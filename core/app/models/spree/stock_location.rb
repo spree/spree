@@ -41,7 +41,7 @@ module Spree
     end
 
     def stocks?(variant)
-      stock_items.where(variant: variant).any?
+      stock_items.exists?(variant: variant)
     end
 
     # Attempts to look up StockItem for the variant, and creates one if not found.

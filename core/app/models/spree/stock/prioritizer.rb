@@ -31,7 +31,7 @@ module Spree
       end
 
       def build_adjuster(item, package)
-        @adjusters[hash_item item] = @adjuster_class.new(item.inventory_unit, item.state, package)
+        @adjusters[hash_item item] = @adjuster_class.new(item.inventory_unit)
       end
 
       def find_adjuster(item)

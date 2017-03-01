@@ -72,11 +72,12 @@ module Spree
       # If stock was -20 and is now -15 (increase of 5 units), then we can process atmost 5 inventory orders.
       # If stock was -20 but then was -25 (decrease of 5 units), do nothing.
       def process_backorders(number)
-        return unless number > 0
-        units    = backordered_inventory_units.first(number) # We can process atmost n backorders
-        position = 0
-        while number > 0 && position < units.length
-          unit = units[position]
+        return unless number.positive?
+        units = backordered_inventory_units.first(number) # We can process atmost n backorders
+
+        units.each do |unit|
+          break unless number.positive?
+
           if unit.quantity > number
             # if required quantity is greater than available
             # split off and fullfill that
@@ -85,8 +86,7 @@ module Spree
           else
             unit.fill_backorder
           end
-          number   -= unit.quantity
-          position += 1
+          number -= unit.quantity
         end
       end
 

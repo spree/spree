@@ -170,8 +170,12 @@ describe Spree::OrderInventory, type: :model do
       it 'should destroy backordered units first' do
         allow(shipment).to receive_messages(
           inventory_units_for_item: [
-            mock_model(Spree::InventoryUnit, variant_id: variant.id, quantity: 2, state: 'backordered', shipped?: false),
-            mock_model(Spree::InventoryUnit, variant_id: variant.id, quantity: 1, state: 'on_hand', shipped?: false),
+            mock_model(
+              Spree::InventoryUnit, variant_id: variant.id, quantity: 2, state: 'backordered', shipped?: false
+            ),
+            mock_model(
+              Spree::InventoryUnit, variant_id: variant.id, quantity: 1, state: 'on_hand', shipped?: false
+            )
           ]
         )
 

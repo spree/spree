@@ -25,7 +25,9 @@ module Spree
       belongs_to :customer_return
       belongs_to :reimbursement
     end
-    has_many :exchange_inventory_units, class_name: 'Spree::InventoryUnit', foreign_key: :original_return_item_id, inverse_of: :original_return_item
+    has_many :exchange_inventory_units, class_name: 'Spree::InventoryUnit',
+                                        foreign_key: :original_return_item_id,
+                                        inverse_of: :original_return_item
     belongs_to :exchange_variant, class_name: 'Spree::Variant'
     belongs_to :preferred_reimbursement_type, class_name: 'Spree::ReimbursementType'
     belongs_to :override_reimbursement_type, class_name: 'Spree::ReimbursementType'
@@ -148,8 +150,9 @@ module Spree
       # for pricing information for if the inventory unit is
       # ever returned. This means that the inventory unit's line_item
       # will have a different variant than the inventory unit itself
+      return unless exchange_required?
       exchange_inventory_units.build(variant: exchange_variant, line_item: inventory_unit.line_item,
-            order: inventory_unit.order, quantity: return_quantity) if exchange_required?
+                                      order: inventory_unit.order, quantity: return_quantity)
     end
 
     def exchange_shipments
@@ -220,14 +223,13 @@ module Spree
     end
 
     def sufficient_quantity_for_return
-      return unless errors.empty? # Only perform the check if everything is good so far
-      if return_quantity > inventory_unit.quantity
-        errors.add(:return_quantity, Spree.t(:cannot_return_more_than_bought_quantity))
-      end
+      # Only perform the check if everything is good so far
+      return unless errors.empty? && return_quantity > inventory_unit.quantity
+      errors.add(:return_quantity, Spree.t(:cannot_return_more_than_bought_quantity))
     end
 
     def extract_inventory_unit
-      self.inventory_unit = self.inventory_unit.split_inventory!(return_quantity)
+      self.inventory_unit = inventory_unit.split_inventory!(return_quantity)
     end
 
     def set_exchange_pre_tax_amount

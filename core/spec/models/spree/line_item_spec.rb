@@ -254,6 +254,7 @@ describe Spree::LineItem, type: :model do
         line_item = order.line_items.first
         line_item.quantity -= 1
         line_item.target_shipment = order.shipments.first
+        line_item.valid?
 
         expect(line_item.errors_on(:quantity).size).to eq(0)
       end
@@ -262,6 +263,7 @@ describe Spree::LineItem, type: :model do
         line_item = order.line_items.first
         line_item.quantity += 2
         line_item.target_shipment = order.shipments.first
+        line_item.valid?
 
         expect(line_item.errors_on(:quantity).size).to eq(1)
       end
@@ -280,6 +282,7 @@ describe Spree::LineItem, type: :model do
         line_item = order.line_items.first
         line_item.quantity += 2
         line_item.target_shipment = order.shipments.first
+        line_item.valid?
 
         expect(line_item.errors_on(:quantity).size).to eq(0)
       end
@@ -288,6 +291,7 @@ describe Spree::LineItem, type: :model do
         line_item = order.line_items.first
         line_item.quantity += 3
         line_item.target_shipment = order.shipments.first
+        line_item.valid?
 
         expect(line_item.errors_on(:quantity).size).to eq(1)
       end

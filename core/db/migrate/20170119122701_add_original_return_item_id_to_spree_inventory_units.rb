@@ -4,7 +4,7 @@ class AddOriginalReturnItemIdToSpreeInventoryUnits < ActiveRecord::Migration[5.0
 
     Spree::InventoryUnit.reset_column_information
 
-    Spree::ReturnItem.where.not(exchange_inventory_unit_id: nil).each do |return_item|
+    Spree::ReturnItem.where.not(exchange_inventory_unit_id: nil).find_each do |return_item|
       if (inventory_unit = Spree::InventoryUnit.find_by(id: return_item.exchange_inventory_unit_id)).present?
         inventory_unit.update_column(:original_return_item_id, return_item.id)
       end
@@ -18,7 +18,7 @@ class AddOriginalReturnItemIdToSpreeInventoryUnits < ActiveRecord::Migration[5.0
 
     Spree::InventoryUnit.reset_column_information
 
-    Spree::InventoryUnit.where.not(original_return_item_id: nil).each do |inventory_unit|
+    Spree::InventoryUnit.where.not(original_return_item_id: nil).find_each do |inventory_unit|
       if (return_item = Spree::ReturnItem.find_by(id: inventory_unit.original_return_item_id)).present?
         return_item.update_column(:exchange_inventory_unit_id, inventory_unit.id)
       end

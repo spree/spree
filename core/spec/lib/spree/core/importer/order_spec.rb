@@ -281,14 +281,14 @@ module Spree
                 cost: '14.99',
                 shipping_method: shipping_method.name,
                 stock_location: stock_location.name,
-                inventory_units: 3.times.map { { sku: sku, variant_id: variant.id } }
+                inventory_units: Array.new(3) { { sku: sku, variant_id: variant.id } }
               },
               {
                 tracking: '123456789',
                 cost: '14.99',
                 shipping_method: shipping_method.name,
                 stock_location: stock_location.name,
-                inventory_units: 2.times.map { { sku: sku, variant_id: variant.id } }
+                inventory_units: Array.new(2) { { sku: sku, variant_id: variant.id } }
               }
             ]
           }

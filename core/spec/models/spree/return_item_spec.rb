@@ -499,7 +499,10 @@ describe Spree::ReturnItem, type: :model do
       before { allow(return_item).to receive(:exchange_variant).and_return(mock_model(Spree::Variant)) }
 
       context "an exchange inventory unit already exists" do
-        before { allow(return_item).to receive(:exchange_inventory_units).and_return([mock_model(Spree::InventoryUnit)]) }
+        before do
+          allow(return_item).to receive(:exchange_inventory_units).and_return([mock_model(Spree::InventoryUnit)])
+        end
+
         it { expect(subject).to be_nil }
       end
 

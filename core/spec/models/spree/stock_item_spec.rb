@@ -79,7 +79,7 @@ describe Spree::StockItem, type: :model do
         before do
           allow(subject).to receive_messages(backordered_inventory_units: [inventory_unit, inventory_unit_2])
           allow(split_inventory_unit).to receive_messages(quantity: 3)
-          allow(inventory_unit).to receive_messages(:quantity => 4, :'split_inventory!' => split_inventory_unit)
+          allow(inventory_unit).to receive_messages(quantity: 4, split_inventory!: split_inventory_unit)
           allow(inventory_unit_2).to receive_messages(quantity: 1)
           subject.update_column(:count_on_hand, -5)
         end
@@ -88,7 +88,7 @@ describe Spree::StockItem, type: :model do
           expect(inventory_unit_2).not_to receive(:split_inventory!)
 
           expect(split_inventory_unit).to receive(:fill_backorder)
-          expect(inventory_unit).not_to   receive(:fill_backorder)
+          expect(inventory_unit).not_to receive(:fill_backorder)
           expect(inventory_unit_2).not_to receive(:fill_backorder)
 
           subject.adjust_count_on_hand(3)

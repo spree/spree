@@ -5,8 +5,7 @@ module Spree
     describe InventoryUnitBuilder, type: :model do
       let(:line_item_1) { build(:line_item) }
       let(:line_item_2) { build(:line_item, quantity: 2) }
-      let(:order_id)    { 1 }
-      let(:order) { build(:order, id: order_id, line_items: [line_item_1, line_item_2]) }
+      let(:order) { build(:order, line_items: [line_item_1, line_item_2]) }
 
       subject { InventoryUnitBuilder.new(order) }
 
@@ -28,7 +27,7 @@ module Spree
         end
 
         it "sets the order_id on inventory units" do
-          expect(subject.units.map(&:order_id).uniq).to eq [order_id]
+          expect(subject.units.map(&:order_id).uniq).to eq [order.id]
         end
 
       end

@@ -6,10 +6,10 @@ module Spree
       attr_accessor :required_quantity, :received_quantity, :backorder_package,
                     :backorder_item
 
-      def initialize(inventory_unit, status, package=nil)
+      def initialize(inventory_unit)
         self.required_quantity = inventory_unit.required_quantity
         self.backorder_package = nil
-        self.backorder_item    = nil
+        self.backorder_item = nil
         self.received_quantity = 0
       end
 
@@ -21,7 +21,7 @@ module Spree
           # as the items/packages are processed in priority order
           if backorder_package.nil?
             self.backorder_package = package_to_adjust
-            self.backorder_item    = item
+            self.backorder_item = item
           else
             package_to_adjust.remove_item item
           end
@@ -37,14 +37,14 @@ module Spree
       def update_backorder
         return if backorder_package.nil?
         if fulfilled?
-          backorder_package.remove_item  backorder_item
+          backorder_package.remove_item backorder_item
         elsif backorder_item.present?
           backorder_item.quantity = remaining_quantity
         end
       end
 
       def fulfilled?
-        remaining_quantity == 0
+        remaining_quantity.zero?
       end
 
       def remaining_quantity

@@ -21,10 +21,10 @@ module Spree
 
       def remove(inventory_unit)
         item = find_item(inventory_unit)
-        @contents -= [item] if item
+        remove_item(item) if item
       end
 
-      def remove_item item
+      def remove_item(item)
         @contents -= [item]
       end
 
@@ -59,7 +59,7 @@ module Spree
       end
 
       def empty?
-        quantity == 0
+        quantity.zero?
       end
 
       def currency

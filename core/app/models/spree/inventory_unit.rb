@@ -16,7 +16,6 @@ module Spree
     scope :on_hand_or_backordered, -> { where state: ['backordered', 'on_hand'] }
     scope :shipped, -> { where state: 'shipped' }
     scope :returned, -> { where state: 'returned' }
-    scope :singular, -> { where quantity: 1 }
     scope :backordered_per_variant, ->(stock_item) do
       includes(:shipment, :order)
         .where.not(spree_shipments: { state: 'canceled' })
@@ -74,17 +73,15 @@ module Spree
     # This will fail if extract >= available_quantity
     def split_inventory!(extract_quantity)
       split = self.class.split(self, extract_quantity)
-      split.save!
-      save!
+      transaction do
+        split.save!
+        save!
+      end
       split
     end
 
     def extract_singular_inventory!
       split_inventory!(1)
-    end
-
-    def singular?
-      quantity === 1
     end
 
     # Remove variant default_scope `deleted_at: nil`
@@ -104,15 +101,13 @@ module Spree
       line_item.included_tax_total * percentage_of_line_item
     end
 
-    def empty?
-      quantity === 0
-    end
-
     def required_quantity
-      @required_quantity ||= if exchanged_unit?
-        original_return_item.return_quantity
+      return @required_quantity unless @required_quantity.nil?
+
+      if exchanged_unit?
+        @required_quantity = original_return_item.return_quantity
       else
-        line_item.quantity
+        @required_quantity = line_item.quantity
       end
     end
 
