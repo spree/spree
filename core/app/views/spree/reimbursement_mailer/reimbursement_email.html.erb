@@ -1,0 +1,61 @@
+<table class="row header">
+  <tr>
+    <td>
+      <p class="lede">
+        <%= Spree.t('reimbursement_mailer.reimbursement_email.dear_customer') %>
+      </p>
+      <p>
+        <%= Spree.t('reimbursement_mailer.reimbursement_email.instructions') %>
+      </p>
+      <p>
+        <%= Spree.t('reimbursement_mailer.reimbursement_email.refund_summary') %>
+      </p>
+      <p>
+        <%= Spree.t('reimbursement_mailer.reimbursement_email.total_refunded', total: @reimbursement.display_total) %>
+      </p>
+
+      <% if @reimbursement.return_items.exchange_requested.present? %>
+        
+        <p>
+        <%= Spree.t('reimbursement_mailer.reimbursement_email.exchange_summary') %>
+        </p>
+
+        <table class="container">
+          <tr>
+            <td class="wrapper last">
+              <table class="twelve columns">
+
+                <% @reimbursement.return_items.exchange_requested.each do |return_item| %>
+                  <tr>
+                    <td class="six sub-columns">
+                      <%= return_item.variant.sku %>
+                    </td>
+                    <td>
+                      <%= link_to raw(return_item.variant.product.name),
+                                  spree.product_url(return_item.variant.product) %>
+                    </td>
+                    <td>
+                      <%= "(#{raw(return_item.exchange_variant.options_text)})" if return_item.exchange_variant.options_text.present? -%>
+                    </td>
+                  </tr>
+                <% end %>
+
+              </table>
+            </td>
+          </tr>
+        </table>
+
+
+        <% if @reimbursement.return_items.awaiting_return.present? && Spree::Config[:expedited_exchanges] %>
+          <p>
+          <%= Spree.t('reimbursement_mailer.reimbursement_email.days_to_send', days: Spree::Config[:expedited_exchanges_days_window]) %>
+          </p>
+        <% end %>
+
+      <% end %>
+      <p>
+        <%= Spree.t('reimbursement_mailer.reimbursement_email.thanks') %>
+      </p>
+    <td class="expander"></td>
+  </tr>
+</table>

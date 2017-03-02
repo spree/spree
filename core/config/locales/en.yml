@@ -1209,6 +1209,7 @@ en:
         refund_summary: Refund Summary
         subject: Reimbursement Notification
         total_refunded: ! 'Total refunded: %{total}'
+        thanks: Thank you for your business.
     return_number: Return Number
     return_quantity: Return Quantity
     returned: Returned
