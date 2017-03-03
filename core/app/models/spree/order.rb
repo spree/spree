@@ -566,10 +566,6 @@ module Spree
       !!self.approved_at
     end
 
-    def can_approve?
-      !approved?
-    end
-
     def consider_risk
       if is_risky? && !approved?
         considered_risky!
