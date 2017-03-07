@@ -6,6 +6,7 @@ describe "Customer Details", type: :feature, js: true do
   let!(:country) { create(:country, name: 'United States of America', iso: 'US') }
   let!(:state) { create(:state, name: "Alabama", country: country, abbr: 'AL') }
   let!(:shipping_method) { create(:shipping_method, display_on: "front_end") }
+  let!(:order_by_guest_user) { create(:order, user: nil, email: generate(:random_email), state: 'complete', completed_at: "2011-02-01 12:36:15") }
   let!(:order) { create(:order, state: 'complete', completed_at: "2011-02-01 12:36:15") }
   let!(:product) { create(:product_in_stock) }
 
@@ -81,6 +82,28 @@ describe "Customer Details", type: :feature, js: true do
       end
     end
 
+    context "guest user's order" do
+      before do
+        visit spree.edit_admin_order_path(order_by_guest_user)
+        click_link "Customer"
+        within("#shipping") { fill_in_address "ship" }
+        within("#billing") { fill_in_address "bill" }
+        click_button "Update"
+      end
+      it "should redirect to order edit page" do
+        expect(page).to have_current_path spree.edit_admin_order_path(order_by_guest_user)
+      end
+      it "should show update message" do
+        expect(page).to have_content "Customer Details Updated"
+      end
+      it "should have complete state" do
+        click_link "Customer"
+        within("#order_tab_summary") do
+          expect(find(".state").text).to eq("complete")
+        end
+      end
+    end
+    
     it "should be able to update customer details for an existing order" do
       order.ship_address = create(:address)
       order.save!
