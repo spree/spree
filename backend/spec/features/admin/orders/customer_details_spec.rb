@@ -6,8 +6,9 @@ describe "Customer Details", type: :feature, js: true do
   let!(:country) { create(:country, name: 'United States of America', iso: 'US') }
   let!(:state) { create(:state, name: "Alabama", country: country, abbr: 'AL') }
   let!(:shipping_method) { create(:shipping_method, display_on: "front_end") }
-  let!(:order_by_guest_user) { create(:order, user: nil, email: generate(:random_email),
-                               state: 'complete', completed_at: "2011-02-01 12:36:15") }
+  let!(:order_by_guest_user) do
+    create(:order, user: nil, email: generate(:random_email), state: 'complete', completed_at: "2011-02-01 12:36:15")
+  end
   let!(:order) { create(:order, state: 'complete', completed_at: "2011-02-01 12:36:15") }
   let!(:product) { create(:product_in_stock) }
 
