@@ -12,23 +12,22 @@ module Spree
       describe "#units" do
         it "returns an inventory unit for each quantity for the order's line items" do
           units = subject.units
-          expect(units.count).to eq 3
+          expect(units.count).to eq 2
           expect(units.first.line_item).to eq line_item_1
           expect(units.first.variant).to eq line_item_1.variant
+          expect(units.first.quantity).to eq line_item_1.quantity
 
-          expect(units[1].line_item).to eq line_item_2
-          expect(units[1].variant).to eq line_item_2.variant
-
-          expect(units[2].line_item).to eq line_item_2
-          expect(units[2].variant).to eq line_item_2.variant
+          expect(units.second.line_item).to eq line_item_2
+          expect(units.second.variant).to eq line_item_2.variant
+          expect(units.second.quantity).to eq line_item_2.quantity
         end
 
         it "builds the inventory units as pending" do
           expect(subject.units.map(&:pending).uniq).to eq [true]
         end
 
-        it "associates the inventory units to the order" do
-          expect(subject.units.map(&:order).uniq).to eq [order]
+        it "sets the order_id on inventory units" do
+          expect(subject.units.map(&:order_id).uniq).to eq [order.id]
         end
 
       end

@@ -18,12 +18,17 @@ module Spree
     end
 
     def perform!
-      shipments = Spree::Stock::Coordinator.new(@order, @reimbursement_objects.map(&:build_exchange_inventory_unit)).shipments
-      if shipments.flat_map(&:inventory_units).size != @reimbursement_objects.size
+      new_exchange_inventory_units = @reimbursement_objects.map(&:build_default_exchange_inventory_unit)
+      shipments = Spree::Stock::Coordinator.new(@order, new_exchange_inventory_units).shipments
+      shipments_units = shipments.flat_map(&:inventory_units)
+
+      if shipments_units.sum(&:quantity) != new_exchange_inventory_units.sum(&:quantity)
         raise UnableToCreateShipments.new("Could not generate shipments for all items. Out of stock?")
       end
+
       @order.shipments += shipments
       @order.save!
+
       shipments.each do |shipment|
         shipment.update!(@order)
         shipment.finalize!

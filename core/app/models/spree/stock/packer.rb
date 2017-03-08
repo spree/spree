@@ -1,13 +1,12 @@
 module Spree
   module Stock
     class Packer
-      attr_reader :stock_location, :inventory_units, :splitters, :allocated_inventory_units
+      attr_reader :stock_location, :inventory_units, :splitters
 
       def initialize(stock_location, inventory_units, splitters=[Splitter::Base])
         @stock_location = stock_location
         @inventory_units = inventory_units
         @splitters = splitters
-        @allocated_inventory_units = []
       end
 
       def packages
@@ -22,22 +21,16 @@ module Spree
         package = Package.new(stock_location)
 
         # Group by variant_id as grouping by variant fires cached query.
-        inventory_units.group_by(&:variant_id).each do |variant_id, variant_inventory_units|
+        inventory_units.index_by(&:variant_id).each do |variant_id, inventory_unit|
           variant = Spree::Variant.find(variant_id)
-          units = variant_inventory_units.clone
+          unit = inventory_unit.dup # Can be used by others, do not use directly
           if variant.should_track_inventory?
-            next unless stock_location.stock_item(variant)
-
-            on_hand, backordered = stock_location.fill_status(variant, units.size)
-            on_hand_units, backordered_units = units.slice!(0, on_hand), units.slice!(0, backordered)
-
-            package.add_multiple on_hand_units, :on_hand if on_hand > 0
-            package.add_multiple backordered_units, :backordered if backordered > 0
-
-            @allocated_inventory_units += (on_hand_units + backordered_units)
+            next unless stock_location.stocks? variant
+            on_hand, backordered = stock_location.fill_status(variant, unit.quantity)
+            package.add(InventoryUnit.split(unit, backordered), :backordered) if backordered.positive?
+            package.add(InventoryUnit.split(unit, on_hand), :on_hand) if on_hand.positive?
           else
-            package.add_multiple units
-            @allocated_inventory_units += units
+            package.add unit
           end
         end
 

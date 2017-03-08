@@ -10,6 +10,7 @@ module Spree
 
       with_options allow_nil: true do
         delegate :line_item,
+                 :quantity,
                  :variant, to: :inventory_unit
         delegate :price, to: :variant
         delegate :dimension,
@@ -17,8 +18,16 @@ module Spree
                  :weight, to: :variant, prefix: true
       end
 
+      def splittable_by_weight?
+        quantity > 1 && variant_weight.present?
+      end
+
       def weight
         variant_weight * quantity
+      end
+
+      def quantity=(value)
+        @inventory_unit.quantity = value
       end
 
       def on_hand?
@@ -32,14 +41,6 @@ module Spree
 
       def amount
         price * quantity
-      end
-
-      def quantity
-        # Since inventory units don't have a quantity,
-        # make this always 1 for now, leaving ourselves
-        # open to a different possibility in the future,
-        # but this massively simplifies things for now
-        1
       end
 
       def volume

@@ -19,96 +19,100 @@ module Spree
     # are always unstocked when the order is completed through +shipment.finalize+
     def verify(shipment = nil)
       if order.completed? || shipment.present?
-
-        if inventory_units.size < line_item.quantity
-          quantity = line_item.quantity - inventory_units.size
+        units_count = inventory_units.reload.sum(&:quantity)
+        if units_count < line_item.quantity
+          quantity = line_item.quantity - units_count
 
           shipment = determine_target_shipment unless shipment
           add_to_shipment(shipment, quantity)
-        elsif inventory_units.size == line_item.quantity && !line_item.changed?
-          remove(inventory_units, shipment)
-        elsif inventory_units.size > line_item.quantity
-          remove(inventory_units, shipment)
+        elsif (units_count > line_item.quantity) || (units_count == line_item.quantity && !line_item.changed?)
+          remove(units_count, shipment)
         end
       end
     end
 
     private
 
-      def remove(item_units, shipment = nil)
-        quantity = set_quantity_to_remove(item_units)
+    def remove(units_count, target_shipment = nil)
+      quantity = set_quantity_to_remove(units_count)
 
-        if shipment.present?
-          remove_from_shipment(shipment, quantity)
-        else
-          order.shipments.each do |shipment|
-            break if quantity == 0
-            quantity -= remove_from_shipment(shipment, quantity)
-          end
+      if target_shipment.present?
+        remove_from_shipment(target_shipment, quantity)
+      else
+        order.shipments.each do |shipment|
+          break if quantity.zero?
+          quantity -= remove_from_shipment(shipment, quantity)
         end
       end
+    end
 
-      def set_quantity_to_remove(item_units)
-        if (item_units.size - line_item.quantity).zero?
-          line_item.quantity
-        else
-          item_units.size - line_item.quantity
-        end
+    def set_quantity_to_remove(units_count)
+      if (units_count - line_item.quantity).zero?
+        line_item.quantity
+      else
+        units_count - line_item.quantity
+      end
+    end
+
+    # Returns either one of the shipment:
+    #
+    # first unshipped that already includes this variant
+    # first unshipped that's leaving from a stock_location that stocks this variant
+    def determine_target_shipment
+      target_shipment = order.shipments.detect do |shipment|
+        shipment.ready_or_pending? && shipment.include?(variant)
       end
 
-      # Returns either one of the shipment:
-      #
-      # first unshipped that already includes this variant
-      # first unshipped that's leaving from a stock_location that stocks this variant
-      def determine_target_shipment
-        shipment = order.shipments.detect do |shipment|
-          shipment.ready_or_pending? && shipment.include?(variant)
-        end
+      target_shipment || order.shipments.detect do |shipment|
+        shipment.ready_or_pending? && variant.stock_location_ids.include?(shipment.stock_location_id)
+      end
+    end
 
-        shipment ||= order.shipments.detect do |shipment|
-          shipment.ready_or_pending? && variant.stock_location_ids.include?(shipment.stock_location_id)
-        end
+    def add_to_shipment(shipment, quantity)
+      if variant.should_track_inventory?
+        on_hand, back_order = shipment.stock_location.fill_status(variant, quantity)
+
+        on_hand.times { shipment.set_up_inventory('on_hand', variant, order, line_item) }
+        back_order.times { shipment.set_up_inventory('backordered', variant, order, line_item) }
+      else
+        quantity.times { shipment.set_up_inventory('on_hand', variant, order, line_item) }
       end
 
-      def add_to_shipment(shipment, quantity)
-        if variant.should_track_inventory?
-          on_hand, back_order = shipment.stock_location.fill_status(variant, quantity)
-
-          on_hand.times { shipment.set_up_inventory('on_hand', variant, order, line_item) }
-          back_order.times { shipment.set_up_inventory('backordered', variant, order, line_item) }
-        else
-          quantity.times { shipment.set_up_inventory('on_hand', variant, order, line_item) }
-        end
-
-        # adding to this shipment, and removing from stock_location
-        if order.completed?
-          shipment.stock_location.unstock(variant, quantity, shipment)
-        end
-
-        quantity
+      # adding to this shipment, and removing from stock_location
+      if order.completed?
+        shipment.stock_location.unstock(variant, quantity, shipment)
       end
 
-      def remove_from_shipment(shipment, quantity)
-        return 0 if quantity == 0 || shipment.shipped?
+      quantity
+    end
 
-        shipment_units = shipment.inventory_units_for_item(line_item, variant).reject(&:shipped?).sort_by(&:state)
+    def remove_from_shipment(shipment, quantity)
+      return 0 if quantity.zero? || shipment.shipped?
 
-        removed_quantity = 0
+      shipment_units = shipment.inventory_units_for_item(line_item, variant).reject(&:shipped?).sort_by(&:state)
 
-        shipment_units.each do |inventory_unit|
+      removed_quantity = 0
+
+      shipment_units.each do |inventory_unit|
+        inventory_unit.quantity.times do
           break if removed_quantity == quantity
-          inventory_unit.destroy
+          if inventory_unit.quantity > 1
+            inventory_unit.decrement(:quantity)
+          else
+            inventory_unit.destroy
+          end
           removed_quantity += 1
         end
-
-        shipment.destroy if shipment.inventory_units.count.zero?
-
-        # removing this from shipment, and adding to stock_location
-        if order.completed?
-          shipment.stock_location.restock variant, removed_quantity, shipment
-        end
-
-        removed_quantity
       end
+
+      shipment.destroy if shipment.inventory_units.sum(:quantity).zero?
+
+      # removing this from shipment, and adding to stock_location
+      if order.completed?
+        shipment.stock_location.restock variant, removed_quantity, shipment
+      end
+
+      removed_quantity
+    end
   end
 end

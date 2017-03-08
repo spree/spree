@@ -281,14 +281,14 @@ module Spree
                 cost: '14.99',
                 shipping_method: shipping_method.name,
                 stock_location: stock_location.name,
-                inventory_units: 3.times.map { { sku: sku } }
+                inventory_units: Array.new(3) { { sku: sku, variant_id: variant.id } }
               },
               {
                 tracking: '123456789',
                 cost: '14.99',
                 shipping_method: shipping_method.name,
                 stock_location: stock_location.name,
-                inventory_units: 2.times.map { { sku: sku } }
+                inventory_units: Array.new(2) { { sku: sku, variant_id: variant.id } }
               }
             ]
           }
@@ -315,9 +315,11 @@ module Spree
         it "allocates inventory units to the correct shipments" do
           order = Importer::Order.import(user, params)
 
-          expect(order.inventory_units.count).to eq 5
-          expect(order.shipments.first.inventory_units.count).to eq 3
-          expect(order.shipments.last.inventory_units.count).to eq 2
+          expect(order.inventory_units.count).to eq 2
+          expect(order.shipments.first.inventory_units.count).to eq 1
+          expect(order.shipments.first.inventory_units.first.quantity).to eq 3
+          expect(order.shipments.last.inventory_units.count).to eq 1
+          expect(order.shipments.last.inventory_units.first.quantity).to eq 2
         end
 
         it "accepts admin name for stock location" do

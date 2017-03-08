@@ -419,11 +419,11 @@ describe Spree::ReturnItem, type: :model do
 
   describe "#exchange_processed?" do
     context "exchange inventory unit exists" do
-      before { allow(subject).to receive(:exchange_inventory_unit) { mock_model(Spree::InventoryUnit) } }
+      before { allow(subject).to receive(:exchange_inventory_units) { [mock_model(Spree::InventoryUnit)] } }
       it { expect(subject.exchange_processed?).to eq true }
     end
     context "exchange inventory unit does not exist" do
-      before { allow(subject).to receive(:exchange_inventory_unit) { nil } }
+      before { allow(subject).to receive(:exchange_inventory_units) { [] } }
       it { expect(subject.exchange_processed?).to eq false }
     end
   end
@@ -491,15 +491,18 @@ describe Spree::ReturnItem, type: :model do
     end
   end
 
-  describe "#build_exchange_inventory_unit" do
+  describe "#build_default_exchange_inventory_unit" do
     let(:return_item) { build(:return_item) }
-    subject { return_item.build_exchange_inventory_unit }
+    subject { return_item.build_default_exchange_inventory_unit }
 
     context "the return item is intended to be exchanged" do
       before { allow(return_item).to receive(:exchange_variant).and_return(mock_model(Spree::Variant)) }
 
       context "an exchange inventory unit already exists" do
-        before { allow(return_item).to receive(:exchange_inventory_unit).and_return(mock_model(Spree::InventoryUnit)) }
+        before do
+          allow(return_item).to receive(:exchange_inventory_units).and_return([mock_model(Spree::InventoryUnit)])
+        end
+
         it { expect(subject).to be_nil }
       end
 
@@ -520,11 +523,11 @@ describe Spree::ReturnItem, type: :model do
     end
   end
 
-  describe "#exchange_shipment" do
+  describe "#exchange_shipments" do
     it "returns the exchange inventory unit's shipment" do
       inventory_unit = build(:inventory_unit)
-      subject.exchange_inventory_unit = inventory_unit
-      expect(subject.exchange_shipment).to eq inventory_unit.shipment
+      subject.exchange_inventory_units << inventory_unit
+      expect(subject.exchange_shipments).to include inventory_unit.shipment
     end
   end
 

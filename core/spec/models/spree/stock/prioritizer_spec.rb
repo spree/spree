@@ -3,22 +3,22 @@ require 'spec_helper'
 module Spree
   module Stock
     describe Prioritizer, type: :model do
-      let(:order) { mock_model(Order) }
+      let(:variant) { build(:variant, weight: 25.0) }
       let(:stock_location) { build(:stock_location) }
-      let(:variant) { build(:variant) }
+      let(:order) { build(:order) }
 
       def inventory_units
         @inventory_units ||= []
       end
 
       def build_inventory_unit
-        mock_model(InventoryUnit, variant: variant).tap do |unit|
+        build(:inventory_unit, variant: variant).tap do |unit|
           inventory_units << unit
         end
       end
 
       def pack
-        package = Package.new(order)
+        package = Package.new(stock_location)
         yield(package) if block_given?
         package
       end

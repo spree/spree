@@ -21,7 +21,11 @@ module Spree
 
       def remove(inventory_unit)
         item = find_item(inventory_unit)
-        @contents -= [item] if item
+        remove_item(item) if item
+      end
+
+      def remove_item(item)
+        @contents -= [item]
       end
 
       # Fix regression that removed package.order.
@@ -55,7 +59,7 @@ module Spree
       end
 
       def empty?
-        quantity == 0
+        quantity.zero?
       end
 
       def currency
@@ -88,10 +92,6 @@ module Spree
           shipping_rates: shipping_rates,
           inventory_units: contents.map(&:inventory_unit)
         )
-      end
-
-      def contents_by_weight
-        contents.sort { |x, y| y.weight <=> x.weight }
       end
 
       def volume

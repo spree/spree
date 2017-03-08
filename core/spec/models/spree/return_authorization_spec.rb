@@ -65,7 +65,7 @@ describe Spree::ReturnAuthorization, type: :model do
           reimbursement = Spree::Reimbursement.last
           expect(reimbursement.order).to eq subject.order
           expect(reimbursement.return_items).to eq [exchange_return_item]
-          expect(exchange_return_item.reload.exchange_shipment).to be_present
+          expect(exchange_return_item.reload.exchange_shipments).to be_present
         end
 
         context "the reimbursement fails" do

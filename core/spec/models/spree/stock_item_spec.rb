@@ -70,12 +70,41 @@ describe Spree::StockItem, type: :model do
       expect(copy.count_on_hand).to eq(current_on_hand + 10)
     end
 
+    context "item out of stock (by five items)" do
+      context "when stock received is insufficient to fullfill backorders" do
+        let(:inventory_unit)       { double('InventoryUnit') }
+        let(:inventory_unit_2)     { double('InventoryUnit2') }
+        let(:split_inventory_unit) { double('SplitInventoryUnit') }
+
+        before do
+          allow(subject).to receive_messages(backordered_inventory_units: [inventory_unit, inventory_unit_2])
+          allow(split_inventory_unit).to receive_messages(quantity: 3)
+          allow(inventory_unit).to receive_messages(quantity: 4, split_inventory!: split_inventory_unit)
+          allow(inventory_unit_2).to receive_messages(quantity: 1)
+          subject.update_column(:count_on_hand, -5)
+        end
+
+        it "splits inventory to fullfill partial backorder" do
+          expect(inventory_unit_2).not_to receive(:split_inventory!)
+
+          expect(split_inventory_unit).to receive(:fill_backorder)
+          expect(inventory_unit).not_to receive(:fill_backorder)
+          expect(inventory_unit_2).not_to receive(:fill_backorder)
+
+          subject.adjust_count_on_hand(3)
+          expect(subject.count_on_hand).to eq -2
+        end
+      end
+    end
+
     context "item out of stock (by two items)" do
       let(:inventory_unit) { double('InventoryUnit') }
       let(:inventory_unit_2) { double('InventoryUnit2') }
 
       before do
         allow(subject).to receive_messages(backordered_inventory_units: [inventory_unit, inventory_unit_2])
+        allow(inventory_unit).to receive_messages(quantity: 1)
+        allow(inventory_unit_2).to receive_messages(quantity: 1)
         subject.update_column(:count_on_hand, -2)
       end
 
@@ -134,7 +163,11 @@ describe Spree::StockItem, type: :model do
       end
 
       context "adds new items" do
-        before { allow(subject).to receive_messages(backordered_inventory_units: [inventory_unit, inventory_unit_2]) }
+        before do
+          allow(subject).to receive_messages(backordered_inventory_units: [inventory_unit, inventory_unit_2])
+          allow(inventory_unit).to receive_messages(quantity: 1)
+          allow(inventory_unit_2).to receive_messages(quantity: 1)
+        end
 
         it "fills existing backorders" do
           expect(inventory_unit).to receive(:fill_backorder)

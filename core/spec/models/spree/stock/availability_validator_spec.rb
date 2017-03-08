@@ -4,8 +4,14 @@ module Spree
   module Stock
     describe AvailabilityValidator, type: :model do
       let!(:line_item) { double(quantity: 5, variant_id: 1, variant: double.as_null_object, errors: double('errors'), inventory_units: []) }
+      let(:inventory_unit) { double("InventoryUnit") }
+      let(:inventory_units) { [inventory_unit] }
 
       subject { described_class.new }
+
+      before do
+        allow(inventory_unit).to receive_messages(quantity: 5)
+      end
 
       it 'should be valid when supply is sufficient' do
         allow_any_instance_of(Stock::Quantifier).to receive_messages(can_supply?: true)
@@ -22,7 +28,7 @@ module Spree
       it 'should consider existing inventory_units sufficient' do
         allow_any_instance_of(Stock::Quantifier).to receive_messages(can_supply?: false)
         expect(line_item).not_to receive(:errors)
-        allow(line_item).to receive_messages(inventory_units: [double] * 5)
+        allow(line_item).to receive_messages(inventory_units: inventory_units)
         subject.validate(line_item)
       end
 

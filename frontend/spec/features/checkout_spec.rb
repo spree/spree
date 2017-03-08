@@ -307,10 +307,11 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
     end
 
     context 'and updates line item quantity and try to reach payment page' do
+      let(:cart_quantity) { 3 }
       before do
         visit spree.cart_path
         within '.cart-item-quantity' do
-          fill_in first('input')['name'], with: 3
+          fill_in first('input')['name'], with: cart_quantity
         end
 
         click_on 'Update'
@@ -326,7 +327,8 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
         click_on 'Save and Continue'
         click_on 'Save and Continue'
 
-        expect(Spree::InventoryUnit.count).to eq 3
+        expect(Spree::InventoryUnit.count).to eq 1
+        expect(Spree::InventoryUnit.first.quantity).to eq cart_quantity
       end
     end
 

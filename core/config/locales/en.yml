@@ -559,6 +559,7 @@ en:
     cannot_create_customer_returns: Cannot create customer returns as this order has no shipped units.
     cannot_create_returns: Cannot create returns as this order has no shipped units.
     cannot_perform_operation: Cannot perform requested operation
+    cannot_return_more_than_bought_quantity: Cannot return more than bought quantity.
     cannot_set_shipping_method_without_address: Cannot set shipping method until customer details are provided.
     capture: Capture
     capture_events: Capture events
@@ -1140,6 +1141,7 @@ en:
     prototypes: Prototypes
     provider: Provider
     provider_settings_warning: If you are changing the provider type, you must save first before you can edit the provider settings
+    purchased_quantity: Purchased Quantity
     qty: Qty
     quantity: Quantity
     quantity_returned: Quantity Returned

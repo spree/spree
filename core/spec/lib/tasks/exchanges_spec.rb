@@ -54,7 +54,7 @@ describe "exchanges:charge_unreturned_items" do
         subject.invoke
         new_order = Spree::Order.last
         expect(new_order.shipments.count).to eq 1
-        expect(return_item_2.reload.exchange_shipment.order).to eq Spree::Order.last
+        expect(return_item_2.reload.exchange_shipments.first.order).to eq Spree::Order.last
       end
 
       it "creates line items on the order for the unreturned items" do
@@ -64,7 +64,7 @@ describe "exchanges:charge_unreturned_items" do
 
       it "associates the exchanges inventory units with the new line items" do
         subject.invoke
-        expect(return_item_2.reload.exchange_inventory_unit.try(:line_item).try(:order)).to eq Spree::Order.last
+        expect(return_item_2.reload.exchange_inventory_units.last.try(:line_item).try(:order)).to eq Spree::Order.last
       end
 
       it "uses the credit card from the previous order" do
@@ -119,14 +119,14 @@ describe "exchanges:charge_unreturned_items" do
       end
 
       context "the exchange inventory unit is not shipped" do
-        before { return_item_2.reload.exchange_inventory_unit.update_columns(state: "on hand") }
+        before { return_item_2.reload.exchange_inventory_units.update_all(state: "on hand") }
         it "does not create a new order" do
           expect { subject.invoke }.not_to change { Spree::Order.count }
         end
       end
 
       context "the exchange inventory unit has been returned" do
-        before { return_item_2.reload.exchange_inventory_unit.update_columns(state: "returned") }
+        before { return_item_2.reload.exchange_inventory_units.update_all(state: "returned") }
         it "does not create a new order" do
           expect { subject.invoke }.not_to change { Spree::Order.count }
         end
