@@ -103,7 +103,7 @@ describe "Customer Details", type: :feature, js: true do
         end
       end
     end
-    
+
     it "should be able to update customer details for an existing order" do
       order.ship_address = create(:address)
       order.save!
