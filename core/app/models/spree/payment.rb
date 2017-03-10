@@ -113,13 +113,7 @@ module Spree
     alias display_amount money
 
     def amount=(amount)
-      self[:amount] =
-        case amount
-        when String
-          separator = I18n.t('number.currency.format.separator')
-          number    = amount.delete("^0-9-#{separator}\.").tr(separator, '.')
-          number.to_d if number.present?
-        end || amount
+      self[:amount] = Spree::LocalizedNumber.parse!(amount)
     end
 
     def offsets_total
