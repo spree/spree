@@ -32,7 +32,7 @@ module Spree
 
         candidate = @letters ? 36 : 10
         number = loop do
-          random_token = SecureRandom.random_number(candidate**length).to_s(candidate).rjust(length, "0")
+          random_token = SecureRandom.random_number(candidate**length).to_s(candidate).rjust(length, '0')
           break random_token unless host.exists?(number: random_token)
         end
 
