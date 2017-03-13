@@ -66,11 +66,15 @@ module Spree
         if requires_authentication? && api_key.blank? && order_token.blank?
           must_specify_api_key and return
         elsif order_token.blank? && (requires_authentication? || api_key.present?)
-          render "spree/api/errors/invalid_api_key", status: 401 and return
+          invalid_api_key and return
         else
           # An anonymous user
           @current_api_user = Spree.user_class.new
         end
+      end
+
+      def invalid_api_key
+        render "spree/api/errors/invalid_api_key", status: 401
       end
 
       def must_specify_api_key
