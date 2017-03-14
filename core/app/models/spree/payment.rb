@@ -113,7 +113,15 @@ module Spree
     alias display_amount money
 
     def amount=(amount)
-      self[:amount] = Spree::LocalizedNumber.parse!(amount)
+      self[:amount] =
+        case amount
+        when String
+          begin
+            Spree::LocalizedNumber.parse!(amount)
+          rescue ArgumentError
+            nil
+          end
+        end || amount
     end
 
     def offsets_total
