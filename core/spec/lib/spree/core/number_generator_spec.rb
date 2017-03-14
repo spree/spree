@@ -44,6 +44,7 @@ describe Spree::Core::NumberGenerator do
 
   shared_examples_for 'duplicate without length increment' do
     before do
+      allow_any_instance_of(Array).to receive(:shuffle!).and_return(self)
       expect(random).to receive(:rand).
         with(expected_rand_limit).
         and_return(next_candidate_index).
@@ -59,6 +60,7 @@ describe Spree::Core::NumberGenerator do
     let(:resource) { model.new }
 
     before do
+      allow_any_instance_of(Array).to receive(:shuffle!).and_return(self)
       expect(random).to receive(:rand).
         with(expected_rand_limit).
         and_return(first_candidate_index).
@@ -101,6 +103,7 @@ describe Spree::Core::NumberGenerator do
         let(:next_candidate) { next_candidate_high           }
 
         before do
+          allow_any_instance_of(Array).to receive(:shuffle!).and_return(self)
           expect(random).to receive(:rand).
             with(expected_rand_limit).
             and_return(next_candidate_index).
