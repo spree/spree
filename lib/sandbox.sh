@@ -11,9 +11,8 @@ fi
 cd ./sandbox
 
 cat <<RUBY >> Gemfile
-current_branch = '$(git symbolic-ref --short -q HEAD)'
-gem 'spree', path: '..', branch: current_branch
-gem 'spree_auth_devise', github: 'spree/spree_auth_devise', branch: current_branch
+gem 'spree', path: '..'
+gem 'spree_auth_devise', github: 'spree/spree_auth_devise', branch: 'master'
 
 group :test, :development do
   gem 'bullet'
