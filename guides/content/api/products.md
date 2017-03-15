@@ -20,6 +20,9 @@ GET /api/v1/products?page=2```
 show_deleted
 : **boolean** - `true` to show deleted products, `false` to hide them. Default: `false`. **Only available to users with an admin role.**
 
+ids
+: A comma-separated list of products ids. Specifying this parameter will display the respective products.
+
 page
 : The page number of products to display.
 
