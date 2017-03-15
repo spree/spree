@@ -49,6 +49,10 @@ You may encounter the follow error messages when using the API.
 <%= headers 401 %>
 <%= json(error: "Invalid API key ([key]) specified.") %>
 
+#### No API Key specified
+
+<%= no_api_key %>
+
 ## Rules
 
 The following are some simple rules that all Spree API endpoints comply with.
