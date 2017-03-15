@@ -107,10 +107,10 @@ GET /api/v1/products/new```
 <%= headers 200 %>
 <%= json \
   attributes: [
-    :id, :name, :description, :price, :available_on, :permalink,
-    :count_on_hand, :meta_description, :meta_keywords, :shipping_category_id, :taxon_ids
+    :id, :name, :description, :price, :display_price, :available_on,
+    :slug, :meta_description, :meta_keywords, :shipping_category_id, :taxon_ids, :total_on_hand
   ],
-  required_attributes: [:name, :price, :shipping_category_id]
+  required_attributes: [:name, :shipping_category, :price]
  %>
 
 ## Create
