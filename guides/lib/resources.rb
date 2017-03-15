@@ -193,7 +193,8 @@ module Spree
         "name"=>"Small",
         "presentation"=>"S",
         "option_type_name"=>"tshirt-size",
-        "option_type_id"=>1
+        "option_type_id"=>1,
+        "option_type_presentation"=>"S",
       }
 
     OPTION_TYPE ||=
@@ -210,19 +211,24 @@ module Spree
           "name"=>"Ruby on Rails Tote",
           "sku"=>"ROR-00011",
           "price"=>"15.99",
-          "display_price"=>"$15.99",
           "weight"=>nil,
           "height"=>nil,
           "width"=>nil,
           "depth"=>nil,
           "is_master"=>true,
-          "cost_price"=>"13.0",
-          "permalink"=>"ruby-on-rails-tote",
+          "slug"=>"ruby-on-rails-tote",
           "description"=>"A text description of the product.",
-          "options_text"=> "(Size: small, Colour: red)",
-          "in_stock" => true,
-          "option_values"=> [OPTION_VALUE],
-          "images"=> [IMAGE]
+          "track_inventory"=>true,
+          "cost_price"=>"13.0",
+          "option_values"=>[OPTION_VALUE],
+          "images"=>[IMAGE],
+          "display_price"=>"$15.99",
+          "options_text"=>"(Size: small, Colour: red)",
+          "in_stock"=>true,
+          "is_backorderable"=>true,
+          "is_orderable"=>true,
+          "total_on_hand"=>10,
+          "is_destroyed"=>false
        }
 
     PRODUCT_PROPERTY ||=
@@ -323,6 +329,26 @@ module Spree
       }
     }
 
+    TAXON ||=
+      {
+        "id"=>2,
+        "name"=>"Ruby on Rails",
+        "pretty_name"=>"Ruby on Rails",
+        "permalink"=>"brands/ruby-on-rails",
+        "parent_id"=>1,
+        "taxonomy_id"=>1,
+        "meta_title"=>"Ruby on Rails",
+        "meta_description"=>"Ruby on Rails",
+        "taxons"=>[]
+      }
+
+    CLASSIFICATION ||=
+      {
+        "taxon_id"=>3,
+        "position"=>1,
+        "taxon"=>TAXON
+      }
+
     PRODUCT ||=
       {
         "id"=>1,
@@ -331,16 +357,18 @@ module Spree
         "price"=>"15.99",
         "display_price"=>"$15.99",
         "available_on"=>"2012-10-17T03:43:57Z",
-        "permalink"=>"ruby-on-rails-tote",
+        "slug"=>"example-product",
         "meta_description"=>nil,
         "meta_keywords"=>nil,
-        "taxon_ids" => [1,2,3],
-        "shipping_category_id" => 1,
-        "has_variants" => true,
-        "master" => VARIANT.merge("is_master" => true),
-        "variants" => [VARIANT.merge("is_master" => false)],
-        "product_properties"=> [PRODUCT_PROPERTY],
-        "option_types" => [OPTION_TYPE]
+        "shipping_category_id"=>1,
+        "taxon_ids"=>[1,2,3],
+        "total_on_hand"=>10,
+        "master"=>VARIANT.merge("is_master" => true),
+        "variants"=>[VARIANT.merge("is_master" => false)],
+        "option_types"=>[OPTION_TYPE],
+        "product_properties"=>[PRODUCT_PROPERTY],
+        "classifications"=>[CLASSIFICATION],
+        "has_variants"=>true
       }
 
     PAYMENT_METHOD ||=
@@ -804,16 +832,6 @@ module Spree
         "country_id"=>1,
         "id"=>1,
         "name"=>"New York"
-      }
-
-    TAXON ||=
-      {
-        "id"=>2,
-        "name"=>"Ruby on Rails",
-        "permalink"=>"brands/ruby-on-rails",
-        "position"=>1,
-        "parent_id"=>1,
-        "taxonomy_id"=>1
       }
 
     SECONDARY_TAXON ||=
