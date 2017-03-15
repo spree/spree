@@ -133,6 +133,10 @@ module Spree
         headers(401) + json(error: "Token is invalid.")
       end
 
+      def no_api_key
+        headers(401) + json(error: "You must specify an API key.")
+      end
+
       def store_not_found
         headers(404) + json(error: "Store not found.")
       end
