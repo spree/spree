@@ -14,6 +14,7 @@
 
 //= require spree
 //= require spree/backend/spree-select2
+//= require spree/backend/country_states
 //= require spree/backend/adjustments
 //= require spree/backend/admin
 //= require spree/backend/calculator
@@ -49,7 +50,6 @@
 //= require spree/backend/variant_autocomplete
 //= require spree/backend/variant_management
 //= require spree/backend/zone
-//= require spree/backend/country_states
 
 Spree.routes.clear_cache = Spree.adminPathFor('general_settings/clear_cache')
 Spree.routes.checkouts_api = Spree.pathFor('api/v1/checkouts')
