@@ -28,6 +28,7 @@ module Spree
     before_validation :set_cost_zero_when_nil
 
     validates :stock_location, presence: true
+    validates :number, uniqueness: true
 
     attr_accessor :special_instructions
 
