@@ -426,11 +426,12 @@ module Spree
         "id"=>1,
         "quantity"=>2,
         "price"=>"19.99",
-        "single_display_amount"=> "$19.99",
-        "total"=> "39.99",
-        "display_total"=> "$39.99",
         "variant_id"=>1,
-        "variant" => line_item_variant
+        "variant" => { "product_id"=>1 }.merge(line_item_variant),
+        "adjustments"=>[],
+        "single_display_amount"=> "$19.99",
+        "display_total"=> "$39.99",
+        "total"=> "39.99"
       }
 
     LINE_ITEM2 ||=
@@ -478,11 +479,26 @@ module Spree
         "updated_at"=>"2012-10-24T23:26:23Z"
       }
 
+    SHIPPING_CATEGORY ||=
+      {
+        "id" => 1,
+        "name" => "Defaukt category"
+      }
+
+    ZONE ||=
+      {
+        "id"=>1,
+        "name"=>"America",
+        "description"=>"The US"
+      }
+
     SHIPPING_METHOD ||=
       {
+        "id" => 1,
+        "code" => nil,
         "name" => "UPS Ground",
-        "zone_id" => 1,
-        "shipping_category_id" => 1
+        "zones" => [ZONE],
+        "shipping_categories" => [SHIPPING_CATEGORY]
       }
 
     SHIPPING_RATE ||=
@@ -491,15 +507,16 @@ module Spree
         "name"=>"UPS Ground (USD)",
         "cost"=>5,
         "selected"=>true,
-        "shipment_id"=>1,
-        "shipping_method_id"=>5
+        "shipping_method_id"=>5,
+        "shipping_method_code"=>nil,
+        "display_cost"=>"$5.00"
       }
 
     MANIFEST ||=
       {
+        "variant_id"=>1,
         "quantity"=>1,
-        "states"=>{"on_hand"=>1},
-        "variant" => VARIANT
+        "states"=>{"on_hand"=>1}
       }
 
     INVENTORY_UNIT ||=
@@ -520,11 +537,13 @@ module Spree
         "cost"=>"5.0",
         "shipped_at"=>nil,
         "state"=>"pending",
-        "order_id"=>"R1234567",
-        "stock_location_name"=>"NY Warehouse",
         "shipping_rates"=>[SHIPPING_RATE],
-        "shipping_method"=> SHIPPING_METHOD,
-        "manifest"=>[MANIFEST]
+        "selected_shipping_rate"=>SHIPPING_RATE,
+        "shipping_methods"=> [SHIPPING_METHOD],
+        "manifest"=>[MANIFEST],
+        "adjustments"=>[],
+        "order_id"=>"R1234567",
+        "stock_location_name"=>"NY Warehouse"
       }
 
     SHIPMENT_SHIPPED ||=
@@ -542,14 +561,15 @@ module Spree
         "manifest"=>[MANIFEST]
       }
 
+    CHECKOUT_STEPS ||= ["address,", "delivery", "complete"]
+
     ORDER ||=
       {
         "id"=>1,
         "number"=>"R335381310",
         "item_total"=>"100.0",
-        "display_item_total"=>"$100.00",
         "total"=>"100.0",
-        "display_total"=>"$100.00",
+        "ship_total"=>"0.0",
         "state"=>"cart",
         "adjustment_total"=>"-12.0",
         "user_id"=>nil,
@@ -561,12 +581,23 @@ module Spree
         "payment_state"=>nil,
         "email"=>nil,
         "special_instructions"=>nil,
+        "channel"=>"spree",
+        "included_tax_total"=>"0.0",
+        "additional_tax_total"=>"0.0",
+        "display_included_tax_total"=>"$0.0",
+        "display_additional_tax_total"=>"$0.0",
+        "tax_total"=>"0.0",
+        "currency"=>"USD",
+        "considered_risky"=>false,
+        "canceler_id"=>nil,
+        "display_item_total"=>"$100.00",
         "total_quantity"=>1,
+        "display_total"=>"$100.00",
+        "display_ship_total"=>"$0.00",
+        "display_tax_total"=>"$0.00",
+        "display_adjustment_total": "$0.00",
         "token"=> "abcdef123456",
-        "line_items"=>[],
-        "adjustments"=>[],
-        "payments"=>[],
-        "shipments"=>[]
+        "checkout_steps"=> CHECKOUT_STEPS
       }
 
     NEW_ORDER ||= {
@@ -623,10 +654,14 @@ module Spree
     SHIPPED_SHIPMENT ||= SHIPMENT.merge({"state" => "shipped"})
 
     ORDER_SHOW ||= ORDER.merge({
+      "bill_address" => [],
+      "ship_address" => [],
       "line_items" => [LINE_ITEM],
       "payments" => [],
-      "adjustments" => []
-
+      "shipments" => [],
+      "adjustments" => [],
+      "credit_cards" => [],
+      "permissions" => { "can_update" => true },
     })
 
     ORDER_SHOW2 ||= ORDER.merge({
@@ -878,14 +913,6 @@ module Spree
         "name"=>"United States",
         "zoneable_type"=>"Spree::Country",
         "zoneable_id"=>1,
-      }
-
-    ZONE ||=
-      {
-        "id"=>1,
-        "name"=>"America",
-        "description"=>"The US",
-        "zone_members"=> [ZONE_MEMBER]
       }
 
     RETURN_AUTHORIZATION ||=
