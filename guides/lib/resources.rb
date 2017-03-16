@@ -205,6 +205,16 @@ module Spree
         "position" => 1
       }
 
+    STOCK_ITEM ||=
+      {
+        "id"=>1,
+        "count_on_hand"=>10,
+        "stock_location_id"=>1,
+        "backorderable"=>true,
+        "available"=>true,
+        "stock_location_name"=>"default"
+      }
+
     VARIANT ||=
        {
          "id"=>1,
@@ -219,7 +229,6 @@ module Spree
           "slug"=>"ruby-on-rails-tote",
           "description"=>"A text description of the product.",
           "track_inventory"=>true,
-          "cost_price"=>"13.0",
           "option_values"=>[OPTION_VALUE],
           "images"=>[IMAGE],
           "display_price"=>"$15.99",
@@ -230,6 +239,8 @@ module Spree
           "total_on_hand"=>10,
           "is_destroyed"=>false
        }
+
+    VARIANT_BIG ||= VARIANT.merge("stock_items"=>[STOCK_ITEM])
 
     PRODUCT_PROPERTY ||=
       {
@@ -901,16 +912,6 @@ module Spree
         "zipcode"=>"20814",
         "phone"=>"",
         "active"=>true
-      }
-
-    STOCK_ITEM ||=
-      {
-        "id"=>1,
-        "count_on_hand"=>10,
-        "backorderable"=>true,
-        "lock_version"=>1,
-        "stock_location_id"=>1,
-        "variant_id"=>1
       }
 
     STOCK_MOVEMENT ||=

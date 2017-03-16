@@ -10,7 +10,7 @@ To return a paginated list of all variants within the store, make this request:
 ```text
 GET /api/v1/variants```
 
-You can limit this to showing the variants for a particular product by passing through a product's permalink:
+You can limit this to showing the variants for a particular product by passing through a product's slug:
 
 ```text
 GET /api/v1/products/ruby-on-rails-tote/variants```
@@ -34,11 +34,12 @@ per_page
 ### Response
 
 <%= headers 200 %>
-<%= json(:variant) do |h|
+<%= json(:variant_big) do |h|
 { variants: [h],
   count: 25,
-  pages: 5,
-  current_page: 1 }
+  total_count: 25,
+  current_page: 1,
+  pages: 1 }
 end %>
 
 ## Search
@@ -66,11 +67,12 @@ The search results are paginated.
 ### Response
 
 <%= headers 200 %>
-<%= json(:variant) do |h|
+<%= json(:variant_big) do |h|
  { variants: [h],
-   count: 25,
-   pages: 5,
-   current_page: 1 }
+   count: 1,
+   total_count: 1,
+   current_page: 1,
+   pages: 1 }
 end %>
 
 ### Sorting results
@@ -118,8 +120,8 @@ GET /api/v1/products/ruby-on-rails-tote/variants/new```
 <%= headers 200 %>
 <%= json \
   attributes: [
-    :id, :name, :count_on_hand, :sku, :price, :weight, :height,
-    :width, :depth, :is_master, :cost_price, :permalink
+    :id, :name, :sku, :price, :weight, :height,
+    :width, :depth, :is_master, :slug, :description, :track_inventory
   ],
   required_attributes: []
  %>
@@ -136,11 +138,14 @@ POST /api/v1/products/ruby-on-rails-tote/variants```
 For instance, a request to create a new variant with a SKU of 12345 and a price of 19.99 would look like this::
 
 ```text
-POST /api/v1/products/ruby-on-rails-tote/variants/?variant[sku]=12345&variant[price]=19.99```
+POST /api/v1/products/ruby-on-rails-tote/variants/?variant[sku]=12345&variant[price]=19.99&variant[option_value_ids][]=1```
 
 ### Successful response
 
 <%= headers 201 %>
+<%= json :variant_big do |h|
+    h.merge("sku"=>12345, "price"=>19.99)
+end %>
 
 ### Failed response
 
@@ -168,6 +173,9 @@ PUT /api/v1/products/ruby-on-rails-tote/variants/2?variant[sku]=12345```
 ### Successful response
 
 <%= headers 201 %>
+<%= json :variant_big do |h|
+  h.merge("sku"=>12345)
+end %>
 
 ### Failed response
 
@@ -190,4 +198,3 @@ DELETE /api/v1/products/ruby-on-rails-tote/variants/2```
 This request, much like a typical variant \"deletion\" through the admin interface, will not actually remove the record from the database. It simply sets the `deleted_at` field to the current time on the variant.
 
 <%= headers 204 %>
-
