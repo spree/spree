@@ -31,8 +31,8 @@ per_page
 <%= json(:product_property) do |h|
 { product_properties: [h],
   count: 10,
-  pages: 2,
-  current_page: 1 }
+  current_page: 1,
+  pages: 2 }
 end %>
 
 ## Search
@@ -51,8 +51,8 @@ The search results are paginated.
 <%= json(:product_property) do |h|
  { product_properties: [h],
    count: 10,
-   pages: 2,
-   current_page: 1 }
+   current_page: 1,
+   pages: 2 }
 end %>
 
 ### Sorting results
@@ -117,4 +117,3 @@ To delete a product property, make a request like this:
     DELETE /api/v1/products/1/product_properties/size
 
 <%= headers 204 %>
-
