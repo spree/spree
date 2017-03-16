@@ -29,10 +29,10 @@ per_page
 
 <%= headers 200 %>
 <%= json(:order) do |h|
-{ orders: [h],
-  count: 25,
-  pages: 5,
-  current_page: 1 }
+  { orders: [h],
+    count: 25,
+    current_page: 1,
+    pages: 5 }
 end %>
 
 ## Search
@@ -52,10 +52,10 @@ The search results are paginated.
 
 <%= headers 200 %>
 <%= json(:order) do |h|
- { orders: [h],
-   count: 25,
-   pages: 5,
-   current_page: 1 }
+  { orders: [h],
+    count: 25,
+    current_page: 1,
+    pages: 5 }
 end %>
 
 ### Sorting results
@@ -72,7 +72,7 @@ GET /api/v1/orders?q[s]=user_name%20asc```
 
 ## Show
 
-To view the details for a single product, make a request using that order\'s number:
+To view the details for a single order, make a request using that order\'s number:
 
 ```text
 GET /api/v1/orders/R123456789```
@@ -134,6 +134,10 @@ POST /api/v1/orders
 ### Successful response
 
 <%= headers 201 %>
+<%= json :order_show do |h|
+  h["line_items"][0]["quantity"] = 5
+  h
+end %>
 
 ### Failed response
 
