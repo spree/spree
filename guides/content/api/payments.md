@@ -29,8 +29,8 @@ per_page
 <%= json(:payment) do |h|
 { payments: [h],
   count: 2,
-  pages: 2,
-  current_page: 1 }
+  current_page: 1,
+  pages: 2 }
 end %>
 
 ## Search
@@ -49,8 +49,8 @@ The search results are paginated.
 <%= json(:payment) do |h|
 { payments: [h],
   count: 2,
-  pages: 2,
-  current_page: 1 }
+  current_page: 1,
+  pages: 2 }
 end %>
 
 ### Sorting results
@@ -58,10 +58,6 @@ end %>
 Results can be returned in a specific order by specifying which field to sort by when making a request.
 
     GET /api/v1/payments?q[s]=state%20desc
-
-It is also possible to sort results using an associated object's field.
-
-    GET /api/v1/payments?q[s]=order_number%20asc
 
 ## New
 
@@ -75,15 +71,15 @@ In order to create a new payment, you will need to know about the available paym
 <%= json \
   attributes:
   ["id", "source_type", "source_id", "amount",
-   "payment_method_id", "response_code", "state",
-   "avs_response", "created_at", "updated_at"],
+   "display_amount", "payment_method_id", "state", "avs_response",
+   "created_at", "updated_at", "number"],
   payment_methods: [Spree::Resources::PAYMENT_METHOD] %>
 
 ## Create
 
 To create a new payment, make a request like this:
 
-   POST /api/v1/orders/R1234567/payments?payment[payment_method_id]=1&payment[amount]=10
+    POST /api/v1/orders/R1234567/payments?payment[payment_method_id]=1&payment[amount]=10
 
 ### Response
 
@@ -94,7 +90,7 @@ To create a new payment, make a request like this:
 
 To get information for a particular payment, make a request like this:
 
-   GET /api/v1/orders/R1234567/payments/1
+    GET /api/v1/orders/R1234567/payments/1
 
 ### Response
 
@@ -105,7 +101,7 @@ To get information for a particular payment, make a request like this:
 
 To authorize a payment, make a request like this:
 
-   PUT /api/v1/orders/R1234567/payments/1/authorize
+    PUT /api/v1/orders/R1234567/payments/1/authorize
 
 ### Response
 
@@ -123,7 +119,7 @@ To authorize a payment, make a request like this:
 
 To capture a payment, make a request like this:
 
-   PUT /api/v1/orders/R1234567/payments/1/capture
+    PUT /api/v1/orders/R1234567/payments/1/capture
 
 ### Response
 
@@ -141,7 +137,7 @@ To capture a payment, make a request like this:
 
 To make a purchase with a payment, make a request like this:
 
-   PUT /api/v1/orders/R1234567/payments/1/purchase
+    PUT /api/v1/orders/R1234567/payments/1/purchase
 
 ### Response
 
@@ -157,7 +153,7 @@ To make a purchase with a payment, make a request like this:
 
 To void a payment, make a request like this:
 
-   PUT /api/v1/orders/R1234567/payments/1/void
+    PUT /api/v1/orders/R1234567/payments/1/void
 
 ### Response
 
@@ -173,7 +169,7 @@ To void a payment, make a request like this:
 
 To credit a payment, make a request like this:
 
-   PUT /api/v1/orders/R1234567/payments/1/credit?amount=10
+    PUT /api/v1/orders/R1234567/payments/1/credit?amount=10
 
 If the payment is over the payment's credit allowed limit, a "Credit Over Limit" response will be returned.
 
@@ -191,4 +187,3 @@ If the payment is over the payment's credit allowed limit, a "Credit Over Limit"
 
 <%= headers 422 %>
 <%= json error: "This payment can only be credited up to [amount]. Please specify an amount less than or equal to this number." %>
-
