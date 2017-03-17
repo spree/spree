@@ -35,7 +35,7 @@ Add Spree gems to your Gemfile:
 ### Rails 5
 
 ```ruby
-gem 'spree', '~> 3.2.0.rc1'
+gem 'spree', '~> 3.2.0'
 gem 'spree_auth_devise', '~> 3.2.0.beta'
 gem 'spree_gateway', '~> 3.2.0.beta'
 ```
