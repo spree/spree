@@ -217,7 +217,7 @@ module Spree
 
     VARIANT ||=
        {
-         "id"=>1,
+          "id"=>1,
           "name"=>"Ruby on Rails Tote",
           "sku"=>"ROR-00011",
           "price"=>"15.99",
@@ -501,6 +501,8 @@ module Spree
         "shipping_categories" => [SHIPPING_CATEGORY]
       }
 
+    SHIPPING_METHOD_SMALL ||= SHIPPING_METHOD.select{ |k| %w(id name zones shipping_categories).include?(k)}
+
     SHIPPING_RATE ||=
       {
         "id"=>1,
@@ -512,22 +514,95 @@ module Spree
         "display_cost"=>"$5.00"
       }
 
-    MANIFEST ||=
-      {
-        "variant_id"=>1,
-        "quantity"=>1,
-        "states"=>{"on_hand"=>1}
-      }
-
     INVENTORY_UNIT ||=
       {
         "id"=>1,
-        "lock_version"=>1,
         "state"=>"on_hand",
-        "variant_id"=>10,
+        "variant_id"=>1,
         "shipment_id"=>1,
-        "return_authorization_id"=>nil
+        "variant"=>VARIANT,
+        "line_item"=>LINE_ITEM.reject{ |k| %w(variant adjustments).include?(k) }
       }
+
+  CHECKOUT_STEPS ||= ["address,", "delivery", "complete"]
+
+  ORDER ||=
+    {
+      "id"=>1,
+      "number"=>"R335381310",
+      "item_total"=>"100.0",
+      "total"=>"100.0",
+      "ship_total"=>"0.0",
+      "state"=>"cart",
+      "adjustment_total"=>"-12.0",
+      "user_id"=>nil,
+      "created_at"=>"2012-10-24T01:02:25Z",
+      "updated_at"=>"2012-10-24T01:02:25Z",
+      "completed_at"=>nil,
+      "payment_total"=>"0.0",
+      "shipment_state"=>nil,
+      "payment_state"=>nil,
+      "email"=>nil,
+      "special_instructions"=>nil,
+      "channel"=>"spree",
+      "included_tax_total"=>"0.0",
+      "additional_tax_total"=>"0.0",
+      "display_included_tax_total"=>"$0.0",
+      "display_additional_tax_total"=>"$0.0",
+      "tax_total"=>"0.0",
+      "currency"=>"USD",
+      "considered_risky"=>false,
+      "canceler_id"=>nil,
+      "display_item_total"=>"$100.00",
+      "total_quantity"=>1,
+      "display_total"=>"$100.00",
+      "display_ship_total"=>"$0.00",
+      "display_tax_total"=>"$0.00",
+      "display_adjustment_total": "$0.00",
+      "token"=> "abcdef123456",
+      "checkout_steps"=> CHECKOUT_STEPS
+    }
+
+    ADDRESS_COUNTRY ||=
+      {
+        "id"=>1,
+        "iso_name"=>"UNITED STATES",
+        "iso"=>"US",
+        "iso3"=>"USA",
+        "name"=>"United States",
+        "numcode"=>1
+      }
+
+    ADDRESS_STATE ||=
+      {
+        "id"=>1,
+        "name"=>"New York",
+        "abbr"=>"NY",
+        "country_id"=>1
+      }
+
+    ADDRESS ||=
+      {
+        "id"=>1,
+        "firstname"=>"Spree",
+        "lastname"=>"Commerce",
+        "full_name"=>"Spree Commerce",
+        "address1"=>"1 Someplace Lane",
+        "address2"=>"Suite 1",
+        "city"=>"Bethesda",
+        "zipcode"=>"16804",
+        "phone"=>"123.4567.890",
+        "company"=>nil,
+        "alternative_phone"=>nil,
+        "country_id"=>1,
+        "state_id"=>1,
+        "state_name"=>nil,
+        "state_text"=>"NY",
+        "country"=> ADDRESS_COUNTRY,
+        "state" => ADDRESS_STATE
+      }
+
+    COUNTRY_STATE ||= { "state"=> ADDRESS_STATE }
 
     SHIPMENT ||=
       {
@@ -537,13 +612,38 @@ module Spree
         "cost"=>"5.0",
         "shipped_at"=>nil,
         "state"=>"pending",
-        "shipping_rates"=>[SHIPPING_RATE],
         "selected_shipping_rate"=>SHIPPING_RATE,
-        "shipping_methods"=> [SHIPPING_METHOD],
-        "manifest"=>[MANIFEST],
-        "adjustments"=>[],
-        "order_id"=>"R1234567",
-        "stock_location_name"=>"NY Warehouse"
+        "inventory_units"=>[INVENTORY_UNIT],
+        "order"=>ORDER.merge({
+                               "state"=>"payment",
+                               "bill_address"=>ADDRESS,
+                               "ship_address"=>ADDRESS,
+                               "adjustments"=>[],
+                               "payments"=>[PAYMENT]
+                            })
+      }
+
+    MANIFEST ||=
+      {
+        "variant"=> VARIANT,
+        "quantity"=>1,
+        "states"=>{"on_hand"=>1}
+      }
+
+    SHIPMENT_SMALL ||=
+      {
+        "id"=>1,
+        "tracking"=>nil,
+        "number"=>"H71047039332",
+        "cost"=>"5.0",
+        "shipped_at"=>nil,
+        "state"=>"pending",
+        "shipping_rates"=>[SHIPPING_RATE],
+        "selected_shipping_rate"=>[SHIPPING_RATE],
+        "shipping_methods"=>[SHIPPING_METHOD],
+        "manifest"=> [MANIFEST],
+        "order_id"=> 1,
+        "stock_location_name"=>"default"
       }
 
     SHIPMENT_SHIPPED ||=
@@ -559,45 +659,6 @@ module Spree
         "shipping_rates"=>[SHIPPING_RATE],
         "shipping_method"=> SHIPPING_METHOD,
         "manifest"=>[MANIFEST]
-      }
-
-    CHECKOUT_STEPS ||= ["address,", "delivery", "complete"]
-
-    ORDER ||=
-      {
-        "id"=>1,
-        "number"=>"R335381310",
-        "item_total"=>"100.0",
-        "total"=>"100.0",
-        "ship_total"=>"0.0",
-        "state"=>"cart",
-        "adjustment_total"=>"-12.0",
-        "user_id"=>nil,
-        "created_at"=>"2012-10-24T01:02:25Z",
-        "updated_at"=>"2012-10-24T01:02:25Z",
-        "completed_at"=>nil,
-        "payment_total"=>"0.0",
-        "shipment_state"=>nil,
-        "payment_state"=>nil,
-        "email"=>nil,
-        "special_instructions"=>nil,
-        "channel"=>"spree",
-        "included_tax_total"=>"0.0",
-        "additional_tax_total"=>"0.0",
-        "display_included_tax_total"=>"$0.0",
-        "display_additional_tax_total"=>"$0.0",
-        "tax_total"=>"0.0",
-        "currency"=>"USD",
-        "considered_risky"=>false,
-        "canceler_id"=>nil,
-        "display_item_total"=>"$100.00",
-        "total_quantity"=>1,
-        "display_total"=>"$100.00",
-        "display_ship_total"=>"$0.00",
-        "display_tax_total"=>"$0.00",
-        "display_adjustment_total": "$0.00",
-        "token"=> "abcdef123456",
-        "checkout_steps"=> CHECKOUT_STEPS
       }
 
     NEW_ORDER ||= {
@@ -821,45 +882,6 @@ module Spree
     ORDER_SHOW_COMPLETE_STATE ||= ORDER.merge({
       "state" => "complete"
     })
-
-    ADDRESS_COUNTRY ||=
-      {
-        "id"=>1,
-        "iso_name"=>"UNITED STATES",
-        "iso"=>"US",
-        "iso3"=>"USA",
-        "name"=>"United States",
-        "numcode"=>1
-      }
-
-    ADDRESS_STATE ||=
-      {
-        "abbr"=>"NY",
-        "country_id"=>1,
-        "id"=>1,
-        "name"=>"New York"
-      }
-
-    ADDRESS ||=
-      {
-        "id"=>1,
-        "firstname"=>"Spree",
-        "lastname"=>"Commerce",
-        "address1"=>"1 Someplace Lane",
-        "address2"=>"Suite 1",
-        "city"=>"Bethesda",
-        "zipcode"=>"16804",
-        "phone"=>"123.4567.890",
-        "company"=>nil,
-        "alternative_phone"=>nil,
-        "country_id"=>1,
-        "state_id"=>1,
-        "state_name"=>nil,
-        "country"=> ADDRESS_COUNTRY,
-        "state" => ADDRESS_STATE
-      }
-
-    COUNTRY_STATE ||= { "state"=> ADDRESS_STATE }
 
     COUNTRY ||=
       {
