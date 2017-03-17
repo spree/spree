@@ -46,7 +46,6 @@ module Spree
 
               # Persist the state on the order
               after_transition do |order, transition|
-                order.state = order.state
                 order.state_changes.create(
                   previous_state: transition.from,
                   next_state: transition.to,
