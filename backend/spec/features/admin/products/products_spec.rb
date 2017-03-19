@@ -277,6 +277,21 @@ describe "Products", type: :feature do
         expect(page).to have_content("Product has been cloned")
       end
 
+      it "should allow to clone a product many times" do
+        product = create(:product)
+        duplicated = product.duplicate
+
+        visit spree.admin_products_path
+
+        within_row(2) do
+          expect(page).to have_content(product.master.sku)
+          expect(page).to_not have_content(duplicated.master.sku)
+          click_icon :clone
+        end
+
+        expect(page).to have_content("Product has been cloned")
+      end
+
       context "cloning a deleted product" do
         it "should allow an admin to clone a deleted product" do
           create(:product, name: "apache baseball cap")
