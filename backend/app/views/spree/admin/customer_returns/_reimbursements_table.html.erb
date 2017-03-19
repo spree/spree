@@ -21,7 +21,7 @@
         <td><%= reimbursement.display_total %></td>
         <td>
           <span class="state <%= reimbursement_status_color(reimbursement) %>">
-            <%= reimbursement.reimbursement_status %>
+            <%= t 'spree.'+reimbursement.reimbursement_status %>
           </span>
         </td>
         <td><%= pretty_time(reimbursement.created_at) %></td>
