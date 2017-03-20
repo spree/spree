@@ -44,17 +44,17 @@ contains a link to download a tarball copy of the latest source code as
 well as links to [previous
 versions](https://github.com/spree/spree/tags).
 
-### Git on Windows
+### Git for Windows
 
 There are some well developed Git clients for Windows now. If you are on
 a Windows box you might want to check out the
-[msysgit](http://code.google.com/p/msysgit/) project.
+[Git for Windows](https://git-for-windows.github.io/) project.
 
 ### Monitoring Changes in the Source
 
 If you would like to keep up to date on changes to the source you can
 subscribe to the GitHub
-[RSS feed](https://github.com/feeds/spree/commits/spree/master) and you
+[RSS feed](https://github.com/spree/spree/subscription) and you
 will be notified of all the commits.
 
 ## Bundler
@@ -128,7 +128,7 @@ appropriate here. Please [consult the Rails Guides](http://edgeguides.rubyonrail
 Using a Spree gem is as simple as adding it to your *Gemfile*:
 
 ```ruby
-gem 'spree_core', '2.1.0'
+gem 'spree_core', '3.2.0'
 ```
 
 Distribution of Spree (and its extensions) is also consistent with Rails
@@ -155,7 +155,7 @@ For example, if you were to specify something like this in your
 application's *Gemfile*:
 
 ```ruby
-gem 'spree', '2.1.0'
+gem 'spree', '3.2.0'
 ```
 
 It would require all the individual parts of Spree. However, if you only
@@ -163,8 +163,8 @@ wanted to require the "core" and "backend" parts of Spree, you would do
 this:
 
 ```ruby
-gem 'spree_core', '2.1.0'
-gem 'spree_backend', '2.1.0'
+gem 'spree_core', '3.2.0'
+gem 'spree_backend', '3.2.0'
 ```
 
 ## Building a Sandbox Application
@@ -253,17 +253,17 @@ See the excellent [Bundler documentation](http://gembundler.com) for more detail
 ### "-stable" branches
 
 The Spree Git repository also contains stable branches for each minor Spree
-version. For instance, there is a 2-1-stable branch which contains the latest
-work for the 2.1.x branch of Spree. You may also decide to use this branch if you want the latest and greatest version of Spree:
+version. For instance, there is a 3-2-stable branch which contains the latest
+work for the 3.2.x branch of Spree. You may also decide to use this branch if you want the latest and greatest version of Spree:
 
 ```ruby
-gem 'spree', github: 'spree/spree', branch: '2-1-stable'
+gem 'spree', github: 'spree/spree', branch: '3-2-stable'
 ```
 
 Similarly, all main Spree extensions use this versioning scheme as well. For example, here's a line that would be used for `spree_auth_devise`:
 
 ```ruby
-gem 'spree_auth_devise', github: 'spree/spree_auth_devise', branch: '2-1-stable'
+gem 'spree_auth_devise', github: 'spree/spree_auth_devise', branch: '3-1-stable'
 ```
 
 !!!
