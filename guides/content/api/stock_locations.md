@@ -31,8 +31,8 @@ per_page
 <%= json(:stock_location) do |h|
 { stock_locations: [h],
   count: 5,
-  pages: 1,
-  current_page: 1 }
+  current_page: 1,
+  pages: 1 }
 end %>
 
 ## Search
@@ -54,8 +54,8 @@ The search results are paginated.
 <%= json(:stock_location) do |h|
 { stock_locations: [h],
   count: 5,
-  pages: 1,
-  current_page: 1 }
+  current_page: 1,
+  pages: 1 }
 end %>
 
 ## Show
@@ -85,14 +85,15 @@ Assuming in this instance that you want to create a stock location with a name o
 
 <%= json \
   stock_location: {
-    name: "East Coast",
-    action: "true"
+    name: "East Coast"
   } %>
 
 ### Response
 
 <%= headers 201 %>
-<%= json(:stock_location) %>
+<%= json(:stock_location) do |h|
+  h.merge("name" => "East Coast")
+end %>
 
 ## Update
 
@@ -107,14 +108,15 @@ To update stock location information, use parameters like this:
 
 <%= json \
   stock_location: {
-    name: "North Pole",
-    action: "false"
+    name: "North Pole"
   } %>
 
 ### Response
 
 <%= headers 200 %>
-<%= json(:stock_location) %>
+<%= json(:stock_location) do |h|
+  h.merge("name" => "North Pole")
+end %>
 
 ## Delete
 
