@@ -29,7 +29,9 @@ This request will update the line item with the ID of 1 for the order, updating 
 ### Response
 
 <%= headers 200 %>
-<%= json(:line_item) %>
+<%= json(:line_item) do |h|
+  h.merge({ "quantity" => 1 })
+end %>
 
 ## Delete
 
@@ -40,4 +42,3 @@ To delete a line item, make a request like this:
 ### Response
 
 <%= headers 204 %>
-
