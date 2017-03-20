@@ -29,8 +29,8 @@ per_page
 <%= json(:zone) do |h|
 { zones: [h],
   count: 25,
-  pages: 5,
-  current_page: 1 }
+  current_page: 1,
+  pages: 5 }
 end %>
 
 ## Search
@@ -50,8 +50,8 @@ The search results are paginated.
 <%= json(:zone) do |h|
  { zones: [h],
    count: 25,
-   pages: 5,
-   current_page: 1 }
+   current_page: 1,
+   pages: 5 }
 end %>
 
 ### Sorting results
@@ -99,7 +99,9 @@ a zone member which is a `Spree::Country` record with the `id` attribute of 1, s
 ### Response
 
 <%= headers 201 %>
-<%= json(:zone) %>
+<%= json(:zone) do |h|
+  h.merge("name" => "North Pole")
+end %>
 
 ## Update
 
@@ -113,7 +115,6 @@ PUT /api/v1/zones/1```
 To update zone and zone member information, use parameters like this:
 
 <%= json \
-  id: 1,
   zone: {
     name: "North Pole",
     zone_members: [
