@@ -85,13 +85,9 @@ describe "Orders Listing", type: :feature, js: true do
       expect(page).not_to have_content("R200")
     end
 
-    it "should be able to filter on variant_id" do
+    it "should be able to filter on variant_sku" do
       click_on 'Filter'
-      # Insure we have the SKU in the options
-      expect(find('#q_line_items_variant_id_in').all('option').collect(&:text)).to include(@order1.line_items.first.variant.sku)
-
-      # Select and filter
-      find('#q_line_items_variant_id_in').find(:xpath, 'option[2]').select_option
+      fill_in "q_line_items_variant_sku_eq", with: @order1.line_items.first.variant.sku
       click_on 'Filter Results'
 
       within_row(1) do
