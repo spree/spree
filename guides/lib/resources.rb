@@ -603,26 +603,37 @@ module Spree
     NEW_ORDER ||= {
       "id"=>1,
       "number"=>"R335381310",
-      "item_total"=>"100.0",
-      "display_item_total"=>"$100.00",
+      "item_total"=>"0.0",
       "total"=>"0.0",
+      "ship_total"=>"0.0",
       "state"=>"cart",
-      "adjustment_total"=>"-0.0",
-      "user_id"=>nil,
+      "adjustment_total"=>"0.0",
+      "user_id"=>1,
       "created_at"=>"2012-10-24T01:02:25Z",
       "updated_at"=>"2012-10-24T01:02:25Z",
       "completed_at"=>nil,
       "payment_total"=>"0.0",
       "shipment_state"=>nil,
       "payment_state"=>nil,
-      "email"=>nil,
+      "email"=>"spree@example.com",
       "special_instructions"=>nil,
-      "total_quantity"=>1,
+      "channel"=>"spree",
+      "included_tax_total"=>"0.0",
+      "additional_tax_total"=>"0.0",
+      "display_included_tax_total"=>"$0.0",
+      "display_additional_tax_total"=>"$0.0",
+      "tax_total"=>"0.0",
+      "currency"=>"USD",
+      "considered_risky"=>false,
+      "canceler_id"=>nil,
+      "display_item_total"=>"$0.00",
+      "total_quantity"=>0,
+      "display_total"=>"$0.00",
+      "display_ship_total"=>"$0.00",
+      "display_tax_total"=>"$0.00",
+      "display_adjustment_total": "$0.00",
       "token"=> "abcdef123456",
-      "line_items"=>[],
-      "adjustments"=>[],
-      "payments"=>[],
-      "shipments"=>[]
+      "checkout_steps"=> CHECKOUT_STEPS
     }
 
     NEW_ORDER_WITH_LINE_ITEMS ||= NEW_ORDER.merge({
@@ -654,8 +665,8 @@ module Spree
     SHIPPED_SHIPMENT ||= SHIPMENT.merge({"state" => "shipped"})
 
     ORDER_SHOW ||= ORDER.merge({
-      "bill_address" => [],
-      "ship_address" => [],
+      "bill_address" => nil,
+      "ship_address" => nil,
       "line_items" => [LINE_ITEM],
       "payments" => [],
       "shipments" => [],
@@ -664,12 +675,15 @@ module Spree
       "permissions" => { "can_update" => true },
     })
 
-    ORDER_SHOW2 ||= ORDER.merge({
-      "line_items" => [LINE_ITEM2],
-      "payments" => [PAYMENT],
-      "shipments" => [SHIPMENT],
-      "adjustments" => [ADJUSTMENT]
-
+    NEW_ORDER_SHOW ||= NEW_ORDER.merge({
+      "bill_address" => nil,
+      "ship_address" => nil,
+      "line_items" => [],
+      "payments" => [],
+      "shipments" => [],
+      "adjustments" => [],
+      "credit_cards" => [],
+      "permissions" => { "can_update" => true }
     })
 
     EVENT ||= {
@@ -708,7 +722,7 @@ module Spree
       "event" => 'order:updated',
       "event_id" => '510bfe8e7575e41e41000002',
       "payload" => {
-        "order" => ORDER_SHOW2
+        "order" => ORDER_SHOW
       }
     }
 

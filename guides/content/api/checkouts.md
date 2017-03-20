@@ -22,52 +22,7 @@ To create a new, empty order, make this request:
 ### Response
 
 <%= headers 201 %>
-<pre class="highlight"><code class="language-javascript">{
-  "id": 4,
-  "number": "R307128032",
-  "item_total": "0.0",
-  "total": "0.0",
-  "ship_total": "0.0",
-  "state": "cart",
-  "adjustment_total": "0.0",
-  "user_id": 1,
-  "created_at": "2014-07-06T18:52:33.724Z",
-  "updated_at": "2014-07-06T18:52:33.752Z",
-  "completed_at": null,
-  "payment_total": "0.0",
-  "shipment_state": null,
-  "payment_state": null,
-  "email": "spree@example.com",
-  "special_instructions": null,
-  "channel": "spree",
-  "included_tax_total": "0.0",
-  "additional_tax_total": "0.0",
-  "display_included_tax_total": "$0.00",
-  "display_additional_tax_total": "$0.00",
-  "tax_total": "0.0",
-  "currency": "USD",
-  "display_item_total": "$0.00",
-  "total_quantity": 0,
-  "display_total": "$0.00",
-  "display_ship_total": "$0.00",
-  "display_tax_total": "$0.00",
-  "token": "n0kZnXjRfjnhZMY5ijhiOA",
-  "checkout_steps": [
-    "address",
-    "delivery",
-    "complete"
-  ],
-  "permissions": {
-    "can_update": true
-  },
-  "bill_address": null,
-  "ship_address": null,
-  "line_items": [],
-  "payments": [],
-  "shipments": [],
-  "adjustments": []
-}
-</code></pre>
+<%= json(:new_order_show) %>
 
 Any time you update the order or move a checkout step you'll get
 a response similar as above along with the new associated objects. e.g. addresses,
@@ -90,73 +45,9 @@ to this api endpoint:
     POST /api/v1/orders/:number/line_items.json
 
 <%= headers 201 %>
-<pre class="highlight"><code class="language-javascript">{
-  "id": 3,
-  "quantity": 5,
-  "price": "15.99",
-  "variant_id": 1,
-  "single_display_amount": "$15.99",
-  "display_amount": "$79.95",
-  "total": "79.95",
-  "variant": {
-    "id": 1,
-    "name": "Ruby on Rails Tote",
-    "sku": "ROR-00011",
-    "price": "15.99",
-    "weight": "0.0",
-    "height": null,
-    "width": null,
-    "depth": null,
-    "is_master": true,
-    "cost_price": "17.0",
-    "slug": "ruby-on-rails-tote",
-    "description": "Nihil et itaque adipisci sed ea dolorum.",
-    "track_inventory": true,
-    "display_price": "$15.99",
-    "options_text": "",
-    "in_stock": true,
-    "option_values": [],
-    "images": [
-      {
-        "id": 21,
-        "position": 1,
-        "attachment_content_type": "image/jpeg",
-        "attachment_file_name": "ror_tote.jpeg",
-        "type": "Spree::Image",
-        "attachment_updated_at": "2014-07-06T18:37:34.534Z",
-        "attachment_width": 360,
-        "attachment_height": 360,
-        "alt": null,
-        "viewable_type": "Spree::Variant",
-        "viewable_id": 1,
-        "mini_url": "/spree/products/21/mini/ror_tote.jpeg?1404671854",
-        "small_url": "/spree/products/21/small/ror_tote.jpeg?1404671854",
-        "product_url": "/spree/products/21/product/ror_tote.jpeg?1404671854",
-        "large_url": "/spree/products/21/large/ror_tote.jpeg?1404671854"
-      },
-      {
-        "id": 22,
-        "position": 2,
-        "attachment_content_type": "image/jpeg",
-        "attachment_file_name": "ror_tote_back.jpeg",
-        "type": "Spree::Image",
-        "attachment_updated_at": "2014-07-06T18:37:34.921Z",
-        "attachment_width": 360,
-        "attachment_height": 360,
-        "alt": null,
-        "viewable_type": "Spree::Variant",
-        "viewable_id": 1,
-        "mini_url": "/spree/products/22/mini/ror_tote_back.jpeg?1404671854",
-        "small_url": "/spree/products/22/small/ror_tote_back.jpeg?1404671854",
-        "product_url": "/spree/products/22/product/ror_tote_back.jpeg?1404671854",
-        "large_url": "/spree/products/22/large/ror_tote_back.jpeg?1404671854"
-      }
-    ],
-    "product_id": 1
-  },
-  "adjustments": []
-}
-</code></pre>
+<%= json(:line_item) do |h|
+  h.merge("quantity" => 5, "display_total" => "$79.95", "total" => 79.95)
+end %>
 
 ## Updating an order
 
@@ -196,27 +87,26 @@ In order to update the addresses, make this request with the necessary parameter
 As an example, here are the required address attributes and how they should be formatted:
 
 <%= json \
-  order: {
-    bill_address_attributes: {
-      firstname:  'John',
-      lastname:   'Doe',
-      address1:   '7735 Old Georgetown Road',
-      city:       'Bethesda',
-      phone:      '3014445002',
-      zipcode:    '20814',
-      state_id:   48,
-      country_id: 49
+  "order": {
+    "bill_address_attributes": {
+      "firstname": "John",
+      "lastname": "Doe",
+      "address1": "233 36th Ave Ne",
+      "city": "St Petersburg",
+      "phone": "3014445002",
+      "zipcode": "33704-1535",
+      "state_id": 3534,
+      "country_id": 232
     },
-
-    ship_address_attributes: {
-      firstname:  'John',
-      lastname:   'Doe',
-      address1:   '7735 Old Georgetown Road',
-      city:       'Bethesda',
-      phone:      '3014445002',
-      zipcode:    '20814',
-      state_id:   48,
-      country_id: 49
+    "ship_address_attributes": {
+      "firstname": "John",
+      "lastname": "Doe",
+      "address1": "233 36th Ave Ne",
+      "city": "St Petersburg",
+      "phone": "3014445002",
+      "zipcode": "33704-1535",
+      "state_id": 3534,
+      "country_id": 232
     }
   }
 %>
@@ -232,51 +122,54 @@ as seen below:
   ...
   "shipments": [
     {
-      "id": 4,
+      "id": 1,
       "tracking": null,
-      "number": "H22035832422",
-      "cost": "15.0",
+      "number": "H71216494427",
+      "cost": "5.0",
       "shipped_at": null,
       "state": "pending",
-      "order_id": "R181010551",
-      "stock_location_name": "default",
       "shipping_rates": [
         {
-          "id": 10,
+          "id": 1,
           "name": "UPS Ground (USD)",
           "cost": "5.0",
-          "selected": false,
+          "selected": true,
           "shipping_method_id": 1,
+          "shipping_method_code": null,
           "display_cost": "$5.00"
         },
         {
-          "id": 11,
+          "id": 2,
           "name": "UPS Two Day (USD)",
           "cost": "10.0",
           "selected": false,
           "shipping_method_id": 2,
+          "shipping_method_code": null,
           "display_cost": "$10.00"
         },
         {
-          "id": 12,
+          "id": 3,
           "name": "UPS One Day (USD)",
           "cost": "15.0",
-          "selected": true,
+          "selected": false,
           "shipping_method_id": 3,
+          "shipping_method_code": null,
           "display_cost": "$15.00"
         }
       ],
       "selected_shipping_rate": {
-        "id": 12,
-        "name": "UPS One Day (USD)",
-        "cost": "15.0",
+        "id": 1,
+        "name": "UPS Ground (USD)",
+        "cost": "5.0",
         "selected": true,
-        "shipping_method_id": 3,
-        "display_cost": "$15.00"
+        "shipping_method_id": 1,
+        "shipping_method_code": null,
+        "display_cost": "$5.00"
       },
       "shipping_methods": [
         {
           "id": 1,
+          "code": null,
           "name": "UPS Ground (USD)",
           "zones": [
             {
@@ -294,6 +187,7 @@ as seen below:
         },
         {
           "id": 2,
+          "code": null,
           "name": "UPS Two Day (USD)",
           "zones": [
             {
@@ -311,6 +205,7 @@ as seen below:
         },
         {
           "id": 3,
+          "code": null,
           "name": "UPS One Day (USD)",
           "zones": [
             {
@@ -329,13 +224,16 @@ as seen below:
       ],
       "manifest": [
         {
-          "quantity": 3,
+          "variant_id": 1,
+          "quantity": 5,
           "states": {
-            "on_hand": 3
-          },
-          "variant_id": 1
+            "on_hand": 5
+          }
         }
-      ]
+      ],
+      "adjustments": [],
+      "order_id": "R608623713",
+      "stock_location_name": "default"
     }
   ],
   ...
@@ -456,11 +354,11 @@ For more information on payments, view the [payments documentation](payments).
       "amount": "65.37",
       "display_amount": "$65.37",
       "payment_method_id": 1,
-      "response_code": null,
       "state": "checkout",
       "avs_response": null,
       "created_at": "2014-07-06T19:55:08.308Z",
       "updated_at": "2014-07-06T19:55:08.308Z",
+      "number": "PNTS91GF",
       "payment_method": {
         "id": 1,
         "name": "Credit Card"
