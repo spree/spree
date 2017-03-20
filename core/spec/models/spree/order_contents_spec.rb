@@ -54,6 +54,19 @@ describe Spree::OrderContents, type: :model do
       expect(order.total.to_f).to eq(19.99)
     end
 
+    context 'when store_credits payment' do
+      let!(:payment) { create(:store_credit_payment, order: order) }
+
+      it 'is expected to have store_credit_payment' do
+        expect(order.payments.store_credits).to include(payment)
+      end
+
+      it "is expected to delete store_credits payment" do
+        subject.add(variant, 1)
+        expect(order.payments.store_credits.count).to eq(0)
+      end
+    end
+
     context "running promotions" do
       let(:promotion) { create(:promotion) }
       let(:calculator) { Spree::Calculator::FlatRate.new(preferred_amount: 10) }
@@ -159,6 +172,24 @@ describe Spree::OrderContents, type: :model do
       expect(line_item.quantity).to eq(2)
     end
 
+    context 'when store_credits payment' do
+      let(:payment) { create(:store_credit_payment, order: order) }
+
+      before do
+        subject.add(variant, 1)
+        payment
+      end
+
+      it 'is expected to have store_credit_payment' do
+        expect(order.payments.store_credits).to include(payment)
+      end
+
+      it "is expected to delete store_credits payment" do
+        subject.remove(variant, 1)
+        expect(order.payments.store_credits.count).to eq(0)
+      end
+    end
+
     it 'should remove line_item if quantity matches line_item quantity' do
       subject.add(variant, 1)
       removed_line_item = subject.remove(variant, 1)
@@ -198,6 +229,24 @@ describe Spree::OrderContents, type: :model do
         line_item = subject.add(variant, 1)
         expect(subject.order).to receive(:ensure_updated_shipments)
         subject.remove_line_item(line_item)
+      end
+    end
+
+    context 'when store_credits payment' do
+      let(:payment) { create(:store_credit_payment, order: order) }
+
+      before do
+        @line_item = subject.add(variant, 1)
+        payment
+      end
+
+      it 'is expected to have store_credit_payment' do
+        expect(order.payments.store_credits).to include(payment)
+      end
+
+      it "is expected to delete store_credits payment" do
+        subject.remove_line_item(@line_item)
+        expect(order.payments.store_credits.count).to eq(0)
       end
     end
 
@@ -241,6 +290,19 @@ describe Spree::OrderContents, type: :model do
       expect {
         subject.update_cart params
       }.to change { subject.order.total }
+    end
+
+    context 'when store_credits payment' do
+      let!(:payment) { create(:store_credit_payment, order: order) }
+
+      it 'is expected to have store_credit_payment' do
+        expect(order.payments.store_credits).to include(payment)
+      end
+
+      it "is expected to delete store_credits payment" do
+        subject.update_cart params
+        expect(order.payments.store_credits.count).to eq(0)
+      end
     end
 
     context "submits item quantity 0" do
