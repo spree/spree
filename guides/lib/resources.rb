@@ -485,11 +485,19 @@ module Spree
         "name" => "Defaukt category"
       }
 
+    ZONE_MEMBER ||=
+      {
+        "id"=>1,
+        "zoneable_type"=>"Spree::Country",
+        "zoneable_id"=>1
+      }
+
     ZONE ||=
       {
         "id"=>1,
         "name"=>"America",
-        "description"=>"The US"
+        "description"=>"The US",
+        "zone_members"=>[ZONE_MEMBER]
       }
 
     SHIPPING_METHOD ||=
@@ -945,14 +953,6 @@ module Spree
         "id" => 1,
         "name" => "Brand",
         "root" => TAXON_WITHOUT_CHILDREN
-      }
-
-    ZONE_MEMBER ||=
-      {
-        "id"=>1,
-        "name"=>"United States",
-        "zoneable_type"=>"Spree::Country",
-        "zoneable_id"=>1,
       }
 
     RETURN_AUTHORIZATION ||=
