@@ -57,14 +57,7 @@ describe Spree::OrderContents, type: :model do
     context 'when store_credits payment' do
       let!(:payment) { create(:store_credit_payment, order: order) }
 
-      it 'is expected to have store_credit_payment' do
-        expect(order.payments.store_credits).to include(payment)
-      end
-
-      it "is expected to delete store_credits payment" do
-        subject.add(variant, 1)
-        expect(order.payments.store_credits.count).to eq(0)
-      end
+      it { expect { subject.add(variant, 1) }.to change { order.payments.store_credits.count }.by(-1) }
     end
 
     context "running promotions" do
@@ -180,14 +173,7 @@ describe Spree::OrderContents, type: :model do
         payment
       end
 
-      it 'is expected to have store_credit_payment' do
-        expect(order.payments.store_credits).to include(payment)
-      end
-
-      it "is expected to delete store_credits payment" do
-        subject.remove(variant, 1)
-        expect(order.payments.store_credits.count).to eq(0)
-      end
+      it { expect { subject.remove(variant, 1) }.to change { order.payments.store_credits.count }.by(-1) }
     end
 
     it 'should remove line_item if quantity matches line_item quantity' do
@@ -240,14 +226,7 @@ describe Spree::OrderContents, type: :model do
         payment
       end
 
-      it 'is expected to have store_credit_payment' do
-        expect(order.payments.store_credits).to include(payment)
-      end
-
-      it "is expected to delete store_credits payment" do
-        subject.remove_line_item(@line_item)
-        expect(order.payments.store_credits.count).to eq(0)
-      end
+      it { expect { subject.remove_line_item(@line_item) }.to change { order.payments.store_credits.count }.by(-1) }
     end
 
     it 'should remove line_item' do
@@ -295,14 +274,7 @@ describe Spree::OrderContents, type: :model do
     context 'when store_credits payment' do
       let!(:payment) { create(:store_credit_payment, order: order) }
 
-      it 'is expected to have store_credit_payment' do
-        expect(order.payments.store_credits).to include(payment)
-      end
-
-      it "is expected to delete store_credits payment" do
-        subject.update_cart params
-        expect(order.payments.store_credits.count).to eq(0)
-      end
+      it { expect { subject.update_cart params }.to change { order.payments.store_credits.count }.by(-1) }
     end
 
     context "submits item quantity 0" do
