@@ -26,8 +26,8 @@ per_page
 <%= json(:stock_movement) do |h|
 { stock_movements: [h],
   count: 25,
-  pages: 5,
-  current_page: 1 }
+  current_page: 1,
+  pages: 5 }
 end %>
 
 ## Search
@@ -49,8 +49,8 @@ The search results are paginated.
 <%= json(:stock_movement) do |h|
  { stock_movements: [h],
    count: 25,
-   pages: 5,
-   current_page: 1 }
+   current_page: 1,
+   pages: 5 }
 end %>
 
 ### Sorting results
@@ -129,7 +129,9 @@ For instance, to update a stock movement's quantity, send it through like this:
 ### Successful response
 
 <%= headers 201 %>
-<%= json(:stock_movement) %>
+<%= json(:stock_movement) do |h|
+  h.merge("quantity" => 30)
+end %>
 
 ### Failed response
 
@@ -139,16 +141,3 @@ For instance, to update a stock movement's quantity, send it through like this:
   errors: {
   }
 %>
-
-## Delete
-
-<%= admin_only %>
-
-To delete a stock movement, make this request:
-
-```text
-DELETE /api/v1/stock_locations/1/stock_movement/1```
-
-### Response
-
-<%= headers 204 %>

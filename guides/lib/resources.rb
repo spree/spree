@@ -219,6 +219,7 @@ module Spree
           "slug"=>"ruby-on-rails-tote",
           "description"=>"A text description of the product.",
           "track_inventory"=>true,
+          "cost_price"=>nil,
           "option_values"=>[OPTION_VALUE],
           "images"=>[IMAGE],
           "display_price"=>"$15.99",
@@ -984,8 +985,8 @@ module Spree
       {
         "id"=>1,
         "quantity"=>10,
-        "action"=>"received",
-        "stock_item_id"=>1
+        "stock_item_id"=>1,
+        "stock_item"=>STOCK_ITEM
       }
 
     MESSAGE ||=
