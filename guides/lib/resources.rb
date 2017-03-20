@@ -957,11 +957,10 @@ module Spree
     RETURN_AUTHORIZATION ||=
       {
         "id"=>1,
-        "number"=>"12345",
+        "number"=>"RA010584183",
         "state"=>"authorized",
-        "amount"=> 14.22,
         "order_id"=>14,
-        "reason"=>"Didn't fit",
+        "memo"=>"Didn't fit",
         "created_at"=>"2012-10-24T23:26:23Z",
         "updated_at"=>"2012-10-24T23:26:23Z"
       }

@@ -31,17 +31,17 @@ per_page
 <%= json(:return_authorization) do |h|
 { return_authorizations: [h],
   count: 2,
-  pages: 1,
-  current_page: 1 }
+  current_page: 1,
+  pages: 1 }
 end %>
 
 ## Search
 
 To search for a particular return authorization, make a request like this:
 
-    GET /api/v1/orders/R1234567/return_authorizations?q[reason_cont]=damage
+    GET /api/v1/orders/R1234567/return_authorizations?q[memo_cont]=damage
 
-The searching API is provided through the Ransack gem which Spree depends on. The `reason_cont` here is called a predicate, and you can learn more about them by reading about [Predicates on the Ransack wiki](https://github.com/ernie/ransack/wiki/Basic-Searching).
+The searching API is provided through the Ransack gem which Spree depends on. The `memo_cont` here is called a predicate, and you can learn more about them by reading about [Predicates on the Ransack wiki](https://github.com/ernie/ransack/wiki/Basic-Searching).
 
 The search results are paginated.
 
@@ -57,8 +57,8 @@ Results can be returned in a specific order by specifying which field to sort by
 <%= json(:return_authorization) do |h|
  { return_authorizations: [h],
    count: 1,
-   pages: 1,
-   current_page: 1 }
+   current_page: 1,
+   pages: 1 }
 end %>
 
 ## Show
@@ -81,9 +81,17 @@ To create a return authorization, make a request like this:
      POST /api/v1/orders/R1234567/return_authorizations
 
 For instance, if you want to create a return authorization with a number, make
-this request:
+above request with following parameters:
 
-     POST /api/v1/orders/R1234567/return_authorizations?return_authorization[number]=123456
+```text
+{
+  "order_id": "R1234567",
+  "return_authorization": {
+    "stock_location_id": 1,
+    "return_authorization_reason_id": 2
+  }
+}
+```
 
 ### Response
 
@@ -100,12 +108,14 @@ To update a return authorization, make a request like this:
 
 For instance, to update a return authorization's number, make this request:
 
-     PUT /api/v1/orders/R1234567/return_authorizations/1?return_authorization[number]=123456
+     PUT /api/v1/orders/R1234567/return_authorizations/1?return_authorization[memo]=Broken
 
 ### Response
 
 <%= headers 200 %>
-<%= json(:return_authorization) %>
+<%= json(:return_authorization) do |h|
+  h.merge("memo" => "Broken")
+end %>
 
 ## Delete
 
@@ -118,4 +128,3 @@ To delete a return authorization, make a request like this:
 ### Response
 
 <%= headers 204 %>
-
