@@ -973,11 +973,14 @@ module Spree
         "address1"=>"7735 Old Georgetown Road",
         "address2"=>"Suite 510",
         "city"=>"Bethesda",
-        "state_id"=>26,
-        "country_id"=>49,
+        "state_id"=>1,
+        "state_name"=>nil,
+        "country_id"=>1,
         "zipcode"=>"20814",
         "phone"=>"",
-        "active"=>true
+        "active"=>true,
+        "country"=>COUNTRY.reject{ |k| k == "states" },
+        "state"=>COUNTRY_STATE
       }
 
     STOCK_MOVEMENT ||=
