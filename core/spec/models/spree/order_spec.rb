@@ -1043,4 +1043,25 @@ describe Spree::Order, type: :model do
       it { expect(resumed_order).to be_resumed }
     end
   end
+
+  describe 'credit_card_nil_payment' do
+    let!(:order) { create(:order_with_line_items, line_items_count: 2) }
+    let!(:credit_card_payment_method) { create(:simple_credit_card_payment_method) }
+    let!(:store_credits) { create(:store_credit_payment, order: order) }
+
+    def attributes(amount = 0)
+      { payments_attributes: [{ amount: amount, payment_method_id: credit_card_payment_method.id }] }
+    end
+    context 'when zero amount credit-card payment' do
+      it 'expect not to build a new payment' do
+        expect { order.assign_attributes(attributes) }.to change { order.payments.size }.by(0)
+      end
+    end
+
+    context 'when valid-amount(>0) creditcard payment' do
+      it 'expect not to build a new payment' do
+        expect { order.assign_attributes(attributes(10)) }.to change { order.payments.size }.by(1)
+      end
+    end
+  end
 end
