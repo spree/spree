@@ -26,8 +26,8 @@ per_page
 <%= json(:stock_item) do |h|
 { stock_items: [h],
   count: 25,
-  pages: 5,
-  current_page: 1 }
+  current_page: 1,
+  pages: 5 }
 end %>
 
 ## Search
@@ -49,8 +49,8 @@ The search results are paginated.
 <%= json(:stock_item) do |h|
  { stock_items: [h],
    count: 25,
-   pages: 5,
-   current_page: 1 }
+   current_page: 1,
+   pages: 5 }
 end %>
 
 ### Sorting results
@@ -114,9 +114,9 @@ For instance, a request to create a new stock item with a count_on_hand of 10 an
 
 <%= admin_only %>
 
-Note that using this endpoint, count_on_hand is APPENDED to its current value.
+Note that using this endpoint, count_on_hand <strong>IS APPENDED</strong> to its current value.
 
-Sending a request with a negative count_on_hand will subtract the current value.
+Sending a request with a negative count_on_hand <strong>WILL SUBSTRACT</strong> the current value.
 
 To force a value for count_on_hand, include force: true in your request, this will replace the current
 value as it's stored in the database.
@@ -144,7 +144,9 @@ Or alternatively with the force attribute to replace the current count_on_hand w
 ### Successful response
 
 <%= headers 201 %>
-<%= json(:stock_item) %>
+<%= json(:stock_item) do |h|
+  h.merge("count_on_hand" => 30)
+end %>
 
 ### Failed response
 
