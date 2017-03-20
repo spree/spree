@@ -19,14 +19,17 @@ page
 per_page
 : The number of taxonomies to return per page
 
+set
+: Displays the complete expanded taxonomy tree if set to ``nested``.
+
 ### Response
 
 <%= headers 200 %>
 <%= json(:taxonomy) do |h|
 { taxonomies: [h],
   count: 25,
-  pages: 5,
-  current_page: 1 }
+  current_page: 1,
+  pages: 5 }
 end %>
 
 ## Search
@@ -46,8 +49,8 @@ The search results are paginated.
 <%= json(:taxonomy) do |h|
  { taxonomies: [h],
    count: 5,
-   pages: 2,
-   current_page: 1 }
+   current_page: 1,
+   pages: 2 }
 end %>
 
 ### Sorting results
@@ -131,14 +134,27 @@ DELETE /api/v1/taxonomies/1```
 
 ## List taxons
 
-To get a list for all taxons underneath the root taxon for a taxonomy (and their immediate children) for a taxonomy, make this request:
+To get a list for all taxons underneath the root taxon for a taxonomy (and their children) for a taxonomy, make this request:
 
     GET /api/v1/taxonomies/1/taxons
+
+### Parameters
+
+without_children
+: Displays only immediate children of taxons if set to ``true``.
 
 ### Response
 
 <%= headers 200 %>
-<%= json(:taxon_with_children) { |h| [h] } %>
+<%= json(:taxon_with_children) do |h|
+  { "taxons" => [h],
+    "count" => 7,
+    "total_count" => 7,
+    "current_page" => 1,
+    "per_page" => 25,
+    "pages" => 1
+  }
+end %>
 
 ## A single taxon
 
@@ -168,7 +184,15 @@ To create a new taxon with the name "Brands", make this request:
 ### Response
 
 <%= headers 201 %>
-<%= json(:taxon_without_children) %>
+<%= json(:taxon_without_children) do |h|
+  h.merge({
+    "name" => "Brands",
+    "pretty_name" => "Brands",
+    "permalink" => "brands/brands",
+    "meta_title" => "Brands",
+    "meta_description" => "Brands"
+  })
+end %>
 
 
 ## Taxon Update
@@ -186,7 +210,15 @@ For example, to update the taxon's name to "Brand", make this request:
 ### Response
 
 <%= headers 200 %>
-<%= json(:taxon_with_children) %>
+<%= json(:taxon_with_children) do |h|
+  h.merge({
+    "name" => "Brands",
+    "pretty_name" => "Brands",
+    "permalink" => "brands/brands",
+    "meta_title" => "Brands",
+    "meta_description" => "Brands"
+  })
+end %>
 
 ## Taxon Delete
 
