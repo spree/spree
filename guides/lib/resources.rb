@@ -386,8 +386,7 @@ module Spree
       {
         "id"=>732545999,
         "name"=>"Check",
-        "description"=>"Pay by check.",
-        "method_type"=>"check"
+        "description"=>"Pay by check."
       }
 
 
@@ -471,12 +470,13 @@ module Spree
         "source_type"=>"Spree::CreditCard",
         "source_id"=>1,
         "amount"=>"10.00",
+        "display_amount"=>"$10.00",
         "payment_method_id"=>1,
-        "response_code"=>"12345",
         "state"=>"checkout",
         "avs_response"=>nil,
         "created_at"=>"2012-10-24T23:26:23Z",
-        "updated_at"=>"2012-10-24T23:26:23Z"
+        "updated_at"=>"2012-10-24T23:26:23Z",
+        "number"=>"P58PJCXG"
       }
 
     SHIPPING_CATEGORY ||=
