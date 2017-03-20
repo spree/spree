@@ -89,6 +89,44 @@ describe Spree::Admin::ProductsController, type: :controller do
     end
   end
 
+  describe '#clone' do
+    let(:product) { create(:custom_product, name: 'MyProduct', sku: 'MySku') }
+    let(:product2) { create(:custom_product, name: 'COPY OF MyProduct', sku: 'COPY OF MySku') }
+    let(:variant) do
+      create(:master_variant, name: 'COPY OF MyProduct', sku: 'COPY OF MySku', created_at: product.created_at - 1.day)
+    end
+
+    def send_request
+      spree_post :clone, id: product, format: :js
+    end
+
+    context 'will successfully clone product' do
+      before do
+        allow(product).to receive(:duplicate).and_return(product2)
+      end
+
+      describe 'response' do
+        before { send_request }
+        it { expect(response).to have_http_status(:found) }
+        it { expect(response).to be_redirect }
+        it { expect(flash[:success]).to eq(Spree.t('notice_messages.product_cloned')) }
+      end
+    end
+
+    context 'will not successfully clone product' do
+      before do
+        variant
+      end
+
+      describe 'response' do
+        before { send_request }
+        it { expect(response).to have_http_status(:found) }
+        it { expect(response).to be_redirect }
+        it { expect(flash[:error]).to eq(Spree.t('notice_messages.product_not_cloned')) }
+      end
+    end
+  end
+
   context "stock" do
     let(:product) { create(:product) }
     it "restricts stock location based on accessible attributes" do
