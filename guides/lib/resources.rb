@@ -880,18 +880,21 @@ module Spree
         "name"=>"New York"
       }
 
-    SECONDARY_TAXON ||=
-      {
-        "id"=>3,
-        "name"=>"T-Shirts",
-        "permalink"=>"brands/ruby-on-rails/t-shirts",
-        "position"=>1,
-        "parent_id"=>2,
-        "taxonomy_id"=>1
-      }
+      SECONDARY_TAXON ||=
+        {
+          "id"=>3,
+          "name"=>"T-Shirts",
+          "pretty_name"=>"T-Shirts",
+          "permalink"=>"brands/t-shirts",
+          "parent_id"=>1,
+          "taxonomy_id"=>1,
+          "meta_title"=>"T-Shirts",
+          "meta_description"=>"T-Shirts",
+          "taxons"=>[]
+        }
 
-    TAXON_WITH_CHILDREN ||= TAXON.merge(taxons: [SECONDARY_TAXON])
-    TAXON_WITHOUT_CHILDREN ||= TAXON.merge(taxons: [])
+    TAXON_WITH_CHILDREN ||= TAXON.merge("taxons" => [SECONDARY_TAXON])
+    TAXON_WITHOUT_CHILDREN ||= TAXON.merge("taxons" => [])
 
     TAXONOMY ||=
      {
