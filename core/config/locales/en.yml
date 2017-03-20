@@ -663,6 +663,10 @@ en:
         item_total_less_than_or_equal: This coupon code can't be applied to orders less than or equal to %{amount}.
         item_total_more_than: This coupon code can't be applied to orders higher than %{amount}.
         item_total_more_than_or_equal: This coupon code can't be applied to orders higher than or equal to %{amount}.
+        item_quantity_less_than: This coupon code can't be applied to orders with less than %{quantity} items.
+        item_quantity_less_than_or_equal: This coupon code can't be applied to orders with items quantity less than or equal to %{quantity}.
+        item_quantity_more_than: This coupon code can't be applied to orders with items quantity higher than %{quantity}.
+        item_quantity_more_than_or_equal: This coupon code can't be applied to orders with items quantity higher than or equal to %{quantity}.
         limit_once_per_user: This coupon code can only be used once per user.
         missing_product: This coupon code can't be applied because you don't have all of the necessary products in your cart.
         missing_taxon: You need to add a product from all applicable categories before applying this coupon code.
@@ -786,6 +790,12 @@ en:
     item_description: Item Description
     item_total: Item Total
     item_total_rule:
+      operators:
+        gt: greater than
+        gte: greater than or equal to
+        lt: less than
+        lte: less than or equal to
+    item_quantity_rule:
       operators:
         gt: greater than
         gte: greater than or equal to
@@ -1077,6 +1087,9 @@ en:
       item_total:
         description: Order total meets these criteria
         name: Item total
+      item_quantity:
+        description: Order quantity meets these criteria
+        name: Item Quantity
       landing_page:
         description: Customer must have visited the specified page
         name: Landing Page
