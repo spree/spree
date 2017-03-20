@@ -904,30 +904,31 @@ module Spree
         "iso"=>"US",
         "iso3"=>"USA",
         "name"=>"United States",
-        "numcode"=>1,
-        "states"=> [COUNTRY_STATE]
+        "numcode"=>1
       }
 
     STATE ||=
       {
-        "abbr"=>"NY",
-        "country_id"=>1,
         "id"=>1,
-        "name"=>"New York"
+        "name"=>"New York",
+        "abbr"=>"NY",
+        "country_id"=>1
       }
 
-      SECONDARY_TAXON ||=
-        {
-          "id"=>3,
-          "name"=>"T-Shirts",
-          "pretty_name"=>"T-Shirts",
-          "permalink"=>"brands/t-shirts",
-          "parent_id"=>1,
-          "taxonomy_id"=>1,
-          "meta_title"=>"T-Shirts",
-          "meta_description"=>"T-Shirts",
-          "taxons"=>[]
-        }
+    COUNTRY_WITH_STATE ||= COUNTRY.merge("states" => [STATE])
+
+    SECONDARY_TAXON ||=
+      {
+        "id"=>3,
+        "name"=>"T-Shirts",
+        "pretty_name"=>"T-Shirts",
+        "permalink"=>"brands/t-shirts",
+        "parent_id"=>1,
+        "taxonomy_id"=>1,
+        "meta_title"=>"T-Shirts",
+        "meta_description"=>"T-Shirts",
+        "taxons"=>[]
+      }
 
     TAXON_WITH_CHILDREN ||= TAXON.merge("taxons" => [SECONDARY_TAXON])
     TAXON_WITHOUT_CHILDREN ||= TAXON.merge("taxons" => [])
