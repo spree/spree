@@ -54,6 +54,12 @@ describe Spree::OrderContents, type: :model do
       expect(order.total.to_f).to eq(19.99)
     end
 
+    context 'when store_credits payment' do
+      let!(:payment) { create(:store_credit_payment, order: order) }
+
+      it { expect { subject.add(variant, 1) }.to change { order.payments.store_credits.count }.by(-1) }
+    end
+
     context "running promotions" do
       let(:promotion) { create(:promotion) }
       let(:calculator) { Spree::Calculator::FlatRate.new(preferred_amount: 10) }
@@ -159,6 +165,17 @@ describe Spree::OrderContents, type: :model do
       expect(line_item.quantity).to eq(2)
     end
 
+    context 'when store_credits payment' do
+      let(:payment) { create(:store_credit_payment, order: order) }
+
+      before do
+        subject.add(variant, 1)
+        payment
+      end
+
+      it { expect { subject.remove(variant, 1) }.to change { order.payments.store_credits.count }.by(-1) }
+    end
+
     it 'should remove line_item if quantity matches line_item quantity' do
       subject.add(variant, 1)
       removed_line_item = subject.remove(variant, 1)
@@ -201,6 +218,17 @@ describe Spree::OrderContents, type: :model do
       end
     end
 
+    context 'when store_credits payment' do
+      let(:payment) { create(:store_credit_payment, order: order) }
+
+      before do
+        @line_item = subject.add(variant, 1)
+        payment
+      end
+
+      it { expect { subject.remove_line_item(@line_item) }.to change { order.payments.store_credits.count }.by(-1) }
+    end
+
     it 'should remove line_item' do
       line_item = subject.add(variant, 1)
       subject.remove_line_item(line_item)
@@ -241,6 +269,12 @@ describe Spree::OrderContents, type: :model do
       expect {
         subject.update_cart params
       }.to change { subject.order.total }
+    end
+
+    context 'when store_credits payment' do
+      let!(:payment) { create(:store_credit_payment, order: order) }
+
+      it { expect { subject.update_cart params }.to change { order.payments.store_credits.count }.by(-1) }
     end
 
     context "submits item quantity 0" do

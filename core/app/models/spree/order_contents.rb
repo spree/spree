@@ -32,6 +32,7 @@ module Spree
         persist_totals
         PromotionHandler::Cart.new(order).activate
         order.ensure_updated_shipments
+        order.payments.store_credits.checkout.destroy_all
         persist_totals
         true
       else
@@ -42,6 +43,7 @@ module Spree
     private
 
     def after_add_or_remove(line_item, options = {})
+      order.payments.store_credits.checkout.destroy_all
       persist_totals
       shipment = options[:shipment]
       shipment.present? ? shipment.update_amounts : order.ensure_updated_shipments
