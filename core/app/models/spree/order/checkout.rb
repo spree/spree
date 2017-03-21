@@ -15,12 +15,9 @@ module Spree
           self.removed_transitions ||= []
 
           def self.checkout_flow(&block)
-            if block_given?
-              @checkout_flow = block
-              define_state_machine!
-            else
-              @checkout_flow
-            end
+            return @checkout_flow unless block_given?
+            @checkout_flow = block
+            define_state_machine!
           end
 
           def self.define_state_machine!
@@ -46,7 +43,6 @@ module Spree
 
               # Persist the state on the order
               after_transition do |order, transition|
-                order.state = order.state
                 order.state_changes.create(
                   previous_state: transition.from,
                   next_state: transition.to,
@@ -125,14 +121,9 @@ module Spree
 
           def self.go_to_state(name, options = {})
             self.checkout_steps[name] = options
-            previous_states.each do |state|
-              add_transition({ from: state, to: name }.merge(options))
-            end
-            if options[:if]
-              previous_states << name
-            else
-              self.previous_states = [name]
-            end
+            self.previous_states.each { |state| add_transition({ from: state, to: name }.merge(options)) }
+            return self.previous_states << name if options[:if]
+            self.previous_states = [name]
           end
 
           def self.insert_checkout_step(name, options = {})
@@ -226,7 +217,11 @@ module Spree
               # rails would slice parameters containg ruby objects, apparently
               existing_card_id = @updating_params[:order] ? @updating_params[:order].delete(:existing_card) : nil
 
-              attributes = @updating_params[:order] ? @updating_params[:order].permit(permitted_params).delete_if { |_k, v| v.nil? } : {}
+              attributes = if @updating_params[:order]
+                             @updating_params[:order].permit(permitted_params).delete_if { |_k, v| v.nil? }
+                           else
+                             {}
+                           end
 
               if existing_card_id.present?
                 credit_card = CreditCard.find existing_card_id
@@ -263,34 +258,29 @@ module Spree
           end
 
           def clone_billing
-            if !bill_address_id && user.bill_address.try(:valid?)
-              self.bill_address = user.bill_address.try(:clone)
-            end
+            return unless !bill_address_id && user.bill_address.try(:valid?)
+            self.bill_address = user.bill_address.try(:clone)
           end
 
           def clone_shipping
-            if !ship_address_id && user.ship_address.try(:valid?)
-              self.ship_address = user.ship_address.try(:clone)
-            end
+            return unless !ship_address_id && user.ship_address.try(:valid?)
+            self.ship_address = user.ship_address.try(:clone)
           end
 
           def persist_user_address!
-            if !temporary_address && user && user.respond_to?(:persist_order_address) && bill_address_id
-              user.persist_order_address(self)
-            end
+            return unless !temporary_address && user && user.respond_to?(:persist_order_address) && bill_address_id
+            user.persist_order_address(self)
           end
 
           def persist_user_credit_card
-            if !temporary_credit_card && user_id && valid_credit_cards.present?
-              valid_credit_cards.first.update(user_id: user_id, default: true)
-            end
+            return unless !temporary_credit_card && user_id && valid_credit_cards.present?
+            valid_credit_cards.first.update(user_id: user_id, default: true)
           end
 
           def assign_default_credit_card
-            if payments.from_credit_card.size == 0 && user_has_valid_default_card? && payment_required?
-              cc = user.default_credit_card
-              payments.create!(payment_method_id: cc.payment_method_id, source: cc, amount: total)
-            end
+            return unless payments.from_credit_card.size.empty? && user_has_valid_default_card? && payment_required?
+            cc = user.default_credit_card
+            payments.create!(payment_method_id: cc.payment_method_id, source: cc, amount: total)
           end
 
           def user_has_valid_default_card?
