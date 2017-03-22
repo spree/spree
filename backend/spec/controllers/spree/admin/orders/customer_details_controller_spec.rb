@@ -43,7 +43,7 @@ describe Spree::Admin::Orders::CustomerDetailsController, type: :controller do
           before do
             allow(order).to receive_messages(update_attributes: true)
             allow(order).to receive_messages(next: false)
-            allow(order).to receive_messages(complete?: true)
+            allow(order).to receive_messages(address?: false)
             allow(order).to receive_messages(refresh_shipment_rates: true)
           end
 
@@ -56,7 +56,7 @@ describe Spree::Admin::Orders::CustomerDetailsController, type: :controller do
           context 'with correct method flow' do
             it { expect(order).to receive(:update_attributes).with(ActionController::Parameters.new(attributes[:order]).permit(permitted_order_attributes)) }
             it { expect(order).to_not receive(:next) }
-            it { expect(order).to receive(:complete?) }
+            it { expect(order).to receive(:address?) }
             it 'does refresh the shipment rates with all shipping methods' do
               expect(order).to receive(:refresh_shipment_rates).
                 with(Spree::ShippingMethod::DISPLAY_ON_FRONT_AND_BACK_END)
@@ -97,7 +97,7 @@ describe Spree::Admin::Orders::CustomerDetailsController, type: :controller do
             allow(Spree.user_class).to receive(:find_by).and_return(user)
             allow(order).to receive_messages(update_attributes: true)
             allow(order).to receive_messages(next: false)
-            allow(order).to receive_messages(complete?: true)
+            allow(order).to receive_messages(address?: false)
             allow(order).to receive_messages(refresh_shipment_rates: true)
             allow(order).to receive_messages(associate_user!: true)
             allow(controller).to receive(:guest_checkout?).and_return(false)
@@ -114,7 +114,7 @@ describe Spree::Admin::Orders::CustomerDetailsController, type: :controller do
             it { expect(order).to receive(:update_attributes).with(ActionController::Parameters.new(attributes[:order]).permit(permitted_order_attributes)) }
             it { expect(order).to receive(:associate_user!).with(user, order.email.blank?) }
             it { expect(order).to_not receive(:next) }
-            it { expect(order).to receive(:complete?) }
+            it { expect(order).to receive(:address?) }
             it 'does refresh the shipment rates with all shipping methods' do
               expect(order).to receive(:refresh_shipment_rates).
                 with(Spree::ShippingMethod::DISPLAY_ON_FRONT_AND_BACK_END)
@@ -152,7 +152,7 @@ describe Spree::Admin::Orders::CustomerDetailsController, type: :controller do
               allow(Spree.user_class).to receive(:find_by).and_return(user)
               allow(order).to receive_messages(update_attributes: true)
               allow(order).to receive_messages(next: false)
-              allow(order).to receive_messages(complete?: true)
+              allow(order).to receive_messages(address?: false)
               allow(order).to receive_messages(refresh_shipment_rates: true)
               allow(order).to receive_messages(associate_user!: true)
               allow(controller).to receive(:guest_checkout?).and_return(false)
