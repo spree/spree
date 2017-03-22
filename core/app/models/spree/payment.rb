@@ -24,6 +24,8 @@ module Spree
     has_many :refunds, inverse_of: :payment
 
     validates :payment_method, presence: true
+    validates :number, uniqueness: true
+
     before_validation :validate_source
 
     after_save :create_payment_profile, if: :profiles_supported?

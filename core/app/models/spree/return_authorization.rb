@@ -17,6 +17,7 @@ module Spree
 
     accepts_nested_attributes_for :return_items, allow_destroy: true
 
+    validates :number, uniqueness: true
     validates :order, :reason, :stock_location, presence: true
     validate :must_have_shipped_units, on: :create
 
