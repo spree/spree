@@ -34,7 +34,7 @@ module Spree
 
         loop do
           candidate = new_candidate(length)
-          return candidate.upcase unless host.exists?(number: candidate)
+          return candidate unless host.exists?(number: candidate)
 
           # If over half of all possible options are taken add another digit.
           length += 1 if host.count > Rational(BASE**length, 2)
@@ -43,7 +43,7 @@ module Spree
 
       def new_candidate(length)
         characters = @letters ? 36 : 10
-        @prefix + SecureRandom.random_number(characters**length).to_s(characters).rjust(length, '0')
+        @prefix + SecureRandom.random_number(characters**length).to_s(characters).rjust(length, '0').upcase
       end
     end # Permalink
   end # Core
