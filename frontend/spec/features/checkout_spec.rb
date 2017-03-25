@@ -492,6 +492,94 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
       expect(page).to_not have_content(Spree.t(:thank_you_for_your_order))
     end
   end
+  context "order's address is outside the default included tax zone" do
+    context "so that no taxation applies to its product" do
+      before do
+        usa = Spree::Country.find_by(name: 'United States of America')
+        north_america_zone = create(:zone,
+                                      name: 'North America',
+                                      kind: 'country',
+                                      default_tax: true).tap do |zone|
+          zone.members << create(:zone_member, zoneable: usa)
+        end
+
+        australia = create(:country,
+                             name: 'Australia',
+                             iso: 'AU',
+                             iso_name: 'AUSTRALIA',
+                             iso3: 'AUS',
+                             states_required: true).tap do |country|
+          country.states << create(:state,
+                                     name: 'New South Wales',
+                                     abbr: 'NSW')
+        end
+        australia_zone = create(:zone,
+                                  name: 'Australia',
+                                  kind: 'country',
+                                  default_tax: false).tap do |zone|
+          zone.members << create(:zone_member, zoneable: australia)
+        end
+
+        default_tax_category = create(:tax_category, name: 'Default', is_default: true)
+
+        create(:shipping_method,
+                 name: 'Default',
+                 display_on: 'both',
+                 zones: [australia_zone],
+                 tax_category: default_tax_category).tap do |sm|
+          sm.calculator.preferred_amount = 10
+          sm.calculator.preferred_currency = Spree::Config[:currency]
+          sm.calculator.save
+        end
+
+        create(:tax_rate,
+                 name: 'USA included',
+                 amount: 0.23,
+                 zone: north_america_zone,
+                 tax_category: default_tax_category,
+                 show_rate_in_label: true,
+                 included_in_price: true)
+
+        create(:product, name: 'Spree Bag', price: 100, tax_category: default_tax_category)
+        create(:product, name: 'Spree T-Shirt', price: 100, tax_category: default_tax_category)
+      end
+
+      it "correctly displays other product taxless price which has been added to cart later" do
+        visit spree.root_path
+
+        click_link 'Spree Bag'
+        click_on 'Add To Cart'
+        click_on 'Checkout'
+
+        fill_in 'order_email', with: 'test@example.com'
+
+        within '#checkout_form_address' do
+          address = 'order_bill_address_attributes'
+
+          fill_in "#{address}_firstname", with: 'John'
+          fill_in "#{address}_lastname", with: 'Doe'
+          fill_in "#{address}_address1", with: '199 George Street'
+          fill_in "#{address}_city", with: 'Sydney'
+          select 'Australia', from: "#{address}_country_id"
+          select 'New South Wales', from: "#{address}_state_id"
+          fill_in "#{address}_zipcode", with: '2000'
+          fill_in "#{address}_phone", with: '123456789'
+        end
+        click_on 'Save and Continue'
+
+        visit spree.root_path
+
+        click_link 'Spree T-Shirt'
+        click_on 'Add To Cart'
+
+        expect(page).not_to have_content('$100.00')
+
+        page.all('td.cart-item-price').each do |line_item|
+          expect(line_item).to have_content('$81.30')
+        end
+      end
+    end
+  end
 
   context 'user has store credits', js: true do
     let(:bogus) { create(:credit_card_payment_method) }
