@@ -20,5 +20,3 @@ Migrations have been run. Please run "rake spree_sample:load" by itself now.
     SpreeSample::Engine.load_samples
   end
 end
-
-

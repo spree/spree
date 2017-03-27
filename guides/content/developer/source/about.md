@@ -26,7 +26,7 @@ In addition, he was motivated by unsuccessful efforts to use other open
 source solutions in other programming languages, including (but not
 limited to) the Magento and OSCommerce platforms. These solutions were
 deemed to be unsatisfactory when challenged with even the simplest
-practical cases of use. 
+practical cases of use.
 
 ### Opinionated Commerce
 
@@ -127,7 +127,7 @@ Ruby, including:
 Rails 3.1 introduced the concept of the asset pipeline. Unfortunately this causes some significant performance issues when running Spree in development mode. The good news is you can improve performance significantly by using a special precompile task.
 
 ```bash
-$ bundle exec rake assets:precompile:nondigest
+$ bundle exec rake assets:precompile
 ```
 
 Using the precompile rake task in development will prevent any changes to asset files from being automatically included in when you reload the page. You must re-run the precompile task for changes to become available.
@@ -142,7 +142,7 @@ It might also be worthwhile to include the public/assets directory in your `.git
 
 ## Open Source License
 
-Copyright © 2007-2013, Spree Commerce Inc. and other contributors.
+Copyright © 2007-2017, Spree Commerce Inc. and other contributors.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
