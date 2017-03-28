@@ -117,10 +117,14 @@ Spree::Core::Engine.add_routes do
       get '/taxons/products', to: 'taxons#products', as: :taxon_products
     end
 
-    match 'v:api/*path', to: redirect("/api/v1/%{path}"), via: [:get, :post, :put, :patch, :delete]
+    spree_path = Rails.application.routes.url_helpers.try(:spree_path, trailing_slash: true) || '/'
+    match 'v:api/*path', to: redirect("#{spree_path}api/v1/%{path}"), via: [:get, :post, :put, :patch, :delete]
 
     match '*path', to: redirect{ |params, request|
-      "/api/v1/#{params[:path]}?#{request.query_string}"
+      format = ".#{params[:format]}" unless params[:format].blank?
+      query  = "?#{request.query_string}" unless request.query_string.blank?
+
+      "#{spree_path}api/v1/#{params[:path]}#{format}#{query}"
     }, via: [:get, :post, :put, :patch, :delete]
   end
 end
