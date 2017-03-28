@@ -110,7 +110,7 @@ module Spree
     accepts_nested_attributes_for :line_items
     accepts_nested_attributes_for :bill_address
     accepts_nested_attributes_for :ship_address
-    accepts_nested_attributes_for :payments, reject_if: :credit_card_nil_payment
+    accepts_nested_attributes_for :payments, reject_if: :credit_card_nil_payment?
     accepts_nested_attributes_for :shipments
 
     # Needs to happen before save_permalink is called
@@ -674,8 +674,8 @@ module Spree
       PaymentMethod.available_on_front_end.select { |pm| pm.available_for_order?(self) }
     end
 
-    def credit_card_nil_payment(attributes)
-      payments.store_credits.present? && (attributes[:amount].try :zero?)
+    def credit_card_nil_payment?(attributes)
+      payments.store_credits.present? && (attributes[:amount].to_f.zero?)
     end
   end
 end
