@@ -18,6 +18,7 @@ module Spree
             create_store_credit_payment(payment_method, credit, amount_to_take)
             remaining_total -= amount_to_take
           end
+          payments.store_credits.checkout
         end
       end
 
