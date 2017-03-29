@@ -42,7 +42,8 @@ module Spree
             while @order.next; end
             # If "@order.next" didn't trigger payment processing already (e.g. if the order was
             # already complete) then trigger it manually now
-            saved_payments.checkout.map &:process! if(@order.completed?)
+
+            saved_payments.each { |payment| payment.process! if payment.reload.checkout? && @order.complete? }
             flash[:success] = flash_message_for(saved_payments.first , :successfully_created)
             redirect_to admin_order_payments_path(@order)
           else
