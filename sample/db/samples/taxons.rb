@@ -29,14 +29,14 @@ end
 
 taxons = [
   {
-    name: I18n.t('spree.taxonomy_brands_name'),
+    name: I18n.t('spree.taxonomy_categories_name'),
     taxonomy: categories,
     position: 0
   },
   {
     name: "Bags",
     taxonomy: categories,
-    parent: I18n.t('spree.taxonomy_brands_name'),
+    parent: I18n.t('spree.taxonomy_categories_name'),
     position: 1,
     products: [
       products[:ror_tote],
@@ -48,7 +48,7 @@ taxons = [
   {
     name: "Mugs",
     taxonomy: categories,
-    parent: I18n.t('spree.taxonomy_brands_name'),
+    parent: I18n.t('spree.taxonomy_categories_name'),
     position: 2,
     products: [
       products[:ror_mug],
@@ -60,7 +60,7 @@ taxons = [
   {
     name: "Clothing",
     taxonomy: categories,
-    parent: I18n.t('spree.taxonomy_brands_name')
+    parent: I18n.t('spree.taxonomy_categories_name')
   },
   {
     name: "Shirts",
