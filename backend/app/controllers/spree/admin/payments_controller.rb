@@ -28,7 +28,7 @@ module Spree
             payments = @order.add_store_credit_payments
           else
             @payment ||= @order.payments.build(object_params)
-            if @payment.payment_method.source_required? && params[:card].present? and params[:card] != 'new'
+            if @payment.payment_method.source_required? && params[:card].present? && params[:card] != 'new'
               @payment.source = @payment.payment_method.payment_source_class.find_by_id(params[:card])
             end
             @payment.save
@@ -44,7 +44,7 @@ module Spree
             # already complete) then trigger it manually now
 
             saved_payments.each { |payment| payment.process! if payment.reload.checkout? && @order.complete? }
-            flash[:success] = flash_message_for(saved_payments.first , :successfully_created)
+            flash[:success] = flash_message_for(saved_payments.first, :successfully_created)
             redirect_to admin_order_payments_path(@order)
           else
             invoke_callbacks(:create, :fails)

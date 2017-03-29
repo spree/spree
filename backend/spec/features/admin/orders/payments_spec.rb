@@ -235,7 +235,7 @@ describe 'Payments', type: :feature, js: true do
 
       before do
         visit spree.new_admin_order_payment_path(order.reload)
-        choose("payment_payment_method_id_#{ payment_method.id }")
+        choose("payment_payment_method_id_#{payment_method.id}")
         click_button 'Continue'
       end
 
