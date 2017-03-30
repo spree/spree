@@ -1,8 +1,8 @@
 Spree::Sample.load_sample("taxonomies")
 Spree::Sample.load_sample("products")
 
-categories = Spree::Taxonomy.find_by_name!(I18n.t('spree.taxonomy_brands_name'))
-brands = Spree::Taxonomy.find_by_name!("Brand")
+categories = Spree::Taxonomy.find_by_name!(I18n.t('spree.taxonomy_categories_name'))
+brands = Spree::Taxonomy.find_by_name!(I18n.t('spree.taxonomy_brands_name'))
 
 products = {
   ror_tote: "Ruby on Rails Tote",
@@ -29,14 +29,14 @@ end
 
 taxons = [
   {
-    name: I18n.t('spree.taxonomy_brands_name'),
+    name: I18n.t('spree.taxonomy_categories_name'),
     taxonomy: categories,
     position: 0
   },
   {
     name: "Bags",
     taxonomy: categories,
-    parent: I18n.t('spree.taxonomy_brands_name'),
+    parent: I18n.t('spree.taxonomy_categories_name'),
     position: 1,
     products: [
       products[:ror_tote],
@@ -48,7 +48,7 @@ taxons = [
   {
     name: "Mugs",
     taxonomy: categories,
-    parent: I18n.t('spree.taxonomy_brands_name'),
+    parent: I18n.t('spree.taxonomy_categories_name'),
     position: 2,
     products: [
       products[:ror_mug],
@@ -60,7 +60,7 @@ taxons = [
   {
     name: "Clothing",
     taxonomy: categories,
-    parent: I18n.t('spree.taxonomy_brands_name')
+    parent: I18n.t('spree.taxonomy_categories_name')
   },
   {
     name: "Shirts",
