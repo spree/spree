@@ -4,6 +4,6 @@ module Spree
     belongs_to :property, class_name: 'Spree::Property'
 
     validates :prototype, :property, presence: true
-    validates :prototype_id, uniqueness: { scope: :property_id }, allow_nil: true
+    validates :prototype_id, uniqueness: { scope: :property_id }
   end
 end
