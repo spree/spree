@@ -15,8 +15,7 @@ module Spree
       validates :quantity, numericality: {
         greater_than_or_equal_to: QUANTITY_LIMITS[:min],
         less_than_or_equal_to: QUANTITY_LIMITS[:max],
-        only_integer: true,
-        allow_nil: true
+        only_integer: true
       }
     end
 
