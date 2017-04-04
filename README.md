@@ -8,7 +8,7 @@
 * [2016 Development Roadmap](https://github.com/spree/spree/wiki/Spree-Commerce-development-roadmap-2016)
 
 [![Circle CI](https://circleci.com/gh/spree/spree.svg?style=svg)](https://circleci.com/gh/spree/spree/tree/master)
-[![Code Climate](https://codeclimate.com/github/spree/spree.png)](https://codeclimate.com/github/spree/spree)
+[![Code Climate](https://codeclimate.com/github/spree/spree/badges/gpa.svg)](https://codeclimate.com/github/spree/spree)
 [![codebeat](https://codebeat.co/badges/16feb8a2-abf0-4fbb-a130-20b689efcfc0)](https://codebeat.co/projects/github-com-spree-spree)
 [![Slack Status](http://slack.spreecommerce.com/badge.svg)](http://slack.spreecommerce.com)
 
@@ -35,7 +35,7 @@ Add Spree gems to your Gemfile:
 ### Rails 5
 
 ```ruby
-gem 'spree', '~> 3.2.0.rc1'
+gem 'spree', '~> 3.2.0'
 gem 'spree_auth_devise', '~> 3.2.0.beta'
 gem 'spree_gateway', '~> 3.2.0.beta'
 ```
