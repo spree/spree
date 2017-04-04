@@ -34,19 +34,19 @@ describe EmailValidator do
     'invalid.email@@email.com'
   ]}
 
+  let(:tester) { Tester.new }
+
   it 'validates valid email addresses' do
-    tester = Tester.new
     valid_emails.each do |email|
       tester.email_address = email
-      expect(tester.valid?).to be true
+      expect(tester).to be_valid
     end
   end
 
   it 'validates invalid email addresses' do
-    tester = Tester.new
     invalid_emails.each do |email|
       tester.email_address = email
-      expect(tester.valid?).to be false
+      expect(tester).to be_invalid
     end
   end
 
