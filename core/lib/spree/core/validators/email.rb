@@ -4,7 +4,7 @@ class EmailValidator < ActiveModel::EachValidator
                           ([A-Za-z0-9]+\-+)|
                           ([A-Za-z0-9]+\.+)|
                           ([A-Za-z0-9]+\++))*[A-Za-z0-9_]+@((\w+\-+)|
-                          (\w+\.))*\w{1,63}\.[a-zA-Z]{2,6}\z}xi
+                          (\w+\.))*\w{1,63}\.[a-zA-Z]{2,15}\z}xi
       record.errors.add(attribute, :invalid, { value: value }.merge!(options))
     end
   end
