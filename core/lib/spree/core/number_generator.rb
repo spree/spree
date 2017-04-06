@@ -3,16 +3,13 @@ module Spree
     class NumberGenerator < Module
       BASE           = 10
       DEFAULT_LENGTH = 9
-      NUMBERS        = (0..9).to_a.freeze
-      LETTERS        = ('A'..'Z').to_a.freeze
 
       attr_accessor :prefix, :length
 
       def initialize(options)
-        @random     = Random.new
         @prefix     = options.fetch(:prefix)
         @length     = options.fetch(:length, DEFAULT_LENGTH)
-        @candidates = NUMBERS + (options[:letters] ? LETTERS : [])
+        @letters    = options[:letters]
       end
 
       def included(host)
@@ -45,8 +42,8 @@ module Spree
       end
 
       def new_candidate(length)
-        @candidates.shuffle!
-        @prefix + length.times.map { @candidates.sample(random: @random) }.join
+        characters = @letters ? 36 : 10
+        @prefix + SecureRandom.random_number(characters**length).to_s(characters).rjust(length, '0').upcase
       end
     end # Permalink
   end # Core

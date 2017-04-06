@@ -2,7 +2,6 @@ require 'spec_helper'
 
 describe Spree::Core::NumberGenerator do
   let(:number_generator) { described_class.new(options) }
-  let(:random)           { instance_double(Random)      }
 
   let(:model) do
     mod = number_generator
@@ -11,10 +10,6 @@ describe Spree::Core::NumberGenerator do
       self.table_name = 'spree_orders'
       include mod
     end
-  end
-
-  before do
-    expect(Random).to receive(:new).and_return(random)
   end
 
   let(:options) { { prefix: 'R' } }
@@ -43,56 +38,41 @@ describe Spree::Core::NumberGenerator do
   end
 
   shared_examples_for 'duplicate without length increment' do
-    before do
-      allow_any_instance_of(Array).to receive(:shuffle!).and_return(self)
-      expect(random).to receive(:rand).
-        with(expected_rand_limit).
-        and_return(next_candidate_index).
-        exactly(expected_length).times
-    end
 
     it 'sets permalink field' do
-      expect { subject }.to change(resource, :number).from(nil).to(next_candidate)
+      expect { subject }.to change(resource, :number).from(nil).to(String)
+      expect(resource.number).to match(regex)
     end
   end
 
   shared_examples_for 'generating permalink'do
     let(:resource) { model.new }
 
-    before do
-      allow_any_instance_of(Array).to receive(:shuffle!).and_return(self)
-      expect(random).to receive(:rand).
-        with(expected_rand_limit).
-        and_return(first_candidate_index).
-        exactly(expected_length).times
-    end
-
     context 'and generated candidate is unique' do
       before do
-        expect(model).to receive(:exists?).with(number: first_candidate).and_return(false)
+        expect(model).to receive(:exists?).and_return(false)
       end
 
       it 'sets permalink field' do
-        expect { subject }.to change(resource, :number).from(nil).to(first_candidate)
+        expect { subject }.to change(resource, :number).from(nil).to(String)
+        expect(resource.number).to match(regex)
       end
     end
 
     context 'and generated candidate is NOT unique' do
       before do
-        expect(model).to receive(:exists?).with(number: first_candidate).and_return(true).ordered
+        expect(model).to receive(:exists?).and_return(true).ordered
         expect(model).to receive(:count).and_return(record_count).ordered
-        expect(model).to receive(:exists?).with(number: next_candidate).and_return(false)
+        expect(model).to receive(:exists?).and_return(false)
       end
 
       context 'and less than half of the value space taken' do
-        let(:next_candidate) { next_candidate_low            }
         let(:record_count)   { 10 ** expected_length / 2 - 1 }
 
         include_examples 'duplicate without length increment'
       end
 
       context 'and exactly half of the value space taken' do
-        let(:next_candidate) { next_candidate_low        }
         let(:record_count)   { 10 ** expected_length / 2 }
 
         include_examples 'duplicate without length increment'
@@ -100,18 +80,10 @@ describe Spree::Core::NumberGenerator do
 
       context 'and more than half of the value space is taken' do
         let(:record_count)   { 10 ** expected_length / 2 + 1 }
-        let(:next_candidate) { next_candidate_high           }
-
-        before do
-          allow_any_instance_of(Array).to receive(:shuffle!).and_return(self)
-          expect(random).to receive(:rand).
-            with(expected_rand_limit).
-            and_return(next_candidate_index).
-            exactly(expected_length.succ).times
-        end
 
         it 'sets permalink field' do
-          expect { subject }.to change(resource, :number).from(nil).to(next_candidate)
+          expect { subject }.to change(resource, :number).from(nil).to(String)
+          expect(resource.number).to match(regex_more_than_half)
         end
       end
     end
@@ -127,40 +99,29 @@ describe Spree::Core::NumberGenerator do
     context 'generates validation hooks on host' do
       subject { resource.valid? }
 
-      let(:first_candidate_index) { 0  }
-      let(:next_candidate_index)  { 1  }
-      let(:expected_rand_limit)   { 10 }
-      let(:expected_length)       { 9  }
+      let(:expected_length)      { 9 }
+      let(:regex)                { /R[0-9]{9}$/  }
+      let(:regex_more_than_half) { /R[0-9]{10}$/ }
 
       context 'when permalink field value is nil' do
         context 'on defaults' do
-          let(:first_candidate)     { 'R000000000'  }
-          let(:next_candidate_low)  { 'R111111111'  }
-          let(:next_candidate_high) { 'R1111111111' }
 
           include_examples 'generating permalink'
         end
 
         context 'with length: option' do
-          let(:options)         { super().merge(length: 10) }
-          let(:expected_length) { 10 }
-
-          let(:first_candidate)     { 'R0000000000'  }
-          let(:next_candidate_low)  { 'R1111111111'  }
-          let(:next_candidate_high) { 'R11111111111' }
+          let(:options)              { super().merge(length: 10) }
+          let(:expected_length)      { 10 }
+          let(:regex)                { /R[0-9]{10}$/ }
+          let(:regex_more_than_half) { /R[0-9]{11}$/ }
 
           include_examples 'generating permalink'
         end
 
         context 'with letters option' do
-          let(:options)             { super().merge(letters: true) }
-          let(:expected_rand_limit) { 36                           }
-
-          let(:first_candidate)       { 'RAAAAAAAAA'  }
-          let(:first_candidate_index) { 10            }
-          let(:next_candidate_index)  { 11            }
-          let(:next_candidate_low)    { 'RBBBBBBBBB'  }
-          let(:next_candidate_high)   { 'RBBBBBBBBBB' }
+          let(:options)              { super().merge(letters: true) }
+          let(:regex)                { /R[0-9A-Z]{9}$/  }
+          let(:regex_more_than_half) { /R[0-9A-Z]{10}$/ }
 
           include_examples 'generating permalink'
         end
