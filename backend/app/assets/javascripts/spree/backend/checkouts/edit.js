@@ -78,13 +78,13 @@ $(document).ready(function() {
   $('#guest_checkout_true').change(function() {
     $('#customer_search').val("");
     $('#user_id').val("");
-    $('#checkout_email').val("");
+    $('#order_email').val("");
 
     var fields = ["firstname", "lastname", "company", "address1", "address2",
               "city", "zipcode", "state_id", "country_id", "phone"]
     $.each(fields, function(i, field) {
-      $('#order_bill_address_attributes' + field).val("");
-      $('#order_ship_address_attributes' + field).val("");
+      $('#order_bill_address_attributes_' + field).val("");
+      $('#order_ship_address_attributes_' + field).val("");
     })
   });
 });
