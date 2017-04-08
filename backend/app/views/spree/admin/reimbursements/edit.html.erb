@@ -96,7 +96,7 @@
         <%= Spree.t(:reimburse) %>
       <% end %>
       <span class="or"><%= Spree.t(:or) %></span>
-      <%= button_link_to Spree.t('actions.cancel'), url_for([:admin, @order, @reimbursement.customer_return]), icon: 'remove-sign' %>
+      <%= button_link_to Spree.t('actions.cancel'), url_for([:edit, :admin, @order, @reimbursement.customer_return]), icon: 'remove-sign' %>
     <% end %>
   </div>
 </fieldset>
