@@ -14,7 +14,7 @@ module Spree
 
     has_many :zones, through: :zone_members, class_name: 'Spree::Zone'
 
-    validates :name, :iso_name, presence: true, uniqueness: { case_sensitive: false, allow_blank: true }
+    validates :name, :iso_name, presence: true, uniqueness: { case_sensitive: false }
 
     def self.default
       country_id = Spree::Config[:default_country_id]

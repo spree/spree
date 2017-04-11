@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Spree::TaxCategory, type: :model do
   describe 'Validations' do
     it { is_expected.to validate_presence_of(:name) }
-    it { is_expected.to validate_uniqueness_of(:name).scoped_to(:deleted_at).case_insensitive.allow_blank }
+    it { is_expected.to validate_uniqueness_of(:name).scoped_to(:deleted_at).case_insensitive }
   end
 
   context 'default tax category' do

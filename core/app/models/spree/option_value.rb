@@ -7,7 +7,7 @@ module Spree
     has_many :variants, through: :option_value_variants, class_name: 'Spree::Variant'
 
     with_options presence: true do
-      validates :name, uniqueness: { scope: :option_type_id, allow_blank: true }
+      validates :name, uniqueness: { scope: :option_type_id }
       validates :presentation
     end
 

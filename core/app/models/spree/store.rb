@@ -3,7 +3,7 @@ module Spree
     has_many :orders, class_name: "Spree::Order"
 
     with_options presence: true do
-      validates :code, uniqueness: { allow_blank: true }
+      validates :code, uniqueness: { case_sensitive: false, allow_blank: true }
       validates :name, :url, :mail_from_address
     end
 
