@@ -33,7 +33,7 @@ describe Spree::StockMovement, type: :model do
     it do
       is_expected.to validate_numericality_of(:quantity).
         is_greater_than_or_equal_to(Spree::StockMovement::QUANTITY_LIMITS[:min]).
-        is_less_than_or_equal_to(Spree::StockMovement::QUANTITY_LIMITS[:max]).only_integer.allow_nil
+        is_less_than_or_equal_to(Spree::StockMovement::QUANTITY_LIMITS[:max]).only_integer
     end
   end
 

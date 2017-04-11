@@ -4,6 +4,6 @@ module Spree
     belongs_to :prototype, class_name: 'Spree::Prototype'
 
     validates :prototype, :taxon, presence: true
-    validates :prototype_id, uniqueness: { scope: :taxon_id }, allow_nil: true
+    validates :prototype_id, uniqueness: { scope: :taxon_id }
   end
 end
