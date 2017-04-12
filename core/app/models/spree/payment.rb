@@ -118,9 +118,11 @@ module Spree
       self[:amount] =
         case amount
         when String
-          separator = I18n.t('number.currency.format.separator')
-          number    = amount.delete("^0-9-#{separator}\.").tr(separator, '.')
-          number.to_d if number.present?
+          begin
+            Spree::LocalizedNumber.parse!(amount)
+          rescue ArgumentError
+            nil
+          end
         end || amount
     end
 

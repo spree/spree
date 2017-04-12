@@ -14,6 +14,12 @@ describe Spree::LocalizedNumber do
       I18n.enforce_available_locales = true
     end
 
+    context "with an empty string" do
+      it "returns 0" do
+        expect(subject.class.parse("")).to eql 0
+      end
+    end
+
     context "with decimal point" do
       it "captures the proper amount for a formatted price" do
         expect(subject.class.parse('1,599.99')).to eql 1599.99
