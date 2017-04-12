@@ -3,7 +3,7 @@ require 'spec_helper'
 module Spree
   module Stock
     describe Packer, :type => :model do
-      let(:inventory_units) { [InventoryUnit.new(variant: create(:variant))] }
+      let!(:inventory_units) { Array.new(5) { build(:inventory_unit) } }
       let(:stock_location) { create(:stock_location) }
 
       subject { Packer.new(stock_location, inventory_units) }
@@ -23,21 +23,19 @@ module Spree
       end
 
       context 'default_package' do
-        let!(:inventory_units) { 2.times.map { InventoryUnit.new variant: create(:variant) } }
 
         it 'contains all the items' do
           package = subject.default_package
-          expect(package.contents.size).to eq 2
+          expect(package.contents.size).to eq 5
         end
 
         it 'variants are added as backordered without enough on_hand' do
-          expect(stock_location).to receive(:fill_status).exactly(2).times.and_return(
-            *(Array.new(1, [1,0]) + Array.new(1, [0,1]))
-          )
+          inventory_units[0..2].each { |iu| stock_location.stock_item(iu.variant_id).set_count_on_hand(1) }
+          inventory_units[3..4].each { |iu| stock_location.stock_item(iu.variant_id).set_count_on_hand(0) }
 
           package = subject.default_package
-          expect(package.on_hand.size).to eq 1
-          expect(package.backordered.size).to eq 1
+          expect(package.on_hand.size).to eq 3
+          expect(package.backordered.size).to eq 2
         end
 
         context "location doesn't have order items in stock" do

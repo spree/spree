@@ -59,12 +59,25 @@ module Spree
     end
 
     def reduce_count_on_hand_to_zero
-      self.set_count_on_hand(0) if count_on_hand > 0
+      set_count_on_hand(0) if count_on_hand > 0
+    end
+
+    def fill_status(quantity)
+      if count_on_hand >= quantity
+        on_hand = quantity
+        backordered = 0
+      else
+        on_hand = count_on_hand
+        on_hand = 0 if on_hand < 0
+        backordered = backorderable? ? (quantity - on_hand) : 0
+      end
+
+      [on_hand, backordered]
     end
 
     private
       def verify_count_on_hand?
-        count_on_hand_changed? && !backorderable? && (count_on_hand < count_on_hand_was) && (count_on_hand < 0)
+        count_on_hand_changed? && !backorderable? && count_on_hand < count_on_hand_was && count_on_hand < 0
       end
 
       # Process backorders based on amount of stock received
