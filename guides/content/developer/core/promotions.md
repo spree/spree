@@ -5,7 +5,7 @@ section: core
 
 ## Overview
 
-Promotions within Spree are used to provide discounts to orders, as well as to add potential additional items at no extra cost. Promotions are one of the most complex areas within Spree, as there are a large number of moving parts to consider. Although this guide will explain Promotions from a developer's perspective, if you are new to this area you can learn a lot from the Admin > Promotions tab where you can set up new Promotions, edit rules & actions, etc. 
+Promotions within Spree are used to provide discounts to orders, as well as to add potential additional items at no extra cost. Promotions are one of the most complex areas within Spree, as there are a large number of moving parts to consider. Although this guide will explain Promotions from a developer's perspective, if you are new to this area you can learn a lot from the Admin > Promotions tab where you can set up new Promotions, edit rules & actions, etc.
 
 Promotions can be activated in three different ways:
 
@@ -99,19 +99,17 @@ en:
 
 ## Rules
 
-There are five rules which come with Spree 2.2 and Spree 2.3:
+There are five rules which come with Spree 3.2:
 
 * `FirstOrder`: The user's order is their first.
 * `ItemTotal`: The order's total is greater than (or equal to) a given value.
 * `Product`: An order contains a specific product.
 * `User` The order is by a specific user.
 * `UserLoggedIn`: The user is logged in.
-
-Spree 2.4 adds an two more rules in addition to the five listed above:
 * `One Use Per User`: Can be used only once per customer.
 * `Taxon(s)`: Order includes product(s) with taxons that you associate to this rule.
 
-Rules are used by Spree to determine if a promotion is applicable to an order and can be matched in one of two ways: all of the rules must match, or one rule must match. This is determined by the `match_policy` attribute on the `Promotion` object. As you will see in the Admin, you can set the match_policy to be "any" or "all" of the rules associated with the Promotion. When set to "any" the Promotion will be considered eligible if any one of the rules applies, when set to "all" it will be eligible only if all the rules apply. 
+Rules are used by Spree to determine if a promotion is applicable to an order and can be matched in one of two ways: all of the rules must match, or one rule must match. This is determined by the `match_policy` attribute on the `Promotion` object. As you will see in the Admin, you can set the match_policy to be "any" or "all" of the rules associated with the Promotion. When set to "any" the Promotion will be considered eligible if any one of the rules applies, when set to "all" it will be eligible only if all the rules apply.
 
 
 
@@ -127,11 +125,11 @@ module Spree
         def applicable?(promotable)
           promotable.is_a?(Spree::Order)
         end
-      
+
         def eligible?(order, options = {})
           ...
         end
-      
+
         def actionable?(line_item)
           ...
         end
