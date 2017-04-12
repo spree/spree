@@ -32,7 +32,11 @@ class AddMissingUniqueIndexesForUniqueAttributes < ActiveRecord::Migration[5.0]
           end
 
           remove_index table_name, column if index_exists?(table_name, column)
-          add_index table_name, "lower(#{column})", unique: true
+          if supports_expression_index?
+            add_index table_name, "lower(#{column})", unique: true
+          else
+            add_index table_name, column, unique: true
+          end
         end
       end
     end
