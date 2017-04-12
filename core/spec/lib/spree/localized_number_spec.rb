@@ -43,6 +43,12 @@ describe Spree::LocalizedNumber do
         expect(number).to eql(number_bak)
       end
     end
+
+    context "with empty string" do
+      it "should return 0" do
+        expect(subject.class.parse('')).to eql 0
+      end
+    end
   end
 
 end
