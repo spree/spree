@@ -3,11 +3,12 @@
 module Spree
   module Stock
     class Adjuster
-      attr_accessor :inventory_unit, :status, :fulfilled
+      attr_accessor :inventory_unit, :status, :fulfilled, :package
 
-      def initialize(inventory_unit, status)
+      def initialize(inventory_unit, status, package=nil)
         @inventory_unit = inventory_unit
         @status = status
+        @package = package
         @fulfilled = false
       end
 
@@ -17,6 +18,12 @@ module Spree
         else
           self.fulfilled = true
         end
+      end
+
+      def reassign(status, package)
+        @fulfilled = false
+        @status = status
+        @package = package
       end
 
       def fulfilled?
