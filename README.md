@@ -92,11 +92,19 @@ bundle exec rake spree_sample:load
 Browse Store
 ----------------------
 
+#### Rails 5
+http://localhost:5000
+
+#### Rails 4.2
 http://localhost:3000
 
 Browse Admin Interface
 ----------------------
 
+#### Rails 5
+http://localhost:5000/admin
+
+#### Rails 4.2
 http://localhost:3000/admin
 
 Extensions
