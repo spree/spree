@@ -68,7 +68,7 @@ module Spree
 
     def populate_redirect
       flash[:error] = Spree.t(:populate_get_error)
-      redirect_to('/cart')
+      redirect_to cart_path
     end
 
     def empty
