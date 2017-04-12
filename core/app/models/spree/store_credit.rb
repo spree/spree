@@ -18,9 +18,9 @@ module Spree
     belongs_to :credit_type, class_name: 'Spree::StoreCreditType', foreign_key: 'type_id'
     has_many :store_credit_events
 
-    validates_presence_of :user, :category, :credit_type, :created_by, :currency
-    validates_numericality_of :amount, greater_than: 0
-    validates_numericality_of :amount_used, greater_than_or_equal_to: 0
+    validates :user, :category, :credit_type, :created_by, :currency, presence: true
+    validates :amount, numericality: { greater_than: 0 }
+    validates :amount_used, numericality: { greater_than_or_equal_to: 0 }
     validate :amount_used_less_than_or_equal_to_amount
     validate :amount_authorized_less_than_or_equal_to_amount
 
