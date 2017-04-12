@@ -49,6 +49,9 @@ module Spree
       if quantity.between?(1, 2_147_483_647)
         begin
           order.contents.add(variant, quantity, options)
+          order.update_line_item_prices!
+          order.create_tax_charge!
+          order.update_with_updater!
         rescue ActiveRecord::RecordInvalid => e
           error = e.record.errors.full_messages.join(", ")
         end
