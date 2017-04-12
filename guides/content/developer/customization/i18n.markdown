@@ -13,8 +13,7 @@ extensions.
 
 Spree uses the standard Rails approach to internationalization so we suggest
 take some time to review the [official Rails i18n
-guide](http://guides.rubyonrails.org/i18n.html) and the
-[rails-i18n.org wiki](http://rails-i18n.org/wiki) to help you get started.
+guide](http://guides.rubyonrails.org/i18n.html) to help you get started.
 
 ### The spree_i18n project
 
@@ -26,7 +25,7 @@ which keeps their localizations in
 [rails-i18n](https://github.com/svenfuchs/rails-i18n).
 
 The project is actually a Spree extension. This extension contains translations and
-uses the [globalize3 gem](https://github.com/svenfuchs/globalize3) to provide
+uses the [globalize3 gem](https://github.com/globalize/globalize) to provide
 translations for model records.
 
 !!!
