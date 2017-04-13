@@ -109,7 +109,7 @@ Spree will then detect this parameter, find the template, and then use this to
 render the response.
 
 ***
-Due to [the way this implemented](https://github.com/spree/spree/blob/v2.3.1/api/v1/lib/spree/api/v1/responders/rabl_template.rb#L5-L18)
+Due to [the way this implemented](https://github.com/spree/spree/blob/2-3-stable/api/lib/spree/api/responders/rabl_template.rb#L5-L18)
 you need to ensure the action rendering in your custom template explicitly
 calls `respond_with`
 ***
