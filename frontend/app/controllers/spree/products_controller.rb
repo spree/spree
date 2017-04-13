@@ -41,7 +41,9 @@ module Spree
         else
           @products = Product.active(current_currency)
         end
-        @product = @products.includes(:variants_including_master, variant_images: :viewable).friendly.find(params[:id])
+
+        @product = @products.includes(:variants_including_master, variant_images: :viewable).
+                             friendly.distinct(false).find(params[:id])
       end
 
       def load_taxon
