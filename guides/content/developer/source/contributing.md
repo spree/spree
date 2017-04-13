@@ -237,6 +237,12 @@ $ nanoc compile
 $ nanoc view
 ```
 
+Or just start the nanoc autocompiler that tracks file changes and compiles the files when needed:
+
+```bash
+$ nanoc autocompile
+```
+
 ## Markdown Conventions
 
 It is helpful to standardize some markdown conventions so readers learn to recognize visual cues as they work their way through the documentation and tutorials. Following are the conventions used for the Spree documentation:
