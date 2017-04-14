@@ -87,3 +87,9 @@ application that exists at the same path as a template within the API engine.
 For instance, if you place a template in your application at
 `app/views/spree/api/v1/products/show.v1.rabl`, it will take precedence over the
 template within the API engine.
+
+***
+Due to [the way this implemented](https://github.com/spree/spree/blob/2-3-stable/api/lib/spree/api/responders/rabl_template.rb#L5-L18)
+you need to ensure the action rendering in your custom template explicitly
+calls `respond_with`
+***
