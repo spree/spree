@@ -1,8 +1,8 @@
 module Spree
   module FrontendHelper
-    def body_class
-      @body_class ||= content_for?(:sidebar) ? 'two-col' : 'one-col'
-      @body_class
+    def spree_body_class
+      @spree_body_class ||= content_for?(:sidebar) ? 'two-col' : 'one-col'
+      @spree_body_class
     end
 
     def breadcrumbs(taxon, separator="&nbsp;")
