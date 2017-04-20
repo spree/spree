@@ -23,6 +23,8 @@
         <div class="col-md-4">
           <div class="form-group">
             <strong><%= label_tag nil, Spree.t(:guest_checkout) %></strong>
+            <% guest = @order.user.nil? %>
+
             <% if @order.completed? %>
               <div>
                 <span class="badge">
@@ -31,7 +33,6 @@
                 </span>
               </div>
             <% else %>
-              <% guest = @order.user.nil? %>
               <div class="radio no-margint">
                 <%= label_tag :guest_checkout_true do %>
                   <%= radio_button_tag :guest_checkout, true, guest %>

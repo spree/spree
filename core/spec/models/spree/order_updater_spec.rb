@@ -67,6 +67,17 @@ module Spree
       end
     end
 
+    describe "#update_with_updater!" do
+      it "updates item count" do
+        create(:line_item, order: order)
+        create(:line_item, order: order)
+
+        order.update_with_updater!
+
+        expect(order.item_count).to eq(2)
+      end
+    end
+
     context "updating shipment state" do
       before do
         allow(order).to receive_messages backordered?: false
