@@ -110,12 +110,6 @@ describe "Adjustments", type: :feature do
   end
 
   context "deleting an adjustment" do
-    it "should not be possible if adjustment is closed" do
-      within_row(1) do
-        expect(page).not_to have_css('.fa-delete')
-      end
-    end
-
     it "should update the total", js: true do
       accept_alert do
         within_row(2) do

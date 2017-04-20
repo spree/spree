@@ -321,8 +321,6 @@ describe "Order Details", type: :feature, js: true do
 
               expect(page.current_path).to eq(spree.edit_admin_order_path(order))
               expect(page).not_to have_text 'Cart'
-              expect(page).not_to have_selector('.fa-split')
-              expect(page).not_to have_selector('.fa-trash')
             end
 
           end
