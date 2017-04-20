@@ -28,8 +28,8 @@
             <% if @order.completed? %>
               <div>
                 <span class="badge">
-                  <%= guest ? Spree.t(:say_yes) : Spree.t(:say_no) %>
-                  <%= hidden_field_tag :guest_checkout, guest %>
+                  <%= @order.user.nil? ? Spree.t(:say_yes) : Spree.t(:say_no) %>
+                  <%= hidden_field_tag :guest_checkout, 'true' if @order.user.nil? %>
                 </span>
               </div>
             <% else %>
