@@ -6,6 +6,7 @@ jQuery ($) ->
       @url  = Spree.url("#{Spree.routes.payments_api(order_id)}/#{id}.json" + '?token=' + Spree.api_key)
       @json = $.getJSON @url.toString(), (data) =>
         @data = data
+      @updating = false
 
     if_editable: (callback) ->
       @json.done (data) ->
@@ -128,9 +129,6 @@ jQuery ($) ->
       $('<input />')
         .prop(id: 'amount', value: amount)
         .width(width)
-        .one
-          blur: =>
-            @save()
         .css('text-align': 'right')
 
     $input: ->
