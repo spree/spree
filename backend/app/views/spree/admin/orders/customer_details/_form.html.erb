@@ -27,7 +27,7 @@
               <div>
                 <span class="badge">
                   <%= @order.user.nil? ? Spree.t(:say_yes) : Spree.t(:say_no) %>
-                  <%= radio_button_tag :guest_checkout, true, @order.user.nil?, class: 'hide' %>
+                  <%= hidden_field_tag :guest_checkout, 'true' if @order.user.nil? %>
                 </span>
               </div>
             <% else %>
