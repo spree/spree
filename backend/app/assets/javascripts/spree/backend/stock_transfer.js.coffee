@@ -97,7 +97,10 @@ $ ->
         'variant_product_name_or_variant_sku_cont')
 
     format_variant_result: (result) ->
-      "#{result.name} - #{result.sku}"
+      if !!result.options_text
+        "#{result.name} - #{result.sku} (#{result.options_text})"
+      else
+        "#{result.name} - #{result.sku}"
 
     build_select: (url, query) ->
       $('#transfer_variant').select2
