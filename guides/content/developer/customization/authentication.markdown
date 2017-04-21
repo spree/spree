@@ -89,40 +89,45 @@ your application's authentication routes.
 #### Authentication Helpers
 
 There are some authentication helpers of Spree's that you will need to
-possibly override. The file at *lib/spree/authentication_helpers.rb*
+possibly override. The file at */lib/generators/spree/custom_user/templates/authentication_helpers.rb.tt*
 contains the following code to help you do that:
 
 ```ruby
 module Spree
+  module CurrentUserHelpers
+    def self.included(receiver)
+      receiver.send :helper_method, :spree_current_user
+    end
+
+    def spree_current_user
+      current_user
+    end
+  end
+
   module AuthenticationHelpers
-     def self.included(receiver)
-       receiver.send :helper_method, :spree_login_path
-       receiver.send :helper_method, :spree_signup_path
-       receiver.send :helper_method, :spree_logout_path
-       receiver.send :helper_method, :spree_current_user
-     end
+    def self.included(receiver)
+      receiver.send :helper_method, :spree_login_path
+      receiver.send :helper_method, :spree_signup_path
+      receiver.send :helper_method, :spree_logout_path
+    end
 
-     def spree_current_user
-       current_person
-     end
+    def spree_login_path
+      main_app.login_path
+    end
 
-     def spree_login_path
-       main_app.login_path
-     end
+    def spree_signup_path
+      main_app.signup_path
+    end
 
-     def spree_signup_path
-       main_app.signup_path
-     end
-
-     def spree_logout_path
-       main_app.logout_path
-     end
-   end
+    def spree_logout_path
+      main_app.logout_path
+    end
+  end
 end
 
-Spree::BaseController.include Spree::AuthenticationHelpers
-Spree::Api::BaseController.include Spree::AuthenticationHelpers
 ApplicationController.include Spree::AuthenticationHelpers
+ApplicationController.include Spree::CurrentUserHelpers
+Spree::Api::BaseController.include Spree::CurrentUserHelpers
 ```
 
 Each of the methods defined in this module return values that are the
