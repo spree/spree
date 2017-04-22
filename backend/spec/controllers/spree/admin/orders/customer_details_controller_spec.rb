@@ -59,7 +59,7 @@ describe Spree::Admin::Orders::CustomerDetailsController, type: :controller do
             it { expect(order).to receive(:address?) }
             it 'does refresh the shipment rates with all shipping methods' do
               expect(order).to receive(:refresh_shipment_rates).
-                with(Spree::ShippingMethod::DISPLAY_ON_FRONT_AND_BACK_END)
+                with(Spree::ShippingMethod::DISPLAY_ON_BACK_END)
             end
             it { expect(controller).to receive(:load_order).and_call_original }
             it { expect(controller).to receive(:guest_checkout?).twice.and_call_original }
@@ -117,7 +117,7 @@ describe Spree::Admin::Orders::CustomerDetailsController, type: :controller do
             it { expect(order).to receive(:address?) }
             it 'does refresh the shipment rates with all shipping methods' do
               expect(order).to receive(:refresh_shipment_rates).
-                with(Spree::ShippingMethod::DISPLAY_ON_FRONT_AND_BACK_END)
+                with(Spree::ShippingMethod::DISPLAY_ON_BACK_END)
             end
             it { expect(controller).to receive(:load_order).and_call_original }
             it { expect(controller).to receive(:guest_checkout?).twice.and_call_original }

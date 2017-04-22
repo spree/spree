@@ -5,6 +5,9 @@ end
 
 describe Spree::ShippingMethod, type: :model do
   let(:shipping_method){ create(:shipping_method) }
+  let(:frontend_shipping_method) { create :shipping_method, display_on: 'front_end' }
+  let(:backend_shipping_method) { create :shipping_method, display_on: 'back_end' }
+  let(:front_and_back_end_shipping_method) { create :shipping_method, display_on: 'both' }
 
   context 'calculators' do
     it "Should reject calculators that don't inherit from Spree::ShippingCalculator" do
@@ -92,4 +95,31 @@ describe Spree::ShippingMethod, type: :model do
       expect(shipping_method.deleted_at).not_to be_blank
     end
   end
+
+  describe '#available_to_display?' do
+    context 'when available on frontend' do
+      it { expect(frontend_shipping_method.available_to_display?(Spree::ShippingMethod::DISPLAY_ON_FRONT_END)).to be true }
+      it { expect(backend_shipping_method.available_to_display?(Spree::ShippingMethod::DISPLAY_ON_FRONT_END)).to be false }
+      it { expect(front_and_back_end_shipping_method.available_to_display?(Spree::ShippingMethod::DISPLAY_ON_FRONT_END)).to be true }
+    end
+
+    context 'when available on backend' do
+      it { expect(frontend_shipping_method.available_to_display?(Spree::ShippingMethod::DISPLAY_ON_BACK_END)).to be false }
+      it { expect(backend_shipping_method.available_to_display?(Spree::ShippingMethod::DISPLAY_ON_BACK_END)).to be true }
+      it { expect(front_and_back_end_shipping_method.available_to_display?(Spree::ShippingMethod::DISPLAY_ON_BACK_END)).to be true }
+    end
+  end
+
+  describe '#frontend?' do
+    it { expect(frontend_shipping_method.send(:frontend?)).to be true }
+    it { expect(backend_shipping_method.send(:frontend?)).to be false }
+    it { expect(front_and_back_end_shipping_method.send(:frontend?)).to be true }
+  end
+
+  describe '#backend?' do
+    it { expect(frontend_shipping_method.send(:backend?)).to be false }
+    it { expect(backend_shipping_method.send(:backend?)).to be true }
+    it { expect(front_and_back_end_shipping_method.send(:backend?)).to be true }
+  end
+
 end

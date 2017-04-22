@@ -56,7 +56,7 @@ module Spree
       def edit
         can_not_transition_without_customer_info
 
-        @order.refresh_shipment_rates(ShippingMethod::DISPLAY_ON_FRONT_AND_BACK_END)
+        @order.refresh_shipment_rates(ShippingMethod::DISPLAY_ON_BACK_END)
       end
 
       def cart
