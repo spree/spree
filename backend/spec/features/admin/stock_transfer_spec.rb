@@ -3,6 +3,22 @@ require 'spec_helper'
 describe 'Stock Transfers', type: :feature, js: true do
   stub_authorization!
 
+  it 'shows variants with options text' do
+    create(:stock_location_with_items, name: 'NY')
+
+    product = Spree::Product.first
+    variant = create(:variant, product: product)
+    variant.set_option_value('Color', 'Green')
+
+    visit spree.admin_stock_transfers_path
+    click_on 'New Stock Transfer'
+
+    select2_search variant.sku, from: 'Variant'
+
+    content = "#{variant.name} - #{variant.sku} (#{variant.options_text})"
+    expect(page).to have_content(content)
+  end
+
   it 'transfer between 2 locations' do
     source_location = create(:stock_location_with_items, name: 'NY')
     destination_location = create(:stock_location, name: 'SF')
