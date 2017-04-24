@@ -1,6 +1,6 @@
 <div class="panel-body calculator-fields">
   <div class="row no-marginb">
-    <div class="form-group col-md-6 no-marginb">
+    <div class="form-group col-xs-12 col-md-6 no-marginb">
       <% field_name = "#{param_prefix}[calculator_type]" %>
       <%= label_tag field_name, Spree.t(:calculator) %>
       <%= select_tag field_name,
@@ -8,7 +8,7 @@
                     class: 'type-select select2' %>
     </div>
     <% unless promotion_action.new_record? %>
-      <div class="form-group col-md-6 no-marginb settings">
+      <div class="form-group col-xs-12 col-md-6 no-marginb settings">
         <% promotion_action.calculator.preferences.keys.map do |key| %>
           <% field_name = "#{param_prefix}[calculator_attributes][preferred_#{key}]" %>
           <%= label_tag field_name, Spree.t(key.to_s) %>

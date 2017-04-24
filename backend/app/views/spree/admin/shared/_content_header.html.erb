@@ -2,7 +2,7 @@
   <div class="content-header <%= "with-page-tabs" if content_for?(:page_tabs) %> page-header">
     <div class="row">
       <% if content_for?(:page_title) %>
-        <h1 class="col-sm-<%= content_for?(:page_actions) ? '6' : '12'  %>">
+        <h1 class="col-xs-<%= content_for?(:page_actions) ? '6' : '12'  %>">
           <%= yield :page_title %>
           <% if content_for?(:page_title_small) %>
             <small><%= yield :page_title_small %></small>
@@ -11,7 +11,7 @@
       <% end %>
 
       <% if content_for?(:page_actions) %>
-        <div class="page-actions col-sm-6" data-hook="toolbar">
+        <div class="page-actions col-xs-6" data-hook="toolbar">
           <%= yield :page_actions %>
         </div>
       <% end %>

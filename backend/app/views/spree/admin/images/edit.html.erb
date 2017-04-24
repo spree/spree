@@ -11,11 +11,11 @@
     </div>
     <div class="panel-body">
       <div class="form-group">
-        <div data-hook="thumbnail" class="col-md-3 text-center">
+        <div data-hook="thumbnail" class="col-xs-12 col-md-3 text-center">
           <%= f.label Spree.t(:thumbnail) %>
           <%= link_to image_tag(@image.attachment.url(:small)), @image.attachment.url(:product) %>
         </div>
-        <div class="col-md-9">
+        <div class="col-xs-12 col-md-9">
           <%= render partial: 'form', locals: { f: f } %>
         </div>
 
