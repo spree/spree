@@ -20,10 +20,10 @@
 <% if can?(:edit, Spree::Adjustment) %>
   <div class="panel-footer">
     <div class="row text-center">
-      <div class="col-md-6">
+      <div class="col-xs-12 col-md-6">
         <%= button_to Spree.t(:open_all_adjustments), open_adjustments_admin_order_path(@order), method: :get, class: "btn btn-success" %>
       </div>
-      <div class="col-md-6">
+      <div class="col-xs-12 col-md-6">
         <%= button_to Spree.t(:close_all_adjustments), close_adjustments_admin_order_path(@order), method: :get, class: "btn btn-danger" %>
       </div>
     </div>

@@ -1,6 +1,6 @@
 <div data-hook="admin_inside_taxon_form">
   <div class="row">
-    <div class="col-md-5">
+    <div class="col-xs-12 col-md-5">
       <%= f.field_container :name, class: ['form-group'] do %>
         <%= f.label :name, Spree.t(:name) %> <span class="required">*</span>
         <%= text_field :taxon, :name, class: 'form-control' %>
@@ -21,7 +21,7 @@
       <% end %>
     </div>
 
-    <div class="col-md-7">
+    <div class="col-xs-12 col-md-7">
       <%= f.field_container :description, class: ['form-group'] do %>
         <%= f.label :description, Spree.t(:description) %>
         <%= f.text_area :description, class: 'form-control', rows: 6 %>

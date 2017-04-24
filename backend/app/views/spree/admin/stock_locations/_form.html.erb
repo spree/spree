@@ -1,6 +1,6 @@
 <div data-hook="admin_stock_locations_form_fields">
   <div class="row">
-    <div class="col-md-9" data-hook="stock_location_names">
+    <div class="col-xs-12 col-md-9" data-hook="stock_location_names">
       <div data-hook="stock_location_name">
         <%= f.field_container :name, class: ['form-group']  do %>
           <%= f.label :name, Spree.t(:name) %> <span class="required">*</span><br />
@@ -16,7 +16,7 @@
       </div>
     </div>
 
-    <div class="col-md-3" data-hook="stock_location_status">
+    <div class="col-xs-12 col-md-3" data-hook="stock_location_status">
       <strong><%= Spree.t(:status) %></strong>
       <div class="checkbox" data-hook="stock_location_active">
         <%= label_tag :active do %>

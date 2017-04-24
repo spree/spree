@@ -2,7 +2,7 @@
 
   <div data-hook="payment_method" class="row">
 
-    <div class="col-md-4">
+    <div class="col-xs-12 col-md-4">
       <div id="preference-settings" data-hook class="form-group">
         <%= f.label :type, Spree.t(:provider) %>
         <%= collection_select(:payment_method, :type, @providers, :to_s, :name, {}, {id: 'gtwy-type', class: 'select2'}) %>
@@ -41,7 +41,7 @@
       </div>
     </div>
 
-    <div class="col-md-8">
+    <div class="col-xs-12 col-md-8">
       <%= field_container :payment_method, :name, class: ['form-group'], 'data-hook' => 'name' do %>
         <%= label_tag :payment_method_name, Spree.t(:name) %>
         <%= text_field :payment_method, :name, class: 'form-control' %>
