@@ -81,7 +81,8 @@ This will enable your application to serve static assets and direct logging to s
 ### Rails 4
 
 For Spree 2.2 and earlier, be sure to add this to your application.rb file:
-```
+
+```ruby
 config.assets.precompile += %w(
       store/all.js
       store/all.css
@@ -133,9 +134,9 @@ This guide will assume that you have an S3 account already, along with a bucket
 under that account for your files to go into, and that you have generated the
 access key and secret for your S3 account.
 
-To configure Spree to upload images to S3, please refer to the following [documentation](http://guides.spreecommerce.org/developer/s3_storage.html) or follow an [equivalent solution](https://devcenter.heroku.com/articles/paperclip-s3) from Heroku's website.
+To configure Spree to upload images to S3, please refer to the following [documentation](/developer/s3_storage.html) or follow an [equivalent solution](https://devcenter.heroku.com/articles/paperclip-s3) from Heroku's website.
 
-This strategy works reasonably well if you image is 3 MB or smaller. If your images are larger, you will need to implement the [Direct Upload Method](https://devcenter.heroku.com/articles/direct-to-s3-image-uploads-in-rails), which is significantly more complicated. 
+This strategy works reasonably well if you image is 3 MB or smaller. If your images are larger, you will need to implement the [Direct Upload Method](https://devcenter.heroku.com/articles/direct-to-s3-image-uploads-in-rails), which is significantly more complicated.
 
 ## Pushing to Heroku
 

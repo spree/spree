@@ -68,6 +68,7 @@ end
 compile '/developer/' do
   filter :pretty_urls
   filter :erb
+  filter :fenced_code_blocks
   filter :kramdown, toc_levels: [2], coderay_line_numbers: nil, coderay_css: :class
   layout 'developer'
 end
@@ -107,7 +108,6 @@ compile '/api/*' do
   filter :parse_info_boxes
   # Converts ``` codeblocks into Kramdown-friendly ~~~
   filter :fenced_code_blocks
-  filter :parse_info_boxes
   filter :kramdown, toc_levels: [2], coderay_line_numbers: nil, coderay_css: :class
   layout 'api/default'
 end
@@ -197,7 +197,7 @@ route '/developer/customization/*/' do
 end
 
 route '/developer/upgrades/*/' do
-  location = item.identifier
+  location = item.identifier.gsub('/upgrades/', '/')
   location.chop + ".html"
 end
 

@@ -107,7 +107,7 @@ For example, your spreadsheet could have the following columns:
 -   one column for each property type used in your catalogue
 
 ### Variant Specifications
--   option types for the product\
+-   option types for the product
 -   one variant per column, each listing the option values and the price/sku
 
 Note that if you know how many fixed columns and properties to expect,
@@ -182,12 +182,13 @@ etc.
 
 Products must have at least a name and a price in order to pass
 validation, and we set the description too.
+
 ```ruby
 p = Spree::Product.create name: 'some product', price: 10.0,
 description: 'some text here'
 ```
 
-Observe that the*permalink+ and timestamps are added automatically.
+Observe that the permalink and timestamps are added automatically.
 You may want to set the 'meta' fields for SEO purposes.
 
 ***
@@ -328,6 +329,7 @@ size_prop = Spree::Property.where(name: 'size', presentation: 'Size').first_or_c
 Then you just set the value for the property-product pair.
 Assuming value*size_info+ which is derived from the relevant
 column, this means:
+
 ```ruby
 Spree::ProductProperty.create property: size_prop, product: p, value: size_info
 ```

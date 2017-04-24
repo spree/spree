@@ -102,6 +102,6 @@ Application Server in a production environment.
 |0.11.x|512MB|2-4|
 
 Database servers for use in multi-server configurations generally
-require a minimum of 512MB RAM when serving one or two applicaiton
+require a minimum of 512MB RAM when serving one or two application
 servers, however this should be increased when more or larger capacity
 application servers are used.
