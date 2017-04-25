@@ -2,6 +2,7 @@ require 'rails/generators'
 require 'highline/import'
 require 'bundler'
 require 'bundler/cli'
+require 'active_support/core_ext/string/indent'
 
 module Spree
   class InstallGenerator < Rails::Generators::Base
