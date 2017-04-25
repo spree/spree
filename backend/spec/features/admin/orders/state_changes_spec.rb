@@ -13,8 +13,8 @@ describe "Order - State Changes", type: :feature do
     it 'are viewable' do
       within_row(1) do
         within('td:nth-child(1)') { expect(page).to have_content('Order') }
-        within('td:nth-child(2)') { expect(page).to have_content('Cart') }
-        within('td:nth-child(3)') { expect(page).to have_content('Address') }
+        within('td:nth-child(2)') { expect(page).to have_content('cart') }
+        within('td:nth-child(3)') { expect(page).to have_content('address') }
       end
     end
   end
