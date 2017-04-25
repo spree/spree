@@ -14,10 +14,15 @@ module Spree
         OPERATORS_MAX = ['lt','lte']
 
         def applicable?(promotable)
-          promotable.is_a?(Spree::Order)
+          promotable.is_a?(Spree::Order) || promotable.is_a?(Spree::Shipment)
         end
 
-        def eligible?(order, options = {})
+        def eligible?(promotable, options = {})
+          if order.is_a?(Spree::Shipment)
+            order = promotable.order
+          else
+            order = promotable
+          end
           item_total = order.item_total
 
           lower_limit_condition = item_total.send(preferred_operator_min == 'gte' ? :>= : :>, BigDecimal.new(preferred_amount_min.to_s))

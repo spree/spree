@@ -409,6 +409,7 @@ module Spree
       end
 
       def update_adjustments
+        PromotionHandler::Cart.new(order).activate
         if cost_changed? && state != 'shipped'
           recalculate_adjustments
         end
