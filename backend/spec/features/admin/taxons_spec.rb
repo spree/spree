@@ -2,17 +2,11 @@ require 'spec_helper'
 
 feature "Taxonomies and taxons" do
   stub_authorization!
-  before(:all) do
-    visit spree.new_admin_taxonomy_path
 
-    fill_in "Name", with: "Hello"
-    click_button "Create"
-
-    @taxonomy = Spree::Taxonomy.last
-  end
+  let(:taxonomy) { create(:taxonomy, name: 'Hello') }
 
   scenario "admin should be able to edit taxon" do
-    visit spree.edit_admin_taxonomy_taxon_path(@taxonomy, @taxonomy.root.id)
+    visit spree.edit_admin_taxonomy_taxon_path(taxonomy, taxonomy.root.id)
 
     fill_in "taxon_name", with: "Shirt"
     fill_in "taxon_description", with: "Discover our new rails shirts"
@@ -23,7 +17,7 @@ feature "Taxonomies and taxons" do
   end
 
   scenario "taxon without name should not be updated" do
-    visit spree.edit_admin_taxonomy_taxon_path(@taxonomy, @taxonomy.root.id)
+    visit spree.edit_admin_taxonomy_taxon_path(taxonomy, taxonomy.root.id)
 
     fill_in "taxon_name", with: ""
     fill_in "taxon_description", with: "Discover our new rails shirts"
