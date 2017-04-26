@@ -3,8 +3,6 @@ module Spree
     acts_as_paranoid
     acts_as_list scope: :product
 
-    include Spree::DefaultPrice
-
     belongs_to :product, touch: true, class_name: 'Spree::Product', inverse_of: :variants
     belongs_to :tax_category, class_name: 'Spree::TaxCategory'
 
@@ -15,6 +13,9 @@ module Spree
     # we need to have this callback before any dependent: :destroy associations
     # https://github.com/rails/rails/issues/3458
     before_destroy :ensure_no_line_items
+
+	  # must include this after ensure_no_line_items to make sure price won't be deleted before validation
+	  include Spree::DefaultPrice
 
     with_options inverse_of: :variant do
       has_many :inventory_units
