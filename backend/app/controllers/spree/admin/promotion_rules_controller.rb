@@ -5,7 +5,7 @@ class Spree::Admin::PromotionRulesController < Spree::Admin::BaseController
   before_action :validate_promotion_rule_type, only: :create
 
   def create
-    @promotion_rule = @promotion_rule_type.new(params[:promotion_rule])
+    @promotion_rule = @promotion_rule_type.new(promotion_rule_params)
     @promotion_rule.promotion = @promotion
     if @promotion_rule.save
       flash[:success] = Spree.t(:successfully_created, resource: Spree.t(:promotion_rule))
@@ -46,5 +46,9 @@ class Spree::Admin::PromotionRulesController < Spree::Admin::BaseController
         format.js   { render layout: false }
       end
     end
+  end
+
+  def promotion_rule_params
+    params[:promotion_rule].permit!
   end
 end
