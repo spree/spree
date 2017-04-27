@@ -84,7 +84,7 @@ describe Spree::Admin::OrdersController, type: :controller do
 
     # Regression test for #3684
     describe "#edit" do
-      let(:display_value) { Spree::ShippingMethod::DISPLAY_ON_FRONT_AND_BACK_END }
+      let(:display_value) { Spree::ShippingMethod::DISPLAY_ON_BACK_END }
 
       before do
         allow(controller).to receive(:can_not_transition_without_customer_info)

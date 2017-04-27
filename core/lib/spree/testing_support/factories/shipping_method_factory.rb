@@ -3,6 +3,7 @@ FactoryGirl.define do
     zones { |a| [Spree::Zone.global] }
     name 'UPS Ground'
     code 'UPS_GROUND'
+    display_on 'both'
 
     before(:create) do |shipping_method, evaluator|
       if shipping_method.shipping_categories.empty?
