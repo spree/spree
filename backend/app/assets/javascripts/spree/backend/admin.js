@@ -44,9 +44,9 @@ jQuery(function($) {
       .toggleClass(mainWrapperExpandedClasses);
 
     if (wrapper.hasClass('sidebar-minimized')) {
-      $.cookie('sidebar-minimized', 'false', { path: '/admin' });
-    } else {
       $.cookie('sidebar-minimized', 'true', { path: '/admin' });
+    } else {
+      $.cookie('sidebar-minimized', 'false', { path: '/admin' });
     }
   });
 
