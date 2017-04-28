@@ -11,7 +11,7 @@ module Spree
           flash_class = "info" if flash[:notice]
           flash_class = "success" if flash[:success]
           flash_div = content_tag(:div, (close_button + message), class: "alert alert-#{flash_class} alert-auto-disappear")
-          content_tag(:div, flash_div, class: 'col-md-12')
+          content_tag(:div, flash_div, class: 'col-xs-12')
         end
       end
 

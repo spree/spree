@@ -74,7 +74,7 @@ These sizes can be changed by altering the value of `Spree::Image.attachment_def
 $ bundle exec rake paperclip:refresh:thumbnails CLASS=Spree::Image
 ```
 
-If you want to change the image that is displayed when a product has no image, simply create new versions of the files within [Spree's app/assets/images/noimage directory](https://github.com/spree/spree/tree/master/frontend/app/assets/images/noimage). These image names must match the keys within `Spree::Config[:attachment_styles]`.
+If you want to change the image that is displayed when a product has no image, simply set `Spree::Image.attachment_definitions[:attachment][:default_url]` with a path to the image that you want to use like this: `/assets/images/missing_:style.png`. These image styles must match the keys within `Spree::Config[:attachment_styles]`. That means that ideally, you'd have four images of different sizes: `missing_mini.png`, `missing_small.png`, `missing_product.png`, and `missing_large.png`.
 
 ## Product Properties
 

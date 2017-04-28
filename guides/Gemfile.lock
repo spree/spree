@@ -176,7 +176,7 @@ GEM
     thor (0.19.1)
     timers (4.0.1)
       hitimes
-    yajl-ruby (1.2.1)
+    yajl-ruby (1.3.0)
 
 PLATFORMS
   ruby
@@ -200,7 +200,7 @@ DEPENDENCIES
   rb-fsevent
   rspec
   sass
-  yajl-ruby
+  yajl-ruby (~> 1.3.0)
 
 BUNDLED WITH
-   1.11.2
+   1.14.6

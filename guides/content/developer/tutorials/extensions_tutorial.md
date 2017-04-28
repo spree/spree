@@ -28,7 +28,7 @@ gem 'spree_i18n', github: 'spree-contrib/spree_i18n', branch: 'master'
 ```
 
 ***
-If you are using a 3.0.x or 2.x version of Spree, you'll need to change the `branch` to `X-X-stable` 
+If you are using a 3.0.x or 2.x version of Spree, you'll need to change the `branch` to `X-X-stable`
 to match the version of Spree you're using. For example, use `3-0-stable` if you're using Spree `3.0.x`.
 ***
 
@@ -66,7 +66,7 @@ $ cd spree_simple_sales
 
 ### Adding a Sale Price to Variants
 
-The first thing we need to do is create a migration that adds a sale_price column to [variants](http://guides.spreecommerce.org/products_and_variants.html#what-is-a-variant).
+The first thing we need to do is create a migration that adds a sale_price column to [variants](/developer/products.html#variants).
 
 We can do this with the following command:
 
@@ -86,7 +86,7 @@ end
 
 ### Adding Our Extension to the Spree Application
 
-Before we continue development of our extension, let's add it to the Spree application we created in the [last tutorial](/developer/getting_started.html). This will allow us to see how the extension works with an actual Spree store while we develop it.
+Before we continue development of our extension, let's add it to the Spree application we created in the [last tutorial](/developer/getting_started_tutorial.html). This will allow us to see how the extension works with an actual Spree store while we develop it.
 
 Within the `mystore` application directory, add the following line to the bottom of our `Gemfile`:
 
@@ -150,7 +150,7 @@ end
 
 #### Setting the Sale Price for a Variant
 
-Now that our variants have the attribute `sale_price` available to them, let's update the sample data so we have at least one product that is on sale in our application. We will need to do this in the rails console for the time being, as we have no admin interface to set sale prices for variants. We will be adding this functionality in the [next tutorial]() in this series, Deface overrides.
+Now that our variants have the attribute `sale_price` available to them, let's update the sample data so we have at least one product that is on sale in our application. We will need to do this in the rails console for the time being, as we have no admin interface to set sale prices for variants. We will be adding this functionality in the [next tutorial](deface_overrides_tutorial) in this series, Deface overrides.
 
 So, in order to do this, first open up the rails console:
 

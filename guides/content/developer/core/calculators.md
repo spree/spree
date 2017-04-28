@@ -17,7 +17,7 @@ def compute(object=nil)
 end
 ```
 
-Calculators link to a `calculable` object, which are typically one of `Spree::ShippingMethod`, `Spree::TaxRate`, or `Spree::Promotion::Actions::CreateAdjustment`. These three classes use the [`Spree::Core::CalculatedAdjustment`](#calculated-adjustments) module to provide an easy way to calculate adjustments for their objects.
+Calculators link to a `calculable` object, which are typically one of `Spree::ShippingMethod`, `Spree::TaxRate`, or `Spree::Promotion::Actions::CreateAdjustment`. These three classes use the `Spree::Core::CalculatedAdjustment` module described below to provide an easy way to calculate adjustments for their objects.
 
 ## Available Calculators
 

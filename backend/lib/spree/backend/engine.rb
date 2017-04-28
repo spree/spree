@@ -21,7 +21,6 @@ module Spree
           spree/backend/all*
           spree/backend/address_states.js
           jquery.jstree/themes/spree/*
-          fontawesome-webfont*
           select2_locale*
         ]
       end

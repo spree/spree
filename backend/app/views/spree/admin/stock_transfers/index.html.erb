@@ -12,14 +12,14 @@
     <%= search_form_for @q, url: admin_stock_transfers_path do |f| %>
 
       <div class="row no-marginb">
-        <div class="col-md-4">
+        <div class="col-xs-12 col-md-4">
           <div class="form-group">
             <%= f.label :reference_cont, Spree.t(:reference_contains) %>
             <%= f.text_field :reference_cont, class: 'form-control' %>
           </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-xs-12 col-md-4">
           <div class="form-group">
             <%= f.label :source_location, Spree.t(:source) %>
             <%= f.select :source_location_id_eq,
@@ -28,7 +28,7 @@
           </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-xs-12 col-md-4">
           <div class="form-group">
             <%= f.label :destination_location, Spree.t(:destination) %>
             <%= f.select :destination_location_id_eq,

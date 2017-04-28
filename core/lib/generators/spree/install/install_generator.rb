@@ -2,6 +2,7 @@ require 'rails/generators'
 require 'highline/import'
 require 'bundler'
 require 'bundler/cli'
+require 'active_support/core_ext/string/indent'
 
 module Spree
   class InstallGenerator < Rails::Generators::Base
@@ -40,15 +41,15 @@ module Spree
 
     def additional_tweaks
       return unless File.exists? 'public/robots.txt'
-      append_file "public/robots.txt", <<-ROBOTS
-User-agent: *
-Disallow: /checkout
-Disallow: /cart
-Disallow: /orders
-Disallow: /user
-Disallow: /account
-Disallow: /api
-Disallow: /password
+      append_file "public/robots.txt", <<-ROBOTS.strip_heredoc
+        User-agent: *
+        Disallow: /checkout
+        Disallow: /cart
+        Disallow: /orders
+        Disallow: /user
+        Disallow: /account
+        Disallow: /api
+        Disallow: /password
       ROBOTS
     end
 
@@ -75,34 +76,34 @@ Disallow: /password
     end
 
     def configure_application
-      application <<-APP
+      application <<-APP.strip_heredoc.indent!(4)
 
-    config.to_prepare do
-      # Load application's model / class decorators
-      Dir.glob(File.join(File.dirname(__FILE__), "../app/**/*_decorator*.rb")) do |c|
-        Rails.configuration.cache_classes ? require(c) : load(c)
-      end
+        config.to_prepare do
+          # Load application's model / class decorators
+          Dir.glob(File.join(File.dirname(__FILE__), "../app/**/*_decorator*.rb")) do |c|
+            Rails.configuration.cache_classes ? require(c) : load(c)
+          end
 
-      # Load application's view overrides
-      Dir.glob(File.join(File.dirname(__FILE__), "../app/overrides/*.rb")) do |c|
-        Rails.configuration.cache_classes ? require(c) : load(c)
-      end
-    end
+          # Load application's view overrides
+          Dir.glob(File.join(File.dirname(__FILE__), "../app/overrides/*.rb")) do |c|
+            Rails.configuration.cache_classes ? require(c) : load(c)
+          end
+        end
       APP
 
       if !options[:enforce_available_locales].nil?
-        application <<-APP
-    # Prevent this deprecation message: https://github.com/svenfuchs/i18n/commit/3b6e56e
-    I18n.enforce_available_locales = #{options[:enforce_available_locales]}
+        application <<-APP.strip_heredoc.indent!(4)
+          # Prevent this deprecation message: https://github.com/svenfuchs/i18n/commit/3b6e56e
+          I18n.enforce_available_locales = #{options[:enforce_available_locales]}
         APP
       end
     end
 
     def include_seed_data
-      append_file "db/seeds.rb", <<-SEEDS
-\n
-Spree::Core::Engine.load_seed if defined?(Spree::Core)
-Spree::Auth::Engine.load_seed if defined?(Spree::Auth)
+      append_file "db/seeds.rb", <<-SEEDS.strip_heredoc
+
+        Spree::Core::Engine.load_seed if defined?(Spree::Core)
+        Spree::Auth::Engine.load_seed if defined?(Spree::Auth)
       SEEDS
     end
 
@@ -172,15 +173,19 @@ Spree::Auth::Engine.load_seed if defined?(Spree::Auth)
     end
 
     def notify_about_routes
-      insert_into_file File.join('config', 'routes.rb'), after: "Rails.application.routes.draw do\n" do
-        %Q{
-  # This line mounts Spree's routes at the root of your application.
-  # This means, any requests to URLs such as /products, will go to Spree::ProductsController.
-  # If you would like to change where this engine is mounted, simply change the :at option to something different.
-  #
-  # We ask that you don't use the :as option here, as Spree relies on it being the default of "spree"
-  mount Spree::Core::Engine, at: '/'
-        }
+      insert_into_file(File.join('config', 'routes.rb'),
+                       after: "Rails.application.routes.draw do\n") do
+        <<-ROUTES.strip_heredoc.indent!(2)
+          # This line mounts Spree's routes at the root of your application.
+          # This means, any requests to URLs such as /products, will go to
+          # Spree::ProductsController.
+          # If you would like to change where this engine is mounted, simply change the
+          # :at option to something different.
+          #
+          # We ask that you don't use the :as option here, as Spree relies on it being
+          # the default of "spree".
+          mount Spree::Core::Engine, at: '/'
+        ROUTES
       end
 
       unless options[:quiet]

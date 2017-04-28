@@ -34,7 +34,7 @@ module Spree
           params[:q][:completed_at_lt] = params[:q].delete(:created_at_lt)
         end
 
-        @search = Order.preload(:user).accessible_by(current_ability, :index).ransack(params[:q])
+        @search = Spree::Order.preload(:user).accessible_by(current_ability, :index).ransack(params[:q])
 
         # lazy loading other models here (via includes) may result in an invalid query
         # e.g. SELECT  DISTINCT DISTINCT "spree_orders".id, "spree_orders"."created_at" AS alias_0 FROM "spree_orders"
@@ -49,14 +49,14 @@ module Spree
       end
 
       def new
-        @order = Order.create(order_params)
+        @order = Spree::Order.create(order_params)
         redirect_to cart_admin_order_url(@order)
       end
 
       def edit
         can_not_transition_without_customer_info
 
-        @order.refresh_shipment_rates(ShippingMethod::DISPLAY_ON_FRONT_AND_BACK_END)
+        @order.refresh_shipment_rates(ShippingMethod::DISPLAY_ON_BACK_END)
       end
 
       def cart
@@ -130,7 +130,7 @@ module Spree
         end
 
         def load_order
-          @order = Order.includes(:adjustments).friendly.find(params[:id])
+          @order = Spree::Order.includes(:adjustments).friendly.find(params[:id])
           authorize! action, @order
         end
 

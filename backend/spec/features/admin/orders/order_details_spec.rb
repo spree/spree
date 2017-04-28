@@ -106,7 +106,7 @@ describe "Order Details", type: :feature, js: true do
         create(:shipping_method, name: "Backdoor", display_on: "back_end")
         order = create(
           :completed_order_with_totals,
-          shipping_method_filter: Spree::ShippingMethod::DISPLAY_ON_FRONT_AND_BACK_END
+          shipping_method_filter: Spree::ShippingMethod::DISPLAY_ON_BACK_END
         )
         visit spree.edit_admin_order_path(order)
         within("table tr.show-method") do
@@ -321,8 +321,6 @@ describe "Order Details", type: :feature, js: true do
 
               expect(page.current_path).to eq(spree.edit_admin_order_path(order))
               expect(page).not_to have_text 'Cart'
-              expect(page).not_to have_selector('.fa-split')
-              expect(page).not_to have_selector('.fa-trash')
             end
 
           end

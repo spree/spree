@@ -28,25 +28,24 @@ jQuery(function($) {
 
   // Sidebar nav toggle functionality
   var sidebar_toggle = $('#sidebar-toggle');
-  sidebar_toggle.on('click', function(){
+  sidebar_toggle.on('click', function() {
     var wrapper = $('#wrapper');
     var main    = $('#main-part');
     var sidebar = $('#main-sidebar');
 
-    if(wrapper.hasClass('sidebar-minimized')){
-      wrapper.removeClass('sidebar-minimized');
-      sidebar.removeClass('hidden-xs');
-      main
-        .removeClass('col-sm-12 col-md-12 sidebar-collapsed')
-        .addClass('col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2');
+    // these should match `spree/backend/app/helpers/spree/admin/navigation_helper.rb#main_part_classes`
+    var mainWrapperCollapsedClasses = 'col-xs-12 sidebar-collapsed';
+    var mainWrapperExpandedClasses = 'col-xs-9 col-xs-offset-3 col-md-10 col-md-offset-2';
+
+    wrapper.toggleClass('sidebar-minimized');
+    sidebar.toggleClass('hidden-xs');
+    main
+      .toggleClass(mainWrapperCollapsedClasses)
+      .toggleClass(mainWrapperExpandedClasses);
+
+    if (wrapper.hasClass('sidebar-minimized')) {
       $.cookie('sidebar-minimized', 'false', { path: '/admin' });
-    }
-    else {
-      wrapper.addClass('sidebar-minimized');
-      sidebar.addClass('hidden-xs');
-      main
-        .removeClass('col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2')
-        .addClass('col-sm-12 col-md-12 sidebar-collapsed');
+    } else {
       $.cookie('sidebar-minimized', 'true', { path: '/admin' });
     }
   });

@@ -269,7 +269,7 @@ future theming developments (editor).
 ### More information on Deface
 
 For more information and sample overrides please refer to its
-[README](https://github.com/railsdog/deface) file on GitHub.
+[README](https://github.com/spree/deface) file on GitHub.
 
 You can also see how Deface internals work, and test selectors using the
 [Deface Test Harness](http://deface.heroku.com) application.

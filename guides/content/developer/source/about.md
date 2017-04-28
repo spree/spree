@@ -87,9 +87,9 @@ Ruby on Rails. To get the most out of this guide, you need to have some
 prerequisites installed:
 
 -   The [Ruby](http://www.ruby-lang.org/en/downloads) language
--   The [RubyGems](http://rubyforge.org/frs/?group_id=126) packaging
+-   The [RubyGems](https://rubygems.org/pages/download) packaging
     system
--   The [Ruby on Rails](http://rubyonrails.org/download) gems
+-   The [Ruby on Rails](http://rubyonrails.org/) gem
 -   A working installation of [SQLite](http://www.sqlite.org)
     (preferred), [MySQL](http://www.mysql.com), or
     [PostgreSQL](http://www.postgresql.org)
