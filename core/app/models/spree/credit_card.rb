@@ -65,7 +65,7 @@ module Spree
           [match[1], match[2]]
         end
       if self[:year]
-        self[:year] = "20#{self[:year]}" if self[:year] / 100 == 0
+        self[:year] = "20#{self[:year]}" if (self[:year] / 100).zero?
         self[:year] = self[:year].to_i
       end
       self[:month] = self[:month].to_i if self[:month]

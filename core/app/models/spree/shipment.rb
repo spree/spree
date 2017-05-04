@@ -352,7 +352,9 @@ module Spree
     end
 
     def transfer_to_shipment(variant, quantity, shipment_to_transfer_to)
-      quantity_already_shipment_to_transfer_to = shipment_to_transfer_to.manifest.find { |mi| mi.line_item.variant == variant }.try(:quantity) || 0
+      quantity_already_shipment_to_transfer_to = shipment_to_transfer_to.manifest.find do |mi|
+        mi.line_item.variant == variant
+      end.try(:quantity) || 0
       final_quantity = quantity + quantity_already_shipment_to_transfer_to
 
       if quantity <= 0 || self == shipment_to_transfer_to
@@ -381,11 +383,11 @@ module Spree
     end
 
     def manifest_restock(item)
-      if item.states["on_hand"].to_i > 0
+      if item.states["on_hand"].to_i.positive?
         stock_location.restock item.variant, item.states["on_hand"], self
       end
 
-      if item.states["backordered"].to_i > 0
+      if item.states["backordered"].to_i.positive?
         stock_location.restock_backordered item.variant, item.states["backordered"]
       end
     end
