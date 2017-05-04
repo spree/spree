@@ -4,8 +4,8 @@ module Spree
     belongs_to :stock_location
 
     has_many :reimbursements, inverse_of: :customer_return
-    has_many :return_authorizations, through: :return_items
     has_many :return_items, inverse_of: :customer_return
+    has_many :return_authorizations, through: :return_items
 
     after_create :process_return!
 
@@ -36,7 +36,6 @@ module Spree
       return nil if return_items.blank?
       return_items.first.inventory_unit.order
     end
-
 
     def pre_tax_total
       return_items.sum(:pre_tax_amount)
