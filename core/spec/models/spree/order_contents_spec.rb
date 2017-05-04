@@ -19,6 +19,7 @@ describe Spree::OrderContents, type: :model do
       it "ensure shipment calls update_amounts instead of order calling ensure_updated_shipments" do
         shipment = create(:shipment)
         expect(subject.order).to_not receive(:ensure_updated_shipments)
+        expect(subject.order).to receive(:refresh_shipment_rates).with(Spree::ShippingMethod::DISPLAY_ON_BACK_END)
         expect(shipment).to receive(:update_amounts)
         subject.add(variant, 1, shipment: shipment)
       end
