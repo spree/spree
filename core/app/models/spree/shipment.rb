@@ -21,6 +21,7 @@ module Spree
     end
     has_many :shipping_methods, through: :shipping_rates
     has_one :selected_shipping_rate, -> { where(selected: true).order(:cost) }, class_name: Spree::ShippingRate
+    has_one :shipping_method, through: :selected_shipping_rate
 
 
     after_save :update_adjustments
@@ -254,10 +255,6 @@ module Spree
     def shipped=(value)
       return unless value == '1' && shipped_at.nil?
       self.shipped_at = Time.current
-    end
-
-    def shipping_method
-      selected_shipping_rate.try(:shipping_method) || shipping_rates.first.try(:shipping_method)
     end
 
     def tax_category
