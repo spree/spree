@@ -425,12 +425,12 @@ module Spree
         expect(json_response['errors']['ship_address.firstname'].first).to eq "can't be blank"
       end
 
-      it "cannot set the user_id for the order" do
+      it "can set the user_id for the order" do
         user = Spree.user_class.create
         original_id = order.user_id
         api_post :update, id: order.to_param, order: { user_id: user.id }
         expect(response.status).to eq 200
-        expect(json_response["user_id"]).to eq(original_id)
+        expect(json_response["user_id"]).to eq(user.id)
       end
 
       context "order has shipments" do

@@ -40,8 +40,7 @@ module Spree
 
         def order_params
           params.require(:order).permit(
-            :email,
-            :use_billing,
+            :email, :user_id, :use_billing,
             bill_address_attributes: permitted_address_attributes,
             ship_address_attributes: permitted_address_attributes
           )
@@ -56,7 +55,7 @@ module Spree
         end
 
         def load_user
-          @user = (Spree.user_class.find_by(id: params[:user_id]) ||
+          @user = (Spree.user_class.find_by(id: order_params[:user_id]) ||
             Spree.user_class.find_by(email: order_params[:email]))
 
           unless @user

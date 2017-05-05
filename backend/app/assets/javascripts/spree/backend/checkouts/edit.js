@@ -33,7 +33,7 @@ $(document).ready(function() {
       formatResult: formatCustomerResult,
       formatSelection: function (customer) {
         $('#order_email').val(customer.email);
-        $('#user_id').val(customer.id);
+        $('#order_user_id').val(customer.id);
         $('#guest_checkout_true').prop('checked', false);
         $('#guest_checkout_false').prop('checked', true);
         $('#guest_checkout_false').prop('disabled', false);
@@ -77,7 +77,7 @@ $(document).ready(function() {
 
   $('#guest_checkout_true').change(function() {
     $('#customer_search').val('');
-    $('#user_id').val('');
+    $('#order_user_id').val('');
     $('#order_email').val('');
 
     var fields = ['firstname', 'lastname', 'company', 'address1', 'address2',

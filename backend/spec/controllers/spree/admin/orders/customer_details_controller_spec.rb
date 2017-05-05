@@ -7,6 +7,8 @@ describe Spree::Admin::Orders::CustomerDetailsController, type: :controller do
   context "with authorization" do
     stub_authorization!
 
+    let(:user) { mock_model(Spree.user_class) }
+
     let(:order) do
       mock_model(
         Spree::Order,
@@ -28,7 +30,8 @@ describe Spree::Admin::Orders::CustomerDetailsController, type: :controller do
             email: "",
             use_billing: "",
             bill_address_attributes: { firstname: 'john' },
-            ship_address_attributes: { firstname: 'john' }
+            ship_address_attributes: { firstname: 'john' },
+            user_id: user.id.to_s
           },
           guest_checkout: 'true'
         }
@@ -89,8 +92,7 @@ describe Spree::Admin::Orders::CustomerDetailsController, type: :controller do
       end
 
       context 'without using guest checkout' do
-        let(:user) { mock_model(Spree.user_class) }
-        let(:changed_attributes) { attributes.merge(guest_checkout: 'false', user_id: user.id) }
+        let(:changed_attributes) { attributes.merge(guest_checkout: 'false') }
 
         context 'having valid parameters' do
           before do
