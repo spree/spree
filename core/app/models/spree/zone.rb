@@ -17,7 +17,7 @@ module Spree
     scope :with_default_tax, -> { where(default_tax: true) }
 
     after_save :remove_defunct_members
-    after_save :remove_previous_default, if: [:default_tax?, :default_tax_changed?]
+    after_save :remove_previous_default, if: [:default_tax?, :saved_change_to_default_tax?]
 
     alias :members :zone_members
     accepts_nested_attributes_for :zone_members, allow_destroy: true, reject_if: proc { |a| a['zoneable_id'].blank? }

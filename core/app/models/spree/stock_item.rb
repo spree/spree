@@ -20,7 +20,7 @@ module Spree
     delegate :name, to: :variant, prefix: true
     delegate :product, to: :variant
 
-    after_save :conditional_variant_touch, if: :changed?
+    after_save :conditional_variant_touch, if: :saved_changes?
     after_touch { variant.touch }
     after_destroy { variant.touch }
 
@@ -65,7 +65,7 @@ module Spree
 
     private
       def verify_count_on_hand?
-        count_on_hand_changed? && !backorderable? && (count_on_hand < count_on_hand_was) && (count_on_hand < 0)
+        saved_change_to_count_on_hand? && !backorderable? && (count_on_hand < count_on_hand_was) && (count_on_hand < 0)
       end
 
       # Process backorders based on amount of stock received
@@ -92,7 +92,7 @@ module Spree
 
       def conditional_variant_touch
         # the variant_id changes from nil when a new stock location is added
-        stock_changed = (count_on_hand_changed? && count_on_hand_change.any?(&:zero?)) || variant_id_changed?
+        stock_changed = (saved_change_to_count_on_hand? && saved_change_to_count_on_hand.any?(&:zero?)) || saved_change_to_variant_id?
 
         if !Spree::Config.binary_inventory_cache || stock_changed
           variant.touch

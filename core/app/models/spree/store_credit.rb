@@ -203,7 +203,7 @@ module Spree
     end
 
     def store_event
-      return unless amount_changed? || amount_used_changed? || amount_authorized_changed? || action == ELIGIBLE_ACTION
+      return unless saved_change_to_amount? || saved_change_to_amount_used? || saved_change_to_amount_authorized? || action == ELIGIBLE_ACTION
 
       event = if action
                 store_credit_events.build(action: action)

@@ -65,7 +65,7 @@ module Spree
     delegate :shipment, to: :inventory_unit
 
     before_create :extract_inventory_unit, unless: -> { inventory_unit.quantity == return_quantity }
-    before_create :set_default_pre_tax_amount, unless: :pre_tax_amount_changed?
+    before_create :set_default_pre_tax_amount, unless: :saved_change_to_pre_tax_amount?
 
     before_save :set_exchange_pre_tax_amount
 
@@ -206,7 +206,7 @@ module Spree
     end
 
     def eligible_exchange_variant
-      return unless exchange_variant && exchange_variant_id_changed?
+      return unless exchange_variant && saved_change_to_exchange_variant_id?
       unless eligible_exchange_variants.include?(exchange_variant)
         errors.add(:base, Spree.t(:invalid_exchange_variant))
       end

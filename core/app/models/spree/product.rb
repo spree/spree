@@ -300,7 +300,7 @@ module Spree
     end
 
     def anything_changed?
-      changed? || @nested_changes
+      saved_changes? || @nested_changes
     end
 
     def reset_nested_changes
@@ -310,12 +310,12 @@ module Spree
     def master_updated?
       master && (
         master.new_record? ||
-        master.changed? ||
+        master.saved_changes? ||
         (
           master.default_price &&
           (
             master.default_price.new_record? ||
-            master.default_price.changed?
+            master.default_price.saved_changes?
           )
         )
       )

@@ -87,10 +87,9 @@ module Spree
     end
     has_many :reimbursements, inverse_of: :order
     has_many :line_item_adjustments, through: :line_items, source: :adjustments
-    has_many :shipment_adjustments, through: :shipments, source: :adjustments
     has_many :inventory_units, inverse_of: :order
-    has_many :products, through: :variants
     has_many :variants, through: :line_items
+    has_many :products, through: :variants
     has_many :refunds, through: :payments
     has_many :all_adjustments,
              class_name: 'Spree::Adjustment',
@@ -106,6 +105,7 @@ module Spree
         pluck(:state).uniq
       end
     end
+    has_many :shipment_adjustments, through: :shipments, source: :adjustments
 
     accepts_nested_attributes_for :line_items
     accepts_nested_attributes_for :bill_address
@@ -120,7 +120,7 @@ module Spree
 
     before_create :create_token
     before_create :link_by_email
-    before_update :homogenize_line_item_currencies, if: :currency_changed?
+    before_update :homogenize_line_item_currencies, if: :saved_change_to_currency?
 
     with_options presence: true do
       validates :number, length: { maximum: 32, allow_blank: true }, uniqueness: { allow_blank: true }
