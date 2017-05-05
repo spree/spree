@@ -20,8 +20,7 @@ module Spree
       has_many :state_changes, as: :stateful
     end
     has_many :shipping_methods, through: :shipping_rates
-    has_one :selected_shipping_rate, -> { where(selected: true).order(:cost) }, class_name: Spree::ShippingRate
-
+    has_one :selected_shipping_rate, -> { where(selected: true).order(:cost) }, class_name: Spree::ShippingRate.to_s
 
     after_save :update_adjustments
 
@@ -57,12 +56,12 @@ module Spree
       end
 
       event :ship do
-        transition from: [:ready, :canceled], to: :shipped
+        transition from: %i(ready canceled), to: :shipped
       end
       after_transition to: :shipped, do: :after_ship
 
       event :cancel do
-        transition to: :canceled, from: [:pending, :ready]
+        transition to: :canceled, from: %i(pending ready)
       end
       after_transition to: :canceled, do: :after_cancel
 
@@ -72,7 +71,7 @@ module Spree
         }
         transition from: :canceled, to: :pending
       end
-      after_transition from: :canceled, to: [:pending, :ready, :shipped], do: :after_resume
+      after_transition from: :canceled, to: %i(pending ready shipped), do: :after_resume
 
       after_transition do |shipment, transition|
         shipment.state_changes.create!(
@@ -102,7 +101,7 @@ module Spree
     end
 
     def backordered?
-      inventory_units.any? { |inventory_unit| inventory_unit.backordered? }
+      inventory_units.any?(&:backordered?)
     end
 
     def currency
@@ -127,7 +126,7 @@ module Spree
     end
     alias discounted_amount discounted_cost
 
-    def editable_by?(user)
+    def editable_by?(_user)
       !shipped?
     end
 
@@ -169,9 +168,8 @@ module Spree
     def manifest
       # Grouping by the ID means that we don't have to call out to the association accessor
       # This makes the grouping by faster because it results in less SQL cache hits.
-      inventory_units.group_by(&:variant_id).map do |variant_id, units|
-        units.group_by(&:line_item_id).map do |line_item_id, units|
-
+      inventory_units.group_by(&:variant_id).map do |_variant_id, units|
+        units.group_by(&:line_item_id).map do |_line_item_id, units|
           states = {}
           units.group_by(&:state).each { |state, iu| states[state] = iu.sum(&:quantity) }
 
@@ -183,8 +181,8 @@ module Spree
     end
 
     def process_order_payments
-      pending_payments =  order.pending_payments
-                            .sort_by(&:uncaptured_amount).reverse
+      pending_payments = order.pending_payments.
+                         sort_by(&:uncaptured_amount).reverse
 
       shipment_to_pay = final_price_with_items
       payments_amount = 0
@@ -209,7 +207,7 @@ module Spree
     end
 
     def ready_or_pending?
-      self.ready? || self.pending?
+      ready? || pending?
     end
 
     def refresh_rates(shipping_method_filter = ShippingMethod::DISPLAY_ON_FRONT_END)
@@ -220,12 +218,12 @@ module Spree
       original_shipping_method_id = shipping_method.try(:id)
 
       self.shipping_rates = Stock::Estimator.new(order).
-      shipping_rates(to_package, shipping_method_filter)
+                            shipping_rates(to_package, shipping_method_filter)
 
       if shipping_method
-        selected_rate = shipping_rates.detect { |rate|
+        selected_rate = shipping_rates.detect do |rate|
           rate.shipping_method_id == original_shipping_method_id
-        }
+        end
         self.selected_shipping_rate_id = selected_rate.id if selected_rate
       end
 
@@ -239,11 +237,11 @@ module Spree
     def selected_shipping_rate_id=(id)
       shipping_rates.update_all(selected: false)
       shipping_rates.update(id, selected: true)
-      self.save!
+      save!
     end
 
     def set_up_inventory(state, variant, order, line_item)
-      self.inventory_units.create(
+      inventory_units.create(
         state: state,
         variant_id: variant.id,
         order_id: order.id,
@@ -285,7 +283,7 @@ module Spree
 
     def update_amounts
       if selected_shipping_rate
-        self.update_columns(
+        update_columns(
           cost: selected_shipping_rate.cost,
           adjustment_total: adjustments.additional.map(&:update!).compact.sum,
           updated_at: Time.current,
@@ -295,20 +293,20 @@ module Spree
 
     # Update Shipment and make sure Order states follow the shipment changes
     def update_attributes_and_order(params = {})
-      if self.update_attributes params
-        if params.has_key? :selected_shipping_rate_id
+      if update_attributes params
+        if params.key? :selected_shipping_rate_id
           # Changing the selected Shipping Rate won't update the cost (for now)
           # so we persist the Shipment#cost before calculating order shipment
           # total and updating payment state (given a change in shipment cost
           # might change the Order#payment_state)
-          self.update_amounts
+          update_amounts
 
           order.updater.update_shipment_total
           order.updater.update_payment_state
 
           # Update shipment state only after order total is updated because it
           # (via Order#paid?) affects the shipment state (YAY)
-          self.update_columns(
+          update_columns(
             state: determine_state(order),
             updated_at: Time.current
           )
@@ -333,7 +331,7 @@ module Spree
         state: new_state,
         updated_at: Time.current,
       )
-      after_ship if new_state == 'shipped' and old_state != 'shipped'
+      after_ship if new_state == 'shipped' && old_state != 'shipped'
     end
 
     def transfer_to_location(variant, quantity, stock_location)
@@ -344,8 +342,8 @@ module Spree
       transaction do
         new_shipment = order.shipments.create!(stock_location: stock_location)
 
-        order.contents.remove(variant, quantity, {shipment: self})
-        order.contents.add(variant, quantity, {shipment: new_shipment})
+        order.contents.remove(variant, quantity, shipment: self)
+        order.contents.add(variant, quantity, shipment: new_shipment)
 
         refresh_rates
         save!
@@ -354,16 +352,18 @@ module Spree
     end
 
     def transfer_to_shipment(variant, quantity, shipment_to_transfer_to)
-      quantity_already_shipment_to_transfer_to = shipment_to_transfer_to.manifest.find{|mi| mi.line_item.variant == variant}.try(:quantity) || 0
+      quantity_already_shipment_to_transfer_to = shipment_to_transfer_to.manifest.find do |mi|
+        mi.line_item.variant == variant
+      end.try(:quantity) || 0
       final_quantity = quantity + quantity_already_shipment_to_transfer_to
 
-      if (quantity <= 0 || self == shipment_to_transfer_to)
+      if quantity <= 0 || self == shipment_to_transfer_to
         raise ArgumentError
       end
 
       transaction do
-        order.contents.remove(variant, quantity, {shipment: self})
-        order.contents.add(variant, quantity, {shipment: shipment_to_transfer_to})
+        order.contents.remove(variant, quantity, shipment: self)
+        order.contents.add(variant, quantity, shipment: shipment_to_transfer_to)
 
         refresh_rates
         save!
@@ -374,45 +374,44 @@ module Spree
 
     private
 
-      def after_ship
-        ShipmentHandler.factory(self).perform
+    def after_ship
+      ShipmentHandler.factory(self).perform
+    end
+
+    def can_get_rates?
+      order.ship_address && order.ship_address.valid?
+    end
+
+    def manifest_restock(item)
+      if item.states["on_hand"].to_i.positive?
+        stock_location.restock item.variant, item.states["on_hand"], self
       end
 
-      def can_get_rates?
-        order.ship_address && order.ship_address.valid?
+      if item.states["backordered"].to_i.positive?
+        stock_location.restock_backordered item.variant, item.states["backordered"]
       end
+    end
 
-      def manifest_restock(item)
-        if item.states["on_hand"].to_i > 0
-         stock_location.restock item.variant, item.states["on_hand"], self
-        end
+    def manifest_unstock(item)
+      stock_location.unstock item.variant, item.quantity, self
+    end
 
-        if item.states["backordered"].to_i > 0
-          stock_location.restock_backordered item.variant, item.states["backordered"]
-        end
+    def recalculate_adjustments
+      Adjustable::AdjustmentsUpdater.update(self)
+    end
+
+    def send_shipped_email
+      ShipmentMailer.shipped_email(id).deliver_later
+    end
+
+    def set_cost_zero_when_nil
+      self.cost = 0 unless cost
+    end
+
+    def update_adjustments
+      if cost_changed? && state != 'shipped'
+        recalculate_adjustments
       end
-
-      def manifest_unstock(item)
-        stock_location.unstock item.variant, item.quantity, self
-      end
-
-      def recalculate_adjustments
-        Adjustable::AdjustmentsUpdater.update(self)
-      end
-
-      def send_shipped_email
-        ShipmentMailer.shipped_email(id).deliver_later
-      end
-
-      def set_cost_zero_when_nil
-        self.cost = 0 unless self.cost
-      end
-
-      def update_adjustments
-        if cost_changed? && state != 'shipped'
-          recalculate_adjustments
-        end
-      end
-
+    end
   end
 end
