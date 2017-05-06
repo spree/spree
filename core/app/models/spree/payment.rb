@@ -267,8 +267,7 @@ module Spree
       end
 
       def invalidate_old_payments
-        return if store_credit? # store credits shouldn't invalidate other payment types
-        order.payments.with_state('checkout').where("id != ?", self.id).each do |payment|
+        order.payments.with_state('checkout').where.not(id: id).each do |payment|
           payment.invalidate! unless payment.store_credit?
         end
       end
