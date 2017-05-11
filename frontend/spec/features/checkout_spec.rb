@@ -400,6 +400,52 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
         expect(current_path).to match(spree.order_path(Spree::Order.last))
       end
     end
+
+    context 'the promotion makes order free (downgrade it total to 0.0)' do
+      let(:promotion2) { Spree::Promotion.create(name: 'test-7450', code: 'test-7450') }
+      let(:calculator2) do
+        Spree::Calculator::FlatRate.create(preferences: { currency: 'USD', amount: BigDecimal.new('99999') })
+      end
+      let(:action2) { Spree::Promotion::Actions::CreateItemAdjustments.create(calculator: calculator2) }
+
+      before { promotion2.actions << action2 }
+
+      context 'user choose to pay by check' do
+        it 'move user to complete checkout step' do
+          fill_in 'Coupon Code', with: promotion2.code
+          click_on 'Save and Continue'
+
+          expect(page).to have_content(promotion2.name)
+          expect(Spree::Order.last.total.to_f).to eq(0)
+          expect(current_path).to match(spree.order_path(Spree::Order.last))
+        end
+      end
+
+      context 'user choose to pay by card' do
+        let(:bogus) { create(:credit_card_payment_method) }
+        before do
+          order = Spree::Order.last
+          allow(order).to receive_messages(available_payment_methods: [bogus])
+          allow_any_instance_of(Spree::CheckoutController).to receive_messages(current_order: order)
+
+          visit spree.checkout_state_path(:payment)
+        end
+
+        it 'move user to confirmation checkout step' do
+          fill_in 'Name on card', with: 'Spree Commerce'
+          fill_in 'Card Number', with: '4111111111111111'
+          fill_in 'card_expiry', with: '04 / 20'
+          fill_in 'Card Code', with: '123'
+
+          fill_in 'Coupon Code', with: promotion2.code
+          click_on 'Save and Continue'
+
+          expect(page).to have_content(promotion2.name)
+          expect(Spree::Order.last.total.to_f).to eq(0)
+          expect(current_path).to eql(spree.checkout_state_path('confirm'))
+        end
+      end
+    end
   end
 
   context 'order has only payment step' do
