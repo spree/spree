@@ -26,10 +26,7 @@ describe Spree::Taxon, type: :model do
     it "stores old slugs in FriendlyIds history" do
       # Stub out unrelated methods that cannot handle a save without an id
       allow(subject).to receive(:set_depth!)
-      # create_slug is a private method, included by FriendlyId::History
-      # it's effect is rather complex and dependent on state and config.
-      # However, when a new slug is set, it should call slugs.create!
-      expect(subject.slugs).to receive(:create!)
+      expect(subject).to receive(:create_slug)
       subject.permalink = "custom-slug"
       subject.run_callbacks :save
     end
