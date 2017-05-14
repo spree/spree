@@ -39,6 +39,9 @@ describe Spree::Payment, type: :model do
   end
 
   before(:each) do
+    # Rails >= 5.0.3 returns new object for association so we ugly mock it
+    allow(payment).to receive(:log_entries).and_return(payment.log_entries)
+
     # So it doesn't create log entries every time a processing method is called
     allow(payment.log_entries).to receive(:create!)
   end
