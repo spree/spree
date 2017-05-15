@@ -31,7 +31,7 @@ group :test do
   gem 'rspec-rails', '~> 3.4'
   gem 'rspec_junit_formatter'
   gem 'simplecov'
-  gem 'webmock', '~> 2.1'
+  gem 'webmock', '~> 3.0.1'
   gem 'poltergeist', '~> 1.10'
   gem 'timecop'
   gem 'with_model'
