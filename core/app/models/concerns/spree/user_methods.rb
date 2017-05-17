@@ -20,8 +20,8 @@ module Spree
       has_many :orders, foreign_key: :user_id, class_name: "Spree::Order"
       has_many :store_credits, foreign_key: :user_id, class_name: 'Spree::StoreCredit'
 
-      belongs_to :ship_address, class_name: 'Spree::Address'
-      belongs_to :bill_address, class_name: 'Spree::Address'
+      belongs_to :ship_address, class_name: 'Spree::Address', optional: true
+      belongs_to :bill_address, class_name: 'Spree::Address', optional: true
 
       self.whitelisted_ransackable_associations = %w[bill_address ship_address]
       self.whitelisted_ransackable_attributes = %w[id email]
