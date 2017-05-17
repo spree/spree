@@ -61,8 +61,7 @@ module Spree
 
       # Include any abilities registered by extensions, etc.
       Ability.abilities.merge(abilities_to_register).each do |clazz|
-        ability = clazz.send(:new, user)
-        @rules = rules + ability.send(:rules)
+        merge clazz.new(user)
       end
 
       # Protect admin role
