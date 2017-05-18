@@ -28,7 +28,11 @@ group :test do
   gem 'rspec-activemodel-mocks', '~> 1.0'
   gem 'rspec-collection_matchers'
   gem 'rspec-its'
+<<<<<<< HEAD
   gem 'rspec-rails', '~> 3.6'
+=======
+  gem 'rspec-rails', '~> 3.5'
+>>>>>>> 19e46aabb... [bump] rspec-rails to 3.5
   gem 'rspec_junit_formatter'
   gem 'simplecov'
   gem 'webmock', '~> 3.0.1'
