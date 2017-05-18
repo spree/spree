@@ -5,7 +5,7 @@
 
 <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @reimbursement_type } %>
 
-<%= form_for @reimbursement_type, :url => object_url, :method => :put do |reimbursement_form| %>
+<%= form_for @reimbursement_type, url: object_url, method: :put do |reimbursement_form| %>
   <%= render partial: 'form', locals: { f: reimbursement_form } %>
   <%= render partial: 'spree/admin/shared/new_resource_links' %>
 <% end %>

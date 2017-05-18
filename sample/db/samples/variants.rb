@@ -91,67 +91,67 @@ variants = [
 ]
 
 masters = {
-  ror_baseball_jersey => {
+  ror_baseball_jersey: {
     sku: "ROR-001",
     cost_price: 17,
   },
-  ror_tote => {
+  ror_tote: {
     sku: "ROR-00011",
     cost_price: 17
   },
-  ror_bag => {
+  ror_bag: {
     sku: "ROR-00012",
     cost_price: 21
   },
-  ror_jr_spaghetti => {
+  ror_jr_spaghetti: {
     sku: "ROR-00013",
     cost_price: 17
   },
-  ror_mug => {
+  ror_mug: {
     sku: "ROR-00014",
     cost_price: 11
   },
-  ror_ringer => {
+  ror_ringer: {
     sku: "ROR-00015",
     cost_price: 17
   },
-  ror_stein => {
+  ror_stein: {
     sku: "ROR-00016",
     cost_price: 15
   },
-  apache_baseball_jersey => {
+  apache_baseball_jersey: {
     sku: "APC-00001",
     cost_price: 17
   },
-  ruby_baseball_jersey => {
+  ruby_baseball_jersey: {
     sku: "RUB-00001",
     cost_price: 17
   },
-  spree_baseball_jersey => {
+  spree_baseball_jersey: {
     sku: "SPR-00001",
     cost_price: 17
   },
-  spree_stein => {
+  spree_stein: {
     sku: "SPR-00016",
     cost_price: 15
   },
-  spree_jr_spaghetti => {
+  spree_jr_spaghetti: {
     sku: "SPR-00013",
     cost_price: 17
   },
-  spree_mug => {
+  spree_mug: {
     sku: "SPR-00014",
     cost_price: 11
   },
-  spree_ringer => {
+  spree_ringer: {
     sku: "SPR-00015",
     cost_price: 17
   },
-  spree_tote => {
+  spree_tote: {
     sku: "SPR-00011",
     cost_price: 13
   },
-  spree_bag => {
+  spree_bag: {
     sku: "SPR-00012",
     cost_price: 21
   }

@@ -8,7 +8,7 @@ module Spree
     #
     #
     # ==== Examples
-    # Decorate a method, with the default option of using the base object's 
+    # Decorate a method, with the default option of using the base object's
     # currency
     #
     #     extend Spree::DisplayMoney
@@ -19,7 +19,7 @@ module Spree
     #     money_methods tax_amount: { currency: "CAD", no_cents: true }, :price
     def money_methods(*args)
       args.each do |money_method|
-        money_method = { money_method => {} } unless money_method.is_a? Hash
+        money_method = { money_method: {} } unless money_method.is_a? Hash
         money_method.each do |method_name, opts|
           define_method("display_#{method_name}") do
             default_opts = respond_to?(:currency) ? { currency: currency } : {}

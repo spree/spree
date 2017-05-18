@@ -10,7 +10,7 @@
 </div>
 
 <%= content_tag :div, nil, class: "hidden js-original-promo-rule-option-values",
-  data: { :'original-option-values' => promotion_rule.preferred_eligible_values } %>
+  data: { 'original-option-values': promotion_rule.preferred_eligible_values } %>
 
 <script type="text/x-handlebars-template" id="promo-rule-option-value-option-values-select-name-template">
   <%= param_prefix %>[preferred_eligible_values][{{productId}}]
