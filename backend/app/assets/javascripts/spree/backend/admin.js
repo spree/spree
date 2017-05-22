@@ -335,7 +335,7 @@ $(document).ready(function(){
             reg = /spree_(\w+_?)+_(\d+)/;
             parts = reg.exec($(obj).prop('id'));
             if (parts) {
-              positions['positions['+parts[2]+']'] = position;
+              positions['positions['+parts[2]+']'] = position+1;
             }
           });
           $.ajax({
