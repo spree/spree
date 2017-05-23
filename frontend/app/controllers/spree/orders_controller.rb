@@ -91,7 +91,8 @@ module Spree
     end
 
     def check_authorization
-      order = Spree::Order.find_by_number(params[:id]) || current_order
+      order = Spree::Order.find_by_number(params[:id]) if params[:id].present?
+      order = current_order unless order
 
       if order
         authorize! :edit, order, cookies.signed[:guest_token]
