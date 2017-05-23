@@ -14,7 +14,7 @@ module Spree
 
     # save the w,h of the original image (from which others can be calculated)
     # we need to look at the write-queue for images which have not been saved yet
-    before_save :find_dimensions, if: :attachment_updated_at_changed?
+    before_save :find_dimensions, if: :saved_change_to_attachment_updated_at?
 
     #used by admin products autocomplete
     def mini_url
