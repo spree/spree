@@ -6,7 +6,7 @@ module Spree
 
     with_options inverse_of: :reimbursements do
       belongs_to :order
-      belongs_to :customer_return, touch: true
+      belongs_to :customer_return, touch: true, optional: true
     end
 
     with_options inverse_of: :reimbursement do

@@ -58,21 +58,23 @@ module Spree
     attr_accessor :temporary_address, :temporary_credit_card
 
     if Spree.user_class
-      belongs_to :user, class_name: Spree.user_class.to_s
-      belongs_to :created_by, class_name: Spree.user_class.to_s
-      belongs_to :approver, class_name: Spree.user_class.to_s
-      belongs_to :canceler, class_name: Spree.user_class.to_s
+      belongs_to :user, class_name: Spree.user_class.to_s, optional: true
+      belongs_to :created_by, class_name: Spree.user_class.to_s, optional: true
+      belongs_to :approver, class_name: Spree.user_class.to_s, optional: true
+      belongs_to :canceler, class_name: Spree.user_class.to_s, optional: true
     else
-      belongs_to :user
-      belongs_to :created_by
-      belongs_to :approver
-      belongs_to :canceler
+      belongs_to :user, optional: true
+      belongs_to :created_by, optional: true
+      belongs_to :approver, optional: true
+      belongs_to :canceler, optional: true
     end
 
-    belongs_to :bill_address, foreign_key: :bill_address_id, class_name: 'Spree::Address'
+    belongs_to :bill_address, foreign_key: :bill_address_id, class_name: 'Spree::Address',
+                              optional: true
     alias_attribute :billing_address, :bill_address
 
-    belongs_to :ship_address, foreign_key: :ship_address_id, class_name: 'Spree::Address'
+    belongs_to :ship_address, foreign_key: :ship_address_id, class_name: 'Spree::Address',
+                              optional: true
     alias_attribute :shipping_address, :ship_address
 
     belongs_to :store, class_name: 'Spree::Store'
