@@ -34,7 +34,7 @@ describe Spree::Zone, type: :model do
     end
 
     describe 'callbacks' do
-      it { is_expected.to callback(:remove_previous_default).after(:save).if(:default_tax?).if(:default_tax_changed?) }
+      it { is_expected.to callback(:remove_previous_default).after(:save).if(:default_tax?).if(:saved_change_to_default_tax?) }
 
       describe '#remove_previous_default' do
         let!(:zone_with_default_tax) { create(:zone, kind: 'country', default_tax: true) }
