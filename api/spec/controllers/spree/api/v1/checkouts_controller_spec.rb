@@ -283,8 +283,6 @@ module Spree
       end
 
       it "can apply a coupon code to an order" do
-        skip "ensure that the order totals are properly updated, see frontend orders_controller or checkout_controller as example"
-
         order.update_column(:state, "payment")
         expect(PromotionHandler::Coupon).to receive(:new).with(order).and_call_original
         expect_any_instance_of(PromotionHandler::Coupon).to receive(:apply).and_return({ coupon_applied?: true })
