@@ -13,26 +13,31 @@ shipping_methods = [
   {
     name: "UPS Ground (USD)",
     zones: [north_america],
+    display_on: 'both',
     shipping_categories: [shipping_category]
   },
   {
     name: "UPS Two Day (USD)",
     zones: [north_america],
+    display_on: 'both',
     shipping_categories: [shipping_category]
   },
   {
     name: "UPS One Day (USD)",
     zones: [north_america],
+    display_on: 'both',
     shipping_categories: [shipping_category]
   },
   {
     name: "UPS Ground (EU)",
     zones: [europe_vat],
+    display_on: 'both',
     shipping_categories: [shipping_category]
   },
   {
     name: "UPS Ground (EUR)",
     zones: [europe_vat],
+    display_on: 'both',
     shipping_categories: [shipping_category]
   }
 ]
@@ -41,6 +46,7 @@ shipping_methods.each do |attributes|
   Spree::ShippingMethod.where(name: attributes[:name]).first_or_create! do |shipping_method|
     shipping_method.calculator = Spree::Calculator::Shipping::FlatRate.create!
     shipping_method.zones = attributes[:zones]
+    shipping_method.display_on = attributes[:display_on]
     shipping_method.shipping_categories = attributes[:shipping_categories]
   end
 end
