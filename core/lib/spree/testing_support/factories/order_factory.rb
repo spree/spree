@@ -62,6 +62,12 @@ FactoryGirl.define do
           end
         end
 
+        factory :completed_order_with_store_credit_payment do
+          after(:create) do |order|
+            create(:store_credit_payment, amount: order.total, order: order)
+          end
+        end
+
         factory :order_ready_to_ship do
           payment_state 'paid'
           shipment_state 'ready'

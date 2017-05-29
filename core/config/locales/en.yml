@@ -1373,6 +1373,7 @@ en:
       captured: "Used"
       allocated: "Added"
       apply: Apply Store Credit
+      remove: Remove Store Credit
       applicable_amount: "%{amount} in store credit will be applied to this order."
       available_amount: "You have %{amount} in Store Credit available!"
       remaining_amount: "You have %{amount} remaining in your account's Store Credit."

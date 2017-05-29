@@ -2,7 +2,7 @@ module Spree
   class Order < Spree::Base
     module StoreCredit
       def add_store_credit_payments
-        payments.store_credits.where(state: 'checkout').map(&:invalidate!)
+        payments.store_credits.where(state: :checkout).map(&:invalidate!)
 
         remaining_total = outstanding_balance
 
@@ -20,6 +20,10 @@ module Spree
           end
           payments.store_credits.checkout
         end
+      end
+
+      def remove_store_credit_payments
+        payments.checkout.store_credits.map(&:invalidate!) unless completed?
       end
 
       def covered_by_store_credit?

@@ -673,6 +673,21 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
         remaining_amount = Spree::Money.new(order.total - amount.money.to_f)
         expect(page).to have_content(Spree.t('store_credit.applicable_amount', amount: amount))
         expect(page).to have_content(Spree.t('store_credit.additional_payment_needed', amount: remaining_amount))
+        expect(page).to have_content(Spree.t('store_credit.remove'))
+      end
+
+      context 'remove store credits payments' do
+        before do
+          store_credit.update(amount: 5)
+          additional_store_credit.update(amount: 5)
+          click_button 'Apply Store Credit'
+        end
+        it 'remove store credits button should remove store_credits' do
+          click_button 'Remove Store Credit'
+          expect(current_path).to eq spree.checkout_state_path(:payment)
+          expect(page).to have_content(Spree.t('store_credit.available_amount', amount: order.display_total_available_store_credit))
+          expect(page).to have_selector('button[name="apply_store_credit"]')
+        end
       end
     end
 
