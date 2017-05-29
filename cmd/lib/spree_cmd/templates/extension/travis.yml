@@ -18,7 +18,7 @@ script:
 
 rvm:
   - 2.3.1
-  - 2.2.5
+  - 2.2.7
 
 addons:
   apt:

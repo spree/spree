@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.homepage      = 'https://spreecommerce.com'
   s.license       = 'BSD-3-Clause'
 
-  s.required_ruby_version = '>= 2.2.2'
+  s.required_ruby_version = '>= 2.2.7'
 
   s.files         = `git ls-files`.split($\)
   s.executables   = s.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
