@@ -663,11 +663,23 @@ describe 'StoreCredit' do
       end
     end
 
-    context 'checkout payment' do
-      let(:payment_state) { 'checkout' }
+    context 'remove store credits' do
+      let(:payment_state) { :checkout }
 
-      it 'returns false' do
-        expect(subject).to be false
+      context 'when payment is in checkout and order is not completed' do
+        it { is_expected.to be true }
+      end
+
+      context 'when order is completed' do
+        before { payment.order.update_column(:completed_at, Time.current) }
+
+        it { is_expected.to be false }
+      end
+
+      context 'when payment is completed' do
+        before { payment.update_column(:state, :completed) }
+
+        it { is_expected.to be false }
       end
     end
 

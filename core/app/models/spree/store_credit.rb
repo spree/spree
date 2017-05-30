@@ -153,7 +153,7 @@ module Spree
     end
 
     def can_void?(payment)
-      payment.pending?
+      payment.pending? || (payment.checkout? && !payment.order.completed?)
     end
 
     def can_credit?(payment)
