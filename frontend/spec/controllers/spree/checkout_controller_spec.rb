@@ -511,5 +511,37 @@ describe Spree::CheckoutController, type: :controller do
         end
       end
     end
+
+    context 'remove store credits payment' do
+      let(:user) { create(:user) }
+      let(:credit_amount) { order.total - 1.00 }
+      let(:put_attrs) do
+        {
+          state: 'payment',
+          remove_store_credit: 'Remove Store Credit',
+          order: {
+            payments_attributes: [{ payment_method_id: payment_method_id }],
+          }
+        }
+      end
+      before do
+        create(:store_credit_payment_method)
+        create(:store_credit, user: user, amount: credit_amount)
+        order.add_store_credit_payments
+      end
+
+      def expect_invalid_store_credit_payment(order)
+        expect(order.payments.store_credits.with_state(:invalid).count).to eq 1
+        expect(order.payments.store_credits.with_state(:invalid).first.source).to be_a Spree::StoreCredit
+      end
+
+      it 'can fully pay with store credits while removing other payment attributes' do
+        spree_put :update, put_attrs
+
+        order.reload
+        expect(order.state).to eq 'payment'
+        expect_invalid_store_credit_payment(order)
+      end
+    end
   end
 end

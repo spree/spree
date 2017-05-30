@@ -17,7 +17,7 @@ module Spree
     before_action :check_authorization
 
     before_action :setup_for_current_state
-    before_action :add_store_credit_payments, only: [:update]
+    before_action :add_store_credit_payments, :remove_store_credit_payments, only: [:update]
 
     helper 'spree/orders'
 
@@ -176,6 +176,13 @@ module Spree
         if @order.payments.valid.sum(:amount) < @order.total
           redirect_to checkout_state_path(@order.state) and return
         end
+      end
+    end
+
+    def remove_store_credit_payments
+      if params.key?(:remove_store_credit)
+        @order.remove_store_credit_payments
+        redirect_to checkout_state_path(@order.state) and return
       end
     end
 
