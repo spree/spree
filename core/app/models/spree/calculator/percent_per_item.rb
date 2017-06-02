@@ -4,9 +4,6 @@ module Spree
   # for all matching products in an order. This should not be used as a
   # shipping calculator since it would be the same thing as a flat percent
   # off the entire order.
-  #
-  #
-  # TODO Should be deprecated now that we have adjustments at the line item level in spree core
 
   class Calculator::PercentPerItem < Calculator
     preference :percent, :decimal, default: 0
@@ -16,6 +13,10 @@ module Spree
     end
 
     def compute(object=nil)
+      ActiveSupport::Deprecation.warn(<<-EOS, caller)
+        Spree::Calculator::PercentPerItem will be removed in Spree 3.4
+        There is now a Promotion Action which deals with these types of promotions instead
+      EOS
       return 0 if object.nil?
       object.line_items.reduce(0) do |sum, line_item|
         sum += value_for_line_item(line_item)
