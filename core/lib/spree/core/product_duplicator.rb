@@ -72,7 +72,7 @@ module Spree
     end
 
     def sku_generator(sku)
-      "COPY OF #{Variant.where('sku like ?', "%#{sku}").order(:created_at).last.sku}"
+      "COPY OF #{Variant.unscoped.where('sku like ?', "%#{sku}").order(:created_at).last.sku}"
     end
   end
 end
