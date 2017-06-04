@@ -60,14 +60,11 @@ CyclomaticComplexity:
 Delegate:
   Enabled: false
 
-DeprecatedHashMethods:
+PreferredHashMethods:
   Enabled: false
 
 Documentation:
   Enabled: false
-
-DotPosition:
-  EnforcedStyle: trailing
 
 DoubleNegation:
   Enabled: false
@@ -261,8 +258,11 @@ UnderscorePrefixedVariableName:
 Void:
   Enabled: false
 
-# Style
+# Layout
 
-Style/IndentationWidth:
+Layout/IndentationWidth:
   # Number of spaces for each indentation level.
   Width: 2
+
+Layout/DotPosition:
+  EnforcedStyle: trailing
