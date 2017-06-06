@@ -3,7 +3,7 @@ module Spree
   class PromotionRule < Spree::Base
     belongs_to :promotion, class_name: 'Spree::Promotion', inverse_of: :promotion_rules
 
-    scope :of_type, ->(t) { where(type: t) }
+    scope :of_type, -> (t) { where(type: t) }
 
     validate :unique_per_promotion, on: :create
 
@@ -29,7 +29,12 @@ module Spree
       @eligibility_errors ||= ActiveModel::Errors.new(self)
     end
 
+    def add_eligibility_error(message)
+      eligibility_errors.add(:base, eligibility_error_message(message))
+    end
+
     private
+
     def unique_per_promotion
       if Spree::PromotionRule.exists?(promotion_id: promotion_id, type: self.class.name)
         errors[:base] << "Promotion already contains this rule type"

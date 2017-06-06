@@ -30,6 +30,7 @@ module Spree
         end
 
         private
+
         def formatted_amount_min
           Spree::Money.new(preferred_amount_min).to_s
         end
