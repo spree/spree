@@ -39,6 +39,10 @@ module Spree
             @current_order.associate_user! try_spree_current_user if try_spree_current_user
           end
 
+          if !@current_order && try_spree_current_user
+            @current_order = Spree::Order.incomplete.order('id DESC').where({ currency: current_currency, user_id: try_spree_current_user.try(:id)}).first
+          end
+
           if @current_order
             @current_order.last_ip_address = ip_address
             return @current_order
