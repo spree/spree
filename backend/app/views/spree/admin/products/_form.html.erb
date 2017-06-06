@@ -69,9 +69,16 @@
         <% end %>
       </div>
 
+      <div data-hook="admin_product_form_sku">
+        <%= f.field_container :sku, class: ['form-group'] do %>
+          <%= f.label :sku, Spree.t(:sku) %>
+          <%= f.text_field :sku, size: 16, class: 'form-control' %>
+        <% end %>
+      </div>
+
       <% if @product.has_variants? %>
         <div data-hook="admin_product_form_multiple_variants" class="well">
-          <%= f.label :skus, Spree.t(:sku).pluralize %>
+          <%= f.label :skus, Spree.t(:variant_skus) %>
           <div class="info marginb">
             <%= Spree.t(:info_product_has_multiple_skus, count: @product.variants.size) %>
             <ul class="text_list">
@@ -92,13 +99,6 @@
           </div>
         </div>
       <% else %>
-        <div data-hook="admin_product_form_sku">
-          <%= f.field_container :sku, class: ['form-group'] do %>
-            <%= f.label :sku, Spree.t(:sku) %>
-            <%= f.text_field :sku, size: 16, class: 'form-control' %>
-          <% end %>
-        </div>
-
         <div data-hook="admin_product_form_promotionable">
           <%= f.field_container :promotionable, class: ['form-group'] do %>
               <%= f.label :promotionable, Spree.t(:promotionable) %>
