@@ -108,6 +108,11 @@ module Spree
       def model_class
         Spree::Payment
       end
+      
+      def model_class
+        Spree::Payment
+      end
+        
     end
   end
 end
