@@ -37,6 +37,12 @@ module Spree
         it { is_expected.to be_nil }
       end
 
+      context "when the master has no price" do
+        let(:product_price) { nil }
+
+        it { should be_nil }
+      end
+
       context "when currency is default" do
         context "when variant is more than master" do
           let(:variant_price) { 15 }
