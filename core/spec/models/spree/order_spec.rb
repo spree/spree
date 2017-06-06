@@ -67,6 +67,8 @@ describe Spree::Order, type: :model do
     end
   end
 
+  its(:class) { should be_const_defined(:STATES) }
+
   context "#canceled_by" do
     let(:admin_user) { create :admin_user }
     let(:order) { create :order }

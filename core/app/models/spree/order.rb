@@ -7,6 +7,9 @@ module Spree
     SHIPMENT_STATES = %w(backorder canceled partial pending ready shipped)
 
     extend FriendlyId
+
+    STATES = ['cart', 'address', 'delivery', 'payment', 'confirm', 'complete']
+
     friendly_id :number, slug_column: :number, use: :slugged
 
     include Spree::Order::Checkout
