@@ -36,13 +36,13 @@ module Spree
 
       def variant_index_includes
         [
-          variant_images: [viewable: { option_values: :option_type }]
+            :variant_images
         ]
       end
 
       def variant_edit_includes
         [
-          variants_including_master: { option_values: :option_type, images: :viewable }
+            variants_including_master: [{option_values: :option_type}, :images]
         ]
       end
     end
