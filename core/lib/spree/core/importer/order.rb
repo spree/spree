@@ -72,7 +72,7 @@ module Spree
                 shipment.shipped_at = s[:shipped_at]
                 shipment.state      = 'shipped'
               end
-
+ 
               shipment.save!
 
               shipping_method = Spree::ShippingMethod.find_by_name(s[:shipping_method]) || Spree::ShippingMethod.find_by_admin_name!(s[:shipping_method])
