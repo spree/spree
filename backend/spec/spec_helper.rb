@@ -92,7 +92,7 @@ RSpec.configure do |config|
 
   config.after(:each) do
     # wait_for_ajax sometimes fails so we should clean db first to get rid of false failed specs
-    DatabaseCleaner.clean
+    # DatabaseCleaner.clean
 
     # Ensure js requests finish processing before advancing to the next test
     wait_for_ajax if RSpec.current_example.metadata[:js]
