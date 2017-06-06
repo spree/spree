@@ -74,6 +74,7 @@ Spree::Core::Engine.add_routes do
         put :approve
         put :cancel
         put :resume
+        get '', to: redirect("#{Spree.admin_path}/orders/%{id}/edit")
       end
 
       resources :state_changes, only: [:index]
