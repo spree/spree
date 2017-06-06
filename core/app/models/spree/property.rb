@@ -6,7 +6,7 @@ module Spree
     has_many :product_properties, dependent: :delete_all, inverse_of: :property
     has_many :products, through: :product_properties
 
-    validates :name, :presentation, presence: true
+    validates :name, :presentation, presence: true, uniqueness: { case_sensitive: false, allow_blank: true }
 
     scope :sorted, -> { order(:name) }
 
