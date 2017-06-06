@@ -40,6 +40,7 @@ module Spree
             set_up_options
           end
 
+          product.touch
           product
         end
 
