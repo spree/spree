@@ -56,7 +56,7 @@ module Spree
       unless meta_title.blank?
         meta_title
       else
-        root? ? name : "#{root.name} - #{name}"
+        root? ? "#{root.name} - #{name}" : name
       end
     end
 
