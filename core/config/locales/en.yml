@@ -717,7 +717,7 @@ en:
     errors:
       messages:
         could_not_create_taxon: Could not create taxon
-        no_shipping_methods_available: No shipping methods available for selected location, please change your address and try again.
+        no_shipping_methods_available: No shipping method available for selected location, please change your address and try again.
     errors_prohibited_this_record_from_being_saved:
       one: 1 error prohibited this record from being saved
       other: ! '%{count} errors prohibited this record from being saved'
@@ -769,7 +769,7 @@ en:
     google_analytics_id: Analytics ID
     guest_checkout: Guest Checkout
     guest_user_account: Checkout as a Guest
-    has_no_shipped_units: has no shipped units
+    has_no_shipped_units: has no shipped unit
     height: Height
     home: Home
     i18n:
@@ -921,18 +921,18 @@ en:
     new_variant: New Variant
     new_zone: New Zone
     next: Next
-    no_actions_added: No actions added
+    no_actions_added: No action added
     no_available_date_set: No available date set
     no_payment_found: No payment found
-    no_pending_payments: No pending payments
-    no_products_found: No products found
-    no_results: No results
-    no_rules_added: No rules added
+    no_pending_payments: No pending payment
+    no_products_found: No product found
+    no_results: No result
+    no_rules_added: No rule added
     no_resource_found: 'No %{resource} found'
-    no_returns_found: No returns found
+    no_returns_found: No return found
     no_shipping_method_selected: No shipping method selected.
-    no_state_changes: No state changes yet.
-    no_tracking_present: No tracking details provided.
+    no_state_changes: No state change yet.
+    no_tracking_present: No tracking detail provided.
     user_not_found: User not found
     none: None
     none_selected: None Selected
@@ -1440,7 +1440,7 @@ en:
         subject: Test Mail
     test_mode: Test Mode
     thank_you_for_your_order: Thank you for your business.  Please print out a copy of this confirmation page for your records.
-    there_are_no_items_for_this_order: There are no items for this order. Please add an item to the order to continue.
+    there_are_no_items_for_this_order: There is no item for this order. Please add an item to the order to continue.
     there_were_problems_with_the_following_fields: There were problems with the following fields
     this_order_has_already_received_a_refund: This order has already received a refund
     thumbnail: Thumbnail
@@ -1505,7 +1505,7 @@ en:
     what_is_this: What's This?
     width: Width
     year: Year
-    you_have_no_orders_yet: You have no orders yet
+    you_have_no_orders_yet: You have no order yet
     your_cart_is_empty: Your cart is empty
     your_order_is_empty_add_product: Your order is empty, please search for and add a product above
     zip: Zip

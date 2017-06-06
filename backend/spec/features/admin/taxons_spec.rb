@@ -43,7 +43,7 @@ feature "Taxonomies and taxons" do
     visit current_path
     select_clothing_from_select2
 
-    expect(page).to have_content("No results")
+    expect(page).to have_content("No result")
   end
 
   def select_clothing_from_select2
