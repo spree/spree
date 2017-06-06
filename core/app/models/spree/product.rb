@@ -38,17 +38,17 @@ module Spree
     has_many :classifications, dependent: :delete_all, inverse_of: :product
     has_many :taxons, through: :classifications, before_remove: :remove_taxon
 
-    has_many :product_promotion_rules, class_name: 'Spree::ProductPromotionRule'
-    has_many :promotion_rules, through: :product_promotion_rules, class_name: 'Spree::PromotionRule'
+    has_many :product_promotion_rules, dependent: :destroy
+    has_many :promotion_rules, through: :product_promotion_rules
 
-    has_many :promotions, through: :promotion_rules, class_name: 'Spree::Promotion'
+    has_many :promotions, through: :promotion_rules
 
     has_many :possible_promotions, -> { advertised.active }, through: :promotion_rules,
                                                              class_name: 'Spree::Promotion',
                                                              source: :promotion
 
-    belongs_to :tax_category, class_name: 'Spree::TaxCategory'
-    belongs_to :shipping_category, class_name: 'Spree::ShippingCategory', inverse_of: :products
+    belongs_to :tax_category
+    belongs_to :shipping_category, inverse_of: :products
 
     has_one :master,
       -> { where is_master: true },
