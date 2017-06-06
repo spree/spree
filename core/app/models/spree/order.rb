@@ -660,6 +660,8 @@ module Spree
     def after_resume
       shipments.each(&:resume!)
       consider_risk
+      update_attributes!(state: :complete)
+      update_with_updater!
     end
 
     def use_billing?
