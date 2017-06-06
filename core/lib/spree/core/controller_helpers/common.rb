@@ -64,9 +64,8 @@ module Spree
           # Default layout is: +app/views/spree/layouts/spree_application+
           #
           def get_layout
-            layout ||= Spree::Config[:layout]
+            Spree::Config[:layout]
           end
-
         end
       end
     end
