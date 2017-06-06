@@ -29,6 +29,11 @@ module Spree
           @callbacks ||= {}
           @callbacks[action] ||= Spree::ActionCallbacks.new
         end
+
+        def custom_callback(action)
+          @callbacks ||= {}
+          @callbacks[action] ||= Spree::ActionCallbacks.new
+        end
       end
 
       protected
