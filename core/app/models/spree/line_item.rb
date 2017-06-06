@@ -85,11 +85,6 @@ module Spree
     alias total final_amount
     alias money display_total
 
-    def invalid_quantity_check
-      warn "`invalid_quantity_check` is deprecated. Use private `ensure_valid_quantity` instead."
-      ensure_valid_quantity
-    end
-
     def sufficient_stock?
       Stock::Quantifier.new(variant).can_supply? quantity
     end
