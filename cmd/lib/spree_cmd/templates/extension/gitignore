@@ -5,6 +5,7 @@
 .idea
 .localeapp/locales
 .project
+.sass-cache
 coverage
 default
 Gemfile.lock
