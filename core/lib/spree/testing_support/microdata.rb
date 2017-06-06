@@ -6,6 +6,9 @@ module Spree
         attr_reader :items, :doc
 
         def initialize(content)
+          ActiveSupport::Deprecation.warn(<<-EOS, caller)
+            Spree::TestingSupport::Microdata will be removed in Spree 3.4
+          EOS
           @doc = Nokogiri::HTML(content)
           @items = extract_items
         end
