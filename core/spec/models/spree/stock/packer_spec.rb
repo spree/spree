@@ -20,6 +20,11 @@ module Spree
           expect(packer).not_to receive(:build_splitter)
           packages = packer.packages
         end
+
+        it 'allows users to set splitters to an empty array' do
+          packages = Packer.new(stock_location, order, []).packages
+          packages.size.should eq 1
+        end
       end
 
       context 'default_package' do
