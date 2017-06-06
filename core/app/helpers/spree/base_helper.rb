@@ -119,5 +119,13 @@ module Spree
         style if style.in? possible_styles.with_indifferent_access
       end
     end
+
+    def gem_available?(name)
+       Gem::Specification.find_by_name(name)
+    rescue Gem::LoadError
+       false
+    rescue
+       Gem.available?(name)
+    end
   end
 end
