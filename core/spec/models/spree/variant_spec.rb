@@ -612,6 +612,20 @@ describe Spree::Variant, type: :model do
     end
   end
 
+  describe "of_type scope" do
+    let(:product) { create(:product) }
+    let(:property) { create(:property, name: 'type', presentation: 'type') }
+    let!(:product_property) { create(:product_property, value: 'luggage', property: property, product: product) }
+
+    it "returns all variants with given property name and product property value" do
+      expect(Spree::Variant.of_type('luggage')).to eq [product.master]
+    end
+
+    it "returns empty array if given property name does not match any variants" do
+      expect(Spree::Variant.of_type('foo')).to eq []
+    end
+  end
+
   context "#volume" do
     let(:variant_zero_width) { create(:variant, width: 0) }
     let(:variant) { create(:variant) }
