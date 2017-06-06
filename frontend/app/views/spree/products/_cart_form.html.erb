@@ -7,7 +7,7 @@
           <% @product.variants_and_option_values(current_currency).each_with_index do |variant, index| %>
             <li>
               <%= radio_button_tag "variant_id", variant.id, index == 0,
-                  'data-price' => variant.price_in(current_currency).money, 
+                  'data-price' => variant.price_in(current_currency).money,
                   'data-in-stock' => variant.can_supply?
               %>
               <%= label_tag "variant_id_#{ variant.id }" do %>
@@ -34,10 +34,10 @@
         <div id="product-price">
           <h6 class="product-section-title"><%= Spree.t(:price) %></h6>
           <div>
-            <span class="lead price selling" itemprop="price">
+            <span class="lead price selling" itemprop="price" content="<%= @product.price_in(current_currency).amount.to_d %>">
               <%= display_price(@product) %>
             </span>
-            <span itemprop="priceCurrency" content="<%= @product.currency %>"></span>
+            <span itemprop="priceCurrency" content="<%= current_currency %>"></span>
           </div>
 
           <% if @product.master.can_supply? %>

@@ -21,19 +21,30 @@ describe "Visiting Products", type: :feature, inaccessible: true do
   end
 
   describe "correct displaying of microdata" do
-    let(:products) { Spree::TestingSupport::Microdata::Document.new(page.body).extract_items }
-    let(:ringer) { products.keep_if { |product| product.properties["name"].first.match("Ringer") }.first }
+    let(:product) { Spree::Product.find_by(name: 'Ruby on Rails Ringer T-Shirt') }
 
-    it "correctly displays the product name via microdata" do
-      expect(ringer.properties["name"]).to eq ["Ruby on Rails Ringer T-Shirt"]
+    it "on products page" do
+      within("#product_#{product.id}") do
+        within('[itemprop=name]') do
+          expect(page).to have_content('Ruby on Rails Ringer T-Shirt')
+        end
+        expect(page).to have_css("[itemprop='price'][content='19.99']")
+        expect(page).to have_css("[itemprop='priceCurrency'][content='USD']")
+        expect(page).to have_css("[itemprop='url'][href='/products/ruby-on-rails-ringer-t-shirt']")
+        expect(page).to have_css("[itemprop='image'][src*='/assets/noimage/small']")
+      end
     end
 
-    it "correctly displays the product image via microdata" do
-      expect(ringer.properties['image'].first).to include '/assets/noimage/small'
-    end
-
-    it "correctly displays the product url via microdata" do
-      expect(ringer.properties["url"]).to eq ["/products/ruby-on-rails-ringer-t-shirt"]
+    it "on product page" do
+      click_link product.name
+      within('[data-hook=product_show]') do
+        within('[itemprop=name]') do
+          expect(page).to have_content('Ruby on Rails Ringer T-Shirt')
+        end
+        expect(page).to have_css("[itemprop='price'][content='19.99']")
+        expect(page).to have_css("[itemprop='priceCurrency'][content='USD']")
+        expect(page).to have_css("[itemprop='image'][src*='/assets/noimage/product']")
+      end
     end
   end
 
