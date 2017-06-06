@@ -211,7 +211,7 @@ module Spree
     end
 
     def refresh_rates(shipping_method_filter = ShippingMethod::DISPLAY_ON_FRONT_END)
-      return shipping_rates if shipped?
+      return shipping_rates if shipped? || order.completed?
       return [] unless can_get_rates?
 
       # StockEstimator.new assigment below will replace the current shipping_method
