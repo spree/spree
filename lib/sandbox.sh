@@ -21,6 +21,17 @@ group :test, :development do
 end
 RUBY
 
+cat <<RUBY >> Gemfile
+group :test, :development do
+  platforms :ruby_19 do
+    gem 'pry-debugger'
+  end
+  platforms :ruby_20, :ruby_21 do
+    gem 'pry-byebug'
+  end
+end
+RUBY
+
 bundle install --gemfile Gemfile
 bundle exec rails g spree:install --auto-accept --user_class=Spree::User --enforce_available_locales=true
 bundle exec rails g spree:auth:install
