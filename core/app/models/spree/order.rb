@@ -77,6 +77,7 @@ module Spree
     alias_attribute :shipping_address, :ship_address
 
     belongs_to :store, class_name: 'Spree::Store'
+    belongs_to :shipping_method
 
     with_options dependent: :destroy do
       has_many :state_changes, as: :stateful

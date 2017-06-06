@@ -15,6 +15,10 @@ describe Spree::Order, type: :model do
     allow(Spree::LegacyUser).to receive_messages(current: mock_model(Spree::LegacyUser, id: 123))
   end
 
+  describe 'associations' do
+    it { is_expected.to belong_to(:shipping_method) }
+  end
+
   describe '.scopes' do
     let!(:user) { FactoryGirl.create(:user) }
     let!(:completed_order) { FactoryGirl.create(:order, user: user, completed_at: Time.current) }
