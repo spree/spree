@@ -1,6 +1,7 @@
 <% max_level = Spree::Config[:max_level_in_taxons_menu] || 1 %>
 
 <nav id="taxonomies" class="sidebar-item" data-hook>
+ <% if @taxonomies %>
   <% @taxonomies.each do |taxonomy| %>
     <% cache [I18n.locale, taxonomy, max_level, @taxon] do %>
       <% if taxonomy.root.children.any? %>
@@ -9,4 +10,5 @@
       <% end %>
     <% end %>
   <% end %>
+ <% end %>
 </nav>
