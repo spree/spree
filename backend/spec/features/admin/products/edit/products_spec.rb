@@ -36,14 +36,6 @@ describe 'Product Details', type: :feature, js: true do
       fill_in "product_slug", with: 'random-slug-value'
       click_button "Update"
       expect(page).to have_content("successfully updated!")
-
-      fill_in "product_slug", with: 'a'
-      click_button "Update"
-      within('#product_slug_field') { expect(page).to have_content("is too short") }
-
-      fill_in "product_slug", with: 'another-random-slug-value'
-      click_button "Update"
-      expect(page).to have_content("successfully updated!")
     end
   end
 
