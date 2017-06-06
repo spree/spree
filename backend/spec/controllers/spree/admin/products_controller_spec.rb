@@ -3,6 +3,16 @@ require 'spec_helper'
 describe Spree::Admin::ProductsController, type: :controller do
   stub_authorization!
 
+  context '#create' do
+    context 'when price is empty' do
+      let(:params) { { name: :sample_name, shipping_category_id: create(:shipping_category).id } }
+
+      it 'does not persist product' do
+        expect { spree_post :create, product: params }.not_to change { Spree::Product.count }
+      end
+    end
+  end
+
   context "#index" do
     let(:ability_user) { stub_model(Spree::LegacyUser, has_spree_role?: true) }
 

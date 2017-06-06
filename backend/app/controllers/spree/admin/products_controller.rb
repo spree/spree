@@ -156,6 +156,14 @@ module Spree
       def variant_stock_includes
         [:images, stock_items: :stock_location, option_values: :option_type]
       end
+
+      def permitted_resource_params
+        params[resource.object_name].present? ? permit_not_blank_params : ActionController::Parameters.new
+      end
+
+      def permit_not_blank_params
+        params.require(resource.object_name).reject { |_k, v| v.blank? }.permit!
+      end
     end
   end
 end
