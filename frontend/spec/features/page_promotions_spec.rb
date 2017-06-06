@@ -21,7 +21,6 @@ describe 'page promotions', type: :feature do
 
   it "automatically applies a page promotion upon visiting" do
     expect(page).not_to have_content("Promotion ($10 off) -$10.00")
-    visit '/content/test'
     visit '/cart'
     expect(page).to have_content("Promotion ($10 off) -$10.00")
     expect(page).to have_content("Subtotal (1 item) $20.00")
