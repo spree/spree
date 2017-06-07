@@ -7,7 +7,6 @@ node(:total) { |li| li.total }
 child :variant do
   extends "spree/api/v1/variants/small"
   attributes :product_id
-  child(images: :images) { extends "spree/api/v1/images/show" }
 end
 
 child adjustments: :adjustments do
