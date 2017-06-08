@@ -21,7 +21,7 @@ module Spree
 
     belongs_to :tax_category, class_name: 'Spree::TaxCategory'
 
-    validates :name, presence: true
+    validates :name, presence: true, uniqueness: { case_sensitive: false, allow_blank: true }
 
     validate :at_least_one_shipping_category
 
