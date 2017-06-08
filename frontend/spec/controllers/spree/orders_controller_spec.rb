@@ -2,13 +2,10 @@ require 'spec_helper'
 
 describe Spree::OrdersController, type: :controller do
   let(:user) { create(:user) }
+  let(:order) { Spree::Order.create }
+  let(:variant) { create(:variant) }
 
   context "Order model mock" do
-    let(:order) do
-      Spree::Order.create!
-    end
-    let(:variant) { create(:variant) }
-
     before do
       allow(controller).to receive_messages(try_spree_current_user: user)
     end
@@ -116,8 +113,6 @@ describe Spree::OrdersController, type: :controller do
   end
 
   context "line items quantity is 0" do
-    let(:order) { Spree::Order.create }
-    let(:variant) { create(:variant) }
     let!(:line_item) { order.contents.add(variant, 1) }
 
     before do
@@ -129,6 +124,41 @@ describe Spree::OrdersController, type: :controller do
       expect(order.line_items.count).to eq 1
       spree_put :update, order: { line_items_attributes: { "0" => { id: line_item.id, quantity: 0 } } }
       expect(order.reload.line_items.count).to eq 0
+    end
+  end
+
+  describe '#order_params' do
+    let(:params) { controller.send(:params) }
+    let(:parameters) { ActionController::Parameters.new }
+    let(:order_params) { { order: { line_items_attributes: { "0" => { id: 1, quantity: 0 } } } } }
+
+    before do
+      allow(controller).to receive(:check_authorization)
+      allow(controller).to receive_messages(current_order: order)
+      allow(controller).to receive(:update_attributes)
+      allow(controller).to receive(:params).and_return(params)
+      allow(params).to receive(:fetch).and_return(parameters)
+      allow(parameters).to receive(:permit).and_return(parameters)
+    end
+
+    def send_request(params = {})
+      spree_put :update, params
+    end
+
+    context 'with correct method flow' do
+      after { send_request }
+      it { expect(controller).to receive(:params).and_return(params) }
+      it { expect(params).to receive(:fetch).with(:order, {}).and_return(parameters) }
+    end
+
+    context 'when order parameter is present' do
+      after { send_request(order_params) }
+      it { expect(parameters).to receive(:permit).with(*controller.permitted_order_attributes).and_return(parameters) }
+    end
+
+    context 'when order parameter is empty' do
+      after { send_request }
+      it { expect(parameters).to receive(:permit).with(*controller.permitted_order_attributes).and_return({}) }
     end
   end
 end
