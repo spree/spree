@@ -67,7 +67,7 @@ module Spree
         private
 
         def last_incomplete_order
-          @last_incomplete_order ||= try_spree_current_user.last_incomplete_spree_order
+          @last_incomplete_order ||= try_spree_current_user.last_incomplete_spree_order(current_store)
         end
 
         def current_order_params
