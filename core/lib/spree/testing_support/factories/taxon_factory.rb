@@ -1,6 +1,6 @@
 FactoryGirl.define do
   factory :taxon, class: Spree::Taxon do
-    name 'Ruby on Rails'
+    sequence(:name) { |n| "taxon_#{n}" }
     taxonomy
     parent_id nil
   end
