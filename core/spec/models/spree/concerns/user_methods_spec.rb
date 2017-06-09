@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Spree::UserMethods do
   let(:test_user) { create :user }
-  let(:current_store){ create :store }
+  let(:current_store) { create :store }
 
   describe 'Associations' do
     subject { test_user }
