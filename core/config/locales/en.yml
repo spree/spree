@@ -721,6 +721,7 @@ en:
     errors_prohibited_this_record_from_being_saved:
       one: 1 error prohibited this record from being saved
       other: ! '%{count} errors prohibited this record from being saved'
+    error_user_destroy_with_orders: User associated with orders cannot be destroyed
     event: Event
     events:
       spree:
