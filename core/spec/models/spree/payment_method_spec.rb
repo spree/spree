@@ -1,6 +1,11 @@
 require 'spec_helper'
 
 describe Spree::PaymentMethod, type: :model do
+  describe "Associations" do
+    it { is_expected.to have_many(:payments).class_name("Spree::Payment").inverse_of(:payment_method).dependent(:restrict_with_error) }
+    it { is_expected.to have_many(:credit_cards).class_name("Spree::CreditCard").dependent(:restrict_with_error) }
+  end
+
   context "visibility scopes" do
     before do
       [nil, '', 'both', 'front_end', 'back_end'].each do |display_on|
