@@ -20,6 +20,7 @@ module Spree
     has_many :promotion_rules, through: :promotion_rule_taxons, class_name: 'Spree::PromotionRule'
 
     validates :name, presence: true
+    validates :permalink, uniqueness: { case_sensitive: false }
     with_options length: { maximum: 255 }, allow_blank: true do
       validates :meta_keywords
       validates :meta_description
