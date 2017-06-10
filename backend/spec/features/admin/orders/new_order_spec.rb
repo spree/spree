@@ -163,7 +163,7 @@ describe "New Order", type: :feature do
       click_link "Customer"
       select_customer
       click_button "Update"
-      expect(Spree::Order.last.state).to eq 'delivery'
+      expect(Spree::Order.last.state).to eq 'address'
     end
   end
 
