@@ -28,7 +28,7 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
       allow(controller).to receive_messages(try_spree_current_user: user)
     }
     context 'create_order_if_necessary option is false' do
-      let!(:order) { create :order, user: user }
+      let!(:order) { create :order, user: user, store: store }
       it 'returns current order' do
         expect(controller.current_order).to eq order
       end
