@@ -17,6 +17,8 @@ module Spree
       end
 
       def new
+        # Move order to payment state in order to capture tax generated on shipments
+        @order.next if @order.can_go_to_state?('payment')
         @payment = @order.payments.build
       end
 
