@@ -5,7 +5,6 @@
 * [Extensions](https://github.com/spree-contrib)
 * [Documentation](http://guides.spreecommerce.org)
 * Spree success stories from [OpenCommerce Conf](http://opencommerceconf.org/)
-* [2016 Development Roadmap](https://github.com/spree/spree/wiki/Spree-Commerce-development-roadmap-2016)
 
 [![Circle CI](https://circleci.com/gh/spree/spree.svg?style=svg)](https://circleci.com/gh/spree/spree/tree/master)
 [![Code Climate](https://codeclimate.com/github/spree/spree.svg)](https://codeclimate.com/github/spree/spree)
@@ -37,7 +36,7 @@ Add Spree gems to your Gemfile:
 ```ruby
 gem 'spree', '~> 3.2.0'
 gem 'spree_auth_devise', '~> 3.2.0.beta'
-gem 'spree_gateway', '~> 3.2.0.beta'
+gem 'spree_gateway', '~> 3.2'
 ```
 
 ### Rails 4.2
@@ -45,7 +44,7 @@ gem 'spree_gateway', '~> 3.2.0.beta'
 ```ruby
 gem 'spree', '~> 3.1.0'
 gem 'spree_auth_devise', '~> 3.1.0'
-gem 'spree_gateway', '~> 3.1.0'
+gem 'spree_gateway', '~> 3.1'
 ```
 
 Run `bundle install`
