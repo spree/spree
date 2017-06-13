@@ -28,9 +28,9 @@ script:
   - bundle exec rake spec
 
 rvm:
-  - 2.4.0
-  - 2.3.1
-  - 2.2.5
+  - 2.4.1
+  - 2.3.4
+  - 2.2.7
 
 addons:
   apt:
