@@ -99,13 +99,13 @@ module Spree
       end
 
       def load_order
-        @order = Order.friendly.find(params[:order_id])
+        @order = Order.find_by!(number: params[:order_id])
         authorize! action, @order
         @order
       end
 
       def load_payment
-        @payment = Payment.friendly.find(params[:id])
+        @payment = Payment.find_by!(number: params[:id])
       end
 
       def model_class

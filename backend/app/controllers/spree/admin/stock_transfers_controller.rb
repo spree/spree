@@ -13,7 +13,7 @@ module Spree
       end
 
       def show
-        @stock_transfer = StockTransfer.friendly.find(params[:id])
+        @stock_transfer = StockTransfer.find_by!(number: params[:id])
       end
 
       def new; end
