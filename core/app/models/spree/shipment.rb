@@ -4,9 +4,6 @@ module Spree
   class Shipment < Spree::Base
     include Spree::Core::NumberGenerator.new(prefix: 'H', length: 11)
 
-    extend FriendlyId
-    friendly_id :number, slug_column: :number, use: :slugged
-
     with_options inverse_of: :shipments do
       belongs_to :address, class_name: 'Spree::Address'
       belongs_to :order, class_name: 'Spree::Order', touch: true
@@ -87,6 +84,10 @@ module Spree
     extend DisplayMoney
     money_methods :cost, :discounted_cost, :final_price, :item_cost
     alias display_amount display_cost
+
+    def to_param
+      number.to_s
+    end
 
     def add_shipping_method(shipping_method, selected = false)
       shipping_rates.create(shipping_method: shipping_method, selected: selected, cost: cost)

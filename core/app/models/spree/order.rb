@@ -6,9 +6,6 @@ module Spree
     PAYMENT_STATES = %w(balance_due credit_owed failed paid void)
     SHIPMENT_STATES = %w(backorder canceled partial pending ready shipped)
 
-    extend FriendlyId
-    friendly_id :number, slug_column: :number, use: :slugged
-
     include Spree::Order::Checkout
     include Spree::Order::CurrencyUpdater
     include Spree::Order::Payments
@@ -166,6 +163,10 @@ module Spree
     # that should be called when determining if two line items are equal.
     def self.register_line_item_comparison_hook(hook)
       line_item_comparison_hooks.add(hook)
+    end
+
+    def to_param
+      number.to_s
     end
 
     # For compatiblity with Calculator::PriceSack

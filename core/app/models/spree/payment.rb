@@ -2,9 +2,6 @@ module Spree
   class Payment < Spree::Base
     include Spree::Core::NumberGenerator.new(prefix: 'P', letters: true, length: 7)
 
-    extend FriendlyId
-    friendly_id :number, slug_column: :number, use: :slugged
-
     include Spree::Payment::Processing
 
     NON_RISKY_AVS_CODES = ['B', 'D', 'H', 'J', 'M', 'Q', 'T', 'V', 'X', 'Y'].freeze
@@ -62,6 +59,10 @@ module Spree
 
     scope :store_credits, -> { where(source_type: Spree::StoreCredit.to_s) }
     scope :not_store_credits, -> { where(arel_table[:source_type].not_eq(Spree::StoreCredit.to_s).or(arel_table[:source_type].eq(nil))) }
+
+    def to_param
+      number.to_s
+    end
 
     # transaction_id is much easier to understand
     def transaction_id
