@@ -8,6 +8,13 @@ describe Spree::Promotion, type: :model do
       @valid_promotion = Spree::Promotion.new name: "A promotion"
     end
 
+    it { is_expected.to validate_presence_of(:name) }
+    it { is_expected.to validate_uniqueness_of(:path).case_insensitive.allow_blank }
+    it { is_expected.to validate_uniqueness_of(:code).case_insensitive.allow_blank }
+    it { is_expected.to validate_numericality_of(:usage_limit).is_greater_than(0).allow_nil }
+    it { is_expected.to validate_length_of(:description).is_at_most(255) }
+    it { is_expected.to allow_values('', nil).for(:description) }
+
     it "valid_promotion is valid" do
       expect(@valid_promotion).to be_valid
     end
@@ -580,23 +587,11 @@ describe Spree::Promotion, type: :model do
       end
     end
 
-    context "and there are multiple coupons with the same code" do
-      context "and only one has any actions" do
-        let!(:promotion_without_actions) { create(:promotion, code: "MY-COUPON-123").actions.clear }
-        let!(:promotion) { create(:promotion, :with_order_adjustment, code: "MY-COUPON-123") }
+    context "when promotion has no actions" do
+      let!(:promotion_without_actions) { create(:promotion, code: "MY-COUPON-123").actions.clear }
 
-        it "then returns the one with an action" do
-          expect(Spree::Promotion.with_coupon_code("MY-COUPON-123").actions.exists?).to be
-        end
-      end
-
-      context "and all of them has actions" do
-        let!(:first_promotion) { create(:promotion, :with_order_adjustment, code: "MY-COUPON-123") }
-        let!(:second_promotion) { create(:promotion, :with_order_adjustment, code: "MY-COUPON-123") }
-
-        it "then returns the first one with an action" do
-          expect(Spree::Promotion.with_coupon_code("MY-COUPON-123").id).to eq(first_promotion.id)
-        end
+      it "then returns the one with an action" do
+        expect(Spree::Promotion.with_coupon_code("MY-COUPON-123")).to be_nil
       end
     end
   end
