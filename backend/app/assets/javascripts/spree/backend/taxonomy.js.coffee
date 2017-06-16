@@ -1,6 +1,6 @@
-handle_ajax_error = (XMLHttpRequest, textStatus, errorThrown) ->
+handle_ajax_error = (last_rollback) ->
   $.jstree.rollback(last_rollback)
-  $("#ajax_error").show().html("<strong>" + Spree.translations.server_error + "</strong><br />" + Spree.translations.taxonomy_tree_error)
+  show_flash("error", "<strong>" + Spree.translations.server_error + "</strong><br />" + Spree.translations.taxonomy_tree_error)
 
 handle_move = (e, data) ->
   last_rollback = data.rlbk
@@ -20,7 +20,8 @@ handle_move = (e, data) ->
       "taxon[child_index]": position,
       token: Spree.api_key
     },
-    error: handle_ajax_error
+    error: (XMLHttpRequest, textStatus, errorThrown) ->
+      handle_ajax_error(last_rollback)
 
   true
 
@@ -41,7 +42,8 @@ handle_create = (e, data) ->
       "taxon[child_index]": position,
       token: Spree.api_key
     },
-    error: handle_ajax_error,
+    error: (XMLHttpRequest, textStatus, errorThrown) ->
+      handle_ajax_error(last_rollback)
     success: (data,result) ->
       node.prop('id', data.id)
 
@@ -62,7 +64,8 @@ handle_rename = (e, data) ->
       "taxon[name]": name,
       token: Spree.api_key
     },
-    error: handle_ajax_error
+    error: (XMLHttpRequest, textStatus, errorThrown) ->
+      handle_ajax_error(last_rollback)
 
 handle_delete = (e, data) ->
   last_rollback = data.rlbk
@@ -79,7 +82,8 @@ handle_delete = (e, data) ->
         _method: "delete",
         token: Spree.api_key
       },
-      error: handle_ajax_error
+      error: (XMLHttpRequest, textStatus, errorThrown) ->
+        handle_ajax_error(last_rollback)
   else
     $.jstree.rollback(last_rollback)
     last_rollback = null
