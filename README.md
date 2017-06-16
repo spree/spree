@@ -35,7 +35,7 @@ Add Spree gems to your Gemfile:
 
 ```ruby
 gem 'spree', '~> 3.2.0'
-gem 'spree_auth_devise', '~> 3.2.0.beta'
+gem 'spree_auth_devise', '~> 3.2'
 gem 'spree_gateway', '~> 3.2'
 ```
 
@@ -43,7 +43,7 @@ gem 'spree_gateway', '~> 3.2'
 
 ```ruby
 gem 'spree', '~> 3.1.0'
-gem 'spree_auth_devise', '~> 3.1.0'
+gem 'spree_auth_devise', '~> 3.1'
 gem 'spree_gateway', '~> 3.1'
 ```
 
