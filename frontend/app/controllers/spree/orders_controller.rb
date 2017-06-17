@@ -91,7 +91,7 @@ module Spree
     end
 
     def check_authorization
-      order = Spree::Order.find_by_number(params[:id]) if params[:id].present?
+      order = Spree::Order.find_by(number: params[:id]) if params[:id].present?
       order = current_order unless order
 
       if order
