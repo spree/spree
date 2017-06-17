@@ -37,7 +37,7 @@ module Spree
             payments = [@payment]
           end
 
-          if (saved_payments = payments.select &:persisted?).any?
+          if payments && (saved_payments = payments.select &:persisted?).any?
             invoke_callbacks(:create, :after)
 
             # Transition order as far as it will go.
@@ -49,6 +49,7 @@ module Spree
             flash[:success] = flash_message_for(saved_payments.first, :successfully_created)
             redirect_to admin_order_payments_path(@order)
           else
+            @payment ||= @order.payments.build(object_params)
             invoke_callbacks(:create, :fails)
             flash[:error] = Spree.t(:payment_could_not_be_created)
             render :new
