@@ -12,7 +12,7 @@
   </thead>
   <tbody>
     <% payments.each do |payment| %>
-      <tr id="<%= dom_id(payment) %>" data-hook="payments_row">
+      <tr id="<%= dom_id(payment) %>" data-hook="payments_row" data-number="<%= payment.number %>">
         <td><%= link_to payment.number, spree.admin_order_payment_path(@order, payment) %></td>
         <td><%= pretty_time(payment.created_at) %></td>
         <td class="amount text-center"><%= payment.display_amount %></td>
