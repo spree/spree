@@ -9,7 +9,7 @@
   <%= item.variant.sku %> <%= raw(item.variant.product.name) %> <%= raw(item.variant.options_text) -%> (<%=item.quantity%>) <%= Spree.t('at_symbol') %>  <%= item.single_money %> = <%= item.display_amount %>
 <% end %>
 ============================================================
-<%= Spree.t('order_mailer.confirm_email.subtotal') %> <%= @order.display_item_total %>
+<%= Spree.t('order_mailer.subtotal') %> <%= @order.display_item_total %>
 <% if @order.line_item_adjustments.exists? %>
   <% if @order.all_adjustments.promotion.eligible.exists? %>
     <% @order.all_adjustments.promotion.eligible.group_by(&:label).each do |label, adjustments| %>
@@ -33,6 +33,6 @@
 <%= adjustment.label %> <%= adjustment.display_amount %>
 <% end %>
 ============================================================
-<%= Spree.t('order_mailer.confirm_email.total') %> <%= @order.display_total %>
+<%= Spree.t('order_mailer.total') %> <%= @order.display_total %>
 
 <%= Spree.t('order_mailer.confirm_email.thanks') %>
