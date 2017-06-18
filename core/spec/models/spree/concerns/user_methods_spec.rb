@@ -79,4 +79,33 @@ describe Spree::UserMethods do
       end
     end
   end
+
+  context '#ensure_atleast_one_admin' do
+    context '#when user is only admin' do
+      let(:admin_role) { Spree::Role.create(name: 'admin') }
+      before do
+        test_user.spree_roles << admin_role
+      end
+
+      it 'should add error on user destroy' do
+        expect(test_user.destroy).to eq false
+        expect(test_user.errors[:base]).to include Spree.t(:cannot_destroy_last_admin)
+      end
+    end
+
+    context '#when user is not only admin' do
+      let(:admin_role) { Spree::Role.create(name: 'admin') }
+      let(:second_admin) { create :user }
+
+      before do
+        second_admin.spree_roles << admin_role
+        test_user.spree_roles << admin_role
+      end
+
+      it 'should not add error on user destroy' do
+        expect(test_user.errors[:base]).to_not include Spree.t(:cannot_destroy_last_admin)
+      end
+    end
+  end
+
 end
