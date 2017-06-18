@@ -9,8 +9,8 @@
   <%= item.variant.sku %> <%= raw(item.variant.product.name) %> <%= raw(item.variant.options_text) -%> (<%=item.quantity%>) <%= Spree.t('at_symbol') %> <%= item.single_money %> = <%= item.display_amount %>
 <% end %>
 ============================================================
-<%= Spree.t('order_mailer.cancel_email.subtotal') %> <%= @order.display_item_total %>
+<%= Spree.t('order_mailer.subtotal') %> <%= @order.display_item_total %>
 <% @order.adjustments.eligible.each do |adjustment| %>
   <%= raw(adjustment.label) %> <%= adjustment.display_amount %>
 <% end %>
-<%= Spree.t('order_mailer.cancel_email.total') %> <%= @order.display_total %>
+<%= Spree.t('order_mailer.total') %> <%= @order.display_total %>
