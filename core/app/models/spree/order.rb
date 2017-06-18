@@ -12,6 +12,8 @@ module Spree
     include Spree::Order::StoreCredit
     include Spree::Core::NumberGenerator.new(prefix: 'R')
     include Spree::Core::TokenGenerator
+    
+    include NumberAsParam
 
     extend Spree::DisplayMoney
     money_methods :outstanding_balance, :item_total,           :adjustment_total,
@@ -163,10 +165,6 @@ module Spree
     # that should be called when determining if two line items are equal.
     def self.register_line_item_comparison_hook(hook)
       line_item_comparison_hooks.add(hook)
-    end
-
-    def to_param
-      number.to_s
     end
 
     # For compatiblity with Calculator::PriceSack

@@ -4,6 +4,8 @@ module Spree
 
     include Spree::Payment::Processing
 
+    include NumberAsParam
+
     NON_RISKY_AVS_CODES = ['B', 'D', 'H', 'J', 'M', 'Q', 'T', 'V', 'X', 'Y'].freeze
     RISKY_AVS_CODES     = ['A', 'C', 'E', 'F', 'G', 'I', 'K', 'L', 'N', 'O', 'P', 'R', 'S', 'U', 'W', 'Z'].freeze
     INVALID_STATES      = %w(failed invalid).freeze
@@ -59,10 +61,6 @@ module Spree
 
     scope :store_credits, -> { where(source_type: Spree::StoreCredit.to_s) }
     scope :not_store_credits, -> { where(arel_table[:source_type].not_eq(Spree::StoreCredit.to_s).or(arel_table[:source_type].eq(nil))) }
-
-    def to_param
-      number.to_s
-    end
 
     # transaction_id is much easier to understand
     def transaction_id
