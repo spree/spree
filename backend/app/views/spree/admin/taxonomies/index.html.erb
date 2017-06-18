@@ -4,7 +4,7 @@
 
 <% content_for :page_actions do %>
   <%= button_link_to Spree.t(:new_taxonomy), new_object_url, class: "btn-success", icon: 'add', id: 'admin_new_taxonomy_link' %>
-<% end %>
+<% end if can?(:create, Spree::Taxonomy) %>
 
 <% if @taxonomies.any? %>
   <div id="list-taxonomies" data-hook>
@@ -13,6 +13,6 @@
 <% else %>
   <div class="alert alert-info no-objects-found">
     <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::Taxonomy)) %>,
-    <%= link_to Spree.t(:add_one), new_object_url %>!
+    <%= link_to Spree.t(:add_one), new_object_url if can?(:create, Spree::Taxonomy) %>!
   </div>
 <% end %>

@@ -4,7 +4,7 @@
 
 <% content_for :page_actions do %>
   <%= button_link_to Spree.t(:new_promotion), new_object_url, class: "btn-success", icon: 'add' %>
-<% end %>
+<% end if can?(:create, Spree::Promotion) %>
 
 <% content_for :table_filter do %>
   <div data-hook="admin_promotions_index_search">
@@ -67,8 +67,8 @@
           <td><%= Spree.t(:current_promotion_usage, count: promotion.credits_count) %></td>
           <td><%= promotion.expires_at.to_date.to_s(:short_date) if promotion.expires_at %></td>
           <td class="actions actions-2" data-hook="admin_promotions_index_row_actions">
-            <%= link_to_edit promotion, no_text: true %>
-            <%= link_to_delete promotion, no_text: true %>
+            <%= link_to_edit promotion, no_text: true if can?(:edit, promotion) %>
+            <%= link_to_delete promotion, no_text: true if can?(:delete, promotion) %>
           </td>
         </tr>
       <% end %>
@@ -77,6 +77,6 @@
 <% else %>
   <div class="alert alert-info no-objects-found">
     <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::Promotion)) %>,
-    <%= link_to Spree.t(:add_one), new_object_url %>!
+    <%= link_to Spree.t(:add_one), new_object_url if can?(:create, Spree::Promotion) %>!
   </div>
 <% end %>
