@@ -4,7 +4,7 @@
 
 <% content_for :page_actions do %>
   <%= button_link_to Spree.t(:new_user), new_admin_user_url, class: "btn-success", icon: 'add', id: 'admin_new_user_link' %>
-<% end %>
+<% end if can? :create, Spree::user_class %>
 
 <% content_for :table_filter_title do %>
   <%= Spree.t(:search) %>
@@ -57,8 +57,8 @@
         <tr id="<%= spree_dom_id user %>" data-hook="admin_users_index_rows">
           <td class='user_email'><%=link_to user.email, edit_admin_user_url(user) %></td>
           <td data-hook="admin_users_index_row_actions" class="actions actions-2 text-right">
-            <%= link_to_edit user, no_text: true %>
-            <%= link_to_delete user, no_text: true %>
+            <%= link_to_edit user, no_text: true if can?(:edit, user) %>
+            <%= link_to_delete user, no_text: true if can?(:delete, user) %>
           </td>
         </tr>
       <% end %>
