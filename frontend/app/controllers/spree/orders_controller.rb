@@ -10,7 +10,7 @@ module Spree
     skip_before_action :verify_authenticity_token, only: [:populate]
 
     def show
-      @order = Order.includes(line_items: [variant: [:option_values, :images, :product]], bill_address: :state, ship_address: :state).find_by_number!(params[:id])
+      @order = Order.includes(line_items: [variant: [:option_values, :images, :product]], bill_address: :state, ship_address: :state).find_by!(number: params[:id])
     end
 
     def update
@@ -91,7 +91,7 @@ module Spree
     end
 
     def check_authorization
-      order = Spree::Order.find_by_number(params[:id]) if params[:id].present?
+      order = Spree::Order.find_by(number: params[:id]) if params[:id].present?
       order = current_order unless order
 
       if order

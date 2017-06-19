@@ -39,7 +39,7 @@ describe Spree::Admin::OrdersController, type: :controller do
     let(:adjustments) { double('adjustments') }
 
     before do
-      allow(Spree::Order).to receive_message_chain(:friendly, :find).and_return(order)
+      allow(Spree::Order).to receive_message_chain(:includes, find_by!: order)
     end
 
     context "#approve" do

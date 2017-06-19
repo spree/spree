@@ -121,7 +121,7 @@ module Spree
           end
 
           def find_order(lock = false)
-            @order = Spree::Order.lock(lock).friendly.find(params[:id])
+            @order = Spree::Order.lock(lock).find_by!(number: params[:id])
           end
 
           def find_current_order

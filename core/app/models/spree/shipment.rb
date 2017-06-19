@@ -4,8 +4,7 @@ module Spree
   class Shipment < Spree::Base
     include Spree::Core::NumberGenerator.new(prefix: 'H', length: 11)
 
-    extend FriendlyId
-    friendly_id :number, slug_column: :number, use: :slugged
+    include NumberAsParam
 
     with_options inverse_of: :shipments do
       belongs_to :address, class_name: 'Spree::Address'
