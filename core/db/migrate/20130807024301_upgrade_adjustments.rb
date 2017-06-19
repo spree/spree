@@ -1,8 +1,8 @@
 class UpgradeAdjustments < ActiveRecord::Migration[4.2]
   def up
-    #Add Temporary index
+    # Add Temporary index
     add_index :spree_adjustments, :originator_type unless index_exists?(:spree_adjustments, :originator_type)
-    
+
     # Temporarily make originator association available
     Spree::Adjustment.class_eval do
       belongs_to :originator, polymorphic: true
@@ -39,8 +39,8 @@ class UpgradeAdjustments < ActiveRecord::Migration[4.2]
 
       adjustment.save!
     end
-    
-    #Remove Temporary index
+
+    # Remove Temporary index
     remove_index :spree_adjustments, :originator_type if index_exists?(:spree_adjustments, :originator_type)
   end
 end
