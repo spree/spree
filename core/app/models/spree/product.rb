@@ -300,7 +300,7 @@ module Spree
     end
 
     def anything_changed?
-      changed? || @nested_changes
+      saved_changes? || @nested_changes
     end
 
     def reset_nested_changes
