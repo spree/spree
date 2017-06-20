@@ -31,7 +31,7 @@ Getting Started
 
 Add Spree gems to your Gemfile:
 
-### Rails 5
+### Rails 5.0
 
 ```ruby
 gem 'spree', '~> 3.2.0'
