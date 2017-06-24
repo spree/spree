@@ -288,7 +288,9 @@ $(document).ready(function(){
           authenticity_token: AUTH_TOKEN
         },
         success: function(response) {
-          el.parents("tr").fadeOut('hide');
+          el.parents("tr").fadeOut('hide', function() {
+            $(this).remove();
+          });
         },
         error: function(response, textStatus, errorThrown) {
           show_flash('error', response.responseText);
