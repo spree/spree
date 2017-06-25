@@ -2,7 +2,7 @@ module Spree
   class Refund < Spree::Base
     with_options inverse_of: :refunds do
       belongs_to :payment
-      belongs_to :reimbursement
+      belongs_to :reimbursement, optional: true
     end
     belongs_to :reason, class_name: 'Spree::RefundReason', foreign_key: :refund_reason_id
 

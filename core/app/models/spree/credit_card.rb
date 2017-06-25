@@ -3,7 +3,8 @@ module Spree
     include ActiveMerchant::Billing::CreditCardMethods
 
     belongs_to :payment_method
-    belongs_to :user, class_name: Spree.user_class.to_s, foreign_key: 'user_id'
+    belongs_to :user, class_name: Spree.user_class.to_s, foreign_key: 'user_id',
+                      optional: true
     has_many :payments, as: :source
 
     before_save :set_last_digits

@@ -277,9 +277,9 @@ describe Spree::Admin::OrdersController, type: :controller do
         allow(user).to receive_messages has_spree_role?: false
         spree_get :index
         expect(response).to render_template :index
-        expect(assigns['orders'].size).to eq 1
+        expect(assigns['orders'].distinct(false).size).to eq 1
         expect(assigns['orders'].first.number).to eq number
-        expect(Spree::Order.accessible_by(Spree::Ability.new(user), :index).pluck(:number)).to eq  [number]
+        expect(Spree::Order.accessible_by(Spree::Ability.new(user), :index).pluck(:number)).to eq [number]
       end
     end
   end

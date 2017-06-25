@@ -6,7 +6,7 @@ module Spree
     include Spree::AdjustmentSource
 
     with_options inverse_of: :tax_rates do
-      belongs_to :zone, class_name: "Spree::Zone"
+      belongs_to :zone, class_name: "Spree::Zone", optional: true
       belongs_to :tax_category,
                  class_name: "Spree::TaxCategory"
     end

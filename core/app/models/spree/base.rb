@@ -18,6 +18,8 @@ class Spree::Base < ApplicationRecord
 
   self.abstract_class = true
 
+  self.belongs_to_required_by_default = false
+
   def self.spree_base_scopes
     where(nil)
   end

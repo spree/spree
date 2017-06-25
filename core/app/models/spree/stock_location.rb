@@ -4,7 +4,7 @@ module Spree
     has_many :stock_items, dependent: :delete_all, inverse_of: :stock_location
     has_many :stock_movements, through: :stock_items
 
-    belongs_to :state, class_name: 'Spree::State'
+    belongs_to :state, class_name: 'Spree::State', optional: true
     belongs_to :country, class_name: 'Spree::Country'
 
     validates :name, presence: true

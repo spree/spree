@@ -51,10 +51,6 @@ module Spree
           params[:order][:user_id] if params[:order]
         end
 
-        def nested_params
-          map_nested_attributes_keys Order, params[:order] || {}
-        end
-
         # Should be overriden if you have areas of your checkout that don't match
         # up to a step within checkout_steps, such as a registration step
         def skip_state_validation?
@@ -82,8 +78,9 @@ module Spree
         end
 
         def after_update_attributes
-          if nested_params && nested_params[:coupon_code].present?
-            handler = PromotionHandler::Coupon.new(@order).apply
+          if params[:order] && params[:order][:coupon_code].present?
+            handler = PromotionHandler::Coupon.new(@order)
+            handler.apply
 
             if handler.error.present?
               @coupon_message = handler.error

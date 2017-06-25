@@ -5,7 +5,7 @@ module Spree
       acts_as_paranoid
     end
 
-    belongs_to :calculable, polymorphic: true
+    belongs_to :calculable, polymorphic: true, optional: true
 
     # This method calls a compute_<computable> method. must be overriden in concrete calculator.
     #
