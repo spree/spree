@@ -27,15 +27,6 @@ describe "Product scopes", type: :model do
 
       it { expect(Spree::Product.available).not_to include(unavailable_product) }
     end
-
-    context 'when multiple prices present' do
-      let!(:price_1) { create(:price, currency: 'EUR', variant: product.master) }
-      let!(:price_2) { create(:price, currency: 'EUR', variant: product.master) }
-
-      it 'should not duplicate product' do
-        expect(Spree::Product.available).to eq([product])
-      end
-    end
   end
 
   context "A product assigned to parent and child taxons" do
