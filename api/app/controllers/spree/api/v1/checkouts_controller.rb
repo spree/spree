@@ -69,7 +69,7 @@ module Spree
         end
 
         def raise_insufficient_quantity
-          respond_with(@order, default_template: 'spree/api/v1/orders/insufficient_quantity')
+          respond_with(@order, default_template: 'spree/api/v1/orders/insufficient_quantity', status: 422)
         end
 
         def state_callback(before_or_after = :before)
@@ -84,7 +84,7 @@ module Spree
 
             if handler.error.present?
               @coupon_message = handler.error
-              respond_with(@order, default_template: 'spree/api/v1/orders/could_not_apply_coupon')
+              respond_with(@order, default_template: 'spree/api/v1/orders/could_not_apply_coupon', status: 422)
               return true
             end
           end
