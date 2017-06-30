@@ -40,6 +40,8 @@ module Spree
     validates_attachment :icon,
       content_type: { content_type: ["image/jpg", "image/jpeg", "image/png", "image/gif"] }
 
+    self.whitelisted_ransackable_associations = %w[taxonomy]
+
     # indicate which filters should be used for a taxon
     # this method should be customized to your own site
     def applicable_filters
