@@ -5,7 +5,7 @@ module Spree
   class Taxon < Spree::Base
     extend FriendlyId
     friendly_id :permalink, slug_column: :permalink, use: :history
-    before_create :set_permalink
+    before_validation :set_permalink, on: :create, if: :name
 
     acts_as_nested_set dependent: :destroy
 
@@ -19,7 +19,7 @@ module Spree
     has_many :promotion_rule_taxons, class_name: 'Spree::PromotionRuleTaxon', dependent: :destroy
     has_many :promotion_rules, through: :promotion_rule_taxons, class_name: 'Spree::PromotionRule'
 
-    validates :name, presence: true
+    validates :name, presence: true, uniqueness: { scope: [:parent_id, :taxonomy_id], allow_blank: true }
     validates :permalink, uniqueness: { case_sensitive: false }
     with_options length: { maximum: 255 }, allow_blank: true do
       validates :meta_keywords
