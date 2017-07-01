@@ -49,6 +49,7 @@ module Spree
         ensure_unused_store_credit
 
         if @store_credit.destroy
+          flash[:success] = flash_message_for(@store_credit, :successfully_removed)
           respond_with(@store_credit) do |format|
             format.html { redirect_to admin_user_store_credits_path(@user) }
             format.js { render_js_for_destroy }
