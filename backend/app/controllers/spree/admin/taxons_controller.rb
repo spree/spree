@@ -4,6 +4,7 @@ module Spree
 
       before_action :load_taxonomy, only: [:create, :edit, :update]
       before_action :load_taxon, only: [:edit, :update]
+      before_action :set_permalink_part, only: [:edit, :update]
       respond_to :html, :js
 
       def index
@@ -24,7 +25,6 @@ module Spree
       end
 
       def edit
-        @permalink_part = @taxon.permalink.split("/").last
       end
 
       def update
@@ -66,6 +66,10 @@ module Spree
       end
 
       private
+
+      def set_permalink_part
+        @permalink_part = @taxon.permalink.split('/').last
+      end
 
       def taxon_params
         params.require(:taxon).permit(permitted_taxon_attributes)
