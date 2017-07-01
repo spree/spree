@@ -5,7 +5,7 @@ module Spree
   class Taxon < Spree::Base
     extend FriendlyId
     friendly_id :permalink, slug_column: :permalink, use: :history
-    before_create :set_permalink
+    before_validation :set_permalink, on: :create
 
     acts_as_nested_set dependent: :destroy
 
