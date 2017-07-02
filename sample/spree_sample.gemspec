@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.homepage    = 'http://spreecommerce.com'
   s.license     = 'BSD-3'
 
-  s.files        = `git ls-files`.split("\n")
+  s.files        = `git ls-files`.split("\n").reject { |f| f.match(/^spec/) }
   s.require_path = 'lib'
   s.requirements << 'none'
 
