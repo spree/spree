@@ -12,8 +12,7 @@ Gem::Specification.new do |s|
   s.summary     = 'Spree Commerce command line utility'
   s.description = 'tools to create new Spree stores and extensions'
 
-  s.files         = `git ls-files`.split("\n")
-  s.test_files    = `git ls-files -- {test,spec,features}/*`.split('\n')
+  s.files         = `git ls-files`.split("\n").reject { |f| f.match(/^spec/) }
   s.bindir        = 'bin'
   s.executables   = `git ls-files -- bin/*`.split("\n").map { |f| File.basename(f) }
   s.require_paths = ['lib']
