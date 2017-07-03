@@ -58,7 +58,6 @@ handle_rename = (e, data) ->
     dataType: "json",
     url: url.toString(),
     data: {
-      _method: "put",
       "taxon[name]": name,
       token: Spree.api_key
     },
