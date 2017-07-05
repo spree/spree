@@ -76,11 +76,6 @@ module Spree
       link_to text.html_safe, spree.cart_path, class: "cart-info #{css_class}"
     end
 
-    # helper to determine if its appropriate to show the store menu
-    def store_menu?
-      %w{thank_you}.exclude? params[:action]
-    end
-
     def taxons_tree(root_taxon, current_taxon, max_level = 1)
       return '' if max_level < 1 || root_taxon.leaf?
       content_tag :div, class: 'list-group' do
