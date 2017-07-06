@@ -11,9 +11,8 @@ Gem::Specification.new do |s|
 
   s.required_ruby_version = '>= 2.2.2'
 
-  s.files         = `git ls-files`.split($\)
+  s.files         = `git ls-files`.split($\).reject { |f| f.match(/^spec/) }
   s.executables   = s.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
-  s.test_files    = s.files.grep(%r{^(test|spec|features)/})
   s.name          = "spree_api"
   s.require_paths = ["lib"]
   s.version       = Spree.version
