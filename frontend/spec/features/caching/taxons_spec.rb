@@ -8,7 +8,6 @@ describe 'taxons', type: :feature, caching: true do
     # warm up the cache
     visit spree.root_path
     assert_written_to_cache("views/en/spree/taxonomies/#{taxonomy.id}")
-    assert_written_to_cache("views/en/taxons/#{taxon.updated_at.utc.to_i}")
 
     clear_cache_events
   end

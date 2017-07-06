@@ -17,7 +17,6 @@ describe 'products', type: :feature, caching: true do
     assert_written_to_cache("views/en/USD/spree/products/all--#{product.updated_at.utc.to_s(:number)}")
     assert_written_to_cache("views/en/USD/spree/products/#{product.id}-#{product.updated_at.utc.to_s(:number)}")
     assert_written_to_cache("views/en/spree/taxonomies/#{taxonomy.id}")
-    assert_written_to_cache("views/en/taxons/#{taxon.updated_at.utc.to_i}")
 
     clear_cache_events
   end
