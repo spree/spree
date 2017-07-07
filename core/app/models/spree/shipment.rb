@@ -401,6 +401,7 @@ module Spree
     end
 
     def send_shipped_email
+      warn "Shipment#send_shipped_email is deprecated, please use ShipmentHandler#send_shipped_email"
       ShipmentMailer.shipped_email(id).deliver_later
     end
 
