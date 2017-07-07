@@ -126,6 +126,7 @@ module Spree
     alias discounted_amount discounted_cost
 
     def editable_by?(_user)
+      warn "`Spree::Shipment#editable_by?` is deprecated. You should use cancancan `can?` method for cheks like this."
       !shipped?
     end
 
@@ -400,6 +401,7 @@ module Spree
     end
 
     def send_shipped_email
+      warn "Shipment#send_shipped_email is deprecated, please use ShipmentHandler#send_shipped_email"
       ShipmentMailer.shipped_email(id).deliver_later
     end
 
