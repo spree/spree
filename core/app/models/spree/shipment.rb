@@ -126,6 +126,7 @@ module Spree
     alias discounted_amount discounted_cost
 
     def editable_by?(_user)
+      warn "`Spree::Shipment#editable_by?` is deprecated. You should use cancancan `can?` method for cheks like this."
       !shipped?
     end
 
