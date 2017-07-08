@@ -315,6 +315,8 @@ en:
               invalid_date_range: must be later than start date
         spree/product:
           attributes:
+            discontinue_on:
+              invalid_date_range: must be later than available date
             base:
               cannot_destroy_if_attached_to_line_items: Cannot delete products once they are attached to line items.
         spree/refund:
