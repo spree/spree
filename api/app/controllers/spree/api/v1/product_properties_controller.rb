@@ -30,9 +30,9 @@ module Spree
         end
 
         def update
-          if @product_property
-            authorize! :update, @product_property
-            @product_property.update_attributes(product_property_params)
+          authorize! :update, @product_property
+
+          if @product_property.update_attributes(product_property_params)
             respond_with(@product_property, status: 200, default_template: :show)
           else
             invalid_resource!(@product_property)
@@ -40,13 +40,9 @@ module Spree
         end
 
         def destroy
-          if @product_property
-            authorize! :destroy, @product_property
-            @product_property.destroy
-            respond_with(@product_property, status: 204)
-          else
-            invalid_resource!(@product_property)
-          end
+          authorize! :destroy, @product_property
+          @product_property.destroy
+          respond_with(@product_property, status: 204)
         end
 
         private
@@ -60,6 +56,7 @@ module Spree
           if @product
             @product_property ||= @product.product_properties.find_by(id: params[:id])
             @product_property ||= @product.product_properties.includes(:property).where(spree_properties: { name: params[:id] }).first
+            fail ActiveRecord::RecordNotFound unless @product_property
             authorize! :read, @product_property
           end
         end
