@@ -114,6 +114,7 @@ module Spree
 
     self.whitelisted_ransackable_associations = %w[stores variants_including_master master variants]
     self.whitelisted_ransackable_attributes = %w[description name slug discontinue_on]
+    self.whitelisted_ransackable_scopes = %w[not_discontinued]
 
     # the master variant is not a member of the variants array
     def has_variants?
