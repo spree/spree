@@ -64,7 +64,7 @@ module Spree
 
       context "#show" do
         it "should check against the specified order" do
-          expect(controller).to receive(:authorize!).with(:edit, specified_order, token)
+          expect(controller).to receive(:authorize!).with(:show, specified_order, token)
           spree_get :show, id: specified_order.number
         end
       end
@@ -78,7 +78,7 @@ module Spree
           before { cookies.signed[:guest_token] = order.guest_token }
 
           it 'displays the page' do
-            expect(controller).to receive(:authorize!).with(:edit, order, order.guest_token)
+            expect(controller).to receive(:authorize!).with(:show, order, order.guest_token)
             spree_get :show, { id: 'R123' }
             expect(response.code).to eq('200')
           end
