@@ -73,12 +73,17 @@ bundle exec rails g migration add_sale_price_to_spree_variants sale_price:decima
 Because we are dealing with prices, we need to now edit the generated migration to ensure the correct precision and scale. Edit the file `db/migrate/XXXXXXXXXXX_add_sale_price_to_spree_variants.rb` so that it contains the following:
 
 ```ruby
-class AddSalePriceToSpreeVariants < ActiveRecord::Migration[4.2]
+class AddSalePriceToSpreeVariants < SpreeExtension::Migration[4.2]
   def change
     add_column :spree_variants, :sale_price, :decimal, precision: 8, scale: 2
   end
 end
 ```
+
+***
+We're not inheriting directly from ActiveRecord::Migration, instead we're using
+[SpreeExtension::Migration](https://github.com/spree-contrib/spree_extension/blob/master/lib/spree_extension/migration.rb) to support multiple Rails versions.
+***
 
 ### Adding Our Extension to the Spree Application
 
