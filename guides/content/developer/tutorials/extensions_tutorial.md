@@ -128,11 +128,9 @@ $ mkdir -p app/controllers/spree
 Next, create a new file in the directory we just created called `home_controller_decorator.rb` and add the following content to it:
 
 ```ruby
-module Spree
-  HomeController.class_eval do
-    def sale
-      @products = Product.joins(:variants_including_master).where('spree_variants.sale_price is not null').uniq
-    end
+Spree::HomeController.class_eval do
+  def sale
+    @products = Product.joins(:variants_including_master).where('spree_variants.sale_price is not null').distinct
   end
 end
 ```
@@ -208,13 +206,11 @@ $ mkdir -p app/models/spree
 Next, create the file `app/models/spree/variant_decorator.rb` and add the following content to it:
 
 ```ruby
-module Spree
-  Variant.class_eval do
-    alias_method :orig_price_in, :price_in
-    def price_in(currency)
-      return orig_price_in(currency) unless sale_price.present?
-      Spree::Price.new(variant_id: self.id, amount: self.sale_price, currency: currency)
-    end
+Spree::Variant.class_eval do
+  alias_method :orig_price_in, :price_in
+  def price_in(currency)
+    return orig_price_in(currency) unless sale_price.present?
+    Spree::Price.new(variant_id: self.id, amount: self.sale_price, currency: currency)
   end
 end
 ```
