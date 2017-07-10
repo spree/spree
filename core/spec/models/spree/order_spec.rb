@@ -1064,4 +1064,13 @@ describe Spree::Order, type: :model do
       end
     end
   end
+
+  describe '#collect_backend_payment_methods' do
+    let!(:order) { create(:order_with_line_items, line_items_count: 2) }
+    let!(:credit_card_payment_method) { create(:simple_credit_card_payment_method, display_on: 'both') }
+    let!(:store_credit_payment_method) { create(:store_credit_payment_method, display_on: 'both') }
+    it { expect(order.collect_backend_payment_methods).to include(credit_card_payment_method) }
+    it { expect(order.collect_backend_payment_methods).to_not include(store_credit_payment_method) }
+  end
+
 end
