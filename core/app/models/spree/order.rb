@@ -184,7 +184,7 @@ module Spree
     end
 
     def shipping_discount
-      shipment_adjustments.eligible.sum(:amount) * - 1
+      shipment_adjustments.non_tax.eligible.sum(:amount) * - 1
     end
 
     def completed?
