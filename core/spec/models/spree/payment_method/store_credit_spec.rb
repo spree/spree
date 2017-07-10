@@ -288,4 +288,21 @@ describe Spree::PaymentMethod::StoreCredit do
       end
     end
   end
+
+  describe '#available_for_order?' do
+    let!(:store_credit_payment_method) { create(:store_credit_payment_method, display_on: 'both') }
+
+    context 'when user have store credits' do
+      let!(:user_with_store_credits) { create(:user) }
+      let!(:store_credit) { create(:store_credit, user: user_with_store_credits) }
+      let!(:order_with_store_credit) { create(:order, user: user_with_store_credits) }
+      it { expect(store_credit_payment_method.available_for_order?(order_with_store_credit)).to be true }
+    end
+
+    context "when user don't store credits" do
+      let!(:user_without_store_credits) { create(:user) }
+      let!(:order_without_store_credit) { create(:order, user: user_without_store_credits) }
+      it { expect(store_credit_payment_method.available_for_order?(order_without_store_credit)).to be false }
+    end
+  end
 end

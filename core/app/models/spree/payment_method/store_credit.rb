@@ -93,6 +93,10 @@ module Spree
       true
     end
 
+    def available_for_order?(order)
+      order.could_use_store_credit?
+    end
+
     private
 
     def handle_action_call(store_credit, action, action_name, auth_code = nil)
