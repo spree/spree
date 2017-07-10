@@ -73,12 +73,17 @@ bundle exec rails g migration add_sale_price_to_spree_variants sale_price:decima
 Because we are dealing with prices, we need to now edit the generated migration to ensure the correct precision and scale. Edit the file `db/migrate/XXXXXXXXXXX_add_sale_price_to_spree_variants.rb` so that it contains the following:
 
 ```ruby
-class AddSalePriceToSpreeVariants < ActiveRecord::Migration[4.2]
+class AddSalePriceToSpreeVariants < SpreeExtension::Migration[4.2]
   def change
     add_column :spree_variants, :sale_price, :decimal, precision: 8, scale: 2
   end
 end
 ```
+
+***
+We're not inheriting directly from ActiveRecord::Migration, instead we're using
+[SpreeExtension::Migration](https://github.com/spree-contrib/spree_extension/blob/master/lib/spree_extension/migration.rb) to support multiple Rails versions.
+***
 
 ### Adding Our Extension to the Spree Application
 
@@ -123,11 +128,9 @@ $ mkdir -p app/controllers/spree
 Next, create a new file in the directory we just created called `home_controller_decorator.rb` and add the following content to it:
 
 ```ruby
-module Spree
-  HomeController.class_eval do
-    def sale
-      @products = Product.joins(:variants_including_master).where('spree_variants.sale_price is not null').uniq
-    end
+Spree::HomeController.class_eval do
+  def sale
+    @products = Product.joins(:variants_including_master).where('spree_variants.sale_price is not null').distinct
   end
 end
 ```
@@ -203,13 +206,11 @@ $ mkdir -p app/models/spree
 Next, create the file `app/models/spree/variant_decorator.rb` and add the following content to it:
 
 ```ruby
-module Spree
-  Variant.class_eval do
-    alias_method :orig_price_in, :price_in
-    def price_in(currency)
-      return orig_price_in(currency) unless sale_price.present?
-      Spree::Price.new(variant_id: self.id, amount: self.sale_price, currency: currency)
-    end
+Spree::Variant.class_eval do
+  alias_method :orig_price_in, :price_in
+  def price_in(currency)
+    return orig_price_in(currency) unless sale_price.present?
+    Spree::Price.new(variant_id: self.id, amount: self.sale_price, currency: currency)
   end
 end
 ```
@@ -278,14 +279,6 @@ end
 ```
 
 These specs test that the `price_in` method we overrode in our `VariantDecorator` returns the correct price both when the sale price is present and when it is not.
-
-## Versioning your extension
-
-Different versions of Spree may act differently with your extension. It's advisable to keep different branches of your extension actively maintained for the different branches of Spree so that your extension will work with those different versions.
-
-It's advisable that your extension follows the same versioning pattern as Spree itself. If your extension is compatible with Spree 2.0.x, then create a `2-0-stable` branch on your extension and advise people to use that branch for your extension. If it's only compatible with 1.3.x, then create a 1-3-stable branch and advise the use of that branch.
-
-Having a consistent branching naming scheme across Spree and its extensions will reduce confusion in the long run.
 
 ## Summary
 
