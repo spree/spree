@@ -607,6 +607,10 @@ module Spree
         payments.offset_payment.exists? # how old versions of spree stored refunds
     end
 
+    def collect_backend_payment_methods
+      PaymentMethod.available_on_back_end.select { |pm| pm.available_for_order?(self) }
+    end
+
     # determines whether the inventory is fully discounted
     #
     # Returns
