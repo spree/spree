@@ -20,6 +20,7 @@ module Spree
     let(:product) { create(:product) }
     let(:attributes) { [:id, :quantity, :price, :variant, :total, :display_amount, :single_display_amount] }
     let(:resource_scoping) { { order_id: order.to_param } }
+    let(:admin_role) { create(:admin_role) }
 
     before do
       stub_authentication!
@@ -143,6 +144,7 @@ module Spree
 
         context "order is completed" do
           before do
+            current_api_user.spree_roles << admin_role
             order.reload
             allow(order).to receive_messages completed?: true
             allow(Order).to receive_message_chain :includes, find_by!: order

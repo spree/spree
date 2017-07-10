@@ -82,6 +82,8 @@ module Spree
       redirect_to spree.cart_path
     end
 
+    private
+
     def accurate_title
       if @order && @order.completed?
         Spree.t(:order_number, number: @order.number)
@@ -94,29 +96,29 @@ module Spree
       order = Spree::Order.find_by(number: params[:id]) if params[:id].present?
       order = current_order unless order
 
-      if order
+      if order && action_name.to_sym == :show
+        authorize! :show, order, cookies.signed[:guest_token]
+      elsif order
         authorize! :edit, order, cookies.signed[:guest_token]
       else
         authorize! :create, Spree::Order
       end
     end
 
-    private
-
-      def order_params
-        if params[:order]
-          params[:order].permit(*permitted_order_attributes)
-        else
-          {}
-        end
+    def order_params
+      if params[:order]
+        params[:order].permit(*permitted_order_attributes)
+      else
+        {}
       end
+    end
 
-      def assign_order_with_lock
-        @order = current_order(lock: true)
-        unless @order
-          flash[:error] = Spree.t(:order_not_found)
-          redirect_to root_path and return
-        end
+    def assign_order_with_lock
+      @order = current_order(lock: true)
+      unless @order
+        flash[:error] = Spree.t(:order_not_found)
+        redirect_to root_path and return
       end
+    end
   end
 end

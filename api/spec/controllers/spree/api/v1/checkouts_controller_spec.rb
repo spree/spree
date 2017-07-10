@@ -248,11 +248,10 @@ module Spree
         expect(response.status).to eq(200)
       end
 
-      it "returns the order if the order is already complete" do
+      it "prevent normal user from updating completed order" do
         order.update_columns(completed_at: Time.current, state: 'complete')
         api_put :update, id: order.to_param, order_token: order.guest_token
-        expect(json_response['number']).to eq(order.number)
-        expect(response.status).to eq(200)
+        assert_unauthorized!
       end
 
       # Regression test for #3784
