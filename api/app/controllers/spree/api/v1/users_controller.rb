@@ -6,7 +6,11 @@ module Spree
         rescue_from Spree::Core::DestroyWithOrdersError, with: :error_during_processing
 
         def index
-          @users = Spree.user_class.accessible_by(current_ability,:read).ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
+          if params[:ids]
+            @users = Spree.user_class.accessible_by(current_ability,:read).ransack(id_in: params[:ids].split(',')).result.page(params[:page]).per(params[:per_page])
+          else
+            @users = Spree.user_class.accessible_by(current_ability,:read).ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
+          end
           expires_in 15.minutes, public: true
           headers['Surrogate-Control'] = "max-age=#{15.minutes}"
           respond_with(@users)
