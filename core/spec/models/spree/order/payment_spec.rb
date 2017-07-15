@@ -177,6 +177,16 @@ module Spree
         # 10 - (0 + 10) = 0
         expect(order.outstanding_balance).to eq 0
       end
+
+      it 'should incorporate refunds' do
+        order = create(:completed_order_with_totals)
+        order.payments << create(:payment, state: :completed, order: order, amount: order.total)
+
+        create(:refund, amount: 10, payment: order.payments.first)
+        order.update_with_updater!
+
+        expect(order.outstanding_balance).to eq 0
+      end
     end
 
     context "#outstanding_balance?" do
