@@ -122,6 +122,22 @@ module Spree
           expect(order.process_payments!).to be false
         end
       end
+
+      # Regression spec for https://github.com/spree/spree/issues/8148
+      let!(:order) { create(:order_with_line_items) }
+      let!(:payment) do
+        payment = create(:payment, amount: 10, order: order)
+        order.payments << payment
+        payment
+      end
+
+      it "updates order with correct payment total" do
+        Spree::Config[:auto_capture] = true
+        order.process_payments!
+
+        expect(payment).to be_completed
+        expect(order.payment_total).to eq payment.amount
+      end
     end
 
     context "#authorize_payments!" do
