@@ -56,13 +56,12 @@ module Spree
       def edit
         can_not_transition_without_customer_info
 
-        @order.refresh_shipment_rates(ShippingMethod::DISPLAY_ON_BACK_END)
+        @order.refresh_shipment_rates(ShippingMethod::DISPLAY_ON_BACK_END) unless @order.completed?
       end
 
       def cart
-        unless @order.completed?
-          @order.refresh_shipment_rates
-        end
+        @order.refresh_shipment_rates(ShippingMethod::DISPLAY_ON_BACK_END) unless @order.completed?
+
         if @order.shipments.shipped.count > 0
           redirect_to edit_admin_order_url(@order)
         end

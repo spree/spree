@@ -37,6 +37,7 @@ describe Spree::Admin::OrdersController, type: :controller do
     end
 
     let(:adjustments) { double('adjustments') }
+    let(:display_value) { Spree::ShippingMethod::DISPLAY_ON_BACK_END }
 
     before do
       allow(Spree::Order).to receive_message_chain(:includes, find_by!: order)
@@ -84,11 +85,8 @@ describe Spree::Admin::OrdersController, type: :controller do
 
     # Regression test for #3684
     describe "#edit" do
-      let(:display_value) { Spree::ShippingMethod::DISPLAY_ON_BACK_END }
-
       before do
         allow(controller).to receive(:can_not_transition_without_customer_info)
-        allow(order).to receive(:refresh_shipment_rates).with(display_value).and_return(true)
       end
 
       after do
@@ -96,7 +94,115 @@ describe Spree::Admin::OrdersController, type: :controller do
       end
 
       it { expect(controller).to receive(:can_not_transition_without_customer_info) }
-      it { expect(order).to receive(:refresh_shipment_rates).with(display_value).and_return(true) }
+
+      context "when order is not completed" do
+        before do
+          allow(order).to receive(:completed?).and_return(false)
+          allow(order).to receive(:refresh_shipment_rates).with(display_value).and_return(true)
+        end
+
+        it { expect(order).to receive(:completed?).and_return(false) }
+        it { expect(order).to receive(:refresh_shipment_rates).with(display_value).and_return(true) }
+      end
+
+      context "when order is completed" do
+        before do
+          allow(order).to receive(:completed?).and_return(true)
+        end
+
+        it { expect(order).to receive(:completed?).and_return(true) }
+      end
+    end
+
+    describe "#cart" do
+      def send_request
+        spree_get :cart, id: order.number
+      end
+
+      context "when order is not completed" do
+        before do
+          allow(order).to receive(:completed?).and_return(false)
+          allow(order).to receive(:refresh_shipment_rates).with(display_value).and_return(true)
+        end
+
+        context "when order has shipped shipments" do
+          before do
+            allow(order).to receive_message_chain(:shipments, :shipped, :count).and_return(1)
+            allow(controller).to receive_message_chain(:shipments, :shipped, :count).and_return(1)
+          end
+
+          describe "expects to receive" do
+            it { expect(order).to receive(:completed?).and_return(false) }
+            it { expect(order).to receive(:refresh_shipment_rates).with(display_value).and_return(true) }
+            it { expect(order).to receive_message_chain(:shipments, :shipped, :count).and_return(1) }
+            after { send_request }
+          end
+
+          describe "response" do
+            before { send_request }
+            it { expect(response).to be_redirect }
+            it { expect(response).to redirect_to(edit_admin_order_url(order)) }
+          end
+        end
+
+        context "when order has no shipped shipments" do
+          before do
+            allow(order).to receive_message_chain(:shipments, :shipped, :count).and_return(0)
+          end
+
+          describe "expects to receive" do
+            it { expect(order).to receive(:completed?).and_return(false) }
+            it { expect(order).to receive(:refresh_shipment_rates).with(display_value).and_return(true) }
+            it { expect(order).to receive_message_chain(:shipments, :shipped, :count).and_return(0) }
+            after { send_request }
+          end
+
+          describe "response" do
+            before { send_request }
+            it { expect(response).to render_template :cart }
+          end
+        end
+      end
+
+      context "when order is completed" do
+        before do
+          allow(order).to receive(:completed?).and_return(true)
+        end
+
+        context "when order has shipped shipments" do
+          before do
+            allow(order).to receive_message_chain(:shipments, :shipped, :count).and_return(1)
+            allow(controller).to receive_message_chain(:shipments, :shipped, :count).and_return(1)
+          end
+
+          describe "expects to receive" do
+            it { expect(order).to receive_message_chain(:shipments, :shipped, :count).and_return(1) }
+            after { send_request }
+          end
+
+          describe "response" do
+            before { send_request }
+            it { expect(response).to be_redirect }
+            it { expect(response).to redirect_to(edit_admin_order_url(order)) }
+          end
+        end
+
+        context "when order has no shipped shipments" do
+          before do
+            allow(order).to receive_message_chain(:shipments, :shipped, :count).and_return(0)
+          end
+
+          describe "expects to receive" do
+            it { expect(order).to receive_message_chain(:shipments, :shipped, :count).and_return(0) }
+            after { send_request }
+          end
+
+          describe "response" do
+            before { send_request }
+            it { expect(response).to render_template :cart }
+          end
+        end
+      end
     end
 
     # Test for #3919
