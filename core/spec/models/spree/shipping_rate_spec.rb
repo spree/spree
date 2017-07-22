@@ -133,8 +133,4 @@ describe Spree::ShippingRate, type: :model do
       expect(shipping_rate.tax_rate).to eq(tax_rate)
     end
   end
-
-  describe 'delegate' do
-    it { is_expected.to delegate_method(:code).to(:shipping_method).with_prefix(true) }
-  end
 end

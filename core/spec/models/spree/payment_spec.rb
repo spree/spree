@@ -46,10 +46,6 @@ describe Spree::Payment, type: :model do
     allow(payment.log_entries).to receive(:create!)
   end
 
-  describe 'delegate' do
-    it { is_expected.to delegate_method(:currency).to(:order) }
-  end
-
   describe 'Constants' do
     it { expect(Spree::Payment::INVALID_STATES).to eq(%w(failed invalid)) }
   end
