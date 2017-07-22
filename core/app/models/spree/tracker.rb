@@ -1,5 +1,7 @@
 module Spree
   class Tracker < Spree::Base
+    enum kind: %i(google_analytics segment)
+
     after_commit :clear_cache
 
     validates :analytics_id, presence: true, uniqueness: { case_sensitive: false, allow_blank: true }
