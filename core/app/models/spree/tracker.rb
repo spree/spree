@@ -2,20 +2,16 @@ module Spree
   class Tracker < Spree::Base
     enum kind: %i(google_analytics segment)
 
-    after_commit :clear_cache
+    validates :analytics_id, presence: true, uniqueness: { scope: :kind, case_sensitive: false, allow_blank: true }
 
-    validates :analytics_id, presence: true, uniqueness: { case_sensitive: false, allow_blank: true }
+    scope :active, -> { where(active: true) }
 
     def self.current
-      tracker = Rails.cache.fetch("current_tracker") do
-        where(active: true).first
-      end
-      tracker.analytics_id.present? ? tracker : nil if tracker
-    end
-
-
-    def clear_cache
-      Rails.cache.delete("current_tracker")
+      ActiveSupport::Deprecation.warn(<<-EOS, caller)
+        Spree::Tracker#current is deprecated because you can have multiple
+        analytical tracker systems like Google Analytics and Segment
+      EOS
+      google_analytics.active.first
     end
   end
 end
