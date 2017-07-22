@@ -2,7 +2,7 @@ module Spree
   class Tracker < Spree::Base
     enum kind: %i(google_analytics segment)
 
-    validates :analytics_id, presence: true, uniqueness: { scope: :kind, case_sensitive: false, allow_blank: true }
+    validates :analytics_id, presence: true, uniqueness: { scope: :kind, case_sensitive: false }
 
     scope :active, -> { where(active: true) }
 
