@@ -83,11 +83,4 @@ describe Spree::Taxon, type: :model do
   context 'ransackable_associations' do
     it { expect(described_class.whitelisted_ransackable_associations).to include('taxonomy') }
   end
-
-  it { expect(taxon).to callback(:set_permalink).before(:validation).on(:create).if(:name) }
-  describe 'validation' do
-    subject { taxon }
-    it { is_expected.to validate_presence_of(:name) }
-    it { is_expected.to validate_uniqueness_of(:name).scoped_to([:parent_id, :taxonomy_id]).allow_blank }
-  end
 end

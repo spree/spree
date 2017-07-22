@@ -7,9 +7,6 @@ describe Spree::LineItem, type: :model do
   before { create(:store) }
 
   describe 'Validations' do
-    it { expect(line_item).to validate_numericality_of(:quantity).only_integer.with_message(Spree.t('validation.must_be_int')) }
-    it { expect(line_item).to validate_presence_of(:order) }
-
     describe 'ensure_proper_currency' do
       context 'order is present' do
         context "when line_item's currency matches with order's" do
