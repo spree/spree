@@ -4,10 +4,6 @@ describe Spree::Country, type: :model do
   let(:america) { create :country }
   let(:canada)  { create :country, name: 'Canada', iso_name: 'CANADA', numcode: '124' }
 
-  describe 'Callbacks' do
-    it { is_expected.to callback(:ensure_not_default).before(:destroy) }
-  end
-
   describe 'Validations' do
     it { is_expected.to validate_presence_of(:name) }
     it { is_expected.to validate_presence_of(:iso_name) }

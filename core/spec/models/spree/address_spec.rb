@@ -1,11 +1,6 @@
 require 'spec_helper'
 
 describe Spree::Address, type: :model do
-
-  describe 'Callbacks' do
-    it { is_expected.to callback(:clear_invalid_state_entities).before(:validation).on(:update) }
-  end
-
   describe "clone" do
     it "creates a copy of the address with the exception of the id, updated_at and created_at attributes" do
       state = create(:state)

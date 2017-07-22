@@ -36,7 +36,6 @@ group :test do
   gem 'timecop'
   gem 'with_model'
   gem 'shoulda-matchers', '~> 3.1'
-  gem 'shoulda-callback-matchers', '~> 1.1'
   gem 'rails-controller-testing'
 end
 
