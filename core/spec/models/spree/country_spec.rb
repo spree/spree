@@ -8,10 +8,6 @@ describe Spree::Country, type: :model do
     it { is_expected.to callback(:ensure_not_default).before(:destroy) }
   end
 
-  describe 'Associations' do
-    it { is_expected.to have_many(:addresses).dependent(:restrict_with_error) }
-  end
-
   describe 'Validations' do
     it { is_expected.to validate_presence_of(:name) }
     it { is_expected.to validate_presence_of(:iso_name) }

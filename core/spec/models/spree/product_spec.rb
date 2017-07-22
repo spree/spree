@@ -10,34 +10,6 @@ module ThirdParty
 end
 
 describe Spree::Product, type: :model do
-
-  describe 'Associations' do
-    it 'should have many promotions' do
-      is_expected.to have_many(:promotions).
-        class_name('Spree::Promotion').through(:promotion_rules)
-    end
-
-    it 'should have many possible_promotions' do
-      is_expected.to have_many(:possible_promotions).
-        class_name('Spree::Promotion').through(:promotion_rules).source(:promotion)
-    end
-
-    it do
-      is_expected.to have_many(:variants).
-        class_name('Spree::Variant').
-        inverse_of(:product).
-        conditions(is_master: false).
-        order(:position)
-    end
-
-    it do
-      is_expected.to have_many(:variants_including_master).
-        class_name('Spree::Variant').
-        inverse_of(:product).
-        order(:position)
-    end
-  end
-
   context 'product instance' do
     let(:product) { create(:product) }
     let(:variant) { create(:variant, product: product) }
