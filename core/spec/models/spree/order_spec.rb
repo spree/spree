@@ -1073,4 +1073,28 @@ describe Spree::Order, type: :model do
     it { expect(order.collect_backend_payment_methods).to_not include(store_credit_payment_method) }
   end
 
+  describe "#create_shipment_tax_charge!" do
+    let(:order_shipments) { double }
+    after { order.create_shipment_tax_charge! }
+
+    context "when order has shipments" do
+      before do
+        allow(order).to receive(:shipments).and_return(order_shipments)
+        allow(order_shipments).to receive(:any?).and_return(true)
+        allow(Spree::TaxRate).to receive(:adjust).with(order, order_shipments)
+      end
+
+      it { expect(order_shipments).to receive(:any?).and_return(true) }
+      it { expect(order).to receive(:shipments).and_return(order_shipments) }
+      it { expect(Spree::TaxRate).to receive(:adjust).with(order, order_shipments) }
+    end
+
+    context "when order has no shipments" do
+      before do
+        allow(order).to receive_message_chain(:shipments, :any?).and_return(false)
+      end
+
+      it { expect(order).to receive_message_chain(:shipments, :any?).and_return(false) }
+    end
+  end
 end
