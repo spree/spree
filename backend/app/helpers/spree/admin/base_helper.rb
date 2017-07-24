@@ -21,7 +21,10 @@ module Spree
         if error_message_on(model, method).present?
           css_classes << 'withError'
         end
-        content_tag(:div, capture(&block), class: css_classes.join(' '), id: "#{model}_#{method}_field")
+        content_tag(
+          :div, capture(&block),
+          options.merge(class: css_classes.join(' '), id: "#{model}_#{method}_field")
+        )
       end
 
       def error_message_on(object, method, options = {})
