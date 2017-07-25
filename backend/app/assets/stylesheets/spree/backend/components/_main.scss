@@ -1,7 +1,9 @@
 #main-part {
-  padding: 15px 35px 0;
-  &.sidebar-collapsed {
-    padding-left: 85px;
+  .card {
+    border-radius: 6px;
+    margin: 20px 20px 0;
+    background: white;
+    padding: 15px 35px 0;
   }
 }
 
@@ -9,7 +11,20 @@
   padding: 5px 15px;
 }
 
-#logo {
+#logo, #logo_mini {
   width: auto;
   height: 40px;
+}
+
+.logo_mini {
+  display: none;
+}
+
+
+@media screen and (max-width: 767px) {
+  body, body.sidebar-minimized {
+    #wrapper {
+      width: 100%;
+    }
+  }
 }

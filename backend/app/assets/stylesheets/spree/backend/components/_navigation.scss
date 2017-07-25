@@ -9,6 +9,9 @@
   cursor: pointer;
 }
 
-.navbar .row {
-  padding-bottom: 0;
+.navbar-header {
+  .icon-bar {
+    background: white;
+    margin-right: 15px;
+  }
 }

@@ -1,3 +1,23 @@
+<div class="navbar-header">
+  <%= link_to(
+    image_tag(Spree::Config[:admin_interface_logo], id: 'logo'),
+    spree.admin_path,
+    class: "logo navbar-brand"
+    ) %>
+  <%= link_to(
+    image_tag('admin/logo_mini.png', id: 'logo_mini'),
+    spree.admin_path,
+    class: "navbar-brand logo_mini"
+    ) %>
+  <span class="navbar-toggle" id="sidebar-toggle">
+    <span class="icon-bar"></span>
+    <span class="icon-bar"></span>
+    <span class="icon-bar"></span>
+  </span>
+</div>
+
+<div class="clearfix"></div>
+
 <% if can? :admin, Spree::Order %>
   <ul class="nav nav-sidebar">
     <%= tab *Spree::BackendConfiguration::ORDER_TABS, icon: 'shopping-cart' %>
@@ -39,6 +59,10 @@
     <%= main_menu_tree Spree.t(:configurations), icon: "wrench", sub_menu: "configuration", url: "#sidebar-configuration" %>
   </ul>
 <% end %>
+
+<ul class="nav nav-sidebar nav-logout">
+  <%= tab Spree.t(:logout), icon: "log-out", url: spree.logout_path %>
+</ul>
 
 <% if can? :admin, current_store && Spree::Config[:admin_show_version] %>
   <div class="spree-version hidden-xs hidden-sm">

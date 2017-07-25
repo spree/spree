@@ -57,3 +57,13 @@ input.form-control {
 .display-inline {
   display: inline;
 }
+
+
+// Table filter(search)
+
+.filter-wrap {
+  #quick_search {
+    border-bottom-right-radius: 20px;
+    border-top-right-radius: 20px;
+  }
+}
