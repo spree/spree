@@ -9,24 +9,102 @@
   -webkit-font-feature-settings: "kern" 1;
   -moz-font-feature-settings: "kern" 1;
 }
+
 .btn {
   text-align: center;
+  border-width: 2px;
+  font-size: 14px;
+  font-weight: 400;
+  padding: 7px 18px;
+  background-color: transparent;
 
   &:focus {
     outline: 0 !important;
   }
-  
+
+  &.btn-default:hover, &.btn-default:focus {
+    @include set-btn-style($btn-hover-color, $btn-default-border, $btn-default-bg);
+  }
+
+  &.btn-primary:hover, &.btn-primary:focus {
+    @include set-btn-style($btn-hover-color, $btn-primary-border, $btn-primary-bg);
+  }
+
+  &.btn-success:hover, &.btn-success:focus {
+    @include set-btn-style($btn-hover-color, $btn-success-border, $btn-success-bg);
+  }
+
+  &.btn-info:hover, &.btn-info:focus {
+    @include set-btn-style($btn-hover-color, $btn-info-border, $btn-info-bg);
+  }
+
+  &.btn-warning:hover, &.btn-warning:focus {
+    @include set-btn-style($btn-hover-color, $btn-warning-border, $btn-warning-bg);
+  }
+
+  &.btn-danger:hover, &.btn-danger:focus {
+    @include set-btn-style($btn-hover-color, $btn-danger-border, $btn-danger-bg);
+  }
+
   &:hover,
   &:focus,
   &:active,
   &.active,
   &.disabled,
   &[disabled] {
-      box-shadow: none;
+    box-shadow: none;
+    color: $btn-hover-color;
   }
 
   .glyphicon {
     padding-right: 3px;
+  }
+}
+
+.btn-sm {
+  padding: 5px 10px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.btn-xs {
+  font-size: 12px;
+  padding: 2px 5px;
+}
+
+.btn-lg {
+  font-size: 18px;
+  padding: 11px 30px;
+}
+
+.btn-fill {
+  color: $btn-default-color;
+  background-color: $btn-default-bg;
+  opacity: 1;
+  filter: alpha(opacity=100);
+
+  &.btn-default {
+    @include set-btn-fill-style($btn-default-bg, $btn-default-color, $btn-default-color);
+  }
+
+  &.btn-primary {
+    @include set-btn-fill-style($btn-default-bg, $btn-primary-color, $btn-primary-color);
+  }
+
+  &.btn-success {
+    @include set-btn-fill-style($btn-default-bg, $btn-success-color, $btn-success-color);
+  }
+
+  &.btn-info {
+    @include set-btn-fill-style($btn-default-bg, $btn-info-color, $btn-info-color);
+  }
+
+  &.btn-warning {
+    @include set-btn-fill-style($btn-default-bg, $btn-warning-color, $btn-warning-color);
+  }
+
+  &.btn-danger {
+    @include set-btn-fill-style($btn-default-bg, $btn-danger-color, $btn-danger-color);
   }
 }
 
@@ -35,3 +113,9 @@
 .btn.action-void { @extend .btn-danger; }
 .btn.action-capture { @extend .btn-success; }
 .btn.payment-action-edit { @extend .btn-primary; }
+
+.filter-wrap {
+  .btn {
+    border-width: 1px;
+  }
+}

@@ -9,12 +9,17 @@
 
   $input-border:  darken(#EDEDED, 5);
 
+  $alabaster: #f4f3ef;
+  $makara: #66615b;
+
 /*------------------------------------------
   Components
   -----------------------------------------*/
   $border-radius-base: 2px;
   $padding-base-vertical: 8px;
   $padding-base-horizontal: 16px;
+  $border-radius-large: 6px;
+  $border-radius-small: 3px;
 
 /*------------------------------------------
   Fonts
@@ -26,6 +31,39 @@
   Buttons
   -----------------------------------------*/
 
+  $btn-default-color:              #67625C;
+  $btn-default-bg:                 #FFF;
+  $btn-default-border:             $btn-default-color;
+
+  $btn-primary-color:              #7B9D9F;
+  $btn-primary-bg:                 $btn-default-bg;
+  $btn-primary-border:             $btn-primary-color;
+
+  $btn-success-color:              #7BC39B;
+  $btn-success-bg:                 $btn-default-bg;
+  $btn-success-border:             $btn-success-color;
+
+  $btn-info-color:                 #69B4C9;
+  $btn-info-bg:                    $btn-default-bg;
+  $btn-info-border:                $btn-info-color;
+
+  $btn-warning-color:              #F4BC46;
+  $btn-warning-bg:                 $btn-default-bg;
+  $btn-warning-border:             $btn-warning-color;
+
+  $btn-danger-color:               #EC5F29;
+  $btn-danger-bg:                  $btn-default-bg;
+  $btn-danger-border:              $btn-danger-color;
+
+  $btn-hover-color: rgba(255, 255, 255, 0.85);
+
+  $body-bg:               #f4f3ef;
+
+  // Allows for customizing button radius independently from global border radius
+  $btn-border-radius-base:         20px;
+  $btn-border-radius-large:        50px;
+  $btn-border-radius-small:        26px;
+
 /*------------------------------------------
   Navbar
   -----------------------------------------*/
@@ -35,3 +73,8 @@
   Wells
   -----------------------------------------*/
   $well-bg: #fbfbfb;
+
+  // Sidebar
+  $sidebar-width: 250px;
+  $sidebar-minimized-width: 50px;
+  $sidebar-arrow-color: #cfcfca;

@@ -1,0 +1,14 @@
+@mixin set-btn-style($color, $background-color, $border-color) {
+  background-color: $background-color;
+  color: $color;
+  border-color: $border-color;
+}
+
+@mixin set-btn-fill-style($color, $background-color, $border-color) {
+  @include set-btn-style($color, $background-color, $border-color);
+
+  &:hover, &:focus, &.active {
+    background-color: darken($background-color, 20);
+    border-color: darken($background-color, 20);
+  }
+}

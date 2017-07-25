@@ -1,6 +1,7 @@
 #main-sidebar {
   position: fixed;
-  top: $navbar-height + 2px;
+  top: 0;
+  width: $sidebar-width;
   bottom: 0;
   left: 0;
   padding: 0;
@@ -8,8 +9,8 @@
   display: block;
   overflow-x: hidden;
   overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
-  background-color: lighten($gray-lighter, 5);
-  border-right: 1px solid darken($gray-lighter, 5);
+  background-color: $makara;
+  height: 100%;
 
   a {
     -webkit-font-smoothing: antialiased;
@@ -20,47 +21,131 @@
   }
 
   ul.nav-sidebar {
+    li {
+      &.selected {
+        color: $btn-success-color;
+
+        a.active {
+          color: $btn-success-color;
+        }
+
+        > a {
+          &:before {
+            border-right: 12px solid $sidebar-arrow-color;
+            border-top: 12px solid transparent;
+            border-bottom: 12px solid transparent;
+            content: "";
+            display: inline-block;
+            position: absolute;
+            right: 0;
+            opacity: 1;
+            top: 3px;
+            transition: opacity 150ms ease-in;
+          }
+
+          &:after {
+            border-right: 12px solid $alabaster;
+            border-top: 12px solid transparent;
+            border-bottom: 12px solid transparent;
+            content: "";
+            display: inline-block;
+            position: absolute;
+            right: -1px;
+            opacity: 1;
+            top: 3px;
+            transition: opacity 150ms ease-in;
+          }
+        }
+      }
+    }
+
     > li {
-      border-bottom: 1px solid $gray-lighter;
+      border-bottom: 1px solid $gray-light;
+
+      &.selected {
+        > a {
+          color: $btn-success-color;
+
+          &:before {
+            border-right: 15px solid $sidebar-arrow-color;
+            border-top: 15px solid transparent;
+            border-bottom: 15px solid transparent;
+            top: 8px;
+          }
+
+          &:after {
+            border-right: 15px solid $alabaster;
+            border-top: 15px solid transparent;
+            border-bottom: 15px solid transparent;
+            top: 8px;
+          }
+
+          &:hover {
+            &:before, &:after {
+              border-right-color: $makara;
+            }
+          }
+        }
+
+        a.active {
+          color: $btn-success-color;
+        }
+      }
+
+      a {
+        color: $gray-lighter;
+
+        &:hover, &:focus {
+          color: $makara;
+        }
+      }
 
       > a {
         text-transform: uppercase;
         letter-spacing: 1px;
         font-size: 12px;
-        font-weight: 500;
         padding: 15px;
-        color: $gray;
+        font-weight: 600;
 
         .glyphicon {
           font-size: 18px;
           vertical-align: bottom;
           padding-right: 5px;
-        }
 
-        .glyphicon.pull-right {
-          font-size: 8px;
-          line-height: 2;
-          color: $gray-light;
-          position: absolute;
-          right: 5px;
-          top: 50%;
-          margin-top: -8px;
+          &.pull-right {
+            font-size: 8px;
+            line-height: 2;
+            color: $gray-light;
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            margin-top: -8px;
+          }
         }
       }
+    }
+
+    &.nav-logout {
+      position: absolute;
+      bottom: 30px;
+      right: 0;
+      left: 0;
     }
   }
 
   ul.nav.nav-pills {
-    background-color: white;
-    border-top: 1px solid $gray-lighter;
+    background-color: $makara;
+    padding: 10px 0;
 
     li {
       a {
         padding: 5px 15px;
         font-size: 12px;
+        color: darken(white, 15);
 
-        &:hover {
+        &:hover, &:focus {
           border-radius: 0;
+          color: $makara;
         }
       }
 
@@ -76,54 +161,108 @@
     position: absolute;
     z-index: -1;
     left: 15px;
-    bottom: 15px;
+    bottom: 5px;
+    color: white;
   }
 }
 
-#wrapper.sidebar-minimized #main-sidebar {
-  width: 50px;
-  overflow: visible;
-
-  li {
-    &:hover, &.menu-active {
-      background-color: $gray-lighter;
-    }
+body.sidebar-minimized {
+  #wrapper {
+    width: calc(100% - #{$sidebar-minimized-width});
   }
 
-  .icon-link, [data-toggle="collapse"] {
-    text-align: center;
-
-    .icon {
-      padding: 0;
-    }
-
-    .text, .icon-chevron-left, .icon-chevron-down {
-      display: none;
-    }
-  }
-
-  ul.collapse.in {
+  .logo.navbar-brand {
     display: none;
   }
 
-  .submenu-active {
-    display: block !important;
-    height: auto !important;
-    position: fixed;
-    top: $navbar-height + 2px;
-    bottom: 0;
-    left: 0;
-    padding: 0;
-    z-index: 1000;
+  .logo_mini.navbar-brand {
     display: block;
-    overflow-x: hidden;
-    overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
-    left: 50px;
-    min-width: 180px;
-    visibility: visible;
-    background-color: lighten($gray-lighter, 5);
-    border-top: none;
-    border-right: 1px solid darken($gray-lighter, 5);
-    padding-top: 5px;
+    padding: 5px 13px;
+  }
+
+  #sidebar-toggle {
+    position: inherit;
+    margin: 10px 7px;
+    padding: 7px;
+
+    .icon-bar {
+      margin-right: 0;
+    }
+
+    &:hover {
+      background-color: $gray-lighter;
+
+      .icon-bar {
+        background-color: $makara;
+      }
+    }
+  }
+
+  #main-sidebar {
+    width: $sidebar-minimized-width;
+    overflow: visible;
+
+    ul.nav-sidebar.nav-logout {
+      bottom: 0;
+    }
+
+    li {
+      &:hover, &.menu-active {
+        background-color: $gray-lighter;
+        > a {
+          color: $makara;
+        }
+      }
+    }
+
+     .nav-sidebar > li {
+      &.selected {
+        > a {
+          &:before, &:after {
+            border: none
+          }
+        }
+      }
+     }
+
+    .icon-link, [data-toggle="collapse"] {
+      text-align: center;
+
+      .icon {
+        padding: 0;
+      }
+
+      .text, .icon-chevron-left, .icon-chevron-down {
+        display: none;
+      }
+    }
+
+    ul.collapse.in {
+      display: none;
+    }
+
+    .spree-version {
+      display: none;
+    }
+
+    .submenu-active {
+      display: block !important;
+      height: auto !important;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      padding: 0;
+      z-index: 1000;
+      display: block;
+      overflow-x: hidden;
+      overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+      left: 50px;
+      min-width: 180px;
+      visibility: visible;
+      border-top: none;
+      padding-top: 5px;
+      border-left: 1px solid $gray-light;
+    }
   }
 }

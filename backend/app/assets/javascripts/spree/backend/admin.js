@@ -28,36 +28,25 @@ jQuery(function($) {
 
   // Sidebar nav toggle functionality
   var sidebar_toggle = $('#sidebar-toggle');
+  var body           = $('body');
   sidebar_toggle.on('click', function() {
     var wrapper = $('#wrapper');
-    var main    = $('#main-part');
     var sidebar = $('#main-sidebar');
 
-    // these should match `spree/backend/app/helpers/spree/admin/navigation_helper.rb#main_part_classes`
-    var mainWrapperCollapsedClasses = 'col-xs-12 sidebar-collapsed';
-    var mainWrapperExpandedClasses = 'col-xs-9 col-xs-offset-3 col-md-10 col-md-offset-2';
-
-    wrapper.toggleClass('sidebar-minimized');
+    body.toggleClass('sidebar-minimized');
     sidebar.toggleClass('hidden-xs');
-    main
-      .toggleClass(mainWrapperCollapsedClasses)
-      .toggleClass(mainWrapperExpandedClasses);
 
-    if (wrapper.hasClass('sidebar-minimized')) {
-      $.cookie('sidebar-minimized', 'true', { path: '/admin' });
-    } else {
-      $.cookie('sidebar-minimized', 'false', { path: '/admin' });
-    }
+    $.cookie('sidebar-minimized', (body.hasClass('sidebar-minimized')), { path: '/admin' });
   });
 
   $('.sidebar-menu-item').mouseover(function(){
-    if($('#wrapper').hasClass('sidebar-minimized')){
+    if(body.hasClass('sidebar-minimized')){
       $(this).addClass('menu-active');
       $(this).find('ul.nav').addClass('submenu-active');
     }
   });
   $('.sidebar-menu-item').mouseout(function(){
-    if($('#wrapper').hasClass('sidebar-minimized')){
+    if(body.hasClass('sidebar-minimized')){
       $(this).removeClass('menu-active');
       $(this).find('ul.nav').removeClass('submenu-active');
     }

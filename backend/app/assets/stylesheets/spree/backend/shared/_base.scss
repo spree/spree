@@ -1,5 +1,12 @@
 body {
-  padding-top: $navbar-height + 2px;
+  font-family: sans-serif;
+  min-height: 100%;
+}
+
+#wrapper {
+  float: right;
+  width: calc(100% - #{$sidebar-width});
+  min-height: 100%;
 }
 
 .table-wrapper {
