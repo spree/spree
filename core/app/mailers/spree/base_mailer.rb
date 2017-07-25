@@ -9,6 +9,11 @@ module Spree
     end
     helper_method :money
 
+    def frontend_available?
+      Spree::Core::Engine.frontend_available?
+    end
+    helper_method :frontend_available?
+
     def mail(headers = {}, &block)
       ensure_default_action_mailer_url_host
       super if Spree::Config[:send_core_emails]
