@@ -8,11 +8,6 @@ describe Spree::Variant, type: :model do
 
   it_behaves_like 'default_price'
 
-  describe 'validations' do
-    it { expect(master_variant).to_not validate_presence_of(:option_values) }
-    it { expect(variant).to validate_presence_of(:option_values) }
-  end
-
   context 'sorting' do
     it 'responds to set_list_position' do
       expect(variant.respond_to?(:set_list_position)).to eq(true)

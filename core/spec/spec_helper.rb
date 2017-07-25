@@ -34,7 +34,6 @@ end
 
 require 'spree/testing_support/factories'
 require 'spree/testing_support/preferences'
-require 'spree/testing_support/shoulda_matcher_configuration'
 require 'spree/testing_support/url_helpers'
 require 'spree/testing_support/kernel'
 

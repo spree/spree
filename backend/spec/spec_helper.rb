@@ -40,7 +40,6 @@ require 'spree/testing_support/flash'
 require 'spree/testing_support/url_helpers'
 require 'spree/testing_support/order_walkthrough'
 require 'spree/testing_support/capybara_ext'
-require 'spree/testing_support/shoulda_matcher_configuration'
 
 require 'spree/core/controller_helpers/strong_parameters'
 

@@ -8,13 +8,6 @@ describe Spree::Promotion, type: :model do
       @valid_promotion = Spree::Promotion.new name: "A promotion"
     end
 
-    it { is_expected.to validate_presence_of(:name) }
-    it { is_expected.to validate_uniqueness_of(:path).case_insensitive.allow_blank }
-    it { is_expected.to validate_uniqueness_of(:code).case_insensitive.allow_blank }
-    it { is_expected.to validate_numericality_of(:usage_limit).is_greater_than(0).allow_nil }
-    it { is_expected.to validate_length_of(:description).is_at_most(255) }
-    it { is_expected.to allow_values('', nil).for(:description) }
-
     it "valid_promotion is valid" do
       expect(@valid_promotion).to be_valid
     end

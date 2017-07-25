@@ -7,9 +7,6 @@ describe Spree::LineItem, type: :model do
   before { create(:store) }
 
   describe 'Validations' do
-    it { expect(line_item).to validate_numericality_of(:quantity).only_integer.with_message(Spree.t('validation.must_be_int')) }
-    it { expect(line_item).to validate_presence_of(:order) }
-
     describe 'ensure_proper_currency' do
       context 'order is present' do
         context "when line_item's currency matches with order's" do
@@ -88,9 +85,6 @@ describe Spree::LineItem, type: :model do
 
   context "#destroy" do
     let!(:line_item) { order.line_items.first }
-    it "returns inventory when a line item is destroyed" do
-      is_expected.to callback(:verify_order_inventory).before(:destroy)
-    end
 
     it "deletes inventory units" do
       expect { line_item.destroy }.to change { line_item.inventory_units.count }.from(1).to(0)

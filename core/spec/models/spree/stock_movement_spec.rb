@@ -16,31 +16,6 @@ describe Spree::StockMovement, type: :model do
     end
   end
 
-  describe 'Associations' do
-    it { is_expected.to belong_to(:stock_item).class_name('Spree::StockItem').inverse_of(:stock_movements) }
-    it { is_expected.to belong_to(:originator) }
-  end
-
-  describe 'Validations' do
-    it do
-      is_expected.to validate_presence_of(:stock_item)
-    end
-
-    it do
-      is_expected.to validate_presence_of(:quantity)
-    end
-
-    it do
-      is_expected.to validate_numericality_of(:quantity).
-        is_greater_than_or_equal_to(Spree::StockMovement::QUANTITY_LIMITS[:min]).
-        is_less_than_or_equal_to(Spree::StockMovement::QUANTITY_LIMITS[:max]).only_integer
-    end
-  end
-
-  describe 'Callbacks' do
-    it { is_expected.to callback(:update_stock_item_quantity).after(:create) }
-  end
-
   describe 'Scope' do
     describe '.recent' do
       it 'should order chronologically by created at' do

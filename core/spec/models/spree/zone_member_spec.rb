@@ -6,16 +6,6 @@ describe Spree::ZoneMember, type: :model do
   let(:zone) { create(:zone, kind: 'country') }
   let(:zone_member) { create(:zone_member, zone: zone, zoneable: country) }
 
-  describe 'associations' do
-    it { is_expected.to belong_to(:zoneable) }
-    it { is_expected.to belong_to(:zone).counter_cache(true).inverse_of(:zone_members) }
-  end
-
-  describe 'validations' do
-    it { is_expected.to validate_presence_of(:zone) }
-    it { is_expected.to validate_presence_of(:zoneable) }
-  end
-
   describe 'scopes' do
     describe '.defunct_without_kind' do
       let(:defunct_without_kind) { Spree::ZoneMember.defunct_without_kind('country') }
