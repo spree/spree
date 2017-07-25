@@ -35,24 +35,24 @@ Add Spree gems to your Gemfile:
 
 ```ruby
 gem 'spree', '~> 3.3.0.rc1'
-gem 'spree_auth_devise', '~> 3.3.0.rc1'
-gem 'spree_gateway', '~> 3.3.0.rc1'
+gem 'spree_auth_devise', '~> 3.3'
+gem 'spree_gateway', '~> 3.3'
 ```
 
 ### Rails 5.0
 
 ```ruby
 gem 'spree', '~> 3.2.0'
-gem 'spree_auth_devise', '~> 3.2'
-gem 'spree_gateway', '~> 3.2'
+gem 'spree_auth_devise', '~> 3.3'
+gem 'spree_gateway', '~> 3.3'
 ```
 
 ### Rails 4.2
 
 ```ruby
 gem 'spree', '~> 3.1.0'
-gem 'spree_auth_devise', '~> 3.1'
-gem 'spree_gateway', '~> 3.1'
+gem 'spree_auth_devise', '~> 3.3'
+gem 'spree_gateway', '~> 3.3'
 ```
 
 Run `bundle install`
