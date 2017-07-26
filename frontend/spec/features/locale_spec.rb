@@ -43,18 +43,5 @@ describe 'setting locale', type: :feature do
         expect(find("#b#{attr} label.error").text).to eq(text)
       end
     end
-
-    it 'shows translated jquery.validate error messages', js: true do
-      visit spree.root_path
-      click_link mug.name
-      click_button 'add-to-cart-button'
-      error_messages.each do |locale, message|
-        with_locale(locale) do
-          visit '/checkout/address'
-          find('.form-buttons input[type=submit]').click
-          check_error_text message
-        end
-      end
-    end
   end
 end
