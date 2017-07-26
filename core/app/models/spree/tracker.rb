@@ -6,12 +6,9 @@ module Spree
 
     scope :active, -> { where(active: true) }
 
-    def self.current
-      ActiveSupport::Deprecation.warn(<<-EOS, caller)
-        Spree::Tracker#current is deprecated because you can have multiple
-        analytical tracker systems like Google Analytics and Segment
-      EOS
-      google_analytics.active.first
+    def self.current(kind = :google_analytics)
+      tracker = send(kind).active.first
+      tracker&.analytics_id? ? tracker : nil
     end
   end
 end
