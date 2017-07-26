@@ -255,12 +255,12 @@ describe Spree::Admin::OrdersController, type: :controller do
 
       context 'when referer' do
         before(:each) do
-          request.env['HTTP_REFERER'] = root_url
+          request.env['HTTP_REFERER'] = '/'
         end
 
         it "redirects back" do
           spree_post :open_adjustments, id: order.number
-          expect(response).to redirect_to(root_url)
+          expect(response).to redirect_to('/')
         end
       end
 
@@ -297,12 +297,12 @@ describe Spree::Admin::OrdersController, type: :controller do
 
       context 'when referer' do
         before(:each) do
-          request.env['HTTP_REFERER'] = root_url
+          request.env['HTTP_REFERER'] = '/'
         end
 
         it "redirects back" do
           spree_post :close_adjustments, id: order.number
-          expect(response).to redirect_to(root_url)
+          expect(response).to redirect_to('/')
         end
       end
 
@@ -370,7 +370,7 @@ describe Spree::Admin::OrdersController, type: :controller do
     it 'should deny access to not signed in users' do
       allow(controller).to receive_messages spree_current_user: nil
       spree_get :index
-      expect(response).to redirect_to(spree.root_path)
+      expect(response).to redirect_to('/')
     end
 
     it 'should restrict returned order(s) on index when using OrderSpecificAbility' do

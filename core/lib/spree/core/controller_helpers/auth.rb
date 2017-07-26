@@ -72,8 +72,10 @@ module Spree
             store_location
             if respond_to?(:spree_login_path)
               redirect_to spree_login_path
+            elsif spree.respond_to?(:root_path)
+              redirect_to spree.root_path
             else
-              redirect_to spree.respond_to?(:root_path) ? spree.root_path : main_app.root_path
+              redirect_to main_app.respond_to?(:root_path) ? main_app.root_path : '/'
             end
           end
         end
