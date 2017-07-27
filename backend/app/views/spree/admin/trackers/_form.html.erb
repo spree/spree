@@ -1,9 +1,9 @@
 <div data-hook="admin_tracker_form_fields" class="row">
-  <div class="col-xs-12 col-md-4" data-hook="analytics_kind">
-    <%= f.field_container :kind, class: ["form-group"], "data-hook" => "analytics_kind" do %>
-      <%= f.label :kind, Spree.t(:analytics_engine) %>
-      <%= f.select :kind, Spree::Tracker.kinds.keys.sort.map { |k| [k.humanize, k] }, {}, { class: 'select2' } %>
-      <%= f.error_message_on :kind %>
+  <div class="col-xs-12 col-md-4" data-hook="analytics_engine">
+    <%= f.field_container :engine, class: ["form-group"], "data-hook" => "analytics_engine" do %>
+      <%= f.label :engine, Spree.t(:analytics_engine) %>
+      <%= f.select :engine, Spree::Tracker.engines.keys.sort.map { |k| [k.humanize, k] }, {}, { class: 'select2' } %>
+      <%= f.error_message_on :engine %>
     <% end %>
   </div>
   <div class="col-xs-12 col-md-8">

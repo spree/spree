@@ -1,13 +1,14 @@
 module Spree
   class Tracker < Spree::Base
-    enum kind: %i(google_analytics segment)
+    TRACKER_ENGINES = %i(google_analytics segment).freeze
+    enum engine: TRACKER_ENGINES
 
-    validates :analytics_id, presence: true, uniqueness: { scope: :kind, case_sensitive: false }
+    validates :analytics_id, presence: true, uniqueness: { scope: :engine, case_sensitive: false }
 
     scope :active, -> { where(active: true) }
 
-    def self.current(kind = :google_analytics)
-      tracker = send(kind).active.first
+    def self.current(engine = :google_analytics)
+      tracker = send(engine).active.first
       tracker&.analytics_id? ? tracker : nil
     end
   end
