@@ -11,7 +11,11 @@
               <table class="twelve columns">
                 <tr>
                   <td class="twelve sub-columns last">
-                    <%= link_to spree.root_url, class: 'template-label' do %>
+                    <% if frontend_available? %>
+                      <%= link_to spree.root_url, class: 'template-label' do %>
+                        <%= image_tag Spree::Config.logo, class: 'logo', alt: Spree::Store.current.name, title: Spree::Store.current.name %>
+                      <% end %>
+                    <% else %>
                       <%= image_tag Spree::Config.logo, class: 'logo', alt: Spree::Store.current.name, title: Spree::Store.current.name %>
                     <% end %>
                   </td>

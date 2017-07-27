@@ -133,3 +133,4 @@ module Spree
 end
 
 require 'spree/core/routes'
+require 'spree/core/components'
