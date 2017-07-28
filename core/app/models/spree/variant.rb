@@ -6,9 +6,8 @@ module Spree
     belongs_to :product, touch: true, class_name: 'Spree::Product', inverse_of: :variants
     belongs_to :tax_category, class_name: 'Spree::TaxCategory', optional: true
 
-    delegate_belongs_to :product, :name, :description, :slug, :available_on,
-                        :shipping_category_id, :meta_description, :meta_keywords,
-                        :shipping_category
+    delegate :name, :description, :slug, :available_on, :shipping_category_id,
+             :meta_description, :meta_keywords, :shipping_category, to: :product
 
     # we need to have this callback before any dependent: :destroy associations
     # https://github.com/rails/rails/issues/3458

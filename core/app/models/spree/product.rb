@@ -73,8 +73,10 @@ module Spree
     has_many :line_items, through: :variants_including_master
     has_many :orders, through: :line_items
 
-    delegate_belongs_to :master, :sku, :price, :currency, :display_amount, :display_price, :weight, :height, :width, :depth,
-                        :is_master, :has_default_price?, :cost_currency, :price_in, :amount_in, :cost_price, :images
+    delegate :sku, :price, :currency, :display_amount, :display_price, :weight,
+             :height, :width, :depth, :is_master, :has_default_price?,
+             :cost_currency, :price_in, :amount_in, :cost_price, :images,
+             to: :master
 
     alias_method :master_images, :images
 
