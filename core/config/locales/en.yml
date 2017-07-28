@@ -96,8 +96,10 @@ en:
         path: Path
         starts_at: Starts At
         usage_limit: Usage Limit
+        promotion_category: Promotion Category
       spree/promotion_category:
         name: Name
+        code: Code
       spree/property:
         name: Name
         presentation: Presentation
@@ -1030,6 +1032,7 @@ en:
     payment_processor_choose_banner_text: If you need help choosing a payment processor, please visit
     payment_processor_choose_link: our payments page
     payment_state: Payment State
+    payment_identifier: Payment Identifier
     payment_states:
       balance_due: balance due
       checkout: checkout
