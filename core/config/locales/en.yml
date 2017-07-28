@@ -1161,7 +1161,6 @@ en:
     reference: Reference
     reference_contains: Reference Contains
     refund: Refund
-    refund_amount_must_be_greater_than_zero: Refund amount must be greater than zero
     refund_reasons: Refund Reasons
     refunded_amount: Refunded Amount
     refunds: Refunds
