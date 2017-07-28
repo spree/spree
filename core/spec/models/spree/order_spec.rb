@@ -1024,6 +1024,25 @@ describe Spree::Order, type: :model do
     end
   end
 
+  describe '#promo_code' do
+    context 'without promo_code applied' do
+      it { expect(order.promo_code).to eq nil }
+    end
+
+    context 'with_promo_code applied' do
+      let(:promo_code) { '10off' }
+      let(:promotion) { create :promotion, code: promo_code }
+
+      before do
+        promotion.orders << order
+      end
+
+      it 'returns applied promo_code' do
+        expect(order.promo_code).to eq promo_code
+      end
+    end
+  end
+
   describe 'order transit to returned state from resumed state' do
     let!(:resumed_order) { create(:order_with_line_items, line_items_count: 3, state: :resumed) }
 

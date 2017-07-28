@@ -618,6 +618,10 @@ module Spree
     end
     alias_method :fully_discounted, :fully_discounted?
 
+    def promo_code
+      promotions.pluck(:code).compact.first
+    end
+
     private
 
     def link_by_email

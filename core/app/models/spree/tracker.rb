@@ -1,19 +1,25 @@
 module Spree
   class Tracker < Spree::Base
+    TRACKING_ENGINES = %i(google_analytics segment).freeze
+    enum engine: TRACKING_ENGINES
+
     after_commit :clear_cache
 
-    validates :analytics_id, presence: true, uniqueness: { case_sensitive: false, allow_blank: true }
+    validates :analytics_id, presence: true, uniqueness: { scope: :engine, case_sensitive: false }
 
-    def self.current
-      tracker = Rails.cache.fetch("current_tracker") do
-        where(active: true).first
+    scope :active, -> { where(active: true) }
+
+    def self.current(engine = TRACKING_ENGINES.first)
+      tracker = Rails.cache.fetch("current_tracker/#{engine}") do
+        send(engine).active.first
       end
       tracker.analytics_id.present? ? tracker : nil if tracker
     end
 
-
     def clear_cache
-      Rails.cache.delete("current_tracker")
+      TRACKING_ENGINES.each do |engine|
+        Rails.cache.delete("current_tracker/#{engine}")
+      end
     end
   end
 end

@@ -1,0 +1,24 @@
+<script>
+  if (typeof analytics !== 'undefined') {
+    analytics.track('Order Completed', {
+      order_id: '<%= order.id %>',
+      total: '<%= order.total %>',
+      shipping: '<%= order.shipment_total %>',
+      tax: '<%= order.additional_tax_total %>',
+      discount: '<%= order.promo_total %>',
+      coupon: '<%= order.promo_code %>',
+      currency: '<%= order.currency %>',
+      products: [
+      <% order.line_items.each do |line_item| %>
+        {
+          product_id: '<%= line_item.product.id %>',
+          sku: '<%= line_item.variant.sku %>',
+          name: '<%= line_item.product.name %>',
+          price: '<%= line_item.price %>',
+          quantity: '<%= line_item.quantity %>'
+        },
+      <% end %>
+      ]
+    });
+  }
+</script>
