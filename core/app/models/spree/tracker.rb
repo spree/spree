@@ -13,7 +13,7 @@ module Spree
       tracker = Rails.cache.fetch("current_tracker/#{engine}") do
         send(engine).active.first
       end
-      tracker&.analytics_id? ? tracker : nil
+      tracker.analytics_id.present? ? tracker : nil if tracker
     end
 
     def clear_cache
