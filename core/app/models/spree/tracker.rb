@@ -1,7 +1,7 @@
 module Spree
   class Tracker < Spree::Base
-    TRACKER_ENGINES = %i(google_analytics segment).freeze
-    enum engine: TRACKER_ENGINES
+    TRACKING_ENGINES = %i(google_analytics segment).freeze
+    enum engine: TRACKING_ENGINES
 
     after_commit :clear_cache
 
@@ -9,7 +9,7 @@ module Spree
 
     scope :active, -> { where(active: true) }
 
-    def self.current(engine = :google_analytics)
+    def self.current(engine = TRACKING_ENGINES.first)
       tracker = Rails.cache.fetch("current_tracker/#{engine}") do
         send(engine).active.first
       end
@@ -17,7 +17,7 @@ module Spree
     end
 
     def clear_cache
-      TRACKER_ENGINES.each do |engine|
+      TRACKING_ENGINES.each do |engine|
         Rails.cache.delete("current_tracker/#{engine}")
       end
     end
