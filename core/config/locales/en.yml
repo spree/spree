@@ -478,6 +478,8 @@ en:
         taxonomies: Taxonomies
         taxons: Taxons
         users: Users
+        return_authorizations: Return Authorizations
+        customer_returns: Customer Returns
       order:
         events:
           approve: approve
