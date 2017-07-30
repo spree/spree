@@ -1,5 +1,5 @@
-united_states = Spree::Country.find_by_iso!("US")
-new_york = Spree::State.find_by_name!("New York")
+united_states = Spree::Country.find_by!(iso: "US")
+new_york = Spree::State.find_by!(name: "New York")
 
 # Billing address
 Spree::Address.create!(

@@ -54,7 +54,7 @@ module Spree
             begin
               shipment = order.shipments.build
               shipment.tracking       = s[:tracking]
-              shipment.stock_location = Spree::StockLocation.find_by_admin_name(s[:stock_location]) || Spree::StockLocation.find_by_name!(s[:stock_location])
+              shipment.stock_location = Spree::StockLocation.find_by(admin_name: s[:stock_location]) || Spree::StockLocation.find_by!(name: s[:stock_location])
               inventory_units = create_inventory_units_from_order_and_params(order, s[:inventory_units])
 
               inventory_units.each do |inventory_unit|
@@ -75,7 +75,7 @@ module Spree
 
               shipment.save!
 
-              shipping_method = Spree::ShippingMethod.find_by_name(s[:shipping_method]) || Spree::ShippingMethod.find_by_admin_name!(s[:shipping_method])
+              shipping_method = Spree::ShippingMethod.find_by(name: s[:shipping_method]) || Spree::ShippingMethod.find_by!(admin_name: s[:shipping_method])
               rate = shipment.shipping_rates.create!(shipping_method: shipping_method, cost: s[:cost])
 
               shipment.selected_shipping_rate_id = rate.id
@@ -187,7 +187,7 @@ module Spree
               # spree_wombat serializes payment state as status so imported orders should fall back to status field.
               payment.state = p[:state] || p[:status] || 'completed'
               payment.created_at = p[:created_at] if p[:created_at]
-              payment.payment_method = Spree::PaymentMethod.find_by_name!(p[:payment_method])
+              payment.payment_method = Spree::PaymentMethod.find_by!(name: p[:payment_method])
               payment.source = create_source_payment_from_params(p[:source], payment) if p[:source]
               payment.save!
             rescue Exception => e
@@ -218,7 +218,7 @@ module Spree
           begin
             sku = hash.delete(:sku)
             unless hash[:variant_id].present?
-              hash[:variant_id] = Spree::Variant.active.find_by_sku!(sku).id
+              hash[:variant_id] = Spree::Variant.active.find_by!(sku: sku).id
             end
             hash
           rescue ActiveRecord::RecordNotFound => e

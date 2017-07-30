@@ -82,7 +82,7 @@ module Spree
       end
 
       def load_store_credit
-        @store_credit = Spree::StoreCredit.find_by_id(params[:id]) || Spree::StoreCredit.new
+        @store_credit = Spree::StoreCredit.find_by(id: params[:id]) || Spree::StoreCredit.new
       end
 
       def ensure_unused_store_credit

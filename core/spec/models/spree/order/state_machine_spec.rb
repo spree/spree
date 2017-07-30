@@ -107,7 +107,7 @@ describe Spree::Order, type: :model do
         create(:line_item, order: order, price: 10)
       end
 
-      allow(order.line_items).to receive_messages find_by_variant_id: order.line_items.first
+      allow(order.line_items).to receive(:find_by).with_keywords(:variant_id).and_return(order.line_items.first)
 
       allow(order).to receive_messages completed?: true
       allow(order).to receive_messages allow_cancel?: true
