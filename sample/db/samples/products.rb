@@ -1,7 +1,7 @@
 Spree::Sample.load_sample("tax_categories")
 Spree::Sample.load_sample("shipping_categories")
 
-clothing = Spree::TaxCategory.find_by_name!("Clothing")
+clothing = Spree::TaxCategory.find_by!(name: "Clothing")
 
 products = [
   {
@@ -99,7 +99,7 @@ products = [
   }
 ]
 
-default_shipping_category = Spree::ShippingCategory.find_by_name!("Default")
+default_shipping_category = Spree::ShippingCategory.find_by!(name: "Default")
 
 products.each do |product_attrs|
   Spree::Config[:currency] = "USD"

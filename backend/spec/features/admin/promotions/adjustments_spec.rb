@@ -13,7 +13,7 @@ describe "Promotion Adjustments", type: :feature, js: true do
       fill_in "Name", with: "Promotion"
       fill_in "Code", with: "order"
       click_button "Create"
-      promotion = Spree::Promotion.find_by_name("Promotion")
+      promotion = Spree::Promotion.find_by(name: "Promotion")
       expect(page).to have_content(promotion.name)
 
       select2 "Item total", from: "Add rule of type"
@@ -50,7 +50,7 @@ describe "Promotion Adjustments", type: :feature, js: true do
       fill_in "Usage Limit", with: "1"
       fill_in "Code", with: "single_use"
       click_button "Create"
-      promotion = Spree::Promotion.find_by_name("Promotion")
+      promotion = Spree::Promotion.find_by(name: "Promotion")
       expect(page).to have_content(promotion.name)
 
       select2 "Create whole-order adjustment", from: "Add action of type"
@@ -73,7 +73,7 @@ describe "Promotion Adjustments", type: :feature, js: true do
     it "should allow an admin to create an automatic promo with flat percent discount" do
       fill_in "Name", with: "Promotion"
       click_button "Create"
-      promotion = Spree::Promotion.find_by_name("Promotion")
+      promotion = Spree::Promotion.find_by(name: "Promotion")
 
       expect(page).to have_content(promotion.name)
 
@@ -110,7 +110,7 @@ describe "Promotion Adjustments", type: :feature, js: true do
 
       fill_in "Name", with: "Promotion"
       click_button "Create"
-      promotion = Spree::Promotion.find_by_name("Promotion")
+      promotion = Spree::Promotion.find_by(name: "Promotion")
 
       expect(page).to have_content(promotion.name)
 
@@ -143,7 +143,7 @@ describe "Promotion Adjustments", type: :feature, js: true do
       fill_in "Name", with: "Promotion"
       click_button "Create"
 
-      promotion = Spree::Promotion.find_by_name("Promotion")
+      promotion = Spree::Promotion.find_by(name: "Promotion")
       expect(page).to have_content(promotion.name)
 
       select2 "Item total", from: "Add rule of type"
@@ -169,7 +169,7 @@ describe "Promotion Adjustments", type: :feature, js: true do
       fill_in "Name", with: "Promotion"
       fill_in "Path", with: "content/cvv"
       click_button "Create"
-      promotion = Spree::Promotion.find_by_name("Promotion")
+      promotion = Spree::Promotion.find_by(name: "Promotion")
 
       expect(page).to have_content(promotion.name)
 
@@ -196,7 +196,7 @@ describe "Promotion Adjustments", type: :feature, js: true do
       fill_in "Name", with: "Promotion"
       fill_in "Code", with: "complex"
       click_button "Create"
-      promotion = Spree::Promotion.find_by_name("Promotion")
+      promotion = Spree::Promotion.find_by(name: "Promotion")
 
       expect(page).to have_content(promotion.name)
 
@@ -227,7 +227,7 @@ describe "Promotion Adjustments", type: :feature, js: true do
     it "ceasing to be eligible for a promotion with item total rule then becoming eligible again" do
       fill_in "Name", with: "Promotion"
       click_button "Create"
-      promotion = Spree::Promotion.find_by_name("Promotion")
+      promotion = Spree::Promotion.find_by(name: "Promotion")
 
       expect(page).to have_content(promotion.name)
 
