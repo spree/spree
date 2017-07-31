@@ -36,7 +36,9 @@ describe "General Settings", type: :feature do
       expect(page).to_not have_content(Spree.t(:clear_cache_ok))
       expect(page).to have_content(Spree.t(:clear_cache_warning))
 
-      click_button "Clear Cache"
+      page.accept_confirm do
+        click_button "Clear Cache"
+      end
 
       expect(page).to have_content(Spree.t(:clear_cache_ok))
     end

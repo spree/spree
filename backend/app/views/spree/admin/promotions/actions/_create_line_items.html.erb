@@ -1,7 +1,9 @@
 <div class="panel-body calculator-fields">
   <% promotion_action.promotion_action_line_items.each do |item| %>
-    <strong><%= item.quantity %> x <%= item.name %></strong>
-    <%= item.variant.options_text %>
+    <% variant = item.variant %>
+
+    <strong><%= item.quantity %> x <%= variant.name %></strong>
+    <%= variant.options_text %>
   <% end %>
 
   <% if promotion_action.promotion_action_line_items.empty? %>

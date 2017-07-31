@@ -52,7 +52,7 @@ module Spree
 
             payment.public_send(method)
 
-            if payment.completed?
+            if payment.completed? && payment_total != total
               self.payment_total += payment.amount
             end
           end

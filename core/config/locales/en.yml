@@ -96,8 +96,10 @@ en:
         path: Path
         starts_at: Starts At
         usage_limit: Usage Limit
+        promotion_category: Promotion Category
       spree/promotion_category:
         name: Name
+        code: Code
       spree/property:
         name: Name
         presentation: Presentation
@@ -476,6 +478,8 @@ en:
         taxonomies: Taxonomies
         taxons: Taxons
         users: Users
+        return_authorizations: Return Authorizations
+        customer_returns: Customer Returns
       order:
         events:
           approve: approve
@@ -715,6 +719,7 @@ en:
     error: error
     errors:
       messages:
+        blank: can't be blank
         could_not_create_taxon: Could not create taxon
         no_shipping_methods_available: No shipping methods available for selected location, please change your address and try again.
     errors_prohibited_this_record_from_being_saved:
@@ -1027,6 +1032,7 @@ en:
     payment_processor_choose_banner_text: If you need help choosing a payment processor, please visit
     payment_processor_choose_link: our payments page
     payment_state: Payment State
+    payment_identifier: Payment Identifier
     payment_states:
       balance_due: balance due
       checkout: checkout
@@ -1154,7 +1160,6 @@ en:
     reference: Reference
     reference_contains: Reference Contains
     refund: Refund
-    refund_amount_must_be_greater_than_zero: Refund amount must be greater than zero
     refund_reasons: Refund Reasons
     refunded_amount: Refunded Amount
     refunds: Refunds
