@@ -117,7 +117,7 @@ module Spree
 
     def handle_action(action, action_name, auth_code)
       # Find first event with provided auth_code
-      store_credit = StoreCreditEvent.find_by_authorization_code(auth_code).try(:store_credit)
+      store_credit = StoreCreditEvent.find_by(authorization_code: auth_code).try(:store_credit)
 
       if store_credit.nil?
         ActiveMerchant::Billing::Response.new(

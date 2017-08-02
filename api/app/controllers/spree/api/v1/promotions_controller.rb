@@ -20,7 +20,7 @@ module Spree
           end
 
           def load_promotion
-            @promotion = Spree::Promotion.find_by_id(params[:id]) || Spree::Promotion.with_coupon_code(params[:id])
+            @promotion = Spree::Promotion.find_by(id: params[:id]) || Spree::Promotion.with_coupon_code(params[:id])
           end
       end
     end

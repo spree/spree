@@ -302,7 +302,7 @@ module Spree
           api_post :create, product: hash
           expect(response.status).to eq 201
 
-          shipping_id = ShippingCategory.find_by_name("Free Ships").id
+          shipping_id = ShippingCategory.find_by(name: "Free Ships").id
           expect(json_response['shipping_category_id']).to eq shipping_id
         end
 

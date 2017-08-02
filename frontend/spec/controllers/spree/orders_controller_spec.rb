@@ -17,7 +17,7 @@ describe Spree::OrdersController, type: :controller do
       it "should create a new order when none specified" do
         spree_post :populate, {}, {}
         expect(cookies.signed[:guest_token]).not_to be_blank
-        expect(Spree::Order.find_by_guest_token(cookies.signed[:guest_token])).to be_persisted
+        expect(Spree::Order.find_by(guest_token: cookies.signed[:guest_token])).to be_persisted
       end
 
       context "with Variant" do
