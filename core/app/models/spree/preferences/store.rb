@@ -40,7 +40,7 @@ module Spree::Preferences
         # has been cleared from the cache
 
         # does it exist in the database?
-        if preference = Spree::Preference.find_by_key(key)
+        if preference = Spree::Preference.find_by(key: key)
           # it does exist
           val = preference.value
         else
@@ -81,7 +81,7 @@ module Spree::Preferences
     def destroy(cache_key)
       return unless should_persist?
 
-      preference = Spree::Preference.find_by_key(cache_key)
+      preference = Spree::Preference.find_by(key: cache_key)
       preference.destroy if preference
     end
 

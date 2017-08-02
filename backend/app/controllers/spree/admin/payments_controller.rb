@@ -31,7 +31,7 @@ module Spree
           else
             @payment ||= @order.payments.build(object_params)
             if @payment.payment_method.source_required? && params[:card].present? && params[:card] != 'new'
-              @payment.source = @payment.payment_method.payment_source_class.find_by_id(params[:card])
+              @payment.source = @payment.payment_method.payment_source_class.find_by(id: params[:card])
             end
             @payment.save
             payments = [@payment]

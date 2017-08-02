@@ -49,7 +49,7 @@ describe "Visiting Products", type: :feature, inaccessible: true do
   end
 
   describe 'meta tags and title' do
-    let(:jersey) { Spree::Product.find_by_name('Ruby on Rails Baseball Jersey') }
+    let(:jersey) { Spree::Product.find_by(name: 'Ruby on Rails Baseball Jersey') }
     let(:metas) { { meta_description: 'Brand new Ruby on Rails Jersey', meta_title: 'Ruby on Rails Baseball Jersey Buy High Quality Geek Apparel', meta_keywords: 'ror, jersey, ruby' } }
 
     it 'should return the correct title when displaying a single product' do
@@ -97,7 +97,7 @@ describe "Visiting Products", type: :feature, inaccessible: true do
     end
 
     let!(:product) do
-      product = Spree::Product.find_by_name("Ruby on Rails Ringer T-Shirt")
+      product = Spree::Product.find_by(name: "Ruby on Rails Ringer T-Shirt")
       product.price = 19.99
       product.tap(&:save)
     end
@@ -150,7 +150,7 @@ describe "Visiting Products", type: :feature, inaccessible: true do
   end
 
   context "a product with variants" do
-    let(:product) { Spree::Product.find_by_name("Ruby on Rails Baseball Jersey") }
+    let(:product) { Spree::Product.find_by(name: "Ruby on Rails Baseball Jersey") }
     let(:option_value) { create(:option_value) }
     let!(:variant) { build(:variant, price: 5.59, product: product, option_values: []) }
 
@@ -197,7 +197,7 @@ describe "Visiting Products", type: :feature, inaccessible: true do
   end
 
   context "a product with variants, images only for the variants" do
-    let(:product) { Spree::Product.find_by_name("Ruby on Rails Baseball Jersey") }
+    let(:product) { Spree::Product.find_by(name: "Ruby on Rails Baseball Jersey") }
     let(:variant1) { create(:variant, product: product, price: 9.99) }
     let(:variant2) { create(:variant, product: product, price: 10.99) }
 
@@ -214,7 +214,7 @@ describe "Visiting Products", type: :feature, inaccessible: true do
   end
 
   context "an out of stock product without variants" do
-    let(:product) { Spree::Product.find_by_name("Ruby on Rails Tote") }
+    let(:product) { Spree::Product.find_by(name: "Ruby on Rails Tote") }
 
     before do
       product.master.stock_items.update_all count_on_hand: 0, backorderable: false
@@ -236,7 +236,7 @@ describe "Visiting Products", type: :feature, inaccessible: true do
   end
 
   context 'product with taxons' do
-    let(:product) { Spree::Product.find_by_name("Ruby on Rails Tote") }
+    let(:product) { Spree::Product.find_by(name: "Ruby on Rails Tote") }
     let(:taxon) { product.taxons.first }
 
     it 'displays breadcrumbs for the default taxon when none selected' do
@@ -333,7 +333,7 @@ describe "Visiting Products", type: :feature, inaccessible: true do
   end
 
   it "should return the correct title when displaying a single product" do
-    product = Spree::Product.find_by_name("Ruby on Rails Baseball Jersey")
+    product = Spree::Product.find_by(name: "Ruby on Rails Baseball Jersey")
     click_link product.name
 
     within("div#product-description") do
