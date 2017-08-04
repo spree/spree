@@ -19,6 +19,8 @@ module Spree
       return 0 unless number.present?
 
       number.to_d
+    rescue ArgumentError
+      0.to_d
     end
 
   end
