@@ -14,7 +14,7 @@ module Spree
       validates :transaction_id, on: :update
       validates :amount, numericality: { greater_than: 0, allow_nil: true }
     end
-    validate :amount_is_less_than_or_equal_to_allowed_amount, on: :create
+    validate :amount_is_less_than_or_equal_to_allowed_amount, on: :create, if: :amount
 
     after_create :perform!
     after_create :create_log_entry
