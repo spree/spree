@@ -14,6 +14,17 @@ describe 'Delivery', type: :feature, inaccessible: true, js: true do
     sm
   end
 
+  let(:add_mug_and_navigate_to_delivery_page) do
+    add_mug_to_cart
+    click_button 'Checkout'
+
+    fill_in 'order_email', with: 'test@example.com'
+    click_on 'Continue'
+    fill_in_address
+
+    click_button 'Save and Continue'
+  end
+
   before do
     shipping_method.calculator.preferred_amount = 10
     shipping_method.calculator.save
@@ -21,14 +32,7 @@ describe 'Delivery', type: :feature, inaccessible: true, js: true do
 
   describe 'shipping total gets updated when shipping method is changed in the delivery step' do
     before do
-      add_mug_to_cart
-      click_button 'Checkout'
-
-      fill_in 'order_email', with: 'test@example.com'
-      click_on 'Continue'
-      fill_in_address
-
-      click_button 'Save and Continue'
+      add_mug_and_navigate_to_delivery_page
     end
 
     it 'should contain the shipping total' do
@@ -41,6 +45,30 @@ describe 'Delivery', type: :feature, inaccessible: true, js: true do
       it 'shipping total and order total both are updates' do
         expect(page).to have_content("Shipping total: $20.00")
       end
+    end
+  end
+
+  context 'custom currency markers' do
+    before do
+      Spree::Money.default_formatting_rules[:decimal_mark] = ','
+      Spree::Money.default_formatting_rules[:thousands_separator] = '.'
+
+      add_mug_and_navigate_to_delivery_page
+
+      choose(shipping_method2.name)
+    end
+
+    after do
+      Spree::Money.default_formatting_rules.delete(:decimal_mark)
+      Spree::Money.default_formatting_rules.delete(:thousands_separator)
+    end
+
+    it 'calculates shipping total correctly with different currency marker' do
+      expect(page).to have_content("Shipping total: $20,00")
+    end
+
+    it 'calculates order total correctly with different currency marker' do
+      expect(page).to have_content("Order Total: $39,99")
     end
   end
 
