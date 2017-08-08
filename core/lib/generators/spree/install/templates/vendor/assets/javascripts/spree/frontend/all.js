@@ -6,6 +6,7 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= require accounting.min
 //= require spree/frontend
 <% unless options[:lib_name] == 'spree' || options[:lib_name] == 'spree/frontend' %>
   <% filename = "spree/frontend/#{ options[:lib_name].gsub("/", "_") }" %>
