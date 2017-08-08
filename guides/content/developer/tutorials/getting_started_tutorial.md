@@ -16,7 +16,7 @@ To run Spree 3.2 you need the latest Rails version, 5.0.2.
 In most cases, the easiest way to install Rails is to take advantage of RubyGems:
 
 ```bash
-$ gem install rails -v 5.0.2
+$ gem install rails -v 5.0.5
 ```
 
 ### Installing Bundler
@@ -53,7 +53,7 @@ The distribution of Spree as a Rubygem allows it to be used in a new Rails proje
 Let's start by creating a standard Rails application using the following command:
 
 ```bash
-$ rails _5.0.2_ new mystore
+$ rails _5.0.5_ new mystore
 ```
 
 ### Adding Spree to Your Rails Application
@@ -70,8 +70,8 @@ Add Spree gems to your Gemfile:
 
 ```ruby
 gem 'spree', '~> 3.2.1'
-gem 'spree_auth_devise', github: 'spree/spree_auth_devise'
-gem 'spree_gateway', github: 'spree/spree_gateway'
+gem 'spree_auth_devise', '~> 3.3'
+gem 'spree_gateway', '~> 3.3'
 ```
 
 Run `bundle install`
