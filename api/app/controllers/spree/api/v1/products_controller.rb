@@ -7,10 +7,10 @@ module Spree
           if params[:ids]
             @products = product_scope.where(id: params[:ids].split(",").flatten)
           else
-            @products = product_scope.ransack(params[:q]).result
+            @products = product_scope.ransack(params[:q]).result(distinct: true).select("#{Spree::Product.table_name}.id AS count_column, #{Spree::Product.table_name}.*")
           end
 
-          @products = @products.distinct.page(params[:page]).per(params[:per_page])
+          @products = @products.page(params[:page]).per(params[:per_page])
           expires_in 15.minutes, public: true
           headers['Surrogate-Control'] = "max-age=#{15.minutes}"
           respond_with(@products)

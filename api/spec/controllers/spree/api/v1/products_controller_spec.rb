@@ -124,6 +124,14 @@ module Spree
         expect(json_response["count"]).to eq(1)
       end
 
+      # regression test for https://github.com/spree/spree/issues/8207
+      it "can sort products by date" do
+        first_product = create(:product, created_at: Time.current - 1.month)
+        second_product = create(:product, created_at: Time.current)
+        api_get :index, q: { s: "created_at asc" }
+        expect(json_response["products"].first['id']).to eq(first_product.id)
+      end
+
       it "gets a single product" do
         product.master.images.create!(attachment: image("thinking-cat.jpg"))
         create(:variant, product: product)
