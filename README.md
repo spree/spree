@@ -96,6 +96,12 @@ bundle exec rake db:seed
 bundle exec rake spree_sample:load
 ```
 
+Bundle Issues
+----------------------
+
+If you encountered any problems with `bundler`, please try downgrading to bundler `1.13.7` or earlier.
+
+
 Browse Store
 ----------------------
 
