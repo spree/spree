@@ -10,6 +10,7 @@ module Spree
       subject { described_class.new }
 
       before do
+        allow(inventory_unit).to receive_messages(pending?: false)
         allow(inventory_unit).to receive_messages(quantity: 5)
       end
 
