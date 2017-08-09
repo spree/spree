@@ -23,3 +23,34 @@ body {
 .alert-error {
   @extend .alert-danger;
 }
+
+.padding-top-none {
+  padding-top: 0 !important;
+}
+
+.padding-bottom-none {
+  padding-bottom: 0 !important;
+}
+
+.padding-left-none {
+  padding-left: 0 !important;
+}
+
+.padding-right-none {
+  padding-right: 0 !important;
+}
+
+.padding-none-horizontal {
+  @extend .padding-left-none;
+  @extend .padding-right-none;
+}
+
+.padding-none-vertical {
+  @extend .padding-top-none;
+  @extend .padding-bottom-none;
+}
+
+.padding-none {
+  @extend .padding-none-horizontal;
+  @extend .padding-none-vertical;
+}

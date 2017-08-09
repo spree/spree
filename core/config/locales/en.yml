@@ -646,6 +646,7 @@ en:
     currency: Currency
     currency_settings: Currency Settings
     current: Current
+    current_count_on_hand: Current Count On Hand
     current_promotion_usage: ! 'Current Usage: %{count}'
     customer: Customer
     customer_details: Customer Details
@@ -1071,6 +1072,7 @@ en:
     product: Product
     product_details: Product Details
     product_has_no_description: This product has no description
+    product_name: Product Name
     product_not_available_in_this_currency: This product is not available in the selected currency.
     product_properties: Product Properties
     product_rule:
@@ -1248,6 +1250,7 @@ en:
     select_a_stock_location: Select a stock location
     select_a_store_credit_reason: Select a reason for the store credit
     select_stock: Select stock
+    select_stock_location: Select Stock Location
     selected_quantity_not_available: ! 'selected of %{item} is not available.'
     send_copy_of_all_mails_to: Send Copy of All Mails To
     send_mails_as: Send Mails As
@@ -1309,6 +1312,7 @@ en:
     show_rate_in_label: Show rate in label
     sku: SKU
     skus: SKUs
+    sku_and_options_text: SKU and Options
     slug: Slug
     source: Source
     special_instructions: Special Instructions

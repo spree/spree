@@ -23,4 +23,8 @@ describe Spree::AppConfiguration, type: :model do
     it { expect(Spree::Config.preferred_admin_path_type).to eq(:string) }
     it { expect(Spree::Config.preferred_admin_path_default).to eq('/admin') }
   end
+
+  describe 'per_page preferences' do
+    it { expect(Spree::Config.stock_items_per_page).to eq(15) }
+  end
 end

@@ -58,6 +58,7 @@ module Spree
     preference :show_variant_full_price, :boolean, default: false #Displays variant full price or difference with product price. Default false to be compatible with older behavior
     preference :show_products_without_price, :boolean, default: false
     preference :show_raw_product_description, :boolean, default: false
+    preference :stock_items_per_page, :integer, default: 15
     preference :tax_using_ship_address, :boolean, default: true
     preference :track_inventory_levels, :boolean, default: true # Determines whether to track on_hand values for variants / products.
 

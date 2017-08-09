@@ -1,0 +1,13 @@
+<div class="row index-pagination-row">
+  <div class="col-sm-6">
+    <%= paginate collection, params: { stock_location: params[:stock_location] || @stock_location.id } %>
+  </div>
+  <div class="col-sm-6">
+    <div class="pagination-wrap">
+      <%= form_tag(per_page_dropdown_params(params), { method: :get, class: 'js-per-page-form form-inline' }) do %>
+        <%= per_page_dropdown %>
+      <% end %>
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</div>

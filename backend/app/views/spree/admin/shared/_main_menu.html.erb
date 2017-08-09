@@ -40,6 +40,12 @@
   </ul>
 <% end %>
 
+<% if can? :admin, Spree::StockItem %>
+  <ul class="nav nav-sidebar">
+    <%= tab *Spree::BackendConfiguration::STOCKS_TABS, icon: 'th-list' %>
+  </ul>
+<% end %>
+
 <% if can?(:admin, current_store) && Spree::Config[:admin_show_version] %>
   <div class="spree-version hidden-xs hidden-sm">
     <%= Spree.version %>

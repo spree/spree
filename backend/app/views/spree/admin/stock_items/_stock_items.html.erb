@@ -1,0 +1,77 @@
+<%= render partial: 'custom_table_options', locals: { collection: @collection } %>
+
+<div class="panel panel-default">
+  <table class="table table-bordered table-responsive" id="listing_stock">
+    <thead>
+      <tr data-hook="admin_product_stock_management_index_headers">
+        <th class="text-center"><%= Spree.t(:variant) %></th>
+        <th class="text-center"><%= Spree.t(:product_name) %></th>
+        <th colspan="2" class="text-center"><%= Spree.t(:sku_and_options_text) %></th>
+        <th class="text-center"><%= Spree.t(:current_count_on_hand) %></th>
+        <th colspan="3" class="text-center"><%= Spree.t(:quantity) %></th>
+        <th class="text-center"><%= Spree.t(:backorderable) %></th>
+        <th class="actions text-center"></th>
+      </tr>
+    </thead>
+    <tbody id='stock-inventory'>
+      <% @collection.each do |stock_item| %>
+        <tr id="stock-item-<%= stock_item.id %>" data-hook="admin_stock_management_index_rows" >
+          <td class="image text-center">
+            <% if stock_item.variant.images.present? %>
+              <%= image_tag stock_item.variant.images.first.attachment.url(:mini) %>
+            <% end %>
+          </td>
+          <td class="text-center"><%= stock_item.product.name %></td>
+          <td colspan="2" class="text-center">
+            <%= stock_item.variant.sku_and_options_text %>
+          </td>
+          <td class="text-center" data-hook='current_count_on_hand'>
+            <%= stock_item.count_on_hand %>
+          </td>
+          <td colspan="3" class="text-center">
+            <div class="input-group" data-hook='stock-count'>
+              <span class="input-group-btn data-dwn">
+                <%= link_to 'javascript:void(0)', class: "btn btn-danger",
+                  data: { value: "decrease", target: "#number_spinner", toggle: "number_spinner" } do %>
+                  <span class="glyphicon glyphicon-minus"></span>
+                <% end %>
+              </span>
+
+                <%= text_field_tag 'total_stock_quantity', stock_item.count_on_hand, id: "number_spinner",
+                  size: "2", class: "text-center form-control input-number",
+                  data: { hook: 'number_spinner', old_value: stock_item.count_on_hand } %>
+
+              <span class="input-group-btn data-up">
+                <%= link_to 'javascript:void(0)', class: "btn btn-success",
+                  data: { value: "increase", target: "#number_spinner", toggle: "number_spinner" } do %>
+                  <span class="glyphicon glyphicon-plus"></span>
+                <% end %>
+              </span>
+              <%= hidden_field_tag 'stock_movement[quantity]', 0, data: { hook: 'stock_movement_quantity', behavior: 'form' } %>
+              <%= hidden_field_tag :stock_location_id, @stock_location.id, data: { hook: 'stock_location_id', behavior: 'form' } %>
+              <%= hidden_field_tag :variant_id, stock_item.variant_id, data: { hook: 'variant_id', behavior: 'form' } %>
+              &nbsp;&nbsp; &nbsp;
+              <span class="input-group-btn">
+                <%= link_to Spree.t(:save, scope: :actions), 'javascript:void(0)', class: 'submit btn btn-primary action-save',
+                data: { stock_item: stock_item.id, hook: 'stock_item_submit', href: admin_stock_items_path(stock_item, format: :json) } %>
+              </span>
+            </div>
+          </td>
+          <td class="text-center">
+            <%= form_tag admin_stock_item_path(stock_item, format: :js), method: :put, class: 'toggle_stock_item_backorderable' do %>
+              <%= check_box_tag 'stock_item[backorderable]', true,
+                stock_item.backorderable?,
+                class: 'stock_item_backorderable',
+                id: "stock_item_backorderable_#{stock_item.stock_location.id}" %>
+            <% end if can? :update, stock_item %>
+          </td>
+          <td class="actions actions-1 text-center">
+            <%= link_to_with_icon('delete', Spree.t(:remove), [:admin, stock_item], method: :delete, remote: true, class: 'icon_link btn btn-danger btn-sm', data: { action: :remove, confirm: Spree.t(:are_you_sure) }, no_text: true) if can? :destroy, stock_item %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+<%= render partial: 'custom_table_options', locals: { collection: @collection } %>
