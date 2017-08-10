@@ -94,6 +94,7 @@ module Spree
     end
 
     def self.having_orders
+      warn "`Spree::Variant#having_orders` is deprecated and will be removed in Spree 3.4"
       joins(:line_items).distinct
     end
 
