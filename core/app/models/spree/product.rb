@@ -73,11 +73,6 @@ module Spree
     has_many :line_items, through: :variants_including_master
     has_many :orders, through: :line_items
 
-    delegate_belongs_to :master, :sku, :price, :currency, :display_amount, :display_price, :weight, :height, :width, :depth,
-                        :is_master, :has_default_price?, :cost_currency, :price_in, :amount_in, :cost_price, :images
-
-    alias_method :master_images, :images
-
     has_many :variant_images, -> { order(:position) }, source: :images, through: :variants_including_master
 
     after_create :add_associations_from_prototype
@@ -117,6 +112,22 @@ module Spree
     self.whitelisted_ransackable_associations = %w[stores variants_including_master master variants]
     self.whitelisted_ransackable_attributes = %w[description name slug discontinue_on]
     self.whitelisted_ransackable_scopes = %w[not_discontinued]
+
+    [
+      :sku, :price, :currency, :weight, :height, :width, :depth, :is_master,
+      :cost_currency, :price_in, :amount_in, :cost_price
+    ].each do |method_name|
+      delegate method_name, :"#{method_name}=", to: :find_or_build_master
+    end
+
+    delegate :display_amount, :display_price, :has_default_price?,
+             :images, to: :find_or_build_master
+
+    alias_method :master_images, :images
+
+    def find_or_build_master
+      master || build_master
+    end
 
     # the master variant is not a member of the variants array
     def has_variants?
