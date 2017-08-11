@@ -108,6 +108,7 @@ module Spree
 
     # returns number of units currently on backorder for this variant.
     def on_backorder
+      warn "`Spree::Variant#on_backorder` is deprecated and will be removed in Spree 3.4"
       inventory_units.with_state('backordered').size
     end
 
