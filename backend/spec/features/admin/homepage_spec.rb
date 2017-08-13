@@ -17,7 +17,7 @@ describe "Homepage", type: :feature do
       it "has a link to overview" do
         within("header") { page.find(:xpath, "//a[@href='/admin']") }
       end
-        
+
       it "has a link to orders" do
         page.find_link("Orders")['/admin/orders']
       end
@@ -40,6 +40,21 @@ describe "Homepage", type: :feature do
 
       it "has a link to customer returns" do
         within('.sidebar') { page.find_link("Customer Returns")['/admin/customer_returns'] }
+      end
+
+      context 'version number' do
+        it 'is displayed' do
+          within('.sidebar') { expect(page).to have_content(Spree.version) }
+        end
+
+        context 'if turned off' do
+          before { Spree::Config[:admin_show_version] = false }
+
+          it 'is not displayed' do
+            visit spree.admin_path
+            within('.sidebar') { expect(page).to_not have_content(Spree.version) }
+          end
+        end
       end
     end
 
