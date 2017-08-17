@@ -39,7 +39,7 @@
               <td class="item-quantity"><%= item.quantity %></td>
               <td class="item-total"><%= item.money.to_html %></td>
               <td class="order-state">
-                <div class="state <%= order.state.downcase %>"><%= Spree.t("order_states.#{order.state.downcase}") %></div>
+                <div class="state <%= order.state.downcase %>"><%= Spree.t("order_state.#{order.state.downcase}") %></div>
                 <% if order.payment_state %>
                   <div class="state <%= order.payment_state %>"><%= link_to Spree.t("payment_states.#{order.payment_state}"), admin_order_payments_path(order) %></div>
                 <% end %>
