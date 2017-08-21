@@ -46,7 +46,7 @@ Extensions are generally distributed as ruby gems and implemented as
 standard Rails 3 engines so they provide a natural way to bundle all the
 changes needed to implement larger features.
 
-Visit the [Extension Registry](http://spreecommerce.com/extensions) to
+Visit the [Extension Registry](https://github.com/spree-contrib) to
 get an idea of the type and volume of extensions available.
 
 #### Theme
