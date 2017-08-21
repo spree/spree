@@ -14,8 +14,6 @@ Spree's functionality is split across seven different components:
   and generating extensions.
 * [**Core**](/developer/core): Provides the minimum necessary functionality for Spree
   to work.
-* [**Dash**](/developer/dash): Provides the [Jirafe](http://jirafe.org) dashboard
-  functionality.
 * [**Frontend**](/developer/frontend): Provides the front-facing functionality for
   Spree; things like product viewing and checkout.
 * [**Sample**](/developer/sample): Provides the sample data for Spree, used for
