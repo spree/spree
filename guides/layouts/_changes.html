@@ -1,6 +1,0 @@
-<% @changes.each do |article| %>
-<div class="change" id="<%= article.path %>">
-  <%= render '_meta', item: article %>
-  <%= article.compiled_content %>
-</div>
-<% end %>
