@@ -14,7 +14,7 @@ to upgrade your store.
 ### Update Gemfile
 
 ```ruby
-gem 'spree', '~> 3.3.0.rc3'
+gem 'spree', '~> 3.3.0'
 gem 'spree_auth_devise', '~> 3.3'
 gem 'spree_gateway', '~> 3.3'
 ```
