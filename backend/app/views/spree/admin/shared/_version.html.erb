@@ -1,0 +1,5 @@
+<% if can?(:admin, current_store) && Spree::Config[:admin_show_version] %>
+  <div class="spree-version hidden-xs hidden-sm">
+    <%= Spree.version %>
+  </div>
+<% end %>
