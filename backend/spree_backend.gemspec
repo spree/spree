@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
   s.license     = 'BSD-3'
   s.rubyforge_project = 'spree_backend'
 
-  s.files        = `git ls-files`.split("\n").reject { |f| f.match(/^spec/) }
+  s.files        = `git ls-files`.split("\n").reject { |f| f.match(/^spec/) && !f.match(/^spec\/fixtures/) }
   s.require_path = 'lib'
   s.requirements << 'none'
 
