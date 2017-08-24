@@ -540,7 +540,7 @@ en:
     back_to_resource_list: 'Back To %{resource} List'
     back_to_payment: Back To Payment
     back_to_rma_reason_list: Back To RMA Reason List
-    back_to_store: Go Back To Store
+    back_to_store: Back to Store
     back_to_users_list: Back To Users List
     backorderable: Backorderable
     backorderable_default: Backorderable default
