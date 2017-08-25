@@ -6,7 +6,7 @@
 * [Documentation](http://guides.spreecommerce.org)
 * Spree success stories from [OpenCommerce Conf](http://opencommerceconf.org/)
 
-[![Circle CI](https://circleci.com/gh/spree/spree.svg?style=svg)](https://circleci.com/gh/spree/spree/tree/master)
+[![Gem Version](https://badge.fury.io/rb/spree.svg)](https://badge.fury.io/rb/spree) [![Circle CI](https://circleci.com/gh/spree/spree.svg?style=shield)](https://circleci.com/gh/spree/spree/tree/master)
 [![Code Climate](https://codeclimate.com/github/spree/spree.svg)](https://codeclimate.com/github/spree/spree)
 [![codebeat](https://codebeat.co/badges/16feb8a2-abf0-4fbb-a130-20b689efcfc0)](https://codebeat.co/projects/github-com-spree-spree)
 [![Slack Status](http://slack.spreecommerce.com/badge.svg)](http://slack.spreecommerce.com)
