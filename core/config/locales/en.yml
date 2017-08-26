@@ -779,6 +779,7 @@ en:
     has_no_shipped_units: has no shipped units
     height: Height
     home: Home
+    help_center: Help Center
     i18n:
       available_locales: Available Locales
       fields: Fields
