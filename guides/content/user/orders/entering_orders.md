@@ -79,25 +79,13 @@ Confirm the deletion by clicking "OK".
 
 ### Opening and Closing Adjustments
 
-Some types of adjustments - tax and shipping, for example - may re-calculate as the order changes, new products are added to it, etc. If you want to be sure that the amount of an adjustment will remain the same, you can lock it in place. This is also known as closing the adjustment.
+Some types of adjustments - tax and shipping, for example - may re-calculate as the order changes, new products are added to it, etc. If you want to be sure that the amount of an adjustment will remain the same, you can lock them in place. This is also known as closing the adjustments.
 
 ***
 Closed adjustments can be re-opened and changed, up to the moment when the order is shipped. At that point, the adjustment is finalized and cannot be changed.
 ***
 
-To lock/close an individual adjustment, click the closed-lock icon at the end of the adjustment row.
-
-![Close Adjustment Icon](/images/user/orders/close_adjustment_icon.jpg)
-
-Doing so will change the state of the adjustment to "closed", and that change will then be reflected in the adjustments list.
-
-![Closed Adjustment](/images/user/orders/closed_adjustment.jpg)
-
-To open an individual adjustment, click the open-lock icon at the end of the adjustment row.
-
-![Open Adjustment Icon](/images/user/orders/open_adjustment_icon.jpg)
-
-If you want to open or close all of the adjustments on an order, just click the "Open All Adjustments" or "Close All Adjustments" buttons on the Adjustments list.
+To open or close all of the adjustments on an order, just click the "Open All Adjustments" or "Close All Adjustments" buttons on the Adjustments list.
 
 ![Mass Open and Close Adjustments](/images/user/orders/mass_open_close_adjustments.jpg)
 
