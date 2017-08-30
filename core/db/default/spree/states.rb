@@ -4,6 +4,7 @@ state_inserts = []
 state_values = -> do
   Spree::Country.where(states_required: true).each do |country|
     carmen_country = Carmen::Country.named(country.name)
+    next if !carmen_country
     carmen_country.subregions.each do |subregion|
       name       = connection.quote subregion.name
       abbr       = connection.quote subregion.code
