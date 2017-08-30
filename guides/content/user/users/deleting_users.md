@@ -1,0 +1,13 @@
+---
+title: Deleting Users
+---
+
+# Introduction
+
+To delete a user in your store, go into the Admin Interface and click the **Users** tab. A list of your store's users will appear. Find the user that you would like to delete and click the "Delete" icon on the right to remove it from your store.
+
+![screen]()
+
+A message will appear asking you to confirm that you want to delete the user. Click "OK".
+
+<%= warning "Please be aware that you cannot delete the user that ever in his history created an order." %>
