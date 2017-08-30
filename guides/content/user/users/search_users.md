@@ -8,7 +8,9 @@ When you click the **Users** tab you will see **Filter dropdown**, **New User bu
 
 ![screen]()
 
-Next to each user there are 2 buttons and additionaly you can sort them by name.
+Next to each user there are 2 buttons and additionaly you can sort them by name by simply clicking **User** above the user's emails.
+
+![screen]()
 
 * **Edit** - Allows you to make [additional edition in the user's settings](edit_users.md).
 * **Delete** - Allows you to [delete the user permanently](delete_users.md).
