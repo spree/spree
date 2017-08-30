@@ -6,6 +6,9 @@
 <%= canonical_tag(current_store.url) %>
 <%= favicon_link_tag 'favicon.ico' %>
 
+<!-- CDN libraries -->
+<%= javascript_include_tag "//cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js" %>
+<%= javascript_include_tag "//cdnjs.cloudflare.com/ajax/libs/jquery-ujs/1.2.2/rails.min.js" %>
 <%= stylesheet_link_tag "//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" %>
 
 <%= stylesheet_link_tag 'spree/frontend/all', media: 'screen' %>
