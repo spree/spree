@@ -2,7 +2,7 @@
 title: Searching Products
 ---
 
-## Searching Products
+# Searching Products
 
 When you click the **Products** tab, you will see dropdown with the **Products settings** on the Admin Interface. In the next step click **Products** tab in the **Products settings**. Now you are presented with a summary of all actual products in the shop.
 
@@ -21,7 +21,7 @@ Next to each product there are 3 buttons.
 
 ![screen]()
 
-# Filtering Results
+## Filtering products
 
 You may not always want to see all of the products in the shop - the Spree default. You may want to view only those products that you want to make additional changes. Default way of sorting products that are present is by the name, but there is also possibility to sort them by Master price.
 
@@ -29,10 +29,10 @@ You can choose one or more of the following options to narrow your product searc
 
 ![screen]()
 
-## Name
+### Name
 
 You can filter particular product by its name.
 
-## SKU
+### SKU
 
 Every time you create a product you may want to assign an SKU Number to make a search much faster and simplify shipping flow. You can use that number to search product.
