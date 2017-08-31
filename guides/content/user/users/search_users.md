@@ -6,15 +6,13 @@ title: Search Users
 
 When you click the **Users** tab you will see **Filter dropdown**, **New User button** and all existing users that have ever created an account on your page.
 
-![screen]()
-
 Next to each user there are 2 buttons and additionaly you can sort them by name by simply clicking **User** above the user's emails.
-
-![screen]()
 
 * **Edit** - Allows you to make [additional edition in the user's settings](edit_users.md).
 * **Delete** - Allows you to [delete the user permanently](delete_users.md).
 * **Sort by user's name** - Allows you to sort the users by name (A-Z, Z-A).
+
+![User search options](/images/user/users/user_tab.jpg)
 
 ## Filtering Users
 
@@ -22,7 +20,7 @@ You may not always want to see all of the users - the Spree default. You may wan
 
 You can choose one or more of the following options to narrow your user search, then click the **Filter** button to extend filter options in dropdown.
 
-![screen]()
+![User search option](/images/user/users/user_search_option.jpg)
 
 ### Email
 
