@@ -23,7 +23,7 @@ Moreover there are **Lifetime Stats** collected by the Spree. You can see the fo
 * **Total Sales** - It defines how much the user has spent money in your shop.
 * **Orders** - Shows the number how many orders the user has bought.
 * **Average Order Value** - It shows the average price that the user spent in your shop.
-* **Store Credits** - You can get more information [about store credits here](store_credits.md).
+* **Store Credits** - You can get more information about Store Credits below.
 * **Member Since** - Shows the date when the user created an account on your page.
 
 ![screen]()
