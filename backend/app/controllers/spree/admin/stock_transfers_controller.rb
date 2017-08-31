@@ -19,18 +19,22 @@ module Spree
       def new; end
 
       def create
-        variants = Hash.new(0)
-        params[:variant].each_with_index do |variant_id, i|
-          variants[variant_id] += params[:quantity][i].to_i
+        if params[:variant].nil?
+          flash[:error] = Spree.t('stock_transfer.errors.must_have_variant')
+          render :new
+        else
+          variants = Hash.new(0)
+          params[:variant].each_with_index do |variant_id, i|
+            variants[variant_id] += params[:quantity][i].to_i
+          end
+          stock_transfer = StockTransfer.create(reference: params[:reference])
+          stock_transfer.transfer(source_location,
+                                  destination_location,
+                                  variants)
+
+          flash[:success] = Spree.t(:stock_successfully_transferred)
+          redirect_to admin_stock_transfer_path(stock_transfer)
         end
-
-        stock_transfer = StockTransfer.create(reference: params[:reference])
-        stock_transfer.transfer(source_location,
-                                destination_location,
-                                variants)
-
-        flash[:success] = Spree.t(:stock_successfully_transferred)
-        redirect_to admin_stock_transfer_path(stock_transfer)
       end
 
       private

@@ -1365,7 +1365,10 @@ en:
     stock_movements: Stock Movements
     stock_movements_for_stock_location: Stock Movements for %{stock_location_name}
     stock_successfully_transferred: Stock was successfully transferred between locations.
-    stock_transfer: Stock Transfer
+    stock_transfer_name: Stock Transfer
+    stock_transfer:
+      errors:
+        must_have_variant: You must add atleast one variant.
     stock_transfers: Stock Transfers
     stop: Stop
     store: Store
