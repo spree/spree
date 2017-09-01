@@ -47,7 +47,9 @@ group :test, :development do
 end
 RUBY
 
+echo 'BEFORE BUNDLE'
 bundle install --gemfile Gemfile
+echo 'AFTER BUNDLE'
 bundle exec rails db:drop || true
 bundle exec rails db:create
 bundle exec rails g spree:install --auto-accept --user_class=Spree::User --enforce_available_locales=true
