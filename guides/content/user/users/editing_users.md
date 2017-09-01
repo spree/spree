@@ -2,7 +2,7 @@
 title: Editing Users
 ---
 
-# Introduction
+# Introduction.
 
 There is a possibility to edit existing users. Simply when you enter **Users** tab search for the certain user that you would like to edit and press **Edit icon**.
 
