@@ -2,7 +2,7 @@
 title: Editing Users
 ---
 
-# Introduction.
+## Introduction.
 
 There is a possibility to edit existing users. Simply when you enter **Users** tab search for the certain user that you would like to edit and press **Edit icon**.
 
@@ -62,7 +62,7 @@ Very simlar to **Orders** tab, however, few more options are present here about 
 
 ### Store Credits
 
-Firstly, to add store credits to the User, you have to create a **Category** which you can learn about more [here](store_credit_categories.md).
+Firstly, to add store credits to the User, you have to create a **Category** which you can learn about more [here](configuring_store_credit_categories.md).
 Once you create a category you can assign Store Credits to the Users by simply, clicking **Edit** on certain User and pressing **Store Credit** in right panel.
 
 ![User edit inside](/images/user/users/store_credit_user_add.jpg)
