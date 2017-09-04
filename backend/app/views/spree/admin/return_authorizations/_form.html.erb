@@ -44,7 +44,7 @@
           </td>
           <td>
             <% if editable %>
-              <%= item_fields.number_field :return_quantity, { class: 'refund-quantity-input form-control' } %>
+              <%= item_fields.number_field :return_quantity, { class: 'refund-quantity-input form-control', min: 0, max: return_item.return_quantity } %>
             <% else %>
               <%= return_item.return_quantity %>
             <% end %>
