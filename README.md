@@ -29,7 +29,7 @@ Demo
 ----
 Try Spree with direct deployment on Heroku:
 
-[![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy?template=https://github.com/spree/spree)
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/spree/spree)
 
 Getting Started
 ----------------------
