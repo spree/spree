@@ -2,6 +2,7 @@ require 'spec_helper'
 
 describe Spree::UserMethods do
   let(:test_user) { create :user }
+  let(:current_store) { create :store }
 
   describe '#has_spree_role?' do
     subject { test_user.has_spree_role? name }
@@ -20,14 +21,14 @@ describe Spree::UserMethods do
   end
 
   describe '#last_incomplete_spree_order' do
-    subject { test_user.last_incomplete_spree_order }
+    subject { test_user.last_incomplete_spree_order(current_store) }
 
     context 'with an incomplete order' do
-      let(:last_incomplete_order) { create :order, user: test_user }
+      let(:last_incomplete_order) { create :order, user: test_user, store: current_store }
 
       before do
-        create(:order, user: test_user, created_at: 1.day.ago)
-        create(:order, user: create(:user))
+        create(:order, user: test_user, created_at: 1.day.ago, store: current_store)
+        create(:order, user: create(:user), store: current_store)
         last_incomplete_order
       end
 
