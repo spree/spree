@@ -34,7 +34,7 @@ $(document).ready(function() {
 
     formFields.find('input.add-item').on('change', updateSuggestedAmount);
     formFields.find('.refund-amount-input').on('keyup', updateSuggestedAmount);
-    formFields.find('.refund-quantity-input').on('keyup', updateSuggestedAmount);
+    formFields.find('.refund-quantity-input').on('keyup mouseup', updateSuggestedAmount);
 
     formFields.find('input, select').not('.add-item').on('change', checkAddItemBox);
   }
