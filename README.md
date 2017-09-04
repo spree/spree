@@ -25,6 +25,11 @@ in a single repository and documented in a single set of
 * spree_core (Models & Mailers, the basic components of Spree that it can't run without)
 * spree_sample (Sample data)
 
+Demo
+----
+Try Spree with direct deployment on Heroku:
+
+[![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy?template=https://github.com/spark-solutions/spree)
 
 Getting Started
 ----------------------
