@@ -1,7 +1,7 @@
 {
   "name": "Spree Sandbox",
   "description":"demo store built with Spree",
-  "repository": "https://github.com/spark-solutions/spree",
+  "repository": "https://github.com/spree/spree",
   "logo": "http://guides.spreecommerce.org/images/logo.png",
   "keywords": [
     "spree"
