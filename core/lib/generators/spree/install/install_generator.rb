@@ -15,6 +15,7 @@ module Spree
     class_option :admin_password, type: :string
     class_option :lib_name, type: :string, default: 'spree'
     class_option :enforce_available_locales, type: :boolean, default: nil
+    class_option :import_views, type: :boolean
 
     def self.source_paths
       paths = self.superclass.source_paths
@@ -28,6 +29,7 @@ module Spree
       @run_migrations = options[:migrate]
       @load_seed_data = options[:seed]
       @load_sample_data = options[:sample]
+      @import_views = options[:import_views]
 
       unless @run_migrations
          @load_seed_data = false
@@ -73,6 +75,14 @@ module Spree
 
     def create_overrides_directory
       empty_directory "app/overrides"
+    end
+
+    def import_views
+      if defined? Spree::Frontend && !Rails.env.test?
+        if @import_views || yes?('Do you want to import spree views to your application for easy customization? y/n')
+          generate 'spree:frontend:views_import'
+        end
+      end
     end
 
     def configure_application
