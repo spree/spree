@@ -24,13 +24,13 @@ Now you just need to wait for the package to be received at your location.
 
 Even created Return Authorization can be edited or deleted. When the user changes his mind as an Admin in your's shop you can still make additional changes to Return action.
 
-![Return Edition]()
+![Return Edition](/images/user/orders/return_autho_edit.jpg)
 
-![Return Delete]()
+![Return Delete](/images/user/orders/return_autho_delete.jpg)
 
 Inside Return Authorization Edit it is the same layout as creating one. Just simply make changes and press **Update** button.
 
-![Return Edition Inside]()
+![Return Edition Inside](/images/user/orders/return_autho_inside.jpg)
 
 ## Processing Returns
 
