@@ -749,6 +749,7 @@ en:
     excl: excl.
     expiration: Expiration
     extension: Extension
+    extensions_directory: Extensions Directory
     existing_shipments: Existing shipments
     failed_payment_attempts: Failed Payment Attempts
     filename: Filename
