@@ -10,6 +10,7 @@ module Spree
     class_option :migrate, type: :boolean, default: true, banner: 'Run Spree migrations'
     class_option :seed, type: :boolean, default: true, banner: 'load seed data (migrations must be run)'
     class_option :sample, type: :boolean, default: true, banner: 'load sample data (migrations must be run)'
+    class_option :copy_views, type: :boolean, default: true, banner: 'copy frontend views from spree to your application for easy customization'
     class_option :auto_accept, type: :boolean
     class_option :user_class, type: :string
     class_option :admin_email, type: :string
@@ -29,6 +30,7 @@ module Spree
       @run_migrations = options[:migrate]
       @load_seed_data = options[:seed]
       @load_sample_data = options[:sample]
+      @copy_views = options[:copy_views]
 
       unless @run_migrations
          @load_seed_data = false
@@ -81,10 +83,8 @@ module Spree
     end
 
     def copy_views
-      if Spree::Core::Engine.frontend_available? && !options[:quiet]
-        if yes?('Do you want to copy views from spree to your application for easy customization? y/n')
-          generate 'spree:frontend:copy_views'
-        end
+      if @copy_views && Spree::Core::Engine.frontend_available?
+        generate 'spree:frontend:copy_views'
       end
     end
 
