@@ -92,23 +92,12 @@ module Spree
       !discontinued? && product.available?
     end
 
-    def self.having_orders
-      warn "`Spree::Variant#having_orders` is deprecated and will be removed in Spree 3.4"
-      joins(:line_items).distinct
-    end
-
     def tax_category
       if self[:tax_category_id].nil?
         product.tax_category
       else
         TaxCategory.find(self[:tax_category_id])
       end
-    end
-
-    # returns number of units currently on backorder for this variant.
-    def on_backorder
-      warn "`Spree::Variant#on_backorder` is deprecated and will be removed in Spree 3.4"
-      inventory_units.with_state('backordered').size
     end
 
     def options_text
