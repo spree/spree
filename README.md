@@ -86,10 +86,11 @@ state. It is unwise to use this branch in a production system you care deeply
 about.**
 
 By default, the installation generator (`rails g spree:install`) will run
-migrations as well as adding seed and sample data. This can be disabled using
+migrations as well as adding seed and sample data and will copy frontend views
+for easy customization (if spree_frontend available). This can be disabled using
 
 ```shell
-rails g spree:install --migrate=false --sample=false --seed=false
+rails g spree:install --migrate=false --sample=false --seed=false --copy_views=false
 ```
 
 You can always perform any of these steps later by using these commands.
