@@ -3,6 +3,7 @@ require 'highline/import'
 require 'bundler'
 require 'bundler/cli'
 require 'active_support/core_ext/string/indent'
+require 'spree/core'
 
 module Spree
   class InstallGenerator < Rails::Generators::Base
@@ -56,16 +57,20 @@ module Spree
     def setup_assets
       @lib_name = 'spree'
       %w{javascripts stylesheets images}.each do |path|
-        empty_directory "vendor/assets/#{path}/spree/frontend" if defined? Spree::Frontend || Rails.env.test?
-        empty_directory "vendor/assets/#{path}/spree/backend" if defined? Spree::Backend || Rails.env.test?
+        if Spree::Core::Engine.frontend_available? || Rails.env.test?
+          empty_directory "vendor/assets/#{path}/spree/frontend"
+        end
+        if Spree::Core::Engine.backend_available? || Rails.env.test?
+          empty_directory "vendor/assets/#{path}/spree/backend"
+        end
       end
 
-      if defined? Spree::Frontend || Rails.env.test?
+      if Spree::Core::Engine.frontend_available? || Rails.env.test?
         template "vendor/assets/javascripts/spree/frontend/all.js"
         template "vendor/assets/stylesheets/spree/frontend/all.css"
       end
 
-      if defined? Spree::Backend || Rails.env.test?
+      if Spree::Core::Engine.backend_available? || Rails.env.test?
         template "vendor/assets/javascripts/spree/backend/all.js"
         template "vendor/assets/stylesheets/spree/backend/all.css"
       end
@@ -76,7 +81,7 @@ module Spree
     end
 
     def copy_views
-      if(!options[:quiet] && defined?(Spree::Frontend))
+      if Spree::Core::Engine.frontend_available? && !options[:quiet]
         if yes?('Do you want to copy views from spree to your application for easy customization? y/n')
           generate 'spree:frontend:copy_views'
         end
