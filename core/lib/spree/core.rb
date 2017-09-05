@@ -83,7 +83,6 @@ require 'spree/localized_number'
 require 'spree/money'
 require 'spree/permitted_attributes'
 
-require 'spree/core/delegate_belongs_to'
 require 'spree/core/importer'
 require 'spree/core/product_duplicator'
 require 'spree/core/controller_helpers/auth'
