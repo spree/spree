@@ -1,6 +1,6 @@
 module Spree
   module Frontend
-    class ViewsImportGenerator < Rails::Generators::Base
+    class CopyViewsGenerator < Rails::Generators::Base
       desc "Copies views from spree frontend to your application"
 
       def self.source_paths

@@ -298,7 +298,7 @@ copying the relevant file from there.
 
 ***
 You can export all views from spree frontend into your application
-using  `rails generate spree:frontend:views_import`
+using  `rails generate spree:frontend:copy_views`
 ***
 
 ### Drawbacks of template replacements
