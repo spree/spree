@@ -24,7 +24,7 @@ module Spree
         if args.last.is_a?(Hash)
           options = options.merge(args.pop)
         end
-        options[:route] ||=  "admin_#{args.first}"
+        options[:route] ||= "admin_#{args.first}"
 
         destination_url = options[:url] || spree.send("#{options[:route]}_path")
         titleized_label = Spree.t(options[:label], default: options[:label], scope: [:admin, :tab]).titleize
@@ -185,7 +185,7 @@ module Spree
 
           html_options.delete('data-update') unless html_options['data-update']
 
-          html_options[:class]  = html_options[:class] ? "btn #{html_options[:class]}" : "btn btn-default"
+          html_options[:class] = html_options[:class] ? "btn #{html_options[:class]}" : "btn btn-default"
 
           if html_options[:icon]
             icon = content_tag(:span, '', class: "icon icon-#{html_options[:icon]}")

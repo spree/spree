@@ -41,7 +41,7 @@ describe Spree::ReturnItem, type: :model do
     end
 
     context 'with a stock location' do
-      let(:stock_item)      { inventory_unit.find_stock_item }
+      let(:stock_item) { inventory_unit.find_stock_item }
       let!(:customer_return) { create(:customer_return_without_return_items, return_items: [return_item], stock_location_id: inventory_unit.shipment.stock_location_id) }
 
       before do

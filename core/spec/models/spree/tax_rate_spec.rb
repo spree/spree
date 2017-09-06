@@ -384,13 +384,13 @@ describe Spree::TaxRate, type: :model do
       @zone.zone_members.create(zoneable: @country)
       @category    = Spree::TaxCategory.create name: "Taxable Foo"
       @category2   = Spree::TaxCategory.create(name: "Non Taxable")
-      @rate1        = Spree::TaxRate.create(
+      @rate1 = Spree::TaxRate.create(
         amount: 0.10,
         calculator: Spree::Calculator::DefaultTax.create,
         tax_category: @category,
         zone: @zone
       )
-      @rate2       = Spree::TaxRate.create(
+      @rate2 = Spree::TaxRate.create(
         amount: 0.05,
         calculator: Spree::Calculator::DefaultTax.create,
         tax_category: @category,

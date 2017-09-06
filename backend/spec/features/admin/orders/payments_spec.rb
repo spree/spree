@@ -32,7 +32,7 @@ describe 'Payments', type: :feature, js: true do
         create(:payment,
                order:          order,
                amount:         order.outstanding_balance,
-               payment_method: create(:check_payment_method)  # Check
+               payment_method: create(:check_payment_method) # Check
         )
       end
 

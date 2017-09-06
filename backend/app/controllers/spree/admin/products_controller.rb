@@ -58,7 +58,7 @@ module Spree
 
         respond_with(@product) do |format|
           format.html { redirect_to collection_url }
-          format.js  { render_js_for_destroy }
+          format.js { render_js_for_destroy }
         end
       end
 

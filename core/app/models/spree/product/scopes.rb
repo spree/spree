@@ -23,7 +23,7 @@ module Spree
         # We should not define price scopes here, as they require something slightly different
         next if name.to_s.include?("master_price")
         parts = name.to_s.match(/(.*)_by_(.*)/)
-        self.scope(name.to_s, -> { order("#{Product.quoted_table_name}.#{parts[2]} #{parts[1] == 'ascend' ?  "ASC" : "DESC"}") })
+        self.scope(name.to_s, -> { order("#{Product.quoted_table_name}.#{parts[2]} #{parts[1] == 'ascend' ? "ASC" : "DESC"}") })
       end
     end
 
@@ -32,7 +32,7 @@ module Spree
       conditions = case property
                    when String   then { "#{properties}.name" => property }
                    when Property then { "#{properties}.id" => property.id }
-      else               { "#{properties}.id" => property.to_i }
+      else { "#{properties}.id" => property.to_i }
       end
     end
 
@@ -108,7 +108,7 @@ module Spree
       conditions = case option
                    when String     then { "#{option_types}.name" => option }
                    when OptionType then { "#{option_types}.id" => option.id }
-      else                 { "#{option_types}.id" => option.to_i }
+      else { "#{option_types}.id" => option.to_i }
       end
 
       joins(:option_types).where(conditions)

@@ -13,7 +13,7 @@ module Spree
     describe Quantifier, type: :model do
       before(:all) { Spree::StockLocation.destroy_all } # FIXME leaky database
 
-      let!(:stock_location) { create :stock_location_with_items  }
+      let!(:stock_location) { create :stock_location_with_items }
       let!(:stock_item) { stock_location.stock_items.order(:id).first }
 
       subject { described_class.new(stock_item.variant) }

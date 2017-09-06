@@ -7,7 +7,7 @@ describe Spree::CustomerReturn, type: :model do
 
   describe ".validation" do
     describe "#must_have_return_authorization" do
-      let(:customer_return)       { build(:customer_return) }
+      let(:customer_return) { build(:customer_return) }
 
       let(:inventory_unit)  { build(:inventory_unit) }
       let(:return_item)     { build(:return_item, inventory_unit: inventory_unit) }

@@ -9,7 +9,7 @@ module Spree
     end
 
     describe '#index' do
-      let!(:reimbursement)   { create(:reimbursement) }
+      let!(:reimbursement) { create(:reimbursement) }
 
       before do
         api_get :index

@@ -8,7 +8,7 @@ describe Spree::Admin::ReimbursementsController, type: :controller do
   end
 
   describe '#create' do
-    let(:customer_return)  { create(:customer_return, line_items_count: 1) }
+    let(:customer_return) { create(:customer_return, line_items_count: 1) }
     let(:order) { customer_return.order }
     let(:return_item) { customer_return.return_items.first }
     let(:payment) { order.payments.first }

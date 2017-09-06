@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Calculator::Returns::DefaultRefundAmount, type: :model do
-  let(:order)           { create(:order) }
+  let(:order) { create(:order) }
   let(:line_item_quantity) { 2 }
   let(:item_price)      { 100.0 }
   let(:pre_tax_amount)  { line_item_quantity * item_price }

@@ -52,7 +52,7 @@ use rake db:load_file[/absolute/path/to/sample/filename.rb]}
   end
 
   desc "Bootstrap is: migrating, loading defaults, sample data and seeding (for all extensions) and load_products tasks"
-  task :bootstrap  do
+  task :bootstrap do
     require 'highline/import'
 
     # remigrate unless production mode (as saftey check)
@@ -74,8 +74,8 @@ use rake db:load_file[/absolute/path/to/sample/filename.rb]}
       model.reset_column_information
     end
 
-    load_defaults  = Spree::Country.count == 0
-    unless load_defaults    # ask if there are already Countries => default data hass been loaded
+    load_defaults = Spree::Country.count == 0
+    unless load_defaults # ask if there are already Countries => default data hass been loaded
       load_defaults = agree('Countries present, load sample data anyways? [y/n]: ')
     end
     if load_defaults
@@ -144,7 +144,7 @@ use rake db:load_file[/absolute/path/to/sample/filename.rb]}
       end
 
       if !variants_to_fix.any?
-        abort(  "ABORT: You have no deleted variants that are associated to line items. You do not need to run this raks task.")
+        abort( "ABORT: You have no deleted variants that are associated to line items. You do not need to run this raks task.")
       end
 
       if no_live_variants_found.any?

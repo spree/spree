@@ -178,7 +178,7 @@ describe Spree::InventoryUnit, type: :model do
 
   describe '#additional_tax_total' do
     let(:quantity) { 2 }
-    let(:line_item_additional_tax_total)  { 10.00 }
+    let(:line_item_additional_tax_total) { 10.00 }
     let(:line_item) do
       build(:line_item, {
         quantity: quantity,
@@ -197,7 +197,7 @@ describe Spree::InventoryUnit, type: :model do
 
   describe '#included_tax_total' do
     let(:quantity) { 2 }
-    let(:line_item_included_tax_total)  { 10.00 }
+    let(:line_item_included_tax_total) { 10.00 }
     let(:line_item) do
       build(:line_item, {
         quantity: quantity,
@@ -216,7 +216,7 @@ describe Spree::InventoryUnit, type: :model do
 
   describe '#additional_tax_total' do
     let(:quantity) { 2 }
-    let(:line_item_additional_tax_total)  { 10.00 }
+    let(:line_item_additional_tax_total) { 10.00 }
     let(:line_item) do
       build(:line_item, {
         quantity: quantity,
@@ -235,7 +235,7 @@ describe Spree::InventoryUnit, type: :model do
 
   describe '#included_tax_total' do
     let(:quantity) { 2 }
-    let(:line_item_included_tax_total)  { 10.00 }
+    let(:line_item_included_tax_total) { 10.00 }
     let(:line_item) do
       build(:line_item, {
         quantity: quantity,

@@ -64,7 +64,7 @@ module Spree
       end
 
       context "existing coupon code promotion" do
-        let!(:promotion) { Promotion.create name: "promo", code: "10off"  }
+        let!(:promotion) { Promotion.create name: "promo", code: "10off" }
         let!(:action) { Promotion::Actions::CreateItemAdjustments.create(promotion: promotion, calculator: calculator) }
         let(:calculator) { Calculator::FlatRate.new(preferred_amount: 10) }
 

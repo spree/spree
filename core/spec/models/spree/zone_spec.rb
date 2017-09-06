@@ -441,7 +441,7 @@ describe Spree::Zone, type: :model do
   end
 
   context "state and country associations" do
-    let!(:country)  { create(:country) }
+    let!(:country) { create(:country) }
 
     context "has countries associated" do
       let!(:zone) do
@@ -454,7 +454,7 @@ describe Spree::Zone, type: :model do
     end
 
     context "has states associated" do
-      let!(:state)  { create(:state, country: country) }
+      let!(:state) { create(:state, country: country) }
       let!(:zone) do
         create(:zone, states: [state])
       end

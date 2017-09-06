@@ -72,7 +72,7 @@ describe Spree::Core::NumberGenerator do
       end
 
       context 'and exactly half of the value space taken' do
-        let(:record_count)   { 10 ** expected_length / 2 }
+        let(:record_count) { 10 ** expected_length / 2 }
 
         include_examples 'duplicate without length increment'
       end

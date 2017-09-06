@@ -3,7 +3,7 @@ module Spree
     extend ActiveSupport::Concern
 
     included do
-      has_one   :calculator, class_name: "Spree::Calculator", as: :calculable, inverse_of: :calculable, dependent: :destroy, autosave: true
+      has_one :calculator, class_name: "Spree::Calculator", as: :calculable, inverse_of: :calculable, dependent: :destroy, autosave: true
       accepts_nested_attributes_for :calculator
       validates :calculator, presence: true
       delegate :compute, to: :calculator

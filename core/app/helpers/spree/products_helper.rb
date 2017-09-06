@@ -59,7 +59,7 @@ module Spree
 
     def available_status(product) # will return a human readable string
       return Spree.t(:discontinued)  if product.discontinued?
-      return Spree.t(:deleted)  if product.deleted?
+      return Spree.t(:deleted) if product.deleted?
 
       if product.available?
         Spree.t(:available)
