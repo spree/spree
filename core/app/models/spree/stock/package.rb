@@ -55,7 +55,7 @@ module Spree
 
       def quantity(state = nil)
         matched_contents = state.nil? ? contents : contents.select { |c| c.state.to_s == state.to_s }
-        matched_contents.map(&:quantity).sum
+        matched_contents.sum(&:quantity)
       end
 
       def empty?

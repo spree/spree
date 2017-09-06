@@ -14,7 +14,7 @@ module Spree
     end
 
     def display_amount
-      Spree::Money.new @reimbursement_objects.map(&:total).sum
+      Spree::Money.new @reimbursement_objects.sum(&:total)
     end
 
     def perform!
