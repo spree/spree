@@ -29,7 +29,7 @@ Now just simply check **Active** checkbox and press **Create** button. Brand new
 
 ## Editing and Deleting existing Reimbursement Type
 
-Once you created a type, that you would like to edit, you can press **Edit Icon** on right side of the type's name.
+Once you have created a type that you would like to edit, you can press **Edit Icon** on the right side of the type's name.
 
 ![Reimbursement Edit Icon]()
 
