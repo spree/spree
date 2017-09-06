@@ -4,24 +4,24 @@ title: Manual Order Entry
 
 ## Introduction
 
-An order can be created one of two ways:
+An order can be created in one of two ways:
 
-1. An order is generated when a customer purchases an item from your store.
-2. An order can be created manually from the Admin Interface for your store.
+1. An order is generated when a customer purchase an item from your store.
+2. An order can be created manually in your store's Admin panel
 
-This guide covers how to create a manual order from the Admin Interface.
+This guide covers how to create a manual order in the Admin Panel.
 
 ## Add Products
 
-To create a new manual order, go into the Admin Interface, click the "Orders" tab, and click the "New Order" button.
+To create new order manually, go into the Admin Interface, click the "Orders" tab, and click the "New Order" button.
 
 ![Create New Order](/images/user/orders/create_new_order.jpg)
 
-Type the name of the product you would like to add to the order in the search field. A list of matching product and variant combinations will return in the drop-down menu. Select the product/variant option you want to add to the order.
+Type the name of the product you would like to add to the order in the search field. A list of matching products and variants combinations will show up in the drop-down menu. Select the product/variant option you want to add to the order.
 
 ![Create New Order](/images/user/orders/order_product_search.jpg)
 
-The system will tell you how many of that product/variant you currently have on hand. Enter the quantity to add to the new order, and click the "Add" icon next to the item.
+The interface will show you you how many of that product/variant you currently have "on hand". Enter the quantity to add to the new order, and click the "Add" icon next to the item.
 
 ![Product Added to Order](/images/user/orders/order_product_added.jpg)
 
@@ -35,7 +35,7 @@ Follow the same steps to add more products to the order.
 
 Click the "Customer" link. You can either select a name from the "Customer Search" field if the customer has ordered from you before, or you can enter the customer's email address in the "Email" field of the "Account" section. The setting for "Guest Checkout" will automatically change accordingly.
 
-Enter the customer's billing address and the shipping address for the order. You can click the "USE BILLING ADDRESS" checkbox to use the same address for both. If you do so, the shipping address fields will become invisible.
+Enter the customer's billing address and the shipping address for the order. You can click "USE BILLING ADDRESS" checkbox to use the same address for both. If you do so, the shipping address fields will become invisible.
 
 ![Enter Customer Details](/images/user/orders/order_customer_details.jpg)
 
@@ -43,7 +43,7 @@ Click the "Update" button.
 
 ## Shipments
 
-After you input the customer information, you will want to choose a shipping method. When you pressed the "Update" button you can see that page automatically reload on "Shipments" tab.
+After you input the customer information, you might want to choose a shipping method. When you pressed the "Update" button, the page will reload on "Shipments" tab.
 
 The default shipping method for your store (if you have one) should already be assigned to this order. Depending on the items you added and the location you're shipping to, there could be additional methods available. You may also have shipping methods that are only available for your site's administrator to assign (in-store pickup, for example).
 
@@ -77,13 +77,13 @@ Confirm the deletion by clicking "OK".
 
 ### Opening and Closing Adjustments
 
-Some types of adjustments - tax and shipping, for example - may re-calculate as the order changes, new products are added to it, etc. If you want to be sure that the amount of an adjustments will remain the same, you can lock them in place. This is also known as closing the adjustments.
+Some types of adjustments - tax and shipping, for example - may re-calculate as the order changes, new products are added to it, etc. If you want to be sure that the amount of an adjustments will remain the same, you can lock them. This is also known as closing the adjustments.
 
 ***
 Closed adjustments can be re-opened and changed, up to the moment when the order is shipped. At that point, the adjustment is finalized and cannot be changed.
 ***
 
-To open or close all of the adjustments on an order, just click the "Open All Adjustments" or "Close All Adjustments" buttons on the Adjustments list.
+To open or close all of the adjustments in an order, just click the "Open All Adjustments" or "Close All Adjustments" buttons on the Adjustments list.
 
 ![Mass Open and Close Adjustments](/images/user/orders/mass_open_close_adjustments.jpg)
 
@@ -97,9 +97,9 @@ You need only enter the "Amount" (positive for a charge on the order; negative f
 
 ![New Adjustment Form](/images/user/orders/new_adjustment_form.jpg)
 
-For a fuller understanding of adjustments, please read the [Developer Adjustments Guide](/developer/adjustments).
+For a better understanding of adjustments, please read the [Developer Adjustments Guide](/developer/adjustments).
 
-Once you have finished all of the changes you want to the order's Adjustments, click "Continue".
+Once you have finished all of the changes you want in the order's Adjustments, click "Continue".
 
 ## Payments
 
@@ -117,6 +117,6 @@ Then, click the "New Payment" link to enter the information for the credit card 
 
 ![New Payment Method Link](/images/user/orders/new_payment_method_link.jpg)
 
-Don't forget that you will need to [capture the payment](payment_states#authorize-vs-capture) on the credit card (unless your store is set up to automatically authorize and capture a payment when it is made).
+Don't forget that you will need to [capture the payment](payment_states#authorize-vs-capture) on the credit card (unless your store is set up to automatically authorize and capture a paymentś).
 
 For more on payments, be sure to read both the [Payment Methods](payment_methods) and [Payment States](payment_states) guides.
