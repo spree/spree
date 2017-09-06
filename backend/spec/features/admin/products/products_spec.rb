@@ -222,27 +222,27 @@ describe "Products", type: :feature do
         before do
           # change English locale’s separator and delimiter to match 19,99 format
           I18n.backend.store_translations(:en,
-            number: {
-              currency: {
-                format: {
-                  separator: ",",
-                  delimiter: "."
-                }
-              }
-            })
+                                          number: {
+                                            currency: {
+                                              format: {
+                                                separator: ",",
+                                                delimiter: "."
+                                              }
+                                            }
+                                          })
         end
 
         after do
           # revert changes to English locale
           I18n.backend.store_translations(:en,
-            number: {
-              currency: {
-                format: {
-                  separator: ".",
-                  delimiter: ","
-                }
-              }
-            })
+                                          number: {
+                                            currency: {
+                                              format: {
+                                                separator: ".",
+                                                delimiter: ","
+                                              }
+                                            }
+                                          })
         end
 
         it "should show localized price value on validation errors", js: true do

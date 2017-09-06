@@ -488,9 +488,9 @@ module Spree
 
         it "lists line item adjustments" do
           adjustment = create(:adjustment,
-            label: "10% off!",
-            order: order,
-            adjustable: order.line_items.first)
+                              label: "10% off!",
+                              order: order,
+                              adjustable: order.line_items.first)
           adjustment.update_column(:amount, 5)
           api_get :show, id: order.to_param
 

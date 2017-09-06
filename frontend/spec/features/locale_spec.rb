@@ -12,10 +12,10 @@ describe 'setting locale', type: :feature do
   context 'shopping cart link and page' do
     before do
       I18n.backend.store_translations(:fr,
-       spree: {
-         cart: 'Panier',
-         shopping_cart: 'Panier'
-      })
+                                      spree: {
+                                        cart: 'Panier',
+                                        shopping_cart: 'Panier'
+                                     })
     end
 
     it 'should be in french' do

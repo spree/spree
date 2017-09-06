@@ -51,20 +51,20 @@ module Spree
     belongs_to :shipping_category, class_name: 'Spree::ShippingCategory', inverse_of: :products
 
     has_one :master,
-      -> { where is_master: true },
-      inverse_of: :product,
-      class_name: 'Spree::Variant'
+            -> { where is_master: true },
+            inverse_of: :product,
+            class_name: 'Spree::Variant'
 
     has_many :variants,
-      -> { where(is_master: false).order(:position) },
-      inverse_of: :product,
-      class_name: 'Spree::Variant'
+             -> { where(is_master: false).order(:position) },
+             inverse_of: :product,
+             class_name: 'Spree::Variant'
 
     has_many :variants_including_master,
-      -> { order(:position) },
-      inverse_of: :product,
-      class_name: 'Spree::Variant',
-      dependent: :destroy
+             -> { order(:position) },
+             inverse_of: :product,
+             class_name: 'Spree::Variant',
+             dependent: :destroy
 
     has_many :prices, -> { order('spree_variants.position, spree_variants.id, currency') }, through: :variants
 

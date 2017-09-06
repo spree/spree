@@ -13,8 +13,8 @@ module Spree
                       path: ':rails_root/public/spree/products/:id/:style/:basename.:extension',
                       convert_options: { all: '-strip -auto-orient -colorspace sRGB' }
     validates_attachment :attachment,
-      presence: true,
-      content_type: { content_type: accepted_image_types }
+                         presence: true,
+                         content_type: { content_type: accepted_image_types }
 
     # save the w,h of the original image (from which others can be calculated)
     # we need to look at the write-queue for images which have not been saved yet

@@ -5,18 +5,18 @@ require 'spree/testing_support/i18n'
 describe "i18n" do
   before do
     I18n.backend.store_translations(:en,
-    {
-      spree: {
-        foo: "bar",
-        bar: {
-          foo: "bar within bar scope",
-          invalid: nil,
-          legacy_translation: "back in the day..."
-        },
-        invalid: nil,
-        legacy_translation: "back in the day..."
-      }
-    })
+                                    {
+                                      spree: {
+                                        foo: "bar",
+                                        bar: {
+                                          foo: "bar within bar scope",
+                                          invalid: nil,
+                                          legacy_translation: "back in the day..."
+                                        },
+                                        invalid: nil,
+                                        legacy_translation: "back in the day..."
+                                      }
+                                    })
   end
 
   it "translates within the spree scope" do

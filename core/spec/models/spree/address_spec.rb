@@ -5,18 +5,18 @@ describe Spree::Address, type: :model do
     it "creates a copy of the address with the exception of the id, updated_at and created_at attributes" do
       state = create(:state)
       original = create(:address,
-                         address1: 'address1',
-                         address2: 'address2',
-                         alternative_phone: 'alternative_phone',
-                         city: 'city',
-                         country: Spree::Country.first,
-                         firstname: 'firstname',
-                         lastname: 'lastname',
-                         company: 'company',
-                         phone: 'phone',
-                         state_id: state.id,
-                         state_name: state.name,
-                         zipcode: '10001')
+                        address1: 'address1',
+                        address2: 'address2',
+                        alternative_phone: 'alternative_phone',
+                        city: 'city',
+                        country: Spree::Country.first,
+                        firstname: 'firstname',
+                        lastname: 'lastname',
+                        company: 'company',
+                        phone: 'phone',
+                        state_id: state.id,
+                        state_name: state.name,
+                        zipcode: '10001')
 
       cloned = original.clone
 

@@ -7,10 +7,10 @@ describe 'Payments', type: :feature, js: true do
 
     let!(:payment) do
       create(:payment,
-        order:          order,
-        amount:         order.outstanding_balance,
-        payment_method: create(:credit_card_payment_method),
-        state:          state
+             order:          order,
+             amount:         order.outstanding_balance,
+             payment_method: create(:credit_card_payment_method),
+             state:          state
       )
     end
 
@@ -31,9 +31,9 @@ describe 'Payments', type: :feature, js: true do
       let(:order) { create(:completed_order_with_totals, number: 'R100') }
       let!(:payment) do
         create(:payment,
-          order:          order,
-          amount:         order.outstanding_balance,
-          payment_method: create(:check_payment_method)  # Check
+               order:          order,
+               amount:         order.outstanding_balance,
+               payment_method: create(:check_payment_method)  # Check
         )
       end
 

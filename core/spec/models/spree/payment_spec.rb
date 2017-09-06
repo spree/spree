@@ -199,16 +199,16 @@ describe Spree::Payment, type: :model do
     describe "#authorize!" do
       it "should call authorize on the gateway with the payment amount" do
         expect(payment.payment_method).to receive(:authorize).with(amount_in_cents,
-                                                               card,
-                                                               anything).and_return(success_response)
+                                                                   card,
+                                                                   anything).and_return(success_response)
         payment.authorize!
       end
 
       it "should call authorize on the gateway with the currency code" do
         allow(payment).to receive_messages currency: 'GBP'
         expect(payment.payment_method).to receive(:authorize).with(amount_in_cents,
-                                                               card,
-                                                               hash_including({currency: "GBP"})).and_return(success_response)
+                                                                   card,
+                                                                   hash_including({currency: "GBP"})).and_return(success_response)
         payment.authorize!
       end
 
@@ -221,8 +221,8 @@ describe Spree::Payment, type: :model do
       context "if successful" do
         before do
           expect(payment.payment_method).to receive(:authorize).with(amount_in_cents,
-                                                                 card,
-                                                                 anything).and_return(success_response)
+                                                                     card,
+                                                                     anything).and_return(success_response)
         end
 
         it "should store the response_code, avs_response and cvv_response fields" do
@@ -266,8 +266,8 @@ describe Spree::Payment, type: :model do
       context "if successful" do
         before do
           expect(payment.payment_method).to receive(:purchase).with(amount_in_cents,
-                                                                card,
-                                                                anything).and_return(success_response)
+                                                                    card,
+                                                                    anything).and_return(success_response)
         end
 
         it "should store the response_code and avs_response" do

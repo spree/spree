@@ -126,11 +126,11 @@ module Spree
 
         it "can update addresses and transition from address to delivery" do
           api_put :update,
-            id: order.to_param, order_token: order.guest_token,
-            order: {
-              bill_address_attributes: address,
-              ship_address_attributes: address
-            }
+                  id: order.to_param, order_token: order.guest_token,
+                  order: {
+                    bill_address_attributes: address,
+                    ship_address_attributes: address
+                  }
           expect(json_response['state']).to eq('delivery')
           expect(json_response['bill_address']['firstname']).to eq('John')
           expect(json_response['ship_address']['firstname']).to eq('John')
@@ -141,11 +141,11 @@ module Spree
         it "can update addresses but not transition to delivery w/o shipping setup" do
           Spree::ShippingMethod.destroy_all
           api_put :update,
-            id: order.to_param, order_token: order.guest_token,
-            order: {
-              bill_address_attributes: address,
-              ship_address_attributes: address
-            }
+                  id: order.to_param, order_token: order.guest_token,
+                  order: {
+                    bill_address_attributes: address,
+                    ship_address_attributes: address
+                  }
           expect(json_response['error']).to eq(I18n.t(:could_not_transition, scope: "spree.api.order"))
           expect(response.status).to eq(422)
         end
@@ -153,11 +153,11 @@ module Spree
         # Regression test for #4498
         it "does not contain duplicate variant data in delivery return" do
           api_put :update,
-            id: order.to_param, order_token: order.guest_token,
-            order: {
-              bill_address_attributes: address,
-              ship_address_attributes: address
-            }
+                  id: order.to_param, order_token: order.guest_token,
+                  order: {
+                    bill_address_attributes: address,
+                    ship_address_attributes: address
+                  }
           # Shipments manifests should not return the ENTIRE variant
           # This information is already present within the order's line items
           expect(json_response['shipments'].first['manifest'].first['variant']).to be_nil

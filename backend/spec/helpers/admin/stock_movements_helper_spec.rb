@@ -15,8 +15,8 @@ describe Spree::Admin::StockMovementsHelper, type: :helper do
         @stock_transfer = Spree::StockTransfer.create(reference: 'PO123')
         variants = { variant => 5 }
         @stock_transfer.transfer(source_location,
-                       destination_location,
-                       variants)
+                                 destination_location,
+                                 variants)
         helper.pretty_originator(@stock_transfer.stock_movements.last)
       end
 

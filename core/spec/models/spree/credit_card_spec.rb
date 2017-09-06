@@ -25,12 +25,12 @@ describe Spree::CreditCard, type: :model do
     @fail_response = double('gateway_response', success?: false)
 
     @payment_gateway = mock_model(Spree::PaymentMethod,
-      payment_profiles_supported?: true,
-      authorize: @success_response,
-      purchase: @success_response,
-      capture: @success_response,
-      void: @success_response,
-      credit: @success_response,
+                                  payment_profiles_supported?: true,
+                                  authorize: @success_response,
+                                  purchase: @success_response,
+                                  capture: @success_response,
+                                  void: @success_response,
+                                  credit: @success_response,
     )
 
     allow(@payment).to receive_messages payment_method: @payment_gateway

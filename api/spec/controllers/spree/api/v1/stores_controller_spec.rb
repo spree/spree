@@ -17,9 +17,9 @@ module Spree
 
       let!(:non_default_store) do
         create(:store,
-          name: "Extra Store",
-          url: "spreestore-5.example.com",
-          default: false
+               name: "Extra Store",
+               url: "spreestore-5.example.com",
+               default: false
         )
       end
 
