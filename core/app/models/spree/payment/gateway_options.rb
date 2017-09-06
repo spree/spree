@@ -1,24 +1,35 @@
 module Spree
   class Payment
     class GatewayOptions
+      attr_reader :payment
+
       def initialize(payment)
         @payment = payment
       end
 
-      def email
-        order.email
-      end
+      delegate :currency,
+               :order, to: :payment, allow_nil: true
+
+      delegate :additional_tax_total,
+               :bill_address,
+               :ship_address,
+               :email,
+               :item_total,
+               :last_ip_address,
+               :promo_total,
+               :ship_total,
+               :user_id, to: :order, allow_nil: true
 
       def customer
-        order.email
+        email
       end
 
       def customer_id
-        order.user_id
+        user_id
       end
 
       def ip
-        order.last_ip_address
+        last_ip_address
       end
 
       def order_id
@@ -26,31 +37,27 @@ module Spree
       end
 
       def shipping
-        order.ship_total * exchange_multiplier
+        ship_total * exchange_multiplier
       end
 
       def tax
-        order.additional_tax_total * exchange_multiplier
+        additional_tax_total * exchange_multiplier
       end
 
       def subtotal
-        order.item_total * exchange_multiplier
+        item_total * exchange_multiplier
       end
 
       def discount
-        order.promo_total * exchange_multiplier
-      end
-
-      def currency
-        @payment.currency
+        promo_total * exchange_multiplier
       end
 
       def billing_address
-        order.bill_address.try(:active_merchant_hash)
+        bill_address.try(:active_merchant_hash)
       end
 
       def shipping_address
-        order.ship_address.try(:active_merchant_hash)
+        ship_address.try(:active_merchant_hash)
       end
 
       def hash_methods
@@ -77,10 +84,6 @@ module Spree
       end
 
       private
-
-      def order
-        @payment.order
-      end
 
       def exchange_multiplier
         @payment.payment_method.try(:exchange_multiplier) || 1.0
