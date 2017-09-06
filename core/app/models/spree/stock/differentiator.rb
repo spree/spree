@@ -19,7 +19,7 @@ module Spree
       def build_missing
         @missing = Hash.new(0)
         required.keys.each do |variant|
-           missing = required[variant] - packed[variant]
+          missing = required[variant] - packed[variant]
            @missing[variant] = missing if missing > 0
         end
       end

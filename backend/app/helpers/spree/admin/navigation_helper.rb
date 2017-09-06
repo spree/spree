@@ -38,7 +38,7 @@ module Spree
         end
 
         selected = if options[:match_path].is_a? Regexp
-          request.fullpath =~ options[:match_path]
+                     request.fullpath =~ options[:match_path]
         elsif options[:match_path]
           request.fullpath.starts_with?("#{spree.admin_path}#{options[:match_path]}")
         else

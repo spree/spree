@@ -23,7 +23,7 @@ module Spree
         calculated_refund = Spree::ReturnItem.refund_amount_calculator.new.compute(return_item)
 
         percent_of_tax = if return_item.pre_tax_amount <= 0 || calculated_refund <= 0
-          0
+                           0
         else
           return_item.pre_tax_amount / calculated_refund
         end

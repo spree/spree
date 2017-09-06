@@ -36,7 +36,7 @@ module Spree::Preferences
     end
 
     def preference_setter_method(name)
-       "preferred_#{name}=".to_sym
+      "preferred_#{name}=".to_sym
     end
 
     def preference_default_getter_method(name)

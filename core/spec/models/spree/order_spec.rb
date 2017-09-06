@@ -192,7 +192,7 @@ describe Spree::Order, type: :model do
       adjustments = [double]
       expect(order).to receive(:all_adjustments).and_return(adjustments)
       adjustments.each do |adj|
-	      expect(adj).to receive(:close)
+	       expect(adj).to receive(:close)
       end
       order.finalize!
     end

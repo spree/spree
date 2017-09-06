@@ -4,11 +4,11 @@ describe "Analytics Tracker", type: :feature do
   stub_authorization!
 
   context "index" do
-    before(:each) do
-      create(:tracker)
-      create(:tracker, analytics_id: 'A200')
-      visit spree.admin_trackers_path
-    end
+     before(:each) do
+       create(:tracker)
+       create(:tracker, analytics_id: 'A200')
+       visit spree.admin_trackers_path
+     end
 
     it "should have the right content" do
       expect(page).to have_content("Analytics Trackers")

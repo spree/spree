@@ -103,7 +103,7 @@ module Spree
 
         def variants_params
           variants_key = if params[:product].has_key? :variants
-            :variants
+                           :variants
           else
             :variants_attributes
           end

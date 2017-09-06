@@ -102,9 +102,9 @@ module Spree::Preferences::Preferable
          value == 0 ||
          value =~ /^(f|false|0)$/i ||
          (value.respond_to? :empty? and value.empty?)
-         false
+        false
       else
-         true
+        true
       end
     when :array
       value.is_a?(Array) ? value : Array.wrap(value)

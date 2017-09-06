@@ -107,13 +107,13 @@ use rake db:load_file[/absolute/path/to/sample/filename.rb]}
       input = STDIN.gets.chomp
       case input.upcase
       when "Y"
-          return true
+        return true
 
       when "N"
-          puts "aborting ....."
+        puts "aborting ....."
           return false
         else
-          return true
+        return true
       end
     end
 

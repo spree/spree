@@ -38,11 +38,11 @@ describe Spree::Calculator, type: :model do
     end
 
     context "with no stubbing" do
-      context "with a Spree::LineItem" do
-          it "raises NotImplementedError" do
-            expect{subject.compute(line_item)}.to raise_error NotImplementedError, /Please implement \'compute_line_item\(line_item\)\' in your calculator/
+        context "with a Spree::LineItem" do
+            it "raises NotImplementedError" do
+              expect{subject.compute(line_item)}.to raise_error NotImplementedError, /Please implement \'compute_line_item\(line_item\)\' in your calculator/
+            end
           end
-        end
   
       context "with a Spree::Order" do
         it "raises NotImplementedError" do

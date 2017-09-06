@@ -33,7 +33,7 @@ module Spree
       @copy_views = options[:copy_views]
 
       unless @run_migrations
-         @load_seed_data = false
+        @load_seed_data = false
          @load_sample_data = false
       end
     end

@@ -188,7 +188,7 @@ describe Spree::Variant, type: :model do
         multi_variant.set_option_value('media_type', 'CD')
 
         expect {
-         multi_variant.set_option_value('media_type', 'DVD')
+          multi_variant.set_option_value('media_type', 'DVD')
         }.to_not change(multi_variant.option_values, :count)
 
         expect {
@@ -220,7 +220,7 @@ describe Spree::Variant, type: :model do
           multi_variant.set_option_value('media_type', 'CD')
 
           expect {
-           multi_variant.set_option_value('media_type', 'DVD')
+            multi_variant.set_option_value('media_type', 'DVD')
           }.to_not change(multi_variant.option_values, :count)
 
           expect {
