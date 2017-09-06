@@ -62,36 +62,36 @@ module Spree
 
     private
 
-      def must_have_shipped_units
-        if order.nil? || order.inventory_units.shipped.none?
-          errors.add(:order, Spree.t(:has_no_shipped_units))
-        end
+    def must_have_shipped_units
+      if order.nil? || order.inventory_units.shipped.none?
+        errors.add(:order, Spree.t(:has_no_shipped_units))
+      end
+    end
+
+    def cancel_return_items
+      return_items.each { |item| item.cancel! if item.can_cancel? }
+    end
+
+    def generate_expedited_exchange_reimbursements
+      return unless Spree::Config[:expedited_exchanges]
+
+      items_to_exchange = return_items.select(&:exchange_required?)
+      items_to_exchange.each(&:attempt_accept)
+      items_to_exchange.select!(&:accepted?)
+
+      return if items_to_exchange.blank?
+
+      pre_expedited_exchange_hooks.each { |h| h.call items_to_exchange }
+
+      reimbursement = Reimbursement.new(return_items: items_to_exchange, order: order)
+
+      if reimbursement.save
+        reimbursement.perform!
+      else
+        errors.add(:base, reimbursement.errors.full_messages)
+        raise ActiveRecord::RecordInvalid.new(self)
       end
 
-      def cancel_return_items
-        return_items.each { |item| item.cancel! if item.can_cancel? }
-      end
-
-      def generate_expedited_exchange_reimbursements
-        return unless Spree::Config[:expedited_exchanges]
-
-        items_to_exchange = return_items.select(&:exchange_required?)
-        items_to_exchange.each(&:attempt_accept)
-        items_to_exchange.select!(&:accepted?)
-
-        return if items_to_exchange.blank?
-
-        pre_expedited_exchange_hooks.each { |h| h.call items_to_exchange }
-
-        reimbursement = Reimbursement.new(return_items: items_to_exchange, order: order)
-
-        if reimbursement.save
-          reimbursement.perform!
-        else
-          errors.add(:base, reimbursement.errors.full_messages)
-          raise ActiveRecord::RecordInvalid.new(self)
-        end
-
-      end
+    end
   end
 end

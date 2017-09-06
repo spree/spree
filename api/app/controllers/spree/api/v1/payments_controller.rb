@@ -58,24 +58,24 @@ module Spree
 
         private
 
-          def find_order
-            @order = Spree::Order.find_by!(number: order_id)
-            authorize! :read, @order, order_token
-          end
+        def find_order
+          @order = Spree::Order.find_by!(number: order_id)
+          authorize! :read, @order, order_token
+        end
 
-          def find_payment
-            @payment = @order.payments.find_by!(number: params[:id])
-          end
+        def find_payment
+          @payment = @order.payments.find_by!(number: params[:id])
+        end
 
-          def perform_payment_action(action, *args)
-            authorize! action, Payment
-            @payment.send("#{action}!", *args)
-            respond_with(@payment, default_template: :show)
-          end
+        def perform_payment_action(action, *args)
+          authorize! action, Payment
+          @payment.send("#{action}!", *args)
+          respond_with(@payment, default_template: :show)
+        end
 
-          def payment_params
-            params.require(:payment).permit(permitted_payment_attributes)
-          end
+        def payment_params
+          params.require(:payment).permit(permitted_payment_attributes)
+        end
       end
     end
   end

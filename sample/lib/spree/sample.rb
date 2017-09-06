@@ -16,8 +16,8 @@ module Spree
     end
 
     private
-      def self.samples_path
-        Pathname.new(File.join(File.dirname(__FILE__), '..', '..', 'db', 'samples'))
-      end
+    def self.samples_path
+      Pathname.new(File.join(File.dirname(__FILE__), '..', '..', 'db', 'samples'))
+    end
   end
 end

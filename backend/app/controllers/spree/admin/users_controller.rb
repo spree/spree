@@ -77,12 +77,12 @@ module Spree
 
       protected
 
-        def collection
-          return @collection if @collection.present?
-          @collection = super
-          @search = @collection.ransack(params[:q])
-          @collection = @search.result.page(params[:page]).per(Spree::Config[:admin_users_per_page])
-        end
+      def collection
+        return @collection if @collection.present?
+        @collection = super
+        @search = @collection.ransack(params[:q])
+        @collection = @search.result.page(params[:page]).per(Spree::Config[:admin_users_per_page])
+      end
 
       private
 

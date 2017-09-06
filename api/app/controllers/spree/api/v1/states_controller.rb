@@ -23,14 +23,14 @@ module Spree
         end
 
         private
-          def scope
-            if params[:country_id]
-              @country = Country.accessible_by(current_ability, :read).find(params[:country_id])
-              return @country.states.accessible_by(current_ability, :read).order('name ASC')
-            else
-              return State.accessible_by(current_ability, :read).order('name ASC')
-            end
+        def scope
+          if params[:country_id]
+            @country = Country.accessible_by(current_ability, :read).find(params[:country_id])
+            return @country.states.accessible_by(current_ability, :read).order('name ASC')
+          else
+            return State.accessible_by(current_ability, :read).order('name ASC')
           end
+        end
       end
     end
   end

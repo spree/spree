@@ -78,14 +78,14 @@ module Spree
     end
 
     private
-      def generate_profile_id(success)
-        record = true
-        prefix = success ? 'BGS' : 'FAIL'
-        while record
-          random = "#{ prefix }-#{ Array.new(6) { rand(6) }.join }"
-          record = CreditCard.find_by(gateway_customer_profile_id: random)
-        end
-        random
+    def generate_profile_id(success)
+      record = true
+      prefix = success ? 'BGS' : 'FAIL'
+      while record
+        random = "#{ prefix }-#{ Array.new(6) { rand(6) }.join }"
+        record = CreditCard.find_by(gateway_customer_profile_id: random)
       end
+      random
+    end
   end
 end

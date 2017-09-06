@@ -553,10 +553,10 @@ describe Spree::Promotion, type: :model do
       end
     end
 
-      context 'when the order is not eligible for the promotion' do
-        before { promotion.starts_at = Time.current + 2.days }
-        it { is_expected.not_to be }
-      end
+    context 'when the order is not eligible for the promotion' do
+      before { promotion.starts_at = Time.current + 2.days }
+      it { is_expected.not_to be }
+    end
   end
 
   # regression for #4059

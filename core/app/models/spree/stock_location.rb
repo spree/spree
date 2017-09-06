@@ -104,16 +104,16 @@ module Spree
     end
 
     private
-      def create_stock_items
-        Variant.includes(:product).find_each do |variant|
-          propagate_variant(variant)
-        end
+    def create_stock_items
+      Variant.includes(:product).find_each do |variant|
+        propagate_variant(variant)
       end
+    end
 
-      def ensure_one_default
-        if self.default
-          StockLocation.where(default: true).where.not(id: self.id).update_all(default: false)
-        end
+    def ensure_one_default
+      if self.default
+        StockLocation.where(default: true).where.not(id: self.id).update_all(default: false)
       end
+    end
   end
 end

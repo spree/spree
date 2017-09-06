@@ -117,21 +117,21 @@ module Spree
 
     private
 
-      def allow_ship?
-        self.on_hand?
-      end
+    def allow_ship?
+      self.on_hand?
+    end
 
-      def fulfill_order
-        self.reload
-        order.fulfill!
-      end
+    def fulfill_order
+      self.reload
+      order.fulfill!
+    end
 
-      def percentage_of_line_item
-        quantity / BigDecimal.new(line_item.quantity)
-      end
+    def percentage_of_line_item
+      quantity / BigDecimal.new(line_item.quantity)
+    end
 
-      def current_return_item
-        return_items.not_cancelled.first
-      end
+    def current_return_item
+      return_items.not_cancelled.first
+    end
   end
 end

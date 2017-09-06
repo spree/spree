@@ -13,12 +13,12 @@ module Spree
     default_scope { order("#{self.table_name}.position, #{self.table_name}.created_at") }
 
     private
-      def set_root
-        self.root ||= Taxon.create!(taxonomy_id: id, name: name)
-      end
+    def set_root
+      self.root ||= Taxon.create!(taxonomy_id: id, name: name)
+    end
 
-      def set_root_taxon_name
-        root.update_attributes(name: name)
-      end
+    def set_root_taxon_name
+      root.update_attributes(name: name)
+    end
   end
 end

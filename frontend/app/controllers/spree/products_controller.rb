@@ -27,37 +27,37 @@ module Spree
 
     private
 
-      def accurate_title
-        if @product
-          @product.meta_title.blank? ? @product.name : @product.meta_title
-        else
-          super
-        end
+    def accurate_title
+      if @product
+        @product.meta_title.blank? ? @product.name : @product.meta_title
+      else
+        super
+      end
+    end
+
+    def load_product
+      if try_spree_current_user.try(:has_spree_role?, "admin")
+        @products = Product.with_deleted
+      else
+        @products = Product.active(current_currency)
       end
 
-      def load_product
-        if try_spree_current_user.try(:has_spree_role?, "admin")
-          @products = Product.with_deleted
-        else
-          @products = Product.active(current_currency)
-        end
+      @product = @products.includes(:variants_including_master, variant_images: :viewable).
+                           friendly.distinct(false).find(params[:id])
+    end
 
-        @product = @products.includes(:variants_including_master, variant_images: :viewable).
-                             friendly.distinct(false).find(params[:id])
-      end
+    def load_taxon
+      @taxon = Spree::Taxon.find(params[:taxon]) if params[:taxon].present?
+    end
 
-      def load_taxon
-        @taxon = Spree::Taxon.find(params[:taxon]) if params[:taxon].present?
+    def redirect_if_legacy_path
+      # If an old id or a numeric id was used to find the record,
+      # we should do a 301 redirect that uses the current friendly id.
+      if params[:id] != @product.friendly_id
+        params[:id] = @product.friendly_id
+        params.permit!
+        return redirect_to url_for(params), status: :moved_permanently
       end
-
-      def redirect_if_legacy_path
-        # If an old id or a numeric id was used to find the record,
-        # we should do a 301 redirect that uses the current friendly id.
-        if params[:id] != @product.friendly_id
-          params[:id] = @product.friendly_id
-          params.permit!
-          return redirect_to url_for(params), status: :moved_permanently
-        end
-      end
+    end
   end
 end

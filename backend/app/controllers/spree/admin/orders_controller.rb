@@ -123,24 +123,24 @@ module Spree
       end
 
       private
-        def order_params
-          params[:created_by_id] = try_spree_current_user.try(:id)
-          params.permit(:created_by_id, :user_id, :store_id)
-        end
+      def order_params
+        params[:created_by_id] = try_spree_current_user.try(:id)
+        params.permit(:created_by_id, :user_id, :store_id)
+      end
 
-        def load_order
-          @order = Spree::Order.includes(:adjustments).find_by!(number: params[:id])
-          authorize! action, @order
-        end
+      def load_order
+        @order = Spree::Order.includes(:adjustments).find_by!(number: params[:id])
+        authorize! action, @order
+      end
 
         # Used for extensions which need to provide their own custom event links on the order details view.
-        def initialize_order_events
-          @order_events = %w{approve cancel resume}
-        end
+      def initialize_order_events
+        @order_events = %w{approve cancel resume}
+      end
 
-        def model_class
-          Spree::Order
-        end
+      def model_class
+        Spree::Order
+      end
     end
   end
 end

@@ -185,86 +185,86 @@ module Spree
       INVALID_STATES.include?(state)
     end
 
-      def validate_source
-        if source && !source.valid?
-          source.errors.each do |field, error|
-            field_name = I18n.t("activerecord.attributes.#{source.class.to_s.underscore}.#{field}")
-            self.errors.add(Spree.t(source.class.to_s.demodulize.underscore), "#{field_name} #{error}")
-          end
-        end
-        return !errors.present?
-      end
-
-      def profiles_supported?
-        payment_method.respond_to?(:payment_profiles_supported?) && payment_method.payment_profiles_supported?
-      end
-
-      def create_payment_profile
-        # Don't attempt to create on bad payments.
-        return if has_invalid_state?
-        # Payment profile cannot be created without source
-        return unless source
-        # Imported payments shouldn't create a payment profile.
-        return if source.imported
-
-        payment_method.create_profile(self)
-      rescue ActiveMerchant::ConnectionError => e
-        gateway_error e
-      end
-
-      def split_uncaptured_amount
-        if uncaptured_amount > 0
-          order.payments.create!(
-            amount: uncaptured_amount,
-            payment_method: payment_method,
-            source: source,
-            state: 'pending',
-            capture_on_dispatch: true
-          ).authorize!
-          update_attributes(amount: captured_amount)
+    def validate_source
+      if source && !source.valid?
+        source.errors.each do |field, error|
+          field_name = I18n.t("activerecord.attributes.#{source.class.to_s.underscore}.#{field}")
+          self.errors.add(Spree.t(source.class.to_s.demodulize.underscore), "#{field_name} #{error}")
         end
       end
+      return !errors.present?
+    end
 
-      def update_order
-        if completed? || void?
-          order.updater.update_payment_total
-        end
+    def profiles_supported?
+      payment_method.respond_to?(:payment_profiles_supported?) && payment_method.payment_profiles_supported?
+    end
 
-        if order.completed?
-          order.updater.update_payment_state
-          order.updater.update_shipments
-          order.updater.update_shipment_state
-        end
+    def create_payment_profile
+      # Don't attempt to create on bad payments.
+      return if has_invalid_state?
+      # Payment profile cannot be created without source
+      return unless source
+      # Imported payments shouldn't create a payment profile.
+      return if source.imported
 
-        if self.completed? || order.completed?
-          order.persist_totals
-        end
+      payment_method.create_profile(self)
+    rescue ActiveMerchant::ConnectionError => e
+      gateway_error e
+    end
+
+    def split_uncaptured_amount
+      if uncaptured_amount > 0
+        order.payments.create!(
+          amount: uncaptured_amount,
+          payment_method: payment_method,
+          source: source,
+          state: 'pending',
+          capture_on_dispatch: true
+        ).authorize!
+        update_attributes(amount: captured_amount)
+      end
+    end
+
+    def update_order
+      if completed? || void?
+        order.updater.update_payment_total
       end
 
-      def create_eligible_credit_event
-        # When cancelling an order, a payment with the negative amount
-        # of the payment total is created to refund the customer. That
-        # payment has a source of itself (Spree::Payment) no matter the
-        # type of payment getting refunded, hence the additional check
-        # if the source is a store credit.
-        return unless store_credit? && source.is_a?(Spree::StoreCredit)
-
-        # creates the store credit event
-        source.update_attributes!({
-          action: Spree::StoreCredit::ELIGIBLE_ACTION,
-          action_amount: amount,
-          action_authorization_code: response_code,
-        })
+      if order.completed?
+        order.updater.update_payment_state
+        order.updater.update_shipments
+        order.updater.update_shipment_state
       end
 
-      def invalidate_old_payments
-        # invalid payment or store_credit payment shouldn't invalidate other payment types
-        return if has_invalid_state? || store_credit?
-
-        order.payments.with_state('checkout').where.not(id: id).each do |payment|
-          payment.invalidate! unless payment.store_credit?
-        end
+      if self.completed? || order.completed?
+        order.persist_totals
       end
+    end
+
+    def create_eligible_credit_event
+      # When cancelling an order, a payment with the negative amount
+      # of the payment total is created to refund the customer. That
+      # payment has a source of itself (Spree::Payment) no matter the
+      # type of payment getting refunded, hence the additional check
+      # if the source is a store credit.
+      return unless store_credit? && source.is_a?(Spree::StoreCredit)
+
+      # creates the store credit event
+      source.update_attributes!({
+        action: Spree::StoreCredit::ELIGIBLE_ACTION,
+        action_amount: amount,
+        action_authorization_code: response_code,
+      })
+    end
+
+    def invalidate_old_payments
+      # invalid payment or store_credit payment shouldn't invalidate other payment types
+      return if has_invalid_state? || store_credit?
+
+      order.payments.with_state('checkout').where.not(id: id).each do |payment|
+        payment.invalidate! unless payment.store_credit?
+      end
+    end
 
   end
 end

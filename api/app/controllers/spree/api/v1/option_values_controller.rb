@@ -46,17 +46,17 @@ module Spree
 
         private
 
-          def scope
-            if params[:option_type_id]
-              @scope ||= Spree::OptionType.find(params[:option_type_id]).option_values.accessible_by(current_ability, :read)
-            else
-              @scope ||= Spree::OptionValue.accessible_by(current_ability, :read).load
-            end
+        def scope
+          if params[:option_type_id]
+            @scope ||= Spree::OptionType.find(params[:option_type_id]).option_values.accessible_by(current_ability, :read)
+          else
+            @scope ||= Spree::OptionValue.accessible_by(current_ability, :read).load
           end
+        end
 
-          def option_value_params
-            params.require(:option_value).permit(permitted_option_value_attributes)
-          end
+        def option_value_params
+          params.require(:option_value).permit(permitted_option_value_attributes)
+        end
       end
     end
   end
