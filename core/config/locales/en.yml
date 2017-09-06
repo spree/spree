@@ -1468,6 +1468,12 @@ en:
     tracking_url: Tracking URL
     tracking_url_placeholder: e.g. http://quickship.com/package?num=:tracking
     transaction_id: Transaction ID
+    transaction_limits: Transaction Limits
+    transaction_maximum: Transaction maximum
+    transaction_maximum_cant_be_less_or_equal_the_minimum: Maximum limit can't be lower or equal the minimum limit.
+    transaction_maximum_explanation: Maximum amount that can be charged with this payment method
+    transaction_minimum: Transaction minimum
+    transaction_minimum_explanation: Minimum charged amount to display this payment method
     transfer_from_location: Transfer From
     transfer_stock: Transfer Stock
     transfer_to_location: Transfer To

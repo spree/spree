@@ -51,6 +51,17 @@
         <%= label_tag :payment_method_description, Spree.t(:description) %>
         <%= text_area :payment_method, :description, { cols: 60, rows: 6, class: 'form-control' } %>
       <% end %>
+      <%= field_container :payment_method, :transaction_minimum, class: ['form-group'], 'data-hook' => 'description' do %>
+        <%= label_tag :payment_method_transaction_minimum, Spree.t(:transaction_minimum) %>
+        <%= text_field :payment_method, :transaction_minimum, { cols: 60, rows: 6, class: 'form-control' } %>
+        <p class="help-block"><%= Spree.t(:transaction_minimum_explanation) %></p>
+      <% end %>
+      <%= field_container :payment_method, :transaction_maximum, class: ['form-group'], 'data-hook' => 'description' do %>
+        <%= label_tag :payment_method_transaction_maximum, Spree.t(:transaction_maximum) %>
+        <%= text_field :payment_method, :transaction_maximum, { cols: 60, rows: 6, class: 'form-control' } %>
+        <p class="help-block"><%= Spree.t(:transaction_maximum_explanation) %></p>
+      <% end %>
+
     </div>
   </div>
 </div>

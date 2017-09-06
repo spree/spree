@@ -535,9 +535,11 @@ describe Spree::Order, type: :model do
     let(:ok_method) { double :payment_method, available_for_order?: true }
     let(:no_method) { double :payment_method, available_for_order?: false }
     let(:methods) { [ok_method, no_method] }
-
+    
     it "does not include a payment method that is not suitable for this order" do
+      allow(ok_method).to receive(:within_transaction_limits?).with(order).and_return(true)
       allow(Spree::PaymentMethod).to receive(:available_on_front_end).and_return(methods)
+
       expect(order.available_payment_methods).to match_array [ok_method]
     end
   end
