@@ -172,6 +172,5 @@ module Spree
         expect(response.status).to eq(204)
       end
     end
-
   end
 end

@@ -121,5 +121,4 @@ describe Spree::ShippingMethod, type: :model do
     it { expect(backend_shipping_method.send(:backend?)).to be true }
     it { expect(front_and_back_end_shipping_method.send(:backend?)).to be true }
   end
-
 end

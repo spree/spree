@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Spree::Preferences::Preferable, type: :model do
-
   before :all do
     class A
       include Spree::Preferences::Preferable
@@ -78,7 +77,6 @@ describe Spree::Preferences::Preferable, type: :model do
         @a.get_preference :flavor
       }.to raise_error(NoMethodError, "flavor preference not defined")
     end
-
   end
 
   describe "preference access" do
@@ -126,7 +124,6 @@ describe Spree::Preferences::Preferable, type: :model do
         @a.set_preference(:is_integer, '')
         expect(@a.preferences[:is_integer]).to eq(0)
       end
-
     end
 
     context "converts decimal preferences to BigDecimal values" do
@@ -265,7 +262,6 @@ describe Spree::Preferences::Preferable, type: :model do
         expect(@a.preferences[:product_attributes]).to eq({id: 1, name: 2})
       end
     end
-
   end
 
   describe "persisted preferables" do
@@ -340,5 +336,4 @@ describe Spree::Preferences::Preferable, type: :model do
       expect(@pt1.get_preference(:pref_test_pref)).to eq('abc')
     end
   end
-
 end

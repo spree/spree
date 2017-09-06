@@ -78,7 +78,6 @@ describe "Adjustments", type: :feature do
   end
 
   context "admin editing an adjustment", js: true do
-
     before(:each) do
       within_row(2) { click_icon :edit }
     end

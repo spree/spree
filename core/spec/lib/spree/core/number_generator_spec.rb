@@ -38,7 +38,6 @@ describe Spree::Core::NumberGenerator do
   end
 
   shared_examples_for 'duplicate without length increment' do
-
     it 'sets permalink field' do
       expect { subject }.to change(resource, :number).from(nil).to(String)
       expect(resource.number).to match(regex)
@@ -105,7 +104,6 @@ describe Spree::Core::NumberGenerator do
 
       context 'when permalink field value is nil' do
         context 'on defaults' do
-
           include_examples 'generating permalink'
         end
 

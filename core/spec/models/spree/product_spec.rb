@@ -36,7 +36,6 @@ describe Spree::Product, type: :model do
     end
 
     context "master variant" do
-
       context "when master variant changed" do
         before do
           product.master.sku = "Something changed"
@@ -188,7 +187,6 @@ describe Spree::Product, type: :model do
     end
 
     context "slugs" do
-
       it "normalizes slug on update validation" do
         product.slug = "hey//joe"
         product.valid?
@@ -203,13 +201,11 @@ describe Spree::Product, type: :model do
       end
 
       context "when product destroyed" do
-
         it "renames slug" do
           expect { product.destroy }.to change { product.slug }
         end
 
         context "when slug is already at or near max length" do
-
           before do
             product.slug = "x" * 255
             product.save!
@@ -219,9 +215,7 @@ describe Spree::Product, type: :model do
             product.destroy
             expect(product.slug.length).to eq 255
           end
-
         end
-
       end
 
       it "validates slug uniqueness" do

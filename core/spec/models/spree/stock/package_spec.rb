@@ -121,7 +121,6 @@ module Spree
       describe "#remove" do
         let(:unit) { build_inventory_unit }
         context "there is a content item for the inventory unit" do
-
           before { subject.add unit }
 
           it "removes that content item" do
@@ -140,7 +139,6 @@ module Spree
       describe "#order" do
         let(:unit) { build_inventory_unit }
         context "there is an inventory unit" do
-
           before { subject.add unit }
 
           it "returns an order" do

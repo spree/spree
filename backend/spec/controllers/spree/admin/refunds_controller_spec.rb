@@ -5,7 +5,6 @@ describe Spree::Admin::RefundsController do
 
   describe "POST create" do
     context "a Spree::Core::GatewayError is raised" do
-
       let(:payment) { create(:payment) }
 
       subject do

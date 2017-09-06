@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Spree::Store, type: :model do
-
   describe ".by_url" do
     let!(:store)    { create(:store, url: "website1.com\nwww.subdomain.com") }
     let!(:store_2)  { create(:store, url: 'freethewhales.com') }
@@ -74,5 +73,4 @@ describe Spree::Store, type: :model do
       end
     end
   end
-
 end

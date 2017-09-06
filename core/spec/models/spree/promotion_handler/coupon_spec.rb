@@ -316,7 +316,6 @@ module Spree
             expect(order.line_items.pluck(:variant_id)).to include(variant.id)
           end
         end
-
       end
     end
   end

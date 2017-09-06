@@ -7,7 +7,6 @@
 require 'singleton'
 
 module Spree::Preferences
-
   class StoreInstance
     attr_accessor :persistence
 
@@ -94,5 +93,4 @@ module Spree::Preferences
   class Store < StoreInstance
     include Singleton
   end
-
 end

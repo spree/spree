@@ -61,7 +61,6 @@ module Spree
     self.reimbursement_failure_hooks = []
 
     state_machine :reimbursement_status, initial: :pending do
-
       event :errored do
         transition to: :errored, from: :pending
       end
@@ -69,7 +68,6 @@ module Spree
       event :reimbursed do
         transition to: :reimbursed, from: [:pending, :errored]
       end
-
     end
 
     class << self

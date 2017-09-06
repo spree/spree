@@ -70,6 +70,5 @@ module Spree
     describe ".model_name" do # for dom_id
       it { expect(Exchange.model_name).to eq Spree::Exchange }
     end
-
   end
 end

@@ -4,7 +4,6 @@ describe Spree::ReturnItem::EligibilityValidator::NoReimbursements do
   let(:validator) { Spree::ReturnItem::EligibilityValidator::NoReimbursements.new(return_item) }
 
   describe "#eligible_for_return?" do
-
     subject { validator.eligible_for_return? }
 
     context "inventory unit has already been reimbursed" do

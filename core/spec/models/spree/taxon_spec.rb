@@ -11,7 +11,6 @@ describe Spree::Taxon, type: :model do
   end
 
   context "set_permalink" do
-
     it "should set permalink correctly when no parent present" do
       taxon.set_permalink
       expect(taxon.permalink).to eql "ruby-on-rails"
@@ -67,7 +66,6 @@ describe Spree::Taxon, type: :model do
           end
         end
       end
-
     end
   end
 

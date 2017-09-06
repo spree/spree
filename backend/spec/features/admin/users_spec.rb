@@ -84,7 +84,6 @@ describe 'Users', type: :feature do
   end
 
   context 'users index' do
-
     context "email" do
       it_behaves_like "a sortable attribute" do
         let(:text_match_1) { user_a.email }
@@ -210,7 +209,6 @@ describe 'Users', type: :feature do
   end
 
   context 'order history with sorting' do
-
     before do
       orders
       click_link user_a.email
@@ -241,7 +239,6 @@ describe 'Users', type: :feature do
   end
 
   context 'items purchased with sorting' do
-
     before do
       orders
       click_link user_a.email

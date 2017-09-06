@@ -383,7 +383,6 @@ describe Spree::Order, type: :model do
   end
 
   context "#confirmation_required?" do
-
     # Regression test for #4117
     it "is required if the state is currently 'confirm'" do
       order = Spree::Order.new
@@ -393,7 +392,6 @@ describe Spree::Order, type: :model do
     end
 
     context 'Spree::Config[:always_include_confirm_step] == true' do
-
       before do
         Spree::Config[:always_include_confirm_step] = true
       end
@@ -405,7 +403,6 @@ describe Spree::Order, type: :model do
     end
 
     context 'Spree::Config[:always_include_confirm_step] == false' do
-
       it "returns false if payments empty and Spree::Config[:always_include_confirm_step] == false" do
         order = Spree::Order.new
         assert !order.confirmation_required?
@@ -1006,7 +1003,6 @@ describe Spree::Order, type: :model do
       end
 
       it { expect(order.fully_discounted?).to eq true }
-
     end
 
     context "the order had inventory-related cost" do
@@ -1091,5 +1087,4 @@ describe Spree::Order, type: :model do
     it { expect(order.collect_backend_payment_methods).to include(credit_card_payment_method) }
     it { expect(order.collect_backend_payment_methods).to_not include(store_credit_payment_method) }
   end
-
 end

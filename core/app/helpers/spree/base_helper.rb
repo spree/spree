@@ -1,6 +1,5 @@
 module Spree
   module BaseHelper
-
     def available_countries
       checkout_zone = Zone.find_by(name: Spree::Config[:checkout_zone])
 

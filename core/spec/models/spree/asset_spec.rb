@@ -4,7 +4,6 @@ describe Spree::Asset, type: :model do
   describe "#viewable" do
     it "touches association" do
       Timecop.scale(3600) do
-
         product = create(:custom_product)
         asset   = Spree::Asset.create! { |a| a.viewable = product.master }
 
@@ -24,5 +23,4 @@ describe Spree::Asset, type: :model do
       expect(asset2.position).to eq 1
     end
   end
-
 end

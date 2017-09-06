@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Spree::Gateway::BogusSimple, type: :model do
-
   subject { Spree::Gateway::BogusSimple.new }
 
   # regression test for #3824
@@ -16,5 +15,4 @@ describe Spree::Gateway::BogusSimple, type: :model do
       expect(response.message).to include("failure")
     end
   end
-
 end

@@ -147,7 +147,6 @@ module Spree
         expect(json_response["exception"]).to eq "Spree::Core::DestroyWithOrdersError"
         expect(response.status).to eq(422)
       end
-
     end
   end
 end

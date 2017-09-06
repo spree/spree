@@ -42,5 +42,4 @@ describe Spree::Preferences::Store, type: :model do
   it "should return nil when key can't be found and fallback value is not supplied" do
     expect(@store.get(:random_key){ nil }).to be_nil
   end
-
 end

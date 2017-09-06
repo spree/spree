@@ -265,7 +265,6 @@ describe Spree::Address, type: :model do
       let(:address) { stub_model(Spree::Address, firstname: nil, lastname: nil) }
       specify { expect(address.full_name).to eq('') }
     end
-
   end
 
   context '#state_text' do

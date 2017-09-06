@@ -4,7 +4,6 @@
 require 'spec_helper'
 
 describe Spree::Adjustment, type: :model do
-
   let(:order) { Spree::Order.new }
 
   before do
@@ -185,5 +184,4 @@ describe Spree::Adjustment, type: :model do
       end
     end
   end
-
 end

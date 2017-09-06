@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Spree::Calculator, type: :model do
-
   let(:order) { create(:order) }
   let!(:line_item) { create(:line_item, order: order) }
   let(:shipment) { create(:shipment, order: order, stock_location: create(:stock_location_with_items)) }
@@ -65,5 +64,4 @@ describe Spree::Calculator, type: :model do
       end
     end
   end
-
 end

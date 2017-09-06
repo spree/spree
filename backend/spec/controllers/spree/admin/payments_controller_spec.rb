@@ -77,7 +77,6 @@ module Spree
             expect(response.code).to eq "200"
           end
         end
-
       end
 
       context "order does not have a billing address" do
@@ -91,7 +90,6 @@ module Spree
           expect(response).to redirect_to(spree.edit_admin_order_customer_path(order))
         end
       end
-
     end
   end
 end

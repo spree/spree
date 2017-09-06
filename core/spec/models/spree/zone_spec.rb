@@ -300,7 +300,6 @@ describe Spree::Zone, type: :model do
       before { @source.members.create(zoneable: country1) }
 
       context "when all states contained in one of the countries we check against" do
-
         before do
           state1 = create(:state, country: country1)
           @target.members.create(zoneable: state1)

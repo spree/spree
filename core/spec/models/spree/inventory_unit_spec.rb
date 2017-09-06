@@ -124,9 +124,7 @@ describe Spree::InventoryUnit, type: :model do
       it "does not find inventory units belonging to incomplete orders" do
         expect(Spree::InventoryUnit.backordered_for_stock_item(stock_item)).not_to include(other_unit)
       end
-
     end
-
   end
 
   context "#finalize_units!" do

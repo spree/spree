@@ -574,7 +574,6 @@ describe Spree::Order, type: :model do
       order.next!
       assert_state_changed(order, 'cart', 'complete')
     end
-
   end
 
   context "insert checkout step" do

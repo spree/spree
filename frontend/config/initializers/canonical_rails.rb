@@ -11,5 +11,4 @@ CanonicalRails.setup do |config|
   # Unless whitelisted, these parameters will be omitted
 
   config.whitelisted_parameters = [:keywords, :page, :search, :taxon]
-
 end

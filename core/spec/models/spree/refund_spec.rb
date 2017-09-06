@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Spree::Refund, type: :model do
-
   describe 'create' do
     let(:amount) { 100.0 }
     let(:amount_in_cents) { amount * 100 }
@@ -60,7 +59,6 @@ describe Spree::Refund, type: :model do
         expect(payment.payment_method).not_to receive(:credit)
         subject
       end
-
     end
 
     context "processing is successful" do
@@ -95,7 +93,6 @@ describe Spree::Refund, type: :model do
         expect(payment.order.updater).to receive(:update)
         subject
       end
-
     end
 
     context "processing fails" do

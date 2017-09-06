@@ -33,7 +33,6 @@ module Spree
       event :cancel do
         transition to: :canceled, from: :authorized, if: lambda { |return_authorization| return_authorization.can_cancel_return_items? }
       end
-
     end
 
     extend DisplayMoney
@@ -68,7 +67,6 @@ module Spree
           errors.add(:order, Spree.t(:has_no_shipped_units))
         end
       end
-
 
       def cancel_return_items
         return_items.each { |item| item.cancel! if item.can_cancel? }

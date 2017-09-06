@@ -12,7 +12,6 @@ class OrderSpecificAbility
 end
 
 describe Spree::Admin::OrdersController, type: :controller do
-
   context "with authorization" do
     stub_authorization!
 

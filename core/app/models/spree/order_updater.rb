@@ -51,7 +51,6 @@ module Spree
       update_adjustment_total
     end
 
-
     # give each of the shipments a chance to update themselves
     def update_shipments
       shipments.each do |shipment|

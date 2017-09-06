@@ -17,7 +17,6 @@ describe Spree::CreditCard, type: :model do
   let(:credit_card) { Spree::CreditCard.new }
 
   before(:each) do
-
     @order = create(:order)
     @payment = Spree::Payment.create(amount: 100, order: @order)
 
@@ -192,7 +191,6 @@ describe Spree::CreditCard, type: :model do
     it "does not blow up when passed one number" do
       expect { credit_card.expiry = '12' }.not_to raise_error
     end
-
   end
 
   context "#cc_type=" do

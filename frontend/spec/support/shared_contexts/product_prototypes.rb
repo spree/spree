@@ -1,5 +1,4 @@
 shared_context "product prototype" do
-
   def build_option_type_with_values(name, values)
     ot = FactoryGirl.create(:option_type, name: name)
     values.each do |val|
@@ -26,5 +25,4 @@ shared_context "product prototype" do
     end
     hash
   end
-
 end

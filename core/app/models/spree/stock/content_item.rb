@@ -38,7 +38,6 @@ module Spree
         state.to_s == "backordered"
       end
 
-
       def amount
         price * quantity
       end

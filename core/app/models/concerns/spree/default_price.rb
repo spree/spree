@@ -21,7 +21,6 @@ module Spree
         !self.default_price.nil?
       end
 
-
       def find_or_build_default_price
         default_price || build_default_price
       end

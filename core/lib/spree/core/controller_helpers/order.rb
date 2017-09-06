@@ -93,7 +93,6 @@ module Spree
 
           order
         end
-
       end
     end
   end

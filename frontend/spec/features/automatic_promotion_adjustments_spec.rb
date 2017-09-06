@@ -28,7 +28,6 @@ describe "Automatic promotions", type: :feature, js: true do
   end
 
   context "on the cart page" do
-
     before do
       visit spree.root_path
       click_link product.name

@@ -20,5 +20,4 @@ module Spree::RansackableAttributes
       whitelisted_ransackable_scopes || []
     end
   end
-
 end

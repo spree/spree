@@ -68,7 +68,6 @@ module Spree
                                                                                :small_url,
                                                                                :product_url,
                                                                                :large_url])
-
     end
 
     it 'variants returned do not contain cost price data' do

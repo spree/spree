@@ -144,7 +144,6 @@ describe Spree::CustomerReturn, type: :model do
     let(:return_item)     { create(:return_item, inventory_unit: inventory_unit) }
 
     context "to the initial stock location" do
-
       it "should mark all inventory units are returned" do
         create(:customer_return_without_return_items, return_items: [return_item], stock_location_id: inventory_unit.shipment.stock_location_id)
         expect(inventory_unit.reload.state).to eq 'returned'
@@ -207,7 +206,6 @@ describe Spree::CustomerReturn, type: :model do
     end
 
     context 'when all return items are decided' do
-
       context 'when all return items are rejected' do
         before { customer_return.return_items.each(&:reject!) }
 

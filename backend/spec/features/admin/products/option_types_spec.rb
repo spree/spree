@@ -108,7 +108,5 @@ describe "Option Types", type: :feature, js: true do
     expect(all("div#progress[style]").count).to eq(0)
     # Assert that the field is hidden automatically
     expect(all("tbody#option_values tr").select(&:visible?).count).to eq(0)
-
   end
-
 end

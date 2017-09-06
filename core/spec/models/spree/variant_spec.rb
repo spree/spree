@@ -353,7 +353,6 @@ describe Spree::Variant, type: :model do
     it 'should order by bar than foo' do
       expect(variant.options_text).to eql 'Bar Type: Bar, Foo Type: Foo'
     end
-
   end
 
   describe 'exchange_name' do
@@ -380,7 +379,6 @@ describe Spree::Variant, type: :model do
         expect(variant.exchange_name).to eql 'Foo Type: Foo'
       end
     end
-
   end
 
   describe 'exchange_name' do
@@ -407,7 +405,6 @@ describe Spree::Variant, type: :model do
         expect(variant.exchange_name).to eql 'Foo Type: Foo'
       end
     end
-
   end
 
   describe 'descriptive_name' do
@@ -434,7 +431,6 @@ describe Spree::Variant, type: :model do
         expect(variant.descriptive_name).to eql variant.name + ' - Foo Type: Foo'
       end
     end
-
   end
 
   # Regression test for #2744
@@ -560,7 +556,6 @@ describe Spree::Variant, type: :model do
   end
 
   describe "#should_track_inventory?" do
-
     it 'should not track inventory when global setting is off' do
       Spree::Config[:track_inventory_levels] = false
 

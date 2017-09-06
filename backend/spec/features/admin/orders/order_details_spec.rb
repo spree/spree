@@ -312,7 +312,6 @@ describe "Order Details", type: :feature, js: true do
           end
 
           context 'A shipment has shipped' do
-
             it 'should not show or let me back to the cart page, nor show the shipment edit buttons', js: false do
               order = create(:order, state: 'payment')
               order.shipments.create!(stock_location_id: stock_location.id, state: 'shipped')
@@ -322,7 +321,6 @@ describe "Order Details", type: :feature, js: true do
               expect(page.current_path).to eq(spree.edit_admin_order_path(order))
               expect(page).not_to have_text 'Cart'
             end
-
           end
         end
 
@@ -343,7 +341,6 @@ describe "Order Details", type: :feature, js: true do
               expect(order.shipments.first.inventory_units_for(product.master).count).to eq(2)
               expect(order.shipments.first.stock_location.id).to eq(stock_location.id)
             end
-
           end
 
           context 'but it can backorder' do

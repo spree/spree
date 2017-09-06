@@ -11,7 +11,6 @@ describe Spree::Admin::ReportsController, type: :controller do
     it 'should have the proper sales total report description' do
       expect(Spree::Admin::ReportsController.available_reports[:sales_total][:description]).to eql('Sales Total For All Orders')
     end
-
   end
 
   describe 'ReportsController.add_available_report!' do

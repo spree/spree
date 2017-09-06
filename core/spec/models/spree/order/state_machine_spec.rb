@@ -144,7 +144,6 @@ describe Spree::Order, type: :model do
         allow(shipment).to receive(:update_order)
         allow(Spree::OrderMailer).to receive(:cancel_email).and_return(mail_message = double)
         allow(mail_message).to receive :deliver_later
-
       end
     end
 
@@ -206,7 +205,6 @@ describe Spree::Order, type: :model do
       allow(order).to receive_messages email: "user@spreecommerce.org"
       allow(order).to receive_messages state: "canceled"
       allow(order).to receive_messages allow_resume?: true
-
     end
   end
 end

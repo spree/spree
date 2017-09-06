@@ -78,7 +78,6 @@ describe Spree::Payment, type: :model do
   end
 
   context '.risky' do
-
     let!(:payment_1) { create(:payment, avs_response: 'Y', cvv_response_code: 'M', cvv_response_message: 'Match') }
     let!(:payment_2) { create(:payment, avs_response: 'Y', cvv_response_code: 'M', cvv_response_message: '') }
     let!(:payment_3) { create(:payment, avs_response: 'A', cvv_response_code: 'M', cvv_response_message: 'Match') }
@@ -447,7 +446,6 @@ describe Spree::Payment, type: :model do
         end
       end
     end
-
   end
 
   context "when already processing" do
@@ -591,7 +589,6 @@ describe Spree::Payment, type: :model do
             amount: 100
           )
         end
-
       end
 
       context "when successfully connecting to the gateway" do

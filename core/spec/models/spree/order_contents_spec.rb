@@ -305,7 +305,6 @@ describe Spree::OrderContents, type: :model do
         expect(subject.order).to receive(:update_attributes).with(single_line_item_params)
         subject.update_cart single_line_item_params
       end
-
     end
 
     it "ensures updated shipments" do

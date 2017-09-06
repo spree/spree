@@ -4,7 +4,6 @@ describe 'Payments', type: :feature, js: true do
   stub_authorization!
 
   context "with a pre-existing payment" do
-
     let!(:payment) do
       create(:payment,
              order:          order,

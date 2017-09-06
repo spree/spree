@@ -48,7 +48,6 @@ module Spree
           end
 
           context 'when stock item allows backordering' do
-
             specify { expect(subject.backorderable?).to be true }
 
             it_should_behave_like 'unlimited supply'

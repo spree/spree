@@ -133,7 +133,6 @@ describe Spree::Api::V1::ShipmentsController, type: :controller do
         expect(json_response).to have_attributes(attributes)
         expect(json_response["state"]).to eq("shipped")
       end
-
     end
 
     describe '#mine' do
@@ -182,6 +181,5 @@ describe Spree::Api::V1::ShipmentsController, type: :controller do
         end
       end
     end
-
   end
 end

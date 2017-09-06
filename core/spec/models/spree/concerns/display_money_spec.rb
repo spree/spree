@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 module Spree
-
   describe DisplayMoney do
     let(:test_class) do
       Class.new do

@@ -151,6 +151,5 @@ module Spree
         expect(json_response).to have_attributes(attributes)
       end
     end
-
   end
 end

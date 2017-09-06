@@ -4,7 +4,6 @@ module Spree
       extend ActiveSupport::Concern
 
       module ClassMethods
-
         attr_accessor :callbacks
 
         protected
@@ -42,7 +41,6 @@ module Spree
         when :fails  then callbacks[action].fails_methods.each  {|method| send method }
         end
       end
-
     end
   end
 end

@@ -1,6 +1,5 @@
 module Spree::Preferences
   module PreferableClassMethods
-
     def preference(name, type, *args)
       options = args.extract_options!
       options.assert_valid_keys(:default)

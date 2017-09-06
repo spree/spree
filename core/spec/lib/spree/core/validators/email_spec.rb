@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe EmailValidator do
-
   class Tester
     include ActiveModel::Validations
     attr_accessor :email_address
@@ -46,5 +45,4 @@ describe EmailValidator do
       expect(tester.valid?).to be false
     end
   end
-
 end

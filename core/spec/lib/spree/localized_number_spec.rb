@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Spree::LocalizedNumber do
-
   context ".parse" do
     before do
       I18n.enforce_available_locales = false
@@ -50,5 +49,4 @@ describe Spree::LocalizedNumber do
       end
     end
   end
-
 end

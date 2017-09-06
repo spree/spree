@@ -34,6 +34,5 @@ FactoryGirl.define do
         is_master 1
       end
     end
-
   end
 end

@@ -238,6 +238,5 @@ module Spree
         specify { expect(subject.state_text).to eq('virginia') }
       end
     end
-
   end
 end

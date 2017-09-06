@@ -38,7 +38,6 @@ module Spree
           Spree::Money.new(preferred_amount_max).to_s
         end
 
-
         def ineligible_message_max
           if preferred_operator_max == 'gte'
             eligibility_error_message(:item_total_more_than_or_equal, amount: formatted_amount_max)

@@ -338,6 +338,7 @@ describe Spree::Shipment, type: :model do
         before do
           Spree::ShipmentHandler::UPS = Class.new {
             def initialize(shipment) true end
+
             def perform() true end
           }
         end

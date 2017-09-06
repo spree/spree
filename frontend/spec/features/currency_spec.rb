@@ -14,5 +14,4 @@ describe "Switching currencies in backend", type: :feature do
     Spree::Config[:currency] = "AUD"
     expect { visit spree.root_path }.not_to raise_error
   end
-
 end

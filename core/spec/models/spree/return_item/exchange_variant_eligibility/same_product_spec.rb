@@ -4,7 +4,6 @@ module Spree
   module ReturnItem::ExchangeVariantEligibility
     describe SameProduct, type: :model do
       describe ".eligible_variants" do
-
         context "product has no variants" do
           it "returns the master variant for the same product" do
             product = create(:product)
@@ -37,7 +36,6 @@ module Spree
           expect(SameProduct.eligible_variants(in_stock_variant)).to eq [in_stock_variant]
         end
       end
-
     end
   end
 end

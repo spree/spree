@@ -206,9 +206,7 @@ describe Spree::Promotion, type: :model do
           expect(promotion.orders).to be_empty
         end
       end
-
     end
-
   end
 
   context "#usage_limit_exceeded" do

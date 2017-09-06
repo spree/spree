@@ -113,7 +113,6 @@ module Spree
       end
 
       context "an incomplete order does not exist" do
-
         before do
           order.update_attribute(:state, order_state)
           order.update_attribute(:completed_at, 5.minutes.ago)
@@ -310,7 +309,6 @@ module Spree
     end
 
     context "working with an order" do
-
       let(:variant) { create(:variant) }
       let!(:line_item) { order.contents.add(variant, 1) }
       let!(:payment_method) { create(:check_payment_method) }
@@ -729,7 +727,6 @@ module Spree
           expect(order.considered_risky).to eq(false)
         end
       end
-
     end
   end
 end

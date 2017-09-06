@@ -29,7 +29,6 @@ module Spree
 
       def update
         successful = @taxon.transaction do
-
           parent_id = params[:taxon][:parent_id]
           set_position
           set_parent(parent_id)
@@ -45,7 +44,6 @@ module Spree
           @update_children = true if params[:taxon][:name] != @taxon.name || params[:taxon][:permalink] != @taxon.permalink
 
           @taxon.update_attributes(taxon_params)
-
         end
         if successful
           flash[:success] = flash_message_for(@taxon, :successfully_updated)

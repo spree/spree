@@ -1,7 +1,6 @@
 module Spree
   module Admin
     module AdjustmentsHelper
-
       def display_adjustable(adjustable)
         case adjustable
         when Spree::LineItem

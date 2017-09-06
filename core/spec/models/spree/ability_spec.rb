@@ -128,7 +128,6 @@ describe Spree::Ability, type: :model do
   end
 
   context 'as Guest User' do
-
     context 'for Country' do
       let(:resource) { Spree::Country.new }
       context 'requested by any user' do
@@ -245,7 +244,5 @@ describe Spree::Ability, type: :model do
         it_should_behave_like 'read only'
       end
     end
-
   end
-
 end

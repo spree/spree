@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Spree::Core::Search::Base do
-
   before do
     include Spree::Core::ProductFilters
     @taxon = create(:taxon, name: "Ruby on Rails")
@@ -82,5 +81,4 @@ describe Spree::Core::Search::Base do
     searcher.current_currency = 'EUR'
     expect(searcher.retrieve_products).to eq([@product1])
   end
-
 end

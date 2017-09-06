@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe "Cancelling + Resuming", type: :feature do
-
   stub_authorization!
 
   let(:user) { double(id: 123, has_spree_role?: true, spree_api_key: 'fake', email: 'spree@example.com') }

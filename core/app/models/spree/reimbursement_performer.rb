@@ -1,5 +1,4 @@
 module Spree
-
   class ReimbursementPerformer
 
     class << self
@@ -39,5 +38,4 @@ module Spree
     end
 
   end
-
 end

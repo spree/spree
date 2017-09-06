@@ -66,7 +66,6 @@ module Spree
           def get_layout
             layout ||= Spree::Config[:layout]
           end
-
         end
       end
     end

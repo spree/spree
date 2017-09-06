@@ -16,7 +16,6 @@ module Spree
         end
 
         context "simulate is true" do
-
           it 'does not perform an exchange and returns the exchange object' do
             expect(new_exchange).not_to receive(:perform!)
             expect(subject).to eq [new_exchange]

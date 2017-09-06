@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Spree::Reimbursement, type: :model do
-
   describe "#display_total" do
     let(:total)         { 100.50 }
     let(:currency)      { "USD" }

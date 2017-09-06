@@ -53,6 +53,5 @@ describe Spree::ReturnItem::EligibilityValidator::InventoryShipped do
         expect(subject).to eq false
       end
     end
-
   end
 end

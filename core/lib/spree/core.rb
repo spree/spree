@@ -19,7 +19,6 @@ require 'state_machines-activerecord'
 StateMachines::Machine.ignore_method_conflicts = true
 
 module Spree
-
   mattr_accessor :user_class
 
   def self.user_class
