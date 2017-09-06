@@ -44,7 +44,7 @@ module Spree
 
       included_rates = rates.select(&:included_in_price)
       if included_rates.any?
-        pre_tax_amount /= (1 + included_rates.map(&:amount).sum)
+        pre_tax_amount /= (1 + included_rates.sum(&:amount))
       end
 
       item.update_column(:pre_tax_amount, pre_tax_amount)
@@ -85,7 +85,7 @@ module Spree
       potential_rates_for_zone(options[:tax_zone]).
         included_in_price.
         for_tax_category(options[:tax_category]).
-        pluck(:amount).sum
+        sum(:amount)
     end
 
     def adjust(order, item)

@@ -15,7 +15,7 @@ module Spree
 
     private
     def total(content_items)
-      content_items.map(&:amount).sum
+      content_items.sum(&:amount)
     end
   end
 end

@@ -124,7 +124,7 @@ module Spree
     end
 
     def offsets_total
-      offsets.pluck(:amount).sum
+      offsets.sum(:amount)
     end
 
     def credit_allowed
