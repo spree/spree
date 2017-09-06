@@ -99,7 +99,7 @@ module Spree
     end
 
     def require_phone?
-      true
+      Spree::Config[:address_requires_phone]
     end
 
     def require_zipcode?
