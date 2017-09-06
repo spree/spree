@@ -749,6 +749,7 @@ en:
     excl: excl.
     expiration: Expiration
     extension: Extension
+    extensions_directory: Extensions Directory
     existing_shipments: Existing shipments
     failed_payment_attempts: Failed Payment Attempts
     filename: Filename
@@ -838,6 +839,7 @@ en:
     items_to_be_reimbursed: Items to be reimbursed
     items_reimbursed: Items reimbursed
     jirafe: Jirafe
+    join_slack: Join Slack
     last_name: Last Name
     last_name_begins_with: Last Name Begins With
     learn_more: Learn More
