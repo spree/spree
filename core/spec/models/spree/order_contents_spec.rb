@@ -237,6 +237,17 @@ describe Spree::OrderContents, type: :model do
       expect(order.reload.line_items).to_not include(line_item)
     end
 
+    context 'should not remove line_item' do
+      let(:line_item) { subject.add(variant, 1) }
+
+      before do
+        allow(subject.order.line_items).to receive(:destroy).with(line_item).and_return(false)
+        subject.remove_line_item(line_item)
+      end
+
+      it { expect(order.reload.line_items).to include(line_item) }
+    end
+
     it "should update order totals" do
       expect(order.item_total.to_f).to eq(0.00)
       expect(order.total.to_f).to eq(0.00)
