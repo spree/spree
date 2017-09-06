@@ -645,9 +645,9 @@ describe Spree::Order, type: :model do
 
       unless persisted
         it "does not persist the order" do
-          expect { order.associate_user!(user) }
-            .to_not change(order, :persisted?)
-            .from(false)
+          expect { order.associate_user!(user) }.
+            to_not change(order, :persisted?).
+            from(false)
         end
       end
     end
@@ -692,9 +692,9 @@ describe Spree::Order, type: :model do
       let(:user) { FactoryGirl.build(:user_with_addreses) }
 
       it "does not persist the user" do
-        expect { order.associate_user!(user) }
-          .to_not change(user, :persisted?)
-          .from(false)
+        expect { order.associate_user!(user) }.
+          to_not change(user, :persisted?).
+          from(false)
       end
 
       it_should_behave_like "#associate_user!"

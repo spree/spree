@@ -38,8 +38,8 @@ module Spree
     end
 
     def self.calculators
-      spree_calculators.send(model_name_without_spree_namespace)
-        .select { |c| c.to_s.constantize < Spree::ShippingCalculator }
+      spree_calculators.send(model_name_without_spree_namespace).
+        select { |c| c.to_s.constantize < Spree::ShippingCalculator }
     end
 
     def tax_category

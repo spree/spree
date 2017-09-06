@@ -28,8 +28,8 @@ describe Spree::Product, type: :model do
       end
 
       it 'calls #duplicate_extra' do
-        expect_any_instance_of(Spree::Product).to receive(:duplicate_extra)
-          .with(product)
+        expect_any_instance_of(Spree::Product).to receive(:duplicate_extra).
+          with(product)
         expect(product).to_not receive(:duplicate_extra)
         product.duplicate
       end

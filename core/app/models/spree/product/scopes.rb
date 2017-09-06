@@ -98,9 +98,9 @@ module Spree
     # a simple test for product with a certain property-value pairing
     # note that it can test for properties with NULL values, but not for absent values
     add_search_scope :with_property_value do |property, value|
-      joins(:properties)
-        .where("#{ProductProperty.table_name}.value = ?", value)
-        .where(property_conditions(property))
+      joins(:properties).
+        where("#{ProductProperty.table_name}.value = ?", value).
+        where(property_conditions(property))
     end
 
     add_search_scope :with_option do |option|

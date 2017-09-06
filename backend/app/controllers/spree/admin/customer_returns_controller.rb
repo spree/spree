@@ -36,10 +36,10 @@ module Spree
 
       def collection
         parent # trigger loading the order
-        @collection ||= Spree::ReturnItem
-          .accessible_by(current_ability, :read)
-          .where(inventory_unit_id: @order.inventory_units.pluck(:id))
-          .map(&:customer_return).uniq.compact
+        @collection ||= Spree::ReturnItem.
+          accessible_by(current_ability, :read).
+          where(inventory_unit_id: @order.inventory_units.pluck(:id)).
+          map(&:customer_return).uniq.compact
         @customer_returns = @collection
       end
 

@@ -40,9 +40,9 @@ module Spree
     self.whitelisted_ransackable_attributes = ['path', 'promotion_category_id', 'code']
 
     def self.with_coupon_code(coupon_code)
-      where("lower(#{table_name}.code) = ?", coupon_code.strip.downcase)
-        .includes(:promotion_actions).where.not(spree_promotion_actions: { id: nil })
-        .first
+      where("lower(#{table_name}.code) = ?", coupon_code.strip.downcase).
+        includes(:promotion_actions).where.not(spree_promotion_actions: { id: nil }).
+        first
     end
 
     def self.active

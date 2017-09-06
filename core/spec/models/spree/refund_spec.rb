@@ -30,10 +30,10 @@ describe Spree::Refund, type: :model do
     subject { create(:refund, payment: payment, amount: amount, reason: refund_reason, transaction_id: nil) }
 
     before do
-      allow(payment.payment_method)
-        .to receive(:credit)
-        .with(amount_in_cents, payment.source, payment.transaction_id, {originator: an_instance_of(Spree::Refund)})
-        .and_return(gateway_response)
+      allow(payment.payment_method).
+        to receive(:credit).
+        with(amount_in_cents, payment.source, payment.transaction_id, {originator: an_instance_of(Spree::Refund)}).
+        and_return(gateway_response)
     end
 
     context "transaction id exists on creation" do
@@ -115,10 +115,10 @@ describe Spree::Refund, type: :model do
       end
 
       it 'should not supply the payment source' do
-        expect(payment.payment_method)
-          .to receive(:credit)
-          .with(amount * 100, payment.transaction_id, {originator: an_instance_of(Spree::Refund)})
-          .and_return(gateway_response)
+        expect(payment.payment_method).
+          to receive(:credit).
+          with(amount * 100, payment.transaction_id, {originator: an_instance_of(Spree::Refund)}).
+          and_return(gateway_response)
 
         subject
       end
@@ -130,10 +130,10 @@ describe Spree::Refund, type: :model do
       end
 
       it 'should supply the payment source' do
-        expect(payment.payment_method)
-          .to receive(:credit)
-          .with(amount_in_cents, payment.source, payment.transaction_id, {originator: an_instance_of(Spree::Refund)})
-          .and_return(gateway_response)
+        expect(payment.payment_method).
+          to receive(:credit).
+          with(amount_in_cents, payment.source, payment.transaction_id, {originator: an_instance_of(Spree::Refund)}).
+          and_return(gateway_response)
 
         subject
       end

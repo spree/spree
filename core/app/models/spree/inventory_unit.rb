@@ -17,11 +17,11 @@ module Spree
     scope :shipped, -> { where state: 'shipped' }
     scope :returned, -> { where state: 'returned' }
     scope :backordered_per_variant, ->(stock_item) do
-      includes(:shipment, :order)
-        .where.not(spree_shipments: { state: 'canceled' })
-        .where(variant_id: stock_item.variant_id)
-        .where.not(spree_orders: { completed_at: nil })
-        .backordered.order("spree_orders.completed_at ASC")
+      includes(:shipment, :order).
+        where.not(spree_shipments: { state: 'canceled' }).
+        where(variant_id: stock_item.variant_id).
+        where.not(spree_orders: { completed_at: nil }).
+        backordered.order("spree_orders.completed_at ASC")
     end
 
     validates :quantity, numericality: { greater_than: 0 }
