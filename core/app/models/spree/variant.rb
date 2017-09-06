@@ -67,7 +67,7 @@ module Spree
 
     scope :not_deleted, -> { where("#{Variant.quoted_table_name}.deleted_at IS NULL") }
 
-    scope :for_currency_and_available_price_amount, -> (currency) do
+    scope :for_currency_and_available_price_amount, -> (currency = nil) do
       currency ||= Spree::Config[:currency]
       joins(:prices).where("spree_prices.currency = ?", currency).where("spree_prices.amount IS NOT NULL").distinct
     end

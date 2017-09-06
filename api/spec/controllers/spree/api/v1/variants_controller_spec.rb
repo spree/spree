@@ -20,6 +20,21 @@ module Spree
       stub_authentication!
     end
 
+    describe "#variant_includes" do
+      let(:variants_includes_list) do
+        [{ option_values: :option_type }, :product,
+          :default_price, :images, { stock_items: :stock_location }]
+      end
+      it { expect(controller).to receive(:variant_includes).and_return(variants_includes_list) }
+      after { api_get :index }
+    end
+
+    it "adds for_currency_and_available_price_amount scope to variants list" do
+      expect(Spree::Variant).to receive(:for_currency_and_available_price_amount).
+        and_return(Spree::Variant.for_currency_and_available_price_amount)
+      api_get :index
+    end
+
     it "can see a paginated list of variants" do
       api_get :index
       first_variant = json_response["variants"].first
@@ -157,7 +172,7 @@ module Spree
       # Test for #2141
       context "deleted variants" do
         before do
-          variant.update_column(:deleted_at, Time.current)
+          variant.update_columns(deleted_at: Time.current, discontinue_on: Time.current + 1)
         end
 
         it "are visible by admin" do
