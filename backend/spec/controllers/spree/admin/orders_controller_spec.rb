@@ -127,14 +127,14 @@ describe Spree::Admin::OrdersController, type: :controller do
 
         context "when order has shipped shipments" do
           before do
-            allow(order).to receive_message_chain(:shipments, :shipped, :count).and_return(1)
-            allow(controller).to receive_message_chain(:shipments, :shipped, :count).and_return(1)
+            allow(order).to receive_message_chain(:shipments, :shipped, :exists?).and_return(true)
+            allow(controller).to receive_message_chain(:shipments, :shipped, :exists?).and_return(true)
           end
 
           describe "expects to receive" do
             it { expect(order).to receive(:completed?).and_return(false) }
             it { expect(order).to receive(:refresh_shipment_rates).with(display_value).and_return(true) }
-            it { expect(order).to receive_message_chain(:shipments, :shipped, :count).and_return(1) }
+            it { expect(order).to receive_message_chain(:shipments, :shipped, :exists?).and_return(true) }
             after { send_request }
           end
 
@@ -147,13 +147,13 @@ describe Spree::Admin::OrdersController, type: :controller do
 
         context "when order has no shipped shipments" do
           before do
-            allow(order).to receive_message_chain(:shipments, :shipped, :count).and_return(0)
+            allow(order).to receive_message_chain(:shipments, :shipped, :exists?).and_return(false)
           end
 
           describe "expects to receive" do
             it { expect(order).to receive(:completed?).and_return(false) }
             it { expect(order).to receive(:refresh_shipment_rates).with(display_value).and_return(true) }
-            it { expect(order).to receive_message_chain(:shipments, :shipped, :count).and_return(0) }
+            it { expect(order).to receive_message_chain(:shipments, :shipped, :exists?).and_return(false) }
             after { send_request }
           end
 
@@ -171,12 +171,12 @@ describe Spree::Admin::OrdersController, type: :controller do
 
         context "when order has shipped shipments" do
           before do
-            allow(order).to receive_message_chain(:shipments, :shipped, :count).and_return(1)
-            allow(controller).to receive_message_chain(:shipments, :shipped, :count).and_return(1)
+            allow(order).to receive_message_chain(:shipments, :shipped, :exists?).and_return(true)
+            allow(controller).to receive_message_chain(:shipments, :shipped, :exists?).and_return(true)
           end
 
           describe "expects to receive" do
-            it { expect(order).to receive_message_chain(:shipments, :shipped, :count).and_return(1) }
+            it { expect(order).to receive_message_chain(:shipments, :shipped, :exists?).and_return(true) }
             after { send_request }
           end
 
@@ -189,11 +189,11 @@ describe Spree::Admin::OrdersController, type: :controller do
 
         context "when order has no shipped shipments" do
           before do
-            allow(order).to receive_message_chain(:shipments, :shipped, :count).and_return(0)
+            allow(order).to receive_message_chain(:shipments, :shipped, :exists?).and_return(false)
           end
 
           describe "expects to receive" do
-            it { expect(order).to receive_message_chain(:shipments, :shipped, :count).and_return(0) }
+            it { expect(order).to receive_message_chain(:shipments, :shipped, :exists?).and_return(false) }
             after { send_request }
           end
 

@@ -775,11 +775,11 @@ describe Spree::Order, type: :model do
 
   context "#allow_checkout?" do
     it "should be true if there are line_items in the order" do
-      allow(order).to receive_message_chain(:line_items, count: 1)
+      allow(order).to receive_message_chain(:line_items, :exists?).and_return(true)
       expect(order.checkout_allowed?).to be true
     end
     it "should be false if there are no line_items in the order" do
-      allow(order).to receive_message_chain(:line_items, count: 0)
+      allow(order).to receive_message_chain(:line_items, :exists?).and_return(false)
       expect(order.checkout_allowed?).to be false
     end
   end

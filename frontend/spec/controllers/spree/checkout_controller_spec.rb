@@ -386,10 +386,10 @@ describe Spree::CheckoutController, type: :controller do
     let(:product) { mock_model(Spree::Product, name: "Amazing Object") }
     let(:variant) { mock_model(Spree::Variant) }
     let(:line_item) { mock_model Spree::LineItem, insufficient_stock?: true, amount: 0 }
-    let(:order) { create(:order) }
+    let(:order) { create(:order_with_line_items) }
 
     before do
-      allow(order).to receive_messages(line_items: [line_item], state: "payment")
+      allow(order).to receive_messages(insufficient_stock_lines: [line_item], state: "payment")
 
       configure_spree_preferences do |config|
         config.track_inventory_levels = true
