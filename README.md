@@ -4,6 +4,7 @@
 * Join our Slack at [slack.spreecommerce.com](http://slack.spreecommerce.com/)
 * [Extensions](https://github.com/spree-contrib)
 * [Documentation](http://guides.spreecommerce.org)
+* [Roadmap](https://github.com/spree/spree/milestones?direction=asc&sort=due_date&state=open)
 * Spree success stories from [OpenCommerce Conf](http://opencommerceconf.org/)
 
 [![Gem Version](https://badge.fury.io/rb/spree.svg)](https://badge.fury.io/rb/spree) [![Circle CI](https://circleci.com/gh/spree/spree.svg?style=shield)](https://circleci.com/gh/spree/spree/tree/master)
