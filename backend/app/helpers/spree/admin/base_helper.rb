@@ -84,24 +84,24 @@ module Spree
 
       def preference_field_options(options)
         field_options = case options[:type]
-        when :integer
+                        when :integer
           {
             size: 10,
             class: 'input_integer form-control'
           }
-        when :boolean
+                        when :boolean
           {}
-        when :string
+                        when :string
           {
             size: 10,
             class: 'input_string form-control'
           }
-        when :password
+                        when :password
           {
             size: 10,
             class: 'password_string form-control'
           }
-        when :text
+                        when :text
           {
             rows: 15,
             cols: 85,

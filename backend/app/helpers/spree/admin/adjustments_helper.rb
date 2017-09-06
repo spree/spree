@@ -4,11 +4,11 @@ module Spree
 
       def display_adjustable(adjustable)
         case adjustable
-          when Spree::LineItem
+        when Spree::LineItem
             display_line_item(adjustable)
-          when Spree::Shipment
+        when Spree::Shipment
             display_shipment(adjustable)
-          when Spree::Order
+        when Spree::Order
             display_order(adjustable)
         end
 

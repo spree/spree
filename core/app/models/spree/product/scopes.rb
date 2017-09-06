@@ -30,8 +30,8 @@ module Spree
     def self.property_conditions(property)
       properties = Property.table_name
       conditions = case property
-      when String   then { "#{properties}.name" => property }
-      when Property then { "#{properties}.id" => property.id }
+                   when String   then { "#{properties}.name" => property }
+                   when Property then { "#{properties}.id" => property.id }
       else               { "#{properties}.id" => property.to_i }
       end
     end
@@ -106,8 +106,8 @@ module Spree
     add_search_scope :with_option do |option|
       option_types = OptionType.table_name
       conditions = case option
-      when String     then { "#{option_types}.name" => option }
-      when OptionType then { "#{option_types}.id" => option.id }
+                   when String     then { "#{option_types}.name" => option }
+                   when OptionType then { "#{option_types}.id" => option.id }
       else                 { "#{option_types}.id" => option.to_i }
       end
 
@@ -117,8 +117,8 @@ module Spree
     add_search_scope :with_option_value do |option, value|
       option_values = OptionValue.table_name
       option_type_id = case option
-        when String then OptionType.find_by(name: option) || option.to_i
-        when OptionType then option.id
+                       when String then OptionType.find_by(name: option) || option.to_i
+                       when OptionType then option.id
         else option.to_i
       end
 

@@ -106,10 +106,10 @@ use rake db:load_file[/absolute/path/to/sample/filename.rb]}
       STDOUT.flush
       input = STDIN.gets.chomp
       case input.upcase
-        when "Y"
+      when "Y"
           return true
 
-        when "N"
+      when "N"
           puts "aborting ....."
           return false
         else

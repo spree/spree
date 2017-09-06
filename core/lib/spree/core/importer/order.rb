@@ -106,7 +106,7 @@ module Spree
         def self.create_line_items_from_params(line_items, order)
           return {} unless line_items
           iterator = case line_items
-          when Hash
+                     when Hash
             ActiveSupport::Deprecation.warn(<<-EOS, caller)
               Passing a hash is now deprecated and will be removed in Spree 4.0.
               It is recommended that you pass it as an array instead.
@@ -134,7 +134,7 @@ module Spree
               }
             EOS
             :each_value
-          when Array
+                     when Array
             :each
           end
 
