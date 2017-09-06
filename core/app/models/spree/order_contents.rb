@@ -98,8 +98,8 @@ module Spree
                merge( { currency: order.currency } )
 
         line_item = order.line_items.new(quantity: quantity,
-                                          variant: variant,
-                                          options: opts)
+                                         variant: variant,
+                                         options: opts)
       end
       line_item.target_shipment = options[:shipment] if options.has_key? :shipment
       line_item.save!

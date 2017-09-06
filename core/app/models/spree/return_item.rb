@@ -152,7 +152,7 @@ module Spree
       # will have a different variant than the inventory unit itself
       return unless exchange_required?
       exchange_inventory_units.build(variant: exchange_variant, line_item: inventory_unit.line_item,
-                                      order: inventory_unit.order, quantity: return_quantity)
+                                     order: inventory_unit.order, quantity: return_quantity)
     end
 
     def exchange_shipments

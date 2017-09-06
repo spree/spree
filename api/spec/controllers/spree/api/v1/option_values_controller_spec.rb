@@ -70,7 +70,7 @@ module Spree
       it "cannot alter an option value" do
         original_name = option_type.name
         api_put :update, id: option_type.id,
-                          option_value: {
+                         option_value: {
                             name: "Option Value"
                           }
         assert_not_found!

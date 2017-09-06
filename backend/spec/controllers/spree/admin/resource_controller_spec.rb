@@ -128,7 +128,7 @@ describe Spree::Admin::WidgetsController, type: :controller do
 
     subject do
       spree_post :update_positions, id: widget_1.to_param,
-        positions: { widget_1.id => '2', widget_2.id => '1' }, format: 'js'
+                                    positions: { widget_1.id => '2', widget_2.id => '1' }, format: 'js'
     end
 
     it 'updates the position of widget 1' do

@@ -171,7 +171,7 @@ module Spree
         shipment.refresh_rates
         shipping_rate = shipment.shipping_rates.where(selected: false).first
         api_put :update, id: order.to_param, order_token: order.guest_token,
-          order: { shipments_attributes: { "0" => { selected_shipping_rate_id: shipping_rate.id, id: shipment.id } } }
+                         order: { shipments_attributes: { "0" => { selected_shipping_rate_id: shipping_rate.id, id: shipment.id } } }
         expect(response.status).to eq(200)
         # Find the correct shipment...
         json_shipment = json_response['shipments'].detect { |s| s["id"] == shipment.id }
@@ -186,7 +186,7 @@ module Spree
       it "can update payment method and transition from payment to confirm" do
         order.update_column(:state, "payment")
         api_put :update, id: order.to_param, order_token: order.guest_token,
-          order: { payments_attributes: [{ payment_method_id: @payment_method.id }] }
+                         order: { payments_attributes: [{ payment_method_id: @payment_method.id }] }
         expect(json_response['state']).to eq('confirm')
         expect(json_response['payments'][0]['payment_method']['name']).to eq(@payment_method.name)
         expect(json_response['payments'][0]['amount']).to eq(order.total.to_s)
@@ -204,8 +204,8 @@ module Spree
         }
 
         api_put :update, id: order.to_param, order_token: order.guest_token,
-          order: { payments_attributes: [{ payment_method_id: @payment_method.id.to_s }],
-                      payment_source: { @payment_method.id.to_s => source_attributes } }
+                         order: { payments_attributes: [{ payment_method_id: @payment_method.id.to_s }],
+                                  payment_source: { @payment_method.id.to_s => source_attributes } }
         expect(json_response['payments'][0]['payment_method']['name']).to eq(@payment_method.name)
         expect(json_response['payments'][0]['amount']).to eq(order.total.to_s)
         expect(response.status).to eq(200)
@@ -214,10 +214,10 @@ module Spree
       it "returns errors when source is missing attributes" do
         order.update_column(:state, "payment")
         api_put :update, id: order.to_param, order_token: order.guest_token,
-          order: {
+                         order: {
             payments_attributes: [{ payment_method_id: @payment_method.id }]
           },
-          payment_source: {
+                         payment_source: {
             @payment_method.id.to_s => { name: "Spree" }
           }
 
@@ -234,7 +234,7 @@ module Spree
         credit_card = create(:credit_card, user_id: order.user_id, payment_method_id: @payment_method.id)
 
         api_put :update, id: order.to_param, order_token: order.guest_token,
-          order: { existing_card: credit_card.id }
+                         order: { existing_card: credit_card.id }
 
         expect(response.status).to eq 200
         expect(order.credit_cards).to match_array [credit_card]
@@ -258,7 +258,7 @@ module Spree
       it "can update the special instructions for an order" do
         instructions = "Don't drop it. (Please)"
         api_put :update, id: order.to_param, order_token: order.guest_token,
-          order: { special_instructions: instructions }
+                         order: { special_instructions: instructions }
         expect(json_response['special_instructions']).to eql(instructions)
       end
 
@@ -268,7 +268,7 @@ module Spree
           user = create(:user)
           # Need to pass email as well so that validations succeed
           api_put :update, id: order.to_param, order_token: order.guest_token,
-            order: { user_id: user.id, email: "guest@spreecommerce.org" }
+                           order: { user_id: user.id, email: "guest@spreecommerce.org" }
           expect(response.status).to eq(200)
           expect(json_response['user_id']).to eq(user.id)
         end
@@ -276,7 +276,7 @@ module Spree
 
       it "can assign an email to the order" do
         api_put :update, id: order.to_param, order_token: order.guest_token,
-          order: { email: "guest@spreecommerce.org" }
+                         order: { email: "guest@spreecommerce.org" }
         expect(json_response['email']).to eq("guest@spreecommerce.org")
         expect(response.status).to eq(200)
       end

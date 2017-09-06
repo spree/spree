@@ -60,7 +60,7 @@ module Spree
 
     def find_stock_item
       Spree::StockItem.where(stock_location_id: shipment.stock_location_id,
-        variant_id: variant_id).first
+                             variant_id: variant_id).first
     end
 
     def self.split(original_inventory_unit, extract_quantity)

@@ -9,8 +9,8 @@ describe Spree::ReturnAuthorization, type: :model do
   let(:variant) { order.variants.first }
   let(:return_authorization) do
     Spree::ReturnAuthorization.new(order: order,
-      stock_location_id: stock_location.id,
-      return_authorization_reason_id: rma_reason.id)
+                                   stock_location_id: stock_location.id,
+                                   return_authorization_reason_id: rma_reason.id)
   end
 
   context "save" do

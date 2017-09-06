@@ -250,8 +250,8 @@ module Spree
       describe "creating a product" do
         it "can create a new product" do
           api_post :create, product: { name: "The Other Product",
-                                          price: 19.99,
-                                          shipping_category_id: create(:shipping_category).id }
+                                       price: 19.99,
+                                       shipping_category_id: create(:shipping_category).id }
           expect(json_response).to have_attributes(base_attributes)
           expect(response.status).to eq(201)
         end

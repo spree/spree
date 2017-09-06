@@ -4,11 +4,11 @@ module Spree
 
     included do
       belongs_to :bill_address, foreign_key: :bill_address_id, class_name: 'Spree::Address',
-                 optional: true
+                                optional: true
       alias_attribute :billing_address, :bill_address
 
       belongs_to :ship_address, foreign_key: :ship_address_id, class_name: 'Spree::Address',
-                 optional: true
+                                optional: true
       alias_attribute :shipping_address, :ship_address
 
       accepts_nested_attributes_for :ship_address, :bill_address

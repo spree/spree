@@ -26,8 +26,8 @@ module Spree
         expect do
           api_post :create,
                    image: { attachment: upload_image('thinking-cat.jpg'),
-                               viewable_type: 'Spree::Variant',
-                               viewable_id: product.master.to_param  },
+                            viewable_type: 'Spree::Variant',
+                            viewable_id: product.master.to_param  },
                    product_id: product.id
           expect(response.status).to eq(201)
           expect(json_response).to have_attributes(attributes)

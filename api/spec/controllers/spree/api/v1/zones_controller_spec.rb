@@ -64,7 +64,7 @@ module Spree
 
       it "updates a zone" do
         params = { id: @zone.id,
-          zone: {
+                   zone: {
             name: "North Pole",
             zone_members: [
               {

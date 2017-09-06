@@ -652,7 +652,7 @@ describe Spree::Payment, type: :model do
 
     it "errors when payment source not valid" do
       params = { amount: 100, payment_method: gateway,
-        source_attributes: {expiry: "1 / 12" }}
+                 source_attributes: {expiry: "1 / 12" }}
 
       payment = Spree::Payment.new(params)
       expect(payment).not_to be_valid
