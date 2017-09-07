@@ -35,7 +35,7 @@ module Spree
             self.spree_responders = {}
           end
 
-          def respond_override(options={})
+          def respond_override(options = {})
             unless options.blank?
               action_name = options.keys.first
               action_value = options.values.first

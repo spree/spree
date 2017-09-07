@@ -4,7 +4,7 @@ module Spree
       attr_reader :stock_location, :contents
       attr_accessor :shipping_rates
 
-      def initialize(stock_location, contents=[])
+      def initialize(stock_location, contents = [])
         @stock_location = stock_location
         @contents = contents
         @shipping_rates = Array.new

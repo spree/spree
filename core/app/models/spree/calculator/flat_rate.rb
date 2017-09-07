@@ -9,7 +9,7 @@ module Spree
       Spree.t(:flat_rate_per_order)
     end
 
-    def compute(object=nil)
+    def compute(object = nil)
       if object && preferred_currency.upcase == object.currency.upcase
         preferred_amount
       else

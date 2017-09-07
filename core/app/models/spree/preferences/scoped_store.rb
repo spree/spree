@@ -1,6 +1,6 @@
 module Spree::Preferences
   class ScopedStore
-    def initialize prefix, suffix=nil
+    def initialize prefix, suffix = nil
       @prefix = prefix
       @suffix = suffix
     end

@@ -109,7 +109,7 @@ module Spree
         ["Spree::#{model_name.classify}", model_name.classify, model_name.gsub('_', '/').classify].find(&:safe_constantize).try(:safe_constantize)
       end
 
-      def link_to_clone(resource, options={})
+      def link_to_clone(resource, options = {})
         options[:data] = { action: 'clone', :'original-title' => Spree.t(:clone) }
         options[:class] = 'btn btn-primary btn-sm with-tip'
         options[:method] = :post
@@ -117,20 +117,20 @@ module Spree
         button_link_to '', clone_object_url(resource), options
       end
 
-      def link_to_edit(resource, options={})
+      def link_to_edit(resource, options = {})
         url = options[:url] || edit_object_url(resource)
         options[:data] = { action: 'edit' }
         options[:class] = 'btn btn-primary btn-sm'
         link_to_with_icon('edit', Spree.t(:edit), url, options)
       end
 
-      def link_to_edit_url(url, options={})
+      def link_to_edit_url(url, options = {})
         options[:data] = { action: 'edit' }
         options[:class] = 'btn btn-primary btn-sm'
         link_to_with_icon('edit', Spree.t(:edit), url, options)
       end
 
-      def link_to_delete(resource, options={})
+      def link_to_delete(resource, options = {})
         url = options[:url] || object_url(resource)
         name = options[:name] || Spree.t(:delete)
         options[:class] = 'btn btn-danger btn-sm delete-resource'
@@ -156,7 +156,7 @@ module Spree
       end
 
       #Override: Add disable_with option to prevent multiple request on consecutive clicks
-      def button(text, icon_name = nil, button_type = 'submit', options={})
+      def button(text, icon_name = nil, button_type = 'submit', options = {})
         if icon_name
           icon = content_tag(:span, '', class: "icon icon-#{icon_name}")
           text.insert(0, icon + ' ')

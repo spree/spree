@@ -5,7 +5,7 @@ module Spree
       @body_class
     end
 
-    def breadcrumbs(taxon, separator='&nbsp;')
+    def breadcrumbs(taxon, separator = '&nbsp;')
       return '' if current_page?('/') || taxon.nil?
       separator = raw(separator)
       crumbs = [content_tag(:li, content_tag(:span, link_to(content_tag(:span, Spree.t(:home), itemprop: 'name'), spree.root_path, itemprop: 'url') + separator, itemprop: 'item'), itemscope: 'itemscope', itemtype: 'https://schema.org/ListItem', itemprop: 'itemListElement')]

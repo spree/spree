@@ -2,7 +2,7 @@ module Spree
   class Responder < ::ActionController::Responder #:nodoc:
     attr_accessor :on_success, :on_failure
 
-    def initialize(controller, resources, options={})
+    def initialize(controller, resources, options = {})
       super
 
       class_name = controller.class.name.to_sym

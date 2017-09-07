@@ -7,7 +7,7 @@ module CapybaraExt
     find(".icon-#{type}").click
   end
 
-  def eventually_fill_in(field, options={})
+  def eventually_fill_in(field, options = {})
     expect(page).to have_css('#' + field)
     fill_in field, options
   end
@@ -55,7 +55,7 @@ module CapybaraExt
     targetted_select2(value, options)
   end
 
-  def select2_no_label value, options={}
+  def select2_no_label value, options = {}
     raise "Must pass a hash containing 'from'" if (not options.is_a?(Hash)) || (not options.has_key?(:from))
 
     placeholder = options[:from]

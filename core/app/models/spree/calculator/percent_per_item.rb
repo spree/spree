@@ -11,7 +11,7 @@ module Spree
       Spree.t(:percent_per_item)
     end
 
-    def compute(object=nil)
+    def compute(object = nil)
       ActiveSupport::Deprecation.warn(<<-EOS, caller)
         Spree::Calculator::PercentPerItem will be removed in Spree 3.4
         There is now a Promotion Action which deals with these types of promotions instead

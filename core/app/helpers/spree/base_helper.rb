@@ -32,7 +32,7 @@ module Spree
       end
     end
 
-    def logo(image_path=Spree::Config[:logo])
+    def logo(image_path = Spree::Config[:logo])
       link_to image_tag(image_path), spree.respond_to?(:root_path) ? spree.root_path : main_app.root_path
     end
 
@@ -78,7 +78,7 @@ module Spree
     end
 
     # human readable list of variant options
-    def variant_options(v, options={})
+    def variant_options(v, options = {})
       v.options_text
     end
 

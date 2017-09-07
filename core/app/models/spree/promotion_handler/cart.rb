@@ -16,7 +16,7 @@ module Spree
       attr_reader :line_item, :order
       attr_accessor :error, :success
 
-      def initialize(order, line_item=nil)
+      def initialize(order, line_item = nil)
         @order, @line_item = order, line_item
       end
 
