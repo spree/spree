@@ -264,7 +264,7 @@ describe Spree::Order, type: :model do
 
           context 'if there are no shipping rates for any shipment' do
             it 'raises an InvalidTransitionError' do
-              transition = lambda { order.next! }
+              transition = -> { order.next! }
               expect(transition).to raise_error(StateMachines::InvalidTransition, /#{Spree.t(:items_cannot_be_shipped)}/)
             end
 

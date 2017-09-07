@@ -10,7 +10,7 @@ module Spree
     before_save :ensure_default_exists_and_is_unique
     before_destroy :validate_not_default
 
-    scope :by_url, lambda { |url| where('url like ?', "%#{url}%") }
+    scope :by_url, ->(url) { where('url like ?', "%#{url}%") }
 
     after_commit :clear_cache
 

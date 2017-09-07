@@ -157,7 +157,7 @@ module Spree
         rake_options << "ADMIN_EMAIL=#{options[:admin_email]}" if options[:admin_email]
         rake_options << "ADMIN_PASSWORD=#{options[:admin_password]}" if options[:admin_password]
 
-        cmd = lambda { rake("db:seed #{rake_options.join(' ')}") }
+        cmd = -> { rake("db:seed #{rake_options.join(' ')}") }
         if options[:auto_accept] || (options[:admin_email] && options[:admin_password])
           silence_stream(STDOUT) do
             silence_stream(STDERR) do
