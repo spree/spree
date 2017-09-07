@@ -12,12 +12,12 @@ module Spree
           if report_description_key.nil?
             report_description_key = "#{report_key}_description"
           end
-          @@available_reports[report_key] = {name: Spree.t(report_key), description: Spree.t(report_description_key)}
+          @@available_reports[report_key] = { name: Spree.t(report_key), description: Spree.t(report_description_key) }
         end
       end
 
       def initialize
-        super 
+        super
         ReportsController.add_available_report!(:sales_total)
       end
 
@@ -28,17 +28,25 @@ module Spree
       def sales_total
         params[:q] = {} unless params[:q]
 
-        if params[:q][:completed_at_gt].blank?
-          params[:q][:completed_at_gt] = Time.zone.now.beginning_of_month
-        else
-          params[:q][:completed_at_gt] = Time.zone.parse(params[:q][:completed_at_gt]).beginning_of_day rescue Time.zone.now.beginning_of_month
-        end
+        params[:q][:completed_at_gt] = if params[:q][:completed_at_gt].blank?
+                                         Time.zone.now.beginning_of_month
+                                       else
+                                         begin
+                                            Time.zone.parse(params[:q][:completed_at_gt]).beginning_of_day
+                                         rescue
+                                            Time.zone.now.beginning_of_month
+                                         end
+                                       end
 
         if params[:q] && !params[:q][:completed_at_lt].blank?
-          params[:q][:completed_at_lt] = Time.zone.parse(params[:q][:completed_at_lt]).end_of_day rescue ""
+          params[:q][:completed_at_lt] = begin
+                                           Time.zone.parse(params[:q][:completed_at_lt]).end_of_day
+                                         rescue
+                                           ''
+                                         end
         end
 
-        params[:q][:s] ||= "completed_at desc"
+        params[:q][:s] ||= 'completed_at desc'
 
         @search = Order.complete.ransack(params[:q])
         @orders = @search.result
@@ -59,7 +67,6 @@ module Spree
       end
 
       @@available_reports = {}
-
     end
   end
 end

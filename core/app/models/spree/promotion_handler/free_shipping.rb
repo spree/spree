@@ -14,9 +14,7 @@ module Spree
         promotions.each do |promotion|
           next if promotion.code.present? && !order_promo_ids.include?(promotion.id)
 
-          if promotion.eligible?(order)
-            promotion.activate(order: order)
-          end
+          promotion.activate(order: order) if promotion.eligible?(order)
         end
       end
 

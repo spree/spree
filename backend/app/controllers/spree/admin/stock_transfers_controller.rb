@@ -7,9 +7,9 @@ module Spree
         @q = StockTransfer.ransack(params[:q])
 
         @stock_transfers = @q.result.
-                             includes(stock_movements: { stock_item: :stock_location }).
-                             order(created_at: :desc).
-                             page(params[:page])
+                           includes(stock_movements: { stock_item: :stock_location }).
+                           order(created_at: :desc).
+                           page(params[:page])
       end
 
       def show
@@ -38,12 +38,13 @@ module Spree
       end
 
       private
+
       def load_stock_locations
         @stock_locations = Spree::StockLocation.active.order_default
       end
 
       def source_location
-        @source_location ||= params.has_key?(:transfer_receive_stock) ? nil :
+        @source_location ||= params.key?(:transfer_receive_stock) ? nil :
                                StockLocation.find(params[:transfer_source_location_id])
       end
 

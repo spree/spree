@@ -3,10 +3,10 @@ module Spree
     class Prioritizer
       attr_reader :packages
 
-      def initialize(packages, adjuster_class=Adjuster)
+      def initialize(packages, adjuster_class = Adjuster)
         @packages = packages
         @adjuster_class = adjuster_class
-        @adjusters = Hash.new
+        @adjusters = {}
       end
 
       def prioritized_packages
@@ -22,15 +22,13 @@ module Spree
         packages.each do |package|
           package.contents.each do |item|
             adjuster = find_adjuster(item)
-            if adjuster.nil?
-              adjuster = build_adjuster(item, package)
-            end
+            adjuster = build_adjuster(item, package) if adjuster.nil?
             adjuster.adjust(package, item)
           end
         end
       end
 
-      def build_adjuster(item, package)
+      def build_adjuster(item, _package)
         @adjusters[hash_item item] = @adjuster_class.new(item.inventory_unit)
       end
 
@@ -43,7 +41,7 @@ module Spree
       end
 
       def prune_packages
-        packages.reject! { |pkg| pkg.empty? }
+        packages.reject!(&:empty?)
       end
 
       def hash_item(item)

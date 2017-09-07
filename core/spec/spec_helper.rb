@@ -1,4 +1,4 @@
-if ENV["COVERAGE"]
+if ENV['COVERAGE']
   # Run Coverage report
   require 'simplecov'
   SimpleCov.start do
@@ -14,23 +14,21 @@ end
 
 # This file is copied to ~/spec when you run 'ruby script/generate rspec'
 # from the project root directory.
-ENV["RAILS_ENV"] ||= 'test'
+ENV['RAILS_ENV'] ||= 'test'
 
 begin
-  require File.expand_path("../dummy/config/environment", __FILE__)
+  require File.expand_path('../dummy/config/environment', __FILE__)
 rescue LoadError
-  puts "Could not load dummy application. Please ensure you have run `bundle exec rake test_app`"
+  puts 'Could not load dummy application. Please ensure you have run `bundle exec rake test_app`'
 end
 
 require 'rspec/rails'
 require 'database_cleaner'
 require 'ffaker'
 
-Dir["./spec/support/**/*.rb"].sort.each { |f| require f }
+Dir['./spec/support/**/*.rb'].sort.each { |f| require f }
 
-if ENV["CHECK_TRANSLATIONS"]
-  require "spree/testing_support/i18n"
-end
+require 'spree/testing_support/i18n' if ENV['CHECK_TRANSLATIONS']
 
 require 'spree/testing_support/factories'
 require 'spree/testing_support/preferences'
@@ -40,7 +38,7 @@ require 'spree/testing_support/kernel'
 RSpec.configure do |config|
   config.color = true
   config.fail_fast = ENV['FAIL_FAST'] || false
-  config.fixture_path = File.join(File.expand_path(File.dirname(__FILE__)), "fixtures")
+  config.fixture_path = File.join(File.expand_path(File.dirname(__FILE__)), 'fixtures')
   config.infer_spec_type_from_file_location!
   config.mock_with :rspec
   config.raise_errors_for_deprecations!

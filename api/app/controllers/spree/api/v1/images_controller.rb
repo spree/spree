@@ -12,8 +12,7 @@ module Spree
           respond_with(@image)
         end
 
-        def new
-        end
+        def new; end
 
         def create
           authorize! :create, Image

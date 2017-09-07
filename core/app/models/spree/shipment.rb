@@ -76,7 +76,7 @@ module Spree
         shipment.state_changes.create!(
           previous_state: transition.from,
           next_state:     transition.to,
-          name:           'shipment',
+          name:           'shipment'
         )
       end
     end
@@ -281,7 +281,7 @@ module Spree
         update_columns(
           cost: selected_shipping_rate.cost,
           adjustment_total: adjustments.additional.map(&:update!).compact.sum,
-          updated_at: Time.current,
+          updated_at: Time.current
         )
       end
     end
@@ -324,15 +324,13 @@ module Spree
       new_state = determine_state(order)
       update_columns(
         state: new_state,
-        updated_at: Time.current,
+        updated_at: Time.current
       )
       after_ship if new_state == 'shipped' && old_state != 'shipped'
     end
 
     def transfer_to_location(variant, quantity, stock_location)
-      if quantity <= 0
-        raise ArgumentError
-      end
+      raise ArgumentError if quantity <= 0
 
       transaction do
         new_shipment = order.shipments.create!(stock_location: stock_location)
@@ -352,9 +350,7 @@ module Spree
       end.try(:quantity) || 0
       final_quantity = quantity + quantity_already_shipment_to_transfer_to
 
-      if quantity <= 0 || self == shipment_to_transfer_to
-        raise ArgumentError
-      end
+      raise ArgumentError if quantity <= 0 || self == shipment_to_transfer_to
 
       transaction do
         order.contents.remove(variant, quantity, shipment: self)
@@ -378,12 +374,12 @@ module Spree
     end
 
     def manifest_restock(item)
-      if item.states["on_hand"].to_i.positive?
-        stock_location.restock item.variant, item.states["on_hand"], self
+      if item.states['on_hand'].to_i.positive?
+        stock_location.restock item.variant, item.states['on_hand'], self
       end
 
-      if item.states["backordered"].to_i.positive?
-        stock_location.restock_backordered item.variant, item.states["backordered"]
+      if item.states['backordered'].to_i.positive?
+        stock_location.restock_backordered item.variant, item.states['backordered']
       end
     end
 
@@ -400,9 +396,7 @@ module Spree
     end
 
     def update_adjustments
-      if saved_change_to_cost? && state != 'shipped'
-        recalculate_adjustments
-      end
+      recalculate_adjustments if saved_change_to_cost? && state != 'shipped'
     end
   end
 end

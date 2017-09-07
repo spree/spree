@@ -21,12 +21,12 @@ describe 'products', type: :feature, caching: true do
     clear_cache_events
   end
 
-  it "reads from cache upon a second viewing" do
+  it 'reads from cache upon a second viewing' do
     visit spree.root_path
     expect(cache_writes.count).to eq(0)
   end
 
-  it "busts the cache when a product is updated" do
+  it 'busts the cache when a product is updated' do
     product.update_column(:updated_at, 1.day.from_now)
     visit spree.root_path
     assert_written_to_cache("views/en/USD/spree/products/all--#{product.updated_at.utc.to_s(:number)}")
@@ -34,7 +34,7 @@ describe 'products', type: :feature, caching: true do
     expect(cache_writes.count).to eq(2)
   end
 
-  it "busts the cache when all products are deleted" do
+  it 'busts the cache when all products are deleted' do
     product.destroy
     product2.destroy
     visit spree.root_path
@@ -42,14 +42,14 @@ describe 'products', type: :feature, caching: true do
     expect(cache_writes.count).to eq(1)
   end
 
-  it "busts the cache when the newest product is deleted" do
+  it 'busts the cache when the newest product is deleted' do
     product.destroy
     visit spree.root_path
     assert_written_to_cache("views/en/USD/spree/products/all--#{product2.updated_at.utc.to_s(:number)}")
     expect(cache_writes.count).to eq(1)
   end
 
-  it "busts the cache when an older product is deleted" do
+  it 'busts the cache when an older product is deleted' do
     product2.destroy
     visit spree.root_path
     assert_written_to_cache("views/en/USD/spree/products/all--#{product.updated_at.utc.to_s(:number)}")

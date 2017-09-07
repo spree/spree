@@ -53,7 +53,7 @@ module Spree
     end
 
     def insufficient_payment?
-      params[:state] == "confirm" &&
+      params[:state] == 'confirm' &&
         @order.payment_required? &&
         @order.payments.valid.sum(:amount) != @order.total
     end
@@ -109,9 +109,7 @@ module Spree
     end
 
     def ensure_checkout_allowed
-      unless @order.checkout_allowed?
-        redirect_to spree.cart_path
-      end
+      redirect_to spree.cart_path unless @order.checkout_allowed?
     end
 
     def ensure_order_not_completed
@@ -150,7 +148,7 @@ module Spree
     end
 
     def before_payment
-      if @order.checkout_steps.include? "delivery"
+      if @order.checkout_steps.include? 'delivery'
         packages = @order.shipments.map(&:to_package)
         @differentiator = Spree::Stock::Differentiator.new(@order, packages)
         @differentiator.missing.each do |variant, quantity|
@@ -164,7 +162,7 @@ module Spree
     end
 
     def add_store_credit_payments
-      if params.has_key?(:apply_store_credit)
+      if params.key?(:apply_store_credit)
         @order.add_store_credit_payments
 
         # Remove other payment method parameters.

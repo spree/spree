@@ -101,3 +101,7 @@ Metrics/CyclomaticComplexity:
 
 Style/ClassAndModuleChildren:
   Enabled: false
+
+Style/AndOr:
+  Exclude:
+    - '**/*controller.rb'

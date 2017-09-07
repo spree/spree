@@ -3,15 +3,14 @@ require 'spec_helper'
 describe 'Payments', type: :feature, js: true do
   stub_authorization!
 
-  context "with a pre-existing payment" do
-
+  context 'with a pre-existing payment' do
     let!(:payment) do
       create(:payment,
-        order:          order,
-        amount:         order.outstanding_balance,
-        payment_method: create(:credit_card_payment_method),
-        state:          state
-      )
+             order:          order,
+             amount:         order.outstanding_balance,
+             payment_method: create(:credit_card_payment_method),
+             state:          state
+            )
     end
 
     let(:order) { create(:completed_order_with_totals, number: 'R100', line_items_count: 5) }
@@ -31,10 +30,10 @@ describe 'Payments', type: :feature, js: true do
       let(:order) { create(:completed_order_with_totals, number: 'R100') }
       let!(:payment) do
         create(:payment,
-          order:          order,
-          amount:         order.outstanding_balance,
-          payment_method: create(:check_payment_method)  # Check
-        )
+               order:          order,
+               amount:         order.outstanding_balance,
+               payment_method: create(:check_payment_method) # Check
+              )
       end
 
       it 'capturing a check payment from a new order' do
@@ -51,7 +50,7 @@ describe 'Payments', type: :feature, js: true do
 
     it 'should list all captures for a payment' do
       Spree::ShippingMethod.delete_all
-      capture_amount = order.outstanding_balance/2 * 100
+      capture_amount = order.outstanding_balance / 2 * 100
       payment.capture!(capture_amount)
 
       visit spree.admin_order_payment_path(order, payment)
@@ -165,65 +164,65 @@ describe 'Payments', type: :feature, js: true do
     end
   end
 
-  context "with no prior payments" do
+  context 'with no prior payments' do
     let(:order) { create(:order_with_line_items, line_items_count: 1) }
     let!(:payment_method) { create(:credit_card_payment_method) }
 
     # Regression tests for #4129
-    context "with a credit card payment method" do
+    context 'with a credit card payment method' do
       before do
         visit spree.admin_order_payments_path(order)
       end
 
-      it "is able to create a new credit card payment with valid information" do
-        fill_in "Card Number", with: "4111 1111 1111 1111"
-        fill_in "Name", with: "Test User"
-        fill_in "Expiration", with: "09 / #{Time.current.year + 1}"
-        fill_in "Card Code", with: "007"
+      it 'is able to create a new credit card payment with valid information' do
+        fill_in 'Card Number', with: '4111 1111 1111 1111'
+        fill_in 'Name', with: 'Test User'
+        fill_in 'Expiration', with: "09 / #{Time.current.year + 1}"
+        fill_in 'Card Code', with: '007'
         # Regression test for #4277
         sleep(1)
         expect(find('.ccType', visible: false).value).to eq('visa')
-        click_button "Continue"
-        expect(page).to have_content("Payment has been successfully created!")
+        click_button 'Continue'
+        expect(page).to have_content('Payment has been successfully created!')
       end
 
-      it "is unable to create a new payment with invalid information" do
-        click_button "Continue"
-        expect(page).to have_content("Payment could not be created.")
+      it 'is unable to create a new payment with invalid information' do
+        click_button 'Continue'
+        expect(page).to have_content('Payment could not be created.')
         expect(page).to have_content("Number can't be blank")
         expect(page).to have_content("Name can't be blank")
         expect(page).to have_content("Verification Value can't be blank")
-        expect(page).to have_content("Month is not a number")
-        expect(page).to have_content("Year is not a number")
+        expect(page).to have_content('Month is not a number')
+        expect(page).to have_content('Year is not a number')
       end
     end
 
-    context "user existing card" do
+    context 'user existing card' do
       let!(:cc) do
-        create(:credit_card, user_id: order.user_id, payment_method: payment_method, gateway_customer_profile_id: "BGS-RFRE")
+        create(:credit_card, user_id: order.user_id, payment_method: payment_method, gateway_customer_profile_id: 'BGS-RFRE')
       end
 
       before { visit spree.admin_order_payments_path(order) }
 
-      it "is able to reuse customer payment source", js: false do
+      it 'is able to reuse customer payment source', js: false do
         expect(find("#card_#{cc.id}")).to be_checked
-        click_button "Continue"
-        expect(page).to have_content("Payment has been successfully created!")
+        click_button 'Continue'
+        expect(page).to have_content('Payment has been successfully created!')
       end
     end
 
-    context "with a check" do
+    context 'with a check' do
       let!(:payment_method) { create(:check_payment_method) }
 
       before do
         visit spree.admin_order_payments_path(order.reload)
       end
 
-      it "can successfully be created and captured" do
+      it 'can successfully be created and captured' do
         click_on 'Continue'
-        expect(page).to have_content("Payment has been successfully created!")
+        expect(page).to have_content('Payment has been successfully created!')
         click_icon(:capture)
-        expect(page).to have_content("Payment Updated")
+        expect(page).to have_content('Payment Updated')
       end
     end
 

@@ -1,17 +1,15 @@
 module Spree
   module Admin
     module AdjustmentsHelper
-
       def display_adjustable(adjustable)
         case adjustable
-          when Spree::LineItem
-            display_line_item(adjustable)
-          when Spree::Shipment
-            display_shipment(adjustable)
-          when Spree::Order
-            display_order(adjustable)
+        when Spree::LineItem
+          display_line_item(adjustable)
+        when Spree::Shipment
+          display_shipment(adjustable)
+        when Spree::Order
+          display_order(adjustable)
         end
-
       end
 
       private
@@ -22,14 +20,14 @@ module Spree
         parts << variant.product.name
         parts << "(#{variant.options_text})" if variant.options_text.present?
         parts << line_item.display_total
-        safe_join(parts, "<br />".html_safe)
+        safe_join(parts, '<br />'.html_safe)
       end
 
       def display_shipment(shipment)
         "#{Spree.t(:shipment)} ##{shipment.number}<br>#{shipment.display_cost}".html_safe
       end
 
-      def display_order(order)
+      def display_order(_order)
         Spree.t(:order)
       end
     end

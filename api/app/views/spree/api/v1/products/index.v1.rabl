@@ -5,5 +5,5 @@ node(:current_page) { params[:page] ? params[:page].to_i : 1 }
 node(:per_page) { params[:per_page].try(:to_i) || Kaminari.config.default_per_page }
 node(:pages) { @products.total_pages }
 child(@products => :products) do
-  extends "spree/api/v1/products/show"
+  extends 'spree/api/v1/products/show'
 end

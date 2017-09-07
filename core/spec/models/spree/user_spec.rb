@@ -52,7 +52,7 @@ describe Spree::LegacyUser, type: :model do
     context 'payment source' do
       let(:payment_method) { create(:credit_card_payment_method) }
       let!(:cc) do
-        create(:credit_card, user_id: user.id, payment_method: payment_method, gateway_customer_profile_id: "2342343")
+        create(:credit_card, user_id: user.id, payment_method: payment_method, gateway_customer_profile_id: '2342343')
       end
 
       it 'has payment sources' do
@@ -85,13 +85,13 @@ describe Spree.user_class, type: :model do
     describe '#lifetime_value' do
       context 'with orders' do
         before { load_orders }
-        it "returns the total of completed orders for the user" do
+        it 'returns the total of completed orders for the user' do
           expect(subject.lifetime_value).to eq (order_count * order_value)
         end
       end
       context 'without orders' do
         it 'returns 0.00' do
-          expect(subject.lifetime_value).to eq BigDecimal("0.00")
+          expect(subject.lifetime_value).to eq BigDecimal('0.00')
         end
       end
     end
@@ -125,7 +125,7 @@ describe Spree.user_class, type: :model do
       end
     end
 
-    describe "#display_average_order_value" do
+    describe '#display_average_order_value' do
       before { load_orders }
       it 'returns a Spree::Money version of average_order_value' do
         value = BigDecimal('500.05')

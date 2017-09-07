@@ -91,7 +91,7 @@ module Spree
       :quantity, :stock_item, :stock_item_id, :originator, :action]
 
     @@store_attributes = [:name, :url, :seo_title, :meta_keywords,
-                         :meta_description, :default_currency, :mail_from_address]
+                          :meta_description, :default_currency, :mail_from_address]
 
     @@store_credit_attributes = [:amount, :category_id, :memo]
 
@@ -101,7 +101,7 @@ module Spree
       :name, :parent_id, :position, :icon, :description, :permalink, :taxonomy_id,
       :meta_description, :meta_keywords, :meta_title, :child_index]
 
-    # TODO Should probably use something like Spree.user_class.attributes
+    # TODO: Should probably use something like Spree.user_class.attributes
     @@user_attributes = [:email, :password, :password_confirmation]
 
     @@variant_attributes = [

@@ -72,7 +72,7 @@ describe Spree::Promotion::Actions::CreateAdjustment, type: :model do
   end
 
   # From promotion spec:
-  context "#perform" do
+  context '#perform' do
     before do
       action.calculator = Spree::Calculator::FlatRate.new(preferred_amount: 10)
       promotion.promotion_actions = [action]
@@ -80,14 +80,14 @@ describe Spree::Promotion::Actions::CreateAdjustment, type: :model do
     end
 
     # Regression test for #3966
-    it "does not apply an adjustment if the amount is 0" do
+    it 'does not apply an adjustment if the amount is 0' do
       action.calculator.preferred_amount = 0
       action.perform(payload)
       expect(promotion.credits_count).to eq(0)
       expect(order.adjustments.count).to eq(0)
     end
 
-    it "should create a discount with correct negative amount" do
+    it 'should create a discount with correct negative amount' do
       order.shipments.create!(cost: 10, stock_location: create(:stock_location))
 
       action.perform(payload)
@@ -96,13 +96,13 @@ describe Spree::Promotion::Actions::CreateAdjustment, type: :model do
       expect(order.adjustments.first.amount.to_i).to eq(-10)
     end
 
-    it "should create a discount accessible through both order_id and adjustable_id" do
+    it 'should create a discount accessible through both order_id and adjustable_id' do
       action.perform(payload)
       expect(order.adjustments.count).to eq(1)
       expect(order.all_adjustments.count).to eq(1)
     end
 
-    it "should not create a discount when order already has one from this promotion" do
+    it 'should not create a discount when order already has one from this promotion' do
       order.shipments.create!(cost: 10, stock_location: create(:stock_location))
 
       action.perform(payload)

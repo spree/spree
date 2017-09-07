@@ -4,8 +4,8 @@ module Spree
     acts_as_list scope: :taxon
 
     with_options inverse_of: :classifications, touch: true do
-      belongs_to :product, class_name: "Spree::Product"
-      belongs_to :taxon, class_name: "Spree::Taxon"
+      belongs_to :product, class_name: 'Spree::Product'
+      belongs_to :taxon, class_name: 'Spree::Taxon'
     end
 
     validates :taxon, :product, presence: true

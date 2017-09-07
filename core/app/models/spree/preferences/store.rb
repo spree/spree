@@ -7,7 +7,6 @@
 require 'singleton'
 
 module Spree::Preferences
-
   class StoreInstance
     attr_accessor :persistence
 
@@ -20,11 +19,11 @@ module Spree::Preferences
       @cache.write(key, value)
       persist(key, value)
     end
-    alias_method :[]=, :set
+    alias []= set
 
     def exist?(key)
       @cache.exist?(key) ||
-      should_persist? && Spree::Preference.where(key: key).exists?
+        should_persist? && Spree::Preference.where(key: key).exists?
     end
 
     def get(key)
@@ -40,13 +39,13 @@ module Spree::Preferences
         # has been cleared from the cache
 
         # does it exist in the database?
-        if preference = Spree::Preference.find_by(key: key)
+        val = if preference = Spree::Preference.find_by(key: key)
           # it does exist
-          val = preference.value
-        else
+                preference.value
+              else
           # use the fallback value
-          val = yield
-        end
+                yield
+              end
 
         # Cache either the value from the db or the fallback value.
         # This avoids hitting the db with subsequent queries.
@@ -57,7 +56,7 @@ module Spree::Preferences
         yield
       end
     end
-    alias_method :fetch, :get
+    alias fetch get
 
     def delete(key)
       @cache.delete(key)
@@ -88,11 +87,9 @@ module Spree::Preferences
     def should_persist?
       @persistence && ActiveRecord::Base.connected? && Spree::Preference.table_exists?
     end
-
   end
 
   class Store < StoreInstance
     include Singleton
   end
-
 end

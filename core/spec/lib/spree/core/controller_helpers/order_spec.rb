@@ -13,7 +13,7 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
 
   describe '#simple_current_order' do
     before { allow(controller).to receive_messages(try_spree_current_user: user) }
-    it "returns an empty order" do
+    it 'returns an empty order' do
       expect(controller.simple_current_order.item_count).to eq 0
     end
     it 'returns Spree::Order instance' do
@@ -23,10 +23,10 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
   end
 
   describe '#current_order' do
-    before {
+    before do
       allow(controller).to receive_messages(current_store: store)
       allow(controller).to receive_messages(try_spree_current_user: user)
-    }
+    end
     context 'create_order_if_necessary option is false' do
       let!(:order) { create :order, user: user, store: store }
       it 'returns current order' do
@@ -35,9 +35,9 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
     end
     context 'create_order_if_necessary option is true' do
       it 'creates new order' do
-        expect {
+        expect do
           controller.current_order(create_order_if_necessary: true)
-        }.to change(Spree::Order, :count).to(1)
+        end.to change(Spree::Order, :count).to(1)
       end
 
       it 'assigns the current_store id' do
@@ -52,7 +52,7 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
 
       before do
         expect(controller).to receive(:current_order_params).and_return(
-          currency: Spree::Config[:currency], guest_token: 'token', store_id: guest_order.store_id, user_id: user.id,
+          currency: Spree::Config[:currency], guest_token: 'token', store_id: guest_order.store_id, user_id: user.id
         )
       end
 

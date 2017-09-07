@@ -16,7 +16,7 @@ module Spree
       method = "compute_#{computable_name}".to_sym
       calculator_class = self.class
       if respond_to?(method)
-        self.send(method, computable)
+        send(method, computable)
       else
         raise NotImplementedError, "Please implement '#{method}(#{computable_name})' in your calculator: #{calculator_class.name}"
       end
@@ -33,14 +33,14 @@ module Spree
     end
 
     def to_s
-      self.class.name.titleize.gsub("Calculator\/", "")
+      self.class.name.titleize.gsub("Calculator\/", '')
     end
 
     def description
       self.class.description
     end
 
-    def available?(object)
+    def available?(_object)
       true
     end
   end

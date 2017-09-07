@@ -1,14 +1,12 @@
 module Spree
   module Admin
     class TaxonsController < Spree::Admin::BaseController
-
       before_action :load_taxonomy, only: [:create, :edit, :update]
       before_action :load_taxon, only: [:edit, :update]
       before_action :set_permalink_part, only: [:edit, :update]
       respond_to :html, :js
 
-      def index
-      end
+      def index; end
 
       def create
         @taxon = @taxonomy.taxons.build(params[:taxon])
@@ -24,12 +22,10 @@ module Spree
         end
       end
 
-      def edit
-      end
+      def edit; end
 
       def update
         successful = @taxon.transaction do
-
           parent_id = params[:taxon][:parent_id]
           set_position
           set_parent(parent_id)
@@ -41,16 +37,15 @@ module Spree
 
           set_permalink_params
 
-          #check if we need to rename child taxons if parent name or permalink changes
+          # check if we need to rename child taxons if parent name or permalink changes
           @update_children = true if params[:taxon][:name] != @taxon.name || params[:taxon][:permalink] != @taxon.permalink
 
           @taxon.update_attributes(taxon_params)
-
         end
         if successful
           flash[:success] = flash_message_for(@taxon, :successfully_updated)
 
-          #rename child taxons
+          # rename child taxons
           rename_child_taxons if @update_children
 
           respond_with(@taxon) do |format|
@@ -85,21 +80,17 @@ module Spree
 
       def set_position
         new_position = params[:taxon][:position]
-        if new_position
-          @taxon.child_index = new_position.to_i
-        end
+        @taxon.child_index = new_position.to_i if new_position
       end
 
       def set_parent(parent_id)
-        if parent_id
-          @taxon.parent = Taxon.find(parent_id.to_i)
-        end
+        @taxon.parent = Taxon.find(parent_id.to_i) if parent_id
       end
 
       def set_permalink_params
-        if params.key? "permalink_part"
-          parent_permalink = @taxon.permalink.split("/")[0...-1].join("/")
-          parent_permalink += "/" unless parent_permalink.blank?
+        if params.key? 'permalink_part'
+          parent_permalink = @taxon.permalink.split('/')[0...-1].join('/')
+          parent_permalink += '/' unless parent_permalink.blank?
           params[:taxon][:permalink] = parent_permalink + params[:permalink_part]
         end
       end

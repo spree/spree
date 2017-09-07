@@ -184,7 +184,7 @@ module Spree
               checkout_steps << step
             end).map(&:to_s)
             # Ensure there is always a complete step
-            steps << "complete" unless steps.include?("complete")
+            steps << 'complete' unless steps.include?('complete')
             steps
           end
 
@@ -226,7 +226,7 @@ module Spree
               if existing_card_id.present?
                 credit_card = CreditCard.find existing_card_id
                 if credit_card.user_id != user_id || credit_card.user_id.blank?
-                  raise Core::GatewayError.new Spree.t(:invalid_credit_card)
+                  raise Core::GatewayError, Spree.t(:invalid_credit_card)
                 end
 
                 credit_card.verification_value = params[:cvc_confirm] if params[:cvc_confirm].present?
@@ -253,7 +253,7 @@ module Spree
               clone_billing
               # Skip setting ship address if order doesn't have a delivery checkout step
               # to avoid triggering validations on shipping address
-              clone_shipping if checkout_steps.include?("delivery")
+              clone_shipping if checkout_steps.include?('delivery')
             end
           end
 
@@ -306,7 +306,7 @@ module Spree
             if @updating_params[:payment_source].present?
               source_params = @updating_params.
                               delete(:payment_source)[@updating_params[:order][:payments_attributes].
-                                                      first[:payment_method_id].to_s]
+                              first[:payment_method_id].to_s]
 
               if source_params
                 @updating_params[:order][:payments_attributes].first[:source_attributes] = source_params

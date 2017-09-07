@@ -4,7 +4,7 @@ module Spree
   describe Api::V1::PromotionsController, type: :controller do
     render_views
 
-    shared_examples "a JSON response" do
+    shared_examples 'a JSON response' do
       it 'should be ok' do
         expect(subject).to be_ok
       end
@@ -13,7 +13,7 @@ module Spree
         payload = HashWithIndifferentAccess.new(JSON.parse(subject.body))
         expect(payload).to_not be_nil
         Spree::Api::ApiHelpers.promotion_attributes.each do |attribute|
-          expect(payload.has_key?(attribute)).to be true
+          expect(payload.key?(attribute)).to be true
         end
       end
     end
@@ -33,13 +33,13 @@ module Spree
         context 'when finding by id' do
           let(:id) { promotion.id }
 
-          it_behaves_like "a JSON response"
+          it_behaves_like 'a JSON response'
         end
 
         context 'when finding by code' do
           let(:id) { promotion.code }
 
-          it_behaves_like "a JSON response"
+          it_behaves_like 'a JSON response'
         end
 
         context 'when id does not exist' do

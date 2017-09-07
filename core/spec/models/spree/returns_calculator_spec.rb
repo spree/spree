@@ -6,9 +6,9 @@ module Spree
     subject { ReturnsCalculator.new }
 
     it 'compute_shipment must be overridden' do
-      expect {
+      expect do
         subject.compute(return_item)
-      }.to raise_error(NotImplementedError)
+      end.to raise_error(NotImplementedError)
     end
   end
 end

@@ -7,7 +7,7 @@ require 'spree/testing_support/bar_ability'
 class FooAbility
   include CanCan::Ability
 
-  def initialize(user)
+  def initialize(_user)
     # allow anyone to perform index on Order
     can :index, Spree::Order
     # allow anyone to update an Order with id of 1
@@ -22,9 +22,9 @@ describe Spree::Ability, type: :model do
   let(:ability) { Spree::Ability.new(user) }
   let(:token) { nil }
 
-  after(:each) {
+  after(:each) do
     Spree::Ability.abilities = Set.new
-  }
+  end
 
   context 'register_ability' do
     it 'should add the ability to the list of abilties' do
@@ -111,7 +111,7 @@ describe Spree::Ability, type: :model do
         # ability.should_not be_able_to :create, resource_user # Fails
         # It can create new users if is has access to the :admin, User!!
 
-        # TODO change the Ability class so only users and customers get the extra premissions?
+        # TODO: change the Ability class so only users and customers get the extra premissions?
 
         Spree::Ability.remove_ability(BarAbility)
       end
@@ -128,7 +128,6 @@ describe Spree::Ability, type: :model do
   end
 
   context 'as Guest User' do
-
     context 'for Country' do
       let(:resource) { Spree::Country.new }
       context 'requested by any user' do
@@ -245,7 +244,5 @@ describe Spree::Ability, type: :model do
         it_should_behave_like 'read only'
       end
     end
-
   end
-
 end

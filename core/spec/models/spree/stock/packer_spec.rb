@@ -23,7 +23,7 @@ module Spree
       end
 
       context 'default_package' do
-        let!(:inventory_units) { 2.times.map { InventoryUnit.new variant: create(:variant) } }
+        let!(:inventory_units) { Array.new(2) { InventoryUnit.new variant: create(:variant) } }
 
         it 'contains all the items' do
           package = subject.default_package
@@ -32,7 +32,7 @@ module Spree
 
         it 'variants are added as backordered without enough on_hand' do
           expect(stock_location).to receive(:fill_status).exactly(2).times.and_return(
-            *(Array.new(1, [1,0]) + Array.new(1, [0,1]))
+            *(Array.new(1, [1, 0]) + Array.new(1, [0, 1]))
           )
 
           package = subject.default_package
@@ -45,13 +45,13 @@ module Spree
           let(:inventory_units) { [InventoryUnit.new(variant: create(:variant))] }
           let(:packer) { Packer.new(stock_location, inventory_units) }
 
-          it "builds an empty package" do
+          it 'builds an empty package' do
             expect(packer.default_package.contents).to be_empty
           end
         end
 
         context "doesn't track inventory levels" do
-          let(:inventory_units) { 2.times.map { InventoryUnit.new(variant: create(:variant)) } }
+          let(:inventory_units) { Array.new(2) { InventoryUnit.new(variant: create(:variant)) } }
 
           before { Config.track_inventory_levels = false }
 
@@ -60,7 +60,7 @@ module Spree
             subject.default_package
           end
 
-          it "still creates package with proper quantity" do
+          it 'still creates package with proper quantity' do
             expect(subject.default_package.quantity).to eql 2
           end
         end

@@ -10,7 +10,7 @@ module Spree
       let(:order_subject) { AdjustmentsUpdater.new(order) }
 
       describe '#update' do
-        it "updates all linked adjusters" do
+        it 'updates all linked adjusters' do
           tax_rate = create(:tax_rate, amount: 0.05)
           create(:adjustment, order: order, source: tax_rate, adjustable: line_item)
           line_item.price = 10

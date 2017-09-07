@@ -15,7 +15,7 @@ module Spree
       if order_count.to_i > 0
         lifetime_value / order_count
       else
-        BigDecimal("0.00")
+        BigDecimal('0.00')
       end
     end
   end

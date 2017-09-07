@@ -10,15 +10,15 @@ module Spree
       @country = @state.country
     end
 
-    it "gets all countries" do
+    it 'gets all countries' do
       api_get :index
       expect(json_response['countries'].first['iso3']).to eq @country.iso3
     end
 
-    context "with two countries" do
-      before { @zambia = create(:country, name: "Zambia") }
+    context 'with two countries' do
+      before { @zambia = create(:country, name: 'Zambia') }
 
-      it "can view all countries" do
+      it 'can view all countries' do
         api_get :index
         expect(json_response['count']).to eq(2)
         expect(json_response['current_page']).to eq(1)
@@ -39,7 +39,7 @@ module Spree
       end
     end
 
-    it "includes states" do
+    it 'includes states' do
       api_get :show, id: @country.id
       states = json_response['states']
       expect(states.first['name']).to eq @state.name

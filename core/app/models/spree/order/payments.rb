@@ -32,11 +32,11 @@ module Spree
         end
 
         def pending_payments
-          payments.select { |payment| payment.pending? }
+          payments.select(&:pending?)
         end
 
         def unprocessed_payments
-          payments.select { |payment| payment.checkout? }
+          payments.select(&:checkout?)
         end
 
         private
@@ -45,7 +45,7 @@ module Spree
           # Don't run if there is nothing to pay.
           return if payment_total >= total
           # Prevent orders from transitioning to complete without a successfully processed payment.
-          raise Core::GatewayError.new(Spree.t(:no_payment_found)) if unprocessed_payments.empty?
+          raise Core::GatewayError, Spree.t(:no_payment_found) if unprocessed_payments.empty?
 
           unprocessed_payments.each do |payment|
             break if payment_total >= total
@@ -58,7 +58,7 @@ module Spree
           end
         rescue Core::GatewayError => e
           result = !!Spree::Config[:allow_checkout_on_gateway_error]
-          errors.add(:base, e.message) and return result
+          errors.add(:base, e.message) && (return result)
         end
       end
     end

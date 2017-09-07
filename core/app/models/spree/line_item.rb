@@ -3,10 +3,10 @@ module Spree
     before_validation :ensure_valid_quantity
 
     with_options inverse_of: :line_items do
-      belongs_to :order, class_name: "Spree::Order", touch: true
-      belongs_to :variant, class_name: "Spree::Variant"
+      belongs_to :order, class_name: 'Spree::Order', touch: true
+      belongs_to :variant, class_name: 'Spree::Variant'
     end
-    belongs_to :tax_category, class_name: "Spree::TaxCategory"
+    belongs_to :tax_category, class_name: 'Spree::TaxCategory'
 
     has_one :product, through: :variant
 
@@ -23,7 +23,7 @@ module Spree
     validates_with Stock::AvailabilityValidator
     validate :ensure_proper_currency, if: -> { order.present? }
 
-    before_destroy :verify_order_inventory, if: -> { order.has_checkout_step?("delivery") }
+    before_destroy :verify_order_inventory, if: -> { order.has_checkout_step?('delivery') }
 
     before_destroy :destroy_inventory_units
 
@@ -54,9 +54,7 @@ module Spree
     end
 
     def copy_tax_category
-      if variant
-        self.tax_category = variant.tax_category
-      end
+      self.tax_category = variant.tax_category if variant
     end
 
     extend DisplayMoney
@@ -76,7 +74,7 @@ module Spree
     end
 
     alias discounted_money display_discounted_amount
-    alias_method :discounted_amount, :taxable_amount
+    alias discounted_amount taxable_amount
 
     def final_amount
       amount + adjustment_total
@@ -127,7 +125,7 @@ module Spree
     end
 
     def update_inventory
-      if (saved_changes? || target_shipment.present?) && order.has_checkout_step?("delivery")
+      if (saved_changes? || target_shipment.present?) && order.has_checkout_step?('delivery')
         verify_order_inventory
       end
     end

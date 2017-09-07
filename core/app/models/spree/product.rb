@@ -51,20 +51,20 @@ module Spree
     belongs_to :shipping_category, class_name: 'Spree::ShippingCategory', inverse_of: :products
 
     has_one :master,
-      -> { where is_master: true },
-      inverse_of: :product,
-      class_name: 'Spree::Variant'
+            -> { where is_master: true },
+            inverse_of: :product,
+            class_name: 'Spree::Variant'
 
     has_many :variants,
-      -> { where(is_master: false).order(:position) },
-      inverse_of: :product,
-      class_name: 'Spree::Variant'
+             -> { where(is_master: false).order(:position) },
+             inverse_of: :product,
+             class_name: 'Spree::Variant'
 
     has_many :variants_including_master,
-      -> { order(:position) },
-      inverse_of: :product,
-      class_name: 'Spree::Variant',
-      dependent: :destroy
+             -> { order(:position) },
+             inverse_of: :product,
+             class_name: 'Spree::Variant',
+             dependent: :destroy
 
     has_many :prices, -> { order('spree_variants.position, spree_variants.id, currency') }, through: :variants
 
@@ -105,9 +105,9 @@ module Spree
 
     attr_accessor :option_values_hash
 
-    accepts_nested_attributes_for :product_properties, allow_destroy: true, reject_if: lambda { |pp| pp[:property_name].blank? }
+    accepts_nested_attributes_for :product_properties, allow_destroy: true, reject_if: ->(pp) { pp[:property_name].blank? }
 
-    alias :options :product_option_types
+    alias options product_option_types
 
     self.whitelisted_ransackable_associations = %w[stores variants_including_master master variants]
     self.whitelisted_ransackable_attributes = %w[description name slug discontinue_on]
@@ -123,7 +123,7 @@ module Spree
     delegate :display_amount, :display_price, :has_default_price?,
              :images, to: :find_or_build_master
 
-    alias_method :master_images, :images
+    alias master_images images
 
     def find_or_build_master
       master || build_master
@@ -192,7 +192,7 @@ module Spree
     # eg categorise_variants_from_option(color) => {"red" -> [...], "blue" -> [...]}
     def categorise_variants_from_option(opt_type)
       return {} unless option_types.include?(opt_type)
-      variants.active.group_by { |v| v.option_values.detect { |o| o.option_type == opt_type} }
+      variants.active.group_by { |v| v.option_values.detect { |o| o.option_type == opt_type } }
     end
 
     def self.like_any(fields, values)
@@ -307,7 +307,7 @@ module Spree
     end
 
     def update_slug_history
-      self.save!
+      save!
     end
 
     def anything_changed?
@@ -349,7 +349,7 @@ module Spree
       # Required to avoid Variant#check_price validation failing on create.
       unless master.default_price && master.valid?
         master.errors.each do |att, error|
-          self.errors.add(att, error)
+          errors.add(att, error)
         end
       end
     end

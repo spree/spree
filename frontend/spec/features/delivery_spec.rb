@@ -43,7 +43,7 @@ describe 'Delivery', type: :feature, inaccessible: true, js: true do
       before { choose(shipping_method2.name) }
 
       it 'shipping total and order total both are updates' do
-        expect(page).to have_content("Shipping total: $20.00")
+        expect(page).to have_content('Shipping total: $20.00')
       end
     end
   end
@@ -64,16 +64,16 @@ describe 'Delivery', type: :feature, inaccessible: true, js: true do
     end
 
     it 'calculates shipping total correctly with different currency marker' do
-      expect(page).to have_content("Shipping total: $20,00")
+      expect(page).to have_content('Shipping total: $20,00')
     end
 
     it 'calculates order total correctly with different currency marker' do
-      expect(page).to have_content("Order Total: $39,99")
+      expect(page).to have_content('Order Total: $39,99')
     end
   end
 
   def fill_in_address
-    address = "order_bill_address_attributes"
+    address = 'order_bill_address_attributes'
     fill_in "#{address}_firstname", with: FFaker::Name.first_name
     fill_in "#{address}_lastname", with: FFaker::Name.last_name
     fill_in "#{address}_address1", with: FFaker::Address.street_address
@@ -87,6 +87,6 @@ describe 'Delivery', type: :feature, inaccessible: true, js: true do
   def add_mug_to_cart
     visit spree.root_path
     click_link mug.name
-    click_button "add-to-cart-button"
+    click_button 'add-to-cart-button'
   end
 end

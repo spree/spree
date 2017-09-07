@@ -58,7 +58,7 @@ module Spree
 
         respond_with(@product) do |format|
           format.html { redirect_to collection_url }
-          format.js  { render_js_for_destroy }
+          format.js { render_js_for_destroy }
         end
       end
 
@@ -72,7 +72,6 @@ module Spree
           flash[:error] = Spree.t('notice_messages.product_not_cloned')
           redirect_to admin_products_url
         end
-
       rescue ActiveRecord::RecordInvalid
         # Handle error on uniqueness validation on product fields
         flash[:error] = Spree.t('notice_messages.product_not_cloned')
@@ -109,10 +108,10 @@ module Spree
       def collection
         return @collection if @collection.present?
         params[:q] ||= {}
-        params[:q][:deleted_at_null] ||= "1"
-        params[:q][:not_discontinued] ||= "1"
+        params[:q][:deleted_at_null] ||= '1'
+        params[:q][:not_discontinued] ||= '1'
 
-        params[:q][:s] ||= "name asc"
+        params[:q][:s] ||= 'name asc'
         @collection = super
         # Don't delete params[:q][:deleted_at_null] here because it is used in view to check the
         # checkbox for 'q[deleted_at_null]'. This also messed with pagination when deleted_at_null is checked.
@@ -124,10 +123,10 @@ module Spree
         # This is to include all products and not just deleted products.
         @search = @collection.ransack(params[:q].reject { |k, _v| k.to_s == 'deleted_at_null' })
         @collection = @search.result.
-              distinct_by_product_ids(params[:q][:s]).
-              includes(product_includes).
-              page(params[:page]).
-              per(params[:per_page] || Spree::Config[:admin_products_per_page])
+                      distinct_by_product_ids(params[:q][:s]).
+                      includes(product_includes).
+                      page(params[:page]).
+                      per(params[:per_page] || Spree::Config[:admin_products_per_page])
         @collection
       end
 

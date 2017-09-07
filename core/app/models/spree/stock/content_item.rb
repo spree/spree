@@ -31,13 +31,12 @@ module Spree
       end
 
       def on_hand?
-        state.to_s == "on_hand"
+        state.to_s == 'on_hand'
       end
 
       def backordered?
-        state.to_s == "backordered"
+        state.to_s == 'backordered'
       end
-
 
       def amount
         price * quantity

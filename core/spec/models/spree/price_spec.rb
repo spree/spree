@@ -88,7 +88,7 @@ describe Spree::Price, type: :model do
         allow(price).to receive(:included_tax_amount).with(tax_zone: zone, tax_category: tax_category) { 0.25 }
       end
 
-      it "returns the correct price including another VAT to two digits" do
+      it 'returns the correct price including another VAT to two digits' do
         expect(price_with_vat).to eq(10.50)
       end
     end
@@ -99,7 +99,7 @@ describe Spree::Price, type: :model do
         expect(price).to receive(:default_zone).at_least(:once).and_return(zone)
       end
 
-      it "returns the correct price" do
+      it 'returns the correct price' do
         expect(price).to receive(:price).and_call_original
         expect(price_with_vat).to eq(10.00)
       end
@@ -111,7 +111,7 @@ describe Spree::Price, type: :model do
         expect(price).to receive(:default_zone).at_least(:once).and_return(nil)
       end
 
-      it "returns the correct price" do
+      it 'returns the correct price' do
         expect(price).to receive(:price).and_call_original
         expect(price.price_including_vat_for(tax_zone: zone)).to eq(10.00)
       end

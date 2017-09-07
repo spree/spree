@@ -26,7 +26,7 @@ module Spree
 
         def best_promo_adjustment
           @best_promo_adjustment ||= begin
-            adjustments.competing_promos.eligible.reorder("amount ASC, created_at DESC, id DESC").first
+            adjustments.competing_promos.eligible.reorder('amount ASC, created_at DESC, id DESC').first
           end
         end
 

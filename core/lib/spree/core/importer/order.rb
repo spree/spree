@@ -2,53 +2,51 @@ module Spree
   module Core
     module Importer
       class Order
-
         def self.import(user, params)
-          begin
-            ensure_country_id_from_params params[:ship_address_attributes]
-            ensure_state_id_from_params params[:ship_address_attributes]
-            ensure_country_id_from_params params[:bill_address_attributes]
-            ensure_state_id_from_params params[:bill_address_attributes]
 
-            create_params = params.slice :currency
-            order = Spree::Order.create! create_params
-            order.associate_user!(user)
+          ensure_country_id_from_params params[:ship_address_attributes]
+          ensure_state_id_from_params params[:ship_address_attributes]
+          ensure_country_id_from_params params[:bill_address_attributes]
+          ensure_state_id_from_params params[:bill_address_attributes]
 
-            shipments_attrs = params.delete(:shipments_attributes)
+          create_params = params.slice :currency
+          order = Spree::Order.create! create_params
+          order.associate_user!(user)
 
-            create_line_items_from_params(params.delete(:line_items_attributes),order)
-            create_shipments_from_params(shipments_attrs, order)
-            create_adjustments_from_params(params.delete(:adjustments_attributes), order)
-            create_payments_from_params(params.delete(:payments_attributes), order)
+          shipments_attrs = params.delete(:shipments_attributes)
 
-            if completed_at = params.delete(:completed_at)
-              order.completed_at = completed_at
-              order.state = 'complete'
-            end
+          create_line_items_from_params(params.delete(:line_items_attributes), order)
+          create_shipments_from_params(shipments_attrs, order)
+          create_adjustments_from_params(params.delete(:adjustments_attributes), order)
+          create_payments_from_params(params.delete(:payments_attributes), order)
 
-            params.delete(:user_id) unless user.try(:has_spree_role?, "admin") && params.key?(:user_id)
-
-            order.update_attributes!(params)
-
-            order.create_proposed_shipments unless shipments_attrs.present?
-
-            # Really ensure that the order totals & states are correct
-            order.updater.update
-            if shipments_attrs.present?
-              order.shipments.each_with_index do |shipment, index|
-                shipment.update_columns(cost: shipments_attrs[index][:cost].to_f) if shipments_attrs[index][:cost].present?
-              end
-            end
-            order.reload
-          rescue Exception => e
-            order.destroy if order && order.persisted?
-            raise e.message
+          if completed_at = params.delete(:completed_at)
+            order.completed_at = completed_at
+            order.state = 'complete'
           end
+
+          params.delete(:user_id) unless user.try(:has_spree_role?, 'admin') && params.key?(:user_id)
+
+          order.update_attributes!(params)
+
+          order.create_proposed_shipments unless shipments_attrs.present?
+
+          # Really ensure that the order totals & states are correct
+          order.updater.update
+          if shipments_attrs.present?
+            order.shipments.each_with_index do |shipment, index|
+              shipment.update_columns(cost: shipments_attrs[index][:cost].to_f) if shipments_attrs[index][:cost].present?
+            end
+          end
+          order.reload
+        rescue Exception => e
+          order.destroy if order && order.persisted?
+          raise e.message
+
         end
 
         def self.create_shipments_from_params(shipments_hash, order)
           return [] unless shipments_hash
-
 
           shipments_hash.each do |s|
             begin
@@ -90,7 +88,7 @@ module Spree
         end
 
         def self.create_inventory_units_from_order_and_params(order, inventory_unit_params)
-          inventory_unit_params.reduce([]) do |inventory_units, inventory_unit_param|
+          inventory_unit_params.each_with_object([]) do |inventory_unit_param, inventory_units|
             ensure_variant_id_from_params(inventory_unit_param)
             existing = inventory_units.detect { |unit| unit.variant_id == inventory_unit_param[:variant_id] }
             if existing
@@ -99,15 +97,15 @@ module Spree
               line_item = order.line_items.detect { |ln| ln.variant_id = inventory_unit_param[:variant_id] }
               inventory_units << InventoryUnit.new(line_item: line_item, order_id: order.id, variant: line_item.variant, quantity: 1)
             end
-            inventory_units
+
           end
         end
 
         def self.create_line_items_from_params(line_items, order)
           return {} unless line_items
           iterator = case line_items
-          when Hash
-            ActiveSupport::Deprecation.warn(<<-EOS, caller)
+                     when Hash
+                       ActiveSupport::Deprecation.warn(<<-EOS, caller)
               Passing a hash is now deprecated and will be removed in Spree 4.0.
               It is recommended that you pass it as an array instead.
 
@@ -133,9 +131,9 @@ module Spree
                 }
               }
             EOS
-            :each_value
-          when Array
-            :each
+                       :each_value
+                     when Array
+                       :each
           end
 
           line_items.send(iterator) do |line_item|
@@ -197,39 +195,39 @@ module Spree
         end
 
         def self.create_source_payment_from_params(source_hash, payment)
-          begin
-            Spree::CreditCard.create(
-              month: source_hash[:month],
-              year: source_hash[:year],
-              cc_type: source_hash[:cc_type],
-              last_digits: source_hash[:last_digits],
-              name: source_hash[:name],
-              payment_method: payment.payment_method,
-              gateway_customer_profile_id: source_hash[:gateway_customer_profile_id],
-              gateway_payment_profile_id: source_hash[:gateway_payment_profile_id],
-              imported: true
-            )
-          rescue Exception => e
-            raise "Order import source payments: #{e.message} #{source_hash}"
-          end
+
+          Spree::CreditCard.create(
+            month: source_hash[:month],
+            year: source_hash[:year],
+            cc_type: source_hash[:cc_type],
+            last_digits: source_hash[:last_digits],
+            name: source_hash[:name],
+            payment_method: payment.payment_method,
+            gateway_customer_profile_id: source_hash[:gateway_customer_profile_id],
+            gateway_payment_profile_id: source_hash[:gateway_payment_profile_id],
+            imported: true
+          )
+        rescue Exception => e
+          raise "Order import source payments: #{e.message} #{source_hash}"
+
         end
 
         def self.ensure_variant_id_from_params(hash)
-          begin
-            sku = hash.delete(:sku)
-            unless hash[:variant_id].present?
-              hash[:variant_id] = Spree::Variant.active.find_by!(sku: sku).id
-            end
-            hash
-          rescue ActiveRecord::RecordNotFound => e
-            raise "Ensure order import variant: Variant w/SKU #{sku} not found."
-          rescue Exception => e
-            raise "Ensure order import variant: #{e.message} #{hash}"
+
+          sku = hash.delete(:sku)
+          unless hash[:variant_id].present?
+            hash[:variant_id] = Spree::Variant.active.find_by!(sku: sku).id
           end
+          hash
+        rescue ActiveRecord::RecordNotFound => e
+          raise "Ensure order import variant: Variant w/SKU #{sku} not found."
+        rescue Exception => e
+          raise "Ensure order import variant: #{e.message} #{hash}"
+
         end
 
         def self.ensure_country_id_from_params(address)
-          return if address.nil? or address[:country_id].present? or address[:country].nil?
+          return if address.nil? || address[:country_id].present? || address[:country].nil?
 
           begin
             search = {}
@@ -245,14 +243,13 @@ module Spree
 
             address.delete(:country)
             address[:country_id] = Spree::Country.where(search).first!.id
-
           rescue Exception => e
             raise "Ensure order import address country: #{e.message} #{search}"
           end
         end
 
         def self.ensure_state_id_from_params(address)
-          return if address.nil? or address[:state_id].present? or address[:state].nil?
+          return if address.nil? || address[:state_id].present? || address[:state].nil?
 
           begin
             search = {}
