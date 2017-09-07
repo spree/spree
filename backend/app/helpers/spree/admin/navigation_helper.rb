@@ -19,7 +19,7 @@ module Spree
         options = { label: args.first.to_s }
 
         # Return if resource is found and user is not allowed to :admin
-        return '' if klass = klass_for(options[:label]) and cannot?(:admin, klass)
+        return '' if (klass = klass_for(options[:label])) && cannot?(:admin, klass)
 
         options = options.merge(args.pop) if args.last.is_a?(Hash)
         options[:route] ||= "admin_#{args.first}"

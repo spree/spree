@@ -229,7 +229,7 @@ module Spree
         end
 
         def self.ensure_country_id_from_params(address)
-          return if address.nil? or address[:country_id].present? or address[:country].nil?
+          return if address.nil? || address[:country_id].present? || address[:country].nil?
 
           begin
             search = {}
@@ -252,7 +252,7 @@ module Spree
         end
 
         def self.ensure_state_id_from_params(address)
-          return if address.nil? or address[:state_id].present? or address[:state].nil?
+          return if address.nil? || address[:state_id].present? || address[:state].nil?
 
           begin
             search = {}

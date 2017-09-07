@@ -31,7 +31,7 @@ class Project
   #   otherwise
   def install
     chdir do
-      bundle_check or bundle_install or fail 'Cannot finish gem installation'
+      bundle_check || bundle_install || fail('Cannot finish gem installation')
     end
     self
   end
@@ -74,7 +74,7 @@ class Project
   #
   # @return [undefined]
   def setup_test_app
-    system(%w[bundle exec rake test_app]) or fail 'Failed to setup the test app'
+    system(%w[bundle exec rake test_app]) || fail('Failed to setup the test app')
   end
 
   # Run tests for subproject

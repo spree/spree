@@ -37,7 +37,7 @@ module Spree
 
     def value_for_line_item(line_item)
       if compute_on_promotion?
-        return 0 unless matching_products.blank? or matching_products.include?(line_item.product)
+        return 0 unless matching_products.blank? || matching_products.include?(line_item.product)
       end
       ((line_item.price * line_item.quantity) * preferred_percent) / 100
     end

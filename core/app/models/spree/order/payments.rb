@@ -58,7 +58,7 @@ module Spree
           end
         rescue Core::GatewayError => e
           result = !!Spree::Config[:allow_checkout_on_gateway_error]
-          errors.add(:base, e.message) and return result
+          errors.add(:base, e.message) && (return result)
         end
       end
     end

@@ -56,7 +56,7 @@ module CapybaraExt
   end
 
   def select2_no_label value, options={}
-    raise "Must pass a hash containing 'from'" if not options.is_a?(Hash) or not options.has_key?(:from)
+    raise "Must pass a hash containing 'from'" if (not options.is_a?(Hash)) || (not options.has_key?(:from))
 
     placeholder = options[:from]
     minlength = options[:minlength] || 4

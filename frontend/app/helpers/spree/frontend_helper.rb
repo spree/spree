@@ -65,7 +65,7 @@ module Spree
       text = text ? h(text) : Spree.t('cart')
       css_class = nil
 
-      if simple_current_order.nil? or simple_current_order.item_count.zero?
+      if simple_current_order.nil? || simple_current_order.item_count.zero?
         text = "<span class='glyphicon glyphicon-shopping-cart'></span> #{text}: (#{Spree.t('empty')})"
         css_class = 'empty'
       else

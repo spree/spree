@@ -35,7 +35,7 @@ use rake db:load_file[/absolute/path/to/sample/filename.rb]}
   task remigrate: :environment do
     require 'highline/import'
 
-    if ENV['SKIP_NAG'] or ENV['OVERWRITE'].to_s.downcase == 'true' or agree("This task will destroy any data in the database. Are you sure you want to \ncontinue? [y/n] ")
+    if ENV['SKIP_NAG'] || ENV['OVERWRITE'].to_s.downcase ==('true') || agree("This task will destroy any data in the database. Are you sure you want to \ncontinue? [y/n] ")
 
       # Drop all tables
       ActiveRecord::Base.connection.tables.each { |t| ActiveRecord::Base.connection.drop_table t }
@@ -57,7 +57,7 @@ use rake db:load_file[/absolute/path/to/sample/filename.rb]}
 
     # remigrate unless production mode (as saftey check)
     if %w[demo development test].include? Rails.env
-      if ENV['AUTO_ACCEPT'] or agree("This task will destroy any data in the database. Are you sure you want to \ncontinue? [y/n] ")
+      if ENV['AUTO_ACCEPT'] || agree("This task will destroy any data in the database. Are you sure you want to \ncontinue? [y/n] ")
         ENV['SKIP_NAG'] = 'yes'
         Rake::Task['db:create'].invoke
         Rake::Task['db:remigrate'].invoke
@@ -78,7 +78,7 @@ use rake db:load_file[/absolute/path/to/sample/filename.rb]}
     end
     Rake::Task['db:seed'].invoke if load_defaults
 
-    if Rails.env.production? and Spree::Product.count > 0
+    if Rails.env.production? && Spree::Product.count >(0)
       load_sample = agree('WARNING: In Production and products exist in database, load sample data anyways? [y/n]:' )
     else
       load_sample = true if ENV['AUTO_ACCEPT']
