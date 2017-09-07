@@ -118,11 +118,11 @@ module Spree
     private
 
     def allow_ship?
-      self.on_hand?
+      on_hand?
     end
 
     def fulfill_order
-      self.reload
+      reload
       order.fulfill!
     end
 

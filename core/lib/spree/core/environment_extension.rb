@@ -4,7 +4,7 @@ module Spree
       extend ActiveSupport::Concern
 
       def add_class(name)
-        self.instance_variable_set "@#{name}", Set.new
+        instance_variable_set "@#{name}", Set.new
 
         create_method( "#{name}=".to_sym ) do |val|
           instance_variable_set( '@' + name, val)

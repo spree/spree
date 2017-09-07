@@ -63,7 +63,7 @@ module Spree
     def method_missing(method_name, *args, &block)
       if image_style = image_style_from_method_name(method_name)
         define_image_method(image_style)
-        self.send(method_name, *args)
+        send(method_name, *args)
       else
         super
       end

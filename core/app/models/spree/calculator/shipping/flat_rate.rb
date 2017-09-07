@@ -11,7 +11,7 @@ module Spree
       end
 
       def compute_package(package)
-        self.preferred_amount
+        preferred_amount
       end
     end
   end

@@ -9,11 +9,11 @@ module Spree::RansackableAttributes
     self.default_ransackable_attributes = %w[id name updated_at created_at]
 
     def self.ransackable_associations(*args)
-      self.whitelisted_ransackable_associations || []
+      whitelisted_ransackable_associations || []
     end
 
     def self.ransackable_attributes(*args)
-      self.default_ransackable_attributes | (self.whitelisted_ransackable_attributes || [])
+      default_ransackable_attributes | (whitelisted_ransackable_attributes || [])
     end
 
     def self.ransackable_scopes(*args)

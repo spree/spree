@@ -140,8 +140,8 @@ module Spree
       return unless new_record?
       if source_attributes.present? && source.blank? && payment_method.try(:payment_source_class)
         self.source = payment_method.payment_source_class.new(source_attributes)
-        self.source.payment_method_id = payment_method.id
-        self.source.user_id = self.order.user_id if self.order
+        source.payment_method_id = payment_method.id
+        source.user_id = order.user_id if order
       end
     end
 
@@ -189,7 +189,7 @@ module Spree
       if source && !source.valid?
         source.errors.each do |field, error|
           field_name = I18n.t("activerecord.attributes.#{source.class.to_s.underscore}.#{field}")
-          self.errors.add(Spree.t(source.class.to_s.demodulize.underscore), "#{field_name} #{error}")
+          errors.add(Spree.t(source.class.to_s.demodulize.underscore), "#{field_name} #{error}")
         end
       end
       return !errors.present?
@@ -236,7 +236,7 @@ module Spree
         order.updater.update_shipment_state
       end
 
-      if self.completed? || order.completed?
+      if completed? || order.completed?
         order.persist_totals
       end
     end

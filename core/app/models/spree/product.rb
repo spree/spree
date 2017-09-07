@@ -307,7 +307,7 @@ module Spree
     end
 
     def update_slug_history
-      self.save!
+      save!
     end
 
     def anything_changed?
@@ -349,7 +349,7 @@ module Spree
       # Required to avoid Variant#check_price validation failing on create.
       unless master.default_price && master.valid?
         master.errors.each do |att, error|
-          self.errors.add(att, error)
+          errors.add(att, error)
         end
       end
     end

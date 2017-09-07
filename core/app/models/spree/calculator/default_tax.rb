@@ -49,7 +49,7 @@ module Spree
     private
 
     def rate
-      self.calculable
+      calculable
     end
 
     def deduced_total_by_rate(pre_tax_amount, rate)

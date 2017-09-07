@@ -49,7 +49,7 @@ module Spree
     self.used_translations ||= []
     self.unused_translation_messages = []
     self.unused_translations = []
-    self.load_translations(translations)
+    load_translations(translations)
     translation_diff = unused_translations - used_translations
     translation_diff.each do |translation|
       Spree.unused_translation_messages << "#{translation} (#{I18n.locale})"
@@ -64,7 +64,7 @@ module Spree
         load_translations(v, root.dup << k)
       else
         key = (root + [k]).join('.')
-        self.unused_translations << key
+        unused_translations << key
       end
     end
   end

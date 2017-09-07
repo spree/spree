@@ -76,8 +76,8 @@ module Spree
       if action_taken
       # connect to the order
       # create the join_table entry.
-        self.orders << order
-        self.save
+        orders << order
+        save
       end
 
       action_taken

@@ -19,10 +19,10 @@ module Spree
         base = object.respond_to?(:amount) ? object.amount : BigDecimal(object.to_s)
       end
 
-      if base < self.preferred_minimal_amount
-        self.preferred_normal_amount
+      if base < preferred_minimal_amount
+        preferred_normal_amount
       else
-        self.preferred_discount_amount
+        preferred_discount_amount
       end
     end
   end

@@ -55,7 +55,7 @@ module Spree
     end
 
     def auto_capture?
-      self.auto_capture.nil? ? Spree::Config[:auto_capture] : self.auto_capture
+      auto_capture.nil? ? Spree::Config[:auto_capture] : auto_capture
     end
 
     def supports?(source)

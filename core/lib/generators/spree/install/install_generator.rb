@@ -19,7 +19,7 @@ module Spree
     class_option :enforce_available_locales, type: :boolean, default: nil
 
     def self.source_paths
-      paths = self.superclass.source_paths
+      paths = superclass.source_paths
       paths << File.expand_path('../templates', "../../#{__FILE__}")
       paths << File.expand_path('../templates', "../#{__FILE__}")
       paths << File.expand_path('../templates', __FILE__)

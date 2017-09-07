@@ -16,7 +16,7 @@ module Spree
       method = "compute_#{computable_name}".to_sym
       calculator_class = self.class
       if respond_to?(method)
-        self.send(method, computable)
+        send(method, computable)
       else
         raise NotImplementedError, "Please implement '#{method}(#{computable_name})' in your calculator: #{calculator_class.name}"
       end

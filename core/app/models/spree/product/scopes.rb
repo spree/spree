@@ -5,7 +5,7 @@ module Spree
     end
 
     def self.add_search_scope(name, &block)
-      self.singleton_class.send(:define_method, name.to_sym, &block)
+      singleton_class.send(:define_method, name.to_sym, &block)
       search_scopes << name.to_sym
     end
 
@@ -23,7 +23,7 @@ module Spree
         # We should not define price scopes here, as they require something slightly different
         next if name.to_s.include?('master_price')
         parts = name.to_s.match(/(.*)_by_(.*)/)
-        self.scope(name.to_s, -> { order("#{Product.quoted_table_name}.#{parts[2]} #{parts[1] == 'ascend' ? "ASC" : "DESC"}") })
+        scope(name.to_s, -> { order("#{Product.quoted_table_name}.#{parts[2]} #{parts[1] == 'ascend' ? "ASC" : "DESC"}") })
       end
     end
 

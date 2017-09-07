@@ -77,7 +77,7 @@ module Spree
     end
 
     def pretty_name
-      ancestor_chain = self.ancestors.inject('') do |name, ancestor|
+      ancestor_chain = ancestors.inject('') do |name, ancestor|
         name += "#{ancestor.name} -> "
       end
       ancestor_chain + "#{name}"
@@ -90,7 +90,7 @@ module Spree
     #
     #  See #3390 for background.
     def child_index=(idx)
-      move_to_child_with_index(parent, idx.to_i) unless self.new_record?
+      move_to_child_with_index(parent, idx.to_i) unless new_record?
     end
 
     private

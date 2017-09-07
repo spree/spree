@@ -29,7 +29,7 @@ module Spree
     # Copied from per_item.rb
     def matching_products
       if compute_on_promotion?
-        self.calculable.promotion.rules.map do |rule|
+        calculable.promotion.rules.map do |rule|
           rule.respond_to?(:products) ? rule.products : []
         end.flatten
       end
@@ -44,7 +44,7 @@ module Spree
 
     # Determines wether or not the calculable object is a promotion
     def compute_on_promotion?
-      @compute_on_promotion ||= self.calculable.respond_to?(:promotion)
+      @compute_on_promotion ||= calculable.respond_to?(:promotion)
     end
   end
 end

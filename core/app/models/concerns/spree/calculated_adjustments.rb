@@ -18,12 +18,12 @@ module Spree
 
       def calculator_type=(calculator_type)
         klass = calculator_type.constantize if calculator_type
-        self.calculator = klass.new if klass && !self.calculator.is_a?(klass)
+        self.calculator = klass.new if klass && !calculator.is_a?(klass)
       end
 
       private
       def self.model_name_without_spree_namespace
-        self.to_s.tableize.gsub('/', '_').sub('spree_', '')
+        to_s.tableize.gsub('/', '_').sub('spree_', '')
       end
 
       def self.spree_calculators

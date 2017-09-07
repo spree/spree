@@ -15,7 +15,7 @@ module Spree
       end
 
       def compute_from_quantity(quantity)
-        self.preferred_amount * quantity
+        preferred_amount * quantity
       end
     end
   end
