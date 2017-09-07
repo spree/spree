@@ -49,8 +49,8 @@ module Spree
     end
 
     it "can search for product properties" do
-      product.product_properties.create(property_name: "Shirt Size")
-      product.product_properties.create(property_name: "Shirt Weight")
+      product.product_properties.create(property_name: "Shirt Size", value: "M")
+      product.product_properties.create(property_name: "Shirt Weight", value: "H")
       api_get :index, q: { property_name_cont: "size" }
       expect(json_response["product_properties"].first['property_name']).to eq('Shirt Size')
       expect(json_response["product_properties"].first).to have_attributes(attributes)

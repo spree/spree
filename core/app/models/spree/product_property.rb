@@ -9,7 +9,7 @@ module Spree
 
     validates :property, presence: true
 
-    validates :value, db_maximum_length: true
+    validates :value, db_maximum_length: true, presence: true
 
     default_scope { order(:position) }
 
