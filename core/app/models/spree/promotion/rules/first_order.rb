@@ -24,6 +24,7 @@ module Spree
         end
 
         private
+
         def completed_orders
           user ? user.orders.complete : orders_by_email
         end

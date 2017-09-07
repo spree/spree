@@ -6,6 +6,7 @@ module Spree
       helper 'spree/admin/promotion_rules'
 
       protected
+
       def location_after_save
         spree.edit_admin_promotion_url(@promotion)
       end

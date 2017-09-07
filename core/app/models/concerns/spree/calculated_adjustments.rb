@@ -22,6 +22,7 @@ module Spree
       end
 
       private
+
       def self.model_name_without_spree_namespace
         to_s.tableize.gsub('/', '_').sub('spree_', '')
       end

@@ -96,6 +96,7 @@ module Spree
         end
 
         private
+
         def product_params
           params.require(:product).permit(permitted_product_attributes)
         end

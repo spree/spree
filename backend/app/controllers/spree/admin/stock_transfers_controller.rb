@@ -38,6 +38,7 @@ module Spree
       end
 
       private
+
       def load_stock_locations
         @stock_locations = Spree::StockLocation.active.order_default
       end

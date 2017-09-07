@@ -28,6 +28,7 @@ module Spree
 
 
       private
+
       def setup_new_option_value
         @option_type.option_values.build if @option_type.option_values.empty?
       end

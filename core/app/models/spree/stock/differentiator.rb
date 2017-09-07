@@ -16,6 +16,7 @@ module Spree
       end
 
       private
+
       def build_missing
         @missing = Hash.new(0)
         required.keys.each do |variant|

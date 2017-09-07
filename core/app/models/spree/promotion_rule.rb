@@ -30,6 +30,7 @@ module Spree
     end
 
     private
+
     def unique_per_promotion
       if Spree::PromotionRule.exists?(promotion_id: promotion_id, type: self.class.name)
         errors[:base] << 'Promotion already contains this rule type'

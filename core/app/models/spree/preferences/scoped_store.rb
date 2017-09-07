@@ -22,6 +22,7 @@ module Spree::Preferences
     end
 
     private
+
     def key_for key
       [rails_cache_id, @prefix, key, @suffix].compact.join('/')
     end

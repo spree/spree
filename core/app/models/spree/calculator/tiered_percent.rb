@@ -28,6 +28,7 @@ module Spree
     end
 
     private
+
     def preferred_tiers_content
       if preferred_tiers.is_a? Hash
         unless preferred_tiers.keys.all? { |k| k.is_a?(Numeric) && k > 0 }

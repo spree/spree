@@ -26,6 +26,7 @@ module Spree
     end
 
     private
+
     def send_shipped_email
       ShipmentMailer.shipped_email(@shipment.id).deliver_later
     end

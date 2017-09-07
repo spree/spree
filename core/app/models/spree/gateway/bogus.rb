@@ -78,6 +78,7 @@ module Spree
     end
 
     private
+
     def generate_profile_id(success)
       record = true
       prefix = success ? 'BGS' : 'FAIL'

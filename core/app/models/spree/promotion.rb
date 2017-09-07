@@ -203,6 +203,7 @@ module Spree
     end
 
     private
+
     def blacklisted?(promotable)
       case promotable
       when Spree::LineItem

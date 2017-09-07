@@ -48,6 +48,7 @@ module Spree
         end
 
         private
+
         def product
           @product ||= Spree::Product.accessible_by(current_ability, :read).friendly.find(params[:product_id]) if params[:product_id]
         end

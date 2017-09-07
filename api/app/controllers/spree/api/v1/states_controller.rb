@@ -21,6 +21,7 @@ module Spree
         end
 
         private
+
         def scope
           if params[:country_id]
             @country = Country.accessible_by(current_ability, :read).find(params[:country_id])

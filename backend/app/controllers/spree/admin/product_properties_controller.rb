@@ -6,6 +6,7 @@ module Spree
       before_action :setup_property, only: :index
 
       private
+
       def find_properties
         @properties = Spree::Property.pluck(:name)
       end

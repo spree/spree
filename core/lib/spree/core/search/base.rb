@@ -32,6 +32,7 @@ module Spree
         end
 
         protected
+
         def get_base_scope
           base_scope = Spree::Product.spree_base_scopes.active
           base_scope = base_scope.in_taxon(taxon) unless taxon.blank?

@@ -13,6 +13,7 @@ module Spree
     end
 
     private
+
     def total(content_items)
       content_items.sum(&:amount)
     end

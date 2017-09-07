@@ -103,6 +103,7 @@ module Spree
         end
 
         private
+
         def order_params
           if params[:order]
             normalize_params
