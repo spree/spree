@@ -372,7 +372,7 @@ module Spree
 
         it 'can update an existing variant on a product' do
           variant_hash = {
-            sku: '123', price: 19.99, options: [{name: 'size', value: 'small'}]
+            sku: '123', price: 19.99, options: [{ name: 'size', value: 'small' }]
           }
           variant_id = product.variants.create!({ product: product }.merge(variant_hash)).id
 
@@ -381,7 +381,7 @@ module Spree
               variant_hash.merge(
                 id: variant_id.to_s,
                 sku: '456',
-                options: [{name: 'size', value: 'large' }]
+                options: [{ name: 'size', value: 'large' }]
               )
             ]
           }

@@ -58,7 +58,7 @@ module Spree
       end
 
       it 'can filter the returned results' do
-        api_get :mine, q: {completed_at_not_null: 1}
+        api_get :mine, q: { completed_at_not_null: 1 }
 
         expect(response.status).to eq(200)
         expect(json_response['orders'].length).to eq(0)
@@ -316,11 +316,11 @@ module Spree
       let(:address_params) { { country_id: country.id } }
       let(:billing_address) { { firstname: 'Tiago', lastname: 'Motta', address1: 'Av Paulista',
                                 city: 'Sao Paulo', zipcode: '01310-300', phone: '12345678',
-                                country_id: country.id} }
+                                country_id: country.id } }
       let(:shipping_address) { { firstname: 'Tiago', lastname: 'Motta', address1: 'Av Paulista',
                                  city: 'Sao Paulo', zipcode: '01310-300', phone: '12345678',
-                                 country_id: country.id} }
-      let(:country) { create(:country, {name: 'Brazil', iso_name: 'BRAZIL', iso: 'BR', iso3: 'BRA', numcode: 76 })}
+                                 country_id: country.id } }
+      let(:country) { create(:country, { name: 'Brazil', iso_name: 'BRAZIL', iso: 'BR', iso3: 'BRA', numcode: 76 })}
 
       before do
         allow_any_instance_of(Order).to receive_messages user: current_api_user
@@ -364,7 +364,7 @@ module Spree
         api_put :update, id: order.to_param, order: {
           line_items: {
             '0' => { id: line_item.id, quantity: 10 },
-            '1' => { variant_id: variant2.id, quantity: 1}
+            '1' => { variant_id: variant2.id, quantity: 1 }
           }
         }
 

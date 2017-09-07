@@ -96,7 +96,7 @@ module Spree
         api_get :jstree, taxonomy_id: taxonomy.id, id: taxon.id
         response = json_response.first
         expect(response['data']).to eq(taxon2.name)
-        expect(response['attr']).to eq({ 'name' => taxon2.name, 'id' => taxon2.id})
+        expect(response['attr']).to eq({ 'name' => taxon2.name, 'id' => taxon2.id })
         expect(response['state']).to eq('closed')
       end
 
@@ -140,7 +140,7 @@ module Spree
 
       it 'can update the position in the list' do
         taxonomy.root.children << taxon2
-        api_put :update, taxonomy_id: taxonomy.id, id: taxon.id, taxon: {parent_id: taxon.parent_id, child_index: 2 }
+        api_put :update, taxonomy_id: taxonomy.id, id: taxon.id, taxon: { parent_id: taxon.parent_id, child_index: 2 }
         expect(response.status).to eq(200)
         expect(taxonomy.reload.root.children[0]).to eql taxon2
         expect(taxonomy.reload.root.children[1]).to eql taxon

@@ -10,7 +10,7 @@ describe Spree::Admin::ReturnItemsController, type: :controller do
     let(:new_acceptance_status) { 'rejected' }
 
     subject do
-      spree_put :update, id: return_item.to_param, return_item: {acceptance_status: new_acceptance_status}
+      spree_put :update, id: return_item.to_param, return_item: { acceptance_status: new_acceptance_status }
     end
 
     it 'updates the return item' do

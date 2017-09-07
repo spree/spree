@@ -207,7 +207,7 @@ describe Spree::Payment, type: :model do
         allow(payment).to receive_messages currency: 'GBP'
         expect(payment.payment_method).to receive(:authorize).with(amount_in_cents,
                                                                    card,
-                                                                   hash_including({currency: 'GBP'})).and_return(success_response)
+                                                                   hash_including({ currency: 'GBP' })).and_return(success_response)
         payment.authorize!
       end
 
@@ -649,7 +649,7 @@ describe Spree::Payment, type: :model do
 
     it 'errors when payment source not valid' do
       params = { amount: 100, payment_method: gateway,
-                 source_attributes: {expiry: '1 / 12' }}
+                 source_attributes: { expiry: '1 / 12' } }
 
       payment = Spree::Payment.new(params)
       expect(payment).not_to be_valid
@@ -905,10 +905,10 @@ describe Spree::Payment, type: :model do
       expect(payment.state_changes).to be_empty
       expect(payment.process!).to be true
       expect(payment.state_changes.count).to eq(2)
-      changes = payment.state_changes.map { |change| { change.previous_state => change.next_state} }
+      changes = payment.state_changes.map { |change| { change.previous_state => change.next_state } }
       expect(changes).to match_array([
-        {'checkout' => 'processing'},
-        { 'processing' => 'pending'}
+        { 'checkout' => 'processing' },
+        { 'processing' => 'pending' }
       ])
     end
   end

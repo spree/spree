@@ -11,7 +11,7 @@ module Spree
             @shipments = Spree::Shipment.
               reverse_chronological.
               joins(:order).
-              where(spree_orders: {user_id: current_api_user.id}).
+              where(spree_orders: { user_id: current_api_user.id }).
               includes(mine_includes).
               ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
           else
@@ -25,7 +25,7 @@ module Spree
           authorize! :create, Shipment
           quantity = params[:quantity].to_i
           @shipment = @order.shipments.create(stock_location_id: params.fetch(:stock_location_id))
-          @order.contents.add(variant, quantity, {shipment: @shipment})
+          @order.contents.add(variant, quantity, { shipment: @shipment })
 
           @shipment.save!
 
@@ -60,7 +60,7 @@ module Spree
         def add
           quantity = params[:quantity].to_i
 
-          @shipment.order.contents.add(variant, quantity, {shipment: @shipment})
+          @shipment.order.contents.add(variant, quantity, { shipment: @shipment })
 
           respond_with(@shipment, default_template: :show)
         end
@@ -68,7 +68,7 @@ module Spree
         def remove
           quantity = params[:quantity].to_i
 
-          @shipment.order.contents.remove(variant, quantity, {shipment: @shipment})
+          @shipment.order.contents.remove(variant, quantity, { shipment: @shipment })
           @shipment.reload if @shipment.persisted?
           respond_with(@shipment, default_template: :show)
         end
@@ -82,7 +82,7 @@ module Spree
           end
 
           @original_shipment.transfer_to_location(@variant, @quantity, @stock_location)
-          render json: {success: true, message: Spree.t(:shipment_transfer_success)}, status: 201
+          render json: { success: true, message: Spree.t(:shipment_transfer_success) }, status: 201
         end
 
         def transfer_to_shipment
@@ -94,7 +94,7 @@ module Spree
           end
 
           @original_shipment.transfer_to_shipment(@variant, @quantity, @target_shipment)
-          render json: {success: true, message: Spree.t(:shipment_transfer_success)}, status: 201
+          render json: { success: true, message: Spree.t(:shipment_transfer_success) }, status: 201
         end
 
         private

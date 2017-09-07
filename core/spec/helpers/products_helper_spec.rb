@@ -196,7 +196,7 @@ THIS IS THE BEST PRODUCT EVER!
       subject { helper.cache_key_for_products }
       before(:each) do
         @products = double('products collection')
-        allow(helper).to receive(:params) { {page: 10} }
+        allow(helper).to receive(:params) { { page: 10 } }
         allow(helper).to receive(:current_price_options) { price_options }
       end
 

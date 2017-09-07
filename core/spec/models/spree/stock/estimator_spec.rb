@@ -15,7 +15,7 @@ module Spree
           shipping_method.zones.first.members.create(zoneable: order.ship_address.country)
           allow_any_instance_of(ShippingMethod).to receive_message_chain(:calculator, :available?).and_return(true)
           allow_any_instance_of(ShippingMethod).to receive_message_chain(:calculator, :compute).and_return(4.00)
-          allow_any_instance_of(ShippingMethod).to receive_message_chain(:calculator, :preferences).and_return({currency: currency})
+          allow_any_instance_of(ShippingMethod).to receive_message_chain(:calculator, :preferences).and_return({ currency: currency })
           allow_any_instance_of(ShippingMethod).to receive_message_chain(:calculator, :marked_for_destruction?)
 
           allow(package).to receive_messages(shipping_methods: [shipping_method])

@@ -86,7 +86,7 @@ module Spree
 
         context 'when guest_token not present' do
           it 'should respond with 404' do
-            spree_get :show, { id: 'R123'}
+            spree_get :show, { id: 'R123' }
             expect(response.code).to eq('404')
           end
         end

@@ -400,7 +400,7 @@ describe Spree::ReturnItem, type: :model do
 
       it 'is valid' do
         expect(subject).to_not be_valid
-        expect(subject.errors.messages).to eq({reimbursement: [I18n.t(:cannot_be_associated_unless_accepted, scope: 'activerecord.errors.models.spree/return_item.attributes.reimbursement')]})
+        expect(subject.errors.messages).to eq({ reimbursement: [I18n.t(:cannot_be_associated_unless_accepted, scope: 'activerecord.errors.models.spree/return_item.attributes.reimbursement')] })
       end
     end
   end

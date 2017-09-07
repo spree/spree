@@ -70,7 +70,7 @@ describe Spree::ReturnItem::EligibilityValidator::Default, type: :model do
       let(:rma_error_text)  { 'RMA eligibility error' }
 
       it 'gathers all errors from permitted eligibility validators into a single errors hash' do
-        expect(subject).to eq({time: time_error_text, rma: rma_error_text})
+        expect(subject).to eq({ time: time_error_text, rma: rma_error_text })
       end
     end
   end

@@ -36,11 +36,11 @@ describe Spree::Order, type: :model do
     end
 
     it '.find_transition when contract was broken' do
-      expect(Spree::Order.find_transition({foo: :bar, baz: :dog})).to be_falsey
+      expect(Spree::Order.find_transition({ foo: :bar, baz: :dog })).to be_falsey
     end
 
     it '.remove_transition' do
-      options = {from: transitions.first.keys.first, to: transitions.first.values.first}
+      options = { from: transitions.first.keys.first, to: transitions.first.values.first }
       expect(Spree::Order).to receive_messages(
         removed_transitions:    [],
         next_event_transitions: transitions.dup
@@ -537,7 +537,7 @@ describe Spree::Order, type: :model do
     end
 
     it 'should not keep old event transitions when checkout_flow is redefined' do
-      expect(Spree::Order.next_event_transitions).to eq([{cart: :payment}, {payment: :complete}])
+      expect(Spree::Order.next_event_transitions).to eq([{ cart: :payment }, { payment: :complete }])
     end
 
     it 'should not keep old events when checkout_flow is redefined' do
@@ -675,7 +675,7 @@ describe Spree::Order, type: :model do
 
       let(:params) do
         ActionController::Parameters.new(
-          order: { payments_attributes: [{payment_method_id: 1}], existing_card: credit_card.id },
+          order: { payments_attributes: [{ payment_method_id: 1 }], existing_card: credit_card.id },
           cvc_confirm: '737',
           payment_source: {
             '1' => { name: 'Luis Braga',
@@ -736,7 +736,7 @@ describe Spree::Order, type: :model do
         let(:credit_card) { create(:credit_card, user_id: order.user_id) }
         let(:params) do
           ActionController::Parameters.new(
-            order: { payments_attributes: [{payment_method_id: 1}], existing_card: credit_card.id }
+            order: { payments_attributes: [{ payment_method_id: 1 }], existing_card: credit_card.id }
           )
         end
 

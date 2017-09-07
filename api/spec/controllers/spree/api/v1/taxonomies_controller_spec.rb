@@ -62,7 +62,7 @@ module Spree
       it 'gets the jstree-friendly version of a taxonomy' do
         api_get :jstree, id: taxonomy.id
         expect(json_response['data']).to eq(taxonomy.root.name)
-        expect(json_response['attr']).to eq({ 'id' => taxonomy.root.id, 'name' => taxonomy.root.name})
+        expect(json_response['attr']).to eq({ 'id' => taxonomy.root.id, 'name' => taxonomy.root.name })
         expect(json_response['state']).to eq('closed')
       end
 
@@ -93,7 +93,7 @@ module Spree
       sign_in_as_admin!
 
       it 'can create' do
-        api_post :create, taxonomy: { name: 'Colors'}
+        api_post :create, taxonomy: { name: 'Colors' }
         expect(json_response).to have_attributes(attributes)
         expect(response.status).to eq(201)
       end

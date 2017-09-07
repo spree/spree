@@ -89,7 +89,7 @@ describe Spree::Admin::ReturnAuthorizationsController, type: :controller do
     context '#create failed' do
       subject do
         spree_post :create, {
-          return_authorization: {return_authorization_reason_id: -1}, # invalid reason_id
+          return_authorization: { return_authorization_reason_id: -1 }, # invalid reason_id
           order_id: order.to_param,
         }
       end
@@ -100,7 +100,7 @@ describe Spree::Admin::ReturnAuthorizationsController, type: :controller do
     context '#update failed' do
       subject do
         spree_put :update, {
-          return_authorization: {return_authorization_reason_id: -1}, # invalid reason_id
+          return_authorization: { return_authorization_reason_id: -1 }, # invalid reason_id
           id: return_authorization.to_param,
           order_id: order.to_param,
         }
@@ -178,7 +178,7 @@ describe Spree::Admin::ReturnAuthorizationsController, type: :controller do
     context 'adding an item' do
       let(:return_items_params) do
         {
-          '0' => {inventory_unit_id: inventory_unit_1.to_param}
+          '0' => { inventory_unit_id: inventory_unit_1.to_param }
         }
       end
 
@@ -211,7 +211,7 @@ describe Spree::Admin::ReturnAuthorizationsController, type: :controller do
 
       let(:return_items_params) do
         {
-          '0' => {id: return_item.to_param, _destroy: '1'}
+          '0' => { id: return_item.to_param, _destroy: '1' }
         }
       end
 

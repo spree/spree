@@ -46,7 +46,7 @@ describe Spree::Core::Search::Base do
 
   it 'maps search params to named scopes' do
     params = { per_page: '',
-               search: { 'price_range_any' => ['Under $10.00'] }}
+               search: { 'price_range_any' => ['Under $10.00'] } }
     searcher = Spree::Core::Search::Base.new(ActionController::Parameters.new(params))
     expect(searcher.send(:get_base_scope).to_sql).to match /<= 10/
     expect(searcher.retrieve_products.count).to eq(1)
@@ -54,7 +54,7 @@ describe Spree::Core::Search::Base do
 
   it 'maps multiple price_range_any filters' do
     params = { per_page: '',
-               search: { 'price_range_any' => ['Under $10.00', '$10.00 - $15.00'] }}
+               search: { 'price_range_any' => ['Under $10.00', '$10.00 - $15.00'] } }
     searcher = Spree::Core::Search::Base.new(ActionController::Parameters.new(params))
     expect(searcher.send(:get_base_scope).to_sql).to match /<= 10/
     expect(searcher.send(:get_base_scope).to_sql).to match /between 10 and 15/i
@@ -63,7 +63,7 @@ describe Spree::Core::Search::Base do
 
   it 'uses ransack if scope not found' do
     params = { per_page: '',
-               search: { 'name_not_cont' => 'Shirt' }}
+               search: { 'name_not_cont' => 'Shirt' } }
     searcher = Spree::Core::Search::Base.new(ActionController::Parameters.new(params))
     expect(searcher.retrieve_products.count).to eq(1)
   end

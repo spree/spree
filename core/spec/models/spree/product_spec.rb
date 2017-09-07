@@ -451,12 +451,12 @@ describe Spree::Product, type: :model do
   context '#images' do
     let(:product) { create(:product) }
     let(:image) { File.open(File.expand_path('../../../fixtures/thinking-cat.jpg', __FILE__)) }
-    let(:params) { {viewable_id: product.master.id, viewable_type: 'Spree::Variant', attachment: image, alt: 'position 2', position: 2} }
+    let(:params) { { viewable_id: product.master.id, viewable_type: 'Spree::Variant', attachment: image, alt: 'position 2', position: 2 } }
 
     before do
       Spree::Image.create(params)
-      Spree::Image.create(params.merge({alt: 'position 1', position: 1}))
-      Spree::Image.create(params.merge({viewable_type: 'ThirdParty::Extension', alt: 'position 1', position: 2}))
+      Spree::Image.create(params.merge({ alt: 'position 1', position: 1 }))
+      Spree::Image.create(params.merge({ viewable_type: 'ThirdParty::Extension', alt: 'position 1', position: 2 }))
     end
 
     it 'only looks for variant images' do

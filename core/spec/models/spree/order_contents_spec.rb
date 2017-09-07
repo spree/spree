@@ -282,7 +282,7 @@ describe Spree::OrderContents, type: :model do
       let(:params) do
         { line_items_attributes: {
           '0' => { id: shirt.id, quantity: 0 },
-          '1' => { id: '666', quantity: 0}
+          '1' => { id: '666', quantity: 0 }
         } }
       end
 

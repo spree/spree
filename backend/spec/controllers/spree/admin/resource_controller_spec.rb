@@ -70,7 +70,7 @@ describe Spree::Admin::WidgetsController, type: :controller do
 
   describe '#create' do
     let(:params) do
-      {widget: {name: 'a widget'}}
+      { widget: { name: 'a widget' } }
     end
 
     subject { spree_post :create, params }
@@ -98,7 +98,7 @@ describe Spree::Admin::WidgetsController, type: :controller do
     let(:params) do
       {
         id: widget.to_param,
-        widget: {name: 'widget renamed'},
+        widget: { name: 'widget renamed' },
       }
     end
 
@@ -111,7 +111,7 @@ describe Spree::Admin::WidgetsController, type: :controller do
 
   describe '#destroy' do
     let!(:widget) { Widget.create!(name: 'a widget') }
-    let(:params) { {id: widget.id} }
+    let(:params) { { id: widget.id } }
 
     subject {
       spree_delete :destroy, params

@@ -588,7 +588,7 @@ describe Spree::Order, type: :model do
 
       it 'matches line item when options match' do
         allow(order).to receive(:foos_match).and_return(true)
-        expect(order.line_item_options_match(@line_items.first, {foos: {bar: :zoo}})).to be true
+        expect(order.line_item_options_match(@line_items.first, { foos: { bar: :zoo } })).to be true
       end
 
       it 'does not match line item without options' do

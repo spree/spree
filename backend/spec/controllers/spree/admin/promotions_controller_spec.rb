@@ -25,17 +25,17 @@ describe Spree::Admin::PromotionsController, type: :controller do
       end
 
       it 'filters by name' do
-        spree_get :index, q: {name_cont: promotion1.name}
+        spree_get :index, q: { name_cont: promotion1.name }
         expect(assigns[:promotions]).to eq [promotion1]
       end
 
       it 'filters by code' do
-        spree_get :index, q: {code_cont: promotion1.code}
+        spree_get :index, q: { code_cont: promotion1.code }
         expect(assigns[:promotions]).to eq [promotion1]
       end
 
       it 'filters by path' do
-        spree_get :index, q: {path_cont: promotion1.path}
+        spree_get :index, q: { path_cont: promotion1.path }
         expect(assigns[:promotions]).to eq [promotion1]
       end
     end

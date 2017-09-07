@@ -163,7 +163,7 @@ describe Spree::Api::V1::ShipmentsController, type: :controller do
         end
 
         context 'with filtering' do
-          let(:params) { {q: {order_completed_at_not_null: 1}} }
+          let(:params) { { q: { order_completed_at_not_null: 1 } } }
 
           let!(:incomplete_order) { create(:order, user: current_api_user) }
 
