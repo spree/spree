@@ -117,7 +117,7 @@ module Spree
       let(:updater) { order.updater }
 
       it 'is failed if no valid payments' do
-        allow(order).to receive_message_chain(:payments, :valid, :size).and_return(0)
+        allow(order).to receive_message_chain(:payments, :valid, :empty?).and_return(true)
 
         updater.update_payment_state
         expect(order.payment_state).to eq('failed')
@@ -175,7 +175,7 @@ module Spree
           it 'is credit_owed' do
             order.payment_total = 30
             order.total = 30
-            allow(order).to receive_message_chain(:payments, :valid, :size).and_return(1)
+            allow(order).to receive_message_chain(:payments, :valid, :empty?).and_return(false)
             allow(order).to receive_message_chain(:payments, :completed, :size).and_return(1)
             expect do
               updater.update_payment_state

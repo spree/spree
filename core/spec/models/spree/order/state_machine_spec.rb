@@ -159,7 +159,7 @@ describe Spree::Order, type: :model do
         allow(order).to receive :restock_items!
         allow(shipment).to receive(:cancel!)
         allow(payment).to receive(:cancel!)
-        allow(order).to receive_message_chain(:payments, :valid, :size).and_return(1)
+        allow(order).to receive_message_chain(:payments, :valid, :empty?).and_return(false)
         allow(order).to receive_message_chain(:payments, :completed).and_return([payment])
         allow(order).to receive_message_chain(:payments, :completed, :includes).and_return([payment])
         allow(order).to receive_message_chain(:payments, :last).and_return(payment)
