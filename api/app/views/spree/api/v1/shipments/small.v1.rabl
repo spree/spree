@@ -28,8 +28,8 @@ child manifest: :manifest do
   glue(:variant) do
     attribute id: :variant_id
   end
-  node(:quantity) { |m| m.quantity }
-  node(:states) { |m| m.states }
+  node(:quantity, &:quantity)
+  node(:states, &:states)
 end
 
 child adjustments: :adjustments do

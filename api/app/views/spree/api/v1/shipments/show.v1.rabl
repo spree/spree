@@ -27,6 +27,6 @@ child manifest: :manifest do
   child variant: :variant do
     extends 'spree/api/v1/variants/small'
   end
-  node(:quantity) { |m| m.quantity }
-  node(:states) { |m| m.states }
+  node(:quantity, &:quantity)
+  node(:states, &:states)
 end

@@ -224,7 +224,7 @@ describe Spree::Admin::OrdersController, type: :controller do
 
       it 'does not display duplicate results' do
         send_request
-        expect(assigns[:orders].map { |o| o.number }.count).to eq 1
+        expect(assigns[:orders].map(&:number).count).to eq 1
       end
 
       it 'preloads users' do

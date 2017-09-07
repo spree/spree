@@ -13,7 +13,7 @@ module Spree
       end
 
       def model_class
-        sub_namespace = sub_namespace_parts.map { |s| s.capitalize }.join('::')
+        sub_namespace = sub_namespace_parts.map(&:capitalize).join('::')
         sub_namespace = "#{sub_namespace}::" if sub_namespace.length > 0
         "Spree::#{sub_namespace}#{@controller_name.classify}".constantize
       end

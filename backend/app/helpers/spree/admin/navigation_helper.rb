@@ -106,9 +106,7 @@ module Spree
       def klass_for(name)
         model_name = name.to_s
 
-        ["Spree::#{model_name.classify}", model_name.classify, model_name.gsub('_', '/').classify].find do |t|
-          t.safe_constantize
-        end.try(:safe_constantize)
+        ["Spree::#{model_name.classify}", model_name.classify, model_name.gsub('_', '/').classify].find(&:safe_constantize).try(:safe_constantize)
       end
 
       def link_to_clone(resource, options={})

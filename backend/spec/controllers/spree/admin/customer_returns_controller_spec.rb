@@ -60,7 +60,7 @@ module Spree
             end
 
             it 'loads the persisted rma return items' do
-              expect(assigns(:rma_return_items).all? { |return_item| return_item.persisted? }).to eq true
+              expect(assigns(:rma_return_items).all?(&:persisted?)).to eq true
             end
 
             it 'has one rma return item' do

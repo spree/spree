@@ -32,11 +32,11 @@ module Spree
         end
 
         def pending_payments
-          payments.select { |payment| payment.pending? }
+          payments.select(&:pending?)
         end
 
         def unprocessed_payments
-          payments.select { |payment| payment.checkout? }
+          payments.select(&:checkout?)
         end
 
         private

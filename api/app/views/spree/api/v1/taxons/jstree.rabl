@@ -1,5 +1,5 @@
 collection @taxon.children, object_root: false
-node(:data) { |taxon| taxon.name }
+node(:data, &:name)
 node(:attr) do |taxon|
   { id: taxon.id,
     name: taxon.name

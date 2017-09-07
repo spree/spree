@@ -41,7 +41,7 @@ module Spree
       end
 
       def prune_packages
-        packages.reject! { |pkg| pkg.empty? }
+        packages.reject!(&:empty?)
       end
 
       def hash_item(item)

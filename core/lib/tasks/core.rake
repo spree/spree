@@ -70,9 +70,7 @@ use rake db:load_file[/absolute/path/to/sample/filename.rb]}
       Rake::Task['db:migrate'].invoke
     end
 
-    ActiveRecord::Base.send(:subclasses).each do |model|
-      model.reset_column_information
-    end
+    ActiveRecord::Base.send(:subclasses).each(&:reset_column_information)
 
     load_defaults = Spree::Country.count == 0
     unless load_defaults # ask if there are already Countries => default data hass been loaded
