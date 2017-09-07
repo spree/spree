@@ -22,7 +22,7 @@ module Spree
       end
     end
 
-  private
+    private
 
     # Returns all products that match this calculator, but only if the calculator
     # is attached to a promotion. If attached to a ShippingMethod, nil is returned.

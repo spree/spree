@@ -61,7 +61,7 @@ namespace :exchanges do
       end
     end
     failure_message = failed_orders.map { |o| "#{o.number} - #{o.errors.full_messages}" }.join(', ')
-    raise UnableToChargeForUnreturnedItems.new(failure_message) if failed_orders.present?
+    raise UnableToChargeForUnreturnedItems, failure_message if failed_orders.present?
   end
 end
 

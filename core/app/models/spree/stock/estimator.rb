@@ -32,10 +32,11 @@ module Spree
         shipping_methods(package, ui_filter).map do |shipping_method|
           cost = shipping_method.calculator.compute(package)
 
+          next unless cost
           shipping_method.shipping_rates.new(
             cost: gross_amount(cost, taxation_options_for(shipping_method)),
             tax_rate: first_tax_rate_for(shipping_method.tax_category)
-          ) if cost
+          )
         end.compact
       end
 

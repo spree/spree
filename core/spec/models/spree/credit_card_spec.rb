@@ -29,8 +29,8 @@ describe Spree::CreditCard, type: :model do
                                   purchase: @success_response,
                                   capture: @success_response,
                                   void: @success_response,
-                                  credit: @success_response,
-    )
+                                  credit: @success_response
+                                 )
 
     allow(@payment).to receive_messages payment_method: @payment_gateway
   end
@@ -140,7 +140,7 @@ describe Spree::CreditCard, type: :model do
     end
 
     it 'should not raise an exception on non-string input' do
-      credit_card.number = Hash.new
+      credit_card.number = ({})
       expect(credit_card.number).to be_nil
     end
   end

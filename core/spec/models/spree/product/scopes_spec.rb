@@ -35,7 +35,7 @@ describe 'Product scopes', type: :model do
       @root_taxon = @taxonomy.root
 
       @parent_taxon = create(:taxon, name: 'Parent', taxonomy_id: @taxonomy.id, parent: @root_taxon)
-      @child_taxon = create(:taxon, name:'Child 1', taxonomy_id: @taxonomy.id, parent: @parent_taxon)
+      @child_taxon = create(:taxon, name: 'Child 1', taxonomy_id: @taxonomy.id, parent: @parent_taxon)
       @parent_taxon.reload # Need to reload for descendents to show up
 
       product.taxons << @parent_taxon
@@ -50,7 +50,7 @@ describe 'Product scopes', type: :model do
     end
 
     it 'calling Product.in_taxon should not return duplicate records' do
-      expect(Spree::Product.in_taxon(@parent_taxon).to_a.count).to eq(1)
+      expect(Spree::Product.in_taxon(@parent_taxon).to_a.size).to eq(1)
     end
 
     context 'orders products based on their ordering within the classifications' do
@@ -84,58 +84,58 @@ describe 'Product scopes', type: :model do
     context 'with_property' do
       let(:with_property) { Spree::Product.method(:with_property) }
       it "finds by a property's name" do
-        expect(with_property.(name).count).to eq(1)
+        expect(with_property.call(name).count).to eq(1)
       end
 
       it "doesn't find any properties with an unknown name" do
-        expect(with_property.('fake').count).to eq(0)
+        expect(with_property.call('fake').count).to eq(0)
       end
 
       it 'finds by a property' do
-        expect(with_property.(property).count).to eq(1)
+        expect(with_property.call(property).count).to eq(1)
       end
 
       it 'finds by an id' do
-        expect(with_property.(property.id).count).to eq(1)
+        expect(with_property.call(property.id).count).to eq(1)
       end
 
       it 'cannot find a property with an unknown id' do
-        expect(with_property.(0).count).to eq(0)
+        expect(with_property.call(0).count).to eq(0)
       end
     end
 
     context 'with_property_value' do
       let(:with_property_value) { Spree::Product.method(:with_property_value) }
       it "finds by a property's name" do
-        expect(with_property_value.(name, value).count).to eq(1)
+        expect(with_property_value.call(name, value).count).to eq(1)
       end
 
       it "cannot find by an unknown property's name" do
-        expect(with_property_value.('fake', value).count).to eq(0)
+        expect(with_property_value.call('fake', value).count).to eq(0)
       end
 
       it 'cannot find with a name by an incorrect value' do
-        expect(with_property_value.(name, 'fake').count).to eq(0)
+        expect(with_property_value.call(name, 'fake').count).to eq(0)
       end
 
       it 'finds by a property' do
-        expect(with_property_value.(property, value).count).to eq(1)
+        expect(with_property_value.call(property, value).count).to eq(1)
       end
 
       it 'cannot find with a property by an incorrect value' do
-        expect(with_property_value.(property, 'fake').count).to eq(0)
+        expect(with_property_value.call(property, 'fake').count).to eq(0)
       end
 
       it 'finds by an id with a value' do
-        expect(with_property_value.(property.id, value).count).to eq(1)
+        expect(with_property_value.call(property.id, value).count).to eq(1)
       end
 
       it 'cannot find with an invalid id' do
-        expect(with_property_value.(0, value).count).to eq(0)
+        expect(with_property_value.call(0, value).count).to eq(0)
       end
 
       it 'cannot find with an invalid value' do
-        expect(with_property_value.(property.id, 'fake').count).to eq(0)
+        expect(with_property_value.call(property.id, 'fake').count).to eq(0)
       end
     end
   end

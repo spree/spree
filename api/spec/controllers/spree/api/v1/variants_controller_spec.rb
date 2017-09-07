@@ -72,7 +72,7 @@ module Spree
 
     it 'variants returned do not contain cost price data' do
       api_get :index
-      expect(json_response['variants'].first.has_key?(:cost_price)).to eq false
+      expect(json_response['variants'].first.key?(:cost_price)).to eq false
     end
 
     # Regression test for #2141
@@ -197,7 +197,7 @@ module Spree
 
       it 'variants returned contain cost price data' do
         api_get :index
-        expect(json_response['variants'].first.has_key?(:cost_price)).to eq true
+        expect(json_response['variants'].first.key?(:cost_price)).to eq true
       end
     end
   end

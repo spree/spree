@@ -16,7 +16,8 @@ module Spree
                                         expired_reimbursement_type,
                                         override_reimbursement_type,
                                         preferred_reimbursement_type
-                                    ] end
+                                    ]
+      end
 
       subject { reimbursement_type_engine.calculate_reimbursement_types }
 

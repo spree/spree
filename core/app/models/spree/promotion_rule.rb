@@ -11,17 +11,17 @@ module Spree
       all.select { |rule| rule.applicable?(promotable) }
     end
 
-    def applicable?(promotable)
+    def applicable?(_promotable)
       raise 'applicable? should be implemented in a sub-class of Spree::PromotionRule'
     end
 
-    def eligible?(promotable, options = {})
+    def eligible?(_promotable, _options = {})
       raise 'eligible? should be implemented in a sub-class of Spree::PromotionRule'
     end
 
     # This states if a promotion can be applied to the specified line item
     # It is true by default, but can be overridden by promotion rules to provide conditions
-    def actionable?(line_item)
+    def actionable?(_line_item)
       true
     end
 

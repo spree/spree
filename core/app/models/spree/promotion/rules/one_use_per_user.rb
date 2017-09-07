@@ -6,7 +6,7 @@ module Spree
           promotable.is_a?(Spree::Order)
         end
 
-        def eligible?(order, options = {})
+        def eligible?(order, _options = {})
           if order.user.present?
             if promotion.used_by?(order.user, [order])
               eligibility_errors.add(:base, eligibility_error_message(:limit_once_per_user))

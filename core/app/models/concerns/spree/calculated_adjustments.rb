@@ -24,7 +24,7 @@ module Spree
       private
 
       def self.model_name_without_spree_namespace
-        to_s.tableize.gsub('/', '_').sub('spree_', '')
+        to_s.tableize.tr('/', '_').sub('spree_', '')
       end
 
       def self.spree_calculators

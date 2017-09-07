@@ -30,7 +30,7 @@ module Spree
         return false unless user
         user.total_available_store_credit >= total
       end
-      alias_method :covered_by_store_credit, :covered_by_store_credit?
+      alias covered_by_store_credit covered_by_store_credit?
 
       def total_available_store_credit
         return 0.0 unless user

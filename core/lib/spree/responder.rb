@@ -15,12 +15,12 @@ module Spree
     end
 
     def to_html
-      super && (return) if !(on_success || on_failure)
+      super && return unless on_success || on_failure
       has_errors? ? controller.instance_exec(&on_failure) : controller.instance_exec(&on_success)
     end
 
     def to_format
-      super && (return) if !(on_success || on_failure)
+      super && return unless on_success || on_failure
       has_errors? ? controller.instance_exec(&on_failure) : controller.instance_exec(&on_success)
     end
 

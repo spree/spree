@@ -52,7 +52,7 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
 
       before do
         expect(controller).to receive(:current_order_params).and_return(
-          currency: Spree::Config[:currency], guest_token: 'token', store_id: guest_order.store_id, user_id: user.id,
+          currency: Spree::Config[:currency], guest_token: 'token', store_id: guest_order.store_id, user_id: user.id
         )
       end
 

@@ -36,11 +36,11 @@ module Spree
     end
 
     def load_product
-      if try_spree_current_user.try(:has_spree_role?, 'admin')
-        @products = Product.with_deleted
-      else
-        @products = Product.active(current_currency)
-      end
+      @products = if try_spree_current_user.try(:has_spree_role?, 'admin')
+                    Product.with_deleted
+                  else
+                    Product.active(current_currency)
+                  end
 
       @product = @products.includes(:variants_including_master, variant_images: :viewable).
                  friendly.distinct(false).find(params[:id])
@@ -56,7 +56,7 @@ module Spree
       if params[:id] != @product.friendly_id
         params[:id] = @product.friendly_id
         params.permit!
-        return redirect_to url_for(params), status: :moved_permanently
+        redirect_to url_for(params), status: :moved_permanently
       end
     end
   end

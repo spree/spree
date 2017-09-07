@@ -1,4 +1,5 @@
 # encoding: utf-8
+
 require 'spec_helper'
 
 describe 'Products', type: :feature do
@@ -408,7 +409,7 @@ describe 'Products', type: :feature do
       allow_any_instance_of(Spree::Admin::BaseController).to receive(:spree_current_user).and_return(nil)
     end
 
-    custom_authorization! do |user|
+    custom_authorization! do |_user|
       can [:admin, :update, :index, :read], Spree::Product
     end
     let!(:product) { create(:product) }

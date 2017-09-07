@@ -15,7 +15,7 @@ module Spree
 
         context 'product has variants' do
           it 'returns all variants for the same product' do
-            product = create(:product, variants: 3.times.map { create(:variant) })
+            product = create(:product, variants: Array.new(3) { create(:variant) })
             product.variants.map { |v| v.stock_items.first.update_column(:count_on_hand, 10) }
 
             expect(SameProduct.eligible_variants(product.variants.first).sort).to eq product.variants.sort
@@ -29,7 +29,7 @@ module Spree
         end
 
         it 'only returns variants that are on hand' do
-          product = create(:product, variants: 2.times.map { create(:variant) })
+          product = create(:product, variants: Array.new(2) { create(:variant) })
           in_stock_variant = product.variants.first
 
           in_stock_variant.stock_items.first.update_column(:count_on_hand, 10)

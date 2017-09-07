@@ -152,11 +152,9 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
   def parent
     if parent_data.present?
       @parent ||= parent_data[:model_class].
-        # Don't use `find_by_attribute_name` to workaround globalize/globalize#423 bug
+                  # Don't use `find_by_attribute_name` to workaround globalize/globalize#423 bug
                   send(:find_by, parent_data[:find_by].to_s => params["#{resource.model_name}_id"])
       instance_variable_set("@#{resource.model_name}", @parent)
-    else
-      nil
     end
   end
 
@@ -231,8 +229,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
   end
 
   # This method should be overridden when object_name does not match the controller name
-  def object_name
-  end
+  def object_name; end
 
   # Allow all attributes to be updatable.
   #

@@ -55,7 +55,7 @@ module Spree
     preference :send_core_emails, :boolean, default: true # Default mail headers settings
     preference :shipping_instructions, :boolean, default: false # Request instructions/info for shipping
     preference :show_only_complete_orders_by_default, :boolean, default: true
-    preference :show_variant_full_price, :boolean, default: false #Displays variant full price or difference with product price. Default false to be compatible with older behavior
+    preference :show_variant_full_price, :boolean, default: false # Displays variant full price or difference with product price. Default false to be compatible with older behavior
     preference :show_products_without_price, :boolean, default: false
     preference :show_raw_product_description, :boolean, default: false
     preference :tax_using_ship_address, :boolean, default: true
@@ -70,8 +70,6 @@ module Spree
       @searcher_class ||= Spree::Core::Search::Base
     end
 
-    def searcher_class=(sclass)
-      @searcher_class = sclass
-    end
+    attr_writer :searcher_class
   end
 end

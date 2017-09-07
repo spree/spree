@@ -11,7 +11,7 @@ end
 module Spree
   module Stock
     describe Quantifier, type: :model do
-      before(:all) { Spree::StockLocation.destroy_all } # FIXME leaky database
+      before(:all) { Spree::StockLocation.destroy_all } # FIXME: leaky database
 
       let!(:stock_location) { create :stock_location_with_items }
       let!(:stock_item) { stock_location.stock_items.order(:id).first }

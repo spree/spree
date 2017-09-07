@@ -12,12 +12,12 @@ module Spree
     end
 
     def check_for_constant
-      begin
-        klass
-      rescue NameError
-        @shell.say "Couldn't find #{class_name}. Are you sure that this class exists within your application and is loaded?", :red
-        exit(1)
-      end
+
+      klass
+    rescue NameError
+      @shell.say "Couldn't find #{class_name}. Are you sure that this class exists within your application and is loaded?", :red
+      exit(1)
+
     end
 
     def generate
@@ -38,7 +38,7 @@ module Spree
         sleep 1 # make sure to get a different migration every time
         Time.new.utc.strftime('%Y%m%d%H%M%S')
       else
-        '%.3d' % (current_migration_number(dirname) + 1)
+        format('%.3d', (current_migration_number(dirname) + 1))
       end
     end
 

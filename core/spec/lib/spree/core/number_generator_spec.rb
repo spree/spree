@@ -44,7 +44,7 @@ describe Spree::Core::NumberGenerator do
     end
   end
 
-  shared_examples_for 'generating permalink'do
+  shared_examples_for 'generating permalink' do
     let(:resource) { model.new }
 
     context 'and generated candidate is unique' do
@@ -66,19 +66,19 @@ describe Spree::Core::NumberGenerator do
       end
 
       context 'and less than half of the value space taken' do
-        let(:record_count)   { 10 ** expected_length / 2 - 1 }
+        let(:record_count)   { 10**expected_length / 2 - 1 }
 
         include_examples 'duplicate without length increment'
       end
 
       context 'and exactly half of the value space taken' do
-        let(:record_count) { 10 ** expected_length / 2 }
+        let(:record_count) { 10**expected_length / 2 }
 
         include_examples 'duplicate without length increment'
       end
 
       context 'and more than half of the value space is taken' do
-        let(:record_count)   { 10 ** expected_length / 2 + 1 }
+        let(:record_count)   { 10**expected_length / 2 + 1 }
 
         it 'sets permalink field' do
           expect { subject }.to change(resource, :number).from(nil).to(String)

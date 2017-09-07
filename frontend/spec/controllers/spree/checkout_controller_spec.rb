@@ -359,9 +359,7 @@ describe Spree::CheckoutController, type: :controller do
     context 'fails to transition from payment to complete' do
       let(:order) do
         FactoryGirl.create(:order_with_line_items).tap do |order|
-          until order.state == 'payment'
-            order.next!
-          end
+          order.next! until order.state == 'payment'
           # So that the confirmation step is skipped and we get straight to the action.
           payment_method = FactoryGirl.create(:simple_credit_card_payment_method)
           payment = FactoryGirl.create(:payment, payment_method: payment_method)

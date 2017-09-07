@@ -7,7 +7,7 @@ require 'spree/testing_support/bar_ability'
 class FooAbility
   include CanCan::Ability
 
-  def initialize(user)
+  def initialize(_user)
     # allow anyone to perform index on Order
     can :index, Spree::Order
     # allow anyone to update an Order with id of 1
@@ -111,7 +111,7 @@ describe Spree::Ability, type: :model do
         # ability.should_not be_able_to :create, resource_user # Fails
         # It can create new users if is has access to the :admin, User!!
 
-        # TODO change the Ability class so only users and customers get the extra premissions?
+        # TODO: change the Ability class so only users and customers get the extra premissions?
 
         Spree::Ability.remove_ability(BarAbility)
       end

@@ -35,10 +35,7 @@ module Spree
       order = @shipment.order
 
       new_state = OrderUpdater.new(order).update_shipment_state
-      order.update_columns(
-                           shipment_state: new_state,
-                           updated_at: Time.current,
-                           )
+      order.update_columns(shipment_state: new_state, updated_at: Time.current)
     end
   end
 end

@@ -7,11 +7,11 @@ module Spree
       def initialize(stock_location, contents = [])
         @stock_location = stock_location
         @contents = contents
-        @shipping_rates = Array.new
+        @shipping_rates = []
       end
 
       def add(inventory_unit, state = :on_hand)
-         # Remove find_item check as already taken care by prioritizer
+        # Remove find_item check as already taken care by prioritizer
         contents << ContentItem.new(inventory_unit, state)
       end
 

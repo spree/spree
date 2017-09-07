@@ -59,8 +59,8 @@ class OrderWalkthrough
     order.next!
   end
 
-  def self.complete(order)
-    #noop?
+  def self.complete(_order)
+    # noop?
   end
 
   def self.states

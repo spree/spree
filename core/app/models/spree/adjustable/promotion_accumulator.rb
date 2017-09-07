@@ -16,7 +16,9 @@ module Spree
 
       def initialize(adjustable)
         @adjustable = adjustable
-        @adjustments, @sources, @promotions = [], [], []
+        @adjustments = []
+        @sources = []
+        @promotions = []
         all_adjustments.each { |a| add_adjustment(a) }
       end
 
@@ -30,7 +32,7 @@ module Spree
         add(promotions, promotion, source.promotion_id)
       end
 
-      def promotions_adjustments(promotion_id, adjustments = adjustments())
+      def promotions_adjustments(promotion_id, adjustments = adjustments)
         where(sources, promotion_id: promotion_id).map do |source|
           where(adjustments, source_id: source.id)
         end.flatten
@@ -64,7 +66,7 @@ module Spree
       end
 
       def item_adjustments
-        adjustments.select { |a| a.adjustable_type != 'Spree::Shipment' }
+        adjustments.reject { |a| a.adjustable_type == 'Spree::Shipment' }
       end
 
       def where(array, opts = {})

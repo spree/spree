@@ -88,9 +88,8 @@ module Spree
         reimbursement.perform!
       else
         errors.add(:base, reimbursement.errors.full_messages)
-        raise ActiveRecord::RecordInvalid.new(self)
+        raise ActiveRecord::RecordInvalid, self
       end
-
     end
   end
 end

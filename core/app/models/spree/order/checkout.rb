@@ -226,7 +226,7 @@ module Spree
               if existing_card_id.present?
                 credit_card = CreditCard.find existing_card_id
                 if credit_card.user_id != user_id || credit_card.user_id.blank?
-                  raise Core::GatewayError.new Spree.t(:invalid_credit_card)
+                  raise Core::GatewayError, Spree.t(:invalid_credit_card)
                 end
 
                 credit_card.verification_value = params[:cvc_confirm] if params[:cvc_confirm].present?

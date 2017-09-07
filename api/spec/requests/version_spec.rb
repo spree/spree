@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'Version', type: :request do
-  let!(:countries) { 2.times.map { create :country } }
+  let!(:countries) { Array.new(2) { create :country } }
 
   describe '/api' do
     it 'be a redirect' do

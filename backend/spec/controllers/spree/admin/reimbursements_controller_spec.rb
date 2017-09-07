@@ -55,7 +55,7 @@ describe Spree::Admin::ReimbursementsController, type: :controller do
     context 'a Spree::Core::GatewayError is raised' do
       before(:each) do
         def controller.perform
-          raise Spree::Core::GatewayError.new('An error has occurred')
+          raise Spree::Core::GatewayError, 'An error has occurred'
         end
       end
 

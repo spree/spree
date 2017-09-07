@@ -102,7 +102,7 @@ describe Spree::Preferences::Preferable, type: :model do
     it 'builds a hash of preferences' do
       @b.preferred_flavor = :strawberry
       expect(@b.preferences[:flavor]).to eq 'strawberry'
-      expect(@b.preferences[:color]).to eq 'green' #default from A
+      expect(@b.preferences[:color]).to eq 'green' # default from A
     end
 
     it 'builds a hash of preference defaults' do

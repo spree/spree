@@ -7,7 +7,7 @@ module ActionController
         # Checkout AS Array#extract_options! and original respond_with
         # implementation for a better picture of this hack
         if resources.last.is_a? Hash
-          resources.last.merge! action_name: action_name.to_sym
+          resources.last[:action_name] = action_name.to_sym
         else
           resources.push action_name: action_name.to_sym
         end

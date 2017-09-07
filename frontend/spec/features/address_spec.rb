@@ -85,9 +85,9 @@ describe 'Address', type: :feature, inaccessible: true do
     it 'shows a disabled state input field' do
       click_button 'Checkout'
 
-       select france.name, from: @country_css
-       expect(page).to have_selector(@state_select_css, visible: false)
-       expect(page).to have_selector(@state_name_css, visible: false)
+      select france.name, from: @country_css
+      expect(page).to have_selector(@state_select_css, visible: false)
+      expect(page).to have_selector(@state_name_css, visible: false)
     end
   end
 end

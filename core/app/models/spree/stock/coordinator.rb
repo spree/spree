@@ -21,7 +21,7 @@ module Spree
         packages = estimate_packages(packages)
       end
 
-      def build_packages(packages = Array.new)
+      def build_packages(packages = [])
         stock_locations_with_requested_variants.each do |stock_location|
           packer = build_packer(stock_location, inventory_units)
           packages += packer.packages
@@ -58,7 +58,7 @@ module Spree
         Packer.new(stock_location, inventory_units, splitters(stock_location))
       end
 
-      def splitters(stock_location)
+      def splitters(_stock_location)
         # extension point to return custom splitters for a location
         Rails.application.config.spree.stock_splitters
       end

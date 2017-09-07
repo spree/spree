@@ -21,7 +21,7 @@ module Spree
           promotable.is_a?(Spree::Order)
         end
 
-        def eligible?(order, options = {})
+        def eligible?(order, _options = {})
           return true if eligible_products.empty?
 
           if preferred_match_policy == 'all'

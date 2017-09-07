@@ -22,8 +22,8 @@ module Spree
 
         percent_of_tax = if return_item.pre_tax_amount <= 0 || calculated_refund <= 0
                            0
-        else
-          return_item.pre_tax_amount / calculated_refund
+                         else
+                           return_item.pre_tax_amount / calculated_refund
         end
 
         additional_tax_total = percent_of_tax * return_item.inventory_unit.additional_tax_total

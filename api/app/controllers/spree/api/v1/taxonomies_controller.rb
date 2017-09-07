@@ -15,8 +15,7 @@ module Spree
           show
         end
 
-        def new
-        end
+        def new; end
 
         def create
           authorize! :create, Taxonomy

@@ -316,10 +316,12 @@ module Spree
       let(:address_params) { { country_id: country.id } }
       let(:billing_address) do { firstname: 'Tiago', lastname: 'Motta', address1: 'Av Paulista',
                                  city: 'Sao Paulo', zipcode: '01310-300', phone: '12345678',
-                                 country_id: country.id } end
+                                 country_id: country.id }
+      end
       let(:shipping_address) do { firstname: 'Tiago', lastname: 'Motta', address1: 'Av Paulista',
                                   city: 'Sao Paulo', zipcode: '01310-300', phone: '12345678',
-                                  country_id: country.id } end
+                                  country_id: country.id }
+      end
       let(:country) { create(:country, name: 'Brazil', iso_name: 'BRAZIL', iso: 'BR', iso3: 'BRA', numcode: 76) }
 
       before do
@@ -507,8 +509,8 @@ module Spree
           expect(source[:last_digits]).to eq payment.source.last_digits
           expect(source[:month].to_i).to eq payment.source.month
           expect(source[:year].to_i).to eq payment.source.year
-          expect(source.has_key?(:gateway_customer_profile_id)).to be false
-          expect(source.has_key?(:gateway_payment_profile_id)).to be false
+          expect(source.key?(:gateway_customer_profile_id)).to be false
+          expect(source.key?(:gateway_payment_profile_id)).to be false
         end
 
         context 'when in delivery' do

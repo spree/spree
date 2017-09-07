@@ -35,13 +35,13 @@ describe Spree::StockItem, type: :model do
 
   describe 'reduce_count_on_hand_to_zero' do
     context 'when count_on_hand > 0' do
-       before(:each) do
-          subject.update_column('count_on_hand', 4)
-         subject.reduce_count_on_hand_to_zero
-        end
+      before(:each) do
+        subject.update_column('count_on_hand', 4)
+        subject.reduce_count_on_hand_to_zero
+      end
 
       it { expect(subject.count_on_hand).to eq(0) }
-     end
+    end
 
     context 'when count_on_hand > 0' do
       before(:each) do

@@ -39,7 +39,7 @@ describe Spree::Core::Search::Base do
     searcher = Spree::Core::Search::Base.new(ActionController::Parameters.new(params))
     expect(searcher.retrieve_products.count).to eq(2)
 
-    params.merge! page: '2'
+    params[:page] = '2'
     searcher = Spree::Core::Search::Base.new(ActionController::Parameters.new(params))
     expect(searcher.retrieve_products.count).to eq(1)
   end

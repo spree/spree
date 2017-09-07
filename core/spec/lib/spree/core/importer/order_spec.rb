@@ -246,7 +246,7 @@ module Spree
         it 'raise error as variant shouldnt be found' do
           variant.product.destroy
           hash = { sku: variant.sku }
-          expect { Importer::Order.ensure_variant_id_from_params(hash) }.to raise_error("Ensure order import variant: Variant w/SKU #{ hash[:sku] } not found.")
+          expect { Importer::Order.ensure_variant_id_from_params(hash) }.to raise_error("Ensure order import variant: Variant w/SKU #{hash[:sku]} not found.")
         end
       end
 

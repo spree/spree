@@ -56,8 +56,7 @@ module Spree
         #     shipping_category: "Free Shipping Items"
         #   }
         #
-        def new
-        end
+        def new; end
 
         def create
           authorize! :create, Product
@@ -102,14 +101,14 @@ module Spree
         end
 
         def variants_params
-          variants_key = if params[:product].has_key? :variants
+          variants_key = if params[:product].key? :variants
                            :variants
-          else
-            :variants_attributes
+                         else
+                           :variants_attributes
           end
 
           params.require(:product).permit(
-            variants_key => [permitted_variant_attributes, :id],
+            variants_key => [permitted_variant_attributes, :id]
           ).delete(variants_key) || []
         end
 

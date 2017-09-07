@@ -17,7 +17,8 @@ module Spree
       attr_accessor :error, :success
 
       def initialize(order, line_item = nil)
-        @order, @line_item = order, line_item
+        @order = order
+        @line_item = line_item
       end
 
       def activate

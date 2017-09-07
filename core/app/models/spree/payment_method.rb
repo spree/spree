@@ -36,7 +36,7 @@ module Spree
       type.demodulize.downcase
     end
 
-    def self.find_with_destroyed *args
+    def self.find_with_destroyed(*args)
       unscoped { find(*args) }
     end
 
@@ -50,7 +50,7 @@ module Spree
 
     # Custom gateways should redefine this method. See Gateway implementation
     # as an example
-    def reusable_sources(order)
+    def reusable_sources(_order)
       []
     end
 
@@ -58,11 +58,11 @@ module Spree
       auto_capture.nil? ? Spree::Config[:auto_capture] : auto_capture
     end
 
-    def supports?(source)
+    def supports?(_source)
       true
     end
 
-    def cancel(response)
+    def cancel(_response)
       raise ::NotImplementedError, 'You must implement cancel method for this payment method.'
     end
 

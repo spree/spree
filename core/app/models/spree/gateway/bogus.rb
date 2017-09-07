@@ -25,7 +25,7 @@ module Spree
       end
     end
 
-    def authorize(money, credit_card, options = {})
+    def authorize(_money, credit_card, _options = {})
       profile_id = credit_card.gateway_customer_profile_id
       if VALID_CCS.include?(credit_card.number) || (profile_id && profile_id.starts_with?('BGS-'))
         ActiveMerchant::Billing::Response.new(true, 'Bogus Gateway: Forced success', {}, test: true, authorization: '12345', avs_result: { code: 'D' })
@@ -34,7 +34,7 @@ module Spree
       end
     end
 
-    def purchase(money, credit_card, options = {})
+    def purchase(_money, credit_card, _options = {})
       profile_id = credit_card.gateway_customer_profile_id
       if VALID_CCS.include?(credit_card.number) || (profile_id && profile_id.starts_with?('BGS-'))
         ActiveMerchant::Billing::Response.new(true, 'Bogus Gateway: Forced success', {}, test: true, authorization: '12345', avs_result: { code: 'M' })
@@ -43,20 +43,19 @@ module Spree
       end
     end
 
-    def credit(money, credit_card, response_code, options = {})
+    def credit(_money, _credit_card, _response_code, _options = {})
       ActiveMerchant::Billing::Response.new(true, 'Bogus Gateway: Forced success', {}, test: true, authorization: '12345')
     end
 
-    def capture(money, authorization, gateway_options)
+    def capture(_money, authorization, _gateway_options)
       if authorization == '12345'
         ActiveMerchant::Billing::Response.new(true, 'Bogus Gateway: Forced success', {}, test: true)
       else
         ActiveMerchant::Billing::Response.new(false, 'Bogus Gateway: Forced failure', error: 'Bogus Gateway: Forced failure', test: true)
       end
-
     end
 
-    def void(response_code, credit_card, options = {})
+    def void(_response_code, _credit_card, _options = {})
       ActiveMerchant::Billing::Response.new(true, 'Bogus Gateway: Forced success', {}, test: true, authorization: '12345')
     end
 
@@ -83,7 +82,7 @@ module Spree
       record = true
       prefix = success ? 'BGS' : 'FAIL'
       while record
-        random = "#{ prefix }-#{ Array.new(6) { rand(6) }.join }"
+        random = "#{prefix}-#{Array.new(6) { rand(6) }.join}"
         record = CreditCard.find_by(gateway_customer_profile_id: random)
       end
       random

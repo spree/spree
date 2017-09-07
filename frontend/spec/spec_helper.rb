@@ -84,11 +84,11 @@ RSpec.configure do |config|
 
   config.before(:each) do
     WebMock.disable!
-    if RSpec.current_example.metadata[:js]
-      DatabaseCleaner.strategy = :truncation
-    else
-      DatabaseCleaner.strategy = :transaction
-    end
+    DatabaseCleaner.strategy = if RSpec.current_example.metadata[:js]
+                                 :truncation
+                               else
+                                 :transaction
+                               end
     # TODO: Find out why open_transactions ever gets below 0
     # See issue #3428
     if ApplicationRecord.connection.open_transactions < 0

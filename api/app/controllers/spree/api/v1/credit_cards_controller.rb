@@ -17,7 +17,7 @@ module Spree
 
         def user
           if params[:user_id].present?
-            @user ||= Spree::user_class.accessible_by(current_ability, :read).find(params[:user_id])
+            @user ||= Spree.user_class.accessible_by(current_ability, :read).find(params[:user_id])
           end
         end
       end

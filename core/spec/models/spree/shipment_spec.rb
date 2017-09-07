@@ -8,7 +8,8 @@ describe Spree::Shipment, type: :model do
                                           currency: 'USD',
                                           number: 'S12345',
                                           paid?: false,
-                                          touch_later: false end
+                                          touch_later: false
+  end
   let(:shipping_method) { create(:shipping_method, name: 'UPS') }
   let(:shipment) do
     shipment = Spree::Shipment.new(cost: 1, state: 'pending', stock_location: create(:stock_location))
@@ -27,7 +28,6 @@ describe Spree::Shipment, type: :model do
       variant_id: order.line_items.first.variant_id,
       line_item_id: order.line_items.first.id
     )
-
   end
 
   describe 'precision of pre_tax_amount' do
@@ -195,7 +195,8 @@ describe Spree::Shipment, type: :model do
     let(:shipping_rates) do [
       Spree::ShippingRate.new(shipping_method: shipping_method1, cost: 10.00, selected: true),
       Spree::ShippingRate.new(shipping_method: shipping_method2, cost: 20.00)
-    ] end
+    ]
+    end
 
     it 'returns shipping_method from selected shipping_rate' do
       shipment.shipping_rates.delete_all
@@ -337,9 +338,13 @@ describe Spree::Shipment, type: :model do
       context 'when using a custom shipment handler' do
         before do
           Spree::ShipmentHandler::UPS = Class.new do
-            def initialize(shipment) true end
+            def initialize(_shipment)
+              true
+            end
 
-            def perform() true end
+            def perform
+              true
+            end
           end
         end
 

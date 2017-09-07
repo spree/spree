@@ -4,7 +4,7 @@ module Spree
   module Stock
     describe Estimator, type: :model do
       let!(:shipping_method) { create(:shipping_method) }
-      let(:package) { build(:stock_package, contents: inventory_units.map { |i| ContentItem.new(inventory_unit) }) }
+      let(:package) { build(:stock_package, contents: inventory_units.map { |_i| ContentItem.new(inventory_unit) }) }
       let(:order) { build(:order_with_line_items) }
       let(:inventory_units) { order.inventory_units }
 
@@ -71,7 +71,7 @@ module Spree
         end
 
         it 'sorts shipping rates by cost' do
-          shipping_methods = 3.times.map { create(:shipping_method) }
+          shipping_methods = Array.new(3) { create(:shipping_method) }
           allow(shipping_methods[0]).to receive_message_chain(:calculator, :compute).and_return(5.00)
           allow(shipping_methods[1]).to receive_message_chain(:calculator, :compute).and_return(3.00)
           allow(shipping_methods[2]).to receive_message_chain(:calculator, :compute).and_return(4.00)
@@ -82,7 +82,7 @@ module Spree
         end
 
         context 'general shipping methods' do
-          let(:shipping_methods) { 2.times.map { create(:shipping_method) } }
+          let(:shipping_methods) { Array.new(2) { create(:shipping_method) } }
 
           it 'selects the most affordable shipping rate' do
             allow(shipping_methods[0]).to receive_message_chain(:calculator, :compute).and_return(5.00)

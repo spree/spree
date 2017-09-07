@@ -1,4 +1,4 @@
-# TODO let friendly id take care of sanitizing the url
+# TODO: let friendly id take care of sanitizing the url
 require 'stringex'
 
 module Spree
@@ -56,10 +56,10 @@ module Spree
 
     # Return meta_title if set otherwise generates from root name and/or taxon name
     def seo_title
-      unless meta_title.blank?
-        meta_title
-      else
+      if meta_title.blank?
         root? ? name : "#{root.name} - #{name}"
+      else
+        meta_title
       end
     end
 
@@ -80,7 +80,7 @@ module Spree
       ancestor_chain = ancestors.inject('') do |name, ancestor|
         name += "#{ancestor.name} -> "
       end
-      ancestor_chain + "#{name}"
+      ancestor_chain + name.to_s
     end
 
     # awesome_nested_set sorts by :lft and :rgt. This call re-inserts the child

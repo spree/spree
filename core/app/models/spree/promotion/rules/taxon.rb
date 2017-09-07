@@ -12,7 +12,7 @@ module Spree
           promotable.is_a?(Spree::Order)
         end
 
-        def eligible?(order, options = {})
+        def eligible?(order, _options = {})
           if preferred_match_policy == 'all'
             unless (taxons.to_a - taxons_in_order_including_parents(order)).empty?
               eligibility_errors.add(:base, eligibility_error_message(:missing_taxon))

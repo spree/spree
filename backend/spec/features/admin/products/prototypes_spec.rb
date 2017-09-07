@@ -19,15 +19,15 @@ describe 'Prototypes', type: :feature, js: true do
       create(:property, name: 'bag_material', presentation: 'Material')
       create(:property, name: 'shirt_type', presentation: 'Type')
       p = create(:prototype, name: 'Shirt')
-      %w( brand gender manufacturer model shirt_fabric shirt_fit shirt_sleeve_length shirt_type ).each do |prop|
+      %w(brand gender manufacturer model shirt_fabric shirt_fit shirt_sleeve_length shirt_type).each do |prop|
         p.properties << Spree::Property.find_by(name: prop)
       end
       p = create(:prototype, name: 'Mug')
-      %w( mug_size mug_type ).each do |prop|
+      %w(mug_size mug_type).each do |prop|
         p.properties << Spree::Property.find_by(name: prop)
       end
       p = create(:prototype, name: 'Bag')
-      %w( bag_type bag_material ).each do |prop|
+      %w(bag_type bag_material).each do |prop|
         p.properties << Spree::Property.find_by(name: prop)
       end
 
@@ -70,7 +70,7 @@ describe 'Prototypes', type: :feature, js: true do
       brand_property = create(:property, name: 'brand', presentation: 'Brand')
 
       shirt_prototype = create(:prototype, name: 'Shirt', properties: [])
-      %w( brand model ).each do |prop|
+      %w(brand model).each do |prop|
         shirt_prototype.properties << Spree::Property.find_by(name: prop)
       end
 

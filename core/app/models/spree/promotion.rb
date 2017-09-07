@@ -8,10 +8,10 @@ module Spree
     belongs_to :promotion_category, optional: true
 
     has_many :promotion_rules, autosave: true, dependent: :destroy
-    alias_method :rules, :promotion_rules
+    alias rules promotion_rules
 
     has_many :promotion_actions, autosave: true, dependent: :destroy
-    alias_method :actions, :promotion_actions
+    alias actions promotion_actions
 
     has_many :order_promotions, class_name: 'Spree::OrderPromotion'
     has_many :orders, through: :order_promotions, class_name: 'Spree::Order'
@@ -74,8 +74,8 @@ module Spree
       action_taken = results.include?(true)
 
       if action_taken
-      # connect to the order
-      # create the join_table entry.
+        # connect to the order
+        # create the join_table entry.
         orders << order
         save
       end
@@ -210,7 +210,7 @@ module Spree
         !promotable.product.promotionable?
       when Spree::Order
         promotable.line_items.any? &&
-          !promotable.line_items.joins(:product).where(spree_products: { promotionable: true }).any?
+          promotable.line_items.joins(:product).where(spree_products: { promotionable: true }).none?
       end
     end
 

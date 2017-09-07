@@ -24,7 +24,7 @@ module Spree
         end
 
         def method_missing(name)
-          if @properties.has_key? name
+          if @properties.key? name
             @properties[name]
           else
             super
@@ -42,7 +42,7 @@ module Spree
           base_scope
         end
 
-        def add_eagerload_scopes scope
+        def add_eagerload_scopes(scope)
           # TL;DR Switch from `preload` to `includes` as soon as Rails starts honoring
           # `order` clauses on `has_many` associations when a `where` constraint
           # affecting a joined table is present (see
@@ -65,18 +65,20 @@ module Spree
         end
 
         def add_search_scopes(base_scope)
-          search.each do |name, scope_attribute|
-            scope_name = name.to_sym
-            if base_scope.respond_to?(:search_scopes) && base_scope.search_scopes.include?(scope_name.to_sym)
-              base_scope = base_scope.send(scope_name, *scope_attribute)
-            else
-              base_scope = base_scope.merge(Spree::Product.ransack(scope_name => scope_attribute).result)
+          if search.is_a?(ActionController::Parameters)
+            search.each do |name, scope_attribute|
+              scope_name = name.to_sym
+              base_scope = if base_scope.respond_to?(:search_scopes) && base_scope.search_scopes.include?(scope_name.to_sym)
+                             base_scope.send(scope_name, *scope_attribute)
+                           else
+                             base_scope.merge(Spree::Product.ransack(scope_name => scope_attribute).result)
+                           end
             end
-          end if search.is_a?(ActionController::Parameters)
+          end
           base_scope
         end
 
-          # method should return new scope based on base_scope
+        # method should return new scope based on base_scope
         def get_products_conditions_for(base_scope, query)
           unless query.blank?
             base_scope = base_scope.like_any([:name, :description], query.split)
@@ -92,11 +94,11 @@ module Spree
 
           per_page = params[:per_page].to_i
           @properties[:per_page] = per_page > 0 ? per_page : Spree::Config[:products_per_page]
-          if params[:page].respond_to?(:to_i)
-            @properties[:page] = (params[:page].to_i <= 0) ? 1 : params[:page].to_i
-          else
-            @properties[:page] = 1
-          end
+          @properties[:page] = if params[:page].respond_to?(:to_i)
+                                 params[:page].to_i <= 0 ? 1 : params[:page].to_i
+                               else
+                                 1
+                               end
         end
       end
     end

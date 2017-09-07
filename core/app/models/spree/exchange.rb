@@ -23,7 +23,7 @@ module Spree
       shipments_units = shipments.flat_map(&:inventory_units)
 
       if shipments_units.sum(&:quantity) != new_exchange_inventory_units.sum(&:quantity)
-        raise UnableToCreateShipments.new('Could not generate shipments for all items. Out of stock?')
+        raise UnableToCreateShipments, 'Could not generate shipments for all items. Out of stock?'
       end
 
       @order.shipments += shipments

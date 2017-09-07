@@ -5,7 +5,9 @@ module Spree
     let(:test_class) do
       Class.new do
         include VatPriceCalculation
-        def total; 10.0; end
+        def total
+          10.0
+        end
       end
     end
 

@@ -29,8 +29,7 @@ module Spree
           respond_with(@variants)
         end
 
-        def new
-        end
+        def new; end
 
         def show
           @variant = scope.includes({ option_values: :option_type }, :option_values, :product, :default_price, :images, stock_items: :stock_location).
@@ -54,11 +53,11 @@ module Spree
         end
 
         def scope
-          if @product
-            variants = @product.variants_including_master
-          else
-            variants = Variant
-          end
+          variants = if @product
+                       @product.variants_including_master
+                     else
+                       Variant
+                     end
 
           if current_ability.can?(:manage, Variant) && params[:show_deleted]
             variants = variants.with_deleted

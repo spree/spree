@@ -103,7 +103,7 @@ module Spree
         payment.state_changes.create!(
           previous_state: transition.from,
           next_state:     transition.to,
-          name:           'payment',
+          name:           'payment'
         )
       end
     end
@@ -157,14 +157,14 @@ module Spree
 
     def is_avs_risky?
       return false if avs_response.blank? || NON_RISKY_AVS_CODES.include?(avs_response)
-      return true
+      true
     end
 
     def is_cvv_risky?
       return false if cvv_response_code == 'M'
       return false if cvv_response_code.nil?
       return false if cvv_response_message.present?
-      return true
+      true
     end
 
     def captured_amount
@@ -192,7 +192,7 @@ module Spree
           errors.add(Spree.t(source.class.to_s.demodulize.underscore), "#{field_name} #{error}")
         end
       end
-      return !errors.present?
+      !errors.present?
     end
 
     def profiles_supported?

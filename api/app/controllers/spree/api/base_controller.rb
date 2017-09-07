@@ -11,7 +11,7 @@ module Spree
 
       before_action :set_content_type
       before_action :load_user
-      before_action :authorize_for_order, if: Proc.new { order_token.present? }
+      before_action :authorize_for_order, if: proc { order_token.present? }
       before_action :authenticate_user
       before_action :load_user_roles
 

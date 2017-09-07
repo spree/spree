@@ -1,1 +1,1 @@
-Rails.application.config.assets.precompile += %w( ink.css )
+Rails.application.config.assets.precompile += %w(ink.css)

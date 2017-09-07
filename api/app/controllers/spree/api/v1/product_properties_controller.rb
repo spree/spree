@@ -16,8 +16,7 @@ module Spree
           respond_with(@product_property)
         end
 
-        def new
-        end
+        def new; end
 
         def create
           authorize! :create, ProductProperty
@@ -56,7 +55,7 @@ module Spree
           if @product
             @product_property ||= @product.product_properties.find_by(id: params[:id])
             @product_property ||= @product.product_properties.includes(:property).where(spree_properties: { name: params[:id] }).first
-            fail ActiveRecord::RecordNotFound unless @product_property
+            raise ActiveRecord::RecordNotFound unless @product_property
             authorize! :read, @product_property
           end
         end

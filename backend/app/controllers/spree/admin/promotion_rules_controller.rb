@@ -39,7 +39,7 @@ class Spree::Admin::PromotionRulesController < Spree::Admin::BaseController
     @promotion_rule_type = promotion_rule_types.detect do |klass|
       klass.name == requested_type
     end
-    if !@promotion_rule_type
+    unless @promotion_rule_type
       flash[:error] = Spree.t(:invalid_promotion_rule)
       respond_to do |format|
         format.html { redirect_to spree.edit_admin_promotion_path(@promotion) }

@@ -10,7 +10,7 @@ describe 'Payments', type: :feature, js: true do
              amount:         order.outstanding_balance,
              payment_method: create(:credit_card_payment_method),
              state:          state
-      )
+            )
     end
 
     let(:order) { create(:completed_order_with_totals, number: 'R100', line_items_count: 5) }
@@ -33,7 +33,7 @@ describe 'Payments', type: :feature, js: true do
                order:          order,
                amount:         order.outstanding_balance,
                payment_method: create(:check_payment_method) # Check
-        )
+              )
       end
 
       it 'capturing a check payment from a new order' do
@@ -50,7 +50,7 @@ describe 'Payments', type: :feature, js: true do
 
     it 'should list all captures for a payment' do
       Spree::ShippingMethod.delete_all
-      capture_amount = order.outstanding_balance/2 * 100
+      capture_amount = order.outstanding_balance / 2 * 100
       payment.capture!(capture_amount)
 
       visit spree.admin_order_payment_path(order, payment)

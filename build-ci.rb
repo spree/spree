@@ -31,7 +31,7 @@ class Project
   #   otherwise
   def install
     chdir do
-      bundle_check || bundle_install || fail('Cannot finish gem installation')
+      bundle_check || bundle_install || raise('Cannot finish gem installation')
     end
     self
   end
@@ -74,7 +74,7 @@ class Project
   #
   # @return [undefined]
   def setup_test_app
-    system(%w[bundle exec rake test_app]) || fail('Failed to setup the test app')
+    system(%w[bundle exec rake test_app]) || raise('Failed to setup the test app')
   end
 
   # Run tests for subproject
@@ -175,7 +175,7 @@ class Project
   # @return [Boolean]
   #   the success of the CLI run
   def self.run_cli(arguments)
-    fail ArgumentError if arguments.length > 1
+    raise ArgumentError if arguments.length > 1
     mode = arguments.fetch(0, DEFAULT_MODE)
 
     case mode
@@ -185,7 +185,7 @@ class Project
     when 'test'
       test
     else
-      fail "Unknown mode: #{mode.inspect}"
+      raise "Unknown mode: #{mode.inspect}"
     end
   end
 end # Project

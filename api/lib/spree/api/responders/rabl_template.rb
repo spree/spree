@@ -20,8 +20,6 @@ module Spree
           if controller.params[:action] == 'destroy'
             # Render a blank template
             super
-          else
-            # Do nothing and fallback to the default template
           end
         end
       end

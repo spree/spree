@@ -1,4 +1,5 @@
 # coding: utf-8
+
 require 'spec_helper'
 
 describe 'Order Details', type: :feature, js: true do
@@ -562,7 +563,7 @@ describe 'Order Details', type: :feature, js: true do
       allow_any_instance_of(Spree::Admin::BaseController).to receive(:spree_current_user).and_return(nil)
     end
 
-    custom_authorization! do |user|
+    custom_authorization! do |_user|
       can [:admin, :index, :read, :edit], Spree::Order
     end
 
@@ -590,7 +591,7 @@ describe 'Order Details', type: :feature, js: true do
   end
 
   context 'as Fakedispatch' do
-    custom_authorization! do |user|
+    custom_authorization! do |_user|
       # allow dispatch to :admin, :index, and :edit on Spree::Order
       can [:admin, :edit, :index, :read], Spree::Order
       # allow dispatch to :index, :show, :create and :update shipments on the admin

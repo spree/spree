@@ -135,7 +135,7 @@ module Spree
                   '0' => {
                     id: return_authorization.return_items.first.id,
                     returned: '1',
-                    'pre_tax_amount'=>'15.99',
+                    'pre_tax_amount' => '15.99',
                     inventory_unit_id: order.inventory_units.shipped.last.id
                   }
                 }
@@ -162,7 +162,7 @@ module Spree
                 return_items_attributes: {
                   '0' => {
                     returned: '1',
-                    'pre_tax_amount'=>'15.99',
+                    'pre_tax_amount' => '15.99',
                     inventory_unit_id: order.inventory_units.shipped.last.id
                   }
                 }

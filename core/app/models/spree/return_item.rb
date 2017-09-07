@@ -182,11 +182,13 @@ module Spree
 
     def process_inventory_unit!
       inventory_unit.return!
-      Spree::StockMovement.create!(
-        stock_item_id: stock_item.id,
-        quantity: inventory_unit.quantity,
-        originator: return_authorization
-      ) if should_restock?
+      if should_restock?
+        Spree::StockMovement.create!(
+          stock_item_id: stock_item.id,
+          quantity: inventory_unit.quantity,
+          originator: return_authorization
+        )
+      end
     end
 
     # This logic is also present in the customer return. The reason for the

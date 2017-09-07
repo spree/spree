@@ -134,7 +134,8 @@ describe Spree::InventoryUnit, type: :model do
     let(:inventory_units) do [
       create(:inventory_unit, variant: variant),
       create(:inventory_unit, variant: variant)
-    ] end
+    ]
+    end
     before do
       shipment.inventory_units = inventory_units
     end

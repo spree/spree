@@ -23,7 +23,7 @@ module Spree
       end
 
       context 'default_package' do
-        let!(:inventory_units) { 2.times.map { InventoryUnit.new variant: create(:variant) } }
+        let!(:inventory_units) { Array.new(2) { InventoryUnit.new variant: create(:variant) } }
 
         it 'contains all the items' do
           package = subject.default_package
@@ -51,7 +51,7 @@ module Spree
         end
 
         context "doesn't track inventory levels" do
-          let(:inventory_units) { 2.times.map { InventoryUnit.new(variant: create(:variant)) } }
+          let(:inventory_units) { Array.new(2) { InventoryUnit.new(variant: create(:variant)) } }
 
           before { Config.track_inventory_levels = false }
 

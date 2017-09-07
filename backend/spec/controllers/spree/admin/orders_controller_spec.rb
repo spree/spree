@@ -6,7 +6,7 @@ require 'spree/testing_support/bar_ability'
 class OrderSpecificAbility
   include CanCan::Ability
 
-  def initialize(user)
+  def initialize(_user)
     can [:admin, :manage], Spree::Order, number: 'R987654321'
   end
 end
@@ -394,7 +394,7 @@ describe Spree::Admin::OrdersController, type: :controller do
 
     it 'raise active record not found' do
       expect do
-        spree_get :edit, id: 99999999
+        spree_get :edit, id: 99_999_999
       end.to raise_error ActiveRecord::RecordNotFound
     end
   end

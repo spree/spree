@@ -623,7 +623,7 @@ describe Spree::Payment, type: :model do
         amount: 100,
         payment_method: gateway,
         source_attributes: {
-          expiry:'01 / 99',
+          expiry: '01 / 99',
           number: '1234567890123',
           verification_value: '123',
           name: 'Spree Commerce'

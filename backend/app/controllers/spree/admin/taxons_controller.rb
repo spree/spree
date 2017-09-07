@@ -6,8 +6,7 @@ module Spree
       before_action :set_permalink_part, only: [:edit, :update]
       respond_to :html, :js
 
-      def index
-      end
+      def index; end
 
       def create
         @taxon = @taxonomy.taxons.build(params[:taxon])
@@ -23,8 +22,7 @@ module Spree
         end
       end
 
-      def edit
-      end
+      def edit; end
 
       def update
         successful = @taxon.transaction do
@@ -39,7 +37,7 @@ module Spree
 
           set_permalink_params
 
-          #check if we need to rename child taxons if parent name or permalink changes
+          # check if we need to rename child taxons if parent name or permalink changes
           @update_children = true if params[:taxon][:name] != @taxon.name || params[:taxon][:permalink] != @taxon.permalink
 
           @taxon.update_attributes(taxon_params)
@@ -47,7 +45,7 @@ module Spree
         if successful
           flash[:success] = flash_message_for(@taxon, :successfully_updated)
 
-          #rename child taxons
+          # rename child taxons
           rename_child_taxons if @update_children
 
           respond_with(@taxon) do |format|

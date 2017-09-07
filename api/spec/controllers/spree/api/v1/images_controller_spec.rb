@@ -7,7 +7,8 @@ module Spree
     let!(:product) { create(:product) }
     let!(:attributes) do [:id, :position, :attachment_content_type,
                           :attachment_file_name, :type, :attachment_updated_at, :attachment_width,
-                          :attachment_height, :alt] end
+                          :attachment_height, :alt]
+    end
 
     before do
       stub_authentication!
@@ -37,8 +38,7 @@ module Spree
       it "can't upload a new image for a variant without attachment" do
         api_post :create,
                  image: { viewable_type: 'Spree::Variant',
-                          viewable_id: product.master.to_param
-                        },
+                          viewable_id: product.master.to_param },
                  product_id: product.id
         expect(response.status).to eq(422)
       end

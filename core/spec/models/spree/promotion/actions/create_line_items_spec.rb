@@ -76,11 +76,11 @@ describe Spree::Promotion::Actions::CreateLineItems, type: :model do
 
     it 'returns false if the item is out of stock' do
       empty_stock(mug)
-      expect(action.item_available? item_out_of_stock).to be false
+      expect(action.item_available?(item_out_of_stock)).to be false
     end
 
     it 'returns true if the item is in stock' do
-      expect(action.item_available? item_in_stock).to be true
+      expect(action.item_available?(item_in_stock)).to be true
     end
   end
 end

@@ -59,7 +59,7 @@ module Spree::Preferences::Preferable
   end
 
   def has_preference!(name)
-    raise NoMethodError.new "#{name} preference not defined" unless has_preference? name
+    raise NoMethodError, "#{name} preference not defined" unless has_preference? name
   end
 
   def has_preference?(name)

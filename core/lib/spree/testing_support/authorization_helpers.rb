@@ -3,7 +3,7 @@ module Spree
     module AuthorizationHelpers
       module CustomAbility
         def build_ability(&block)
-          block ||= proc { |u| can :manage, :all }
+          block ||= proc { |_u| can :manage, :all }
           Class.new do
             include CanCan::Ability
             define_method(:initialize, block)

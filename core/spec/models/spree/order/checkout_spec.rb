@@ -283,7 +283,8 @@ describe Spree::Order, type: :model do
         let(:shipping_method) { create(:shipping_method) }
         let(:shipping_rate) do [
           Spree::ShippingRate.create!(shipping_method: shipping_method, cost: 10.00, shipment: shipment)
-        ] end
+        ]
+        end
 
         before do
           order.state = 'address'

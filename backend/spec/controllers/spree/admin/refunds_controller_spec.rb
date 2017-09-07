@@ -16,7 +16,7 @@ describe Spree::Admin::RefundsController do
 
       before(:each) do
         def controller.create
-          raise Spree::Core::GatewayError.new('An error has occurred')
+          raise Spree::Core::GatewayError, 'An error has occurred'
         end
       end
 

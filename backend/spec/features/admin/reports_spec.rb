@@ -28,7 +28,7 @@ describe 'Reports', type: :feature do
       order.completed_at = Time.current
       order.save!
 
-      #incomplete order
+      # incomplete order
       order = create(:order)
       order.update_columns(adjustment_total: 50)
       order.save!

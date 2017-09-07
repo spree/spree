@@ -10,7 +10,7 @@ module Spree
     end
 
     def compute(object = nil)
-      if object && preferred_currency.upcase == object.currency.upcase
+      if object && preferred_currency.casecmp(object.currency.upcase).zero?
         preferred_amount
       else
         0

@@ -255,7 +255,7 @@ module Spree
         end
 
         it 'creates with embedded variants' do
-          product_data.merge!(variants: [attributes_for_variant, attributes_for_variant])
+          product_data[:variants] = [attributes_for_variant, attributes_for_variant]
 
           api_post :create, product: product_data
           expect(response.status).to eq 201
@@ -269,10 +269,10 @@ module Spree
         end
 
         it 'can create a new product with embedded product_properties' do
-          product_data.merge!(product_properties_attributes: [{
+          product_data[:product_properties_attributes] = [{
               property_name: 'fabric',
               value: 'cotton'
-            }])
+            }]
 
           api_post :create, product: product_data
 
@@ -281,7 +281,7 @@ module Spree
         end
 
         it 'can create a new product with option_types' do
-          product_data.merge!(option_types: ['size', 'color'])
+          product_data[:option_types] = ['size', 'color']
 
           api_post :create, product: product_data
           expect(json_response['option_types'].count).to eq(2)
@@ -289,7 +289,7 @@ module Spree
 
         it 'creates product with option_types ids' do
           option_type = create(:option_type)
-          product_data.merge!(option_type_ids: [option_type.id])
+          product_data[:option_type_ids] = [option_type.id]
           api_post :create, product: product_data
           expect(json_response['option_types'].first['id']).to eq option_type.id
         end
@@ -355,7 +355,7 @@ module Spree
           expect(response.status).to eq 200
           expect(json_response['variants'].count).to eq(2) # 2 variants
 
-          variants = json_response['variants'].select { |v| !v['is_master'] }
+          variants = json_response['variants'].reject { |v| v['is_master'] }
           expect(variants.last['option_values'][0]['name']).to eq('small')
           expect(variants.last['option_values'][0]['option_type_name']).to eq('size')
 
@@ -379,7 +379,7 @@ module Spree
           }
 
           expect(json_response['variants'].count).to eq(1)
-          variants = json_response['variants'].select { |v| !v['is_master'] }
+          variants = json_response['variants'].reject { |v| v['is_master'] }
           expect(variants.last['option_values'][0]['name']).to eq('large')
           expect(variants.last['sku']).to eq('456')
           expect(variants.count).to eq(1)

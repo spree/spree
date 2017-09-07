@@ -54,7 +54,7 @@ module Spree
   #
   # This method is defined within the core gem on purpose.
   # Some people may only wish to use the Core part of Spree.
-  def self.config(&block)
+  def self.config
     yield(Spree::Config)
   end
 

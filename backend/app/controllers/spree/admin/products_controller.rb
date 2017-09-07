@@ -72,7 +72,6 @@ module Spree
           flash[:error] = Spree.t('notice_messages.product_not_cloned')
           redirect_to admin_products_url
         end
-
       rescue ActiveRecord::RecordInvalid
         # Handle error on uniqueness validation on product fields
         flash[:error] = Spree.t('notice_messages.product_not_cloned')

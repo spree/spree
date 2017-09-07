@@ -166,7 +166,7 @@ module Spree
 
             before do
               allow(order).to receive_messages(coupon_code: '10off',
-                # These need to be here so that promotion adjustment "wins"
+                                               # These need to be here so that promotion adjustment "wins"
                                                item_total: 50,
                                                ship_total: 10)
             end
@@ -226,10 +226,10 @@ module Spree
             @zone.zone_members.create(zoneable: @country)
             @category = Spree::TaxCategory.create name: 'Taxable Foo'
             @rate1 = Spree::TaxRate.create(
-                amount: 0.10,
-                calculator: Spree::Calculator::DefaultTax.create,
-                tax_category: @category,
-                zone: @zone
+              amount: 0.10,
+              calculator: Spree::Calculator::DefaultTax.create,
+              tax_category: @category,
+              zone: @zone
             )
 
             @order = Spree::Order.create!
@@ -237,7 +237,7 @@ module Spree
           end
           context 'and the product price is less than promo discount' do
             before(:each) do
-              3.times do |i|
+              3.times do |_i|
                 taxable = create(:product, tax_category: @category, price: 9.0)
                 @order.contents.add(taxable.master, 1)
               end
@@ -255,7 +255,7 @@ module Spree
           end
           context 'and the product price is greater than promo discount' do
             before(:each) do
-              3.times do |i|
+              3.times do |_i|
                 taxable = create(:product, tax_category: @category, price: 11.0)
                 @order.contents.add(taxable.master, 2)
               end
@@ -280,7 +280,7 @@ module Spree
 
               allow(@order).to receive(:coupon_code).and_call_original
               allow(@order).to receive_messages coupon_code: '20off'
-              3.times do |i|
+              3.times do |_i|
                 taxable = create(:product, tax_category: @category, price: 10.0)
                 @order.contents.add(taxable.master, 2)
               end
@@ -300,7 +300,7 @@ module Spree
 
         context 'with a CreateLineItems action' do
           let!(:variant) { create(:variant) }
-          let!(:action) { Promotion::Actions::CreateLineItems.create(promotion: promotion, promotion_action_line_items_attributes: { :'0' => { variant_id: variant.id } }) }
+          let!(:action) { Promotion::Actions::CreateLineItems.create(promotion: promotion, promotion_action_line_items_attributes: { '0': { variant_id: variant.id } }) }
           let(:order) { create(:order) }
 
           before do

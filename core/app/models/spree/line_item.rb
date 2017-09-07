@@ -74,7 +74,7 @@ module Spree
     end
 
     alias discounted_money display_discounted_amount
-    alias_method :discounted_amount, :taxable_amount
+    alias discounted_amount taxable_amount
 
     def final_amount
       amount + adjustment_total

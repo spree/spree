@@ -23,7 +23,7 @@ module Spree
         # We should not define price scopes here, as they require something slightly different
         next if name.to_s.include?('master_price')
         parts = name.to_s.match(/(.*)_by_(.*)/)
-        scope(name.to_s, -> { order("#{Product.quoted_table_name}.#{parts[2]} #{parts[1] == 'ascend' ? "ASC" : "DESC"}") })
+        scope(name.to_s, -> { order("#{Product.quoted_table_name}.#{parts[2]} #{parts[1] == 'ascend' ? 'ASC' : 'DESC'}") })
       end
     end
 
@@ -32,7 +32,7 @@ module Spree
       conditions = case property
                    when String   then { "#{properties}.name" => property }
                    when Property then { "#{properties}.id" => property.id }
-      else { "#{properties}.id" => property.to_i }
+                   else { "#{properties}.id" => property.to_i }
       end
     end
 
@@ -108,7 +108,7 @@ module Spree
       conditions = case option
                    when String     then { "#{option_types}.name" => option }
                    when OptionType then { "#{option_types}.id" => option.id }
-      else { "#{option_types}.id" => option.to_i }
+                   else { "#{option_types}.id" => option.to_i }
       end
 
       joins(:option_types).where(conditions)
@@ -119,7 +119,7 @@ module Spree
       option_type_id = case option
                        when String then OptionType.find_by(name: option) || option.to_i
                        when OptionType then option.id
-        else option.to_i
+                       else option.to_i
       end
 
       conditions = "#{option_values}.name = ? AND #{option_values}.option_type_id = ?", value, option_type_id
@@ -195,7 +195,7 @@ module Spree
     end
     search_scopes << :not_discontinued
     # Can't use add_search_scope for this as it needs a default argument
-    def self.available(available_on = nil, currency = nil)
+    def self.available(available_on = nil, _currency = nil)
       available_on ||= Time.current
       not_discontinued.joins(master: :prices).where("#{Product.quoted_table_name}.available_on <= ?", available_on)
     end
@@ -241,14 +241,14 @@ module Spree
       Price.quoted_table_name
     end
 
-      # specifically avoid having an order for taxon search (conflicts with main order)
+    # specifically avoid having an order for taxon search (conflicts with main order)
     def self.prepare_taxon_conditions(taxons)
       ids = taxons.map { |taxon| taxon.self_and_descendants.pluck(:id) }.flatten.uniq
       joins(:classifications).where(Classification.table_name => { taxon_id: ids })
     end
 
-      # Produce an array of keywords for use in scopes.
-      # Always return array with at least an empty string to avoid SQL errors
+    # Produce an array of keywords for use in scopes.
+    # Always return array with at least an empty string to avoid SQL errors
     def self.prepare_words(words)
       return [''] if words.blank?
       a = words.split(/[,\s]/).map(&:strip)

@@ -2,12 +2,9 @@ require 'spec_helper'
 
 describe Spree::Gateway, type: :model do
   class Provider
-    def initialize(options)
-    end
+    def initialize(options); end
 
-    def imaginary_method
-
-    end
+    def imaginary_method; end
   end
 
   class TestGateway < Spree::Gateway

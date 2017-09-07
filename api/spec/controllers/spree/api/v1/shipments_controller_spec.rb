@@ -53,7 +53,7 @@ describe Spree::Api::V1::ShipmentsController, type: :controller do
           it 'should return proper error' do
             subject
             expect(response.status).to eq(422)
-            expect(json_response['exception']).to eq("param is missing or the value is empty: #{field.to_s}")
+            expect(json_response['exception']).to eq("param is missing or the value is empty: #{field}")
           end
         end
       end

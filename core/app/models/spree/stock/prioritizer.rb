@@ -6,7 +6,7 @@ module Spree
       def initialize(packages, adjuster_class = Adjuster)
         @packages = packages
         @adjuster_class = adjuster_class
-        @adjusters = Hash.new
+        @adjusters = {}
       end
 
       def prioritized_packages
@@ -28,7 +28,7 @@ module Spree
         end
       end
 
-      def build_adjuster(item, package)
+      def build_adjuster(item, _package)
         @adjusters[hash_item item] = @adjuster_class.new(item.inventory_unit)
       end
 

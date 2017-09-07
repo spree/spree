@@ -30,14 +30,14 @@ module Spree
           authorize! :create, Order
           order_user = if @current_user_roles.include?('admin') && order_params[:user_id]
                          Spree.user_class.find(order_params[:user_id])
-          else
-            current_api_user
+                       else
+                         current_api_user
           end
 
           import_params = if @current_user_roles.include?('admin')
                             params[:order].present? ? params[:order].permit! : {}
-          else
-            order_params
+                          else
+                            order_params
           end
 
           @order = Spree::Core::Importer::Order.import(order_user, import_params)

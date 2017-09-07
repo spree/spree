@@ -11,7 +11,7 @@ module Spree
       Spree.t(:flexible_rate)
     end
 
-    def self.available?(object)
+    def self.available?(_object)
       true
     end
 

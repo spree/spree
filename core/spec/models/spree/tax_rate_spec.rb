@@ -149,7 +149,7 @@ describe Spree::TaxRate, type: :model do
                    quantity: 1,
                    tax_category: tax_category_1,
                    variant: stub_model(Spree::Variant)
-        )
+                  )
       end
 
       let(:line_items) { [line_item] }
@@ -168,11 +168,11 @@ describe Spree::TaxRate, type: :model do
     context 'without tax rates' do
       let(:line_item) do
         stub_model(Spree::LineItem,
-                   :price => 10.0,
-                   :quantity => 2,
-                   :tax_category => nil,
-                   :variant => stub_model(Spree::Variant)
-        )
+                   price: 10.0,
+                   quantity: 2,
+                   tax_category: nil,
+                   variant: stub_model(Spree::Variant)
+                  )
       end
 
       let(:line_items) { [line_item] }

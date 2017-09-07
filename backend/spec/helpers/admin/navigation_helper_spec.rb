@@ -1,4 +1,5 @@
 # coding: UTF-8
+
 require 'spec_helper'
 
 describe Spree::Admin::NavigationHelper, type: :helper do

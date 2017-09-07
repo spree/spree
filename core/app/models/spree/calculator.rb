@@ -40,7 +40,7 @@ module Spree
       self.class.description
     end
 
-    def available?(object)
+    def available?(_object)
       true
     end
   end

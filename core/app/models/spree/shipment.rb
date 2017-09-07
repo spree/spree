@@ -76,7 +76,7 @@ module Spree
         shipment.state_changes.create!(
           previous_state: transition.from,
           next_state:     transition.to,
-          name:           'shipment',
+          name:           'shipment'
         )
       end
     end
@@ -281,7 +281,7 @@ module Spree
         update_columns(
           cost: selected_shipping_rate.cost,
           adjustment_total: adjustments.additional.map(&:update!).compact.sum,
-          updated_at: Time.current,
+          updated_at: Time.current
         )
       end
     end
@@ -324,7 +324,7 @@ module Spree
       new_state = determine_state(order)
       update_columns(
         state: new_state,
-        updated_at: Time.current,
+        updated_at: Time.current
       )
       after_ship if new_state == 'shipped' && old_state != 'shipped'
     end

@@ -31,7 +31,11 @@ module Spree
     self.whitelisted_ransackable_attributes = %w[firstname lastname company]
 
     def self.build_default
-      country = Spree::Country.find(Spree::Config[:default_country_id]) rescue Spree::Country.first
+      country = begin
+                  Spree::Country.find(Spree::Config[:default_country_id])
+                rescue
+                  Spree::Country.first
+                end
       new(country: country)
     end
 
@@ -165,10 +169,10 @@ module Spree
 
     def postal_code_validate
       return if country.blank? || country.iso.blank? || !require_zipcode?
-      return if !TwitterCldr::Shared::PostalCodes.territories.include?(country.iso.downcase.to_sym)
+      return unless TwitterCldr::Shared::PostalCodes.territories.include?(country.iso.downcase.to_sym)
 
       postal_code = TwitterCldr::Shared::PostalCodes.for_territory(country.iso)
-      errors.add(:zipcode, :invalid) if !postal_code.valid?(zipcode.to_s.strip)
+      errors.add(:zipcode, :invalid) unless postal_code.valid?(zipcode.to_s.strip)
     end
   end
 end

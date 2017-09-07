@@ -9,7 +9,7 @@ module Spree
           before_action :set_guest_token
           helper_method :try_spree_current_user
 
-          rescue_from CanCan::AccessDenied do |exception|
+          rescue_from CanCan::AccessDenied do |_exception|
             redirect_unauthorized_access
           end
         end
@@ -54,8 +54,6 @@ module Spree
           # This one will be defined by Devise
           elsif respond_to?(:current_spree_user)
             current_spree_user
-          else
-            nil
           end
         end
 

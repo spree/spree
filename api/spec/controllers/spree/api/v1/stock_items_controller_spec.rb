@@ -6,8 +6,7 @@ module Spree
 
     let!(:stock_location) { create(:stock_location_with_items) }
     let!(:stock_item) { stock_location.stock_items.order(:id).first }
-    let!(:attributes) do [:id, :count_on_hand, :backorderable,
-                          :stock_location_id, :variant_id] end
+    let!(:attributes) { [:id, :count_on_hand, :backorderable, :stock_location_id, :variant_id] }
 
     before do
       stub_authentication!
@@ -80,7 +79,7 @@ module Spree
       end
 
       it 'can query the results through a paramter (variant_id)' do
-        api_get :index, stock_location_id: stock_location.to_param, q: { variant_id_eq: 999999 }
+        api_get :index, stock_location_id: stock_location.to_param, q: { variant_id_eq: 999_999 }
         expect(json_response['count']).to eq(0)
         api_get :index, stock_location_id: stock_location.to_param, q: { variant_id_eq: stock_item.variant_id }
         expect(json_response['count']).to eq(1)

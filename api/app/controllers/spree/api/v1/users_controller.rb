@@ -23,8 +23,7 @@ module Spree
           respond_with(user)
         end
 
-        def new
-        end
+        def new; end
 
         def create
           authorize! :create, Spree.user_class

@@ -11,7 +11,7 @@ module Spree
   class << self
     attr_accessor :used_translations, :missing_translation_messages,
                   :unused_translations, :unused_translation_messages
-    alias_method :normal_t, :t
+    alias normal_t t
   end
 
   def self.t(*args)

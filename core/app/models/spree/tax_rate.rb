@@ -16,15 +16,15 @@ module Spree
       validates :tax_category
     end
 
-    scope :by_zone, -> (zone) { where(zone_id: zone.id) }
+    scope :by_zone, ->(zone) { where(zone_id: zone.id) }
     scope :potential_rates_for_zone,
-          -> (zone) do
+          ->(zone) do
             where(zone_id: Spree::Zone.potential_matching_zones(zone).pluck(:id))
           end
     scope :for_default_zone,
           -> { potential_rates_for_zone(Spree::Zone.default_tax) }
     scope :for_tax_category,
-          -> (category) { where(tax_category_id: category.try(:id)) }
+          ->(category) { where(tax_category_id: category.try(:id)) }
     scope :included_in_price, -> { where(included_in_price: true) }
 
     # Gets the array of TaxRates appropriate for the specified tax zone

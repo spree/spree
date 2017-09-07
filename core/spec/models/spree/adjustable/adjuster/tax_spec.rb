@@ -51,7 +51,7 @@ describe Spree::Adjustable::Adjuster::Tax, type: :model do
         order_subject.update
         order.reload
         expect(order.included_tax_total).to eq(0.5)
-        expect(order.additional_tax_total).to eq(00)
+        expect(order.additional_tax_total).to eq(0o0)
       end
     end
 

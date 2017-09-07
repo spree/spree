@@ -8,7 +8,7 @@ describe Spree::Refund, type: :model do
     let(:authorization) { generate(:refund_transaction_id) }
 
     let(:payment) { create(:payment, amount: payment_amount, payment_method: payment_method) }
-    let(:payment_amount) { amount*2 }
+    let(:payment_amount) { amount * 2 }
     let(:payment_method) { create(:credit_card_payment_method) }
 
     let(:refund_reason) { create(:refund_reason) }
@@ -154,7 +154,7 @@ describe Spree::Refund, type: :model do
 
     context 'with amount too large' do
       let(:payment_amount) { 10 }
-      let(:amount) { payment_amount*2 }
+      let(:amount) { payment_amount * 2 }
 
       it 'is invalid' do
         expect { subject }.to raise_error { |error|

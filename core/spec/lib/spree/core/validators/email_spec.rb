@@ -17,7 +17,8 @@ describe EmailValidator do
     'validemail_@email.com',
     'valid.email@email.com',
     'valid.email@email.photography'
-  ] end
+  ]
+  end
   let(:invalid_emails) do [
     '',
     ' ',
@@ -28,7 +29,8 @@ describe EmailValidator do
     '@invalid.email@email.com',
     'invalid@email@email.com',
     'invalid.email@@email.com'
-  ] end
+  ]
+  end
 
   it 'validates valid email addresses' do
     tester = Tester.new

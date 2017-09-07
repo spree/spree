@@ -22,11 +22,19 @@ module Spree
         params[:q].delete(:inventory_units_shipment_id_null) if params[:q][:inventory_units_shipment_id_null] == '0'
 
         if params[:q][:created_at_gt].present?
-          params[:q][:created_at_gt] = Time.zone.parse(params[:q][:created_at_gt]).beginning_of_day rescue ''
+          params[:q][:created_at_gt] = begin
+                                         Time.zone.parse(params[:q][:created_at_gt]).beginning_of_day
+                                       rescue
+                                         ''
+                                       end
         end
 
         if params[:q][:created_at_lt].present?
-          params[:q][:created_at_lt] = Time.zone.parse(params[:q][:created_at_lt]).end_of_day rescue ''
+          params[:q][:created_at_lt] = begin
+                                         Time.zone.parse(params[:q][:created_at_lt]).end_of_day
+                                       rescue
+                                         ''
+                                       end
         end
 
         if @show_only_completed
@@ -134,7 +142,7 @@ module Spree
         authorize! action, @order
       end
 
-        # Used for extensions which need to provide their own custom event links on the order details view.
+      # Used for extensions which need to provide their own custom event links on the order details view.
       def initialize_order_events
         @order_events = %w{approve cancel resume}
       end

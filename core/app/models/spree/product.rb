@@ -107,7 +107,7 @@ module Spree
 
     accepts_nested_attributes_for :product_properties, allow_destroy: true, reject_if: ->(pp) { pp[:property_name].blank? }
 
-    alias :options :product_option_types
+    alias options product_option_types
 
     self.whitelisted_ransackable_associations = %w[stores variants_including_master master variants]
     self.whitelisted_ransackable_attributes = %w[description name slug discontinue_on]
@@ -123,7 +123,7 @@ module Spree
     delegate :display_amount, :display_price, :has_default_price?,
              :images, to: :find_or_build_master
 
-    alias_method :master_images, :images
+    alias master_images images
 
     def find_or_build_master
       master || build_master

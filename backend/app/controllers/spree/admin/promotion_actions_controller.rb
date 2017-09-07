@@ -34,7 +34,7 @@ class Spree::Admin::PromotionActionsController < Spree::Admin::BaseController
 
   def validate_promotion_action_type
     valid_promotion_action_types = Rails.application.config.spree.promotions.actions.map(&:to_s)
-    if !valid_promotion_action_types.include?(params[:action_type])
+    unless valid_promotion_action_types.include?(params[:action_type])
       flash[:error] = Spree.t(:invalid_promotion_action)
       respond_to do |format|
         format.html { redirect_to spree.edit_admin_promotion_path(@promotion) }

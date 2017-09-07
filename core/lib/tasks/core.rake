@@ -4,7 +4,7 @@ namespace :db do
   desc %q{Loads a specified fixture file:
 use rake db:load_file[/absolute/path/to/sample/filename.rb]}
 
-  task :load_file , [:file, :dir] => :environment do |t, args|
+  task :load_file, [:file, :dir] => :environment do |_t, args|
     file = Pathname.new(args.file)
 
     puts "loading ruby #{file}"
@@ -12,18 +12,18 @@ use rake db:load_file[/absolute/path/to/sample/filename.rb]}
   end
 
   desc 'Loads fixtures from the the dir you specify using rake db:load_dir[loadfrom]'
-  task :load_dir , [:dir] => :environment do |t, args|
+  task :load_dir, [:dir] => :environment do |_t, args|
     dir = args.dir
     dir = File.join(Rails.root, 'db', dir) if Pathname.new(dir).relative?
 
     ruby_files = {}
-    Dir.glob(File.join(dir , '**/*.{rb}')).each do |fixture_file|
+    Dir.glob(File.join(dir, '**/*.{rb}')).each do |fixture_file|
       ext = File.extname fixture_file
       ruby_files[File.basename(fixture_file, '.*')] = fixture_file
     end
-    ruby_files.sort.each do |fixture , ruby_file|
+    ruby_files.sort.each do |fixture, ruby_file|
       # If file exists within application it takes precendence.
-      if File.exists?(File.join(Rails.root, 'db/default/spree', "#{fixture}.rb"))
+      if File.exist?(File.join(Rails.root, 'db/default/spree', "#{fixture}.rb"))
         ruby_file = File.expand_path(File.join(Rails.root, 'db/default/spree', "#{fixture}.rb"))
       end
       # an invoke will only execute the task once
@@ -35,7 +35,7 @@ use rake db:load_file[/absolute/path/to/sample/filename.rb]}
   task remigrate: :environment do
     require 'highline/import'
 
-    if ENV['SKIP_NAG'] || ENV['OVERWRITE'].to_s.downcase ==('true') || agree("This task will destroy any data in the database. Are you sure you want to \ncontinue? [y/n] ")
+    if ENV['SKIP_NAG'] || ENV['OVERWRITE'].to_s.casecmp('true').zero? || agree("This task will destroy any data in the database. Are you sure you want to \ncontinue? [y/n] ")
 
       # Drop all tables
       ActiveRecord::Base.connection.tables.each { |t| ActiveRecord::Base.connection.drop_table t }
@@ -78,7 +78,7 @@ use rake db:load_file[/absolute/path/to/sample/filename.rb]}
     end
     Rake::Task['db:seed'].invoke if load_defaults
 
-    if Rails.env.production? && Spree::Product.count >(0)
+    if Rails.env.production? && Spree::Product.count > 0
       load_sample = agree('WARNING: In Production and products exist in database, load sample data anyways? [y/n]:')
     else
       load_sample = true if ENV['AUTO_ACCEPT']
@@ -95,7 +95,7 @@ use rake db:load_file[/absolute/path/to/sample/filename.rb]}
   end
 
   desc 'Fix orphan line items after upgrading to Spree 3.1: only needed if you have line items attached to deleted records with Slug (product) and SKU (variant) duplicates of non-deleted records.'
-  task fix_orphan_line_items: :environment do |t, args|
+  task fix_orphan_line_items: :environment do |_t, _args|
     def get_input
       STDOUT.flush
       input = STDIN.gets.chomp
@@ -105,8 +105,8 @@ use rake db:load_file[/absolute/path/to/sample/filename.rb]}
 
       when 'N'
         puts 'aborting .....'
-          return false
-        else
+        return false
+      else
         return true
       end
     end
@@ -124,7 +124,7 @@ use rake db:load_file[/absolute/path/to/sample/filename.rb]}
 
       Spree::Variant.deleted.each do |variant|
         # check if this variant has any line items at all
-        next if !variant.line_items.any?
+        next if variant.line_items.none?
 
         variants_to_fix << variant
         dup_variant = Spree::Variant.find_by(sku: variant.sku)
@@ -135,7 +135,7 @@ use rake db:load_file[/absolute/path/to/sample/filename.rb]}
         end
       end
 
-      if !variants_to_fix.any?
+      if variants_to_fix.none?
         abort('ABORT: You have no deleted variants that are associated to line items. You do not need to run this raks task.')
       end
 
@@ -144,7 +144,7 @@ use rake db:load_file[/absolute/path/to/sample/filename.rb]}
         no_live_variants_found.each do |deleted_variant|
           puts "variant id #{deleted_variant.id} (sku is '#{deleted_variant.sku}') ... no match found"
         end
-        abort()
+        abort
       end
 
       puts 'Ready to fix...'

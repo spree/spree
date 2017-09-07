@@ -10,7 +10,7 @@ module Spree
         Spree.t(:shipping_flat_rate_per_order)
       end
 
-      def compute_package(package)
+      def compute_package(_package)
         preferred_amount
       end
     end

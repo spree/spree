@@ -38,7 +38,7 @@ module Spree
       mattr_reader *ATTRIBUTES
 
       def required_fields_for(model)
-        required_fields = model._validators.select do |field, validations|
+        required_fields = model._validators.select do |_field, validations|
           validations.any? { |v| v.is_a?(ActiveModel::Validations::PresenceValidator) }
         end.map(&:first) # get fields that are invalid
         # Permalinks presence is validated, but are really automatically generated

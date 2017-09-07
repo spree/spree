@@ -20,7 +20,7 @@ module Spree
                name: 'Extra Store',
                url: 'spreestore-5.example.com',
                default: false
-        )
+              )
       end
 
       it 'I can list the available stores' do
@@ -96,7 +96,7 @@ module Spree
           api_delete :destroy, id: store.id
           expect(response.status).to eq(422)
           expect(json_response['errors']['base']).to eql(
-          ['Cannot destroy the default Store.']
+            ['Cannot destroy the default Store.']
           )
         end
 

@@ -6,15 +6,14 @@ module Spree
 
         self.line_item_options = []
 
-        def new
-        end
+        def new; end
 
         def create
           variant = Spree::Variant.find(params[:line_item][:variant_id])
           @line_item = order.contents.add(
-              variant,
-              params[:line_item][:quantity] || 1,
-              line_item_params[:options] || {}
+            variant,
+            params[:line_item][:quantity] || 1,
+            line_item_params[:options] || {}
           )
 
           if @line_item.errors.empty?
@@ -62,11 +61,7 @@ module Spree
         end
 
         def line_item_params
-          params.require(:line_item).permit(
-              :quantity,
-              :variant_id,
-              options: line_item_options
-          )
+          params.require(:line_item).permit(:quantity, :variant_id, options: line_item_options)
         end
       end
     end

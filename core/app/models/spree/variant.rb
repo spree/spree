@@ -67,12 +67,12 @@ module Spree
 
     scope :not_deleted, -> { where("#{Variant.quoted_table_name}.deleted_at IS NULL") }
 
-    scope :for_currency_and_available_price_amount, -> (currency) do
+    scope :for_currency_and_available_price_amount, ->(currency) do
       currency ||= Spree::Config[:currency]
       joins(:prices).where('spree_prices.currency = ?', currency).where('spree_prices.amount IS NOT NULL').distinct
     end
 
-    scope :active, -> (currency = nil) do
+    scope :active, ->(currency = nil) do
       not_discontinued.not_deleted.
         for_currency_and_available_price_amount(currency)
     end
@@ -152,14 +152,14 @@ module Spree
 
       current_value = option_values.detect { |o| o.option_type.name == opt_name }
 
-      unless current_value.nil?
-        return if current_value.name == opt_value
-        option_values.delete(current_value)
-      else
+      if current_value.nil?
         # then we have to check to make sure that the product has the option type
         unless product.option_types.include? option_type
           product.option_types << option_type
         end
+      else
+        return if current_value.name == opt_value
+        option_values.delete(current_value)
       end
 
       option_value = Spree::OptionValue.where(option_type_id: option_type.id, name: opt_value).first_or_initialize do |o|

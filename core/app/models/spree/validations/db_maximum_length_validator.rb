@@ -6,7 +6,7 @@ module Spree
       def initialize(options)
         super
         @field = options[:field].to_s
-        raise ArgumentError.new('a field must be specified to the validator') if @field.blank?
+        raise ArgumentError, 'a field must be specified to the validator' if @field.blank?
       end
 
       def validate(record)

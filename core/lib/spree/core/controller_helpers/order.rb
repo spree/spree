@@ -13,7 +13,6 @@ module Spree
 
         # Used in the link_to_cart helper.
         def simple_current_order
-
           return @simple_current_order if @simple_current_order
 
           @simple_current_order = find_order_by_token_or_user

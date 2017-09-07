@@ -34,7 +34,7 @@ module Spree
 
       unless @run_migrations
         @load_seed_data = false
-         @load_sample_data = false
+        @load_sample_data = false
       end
     end
 
@@ -43,7 +43,7 @@ module Spree
     end
 
     def additional_tweaks
-      return unless File.exists? 'public/robots.txt'
+      return unless File.exist? 'public/robots.txt'
       append_file 'public/robots.txt', <<-ROBOTS.strip_heredoc
         User-agent: *
         Disallow: /checkout
@@ -104,7 +104,7 @@ module Spree
         end
       APP
 
-      if !options[:enforce_available_locales].nil?
+      unless options[:enforce_available_locales].nil?
         application <<-APP.strip_heredoc.indent!(4)
           # Prevent this deprecation message: https://github.com/svenfuchs/i18n/commit/3b6e56e
           I18n.enforce_available_locales = #{options[:enforce_available_locales]}
@@ -152,7 +152,7 @@ module Spree
     def populate_seed_data
       if @load_seed_data
         say_status :loading,  'seed data'
-        rake_options=[]
+        rake_options = []
         rake_options << 'AUTO_ACCEPT=1' if options[:auto_accept]
         rake_options << "ADMIN_EMAIL=#{options[:admin_email]}" if options[:admin_email]
         rake_options << "ADMIN_PASSWORD=#{options[:admin_password]}" if options[:admin_password]
@@ -232,7 +232,7 @@ module Spree
 
     def file_exists?(extensions, filename)
       extensions.detect do |extension|
-        File.exists?("#{filename}#{extension}")
+        File.exist?("#{filename}#{extension}")
       end
     end
 

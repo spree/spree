@@ -101,7 +101,7 @@ module Spree
                                          variant: variant,
                                          options: opts)
       end
-      line_item.target_shipment = options[:shipment] if options.has_key? :shipment
+      line_item.target_shipment = options[:shipment] if options.key? :shipment
       line_item.save!
       line_item
     end
@@ -109,7 +109,7 @@ module Spree
     def remove_from_line_item(variant, quantity, options = {})
       line_item = grab_line_item_by_variant(variant, true, options)
       line_item.quantity -= quantity
-      line_item.target_shipment= options[:shipment]
+      line_item.target_shipment = options[:shipment]
 
       if line_item.quantity.zero?
         order.line_items.destroy(line_item)

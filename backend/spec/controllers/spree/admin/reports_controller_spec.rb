@@ -34,7 +34,7 @@ describe Spree::Admin::ReportsController, type: :controller do
   end
 
   after(:each) do
-    Spree::Admin::ReportsController.available_reports.delete_if do |key, value|
+    Spree::Admin::ReportsController.available_reports.delete_if do |key, _value|
       key != :sales_total
     end
   end

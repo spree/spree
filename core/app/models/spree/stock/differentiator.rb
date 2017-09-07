@@ -21,7 +21,7 @@ module Spree
         @missing = Hash.new(0)
         required.keys.each do |variant|
           missing = required[variant] - packed[variant]
-           @missing[variant] = missing if missing > 0
+          @missing[variant] = missing if missing > 0
         end
       end
 

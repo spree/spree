@@ -606,7 +606,7 @@ describe Spree::Variant, type: :model do
 
     it 'return the volume if the dimension parameters are different of zero' do
       volume_expected = variant.width * variant.depth * variant.height
-      expect(variant.volume).to eq (volume_expected)
+      expect(variant.volume).to eq volume_expected
     end
   end
 
@@ -615,7 +615,7 @@ describe Spree::Variant, type: :model do
 
     it 'return the dimension if the dimension parameters are different of zero' do
       dimension_expected = variant.width + variant.depth + variant.height
-      expect(variant.dimension).to eq (dimension_expected)
+      expect(variant.dimension).to eq dimension_expected
     end
   end
 

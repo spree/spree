@@ -1,7 +1,7 @@
 module Spree
   module Admin
     module BaseHelper
-      def flash_alert flash
+      def flash_alert(flash)
         if flash.present?
           close_button = button_tag(class: 'close', 'data-dismiss' => 'alert', 'aria-label' => Spree.t(:close)) do
             content_tag('span', '&times;'.html_safe, 'aria-hidden' => true)
@@ -25,7 +25,7 @@ module Spree
         )
       end
 
-      def error_message_on(object, method, options = {})
+      def error_message_on(object, method, _options = {})
         object = convert_to_model(object)
         obj = object.respond_to?(:errors) ? object : instance_variable_get("@#{object}")
 
@@ -40,8 +40,6 @@ module Spree
       def datepicker_field_value(date)
         unless date.blank?
           l(date, format: Spree.t('date_picker.format', default: '%Y/%m/%d'))
-        else
-          nil
         end
       end
 
@@ -105,7 +103,7 @@ module Spree
                             cols: 85,
                             class: 'form-control'
                           }
-        else
+                        else
                           {
                             size: 10,
                             class: 'input_string form-control'
