@@ -106,10 +106,8 @@ describe Spree::Preferences::Preferable, type: :model do
     end
 
     it 'builds a hash of preference defaults' do
-      expect(@b.default_preferences).to eq({
-        flavor: nil,
-        color: 'green'
-      })
+      expect(@b.default_preferences).to eq(        flavor: nil,
+        color: 'green')
     end
 
     context 'converts integer preferences to integer values' do
@@ -209,8 +207,8 @@ describe Spree::Preferences::Preferable, type: :model do
       end
 
       it 'with hash and keys are integers' do
-        @a.set_preference(:is_hash, { 1 => 2, 3 => 4 })
-        expect(@a.preferences[:is_hash]).to eql({ 1 => 2, 3 => 4 })
+        @a.set_preference(:is_hash, 1 => 2, 3 => 4)
+        expect(@a.preferences[:is_hash]).to eql(1 => 2, 3 => 4)
       end
 
       it 'with string' do
@@ -258,8 +256,8 @@ describe Spree::Preferences::Preferable, type: :model do
 
       it 'with hash' do
         expect(@a.preferences[:product_attributes]).to eq({})
-        @a.set_preference(:product_attributes, { id: 1, name: 2 })
-        expect(@a.preferences[:product_attributes]).to eq({ id: 1, name: 2 })
+        @a.set_preference(:product_attributes, id: 1, name: 2)
+        expect(@a.preferences[:product_attributes]).to eq(id: 1, name: 2)
       end
     end
   end

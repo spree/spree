@@ -55,7 +55,7 @@ describe Spree::Admin::UsersController, type: :controller do
     it 'deny access to users with an bar role' do
       user.spree_roles << Spree::Role.find_or_create_by(name: 'bar')
       Spree::Ability.register_ability(BarAbility)
-      spree_post :update, { id: '9' }
+      spree_post :update, id: '9'
       expect(response).to redirect_to(spree.forbidden_path)
     end
 
@@ -121,13 +121,13 @@ describe Spree::Admin::UsersController, type: :controller do
     end
 
     it 'assigns a list of the users orders' do
-      spree_get :orders, { id: user.id }
+      spree_get :orders, id: user.id
       expect(assigns[:orders].count).to eq 1
       expect(assigns[:orders].first).to eq order
     end
 
     it 'assigns a ransack search for Spree::Order' do
-      spree_get :orders, { id: user.id }
+      spree_get :orders, id: user.id
       expect(assigns[:search]).to be_a Ransack::Search
       expect(assigns[:search].klass).to eq Spree::Order
     end
@@ -141,13 +141,13 @@ describe Spree::Admin::UsersController, type: :controller do
     end
 
     it 'assigns a list of the users orders' do
-      spree_get :items, { id: user.id }
+      spree_get :items, id: user.id
       expect(assigns[:orders].count).to eq 1
       expect(assigns[:orders].first).to eq order
     end
 
     it 'assigns a ransack search for Spree::Order' do
-      spree_get :items, { id: user.id }
+      spree_get :items, id: user.id
       expect(assigns[:search]).to be_a Ransack::Search
       expect(assigns[:search].klass).to eq Spree::Order
     end

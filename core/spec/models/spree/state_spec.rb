@@ -9,7 +9,7 @@ describe Spree::State, type: :model do
 
   it 'can find all states group by country id' do
     state = create(:state)
-    expect(Spree::State.states_group_by_country_id).to eq({ state.country_id.to_s => [[state.id, state.name]] })
+    expect(Spree::State.states_group_by_country_id).to eq(state.country_id.to_s => [[state.id, state.name]])
   end
 
   describe 'whitelisted_ransackable_attributes' do

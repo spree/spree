@@ -400,7 +400,7 @@ describe Spree::ReturnItem, type: :model do
 
       it 'is valid' do
         expect(subject).to_not be_valid
-        expect(subject.errors.messages).to eq({ reimbursement: [I18n.t(:cannot_be_associated_unless_accepted, scope: 'activerecord.errors.models.spree/return_item.attributes.reimbursement')] })
+        expect(subject.errors.messages).to eq(reimbursement: [I18n.t(:cannot_be_associated_unless_accepted, scope: 'activerecord.errors.models.spree/return_item.attributes.reimbursement')])
       end
     end
   end
@@ -543,10 +543,8 @@ describe Spree::ReturnItem, type: :model do
     let(:old_reception_status) { 'awaiting' }
 
     subject do
-      build(:return_item, {
-        return_authorization: old_return_item.return_authorization,
-        inventory_unit: old_return_item.inventory_unit,
-      })
+      build(:return_item,         return_authorization: old_return_item.return_authorization,
+        inventory_unit: old_return_item.inventory_unit)
     end
 
     context 'with other awaiting return items exist for the same inventory unit' do

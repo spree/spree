@@ -93,7 +93,7 @@ describe 'exchanges:charge_unreturned_items' do
       it 'associates the store of the original order with the exchange order' do
         allow_any_instance_of(Spree::Order).to receive(:store_id).and_return(123)
 
-        expect(Spree::Order).to receive(:create!).once.with(hash_including({ store_id: 123 })) { |attrs| Spree::Order.new(attrs.except(:store_id)).tap(&:save!) }
+        expect(Spree::Order).to receive(:create!).once.with(hash_including(store_id: 123)) { |attrs| Spree::Order.new(attrs.except(:store_id)).tap(&:save!) }
         subject.invoke
       end
 

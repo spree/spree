@@ -96,7 +96,7 @@ describe Spree::Api::V1::ShipmentsController, type: :controller do
       let!(:resource_scoping) { { id: order.shipments.first.to_param, shipment: { order_id: order.to_param } } }
 
       it 'adds a variant to a shipment' do
-        api_put :add, { variant_id: variant.to_param, quantity: 2 }
+        api_put :add, variant_id: variant.to_param, quantity: 2
         expect(response.status).to eq(200)
         expect(json_response['manifest'].detect { |h| h['variant']['id'] == variant.id }['quantity']).to eq(2)
       end
@@ -104,7 +104,7 @@ describe Spree::Api::V1::ShipmentsController, type: :controller do
       it 'removes a variant from a shipment' do
         order.contents.add(variant, 2)
 
-        api_put :remove, { variant_id: variant.to_param, quantity: 1 }
+        api_put :remove, variant_id: variant.to_param, quantity: 1
         expect(response.status).to eq(200)
         expect(json_response['manifest'].detect { |h| h['variant']['id'] == variant.id }['quantity']).to eq(1)
       end
@@ -113,7 +113,7 @@ describe Spree::Api::V1::ShipmentsController, type: :controller do
         order.contents.add(variant, 2)
         variant.destroy
 
-        api_put :remove, { variant_id: variant.to_param, quantity: 1 }
+        api_put :remove, variant_id: variant.to_param, quantity: 1
         expect(response.status).to eq(200)
         expect(json_response['manifest'].detect { |h| h['variant']['id'] == variant.id }['quantity']).to eq(1)
       end

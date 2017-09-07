@@ -36,7 +36,7 @@ describe Spree::Order, type: :model do
     end
 
     it '.find_transition when contract was broken' do
-      expect(Spree::Order.find_transition({ foo: :bar, baz: :dog })).to be_falsey
+      expect(Spree::Order.find_transition(foo: :bar, baz: :dog)).to be_falsey
     end
 
     it '.remove_transition' do

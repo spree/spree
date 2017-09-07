@@ -95,7 +95,7 @@ module Spree
         options_params = options.is_a?(ActionController::Parameters) ? options : ActionController::Parameters.new(options.to_h)
         opts = options_params.
                permit(PermittedAttributes.line_item_attributes).to_h.
-               merge( { currency: order.currency } )
+               merge( currency: order.currency )
 
         line_item = order.line_items.new(quantity: quantity,
                                          variant: variant,

@@ -37,7 +37,7 @@ describe Spree::CustomController, type: :controller do
       context 'specify symbol for handler instead of Proc' do
         before do
           Spree::CustomController.class_eval do
-            respond_override({ index: { html: { success: :success_method } } })
+            respond_override(index: { html: { success: :success_method } })
 
             private
 
@@ -76,7 +76,7 @@ describe Spree::CustomController, type: :controller do
       context 'redirect' do
         before do
           Spree::CustomController.instance_eval do
-            respond_override({ index: { html: { success: lambda { redirect_to('/cart') } } } })
+            respond_override(index: { html: { success: lambda { redirect_to('/cart') } } })
             respond_override(index: { html: { failure: lambda { render(plain: 'failure!!!') } } })
           end
         end

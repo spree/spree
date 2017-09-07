@@ -75,13 +75,13 @@ describe Spree::OrdersController, type: :controller do
         it 'should render the edit view (on failure)' do
           # email validation is only after address state
           order.update_column(:state, 'delivery')
-          spree_put :update, { order: { email: '' } }, { order_id: order.id }
+          spree_put :update, { order: { email: '' } }, order_id: order.id
           expect(response).to render_template :edit
         end
 
         it 'should redirect to cart path (on success)' do
           allow(order).to receive(:update_attributes).and_return true
-          spree_put :update, {}, { order_id: 1 }
+          spree_put :update, {}, order_id: 1
           expect(response).to redirect_to(spree.cart_path)
         end
       end

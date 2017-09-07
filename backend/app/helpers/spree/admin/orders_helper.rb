@@ -20,7 +20,7 @@ module Spree
       end
 
       def line_item_shipment_price(line_item, quantity)
-        Spree::Money.new(line_item.price * quantity, { currency: line_item.currency })
+        Spree::Money.new(line_item.price * quantity, currency: line_item.currency)
       end
 
       def avs_response_code

@@ -455,8 +455,8 @@ describe Spree::Product, type: :model do
 
     before do
       Spree::Image.create(params)
-      Spree::Image.create(params.merge({ alt: 'position 1', position: 1 }))
-      Spree::Image.create(params.merge({ viewable_type: 'ThirdParty::Extension', alt: 'position 1', position: 2 }))
+      Spree::Image.create(params.merge(alt: 'position 1', position: 1))
+      Spree::Image.create(params.merge(viewable_type: 'ThirdParty::Extension', alt: 'position 1', position: 2))
     end
 
     it 'only looks for variant images' do

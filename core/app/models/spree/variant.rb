@@ -109,7 +109,7 @@ module Spree
         "#{ov.option_type.presentation}: #{ov.presentation}"
       end
 
-      values.to_sentence({ words_connector: ', ', two_words_connector: ', ' })
+      values.to_sentence(words_connector: ', ', two_words_connector: ', ')
     end
 
     # Default to master name

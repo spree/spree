@@ -24,7 +24,7 @@ module Spree
     def variant_full_price(variant)
       product = variant.product
       unless product.variants.active(current_currency).all? { |v| v.price == product.price }
-        Spree::Money.new(variant.price, { currency: current_currency }).to_html
+        Spree::Money.new(variant.price, currency: current_currency).to_html
       end
     end
 

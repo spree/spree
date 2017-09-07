@@ -502,29 +502,23 @@ describe Spree::Order, type: :model do
   # Regression test for #4199
   context '#available_payment_methods' do
     it 'includes frontend payment methods' do
-      payment_method = Spree::PaymentMethod.create!({
-        name: 'Fake',
+      payment_method = Spree::PaymentMethod.create!(        name: 'Fake',
         active: true,
-        display_on: 'front_end',
-      })
+        display_on: 'front_end')
       expect(order.available_payment_methods).to include(payment_method)
     end
 
     it "includes 'both' payment methods" do
-      payment_method = Spree::PaymentMethod.create!({
-        name: 'Fake',
+      payment_method = Spree::PaymentMethod.create!(        name: 'Fake',
         active: true,
-        display_on: 'both',
-      })
+        display_on: 'both')
       expect(order.available_payment_methods).to include(payment_method)
     end
 
     it 'does not include a payment method twice if display_on is blank' do
-      payment_method = Spree::PaymentMethod.create!({
-        name: 'Fake',
+      payment_method = Spree::PaymentMethod.create!(        name: 'Fake',
         active: true,
-        display_on: 'both',
-      })
+        display_on: 'both')
       expect(order.available_payment_methods.count).to eq(1)
       expect(order.available_payment_methods).to include(payment_method)
     end
@@ -588,7 +582,7 @@ describe Spree::Order, type: :model do
 
       it 'matches line item when options match' do
         allow(order).to receive(:foos_match).and_return(true)
-        expect(order.line_item_options_match(@line_items.first, { foos: { bar: :zoo } })).to be true
+        expect(order.line_item_options_match(@line_items.first, foos: { bar: :zoo })).to be true
       end
 
       it 'does not match line item without options' do

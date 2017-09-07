@@ -320,7 +320,7 @@ module Spree
       let(:shipping_address) { { firstname: 'Tiago', lastname: 'Motta', address1: 'Av Paulista',
                                  city: 'Sao Paulo', zipcode: '01310-300', phone: '12345678',
                                  country_id: country.id } }
-      let(:country) { create(:country, { name: 'Brazil', iso_name: 'BRAZIL', iso: 'BR', iso3: 'BRA', numcode: 76 })}
+      let(:country) { create(:country, name: 'Brazil', iso_name: 'BRAZIL', iso: 'BR', iso3: 'BRA', numcode: 76)}
 
       before do
         allow_any_instance_of(Order).to receive_messages user: current_api_user

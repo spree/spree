@@ -10,7 +10,7 @@ module Spree
         let(:customer_return) { create(:customer_return) }
 
         subject do
-          spree_get :index, { order_id: customer_return.order.to_param }
+          spree_get :index, order_id: customer_return.order.to_param
         end
 
         before { subject }
@@ -32,7 +32,7 @@ module Spree
         let!(:second_active_reimbursement_type) { create(:reimbursement_type) }
 
         subject do
-          spree_get :new, { order_id: order.to_param }
+          spree_get :new, order_id: order.to_param
         end
 
         it 'loads the order' do
@@ -79,7 +79,7 @@ module Spree
         let!(:manual_intervention_return_item) { customer_return.return_items.order('id').third.tap(&:require_manual_intervention!) }
 
         subject do
-          spree_get :edit, { order_id: order.to_param, id: customer_return.to_param }
+          spree_get :edit, order_id: order.to_param, id: customer_return.to_param
         end
 
         before do

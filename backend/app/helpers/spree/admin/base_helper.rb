@@ -114,11 +114,9 @@ module Spree
                           }
         end
 
-        field_options.merge!({
-          readonly: options[:readonly],
+        field_options.merge!(          readonly: options[:readonly],
           disabled: options[:disabled],
-          size:     options[:size]
-        })
+          size:     options[:size])
       end
 
       def preference_fields(object, form)

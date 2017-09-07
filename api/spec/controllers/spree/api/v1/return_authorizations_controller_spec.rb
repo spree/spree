@@ -65,7 +65,7 @@ module Spree
       it 'can get a list of return authorizations' do
         FactoryGirl.create(:return_authorization, order: order)
         FactoryGirl.create(:return_authorization, order: order)
-        api_get :index, { order_id: order.number }
+        api_get :index, order_id: order.number
         expect(response.status).to eq(200)
         return_authorizations = json_response['return_authorizations']
         expect(return_authorizations.first).to have_attributes(attributes)

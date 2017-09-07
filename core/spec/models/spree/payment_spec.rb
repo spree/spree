@@ -27,11 +27,9 @@ describe Spree::Payment, type: :model do
   let(:amount_in_cents) { (payment.amount * 100).round }
 
   let!(:success_response) do
-    ActiveMerchant::Billing::Response.new(true, '', {}, {
-      authorization: '123',
+    ActiveMerchant::Billing::Response.new(true, '', {},       authorization: '123',
       cvv_result: cvv_code,
-      avs_result: { code: avs_code }
-    })
+      avs_result: { code: avs_code })
   end
 
   let(:failed_response) do
@@ -207,7 +205,7 @@ describe Spree::Payment, type: :model do
         allow(payment).to receive_messages currency: 'GBP'
         expect(payment.payment_method).to receive(:authorize).with(amount_in_cents,
                                                                    card,
-                                                                   hash_including({ currency: 'GBP' })).and_return(success_response)
+                                                                   hash_including(currency: 'GBP')).and_return(success_response)
         payment.authorize!
       end
 
@@ -770,7 +768,7 @@ describe Spree::Payment, type: :model do
 
     context 'when the locale uses a coma as a decimal separator' do
       before(:each) do
-        I18n.backend.store_translations(:fr, { number: { currency: { format: { delimiter: ' ', separator: ',' } } } })
+        I18n.backend.store_translations(:fr, number: { currency: { format: { delimiter: ' ', separator: ',' } } })
         I18n.locale = :fr
         subject.amount = amount
       end
