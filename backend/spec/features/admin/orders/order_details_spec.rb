@@ -300,7 +300,6 @@ describe 'Order Details', type: :feature, js: true do
             expect(order.shipments.first.inventory_units_for(product.master).count).to eq(2)
             expect(order.shipments.first.stock_location.id).to eq(stock_location.id)
 
-
             fill_in 'item_quantity', with: -1
             click_icon :save
 
@@ -532,7 +531,6 @@ describe 'Order Details', type: :feature, js: true do
             product.master.stock_items.last.update_column(:backorderable, true)
             product.master.stock_items.last.update_column(:count_on_hand, 0)
             expect(@shipment2.reload.backordered?).to eq(false)
-
 
             within_row(1) { click_icon 'split' }
             targetted_select2 @shipment2.number, from: '#s2id_item_stock_location'

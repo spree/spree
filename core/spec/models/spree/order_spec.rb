@@ -416,7 +416,6 @@ describe Spree::Order, type: :model do
     end
   end
 
-
   context 'add_update_hook' do
     before do
       Spree::Order.class_eval do
@@ -547,7 +546,6 @@ describe Spree::Order, type: :model do
       order.apply_free_shipping_promotions
     end
   end
-
 
   context '#products' do
     before :each do

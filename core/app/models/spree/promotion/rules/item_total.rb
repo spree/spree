@@ -9,7 +9,6 @@ module Spree
         preference :amount_max, :decimal, default: 1000.00
         preference :operator_max, :string, default: '<'
 
-
         OPERATORS_MIN = ['gt', 'gte']
         OPERATORS_MAX = ['lt','lte']
 

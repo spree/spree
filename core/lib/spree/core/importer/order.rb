@@ -48,7 +48,6 @@ module Spree
         def self.create_shipments_from_params(shipments_hash, order)
           return [] unless shipments_hash
 
-
           shipments_hash.each do |s|
             begin
               shipment = order.shipments.build

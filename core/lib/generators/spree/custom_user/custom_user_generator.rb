@@ -3,7 +3,6 @@ module Spree
     include Rails::Generators::ResourceHelpers
     include Rails::Generators::Migration
 
-
     desc 'Set up a Spree installation with a custom User class'
 
     def self.source_paths

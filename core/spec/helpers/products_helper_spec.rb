@@ -117,7 +117,6 @@ module Spree
       end
     end
 
-
     context '#product_description' do
       # Regression test for #1607
       it 'renders a product description without excessive paragraph breaks' do

@@ -190,7 +190,6 @@ module Spree
               expect(subject.error).to eq Spree.t(:coupon_code_unknown_error)
             end
 
-
             it 'coupon code hit max usage' do
               promotion.update_column(:usage_limit, 1)
               coupon = Coupon.new(order)

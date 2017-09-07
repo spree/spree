@@ -80,7 +80,6 @@ module Spree
         }
       end
 
-
       # Example: filtering by possible brands
       #
       # First, we define the scope. Two interesting points here: (a) we run our conditions

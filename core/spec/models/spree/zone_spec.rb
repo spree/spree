@@ -243,7 +243,6 @@ describe Spree::Zone, type: :model do
       end
     end
 
-
     context 'when checking states against states' do
       before do
         @source.members.create(zoneable: state1)

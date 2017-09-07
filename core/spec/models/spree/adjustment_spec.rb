@@ -112,7 +112,6 @@ describe Spree::Adjustment, type: :model do
     end
   end
 
-
   context 'adjustment state' do
     let(:adjustment) { create(:adjustment, order: order, state: 'open') }
 

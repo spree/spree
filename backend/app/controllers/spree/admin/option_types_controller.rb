@@ -26,7 +26,6 @@ module Spree
         end
       end
 
-
       private
 
       def setup_new_option_value

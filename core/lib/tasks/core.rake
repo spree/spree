@@ -94,8 +94,6 @@ use rake db:load_file[/absolute/path/to/sample/filename.rb]}
     puts "Bootstrap Complete.\n\n"
   end
 
-
-
   desc 'Fix orphan line items after upgrading to Spree 3.1: only needed if you have line items attached to deleted records with Slug (product) and SKU (variant) duplicates of non-deleted records.'
   task fix_orphan_line_items: :environment do |t, args|
     def get_input
@@ -148,7 +146,6 @@ use rake db:load_file[/absolute/path/to/sample/filename.rb]}
         end
         abort()
       end
-
 
       puts 'Ready to fix...'
       variants_to_fix.each do |variant|

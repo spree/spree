@@ -18,7 +18,6 @@ module Spree
         transfer.reference = 'PO 666'
       end end
 
-
     context '#index' do
       it 'gets all transfers without search criteria' do
         spree_get :index

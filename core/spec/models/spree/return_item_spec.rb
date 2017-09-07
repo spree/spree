@@ -29,7 +29,6 @@ describe Spree::ReturnItem, type: :model do
 
     subject { return_item.receive! }
 
-
     it 'returns the inventory unit' do
       subject
       expect(inventory_unit.reload.state).to eq 'returned'

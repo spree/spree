@@ -134,7 +134,6 @@ module Spree
             package.shipping_methods.map(&:reload)
           end
 
-
           it 'links the shipping rate and the tax rate' do
             shipping_rates = subject.shipping_rates(package)
             expect(shipping_rates.first.tax_rate).to eq(tax_rate)

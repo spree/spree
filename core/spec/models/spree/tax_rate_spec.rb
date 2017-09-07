@@ -368,7 +368,6 @@ describe Spree::TaxRate, type: :model do
       }
     end
 
-
     let(:line_item) { order.line_items.first }
     subject(:included_tax_amount) { Spree::TaxRate.included_tax_amount_for(price_options) }
 

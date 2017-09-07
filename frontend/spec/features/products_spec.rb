@@ -266,7 +266,6 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
     expect(page.all('#products .product-list-item').size).to eq(0)
   end
 
-
   it 'should be able to display products priced under 10 dollars' do
     within(:css, '#taxonomies') { click_link 'Ruby on Rails' }
     check 'Price_Range_Under_$10.00'

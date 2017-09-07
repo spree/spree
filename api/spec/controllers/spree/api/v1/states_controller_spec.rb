@@ -52,7 +52,6 @@ module Spree
       end
     end
 
-
     context 'with two states' do
       before { create(:state, name: 'New South Wales') }
 

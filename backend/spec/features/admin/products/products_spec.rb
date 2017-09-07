@@ -264,7 +264,6 @@ describe 'Products', type: :feature do
       end
     end
 
-
     context 'cloning a product', js: true do
       it 'should allow an admin to clone a product' do
         create(:product)

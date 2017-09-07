@@ -97,7 +97,6 @@ module Spree
         expect(order.shipment_state).to be_nil
       end
 
-
       ['shipped', 'ready', 'pending'].each do |state|
         it "is #{state}" do
           allow(order).to receive_message_chain(:shipments, :states).and_return([state])
