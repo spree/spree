@@ -6,8 +6,8 @@ module Spree
     let!(:order) { create(:order) }
     let!(:payment) { create(:payment, order: order) }
     let!(:attributes) do [:id, :source_type, :source_id, :amount, :display_amount,
-                         :payment_method_id, :state, :avs_response,
-                         :created_at, :updated_at, :number] end
+                          :payment_method_id, :state, :avs_response,
+                          :created_at, :updated_at, :number] end
 
     let(:resource_scoping) { { order_id: order.to_param } }
 

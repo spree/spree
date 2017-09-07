@@ -141,23 +141,23 @@ module Spree
 
         expect(json_response).to have_attributes(show_attributes)
         expect(json_response['variants'].first).to have_attributes([:name,
-                                                              :is_master,
-                                                              :price,
-                                                              :images,
-                                                              :in_stock])
+                                                                    :is_master,
+                                                                    :price,
+                                                                    :images,
+                                                                    :in_stock])
 
         expect(json_response['variants'].first['images'].first).to have_attributes([:attachment_file_name,
-                                                                                :attachment_width,
-                                                                                :attachment_height,
-                                                                                :attachment_content_type,
-                                                                                :mini_url,
-                                                                                :small_url,
-                                                                                :product_url,
-                                                                                :large_url])
+                                                                                    :attachment_width,
+                                                                                    :attachment_height,
+                                                                                    :attachment_content_type,
+                                                                                    :mini_url,
+                                                                                    :small_url,
+                                                                                    :product_url,
+                                                                                    :large_url])
 
         expect(json_response['product_properties'].first).to have_attributes([:value,
-                                                                         :product_id,
-                                                                         :property_name])
+                                                                              :product_id,
+                                                                              :property_name])
 
         expect(json_response['classifications'].first).to have_attributes([:taxon_id, :position, :taxon])
         expect(json_response['classifications'].first['taxon']).to have_attributes([:id, :name, :pretty_name, :permalink, :taxonomy_id, :parent_id])

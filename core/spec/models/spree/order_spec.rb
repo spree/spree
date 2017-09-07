@@ -789,7 +789,7 @@ describe Spree::Order, type: :model do
   context '#backordered?' do
     it 'is backordered if one of the shipments is backordered' do
       allow(order).to receive_messages(shipments: [mock_model(Spree::Shipment, backordered?: false),
-                                mock_model(Spree::Shipment, backordered?: true)])
+                                                   mock_model(Spree::Shipment, backordered?: true)])
       expect(order).to be_backordered
     end
   end

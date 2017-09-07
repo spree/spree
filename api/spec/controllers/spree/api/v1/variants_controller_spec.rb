@@ -49,9 +49,9 @@ module Spree
       api_get :index
       option_values = json_response['variants'].last['option_values']
       expect(option_values.first).to have_attributes([:name,
-                                                 :presentation,
-                                                 :option_type_name,
-                                                 :option_type_id])
+                                                      :presentation,
+                                                      :option_type_name,
+                                                      :option_type_id])
     end
 
     it 'variants returned contain images data' do
@@ -61,13 +61,13 @@ module Spree
 
       expect(json_response['variants'].last).to have_attributes([:images])
       expect(json_response['variants'].first['images'].first).to have_attributes([:attachment_file_name,
-                                                                               :attachment_width,
-                                                                               :attachment_height,
-                                                                               :attachment_content_type,
-                                                                               :mini_url,
-                                                                               :small_url,
-                                                                               :product_url,
-                                                                               :large_url])
+                                                                                  :attachment_width,
+                                                                                  :attachment_height,
+                                                                                  :attachment_content_type,
+                                                                                  :mini_url,
+                                                                                  :small_url,
+                                                                                  :product_url,
+                                                                                  :large_url])
     end
 
     it 'variants returned do not contain cost price data' do
@@ -109,9 +109,9 @@ module Spree
       expect(json_response['stock_items']).to be_present
       option_values = json_response['option_values']
       expect(option_values.first).to have_attributes([:name,
-                                                 :presentation,
-                                                 :option_type_name,
-                                                 :option_type_id])
+                                                      :presentation,
+                                                      :option_type_name,
+                                                      :option_type_id])
     end
 
     it 'can see a single variant with images' do
@@ -122,9 +122,9 @@ module Spree
       expect(json_response).to have_attributes(show_attributes + [:images])
       option_values = json_response['option_values']
       expect(option_values.first).to have_attributes([:name,
-                                                 :presentation,
-                                                 :option_type_name,
-                                                 :option_type_id])
+                                                      :presentation,
+                                                      :option_type_name,
+                                                      :option_type_id])
     end
 
     it 'can learn how to create a new variant' do

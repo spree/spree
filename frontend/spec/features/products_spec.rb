@@ -310,9 +310,9 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
     tmp = page.all('#products .product-list-item a').map(&:text).flatten.compact
     tmp.delete('')
     expect(tmp.sort!).to eq(['Ruby on Rails Bag',
-                         'Ruby on Rails Baseball Jersey',
-                         'Ruby on Rails Jr. Spaghetti',
-                         'Ruby on Rails Ringer T-Shirt'])
+                             'Ruby on Rails Baseball Jersey',
+                             'Ruby on Rails Jr. Spaghetti',
+                             'Ruby on Rails Ringer T-Shirt'])
   end
 
   it 'should be able to put a product without a description in the cart' do

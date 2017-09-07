@@ -6,8 +6,8 @@ module Spree
 
     let!(:product) { create(:product) }
     let!(:attributes) do [:id, :position, :attachment_content_type,
-                         :attachment_file_name, :type, :attachment_updated_at, :attachment_width,
-                         :attachment_height, :alt] end
+                          :attachment_file_name, :type, :attachment_updated_at, :attachment_width,
+                          :attachment_height, :alt] end
 
     before do
       stub_authentication!
