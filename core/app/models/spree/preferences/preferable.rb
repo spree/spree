@@ -81,7 +81,7 @@ module Spree::Preferences::Preferable
   end
 
   def clear_preferences
-    preferences.keys.each {|pref| preferences.delete pref}
+    preferences.keys.each { |pref| preferences.delete pref }
   end
 
   private

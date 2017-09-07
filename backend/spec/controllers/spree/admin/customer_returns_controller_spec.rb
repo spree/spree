@@ -75,7 +75,7 @@ module Spree
         let(:customer_return) { create(:customer_return, line_items_count: 3) }
 
         let!(:accepted_return_item)            { customer_return.return_items.order('id').first.tap(&:accept!) }
-        let!(:rejected_return_item)            { customer_return.return_items.order('id').second.tap(&:reject!)}
+        let!(:rejected_return_item)            { customer_return.return_items.order('id').second.tap(&:reject!) }
         let!(:manual_intervention_return_item) { customer_return.return_items.order('id').third.tap(&:require_manual_intervention!) }
 
         subject do

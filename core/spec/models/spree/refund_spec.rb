@@ -166,7 +166,7 @@ describe Spree::Refund, type: :model do
   end
 
   describe 'total_amount_reimbursed_for' do
-    let(:customer_return) { reimbursement.customer_return}
+    let(:customer_return) { reimbursement.customer_return }
     let(:reimbursement) { create(:reimbursement) }
     let!(:default_refund_reason) { Spree::RefundReason.find_or_create_by!(name: Spree::RefundReason::RETURN_PROCESSING_REASON, mutable: false) }
 

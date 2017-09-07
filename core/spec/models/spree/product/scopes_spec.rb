@@ -73,8 +73,8 @@ describe 'Product scopes', type: :model do
 
   context 'property scopes' do
     let(:name) { 'A proper tee' }
-    let(:value) { 'A proper value'}
-    let!(:property) { create(:property, name: name)}
+    let(:value) { 'A proper value' }
+    let!(:property) { create(:property, name: name) }
 
     before do
       product.properties << property

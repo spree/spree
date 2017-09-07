@@ -288,7 +288,7 @@ describe Spree::Address, type: :model do
 
   context 'defines require_phone? helper method' do
     let(:address) { stub_model(Spree::Address) }
-    specify { expect(address.instance_eval { require_phone? }).to be true}
+    specify { expect(address.instance_eval { require_phone? }).to be true }
   end
 
   context '#clear_state_entities' do

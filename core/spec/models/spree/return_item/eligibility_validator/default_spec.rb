@@ -10,8 +10,8 @@ describe Spree::ReturnItem::EligibilityValidator::Default, type: :model do
   let(:time_eligibility_instance) { double(errors: time_error) }
   let(:rma_eligibility_instance)  { double(errors: rma_error) }
 
-  let(:time_error) {{}}
-  let(:rma_error)  {{}}
+  let(:time_error) { {} }
+  let(:rma_error)  { {} }
 
   before do
     validator.permitted_eligibility_validators = [ time_eligibility_class, rma_eligibility_class ]
@@ -63,8 +63,8 @@ describe Spree::ReturnItem::EligibilityValidator::Default, type: :model do
     end
 
     context 'the validators have errors' do
-      let(:time_error) { { time: time_error_text }}
-      let(:rma_error)  { { rma: rma_error_text }}
+      let(:time_error) { { time: time_error_text } }
+      let(:rma_error)  { { rma: rma_error_text } }
 
       let(:time_error_text) { 'Time eligibility error' }
       let(:rma_error_text)  { 'RMA eligibility error' }

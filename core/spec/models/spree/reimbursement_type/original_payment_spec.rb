@@ -8,7 +8,7 @@ module Spree
     let(:simulate)                { false }
     let!(:default_refund_reason)  { Spree::RefundReason.find_or_create_by!(name: Spree::RefundReason::RETURN_PROCESSING_REASON, mutable: false) }
 
-    subject { Spree::ReimbursementType::OriginalPayment.reimburse(reimbursement, [return_item], simulate)}
+    subject { Spree::ReimbursementType::OriginalPayment.reimburse(reimbursement, [return_item], simulate) }
 
     before { reimbursement.update!(total: reimbursement.calculated_total) }
 

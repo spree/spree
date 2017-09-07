@@ -14,7 +14,7 @@ module Spree
       self.table_name = 'spree_payments' # Your creditable class should not use this table
     end
 
-    subject { Spree::ReimbursementType::Credit.reimburse(reimbursement, [return_item], simulate)}
+    subject { Spree::ReimbursementType::Credit.reimburse(reimbursement, [return_item], simulate) }
 
     before do
       reimbursement.update!(total: reimbursement.calculated_total)

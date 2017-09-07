@@ -8,7 +8,7 @@ module Spree
       let(:new_exchange)  { double('Exchange') }
       let(:simulate)      { true }
 
-      subject { Spree::ReimbursementType::Exchange.reimburse(reimbursement, return_items, simulate)}
+      subject { Spree::ReimbursementType::Exchange.reimburse(reimbursement, return_items, simulate) }
 
       context 'return items are supplied' do
         before do

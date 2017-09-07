@@ -505,7 +505,7 @@ describe Spree::Promotion, type: :model do
 
   describe '#line_item_actionable?' do
     let(:order) { double Spree::Order }
-    let(:line_item) { double Spree::LineItem}
+    let(:line_item) { double Spree::LineItem }
     let(:true_rule) { double Spree::PromotionRule, eligible?: true, applicable?: true, actionable?: true }
     let(:false_rule) { double Spree::PromotionRule, eligible?: true, applicable?: true, actionable?: false }
     let(:rules) { [] }
@@ -528,12 +528,12 @@ describe Spree::Promotion, type: :model do
 
           context 'when all rules allow action on the line item' do
             let(:rules) { [true_rule] }
-            it { is_expected.to be}
+            it { is_expected.to be }
           end
 
           context 'when at least one rule does not allow action on the line item' do
             let(:rules) { [true_rule, false_rule] }
-            it { is_expected.not_to be}
+            it { is_expected.not_to be }
           end
         end
 
@@ -547,7 +547,7 @@ describe Spree::Promotion, type: :model do
 
           context 'when no rules allow action on the line item' do
             let(:rules) { [false_rule] }
-            it { is_expected.not_to be}
+            it { is_expected.not_to be }
           end
         end
       end

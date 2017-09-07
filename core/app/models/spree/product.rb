@@ -192,7 +192,7 @@ module Spree
     # eg categorise_variants_from_option(color) => {"red" -> [...], "blue" -> [...]}
     def categorise_variants_from_option(opt_type)
       return {} unless option_types.include?(opt_type)
-      variants.active.group_by { |v| v.option_values.detect { |o| o.option_type == opt_type} }
+      variants.active.group_by { |v| v.option_values.detect { |o| o.option_type == opt_type } }
     end
 
     def self.like_any(fields, values)

@@ -172,7 +172,7 @@ describe Spree::Payment, type: :model do
 
       it 'should invalidate if payment method doesnt support source' do
         expect(payment.payment_method).to receive(:supports?).with(payment.source).and_return(false)
-        expect { payment.process!}.to raise_error(Spree::Core::GatewayError)
+        expect { payment.process! }.to raise_error(Spree::Core::GatewayError)
         expect(payment.state).to eq('invalid')
       end
 

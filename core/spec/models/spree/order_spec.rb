@@ -466,13 +466,13 @@ describe Spree::Order, type: :model do
     it 'updates the state column to the first checkout_steps value' do
       order = create(:order_with_totals, state: 'delivery')
       expect(order.checkout_steps).to eql ['address', 'delivery', 'complete']
-      expect { order.restart_checkout_flow }.to change {order.state}.from('delivery').to('address')
+      expect { order.restart_checkout_flow }.to change { order.state }.from('delivery').to('address')
     end
 
     context 'without line items' do
       it 'updates the state column to cart' do
         order = create(:order, state: 'delivery')
-        expect { order.restart_checkout_flow }.to change {order.state}.from('delivery').to('cart')
+        expect { order.restart_checkout_flow }.to change { order.state }.from('delivery').to('cart')
       end
     end
   end
@@ -878,7 +878,7 @@ describe Spree::Order, type: :model do
 
     context 'a reimbursement related refund exists' do
       let(:order) { refund.payment.order }
-      let(:refund) { create(:refund, reimbursement_id: 123, amount: 5)}
+      let(:refund) { create(:refund, reimbursement_id: 123, amount: 5) }
 
       it { is_expected.to eq false }
     end

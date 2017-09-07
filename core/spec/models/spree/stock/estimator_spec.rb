@@ -42,7 +42,7 @@ module Spree
         end
 
         context "when the order's ship address is in a different zone" do
-          before { shipping_method.zones.each {|z| z.members.delete_all} }
+          before { shipping_method.zones.each { |z| z.members.delete_all } }
           it_should_behave_like "shipping rate doesn't match"
         end
 

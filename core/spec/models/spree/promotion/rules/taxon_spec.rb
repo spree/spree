@@ -5,7 +5,7 @@ describe Spree::Promotion::Rules::Taxon, type: :model do
 
   context '#elegible?(order)' do
     let(:taxon) { create :taxon, name: 'first' }
-    let(:taxon2) { create :taxon, name: 'second'}
+    let(:taxon2) { create :taxon, name: 'second' }
     let(:order) { create :order_with_line_items }
 
     before do

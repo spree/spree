@@ -11,7 +11,7 @@ class Spree::Admin::PromotionRulesController < Spree::Admin::BaseController
       flash[:success] = Spree.t(:successfully_created, resource: Spree.t(:promotion_rule))
     end
     respond_to do |format|
-      format.html { redirect_to spree.edit_admin_promotion_path(@promotion)}
+      format.html { redirect_to spree.edit_admin_promotion_path(@promotion) }
       format.js   { render layout: false }
     end
   end
@@ -22,7 +22,7 @@ class Spree::Admin::PromotionRulesController < Spree::Admin::BaseController
       flash[:success] = Spree.t(:successfully_removed, resource: Spree.t(:promotion_rule))
     end
     respond_to do |format|
-      format.html { redirect_to spree.edit_admin_promotion_path(@promotion)}
+      format.html { redirect_to spree.edit_admin_promotion_path(@promotion) }
       format.js   { render layout: false }
     end
   end
@@ -42,7 +42,7 @@ class Spree::Admin::PromotionRulesController < Spree::Admin::BaseController
     if !@promotion_rule_type
       flash[:error] = Spree.t(:invalid_promotion_rule)
       respond_to do |format|
-        format.html { redirect_to spree.edit_admin_promotion_path(@promotion)}
+        format.html { redirect_to spree.edit_admin_promotion_path(@promotion) }
         format.js   { render layout: false }
       end
     end

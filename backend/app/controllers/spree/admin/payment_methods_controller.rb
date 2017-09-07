@@ -56,7 +56,7 @@ module Spree
       end
 
       def load_data
-        @providers = Gateway.providers.sort {|p1, p2| p1.name <=> p2.name }
+        @providers = Gateway.providers.sort { |p1, p2| p1.name <=> p2.name }
       end
 
       def validate_payment_method_provider
