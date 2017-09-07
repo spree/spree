@@ -308,16 +308,16 @@ describe Spree::Promotion, type: :model do
     let(:order) { create :order }
     let(:line_item) { create :line_item, order: order }
     let(:promotion) { Spree::Promotion.create name: 'promo', code: '10off' }
-    let(:order_action) {
+    let(:order_action) do
       action = Spree::Promotion::Actions::CreateAdjustment.create(calculator: Spree::Calculator::FlatPercentItemTotal.new)
       promotion.actions << action
       action
-    }
-    let(:item_action) {
+    end
+    let(:item_action) do
       action = Spree::Promotion::Actions::CreateItemAdjustments.create(calculator: Spree::Calculator::FlatPercentItemTotal.new)
       promotion.actions << action
       action
-    }
+    end
     let(:order_adjustment) do
       Spree::Adjustment.create!(
         source: order_action,

@@ -6,9 +6,9 @@ module Spree
       def add_class(name)
         self.instance_variable_set "@#{name}", Set.new
 
-        create_method( "#{name}=".to_sym ) { |val|
+        create_method( "#{name}=".to_sym ) do |val|
           instance_variable_set( '@' + name, val)
-        }
+        end
 
         create_method(name.to_sym) do
           instance_variable_get( '@' + name )

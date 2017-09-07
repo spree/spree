@@ -14,9 +14,9 @@ module Spree
 
       context 'item quantity changes' do
         it 'recalculates order adjustments' do
-          expect {
+          expect do
             order.contents.add(shirt, 3)
-          }.to change { order.adjustments.eligible.pluck(:amount) }
+          end.to change { order.adjustments.eligible.pluck(:amount) }
         end
       end
     end

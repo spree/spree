@@ -22,9 +22,9 @@ describe 'current order tracking', type: :controller do
     before { allow(controller).to receive_messages(try_spree_current_user: user) }
 
     it "doesn't create a new order out of the blue" do
-      expect {
+      expect do
         spree_get :index
-      }.not_to change { Spree::Order.count }
+      end.not_to change { Spree::Order.count }
     end
   end
 end
@@ -36,9 +36,9 @@ describe Spree::OrdersController, type: :controller do
 
   describe Spree::OrdersController do
     it "doesn't create a new order out of the blue" do
-      expect {
+      expect do
         spree_get :edit
-      }.not_to change { Spree::Order.count }
+      end.not_to change { Spree::Order.count }
     end
   end
 end

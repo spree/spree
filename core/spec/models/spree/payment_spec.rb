@@ -241,9 +241,9 @@ describe Spree::Payment, type: :model do
           allow(gateway).to receive(:authorize).and_return(failed_response)
           expect(payment).to receive(:failure)
           expect(payment).not_to receive(:pend)
-          expect {
+          expect do
             payment.authorize!
-          }.to raise_error(Spree::Core::GatewayError)
+          end.to raise_error(Spree::Core::GatewayError)
         end
       end
     end
@@ -512,9 +512,9 @@ describe Spree::Payment, type: :model do
 
     context 'not completed payments' do
       it "doesn't update order payment total" do
-        expect {
+        expect do
           Spree::Payment.create(amount: 100, order: order)
-        }.not_to change { order.payment_total }
+        end.not_to change { order.payment_total }
       end
 
       it 'requires a payment method' do

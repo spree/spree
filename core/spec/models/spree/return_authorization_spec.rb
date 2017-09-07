@@ -174,9 +174,9 @@ describe Spree::ReturnAuthorization, type: :model do
     let(:return_items) { [return_item] }
     let(:return_item) { create(:return_item) }
 
-    subject {
+    subject do
       return_authorization.cancel!
-    }
+    end
 
     it 'cancels the associated return items' do
       subject

@@ -26,17 +26,17 @@ describe Spree::Order, type: :model do
         order.update_column(:shipment_total, 5)
         order.shipments.create!(stock_location: create(:stock_location))
 
-        expect {
+        expect do
           order.ensure_updated_shipments
-        }.not_to change { order.shipment_total }
+        end.not_to change { order.shipment_total }
 
-        expect {
+        expect do
           order.ensure_updated_shipments
-        }.not_to change { order.shipments }
+        end.not_to change { order.shipments }
 
-        expect {
+        expect do
           order.ensure_updated_shipments
-        }.not_to change { order.state }
+        end.not_to change { order.state }
       end
     end
   end

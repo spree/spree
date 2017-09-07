@@ -257,7 +257,7 @@ module Spree
 
     def self.get_taxons(*ids_or_records_or_names)
       taxons = Taxon.table_name
-      ids_or_records_or_names.flatten.map { |t|
+      ids_or_records_or_names.flatten.map do |t|
         case t
         when Integer then Taxon.find_by(id: t)
         when ApplicationRecord then t
@@ -265,7 +265,7 @@ module Spree
           Taxon.find_by(name: t) ||
           Taxon.where("#{taxons}.permalink LIKE ? OR #{taxons}.permalink = ?", "%/#{t}/", "#{t}/").first
         end
-      }.compact.flatten.uniq
+      end.compact.flatten.uniq
     end
     end
 end

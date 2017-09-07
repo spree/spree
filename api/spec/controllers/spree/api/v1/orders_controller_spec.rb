@@ -314,12 +314,12 @@ module Spree
       let!(:payment_method) { create(:check_payment_method) }
 
       let(:address_params) { { country_id: country.id } }
-      let(:billing_address) { { firstname: 'Tiago', lastname: 'Motta', address1: 'Av Paulista',
+      let(:billing_address) do { firstname: 'Tiago', lastname: 'Motta', address1: 'Av Paulista',
                                 city: 'Sao Paulo', zipcode: '01310-300', phone: '12345678',
-                                country_id: country.id } }
-      let(:shipping_address) { { firstname: 'Tiago', lastname: 'Motta', address1: 'Av Paulista',
+                                country_id: country.id } end
+      let(:shipping_address) do { firstname: 'Tiago', lastname: 'Motta', address1: 'Av Paulista',
                                  city: 'Sao Paulo', zipcode: '01310-300', phone: '12345678',
-                                 country_id: country.id } }
+                                 country_id: country.id } end
       let(:country) { create(:country, name: 'Brazil', iso_name: 'BRAZIL', iso: 'BR', iso3: 'BRA', numcode: 76)}
 
       before do

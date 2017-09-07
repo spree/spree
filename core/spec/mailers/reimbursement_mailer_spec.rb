@@ -17,9 +17,9 @@ describe Spree::ReimbursementMailer, type: :mailer do
   it 'accepts a reimbursement id as an alternative to a Reimbursement object' do
     expect(Spree::Reimbursement).to receive(:find).with(reimbursement.id).and_return(reimbursement)
 
-    expect {
+    expect do
       Spree::ReimbursementMailer.reimbursement_email(reimbursement.id).body
-    }.not_to raise_error
+    end.not_to raise_error
   end
 
   context 'emails must be translatable' do

@@ -25,10 +25,10 @@ describe Spree::CustomController, type: :controller do
 
   before do
     @routes = ActionDispatch::Routing::RouteSet.new.tap do |r|
-      r.draw {
+      r.draw do
         get 'index', to: 'spree/custom#index'
         post 'create', to: 'spree/custom#create'
-      }
+      end
     end
   end
 

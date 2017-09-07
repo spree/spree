@@ -35,9 +35,9 @@ module Spree
           let(:stock_item) { subject.propagate_variant(variant) }
 
           it 'creates a new stock item' do
-            expect {
+            expect do
               subject.propagate_variant(variant)
-            }.to change{ StockItem.count }.by(1)
+            end.to change{ StockItem.count }.by(1)
           end
 
           context 'passes backorderable default config' do
@@ -126,9 +126,9 @@ module Spree
     end
 
     it 'it creates a stock_movement' do
-      expect {
+      expect do
         subject.move variant, 5
-      }.to change { subject.stock_movements.where(stock_item_id: stock_item).count }.by(1)
+      end.to change { subject.stock_movements.where(stock_item_id: stock_item).count }.by(1)
     end
 
     it 'can be deactivated' do

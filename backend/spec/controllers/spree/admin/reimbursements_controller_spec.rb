@@ -45,9 +45,9 @@ describe Spree::Admin::ReimbursementsController, type: :controller do
     end
 
     it 'performs the reimbursement' do
-      expect {
+      expect do
         subject
-      }.to change { payment.refunds.count }.by(1)
+      end.to change { payment.refunds.count }.by(1)
       expect(payment.refunds.last.amount).to be > 0
       expect(payment.refunds.last.amount).to eq return_items.to_a.sum(&:total)
     end

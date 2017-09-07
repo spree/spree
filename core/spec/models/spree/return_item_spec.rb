@@ -551,9 +551,9 @@ describe Spree::ReturnItem, type: :model do
       let(:old_reception_status) { 'awaiting' }
 
       it 'cancels the others' do
-        expect {
+        expect do
           subject.save!
-        }.to change { old_return_item.reload.reception_status }.from('awaiting').to('cancelled')
+        end.to change { old_return_item.reload.reception_status }.from('awaiting').to('cancelled')
       end
 
       it 'does not cancel itself' do

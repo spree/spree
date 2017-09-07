@@ -114,9 +114,9 @@ module Spree
                                        order: order,
                                        adjustable: line_item)
 
-            expect {
+            expect do
               action.destroy
-            }.to change { Adjustment.count }.by(-1)
+            end.to change { Adjustment.count }.by(-1)
           end
 
           it 'nullifies adjustments for completed orders' do
@@ -126,9 +126,9 @@ module Spree
                                                     order: order,
                                                     adjustable: line_item)
 
-            expect {
+            expect do
               action.destroy
-            }.to change { adjustment.reload.source_id }.from(action.id).to nil
+            end.to change { adjustment.reload.source_id }.from(action.id).to nil
           end
 
           it 'doesnt mess with unrelated adjustments' do
@@ -137,9 +137,9 @@ module Spree
                                              order: order,
                                              adjustable: line_item)
 
-            expect {
+            expect do
               action.destroy
-            }.not_to change { other_action.adjustments.count }
+            end.not_to change { other_action.adjustments.count }
           end
         end
       end

@@ -129,9 +129,9 @@ module Spree
           order.payment_total = 2
           order.total = 1
 
-          expect {
+          expect do
             updater.update_payment_state
-          }.to change { order.payment_state }.to 'credit_owed'
+          end.to change { order.payment_state }.to 'credit_owed'
         end
       end
 
@@ -140,9 +140,9 @@ module Spree
           order.payment_total = 1
           order.total = 2
 
-          expect {
+          expect do
             updater.update_payment_state
-          }.to change { order.payment_state }.to 'balance_due'
+          end.to change { order.payment_state }.to 'balance_due'
         end
       end
 
@@ -151,9 +151,9 @@ module Spree
           order.payment_total = 30
           order.total = 30
 
-          expect {
+          expect do
             updater.update_payment_state
-          }.to change { order.payment_state }.to 'paid'
+          end.to change { order.payment_state }.to 'paid'
         end
       end
 
@@ -166,9 +166,9 @@ module Spree
           it 'is void' do
             order.payment_total = 0
             order.total = 30
-            expect {
+            expect do
               updater.update_payment_state
-            }.to change { order.payment_state }.to 'void'
+            end.to change { order.payment_state }.to 'void'
           end
         end
 
@@ -178,9 +178,9 @@ module Spree
             order.total = 30
             allow(order).to receive_message_chain(:payments, :valid, :size).and_return(1)
             allow(order).to receive_message_chain(:payments, :completed, :size).and_return(1)
-            expect {
+            expect do
               updater.update_payment_state
-            }.to change { order.payment_state }.to 'credit_owed'
+            end.to change { order.payment_state }.to 'credit_owed'
           end
         end
 
@@ -188,9 +188,9 @@ module Spree
           it 'is void' do
             order.payment_total = 0
             order.total = 30
-            expect {
+            expect do
               updater.update_payment_state
-            }.to change { order.payment_state }.to 'void'
+            end.to change { order.payment_state }.to 'void'
           end
         end
       end

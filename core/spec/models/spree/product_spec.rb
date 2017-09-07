@@ -315,18 +315,18 @@ describe Spree::Product, type: :model do
     end
 
     it 'should not create duplicate properties when set_property is called' do
-      expect {
+      expect do
         product.set_property('the_prop', 'value2')
         product.save
         product.reload
-      }.not_to change(product.properties, :length)
+      end.not_to change(product.properties, :length)
 
-      expect {
+      expect do
         product.set_property('the_prop_new', 'value')
         product.save
         product.reload
         expect(product.property('the_prop_new')).to eq('value')
-      }.to change { product.properties.length }.by(1)
+      end.to change { product.properties.length }.by(1)
     end
 
     context 'optional property_presentation' do

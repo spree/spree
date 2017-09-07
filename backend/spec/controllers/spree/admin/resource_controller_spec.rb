@@ -113,9 +113,9 @@ describe Spree::Admin::WidgetsController, type: :controller do
     let!(:widget) { Widget.create!(name: 'a widget') }
     let(:params) { { id: widget.id } }
 
-    subject {
+    subject do
       spree_delete :destroy, params
-    }
+    end
 
     it 'destroys the resource' do
       expect { subject }.to change { Widget.count }.from(1).to(0)

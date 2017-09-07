@@ -190,17 +190,17 @@ describe Spree::StockItem, type: :model do
     before { subject.destroy }
 
     it 'recreates stock item just fine' do
-      expect {
+      expect do
         stock_location.stock_items.create!(variant: subject.variant)
-      }.not_to raise_error
+      end.not_to raise_error
     end
 
     it 'doesnt allow recreating more than one stock item at once' do
       stock_location.stock_items.create!(variant: subject.variant)
 
-      expect {
+      expect do
         stock_location.stock_items.create!(variant: subject.variant)
-      }.to raise_error(StandardError)
+      end.to raise_error(StandardError)
     end
   end
 

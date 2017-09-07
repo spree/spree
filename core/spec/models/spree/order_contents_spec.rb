@@ -126,9 +126,9 @@ describe Spree::OrderContents, type: :model do
   context '#remove' do
     context 'given an invalid variant' do
       it 'raises an exception' do
-        expect {
+        expect do
           subject.remove(variant, 1)
-        }.to raise_error(ActiveRecord::RecordNotFound)
+        end.to raise_error(ActiveRecord::RecordNotFound)
       end
     end
 
@@ -267,9 +267,9 @@ describe Spree::OrderContents, type: :model do
     end
 
     it 'updates order totals' do
-      expect {
+      expect do
         subject.update_cart params
-      }.to change { subject.order.total }
+      end.to change { subject.order.total }
     end
 
     context 'when store_credits payment' do
@@ -287,9 +287,9 @@ describe Spree::OrderContents, type: :model do
       end
 
       it 'removes item from order' do
-        expect {
+        expect do
           subject.update_cart params
-        }.to change { subject.order.line_items.count }
+        end.to change { subject.order.line_items.count }
       end
 
       it 'doesnt try to update unexistent items' do
@@ -319,13 +319,13 @@ describe Spree::OrderContents, type: :model do
     before { order.shipments.create! stock_location_id: variant.stock_location_ids.first }
 
     it 'updates order payment state' do
-      expect {
+      expect do
         subject.add variant
-      }.to change { order.payment_state }
+      end.to change { order.payment_state }
 
-      expect {
+      expect do
         subject.remove variant
-      }.to change { order.payment_state }
+      end.to change { order.payment_state }
     end
   end
 end

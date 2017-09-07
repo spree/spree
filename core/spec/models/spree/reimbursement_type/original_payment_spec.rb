@@ -24,9 +24,9 @@ module Spree
 
       context 'simulate is false' do
         it 'performs the refund' do
-          expect {
+          expect do
             subject
-          }.to change { payment.refunds.count }.by(1)
+          end.to change { payment.refunds.count }.by(1)
           expect(payment.refunds.sum(:amount)).to eq reimbursement.return_items.to_a.sum(&:total)
         end
       end

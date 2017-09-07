@@ -6,8 +6,8 @@ module Spree
 
     let!(:stock_location) { create(:stock_location_with_items) }
     let!(:stock_item) { stock_location.stock_items.order(:id).first }
-    let!(:attributes) { [:id, :count_on_hand, :backorderable,
-                         :stock_location_id, :variant_id] }
+    let!(:attributes) do [:id, :count_on_hand, :backorderable,
+                         :stock_location_id, :variant_id] end
 
     before do
       stub_authentication!

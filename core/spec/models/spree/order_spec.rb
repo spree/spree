@@ -866,12 +866,12 @@ describe Spree::Order, type: :model do
     context 'an old-style refund exists' do
       let(:order) { create(:order_ready_to_ship) }
       let(:payment) { order.payments.first.tap { |p| allow(p).to receive_messages(profiles_supported: false) } }
-      let!(:refund_payment) {
+      let!(:refund_payment) do
         build(:payment, amount: -1, order: order, state: 'completed', source: payment).tap do |p|
           allow(p).to receive_messages(profiles_supported?: false)
           p.save!
         end
-      }
+      end
 
       it { is_expected.to eq true }
     end

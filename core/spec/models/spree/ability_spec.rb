@@ -22,9 +22,9 @@ describe Spree::Ability, type: :model do
   let(:ability) { Spree::Ability.new(user) }
   let(:token) { nil }
 
-  after(:each) {
+  after(:each) do
     Spree::Ability.abilities = Set.new
-  }
+  end
 
   context 'register_ability' do
     it 'should add the ability to the list of abilties' do

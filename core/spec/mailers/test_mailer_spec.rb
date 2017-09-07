@@ -17,9 +17,9 @@ describe Spree::TestMailer, type: :mailer do
   end
 
   it 'confirm_email accepts a user id as an alternative to a User object' do
-    expect {
+    expect do
       Spree::TestMailer.test_email('test@example.com')
-    }.not_to raise_error
+    end.not_to raise_error
   end
 
   context 'action mailer host' do

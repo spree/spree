@@ -57,9 +57,9 @@ describe Spree::Preferences::Preferable, type: :model do
     end
 
     it 'can be asked and raises' do
-      expect {
+      expect do
         @a.has_preference! :flavor
-      }.to raise_error(NoMethodError, 'flavor preference not defined')
+      end.to raise_error(NoMethodError, 'flavor preference not defined')
     end
 
     it 'has a type' do
@@ -73,9 +73,9 @@ describe Spree::Preferences::Preferable, type: :model do
     end
 
     it 'raises if not defined' do
-      expect {
+      expect do
         @a.get_preference :flavor
-      }.to raise_error(NoMethodError, 'flavor preference not defined')
+      end.to raise_error(NoMethodError, 'flavor preference not defined')
     end
   end
 
@@ -94,9 +94,9 @@ describe Spree::Preferences::Preferable, type: :model do
     end
 
     it 'raises when preference not defined' do
-      expect {
+      expect do
         @a.set_preference(:bad, :bone)
-      }.to raise_exception(NoMethodError, 'bad preference not defined')
+      end.to raise_exception(NoMethodError, 'bad preference not defined')
     end
 
     it 'builds a hash of preferences' do

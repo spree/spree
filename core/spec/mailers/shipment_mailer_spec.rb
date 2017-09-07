@@ -35,9 +35,9 @@ describe Spree::ShipmentMailer, type: :mailer do
 
   it 'shipment_email accepts an shipment id as an alternative to an Shipment object' do
     expect(Spree::Shipment).to receive(:find).with(shipment.id).and_return(shipment)
-    expect {
+    expect do
       Spree::ShipmentMailer.shipped_email(shipment.id).body
-    }.not_to raise_error
+    end.not_to raise_error
   end
 
   context 'emails must be translatable' do

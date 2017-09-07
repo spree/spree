@@ -393,9 +393,9 @@ describe Spree::Admin::OrdersController, type: :controller do
     stub_authorization!
 
     it 'raise active record not found' do
-      expect {
+      expect do
         spree_get :edit, id: 99999999
-      }.to raise_error ActiveRecord::RecordNotFound
+      end.to raise_error ActiveRecord::RecordNotFound
     end
   end
 end

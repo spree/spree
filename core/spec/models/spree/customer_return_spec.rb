@@ -174,9 +174,9 @@ describe Spree::CustomerReturn, type: :model do
       let(:new_stock_location) { create(:stock_location, name: 'other') }
 
       it 'should update the stock item counts in new stock location' do
-        expect {
+        expect do
           create(:customer_return_without_return_items, return_items: [return_item], stock_location_id: new_stock_location.id)
-        }.to change {
+        end.to change {
           Spree::StockItem.where(variant_id: inventory_unit.variant_id, stock_location_id: new_stock_location.id).first.count_on_hand
         }.by(1)
       end

@@ -61,9 +61,9 @@ describe Spree::Reimbursement, type: :model do
     end
 
     it 'creates a refund' do
-      expect {
+      expect do
         subject
-      }.to change{ Spree::Refund.count }.by(1)
+      end.to change{ Spree::Refund.count }.by(1)
       expect(Spree::Refund.last.amount).to eq order.total
     end
 
@@ -71,9 +71,9 @@ describe Spree::Reimbursement, type: :model do
       let!(:tax_rate) { create(:tax_rate, name: 'Sales Tax', amount: 0.10, included_in_price: false, zone: tax_zone) }
 
       it 'saves the additional tax and refunds the total' do
-        expect {
+        expect do
           subject
-        }.to change { Spree::Refund.count }.by(1)
+        end.to change { Spree::Refund.count }.by(1)
         return_item.reload
         expect(return_item.additional_tax_total).to be > 0
         expect(return_item.additional_tax_total).to eq line_item.additional_tax_total
@@ -86,9 +86,9 @@ describe Spree::Reimbursement, type: :model do
       let!(:tax_rate) { create(:tax_rate, name: 'VAT Tax', amount: 0.1, included_in_price: true, zone: tax_zone) }
 
       it 'saves the included tax and refunds the total' do
-        expect {
+        expect do
           subject
-        }.to change { Spree::Refund.count }.by(1)
+        end.to change { Spree::Refund.count }.by(1)
         return_item.reload
         expect(return_item.included_tax_total).to be > 0
         expect(return_item.included_tax_total).to eq line_item.included_tax_total

@@ -2,13 +2,13 @@ require 'spec_helper'
 require 'benchmark'
 
 describe Spree::Shipment, type: :model do
-  let(:order) { mock_model Spree::Order, backordered?: false,
+  let(:order) do mock_model Spree::Order, backordered?: false,
                                          canceled?: false,
                                          can_ship?: true,
                                          currency: 'USD',
                                          number: 'S12345',
                                          paid?: false,
-                                         touch_later: false }
+                                         touch_later: false end
   let(:shipping_method) { create(:shipping_method, name: 'UPS') }
   let(:shipment) do
     shipment = Spree::Shipment.new(cost: 1, state: 'pending', stock_location: create(:stock_location))
@@ -192,10 +192,10 @@ describe Spree::Shipment, type: :model do
     let(:shipment) { create(:shipment) }
     let(:shipping_method1) { create(:shipping_method) }
     let(:shipping_method2) { create(:shipping_method) }
-    let(:shipping_rates) { [
+    let(:shipping_rates) do [
       Spree::ShippingRate.new(shipping_method: shipping_method1, cost: 10.00, selected: true),
       Spree::ShippingRate.new(shipping_method: shipping_method2, cost: 20.00)
-    ] }
+    ] end
 
     it 'returns shipping_method from selected shipping_rate' do
       shipment.shipping_rates.delete_all
@@ -336,11 +336,11 @@ describe Spree::Shipment, type: :model do
 
       context 'when using a custom shipment handler' do
         before do
-          Spree::ShipmentHandler::UPS = Class.new {
+          Spree::ShipmentHandler::UPS = Class.new do
             def initialize(shipment) true end
 
             def perform() true end
-          }
+          end
         end
 
         it "should call the custom handler's 'perform' method" do
@@ -435,9 +435,9 @@ describe Spree::Shipment, type: :model do
         expect(other_shipment.inventory_units.count).to eq 1
         expect(other_shipment.inventory_units.first).to be_backordered
 
-        expect {
+        expect do
           shipment.cancel!
-        }.not_to change { other_shipment.inventory_units.first.state }
+        end.not_to change { other_shipment.inventory_units.first.state }
       end
     end
   end

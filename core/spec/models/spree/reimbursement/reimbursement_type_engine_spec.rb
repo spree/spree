@@ -10,13 +10,13 @@ module Spree
       let(:override_reimbursement_type) { Spree::ReimbursementType::OriginalPayment.new }
       let(:preferred_reimbursement_type) { Spree::ReimbursementType::OriginalPayment.new }
       let(:calculated_reimbursement_types) { subject }
-      let(:all_reimbursement_types) {[
+      let(:all_reimbursement_types) do [
                                         reimbursement_type_engine.default_reimbursement_type,
                                         reimbursement_type_engine.exchange_reimbursement_type,
                                         expired_reimbursement_type,
                                         override_reimbursement_type,
                                         preferred_reimbursement_type
-                                    ]}
+                                    ] end
 
       subject { reimbursement_type_engine.calculate_reimbursement_types }
 

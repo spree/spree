@@ -281,9 +281,9 @@ describe Spree::Order, type: :model do
       context 'when order has default selected_shipping_rate_id' do
         let(:shipment) { create(:shipment, order: order) }
         let(:shipping_method) { create(:shipping_method) }
-        let(:shipping_rate) { [
+        let(:shipping_rate) do [
           Spree::ShippingRate.create!(shipping_method: shipping_method, cost: 10.00, shipment: shipment)
-        ] }
+        ] end
 
         before do
           order.state = 'address'
@@ -441,9 +441,9 @@ describe Spree::Order, type: :model do
           let(:payment_state) { 'failed' }
 
           it 'raises a StateMachine::InvalidTransition' do
-            expect {
+            expect do
               order.next!
-            }.to raise_error(StateMachines::InvalidTransition, /#{Spree.t(:no_payment_found)}/)
+            end.to raise_error(StateMachines::InvalidTransition, /#{Spree.t(:no_payment_found)}/)
 
             expect(order.errors[:base]).to include(Spree.t(:no_payment_found))
           end
@@ -696,9 +696,9 @@ describe Spree::Order, type: :model do
       end
 
       it 'sets existing card as source for new payment' do
-        expect {
+        expect do
           order.update_from_params(params, permitted_params)
-        }.to change { Spree::Payment.count }.by(1)
+        end.to change { Spree::Payment.count }.by(1)
 
         expect(Spree::Payment.last.source).to eq credit_card
       end
@@ -713,9 +713,9 @@ describe Spree::Order, type: :model do
       it 'dont let users mess with others users cards' do
         credit_card.update_column :user_id, 5
 
-        expect {
+        expect do
           order.update_from_params(params, permitted_params)
-        }.to raise_error(Spree.t(:invalid_credit_card))
+        end.to raise_error(Spree.t(:invalid_credit_card))
       end
     end
 
@@ -750,9 +750,9 @@ describe Spree::Order, type: :model do
         end
 
         it 'does not attempt to permit existing_card' do
-          expect {
+          expect do
             order.update_from_params(params, permitted_params)
-          }.not_to raise_error
+          end.not_to raise_error
         end
       end
 

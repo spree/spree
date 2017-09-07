@@ -14,9 +14,9 @@ describe Spree::Admin::ReturnItemsController, type: :controller do
     end
 
     it 'updates the return item' do
-      expect {
+      expect do
         subject
-      }.to change { return_item.reload.acceptance_status }.from(old_acceptance_status).to(new_acceptance_status)
+      end.to change { return_item.reload.acceptance_status }.from(old_acceptance_status).to(new_acceptance_status)
     end
 
     it 'redirects to the custome return' do

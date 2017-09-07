@@ -52,9 +52,9 @@ module Spree
         end
 
         it 'raises an UnableToCreateShipments error' do
-          expect {
+          expect do
             subject
-          }.to raise_error(Spree::Exchange::UnableToCreateShipments)
+          end.to raise_error(Spree::Exchange::UnableToCreateShipments)
         end
       end
     end

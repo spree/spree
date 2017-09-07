@@ -13,14 +13,14 @@ describe Spree::Refund, type: :model do
 
     let(:refund_reason) { create(:refund_reason) }
 
-    let(:gateway_response) {
+    let(:gateway_response) do
       ActiveMerchant::Billing::Response.new(
         gateway_response_success,
         gateway_response_message,
         gateway_response_params,
         gateway_response_options
       )
-    }
+    end
     let(:gateway_response_success) { true }
     let(:gateway_response_message) { '' }
     let(:gateway_response_params) { {} }

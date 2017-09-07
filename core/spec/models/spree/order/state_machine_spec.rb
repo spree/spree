@@ -93,8 +93,8 @@ describe Spree::Order, type: :model do
 
   context '#cancel' do
     let!(:variant) { stub_model(Spree::Variant) }
-    let!(:inventory_units) { [stub_model(Spree::InventoryUnit, variant: variant),
-                              stub_model(Spree::InventoryUnit, variant: variant)] }
+    let!(:inventory_units) do [stub_model(Spree::InventoryUnit, variant: variant),
+                              stub_model(Spree::InventoryUnit, variant: variant)] end
     let!(:shipment) do
       shipment = stub_model(Spree::Shipment)
       allow(shipment).to receive_messages inventory_units: inventory_units, order: order
