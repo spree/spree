@@ -205,7 +205,7 @@ describe Spree::Shipment, type: :model do
 
     context 'refresh_rates' do
       let(:mock_estimator) { double('estimator', shipping_rates: shipping_rates) }
-      before { allow(shipment).to receive(:can_get_rates?){ true } }
+      before { allow(shipment).to receive(:can_get_rates?) { true } }
 
       it 'should request new rates, and maintain shipping_method selection' do
         expect(Spree::Stock::Estimator).to receive(:new).with(shipment.order).and_return(mock_estimator)

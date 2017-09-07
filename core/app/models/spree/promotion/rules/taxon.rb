@@ -19,7 +19,7 @@ module Spree
             end
           else
             order_taxons = taxons_in_order_including_parents(order)
-            unless taxons.any?{ |taxon| order_taxons.include? taxon }
+            unless taxons.any? { |taxon| order_taxons.include? taxon }
               eligibility_errors.add(:base, eligibility_error_message(:no_matching_taxons))
             end
           end
@@ -49,7 +49,7 @@ module Spree
 
         # ids of taxons rules and taxons rules children
         def taxons_including_children_ids
-          taxons.inject([]){ |ids,taxon| ids += taxon.self_and_descendants.ids }
+          taxons.inject([]) { |ids,taxon| ids += taxon.self_and_descendants.ids }
         end
 
         # taxons order vs taxons rules and taxons rules children
@@ -58,7 +58,7 @@ module Spree
         end
 
         def taxons_in_order_including_parents(order)
-          order_taxons_in_taxons_and_children(order).inject([]){ |taxons, taxon| taxons << taxon.self_and_ancestors }.flatten.uniq
+          order_taxons_in_taxons_and_children(order).inject([]) { |taxons, taxon| taxons << taxon.self_and_ancestors }.flatten.uniq
         end
 
         def taxon_product_ids

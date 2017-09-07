@@ -302,7 +302,7 @@ describe Spree::Order, type: :model do
         end
 
         it 'should update shipment_total' do
-          expect { order.next! }.to change{ order.shipment_total }.by(10.00)
+          expect { order.next! }.to change { order.shipment_total }.by(10.00)
         end
       end
     end
@@ -606,7 +606,7 @@ describe Spree::Order, type: :model do
       end
 
       it 'goes through checkout without raising error' do
-        expect{ OrderWalkthrough.up_to(:complete) }.to_not raise_error
+        expect { OrderWalkthrough.up_to(:complete) }.to_not raise_error
       end
     end
 
@@ -623,7 +623,7 @@ describe Spree::Order, type: :model do
       end
 
       it 'goes through checkout without raising error' do
-        expect{ OrderWalkthrough.up_to(:complete) }.to_not raise_error
+        expect { OrderWalkthrough.up_to(:complete) }.to_not raise_error
       end
     end
   end

@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Spree::BaseHelper, type: :helper do
   include Spree::BaseHelper
 
-  let(:current_store){ create :store }
+  let(:current_store) { create :store }
 
   context 'available_countries' do
     let(:country) { create(:country) }

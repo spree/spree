@@ -821,7 +821,7 @@ describe Spree::Payment, type: :model do
 
   describe 'is_avs_risky?' do
     it 'returns false if avs_response included in NON_RISKY_AVS_CODES' do
-      ('A'..'Z').reject{ |x| subject.class::RISKY_AVS_CODES.include?(x) }.to_a.each do |char|
+      ('A'..'Z').reject { |x| subject.class::RISKY_AVS_CODES.include?(x) }.to_a.each do |char|
         payment.update_attribute(:avs_response, char)
         expect(payment.is_avs_risky?).to eq false
       end
@@ -836,7 +836,7 @@ describe Spree::Payment, type: :model do
 
     it 'returns true if avs_response in RISKY_AVS_CODES' do
       # should use avs_response_code helper
-      ('A'..'Z').reject{ |x| subject.class::NON_RISKY_AVS_CODES.include?(x) }.to_a.each do |char|
+      ('A'..'Z').reject { |x| subject.class::NON_RISKY_AVS_CODES.include?(x) }.to_a.each do |char|
         payment.update_attribute(:avs_response, char)
         expect(payment.is_avs_risky?).to eq true
       end

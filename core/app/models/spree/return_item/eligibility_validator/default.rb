@@ -24,7 +24,7 @@ module Spree
     private
 
     def validators
-      @validators ||= permitted_eligibility_validators.map{|v| v.new(@return_item) }
+      @validators ||= permitted_eligibility_validators.map {|v| v.new(@return_item) }
     end
   end
 end

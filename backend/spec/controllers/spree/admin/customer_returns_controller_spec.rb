@@ -144,7 +144,7 @@ module Spree
           end
 
           it 'creates a customer return' do
-            expect{ subject }.to change { Spree::CustomerReturn.count }.by(1)
+            expect { subject }.to change { Spree::CustomerReturn.count }.by(1)
           end
 
           it 'redirects to the index page' do
@@ -171,7 +171,7 @@ module Spree
           end
 
           it "doesn't create a customer return" do
-            expect{ subject }.to_not change { Spree::CustomerReturn.count }
+            expect { subject }.to_not change { Spree::CustomerReturn.count }
           end
 
           it 'renders the new page' do

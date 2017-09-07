@@ -167,7 +167,7 @@ describe Spree::Order, type: :model do
 
       context 'without shipped items' do
         it "should set payment state to 'void'" do
-          expect { order.cancel! }.to change{ order.reload.payment_state }.to('void')
+          expect { order.cancel! }.to change { order.reload.payment_state }.to('void')
         end
       end
 

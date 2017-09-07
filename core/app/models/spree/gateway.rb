@@ -23,7 +23,7 @@ module Spree
     end
 
     def options
-      preferences.inject({}){ |memo, (key, value)| memo[key.to_sym] = value; memo }
+      preferences.inject({}) { |memo, (key, value)| memo[key.to_sym] = value; memo }
     end
 
     def method_missing(method, *args)

@@ -4,7 +4,7 @@ class DummyShippingCalculator < Spree::ShippingCalculator
 end
 
 describe Spree::ShippingMethod, type: :model do
-  let(:shipping_method){ create(:shipping_method) }
+  let(:shipping_method) { create(:shipping_method) }
   let(:frontend_shipping_method) { create :shipping_method, display_on: 'front_end' }
   let(:backend_shipping_method) { create :shipping_method, display_on: 'back_end' }
   let(:front_and_back_end_shipping_method) { create :shipping_method, display_on: 'both' }

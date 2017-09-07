@@ -37,7 +37,7 @@ module Spree
           it 'creates a new stock item' do
             expect do
               subject.propagate_variant(variant)
-            end.to change{ StockItem.count }.by(1)
+            end.to change { StockItem.count }.by(1)
           end
 
           context 'passes backorderable default config' do

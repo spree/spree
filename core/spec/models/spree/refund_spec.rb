@@ -40,7 +40,7 @@ describe Spree::Refund, type: :model do
       subject { create(:refund, payment: payment, amount: amount, reason: refund_reason, transaction_id: transaction_id) }
 
       it 'creates a refund record' do
-        expect{ subject }.to change { Spree::Refund.count }.by(1)
+        expect { subject }.to change { Spree::Refund.count }.by(1)
       end
 
       it 'maintains the transaction id' do
@@ -65,7 +65,7 @@ describe Spree::Refund, type: :model do
       let(:gateway_response_options) { { authorization: authorization } }
 
       it 'should create a refund' do
-        expect{ subject }.to change{ Spree::Refund.count }.by(1)
+        expect { subject }.to change { Spree::Refund.count }.by(1)
       end
 
       it 'return the newly created refund' do
@@ -102,7 +102,7 @@ describe Spree::Refund, type: :model do
       it 'should raise error and not create a refund' do
         expect do
           expect { subject }.to raise_error(Spree::Core::GatewayError, gateway_response_message)
-        end.to_not change{ Spree::Refund.count }
+        end.to_not change { Spree::Refund.count }
       end
     end
 

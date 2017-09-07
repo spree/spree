@@ -28,18 +28,18 @@ describe Spree::Preferences::Store, type: :model do
 
   it 'should return and cache fallback value when supplied' do
     Rails.cache.clear
-    expect(@store.get(:test){ false }).to be false
+    expect(@store.get(:test) { false }).to be false
     expect(Rails.cache.read(:test)).to be false
   end
 
   it 'should return but not cache fallback value when persistence is disabled' do
     Rails.cache.clear
     allow(@store).to receive_messages(should_persist?: false)
-    expect(@store.get(:test){ true }).to be true
+    expect(@store.get(:test) { true }).to be true
     expect(Rails.cache.exist?(:test)).to be false
   end
 
   it "should return nil when key can't be found and fallback value is not supplied" do
-    expect(@store.get(:random_key){ nil }).to be_nil
+    expect(@store.get(:random_key) { nil }).to be_nil
   end
 end

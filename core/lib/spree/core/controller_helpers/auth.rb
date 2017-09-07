@@ -40,7 +40,7 @@ module Spree
             end
           end
 
-          disallowed_urls.map!{ |url| url[/\/\w+$/] }
+          disallowed_urls.map! { |url| url[/\/\w+$/] }
           unless disallowed_urls.include?(request.fullpath)
             session['spree_user_return_to'] = request.fullpath.gsub('//', '/')
           end

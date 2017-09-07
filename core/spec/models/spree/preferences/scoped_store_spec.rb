@@ -1,28 +1,28 @@
 require 'spec_helper'
 
 describe Spree::Preferences::ScopedStore, type: :model do
-  let(:scoped_store){ described_class.new(prefix, suffix) }
-  subject{ scoped_store }
-  let(:prefix){ nil }
-  let(:suffix){ nil }
+  let(:scoped_store) { described_class.new(prefix, suffix) }
+  subject { scoped_store }
+  let(:prefix) { nil }
+  let(:suffix) { nil }
 
   describe '#store' do
-    subject{ scoped_store.store }
-    it{ is_expected.to be Spree::Preferences::Store.instance }
+    subject { scoped_store.store }
+    it { is_expected.to be Spree::Preferences::Store.instance }
   end
 
   context 'stubbed store' do
-    let(:store){ double(:store) }
+    let(:store) { double(:store) }
     before do
       allow(scoped_store).to receive(:store).and_return(store)
     end
 
     context 'with a prefix' do
-      let(:prefix){ 'my_class' }
+      let(:prefix) { 'my_class' }
 
       it 'can fetch' do
         expect(store).to receive(:fetch).with('my_class/attr')
-        scoped_store.fetch('attr'){ 'default' }
+        scoped_store.fetch('attr') { 'default' }
       end
 
       it 'can assign' do
@@ -36,11 +36,11 @@ describe Spree::Preferences::ScopedStore, type: :model do
       end
 
       context 'and suffix' do
-        let(:suffix){ 123 }
+        let(:suffix) { 123 }
 
         it 'can fetch' do
           expect(store).to receive(:fetch).with('my_class/attr/123')
-          scoped_store.fetch('attr'){ 'default' }
+          scoped_store.fetch('attr') { 'default' }
         end
 
         it 'can assign' do

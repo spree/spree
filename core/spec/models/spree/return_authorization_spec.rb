@@ -42,7 +42,7 @@ describe Spree::ReturnAuthorization, type: :model do
         subject { create(:return_authorization, order: order) }
 
         it 'does not create a reimbursement' do
-          expect{subject.save}.to_not change { Spree::Reimbursement.count }
+          expect {subject.save}.to_not change { Spree::Reimbursement.count }
         end
       end
 
