@@ -247,8 +247,8 @@ module Spree
 
       # creates the store credit event
       source.update_attributes!(action: Spree::StoreCredit::ELIGIBLE_ACTION,
-        action_amount: amount,
-        action_authorization_code: response_code)
+                                action_amount: amount,
+                                action_authorization_code: response_code)
     end
 
     def invalidate_old_payments

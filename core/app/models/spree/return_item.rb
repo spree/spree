@@ -173,7 +173,7 @@ module Spree
       return unless customer_return
 
       Spree::StockItem.find_by(variant_id: inventory_unit.variant_id,
-        stock_location_id: customer_return.stock_location_id)
+                               stock_location_id: customer_return.stock_location_id)
     end
 
     def currency
@@ -236,11 +236,11 @@ module Spree
 
     def validate_no_other_completed_return_items
       other_return_item = Spree::ReturnItem.where(inventory_unit_id: inventory_unit_id,
-        reception_status: COMPLETED_RECEPTION_STATUSES).first
+                                                  reception_status: COMPLETED_RECEPTION_STATUSES).first
 
       if other_return_item
         errors.add(:inventory_unit, :other_completed_return_item_exists,           inventory_unit_id: inventory_unit_id,
-          return_item_id: other_return_item.id)
+                                                                                   return_item_id: other_return_item.id)
       end
     end
 

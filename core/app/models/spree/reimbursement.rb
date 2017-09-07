@@ -74,7 +74,7 @@ module Spree
       def build_from_customer_return(customer_return)
         order = customer_return.order
         order.reimbursements.build(customer_return: customer_return,
-          return_items: customer_return.return_items.accepted.not_reimbursed)
+                                   return_items: customer_return.return_items.accepted.not_reimbursed)
       end
     end
 

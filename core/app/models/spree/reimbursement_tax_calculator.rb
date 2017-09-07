@@ -30,7 +30,7 @@ module Spree
         included_tax_total   = percent_of_tax * return_item.inventory_unit.included_tax_total
 
         return_item.update_attributes!(additional_tax_total: additional_tax_total,
-          included_tax_total:   included_tax_total)
+                                       included_tax_total:   included_tax_total)
       end
     end
   end

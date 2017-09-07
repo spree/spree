@@ -28,8 +28,8 @@ describe Spree::Payment, type: :model do
 
   let!(:success_response) do
     ActiveMerchant::Billing::Response.new(true, '', {},       authorization: '123',
-      cvv_result: cvv_code,
-      avs_result: { code: avs_code })
+                                                              cvv_result: cvv_code,
+                                                              avs_result: { code: avs_code })
   end
 
   let(:failed_response) do

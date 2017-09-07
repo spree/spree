@@ -543,7 +543,7 @@ describe Spree::ReturnItem, type: :model do
 
     subject do
       build(:return_item,         return_authorization: old_return_item.return_authorization,
-        inventory_unit: old_return_item.inventory_unit)
+                                  inventory_unit: old_return_item.inventory_unit)
     end
 
     context 'with other awaiting return items exist for the same inventory unit' do

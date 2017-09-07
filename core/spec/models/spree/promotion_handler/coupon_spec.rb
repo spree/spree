@@ -167,8 +167,8 @@ module Spree
             before do
               allow(order).to receive_messages(coupon_code: '10off',
                 # These need to be here so that promotion adjustment "wins"
-                item_total: 50,
-                ship_total: 10)
+                                               item_total: 50,
+                                               ship_total: 10)
             end
 
             it 'successfully activates promo' do

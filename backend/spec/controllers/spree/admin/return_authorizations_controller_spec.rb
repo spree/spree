@@ -75,7 +75,7 @@ describe Spree::Admin::ReturnAuthorizationsController, type: :controller do
     context '#edit' do
       subject do
         spree_get :edit,           id: return_authorization.to_param,
-          order_id: order.to_param
+                                   order_id: order.to_param
       end
 
       let(:return_authorization) { create(:return_authorization, order: order) }
@@ -87,7 +87,7 @@ describe Spree::Admin::ReturnAuthorizationsController, type: :controller do
     context '#create failed' do
       subject do
         spree_post :create,           return_authorization: { return_authorization_reason_id: -1 }, # invalid reason_id
-          order_id: order.to_param
+                                      order_id: order.to_param
       end
 
       include_context 'without existing return items'
@@ -96,8 +96,8 @@ describe Spree::Admin::ReturnAuthorizationsController, type: :controller do
     context '#update failed' do
       subject do
         spree_put :update,           return_authorization: { return_authorization_reason_id: -1 }, # invalid reason_id
-          id: return_authorization.to_param,
-          order_id: order.to_param
+                                     id: return_authorization.to_param,
+                                     order_id: order.to_param
       end
 
       let(:return_authorization) { create(:return_authorization, order: order) }
@@ -185,8 +185,8 @@ describe Spree::Admin::ReturnAuthorizationsController, type: :controller do
       context 'with existing completed items' do
         let!(:completed_return_item) do
           create(:return_item,             return_authorization: return_authorization,
-            inventory_unit: inventory_unit_1,
-            reception_status: 'received')
+                                           inventory_unit: inventory_unit_1,
+                                           reception_status: 'received')
         end
 
         it 'does not create new items' do

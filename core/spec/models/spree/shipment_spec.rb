@@ -3,12 +3,12 @@ require 'benchmark'
 
 describe Spree::Shipment, type: :model do
   let(:order) do mock_model Spree::Order, backordered?: false,
-                                         canceled?: false,
-                                         can_ship?: true,
-                                         currency: 'USD',
-                                         number: 'S12345',
-                                         paid?: false,
-                                         touch_later: false end
+                                          canceled?: false,
+                                          can_ship?: true,
+                                          currency: 'USD',
+                                          number: 'S12345',
+                                          paid?: false,
+                                          touch_later: false end
   let(:shipping_method) { create(:shipping_method, name: 'UPS') }
   let(:shipment) do
     shipment = Spree::Shipment.new(cost: 1, state: 'pending', stock_location: create(:stock_location))

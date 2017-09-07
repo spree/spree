@@ -107,7 +107,7 @@ describe Spree::Preferences::Preferable, type: :model do
 
     it 'builds a hash of preference defaults' do
       expect(@b.default_preferences).to eq(flavor: nil,
-        color: 'green')
+                                           color: 'green')
     end
 
     context 'converts integer preferences to integer values' do
