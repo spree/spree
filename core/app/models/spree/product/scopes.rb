@@ -77,8 +77,8 @@ module Spree
     #   SELECT COUNT(*) ...
     add_search_scope :in_taxon do |taxon|
       includes(:classifications).
-      where('spree_products_taxons.taxon_id' => taxon.self_and_descendants.pluck(:id)).
-      order('spree_products_taxons.position ASC')
+        where('spree_products_taxons.taxon_id' => taxon.self_and_descendants.pluck(:id)).
+        order('spree_products_taxons.position ASC')
     end
 
     # This scope selects products in all taxons AND all its descendants
@@ -131,8 +131,8 @@ module Spree
     # 2) have a product property with a value matching the one given
     add_search_scope :with do |value|
       includes(variants_including_master: :option_values).
-      includes(:product_properties).
-      where("#{OptionValue.table_name}.name = ? OR #{ProductProperty.table_name}.value = ?", value, value)
+        includes(:product_properties).
+        where("#{OptionValue.table_name}.name = ? OR #{ProductProperty.table_name}.value = ?", value, value)
     end
 
     # Finds all products that have a name containing the given words.
@@ -166,7 +166,7 @@ module Spree
     # order: 'COALESCE(cnt, 0) DESC'
     add_search_scope :descend_by_popularity do
       joins(:master).
-      order(%Q{
+        order(%Q{
            COALESCE((
              SELECT
                COUNT(#{LineItem.quoted_table_name}.id)

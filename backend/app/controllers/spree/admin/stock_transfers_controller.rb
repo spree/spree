@@ -7,9 +7,9 @@ module Spree
         @q = StockTransfer.ransack(params[:q])
 
         @stock_transfers = @q.result.
-                             includes(stock_movements: { stock_item: :stock_location }).
-                             order(created_at: :desc).
-                             page(params[:page])
+                           includes(stock_movements: { stock_item: :stock_location }).
+                           order(created_at: :desc).
+                           page(params[:page])
       end
 
       def show

@@ -601,8 +601,8 @@ describe 'Order Details', type: :feature, js: true do
 
     before do
       allow(Spree.user_class).to receive(:find_by).
-                                   with(hash_including(:spree_api_key)).
-                                   and_return(Spree.user_class.new)
+        with(hash_including(:spree_api_key)).
+        and_return(Spree.user_class.new)
     end
 
     it 'should not display order tabs or edit buttons without ability', js: false do

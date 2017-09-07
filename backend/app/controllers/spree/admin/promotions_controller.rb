@@ -23,9 +23,9 @@ module Spree
         @collection = super
         @search = @collection.ransack(params[:q])
         @collection = @search.result(distinct: true).
-          includes(promotion_includes).
-          page(params[:page]).
-          per(params[:per_page] || Spree::Config[:admin_promotions_per_page])
+                      includes(promotion_includes).
+                      page(params[:page]).
+                      per(params[:per_page] || Spree::Config[:admin_promotions_per_page])
       end
 
       def promotion_includes

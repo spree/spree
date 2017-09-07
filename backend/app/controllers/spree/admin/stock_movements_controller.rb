@@ -6,8 +6,8 @@ module Spree
 
       def index
         @stock_movements = stock_location.stock_movements.recent.
-          includes(stock_item: { variant: :product }).
-          page(params[:page])
+                           includes(stock_item: { variant: :product }).
+                           page(params[:page])
       end
 
       def new

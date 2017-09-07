@@ -17,9 +17,9 @@ module Spree
 
     def show
       @variants = @product.variants_including_master.
-                           spree_base_scopes.
-                           active(current_currency).
-                           includes([:option_values, :images])
+                  spree_base_scopes.
+                  active(current_currency).
+                  includes([:option_values, :images])
       @product_properties = @product.product_properties.includes(:property)
       @taxon = params[:taxon_id].present? ? Spree::Taxon.find(params[:taxon_id]) : @product.taxons.first
       redirect_if_legacy_path
@@ -43,7 +43,7 @@ module Spree
       end
 
       @product = @products.includes(:variants_including_master, variant_images: :viewable).
-                           friendly.distinct(false).find(params[:id])
+                 friendly.distinct(false).find(params[:id])
     end
 
     def load_taxon
