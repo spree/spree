@@ -7,4 +7,3 @@ namespace :extension do
     Rake::Task['common:test_app'].invoke
   end
 end
-

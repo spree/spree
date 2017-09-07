@@ -5,4 +5,3 @@ describe Spree::PromotionAction, type: :model do
     expect { MyAction.new.perform }.to raise_error(NameError)
   end
 end
-

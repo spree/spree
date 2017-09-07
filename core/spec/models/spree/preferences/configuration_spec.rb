@@ -23,6 +23,3 @@ describe Spree::Preferences::Configuration, type: :model do
     expect(@config.get(:color)).to eq 'green'
   end
 end
-
-
-
