@@ -48,7 +48,7 @@ module Spree
 
     def available_to_display?(display_filter)
       (frontend? && display_filter == DISPLAY_ON_FRONT_END) ||
-      (backend? && display_filter == DISPLAY_ON_BACK_END)
+        (backend? && display_filter == DISPLAY_ON_BACK_END)
     end
 
     private

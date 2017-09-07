@@ -96,7 +96,7 @@ module Spree
       # the variant_id changes from nil when a new stock location is added
       stock_changed = (saved_change_to_count_on_hand? &&
                         saved_change_to_count_on_hand.any?(&:zero?)) ||
-                      saved_change_to_variant_id?
+        saved_change_to_variant_id?
 
       variant.touch if !Spree::Config.binary_inventory_cache || stock_changed
     end

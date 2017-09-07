@@ -98,10 +98,10 @@ module Spree::Preferences::Preferable
       value.to_i
     when :boolean
       if value.is_a?(FalseClass) ||
-         value.nil? ||
-         value == 0 ||
-         value =~ /^(f|false|0)$/i ||
-         (value.respond_to?(:empty?) && value.empty?)
+          value.nil? ||
+          value == 0 ||
+          value =~ /^(f|false|0)$/i ||
+          (value.respond_to?(:empty?) && value.empty?)
         false
       else
         true

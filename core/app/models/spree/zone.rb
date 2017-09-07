@@ -52,13 +52,13 @@ module Spree
     # Returns nil in the case of no matches.
     def self.match(address)
       return unless address &&
-                    matches = includes(:zone_members).
-                    order('spree_zones.zone_members_count', 'spree_zones.created_at').
-                    where("(spree_zone_members.zoneable_type = 'Spree::Country' AND " \
-                                      'spree_zone_members.zoneable_id = ?) OR ' \
-                                      "(spree_zone_members.zoneable_type = 'Spree::State' AND " \
-                                      'spree_zone_members.zoneable_id = ?)', address.country_id, address.state_id).
-                    references(:zones)
+          matches = includes(:zone_members).
+          order('spree_zones.zone_members_count', 'spree_zones.created_at').
+          where("(spree_zone_members.zoneable_type = 'Spree::Country' AND " \
+                            'spree_zone_members.zoneable_id = ?) OR ' \
+                            "(spree_zone_members.zoneable_type = 'Spree::State' AND " \
+                            'spree_zone_members.zoneable_id = ?)', address.country_id, address.state_id).
+          references(:zones)
 
       %w[state country].each do |zone_kind|
         if match = matches.detect { |zone| zone_kind == zone.kind }

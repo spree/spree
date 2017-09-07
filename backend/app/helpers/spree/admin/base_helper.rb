@@ -51,7 +51,7 @@ module Spree
           text_field_tag(name, value, preference_field_options(options))
         when :boolean
           hidden_field_tag(name, 0, id: "#{name}_hidden") +
-          check_box_tag(name, 1, value, preference_field_options(options))
+            check_box_tag(name, 1, value, preference_field_options(options))
         when :string
           text_field_tag(name, value, preference_field_options(options))
         when :password
