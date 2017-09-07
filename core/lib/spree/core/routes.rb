@@ -14,17 +14,13 @@ module Spree
         # This is mainly why this whole file exists in the first place.
         #
         # Thus we need to make sure that the routes aren't drawn twice.
-        unless @spree_routes.include?(block)
-          @spree_routes << block
-        end
+        @spree_routes << block unless @spree_routes.include?(block)
       end
 
       def self.append_routes(&block)
         @append_routes ||= []
         # See comment in add_routes.
-        unless @append_routes.include?(block)
-          @append_routes << block
-        end
+        @append_routes << block unless @append_routes.include?(block)
       end
 
       def self.draw_routes(&block)

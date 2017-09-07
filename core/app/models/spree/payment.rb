@@ -226,9 +226,7 @@ module Spree
     end
 
     def update_order
-      if completed? || void?
-        order.updater.update_payment_total
-      end
+      order.updater.update_payment_total if completed? || void?
 
       if order.completed?
         order.updater.update_payment_state
@@ -236,9 +234,7 @@ module Spree
         order.updater.update_shipment_state
       end
 
-      if completed? || order.completed?
-        order.persist_totals
-      end
+      order.persist_totals if completed? || order.completed?
     end
 
     def create_eligible_credit_event

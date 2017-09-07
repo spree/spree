@@ -51,9 +51,7 @@ module Spree
         end
 
         def ship
-          unless @shipment.shipped?
-            @shipment.ship!
-          end
+          @shipment.ship! unless @shipment.shipped?
           respond_with(@shipment, default_template: :show)
         end
 

@@ -12,9 +12,7 @@ module Spree
           end
 
           state = @states.last
-          if stale?(state)
-            respond_with(@states)
-          end
+          respond_with(@states) if stale?(state)
         end
 
         def show

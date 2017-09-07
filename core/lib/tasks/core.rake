@@ -78,9 +78,7 @@ use rake db:load_file[/absolute/path/to/sample/filename.rb]}
     unless load_defaults # ask if there are already Countries => default data hass been loaded
       load_defaults = agree('Countries present, load sample data anyways? [y/n]: ')
     end
-    if load_defaults
-      Rake::Task['db:seed'].invoke
-    end
+    Rake::Task['db:seed'].invoke if load_defaults
 
     if Rails.env.production? and Spree::Product.count > 0
       load_sample = agree('WARNING: In Production and products exist in database, load sample data anyways? [y/n]:' )
@@ -130,9 +128,7 @@ use rake db:load_file[/absolute/path/to/sample/filename.rb]}
 
       Spree::Variant.deleted.each do |variant|
         # check if this variant has any line items at all
-        if !variant.line_items.any?
-          next
-        end
+        next if !variant.line_items.any?
 
         variants_to_fix << variant
         dup_variant = Spree::Variant.find_by(sku: variant.sku)

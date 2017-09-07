@@ -330,9 +330,7 @@ module Spree
     end
 
     def transfer_to_location(variant, quantity, stock_location)
-      if quantity <= 0
-        raise ArgumentError
-      end
+      raise ArgumentError if quantity <= 0
 
       transaction do
         new_shipment = order.shipments.create!(stock_location: stock_location)
@@ -352,9 +350,7 @@ module Spree
       end.try(:quantity) || 0
       final_quantity = quantity + quantity_already_shipment_to_transfer_to
 
-      if quantity <= 0 || self == shipment_to_transfer_to
-        raise ArgumentError
-      end
+      raise ArgumentError if quantity <= 0 || self == shipment_to_transfer_to
 
       transaction do
         order.contents.remove(variant, quantity, shipment: self)
@@ -400,9 +396,7 @@ module Spree
     end
 
     def update_adjustments
-      if saved_change_to_cost? && state != 'shipped'
-        recalculate_adjustments
-      end
+      recalculate_adjustments if saved_change_to_cost? && state != 'shipped'
     end
   end
 end

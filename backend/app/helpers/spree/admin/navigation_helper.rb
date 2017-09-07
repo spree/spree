@@ -21,9 +21,7 @@ module Spree
         # Return if resource is found and user is not allowed to :admin
         return '' if klass = klass_for(options[:label]) and cannot?(:admin, klass)
 
-        if args.last.is_a?(Hash)
-          options = options.merge(args.pop)
-        end
+        options = options.merge(args.pop) if args.last.is_a?(Hash)
         options[:route] ||= "admin_#{args.first}"
 
         destination_url = options[:url] || spree.send("#{options[:route]}_path")
@@ -46,9 +44,7 @@ module Spree
         end
         css_classes << 'selected' if selected
 
-        if options[:css_class]
-          css_classes << options[:css_class]
-        end
+        css_classes << options[:css_class] if options[:css_class]
         content_tag('li', link, class: css_classes.join(' '))
       end
 

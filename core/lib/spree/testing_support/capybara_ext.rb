@@ -90,9 +90,7 @@ module CapybaraExt
       label = find_label(text)
     end
 
-    if label.nil?
-      raise "Could not find label by text #{text}"
-    end
+    raise "Could not find label by text #{text}" if label.nil?
 
     label
   end

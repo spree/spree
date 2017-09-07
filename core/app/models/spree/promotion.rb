@@ -224,9 +224,7 @@ module Spree
     end
 
     def expires_at_must_be_later_than_starts_at
-      if expires_at < starts_at
-        errors.add(:expires_at, :invalid_date_range)
-      end
+      errors.add(:expires_at, :invalid_date_range) if expires_at < starts_at
     end
   end
 end

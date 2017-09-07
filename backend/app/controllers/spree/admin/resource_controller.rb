@@ -11,18 +11,14 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
     invoke_callbacks(:new_action, :before)
     respond_with(@object) do |format|
       format.html { render layout: !request.xhr? }
-      if request.xhr?
-        format.js   { render layout: false }
-      end
+      format.js   { render layout: false } if request.xhr?
     end
   end
 
   def edit
     respond_with(@object) do |format|
       format.html { render layout: !request.xhr? }
-      if request.xhr?
-        format.js   { render layout: false }
-      end
+      format.js   { render layout: false } if request.xhr?
     end
   end
 
@@ -117,9 +113,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
 
   def resource
     return @resource if @resource
-    if parent_data
-      parent_model_name = parent_data[:model_name]
-    end
+    parent_model_name = parent_data[:model_name] if parent_data
     @resource = Spree::Admin::Resource.new controller_path, controller_name, parent_model_name, object_name
   end
 

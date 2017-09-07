@@ -83,15 +83,11 @@ module Spree
 
       def set_position
         new_position = params[:taxon][:position]
-        if new_position
-          @taxon.child_index = new_position.to_i
-        end
+        @taxon.child_index = new_position.to_i if new_position
       end
 
       def set_parent(parent_id)
-        if parent_id
-          @taxon.parent = Taxon.find(parent_id.to_i)
-        end
+        @taxon.parent = Taxon.find(parent_id.to_i) if parent_id
       end
 
       def set_permalink_params

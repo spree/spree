@@ -573,9 +573,7 @@ module Spree
     end
 
     def consider_risk
-      if is_risky? && !approved?
-        considered_risky!
-      end
+      considered_risky! if is_risky? && !approved?
     end
 
     def considered_risky!

@@ -9,9 +9,7 @@ module Spree
                        order('name ASC').
                        page(params[:page]).per(params[:per_page])
           country = Country.order('updated_at ASC').last
-          if stale?(country)
-            respond_with(@countries)
-          end
+          respond_with(@countries) if stale?(country)
         end
 
         def show

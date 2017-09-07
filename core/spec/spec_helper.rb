@@ -28,9 +28,7 @@ require 'ffaker'
 
 Dir['./spec/support/**/*.rb'].sort.each { |f| require f }
 
-if ENV['CHECK_TRANSLATIONS']
-  require 'spree/testing_support/i18n'
-end
+require 'spree/testing_support/i18n' if ENV['CHECK_TRANSLATIONS']
 
 require 'spree/testing_support/factories'
 require 'spree/testing_support/preferences'

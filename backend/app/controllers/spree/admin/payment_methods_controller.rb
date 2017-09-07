@@ -34,9 +34,7 @@ module Spree
 
         attributes = payment_method_params.merge(preferences_params)
         attributes.each do |k,v|
-          if k.include?('password') && attributes[k].blank?
-            attributes.delete(k)
-          end
+          attributes.delete(k) if k.include?('password') && attributes[k].blank?
         end
 
         if @payment_method.update_attributes(attributes)

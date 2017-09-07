@@ -22,9 +22,7 @@ module Spree
         packages.each do |package|
           package.contents.each do |item|
             adjuster = find_adjuster(item)
-            if adjuster.nil?
-              adjuster = build_adjuster(item, package)
-            end
+            adjuster = build_adjuster(item, package) if adjuster.nil?
             adjuster.adjust(package, item)
           end
         end

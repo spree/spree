@@ -31,9 +31,7 @@ Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
 
 require 'database_cleaner'
 
-if ENV['CHECK_TRANSLATIONS']
-  require 'spree/testing_support/i18n'
-end
+require 'spree/testing_support/i18n' if ENV['CHECK_TRANSLATIONS']
 
 require 'spree/testing_support/authorization_helpers'
 require 'spree/testing_support/capybara_ext'

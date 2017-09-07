@@ -35,9 +35,7 @@ module Spree
           authentication_routes = [:spree_signup_path, :spree_login_path, :spree_logout_path]
           disallowed_urls = []
           authentication_routes.each do |route|
-            if respond_to?(route)
-              disallowed_urls << send(route)
-            end
+            disallowed_urls << send(route) if respond_to?(route)
           end
 
           disallowed_urls.map! { |url| url[/\/\w+$/] }

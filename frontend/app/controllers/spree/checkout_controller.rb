@@ -109,9 +109,7 @@ module Spree
     end
 
     def ensure_checkout_allowed
-      unless @order.checkout_allowed?
-        redirect_to spree.cart_path
-      end
+      redirect_to spree.cart_path unless @order.checkout_allowed?
     end
 
     def ensure_order_not_completed

@@ -28,9 +28,7 @@ module Spree
       if context
         path = context.instance_variable_get('@virtual_path')
 
-        if path
-          path.gsub(/spree/, '')
-        end
+        path.gsub(/spree/, '') if path
       end
     end
   end

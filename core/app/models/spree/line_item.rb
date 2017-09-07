@@ -54,9 +54,7 @@ module Spree
     end
 
     def copy_tax_category
-      if variant
-        self.tax_category = variant.tax_category
-      end
+      self.tax_category = variant.tax_category if variant
     end
 
     extend DisplayMoney

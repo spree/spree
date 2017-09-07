@@ -87,9 +87,7 @@ module Spree
                   end
 
           # Find any incomplete orders for the current user
-          if order.nil? && try_spree_current_user
-            order = last_incomplete_order
-          end
+          order = last_incomplete_order if order.nil? && try_spree_current_user
 
           order
         end
