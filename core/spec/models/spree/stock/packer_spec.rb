@@ -45,7 +45,7 @@ module Spree
           let(:inventory_units) { [InventoryUnit.new(variant: create(:variant))] }
           let(:packer) { Packer.new(stock_location, inventory_units) }
 
-          it "builds an empty package" do
+          it 'builds an empty package' do
             expect(packer.default_package.contents).to be_empty
           end
         end
@@ -60,7 +60,7 @@ module Spree
             subject.default_package
           end
 
-          it "still creates package with proper quantity" do
+          it 'still creates package with proper quantity' do
             expect(subject.default_package.quantity).to eql 2
           end
         end

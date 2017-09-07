@@ -13,7 +13,7 @@ describe Spree::Promotion::Actions::CreateLineItems, type: :model do
     variant.stock_items.each(&:reduce_count_on_hand_to_zero)
   end
 
-  context "#perform" do
+  context '#perform' do
     before do
       allow(action).to receive_messages promotion: promotion
       action.promotion_action_line_items.create!(
@@ -26,12 +26,12 @@ describe Spree::Promotion::Actions::CreateLineItems, type: :model do
       )
     end
 
-    context "order is eligible" do
+    context 'order is eligible' do
       before do
         allow(promotion).to receive_messages eligible: true
       end
 
-      it "adds line items to order with correct variant and quantity" do
+      it 'adds line items to order with correct variant and quantity' do
         action.perform(payload)
         expect(order.line_items.count).to eq(2)
         line_item = order.line_items.find_by(variant_id: mug.id)
@@ -39,7 +39,7 @@ describe Spree::Promotion::Actions::CreateLineItems, type: :model do
         expect(line_item.quantity).to eq(1)
       end
 
-      it "only adds the delta of quantity to an order" do
+      it 'only adds the delta of quantity to an order' do
         order.contents.add(shirt, 1)
         action.perform(payload)
         line_item = order.line_items.find_by(variant_id: shirt.id)
@@ -65,7 +65,7 @@ describe Spree::Promotion::Actions::CreateLineItems, type: :model do
     end
   end
 
-  describe "#item_available?" do
+  describe '#item_available?' do
     let(:item_out_of_stock) do
       action.promotion_action_line_items.create!(variant: mug, quantity: 1)
     end
@@ -74,12 +74,12 @@ describe Spree::Promotion::Actions::CreateLineItems, type: :model do
       action.promotion_action_line_items.create!(variant: shirt, quantity: 1)
     end
 
-    it "returns false if the item is out of stock" do
+    it 'returns false if the item is out of stock' do
       empty_stock(mug)
       expect(action.item_available? item_out_of_stock).to be false
     end
 
-    it "returns true if the item is in stock" do
+    it 'returns true if the item is in stock' do
       expect(action.item_available? item_in_stock).to be true
     end
   end

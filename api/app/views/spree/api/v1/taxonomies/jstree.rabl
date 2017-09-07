@@ -5,4 +5,4 @@ node(:attr) do
     name: @taxonomy.root.name
   }
 end
-node(:state) { "closed" }
+node(:state) { 'closed' }

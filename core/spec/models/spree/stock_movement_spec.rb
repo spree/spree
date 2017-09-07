@@ -79,13 +79,13 @@ describe Spree::StockMovement, type: :model do
         end
       end
 
-      context "when quantity is positive" do
+      context 'when quantity is positive' do
         before do
           stock_movement.quantity = 1
           stock_movement.save
           stock_item.reload
         end
-        it "should increment the stock item count on hand" do
+        it 'should increment the stock item count on hand' do
           expect(stock_item.count_on_hand).to eq(11)
         end
       end

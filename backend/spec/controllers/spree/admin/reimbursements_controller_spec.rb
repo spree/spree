@@ -28,7 +28,7 @@ describe Spree::Admin::ReimbursementsController, type: :controller do
     end
   end
 
-  describe "#perform" do
+  describe '#perform' do
     let(:reimbursement) { create(:reimbursement) }
     let(:customer_return) { reimbursement.customer_return }
     let(:order) { reimbursement.order }
@@ -52,14 +52,14 @@ describe Spree::Admin::ReimbursementsController, type: :controller do
       expect(payment.refunds.last.amount).to eq return_items.to_a.sum(&:total)
     end
 
-    context "a Spree::Core::GatewayError is raised" do
+    context 'a Spree::Core::GatewayError is raised' do
       before(:each) do
         def controller.perform
           raise Spree::Core::GatewayError.new('An error has occurred')
         end
       end
 
-      it "sets an error message with the correct text" do
+      it 'sets an error message with the correct text' do
         subject
         expect(flash[:error]).to eq 'An error has occurred'
       end

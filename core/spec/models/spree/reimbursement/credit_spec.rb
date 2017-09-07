@@ -29,7 +29,7 @@ module Spree
       let(:credit) { Spree::Reimbursement::Credit.new(amount: 100) }
 
       it 'should be a money object' do
-        expect(credit.display_amount).to eq Spree::Money.new(100, currency: "USD")
+        expect(credit.display_amount).to eq Spree::Money.new(100, currency: 'USD')
       end
     end
   end

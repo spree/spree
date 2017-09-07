@@ -38,7 +38,7 @@ module Spree
       end
 
       def collection
-        @deleted = (params.key?(:deleted) && params[:deleted] == "on") ? "checked" : ""
+        @deleted = (params.key?(:deleted) && params[:deleted] == 'on') ? 'checked' : ''
 
         @collection ||=
           if @deleted.blank?

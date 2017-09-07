@@ -54,10 +54,10 @@ module Spree
 
       # Single main menu item
       def main_menu_item text, url: nil, icon: nil
-        link_to url, :'data-toggle' => "collapse", :'data-parent' => '#sidebar' do
+        link_to url, :'data-toggle' => 'collapse', :'data-parent' => '#sidebar' do
           content_tag(:span, nil, class: "icon icon-#{icon}") +
           content_tag(:span, " #{text}", class: 'text') +
-          content_tag(:span, nil, class: "icon icon-chevron-left pull-right")
+          content_tag(:span, nil, class: 'icon icon-chevron-left pull-right')
         end
       end
 
@@ -117,7 +117,7 @@ module Spree
 
       def link_to_clone(resource, options={})
         options[:data] = { action: 'clone', :'original-title' => Spree.t(:clone) }
-        options[:class] = "btn btn-primary btn-sm with-tip"
+        options[:class] = 'btn btn-primary btn-sm with-tip'
         options[:method] = :post
         options[:icon] = :clone
         button_link_to '', clone_object_url(resource), options
@@ -126,20 +126,20 @@ module Spree
       def link_to_edit(resource, options={})
         url = options[:url] || edit_object_url(resource)
         options[:data] = { action: 'edit' }
-        options[:class] = "btn btn-primary btn-sm"
+        options[:class] = 'btn btn-primary btn-sm'
         link_to_with_icon('edit', Spree.t(:edit), url, options)
       end
 
       def link_to_edit_url(url, options={})
         options[:data] = { action: 'edit' }
-        options[:class] = "btn btn-primary btn-sm"
+        options[:class] = 'btn btn-primary btn-sm'
         link_to_with_icon('edit', Spree.t(:edit), url, options)
       end
 
       def link_to_delete(resource, options={})
         url = options[:url] || object_url(resource)
         name = options[:name] || Spree.t(:delete)
-        options[:class] = "btn btn-danger btn-sm delete-resource"
+        options[:class] = 'btn btn-danger btn-sm delete-resource'
         options[:data] = { confirm: Spree.t(:are_you_sure), action: 'remove' }
         link_to_with_icon 'delete', name, url, options
       end
@@ -185,7 +185,7 @@ module Spree
 
           html_options.delete('data-update') unless html_options['data-update']
 
-          html_options[:class] = html_options[:class] ? "btn #{html_options[:class]}" : "btn btn-default"
+          html_options[:class] = html_options[:class] ? "btn #{html_options[:class]}" : 'btn btn-default'
 
           if html_options[:icon]
             icon = content_tag(:span, '', class: "icon icon-#{html_options[:icon]}")

@@ -26,7 +26,7 @@ describe Spree::Core::ControllerHelpers::Auth, type: :controller do
       expect(response).to redirect_to('/redirect')
     end
     it 'redirects to HTTP_REFERER' do
-      request.env["HTTP_REFERER"] = '/dummy_redirect'
+      request.env['HTTP_REFERER'] = '/dummy_redirect'
       get :index
       expect(response).to redirect_to('/dummy_redirect')
     end

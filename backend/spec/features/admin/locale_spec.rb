@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "setting locale", type: :feature do
+describe 'setting locale', type: :feature do
   stub_authorization!
 
   before do
@@ -11,21 +11,21 @@ describe "setting locale", type: :feature do
                                     },
                                     spree: {
                                       admin: {
-                                        tab: { orders: "Ordres" }
+                                        tab: { orders: 'Ordres' }
                                       },
-                                      listing_orders: "Ordres",
+                                      listing_orders: 'Ordres',
                                     })
-    Spree::Backend::Config[:locale] = "fr"
+    Spree::Backend::Config[:locale] = 'fr'
   end
 
   after do
     I18n.locale = I18n.default_locale
-    Spree::Backend::Config[:locale] = "en"
+    Spree::Backend::Config[:locale] = 'en'
   end
 
-  it "should be in french" do
+  it 'should be in french' do
     visit spree.admin_path
-    click_link "Ordres"
-    expect(page).to have_content("Ordres")
+    click_link 'Ordres'
+    expect(page).to have_content('Ordres')
   end
 end

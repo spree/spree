@@ -5,7 +5,7 @@ module Spree
     validates :name, presence: true, uniqueness: { case_sensitive: false, allow_blank: true }
 
     has_many :taxons, inverse_of: :taxonomy
-    has_one :root, -> { where parent_id: nil }, class_name: "Spree::Taxon", dependent: :destroy
+    has_one :root, -> { where parent_id: nil }, class_name: 'Spree::Taxon', dependent: :destroy
 
     after_create :set_root
     after_save :set_root_taxon_name

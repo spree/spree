@@ -1,9 +1,9 @@
-require "spec_helper"
-require "cancan"
-require "spree/testing_support/bar_ability"
+require 'spec_helper'
+require 'cancan'
+require 'spree/testing_support/bar_ability'
 
 describe Spree::Admin::Orders::CustomerDetailsController, type: :controller do
-  context "with authorization" do
+  context 'with authorization' do
     stub_authorization!
 
     let(:user) { mock_model(Spree.user_class) }
@@ -12,7 +12,7 @@ describe Spree::Admin::Orders::CustomerDetailsController, type: :controller do
       mock_model(
         Spree::Order,
         total:           100,
-        number:          "R123456789",
+        number:          'R123456789',
         billing_address: mock_model(Spree::Address)
       )
     end
@@ -26,8 +26,8 @@ describe Spree::Admin::Orders::CustomerDetailsController, type: :controller do
         {
           order_id: order.number,
           order: {
-            email: "",
-            use_billing: "",
+            email: '',
+            use_billing: '',
             bill_address_attributes: { firstname: 'john' },
             ship_address_attributes: { firstname: 'john' },
             user_id: user.id.to_s
@@ -160,7 +160,7 @@ describe Spree::Admin::Orders::CustomerDetailsController, type: :controller do
               allow(order).to receive(:associate_user!)
             end
 
-            it "expects to assign user" do
+            it 'expects to assign user' do
               send_request(changed_attributes)
               expect(assigns[:user]).to eq(user)
             end
@@ -177,14 +177,14 @@ describe Spree::Admin::Orders::CustomerDetailsController, type: :controller do
               allow(controller).to receive(:guest_checkout?).and_return(false)
             end
 
-            it "expects to not assign user" do
+            it 'expects to not assign user' do
               send_request(changed_attributes)
               expect(assigns[:user]).to_not eq(user)
             end
 
             context 'with correct method flow' do
               it { expect(Spree.user_class).to receive(:find_by).with(id: user.id.to_s).and_return(nil) }
-              it "expects user class to receive find_by with email" do
+              it 'expects user class to receive find_by with email' do
                 expect(Spree.user_class).to receive(:find_by).
                   with(email: changed_attributes[:order][:email]).and_return(nil)
               end

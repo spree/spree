@@ -3,7 +3,7 @@ require 'spec_helper'
 module Spree
   describe Classification, type: :model do
     # Regression test for #3494
-    it "cannot link the same taxon to the same product more than once" do
+    it 'cannot link the same taxon to the same product more than once' do
       product = create(:product)
       taxon = create(:taxon)
       add_taxon = lambda { product.taxons << taxon }
@@ -25,19 +25,19 @@ module Spree
       expect(positions).to eq((1..taxon.classifications.count).to_a)
     end
 
-    it "has a valid fixtures" do
+    it 'has a valid fixtures' do
       expect positions_to_be_valid(taxon_with_5_products)
       expect(Spree::Classification.count).to eq 5
     end
 
-    context "removing product from taxon" do
+    context 'removing product from taxon' do
       before :each do
         p = taxon_with_5_products.products[1]
         expect(p.classifications.first.position).to eq(2)
         taxon_with_5_products.products.destroy(p)
       end
 
-      it "resets positions" do
+      it 'resets positions' do
         expect positions_to_be_valid(taxon_with_5_products)
       end
     end
@@ -50,19 +50,19 @@ module Spree
         taxon_with_5_products.save!
       end
 
-      it "resets positions" do
+      it 'resets positions' do
         expect positions_to_be_valid(taxon_with_5_products)
       end
     end
 
-    context "removing taxon from product" do
+    context 'removing taxon from product' do
       before :each do
         p = taxon_with_5_products.products[1]
         p.taxons.destroy(taxon_with_5_products)
         p.save!
       end
 
-      it "resets positions" do
+      it 'resets positions' do
         expect positions_to_be_valid(taxon_with_5_products)
       end
     end
@@ -74,18 +74,18 @@ module Spree
         p.save!
       end
 
-      it "resets positions" do
+      it 'resets positions' do
         expect positions_to_be_valid(taxon_with_5_products)
       end
     end
 
-    context "destroying classification" do
+    context 'destroying classification' do
       before :each do
         classification = taxon_with_5_products.classifications[1]
         classification.destroy
       end
 
-      it "resets positions" do
+      it 'resets positions' do
         expect positions_to_be_valid(taxon_with_5_products)
       end
     end

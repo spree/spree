@@ -31,7 +31,7 @@ describe Spree::InventoryUnit, type: :model do
     end
   end
 
-  context "#backordered_for_stock_item" do
+  context '#backordered_for_stock_item' do
     let(:order) do
       order = create(:order, state: 'complete', ship_address: create(:ship_address))
       order.completed_at = Time.current
@@ -61,7 +61,7 @@ describe Spree::InventoryUnit, type: :model do
     end
 
     # Regression for #3066
-    it "returns modifiable objects" do
+    it 'returns modifiable objects' do
       units = Spree::InventoryUnit.backordered_for_stock_item(stock_item)
       expect { units.first.save! }.to_not raise_error
     end
@@ -88,14 +88,14 @@ describe Spree::InventoryUnit, type: :model do
       expect(Spree::InventoryUnit.backordered_for_stock_item(stock_item)).not_to include(other_variant_unit)
     end
 
-    it "does not change shipping cost when fulfilling the order" do
+    it 'does not change shipping cost when fulfilling the order' do
       current_shipment_cost = shipment.cost
       shipping_method.calculator.set_preference(:amount, current_shipment_cost + 5.0)
       stock_item.set_count_on_hand(0)
       expect(shipment.reload.cost).to eq(current_shipment_cost)
     end
 
-    context "other shipments" do
+    context 'other shipments' do
       let(:other_order) do
         order = create(:order)
         order.state = 'payment'
@@ -121,13 +121,13 @@ describe Spree::InventoryUnit, type: :model do
         unit.tap(&:save!)
       end
 
-      it "does not find inventory units belonging to incomplete orders" do
+      it 'does not find inventory units belonging to incomplete orders' do
         expect(Spree::InventoryUnit.backordered_for_stock_item(stock_item)).not_to include(other_unit)
       end
     end
   end
 
-  context "#finalize_units!" do
+  context '#finalize_units!' do
     let!(:stock_location) { create(:stock_location) }
     let(:variant) { create(:variant) }
     let (:shipment) { create(:shipment) }
@@ -139,22 +139,22 @@ describe Spree::InventoryUnit, type: :model do
       shipment.inventory_units = inventory_units
     end
 
-    it "should create a stock movement" do
+    it 'should create a stock movement' do
       expect { shipment.inventory_units.finalize_units! }.
         to change { shipment.inventory_units.where(pending: false).count }.by 2
     end
   end
 
-  describe "#current_or_new_return_item" do
+  describe '#current_or_new_return_item' do
     before { allow(inventory_unit).to receive_messages(pre_tax_amount: 100.0) }
 
     subject { inventory_unit.current_or_new_return_item }
 
-    context "associated with a return item" do
+    context 'associated with a return item' do
       let(:return_item) { create(:return_item) }
       let(:inventory_unit) { return_item.inventory_unit }
 
-      it "returns a persisted return item" do
+      it 'returns a persisted return item' do
         expect(subject).to be_persisted
       end
 
@@ -163,14 +163,14 @@ describe Spree::InventoryUnit, type: :model do
       end
     end
 
-    context "no associated return item" do
+    context 'no associated return item' do
       let(:inventory_unit) { create(:inventory_unit) }
 
-      it "returns a new return item" do
+      it 'returns a new return item' do
         expect(subject).to_not be_persisted
       end
 
-      it "associates itself to the new return_item" do
+      it 'associates itself to the new return_item' do
         expect(subject.inventory_unit).to eq inventory_unit
       end
     end

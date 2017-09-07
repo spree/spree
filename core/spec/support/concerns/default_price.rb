@@ -1,4 +1,4 @@
-shared_examples_for "default_price" do
+shared_examples_for 'default_price' do
   let(:model)        { described_class }
   subject(:instance) { FactoryGirl.build(model.name.demodulize.downcase.to_sym) }
 

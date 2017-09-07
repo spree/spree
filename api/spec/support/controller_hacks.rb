@@ -7,22 +7,22 @@ module ControllerHacks
   end
 
   def api_get(action, params={}, session=nil, flash=nil)
-    api_process(action, params, session, flash, "GET")
+    api_process(action, params, session, flash, 'GET')
   end
 
   def api_post(action, params={}, session=nil, flash=nil)
-    api_process(action, params, session, flash, "POST")
+    api_process(action, params, session, flash, 'POST')
   end
 
   def api_put(action, params={}, session=nil, flash=nil)
-    api_process(action, params, session, flash, "PUT")
+    api_process(action, params, session, flash, 'PUT')
   end
 
   def api_delete(action, params={}, session=nil, flash=nil)
-    api_process(action, params, session, flash, "DELETE")
+    api_process(action, params, session, flash, 'DELETE')
   end
 
-  def api_process(action, params={}, session=nil, flash=nil, method="get")
+  def api_process(action, params={}, session=nil, flash=nil, method='get')
     scoping = respond_to?(:resource_scoping) ? resource_scoping : {}
     process(
       action,

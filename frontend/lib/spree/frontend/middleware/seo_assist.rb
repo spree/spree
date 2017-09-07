@@ -18,10 +18,10 @@ module Spree
             params.delete('taxon')
 
             return build_response(params, "#{request.script_name}t/#{taxon.permalink}" )
-          elsif env["PATH_INFO"] =~ /^\/(t|products)(\/\S+)?\/$/
+          elsif env['PATH_INFO'] =~ /^\/(t|products)(\/\S+)?\/$/
             #ensures no trailing / for taxon and product urls
 
-            return build_response(params, env["PATH_INFO"][0...-1])
+            return build_response(params, env['PATH_INFO'][0...-1])
           end
 
           @app.call(env)
@@ -40,9 +40,9 @@ module Spree
             if v.class == Array
               build_query(v.map { |x| ["#{k}[]", x] })
             else
-              k + "=" + Rack::Utils.escape(v)
+              k + '=' + Rack::Utils.escape(v)
             end
-          }.join("&")
+          }.join('&')
         end
 
       end

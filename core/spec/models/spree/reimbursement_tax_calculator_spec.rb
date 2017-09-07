@@ -25,7 +25,7 @@ describe Spree::ReimbursementTaxCalculator, type: :model do
   context 'with additional tax' do
     let!(:tax_rate) do
       create :tax_rate,
-             name: "Sales Tax",
+             name: 'Sales Tax',
              amount: 0.10,
              included_in_price: false,
              tax_category: create(:tax_category),
@@ -44,7 +44,7 @@ describe Spree::ReimbursementTaxCalculator, type: :model do
   context 'with included tax' do
     let!(:tax_rate) do
       create :tax_rate,
-             name: "VAT Tax",
+             name: 'VAT Tax',
              amount: 0.10,
              included_in_price: true,
              tax_category: create(:tax_category),

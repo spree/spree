@@ -1,8 +1,8 @@
 require 'spec_helper'
 
 describe Spree::Asset, type: :model do
-  describe "#viewable" do
-    it "touches association" do
+  describe '#viewable' do
+    it 'touches association' do
       Timecop.scale(3600) do
         product = create(:custom_product)
         asset   = Spree::Asset.create! { |a| a.viewable = product.master }
@@ -14,8 +14,8 @@ describe Spree::Asset, type: :model do
     end
   end
 
-  describe "#acts_as_list scope" do
-    it "should start from first position for different viewables" do
+  describe '#acts_as_list scope' do
+    it 'should start from first position for different viewables' do
       asset1 = Spree::Asset.create(viewable_type: 'Spree::Image', viewable_id: 1)
       asset2 = Spree::Asset.create(viewable_type: 'Spree::LineItem', viewable_id: 1)
 

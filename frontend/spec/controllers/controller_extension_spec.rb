@@ -6,7 +6,7 @@ require 'spec_helper'
 class Spree::CustomController < Spree::BaseController
   def index
     respond_with(Spree::Address.new) do |format|
-      format.html { render plain: "neutral" }
+      format.html { render plain: 'neutral' }
     end
   end
 
@@ -32,9 +32,9 @@ describe Spree::CustomController, type: :controller do
     end
   end
 
-  context "extension testing" do
-    context "index" do
-      context "specify symbol for handler instead of Proc" do
+  context 'extension testing' do
+    context 'index' do
+      context 'specify symbol for handler instead of Proc' do
         before do
           Spree::CustomController.class_eval do
             respond_override({index: {html: {success: :success_method}}})
@@ -47,8 +47,8 @@ describe Spree::CustomController, type: :controller do
           end
         end
 
-        describe "GET" do
-          it "has value success" do
+        describe 'GET' do
+          it 'has value success' do
             spree_get :index
             expect(response).to be_success
             assert (response.body =~ /success!!!/)
@@ -56,7 +56,7 @@ describe Spree::CustomController, type: :controller do
         end
       end
 
-      context "render" do
+      context 'render' do
         before do
           Spree::CustomController.instance_eval do
             respond_override(index: { html: { success: lambda { render(plain: 'success!!!') } } })
@@ -64,8 +64,8 @@ describe Spree::CustomController, type: :controller do
           end
         end
 
-        describe "GET" do
-          it "has value success" do
+        describe 'GET' do
+          it 'has value success' do
             spree_get :index
             expect(response).to be_success
             assert (response.body =~ /success!!!/)
@@ -73,7 +73,7 @@ describe Spree::CustomController, type: :controller do
         end
       end
 
-      context "redirect" do
+      context 'redirect' do
         before do
           Spree::CustomController.instance_eval do
             respond_override({index: {html: {success: lambda { redirect_to('/cart') }}}})
@@ -81,15 +81,15 @@ describe Spree::CustomController, type: :controller do
           end
         end
 
-        describe "GET" do
-          it "has value success" do
+        describe 'GET' do
+          it 'has value success' do
             spree_get :index
             expect(response).to be_redirect
           end
         end
       end
 
-      context "validation error" do
+      context 'validation error' do
         before do
           Spree::CustomController.instance_eval do
             respond_to :html
@@ -98,8 +98,8 @@ describe Spree::CustomController, type: :controller do
           end
         end
 
-        describe "POST" do
-          it "has value success" do
+        describe 'POST' do
+          it 'has value success' do
             spree_post :create
             expect(response).to be_success
             assert (response.body =~ /success!/)
@@ -114,8 +114,8 @@ describe Spree::CustomController, type: :controller do
           end
         end
 
-        describe "POST" do
-          it "should not effect the wrong controller" do
+        describe 'POST' do
+          it 'should not effect the wrong controller' do
             spree_get :index
             assert (response.body =~ /neutral/)
           end

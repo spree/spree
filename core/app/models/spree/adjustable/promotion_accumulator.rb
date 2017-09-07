@@ -56,7 +56,7 @@ module Spree
 
       def all_adjustments
         order.all_adjustments.promotion.includes(source: [:promotion]).where.
-          not("adjustable_id = ? AND adjustable_type = ?", adjustable.id, adjustable.class.to_s)
+          not('adjustable_id = ? AND adjustable_type = ?', adjustable.id, adjustable.class.to_s)
       end
 
       def add(array, object, id)

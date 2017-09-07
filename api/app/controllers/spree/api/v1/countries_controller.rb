@@ -8,7 +8,7 @@ module Spree
           @countries = Country.accessible_by(current_ability, :read).ransack(params[:q]).result.
                        order('name ASC').
                        page(params[:page]).per(params[:per_page])
-          country = Country.order("updated_at ASC").last
+          country = Country.order('updated_at ASC').last
           if stale?(country)
             respond_with(@countries)
           end

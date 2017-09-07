@@ -23,7 +23,7 @@ module Spree
 
   def self.user_class
     if @@user_class.is_a?(Class)
-      raise "Spree.user_class MUST be a String or Symbol object, not a Class object."
+      raise 'Spree.user_class MUST be a String or Symbol object, not a Class object.'
     elsif @@user_class.is_a?(String) || @@user_class.is_a?(Symbol)
       @@user_class.to_s.constantize
     end
@@ -59,8 +59,8 @@ module Spree
   end
 
   module Core
-    autoload :ProductFilters, "spree/core/product_filters"
-    autoload :TokenGenerator, "spree/core/token_generator"
+    autoload :ProductFilters, 'spree/core/product_filters'
+    autoload :TokenGenerator, 'spree/core/token_generator'
 
     class GatewayError < RuntimeError; end
     class DestroyWithOrdersError < StandardError; end

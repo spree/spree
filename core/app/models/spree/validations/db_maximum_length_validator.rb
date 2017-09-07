@@ -7,11 +7,11 @@ module Spree
       def initialize(options)
         super
         @field = options[:field].to_s
-        raise ArgumentError.new("a field must be specified to the validator") if @field.blank?
+        raise ArgumentError.new('a field must be specified to the validator') if @field.blank?
       end
 
       def validate(record)
-        warn "`Spree::Validations::DbMaximumLengthValidator` is deprecated. Use `DbMaximumLengthValidator` instead."
+        warn '`Spree::Validations::DbMaximumLengthValidator` is deprecated. Use `DbMaximumLengthValidator` instead.'
         limit = record.class.columns_hash[@field].limit
         value = record[@field.to_sym]
         if value && limit && value.to_s.length > limit

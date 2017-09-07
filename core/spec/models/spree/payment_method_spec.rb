@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::PaymentMethod, type: :model do
-  context "visibility scopes" do
+  context 'visibility scopes' do
     before do
       [nil, '', 'both', 'front_end', 'back_end'].each do |display_on|
         Spree::Gateway::Test.create(
@@ -13,28 +13,28 @@ describe Spree::PaymentMethod, type: :model do
       end
     end
 
-    it "should have 5 total methods" do
+    it 'should have 5 total methods' do
       expect(Spree::PaymentMethod.count).to eq(5)
     end
 
-    describe "#available" do
-      it "should return all methods available to front-end/back-end" do
+    describe '#available' do
+      it 'should return all methods available to front-end/back-end' do
         methods = Spree::PaymentMethod.available
         expect(methods.size).to eq(3)
         expect(methods.pluck(:display_on)).to eq(['both', 'front_end', 'back_end'])
       end
     end
 
-    describe "#available_on_front_end" do
-      it "should return all methods available to front-end" do
+    describe '#available_on_front_end' do
+      it 'should return all methods available to front-end' do
         methods = Spree::PaymentMethod.available_on_front_end
         expect(methods.size).to eq(2)
         expect(methods.pluck(:display_on)).to eq(['both', 'front_end'])
       end
     end
 
-    describe "#available_on_back_end" do
-      it "should return all methods available to back-end" do
+    describe '#available_on_back_end' do
+      it 'should return all methods available to back-end' do
         methods = Spree::PaymentMethod.available_on_back_end
         expect(methods.size).to eq(2)
         expect(methods.pluck(:display_on)).to eq(['both', 'back_end'])

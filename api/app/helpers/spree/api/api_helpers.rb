@@ -43,9 +43,9 @@ module Spree
         end.map(&:first) # get fields that are invalid
         # Permalinks presence is validated, but are really automatically generated
         # Therefore we shouldn't tell API clients that they MUST send one through
-        required_fields.map!(&:to_s).delete("permalink")
+        required_fields.map!(&:to_s).delete('permalink')
         # Do not require slugs, either
-        required_fields.delete("slug")
+        required_fields.delete('slug')
         required_fields
       end
 
@@ -177,7 +177,7 @@ module Spree
       ]
 
       def variant_attributes
-        if @current_user_roles && @current_user_roles.include?("admin")
+        if @current_user_roles && @current_user_roles.include?('admin')
           @@variant_attributes + [:cost_price]
         else
           @@variant_attributes

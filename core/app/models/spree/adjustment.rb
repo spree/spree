@@ -63,7 +63,7 @@ module Spree
     scope :credit, -> { where("#{quoted_table_name}.amount < 0") }
     scope :nonzero, -> { where("#{quoted_table_name}.amount != 0") }
     scope :promotion, -> { where(source_type: 'Spree::PromotionAction') }
-    scope :return_authorization, -> { where(source_type: "Spree::ReturnAuthorization") }
+    scope :return_authorization, -> { where(source_type: 'Spree::ReturnAuthorization') }
     scope :is_included, -> { where(included: true) }
     scope :additional, -> { where(included: false) }
     scope :competing_promos, -> { where(source_type: competing_promos_source_types) }

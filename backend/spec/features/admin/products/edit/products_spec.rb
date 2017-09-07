@@ -20,11 +20,11 @@ describe 'Product Details', type: :feature, js: true do
       expect(find('textarea#product_description').text.strip).to eq('lorem ipsum')
       expect(find('input#product_price').value).to eq('19.99')
       expect(find('input#product_cost_price').value).to eq('17.00')
-      expect(find('input#product_available_on').value).to eq("2013/08/14")
+      expect(find('input#product_available_on').value).to eq('2013/08/14')
       expect(find('input#product_sku').value).to eq('A100')
     end
 
-    it "should handle slug changes" do
+    it 'should handle slug changes' do
       create(:product, name: 'Bún thịt nướng', sku: 'A100',
                        description: 'lorem ipsum', available_on: '2011-01-01 01:01:01')
 
@@ -33,15 +33,15 @@ describe 'Product Details', type: :feature, js: true do
         click_icon(:edit)
       end
 
-      fill_in "product_slug", with: 'random-slug-value'
-      click_button "Update"
-      expect(page).to have_content("successfully updated!")
+      fill_in 'product_slug', with: 'random-slug-value'
+      click_button 'Update'
+      expect(page).to have_content('successfully updated!')
     end
   end
 
   # Regression test for #3385
-  context "deleting a product" do
-    it "is still able to find the master variant" do
+  context 'deleting a product' do
+    it 'is still able to find the master variant' do
       create(:product)
 
       visit spree.admin_products_path

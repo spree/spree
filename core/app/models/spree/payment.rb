@@ -16,7 +16,7 @@ module Spree
     end
     belongs_to :source, polymorphic: true
 
-    has_many :offsets, -> { offset_payment }, class_name: "Spree::Payment", foreign_key: :source_id
+    has_many :offsets, -> { offset_payment }, class_name: 'Spree::Payment', foreign_key: :source_id
     has_many :log_entries, as: :source
     has_many :state_changes, as: :stateful
     has_many :capture_events, class_name: 'Spree::PaymentCaptureEvent'
@@ -161,7 +161,7 @@ module Spree
     end
 
     def is_cvv_risky?
-      return false if cvv_response_code == "M"
+      return false if cvv_response_code == 'M'
       return false if cvv_response_code.nil?
       return false if cvv_response_message.present?
       return true

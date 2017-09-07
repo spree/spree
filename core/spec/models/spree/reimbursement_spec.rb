@@ -1,15 +1,15 @@
 require 'spec_helper'
 
 describe Spree::Reimbursement, type: :model do
-  describe "#display_total" do
+  describe '#display_total' do
     let(:total)         { 100.50 }
-    let(:currency)      { "USD" }
+    let(:currency)      { 'USD' }
     let(:order)         { Spree::Order.new(currency: currency) }
     let(:reimbursement) { Spree::Reimbursement.new(total: total, order: order) }
 
     subject { reimbursement.display_total }
 
-    it "returns the value as a Spree::Money instance" do
+    it 'returns the value as a Spree::Money instance' do
       expect(subject).to eq Spree::Money.new(total)
     end
 
@@ -18,7 +18,7 @@ describe Spree::Reimbursement, type: :model do
     end
   end
 
-  describe "#perform!" do
+  describe '#perform!' do
     let!(:adjustments)            { [] } # placeholder to ensure it gets run prior the "before" at this level
 
     let!(:tax_rate)               { nil }
@@ -55,12 +55,12 @@ describe Spree::Reimbursement, type: :model do
       return_item.accept!
     end
 
-    it "refunds the total amount" do
+    it 'refunds the total amount' do
       subject
       expect(reimbursement.unpaid_amount).to eq 0
     end
 
-    it "creates a refund" do
+    it 'creates a refund' do
       expect {
         subject
       }.to change{ Spree::Refund.count }.by(1)
@@ -68,7 +68,7 @@ describe Spree::Reimbursement, type: :model do
     end
 
     context 'with additional tax' do
-      let!(:tax_rate) { create(:tax_rate, name: "Sales Tax", amount: 0.10, included_in_price: false, zone: tax_zone) }
+      let!(:tax_rate) { create(:tax_rate, name: 'Sales Tax', amount: 0.10, included_in_price: false, zone: tax_zone) }
 
       it 'saves the additional tax and refunds the total' do
         expect {
@@ -83,7 +83,7 @@ describe Spree::Reimbursement, type: :model do
     end
 
     context 'with included tax' do
-      let!(:tax_rate) { create(:tax_rate, name: "VAT Tax", amount: 0.1, included_in_price: true, zone: tax_zone) }
+      let!(:tax_rate) { create(:tax_rate, name: 'VAT Tax', amount: 0.1, included_in_price: true, zone: tax_zone) }
 
       it 'saves the included tax and refunds the total' do
         expect {
@@ -105,30 +105,30 @@ describe Spree::Reimbursement, type: :model do
       end
     end
 
-    context "when exchange is required" do
+    context 'when exchange is required' do
       let(:exchange_variant) { build(:variant) }
       before { return_item.exchange_variant = exchange_variant }
-      it "generates an exchange shipment for the order for the exchange items" do
+      it 'generates an exchange shipment for the order for the exchange items' do
         expect { subject }.to change { order.reload.shipments.count }.by 1
         expect(order.shipments.last.inventory_units.first.variant).to eq exchange_variant
       end
     end
 
-    it "triggers the reimbursement mailer to be sent" do
+    it 'triggers the reimbursement mailer to be sent' do
       expect(Spree::ReimbursementMailer).to receive(:reimbursement_email).with(reimbursement.id) { double(deliver_later: true) }
       subject
     end
   end
 
-  describe "#return_items_requiring_exchange" do
-    it "returns only the return items that require an exchange" do
+  describe '#return_items_requiring_exchange' do
+    it 'returns only the return items that require an exchange' do
       return_items = [double(exchange_required?: true), double(exchange_required?: true),double(exchange_required?: false)]
       allow(subject).to receive(:return_items) { return_items }
       expect(subject.return_items_requiring_exchange).to eq return_items.take(2)
     end
   end
 
-  describe "#calculated_total" do
+  describe '#calculated_total' do
     context 'with return item amounts that would round up if added' do
       let(:reimbursement) { Spree::Reimbursement.new }
 

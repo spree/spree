@@ -4,8 +4,8 @@ namespace :exchanges do
   task charge_unreturned_items: :environment do
     unreturned_return_items_scope = Spree::ReturnItem.awaiting_return.exchange_processed
     unreturned_return_items = unreturned_return_items_scope.joins(:exchange_inventory_units).where([
-      "spree_inventory_units.created_at < :days_ago AND spree_inventory_units.state = :iu_state",
-      days_ago: Spree::Config[:expedited_exchanges_days_window].days.ago, iu_state: "shipped"
+      'spree_inventory_units.created_at < :days_ago AND spree_inventory_units.state = :iu_state',
+      days_ago: Spree::Config[:expedited_exchanges_days_window].days.ago, iu_state: 'shipped'
     ]).distinct.to_a
 
     # Determine that a return item has already been deemed unreturned and therefore charged
@@ -49,7 +49,7 @@ namespace :exchanges do
         # the original exchange shipment, not the built one
         order.shipments.destroy_all
         shipments.each { |shipment| shipment.update_attributes!(order_id: order.id) }
-        order.update_attributes!(state: "confirm")
+        order.update_attributes!(state: 'confirm')
 
         order.reload.next!
         order.update_with_updater!
@@ -60,7 +60,7 @@ namespace :exchanges do
         failed_orders << order
       end
     end
-    failure_message = failed_orders.map { |o| "#{o.number} - #{o.errors.full_messages}" }.join(", ")
+    failure_message = failed_orders.map { |o| "#{o.number} - #{o.errors.full_messages}" }.join(', ')
     raise UnableToChargeForUnreturnedItems.new(failure_message) if failed_orders.present?
   end
 end

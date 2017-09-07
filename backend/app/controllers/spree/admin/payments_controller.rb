@@ -65,7 +65,7 @@ module Spree
         return unless event = params[:e] and @payment.payment_source
 
         # Because we have a transition method also called void, we do this to avoid conflicts.
-        event = "void_transaction" if event == "void"
+        event = 'void_transaction' if event == 'void'
         if @payment.send("#{event}!")
           flash[:success] = Spree.t(:payment_updated)
         else

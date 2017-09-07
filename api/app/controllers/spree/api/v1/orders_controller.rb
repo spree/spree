@@ -34,7 +34,7 @@ module Spree
             current_api_user
           end
 
-          import_params = if @current_user_roles.include?("admin")
+          import_params = if @current_user_roles.include?('admin')
                             params[:order].present? ? params[:order].permit! : {}
           else
             order_params
@@ -89,7 +89,7 @@ module Spree
           if current_api_user.persisted?
             @orders = current_api_user.orders.reverse_chronological.ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
           else
-            render "spree/api/errors/unauthorized", status: :unauthorized
+            render 'spree/api/errors/unauthorized', status: :unauthorized
           end
         end
 
@@ -99,7 +99,7 @@ module Spree
           @order.coupon_code = params[:coupon_code]
           @handler = PromotionHandler::Coupon.new(@order).apply
           status = @handler.successful? ? 200 : 422
-          render "spree/api/v1/promotions/handler", status: status
+          render 'spree/api/v1/promotions/handler', status: status
         end
 
         private

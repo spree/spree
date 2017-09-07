@@ -15,7 +15,7 @@ module Spree
               includes(mine_includes).
               ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
           else
-            render "spree/api/errors/unauthorized", status: :unauthorized
+            render 'spree/api/errors/unauthorized', status: :unauthorized
           end
         end
 

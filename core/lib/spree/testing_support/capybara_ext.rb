@@ -16,7 +16,7 @@ module CapybaraExt
     if RSpec.current_example.metadata[:js]
       within("table.table tbody tr:nth-child(#{num})", &block)
     else
-      within(:xpath, all("table.table tbody tr")[num-1].path, &block)
+      within(:xpath, all('table.table tbody tr')[num-1].path, &block)
     end
   end
 
@@ -24,7 +24,7 @@ module CapybaraExt
     if RSpec.current_example.metadata[:js]
       find("td:nth-child(#{num})").text
     else
-      all("td")[num-1].text
+      all('td')[num-1].text
     end
   end
 
@@ -34,7 +34,7 @@ module CapybaraExt
 
   def select2_search(value, options)
     label = find_label_by_text(options[:from])
-    within label.first(:xpath,".//..") do
+    within label.first(:xpath,'.//..') do
       options[:from] = "##{find(".select2-container")["id"]}"
     end
     targetted_select2_search(value, options)
@@ -49,7 +49,7 @@ module CapybaraExt
   def select2(value, options)
     label = find_label_by_text(options[:from])
 
-    within label.first(:xpath,".//..") do
+    within label.first(:xpath,'.//..') do
       options[:from] = "##{find(".select2-container")["id"]}"
     end
     targetted_select2(value, options)
@@ -75,7 +75,7 @@ module CapybaraExt
   def select_select2_result(value)
     # results are in a div appended to the end of the document
     within(:xpath, '//body') do
-      page.find("div.select2-result-label", text: %r{#{Regexp.escape(value)}}i).click
+      page.find('div.select2-result-label', text: %r{#{Regexp.escape(value)}}i).click
     end
   end
 
@@ -161,11 +161,11 @@ end
 
 RSpec::Matchers.define :have_title do |expected|
   match do |actual|
-    has_css?("title", text: expected, visible: false)
+    has_css?('title', text: expected, visible: false)
   end
 
   failure_message do |actual|
-    actual = first("title")
+    actual = first('title')
     if actual
       "expected that title would have been '#{expected}' but was '#{actual.text}'"
     else

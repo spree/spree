@@ -44,7 +44,7 @@ module Spree
 
     def additional_tweaks
       return unless File.exists? 'public/robots.txt'
-      append_file "public/robots.txt", <<-ROBOTS.strip_heredoc
+      append_file 'public/robots.txt', <<-ROBOTS.strip_heredoc
         User-agent: *
         Disallow: /checkout
         Disallow: /cart
@@ -68,18 +68,18 @@ module Spree
       end
 
       if Spree::Core::Engine.frontend_available? || Rails.env.test?
-        template "vendor/assets/javascripts/spree/frontend/all.js"
-        template "vendor/assets/stylesheets/spree/frontend/all.css"
+        template 'vendor/assets/javascripts/spree/frontend/all.js'
+        template 'vendor/assets/stylesheets/spree/frontend/all.css'
       end
 
       if Spree::Core::Engine.backend_available? || Rails.env.test?
-        template "vendor/assets/javascripts/spree/backend/all.js"
-        template "vendor/assets/stylesheets/spree/backend/all.css"
+        template 'vendor/assets/javascripts/spree/backend/all.js'
+        template 'vendor/assets/stylesheets/spree/backend/all.css'
       end
     end
 
     def create_overrides_directory
-      empty_directory "app/overrides"
+      empty_directory 'app/overrides'
     end
 
     def copy_views
@@ -113,7 +113,7 @@ module Spree
     end
 
     def include_seed_data
-      append_file "db/seeds.rb", <<-SEEDS.strip_heredoc
+      append_file 'db/seeds.rb', <<-SEEDS.strip_heredoc
 
         Spree::Core::Engine.load_seed if defined?(Spree::Core)
         Spree::Auth::Engine.load_seed if defined?(Spree::Auth)
@@ -121,14 +121,14 @@ module Spree
     end
 
     def install_migrations
-      say_status :copying, "migrations"
+      say_status :copying, 'migrations'
       silence_stream(STDOUT) do
         silence_warnings { rake 'railties:install:migrations' }
       end
     end
 
     def create_database
-      say_status :creating, "database"
+      say_status :creating, 'database'
       silence_stream(STDOUT) do
         silence_stream(STDERR) do
           silence_warnings { rake 'db:create' }
@@ -138,7 +138,7 @@ module Spree
 
     def run_migrations
       if @run_migrations
-        say_status :running, "migrations"
+        say_status :running, 'migrations'
         silence_stream(STDOUT) do
           silence_stream(STDERR) do
             silence_warnings { rake 'db:migrate' }
@@ -151,9 +151,9 @@ module Spree
 
     def populate_seed_data
       if @load_seed_data
-        say_status :loading,  "seed data"
+        say_status :loading,  'seed data'
         rake_options=[]
-        rake_options << "AUTO_ACCEPT=1" if options[:auto_accept]
+        rake_options << 'AUTO_ACCEPT=1' if options[:auto_accept]
         rake_options << "ADMIN_EMAIL=#{options[:admin_email]}" if options[:admin_email]
         rake_options << "ADMIN_PASSWORD=#{options[:admin_password]}" if options[:admin_password]
 
@@ -168,20 +168,20 @@ module Spree
           cmd.call
         end
       else
-        say_status :skipping, "seed data (you can always run rake db:seed)"
+        say_status :skipping, 'seed data (you can always run rake db:seed)'
       end
     end
 
     def load_sample_data
       if @load_sample_data
-        say_status :loading, "sample data"
+        say_status :loading, 'sample data'
         silence_stream(STDOUT) do
           silence_stream(STDERR) do
             silence_warnings { rake 'spree_sample:load' }
           end
         end
       else
-        say_status :skipping, "sample data (you can always run rake spree_sample:load)"
+        say_status :skipping, 'sample data (you can always run rake spree_sample:load)'
       end
     end
 
@@ -202,19 +202,19 @@ module Spree
       end
 
       unless options[:quiet]
-        puts "*" * 50
+        puts '*' * 50
         puts "We added the following line to your application's config/routes.rb file:"
-        puts " "
+        puts ' '
         puts "    mount Spree::Core::Engine, at: '/'"
       end
     end
 
     def complete
       unless options[:quiet]
-        puts "*" * 50
+        puts '*' * 50
         puts "Spree has been installed successfully. You're all ready to go!"
-        puts " "
-        puts "Enjoy!"
+        puts ' '
+        puts 'Enjoy!'
       end
     end
 

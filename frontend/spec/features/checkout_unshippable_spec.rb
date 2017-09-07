@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "checkout with unshippable items", type: :feature, inaccessible: true do
+describe 'checkout with unshippable items', type: :feature, inaccessible: true do
   let!(:stock_location) { create(:stock_location) }
   let(:order) { OrderWalkthrough.up_to(:delivery) }
 
@@ -26,7 +26,7 @@ describe "checkout with unshippable items", type: :feature, inaccessible: true d
     visit spree.checkout_state_path(:delivery)
     expect(page).to have_content('Unshippable Items')
 
-    click_button "Save and Continue"
+    click_button 'Save and Continue'
 
     order.reload
     expect(order.line_items.count).to eq 1

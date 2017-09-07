@@ -15,13 +15,13 @@ describe Spree::ShipmentMailer, type: :mailer do
   let(:shipment) do
     shipment = stub_model(Spree::Shipment)
     allow(shipment).to receive_messages(line_items: [line_item], order: order)
-    allow(shipment).to receive_messages(tracking_url: "http://track.com/me")
+    allow(shipment).to receive_messages(tracking_url: 'http://track.com/me')
     allow(shipment).to receive_messages(shipping_method: shipping_method)
     shipment
   end
 
-  context ":from not set explicitly" do
-    it "falls back to spree config" do
+  context ':from not set explicitly' do
+    it 'falls back to spree config' do
       message = Spree::ShipmentMailer.shipped_email(shipment)
       expect(message.from).to eq([Spree::Store.current.mail_from_address])
     end
@@ -33,16 +33,16 @@ describe Spree::ShipmentMailer, type: :mailer do
     expect(shipment_email.body).not_to include(%Q{Out of Stock})
   end
 
-  it "shipment_email accepts an shipment id as an alternative to an Shipment object" do
+  it 'shipment_email accepts an shipment id as an alternative to an Shipment object' do
     expect(Spree::Shipment).to receive(:find).with(shipment.id).and_return(shipment)
     expect {
       Spree::ShipmentMailer.shipped_email(shipment.id).body
     }.not_to raise_error
   end
 
-  context "emails must be translatable" do
-    context "shipped_email" do
-      context "pt-BR locale" do
+  context 'emails must be translatable' do
+    context 'shipped_email' do
+      context 'pt-BR locale' do
         before do
           I18n.enforce_available_locales = false
           pt_br_shipped_email = { spree: { shipment_mailer: { shipped_email: { dear_customer: 'Caro Cliente,' } } } }
@@ -57,13 +57,13 @@ describe Spree::ShipmentMailer, type: :mailer do
 
         specify do
           shipped_email = Spree::ShipmentMailer.shipped_email(shipment)
-          expect(shipped_email).to have_body_text("Caro Cliente,")
+          expect(shipped_email).to have_body_text('Caro Cliente,')
         end
       end
     end
   end
 
-  context "shipped_email" do
+  context 'shipped_email' do
     let(:shipped_email) { Spree::ShipmentMailer.shipped_email(shipment) }
 
     specify do

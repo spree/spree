@@ -486,7 +486,7 @@ module Spree
       all_adjustments.shipping.delete_all
 
       shipment_ids = shipments.map(&:id)
-      StateChange.where(stateful_type: "Spree::Shipment", stateful_id: shipment_ids).delete_all
+      StateChange.where(stateful_type: 'Spree::Shipment', stateful_id: shipment_ids).delete_all
       ShippingRate.where(shipment_id: shipment_ids).delete_all
 
       shipments.delete_all

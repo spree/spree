@@ -31,7 +31,7 @@ module Spree
     has_many :option_value_variants, class_name: 'Spree::OptionValueVariant'
     has_many :option_values, through: :option_value_variants, class_name: 'Spree::OptionValue'
 
-    has_many :images, -> { order(:position) }, as: :viewable, dependent: :destroy, class_name: "Spree::Image"
+    has_many :images, -> { order(:position) }, as: :viewable, dependent: :destroy, class_name: 'Spree::Image'
 
     has_many :prices,
              class_name: 'Spree::Price',
@@ -69,7 +69,7 @@ module Spree
 
     scope :for_currency_and_available_price_amount, -> (currency) do
       currency ||= Spree::Config[:currency]
-      joins(:prices).where("spree_prices.currency = ?", currency).where("spree_prices.amount IS NOT NULL").distinct
+      joins(:prices).where('spree_prices.currency = ?', currency).where('spree_prices.amount IS NOT NULL').distinct
     end
 
     scope :active, -> (currency = nil) do
@@ -109,7 +109,7 @@ module Spree
         "#{ov.option_type.presentation}: #{ov.presentation}"
       end
 
-      values.to_sentence({ words_connector: ", ", two_words_connector: ", " })
+      values.to_sentence({ words_connector: ', ', two_words_connector: ', ' })
     end
 
     # Default to master name

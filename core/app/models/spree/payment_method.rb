@@ -13,8 +13,8 @@ module Spree
     validates :name, presence: true
 
     with_options dependent: :restrict_with_error do
-      has_many :payments, class_name: "Spree::Payment", inverse_of: :payment_method
-      has_many :credit_cards, class_name: "Spree::CreditCard"
+      has_many :payments, class_name: 'Spree::Payment', inverse_of: :payment_method
+      has_many :credit_cards, class_name: 'Spree::CreditCard'
     end
 
     def self.providers

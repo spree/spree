@@ -9,15 +9,15 @@ module Spree
       @inventory_unit = create(:inventory_unit)
     end
 
-    context "as an admin" do
+    context 'as an admin' do
       sign_in_as_admin!
 
-      it "gets an inventory unit" do
+      it 'gets an inventory unit' do
         api_get :show, id: @inventory_unit.id
         expect(json_response['state']).to eq @inventory_unit.state
       end
 
-      it "updates an inventory unit" do
+      it 'updates an inventory unit' do
         api_put :update, id: @inventory_unit.id,
                          inventory_unit: { shipment_id: nil }
         expect(json_response['shipment_id']).to be_nil

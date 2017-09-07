@@ -6,7 +6,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
   let(:country) { create(:country, name: 'United States of America', iso_name: 'UNITED STATES') }
   let(:state) { create(:state, name: 'Alabama', abbr: 'AL', country: country) }
 
-  context "visitor makes checkout as guest without registration" do
+  context 'visitor makes checkout as guest without registration' do
     before(:each) do
       stock_location.stock_items.update_all(count_on_hand: 1)
     end
@@ -83,7 +83,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
     # Regression test for #4190
     it 'updates state_lock_version on form submission', js: true do
       add_mug_to_cart
-      click_button "Checkout"
+      click_button 'Checkout'
 
       expect(find('input#order_state_lock_version', visible: false).value).to eq '0'
 
@@ -347,7 +347,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
       end
 
       it 'updates shipments properly through step address -> delivery transitions' do
-        visit spree.checkout_state_path("payment")
+        visit spree.checkout_state_path('payment')
         click_on 'Save and Continue'
         click_on 'Save and Continue'
 
@@ -539,7 +539,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
     end
   end
   context "order's address is outside the default included tax zone" do
-    context "so that no taxation applies to its product" do
+    context 'so that no taxation applies to its product' do
       before do
         usa = Spree::Country.find_by(name: 'United States of America')
         north_america_zone = create(:zone,
@@ -590,7 +590,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
         create(:product, name: 'Spree T-Shirt', price: 100, tax_category: default_tax_category)
       end
 
-      it "correctly displays other product taxless price which has been added to cart later" do
+      it 'correctly displays other product taxless price which has been added to cart later' do
         visit spree.root_path
 
         click_link 'Spree Bag'
@@ -704,20 +704,20 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
   end
 
   def fill_in_address
-    address = "order_bill_address_attributes"
-    fill_in "#{address}_firstname", with: "Ryan"
-    fill_in "#{address}_lastname", with: "Bigg"
-    fill_in "#{address}_address1", with: "143 Swan Street"
-    fill_in "#{address}_city", with: "Richmond"
+    address = 'order_bill_address_attributes'
+    fill_in "#{address}_firstname", with: 'Ryan'
+    fill_in "#{address}_lastname", with: 'Bigg'
+    fill_in "#{address}_address1", with: '143 Swan Street'
+    fill_in "#{address}_city", with: 'Richmond'
     select country.name, from: "#{address}_country_id"
     select state.name, from: "#{address}_state_id"
-    fill_in "#{address}_zipcode", with: "12345"
-    fill_in "#{address}_phone", with: "(555) 555-5555"
+    fill_in "#{address}_zipcode", with: '12345'
+    fill_in "#{address}_phone", with: '(555) 555-5555'
   end
 
   def add_mug_to_cart
     visit spree.root_path
     click_link mug.name
-    click_button "add-to-cart-button"
+    click_button 'add-to-cart-button'
   end
 end

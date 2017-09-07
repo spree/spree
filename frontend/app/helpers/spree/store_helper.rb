@@ -8,7 +8,7 @@ module Spree
         cache [I18n.locale, @taxons] do
       EOS
       max_updated_at = @taxons.maximum(:updated_at).to_i
-      parts = [@taxon.try(:id), max_updated_at].compact.join("-")
+      parts = [@taxon.try(:id), max_updated_at].compact.join('-')
       "#{I18n.locale}/taxons/#{parts}"
     end
   end

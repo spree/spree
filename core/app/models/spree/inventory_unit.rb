@@ -1,15 +1,15 @@
 module Spree
   class InventoryUnit < Spree::Base
     with_options inverse_of: :inventory_units do
-      belongs_to :variant, class_name: "Spree::Variant"
-      belongs_to :order, class_name: "Spree::Order"
-      belongs_to :shipment, class_name: "Spree::Shipment", touch: true, optional: true
-      belongs_to :return_authorization, class_name: "Spree::ReturnAuthorization"
-      belongs_to :line_item, class_name: "Spree::LineItem"
+      belongs_to :variant, class_name: 'Spree::Variant'
+      belongs_to :order, class_name: 'Spree::Order'
+      belongs_to :shipment, class_name: 'Spree::Shipment', touch: true, optional: true
+      belongs_to :return_authorization, class_name: 'Spree::ReturnAuthorization'
+      belongs_to :line_item, class_name: 'Spree::LineItem'
     end
 
     has_many :return_items, inverse_of: :inventory_unit
-    belongs_to :original_return_item, class_name: "Spree::ReturnItem"
+    belongs_to :original_return_item, class_name: 'Spree::ReturnItem'
 
     scope :backordered, -> { where state: 'backordered' }
     scope :on_hand, -> { where state: 'on_hand' }
@@ -21,7 +21,7 @@ module Spree
         where.not(spree_shipments: { state: 'canceled' }).
         where(variant_id: stock_item.variant_id).
         where.not(spree_orders: { completed_at: nil }).
-        backordered.order("spree_orders.completed_at ASC")
+        backordered.order('spree_orders.completed_at ASC')
     end
 
     validates :quantity, numericality: { greater_than: 0 }

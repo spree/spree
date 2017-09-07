@@ -378,12 +378,12 @@ module Spree
     end
 
     def manifest_restock(item)
-      if item.states["on_hand"].to_i.positive?
-        stock_location.restock item.variant, item.states["on_hand"], self
+      if item.states['on_hand'].to_i.positive?
+        stock_location.restock item.variant, item.states['on_hand'], self
       end
 
-      if item.states["backordered"].to_i.positive?
-        stock_location.restock_backordered item.variant, item.states["backordered"]
+      if item.states['backordered'].to_i.positive?
+        stock_location.restock_backordered item.variant, item.states['backordered']
       end
     end
 

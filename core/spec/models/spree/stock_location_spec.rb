@@ -10,53 +10,53 @@ module Spree
       expect(subject.stock_items.count).to eq Variant.count
     end
 
-    context "handling stock items" do
+    context 'handling stock items' do
       let!(:variant) { create(:variant) }
 
-      context "given a variant" do
-        subject { StockLocation.create(name: "testing", propagate_all_variants: false) }
+      context 'given a variant' do
+        subject { StockLocation.create(name: 'testing', propagate_all_variants: false) }
 
-        context "set up" do
-          it "creates stock item" do
+        context 'set up' do
+          it 'creates stock item' do
             expect(subject).to receive(:propagate_variant)
             subject.set_up_stock_item(variant)
           end
 
-          context "stock item exists" do
+          context 'stock item exists' do
             let!(:stock_item) { subject.propagate_variant(variant) }
 
-            it "returns existing stock item" do
+            it 'returns existing stock item' do
               expect(subject.set_up_stock_item(variant)).to eq(stock_item)
             end
           end
         end
 
-        context "propagate variants" do
+        context 'propagate variants' do
           let(:stock_item) { subject.propagate_variant(variant) }
 
-          it "creates a new stock item" do
+          it 'creates a new stock item' do
             expect {
               subject.propagate_variant(variant)
             }.to change{ StockItem.count }.by(1)
           end
 
-          context "passes backorderable default config" do
-            context "true" do
+          context 'passes backorderable default config' do
+            context 'true' do
               before { subject.backorderable_default = true }
               it { expect(stock_item.backorderable).to be true }
             end
 
-            context "false" do
+            context 'false' do
               before { subject.backorderable_default = false }
               it { expect(stock_item.backorderable).to be false }
             end
           end
         end
 
-        context "propagate all variants" do
-          subject { StockLocation.new(name: "testing") }
+        context 'propagate all variants' do
+          subject { StockLocation.new(name: 'testing') }
 
-          context "true" do
+          context 'true' do
             before { subject.propagate_all_variants = true }
 
             specify do
@@ -65,7 +65,7 @@ module Spree
             end
           end
 
-          context "false" do
+          context 'false' do
             before { subject.propagate_all_variants = false }
 
             specify do
@@ -222,19 +222,19 @@ module Spree
 
     context '#state_text' do
       context 'state is blank' do
-        subject { StockLocation.create(name: "testing", state: nil, state_name: 'virginia') }
+        subject { StockLocation.create(name: 'testing', state: nil, state_name: 'virginia') }
         specify { expect(subject.state_text).to eq('virginia') }
       end
 
       context 'both name and abbr is present' do
         let(:state) { stub_model(Spree::State, name: 'virginia', abbr: 'va') }
-        subject { StockLocation.create(name: "testing", state: state, state_name: nil) }
+        subject { StockLocation.create(name: 'testing', state: state, state_name: nil) }
         specify { expect(subject.state_text).to eq('va') }
       end
 
       context 'only name is present' do
         let(:state) { stub_model(Spree::State, name: 'virginia', abbr: nil) }
-        subject { StockLocation.create(name: "testing", state: state, state_name: nil) }
+        subject { StockLocation.create(name: 'testing', state: state, state_name: nil) }
         specify { expect(subject.state_text).to eq('virginia') }
       end
     end

@@ -53,7 +53,7 @@ module Spree
     end
 
     def insufficient_payment?
-      params[:state] == "confirm" &&
+      params[:state] == 'confirm' &&
         @order.payment_required? &&
         @order.payments.valid.sum(:amount) != @order.total
     end
@@ -150,7 +150,7 @@ module Spree
     end
 
     def before_payment
-      if @order.checkout_steps.include? "delivery"
+      if @order.checkout_steps.include? 'delivery'
         packages = @order.shipments.map(&:to_package)
         @differentiator = Spree::Stock::Differentiator.new(@order, packages)
         @differentiator.missing.each do |variant, quantity|

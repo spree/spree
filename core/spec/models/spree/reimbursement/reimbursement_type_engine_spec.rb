@@ -20,8 +20,8 @@ module Spree
 
       subject { reimbursement_type_engine.calculate_reimbursement_types }
 
-      shared_examples_for "reimbursement type hash" do
-        it "contain all keys that respond to reimburse" do
+      shared_examples_for 'reimbursement type hash' do
+        it 'contain all keys that respond to reimburse' do
           calculated_reimbursement_types.keys.each do |r_type|
             expect(r_type).to respond_to :reimburse
           end

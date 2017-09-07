@@ -95,9 +95,9 @@ module Spree
       end
 
       def set_permalink_params
-        if params.key? "permalink_part"
-          parent_permalink = @taxon.permalink.split("/")[0...-1].join("/")
-          parent_permalink += "/" unless parent_permalink.blank?
+        if params.key? 'permalink_part'
+          parent_permalink = @taxon.permalink.split('/')[0...-1].join('/')
+          parent_permalink += '/' unless parent_permalink.blank?
           params[:taxon][:permalink] = parent_permalink + params[:permalink_part]
         end
       end

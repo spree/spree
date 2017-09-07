@@ -184,7 +184,7 @@ module Spree
               checkout_steps << step
             end).map(&:to_s)
             # Ensure there is always a complete step
-            steps << "complete" unless steps.include?("complete")
+            steps << 'complete' unless steps.include?('complete')
             steps
           end
 
@@ -253,7 +253,7 @@ module Spree
               clone_billing
               # Skip setting ship address if order doesn't have a delivery checkout step
               # to avoid triggering validations on shipping address
-              clone_shipping if checkout_steps.include?("delivery")
+              clone_shipping if checkout_steps.include?('delivery')
             end
           end
 

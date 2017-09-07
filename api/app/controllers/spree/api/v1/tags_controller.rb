@@ -5,7 +5,7 @@ module Spree
         def index
           @tags =
             if params[:ids]
-              Tag.where(id: params[:ids].split(",").flatten)
+              Tag.where(id: params[:ids].split(',').flatten)
             else
               Tag.ransack(params[:q]).result
             end

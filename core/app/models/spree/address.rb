@@ -10,8 +10,8 @@ module Spree
       'TO', 'TV', 'UG', 'AE', 'VU', 'YE', 'ZW'
     ].freeze
 
-    belongs_to :country, class_name: "Spree::Country"
-    belongs_to :state, class_name: "Spree::State", optional: true
+    belongs_to :country, class_name: 'Spree::Country'
+    belongs_to :state, class_name: 'Spree::State', optional: true
 
     has_many :shipments, inverse_of: :address
 
@@ -35,7 +35,7 @@ module Spree
       new(country: country)
     end
 
-    def self.default(user = nil, kind = "bill")
+    def self.default(user = nil, kind = 'bill')
       if user && user_address = user.public_send(:"#{kind}_address")
         user_address.clone
       else

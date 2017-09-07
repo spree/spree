@@ -2,8 +2,8 @@
 require 'spec_helper'
 
 describe Spree::Admin::StockMovementsHelper, type: :helper do
-  describe "#pretty_originator" do
-    context "transfering between two locations" do
+  describe '#pretty_originator' do
+    context 'transfering between two locations' do
       let(:destination_location) { create(:stock_location_with_items) }
       let(:source_location) { create(:stock_location_with_items) }
       let(:stock_item) { source_location.stock_items.order(:id).first }
@@ -19,7 +19,7 @@ describe Spree::Admin::StockMovementsHelper, type: :helper do
       end
 
 
-      it "returns link to stock transfer" do
+      it 'returns link to stock transfer' do
         expect(helper.pretty_originator(@stock_transfer.stock_movements.last)).to eq @stock_transfer.number
       end
     end

@@ -110,12 +110,12 @@ module Spree::Preferences::Preferable
       value.is_a?(Array) ? value : Array.wrap(value)
     when :hash
       case value.class.to_s
-      when "Hash"
+      when 'Hash'
         value
-      when "String"
+      when 'String'
         # only works with hashes whose keys are strings
         JSON.parse value.gsub('=>', ':')
-      when "Array"
+      when 'Array'
         begin
           value.try(:to_h)
         rescue TypeError

@@ -12,11 +12,11 @@ class OrderSpecificAbility
 end
 
 describe Spree::Admin::OrdersController, type: :controller do
-  context "with authorization" do
+  context 'with authorization' do
     stub_authorization!
 
     before do
-      request.env["HTTP_REFERER"] = "http://localhost:3000"
+      request.env['HTTP_REFERER'] = 'http://localhost:3000'
 
       # ensure no respond_overrides are in effect
       if Spree::BaseController.spree_responders[:OrdersController].present?
@@ -42,32 +42,32 @@ describe Spree::Admin::OrdersController, type: :controller do
       allow(Spree::Order).to receive_message_chain(:includes, find_by!: order)
     end
 
-    context "#approve" do
-      it "approves an order" do
+    context '#approve' do
+      it 'approves an order' do
         expect(order).to receive(:approved_by).with(controller.try_spree_current_user)
         spree_put :approve, id: order.number
         expect(flash[:success]).to eq Spree.t(:order_approved)
       end
     end
 
-    context "#cancel" do
-      it "cancels an order" do
+    context '#cancel' do
+      it 'cancels an order' do
         expect(order).to receive(:canceled_by).with(controller.try_spree_current_user)
         spree_put :cancel, id: order.number
         expect(flash[:success]).to eq Spree.t(:order_canceled)
       end
     end
 
-    context "#resume" do
-      it "resumes an order" do
+    context '#resume' do
+      it 'resumes an order' do
         expect(order).to receive(:resume!)
         spree_put :resume, id: order.number
         expect(flash[:success]).to eq Spree.t(:order_resumed)
       end
     end
 
-    context "pagination" do
-      it "can page through the orders" do
+    context 'pagination' do
+      it 'can page through the orders' do
         spree_get :index, page: 2, per_page: 10
         expect(assigns[:orders].offset_value).to eq(10)
         expect(assigns[:orders].limit_value).to eq(10)
@@ -75,15 +75,15 @@ describe Spree::Admin::OrdersController, type: :controller do
     end
 
     # Test for #3346
-    context "#new" do
-      it "a new order has the current user assigned as a creator" do
+    context '#new' do
+      it 'a new order has the current user assigned as a creator' do
         spree_get :new
         expect(assigns[:order].created_by).to eq(controller.try_spree_current_user)
       end
     end
 
     # Regression test for #3684
-    describe "#edit" do
+    describe '#edit' do
       before do
         allow(controller).to receive(:can_not_transition_without_customer_info)
       end
@@ -94,7 +94,7 @@ describe Spree::Admin::OrdersController, type: :controller do
 
       it { expect(controller).to receive(:can_not_transition_without_customer_info) }
 
-      context "when order is not completed" do
+      context 'when order is not completed' do
         before do
           allow(order).to receive(:completed?).and_return(false)
           allow(order).to receive(:refresh_shipment_rates).with(display_value).and_return(true)
@@ -104,7 +104,7 @@ describe Spree::Admin::OrdersController, type: :controller do
         it { expect(order).to receive(:refresh_shipment_rates).with(display_value).and_return(true) }
       end
 
-      context "when order is completed" do
+      context 'when order is completed' do
         before do
           allow(order).to receive(:completed?).and_return(true)
         end
@@ -113,90 +113,90 @@ describe Spree::Admin::OrdersController, type: :controller do
       end
     end
 
-    describe "#cart" do
+    describe '#cart' do
       def send_request
         spree_get :cart, id: order.number
       end
 
-      context "when order is not completed" do
+      context 'when order is not completed' do
         before do
           allow(order).to receive(:completed?).and_return(false)
           allow(order).to receive(:refresh_shipment_rates).with(display_value).and_return(true)
         end
 
-        context "when order has shipped shipments" do
+        context 'when order has shipped shipments' do
           before do
             allow(order).to receive_message_chain(:shipments, :shipped, :exists?).and_return(true)
             allow(controller).to receive_message_chain(:shipments, :shipped, :exists?).and_return(true)
           end
 
-          describe "expects to receive" do
+          describe 'expects to receive' do
             it { expect(order).to receive(:completed?).and_return(false) }
             it { expect(order).to receive(:refresh_shipment_rates).with(display_value).and_return(true) }
             it { expect(order).to receive_message_chain(:shipments, :shipped, :exists?).and_return(true) }
             after { send_request }
           end
 
-          describe "response" do
+          describe 'response' do
             before { send_request }
             it { expect(response).to be_redirect }
             it { expect(response).to redirect_to(edit_admin_order_url(order)) }
           end
         end
 
-        context "when order has no shipped shipments" do
+        context 'when order has no shipped shipments' do
           before do
             allow(order).to receive_message_chain(:shipments, :shipped, :exists?).and_return(false)
           end
 
-          describe "expects to receive" do
+          describe 'expects to receive' do
             it { expect(order).to receive(:completed?).and_return(false) }
             it { expect(order).to receive(:refresh_shipment_rates).with(display_value).and_return(true) }
             it { expect(order).to receive_message_chain(:shipments, :shipped, :exists?).and_return(false) }
             after { send_request }
           end
 
-          describe "response" do
+          describe 'response' do
             before { send_request }
             it { expect(response).to render_template :cart }
           end
         end
       end
 
-      context "when order is completed" do
+      context 'when order is completed' do
         before do
           allow(order).to receive(:completed?).and_return(true)
         end
 
-        context "when order has shipped shipments" do
+        context 'when order has shipped shipments' do
           before do
             allow(order).to receive_message_chain(:shipments, :shipped, :exists?).and_return(true)
             allow(controller).to receive_message_chain(:shipments, :shipped, :exists?).and_return(true)
           end
 
-          describe "expects to receive" do
+          describe 'expects to receive' do
             it { expect(order).to receive_message_chain(:shipments, :shipped, :exists?).and_return(true) }
             after { send_request }
           end
 
-          describe "response" do
+          describe 'response' do
             before { send_request }
             it { expect(response).to be_redirect }
             it { expect(response).to redirect_to(edit_admin_order_url(order)) }
           end
         end
 
-        context "when order has no shipped shipments" do
+        context 'when order has no shipped shipments' do
           before do
             allow(order).to receive_message_chain(:shipments, :shipped, :exists?).and_return(false)
           end
 
-          describe "expects to receive" do
+          describe 'expects to receive' do
             it { expect(order).to receive_message_chain(:shipments, :shipped, :exists?).and_return(false) }
             after { send_request }
           end
 
-          describe "response" do
+          describe 'response' do
             before { send_request }
             it { expect(response).to render_template :cart }
           end
@@ -205,7 +205,7 @@ describe Spree::Admin::OrdersController, type: :controller do
     end
 
     # Test for #3919
-    context "search" do
+    context 'search' do
       let(:user) { create(:user) }
 
       before do
@@ -233,7 +233,7 @@ describe Spree::Admin::OrdersController, type: :controller do
       end
     end
 
-    context "#open_adjustments" do
+    context '#open_adjustments' do
       let(:closed) { double('closed_adjustments') }
 
       before do
@@ -241,13 +241,13 @@ describe Spree::Admin::OrdersController, type: :controller do
         allow(closed).to receive(:update_all)
       end
 
-      it "changes all the closed adjustments to open" do
+      it 'changes all the closed adjustments to open' do
         expect(adjustments).to receive(:closed).and_return(closed)
         expect(closed).to receive(:update_all).with(state: 'open')
         spree_post :open_adjustments, id: order.number
       end
 
-      it "sets the flash success message" do
+      it 'sets the flash success message' do
         spree_post :open_adjustments, id: order.number
         expect(flash[:success]).to eql('All adjustments successfully opened!')
       end
@@ -257,7 +257,7 @@ describe Spree::Admin::OrdersController, type: :controller do
           request.env['HTTP_REFERER'] = '/'
         end
 
-        it "redirects back" do
+        it 'redirects back' do
           spree_post :open_adjustments, id: order.number
           expect(response).to redirect_to('/')
         end
@@ -275,7 +275,7 @@ describe Spree::Admin::OrdersController, type: :controller do
       end
     end
 
-    context "#close_adjustments" do
+    context '#close_adjustments' do
       let(:open) { double('open_adjustments') }
 
       before do
@@ -283,13 +283,13 @@ describe Spree::Admin::OrdersController, type: :controller do
         allow(open).to receive(:update_all)
       end
 
-      it "changes all the open adjustments to closed" do
+      it 'changes all the open adjustments to closed' do
         expect(adjustments).to receive(:open).and_return(open)
         expect(open).to receive(:update_all).with(state: 'closed')
         spree_post :close_adjustments, id: order.number
       end
 
-      it "sets the flash success message" do
+      it 'sets the flash success message' do
         spree_post :close_adjustments, id: order.number
         expect(flash[:success]).to eql('All adjustments successfully closed!')
       end
@@ -299,7 +299,7 @@ describe Spree::Admin::OrdersController, type: :controller do
           request.env['HTTP_REFERER'] = '/'
         end
 
-        it "redirects back" do
+        it 'redirects back' do
           spree_post :close_adjustments, id: order.number
           expect(response).to redirect_to('/')
         end
@@ -389,10 +389,10 @@ describe Spree::Admin::OrdersController, type: :controller do
     end
   end
 
-  context "order number not given" do
+  context 'order number not given' do
     stub_authorization!
 
-    it "raise active record not found" do
+    it 'raise active record not found' do
       expect {
         spree_get :edit, id: 99999999
       }.to raise_error ActiveRecord::RecordNotFound

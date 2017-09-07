@@ -7,11 +7,11 @@ module Spree
         self.instance_variable_set "@#{name}", Set.new
 
         create_method( "#{name}=".to_sym ) { |val|
-          instance_variable_set( "@" + name, val)
+          instance_variable_set( '@' + name, val)
         }
 
         create_method(name.to_sym) do
-          instance_variable_get( "@" + name )
+          instance_variable_get( '@' + name )
         end
       end
 

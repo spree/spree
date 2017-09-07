@@ -6,9 +6,9 @@ module Spree
     include Spree::AdjustmentSource
 
     with_options inverse_of: :tax_rates do
-      belongs_to :zone, class_name: "Spree::Zone", optional: true
+      belongs_to :zone, class_name: 'Spree::Zone', optional: true
       belongs_to :tax_category,
-                 class_name: "Spree::TaxCategory"
+                 class_name: 'Spree::TaxCategory'
     end
 
     with_options presence: true do
@@ -100,14 +100,14 @@ module Spree
 
     def label
       Spree.t included_in_price? ? :including_tax : :excluding_tax,
-              scope: "adjustment_labels.tax_rates",
+              scope: 'adjustment_labels.tax_rates',
               name: name.presence || tax_category.name,
               amount: amount_for_label
     end
 
     def amount_for_label
-      return "" unless show_rate_in_label?
-      " " + ActiveSupport::NumberHelper::NumberToPercentageConverter.convert(
+      return '' unless show_rate_in_label?
+      ' ' + ActiveSupport::NumberHelper::NumberToPercentageConverter.convert(
         amount * 100,
         locale: I18n.locale
       )

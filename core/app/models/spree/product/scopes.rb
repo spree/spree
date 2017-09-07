@@ -21,7 +21,7 @@ module Spree
     def self.add_simple_scopes(scopes)
       scopes.each do |name|
         # We should not define price scopes here, as they require something slightly different
-        next if name.to_s.include?("master_price")
+        next if name.to_s.include?('master_price')
         parts = name.to_s.match(/(.*)_by_(.*)/)
         self.scope(name.to_s, -> { order("#{Product.quoted_table_name}.#{parts[2]} #{parts[1] == 'ascend' ? "ASC" : "DESC"}") })
       end
@@ -77,8 +77,8 @@ module Spree
     #   SELECT COUNT(*) ...
     add_search_scope :in_taxon do |taxon|
       includes(:classifications).
-      where("spree_products_taxons.taxon_id" => taxon.self_and_descendants.pluck(:id)).
-      order("spree_products_taxons.position ASC")
+      where('spree_products_taxons.taxon_id' => taxon.self_and_descendants.pluck(:id)).
+      order('spree_products_taxons.position ASC')
     end
 
     # This scope selects products in all taxons AND all its descendants
@@ -207,11 +207,11 @@ module Spree
     search_scopes << :active
 
     add_search_scope :taxons_name_eq do |name|
-      group("spree_products.id").joins(:taxons).where(Taxon.arel_table[:name].eq(name))
+      group('spree_products.id').joins(:taxons).where(Taxon.arel_table[:name].eq(name))
     end
 
     def self.distinct_by_product_ids(sort_order = nil)
-      sort_column = sort_order.split(" ").first
+      sort_column = sort_order.split(' ').first
 
       # Postgres will complain when using ordering by expressions not present in
       # SELECT DISTINCT. e.g.

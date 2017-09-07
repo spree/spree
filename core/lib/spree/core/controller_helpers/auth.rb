@@ -20,8 +20,8 @@ module Spree
         end
 
         def redirect_back_or_default(default)
-          redirect_to(session["spree_user_return_to"] || request.env["HTTP_REFERER"] || default)
-          session["spree_user_return_to"] = nil
+          redirect_to(session['spree_user_return_to'] || request.env['HTTP_REFERER'] || default)
+          session['spree_user_return_to'] = nil
         end
 
         def set_guest_token

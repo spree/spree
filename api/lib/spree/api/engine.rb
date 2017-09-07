@@ -17,7 +17,7 @@ module Spree
         config.json_engine = ActiveSupport::JSON
       end
 
-      initializer "spree.api.versioncake" do |_app|
+      initializer 'spree.api.versioncake' do |_app|
         VersionCake.setup do |config|
           config.resources do |r|
             r.resource %r{.*}, [], [], [1]
@@ -28,12 +28,12 @@ module Spree
         end
       end
 
-      initializer "spree.api.environment", before: :load_config_initializers do |app|
+      initializer 'spree.api.environment', before: :load_config_initializers do |app|
         Spree::Api::Config = Spree::ApiConfiguration.new
       end
 
       def self.activate
-        Dir.glob(File.join(File.dirname(__FILE__), "../../../app/**/*_decorator*.rb")) do |c|
+        Dir.glob(File.join(File.dirname(__FILE__), '../../../app/**/*_decorator*.rb')) do |c|
           Rails.configuration.cache_classes ? require(c) : load(c)
         end
       end

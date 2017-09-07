@@ -17,7 +17,7 @@ module Spree
       has_many :promotion_rule_users, class_name: 'Spree::PromotionRuleUser', foreign_key: :user_id, dependent: :destroy
       has_many :promotion_rules, through: :promotion_rule_users, class_name: 'Spree::PromotionRule'
 
-      has_many :orders, foreign_key: :user_id, class_name: "Spree::Order"
+      has_many :orders, foreign_key: :user_id, class_name: 'Spree::Order'
       has_many :store_credits, foreign_key: :user_id, class_name: 'Spree::StoreCredit'
 
       belongs_to :ship_address, class_name: 'Spree::Address', optional: true

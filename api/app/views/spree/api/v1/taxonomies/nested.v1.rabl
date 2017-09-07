@@ -6,6 +6,6 @@ child root: :root do
   child children: :taxons do
     attributes *taxon_attributes
 
-    extends "spree/api/v1/taxons/taxons"
+    extends 'spree/api/v1/taxons/taxons'
   end
 end

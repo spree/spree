@@ -12,17 +12,17 @@ module Spree
 
     before { reimbursement.update!(total: reimbursement.calculated_total) }
 
-    describe ".reimburse" do
-      context "simulate is true" do
+    describe '.reimburse' do
+      context 'simulate is true' do
         let(:simulate) { true }
 
-        it "returns an array of readonly refunds" do
+        it 'returns an array of readonly refunds' do
           expect(subject.map(&:class)).to eq [Spree::Refund]
           expect(subject.map(&:readonly?)).to eq [true]
         end
       end
 
-      context "simulate is false" do
+      context 'simulate is false' do
         it 'performs the refund' do
           expect {
             subject

@@ -1,11 +1,11 @@
 require 'spec_helper'
 
 describe Spree::Store, type: :model do
-  describe ".by_url" do
+  describe '.by_url' do
     let!(:store)    { create(:store, url: "website1.com\nwww.subdomain.com") }
     let!(:store_2)  { create(:store, url: 'freethewhales.com') }
 
-    it "should find stores by url" do
+    it 'should find stores by url' do
       by_domain = Spree::Store.by_url('www.subdomain.com')
 
       expect(by_domain).to include(store)

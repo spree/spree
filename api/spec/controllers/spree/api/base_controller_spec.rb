@@ -7,7 +7,7 @@ describe Spree::Api::BaseController, type: :controller do
   render_views
   controller(Spree::Api::BaseController) do
     def index
-      render plain: { "products" => [] }.to_json
+      render plain: { 'products' => [] }.to_json
     end
   end
 
@@ -17,46 +17,46 @@ describe Spree::Api::BaseController, type: :controller do
     end
   end
 
-  context "when validating based on an order token" do
+  context 'when validating based on an order token' do
     let!(:order) { create :order }
 
-    context "with a correct order token" do
-      it "succeeds" do
+    context 'with a correct order token' do
+      it 'succeeds' do
         api_get :index, order_token: order.guest_token, order_id: order.number
         expect(response.status).to eq(200)
       end
 
-      it "succeeds with an order_number parameter" do
+      it 'succeeds with an order_number parameter' do
         api_get :index, order_token: order.guest_token, order_number: order.number
         expect(response.status).to eq(200)
       end
     end
 
-    context "with an incorrect order token" do
-      it "returns unauthorized" do
-        api_get :index, order_token: "NOT_A_TOKEN", order_id: order.number
+    context 'with an incorrect order token' do
+      it 'returns unauthorized' do
+        api_get :index, order_token: 'NOT_A_TOKEN', order_id: order.number
         expect(response.status).to eq(401)
       end
     end
   end
 
-  context "cannot make a request to the API" do
-    it "without an API key" do
+  context 'cannot make a request to the API' do
+    it 'without an API key' do
       api_get :index
-      expect(json_response).to eq({ "error" => "You must specify an API key." })
+      expect(json_response).to eq({ 'error' => 'You must specify an API key.' })
       expect(response.status).to eq(401)
     end
 
-    it "with an invalid API key" do
-      request.headers["X-Spree-Token"] = "fake_key"
+    it 'with an invalid API key' do
+      request.headers['X-Spree-Token'] = 'fake_key'
       get :index
-      expect(json_response).to eq({ "error" => "Invalid API key (fake_key) specified." })
+      expect(json_response).to eq({ 'error' => 'Invalid API key (fake_key) specified.' })
       expect(response.status).to eq(401)
     end
 
-    it "using an invalid token param" do
-      get :index, params: { token: "fake_key" }
-      expect(json_response).to eq({ "error" => "Invalid API key (fake_key) specified." })
+    it 'using an invalid token param' do
+      get :index, params: { token: 'fake_key' }
+      expect(json_response).to eq({ 'error' => 'Invalid API key (fake_key) specified.' })
     end
   end
 
@@ -78,7 +78,7 @@ describe Spree::Api::BaseController, type: :controller do
     expect(json_response).to eql('exception' => "Validation failed: Name can't be blank, Shipping Category can't be blank, Price can't be blank")
   end
 
-  it "lets a subclass override the product associations that are eager-loaded" do
+  it 'lets a subclass override the product associations that are eager-loaded' do
     expect(controller.respond_to?(:product_includes, true)).to be
   end
 end

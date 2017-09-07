@@ -5,7 +5,7 @@ module Spree
 
         def index
           if params[:ids]
-            @products = product_scope.where(id: params[:ids].split(",").flatten)
+            @products = product_scope.where(id: params[:ids].split(',').flatten)
           else
             @products = product_scope.ransack(params[:q]).result(distinct: true).select("#{Spree::Product.table_name}.id AS count_column, #{Spree::Product.table_name}.*")
           end
@@ -20,7 +20,7 @@ module Spree
           @product = find_product(params[:id])
           expires_in 15.minutes, public: true
           headers['Surrogate-Control'] = "max-age=#{15.minutes}"
-          headers['Surrogate-Key'] = "product_id=1"
+          headers['Surrogate-Key'] = 'product_id=1'
           respond_with(@product)
         end
 

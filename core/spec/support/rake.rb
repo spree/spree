@@ -1,6 +1,6 @@
-require "rake"
+require 'rake'
 
-shared_context "rake" do
+shared_context 'rake' do
   let(:task_name) { self.class.top_level_description }
   let(:task_path) { "lib/tasks/#{task_name.split(":").first}" }
   subject         { Rake::Task[task_name] }

@@ -53,7 +53,7 @@ module Spree
           order.create_tax_charge!
           order.update_with_updater!
         rescue ActiveRecord::RecordInvalid => e
-          error = e.record.errors.full_messages.join(", ")
+          error = e.record.errors.full_messages.join(', ')
         end
       else
         error = Spree.t(:please_enter_reasonable_quantity)

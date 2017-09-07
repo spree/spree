@@ -17,7 +17,7 @@ module Spree
         end
 
         def api_behavior
-          if controller.params[:action] == "destroy"
+          if controller.params[:action] == 'destroy'
             # Render a blank template
             super
           else

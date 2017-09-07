@@ -1,7 +1,7 @@
 module Spree
   class Promotion < Spree::Base
     MATCH_POLICIES = %w(all any)
-    UNACTIVATABLE_ORDER_STATES = ["complete", "awaiting_return", "returned"]
+    UNACTIVATABLE_ORDER_STATES = ['complete', 'awaiting_return', 'returned']
 
     attr_reader :eligibility_errors
 
@@ -149,7 +149,7 @@ module Spree
     end
 
     def products
-      rules.where(type: "Spree::Promotion::Rules::Product").map(&:products).flatten.uniq
+      rules.where(type: 'Spree::Promotion::Rules::Product').map(&:products).flatten.uniq
     end
 
     def usage_limit_exceeded?(promotable)
