@@ -106,7 +106,7 @@ describe Spree::Preferences::Preferable, type: :model do
     end
 
     it 'builds a hash of preference defaults' do
-      expect(@b.default_preferences).to eq(        flavor: nil,
+      expect(@b.default_preferences).to eq(flavor: nil,
         color: 'green')
     end
 

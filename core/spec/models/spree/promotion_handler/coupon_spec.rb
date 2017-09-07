@@ -165,7 +165,7 @@ module Spree
             let(:calculator) { Calculator::FlatRate.new(preferred_amount: 10) }
 
             before do
-              allow(order).to receive_messages(                coupon_code: '10off',
+              allow(order).to receive_messages(coupon_code: '10off',
                 # These need to be here so that promotion adjustment "wins"
                 item_total: 50,
                 ship_total: 10)
@@ -212,7 +212,7 @@ module Spree
 
               it 'notifies of better deal' do
                 subject.apply
-                allow(order).to receive_messages( coupon_code: '5off' )
+                allow(order).to receive_messages(coupon_code: '5off')
                 coupon = Coupon.new(order).apply
                 expect(coupon.error).to eq Spree.t(:coupon_code_better_exists)
               end

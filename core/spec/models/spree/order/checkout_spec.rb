@@ -657,12 +657,12 @@ describe Spree::Order, type: :model do
 
     it 'calls update_atributes without order params' do
       expect(order).to receive(:update_attributes).with({})
-      order.update_from_params( params, permitted_params)
+      order.update_from_params(params, permitted_params)
     end
 
     it 'runs the callbacks' do
       expect(order).to receive(:run_callbacks).with(:updating_from_params)
-      order.update_from_params( params, permitted_params)
+      order.update_from_params(params, permitted_params)
     end
 
     context 'passing a credit card' do
@@ -721,7 +721,7 @@ describe Spree::Order, type: :model do
 
     context 'has params' do
       let(:permitted_params) { [ :good_param ] }
-      let(:params) { ActionController::Parameters.new(order: { bad_param: 'okay' } ) }
+      let(:params) { ActionController::Parameters.new(order: { bad_param: 'okay' }) }
 
       it 'does not let through unpermitted attributes' do
         expect(order).to receive(:update_attributes).with(ActionController::Parameters.new.permit!)
@@ -757,7 +757,7 @@ describe Spree::Order, type: :model do
       end
 
       context 'has allowed params' do
-        let(:params) { ActionController::Parameters.new(order: { good_param: 'okay' } ) }
+        let(:params) { ActionController::Parameters.new(order: { good_param: 'okay' }) }
 
         it 'accepts permitted attributes' do
           expect(order).to receive(:assign_attributes).with(ActionController::Parameters.new('good_param' => 'okay').permit!)

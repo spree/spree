@@ -502,21 +502,21 @@ describe Spree::Order, type: :model do
   # Regression test for #4199
   context '#available_payment_methods' do
     it 'includes frontend payment methods' do
-      payment_method = Spree::PaymentMethod.create!(        name: 'Fake',
+      payment_method = Spree::PaymentMethod.create!(name: 'Fake',
         active: true,
         display_on: 'front_end')
       expect(order.available_payment_methods).to include(payment_method)
     end
 
     it "includes 'both' payment methods" do
-      payment_method = Spree::PaymentMethod.create!(        name: 'Fake',
+      payment_method = Spree::PaymentMethod.create!(name: 'Fake',
         active: true,
         display_on: 'both')
       expect(order.available_payment_methods).to include(payment_method)
     end
 
     it 'does not include a payment method twice if display_on is blank' do
-      payment_method = Spree::PaymentMethod.create!(        name: 'Fake',
+      payment_method = Spree::PaymentMethod.create!(name: 'Fake',
         active: true,
         display_on: 'both')
       expect(order.available_payment_methods.count).to eq(1)

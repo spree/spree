@@ -18,7 +18,7 @@ module Spree
 
       line_items_total = matched_line_items.sum(&:total)
       if rate.included_in_price
-        round_to_two_places(line_items_total - ( line_items_total / (1 + rate.amount) ) )
+        round_to_two_places(line_items_total - (line_items_total / (1 + rate.amount)))
       else
         round_to_two_places(line_items_total * rate.amount)
       end

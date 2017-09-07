@@ -49,7 +49,7 @@ module Spree
         meta[:description] = truncate(strip_tags(object.description), length: 160, separator: ' ')
       end
 
-      meta.reverse_merge!(        keywords: current_store.meta_keywords,
+      meta.reverse_merge!(keywords: current_store.meta_keywords,
         description: current_store.meta_description) if meta[:keywords].blank? || meta[:description].blank?
       meta
     end

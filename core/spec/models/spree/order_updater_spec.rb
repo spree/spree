@@ -34,7 +34,7 @@ module Spree
         let(:calculator) { Calculator::FlatPercentItemTotal.new(preferred_flat_percent: 10) }
 
         let(:promotion_action) do
-          Promotion::Actions::CreateAdjustment.create!(            calculator: calculator,
+          Promotion::Actions::CreateAdjustment.create!(calculator: calculator,
             promotion: promotion)
         end
 
@@ -53,7 +53,7 @@ module Spree
       it 'update order adjustments' do
         # A line item will not have both additional and included tax,
         # so please just humour me for now.
-        order.line_items.first.update_columns(          adjustment_total: 10.05,
+        order.line_items.first.update_columns(adjustment_total: 10.05,
           additional_tax_total: 0.05,
           included_tax_total: 0.05)
         updater.update_adjustment_total
