@@ -15,7 +15,7 @@ shared_context 'product prototype' do
 
   let(:prototype) do
     size = build_option_type_with_values('size', %w(Small Medium Large))
-    FactoryGirl.create(:prototype, name: 'Size', option_types: [ size ])
+    FactoryGirl.create(:prototype, name: 'Size', option_types: [size])
   end
 
   let(:option_values_hash) do

@@ -720,7 +720,7 @@ describe Spree::Order, type: :model do
     end
 
     context 'has params' do
-      let(:permitted_params) { [ :good_param ] }
+      let(:permitted_params) { [:good_param] }
       let(:params) { ActionController::Parameters.new(order: { bad_param: 'okay' }) }
 
       it 'does not let through unpermitted attributes' do

@@ -18,7 +18,7 @@ describe Spree::ShippingMethod, type: :model do
         DummyShippingCalculator # included as regression test for https://github.com/spree/spree/issues/3109
       ])
 
-      expect(Spree::ShippingMethod.calculators).to eq([Spree::Calculator::Shipping::FlatPercentItemTotal, Spree::Calculator::Shipping::PriceSack, DummyShippingCalculator ])
+      expect(Spree::ShippingMethod.calculators).to eq([Spree::Calculator::Shipping::FlatPercentItemTotal, Spree::Calculator::Shipping::PriceSack, DummyShippingCalculator])
       expect(Spree::ShippingMethod.calculators).not_to eq([Spree::Calculator::DefaultTax])
     end
   end

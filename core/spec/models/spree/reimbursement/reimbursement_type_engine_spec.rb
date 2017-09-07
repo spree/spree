@@ -4,7 +4,7 @@ module Spree
   describe Reimbursement::ReimbursementTypeEngine, type: :model do
     describe '#calculate_reimbursement_types' do
       let(:return_item)   { create(:return_item) }
-      let(:return_items)  { [ return_item ] }
+      let(:return_items)  { [return_item] }
       let(:reimbursement_type_engine) { Spree::Reimbursement::ReimbursementTypeEngine.new(return_items) }
       let(:expired_reimbursement_type) { Spree::ReimbursementType::OriginalPayment }
       let(:override_reimbursement_type) { Spree::ReimbursementType::OriginalPayment.new }

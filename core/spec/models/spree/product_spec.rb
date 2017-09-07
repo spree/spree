@@ -396,7 +396,7 @@ describe Spree::Product, type: :model do
 
       let(:prototype) do
         size = build_option_type_with_values('size', %w(Small Medium Large))
-        create(:prototype, name: 'Size', option_types: [ size ])
+        create(:prototype, name: 'Size', option_types: [size])
       end
 
       let(:option_values_hash) do

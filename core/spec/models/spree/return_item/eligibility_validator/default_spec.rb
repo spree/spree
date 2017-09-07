@@ -14,7 +14,7 @@ describe Spree::ReturnItem::EligibilityValidator::Default, type: :model do
   let(:rma_error)  { {} }
 
   before do
-    validator.permitted_eligibility_validators = [ time_eligibility_class, rma_eligibility_class ]
+    validator.permitted_eligibility_validators = [time_eligibility_class, rma_eligibility_class]
 
     expect(time_eligibility_class).to receive(:new).and_return(time_eligibility_instance)
     expect(rma_eligibility_class).to receive(:new).and_return(rma_eligibility_instance)
