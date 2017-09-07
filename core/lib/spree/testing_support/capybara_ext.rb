@@ -34,7 +34,7 @@ module CapybaraExt
 
   def select2_search(value, options)
     label = find_label_by_text(options[:from])
-    within label.first(:xpath,'.//..') do
+    within label.first(:xpath, './/..') do
       options[:from] = "##{find(".select2-container")["id"]}"
     end
     targetted_select2_search(value, options)
@@ -49,7 +49,7 @@ module CapybaraExt
   def select2(value, options)
     label = find_label_by_text(options[:from])
 
-    within label.first(:xpath,'.//..') do
+    within label.first(:xpath, './/..') do
       options[:from] = "##{find(".select2-container")["id"]}"
     end
     targetted_select2(value, options)

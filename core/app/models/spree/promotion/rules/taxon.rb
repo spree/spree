@@ -49,7 +49,7 @@ module Spree
 
         # ids of taxons rules and taxons rules children
         def taxons_including_children_ids
-          taxons.inject([]) { |ids,taxon| ids += taxon.self_and_descendants.ids }
+          taxons.inject([]) { |ids, taxon| ids += taxon.self_and_descendants.ids }
         end
 
         # taxons order vs taxons rules and taxons rules children

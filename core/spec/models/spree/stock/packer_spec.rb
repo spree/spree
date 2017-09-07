@@ -32,7 +32,7 @@ module Spree
 
         it 'variants are added as backordered without enough on_hand' do
           expect(stock_location).to receive(:fill_status).exactly(2).times.and_return(
-            *(Array.new(1, [1,0]) + Array.new(1, [0,1]))
+            *(Array.new(1, [1, 0]) + Array.new(1, [0, 1]))
           )
 
           package = subject.default_package

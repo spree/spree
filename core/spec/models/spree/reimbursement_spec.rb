@@ -122,7 +122,7 @@ describe Spree::Reimbursement, type: :model do
 
   describe '#return_items_requiring_exchange' do
     it 'returns only the return items that require an exchange' do
-      return_items = [double(exchange_required?: true), double(exchange_required?: true),double(exchange_required?: false)]
+      return_items = [double(exchange_required?: true), double(exchange_required?: true), double(exchange_required?: false)]
       allow(subject).to receive(:return_items) { return_items }
       expect(subject.return_items_requiring_exchange).to eq return_items.take(2)
     end

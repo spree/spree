@@ -59,7 +59,7 @@ module Spree
   private
 
   def self.load_translations(hash, root = [])
-    hash.each do |k,v|
+    hash.each do |k, v|
       if v.is_a?(Hash)
         load_translations(v, root.dup << k)
       else

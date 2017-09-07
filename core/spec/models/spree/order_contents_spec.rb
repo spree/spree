@@ -189,12 +189,12 @@ describe Spree::OrderContents, type: :model do
       expect(order.item_total.to_f).to eq(0.00)
       expect(order.total.to_f).to eq(0.00)
 
-      subject.add(variant,2)
+      subject.add(variant, 2)
 
       expect(order.item_total.to_f).to eq(39.98)
       expect(order.total.to_f).to eq(39.98)
 
-      subject.remove(variant,1)
+      subject.remove(variant, 1)
       expect(order.item_total.to_f).to eq(19.99)
       expect(order.total.to_f).to eq(19.99)
     end
@@ -241,7 +241,7 @@ describe Spree::OrderContents, type: :model do
       expect(order.item_total.to_f).to eq(0.00)
       expect(order.total.to_f).to eq(0.00)
 
-      line_item = subject.add(variant,2)
+      line_item = subject.add(variant, 2)
 
       expect(order.item_total.to_f).to eq(39.98)
       expect(order.total.to_f).to eq(39.98)

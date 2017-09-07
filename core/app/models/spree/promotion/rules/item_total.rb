@@ -10,7 +10,7 @@ module Spree
         preference :operator_max, :string, default: '<'
 
         OPERATORS_MIN = ['gt', 'gte']
-        OPERATORS_MAX = ['lt','lte']
+        OPERATORS_MAX = ['lt', 'lte']
 
         def applicable?(promotable)
           promotable.is_a?(Spree::Order)

@@ -76,7 +76,7 @@ module Spree
           name:   Spree.t(:price_range),
           scope:  :price_range_any,
           conds:  Hash[*conds.flatten],
-          labels: conds.map { |k,v| [k, k] }
+          labels: conds.map { |k, v| [k, k] }
         }
       end
 
