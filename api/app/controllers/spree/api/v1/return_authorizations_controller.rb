@@ -2,7 +2,6 @@ module Spree
   module Api
     module V1
       class ReturnAuthorizationsController < Spree::Api::BaseController
-
         def create
           authorize! :create, ReturnAuthorization
           @return_authorization = order.return_authorizations.build(return_authorization_params)

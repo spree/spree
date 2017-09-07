@@ -1,6 +1,5 @@
 module Spree
   class ReimbursementPerformer
-
     class << self
       class_attribute :reimbursement_type_engine
       self.reimbursement_type_engine = Spree::Reimbursement::ReimbursementTypeEngine
@@ -34,8 +33,6 @@ module Spree
         # {Spree::ReimbursementType::OriginalPayment => [ReturnItem, ...], Spree::ReimbursementType::Exchange => [ReturnItem, ...]}
         reimbursement_type_engine.new(reimbursement.return_items).calculate_reimbursement_types
       end
-
     end
-
   end
 end

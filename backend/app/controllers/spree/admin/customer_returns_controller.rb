@@ -62,7 +62,6 @@ module Spree
           return_item
         end.compact
       end
-
     end
   end
 end

@@ -64,6 +64,5 @@ module Spree::Preferences
         super
       end
     end
-
   end
 end

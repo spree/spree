@@ -1,6 +1,5 @@
 module Spree
   class Responder < ::ActionController::Responder #:nodoc:
-
     attr_accessor :on_success, :on_failure
 
     def initialize(controller, resources, options={})

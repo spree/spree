@@ -50,7 +50,6 @@ module Spree
     def table_name
       klass.table_name
     end
-
   end
 end
 

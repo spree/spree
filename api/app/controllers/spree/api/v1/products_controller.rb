@@ -2,7 +2,6 @@ module Spree
   module Api
     module V1
       class ProductsController < Spree::Api::BaseController
-
         def index
           if params[:ids]
             @products = product_scope.where(id: params[:ids].split(',').flatten)

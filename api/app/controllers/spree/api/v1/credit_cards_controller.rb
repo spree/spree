@@ -20,7 +20,6 @@ module Spree
             @user ||= Spree::user_class.accessible_by(current_ability, :read).find(params[:user_id])
           end
         end
-
       end
     end
   end

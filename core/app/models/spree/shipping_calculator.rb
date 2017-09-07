@@ -1,6 +1,5 @@
 module Spree
   class ShippingCalculator < Calculator
-
     def compute_shipment(shipment)
       raise NotImplementedError, "Please implement 'compute_shipment(shipment)' in your calculator: #{self.class.name}"
     end

@@ -87,7 +87,6 @@ module Spree::Preferences
     def should_persist?
       @persistence && ActiveRecord::Base.connected? && Spree::Preference.table_exists?
     end
-
   end
 
   class Store < StoreInstance

@@ -2,7 +2,6 @@ module Spree
   module Api
     module V1
       class TaxonomiesController < Spree::Api::BaseController
-
         def index
           respond_with(taxonomies)
         end

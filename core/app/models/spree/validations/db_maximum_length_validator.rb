@@ -3,7 +3,6 @@ module Spree
     ##
     # Validates a field based on the maximum length of the underlying DB field, if there is one.
     class DbMaximumLengthValidator < ActiveModel::Validator
-
       def initialize(options)
         super
         @field = options[:field].to_s

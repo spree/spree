@@ -2,7 +2,6 @@ module Spree
   module Api
     module V1
       class PropertiesController < Spree::Api::BaseController
-
         before_action :find_property, only: [:show, :update, :destroy]
 
         def index

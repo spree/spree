@@ -2,7 +2,6 @@ module Spree
   module Api
     module V1
       class UsersController < Spree::Api::BaseController
-
         rescue_from Spree::Core::DestroyWithOrdersError, with: :error_during_processing
 
         def index
@@ -63,7 +62,6 @@ module Spree
                                          [bill_address_attributes: permitted_address_attributes,
                                           ship_address_attributes: permitted_address_attributes])
         end
-
       end
     end
   end

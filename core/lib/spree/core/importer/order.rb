@@ -2,7 +2,6 @@ module Spree
   module Core
     module Importer
       class Order
-
         def self.import(user, params)
           begin
             ensure_country_id_from_params params[:ship_address_attributes]

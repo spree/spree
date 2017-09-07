@@ -8,9 +8,7 @@ module Spree
   # where `calculator_object` is an object that responds to "call" and accepts a reimbursement object
 
   class ReimbursementTaxCalculator
-
     class << self
-
       def call(reimbursement)
         reimbursement.return_items.includes(:inventory_unit).each do |return_item|
           set_tax!(return_item)
@@ -35,6 +33,5 @@ module Spree
           included_tax_total:   included_tax_total)
       end
     end
-
   end
 end

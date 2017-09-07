@@ -1,7 +1,6 @@
 module Spree
   module Admin
     class TaxonsController < Spree::Admin::BaseController
-
       before_action :load_taxonomy, only: [:create, :edit, :update]
       before_action :load_taxon, only: [:edit, :update]
       before_action :set_permalink_part, only: [:edit, :update]

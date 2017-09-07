@@ -259,6 +259,5 @@ module Spree
         payment.invalidate! unless payment.store_credit?
       end
     end
-
   end
 end

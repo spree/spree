@@ -44,7 +44,6 @@ module Spree
             end
           end.join('&')
         end
-
       end
     end
   end

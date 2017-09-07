@@ -99,6 +99,5 @@ module Spree
       # Cause adjustable's total to be recalculated
       Adjustable::AdjustmentsUpdater.update(adjustable)
     end
-
   end
 end

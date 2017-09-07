@@ -33,7 +33,6 @@ module Spree
       return unless stock_item.should_track_inventory?
       stock_item.adjust_count_on_hand quantity
     end
-
   end
 end
 

@@ -53,7 +53,6 @@ module Spree
             eligibility_error_message(:item_total_less_than_or_equal, amount: formatted_amount_min)
           end
         end
-
       end
     end
   end

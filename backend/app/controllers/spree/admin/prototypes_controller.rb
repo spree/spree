@@ -21,7 +21,6 @@ module Spree
         @prototype ||= Prototype.find(params[:id])
         @prototype_properties = @prototype.properties
       end
-
     end
   end
 end

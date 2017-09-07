@@ -46,6 +46,5 @@ module Spree
     def self.model_name
       Spree::Exchange
     end
-
   end
 end

@@ -66,5 +66,4 @@ class OrderWalkthrough
   def self.states
     [:address, :delivery, :payment, :complete]
   end
-
 end

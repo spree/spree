@@ -1,7 +1,6 @@
 # Bogus Gateway that doesn't support payment profiles
 module Spree
   class Gateway::BogusSimple < Gateway::Bogus
-
     def payment_profiles_supported?
       false
     end
@@ -21,6 +20,5 @@ module Spree
         ActiveMerchant::Billing::Response.new(false, 'Bogus Gateway: Forced failure', message: 'Bogus Gateway: Forced failure', test: true)
       end
     end
-
   end
 end
