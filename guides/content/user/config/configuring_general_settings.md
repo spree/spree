@@ -48,5 +48,5 @@ The remaining settings all cover how currency is rendered in your store.
 
 In the newest version of Spree, currency is chosen by the Primary Country you pick in Currency Settings.
 
-![Choose Currency]()
+![Choose Currency](/images/user/config/choose_currency.jpg)
 
