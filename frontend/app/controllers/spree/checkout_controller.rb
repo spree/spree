@@ -89,13 +89,15 @@ module Spree
 
     def ensure_valid_state_lock_version
       if params[:order] && params[:order][:state_lock_version]
-        @order.with_lock do
+        changes = @order.changes if @order.changed?
+        @order.reload.with_lock do
           unless @order.state_lock_version == params[:order].delete(:state_lock_version).to_i
             flash[:error] = Spree.t(:order_already_updated)
             redirect_to(checkout_state_path(@order.state)) && return
           end
           @order.increment!(:state_lock_version)
         end
+        @order.assign_attributes(changes) if changes
       end
     end
 
