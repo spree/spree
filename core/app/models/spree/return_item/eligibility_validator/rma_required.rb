@@ -2,10 +2,10 @@ module Spree
   class ReturnItem::EligibilityValidator::RMARequired < Spree::ReturnItem::EligibilityValidator::BaseValidator
     def eligible_for_return?
       if @return_item.return_authorization.present?
-        return true
+        true
       else
         add_error(:rma_required, Spree.t('return_item_rma_ineligible'))
-        return false
+        false
       end
     end
 
@@ -14,4 +14,3 @@ module Spree
     end
   end
 end
-

@@ -59,7 +59,7 @@ module Spree::Preferences::Preferable
   end
 
   def has_preference!(name)
-    raise NoMethodError.new "#{name} preference not defined" unless has_preference? name
+    raise NoMethodError, "#{name} preference not defined" unless has_preference? name
   end
 
   def has_preference?(name)
@@ -81,7 +81,7 @@ module Spree::Preferences::Preferable
   end
 
   def clear_preferences
-    preferences.keys.each {|pref| preferences.delete pref}
+    preferences.keys.each { |pref| preferences.delete pref }
   end
 
   private
@@ -98,24 +98,24 @@ module Spree::Preferences::Preferable
       value.to_i
     when :boolean
       if value.is_a?(FalseClass) ||
-         value.nil? ||
-         value == 0 ||
-         value =~ /^(f|false|0)$/i ||
-         (value.respond_to? :empty? and value.empty?)
-         false
+          value.nil? ||
+          value == 0 ||
+          value =~ /^(f|false|0)$/i ||
+          (value.respond_to?(:empty?) && value.empty?)
+        false
       else
-         true
+        true
       end
     when :array
       value.is_a?(Array) ? value : Array.wrap(value)
     when :hash
       case value.class.to_s
-      when "Hash"
+      when 'Hash'
         value
-      when "String"
+      when 'String'
         # only works with hashes whose keys are strings
         JSON.parse value.gsub('=>', ':')
-      when "Array"
+      when 'Array'
         begin
           value.try(:to_h)
         rescue TypeError

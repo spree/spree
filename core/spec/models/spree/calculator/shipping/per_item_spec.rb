@@ -12,7 +12,7 @@ module Spree
 
       subject { PerItem.new(preferred_amount: 10) }
 
-      it "correctly calculates per item shipping" do
+      it 'correctly calculates per item shipping' do
         expect(subject.compute(package).to_f).to eq(80) # 5 x 10 + 3 x 10
       end
     end

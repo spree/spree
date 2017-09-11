@@ -1,6 +1,6 @@
 # encoding: utf-8
 
-require "spec_helper"
+require 'spec_helper'
 
 module Spree
   describe ProductsHelper, type: :helper do
@@ -13,7 +13,7 @@ module Spree
       allow(helper).to receive(:current_currency) { currency }
     end
 
-    context "#variant_price_diff" do
+    context '#variant_price_diff' do
       let(:product_price) { 10 }
       let(:variant_price) { 10 }
 
@@ -27,69 +27,69 @@ module Spree
 
       subject { helper.variant_price(@variant) }
 
-      context "when variant is same as master" do
+      context 'when variant is same as master' do
         it { is_expected.to be_nil }
       end
 
-      context "when the master has no price" do
+      context 'when the master has no price' do
         let(:product_price) { nil }
 
         it { is_expected.to be_nil }
       end
 
-      context "when currency is default" do
-        context "when variant is more than master" do
+      context 'when currency is default' do
+        context 'when variant is more than master' do
           let(:variant_price) { 15 }
 
-          it { is_expected.to eq("(Add: $5.00)") }
+          it { is_expected.to eq('(Add: $5.00)') }
           # Regression test for #2737
           it { is_expected.to be_html_safe }
         end
 
-        context "when variant is less than master" do
+        context 'when variant is less than master' do
           let(:product_price) { 15 }
 
-          it { is_expected.to eq("(Subtract: $5.00)") }
+          it { is_expected.to eq('(Subtract: $5.00)') }
         end
       end
 
-      context "when currency is JPY" do
+      context 'when currency is JPY' do
         let(:variant_price) { 100 }
         let(:product_price) { 100 }
         let(:currency) { 'JPY' }
 
-        context "when variant is more than master" do
+        context 'when variant is more than master' do
           let(:variant_price) { 150 }
 
-          it { is_expected.to eq("(Add: &#x00A5;50)") }
+          it { is_expected.to eq('(Add: &#x00A5;50)') }
         end
 
-        context "when variant is less than master" do
+        context 'when variant is less than master' do
           let(:product_price) { 150 }
 
-          it { is_expected.to eq("(Subtract: &#x00A5;50)") }
+          it { is_expected.to eq('(Subtract: &#x00A5;50)') }
         end
       end
     end
 
-    context "#variant_price_full" do
+    context '#variant_price_full' do
       before do
         Spree::Config[:show_variant_full_price] = true
         @variant1 = create(:variant, product: product)
         @variant2 = create(:variant, product: product)
       end
 
-      context "when currency is default" do
-        it "should return the variant price if the price is different than master" do
+      context 'when currency is default' do
+        it 'should return the variant price if the price is different than master' do
           product.price = 10
           @variant1.price = 15
           @variant2.price = 20
-          expect(helper.variant_price(@variant1)).to eq("$15.00")
-          expect(helper.variant_price(@variant2)).to eq("$20.00")
+          expect(helper.variant_price(@variant1)).to eq('$15.00')
+          expect(helper.variant_price(@variant2)).to eq('$20.00')
         end
       end
 
-      context "when currency is JPY" do
+      context 'when currency is JPY' do
         let(:currency) { 'JPY' }
 
         before do
@@ -101,14 +101,14 @@ module Spree
           end
         end
 
-        it "should return the variant price if the price is different than master" do
+        it 'should return the variant price if the price is different than master' do
           product.price = 100
           @variant1.price = 150
-          expect(helper.variant_price(@variant1)).to eq("&#x00A5;150")
+          expect(helper.variant_price(@variant1)).to eq('&#x00A5;150')
         end
       end
 
-      it "should be nil when all variant prices are equal" do
+      it 'should be nil when all variant prices are equal' do
         product.price = 10
         @variant1.default_price.update_column(:amount, 10)
         @variant2.default_price.update_column(:amount, 10)
@@ -117,10 +117,9 @@ module Spree
       end
     end
 
-
-    context "#product_description" do
+    context '#product_description' do
       # Regression test for #1607
-      it "renders a product description without excessive paragraph breaks" do
+      it 'renders a product description without excessive paragraph breaks' do
         product.description = %Q{
 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus a ligula leo. Proin eu arcu at ipsum dapibus ullamcorper. Pellentesque egestas orci nec magna condimentum luctus. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Ut ac ante et mauris bibendum ultricies non sed massa. Fusce facilisis dui eget lacus scelerisque eget aliquam urna ultricies. Duis et rhoncus quam. Praesent tellus nisi, ultrices sed iaculis quis, euismod interdum ipsum.</p>
 <ul>
@@ -132,7 +131,7 @@ module Spree
         expect(description.strip).to eq(product.description.strip)
       end
 
-      it "renders a product description with automatic paragraph breaks" do
+      it 'renders a product description with automatic paragraph breaks' do
         product.description = %Q{
 THIS IS THE BEST PRODUCT EVER!
 
@@ -142,7 +141,7 @@ THIS IS THE BEST PRODUCT EVER!
         expect(description.strip).to eq(%Q{<p>\nTHIS IS THE BEST PRODUCT EVER!</p>"IT CHANGED MY LIFE" - Sue, MD})
       end
 
-      it "renders a product description without any formatting based on configuration" do
+      it 'renders a product description without any formatting based on configuration' do
         initialDescription = %Q{
             <p>hello world</p>
 
@@ -158,13 +157,13 @@ THIS IS THE BEST PRODUCT EVER!
         expect(description).to eq(initialDescription)
       end
 
-      context "renders a product description default description incase description is blank" do
+      context 'renders a product description default description incase description is blank' do
         before { product.description = '' }
         it { expect(product_description(product)).to eq(Spree.t(:product_has_no_description)) }
       end
     end
 
-    shared_examples_for "line item descriptions" do
+    shared_examples_for 'line item descriptions' do
       context 'variant has a blank description' do
         let(:description) { nil }
         it { is_expected.to eq(Spree.t(:product_has_no_description)) }
@@ -186,7 +185,7 @@ THIS IS THE BEST PRODUCT EVER!
     context '#line_item_description_text' do
       subject { line_item_description_text description }
 
-      it_should_behave_like "line item descriptions"
+      it_should_behave_like 'line item descriptions'
     end
 
     context '#cache_key_for_products' do
@@ -196,7 +195,7 @@ THIS IS THE BEST PRODUCT EVER!
       subject { helper.cache_key_for_products }
       before(:each) do
         @products = double('products collection')
-        allow(helper).to receive(:params) { {page: 10} }
+        allow(helper).to receive(:params) { { page: 10 } }
         allow(helper).to receive(:current_price_options) { price_options }
       end
 
@@ -207,22 +206,22 @@ THIS IS THE BEST PRODUCT EVER!
           allow(@products).to receive(:maximum).with(:updated_at) { updated_at }
         end
 
-        it { is_expected.to eq("en/USD/spree/zones/new/spree/products/all-10-20111213-5") }
+        it { is_expected.to eq('en/USD/spree/zones/new/spree/products/all-10-20111213-5') }
       end
 
       context 'when there is no considered maximum updated date' do
         let(:today) { Date.new(2013, 12, 11) }
         before :each do
-          allow(@products).to receive(:count) { 1234567 }
+          allow(@products).to receive(:count) { 1_234_567 }
           allow(@products).to receive(:maximum).with(:updated_at) { nil }
           allow(Date).to receive(:today) { today }
         end
 
-        it { is_expected.to eq("en/USD/spree/zones/new/spree/products/all-10-20131211-1234567") }
+        it { is_expected.to eq('en/USD/spree/zones/new/spree/products/all-10-20131211-1234567') }
       end
     end
 
-    context "#cache_key_for_product" do
+    context '#cache_key_for_product' do
       let(:product) { Spree::Product.new }
       let(:price_options) { { tax_zone: zone } }
 
@@ -232,21 +231,21 @@ THIS IS THE BEST PRODUCT EVER!
         allow(helper).to receive(:current_price_options) { price_options }
       end
 
-      context "when there is a current tax zone" do
+      context 'when there is a current tax zone' do
         let(:zone) { Spree::Zone.new }
 
-        it "includes the current_tax_zone" do
-          is_expected.to eq("en/USD/spree/zones/new/spree/products/new/")
+        it 'includes the current_tax_zone' do
+          is_expected.to eq('en/USD/spree/zones/new/spree/products/new/')
         end
       end
 
-      context "when there is no current tax zone" do
+      context 'when there is no current tax zone' do
         let(:zone) { nil }
 
-        it { is_expected.to eq("en/USD/spree/products/new/") }
+        it { is_expected.to eq('en/USD/spree/products/new/') }
       end
 
-      context "when current_price_options includes nil values" do
+      context 'when current_price_options includes nil values' do
         let(:price_options) do
           {
             a: nil,
@@ -254,12 +253,12 @@ THIS IS THE BEST PRODUCT EVER!
           }
         end
 
-        it "does not include nil values" do
-          expect(cache_key).to eq("en/USD/spree/zones/new/spree/products/new/")
+        it 'does not include nil values' do
+          expect(cache_key).to eq('en/USD/spree/zones/new/spree/products/new/')
         end
       end
 
-      context "when current_price_options includes values that do not implement cache_key" do
+      context 'when current_price_options includes values that do not implement cache_key' do
         let(:price_options) do
           {
             a: true,
@@ -267,12 +266,12 @@ THIS IS THE BEST PRODUCT EVER!
           }
         end
 
-        it "includes string representations of these values" do
-          expect(cache_key).to eq("en/USD/true/spree/zones/new/spree/products/new/")
+        it 'includes string representations of these values' do
+          expect(cache_key).to eq('en/USD/true/spree/zones/new/spree/products/new/')
         end
       end
 
-      context "when keys in the options hash are inserted in non-alphabetical order" do
+      context 'when keys in the options hash are inserted in non-alphabetical order' do
         let(:price_options) do
           {
             b: Spree::Zone.new,
@@ -280,8 +279,8 @@ THIS IS THE BEST PRODUCT EVER!
           }
         end
 
-        it "the values are nevertheless returned in alphabetical order of their keys" do
-          expect(cache_key).to eq("en/USD/true/spree/zones/new/spree/products/new/")
+        it 'the values are nevertheless returned in alphabetical order of their keys' do
+          expect(cache_key).to eq('en/USD/true/spree/zones/new/spree/products/new/')
         end
       end
     end

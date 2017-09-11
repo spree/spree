@@ -540,7 +540,7 @@ en:
     back_to_resource_list: 'Back To %{resource} List'
     back_to_payment: Back To Payment
     back_to_rma_reason_list: Back To RMA Reason List
-    back_to_store: Go Back To Store
+    back_to_store: Back to Store
     back_to_users_list: Back To Users List
     backorderable: Backorderable
     backorderable_default: Backorderable default
@@ -749,6 +749,7 @@ en:
     excl: excl.
     expiration: Expiration
     extension: Extension
+    extensions_directory: Extensions Directory
     existing_shipments: Existing shipments
     failed_payment_attempts: Failed Payment Attempts
     filename: Filename
@@ -779,6 +780,7 @@ en:
     has_no_shipped_units: has no shipped units
     height: Height
     home: Home
+    help_center: Help Center
     i18n:
       available_locales: Available Locales
       fields: Fields
@@ -837,8 +839,7 @@ en:
     items_to_be_reimbursed: Items to be reimbursed
     items_reimbursed: Items reimbursed
     jirafe: Jirafe
-    landing_page_rule:
-      path: Path
+    join_slack: Join Slack
     last_name: Last Name
     last_name_begins_with: Last Name Begins With
     learn_more: Learn More
@@ -997,7 +998,7 @@ en:
     order_number: Order %{number}
     order_processed_successfully: Your order has been processed successfully
     order_resumed: Order resumed
-    order_states:
+    order_state:
       address: address
       awaiting_return: awaiting return
       canceled: canceled
@@ -1119,9 +1120,6 @@ en:
       item_total:
         description: Order total meets these criteria
         name: Item total
-      landing_page:
-        description: Customer must have visited the specified page
-        name: Landing Page
       one_use_per_user:
         description: Only One Use Per User
         name: One Use Per User
@@ -1369,7 +1367,10 @@ en:
     stock_movements: Stock Movements
     stock_movements_for_stock_location: Stock Movements for %{stock_location_name}
     stock_successfully_transferred: Stock was successfully transferred between locations.
-    stock_transfer: Stock Transfer
+    stock_transfer_name: Stock Transfer
+    stock_transfer:
+      errors:
+        must_have_variant: You must add atleast one variant.
     stock_transfers: Stock Transfers
     stop: Stop
     store: Store

@@ -4,9 +4,10 @@
 * Join our Slack at [slack.spreecommerce.com](http://slack.spreecommerce.com/)
 * [Extensions](https://github.com/spree-contrib)
 * [Documentation](http://guides.spreecommerce.org)
+* [Roadmap](https://github.com/spree/spree/milestones?direction=asc&sort=due_date&state=open)
 * Spree success stories from [OpenCommerce Conf](http://opencommerceconf.org/)
 
-[![Circle CI](https://circleci.com/gh/spree/spree.svg?style=svg)](https://circleci.com/gh/spree/spree/tree/master)
+[![Gem Version](https://badge.fury.io/rb/spree.svg)](https://badge.fury.io/rb/spree) [![Circle CI](https://circleci.com/gh/spree/spree.svg?style=shield)](https://circleci.com/gh/spree/spree/tree/master)
 [![Code Climate](https://codeclimate.com/github/spree/spree.svg)](https://codeclimate.com/github/spree/spree)
 [![codebeat](https://codebeat.co/badges/16feb8a2-abf0-4fbb-a130-20b689efcfc0)](https://codebeat.co/projects/github-com-spree-spree)
 [![Slack Status](http://slack.spreecommerce.com/badge.svg)](http://slack.spreecommerce.com)
@@ -25,6 +26,11 @@ in a single repository and documented in a single set of
 * spree_core (Models & Mailers, the basic components of Spree that it can't run without)
 * spree_sample (Sample data)
 
+Demo
+----
+Try Spree with direct deployment on Heroku:
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/spree/spree)
 
 Getting Started
 ----------------------
@@ -34,7 +40,7 @@ Add Spree gems to your Gemfile:
 ### Rails 5.1
 
 ```ruby
-gem 'spree', '~> 3.3.0.rc1'
+gem 'spree', '~> 3.3.0'
 gem 'spree_auth_devise', '~> 3.3'
 gem 'spree_gateway', '~> 3.3'
 ```
@@ -81,10 +87,11 @@ state. It is unwise to use this branch in a production system you care deeply
 about.**
 
 By default, the installation generator (`rails g spree:install`) will run
-migrations as well as adding seed and sample data. This can be disabled using
+migrations as well as adding seed and sample data and will copy frontend views
+for easy customization (if spree_frontend available). This can be disabled using
 
 ```shell
-rails g spree:install --migrate=false --sample=false --seed=false
+rails g spree:install --migrate=false --sample=false --seed=false --copy_views=false
 ```
 
 You can always perform any of these steps later by using these commands.
@@ -95,6 +102,12 @@ bundle exec rake db:migrate
 bundle exec rake db:seed
 bundle exec rake spree_sample:load
 ```
+
+Bundle Issues
+----------------------
+
+If you encountered any problems with `bundler`, please try downgrading to bundler `1.13.7` or earlier.
+
 
 Browse Store
 ----------------------

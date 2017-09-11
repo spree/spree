@@ -3,7 +3,7 @@ module Spree
     module AuthorizationHelpers
       module CustomAbility
         def build_ability(&block)
-          block ||= proc{ |u| can :manage, :all }
+          block ||= proc { |_u| can :manage, :all }
           Class.new do
             include CanCan::Ability
             define_method(:initialize, block)
@@ -38,8 +38,8 @@ module Spree
 
           before do
             allow(Spree.user_class).to receive(:find_by).
-                                         with(hash_including(:spree_api_key)).
-                                         and_return(Spree.user_class.new)
+              with(hash_including(:spree_api_key)).
+              and_return(Spree.user_class.new)
           end
         end
 

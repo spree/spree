@@ -1,6 +1,5 @@
 module Spree
   class LocalizedNumber
-
     # Strips all non-price-like characters from the number, taking into account locale settings.
     def self.parse(number)
       return number unless number.is_a?(String)
@@ -20,6 +19,5 @@ module Spree
 
       number.to_d
     end
-
   end
 end

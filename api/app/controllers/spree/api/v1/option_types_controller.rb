@@ -22,8 +22,7 @@ module Spree
           respond_with(@option_type)
         end
 
-        def new
-        end
+        def new; end
 
         def create
           authorize! :create, Spree::OptionType
@@ -51,9 +50,10 @@ module Spree
         end
 
         private
-          def option_type_params
-            params.require(:option_type).permit(permitted_option_type_attributes)
-          end
+
+        def option_type_params
+          params.require(:option_type).permit(permitted_option_type_attributes)
+        end
       end
     end
   end

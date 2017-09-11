@@ -9,7 +9,7 @@ module Spree
           before_action :set_guest_token
           helper_method :try_spree_current_user
 
-          rescue_from CanCan::AccessDenied do |exception|
+          rescue_from CanCan::AccessDenied do |_exception|
             redirect_unauthorized_access
           end
         end
@@ -20,8 +20,8 @@ module Spree
         end
 
         def redirect_back_or_default(default)
-          redirect_to(session["spree_user_return_to"] || request.env["HTTP_REFERER"] || default)
-          session["spree_user_return_to"] = nil
+          redirect_to(session['spree_user_return_to'] || request.env['HTTP_REFERER'] || default)
+          session['spree_user_return_to'] = nil
         end
 
         def set_guest_token
@@ -35,12 +35,10 @@ module Spree
           authentication_routes = [:spree_signup_path, :spree_login_path, :spree_logout_path]
           disallowed_urls = []
           authentication_routes.each do |route|
-            if respond_to?(route)
-              disallowed_urls << send(route)
-            end
+            disallowed_urls << send(route) if respond_to?(route)
           end
 
-          disallowed_urls.map!{ |url| url[/\/\w+$/] }
+          disallowed_urls.map! { |url| url[/\/\w+$/] }
           unless disallowed_urls.include?(request.fullpath)
             session['spree_user_return_to'] = request.fullpath.gsub('//', '/')
           end
@@ -56,8 +54,6 @@ module Spree
           # This one will be defined by Devise
           elsif respond_to?(:current_spree_user)
             current_spree_user
-          else
-            nil
           end
         end
 
@@ -79,7 +75,6 @@ module Spree
             end
           end
         end
-
       end
     end
   end

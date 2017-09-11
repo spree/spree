@@ -6,27 +6,27 @@ module Spree
     let(:variant) { create(:variant) }
     let(:order_1) { Spree::Order.create }
     let(:order_2) { Spree::Order.create }
-    let(:user) { stub_model(Spree::LegacyUser, email: "spree@example.com") }
+    let(:user) { stub_model(Spree::LegacyUser, email: 'spree@example.com') }
     let(:subject) { Spree::OrderMerger.new(order_1) }
 
-    it "destroys the other order" do
+    it 'destroys the other order' do
       subject.merge!(order_2)
       expect { order_2.reload }.to raise_error(ActiveRecord::RecordNotFound)
     end
 
-    it "persist the merge" do
+    it 'persist the merge' do
       expect(subject).to receive(:persist_merge)
       subject.merge!(order_2)
     end
 
-    context "user is provided" do
-      it "assigns user to new order" do
+    context 'user is provided' do
+      it 'assigns user to new order' do
         subject.merge!(order_2, user)
         expect(order_1.user).to eq user
       end
     end
 
-    context "merging together two orders with line items for the same variant" do
+    context 'merging together two orders with line items for the same variant' do
       before do
         order_1.contents.add(variant, 1)
         order_2.contents.add(variant, 1)
@@ -42,7 +42,7 @@ module Spree
       end
     end
 
-    context "merging using extension-specific line_item_comparison_hooks" do
+    context 'merging using extension-specific line_item_comparison_hooks' do
       before do
         Spree::Order.register_line_item_comparison_hook(:foos_match)
         allow(Spree::Variant).to receive(:price_modifier_amount).and_return(0.00)
@@ -53,7 +53,7 @@ module Spree
         Spree::Order.line_item_comparison_hooks = Set.new
       end
 
-      context "2 equal line items" do
+      context '2 equal line items' do
         before do
           @line_item_1 = order_1.contents.add(variant, 1, foos: {})
           @line_item_2 = order_2.contents.add(variant, 1, foos: {})
@@ -70,7 +70,7 @@ module Spree
         end
       end
 
-      context "2 different line items" do
+      context '2 different line items' do
         before do
           allow(order_1).to receive(:foos_match).and_return(false)
 
@@ -93,7 +93,7 @@ module Spree
       end
     end
 
-    context "merging together two orders with different line items" do
+    context 'merging together two orders with different line items' do
       let(:variant_2) { create(:variant) }
 
       before do
@@ -115,7 +115,7 @@ module Spree
       end
     end
 
-    context "merging together orders with invalid line items" do
+    context 'merging together orders with invalid line items' do
       let(:variant_2) { create(:variant) }
 
       before do
@@ -123,7 +123,7 @@ module Spree
         order_2.contents.add(variant_2, 1)
       end
 
-      it "should create errors with invalid line items" do
+      it 'should create errors with invalid line items' do
         # we cannot use .destroy here as it will be halted by
         # :ensure_no_line_items callback
         variant_2.really_destroy!

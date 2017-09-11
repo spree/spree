@@ -82,12 +82,12 @@ module Spree
       end
 
       def load_store_credit
-        @store_credit = Spree::StoreCredit.find_by_id(params[:id]) || Spree::StoreCredit.new
+        @store_credit = Spree::StoreCredit.find_by(id: params[:id]) || Spree::StoreCredit.new
       end
 
       def ensure_unused_store_credit
         unless @store_credit.amount_used.zero?
-          raise StoreCreditError.new(Spree.t('store_credit.errors.cannot_change_used_store_credit'))
+          raise StoreCreditError, Spree.t('store_credit.errors.cannot_change_used_store_credit')
         end
       end
     end

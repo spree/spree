@@ -18,14 +18,16 @@
         <%= f.label :credit_allowed, Spree.t(:credit_allowed) %><br/>
         <%= @refund.payment.credit_allowed %>
       </div>
-      <div class="form-group">
+      <%= f.field_container :amount, class: ['form-group'] do %>
         <%= f.label :amount, Spree.t(:amount) %>
         <%= f.text_field :amount, class: 'form-control' %>
-      </div>
-      <div class="form-group">
+        <%= f.error_message_on :amount %>
+      <% end %>
+      <%= f.field_container :reason, class: ['form-group'] do %>
         <%= f.label :refund_reason_id, Spree.t(:reason) %>
         <%= f.collection_select(:refund_reason_id, refund_reasons, :id, :name, {include_blank: true}, {class: 'select2'}) %>
-      </div>
+        <%= f.error_message_on :reason %>
+      <% end %>
     </div>
 
     <div class="form-actions" data-hook="buttons">

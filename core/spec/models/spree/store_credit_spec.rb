@@ -232,7 +232,7 @@ describe 'StoreCredit' do
     end
 
     context 'currency mismatch' do
-      subject { store_credit.validate_authorization(store_credit.amount, "EUR") }
+      subject { store_credit.validate_authorization(store_credit.amount, 'EUR') }
 
       it 'returns false' do
         expect(subject).to be false
@@ -293,7 +293,7 @@ describe 'StoreCredit' do
     end
 
     context 'currency mismatch' do
-      subject { store_credit.capture(authorized_amount, auth_code, "EUR") }
+      subject { store_credit.capture(authorized_amount, auth_code, 'EUR') }
 
       it 'returns false' do
         expect(subject).to be false

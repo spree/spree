@@ -4,7 +4,7 @@ module Spree
   module Stock
     describe AvailabilityValidator, type: :model do
       let!(:line_item) { double(quantity: 5, variant_id: 1, variant: double.as_null_object, errors: double('errors'), inventory_units: []) }
-      let(:inventory_unit) { double("InventoryUnit") }
+      let(:inventory_unit) { double('InventoryUnit') }
       let(:inventory_units) { [inventory_unit] }
 
       subject { described_class.new }

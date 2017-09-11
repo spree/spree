@@ -14,7 +14,6 @@ module Spree
           expect(splitter1).to receive(:split).with(packages)
           splitter2.split(packages)
         end
-
       end
     end
   end

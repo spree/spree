@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Cart", type: :feature, inaccessible: true do
+describe 'Cart', type: :feature, inaccessible: true do
   before { Timecop.scale(100) }
 
   after { Timecop.return }
@@ -11,15 +11,15 @@ describe "Cart", type: :feature, inaccessible: true do
   def add_mug_to_cart
     visit spree.root_path
     click_link product.name
-    click_button "add-to-cart-button"
+    click_button 'add-to-cart-button'
   end
 
-  it "shows cart icon on non-cart pages" do
+  it 'shows cart icon on non-cart pages' do
     visit spree.root_path
-    expect(page).to have_selector("li#link-to-cart a", visible: true)
+    expect(page).to have_selector('li#link-to-cart a', visible: true)
   end
 
-  it "prevents double clicking the remove button on cart", js: true do
+  it 'prevents double clicking the remove button on cart', js: true do
     add_mug_to_cart
     # prevent form submit to verify button is disabled
     page.execute_script("$('#update-cart').submit(function(){return false;})")
@@ -32,7 +32,7 @@ describe "Cart", type: :feature, inaccessible: true do
   # Regression test for #2006
   it "does not error out with a 404 when GET'ing to /orders/populate" do
     visit '/orders/populate'
-    within(".alert-error") do
+    within('.alert-error') do
       expect(page).to have_content(Spree.t(:populate_get_error))
     end
   end
@@ -40,35 +40,35 @@ describe "Cart", type: :feature, inaccessible: true do
   it 'allows you to remove an item from the cart', js: true do
     add_mug_to_cart
     line_item = Spree::LineItem.first!
-    within("#line_items") do
+    within('#line_items') do
       click_link "delete_line_item_#{line_item.id}"
     end
 
-    expect(page).to_not have_content("Line items quantity must be an integer")
+    expect(page).to_not have_content('Line items quantity must be an integer')
     expect(page).to_not have_content(product.name)
-    expect(page).to have_content("Your cart is empty")
+    expect(page).to have_content('Your cart is empty')
 
-    within "#link-to-cart" do
-      expect(page).to have_content("Empty")
+    within '#link-to-cart' do
+      expect(page).to have_content('Empty')
     end
   end
 
   it 'allows you to empty the cart', js: true do
     add_mug_to_cart
     expect(page).to have_content(product.name)
-    click_on "Empty Cart"
-    expect(page).to have_content("Your cart is empty")
+    click_on 'Empty Cart'
+    expect(page).to have_content('Your cart is empty')
 
-    within "#link-to-cart" do
-      expect(page).to have_content("Empty")
+    within '#link-to-cart' do
+      expect(page).to have_content('Empty')
     end
   end
 
   # regression for #2276
-  context "product contains variants but no option values" do
+  context 'product contains variants but no option values' do
     before { variant.option_values.destroy_all }
 
-    it "still adds product to cart", inaccessible: true do
+    it 'still adds product to cart', inaccessible: true do
       add_mug_to_cart
       visit spree.cart_path
       expect(page).to have_content(product.name)

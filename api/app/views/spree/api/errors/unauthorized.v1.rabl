@@ -1,2 +1,2 @@
 object false
-node(:error) { I18n.t(:unauthorized, scope: "spree.api") }
+node(:error) { I18n.t(:unauthorized, scope: 'spree.api') }

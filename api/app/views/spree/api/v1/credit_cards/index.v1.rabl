@@ -1,6 +1,6 @@
 object false
 child(@credit_cards => :credit_cards) do
-  extends "spree/api/v1/credit_cards/show"
+  extends 'spree/api/v1/credit_cards/show'
 end
 node(:count) { @credit_cards.count }
 node(:current_page) { params[:page].try(:to_i) || 1 }

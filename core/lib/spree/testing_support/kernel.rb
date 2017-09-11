@@ -1,7 +1,6 @@
 module Spree
   module TestingSupport
     module Kernel
-
       private
 
       def silence_stream(stream)

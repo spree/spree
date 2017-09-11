@@ -34,7 +34,7 @@ module Spree
           can_event = "can_#{@event}?"
 
           unless inventory_unit.respond_to?(can_event) &&
-                 inventory_unit.send(can_event)
+              inventory_unit.send(can_event)
             render plain: { exception: "cannot transition to #{@event}" }.to_json,
                    status: 200
             false
@@ -44,7 +44,7 @@ module Spree
         def fire
           inventory_unit.send("#{@event}!") if @event
         end
-        
+
         def inventory_unit_params
           params.require(:inventory_unit).permit(permitted_inventory_unit_attributes)
         end

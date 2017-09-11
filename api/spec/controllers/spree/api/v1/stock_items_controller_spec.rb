@@ -6,25 +6,24 @@ module Spree
 
     let!(:stock_location) { create(:stock_location_with_items) }
     let!(:stock_item) { stock_location.stock_items.order(:id).first }
-    let!(:attributes) { [:id, :count_on_hand, :backorderable,
-                         :stock_location_id, :variant_id] }
+    let!(:attributes) { [:id, :count_on_hand, :backorderable, :stock_location_id, :variant_id] }
 
     before do
       stub_authentication!
     end
 
-    context "as a normal user" do
-      it "cannot list stock items for a stock location" do
+    context 'as a normal user' do
+      it 'cannot list stock items for a stock location' do
         api_get :index, stock_location_id: stock_location.to_param
         expect(response.status).to eq(404)
       end
 
-      it "cannot see a stock item" do
+      it 'cannot see a stock item' do
         api_get :show, stock_location_id: stock_location.to_param, id: stock_item.to_param
         expect(response.status).to eq(404)
       end
 
-      it "cannot create a stock item" do
+      it 'cannot create a stock item' do
         variant = create(:variant)
         params = {
           stock_location_id: stock_location.to_param,
@@ -38,20 +37,20 @@ module Spree
         expect(response.status).to eq(404)
       end
 
-      it "cannot update a stock item" do
+      it 'cannot update a stock item' do
         api_put :update, stock_location_id: stock_location.to_param,
-          id: stock_item.to_param
+                         id: stock_item.to_param
         expect(response.status).to eq(404)
       end
 
-      it "cannot destroy a stock item" do
+      it 'cannot destroy a stock item' do
         api_delete :destroy, stock_location_id: stock_location.to_param,
-          id: stock_item.to_param
+                             id: stock_item.to_param
         expect(response.status).to eq(404)
       end
     end
 
-    context "as an admin" do
+    context 'as an admin' do
       sign_in_as_admin!
 
       it 'cannot list of stock items' do
@@ -80,7 +79,7 @@ module Spree
       end
 
       it 'can query the results through a paramter (variant_id)' do
-        api_get :index, stock_location_id: stock_location.to_param, q: { variant_id_eq: 999999 }
+        api_get :index, stock_location_id: stock_location.to_param, q: { variant_id_eq: 999_999 }
         expect(json_response['count']).to eq(0)
         api_get :index, stock_location_id: stock_location.to_param, q: { variant_id_eq: stock_item.variant_id }
         expect(json_response['count']).to eq(1)

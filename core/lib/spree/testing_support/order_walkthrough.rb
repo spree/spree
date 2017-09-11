@@ -1,9 +1,7 @@
 class OrderWalkthrough
   def self.up_to(state)
     # A default store must exist to provide store settings
-    unless Spree::Store.exists?
-      FactoryGirl.create(:store)
-    end
+    FactoryGirl.create(:store) unless Spree::Store.exists?
 
     # A payment method must exist for an order to proceed through the Address state
     unless Spree::PaymentMethod.exists?
@@ -25,7 +23,7 @@ class OrderWalkthrough
       end
     end
 
-    order = Spree::Order.create!(email: "spree@example.com")
+    order = Spree::Order.create!(email: 'spree@example.com')
     add_line_item!(order)
     order.next!
 
@@ -61,12 +59,11 @@ class OrderWalkthrough
     order.next!
   end
 
-  def self.complete(order)
-    #noop?
+  def self.complete(_order)
+    # noop?
   end
 
   def self.states
     [:address, :delivery, :payment, :complete]
   end
-
 end

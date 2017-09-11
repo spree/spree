@@ -23,17 +23,18 @@ module Spree
     end
 
     def compute(object)
-      base, percent = preferred_tiers.sort.reverse.detect{ |b,_| object.amount >= b }
+      base, percent = preferred_tiers.sort.reverse.detect { |b, _| object.amount >= b }
       (object.amount * (percent || preferred_base_percent) / 100).round(2)
     end
 
     private
+
     def preferred_tiers_content
       if preferred_tiers.is_a? Hash
-        unless preferred_tiers.keys.all?{ |k| k.is_a?(Numeric) && k > 0 }
+        unless preferred_tiers.keys.all? { |k| k.is_a?(Numeric) && k > 0 }
           errors.add(:base, :keys_should_be_positive_number)
         end
-        unless preferred_tiers.values.all?{ |k| k.is_a?(Numeric) && k >= 0 && k <= 100 }
+        unless preferred_tiers.values.all? { |k| k.is_a?(Numeric) && k >= 0 && k <= 100 }
           errors.add(:base, :values_should_be_percent)
         end
       else

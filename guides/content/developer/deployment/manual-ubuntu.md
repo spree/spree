@@ -785,7 +785,7 @@ the console and assign it the admin role, like this:
 
 ```ruby
 user = User.create!(email: "email@example.com", password: "topsekret")
-user.spree_roles << Spree::Role.find_by_name("admin")
+user.spree_roles << Spree::Role.find_by(name: "admin")
 user.save!
 ```
 

@@ -19,7 +19,7 @@ module Spree
     end
 
     def display_amount
-      Spree::Money.new(amount, { currency: creditable.try(:currency) || "USD" })
+      Spree::Money.new(amount, currency: creditable.try(:currency) || 'USD')
     end
   end
 end

@@ -20,7 +20,7 @@ module Spree
                   :included_tax_total,  :additional_tax_total, :tax_total,
                   :shipment_total,      :promo_total,          :total
 
-    alias :display_ship_total :display_shipment_total
+    alias display_ship_total display_shipment_total
     alias_attribute :ship_total, :shipment_total
 
     MONEY_THRESHOLD  = 100_000_000
@@ -196,7 +196,7 @@ module Spree
     # least one LineItem in the Order.  Feel free to override this logic in your
     # own application if you require additional steps before allowing a checkout.
     def checkout_allowed?
-      line_items.count > 0
+      line_items.exists?
     end
 
     # Is this a free order in which case the payment step should be skipped
@@ -486,7 +486,7 @@ module Spree
       all_adjustments.shipping.delete_all
 
       shipment_ids = shipments.map(&:id)
-      StateChange.where(stateful_type: "Spree::Shipment", stateful_id: shipment_ids).delete_all
+      StateChange.where(stateful_type: 'Spree::Shipment', stateful_id: shipment_ids).delete_all
       ShippingRate.where(shipment_id: shipment_ids).delete_all
 
       shipments.delete_all
@@ -521,9 +521,9 @@ module Spree
     def restart_checkout_flow
       update_columns(
         state: 'cart',
-        updated_at: Time.current,
+        updated_at: Time.current
       )
-      next! if !line_items.empty?
+      next! unless line_items.empty?
     end
 
     def refresh_shipment_rates(shipping_method_filter = ShippingMethod::DISPLAY_ON_FRONT_END)
@@ -558,7 +558,7 @@ module Spree
         approve!
         update_columns(
           approver_id: user.id,
-          approved_at: Time.current,
+          approved_at: Time.current
         )
       end
     end
@@ -572,9 +572,7 @@ module Spree
     end
 
     def consider_risk
-      if is_risky? && !approved?
-        considered_risky!
-      end
+      considered_risky! if is_risky? && !approved?
     end
 
     def considered_risky!
@@ -615,7 +613,7 @@ module Spree
     def fully_discounted?
       adjustment_total + line_items.map(&:final_amount).sum == 0.0
     end
-    alias_method :fully_discounted, :fully_discounted?
+    alias fully_discounted fully_discounted?
 
     def promo_code
       promotions.pluck(:code).compact.first

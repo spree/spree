@@ -7,13 +7,13 @@ describe Spree::Adjustable::Adjuster::Tax, type: :model do
   let(:subject) { Spree::Adjustable::AdjustmentsUpdater.new(line_item) }
   let(:order_subject) { Spree::Adjustable::AdjustmentsUpdater.new(order) }
 
-  context "taxes with promotions" do
+  context 'taxes with promotions' do
     let!(:tax_rate) do
       create(:tax_rate, amount: 0.05)
     end
 
     let!(:promotion) do
-      Spree::Promotion.create(name: "$10 off")
+      Spree::Promotion.create(name: '$10 off')
     end
 
     let!(:promotion_action) do
@@ -29,7 +29,7 @@ describe Spree::Adjustable::Adjuster::Tax, type: :model do
       create(:adjustment, order: order, source: promotion_action, adjustable: line_item)
     end
 
-    context "tax included in price" do
+    context 'tax included in price' do
       before do
         create(:adjustment,
                source: tax_rate,
@@ -38,7 +38,7 @@ describe Spree::Adjustable::Adjuster::Tax, type: :model do
                included: true)
       end
 
-      it "tax has no bearing on final price" do
+      it 'tax has no bearing on final price' do
         subject.update
         line_item.reload
         expect(line_item.included_tax_total).to eq(0.5)
@@ -47,15 +47,15 @@ describe Spree::Adjustable::Adjuster::Tax, type: :model do
         expect(line_item.adjustment_total).to eq(-10)
       end
 
-      it "tax linked to order" do
+      it 'tax linked to order' do
         order_subject.update
         order.reload
         expect(order.included_tax_total).to eq(0.5)
-        expect(order.additional_tax_total).to eq(00)
+        expect(order.additional_tax_total).to eq(0o0)
       end
     end
 
-    context "tax excluded from price" do
+    context 'tax excluded from price' do
       before do
         create(:adjustment,
                source: tax_rate,
@@ -64,7 +64,7 @@ describe Spree::Adjustable::Adjuster::Tax, type: :model do
                included: false)
       end
 
-      it "tax applies to line item" do
+      it 'tax applies to line item' do
         subject.update
         line_item.reload
         # Taxable amount is: $20 (base) - $10 (promotion) = $10
@@ -75,7 +75,7 @@ describe Spree::Adjustable::Adjuster::Tax, type: :model do
         expect(line_item.adjustment_total).to eq(-9.5)
       end
 
-      it "tax linked to order" do
+      it 'tax linked to order' do
         order_subject.update
         order.reload
         expect(order.included_tax_total).to eq(0)

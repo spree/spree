@@ -1,20 +1,20 @@
 object @order
-extends "spree/api/v1/orders/order"
+extends 'spree/api/v1/orders/order'
 
 if lookup_context.find_all("spree/api/v1/orders/#{root_object.state}").present?
   extends "spree/api/v1/orders/#{root_object.state}"
 end
 
 child billing_address: :bill_address do
-  extends "spree/api/v1/addresses/show"
+  extends 'spree/api/v1/addresses/show'
 end
 
 child shipping_address: :ship_address do
-  extends "spree/api/v1/addresses/show"
+  extends 'spree/api/v1/addresses/show'
 end
 
 child line_items: :line_items do
-  extends "spree/api/v1/line_items/show"
+  extends 'spree/api/v1/line_items/show'
 end
 
 child payments: :payments do
@@ -34,11 +34,11 @@ child payments: :payments do
 end
 
 child shipments: :shipments do
-  extends "spree/api/v1/shipments/small"
+  extends 'spree/api/v1/shipments/small'
 end
 
 child adjustments: :adjustments do
-  extends "spree/api/v1/adjustments/show"
+  extends 'spree/api/v1/adjustments/show'
 end
 
 # Necessary for backend's order interface
@@ -47,5 +47,5 @@ node :permissions do
 end
 
 child valid_credit_cards: :credit_cards do
-  extends "spree/api/v1/credit_cards/show"
+  extends 'spree/api/v1/credit_cards/show'
 end

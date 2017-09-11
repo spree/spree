@@ -9,15 +9,14 @@ module Spree
         preference :amount_max, :decimal, default: 1000.00
         preference :operator_max, :string, default: '<'
 
-
         OPERATORS_MIN = ['gt', 'gte']
-        OPERATORS_MAX = ['lt','lte']
+        OPERATORS_MAX = ['lt', 'lte']
 
         def applicable?(promotable)
           promotable.is_a?(Spree::Order)
         end
 
-        def eligible?(order, options = {})
+        def eligible?(order, _options = {})
           item_total = order.item_total
 
           lower_limit_condition = item_total.send(preferred_operator_min == 'gte' ? :>= : :>, BigDecimal.new(preferred_amount_min.to_s))
@@ -30,6 +29,7 @@ module Spree
         end
 
         private
+
         def formatted_amount_min
           Spree::Money.new(preferred_amount_min).to_s
         end
@@ -37,7 +37,6 @@ module Spree
         def formatted_amount_max
           Spree::Money.new(preferred_amount_max).to_s
         end
-
 
         def ineligible_message_max
           if preferred_operator_max == 'gte'
@@ -54,7 +53,6 @@ module Spree
             eligibility_error_message(:item_total_less_than_or_equal, amount: formatted_amount_min)
           end
         end
-
       end
     end
   end

@@ -207,7 +207,7 @@ Spree comes with a set of calculators that should fit most of the shipping situa
 
 ### Extensions
 
-There are a few Spree extensions which provide additional shipping methods, including special support for fees imposed by common carriers, or support for bulk orders. See the [Spree Extension Registry](http://spreecommerce.com/extensions) for the latest information.
+There are a few Spree extensions which provide additional shipping methods, including special support for fees imposed by common carriers, or support for bulk orders. See the [Spree Extension Registry](https://github.com/spree-contrib) for the latest information.
 
 ### Writing Your Own
 

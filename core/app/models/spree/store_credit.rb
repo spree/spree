@@ -204,9 +204,9 @@ module Spree
 
     def store_event
       return unless saved_change_to_amount? ||
-                    saved_change_to_amount_used? ||
-                    saved_change_to_amount_authorized? ||
-                    action == ELIGIBLE_ACTION
+          saved_change_to_amount_used? ||
+          saved_change_to_amount_authorized? ||
+          action == ELIGIBLE_ACTION
 
       event = if action
                 store_credit_events.build(action: action)
@@ -248,7 +248,7 @@ module Spree
     def associate_credit_type
       unless type_id
         credit_type_name = category.try(:non_expiring?) ? 'Non-expiring' : 'Expiring'
-        self.credit_type = Spree::StoreCreditType.find_by_name(credit_type_name)
+        self.credit_type = Spree::StoreCreditType.find_by(name: credit_type_name)
       end
     end
   end

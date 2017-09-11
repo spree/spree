@@ -35,17 +35,18 @@ module Spree
       end
 
       private
-        def stock_movement_params
-          params.require(:stock_movement).permit(permitted_stock_movement_attributes)
-        end
 
-        def stock_item
-          @stock_item ||= StockItem.find(params[:id])
-        end
+      def stock_movement_params
+        params.require(:stock_movement).permit(permitted_stock_movement_attributes)
+      end
 
-        def determine_backorderable
-          stock_item.backorderable = params[:stock_item].present? && params[:stock_item][:backorderable].present?
-        end
+      def stock_item
+        @stock_item ||= StockItem.find(params[:id])
+      end
+
+      def determine_backorderable
+        stock_item.backorderable = params[:stock_item].present? && params[:stock_item][:backorderable].present?
+      end
     end
   end
 end

@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Spree::ShippingCategory, type: :model do
-
   describe '#validations' do
     it 'should have a valid factory' do
       expect(FactoryGirl.build(:shipping_category)).to be_valid

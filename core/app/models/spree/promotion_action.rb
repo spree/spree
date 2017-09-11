@@ -12,7 +12,7 @@ module Spree
     # Updates the state of the order or performs some other action depending on the subclass
     # options will contain the payload from the event that activated the promotion. This will include
     # the key :user which allows user based actions to be performed in addition to actions on the order
-    def perform(options = {})
+    def perform(_options = {})
       raise 'perform should be implemented in a sub-class of PromotionAction'
     end
 

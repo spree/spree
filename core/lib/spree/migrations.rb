@@ -4,7 +4,8 @@ module Spree
 
     # Takes the engine config block and engine name
     def initialize(config, engine_name)
-      @config, @engine_name = config, engine_name
+      @config = config
+      @engine_name = engine_name
     end
 
     # Puts warning when any engine migration is not present on the Rails app
@@ -23,7 +24,7 @@ module Spree
     def check
       if File.directory?(app_dir)
         engine_in_app = app_migrations.map do |file_name|
-          name, engine = file_name.split(".", 2)
+          name, engine = file_name.split('.', 2)
           next unless match_engine?(engine)
           name
         end.compact
@@ -44,15 +45,15 @@ module Spree
 
     def engine_migrations
       Dir.entries(engine_dir).map do |file_name|
-        name = file_name.split("_", 2).last.split(".", 2).first
+        name = file_name.split('_', 2).last.split('.', 2).first
         name.empty? ? next : name
       end.compact! || []
     end
 
     def app_migrations
       Dir.entries(app_dir).map do |file_name|
-        next if [".", ".."].include? file_name
-        name = file_name.split("_", 2).last
+        next if ['.', '..'].include? file_name
+        name = file_name.split('_', 2).last
         name.empty? ? next : name
       end.compact! || []
     end
@@ -66,9 +67,9 @@ module Spree
     end
 
     def match_engine?(engine)
-      if engine_name == "spree"
+      if engine_name == 'spree'
         # Avoid stores upgrading from 1.3 getting wrong warnings
-        ["spree.rb", "spree_promo.rb"].include? engine
+        ['spree.rb', 'spree_promo.rb'].include? engine
       else
         engine == "#{engine_name}.rb"
       end

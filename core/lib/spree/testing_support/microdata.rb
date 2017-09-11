@@ -156,7 +156,7 @@ module Spree
         end
 
         def non_textcontent_element?(element)
-          NON_TEXTCONTENT_ELEMENTS.has_key?(element)
+          NON_TEXTCONTENT_ELEMENTS.key?(element)
         end
 
         def url_attribute?(attribute)

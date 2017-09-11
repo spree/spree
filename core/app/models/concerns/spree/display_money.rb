@@ -8,7 +8,7 @@ module Spree
     #
     #
     # ==== Examples
-    # Decorate a method, with the default option of using the base object's 
+    # Decorate a method, with the default option of using the base object's
     # currency
     #
     #     extend Spree::DisplayMoney

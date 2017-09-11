@@ -10,8 +10,8 @@ module Spree
       'TO', 'TV', 'UG', 'AE', 'VU', 'YE', 'ZW'
     ].freeze
 
-    belongs_to :country, class_name: "Spree::Country"
-    belongs_to :state, class_name: "Spree::State", optional: true
+    belongs_to :country, class_name: 'Spree::Country'
+    belongs_to :state, class_name: 'Spree::State', optional: true
 
     has_many :shipments, inverse_of: :address
 
@@ -31,11 +31,15 @@ module Spree
     self.whitelisted_ransackable_attributes = %w[firstname lastname company]
 
     def self.build_default
-      country = Spree::Country.find(Spree::Config[:default_country_id]) rescue Spree::Country.first
+      country = begin
+                  Spree::Country.find(Spree::Config[:default_country_id])
+                rescue
+                  Spree::Country.first
+                end
       new(country: country)
     end
 
-    def self.default(user = nil, kind = "bill")
+    def self.default(user = nil, kind = 'bill')
       if user && user_address = user.public_send(:"#{kind}_address")
         user_address.clone
       else
@@ -68,11 +72,11 @@ module Spree
     end
 
     def clone
-      self.class.new(self.attributes.except('id', 'updated_at', 'created_at'))
+      self.class.new(attributes.except('id', 'updated_at', 'created_at'))
     end
 
     def ==(other_address)
-      self_attrs = self.attributes
+      self_attrs = attributes
       other_attrs = other_address.respond_to?(:attributes) ? other_address.attributes : {}
 
       [self_attrs, other_attrs].each { |attrs| attrs.except!('id', 'created_at', 'updated_at') }
@@ -99,7 +103,7 @@ module Spree
     end
 
     def require_phone?
-      true
+      Spree::Config[:address_requires_phone]
     end
 
     def require_zipcode?
@@ -165,10 +169,10 @@ module Spree
 
     def postal_code_validate
       return if country.blank? || country.iso.blank? || !require_zipcode?
-      return if !TwitterCldr::Shared::PostalCodes.territories.include?(country.iso.downcase.to_sym)
+      return unless TwitterCldr::Shared::PostalCodes.territories.include?(country.iso.downcase.to_sym)
 
       postal_code = TwitterCldr::Shared::PostalCodes.for_territory(country.iso)
-      errors.add(:zipcode, :invalid) if !postal_code.valid?(zipcode.to_s.strip)
+      errors.add(:zipcode, :invalid) unless postal_code.valid?(zipcode.to_s.strip)
     end
   end
 end

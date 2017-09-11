@@ -11,7 +11,7 @@ module Spree
   class << self
     attr_accessor :used_translations, :missing_translation_messages,
                   :unused_translations, :unused_translation_messages
-    alias_method :normal_t, :t
+    alias normal_t t
   end
 
   def self.t(*args)
@@ -49,7 +49,7 @@ module Spree
     self.used_translations ||= []
     self.unused_translation_messages = []
     self.unused_translations = []
-    self.load_translations(translations)
+    load_translations(translations)
     translation_diff = unused_translations - used_translations
     translation_diff.each do |translation|
       Spree.unused_translation_messages << "#{translation} (#{I18n.locale})"
@@ -58,13 +58,13 @@ module Spree
 
   private
 
-  def self.load_translations(hash, root=[])
-    hash.each do |k,v|
+  def self.load_translations(hash, root = [])
+    hash.each do |k, v|
       if v.is_a?(Hash)
         load_translations(v, root.dup << k)
       else
         key = (root + [k]).join('.')
-        self.unused_translations << key
+        unused_translations << key
       end
     end
   end
@@ -94,4 +94,3 @@ RSpec.configure do |config|
     end
   end
 end
-

@@ -1,7 +1,7 @@
 Spree::Sample.load_sample("option_types")
 
-size = Spree::OptionType.find_by_presentation!("Size")
-color = Spree::OptionType.find_by_presentation!("Color")
+size = Spree::OptionType.find_by!(presentation: "Size")
+color = Spree::OptionType.find_by!(presentation: "Color")
 
 option_values_attributes = [
   {

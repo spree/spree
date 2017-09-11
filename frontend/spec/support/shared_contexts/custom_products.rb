@@ -1,4 +1,4 @@
-shared_context "custom products" do
+shared_context 'custom products' do
   before(:each) do
     taxonomy = FactoryGirl.create(:taxonomy, name: 'Categories')
     root = taxonomy.root
