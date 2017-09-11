@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.homepage      = 'https://spreecommerce.com'
   s.license       = 'BSD-3'
 
-  s.files         = `git ls-files`.split($\).reject { |f| f.match(/^spec/) }
+  s.files         = `git ls-files`.split($\).reject { |f| f.match(/^spec/) && !f.match(/^spec\/fixtures/) }
   s.executables   = s.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
   s.name          = "spree_api"
   s.require_paths = ["lib"]
