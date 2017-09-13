@@ -19,6 +19,9 @@
   <% end %>
 </div>
 
+<%= render partial: 'spree/shared/trackers/segment/product_list_viewed.js',
+            formats: :js,
+            locals: { taxon: @taxon, products: products } %>
 <% if products.any? %>
   <div id="products" class="row" data-hook>
     <%= render partial: 'spree/products/product', collection: products, locals: { taxon: @taxon } %>
