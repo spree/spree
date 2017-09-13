@@ -1,7 +1,7 @@
 <script>
   if (typeof analytics !== 'undefined') {
     analytics.track('Order Completed', {
-      order_id: '<%= order.id %>',
+      order_id: '<%= order.number %>',
       total: '<%= order.total %>',
       shipping: '<%= order.shipment_total %>',
       tax: '<%= order.additional_tax_total %>',
