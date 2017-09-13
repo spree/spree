@@ -1,0 +1,12 @@
+<script>
+  if (typeof analytics !== 'undefined') {
+    analytics.track('Cart Viewed', {
+      cart_id: '<%= order.number %>',
+      products: [
+      <% order.line_items.each_with_index do |line_item, index| %>
+        <%= product_for_segment(line_item, position: index+1, quantity: line_item.quantity) %>,
+      <% end %>
+      ]
+    });
+  }
+</script>
