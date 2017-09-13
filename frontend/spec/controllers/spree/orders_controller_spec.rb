@@ -26,7 +26,7 @@ describe Spree::OrdersController, type: :controller do
             spree_post :populate, variant_id: variant.id, quantity: 5
           end.to change { user.orders.count }.by(1)
           order = user.orders.last
-          expect(response).to redirect_to spree.cart_path
+          expect(response).to redirect_to spree.cart_path(variant_id: variant.id)
           expect(order.line_items.size).to eq(1)
           line_item = order.line_items.first
           expect(line_item.variant_id).to eq(variant.id)
