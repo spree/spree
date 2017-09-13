@@ -10,6 +10,9 @@
       <%= Spree.t(:no_products_found) %>
     </div>
   <% elsif params.key?(:keywords) %>
+    <%= render partial: 'spree/shared/trackers/segment/products_searched.js',
+                formats: :js,
+                locals: { query: params[:keywords] } %>
     <div data-hook="products_search_results_heading_results_found">
       <h6 class="search-results-title"><%= Spree.t(:search_results, keywords: h(params[:keywords])) %></h6>
     </div>
