@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
 
   s.author      = 'Sean Schofield'
   s.email       = 'sean@spreecommerce.com'
-  s.homepage    = 'http://spreecommerce.com'
+  s.homepage    = 'http://spreecommerce.org'
   s.license     = 'BSD-3-Clause'
 
   s.files        = `git ls-files`.split("\n").reject { |f| f.match(/^spec/) && !f.match(/^spec\/fixtures/) }

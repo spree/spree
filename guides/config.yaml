@@ -63,7 +63,7 @@ watcher:
   notify_on_compilation_failure: true
 
 # For the atom feed.
-base_url: http://edgeguides.spreecommerce.com
+base_url: http://guides.spreecommerce.org
 
 # Array of [version, released_at] Array tuples.
 #api_versions:
