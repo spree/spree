@@ -9,7 +9,8 @@ module Spree
       def index; end
 
       def create
-        @taxon = @taxonomy.taxons.build(params[:taxon])
+        @taxon = @taxonomy.taxons.build(params[:taxon].except(:icon))
+        @taxon.build_icon(attachment: taxon_params[:icon])
         if @taxon.save
           respond_with(@taxon) do |format|
             format.json { render json: @taxon.to_json }
@@ -40,7 +41,8 @@ module Spree
           # check if we need to rename child taxons if parent name or permalink changes
           @update_children = true if params[:taxon][:name] != @taxon.name || params[:taxon][:permalink] != @taxon.permalink
 
-          @taxon.update_attributes(taxon_params)
+          @taxon.create_icon(attachment: taxon_params[:icon]) if taxon_params[:icon]
+          @taxon.update_attributes(taxon_params.except(:icon))
         end
         if successful
           flash[:success] = flash_message_for(@taxon, :successfully_updated)

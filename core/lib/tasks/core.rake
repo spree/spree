@@ -157,4 +157,14 @@ use rake db:load_file[/absolute/path/to/sample/filename.rb]}
       puts 'DONE !   Your database should no longer have line items that are associated with deleted variants.'
     end
   end
+
+  desc 'Migrates taxon icons to spree assets after upgrading to Spree 3.4: only needed if you used taxons icons.'
+  task migrate_taxon_icons: :environment do |_t, _args|
+    Spree::Taxon.all.each do |taxon|
+      taxon.create_icon(attachment_file_name: taxon.icon_file_name,
+                        attachment_content_type: taxon.icon_content_type,
+                        attachment_file_size: taxon.icon_file_size,
+                        attachment_updated_at: taxon.icon_updated_at)
+    end
+  end
 end
