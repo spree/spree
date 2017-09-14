@@ -7,6 +7,7 @@ module Spree
     has_many :products, through: :product_properties
 
     validates :name, :presentation, presence: true
+    validates :name, uniqueness: true
 
     scope :sorted, -> { order(:name) }
 
