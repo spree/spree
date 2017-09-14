@@ -1,15 +1,15 @@
 ---
-title: Search Users
+title: Searching Users
 ---
 
-# Search Users
+# Searching Users
 
 When you click the **Users** tab you will see **Filter dropdown**, **New User button** and all existing users that have ever created an account on your page.
 
 Next to each user there are 2 buttons and additionaly you can sort them by name by simply clicking **User** above the user's emails.
 
-* **Edit** - Allows you to make [additional edition in the user's settings](edit_users.md).
-* **Delete** - Allows you to [delete the user permanently](delete_users.md).
+* **Edit** - Allows you to make [additional edition in the user's settings](editing_users).
+* **Delete** - Allows you to [delete the user permanently](deleting_users).
 * **Sort by user's name** - Allows you to sort the users by name (A-Z, Z-A).
 
 ![User search options](/images/user/users/user_tab.jpg)
