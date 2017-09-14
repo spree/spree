@@ -6,7 +6,7 @@
         <span class="caret"></span>
       </button>
       <ul class="dropdown-menu" role="menu" data-hook="taxon_product_dropdown">
-        <li><a href="javascript:;" class="edit-product js-edit-product"><%= Spree.t(:edit) %></a></li>
+        <li><a href="{{ edit_product_url product.id }}" class="edit-product js-edit-product"><%= Spree.t(:edit) %></a></li>
         <li><a href="javascript:;" class="delete-product js-delete-product"><%= Spree.t(:delete_from_taxon) %></a></li>
       </ul>
     </div>
