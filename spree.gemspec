@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
 
   s.author       = 'Sean Schofield'
   s.email        = 'sean@spreecommerce.com'
-  s.homepage     = 'http://spreecommerce.com'
+  s.homepage     = 'http://spreecommerce.org'
   s.license      = 'BSD-3-Clause'
 
   s.add_dependency 'spree_core', s.version

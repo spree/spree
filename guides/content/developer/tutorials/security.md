@@ -290,7 +290,7 @@ authorize! action, resource, session[:access_token]
 ### PCI Compliance
 
 All store owners wishing to process credit card transactions should be familiar with [PCI Compliance](http://en.wikipedia.org/wiki/Pci_compliance). Spree makes
-absolutely no warranty regarding PCI compliance (or anything else for that matter - see the [LICENSE](http://spreecommerce.com/license) for details.) We do, however, follow common sense security practices in handling credit card data.
+absolutely no warranty regarding PCI compliance (or anything else for that matter - see the [LICENSE](https://github.com/spree/spree/blob/master/license.md) for details.) We do, however, follow common sense security practices in handling credit card data.
 
 ### Transmit Exactly Once
 
