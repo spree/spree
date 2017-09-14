@@ -14,6 +14,7 @@ module Spree
     end
 
     def update
+      @variant = Spree::Variant.find(params[:variant_id]) if params[:variant_id]
       if @order.contents.update_cart(order_params)
         respond_with(@order) do |format|
           format.html do
@@ -64,7 +65,7 @@ module Spree
         redirect_back_or_default(spree.root_path)
       else
         respond_with(order) do |format|
-          format.html { redirect_to cart_path }
+          format.html { redirect_to(cart_path(variant_id: variant.id)) }
         end
       end
     end

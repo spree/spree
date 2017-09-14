@@ -1,0 +1,16 @@
+<script>
+  if (typeof analytics !== 'undefined') {
+    analytics.track('Product List Filtered', {
+      filters: [
+        <% search.to_unsafe_h.each do |type, value| %>
+          <%= { type: type, value: value } .to_json.html_safe %>,
+        <% end %>
+      ],
+      products: [
+      <% products.each_with_index do |product, index| %>
+        <%= product_for_segment(product, position: index+1, image: product.images.first) %>,
+      <% end %>
+      ]
+    });
+  }
+</script>
