@@ -72,7 +72,7 @@ If you try to transfer an item that you do not have in stock at your Source loca
 
 The new stock transfer is readied. Once you have added all of the items you want to transfer, click the "Transfer Stock" button.
 
-![Stock Transfer Complete](/images/user/config/stock_transfer_complete.png)
+![Stock Transfer Complete](/images/user/config/stock_transfer_complete.jpg)
 
 Now when you look at the [Stock Movements](#stock-movements) for each of the stock locations, you see that there are two new entries that correspond to the stock transfer, both with a system-assigned "Action" number (actually, the id for the stock transfer).
 
