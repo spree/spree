@@ -234,6 +234,11 @@ route '/user/inventory/*/' do
   location.chop + ".html"
 end
 
+route '/user/users/*/' do
+  location = item.identifier.gsub('/users/', '/')
+  location.chop + ".html"
+end
+
 route '/release_notes/*/' do
   location = item.identifier.gsub('/release_notes/', '/release_notes/spree_')
   location.chop + ".html"

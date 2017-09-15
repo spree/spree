@@ -50,6 +50,12 @@ The Frontend is the customer-facing area of your store, meaning that the payment
 
 The Backend is the Admin Interface for your store. Site administrators typically select this option when they want to make a payment option available to their internal staff but not to their end customers. For example, you might want to offer purchase orders as a payment option to customers on a one-off basis, but only if they contact one of your customer service representatives via email or telephone.
 
+#### Auto Capture
+
+There is a possibility to set Auto Capture feature for your payment methods. Once you set Auto Capture on **Yes** option for a particular payment method, all the payments will be captured automatically. At this point all the payments will be captured without Admin's direct interference. However,  **Use App Default (false)** is default setting for newly created Payment Method.
+
+![Set up Auto Capture Payment Method](/images/user/config/auto_capture_payment_method.jpg)
+
 #### Active
 
 Select "Yes" if you want the payment method to be active on your store. Select "No" if you want to create the payment method, but not present it on your store until a later point.
