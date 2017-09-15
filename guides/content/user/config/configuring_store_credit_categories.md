@@ -29,4 +29,4 @@ Simple as that, in every other section in Spree you can see **Edit** and **Delet
 
 ![Category Delete](/images/user/config/category_delete_icon.jpg)
 
-Now you can assign Store Credit to the User's accounts. You can learn more about it [here](../users/editing_users.md)
+Now you can assign Store Credit to the User's accounts. You can learn more about it [here](editing_users)

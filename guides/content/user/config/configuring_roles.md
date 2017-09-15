@@ -26,4 +26,4 @@ Or Delete it by pressing **Delete** button.
 
 ## Assigning Role to the User
 
-To assign new Role, you need to open edition for the certain User. To find out more [click here](../users/editing_users.md).
+To assign new Role, you need to open edition for the certain User. To find out more [click here](editing_users).

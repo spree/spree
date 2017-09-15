@@ -41,7 +41,7 @@ There is a simply review of all orders created by the user. There are also **Lif
 
 * **Completed at** - This is the date when the user created certain order.
 * **Number** - This is an unique ID for a certain order, also you can move directly to the order when you click the ID.
-* **State** - It shows current state for the certain order, you can find more [about order state here](../orders/order_states).
+* **State** - It shows current state for the certain order, you can find more [about order state here](order_states).
 * **Total** - It shows total price for the certain order.
 
 ![User's orders](/images/user/users/user_edit_orders.jpg)
@@ -55,7 +55,7 @@ Very simlar to **Orders** tab, however, few more options are present here about 
 * **Price** - Price without taxes and shipping cost.
 * **Quantity** - Total number of purchased product.
 * **Total** - It shows total price for the certain order.
-* **State** - As previously aformentioned above there is more information [here](../user/orders/order_states).
+* **State** - As previously aformentioned above there is more information [here](order_states).
 * **Order #** - It shows order's unique ID that hyperlinks you to order's details.
 
 ![User's Items](/images/user/users/user_edit_inside_items.jpg)
@@ -111,7 +111,7 @@ Once the order has been placed there is recapitulation of the order. The user ca
 
 ![Placed order](/images/user/users/store_credit_front_placed_order.jpg)
 
-As an Admin you are able to check how the user paid for the order. Simply choose order that you would like to inspect and follow to **Payments** tab. If you don't know yet how to find this tab you can find out [here](../orders/entering_orders.html#payments). Admin has to capture the payment manually by default. In order to enable Automatic Payment Capture for the future payments we strongly recommend to read about it [here](../payments/payment_methods.html#user-content-auto-capture).
+As an Admin you are able to check how the user paid for the order. Simply choose order that you would like to inspect and follow to **Payments** tab. If you don't know yet how to find this tab you can find out [here](entering_orders). Admin has to capture the payment manually by default. In order to enable Automatic Payment Capture for the future payments we strongly recommend to read about it [here](payment_methods).
 
 ![Admin panel Payments](/images/user/users/store_credit_order_paid.jpg)
 

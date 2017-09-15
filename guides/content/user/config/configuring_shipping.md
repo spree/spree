@@ -5,7 +5,7 @@ title: Shipping Settings
 ## Introduction
 
 Once, you set up your shop, and add the products. You have to create Shipping Category and define your Shipping Methods using those categories.
-To make it easier for you, there is already an explanation for both, [Shipping Category](../user/shipments/shipping_categories.md) and [Methods](../user/shipments/shipping_methods.md).
+To make it easier for you, there is already an explanation for both, [Shipping Category](shipping_categories) and [Methods](shipping_methods).
 
 ## Corelation between Shipping Categories and Shipping Methods
 
