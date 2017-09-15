@@ -1,7 +1,7 @@
 
 <img src="spree_logo.png" width="261">
 
-* Join our Slack at [slack.spreecommerce.com](http://slack.spreecommerce.com/)
+* Join our Slack at [slack.spreecommerce.org](http://slack.spreecommerce.org/)
 * [Extensions](https://github.com/spree-contrib)
 * [Documentation](http://guides.spreecommerce.org)
 * [Roadmap](https://github.com/spree/spree/milestones?direction=asc&sort=due_date&state=open)
@@ -10,7 +10,7 @@
 [![Gem Version](https://badge.fury.io/rb/spree.svg)](https://badge.fury.io/rb/spree) [![Circle CI](https://circleci.com/gh/spree/spree.svg?style=shield)](https://circleci.com/gh/spree/spree/tree/master)
 [![Code Climate](https://codeclimate.com/github/spree/spree.svg)](https://codeclimate.com/github/spree/spree)
 [![codebeat](https://codebeat.co/badges/16feb8a2-abf0-4fbb-a130-20b689efcfc0)](https://codebeat.co/projects/github-com-spree-spree)
-[![Slack Status](http://slack.spreecommerce.com/badge.svg)](http://slack.spreecommerce.com)
+[![Slack Status](http://slack.spreecommerce.org/badge.svg)](http://slack.spreecommerce.org)
 
 **Spree** is a complete open source e-commerce solution built with Ruby on Rails. It
 was originally developed by Sean Schofield and is now maintained by developers from [Spark Solutions](http://sparksolutions.co) and [Vinsol](http://vinsol.com/). We're open to [contributions](#contributing) and accepting new [Core Team](https://github.com/spree/spree/wiki/Core-Team) members.
