@@ -33,7 +33,7 @@ describe "Cart", type: :feature, inaccessible: true do
     end
   end
 
-  it 'allows you to remove an item from the cart', :js => true do
+  it 'allows you to remove an item from the cart', js: true do
     create(:product, name: "RoR Mug")
     visit spree.root_path
     click_link "RoR Mug"

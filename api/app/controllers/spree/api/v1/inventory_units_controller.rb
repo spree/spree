@@ -15,7 +15,7 @@ module Spree
           inventory_unit.transaction do
             if inventory_unit.update_attributes(inventory_unit_params)
               fire
-              render :show, :status => 200
+              render :show, status: 200
             else
               invalid_resource!(inventory_unit)
             end
@@ -35,8 +35,8 @@ module Spree
 
           unless inventory_unit.respond_to?(can_event) &&
                  inventory_unit.send(can_event)
-            render :text => { :exception => "cannot transition to #{@event}" }.to_json,
-                   :status => 200
+            render text: { exception: "cannot transition to #{@event}" }.to_json,
+                   status: 200
             false
           end
         end

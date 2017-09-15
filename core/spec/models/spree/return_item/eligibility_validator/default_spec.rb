@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::ReturnItem::EligibilityValidator::Default, :type => :model do
+describe Spree::ReturnItem::EligibilityValidator::Default, type: :model do
   let(:return_item) { create(:return_item) }
   let(:validator) { Spree::ReturnItem::EligibilityValidator::Default.new(return_item) }
 

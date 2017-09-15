@@ -34,7 +34,7 @@ gem 'rails', '~> 4.0.0'```
 For best results, use the 2-1-stable branch from GitHub:
 
 ```ruby
-gem 'spree', :github => 'spree/spree', :branch => '2-1-stable'```
+gem 'spree', github: 'spree/spree', branch: '2-1-stable'```
 
 Run `bundle update spree`.
 

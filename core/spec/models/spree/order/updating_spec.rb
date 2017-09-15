@@ -1,10 +1,10 @@
 require 'spec_helper'
 
-describe Spree::Order, :type => :model do
+describe Spree::Order, type: :model do
   let(:order) { create(:order) }
 
   context "#update_with_updater!" do
-    let(:line_items) { [mock_model(Spree::LineItem, :amount => 5) ]}
+    let(:line_items) { [mock_model(Spree::LineItem, amount: 5) ]}
 
     context "when there are update hooks" do
       before { Spree::Order.register_update_hook :foo }

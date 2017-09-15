@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::StockItem, :type => :model do
+describe Spree::StockItem, type: :model do
   let(:stock_location) { create(:stock_location_with_items) }
 
   subject { stock_location.stock_items.order(:id).first }
@@ -73,7 +73,7 @@ describe Spree::StockItem, :type => :model do
       let(:inventory_unit_2) { double('InventoryUnit2') }
 
       before do
-        allow(subject).to receive_messages(:backordered_inventory_units => [inventory_unit, inventory_unit_2])
+        allow(subject).to receive_messages(backordered_inventory_units: [inventory_unit, inventory_unit_2])
         subject.update_column(:count_on_hand, -2)
       end
 
@@ -94,7 +94,7 @@ describe Spree::StockItem, :type => :model do
       end
 
       context "adds new items" do
-        before { allow(subject).to receive_messages(:backordered_inventory_units => [inventory_unit, inventory_unit_2]) }
+        before { allow(subject).to receive_messages(backordered_inventory_units: [inventory_unit, inventory_unit_2]) }
 
         it "fills existing backorders" do
           expect(inventory_unit).to receive(:fill_backorder)
@@ -132,7 +132,7 @@ describe Spree::StockItem, :type => :model do
       end
 
       context "adds new items" do
-        before { allow(subject).to receive_messages(:backordered_inventory_units => [inventory_unit, inventory_unit_2]) }
+        before { allow(subject).to receive_messages(backordered_inventory_units: [inventory_unit, inventory_unit_2]) }
 
         it "fills existing backorders" do
           expect(inventory_unit).to receive(:fill_backorder)

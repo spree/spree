@@ -3,7 +3,7 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= button_link_to Spree.t(:new_promotion), new_object_url, :class => "btn-success", :icon => 'add' %>
+  <%= button_link_to Spree.t(:new_promotion), new_object_url, class: "btn-success", icon: 'add' %>
 <% end %>
 
 <% content_for :table_filter do %>
@@ -30,7 +30,7 @@
 
           <div class="form-group">
             <%= label_tag :q_promotion_category_id_eq, Spree.t(:promotion_category) %>
-            <%= f.collection_select(:promotion_category_id_eq, @promotion_categories, :id, :name, { :include_blank => Spree.t('match_choices.all') }, { :class => 'select2' }) %>
+            <%= f.collection_select(:promotion_category_id_eq, @promotion_categories, :id, :name, { include_blank: Spree.t('match_choices.all') }, { class: 'select2' }) %>
           </div>
         </div>
       </div>
@@ -64,11 +64,11 @@
           <td><%= promotion.code %></td>
           <td><%= promotion.description %></td>
           <td><%= promotion.usage_limit.nil? ? "∞" : promotion.usage_limit  %></td>
-          <td><%= Spree.t(:current_promotion_usage, :count => promotion.credits_count) %></td>
+          <td><%= Spree.t(:current_promotion_usage, count: promotion.credits_count) %></td>
           <td><%= promotion.expires_at.to_date.to_s(:short_date) if promotion.expires_at %></td>
           <td class="actions actions-2">
-            <%= link_to_edit promotion, :no_text => true %>
-            <%= link_to_delete promotion, :no_text => true %>
+            <%= link_to_edit promotion, no_text: true %>
+            <%= link_to_delete promotion, no_text: true %>
           </td>
         </tr>
       <% end %>

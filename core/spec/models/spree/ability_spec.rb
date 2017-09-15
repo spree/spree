@@ -17,7 +17,7 @@ class FooAbility
   end
 end
 
-describe Spree::Ability, :type => :model do
+describe Spree::Ability, type: :model do
   let(:user) { build(:user) }
   let(:ability) { Spree::Ability.new(user) }
   let(:token) { nil }
@@ -34,7 +34,7 @@ describe Spree::Ability, :type => :model do
 
     it 'should apply the registered abilities permissions' do
       Spree::Ability.register_ability(FooAbility)
-      expect(Spree::Ability.new(user).can?(:update, mock_model(Spree::Order, :id => 1))).to be true
+      expect(Spree::Ability.new(user).can?(:update, mock_model(Spree::Order, id: 1))).to be true
     end
   end
 

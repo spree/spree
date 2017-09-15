@@ -21,7 +21,7 @@ Given that this is a major release, you may want to read through the [2.0.0 rele
 For best results, use the 2-0-stable branch from GitHub:
 
 ```ruby
-gem 'spree', :github => 'spree/spree', :branch => '2-0-stable'```
+gem 'spree', github: 'spree/spree', branch: '2-0-stable'```
 
 Run `bundle update spree`. 
 

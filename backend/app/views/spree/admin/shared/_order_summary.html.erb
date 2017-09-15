@@ -11,7 +11,7 @@
         </td>
         <td>
           <span class="state label label-<%= @order.state %>">
-            <%= Spree.t(@order.state, :scope => :order_state) %>
+            <%= Spree.t(@order.state, scope: :order_state) %>
           </span>
         </td>
       </tr>
@@ -71,7 +71,7 @@
           </td>
           <td id='shipment_status'>
             <span class="state label label-<%= @order.shipment_state %>">
-              <%= Spree.t(@order.shipment_state, :scope => :shipment_states, :default => [:missing, "none"]) %>
+              <%= Spree.t(@order.shipment_state, scope: :shipment_states, default: [:missing, "none"]) %>
             </span>
           </td>
         </tr>
@@ -81,7 +81,7 @@
           </td>
           <td id='payment_status'>
             <span class="state label label-<%= @order.payment_state %>">
-              <%= Spree.t(@order.payment_state, :scope => :payment_states, :default => [:missing, "none"]) %>
+              <%= Spree.t(@order.payment_state, scope: :payment_states, default: [:missing, "none"]) %>
             </span>
           </td>
         </tr>

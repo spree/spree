@@ -19,8 +19,8 @@ describe "Promotion Adjustments", type: :feature, js: true do
       select2 "Item total", from: "Add rule of type"
       within('#rule_fields') { click_button "Add" }
 
-      eventually_fill_in "promotion_promotion_rules_attributes_#{Spree::Promotion.count}_preferred_amount_min", :with => 30
-      eventually_fill_in "promotion_promotion_rules_attributes_#{Spree::Promotion.count}_preferred_amount_max", :with => 60
+      eventually_fill_in "promotion_promotion_rules_attributes_#{Spree::Promotion.count}_preferred_amount_min", with: 30
+      eventually_fill_in "promotion_promotion_rules_attributes_#{Spree::Promotion.count}_preferred_amount_max", with: 60
       within('#rule_fields') { click_button "Update" }
 
       select2 "Create whole-order adjustment", from: "Add action of type"

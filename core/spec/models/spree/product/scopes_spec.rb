@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Product scopes", :type => :model do
+describe "Product scopes", type: :model do
   let!(:product) { create(:product) }
 
   describe '#available' do
@@ -43,8 +43,8 @@ describe "Product scopes", :type => :model do
       @taxonomy = create(:taxonomy)
       @root_taxon = @taxonomy.root
 
-      @parent_taxon = create(:taxon, :name => 'Parent', :taxonomy_id => @taxonomy.id, :parent => @root_taxon)
-      @child_taxon = create(:taxon, :name =>'Child 1', :taxonomy_id => @taxonomy.id, :parent => @parent_taxon)
+      @parent_taxon = create(:taxon, name: 'Parent', taxonomy_id: @taxonomy.id, parent: @root_taxon)
+      @child_taxon = create(:taxon, name:'Child 1', taxonomy_id: @taxonomy.id, parent: @parent_taxon)
       @parent_taxon.reload # Need to reload for descendents to show up
 
       product.taxons << @parent_taxon
@@ -73,7 +73,7 @@ describe "Product scopes", :type => :model do
 
       it 'after ordering changed' do
         [@child_taxon, other_taxon].each do |taxon|
-          Spree::Classification.find_by(:taxon => taxon, :product => product).insert_at(2)
+          Spree::Classification.find_by(taxon: taxon, product: product).insert_at(2)
           expect(Spree::Product.in_taxon(taxon)).to eq([product_2, product])
         end
       end

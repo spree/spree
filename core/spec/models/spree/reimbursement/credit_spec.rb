@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe Reimbursement::Credit, :type => :model do
+  describe Reimbursement::Credit, type: :model do
     context 'class methods' do
       describe '.total_amount_reimbursed_for' do
         subject { Spree::Reimbursement::Credit.total_amount_reimbursed_for(reimbursement) }

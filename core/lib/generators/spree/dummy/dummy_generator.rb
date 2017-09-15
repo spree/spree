@@ -6,8 +6,8 @@ module Spree
   class DummyGenerator < Rails::Generators::Base
     desc "Creates blank Rails application, installs Spree and all sample data"
 
-    class_option :lib_name, :default => ''
-    class_option :database, :default => ''
+    class_option :lib_name, default: ''
+    class_option :database, default: ''
 
     def self.source_paths
       paths = self.superclass.source_paths
@@ -41,14 +41,14 @@ module Spree
       @lib_name = options[:lib_name]
       @database = options[:database]
 
-      template "rails/database.yml", "#{dummy_path}/config/database.yml", :force => true
-      template "rails/boot.rb", "#{dummy_path}/config/boot.rb", :force => true
-      template "rails/application.rb", "#{dummy_path}/config/application.rb", :force => true
-      template "rails/routes.rb", "#{dummy_path}/config/routes.rb", :force => true
-      template "rails/test.rb", "#{dummy_path}/config/environments/test.rb", :force => true
-      template "rails/script/rails", "#{dummy_path}/spec/dummy/script/rails", :force => true
-      template "initializers/custom_user.rb", "#{dummy_path}/config/initializers/custom_user.rb", :force => true
-      template "initializers/devise.rb", "#{dummy_path}/config/initializers/devise.rb", :force => true
+      template "rails/database.yml", "#{dummy_path}/config/database.yml", force: true
+      template "rails/boot.rb", "#{dummy_path}/config/boot.rb", force: true
+      template "rails/application.rb", "#{dummy_path}/config/application.rb", force: true
+      template "rails/routes.rb", "#{dummy_path}/config/routes.rb", force: true
+      template "rails/test.rb", "#{dummy_path}/config/environments/test.rb", force: true
+      template "rails/script/rails", "#{dummy_path}/spec/dummy/script/rails", force: true
+      template "initializers/custom_user.rb", "#{dummy_path}/config/initializers/custom_user.rb", force: true
+      template "initializers/devise.rb", "#{dummy_path}/config/initializers/devise.rb", force: true
     end
 
     def test_dummy_inject_extension_requirements
@@ -91,7 +91,7 @@ begin
 rescue LoadError
   # #{requirement} is not available.
 end
-      ], :before => /require '#{@lib_name}'/, :verbose => true
+      ], before: /require '#{@lib_name}'/, verbose: true
     end
 
     def dummy_path

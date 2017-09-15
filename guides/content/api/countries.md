@@ -27,10 +27,10 @@ per_page
 
 <%= headers 200 %>
 <%= json(:country) do |h|
-{ :countries => [h],
-  :count => 25,
-  :pages => 5,
-  :current_page => 1 }
+{ countries: [h],
+  count: 25,
+  pages: 5,
+  current_page: 1 }
 end %>
 
 ## Search
@@ -48,10 +48,10 @@ The search results are paginated.
 
 <%= headers 200 %>
 <%= json(:country) do |h|
- { :countries => [h],
-   :count => 25,
-   :pages => 5,
-   :current_page => 1 }
+ { countries: [h],
+   count: 25,
+   pages: 5,
+   current_page: 1 }
 end %>
 
 Results can be returned in a specific order by specifying which field to sort by when making a request.

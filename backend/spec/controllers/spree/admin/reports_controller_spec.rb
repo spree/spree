@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Admin::ReportsController, :type => :controller do
+describe Spree::Admin::ReportsController, type: :controller do
   stub_authorization!
 
   describe 'ReportsController.available_reports' do

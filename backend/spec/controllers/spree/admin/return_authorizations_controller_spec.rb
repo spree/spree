@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Admin::ReturnAuthorizationsController, :type => :controller do
+describe Spree::Admin::ReturnAuthorizationsController, type: :controller do
   stub_authorization!
 
   # Regression test for #1370 #3

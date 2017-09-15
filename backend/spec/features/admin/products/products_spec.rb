@@ -222,11 +222,11 @@ describe "Products", type: :feature do
         before do
           # change English locale’s separator and delimiter to match 19,99 format
           I18n.backend.store_translations(:en,
-            :number => {
-              :currency => {
-                :format => {
-                  :separator => ",",
-                  :delimiter => "."
+            number: {
+              currency: {
+                format: {
+                  separator: ",",
+                  delimiter: "."
                 }
               }
             })
@@ -235,18 +235,18 @@ describe "Products", type: :feature do
         after do
           # revert changes to English locale
           I18n.backend.store_translations(:en,
-            :number => {
-              :currency => {
-                :format => {
-                  :separator => ".",
-                  :delimiter => ","
+            number: {
+              currency: {
+                format: {
+                  separator: ".",
+                  delimiter: ","
                 }
               }
             })
         end
 
-        it "should show localized price value on validation errors", :js => true do
-          fill_in "product_price", :with => "19,99"
+        it "should show localized price value on validation errors", js: true do
+          fill_in "product_price", with: "19,99"
           click_button "Create"
           expect(find('input#product_price').value).to eq('19,99')
         end
@@ -385,7 +385,7 @@ describe "Products", type: :feature do
       end
     end
 
-    context 'deleting a product', :js => true do
+    context 'deleting a product', js: true do
       let!(:product) { create(:product) }
 
       it "is still viewable" do

@@ -1,11 +1,11 @@
 require 'spec_helper'
 
-describe Spree::Taxonomy, :type => :model do
+describe Spree::Taxonomy, type: :model do
   context "#destroy" do
     before do
        @taxonomy = create(:taxonomy)
        @root_taxon = @taxonomy.root
-       @child_taxon = create(:taxon, :taxonomy_id => @taxonomy.id, :parent => @root_taxon)
+       @child_taxon = create(:taxon, taxonomy_id: @taxonomy.id, parent: @root_taxon)
     end
 
     it "should destroy all associated taxons" do

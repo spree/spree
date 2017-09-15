@@ -3,7 +3,7 @@
 require "spec_helper"
 
 module Spree
-  describe ProductsHelper, :type => :helper do
+  describe ProductsHelper, type: :helper do
     include ProductsHelper
 
     let(:product) { create(:product) }
@@ -18,7 +18,7 @@ module Spree
       let(:variant_price) { 10 }
 
       before do
-        @variant = create(:variant, :product => product)
+        @variant = create(:variant, product: product)
         product.price = 15
         @variant.price = 10
         allow(product).to receive(:amount_in) { product_price }
@@ -75,8 +75,8 @@ module Spree
     context "#variant_price_full" do
       before do
         Spree::Config[:show_variant_full_price] = true
-        @variant1 = create(:variant, :product => product)
-        @variant2 = create(:variant, :product => product)
+        @variant1 = create(:variant, product: product)
+        @variant2 = create(:variant, product: product)
       end
 
       context "when currency is default" do
@@ -203,7 +203,7 @@ THIS IS THE BEST PRODUCT EVER!
       subject { helper.cache_key_for_products }
       before(:each) do
         @products = double('products collection')
-        allow(helper).to receive(:params) { {:page => 10} }
+        allow(helper).to receive(:params) { {page: 10} }
         allow(helper).to receive(:current_price_options) { price_options }
       end
 

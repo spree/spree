@@ -1,12 +1,12 @@
 require 'spec_helper'
 require 'spree/core/product_filters'
 
-describe 'product filters', :type => :model do
+describe 'product filters', type: :model do
   # Regression test for #1709
   context 'finds products filtered by brand' do
     let(:product) { create(:product) }
     before do
-      property = Spree::Property.create!(:name => "brand", :presentation => "brand")
+      property = Spree::Property.create!(name: "brand", presentation: "brand")
       product.set_property("brand", "Nike")
     end
 

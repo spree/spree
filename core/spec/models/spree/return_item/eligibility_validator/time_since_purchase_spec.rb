@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::ReturnItem::EligibilityValidator::TimeSincePurchase, :type => :model do
+describe Spree::ReturnItem::EligibilityValidator::TimeSincePurchase, type: :model do
   let(:inventory_unit) { create(:inventory_unit, order: create(:shipped_order)) }
   let(:return_item)    { create(:return_item, inventory_unit: inventory_unit) }
   let(:validator)      { Spree::ReturnItem::EligibilityValidator::TimeSincePurchase.new(return_item) }

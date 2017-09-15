@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::Zone, :type => :model do
+describe Spree::Zone, type: :model do
   context "#match" do
     let(:country_zone) { create(:zone, kind: 'country') }
 

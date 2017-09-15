@@ -6,7 +6,7 @@ describe "States", type: :feature do
   let!(:country) { create(:country) }
 
   before(:each) do
-    @hungary = Spree::Country.create!(:name => "Hungary", :iso_name => "Hungary")
+    @hungary = Spree::Country.create!(name: "Hungary", iso_name: "Hungary")
   end
 
   def go_to_states_page
@@ -16,7 +16,7 @@ describe "States", type: :feature do
   end
 
   context "admin visiting states listing" do
-    let!(:state) { create(:state, :country => country) }
+    let!(:state) { create(:state, country: country) }
 
     it "should correctly display the states" do
       visit spree.admin_country_states_path(country)

@@ -1,21 +1,21 @@
-<%= render :partial => 'spree/admin/shared/error_messages', :locals => { :target => @promotion } %>
+<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @promotion } %>
 
 <div class="row" id="general_fields" >
   <div class="col-md-3">
     <%= f.field_container :name, class: ['form-group'] do %>
       <%= f.label :name %>
-      <%= f.text_field :name, :class => 'form-control' %>
+      <%= f.text_field :name, class: 'form-control' %>
       <%= f.error_message_on :name %>
     <% end %>
 
     <%= f.field_container :code, class: ['form-group'] do %>
       <%= f.label :code %>
-      <%= f.text_field :code, :class => 'form-control' %>
+      <%= f.text_field :code, class: 'form-control' %>
     <% end %>
 
     <%= f.field_container :path, class: ['form-group'] do %>
       <%= f.label :path %>
-      <%= f.text_field :path, :class => 'form-control' %>
+      <%= f.text_field :path, class: 'form-control' %>
     <% end %>
 
     <%= f.field_container :advertise, class: ['checkbox'] do %>
@@ -29,32 +29,32 @@
   <div class="col-md-6">
     <%= f.field_container :description, class: ['form-group'] do %>
       <%= f.label :description %>
-      <%= f.text_area :description, :rows => 7, :class => 'form-control' %>
+      <%= f.text_area :description, rows: 7, class: 'form-control' %>
     <% end %>
 
     <%= f.field_container :category, class: ['form-group'] do %>
       <%= f.label :promotion_category %>
-      <%= f.collection_select(:promotion_category_id, @promotion_categories, :id, :name, { :include_blank => Spree.t('match_choices.none') }, { :class => 'select2' }) %>
+      <%= f.collection_select(:promotion_category_id, @promotion_categories, :id, :name, { include_blank: Spree.t('match_choices.none') }, { class: 'select2' }) %>
     <% end %>
   </div>
 
   <div id="expiry_fields" class="col-md-3">
     <%= f.field_container :usage_limit do %>
       <%= f.label :usage_limit %>
-      <%= f.number_field :usage_limit, :min => 0, :class => 'form-control' %>
+      <%= f.number_field :usage_limit, min: 0, class: 'form-control' %>
       <p class="help-block">
-        <%= Spree.t(:current_promotion_usage, :count => @promotion.credits_count) %>
+        <%= Spree.t(:current_promotion_usage, count: @promotion.credits_count) %>
       </p>
     <% end %>
 
     <div id="starts_at_field" class="form-group">
       <%= f.label :starts_at %>
-      <%= f.text_field :starts_at, :value => datepicker_field_value(@promotion.starts_at), :class => 'datepicker datepicker-from form-control' %>
+      <%= f.text_field :starts_at, value: datepicker_field_value(@promotion.starts_at), class: 'datepicker datepicker-from form-control' %>
     </div>
 
     <div id="expires_at_field" class="form-group">
       <%= f.label :expires_at %>
-      <%= f.text_field :expires_at, :value => datepicker_field_value(@promotion.expires_at), :class => 'datepicker datepicker-to form-control' %>
+      <%= f.text_field :expires_at, value: datepicker_field_value(@promotion.expires_at), class: 'datepicker datepicker-to form-control' %>
     </div>
   </div>
 </div>

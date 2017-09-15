@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'benchmark'
 
-describe Spree::Shipment, :type => :model do
+describe Spree::Shipment, type: :model do
   let(:order) { mock_model Spree::Order, backordered?: false,
                                          canceled?: false,
                                          can_ship?: true,
@@ -725,7 +725,7 @@ describe Spree::Shipment, :type => :model do
   context "state changes" do
     before do
       # Must be stubbed so transition can succeed
-      allow(order).to receive_messages :paid? => true
+      allow(order).to receive_messages paid?: true
     end
 
     it "are logged to the database" do

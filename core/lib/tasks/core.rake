@@ -32,7 +32,7 @@ use rake db:load_file[/absolute/path/to/sample/filename.rb]}
   end
 
   desc "Migrate schema to version 0 and back up again. WARNING: Destroys all data in tables!!"
-  task :remigrate => :environment do
+  task remigrate: :environment do
     require 'highline/import'
 
     if ENV['SKIP_NAG'] or ENV['OVERWRITE'].to_s.downcase == 'true' or agree("This task will destroy any data in the database. Are you sure you want to \ncontinue? [y/n] ")
@@ -101,7 +101,7 @@ use rake db:load_file[/absolute/path/to/sample/filename.rb]}
 
 
   desc "Fix orphan line items after upgrading to Spree 3.1: only needed if you have line items attached to deleted records with Slug (product) and SKU (variant) duplicates of non-deleted records."
-  task :fix_orphan_line_items => :environment do |t, args|
+  task fix_orphan_line_items: :environment do |t, args|
     def get_input
       STDOUT.flush
       input = STDIN.gets.chomp

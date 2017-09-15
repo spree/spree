@@ -6,8 +6,8 @@ describe 'Product Details', type: :feature, js: true do
 
   context 'editing a product' do
     it 'should list the product details' do
-      create(:product, :name => 'Bún thịt nướng', :sku => 'A100',
-              :description => 'lorem ipsum', :available_on => '2013-08-14 01:02:03')
+      create(:product, name: 'Bún thịt nướng', sku: 'A100',
+              description: 'lorem ipsum', available_on: '2013-08-14 01:02:03')
 
       visit spree.admin_products_path
       within_row(1) { click_icon :edit }
