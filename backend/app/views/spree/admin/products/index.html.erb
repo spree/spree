@@ -34,7 +34,7 @@
 
           <div class="field checkbox">
             <label>
-              <%= f.check_box :discontinue_on_null, {:checked => params[:q][:discontinue_on_null] == '0'}, '0', '1' %>
+              <%= f.check_box :not_discontinued, {checked: params[:q][:not_discontinued] == '0'}, '0', '1' %>
               <%= Spree.t(:show_discontinued ) %>
             </label>
           </div>

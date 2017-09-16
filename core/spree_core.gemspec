@@ -16,20 +16,20 @@ Gem::Specification.new do |s|
   s.homepage    = 'http://spreecommerce.com'
   s.license     = 'BSD-3'
 
-  s.files        = `git ls-files`.split("\n")
+  s.files        = `git ls-files`.split("\n").reject { |f| f.match(/^spec/) && !f.match(/^spec\/fixtures/) }
   s.require_path = 'lib'
 
   s.add_dependency 'activemerchant', '~> 1.59'
-  s.add_dependency 'acts_as_list', '0.7.2'
+  s.add_dependency 'acts_as_list', '~> 0.7', '>= 0.7.2'
   s.add_dependency 'awesome_nested_set', '~> 3.0.1'
   s.add_dependency 'carmen', '~> 1.0.0'
   s.add_dependency 'cancancan', '~> 1.10.1'
-  s.add_dependency 'deface', '~> 1.0.0'
-  s.add_dependency 'ffaker', '~> 2.2.0'
+  s.add_dependency 'deface', '~> 1.0'
+  s.add_dependency 'ffaker', '~> 2.2'
   s.add_dependency 'font-awesome-rails', '~> 4.0'
   s.add_dependency 'friendly_id', '~> 5.1.0'
   s.add_dependency 'highline', '~> 1.6.18' # Necessary for the install generator
-  s.add_dependency 'kaminari', '~> 0.17'
+  s.add_dependency 'kaminari', '~> 1.0.1'
   s.add_dependency 'monetize', '~> 1.1'
   s.add_dependency 'paperclip', '~> 4.3.0'
   s.add_dependency 'paranoia', '~> 2.1.0'

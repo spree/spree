@@ -53,7 +53,7 @@ module Spree
     end
 
     self.whitelisted_ransackable_associations = %w[shipments user promotions bill_address ship_address line_items]
-    self.whitelisted_ransackable_attributes =  %w[completed_at created_at email number state payment_state shipment_state total considered_risky]
+    self.whitelisted_ransackable_attributes = %w[completed_at email number state payment_state shipment_state total considered_risky]
 
     attr_reader :coupon_code
     attr_accessor :temporary_address, :temporary_credit_card
@@ -609,20 +609,6 @@ module Spree
     alias_method :fully_discounted, :fully_discounted?
 
     private
-
-    def create_store_credit_payment(payment_method, credit, amount)
-      payments.create!(
-        source: credit,
-        payment_method: payment_method,
-        amount: amount,
-        state: 'checkout',
-        response_code: credit.generate_authorization_code
-      )
-    end
-
-    def store_credit_amount(credit, total)
-      [credit.amount_remaining, total].min
-    end
 
     def link_by_email
       self.email = user.email if self.user

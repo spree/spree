@@ -10,15 +10,15 @@
     <% end if can?(:admin, Spree::Product) %>
     <%= content_tag :li, class: ('active' if current == :images) do %>
       <%= link_to_with_icon 'picture', Spree.t(:images), spree.admin_product_images_url(@product) %>
-    <% end if can?(:admin, Spree::Image) %>
+    <% end if can?(:admin, Spree::Image) && !@product.deleted? %>
     <%= content_tag :li, class: ('active' if current == :variants) do %>
       <%= link_to_with_icon 'th-large', Spree.t(:variants),  spree.admin_product_variants_url(@product) %>
-    <% end if can?(:admin, Spree::Variant) %>
+    <% end if can?(:admin, Spree::Variant) && !@product.deleted? %>
     <%= content_tag :li, class: ('active' if current == :properties) do %>
       <%= link_to_with_icon 'list-alt', Spree.t(:properties), spree.admin_product_product_properties_url(@product) %>
-    <% end if can?(:admin, Spree::ProductProperty) %>
+    <% end if can?(:admin, Spree::ProductProperty) && !@product.deleted? %>
     <%= content_tag :li, class: ('active' if current == :stock) do %>
       <%= link_to_with_icon 'home', Spree.t(:stock), stock_admin_product_url(@product) %>
-    <% end if can?(:admin, Spree::Stock) %>
+    <% end if can?(:admin, Spree::Stock) && !@product.deleted? %>
   </ul>
 <% end %>

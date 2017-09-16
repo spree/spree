@@ -86,15 +86,46 @@ module Spree
         expect(response.status).to eq(201)
       end
 
-      it "can update a product property" do
-        api_put :update, :id => property_1.property_name, :product_property => { :value => "my value 456" }
-        expect(response.status).to eq(200)
+      context 'when product property does not exist' do
+        it 'cannot update product property and responds 404' do
+          api_put :update, id: 'does not exist', product_property: { value: 'new value' }
+          expect(response.status).to eq(404)
+        end
       end
 
-      it "can delete a product property" do
-        api_delete :destroy, :id => property_1.property_name
-        expect(response.status).to eq(204)
-        expect { property_1.reload }.to raise_error(ActiveRecord::RecordNotFound)
+      context 'when product property exists' do
+        context 'when product property is valid' do
+          it 'responds 200' do
+            api_put :update, id: property_1.property_name, product_property: { value: "my value 456" }
+            expect(response.status).to eq(200)
+          end
+        end
+
+        context 'when product property is invalid' do
+          before(:each) do
+            expect_any_instance_of(Spree::ProductProperty).to receive(:update_attributes).and_return false
+          end
+
+          it 'responds 422' do
+            api_put :update, id: property_1.property_name, product_property: { value: 'hello' }
+            expect(response.status).to eq(422)
+          end
+        end
+      end
+
+      context 'when product property does not exist' do
+        it 'cannot delete product property and responds 404' do
+          api_delete :destroy, id: 'does not exist'
+          expect(response.status).to eq(404)
+        end
+      end
+
+      context 'when product property exists' do
+        it "can delete a product property" do
+          api_delete :destroy, id: property_1.property_name
+          expect(response.status).to eq(204)
+          expect { property_1.reload }.to raise_error(ActiveRecord::RecordNotFound)
+        end
       end
     end
 

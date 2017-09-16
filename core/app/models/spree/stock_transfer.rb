@@ -10,7 +10,7 @@ module Spree
     belongs_to :source_location, class_name: 'StockLocation'
     belongs_to :destination_location, class_name: 'StockLocation'
 
-    self.whitelisted_ransackable_attributes = %w[reference source_location_id destination_location_id created_at number]
+    self.whitelisted_ransackable_attributes = %w[reference source_location_id destination_location_id number]
 
     def to_param
       number

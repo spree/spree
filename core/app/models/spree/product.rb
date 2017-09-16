@@ -105,6 +105,7 @@ module Spree
     end
 
     validates :slug, length: { minimum: 3 }, allow_blank: true, uniqueness: true
+    validate :discontinue_on_must_be_later_than_available_on, if: -> { available_on && discontinue_on }
 
     attr_accessor :option_values_hash
 
@@ -114,6 +115,7 @@ module Spree
 
     self.whitelisted_ransackable_associations = %w[stores variants_including_master master variants]
     self.whitelisted_ransackable_attributes = %w[description name slug discontinue_on]
+    self.whitelisted_ransackable_scopes = %w[not_discontinued]
 
     # the master variant is not a member of the variants array
     def has_variants?
@@ -369,6 +371,12 @@ module Spree
     def remove_taxon(taxon)
       removed_classifications = classifications.where(taxon: taxon)
       removed_classifications.each &:remove_from_list
+    end
+
+    def discontinue_on_must_be_later_than_available_on
+      if discontinue_on < available_on
+        errors.add(:discontinue_on, :invalid_date_range)
+      end
     end
   end
 end
