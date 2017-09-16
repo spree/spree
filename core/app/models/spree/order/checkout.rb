@@ -62,7 +62,7 @@ module Spree
 
               event :return do
                 transition to: :returned,
-                           from: [:complete, :awaiting_return, :canceled],
+                           from: [:complete, :awaiting_return, :canceled, :returned],
                            if: :all_inventory_units_returned?
               end
 
