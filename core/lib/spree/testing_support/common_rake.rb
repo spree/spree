@@ -11,6 +11,7 @@ namespace :common do
     require ENV['LIB_NAME'].to_s
 
     ENV['RAILS_ENV'] = 'test'
+    Rails.env = 'test'
 
     Spree::DummyGenerator.start ["--lib_name=#{ENV['LIB_NAME']}", '--quiet']
     Spree::InstallGenerator.start ["--lib_name=#{ENV['LIB_NAME']}", '--auto-accept', '--migrate=false', '--seed=false', '--sample=false', '--quiet', '--copy_views=false', "--user_class=#{args[:user_class]}"]
