@@ -3,6 +3,7 @@ unless defined?(Spree::InstallGenerator)
 end
 
 require 'generators/spree/dummy/dummy_generator'
+require 'rails'
 
 desc "Generates a dummy app for testing"
 namespace :common do
@@ -11,6 +12,7 @@ namespace :common do
     require ENV['LIB_NAME'].to_s
 
     ENV['RAILS_ENV'] = 'test'
+    Rails.env = 'test'
 
     Spree::DummyGenerator.start ["--lib_name=#{ENV['LIB_NAME']}", "--quiet"]
     Spree::InstallGenerator.start ["--lib_name=#{ENV['LIB_NAME']}", "--auto-accept", "--migrate=false", "--seed=false", "--sample=false", "--quiet", "--user_class=#{args[:user_class]}"]
