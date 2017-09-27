@@ -20,9 +20,9 @@ module Spree
     def perform
       @shipment.inventory_units.each &:ship!
       @shipment.process_order_payments if Spree::Config[:auto_capture_on_dispatch]
-      send_shipped_email
       @shipment.touch :shipped_at
       update_order_shipment_state
+      send_shipped_email
     end
 
     private
