@@ -60,7 +60,7 @@ With this release we're not including this automatically. You need to do it manu
 
 You need to include `Spree::UserMethods` in your user class, eg.
 
-```
+```ruby
 class User
   include UserAddress
   include UserMethods
@@ -72,13 +72,13 @@ end
 
 Spree 3.3 comes with paperclip 5.1 support so if you're using Amazon S3 storage you need to change in your Gemfile, from:
 
-```
+```ruby
 gem 'aws-sdk', '< 2.0'
 ```
 
 to:
 
-```
+```ruby
 gem 'aws-sdk', '>= 2.0'
 ```
 
