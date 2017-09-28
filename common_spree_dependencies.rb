@@ -29,7 +29,7 @@ group :test do
   gem 'rspec-rails', '~> 3.4.2'
   gem 'simplecov'
   gem 'webmock', '1.8.11'
-  gem 'poltergeist', '1.5.0'
+  gem 'poltergeist', '1.16.0'
   gem 'timecop'
   gem 'with_model'
 end
