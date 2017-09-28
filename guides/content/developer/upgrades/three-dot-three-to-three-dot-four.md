@@ -29,6 +29,16 @@ rails spree_gateway:install:migrations
 rails db:migrate
 ```
 
+### Migrate Spree::Taxon icons to Spree Assets
+
+We changed `Spree::Taxon` icon to use `Spree::Asset` to unify attachment usage
+across all Spree models. If you were using icon images in `Spree::Taxon`
+please run this to migrate your icons:
+
+```bash
+rails db:migrate_taxon_icons
+```
+
 ## Read the release notes
 
 For information about changes contained within this release, please read the [3.4.0 Release Notes](http://guides.spreecommerce.org/release_notes/spree_3_4_0.html).
