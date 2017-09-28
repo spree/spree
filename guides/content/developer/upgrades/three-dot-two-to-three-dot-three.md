@@ -98,7 +98,7 @@ you will need to add it this file manually to your project because this library 
 
 ## Read the release notes
 
-For information about changes contained within this release, please read the [3.2.0 Release Notes](http://guides.spreecommerce.org/release_notes/spree_3_2_0.html).
+For information about changes contained within this release, please read the [3.3.0 Release Notes](http://guides.spreecommerce.org/release_notes/spree_3_3_0.html).
 
 ## Verify that everything is OK
 
