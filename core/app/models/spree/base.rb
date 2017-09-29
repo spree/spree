@@ -18,10 +18,6 @@ class Spree::Base < ApplicationRecord
 
   self.abstract_class = true
 
-  mattr_accessor :belongs_to_required_by_default, instance_accessor: false do
-    false
-  end
-
   def self.spree_base_scopes
     where(nil)
   end
