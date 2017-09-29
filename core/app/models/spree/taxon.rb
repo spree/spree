@@ -30,15 +30,7 @@ module Spree
     after_save :touch_ancestors_and_taxonomy
     after_touch :touch_ancestors_and_taxonomy
 
-    has_attached_file :icon,
-                      styles: { mini: '32x32>', normal: '128x128>' },
-                      default_style: :mini,
-                      url: '/spree/taxons/:id/:style/:basename.:extension',
-                      path: ':rails_root/public/spree/taxons/:id/:style/:basename.:extension',
-                      default_url: '/assets/default_taxon.png'
-
-    validates_attachment :icon,
-                         content_type: { content_type: ['image/jpg', 'image/jpeg', 'image/png', 'image/gif'] }
+    has_one :icon, as: :viewable, dependent: :destroy, class_name: 'Spree::TaxonIcon'
 
     self.whitelisted_ransackable_associations = %w[taxonomy]
 
