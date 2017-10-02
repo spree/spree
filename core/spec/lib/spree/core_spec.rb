@@ -46,9 +46,16 @@ describe Spree do
       end
     end
 
+    context 'when constantize is false' do
+      it 'returns the user_class as a String' do
+        Spree.user_class = 'Spree::LegacyUser'
+
+        expect(Spree.user_class(constantize: false)).to eq('Spree::LegacyUser')
+      end
+    end
+
     after do
       Spree.user_class = 'Spree::LegacyUser'
     end
   end
-
 end
