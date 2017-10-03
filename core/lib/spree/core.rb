@@ -21,11 +21,11 @@ StateMachines::Machine.ignore_method_conflicts = true
 module Spree
   mattr_accessor :user_class
 
-  def self.user_class
+  def self.user_class(constantize: true)
     if @@user_class.is_a?(Class)
       raise 'Spree.user_class MUST be a String or Symbol object, not a Class object.'
     elsif @@user_class.is_a?(String) || @@user_class.is_a?(Symbol)
-      @@user_class.to_s.constantize
+      constantize ? @@user_class.to_s.constantize : @@user_class.to_s
     end
   end
 
