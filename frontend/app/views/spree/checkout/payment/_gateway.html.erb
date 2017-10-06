@@ -34,7 +34,7 @@
         <%= Spree.t(:card_code) %><abbr class="required" title="required">*</abbr>
       <% end %>
       <%= text_field_tag "#{param_prefix}[verification_value]", '', options_hash.merge(id: 'card_code', class: 'form-control required cardCode', size: 5) %>
-      <%= link_to "(#{Spree.t(:what_is_this)})", spree.content_path('cvv'), target: '_blank', "data-hook" => "cvv_link", id: "cvv_link" %>
+      <%= link_to Spree.t(:what_is_this), spree.cvv_path, target: :blank, "data-hook" => "cvv_link", id: "cvv_link" %>
     </div>
   </div>
 
