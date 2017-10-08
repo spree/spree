@@ -10,6 +10,10 @@ module Spree
       'TO', 'TV', 'UG', 'AE', 'VU', 'YE', 'ZW'
     ].freeze
 
+    # we're not freezing this on purpose so developers can extend and manage
+    # those attributes depending of the logic of their applications
+    EXCLUDED_KEYS_FOR_COMPARISION = %w(id updated_at created_at)
+
     belongs_to :country, class_name: 'Spree::Country'
     belongs_to :state, class_name: 'Spree::State', optional: true
 
@@ -62,7 +66,7 @@ module Spree
 
     def same_as?(other)
       return false if other.nil?
-      attributes.except('id', 'updated_at', 'created_at') == other.attributes.except('id', 'updated_at', 'created_at')
+      attributes.except(*EXCLUDED_KEYS_FOR_COMPARISION) == other.attributes.except(*EXCLUDED_KEYS_FOR_COMPARISION)
     end
 
     alias same_as same_as?
