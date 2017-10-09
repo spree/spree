@@ -270,7 +270,7 @@ Here are some ways **you** can contribute:
 * by using prerelease versions / master branch
 * by reporting [bugs](https://github.com/spree/spree/issues/new)
 * by [translating to a new language](https://github.com/spree/spree_i18n/tree/master/config/locales)
-* by writing or editing [documentation](http://guides.spreecommerce.org/developer/contributing.html#contributing-to-the-documentation)
+* by writing or editing [documentation](https://github.com/spree/spree/blob/master/.github/CONTRIBUTING.md)
 * by writing [specs](https://github.com/spree/spree/labels/need_specs)
 * by writing [needed code](https://github.com/spree/spree/labels/feature_request) or [finishing code](https://github.com/spree/spree/labels/address_feedback)
 * by [refactoring code](https://github.com/spree/spree/labels/address_feedback)
