@@ -202,7 +202,8 @@ module Spree
         "id" => 1,
         "name" => "tshirt-size",
         "presentation" => "Size",
-        "position" => 1
+        "position" => 1, 
+        "option_values"=>[OPTION_VALUE]
       }
 
     VARIANT ||=
