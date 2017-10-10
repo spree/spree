@@ -586,7 +586,7 @@ describe Spree::Product, type: :model do
 
     it 'should add error on product destroy' do
       expect(product.destroy).to eq false
-      expect(product.errors[:base]).to include Spree.t(:cannot_destroy_if_attached_to_line_items)
+      expect(product.errors[:base]).to include I18n.t('activerecord.errors.models.spree/product.attributes.base.cannot_destroy_if_attached_to_line_items')
     end
   end
 end
