@@ -10,12 +10,13 @@ Retrieve a list of option types by making this request:
 ``` text
 GET /api/v1/option_types
 ```
+
 ### Parameters
 
-ids:
-A comma-separated list of option type ids. Specifying this parameter will display the respective option types.
+ids
+: A comma-separated list of option type ids. Specifying this parameter will display the respective option types.
 
-### Responses
+### Response
 
 <%= headers 200 %>
 <%= json(:option_type){ |h| [h] } %>
@@ -23,9 +24,11 @@ A comma-separated list of option type ids. Specifying this parameter will displa
 ## Search
 
 To search for a specific option type, make a request like this:
+
 ```text
 GET /api/v1/option_types?q[name_cont]=color
 ```
+
 The searching API is provided through the Ransack gem which Spree depends on. The `name_cont` here is called a predicate, and you can learn more about them by reading about [Predicates on the Ransack wiki](https://github.com/ernie/ransack/wiki/Basic-Searching).
 
 ### Response
@@ -44,6 +47,7 @@ GET /api/v1/option_types?q[s]=name%20asc
 ## Show
 
 Retrieve details about a particular option type:
+
 ```text
 GET /api/v1/option_types/1
 ```
@@ -89,11 +93,11 @@ For instance, a request to create a new option type called "tshirt-category" wit
 POST api/v1/option_types/?option_type[name]=tshirt-category&option_type[presentation]=Category
 ```
 
-### Successful response
+### Successful Response
 
 <%= headers 201 %>
 
-### Failed response
+### Failed Response
 
 <%= headers 422 %>
 <%= json \
@@ -120,11 +124,11 @@ For instance, to update a option types's name, send it through like this:
 PUT /api/v1/option_types/3?option_type[name]=t-category
 ```
 
-### Successful response
+### Successful Response
 
 <%= headers 201 %>
 
-### Failed response
+### Failed Response
 
 <%= headers 422 %>
 <%= json \
