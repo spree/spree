@@ -80,12 +80,14 @@ GET /api/v1/option_types/new
 To create a new option type through the API, make this request with the necessary parameters:
 
 ```text
-POST /api/v1/option_types```
+POST /api/v1/option_types
+```
 
 For instance, a request to create a new option type called "tshirt-category" with a presentation value of "Category" would look like this:
 
 ```text
-POST api/v1/option_types/?option_type[name]=tshirt-category&option_type[presentation]=Category```
+POST api/v1/option_types/?option_type[name]=tshirt-category&option_type[presentation]=Category
+```
 
 ### Successful response
 
@@ -101,3 +103,49 @@ POST api/v1/option_types/?option_type[name]=tshirt-category&option_type[presenta
      "presentation": ["can't be blank"]
   }
 %>
+
+## Update
+
+<%= admin_only %>
+
+To update a option type's details, make this request with the necessary parameters:
+
+```text
+PUT /api/v1/option_types/1
+```
+
+For instance, to update a option types's name, send it through like this:
+
+```text
+PUT /api/v1/option_types/3?option_type[name]=t-category
+```
+
+### Successful response
+
+<%= headers 201 %>
+
+### Failed response
+
+<%= headers 422 %>
+<%= json \
+  error: "Invalid resource. Please fix errors and try again.",
+  errors: {
+    name: ["can't be blank"],
+    presentation: ["can't be blank"]
+  }
+%>
+
+
+## Delete
+
+<%= admin_only %>
+
+To delete a option type, make this request:
+
+```text
+DELETE /api/v1/option_types/1
+```
+
+This request removes a option type from database.
+
+<%= headers 204 %>
