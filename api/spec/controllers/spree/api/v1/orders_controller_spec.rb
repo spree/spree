@@ -178,7 +178,7 @@ module Spree
       end
     end
 
-    it 'orders contain the basic checkout steps' do
+    it 'order contains the basic checkout steps' do
       allow_any_instance_of(Order).to receive_messages user: current_api_user
       api_get :show, id: order.to_param
       expect(response.status).to eq(200)
