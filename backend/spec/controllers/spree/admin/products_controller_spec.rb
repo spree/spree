@@ -83,7 +83,7 @@ describe Spree::Admin::ProductsController, type: :controller do
       describe 'response' do
         before { send_request }
         it { expect(response).to have_http_status(:ok) }
-        it { expect(flash[:error]).to eq(Spree.t('notice_messages.product_not_deleted')) }
+        it { expect(flash[:error]).to eq(Spree.t('notice_messages.product_not_deleted', error: product.errors.full_messages.join(', '))) }
       end
     end
   end
