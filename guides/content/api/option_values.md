@@ -116,13 +116,13 @@ POST /api/v1/option_values?option_value[name]=sports&option_value[presentation]=
 
 <%= admin_only %>
 
-To update a option values's details, make this request with the necessary parameters:
+To update an option value's details, make this request with the necessary parameters:
 
 ```text
 PUT /api/v1/option_values/1
 ```
 
-For instance, to update a option values's name, send it through like this:
+For instance, to update an option value's name, send it through like this:
 
 ```text
 PUT /api/v1/option_values/1?option_value[name]=sport&option_value[presentation]=Sport
@@ -148,12 +148,12 @@ PUT /api/v1/option_values/1?option_value[name]=sport&option_value[presentation]=
 
 <%= admin_only %>
 
-To delete a option value, make this request:
+To delete an option value, make this request:
 
 ```text
 DELETE /api/v1/option_values/1
 ```
 
-This request removes a option value from database.
+This request removes an option value from database.
 
 <%= headers 204 %>
