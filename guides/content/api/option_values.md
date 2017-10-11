@@ -46,3 +46,68 @@ Results can be returned in a specific order by specifying which field to sort by
 ```text
 GET /api/v1/option_values?q[s]=name%20asc
 ```
+
+## Show
+
+Retrieve details about a particular option value:
+
+```text
+GET /api/v1/option_values/1
+```
+
+### Response
+
+<%= headers 200 %>
+<%= json(:option_value) %>
+
+## New
+
+You can learn about the potential attributes (required and non-required) for a option value by making this request:
+
+```text
+GET /api/v1/option_values/new
+```
+
+### Response
+
+<%= headers 200 %>
+<%= json \
+  "attributes": [
+      "id", "name", "presentation", "option_type_name", "option_type_id",
+      "option_type_presentation"
+  ],
+  "required_attributes": [
+      "name", "presentation"
+  ]
+%>
+
+## Create
+
+<%= admin_only %>
+
+To create a new option value through the API, make this request with the necessary parameters:
+
+```text
+POST /api/v1/option_values
+```
+
+For instance, a request to create a new option value called "sports" with a presentation value of "Sports" would look like this:
+
+```text
+POST /api/v1/option_values?option_value[name]=sports&option_value[presentation]=Sports
+```
+
+### Successful Response
+
+<%= headers 201 %>
+
+### Failed Response
+
+<%= headers 422 %>
+<%= json \
+  error: "Invalid resource. Please fix errors and try again.",
+  errors: {
+    "name": ["can't be blank"],
+     "presentation": ["can't be blank"]
+  }
+%>
