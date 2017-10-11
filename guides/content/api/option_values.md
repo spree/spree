@@ -111,3 +111,49 @@ POST /api/v1/option_values?option_value[name]=sports&option_value[presentation]=
      "presentation": ["can't be blank"]
   }
 %>
+
+## Update
+
+<%= admin_only %>
+
+To update a option values's details, make this request with the necessary parameters:
+
+```text
+PUT /api/v1/option_values/1
+```
+
+For instance, to update a option values's name, send it through like this:
+
+```text
+PUT /api/v1/option_values/1?option_value[name]=sport&option_value[presentation]=Sport
+```
+
+### Successful Response
+
+<%= headers 201 %>
+
+### Failed Response
+
+<%= headers 422 %>
+<%= json \
+  error: "Invalid resource. Please fix errors and try again.",
+  errors: {
+    name: ["can't be blank"],
+    presentation: ["can't be blank"]
+  }
+%>
+
+
+## Delete
+
+<%= admin_only %>
+
+To delete a option value, make this request:
+
+```text
+DELETE /api/v1/option_values/1
+```
+
+This request removes a option value from database.
+
+<%= headers 204 %>
