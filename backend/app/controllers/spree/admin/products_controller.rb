@@ -50,10 +50,10 @@ module Spree
           if @product.destroy
             flash[:success] = Spree.t('notice_messages.product_deleted')
           else
-            flash[:error] = Spree.t('notice_messages.product_not_deleted')
+            flash[:error] = Spree.t('notice_messages.product_not_deleted', error: @product.errors.full_messages.join(', '))
           end
         rescue ActiveRecord::RecordNotDestroyed => e
-          flash[:error] = Spree.t('notice_messages.product_not_deleted')
+          flash[:error] = Spree.t('notice_messages.product_not_deleted', error: e.message)
         end
 
         respond_with(@product) do |format|
