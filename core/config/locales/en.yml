@@ -507,18 +507,9 @@ en:
     all_adjustments_opened: All adjustments successfully opened!
     all_departments: All departments
     all_items_have_been_returned: All items have been returned
-    already_signed_up_for_analytics: You have already signed up for Spree Analytics
     alt_text: Alternative Text
     alternative_phone: Alternative Phone
     amount: Amount
-    analytics_desc_header_1: Spree Analytics
-    analytics_desc_header_2: Live analytics integrated into your Spree dashboard
-    analytics_desc_list_1: Get live sales information as it happens
-    analytics_desc_list_2: Requires only a free Spree account to activate
-    analytics_desc_list_3: Absolutely no code to install
-    analytics_desc_list_4: It's completely free!
-    analytics_engine: Analytics Engine
-    analytics_trackers: Analytics Trackers
     and: and
     approve: approve
     approver: Approver
@@ -605,7 +596,6 @@ en:
     continue_shopping: Continue shopping
     cost_currency: Cost Currency
     cost_price: Cost Price
-    could_not_connect_to_jirafe: Could not connect to Jirafe to sync data. This will be automatically retried later.
     could_not_create_customer_return: Could not create customer return
     could_not_create_stock_movement: There was a problem saving this stock movement. Please try again.
     count_on_hand: Count On Hand
@@ -655,16 +645,6 @@ en:
     customer_search: Customer Search
     cut: Cut
     cvv_response: CVV Response
-    dash:
-      jirafe:
-        app_id: App ID
-        app_token: App Token
-        currently_unavailable: Jirafe is currently unavailable. Spree will automatically connect to Jirafe once it is available.
-        explanation: The fields below may already be populated if you chose to register with Jirafe from the admin dashboard.
-        header: Jirafe Analytics Settings
-        site_id: Site ID
-        token: Token
-      jirafe_settings_updated: Jirafe Settings have been updated.
     date: Date
     date_completed: Date Completed
     date_picker:
@@ -773,8 +753,6 @@ en:
     gateway_error: Gateway Error
     general: General
     general_settings: General Settings
-    google_analytics: Google Analytics
-    google_analytics_id: Analytics ID
     guest_checkout: Guest Checkout
     guest_user_account: Checkout as a Guest
     has_no_shipped_units: has no shipped units
@@ -838,7 +816,6 @@ en:
     items_in_rmas: Items in Return Authorizations
     items_to_be_reimbursed: Items to be reimbursed
     items_reimbursed: Items reimbursed
-    jirafe: Jirafe
     join_slack: Join Slack
     last_name: Last Name
     last_name_begins_with: Last Name Begins With
@@ -1412,7 +1389,6 @@ en:
     successfully_created: ! '%{resource} has been successfully created!'
     successfully_refunded: ! '%{resource} has been successfully refunded!'
     successfully_removed: ! '%{resource} has been successfully removed!'
-    successfully_signed_up_for_analytics: Successfully signed up for Spree Analytics
     successfully_updated: ! '%{resource} has been successfully updated!'
     summary: Summary
     tax: Tax

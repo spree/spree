@@ -39,10 +39,6 @@ module Spree
         first
     end
 
-    def analytics_id
-      id
-    end
-
     def total_available_store_credit
       store_credits.reload.to_a.sum(&:amount_remaining)
     end
