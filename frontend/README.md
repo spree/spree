@@ -31,18 +31,16 @@ Customizing
 
 Override the stylesheet to `vendor/assets/stylesheets/spree/frontend/frontend_bootstrap.css.scss`. Use this as your base stylesheet and edit as required.
 
-To style your spree store just override the bootstrap 3 variables. The full list of bootstrap variables can be found [here](https://github.com/twbs/bootstrap-sass/blob/master/assets/stylesheets/bootstrap/_variables.scss). You can override these by simply redefining the variable before the `@import` directive.
+To style your spree store just override the bootstrap 3 variables. The full list of bootstrap variables can be found [here](https://github.com/twbs/bootstrap-sass/blob/master/assets/stylesheets/bootstrap/_variables.scss). You can override these by simply redefining the variable.
 For example:
 
 ```scss
 $navbar-default-bg: #312312;
 $light-orange: #ff8c00;
 $navbar-default-color: $light-orange;
-
-@import "bootstrap";
 ```
 
-This uses the [bootstrap-sass](https://github.com/twbs/bootstrap-sass) gem. So check there for full cutomization instructions.
+Spree uses maxcdn for optimized bootstrap delivery along with overrides from the [bootstrap-sass](https://github.com/twbs/bootstrap-sass) gem. So check there for full cutomization instructions.
 
 It’s quite powerful, here are some examples created in ~10 minutes with a few extra SCSS variables, no actual css edits required:
 

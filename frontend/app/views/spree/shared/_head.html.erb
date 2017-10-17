@@ -5,12 +5,25 @@
 <%== meta_data_tags %>
 <%= canonical_tag(current_store.url) %>
 <%= favicon_link_tag 'favicon.ico' %>
+
+<!-- CDN libraries -->
+<%= javascript_include_tag "//cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js" %>
+<%= javascript_include_tag "//cdnjs.cloudflare.com/ajax/libs/jquery-ujs/1.2.2/rails.min.js" %>
+<%= javascript_include_tag "//cdnjs.cloudflare.com/ajax/libs/jquery.payment/3.0.0/jquery.payment.min.js" %>
+<%= stylesheet_link_tag "//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" %>
+
 <%= stylesheet_link_tag 'spree/frontend/all', media: 'screen' %>
 <%= csrf_meta_tags %>
 <%= render 'spree/shared/paths' %>
-<%= javascript_include_tag 'spree/frontend/all' %>
+
 <!--[if lt IE 9]>
   <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.6/html5shiv.min.js"></script>
 <![endif]-->
+<%= javascript_include_tag "//cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" %>
+<%= javascript_include_tag "//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js" %>
+<%= javascript_include_tag "//cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.10/handlebars.min.js" %>
+<%= javascript_include_tag "//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" %>
+
+<%= javascript_include_tag 'spree/frontend/all' %>
 <%= yield :head %>
 <%= render 'spree/shared/translations' %>

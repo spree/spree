@@ -1,8 +1,10 @@
 //Add your custom bootstrap variables here, see https://github.com/twbs/bootstrap-sass/blob/master/assets/stylesheets/bootstrap/_variables.scss for full list of variables.
 
+<% if Rails.env.development? %>
+  // @import "bootstrap-sprockets";
+  // @import "bootstrap";
+<% end %>
 @import "variables";
-@import "alerts";
-
 
 // -- Spree Custom Header and Footer ---------------------
 #spree-header {
@@ -99,8 +101,4 @@ table {
 
 .existing-credit-card-list td {
   padding: 5px;
-}
-
-.save-user-address-wrapper {
-  display: inline-block;
 }
