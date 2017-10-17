@@ -16,7 +16,7 @@ module Spree
     end
 
     def store_credit_category_used?
-      Spree::StoreCredit.find_by_category_id(id)
+      Spree::StoreCredit.exists?(category_id: id)
     end
 
     def validate_not_used
