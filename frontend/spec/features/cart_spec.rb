@@ -81,7 +81,8 @@ describe 'Cart', type: :feature, inaccessible: true do
   end
 
   describe 'add promotion coupon on cart page', js: true do
-    let!(:promotion) { Spree::Promotion.create(name: 'Huhuhu', code: 'huhu') }
+    let!(:promotion) { Spree::Promotion.create(name: 'Huhuhu') }
+    let!(:code) { promotion.codes.create(value: 'huhu') }
     let!(:calculator) { Spree::Calculator::FlatPercentItemTotal.create(preferred_flat_percent: '10') }
     let!(:action) { Spree::Promotion::Actions::CreateItemAdjustments.create(calculator: calculator) }
 
@@ -97,7 +98,7 @@ describe 'Cart', type: :feature, inaccessible: true do
     end
 
     context 'valid coupon' do
-      before { apply_coupon(promotion.code) }
+      before { apply_coupon(promotion.codes.first.value) }
 
       context 'for the first time' do
         it 'makes sure payment reflects order total with discounts' do
@@ -106,9 +107,9 @@ describe 'Cart', type: :feature, inaccessible: true do
       end
 
       context 'same coupon for the second time' do
-        before { apply_coupon(promotion.code) }
+        before { apply_coupon(promotion.codes.first.value) }
         it 'should reflect an error that coupon already applied' do
-          apply_coupon(promotion.code)
+          apply_coupon(promotion.codes.first.value)
           expect(page).to have_content(Spree.t(:coupon_code_already_applied))
           expect(page).to have_content(promotion.name)
         end

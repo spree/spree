@@ -357,7 +357,8 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
   end
 
   context 'if coupon promotion, submits coupon along with payment', js: true do
-    let!(:promotion) { create(:promotion, name: 'Huhuhu', code: 'huhu') }
+    let!(:promotion) { create(:promotion, name: 'Huhuhu') }
+    let!(:promotion_code) { create(:promotion_code, promotion: promotion, value: 'huhu') }
     let!(:calculator) { Spree::Calculator::FlatPercentItemTotal.create(preferred_flat_percent: '10') }
     let!(:action) { Spree::Promotion::Actions::CreateItemAdjustments.create(calculator: calculator) }
 
@@ -402,7 +403,8 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
     end
 
     context 'the promotion makes order free (downgrade it total to 0.0)' do
-      let(:promotion2) { Spree::Promotion.create(name: 'test-7450', code: 'test-7450') }
+      let(:promotion2) { Spree::Promotion.create(name: 'test-7450') }
+      let!(:promotion_code2) { create(:promotion_code, promotion: promotion2, value: 'test-7450') }
       let(:calculator2) do
         Spree::Calculator::FlatRate.create(preferences: { currency: 'USD', amount: BigDecimal.new('99999') })
       end
@@ -412,7 +414,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
 
       context 'user choose to pay by check' do
         it 'move user to complete checkout step' do
-          fill_in 'Coupon Code', with: promotion2.code
+          fill_in 'Coupon Code', with: promotion_code2.value
           click_on 'Save and Continue'
 
           expect(page).to have_content(promotion2.name)
@@ -437,7 +439,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
           fill_in 'card_expiry', with: '04 / 20'
           fill_in 'Card Code', with: '123'
 
-          fill_in 'Coupon Code', with: promotion2.code
+          fill_in 'Coupon Code', with: promotion_code2.value
           click_on 'Save and Continue'
 
           expect(page).to have_content(promotion2.name)

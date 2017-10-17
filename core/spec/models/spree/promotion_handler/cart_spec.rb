@@ -13,17 +13,13 @@ module Spree
 
       shared_context 'creates the adjustment' do
         it 'creates the adjustment' do
-          expect {
-            subject.activate
-          }.to change { adjustable.adjustments.count }.by(1)
+          expect { subject.activate }.to change { adjustable.adjustments.count }.by(1)
         end
       end
 
       shared_context 'creates an order promotion' do
         it 'connects the promotion to the order' do
-          expect {
-            subject.activate
-          }.to change { order.promotions.reload.to_a }.from([]).to([promotion])
+          expect { subject.activate }.to change { order.promotions.reload.to_a }.from([]).to([promotion])
         end
       end
 
@@ -95,7 +91,7 @@ module Spree
 
         before do
           Spree::OrderPromotion.create!(promotion: promotion, order: order, promotion_code: promotion_code)
-          order.update!
+          order.update_with_updater!
         end
 
         include_context 'creates the adjustment'
@@ -106,7 +102,11 @@ module Spree
         end
 
         it 'checks if the promotion code is eligible' do
-          expect_any_instance_of(Spree::Promotion).to receive(:eligible?).at_least(2).times.with(anything, promotion_code: promotion_code).and_return(false)
+          expect_any_instance_of(Spree::Promotion)
+            .to receive(:eligible?).at_least(2)
+            .times
+            .with(anything, promotion_code: promotion_code)
+            .and_return(false)
           subject.activate
         end
       end

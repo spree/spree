@@ -146,12 +146,14 @@ describe 'Orders Listing', type: :feature do
       let!(:promotion) { create(:promotion_with_item_adjustment) }
 
       before do
+        promotion.build_promotion_codes(base_code: 'promo1', number_of_codes: 1)
+        promotion.save
         order1.promotions << promotion
         order1.save
         visit spree.admin_orders_path
       end
 
-      it 'only shows the orders with the selected promotion' do
+      it 'only shows the orders with the selected promotion', js: true do
         click_on 'Filter'
         fill_in 'q_promotions_codes_value_cont', with: promotion.codes.first.value
         click_on 'Filter Results'

@@ -24,8 +24,8 @@ describe Spree::Promotion::Actions::FreeShipping, type: :model do
         expect(action.perform(payload)).to be true
         expect(promotion.usage_count).to eq 2
         expect(order.shipment_adjustments.count).to eq 2
-        expect(order.shipment_adjustments.first.amount.to_i).to eq -100
-        expect(order.shipment_adjustments.last.amount.to_i).to eq -100
+        expect(order.shipment_adjustments.first.amount.to_i).to eq (-100)
+        expect(order.shipment_adjustments.last.amount.to_i).to eq (-100)
         expect(order.shipment_adjustments.map(&:promotion_code)).to eq [promotion_code, promotion_code]
       end
 

@@ -1019,13 +1019,12 @@ describe Spree::Order, type: :model do
 
     context 'with_promo_code applied' do
       let(:promo_code) { '10off' }
-      let(:promotion) { create :promotion, code: promo_code }
-
-      before do
-        promotion.orders << order
-      end
+      let!(:promotion) { create :promotion }
+      let!(:promotion_code) { create :promotion_code, promotion: promotion, value: promo_code }
 
       it 'returns applied promo_code' do
+        promotion.orders << order
+        order.promo_code
         expect(order.promo_code).to eq promo_code
       end
     end

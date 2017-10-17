@@ -25,7 +25,8 @@ module Spree
     validates_associated :rules
 
     validates :name, presence: true
-    validates :path, :code, uniqueness: { case_sensitive: false, allow_blank: true }
+    # validates :path, :code, uniqueness: { case_sensitive: false, allow_blank: true }
+    validates :path, uniqueness: { case_sensitive: false, allow_blank: true }
     validates :usage_limit, numericality: { greater_than: 0, allow_nil: true }
     validates :per_code_usage_limit, numericality: { greater_than_or_equal_to: 0, allow_nil: true }
     validates :description, length: { maximum: 255 }, allow_blank: true
@@ -33,22 +34,11 @@ module Spree
 
     before_save :normalize_blank_values
 
-    scope :coupons, -> { where.not(code: nil) }
     scope :advertised, -> { where(advertise: true) }
-    scope :applied, lambda {
-      joins(<<-SQL).distinct
-        INNER JOIN spree_order_promotions
-        ON spree_order_promotions.promotion_id = #{table_name}.id
-      SQL
-    }
 
     self.whitelisted_ransackable_attributes = ['path', 'promotion_category_id', 'code']
+    self.whitelisted_ransackable_associations = ['codes']
 
-    def self.with_coupon_code(coupon_code)
-      where("lower(#{table_name}.code) = ?", coupon_code.strip.downcase).
-        includes(:promotion_actions).where.not(spree_promotion_actions: { id: nil }).
-        first
-    end
     # temporary code. remove after the column is dropped from the db.
     def columns
       super.reject { |column| column.name == 'code' }
@@ -71,11 +61,11 @@ module Spree
       fail 'Attempted to call code on a Spree::Promotion. Promotions are now tied to multiple code records'
     end
 
-    def code=(val)
+    def code=(_val)
       fail 'Attempted to call code= on a Spree::Promotion. Promotions are now tied to multiple code records'
     end
 
-    def as_json(options={})
+    def as_json(options = {})
       options[:except] ||= :code
       super
     end
@@ -117,8 +107,7 @@ module Spree
 
       if action_taken
         # create the join_table entry.
-        orders << order
-        save
+        order_promotions.find_or_create_by!(order_id: order.id, promotion_code_id: promotion_code.try!(:id))
       end
 
       action_taken
@@ -320,7 +309,7 @@ module Spree
     end
 
     def code_with_randomness(base_code:)
-      "#{base_code}_#{Array.new(DEFAULT_RANDOM_CODE_LENGTH){ ('A'..'Z').to_a.sample }.join}"
+      "#{base_code}_#{Array.new(DEFAULT_RANDOM_CODE_LENGTH) { ('A'..'Z').to_a.sample }.join}"
     end
   end
 end

@@ -8,7 +8,8 @@ module Spree
         before_validation -> { self.calculator ||= Calculator::PercentOnLineItem.new }
 
         def perform(options = {})
-          order, promotion = options[:order], options[:promotion]
+          order = options[:order]
+          promotion = options[:promotion]
           promotion_code = options[:promotion_code]
           create_unique_adjustments(order, order.line_items, promotion_code) do |line_item|
             promotion.line_item_actionable?(order, line_item)

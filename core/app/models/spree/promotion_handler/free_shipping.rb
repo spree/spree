@@ -12,7 +12,7 @@ module Spree
 
       def activate
         promotions.each do |promotion|
-          next if promotion.code.present? && !order_promo_ids.include?(promotion.id)
+          next if promotion.codes.any? && !order_promo_ids.include?(promotion.id)
 
           promotion.activate(order: order) if promotion.eligible?(order)
         end
@@ -30,11 +30,10 @@ module Spree
 
         Spree::Promotion.active.
           joins(promotion_code_join).
-          where({
+          where(
             id: Spree::Promotion::Actions::FreeShipping.pluck(:promotion_id), # This would probably be more efficient by joining instead
-            spree_promotion_codes: { id: nil },
             path: nil
-          })
+          )
       end
     end
   end

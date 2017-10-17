@@ -58,7 +58,7 @@ describe 'Coupon code promotions', type: :feature, js: true do
 
       it 'informs the user about a coupon code which has exceeded its usage' do
         promotion.update_column(:usage_limit, 5)
-        allow_any_instance_of(promotion.class).to receive_messages(credits_count: 10)
+        allow_any_instance_of(promotion.class).to receive_messages(usage_limit_exceeded?: true)
 
         fill_in 'order_coupon_code', with: 'onetwo'
         click_button 'Save and Continue'

@@ -7,12 +7,12 @@ module Spree
 
       subject { Coupon.new(order) }
 
-      def expect_order_connection(order:, promotion:, promotion_code:nil)
+      def expect_order_connection(order:, promotion:, promotion_code: nil)
         expect(order.promotions.to_a).to include(promotion)
         expect(order.order_promotions.flat_map(&:promotion_code)).to include(promotion_code)
       end
 
-      def expect_adjustment_creation(adjustable:, promotion:, promotion_code:nil)
+      def expect_adjustment_creation(adjustable:, promotion:, promotion_code: nil)
         expect(adjustable.adjustments.map(&:source).map(&:promotion)).to include(promotion)
         expect(adjustable.adjustments.map(&:promotion_code)).to include(promotion_code)
       end
@@ -64,7 +64,10 @@ module Spree
         end
 
         context 'with no actions defined' do
-          before { create(:promotion, code: '10off') }
+          before do
+            promotion = create(:promotion)
+            create(:promotion_code, promotion: promotion, value: '10off')
+          end
 
           it 'populates error message' do
             subject.apply
@@ -186,12 +189,12 @@ module Spree
             let(:calculator) { Calculator::FlatRate.new(preferred_amount: 10) }
 
             before do
-              allow(order).to receive_messages({
+              allow(order).to receive_messages(
                 coupon_code: '10off',
                 # These need to be here so that promotion adjustment "wins"
                 item_total: 50,
                 ship_total: 10
-              })
+              )
             end
 
             it 'successfully activates promo' do
@@ -217,7 +220,9 @@ module Spree
             end
 
             context 'when the coupon fails to activate' do
-              before { Spree::Promotion.any_instance.stub(:activate).and_return false }
+              before do
+                allow_any_instance_of(Spree::Promotion).to receive_messages activate: false
+              end
 
               it 'is not successful' do
                 subject.apply
@@ -271,7 +276,8 @@ module Spree
             context 'when the a new coupon is less good' do
               let!(:action_5) { Promotion::Actions::CreateAdjustment.create(promotion: promotion_5, calculator: calculator_5) }
               let(:calculator_5) { Calculator::FlatRate.new(preferred_amount: 5) }
-              let!(:promotion_5) { Promotion.create name: 'promo', code: '5off' }
+              let!(:promotion_5) { Promotion.create name: 'promo' }
+              let!(:promotion_code_5) { create(:promotion_code, value: '5off', promotion: promotion_5) }
 
               it 'notifies of better deal' do
                 subject.apply
@@ -290,10 +296,10 @@ module Spree
             @zone.zone_members.create(zoneable: @country)
             @category = Spree::TaxCategory.create name: 'Taxable Foo'
             @rate1 = Spree::TaxRate.create(
-                amount: 0.10,
-                calculator: Spree::Calculator::DefaultTax.create,
-                tax_category: @category,
-                zone: @zone
+              amount: 0.10,
+              calculator: Spree::Calculator::DefaultTax.create,
+              tax_category: @category,
+              zone: @zone
             )
 
             @order = Spree::Order.create!

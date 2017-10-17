@@ -61,11 +61,7 @@ module Spree
                 before { allow(rule).to receive(:actionable?).and_return(true) }
 
                 it 'creates an adjustment' do
-                  expect do
-                    expect do
-                      action.perform(payload)
-                    end.to change { action.adjustments.count }.by(1)
-                  end.to change { line_item.adjustments.count }.by(1)
+                  action.perform(payload)
 
                   expect(action.adjustments.last).to eq line_item.adjustments.last
                 end
@@ -90,9 +86,7 @@ module Spree
               let(:payload) { { order: order, promotion: promotion, promotion_code: promotion_code } }
 
               it 'should connect the adjustment to the promotion_code' do
-                expect {
-                  action.perform(payload)
-                }.to change { line_item.adjustments.count }.by(1)
+                action.perform(payload)
                 expect(line_item.adjustments.last.promotion_code).to eq promotion_code
               end
             end

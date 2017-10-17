@@ -24,7 +24,7 @@ module Spree
   class Adjustment < Spree::Base
     with_options polymorphic: true do
       belongs_to :adjustable, touch: true
-      belongs_to :source
+      belongs_to :source, optional: true
     end
     belongs_to :order, class_name: 'Spree::Order', inverse_of: :all_adjustments
     belongs_to :promotion_code, class_name: 'Spree::PromotionCode'

@@ -3,8 +3,8 @@ require 'spec_helper'
 describe Spree::Admin::PromotionsController, type: :controller do
   stub_authorization!
 
-  let!(:promotion1) { create(:promotion, name: 'name1', code: 'code1', path: 'path1') }
-  let!(:promotion2) { create(:promotion, name: 'name2', code: 'code2', path: 'path2') }
+  let!(:promotion1) { Spree::Promotion.create!(name: 'name1', path: 'path1') }
+  let!(:promotion2) { Spree::Promotion.create!(name: 'name2', path: 'path2') }
   let!(:category) { create :promotion_category }
 
   context '#index' do
@@ -30,6 +30,8 @@ describe Spree::Admin::PromotionsController, type: :controller do
       end
 
       it 'filters by code' do
+        promotion1.build_promotion_codes(base_code: 'promo1', number_of_codes: 10)
+        promotion1.save
         spree_get :index, q: { codes_value_cont: promotion1.codes.first.value }
         expect(assigns[:promotions]).to eq [promotion1]
       end
@@ -45,9 +47,7 @@ describe Spree::Admin::PromotionsController, type: :controller do
     let(:params) { {promotion: {name: 'some promo'}} }
 
     it 'succeeds' do
-      expect {
-        spree_post :create, params
-      }.to change { Spree::Promotion.count }.by(1)
+      expect { spree_post :create, params }.to change { Spree::Promotion.count }.by(1)
     end
 
     context 'with one promo codes' do
@@ -56,13 +56,8 @@ describe Spree::Admin::PromotionsController, type: :controller do
       end
 
       it 'succeeds and creates one code' do
-        expect {
-          expect {
-            spree_post :create, params
-          }.to change { Spree::Promotion.count }.by(1)
-        }.to change { Spree::PromotionCode.count }.by(1)
-
-        expect(assigns(:promotion).codes.first.value).to eq ('abc')
+        spree_post :create, params
+        expect(assigns(:promotion).codes.first.value).to eq 'abc'
       end
     end
 
@@ -74,11 +69,7 @@ describe Spree::Admin::PromotionsController, type: :controller do
       before { srand 123 }
 
       it 'succeeds and creates multiple codes' do
-        expect {
-          expect {
-            spree_post :create, params
-          }.to change { Spree::Promotion.count }.by(1)
-        }.to change { Spree::PromotionCode.count }.by(2)
+        spree_post :create, params
 
         expect(assigns(:promotion).codes.map(&:value).sort).to eq ['abc_kzwbar', 'abc_nccgrt']
       end

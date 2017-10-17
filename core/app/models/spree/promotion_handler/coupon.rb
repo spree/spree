@@ -14,12 +14,10 @@ module Spree
             handle_present_promotion
           elsif Promotion.with_coupon_code(order.coupon_code).try(:expired?)
             set_error_code :coupon_code_expired
+          elsif promotion_code && promotion_code.promotion.expired?
+            set_error_code :coupon_code_expired
           else
-            if promotion_code && promotion_code.promotion.expired?
-              set_error_code :coupon_code_expired
-            else
-              set_error_code :coupon_code_not_found
-            end
+            set_error_code :coupon_code_not_found
           end
         end
         self
@@ -36,11 +34,7 @@ module Spree
       end
 
       def promotion
-        @promotion ||= begin
-          if promotion_code && promotion_code.promotion.active?
-            promotion_code.promotion
-          end
-        end
+        @promotion ||= promotion_code.promotion if promotion_code && promotion_code.promotion.active?
       end
 
       def successful?
@@ -53,9 +47,9 @@ module Spree
         @promotion_code ||= Spree::PromotionCode.where(value: order.coupon_code.downcase).first
       end
 
-      def handle_present_promotion(promotion)
+      def handle_present_promotion
         return promotion_usage_limit_exceeded if promotion.usage_limit_exceeded?(order) || promotion_code.usage_limit_exceeded?(order)
-        return promotion_applied if promotion_exists_on_order?(order, promotion)
+        return promotion_applied if promotion_exists_on_order?
         unless promotion.eligible?(order, promotion_code: promotion_code)
           self.error = promotion.eligibility_errors.full_messages.first unless promotion.eligibility_errors.blank?
           return (error || ineligible_for_this_order)
