@@ -21,10 +21,20 @@ module Spree
       private
 
       def promotions
-        Spree::Promotion.active.where(
-          id: Spree::Promotion::Actions::FreeShipping.pluck(:promotion_id),
-          path: nil
-        )
+        promo_table = Promotion.arel_table
+        code_table  = PromotionCode.arel_table
+
+        promotion_code_join = promo_table.join(code_table, Arel::Nodes::OuterJoin).on(
+          promo_table[:id].eq(code_table[:promotion_id])
+        ).join_sources
+
+        Spree::Promotion.active.
+          joins(promotion_code_join).
+          where({
+            id: Spree::Promotion::Actions::FreeShipping.pluck(:promotion_id), # This would probably be more efficient by joining instead
+            spree_promotion_codes: { id: nil },
+            path: nil
+          })
       end
     end
   end

@@ -357,7 +357,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
   end
 
   context 'if coupon promotion, submits coupon along with payment', js: true do
-    let!(:promotion) { Spree::Promotion.create(name: 'Huhuhu', code: 'huhu') }
+    let!(:promotion) { create(:promotion, name: 'Huhuhu', code: 'huhu') }
     let!(:calculator) { Spree::Calculator::FlatPercentItemTotal.create(preferred_flat_percent: '10') }
     let!(:action) { Spree::Promotion::Actions::CreateItemAdjustments.create(calculator: calculator) }
 
@@ -377,7 +377,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
     end
 
     it 'makes sure payment reflects order total with discounts' do
-      fill_in 'Coupon Code', with: promotion.code
+      fill_in 'Coupon Code', with: promotion.codes.first.value
       click_on 'Save and Continue'
 
       expect(page).to have_content(promotion.name)

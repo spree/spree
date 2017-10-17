@@ -13,19 +13,19 @@
         <div class="col-xs-12 col-md-6">
           <div class="form-group">
             <%= label_tag :q_name_cont, Spree.t(:name) %>
-            <%= f.text_field :name_cont, tabindex: 1, class: "form-control js-quick-search-target" %>
+            <%= f.text_field :name_cont, tabindex: 1, class: 'form-control js-quick-search-target' %>
           </div>
 
           <div class="form-group">
-            <%= label_tag :q_code_cont, Spree.t(:code) %>
-            <%= f.text_field :code_cont, tabindex: 1, class: "form-control" %>
+            <%= label_tag :q_codes_value_cont, Spree.t(:code) %>
+            <%= f.text_field :codes_value_cont, tabindex: 1, class: 'form-control' %>
           </div>
         </div>
 
         <div class="col-xs-12 col-md-6">
           <div class="form-group">
             <%= label_tag :q_path_cont, Spree.t(:path) %>
-            <%= f.text_field :path_cont, tabindex: 1, class: "form-control" %>
+            <%= f.text_field :path_cont, tabindex: 1, class: 'form-control' %>
           </div>
 
           <div class="form-group">
@@ -61,14 +61,14 @@
       <% @promotions.each do |promotion| %>
         <tr id="<%= spree_dom_id promotion %>">
           <td><%= link_to promotion.name, edit_admin_promotion_path(promotion) %></td>
-          <td><%= promotion.code %></td>
+          <td><%= (promotion.codes.size == 1) ? promotion.codes.first.try!(:value) : Spree.t(:number_of_codes, count: promotion.codes.size) %></td>
           <td><%= promotion.description %></td>
           <td><%= promotion.usage_limit.nil? ? "∞" : promotion.usage_limit  %></td>
-          <td><%= Spree.t(:current_promotion_usage, count: promotion.credits_count) %></td>
+          <td><%= Spree.t(:current_promotion_usage, count: promotion.usage_count) %></td>
           <td><%= promotion.expires_at.to_date.to_s(:short_date) if promotion.expires_at %></td>
-          <td class="actions actions-2" data-hook="admin_promotions_index_row_actions">
-            <%= link_to_edit promotion, no_text: true if can?(:edit, promotion) %>
-            <%= link_to_delete promotion, no_text: true if can?(:delete, promotion) %>
+          <td class="actions actions-2">
+            <%= link_to_edit promotion, no_text: true %>
+            <%= link_to_delete promotion, no_text: true %>
           </td>
         </tr>
       <% end %>

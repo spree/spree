@@ -152,7 +152,8 @@ describe 'Orders Listing', type: :feature do
       end
 
       it 'only shows the orders with the selected promotion' do
-        select promotion.name, from: 'Promotion'
+        click_on 'Filter'
+        fill_in 'q_promotions_codes_value_cont', with: promotion.codes.first.value
         click_on 'Filter Results'
         within_row(1) { expect(page).to have_content('R100') }
         within('table#listing_orders') { expect(page).not_to have_content('R200') }

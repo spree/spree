@@ -10,7 +10,22 @@
 
     <%= f.field_container :code, class: ['form-group'] do %>
       <%= f.label :code %>
-      <%= f.text_field :code, class: 'form-control' %>
+      <%= text_field_tag 'promotion[code]', @promotion.code, class: 'form-control' %>
+    <% end %>
+
+    <%= f.field_container :base_code, class: ['form-group'] do %>
+      <%= label_tag :base_code %>
+      <%= text_field_tag 'bulk_base', @bulk_base, readonly: !@promotion.new_record?, class: 'form-control' %>
+    <% end %>
+
+    <%= f.field_container :number_of_codes, class: ['form-group'] do %>
+      <%= label_tag :number_of_codes %>
+      <%= text_field_tag 'bulk_number', @bulk_number, readonly: !@promotion.new_record?, class: 'form-control' %>
+    <% end %>
+
+    <%= f.field_container :per_code_usage_limit, class: ['form-group'] do %>
+      <%= f.label :per_code_usage_limit %>
+      <%= f.text_field :per_code_usage_limit, class: 'form-control' %>
     <% end %>
 
     <%= f.field_container :path, class: ['form-group'] do %>
@@ -38,12 +53,12 @@
     <% end %>
   </div>
 
-  <div id="expiry_fields" class="col-xs-6 col-md-3">
-    <%= f.field_container :usage_limit do %>
-      <%= f.label :usage_limit %>
+  <div id="expiry_fields" class="col-md-3">
+    <%= f.field_container :overall_usage_limit do %>
+      <%= f.label :overall_usage_limit %>
       <%= f.number_field :usage_limit, min: 0, class: 'form-control' %>
       <p class="help-block">
-        <%= Spree.t(:current_promotion_usage, count: @promotion.credits_count) %>
+        <%= Spree.t(:current_promotion_usage, count: @promotion.usage_count) %>
       </p>
     <% end %>
 

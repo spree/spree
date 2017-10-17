@@ -6,7 +6,7 @@ module Spree
       let(:order) { create(:order) }
       let(:shipment) { create(:shipment, order: order) }
 
-      let(:promotion) { Promotion.create(name: 'Free Shipping') }
+      let(:promotion) { Promotion.create!(name: 'Free Shipping') }
       let(:calculator) { Calculator::FlatPercentItemTotal.new(preferred_flat_percent: 10) }
       let!(:action) { Promotion::Actions::FreeShipping.create(promotion: promotion) }
 
@@ -19,9 +19,7 @@ module Spree
       end
 
       context 'if promo has a code' do
-        before do
-          promotion.update_column(:code, 'code')
-        end
+        let!(:promotion_code) { create(:promotion_code, promotion: promotion) }
 
         it 'does adjust the shipment when applied to order' do
           order.promotions << promotion

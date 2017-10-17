@@ -15,7 +15,11 @@ module Spree
           elsif Promotion.with_coupon_code(order.coupon_code).try(:expired?)
             set_error_code :coupon_code_expired
           else
-            set_error_code :coupon_code_not_found
+            if promotion_code && promotion_code.promotion.expired?
+              set_error_code :coupon_code_expired
+            else
+              set_error_code :coupon_code_not_found
+            end
           end
         end
         self
@@ -32,9 +36,11 @@ module Spree
       end
 
       def promotion
-        @promotion ||= Promotion.active.includes(
-          :promotion_rules, :promotion_actions
-        ).with_coupon_code(order.coupon_code)
+        @promotion ||= begin
+          if promotion_code && promotion_code.promotion.active?
+            promotion_code.promotion
+          end
+        end
       end
 
       def successful?
@@ -43,17 +49,21 @@ module Spree
 
       private
 
-      def handle_present_promotion
-        return promotion_usage_limit_exceeded if promotion.usage_limit_exceeded?(order)
-        return promotion_applied if promotion_exists_on_order?
-        unless promotion.eligible?(order)
+      def promotion_code
+        @promotion_code ||= Spree::PromotionCode.where(value: order.coupon_code.downcase).first
+      end
+
+      def handle_present_promotion(promotion)
+        return promotion_usage_limit_exceeded if promotion.usage_limit_exceeded?(order) || promotion_code.usage_limit_exceeded?(order)
+        return promotion_applied if promotion_exists_on_order?(order, promotion)
+        unless promotion.eligible?(order, promotion_code: promotion_code)
           self.error = promotion.eligibility_errors.full_messages.first unless promotion.eligibility_errors.blank?
           return (error || ineligible_for_this_order)
         end
 
         # If any of the actions for the promotion return `true`,
         # then result here will also be `true`.
-        if promotion.activate(order: order)
+        if promotion.activate(order: order, promotion_code: promotion_code)
           determine_promotion_application_result
         else
           set_error_code :coupon_code_unknown_error
@@ -79,7 +89,7 @@ module Spree
       def determine_promotion_application_result
         # Check for applied adjustments.
         discount = order.all_adjustments.promotion.eligible.detect do |p|
-          p.source.promotion.code.try(:downcase) == order.coupon_code.downcase
+          p.source.promotion.codes.any? { |code| code.value == order.coupon_code.downcase }
         end
 
         # Check for applied line items.
