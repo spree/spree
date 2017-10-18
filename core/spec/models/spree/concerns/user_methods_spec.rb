@@ -66,4 +66,13 @@ describe Spree::UserMethods do
       end
     end
   end
+
+  context 'when user destroyed with approved orders' do
+    let(:order) { create(:order, approver_id: test_user.id, created_at: 1.day.ago) }
+
+    it 'should nullify all approver ids' do
+      expect(test_user).to receive(:nullify_approver_id_in_approved_orders)
+      test_user.destroy
+    end
+  end
 end
