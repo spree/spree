@@ -10,6 +10,7 @@ module Spree
       # we need to have this callback before any dependent: :destroy associations
       # https://github.com/rails/rails/issues/3458
       before_destroy :check_completed_orders
+      after_destroy :nullify_approver_id_in_approved_orders
 
       has_many :role_users, class_name: 'Spree::RoleUser', foreign_key: :user_id, dependent: :destroy
       has_many :spree_roles, through: :role_users, class_name: 'Spree::Role', source: :role
@@ -51,6 +52,10 @@ module Spree
 
     def check_completed_orders
       raise Spree::Core::DestroyWithOrdersError if orders.complete.present?
+    end
+
+    def nullify_approver_id_in_approved_orders
+      Spree::Order.where(approver_id: id).update_all(approver_id: nil)
     end
   end
 end
