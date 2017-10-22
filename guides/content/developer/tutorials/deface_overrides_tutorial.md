@@ -72,7 +72,7 @@ We can do this by creating a new file `app/models/spree/product_decorator.rb` an
 ```ruby
 module Spree
   Product.class_eval do
-    delegate :sale_price, to: :master
+    delegate :sale_price, :sale_price=, to: :master
   end
 end
 ```
