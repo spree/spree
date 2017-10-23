@@ -61,6 +61,10 @@ gem 'spree_auth_devise', '~> 3.3'
 gem 'spree_gateway', '~> 3.3'
 ```
 
+**Note: If you're using fresh Rails 5.1 application, you need to run `bundle update i18n` before following steps
+below.**
+
+
 Run `bundle install`
 
 Use the install generators to set up Spree:
