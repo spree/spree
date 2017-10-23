@@ -24,9 +24,10 @@ module Spree
   class Adjustment < Spree::Base
     with_options polymorphic: true do
       belongs_to :adjustable, touch: true
-      belongs_to :source
+      belongs_to :source, optional: true
     end
     belongs_to :order, class_name: 'Spree::Order', inverse_of: :all_adjustments
+    belongs_to :promotion_code, class_name: 'Spree::PromotionCode'
 
     validates :adjustable, :order, :label, presence: true
     validates :amount, numericality: true
@@ -88,7 +89,7 @@ module Spree
       return amount if closed? || source.blank?
       amount = source.compute_amount(target)
       attributes = { amount: amount, updated_at: Time.current }
-      attributes[:eligible] = source.promotion.eligible?(target) if promotion?
+      attributes[:eligible] = source.promotion.eligible?(target, promotion_code: promotion_code) if promotion?
       update_columns(attributes)
       amount
     end

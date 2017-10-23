@@ -21,7 +21,7 @@ describe Spree::Promotion::Actions::CreateAdjustment, type: :model do
         it 'returns discount amount eq to total' do
           allow(subject).to receive(:compute).with(order).and_return(100)
 
-          expect(subject.compute_amount(order)).to eq -30
+          expect(subject.compute_amount(order)).to eq (-30)
         end
       end
 
@@ -29,7 +29,7 @@ describe Spree::Promotion::Actions::CreateAdjustment, type: :model do
         it 'returns discount amount' do
           allow(subject).to receive(:compute).with(order).and_return(30)
 
-          expect(subject.compute_amount(order)).to eq -30
+          expect(subject.compute_amount(order)).to eq (-30)
         end
       end
 
@@ -37,7 +37,7 @@ describe Spree::Promotion::Actions::CreateAdjustment, type: :model do
         it 'returns discount amount' do
           allow(subject).to receive(:compute).with(order).and_return(10)
 
-          expect(subject.compute_amount(order)).to eq -10
+          expect(subject.compute_amount(order)).to eq (-10)
         end
       end
     end
@@ -49,7 +49,7 @@ describe Spree::Promotion::Actions::CreateAdjustment, type: :model do
         it 'returns discount amount eq to total' do
           allow(subject).to receive(:compute).with(order).and_return(100)
 
-          expect(subject.compute_amount(order)).to eq -40
+          expect(subject.compute_amount(order)).to eq (-40)
         end
       end
 
@@ -57,7 +57,7 @@ describe Spree::Promotion::Actions::CreateAdjustment, type: :model do
         it 'returns discount amount' do
           allow(subject).to receive(:compute).with(order).and_return(40)
 
-          expect(subject.compute_amount(order)).to eq -40
+          expect(subject.compute_amount(order)).to eq (-40)
         end
       end
 
@@ -65,7 +65,7 @@ describe Spree::Promotion::Actions::CreateAdjustment, type: :model do
         it 'returns discount amount' do
           allow(subject).to receive(:compute).with(order).and_return(10)
 
-          expect(subject.compute_amount(order)).to eq -10
+          expect(subject.compute_amount(order)).to eq (-10)
         end
       end
     end
@@ -83,7 +83,7 @@ describe Spree::Promotion::Actions::CreateAdjustment, type: :model do
     it 'does not apply an adjustment if the amount is 0' do
       action.calculator.preferred_amount = 0
       action.perform(payload)
-      expect(promotion.credits_count).to eq(0)
+      expect(promotion.usage_count).to eq(0)
       expect(order.adjustments.count).to eq(0)
     end
 
@@ -91,7 +91,7 @@ describe Spree::Promotion::Actions::CreateAdjustment, type: :model do
       order.shipments.create!(cost: 10, stock_location: create(:stock_location))
 
       action.perform(payload)
-      expect(promotion.credits_count).to eq(1)
+      expect(promotion.usage_count).to eq(1)
       expect(order.adjustments.count).to eq(1)
       expect(order.adjustments.first.amount.to_i).to eq(-10)
     end
@@ -107,7 +107,18 @@ describe Spree::Promotion::Actions::CreateAdjustment, type: :model do
 
       action.perform(payload)
       action.perform(payload)
-      expect(promotion.credits_count).to eq(1)
+      expect(promotion.usage_count).to eq(1)
+    end
+
+    context 'when a promotion code is used' do
+      let(:promotion_code) { create(:promotion_code) }
+      let(:promotion) { promotion_code.promotion }
+      let(:payload) { { order: order, promotion_code: promotion_code } }
+
+      it 'should connect the adjustment to the promotion_code' do
+        expect { action.perform(payload) }.to change { order.adjustments.count }.by(1)
+        expect(order.adjustments.last.promotion_code).to eq promotion_code
+      end
     end
   end
 end

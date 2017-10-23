@@ -22,7 +22,8 @@ module Spree
       stub_authentication!
     end
 
-    let(:promotion) { create :promotion, :with_order_adjustment, code: '10off' }
+    let!(:promotion) { create :promotion, :with_order_adjustment, code: '10off' }
+    let!(:code) { create(:promotion_code, promotion: promotion) }
 
     describe 'GET #show' do
       subject { api_get :show, id: id }
@@ -37,7 +38,7 @@ module Spree
         end
 
         context 'when finding by code' do
-          let(:id) { promotion.code }
+          let(:id) { code.value }
 
           it_behaves_like 'a JSON response'
         end

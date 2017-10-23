@@ -53,19 +53,41 @@ module Spree
             end
 
             context 'with products rules' do
-              let!(:second_line_item) { create(:line_item, order: order) }
               let(:rule) { double Spree::Promotion::Rules::Product }
 
-              before do
-                allow(promotion).to receive(:eligible_rules) { [rule] }
-                allow(rule).to receive(:actionable?).and_return(true, false)
+              before { allow(promotion).to receive(:eligible_rules) { [rule] } }
+
+              context 'when the rule is actionable' do
+                before { allow(rule).to receive(:actionable?).and_return(true) }
+
+                it 'creates an adjustment' do
+                  action.perform(payload)
+
+                  expect(action.adjustments.last).to eq line_item.adjustments.last
+                end
               end
 
-              it 'does not create adjustments for line_items not in product rule' do
+              context 'when the rule is not actionable' do
+                before { allow(rule).to receive(:actionable?).and_return(false) }
+
+                it 'does not create an adjustment' do
+                  expect do
+                    expect do
+                      action.perform(payload)
+                    end.to_not change { action.adjustments.count }
+                  end.to_not change { line_item.adjustments.count }
+                end
+              end
+            end
+
+            context 'when a promotion code is used' do
+              let(:promotion_code) { create(:promotion_code) }
+              let(:promotion) { promotion_code.promotion }
+              let(:payload) { { order: order, promotion: promotion, promotion_code: promotion_code } }
+
+              it 'should connect the adjustment to the promotion_code' do
                 action.perform(payload)
-                expect(action.adjustments.count).to eql 1
-                expect(line_item.reload.adjustments).to match_array action.adjustments
-                expect(second_line_item.reload.adjustments).to be_empty
+                expect(line_item.adjustments.last.promotion_code).to eq promotion_code
               end
             end
           end
