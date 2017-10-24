@@ -84,7 +84,7 @@ describe 'Store credits admin' do
       allow_any_instance_of(Spree::Admin::StoreCreditsController).to receive(:try_spree_current_user).and_return(admin_user)
     end
 
-    it 'should update store credit lin lifetime stats' do
+    it 'should update store credit in lifetime stats' do
       accept_alert do
         click_icon :delete
         wait_for_ajax
