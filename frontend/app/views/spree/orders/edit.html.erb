@@ -1,13 +1,5 @@
 <% @body_id = 'cart' %>
 
-<% if @variant %>
-  <%= render partial: 'spree/shared/trackers/segment/product_added.js',
-              formats: :js,
-              locals: { product: @variant.product, order: @order } %>
-<% end %>
-<%= render partial: 'spree/shared/trackers/segment/cart_viewed.js',
-            formats: :js,
-            locals: { order: @order } %>
 <div data-hook="cart_container">
   <h1><%= Spree.t(:shopping_cart) %></h1>
 

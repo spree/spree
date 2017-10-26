@@ -1,12 +1,3 @@
-<% if order_just_completed?(@order) %>
-  <%= render partial: 'spree/shared/trackers/segment/order_complete.js',
-             formats: :js,
-             locals: { order: @order } %>
-  <% content_for :google_analytics do %>
-    <%= render partial: 'spree/shared/google_purchase.js', locals: { order: @order } %>
-  <% end %>
-<% end %>
-
 <fieldset id="order_summary" data-hook>
   <h1><%= accurate_title %></h1>
   <% if order_just_completed?(@order) %>

@@ -1,9 +1,5 @@
 <% @body_id = 'product-details' %>
 
-<%= render partial: 'spree/shared/trackers/segment/product_viewed.js',
-            formats: :js,
-            locals: { product: @product } %>
-
 <% cache cache_key_for_product do %>
   <div data-hook="product_show" class="row" itemscope itemtype="https://schema.org/Product">
     <div class="col-md-4 col-sm-5" data-hook="product_left_part">

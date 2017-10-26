@@ -1,10 +1,5 @@
 <h1 class="taxon-title"><%= @taxon.name %></h1>
 
-<% if params[:search].present? %>
-  <%= render partial: 'spree/shared/trackers/segment/product_list_filtered.js',
-              formats: :js,
-              locals: { search: params[:search], products: @products } %>
-<% end %>
 <% content_for :sidebar do %>
   <div data-hook="taxon_sidebar_navigation">
     <%= render partial: 'spree/shared/taxonomies' %>

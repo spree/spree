@@ -151,7 +151,6 @@ Spree::Core::Engine.add_routes do
     resources :stock_items, only: [:create, :update, :destroy]
     resources :store_credit_categories
     resources :tax_rates
-    resources :trackers
     resources :payment_methods do
       collection do
         post :update_positions
