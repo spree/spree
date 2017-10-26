@@ -565,6 +565,7 @@ module Spree
     end
 
     def shipping_eq_billing_address?
+      return true if bill_address == ship_address
       return false if !bill_address || !ship_address
       return true if bill_address.empty? && ship_address.empty?
 
