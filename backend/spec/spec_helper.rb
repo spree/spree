@@ -31,6 +31,7 @@ Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require f}
 require 'database_cleaner'
 require 'ffaker'
 require 'timeout'
+require 'rspec/retry'
 
 require 'spree/testing_support/authorization_helpers'
 require 'spree/testing_support/factories'
@@ -126,6 +127,13 @@ RSpec.configure do |config|
   config.include VersionCake::TestHelpers, type: :controller
   config.before(:each, type: :controller) do
     set_request_version('', 1)
+  end
+
+  config.verbose_retry = true
+  config.display_try_failure_messages = true
+
+  config.around :each, type: :feature do |ex|
+    ex.run_with_retry retry: 3
   end
 end
 
