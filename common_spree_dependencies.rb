@@ -29,6 +29,7 @@ group :test do
   gem 'rspec-collection_matchers'
   gem 'rspec-its'
   gem 'rspec-rails', '~> 3.7'
+  gem 'rspec-retry'
   gem 'rspec_junit_formatter'
   gem 'simplecov'
   gem 'webmock', '~> 3.0.1'
