@@ -45,14 +45,22 @@ require 'spree/testing_support/order_walkthrough'
 require 'spree/testing_support/caching'
 
 require 'capybara-screenshot/rspec'
+
 Capybara.save_path = ENV['CIRCLE_ARTIFACTS'] if ENV['CIRCLE_ARTIFACTS']
 
 if ENV['WEBDRIVER'] == 'accessible'
   require 'capybara/accessible'
   Capybara.javascript_driver = :accessible
 else
-  require 'capybara/poltergeist'
-  Capybara.javascript_driver = :poltergeist
+  Capybara.register_driver :chrome do |app|
+    Capybara::Selenium::Driver.new app,
+      browser: :chrome,
+      options: Selenium::WebDriver::Chrome::Options.new(args: %w[headless disable-gpu window-size=1920,1080])
+  end
+  Capybara.javascript_driver = :chrome
+end
+Capybara.configure do |config|
+  config.default_max_wait_time = 20
 end
 
 RSpec.configure do |config|

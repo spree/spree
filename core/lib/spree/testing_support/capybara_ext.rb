@@ -59,8 +59,6 @@ module CapybaraExt
     raise "Must pass a hash containing 'from'" if !options.is_a?(Hash) || !options.key?(:from)
 
     placeholder = options[:from]
-    minlength = options[:minlength] || 4
-
     click_link placeholder
 
     select_select2_result(value)
@@ -101,12 +99,11 @@ module CapybaraExt
 
   # arg delay in seconds
   def wait_for_ajax(delay = Capybara.default_max_wait_time)
-    counter = 0
-    delay_threshold = delay * 10
-    while page.evaluate_script("typeof($) === 'undefined' || $.active > 0")
-      counter += 1
-      sleep(0.1)
-      raise "AJAX request took longer than #{delay} seconds." if counter >= delay_threshold
+    Timeout.timeout(delay) do
+      active = page.evaluate_script('typeof jQuery !== "undefined" && jQuery.active')
+      until active.zero?
+        active = page.evaluate_script('typeof jQuery !== "undefined" && jQuery.active')
+      end
     end
   end
 
@@ -114,6 +111,7 @@ module CapybaraExt
   #
   # Much better than a random sleep "here and there"
   # it will not cause any delay in case the condition is fullfilled on first cycle.
+
   def wait_for_condition(delay = Capybara.default_max_wait_time)
     counter = 0
     delay_threshold = delay * 10
@@ -124,16 +122,15 @@ module CapybaraExt
     end
   end
 
-  def accept_alert
-    page.evaluate_script('window.confirm = function() { return true; }')
-    yield
-  end
-
   def dismiss_alert
     page.evaluate_script('window.confirm = function() { return false; }')
     yield
     # Restore existing default
     page.evaluate_script('window.confirm = function() { return true; }')
+  end
+
+  def disable_html5_validation
+    page.execute_script('for(var f=document.forms,i=f.length;i--;)f[i].setAttribute("novalidate",i)')
   end
 end
 

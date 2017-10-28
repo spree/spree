@@ -11,8 +11,7 @@ describe 'Properties', type: :feature, js: true do
     before do
       create(:property, name: 'shirt size', presentation: 'size')
       create(:property, name: 'shirt fit', presentation: 'fit')
-      click_link 'Products'
-      click_link 'Properties'
+      visit spree.admin_properties_path
     end
 
     context 'listing product properties' do
@@ -43,8 +42,7 @@ describe 'Properties', type: :feature, js: true do
 
   context 'creating a property' do
     it 'should allow an admin to create a new product property' do
-      click_link 'Products'
-      click_link 'Properties'
+      visit spree.admin_properties_path
       click_link 'new_property_link'
       within('.content-header') { expect(page).to have_content('New Property') }
 
@@ -58,8 +56,7 @@ describe 'Properties', type: :feature, js: true do
   context 'editing a property' do
     before(:each) do
       create(:property)
-      click_link 'Products'
-      click_link 'Properties'
+      visit spree.admin_properties_path
       within_row(1) { click_icon :edit }
     end
 
@@ -71,6 +68,7 @@ describe 'Properties', type: :feature, js: true do
     end
 
     it 'should show validation errors' do
+      disable_html5_validation
       fill_in 'property_name', with: ''
       click_button 'Update'
       expect(page).to have_content("Name can't be blank")
@@ -132,7 +130,6 @@ describe 'Properties', type: :feature, js: true do
     def delete_product_property
       accept_alert do
         click_icon :delete
-        wait_for_ajax # delete action must finish before reloading
       end
     end
 

@@ -33,7 +33,7 @@ group :test do
   gem 'rspec_junit_formatter'
   gem 'simplecov'
   gem 'webmock', '~> 3.0.1'
-  gem 'poltergeist', '~> 1.10'
+  gem 'selenium-webdriver'
   gem 'timecop'
   gem 'rails-controller-testing'
 end

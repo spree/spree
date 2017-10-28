@@ -45,13 +45,19 @@ require 'spree/testing_support/capybara_ext'
 require 'spree/core/controller_helpers/strong_parameters'
 
 require 'capybara-screenshot/rspec'
+
 Capybara.save_path = ENV['CIRCLE_ARTIFACTS'] if ENV['CIRCLE_ARTIFACTS']
 
-require 'capybara/poltergeist'
-Capybara.javascript_driver = :poltergeist
+Capybara.register_driver :chrome do |app|
+  Capybara::Selenium::Driver.new app,
+    browser: :chrome,
+    options: Selenium::WebDriver::Chrome::Options.new(args: %w[disable-popup-blocking headless disable-gpu window-size=1920,1080])
+end
+
+Capybara.javascript_driver = :chrome
 
 # Set timeout to something high enough to allow CI to pass
-Capybara.default_max_wait_time = 30
+Capybara.default_max_wait_time = 45
 
 RSpec.configure do |config|
   config.color = true
@@ -97,7 +103,7 @@ RSpec.configure do |config|
   end
 
   config.around do |example|
-    Timeout.timeout(30, &example)
+    Timeout.timeout(45, &example)
   end
 
   config.after(:each, type: :feature) do |example|
