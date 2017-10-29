@@ -119,7 +119,7 @@ describe Spree::Order, type: :model do
 
       context 'with a line item' do
         before do
-          order.line_items << FactoryGirl.create(:line_item)
+          order.line_items << FactoryBot.create(:line_item)
         end
 
         it 'transitions to address' do
@@ -134,10 +134,10 @@ describe Spree::Order, type: :model do
         end
 
         context 'with default addresses' do
-          let(:default_address) { FactoryGirl.create(:address) }
+          let(:default_address) { FactoryBot.create(:address) }
 
           before do
-            order.user = FactoryGirl.create(:user, "#{address_kind}_address" => default_address)
+            order.user = FactoryBot.create(:user, "#{address_kind}_address" => default_address)
             order.next!
             order.reload
           end
@@ -171,19 +171,19 @@ describe Spree::Order, type: :model do
       before do
         order.state = 'address'
         allow(order).to receive(:has_available_payment)
-        shipment = FactoryGirl.create(:shipment, order: order)
+        shipment = FactoryBot.create(:shipment, order: order)
         order.email = 'user@example.com'
         order.save!
       end
 
       it 'updates totals' do
         allow(order).to receive_messages(ensure_available_shipping_rates: true)
-        line_item = FactoryGirl.create(:line_item, price: 10, adjustment_total: 10)
+        line_item = FactoryBot.create(:line_item, price: 10, adjustment_total: 10)
         line_item.variant.update_attributes!(price: 10)
         order.line_items << line_item
         tax_rate = create(:tax_rate, tax_category: line_item.tax_category, amount: 0.05)
         allow(Spree::TaxRate).to receive_messages match: [tax_rate]
-        FactoryGirl.create(:tax_adjustment, adjustable: line_item, source: tax_rate, order: order)
+        FactoryBot.create(:tax_adjustment, adjustable: line_item, source: tax_rate, order: order)
         order.email = 'user@example.com'
         order.next!
         expect(order.adjustment_total).to eq(0.5)
@@ -194,7 +194,7 @@ describe Spree::Order, type: :model do
 
       it 'updates prices' do
         allow(order).to receive_messages(ensure_available_shipping_rates: true)
-        line_item = FactoryGirl.create(:line_item, price: 10, adjustment_total: 10)
+        line_item = FactoryBot.create(:line_item, price: 10, adjustment_total: 10)
         line_item.variant.update_attributes!(price: 20)
         order.line_items << line_item
         tax_rate = create :tax_rate,
@@ -202,7 +202,7 @@ describe Spree::Order, type: :model do
                           tax_category: line_item.tax_category,
                           amount: 0.05
         allow(Spree::TaxRate).to receive_messages(match: [tax_rate])
-        FactoryGirl.create :tax_adjustment,
+        FactoryBot.create :tax_adjustment,
                            adjustable: line_item,
                            source: tax_rate,
                            order: order
@@ -225,7 +225,7 @@ describe Spree::Order, type: :model do
         # otherwise, it will crash
         allow(order).to receive_messages(ensure_available_shipping_rates: true)
 
-        order.user = FactoryGirl.create(:user)
+        order.user = FactoryBot.create(:user)
         order.save!
 
         expect(order.user).to_not receive(:persist_order_address).with(order)
@@ -235,9 +235,9 @@ describe Spree::Order, type: :model do
       it "calls persist_order_address on the order's user" do
         allow(order).to receive_messages(ensure_available_shipping_rates: true)
 
-        order.user = FactoryGirl.create(:user)
-        order.ship_address = FactoryGirl.create(:address)
-        order.bill_address = FactoryGirl.create(:address)
+        order.user = FactoryBot.create(:user)
+        order.ship_address = FactoryBot.create(:address)
+        order.bill_address = FactoryBot.create(:address)
         order.save!
 
         expect(order.user).to receive(:persist_order_address).with(order)
@@ -247,7 +247,7 @@ describe Spree::Order, type: :model do
       it "does not call persist_order_address on the order's user for a temporary address" do
         allow(order).to receive_messages(ensure_available_shipping_rates: true)
 
-        order.user = FactoryGirl.create(:user)
+        order.user = FactoryBot.create(:user)
         order.temporary_address = true
         order.save!
 
@@ -258,7 +258,7 @@ describe Spree::Order, type: :model do
       context 'cannot transition to delivery' do
         context 'with an existing shipment' do
           before do
-            line_item = FactoryGirl.create(:line_item, price: 10)
+            line_item = FactoryBot.create(:line_item, price: 10)
             order.line_items << line_item
           end
 
@@ -345,7 +345,7 @@ describe Spree::Order, type: :model do
 
       context 'correctly determining payment required based on shipping information' do
         let(:shipment) do
-          FactoryGirl.create(:shipment)
+          FactoryBot.create(:shipment)
         end
 
         before do
@@ -403,7 +403,7 @@ describe Spree::Order, type: :model do
           order.email = 'spree@example.com'
           allow(order).to receive_messages confirmation_required?: false
           allow(order).to receive_messages payment_required?: true
-          order.payments << FactoryGirl.create(:payment, state: payment_state, order: order)
+          order.payments << FactoryBot.create(:payment, state: payment_state, order: order)
         end
 
         context 'when there is at least one valid payment' do
@@ -475,13 +475,13 @@ describe Spree::Order, type: :model do
 
     context 'default credit card' do
       before do
-        order.user = FactoryGirl.create(:user)
+        order.user = FactoryBot.create(:user)
         order.email = 'spree@example.org'
-        order.payments << FactoryGirl.create(:payment)
+        order.payments << FactoryBot.create(:payment)
 
         # make sure we will actually capture a payment
         allow(order).to receive_messages(payment_required?: true)
-        order.line_items << FactoryGirl.create(:line_item)
+        order.line_items << FactoryBot.create(:line_item)
         Spree::OrderUpdater.new(order).update
 
         order.save!

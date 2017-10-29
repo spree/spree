@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :stock_location, class: Spree::StockLocation do
     name 'NY Warehouse'
     address1 '1600 Pennsylvania Ave NW'
