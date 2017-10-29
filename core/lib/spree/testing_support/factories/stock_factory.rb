@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   # must use build()
   factory :stock_packer, class: Spree::Stock::Packer do
     transient do

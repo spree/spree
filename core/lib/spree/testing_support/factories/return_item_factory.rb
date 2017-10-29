@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :return_item, class: Spree::ReturnItem do
     association(:inventory_unit, factory: :inventory_unit, state: :shipped)
     association(:return_authorization, factory: :return_authorization)

@@ -51,7 +51,7 @@ $ bundle exec rspec spec/models/spree/state_spec.rb:7
 
 ### Using Factories
 
-Spree uses [factory_girl](https://github.com/thoughtbot/factory_girl) to create valid records for testing purpose. All of the factories are also packaged in the gem. So if you are writing an extension or if you just want to play with Spree models then you can use these factories as illustrated below.
+Spree uses [factory_bot](https://github.com/thoughtbot/factory_bot) to create valid records for testing purpose. All of the factories are also packaged in the gem. So if you are writing an extension or if you just want to play with Spree models then you can use these factories as illustrated below.
 
 ```bash
 $ rails console
@@ -72,7 +72,7 @@ Spree itself is well unit-tested. However, when you install a Spree store for th
 
 In the early days, Rails developers preferred fixtures and seed data. As apps grew, fixtures and seed data went out of vogue in favor of Factories. Factories can have their own problems, but at this point are widely considered superior to a large fixture/seed data setup. This [blog post](https://semaphoreci.com/blog/2014/01/14/rails-testing-antipatterns-fixtures-and-factories.html) discusses some background consideration.
 
-Below are some examples for how to create a test suite using Factories (with FactoryGirl). As discussed above, you can copy all of the Spree Factories from the Spree core, or you can write your own Factories.
+Below are some examples for how to create a test suite using Factories (with FactoryBot). As discussed above, you can copy all of the Spree Factories from the Spree core, or you can write your own Factories.
 
 We recommend a fully integration suite covering your checkout. You can also write integration tests for the Admin area, but many people put less attention into this because it is not user-facing. As with the unit tests, the most important thing to test is the modifications you make that make your Spree store different from the default Spree install.
 
@@ -83,7 +83,7 @@ We recommend a fully integration suite covering your checkout. You can also writ
 If you're using spree_auth_devise, your app already comes with the Warden gem, which can be used to log-in a user through your test suite
 
 ```ruby
-let(:user) { FactoryGirl.create(:user) }
+let(:user) { FactoryBot.create(:user) }
 before(:each) do
   login_as(user, scope: :spree_user)
 end
@@ -97,7 +97,7 @@ This lets your Spree app behave as if this user is logged in.
 For Spree 2.2 and prior, Spree keeps track of the order for a logged out user using a session variable. Here's an example that may work for you in Spree 2.2 and earlier:
 
 ```ruby
-let (:order) { FactoryGirl.create(:order) }
+let (:order) { FactoryBot.create(:order) }
 before(:each) do
   page.set_rack_session(order_id: order.id)
   page.set_rack_session(access_token: order.token)
@@ -108,7 +108,7 @@ In Spree 2.3, a signed cookie is used to keep track of the guest user's cart. In
 
 ```ruby
 describe "cart to registration page", type: :feature do
-  let(:order) { FactoryGirl.create(:order, guest_token: "xyz") }
+  let(:order) { FactoryBot.create(:order, guest_token: "xyz") }
   # user should be nil for logged out user
 
 

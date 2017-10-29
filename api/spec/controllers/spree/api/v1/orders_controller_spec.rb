@@ -141,7 +141,7 @@ module Spree
 
     describe 'GET #show' do
       let(:order) { create :order_with_line_items }
-      let(:adjustment) { FactoryGirl.create(:adjustment, order: order) }
+      let(:adjustment) { FactoryBot.create(:adjustment, order: order) }
 
       subject { api_get :show, id: order.to_param }
 
@@ -515,15 +515,15 @@ module Spree
 
         context 'when in delivery' do
           let!(:shipping_method) do
-            FactoryGirl.create(:shipping_method).tap do |shipping_method|
+            FactoryBot.create(:shipping_method).tap do |shipping_method|
               shipping_method.calculator.preferred_amount = 10
               shipping_method.calculator.save
             end
           end
 
           before do
-            order.bill_address = FactoryGirl.create(:address)
-            order.ship_address = FactoryGirl.create(:address)
+            order.bill_address = FactoryBot.create(:address)
+            order.ship_address = FactoryBot.create(:address)
             order.next!
             order.save
           end
