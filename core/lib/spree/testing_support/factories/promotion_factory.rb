@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :promotion, class: Spree::Promotion do
     name 'Promo'
 

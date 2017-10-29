@@ -3,7 +3,7 @@
 require 'spec_helper'
 
 describe Spree::Taxon, type: :model do
-  let(:taxon) { FactoryGirl.build(:taxon, name: 'Ruby on Rails') }
+  let(:taxon) { FactoryBot.build(:taxon, name: 'Ruby on Rails') }
 
   describe '#to_param' do
     subject { super().to_param }
@@ -31,7 +31,7 @@ describe Spree::Taxon, type: :model do
     end
 
     context 'with parent taxon' do
-      let(:parent) { FactoryGirl.build(:taxon, permalink: 'brands') }
+      let(:parent) { FactoryBot.build(:taxon, permalink: 'brands') }
       before       { allow(taxon).to receive_messages parent: parent }
 
       it 'should set permalink correctly when taxon has parent' do

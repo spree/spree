@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :inventory_unit, class: Spree::InventoryUnit do
     variant
     order

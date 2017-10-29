@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :base_shipping_method, class: Spree::ShippingMethod do
     zones { |_a| [Spree::Zone.global] }
     name 'UPS Ground'
