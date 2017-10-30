@@ -31,7 +31,14 @@ $(document).ready(function() {
         cache: true,
         data: function(term, page) {
           return {
-            q: term,
+            q: {
+              'm': 'or',
+              'email_start': term,
+              'ship_address_firstname_start': term,
+              'ship_address_lastname_start': term,
+              'bill_address_firstname_start': term,
+              'bill_address_lastname_start': term
+            },
             token: Spree.api_key
           }
         },
