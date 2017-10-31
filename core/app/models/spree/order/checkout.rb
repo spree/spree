@@ -100,6 +100,7 @@ module Spree
                 before_transition to: :delivery, do: :create_proposed_shipments
                 before_transition to: :delivery, do: :ensure_available_shipping_rates
                 before_transition to: :delivery, do: :set_shipments_cost
+                before_transition to: :delivery, do: :create_shipment_tax_charge!
                 before_transition from: :delivery, do: :apply_free_shipping_promotions
               end
 
