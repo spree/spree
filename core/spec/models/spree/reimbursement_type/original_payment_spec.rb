@@ -8,25 +8,25 @@ module Spree
     let(:simulate)                { false }
     let!(:default_refund_reason)  { Spree::RefundReason.find_or_create_by!(name: Spree::RefundReason::RETURN_PROCESSING_REASON, mutable: false) }
 
-    subject { Spree::ReimbursementType::OriginalPayment.reimburse(reimbursement, [return_item], simulate)}
+    subject { Spree::ReimbursementType::OriginalPayment.reimburse(reimbursement, [return_item], simulate) }
 
     before { reimbursement.update!(total: reimbursement.calculated_total) }
 
-    describe ".reimburse" do
-      context "simulate is true" do
+    describe '.reimburse' do
+      context 'simulate is true' do
         let(:simulate) { true }
 
-        it "returns an array of readonly refunds" do
+        it 'returns an array of readonly refunds' do
           expect(subject.map(&:class)).to eq [Spree::Refund]
           expect(subject.map(&:readonly?)).to eq [true]
         end
       end
 
-      context "simulate is false" do
+      context 'simulate is false' do
         it 'performs the refund' do
-          expect {
+          expect do
             subject
-          }.to change { payment.refunds.count }.by(1)
+          end.to change { payment.refunds.count }.by(1)
           expect(payment.refunds.sum(:amount)).to eq reimbursement.return_items.to_a.sum(&:total)
         end
       end

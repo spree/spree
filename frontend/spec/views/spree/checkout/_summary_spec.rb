@@ -1,11 +1,11 @@
 require 'spec_helper'
 
-describe "spree/checkout/_summary.html.erb", type: :view do
+describe 'spree/checkout/_summary.html.erb', type: :view do
   # Regression spec for #4223
-  it "does not use the @order instance variable" do
+  it 'does not use the @order instance variable' do
     order = stub_model(Spree::Order)
     expect do
-      render partial: "spree/checkout/summary", locals: {order: order}
+      render partial: 'spree/checkout/summary', locals: { order: order }
     end.not_to raise_error
   end
 end

@@ -5,5 +5,5 @@ node(:current_page) { params[:page] ? params[:page].to_i : 1 }
 node(:pages) { @variants.total_pages }
 
 child(@variants => :variants) do
-  extends "spree/api/v1/variants/big"
+  extends 'spree/api/v1/variants/big'
 end

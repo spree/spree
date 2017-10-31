@@ -130,7 +130,7 @@ Next, create a new file in the directory we just created called `home_controller
 ```ruby
 Spree::HomeController.class_eval do
   def sale
-    @products = Product.joins(:variants_including_master).where('spree_variants.sale_price is not null').distinct
+    @products = Spree::Product.joins(:variants_including_master).where('spree_variants.sale_price is not null').distinct
   end
 end
 ```

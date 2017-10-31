@@ -8,7 +8,7 @@ module Spree
 
         if user && user.store_credits.any?
           payment_method = Spree::PaymentMethod::StoreCredit.available.first
-          raise "Store credit payment method could not be found" unless payment_method
+          raise 'Store credit payment method could not be found' unless payment_method
 
           user.store_credits.order_by_priority.each do |credit|
             break if remaining_total.zero?
@@ -30,7 +30,7 @@ module Spree
         return false unless user
         user.total_available_store_credit >= total
       end
-      alias_method :covered_by_store_credit, :covered_by_store_credit?
+      alias covered_by_store_credit covered_by_store_credit?
 
       def total_available_store_credit
         return 0.0 unless user

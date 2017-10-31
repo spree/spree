@@ -9,7 +9,7 @@ module Spree
             stock_movement.originator.number
           end
         else
-          ""
+          ''
         end
       end
 

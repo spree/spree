@@ -7,8 +7,29 @@ section: customization
 View customization allows you to extend or replace any view within a
 Spree store. This guide explains the options available, including:
 
--   Using Deface for view customization
--   Replacing entire view templates
+-   Overwriting view templates
+-   Using Deface for small view customizations
+
+## Template Replacements
+
+Spree supports the duplication of views within an application or extension that will
+completely replace the file of the same name in Spree.
+
+To override any of Spree's default views including those for the admin
+interface, simply create a file with the same filename in your app/views
+directory.
+
+For example, to override the main layout, create the file
+`YOUR_SITE_OR_EXTENSION/app/views/spree/layouts/spree_application.html.erb`
+
+You can export all views from spree frontend into your application
+using
+
+```bash
+rails generate spree:frontend:copy_views
+```
+
+This is the recommended way of customizing views in Spree.
 
 ## Using Deface
 
@@ -17,6 +38,8 @@ templates without needing to directly edit the underlying view file.
 Deface allows you to use standard CSS3 style selectors to target any
 element (including Ruby blocks), and perform an action against all the
 matching elements.
+
+We recommend using Deface only for really small changes.
 
 For example, take the Checkout Registration template, which looks like
 this:
@@ -270,40 +293,3 @@ future theming developments (editor).
 
 For more information and sample overrides please refer to its
 [README](https://github.com/spree/deface) file on GitHub.
-
-You can also see how Deface internals work, and test selectors using the
-[Deface Test Harness](http://deface.heroku.com) application.
-
-## Template Replacements
-
-Sometimes the customization required to a view are so substantial that
-using a Deface override seems impractical. Spree also supports the
-duplication of views within an application or extension that will
-completely replace the file of the same name in Spree.
-
-To override any of Spree's default views including those for the admin
-interface, simply create a file with the same filename in your app/views
-directory.
-
-For example, to override the main layout, create the file
-YOUR_SITE_OR_EXTENSION/app/views/spree/layouts/spree_application.html.erb
-
-***
-It's important to ensure you copy the correct version of a view
-into your application or extension, as copying a mismatched version
-could lead to hard to debug issues. We suggest using `bundle show spree`
-to get the location of the Spree code you're actually running and then
-copying the relevant file from there.
-***
-
-### Drawbacks of template replacements
-
-Whenever you copy an entire view into your extension or application you
-are adding a significant maintenance overhead to your application when
-it comes to upgrading to newer versions of Spree. When upgrading between
-versions you need to compare each template that's been replaced to
-ensure to replicate any changes from the newer Spree version in your
-locally copied version.
-
-To this end we strongly suggest you use Deface to achieve the desired
-customizations wherever possible.

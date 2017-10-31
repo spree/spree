@@ -77,6 +77,30 @@
       <li class='js-topic'>
         <h3>
           <a href="#" class="js-expand-btn collapsed toggle-tutorial-menu"><i class="icon-right-open"></i></a>
+          <%= link_to 'Users', 'users' %>
+        </h3>
+        <ul class="js-guides">
+          <li>
+            <i class="icon-dot"></i>
+            <%= link_to "Creating Users", 'creating_users' %>
+          </li>
+          <li>
+            <i class="icon-dot"></i>
+            <%= link_to "Searching Users", 'searching_users' %>
+          </li>
+          <li>
+            <i class="icon-dot"></i>
+            <%= link_to "Deleting Users", 'deleting_users' %>
+          </li>
+          <li>
+            <i class="icon-dot"></i>
+            <%= link_to "Editing Users", 'editing_users' %>
+          </li>
+        </ul>
+      </li>
+      <li class='js-topic'>
+        <h3>
+          <a href="#" class="js-expand-btn collapsed toggle-tutorial-menu"><i class="icon-right-open"></i></a>
           <%= link_to 'Payments', 'payments' %>
         </h3>
         <ul class="js-guides">
@@ -154,7 +178,11 @@
           </li>
           <li>
             <i class="icon-dot"></i>
-            <%= link_to "Configuring Analytics", 'configuring_analytics' %>
+            <%= link_to "Analytic Trackers", 'configuring_analytics' %>
+          </li>
+          <li>
+            <i class="icon-dot"></i>
+            <%= link_to "Store Credits", 'configuring_store_credit_categories' %>
           </li>
         </ul>
       </li>
@@ -175,44 +203,6 @@
           <a href="#" class="js-expand-btn collapsed"><i class="icon-right-open"></i></a>
           <%= link_to 'Extensions', 'extensions' %>
         </h3>
-        <ul class="js-guides">
-          <li>
-            <i class="icon-dot"></i>
-            <%= link_to "Introduction", 'extensions', 'introduction' %>
-          </li>
-          <li>
-            <i class="icon-dot"></i>
-            <%= link_to "spree_paypal_express", 'extensions', 'spreepaypalexpress' %>
-          </li>
-          <li>
-            <i class="icon-dot"></i>
-            <%= link_to "spree_gateway", 'extensions', 'spreegateway' %>
-          </li>
-          <li>
-            <i class="icon-dot"></i>
-            <%= link_to "spree_wishlist", 'extensions', 'spreewishlist' %>
-          </li>
-          <li>
-            <i class="icon-dot"></i>
-            <%= link_to "spree_email_to_friend", 'extensions', 'spreeemailtofriend' %>
-          </li>
-          <li>
-            <i class="icon-dot"></i>
-            <%= link_to "spree_reviews", 'extensions', 'spreereviews' %>
-          </li>
-          <li>
-            <i class="icon-dot"></i>
-            <%= link_to "spree_social", 'extensions', 'spreesocial' %>
-          </li>
-          <li>
-            <i class="icon-dot"></i>
-            <%= link_to "spree_multi_currency", 'extensions', 'spreemulticurrency' %>
-          </li>
-          <li>
-            <i class="icon-dot"></i>
-            <%= link_to "spree-multi-domain", 'extensions', 'spree-multi-domain' %>
-          </li>
-        </ul>
       </li>
     </ul>
   </nav>

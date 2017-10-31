@@ -6,7 +6,5 @@ node(:per_page) { params[:per_page].try(:to_i) || Kaminari.config.default_per_pa
 node(:pages) { @taxons.total_pages }
 child @taxons => :taxons do
   attributes *taxon_attributes
-  unless params[:without_children]
-    extends "spree/api/v1/taxons/taxons"
-  end
+  extends 'spree/api/v1/taxons/taxons' unless params[:without_children]
 end

@@ -11,6 +11,7 @@ module Spree
         end
 
         private
+
         def split_by_category(package)
           categories = Hash.new { |hash, key| hash[key] = [] }
           package.contents.each do |item|
@@ -21,7 +22,7 @@ module Spree
 
         def hash_to_packages(categories)
           packages = []
-          categories.each do |id, contents|
+          categories.each do |_id, contents|
             packages << build_package(contents)
           end
           packages

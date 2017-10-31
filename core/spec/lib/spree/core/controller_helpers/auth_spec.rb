@@ -3,7 +3,9 @@ require 'spree/testing_support/url_helpers'
 
 class FakesController < ApplicationController
   include Spree::Core::ControllerHelpers::Auth
-  def index; render plain: 'index'; end
+  def index
+    render plain: 'index'
+  end
 end
 
 describe Spree::Core::ControllerHelpers::Auth, type: :controller do
@@ -18,7 +20,9 @@ describe Spree::Core::ControllerHelpers::Auth, type: :controller do
 
   describe '#redirect_back_or_default' do
     controller(FakesController) do
-      def index; redirect_back_or_default('/'); end
+      def index
+        redirect_back_or_default('/')
+      end
     end
     it 'redirects to session url' do
       session[:spree_user_return_to] = '/redirect'
@@ -26,7 +30,7 @@ describe Spree::Core::ControllerHelpers::Auth, type: :controller do
       expect(response).to redirect_to('/redirect')
     end
     it 'redirects to HTTP_REFERER' do
-      request.env["HTTP_REFERER"] = '/dummy_redirect'
+      request.env['HTTP_REFERER'] = '/dummy_redirect'
       get :index
       expect(response).to redirect_to('/dummy_redirect')
     end
@@ -73,7 +77,9 @@ describe Spree::Core::ControllerHelpers::Auth, type: :controller do
 
   describe '#redirect_unauthorized_access' do
     controller(FakesController) do
-      def index; redirect_unauthorized_access; end
+      def index
+        redirect_unauthorized_access
+      end
     end
     context 'when logged in' do
       before do

@@ -36,7 +36,7 @@ The state transition for these is handled by the processing code within Spree; h
 
 ## Payment Methods
 
-Payment methods represent the different options a customer has for making a payment. Most sites will accept credit card payments through a payment gateway, but there are other options. Spree also comes with built-in support for a Check payment, which can be used to represent any offline payment. There are also third-party extensions that provide support for some other interesting options such as [better_spree_paypal_express](https://github.com/spree-contrib/better_spree_paypal_express).
+Payment methods represent the different options a customer has for making a payment. Most sites will accept credit card payments through a payment gateway, but there are other options. Spree also comes with built-in support for a Check payment, which can be used to represent any offline payment. There are also third-party extensions that provide support for some other interesting options such as [spree_braintree_vzero](https://github.com/spree-contrib/spree_braintree_vzero) for Braintree & PayPal payment methods.
 
 A `PaymentMethod` can have the following attributes:
 
@@ -187,6 +187,4 @@ by adding the following code in your spree.rb for example:
 Rails.application.config.spree.payment_methods << YourCustomGateway
 ```
 
-[better_spree_paypal_express](https://github.com/spree-contrib/better_spree_paypal_express) and
-[spree-adyen](https://github.com/spree/spree-adyen) are good examples of standalone custom gateways.
-No dependency on spree_gateway or activemerchant required.
+[spree_braintree_vzero](https://github.com/spree-contrib/spree_braintree_vzero) is a good example of a standalone custom gateways.

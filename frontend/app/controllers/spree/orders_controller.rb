@@ -14,10 +14,11 @@ module Spree
     end
 
     def update
+      @variant = Spree::Variant.find(params[:variant_id]) if params[:variant_id]
       if @order.contents.update_cart(order_params)
         respond_with(@order) do |format|
           format.html do
-            if params.has_key?(:checkout)
+            if params.key?(:checkout)
               @order.next if @order.cart?
               redirect_to checkout_state_path(@order.checkout_steps.first)
             else
@@ -33,8 +34,8 @@ module Spree
     # Shows the current incomplete order from the session
     def edit
       @order = current_order || Order.incomplete.
-                                  includes(line_items: [variant: [:images, :option_values, :product]]).
-                                  find_or_initialize_by(guest_token: cookies.signed[:guest_token])
+               includes(line_items: [variant: [:images, :option_values, :product]]).
+               find_or_initialize_by(guest_token: cookies.signed[:guest_token])
       associate_user
     end
 
@@ -53,7 +54,7 @@ module Spree
           order.create_tax_charge!
           order.update_with_updater!
         rescue ActiveRecord::RecordInvalid => e
-          error = e.record.errors.full_messages.join(", ")
+          error = e.record.errors.full_messages.join(', ')
         end
       else
         error = Spree.t(:please_enter_reasonable_quantity)
@@ -64,7 +65,7 @@ module Spree
         redirect_back_or_default(spree.root_path)
       else
         respond_with(order) do |format|
-          format.html { redirect_to cart_path }
+          format.html { redirect_to(cart_path(variant_id: variant.id)) }
         end
       end
     end
@@ -75,9 +76,7 @@ module Spree
     end
 
     def empty
-      if @order = current_order
-        @order.empty!
-      end
+      @order.empty! if @order = current_order
 
       redirect_to spree.cart_path
     end

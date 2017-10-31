@@ -51,20 +51,20 @@ module Spree
     belongs_to :shipping_category, class_name: 'Spree::ShippingCategory', inverse_of: :products
 
     has_one :master,
-      -> { where is_master: true },
-      inverse_of: :product,
-      class_name: 'Spree::Variant'
+            -> { where is_master: true },
+            inverse_of: :product,
+            class_name: 'Spree::Variant'
 
     has_many :variants,
-      -> { where(is_master: false).order(:position) },
-      inverse_of: :product,
-      class_name: 'Spree::Variant'
+             -> { where(is_master: false).order(:position) },
+             inverse_of: :product,
+             class_name: 'Spree::Variant'
 
     has_many :variants_including_master,
-      -> { order(:position) },
-      inverse_of: :product,
-      class_name: 'Spree::Variant',
-      dependent: :destroy
+             -> { order(:position) },
+             inverse_of: :product,
+             class_name: 'Spree::Variant',
+             dependent: :destroy
 
     has_many :prices, -> { order('spree_variants.position, spree_variants.id, currency') }, through: :variants
 
@@ -72,11 +72,6 @@ module Spree
 
     has_many :line_items, through: :variants_including_master
     has_many :orders, through: :line_items
-
-    delegate_belongs_to :master, :sku, :price, :currency, :display_amount, :display_price, :weight, :height, :width, :depth,
-                        :is_master, :has_default_price?, :cost_currency, :price_in, :amount_in, :cost_price, :images
-
-    alias_method :master_images, :images
 
     has_many :variant_images, -> { order(:position) }, source: :images, through: :variants_including_master
 
@@ -110,13 +105,29 @@ module Spree
 
     attr_accessor :option_values_hash
 
-    accepts_nested_attributes_for :product_properties, allow_destroy: true, reject_if: lambda { |pp| pp[:property_name].blank? }
+    accepts_nested_attributes_for :product_properties, allow_destroy: true, reject_if: ->(pp) { pp[:property_name].blank? }
 
-    alias :options :product_option_types
+    alias options product_option_types
 
     self.whitelisted_ransackable_associations = %w[stores variants_including_master master variants]
     self.whitelisted_ransackable_attributes = %w[description name slug discontinue_on]
     self.whitelisted_ransackable_scopes = %w[not_discontinued]
+
+    [
+      :sku, :price, :currency, :weight, :height, :width, :depth, :is_master,
+      :cost_currency, :price_in, :amount_in, :cost_price
+    ].each do |method_name|
+      delegate method_name, :"#{method_name}=", to: :find_or_build_master
+    end
+
+    delegate :display_amount, :display_price, :has_default_price?,
+             :images, to: :find_or_build_master
+
+    alias master_images images
+
+    def find_or_build_master
+      master || build_master
+    end
 
     # the master variant is not a member of the variants array
     def has_variants?
@@ -181,7 +192,7 @@ module Spree
     # eg categorise_variants_from_option(color) => {"red" -> [...], "blue" -> [...]}
     def categorise_variants_from_option(opt_type)
       return {} unless option_types.include?(opt_type)
-      variants.active.group_by { |v| v.option_values.detect { |o| o.option_type == opt_type} }
+      variants.active.group_by { |v| v.option_values.detect { |o| o.option_type == opt_type } }
     end
 
     def self.like_any(fields, values)
@@ -296,7 +307,7 @@ module Spree
     end
 
     def update_slug_history
-      self.save!
+      save!
     end
 
     def anything_changed?
@@ -338,7 +349,7 @@ module Spree
       # Required to avoid Variant#check_price validation failing on create.
       unless master.default_price && master.valid?
         master.errors.each do |att, error|
-          self.errors.add(att, error)
+          errors.add(att, error)
         end
       end
     end
@@ -372,7 +383,7 @@ module Spree
 
     def ensure_no_line_items
       if line_items.any?
-        errors.add(:base, Spree.t(:cannot_destroy_if_attached_to_line_items))
+        errors.add(:base, :cannot_destroy_if_attached_to_line_items)
         throw(:abort)
       end
     end

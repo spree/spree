@@ -7,7 +7,7 @@ module ActionController
         # Checkout AS Array#extract_options! and original respond_with
         # implementation for a better picture of this hack
         if resources.last.is_a? Hash
-          resources.last.merge! action_name: action_name.to_sym
+          resources.last[:action_name] = action_name.to_sym
         else
           resources.push action_name: action_name.to_sym
         end
@@ -35,7 +35,7 @@ module Spree
             self.spree_responders = {}
           end
 
-          def respond_override(options={})
+          def respond_override(options = {})
             unless options.blank?
               action_name = options.keys.first
               action_value = options.values.first
@@ -52,10 +52,10 @@ module Spree
               end
 
               if format_value.is_a?(Proc)
-                options = {action_name.to_sym => {format_name.to_sym => {success: format_value}}}
+                options = { action_name.to_sym => { format_name.to_sym => { success: format_value } } }
               end
 
-              self.spree_responders.deep_merge!(self.name.to_sym => options)
+              spree_responders.deep_merge!(name.to_sym => options)
             end
           end
         end

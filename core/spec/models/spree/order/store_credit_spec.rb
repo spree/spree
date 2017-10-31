@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-shared_examples "check total store credit from payments" do
+shared_examples 'check total store credit from payments' do
   context 'with valid payments' do
     let(:order) { payment.order }
     let!(:payment) { create(:store_credit_payment) }

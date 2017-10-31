@@ -14,10 +14,10 @@ Gem::Specification.new do |s|
 
   s.author      = 'Sean Schofield'
   s.email       = 'sean@spreecommerce.com'
-  s.homepage    = 'http://spreecommerce.com'
+  s.homepage    = 'http://spreecommerce.org'
   s.license     = 'BSD-3-Clause'
 
-  s.files        = `git ls-files`.split("\n").reject { |f| f.match(/^spec/) }
+  s.files        = `git ls-files`.split("\n").reject { |f| f.match(/^spec/) && !f.match(/^spec\/fixtures/) }
   s.require_path = 'lib'
 
   s.add_dependency 'activemerchant', '~> 1.67'
@@ -35,7 +35,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'paranoia', '~> 2.3.0'
   s.add_dependency 'premailer-rails'
   s.add_dependency 'acts-as-taggable-on', '~> 5.0'
-  s.add_dependency 'rails', '~> 5.1.1'
+  s.add_dependency 'rails', '~> 5.1.4'
   s.add_dependency 'ransack', '~> 1.8.0'
   s.add_dependency 'responders'
   s.add_dependency 'state_machines-activerecord', '~> 0.5'

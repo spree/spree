@@ -11,7 +11,7 @@
     <div data-hook="admin_shipping_method_form_display_field" class="col-xs-12 col-md-6">
       <%= f.field_container :display_on, class: ['form-group'] do %>
         <%= f.label :display_on, Spree.t(:display) %>
-        <%= select(:shipping_method, :display_on, Spree::ShippingMethod::DISPLAY.collect { |display| [Spree.t(display), display.to_s] }, {}, { class: 'select2' }) %>
+        <%= select(:shipping_method, :display_on, Spree::ShippingMethod::DISPLAY.collect { |display| [Spree.t(display), display.to_s] }, { include_blank: true }, { class: 'select2' }) %>
         <%= f.error_message_on :display_on %>
       <% end %>
     </div>

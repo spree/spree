@@ -20,4 +20,42 @@ describe Spree do
       Spree.admin_path = original_admin_path
     end
   end
+
+  describe '.user_class' do
+    context 'when user_class is a Class instance' do
+      it 'raises an error' do
+        Spree.user_class = Spree::LegacyUser
+
+        expect { Spree.user_class }.to raise_error(RuntimeError)
+      end
+    end
+
+    context 'when user_class is a Symbol instance' do
+      it 'returns the user_class constant' do
+        Spree.user_class = :'Spree::LegacyUser'
+
+        expect(Spree.user_class).to eq(Spree::LegacyUser)
+      end
+    end
+
+    context 'when user_class is a String instance' do
+      it 'returns the user_class constant' do
+        Spree.user_class = 'Spree::LegacyUser'
+
+        expect(Spree.user_class).to eq(Spree::LegacyUser)
+      end
+    end
+
+    context 'when constantize is false' do
+      it 'returns the user_class as a String' do
+        Spree.user_class = 'Spree::LegacyUser'
+
+        expect(Spree.user_class(constantize: false)).to eq('Spree::LegacyUser')
+      end
+    end
+
+    after do
+      Spree.user_class = 'Spree::LegacyUser'
+    end
+  end
 end

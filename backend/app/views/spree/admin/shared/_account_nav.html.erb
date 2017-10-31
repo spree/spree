@@ -1,0 +1,59 @@
+<% if try_spree_current_user %>
+  <ul class="nav navbar-nav">
+    <li class="dropdown user user-menu">
+      <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+        <i class="glyphicon glyphicon-user"></i>
+        <span><%= try_spree_current_user.email %> <i class="caret"></i></span>
+      </a>
+      <ul class="dropdown-menu">
+        <% if spree.respond_to? :root_path %>
+          <li>
+            <%= link_to spree.root_path, target: :blank do %>
+              <i class="glyphicon glyphicon-new-window"></i>
+              &nbsp;
+              <%= Spree.t(:back_to_store) %>
+            <% end %>
+          </li>
+        <% end %>
+        <li>
+          <%= link_to spree.edit_admin_user_path(try_spree_current_user) do %>
+            <i class="glyphicon glyphicon-user"></i>
+            &nbsp;
+            <%= Spree.t(:account) %>
+          <% end %>
+        </li>
+        <% if spree.respond_to? :admin_logout_path %>
+          <li>
+            <%= link_to spree.admin_logout_path do %>
+              <i class="glyphicon glyphicon-log-out"></i>
+              &nbsp;
+              <%= Spree.t(:logout) %>
+            <% end %>
+          </li>
+        <% end %>
+        <hr />
+        <li>
+          <%= link_to 'http://guides.spreecommerce.org', target: :blank do %>
+            <i class="glyphicon glyphicon-info-sign"></i>
+            &nbsp;
+            <%= Spree.t(:help_center) %>
+          <% end %>
+        </li>
+        <li>
+          <%= link_to 'http://slack.spreecommerce.org', target: :blank do %>
+            <i class="glyphicon glyphicon-comment"></i>
+            &nbsp;
+            <%= Spree.t(:join_slack) %>
+          <% end %>
+        </li>
+        <li>
+          <%= link_to 'https://github.com/spree-contrib', target: :blank do %>
+            <i class="glyphicon glyphicon-download"></i>
+            &nbsp;
+            <%= Spree.t(:extensions_directory) %>
+          <% end %>
+        </li>
+      </ul>
+    </li>
+  </ul>
+<% end %>

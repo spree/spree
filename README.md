@@ -1,15 +1,16 @@
 
 <img src="spree_logo.png" width="261">
 
-* Join our Slack at [slack.spreecommerce.com](http://slack.spreecommerce.com/)
+* Join our Slack at [slack.spreecommerce.org](http://slack.spreecommerce.org/)
 * [Extensions](https://github.com/spree-contrib)
 * [Documentation](http://guides.spreecommerce.org)
+* [Roadmap](https://github.com/spree/spree/milestones?direction=asc&sort=due_date&state=open)
 * Spree success stories from [OpenCommerce Conf](http://opencommerceconf.org/)
 
-[![Circle CI](https://circleci.com/gh/spree/spree.svg?style=svg)](https://circleci.com/gh/spree/spree/tree/master)
+[![Gem Version](https://badge.fury.io/rb/spree.svg)](https://badge.fury.io/rb/spree) [![Circle CI](https://circleci.com/gh/spree/spree.svg?style=shield)](https://circleci.com/gh/spree/spree/tree/master)
 [![Code Climate](https://codeclimate.com/github/spree/spree.svg)](https://codeclimate.com/github/spree/spree)
 [![codebeat](https://codebeat.co/badges/16feb8a2-abf0-4fbb-a130-20b689efcfc0)](https://codebeat.co/projects/github-com-spree-spree)
-[![Slack Status](http://slack.spreecommerce.com/badge.svg)](http://slack.spreecommerce.com)
+[![Slack Status](http://slack.spreecommerce.org/badge.svg)](http://slack.spreecommerce.org)
 
 **Spree** is a complete open source e-commerce solution built with Ruby on Rails. It
 was originally developed by Sean Schofield and is now maintained by developers from [Spark Solutions](http://sparksolutions.co) and [Vinsol](http://vinsol.com/). We're open to [contributions](#contributing) and accepting new [Core Team](https://github.com/spree/spree/wiki/Core-Team) members.
@@ -25,6 +26,17 @@ in a single repository and documented in a single set of
 * spree_core (Models & Mailers, the basic components of Spree that it can't run without)
 * spree_sample (Sample data)
 
+Demo
+----
+Try Spree with direct deployment on Heroku:
+
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/spree/spree)
+
+If you have want to run demo spree application on your machine, you can use our docker image with command below. It will
+download and run sample Spree application on http://localhost:3000
+```shell
+docker run --rm -it -p 3000:3000 spreecommerce/spree:latest
+```
 
 Getting Started
 ----------------------
@@ -34,26 +46,30 @@ Add Spree gems to your Gemfile:
 ### Rails 5.1
 
 ```ruby
-gem 'spree', '~> 3.3.0.rc1'
-gem 'spree_auth_devise', '~> 3.3.0.rc1'
-gem 'spree_gateway', '~> 3.3.0.rc1'
+gem 'spree', '~> 3.4.0'
+gem 'spree_auth_devise', '~> 3.3'
+gem 'spree_gateway', '~> 3.3'
 ```
 
 ### Rails 5.0
 
 ```ruby
 gem 'spree', '~> 3.2.0'
-gem 'spree_auth_devise', '~> 3.2'
-gem 'spree_gateway', '~> 3.2'
+gem 'spree_auth_devise', '~> 3.3'
+gem 'spree_gateway', '~> 3.3'
 ```
 
 ### Rails 4.2
 
 ```ruby
 gem 'spree', '~> 3.1.0'
-gem 'spree_auth_devise', '~> 3.1'
-gem 'spree_gateway', '~> 3.1'
+gem 'spree_auth_devise', '~> 3.3'
+gem 'spree_gateway', '~> 3.3'
 ```
+
+**Note: If you're using fresh Rails 5.1 application, you need to run `bundle update i18n` before following steps
+below.**
+
 
 Run `bundle install`
 
@@ -81,10 +97,11 @@ state. It is unwise to use this branch in a production system you care deeply
 about.**
 
 By default, the installation generator (`rails g spree:install`) will run
-migrations as well as adding seed and sample data. This can be disabled using
+migrations as well as adding seed and sample data and will copy frontend views
+for easy customization (if spree_frontend available). This can be disabled using
 
 ```shell
-rails g spree:install --migrate=false --sample=false --seed=false
+rails g spree:install --migrate=false --sample=false --seed=false --copy_views=false
 ```
 
 You can always perform any of these steps later by using these commands.
@@ -95,6 +112,12 @@ bundle exec rake db:migrate
 bundle exec rake db:seed
 bundle exec rake spree_sample:load
 ```
+
+Bundle Issues
+----------------------
+
+If you encountered any problems with `bundler`, please try downgrading to bundler `1.13.7` or earlier.
+
 
 Browse Store
 ----------------------
@@ -111,23 +134,28 @@ Extensions
 
 Spree Extensions provide additional features not present in the Core system.
 
-| Extension | Description |
-| --- | --- |
-| [spree_i18n](https://github.com/spree-contrib/spree_i18n) | I18n translation files for Spree Commerce
-| [spree-multi-domain](https://github.com/spree-contrib/spree-multi-domain) | Multiple Spree stores on different domains - single unified backed for processing orders
-| [spree_multi_currency](https://github.com/spree-contrib/spree_multi_currency) | Provides UI to allow configuring multiple currencies in Spree |
-| [spree_braintree_vzero](https://github.com/spree-contrib/spree_braintree_vzero) | Official Spree Braintree v.zero + PayPal extension |
-| [spree_address_book](https://github.com/spree-contrib/spree_address_book) | Adds address book for users to Spree |
-| [spree_digital](https://github.com/spree-contrib/spree_digital) | A Spree extension to enable downloadable products |
-| [spree_social](https://github.com/spree-contrib/spree_social) | Building block for spree social networking features (provides authentication and account linkage) |
-| [spree_related_products](https://github.com/spree-contrib/spree_related_products) | Related products extension for Spree
-| [spree_active_shipping](https://github.com/spree-contrib/spree_active_shipping) | Spree integration for Shopify's active_shipping gem
-| [spree_static_content](https://github.com/spree-contrib/spree_static_content) | Manage static pages for Spree |
-| [spree-product-assembly](https://github.com/spree-contrib/spree-product-assembly) | Adds oportunity to make bundle of products |
-| [spree_editor](https://github.com/spree-contrib/spree_editor) | Rich text editor for Spree with Image and File uploading in-place |
-| [spree_recently_viewed](https://github.com/spree-contrib/spree_recently_viewed) | Recently viewed products in Spree |
-| [spree_wishlist](https://github.com/spree-contrib/spree_wishlist) | Wishlist extension for Spree |
-| [spree_sitemap](https://github.com/spree-contrib/spree_sitemap) | Sitemap Generator for Spree  |
+
+| Extension | Spree 3.1+ support | Description |
+| --- | --- | --- |
+| [spree_gateway](https://github.com/spree/spree_gateway) | [![Build Status](https://travis-ci.org/spree/spree_gateway.svg?branch=master)](https://travis-ci.org/spree/spree_gateway) | Community supported Spree Payment Method Gateways
+| [spree_auth_devise](https://github.com/spree/spree_auth_devise) | [![Build Status](https://travis-ci.org/spree/spree_auth_devise.svg?branch=master)](https://travis-ci.org/spree/spree_auth_devise) | Provides authentication services for Spree, using the Devise gem.
+| [spree_i18n](https://github.com/spree-contrib/spree_i18n) | [![Build Status](https://travis-ci.org/spree-contrib/spree_i18n.svg?branch=master)](https://travis-ci.org/spree-contrib/spree_i18n) | I18n translation files for Spree Commerce
+| [spree-multi-domain](https://github.com/spree-contrib/spree-multi-domain) | [![Build Status](https://travis-ci.org/spree-contrib/spree-multi-domain.svg?branch=master)](https://travis-ci.org/spree-contrib/spree-multi-domain) | Multiple Spree stores on different domains - single unified backed for processing orders
+| [spree_multi_currency](https://github.com/spree-contrib/spree_multi_currency) | [![Build Status](https://travis-ci.org/spree-contrib/spree_multi_currency.svg?branch=master)](https://travis-ci.org/spree-contrib/spree_multi_currency) | Provides UI to allow configuring multiple currencies in Spree |
+| [spree_braintree_vzero](https://github.com/spree-contrib/spree_braintree_vzero) | [![Build Status](https://travis-ci.org/spree-contrib/spree_braintree_vzero.svg?branch=master)](https://travis-ci.org/spree-contrib/spree_braintree_vzero) | Official Spree Braintree v.zero + PayPal extension |
+| [spree_address_book](https://github.com/spree-contrib/spree_address_book) | [![Build Status](https://travis-ci.org/spree-contrib/spree_address_book.svg?branch=master)](https://travis-ci.org/spree-contrib/spree_address_book) | Adds address book for users to Spree |
+| [spree_digital](https://github.com/spree-contrib/spree_digital) | [![Build Status](https://travis-ci.org/spree-contrib/spree_digital.svg?branch=master)](https://travis-ci.org/spree-contrib/spree_digital) | A Spree extension to enable downloadable products |
+| [spree_social](https://github.com/spree-contrib/spree_social) |[![Build Status](https://travis-ci.org/spree-contrib/spree_social.svg?branch=master)](https://travis-ci.org/spree-contrib/spree_social)  | Building block for spree social networking features (provides authentication and account linkage) |
+| [spree_related_products](https://github.com/spree-contrib/spree_related_products) | [![Build Status](https://travis-ci.org/spree-contrib/spree_related_products.svg?branch=master)](https://travis-ci.org/spree-contrib/spree_related_products) | Related products extension for Spree
+| [spree_active_shipping](https://github.com/spree-contrib/spree_active_shipping) | [![Build Status](https://travis-ci.org/spree-contrib/spree_active_shipping.svg?branch=master)](https://travis-ci.org/spree-contrib/spree_active_shipping) | Spree integration for Shopify's active_shipping gem
+| [spree_static_content](https://github.com/spree-contrib/spree_static_content) | [![Build Status](https://travis-ci.org/spree-contrib/spree_static_content.svg?branch=master)](https://travis-ci.org/spree-contrib/spree_static_content) | Manage static pages for Spree |
+| [spree-product-assembly](https://github.com/spree-contrib/spree-product-assembly) | [![Build Status](https://travis-ci.org/spree-contrib/spree-product-assembly.svg?branch=master)](https://travis-ci.org/spree-contrib/spree-product-assembly) | Adds oportunity to make bundle of products |
+| [spree_editor](https://github.com/spree-contrib/spree_editor) | [![Build Status](https://travis-ci.org/spree-contrib/spree_editor.svg?branch=master)](https://travis-ci.org/spree-contrib/spree_editor) | Rich text editor for Spree with Image and File uploading in-place |
+| [spree_recently_viewed](https://github.com/spree-contrib/spree_recently_viewed) | [![Build Status](https://travis-ci.org/spree-contrib/spree_recently_viewed.svg?branch=master)](https://travis-ci.org/spree-contrib/spree_recently_viewed) | Recently viewed products in Spree |
+| [spree_wishlist](https://github.com/spree-contrib/spree_wishlist) | [![Build Status](https://travis-ci.org/spree-contrib/spree_wishlist.svg?branch=master)](https://travis-ci.org/spree-contrib/spree_wishlist) | Wishlist extension for Spree |
+| [spree_sitemap](https://github.com/spree-contrib/spree_sitemap) | [![Build Status](https://travis-ci.org/spree-contrib/spree_sitemap.svg?branch=master)](https://travis-ci.org/spree-contrib/spree_sitemap) | Sitemap Generator for Spree  |
+| [spree_volume_pricing](https://github.com/spree-contrib/spree_volume_pricing) | [![Build Status](https://travis-ci.org/spree-contrib/spree_volume_pricing.svg?branch=master)](https://travis-ci.org/spree-contrib/spree_volume_pricing) | It determines the price for a particular product variant with predefined ranges of quantities
+| [better_spree_paypal_express](https://github.com/spree-contrib/better_spree_paypal_express) | [![Build Status](https://travis-ci.org/spree-contrib/better_spree_paypal_express.svg?branch=master)](https://travis-ci.org/spree-contrib/better_spree_paypal_express) | This is the official Paypal Express extension for Spree.
 
 Performance
 ----------------------
@@ -192,7 +220,7 @@ bundle exec rspec spec
 ```
 
 If you would like to run specs against a particular database you may specify the
-dummy apps database, which defaults to sqlite3.
+dummy app's database, which defaults to sqlite3.
 ```shell
 DB=postgres bundle exec rake test_app
 ```
@@ -252,7 +280,7 @@ Here are some ways **you** can contribute:
 * by using prerelease versions / master branch
 * by reporting [bugs](https://github.com/spree/spree/issues/new)
 * by [translating to a new language](https://github.com/spree/spree_i18n/tree/master/config/locales)
-* by writing or editing [documentation](http://guides.spreecommerce.org/developer/contributing.html#contributing-to-the-documentation)
+* by writing or editing [documentation](https://github.com/spree/spree/blob/master/.github/CONTRIBUTING.md)
 * by writing [specs](https://github.com/spree/spree/labels/need_specs)
 * by writing [needed code](https://github.com/spree/spree/labels/feature_request) or [finishing code](https://github.com/spree/spree/labels/address_feedback)
 * by [refactoring code](https://github.com/spree/spree/labels/address_feedback)

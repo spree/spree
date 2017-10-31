@@ -77,12 +77,12 @@ module Spree
 
       protected
 
-        def collection
-          return @collection if @collection.present?
-          @collection = super
-          @search = @collection.ransack(params[:q])
-          @collection = @search.result.page(params[:page]).per(Spree::Config[:admin_users_per_page])
-        end
+      def collection
+        return @collection if @collection.present?
+        @collection = super
+        @search = @collection.ransack(params[:q])
+        @collection = @search.result.page(params[:page]).per(Spree::Config[:admin_users_per_page])
+      end
 
       private
 
@@ -96,7 +96,7 @@ module Spree
       # handling raise from Spree::Admin::ResourceController#destroy
       def user_destroy_with_orders_error
         invoke_callbacks(:destroy, :fails)
-        render status: :forbidden, text: Spree.t(:error_user_destroy_with_orders)
+        render status: :forbidden, plain: Spree.t(:error_user_destroy_with_orders)
       end
 
       def sign_in_if_change_own_password

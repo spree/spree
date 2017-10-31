@@ -4,7 +4,6 @@ module Spree
   module Stock
     module Splitter
       describe ShippingCategory, type: :model do
-
         let(:variant1) { create(:variant) }
         let(:variant2) { create(:variant) }
         let(:shipping_category_1) { create(:shipping_category, name: 'A') }

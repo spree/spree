@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Spree::StockMovement, type: :model do
-
   describe 'Constants' do
     describe 'QUANTITY_LIMITS[:max]' do
       it 'return 2**31 - 1' do
@@ -14,31 +13,6 @@ describe Spree::StockMovement, type: :model do
         expect(Spree::StockMovement::QUANTITY_LIMITS[:min]).to eq(-2**31)
       end
     end
-  end
-
-  describe 'Associations' do
-    it { is_expected.to belong_to(:stock_item).class_name('Spree::StockItem').inverse_of(:stock_movements) }
-    it { is_expected.to belong_to(:originator) }
-  end
-
-  describe 'Validations' do
-    it do
-      is_expected.to validate_presence_of(:stock_item)
-    end
-
-    it do
-      is_expected.to validate_presence_of(:quantity)
-    end
-
-    it do
-      is_expected.to validate_numericality_of(:quantity).
-        is_greater_than_or_equal_to(Spree::StockMovement::QUANTITY_LIMITS[:min]).
-        is_less_than_or_equal_to(Spree::StockMovement::QUANTITY_LIMITS[:max]).only_integer
-    end
-  end
-
-  describe 'Callbacks' do
-    it { is_expected.to callback(:update_stock_item_quantity).after(:create) }
   end
 
   describe 'Scope' do
@@ -105,13 +79,13 @@ describe Spree::StockMovement, type: :model do
         end
       end
 
-      context "when quantity is positive" do
+      context 'when quantity is positive' do
         before do
           stock_movement.quantity = 1
           stock_movement.save
           stock_item.reload
         end
-        it "should increment the stock item count on hand" do
+        it 'should increment the stock item count on hand' do
           expect(stock_item.count_on_hand).to eq(11)
         end
       end

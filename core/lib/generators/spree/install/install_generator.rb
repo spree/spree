@@ -3,12 +3,14 @@ require 'highline/import'
 require 'bundler'
 require 'bundler/cli'
 require 'active_support/core_ext/string/indent'
+require 'spree/core'
 
 module Spree
   class InstallGenerator < Rails::Generators::Base
     class_option :migrate, type: :boolean, default: true, banner: 'Run Spree migrations'
     class_option :seed, type: :boolean, default: true, banner: 'load seed data (migrations must be run)'
     class_option :sample, type: :boolean, default: true, banner: 'load sample data (migrations must be run)'
+    class_option :copy_views, type: :boolean, default: true, banner: 'copy frontend views from spree to your application for easy customization'
     class_option :auto_accept, type: :boolean
     class_option :user_class, type: :string
     class_option :admin_email, type: :string
@@ -17,7 +19,7 @@ module Spree
     class_option :enforce_available_locales, type: :boolean, default: nil
 
     def self.source_paths
-      paths = self.superclass.source_paths
+      paths = superclass.source_paths
       paths << File.expand_path('../templates', "../../#{__FILE__}")
       paths << File.expand_path('../templates', "../#{__FILE__}")
       paths << File.expand_path('../templates', __FILE__)
@@ -28,10 +30,11 @@ module Spree
       @run_migrations = options[:migrate]
       @load_seed_data = options[:seed]
       @load_sample_data = options[:sample]
+      @copy_views = options[:copy_views]
 
       unless @run_migrations
-         @load_seed_data = false
-         @load_sample_data = false
+        @load_seed_data = false
+        @load_sample_data = false
       end
     end
 
@@ -40,8 +43,8 @@ module Spree
     end
 
     def additional_tweaks
-      return unless File.exists? 'public/robots.txt'
-      append_file "public/robots.txt", <<-ROBOTS.strip_heredoc
+      return unless File.exist? 'public/robots.txt'
+      append_file 'public/robots.txt', <<-ROBOTS.strip_heredoc
         User-agent: *
         Disallow: /checkout
         Disallow: /cart
@@ -56,23 +59,33 @@ module Spree
     def setup_assets
       @lib_name = 'spree'
       %w{javascripts stylesheets images}.each do |path|
-        empty_directory "vendor/assets/#{path}/spree/frontend" if defined? Spree::Frontend || Rails.env.test?
-        empty_directory "vendor/assets/#{path}/spree/backend" if defined? Spree::Backend || Rails.env.test?
+        if Spree::Core::Engine.frontend_available? || Rails.env.test?
+          empty_directory "vendor/assets/#{path}/spree/frontend"
+        end
+        if Spree::Core::Engine.backend_available? || Rails.env.test?
+          empty_directory "vendor/assets/#{path}/spree/backend"
+        end
       end
 
-      if defined? Spree::Frontend || Rails.env.test?
-        template "vendor/assets/javascripts/spree/frontend/all.js"
-        template "vendor/assets/stylesheets/spree/frontend/all.css"
+      if Spree::Core::Engine.frontend_available? || Rails.env.test?
+        template 'vendor/assets/javascripts/spree/frontend/all.js'
+        template 'vendor/assets/stylesheets/spree/frontend/all.css'
       end
 
-      if defined? Spree::Backend || Rails.env.test?
-        template "vendor/assets/javascripts/spree/backend/all.js"
-        template "vendor/assets/stylesheets/spree/backend/all.css"
+      if Spree::Core::Engine.backend_available? || Rails.env.test?
+        template 'vendor/assets/javascripts/spree/backend/all.js'
+        template 'vendor/assets/stylesheets/spree/backend/all.css'
       end
     end
 
     def create_overrides_directory
-      empty_directory "app/overrides"
+      empty_directory 'app/overrides'
+    end
+
+    def copy_views
+      if @copy_views && Spree::Core::Engine.frontend_available?
+        generate 'spree:frontend:copy_views'
+      end
     end
 
     def configure_application
@@ -91,7 +104,7 @@ module Spree
         end
       APP
 
-      if !options[:enforce_available_locales].nil?
+      unless options[:enforce_available_locales].nil?
         application <<-APP.strip_heredoc.indent!(4)
           # Prevent this deprecation message: https://github.com/svenfuchs/i18n/commit/3b6e56e
           I18n.enforce_available_locales = #{options[:enforce_available_locales]}
@@ -100,7 +113,7 @@ module Spree
     end
 
     def include_seed_data
-      append_file "db/seeds.rb", <<-SEEDS.strip_heredoc
+      append_file 'db/seeds.rb', <<-SEEDS.strip_heredoc
 
         Spree::Core::Engine.load_seed if defined?(Spree::Core)
         Spree::Auth::Engine.load_seed if defined?(Spree::Auth)
@@ -108,14 +121,14 @@ module Spree
     end
 
     def install_migrations
-      say_status :copying, "migrations"
+      say_status :copying, 'migrations'
       silence_stream(STDOUT) do
         silence_warnings { rake 'railties:install:migrations' }
       end
     end
 
     def create_database
-      say_status :creating, "database"
+      say_status :creating, 'database'
       silence_stream(STDOUT) do
         silence_stream(STDERR) do
           silence_warnings { rake 'db:create' }
@@ -125,7 +138,7 @@ module Spree
 
     def run_migrations
       if @run_migrations
-        say_status :running, "migrations"
+        say_status :running, 'migrations'
         silence_stream(STDOUT) do
           silence_stream(STDERR) do
             silence_warnings { rake 'db:migrate' }
@@ -138,13 +151,13 @@ module Spree
 
     def populate_seed_data
       if @load_seed_data
-        say_status :loading,  "seed data"
-        rake_options=[]
-        rake_options << "AUTO_ACCEPT=1" if options[:auto_accept]
+        say_status :loading,  'seed data'
+        rake_options = []
+        rake_options << 'AUTO_ACCEPT=1' if options[:auto_accept]
         rake_options << "ADMIN_EMAIL=#{options[:admin_email]}" if options[:admin_email]
         rake_options << "ADMIN_PASSWORD=#{options[:admin_password]}" if options[:admin_password]
 
-        cmd = lambda { rake("db:seed #{rake_options.join(' ')}") }
+        cmd = -> { rake("db:seed #{rake_options.join(' ')}") }
         if options[:auto_accept] || (options[:admin_email] && options[:admin_password])
           silence_stream(STDOUT) do
             silence_stream(STDERR) do
@@ -155,20 +168,20 @@ module Spree
           cmd.call
         end
       else
-        say_status :skipping, "seed data (you can always run rake db:seed)"
+        say_status :skipping, 'seed data (you can always run rake db:seed)'
       end
     end
 
     def load_sample_data
       if @load_sample_data
-        say_status :loading, "sample data"
+        say_status :loading, 'sample data'
         silence_stream(STDOUT) do
           silence_stream(STDERR) do
             silence_warnings { rake 'spree_sample:load' }
           end
         end
       else
-        say_status :skipping, "sample data (you can always run rake spree_sample:load)"
+        say_status :skipping, 'sample data (you can always run rake spree_sample:load)'
       end
     end
 
@@ -189,19 +202,19 @@ module Spree
       end
 
       unless options[:quiet]
-        puts "*" * 50
+        puts '*' * 50
         puts "We added the following line to your application's config/routes.rb file:"
-        puts " "
+        puts ' '
         puts "    mount Spree::Core::Engine, at: '/'"
       end
     end
 
     def complete
       unless options[:quiet]
-        puts "*" * 50
+        puts '*' * 50
         puts "Spree has been installed successfully. You're all ready to go!"
-        puts " "
-        puts "Enjoy!"
+        puts ' '
+        puts 'Enjoy!'
       end
     end
 
@@ -219,7 +232,7 @@ module Spree
 
     def file_exists?(extensions, filename)
       extensions.detect do |extension|
-        File.exists?("#{filename}#{extension}")
+        File.exist?("#{filename}#{extension}")
       end
     end
 

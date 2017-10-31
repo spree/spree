@@ -18,7 +18,7 @@ module Spree
       super(*args)
     end
 
-    alias_method :t, :translate
+    alias t translate
 
     def context
       Spree::ViewContext.context
@@ -26,11 +26,9 @@ module Spree
 
     def virtual_path
       if context
-        path = context.instance_variable_get("@virtual_path")
+        path = context.instance_variable_get('@virtual_path')
 
-        if path
-          path.gsub(/spree/, '')
-        end
+        path.gsub(/spree/, '') if path
       end
     end
   end

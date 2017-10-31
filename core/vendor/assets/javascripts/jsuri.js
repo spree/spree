@@ -1,2 +1,458 @@
-/*! jsUri v1.1.1 | https://github.com/derek-watson/jsUri */
-var Query=function(a){"use strict";var b=function(a){var b=[],c,d,e,f;if(typeof a=="undefined"||a===null||a==="")return b;a.indexOf("?")===0&&(a=a.substring(1)),d=a.toString().split(/[&;]/);for(c=0;c<d.length;c++)e=d[c],f=e.split("="),b.push([f[0],f[1]]);return b},c=b(a),d=function(){var a="",b,d;for(b=0;b<c.length;b++)d=c[b],a.length>0&&(a+="&"),a+=d.join("=");return a.length>0?"?"+a:a},e=function(a){a=decodeURIComponent(a),a=a.replace("+"," ");return a},f=function(a){var b,d;for(d=0;d<c.length;d++){b=c[d];if(e(a)===e(b[0]))return b[1]}},g=function(a){var b=[],d,f;for(d=0;d<c.length;d++)f=c[d],e(a)===e(f[0])&&b.push(f[1]);return b},h=function(a,b){var d=[],f,g,h,i;for(f=0;f<c.length;f++)g=c[f],h=e(g[0])===e(a),i=e(g[1])===e(b),(arguments.length===1&&!h||arguments.length===2&&!h&&!i)&&d.push(g);c=d;return this},i=function(a,b,d){arguments.length===3&&d!==-1?(d=Math.min(d,c.length),c.splice(d,0,[a,b])):arguments.length>0&&c.push([a,b]);return this},j=function(a,b,d){var f=-1,g,j;if(arguments.length===3){for(g=0;g<c.length;g++){j=c[g];if(e(j[0])===e(a)&&decodeURIComponent(j[1])===e(d)){f=g;break}}h(a,d).addParam(a,b,f)}else{for(g=0;g<c.length;g++){j=c[g];if(e(j[0])===e(a)){f=g;break}}h(a),i(a,b,f)}return this};return{getParamValue:f,getParamValues:g,deleteParam:h,addParam:i,replaceParam:j,toString:d}},Uri=function(a){"use strict";var b=!1,c=function(a){var c={strict:/^(?:([^:\/?#]+):)?(?:\/\/((?:(([^:@]*)(?::([^:@]*))?)?@)?([^:\/?#]*)(?::(\d*))?))?((((?:[^?#\/]*\/)*)([^?#]*))(?:\?([^#]*))?(?:#(.*))?)/,loose:/^(?:(?![^:@]+:[^:@\/]*@)([^:\/?#.]+):)?(?:\/\/)?((?:(([^:@]*)(?::([^:@]*))?)?@)?([^:\/?#]*)(?::(\d*))?)(((\/(?:[^?#](?![^?#\/]*\.[^?#\/.]+(?:[?#]|$)))*\/?)?([^?#\/]*))(?:\?([^#]*))?(?:#(.*))?)/},d=["source","protocol","authority","userInfo","user","password","host","port","relative","path","directory","file","query","anchor"],e={name:"queryKey",parser:/(?:^|&)([^&=]*)=?([^&]*)/g},f=c[b?"strict":"loose"].exec(a),g={},h=14;while(h--)g[d[h]]=f[h]||"";g[e.name]={},g[d[12]].replace(e.parser,function(a,b,c){b&&(g[e.name][b]=c)});return g},d=c(a||""),e=new Query(d.query),f=function(a){typeof a!="undefined"&&(d.protocol=a);return d.protocol},g=null,h=function(a){typeof a!="undefined"&&(g=a);return g===null?d.source.indexOf("//")!==-1:g},i=function(a){typeof a!="undefined"&&(d.userInfo=a);return d.userInfo},j=function(a){typeof a!="undefined"&&(d.host=a);return d.host},k=function(a){typeof a!="undefined"&&(d.port=a);return d.port},l=function(a){typeof a!="undefined"&&(d.path=a);return d.path},m=function(a){typeof a!="undefined"&&(e=new Query(a));return e},n=function(a){typeof a!="undefined"&&(d.anchor=a);return d.anchor},o=function(a){f(a);return this},p=function(a){h(a);return this},q=function(a){i(a);return this},r=function(a){j(a);return this},s=function(a){k(a);return this},t=function(a){l(a);return this},u=function(a){m(a);return this},v=function(a){n(a);return this},w=function(a){return m().getParamValue(a)},x=function(a){return m().getParamValues(a)},y=function(a,b){arguments.length===2?m().deleteParam(a,b):m().deleteParam(a);return this},z=function(a,b,c){arguments.length===3?m().addParam(a,b,c):m().addParam(a,b);return this},A=function(a,b,c){arguments.length===3?m().replaceParam(a,b,c):m().replaceParam(a,b);return this},B=function(){var a="",b=function(a){return a!==null&&a!==""};b(f())?(a+=f(),f().indexOf(":")!==f().length-1&&(a+=":"),a+="//"):h()&&b(j())&&(a+="//"),b(i())&&b(j())&&(a+=i(),i().indexOf("@")!==i().length-1&&(a+="@")),b(j())&&(a+=j(),b(k())&&(a+=":"+k())),b(l())?a+=l():b(j())&&(b(m().toString())||b(n()))&&(a+="/"),b(m().toString())&&(m().toString().indexOf("?")!==0&&(a+="?"),a+=m().toString()),b(n())&&(n().indexOf("#")!==0&&(a+="#"),a+=n());return a},C=function(){return new Uri(B())};return{protocol:f,hasAuthorityPrefix:h,userInfo:i,host:j,port:k,path:l,query:m,anchor:n,setProtocol:o,setHasAuthorityPrefix:p,setUserInfo:q,setHost:r,setPort:s,setPath:t,setQuery:u,setAnchor:v,getQueryParamValue:w,getQueryParamValues:x,deleteQueryParam:y,addQueryParam:z,replaceQueryParam:A,toString:B,clone:C}},jsUri=Uri;
+/*!
+ * jsUri
+ * https://github.com/derek-watson/jsUri
+ *
+ * Copyright 2013, Derek Watson
+ * Released under the MIT license.
+ *
+ * Includes parseUri regular expressions
+ * http://blog.stevenlevithan.com/archives/parseuri
+ * Copyright 2007, Steven Levithan
+ * Released under the MIT license.
+ */
+
+ /*globals define, module */
+
+(function(global) {
+
+  var re = {
+    starts_with_slashes: /^\/+/,
+    ends_with_slashes: /\/+$/,
+    pluses: /\+/g,
+    query_separator: /[&;]/,
+    uri_parser: /^(?:(?![^:@]+:[^:@\/]*@)([^:\/?#.]+):)?(?:\/\/)?((?:(([^:@\/]*)(?::([^:@]*))?)?@)?(\[[0-9a-fA-F:.]+\]|[^:\/?#]*)(?::(\d+|(?=:)))?(:)?)((((?:[^?#](?![^?#\/]*\.[^?#\/.]+(?:[?#]|$)))*\/?)?([^?#\/]*))(?:\?([^#]*))?(?:#(.*))?)/
+  };
+
+  /**
+   * Define forEach for older js environments
+   * @see https://developer.mozilla.org/en-US/docs/JavaScript/Reference/Global_Objects/Array/forEach#Compatibility
+   */
+  if (!Array.prototype.forEach) {
+    Array.prototype.forEach = function(callback, thisArg) {
+      var T, k;
+
+      if (this == null) {
+        throw new TypeError(' this is null or not defined');
+      }
+
+      var O = Object(this);
+      var len = O.length >>> 0;
+
+      if (typeof callback !== "function") {
+        throw new TypeError(callback + ' is not a function');
+      }
+
+      if (arguments.length > 1) {
+        T = thisArg;
+      }
+
+      k = 0;
+
+      while (k < len) {
+        var kValue;
+        if (k in O) {
+          kValue = O[k];
+          callback.call(T, kValue, k, O);
+        }
+        k++;
+      }
+    };
+  }
+
+  /**
+   * unescape a query param value
+   * @param  {string} s encoded value
+   * @return {string}   decoded value
+   */
+  function decode(s) {
+    if (s) {
+        s = s.toString().replace(re.pluses, '%20');
+        s = decodeURIComponent(s);
+    }
+    return s;
+  }
+
+  /**
+   * Breaks a uri string down into its individual parts
+   * @param  {string} str uri
+   * @return {object}     parts
+   */
+  function parseUri(str) {
+    var parser = re.uri_parser;
+    var parserKeys = ["source", "protocol", "authority", "userInfo", "user", "password", "host", "port", "isColonUri", "relative", "path", "directory", "file", "query", "anchor"];
+    var m = parser.exec(str || '');
+    var parts = {};
+
+    parserKeys.forEach(function(key, i) {
+      parts[key] = m[i] || '';
+    });
+
+    return parts;
+  }
+
+  /**
+   * Breaks a query string down into an array of key/value pairs
+   * @param  {string} str query
+   * @return {array}      array of arrays (key/value pairs)
+   */
+  function parseQuery(str) {
+    var i, ps, p, n, k, v, l;
+    var pairs = [];
+
+    if (typeof(str) === 'undefined' || str === null || str === '') {
+      return pairs;
+    }
+
+    if (str.indexOf('?') === 0) {
+      str = str.substring(1);
+    }
+
+    ps = str.toString().split(re.query_separator);
+
+    for (i = 0, l = ps.length; i < l; i++) {
+      p = ps[i];
+      n = p.indexOf('=');
+
+      if (n !== 0) {
+        k = decode(p.substring(0, n));
+        v = decode(p.substring(n + 1));
+        pairs.push(n === -1 ? [p, null] : [k, v]);
+      }
+
+    }
+    return pairs;
+  }
+
+  /**
+   * Creates a new Uri object
+   * @constructor
+   * @param {string} str
+   */
+  function Uri(str) {
+    this.uriParts = parseUri(str);
+    this.queryPairs = parseQuery(this.uriParts.query);
+    this.hasAuthorityPrefixUserPref = null;
+  }
+
+  /**
+   * Define getter/setter methods
+   */
+  ['protocol', 'userInfo', 'host', 'port', 'path', 'anchor'].forEach(function(key) {
+    Uri.prototype[key] = function(val) {
+      if (typeof val !== 'undefined') {
+        this.uriParts[key] = val;
+      }
+      return this.uriParts[key];
+    };
+  });
+
+  /**
+   * if there is no protocol, the leading // can be enabled or disabled
+   * @param  {Boolean}  val
+   * @return {Boolean}
+   */
+  Uri.prototype.hasAuthorityPrefix = function(val) {
+    if (typeof val !== 'undefined') {
+      this.hasAuthorityPrefixUserPref = val;
+    }
+
+    if (this.hasAuthorityPrefixUserPref === null) {
+      return (this.uriParts.source.indexOf('//') !== -1);
+    } else {
+      return this.hasAuthorityPrefixUserPref;
+    }
+  };
+
+  Uri.prototype.isColonUri = function (val) {
+    if (typeof val !== 'undefined') {
+      this.uriParts.isColonUri = !!val;
+    } else {
+      return !!this.uriParts.isColonUri;
+    }
+  };
+
+  /**
+   * Serializes the internal state of the query pairs
+   * @param  {string} [val]   set a new query string
+   * @return {string}         query string
+   */
+  Uri.prototype.query = function(val) {
+    var s = '', i, param, l;
+
+    if (typeof val !== 'undefined') {
+      this.queryPairs = parseQuery(val);
+    }
+
+    for (i = 0, l = this.queryPairs.length; i < l; i++) {
+      param = this.queryPairs[i];
+      if (s.length > 0) {
+        s += '&';
+      }
+      if (param[1] === null) {
+        s += param[0];
+      } else {
+        s += param[0];
+        s += '=';
+        if (typeof param[1] !== 'undefined') {
+          s += encodeURIComponent(param[1]);
+        }
+      }
+    }
+    return s.length > 0 ? '?' + s : s;
+  };
+
+  /**
+   * returns the first query param value found for the key
+   * @param  {string} key query key
+   * @return {string}     first value found for key
+   */
+  Uri.prototype.getQueryParamValue = function (key) {
+    var param, i, l;
+    for (i = 0, l = this.queryPairs.length; i < l; i++) {
+      param = this.queryPairs[i];
+      if (key === param[0]) {
+        return param[1];
+      }
+    }
+  };
+
+  /**
+   * returns an array of query param values for the key
+   * @param  {string} key query key
+   * @return {array}      array of values
+   */
+  Uri.prototype.getQueryParamValues = function (key) {
+    var arr = [], i, param, l;
+    for (i = 0, l = this.queryPairs.length; i < l; i++) {
+      param = this.queryPairs[i];
+      if (key === param[0]) {
+        arr.push(param[1]);
+      }
+    }
+    return arr;
+  };
+
+  /**
+   * removes query parameters
+   * @param  {string} key     remove values for key
+   * @param  {val}    [val]   remove a specific value, otherwise removes all
+   * @return {Uri}            returns self for fluent chaining
+   */
+  Uri.prototype.deleteQueryParam = function (key, val) {
+    var arr = [], i, param, keyMatchesFilter, valMatchesFilter, l;
+
+    for (i = 0, l = this.queryPairs.length; i < l; i++) {
+
+      param = this.queryPairs[i];
+      keyMatchesFilter = decode(param[0]) === decode(key);
+      valMatchesFilter = param[1] === val;
+
+      if ((arguments.length === 1 && !keyMatchesFilter) || (arguments.length === 2 && (!keyMatchesFilter || !valMatchesFilter))) {
+        arr.push(param);
+      }
+    }
+
+    this.queryPairs = arr;
+
+    return this;
+  };
+
+  /**
+   * adds a query parameter
+   * @param  {string}  key        add values for key
+   * @param  {string}  val        value to add
+   * @param  {integer} [index]    specific index to add the value at
+   * @return {Uri}                returns self for fluent chaining
+   */
+  Uri.prototype.addQueryParam = function (key, val, index) {
+    if (arguments.length === 3 && index !== -1) {
+      index = Math.min(index, this.queryPairs.length);
+      this.queryPairs.splice(index, 0, [key, val]);
+    } else if (arguments.length > 0) {
+      this.queryPairs.push([key, val]);
+    }
+    return this;
+  };
+
+  /**
+   * test for the existence of a query parameter
+   * @param  {string}  key        check values for key
+   * @return {Boolean}            true if key exists, otherwise false
+   */
+  Uri.prototype.hasQueryParam = function (key) {
+    var i, len = this.queryPairs.length;
+    for (i = 0; i < len; i++) {
+      if (this.queryPairs[i][0] == key)
+        return true;
+    }
+    return false;
+  };
+
+  /**
+   * replaces query param values
+   * @param  {string} key         key to replace value for
+   * @param  {string} newVal      new value
+   * @param  {string} [oldVal]    replace only one specific value (otherwise replaces all)
+   * @return {Uri}                returns self for fluent chaining
+   */
+  Uri.prototype.replaceQueryParam = function (key, newVal, oldVal) {
+    var index = -1, len = this.queryPairs.length, i, param;
+
+    if (arguments.length === 3) {
+      for (i = 0; i < len; i++) {
+        param = this.queryPairs[i];
+        if (decode(param[0]) === decode(key) && decodeURIComponent(param[1]) === decode(oldVal)) {
+          index = i;
+          break;
+        }
+      }
+      if (index >= 0) {
+        this.deleteQueryParam(key, decode(oldVal)).addQueryParam(key, newVal, index);
+      }
+    } else {
+      for (i = 0; i < len; i++) {
+        param = this.queryPairs[i];
+        if (decode(param[0]) === decode(key)) {
+          index = i;
+          break;
+        }
+      }
+      this.deleteQueryParam(key);
+      this.addQueryParam(key, newVal, index);
+    }
+    return this;
+  };
+
+  /**
+   * Define fluent setter methods (setProtocol, setHasAuthorityPrefix, etc)
+   */
+  ['protocol', 'hasAuthorityPrefix', 'isColonUri', 'userInfo', 'host', 'port', 'path', 'query', 'anchor'].forEach(function(key) {
+    var method = 'set' + key.charAt(0).toUpperCase() + key.slice(1);
+    Uri.prototype[method] = function(val) {
+      this[key](val);
+      return this;
+    };
+  });
+
+  /**
+   * Scheme name, colon and doubleslash, as required
+   * @return {string} http:// or possibly just //
+   */
+  Uri.prototype.scheme = function() {
+    var s = '';
+
+    if (this.protocol()) {
+      s += this.protocol();
+      if (this.protocol().indexOf(':') !== this.protocol().length - 1) {
+        s += ':';
+      }
+      s += '//';
+    } else {
+      if (this.hasAuthorityPrefix() && this.host()) {
+        s += '//';
+      }
+    }
+
+    return s;
+  };
+
+  /**
+   * Same as Mozilla nsIURI.prePath
+   * @return {string} scheme://user:password@host:port
+   * @see  https://developer.mozilla.org/en/nsIURI
+   */
+  Uri.prototype.origin = function() {
+    var s = this.scheme();
+
+    if (this.userInfo() && this.host()) {
+      s += this.userInfo();
+      if (this.userInfo().indexOf('@') !== this.userInfo().length - 1) {
+        s += '@';
+      }
+    }
+
+    if (this.host()) {
+      s += this.host();
+      if (this.port() || (this.path() && this.path().substr(0, 1).match(/[0-9]/))) {
+        s += ':' + this.port();
+      }
+    }
+
+    return s;
+  };
+
+  /**
+   * Adds a trailing slash to the path
+   */
+  Uri.prototype.addTrailingSlash = function() {
+    var path = this.path() || '';
+
+    if (path.substr(-1) !== '/') {
+      this.path(path + '/');
+    }
+
+    return this;
+  };
+
+  /**
+   * Serializes the internal state of the Uri object
+   * @return {string}
+   */
+  Uri.prototype.toString = function() {
+    var path, s = this.origin();
+
+    if (this.isColonUri()) {
+      if (this.path()) {
+        s += ':'+this.path();
+      }
+    } else if (this.path()) {
+      path = this.path();
+      if (!(re.ends_with_slashes.test(s) || re.starts_with_slashes.test(path))) {
+        s += '/';
+      } else {
+        if (s) {
+          s.replace(re.ends_with_slashes, '/');
+        }
+        path = path.replace(re.starts_with_slashes, '/');
+      }
+      s += path;
+    } else {
+      if (this.host() && (this.query().toString() || this.anchor())) {
+        s += '/';
+      }
+    }
+    if (this.query().toString()) {
+      s += this.query().toString();
+    }
+
+    if (this.anchor()) {
+      if (this.anchor().indexOf('#') !== 0) {
+        s += '#';
+      }
+      s += this.anchor();
+    }
+
+    return s;
+  };
+
+  /**
+   * Clone a Uri object
+   * @return {Uri} duplicate copy of the Uri
+   */
+  Uri.prototype.clone = function() {
+    return new Uri(this.toString());
+  };
+
+  /**
+   * export via AMD or CommonJS, otherwise leak a global
+   */
+  if (typeof define === 'function' && define.amd) {
+    define(function() {
+      return Uri;
+    });
+  } else if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
+    module.exports = Uri;
+  } else {
+    global.Uri = Uri;
+  }
+}(this));

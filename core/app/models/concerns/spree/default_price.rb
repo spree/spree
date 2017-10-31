@@ -4,17 +4,12 @@ module Spree
 
     included do
       has_one :default_price,
-        -> { where currency: Spree::Config[:currency] },
-        class_name: 'Spree::Price',
-        dependent: :destroy
+              -> { where currency: Spree::Config[:currency] },
+              class_name: 'Spree::Price',
+              dependent: :destroy
 
-      delegate_belongs_to :default_price,
-                          :display_price,
-                          :display_amount,
-                          :price,
-                          :price=,
-                          :price_including_vat_for,
-                          :currency
+      delegate :display_price, :display_amount, :price, :currency, :price=,
+               :price_including_vat_for, :currency=, to: :find_or_build_default_price
 
       after_save :save_default_price
 
@@ -23,7 +18,11 @@ module Spree
       end
 
       def has_default_price?
-        !self.default_price.nil?
+        !default_price.nil?
+      end
+
+      def find_or_build_default_price
+        default_price || build_default_price
       end
 
       private

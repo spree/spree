@@ -21,6 +21,5 @@ module Spree
     def fails(method)
       @fails_methods << method
     end
-
   end
 end

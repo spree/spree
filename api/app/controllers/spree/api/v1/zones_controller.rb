@@ -2,7 +2,6 @@ module Spree
   module Api
     module V1
       class ZonesController < Spree::Api::BaseController
-
         def create
           authorize! :create, Zone
           @zone = Spree::Zone.new(zone_params)

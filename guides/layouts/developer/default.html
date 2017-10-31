@@ -5,7 +5,7 @@
 <!--[if IE 9]>    <html class="ie9"> <![endif]-->
 <!--[if gt IE 9]><!--> <html lang="en" > <!--<![endif]-->
 <head>
-  <title><%= @item[:title] %> - Developer Guide | Spree Commerce</title>
+  <title><%= @item[:title] %> - Developer Guide | Spree - Ruby on Rails e-commerce platform</title>
 
   <%= render '_head' %>
 
@@ -13,26 +13,12 @@
 <body class="developer">
   <%= render '_edge_badge' %>
   <header id="header">
-    <div id="top-header">
-      <div class="container">
-
-        <div class="row">
-
-          <div class="five columns">
-            <a class="logo" href="/"><img src='/images/logo.png' /></a>
-          </div>
-
-          <%= render '_main_menu' %>
-
-        </div>
-
-      </div>
-    </div>
+    <%= render '_header' %>
 
     <div id="subheader">
       <div class="container">
         <div class="sixteen columns">
-          <h1 class="page-title"><%= @item[:title] %> - Developer Guide | Spree Commerce</h1>
+          <h1 class="page-title"><%= @item[:title] %> - Developer Guide | Spree - Ruby on Rails e-commerce platform</h1>
         </div>
       </div>
     </div>

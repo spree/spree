@@ -17,9 +17,7 @@ module Spree
       private
 
       def convert_flash(flash)
-        if flash.is_a?(Symbol)
-          flash = Spree.t(flash)
-        end
+        flash = Spree.t(flash) if flash.is_a?(Symbol)
         flash
       end
     end

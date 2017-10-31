@@ -75,6 +75,25 @@ describe 'Store credits admin' do
     end
   end
 
+  describe 'deleting store credit', js: true do
+    before do
+      visit spree.admin_path
+      click_link 'Users'
+      click_link store_credit.user.email
+      click_link 'Store Credits'
+      allow_any_instance_of(Spree::Admin::StoreCreditsController).to receive(:try_spree_current_user).and_return(admin_user)
+    end
+
+    it 'should update store credit in lifetime stats' do
+      accept_alert do
+        click_icon :delete
+        wait_for_ajax
+      end
+      store_credit = page.find('#user-lifetime-stats #store_credit')
+      expect(store_credit.text).to eq(Spree::Money.new(0).to_s)
+    end
+  end
+
   describe 'non-existent user' do
     before do
       visit spree.admin_path

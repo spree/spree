@@ -11,7 +11,7 @@
         </td>
         <td>
           <span class="state label label-<%= @order.state %>">
-            <%= Spree.t(@order.state, scope: :order_states) %>
+            <%= Spree.t(@order.state, scope: :order_state) %>
           </span>
         </td>
       </tr>
@@ -98,7 +98,7 @@
       <% if @order.approved? %>
         <tr>
           <td><strong><%= Spree.t(:approver) %></strong></td>
-          <td><%= @order.approver.email %></td>
+          <td><%= @order.approver.try(:email) %></td>
         </tr>
         <tr>
           <td><strong><%= Spree.t(:approved_at) %></strong></td>

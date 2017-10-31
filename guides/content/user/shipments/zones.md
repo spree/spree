@@ -18,11 +18,11 @@ To create a new zone, go to the Admin Interface, click the "Configuration" tab, 
 
 ### Adding Members to a Zone
 
-Once you have a zone set up, you can associate either countries or states with it. To do this, go back to the Zones list (from the Admin Interface, click "Configuration", then "Zones"). Click the "Edit" icon next to the zone you just created. Click the "Add Country" or "Add State" button.
+Once you have a zone set up, you can associate either countries or states with it. To do this, go back to the Zones list (from the Admin Interface, click "Configuration", then "Zones"). Click the "Edit" icon next to the zone you just created.
 
 ![Edit Zone Form](/images/user/shipments/edit_zone.jpg)
 
-Choose a country or state from the drop-down box and click the "Add Country" or "Add State" button. Follow the same steps to add additional countries or states for the Zone.
+Choose a country or state from the drop-down box. Follow the same steps to add additional countries or states for the Zone.
 
 ![Add Multiple Members](/images/user/shipments/add_multi_to_zone.jpg)
 

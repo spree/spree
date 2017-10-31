@@ -21,19 +21,19 @@ module Spree
           promotable.is_a?(Spree::Order)
         end
 
-        def eligible?(order, options = {})
+        def eligible?(order, _options = {})
           return true if eligible_products.empty?
 
           if preferred_match_policy == 'all'
-            unless eligible_products.all? {|p| order.products.include?(p) }
+            unless eligible_products.all? { |p| order.products.include?(p) }
               eligibility_errors.add(:base, eligibility_error_message(:missing_product))
             end
           elsif preferred_match_policy == 'any'
-            unless order.products.any? {|p| eligible_products.include?(p) }
+            unless order.products.any? { |p| eligible_products.include?(p) }
               eligibility_errors.add(:base, eligibility_error_message(:no_applicable_products))
             end
           else
-            unless order.products.none? {|p| eligible_products.include?(p) }
+            unless order.products.none? { |p| eligible_products.include?(p) }
               eligibility_errors.add(:base, eligibility_error_message(:has_excluded_product))
             end
           end

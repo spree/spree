@@ -4,21 +4,6 @@ describe Spree::Country, type: :model do
   let(:america) { create :country }
   let(:canada)  { create :country, name: 'Canada', iso_name: 'CANADA', numcode: '124' }
 
-  describe 'Callbacks' do
-    it { is_expected.to callback(:ensure_not_default).before(:destroy) }
-  end
-
-  describe 'Associations' do
-    it { is_expected.to have_many(:addresses).dependent(:restrict_with_error) }
-  end
-
-  describe 'Validations' do
-    it { is_expected.to validate_presence_of(:name) }
-    it { is_expected.to validate_presence_of(:iso_name) }
-    it { is_expected.to validate_uniqueness_of(:iso_name).case_insensitive }
-    it { is_expected.to validate_uniqueness_of(:name).case_insensitive }
-  end
-
   describe '.default' do
     context 'when default_country_id config is set' do
       before { Spree::Config[:default_country_id] = canada.id }

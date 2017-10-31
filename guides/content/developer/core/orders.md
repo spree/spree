@@ -9,7 +9,7 @@ The `Order` model is one of the key models in Spree. It provides a central place
 
 Orders have the following attributes:
 
-* `number`: The unique identifier for this order. It begins with the letter R and ends in a 9-digit number. This number is shown to the users, and can be used to find the order by calling `Spree::Order.find_by_number(number)`.
+* `number`: The unique identifier for this order. It begins with the letter R and ends in a 9-digit number. This number is shown to the users, and can be used to find the order by calling `Spree::Order.find_by(number: number)`.
 * `item_total`: The sum of all the line items for this order.
 * `adjustment_total`: The sum of all adjustments on this order.
 * `total`: The result of the sum of the `item_total` and the `adjustment_total`.

@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   sequence(:store_credits_order_number) { |n| "R1000#{n}" }
 
   factory :store_credit, class: Spree::StoreCredit do

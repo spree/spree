@@ -5,7 +5,7 @@
 <!--[if IE 9]>    <html class="ie ie9"> <![endif]-->
 <!--[if gt IE 9]><!--> <html lang="en" > <!--<![endif]-->
 <head>
-  <title><%= @item[:title]%> - Storefront API | Spree Commerce</title>
+  <title><%= @item[:title]%> - Storefront API | Spree - Ruby on Rails e-commerce platform</title>
 
   <%= render '_head' %>
   <script src="/assets/javascripts/raphael-min.js" type="text/javascript"></script>
@@ -17,20 +17,13 @@
   <%= render '_edge_badge' %>
 
   <header id="header">
-
     <div id="top-header">
       <div class="container">
-
         <div class="row">
-
-          <div class="five columns">
-            <a class="logo" href="/"><img src='/images/logo.png' /></a>
-          </div>
-
+          <%= render '_logo' %>
+          <%= render '_search' %>
           <%= render '_main_menu' %>
-
         </div>
-
       </div>
     </div>
 

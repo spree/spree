@@ -6,11 +6,7 @@ describe Spree::OrderInventory, type: :model do
 
   subject { described_class.new(order, line_item) }
 
-  describe 'delegate' do
-    it { is_expected.to delegate_method(:inventory_units).to(:line_item) }
-  end
-
-  context "when order is missing inventory units" do
+  context 'when order is missing inventory units' do
     before { line_item.update_column(:quantity, 2) }
 
     it 'creates the proper number of inventory units' do
@@ -19,10 +15,10 @@ describe Spree::OrderInventory, type: :model do
     end
   end
 
-  context "#add_to_shipment" do
+  context '#add_to_shipment' do
     let(:shipment) { order.shipments.first }
 
-    context "order is not completed" do
+    context 'order is not completed' do
       before { allow(order).to receive_messages completed?: false }
 
       it "doesn't unstock items" do
@@ -31,7 +27,7 @@ describe Spree::OrderInventory, type: :model do
       end
     end
 
-    context "inventory units state" do
+    context 'inventory units state' do
       before { shipment.inventory_units.destroy_all }
 
       it 'sets inventory_units state as per stock location availability' do
@@ -45,12 +41,12 @@ describe Spree::OrderInventory, type: :model do
       end
     end
 
-    context "store doesnt track inventory" do
+    context 'store doesnt track inventory' do
       let(:variant) { create(:variant) }
 
       before { Spree::Config.track_inventory_levels = false }
 
-      it "creates only on hand inventory units" do
+      it 'creates only on hand inventory units' do
         variant.stock_items.destroy_all
 
         # The before_save callback in LineItem would verify inventory
@@ -62,11 +58,11 @@ describe Spree::OrderInventory, type: :model do
       end
     end
 
-    context "variant doesnt track inventory" do
+    context 'variant doesnt track inventory' do
       let(:variant) { create(:variant) }
       before { variant.track_inventory = false }
 
-      it "creates only on hand inventory units" do
+      it 'creates only on hand inventory units' do
         variant.stock_items.destroy_all
 
         line_item = order.contents.add variant, 1
@@ -88,7 +84,7 @@ describe Spree::OrderInventory, type: :model do
     end
   end
 
-  context "#determine_target_shipment" do
+  context '#determine_target_shipment' do
     let(:stock_location) { create :stock_location }
     let(:variant) { line_item.variant }
 
@@ -110,7 +106,7 @@ describe Spree::OrderInventory, type: :model do
       expect(variant.stock_location_ids.include?(shipment.stock_location_id)).to be true
     end
 
-    context "when no shipments already contain this varint" do
+    context 'when no shipments already contain this varint' do
       before do
         subject.line_item.reload
         subject.inventory_units.destroy_all
@@ -149,7 +145,7 @@ describe Spree::OrderInventory, type: :model do
       let(:shipment) { order.shipments.first }
       let(:variant) { subject.variant }
 
-      context "order is not completed" do
+      context 'order is not completed' do
         before { allow(order).to receive_messages completed?: false }
 
         it "doesn't restock items" do
@@ -226,17 +222,17 @@ describe Spree::OrderInventory, type: :model do
         expect(subject.send(:remove_from_shipment, shipment, 1)).to eq(1)
       end
 
-      context "inventory unit line item and variant points to different products" do
+      context 'inventory unit line item and variant points to different products' do
         let(:different_line_item) { create(:line_item) }
 
         let!(:different_inventory) do
-          shipment.set_up_inventory("on_hand", variant, order, different_line_item)
+          shipment.set_up_inventory('on_hand', variant, order, different_line_item)
         end
 
-        context "completed order" do
+        context 'completed order' do
           before { order.touch :completed_at }
 
-          it "removes only units that match both line item and variant" do
+          it 'removes only units that match both line item and variant' do
             subject.send(:remove_from_shipment, shipment, shipment.inventory_units.sum(&:quantity))
             expect(different_inventory.reload).to be_persisted
           end

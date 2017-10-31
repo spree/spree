@@ -6,12 +6,12 @@ Gem::Specification.new do |s|
   s.email         = ["ryan@spreecommerce.com"]
   s.description   = %q{Spree's API}
   s.summary       = %q{Spree's API}
-  s.homepage      = 'https://spreecommerce.com'
+  s.homepage      = 'http://spreecommerce.org'
   s.license       = 'BSD-3-Clause'
 
   s.required_ruby_version = '>= 2.2.7'
 
-  s.files         = `git ls-files`.split($\).reject { |f| f.match(/^spec/) }
+  s.files         = `git ls-files`.split($\).reject { |f| f.match(/^spec/) && !f.match(/^spec\/fixtures/) }
   s.executables   = s.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
   s.name          = "spree_api"
   s.require_paths = ["lib"]

@@ -26,8 +26,7 @@ module Spree
           show
         end
 
-        def new
-        end
+        def new; end
 
         def create
           authorize! :create, Taxon
@@ -70,28 +69,28 @@ module Spree
           taxon = Spree::Taxon.find(params[:id])
           @products = taxon.products.ransack(params[:q]).result
           @products = @products.page(params[:page]).per(params[:per_page] || 500)
-          render "spree/api/v1/products/index"
+          render 'spree/api/v1/products/index'
         end
 
         private
 
-          def taxonomy
-            if params[:taxonomy_id].present?
-              @taxonomy ||= Spree::Taxonomy.accessible_by(current_ability, :read).find(params[:taxonomy_id])
-            end
+        def taxonomy
+          if params[:taxonomy_id].present?
+            @taxonomy ||= Spree::Taxonomy.accessible_by(current_ability, :read).find(params[:taxonomy_id])
           end
+        end
 
-          def taxon
-            @taxon ||= taxonomy.taxons.accessible_by(current_ability, :read).find(params[:id])
-          end
+        def taxon
+          @taxon ||= taxonomy.taxons.accessible_by(current_ability, :read).find(params[:id])
+        end
 
-          def taxon_params
-            if params[:taxon] && !params[:taxon].empty?
-              params.require(:taxon).permit(permitted_taxon_attributes)
-            else
-              {}
-            end
+        def taxon_params
+          if params[:taxon] && !params[:taxon].empty?
+            params.require(:taxon).permit(permitted_taxon_attributes)
+          else
+            {}
           end
+        end
       end
     end
   end

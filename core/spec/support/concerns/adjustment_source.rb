@@ -1,4 +1,4 @@
-shared_examples_for "an adjustment source" do
+shared_examples_for 'an adjustment source' do
   subject(:source) { described_class.create }
 
   before do

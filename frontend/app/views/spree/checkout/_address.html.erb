@@ -35,7 +35,7 @@
 <div class="well text-right form-buttons" data-hook="buttons">
   <%= submit_tag Spree.t(:save_and_continue), class: 'btn btn-lg btn-success' %>
   <% if try_spree_current_user %>
-    <span data-hook="save_user_address">
+    <span data-hook="save_user_address" class='save-user-address-wrapper'>
       &nbsp; &nbsp;
       <%= check_box_tag 'save_user_address', '1', try_spree_current_user.respond_to?(:persist_order_address) %>
       <%= label_tag :save_user_address, Spree.t(:save_my_address) %>

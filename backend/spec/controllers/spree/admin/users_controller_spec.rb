@@ -11,12 +11,12 @@ describe Spree::Admin::UsersController, type: :controller do
     stub_const('Spree::User', user.class)
   end
 
-  context "#show" do
+  context '#show' do
     before do
       user.spree_roles << Spree::Role.find_or_create_by(name: 'admin')
     end
 
-    it "redirects to edit" do
+    it 'redirects to edit' do
       spree_get :show, id: user.id
       expect(response).to redirect_to spree.edit_admin_user_path(user)
     end
@@ -55,7 +55,7 @@ describe Spree::Admin::UsersController, type: :controller do
     it 'deny access to users with an bar role' do
       user.spree_roles << Spree::Role.find_or_create_by(name: 'bar')
       Spree::Ability.register_ability(BarAbility)
-      spree_post :update, { id: '9' }
+      spree_post :update, id: '9'
       expect(response).to redirect_to(spree.forbidden_path)
     end
 
@@ -66,88 +66,88 @@ describe Spree::Admin::UsersController, type: :controller do
     end
   end
 
-  describe "#create" do
+  describe '#create' do
     before do
       use_mock_user
       user.spree_roles << Spree::Role.find_or_create_by(name: 'admin')
     end
 
-    it "can create a shipping_address" do
+    it 'can create a shipping_address' do
       expect(Spree.user_class).to receive(:new).with(ActionController::Parameters.new(
-        "ship_address_attributes" => { "city" => "New York" }
+        'ship_address_attributes' => { 'city' => 'New York' }
       ).permit(ship_address_attributes: permitted_address_attributes))
-      spree_post :create, user: { ship_address_attributes: { city: "New York" } }
+      spree_post :create, user: { ship_address_attributes: { city: 'New York' } }
     end
 
-    it "can create a billing_address" do
+    it 'can create a billing_address' do
       expect(Spree.user_class).to receive(:new).with(ActionController::Parameters.new(
-        "bill_address_attributes" => { "city" => "New York" }
+        'bill_address_attributes' => { 'city' => 'New York' }
       ).permit(bill_address_attributes: permitted_address_attributes))
-      spree_post :create, user: { bill_address_attributes: { city: "New York" } }
+      spree_post :create, user: { bill_address_attributes: { city: 'New York' } }
     end
   end
 
-  describe "#update" do
+  describe '#update' do
     before do
       use_mock_user
       user.spree_roles << Spree::Role.find_or_create_by(name: 'admin')
     end
 
-    it "allows shipping address attributes through" do
+    it 'allows shipping address attributes through' do
       expect(mock_user).to receive(:update_attributes).with(ActionController::Parameters.new(
-        "ship_address_attributes" => { "city" => "New York" }
+        'ship_address_attributes' => { 'city' => 'New York' }
       ).permit(ship_address_attributes: permitted_address_attributes))
-      spree_put :update, id: mock_user.id, user: { ship_address_attributes: { city: "New York" } }
+      spree_put :update, id: mock_user.id, user: { ship_address_attributes: { city: 'New York' } }
     end
 
-    it "allows billing address attributes through" do
+    it 'allows billing address attributes through' do
       expect(mock_user).to receive(:update_attributes).with(ActionController::Parameters.new(
-        "bill_address_attributes" => { "city" => "New York" }
+        'bill_address_attributes' => { 'city' => 'New York' }
       ).permit(bill_address_attributes: permitted_address_attributes))
-      spree_put :update, id: mock_user.id, user: { bill_address_attributes: { city: "New York" } }
+      spree_put :update, id: mock_user.id, user: { bill_address_attributes: { city: 'New York' } }
     end
 
-    it "allows updating without password resetting" do
+    it 'allows updating without password resetting' do
       expect(mock_user).to receive(:update_attributes).with(hash_not_including(password: '', password_confirmation: ''))
       spree_put :update, id: mock_user.id, user: { password: '', password_confirmation: '', email: 'spree@example.com' }
     end
   end
 
-  describe "#orders" do
+  describe '#orders' do
     let(:order) { create(:order) }
     before do
       user.orders << order
       user.spree_roles << Spree::Role.find_or_create_by(name: 'admin')
     end
 
-    it "assigns a list of the users orders" do
-      spree_get :orders, { id: user.id }
+    it 'assigns a list of the users orders' do
+      spree_get :orders, id: user.id
       expect(assigns[:orders].count).to eq 1
       expect(assigns[:orders].first).to eq order
     end
 
-    it "assigns a ransack search for Spree::Order" do
-      spree_get :orders, { id: user.id }
+    it 'assigns a ransack search for Spree::Order' do
+      spree_get :orders, id: user.id
       expect(assigns[:search]).to be_a Ransack::Search
       expect(assigns[:search].klass).to eq Spree::Order
     end
   end
 
-  describe "#items" do
+  describe '#items' do
     let(:order) { create(:order) }
     before do
       user.orders << order
       user.spree_roles << Spree::Role.find_or_create_by(name: 'admin')
     end
 
-    it "assigns a list of the users orders" do
-      spree_get :items, { id: user.id }
+    it 'assigns a list of the users orders' do
+      spree_get :items, id: user.id
       expect(assigns[:orders].count).to eq 1
       expect(assigns[:orders].first).to eq order
     end
 
-    it "assigns a ransack search for Spree::Order" do
-      spree_get :items, { id: user.id }
+    it 'assigns a ransack search for Spree::Order' do
+      spree_get :items, id: user.id
       expect(assigns[:search]).to be_a Ransack::Search
       expect(assigns[:search].klass).to eq Spree::Order
     end

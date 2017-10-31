@@ -48,3 +48,9 @@ To capture a payment using the Admin Interface, click on the "Orders" tab. Find 
 To void a payment, go to the Admin Interface. click on the "Orders" tab. Find the order you want to look up and click on it. Then click on the "Payments" link. The order details will appear. Click on the "Void" icon to void the transaction.
 
 ![Void a Payment](/images/user/payments/payment_void.jpg)
+
+## Payment's amount edit
+
+Additionally, before accepting or voiding the payment you can edit the amount by clicking "Edit" button.
+
+![Edit button](/images/user/payments/payment_edit_button.jpg)

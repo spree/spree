@@ -16,7 +16,7 @@ module Spree
       before do
         api_get :index
       end
- 
+
       it 'loads customer returns' do
         expect(response.status).to eq(200)
         expect(json_response['count']).to eq(1)
@@ -24,4 +24,3 @@ module Spree
     end
   end
 end
-

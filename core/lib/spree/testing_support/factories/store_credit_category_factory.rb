@@ -1,6 +1,6 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :store_credit_category, class: Spree::StoreCreditCategory do
-    name "Exchange"
+    name 'Exchange'
   end
 
   factory :store_credit_gift_card_category, class: Spree::StoreCreditCategory do

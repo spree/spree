@@ -5,7 +5,7 @@ module Spree
     describe ReturnIndexController, type: :controller do
       stub_authorization!
 
-      describe "#return_authorizations" do
+      describe '#return_authorizations' do
         let(:return_authorization) { create(:return_authorization) }
 
         subject do
@@ -14,12 +14,12 @@ module Spree
 
         before { subject }
 
-        it "loads return authorizations" do
+        it 'loads return authorizations' do
           expect(assigns(:collection)).to include(return_authorization)
         end
       end
 
-      describe "#customer_returns" do
+      describe '#customer_returns' do
         let(:customer_return) { create(:customer_return) }
 
         subject do
@@ -28,7 +28,7 @@ module Spree
 
         before { subject }
 
-        it "loads customer returns" do
+        it 'loads customer returns' do
           expect(assigns(:collection)).to include(customer_return)
         end
       end

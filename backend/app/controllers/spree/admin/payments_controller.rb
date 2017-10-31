@@ -31,7 +31,7 @@ module Spree
           else
             @payment ||= @order.payments.build(object_params)
             if @payment.payment_method.source_required? && params[:card].present? && params[:card] != 'new'
-              @payment.source = @payment.payment_method.payment_source_class.find_by_id(params[:card])
+              @payment.source = @payment.payment_method.payment_source_class.find_by(id: params[:card])
             end
             @payment.save
             payments = [@payment]
@@ -56,7 +56,7 @@ module Spree
           end
         rescue Spree::Core::GatewayError => e
           invoke_callbacks(:create, :fails)
-          flash[:error] = "#{e.message}"
+          flash[:error] = e.message.to_s
           redirect_to new_admin_order_payment_path(@order)
         end
       end
@@ -65,14 +65,14 @@ module Spree
         return unless event = params[:e] and @payment.payment_source
 
         # Because we have a transition method also called void, we do this to avoid conflicts.
-        event = "void_transaction" if event == "void"
+        event = 'void_transaction' if event == 'void'
         if @payment.send("#{event}!")
           flash[:success] = Spree.t(:payment_updated)
         else
           flash[:error] = Spree.t(:cannot_perform_operation)
         end
       rescue Spree::Core::GatewayError => ge
-        flash[:error] = "#{ge.message}"
+        flash[:error] = ge.message.to_s
       ensure
         redirect_to admin_order_payments_path(@order)
       end

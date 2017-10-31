@@ -26,7 +26,7 @@
           <td class="order-completed-at"><%= order_time(order.completed_at) if order.completed_at %></td>
           <td class="order-number"><%= link_to order.number, edit_admin_order_path(order) %></td>
           <td class="order-state">
-            <div class="state <%= order.state.downcase %>"><%= Spree.t("order_states.#{order.state.downcase}") %></div>
+            <div class="state <%= order.state.downcase %>"><%= Spree.t("order_state.#{order.state.downcase}") %></div>
             <% if order.payment_state %>
               <div class="state <%= order.payment_state %>"><%= link_to Spree.t("payment_states.#{order.payment_state}"), admin_order_payments_path(order) %></div>
             <% end %>

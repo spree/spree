@@ -1,10 +1,10 @@
 require 'spec_helper'
 
-describe "Ransackable Attributes" do
+describe 'Ransackable Attributes' do
   let(:user) { create(:user).tap(&:generate_spree_api_key!) }
   let(:order) { create(:order_with_line_items, user: user) }
-  context "filtering by attributes one association away" do
-    it "does not allow the filtering of variants by order attributes" do
+  context 'filtering by attributes one association away' do
+    it 'does not allow the filtering of variants by order attributes' do
       2.times { create(:variant) }
 
       get "/api/v1/variants?q[orders_email_start]=#{order.email}", params: { token: user.spree_api_key }
@@ -14,8 +14,8 @@ describe "Ransackable Attributes" do
     end
   end
 
-  context "filtering by attributes two associations away" do
-    it "does not allow the filtering of variants by user attributes" do
+  context 'filtering by attributes two associations away' do
+    it 'does not allow the filtering of variants by user attributes' do
       2.times { create(:variant) }
 
       get "/api/v1/variants?q[orders_user_email_start]=#{order.user.email}", params: { token: user.spree_api_key }
@@ -25,13 +25,13 @@ describe "Ransackable Attributes" do
     end
   end
 
-  context "it maintains desired association behavior" do
-    it "allows filtering of variants product name" do
-      product = create(:product, name: "Fritos")
+  context 'it maintains desired association behavior' do
+    it 'allows filtering of variants product name' do
+      product = create(:product, name: 'Fritos')
       variant = create(:variant, product: product)
       other_variant = create(:variant)
 
-      get "/api/v1/variants?q[product_name_or_sku_cont]=fritos", params: { token: user.spree_api_key }
+      get '/api/v1/variants?q[product_name_or_sku_cont]=fritos', params: { token: user.spree_api_key }
 
       skus = JSON.parse(response.body)['variants'].map { |variant| variant['sku'] }
       expect(skus).to include variant.sku
@@ -39,18 +39,18 @@ describe "Ransackable Attributes" do
     end
   end
 
-  context "filtering by attributes" do
-    it "most attributes are not filterable by default" do
-      product = create(:product, meta_title: "special product")
+  context 'filtering by attributes' do
+    it 'most attributes are not filterable by default' do
+      product = create(:product, meta_title: 'special product')
       other_product = create(:product)
 
-      get "/api/v1/products?q[meta_title_cont]=special", params: { token: user.spree_api_key }
+      get '/api/v1/products?q[meta_title_cont]=special', params: { token: user.spree_api_key }
 
       products_response = JSON.parse(response.body)
       expect(products_response['total_count']).to eq(Spree::Product.count)
     end
 
-    it "id is filterable by default" do
+    it 'id is filterable by default' do
       product = create(:product)
       other_product = create(:product)
 
@@ -62,18 +62,16 @@ describe "Ransackable Attributes" do
     end
   end
 
-  context "filtering by whitelisted attributes" do
-    it "filtering is supported for whitelisted attributes" do
-      product = create(:product, name: "Fritos")
+  context 'filtering by whitelisted attributes' do
+    it 'filtering is supported for whitelisted attributes' do
+      product = create(:product, name: 'Fritos')
       other_product = create(:product)
 
-      get "/api/v1/products?q[name_cont]=fritos", params: { token: user.spree_api_key }
+      get '/api/v1/products?q[name_cont]=fritos', params: { token: user.spree_api_key }
 
       product_names = JSON.parse(response.body)['products'].map { |product| product['name'] }
       expect(product_names).to include product.name
       expect(product_names).not_to include other_product.name
     end
   end
-
-
 end

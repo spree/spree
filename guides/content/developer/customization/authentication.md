@@ -95,34 +95,41 @@ contains the following code to help you do that:
 ```ruby
 module Spree
   module AuthenticationHelpers
-     def self.included(receiver)
-       receiver.send :helper_method, :spree_login_path
-       receiver.send :helper_method, :spree_signup_path
-       receiver.send :helper_method, :spree_logout_path
-       receiver.send :helper_method, :spree_current_user
-     end
+    def self.included(receiver)
+      receiver.send :helper_method, :spree_login_path
+      receiver.send :helper_method, :spree_signup_path
+      receiver.send :helper_method, :spree_logout_path
+      receiver.send :helper_method, :spree_current_user
+    end
 
-     def spree_current_user
-       current_person
-     end
+    def spree_current_user
+      current_user
+    end
 
-     def spree_login_path
-       main_app.login_path
-     end
+    def spree_login_path
+      main_app.login_path
+    end
 
-     def spree_signup_path
-       main_app.signup_path
-     end
+    def spree_signup_path
+      main_app.signup_path
+    end
 
-     def spree_logout_path
-       main_app.logout_path
-     end
-   end
+    def spree_logout_path
+      main_app.logout_path
+    end
+  end
 end
+```
 
-Spree::BaseController.include Spree::AuthenticationHelpers
-Spree::Api::BaseController.include Spree::AuthenticationHelpers
-ApplicationController.include Spree::AuthenticationHelpers
+In your `ApplicationController` add those lines:
+
+```ruby
+include Spree::AuthenticationHelpers
+include Spree::Core::ControllerHelpers::Auth
+include Spree::Core::ControllerHelpers::Common
+include Spree::Core::ControllerHelpers::Order
+include Spree::Core::ControllerHelpers::Store
+helper 'spree/base'
 ```
 
 Each of the methods defined in this module return values that are the
@@ -152,7 +159,8 @@ You will need to define the `login_path`, `signup_path` and
 application's `config/routes.rb` if you're using Devise:
 
 ```ruby
-devise_scope :person do
+devise_for :users
+devise_scope :user do
   get '/login', to: "devise/sessions#new"
   get '/signup', to: "devise/registrations#new"
   delete '/logout', to: "devise/sessions#destroy"
@@ -176,9 +184,14 @@ modification to other files in `lib`.
 
 ## The User Model
 
-Once you have specified `Spree.user_class` correctly, there will be
-some new methods added to your `User` class. The first of these methods
-are the ones added for the `has_and_belongs_to_many` association
+In your User Model you have to add:
+
+```ruby
+include Spree::UserMethods
+include Spree::UserAddress
+include Spree::UserPaymentSource
+```
+The first of these methods are the ones added for the `has_and_belongs_to_many` association
 called "spree_roles". This association will retrieve all the roles that
 a user has for Spree.
 

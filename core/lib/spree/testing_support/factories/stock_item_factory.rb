@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :stock_item, class: Spree::StockItem do
     backorderable true
     stock_location

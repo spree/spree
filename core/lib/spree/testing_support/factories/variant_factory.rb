@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   sequence(:random_float) { BigDecimal.new("#{rand(200)}.#{rand(99)}") }
 
   factory :base_variant, class: Spree::Variant do
@@ -34,6 +34,5 @@ FactoryGirl.define do
         is_master 1
       end
     end
-
   end
 end
