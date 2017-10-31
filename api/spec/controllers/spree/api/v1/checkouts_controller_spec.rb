@@ -324,6 +324,13 @@ module Spree
         expect(json_response['error']).to match(/could not be transitioned/)
       end
 
+      it 'cannot transition if any line_item becomes unavailable' do
+        allow_any_instance_of(Order).to receive(:insufficient_stock_lines).and_return(order.line_items)
+        api_put :next, id: order.to_param, order_token: order.guest_token
+        expect(response.status).to eq(422)
+        expect(json_response['error']).to match(Spree.t(:insufficient_quantity, scope: [:api, :order]))
+      end
+
       it 'doesnt advance payment state if order has no payment' do
         order.update_column(:state, 'payment')
         api_put :next, id: order.to_param, order_token: order.guest_token, order: {}
