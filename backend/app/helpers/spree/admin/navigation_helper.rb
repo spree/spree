@@ -41,7 +41,7 @@ module Spree
                      request.fullpath.starts_with?("#{spree.admin_path}#{options[:match_path]}")
                    else
                      args.include?(controller.controller_name.to_sym)
-        end
+                   end
         css_classes << 'selected' if selected
 
         css_classes << options[:css_class] if options[:css_class]
@@ -151,8 +151,16 @@ module Spree
         link_to(text.html_safe, url, options)
       end
 
-      def icon(icon_name)
+      def spree_icon(icon_name)
         icon_name ? content_tag(:i, '', class: icon_name) : ''
+      end
+
+      def icon(icon_name)
+        ActiveSupport::Deprecation.warn(<<-EOS, caller)
+         Admin::NavigationHelper#icon was renamed to Admin::NavigationHelper#spree_icon
+         and will be removed in Spree 3.6. Please update your code to avoid problems after update
+        EOS
+        spree_icon(icon_name)
       end
 
       # Override: Add disable_with option to prevent multiple request on consecutive clicks
