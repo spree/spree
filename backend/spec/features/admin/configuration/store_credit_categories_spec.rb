@@ -39,6 +39,8 @@ describe 'Store Credit Categories', type: :feature, js: true do
   context 'admin editing a store credit category' do
     it 'should be able to update an existing store credit category' do
       create(:store_credit_category)
+      # Workaround for animation to finish expanding
+      sleep 1
       click_link 'Store Credit Categories'
       within_row(1) { click_icon :edit }
       fill_in 'store_credit_category_name', with: 'Return'
