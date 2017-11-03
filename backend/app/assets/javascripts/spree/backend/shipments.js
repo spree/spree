@@ -262,7 +262,7 @@ completeItemSplit = function(event) {
             token: Spree.api_key
         }
       }).error(function(msg) {
-          alert(msg.responseJSON['message']);
+          alert(msg.responseJSON['exception']);
       }).done(function(msg) {
         window.Spree.advanceOrder();
       });
@@ -280,7 +280,7 @@ completeItemSplit = function(event) {
                 token: Spree.api_key
             }
         }).error(function(msg) {
-            alert(msg.responseJSON['message']);
+            alert(msg.responseJSON['exception']);
         }).done(function(msg) {
             window.Spree.advanceOrder();
         });
