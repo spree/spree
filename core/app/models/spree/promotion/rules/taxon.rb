@@ -7,10 +7,6 @@ module Spree
         MATCH_POLICIES = %w(any all)
         preference :match_policy, default: MATCH_POLICIES.first
 
-        def applicable?(promotable)
-          promotable.is_a?(Spree::Order)
-        end
-
         def eligible?(order, options = {})
           if preferred_match_policy == 'all'
             unless (taxons.to_a - taxons_in_order_including_parents(order)).empty?

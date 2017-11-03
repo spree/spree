@@ -13,10 +13,6 @@ module Spree
         OPERATORS_MIN = ['gt', 'gte']
         OPERATORS_MAX = ['lt','lte']
 
-        def applicable?(promotable)
-          promotable.is_a?(Spree::Order)
-        end
-
         def eligible?(order, options = {})
           item_total = order.item_total
 
