@@ -26,8 +26,6 @@ module Spree
           @shipment = @order.shipments.create(stock_location_id: params.fetch(:stock_location_id))
           @order.contents.add(variant, quantity, shipment: @shipment)
 
-          @shipment.save!
-
           respond_with(@shipment.reload, default_template: :show)
         end
 
@@ -58,15 +56,23 @@ module Spree
           quantity = params[:quantity].to_i
 
           @shipment.order.contents.add(variant, quantity, shipment: @shipment)
-
           respond_with(@shipment, default_template: :show)
         end
 
         def remove
-          quantity = params[:quantity].to_i
-
+          quantity = if params.key?(:quantity)
+                       params[:quantity].to_i
+                     else
+                       @shipment.inventory_units_for(variant).sum(:quantity)
+                     end
           @shipment.order.contents.remove(variant, quantity, shipment: @shipment)
-          @shipment.reload if @shipment.persisted?
+
+          if @shipment.inventory_units.any?
+            @shipment.reload
+          else
+            @shipment.destroy!
+          end
+
           respond_with(@shipment, default_template: :show)
         end
 

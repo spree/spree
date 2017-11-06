@@ -219,6 +219,7 @@ module Spree
         selected_rate = shipping_rates.detect do |rate|
           rate.shipping_method_id == original_shipping_method_id
         end
+        save!
         self.selected_shipping_rate_id = selected_rate.id if selected_rate
       end
 
@@ -235,12 +236,14 @@ module Spree
       save!
     end
 
-    def set_up_inventory(state, variant, order, line_item)
+    def set_up_inventory(state, variant, order, line_item, quantity = 1)
+      return if quantity <= 0
       inventory_units.create(
         state: state,
         variant_id: variant.id,
         order_id: order.id,
-        line_item_id: line_item.id
+        line_item_id: line_item.id,
+        quantity: quantity
       )
     end
 
@@ -337,6 +340,7 @@ module Spree
 
         order.contents.remove(variant, quantity, shipment: self)
         order.contents.add(variant, quantity, shipment: new_shipment)
+        order.update_with_updater!
 
         refresh_rates
         save!
@@ -353,8 +357,9 @@ module Spree
       raise ArgumentError if quantity <= 0 || self == shipment_to_transfer_to
 
       transaction do
-        order.contents.remove(variant, quantity, shipment: self)
-        order.contents.add(variant, quantity, shipment: shipment_to_transfer_to)
+        order.contents.remove(variant, final_quantity, shipment: self)
+        order.contents.add(variant, final_quantity, shipment: shipment_to_transfer_to)
+        order.update_with_updater!
 
         refresh_rates
         save!
