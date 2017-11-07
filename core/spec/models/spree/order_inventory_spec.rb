@@ -36,8 +36,8 @@ describe Spree::OrderInventory, type: :model do
         expect(subject.send(:add_to_shipment, shipment, 5)).to eq(5)
 
         units = shipment.inventory_units_for(subject.variant).group_by(&:state)
-        expect(units['backordered'].size).to eq(2)
-        expect(units['on_hand'].size).to eq(3)
+        expect(units['backordered'].sum(&:quantity)).to eq(2)
+        expect(units['on_hand'].sum(&:quantity)).to eq(3)
       end
     end
 
@@ -132,7 +132,7 @@ describe Spree::OrderInventory, type: :model do
     end
 
     it 'should be a messed up order' do
-      expect(order.shipments.first.inventory_units_for(line_item.variant).size).to eq(3)
+      expect(order.shipments.first.inventory_units_for(line_item.variant).sum(&:quantity)).to eq(3)
       expect(line_item.quantity).to eq(2)
     end
 
@@ -177,8 +177,10 @@ describe Spree::OrderInventory, type: :model do
 
         expect(shipment.inventory_units_for_item[0]).to receive(:quantity).and_return(2)
         expect(shipment.inventory_units_for_item[0]).to receive(:decrement)
+        expect(shipment.inventory_units_for_item[0]).to receive(:save!)
         expect(shipment.inventory_units_for_item[0]).to receive(:quantity).and_return(1)
         expect(shipment.inventory_units_for_item[0]).to receive(:destroy)
+        expect(shipment.inventory_units_for_item[1]).to receive(:save!)
         expect(shipment.inventory_units_for_item[1]).not_to receive(:decrement)
         expect(shipment.inventory_units_for_item[1]).not_to receive(:destroy)
         # expect(shipment.inventory_units_for_item[2]).to receive(:destroy)
@@ -194,6 +196,8 @@ describe Spree::OrderInventory, type: :model do
           ]
         )
 
+        allow(shipment.inventory_units_for_item[0]).to receive(:save!)
+        allow(shipment.inventory_units_for_item[1]).to receive(:save!)
         expect(shipment.inventory_units_for_item[0]).not_to receive(:destroy)
         expect(shipment.inventory_units_for_item[1]).to receive(:destroy)
 
@@ -210,6 +214,8 @@ describe Spree::OrderInventory, type: :model do
 
         expect(shipment.inventory_units_for_item[0]).not_to receive(:destroy)
         expect(shipment.inventory_units_for_item[1]).to receive(:destroy)
+        allow(shipment.inventory_units_for_item[0]).to receive(:save!)
+        allow(shipment.inventory_units_for_item[1]).to receive(:save!)
 
         expect(subject.send(:remove_from_shipment, shipment, 1)).to eq(1)
       end
