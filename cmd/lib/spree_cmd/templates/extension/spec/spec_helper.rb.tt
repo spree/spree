@@ -34,7 +34,7 @@ require 'spree/testing_support/url_helpers'
 require '<%= file_name %>/factories'
 
 RSpec.configure do |config|
-  config.include FactoryGirl::Syntax::Methods
+  config.include FactoryBot::Syntax::Methods
 
   Capybara.javascript_driver = :poltergeist
 

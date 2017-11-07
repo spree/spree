@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :customer_return, class: Spree::CustomerReturn do
     association(:stock_location, factory: :stock_location)
 

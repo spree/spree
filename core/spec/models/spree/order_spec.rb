@@ -16,9 +16,9 @@ describe Spree::Order, type: :model do
   end
 
   describe '.scopes' do
-    let!(:user) { FactoryGirl.create(:user) }
-    let!(:completed_order) { FactoryGirl.create(:order, user: user, completed_at: Time.current) }
-    let!(:incompleted_order) { FactoryGirl.create(:order, user: user, completed_at: nil) }
+    let!(:user) { FactoryBot.create(:user) }
+    let!(:completed_order) { FactoryBot.create(:order, user: user, completed_at: Time.current) }
+    let!(:incompleted_order) { FactoryBot.create(:order, user: user, completed_at: nil) }
 
     describe '.complete' do
       it { expect(Spree::Order.complete).to include completed_order }
@@ -478,7 +478,7 @@ describe Spree::Order, type: :model do
 
   # Regression tests for #4072
   context '#state_changed' do
-    let(:order) { FactoryGirl.create(:order) }
+    let(:order) { FactoryBot.create(:order) }
 
     it 'logs state changes' do
       order.update_column(:payment_state, 'balance_due')
@@ -591,14 +591,14 @@ describe Spree::Order, type: :model do
   end
 
   describe '#associate_user!' do
-    let(:user) { FactoryGirl.create(:user_with_addreses) }
+    let(:user) { FactoryBot.create(:user_with_addreses) }
     let(:email) { user.email }
     let(:created_by) { user }
     let(:bill_address) { user.bill_address }
     let(:ship_address) { user.ship_address }
     let(:override_email) { true }
 
-    let(:order) { FactoryGirl.build(:order, order_attributes) }
+    let(:order) { FactoryBot.build(:order, order_attributes) }
 
     let(:order_attributes) do
       {
@@ -665,20 +665,20 @@ describe Spree::Order, type: :model do
 
     context 'when bill_address is set' do
       let(:order_attributes) { super().merge(bill_address: bill_address) }
-      let(:bill_address) { FactoryGirl.build(:address) }
+      let(:bill_address) { FactoryBot.build(:address) }
 
       it_should_behave_like '#associate_user!'
     end
 
     context 'when ship_address is set' do
       let(:order_attributes) { super().merge(ship_address: ship_address) }
-      let(:ship_address) { FactoryGirl.build(:address) }
+      let(:ship_address) { FactoryBot.build(:address) }
 
       it_should_behave_like '#associate_user!'
     end
 
     context 'when the user is not persisted' do
-      let(:user) { FactoryGirl.build(:user_with_addreses) }
+      let(:user) { FactoryBot.build(:user_with_addreses) }
 
       it 'does not persist the user' do
         expect { order.associate_user!(user) }.
@@ -690,7 +690,7 @@ describe Spree::Order, type: :model do
     end
 
     context 'when the order is persisted' do
-      let(:order) { FactoryGirl.create(:order, order_attributes) }
+      let(:order) { FactoryBot.create(:order, order_attributes) }
 
       it 'associates a user to a persisted order' do
         order.associate_user!(user)
@@ -706,7 +706,7 @@ describe Spree::Order, type: :model do
       end
 
       it 'does not change any other orders' do
-        other = FactoryGirl.create(:order)
+        other = FactoryBot.create(:order)
         order.associate_user!(user)
         expect(other.reload.user).to_not eql(user)
       end
