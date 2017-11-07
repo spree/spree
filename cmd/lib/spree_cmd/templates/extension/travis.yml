@@ -10,6 +10,8 @@ env:
 gemfile:
   - gemfiles/spree_3_1.gemfile
   - gemfiles/spree_3_2.gemfile
+  - gemfiles/spree_3_3.gemfile
+  - gemfiles/spree_3_4.gemfile
   - gemfiles/spree_master.gemfile
 
 script:
