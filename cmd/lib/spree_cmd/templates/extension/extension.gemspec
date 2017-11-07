@@ -33,8 +33,10 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rspec-rails'
   s.add_development_dependency 'sass-rails'
   s.add_development_dependency 'selenium-webdriver'
+  s.add_development_dependency 'poltergeist'
   s.add_development_dependency 'simplecov'
   s.add_development_dependency 'pg'
   s.add_development_dependency 'mysql2'
+  s.add_development_dependency 'sqlite3'
   s.add_development_dependency 'appraisal'
 end
