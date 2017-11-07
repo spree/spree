@@ -5,7 +5,7 @@ module Spree
       @body_class
     end
 
-    def breadcrumbs(taxon, separator = '&nbsp;')
+    def spree_breadcrumbs(taxon, separator = '&nbsp;')
       return '' if current_page?('/') || taxon.nil?
       separator = raw(separator)
       crumbs = [content_tag(:li, content_tag(:span, link_to(content_tag(:span, Spree.t(:home), itemprop: 'name'), spree.root_path, itemprop: 'url') + separator, itemprop: 'item'), itemscope: 'itemscope', itemtype: 'https://schema.org/ListItem', itemprop: 'itemListElement')]
@@ -18,6 +18,14 @@ module Spree
       end
       crumb_list = content_tag(:ol, raw(crumbs.flatten.map(&:mb_chars).join), class: 'breadcrumb', itemscope: 'itemscope', itemtype: 'https://schema.org/BreadcrumbList')
       content_tag(:nav, crumb_list, id: 'breadcrumbs', class: 'col-md-12')
+    end
+
+    def breadcrumbs(taxon, separator = '&nbsp;')
+      ActiveSupport::Deprecation.warn(<<-EOS, caller)
+        Spree::FrontendHelper#breadcrumbs was renamed to Spree::FrontendHelper#spree_breadcrumbs
+        and will be removed in Spree 3.6. Please update your code to avoid problems after update
+      EOS
+      spree_breadcrumbs(taxon, separator)
     end
 
     def checkout_progress(numbers: false)
