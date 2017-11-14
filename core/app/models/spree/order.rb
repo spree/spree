@@ -504,9 +504,8 @@ module Spree
 
     def apply_free_shipping_promotions
       Spree::PromotionHandler::FreeShipping.new(self).activate
-      shipments.each { |shipment| Adjustable::AdjustmentsUpdater.update(shipment) }
-      updater.update_shipment_total
-      persist_totals
+      shipments.each { |shipment| Spree::Adjustable::AdjustmentsUpdater.update(shipment) }
+      update_with_updater!
     end
 
     # Clean shipments and make order back to address state
