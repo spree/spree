@@ -4,6 +4,9 @@ module Spree
       extend ActiveSupport::Concern
 
       def add_class(name)
+        ActiveSupport::Deprecation.warn(<<-EOS, caller)
+          EnvironmentExtension module is deprecated and will be removed in Spree 3.6
+        EOS
         instance_variable_set "@#{name}", Set.new
 
         create_method("#{name}=".to_sym) do |val|
