@@ -2,8 +2,11 @@ module Spree
   class Promotion
     module Actions
       class CreateAdjustment < PromotionAction
-        include Spree::CalculatedAdjustments
         include Spree::AdjustmentSource
+
+        has_one :calculator, class_name: 'Spree::Calculator', as: :calculable, inverse_of: :calculable, dependent: :destroy, autosave: true
+        accepts_nested_attributes_for :calculator
+        validates :calculator, presence: true
 
         before_validation -> { self.calculator ||= Calculator::FlatPercentItemTotal.new }
 
@@ -13,7 +16,7 @@ module Spree
         end
 
         def compute_amount(order)
-          [(order.item_total + order.ship_total - order.shipping_discount), compute(order)].min * -1
+          [(order.item_total + order.ship_total - order.shipping_discount), calculator.compute(order)].min * -1
         end
       end
     end

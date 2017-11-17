@@ -2,8 +2,11 @@ module Spree
   class Promotion
     module Actions
       class CreateItemAdjustments < PromotionAction
-        include Spree::CalculatedAdjustments
         include Spree::AdjustmentSource
+
+        has_one :calculator, class_name: 'Spree::Calculator', as: :calculable, inverse_of: :calculable, dependent: :destroy, autosave: true
+        accepts_nested_attributes_for :calculator
+        validates :calculator, presence: true
 
         before_validation -> { self.calculator ||= Calculator::PercentOnLineItem.new }
 
@@ -17,7 +20,7 @@ module Spree
 
         def compute_amount(line_item)
           return 0 unless promotion.line_item_actionable?(line_item.order, line_item)
-          [line_item.amount, compute(line_item)].min * -1
+          [line_item.amount, calculator.compute(line_item)].min * -1
         end
       end
     end

@@ -27,9 +27,13 @@ module Spree
       'Base Calculator'
     end
 
-    # Returns all calculators applicable for kind of work
-    def self.calculators
-      Rails.application.config.spree.calculators
+    def self.calculators_for(adjustment_type)
+      calculators = Rails.application.config.spree.calculators[adjustment_type].sort_by(&:name)
+      if adjustment_type == :shipping_methods
+        calculators.select { |c| c.to_s.constantize < Spree::ShippingCalculator }
+      else
+        calculators
+      end
     end
 
     def to_s

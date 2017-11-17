@@ -5,6 +5,22 @@ module Spree
 
       helper 'spree/admin/promotion_rules'
 
+      def update
+        promotion_actions_attributes = permitted_resource_params[:promotion_actions_attributes].to_h.map do |key, value|
+          unless @promotion.promotion_actions.detect { |x| x.id.to_s == key && x.type == value['calculator_type'] }
+            value[:calculator] = value.delete('calculator_type').constantize.new
+            [key, value]
+          end
+        end.compact.to_h
+
+        if @object.update_attributes(permitted_resource_params.merge('promotion_actions_attributes' => promotion_actions_attributes))
+          flash[:success] = flash_message_for(@object, :successfully_updated)
+          redirect_to location_after_save
+        else
+          render action: :edit
+        end
+      end
+
       protected
 
       def location_after_save
@@ -12,7 +28,7 @@ module Spree
       end
 
       def load_data
-        @calculators = Rails.application.config.spree.calculators.promotion_actions_create_adjustments
+        @calculators = Spree::Calculator.calculators_for(:promotion_actions_create_adjustments)
         @promotion_categories = Spree::PromotionCategory.order(:name)
       end
 
