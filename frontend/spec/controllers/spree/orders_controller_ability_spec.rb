@@ -9,6 +9,7 @@ module Spree
     context 'when an order exists in the cookies.signed' do
       let(:token) { 'some_token' }
       let(:specified_order) { create(:order) }
+      let!(:variant) { create(:variant) }
 
       before do
         cookies.signed[:guest_token] = token
@@ -19,11 +20,11 @@ module Spree
       context '#populate' do
         it 'should check if user is authorized for :edit' do
           expect(controller).to receive(:authorize!).with(:edit, order, token)
-          spree_post :populate
+          spree_post :populate, variant_id: variant.id
         end
         it 'should check against the specified order' do
           expect(controller).to receive(:authorize!).with(:edit, specified_order, token)
-          spree_post :populate, id: specified_order.number
+          spree_post :populate, id: specified_order.number, variant_id: variant.id
         end
       end
 
@@ -85,9 +86,8 @@ module Spree
         end
 
         context 'when guest_token not present' do
-          it 'should respond with 404' do
-            spree_get :show, id: 'R123'
-            expect(response.code).to eq('404')
+          it 'should raise ActiveRecord::RecordNotFound' do
+            expect { spree_get :show, id: 'R123' }.to raise_error(ActiveRecord::RecordNotFound)
           end
         end
       end

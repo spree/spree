@@ -12,8 +12,7 @@ describe Spree::ProductsController, type: :controller do
   end
 
   it 'cannot view non-active products' do
-    spree_get :show, id: product.to_param
-    expect(response.status).to eq(404)
+    expect { spree_get :show, id: product.to_param }.to raise_error(ActiveRecord::RecordNotFound)
   end
 
   it 'should provide the current user to the searcher class' do
