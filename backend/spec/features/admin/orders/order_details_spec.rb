@@ -223,7 +223,7 @@ describe 'Order Details', type: :feature, js: true do
         context 'there is enough stock at the other location' do
           it 'should allow me to make a split' do
             expect(order.shipments.count).to eq(1)
-            expect(order.shipments.first.inventory_units_for(product.master).count).to eq(2)
+            expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq(2)
 
             within_row(1) { click_icon 'split' }
             targetted_select2 stock_location2.name, from: '#s2id_item_stock_location'
@@ -234,8 +234,8 @@ describe 'Order Details', type: :feature, js: true do
 
             expect(order.shipments.count).to eq(2)
             expect(order.shipments.last.backordered?).to eq(false)
-            expect(order.shipments.first.inventory_units_for(product.master).count).to eq(1)
-            expect(order.shipments.last.inventory_units_for(product.master).count).to eq(1)
+            expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq(1)
+            expect(order.shipments.last.inventory_units_for(product.master).sum(&:quantity)).to eq(1)
           end
 
           it 'should allow me to make a transfer via splitting off all stock' do
@@ -251,7 +251,7 @@ describe 'Order Details', type: :feature, js: true do
 
             expect(order.shipments.count).to eq(1)
             expect(order.shipments.last.backordered?).to eq(false)
-            expect(order.shipments.first.inventory_units_for(product.master).count).to eq(2)
+            expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq(2)
             expect(order.shipments.first.stock_location.id).to eq(stock_location2.id)
           end
 
@@ -268,7 +268,7 @@ describe 'Order Details', type: :feature, js: true do
 
             expect(order.shipments.count).to eq(1)
             expect(order.shipments.last.backordered?).to eq(false)
-            expect(order.shipments.first.inventory_units_for(product.master).count).to eq(5)
+            expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq(5)
             expect(order.shipments.first.stock_location.id).to eq(stock_location2.id)
           end
 
@@ -283,7 +283,7 @@ describe 'Order Details', type: :feature, js: true do
             wait_for_ajax
 
             expect(order.shipments.count).to eq(1)
-            expect(order.shipments.first.inventory_units_for(product.master).count).to eq(2)
+            expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq(2)
             expect(order.shipments.first.stock_location.id).to eq(stock_location.id)
           end
 
@@ -298,7 +298,7 @@ describe 'Order Details', type: :feature, js: true do
             wait_for_ajax
 
             expect(order.shipments.count).to eq(1)
-            expect(order.shipments.first.inventory_units_for(product.master).count).to eq(2)
+            expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq(2)
             expect(order.shipments.first.stock_location.id).to eq(stock_location.id)
 
             fill_in 'item_quantity', with: -1
@@ -307,7 +307,7 @@ describe 'Order Details', type: :feature, js: true do
             wait_for_ajax
 
             expect(order.shipments.count).to eq(1)
-            expect(order.shipments.first.inventory_units_for(product.master).count).to eq(2)
+            expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq(2)
             expect(order.shipments.first.stock_location.id).to eq(stock_location.id)
           end
 
@@ -338,7 +338,7 @@ describe 'Order Details', type: :feature, js: true do
               wait_for_ajax
 
               expect(order.shipments.count).to eq(1)
-              expect(order.shipments.first.inventory_units_for(product.master).count).to eq(2)
+              expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq(2)
               expect(order.shipments.first.stock_location.id).to eq(stock_location.id)
             end
           end
@@ -357,7 +357,7 @@ describe 'Order Details', type: :feature, js: true do
               order.reload
 
               expect(order.shipments.count).to eq(1)
-              expect(order.shipments.first.inventory_units_for(product.master).count).to eq(2)
+              expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq(2)
               expect(order.shipments.first.stock_location.id).to eq(stock_location2.id)
             end
           end
@@ -378,8 +378,8 @@ describe 'Order Details', type: :feature, js: true do
 
             expect(order.shipments.count).to eq(2)
             expect(order.shipments.last.backordered?).to eq(false)
-            expect(order.shipments.first.inventory_units_for(product.master).count).to eq(1)
-            expect(order.shipments.last.inventory_units_for(product.master).count).to eq(1)
+            expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq(1)
+            expect(order.shipments.last.inventory_units_for(product.master).sum(&:quantity)).to eq(1)
           end
         end
 
@@ -468,7 +468,7 @@ describe 'Order Details', type: :feature, js: true do
           order.reload
 
           expect(order.shipments.count).to eq(1)
-          expect(order.shipments.last.inventory_units_for(product.master).count).to eq(2)
+          expect(order.shipments.last.inventory_units_for(product.master).sum(&:quantity)).to eq(2)
         end
 
         context 'receiving shipment can not backorder' do
@@ -492,8 +492,8 @@ describe 'Order Details', type: :feature, js: true do
             wait_for_ajax
 
             expect(order.shipments.count).to eq(2)
-            expect(order.shipments.first.inventory_units_for(product.master).count).to eq(1)
-            expect(order.shipments.last.inventory_units_for(product.master).count).to eq(1)
+            expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq(1)
+            expect(order.shipments.last.inventory_units_for(product.master).sum(&:quantity)).to eq(1)
           end
 
           it 'should not allow a shipment to split stock to itself' do
@@ -505,7 +505,7 @@ describe 'Order Details', type: :feature, js: true do
             wait_for_ajax
 
             expect(order.shipments.count).to eq(2)
-            expect(order.shipments.first.inventory_units_for(product.master).count).to eq(2)
+            expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq(2)
           end
 
           it 'should split fine if more than one line_item is in the receiving shipment' do
@@ -520,10 +520,10 @@ describe 'Order Details', type: :feature, js: true do
             wait_for_ajax
 
             expect(order.shipments.count).to eq(2)
-            expect(order.shipments.first.inventory_units_for(product.master).count).to eq 1
-            expect(order.shipments.last.inventory_units_for(product.master).count).to eq 1
-            expect(order.shipments.first.inventory_units_for(variant2).count).to eq 0
-            expect(order.shipments.last.inventory_units_for(variant2).count).to eq 2
+            expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq 1
+            expect(order.shipments.last.inventory_units_for(product.master).sum(&:quantity)).to eq 1
+            expect(order.shipments.first.inventory_units_for(variant2).sum(&:quantity)).to eq 0
+            expect(order.shipments.last.inventory_units_for(variant2).sum(&:quantity)).to eq 2
           end
         end
 
@@ -550,7 +550,7 @@ describe 'Order Details', type: :feature, js: true do
             wait_for_ajax
 
             expect(order.shipments.count).to eq(1)
-            expect(order.shipments.last.inventory_units_for(product.master).count).to eq(2)
+            expect(order.shipments.last.inventory_units_for(product.master).sum(&:quantity)).to eq(2)
             expect(@shipment2.reload.backordered?).to eq(true)
           end
         end

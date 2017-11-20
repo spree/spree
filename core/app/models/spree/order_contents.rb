@@ -81,7 +81,6 @@ module Spree
     end
 
     def persist_totals
-      order_updater.update_item_count
       order_updater.update
     end
 
