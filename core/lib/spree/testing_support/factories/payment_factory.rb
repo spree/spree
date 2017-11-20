@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :payment, class: Spree::Payment do
     amount 45.75
     association(:payment_method, factory: :credit_card_payment_method)

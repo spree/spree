@@ -1,6 +1,6 @@
 shared_examples_for "default_price" do
   let(:model)        { described_class }
-  subject(:instance) { FactoryGirl.build(model.name.demodulize.downcase.to_sym) }
+  subject(:instance) { FactoryBot.build(model.name.demodulize.downcase.to_sym) }
 
   describe '.has_one :default_price' do
     let(:default_price_association) { model.reflect_on_association(:default_price) }
