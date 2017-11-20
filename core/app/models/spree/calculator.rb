@@ -11,6 +11,10 @@ module Spree
     #
     # It should return amount computed based on #calculable and the computable parameter
     def compute(computable)
+      ActiveSupport::Deprecation.warn(<<-EOS, caller)
+        Calculator#compute is deprecated and will be removed in Spree 3.6
+      EOS
+      debugger
       # Spree::LineItem -> :compute_line_item
       computable_name = computable.class.name.demodulize.underscore
       method = "compute_#{computable_name}".to_sym

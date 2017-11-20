@@ -94,7 +94,7 @@ module Spree
     end
 
     def compute_amount(item)
-      calculator.compute(item)
+      calculator.compute_shipment_or_line_item(item)
     end
 
     private

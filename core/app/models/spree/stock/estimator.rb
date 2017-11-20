@@ -30,7 +30,7 @@ module Spree
 
       def calculate_shipping_rates(package, ui_filter)
         shipping_methods(package, ui_filter).map do |shipping_method|
-          cost = shipping_method.calculator.compute(package)
+          cost = shipping_method.calculator.compute_package(package)
 
           next unless cost
           shipping_method.shipping_rates.new(
