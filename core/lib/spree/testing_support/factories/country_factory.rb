@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :country, class: Spree::Country do
     sequence(:iso_name) { |n| "ISO_NAME_#{n}" }
     sequence(:name) { |n| "NAME_#{n}" }

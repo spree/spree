@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :reimbursement, class: Spree::Reimbursement do
     transient do
       return_items_count 1

@@ -20,7 +20,7 @@ describe Spree::Order, type: :model do
 
       context "when payment processing succeeds" do
         before do
-          order.payments << FactoryGirl.create(:payment, state: 'checkout', order: order)
+          order.payments << FactoryBot.create(:payment, state: 'checkout', order: order)
           allow(order).to receive_messages process_payments: true
         end
 

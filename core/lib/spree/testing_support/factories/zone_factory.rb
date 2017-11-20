@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :global_zone, class: Spree::Zone do
     name 'GlobalZone'
     description { generate(:random_string) }
