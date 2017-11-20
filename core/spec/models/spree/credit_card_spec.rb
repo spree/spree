@@ -295,9 +295,9 @@ describe Spree::CreditCard, type: :model do
   end
 
   it 'ensures only one credit card per user is default at a time' do
-    user = FactoryGirl.create(:user)
-    first = FactoryGirl.create(:credit_card, user: user, default: true)
-    second = FactoryGirl.create(:credit_card, user: user, default: true)
+    user = FactoryBot.create(:user)
+    first = FactoryBot.create(:credit_card, user: user, default: true)
+    second = FactoryBot.create(:credit_card, user: user, default: true)
 
     expect(first.reload.default).to eq false
     expect(second.reload.default).to eq true
@@ -310,17 +310,17 @@ describe Spree::CreditCard, type: :model do
   end
 
   it 'allows default credit cards for different users' do
-    first = FactoryGirl.create(:credit_card, user: FactoryGirl.create(:user), default: true)
-    second = FactoryGirl.create(:credit_card, user: FactoryGirl.create(:user), default: true)
+    first = FactoryBot.create(:credit_card, user: FactoryBot.create(:user), default: true)
+    second = FactoryBot.create(:credit_card, user: FactoryBot.create(:user), default: true)
 
     expect(first.reload.default).to eq true
     expect(second.reload.default).to eq true
   end
 
   it 'allows this card to save even if the previously default card has expired' do
-    user = FactoryGirl.create(:user)
-    first = FactoryGirl.create(:credit_card, user: user, default: true)
-    second = FactoryGirl.create(:credit_card, user: user, default: false)
+    user = FactoryBot.create(:user)
+    first = FactoryBot.create(:credit_card, user: user, default: true)
+    second = FactoryBot.create(:credit_card, user: user, default: false)
     first.update_columns(year: DateTime.current.year, month: 1.month.ago.month)
 
     expect { second.update_attributes!(default: true) }.not_to raise_error

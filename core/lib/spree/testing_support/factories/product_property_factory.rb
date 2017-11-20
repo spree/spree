@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :product_property, class: Spree::ProductProperty do
     product
     property

@@ -23,7 +23,7 @@ group :test do
   gem 'capybara-screenshot', '~> 1.0.11'
   gem 'database_cleaner', '~> 1.3'
   gem 'email_spec'
-  gem 'factory_girl_rails', '~> 4.5.0'
+  gem 'factory_bot_rails', '~> 4.5.0'
   gem 'launchy'
   gem 'rspec-activemodel-mocks', '~> 1.0.2'
   gem 'rspec-collection_matchers'
