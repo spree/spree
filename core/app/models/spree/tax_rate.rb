@@ -81,6 +81,7 @@ module Spree
     end
 
     def self.included_tax_amount_for(options)
+	    byebug
       return 0 unless options[:tax_zone] && options[:tax_category]
       potential_rates_for_zone(options[:tax_zone]).
         included_in_price.

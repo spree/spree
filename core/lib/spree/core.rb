@@ -84,6 +84,7 @@ require 'spree/permitted_attributes'
 
 require 'spree/core/importer'
 require 'spree/core/product_duplicator'
+require 'spree/core/vat_price_calculator'
 require 'spree/core/controller_helpers/auth'
 require 'spree/core/controller_helpers/common'
 require 'spree/core/controller_helpers/order'

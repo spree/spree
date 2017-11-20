@@ -32,7 +32,8 @@ module Spree
 
     def price_including_vat_for(price_options)
       options = price_options.merge(tax_category: variant.tax_category)
-      gross_amount(price, options)
+       VatPriceCalculator.new.call(price, options)
+       # gross_amount(price, options)
     end
 
     def display_price_including_vat_for(price_options)

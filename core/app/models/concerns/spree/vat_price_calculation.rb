@@ -2,7 +2,7 @@ module Spree
   module VatPriceCalculation
     def gross_amount(amount, price_options)
       return amount unless outside_default_vat_zone?(price_options)
-      round_to_two_places(add_foreign_vat_for(amount, price_options))
+      BigDecimal.new(add_foreign_vat_for(amount, price_options).to_s).round(2, BigDecimal::ROUND_HALF_UP)
     end
 
     private
@@ -38,10 +38,6 @@ module Spree
 
     def default_zone
       @_default_zone ||= Spree::Zone.default_tax
-    end
-
-    def round_to_two_places(amount)
-      BigDecimal.new(amount.to_s).round(2, BigDecimal::ROUND_HALF_UP)
     end
   end
 end

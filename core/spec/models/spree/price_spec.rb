@@ -74,21 +74,22 @@ describe Spree::Price, type: :model do
   describe '#price_including_vat_for(zone)' do
     subject(:price_with_vat) { price.price_including_vat_for(price_options) }
 
-    let(:variant) { stub_model Spree::Variant }
-    let(:default_zone) { Spree::Zone.new }
-    let(:zone) { Spree::Zone.new }
+    let(:tax_category) { Spree::TaxCategory.create(name: "DefaultCategory", is_default: true) }
+    let!(:variant) { create(:variant, tax_category: tax_category) }
+    let!(:default_zone) { Spree::Zone.create(default_tax: true, name: 'DefaultZone', kind: 'country') }
+    let!(:zone) { Spree::Zone.create(default_tax: false, name: "TestZone", kind: 'country') } #tu dodaj kinda
+    let!(:country) { Spree::Country.new }
+    let!(:foreign_country) { Spree::Country.new.save }
+    let!(:zone_member) { Spree::ZoneMember.create(zone: default_zone, zoneable: country, zoneable_id: 2) }
+    let!(:zone_mem) { Spree::ZoneMember.create(zone: zone, zoneable: country, zoneable_id: 1) }
     let(:amount) { 10 }
-    let(:tax_category) { Spree::TaxCategory.new }
     let(:price) { Spree::Price.new variant: variant, amount: amount }
     let(:price_options) { { tax_zone: zone } }
 
     context 'when called with a non-default zone' do
       before do
         allow(variant).to receive(:tax_category).and_return(tax_category)
-        expect(price).to receive(:default_zone).at_least(:once).and_return(default_zone)
         allow(price).to receive(:apply_foreign_vat?).and_return(true)
-        allow(price).to receive(:included_tax_amount).with(tax_zone: default_zone, tax_category: tax_category).and_return(0.19)
-        allow(price).to receive(:included_tax_amount).with(tax_zone: zone, tax_category: tax_category).and_return(0.25)
       end
 
       it 'returns the correct price including another VAT to two digits' do
@@ -99,11 +100,9 @@ describe Spree::Price, type: :model do
     context 'when called from the default zone' do
       before do
         allow(variant).to receive(:tax_category).and_return(tax_category)
-        expect(price).to receive(:default_zone).at_least(:once).and_return(zone)
       end
 
       it 'returns the correct price' do
-        expect(price).to receive(:price).and_call_original
         expect(price_with_vat).to eq(10.00)
       end
     end
@@ -111,11 +110,9 @@ describe Spree::Price, type: :model do
     context 'when no default zone is set' do
       before do
         allow(variant).to receive(:tax_category).and_return(tax_category)
-        expect(price).to receive(:default_zone).at_least(:once).and_return(nil)
       end
 
       it 'returns the correct price' do
-        expect(price).to receive(:price).and_call_original
         expect(price.price_including_vat_for(tax_zone: zone)).to eq(10.00)
       end
     end

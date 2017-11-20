@@ -29,6 +29,8 @@ module Spree
     end
 
     def self.potential_matching_zones(zone)
+	    byebug
+	    #sprawdza czy zone to panstwo czy federacja
       if zone.country?
         # Match zones of the same kind with similar countries
         joins(countries: :zones).
@@ -69,6 +71,7 @@ module Spree
     end
 
     def kind
+	    byebug
       if kind?
         super
       else
