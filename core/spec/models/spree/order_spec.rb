@@ -541,8 +541,7 @@ describe Spree::Order, type: :model do
 
       expect(Spree::Adjustable::AdjustmentsUpdater).to receive(:update).with(shipment)
 
-      expect(order.updater).to receive(:update_shipment_total)
-      expect(order.updater).to receive(:persist_totals)
+      expect(order.updater).to receive(:update)
       order.apply_free_shipping_promotions
     end
   end
