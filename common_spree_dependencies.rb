@@ -30,7 +30,6 @@ group :test do
   gem 'rspec-its'
   gem 'rspec-rails', '~> 3.7.2'
   gem 'rspec-retry'
-  gem 'rack-test', '0.7.0'
   gem 'rspec_junit_formatter'
   gem 'simplecov'
   gem 'webmock', '~> 3.0.1'
