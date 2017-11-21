@@ -44,8 +44,6 @@ require 'spree/testing_support/capybara_ext'
 
 require 'spree/core/controller_helpers/strong_parameters'
 
-require 'paperclip/matchers'
-
 require 'capybara-screenshot/rspec'
 Capybara.save_path = ENV['CIRCLE_ARTIFACTS'] if ENV['CIRCLE_ARTIFACTS']
 
@@ -118,8 +116,6 @@ RSpec.configure do |config|
   config.include Spree::TestingSupport::Flash
 
   config.include Spree::Core::ControllerHelpers::StrongParameters, type: :controller
-
-  config.include Paperclip::Shoulda::Matchers
 
   config.extend WithModel
 

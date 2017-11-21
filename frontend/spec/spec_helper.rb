@@ -44,8 +44,6 @@ require 'spree/testing_support/url_helpers'
 require 'spree/testing_support/order_walkthrough'
 require 'spree/testing_support/caching'
 
-require 'paperclip/matchers'
-
 require 'capybara-screenshot/rspec'
 Capybara.save_path = ENV['CIRCLE_ARTIFACTS'] if ENV['CIRCLE_ARTIFACTS']
 
@@ -117,8 +115,6 @@ RSpec.configure do |config|
   config.include Spree::TestingSupport::UrlHelpers
   config.include Spree::TestingSupport::ControllerRequests, type: :controller
   config.include Spree::TestingSupport::Flash
-
-  config.include Paperclip::Shoulda::Matchers
 
   config.order = :random
   Kernel.srand config.seed
