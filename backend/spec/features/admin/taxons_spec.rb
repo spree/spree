@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-feature 'Taxonomies and taxons' do
+describe 'Taxonomies and taxons', type: :feature do
   stub_authorization!
 
   let(:taxonomy) { create(:taxonomy, name: 'Hello') }
