@@ -5,11 +5,11 @@ feature 'Tiered Calculator Promotions' do
 
   let(:promotion) { create :promotion }
 
-  background do
+  before do
     visit spree.edit_admin_promotion_path(promotion)
   end
 
-  scenario 'adding a tiered percent calculator', js: true do
+  it 'adding a tiered percent calculator', js: true do
     select2 'Create whole-order adjustment', from: 'Add action of type'
     within('#action_fields') { click_button 'Add' }
 
@@ -45,7 +45,7 @@ feature 'Tiered Calculator Promotions' do
   context 'with an existing tiered flat rate calculator' do
     let(:promotion) { create :promotion, :with_order_adjustment }
 
-    background do
+    before do
       action = promotion.actions.first
 
       action.calculator = Spree::Calculator::TieredFlatRate.new
@@ -56,7 +56,7 @@ feature 'Tiered Calculator Promotions' do
       visit spree.edit_admin_promotion_path(promotion)
     end
 
-    scenario 'deleting a tier', js: true do
+    it 'deleting a tier', js: true do
       within('.tier:nth-child(2)') do
         click_icon :delete
       end

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'Store credits admin' do
+describe 'Store credits admin', type: :feature do
   stub_authorization!
 
   let!(:admin_user) { create(:admin_user) }
