@@ -19,7 +19,7 @@ platforms :ruby do
 end
 
 group :test do
-  gem 'capybara', '~> 2.4'
+  gem 'capybara', '~> 2.16'
   gem 'capybara-screenshot', '~> 1.0'
   gem 'database_cleaner', '~> 1.3'
   gem 'email_spec'
@@ -30,7 +30,6 @@ group :test do
   gem 'rspec-its'
   gem 'rspec-rails', '~> 3.7.2'
   gem 'rspec-retry'
-  gem 'rack-test', '0.7.0'
   gem 'rspec_junit_formatter'
   gem 'simplecov'
   gem 'webmock', '~> 3.0.1'
