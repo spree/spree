@@ -43,9 +43,23 @@ $(document).ready(function () {
       var del = $(this);
       var shipment_number = del.data('shipment-number');
       var variant_id = del.data('variant-id');
+      var shipment = _.findWhere(shipments, {number: shipment_number + ''});
+      var url = Spree.routes.shipments_api + "/" + shipment_number + '/remove';
 
       toggleItemEdit();
-      adjustShipmentItems(shipment_number, variant_id, 0);
+
+      $.ajax({
+        type: "PUT",
+        url: Spree.url(url),
+        data: {
+          variant_id: variant_id,
+          token: Spree.api_key
+        }
+      }).done(function( msg ) {
+        window.location.reload();
+      }).fail(function(msg) {
+        alert(msg.responseJSON.message)
+      });
     }
     return false;
   });
@@ -145,13 +159,16 @@ adjustShipmentItems = function(shipment_number, variant_id, quantity){
 
     var url = Spree.routes.shipments_api + "/" + shipment_number;
 
-    var new_quantity = 0;
-    if(inventory_units.length<quantity){
+    var previous_quantity = inventory_units.reduce(function(accumulator, current_unit, _index, _array) {
+      return accumulator + current_unit.quantity;
+    }, 0);
+
+    if(previous_quantity<quantity){
       url += "/add"
-      new_quantity = (quantity - inventory_units.length);
-    }else if(inventory_units.length>quantity){
+      new_quantity = (quantity - previous_quantity);
+    }else if(previous_quantity>quantity){
       url += "/remove"
-      new_quantity = (inventory_units.length - quantity);
+      new_quantity = (previous_quantity - quantity);
     }
     url += '.json';
 
@@ -264,7 +281,7 @@ completeItemSplit = function(event) {
       }).error(function(msg) {
           alert(msg.responseJSON['message']);
       }).done(function(msg) {
-        window.Spree.advanceOrder();
+          window.location.reload();
       });
     } else {
         // TRANSFER TO AN EXISTING SHIPMENT
@@ -282,7 +299,7 @@ completeItemSplit = function(event) {
         }).error(function(msg) {
             alert(msg.responseJSON['message']);
         }).done(function(msg) {
-            window.Spree.advanceOrder();
+            window.location.reload();
         });
     }
   }
