@@ -72,26 +72,21 @@ describe Spree::Price, type: :model do
   end
 
   describe '#price_including_vat_for(zone)' do
-    subject(:price_with_vat) { price.price_including_vat_for(price_options) }
-
-    let(:tax_category) { Spree::TaxCategory.create(name: "DefaultCategory", is_default: true) }
-    let!(:variant) { create(:variant, tax_category: tax_category) }
+    let!(:tax_category) { Spree::TaxCategory.create(name: 'FirstCategory', is_default: false) }
+    let!(:second_tax_category) { Spree::TaxCategory.create(name: 'SecondCategory', is_default: true) }
+    let!(:variant) { create(:variant, tax_category: second_tax_category) }
     let!(:default_zone) { Spree::Zone.create(default_tax: true, name: 'DefaultZone', kind: 'country') }
-    let!(:zone) { Spree::Zone.create(default_tax: false, name: "TestZone", kind: 'country') } #tu dodaj kinda
-    let!(:country) { Spree::Country.new }
-    let!(:foreign_country) { Spree::Country.new.save }
+    let!(:zone) { Spree::Zone.create(default_tax: false, name: 'TestZone', kind: 'country') }
+    let!(:country) { Spree::Country.create(name: 'Monaco', iso_name: 'MONACO') }
+    let!(:foreign_country) { Spree::Country.create(name: 'Poland', iso_name: 'POLAND') }
     let!(:zone_member) { Spree::ZoneMember.create(zone: default_zone, zoneable: country, zoneable_id: 2) }
-    let!(:zone_mem) { Spree::ZoneMember.create(zone: zone, zoneable: country, zoneable_id: 1) }
+    let!(:second_zone_member) { Spree::ZoneMember.create(zone: zone, zoneable: country, zoneable_id: 1) }
+    let!(:tax_rate) { create(:tax_rate, zone: zone, included_in_price: true, tax_category: second_tax_category, amount: 0.05) }
     let(:amount) { 10 }
     let(:price) { Spree::Price.new variant: variant, amount: amount }
     let(:price_options) { { tax_zone: zone } }
 
     context 'when called with a non-default zone' do
-      before do
-        allow(variant).to receive(:tax_category).and_return(tax_category)
-        allow(price).to receive(:apply_foreign_vat?).and_return(true)
-      end
-
       it 'returns the correct price including another VAT to two digits' do
         expect(price_with_vat).to eq(10.50)
       end

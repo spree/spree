@@ -2,7 +2,6 @@ require_dependency 'spree/calculator'
 
 module Spree
   class Calculator::DefaultTax < Calculator
-    include VatPriceCalculation
     def self.description
       Spree.t(:default_tax)
     end

@@ -1,6 +1,5 @@
 module Spree
   class Price < Spree::Base
-    include VatPriceCalculation
 
     acts_as_paranoid
 
@@ -32,8 +31,7 @@ module Spree
 
     def price_including_vat_for(price_options)
       options = price_options.merge(tax_category: variant.tax_category)
-       VatPriceCalculator.new.call(price, options)
-       # gross_amount(price, options)
+      Spree::VatPriceCalculator.new.call(price, options)
     end
 
     def display_price_including_vat_for(price_options)
