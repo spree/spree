@@ -125,6 +125,19 @@ $(document).ready(function () {
   $('a.edit-tracking').click(toggleTrackingEdit);
   $('a.cancel-tracking').click(toggleTrackingEdit);
 
+  var createTrackingValueContent = function (data) {
+    var selected_shipping_method = data.shipping_methods.filter(function (method) {
+      return method.id === data.selected_shipping_rate.shipping_method_id;
+    })[0];
+
+    if (selected_shipping_method && selected_shipping_method.tracking_url) {
+      var shipmentTrackingUrl = selected_shipping_method.tracking_url.replace(/:tracking/, data.tracking);
+      return '<a target="_blank" href="' + shipmentTrackingUrl + '">' + data.tracking + '<a>';
+    }
+
+    return data.tracking
+  }
+
   // handle tracking save
   $('[data-hook=admin_shipment_form] a.save-tracking').on('click', function (event) {
     event.preventDefault();
@@ -148,7 +161,12 @@ $(document).ready(function () {
 
       var show = link.parents('tbody').find('tr.show-tracking');
       show.toggle();
-      show.find('.tracking-value').html($("<strong>").html(Spree.translations.tracking + ": ")).append(data.tracking);
+
+      if (data.tracking) {
+        show.find('.tracking-value').html($("<strong>").html(Spree.translations.tracking + ": ")).append(createTrackingValueContent(data));
+      } else {
+        show.find('.tracking-value').html(Spree.translations.no_tracking_present);
+      }
     });
   });
 });
