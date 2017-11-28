@@ -10,6 +10,7 @@ module Spree
 
     before do
       stub_authentication!
+      stock_item.update(backorderable: true)
     end
 
     context 'as a normal user' do
@@ -122,6 +123,19 @@ module Spree
         api_put :update, params
         expect(response.status).to eq(200)
         expect(json_response['count_on_hand']).to eq 50
+      end
+
+      it 'can update a stock item to modify its backorderable field' do
+        params = {
+          id: stock_item.to_param,
+          stock_item: {
+            backorderable: false
+          }
+        }
+
+        api_put :update, params
+        expect(response.status).to eq(200)
+        expect(json_response[:backorderable]).to eq(false)
       end
 
       it 'can set a stock item to modify the current inventory' do
