@@ -135,7 +135,7 @@ $(document).ready(function () {
       return '<a target="_blank" href="' + shipmentTrackingUrl + '">' + data.tracking + '<a>';
     }
 
-    return data.tracking
+    return data.tracking;
   }
 
   // handle tracking save
