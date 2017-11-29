@@ -3,6 +3,7 @@ require 'spec_helper'
 describe Spree::Api::V1::ShipmentsController, type: :controller do
   render_views
   let!(:shipment) { create(:shipment) }
+  let!(:shipment2) { create(:shipment) }
   let!(:attributes) { [:id, :tracking, :number, :cost, :shipped_at, :stock_location_name, :order_id, :shipping_rates, :shipping_methods] }
 
   before do
@@ -61,6 +62,50 @@ describe Spree::Api::V1::ShipmentsController, type: :controller do
       it 'should create a new shipment' do
         expect(subject).to be_ok
         expect(json_response).to have_attributes(attributes)
+      end
+    end
+
+    describe 'POST #transfer_to_shipment' do
+      let(:shared_params) do
+        {
+          original_shipment_number: shipment.number,
+          variant_id: stock_location.stock_items.first.variant.to_param,
+          shipment: { order_id: order.number },
+          stock_location_id: stock_location.to_param
+        }
+      end
+
+      context 'wrong quantity and shipment target' do
+        let!(:params) do
+          shared_params.merge(target_shipment_number: shipment.number, quantity: '-200')
+        end
+
+        it 'should display wrong target and negative quantity errors' do
+          api_post :transfer_to_shipment, params
+          expect(json_response['exception']).to eq("#{Spree.t(:shipment_transfer_errors_occured, scope: 'api')} \n#{Spree.t(:negative_quantity, scope: 'api')}, \n#{Spree.t(:wrong_shipment_target, scope: 'api')}")
+        end
+      end
+
+      context 'wrong quantity' do
+        let!(:params) do
+          shared_params.merge(target_shipment_number: shipment2.number, quantity: '-200')
+        end
+
+        it 'should display negative quantity error' do
+          api_post :transfer_to_shipment, params
+          expect(json_response['exception']).to eq("#{Spree.t(:shipment_transfer_errors_occured, scope: 'api')} \n#{Spree.t(:negative_quantity, scope: 'api')}")
+        end
+      end
+
+      context 'wrong shipment target' do
+        let!(:params) do
+          shared_params.merge(target_shipment_number: shipment.number, quantity: '200')
+        end
+
+        it 'should display wrong target error' do
+          api_post :transfer_to_shipment, params
+          expect(json_response['exception']).to eq("#{Spree.t(:shipment_transfer_errors_occured, scope: 'api')} \n#{Spree.t(:wrong_shipment_target, scope: 'api')}")
+        end
       end
     end
 

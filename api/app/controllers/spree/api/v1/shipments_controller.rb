@@ -80,7 +80,7 @@ module Spree
           @stock_location = Spree::StockLocation.find(params[:stock_location_id])
 
           unless @quantity > 0
-            unprocessable_entity('ArgumentError')
+            unprocessable_entity("#{Spree.t(:shipment_transfer_errors_occured, scope: 'api')} \n #{Spree.t(:negative_quantity, scope: 'api')}")
             return
           end
 
@@ -91,13 +91,21 @@ module Spree
         def transfer_to_shipment
           @target_shipment = Spree::Shipment.find_by!(number: params[:target_shipment_number])
 
-          if @quantity < 0 || @target_shipment == @original_shipment
-            unprocessable_entity('ArgumentError')
-            return
-          end
+          error =
+            if @quantity < 0 && @target_shipment == @original_shipment
+              "#{Spree.t(:negative_quantity, scope: 'api')}, \n#{Spree.t('wrong_shipment_target', scope: 'api')}"
+            elsif @target_shipment == @original_shipment
+              Spree.t(:wrong_shipment_target, scope: 'api')
+            elsif @quantity < 0
+              Spree.t(:negative_quantity, scope: 'api')
+            end
 
-          @original_shipment.transfer_to_shipment(@variant, @quantity, @target_shipment)
-          render json: { success: true, message: Spree.t(:shipment_transfer_success) }, status: 201
+          if error
+            unprocessable_entity("#{Spree.t(:shipment_transfer_errors_occured, scope: 'api')} \n#{error}")
+          else
+            @original_shipment.transfer_to_shipment(@variant, @quantity, @target_shipment)
+            render json: { success: true, message: Spree.t(:shipment_transfer_success) }, status: 201
+          end
         end
 
         private

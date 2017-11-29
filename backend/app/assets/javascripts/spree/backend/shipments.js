@@ -297,7 +297,7 @@ completeItemSplit = function(event) {
             token: Spree.api_key
         }
       }).error(function(msg) {
-          alert(msg.responseJSON['message']);
+          alert(msg.responseJSON.exception);
       }).done(function(msg) {
           window.location.reload();
       });
@@ -315,7 +315,7 @@ completeItemSplit = function(event) {
                 token: Spree.api_key
             }
         }).error(function(msg) {
-            alert(msg.responseJSON['message']);
+            alert(msg.responseJSON.exception);
         }).done(function(msg) {
             window.location.reload();
         });
