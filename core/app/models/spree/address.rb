@@ -51,11 +51,6 @@ module Spree
       end
     end
 
-    # Can modify an address if it's not been used in an order (but checkouts controller has finer control)
-    # def editable?
-    #   new_record? || (shipments.empty? && checkouts.empty?)
-    # end
-
     def full_name
       "#{firstname} #{lastname}".strip
     end
