@@ -81,7 +81,7 @@ Style/MutableConstant:
 Style/PercentLiteralDelimiters:
   Enabled: false
 
-Style/VariableNumber:
+Naming/VariableNumber:
   Enabled: false
 
 Performance/RegexpMatch:
