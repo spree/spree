@@ -3,7 +3,7 @@ module Spree
     MATCH_POLICIES = %w(all any)
     UNACTIVATABLE_ORDER_STATES = ['complete', 'awaiting_return', 'returned']
 
-    attr_reader :eligibility_errors
+    attr_reader :eligibility_errors, :generate_code
 
     belongs_to :promotion_category, optional: true
 
@@ -52,6 +52,12 @@ module Spree
 
     def self.order_activatable?(order)
       order && !UNACTIVATABLE_ORDER_STATES.include?(order.state)
+    end
+
+    def generate_code=(generating_code)
+      if ActiveModel::Type::Boolean.new.cast(generating_code)
+        self.code = random_code
+      end
     end
 
     def expired?
@@ -226,6 +232,14 @@ module Spree
 
     def expires_at_must_be_later_than_starts_at
       errors.add(:expires_at, :invalid_date_range) if expires_at < starts_at
+    end
+
+    def random_code
+      coupon_code = loop do
+        random_token = SecureRandom.hex(4)
+        break random_token unless self.class.exists?(code: random_token)
+      end
+      coupon_code
     end
   end
 end
