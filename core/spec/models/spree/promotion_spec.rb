@@ -662,4 +662,21 @@ describe Spree::Promotion, type: :model do
       expect(order.adjustment_total).to eq -10
     end
   end
+
+  describe '#generate_code' do
+    let(:promotion) { create(:promotion, code: 'spree123') }
+
+    context 'with generate_code' do
+      it 'has a generated code' do
+        promotion.generate_code = true
+        expect(promotion.code).not_to eq 'spree123'
+      end
+    end
+
+    context 'without generate_code' do
+      it 'has a generated code' do
+        expect(promotion.code).to eq 'spree123'
+      end
+    end
+  end
 end
