@@ -157,11 +157,7 @@ module Spree
           end
 
           context 'deleting line items' do
-            let(:shipments) { order.shipments.load }
-
-            before(:each) do
-              allow(order).to receive(:shipments).and_return(shipments)
-            end
+            let!(:shipments) { order.shipments.load }
 
             it 'restocks product after line item removal' do
               line_item = order.line_items.first
