@@ -13,6 +13,13 @@
       <%= f.text_field :code, class: 'form-control' %>
     <% end %>
 
+    <%= f.field_container :generate_code, class: ['checkbox'] do %>
+      <%= f.label :generate_code do %>
+        <%= f.check_box :generate_code %>
+        <%= Spree.t(:generate_code) %>
+      <% end %>
+    <% end %>
+
     <%= f.field_container :path, class: ['form-group'] do %>
       <%= f.label :path %>
       <%= f.text_field :path, class: 'form-control' %>

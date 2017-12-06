@@ -92,6 +92,7 @@ en:
         description: Description
         event_name: Event Name
         expires_at: Expires At
+        generate_code: Generate coupon code
         name: Name
         path: Path
         starts_at: Starts At
@@ -757,6 +758,7 @@ en:
     gateway_error: Gateway Error
     general: General
     general_settings: General Settings
+    generate_code: Generate coupon code
     guest_checkout: Guest Checkout
     guest_user_account: Checkout as a Guest
     has_no_shipped_units: has no shipped units
