@@ -9,8 +9,11 @@ module Spree
     included do
       # we need to have this callback before any dependent: :destroy associations
       # https://github.com/rails/rails/issues/3458
+      before_validation :clone_billing_address, if: :use_billing?
       before_destroy :check_completed_orders
       after_destroy :nullify_approver_id_in_approved_orders
+
+      attr_accessor :use_billing
 
       has_many :role_users, class_name: 'Spree::RoleUser', foreign_key: :user_id, dependent: :destroy
       has_many :spree_roles, through: :role_users, class_name: 'Spree::Role', source: :role
@@ -52,6 +55,19 @@ module Spree
 
     def nullify_approver_id_in_approved_orders
       Spree::Order.where(approver_id: id).update_all(approver_id: nil)
+    end
+
+    def clone_billing_address
+      if bill_address && ship_address.nil?
+        self.ship_address = bill_address.clone
+      else
+        ship_address.attributes = bill_address.attributes.except('id', 'updated_at', 'created_at')
+      end
+      true
+    end
+
+    def use_billing?
+      use_billing.in?([true, 'true', '1'])
     end
   end
 end

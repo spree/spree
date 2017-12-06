@@ -44,6 +44,7 @@
 //= require spree/backend/taxon_tree_menu
 //= require spree/backend/taxonomy
 //= require spree/backend/taxons
+//= require spree/backend/users/edit
 //= require spree/backend/user_picker
 //= require spree/backend/tag_picker
 //= require spree/backend/variant_autocomplete

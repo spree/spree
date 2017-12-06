@@ -160,6 +160,17 @@ describe 'Users', type: :feature do
       expect(user_a.reload.bill_address.address1).to eq '1313 Mockingbird Ln'
     end
 
+    it 'can set shipping address to be the same as billing address' do
+      click_link 'Addresses'
+
+      within('#admin_user_edit_addresses') do
+        find('#user_use_billing').click
+        click_button 'Update'
+      end
+
+      expect(user_a.reload.ship_address.same_as?(user_a.reload.bill_address)).to eq true
+    end
+
     context 'no api key exists' do
       it 'can generate a new api key' do
         within('#admin_user_edit_api_key') do
