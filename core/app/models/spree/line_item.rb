@@ -23,7 +23,7 @@ module Spree
     validates_with Stock::AvailabilityValidator
     validate :ensure_proper_currency, if: -> { order.present? }
 
-    before_destroy :verify_order_inventory, if: -> { order.has_checkout_step?('delivery') }
+    before_destroy :verify_order_inventory_before_destroy, if: -> { order.has_checkout_step?('delivery') }
 
     before_destroy :destroy_inventory_units
 
@@ -131,6 +131,10 @@ module Spree
     end
 
     def verify_order_inventory
+      Spree::OrderInventory.new(order, self).verify(target_shipment, is_updated: true)
+    end
+
+    def verify_order_inventory_before_destroy
       Spree::OrderInventory.new(order, self).verify(target_shipment)
     end
 

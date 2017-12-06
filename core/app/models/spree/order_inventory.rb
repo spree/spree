@@ -17,17 +17,19 @@ module Spree
     # In case shipment is passed the stock location should only unstock or
     # restock items if the order is completed. That is so because stock items
     # are always unstocked when the order is completed through +shipment.finalize+
-    def verify(shipment = nil)
-      if order.completed? || shipment.present?
-        units_count = inventory_units.reload.sum(&:quantity)
-        if units_count < line_item.quantity
-          quantity = line_item.quantity - units_count
+    def verify(shipment = nil, is_updated: false)
+      return unless order.completed? || shipment.present?
 
-          shipment = determine_target_shipment unless shipment
-          add_to_shipment(shipment, quantity)
-        elsif (units_count > line_item.quantity) || (units_count == line_item.quantity && !line_item.changed?)
-          remove(units_count, shipment)
-        end
+      units_count = inventory_units.reload.sum(&:quantity)
+      line_item_changed = is_updated ? !line_item.saved_changes? : !line_item.changed?
+
+      if units_count < line_item.quantity
+        quantity = line_item.quantity - units_count
+
+        shipment = determine_target_shipment unless shipment
+        add_to_shipment(shipment, quantity)
+      elsif (units_count > line_item.quantity) || (units_count == line_item.quantity && line_item_changed)
+        remove(units_count, shipment)
       end
     end
 
