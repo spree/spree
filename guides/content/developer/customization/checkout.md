@@ -327,7 +327,7 @@ a translation for that state in the relevant translation file located in the
 
 ```ruby
 en:
-  order_state:
+  order_states:
     new_step: New Step
 ```
 

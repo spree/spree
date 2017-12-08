@@ -31,7 +31,7 @@ module Spree
     def checkout_progress(numbers: false)
       states = @order.checkout_steps
       items = states.each_with_index.map do |state, i|
-        text = Spree.t("order_state.#{state}").titleize
+        text = Spree.t("order_states.#{state}").titleize
         text.prepend("#{i.succ}. ") if numbers
 
         css_classes = []
