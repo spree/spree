@@ -116,7 +116,9 @@ module Spree
     def update_price_from_modifier(currency, opts)
       if currency
         self.currency = currency
-        self.price = variant.price_in(currency).amount +
+        # variant.price_in(currency).amount can be nil if
+        # there's no price for this currency
+        self.price = (variant.price_in(currency).amount || 0) +
           variant.price_modifier_amount_in(currency, opts)
       else
         self.price = variant.price +
