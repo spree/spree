@@ -339,4 +339,50 @@ describe Spree::LineItem, type: :model do
       expect(line_item.reload.pre_tax_amount).to eq(4.2051)
     end
   end
+
+  describe '#update_price_from_modifier' do
+    context 'with specified currency' do
+      let(:line_item) { create :line_item }
+
+      it 'sets currency' do
+        expect do
+          line_item.send(:update_price_from_modifier, 'EUR', {})
+        end.to change { line_item.currency }.to('EUR').from('USD')
+      end
+
+      context 'variant with price in this currency' do
+        it 'sets the proper price' do
+          line_item.variant.prices.create(amount: 10, currency: 'EUR')
+          expect(line_item.variant).to receive(:gift_wrap_price_modifier_amount_in).with('EUR', true).and_return 1.99
+          expect do
+            line_item.send(:update_price_from_modifier, 'EUR', gift_wrap: true)
+          end.to change { line_item.price.to_f }.to(11.99)
+        end
+      end
+
+      context 'variant without price in this currency' do
+        it 'sets the proper price' do
+          expect(line_item.variant).to receive(:gift_wrap_price_modifier_amount_in).with('EUR', true).and_return 1.99
+          expect do
+            line_item.send(:update_price_from_modifier, 'EUR', gift_wrap: true)
+          end.to change { line_item.price.to_f }.to(1.99)
+        end
+      end
+    end
+
+    context 'without currency' do
+      let(:line_item) { create :line_item, variant: create(:variant, price: 10) }
+
+      before do
+        line_item.order.currency = nil
+      end
+
+      it 'sets the proper price' do
+        expect(line_item.variant).to receive(:gift_wrap_price_modifier_amount).with(true).and_return 1.99
+        expect do
+          line_item.send(:update_price_from_modifier, nil, gift_wrap: true)
+        end.to change { line_item.price.to_f }.to(11.99).from(10)
+      end
+    end
+  end
 end
