@@ -21,8 +21,8 @@
       <% @state_changes.each do |state_change| %>
         <tr>
           <td><%= Spree.t("state_machine_states.#{state_change.name}") %></td>
-          <td><%= state_change.previous_state ? Spree.t(state_change.previous_state, scope: "#{ state_change.name }_state") : Spree.t(:previous_state_missing) %></td>
-          <td><%= Spree.t(state_change.next_state, scope: "#{ state_change.name }_state") %></td>
+          <td><%= state_change.previous_state ? Spree.t(state_change.previous_state, scope: "#{ state_change.name }_states") : Spree.t(:previous_state_missing) %></td>
+          <td><%= Spree.t(state_change.next_state, scope: "#{ state_change.name }_states") %></td>
           <td>
             <% if state_change.user %>
               <% user_login = state_change.user.try(:login) || state_change.user.try(:email) %>
