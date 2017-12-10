@@ -230,6 +230,9 @@ toggleItemEdit = function(){
 
 startItemSplit = function(event){
   event.preventDefault();
+  $('.cancel-split').each(function(){
+    $(this).click()
+  })
   var link = $(this);
   link.parent().find('a.edit-item').toggle();
   link.parent().find('a.split-item').toggle();
