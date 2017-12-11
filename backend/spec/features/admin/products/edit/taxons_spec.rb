@@ -25,7 +25,7 @@ describe 'Product Taxons', type: :feature, js: true do
       visit spree.admin_products_path
       within_row(1) { click_icon :edit }
 
-      expect(find('.select2-search-choice').text).to eq(taxon_1.name)
+      expect(find('.select2-search-choice').text).to eq("#{taxon_1.parent.name} -> #{taxon_1.name}")
       expect(selected_taxons).to match_array([taxon_1.id])
 
       select2_search 'Clothing', from: 'Taxons'

@@ -3,11 +3,22 @@
 require 'spec_helper'
 
 describe Spree::Taxon, type: :model do
-  let(:taxon) { FactoryBot.build(:taxon, name: 'Ruby on Rails') }
+  let(:taxon) { FactoryBot.build(:taxon, name: 'Ruby on Rails', parent_id: nil) }
+  let(:valid_taxon) { FactoryBot.build(:taxon, name: 'Vaild Rails', parent_id: 1, taxonomy_id: 2) }
 
   describe '#to_param' do
     subject { super().to_param }
     it { is_expected.to eql taxon.permalink }
+  end
+
+  context 'check_for_root' do
+    it 'should not validate the taxon' do
+      expect(taxon.valid?).to eq false
+    end
+
+    it 'should validate the taxon' do
+      expect(valid_taxon.valid?).to eq true
+    end
   end
 
   context 'set_permalink' do
@@ -23,7 +34,7 @@ describe Spree::Taxon, type: :model do
     end
 
     it 'stores old slugs in FriendlyIds history' do
-      # Stub out unrelated methods that cannot handle a save without an id
+      # Stub out the unrelated methods that cannot handle a save without an id
       allow(subject).to receive(:set_depth!)
       expect(subject).to receive(:create_slug)
       subject.permalink = 'custom-slug'
@@ -71,10 +82,10 @@ describe Spree::Taxon, type: :model do
 
   # Regression test for #2620
   context 'creating a child node using first_or_create' do
-    let(:taxonomy) { create(:taxonomy) }
+    let!(:taxonomy) { create(:taxonomy) }
 
     it 'does not error out' do
-      expect { taxonomy.root.children.unscoped.where(name: 'Some name').first_or_create }.not_to raise_error
+      expect { taxonomy.root.children.unscoped.where(name: 'Some name', parent_id: taxonomy.taxons.first.id).first_or_create }.not_to raise_error
     end
   end
 

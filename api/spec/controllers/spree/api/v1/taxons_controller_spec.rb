@@ -4,22 +4,17 @@ module Spree
   describe Api::V1::TaxonsController, type: :controller do
     render_views
 
-    let(:taxonomy) { create(:taxonomy) }
-    let(:taxon) { create(:taxon, name: 'Ruby', taxonomy: taxonomy) }
-    let(:taxon2) { create(:taxon, name: 'Rails', taxonomy: taxonomy) }
+    let!(:taxonomy) { create(:taxonomy) }
+    let!(:taxon) { create(:taxon, name: 'Ruby', taxonomy: taxonomy, parent_id: taxonomy.taxons.first.id) }
+    let!(:taxon2) { create(:taxon, name: 'Rails', taxonomy: taxonomy, parent_id: taxon.id) }
+    let!(:taxon3) { create(:taxon, name: 'React', taxonomy: taxonomy, parent_id: taxon2.id) }
     let(:attributes) { ['id', 'name', 'pretty_name', 'permalink', 'parent_id', 'taxonomy_id', 'meta_title', 'meta_description'] }
 
-    before do
-      stub_authentication!
-      taxon2.children << create(:taxon, name: '3.2.2', taxonomy: taxonomy)
-      taxon.children << taxon2
-      taxonomy.root.children << taxon
-    end
+    before { stub_authentication! }
 
     context 'as a normal user' do
       it 'gets all taxons for a taxonomy' do
         api_get :index, taxonomy_id: taxonomy.id
-
         expect(json_response['taxons'].first['name']).to eq taxon.name
         children = json_response['taxons'].first['taxons']
         expect(children.count).to eq 1
@@ -36,7 +31,7 @@ module Spree
       end
 
       it 'paginates through taxons' do
-        new_taxon = create(:taxon, name: 'Go', taxonomy: taxonomy)
+        new_taxon = create(:taxon, name: 'Go', taxonomy: taxonomy, parent_id: taxonomy.taxons.first.id)
         taxonomy.root.children << new_taxon
         expect(taxonomy.root.children.count).to eql(2)
         api_get :index, taxonomy_id: taxonomy.id, page: 1, per_page: 1
@@ -153,6 +148,11 @@ module Spree
         errors = json_response['errors']
 
         expect(taxonomy.reload.root.children.count).to eq 1
+      end
+
+      it 'cannot create another root taxon' do
+        api_post :create, taxonomy_id: taxonomy.id, taxon: { name: 'foo', parent_id: nil }
+        expect(json_response[:errors][:root_conflict].first).to eq 'this taxonomy already has a root taxon'
       end
 
       it 'cannot create a new taxon with invalid taxonomy_id' do
