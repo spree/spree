@@ -27,21 +27,31 @@ module Spree
         end
 
         def create
-          authorize! :create, Order
-          order_user = if @current_user_roles.include?('admin') && order_params[:user_id]
-                         Spree.user_class.find(order_params[:user_id])
-                       else
-                         current_api_user
-          end
+          authorize! :create, Spree::Order
+          if can?(:admin, Spree::Order)
+            order_user = if @current_user_roles.include?('admin') && order_params[:user_id]
+                          Spree.user_class.find(order_params[:user_id])
+                        else
+                          current_api_user
+            end
 
-          import_params = if @current_user_roles.include?('admin')
-                            params[:order].present? ? params[:order].permit! : {}
-                          else
-                            order_params
-          end
+            import_params = if @current_user_roles.include?('admin')
+                              params[:order].present? ? params[:order].permit! : {}
+                            else
+                              order_params
+                            end
 
-          @order = Spree::Core::Importer::Order.import(order_user, import_params)
-          respond_with(@order, default_template: :show, status: 201)
+            @order = Spree::Core::Importer::Order.import(order_user, import_params)
+
+            respond_with(@order, default_template: :show, status: 201)
+          else
+            @order = Spree::Order.create!(user: current_api_user, store: current_store)
+            if @order.contents.update_cart(order_params)
+              respond_with(@order, default_template: :show, status: 201)
+            else
+              invalid_resource!(@order)
+            end
+          end
         end
 
         def empty
