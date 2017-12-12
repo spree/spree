@@ -232,8 +232,8 @@ module Spree
       assert_unauthorized!
     end
 
-    it "can create an order" do
-      api_post :create, order: { line_items: [{ variant_id: variant.to_param, quantity: 5 }] }
+    it 'can create an order' do
+      api_post :create, order: { line_items: { '0' => { variant_id: variant.to_param, quantity: 5 }} }
       expect(response.status).to eq(201)
 
       order = Order.last
@@ -255,23 +255,9 @@ module Spree
       expect(json_response['email']).to eq "guest@spreecommerce.org"
     end
 
-    # Regression test for #3404
-    it "can specify additional parameters for a line item" do
-      expect(Order).to receive(:create!).and_return(order = Spree::Order.new)
-      allow(order).to receive(:associate_user!)
-      allow(order).to receive_message_chain(:contents, :add).and_return(line_item = double('LineItem'))
-      expect(line_item).to receive(:update_attributes!).with(hash_including("special" => "foo"))
-
-      allow(controller).to receive_messages(permitted_line_item_attributes: [:id, :variant_id, :quantity, :special])
+    it 'cannot arbitrarily set the line items price' do
       api_post :create, order: {
-        line_items: [{ variant_id: variant.to_param, quantity: 5, special: "foo" }]
-      }
-      expect(response.status).to eq(201)
-    end
-
-    it "cannot arbitrarily set the line items price" do
-      api_post :create, order: {
-        line_items: [{ price: 33.0, variant_id: variant.to_param, quantity: 5 }]
+        line_items: { '0' => { price: 33.0, variant_id: variant.to_param, quantity: 5 }}
       }
 
       expect(response.status).to eq 201
@@ -291,18 +277,7 @@ module Spree
       end
     end
 
-    # Regression test for #3404
-    it "does not update line item needlessly" do
-      expect(Order).to receive(:create!).and_return(order = Spree::Order.new)
-      allow(order).to receive(:associate_user!)
-      line_item = double('LineItem')
-      allow(line_item).to receive_messages(save!: line_item)
-      allow(order).to receive_message_chain(:contents, :add).and_return(line_item)
-      expect(line_item).not_to receive(:update_attributes)
-      api_post :create, order: { line_items: [{ variant_id: variant.to_param, quantity: 5 }] }
-    end
-
-    it "can create an order without any parameters" do
+    it 'can create an order without any parameters' do
       expect { api_post :create }.not_to raise_error
       expect(response.status).to eq(201)
       order = Order.last
