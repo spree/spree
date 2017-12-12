@@ -16,6 +16,7 @@ module Spree
         end
 
         def create
+          @order.validate_payments_attributes([payment_params])
           @payment = @order.payments.build(payment_params)
           if @payment.save
             respond_with(@payment, status: 201, default_template: :show)
