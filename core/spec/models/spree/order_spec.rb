@@ -1028,6 +1028,25 @@ describe Spree::Order, type: :model do
     end
   end
 
+  describe '#validate_payments_attributes' do
+    let(:payment_method) { create(:credit_card_payment_method) }
+    let(:attributes) do
+      [{ amount: 50, payment_method_id: payment_method.id }]
+    end
+    context 'with existing payment method' do
+      it "doesn't raise error and returns collection" do
+        expect(order.validate_payments_attributes(attributes)).to eq attributes
+      end
+    end
+
+    context 'not existing payment method' do
+    let(:payment_method) { create(:credit_card_payment_method, display_on: 'backend') }
+      it 'raises RecordNotFound' do
+        expect { order.validate_payments_attributes(attributes) }.to raise_error(ActiveRecord::RecordNotFound)
+      end
+    end
+  end
+
   describe 'order transit to returned state from resumed state' do
     let!(:resumed_order) { create(:order_with_line_items, line_items_count: 3, state: :resumed) }
 
