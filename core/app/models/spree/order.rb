@@ -604,6 +604,22 @@ module Spree
     end
     alias_method :fully_discounted, :fully_discounted?
 
+    def payments_attributes=(attributes)
+      validate_payments_attributes(attributes)
+      super(attributes)
+    end
+
+    def validate_payments_attributes(attributes)
+      # Ensure the payment methods specified are allowed for this user
+      payment_methods = Spree::PaymentMethod.where(id: available_payment_methods.map(&:id))
+      attributes.each do |payment_attributes|
+        payment_method_id = payment_attributes[:payment_method_id]
+
+        # raise RecordNotFound unless it is an allowed payment method
+        payment_methods.find(payment_method_id) if payment_method_id
+      end
+    end
+
     private
 
     def link_by_email
