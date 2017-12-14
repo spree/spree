@@ -85,7 +85,7 @@ module Spree::Preferences
     end
 
     def should_persist?
-      @persistence && ActiveRecord::Base.connected? && Spree::Preference.table_exists?
+      @persistence && Spree::Preference.table_exists?
     end
   end
 
