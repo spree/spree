@@ -86,6 +86,17 @@ module Spree
 
     end
 
+    def create_dummy_model
+      system "bundle exec rails generate model Spree::DummyModel name:string position:integer > #{File::NULL}"
+      inside dummy_path do
+        inject_into_file "app/models/spree/dummy_model.rb", %Q[
+acts_as_list
+validates :name, presence: true
+        ], before: /^end/, verbose: true
+      end
+    end
+
+
     attr :lib_name
     attr :database
 
