@@ -180,9 +180,7 @@ describe 'StoreCredit' do
         end
 
         context 'originator is present' do
-          with_model 'OriginatorThing', scope: :all
-
-          let(:originator) { OriginatorThing.create! } # won't actually be a user. just giving it a valid model here
+          let(:originator) { create(:refund, amount: 10) }
 
           subject do
             store_credit.authorize(added_authorization_amount, store_credit.currency,
@@ -335,9 +333,7 @@ describe 'StoreCredit' do
       end
 
       context 'originator is present' do
-        with_model 'OriginatorThing', scope: :all
-
-        let(:originator) { OriginatorThing.create! } # won't actually be a user. just giving it a valid model here
+        let(:originator) { create(:refund, amount: 10) }
 
         it 'records the originator' do
           expect { subject }.to change { Spree::StoreCreditEvent.count }.by(1)
@@ -407,9 +403,7 @@ describe 'StoreCredit' do
       end
 
       context 'originator is present' do
-        with_model 'OriginatorThing', scope: :all
-
-        let(:originator) { OriginatorThing.create! } # won't actually be a user. just giving it a valid model here
+        let(:originator) { create(:refund, amount: 10) }
 
         it 'records the originator' do
           expect { subject }.to change { Spree::StoreCreditEvent.count }.by(1)
@@ -534,9 +528,7 @@ describe 'StoreCredit' do
         end
 
         context 'originator is present' do
-          with_model 'OriginatorThing', scope: :all
-
-          let(:originator) { OriginatorThing.create! } # won't actually be a user. just giving it a valid model here
+          let(:originator) { create(:refund, amount: 10) }
 
           it 'records the originator' do
             expect { subject }.to change { Spree::StoreCreditEvent.count }.by(1)
