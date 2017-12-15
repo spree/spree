@@ -35,7 +35,6 @@ group :test do
   gem 'webmock', '~> 3.0.1'
   gem 'poltergeist', '~> 1.10'
   gem 'timecop'
-  gem 'with_model'
   gem 'rails-controller-testing'
 end
 

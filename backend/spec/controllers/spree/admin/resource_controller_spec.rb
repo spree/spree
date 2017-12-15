@@ -29,7 +29,6 @@ describe Spree::Admin::DummyModelsController, type: :controller do
     end
   end
 
-
   describe '#new' do
     subject do
       spree_get :new

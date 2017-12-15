@@ -53,8 +53,6 @@ RSpec.configure do |config|
     reset_spree_preferences
   end
 
-  config.extend WithModel
-
   config.include FactoryBot::Syntax::Methods
   config.include Spree::TestingSupport::Preferences
   config.include Spree::TestingSupport::Kernel
