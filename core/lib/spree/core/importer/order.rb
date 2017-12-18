@@ -94,7 +94,7 @@ module Spree
             if existing
               existing.quantity += 1
             else
-              line_item = order.line_items.detect { |ln| ln.variant_id = inventory_unit_param[:variant_id] }
+              line_item = order.line_items.detect { |ln| ln.variant_id == inventory_unit_param[:variant_id] }
               inventory_units << InventoryUnit.new(line_item: line_item, order_id: order.id, variant: line_item.variant, quantity: 1)
             end
 
