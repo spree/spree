@@ -7,10 +7,11 @@ module Spree
 
       def initialize(adjustable)
         @adjustable = adjustable
-        adjustable.reload if shipment? && adjustable.persisted?
+        adjustable.reload if shipment? && adjustable && adjustable.persisted?
       end
 
       def update
+        return unless @adjustable
         return unless @adjustable.persisted?
 
         totals = {
