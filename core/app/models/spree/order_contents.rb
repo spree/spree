@@ -8,19 +8,25 @@ module Spree
 
     def add(variant, quantity = 1, options = {})
       timestamp = Time.current
-      line_item = add_to_line_item(variant, quantity, options)
-      options[:line_item_created] = true if timestamp <= line_item.created_at
-      after_add_or_remove(line_item, options)
+      ActiveRecord::Base.transaction do
+        line_item = add_to_line_item(variant, quantity, options)
+        options[:line_item_created] = true if timestamp <= line_item.created_at
+        after_add_or_remove(line_item, options)
+      end
     end
 
     def remove(variant, quantity = 1, options = {})
-      line_item = remove_from_line_item(variant, quantity, options)
-      after_add_or_remove(line_item, options)
+      ActiveRecord::Base.transaction do
+        line_item = remove_from_line_item(variant, quantity, options)
+        after_add_or_remove(line_item, options)
+      end
     end
 
     def remove_line_item(line_item, options = {})
-      line_item.destroy!
-      after_add_or_remove(line_item, options)
+      ActiveRecord::Base.transaction do
+        line_item.destroy!
+        after_add_or_remove(line_item, options)
+      end
     end
 
     def update_cart(params)
@@ -29,11 +35,13 @@ module Spree
         # Update totals, then check if the order is eligible for any cart promotions.
         # If we do not update first, then the item total will be wrong and ItemTotal
         # promotion rules would not be triggered.
-        persist_totals
-        PromotionHandler::Cart.new(order).activate
-        order.ensure_updated_shipments
-        order.payments.store_credits.checkout.destroy_all
-        persist_totals
+        ActiveRecord::Base.transaction do
+          persist_totals
+          PromotionHandler::Cart.new(order).activate
+          order.ensure_updated_shipments
+          order.payments.store_credits.checkout.destroy_all
+          persist_totals
+        end
         true
       else
         false
