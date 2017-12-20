@@ -21,6 +21,7 @@ module Spree
 
     validates :name, presence: true, uniqueness: { scope: [:parent_id, :taxonomy_id], allow_blank: true }
     validates :permalink, uniqueness: { case_sensitive: false }
+    validate :check_for_root, on: :create
     with_options length: { maximum: 255 }, allow_blank: true do
       validates :meta_keywords
       validates :meta_description
@@ -92,6 +93,12 @@ module Spree
       ancestors.update_all(updated_at: Time.current)
       # Have taxonomy touch happen in #touch_ancestors_and_taxonomy rather than association option in order for imports to override.
       taxonomy.try!(:touch)
+    end
+
+    def check_for_root
+      if taxonomy.try(:root).present? && parent_id == nil
+        errors.add(:root_conflict, 'this taxonomy already has a root taxon')
+      end
     end
   end
 end
