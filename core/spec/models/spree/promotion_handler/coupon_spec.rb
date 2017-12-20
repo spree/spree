@@ -300,10 +300,14 @@ module Spree
 
         context 'with a CreateLineItems action' do
           let!(:variant) { create(:variant) }
-          let!(:action) { Promotion::Actions::CreateLineItems.create(promotion: promotion, promotion_action_line_items_attributes: { '0': { variant_id: variant.id } }) }
+          let!(:action) { Promotion::Actions::CreateLineItems.create(promotion: promotion) }
           let(:order) { create(:order) }
 
           before do
+            action.promotion_action_line_items.create(
+              variant: variant,
+              quantity: 1
+            )
             allow(order).to receive_messages(coupon_code: '10off')
           end
 
