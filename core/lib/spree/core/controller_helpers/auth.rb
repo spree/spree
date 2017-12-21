@@ -26,7 +26,7 @@ module Spree
 
         def set_guest_token
           if cookies.signed[:guest_token].blank?
-            cookies.permanent.signed[:guest_token] = generate_guest_token
+            cookies.permanent.signed[:guest_token] = { value: generate_guest_token, httponly: true }
           end
         end
 

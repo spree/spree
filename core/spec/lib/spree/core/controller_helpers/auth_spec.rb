@@ -51,6 +51,10 @@ describe Spree::Core::ControllerHelpers::Auth, type: :controller do
       get :index
       expect(response.cookies['guest_token']).not_to be_nil
     end
+    it 'sets httponly flag' do
+      get :index
+      expect(response['Set-Cookie']).to include('HttpOnly')
+    end
   end
 
   describe '#store_location' do
