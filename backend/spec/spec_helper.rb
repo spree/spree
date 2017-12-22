@@ -128,6 +128,9 @@ RSpec.configure do |config|
   config.around :each, type: :feature do |ex|
     ex.run_with_retry retry: 3
   end
+
+  config.order = :random
+  Kernel.srand config.seed
 end
 
 module Spree
