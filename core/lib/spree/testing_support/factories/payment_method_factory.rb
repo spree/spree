@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :check_payment_method, class: Spree::PaymentMethod::Check do
     name 'Check'
   end
