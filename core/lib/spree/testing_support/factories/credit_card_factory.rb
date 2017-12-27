@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :credit_card, class: Spree::CreditCard do
     verification_value 123
     month 12

@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :address, aliases: [:bill_address, :ship_address], class: Spree::Address do
     firstname 'John'
     lastname 'Doe'

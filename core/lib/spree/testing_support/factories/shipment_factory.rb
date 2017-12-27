@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :shipment, class: Spree::Shipment do
     tracking 'U10000'
     cost 100.00

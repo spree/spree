@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :store, class: Spree::Store do
     sequence(:code) { |i| "spree_#{i}" }
     name 'Spree Test Store'
