@@ -2,7 +2,7 @@ AllCops:
   TargetRubyVersion: 2.2
   Exclude:
     - '**/sandbox/**/*'
-    - '**/db/**/*'
+    - '**/db/migrate/*'
     - '**/Gemfile'
     - '**/Gemfile.lock'
     - '**/Rakefile'
@@ -10,7 +10,6 @@ AllCops:
     - 'guides/**/*'
     - '**/*.gemspec'
     - '**/dummy/**/*'
-    - '**/migrate/**/*'
     - '**/vendor/**/*'
 
 Layout/MultilineOperationIndentation:
