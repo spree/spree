@@ -1,0 +1,67 @@
+---
+extends: "eslint-config-airbnb-es5"
+
+plugins:
+  - coffeescript
+
+globals:
+  Spree: true
+  analytics: true
+  ga: true
+  _: true
+  Select2: true
+  Handlebars: true
+  Raphael: true
+
+env:
+  browser: true
+  jquery: true
+
+rules:
+  ### Variables
+  no-undef: 2
+  no-unused-vars: [1, { vars: all, args: none }]
+
+  ### Stylistic issues
+  indent: [1, 2, { SwitchCase: 1, VariableDeclarator: 2 }]
+  id-length: [1, { min: 2, exceptions: [_, e, i, k, v] }]
+  semi: 0
+  camelcase: 1
+  comma-style: [1, last]
+  comma-dangle: [1, never]
+  object-curly-newline: 1
+  object-curly-spacing: 1
+  prefer-destructuring: 0
+  global-require: 1
+  eol-last: 1
+  quotes: 1
+  new-cap: 0
+  space-infix-ops: 1
+  eqeqeq: 1
+  keyword-spacing: 1
+  no-redeclare: 1
+  space-before-blocks: 1
+  brace-style: 1
+  space-before-function-paren: 1
+  spaced-comment: 1
+  padded-blocks: 1
+  consistent-return: 1
+  one-var: 0
+  no-extra-semi: 1
+  key-spacing: 1
+  dot-notation: 0
+  no-shadow: 1
+  no-param-reassign: 1
+  space-unary-ops: 1
+  no-trailing-space: 1
+  comma-spacing: 1
+  no-inner-declarations: 1
+  no-trailing-spaces: 1
+  no-implied-eval: 1
+
+  prefer-template: 1
+  function-paren-newline: 1
+  no-mixed-operators: 1
+  max-len: [1, 150, 2]
+  arrow-parens: 1
+  no-else-return: 1
