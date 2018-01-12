@@ -155,7 +155,7 @@ module Spree
     scope :incomplete, -> { where(completed_at: nil) }
 
     # shows completed orders first, by their completed_at date, then uncompleted orders by their created_at
-    scope :reverse_chronological, -> { order('spree_orders.completed_at IS NULL', completed_at: :desc, created_at: :desc) }
+    scope :reverse_chronological, -> { order(Arel.sql('spree_orders.completed_at IS NULL'), completed_at: :desc, created_at: :desc) }
 
     # Use this method in other gems that wish to register their own custom logic
     # that should be called after Order#update

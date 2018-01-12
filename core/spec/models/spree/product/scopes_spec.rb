@@ -150,22 +150,22 @@ describe 'Product scopes', type: :model do
     context 'define scope' do
       context 'ascend_by_updated_at' do
         context 'on class' do
-          it { expect(Spree::Product.ascend_by_updated_at.to_sql).to eq Spree::Product.order("#{Spree::Product.quoted_table_name}.updated_at ASC").to_sql }
+          it { expect(Spree::Product.ascend_by_updated_at.to_sql).to eq Spree::Product.order(Arel.sql("#{Spree::Product.quoted_table_name}.updated_at ASC")).to_sql }
         end
 
         context 'on ActiveRecord::Relation' do
-          it { expect(Spree::Product.limit(2).ascend_by_updated_at.to_sql).to eq Spree::Product.limit(2).order("#{Spree::Product.quoted_table_name}.updated_at ASC").to_sql }
+          it { expect(Spree::Product.limit(2).ascend_by_updated_at.to_sql).to eq Spree::Product.limit(2).order(Arel.sql("#{Spree::Product.quoted_table_name}.updated_at ASC")).to_sql }
           it { expect(Spree::Product.limit(2).ascend_by_updated_at.to_sql).to eq Spree::Product.ascend_by_updated_at.limit(2).to_sql }
         end
       end
 
       context 'descend_by_name' do
         context 'on class' do
-          it { expect(Spree::Product.descend_by_name.to_sql).to eq Spree::Product.order("#{Spree::Product.quoted_table_name}.name DESC").to_sql }
+          it { expect(Spree::Product.descend_by_name.to_sql).to eq Spree::Product.order(Arel.sql("#{Spree::Product.quoted_table_name}.name DESC")).to_sql }
         end
 
         context 'on ActiveRecord::Relation' do
-          it { expect(Spree::Product.limit(2).descend_by_name.to_sql).to eq Spree::Product.limit(2).order("#{Spree::Product.quoted_table_name}.name DESC").to_sql }
+          it { expect(Spree::Product.limit(2).descend_by_name.to_sql).to eq Spree::Product.limit(2).order(Arel.sql("#{Spree::Product.quoted_table_name}.name DESC")).to_sql }
           it { expect(Spree::Product.limit(2).descend_by_name.to_sql).to eq Spree::Product.descend_by_name.limit(2).to_sql }
         end
       end
