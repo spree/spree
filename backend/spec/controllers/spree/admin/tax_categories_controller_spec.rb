@@ -9,7 +9,7 @@ module Spree
         subject { spree_get :index }
 
         it 'should be successful' do
-          expect(subject).to be_success
+          expect(subject).to be_successful
         end
       end
 

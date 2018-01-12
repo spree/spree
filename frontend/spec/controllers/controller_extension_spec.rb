@@ -50,7 +50,7 @@ describe Spree::CustomController, type: :controller do
         describe 'GET' do
           it 'has value success' do
             spree_get :index
-            expect(response).to be_success
+            expect(response).to be_successful
             assert (response.body =~ /success!!!/)
           end
         end
@@ -67,7 +67,7 @@ describe Spree::CustomController, type: :controller do
         describe 'GET' do
           it 'has value success' do
             spree_get :index
-            expect(response).to be_success
+            expect(response).to be_successful
             assert (response.body =~ /success!!!/)
           end
         end
@@ -101,7 +101,7 @@ describe Spree::CustomController, type: :controller do
         describe 'POST' do
           it 'has value success' do
             spree_post :create
-            expect(response).to be_success
+            expect(response).to be_successful
             assert (response.body =~ /success!/)
           end
         end

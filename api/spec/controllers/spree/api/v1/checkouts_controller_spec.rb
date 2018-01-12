@@ -25,7 +25,7 @@ module Spree
         end
 
         it 'should not generate double_render_error' do
-          expect(response).to be_success
+          expect(response).to be_successful
         end
       end
 

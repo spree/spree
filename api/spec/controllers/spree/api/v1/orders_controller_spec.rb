@@ -98,7 +98,7 @@ module Spree
       context 'an incomplete order exists' do
         it 'returns that order' do
           expect(JSON.parse(subject.body)['id']).to eq order.id
-          expect(subject).to be_success
+          expect(subject).to be_successful
         end
       end
 
@@ -320,7 +320,7 @@ module Spree
             email: 'hublock@spreecommerce.com'
           }
 
-          expect(response).to be_success
+          expect(response).to be_successful
         end
       end
 
