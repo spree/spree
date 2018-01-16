@@ -12,6 +12,8 @@ Spree::Core::Engine.add_routes do
 
     resources :zones
 
+    resources :stores
+
     resources :countries do
       resources :states
     end
