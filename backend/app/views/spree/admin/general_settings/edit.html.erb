@@ -7,56 +7,6 @@
 
     <fieldset class="general no-border-top">
 
-      <%= fields_for :store do |f| %>
-        <div class="row">
-          <div class="col-xs-12 col-md-6">
-            <div class="form-group" data-hook="admin_general_setting_input_name">
-              <%= f.label :name %>
-              <%= f.text_field :name, class: 'form-control' %>
-            </div>
-          </div>
-
-          <div class="col-xs-12 col-md-6">
-            <div class="form-group" data-hook="admin_general_setting_input_seo_title">
-              <%= f.label :seo_title %>
-              <%= f.text_field :seo_title, class: 'form-control'  %>
-            </div>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="col-xs-12 col-md-6">
-            <div class="form-group" data-hook="admin_general_setting_input_meta_keywords">
-              <%= f.label :meta_keywords %>
-              <%= f.text_field :meta_keywords, class: 'form-control'  %>
-            </div>
-          </div>
-
-          <div class="col-xs-12 col-md-6">
-            <div class="form-group" data-hook="admin_general_setting_input_meta_description">
-              <%= f.label :meta_description %>
-              <%= f.text_field :meta_description, class: 'form-control'  %>
-            </div>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="col-xs-12 col-md-6">
-            <div class="form-group" data-hook="admin_general_setting_input_url">
-              <%= f.label :url %>
-              <%= f.text_field :url, class: 'form-control'  %>
-            </div>
-          </div>
-
-          <div class="col-xs-12 col-md-6">
-            <div class="form-group" data-hook="admin_general_setting_mail_from_address">
-              <%= f.label :mail_from_address %>
-              <%= f.text_field :mail_from_address, class: 'form-control'  %>
-            </div>
-          </div>
-        </div>
-      <% end %>
-
       <div class="row">
         <div class="col-xs-12 col-md-6">
           <%#-------------------------------------------------%>
