@@ -56,6 +56,14 @@ Spree.ready(function ($) {
     return $("#add-to-cart-button").attr("disabled", !inStock);
   };
 
+
+  $("#add-to-cart-form").on("ajax:success", function (e, data, status, xhr) {
+      console.log(e);
+      console.log(data);
+      console.log(status);
+      console.log(xhr);
+  });
+
   var radios = $("#product-variants input[type='radio']");
 
   if (radios.length > 0) {

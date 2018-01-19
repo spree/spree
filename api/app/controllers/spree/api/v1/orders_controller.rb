@@ -2,9 +2,10 @@ module Spree
   module Api
     module V1
       class OrdersController < Spree::Api::BaseController
-        skip_before_action :authenticate_user, only: :apply_coupon_code
+        respond_to :html, :json
+        skip_before_action :authenticate_user, only: [:apply_coupon_code, :populate]
 
-        before_action :find_order, except: [:create, :mine, :current, :index, :update]
+        before_action :find_order, except: [:create, :mine, :current, :index, :update, :populate]
 
         # Dynamically defines our stores checkout steps to ensure we check authorization on each step.
         Order.checkout_steps.keys.each do |step|
@@ -30,10 +31,10 @@ module Spree
           authorize! :create, Spree::Order
           if can?(:admin, Spree::Order)
             order_user = if @current_user_roles.include?('admin') && order_params[:user_id]
-                          Spree.user_class.find(order_params[:user_id])
-                        else
-                          current_api_user
-            end
+                           Spree.user_class.find(order_params[:user_id])
+                         else
+                           current_api_user
+                         end
 
             import_params = if @current_user_roles.include?('admin')
                               params[:order].present? ? params[:order].permit! : {}
@@ -110,6 +111,36 @@ module Spree
           @handler = PromotionHandler::Coupon.new(@order).apply
           status = @handler.successful? ? 200 : 422
           render 'spree/api/v1/promotions/handler', status: status
+        end
+
+        def populate
+          # authorize! :update, @order, order_token
+          order    = current_order(create_order_if_necessary: true)
+          variant  = Spree::Variant.find(params[:variant_id])
+          quantity = params[:quantity].to_i
+          options  = params[:options] || {}
+
+          if quantity.between?(1, 2_147_483_647)
+            begin
+              order.contents.add(variant, quantity, options)
+              order.update_line_item_prices!
+              order.create_tax_charge!
+              order.update_with_updater!
+            rescue ActiveRecord::RecordInvalid => e
+              error = e.record.errors.full_messages.join(', ')
+            end
+          else
+            error = Spree.t(:please_enter_reasonable_quantity)
+          end
+          if error
+            flash[:error] = error
+            redirect_back_or_default(spree.root_path)
+          else
+            respond_with(order) do |format|
+              format.html { redirect_to(cart_path(variant_id: variant.id)) }
+              format.json { render json: order }
+            end
+          end
         end
 
         private
