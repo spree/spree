@@ -1,8 +1,8 @@
 require 'digest/sha1'
 
-module Nanoc3::DataSources
+module Nanoc::DataSources
 
-  class Static < Nanoc3::DataSource
+  class Static < Nanoc::DataSource
 
     identifier :static
 
@@ -19,16 +19,13 @@ module Nanoc3::DataSources
           extension: File.extname(filename)[1..-1],
           filename: filename,
         }
-        identifier = filename[(prefix.length+1)..-1] + '/'
+        identifier = Nanoc::Identifier.new(filename[(prefix.length+1)..-1] + '/', type: :legacy)
 
-        mtime      = File.mtime(filename)
-        checksum   = checksum_for(filename)
-
-        Nanoc3::Item.new(
-          filename,
+        new_item(
+          "#{Dir.pwd}/#{filename}",
           attributes,
           identifier,
-          binary: true, mtime: mtime, checksum: checksum
+          binary: true
         )
       end
     end
