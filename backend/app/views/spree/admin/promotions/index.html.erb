@@ -68,6 +68,7 @@
           <td><%= promotion.expires_at.to_date.to_s(:short_date) if promotion.expires_at %></td>
           <td class="actions actions-2" data-hook="admin_promotions_index_row_actions">
             <%= link_to_edit promotion, no_text: true if can?(:edit, promotion) %>
+            <%= link_to_clone_promotion promotion, no_text: true if can?(:clone, promotion) %>
             <%= link_to_delete promotion, no_text: true if can?(:delete, promotion) %>
           </td>
         </tr>

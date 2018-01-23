@@ -3,6 +3,9 @@ Spree::Core::Engine.add_routes do
     resources :promotions do
       resources :promotion_rules
       resources :promotion_actions
+      member do
+        post :clone
+      end
     end
 
     resources :promotion_categories, except: [:show]

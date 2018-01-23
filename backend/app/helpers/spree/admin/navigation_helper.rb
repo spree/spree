@@ -117,6 +117,14 @@ module Spree
         button_link_to '', clone_object_url(resource), options
       end
 
+      def link_to_clone_promotion(promotion, options = {})
+        options[:data] = { action: 'clone', 'original-title': Spree.t(:clone) }
+        options[:class] = 'btn btn-warning btn-sm with-tip'
+        options[:method] = :post
+        options[:icon] = :clone
+        button_link_to '', clone_admin_promotion_path(promotion), options
+      end
+
       def link_to_edit(resource, options = {})
         url = options[:url] || edit_object_url(resource)
         options[:data] = { action: 'edit' }

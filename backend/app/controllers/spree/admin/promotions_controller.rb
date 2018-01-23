@@ -1,9 +1,24 @@
 module Spree
   module Admin
     class PromotionsController < ResourceController
-      before_action :load_data
+      before_action :load_data, except: :clone
 
       helper 'spree/admin/promotion_rules'
+
+      def clone
+        promotion = Spree::Promotion.find(params[:id])
+        duplicator = Spree::PromotionHandler::PromotionDuplicator.new(promotion)
+
+        @new_promo = duplicator.duplicate
+
+        if @new_promo.errors.empty?
+          flash[:success] = Spree.t('promotion_cloned')
+          redirect_to edit_admin_promotion_url(@new_promo)
+        else
+          flash[:error] = "#{Spree.t('promotion_not_cloned')}: #{@new_promo.errors.full_messages.join(', ')}"
+          redirect_to admin_promotions_url(@new_promo)
+        end
+      end
 
       protected
 
