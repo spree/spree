@@ -15,7 +15,7 @@ end
 
 platforms :ruby do
   gem 'mysql2'
-  gem 'pg'
+  gem 'pg', '~> 0.18'
 end
 
 group :test do
