@@ -1,8 +1,8 @@
 module Spree
   class TaxRate < Spree::Base
+    attr_accessor :calculator_type
     acts_as_paranoid
 
-    include Spree::CalculatedAdjustments
     include Spree::AdjustmentSource
 
     with_options inverse_of: :tax_rates do
@@ -11,10 +11,11 @@ module Spree
                  class_name: 'Spree::TaxCategory'
     end
 
-    with_options presence: true do
-      validates :amount, numericality: { allow_nil: true }
-      validates :tax_category
-    end
+    has_one :calculator, class_name: 'Spree::Calculator', as: :calculable, inverse_of: :calculable, dependent: :destroy, autosave: true
+    accepts_nested_attributes_for :calculator
+
+    validates :amount, numericality: { allow_nil: true }, presence: true
+    validates :tax_category, :calculator, presence: true
 
     scope :by_zone, ->(zone) { where(zone_id: zone.id) }
     scope :potential_rates_for_zone,
@@ -93,7 +94,7 @@ module Spree
     end
 
     def compute_amount(item)
-      compute(item)
+      calculator.compute_shipment_or_line_item(item)
     end
 
     private

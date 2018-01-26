@@ -1,7 +1,7 @@
 module Spree
   class ShippingMethod < Spree::Base
+    attr_accessor :calculator_type
     acts_as_paranoid
-    include Spree::CalculatedAdjustments
     DISPLAY = [:both, :front_end, :back_end]
 
     # Used for #refresh_rates
@@ -9,6 +9,9 @@ module Spree
     DISPLAY_ON_BACK_END = 2
 
     default_scope { where(deleted_at: nil) }
+
+    has_one :calculator, class_name: 'Spree::Calculator', as: :calculable, inverse_of: :calculable, dependent: :destroy, autosave: true
+    accepts_nested_attributes_for :calculator
 
     has_many :shipping_method_categories, dependent: :destroy
     has_many :shipping_categories, through: :shipping_method_categories
@@ -21,7 +24,7 @@ module Spree
 
     belongs_to :tax_category, class_name: 'Spree::TaxCategory', optional: true
 
-    validates :name, presence: true
+    validates :name, :calculator, presence: true
 
     validate :at_least_one_shipping_category
 
@@ -34,12 +37,7 @@ module Spree
 
     def build_tracking_url(tracking)
       return if tracking.blank? || tracking_url.blank?
-      tracking_url.gsub(/:tracking/, ERB::Util.url_encode(tracking)) # :url_encode exists in 1.8.7 through 2.1.0
-    end
-
-    def self.calculators
-      spree_calculators.send(model_name_without_spree_namespace).
-        select { |c| c.to_s.constantize < Spree::ShippingCalculator }
+      tracking_url.gsub(/:tracking/, ERB::Util.url_encode(tracking))
     end
 
     def tax_category

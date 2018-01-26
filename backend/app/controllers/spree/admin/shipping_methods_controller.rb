@@ -3,6 +3,7 @@ module Spree
     class ShippingMethodsController < ResourceController
       before_action :load_data, except: :index
       before_action :set_shipping_category, only: [:create, :update]
+      before_action :set_calculator_type, only: [:create, :update]
       before_action :set_zones, only: [:create, :update]
 
       def destroy
@@ -17,6 +18,11 @@ module Spree
       end
 
       private
+
+      def set_calculator_type
+        klass = params[:shipping_method][:calculator_type]
+        @shipping_method.build_calculator(type: klass) if @shipping_method.calculator.class.to_s != klass
+      end
 
       def set_shipping_category
         return true if params['shipping_method'][:shipping_categories] == ''
@@ -39,7 +45,8 @@ module Spree
       def load_data
         @available_zones = Zone.order(:name)
         @tax_categories = Spree::TaxCategory.order(:name)
-        @calculators = ShippingMethod.calculators.sort_by(&:name)
+
+        @calculators = Spree::Calculator.calculators_for(:shipping_methods)
       end
     end
   end

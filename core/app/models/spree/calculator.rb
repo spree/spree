@@ -11,6 +11,10 @@ module Spree
     #
     # It should return amount computed based on #calculable and the computable parameter
     def compute(computable)
+      ActiveSupport::Deprecation.warn(<<-EOS, caller)
+        Calculator#compute is deprecated and will be removed in Spree 3.6
+      EOS
+      debugger
       # Spree::LineItem -> :compute_line_item
       computable_name = computable.class.name.demodulize.underscore
       method = "compute_#{computable_name}".to_sym
@@ -27,9 +31,13 @@ module Spree
       'Base Calculator'
     end
 
-    # Returns all calculators applicable for kind of work
-    def self.calculators
-      Rails.application.config.spree.calculators
+    def self.calculators_for(adjustment_type)
+      calculators = Rails.application.config.spree.calculators[adjustment_type].sort_by(&:name)
+      if adjustment_type == :shipping_methods
+        calculators.select { |c| c.to_s.constantize < Spree::ShippingCalculator }
+      else
+        calculators
+      end
     end
 
     def to_s

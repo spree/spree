@@ -1,42 +1,36 @@
 require 'spec_helper'
 
 describe Spree::Promotion::Actions::CreateAdjustment, type: :model do
-  let(:order) { create(:order_with_line_items, line_items_count: 1) }
-  let(:promotion) { create(:promotion) }
-  let(:action) { Spree::Promotion::Actions::CreateAdjustment.new }
-  let(:payload) { { order: order } }
+  let(:order) { create(:order_with_line_items, line_items_count: 1, shipment_total: 10, item_total: 30) }
+  subject { described_class.new }
+  let(:amount) { 100 }
+  let(:shipping_discount) { 10 }
 
   it_behaves_like 'an adjustment source'
 
   describe '#compute_amount' do
-    subject { described_class.new }
-
-    let(:shipping_discount) { 10 }
-    let(:order) do
-      double(:order, item_total: 30, ship_total: 10, shipping_discount: shipping_discount)
+    before do
+      subject.calculator = Spree::Calculator::FlatRate.new(preferred_amount: amount)
+      allow(subject).to receive(:shipping_discount).and_return(shipping_discount)
     end
 
     context 'when shipping_discount is applied' do
+      let(:amount) { 30 }
       context 'and total is less than discount' do
         it 'returns discount amount eq to total' do
-          allow(subject).to receive(:compute).with(order).and_return(100)
-
           expect(subject.compute_amount(order)).to eq -30
         end
       end
 
       context 'and total is equal to discount' do
         it 'returns discount amount' do
-          allow(subject).to receive(:compute).with(order).and_return(30)
-
           expect(subject.compute_amount(order)).to eq -30
         end
       end
 
       context 'and total is greater than discount' do
+        let(:amount) { 10 }
         it 'returns discount amount' do
-          allow(subject).to receive(:compute).with(order).and_return(10)
-
           expect(subject.compute_amount(order)).to eq -10
         end
       end
@@ -46,24 +40,25 @@ describe Spree::Promotion::Actions::CreateAdjustment, type: :model do
       let(:shipping_discount) { 0 }
 
       context 'and total is less than discount' do
+        let(:amount) { 40 }
         it 'returns discount amount eq to total' do
-          allow(subject).to receive(:compute).with(order).and_return(100)
-
           expect(subject.compute_amount(order)).to eq -40
         end
       end
 
       context 'and total is equal to discount' do
+        let(:amount) { 40 }
         it 'returns discount amount' do
-          allow(subject).to receive(:compute).with(order).and_return(40)
+          allow(order).to receive(:item_total).and_return(30)
 
           expect(subject.compute_amount(order)).to eq -40
         end
       end
 
       context 'and total is greater than discount' do
+        let(:amount) { 10 }
         it 'returns discount amount' do
-          allow(subject).to receive(:compute).with(order).and_return(10)
+          # allow(subject).to receive(:compute).with(order).and_return(10)
 
           expect(subject.compute_amount(order)).to eq -10
         end
@@ -73,6 +68,10 @@ describe Spree::Promotion::Actions::CreateAdjustment, type: :model do
 
   # From promotion spec:
   context '#perform' do
+    let(:action) { Spree::Promotion::Actions::CreateAdjustment.new }
+    let(:payload) { { order: order } }
+    let(:promotion) { create(:promotion) }
+
     before do
       action.calculator = Spree::Calculator::FlatRate.new(preferred_amount: 10)
       promotion.promotion_actions = [action]

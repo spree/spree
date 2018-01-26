@@ -3,7 +3,7 @@ class Spree::Admin::PromotionActionsController < Spree::Admin::BaseController
   before_action :validate_promotion_action_type, only: :create
 
   def create
-    @calculators = Spree::Promotion::Actions::CreateAdjustment.calculators
+    @calculators = Spree::Calculator.calculators_for(:promotion_actions_create_adjustments)
     @promotion_action = params[:action_type].constantize.new(params[:promotion_action])
     @promotion_action.promotion = @promotion
     if @promotion_action.save

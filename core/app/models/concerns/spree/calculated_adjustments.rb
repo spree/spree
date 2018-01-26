@@ -3,6 +3,10 @@ module Spree
     extend ActiveSupport::Concern
 
     included do
+      ActiveSupport::Deprecation.warn(<<-EOS, caller)
+        Spree::CalculatedAdjustments will be removed in Spree 3.6
+        This concern is useless and creates unneed coupling
+      EOS
       has_one :calculator, class_name: 'Spree::Calculator', as: :calculable, inverse_of: :calculable, dependent: :destroy, autosave: true
       accepts_nested_attributes_for :calculator
       validates :calculator, presence: true
