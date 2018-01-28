@@ -2,7 +2,9 @@ module Spree
   class Promotion
     module Rules
       class Taxon < PromotionRule
-        has_many :promotion_rule_taxons, class_name: 'Spree::PromotionRuleTaxon', foreign_key: 'promotion_rule_id'
+        has_many :promotion_rule_taxons, class_name: 'Spree::PromotionRuleTaxon',
+                                         foreign_key: 'promotion_rule_id',
+                                         dependent: :destroy
         has_many :taxons, through: :promotion_rule_taxons, class_name: 'Spree::Taxon'
 
         MATCH_POLICIES = %w(any all)
