@@ -1071,6 +1071,8 @@ en:
     products: Products
     promotion: Promotion
     promotionable: Promotable
+    promotion_cloned: Promotion has been cloned
+    promotion_not_cloned: Promotion has not been cloned
     promotion_action: Promotion Action
     promotion_action_types:
       create_adjustment:

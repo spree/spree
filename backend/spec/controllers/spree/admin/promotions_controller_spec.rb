@@ -40,4 +40,38 @@ describe Spree::Admin::PromotionsController, type: :controller do
       end
     end
   end
+
+  context '#clone' do
+    context 'cloning valid promotion' do
+      subject do
+        spree_post :clone, id: promotion1.id
+      end
+
+      it 'creates a copy of promotion' do
+        expect { subject }.to change { Spree::Promotion.count }.by(1)
+      end
+
+      it 'creates a copy of promotion with changed fields' do
+        subject
+        new_promo = Spree::Promotion.order(:created_at).last
+
+        expect(new_promo.name).to eq 'New name1'
+        expect(new_promo.code).to eq 'code1_new'
+        expect(new_promo.path).to eq 'path1_new'
+      end
+    end
+
+    context 'cloning invalid promotion' do
+      let!(:promotion3) { create(:promotion, name: 'Name3', code: 'code3', path: '') }
+      let!(:promotion4) { create(:promotion, name: 'Name4', code: 'code4', path: '_new') }
+
+      subject do
+        spree_post :clone, id: promotion3.id
+      end
+
+      it 'doesnt create a copy of promotion' do
+        expect { subject }.not_to(change { Spree::Promotion.count })
+      end
+    end
+  end
 end
