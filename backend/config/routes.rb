@@ -12,7 +12,11 @@ Spree::Core::Engine.add_routes do
 
     resources :zones
 
-    resources :stores
+    resources :stores do
+      member do
+        post :set_default
+      end
+    end
 
     resources :countries do
       resources :states

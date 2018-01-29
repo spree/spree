@@ -14,7 +14,7 @@ module Spree
           flash[:success] = flash_message_for(@store, :successfully_created)
           redirect_to admin_stores_path
         else
-          flash[:error] = Spree.t('store.errors.unable_to_create')
+          flash[:error] = "#{Spree.t('store.errors.unable_to_create')}: #{@store.errors.full_messages.join(', ')}"
           render :new
         end
       end
@@ -26,7 +26,7 @@ module Spree
           flash[:success] = flash_message_for(@store, :successfully_updated)
           redirect_to admin_stores_path
         else
-          flash[:error] = Spree.t('store.errors.unable_to_update')
+          flash[:error] = "#{Spree.t('store.errors.unable_to_update')}: #{@store.errors.full_messages.join(', ')}"
           render :edit
         end
       end
@@ -41,8 +41,26 @@ module Spree
             format.js { render_js_for_destroy }
           end
         else
-          render plain: Spree.t('store.errors.unable_to_delete'), status: :unprocessable_entity
+          render plain: "#{Spree.t('store.errors.unable_to_delete')}: #{@store.errors.full_messages.join(', ')}", status: :unprocessable_entity
         end
+      end
+
+      def set_default
+        store = Spree::Store.find(params[:id])
+        stores = Spree::Store.where.not(id: params[:id])
+
+        ApplicationRecord.transaction do
+          store.update(default: true)
+          stores.update_all(default: false)
+        end
+
+        if store.errors.empty?
+          flash[:success] = Spree.t(:store_set_as_default, store: store.name)
+        else
+          flash[:error] = "#{Spree.t(:store_not_set_as_default, store: store.name)} #{store.errors.full_messages.join(', ')}"
+        end
+
+        redirect_to admin_stores_path
       end
 
       protected
