@@ -65,4 +65,16 @@ describe 'Stores admin', type: :feature do
       expect(Spree::Store.find_by_id(second_store.id)).to be_nil
     end
   end
+
+  describe 'setting default store' do
+    let!(:store1) { create(:store, default: false) }
+
+    it 'should set a store as default' do
+      visit spree.admin_stores_path
+      click_button 'Set as default'
+
+      expect(store.reload.default).to eq false
+      expect(store1.reload.default).to eq true
+    end
+  end
 end
