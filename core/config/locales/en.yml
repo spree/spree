@@ -936,10 +936,10 @@ en:
     notice_messages:
       product_cloned: Product has been cloned
       product_deleted: Product has been deleted
-      product_not_cloned: Product could not be cloned
-      product_not_deleted: Product could not be deleted
+      product_not_cloned: "Product could not be cloned. Reason: %{error}"
+      product_not_deleted: "Product could not be deleted. Reason: %{error}"
       variant_deleted: Variant has been deleted
-      variant_not_deleted: Variant could not be deleted
+      variant_not_deleted: "Variant could not be deleted. Reason: %{error}"
     num_orders: "# Orders"
     number: Number
     on_hand: On Hand
@@ -1072,7 +1072,7 @@ en:
     promotion: Promotion
     promotionable: Promotable
     promotion_cloned: Promotion has been cloned
-    promotion_not_cloned: Promotion has not been cloned
+    promotion_not_cloned: "Promotion has not been cloned. Reason: %{error}"
     promotion_action: Promotion Action
     promotion_action_types:
       create_adjustment:

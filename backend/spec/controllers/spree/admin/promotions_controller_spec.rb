@@ -72,6 +72,12 @@ describe Spree::Admin::PromotionsController, type: :controller do
       it 'doesnt create a copy of promotion' do
         expect { subject }.not_to(change { Spree::Promotion.count })
       end
+
+      it 'returns error' do
+        subject
+        expected_error = Spree.t('promotion_not_cloned', error: assigns(:new_promo).errors.full_messages.to_sentence)
+        expect(flash[:error]).to eq(expected_error)
+      end
     end
   end
 end

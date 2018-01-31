@@ -50,7 +50,7 @@ module Spree
           if @product.destroy
             flash[:success] = Spree.t('notice_messages.product_deleted')
           else
-            flash[:error] = Spree.t('notice_messages.product_not_deleted', error: @product.errors.full_messages.join(', '))
+            flash[:error] = Spree.t('notice_messages.product_not_deleted', error: @product.errors.full_messages.to_sentence)
           end
         rescue ActiveRecord::RecordNotDestroyed => e
           flash[:error] = Spree.t('notice_messages.product_not_deleted', error: e.message)
@@ -69,12 +69,12 @@ module Spree
           flash[:success] = Spree.t('notice_messages.product_cloned')
           redirect_to edit_admin_product_url(@new)
         else
-          flash[:error] = Spree.t('notice_messages.product_not_cloned')
+          flash[:error] = Spree.t('notice_messages.product_not_cloned', error: @new.errors.full_messages.to_sentence)
           redirect_to admin_products_url
         end
-      rescue ActiveRecord::RecordInvalid
+      rescue ActiveRecord::RecordInvalid => e
         # Handle error on uniqueness validation on product fields
-        flash[:error] = Spree.t('notice_messages.product_not_cloned')
+        flash[:error] = Spree.t('notice_messages.product_not_cloned', error: e.message)
         redirect_to admin_products_url
       end
 
