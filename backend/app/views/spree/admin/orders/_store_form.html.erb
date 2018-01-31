@@ -1,0 +1,18 @@
+<div data-hook="store-form-container">
+  <%= form_for [:admin, order], method: :put, url: set_store_admin_order_url do |f| %>
+    <fieldset>
+    <div data-hook="admin_order_store_field">
+      <%= f.field_container :store_id, class: ['form-group'] do %>
+        <%= f.label :store_id, Spree.t(:store) %>
+        <%= f.collection_select(:store_id, @stores, :id, :name, { include_blank: false }, { class: "select2" }) %>
+        <%= f.error_message_on :store_id %>
+      <% end %>
+    </div>
+    <div class="form-actions" data-hook="buttons">
+      <%= button Spree.t('actions.update'), 'refresh', 'submit', {class: 'btn-success', data: { disable_with: "#{ Spree.t(:saving) }..." }} %>
+      <span class="or"><%= Spree.t(:or) %></span>
+      <%= button_link_to Spree.t('actions.cancel'), edit_admin_order_url(order), icon: 'delete' %>
+    </div>
+    <fieldset>
+  <% end %>
+</div>
