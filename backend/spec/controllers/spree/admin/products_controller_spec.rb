@@ -61,9 +61,12 @@ describe Spree::Admin::ProductsController, type: :controller do
     end
 
     context 'will not successfully destroy product' do
+      let(:error_msg) { 'Failed to delete' }
+
       before do
         allow(Spree::Product).to receive(:friendly).and_return(products)
         allow(products).to receive(:find).with(product.id.to_s).and_return(product)
+        allow(product).to receive_message_chain(:errors, :full_messages).and_return([error_msg])
         allow(product).to receive(:destroy).and_return(false)
       end
 
@@ -85,7 +88,7 @@ describe Spree::Admin::ProductsController, type: :controller do
         it { expect(response).to have_http_status(:ok) }
 
         it 'set flash error' do
-          expected_error = Spree.t('notice_messages.product_not_deleted', error: assigns(:product).errors.full_messages.to_sentence)
+          expected_error = Spree.t('notice_messages.product_not_deleted', error: error_msg)
           expect(flash[:error]).to eq(expected_error)
         end
       end

@@ -49,10 +49,16 @@ module Spree
 
         describe 'expects to receive' do
           after { send_request }
+
           it { expect(Spree::Product).to receive(:friendly).and_return(products) }
           it { expect(products).to receive(:find).with(product.id.to_s).and_return(product) }
           it { expect(product).to receive_message_chain(:variants, :find).with(variant.id.to_s).and_return(variants) }
           it { expect(Spree::Variant).to receive(:find).with(variant.id.to_s).and_return(variant) }
+        end
+
+        shared_examples 'correct response' do
+          it { expect(assigns(:variant)).to eq(variant) }
+          it { expect(response).to have_http_status(:ok) }
         end
 
         context 'will successfully destroy variant' do
@@ -64,36 +70,35 @@ module Spree
             it { expect(variant).to receive(:destroy).and_return(true) }
           end
 
-          describe 'assigns' do
+          describe 'returns response' do
             before { send_request }
-            it { expect(assigns(:variant)).to eq(variant) }
-          end
 
-          describe 'response' do
-            before { send_request }
-            it { expect(response).to have_http_status(:ok) }
+            it_behaves_like 'correct response'
             it { expect(flash[:success]).to eq(Spree.t('notice_messages.variant_deleted')) }
           end
         end
 
         context 'will not successfully destroy product' do
-          before { allow(variant).to receive(:destroy).and_return(false) }
+          let(:error_msg) { 'Failed to delete' }
+
+          before do
+            allow(variant).to receive_message_chain(:errors, :full_messages).and_return([error_msg])
+            allow(variant).to receive(:destroy).and_return(false)
+          end
 
           describe 'expects to receive' do
             after { send_request }
 
+            it { expect(variant).to receive_message_chain(:errors, :full_messages).and_return([error_msg]) }
             it { expect(variant).to receive(:destroy).and_return(false) }
           end
 
-          describe 'assigns' do
+          describe 'returns response' do
             before { send_request }
-            it { expect(assigns(:variant)).to eq(variant) }
-          end
 
-          describe 'response' do
-            before { send_request }
-            it { expect(response).to have_http_status(:ok) }
-            it { expect(flash[:error]).to eq(Spree.t('notice_messages.variant_not_deleted', error: variant.errors.full_messages.to_sentence)) }
+            it_behaves_like 'correct response'
+
+            it { expect(flash[:error]).to eq(Spree.t('notice_messages.variant_not_deleted', error: error_msg)) }
           end
         end
       end
