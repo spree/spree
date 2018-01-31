@@ -574,6 +574,12 @@ describe Spree::Shipment, type: :model do
           payment
         end
 
+        before do
+          calculator = @shipment.shipping_method.calculator
+          calculator.set_preference(:amount, @shipment.cost)
+          calculator.save!
+        end
+
         it 'can fully capture an authorized payment' do
           payment.update_attribute(:amount, @order.total)
 
@@ -588,7 +594,7 @@ describe Spree::Shipment, type: :model do
           expect(payment.amount).to eq payment.uncaptured_amount
           @shipment.ship!
           expect(payment.captured_amount).to eq @order.total
-          expect(payment.captured_amount).to eq payment.amount
+          expect(payment.captured_amount).to eq payment.amount - 50
           expect(payment.order.payments.pending.first.amount).to eq 50
         end
       end
@@ -701,6 +707,52 @@ describe Spree::Shipment, type: :model do
       shipment.tracking = '1Z12345'
 
       expect(shipment.tracking_url).to eq(:some_url)
+    end
+  end
+
+  context '#transfer_to_location' do
+    # Order with 2 line items in order to be able to split one shipment into 2
+    let(:order) { create(:completed_order_with_totals, line_items_count: 2) }
+    let(:stock_location) { create(:stock_location) }
+    let(:variant) { order.line_items.first.variant }
+
+    before do
+      shipping_method = order.shipments.first.shipping_method
+      shipping_method.calculator.preferences[:amount] = order.shipments.first.cost
+      shipping_method.calculator.save!
+    end
+
+    it 'creates new shipment for same order' do
+      shipment = order.shipments.first
+
+      expect { shipment.transfer_to_location(variant, 1, stock_location) }.
+        to change { order.reload.shipments.size }.from(1).to(2)
+    end
+
+    it 'sets the given stock location for new shipment' do
+      shipment = order.shipments.first
+      shipment.transfer_to_location(variant, 1, stock_location)
+
+      new_shipment = order.reload.shipments.last
+
+      expect(new_shipment.stock_location).to_not eq(shipment.stock_location)
+    end
+
+    it 'sets proper costs for new shipment' do
+      shipment = order.shipments.first
+      shipment.transfer_to_location(variant, 1, shipment.stock_location)
+
+      new_shipment = order.reload.shipments.last
+      # Cost must be the same since both come from the same stock location
+      expect(new_shipment.cost).to eq(shipment.cost)
+    end
+
+    it 'updates `order.shipment_total` to the sum of shipments cost' do
+      shipment = order.shipments.first
+      shipment.transfer_to_location(variant, 1, shipment.stock_location)
+
+      order.reload
+      expect(order.shipment_total).to eq(order.shipments.sum(&:cost))
     end
   end
 

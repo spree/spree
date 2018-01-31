@@ -217,10 +217,15 @@ module Spree
 
       if shipping_method
         selected_rate = shipping_rates.detect do |rate|
-          rate.shipping_method_id == original_shipping_method_id
+          if original_shipping_method_id
+            rate.shipping_method_id == original_shipping_method_id
+          else
+            rate.selected
+          end
         end
         save!
         self.selected_shipping_rate_id = selected_rate.id if selected_rate
+        reload
       end
 
       shipping_rates
@@ -340,6 +345,7 @@ module Spree
 
         order.contents.remove(variant, quantity, shipment: self)
         order.contents.add(variant, quantity, shipment: new_shipment)
+        order.create_tax_charge!
         order.update_with_updater!
 
         refresh_rates
