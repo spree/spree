@@ -3,7 +3,7 @@ module SpreeCmd
     include Thor::Actions
 
     desc 'builds a spree extension'
-    argument :file_name, type: :string, desc: 'rails app_path', default: '.'
+    argument :file_name, type: :string, desc: 'rails app_path', default: 'sample_extension'
 
     source_root File.expand_path('../templates/extension', __FILE__)
 
@@ -15,6 +15,8 @@ module SpreeCmd
       directory 'app', "#{file_name}/app"
       directory 'lib', "#{file_name}/lib"
       directory 'bin', "#{file_name}/bin"
+      directory 'spec/support', "#{file_name}/spec/support"
+
       chmod "#{file_name}/bin/rails", 0o755
 
       template 'extension.gemspec', "#{file_name}/#{file_name}.gemspec"
