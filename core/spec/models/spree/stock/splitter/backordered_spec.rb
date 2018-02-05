@@ -11,14 +11,9 @@ module Spree
         let(:packer) { build(:stock_packer) }
         let(:package) { Package.new(packer.stock_location) }
 
-        # this inventory_unit method is working 2x faster than build_stubbed
-        def inventory_unit
-          InventoryUnit.new(variant: build_stubbed(:variant))
-        end
-
         before do
-          4.times { package.add(inventory_unit) }
-          5.times { package.add(inventory_unit, :backordered) }
+          4.times { package.add(build_stubbed(:inventory_unit, :without_assoc)) }
+          5.times { package.add(build_stubbed(:inventory_unit, :without_assoc), :backordered) }
         end
 
         it 'splits packages by status' do

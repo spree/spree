@@ -22,21 +22,12 @@ module Spree
         let(:shipping_category_1) { build_stubbed(:shipping_category, name: 'A') }
         let(:shipping_category_2) { build_stubbed(:shipping_category, name: 'B') }
 
-        # these inventory_unit methods are working 2x faster than build_stubbed
-        def inventory_unit1
-          InventoryUnit.new(variant: variant1)
-        end
-
-        def inventory_unit2
-          InventoryUnit.new(variant: variant2)
-        end
-
         before do
-          4.times { package1.add(inventory_unit1) }
-          8.times { package1.add(inventory_unit2) }
+          4.times { package1.add(build_stubbed(:inventory_unit, :without_assoc, variant: variant1)) }
+          8.times { package1.add(build_stubbed(:inventory_unit, :without_assoc, variant: variant2)) }
 
-          6.times { package2.add(inventory_unit1) }
-          9.times { package2.add(inventory_unit2, :backordered) }
+          6.times { package2.add(build_stubbed(:inventory_unit, :without_assoc, variant: variant1)) }
+          9.times { package2.add(build_stubbed(:inventory_unit, :without_assoc, variant: variant2), :backordered) }
         end
 
         it 'splits each package by shipping category' do
