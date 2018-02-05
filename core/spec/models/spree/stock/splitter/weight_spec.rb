@@ -17,9 +17,9 @@ module Spree
 
         context 'with packages that can be reduced' do
           before do
-            2.times { package.add(build_stubbed(:inventory_unit, :without_assoc, variant: heavy_variant)) }
-            4.times { package.add(build_stubbed(:inventory_unit, :without_assoc, variant: variant)) }
-            2.times { package.add(build_stubbed(:inventory_unit, :without_assoc, variant: heavy_variant)) }
+            package.add_multiple(build_stubbed_list(:inventory_unit, 2, :without_assoc, variant: heavy_variant))
+            package.add_multiple(build_stubbed_list(:inventory_unit, 4, :without_assoc, variant: variant))
+            package.add_multiple(build_stubbed_list(:inventory_unit, 2, :without_assoc, variant: heavy_variant))
           end
 
           it 'splits and keeps splitting until all packages are underweight' do
@@ -35,7 +35,7 @@ module Spree
           let(:variant) { build_stubbed(:base_variant, weight: 200) }
 
           before do
-            2.times { package.add(build_stubbed(:inventory_unit, :without_assoc, variant: variant)) }
+            package.add_multiple(build_stubbed_list(:inventory_unit, 2, :without_assoc, variant: variant))
           end
 
           it 'handles packages that can not be reduced' do
@@ -44,21 +44,26 @@ module Spree
           end
         end
 
-        xcontext 'with multiple packages' do
+        context 'with multiple packages' do
           let(:packages) { [package, package1] }
           let(:package1) { Package.new(packer.stock_location) }
 
           before do
-            2.times { package.add(build_stubbed(:inventory_unit, :without_assoc, variant: heavy_variant)) }
-            4.times { package.add(build_stubbed(:inventory_unit, :without_assoc, variant: variant)) }
+            package.add_multiple(build_stubbed_list(:inventory_unit, 2, :without_assoc, variant: heavy_variant))
+            package.add_multiple(build_stubbed_list(:inventory_unit, 4, :without_assoc, variant: variant))
 
-            2.times { package1.add(build_stubbed(:inventory_unit, :without_assoc, variant: variant)) }
-            4.times { package1.add(build_stubbed(:inventory_unit, :without_assoc, variant: heavy_variant)) }
+            package1.add_multiple(build_stubbed_list(:inventory_unit, 2, :without_assoc, variant: variant))
+            package1.add_multiple(build_stubbed_list(:inventory_unit, 4, :without_assoc, variant: heavy_variant))
           end
 
           it 'splits and keeps splitting until all packages are underweight' do
-            # formula: (2*100 + 4*49 + 2*49 + 4*100) / 150
-            expect(result.size).to eq 6
+            # formula: [2*100 + 4*49] [2*49, 4*100]
+            # first package was splited to 3, 2nd to 4
+            expect(result.size).to eq 7
+
+            result.each do |pack|
+              expect(pack.weight).to be <= described_class.threshold
+            end
           end
         end
       end

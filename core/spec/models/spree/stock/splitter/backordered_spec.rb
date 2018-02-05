@@ -12,8 +12,8 @@ module Spree
         let(:package) { Package.new(packer.stock_location) }
 
         before do
-          4.times { package.add(build_stubbed(:inventory_unit, :without_assoc)) }
-          5.times { package.add(build_stubbed(:inventory_unit, :without_assoc), :backordered) }
+          package.add_multiple(build_stubbed_list(:inventory_unit, 4, :without_assoc))
+          package.add_multiple(build_stubbed_list(:inventory_unit, 5, :without_assoc), :backordered)
         end
 
         it 'splits packages by status' do

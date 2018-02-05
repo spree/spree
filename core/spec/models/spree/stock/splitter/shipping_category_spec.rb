@@ -23,11 +23,11 @@ module Spree
         let(:shipping_category_2) { build_stubbed(:shipping_category, name: 'B') }
 
         before do
-          4.times { package1.add(build_stubbed(:inventory_unit, :without_assoc, variant: variant1)) }
-          8.times { package1.add(build_stubbed(:inventory_unit, :without_assoc, variant: variant2)) }
+          package1.add_multiple(build_stubbed_list(:inventory_unit, 4, :without_assoc, variant: variant1))
+          package1.add_multiple(build_stubbed_list(:inventory_unit, 8, :without_assoc, variant: variant2))
 
-          6.times { package2.add(build_stubbed(:inventory_unit, :without_assoc, variant: variant1)) }
-          9.times { package2.add(build_stubbed(:inventory_unit, :without_assoc, variant: variant2), :backordered) }
+          package2.add_multiple(build_stubbed_list(:inventory_unit, 6, :without_assoc, variant: variant1))
+          package2.add_multiple(build_stubbed_list(:inventory_unit, 9, :without_assoc, variant: variant2), :backordered)
         end
 
         it 'splits each package by shipping category' do
