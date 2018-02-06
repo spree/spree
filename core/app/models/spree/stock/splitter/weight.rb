@@ -8,7 +8,8 @@ module Spree
 
         def split(packages)
           generated_packages = packages.flat_map(&method(:reduce))
-          return_next(generated_packages)
+          packages.push(*generated_packages)
+          return_next(packages)
         end
 
         private
@@ -32,7 +33,7 @@ module Spree
             package_to_use.contents << contents.shift
           end
 
-          split_packages
+          split_packages.drop(1)
         end
 
         def choose_package(generated_packages, content_to_add)
@@ -45,8 +46,8 @@ module Spree
           generated_packages.each do |generated_package|
             generated_package_weight = generated_package.weight
 
-            weight_exceed = generated_package_weight + content_to_add.weight > threshold
-            space_left = available_space >= threshold - generated_package_weight
+            weight_exceed = (generated_package_weight + content_to_add.weight) > threshold
+            space_left = available_space >= (threshold - generated_package_weight)
 
             next if weight_exceed || space_left
 
