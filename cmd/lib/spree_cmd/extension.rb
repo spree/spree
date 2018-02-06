@@ -15,7 +15,7 @@ module SpreeCmd
       directory 'app', "#{file_name}/app"
       directory 'lib', "#{file_name}/lib"
       directory 'bin', "#{file_name}/bin"
-      directory 'spec/support', "#{file_name}/spec/support"
+      directory 'spec', "#{file_name}/spec"
 
       chmod "#{file_name}/bin/rails", 0o755
 
@@ -28,9 +28,9 @@ module SpreeCmd
       template 'config/routes.rb', "#{file_name}/config/routes.rb"
       template 'config/locales/en.yml', "#{file_name}/config/locales/en.yml"
       template 'rspec', "#{file_name}/.rspec"
-      template 'spec/spec_helper.rb.tt', "#{file_name}/spec/spec_helper.rb"
       template 'travis.yml', "#{file_name}/.travis.yml"
       template 'Appraisals', "#{file_name}/Appraisals"
+      template '.rubocop.yml', "#{file_name}/.rubocop.yml"
     end
 
     def final_banner
