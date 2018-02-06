@@ -12,7 +12,7 @@ prepare_app(){
   set_gemfile
   bundle update --quiet
   echo "Preparing test app..."
-  bundle exec rake test_app
+  BUNDLE_GEMFILE=../Gemfile bundle exec rake test_app
 }
 # Target postgres. Override with: `DB=sqlite bash build.sh`
 export DB=${DB:-postgres}

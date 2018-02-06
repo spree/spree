@@ -215,7 +215,7 @@ do a quick one-time creation of a test application and then you can use it to ru
 the tests.  For example, to run the tests for the core project.
 ```shell
 cd core
-bundle exec rake test_app
+BUNDLE_GEMFILE=../Gemfile bundle exec rake test_app
 bundle exec rspec spec
 ```
 
