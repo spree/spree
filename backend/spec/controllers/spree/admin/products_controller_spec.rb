@@ -61,9 +61,12 @@ describe Spree::Admin::ProductsController, type: :controller do
     end
 
     context 'will not successfully destroy product' do
+      let(:error_msg) { 'Failed to delete' }
+
       before do
         allow(Spree::Product).to receive(:friendly).and_return(products)
         allow(products).to receive(:find).with(product.id.to_s).and_return(product)
+        allow(product).to receive_message_chain(:errors, :full_messages).and_return([error_msg])
         allow(product).to receive(:destroy).and_return(false)
       end
 
@@ -83,7 +86,11 @@ describe Spree::Admin::ProductsController, type: :controller do
       describe 'response' do
         before { send_request }
         it { expect(response).to have_http_status(:ok) }
-        it { expect(flash[:error]).to eq(Spree.t('notice_messages.product_not_deleted', error: product.errors.full_messages.join(', '))) }
+
+        it 'set flash error' do
+          expected_error = Spree.t('notice_messages.product_not_deleted', error: error_msg)
+          expect(flash[:error]).to eq(expected_error)
+        end
       end
     end
   end
@@ -91,11 +98,9 @@ describe Spree::Admin::ProductsController, type: :controller do
   describe '#clone' do
     let(:product) { create(:custom_product, name: 'MyProduct', sku: 'MySku') }
     let(:product2) { create(:custom_product, name: 'COPY OF MyProduct', sku: 'COPY OF MySku') }
-    let(:variant) do
-      create(:master_variant, name: 'COPY OF MyProduct', sku: 'COPY OF MySku', created_at: product.created_at - 1.day)
-    end
+    let(:variant) { create(:master_variant, name: 'COPY OF MyProduct', sku: 'COPY OF MySku', created_at: product.created_at - 1.day) }
 
-    def send_request
+    subject(:send_request) do
       spree_post :clone, id: product, format: :js
     end
 
@@ -121,7 +126,11 @@ describe Spree::Admin::ProductsController, type: :controller do
         before { send_request }
         it { expect(response).to have_http_status(:found) }
         it { expect(response).to be_redirect }
-        it { expect(flash[:error]).to eq(Spree.t('notice_messages.product_not_cloned')) }
+
+        it 'set flash error' do
+          expected_error = Spree.t('notice_messages.product_not_cloned', error: 'Validation failed: Sku has already been taken')
+          expect(flash[:error]).to eq(expected_error)
+        end
       end
     end
   end
