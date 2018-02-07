@@ -41,7 +41,7 @@ module Spree
 
       def build_splitter
         splitter = nil
-        splitters.reverse.each do |klass|
+        splitters.reverse_each do |klass|
           splitter = klass.new(self, splitter)
         end
         splitter
