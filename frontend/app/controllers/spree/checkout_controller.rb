@@ -6,12 +6,12 @@ module Spree
   class CheckoutController < Spree::StoreController
     before_action :load_order_with_lock
     before_action :ensure_valid_state_lock_version, only: [:update]
+    before_action :ensure_valid_state
     before_action :set_state_if_present
 
     before_action :ensure_order_not_completed
     before_action :ensure_checkout_allowed
     before_action :ensure_sufficient_stock_lines
-    before_action :ensure_valid_state
 
     before_action :associate_user
     before_action :check_authorization
@@ -49,7 +49,7 @@ module Spree
 
     def unknown_state?
       (params[:state] && !@order.has_checkout_step?(params[:state])) ||
-        (!params[:state] && !@order.has_checkout_step?(@order.state))
+        (!@order.has_checkout_step?(@order.state))
     end
 
     def insufficient_payment?
