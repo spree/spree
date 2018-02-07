@@ -3,6 +3,7 @@
 <% end %>
 
 <% if error = flash.discard(:error) %>
+  $('#content').find('.alert-success').remove();
   show_flash('error', "<%= j error %>");
 <% end %>
 
