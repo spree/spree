@@ -19,6 +19,15 @@ describe 'Stock Transfers', type: :feature, js: true do
     expect(page).to have_content(content)
   end
 
+  it 'show error message if no variant is added' do
+    visit spree.admin_stock_transfers_path
+    click_on 'New Stock Transfer'
+    click_button 'Transfer Stock'
+    fill_in 'reference', with: 'PO 666'
+
+    expect(page).to have_content('No Variants found')
+  end
+
   it 'transfer between 2 locations' do
     source_location = create(:stock_location_with_items, name: 'NY')
     destination_location = create(:stock_location, name: 'SF')

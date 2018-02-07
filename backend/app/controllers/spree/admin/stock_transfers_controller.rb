@@ -2,6 +2,7 @@ module Spree
   module Admin
     class StockTransfersController < Admin::BaseController
       before_action :load_stock_locations, only: :index
+      before_action :ensure_variants_exists, only: :create
 
       def index
         @q = StockTransfer.ransack(params[:q])
@@ -41,6 +42,13 @@ module Spree
 
       def load_stock_locations
         @stock_locations = Spree::StockLocation.active.order_default
+      end
+
+      def ensure_variants_exists
+        if params[:variants].blank?
+          flash[:error] = Spree.t(:no_resource_found, resource: :variants)
+          redirect_to new_admin_stock_transfer_path
+        end
       end
 
       def source_location
