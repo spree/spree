@@ -9,7 +9,7 @@ module Spree
 
     protected
 
-    def create_adjustment(order, adjustable, included = nil)
+    def create_adjustment(order, adjustable, included = false)
       amount = compute_amount(adjustable)
       return if amount == 0
       adjustments.new(order: order,
