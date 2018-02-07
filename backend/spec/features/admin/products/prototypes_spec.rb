@@ -54,8 +54,8 @@ describe 'Prototypes', type: :feature, js: true do
       fill_in 'prototype_name', with: 'male shirts'
       click_button 'Create'
       expect(page).to have_content('successfully created!')
-      click_link 'Products'
-      click_link 'Prototypes'
+
+      visit spree.admin_prototypes_path
       within_row(1) { click_icon :edit }
       fill_in 'prototype_name', with: 'Shirt 99'
       click_button 'Update'
@@ -101,11 +101,11 @@ describe 'Prototypes', type: :feature, js: true do
     click_link 'Products'
     click_link 'Prototypes'
 
-    within("#spree_prototype_#{shirt_prototype.id}") do
-      page.find('.delete-resource').click
-    end
-
     accept_alert do
+      within("#spree_prototype_#{shirt_prototype.id}") do
+        page.find('.delete-resource').click
+      end
+
       expect(page).to have_content("Prototype \"#{shirt_prototype.name}\" has been successfully removed!")
     end
   end

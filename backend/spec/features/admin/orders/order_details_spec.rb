@@ -278,9 +278,11 @@ describe 'Order Details', type: :feature, js: true do
             within_row(1) { click_icon 'split' }
             targetted_select2 stock_location2.name, from: '#s2id_item_stock_location'
             fill_in 'item_quantity', with: 'ff'
-            click_icon :save
 
-            wait_for_ajax
+            accept_alert do
+              click_icon :save
+              wait_for_ajax
+            end
 
             expect(order.shipments.count).to eq(1)
             expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq(2)
@@ -293,18 +295,22 @@ describe 'Order Details', type: :feature, js: true do
             within_row(1) { click_icon 'split' }
             targetted_select2 stock_location2.name, from: '#s2id_item_stock_location'
             fill_in 'item_quantity', with: 0
-            click_icon :save
 
-            wait_for_ajax
+            accept_alert do
+              click_icon :save
+              wait_for_ajax
+            end
 
             expect(order.shipments.count).to eq(1)
             expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq(2)
             expect(order.shipments.first.stock_location.id).to eq(stock_location.id)
 
             fill_in 'item_quantity', with: -1
-            click_icon :save
 
-            wait_for_ajax
+            accept_alert do
+              click_icon :save
+              wait_for_ajax
+            end
 
             expect(order.shipments.count).to eq(1)
             expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq(2)
@@ -333,9 +339,11 @@ describe 'Order Details', type: :feature, js: true do
               within_row(1) { click_icon 'split' }
               targetted_select2 stock_location2.name, from: '#s2id_item_stock_location'
               fill_in 'item_quantity', with: 2
-              click_icon :save
 
-              wait_for_ajax
+              accept_alert do
+                click_icon :save
+                wait_for_ajax
+              end
 
               expect(order.shipments.count).to eq(1)
               expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq(2)
@@ -354,6 +362,7 @@ describe 'Order Details', type: :feature, js: true do
               click_icon :save
 
               wait_for_ajax
+
               order.reload
 
               expect(order.shipments.count).to eq(1)
@@ -480,16 +489,20 @@ describe 'Order Details', type: :feature, js: true do
             within_row(1) { click_icon 'split' }
             targetted_select2 @shipment2.number, from: '#s2id_item_stock_location'
             fill_in 'item_quantity', with: 1
-            click_icon :save
 
-            wait_for_ajax
+            accept_alert do
+              click_icon :save
+              wait_for_ajax
+            end
 
             within_row(1) { click_icon 'split' }
             targetted_select2 @shipment2.number, from: '#s2id_item_stock_location'
             fill_in 'item_quantity', with: 200
-            click_icon :save
 
-            wait_for_ajax
+            accept_alert do
+              click_icon :save
+              wait_for_ajax
+            end
 
             expect(order.shipments.count).to eq(2)
             expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq(1)
@@ -500,9 +513,11 @@ describe 'Order Details', type: :feature, js: true do
             within_row(1) { click_icon 'split' }
             targetted_select2 order.shipments.first.number, from: '#s2id_item_stock_location'
             fill_in 'item_quantity', with: 1
-            click_icon :save
 
-            wait_for_ajax
+            accept_alert do
+              click_icon :save
+              wait_for_ajax
+            end
 
             expect(order.shipments.count).to eq(2)
             expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq(2)

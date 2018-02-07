@@ -175,6 +175,7 @@ describe 'Products', type: :feature do
       end
 
       it 'should keep option values selected if validation fails' do
+        disable_html5_validation
         fill_in 'product_name', with: 'Baseball Cap'
         fill_in 'product_sku', with: 'B100'
         fill_in 'product_price', with: '100'
