@@ -3,7 +3,7 @@ module SpreeCmd
     include Thor::Actions
 
     desc 'builds a spree extension'
-    argument :file_name, type: :string, desc: 'rails app_path', default: '.'
+    argument :file_name, type: :string, desc: 'rails app_path', default: 'sample_extension'
 
     source_root File.expand_path('../templates/extension', __FILE__)
 
@@ -15,6 +15,8 @@ module SpreeCmd
       directory 'app', "#{file_name}/app"
       directory 'lib', "#{file_name}/lib"
       directory 'bin', "#{file_name}/bin"
+      directory 'spec', "#{file_name}/spec"
+
       chmod "#{file_name}/bin/rails", 0o755
 
       template 'extension.gemspec', "#{file_name}/#{file_name}.gemspec"
@@ -26,9 +28,9 @@ module SpreeCmd
       template 'config/routes.rb', "#{file_name}/config/routes.rb"
       template 'config/locales/en.yml', "#{file_name}/config/locales/en.yml"
       template 'rspec', "#{file_name}/.rspec"
-      template 'spec/spec_helper.rb.tt', "#{file_name}/spec/spec_helper.rb"
       template 'travis.yml', "#{file_name}/.travis.yml"
       template 'Appraisals', "#{file_name}/Appraisals"
+      template '.rubocop.yml', "#{file_name}/.rubocop.yml"
     end
 
     def final_banner
