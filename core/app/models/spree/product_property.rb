@@ -8,8 +8,8 @@ module Spree
     end
 
     validates :property, presence: true
-
     validates :value, db_maximum_length: true
+    validates :property_id, uniqueness: { scope: :product_id }, allow_blank: true
 
     default_scope { order(:position) }
 
@@ -22,7 +22,8 @@ module Spree
     def property_name=(name)
       if name.present?
         # don't use `find_by :name` to workaround globalize/globalize#423 bug
-        self.property = Property.where(name: name).first_or_create(presentation: name)
+        stripped_name = name.strip
+        self.property = Property.where(name: stripped_name).first_or_create(presentation: stripped_name)
       end
     end
   end
