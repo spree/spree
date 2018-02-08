@@ -5,13 +5,13 @@ module Spree
     render_views
 
     shared_examples 'a JSON response' do
-      it 'should be ok' do
+      it 'is ok' do
         expect(subject).to be_ok
       end
 
-      it 'should return JSON' do
+      it 'returns JSON' do
         payload = HashWithIndifferentAccess.new(JSON.parse(subject.body))
-        expect(payload).to_not be_nil
+        expect(payload).not_to be_nil
         Spree::Api::ApiHelpers.promotion_attributes.each do |attribute|
           expect(payload.key?(attribute)).to be true
         end
@@ -45,7 +45,7 @@ module Spree
         context 'when id does not exist' do
           let(:id) { 'argh' }
 
-          it 'should be 404' do
+          it 'is 404' do
             expect(subject.status).to eq(404)
           end
         end
@@ -54,7 +54,7 @@ module Spree
       context 'when non admin' do
         let(:id) { promotion.id }
 
-        it 'should be unauthorized' do
+        it 'is unauthorized' do
           subject
           assert_unauthorized!
         end

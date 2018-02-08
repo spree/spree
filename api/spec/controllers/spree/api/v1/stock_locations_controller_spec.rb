@@ -45,7 +45,6 @@ module Spree
       end
     end
 
-
     context 'as an admin' do
       sign_in_as_admin!
 

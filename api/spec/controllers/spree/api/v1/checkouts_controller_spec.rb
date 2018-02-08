@@ -9,11 +9,11 @@ module Spree
         allow(controller).to receive(:load_order).with(true).and_return(true)
       end
 
-      it 'should invoke load_order_with_lock' do
+      it 'invokes load_order_with_lock' do
         expect(controller).to receive(:load_order_with_lock).exactly(1).times
       end
 
-      it 'should invoke load_order' do
+      it 'invokes load_order' do
         expect(controller).to receive(:load_order).with(true).exactly(1).times.and_return(true)
       end
 
@@ -24,7 +24,7 @@ module Spree
           end
         end
 
-        it 'should not generate double_render_error' do
+        it 'does not generate double_render_error' do
           expect(response).to be_successful
         end
       end
@@ -34,7 +34,7 @@ module Spree
       end
     end
 
-    before(:each) do
+    before do
       stub_authentication!
       Spree::Config[:track_inventory_levels] = false
       country_zone = create(:zone, name: 'CountryZone')
@@ -60,19 +60,19 @@ module Spree
         order
       end
 
-      before(:each) do
+      before do
         allow_any_instance_of(Order).to receive_messages(confirmation_required?: true)
         allow_any_instance_of(Order).to receive_messages(payment_required?: true)
       end
 
-      it 'should transition a recently created order from cart to address' do
+      it 'transitions a recently created order from cart to address' do
         expect(order.state).to eq 'cart'
         expect(order.email).not_to be_nil
         api_put :update, id: order.to_param, order_token: order.guest_token
         expect(order.reload.state).to eq 'address'
       end
 
-      it 'should transition a recently created order from cart to address with order token in header' do
+      it 'transitions a recently created order from cart to address with order token in header' do
         expect(order.state).to eq 'cart'
         expect(order.email).not_to be_nil
         request.headers['X-Spree-Order-Token'] = order.guest_token
@@ -161,7 +161,7 @@ module Spree
           # Shipments manifests should not return the ENTIRE variant
           # This information is already present within the order's line items
           expect(json_response['shipments'].first['manifest'].first['variant']).to be_nil
-          expect(json_response['shipments'].first['manifest'].first['variant_id']).to_not be_nil
+          expect(json_response['shipments'].first['manifest'].first['variant_id']).not_to be_nil
         end
       end
 
@@ -215,11 +215,11 @@ module Spree
         order.update_column(:state, 'payment')
         api_put :update, id: order.to_param, order_token: order.guest_token,
                          order: {
-            payments_attributes: [{ payment_method_id: @payment_method.id }]
-          },
+                           payments_attributes: [{ payment_method_id: @payment_method.id }]
+                         },
                          payment_source: {
-            @payment_method.id.to_s => { name: 'Spree' }
-          }
+                           @payment_method.id.to_s => { name: 'Spree' }
+                         }
 
         expect(response.status).to eq(422)
         cc_errors = json_response['errors']['payments.Credit Card']
@@ -292,11 +292,12 @@ module Spree
         api_put :update, id: order.to_param, order_token: order.guest_token
       end
 
-      it_should_behave_like 'action which loads order using load_order_with_lock'
+      it_behaves_like 'action which loads order using load_order_with_lock'
     end
 
     context "PUT 'next'" do
       let!(:order) { create(:order_with_line_items) }
+
       it 'cannot transition to address without a line item' do
         order.line_items.delete_all
         order.update_column(:email, 'spree@example.com')
@@ -341,7 +342,7 @@ module Spree
         api_put :next, id: order.to_param, order_token: order.guest_token
       end
 
-      it_should_behave_like 'action which loads order using load_order_with_lock'
+      it_behaves_like 'action which loads order using load_order_with_lock'
     end
 
     context "PUT 'advance'" do
@@ -361,7 +362,7 @@ module Spree
         api_put :advance, id: order.to_param, order_token: order.guest_token
       end
 
-      it_should_behave_like 'action which loads order using load_order_with_lock'
+      it_behaves_like 'action which loads order using load_order_with_lock'
     end
   end
 end

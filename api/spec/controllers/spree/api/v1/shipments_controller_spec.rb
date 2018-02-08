@@ -5,12 +5,11 @@ describe Spree::Api::V1::ShipmentsController, type: :controller do
   let!(:shipment) { create(:shipment) }
   let!(:shipment2) { create(:shipment) }
   let!(:attributes) { [:id, :tracking, :number, :cost, :shipped_at, :stock_location_name, :order_id, :shipping_rates, :shipping_methods] }
+  let(:resource_scoping) { { id: shipment.to_param, shipment: { order_id: shipment.order.to_param } } }
 
   before do
     stub_authentication!
   end
-
-  let!(:resource_scoping) { { id: shipment.to_param, shipment: { order_id: shipment.order.to_param } } }
 
   context 'as a non-admin' do
     it 'cannot make a shipment ready' do
@@ -33,6 +32,10 @@ describe Spree::Api::V1::ShipmentsController, type: :controller do
 
     # Start writing this spec a bit differently than before....
     describe 'POST #create' do
+      subject do
+        api_post :create, params
+      end
+
       let(:params) do
         {
           variant_id: stock_location.stock_items.first.variant.to_param,
@@ -41,17 +44,13 @@ describe Spree::Api::V1::ShipmentsController, type: :controller do
         }
       end
 
-      subject do
-        api_post :create, params
-      end
-
       [:variant_id, :stock_location_id].each do |field|
         context "when #{field} is missing" do
           before do
             params.delete(field)
           end
 
-          it 'should return proper error' do
+          it 'returns proper error' do
             subject
             expect(response.status).to eq(422)
             expect(json_response['exception']).to eq("param is missing or the value is empty: #{field}")
@@ -59,7 +58,7 @@ describe Spree::Api::V1::ShipmentsController, type: :controller do
         end
       end
 
-      it 'should create a new shipment' do
+      it 'creates a new shipment' do
         expect(subject).to be_ok
         expect(json_response).to have_attributes(attributes)
       end
@@ -80,7 +79,7 @@ describe Spree::Api::V1::ShipmentsController, type: :controller do
           shared_params.merge(target_shipment_number: shipment.number, quantity: '-200')
         end
 
-        it 'should display wrong target and negative quantity errors' do
+        it 'displays wrong target and negative quantity errors' do
           api_post :transfer_to_shipment, params
           expect(json_response['exception']).to eq("#{Spree.t(:shipment_transfer_errors_occured, scope: 'api')} \n#{Spree.t(:negative_quantity, scope: 'api')}, \n#{Spree.t(:wrong_shipment_target, scope: 'api')}")
         end
@@ -91,7 +90,7 @@ describe Spree::Api::V1::ShipmentsController, type: :controller do
           shared_params.merge(target_shipment_number: shipment2.number, quantity: '-200')
         end
 
-        it 'should display negative quantity error' do
+        it 'displays negative quantity error' do
           api_post :transfer_to_shipment, params
           expect(json_response['exception']).to eq("#{Spree.t(:shipment_transfer_errors_occured, scope: 'api')} \n#{Spree.t(:negative_quantity, scope: 'api')}")
         end
@@ -102,7 +101,7 @@ describe Spree::Api::V1::ShipmentsController, type: :controller do
           shared_params.merge(target_shipment_number: shipment.number, quantity: '200')
         end
 
-        it 'should display wrong target error' do
+        it 'displays wrong target error' do
           api_post :transfer_to_shipment, params
           expect(json_response['exception']).to eq("#{Spree.t(:shipment_transfer_errors_occured, scope: 'api')} \n#{Spree.t(:wrong_shipment_target, scope: 'api')}")
         end
@@ -138,7 +137,7 @@ describe Spree::Api::V1::ShipmentsController, type: :controller do
 
     context 'for completed shipments' do
       let(:order) { create :completed_order_with_totals }
-      let!(:resource_scoping) { { id: order.shipments.first.to_param, shipment: { order_id: order.to_param } } }
+      let(:resource_scoping) { { id: order.shipments.first.to_param, shipment: { order_id: order.to_param } } }
 
       it 'adds a variant to a shipment' do
         api_put :add, variant_id: variant.to_param, quantity: 2
@@ -210,7 +209,9 @@ describe Spree::Api::V1::ShipmentsController, type: :controller do
         context 'with filtering' do
           let(:params) { { q: { order_completed_at_not_null: 1 } } }
 
-          let!(:incomplete_order) { create(:order, user: current_api_user) }
+          before do
+            create(:order, user: current_api_user) # incomplete_order
+          end
 
           it 'filters' do
             expect(assigns(:shipments).map(&:id)).to match_array current_api_user.orders.complete.flat_map(&:shipments).map(&:id)

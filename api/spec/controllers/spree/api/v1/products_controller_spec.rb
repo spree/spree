@@ -19,9 +19,9 @@ module Spree
     let(:attributes_for_variant) do
       h = attributes_for(:variant).except(:option_values, :product)
       h.merge(options: [
-          { name: 'size', value: 'small' },
-          { name: 'color', value: 'black' }
-        ])
+                { name: 'size', value: 'small' },
+                { name: 'color', value: 'black' }
+              ])
     end
 
     before do
@@ -30,9 +30,8 @@ module Spree
 
     context 'as a normal user' do
       context 'with caching enabled' do
-        let!(:product_2) { create(:product) }
-
         before do
+          create(:product) # product_2
           ActionController::Base.perform_caching = true
         end
 
@@ -96,8 +95,9 @@ module Spree
       end
 
       context 'pagination' do
+        before { create(:product) }
+
         it 'can select the next page of products' do
-          second_product = create(:product)
           api_get :index, page: 2, per_page: 1
           expect(json_response['products'].first).to have_attributes(show_attributes)
           expect(json_response['total_count']).to eq(2)
@@ -106,7 +106,6 @@ module Spree
         end
 
         it 'can control the page size through a parameter' do
-          create(:product)
           api_get :index, per_page: 1
           expect(json_response['count']).to eq(1)
           expect(json_response['total_count']).to eq(2)
@@ -125,7 +124,7 @@ module Spree
       # regression test for https://github.com/spree/spree/issues/8207
       it 'can sort products by date' do
         first_product = create(:product, created_at: Time.current - 1.month)
-        second_product = create(:product, created_at: Time.current)
+        create(:product, created_at: Time.current) # second_product
         api_get :index, q: { s: 'created_at asc' }
         expect(json_response['products'].first['id']).to eq(first_product.id)
       end
@@ -270,9 +269,9 @@ module Spree
 
         it 'can create a new product with embedded product_properties' do
           product_data[:product_properties_attributes] = [{
-              property_name: 'fabric',
-              value: 'cotton'
-            }]
+            property_name: 'fabric',
+            value: 'cotton'
+          }]
 
           api_post :create, product: product_data
 

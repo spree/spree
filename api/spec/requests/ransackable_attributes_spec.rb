@@ -3,6 +3,7 @@ require 'spec_helper'
 describe 'Ransackable Attributes' do
   let(:user) { create(:user).tap(&:generate_spree_api_key!) }
   let(:order) { create(:order_with_line_items, user: user) }
+
   context 'filtering by attributes one association away' do
     it 'does not allow the filtering of variants by order attributes' do
       2.times { create(:variant) }
@@ -33,7 +34,7 @@ describe 'Ransackable Attributes' do
 
       get '/api/v1/variants?q[product_name_or_sku_cont]=fritos', params: { token: user.spree_api_key }
 
-      skus = JSON.parse(response.body)['variants'].map { |variant| variant['sku'] }
+      skus = JSON.parse(response.body)['variants'].map { |var| var['sku'] }
       expect(skus).to include variant.sku
       expect(skus).not_to include other_variant.sku
     end
@@ -41,8 +42,8 @@ describe 'Ransackable Attributes' do
 
   context 'filtering by attributes' do
     it 'most attributes are not filterable by default' do
-      product = create(:product, meta_title: 'special product')
-      other_product = create(:product)
+      create(:product, meta_title: 'special product')
+      create(:product)
 
       get '/api/v1/products?q[meta_title_cont]=special', params: { token: user.spree_api_key }
 
@@ -56,7 +57,7 @@ describe 'Ransackable Attributes' do
 
       get "/api/v1/products?q[id_eq]=#{product.id}", params: { token: user.spree_api_key }
 
-      product_names = JSON.parse(response.body)['products'].map { |product| product['name'] }
+      product_names = JSON.parse(response.body)['products'].map { |prod| prod['name'] }
       expect(product_names).to include product.name
       expect(product_names).not_to include other_product.name
     end
@@ -69,7 +70,7 @@ describe 'Ransackable Attributes' do
 
       get '/api/v1/products?q[name_cont]=fritos', params: { token: user.spree_api_key }
 
-      product_names = JSON.parse(response.body)['products'].map { |product| product['name'] }
+      product_names = JSON.parse(response.body)['products'].map { |prod| prod['name'] }
       expect(product_names).to include product.name
       expect(product_names).not_to include other_product.name
     end

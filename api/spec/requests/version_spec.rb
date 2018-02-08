@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'Version', type: :request do
-  let!(:countries) { Array.new(2) { create :country } }
+  before { create_list(:country, 2) }
 
   describe '/api' do
     it 'be a redirect' do

@@ -35,7 +35,8 @@ module Spree
 
     it 'can retrieve a list of specific option types' do
       option_type_1 = create(:option_type)
-      option_type_2 = create(:option_type)
+      create(:option_type) # option_type_2
+
       api_get :index, ids: "#{option_type.id},#{option_type_1.id}"
       expect(json_response.count).to eq(2)
 
@@ -51,14 +52,14 @@ module Spree
     it 'can learn how to create a new option type' do
       api_get :new
       expect(json_response['attributes']).to eq(attributes.map(&:to_s))
-      expect(json_response['required_attributes']).to_not be_empty
+      expect(json_response['required_attributes']).not_to be_empty
     end
 
     it 'cannot create a new option type' do
       api_post :create, option_type: {
-                        name: 'Option Type',
-                        presentation: 'Option Type'
-                      }
+        name: 'Option Type',
+        presentation: 'Option Type'
+      }
       assert_unauthorized!
     end
 
@@ -66,8 +67,8 @@ module Spree
       original_name = option_type.name
       api_put :update, id: option_type.id,
                        option_type: {
-                          name: 'Option Type'
-                        }
+                         name: 'Option Type'
+                       }
       assert_not_found!
       expect(option_type.reload.name).to eq(original_name)
     end
@@ -83,9 +84,9 @@ module Spree
 
       it 'can create an option type' do
         api_post :create, option_type: {
-                          name: 'Option Type',
-                          presentation: 'Option Type'
-                        }
+          name: 'Option Type',
+          presentation: 'Option Type'
+        }
         expect(json_response).to have_attributes(attributes)
         expect(response.status).to eq(201)
       end
@@ -96,20 +97,13 @@ module Spree
       end
 
       it 'can update an option type' do
-        original_name = option_type.name
-        api_put :update, id: option_type.id, option_type: {
-                              name: 'Option Type',
-                            }
+        api_put :update, id: option_type.id, option_type: { name: 'Option Type' }
         expect(response.status).to eq(200)
-
-        option_type.reload
-        expect(option_type.name).to eq('Option Type')
+        expect(option_type.reload.name).to eq('Option Type')
       end
 
       it 'cannot update an option type with invalid attributes' do
-        api_put :update, id: option_type.id, option_type: {
-                          name: ''
-                         }
+        api_put :update, id: option_type.id, option_type: { name: '' }
         expect(response.status).to eq(422)
       end
 

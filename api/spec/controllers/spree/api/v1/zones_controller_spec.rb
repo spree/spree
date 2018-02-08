@@ -65,14 +65,14 @@ module Spree
       it 'updates a zone' do
         params = { id: @zone.id,
                    zone: {
-                    name: 'North Pole',
-                    zone_members: [
-                      {
-                        zoneable_type: 'Spree::Country',
-                        zoneable_id: country.id
-                      }
-                    ]
-                  } }
+                     name: 'North Pole',
+                     zone_members: [
+                       {
+                         zoneable_type: 'Spree::Country',
+                         zoneable_id: country.id
+                       }
+                     ]
+                   } }
 
         api_put :update, params
         expect(response.status).to eq(200)
