@@ -84,6 +84,7 @@ describe 'Stock Management', type: :feature, js: true do
 
     context 'with multiple variants' do
       let!(:variant) { create(:variant, product: product, sku: 'SPREEC') }
+
       before do
         variant.stock_items.first.update_column(:count_on_hand, 30)
         visit current_url

@@ -29,7 +29,7 @@ module Spree
           spree_post :create, attributes
         end
 
-        it 'should process payment correctly' do
+        it 'processes payment correctly' do
           expect(order.payments.count).to eq(1)
           expect(response).to redirect_to(spree.admin_order_payments_path(order))
           expect(order.reload.state).to eq('complete')
@@ -85,7 +85,7 @@ module Spree
           order.save
         end
 
-        it 'should redirect to the customer details page' do
+        it 'redirects to the customer details page' do
           spree_get :index, amount: 100, order_id: order.number
           expect(response).to redirect_to(spree.edit_admin_order_customer_path(order))
         end

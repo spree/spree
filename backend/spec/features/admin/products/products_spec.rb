@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 require 'spec_helper'
 
 describe 'Products', type: :feature do
@@ -21,7 +19,7 @@ describe 'Products', type: :feature do
           create(:product, name: 'zomg shirt', price: 5)
         end
 
-        it 'should list existing products with correct sorting by name' do
+        it 'lists existing products with correct sorting by name' do
           visit spree.admin_products_path
           # Name ASC
           within_row(1) { expect(page).to have_content('apache baseball cap') }
@@ -33,7 +31,7 @@ describe 'Products', type: :feature do
           within_row(2) { expect(page).to have_content('apache baseball cap') }
         end
 
-        it 'should list existing products with correct sorting by price' do
+        it 'lists existing products with correct sorting by price' do
           visit spree.admin_products_path
           # Name ASC (default)
           within_row(1) { expect(page).to have_content('apache baseball cap') }
@@ -50,9 +48,6 @@ describe 'Products', type: :feature do
         context 'using Russian Rubles' do
           before do
             Spree::Config[:currency] = 'RUB'
-          end
-
-          let!(:product) do
             create(:product, name: 'Just a product', price: 19.99)
           end
 
@@ -68,7 +63,7 @@ describe 'Products', type: :feature do
     end
 
     context 'searching products' do
-      it 'should be able to search deleted products' do
+      it 'is able to search deleted products' do
         create(:product, name: 'apache baseball cap', deleted_at: '2011-01-06 18:21:13')
         create(:product, name: 'zomg shirt')
 
@@ -89,7 +84,7 @@ describe 'Products', type: :feature do
         expect(page).not_to have_content('apache baseball cap')
       end
 
-      it 'should be able to search products by their properties' do
+      it 'is able to search products by their properties' do
         create(:product, name: 'apache baseball cap', sku: 'A100')
         create(:product, name: 'apache baseball cap2', sku: 'B100')
         create(:product, name: 'zomg shirt')
@@ -139,7 +134,7 @@ describe 'Products', type: :feature do
         hash
       end
 
-      before(:each) do
+      before do
         @option_type_prototype = prototype
         @property_prototype = create(:prototype, name: 'Random')
         @shipping_category = create(:shipping_category)
@@ -150,7 +145,7 @@ describe 'Products', type: :feature do
         end
       end
 
-      it 'should allow an admin to create a new product and variants from a prototype' do
+      it 'allows an admin to create a new product and variants from a prototype' do
         fill_in 'product_name', with: 'Baseball Cap'
         fill_in 'product_sku', with: 'B100'
         fill_in 'product_price', with: '100'
@@ -166,7 +161,7 @@ describe 'Products', type: :feature do
         expect(Spree::Product.last.variants.length).to eq(1)
       end
 
-      it 'should not display variants when prototype does not contain option types' do
+      it 'does not display variants when prototype does not contain option types' do
         select 'Random', from: 'Prototype'
 
         fill_in 'product_name', with: 'Baseball Cap'
@@ -174,7 +169,7 @@ describe 'Products', type: :feature do
         expect(page).not_to have_content('Variants')
       end
 
-      it 'should keep option values selected if validation fails' do
+      it 'keeps option values selected if validation fails' do
         disable_html5_validation
         fill_in 'product_name', with: 'Baseball Cap'
         fill_in 'product_sku', with: 'B100'
@@ -191,7 +186,7 @@ describe 'Products', type: :feature do
     end
 
     context 'creating a new product' do
-      before(:each) do
+      before do
         @shipping_category = create(:shipping_category)
         visit spree.admin_products_path
         click_link 'admin_new_product'
@@ -200,7 +195,7 @@ describe 'Products', type: :feature do
         end
       end
 
-      it 'should allow an admin to create a new product' do
+      it 'allows an admin to create a new product' do
         fill_in 'product_name', with: 'Baseball Cap'
         fill_in 'product_sku', with: 'B100'
         fill_in 'product_price', with: '100'
@@ -212,7 +207,7 @@ describe 'Products', type: :feature do
         expect(page).to have_content('successfully updated!')
       end
 
-      it 'should show validation errors' do
+      it 'shows validation errors' do
         fill_in 'product_name', with: 'Baseball Cap'
         fill_in 'product_sku', with: 'B100'
         fill_in 'product_price', with: '100'
@@ -222,7 +217,7 @@ describe 'Products', type: :feature do
 
       context 'using a locale with a different decimal format ' do
         before do
-          # change English locale’s separator and delimiter to match 19,99 format
+          # change English locale's separator and delimiter to match 19,99 format
           I18n.backend.store_translations(:en,
                                           number: {
                                             currency: {
@@ -247,7 +242,7 @@ describe 'Products', type: :feature do
                                           })
         end
 
-        it 'should show localized price value on validation errors', js: true do
+        it 'shows localized price value on validation errors', js: true do
           fill_in 'product_price', with: '19,99'
           click_button 'Create'
           expect(find('input#product_price').value).to eq('19,99')
@@ -267,7 +262,7 @@ describe 'Products', type: :feature do
     end
 
     context 'cloning a product', js: true do
-      it 'should allow an admin to clone a product' do
+      it 'allows an admin to clone a product' do
         create(:product)
 
         visit spree.admin_products_path
@@ -279,7 +274,7 @@ describe 'Products', type: :feature do
       end
 
       context 'cloning a deleted product' do
-        it 'should allow an admin to clone a deleted product' do
+        it 'allows an admin to clone a deleted product' do
           create(:product, name: 'apache baseball cap')
 
           visit spree.admin_products_path
@@ -306,12 +301,12 @@ describe 'Products', type: :feature do
         FactoryBot.create(:prototype, name: 'Size', option_types: [size])
       end
 
-      before(:each) do
+      before do
         @option_type_prototype = prototype
         @property_prototype = create(:prototype, name: 'Random')
       end
 
-      it 'should parse correctly available_on' do
+      it 'parses correctly available_on' do
         visit spree.admin_product_path(product)
         fill_in 'product_available_on', with: '2012/12/25'
         click_button 'Update'
@@ -319,7 +314,7 @@ describe 'Products', type: :feature do
         expect(Spree::Product.last.available_on.to_s).to eq('2012-12-25 00:00:00 UTC')
       end
 
-      it 'should add option_types when selecting a prototype', js: true do
+      it 'adds option_types when selecting a prototype', js: true do
         visit spree.admin_product_path(product)
         within('#sidebar') do
           click_link 'Properties'
@@ -338,7 +333,7 @@ describe 'Products', type: :feature do
 
       context 'using a locale with a different decimal format' do
         before do
-          # change English locale’s separator and delimiter to match 19,99 format
+          # change English locale's separator and delimiter to match 19,99 format
           I18n.backend.store_translations(
             :en,
             number: {
@@ -375,7 +370,7 @@ describe 'Products', type: :feature do
           )
         end
 
-        it 'should parse correctly decimal values like weight' do
+        it 'parses correctly decimal values like weight' do
           visit spree.admin_product_path(product)
           fill_in 'product_weight', with: '1'
           click_button 'Update'
@@ -415,7 +410,7 @@ describe 'Products', type: :feature do
     end
     let!(:product) { create(:product) }
 
-    it 'should only display accessible links on index' do
+    it 'onlies display accessible links on index' do
       visit spree.admin_products_path
 
       expect(page).to have_link('Products')
@@ -428,7 +423,7 @@ describe 'Products', type: :feature do
       expect(page).not_to have_css('.delete-resource')
     end
 
-    it 'should only display accessible links on edit' do
+    it 'onlies display accessible links on edit' do
       visit spree.admin_product_path(product)
 
       # product tabs should be hidden

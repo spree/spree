@@ -16,7 +16,7 @@ describe 'Product Taxons', type: :feature, js: true do
       find('#product_taxon_ids').value.split(',').map(&:to_i).uniq
     end
 
-    it 'should allow an admin to manage taxons' do
+    it 'allows an admin to manage taxons' do
       taxon_1 = create(:taxon)
       taxon_2 = create(:taxon, name: 'Clothing')
       product = create(:product)

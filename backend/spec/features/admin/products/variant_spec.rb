@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 require 'spec_helper'
 
 describe 'Variants', type: :feature do
@@ -8,7 +6,7 @@ describe 'Variants', type: :feature do
   let(:product) { create(:product_with_option_types, price: '1.99', cost_price: '1.00', weight: '2.5', height: '3.0', width: '1.0', depth: '1.5') }
 
   context 'creating a new variant' do
-    it 'should allow an admin to create a new variant', js: true do
+    it 'allows an admin to create a new variant', js: true do
       product.options.each do |option|
         create(:option_value, option_type: option.option_type)
       end
@@ -32,9 +30,6 @@ describe 'Variants', type: :feature do
       context 'using Russian Rubles' do
         before do
           Spree::Config[:currency] = 'RUB'
-        end
-
-        let!(:variant) do
           create(:variant, product: product, price: 19.99)
         end
 

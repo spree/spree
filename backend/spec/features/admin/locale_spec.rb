@@ -23,7 +23,7 @@ describe 'setting locale', type: :feature do
     Spree::Backend::Config[:locale] = 'en'
   end
 
-  it 'should be in french' do
+  it 'is in french' do
     visit spree.admin_path
     click_link 'Ordres'
     expect(page).to have_content('Ordres')

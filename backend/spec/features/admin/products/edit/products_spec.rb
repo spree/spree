@@ -1,12 +1,10 @@
-# encoding: UTF-8
-
 require 'spec_helper'
 
 describe 'Product Details', type: :feature, js: true do
   stub_authorization!
 
   context 'editing a product' do
-    it 'should list the product details' do
+    it 'lists the product details' do
       create(:product, name: 'Bún thịt nướng', sku: 'A100',
                        description: 'lorem ipsum', available_on: '2013-08-14 01:02:03')
 
@@ -25,7 +23,7 @@ describe 'Product Details', type: :feature, js: true do
       expect(find('input#product_sku').value).to eq('A100')
     end
 
-    it 'should handle slug changes' do
+    it 'handles slug changes' do
       create(:product, name: 'Bún thịt nướng', sku: 'A100',
                        description: 'lorem ipsum', available_on: '2011-01-01 01:01:01')
 

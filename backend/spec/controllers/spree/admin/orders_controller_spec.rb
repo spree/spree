@@ -15,15 +15,6 @@ describe Spree::Admin::OrdersController, type: :controller do
   context 'with authorization' do
     stub_authorization!
 
-    before do
-      request.env['HTTP_REFERER'] = 'http://localhost:3000'
-
-      # ensure no respond_overrides are in effect
-      if Spree::BaseController.spree_responders[:OrdersController].present?
-        Spree::BaseController.spree_responders[:OrdersController].clear
-      end
-    end
-
     let(:order) do
       mock_model(
         Spree::Order,
@@ -39,6 +30,10 @@ describe Spree::Admin::OrdersController, type: :controller do
     let(:display_value) { Spree::ShippingMethod::DISPLAY_ON_BACK_END }
 
     before do
+      request.env['HTTP_REFERER'] = 'http://localhost:3000'
+      # ensure no respond_overrides are in effect
+      Spree::BaseController.spree_responders[:OrdersController].clear if Spree::BaseController.spree_responders[:OrdersController].present?
+
       allow(Spree::Order).to receive_message_chain(:includes, find_by!: order)
     end
 
@@ -253,7 +248,7 @@ describe Spree::Admin::OrdersController, type: :controller do
       end
 
       context 'when referer' do
-        before(:each) do
+        before do
           request.env['HTTP_REFERER'] = '/'
         end
 
@@ -264,7 +259,7 @@ describe Spree::Admin::OrdersController, type: :controller do
       end
 
       context 'when no referer' do
-        before(:each) do
+        before do
           request.env['HTTP_REFERER'] = nil
         end
 
@@ -295,7 +290,7 @@ describe Spree::Admin::OrdersController, type: :controller do
       end
 
       context 'when referer' do
-        before(:each) do
+        before do
           request.env['HTTP_REFERER'] = '/'
         end
 
@@ -306,7 +301,7 @@ describe Spree::Admin::OrdersController, type: :controller do
       end
 
       context 'when no referer' do
-        before(:each) do
+        before do
           request.env['HTTP_REFERER'] = nil
         end
 
@@ -334,13 +329,13 @@ describe Spree::Admin::OrdersController, type: :controller do
       allow(controller).to receive_messages spree_current_user: user
     end
 
-    it 'should grant access to users with an admin role' do
+    it 'grants access to users with an admin role' do
       user.spree_roles << Spree::Role.find_or_create_by(name: 'admin')
       spree_post :index
       expect(response).to render_template :index
     end
 
-    it 'should grant access to users with an bar role' do
+    it 'grants access to users with an bar role' do
       with_ability(BarAbility) do
         user.spree_roles << Spree::Role.find_or_create_by(name: 'bar')
         spree_post :index
@@ -348,7 +343,7 @@ describe Spree::Admin::OrdersController, type: :controller do
       end
     end
 
-    it 'should deny access to users with an bar role' do
+    it 'denies access to users with an bar role' do
       with_ability(BarAbility) do
         allow(order).to receive(:update_attributes).and_return true
         allow(order).to receive(:user).and_return Spree.user_class.new
@@ -360,19 +355,19 @@ describe Spree::Admin::OrdersController, type: :controller do
       end
     end
 
-    it 'should deny access to users without an admin role' do
+    it 'denies access to users without an admin role' do
       allow(user).to receive_messages has_spree_role?: false
       spree_post :index
       expect(response).to redirect_to(spree.forbidden_path)
     end
 
-    it 'should deny access to not signed in users' do
+    it 'denies access to not signed in users' do
       allow(controller).to receive_messages spree_current_user: nil
       spree_get :index
       expect(response).to redirect_to('/')
     end
 
-    it 'should restrict returned order(s) on index when using OrderSpecificAbility' do
+    it 'restricts returned order(s) on index when using OrderSpecificAbility' do
       number = order.number
 
       3.times { create(:completed_order_with_totals) }

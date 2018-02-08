@@ -1,5 +1,3 @@
-# coding: UTF-8
-
 require 'spec_helper'
 
 describe Spree::Admin::StockMovementsHelper, type: :helper do

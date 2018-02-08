@@ -8,16 +8,16 @@ describe 'ReturnAuthorizationReason', type: :feature, js: true do
   let!(:rma_reason) { create(:return_authorization_reason, name: 'Defect #1', mutable: true) }
   let!(:rma_reason2) { create(:return_authorization_reason, name: 'Defect #2', mutable: true) }
 
-  let!(:return_authorization) do
+  before do
     create(
       :return_authorization,
       order: order,
       stock_location: stock_location,
       reason: rma_reason
     )
-  end
 
-  before { visit spree.admin_return_authorization_reasons_path }
+    visit spree.admin_return_authorization_reasons_path
+  end
 
   describe 'destroy' do
     it 'has return authorization reasons' do

@@ -6,15 +6,17 @@ module Spree
       stub_authorization!
 
       describe '#index' do
-        let!(:order) { create(:order) }
-        let!(:adjustment_1) { create(:adjustment, order: order) }
-        let!(:adjustment_2) { create(:adjustment, order: order, eligible: false) }
-
         subject do
           spree_get :index, order_id: order.to_param
         end
 
-        before { subject }
+        let!(:order) { create(:order) }
+        let!(:adjustment_1) { create(:adjustment, order: order) }
+
+        before do
+          create(:adjustment, order: order, eligible: false) # adjustment_2
+          subject
+        end
 
         it 'returns 200 status' do
           expect(response.status).to eq 200

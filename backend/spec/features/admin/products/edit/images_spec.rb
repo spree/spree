@@ -13,7 +13,7 @@ describe 'Product Images', type: :feature, js: true do
   end
 
   context 'uploading, editing, and deleting an image' do
-    it 'should allow an admin to upload and edit an image for a product' do
+    it 'allows an admin to upload and edit an image for a product' do
       Spree::Image.attachment_definitions[:attachment].delete :storage
 
       create(:product)
@@ -41,7 +41,7 @@ describe 'Product Images', type: :feature, js: true do
   end
 
   # Regression test for #2228
-  it 'should see variant images', js: false do
+  it 'sees variant images', js: false do
     variant = create(:variant)
     variant.images.create!(attachment: File.open(file_path))
     visit spree.admin_product_images_path(variant.product)
@@ -65,7 +65,7 @@ describe 'Product Images', type: :feature, js: true do
     end
   end
 
-  it 'should not see variant column when product has no variants', js: false do
+  it 'does not see variant column when product has no variants', js: false do
     product = create(:product)
     product.images.create!(attachment: File.open(file_path))
     visit spree.admin_product_images_path(product)

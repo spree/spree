@@ -32,3 +32,6 @@ RSpec/NamedSubject:
 
 RSpec/MultipleExpectations:
   Enabled: false
+
+RSpec/FilePath:
+  Enabled: false

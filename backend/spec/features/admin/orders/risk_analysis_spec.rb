@@ -42,7 +42,7 @@ describe 'Order Risk Analysis', type: :feature do
     end
 
     it "does not display 'Risk Analysis' box" do
-      expect(page).to_not have_content 'Risk Analysis'
+      expect(page).not_to have_content 'Risk Analysis'
     end
   end
 end

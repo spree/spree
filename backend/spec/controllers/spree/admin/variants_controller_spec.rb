@@ -30,14 +30,14 @@ module Spree
       end
 
       describe '#destroy' do
+        subject(:send_request) do
+          spree_delete :destroy, product_id: product, id: variant, format: :js
+        end
+
         let(:variant) { mock_model(Spree::Variant) }
         let(:variants) { double(ActiveRecord::Relation) }
         let(:product) { mock_model(Spree::Product) }
         let(:products) { double(ActiveRecord::Relation) }
-
-        subject(:send_request) do
-          spree_delete :destroy, product_id: product, id: variant, format: :js
-        end
 
         before do
           allow(Spree::Product).to receive(:friendly).and_return(products)

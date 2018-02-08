@@ -45,24 +45,27 @@ describe Spree::Admin::UsersController, type: :controller do
       expect(response).to redirect_to(spree.edit_admin_user_path(mock_user))
     end
 
-    it 'deny access to users with an bar role' do
-      user.spree_roles << Spree::Role.find_or_create_by(name: 'bar')
-      Spree::Ability.register_ability(BarAbility)
-      spree_post :index
-      expect(response).to redirect_to(spree.forbidden_path)
-    end
-
-    it 'deny access to users with an bar role' do
-      user.spree_roles << Spree::Role.find_or_create_by(name: 'bar')
-      Spree::Ability.register_ability(BarAbility)
-      spree_post :update, id: '9'
-      expect(response).to redirect_to(spree.forbidden_path)
-    end
-
     it 'deny access to users without an admin role' do
       allow(user).to receive_messages has_spree_role?: false
       spree_post :index
       expect(response).to redirect_to(spree.forbidden_path)
+    end
+
+    describe 'deny access to users with an bar role' do
+      before do
+        user.spree_roles << Spree::Role.find_or_create_by(name: 'bar')
+        Spree::Ability.register_ability(BarAbility)
+      end
+
+      it '#index' do
+        spree_post :index
+        expect(response).to redirect_to(spree.forbidden_path)
+      end
+
+      it '#update' do
+        spree_post :update, id: '9'
+        expect(response).to redirect_to(spree.forbidden_path)
+      end
     end
   end
 
@@ -115,6 +118,7 @@ describe Spree::Admin::UsersController, type: :controller do
 
   describe '#orders' do
     let(:order) { create(:order) }
+
     before do
       user.orders << order
       user.spree_roles << Spree::Role.find_or_create_by(name: 'admin')
@@ -135,6 +139,7 @@ describe Spree::Admin::UsersController, type: :controller do
 
   describe '#items' do
     let(:order) { create(:order) }
+
     before do
       user.orders << order
       user.spree_roles << Spree::Role.find_or_create_by(name: 'admin')

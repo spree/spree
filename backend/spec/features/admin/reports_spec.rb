@@ -4,7 +4,7 @@ describe 'Reports', type: :feature do
   stub_authorization!
 
   context 'visiting the admin reports page' do
-    it 'should have the right content' do
+    it 'has the right content' do
       visit spree.admin_path
       click_link 'Reports'
       click_link 'Sales Total'
@@ -46,7 +46,7 @@ describe 'Reports', type: :feature do
       order.save!
     end
 
-    it 'should allow me to search for reports' do
+    it 'allows me to search for reports' do
       visit spree.admin_path
       click_link 'Reports'
       click_link 'Sales Total'

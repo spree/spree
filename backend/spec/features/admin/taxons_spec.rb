@@ -5,7 +5,7 @@ describe 'Taxonomies and taxons', type: :feature do
 
   let(:taxonomy) { create(:taxonomy, name: 'Hello') }
 
-  scenario 'admin should be able to edit taxon' do
+  it 'admin should be able to edit taxon' do
     visit spree.edit_admin_taxonomy_taxon_path(taxonomy, taxonomy.root.id)
 
     fill_in 'taxon_name', with: 'Shirt'
@@ -16,7 +16,7 @@ describe 'Taxonomies and taxons', type: :feature do
     expect(page).to have_content('Taxon "Shirt" has been successfully updated!')
   end
 
-  scenario 'taxon without name should not be updated' do
+  it 'taxon without name should not be updated' do
     visit spree.edit_admin_taxonomy_taxon_path(taxonomy, taxonomy.root.id)
 
     fill_in 'taxon_name', with: ''
@@ -27,7 +27,7 @@ describe 'Taxonomies and taxons', type: :feature do
     expect(page).to have_content("Name can't be blank")
   end
 
-  scenario 'admin should be able to remove a product from a taxon', js: true do
+  it 'admin should be able to remove a product from a taxon', js: true do
     taxon_1 = create(:taxon, name: 'Clothing')
     product = create(:product)
     product.taxons << taxon_1

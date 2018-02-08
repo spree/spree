@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 require 'spec_helper'
 
 describe 'Return Authorizations', type: :feature do
@@ -9,7 +7,7 @@ describe 'Return Authorizations', type: :feature do
     let!(:return_authorization) { create(:return_authorization, created_at: Time.current) }
     let!(:return_authorization_2) { create(:return_authorization, created_at: Time.current - 1.day) }
 
-    before(:each) do
+    before do
       visit spree.admin_return_authorizations_path
     end
 

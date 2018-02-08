@@ -76,7 +76,7 @@ RSpec.configure do |config|
     DatabaseCleaner.clean_with :truncation
   end
 
-  config.before(:each) do
+  config.before do
     Rails.cache.clear
     WebMock.disable!
     DatabaseCleaner.strategy = if RSpec.current_example.metadata[:js]
@@ -86,15 +86,13 @@ RSpec.configure do |config|
                                end
     # TODO: Find out why open_transactions ever gets below 0
     # See issue #3428
-    if ApplicationRecord.connection.open_transactions < 0
-      ApplicationRecord.connection.increment_open_transactions
-    end
+    ApplicationRecord.connection.increment_open_transactions if ApplicationRecord.connection.open_transactions < 0
 
     DatabaseCleaner.start
     reset_spree_preferences
   end
 
-  config.after(:each) do
+  config.after do
     # wait_for_ajax sometimes fails so we should clean db first to get rid of false failed specs
     DatabaseCleaner.clean
 

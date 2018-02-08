@@ -112,4 +112,8 @@ Style/AndOr:
     - '**/*controller.rb'
 
 RSpec/NestedGroups:
-  Max: 5
+  Max: 7
+
+Lint/AmbiguousBlockAssociation:
+  Exclude:
+    - '**/spec/**/*'

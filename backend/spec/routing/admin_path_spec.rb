@@ -7,7 +7,7 @@ module Spree
         expect(spree.admin_path).to eq('/admin')
       end
 
-      it 'should route to the the configured path' do
+      it 'routes to the the configured path' do
         Spree.admin_path = '/secret'
         Rails.application.reload_routes!
         expect(spree.admin_path).to eq('/secret')

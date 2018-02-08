@@ -19,7 +19,7 @@ describe 'Shipping Methods', type: :feature do
   end
 
   context 'show' do
-    it 'should display existing shipping methods' do
+    it 'displays existing shipping methods' do
       within_row(1) do
         expect(column_text(1)).to eq(shipping_method.name)
         expect(column_text(2)).to eq(zone.name)
@@ -30,7 +30,7 @@ describe 'Shipping Methods', type: :feature do
   end
 
   context 'create' do
-    it 'should be able to create a new shipping method' do
+    it 'is able to create a new shipping method' do
       click_link 'New Shipping Method'
 
       fill_in 'shipping_method_name', with: 'bullock cart'
@@ -40,7 +40,7 @@ describe 'Shipping Methods', type: :feature do
       end
 
       click_on 'Create'
-      expect(current_path).to eql(spree.edit_admin_shipping_method_path(Spree::ShippingMethod.last))
+      expect(page).to have_current_path(spree.edit_admin_shipping_method_path(Spree::ShippingMethod.last))
     end
   end
 

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-feature 'Tiered Calculator Promotions' do
+describe 'Tiered Calculator Promotions' do
   stub_authorization!
 
   let(:promotion) { create :promotion }

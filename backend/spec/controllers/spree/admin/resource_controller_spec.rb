@@ -15,7 +15,7 @@ end
 describe Spree::Admin::DummyModelsController, type: :controller do
   stub_authorization!
 
-  after(:all) do
+  after(:all) do # rubocop:disable RSpec/BeforeAfterAll
     Rails.application.reload_routes!
   end
 
@@ -41,11 +41,11 @@ describe Spree::Admin::DummyModelsController, type: :controller do
   end
 
   describe '#edit' do
-    let(:dummy_model) { Spree::DummyModel.create!(name: 'a dummy_model') }
-
     subject do
       spree_get :edit, id: dummy_model.to_param
     end
+
+    let(:dummy_model) { Spree::DummyModel.create!(name: 'a dummy_model') }
 
     it 'succeeds' do
       subject
@@ -54,11 +54,11 @@ describe Spree::Admin::DummyModelsController, type: :controller do
   end
 
   describe '#create' do
+    subject { spree_post :create, params }
+
     let(:params) do
       { dummy_model: { name: 'a dummy_model' } }
     end
-
-    subject { spree_post :create, params }
 
     it 'creates the resource' do
       expect { subject }.to change { Spree::DummyModel.count }.by(1)
@@ -78,6 +78,8 @@ describe Spree::Admin::DummyModelsController, type: :controller do
   end
 
   describe '#update' do
+    subject { spree_put :update, params }
+
     let(:dummy_model) { Spree::DummyModel.create!(name: 'a dummy_model') }
 
     let(:params) do
@@ -87,20 +89,18 @@ describe Spree::Admin::DummyModelsController, type: :controller do
       }
     end
 
-    subject { spree_put :update, params }
-
     it 'updates the resource' do
       expect { subject }.to change { dummy_model.reload.name }.from('a dummy_model').to('dummy_model renamed')
     end
   end
 
   describe '#destroy' do
-    let!(:dummy_model) { Spree::DummyModel.create!(name: 'a dummy_model') }
-    let(:params) { { id: dummy_model.id } }
-
     subject do
       spree_delete :destroy, params
     end
+
+    let!(:dummy_model) { Spree::DummyModel.create!(name: 'a dummy_model') }
+    let(:params) { { id: dummy_model.id } }
 
     it 'destroys the resource' do
       expect { subject }.to change { Spree::DummyModel.count }.from(1).to(0)
@@ -108,13 +108,13 @@ describe Spree::Admin::DummyModelsController, type: :controller do
   end
 
   describe '#update_positions' do
-    let(:dummy_model_1) { Spree::DummyModel.create!(name: 'dummy_model 1', position: 1) }
-    let(:dummy_model_2) { Spree::DummyModel.create!(name: 'dummy_model 2', position: 2) }
-
     subject do
       spree_post :update_positions, id: dummy_model_1.to_param,
                                     positions: { dummy_model_1.id => '2', dummy_model_2.id => '1' }, format: 'js'
     end
+
+    let(:dummy_model_1) { Spree::DummyModel.create!(name: 'dummy_model 1', position: 1) }
+    let(:dummy_model_2) { Spree::DummyModel.create!(name: 'dummy_model 2', position: 2) }
 
     it 'updates the position of dummy_model 1' do
       expect { subject }.to change { dummy_model_1.reload.position }.from(1).to(2)
