@@ -5,8 +5,8 @@ module Spree
     render_views
 
     let!(:taxonomy) { create(:taxonomy) }
-    let!(:taxon) { create(:taxon, name: 'Ruby', taxonomy: taxonomy, parent_id: taxonomy.taxons.first.id) }
-    let!(:rust_taxon) { create(:taxon, name: 'Rust', taxonomy: taxonomy, parent_id: taxonomy.id) }
+    let!(:taxon) { create(:taxon, name: 'Ruby', taxonomy: taxonomy, parent_id: taxonomy.root.id)}
+    let!(:rust_taxon) { create(:taxon, name: 'Rust', taxonomy: taxonomy, parent_id: taxonomy.root.id) }
     let!(:taxon2) { create(:taxon, name: 'Rails', taxonomy: taxonomy, parent_id: taxon.id) }
     let!(:taxon3) { create(:taxon, name: 'React', taxonomy: taxonomy, parent_id: taxon2.id) }
     let(:attributes) { ['id', 'name', 'pretty_name', 'permalink', 'parent_id', 'taxonomy_id', 'meta_title', 'meta_description'] }
@@ -32,7 +32,7 @@ module Spree
       end
 
       it 'paginates through taxons' do
-        new_taxon = create(:taxon, name: 'Go', taxonomy: taxonomy, parent_id: taxonomy.taxons.first.id)
+        new_taxon = create(:taxon, name: 'Go', taxonomy: taxonomy, parent_id: taxonomy.root.id)
         taxonomy.root.children << new_taxon
         expect(taxonomy.root.children.count).to eql(3)
         api_get :index, taxonomy_id: taxonomy.id, page: 1, per_page: 1
