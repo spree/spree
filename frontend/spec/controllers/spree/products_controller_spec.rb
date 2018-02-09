@@ -15,7 +15,7 @@ describe Spree::ProductsController, type: :controller do
     expect { spree_get :show, id: product.to_param }.to raise_error(ActiveRecord::RecordNotFound)
   end
 
-  it 'should provide the current user to the searcher class' do
+  it 'provides the current user to the searcher class' do
     user = mock_model(Spree.user_class, last_incomplete_spree_order: nil, spree_api_key: 'fake')
     allow(controller).to receive_messages spree_current_user: user
     expect_any_instance_of(Spree::Config.searcher_class).to receive(:current_user=).with(user)

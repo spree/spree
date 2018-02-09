@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 require 'spec_helper'
 
 describe 'Visiting Products', type: :feature, inaccessible: true do
@@ -9,11 +7,11 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
     ((first_store = Spree::Store.first) && first_store.name).to_s
   end
 
-  before(:each) do
+  before do
     visit spree.root_path
   end
 
-  it 'should be able to show the shopping cart after adding a product to it' do
+  it 'is able to show the shopping cart after adding a product to it' do
     click_link 'Ruby on Rails Ringer T-Shirt'
     expect(page).to have_content('$19.99')
 
@@ -53,7 +51,7 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
     let(:jersey) { Spree::Product.find_by(name: 'Ruby on Rails Baseball Jersey') }
     let(:metas) { { meta_description: 'Brand new Ruby on Rails Jersey', meta_title: 'Ruby on Rails Baseball Jersey Buy High Quality Geek Apparel', meta_keywords: 'ror, jersey, ruby' } }
 
-    it 'should return the correct title when displaying a single product' do
+    it 'returns the correct title when displaying a single product' do
       click_link jersey.name
       expect(page).to have_title('Ruby on Rails Baseball Jersey - ' + store_name)
       within('div#product-description') do
@@ -143,7 +141,7 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
     end
   end
 
-  it 'should be able to search for a product' do
+  it 'is able to search for a product' do
     fill_in 'keywords', with: 'shirt'
     click_button 'Search'
 
@@ -166,8 +164,8 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
       variant.save!
     end
 
-    it 'should be displayed' do
-      expect { click_link product.name }.to_not raise_error
+    it 'is displayed' do
+      expect { click_link product.name }.not_to raise_error
     end
 
     it 'displays price of first variant listed', js: true do
@@ -208,7 +206,7 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
       variant2.images.create!(attachment: image)
     end
 
-    it 'should not display no image available' do
+    it 'does not display no image available' do
       visit spree.root_path
       expect(page).to have_xpath("//img[contains(@src,'thinking-cat')]")
     end
@@ -259,7 +257,7 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
     end
   end
 
-  it 'should be able to hide products without price' do
+  it 'is able to hide products without price' do
     expect(page.all('#products .product-list-item').size).to eq(9)
     Spree::Config.show_products_without_price = false
     Spree::Config.currency = 'CAN'
@@ -267,14 +265,14 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
     expect(page.all('#products .product-list-item').size).to eq(0)
   end
 
-  it 'should be able to display products priced under 10 dollars' do
+  it 'is able to display products priced under 10 dollars' do
     within(:css, '#taxonomies') { click_link 'Ruby on Rails' }
     check 'Price_Range_Under_$10.00'
     within(:css, '#sidebar_products_search') { click_button 'Search' }
     expect(page).to have_content('No products found')
   end
 
-  it 'should be able to display products priced between 15 and 18 dollars' do
+  it 'is able to display products priced between 15 and 18 dollars' do
     within(:css, '#taxonomies') { click_link 'Ruby on Rails' }
     check 'Price_Range_$15.00_-_$18.00'
     within(:css, '#sidebar_products_search') { click_button 'Search' }
@@ -285,7 +283,7 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
     expect(tmp.sort!).to eq(['Ruby on Rails Mug', 'Ruby on Rails Stein', 'Ruby on Rails Tote'])
   end
 
-  it 'should be able to display products priced between 15 and 18 dollars across multiple pages' do
+  it 'is able to display products priced between 15 and 18 dollars across multiple pages' do
     Spree::Config.products_per_page = 2
     within(:css, '#taxonomies') { click_link 'Ruby on Rails' }
     check 'Price_Range_$15.00_-_$18.00'
@@ -300,7 +298,7 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
     expect(products.count).to eq(1)
   end
 
-  it 'should be able to display products priced 18 dollars and above' do
+  it 'is able to display products priced 18 dollars and above' do
     within(:css, '#taxonomies') { click_link 'Ruby on Rails' }
     check 'Price_Range_$18.00_-_$20.00'
     check 'Price_Range_$20.00_or_over'
@@ -315,7 +313,7 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
                              'Ruby on Rails Ringer T-Shirt'])
   end
 
-  it 'should be able to put a product without a description in the cart' do
+  it 'is able to put a product without a description in the cart' do
     product = FactoryBot.create(:base_product, description: nil, name: 'Sample', price: '19.99')
     visit spree.product_path(product)
     expect(page).to have_content 'This product has no description'
@@ -323,7 +321,7 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
     expect(page).to have_content 'This product has no description'
   end
 
-  it "shouldn't be able to put a product without a current price in the cart" do
+  it 'is not able to put a product without a current price in the cart' do
     product = FactoryBot.create(:base_product, description: nil, name: 'Sample', price: '19.99')
     Spree::Config.currency = 'CAN'
     Spree::Config.show_products_without_price = true
@@ -332,7 +330,7 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
     expect(page).not_to have_content 'add-to-cart-button'
   end
 
-  it 'should return the correct title when displaying a single product' do
+  it 'returns the correct title when displaying a single product' do
     product = Spree::Product.find_by(name: 'Ruby on Rails Baseball Jersey')
     click_link product.name
 

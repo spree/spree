@@ -44,8 +44,8 @@ describe 'Cart', type: :feature, inaccessible: true do
       click_link "delete_line_item_#{line_item.id}"
     end
 
-    expect(page).to_not have_content('Line items quantity must be an integer')
-    expect(page).to_not have_content(product.name)
+    expect(page).not_to have_content('Line items quantity must be an integer')
+    expect(page).not_to have_content(product.name)
     expect(page).to have_content('Your cart is empty')
 
     within '#link-to-cart' do
@@ -75,7 +75,7 @@ describe 'Cart', type: :feature, inaccessible: true do
     end
   end
 
-  it "should have a surrounding element with data-hook='cart_container'" do
+  it "has a surrounding element with data-hook='cart_container'" do
     visit spree.cart_path
     expect(page).to have_selector("div[data-hook='cart_container']")
   end
@@ -88,7 +88,7 @@ describe 'Cart', type: :feature, inaccessible: true do
     before do
       promotion.actions << action
       add_mug_to_cart
-      expect(current_path).to eql(spree.cart_path)
+      expect(page).to have_current_path(spree.cart_path(variant_id: variant))
     end
 
     def apply_coupon(code)
@@ -107,7 +107,8 @@ describe 'Cart', type: :feature, inaccessible: true do
 
       context 'same coupon for the second time' do
         before { apply_coupon(promotion.code) }
-        it 'should reflect an error that coupon already applied' do
+
+        it 'reflects an error that coupon already applied' do
           apply_coupon(promotion.code)
           expect(page).to have_content(Spree.t(:coupon_code_already_applied))
           expect(page).to have_content(promotion.name)
@@ -125,7 +126,7 @@ describe 'Cart', type: :feature, inaccessible: true do
     context "doesn't fill in coupon code input" do
       it 'advances just fine' do
         click_on 'Update'
-        expect(current_path).to match(spree.cart_path)
+        expect(page).to have_current_path(spree.cart_path)
       end
     end
   end

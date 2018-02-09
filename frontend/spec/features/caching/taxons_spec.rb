@@ -2,9 +2,9 @@ require 'spec_helper'
 
 describe 'taxons', type: :feature, caching: true do
   let!(:taxonomy) { create(:taxonomy) }
-  let!(:taxon) { create(:taxon, taxonomy: taxonomy) }
 
   before do
+    create(:taxon, taxonomy: taxonomy)
     # warm up the cache
     visit spree.root_path
     assert_written_to_cache("views/en/spree/taxonomies/#{taxonomy.id}")

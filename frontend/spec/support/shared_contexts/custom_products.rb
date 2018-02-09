@@ -1,5 +1,5 @@
 shared_context 'custom products' do
-  before(:each) do
+  before do
     taxonomy = FactoryBot.create(:taxonomy, name: 'Categories')
     root = taxonomy.root
     clothing_taxon = FactoryBot.create(:taxon, name: 'Clothing', parent_id: root.id)

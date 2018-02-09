@@ -14,14 +14,14 @@ describe Spree::OrdersController, type: :controller do
     end
 
     context '#populate' do
-      it 'should create a new order when none specified' do
+      it 'creates a new order when none specified' do
         spree_post :populate, variant_id: variant.id
         expect(cookies.signed[:guest_token]).not_to be_blank
         expect(Spree::Order.find_by(guest_token: cookies.signed[:guest_token])).to be_persisted
       end
 
       context 'with Variant' do
-        it 'should handle population' do
+        it 'handles population' do
           expect do
             spree_post :populate, variant_id: variant.id, quantity: 5
           end.to change { user.orders.count }.by(1)
@@ -72,14 +72,14 @@ describe Spree::OrdersController, type: :controller do
           allow(controller).to receive_messages current_order: order
         end
 
-        it 'should render the edit view (on failure)' do
+        it 'renders the edit view (on failure)' do
           # email validation is only after address state
           order.update_column(:state, 'delivery')
           spree_put :update, { order: { email: '' } }, order_id: order.id
           expect(response).to render_template :edit
         end
 
-        it 'should redirect to cart path (on success)' do
+        it 'redirects to cart path (on success)' do
           allow(order).to receive(:update_attributes).and_return true
           spree_put :update, {}, order_id: 1
           expect(response).to redirect_to(spree.cart_path)
@@ -92,7 +92,7 @@ describe Spree::OrdersController, type: :controller do
         allow(controller).to receive :check_authorization
       end
 
-      it 'should destroy line items in the current order' do
+      it 'destroys line items in the current order' do
         allow(controller).to receive(:current_order).and_return(order)
         expect(order).to receive(:empty!)
         spree_put :empty
