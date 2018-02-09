@@ -5,14 +5,15 @@ module Spree
         def index
           if taxonomy
             @taxons = taxonomy.root.children
+
           else
             if params[:ids]
               @taxons = Spree::Taxon.includes(:children).accessible_by(current_ability, :read).where(id: params[:ids].split(','))
             else
-              @taxons = Spree::Taxon.includes(:children).accessible_by(current_ability, :read).order(:taxonomy_id, :lft).ransack(params[:q]).result
+              @taxons = Spree::Taxon.includes(:children).accessible_by(current_ability, :read).order(:taxonomy_id, :lft)
             end
           end
-
+          @taxons = @taxons.ransack(params[:q]).result
           @taxons = @taxons.page(params[:page]).per(params[:per_page])
           respond_with(@taxons)
         end
