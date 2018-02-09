@@ -52,15 +52,7 @@ module Spree
           context 'searching for top level taxon' do
             let(:name) { 'Ruby' }
             it 'returns an array including the matching taxon' do
-              expect(json_response['taxons'].count).to eq(1)
-              expect(json_response['per_page']).to eql(25)
-            end
-          end
-          context 'searching for nested taxon' do
-            let(:name) { 'Rails' }
-            xit 'returns an array including the matching taxon' do
-              expect(json_response['taxons'].count).to eq(1)
-              expect(json_response['per_page']).to eql(25)
+              expect(json_response['taxons'].first['name']).to eq('Ruby')
             end
           end
         end
