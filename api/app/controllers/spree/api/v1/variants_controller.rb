@@ -24,7 +24,7 @@ module Spree
         # we render on the view so we better update it any time a node is included
         # or removed from the views.
         def index
-          @variants = scope.includes({ option_values: :option_type }, :product, :default_price, :images, stock_items: :stock_location).
+          @variants = scope.includes(*variant_includes).for_currency_and_available_price_amount.
                       ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
           respond_with(@variants)
         end
@@ -32,8 +32,7 @@ module Spree
         def new; end
 
         def show
-          @variant = scope.includes({ option_values: :option_type }, :option_values, :product, :default_price, :images, stock_items: :stock_location).
-                     find(params[:id])
+          @variant = scope.includes(*variant_includes).find(params[:id])
           respond_with(@variant)
         end
 
@@ -49,7 +48,8 @@ module Spree
         private
 
         def product
-          @product ||= Spree::Product.accessible_by(current_ability, :read).friendly.find(params[:product_id]) if params[:product_id]
+          @product ||= Spree::Product.accessible_by(current_ability, :read).
+                       friendly.find(params[:product_id]) if params[:product_id]
         end
 
         def scope
@@ -68,6 +68,10 @@ module Spree
 
         def variant_params
           params.require(:variant).permit(permitted_variant_attributes)
+        end
+
+        def variant_includes
+          [{ option_values: :option_type }, :product, :default_price, :images, { stock_items: :stock_location }]
         end
       end
     end
