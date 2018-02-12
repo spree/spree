@@ -2,6 +2,8 @@ module Spree
   module Api
     module V1
       class ProductsController < Spree::Api::BaseController
+        before_action :find_product, only: [:update, :show, :destroy]
+
         def index
           if params[:ids]
             @products = product_scope.where(id: params[:ids].split(',').flatten)
@@ -16,7 +18,6 @@ module Spree
         end
 
         def show
-          @product = find_product(params[:id])
           expires_in 15.minutes, public: true
           headers['Surrogate-Control'] = "max-age=#{15.minutes}"
           headers['Surrogate-Key'] = 'product_id=1'
@@ -74,7 +75,6 @@ module Spree
         end
 
         def update
-          @product = find_product(params[:id])
           authorize! :update, @product
 
           options = { variants_attrs: variants_params, options_attrs: option_types_params }
@@ -88,7 +88,6 @@ module Spree
         end
 
         def destroy
-          @product = find_product(params[:id])
           authorize! :destroy, @product
           @product.destroy
           respond_with(@product, status: 204)
@@ -114,6 +113,10 @@ module Spree
 
         def option_types_params
           params[:product].fetch(:option_types, [])
+        end
+
+        def find_product
+          super(params[:id])
         end
 
         def set_up_shipping_category
