@@ -407,4 +407,10 @@ describe Spree::Address, type: :model do
       it { expect(address.same_as?(address2)).to eq(false) }
     end
   end
+
+  describe '.build_default' do
+    let(:_address) { described_class.build_default }
+
+    it { expect(_address.country).to eq(Spree::Country.default) }
+  end
 end
