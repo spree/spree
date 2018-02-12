@@ -129,7 +129,7 @@ Browse Admin Interface
 
 http://localhost:3000/admin
 
-You can generate a new admin account by running `rake spree_auth:admin:create`.
+If you have `spree_auth_devise` installed, you can generate a new admin user by running `rake spree_auth:admin:create`.
 
 Extensions
 ----------------------
