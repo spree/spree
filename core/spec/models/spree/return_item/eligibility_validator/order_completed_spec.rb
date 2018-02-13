@@ -3,7 +3,7 @@ require 'spec_helper'
 describe Spree::ReturnItem::EligibilityValidator::OrderCompleted do
   let(:inventory_unit) { create(:inventory_unit, order: order) }
   let(:return_item)    { create(:return_item, inventory_unit: inventory_unit) }
-  let(:validator)      { Spree::ReturnItem::EligibilityValidator::OrderCompleted.new(return_item) }
+  let(:validator)      { described_class.new(return_item) }
 
   describe '#eligible_for_return?' do
     subject { validator.eligible_for_return? }

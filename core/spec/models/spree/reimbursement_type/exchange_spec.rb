@@ -3,12 +3,12 @@ require 'spec_helper'
 module Spree
   describe ReimbursementType::Exchange, type: :model do
     describe '.reimburse' do
+      subject { Spree::ReimbursementType::Exchange.reimburse(reimbursement, return_items, simulate) }
+
       let(:reimbursement) { create(:reimbursement, return_items_count: 1) }
       let(:return_items)  { reimbursement.return_items }
       let(:new_exchange)  { double('Exchange') }
       let(:simulate)      { true }
-
-      subject { Spree::ReimbursementType::Exchange.reimburse(reimbursement, return_items, simulate) }
 
       context 'return items are supplied' do
         before do

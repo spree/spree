@@ -3,8 +3,9 @@ require 'spec_helper'
 module Spree
   module Stock
     describe ContentItem, type: :model do
-      let(:variant) { build(:variant, weight: 25.0) }
       subject { ContentItem.new(build(:inventory_unit, variant: variant)) }
+
+      let(:variant) { build(:variant, weight: 25.0) }
 
       context '#volume' do
         it 'calculate the total volume of the variant' do

@@ -36,11 +36,11 @@ describe Spree::Adjustable::Adjuster::Promotion, type: :model do
         create_adjustment('Promotion A', -2.50)
 
         subject.update
-        expect(line_item.promo_total).to eql 0.0
+        expect(line_item.promo_total).to eq(0.0)
       end
     end
 
-    it 'should use only the most valuable promotion' do
+    it 'uses only the most valuable promotion' do
       create_adjustment('Promotion A', -100)
       create_adjustment('Promotion B', -200)
       create_adjustment('Promotion C', -300)
@@ -59,7 +59,7 @@ describe Spree::Adjustable::Adjuster::Promotion, type: :model do
       expect(line_item.adjustments.promotion.eligible.first.label).to eq('Promotion C')
     end
 
-    it 'should choose the most recent promotion adjustment when amounts are equal' do
+    it 'chooses the most recent promotion adjustment when amounts are equal' do
       # Using Timecop is a regression test
       Timecop.freeze do
         create_adjustment('Promotion A', -200)
@@ -115,7 +115,7 @@ describe Spree::Adjustable::Adjuster::Promotion, type: :model do
       promo_sequences = [[0, 1], [1, 0]]
 
       promo_sequences.each do |promo_sequence|
-        it 'should pick the best order-level promo according to current eligibility' do
+        it 'picks the best order-level promo according to current eligibility' do
           # apply both promos to the order, even though only promo1 is eligible
           order_promos[promo_sequence[0]].activate order: order
           order_promos[promo_sequence[1]].activate order: order
@@ -146,7 +146,7 @@ describe Spree::Adjustable::Adjuster::Promotion, type: :model do
       end
 
       promo_sequences.each do |promo_sequence|
-        it 'should pick the best line-item-level promo according to current eligibility' do
+        it 'picks the best line-item-level promo according to current eligibility' do
           # apply both promos to the order, even though only promo1 is eligible
           line_item_promos[promo_sequence[0]].activate order: order
           line_item_promos[promo_sequence[1]].activate order: order
@@ -197,7 +197,7 @@ describe Spree::Adjustable::Adjuster::Promotion, type: :model do
       end
     end
 
-    it 'should only leave one adjustment even if 2 have the same amount' do
+    it 'only leaves one adjustment even if 2 have the same amount' do
       create_adjustment('Promotion A', -100)
       create_adjustment('Promotion B', -200)
       create_adjustment('Promotion C', -200)

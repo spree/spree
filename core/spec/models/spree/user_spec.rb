@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::LegacyUser, type: :model do
+describe Spree::LegacyUser, type: :model do # rubocop:disable RSpec/MultipleDescribes
   # Regression test for #2844 + #3346
   context '#last_incomplete_order' do
     let!(:user) { create(:user) }
@@ -145,13 +145,13 @@ describe Spree.user_class, type: :model do
     end
 
     context 'user has several associated store credits' do
+      subject { store_credit.user }
+
       let(:user) { create(:user) }
       let(:amount) { 120.25 }
       let(:additional_amount) { 55.75 }
       let(:store_credit) { create(:store_credit, user: user, amount: amount, amount_used: 0.0) }
       let!(:additional_store_credit) { create(:store_credit, user: user, amount: additional_amount, amount_used: 0.0) }
-
-      subject { store_credit.user }
 
       context 'part of the store credit has been used' do
         let(:amount_used) { 35.00 }

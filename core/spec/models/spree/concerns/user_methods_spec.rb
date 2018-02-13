@@ -42,13 +42,14 @@ describe Spree::UserMethods do
 
   context '#check_completed_orders' do
     let(:possible_promotion) { create(:promotion, advertise: true, starts_at: 1.day.ago) }
+
     context 'rstrict t delete dependent destroyed' do
       before do
         test_user.promotion_rules.create!(promotion: possible_promotion)
         create(:order, user: test_user, completed_at: Time.current)
       end
 
-      it 'should not destroy dependent destroy items' do
+      it 'does not destroy dependent destroy items' do
         expect { test_user.destroy }.to raise_error(Spree::Core::DestroyWithOrdersError)
         expect(test_user.promotion_rule_users.any?).to be(true)
       end
@@ -61,7 +62,7 @@ describe Spree::UserMethods do
         test_user.destroy
       end
 
-      it 'should not destroy dependent destroy items' do
+      it 'does not destroy dependent destroy items' do
         expect(test_user.promotion_rule_users.any?).to be(false)
       end
     end
@@ -70,7 +71,7 @@ describe Spree::UserMethods do
   context 'when user destroyed with approved orders' do
     let(:order) { create(:order, approver_id: test_user.id, created_at: 1.day.ago) }
 
-    it 'should nullify all approver ids' do
+    it 'nullifies all approver ids' do
       expect(test_user).to receive(:nullify_approver_id_in_approved_orders)
       test_user.destroy
     end

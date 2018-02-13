@@ -105,7 +105,7 @@ module Spree
             it 'can update' do
               payment.update_attributes(state: 'checkout')
               api_put(:update, id: payment.to_param, payment: { amount: 2.01 })
-              expect(response.status).to be(200)
+              expect(response.status).to eq(200)
               expect(payment.reload.amount).to eq(2.01)
             end
           end

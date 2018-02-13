@@ -410,7 +410,7 @@ describe 'Products', type: :feature do
     end
     let!(:product) { create(:product) }
 
-    it 'onlies display accessible links on index' do
+    it 'only displays accessible links on index' do
       visit spree.admin_products_path
 
       expect(page).to have_link('Products')
@@ -423,7 +423,7 @@ describe 'Products', type: :feature do
       expect(page).not_to have_css('.delete-resource')
     end
 
-    it 'onlies display accessible links on edit' do
+    it 'only displays accessible links on edit' do
       visit spree.admin_product_path(product)
 
       # product tabs should be hidden

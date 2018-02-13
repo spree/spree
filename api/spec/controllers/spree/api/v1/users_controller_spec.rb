@@ -87,7 +87,7 @@ module Spree
         assert_not_found!
       end
 
-      it 'onlies get own details on index' do
+      it 'only gets own details on index' do
         2.times { create(:user) }
         api_get :index, token: user.spree_api_key
 

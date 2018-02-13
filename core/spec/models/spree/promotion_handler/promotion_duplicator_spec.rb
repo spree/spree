@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe Spree::PromotionHandler::PromotionDuplicator do
+  subject { described_class.new(promotion) }
+
   let!(:promo_category) { create(:promotion_category) }
   let!(:calculator) { create(:calculator) }
 
@@ -16,8 +18,6 @@ describe Spree::PromotionHandler::PromotionDuplicator do
            path: 'test1',
            promotion_category: promo_category)
   end
-
-  subject { Spree::PromotionHandler::PromotionDuplicator.new(promotion) }
 
   before do
     Spree::Promotion::Actions::CreateItemAdjustments.create!(calculator: calculator, promotion: promotion)

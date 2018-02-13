@@ -19,8 +19,7 @@ module Spree
         create(:store,
                name: 'Extra Store',
                url: 'spreestore-5.example.com',
-               default: false
-              )
+               default: false)
       end
 
       it 'I can list the available stores' do

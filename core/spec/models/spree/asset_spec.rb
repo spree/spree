@@ -15,7 +15,7 @@ describe Spree::Asset, type: :model do
   end
 
   describe '#acts_as_list scope' do
-    it 'should start from first position for different viewables' do
+    it 'starts from first position for different viewables' do
       asset1 = Spree::Asset.create(viewable_type: 'Spree::Image', viewable_id: 1)
       asset2 = Spree::Asset.create(viewable_type: 'Spree::LineItem', viewable_id: 1)
 

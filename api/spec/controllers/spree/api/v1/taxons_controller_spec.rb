@@ -58,6 +58,7 @@ module Spree
 
           context 'searching for top level taxon' do
             let(:name) { 'Ruby' }
+
             it 'returns the matching taxons' do
               expect_single_taxon_result 'Ruby'
             end

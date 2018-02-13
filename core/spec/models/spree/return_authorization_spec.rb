@@ -16,16 +16,17 @@ describe Spree::ReturnAuthorization, type: :model do
   context 'save' do
     let(:order) { Spree::Order.create }
 
-    it 'should be invalid when order has no inventory units' do
+    it 'is invalid when order has no inventory units' do
       return_authorization.save
       expect(return_authorization.errors[:order]).to eq(['has no shipped units'])
     end
 
     context 'expedited exchanges are configured' do
+      subject                    { create(:return_authorization, order: order, return_items: [exchange_return_item, return_item]) }
+
       let(:order)                { create(:shipped_order, line_items_count: 2) }
       let(:exchange_return_item) { create(:exchange_return_item, inventory_unit: order.inventory_units.first) }
       let(:return_item)          { create(:return_item, inventory_unit: order.inventory_units.last) }
-      subject                    { create(:return_authorization, order: order, return_items: [exchange_return_item, return_item]) }
 
       before do
         @expediteted_exchanges_config = Spree::Config[:expedited_exchanges]
@@ -42,7 +43,7 @@ describe Spree::ReturnAuthorization, type: :model do
         subject { create(:return_authorization, order: order) }
 
         it 'does not create a reimbursement' do
-          expect { subject.save }.to_not change { Spree::Reimbursement.count }
+          expect { subject.save }.not_to change { Spree::Reimbursement.count }
         end
       end
 
@@ -70,7 +71,7 @@ describe Spree::ReturnAuthorization, type: :model do
 
         context 'the reimbursement fails' do
           before do
-            allow_any_instance_of(Spree::Reimbursement).to receive(:save) { false }
+            allow_any_instance_of(Spree::Reimbursement).to receive(:save).and_return(false)
             allow_any_instance_of(Spree::Reimbursement).to receive(:errors) { double(full_messages: 'foo') }
           end
 
@@ -88,13 +89,15 @@ describe Spree::ReturnAuthorization, type: :model do
   end
 
   context '#currency' do
-    before { allow(order).to receive(:currency) { 'ABC' } }
+    before { allow(order).to receive(:currency).and_return('ABC') }
     it 'returns the order currency' do
       expect(return_authorization.currency).to eq('ABC')
     end
   end
 
   describe '#pre_tax_total' do
+    subject { return_authorization.pre_tax_total }
+
     let(:pre_tax_amount_1) { 15.0 }
     let!(:return_item_1) { create(:return_item, return_authorization: return_authorization, pre_tax_amount: pre_tax_amount_1) }
 
@@ -103,8 +106,6 @@ describe Spree::ReturnAuthorization, type: :model do
 
     let(:pre_tax_amount_3) { 5.0 }
     let!(:return_item_3) { create(:return_item, return_authorization: return_authorization, pre_tax_amount: pre_tax_amount_3) }
-
-    subject { return_authorization.pre_tax_total }
 
     it "sums it's associated return_item's pre-tax amounts" do
       expect(subject).to eq (pre_tax_amount_1 + pre_tax_amount_2 + pre_tax_amount_3)
@@ -119,10 +120,10 @@ describe Spree::ReturnAuthorization, type: :model do
   end
 
   describe '#refundable_amount' do
+    subject { return_authorization.refundable_amount }
+
     let(:weighted_line_item_pre_tax_amount) { 5.0 }
     let(:line_item_count)                   { return_authorization.order.line_items.count }
-
-    subject { return_authorization.refundable_amount }
 
     before do
       return_authorization.order.line_items.update_all(pre_tax_amount: weighted_line_item_pre_tax_amount)
@@ -131,6 +132,7 @@ describe Spree::ReturnAuthorization, type: :model do
 
     context 'no promotions' do
       let(:promo_total) { 0.0 }
+
       it 'returns the pre-tax line item total' do
         expect(subject).to eq (weighted_line_item_pre_tax_amount * line_item_count)
       end
@@ -138,6 +140,7 @@ describe Spree::ReturnAuthorization, type: :model do
 
     context 'promotions' do
       let(:promo_total) { -10.0 }
+
       it 'returns the pre-tax line item total minus the order level promotion value' do
         expect(subject).to eq (weighted_line_item_pre_tax_amount * line_item_count) + promo_total
       end
@@ -170,13 +173,13 @@ describe Spree::ReturnAuthorization, type: :model do
   end
 
   describe 'cancel_return_items' do
-    let(:return_authorization) { create(:return_authorization, return_items: return_items) }
-    let(:return_items) { [return_item] }
-    let(:return_item) { create(:return_item) }
-
     subject do
       return_authorization.cancel!
     end
+
+    let(:return_authorization) { create(:return_authorization, return_items: return_items) }
+    let(:return_items) { [return_item] }
+    let(:return_item) { create(:return_item) }
 
     it 'cancels the associated return items' do
       subject
@@ -197,6 +200,7 @@ describe Spree::ReturnAuthorization, type: :model do
 
   describe '#can_cancel?' do
     subject { create(:return_authorization, return_items: return_items).can_cancel? }
+
     let(:return_items) { [return_item_1, return_item_2] }
     let(:return_item_1) { create(:return_item) }
     let(:return_item_2) { create(:return_item) }
@@ -210,20 +214,20 @@ describe Spree::ReturnAuthorization, type: :model do
     context 'at least one return item can be cancelled' do
       let(:return_item_2) { create(:return_item, reception_status: 'received') }
 
-      it { should eq true }
+      it { is_expected.to eq true }
     end
 
     context 'no items can be cancelled' do
       let(:return_item_1) { create(:return_item, reception_status: 'received') }
       let(:return_item_2) { create(:return_item, reception_status: 'received') }
 
-      it { should eq false }
+      it { is_expected.to eq false }
     end
 
     context 'when return_authorization has no return_items' do
       let(:return_items) { [] }
 
-      it { should eq true }
+      it { is_expected.to eq true }
     end
   end
 end

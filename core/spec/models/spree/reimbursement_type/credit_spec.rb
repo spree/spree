@@ -2,6 +2,8 @@ require 'spec_helper'
 
 module Spree
   describe ReimbursementType::Credit, type: :model do
+    subject { Spree::ReimbursementType::Credit.reimburse(reimbursement, [return_item], simulate) }
+
     let(:reimbursement)           { create(:reimbursement, return_items_count: 1) }
     let(:return_item)             { reimbursement.return_items.first }
     let(:payment)                 { reimbursement.order.payments.first }
@@ -13,8 +15,6 @@ module Spree
       attr_accessor :amount
       self.table_name = 'spree_payments' # Your creditable class should not use this table
     end
-
-    subject { Spree::ReimbursementType::Credit.reimburse(reimbursement, [return_item], simulate) }
 
     before do
       reimbursement.update!(total: reimbursement.calculated_total)
@@ -32,7 +32,7 @@ module Spree
         end
 
         it 'does not save to the database' do
-          expect { subject }.to_not change { Spree::Reimbursement::Credit.count }
+          expect { subject }.not_to change { Spree::Reimbursement::Credit.count }
         end
       end
 

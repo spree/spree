@@ -5,6 +5,7 @@ describe Spree::Calculator::TieredPercent, type: :model do
 
   describe '#valid?' do
     subject { calculator.valid? }
+
     context 'when base percent is less than zero' do
       before { calculator.preferred_base_percent = -1 }
       it { is_expected.to be false }
@@ -30,7 +31,10 @@ describe Spree::Calculator::TieredPercent, type: :model do
   end
 
   describe '#compute' do
+    subject { calculator.compute(line_item) }
+
     let(:line_item) { mock_model Spree::LineItem, amount: amount }
+
     before do
       calculator.preferred_base_percent = 10
       calculator.preferred_tiers = {
@@ -38,13 +42,15 @@ describe Spree::Calculator::TieredPercent, type: :model do
         200 => 20
       }
     end
-    subject { calculator.compute(line_item) }
+
     context 'when amount falls within the first tier' do
       let(:amount) { 50 }
+
       it { is_expected.to eq 5 }
     end
     context 'when amount falls within the second tier' do
       let(:amount) { 150 }
+
       it { is_expected.to eq 22 }
     end
   end

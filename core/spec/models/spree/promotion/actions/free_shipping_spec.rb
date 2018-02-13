@@ -15,7 +15,7 @@ describe Spree::Promotion::Actions::FreeShipping, type: :model do
       promotion.promotion_actions << action
     end
 
-    it 'should create a discount with correct negative amount' do
+    it 'creates a discount with correct negative amount' do
       expect(order.shipments.count).to eq(2)
       expect(order.shipments.first.cost).to eq(100)
       expect(order.shipments.last.cost).to eq(100)
@@ -26,7 +26,7 @@ describe Spree::Promotion::Actions::FreeShipping, type: :model do
       expect(order.shipment_adjustments.last.amount.to_i).to eq(-100)
     end
 
-    it 'should not create a discount when order already has one from this promotion' do
+    it 'does not create a discount when order already has one from this promotion' do
       expect(action.perform(payload)).to be true
       expect(action.perform(payload)).to be false
       expect(promotion.credits_count).to eq(2)

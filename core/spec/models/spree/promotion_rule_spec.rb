@@ -10,7 +10,7 @@ module Spree
       end
     end
 
-    it 'should force developer to implement eligible? method' do
+    it 'forces developer to implement eligible? method' do
       expect { BadTestRule.new.eligible? }.to raise_error(ArgumentError)
     end
 

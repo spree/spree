@@ -35,8 +35,10 @@ ModuleLength:
 Documentation:
   Enabled: false
 
-LineLength:
+Metrics/LineLength:
   Max: 150
+  Exclude:
+    - '**/spec/**/*'
 
 MethodLength:
   CountComments: false

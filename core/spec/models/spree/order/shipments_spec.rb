@@ -28,15 +28,15 @@ describe Spree::Order, type: :model do
 
         expect do
           order.ensure_updated_shipments
-        end.not_to change { order.shipment_total }
+        end.not_to change(order, :shipment_total)
 
         expect do
           order.ensure_updated_shipments
-        end.not_to change { order.shipments }
+        end.not_to change(order, :shipments)
 
         expect do
           order.ensure_updated_shipments
-        end.not_to change { order.state }
+        end.not_to change(order, :state)
       end
     end
   end

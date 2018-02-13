@@ -222,7 +222,7 @@ describe Spree::CheckoutController, type: :controller do
         end
 
         context 'correct' do
-          it 'properlies update and increment version' do
+          it 'properly updates and increment version' do
             spree_post :update, post_params
             expect(order.state_lock_version).to eq 1
           end

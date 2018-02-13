@@ -3,6 +3,8 @@ require 'spec_helper'
 module Spree
   module Stock
     describe Differentiator, type: :model do
+      subject { Differentiator.new(order, packages) }
+
       let(:variant1) { mock_model(Variant) }
       let(:variant2) { mock_model(Variant) }
 
@@ -25,8 +27,6 @@ module Spree
       end
 
       let(:packages) { [package1, package2] }
-
-      subject { Differentiator.new(order, packages) }
 
       it { is_expected.to be_missing }
 

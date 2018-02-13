@@ -22,9 +22,9 @@ module Spree
 
     describe '#variant_includes' do
       let(:variants_includes_list) do
-        [{ option_values: :option_type }, :product,
-          :default_price, :images, { stock_items: :stock_location }]
+        [{ option_values: :option_type }, :product, :default_price, :images, { stock_items: :stock_location }]
       end
+
       it { expect(controller).to receive(:variant_includes).and_return(variants_includes_list) }
       after { api_get :index }
     end

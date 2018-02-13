@@ -15,7 +15,7 @@ end
 describe Spree::Admin::DummyModelsController, type: :controller do
   stub_authorization!
 
-  after(:all) do # rubocop:disable RSpec/BeforeAfterAll
+  after(:all) do
     Rails.application.reload_routes!
   end
 

@@ -3,10 +3,10 @@ require 'spec_helper'
 module Spree
   module Stock
     describe Packer, type: :model do
+      subject { Packer.new(stock_location, inventory_units) }
+
       let(:inventory_units) { [InventoryUnit.new(variant: create(:variant))] }
       let(:stock_location) { create(:stock_location) }
-
-      subject { Packer.new(stock_location, inventory_units) }
 
       context 'packages' do
         it 'builds an array of packages' do
@@ -18,7 +18,7 @@ module Spree
         it 'allows users to set splitters to an empty array' do
           packer = Packer.new(StockLocation.new, [], [])
           expect(packer).not_to receive(:build_splitter)
-          packages = packer.packages
+          packer.packages
         end
       end
 
@@ -61,7 +61,7 @@ module Spree
           end
 
           it 'still creates package with proper quantity' do
-            expect(subject.default_package.quantity).to eql 2
+            expect(subject.default_package.quantity).to eq 2
           end
         end
       end

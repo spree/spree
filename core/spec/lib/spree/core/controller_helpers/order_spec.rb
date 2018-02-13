@@ -29,6 +29,7 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
     end
     context 'create_order_if_necessary option is false' do
       let!(:order) { create :order, user: user, store: store }
+
       it 'returns current order' do
         expect(controller.current_order).to eq order
       end
@@ -68,6 +69,7 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
     end
     context "user's email is blank" do
       let(:user) { create(:user, email: '') }
+
       it 'calls Spree::Order#associate_user! method' do
         expect_any_instance_of(Spree::Order).to receive(:associate_user!)
         controller.associate_user
@@ -83,6 +85,7 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
 
   describe '#set_current_order' do
     let(:incomplete_order) { create(:order, user: user) }
+
     before { allow(controller).to receive_messages(try_spree_current_user: user) }
 
     context 'when current order not equal to users incomplete orders' do

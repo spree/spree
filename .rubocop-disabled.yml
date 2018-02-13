@@ -35,3 +35,15 @@ RSpec/MultipleExpectations:
 
 RSpec/FilePath:
   Enabled: false
+
+RSpec/LetSetup:
+  Enabled: false
+
+RSpec/SubjectStub:
+  Enabled: false
+
+RSpec/VoidExpect:
+  Enabled: false
+
+RSpec/BeforeAfterAll:
+  Enabled: false

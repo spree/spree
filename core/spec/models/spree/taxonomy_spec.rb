@@ -8,7 +8,7 @@ describe Spree::Taxonomy, type: :model do
       @child_taxon = create(:taxon, taxonomy_id: @taxonomy.id, parent: @root_taxon)
     end
 
-    it 'should destroy all associated taxons' do
+    it 'destroys all associated taxons' do
       @taxonomy.destroy
       expect { Spree::Taxon.find(@root_taxon.id) }.to raise_error(ActiveRecord::RecordNotFound)
       expect { Spree::Taxon.find(@child_taxon.id) }.to raise_error(ActiveRecord::RecordNotFound)

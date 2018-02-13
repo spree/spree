@@ -17,7 +17,7 @@ describe Spree::Promotion::Rules::FirstOrder, type: :model do
   context 'first order' do
     context 'for a signed user' do
       context 'with no completed orders' do
-        before(:each) do
+        before do
           allow(user).to receive_message_chain(:orders, complete: [])
         end
 
@@ -26,17 +26,17 @@ describe Spree::Promotion::Rules::FirstOrder, type: :model do
           expect(rule).to be_eligible(order)
         end
 
-        it 'should be eligible when user passed in payload data' do
+        it 'is eligible when user passed in payload data' do
           expect(rule).to be_eligible(order, user: user)
         end
       end
 
       context 'with completed orders' do
-        before(:each) do
+        before do
           allow(order).to receive_messages(user: user)
         end
 
-        it 'should be eligible when checked against first completed order' do
+        it 'is eligible when checked against first completed order' do
           allow(user).to receive_message_chain(:orders, complete: [order])
           expect(rule).to be_eligible(order)
         end
@@ -55,6 +55,7 @@ describe Spree::Promotion::Rules::FirstOrder, type: :model do
 
     context 'for a guest user' do
       let(:email) { 'user@spreecommerce.org' }
+
       before { allow(order).to receive_messages email: 'user@spreecommerce.org' }
 
       context 'with no other orders' do

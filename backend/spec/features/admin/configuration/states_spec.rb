@@ -18,7 +18,7 @@ describe 'States', type: :feature do
   context 'admin visiting states listing' do
     let!(:state) { create(:state, country: country) }
 
-    it 'correctlies display the states' do
+    it 'correctly displays the states' do
       visit spree.admin_country_states_path(country)
       expect(page).to have_content(state.name)
     end

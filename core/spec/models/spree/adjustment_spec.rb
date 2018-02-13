@@ -1,40 +1,37 @@
-# encoding: utf-8
-
 #
 
 require 'spec_helper'
 
 describe Spree::Adjustment, type: :model do
   let(:order) { Spree::Order.new }
+  let(:adjustment) { Spree::Adjustment.create!(label: 'Adjustment', adjustable: order, order: order, amount: 5) }
 
   before do
     allow(order).to receive(:update_with_updater!)
   end
 
-  let(:adjustment) { Spree::Adjustment.create!(label: 'Adjustment', adjustable: order, order: order, amount: 5) }
-
   describe 'scopes' do
     describe '.for_complete_order' do
+      subject { Spree::Adjustment.for_complete_order }
+
       let(:complete_order) { Spree::Order.create! completed_at: Time.current }
       let(:incomplete_order) { Spree::Order.create! completed_at: nil }
       let(:adjustment_for_complete_order) { Spree::Adjustment.create!(label: 'Adjustment', adjustable: complete_order, order: complete_order, amount: 5) }
       let(:adjustment_for_incomplete_order) { Spree::Adjustment.create!(label: 'Adjustment', adjustable: incomplete_order, order: incomplete_order, amount: 5) }
 
-      subject { Spree::Adjustment.for_complete_order }
-
       it { is_expected.to include(adjustment_for_complete_order) }
-      it { is_expected.to_not include(adjustment_for_incomplete_order) }
+      it { is_expected.not_to include(adjustment_for_incomplete_order) }
     end
 
     describe '.for_incomplete_order' do
+      subject { Spree::Adjustment.for_incomplete_order }
+
       let(:complete_order) { Spree::Order.create! completed_at: Time.current }
       let(:incomplete_order) { Spree::Order.create! completed_at: nil }
       let(:adjustment_for_complete_order) { Spree::Adjustment.create!(label: 'Adjustment', adjustable: complete_order, order: complete_order, amount: 5) }
       let(:adjustment_for_incomplete_order) { Spree::Adjustment.create!(label: 'Adjustment', adjustable: incomplete_order, order: incomplete_order, amount: 5) }
 
-      subject { Spree::Adjustment.for_incomplete_order }
-
-      it { is_expected.to_not include(adjustment_for_complete_order) }
+      it { is_expected.not_to include(adjustment_for_complete_order) }
       it { is_expected.to include(adjustment_for_incomplete_order) }
     end
   end
@@ -70,7 +67,7 @@ describe Spree::Adjustment, type: :model do
     let!(:non_tax_adjustment_without_source) { create(:adjustment, order: order, source: nil) }
 
     it 'select non-tax adjustments' do
-      expect(subject).to_not include tax_adjustment
+      expect(subject).not_to include tax_adjustment
       expect(subject).to include non_tax_adjustment_with_source
       expect(subject).to include non_tax_adjustment_without_source
     end
@@ -95,9 +92,9 @@ describe Spree::Adjustment, type: :model do
 
       it 'selects promotion adjustments by default' do
         expect(subject).to include promotion_adjustment
-        expect(subject).to_not include custom_adjustment_with_source
-        expect(subject).to_not include non_promotion_adjustment_with_source
-        expect(subject).to_not include non_promotion_adjustment_without_source
+        expect(subject).not_to include custom_adjustment_with_source
+        expect(subject).not_to include non_promotion_adjustment_with_source
+        expect(subject).not_to include non_promotion_adjustment_without_source
       end
     end
 
@@ -107,8 +104,8 @@ describe Spree::Adjustment, type: :model do
       it 'selects adjustments with registered source_types' do
         expect(subject).to include promotion_adjustment
         expect(subject).to include custom_adjustment_with_source
-        expect(subject).to_not include non_promotion_adjustment_with_source
-        expect(subject).to_not include non_promotion_adjustment_without_source
+        expect(subject).not_to include non_promotion_adjustment_with_source
+        expect(subject).not_to include non_promotion_adjustment_without_source
       end
     end
   end
@@ -124,7 +121,7 @@ describe Spree::Adjustment, type: :model do
 
       it 'is false when adjustment state is open' do
         adjustment.state = 'open'
-        expect(adjustment).to_not be_closed
+        expect(adjustment).not_to be_closed
       end
     end
   end
@@ -167,7 +164,7 @@ describe Spree::Adjustment, type: :model do
       before { expect(adjustment).to receive(:closed?).and_return(true) }
 
       it 'does not update the adjustment' do
-        expect(adjustment).to_not receive(:update_column)
+        expect(adjustment).not_to receive(:update_column)
         adjustment.update!
       end
     end

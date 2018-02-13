@@ -21,10 +21,12 @@ module Spree
       end
 
       context 'currency is defined' do
-        before do test_class.class_eval do def currency
-                                             'USD'
-                                         end
-        end
+        before do
+          test_class.class_eval do
+            def currency
+              'USD'
+            end
+          end
         end
 
         it 'generates a display_* method that builds a Spree::Money with currency' do
@@ -34,9 +36,10 @@ module Spree
 
       context 'with multiple + options' do
         before do
-          test_class.class_eval do def amount
-                                     20.0
-                                  end
+          test_class.class_eval do
+            def amount
+              20.0
+            end
           end
           test_class.money_methods :total, amount: { no_cents: true }
         end

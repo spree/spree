@@ -7,7 +7,7 @@ describe Spree::Calculator::FlatPercentItemTotal, type: :model do
   before { allow(calculator).to receive_messages preferred_flat_percent: 10 }
 
   context 'compute' do
-    it 'should round result correctly' do
+    it 'rounds result correctly' do
       allow(line_item).to receive_messages amount: 31.08
       expect(calculator.compute(line_item)).to eq 3.11
 

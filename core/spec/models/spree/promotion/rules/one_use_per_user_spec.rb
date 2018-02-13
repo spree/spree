@@ -5,6 +5,7 @@ describe Spree::Promotion::Rules::OneUsePerUser, type: :model do
 
   describe '#eligible?(order)' do
     subject { rule.eligible?(order) }
+
     let(:order) { double Spree::Order, user: user }
     let(:user) { double Spree::LegacyUser }
     let(:promotion) { stub_model Spree::Promotion, used_by?: used_by }
@@ -31,6 +32,7 @@ describe Spree::Promotion::Rules::OneUsePerUser, type: :model do
 
     context 'when the order is not assigned to a user' do
       let(:user) { nil }
+
       it { is_expected.to be false }
       it 'sets an error message' do
         subject

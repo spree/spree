@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::ReturnItem::EligibilityValidator::NoReimbursements do
-  let(:validator) { Spree::ReturnItem::EligibilityValidator::NoReimbursements.new(return_item) }
+  let(:validator) { described_class.new(return_item) }
 
   describe '#eligible_for_return?' do
     subject { validator.eligible_for_return? }

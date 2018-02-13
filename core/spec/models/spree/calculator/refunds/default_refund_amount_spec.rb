@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe Spree::Calculator::Returns::DefaultRefundAmount, type: :model do
+  subject { calculator.compute(return_item) }
+
   let(:order) { create(:order) }
   let(:line_item_quantity) { 2 }
   let(:item_price)      { 100.0 }
@@ -11,8 +13,6 @@ describe Spree::Calculator::Returns::DefaultRefundAmount, type: :model do
   let(:calculator)      { Spree::Calculator::Returns::DefaultRefundAmount.new }
 
   before { order.line_items << line_item }
-
-  subject { calculator.compute(return_item) }
 
   context 'not an exchange' do
     context 'no promotions or taxes' do

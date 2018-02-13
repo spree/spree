@@ -28,7 +28,7 @@ describe 'Payments', type: :feature, js: true do
     context 'with a check payment' do
       let(:order) { create(:completed_order_with_totals, number: 'R100') }
 
-      let!(:payment) do # rubocop:disable RSpec/LetSetup
+      let!(:payment) do
         create(:payment,
                order: order,
                amount: order.outstanding_balance,
@@ -211,7 +211,7 @@ describe 'Payments', type: :feature, js: true do
     end
 
     context 'with a check' do
-      let!(:payment_method) { create(:check_payment_method) }  # rubocop:disable RSpec/LetSetup
+      let!(:payment_method) { create(:check_payment_method) }
 
       before do
         visit spree.admin_order_payments_path(order.reload)

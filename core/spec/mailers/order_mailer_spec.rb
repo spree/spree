@@ -40,7 +40,7 @@ describe Spree::OrderMailer, type: :mailer do
   it 'cancel_email accepts an order id as an alternative to an Order object' do
     expect(Spree::Order).to receive(:find).with(order.id).and_return(order)
     expect do
-      cancel_email = Spree::OrderMailer.cancel_email(order.id).body
+      Spree::OrderMailer.cancel_email(order.id).body
     end.not_to raise_error
   end
 
@@ -69,14 +69,14 @@ describe Spree::OrderMailer, type: :mailer do
     specify do
       confirmation_email = Spree::OrderMailer.confirm_email(order)
       expect(confirmation_email).to have_body_text('4.99')
-      expect(confirmation_email).to_not have_body_text('5.00')
+      expect(confirmation_email).not_to have_body_text('5.00')
     end
 
     # Tests mailer view spree/order_mailer/cancel_email.text.erb
     specify do
       cancel_email = Spree::OrderMailer.cancel_email(order)
       expect(cancel_email).to have_body_text('4.99')
-      expect(cancel_email).to_not have_body_text('5.00')
+      expect(cancel_email).not_to have_body_text('5.00')
     end
   end
 

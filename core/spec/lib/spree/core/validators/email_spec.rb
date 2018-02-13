@@ -7,29 +7,31 @@ describe EmailValidator do
     validates :email_address, email: true
   end
 
-  let(:valid_emails) do [
-    'valid@email.com',
-    'valid@email.com.uk',
-    'e@email.com',
-    'valid+email@email.com',
-    'valid-email@email.com',
-    'valid_email@email.com',
-    'validemail_@email.com',
-    'valid.email@email.com',
-    'valid.email@email.photography'
-  ]
+  let(:valid_emails) do
+    [
+      'valid@email.com',
+      'valid@email.com.uk',
+      'e@email.com',
+      'valid+email@email.com',
+      'valid-email@email.com',
+      'valid_email@email.com',
+      'validemail_@email.com',
+      'valid.email@email.com',
+      'valid.email@email.photography'
+    ]
   end
-  let(:invalid_emails) do [
-    '',
-    ' ',
-    'invalid email@email.com',
-    'invalidemail @email.com',
-    '@email.com',
-    'invalidemailemail.com',
-    '@invalid.email@email.com',
-    'invalid@email@email.com',
-    'invalid.email@@email.com'
-  ]
+  let(:invalid_emails) do
+    [
+      '',
+      ' ',
+      'invalid email@email.com',
+      'invalidemail @email.com',
+      '@email.com',
+      'invalidemailemail.com',
+      '@invalid.email@email.com',
+      'invalid@email@email.com',
+      'invalid.email@@email.com'
+    ]
   end
 
   it 'validates valid email addresses' do

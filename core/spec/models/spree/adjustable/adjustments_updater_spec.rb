@@ -30,7 +30,7 @@ module Spree
           let(:subject) { AdjustmentsUpdater.new(new_line_item) }
 
           it 'does nothing' do
-            expect { subject.update }.to_not change { new_line_item.adjustment_total }
+            expect { subject.update }.not_to change(new_line_item, :adjustment_total)
           end
         end
 
@@ -38,7 +38,7 @@ module Spree
           let(:subject) { AdjustmentsUpdater.new(nil) }
 
           it 'does not raise an error' do
-            expect { subject.update }.to_not raise_error
+            expect { subject.update }.not_to raise_error
           end
         end
       end

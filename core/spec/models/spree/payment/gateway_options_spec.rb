@@ -46,66 +46,79 @@ RSpec.describe Spree::Payment::GatewayOptions, type: :model do
 
   describe '#email' do
     subject { options.email }
-    it { should == 'test@email.com' }
+
+    it { is_expected.to eq 'test@email.com' }
   end
 
   describe '#customer' do
     subject { options.customer }
-    it { should == 'test@email.com' }
+
+    it { is_expected.to eq 'test@email.com' }
   end
 
   describe '#customer_id' do
     subject { options.customer_id }
-    it { should == 144 }
+
+    it { is_expected.to eq 144 }
   end
 
   describe '#ip' do
     subject { options.ip }
-    it { should == '0.0.0.0' }
+
+    it { is_expected.to eq '0.0.0.0' }
   end
 
   describe '#order_id' do
     subject { options.order_id }
-    it { should == 'R1444-P1566' }
+
+    it { is_expected.to eq 'R1444-P1566' }
   end
 
   describe '#shipping' do
     subject { options.shipping }
-    it { should == 1244 }
+
+    it { is_expected.to eq 1244 }
   end
 
   describe '#tax' do
     subject { options.tax }
-    it { should == 153 }
+
+    it { is_expected.to eq 153 }
   end
 
   describe '#subtotal' do
     subject { options.subtotal }
-    it { should == 1511 }
+
+    it { is_expected.to eq 1511 }
   end
 
   describe '#discount' do
     subject { options.discount }
-    it { should == 257 }
+
+    it { is_expected.to eq 257 }
   end
 
   describe '#currency' do
     subject { options.currency }
-    it { should == 'EUR' }
+
+    it { is_expected.to eq 'EUR' }
   end
 
   describe '#billing_address' do
     subject { options.billing_address }
-    it { should == { bill: :address } }
+
+    it { is_expected.to eq(bill: :address) }
   end
 
   describe '#shipping_address' do
     subject { options.shipping_address }
-    it { should == { ship: :address } }
+
+    it { is_expected.to eq(ship: :address) }
   end
 
   describe '#to_hash' do
     subject { options.to_hash }
+
     let(:expected) do
       {
         email: 'test@email.com',
@@ -122,6 +135,7 @@ RSpec.describe Spree::Payment::GatewayOptions, type: :model do
         shipping_address: { ship: :address }
       }
     end
-    it { should == expected }
+
+    it { is_expected.to eq expected }
   end
 end

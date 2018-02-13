@@ -3,11 +3,11 @@ require 'spec_helper'
 module Spree
   module Stock
     describe Package, type: :model do
+      subject { Package.new(stock_location) }
+
       let(:variant) { build(:variant, weight: 25.0) }
       let(:stock_location) { build(:stock_location) }
       let(:order) { build(:order) }
-
-      subject { Package.new(stock_location) }
 
       def build_inventory_unit
         build(:inventory_unit, variant: variant)
@@ -20,6 +20,7 @@ module Spree
 
       context 'currency' do
         let(:unit) { build_inventory_unit }
+
         before { subject.add unit }
 
         it 'returns the currency based on the currency from the order' do
@@ -106,7 +107,7 @@ module Spree
 
       describe '#add_multiple' do
         it 'adds multiple inventory units' do
-          expect { subject.add_multiple [build_inventory_unit, build_inventory_unit] }.to change { subject.quantity }.by(2)
+          expect { subject.add_multiple [build_inventory_unit, build_inventory_unit] }.to change(subject, :quantity).by(2)
         end
 
         it 'allows adding with a state' do
@@ -120,24 +121,26 @@ module Spree
 
       describe '#remove' do
         let(:unit) { build_inventory_unit }
+
         context 'there is a content item for the inventory unit' do
           before { subject.add unit }
 
           it 'removes that content item' do
-            expect { subject.remove(unit) }.to change { subject.quantity }.by(-1)
+            expect { subject.remove(unit) }.to change(subject, :quantity).by(-1)
             expect(subject.contents.map(&:inventory_unit)).not_to include unit
           end
         end
 
         context 'there is no content item for the inventory unit' do
           it "doesn't change the set of content items" do
-            expect { subject.remove(unit) }.not_to change { subject.quantity }
+            expect { subject.remove(unit) }.not_to change(subject, :quantity)
           end
         end
       end
 
       describe '#order' do
         let(:unit) { build_inventory_unit }
+
         context 'there is an inventory unit' do
           before { subject.add unit }
 

@@ -3,6 +3,7 @@ require 'spec_helper'
 module Spree
   describe StockLocation, type: :model do
     subject { create(:stock_location_with_items, backorderable_default: true) }
+
     let(:stock_item) { subject.stock_items.order(:id).first }
     let(:variant) { stock_item.variant }
 
@@ -37,7 +38,7 @@ module Spree
           it 'creates a new stock item' do
             expect do
               subject.propagate_variant(variant)
-            end.to change { StockItem.count }.by(1)
+            end.to change(StockItem, :count).by(1)
           end
 
           context 'passes backorderable default config' do
@@ -125,7 +126,7 @@ module Spree
       subject.unstock(variant, 5, originator)
     end
 
-    it 'it creates a stock_movement' do
+    it 'creates a stock_movement' do
       expect do
         subject.move variant, 5
       end.to change { subject.stock_movements.where(stock_item_id: stock_item).count }.by(1)
@@ -208,6 +209,7 @@ module Spree
 
       context 'without stock_items' do
         subject { create(:stock_location) }
+
         let(:variant) { create(:base_variant) }
 
         it 'zero on_hand and backordered' do
@@ -223,18 +225,23 @@ module Spree
     context '#state_text' do
       context 'state is blank' do
         subject { StockLocation.create(name: 'testing', state: nil, state_name: 'virginia') }
+
         specify { expect(subject.state_text).to eq('virginia') }
       end
 
       context 'both name and abbr is present' do
-        let(:state) { stub_model(Spree::State, name: 'virginia', abbr: 'va') }
         subject { StockLocation.create(name: 'testing', state: state, state_name: nil) }
+
+        let(:state) { stub_model(Spree::State, name: 'virginia', abbr: 'va') }
+
         specify { expect(subject.state_text).to eq('va') }
       end
 
       context 'only name is present' do
-        let(:state) { stub_model(Spree::State, name: 'virginia', abbr: nil) }
         subject { StockLocation.create(name: 'testing', state: state, state_name: nil) }
+
+        let(:state) { stub_model(Spree::State, name: 'virginia', abbr: nil) }
+
         specify { expect(subject.state_text).to eq('virginia') }
       end
     end
