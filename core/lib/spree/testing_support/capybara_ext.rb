@@ -129,6 +129,12 @@ module CapybaraExt
     page.evaluate_script('window.confirm = function() { return true; }')
   end
 
+  def spree_accept_alert
+    yield
+  rescue Selenium::WebDriver::Error::UnhandledAlertError
+    page.driver.browser.switch_to.alert.accept
+  end
+
   def disable_html5_validation
     page.execute_script('for(var f=document.forms,i=f.length;i--;)f[i].setAttribute("novalidate",i)')
   end

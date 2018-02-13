@@ -85,7 +85,7 @@ describe 'Store credits admin', type: :feature do
     end
 
     it 'should update store credit in lifetime stats' do
-      accept_alert do
+      spree_accept_alert do
         click_icon :delete
         wait_for_ajax
       end

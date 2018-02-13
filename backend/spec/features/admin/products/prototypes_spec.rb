@@ -101,10 +101,11 @@ describe 'Prototypes', type: :feature, js: true do
     click_link 'Products'
     click_link 'Prototypes'
 
-    accept_alert do
+    spree_accept_alert do
       within("#spree_prototype_#{shirt_prototype.id}") do
         page.find('.delete-resource').click
       end
+      wait_for_ajax
 
       expect(page).to have_content("Prototype \"#{shirt_prototype.name}\" has been successfully removed!")
     end

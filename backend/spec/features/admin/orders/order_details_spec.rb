@@ -54,8 +54,9 @@ describe 'Order Details', type: :feature, js: true do
         expect(page).to have_content('spree t-shirt')
 
         within_row(1) do
-          accept_alert do
+          spree_accept_alert do
             click_icon :delete
+            wait_for_ajax
           end
         end
 
@@ -279,7 +280,7 @@ describe 'Order Details', type: :feature, js: true do
             targetted_select2 stock_location2.name, from: '#s2id_item_stock_location'
             fill_in 'item_quantity', with: 'ff'
 
-            accept_alert do
+            spree_accept_alert do
               click_icon :save
               wait_for_ajax
             end
@@ -296,7 +297,7 @@ describe 'Order Details', type: :feature, js: true do
             targetted_select2 stock_location2.name, from: '#s2id_item_stock_location'
             fill_in 'item_quantity', with: 0
 
-            accept_alert do
+            spree_accept_alert do
               click_icon :save
               wait_for_ajax
             end
@@ -307,7 +308,7 @@ describe 'Order Details', type: :feature, js: true do
 
             fill_in 'item_quantity', with: -1
 
-            accept_alert do
+            spree_accept_alert do
               click_icon :save
               wait_for_ajax
             end
@@ -340,7 +341,7 @@ describe 'Order Details', type: :feature, js: true do
               targetted_select2 stock_location2.name, from: '#s2id_item_stock_location'
               fill_in 'item_quantity', with: 2
 
-              accept_alert do
+              spree_accept_alert do
                 click_icon :save
                 wait_for_ajax
               end
@@ -490,7 +491,7 @@ describe 'Order Details', type: :feature, js: true do
             targetted_select2 @shipment2.number, from: '#s2id_item_stock_location'
             fill_in 'item_quantity', with: 1
 
-            accept_alert do
+            spree_accept_alert do
               click_icon :save
               wait_for_ajax
             end
@@ -499,7 +500,7 @@ describe 'Order Details', type: :feature, js: true do
             targetted_select2 @shipment2.number, from: '#s2id_item_stock_location'
             fill_in 'item_quantity', with: 200
 
-            accept_alert do
+            spree_accept_alert do
               click_icon :save
               wait_for_ajax
             end
@@ -514,7 +515,7 @@ describe 'Order Details', type: :feature, js: true do
             targetted_select2 order.shipments.first.number, from: '#s2id_item_stock_location'
             fill_in 'item_quantity', with: 1
 
-            accept_alert do
+            spree_accept_alert do
               click_icon :save
               wait_for_ajax
             end

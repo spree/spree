@@ -56,10 +56,11 @@ describe 'ReturnAuthorizationReason', type: :feature, js: true do
     end
 
     def delete_product_property
-      accept_alert do
+      spree_accept_alert do
         click_icon :delete
         wait_for_ajax
       end
+      wait_for_ajax
     end
   end
 end
