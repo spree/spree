@@ -39,19 +39,4 @@ describe 'Product Details', type: :feature, js: true do
       expect(page).to have_content('successfully updated!')
     end
   end
-
-  # Regression test for #3385
-  context 'deleting a product' do
-    it 'is still able to find the master variant' do
-      create(:product)
-
-      visit spree.admin_products_path
-      within_row(1) do
-        spree_accept_alert do
-          click_icon :delete
-          wait_for_ajax
-        end
-      end
-    end
-  end
 end
