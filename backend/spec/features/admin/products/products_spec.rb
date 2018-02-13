@@ -391,7 +391,7 @@ describe 'Products', type: :feature do
 
       it 'is still viewable' do
         visit spree.admin_products_path
-        accept_alert do
+        spree_accept_alert do
           click_icon :delete
           wait_for_ajax
         end

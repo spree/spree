@@ -23,11 +23,11 @@ describe 'Stock Locations', type: :feature do
     visit current_path
 
     expect(find('#listing_stock_locations')).to have_content('NY Warehouse')
-    accept_alert do
+    spree_accept_alert do
       click_icon :delete
+      # Wait for API request to complete.
+      wait_for_ajax
     end
-    # Wait for API request to complete.
-    wait_for_ajax
     visit current_path
     expect(page).to have_content('No Stock Locations found')
   end

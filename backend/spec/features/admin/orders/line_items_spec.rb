@@ -40,8 +40,9 @@ describe 'Order Line Items', type: :feature, js: true do
 
     within('.line-items') do
       within_row(1) do
-        accept_alert do
+        spree_accept_alert do
           find('.delete-line-item').click
+          wait_for_ajax
         end
       end
     end

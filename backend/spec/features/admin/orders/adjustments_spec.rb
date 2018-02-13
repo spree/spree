@@ -110,13 +110,13 @@ describe 'Adjustments', type: :feature do
 
   context 'deleting an adjustment' do
     it 'should update the total', js: true do
-      accept_alert do
+      spree_accept_alert do
         within_row(2) do
           click_icon(:delete)
+          wait_for_ajax
         end
       end
 
-      wait_for_ajax
       expect(page).to have_content(/Total: ?\$170\.00/)
     end
   end

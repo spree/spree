@@ -47,11 +47,11 @@ describe 'Product Details', type: :feature, js: true do
 
       visit spree.admin_products_path
       within_row(1) do
-        accept_alert do
+        spree_accept_alert do
           click_icon :delete
+          wait_for_ajax
         end
       end
-      wait_for_ajax
     end
   end
 end
