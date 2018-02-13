@@ -7,6 +7,7 @@ module Spree
     # Used for #refresh_rates
     DISPLAY_ON_FRONT_END = 1
     DISPLAY_ON_BACK_END = 2
+    DISPLAY_ON_ANY = 3
 
     default_scope { where(deleted_at: nil) }
 
@@ -48,7 +49,8 @@ module Spree
 
     def available_to_display?(display_filter)
       (frontend? && display_filter == DISPLAY_ON_FRONT_END) ||
-        (backend? && display_filter == DISPLAY_ON_BACK_END)
+        (backend? && display_filter == DISPLAY_ON_BACK_END) ||
+        (on_any? && display_filter == DISPLAY_ON_ANY)
     end
 
     private
@@ -60,6 +62,10 @@ module Spree
 
     def backend?
       display_on.in?(['both', 'back_end'])
+    end
+
+    def on_any?
+      display_on.in?(['both', 'back_end', 'front_end'])
     end
 
     def at_least_one_shipping_category

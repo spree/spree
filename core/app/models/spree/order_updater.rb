@@ -19,7 +19,7 @@ module Spree
       update_totals
       if order.completed?
         update_payment_state
-        update_shipments
+        update_shipments(ShippingMethod::DISPLAY_ON_ANY)
         update_shipment_state
         update_shipment_total
       end
@@ -52,11 +52,11 @@ module Spree
     end
 
     # give each of the shipments a chance to update themselves
-    def update_shipments
+    def update_shipments(shipping_method_filter = ShippingMethod::DISPLAY_ON_FRONT_END)
       shipments.each do |shipment|
         next unless shipment.persisted?
         shipment.update!(order)
-        shipment.refresh_rates
+        shipment.refresh_rates(shipping_method_filter)
         shipment.update_amounts
       end
     end

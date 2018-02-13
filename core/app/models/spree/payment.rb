@@ -230,7 +230,7 @@ module Spree
 
       if order.completed?
         order.updater.update_payment_state
-        order.updater.update_shipments
+        order.updater.update_shipments(ShippingMethod::DISPLAY_ON_ANY)
         order.updater.update_shipment_state
       end
 
