@@ -85,6 +85,8 @@ module Spree
           end
 
           @original_shipment.transfer_to_location(@variant, @quantity, @stock_location)
+          clean_shipment(@original_shipment)
+
           render json: { success: true, message: Spree.t(:shipment_transfer_success) }, status: 201
         end
 
@@ -104,6 +106,8 @@ module Spree
             unprocessable_entity("#{Spree.t(:shipment_transfer_errors_occured, scope: 'api')} \n#{error}")
           else
             @original_shipment.transfer_to_shipment(@variant, @quantity, @target_shipment)
+            clean_shipment(@original_shipment)
+
             render json: { success: true, message: Spree.t(:shipment_transfer_success) }, status: 201
           end
         end
@@ -134,6 +138,14 @@ module Spree
 
         def variant
           @variant ||= Spree::Variant.unscoped.find(params.fetch(:variant_id))
+        end
+
+        def clean_shipment(shipment)
+          return if shipment.inventory_units.size.positive?
+
+          order = shipment.order
+          shipment.destroy
+          order.update_with_updater!
         end
 
         def mine_includes

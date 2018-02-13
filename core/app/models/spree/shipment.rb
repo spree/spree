@@ -338,43 +338,60 @@ module Spree
     end
 
     def transfer_to_location(variant, quantity, stock_location)
-      raise ArgumentError if quantity <= 0
+      units = inventory_units.where(variant: variant).order(:state)
+      original_quantity = units.inject(0) { |sum, i| sum += i.quantity }
+
+      raise ArgumentError if quantity <= 0 || original_quantity < quantity
 
       transaction do
-        new_shipment = order.shipments.create!(stock_location: stock_location)
+        new_shipment = order.shipments.create!(stock_location: stock_location, address_id: address_id)
 
-        order.contents.remove(variant, quantity, shipment: self)
-        order.contents.add(variant, quantity, shipment: new_shipment)
-        order.create_tax_charge!
-        order.update_with_updater!
+        transfer_units_to_shipment(units, quantity, new_shipment)
 
         refresh_rates
         save!
-        new_shipment.save!
+        order.create_tax_charge!
+        order.update_with_updater!
       end
     end
 
-    def transfer_to_shipment(variant, quantity, shipment_to_transfer_to)
-      quantity_already_shipment_to_transfer_to = shipment_to_transfer_to.manifest.find do |mi|
-        mi.line_item.variant == variant
-      end.try(:quantity) || 0
-      final_quantity = quantity + quantity_already_shipment_to_transfer_to
+    def transfer_to_shipment(variant, quantity, to_shipment)
+      units = inventory_units.where(variant: variant).order(:state)
+      original_quantity = units.inject(0) { |sum, i| sum += i.quantity }
 
-      raise ArgumentError if quantity <= 0 || self == shipment_to_transfer_to
+      raise ArgumentError if quantity <= 0 || original_quantity < quantity || self == to_shipment
 
       transaction do
-        order.contents.remove(variant, final_quantity, shipment: self)
-        order.contents.add(variant, final_quantity, shipment: shipment_to_transfer_to)
-        order.update_with_updater!
+        transfer_units_to_shipment(units, quantity, to_shipment)
 
         refresh_rates
         save!
-        shipment_to_transfer_to.refresh_rates
-        shipment_to_transfer_to.save!
+        to_shipment.refresh_rates
+        to_shipment.save!
+
+        order.update_with_updater!
       end
     end
 
     private
+
+    def transfer_units_to_shipment(units, quantity, new_shipment)
+      units.each do |unit|
+        if unit.quantity < quantity
+          unit.update(shipment: new_shipment)
+          quantity -= unit.quantity
+        else
+          temp = unit.quantity - quantity
+
+          new_unit = unit.dup
+          new_unit.assign_attributes(shipment: new_shipment, quantity: quantity)
+          new_unit.save
+
+          temp.positive? ? unit.update(quantity: temp) : unit.destroy
+          break
+        end
+      end
+    end
 
     def after_ship
       ShipmentHandler.factory(self).perform
