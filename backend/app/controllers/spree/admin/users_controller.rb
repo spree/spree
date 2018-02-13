@@ -12,8 +12,8 @@ module Spree
       def create
         @user = Spree.user_class.new(user_params)
         if @user.save
-          flash.now[:success] = flash_message_for(@user, :successfully_created)
-          render :edit
+          flash[:success] = flash_message_for(@user, :successfully_created)
+          redirect_to edit_admin_user_path(@user)
         else
           render :new
         end
@@ -26,10 +26,11 @@ module Spree
         end
 
         if @user.update_attributes(user_params)
-          flash.now[:success] = Spree.t(:account_updated)
+          flash[:success] = Spree.t(:account_updated)
+          redirect_to edit_admin_user_path(@user)
+        else
+          render :edit
         end
-
-        render :edit
       end
 
       def addresses

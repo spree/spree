@@ -85,6 +85,11 @@ describe Spree::Admin::UsersController, type: :controller do
       ).permit(bill_address_attributes: permitted_address_attributes))
       spree_post :create, user: { bill_address_attributes: { city: 'New York' } }
     end
+
+    it 'redirects to user edit page' do
+      spree_post :create, user: user.slice(*permitted_user_attributes)
+      expect(response).to redirect_to(spree.edit_admin_user_path(assigns[:user]))
+    end
   end
 
   describe '#update' do
@@ -110,6 +115,18 @@ describe Spree::Admin::UsersController, type: :controller do
     it 'allows updating without password resetting' do
       expect(mock_user).to receive(:update_attributes).with(hash_not_including(password: '', password_confirmation: ''))
       spree_put :update, id: mock_user.id, user: { password: '', password_confirmation: '', email: 'spree@example.com' }
+    end
+
+    it 'redirects to user edit page' do
+      expect(mock_user).to receive(:update_attributes).with(hash_not_including(email: '')).and_return(true)
+      spree_put :update, id: mock_user.id, user: { email: 'spree@example.com' }
+      expect(response).to redirect_to(spree.edit_admin_user_path(mock_user))
+    end
+
+    it 'render edit page when update got errors' do
+      expect(mock_user).to receive(:update_attributes).with(hash_not_including(email: '')).and_return(false)
+      spree_put :update, id: mock_user.id, user: { email: 'invalid_email' }
+      expect(response).to render_template(:edit)
     end
   end
 
