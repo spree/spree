@@ -62,6 +62,7 @@ Spree::Core::Engine.add_routes do
 
       get '/orders/mine', to: 'orders#mine', as: 'my_orders'
       get '/orders/current', to: 'orders#current', as: 'current_order'
+      post '/orders/populate', to: 'orders#populate', as: 'populate_cart'
 
       resources :orders, concerns: :order_routes
 

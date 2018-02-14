@@ -1,4 +1,4 @@
-<%= form_for :order, url: populate_orders_path do |f| %>
+<%= form_with model: @order, url: api_v1_populate_cart_path, method: :post, id: "add-to-cart-form" do |f| %>
   <div class="row" id="inside-product-cart-form" data-hook="inside_product_cart_form" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
     <% if @product.variants_and_option_values(current_currency).any? %>
       <div id="product-variants" class="col-md-6">
