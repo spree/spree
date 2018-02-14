@@ -200,6 +200,11 @@ module Spree
 
       it 'incorporates refunds' do
         order = create(:completed_order_with_totals)
+        calculator = order.shipments.first.shipping_method.calculator
+
+        calculator.set_preference(:amount, order.shipments.first.cost)
+        calculator.save!
+
         order.payments << create(:payment, state: :completed, order: order, amount: order.total)
 
         create(:refund, amount: 10, payment: order.payments.first)
