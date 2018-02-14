@@ -45,6 +45,8 @@ describe 'Tax Categories', type: :feature do
   context 'admin editing a tax category' do
     it 'is able to update an existing tax category', js: true do
       create(:tax_category)
+      # Workaround for animation to finish expanding
+      sleep 1
       click_link 'Tax Categories'
       within_row(1) { click_icon :edit }
       fill_in 'tax_category_description', with: 'desc 99'
