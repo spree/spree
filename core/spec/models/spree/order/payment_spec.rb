@@ -94,42 +94,42 @@ module Spree
     end
 
     context '#process_payments!' do
-      let(:payment) { stub_model(Spree::Payment) }
-      before { allow(order).to receive_messages unprocessed_payments: [payment], total: 10 }
-
-      it 'should process the payments' do
-        expect(payment).to receive(:process!)
-        expect(order.process_payments!).to be_truthy
-      end
-
-      # Regression spec for https://github.com/spree/spree/issues/5436
-      it 'should raise an error if there are no payments to process' do
-        allow(order).to receive_messages unprocessed_payments: []
-        expect(payment).to_not receive(:process!)
-        expect(order.process_payments!).to be_falsey
-      end
-
-      context 'when a payment raises a GatewayError' do
-        before { expect(payment).to receive(:process!).and_raise(Spree::Core::GatewayError) }
-
-        it 'should return true when configured to allow checkout on gateway failures' do
-          Spree::Config.set allow_checkout_on_gateway_error: true
-          expect(order.process_payments!).to be true
-        end
-
-        it 'should return false when not configured to allow checkout on gateway failures' do
-          Spree::Config.set allow_checkout_on_gateway_error: false
-          expect(order.process_payments!).to be false
-        end
-      end
-
-      # Regression spec for https://github.com/spree/spree/issues/8148
       let!(:order) { create(:order_with_line_items) }
       let!(:payment) do
         payment = create(:payment, amount: 10, order: order)
         order.payments << payment
         payment
       end
+
+      before { allow(order).to receive_messages unprocessed_payments: [payment], total: 10 }
+
+      it 'processes the payments' do
+        expect(payment).to receive(:process!)
+        expect(order.process_payments!).to be_truthy
+      end
+
+      # Regression spec for https://github.com/spree/spree/issues/5436
+      it 'raises an error if there are no payments to process' do
+        allow(order).to receive_messages unprocessed_payments: []
+        expect(payment).not_to receive(:process!)
+        expect(order.process_payments!).to be_falsey
+      end
+
+      context 'when a payment raises a GatewayError' do
+        before { expect(payment).to receive(:process!).and_raise(Spree::Core::GatewayError) }
+
+        it 'returns true when configured to allow checkout on gateway failures' do
+          Spree::Config.set allow_checkout_on_gateway_error: true
+          expect(order.process_payments!).to be true
+        end
+
+        it 'returns false when not configured to allow checkout on gateway failures' do
+          Spree::Config.set allow_checkout_on_gateway_error: false
+          expect(order.process_payments!).to be false
+        end
+      end
+
+      # Regression spec for https://github.com/spree/spree/issues/8148
 
       it 'updates order with correct payment total' do
         Spree::Config[:auto_capture] = true
@@ -141,9 +141,11 @@ module Spree
     end
 
     context '#authorize_payments!' do
-      let(:payment) { stub_model(Spree::Payment) }
-      before { allow(order).to receive_messages unprocessed_payments: [payment], total: 10 }
       subject { order.authorize_payments! }
+
+      let(:payment) { stub_model(Spree::Payment) }
+
+      before { allow(order).to receive_messages unprocessed_payments: [payment], total: 10 }
 
       it 'processes payments with attempt_authorization!' do
         expect(payment).to receive(:authorize!)
@@ -154,9 +156,11 @@ module Spree
     end
 
     context '#capture_payments!' do
-      let(:payment) { stub_model(Spree::Payment) }
-      before { allow(order).to receive_messages unprocessed_payments: [payment], total: 10 }
       subject { order.capture_payments! }
+
+      let(:payment) { stub_model(Spree::Payment) }
+
+      before { allow(order).to receive_messages unprocessed_payments: [payment], total: 10 }
 
       it 'processes payments with attempt_authorization!' do
         expect(payment).to receive(:purchase!)
@@ -167,17 +171,17 @@ module Spree
     end
 
     context '#outstanding_balance' do
-      it 'should return positive amount when payment_total is less than total' do
+      it 'returns positive amount when payment_total is less than total' do
         order.payment_total = 20.20
         order.total = 30.30
         expect(order.outstanding_balance).to eq(10.10)
       end
-      it 'should return negative amount when payment_total is greater than total' do
+      it 'returns negative amount when payment_total is greater than total' do
         order.total = 8.20
         order.payment_total = 10.20
         expect(order.outstanding_balance).to be_within(0.001).of(-2.00)
       end
-      it 'should incorporate refund reimbursements' do
+      it 'incorporates refund reimbursements' do
         # Creates an order w/total 10
         reimbursement = create :reimbursement
         # Set the payment amount to actually be the order total of 10
@@ -194,7 +198,7 @@ module Spree
         expect(order.outstanding_balance).to eq 0
       end
 
-      it 'should incorporate refunds' do
+      it 'incorporates refunds' do
         order = create(:completed_order_with_totals)
         order.payments << create(:payment, state: :completed, order: order, amount: order.total)
 
@@ -206,19 +210,19 @@ module Spree
     end
 
     context '#outstanding_balance?' do
-      it 'should be true when total greater than payment_total' do
+      it 'is true when total greater than payment_total' do
         order.total = 10.10
         order.payment_total = 9.50
         expect(order.outstanding_balance?).to be true
       end
 
-      it 'should be true when total less than payment_total' do
+      it 'is true when total less than payment_total' do
         order.total = 8.25
         order.payment_total = 10.44
         expect(order.outstanding_balance?).to be true
       end
 
-      it 'should be false when total equals payment_total' do
+      it 'is false when total equals payment_total' do
         order.total = 10.10
         order.payment_total = 10.10
         expect(order.outstanding_balance?).to be false

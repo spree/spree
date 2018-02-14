@@ -1,9 +1,6 @@
 require 'spec_helper'
 
 describe 'Address', type: :feature, inaccessible: true do
-  let!(:product) { create(:product, name: 'RoR Mug') }
-  let!(:order) { create(:order_with_totals, state: 'cart') }
-
   stub_authorization!
 
   after do
@@ -11,6 +8,9 @@ describe 'Address', type: :feature, inaccessible: true do
   end
 
   before do
+    create(:product, name: 'RoR Mug')
+    create(:order_with_totals, state: 'cart')
+
     Capybara.ignore_hidden_elements = false
 
     visit spree.root_path
@@ -24,7 +24,7 @@ describe 'Address', type: :feature, inaccessible: true do
     @state_name_css = "##{address}_state_name"
   end
 
-  context 'country requires state', js: true, focus: true do
+  context 'country requires state', js: true do
     let!(:canada) { create(:country, name: 'Canada', states_required: true, iso: 'CA') }
     let!(:uk) { create(:country, name: 'United Kingdom', states_required: true, iso: 'UK') }
 
@@ -70,7 +70,7 @@ describe 'Address', type: :feature, inaccessible: true do
 
         select france.name, from: @country_css
         expect(page.find(@state_name_css)).to have_content('')
-        until page.evaluate_script('$.active').to_i == 0
+        until page.evaluate_script('$.active').to_i.zero?
           expect(find(@state_name_css)['class']).not_to match(/hidden/)
           expect(find(@state_name_css)['class']).not_to match(/required/)
           expect(find(@state_select_css)['class']).not_to match(/required/)

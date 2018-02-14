@@ -3,9 +3,9 @@ require 'spec_helper'
 module Spree
   module Stock
     describe Coordinator, type: :model do
-      let(:order) { create(:order_with_line_items) }
-
       subject { Coordinator.new(order) }
+
+      let(:order) { create(:order_with_line_items) }
 
       context 'packages' do
         it 'builds, prioritizes and estimates' do
@@ -24,7 +24,7 @@ module Spree
         it 'turns packages into shipments' do
           shipments = subject.shipments
           expect(shipments.count).to eq packages.count
-          shipments.each { |shipment| expect(shipment).to be_a Shipment }
+          expect(shipments).to all(be_a(Shipment))
         end
 
         it "puts the order's ship address on the shipments" do

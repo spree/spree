@@ -19,38 +19,39 @@ module Spree
         create(:store,
                name: 'Extra Store',
                url: 'spreestore-5.example.com',
-               default: false
-              )
+               default: false)
       end
 
       it 'I can list the available stores' do
         api_get :index
-        expect(json_response['stores']).to eq([
-          {
-            'id' => store.id,
-            'name' => 'My Spree Store',
-            'url' => 'spreestore.example.com',
-            'meta_description' => nil,
-            'meta_keywords' => nil,
-            'seo_title' => nil,
-            'mail_from_address' => 'spree@example.org',
-            'default_currency' => nil,
-            'code' => store.code,
-            'default' => true
-          },
-          {
-            'id' => non_default_store.id,
-            'name' => 'Extra Store',
-            'url' => 'spreestore-5.example.com',
-            'meta_description' => nil,
-            'meta_keywords' => nil,
-            'seo_title' => nil,
-            'mail_from_address' => 'spree@example.org',
-            'default_currency' => nil,
-            'code' => non_default_store.code,
-            'default' => false
-          }
-        ])
+        expect(json_response['stores']).to eq(
+          [
+            {
+              'id' => store.id,
+              'name' => 'My Spree Store',
+              'url' => 'spreestore.example.com',
+              'meta_description' => nil,
+              'meta_keywords' => nil,
+              'seo_title' => nil,
+              'mail_from_address' => 'spree@example.org',
+              'default_currency' => nil,
+              'code' => store.code,
+              'default' => true
+            },
+            {
+              'id' => non_default_store.id,
+              'name' => 'Extra Store',
+              'url' => 'spreestore-5.example.com',
+              'meta_description' => nil,
+              'meta_keywords' => nil,
+              'seo_title' => nil,
+              'mail_from_address' => 'spree@example.org',
+              'default_currency' => nil,
+              'code' => non_default_store.code,
+              'default' => false
+            }
+          ]
+        )
       end
 
       it 'I can get the store details' do

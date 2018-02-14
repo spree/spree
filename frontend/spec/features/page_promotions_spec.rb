@@ -1,8 +1,9 @@
 require 'spec_helper'
 
 describe 'page promotions', type: :feature do
-  let!(:product) { create(:product, name: 'RoR Mug', price: 20) }
   before do
+    create(:product, name: 'RoR Mug', price: 20)
+
     promotion = Spree::Promotion.create!(name:       '$10 off',
                                          path:       'test',
                                          starts_at:  1.day.ago,

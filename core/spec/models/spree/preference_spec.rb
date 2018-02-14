@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Preference, type: :model do
-  it 'should require a key' do
+  it 'requires a key' do
     @preference = Spree::Preference.new
     @preference.key = :test
     @preference.value = true

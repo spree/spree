@@ -3,14 +3,13 @@ require 'spec_helper'
 describe 'Product Variants', type: :feature, js: true do
   stub_authorization!
 
-  let!(:product) { create(:product) }
-
-  before(:each) do
+  before do
+    create(:product)
     visit spree.admin_products_path
   end
 
   context 'editing variant option types' do
-    it 'should allow an admin to create option types for a variant' do
+    it 'allows an admin to create option types for a variant' do
       within_row(1) { click_icon :edit }
 
       within('#sidebar') { click_link 'Variants' }

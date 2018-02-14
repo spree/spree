@@ -123,7 +123,7 @@ module Spree
         order_2.contents.add(variant_2, 1)
       end
 
-      it 'should create errors with invalid line items' do
+      it 'creates errors with invalid line items' do
         # we cannot use .destroy here as it will be halted by
         # :ensure_no_line_items callback
         variant_2.really_destroy!

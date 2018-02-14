@@ -3,19 +3,18 @@ require 'spec_helper'
 describe 'Free shipping promotions', type: :feature, js: true do
   let!(:country) { create(:country, name: 'United States of America', states_required: true) }
   let!(:state) { create(:state, name: 'Alabama', country: country) }
-  let!(:zone) { create(:zone) }
-  let!(:shipping_method) do
+
+  before do
+    create(:zone)
     sm = create(:shipping_method)
     sm.calculator.preferred_amount = 10
     sm.calculator.save
-    sm
-  end
 
-  let!(:payment_method) { create(:check_payment_method) }
-  let!(:product) { create(:product, name: 'RoR Mug', price: 20) }
-  let!(:promotion) do
-    promotion = Spree::Promotion.create!(name:       'Free Shipping',
-                                         starts_at:  1.day.ago,
+    create(:check_payment_method)
+    create(:product, name: 'RoR Mug', price: 20)
+
+    promotion = Spree::Promotion.create!(name: 'Free Shipping',
+                                         starts_at: 1.day.ago,
                                          expires_at: 1.day.from_now)
 
     action = Spree::Promotion::Actions::FreeShipping.new

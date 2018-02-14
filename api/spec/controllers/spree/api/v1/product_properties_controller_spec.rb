@@ -7,12 +7,12 @@ module Spree
 
     let!(:product) { create(:product) }
     let!(:property_1) { product.product_properties.create(property_name: 'My Property 1', value: 'my value 1', position: 0) }
-    let!(:property_2) { product.product_properties.create(property_name: 'My Property 2', value: 'my value 2', position: 1) }
 
     let(:attributes) { [:id, :product_id, :property_id, :value, :property_name] }
     let(:resource_scoping) { { product_id: product.to_param } }
 
     before do
+      product.product_properties.create(property_name: 'My Property 2', value: 'my value 2', position: 1) # property_2
       stub_authentication!
     end
 
@@ -111,7 +111,7 @@ module Spree
         end
 
         context 'when product property is invalid' do
-          before(:each) do
+          before do
             expect_any_instance_of(Spree::ProductProperty).to receive(:update_attributes).and_return false
           end
 
@@ -140,6 +140,7 @@ module Spree
 
     context 'with product identified by id' do
       let(:resource_scoping) { { product_id: product.id } }
+
       it 'can see a list of all product properties' do
         api_get :index
         expect(json_response['product_properties'].count).to eq 2

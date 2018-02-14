@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 require 'spec_helper'
 
 describe 'Customer Returns', type: :feature do
@@ -9,7 +7,7 @@ describe 'Customer Returns', type: :feature do
   describe 'listing' do
     let!(:customer_return_2) { create(:customer_return, created_at: Time.current - 1.day) }
 
-    before(:each) do
+    before do
       visit spree.admin_customer_returns_path
     end
 

@@ -4,13 +4,14 @@ describe 'products', type: :feature, caching: true do
   let!(:product) { create(:product) }
   let!(:product2) { create(:product) }
   let!(:taxonomy) { create(:taxonomy) }
-  let!(:taxon) { create(:taxon, taxonomy: taxonomy) }
-
-  before { Timecop.scale(1000) }
 
   after { Timecop.return }
 
   before do
+    create(:taxon, taxonomy: taxonomy)
+
+    Timecop.scale(1000)
+
     product2.update_column(:updated_at, 1.day.ago)
     # warm up the cache
     visit spree.root_path

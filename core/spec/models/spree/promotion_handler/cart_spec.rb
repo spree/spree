@@ -3,13 +3,13 @@ require 'spec_helper'
 module Spree
   module PromotionHandler
     describe Cart, type: :model do
+      subject { Cart.new(order, line_item) }
+
       let(:line_item) { create(:line_item) }
       let(:order) { line_item.order }
 
       let(:promotion) { Promotion.create(name: 'At line items') }
       let(:calculator) { Calculator::FlatPercentItemTotal.new(preferred_flat_percent: 10) }
-
-      subject { Cart.new(order, line_item) }
 
       context 'activates in LineItem level' do
         let!(:action) { Promotion::Actions::CreateItemAdjustments.create(promotion: promotion, calculator: calculator) }

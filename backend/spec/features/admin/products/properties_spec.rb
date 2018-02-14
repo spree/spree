@@ -3,7 +3,7 @@ require 'spec_helper'
 describe 'Properties', type: :feature, js: true do
   stub_authorization!
 
-  before(:each) do
+  before do
     visit spree.admin_products_path
   end
 
@@ -15,7 +15,7 @@ describe 'Properties', type: :feature, js: true do
     end
 
     context 'listing product properties' do
-      it 'should list the existing product properties' do
+      it 'lists the existing product properties' do
         within_row(1) do
           expect(column_text(1)).to eq('shirt size')
           expect(column_text(2)).to eq('size')
@@ -29,7 +29,7 @@ describe 'Properties', type: :feature, js: true do
     end
 
     context 'searching properties' do
-      it 'should list properties matching search query' do
+      it 'lists properties matching search query' do
         click_on 'Filter'
         fill_in 'q_name_cont', with: 'size'
         click_on 'Search'
@@ -41,7 +41,7 @@ describe 'Properties', type: :feature, js: true do
   end
 
   context 'creating a property' do
-    it 'should allow an admin to create a new product property' do
+    it 'allows an admin to create a new product property' do
       visit spree.admin_properties_path
       click_link 'new_property_link'
       within('.content-header') { expect(page).to have_content('New Property') }
@@ -54,20 +54,20 @@ describe 'Properties', type: :feature, js: true do
   end
 
   context 'editing a property' do
-    before(:each) do
+    before do
       create(:property)
       visit spree.admin_properties_path
       within_row(1) { click_icon :edit }
     end
 
-    it 'should allow an admin to edit an existing product property' do
+    it 'allows an admin to edit an existing product property' do
       fill_in 'property_name', with: 'model 99'
       click_button 'Update'
       expect(page).to have_content('successfully updated!')
       expect(page).to have_content('model 99')
     end
 
-    it 'should show validation errors' do
+    it 'shows validation errors' do
       disable_html5_validation
       fill_in 'property_name', with: ''
       click_button 'Update'

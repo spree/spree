@@ -13,10 +13,12 @@ module Spree
     let!(:taxon) { create(:taxon, name: 'Ruby', taxonomy: taxonomy, parent_id: taxonomy.root.id) }
     let!(:rust_taxon) { create(:taxon, name: 'Rust', taxonomy: taxonomy, parent_id: taxonomy.root.id) }
     let!(:taxon2) { create(:taxon, name: 'Rails', taxonomy: taxonomy, parent_id: taxon.id) }
-    let!(:taxon3) { create(:taxon, name: 'React', taxonomy: taxonomy, parent_id: taxon2.id) }
     let(:attributes) { ['id', 'name', 'pretty_name', 'permalink', 'parent_id', 'taxonomy_id', 'meta_title', 'meta_description'] }
 
-    before { stub_authentication! }
+    before do
+      create(:taxon, name: 'React', taxonomy: taxonomy, parent_id: taxon2.id) # taxon3
+      stub_authentication!
+    end
 
     context 'as a normal user' do
       it 'gets all taxons for a taxonomy' do
@@ -39,13 +41,13 @@ module Spree
       it 'paginates through taxons' do
         new_taxon = create(:taxon, name: 'Go', taxonomy: taxonomy, parent_id: taxonomy.root.id)
         taxonomy.root.children << new_taxon
-        expect(taxonomy.root.children.count).to eql(3)
+        expect(taxonomy.root.children.count).to eq(3)
         api_get :index, taxonomy_id: taxonomy.id, page: 1, per_page: 1
-        expect(json_response['count']).to eql(1)
-        expect(json_response['total_count']).to eql(3)
-        expect(json_response['current_page']).to eql(1)
-        expect(json_response['per_page']).to eql(1)
-        expect(json_response['pages']).to eql(3)
+        expect(json_response['count']).to eq(1)
+        expect(json_response['total_count']).to eq(3)
+        expect(json_response['current_page']).to eq(1)
+        expect(json_response['per_page']).to eq(1)
+        expect(json_response['pages']).to eq(3)
       end
 
       describe 'searching' do
@@ -56,6 +58,7 @@ module Spree
 
           context 'searching for top level taxon' do
             let(:name) { 'Ruby' }
+
             it 'returns the matching taxons' do
               expect_single_taxon_result 'Ruby'
             end
@@ -165,8 +168,6 @@ module Spree
         api_post :create, taxonomy_id: taxonomy.id, taxon: { foo: :bar }
         expect(response.status).to eq(422)
         expect(json_response['error']).to eq('Invalid resource. Please fix errors and try again.')
-        errors = json_response['errors']
-
         expect(taxonomy.reload.root.children.count).to eq 2
       end
 

@@ -3,15 +3,15 @@ require 'spec_helper'
 module Spree
   module Stock
     describe Estimator, type: :model do
+      subject { Estimator.new(order) }
+
       let!(:shipping_method) { create(:shipping_method) }
       let(:package) { build(:stock_package, contents: inventory_units.map { |_i| ContentItem.new(inventory_unit) }) }
       let(:order) { build(:order_with_line_items) }
       let(:inventory_units) { order.inventory_units }
 
-      subject { Estimator.new(order) }
-
       context '#shipping rates' do
-        before(:each) do
+        before do
           shipping_method.zones.first.members.create(zoneable: order.ship_address.country)
           allow_any_instance_of(ShippingMethod).to receive_message_chain(:calculator, :available?).and_return(true)
           allow_any_instance_of(ShippingMethod).to receive_message_chain(:calculator, :compute).and_return(4.00)
@@ -38,36 +38,39 @@ module Spree
         end
 
         context "when the order's ship address is in the same zone" do
-          it_should_behave_like 'shipping rate matches'
+          it_behaves_like 'shipping rate matches'
         end
 
         context "when the order's ship address is in a different zone" do
           before { shipping_method.zones.each { |z| z.members.delete_all } }
-          it_should_behave_like "shipping rate doesn't match"
+          it_behaves_like "shipping rate doesn't match"
         end
 
         context 'when the calculator is not available for that order' do
           before { allow_any_instance_of(ShippingMethod).to receive_message_chain(:calculator, :available?).and_return(false) }
-          it_should_behave_like "shipping rate doesn't match"
+          it_behaves_like "shipping rate doesn't match"
         end
 
         context 'when the currency is nil' do
           let(:currency) { nil }
-          it_should_behave_like 'shipping rate matches'
+
+          it_behaves_like 'shipping rate matches'
         end
 
         context 'when the currency is an empty string' do
           let(:currency) { '' }
-          it_should_behave_like 'shipping rate matches'
+
+          it_behaves_like 'shipping rate matches'
         end
 
         context "when the current matches the order's currency" do
-          it_should_behave_like 'shipping rate matches'
+          it_behaves_like 'shipping rate matches'
         end
 
         context "if the currency is different than the order's currency" do
           let(:currency) { 'GBP' }
-          it_should_behave_like "shipping rate doesn't match"
+
+          it_behaves_like "shipping rate doesn't match"
         end
 
         it 'sorts shipping rates by cost' do
@@ -155,16 +158,17 @@ module Spree
 
           context 'when the order does not have a tax zone' do
             before { allow(order).to receive(:tax_zone).and_return nil }
-            it_should_behave_like 'shipping rate matches'
+            it_behaves_like 'shipping rate matches'
           end
 
           context "when the order's tax zone is the default zone" do
             before { allow(order).to receive(:tax_zone).and_return(default_zone) }
-            it_should_behave_like 'shipping rate matches'
+            it_behaves_like 'shipping rate matches'
           end
 
           context "when the order's tax zone is a non-VAT zone" do
             let!(:zone_without_vat) { create(:zone_with_country) }
+
             before { allow(order).to receive(:tax_zone).and_return(zone_without_vat) }
 
             it 'deducts the default VAT from the cost' do

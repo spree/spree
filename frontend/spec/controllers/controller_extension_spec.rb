@@ -115,7 +115,7 @@ describe Spree::CustomController, type: :controller do
         end
 
         describe 'POST' do
-          it 'should not effect the wrong controller' do
+          it 'does not effect the wrong controller' do
             spree_get :index
             assert (response.body =~ /neutral/)
           end

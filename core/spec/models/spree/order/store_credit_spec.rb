@@ -2,11 +2,11 @@ require 'spec_helper'
 
 shared_examples 'check total store credit from payments' do
   context 'with valid payments' do
+    subject { order }
+
     let(:order) { payment.order }
     let!(:payment) { create(:store_credit_payment) }
     let!(:second_payment) { create(:store_credit_payment, order: order) }
-
-    subject { order }
 
     it 'returns the sum of the payment amounts' do
       expect(subject.total_applicable_store_credit).to eq (payment.amount + second_payment.amount)
@@ -14,9 +14,9 @@ shared_examples 'check total store credit from payments' do
   end
 
   context 'without valid payments' do
-    let(:order) { create(:order) }
-
     subject { order }
+
+    let(:order) { create(:order) }
 
     it 'returns 0' do
       expect(subject.total_applicable_store_credit).to be_zero
@@ -26,11 +26,11 @@ end
 
 describe 'Order' do
   describe '#add_store_credit_payments' do
+    subject { order.add_store_credit_payments }
+
     let(:order_total) { 500.00 }
 
     before { create(:store_credit_payment_method) }
-
-    subject { order.add_store_credit_payments }
 
     context 'there is no store credit' do
       let(:order) { create(:store_credits_order_without_user, total: order_total) }
@@ -118,10 +118,10 @@ describe 'Order' do
   end
 
   describe '#remove_store_credit_payments' do
+    subject { order.remove_store_credit_payments }
+
     let(:order_total) { 500.00 }
     let(:order) { create(:order, user: store_credit.user, total: order_total) }
-
-    subject { order.remove_store_credit_payments }
 
     context 'when order is not complete' do
       let(:store_credit) { create(:store_credit, amount: order_total - 1) }
@@ -158,9 +158,9 @@ describe 'Order' do
     end
 
     context 'order has an associated user' do
-      let(:user) { create(:user) }
-
       subject { create(:order, user: user) }
+
+      let(:user) { create(:user) }
 
       context 'user has enough store credit to pay for the order' do
         before do
@@ -196,10 +196,10 @@ describe 'Order' do
     end
 
     context 'order has an associated user' do
+      subject { create(:order, user: user) }
+
       let(:user) { create(:user) }
       let(:available_store_credit) { 25.0 }
-
-      subject { create(:order, user: user) }
 
       before do
         allow(user).to receive(:total_available_store_credit).and_return(available_store_credit)
@@ -219,9 +219,9 @@ describe 'Order' do
     end
 
     context 'order has an associated user' do
-      let(:user) { create(:user) }
-
       subject { create(:order, user: user) }
+
+      let(:user) { create(:user) }
 
       context 'without store credit' do
         it { expect(subject.could_use_store_credit?).to be false }
@@ -240,9 +240,9 @@ describe 'Order' do
   end
 
   describe '#order_total_after_store_credit' do
-    let(:order_total) { 100.0 }
-
     subject { create(:order, total: order_total) }
+
+    let(:order_total) { 100.0 }
 
     before do
       allow(subject).to receive(:total_applicable_store_credit).and_return(applicable_store_credit)
@@ -278,10 +278,10 @@ describe 'Order' do
 
     context 'order is in any state other than confirm or complete' do
       context 'the associated user has store credits' do
+        subject { order }
+
         let(:store_credit) { create(:store_credit) }
         let(:order) { create(:order, user: store_credit.user) }
-
-        subject { order }
 
         context 'the store credit is more than the order total' do
           let(:order_total) { store_credit.amount - 1 }
@@ -305,9 +305,9 @@ describe 'Order' do
       end
 
       context 'the associated user does not have store credits' do
-        let(:order) { create(:order) }
-
         subject { order }
+
+        let(:order) { create(:order) }
 
         it 'returns 0' do
           expect(subject.total_applicable_store_credit).to be_zero
@@ -326,11 +326,11 @@ describe 'Order' do
 
   describe '#total_applied_store_credit' do
     context 'with valid payments' do
+      subject { order }
+
       let(:order) { payment.order }
       let!(:payment) { create(:store_credit_payment) }
       let!(:second_payment) { create(:store_credit_payment, order: order) }
-
-      subject { order }
 
       it 'returns the sum of the payment amounts' do
         expect(subject.total_applied_store_credit).to eq (payment.amount + second_payment.amount)
@@ -338,9 +338,9 @@ describe 'Order' do
     end
 
     context 'without valid payments' do
-      let(:order) { create(:order) }
-
       subject { order }
+
+      let(:order) { create(:order) }
 
       it 'returns 0' do
         expect(subject.total_applied_store_credit).to be_zero
@@ -363,9 +363,9 @@ describe 'Order' do
   end
 
   describe '#display_total_applicable_store_credit' do
-    let(:total_applicable_store_credit) { 10.00 }
-
     subject { create(:order) }
+
+    let(:total_applicable_store_credit) { 10.00 }
 
     before do
       allow(subject).to receive(:total_applicable_store_credit).and_return(total_applicable_store_credit)
@@ -381,9 +381,9 @@ describe 'Order' do
   end
 
   describe '#display_total_applied_store_credit' do
-    let(:total_applied_store_credit) { 10.00 }
-
     subject { create(:order) }
+
+    let(:total_applied_store_credit) { 10.00 }
 
     before do
       allow(subject).to receive(:total_applied_store_credit).and_return(total_applied_store_credit)
@@ -399,9 +399,9 @@ describe 'Order' do
   end
 
   describe '#display_order_total_after_store_credit' do
-    let(:order_total_after_store_credit) { 10.00 }
-
     subject { create(:order) }
+
+    let(:order_total_after_store_credit) { 10.00 }
 
     before do
       allow(subject).to receive(:order_total_after_store_credit).and_return(order_total_after_store_credit)
@@ -417,9 +417,9 @@ describe 'Order' do
   end
 
   describe '#display_total_available_store_credit' do
-    let(:total_available_store_credit) { 10.00 }
-
     subject { create(:order) }
+
+    let(:total_available_store_credit) { 10.00 }
 
     before do
       allow(subject).to receive(:total_available_store_credit).and_return(total_available_store_credit)
@@ -435,10 +435,10 @@ describe 'Order' do
   end
 
   describe '#display_store_credit_remaining_after_capture' do
+    subject { create(:order) }
+
     let(:total_available_store_credit)  { 10.00 }
     let(:total_applicable_store_credit) { 5.00 }
-
-    subject { create(:order) }
 
     before do
       allow(subject).to receive(:total_available_store_credit).and_return(total_available_store_credit)

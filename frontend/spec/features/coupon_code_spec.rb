@@ -3,11 +3,14 @@ require 'spec_helper'
 describe 'Coupon code promotions', type: :feature, js: true do
   let!(:country) { create(:country, name: 'United States of America', states_required: true) }
   let!(:state) { create(:state, name: 'Alabama', country: country) }
-  let!(:zone) { create(:zone) }
-  let!(:shipping_method) { create(:shipping_method) }
-  let!(:payment_method) { create(:check_payment_method) }
-  let!(:product) { create(:product, name: 'RoR Mug', price: 20) }
-  let!(:store) { create(:store) }
+
+  before do
+    create(:zone)
+    create(:shipping_method)
+    create(:check_payment_method)
+    create(:product, name: 'RoR Mug', price: 20)
+    create(:store)
+  end
 
   context 'visitor makes checkout as guest without registration' do
     def create_basic_coupon_promotion(code)

@@ -83,6 +83,7 @@ describe 'Product scopes', type: :model do
 
     context 'with_property' do
       let(:with_property) { Spree::Product.method(:with_property) }
+
       it "finds by a property's name" do
         expect(with_property.call(name).count).to eq(1)
       end
@@ -106,6 +107,7 @@ describe 'Product scopes', type: :model do
 
     context 'with_property_value' do
       let(:with_property_value) { Spree::Product.method(:with_property_value) }
+
       it "finds by a property's name" do
         expect(with_property_value.call(name, value).count).to eq(1)
       end

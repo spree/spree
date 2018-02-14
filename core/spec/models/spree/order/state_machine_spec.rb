@@ -2,6 +2,7 @@ require 'spec_helper'
 
 describe Spree::Order, type: :model do
   let(:order) { Spree::Order.new }
+
   before do
     # Ensure state machine has been re-defined correctly
     Spree::Order.define_state_machine!
@@ -24,7 +25,7 @@ describe Spree::Order, type: :model do
           allow(order).to receive_messages process_payments: true
         end
 
-        it 'should finalize order when transitioning to complete state' do
+        it 'finalizes order when transitioning to complete state' do
           expect(order).to receive(:finalize!)
           order.next!
         end
@@ -32,7 +33,7 @@ describe Spree::Order, type: :model do
         context 'when credit card processing fails' do
           before { allow(order).to receive_messages process_payments!: false }
 
-          it 'should not complete the order' do
+          it 'does not complete the order' do
             order.next
             expect(order.state).to eq('confirm')
           end
@@ -93,8 +94,9 @@ describe Spree::Order, type: :model do
 
   context '#cancel' do
     let!(:variant) { stub_model(Spree::Variant) }
-    let!(:inventory_units) do [stub_model(Spree::InventoryUnit, variant: variant),
-                               stub_model(Spree::InventoryUnit, variant: variant)]
+    let!(:inventory_units) do
+      [stub_model(Spree::InventoryUnit, variant: variant),
+       stub_model(Spree::InventoryUnit, variant: variant)]
     end
     let!(:shipment) do
       shipment = stub_model(Spree::Shipment)
@@ -121,10 +123,10 @@ describe Spree::Order, type: :model do
       allow(shipments).to receive_messages shipped: []
       allow(shipments).to receive(:sum).with(:cost).and_return(shipment.cost)
 
-      allow_any_instance_of(Spree::OrderUpdater).to receive(:update_adjustment_total) { 10 }
+      allow_any_instance_of(Spree::OrderUpdater).to receive(:update_adjustment_total).and_return(10)
     end
 
-    it 'should send a cancel email' do
+    it 'sends a cancel email' do
       # Stub methods that cause side-effects in this test
       allow(shipment).to receive(:cancel!)
       allow(order).to receive :restock_items!
@@ -137,15 +139,6 @@ describe Spree::Order, type: :model do
       expect(mail_message).to receive :deliver_later
       order.cancel!
       expect(order_id).to eq(order.id)
-    end
-
-    context 'restocking inventory' do
-      before do
-        allow(shipment).to receive(:ensure_correct_adjustment)
-        allow(shipment).to receive(:update_order)
-        allow(Spree::OrderMailer).to receive(:cancel_email).and_return(mail_message = double)
-        allow(mail_message).to receive :deliver_later
-      end
     end
 
     context 'resets payment state' do
@@ -167,7 +160,7 @@ describe Spree::Order, type: :model do
       end
 
       context 'without shipped items' do
-        it "should set payment state to 'void'" do
+        it "sets payment state to 'void'" do
           expect { order.cancel! }.to change { order.reload.payment_state }.to('void')
         end
       end
@@ -179,7 +172,7 @@ describe Spree::Order, type: :model do
           allow(order).to receive_messages payment_state: 'paid'
         end
 
-        it 'should not alter the payment state' do
+        it 'does not alter the payment state' do
           order.cancel!
           expect(order.payment_state).to eql 'paid'
         end
@@ -188,7 +181,7 @@ describe Spree::Order, type: :model do
       context 'with payments' do
         let(:payment) { create(:payment) }
 
-        it 'should automatically refund all payments' do
+        it 'automatically refunds all payments' do
           allow(order).to receive_message_chain(:payments, :valid, :size).and_return(1)
           allow(order).to receive_message_chain(:payments, :completed).and_return([payment])
           allow(order).to receive_message_chain(:payments, :completed, :includes).and_return([payment])
@@ -197,15 +190,6 @@ describe Spree::Order, type: :model do
           order.cancel!
         end
       end
-    end
-  end
-
-  # Another regression test for #729
-  context '#resume' do
-    before do
-      allow(order).to receive_messages email: 'user@spreecommerce.org'
-      allow(order).to receive_messages state: 'canceled'
-      allow(order).to receive_messages allow_resume?: true
     end
   end
 end

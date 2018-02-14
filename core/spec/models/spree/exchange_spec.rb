@@ -18,8 +18,8 @@ module Spree
       end
 
       it "describes the return items' change in options" do
-        expect(exchange.description).to match /foo => bar/
-        expect(exchange.description).to match /baz => qux/
+        expect(exchange.description).to match(/foo => bar/)
+        expect(exchange.description).to match(/baz => qux/)
       end
     end
 
@@ -30,10 +30,12 @@ module Spree
     end
 
     describe '#perform!' do
+      subject { exchange.perform! }
+
       let(:return_item) { create(:exchange_return_item) }
       let(:return_items) { [return_item] }
       let(:order) { return_item.return_authorization.order }
-      subject { exchange.perform! }
+
       before { return_item.exchange_variant.stock_items.first.adjust_count_on_hand(20) }
 
       it 'creates shipments for the order with the return items exchange inventory units' do

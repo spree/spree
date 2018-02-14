@@ -16,17 +16,17 @@ describe Spree::Zone, type: :model do
 
     describe 'scopes' do
       describe '.remove_previous_default' do
+        subject { Spree::Zone.with_default_tax }
+
         let(:zone_with_default_tax) { create(:zone, kind: 'country', default_tax: true) }
         let(:zone_not_with_default_tax) { create(:zone, kind: 'country', default_tax: false) }
-
-        subject { Spree::Zone.with_default_tax }
 
         it 'is expected to include zone with default tax' do
           is_expected.to include(zone_with_default_tax)
         end
 
         it 'is expected to not include zone with default tax' do
-          is_expected.to_not include(zone_not_with_default_tax)
+          is_expected.not_to include(zone_not_with_default_tax)
         end
       end
     end
@@ -39,7 +39,7 @@ describe Spree::Zone, type: :model do
         it 'is expected to make previous default tax zones to non default tax zones' do
           expect(zone_with_default_tax).to be_default_tax
           zone_not_with_default_tax.update(default_tax: true)
-          expect(zone_with_default_tax.reload).to_not be_default_tax
+          expect(zone_with_default_tax.reload).not_to be_default_tax
         end
       end
     end
@@ -47,7 +47,7 @@ describe Spree::Zone, type: :model do
     context 'when there is only one qualifying zone' do
       let(:address) { create(:address, country: country, state: state) }
 
-      it 'should return the qualifying zone' do
+      it 'returns the qualifying zone' do
         expect(Spree::Zone.match(address)).to eq(country_zone)
       end
     end
@@ -59,7 +59,7 @@ describe Spree::Zone, type: :model do
       before { second_zone.members.create(zoneable: country) }
 
       context 'when both zones have the same number of members' do
-        it 'should return the zone that was created first' do
+        it 'returns the zone that was created first' do
           Timecop.scale(100) do
             expect(Spree::Zone.match(address)).to eq(country_zone)
           end
@@ -71,7 +71,7 @@ describe Spree::Zone, type: :model do
 
         before { country_zone.members.create(zoneable: country2) }
 
-        it 'should return the zone with fewer members' do
+        it 'returns the zone with fewer members' do
           expect(Spree::Zone.match(address)).to eq(second_zone)
         end
       end
@@ -83,13 +83,13 @@ describe Spree::Zone, type: :model do
 
       before { state_zone.members.create!(zoneable: state) }
 
-      it 'should return the zone with the more specific member type' do
+      it 'returns the zone with the more specific member type' do
         expect(Spree::Zone.match(address)).to eq(state_zone)
       end
     end
 
     context 'when there are no qualifying zones' do
-      it 'should return nil' do
+      it 'returns nil' do
         expect(Spree::Zone.match(Spree::Address.new)).to be_nil
       end
     end
@@ -104,7 +104,7 @@ describe Spree::Zone, type: :model do
 
       before { country_zone.members.create(zoneable: country) }
 
-      it 'should return a list of countries' do
+      it 'returns a list of countries' do
         expect(country_zone.country_list).to eq([country])
       end
     end
@@ -114,7 +114,7 @@ describe Spree::Zone, type: :model do
 
       before { state_zone.members.create(zoneable: state) }
 
-      it 'should return a list of countries' do
+      it 'returns a list of countries' do
         expect(state_zone.country_list).to eq([state.country])
       end
     end
@@ -127,18 +127,20 @@ describe Spree::Zone, type: :model do
 
     context 'when zone is country type' do
       let(:country_zone) { create(:zone, kind: 'country') }
+
       before { country_zone.members.create(zoneable: country) }
 
-      it 'should be true' do
+      it 'is true' do
         expect(country_zone.include?(address)).to be true
       end
     end
 
     context 'when zone is state type' do
       let(:state_zone) { create(:zone, kind: 'state') }
+
       before { state_zone.members.create(zoneable: state) }
 
-      it 'should be true' do
+      it 'is true' do
         expect(state_zone.include?(address)).to be true
       end
     end
@@ -148,14 +150,14 @@ describe Spree::Zone, type: :model do
     context 'when there is a default tax zone specified' do
       before { @foo_zone = create(:zone, name: 'whatever', default_tax: true) }
 
-      it 'should be the correct zone' do
-        foo_zone = create(:zone, name: 'foo')
+      it 'is the correct zone' do
+        create(:zone, name: 'foo')
         expect(Spree::Zone.default_tax).to eq(@foo_zone)
       end
     end
 
     context 'when there is no default tax zone specified' do
-      it 'should be nil' do
+      it 'is nil' do
         expect(Spree::Zone.default_tax).to be_nil
       end
     end
@@ -178,7 +180,7 @@ describe Spree::Zone, type: :model do
     context 'when the target has no members' do
       before { @source.members.create(zoneable: country1) }
 
-      it 'should be false' do
+      it 'is false' do
         expect(@source.contains?(@target)).to be false
       end
     end
@@ -186,7 +188,7 @@ describe Spree::Zone, type: :model do
     context 'when the source has no members' do
       before { @target.members.create(zoneable: country1) }
 
-      it 'should be false' do
+      it 'is false' do
         expect(@source.contains?(@target)).to be false
       end
     end
@@ -197,7 +199,7 @@ describe Spree::Zone, type: :model do
         @target = @source
       end
 
-      it 'should be true' do
+      it 'is true' do
         expect(@source.contains?(@target)).to be true
       end
     end
@@ -214,7 +216,7 @@ describe Spree::Zone, type: :model do
           @target.members.create(zoneable: country2)
         end
 
-        it 'should be true' do
+        it 'is true' do
           expect(@source.contains?(@target)).to be true
         end
       end
@@ -226,7 +228,7 @@ describe Spree::Zone, type: :model do
           @target.members.create(zoneable: create(:country))
         end
 
-        it 'should be false' do
+        it 'is false' do
           expect(@source.contains?(@target)).to be false
         end
       end
@@ -237,7 +239,7 @@ describe Spree::Zone, type: :model do
           @target.members.create(zoneable: create(:country))
         end
 
-        it 'should be false' do
+        it 'is false' do
           expect(@source.contains?(@target)).to be false
         end
       end
@@ -255,7 +257,7 @@ describe Spree::Zone, type: :model do
           @target.members.create(zoneable: state2)
         end
 
-        it 'should be true' do
+        it 'is true' do
           expect(@source.contains?(@target)).to be true
         end
       end
@@ -267,7 +269,7 @@ describe Spree::Zone, type: :model do
           @target.members.create(zoneable: create(:state))
         end
 
-        it 'should be false' do
+        it 'is false' do
           expect(@source.contains?(@target)).to be false
         end
       end
@@ -278,7 +280,7 @@ describe Spree::Zone, type: :model do
           @target.members.create(zoneable: create(:state))
         end
 
-        it 'should be false' do
+        it 'is false' do
           expect(@source.contains?(@target)).to be false
         end
       end
@@ -290,7 +292,7 @@ describe Spree::Zone, type: :model do
         @target.members.create(zoneable: country1)
       end
 
-      it 'should be false' do
+      it 'is false' do
         expect(@source.contains?(@target)).to be false
       end
     end
@@ -304,7 +306,7 @@ describe Spree::Zone, type: :model do
           @target.members.create(zoneable: state1)
         end
 
-        it 'should be true' do
+        it 'is true' do
           expect(@source.contains?(@target)).to be true
         end
       end
@@ -316,7 +318,7 @@ describe Spree::Zone, type: :model do
           @target.members.create(zoneable: create(:state, country: country2))
         end
 
-        it 'should be false' do
+        it 'is false' do
           expect(@source.contains?(@target)).to be false
         end
       end
@@ -327,7 +329,7 @@ describe Spree::Zone, type: :model do
           @target.members.create(zoneable: create(:state, country: country2))
         end
 
-        it 'should be false' do
+        it 'is false' do
           expect(@source.contains?(@target)).to be false
         end
       end
@@ -336,15 +338,15 @@ describe Spree::Zone, type: :model do
 
   context '#save' do
     context 'when default_tax is true' do
-      it 'should clear previous default tax zone' do
+      it 'clears previous default tax zone' do
         zone1 = create(:zone, name: 'foo', default_tax: true)
-        zone = create(:zone, name: 'bar', default_tax: true)
+        create(:zone, name: 'bar', default_tax: true)
         expect(zone1.reload.default_tax).to be false
       end
     end
 
     context 'when a zone member country is added to an existing zone consisting of state members' do
-      it 'should remove existing state members' do
+      it 'removes existing state members' do
         zone = create(:zone, name: 'foo', zone_members: [])
         state = create(:state)
         country = create(:country)
@@ -368,7 +370,7 @@ describe Spree::Zone, type: :model do
         @zone.members.create(zoneable: create(:country))
       end
 
-      it 'should return the kind of zone member' do
+      it 'returns the kind of zone member' do
         expect(@zone.kind).to eq('country')
       end
     end

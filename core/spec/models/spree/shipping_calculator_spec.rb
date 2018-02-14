@@ -2,14 +2,14 @@ require 'spec_helper'
 
 module Spree
   describe ShippingCalculator, type: :model do
+    subject { ShippingCalculator.new }
+
     let(:variant1) { build(:variant, price: 10) }
     let(:variant2) { build(:variant, price: 20) }
 
     let(:package) do
       build(:stock_package, variants_contents: { variant1 => 2, variant2 => 1 })
     end
-
-    subject { ShippingCalculator.new }
 
     it 'computes with a shipment' do
       shipment = mock_model(Spree::Shipment)

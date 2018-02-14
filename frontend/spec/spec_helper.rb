@@ -66,7 +66,7 @@ end
 RSpec.configure do |config|
   config.color = true
   config.fail_fast = ENV['FAIL_FAST'] || false
-  config.fixture_path = File.join(File.expand_path(File.dirname(__FILE__)), 'fixtures')
+  config.fixture_path = File.join(__dir__, 'fixtures')
   config.infer_spec_type_from_file_location!
   config.mock_with :rspec
   config.raise_errors_for_deprecations!
@@ -89,7 +89,7 @@ RSpec.configure do |config|
     DatabaseCleaner.clean
   end
 
-  config.before(:each) do
+  config.before do
     WebMock.disable!
     DatabaseCleaner.strategy = if RSpec.current_example.metadata[:js]
                                  :truncation
@@ -98,14 +98,12 @@ RSpec.configure do |config|
                                end
     # TODO: Find out why open_transactions ever gets below 0
     # See issue #3428
-    if ApplicationRecord.connection.open_transactions < 0
-      ApplicationRecord.connection.increment_open_transactions
-    end
+    ApplicationRecord.connection.increment_open_transactions if ApplicationRecord.connection.open_transactions < 0
     DatabaseCleaner.start
     reset_spree_preferences
   end
 
-  config.after(:each) do
+  config.after do
     DatabaseCleaner.clean
   end
 

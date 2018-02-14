@@ -5,7 +5,6 @@ describe 'Users', type: :feature do
   stub_authorization!
   include Spree::Admin::BaseHelper
 
-  let!(:country) { create(:country) }
   let!(:user_a) { create(:user_with_addresses, email: 'a@example.com') }
   let!(:user_b) { create(:user_with_addresses, email: 'b@example.com') }
 
@@ -19,10 +18,6 @@ describe 'Users', type: :feature do
   end
 
   let(:orders) { [order, order_2] }
-
-  before do
-    stub_const('Spree::User', create(:user, email: 'example@example.com').class)
-  end
 
   shared_examples_for 'a user page' do
     it 'has lifetime stats' do
@@ -79,6 +74,8 @@ describe 'Users', type: :feature do
   end
 
   before do
+    create(:country)
+    stub_const('Spree::User', create(:user, email: 'example@example.com').class)
     visit spree.admin_path
     click_link 'Users'
   end
@@ -181,7 +178,7 @@ describe 'Users', type: :feature do
         expect(user_a.reload.spree_api_key).to be_present
 
         within('#admin_user_edit_api_key') do
-          expect(find('#current-api-key').text).to match /Key: #{user_a.spree_api_key}/
+          expect(find('#current-api-key').text).to match(/Key: #{user_a.spree_api_key}/)
         end
       end
     end
@@ -213,7 +210,7 @@ describe 'Users', type: :feature do
         expect(user_a.reload.spree_api_key).not_to eq old_key
 
         within('#admin_user_edit_api_key') do
-          expect(find('#current-api-key').text).to match /Key: #{user_a.spree_api_key}/
+          expect(find('#current-api-key').text).to match(/Key: #{user_a.spree_api_key}/)
         end
       end
     end

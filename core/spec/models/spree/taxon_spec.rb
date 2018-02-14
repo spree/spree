@@ -1,5 +1,3 @@
-# coding: UTF-8
-
 require 'spec_helper'
 
 describe Spree::Taxon, type: :model do
@@ -8,26 +6,27 @@ describe Spree::Taxon, type: :model do
 
   describe '#to_param' do
     subject { super().to_param }
+
     it { is_expected.to eql taxon.permalink }
   end
 
   context 'check_for_root' do
-    it 'should not validate the taxon' do
+    it 'does not validate the taxon' do
       expect(taxon.valid?).to eq false
     end
 
-    it 'should validate the taxon' do
+    it 'validates the taxon' do
       expect(valid_taxon.valid?).to eq true
     end
   end
 
   context 'set_permalink' do
-    it 'should set permalink correctly when no parent present' do
+    it 'sets permalink correctly when no parent present' do
       taxon.set_permalink
       expect(taxon.permalink).to eql 'ruby-on-rails'
     end
 
-    it 'should support Chinese characters' do
+    it 'supports Chinese characters' do
       taxon.name = '你好'
       taxon.set_permalink
       expect(taxon.permalink).to eql 'ni-hao'
@@ -43,20 +42,21 @@ describe Spree::Taxon, type: :model do
 
     context 'with parent taxon' do
       let(:parent) { FactoryBot.build(:taxon, permalink: 'brands') }
+
       before       { allow(taxon).to receive_messages parent: parent }
 
-      it 'should set permalink correctly when taxon has parent' do
+      it 'sets permalink correctly when taxon has parent' do
         taxon.set_permalink
         expect(taxon.permalink).to eql 'brands/ruby-on-rails'
       end
 
-      it 'should set permalink correctly with existing permalink present' do
+      it 'sets permalink correctly with existing permalink present' do
         taxon.permalink = 'b/rubyonrails'
         taxon.set_permalink
         expect(taxon.permalink).to eql 'brands/rubyonrails'
       end
 
-      it 'should support Chinese characters' do
+      it 'supports Chinese characters' do
         taxon.name = '我'
         taxon.set_permalink
         expect(taxon.permalink).to eql 'brands/wo'
@@ -65,6 +65,7 @@ describe Spree::Taxon, type: :model do
       # Regression test for #3390
       context 'setting a new node sibling position via :child_index=' do
         let(:idx) { rand(0..100) }
+
         before { allow(parent).to receive(:move_to_child_with_index) }
 
         context 'taxon is not new' do

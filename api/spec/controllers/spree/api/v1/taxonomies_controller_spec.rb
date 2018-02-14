@@ -102,7 +102,6 @@ module Spree
         api_post :create, taxonomy: {}
         expect(response.status).to eq(422)
         expect(json_response['error']).to eq('Invalid resource. Please fix errors and try again.')
-        errors = json_response['errors']
       end
 
       it 'can destroy' do

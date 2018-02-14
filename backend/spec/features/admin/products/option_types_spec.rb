@@ -3,13 +3,13 @@ require 'spec_helper'
 describe 'Option Types', type: :feature, js: true do
   stub_authorization!
 
-  before(:each) do
+  before do
     visit spree.admin_path
     click_link 'Products'
   end
 
   context 'listing option types' do
-    it 'should list existing option types' do
+    it 'lists existing option types' do
       create(:option_type, name: 'tshirt-color', presentation: 'Color')
       create(:option_type, name: 'tshirt-size', presentation: 'Size')
       click_link 'Option Types'
@@ -23,7 +23,7 @@ describe 'Option Types', type: :feature, js: true do
   end
 
   context 'creating a new option type' do
-    it 'should allow an admin to create a new option type' do
+    it 'allows an admin to create a new option type' do
       click_link 'Option Types'
       click_link 'new_option_type_link'
       expect(page).to have_content('New Option Type')
@@ -41,7 +41,7 @@ describe 'Option Types', type: :feature, js: true do
   end
 
   context 'editing an existing option type' do
-    it 'should allow an admin to update an existing option type' do
+    it 'allows an admin to update an existing option type' do
       create(:option_type, name: 'tshirt-color', presentation: 'Color')
       create(:option_type, name: 'tshirt-size', presentation: 'Size')
       click_link 'Option Types'

@@ -12,6 +12,8 @@ module Spree
     end
 
     describe '#gross_amount' do
+      subject(:gross_amount) { test_class.new.gross_amount(amount, price_options) }
+
       let(:zone) { Zone.new }
       let(:tax_category) { TaxCategory.new }
       let(:price_options) do
@@ -22,8 +24,6 @@ module Spree
       end
       let(:amount) { 100 }
 
-      subject(:gross_amount) { test_class.new.gross_amount(amount, price_options) }
-
       context 'with no default zone set' do
         it 'does not call TaxRate.included_tax_amount_for' do
           expect(TaxRate).not_to receive(:included_tax_amount_for)
@@ -33,6 +33,7 @@ module Spree
 
       context 'with no zone given' do
         let(:zone) { nil }
+
         it 'does not call TaxRate.included_tax_amount_for' do
           expect(TaxRate).not_to receive(:included_tax_amount_for)
           gross_amount
@@ -41,6 +42,7 @@ module Spree
 
       context 'with a default zone set' do
         let(:default_zone) { Spree::Zone.new }
+
         before do
           allow(Spree::Zone).to receive(:default_tax).and_return(default_zone)
         end

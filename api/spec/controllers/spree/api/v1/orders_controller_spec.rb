@@ -88,12 +88,12 @@ module Spree
     end
 
     describe 'current' do
-      let(:current_api_user) { order.user }
-      let!(:order) { create(:order, line_items: [line_item]) }
-
       subject do
         api_get :current, format: 'json'
       end
+
+      let(:current_api_user) { order.user }
+      let!(:order) { create(:order, line_items: [line_item]) }
 
       context 'an incomplete order exists' do
         it 'returns that order' do
@@ -140,10 +140,10 @@ module Spree
     end
 
     describe 'GET #show' do
+      subject { api_get :show, id: order.to_param }
+
       let(:order) { create :order_with_line_items }
       let(:adjustment) { FactoryBot.create(:adjustment, order: order) }
-
-      subject { api_get :show, id: order.to_param }
 
       before do
         allow_any_instance_of(Order).to receive_messages user: current_api_user
@@ -153,7 +153,7 @@ module Spree
         it 'contains stock information on variant' do
           subject
           variant = json_response['line_items'][0]['variant']
-          expect(variant).to_not be_nil
+          expect(variant).not_to be_nil
           expect(variant['in_stock']).to eq(false)
           expect(variant['total_on_hand']).to eq(0)
           expect(variant['is_backorderable']).to eq(true)
@@ -171,7 +171,7 @@ module Spree
 
           # Test to insure shipment has adjustments
           shipment = json_response['shipments'][0]
-          expect(shipment).to_not be_nil
+          expect(shipment).not_to be_nil
           expect(shipment['adjustments'][0]).not_to be_empty
           expect(shipment['adjustments'][0]['label']).to eq(adjustment.label)
         end
@@ -232,7 +232,7 @@ module Spree
     end
 
     it 'can create an order' do
-      api_post :create, order: { line_items: { '0' => { variant_id: variant.to_param, quantity: 5 }} }
+      api_post :create, order: { line_items: { '0' => { variant_id: variant.to_param, quantity: 5 } } }
       expect(response.status).to eq(201)
 
       order = Order.last
@@ -256,7 +256,7 @@ module Spree
 
     it 'cannot arbitrarily set the line items price' do
       api_post :create, order: {
-        line_items: { '0' => { price: 33.0, variant_id: variant.to_param, quantity: 5 }}
+        line_items: { '0' => { price: 33.0, variant_id: variant.to_param, quantity: 5 } }
       }
 
       expect(response.status).to eq 201
@@ -279,23 +279,26 @@ module Spree
     it 'can create an order without any parameters' do
       expect { api_post :create }.not_to raise_error
       expect(response.status).to eq(201)
-      order = Order.last
       expect(json_response['state']).to eq('cart')
     end
 
     context 'working with an order' do
       let(:variant) { create(:variant) }
       let!(:line_item) { order.contents.add(variant, 1) }
-      let!(:payment_method) { create(:check_payment_method) }
-
       let(:address_params) { { country_id: country.id } }
-      let(:billing_address) do { firstname: 'Tiago', lastname: 'Motta', address1: 'Av Paulista',
-                                 city: 'Sao Paulo', zipcode: '01310-300', phone: '12345678',
-                                 country_id: country.id }
+      let(:billing_address) do
+        {
+          firstname: 'Tiago', lastname: 'Motta', address1: 'Av Paulista',
+          city: 'Sao Paulo', zipcode: '01310-300', phone: '12345678',
+          country_id: country.id
+        }
       end
-      let(:shipping_address) do { firstname: 'Tiago', lastname: 'Motta', address1: 'Av Paulista',
-                                  city: 'Sao Paulo', zipcode: '01310-300', phone: '12345678',
-                                  country_id: country.id }
+      let(:shipping_address) do
+        {
+          firstname: 'Tiago', lastname: 'Motta', address1: 'Av Paulista',
+          city: 'Sao Paulo', zipcode: '01310-300', phone: '12345678',
+          country_id: country.id
+        }
       end
       let(:country) { create(:country, name: 'Brazil', iso_name: 'BRAZIL', iso: 'BR', iso3: 'BRA', numcode: 76) }
 
@@ -361,14 +364,14 @@ module Spree
 
         expect(response.status).to eq(200)
         expect(json_response['line_items'].count).to eq(1)
-        expect(json_response['line_items'].first['price'].to_f).to_not eq(0)
+        expect(json_response['line_items'].first['price'].to_f).not_to eq(0)
         expect(json_response['line_items'].first['price'].to_f).to eq(line_item.variant.price)
       end
 
       it 'can add billing address' do
         api_put :update, id: order.to_param, order: { bill_address_attributes: billing_address }
 
-        expect(order.reload.bill_address).to_not be_nil
+        expect(order.reload.bill_address).not_to be_nil
       end
 
       it 'receives error message if trying to add billing address with errors' do
@@ -402,7 +405,6 @@ module Spree
 
       it 'can set the user_id for the order' do
         user = Spree.user_class.create
-        original_id = order.user_id
         api_post :update, id: order.to_param, order: { user_id: user.id }
         expect(response.status).to eq 200
         expect(json_response['user_id']).to eq(user.id)
@@ -412,7 +414,6 @@ module Spree
         before { order.create_proposed_shipments }
 
         it 'clears out all existing shipments on line item udpate' do
-          previous_shipments = order.shipments
           api_put :update, id: order.to_param, order: {
             line_items: {
               0 => { id: line_item.id, quantity: 10 }
@@ -644,7 +645,6 @@ module Spree
         it 'can create an order without any parameters' do
           expect { api_post :create }.not_to raise_error
           expect(response.status).to eq(201)
-          order = Order.last
           expect(json_response['state']).to eq('cart')
         end
 

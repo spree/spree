@@ -6,7 +6,7 @@ describe Spree::Promotion::Rules::UserLoggedIn, type: :model do
   context '#eligible?(order)' do
     let(:order) { Spree::Order.new }
 
-    it 'should be eligible if order has an associated user' do
+    it 'is eligible if order has an associated user' do
       user = double('User')
       allow(order).to receive_messages(user: user)
 

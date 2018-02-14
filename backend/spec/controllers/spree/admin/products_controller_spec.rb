@@ -18,6 +18,7 @@ describe Spree::Admin::ProductsController, type: :controller do
   # regression test for #1370
   context 'adding properties to a product' do
     let!(:product) { create(:product) }
+
     specify do
       spree_put :update, id: product.to_param, product: { product_properties_attributes: { '1' => { property_name: 'Foo', value: 'bar' } } }
       expect(flash[:success]).to eq("Product #{product.name.inspect} has been successfully updated!")
@@ -96,13 +97,13 @@ describe Spree::Admin::ProductsController, type: :controller do
   end
 
   describe '#clone' do
-    let(:product) { create(:custom_product, name: 'MyProduct', sku: 'MySku') }
-    let(:product2) { create(:custom_product, name: 'COPY OF MyProduct', sku: 'COPY OF MySku') }
-    let(:variant) { create(:master_variant, name: 'COPY OF MyProduct', sku: 'COPY OF MySku', created_at: product.created_at - 1.day) }
-
     subject(:send_request) do
       spree_post :clone, id: product, format: :js
     end
+
+    let(:product) { create(:custom_product, name: 'MyProduct', sku: 'MySku') }
+    let(:product2) { create(:custom_product, name: 'COPY OF MyProduct', sku: 'COPY OF MySku') }
+    let(:variant) { create(:master_variant, name: 'COPY OF MyProduct', sku: 'COPY OF MySku', created_at: product.created_at - 1.day) }
 
     context 'will successfully clone product' do
       before do
@@ -137,6 +138,7 @@ describe Spree::Admin::ProductsController, type: :controller do
 
   context 'stock' do
     let(:product) { create(:product) }
+
     it 'restricts stock location based on accessible attributes' do
       expect(Spree::StockLocation).to receive(:accessible_by).and_return([])
       spree_get :stock, id: product

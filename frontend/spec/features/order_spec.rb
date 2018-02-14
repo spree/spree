@@ -15,7 +15,7 @@ describe 'orders', type: :feature do
     expect { visit spree.order_path(order) }.not_to raise_error
   end
 
-  it 'should display line item price' do
+  it 'displays line item price' do
     # Regression test for #2772
     line_item = order.line_items.first
     line_item.target_shipment = create(:shipment)
@@ -30,7 +30,7 @@ describe 'orders', type: :feature do
     end
   end
 
-  it 'should have credit card info if paid with credit card' do
+  it 'has credit card info if paid with credit card' do
     create(:payment, order: order)
     visit spree.order_path(order)
     within '.payment-info' do
@@ -38,7 +38,7 @@ describe 'orders', type: :feature do
     end
   end
 
-  it 'should have payment method name visible if not paid with credit card' do
+  it 'has payment method name visible if not paid with credit card' do
     create(:check_payment, order: order)
     visit spree.order_path(order)
     within '.payment-info' do
@@ -64,7 +64,7 @@ describe 'orders', type: :feature do
     end
   end
 
-  it 'should return the correct title when displaying a completed order' do
+  it 'returns the correct title when displaying a completed order' do
     visit spree.order_path(order)
 
     within '#order_summary' do
@@ -79,7 +79,7 @@ describe 'orders', type: :feature do
         configure_spree_preferences { |config| config.address_requires_state = true }
       end
 
-      it 'should show state text' do
+      it 'shows state text' do
         visit spree.order_path(order)
 
         within '#order' do
@@ -94,7 +94,7 @@ describe 'orders', type: :feature do
         configure_spree_preferences { |config| config.address_requires_state = false }
       end
 
-      it 'should not show state text' do
+      it 'does not show state text' do
         visit spree.order_path(order)
 
         within '#order' do

@@ -11,7 +11,7 @@ module Spree
 
         before { allow(reimbursement).to receive(:credits).and_return([credit_double, credit_double]) }
 
-        it 'should sum the amounts of all of the reimbursements credits' do
+        it 'sums the amounts of all of the reimbursements credits' do
           expect(subject).to eq BigDecimal.new('199.98')
         end
       end
@@ -20,7 +20,7 @@ module Spree
     describe '#description' do
       let(:credit) { Spree::Reimbursement::Credit.new(amount: 100, creditable: mock_model(Spree::PaymentMethod::Check)) }
 
-      it "should be the creditable's class name" do
+      it "is the creditable's class name" do
         expect(credit.description).to eq 'Check'
       end
     end
@@ -28,7 +28,7 @@ module Spree
     describe '#display_amount' do
       let(:credit) { Spree::Reimbursement::Credit.new(amount: 100) }
 
-      it 'should be a money object' do
+      it 'is a money object' do
         expect(credit.display_amount).to eq Spree::Money.new(100, currency: 'USD')
       end
     end

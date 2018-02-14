@@ -130,7 +130,7 @@ module Spree
 
           expect do
             updater.update_payment_state
-          end.to change { order.payment_state }.to 'credit_owed'
+          end.to change(order, :payment_state).to 'credit_owed'
         end
       end
 
@@ -141,7 +141,7 @@ module Spree
 
           expect do
             updater.update_payment_state
-          end.to change { order.payment_state }.to 'balance_due'
+          end.to change(order, :payment_state).to 'balance_due'
         end
       end
 
@@ -152,7 +152,7 @@ module Spree
 
           expect do
             updater.update_payment_state
-          end.to change { order.payment_state }.to 'paid'
+          end.to change(order, :payment_state).to 'paid'
         end
       end
 
@@ -167,7 +167,7 @@ module Spree
             order.total = 30
             expect do
               updater.update_payment_state
-            end.to change { order.payment_state }.to 'void'
+            end.to change(order, :payment_state).to 'void'
           end
         end
 
@@ -179,7 +179,7 @@ module Spree
             allow(order).to receive_message_chain(:payments, :completed, :size).and_return(1)
             expect do
               updater.update_payment_state
-            end.to change { order.payment_state }.to 'credit_owed'
+            end.to change(order, :payment_state).to 'credit_owed'
           end
         end
 
@@ -189,7 +189,7 @@ module Spree
             order.total = 30
             expect do
               updater.update_payment_state
-            end.to change { order.payment_state }.to 'void'
+            end.to change(order, :payment_state).to 'void'
           end
         end
       end

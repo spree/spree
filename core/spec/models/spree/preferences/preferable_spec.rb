@@ -22,7 +22,7 @@ describe Spree::Preferences::Preferable, type: :model do
     end
   end
 
-  before :each do
+  before do
     @a = A.new
     allow(@a).to receive_messages(persisted?: true)
     @b = B.new
@@ -292,7 +292,7 @@ describe Spree::Preferences::Preferable, type: :model do
       ActiveRecord::Migration.verbose = @migration_verbosity
     end
 
-    before(:each) do
+    before do
       # load PrefTest table
       PrefTest.first
       @pt = PrefTest.create

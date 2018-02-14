@@ -6,7 +6,7 @@ module Spree
       subject { Calculator::Shipping::FlatRate.new(preferred_amount: 4.00) }
 
       it 'always returns the same rate' do
-        expect(subject.compute(build(:stock_package_fulfilled))).to eql 4.00
+        expect(subject.compute(build(:stock_package_fulfilled))).to eq(4.00)
       end
     end
   end

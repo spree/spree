@@ -11,7 +11,7 @@ describe Spree::ZoneMember, type: :model do
       let(:defunct_without_kind) { Spree::ZoneMember.defunct_without_kind('country') }
 
       context 'zoneable is present and is of defunct kind' do
-        it { expect(defunct_without_kind).to_not include(zone_member) }
+        it { expect(defunct_without_kind).not_to include(zone_member) }
       end
 
       context 'zoneable is not of defunct kind' do

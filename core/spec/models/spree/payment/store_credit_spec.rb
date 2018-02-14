@@ -44,7 +44,7 @@ describe 'Payment' do
 
       context 'cancels successfully' do
         it 'voids the payment' do
-          expect { subject }.to change { payment.state }.to('void')
+          expect { subject }.to change(payment, :state).to('void')
         end
       end
 

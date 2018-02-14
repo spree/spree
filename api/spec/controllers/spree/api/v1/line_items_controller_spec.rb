@@ -5,7 +5,7 @@ module Spree
     mattr_writer :line_item_attributes
   end
 
-  unless PermittedAttributes.line_item_attributes.include? :some_option
+  unless PermittedAttributes.line_item_attributes.include?(:some_option)
     PermittedAttributes.line_item_attributes += [:some_option]
   end
 
@@ -181,9 +181,7 @@ module Spree
     end
 
     context 'as just another user' do
-      before do
-        user = create(:user)
-      end
+      before { create(:user) }
 
       it 'cannot add a new line item to the order' do
         api_post :create, line_item: { variant_id: product.master.to_param, quantity: 1 }

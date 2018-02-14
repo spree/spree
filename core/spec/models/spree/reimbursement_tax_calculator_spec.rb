@@ -1,15 +1,15 @@
 require 'spec_helper'
 
 describe Spree::ReimbursementTaxCalculator, type: :model do
+  subject do
+    Spree::ReimbursementTaxCalculator.call(reimbursement)
+  end
+
   let!(:tax_rate) { nil }
 
   let(:reimbursement) { create(:reimbursement, return_items_count: 1) }
   let(:return_item) { reimbursement.return_items.first }
   let(:line_item) { return_item.inventory_unit.line_item }
-
-  subject do
-    Spree::ReimbursementTaxCalculator.call(reimbursement)
-  end
 
   context 'without taxes' do
     let!(:tax_rate) { nil }

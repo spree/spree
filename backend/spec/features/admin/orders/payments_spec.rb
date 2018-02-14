@@ -9,8 +9,7 @@ describe 'Payments', type: :feature, js: true do
              order:          order,
              amount:         order.outstanding_balance,
              payment_method: create(:credit_card_payment_method),
-             state:          state
-            )
+             state:          state)
     end
 
     let(:order) { create(:completed_order_with_totals, number: 'R100', line_items_count: 5) }
@@ -28,12 +27,12 @@ describe 'Payments', type: :feature, js: true do
     # Regression tests for #1453
     context 'with a check payment' do
       let(:order) { create(:completed_order_with_totals, number: 'R100') }
+
       let!(:payment) do
         create(:payment,
-               order:          order,
-               amount:         order.outstanding_balance,
-               payment_method: create(:check_payment_method) # Check
-              )
+               order: order,
+               amount: order.outstanding_balance,
+               payment_method: create(:check_payment_method)) # Check
       end
 
       it 'capturing a check payment from a new order' do
@@ -48,7 +47,7 @@ describe 'Payments', type: :feature, js: true do
       end
     end
 
-    it 'should list all captures for a payment' do
+    it 'lists all captures for a payment' do
       Spree::ShippingMethod.delete_all
       capture_amount = order.outstanding_balance / 2 * 100
       payment.capture!(capture_amount)
@@ -229,9 +228,9 @@ describe 'Payments', type: :feature, js: true do
     context 'store_credit payment' do
       let!(:payment_method) { create(:store_credit_payment_method) }
       let!(:category) { create(:store_credit_category, name: 'Default') }
-      let!(:store_credit) { create(:store_credit, user: order.user, category: category, amount: 500) }
 
       before do
+        create(:store_credit, user: order.user, category: category, amount: 500)
         visit spree.new_admin_order_payment_path(order.reload)
         choose("payment_payment_method_id_#{payment_method.id}")
         click_button 'Continue'

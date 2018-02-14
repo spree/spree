@@ -5,15 +5,17 @@ describe 'Customer Details', type: :feature, js: true do
 
   let!(:country) { create(:country, name: 'United States of America', iso: 'US') }
   let!(:state) { create(:state, name: 'Alabama', country: country, abbr: 'AL') }
-  let!(:shipping_method) { create(:shipping_method, display_on: 'front_end') }
   let!(:order) { create(:order, state: 'complete', completed_at: '2011-02-01 12:36:15') }
   let!(:product) { create(:product_in_stock) }
-
   # We need a unique name that will appear for the customer dropdown
   let!(:ship_address) { create(:address, country: country, state: state, first_name: 'Rumpelstiltskin') }
   let!(:bill_address) { create(:address, country: country, state: state, first_name: 'Rumpelstiltskin') }
 
   let!(:user) { create(:user, email: 'foobar@example.com', ship_address: ship_address, bill_address: bill_address) }
+
+  before do
+    create(:shipping_method, display_on: 'front_end')
+  end
 
   # Value attribute is dynamically set via JS, so not observable via a CSS/XPath selector
   # As the browser might take time to make the values visible in the dom we need to
@@ -81,7 +83,7 @@ describe 'Customer Details', type: :feature, js: true do
       end
     end
 
-    it 'should be able to update customer details for an existing order' do
+    it 'is able to update customer details for an existing order' do
       order.ship_address = create(:address)
       order.save!
 
@@ -99,7 +101,7 @@ describe 'Customer Details', type: :feature, js: true do
       end
     end
 
-    it 'should show validation errors' do
+    it 'shows validation errors' do
       click_link 'Customer'
       click_button 'Update'
       expect(page).to have_content("Shipping address first name can't be blank")

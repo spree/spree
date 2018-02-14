@@ -32,6 +32,7 @@ describe Spree::Country, type: :model do
 
     context 'will not destroy country if it is default' do
       subject { america.destroy }
+
       it { is_expected.to be_falsy }
 
       context 'error should be default country cannot be deleted' do

@@ -40,7 +40,6 @@ module Spree
         api_post :create, user: {}, token: user.spree_api_key
         expect(response.status).to eq(422)
         expect(json_response['error']).to eq('Invalid resource. Please fix errors and try again.')
-        errors = json_response['errors']
       end
 
       it 'can update own details' do
@@ -69,8 +68,8 @@ module Spree
           }
         }
         expect(json_response['email']).to eq 'mine@example.com'
-        expect(json_response['bill_address']).to_not be_nil
-        expect(json_response['ship_address']).to_not be_nil
+        expect(json_response['bill_address']).not_to be_nil
+        expect(json_response['ship_address']).not_to be_nil
       end
 
       it 'cannot update other users details' do
@@ -88,7 +87,7 @@ module Spree
         assert_not_found!
       end
 
-      it 'should only get own details on index' do
+      it 'only gets own details on index' do
         2.times { create(:user) }
         api_get :index, token: user.spree_api_key
 

@@ -22,9 +22,9 @@ module Spree
 
     describe '#variant_includes' do
       let(:variants_includes_list) do
-        [{ option_values: :option_type }, :product,
-          :default_price, :images, { stock_items: :stock_location }]
+        [{ option_values: :option_type }, :product, :default_price, :images, { stock_items: :stock_location }]
       end
+
       it { expect(controller).to receive(:variant_includes).and_return(variants_includes_list) }
       after { api_get :index }
     end
@@ -108,8 +108,9 @@ module Spree
     end
 
     context 'pagination' do
+      before { create(:variant) }
+
       it 'can select the next page of variants' do
-        second_variant = create(:variant)
         api_get :index, page: 2, per_page: 1
         expect(json_response['variants'].first).to have_attributes(show_attributes)
         expect(json_response['total_count']).to eq(3)

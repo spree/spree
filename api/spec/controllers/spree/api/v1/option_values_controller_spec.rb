@@ -49,7 +49,7 @@ module Spree
 
       it 'can retrieve a list of option types' do
         option_value_1 = create(:option_value, option_type: option_type)
-        option_value_2 = create(:option_value, option_type: option_type)
+        create(:option_value, option_type: option_type) # option_value_2
         api_get :index, ids: [option_value.id, option_value_1.id]
         expect(json_response.count).to eq(2)
       end
@@ -61,9 +61,9 @@ module Spree
 
       it 'cannot create a new option value' do
         api_post :create, option_value: {
-                          name: 'Option Value',
-                          presentation: 'Option Value'
-                        }
+          name: 'Option Value',
+          presentation: 'Option Value'
+        }
         assert_unauthorized!
       end
 
@@ -71,8 +71,8 @@ module Spree
         original_name = option_type.name
         api_put :update, id: option_type.id,
                          option_value: {
-                            name: 'Option Value'
-                          }
+                           name: 'Option Value'
+                         }
         assert_not_found!
         expect(option_type.reload.name).to eq(original_name)
       end
@@ -89,14 +89,14 @@ module Spree
         it 'can learn how to create a new option value' do
           api_get :new
           expect(json_response['attributes']).to eq(attributes.map(&:to_s))
-          expect(json_response['required_attributes']).to_not be_empty
+          expect(json_response['required_attributes']).not_to be_empty
         end
 
         it 'can create an option value' do
           api_post :create, option_value: {
-                            name: 'Option Value',
-                            presentation: 'Option Value'
-                          }
+            name: 'Option Value',
+            presentation: 'Option Value'
+          }
           expect(json_response).to have_attributes(attributes)
           expect(response.status).to eq(201)
         end
@@ -107,27 +107,18 @@ module Spree
         end
 
         it 'can update an option value' do
-          original_name = option_value.name
-          api_put :update, id: option_value.id, option_value: {
-                                name: 'Option Value',
-                              }
+          api_put :update, id: option_value.id, option_value: { name: 'Option Value' }
           expect(response.status).to eq(200)
-
-          option_value.reload
-          expect(option_value.name).to eq('Option Value')
+          expect(option_value.reload.name).to eq('Option Value')
         end
 
         it 'permits the correct attributes' do
           expect(controller).to receive(:permitted_option_value_attributes)
-          api_put :update, id: option_value.id, option_value: {
-                            name: ''
-                           }
+          api_put :update, id: option_value.id, option_value: { name: '' }
         end
 
         it 'cannot update an option value with invalid attributes' do
-          api_put :update, id: option_value.id, option_value: {
-                            name: ''
-                           }
+          api_put :update, id: option_value.id, option_value: { name: '' }
           expect(response.status).to eq(422)
         end
 

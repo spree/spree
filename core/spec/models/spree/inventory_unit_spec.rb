@@ -63,7 +63,7 @@ describe Spree::InventoryUnit, type: :model do
     # Regression for #3066
     it 'returns modifiable objects' do
       units = Spree::InventoryUnit.backordered_for_stock_item(stock_item)
-      expect { units.first.save! }.to_not raise_error
+      expect { units.first.save! }.not_to raise_error
     end
 
     it "finds inventory units from its stock location when the unit's variant matches the stock item's variant" do
@@ -131,16 +131,18 @@ describe Spree::InventoryUnit, type: :model do
     let!(:stock_location) { create(:stock_location) }
     let(:variant) { create(:variant) }
     let (:shipment) { create(:shipment) }
-    let(:inventory_units) do [
-      create(:inventory_unit, variant: variant),
-      create(:inventory_unit, variant: variant)
-    ]
+    let(:inventory_units) do
+      [
+        create(:inventory_unit, variant: variant),
+        create(:inventory_unit, variant: variant)
+      ]
     end
+
     before do
       shipment.inventory_units = inventory_units
     end
 
-    it 'should create a stock movement' do
+    it 'creates a stock movement' do
       expect { shipment.inventory_units.finalize_units! }.
         to change { shipment.inventory_units.where(pending: false).count }.by 2
     end
@@ -168,7 +170,7 @@ describe Spree::InventoryUnit, type: :model do
       let(:inventory_unit) { create(:inventory_unit) }
 
       it 'returns a new return item' do
-        expect(subject).to_not be_persisted
+        expect(subject).not_to be_persisted
       end
 
       it 'associates itself to the new return_item' do
@@ -178,15 +180,15 @@ describe Spree::InventoryUnit, type: :model do
   end
 
   describe '#additional_tax_total' do
+    subject do
+      build(:inventory_unit, line_item: line_item)
+    end
+
     let(:quantity) { 2 }
     let(:line_item_additional_tax_total) { 10.00 }
     let(:line_item) do
       build(:line_item,         quantity: quantity,
                                 additional_tax_total: line_item_additional_tax_total)
-    end
-
-    subject do
-      build(:inventory_unit, line_item: line_item)
     end
 
     it 'is the correct amount' do
@@ -195,15 +197,15 @@ describe Spree::InventoryUnit, type: :model do
   end
 
   describe '#included_tax_total' do
+    subject do
+      build(:inventory_unit, line_item: line_item)
+    end
+
     let(:quantity) { 2 }
     let(:line_item_included_tax_total) { 10.00 }
     let(:line_item) do
       build(:line_item,         quantity: quantity,
                                 included_tax_total: line_item_included_tax_total)
-    end
-
-    subject do
-      build(:inventory_unit, line_item: line_item)
     end
 
     it 'is the correct amount' do
@@ -212,15 +214,15 @@ describe Spree::InventoryUnit, type: :model do
   end
 
   describe '#additional_tax_total' do
+    subject do
+      build(:inventory_unit, line_item: line_item)
+    end
+
     let(:quantity) { 2 }
     let(:line_item_additional_tax_total) { 10.00 }
     let(:line_item) do
       build(:line_item,         quantity: quantity,
                                 additional_tax_total: line_item_additional_tax_total)
-    end
-
-    subject do
-      build(:inventory_unit, line_item: line_item)
     end
 
     it 'is the correct amount' do
@@ -229,15 +231,15 @@ describe Spree::InventoryUnit, type: :model do
   end
 
   describe '#included_tax_total' do
+    subject do
+      build(:inventory_unit, line_item: line_item)
+    end
+
     let(:quantity) { 2 }
     let(:line_item_included_tax_total) { 10.00 }
     let(:line_item) do
       build(:line_item,         quantity: quantity,
                                 included_tax_total: line_item_included_tax_total)
-    end
-
-    subject do
-      build(:inventory_unit, line_item: line_item)
     end
 
     it 'is the correct amount' do

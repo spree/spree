@@ -125,9 +125,9 @@ describe Spree::Admin::ReturnAuthorizationsController, type: :controller do
   end
 
   context '#create' do
-    let(:stock_location) { create(:stock_location) }
-
     subject { spree_post :create, params }
+
+    let(:stock_location) { create(:stock_location) }
 
     let(:params) do
       {
@@ -151,6 +151,8 @@ describe Spree::Admin::ReturnAuthorizationsController, type: :controller do
   end
 
   context '#update' do
+    subject { spree_put :update, params }
+
     let(:return_authorization) { create(:return_authorization, order: order) }
 
     let(:params) do
@@ -166,8 +168,6 @@ describe Spree::Admin::ReturnAuthorizationsController, type: :controller do
         return_items_attributes: return_items_params,
       }
     end
-
-    subject { spree_put :update, params }
 
     context 'adding an item' do
       let(:return_items_params) do
@@ -190,7 +190,7 @@ describe Spree::Admin::ReturnAuthorizationsController, type: :controller do
         end
 
         it 'does not create new items' do
-          expect { subject }.to_not change { Spree::ReturnItem.count }
+          expect { subject }.not_to change { Spree::ReturnItem.count }
           expect(assigns[:return_authorization].errors['return_items.inventory_unit']).to eq ["#{inventory_unit_1.id} has already been taken by return item #{completed_return_item.id}"]
         end
       end

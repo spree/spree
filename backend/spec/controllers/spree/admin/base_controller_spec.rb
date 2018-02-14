@@ -27,7 +27,7 @@ describe Spree::Admin::BaseController, type: :controller do
     let(:user) { mock_model(Spree.user_class, has_spree_role?: true) }
 
     before do
-      allow(controller).to receive(:authorize_admin) { true }
+      allow(controller).to receive(:authorize_admin).and_return(true)
       allow(controller).to receive(:try_spree_current_user) { user }
     end
 

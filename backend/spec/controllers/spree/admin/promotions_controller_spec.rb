@@ -62,11 +62,14 @@ describe Spree::Admin::PromotionsController, type: :controller do
     end
 
     context 'cloning invalid promotion' do
-      let!(:promotion3) { create(:promotion, name: 'Name3', code: 'code3', path: '') }
-      let!(:promotion4) { create(:promotion, name: 'Name4', code: 'code4', path: '_new') }
-
       subject do
         spree_post :clone, id: promotion3.id
+      end
+
+      let!(:promotion3) { create(:promotion, name: 'Name3', code: 'code3', path: '') }
+
+      before do
+        create(:promotion, name: 'Name4', code: 'code4', path: '_new') # promotion 4
       end
 
       it 'doesnt create a copy of promotion' do

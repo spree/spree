@@ -6,12 +6,12 @@ module Spree
       stub_authorization!
 
       describe '#index' do
-        let(:order)           { customer_return.order }
-        let(:customer_return) { create(:customer_return) }
-
         subject do
           spree_get :index, order_id: customer_return.order.to_param
         end
+
+        let(:order)           { customer_return.order }
+        let(:customer_return) { create(:customer_return) }
 
         before { subject }
 
@@ -25,14 +25,17 @@ module Spree
       end
 
       describe '#new' do
-        let(:order) { create(:shipped_order, line_items_count: 1) }
-        let!(:rma) { create :return_authorization, order: order, return_items: [create(:return_item, inventory_unit: order.inventory_units.first)] }
-        let!(:inactive_reimbursement_type)      { create(:reimbursement_type, active: false) }
-        let!(:first_active_reimbursement_type)  { create(:reimbursement_type) }
-        let!(:second_active_reimbursement_type) { create(:reimbursement_type) }
-
         subject do
           spree_get :new, order_id: order.to_param
+        end
+
+        let(:order) { create(:shipped_order, line_items_count: 1) }
+        let!(:rma) { create :return_authorization, order: order, return_items: [create(:return_item, inventory_unit: order.inventory_units.first)] }
+
+        before do
+          create(:reimbursement_type, active: false) # inactive_reimbursement_type
+          create(:reimbursement_type) # first_active_reimbursement_type
+          create(:reimbursement_type) # second_active_reimbursement_type
         end
 
         it 'loads the order' do
@@ -42,7 +45,7 @@ module Spree
 
         it 'creates a new customer return' do
           subject
-          expect(assigns(:customer_return)).to_not be_persisted
+          expect(assigns(:customer_return)).not_to be_persisted
         end
 
         context 'with previous customer return' do
@@ -53,9 +56,8 @@ module Spree
           let!(:customer_return_return_item) { create(:return_item, return_authorization: rma, inventory_unit: order.inventory_units.last) }
 
           context 'there is a return item associated with an rma but not a customer return' do
-            let!(:previous_customer_return) { create(:customer_return_without_return_items, return_items: [customer_return_return_item]) }
-
             before do
+              create(:customer_return_without_return_items, return_items: [customer_return_return_item]) # previous_customer_return
               subject
             end
 
@@ -71,20 +73,18 @@ module Spree
       end
 
       describe '#edit' do
-        let(:order)           { customer_return.order }
-        let(:customer_return) { create(:customer_return, line_items_count: 3) }
-
-        let!(:accepted_return_item)            { customer_return.return_items.order('id').first.tap(&:accept!) }
-        let!(:rejected_return_item)            { customer_return.return_items.order('id').second.tap(&:reject!) }
-        let!(:manual_intervention_return_item) { customer_return.return_items.order('id').third.tap(&:require_manual_intervention!) }
-
         subject do
           spree_get :edit, order_id: order.to_param, id: customer_return.to_param
         end
 
-        before do
-          subject
-        end
+        let(:order) { customer_return.order }
+        let(:customer_return) { create(:customer_return, line_items_count: 3) }
+
+        let!(:accepted_return_item) { customer_return.return_items.order('id').first.tap(&:accept!) }
+        let!(:rejected_return_item) { customer_return.return_items.order('id').second.tap(&:reject!) }
+        let!(:manual_intervention_return_item) { customer_return.return_items.order('id').third.tap(&:require_manual_intervention!) }
+
+        before { subject }
 
         it 'loads the order' do
           expect(assigns(:order)).to eq order
@@ -116,17 +116,17 @@ module Spree
       end
 
       describe '#create' do
-        let(:order) { create(:shipped_order, line_items_count: 1) }
-        let!(:return_authorization) { create :return_authorization, order: order, return_items: [create(:return_item, inventory_unit: order.inventory_units.shipped.last)] }
-
         subject do
           spree_post :create, customer_return_params
         end
 
+        let(:order) { create(:shipped_order, line_items_count: 1) }
+        let!(:return_authorization) { create :return_authorization, order: order, return_items: [create(:return_item, inventory_unit: order.inventory_units.shipped.last)] }
+
         context 'valid customer return' do
           let(:stock_location) { order.shipments.last.stock_location }
 
-          let!(:customer_return_params) do
+          let(:customer_return_params) do
             {
               order_id: order.to_param,
               customer_return: {
@@ -154,7 +154,7 @@ module Spree
         end
 
         context 'invalid customer return' do
-          let!(:customer_return_params) do
+          let(:customer_return_params) do
             {
               order_id: order.to_param,
               customer_return: {
@@ -171,7 +171,7 @@ module Spree
           end
 
           it "doesn't create a customer return" do
-            expect { subject }.to_not change { Spree::CustomerReturn.count }
+            expect { subject }.not_to change { Spree::CustomerReturn.count }
           end
 
           it 'renders the new page' do

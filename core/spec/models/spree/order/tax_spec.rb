@@ -11,7 +11,7 @@ module Spree
       let(:zone) { create :zone }
 
       context 'when no zones exist' do
-        it 'should return nil' do
+        it 'returns nil' do
           expect(order.tax_zone).to be_nil
         end
       end
@@ -19,7 +19,7 @@ module Spree
       context 'when tax_using_ship_address: true' do
         before { Spree::Config.set(tax_using_ship_address: true) }
 
-        it 'should calculate using ship_address' do
+        it 'calculates using ship_address' do
           expect(Spree::Zone).to receive(:match).at_least(:once).with(ship_address)
           expect(Spree::Zone).not_to receive(:match).with(bill_address)
           order.tax_zone
@@ -29,7 +29,7 @@ module Spree
       context 'when tax_using_ship_address: false' do
         before { Spree::Config.set(tax_using_ship_address: false) }
 
-        it 'should calculate using bill_address' do
+        it 'calculates using bill_address' do
           expect(Spree::Zone).to receive(:match).at_least(:once).with(bill_address)
           expect(Spree::Zone).not_to receive(:match).with(ship_address)
           order.tax_zone
@@ -45,7 +45,7 @@ module Spree
         context 'when there is a matching zone' do
           before { allow(Spree::Zone).to receive_messages(match: zone) }
 
-          it 'should return the matching zone' do
+          it 'returns the matching zone' do
             expect(order.tax_zone).to eq(zone)
           end
         end
@@ -53,7 +53,7 @@ module Spree
         context 'when there is no matching zone' do
           before { allow(Spree::Zone).to receive_messages(match: nil) }
 
-          it 'should return the default tax zone' do
+          it 'returns the default tax zone' do
             expect(order.tax_zone).to eq(@default_zone)
           end
         end
@@ -65,7 +65,7 @@ module Spree
         context 'when there is a matching zone' do
           before { allow(Spree::Zone).to receive_messages(match: zone) }
 
-          it 'should return the matching zone' do
+          it 'returns the matching zone' do
             expect(order.tax_zone).to eq(zone)
           end
         end
@@ -73,7 +73,7 @@ module Spree
         context 'when there is no matching zone' do
           before { allow(Spree::Zone).to receive_messages(match: nil) }
 
-          it 'should return nil' do
+          it 'returns nil' do
             expect(order.tax_zone).to be_nil
           end
         end

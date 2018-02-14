@@ -34,13 +34,13 @@ module Spree
         it 'and returns exception if cannot fire' do
           api_put :update, id: @inventory_unit.id,
                            fire: 'return'
-          expect(json_response['exception']).to match /cannot transition to return/
+          expect(json_response['exception']).to match(/cannot transition to return/)
         end
 
         it 'and returns exception bad state' do
           api_put :update, id: @inventory_unit.id,
                            fire: 'bad'
-          expect(json_response['exception']).to match /cannot transition to bad/
+          expect(json_response['exception']).to match(/cannot transition to bad/)
         end
       end
     end

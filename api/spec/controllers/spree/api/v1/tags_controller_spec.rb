@@ -13,9 +13,8 @@ module Spree
 
     context 'as a normal user' do
       context 'with caching enabled' do
-        let!(:tag_2) { create(:tag) }
-
         before do
+          create(:tag) # tag_2
           ActionController::Base.perform_caching = true
         end
 
@@ -60,7 +59,7 @@ module Spree
       end
 
       context 'pagination' do
-        let!(:second_tag) { create(:tag) }
+        before { create(:tag) } # second_tag
 
         it 'can select the next page of tags' do
           api_get :index, page: 2, per_page: 1

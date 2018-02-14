@@ -13,20 +13,21 @@ end
 
 describe Spree::Base do
   let(:connection) { ActiveRecord::Base.connection }
-  before(:each) do
+
+  before do
     connection.create_table :test_parents, force: true
     connection.create_table :test_children, force: true do |t|
       t.belongs_to :test_parent
     end
   end
 
-  after(:each) do
+  after do
     connection.drop_table 'test_parents', if_exists: true
     connection.drop_table 'test_children', if_exists: true
   end
 
   it 'does not override Rails 5 default belongs_to_required_by_default' do
-    expect(Spree::Base.belongs_to_required_by_default).to eq(false)
+    expect(described_class.belongs_to_required_by_default).to eq(false)
     expect(Spree::Product.belongs_to_required_by_default).to be(false)
 
     expect(ApplicationRecord.belongs_to_required_by_default).to be(true)

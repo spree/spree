@@ -17,7 +17,7 @@ describe Spree::StockMovement, type: :model do
 
   describe 'Scope' do
     describe '.recent' do
-      it 'should order chronologically by created at' do
+      it 'orders chronologically by created at' do
         expect(Spree::StockMovement.recent.to_sql).
           to eq Spree::StockMovement.unscoped.order(created_at: :desc).to_sql
       end
@@ -36,7 +36,8 @@ describe Spree::StockMovement, type: :model do
 
     describe '#readonly?' do
       let(:stock_movement) { create(:stock_movement, stock_item: stock_item) }
-      it 'should not update a persisted record' do
+
+      it 'does not update a persisted record' do
         expect { stock_movement.save }.to raise_error(ActiveRecord::ReadOnlyRecord)
       end
     end
@@ -74,7 +75,7 @@ describe Spree::StockMovement, type: :model do
           stock_movement.save
           stock_item.reload
         end
-        it 'should decrement the stock item count on hand' do
+        it 'decrements the stock item count on hand' do
           expect(stock_item.count_on_hand).to eq(9)
         end
       end
@@ -85,7 +86,7 @@ describe Spree::StockMovement, type: :model do
           stock_movement.save
           stock_item.reload
         end
-        it 'should increment the stock item count on hand' do
+        it 'increments the stock item count on hand' do
           expect(stock_item.count_on_hand).to eq(11)
         end
       end

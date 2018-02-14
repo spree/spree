@@ -1,3 +1,7 @@
+require: rubocop-rspec
+
+inherit_from: '.rubocop-disabled.yml'
+
 AllCops:
   TargetRubyVersion: 2.2
   Exclude:
@@ -25,12 +29,16 @@ ClassLength:
 ModuleLength:
   CountComments: false
   Max: 250
+  Exclude:
+    - '**/spec/**/*'
 
 Documentation:
   Enabled: false
 
-LineLength:
+Metrics/LineLength:
   Max: 150
+  Exclude:
+    - '**/spec/**/*'
 
 MethodLength:
   CountComments: false
@@ -104,3 +112,10 @@ Style/ClassAndModuleChildren:
 Style/AndOr:
   Exclude:
     - '**/*controller.rb'
+
+RSpec/NestedGroups:
+  Max: 7
+
+Lint/AmbiguousBlockAssociation:
+  Exclude:
+    - '**/spec/**/*'

@@ -4,12 +4,12 @@ describe 'New Order', type: :feature do
   let!(:product) { create(:product_in_stock) }
   let!(:state) { create(:state) }
   let!(:user) { create(:user, ship_address: create(:address), bill_address: create(:address)) }
-  let!(:payment_method) { create(:check_payment_method) }
-  let!(:shipping_method) { create(:shipping_method) }
 
   stub_authorization!
 
   before do
+    create(:check_payment_method)
+    create(:shipping_method)
     # create default store
     allow(Spree.user_class).to receive(:find_by).and_return(user)
     create(:store)
@@ -19,7 +19,7 @@ describe 'New Order', type: :feature do
   it 'does check if you have a billing address before letting you add shipments' do
     click_on 'Shipments'
     expect(page).to have_content 'Please fill in customer info'
-    expect(current_path).to eql(spree.edit_admin_order_customer_path(Spree::Order.last))
+    expect(page).to have_current_path(spree.edit_admin_order_customer_path(Spree::Order.last))
   end
 
   it 'completes new order successfully without using the cart', js: true do
@@ -36,7 +36,7 @@ describe 'New Order', type: :feature do
     click_on 'Payments'
     click_on 'Update'
 
-    expect(current_path).to eql(spree.admin_order_payments_path(Spree::Order.last))
+    expect(page).to have_current_path(spree.admin_order_payments_path(Spree::Order.last))
     click_icon 'capture'
 
     click_on 'Shipments'

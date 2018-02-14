@@ -21,12 +21,13 @@ describe 'Orders Listing', type: :feature do
   before do
     allow_any_instance_of(Spree::OrderInventory).to receive(:add_to_shipment)
     # create the order instances after stubbing the `add_to_shipment` method
-    order1; order2
+    order1
+    order2
     visit spree.admin_orders_path
   end
 
   describe 'listing orders' do
-    it 'should list existing orders' do
+    it 'lists existing orders' do
       within_row(1) do
         expect(column_text(2)).to eq 'R100'
         expect(find('td:nth-child(3)')).to have_css '.label-considered_risky'
@@ -39,7 +40,7 @@ describe 'Orders Listing', type: :feature do
       end
     end
 
-    it 'should be able to sort the orders listing' do
+    it 'is able to sort the orders listing' do
       # default is completed_at desc
       within_row(1) { expect(page).to have_content('R100') }
       within_row(2) { expect(page).to have_content('R200') }
@@ -59,7 +60,7 @@ describe 'Orders Listing', type: :feature do
   end
 
   describe 'searching orders' do
-    it 'should be able to search orders' do
+    it 'is able to search orders' do
       fill_in 'q_number_cont', with: 'R200'
       click_on 'Filter Results'
       within_row(1) do
@@ -70,7 +71,7 @@ describe 'Orders Listing', type: :feature do
       within('table#listing_orders') { expect(page).not_to have_content('R100') }
     end
 
-    it 'should return both complete and incomplete orders when only complete orders is not checked' do
+    it 'returns both complete and incomplete orders when only complete orders is not checked' do
       Spree::Order.create! email: 'incomplete@example.com', completed_at: nil, state: 'cart'
       click_on 'Filter'
       uncheck 'q_completed_at_not_null'
@@ -80,7 +81,7 @@ describe 'Orders Listing', type: :feature do
       expect(page).to have_content('incomplete@example.com')
     end
 
-    it 'should be able to filter risky orders' do
+    it 'is able to filter risky orders' do
       # Check risky and filter
       check 'q_considered_risky_eq'
       click_on 'Filter Results'
@@ -95,7 +96,7 @@ describe 'Orders Listing', type: :feature do
       expect(page).not_to have_content('R200')
     end
 
-    it 'should be able to filter on variant_sku' do
+    it 'is able to filter on variant_sku' do
       click_on 'Filter'
       fill_in 'q_line_items_variant_sku_eq', with: order1.line_items.first.variant.sku
       click_on 'Filter Results'
@@ -118,7 +119,7 @@ describe 'Orders Listing', type: :feature do
       end
 
       # Regression test for #4004
-      it 'should be able to go from page to page for incomplete orders' do
+      it 'is able to go from page to page for incomplete orders' do
         Spree::Order.destroy_all
         2.times { Spree::Order.create! email: 'incomplete@example.com', completed_at: nil, state: 'cart' }
         click_on 'Filter'
@@ -132,7 +133,7 @@ describe 'Orders Listing', type: :feature do
       end
     end
 
-    it 'should be able to search orders using only completed at input' do
+    it 'is able to search orders using only completed at input' do
       fill_in 'q_created_at_gt', with: Date.current
       click_on 'Filter Results'
 
@@ -159,7 +160,7 @@ describe 'Orders Listing', type: :feature do
       end
     end
 
-    it 'should be able to apply a ransack filter by clicking a quickfilter icon', js: true do
+    it 'is able to apply a ransack filter by clicking a quickfilter icon', js: true do
       label_pending = page.find '.label-pending'
       parent_td = label_pending.find(:xpath, '..')
 

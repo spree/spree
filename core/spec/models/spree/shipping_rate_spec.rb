@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 require 'spec_helper'
 
 describe Spree::ShippingRate, type: :model do
@@ -21,6 +19,7 @@ describe Spree::ShippingRate, type: :model do
                included_in_price: true,
                zone: default_zone
       end
+
       context 'when the tax rate is from the default zone' do
         before { shipping_rate.tax_rate = default_tax_rate }
 
@@ -50,6 +49,7 @@ describe Spree::ShippingRate, type: :model do
                  included_in_price: true,
                  zone: non_default_zone
         end
+
         before { shipping_rate.tax_rate = non_default_tax_rate }
 
         it "deducts the other zone's VAT from the calculated shipping rate" do
@@ -71,6 +71,7 @@ describe Spree::ShippingRate, type: :model do
 
     context 'when tax is additional to price' do
       let(:tax_rate) { create(:tax_rate, name: 'Sales Tax', amount: 0.1) }
+
       before { shipping_rate.tax_rate = tax_rate }
 
       it 'shows correct tax amount' do

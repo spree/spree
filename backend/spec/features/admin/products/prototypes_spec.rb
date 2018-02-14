@@ -4,7 +4,7 @@ describe 'Prototypes', type: :feature, js: true do
   stub_authorization!
 
   context 'listing prototypes' do
-    it 'should be able to list existing prototypes' do
+    it 'is able to list existing prototypes' do
       create(:property, name: 'model', presentation: 'Model')
       create(:property, name: 'brand', presentation: 'Brand')
       create(:property, name: 'shirt_fabric', presentation: 'Fabric')
@@ -42,7 +42,7 @@ describe 'Prototypes', type: :feature, js: true do
   end
 
   context 'creating a prototype' do
-    it 'should allow an admin to create a new product prototype' do
+    it 'allows an admin to create a new product prototype' do
       visit spree.admin_path
       click_link 'Products'
       click_link 'Prototypes'
@@ -65,7 +65,7 @@ describe 'Prototypes', type: :feature, js: true do
   end
 
   context 'editing a prototype' do
-    it 'should allow to empty its properties' do
+    it 'allows to empty its properties' do
       model_property = create(:property, name: 'model', presentation: 'Model')
       brand_property = create(:property, name: 'brand', presentation: 'Brand')
 
@@ -93,7 +93,7 @@ describe 'Prototypes', type: :feature, js: true do
     end
   end
 
-  it 'should be deletable' do
+  it 'is deletable' do
     shirt_prototype = create(:prototype, name: 'Shirt', properties: [])
     shirt_prototype.taxons << create(:taxon)
 

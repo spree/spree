@@ -2,9 +2,9 @@ require 'spec_helper'
 
 describe 'StoreCreditEvent' do
   describe '#display_amount' do
-    let(:event_amount) { 120.0 }
-
     subject { create(:store_credit_auth_event, amount: event_amount) }
+
+    let(:event_amount) { 120.0 }
 
     it 'returns a Spree::Money instance' do
       expect(subject.display_amount).to be_instance_of(Spree::Money)
@@ -16,9 +16,9 @@ describe 'StoreCreditEvent' do
   end
 
   describe '#display_user_total_amount' do
-    let(:user_total_amount) { 300.0 }
-
     subject { create(:store_credit_auth_event, user_total_amount: user_total_amount) }
+
+    let(:user_total_amount) { 300.0 }
 
     it 'returns a Spree::Money instance' do
       expect(subject.display_user_total_amount).to be_instance_of(Spree::Money)
@@ -84,14 +84,14 @@ describe 'StoreCreditEvent' do
     end
 
     context 'there is an associated payment with the event' do
-      let(:authorization_code) { '1-SC-TEST' }
-      let(:order) { create(:order) }
-      let!(:payment) { create(:store_credit_payment, order: order, response_code: authorization_code) }
-
       subject do
         create(:store_credit_auth_event, action: Spree::StoreCredit::CAPTURE_ACTION,
                                          authorization_code: authorization_code)
       end
+
+      let(:authorization_code) { '1-SC-TEST' }
+      let(:order) { create(:order) }
+      let!(:payment) { create(:store_credit_payment, order: order, response_code: authorization_code) }
 
       it 'returns the order associated with the payment' do
         expect(subject.order).to eq order

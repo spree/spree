@@ -99,7 +99,8 @@ describe 'exchanges:charge_unreturned_items' do
 
       context 'there is no card from the previous order' do
         let!(:credit_card) { create(:credit_card, user: order.user, default: true, gateway_customer_profile_id: 'BGS-123') }
-        before { allow_any_instance_of(Spree::Order).to receive(:valid_credit_cards) { [] } }
+
+        before { allow_any_instance_of(Spree::Order).to receive(:valid_credit_cards).and_return([]) }
 
         it "attempts to use the user's default card" do
           expect { subject.invoke }.to change { Spree::Payment.count }.by(1)

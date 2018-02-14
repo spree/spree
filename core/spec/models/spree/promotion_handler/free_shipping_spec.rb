@@ -3,14 +3,14 @@ require 'spec_helper'
 module Spree
   module PromotionHandler
     describe FreeShipping, type: :model do
+      subject { Spree::PromotionHandler::FreeShipping.new(order) }
+
       let(:order) { create(:order) }
       let(:shipment) { create(:shipment, order: order) }
 
       let(:promotion) { Promotion.create(name: 'Free Shipping') }
       let(:calculator) { Calculator::FlatPercentItemTotal.new(preferred_flat_percent: 10) }
       let!(:action) { Promotion::Actions::FreeShipping.create(promotion: promotion) }
-
-      subject { Spree::PromotionHandler::FreeShipping.new(order) }
 
       context 'activates in Shipment level' do
         it 'creates the adjustment' do
@@ -30,7 +30,7 @@ module Spree
         end
 
         it 'does not adjust the shipment when not applied to order' do
-          expect { subject.activate }.to_not change { shipment.adjustments.count }
+          expect { subject.activate }.not_to change { shipment.adjustments.count }
         end
       end
 
@@ -40,7 +40,7 @@ module Spree
         end
 
         it 'does not adjust the shipment' do
-          expect { subject.activate }.to_not change { shipment.adjustments.count }
+          expect { subject.activate }.not_to change { shipment.adjustments.count }
         end
       end
     end

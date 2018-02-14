@@ -5,7 +5,7 @@ describe 'Homepage', type: :feature do
     stub_authorization!
 
     context 'visiting the homepage' do
-      before(:each) do
+      before do
         visit spree.admin_path
       end
 
@@ -51,14 +51,14 @@ describe 'Homepage', type: :feature do
 
           it 'is not displayed' do
             visit spree.admin_path
-            within('.sidebar') { expect(page).to_not have_content(Spree.version) }
+            within('.sidebar') { expect(page).not_to have_content(Spree.version) }
           end
         end
       end
     end
 
     context 'visiting the products tab' do
-      before(:each) do
+      before do
         visit spree.admin_products_path
       end
 

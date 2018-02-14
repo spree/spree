@@ -42,6 +42,7 @@ describe 'Promotion with option value rule', type: :feature do
   context 'with an existing option value rule' do
     let(:variant1) { create :variant }
     let(:variant2) { create :variant }
+
     before do
       rule = Spree::Promotion::Rules::OptionValue.new
       rule.promotion = promotion

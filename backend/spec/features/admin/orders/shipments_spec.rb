@@ -20,7 +20,7 @@ describe 'Shipments', type: :feature do
   end
 
   context 'shipping an order', js: true do
-    before(:each) do
+    before do
       visit spree.admin_orders_path
       within_row(1) do
         click_link 'R100'
@@ -37,8 +37,8 @@ describe 'Shipments', type: :feature do
   end
 
   context 'moving variants between shipments', js: true do
-    let!(:la) { create(:stock_location, name: 'LA') }
-    before(:each) do
+    before do
+      create(:stock_location, name: 'LA')
       visit spree.admin_orders_path
       within_row(1) do
         click_link 'R100'

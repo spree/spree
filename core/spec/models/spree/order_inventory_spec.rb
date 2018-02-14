@@ -1,10 +1,10 @@
 require 'spec_helper'
 
 describe Spree::OrderInventory, type: :model do
+  subject { described_class.new(order, line_item) }
+
   let(:order) { create :completed_order_with_totals }
   let(:line_item) { order.line_items.first }
-
-  subject { described_class.new(order, line_item) }
 
   context 'when order is missing inventory units' do
     before { line_item.update_column(:quantity, 2) }
@@ -60,6 +60,7 @@ describe Spree::OrderInventory, type: :model do
 
     context 'variant doesnt track inventory' do
       let(:variant) { create(:variant) }
+
       before { variant.track_inventory = false }
 
       it 'creates only on hand inventory units' do
@@ -74,7 +75,7 @@ describe Spree::OrderInventory, type: :model do
       end
     end
 
-    it 'should create stock_movement' do
+    it 'creates stock_movement' do
       expect(subject.send(:add_to_shipment, shipment, 5)).to eq(5)
 
       stock_item = shipment.stock_location.stock_item(subject.variant)
@@ -89,7 +90,7 @@ describe Spree::OrderInventory, type: :model do
     let(:variant) { line_item.variant }
 
     before do
-      allow(line_item).to receive(:changed?).and_return(:true)
+      allow(line_item).to receive(:changed?).and_return(true)
       subject.verify
 
       order.shipments.create(stock_location_id: stock_location.id, cost: 5)
@@ -98,7 +99,7 @@ describe Spree::OrderInventory, type: :model do
       shipped.update_column(:state, 'shipped')
     end
 
-    it 'should select first non-shipped shipment that already contains given variant' do
+    it 'selects first non-shipped shipment that already contains given variant' do
       shipment = subject.send(:determine_target_shipment)
       expect(shipment.shipped?).to be false
       expect(shipment.inventory_units_for(variant)).not_to be_empty
@@ -131,12 +132,12 @@ describe Spree::OrderInventory, type: :model do
       subject.line_item.reload
     end
 
-    it 'should be a messed up order' do
+    it 'is a messed up order' do
       expect(order.shipments.first.inventory_units_for(line_item.variant).sum(&:quantity)).to eq(3)
       expect(line_item.quantity).to eq(2)
     end
 
-    it 'should decrease the number of inventory units' do
+    it 'decreases the number of inventory units' do
       subject.verify
       expect(subject.inventory_units.reload.sum(:quantity)).to eq 2
     end
@@ -154,7 +155,7 @@ describe Spree::OrderInventory, type: :model do
         end
       end
 
-      it 'should create stock_movement' do
+      it 'creates stock_movement' do
         expect(subject.send(:remove_from_shipment, shipment, 1)).to eq(1)
 
         stock_item = shipment.stock_location.stock_item(variant)
@@ -163,7 +164,7 @@ describe Spree::OrderInventory, type: :model do
         expect(movement.quantity).to eq(1)
       end
 
-      it 'should destroy backordered units first' do
+      it 'destroys backordered units first' do
         allow(shipment).to receive_messages(
           inventory_units_for_item: [
             mock_model(
@@ -188,7 +189,7 @@ describe Spree::OrderInventory, type: :model do
         expect(subject.send(:remove_from_shipment, shipment, 2)).to eq(2)
       end
 
-      it 'should destroy unshipped units first' do
+      it 'destroys unshipped units first' do
         allow(shipment).to receive_messages(
           inventory_units_for_item: [
             mock_model(Spree::InventoryUnit, variant_id: variant.id, quantity: 1, state: 'shipped', shipped?: true),
@@ -220,7 +221,7 @@ describe Spree::OrderInventory, type: :model do
         expect(subject.send(:remove_from_shipment, shipment, 1)).to eq(1)
       end
 
-      it 'should destroy self if not inventory units remain' do
+      it 'destroys self if not inventory units remain' do
         allow(shipment).to receive(:inventory_units).and_return(shipment.inventory_units)
         allow(shipment.inventory_units).to receive_messages(sum: 0)
         expect(shipment).to receive(:destroy)

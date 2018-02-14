@@ -204,7 +204,7 @@ describe Spree::LineItem, type: :model do
   end
 
   describe '#discounted_money' do
-    it 'should return a money object with the discounted amount' do
+    it 'returns a money object with the discounted amount' do
       expect(line_item.discounted_money.to_s).to eq '$10.00'
     end
   end
@@ -347,7 +347,7 @@ describe Spree::LineItem, type: :model do
       it 'sets currency' do
         expect do
           line_item.send(:update_price_from_modifier, 'EUR', {})
-        end.to change { line_item.currency }.to('EUR').from('USD')
+        end.to change(line_item, :currency).to('EUR').from('USD')
       end
 
       context 'variant with price in this currency' do

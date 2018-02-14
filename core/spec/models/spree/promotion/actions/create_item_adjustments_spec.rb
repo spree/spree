@@ -63,7 +63,7 @@ module Spree
 
               it 'does not create adjustments for line_items not in product rule' do
                 action.perform(payload)
-                expect(action.adjustments.count).to eql 1
+                expect(action.adjustments.count).to be 1
                 expect(line_item.reload.adjustments).to match_array action.adjustments
                 expect(second_line_item.reload.adjustments).to be_empty
               end
@@ -88,16 +88,16 @@ module Spree
               end
 
               it 'does not exceed it' do
-                expect(action.compute_amount(line_item)).to eql(-100)
+                expect(action.compute_amount(line_item)).to be(-100)
               end
             end
           end
 
           context 'when the adjustable is not actionable' do
-            before { allow(promotion).to receive(:line_item_actionable?) { false } }
+            before { allow(promotion).to receive(:line_item_actionable?).and_return(false) }
 
             it 'returns 0' do
-              expect(action.compute_amount(line_item)).to eql(0)
+              expect(action.compute_amount(line_item)).to be(0)
             end
           end
         end
@@ -105,6 +105,7 @@ module Spree
         context '#destroy' do
           let!(:action) { CreateItemAdjustments.create! }
           let(:other_action) { CreateItemAdjustments.create! }
+
           before { promotion.promotion_actions = [other_action] }
 
           it 'destroys adjustments for incompleted orders' do
@@ -116,7 +117,7 @@ module Spree
 
             expect do
               action.destroy
-            end.to change { Adjustment.count }.by(-1)
+            end.to change(Adjustment, :count).by(-1)
           end
 
           it 'nullifies adjustments for completed orders' do

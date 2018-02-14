@@ -2,6 +2,8 @@ require 'spec_helper'
 
 describe Spree::Refund, type: :model do
   describe 'create' do
+    subject { create(:refund, payment: payment, amount: amount, reason: refund_reason, transaction_id: nil) }
+
     let(:amount) { 100.0 }
     let(:amount_in_cents) { amount * 100 }
 
@@ -26,8 +28,6 @@ describe Spree::Refund, type: :model do
     let(:gateway_response_params) { {} }
     let(:gateway_response_options) { {} }
 
-    subject { create(:refund, payment: payment, amount: amount, reason: refund_reason, transaction_id: nil) }
-
     before do
       allow(payment.payment_method).
         to receive(:credit).
@@ -36,8 +36,9 @@ describe Spree::Refund, type: :model do
     end
 
     context 'transaction id exists on creation' do
-      let(:transaction_id) { '12kfjas0' }
       subject { create(:refund, payment: payment, amount: amount, reason: refund_reason, transaction_id: transaction_id) }
+
+      let(:transaction_id) { '12kfjas0' }
 
       it 'creates a refund record' do
         expect { subject }.to change { Spree::Refund.count }.by(1)
@@ -64,7 +65,7 @@ describe Spree::Refund, type: :model do
     context 'processing is successful' do
       let(:gateway_response_options) { { authorization: authorization } }
 
-      it 'should create a refund' do
+      it 'creates a refund' do
         expect { subject }.to change { Spree::Refund.count }.by(1)
       end
 
@@ -72,15 +73,15 @@ describe Spree::Refund, type: :model do
         expect(subject).to be_a(Spree::Refund)
       end
 
-      it 'should save the returned authorization value' do
+      it 'saves the returned authorization value' do
         expect(subject.reload.transaction_id).to eq authorization
       end
 
-      it 'should save the passed amount as the refund amount' do
+      it 'saves the passed amount as the refund amount' do
         expect(subject.amount).to eq amount
       end
 
-      it 'should create a log entry' do
+      it 'creates a log entry' do
         expect(subject.log_entries).to be_present
       end
 
@@ -89,7 +90,7 @@ describe Spree::Refund, type: :model do
         subject
       end
 
-      it 'should update the payment total' do
+      it 'updates the payment total' do
         expect(payment.order.updater).to receive(:update)
         subject
       end
@@ -99,19 +100,19 @@ describe Spree::Refund, type: :model do
       let(:gateway_response_success) { false }
       let(:gateway_response_message) { 'failure message' }
 
-      it 'should raise error and not create a refund' do
+      it 'raises error and not create a refund' do
         expect do
           expect { subject }.to raise_error(Spree::Core::GatewayError, gateway_response_message)
-        end.to_not change { Spree::Refund.count }
+        end.not_to change { Spree::Refund.count }
       end
     end
 
     context 'without payment profiles supported' do
       before do
-        allow(payment.payment_method).to receive(:payment_profiles_supported?) { false }
+        allow(payment.payment_method).to receive(:payment_profiles_supported?).and_return(false)
       end
 
-      it 'should not supply the payment source' do
+      it 'does not supply the payment source' do
         expect(payment.payment_method).
           to receive(:credit).
           with(amount * 100, payment.transaction_id, originator: an_instance_of(Spree::Refund)).
@@ -123,10 +124,10 @@ describe Spree::Refund, type: :model do
 
     context 'with payment profiles supported' do
       before do
-        allow(payment.payment_method).to receive(:payment_profiles_supported?) { true }
+        allow(payment.payment_method).to receive(:payment_profiles_supported?).and_return(true)
       end
 
-      it 'should supply the payment source' do
+      it 'supplies the payment source' do
         expect(payment.payment_method).
           to receive(:credit).
           with(amount_in_cents, payment.source, payment.transaction_id, originator: an_instance_of(Spree::Refund)).
@@ -166,11 +167,11 @@ describe Spree::Refund, type: :model do
   end
 
   describe 'total_amount_reimbursed_for' do
+    subject { Spree::Refund.total_amount_reimbursed_for(reimbursement) }
+
     let(:customer_return) { reimbursement.customer_return }
     let(:reimbursement) { create(:reimbursement) }
     let!(:default_refund_reason) { Spree::RefundReason.find_or_create_by!(name: Spree::RefundReason::RETURN_PROCESSING_REASON, mutable: false) }
-
-    subject { Spree::Refund.total_amount_reimbursed_for(reimbursement) }
 
     context 'with reimbursements performed' do
       before { reimbursement.perform! }

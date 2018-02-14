@@ -26,7 +26,7 @@ describe Spree::Calculator::DefaultTax, type: :model do
           line_item_2.tax_category = nil
         end
 
-        it 'should be 0' do
+        it 'is 0' do
           expect(calculator.compute(order)).to eq(0)
         end
       end
@@ -37,7 +37,7 @@ describe Spree::Calculator::DefaultTax, type: :model do
           line_item_2.tax_category = nil
         end
 
-        it 'should be equal to the item total * rate' do
+        it 'is equal to the item total * rate' do
           expect(calculator.compute(order)).to eq(1.5)
         end
 
@@ -55,7 +55,7 @@ describe Spree::Calculator::DefaultTax, type: :model do
       end
 
       context 'when more than one item matches the tax category' do
-        it 'should be equal to the sum of the item totals * rate' do
+        it 'is equal to the sum of the item totals * rate' do
           expect(calculator.compute(order)).to eq(3)
         end
       end
@@ -68,13 +68,14 @@ describe Spree::Calculator::DefaultTax, type: :model do
           # ex pre-tax = $57.14
           # 57.14 + %5 = 59.997 (or "close enough" to $60)
           # 60 - 57.14 = $2.86
-          expect(calculator.compute(order).to_f).to eql 2.86
+          expect(calculator.compute(order).to_f).to eq(2.86)
         end
       end
     end
 
     context 'when tax is included in price' do
       let(:included_in_price) { true }
+
       context 'when the variant matches the tax category' do
         context 'when line item is discounted' do
           before do
@@ -82,13 +83,13 @@ describe Spree::Calculator::DefaultTax, type: :model do
             Spree::TaxRate.store_pre_tax_amount(line_item, [rate])
           end
 
-          it "should be equal to the item's discounted total * rate" do
-            expect(calculator.compute(line_item)).to eql 1.38
+          it "is equal to the item's discounted total * rate" do
+            expect(calculator.compute(line_item)).to eq(1.38)
           end
         end
-        it "should be equal to the item's full price * rate" do
+        it "is equal to the item's full price * rate" do
           Spree::TaxRate.store_pre_tax_amount(line_item, [rate])
-          expect(calculator.compute(line_item)).to eql 1.43
+          expect(calculator.compute(line_item)).to eq(1.43)
         end
       end
     end
@@ -97,20 +98,20 @@ describe Spree::Calculator::DefaultTax, type: :model do
       context 'when the line item is discounted' do
         before { line_item.taxable_adjustment_total = -1 }
 
-        it "should be equal to the item's pre-tax total * rate" do
+        it "is equal to the item's pre-tax total * rate" do
           expect(calculator.compute(line_item)).to eq(1.45)
         end
       end
 
       context 'when the variant matches the tax category' do
-        it 'should be equal to the item pre-tax total * rate' do
+        it 'is equal to the item pre-tax total * rate' do
           expect(calculator.compute(line_item)).to eq(1.50)
         end
       end
     end
 
     context 'when given a shipment' do
-      it 'should be 5% of 15' do
+      it 'is 5% of 15' do
         expect(calculator.compute(shipment)).to eq(0.75)
       end
 
@@ -123,13 +124,13 @@ describe Spree::Calculator::DefaultTax, type: :model do
   end
 
   context 'when given a line_item' do
-    let(:rate) { create(:tax_rate, amount: 0.07, included_in_price: true) }
-    let(:line_item) { create(:line_item, quantity: 50, price: 8.50) }
-
     subject do
       Spree::Calculator::DefaultTax.new(calculable: rate).
         compute_line_item(line_item)
     end
+
+    let(:rate) { create(:tax_rate, amount: 0.07, included_in_price: true) }
+    let(:line_item) { create(:line_item, quantity: 50, price: 8.50) }
 
     describe '#compute_line_item' do
       it 'computes the line item right' do

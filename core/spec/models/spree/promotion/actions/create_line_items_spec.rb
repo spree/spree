@@ -59,7 +59,7 @@ describe Spree::Promotion::Actions::CreateLineItems, type: :model do
         empty_stock(mug)
         empty_stock(shirt)
 
-        expect(order.contents).to_not receive(:add)
+        expect(order.contents).not_to receive(:add)
         action.perform(order: order)
       end
     end

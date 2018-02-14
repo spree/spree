@@ -22,17 +22,17 @@ describe Spree::Ability, type: :model do
   let(:ability) { Spree::Ability.new(user) }
   let(:token) { nil }
 
-  after(:each) do
+  after do
     Spree::Ability.abilities = Set.new
   end
 
   context 'register_ability' do
-    it 'should add the ability to the list of abilties' do
+    it 'adds the ability to the list of abilties' do
       Spree::Ability.register_ability(FooAbility)
       expect(Spree::Ability.new(user).abilities).not_to be_empty
     end
 
-    it 'should apply the registered abilities permissions' do
+    it 'applies the registered abilities permissions' do
       Spree::Ability.register_ability(FooAbility)
       expect(Spree::Ability.new(user).can?(:update, mock_model(Spree::Order, id: 1))).to be true
     end
@@ -54,14 +54,14 @@ describe Spree::Ability, type: :model do
     let(:resource) { Object.new }
 
     context 'with admin user' do
-      before(:each) { allow(user).to receive(:has_spree_role?).and_return(true) }
-      it_should_behave_like 'access granted'
-      it_should_behave_like 'index allowed'
+      before { allow(user).to receive(:has_spree_role?).and_return(true) }
+      it_behaves_like 'access granted'
+      it_behaves_like 'index allowed'
     end
 
     context 'with customer' do
-      it_should_behave_like 'access denied'
-      it_should_behave_like 'no index allowed'
+      it_behaves_like 'access denied'
+      it_behaves_like 'no index allowed'
     end
   end
 
@@ -75,7 +75,7 @@ describe Spree::Ability, type: :model do
     let(:fakedispatch_ability) { Spree::Ability.new(fakedispatch_user) }
 
     context 'with admin user' do
-      it 'should be able to admin' do
+      it 'is able to admin' do
         user.spree_roles << Spree::Role.find_or_create_by(name: 'admin')
         expect(ability).to be_able_to :admin, resource
         expect(ability).to be_able_to :index, resource_order
@@ -85,7 +85,7 @@ describe Spree::Ability, type: :model do
     end
 
     context 'with fakedispatch user' do
-      it 'should be able to admin on the order and shipment pages' do
+      it 'is able to admin on the order and shipment pages' do
         user.spree_roles << Spree::Role.find_or_create_by(name: 'bar')
 
         Spree::Ability.register_ability(BarAbility)
@@ -118,7 +118,7 @@ describe Spree::Ability, type: :model do
     end
 
     context 'with customer' do
-      it 'should not be able to admin' do
+      it 'is not able to admin' do
         expect(ability).not_to be_able_to :admin, resource
         expect(ability).not_to be_able_to :admin, resource_order
         expect(ability).not_to be_able_to :admin, resource_product
@@ -130,22 +130,25 @@ describe Spree::Ability, type: :model do
   context 'as Guest User' do
     context 'for Country' do
       let(:resource) { Spree::Country.new }
+
       context 'requested by any user' do
-        it_should_behave_like 'read only'
+        it_behaves_like 'read only'
       end
     end
 
     context 'for OptionType' do
       let(:resource) { Spree::OptionType.new }
+
       context 'requested by any user' do
-        it_should_behave_like 'read only'
+        it_behaves_like 'read only'
       end
     end
 
     context 'for OptionValue' do
       let(:resource) { Spree::OptionType.new }
+
       context 'requested by any user' do
-        it_should_behave_like 'read only'
+        it_behaves_like 'read only'
       end
     end
 
@@ -153,95 +156,107 @@ describe Spree::Ability, type: :model do
       let(:resource) { Spree::Order.new }
 
       context 'requested by same user' do
-        before(:each) { resource.user = user }
-        it_should_behave_like 'access granted'
-        it_should_behave_like 'no index allowed'
+        before { resource.user = user }
+        it_behaves_like 'access granted'
+        it_behaves_like 'no index allowed'
       end
 
       context 'requested by other user' do
-        before(:each) { resource.user = Spree.user_class.new }
-        it_should_behave_like 'create only'
+        before { resource.user = Spree.user_class.new }
+        it_behaves_like 'create only'
       end
 
       context 'requested with proper token' do
         let(:token) { 'TOKEN123' }
-        before(:each) { allow(resource).to receive_messages guest_token: token }
-        it_should_behave_like 'access granted'
-        it_should_behave_like 'no index allowed'
+
+        before { allow(resource).to receive_messages guest_token: token }
+        it_behaves_like 'access granted'
+        it_behaves_like 'no index allowed'
       end
 
       context 'requested with inproper token' do
         let(:token) { 'FAIL' }
-        before(:each) { allow(resource).to receive_messages guest_token: token }
-        it_should_behave_like 'create only'
+
+        before { allow(resource).to receive_messages guest_token: token }
+        it_behaves_like 'create only'
       end
     end
 
     context 'for Product' do
       let(:resource) { Spree::Product.new }
+
       context 'requested by any user' do
-        it_should_behave_like 'read only'
+        it_behaves_like 'read only'
       end
     end
 
     context 'for ProductProperty' do
       let(:resource) { Spree::Product.new }
+
       context 'requested by any user' do
-        it_should_behave_like 'read only'
+        it_behaves_like 'read only'
       end
     end
 
     context 'for Property' do
       let(:resource) { Spree::Product.new }
+
       context 'requested by any user' do
-        it_should_behave_like 'read only'
+        it_behaves_like 'read only'
       end
     end
 
     context 'for State' do
       let(:resource) { Spree::State.new }
+
       context 'requested by any user' do
-        it_should_behave_like 'read only'
+        it_behaves_like 'read only'
       end
     end
 
     context 'for Taxons' do
       let(:resource) { Spree::Taxon.new }
+
       context 'requested by any user' do
-        it_should_behave_like 'read only'
+        it_behaves_like 'read only'
       end
     end
 
     context 'for Taxonomy' do
       let(:resource) { Spree::Taxonomy.new }
+
       context 'requested by any user' do
-        it_should_behave_like 'read only'
+        it_behaves_like 'read only'
       end
     end
 
     context 'for User' do
       context 'requested by same user' do
         let(:resource) { user }
-        it_should_behave_like 'access granted'
-        it_should_behave_like 'no index allowed'
+
+        it_behaves_like 'access granted'
+        it_behaves_like 'no index allowed'
       end
       context 'requested by other user' do
         let(:resource) { create(:user) }
-        it_should_behave_like 'create only'
+
+        it_behaves_like 'create only'
       end
     end
 
     context 'for Variant' do
       let(:resource) { Spree::Variant.new }
+
       context 'requested by any user' do
-        it_should_behave_like 'read only'
+        it_behaves_like 'read only'
       end
     end
 
     context 'for Zone' do
       let(:resource) { Spree::Zone.new }
+
       context 'requested by any user' do
-        it_should_behave_like 'read only'
+        it_behaves_like 'read only'
       end
     end
   end

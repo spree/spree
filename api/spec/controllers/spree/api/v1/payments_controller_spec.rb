@@ -5,9 +5,10 @@ module Spree
     render_views
     let!(:order) { create(:order) }
     let!(:payment) { create(:payment, order: order) }
-    let!(:attributes) do [:id, :source_type, :source_id, :amount, :display_amount,
-                          :payment_method_id, :state, :avs_response,
-                          :created_at, :updated_at, :number]
+    let!(:attributes) do
+      [:id, :source_type, :source_id, :amount, :display_amount,
+       :payment_method_id, :state, :avs_response,
+       :created_at, :updated_at, :number]
     end
 
     let(:resource_scoping) { { order_id: order.to_param } }
@@ -104,7 +105,7 @@ module Spree
             it 'can update' do
               payment.update_attributes(state: 'checkout')
               api_put(:update, id: payment.to_param, payment: { amount: 2.01 })
-              expect(response.status).to be(200)
+              expect(response.status).to eq(200)
               expect(payment.reload.amount).to eq(2.01)
             end
           end

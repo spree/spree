@@ -22,17 +22,17 @@ describe Spree::ProductsController, type: :controller do
 
   # Regression test for #1184
   context 'when session locale not set' do
-    before(:each) do
+    before do
       session[:locale] = nil
     end
 
     context 'when Spree::Frontend::Config[:locale] not present' do
-      before(:each) do
+      before do
         Spree::Frontend::Config[:locale] = nil
       end
 
       context 'when rails application default locale not set' do
-        before(:each) do
+        before do
           Rails.application.config.i18n.default_locale = nil
         end
 
@@ -44,7 +44,7 @@ describe Spree::ProductsController, type: :controller do
 
       context 'when rails application default locale is set' do
         context 'and not in available_locales' do
-          before(:each) do
+          before do
             Rails.application.config.i18n.default_locale = unavailable_locale
           end
 
@@ -55,7 +55,7 @@ describe Spree::ProductsController, type: :controller do
         end
 
         context 'and in available_locales' do
-          before(:each) do
+          before do
             Rails.application.config.i18n.default_locale = available_locale
           end
 
@@ -70,7 +70,7 @@ describe Spree::ProductsController, type: :controller do
 
     context 'when Spree::Frontend::Config[:locale] is present' do
       context 'and not in available_locales' do
-        before(:each) do
+        before do
           Spree::Frontend::Config[:locale] = unavailable_locale
         end
 
@@ -81,7 +81,7 @@ describe Spree::ProductsController, type: :controller do
       end
 
       context 'and not in available_locales' do
-        before(:each) do
+        before do
           Spree::Frontend::Config[:locale] = available_locale
         end
 
@@ -96,7 +96,7 @@ describe Spree::ProductsController, type: :controller do
 
   context 'when session locale is set' do
     context 'and not in available_locales' do
-      before(:each) do
+      before do
         session[:locale] = unavailable_locale
       end
 
@@ -107,7 +107,7 @@ describe Spree::ProductsController, type: :controller do
     end
 
     context 'and in available_locales' do
-      before(:each) do
+      before do
         session[:locale] = available_locale
       end
 

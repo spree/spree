@@ -5,7 +5,7 @@ describe 'States', type: :feature do
 
   let!(:country) { create(:country) }
 
-  before(:each) do
+  before do
     @hungary = Spree::Country.create!(name: 'Hungary', iso_name: 'Hungary')
   end
 
@@ -18,14 +18,14 @@ describe 'States', type: :feature do
   context 'admin visiting states listing' do
     let!(:state) { create(:state, country: country) }
 
-    it 'should correctly display the states' do
+    it 'correctly displays the states' do
       visit spree.admin_country_states_path(country)
       expect(page).to have_content(state.name)
     end
   end
 
   context 'creating and editing states' do
-    it 'should allow an admin to edit existing states', js: true do
+    it 'allows an admin to edit existing states', js: true do
       go_to_states_page
       set_select2_field('country', country.id)
 
@@ -37,7 +37,7 @@ describe 'States', type: :feature do
       expect(page).to have_content('Calgary')
     end
 
-    it 'should allow an admin to create states for non default countries', js: true do
+    it 'allows an admin to create states for non default countries', js: true do
       go_to_states_page
       set_select2_field '#country', @hungary.id
       # Just so the change event actually gets triggered in this spec
@@ -53,7 +53,7 @@ describe 'States', type: :feature do
       expect(find('#s2id_country span').text).to eq('Hungary')
     end
 
-    it 'should show validation errors', js: true do
+    it 'shows validation errors', js: true do
       go_to_states_page
       set_select2_field('country', country.id)
 

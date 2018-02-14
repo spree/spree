@@ -54,18 +54,16 @@ describe Spree::Address, type: :model do
   end
 
   context 'validation' do
-    before do
-      configure_spree_preferences do |config|
-        config.address_requires_state = true
-      end
-    end
-
     let(:country) { stub_model(Spree::Country, states: [state], states_required: true) }
     let(:state) { stub_model(Spree::State, name: 'maryland', abbr: 'md') }
     let(:address) { build(:address, country: country) }
 
     before do
       allow(Spree::State).to receive(:find_all_by_name_or_abbr) { [state] }
+
+      configure_spree_preferences do |config|
+        config.address_requires_state = true
+      end
     end
 
     it 'state_name is not nil and country does not have any states' do
@@ -248,21 +246,25 @@ describe Spree::Address, type: :model do
   context '#full_name' do
     context 'both first and last names are present' do
       let(:address) { stub_model(Spree::Address, firstname: 'Michael', lastname: 'Jackson') }
+
       specify { expect(address.full_name).to eq('Michael Jackson') }
     end
 
     context 'first name is blank' do
       let(:address) { stub_model(Spree::Address, firstname: nil, lastname: 'Jackson') }
+
       specify { expect(address.full_name).to eq('Jackson') }
     end
 
     context 'last name is blank' do
       let(:address) { stub_model(Spree::Address, firstname: 'Michael', lastname: nil) }
+
       specify { expect(address.full_name).to eq('Michael') }
     end
 
     context 'both first and last names are blank' do
       let(:address) { stub_model(Spree::Address, firstname: nil, lastname: nil) }
+
       specify { expect(address.full_name).to eq('') }
     end
   end
@@ -270,49 +272,56 @@ describe Spree::Address, type: :model do
   context '#state_text' do
     context 'state is blank' do
       let(:address) { stub_model(Spree::Address, state: nil, state_name: 'virginia') }
+
       specify { expect(address.state_text).to eq('virginia') }
     end
 
     context 'both name and abbr is present' do
       let(:state) { stub_model(Spree::State, name: 'virginia', abbr: 'va') }
       let(:address) { stub_model(Spree::Address, state: state) }
+
       specify { expect(address.state_text).to eq('va') }
     end
 
     context 'only name is present' do
       let(:state) { stub_model(Spree::State, name: 'virginia', abbr: nil) }
       let(:address) { stub_model(Spree::Address, state: state) }
+
       specify { expect(address.state_text).to eq('virginia') }
     end
   end
 
   context 'defines require_phone? helper method' do
     let(:address) { stub_model(Spree::Address) }
+
     specify { expect(address.instance_eval { require_phone? }).to be true }
   end
 
   context '#clear_state_entities' do
     let (:address) { create(:address) }
+
     before { address.state_name = 'maryland' }
 
-    it { expect { address.send(:clear_state_entities) }.to change { address.state }.to(nil).from(address.state) }
-    it { expect { address.send(:clear_state_entities) }.to change { address.state_name }.to(nil).from('maryland') }
+    it { expect { address.send(:clear_state_entities) }.to change(address, :state).to(nil).from(address.state) }
+    it { expect { address.send(:clear_state_entities) }.to change(address, :state_name).to(nil).from('maryland') }
   end
 
   context '#clear_state' do
     let (:address) { create(:address) }
+
     before { address.state_name = 'maryland' }
 
-    it { expect { address.send(:clear_state) }.to change { address.state }.to(nil).from(address.state) }
-    it { expect { address.send(:clear_state) }.to_not change(address, :state_name) }
+    it { expect { address.send(:clear_state) }.to change(address, :state).to(nil).from(address.state) }
+    it { expect { address.send(:clear_state) }.not_to change(address, :state_name) }
   end
 
   context '#clear_state_name' do
     let (:address) { create(:address) }
+
     before { address.state_name = 'maryland' }
 
-    it { expect { address.send(:clear_state_name) }.to_not change(address, :state_id) }
-    it { expect { address.send(:clear_state_name) }.to change { address.state_name }.to(nil).from('maryland') }
+    it { expect { address.send(:clear_state_name) }.not_to change(address, :state_id) }
+    it { expect { address.send(:clear_state_name) }.to change(address, :state_name).to(nil).from('maryland') }
   end
 
   context '#clear_invalid_state_entities' do
