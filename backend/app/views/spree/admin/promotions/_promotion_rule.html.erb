@@ -7,5 +7,5 @@
   <% param_prefix = "promotion[promotion_rules_attributes][#{promotion_rule.id}]" %>
   <%= hidden_field_tag "#{param_prefix}[id]", promotion_rule.id %>
 
-  <%= render partial: "spree/admin/promotions/rules/#{type_name}", locals: { promotion_rule: promotion_rule, param_prefix: param_prefix } rescue nil %>
+  <%= render partial: "spree/admin/promotions/rules/#{type_name}", locals: { promotion_rule: promotion_rule, param_prefix: param_prefix } %>
 </div>
