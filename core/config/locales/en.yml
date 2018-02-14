@@ -633,6 +633,7 @@ en:
     created_at: Created At
     created_by: Created By
     credit: Credit
+    credit_allocation_memo: This is a credit from store credit ID %{resource_id}
     credit_card: Credit Card
     credit_cards: Credit Cards
     credit_owed: Credit Owed

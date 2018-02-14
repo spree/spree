@@ -47,6 +47,29 @@ module Spree
       amount - amount_used - amount_authorized
     end
 
+    def validate_sufficient_amount(amount)
+      if amount_remaining.to_d < amount.to_d
+        errors.add(:base, Spree.t('store_credit_payment_method.insufficient_funds'))
+        false
+      else
+        true
+      end
+    end
+
+    def validate_authorization(amount, order_currency)
+      warn "[DEPRECATION] `validate_authorization` is deprecated and it will be removed in the next version. Please use `validate_sufficient_amount and validate_currency_match respectively` instead."
+      validate_currency_match(order_currency) && validate_sufficient_amount(amount)
+    end
+
+    def validate_currency_match(order_currency)
+      if currency != order_currency
+        errors.add(:base, Spree.t('store_credit_payment_method.currency_mismatch'))
+        false
+      else
+        true
+      end
+    end
+
     def authorize(amount, order_currency, options = {})
       authorization_code = options[:action_authorization_code]
       if authorization_code
@@ -58,7 +81,7 @@ module Spree
         authorization_code = generate_authorization_code
       end
 
-      if validate_authorization(amount, order_currency)
+      if validate_currency_match(order_currency) && validate_sufficient_amount(amount)
         update_attributes!(
           action: AUTHORIZE_ACTION,
           action_amount: amount,
@@ -68,38 +91,24 @@ module Spree
         )
         authorization_code
       else
-        errors.add(:base, Spree.t('store_credit_payment_method.insufficient_authorized_amount'))
         false
       end
     end
 
-    def validate_authorization(amount, order_currency)
-      if amount_remaining.to_d < amount.to_d
-        errors.add(:base, Spree.t('store_credit_payment_method.insufficient_funds'))
-      elsif currency != order_currency
-        errors.add(:base, Spree.t('store_credit_payment_method.currency_mismatch'))
-      end
-      errors.blank?
-    end
-
     def capture(amount, authorization_code, order_currency, options = {})
+      return false unless validate_currency_match(order_currency)
       return false unless authorize(amount, order_currency, action_authorization_code: authorization_code)
 
       if amount <= amount_authorized
-        if currency != order_currency
-          errors.add(:base, Spree.t('store_credit_payment_method.currency_mismatch'))
-          false
-        else
-          update_attributes!(
-            action: CAPTURE_ACTION,
-            action_amount: amount,
-            action_originator: options[:action_originator],
-            action_authorization_code: authorization_code,
-            amount_used: amount_used + amount,
-            amount_authorized: amount_authorized - amount
-          )
-          authorization_code
-        end
+        update_attributes!(
+          action: CAPTURE_ACTION,
+          action_amount: amount,
+          action_originator: options[:action_originator],
+          action_authorization_code: authorization_code,
+          amount_used: amount_used + amount,
+          amount_authorized: amount_authorized - amount
+        )
+        authorization_code
       else
         errors.add(:base, Spree.t('store_credit_payment_method.insufficient_authorized_amount'))
         false
@@ -123,13 +132,12 @@ module Spree
     end
 
     def credit(amount, authorization_code, order_currency, options = {})
+      return false unless validate_currency_match(order_currency)
+
       # Find the amount related to this authorization_code in order to add the store credit back
       capture_event = store_credit_events.find_by(action: CAPTURE_ACTION, authorization_code: authorization_code)
 
-      if currency != order_currency # sanity check to make sure the order currency hasn't changed since the auth
-        errors.add(:base, Spree.t('store_credit_payment_method.currency_mismatch'))
-        false
-      elsif capture_event && amount <= capture_event.amount
+      if capture_event && amount <= capture_event.amount
         action_attributes = {
           action: CREDIT_ACTION,
           action_amount: amount,
@@ -199,7 +207,7 @@ module Spree
     end
 
     def credit_allocation_memo
-      "This is a credit from store credit ID #{id}"
+      Spree.t(:credit_allocation_memo, resource_id: id)
     end
 
     def store_event

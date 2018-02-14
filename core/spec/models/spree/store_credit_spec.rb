@@ -122,6 +122,10 @@ describe 'StoreCredit' do
     end
   end
 
+  describe '#credit_allocation_memo' do
+    it { expect(store_credit.credit_allocation_memo).to eq("This is a credit from store credit ID %{resource_id}") }
+  end
+
   describe '#amount_remaining' do
     context 'the amount_used is not defined' do
       context 'the authorized amount is not defined' do
@@ -212,6 +216,44 @@ describe 'StoreCredit' do
     context 'amount is invalid' do
       it 'returns false' do
         expect(store_credit.authorize(store_credit.amount * 2, store_credit.currency)).to be false
+      end
+    end
+  end
+
+  describe 'validate_sufficient_amount' do
+    context 'insufficient funds' do
+      it 'returns false' do
+        expect(store_credit.validate_sufficient_amount(store_credit.amount * 2)).to be_falsy
+      end
+
+      context 'adds an error to the model' do
+        before { store_credit.validate_sufficient_amount(store_credit.amount * 2) }
+        it { expect(store_credit.errors.full_messages).to include(Spree.t('store_credit_payment_method.insufficient_funds')) }
+      end
+    end
+
+    context 'sufficient funds' do
+      it 'returns true' do
+        expect(store_credit.validate_sufficient_amount(store_credit.amount)).to be_truthy
+      end
+    end
+  end
+
+  describe 'validate_currency_match' do
+    context 'currency mismatch' do
+      it 'returns false' do
+        expect(store_credit.validate_currency_match("EUR")).to be_falsy
+      end
+
+      context 'adds an error to the model' do
+        before { store_credit.validate_currency_match("EUR") }
+        it { expect(store_credit.errors.full_messages).to include(Spree.t('store_credit_payment_method.currency_mismatch')) }
+      end
+    end
+
+    context 'currency match' do
+      it 'returns true' do
+        expect(store_credit.validate_currency_match("USD")).to be_truthy
       end
     end
   end
