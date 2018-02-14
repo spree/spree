@@ -78,8 +78,9 @@ module Spree
 
         def transfer_to_location
           @stock_location = Spree::StockLocation.find(params[:stock_location_id])
+          max_quantity_to_tranfer = @original_shipment.inventory_units_for(@variant).inject(0) { |sum, i| sum += i.quantity }
 
-          unless @quantity > 0
+          if @quantity <= 0 || max_quantity_to_tranfer < @quantity
             unprocessable_entity("#{Spree.t(:shipment_transfer_errors_occured, scope: 'api')} \n #{Spree.t(:negative_quantity, scope: 'api')}")
             return
           end
@@ -92,14 +93,17 @@ module Spree
 
         def transfer_to_shipment
           @target_shipment = Spree::Shipment.find_by!(number: params[:target_shipment_number])
+          max_quantity_to_tranfer = @original_shipment.inventory_units_for(@variant).inject(0) { |sum, i| sum += i.quantity }
 
           error =
-            if @quantity < 0 && @target_shipment == @original_shipment
+            if @quantity <= 0 && @target_shipment == @original_shipment
               "#{Spree.t(:negative_quantity, scope: 'api')}, \n#{Spree.t('wrong_shipment_target', scope: 'api')}"
             elsif @target_shipment == @original_shipment
               Spree.t(:wrong_shipment_target, scope: 'api')
-            elsif @quantity < 0
+            elsif @quantity <= 0
               Spree.t(:negative_quantity, scope: 'api')
+            elsif max_quantity_to_tranfer < @quantity
+              'Wrong quantity'
             end
 
           if error
