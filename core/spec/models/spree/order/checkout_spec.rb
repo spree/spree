@@ -500,6 +500,27 @@ describe Spree::Order, type: :model do
         expect(order.user.reload.default_credit_card).to be_nil
       end
     end
+
+    context "a payment fails during processing" do
+      before do
+        order.user = FactoryGirl.create(:user)
+        order.email = 'spree@example.org'
+        payment = FactoryGirl.create(:payment)
+        gateway_error = Spree::Core::GatewayError.new('processing failed')
+        allow(payment).to receive(:process!).and_raise(gateway_error)
+        order.payments << payment
+
+        # make sure we will actually capture a payment
+        allow(order).to receive_messages(payment_required?: true)
+        order.line_items << FactoryGirl.create(:line_item)
+        Spree::OrderUpdater.new(order).update
+      end
+
+      it "transitions to the payment state" do
+        expect { order.next! }.to raise_error StateMachine::InvalidTransition
+        expect(order.reload.state).to eq 'payment'
+      end
+    end
   end
 
   context 'subclassed order' do

@@ -74,12 +74,18 @@ module Spree
               before_transition to: :complete, do: :ensure_line_items_are_in_stock
 
               if states[:payment]
+                event :payment_failed do
+                  transition to: :payment, from: :confirm
+                end
+
                 before_transition to: :complete do |order|
                   if order.payment_required? && order.payments.valid.empty?
                     order.errors.add(:base, Spree.t(:no_payment_found))
                     false
                   elsif order.payment_required?
-                    order.process_payments!
+                    order.process_payments!.tap do |success|
+                      order.handle_failed_payments unless success
+                    end
                   end
                 end
                 after_transition to: :complete, do: :persist_user_credit_card
@@ -286,6 +292,12 @@ module Spree
 
           def user_has_valid_default_card?
             user && user.default_credit_card.try(:valid?)
+          end
+
+          def handle_failed_payments
+            errors = self.errors[:base]
+            self.payment_failed!
+            errors.each { |error| self.errors.add(:base, error) }
           end
 
           private
