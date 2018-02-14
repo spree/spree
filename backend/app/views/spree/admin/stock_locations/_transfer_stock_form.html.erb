@@ -2,27 +2,27 @@
   <fieldset>
     <legend><%= Spree.t(:move_stock_between_locations)%></legend>
     <div data-hook="admin_stock_movements_form_fields" class="row">
-      <div class="col-md-5">
+      <div class="col-xs-12 col-md-5">
         <div class="form-group" id="stock_movement_transfer_from_field">
           <%= label_tag :stock_location_from_id, Spree.t(:transfer_from_location) %>
           <%= select_tag :stock_location_from_id, options_from_collection_for_select(@stock_locations, :id, :name), class: 'select2' %>
         </div>
       </div>
-      <div class="col-md-5">
+      <div class="col-xs-12 col-md-5">
         <div class="form-group" id="stock_movement_transfer_to_field">
           <%= label_tag :stock_location_to_id, Spree.t(:transfer_to_location) %>
           <%= select_tag :stock_location_to_id, options_from_collection_for_select(@stock_locations, :id, :name), class: 'select2' %>
         </div>
       </div>
 
-      <div class="col-md-5">
+      <div class="col-xs-12 col-md-5">
         <div class="form-group" id="stock_movement_variant_id_field">
           <%= label_tag 'variant_id', Spree.t(:variant) %>
           <%= select_tag :variant_id, options_from_collection_for_select(@variants, :id, :name_and_sku), class: 'select2' %>
         </div>
       </div>
 
-      <div class="col-md-5">
+      <div class="col-xs-12 col-md-5">
         <div class="form-group" id="stock_movement_quantity_field">
           <%= label_tag 'quantity', Spree.t(:quantity) %>
           <%= number_field_tag :quantity, 1, class: 'form-control' %>

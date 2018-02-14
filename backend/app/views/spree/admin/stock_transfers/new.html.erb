@@ -62,18 +62,18 @@
 
     <div class="panel-body">
       <div class="row">
-        <div class="col-md-8">
+        <div class="col-xs-12 col-md-8">
           <div class="form-group" id="stock_movement_variant_id_field">
             <%= label_tag 'variant_id', Spree.t(:variant) %>
             <%= hidden_field_tag 'transfer_variant', {}, {class: 'fullwidth-input'} %>
           </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-xs-12 col-md-4">
           <div class="form-group" id="stock_movement_quantity_field">
             <%= label_tag :transfer_variant_quantity, Spree.t(:quantity) %>
             <div class="input-group">
-              <%= number_field_tag :transfer_variant_quantity, 1, class: 'form-control', min: 0 %>
+              <%= number_field_tag :transfer_variant_quantity, 1, class: 'form-control', min: 1 %>
               <span class="input-group-btn">
                 <%= button Spree.t(:add), 'plus', 'submit', class: "transfer_add_variant" %>
               </span>

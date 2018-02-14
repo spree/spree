@@ -4,7 +4,6 @@ module Spree
       extend ActiveSupport::Concern
 
       module ClassMethods
-
         attr_accessor :callbacks
 
         protected
@@ -37,12 +36,11 @@ module Spree
         callbacks = self.class.callbacks || {}
         return if callbacks[action].nil?
         case callback_type.to_sym
-          when :before then callbacks[action].before_methods.each {|method| send method }
-          when :after  then callbacks[action].after_methods.each  {|method| send method }
-          when :fails  then callbacks[action].fails_methods.each  {|method| send method }
+        when :before then callbacks[action].before_methods.each { |method| send method }
+        when :after  then callbacks[action].after_methods.each  { |method| send method }
+        when :fails  then callbacks[action].fails_methods.each  { |method| send method }
         end
       end
-
     end
   end
 end

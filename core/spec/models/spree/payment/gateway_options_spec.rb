@@ -1,4 +1,4 @@
-require "spec_helper"
+require 'spec_helper'
 
 RSpec.describe Spree::Payment::GatewayOptions, type: :model do
   let(:options) { Spree::Payment::GatewayOptions.new(payment) }
@@ -7,8 +7,8 @@ RSpec.describe Spree::Payment::GatewayOptions, type: :model do
     double(
       Spree::Payment,
       order: order,
-      number: "P1566",
-      currency: "EUR",
+      number: 'P1566',
+      currency: 'EUR',
       payment_method: payment_method
     )
   end
@@ -23,14 +23,14 @@ RSpec.describe Spree::Payment::GatewayOptions, type: :model do
   let(:order) do
     double(
       Spree::Order,
-      email: "test@email.com",
+      email: 'test@email.com',
       user_id: 144,
-      last_ip_address: "0.0.0.0",
-      number: "R1444",
-      ship_total: "12.44".to_d,
-      additional_tax_total: "1.53".to_d,
-      item_total: "15.11".to_d,
-      promo_total: "2.57".to_d,
+      last_ip_address: '0.0.0.0',
+      number: 'R1444',
+      ship_total: '12.44'.to_d,
+      additional_tax_total: '1.53'.to_d,
+      item_total: '15.11'.to_d,
+      promo_total: '2.57'.to_d,
       bill_address: bill_address,
       ship_address: ship_address
     )
@@ -44,84 +44,98 @@ RSpec.describe Spree::Payment::GatewayOptions, type: :model do
     double Spree::Address, active_merchant_hash: { ship: :address }
   end
 
-  describe "#email" do
+  describe '#email' do
     subject { options.email }
-    it { should == "test@email.com" }
+
+    it { is_expected.to eq 'test@email.com' }
   end
 
-  describe "#customer" do
+  describe '#customer' do
     subject { options.customer }
-    it { should == "test@email.com" }
+
+    it { is_expected.to eq 'test@email.com' }
   end
 
-  describe "#customer_id" do
+  describe '#customer_id' do
     subject { options.customer_id }
-    it { should == 144 }
+
+    it { is_expected.to eq 144 }
   end
 
-  describe "#ip" do
+  describe '#ip' do
     subject { options.ip }
-    it { should == "0.0.0.0" }
+
+    it { is_expected.to eq '0.0.0.0' }
   end
 
-  describe "#order_id" do
+  describe '#order_id' do
     subject { options.order_id }
-    it { should == "R1444-P1566" }
+
+    it { is_expected.to eq 'R1444-P1566' }
   end
 
-  describe "#shipping" do
+  describe '#shipping' do
     subject { options.shipping }
-    it { should == 1244 }
+
+    it { is_expected.to eq 1244 }
   end
 
-  describe "#tax" do
+  describe '#tax' do
     subject { options.tax }
-    it { should == 153 }
+
+    it { is_expected.to eq 153 }
   end
 
-  describe "#subtotal" do
+  describe '#subtotal' do
     subject { options.subtotal }
-    it { should == 1511 }
+
+    it { is_expected.to eq 1511 }
   end
 
-  describe "#discount" do
+  describe '#discount' do
     subject { options.discount }
-    it { should == 257 }
+
+    it { is_expected.to eq 257 }
   end
 
-  describe "#currency" do
+  describe '#currency' do
     subject { options.currency }
-    it { should == "EUR" }
+
+    it { is_expected.to eq 'EUR' }
   end
 
-  describe "#billing_address" do
+  describe '#billing_address' do
     subject { options.billing_address }
-    it { should == { bill: :address } }
+
+    it { is_expected.to eq(bill: :address) }
   end
 
-  describe "#shipping_address" do
+  describe '#shipping_address' do
     subject { options.shipping_address }
-    it { should == { ship: :address } }
+
+    it { is_expected.to eq(ship: :address) }
   end
 
-  describe "#to_hash" do
+  describe '#to_hash' do
     subject { options.to_hash }
+
     let(:expected) do
       {
-        email: "test@email.com",
-        customer: "test@email.com",
+        email: 'test@email.com',
+        customer: 'test@email.com',
         customer_id: 144,
-        ip: "0.0.0.0",
-        order_id: "R1444-P1566",
-        shipping: "1244".to_d,
-        tax: "153".to_d,
-        subtotal: "1511".to_d,
-        discount: "257".to_d,
-        currency: "EUR",
+        ip: '0.0.0.0',
+        order_id: 'R1444-P1566',
+        shipping: '1244'.to_d,
+        tax: '153'.to_d,
+        subtotal: '1511'.to_d,
+        discount: '257'.to_d,
+        currency: 'EUR',
         billing_address: { bill: :address },
         shipping_address: { ship: :address }
       }
     end
-    it { should == expected }
+
+    it { is_expected.to eq expected }
   end
 end

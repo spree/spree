@@ -3,7 +3,7 @@ module Spree
     class Packer
       attr_reader :stock_location, :inventory_units, :splitters
 
-      def initialize(stock_location, inventory_units, splitters=[Splitter::Base])
+      def initialize(stock_location, inventory_units, splitters = [Splitter::Base])
         @stock_location = stock_location
         @inventory_units = inventory_units
         @splitters = splitters
@@ -41,7 +41,7 @@ module Spree
 
       def build_splitter
         splitter = nil
-        splitters.reverse.each do |klass|
+        splitters.reverse_each do |klass|
           splitter = klass.new(self, splitter)
         end
         splitter

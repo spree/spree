@@ -6,7 +6,7 @@
   <span id="new_ot_link">
     <%= button_link_to Spree.t(:new_option_type), new_object_url, { class: "btn-success", icon: 'add', id: 'new_option_type_link' } %>
   </span>
-<% end %>
+<% end if can?(:create, Spree::OptionType) %>
 
 <div id="new_option_type"></div>
 
@@ -29,8 +29,8 @@
         <td><%= option_type.name %></td>
         <td class="presentation"><%= option_type.presentation %></td>
         <td class="actions actions-2 text-right">
-          <%= link_to_edit(option_type, class: 'admin_edit_option_type', no_text: true) %>
-          <%= link_to_delete(option_type, no_text: true) %>
+          <%= link_to_edit(option_type, class: 'admin_edit_option_type', no_text: true) if can?(:edit, option_type) %>
+          <%= link_to_delete(option_type, no_text: true) if can?(:delete, option_type) %>
         </td>
       </tr>
     <% end %>
@@ -39,6 +39,6 @@
 <% else %>
   <div class="alert alert-info no-objects-found">
     <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::OptionType)) %>,
-    <%= link_to Spree.t(:add_one), new_object_url %>!
+    <%= link_to Spree.t(:add_one), new_object_url if can?(:create, Spree::OptionType) %>!
   </div>
 <% end %>

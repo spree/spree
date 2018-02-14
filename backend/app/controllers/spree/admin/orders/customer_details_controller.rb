@@ -23,7 +23,7 @@ module Spree
           if @order.update_attributes(order_params)
             @order.associate_user!(@user, @order.email.blank?) unless guest_checkout?
             @order.next if @order.address?
-            @order.refresh_shipment_rates(Spree::ShippingMethod::DISPLAY_ON_FRONT_AND_BACK_END)
+            @order.refresh_shipment_rates(Spree::ShippingMethod::DISPLAY_ON_BACK_END)
 
             if @order.errors.empty?
               flash[:success] = Spree.t('customer_details_updated')
@@ -40,15 +40,14 @@ module Spree
 
         def order_params
           params.require(:order).permit(
-            :email,
-            :use_billing,
+            :email, :user_id, :use_billing,
             bill_address_attributes: permitted_address_attributes,
             ship_address_attributes: permitted_address_attributes
           )
         end
 
         def load_order
-          @order = Order.includes(:adjustments).friendly.find(params[:order_id])
+          @order = Order.includes(:adjustments).find_by!(number: params[:order_id])
         end
 
         def model_class
@@ -56,7 +55,7 @@ module Spree
         end
 
         def load_user
-          @user = (Spree.user_class.find_by(id: params[:user_id]) ||
+          @user = (Spree.user_class.find_by(id: order_params[:user_id]) ||
             Spree.user_class.find_by(email: order_params[:email]))
 
           unless @user

@@ -3,6 +3,7 @@ module Spree
     class VariantsController < ResourceController
       belongs_to 'spree/product', find_by: :slug
       new_action.before :new_before
+      before_action :redirect_on_empty_option_values, only: [:new]
       before_action :load_data, only: [:new, :create, :edit, :update]
 
       # override the destroy method to set deleted_at value
@@ -12,7 +13,7 @@ module Spree
         if @variant.destroy
           flash[:success] = Spree.t('notice_messages.variant_deleted')
         else
-          flash[:error] = Spree.t('notice_messages.variant_not_deleted')
+          flash[:error] = Spree.t('notice_messages.variant_not_deleted', error: @variant.errors.full_messages.to_sentence)
         end
 
         respond_with(@variant) do |format|
@@ -38,7 +39,7 @@ module Spree
       end
 
       def collection
-        @deleted = (params.key?(:deleted) && params[:deleted] == "on") ? "checked" : ""
+        @deleted = params.key?(:deleted) && params[:deleted] == 'on' ? 'checked' : ''
 
         @collection ||=
           if @deleted.blank?
@@ -53,6 +54,10 @@ module Spree
 
       def load_data
         @tax_categories = TaxCategory.order(:name)
+      end
+
+      def redirect_on_empty_option_values
+        redirect_to admin_product_variants_url(params[:product_id]) if @product.empty_option_values?
       end
     end
   end

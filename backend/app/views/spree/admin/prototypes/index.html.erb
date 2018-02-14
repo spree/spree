@@ -4,7 +4,7 @@
 
 <% content_for :page_actions do %>
   <%= button_link_to Spree.t(:new_prototype), new_object_url, { class: "btn-success", icon: 'add', 'data-update' => 'new_prototype', id: 'new_prototype_link'} %>
-<% end %>
+<% end if can?(:create, Spree::Prototype) %>
 
 <% if @prototypes.any? %>
   <table class="table" id='listing_prototypes' data-hook>
@@ -19,8 +19,8 @@
         <tr id="<%= spree_dom_id prototype %>" data-hook="prototypes_row">
           <td><%= prototype.name %></td>
           <td class="actions actions-2 text-right">
-            <%= link_to_edit(prototype, no_text: true, class: 'admin_edit_prototype') %>
-            <%= link_to_delete(prototype, no_text: true) %>
+            <%= link_to_edit(prototype, no_text: true, class: 'admin_edit_prototype') if can?(:edit, prototype) %>
+            <%= link_to_delete(prototype, no_text: true) if can?(:delete, prototype) %>
           </td>
         </tr>
       <% end %>
@@ -29,6 +29,6 @@
 <% else %>
   <div class="alert alert-info no-objects-found">
     <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::Prototype)) %>,
-    <%= link_to Spree.t(:add_one), new_object_url %>!
+    <%= link_to Spree.t(:add_one), new_object_url if can?(:create, Spree::Prototype) %>!
   </div>
 <% end %>

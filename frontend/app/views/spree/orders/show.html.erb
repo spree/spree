@@ -1,11 +1,4 @@
-<% content_for :google_analytics do %>
-  <% if order_just_completed?(@order) %>
-    <%= render partial: 'spree/shared/google_purchase.js', locals: { order: @order } %>
-  <% end %>
-<% end %>
-
 <fieldset id="order_summary" data-hook>
-  <legend><%= Spree.t(:order_number, number: @order.number) %></legend>
   <h1><%= accurate_title %></h1>
   <% if order_just_completed?(@order) %>
     <strong><%= Spree.t(:thank_you_for_your_order) %></strong>

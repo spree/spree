@@ -1,6 +1,7 @@
 // Green
 .label-completed,
 .label-complete,
+.label-resumed,
 .label-considered_safe,
 .label-paid,
 .label-shipped,
@@ -28,6 +29,7 @@
 }
 
 // Orange
+.label-processing,
 .label-pending,
 .label-awaiting_return,
 .label-returned,

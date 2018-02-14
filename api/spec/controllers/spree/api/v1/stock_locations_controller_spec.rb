@@ -11,21 +11,21 @@ module Spree
       stub_authentication!
     end
 
-    context "as a user" do
-      it "cannot see stock locations" do
+    context 'as a user' do
+      it 'cannot see stock locations' do
         api_get :index
         expect(response.status).to eq(401)
       end
 
-      it "cannot see a single stock location" do
+      it 'cannot see a single stock location' do
         api_get :show, id: stock_location.id
         expect(response.status).to eq(404)
       end
 
-      it "cannot create a new stock location" do
+      it 'cannot create a new stock location' do
         params = {
           stock_location: {
-            name: "North Pole",
+            name: 'North Pole',
             active: true
           }
         }
@@ -34,22 +34,21 @@ module Spree
         expect(response.status).to eq(401)
       end
 
-      it "cannot update a stock location" do
-        api_put :update, stock_location: { name: "South Pole" }, id: stock_location.to_param
+      it 'cannot update a stock location' do
+        api_put :update, stock_location: { name: 'South Pole' }, id: stock_location.to_param
         expect(response.status).to eq(404)
       end
 
-      it "cannot delete a stock location" do
+      it 'cannot delete a stock location' do
         api_put :destroy, id: stock_location.to_param
         expect(response.status).to eq(404)
       end
     end
 
-    
-    context "as an admin" do
+    context 'as an admin' do
       sign_in_as_admin!
 
-      it "gets list of stock locations" do
+      it 'gets list of stock locations' do
         api_get :index
         expect(json_response['stock_locations'].first).to have_attributes(attributes)
         expect(json_response['stock_locations'].first['country']).not_to be_nil
@@ -71,16 +70,16 @@ module Spree
         expect(json_response['stock_locations'].first['name']).to eq expected_result.name
       end
 
-      it "gets a stock location" do
+      it 'gets a stock location' do
         api_get :show, id: stock_location.to_param
         expect(json_response).to have_attributes(attributes)
         expect(json_response['name']).to eq stock_location.name
       end
 
-      it "can create a new stock location" do
+      it 'can create a new stock location' do
         params = {
           stock_location: {
-            name: "North Pole",
+            name: 'North Pole',
             active: true
           }
         }
@@ -90,11 +89,11 @@ module Spree
         expect(json_response).to have_attributes(attributes)
       end
 
-      it "can update a stock location" do
+      it 'can update a stock location' do
         params = {
           id: stock_location.to_param,
           stock_location: {
-            name: "South Pole"
+            name: 'South Pole'
           }
         }
 
@@ -103,7 +102,7 @@ module Spree
         expect(json_response['name']).to eq 'South Pole'
       end
 
-      it "can delete a stock location" do
+      it 'can delete a stock location' do
         api_delete :destroy, id: stock_location.to_param
         expect(response.status).to eq(204)
         expect { stock_location.reload }.to raise_error(ActiveRecord::RecordNotFound)

@@ -3,7 +3,6 @@ require 'spec_helper'
 module Spree
   module Calculator::Shipping
     describe PriceSack do
-      let(:variant) { build(:variant, price: 2) }
       subject(:calculator) do
         calculator = PriceSack.new
         calculator.preferred_minimal_amount = 5
@@ -11,6 +10,8 @@ module Spree
         calculator.preferred_discount_amount = 1
         calculator
       end
+
+      let(:variant) { build(:variant, price: 2) }
 
       let(:normal_package) do
         build(:stock_package, variants_contents: { variant => 2 })

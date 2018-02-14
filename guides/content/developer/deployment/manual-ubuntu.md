@@ -13,8 +13,8 @@ covers setting up the following things:
 
 * A user for the application
 * Operating system dependencies required for Ruby, Rails and Spree
-* Ruby 2.1.0
-* Rails 4.0.2
+* Ruby 2.3.0
+* Rails 5.0.2
 * PostgreSQL
 * Unicorn + nginx (with SSL)
 * Seed data for your store
@@ -172,10 +172,10 @@ $ apt-get install -y imagemagick
 ```
 
 Once these dependencies are installed, switch back into the `spree` user and
-install Ruby 2.1.0 by running this command:
+install Ruby 2.3.0 by running this command:
 
 ```bash
-$ rvm install 2.1.0
+$ rvm install 2.3.0
 ```
 
 This command will take a couple of minutes to finish running.
@@ -184,7 +184,7 @@ Once it's finished running, run this command to make that version of Ruby the
 default for this user:
 
 ```bash
-$ rvm use 2.1.0 --default
+$ rvm use 2.3.0 --default
 ```
 
 Ensure that this version of Ruby is really the new default by running this
@@ -197,7 +197,7 @@ ruby -v
 It should output something similar to this:
 
 ```bash
-ruby 2.1.0p0 (2013-12-25 revision 44422) [x86_64-linux]
+ruby 2.3.0p0 (2013-12-25 revision 44422) [x86_64-linux]
 ```
 
 You now have a version of Ruby correctly configured on your server.
@@ -206,7 +206,7 @@ You now have a version of Ruby correctly configured on your server.
 
 The next step is to put your Spree application onto the server. To do this, you
 will use the deployment tool called
-[Capistrano](https://github.com/capistrano/capistrano/wiki). The instructions below describe how to do this using Capistrano version 2.x. If you wish to use version 3.x or higher, you should consult the documentation at http://capistranorb.com.
+[Capistrano](https://github.com/capistrano/capistrano/wiki). The instructions below describe how to do this using Capistrano version 2.x. If you wish to use version 3.x or higher, you should consult the documentation at [http://capistranorb.com](http://capistranorb.com).
 
 First add the capistrano gem to the Gemfile located in the directory containing your Spree application:
 
@@ -456,7 +456,7 @@ end
 
 ***
 If you need to add this gem, you will need to run `bundle install` on your
-server and commit`push your `Gemfile` and `Gemfile.lock` to Git.
+server and commit/push your `Gemfile` and `Gemfile.lock` to Git.
 ***
 
 !!!
@@ -517,7 +517,7 @@ env = ENV["RAILS_ENV"] || "development"
 # See http://unicorn.bogomips.org/Unicorn/Configurator.html for complete documentation.
 worker_processes 4
 
-# listen on both a Unix domain socket and a TCP port, 
+# listen on both a Unix domain socket and a TCP port,
 # we use a shorter backlog for quicker failover when busy
 listen "/tmp/[application's name].socket", backlog: 64
 
@@ -785,7 +785,7 @@ the console and assign it the admin role, like this:
 
 ```ruby
 user = User.create!(email: "email@example.com", password: "topsekret")
-user.spree_roles << Spree::Role.find_by_name("admin")
+user.spree_roles << Spree::Role.find_by(name: "admin")
 user.save!
 ```
 

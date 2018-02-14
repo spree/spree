@@ -5,12 +5,16 @@
   }
 
   .dropdown-menu {
-    padding: 20px;
-    min-width: 240px;
-    text-align: center;
+    width: 100%;
+    padding: 0 0;
+
+    hr {
+      margin: 0 0;
+    }
 
     a {
       color: $dropdown-link-color !important;
+      padding: 15px;
     }
   }
 }

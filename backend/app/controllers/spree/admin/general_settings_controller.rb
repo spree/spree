@@ -28,6 +28,7 @@ module Spree
       end
 
       private
+
       def store_params
         params.require(:store).permit(permitted_store_attributes)
       end

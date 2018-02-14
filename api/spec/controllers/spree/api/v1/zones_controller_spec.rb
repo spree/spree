@@ -11,7 +11,7 @@ module Spree
       @zone = create(:zone, name: 'Europe')
     end
 
-    it "gets list of zones" do
+    it 'gets list of zones' do
       api_get :index
       expect(json_response['zones'].first).to have_attributes(attributes)
     end
@@ -31,25 +31,25 @@ module Spree
       expect(json_response['zones'].first['name']).to eq expected_result.name
     end
 
-    it "gets a zone" do
+    it 'gets a zone' do
       api_get :show, id: @zone.id
       expect(json_response).to have_attributes(attributes)
       expect(json_response['name']).to eq @zone.name
       expect(json_response['zone_members'].size).to eq @zone.zone_members.count
     end
 
-    context "as an admin" do
+    context 'as an admin' do
       sign_in_as_admin!
 
       let!(:country) { create(:country) }
 
-      it "can create a new zone" do
+      it 'can create a new zone' do
         params = {
           zone: {
-            name: "North Pole",
+            name: 'North Pole',
             zone_members: [
               {
-                zoneable_type: "Spree::Country",
+                zoneable_type: 'Spree::Country',
                 zoneable_id: country.id
               }
             ]
@@ -59,21 +59,20 @@ module Spree
         api_post :create, params
         expect(response.status).to eq(201)
         expect(json_response).to have_attributes(attributes)
-        expect(json_response["zone_members"]).not_to be_empty
+        expect(json_response['zone_members']).not_to be_empty
       end
 
-      it "updates a zone" do
+      it 'updates a zone' do
         params = { id: @zone.id,
-          zone: {
-            name: "North Pole",
-            zone_members: [
-              {
-                zoneable_type: "Spree::Country",
-                zoneable_id: country.id
-              }
-            ]
-          }
-        }
+                   zone: {
+                     name: 'North Pole',
+                     zone_members: [
+                       {
+                         zoneable_type: 'Spree::Country',
+                         zoneable_id: country.id
+                       }
+                     ]
+                   } }
 
         api_put :update, params
         expect(response.status).to eq(200)
@@ -81,7 +80,7 @@ module Spree
         expect(json_response['zone_members']).not_to be_blank
       end
 
-      it "can delete a zone" do
+      it 'can delete a zone' do
         api_delete :destroy, id: @zone.id
         expect(response.status).to eq(204)
         expect { @zone.reload }.to raise_error(ActiveRecord::RecordNotFound)

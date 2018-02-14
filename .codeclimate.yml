@@ -1,0 +1,19 @@
+version: "2"
+plugins:
+  rubocop:
+    enabled: true
+    config:
+      file: .rubocop.yml
+    channel: "rubocop-0-51" # need to keep this value the same as rubocop version
+                            # https://docs.codeclimate.com/v1.0/docs/rubocop#section-using-rubocop-s-newer-versions
+  eslint:
+    enabled: true
+    channel: "eslint-4" # need to keep this value the same as eslint version
+                        # https://docs.codeclimate.com/v1.0/docs/eslint#section-eslint-versions
+  stylelint:
+    enabled: true
+exclude_patterns:
+  - "**/bin/"
+  - "**/script/"
+  - "**/vendor/"
+  - "public/"

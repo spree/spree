@@ -1,7 +1,6 @@
 module Spree
   module Admin
     class AdjustmentsController < ResourceController
-
       belongs_to 'spree/order', find_by: :number
 
       create.after :update_totals
@@ -13,7 +12,7 @@ module Spree
       before_action :find_adjustment, only: [:destroy, :edit, :update]
 
       def index
-        @adjustments = @order.all_adjustments.order(created_at: :asc)
+        @adjustments = @order.all_adjustments.eligible.order(created_at: :asc)
       end
 
       private
@@ -32,7 +31,6 @@ module Spree
       def build_resource
         parent.adjustments.build(order: parent)
       end
-
     end
   end
 end

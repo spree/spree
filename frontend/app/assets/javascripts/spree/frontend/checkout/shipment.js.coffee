@@ -1,10 +1,13 @@
 class @ShippingTotalManager
-  REGEX_FOR_REMOVING_SPECIAL_CHARS = /[^0-9\.]+/g
-
   constructor: (@input) ->
     @shippingMethods = @input.shippingMethods
     @shipmentTotal = @input.shipmentTotal
     @orderTotal = @input.orderTotal
+    @formatOptions = {
+      symbol : @shipmentTotal.data('currency'),
+      decimal : @shipmentTotal.attr('decimal-mark'),
+      thousand: @shipmentTotal.attr('thousands-separator'),
+      precision : 2 }
 
   calculateShipmentTotal: ->
     @sum = 0
@@ -18,12 +21,12 @@ class @ShippingTotalManager
     )
 
   parseCurrencyToFloat: (input) ->
-    parseFloat(input.replace(REGEX_FOR_REMOVING_SPECIAL_CHARS, ""))
+    accounting.unformat(input, @formatOptions.decimal)
 
   readjustSummarySection: (orderTotal, newShipmentTotal, oldShipmentTotal) ->
     newOrderTotal = orderTotal + (newShipmentTotal - oldShipmentTotal)
-    @shipmentTotal.html(@shipmentTotal.data('currency') + newShipmentTotal.toFixed(2))
-    @orderTotal.html(@orderTotal.data('currency') + newOrderTotal.toFixed(2))
+    @shipmentTotal.html(accounting.formatMoney(newShipmentTotal, @formatOptions))
+    @orderTotal.html(accounting.formatMoney(newOrderTotal, @formatOptions))
 
   bindEvent: ->
     @shippingMethods.change =>

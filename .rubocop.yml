@@ -1,268 +1,121 @@
+require: rubocop-rspec
+
+inherit_from: '.rubocop-disabled.yml'
+
 AllCops:
+  TargetRubyVersion: 2.2
   Exclude:
-    - db/schema.rb
+    - '**/sandbox/**/*'
+    - '**/db/migrate/*'
+    - '**/Gemfile'
+    - '**/Gemfile.lock'
+    - '**/Rakefile'
+    - '**/rails'
+    - 'guides/**/*'
+    - '**/*.gemspec'
+    - '**/dummy/**/*'
+    - '**/vendor/**/*'
 
-AccessorMethodName:
-  Enabled: false
+Layout/MultilineOperationIndentation:
+  EnforcedStyle: indented
 
-ActionFilter:
-  Enabled: false
-
-Alias:
-  Enabled: false
-
-ArrayJoin:
-  Enabled: false
-
-AsciiComments:
-  Enabled: false
-
-AsciiIdentifiers:
-  Enabled: false
-
-Attr:
-  Enabled: false
-
-BlockNesting:
-  Enabled: false
-
-CaseEquality:
-  Enabled: false
-
-CharacterLiteral:
-  Enabled: false
-
-ClassAndModuleChildren:
+AlignParameters:
   Enabled: false
 
 ClassLength:
-  Enabled: false
+  CountComments: false
+  Max: 150
 
-ClassVars:
-  Enabled: false
-
-CollectionMethods:
-  PreferredMethods:
-    find: detect
-    reduce: inject
-    collect: map
-    find_all: select
-
-ColonMethodCall:
-  Enabled: false
-
-CommentAnnotation:
-  Enabled: false
-
-CyclomaticComplexity:
-  Enabled: false
-
-Delegate:
-  Enabled: false
-
-DeprecatedHashMethods:
-  Enabled: false
+ModuleLength:
+  CountComments: false
+  Max: 250
+  Exclude:
+    - '**/spec/**/*'
 
 Documentation:
   Enabled: false
 
-DotPosition:
-  EnforcedStyle: trailing
-
-DoubleNegation:
-  Enabled: false
-
-EachWithObject:
-  Enabled: false
-
-EmptyLiteral:
-  Enabled: false
-
-Encoding:
-  Enabled: false
-
-EvenOdd:
-  Enabled: false
-
-FileName:
-  Enabled: false
-
-FlipFlop:
-  Enabled: false
-
-FormatString:
-  Enabled: false
-
-GlobalVars:
-  Enabled: false
-
-GuardClause:
-  Enabled: false
-
-IfUnlessModifier:
-  Enabled: false
-
-IfWithSemicolon:
-  Enabled: false
-
-InlineComment:
-  Enabled: false
-
-Lambda:
-  Enabled: false
-
-LambdaCall:
-  Enabled: false
-
-LineEndConcatenation:
-  Enabled: false
-
-LineLength:
-  Max: 120
+Metrics/LineLength:
+  Max: 150
+  Exclude:
+    - '**/spec/**/*'
 
 MethodLength:
+  CountComments: false
+  Max: 50
+
+BlockLength:
+  CountComments: false
+  Max: 50
+  Exclude:
+    - '**/spec/**/*'
+    - '**/*.rake'
+
+Metrics/AbcSize:
+ Max: 45
+
+Style/StringLiterals:
+  EnforcedStyle: single_quotes
+
+Layout/DotPosition:
+  EnforcedStyle: trailing
+  Enabled: true
+
+Style/FrozenStringLiteralComment:
   Enabled: false
 
-ModuleFunction:
+Style/RegexpLiteral:
   Enabled: false
 
-NegatedIf:
+Style/WordArray:
   Enabled: false
 
-NegatedWhile:
+Style/SymbolArray:
   Enabled: false
 
-Next:
+Style/GuardClause:
   Enabled: false
 
-NilComparison:
+Style/TrailingCommaInLiteral:
   Enabled: false
 
-Not:
+Style/BarePercentLiterals:
   Enabled: false
 
-NumericLiterals:
+Style/MutableConstant:
   Enabled: false
 
-OneLineConditional:
+Style/PercentLiteralDelimiters:
   Enabled: false
 
-OpMethod:
+Naming/VariableNumber:
   Enabled: false
 
-ParameterLists:
+Performance/RegexpMatch:
   Enabled: false
 
-PercentLiteralDelimiters:
+Style/UnneededPercentQ:
   Enabled: false
 
-PerlBackrefs:
+Lint/ParenthesesAsGroupedExpression:
   Enabled: false
 
-PredicateName:
-  NamePrefixBlacklist:
-    - is_
+Metrics/PerceivedComplexity:
+  Max: 10
 
-Proc:
+Metrics/CyclomaticComplexity:
+  Max: 10
+
+Style/ClassAndModuleChildren:
   Enabled: false
 
-RaiseArgs:
-  Enabled: false
+Style/AndOr:
+  Exclude:
+    - '**/*controller.rb'
 
-RegexpLiteral:
-  Enabled: false
+RSpec/NestedGroups:
+  Max: 7
 
-SelfAssignment:
-  Enabled: false
-
-SingleLineBlockParams:
-  Enabled: false
-
-SingleLineMethods:
-  Enabled: false
-
-SignalException:
-  Enabled: false
-
-SpecialGlobalVars:
-  Enabled: false
-
-StringLiterals:
-  Enabled: false
-
-VariableInterpolation:
-  Enabled: false
-
-TrailingCommaInLiteral:
-  Enabled: false
-
-TrailingCommaInArguments:
-  Enabled: false
-
-TrivialAccessors:
-  Enabled: false
-
-VariableInterpolation:
-  Enabled: false
-
-WhenThen:
-  Enabled: false
-
-WhileUntilModifier:
-  Enabled: false
-
-WordArray:
-  Enabled: false
-
-# Lint
-
-AmbiguousOperator:
-  Enabled: false
-
-AmbiguousRegexpLiteral:
-  Enabled: false
-
-AssignmentInCondition:
-  Enabled: false
-
-ConditionPosition:
-  Enabled: false
-
-DeprecatedClassMethods:
-  Enabled: false
-
-ElseLayout:
-  Enabled: false
-
-HandleExceptions:
-  Enabled: false
-
-InvalidCharacterLiteral:
-  Enabled: false
-
-LiteralInCondition:
-  Enabled: false
-
-LiteralInInterpolation:
-  Enabled: false
-
-Loop:
-  Enabled: false
-
-ParenthesesAsGroupedExpression:
-  Enabled: false
-
-RequireParentheses:
-  Enabled: false
-
-UnderscorePrefixedVariableName:
-  Enabled: false
-
-Void:
-  Enabled: false
-
-# Style
-
-Style/IndentationWidth:
-  # Number of spaces for each indentation level.
-  Width: 2
+Lint/AmbiguousBlockAssociation:
+  Exclude:
+    - '**/spec/**/*'

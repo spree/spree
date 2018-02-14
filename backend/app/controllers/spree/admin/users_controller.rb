@@ -12,8 +12,8 @@ module Spree
       def create
         @user = Spree.user_class.new(user_params)
         if @user.save
-          flash.now[:success] = flash_message_for(@user, :successfully_created)
-          render :edit
+          flash[:success] = flash_message_for(@user, :successfully_created)
+          redirect_to edit_admin_user_path(@user)
         else
           render :new
         end
@@ -26,10 +26,11 @@ module Spree
         end
 
         if @user.update_attributes(user_params)
-          flash.now[:success] = Spree.t(:account_updated)
+          flash[:success] = Spree.t(:account_updated)
+          redirect_to edit_admin_user_path(@user)
+        else
+          render :edit
         end
-
-        render :edit
       end
 
       def addresses
@@ -77,18 +78,19 @@ module Spree
 
       protected
 
-        def collection
-          return @collection if @collection.present?
-          @collection = super
-          @search = @collection.ransack(params[:q])
-          @collection = @search.result.page(params[:page]).per(Spree::Config[:admin_users_per_page])
-        end
+      def collection
+        return @collection if @collection.present?
+        @collection = super
+        @search = @collection.ransack(params[:q])
+        @collection = @search.result.page(params[:page]).per(Spree::Config[:admin_users_per_page])
+      end
 
       private
 
       def user_params
         params.require(:user).permit(permitted_user_attributes |
-                                     [spree_role_ids: [],
+                                     [:use_billing,
+                                      spree_role_ids: [],
                                       ship_address_attributes: permitted_address_attributes,
                                       bill_address_attributes: permitted_address_attributes])
       end
@@ -96,7 +98,7 @@ module Spree
       # handling raise from Spree::Admin::ResourceController#destroy
       def user_destroy_with_orders_error
         invoke_callbacks(:destroy, :fails)
-        render status: :forbidden, text: Spree.t(:error_user_destroy_with_orders)
+        render status: :forbidden, plain: Spree.t(:error_user_destroy_with_orders)
       end
 
       def sign_in_if_change_own_password

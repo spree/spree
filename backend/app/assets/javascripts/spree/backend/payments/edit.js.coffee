@@ -2,10 +2,11 @@ jQuery ($) ->
   # Payment model
   order_id = $('#payments').data('order-id')
   class Payment
-    constructor: (id) ->
-      @url  = Spree.url("#{Spree.routes.payments_api(order_id)}/#{id}.json" + '?token=' + Spree.api_key)
+    constructor: (number) ->
+      @url  = Spree.url("#{Spree.routes.payments_api(order_id)}/#{number}.json" + '?token=' + Spree.api_key)
       @json = $.getJSON @url.toString(), (data) =>
         @data = data
+      @updating = false
 
     if_editable: (callback) ->
       @json.done (data) ->
@@ -128,9 +129,6 @@ jQuery ($) ->
       $('<input />')
         .prop(id: 'amount', value: amount)
         .width(width)
-        .one
-          blur: =>
-            @save()
         .css('text-align': 'right')
 
     $input: ->
@@ -143,5 +141,5 @@ jQuery ($) ->
   # Attach ShowPaymentView to each editable payment in the table
   $('.admin tr[data-hook=payments_row]').each ->
     $el = $(@)
-    payment = new Payment($el.prop('id').match(/\d+$/))
+    payment = new Payment($el.attr('data-number'))
     payment.if_editable -> new ShowPaymentView($el, payment)

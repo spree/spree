@@ -13,7 +13,7 @@
  */
 
 /*jslint browser: true, onevar: true, undef: true, bitwise: true, strict: true */
-/*global window : false, clearInterval: false, clearTimeout: false, document: false, setInterval: false, setTimeout: false, jQuery: false, navigator: false, XSLTProcessor: false, DOMParser: false, XMLSerializer: false*/
+/*global window : false, clearInterval: false, clearTimeout: false, document: false, setInterval: false, setTimeout: false, jQuery: false, navigator: false, XSLTProcessor: false, DOMParser: false, XMLSerializer: false, ActiveXObject: false */
 
 "use strict";
 
@@ -114,7 +114,7 @@
 		if(isMethodCall) {
 			if(settings.substring(0, 1) == '_') { return returnValue; }
 			this.each(function() {
-				var instance = instances[$.data(this, "jstree-instance-id")],
+				var instance = instances[$.data(this, "jstree_instance_id")],
 					methodValue = (instance && $.isFunction(instance[settings])) ? instance[settings].apply(instance, args) : instance;
 					if(typeof methodValue !== "undefined" && (settings.indexOf("is_") === 0 || (methodValue !== true && methodValue !== false))) { returnValue = methodValue; return false; }
 			});
@@ -122,7 +122,7 @@
 		else {
 			this.each(function() {
 				// extend settings and allow for multiple hashes and $.data
-				var instance_id = $.data(this, "jstree-instance-id"),
+				var instance_id = $.data(this, "jstree_instance_id"),
 					a = [],
 					b = settings ? $.extend({}, true, settings) : {},
 					c = $(this), 
@@ -137,7 +137,7 @@
 				// push a new empty object to the instances array
 				instance_id = parseInt(instances.push({}),10) - 1;
 				// store the jstree instance id to the container element
-				$.data(this, "jstree-instance-id", instance_id);
+				$.data(this, "jstree_instance_id", instance_id);
 				// clean up all plugins
 				b.plugins = $.isArray(b.plugins) ? b.plugins : $.jstree.defaults.plugins.slice();
 				b.plugins.unshift("core");
@@ -159,7 +159,7 @@
 				$.each(instances[instance_id]._get_settings().plugins, function (i, val) { instances[instance_id].data[val] = {}; });
 				$.each(instances[instance_id]._get_settings().plugins, function (i, val) { if(plugins[val]) { plugins[val].__init.apply(instances[instance_id]); } });
 				// initialize the instance
-				setTimeout(function() { instances[instance_id].init(); }, 0);
+				setTimeout(function() { if(instances[instance_id]) { instances[instance_id].init(); } }, 0);
 			});
 		}
 		// return the jquery selection (or if it was a method call that returned a value - the returned value)
@@ -178,7 +178,7 @@
 			var o = $(needle); 
 			if(!o.length && typeof needle === "string") { o = $("#" + needle); }
 			if(!o.length) { return null; }
-			return instances[o.closest(".jstree").data("jstree-instance-id")] || null; 
+			return instances[o.closest(".jstree").data("jstree_instance_id")] || null; 
 		},
 		_instance : function (index, container, settings) { 
 			// for plugins to store data in
@@ -356,7 +356,8 @@
 				this.get_container()
 					.delegate("li > ins", "click.jstree", $.proxy(function (event) {
 							var trgt = $(event.target);
-							if(trgt.is("ins") && event.pageY - trgt.offset().top < this.data.core.li_height) { this.toggle_node(trgt); }
+							// if(trgt.is("ins") && event.pageY - trgt.offset().top < this.data.core.li_height) { this.toggle_node(trgt); }
+							this.toggle_node(trgt);
 						}, this))
 					.bind("mousedown.jstree", $.proxy(function () { 
 							this.set_focus(); // This used to be setTimeout(set_focus,0) - why?
@@ -433,9 +434,9 @@
 				this.get_container()
 					.unbind(".jstree")
 					.undelegate(".jstree")
-					.removeData("jstree-instance-id")
+					.removeData("jstree_instance_id")
 					.find("[class^='jstree']")
-						.andSelf()
+						.addBack()
 						.attr("class", function () { return this.className.replace(/jstree[^ ]*|$/ig,''); });
 				$(document)
 					.unbind(".jstree-" + n)
@@ -678,7 +679,7 @@
 				}
 				else {
 					original_obj = obj;
-					if(obj.is(".jstree-closed")) { obj = obj.find("li.jstree-closed").andSelf(); }
+					if(obj.is(".jstree-closed")) { obj = obj.find("li.jstree-closed").addBack(); }
 					else { obj = obj.find("li.jstree-closed"); }
 				}
 				var _this = this;
@@ -694,12 +695,12 @@
 				var _this = this;
 				obj = obj ? this._get_node(obj) : this.get_container();
 				if(!obj || obj === -1) { obj = this.get_container_ul(); }
-				obj.find("li.jstree-open").andSelf().each(function () { _this.close_node(this, !do_animation); });
+				obj.find("li.jstree-open").addBack().each(function () { _this.close_node(this, !do_animation); });
 				this.__callback({ "obj" : obj });
 			},
 			clean_node	: function (obj) {
 				obj = obj && obj != -1 ? $(obj) : this.get_container_ul();
-				obj = obj.is("li") ? obj.find("li").andSelf() : obj.find("li");
+				obj = obj.is("li") ? obj.find("li").addBack() : obj.find("li");
 				obj.removeClass("jstree-last")
 					.filter("li:last-child").addClass("jstree-last").end()
 					.filter(":has(li)")
@@ -752,6 +753,7 @@
 						if(m.language) { tmp.addClass(m.language); }
 					}
 					tmp.prepend("<ins class='jstree-icon'>&#160;</ins>");
+					if(!m.icon && js.icon) { m.icon = js.icon; }
 					if(m.icon) { 
 						if(m.icon.indexOf("/") === -1) { tmp.children("ins").addClass(m.icon); }
 						else { tmp.children("ins").css("background","url('" + m.icon + "') center center no-repeat"); }
@@ -920,10 +922,12 @@
 			check_move : function () {
 				var obj = prepared_move, ret = true, r = obj.r === -1 ? this.get_container() : obj.r;
 				if(!obj || !obj.o || obj.or[0] === obj.o[0]) { return false; }
-				if(obj.op && obj.np && obj.op[0] === obj.np[0] && obj.cp - 1 === obj.o.index()) { return false; }
-				obj.o.each(function () { 
-					if(r.parentsUntil(".jstree", "li").andSelf().index(this) !== -1) { ret = false; return false; }
-				});
+				if(!obj.cy) {
+					if(obj.op && obj.np && obj.op[0] === obj.np[0] && obj.cp - 1 === obj.o.index()) { return false; }
+					obj.o.each(function () { 
+						if(r.parentsUntil(".jstree", "li").addBack().index(this) !== -1) { ret = false; return false; }
+					});
+				}
 				return ret;
 			},
 			move_node : function (obj, ref, position, is_copy, is_prepared, skip_check) {
@@ -941,7 +945,7 @@
 				var o = false;
 				if(is_copy) {
 					o = obj.o.clone(true);
-					o.find("*[id]").andSelf().each(function () {
+					o.find("*[id]").addBack().each(function () {
 						if(this.id) { this.id = "copy_" + this.id; }
 					});
 				}
@@ -1138,7 +1142,7 @@
 					switch(!0) {
 						case (is_range):
 							this.data.ui.last_selected.addClass("jstree-last-selected");
-							obj = obj[ obj.index() < this.data.ui.last_selected.index() ? "nextUntil" : "prevUntil" ](".jstree-last-selected").andSelf();
+							obj = obj[ obj.index() < this.data.ui.last_selected.index() ? "nextUntil" : "prevUntil" ](".jstree-last-selected").addBack();
 							if(s.select_limit == -1 || obj.length < s.select_limit) {
 								this.data.ui.last_selected.removeClass("jstree-last-selected");
 								this.data.ui.selected.each(function () {
@@ -1242,7 +1246,7 @@
 				.bind("move_node.jstree", $.proxy(function (e, data) {
 					if(this._get_settings().crrm.move.open_onmove) {
 						var t = this;
-						data.rslt.np.parentsUntil(".jstree").andSelf().filter(".jstree-closed").each(function () {
+						data.rslt.np.parentsUntil(".jstree").addBack().filter(".jstree-closed").each(function () {
 							t.open_node(this, false, true);
 						});
 					}
@@ -1658,7 +1662,7 @@
 				obj = this._get_node(obj);
 				var s = this._get_settings().json_data;
 				if(obj && obj !== -1 && s.progressive_unload && ($.isFunction(s.data) || !!s.ajax)) {
-					obj.removeData("jstree-children");
+					obj.removeData("jstree_children");
 				}
 				return this.__call_old();
 			},
@@ -1668,11 +1672,11 @@
 					success_func = function () {};
 				obj = this._get_node(obj);
 
-				if(obj && obj !== -1 && (s.progressive_render || s.progressive_unload) && !obj.is(".jstree-open, .jstree-leaf") && obj.children("ul").children("li").length === 0 && obj.data("jstree-children")) {
-					d = this._parse_json(obj.data("jstree-children"), obj);
+				if(obj && obj !== -1 && (s.progressive_render || s.progressive_unload) && !obj.is(".jstree-open, .jstree-leaf") && obj.children("ul").children("li").length === 0 && obj.data("jstree_children")) {
+					d = this._parse_json(obj.data("jstree_children"), obj);
 					if(d) {
 						obj.append(d);
-						if(!s.progressive_unload) { obj.removeData("jstree-children"); }
+						if(!s.progressive_unload) { obj.removeData("jstree_children"); }
 					}
 					this.clean_node(obj);
 					if(s_call) { s_call.call(this); }
@@ -1680,8 +1684,8 @@
 				}
 
 				if(obj && obj !== -1) {
-					if(obj.data("jstree-is-loading")) { return; }
-					else { obj.data("jstree-is-loading",true); }
+					if(obj.data("jstree_is_loading")) { return; }
+					else { obj.data("jstree_is_loading",true); }
 				}
 				switch(!0) {
 					case (!s.data && !s.ajax): throw "Neither data nor ajax settings supplied.";
@@ -1695,14 +1699,14 @@
 								}
 								else {
 									obj.children("a.jstree-loading").removeClass("jstree-loading");
-									obj.removeData("jstree-is-loading");
+									obj.removeData("jstree_is_loading");
 									if(s.correct_state) { this.correct_state(obj); }
 								}
 								if(e_call) { e_call.call(this); }
 							}
 							else {
 								if(obj === -1 || !obj) { this.get_container().children("ul").empty().append(d.children()); }
-								else { obj.append(d).children("a.jstree-loading").removeClass("jstree-loading"); obj.removeData("jstree-is-loading"); }
+								else { obj.append(d).children("a.jstree-loading").removeClass("jstree-loading"); obj.removeData("jstree_is_loading"); }
 								this.clean_node(obj);
 								if(s_call) { s_call.call(this); }
 							}
@@ -1727,7 +1731,7 @@
 							if(ef) { ef.call(this, x, t, e); }
 							if(obj != -1 && obj.length) {
 								obj.children("a.jstree-loading").removeClass("jstree-loading");
-								obj.removeData("jstree-is-loading");
+								obj.removeData("jstree_is_loading");
 								if(t === "success" && s.correct_state) { this.correct_state(obj); }
 							}
 							else {
@@ -1744,7 +1748,7 @@
 							d = this._parse_json(d, obj);
 							if(d) {
 								if(obj === -1 || !obj) { this.get_container().children("ul").empty().append(d.children()); }
-								else { obj.append(d).children("a.jstree-loading").removeClass("jstree-loading"); obj.removeData("jstree-is-loading"); }
+								else { obj.append(d).children("a.jstree-loading").removeClass("jstree-loading"); obj.removeData("jstree_is_loading"); }
 								this.clean_node(obj);
 								if(s_call) { s_call.call(this); }
 							}
@@ -1757,7 +1761,7 @@
 								}
 								else {
 									obj.children("a.jstree-loading").removeClass("jstree-loading");
-									obj.removeData("jstree-is-loading");
+									obj.removeData("jstree_is_loading");
 									if(s.correct_state) { 
 										this.correct_state(obj);
 										if(s_call) { s_call.call(this); } 
@@ -1784,14 +1788,16 @@
 
 				if(!js) { return d; }
 				if(s.progressive_unload && obj && obj !== -1) { 
-					obj.data("jstree-children", d);
+					obj.data("jstree_children", d);
 				}
 				if($.isArray(js)) {
 					d = $('<ul>');
 					if(!js.length) { return false; }
 					for(i = 0, j = js.length; i < j; i++) {
 						tmp = this._parse_json(js[i], obj, true);
-						if(tmp.length) { d = d.append(tmp); }
+						if(tmp.length) {
+							d = d.append(tmp);
+						}
 					}
 					d = d.children();
 				}
@@ -1824,10 +1830,10 @@
 					d.prepend("<ins class='jstree-icon'>&#160;</ins>");
 					if(js.children) { 
 						if(s.progressive_render && js.state !== "open") {
-							d.addClass("jstree-closed").data("jstree-children", js.children);
+							d.addClass("jstree-closed").data("jstree_children", js.children);
 						}
 						else {
-							if(s.progressive_unload) { d.data("jstree-children", js.children); }
+							if(s.progressive_unload) { d.data("jstree_children", js.children); }
 							if($.isArray(js.children) && js.children.length) {
 								tmp = this._parse_json(js.children, obj, true);
 								if(tmp.length) {
@@ -1928,6 +1934,7 @@
  * This is useful for maintaining the same structure in many languages (hence the name of the plugin)
  */
 (function ($) {
+	var sh = false;
 	$.jstree.plugin("languages", {
 		__init : function () { this._load_css();  },
 		defaults : [],
@@ -1942,9 +1949,9 @@
 					else { return false; }
 				}
 				if(i == this.data.languages.current_language) { return true; }
-				st = $.vakata.css.get_css(selector + "." + this.data.languages.current_language, false, this.data.languages.language_css);
+				st = $.vakata.css.get_css(selector + "." + this.data.languages.current_language, false, sh);
 				if(st !== false) { st.style.display = "none"; }
-				st = $.vakata.css.get_css(selector + "." + i, false, this.data.languages.language_css);
+				st = $.vakata.css.get_css(selector + "." + i, false, sh);
 				if(st !== false) { st.style.display = ""; }
 				this.data.languages.current_language = i;
 				this.__callback(i);
@@ -2018,7 +2025,7 @@
 						if(langs[ln] != this.data.languages.current_language) { str += " display:none; "; }
 						str += " } ";
 					}
-					this.data.languages.language_css = $.vakata.css.add_sheet({ 'str' : str, 'title' : "jstree-languages" });
+					sh = $.vakata.css.add_sheet({ 'str' : str, 'title' : "jstree-languages" });
 				}
 			},
 			create_node : function (obj, position, js, callback) {
@@ -2686,14 +2693,14 @@
 	$(function() {
 		var css_string = '' + 
 			'#vakata-dragged ins { display:block; text-decoration:none; width:16px; height:16px; margin:0 0 0 0; padding:0; position:absolute; top:4px; left:4px; ' + 
-			' border-radius:4px; -webkit-border-radius:4px; ' +
+			' -moz-border-radius:4px; border-radius:4px; -webkit-border-radius:4px; ' +
 			'} ' + 
 			'#vakata-dragged .jstree-ok { background:green; } ' + 
 			'#vakata-dragged .jstree-invalid { background:red; } ' + 
 			'#jstree-marker { padding:0; margin:0; font-size:12px; overflow:hidden; height:12px; width:8px; position:absolute; top:-30px; z-index:10001; background-repeat:no-repeat; display:none; background-color:transparent; text-shadow:1px 1px 1px white; color:black; line-height:10px; } ' + 
 			'#jstree-marker-line { padding:0; margin:0; line-height:0%; font-size:1px; overflow:hidden; height:1px; width:100px; position:absolute; top:-30px; z-index:10000; background-repeat:no-repeat; display:none; background-color:#456c43; ' + 
 			' cursor:pointer; border:1px solid #eeeeee; border-left:0; -moz-box-shadow: 0px 0px 2px #666; -webkit-box-shadow: 0px 0px 2px #666; box-shadow: 0px 0px 2px #666; ' + 
-			' border-radius:1px; -webkit-border-radius:1px; ' +
+			' -moz-border-radius:1px; border-radius:1px; -webkit-border-radius:1px; ' +
 			'}' + 
 			'';
 		$.vakata.css.add_sheet({ str : css_string, title : "jstree" });
@@ -2800,7 +2807,7 @@
 				obj.each(function () {
 					t = $(this);
 					c = t.is("li") && (t.hasClass("jstree-checked") || (rc && t.children(":checked").length)) ? "jstree-checked" : "jstree-unchecked";
-					t.find("li").andSelf().each(function () {
+					t.find("li").addBack().each(function () {
 						var $t = $(this), nm;
 						$t.children("a" + (_this.data.languages ? "" : ":eq(0)") ).not(":has(.jstree-checkbox)").prepend("<ins class='jstree-checkbox'>&#160;</ins>").parent().not(".jstree-checked, .jstree-unchecked").addClass( ts ? "jstree-unchecked" : c );
 						if(rc) {
@@ -2811,19 +2818,20 @@
 							else {
 								$t.children(":checkbox").addClass("jstree-real-checkbox");
 							}
-							if(c === "jstree-checked") { 
-								$t.children(":checkbox").attr("checked","checked"); 
+						}
+						if(!ts) {
+							if(c === "jstree-checked" || $t.hasClass("jstree-checked") || $t.children(':checked').length) {
+								$t.find("li").addBack().addClass("jstree-checked").children(":checkbox").prop("checked", true);
 							}
 						}
-						if(c === "jstree-checked" && !ts) {
-							$t.find("li").addClass("jstree-checked");
+						else {
+							if($t.hasClass("jstree-checked") || $t.children(':checked').length) {
+								$t.addClass("jstree-checked").children(":checkbox").prop("checked", true);
+							}
 						}
 					});
 				});
 				if(!ts) {
-					if(obj.length === 1 && obj.is("li")) { this._repair_state(obj); }
-					if(obj.is("li")) { obj.each(function () { _this._repair_state(this); }); }
-					else { obj.find("> ul > li").each(function () { _this._repair_state(this); }); }
 					obj.find(".jstree-checked").parent().parent().each(function () { _this._repair_state(this); }); 
 				}
 			},
@@ -2835,25 +2843,25 @@
 				if(this._get_settings().checkbox.two_state) {
 					if(state) { 
 						obj.removeClass("jstree-checked").addClass("jstree-unchecked"); 
-						if(rc) { obj.children(":checkbox").removeAttr("checked"); }
+						if(rc) { obj.children(":checkbox").prop("checked", false); }
 					}
 					else { 
 						obj.removeClass("jstree-unchecked").addClass("jstree-checked"); 
-						if(rc) { obj.children(":checkbox").attr("checked","checked"); }
+						if(rc) { obj.children(":checkbox").prop("checked", true); }
 					}
 				}
 				else {
 					if(state) { 
-						coll = obj.find("li").andSelf();
+						coll = obj.find("li").addBack();
 						if(!coll.filter(".jstree-checked, .jstree-undetermined").length) { return false; }
 						coll.removeClass("jstree-checked jstree-undetermined").addClass("jstree-unchecked"); 
-						if(rc) { coll.children(":checkbox").removeAttr("checked"); }
+						if(rc) { coll.children(":checkbox").prop("checked", false); }
 					}
 					else { 
-						coll = obj.find("li").andSelf();
+						coll = obj.find("li").addBack();
 						if(!coll.filter(".jstree-unchecked, .jstree-undetermined").length) { return false; }
 						coll.removeClass("jstree-unchecked jstree-undetermined").addClass("jstree-checked"); 
-						if(rc) { coll.children(":checkbox").attr("checked","checked"); }
+						if(rc) { coll.children(":checkbox").prop("checked", true); }
 						if(this.data.ui) { this.data.ui.last_selected = obj; }
 						this.data.checkbox.last_selected = obj;
 					}
@@ -2861,24 +2869,24 @@
 						var $this = $(this);
 						if(state) {
 							if($this.children("ul").children("li.jstree-checked, li.jstree-undetermined").length) {
-								$this.parentsUntil(".jstree", "li").andSelf().removeClass("jstree-checked jstree-unchecked").addClass("jstree-undetermined");
-								if(rc) { $this.parentsUntil(".jstree", "li").andSelf().children(":checkbox").removeAttr("checked"); }
+								$this.parentsUntil(".jstree", "li").addBack().removeClass("jstree-checked jstree-unchecked").addClass("jstree-undetermined");
+								if(rc) { $this.parentsUntil(".jstree", "li").addBack().children(":checkbox").prop("checked", false); }
 								return false;
 							}
 							else {
 								$this.removeClass("jstree-checked jstree-undetermined").addClass("jstree-unchecked");
-								if(rc) { $this.children(":checkbox").removeAttr("checked"); }
+								if(rc) { $this.children(":checkbox").prop("checked", false); }
 							}
 						}
 						else {
 							if($this.children("ul").children("li.jstree-unchecked, li.jstree-undetermined").length) {
-								$this.parentsUntil(".jstree", "li").andSelf().removeClass("jstree-checked jstree-unchecked").addClass("jstree-undetermined");
-								if(rc) { $this.parentsUntil(".jstree", "li").andSelf().children(":checkbox").removeAttr("checked"); }
+								$this.parentsUntil(".jstree", "li").addBack().removeClass("jstree-checked jstree-unchecked").addClass("jstree-undetermined");
+								if(rc) { $this.parentsUntil(".jstree", "li").addBack().children(":checkbox").prop("checked", false); }
 								return false;
 							}
 							else {
 								$this.removeClass("jstree-unchecked jstree-undetermined").addClass("jstree-checked");
-								if(rc) { $this.children(":checkbox").attr("checked","checked"); }
+								if(rc) { $this.children(":checkbox").prop("checked", true); }
 							}
 						}
 					});
@@ -2936,6 +2944,10 @@
 			_repair_state : function (obj) {
 				obj = this._get_node(obj);
 				if(!obj.length) { return; }
+				if(this._get_settings().checkbox.two_state) {
+					obj.find('li').addBack().not('.jstree-checked').removeClass('jstree-undetermined').addClass('jstree-unchecked').children(':checkbox').prop('checked', true);
+					return;
+				}
 				var rc = this._get_settings().checkbox.real_checkboxes,
 					a = obj.find("> ul > .jstree-checked").length,
 					b = obj.find("> ul > .jstree-undetermined").length,
@@ -2944,8 +2956,8 @@
 				else if(a === 0 && b === 0) { this.change_state(obj, true); }
 				else if(a === c) { this.change_state(obj, false); }
 				else { 
-					obj.parentsUntil(".jstree","li").andSelf().removeClass("jstree-checked jstree-unchecked").addClass("jstree-undetermined");
-					if(rc) { obj.parentsUntil(".jstree", "li").andSelf().children(":checkbox").removeAttr("checked"); }
+					obj.parentsUntil(".jstree","li").addBack().removeClass("jstree-checked jstree-unchecked").addClass("jstree-undetermined");
+					if(rc) { obj.parentsUntil(".jstree", "li").addBack().children(":checkbox").prop("checked", false); }
 				}
 			},
 			reselect : function () {
@@ -2983,49 +2995,37 @@
  */
 (function ($) {
 	$.vakata.xslt = function (xml, xsl, callback) {
-		var rs = "", xm, xs, processor, support;
-		// TODO: IE9 no XSLTProcessor, no document.recalc
-		if(document.recalc) {
-			xm = document.createElement('xml');
-			xs = document.createElement('xml');
-			xm.innerHTML = xml;
-			xs.innerHTML = xsl;
-			$("body").append(xm).append(xs);
-			setTimeout( (function (xm, xs, callback) {
-				return function () {
-					callback.call(null, xm.transformNode(xs.XMLDocument));
-					setTimeout( (function (xm, xs) { return function () { $(xm).remove(); $(xs).remove(); }; })(xm, xs), 200);
-				};
-			})(xm, xs, callback), 100);
-			return true;
-		}
-		if(typeof window.DOMParser !== "undefined" && typeof window.XMLHttpRequest !== "undefined" && typeof window.XSLTProcessor === "undefined") {
-			xml = new DOMParser().parseFromString(xml, "text/xml");
-			xsl = new DOMParser().parseFromString(xsl, "text/xml");
-			// alert(xml.transformNode());
-			// callback.call(null, new XMLSerializer().serializeToString(rs));
-			
-		}
-		if(typeof window.DOMParser !== "undefined" && typeof window.XMLHttpRequest !== "undefined" && typeof window.XSLTProcessor !== "undefined") {
-			processor = new XSLTProcessor();
-			support = $.isFunction(processor.transformDocument) ? (typeof window.XMLSerializer !== "undefined") : true;
-			if(!support) { return false; }
-			xml = new DOMParser().parseFromString(xml, "text/xml");
-			xsl = new DOMParser().parseFromString(xsl, "text/xml");
-			if($.isFunction(processor.transformDocument)) {
-				rs = document.implementation.createDocument("", "", null);
-				processor.transformDocument(xml, xsl, rs, null);
-				callback.call(null, new XMLSerializer().serializeToString(rs));
-				return true;
+		var r = false, p, q, s;
+		// IE9
+		if(r === false && (window.ActiveXObject || "ActiveXObject" in window)) {
+			try {
+				r = new ActiveXObject("Msxml2.XSLTemplate");
+				q = new ActiveXObject("Msxml2.DOMDocument");
+				q.loadXML(xml);
+				s = new ActiveXObject("Msxml2.FreeThreadedDOMDocument");
+				s.loadXML(xsl);
+				r.stylesheet = s;
+				p = r.createProcessor();
+				p.input = q;
+				p.transform();
+				r = p.output;
 			}
-			else {
-				processor.importStylesheet(xsl);
-				rs = processor.transformToFragment(xml, document);
-				callback.call(null, $("<div />").append(rs).html());
-				return true;
-			}
+			catch (e) { }
 		}
-		return false;
+		xml = $.parseXML(xml);
+		xsl = $.parseXML(xsl);
+		// FF, Chrome
+		if(r === false && typeof (XSLTProcessor) !== "undefined") {
+			p = new XSLTProcessor();
+			p.importStylesheet(xsl);
+			r = p.transformToFragment(xml, document);
+			r = $('<div />').append(r).html();
+		}
+		// OLD IE
+		if(r === false && typeof (xml.transformNode) !== "undefined") {
+			r = xml.transformNode(xsl);
+		}
+		callback.call(null, r);
 	};
 	var xsl = {
 		'nest' : '<' + '?xml version="1.0" encoding="utf-8" ?>' + 
@@ -3194,8 +3194,8 @@
 
 				obj = this._get_node(obj);
 				if(obj && obj !== -1) {
-					if(obj.data("jstree-is-loading")) { return; }
-					else { obj.data("jstree-is-loading",true); }
+					if(obj.data("jstree_is_loading")) { return; }
+					else { obj.data("jstree_is_loading",true); }
 				}
 				switch(!0) {
 					case (!s.data && !s.ajax): throw "Neither data nor ajax settings supplied.";
@@ -3207,14 +3207,14 @@
 									if(d.length > 10) {
 										d = $(d);
 										if(obj === -1 || !obj) { this.get_container().children("ul").empty().append(d.children()); }
-										else { obj.children("a.jstree-loading").removeClass("jstree-loading"); obj.append(d); obj.removeData("jstree-is-loading"); }
+										else { obj.children("a.jstree-loading").removeClass("jstree-loading"); obj.append(d); obj.removeData("jstree_is_loading"); }
 										if(s.clean_node) { this.clean_node(obj); }
 										if(s_call) { s_call.call(this); }
 									}
 									else {
 										if(obj && obj !== -1) { 
 											obj.children("a.jstree-loading").removeClass("jstree-loading");
-											obj.removeData("jstree-is-loading");
+											obj.removeData("jstree_is_loading");
 											if(s.correct_state) { 
 												this.correct_state(obj);
 												if(s_call) { s_call.call(this); } 
@@ -3258,7 +3258,7 @@
 							if(ef) { ef.call(this, x, t, e); }
 							if(obj !== -1 && obj.length) {
 								obj.children("a.jstree-loading").removeClass("jstree-loading");
-								obj.removeData("jstree-is-loading");
+								obj.removeData("jstree_is_loading");
 								if(t === "success" && s.correct_state) { this.correct_state(obj); }
 							}
 							else {
@@ -3279,14 +3279,14 @@
 									if(d.length > 10) {
 										d = $(d);
 										if(obj === -1 || !obj) { this.get_container().children("ul").empty().append(d.children()); }
-										else { obj.children("a.jstree-loading").removeClass("jstree-loading"); obj.append(d); obj.removeData("jstree-is-loading"); }
+										else { obj.children("a.jstree-loading").removeClass("jstree-loading"); obj.append(d); obj.removeData("jstree_is_loading"); }
 										if(s.clean_node) { this.clean_node(obj); }
 										if(s_call) { s_call.call(this); }
 									}
 									else {
 										if(obj && obj !== -1) { 
 											obj.children("a.jstree-loading").removeClass("jstree-loading");
-											obj.removeData("jstree-is-loading");
+											obj.removeData("jstree_is_loading");
 											if(s.correct_state) { 
 												this.correct_state(obj);
 												if(s_call) { s_call.call(this); } 
@@ -3401,12 +3401,26 @@
  * DOES NOT WORK WITH JSON PROGRESSIVE RENDER
  */
 (function ($) {
-	$.expr[':'].jstree_contains = function(a,i,m){
-		return (a.textContent || a.innerText || "").toLowerCase().indexOf(m[3].toLowerCase())>=0;
-	};
-	$.expr[':'].jstree_title_contains = function(a,i,m) {
-		return (a.getAttribute("title") || "").toLowerCase().indexOf(m[3].toLowerCase())>=0;
-	};
+	if($().jquery.split('.')[1] >= 8) {
+		$.expr[':'].jstree_contains = $.expr.createPseudo(function(search) {
+			return function(a) {
+				return (a.textContent || a.innerText || "").toLowerCase().indexOf(search.toLowerCase())>=0;
+			};
+		});
+		$.expr[':'].jstree_title_contains = $.expr.createPseudo(function(search) {
+			return function(a) {
+				return (a.getAttribute("title") || "").toLowerCase().indexOf(search.toLowerCase())>=0;
+			};
+		});
+	}
+	else {
+		$.expr[':'].jstree_contains = function(a,i,m){
+			return (a.textContent || a.innerText || "").toLowerCase().indexOf(m[3].toLowerCase())>=0;
+		};
+		$.expr[':'].jstree_title_contains = function(a,i,m) {
+			return (a.getAttribute("title") || "").toLowerCase().indexOf(m[3].toLowerCase())>=0;
+		};
+	}
 	$.jstree.plugin("search", {
 		__init : function () {
 			this.data.search.str = "";
@@ -3415,7 +3429,7 @@
 				this.get_container()
 					.bind("search.jstree", function (e, data) {
 						$(this).children("ul").find("li").hide().removeClass("jstree-last");
-						data.rslt.nodes.parentsUntil(".jstree").andSelf().show()
+						data.rslt.nodes.parentsUntil(".jstree").addBack().show()
 							.filter("ul").each(function () { $(this).children("li:visible").eq(-1).addClass("jstree-last"); });
 					})
 					.bind("clear_search.jstree", function () {
@@ -3684,6 +3698,11 @@
 						e.preventDefault();
 						if(!$(e.currentTarget).hasClass("jstree-loading")) {
 							this.show_contextmenu(e.currentTarget, e.pageX, e.pageY);
+						}
+					}, this))
+				.delegate("a", "click.jstree", $.proxy(function (e) {
+						if(this.data.contextmenu) {
+							$.vakata.context.hide();
 						}
 					}, this))
 				.bind("destroy.jstree", $.proxy(function () {
@@ -3996,7 +4015,7 @@
 			// this used to use html() and clean the whitespace, but this way any attached data was lost
 			this.data.html_data.original_container_html = this.get_container().find(" > ul > li").clone(true);
 			// remove white space from LI node - otherwise nodes appear a bit to the right
-			this.data.html_data.original_container_html.find("li").andSelf().contents().filter(function() { return this.nodeType == 3; }).remove();
+			this.data.html_data.original_container_html.find("li").addBack().contents().filter(function() { return this.nodeType == 3; }).remove();
 		},
 		defaults : { 
 			data : false,
@@ -4016,8 +4035,8 @@
 					success_func = function () {};
 				obj = this._get_node(obj);
 				if(obj && obj !== -1) {
-					if(obj.data("jstree-is-loading")) { return; }
-					else { obj.data("jstree-is-loading",true); }
+					if(obj.data("jstree_is_loading")) { return; }
+					else { obj.data("jstree_is_loading",true); }
 				}
 				switch(!0) {
 					case ($.isFunction(s.data)):
@@ -4026,14 +4045,14 @@
 								d = $(d);
 								if(!d.is("ul")) { d = $("<ul />").append(d); }
 								if(obj == -1 || !obj) { this.get_container().children("ul").empty().append(d.children()).find("li, a").filter(function () { return !this.firstChild || !this.firstChild.tagName || this.firstChild.tagName !== "INS"; }).prepend("<ins class='jstree-icon'>&#160;</ins>").end().filter("a").children("ins:first-child").not(".jstree-icon").addClass("jstree-icon"); }
-								else { obj.children("a.jstree-loading").removeClass("jstree-loading"); obj.append(d).children("ul").find("li, a").filter(function () { return !this.firstChild || !this.firstChild.tagName || this.firstChild.tagName !== "INS"; }).prepend("<ins class='jstree-icon'>&#160;</ins>").end().filter("a").children("ins:first-child").not(".jstree-icon").addClass("jstree-icon"); obj.removeData("jstree-is-loading"); }
+								else { obj.children("a.jstree-loading").removeClass("jstree-loading"); obj.append(d).children("ul").find("li, a").filter(function () { return !this.firstChild || !this.firstChild.tagName || this.firstChild.tagName !== "INS"; }).prepend("<ins class='jstree-icon'>&#160;</ins>").end().filter("a").children("ins:first-child").not(".jstree-icon").addClass("jstree-icon"); obj.removeData("jstree_is_loading"); }
 								this.clean_node(obj);
 								if(s_call) { s_call.call(this); }
 							}
 							else {
 								if(obj && obj !== -1) {
 									obj.children("a.jstree-loading").removeClass("jstree-loading");
-									obj.removeData("jstree-is-loading");
+									obj.removeData("jstree_is_loading");
 									if(s.correct_state) { 
 										this.correct_state(obj);
 										if(s_call) { s_call.call(this); } 
@@ -4078,7 +4097,7 @@
 							if(ef) { ef.call(this, x, t, e); }
 							if(obj != -1 && obj.length) {
 								obj.children("a.jstree-loading").removeClass("jstree-loading");
-								obj.removeData("jstree-is-loading");
+								obj.removeData("jstree_is_loading");
 								if(t === "success" && s.correct_state) { this.correct_state(obj); }
 							}
 							else {
@@ -4096,14 +4115,14 @@
 								d = $(d);
 								if(!d.is("ul")) { d = $("<ul />").append(d); }
 								if(obj == -1 || !obj) { this.get_container().children("ul").empty().append(d.children()).find("li, a").filter(function () { return !this.firstChild || !this.firstChild.tagName || this.firstChild.tagName !== "INS"; }).prepend("<ins class='jstree-icon'>&#160;</ins>").end().filter("a").children("ins:first-child").not(".jstree-icon").addClass("jstree-icon"); }
-								else { obj.children("a.jstree-loading").removeClass("jstree-loading"); obj.append(d).children("ul").find("li, a").filter(function () { return !this.firstChild || !this.firstChild.tagName || this.firstChild.tagName !== "INS"; }).prepend("<ins class='jstree-icon'>&#160;</ins>").end().filter("a").children("ins:first-child").not(".jstree-icon").addClass("jstree-icon"); obj.removeData("jstree-is-loading"); }
+								else { obj.children("a.jstree-loading").removeClass("jstree-loading"); obj.append(d).children("ul").find("li, a").filter(function () { return !this.firstChild || !this.firstChild.tagName || this.firstChild.tagName !== "INS"; }).prepend("<ins class='jstree-icon'>&#160;</ins>").end().filter("a").children("ins:first-child").not(".jstree-icon").addClass("jstree-icon"); obj.removeData("jstree_is_loading"); }
 								this.clean_node(obj);
 								if(s_call) { s_call.call(this); }
 							}
 							else {
 								if(obj && obj !== -1) {
 									obj.children("a.jstree-loading").removeClass("jstree-loading");
-									obj.removeData("jstree-is-loading");
+									obj.removeData("jstree_is_loading");
 									if(s.correct_state) { 
 										this.correct_state(obj);
 										if(s_call) { s_call.call(this); } 
@@ -4214,7 +4233,8 @@
 		_fn : {
 			_themeroller : function (obj) {
 				var s = this._get_settings().themeroller;
-				obj = !obj || obj == -1 ? this.get_container_ul() : this._get_node(obj).parent();
+				obj = (!obj || obj == -1) ? this.get_container_ul() : this._get_node(obj);
+				obj = (!obj || obj == -1) ? this.get_container_ul() : obj.parent();
 				obj
 					.find("li.jstree-closed")
 						.children("ins.jstree-icon").removeClass(s.opened).addClass("ui-icon " + s.closed).end()
@@ -4327,15 +4347,19 @@
 		},
 		_fn : { 
 			_check_unique : function (nms, p, func) {
-				var cnms = [];
+				var cnms = [], ok = true;
 				p.children("a").each(function () { cnms.push($(this).text().replace(/^\s+/g,"")); });
 				if(!cnms.length || !nms.length) { return true; }
-				cnms = cnms.sort().join(",,").replace(/(,|^)([^,]+)(,,\2)+(,|$)/g,"$1$2$4").replace(/,,+/g,",").replace(/,$/,"").split(",");
-				if((cnms.length + nms.length) != cnms.concat(nms).sort().join(",,").replace(/(,|^)([^,]+)(,,\2)+(,|$)/g,"$1$2$4").replace(/,,+/g,",").replace(/,$/,"").split(",").length) {
+				$.each(nms, function (i, v) {
+					if($.inArray(v, cnms) !== -1) {
+						ok = false;
+						return false;
+					}
+				});
+				if(!ok) {
 					this._get_settings().unique.error_callback.call(null, nms, p, func);
-					return false;
 				}
-				return true;
+				return ok;
 			},
 			check_move : function () {
 				if(!this.__call_old()) { return false; }
@@ -4422,7 +4446,7 @@
 				obj = !obj || obj == -1 ? this.get_container().find("> ul > li") : this._get_node(obj);
 				if(obj === false) { return; } // added for removing root nodes
 				obj.each(function () {
-					$(this).find("li").andSelf().each(function () {
+					$(this).find("li").addBack().each(function () {
 						var $t = $(this);
 						if($t.children(".jstree-wholerow-span").length) { return true; }
 						$t.prepend("<span class='jstree-wholerow-span' style='width:" + ($t.parentsUntil(".jstree","li").length * 18) + "px;'>&#160;</span>");

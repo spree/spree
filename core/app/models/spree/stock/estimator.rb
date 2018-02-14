@@ -17,6 +17,7 @@ module Spree
       end
 
       private
+
       def choose_default_shipping_rate(shipping_rates)
         unless shipping_rates.empty?
           shipping_rates.min_by(&:cost).selected = true
@@ -31,10 +32,11 @@ module Spree
         shipping_methods(package, ui_filter).map do |shipping_method|
           cost = shipping_method.calculator.compute(package)
 
+          next unless cost
           shipping_method.shipping_rates.new(
             cost: gross_amount(cost, taxation_options_for(shipping_method)),
             tax_rate: first_tax_rate_for(shipping_method.tax_category)
-          ) if cost
+          )
         end.compact
       end
 
@@ -58,11 +60,11 @@ module Spree
         package.shipping_methods.select do |ship_method|
           calculator = ship_method.calculator
 
-          ship_method.available_to_display(display_filter) &&
-          ship_method.include?(order.ship_address) &&
-          calculator.available?(package) &&
-          (calculator.preferences[:currency].blank? ||
-           calculator.preferences[:currency] == currency)
+          ship_method.available_to_display?(display_filter) &&
+            ship_method.include?(order.ship_address) &&
+            calculator.available?(package) &&
+            (calculator.preferences[:currency].blank? ||
+             calculator.preferences[:currency] == currency)
         end
       end
     end

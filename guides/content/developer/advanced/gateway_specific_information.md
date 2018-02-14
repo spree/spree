@@ -19,7 +19,7 @@ For both you real business's Authorize.net account and your sandbox, you will ge
 
 WARNING: If you reset your Authorize.net password (via the web interface), these credentials will be expired and regenerated automatically. However, the old set of credentials will continue to work for a period of 24 hours before they cease working.
 
-Here on the edit Paymemt Method screen you will also see settings for both "test mode" and a setting for "server." Do not confuse the two settings.
+Here on the edit Payment Method screen you will also see settings for both "test mode" and a setting for "server." Do not confuse the two settings.
 
 In both the AuthorizeNet and AuthorizeNetCIM objects, the "server" setting must be set to either 'live' (for your real-live authorize.net Production environemnt tied to your business's bank account) or 'test' (for a sandbox account you created on http://developer.authorize.net)
 

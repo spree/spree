@@ -2,7 +2,7 @@ module Spree
   class Refund < Spree::Base
     with_options inverse_of: :refunds do
       belongs_to :payment
-      belongs_to :reimbursement
+      belongs_to :reimbursement, optional: true
     end
     belongs_to :reason, class_name: 'Spree::RefundReason', foreign_key: :refund_reason_id
 
@@ -14,7 +14,7 @@ module Spree
       validates :transaction_id, on: :update
       validates :amount, numericality: { greater_than: 0, allow_nil: true }
     end
-    validate :amount_is_less_than_or_equal_to_allowed_amount, on: :create
+    validate :amount_is_less_than_or_equal_to_allowed_amount, on: :create, if: :amount
 
     after_create :perform!
     after_create :create_log_entry
@@ -22,7 +22,7 @@ module Spree
     scope :non_reimbursement, -> { where(reimbursement_id: nil) }
 
     def money
-      Spree::Money.new(amount, { currency: payment.currency })
+      Spree::Money.new(amount, currency: payment.currency)
     end
     alias display_amount money
 
@@ -55,21 +55,21 @@ module Spree
     # return an activemerchant response object if successful or else raise an error
     def process!(credit_cents)
       response = if payment.payment_method.payment_profiles_supported?
-        payment.payment_method.credit(credit_cents, payment.source, payment.transaction_id, {originator: self})
-      else
-        payment.payment_method.credit(credit_cents, payment.transaction_id, {originator: self})
+                   payment.payment_method.credit(credit_cents, payment.source, payment.transaction_id, originator: self)
+                 else
+                   payment.payment_method.credit(credit_cents, payment.transaction_id, originator: self)
       end
 
-      if !response.success?
+      unless response.success?
         logger.error(Spree.t(:gateway_error) + "  #{response.to_yaml}")
         text = response.params['message'] || response.params['response_reason_text'] || response.message
-        raise Core::GatewayError.new(text)
+        raise Core::GatewayError, text
       end
 
       response
     rescue ActiveMerchant::ConnectionError => e
       logger.error(Spree.t(:gateway_error) + "  #{e.inspect}")
-      raise Core::GatewayError.new(Spree.t(:unable_to_connect_to_gateway))
+      raise Core::GatewayError, Spree.t(:unable_to_connect_to_gateway)
     end
 
     def create_log_entry

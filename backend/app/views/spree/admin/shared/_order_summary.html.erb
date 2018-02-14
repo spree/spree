@@ -98,7 +98,7 @@
       <% if @order.approved? %>
         <tr>
           <td><strong><%= Spree.t(:approver) %></strong></td>
-          <td><%= @order.approver.email %></td>
+          <td><%= @order.approver.try(:email) %></td>
         </tr>
         <tr>
           <td><strong><%= Spree.t(:approved_at) %></strong></td>

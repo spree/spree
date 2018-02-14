@@ -9,11 +9,11 @@ module Spree
         allow(controller).to receive(:load_order).with(true).and_return(true)
       end
 
-      it 'should invoke load_order_with_lock' do
+      it 'invokes load_order_with_lock' do
         expect(controller).to receive(:load_order_with_lock).exactly(1).times
       end
 
-      it 'should invoke load_order' do
+      it 'invokes load_order' do
         expect(controller).to receive(:load_order).with(true).exactly(1).times.and_return(true)
       end
 
@@ -24,8 +24,8 @@ module Spree
           end
         end
 
-        it 'should not generate double_render_error' do
-          expect(response).to be_success
+        it 'does not generate double_render_error' do
+          expect(response).to be_successful
         end
       end
 
@@ -34,7 +34,7 @@ module Spree
       end
     end
 
-    before(:each) do
+    before do
       stub_authentication!
       Spree::Config[:track_inventory_levels] = false
       country_zone = create(:zone, name: 'CountryZone')
@@ -60,55 +60,55 @@ module Spree
         order
       end
 
-      before(:each) do
+      before do
         allow_any_instance_of(Order).to receive_messages(confirmation_required?: true)
         allow_any_instance_of(Order).to receive_messages(payment_required?: true)
       end
 
-      it "should transition a recently created order from cart to address" do
-        expect(order.state).to eq "cart"
+      it 'transitions a recently created order from cart to address' do
+        expect(order.state).to eq 'cart'
         expect(order.email).not_to be_nil
         api_put :update, id: order.to_param, order_token: order.guest_token
-        expect(order.reload.state).to eq "address"
+        expect(order.reload.state).to eq 'address'
       end
 
-      it "should transition a recently created order from cart to address with order token in header" do
-        expect(order.state).to eq "cart"
+      it 'transitions a recently created order from cart to address with order token in header' do
+        expect(order.state).to eq 'cart'
         expect(order.email).not_to be_nil
-        request.headers["X-Spree-Order-Token"] = order.guest_token
+        request.headers['X-Spree-Order-Token'] = order.guest_token
         api_put :update, id: order.to_param
-        expect(order.reload.state).to eq "address"
+        expect(order.reload.state).to eq 'address'
       end
 
-      it "can take line_items_attributes as a parameter" do
+      it 'can take line_items_attributes as a parameter' do
         line_item = order.line_items.first
         api_put :update, id: order.to_param, order_token: order.guest_token,
                          order: { line_items_attributes: { 0 => { id: line_item.id, quantity: 1 } } }
         expect(response.status).to eq(200)
-        expect(order.reload.state).to eq "address"
+        expect(order.reload.state).to eq 'address'
       end
 
-      it "can take line_items as a parameter" do
+      it 'can take line_items as a parameter' do
         line_item = order.line_items.first
         api_put :update, id: order.to_param, order_token: order.guest_token,
                          order: { line_items: { 0 => { id: line_item.id, quantity: 1 } } }
         expect(response.status).to eq(200)
-        expect(order.reload.state).to eq "address"
+        expect(order.reload.state).to eq 'address'
       end
 
-      it "will return an error if the order cannot transition" do
-        skip "not sure if this test is valid"
+      it 'will return an error if the order cannot transition' do
+        skip 'not sure if this test is valid'
         order.bill_address = nil
         order.save
-        order.update_column(:state, "address")
+        order.update_column(:state, 'address')
         api_put :update, id: order.to_param, order_token: order.guest_token
         # Order has not transitioned
         expect(response.status).to eq(422)
       end
 
-      context "transitioning to delivery" do
+      context 'transitioning to delivery' do
         before do
-          order.update_column(:state, "address")
+          order.update_column(:state, 'address')
         end
 
         let(:address) do
@@ -124,13 +124,13 @@ module Spree
           }
         end
 
-        it "can update addresses and transition from address to delivery" do
+        it 'can update addresses and transition from address to delivery' do
           api_put :update,
-            id: order.to_param, order_token: order.guest_token,
-            order: {
-              bill_address_attributes: address,
-              ship_address_attributes: address
-            }
+                  id: order.to_param, order_token: order.guest_token,
+                  order: {
+                    bill_address_attributes: address,
+                    ship_address_attributes: address
+                  }
           expect(json_response['state']).to eq('delivery')
           expect(json_response['bill_address']['firstname']).to eq('John')
           expect(json_response['ship_address']['firstname']).to eq('John')
@@ -138,109 +138,109 @@ module Spree
         end
 
         # Regression Spec for #5389 & #5880
-        it "can update addresses but not transition to delivery w/o shipping setup" do
+        it 'can update addresses but not transition to delivery w/o shipping setup' do
           Spree::ShippingMethod.destroy_all
           api_put :update,
-            id: order.to_param, order_token: order.guest_token,
-            order: {
-              bill_address_attributes: address,
-              ship_address_attributes: address
-            }
-          expect(json_response['error']).to eq(I18n.t(:could_not_transition, scope: "spree.api.order"))
+                  id: order.to_param, order_token: order.guest_token,
+                  order: {
+                    bill_address_attributes: address,
+                    ship_address_attributes: address
+                  }
+          expect(json_response['error']).to eq(I18n.t(:could_not_transition, scope: 'spree.api.order'))
           expect(response.status).to eq(422)
         end
 
         # Regression test for #4498
-        it "does not contain duplicate variant data in delivery return" do
+        it 'does not contain duplicate variant data in delivery return' do
           api_put :update,
-            id: order.to_param, order_token: order.guest_token,
-            order: {
-              bill_address_attributes: address,
-              ship_address_attributes: address
-            }
+                  id: order.to_param, order_token: order.guest_token,
+                  order: {
+                    bill_address_attributes: address,
+                    ship_address_attributes: address
+                  }
           # Shipments manifests should not return the ENTIRE variant
           # This information is already present within the order's line items
           expect(json_response['shipments'].first['manifest'].first['variant']).to be_nil
-          expect(json_response['shipments'].first['manifest'].first['variant_id']).to_not be_nil
+          expect(json_response['shipments'].first['manifest'].first['variant_id']).not_to be_nil
         end
       end
 
-      it "can update shipping method and transition from delivery to payment" do
-        order.update_column(:state, "delivery")
+      it 'can update shipping method and transition from delivery to payment' do
+        order.update_column(:state, 'delivery')
         shipment = create(:shipment, order: order)
         shipment.refresh_rates
         shipping_rate = shipment.shipping_rates.where(selected: false).first
         api_put :update, id: order.to_param, order_token: order.guest_token,
-          order: { shipments_attributes: { "0" => { selected_shipping_rate_id: shipping_rate.id, id: shipment.id } } }
+                         order: { shipments_attributes: { '0' => { selected_shipping_rate_id: shipping_rate.id, id: shipment.id } } }
         expect(response.status).to eq(200)
         # Find the correct shipment...
-        json_shipment = json_response['shipments'].detect { |s| s["id"] == shipment.id }
+        json_shipment = json_response['shipments'].detect { |s| s['id'] == shipment.id }
         # Find the correct shipping rate for that shipment...
-        json_shipping_rate = json_shipment['shipping_rates'].detect { |sr| sr["id"] == shipping_rate.id }
+        json_shipping_rate = json_shipment['shipping_rates'].detect { |sr| sr['id'] == shipping_rate.id }
         # ... And finally ensure that it's selected
         expect(json_shipping_rate['selected']).to be true
         # Order should automatically transfer to payment because all criteria are met
         expect(json_response['state']).to eq('payment')
       end
 
-      it "can update payment method and transition from payment to confirm" do
-        order.update_column(:state, "payment")
+      it 'can update payment method and transition from payment to confirm' do
+        order.update_column(:state, 'payment')
         api_put :update, id: order.to_param, order_token: order.guest_token,
-          order: { payments_attributes: [{ payment_method_id: @payment_method.id }] }
+                         order: { payments_attributes: [{ payment_method_id: @payment_method.id }] }
         expect(json_response['state']).to eq('confirm')
         expect(json_response['payments'][0]['payment_method']['name']).to eq(@payment_method.name)
         expect(json_response['payments'][0]['amount']).to eq(order.total.to_s)
         expect(response.status).to eq(200)
       end
 
-      it "can update payment method with source and transition from payment to confirm" do
-        order.update_column(:state, "payment")
+      it 'can update payment method with source and transition from payment to confirm' do
+        order.update_column(:state, 'payment')
         source_attributes = {
-          number: "4111111111111111",
+          number: '4111111111111111',
           month: 1.month.from_now.month,
           year: 1.month.from_now.year,
-          verification_value: "123",
-          name: "Spree Commerce"
+          verification_value: '123',
+          name: 'Spree Commerce'
         }
 
         api_put :update, id: order.to_param, order_token: order.guest_token,
-          order: { payments_attributes: [{ payment_method_id: @payment_method.id.to_s }],
-                      payment_source: { @payment_method.id.to_s => source_attributes } }
+                         order: { payments_attributes: [{ payment_method_id: @payment_method.id.to_s }],
+                                  payment_source: { @payment_method.id.to_s => source_attributes } }
         expect(json_response['payments'][0]['payment_method']['name']).to eq(@payment_method.name)
         expect(json_response['payments'][0]['amount']).to eq(order.total.to_s)
         expect(response.status).to eq(200)
       end
 
-      it "returns errors when source is missing attributes" do
-        order.update_column(:state, "payment")
+      it 'returns errors when source is missing attributes' do
+        order.update_column(:state, 'payment')
         api_put :update, id: order.to_param, order_token: order.guest_token,
-          order: {
-            payments_attributes: [{ payment_method_id: @payment_method.id }]
-          },
-          payment_source: {
-            @payment_method.id.to_s => { name: "Spree" }
-          }
+                         order: {
+                           payments_attributes: [{ payment_method_id: @payment_method.id }]
+                         },
+                         payment_source: {
+                           @payment_method.id.to_s => { name: 'Spree' }
+                         }
 
         expect(response.status).to eq(422)
         cc_errors = json_response['errors']['payments.Credit Card']
         expect(cc_errors).to include("Number can't be blank")
-        expect(cc_errors).to include("Month is not a number")
-        expect(cc_errors).to include("Year is not a number")
+        expect(cc_errors).to include('Month is not a number')
+        expect(cc_errors).to include('Year is not a number')
         expect(cc_errors).to include("Verification Value can't be blank")
       end
 
-      it "allow users to reuse a credit card" do
-        order.update_column(:state, "payment")
+      it 'allow users to reuse a credit card' do
+        order.update_column(:state, 'payment')
         credit_card = create(:credit_card, user_id: order.user_id, payment_method_id: @payment_method.id)
 
         api_put :update, id: order.to_param, order_token: order.guest_token,
-          order: { existing_card: credit_card.id }
+                         order: { existing_card: credit_card.id }
 
         expect(response.status).to eq 200
         expect(order.credit_cards).to match_array [credit_card]
       end
 
-      it "can transition from confirm to complete" do
+      it 'can transition from confirm to complete' do
         order.update_columns(state: 'confirm')
         allow_any_instance_of(Spree::Order).to receive_messages(payment_required?: false)
         api_put :update, id: order.to_param, order_token: order.guest_token
@@ -248,75 +248,73 @@ module Spree
         expect(response.status).to eq(200)
       end
 
-      it "returns the order if the order is already complete" do
+      it 'prevent normal user from updating completed order' do
         order.update_columns(completed_at: Time.current, state: 'complete')
         api_put :update, id: order.to_param, order_token: order.guest_token
-        expect(json_response['number']).to eq(order.number)
-        expect(response.status).to eq(200)
+        assert_unauthorized!
       end
 
       # Regression test for #3784
-      it "can update the special instructions for an order" do
+      it 'can update the special instructions for an order' do
         instructions = "Don't drop it. (Please)"
         api_put :update, id: order.to_param, order_token: order.guest_token,
-          order: { special_instructions: instructions }
+                         order: { special_instructions: instructions }
         expect(json_response['special_instructions']).to eql(instructions)
       end
 
-      context "as an admin" do
+      context 'as an admin' do
         sign_in_as_admin!
-        it "can assign a user to the order" do
+        it 'can assign a user to the order' do
           user = create(:user)
           # Need to pass email as well so that validations succeed
           api_put :update, id: order.to_param, order_token: order.guest_token,
-            order: { user_id: user.id, email: "guest@spreecommerce.org" }
+                           order: { user_id: user.id, email: 'guest@spreecommerce.org' }
           expect(response.status).to eq(200)
           expect(json_response['user_id']).to eq(user.id)
         end
       end
 
-      it "can assign an email to the order" do
+      it 'can assign an email to the order' do
         api_put :update, id: order.to_param, order_token: order.guest_token,
-          order: { email: "guest@spreecommerce.org" }
-        expect(json_response['email']).to eq("guest@spreecommerce.org")
+                         order: { email: 'guest@spreecommerce.org' }
+        expect(json_response['email']).to eq('guest@spreecommerce.org')
         expect(response.status).to eq(200)
       end
 
-      it "can apply a coupon code to an order" do
-        skip "ensure that the order totals are properly updated, see frontend orders_controller or checkout_controller as example"
-
-        order.update_column(:state, "payment")
+      it 'can apply a coupon code to an order' do
+        order.update_column(:state, 'payment')
         expect(PromotionHandler::Coupon).to receive(:new).with(order).and_call_original
-        expect_any_instance_of(PromotionHandler::Coupon).to receive(:apply).and_return({ coupon_applied?: true })
-        api_put :update, id: order.to_param, order_token: order.guest_token, order: { coupon_code: "foobar" }
+        expect_any_instance_of(PromotionHandler::Coupon).to receive(:apply).and_return(coupon_applied?: true)
+        api_put :update, id: order.to_param, order_token: order.guest_token, order: { coupon_code: 'foobar' }
       end
 
       def send_request
         api_put :update, id: order.to_param, order_token: order.guest_token
       end
 
-      it_should_behave_like 'action which loads order using load_order_with_lock'
+      it_behaves_like 'action which loads order using load_order_with_lock'
     end
 
     context "PUT 'next'" do
       let!(:order) { create(:order_with_line_items) }
-      it "cannot transition to address without a line item" do
+
+      it 'cannot transition to address without a line item' do
         order.line_items.delete_all
-        order.update_column(:email, "spree@example.com")
+        order.update_column(:email, 'spree@example.com')
         api_put :next, id: order.to_param, order_token: order.guest_token
         expect(response.status).to eq(422)
-        expect(json_response["errors"]["base"]).to include(Spree.t(:there_are_no_items_for_this_order))
+        expect(json_response['errors']['base']).to include(Spree.t(:there_are_no_items_for_this_order))
       end
 
-      it "can transition an order to the next state" do
-        order.update_column(:email, "spree@example.com")
+      it 'can transition an order to the next state' do
+        order.update_column(:email, 'spree@example.com')
 
         api_put :next, id: order.to_param, order_token: order.guest_token
         expect(response.status).to eq(200)
         expect(json_response['state']).to eq('address')
       end
 
-      it "cannot transition if order email is blank" do
+      it 'cannot transition if order email is blank' do
         order.update_columns(
           state: 'address',
           email: nil
@@ -327,17 +325,24 @@ module Spree
         expect(json_response['error']).to match(/could not be transitioned/)
       end
 
-      it "doesnt advance payment state if order has no payment" do
-        order.update_column(:state, "payment")
+      it 'cannot transition if any line_item becomes unavailable' do
+        allow_any_instance_of(Order).to receive(:insufficient_stock_lines).and_return(order.line_items)
+        api_put :next, id: order.to_param, order_token: order.guest_token
+        expect(response.status).to eq(422)
+        expect(json_response['error']).to match(Spree.t(:insufficient_quantity, scope: [:api, :order]))
+      end
+
+      it 'doesnt advance payment state if order has no payment' do
+        order.update_column(:state, 'payment')
         api_put :next, id: order.to_param, order_token: order.guest_token, order: {}
-        expect(json_response["errors"]["base"]).to include(Spree.t(:no_payment_found))
+        expect(json_response['errors']['base']).to include(Spree.t(:no_payment_found))
       end
 
       def send_request
         api_put :next, id: order.to_param, order_token: order.guest_token
       end
 
-      it_should_behave_like 'action which loads order using load_order_with_lock'
+      it_behaves_like 'action which loads order using load_order_with_lock'
     end
 
     context "PUT 'advance'" do
@@ -357,7 +362,7 @@ module Spree
         api_put :advance, id: order.to_param, order_token: order.guest_token
       end
 
-      it_should_behave_like 'action which loads order using load_order_with_lock'
+      it_behaves_like 'action which loads order using load_order_with_lock'
     end
   end
 end

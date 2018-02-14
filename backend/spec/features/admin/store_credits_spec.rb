@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'Store credits admin' do
+describe 'Store credits admin', type: :feature do
   stub_authorization!
 
   let!(:admin_user) { create(:admin_user) }
@@ -16,10 +16,10 @@ describe 'Store credits admin' do
       click_link 'Users'
     end
 
-    it 'should be on the store credits page' do
+    it 'is on the store credits page' do
       click_link store_credit.user.email
       click_link 'Store Credits'
-      expect(page.current_path).to eq spree.admin_user_store_credits_path(store_credit.user)
+      expect(page).to have_current_path(spree.admin_user_store_credits_path(store_credit.user))
 
       store_credit_table = page.find('table')
       expect(store_credit_table.all('tr').count).to eq 1
@@ -39,13 +39,14 @@ describe 'Store credits admin' do
       allow_any_instance_of(Spree::Admin::StoreCreditsController).to receive(:try_spree_current_user).and_return(admin_user)
     end
 
-    it 'should create store credit and associate it with the user' do
+    it 'creates store credit and associate it with the user' do
       click_link 'Add Store Credit'
       page.fill_in 'store_credit_amount', with: '102.00'
       select 'Exchange', from: 'store_credit_category_id'
       click_button 'Create'
 
-      expect(page.current_path).to eq spree.admin_user_store_credits_path(store_credit.user)
+      expect(page).to have_current_path(spree.admin_user_store_credits_path(store_credit.user))
+
       store_credit_table = page.find('table')
       expect(store_credit_table.all('tr').count).to eq 2
       expect(Spree::StoreCredit.count).to eq 2
@@ -63,15 +64,34 @@ describe 'Store credits admin' do
       allow_any_instance_of(Spree::Admin::StoreCreditsController).to receive(:try_spree_current_user).and_return(admin_user)
     end
 
-    it 'should create store credit and associate it with the user' do
+    it 'creates store credit and associate it with the user' do
       click_link 'Edit'
       page.fill_in 'store_credit_amount', with: updated_amount
       click_button 'Update'
 
-      expect(page.current_path).to eq spree.admin_user_store_credits_path(store_credit.user)
+      expect(page).to have_current_path(spree.admin_user_store_credits_path(store_credit.user))
       store_credit_table = page.find('table')
       expect(store_credit_table).to have_content(Spree::Money.new(updated_amount).to_s)
       expect(store_credit.reload.amount.to_f).to eq updated_amount.to_f
+    end
+  end
+
+  describe 'deleting store credit', js: true do
+    before do
+      visit spree.admin_path
+      click_link 'Users'
+      click_link store_credit.user.email
+      click_link 'Store Credits'
+      allow_any_instance_of(Spree::Admin::StoreCreditsController).to receive(:try_spree_current_user).and_return(admin_user)
+    end
+
+    it 'updates store credit in lifetime stats' do
+      spree_accept_alert do
+        click_icon :delete
+        wait_for_ajax
+      end
+      store_credit = page.find('#user-lifetime-stats #store_credit')
+      expect(store_credit.text).to eq(Spree::Money.new(0).to_s)
     end
   end
 
@@ -86,7 +106,7 @@ describe 'Store credits admin' do
       allow_any_instance_of(Spree::Admin::StoreCreditsController).to receive(:try_spree_current_user).and_return(admin_user)
     end
 
-    it 'should display flash withe error' do
+    it 'displays flash withe error' do
       expect(page).to have_content(Spree.t(:user_not_found))
     end
   end

@@ -16,7 +16,7 @@ module Spree
       if store_credit.nil?
         ActiveMerchant::Billing::Response.new(false, Spree.t('store_credit_payment_method.unable_to_find'), {}, {})
       else
-        action = -> (store_credit) do
+        action = lambda do |store_credit|
           store_credit.authorize(
             amount_in_cents / 100.0.to_d,
             gateway_options[:currency],
@@ -28,7 +28,7 @@ module Spree
     end
 
     def capture(amount_in_cents, auth_code, gateway_options = {})
-      action = -> (store_credit) do
+      action = lambda do |store_credit|
         store_credit.capture(
           amount_in_cents / 100.0.to_d,
           auth_code,
@@ -57,14 +57,14 @@ module Spree
     end
 
     def void(auth_code, gateway_options = {})
-      action = -> (store_credit) do
+      action = lambda do |store_credit|
         store_credit.void(auth_code, action_originator: gateway_options[:originator])
       end
       handle_action(action, :void, auth_code)
     end
 
     def credit(amount_in_cents, auth_code, gateway_options)
-      action = -> (store_credit) do
+      action = lambda do |store_credit|
         currency = gateway_options[:currency] || store_credit.currency
         originator = gateway_options[:originator]
 
@@ -82,7 +82,7 @@ module Spree
       if !store_credit_event || !store_credit
         handle_action(nil, :cancel, false)
       else
-        action = -> (store_credit) do
+        action = lambda do |store_credit|
           store_credit.credit(store_credit_event.amount, auth_code, store_credit.currency)
         end
         handle_action(action, :cancel, auth_code)
@@ -91,6 +91,10 @@ module Spree
 
     def source_required?
       true
+    end
+
+    def available_for_order?(order)
+      order.could_use_store_credit?
     end
 
     private
@@ -113,7 +117,7 @@ module Spree
 
     def handle_action(action, action_name, auth_code)
       # Find first event with provided auth_code
-      store_credit = StoreCreditEvent.find_by_authorization_code(auth_code).try(:store_credit)
+      store_credit = StoreCreditEvent.find_by(authorization_code: auth_code).try(:store_credit)
 
       if store_credit.nil?
         ActiveMerchant::Billing::Response.new(

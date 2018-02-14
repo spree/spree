@@ -8,6 +8,9 @@
 </div>
 
 <div class="well text-right form-buttons" data-hook="buttons">
+  <% if @order.using_store_credit? %>
+    <%= button_tag Spree.t('store_credit.remove'), name: 'remove_store_credit', class: 'continue btn' %>
+  <% end %>
   <%= submit_tag Spree.t(:place_order), class: 'btn btn-lg btn-success' %>
   <script>Spree.disableSaveOnClick();</script>
 </div>

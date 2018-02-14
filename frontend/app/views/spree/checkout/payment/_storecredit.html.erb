@@ -5,6 +5,7 @@
       <p><%= Spree.t('store_credit.remaining_amount', amount: @order.display_store_credit_remaining_after_capture) %></p>
     <% else %>
       <p><%= Spree.t('store_credit.additional_payment_needed', amount: @order.display_order_total_after_store_credit) %></p>
+      <%= button_tag Spree.t('store_credit.remove'), name: 'remove_store_credit', class: 'continue btn' %>
     <% end %>
   </div>
 

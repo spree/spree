@@ -5,17 +5,13 @@ class Spree::Admin::PromotionRulesController < Spree::Admin::BaseController
   before_action :validate_promotion_rule_type, only: :create
 
   def create
-    # Remove type key from this hash so that we don't attempt
-    # to set it when creating a new record, as this is raises
-    # an error in ActiveRecord 3.2.
-    promotion_rule_type = params[:promotion_rule].delete(:type)
-    @promotion_rule = promotion_rule_type.constantize.new(params[:promotion_rule])
+    @promotion_rule = @promotion_rule_type.new(promotion_rule_params)
     @promotion_rule.promotion = @promotion
     if @promotion_rule.save
       flash[:success] = Spree.t(:successfully_created, resource: Spree.t(:promotion_rule))
     end
     respond_to do |format|
-      format.html { redirect_to spree.edit_admin_promotion_path(@promotion)}
+      format.html { redirect_to spree.edit_admin_promotion_path(@promotion) }
       format.js   { render layout: false }
     end
   end
@@ -26,7 +22,7 @@ class Spree::Admin::PromotionRulesController < Spree::Admin::BaseController
       flash[:success] = Spree.t(:successfully_removed, resource: Spree.t(:promotion_rule))
     end
     respond_to do |format|
-      format.html { redirect_to spree.edit_admin_promotion_path(@promotion)}
+      format.html { redirect_to spree.edit_admin_promotion_path(@promotion) }
       format.js   { render layout: false }
     end
   end
@@ -38,13 +34,21 @@ class Spree::Admin::PromotionRulesController < Spree::Admin::BaseController
   end
 
   def validate_promotion_rule_type
-    valid_promotion_rule_types = Rails.application.config.spree.promotions.rules.map(&:to_s)
-    if !valid_promotion_rule_types.include?(params[:promotion_rule][:type])
+    requested_type = params[:promotion_rule].delete(:type)
+    promotion_rule_types = Rails.application.config.spree.promotions.rules
+    @promotion_rule_type = promotion_rule_types.detect do |klass|
+      klass.name == requested_type
+    end
+    unless @promotion_rule_type
       flash[:error] = Spree.t(:invalid_promotion_rule)
       respond_to do |format|
-        format.html { redirect_to spree.edit_admin_promotion_path(@promotion)}
+        format.html { redirect_to spree.edit_admin_promotion_path(@promotion) }
         format.js   { render layout: false }
       end
     end
+  end
+
+  def promotion_rule_params
+    params[:promotion_rule].permit!
   end
 end

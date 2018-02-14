@@ -8,5 +8,5 @@
   <%= hidden_field_tag "#{param_prefix}[id]", promotion_action.id %>
 
   <%= render partial: "spree/admin/promotions/actions/#{type_name}",
-             locals: { promotion_action: promotion_action, param_prefix: param_prefix } rescue nil %>
+    locals: { promotion_action: promotion_action, param_prefix: param_prefix } %>
 </div>

@@ -3,30 +3,29 @@ require 'spec_helper'
 describe Spree::Admin::RefundsController do
   stub_authorization!
 
-  describe "POST create" do
-    context "a Spree::Core::GatewayError is raised" do
-
-      let(:payment) { create(:payment) }
-
+  describe 'POST create' do
+    context 'a Spree::Core::GatewayError is raised' do
       subject do
         spree_post :create,
-                   refund: { amount: "50.0", refund_reason_id: "1" },
+                   refund: { amount: '50.0', refund_reason_id: '1' },
                    order_id: payment.order.to_param,
                    payment_id: payment.to_param
       end
 
-      before(:each) do
+      let(:payment) { create(:payment) }
+
+      before do
         def controller.create
-          raise Spree::Core::GatewayError.new('An error has occurred')
+          raise Spree::Core::GatewayError, 'An error has occurred'
         end
       end
 
-      it "sets an error message with the correct text" do
+      it 'sets an error message with the correct text' do
         subject
         expect(flash[:error]).to eq 'An error has occurred'
       end
 
-      it { should render_template(:new) }
+      it { is_expected.to render_template(:new) }
     end
   end
 end

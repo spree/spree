@@ -1,31 +1,30 @@
-# encoding: utf-8
 require 'spec_helper'
 
-describe "Customer Returns", type: :feature do
+describe 'Customer Returns', type: :feature do
   stub_authorization!
   let!(:customer_return) { create(:customer_return, created_at: Time.current) }
 
-  describe "listing" do
+  describe 'listing' do
     let!(:customer_return_2) { create(:customer_return, created_at: Time.current - 1.day) }
 
-    before(:each) do
+    before do
       visit spree.admin_customer_returns_path
     end
 
-    it "lists sorted by created_at" do
+    it 'lists sorted by created_at' do
       within_row(1) { expect(page).to have_content(customer_return.number) }
       within_row(2) { expect(page).to have_content(customer_return_2.number) }
     end
 
-    it "displays pre tax total" do
+    it 'displays pre tax total' do
       within_row(1) { expect(page).to have_content(customer_return.display_pre_tax_total.to_html) }
     end
 
-    it "displays order number" do
+    it 'displays order number' do
       within_row(1) { expect(page).to have_content(customer_return.order.number) }
     end
 
-    it "displays customer return number" do
+    it 'displays customer return number' do
       within_row(1) { expect(page).to have_content(customer_return.number) }
     end
 
@@ -38,21 +37,21 @@ describe "Customer Returns", type: :feature do
     end
   end
 
-  describe "searching" do
+  describe 'searching' do
     let!(:customer_return_2) { create(:customer_return) }
 
-    it "searches on number" do
+    it 'searches on number' do
       visit spree.admin_customer_returns_path
 
       click_on 'Filter'
-      fill_in "q_number_cont", with: customer_return.number
+      fill_in 'q_number_cont', with: customer_return.number
       click_on 'Search'
 
       expect(page).to have_content(customer_return.number)
       expect(page).not_to have_content(customer_return_2.number)
 
       click_on 'Filter'
-      fill_in "q_number_cont", with: customer_return_2.number
+      fill_in 'q_number_cont', with: customer_return_2.number
       click_on 'Search'
 
       expect(page).to have_content(customer_return_2.number)

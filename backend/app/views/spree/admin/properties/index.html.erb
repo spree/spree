@@ -4,7 +4,7 @@
 
 <% content_for :page_actions do %>
   <%= button_link_to Spree.t(:new_property), new_object_url, { class: "btn-success", icon: 'add', 'data-update' => 'new_property', id: 'new_property_link' } %>
-<% end %>
+<% end if can?(:create, Spree::Property) %>
 
 <% content_for :table_filter do %>
   <div data-hook="admin_property_sidebar">
@@ -13,14 +13,14 @@
       <%- locals = {f: f} %>
 
       <div class="row">
-        <div class="col col-md-6">
+        <div class="col-xs-12 col-md-6">
           <div data-hook="admin_property_index_search" class="form-group">
             <%= f.label :name_cont, Spree.t(:name) %>
             <%= f.text_field :name_cont, class: "form-control js-quick-search-target" %>
           </div>
         </div>
 
-        <div class="col-md-6">
+        <div class="col-xs-12 col-md-6">
           <div class="form-group">
             <%= f.label :presentation_cont, Spree.t(:presentation) %>
             <%= f.text_field :presentation_cont, class: "form-control" %>
@@ -51,8 +51,8 @@
           <td><%= property.name %></td>
           <td><%= property.presentation %></td>
           <td class="actions actions-2 text-right">
-            <%= link_to_edit(property, no_text: true) %>
-            <%= link_to_delete(property, no_text: true) %>
+            <%= link_to_edit(property, no_text: true) if can?(:edit, property) %>
+            <%= link_to_delete(property, no_text: true) if can?(:delete, property) %>
           </td>
         </tr>
       <% end %>
@@ -61,7 +61,7 @@
 <% else %>
   <div class="alert alert-info no-objects-found">
     <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::Property)) %>,
-    <%= link_to Spree.t(:add_one), new_object_url %>!
+    <%= link_to Spree.t(:add_one), new_object_url if can?(:create, Spree::OptionType) %>!
   </div>
 <% end %>
 

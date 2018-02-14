@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :check_payment_method, class: Spree::PaymentMethod::Check do
     name 'Check'
   end
@@ -14,9 +14,9 @@ FactoryGirl.define do
   end
 
   factory :store_credit_payment_method, class: Spree::PaymentMethod::StoreCredit do
-    type          "Spree::PaymentMethod::StoreCredit"
-    name          "Store Credit"
-    description   "Store Credit"
+    type          'Spree::PaymentMethod::StoreCredit'
+    name          'Store Credit'
+    description   'Store Credit'
     active        true
     auto_capture  true
   end

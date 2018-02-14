@@ -22,12 +22,12 @@ module Spree
       return price if tax_rate.nil? || tax_amount == 0
 
       Spree.t tax_rate.included_in_price? ? :including_tax : :excluding_tax,
-              scope: "shipping_rates.display_price",
+              scope: 'shipping_rates.display_price',
               price: price,
               tax_amount: display_tax_amount,
               tax_rate_name: tax_rate.name
     end
-    alias_method :display_cost, :display_price
+    alias display_cost display_price
 
     def tax_amount
       @_tax_amount ||= tax_rate.calculator.compute_shipping_rate(self)

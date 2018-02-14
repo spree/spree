@@ -15,7 +15,7 @@ module Spree
 
     def provider
       gateway_options = options
-      gateway_options.delete :login if gateway_options.has_key?(:login) and gateway_options[:login].nil?
+      gateway_options.delete :login if gateway_options.key?(:login) && gateway_options[:login].nil?
       if gateway_options[:server]
         ActiveMerchant::Billing::Base.mode = gateway_options[:server].to_sym
       end
@@ -23,7 +23,7 @@ module Spree
     end
 
     def options
-      self.preferences.inject({}){ |memo, (key, value)| memo[key.to_sym] = value; memo }
+      preferences.each_with_object({}) { |(key, value), memo| memo[key.to_sym] = value; }
     end
 
     def method_missing(method, *args)
@@ -61,7 +61,7 @@ module Spree
     end
 
     def sources_by_order(order)
-      source_ids = order.payments.where(source_type: payment_source_class.to_s, payment_method_id: self.id).pluck(:source_id).uniq
+      source_ids = order.payments.where(source_type: payment_source_class.to_s, payment_method_id: id).pluck(:source_id).uniq
       payment_source_class.where(id: source_ids).with_payment_profile
     end
 
@@ -70,7 +70,7 @@ module Spree
         sources_by_order order
       else
         if order.user_id
-          self.credit_cards.where(user_id: order.user_id).with_payment_profile
+          credit_cards.where(user_id: order.user_id).with_payment_profile
         else
           []
         end

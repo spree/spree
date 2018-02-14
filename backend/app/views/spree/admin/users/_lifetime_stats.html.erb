@@ -12,7 +12,7 @@
     </tr>
     <tr>
       <td><%= Spree.t(:num_orders) %>:</td>
-      <td><%= @user.order_count.to_i %></td>
+      <td><%= @user.order_count %></td>
     </tr>
     <tr>
       <td><%= Spree.t(:average_order_value) %>:</td>
@@ -20,7 +20,7 @@
     </tr>
     <tr>
       <td><%= Spree.t('admin.user.store_credits') %>:</td>
-      <td><%= Spree::Money.new(@user.total_available_store_credit) %></td>
+      <td id="store_credit"><%= Spree::Money.new(@user.total_available_store_credit) %></td>
     </tr>
     <tr>
       <td><%= Spree.t(:member_since) %>:</td>

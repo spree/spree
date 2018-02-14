@@ -1,31 +1,29 @@
 class OrderWalkthrough
   def self.up_to(state)
     # A default store must exist to provide store settings
-    unless Spree::Store.exists?
-      FactoryGirl.create(:store)
-    end
+    FactoryBot.create(:store) unless Spree::Store.exists?
 
     # A payment method must exist for an order to proceed through the Address state
     unless Spree::PaymentMethod.exists?
-      FactoryGirl.create(:check_payment_method)
+      FactoryBot.create(:check_payment_method)
     end
 
     # Need to create a valid zone too...
-    zone = FactoryGirl.create(:zone)
-    country = FactoryGirl.create(:country)
+    zone = FactoryBot.create(:zone)
+    country = FactoryBot.create(:country)
     zone.members << Spree::ZoneMember.create(zoneable: country)
-    country.states << FactoryGirl.create(:state, country: country)
+    country.states << FactoryBot.create(:state, country: country)
 
     # A shipping method must exist for rates to be displayed on checkout page
     unless Spree::ShippingMethod.exists?
-      FactoryGirl.create(:shipping_method).tap do |sm|
+      FactoryBot.create(:shipping_method).tap do |sm|
         sm.calculator.preferred_amount = 10
         sm.calculator.preferred_currency = Spree::Config[:currency]
         sm.calculator.save
       end
     end
 
-    order = Spree::Order.create!(email: "spree@example.com")
+    order = Spree::Order.create!(email: 'spree@example.com')
     add_line_item!(order)
     order.next!
 
@@ -40,13 +38,13 @@ class OrderWalkthrough
   private
 
   def self.add_line_item!(order)
-    FactoryGirl.create(:line_item, order: order)
+    FactoryBot.create(:line_item, order: order)
     order.reload
   end
 
   def self.address(order)
-    order.bill_address = FactoryGirl.create(:address, country_id: Spree::Zone.global.members.first.zoneable.id)
-    order.ship_address = FactoryGirl.create(:address, country_id: Spree::Zone.global.members.first.zoneable.id)
+    order.bill_address = FactoryBot.create(:address, country_id: Spree::Zone.global.members.first.zoneable.id)
+    order.ship_address = FactoryBot.create(:address, country_id: Spree::Zone.global.members.first.zoneable.id)
     order.next!
   end
 
@@ -61,12 +59,11 @@ class OrderWalkthrough
     order.next!
   end
 
-  def self.complete(order)
-    #noop?
+  def self.complete(_order)
+    # noop?
   end
 
   def self.states
     [:address, :delivery, :payment, :complete]
   end
-
 end

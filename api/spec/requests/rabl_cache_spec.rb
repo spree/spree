@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Rabl Cache", type: :request, caching: true do
+describe 'Rabl Cache', type: :request, caching: true do
   let!(:user)  { create(:admin_user) }
 
   before do
@@ -10,12 +10,12 @@ describe "Rabl Cache", type: :request, caching: true do
   end
 
   it "doesn't create a cache key collision for models with different rabl templates" do
-    get "/api/v1/variants", params: { token: user.spree_api_key }
+    get '/api/v1/variants', params: { token: user.spree_api_key }
     expect(response.status).to eq(200)
 
     # Make sure we get a non master variant
-    variant_a = JSON.parse(response.body)['variants'].select do |v|
-      !v['is_master']
+    variant_a = JSON.parse(response.body)['variants'].reject do |v|
+      v['is_master']
     end.first
 
     expect(variant_a['is_master']).to be false

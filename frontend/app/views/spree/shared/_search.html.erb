@@ -1,8 +1,7 @@
 <% @taxons = @taxon && @taxon.parent ? @taxon.parent.children : Spree::Taxon.roots %>
-
 <%= form_tag spree.products_path, method: :get, class: "navbar-form" do %>
   <div class="form-group">
-    <% cache(cache_key_for_taxons) do %>
+    <% cache [I18n.locale, @taxons] do %>
       <%= select_tag :taxon,
             options_for_select([[Spree.t(:all_departments), '']] +
                                   @taxons.map {|t| [t.name, t.id]},

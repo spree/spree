@@ -7,7 +7,7 @@
     </div>
 
     <div class="panel-body">
-      <div class="col-md-6">
+      <div class="col-xs-12 col-md-6">
         <div data-hook="name" class="form-group">
           <%= f.label :name, Spree.t(:name) %>
           <%= f.text_field :name, class: 'form-control' %>
@@ -30,7 +30,7 @@
         </div>
       </div>
 
-      <div class="col-md-6">
+      <div class="col-xs-12 col-md-6">
         <div data-hook="zone" class="form-group">
           <%= f.label :zone, Spree.t(:zone) %>
           <%= f.collection_select(:zone_id, @available_zones, :id, :name, {}, {class: 'select2'}) %>

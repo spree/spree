@@ -18,19 +18,19 @@ module Spree
 
       protected
 
-        def location_after_save
-          if @option_type.created_at == @option_type.updated_at
-            edit_admin_option_type_url(@option_type)
-          else
-            admin_option_types_url
-          end
+      def location_after_save
+        if @option_type.created_at == @option_type.updated_at
+          edit_admin_option_type_url(@option_type)
+        else
+          admin_option_types_url
         end
-
+      end
 
       private
-        def setup_new_option_value
-          @option_type.option_values.build if @option_type.option_values.empty?
-        end
+
+      def setup_new_option_value
+        @option_type.option_values.build if @option_type.option_values.empty?
+      end
     end
   end
 end

@@ -1,23 +1,18 @@
 module Spree
   class ContentController < Spree::StoreController
     # Don't serve local files or static assets
-    before_action { render_404 if params[:path] =~ /(\.|\\)/ }
-    after_action :fire_visited_path, only: :show
-
-    rescue_from ActionView::MissingTemplate, with: :render_404
+    after_action :fire_visited_path, except: :cvv
 
     respond_to :html
 
-    def show
-      render action: params[:path]
-    end
+    def test; end
 
     def cvv
       render layout: false
     end
 
     def fire_visited_path
-      Spree::PromotionHandler::Page.new(current_order, params[:path]).activate
+      Spree::PromotionHandler::Page.new(current_order, params[:action]).activate
     end
   end
 end

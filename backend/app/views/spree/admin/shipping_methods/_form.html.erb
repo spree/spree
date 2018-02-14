@@ -1,6 +1,6 @@
 <div data-hook="admin_shipping_method_form_fields">
   <div class="row">
-    <div data-hook="admin_shipping_method_form_name_field" class="col-md-6">
+    <div data-hook="admin_shipping_method_form_name_field" class="col-xs-12 col-md-6">
       <%= f.field_container :name, class: ['form-group'] do %>
         <%= f.label :name, Spree.t(:name) %>
         <%= f.text_field :name, class: 'form-control' %>
@@ -8,17 +8,17 @@
       <% end %>
     </div>
 
-    <div data-hook="admin_shipping_method_form_display_field" class="col-md-6">
+    <div data-hook="admin_shipping_method_form_display_field" class="col-xs-12 col-md-6">
       <%= f.field_container :display_on, class: ['form-group'] do %>
         <%= f.label :display_on, Spree.t(:display) %>
-        <%= select(:shipping_method, :display_on, Spree::ShippingMethod::DISPLAY.collect { |display| [Spree.t(display), display == :both ? nil : display.to_s] }, {}, { class: 'select2' }) %>
+        <%= select(:shipping_method, :display_on, Spree::ShippingMethod::DISPLAY.collect { |display| [Spree.t(display), display.to_s] }, { include_blank: true }, { class: 'select2' }) %>
         <%= f.error_message_on :display_on %>
       <% end %>
     </div>
   </div>
 
   <div class="row">
-    <div data-hook="admin_shipping_method_form_internal_name_field" class="col-md-4">
+    <div data-hook="admin_shipping_method_form_internal_name_field" class="col-xs-12 col-md-4">
       <%= f.field_container :admin_name, class: ['form-group'] do %>
         <%= f.label :admin_name, Spree.t(:internal_name) %>
         <%= f.text_field :admin_name, class: 'form-control', label: false %>
@@ -26,7 +26,7 @@
       <% end %>
     </div>
 
-    <div data-hook="admin_shipping_method_form_code" class="col-md-4">
+    <div data-hook="admin_shipping_method_form_code" class="col-xs-12 col-md-4">
       <%= f.field_container :code, class: ['form-group'] do %>
         <%= f.label :code, Spree.t(:code) %>
         <%= f.text_field :code, class: 'form-control', label: false %>
@@ -34,7 +34,7 @@
       <% end %>
     </div>
 
-    <div data-hook="admin_shipping_method_form_tracking_url_field" class="col-md-4">
+    <div data-hook="admin_shipping_method_form_tracking_url_field" class="col-xs-12 col-md-4">
       <%= f.field_container :tracking_url, class: ['form-group'] do %>
         <%= f.label :tracking_url, Spree.t(:tracking_url) %>
         <%= f.text_field :tracking_url, class: 'form-control', placeholder: Spree.t(:tracking_url_placeholder) %>
@@ -45,7 +45,7 @@
 </div>
 
 <div class="row">
-  <div data-hook="admin_shipping_method_form_availability_fields" class="col-md-6">
+  <div data-hook="admin_shipping_method_form_availability_fields" class="col-xs-12 col-md-6">
     <div class="panel panel-default categories">
       <div class="panel-heading">
         <h1 class="panel-title">
@@ -69,7 +69,7 @@
     </div>
   </div>
 
-  <div class="col-md-6">
+  <div class="col-xs-12 col-md-6">
     <div class="panel panel-default">
       <div class="panel-heading">
         <h1 class="panel-title">
@@ -96,11 +96,11 @@
 </div>
 
 <div class="row">
-  <div data-hook="admin_shipping_method_form_calculator_fields" class="col-md-6">
+  <div data-hook="admin_shipping_method_form_calculator_fields" class="col-xs-12 col-md-6">
     <%= render partial: 'spree/admin/shared/calculator_fields', locals: { f: f } %>
   </div>
 
-  <div class="col-md-6">
+  <div class="col-xs-12 col-md-6">
     <div class="panel panel-default tax_categories">
       <div class="panel-heading">
         <h1 class="panel-title">

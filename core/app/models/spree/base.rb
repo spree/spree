@@ -11,12 +11,16 @@ class Spree::Base < ApplicationRecord
   end
 
   if Kaminari.config.page_method_name != :page
-    def self.page num
+    def self.page(num)
       send Kaminari.config.page_method_name, num
     end
   end
 
   self.abstract_class = true
+
+  def self.belongs_to_required_by_default
+    false
+  end
 
   def self.spree_base_scopes
     where(nil)

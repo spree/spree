@@ -17,7 +17,7 @@ module Spree
 
     delegate :cents, to: :money
 
-    def initialize(amount, options={})
+    def initialize(amount, options = {})
       @money = Monetize.parse([amount, (options[:currency] || Spree::Config[:currency])].join)
       @options = Spree::Money.default_formatting_rules.merge(options)
     end
@@ -31,13 +31,23 @@ module Spree
       if options[:html]
         # 1) prevent blank, breaking spaces
         # 2) prevent escaping of HTML character entities
-        output = output.sub(" ", "&nbsp;").html_safe
+        output = output.sub(' ', '&nbsp;').html_safe
       end
       output
     end
 
     def as_json(*)
       to_s
+    end
+
+    def decimal_mark
+      return @money.decimal_mark if @options[:decimal_mark].nil?
+      @options[:decimal_mark]
+    end
+
+    def thousands_separator
+      return @money.thousands_separator if @options[:thousands_separator].nil?
+      @options[:thousands_separator]
     end
 
     def ==(obj)

@@ -1,14 +1,15 @@
 require 'spec_helper'
 
-describe Spree::LegacyUser, type: :model do
+describe Spree::LegacyUser, type: :model do # rubocop:disable RSpec/MultipleDescribes
   # Regression test for #2844 + #3346
   context '#last_incomplete_order' do
     let!(:user) { create(:user) }
     let!(:order) { create(:order, bill_address: create(:address), ship_address: create(:address)) }
+    let(:current_store) { create :store }
 
-    let(:order_1) { create(:order, created_at: 1.day.ago, user: user, created_by: user) }
-    let(:order_2) { create(:order, user: user, created_by: user) }
-    let(:order_3) { create(:order, user: user, created_by: create(:user)) }
+    let(:order_1) { create(:order, created_at: 1.day.ago, user: user, created_by: user, store: current_store) }
+    let(:order_2) { create(:order, user: user, created_by: user, store: current_store) }
+    let(:order_3) { create(:order, user: user, created_by: create(:user), store: current_store) }
 
     it 'returns correct order' do
       Timecop.scale(3600) do
@@ -16,7 +17,7 @@ describe Spree::LegacyUser, type: :model do
         order_2
         order_3
 
-        expect(user.last_incomplete_spree_order).to eq order_3
+        expect(user.last_incomplete_spree_order(current_store)).to eq order_3
       end
     end
 
@@ -51,7 +52,7 @@ describe Spree::LegacyUser, type: :model do
     context 'payment source' do
       let(:payment_method) { create(:credit_card_payment_method) }
       let!(:cc) do
-        create(:credit_card, user_id: user.id, payment_method: payment_method, gateway_customer_profile_id: "2342343")
+        create(:credit_card, user_id: user.id, payment_method: payment_method, gateway_customer_profile_id: '2342343')
       end
 
       it 'has payment sources' do
@@ -84,13 +85,13 @@ describe Spree.user_class, type: :model do
     describe '#lifetime_value' do
       context 'with orders' do
         before { load_orders }
-        it "returns the total of completed orders for the user" do
+        it 'returns the total of completed orders for the user' do
           expect(subject.lifetime_value).to eq (order_count * order_value)
         end
       end
       context 'without orders' do
         it 'returns 0.00' do
-          expect(subject.lifetime_value).to eq BigDecimal("0.00")
+          expect(subject.lifetime_value).to eq BigDecimal('0.00')
         end
       end
     end
@@ -106,7 +107,7 @@ describe Spree.user_class, type: :model do
     describe '#order_count' do
       before { load_orders }
       it 'returns the count of completed orders for the user' do
-        expect(subject.order_count).to eq BigDecimal(order_count)
+        expect(subject.order_count).to eq order_count
       end
     end
 
@@ -124,7 +125,7 @@ describe Spree.user_class, type: :model do
       end
     end
 
-    describe "#display_average_order_value" do
+    describe '#display_average_order_value' do
       before { load_orders }
       it 'returns a Spree::Money version of average_order_value' do
         value = BigDecimal('500.05')
@@ -144,13 +145,13 @@ describe Spree.user_class, type: :model do
     end
 
     context 'user has several associated store credits' do
+      subject { store_credit.user }
+
       let(:user) { create(:user) }
       let(:amount) { 120.25 }
       let(:additional_amount) { 55.75 }
       let(:store_credit) { create(:store_credit, user: user, amount: amount, amount_used: 0.0) }
       let!(:additional_store_credit) { create(:store_credit, user: user, amount: additional_amount, amount_used: 0.0) }
-
-      subject { store_credit.user }
 
       context 'part of the store credit has been used' do
         let(:amount_used) { 35.00 }

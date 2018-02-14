@@ -1,10 +1,10 @@
 <div class="panel-body">
   <div class="row no-marginb">
-    <div class="form-group col-md-6 no-marginb">
+    <div class="form-group col-xs-12 col-md-6 no-marginb">
       <%= select_tag "#{param_prefix}[preferred_operator_min]", options_for_select(Spree::Promotion::Rules::ItemTotal::OPERATORS_MIN.map{|o| [Spree.t("item_total_rule.operators.#{o}"),o]}, promotion_rule.preferred_operator_min), { class: 'select2 select_item_total marginb' } %>
       <%= select_tag "#{param_prefix}[preferred_operator_max]", options_for_select(Spree::Promotion::Rules::ItemTotal::OPERATORS_MAX.map{|o| [Spree.t("item_total_rule.operators.#{o}"),o]}, promotion_rule.preferred_operator_max), { class: 'select2 select_item_total' } %>
     </div>
-    <div class="form-group col-md-6 no-marginb">
+    <div class="form-group col-xs-12 col-md-6 no-marginb">
       <%= text_field_tag "#{param_prefix}[preferred_amount_min]", promotion_rule.preferred_amount_min, class: 'form-control marginb' %>
       <%= text_field_tag "#{param_prefix}[preferred_amount_max]", promotion_rule.preferred_amount_max, class: 'form-control' %>
     </div>

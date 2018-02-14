@@ -1,11 +1,11 @@
-# TODO let friendly id take care of sanitizing the url
+# TODO: let friendly id take care of sanitizing the url
 require 'stringex'
 
 module Spree
   class Taxon < Spree::Base
     extend FriendlyId
     friendly_id :permalink, slug_column: :permalink, use: :history
-    before_create :set_permalink
+    before_validation :set_permalink, on: :create, if: :name
 
     acts_as_nested_set dependent: :destroy
 
@@ -19,7 +19,9 @@ module Spree
     has_many :promotion_rule_taxons, class_name: 'Spree::PromotionRuleTaxon', dependent: :destroy
     has_many :promotion_rules, through: :promotion_rule_taxons, class_name: 'Spree::PromotionRule'
 
-    validates :name, presence: true
+    validates :name, presence: true, uniqueness: { scope: [:parent_id, :taxonomy_id], allow_blank: true }
+    validates :permalink, uniqueness: { case_sensitive: false }
+    validate :check_for_root, on: :create
     with_options length: { maximum: 255 }, allow_blank: true do
       validates :meta_keywords
       validates :meta_description
@@ -29,15 +31,9 @@ module Spree
     after_save :touch_ancestors_and_taxonomy
     after_touch :touch_ancestors_and_taxonomy
 
-    has_attached_file :icon,
-      styles: { mini: '32x32>', normal: '128x128>' },
-      default_style: :mini,
-      url: '/spree/taxons/:id/:style/:basename.:extension',
-      path: ':rails_root/public/spree/taxons/:id/:style/:basename.:extension',
-      default_url: '/assets/default_taxon.png'
+    has_one :icon, as: :viewable, dependent: :destroy, class_name: 'Spree::TaxonIcon'
 
-    validates_attachment :icon,
-      content_type: { content_type: ["image/jpg", "image/jpeg", "image/png", "image/gif"] }
+    self.whitelisted_ransackable_associations = %w[taxonomy]
 
     # indicate which filters should be used for a taxon
     # this method should be customized to your own site
@@ -53,10 +49,10 @@ module Spree
 
     # Return meta_title if set otherwise generates from root name and/or taxon name
     def seo_title
-      unless meta_title.blank?
-        meta_title
-      else
+      if meta_title.blank?
         root? ? name : "#{root.name} - #{name}"
+      else
+        meta_title
       end
     end
 
@@ -74,10 +70,10 @@ module Spree
     end
 
     def pretty_name
-      ancestor_chain = self.ancestors.inject("") do |name, ancestor|
+      ancestor_chain = ancestors.inject('') do |name, ancestor|
         name += "#{ancestor.name} -> "
       end
-      ancestor_chain + "#{name}"
+      ancestor_chain + name.to_s
     end
 
     # awesome_nested_set sorts by :lft and :rgt. This call re-inserts the child
@@ -87,7 +83,7 @@ module Spree
     #
     #  See #3390 for background.
     def child_index=(idx)
-      move_to_child_with_index(parent, idx.to_i) unless self.new_record?
+      move_to_child_with_index(parent, idx.to_i) unless new_record?
     end
 
     private
@@ -97,6 +93,12 @@ module Spree
       ancestors.update_all(updated_at: Time.current)
       # Have taxonomy touch happen in #touch_ancestors_and_taxonomy rather than association option in order for imports to override.
       taxonomy.try!(:touch)
+    end
+
+    def check_for_root
+      if taxonomy.try(:root).present? && parent_id == nil
+        errors.add(:root_conflict, 'this taxonomy already has a root taxon')
+      end
     end
   end
 end

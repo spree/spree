@@ -1,7 +1,6 @@
 module Spree
   class OrdersController < Spree::StoreController
     before_action :check_authorization
-    rescue_from ActiveRecord::RecordNotFound, with: :render_404
     helper 'spree/products', 'spree/orders'
 
     respond_to :html
@@ -10,14 +9,15 @@ module Spree
     skip_before_action :verify_authenticity_token, only: [:populate]
 
     def show
-      @order = Order.includes(line_items: [variant: [:option_values, :images, :product]], bill_address: :state, ship_address: :state).find_by_number!(params[:id])
+      @order = Order.includes(line_items: [variant: [:option_values, :images, :product]], bill_address: :state, ship_address: :state).find_by!(number: params[:id])
     end
 
     def update
+      @variant = Spree::Variant.find(params[:variant_id]) if params[:variant_id]
       if @order.contents.update_cart(order_params)
         respond_with(@order) do |format|
           format.html do
-            if params.has_key?(:checkout)
+            if params.key?(:checkout)
               @order.next if @order.cart?
               redirect_to checkout_state_path(@order.checkout_steps.first)
             else
@@ -33,8 +33,8 @@ module Spree
     # Shows the current incomplete order from the session
     def edit
       @order = current_order || Order.incomplete.
-                                  includes(line_items: [variant: [:images, :option_values, :product]]).
-                                  find_or_initialize_by(guest_token: cookies.signed[:guest_token])
+               includes(line_items: [variant: [:images, :option_values, :product]]).
+               find_or_initialize_by(guest_token: cookies.signed[:guest_token])
       associate_user
     end
 
@@ -53,7 +53,7 @@ module Spree
           order.create_tax_charge!
           order.update_with_updater!
         rescue ActiveRecord::RecordInvalid => e
-          error = e.record.errors.full_messages.join(", ")
+          error = e.record.errors.full_messages.join(', ')
         end
       else
         error = Spree.t(:please_enter_reasonable_quantity)
@@ -64,7 +64,7 @@ module Spree
         redirect_back_or_default(spree.root_path)
       else
         respond_with(order) do |format|
-          format.html { redirect_to cart_path }
+          format.html { redirect_to(cart_path(variant_id: variant.id)) }
         end
       end
     end
@@ -75,12 +75,12 @@ module Spree
     end
 
     def empty
-      if @order = current_order
-        @order.empty!
-      end
+      @order.empty! if @order = current_order
 
       redirect_to spree.cart_path
     end
+
+    private
 
     def accurate_title
       if @order && @order.completed?
@@ -91,31 +91,32 @@ module Spree
     end
 
     def check_authorization
-      order = Spree::Order.find_by_number(params[:id]) || current_order
+      order = Spree::Order.find_by(number: params[:id]) if params[:id].present?
+      order = current_order unless order
 
-      if order
+      if order && action_name.to_sym == :show
+        authorize! :show, order, cookies.signed[:guest_token]
+      elsif order
         authorize! :edit, order, cookies.signed[:guest_token]
       else
         authorize! :create, Spree::Order
       end
     end
 
-    private
-
-      def order_params
-        if params[:order]
-          params[:order].permit(*permitted_order_attributes)
-        else
-          {}
-        end
+    def order_params
+      if params[:order]
+        params[:order].permit(*permitted_order_attributes)
+      else
+        {}
       end
+    end
 
-      def assign_order_with_lock
-        @order = current_order(lock: true)
-        unless @order
-          flash[:error] = Spree.t(:order_not_found)
-          redirect_to root_path and return
-        end
+    def assign_order_with_lock
+      @order = current_order(lock: true)
+      unless @order
+        flash[:error] = Spree.t(:order_not_found)
+        redirect_to root_path and return
       end
+    end
   end
 end

@@ -21,7 +21,9 @@ $.fn.userAutocomplete = function () {
       datatype: 'json',
       data: function (term) {
         return {
-          q: term,
+          q: {
+            email_cont: term
+          },
           token: Spree.api_key
         };
       },

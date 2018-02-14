@@ -1,6 +1,6 @@
 <%= render partial: 'spree/admin/shared/product_tabs', locals: { current: :images } %>
 
-<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @product } %>
+<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @object } %>
 
 <% content_for :page_title do %>
   <%= Spree.t(:new_image) %>

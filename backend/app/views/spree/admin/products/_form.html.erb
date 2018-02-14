@@ -3,7 +3,7 @@
 
   <div class="row">
 
-    <div class="col-md-8" data-hook="admin_product_form_left">
+    <div class="col-xs-12 col-md-8" data-hook="admin_product_form_left">
       <div data-hook="admin_product_form_name">
         <%= f.field_container :name, class: ['form-group'] do %>
           <%= f.label :name, raw(Spree.t(:name) + content_tag(:span, ' *', class: 'required')) %>
@@ -29,7 +29,7 @@
       </div>
     </div>
 
-    <div class="col-md-4" data-hook="admin_product_form_right">
+    <div class="col-xs-12 col-md-4" data-hook="admin_product_form_right">
       <div data-hook="admin_product_form_price">
         <%= f.field_container :price, class: ['form-group'] do %>
           <%= f.label :price, raw(Spree.t(:master_price) + content_tag(:span, ' *', class: "required")) %>
@@ -69,6 +69,14 @@
         <% end %>
       </div>
 
+      <div data-hook="admin_product_form_promotionable">
+        <%= f.field_container :promotionable, class: ['form-group'] do %>
+          <%= f.label :promotionable, Spree.t(:promotionable) %>
+          <%= f.error_message_on :promotionable %>
+          <%= f.check_box :promotionable, class: 'form-control' %>
+        <% end %>
+      </div>
+
       <% if @product.has_variants? %>
         <div data-hook="admin_product_form_multiple_variants" class="well">
           <%= f.label :skus, Spree.t(:sku).pluralize %>
@@ -99,37 +107,29 @@
           <% end %>
         </div>
 
-        <div data-hook="admin_product_form_promotionable">
-          <%= f.field_container :promotionable, class: ['form-group'] do %>
-              <%= f.label :promotionable, Spree.t(:promotionable) %>
-              <%= f.error_message_on :promotionable %>
-              <%= f.check_box :promotionable, class: 'form-control' %>
-          <% end %>
-        </div>
-
         <div id="shipping_specs" class="row">
-          <div class="col-md-6">
+          <div class="col-xs-12 col-md-6">
             <div id="shipping_specs_weight_field" data-hook="admin_product_form_weight" class="form-group">
               <%= f.label :weight, Spree.t(:weight) %>
               <%= f.text_field :weight, value: number_with_precision(@product.weight, precision: 2), size: 4, class: 'form-control' %>
             </div>
           </div>
 
-          <div class="col-md-6">
+          <div class="col-xs-12 col-md-6">
             <div id="shipping_specs_height_field" data-hook="admin_product_form_height" class="form-group">
               <%= f.label :height, Spree.t(:height) %>
               <%= f.text_field :height, value: number_with_precision(@product.height, precision: 2), size: 4, class: 'form-control' %>
             </div>
           </div>
 
-          <div class="col-md-6">
+          <div class="col-xs-12 col-md-6">
             <div id="shipping_specs_width_field" data-hook="admin_product_form_width" class="form-group">
               <%= f.label :width, Spree.t(:width) %>
               <%= f.text_field :width, value: number_with_precision(@product.width, precision: 2), size: 4, class: 'form-control' %>
             </div>
           </div>
 
-          <div class="col-md-6">
+          <div class="col-xs-12 col-md-6">
             <div id="shipping_specs_depth_field" data-hook="admin_product_form_depth" class="form-group">
               <%= f.label :depth, Spree.t(:depth) %>
               <%= f.text_field :depth, value: number_with_precision(@product.depth, precision: 2), size: 4, class: 'form-control' %>
@@ -139,8 +139,8 @@
       <% end %>
 
       <div data-hook="admin_product_form_shipping_categories">
-        <%= f.field_container :shipping_categories, class: ['form-group'] do %>
-          <%= f.label :shipping_category_id, Spree.t(:shipping_categories) %>
+        <%= f.field_container :shipping_category, class: ['form-group'] do %>
+          <%= f.label :shipping_category_id, Spree.t(:shipping_category) %>
           <%= f.collection_select(:shipping_category_id, @shipping_categories, :id, :name, { include_blank: Spree.t('match_choices.none') }, { class: 'select2' }) %>
           <%= f.error_message_on :shipping_category %>
         <% end %>

@@ -1,13 +1,8 @@
 require 'spec_helper'
 
 describe Spree::OptionValue, type: :model do
-  describe 'delegate' do
-    it { is_expected.to delegate_method(:name).to(:option_type).with_prefix }
-    it { is_expected.to delegate_method(:presentation).to(:option_type).with_prefix }
-  end
-
-  context "touching" do
-    it "should touch a variant" do
+  context 'touching' do
+    it 'touches a variant' do
       variant = create(:variant)
       option_value = variant.option_values.first
       variant.update_column(:updated_at, 1.day.ago)

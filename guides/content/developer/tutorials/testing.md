@@ -51,7 +51,7 @@ $ bundle exec rspec spec/models/spree/state_spec.rb:7
 
 ### Using Factories
 
-Spree uses [factory_girl](https://github.com/thoughtbot/factory_girl) to create valid records for testing purpose. All of the factories are also packaged in the gem. So if you are writing an extension or if you just want to play with Spree models then you can use these factories as illustrated below.
+Spree uses [factory_bot](https://github.com/thoughtbot/factory_bot) to create valid records for testing purpose. All of the factories are also packaged in the gem. So if you are writing an extension or if you just want to play with Spree models then you can use these factories as illustrated below.
 
 ```bash
 $ rails console
@@ -72,20 +72,20 @@ Spree itself is well unit-tested. However, when you install a Spree store for th
 
 In the early days, Rails developers preferred fixtures and seed data. As apps grew, fixtures and seed data went out of vogue in favor of Factories. Factories can have their own problems, but at this point are widely considered superior to a large fixture/seed data setup. This [blog post](https://semaphoreci.com/blog/2014/01/14/rails-testing-antipatterns-fixtures-and-factories.html) discusses some background consideration.
 
-Below are some examples for how to create a test suite using Factories (with FactoryGirl). As discussed above, you can copy all of the Spree Factories from the Spree core, or you can write your own Factories. 
+Below are some examples for how to create a test suite using Factories (with FactoryBot). As discussed above, you can copy all of the Spree Factories from the Spree core, or you can write your own Factories.
 
 We recommend a fully integration suite covering your checkout. You can also write integration tests for the Admin area, but many people put less attention into this because it is not user-facing. As with the unit tests, the most important thing to test is the modifications you make that make your Spree store different from the default Spree install.
 
- 
+
 
 #### Testing as Someone Logged In
 
 If you're using spree_auth_devise, your app already comes with the Warden gem, which can be used to log-in a user through your test suite
 
-```
-let(:user) { FactoryGirl.create(:user) }
+```ruby
+let(:user) { FactoryBot.create(:user) }
 before(:each) do
-	login_as(user, scope: :spree_user)
+  login_as(user, scope: :spree_user)
 end
 ```
 
@@ -96,8 +96,8 @@ This lets your Spree app behave as if this user is logged in.
 
 For Spree 2.2 and prior, Spree keeps track of the order for a logged out user using a session variable. Here's an example that may work for you in Spree 2.2 and earlier:
 
-```
-let (:order) { FactoryGirl.create(:order) }
+```ruby
+let (:order) { FactoryBot.create(:order) }
 before(:each) do
   page.set_rack_session(order_id: order.id)
   page.set_rack_session(access_token: order.token)
@@ -106,9 +106,9 @@ end
 
 In Spree 2.3, a signed cookie is used to keep track of the guest user's cart. In the example below, we make two stubs onto objects in Spree to fake-out the guest token (in this text example, we simply set it to 'xyz'). In the example, presume that the order factory will have a lineitem in it for an associated product called "Some Product":
 
-```
+```ruby
 describe "cart to registration page", type: :feature do
-  let(:order) { FactoryGirl.create(:order, guest_token: "xyz") }
+  let(:order) { FactoryBot.create(:order, guest_token: "xyz") }
   # user should be nil for logged out user
 
 
@@ -135,8 +135,9 @@ end
 $$$
 TODO: We still are looking for a way to set a signed cookie on a RackTest driver. If you get that working, you can remove the stub on the Spree::OrdersController in the code example above.
 
-Thomas Walpole thinks code like this might work, but we have yet to get this working correctly: 
-```
+Thomas Walpole thinks code like this might work, but we have yet to get this working correctly:
+
+```ruby
 kg = ActiveSupport::KeyGenerator.new(Rails.application.secrets.secret_key_base, iterations:1000)
 guest_token_cookie_value_to_set = ActiveSupport::MessageVerifier.new(kg.generate_key("signed cookie"), digest: 'SHA1', serializer: ActiveSupport::MessageEncryptor::NullSerializer).generate("\"#{guest_token}\"")
 ```

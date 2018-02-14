@@ -1,7 +1,7 @@
 <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @promotion } %>
 
 <div class="row" id="general_fields" >
-  <div class="col-md-3">
+  <div class="col-xs-6 col-md-3">
     <%= f.field_container :name, class: ['form-group'] do %>
       <%= f.label :name %>
       <%= f.text_field :name, class: 'form-control' %>
@@ -11,6 +11,13 @@
     <%= f.field_container :code, class: ['form-group'] do %>
       <%= f.label :code %>
       <%= f.text_field :code, class: 'form-control' %>
+    <% end %>
+
+    <%= f.field_container :generate_code, class: ['checkbox'] do %>
+      <%= f.label :generate_code do %>
+        <%= f.check_box :generate_code %>
+        <%= Spree.t(:generate_code) %>
+      <% end %>
     <% end %>
 
     <%= f.field_container :path, class: ['form-group'] do %>
@@ -26,7 +33,7 @@
     <% end %>
   </div>
 
-  <div class="col-md-6">
+  <div class="col-xs-12 col-md-6">
     <%= f.field_container :description, class: ['form-group'] do %>
       <%= f.label :description %>
       <%= f.text_area :description, rows: 7, class: 'form-control' %>
@@ -38,7 +45,7 @@
     <% end %>
   </div>
 
-  <div id="expiry_fields" class="col-md-3">
+  <div id="expiry_fields" class="col-xs-6 col-md-3">
     <%= f.field_container :usage_limit do %>
       <%= f.label :usage_limit %>
       <%= f.number_field :usage_limit, min: 0, class: 'form-control' %>

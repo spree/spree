@@ -1,5 +1,5 @@
-north_america = Spree::Zone.find_by_name!("North America")
-clothing = Spree::TaxCategory.find_by_name!("Clothing")
+north_america = Spree::Zone.find_by!(name: "North America")
+clothing = Spree::TaxCategory.find_by!(name: "Clothing")
 
 Spree::TaxRate.where(
   name: "North America",

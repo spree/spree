@@ -1,5 +1,5 @@
 <div class="row">
-  <div data-hook="bill_address_wrapper" class="col-md-6">
+  <div data-hook="bill_address_wrapper" class="col-xs-12 col-md-6">
     <div class="panel panel-default">
       <div class="panel-heading">
         <h1 class="panel-title">
@@ -16,7 +16,7 @@
     </div>
   </div>
 
-  <div data-hook="ship_address_wrapper" class="col-md-6">
+  <div data-hook="ship_address_wrapper" class="col-xs-12 col-md-6">
     <div class="panel panel-default">
       <div class="panel-heading">
         <h1 class="panel-title">
@@ -25,6 +25,13 @@
       </div>
 
       <div class="panel-body">
+          <p class="field checkbox" data-hook="use_billing">
+            <%= label_tag :use_billing, id: 'use_billing' do %>
+              <% checked = @user.bill_address.nil? ? false : @user.bill_address.same_as?(@user.ship_address) %>
+              <%= check_box_tag 'user[use_billing]', '1', checked %>
+              <%= Spree.t(:use_billing_address) %>
+            <% end %>
+          </p>
         <%= f.fields_for :ship_address, (@user.ship_address || Spree::Address.default(@user, "ship")) do |sa_form| %>
           <% sa_form.object ||= Spree::Address.new(country: Spree::Country.new) %>
           <%= render partial: 'spree/admin/shared/address_form', locals: { f: sa_form, type: "shipping" } %>

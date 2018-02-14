@@ -5,7 +5,6 @@ module Spree
     DISPLAY = [:both, :front_end, :back_end]
 
     # Used for #refresh_rates
-    DISPLAY_ON_FRONT_AND_BACK_END = 0
     DISPLAY_ON_FRONT_END = 1
     DISPLAY_ON_BACK_END = 2
 
@@ -20,7 +19,7 @@ module Spree
                                      foreign_key: 'shipping_method_id'
     has_many :zones, through: :shipping_method_zones, class_name: 'Spree::Zone'
 
-    belongs_to :tax_category, class_name: 'Spree::TaxCategory'
+    belongs_to :tax_category, class_name: 'Spree::TaxCategory', optional: true
 
     validates :name, presence: true
 
@@ -39,26 +38,29 @@ module Spree
     end
 
     def self.calculators
-      spree_calculators.send(model_name_without_spree_namespace)
-        .select { |c| c.to_s.constantize < Spree::ShippingCalculator }
-    end
-
-    # Some shipping methods are only meant to be set via backend
-    def frontend?
-      self.display_on != "back_end"
+      spree_calculators.send(model_name_without_spree_namespace).
+        select { |c| c.to_s.constantize < Spree::ShippingCalculator }
     end
 
     def tax_category
       Spree::TaxCategory.unscoped { super }
     end
 
-    def available_to_display(display_filter)
-      display_filter == DISPLAY_ON_FRONT_AND_BACK_END ||
+    def available_to_display?(display_filter)
       (frontend? && display_filter == DISPLAY_ON_FRONT_END) ||
-      (!frontend? && display_filter == DISPLAY_ON_BACK_END)
+        (backend? && display_filter == DISPLAY_ON_BACK_END)
     end
 
     private
+
+    # Some shipping methods are only meant to be set via backend
+    def frontend?
+      display_on.in?(['both', 'front_end'])
+    end
+
+    def backend?
+      display_on.in?(['both', 'back_end'])
+    end
 
     def at_least_one_shipping_category
       if shipping_categories.empty?

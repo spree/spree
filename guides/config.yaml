@@ -23,11 +23,13 @@ enable_output_diff: false
 # hashes; each array element represents a single data source. By default,
 # there is only a single data source that reads data from the “content/” and
 # “layout/” directories in the site directory.
+string_pattern_type: legacy
 data_sources:
   -
     # The type is the identifier of the data source. By default, this will be
     # `filesystem_unified`.
     type: filesystem_unified
+    identifier_type: legacy
     encoding: utf-8
     # The path where items should be mounted (comparable to mount points in
     # Unix-like systems). This is “/” by default, meaning that items will have
@@ -63,7 +65,7 @@ watcher:
   notify_on_compilation_failure: true
 
 # For the atom feed.
-base_url: http://edgeguides.spreecommerce.com
+base_url: http://guides.spreecommerce.org
 
 # Array of [version, released_at] Array tuples.
 #api_versions:

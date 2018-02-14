@@ -2,18 +2,11 @@ class AddMissingUniqueIndexesForUniqueAttributes < ActiveRecord::Migration[5.0]
   def change
     tables = {
       country: [:name, :iso_name],
-      option_type: [:name],
-      option_value: [:name],
-      promotion: [:path],
       refund_reason: [:name],
       reimbursement_type: [:name],
       return_authorization_reason: [:name],
       role: [:name],
-      shipping_category: [:name],
-      store: [:code],
-      tax_category: [:name],
-      tracker: [:analytics_id],
-      zone: [:name]
+      store: [:code]
     }
 
     tables.each do |table, columns|

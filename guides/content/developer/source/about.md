@@ -7,7 +7,7 @@ section: source-code
 
 Spree is a full featured e-commerce platform written for the Ruby on Rails framework. It is designed to make programming commerce applications easier by making several assumptions about what most developers needs to get started. Spree is a production ready store that can be used "out of the box", but more importantly, it is also a developer tool that can be used as a solid foundation for a more sophisticated application than what is generally possible with traditional open source offerings.
 
-Spree is 100% [open source](http://en.wikipedia.org/wiki/Open_source).  It is licensed under the very permissive [New BSD License](http://spreecommerce.com/license).  You are free to use the software as you see fit, at no charge.  Perhaps more important than the cost, Spree is a true open source community. Spree has hundreds of contributors who have used and improved it while building their own e-commerce solutions.
+Spree is 100% [open source](http://en.wikipedia.org/wiki/Open_source).  It is licensed under the very permissive [New BSD License](https://github.com/spree/spree/blob/master/license.md).  You are free to use the software as you see fit, at no charge.  Perhaps more important than the cost, Spree is a true open source community. Spree has hundreds of contributors who have used and improved it while building their own e-commerce solutions.
 
 ## Motivation
 
@@ -87,9 +87,9 @@ Ruby on Rails. To get the most out of this guide, you need to have some
 prerequisites installed:
 
 -   The [Ruby](http://www.ruby-lang.org/en/downloads) language
--   The [RubyGems](http://rubyforge.org/frs/?group_id=126) packaging
+-   The [RubyGems](https://rubygems.org/pages/download) packaging
     system
--   The [Ruby on Rails](http://rubyonrails.org/download) gems
+-   The [Ruby on Rails](http://rubyonrails.org/) gem
 -   A working installation of [SQLite](http://www.sqlite.org)
     (preferred), [MySQL](http://www.mysql.com), or
     [PostgreSQL](http://www.postgresql.org)

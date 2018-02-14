@@ -8,19 +8,25 @@ module Spree
 
     def add(variant, quantity = 1, options = {})
       timestamp = Time.current
-      line_item = add_to_line_item(variant, quantity, options)
-      options[:line_item_created] = true if timestamp <= line_item.created_at
-      after_add_or_remove(line_item, options)
+      ActiveRecord::Base.transaction do
+        line_item = add_to_line_item(variant, quantity, options)
+        options[:line_item_created] = true if timestamp <= line_item.created_at
+        after_add_or_remove(line_item, options)
+      end
     end
 
     def remove(variant, quantity = 1, options = {})
-      line_item = remove_from_line_item(variant, quantity, options)
-      after_add_or_remove(line_item, options)
+      ActiveRecord::Base.transaction do
+        line_item = remove_from_line_item(variant, quantity, options)
+        after_add_or_remove(line_item, options)
+      end
     end
 
     def remove_line_item(line_item, options = {})
-      line_item.destroy!
-      after_add_or_remove(line_item, options)
+      ActiveRecord::Base.transaction do
+        line_item.destroy!
+        after_add_or_remove(line_item, options)
+      end
     end
 
     def update_cart(params)
@@ -29,11 +35,13 @@ module Spree
         # Update totals, then check if the order is eligible for any cart promotions.
         # If we do not update first, then the item total will be wrong and ItemTotal
         # promotion rules would not be triggered.
-        persist_totals
-        PromotionHandler::Cart.new(order).activate
-        order.ensure_updated_shipments
-        order.payments.store_credits.checkout.destroy_all
-        persist_totals
+        ActiveRecord::Base.transaction do
+          persist_totals
+          PromotionHandler::Cart.new(order).activate
+          order.ensure_updated_shipments
+          order.payments.store_credits.checkout.destroy_all
+          persist_totals
+        end
         true
       else
         false
@@ -46,7 +54,16 @@ module Spree
       order.payments.store_credits.checkout.destroy_all
       persist_totals
       shipment = options[:shipment]
-      shipment.present? ? shipment.update_amounts : order.ensure_updated_shipments
+      if shipment.present?
+        # ADMIN END SHIPMENT RATE FIX
+        # refresh shipments to ensure correct shipment amount is calculated when using price sack calculator
+        # for calculating shipment rates.
+        # Currently shipment rate is calculated on previous order total instead of current order total when updating a shipment from admin end.
+        order.refresh_shipment_rates(ShippingMethod::DISPLAY_ON_BACK_END)
+        shipment.update_amounts
+      else
+        order.ensure_updated_shipments
+      end
       PromotionHandler::Cart.new(order, line_item).activate
       Adjustable::AdjustmentsUpdater.update(line_item)
       TaxRate.adjust(order, [line_item]) if options[:line_item_created]
@@ -72,7 +89,6 @@ module Spree
     end
 
     def persist_totals
-      order_updater.update_item_count
       order_updater.update
     end
 
@@ -83,15 +99,16 @@ module Spree
         line_item.quantity += quantity.to_i
         line_item.currency = currency unless currency.nil?
       else
-        opts = ActionController::Parameters.new(options.to_h).
+        options_params = options.is_a?(ActionController::Parameters) ? options : ActionController::Parameters.new(options.to_h)
+        opts = options_params.
                permit(PermittedAttributes.line_item_attributes).to_h.
-               merge( { currency: order.currency } )
+               merge(currency: order.currency)
 
         line_item = order.line_items.new(quantity: quantity,
-                                          variant: variant,
-                                          options: opts)
+                                         variant: variant,
+                                         options: opts)
       end
-      line_item.target_shipment = options[:shipment] if options.has_key? :shipment
+      line_item.target_shipment = options[:shipment] if options.key? :shipment
       line_item.save!
       line_item
     end
@@ -99,7 +116,7 @@ module Spree
     def remove_from_line_item(variant, quantity, options = {})
       line_item = grab_line_item_by_variant(variant, true, options)
       line_item.quantity -= quantity
-      line_item.target_shipment= options[:shipment]
+      line_item.target_shipment = options[:shipment]
 
       if line_item.quantity.zero?
         order.line_items.destroy(line_item)

@@ -15,15 +15,15 @@ module Spree
     # the +CanCan::Ability+ module.  The registered ability should behave properly as a stand-alone class
     # and therefore should be easy to test in isolation.
     def self.register_ability(ability)
-      self.abilities.add(ability)
+      abilities.add(ability)
     end
 
     def self.remove_ability(ability)
-      self.abilities.delete(ability)
+      abilities.delete(ability)
     end
 
     def initialize(user)
-      self.clear_aliased_actions
+      clear_aliased_actions
 
       # override cancan default aliasing (we don't want to differentiate between read and index)
       alias_action :delete, to: :destroy
@@ -43,8 +43,11 @@ module Spree
         can :display, OptionType
         can :display, OptionValue
         can :create, Order
-        can [:read, :update], Order do |order, token|
+        can :read, Order do |order, token|
           order.user == user || order.guest_token && token == order.guest_token
+        end
+        can :update, Order do |order, token|
+          !order.completed? && (order.user == user || order.guest_token && token == order.guest_token)
         end
         can :display, CreditCard, user_id: user.id
         can :display, Product
@@ -61,8 +64,7 @@ module Spree
 
       # Include any abilities registered by extensions, etc.
       Ability.abilities.merge(abilities_to_register).each do |clazz|
-        ability = clazz.send(:new, user)
-        @rules = rules + ability.send(:rules)
+        merge clazz.new(user)
       end
 
       # Protect admin role

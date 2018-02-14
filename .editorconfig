@@ -13,10 +13,10 @@ trim_trailing_whitespace = true
 tab_width = 2
 
 [**.rb]
-max_line_length = 120
+max_line_length = 150
 
 [**.js, **.coffee]
-max_line_length = 120
+max_line_length = 150
 
 [*.md]
 trim_trailing_whitespace = false

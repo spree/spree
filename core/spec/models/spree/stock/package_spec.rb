@@ -3,11 +3,11 @@ require 'spec_helper'
 module Spree
   module Stock
     describe Package, type: :model do
+      subject { Package.new(stock_location) }
+
       let(:variant) { build(:variant, weight: 25.0) }
       let(:stock_location) { build(:stock_location) }
       let(:order) { build(:order) }
-
-      subject { Package.new(stock_location) }
 
       def build_inventory_unit
         build(:inventory_unit, variant: variant)
@@ -18,12 +18,13 @@ module Spree
         expect(subject.weight).to eq(100.0)
       end
 
-      context "currency" do
+      context 'currency' do
         let(:unit) { build_inventory_unit }
+
         before { subject.add unit }
 
-        it "returns the currency based on the currency from the order" do
-          expect(subject.currency).to eql "USD"
+        it 'returns the currency based on the currency from the order' do
+          expect(subject.currency).to eql 'USD'
         end
       end
 
@@ -81,12 +82,12 @@ module Spree
         expect(package.shipping_methods).to be_empty
       end
 
-      it "can convert to a shipment" do
+      it 'can convert to a shipment' do
         2.times { subject.add build_inventory_unit }
         subject.add build_inventory_unit, :backordered
 
         shipping_method = build(:shipping_method)
-        subject.shipping_rates = [ Spree::ShippingRate.new(shipping_method: shipping_method, cost: 10.00, selected: true) ]
+        subject.shipping_rates = [Spree::ShippingRate.new(shipping_method: shipping_method, cost: 10.00, selected: true)]
 
         shipment = subject.to_shipment
         expect(shipment.stock_location).to eq subject.stock_location
@@ -104,60 +105,60 @@ module Spree
         expect(shipment.shipping_method).to eq shipping_method
       end
 
-      describe "#add_multiple" do
-        it "adds multiple inventory units" do
-          expect { subject.add_multiple [build_inventory_unit, build_inventory_unit] }.to change { subject.quantity }.by(2)
+      describe '#add_multiple' do
+        it 'adds multiple inventory units' do
+          expect { subject.add_multiple [build_inventory_unit, build_inventory_unit] }.to change(subject, :quantity).by(2)
         end
 
-        it "allows adding with a state" do
+        it 'allows adding with a state' do
           expect { subject.add_multiple [build_inventory_unit, build_inventory_unit], :backordered }.to change { subject.backordered.count }.by(2)
         end
 
-        it "defaults to adding with the on hand state" do
+        it 'defaults to adding with the on hand state' do
           expect { subject.add_multiple [build_inventory_unit, build_inventory_unit] }.to change { subject.on_hand.count }.by(2)
         end
       end
 
-      describe "#remove" do
+      describe '#remove' do
         let(:unit) { build_inventory_unit }
-        context "there is a content item for the inventory unit" do
 
+        context 'there is a content item for the inventory unit' do
           before { subject.add unit }
 
-          it "removes that content item" do
-            expect { subject.remove(unit) }.to change { subject.quantity }.by(-1)
+          it 'removes that content item' do
+            expect { subject.remove(unit) }.to change(subject, :quantity).by(-1)
             expect(subject.contents.map(&:inventory_unit)).not_to include unit
           end
         end
 
-        context "there is no content item for the inventory unit" do
+        context 'there is no content item for the inventory unit' do
           it "doesn't change the set of content items" do
-            expect { subject.remove(unit) }.not_to change { subject.quantity }
+            expect { subject.remove(unit) }.not_to change(subject, :quantity)
           end
         end
       end
 
-      describe "#order" do
+      describe '#order' do
         let(:unit) { build_inventory_unit }
-        context "there is an inventory unit" do
 
+        context 'there is an inventory unit' do
           before { subject.add unit }
 
-          it "returns an order" do
+          it 'returns an order' do
             expect(subject.order).to be_a_kind_of Spree::Order
             expect(subject.order).to eq unit.order
           end
         end
 
-        context "there is no inventory unit" do
-          it "returns nil" do
+        context 'there is no inventory unit' do
+          it 'returns nil' do
             expect(subject.order).to eq nil
           end
         end
       end
 
-      context "#volume" do
-        it "calculates the sum of the volume of all the items" do
+      context '#volume' do
+        it 'calculates the sum of the volume of all the items' do
           contents = [ContentItem.new(build(:inventory_unit, variant: build(:variant))),
                       ContentItem.new(build(:inventory_unit, variant: build(:variant))),
                       ContentItem.new(build(:inventory_unit, variant: build(:variant))),
@@ -167,8 +168,8 @@ module Spree
         end
       end
 
-      context "#dimension" do
-        it "calculates the sum of the dimension of all the items" do
+      context '#dimension' do
+        it 'calculates the sum of the dimension of all the items' do
           contents = [ContentItem.new(build(:inventory_unit, variant: build(:variant))),
                       ContentItem.new(build(:inventory_unit, variant: build(:variant))),
                       ContentItem.new(build(:inventory_unit, variant: build(:variant))),

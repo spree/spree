@@ -55,7 +55,7 @@ module Spree
       end
 
       it 'can query the results through a paramter' do
-        expected_result = create(:stock_movement, :received, quantity: 10, stock_item: stock_item)
+        create(:stock_movement, :received, quantity: 10, stock_item: stock_item)
         api_get :index, stock_location_id: stock_location.to_param, q: { quantity_eq: '10' }
         expect(json_response['count']).to eq(1)
       end
@@ -81,4 +81,3 @@ module Spree
     end
   end
 end
-

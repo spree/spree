@@ -41,7 +41,9 @@
         }
       }
       .image {
+	height: 191px;
         .thumbnail {
+	  max-height: 180px;
           margin-bottom: 8px;
           display: inline-block;
           width: 100%;

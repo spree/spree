@@ -18,6 +18,7 @@ en:
       order:
         could_not_transition: "The order could not be transitioned. Please fix the errors and try again."
         invalid_shipping_method: "Invalid shipping method specified."
+        insufficient_quantity: An item in your cart has become unavailable.
       payment:
         credit_over_limit: "This payment can only be credited up to %{limit}. Please specify an amount less than or equal to this number."
         update_forbidden: "This payment cannot be updated because it is %{state}."
@@ -25,3 +26,6 @@ en:
         cannot_ready: "Cannot ready shipment."
       stock_location_required: "A stock_location_id parameter must be provided in order to retrieve stock movements."
       invalid_taxonomy_id: "Invalid taxonomy id."
+      shipment_transfer_errors_occured: "Following errors occured while attempting this action:"
+      negative_quantity: "quantity is negative"
+      wrong_shipment_target: "target shipment is the same as original shipment"

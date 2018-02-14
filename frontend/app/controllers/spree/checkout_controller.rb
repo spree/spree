@@ -17,7 +17,7 @@ module Spree
     before_action :check_authorization
 
     before_action :setup_for_current_state
-    before_action :add_store_credit_payments, only: [:update]
+    before_action :add_store_credit_payments, :remove_store_credit_payments, only: [:update]
 
     helper 'spree/orders'
 
@@ -53,7 +53,7 @@ module Spree
     end
 
     def insufficient_payment?
-      params[:state] == "confirm" &&
+      params[:state] == 'confirm' &&
         @order.payment_required? &&
         @order.payments.valid.sum(:amount) != @order.total
     end
@@ -89,13 +89,15 @@ module Spree
 
     def ensure_valid_state_lock_version
       if params[:order] && params[:order][:state_lock_version]
-        @order.with_lock do
+        changes = @order.changes if @order.changed?
+        @order.reload.with_lock do
           unless @order.state_lock_version == params[:order].delete(:state_lock_version).to_i
             flash[:error] = Spree.t(:order_already_updated)
             redirect_to(checkout_state_path(@order.state)) && return
           end
           @order.increment!(:state_lock_version)
         end
+        @order.assign_attributes(changes) if changes
       end
     end
 
@@ -109,9 +111,7 @@ module Spree
     end
 
     def ensure_checkout_allowed
-      unless @order.checkout_allowed?
-        redirect_to spree.cart_path
-      end
+      redirect_to spree.cart_path unless @order.checkout_allowed?
     end
 
     def ensure_order_not_completed
@@ -150,7 +150,7 @@ module Spree
     end
 
     def before_payment
-      if @order.checkout_steps.include? "delivery"
+      if @order.checkout_steps.include? 'delivery'
         packages = @order.shipments.map(&:to_package)
         @differentiator = Spree::Stock::Differentiator.new(@order, packages)
         @differentiator.missing.each do |variant, quantity|
@@ -164,7 +164,7 @@ module Spree
     end
 
     def add_store_credit_payments
-      if params.has_key?(:apply_store_credit)
+      if params.key?(:apply_store_credit)
         @order.add_store_credit_payments
 
         # Remove other payment method parameters.
@@ -176,6 +176,13 @@ module Spree
         if @order.payments.valid.sum(:amount) < @order.total
           redirect_to checkout_state_path(@order.state) and return
         end
+      end
+    end
+
+    def remove_store_credit_payments
+      if params.key?(:remove_store_credit)
+        @order.remove_store_credit_payments
+        redirect_to checkout_state_path(@order.state) and return
       end
     end
 

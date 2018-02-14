@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :order, class: Spree::Order do
     user
     bill_address
@@ -59,6 +59,12 @@ FactoryGirl.define do
         factory :completed_order_with_pending_payment do
           after(:create) do |order|
             create(:payment, amount: order.total, order: order)
+          end
+        end
+
+        factory :completed_order_with_store_credit_payment do
+          after(:create) do |order|
+            create(:store_credit_payment, amount: order.total, order: order)
           end
         end
 

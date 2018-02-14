@@ -1,0 +1,24 @@
+AllCops:
+  DisplayCopNames: true
+  TargetRubyVersion: 2.4
+  Include:
+    - '**/Gemfile'
+    - '**/Rakefile'
+    - '**/Appraisals'
+  Exclude:
+    - 'spec/dummy/**/*'
+    - 'lib/generators/**/*'
+
+Rails:
+  Enabled: true
+
+Metrics/LineLength:
+  Max: 150
+
+# DISABLED
+
+Style/Documentation:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  Enabled: false

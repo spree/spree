@@ -11,7 +11,7 @@ you can go to ask Spree questions, and they are covered in this guide.
 
 ## Slack
 
-Spree has a [Slack chat room ](http://slack.spreecommerce.com/) that can be used to discuss Spree in real-time.
+Spree has a [Slack chat room ](http://slack.spreecommerce.org/) that can be used to discuss Spree in real-time.
 
 ## GitHub Issues
 

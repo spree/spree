@@ -7,7 +7,7 @@ describe Spree::PaymentMethod::StoreCredit do
 
   context '#authorize' do
     subject do
-      Spree::PaymentMethod::StoreCredit.new.authorize(auth_amount, store_credit, gateway_options)
+      described_class.new.authorize(auth_amount, store_credit, gateway_options)
     end
 
     let(:auth_amount) { store_credit.amount_remaining * 100 }
@@ -46,7 +46,7 @@ describe Spree::PaymentMethod::StoreCredit do
     context 'with a valid request' do
       it 'authorizes a valid store credit' do
         expect(subject.success?).to be true
-        expect(subject.authorization).to_not be_nil
+        expect(subject.authorization).not_to be_nil
       end
 
       context 'with an originator' do
@@ -63,7 +63,7 @@ describe Spree::PaymentMethod::StoreCredit do
 
   context '#capture' do
     subject do
-      Spree::PaymentMethod::StoreCredit.new.capture(capture_amount, auth_code, gateway_options)
+      described_class.new.capture(capture_amount, auth_code, gateway_options)
     end
 
     let(:capture_amount) { 10_00 }
@@ -127,7 +127,7 @@ describe Spree::PaymentMethod::StoreCredit do
 
   context '#void' do
     subject do
-      Spree::PaymentMethod::StoreCredit.new.void(auth_code, gateway_options)
+      described_class.new.void(auth_code, gateway_options)
     end
 
     let(:auth_code) { auth_event.authorization_code }
@@ -200,7 +200,7 @@ describe Spree::PaymentMethod::StoreCredit do
 
   context '#credit' do
     subject do
-      Spree::PaymentMethod::StoreCredit.new.credit(credit_amount, auth_code, gateway_options)
+      described_class.new.credit(credit_amount, auth_code, gateway_options)
     end
 
     let(:credit_amount) { 100.0 }
@@ -249,7 +249,7 @@ describe Spree::PaymentMethod::StoreCredit do
 
   context '#cancel' do
     subject do
-      Spree::PaymentMethod::StoreCredit.new.cancel(auth_code)
+      described_class.new.cancel(auth_code)
     end
 
     let(:store_credit) { create(:store_credit, amount_used: captured_amount) }
@@ -280,12 +280,31 @@ describe Spree::PaymentMethod::StoreCredit do
 
     context 'store credit event not found' do
       subject do
-        Spree::PaymentMethod::StoreCredit.new.cancel('INVALID')
+        described_class.new.cancel('INVALID')
       end
 
       it 'returns an error response' do
         expect(subject.success?).to be false
       end
+    end
+  end
+
+  describe '#available_for_order?' do
+    let!(:store_credit_payment_method) { create(:store_credit_payment_method, display_on: 'both') }
+
+    context 'when user have store credits' do
+      let!(:user_with_store_credits) { create(:user) }
+      let!(:store_credit) { create(:store_credit, user: user_with_store_credits) }
+      let!(:order_with_store_credit) { create(:order, user: user_with_store_credits) }
+
+      it { expect(store_credit_payment_method.available_for_order?(order_with_store_credit)).to be true }
+    end
+
+    context "when user don't store credits" do
+      let!(:user_without_store_credits) { create(:user) }
+      let!(:order_without_store_credit) { create(:order, user: user_without_store_credits) }
+
+      it { expect(store_credit_payment_method.available_for_order?(order_without_store_credit)).to be false }
     end
   end
 end

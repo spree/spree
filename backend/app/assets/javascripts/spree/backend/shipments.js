@@ -43,9 +43,23 @@ $(document).ready(function () {
       var del = $(this);
       var shipment_number = del.data('shipment-number');
       var variant_id = del.data('variant-id');
+      var shipment = _.findWhere(shipments, {number: shipment_number + ''});
+      var url = Spree.routes.shipments_api + "/" + shipment_number + '/remove';
 
       toggleItemEdit();
-      adjustShipmentItems(shipment_number, variant_id, 0);
+
+      $.ajax({
+        type: "PUT",
+        url: Spree.url(url),
+        data: {
+          variant_id: variant_id,
+          token: Spree.api_key
+        }
+      }).done(function( msg ) {
+        window.location.reload();
+      }).fail(function(msg) {
+        alert(msg.responseJSON.message)
+      });
     }
     return false;
   });
@@ -111,6 +125,19 @@ $(document).ready(function () {
   $('a.edit-tracking').click(toggleTrackingEdit);
   $('a.cancel-tracking').click(toggleTrackingEdit);
 
+  var createTrackingValueContent = function (data) {
+    var selected_shipping_method = data.shipping_methods.filter(function (method) {
+      return method.id === data.selected_shipping_rate.shipping_method_id;
+    })[0];
+
+    if (selected_shipping_method && selected_shipping_method.tracking_url) {
+      var shipmentTrackingUrl = selected_shipping_method.tracking_url.replace(/:tracking/, data.tracking);
+      return '<a target="_blank" href="' + shipmentTrackingUrl + '">' + data.tracking + '<a>';
+    }
+
+    return data.tracking;
+  }
+
   // handle tracking save
   $('[data-hook=admin_shipment_form] a.save-tracking').on('click', function (event) {
     event.preventDefault();
@@ -134,7 +161,12 @@ $(document).ready(function () {
 
       var show = link.parents('tbody').find('tr.show-tracking');
       show.toggle();
-      show.find('.tracking-value').html($("<strong>").html(Spree.translations.tracking + ": ")).append(data.tracking);
+
+      if (data.tracking) {
+        show.find('.tracking-value').html($("<strong>").html(Spree.translations.tracking + ": ")).append(createTrackingValueContent(data));
+      } else {
+        show.find('.tracking-value').html(Spree.translations.no_tracking_present);
+      }
     });
   });
 });
@@ -145,13 +177,16 @@ adjustShipmentItems = function(shipment_number, variant_id, quantity){
 
     var url = Spree.routes.shipments_api + "/" + shipment_number;
 
-    var new_quantity = 0;
-    if(inventory_units.length<quantity){
+    var previous_quantity = inventory_units.reduce(function(accumulator, current_unit, _index, _array) {
+      return accumulator + current_unit.quantity;
+    }, 0);
+
+    if(previous_quantity<quantity){
       url += "/add"
-      new_quantity = (quantity - inventory_units.length);
-    }else if(inventory_units.length>quantity){
+      new_quantity = (quantity - previous_quantity);
+    }else if(previous_quantity>quantity){
       url += "/remove"
-      new_quantity = (inventory_units.length - quantity);
+      new_quantity = (previous_quantity - quantity);
     }
     url += '.json';
 
@@ -195,6 +230,9 @@ toggleItemEdit = function(){
 
 startItemSplit = function(event){
   event.preventDefault();
+  $('.cancel-split').each(function(){
+    $(this).click()
+  })
   var link = $(this);
   link.parent().find('a.edit-item').toggle();
   link.parent().find('a.split-item').toggle();
@@ -262,9 +300,9 @@ completeItemSplit = function(event) {
             token: Spree.api_key
         }
       }).error(function(msg) {
-          alert(msg.responseJSON['message']);
+          alert(msg.responseJSON.exception);
       }).done(function(msg) {
-        window.Spree.advanceOrder();
+          window.location.reload();
       });
     } else {
         // TRANSFER TO AN EXISTING SHIPMENT
@@ -280,9 +318,9 @@ completeItemSplit = function(event) {
                 token: Spree.api_key
             }
         }).error(function(msg) {
-            alert(msg.responseJSON['message']);
+            alert(msg.responseJSON.exception);
         }).done(function(msg) {
-            window.Spree.advanceOrder();
+            window.location.reload();
         });
     }
   }

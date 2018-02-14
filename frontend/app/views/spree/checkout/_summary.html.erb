@@ -30,7 +30,8 @@
     <% if order.passed_checkout_step?("address") && order.shipments.any? %>
       <tr data-hook="shipping_total">
         <td><%= Spree.t(:shipping_total) %>:</td>
-        <td data-hook='shipping-total' data-currency=<%= Money::Currency.find(order.currency).symbol %>><%= Spree::Money.new(order.shipments.to_a.sum(&:cost), currency: order.currency).to_html %></td>
+        <% shipping_total = Spree::Money.new(order.shipments.to_a.sum(&:cost), currency: order.currency) %>
+        <td data-hook='shipping-total' data-currency='<%= Money::Currency.find(order.currency).symbol %>' thousands-separator='<%= shipping_total.thousands_separator %>' decimal-mark='<%= shipping_total.decimal_mark %>'><%= shipping_total.to_html %></td>
       </tr>
 
       <% if order.shipment_adjustments.nonzero.exists? %>

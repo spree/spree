@@ -1,0 +1,9 @@
+**/vendor/**
+**/dummy/**
+**/sandbox/**
+**/guides/output/**
+*-min.js
+*.min.js
+jquery*.js
+/guides/content/assets/javascripts/css_browser_selector_dev.js
+/cmd/lib/spree_cmd/templates/**

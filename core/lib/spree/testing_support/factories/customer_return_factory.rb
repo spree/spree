@@ -1,5 +1,4 @@
-FactoryGirl.define do
-
+FactoryBot.define do
   factory :customer_return, class: Spree::CustomerReturn do
     association(:stock_location, factory: :stock_location)
 
@@ -27,5 +26,4 @@ FactoryGirl.define do
   factory :customer_return_without_return_items, class: Spree::CustomerReturn do
     association(:stock_location, factory: :stock_location)
   end
-
 end

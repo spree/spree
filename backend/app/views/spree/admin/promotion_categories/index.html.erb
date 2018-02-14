@@ -4,7 +4,7 @@
 
 <% content_for :page_actions do %>
   <%= button_link_to Spree.t(:new_promotion_category), new_object_url, icon: 'add', class: 'btn-success' %>
-<% end %>
+<% end if can?(:create, Spree::PromotionCategory) %>
 
 <% if @promotion_categories.any? %>
   <table class="table">
@@ -19,8 +19,8 @@
           <td><%= promotion_category.name %></td>
           <td><%= promotion_category.code %></td>
           <td class="actions actions-2 text-right">
-            <%= link_to_edit promotion_category, no_text: true %>
-            <%= link_to_delete promotion_category, no_text: true %>
+            <%= link_to_edit promotion_category, no_text: true if can?(:edit, promotion_category) %>
+            <%= link_to_delete promotion_category, no_text: true if can?(:delete, promotion_category) %>
           </td>
         </tr>
       <% end %>

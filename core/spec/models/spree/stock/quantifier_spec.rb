@@ -11,12 +11,12 @@ end
 module Spree
   module Stock
     describe Quantifier, type: :model do
-      before(:all) { Spree::StockLocation.destroy_all } # FIXME leaky database
-
-      let!(:stock_location) { create :stock_location_with_items  }
-      let!(:stock_item) { stock_location.stock_items.order(:id).first }
+      before(:all) { Spree::StockLocation.destroy_all } # FIXME: leaky database
 
       subject { described_class.new(stock_item.variant) }
+
+      let!(:stock_location) { create :stock_location_with_items }
+      let!(:stock_item) { stock_location.stock_items.order(:id).first }
 
       specify { expect(subject.stock_items).to eq([stock_item]) }
       specify { expect(subject.variant).to eq(stock_item.variant) }
@@ -27,8 +27,8 @@ module Spree
         end
 
         context 'when variant is available' do
-          before(:each) do
-            allow(subject.variant).to receive(:available?) { true }
+          before do
+            allow(subject.variant).to receive(:available?).and_return(true)
           end
 
           context 'when track_inventory_levels is false' do
@@ -36,7 +36,7 @@ module Spree
 
             specify { expect(subject.total_on_hand).to eq(Float::INFINITY) }
 
-            it_should_behave_like 'unlimited supply'
+            it_behaves_like 'unlimited supply'
           end
 
           context 'when variant inventory tracking is off' do
@@ -44,14 +44,13 @@ module Spree
 
             specify { expect(subject.total_on_hand).to eq(Float::INFINITY) }
 
-            it_should_behave_like 'unlimited supply'
+            it_behaves_like 'unlimited supply'
           end
 
           context 'when stock item allows backordering' do
-
             specify { expect(subject.backorderable?).to be true }
 
-            it_should_behave_like 'unlimited supply'
+            it_behaves_like 'unlimited supply'
           end
 
           context 'when stock item prevents backordering' do
@@ -68,8 +67,8 @@ module Spree
         end
 
         context 'when variant is not available' do
-          before(:each) do
-            allow(subject.variant).to receive(:available?) { false }
+          before do
+            allow(subject.variant).to receive(:available?).and_return(false)
           end
 
           it { expect(subject.can_supply?).to be false }
@@ -90,14 +89,14 @@ module Spree
         end
 
         context 'when variant is available' do
-          before(:each) do
-            allow(subject.variant).to receive(:available?) { true }
+          before do
+            allow(subject.variant).to receive(:available?).and_return(true)
           end
 
           context 'when any stock item allows backordering' do
             specify { expect(subject.backorderable?).to be true }
 
-            it_should_behave_like 'unlimited supply'
+            it_behaves_like 'unlimited supply'
           end
 
           context 'when all stock items prevent backordering' do
@@ -114,8 +113,8 @@ module Spree
         end
 
         context 'when variant is not available' do
-          before(:each) do
-            allow(subject.variant).to receive(:available?) { false }
+          before do
+            allow(subject.variant).to receive(:available?).and_return(false)
           end
 
           it { expect(subject.can_supply?).to be false }

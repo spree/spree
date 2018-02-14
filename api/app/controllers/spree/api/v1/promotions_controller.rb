@@ -13,15 +13,16 @@ module Spree
           end
         end
 
-        private 
-          def requires_admin
-            return if @current_user_roles.include?("admin")
-            unauthorized and return
-          end
+        private
 
-          def load_promotion
-            @promotion = Spree::Promotion.find_by_id(params[:id]) || Spree::Promotion.with_coupon_code(params[:id])
-          end
+        def requires_admin
+          return if @current_user_roles.include?('admin')
+          unauthorized and return
+        end
+
+        def load_promotion
+          @promotion = Spree::Promotion.find_by(id: params[:id]) || Spree::Promotion.with_coupon_code(params[:id])
+        end
       end
     end
   end

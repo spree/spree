@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :price, class: Spree::Price do
     variant
     amount 19.99

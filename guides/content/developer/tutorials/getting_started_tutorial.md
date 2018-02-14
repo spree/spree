@@ -9,19 +9,22 @@ Before starting this tutorial, make sure you have Ruby and RubyGems installed on
 
 By following this tutorial, you will create a simple Spree project called `mystore`. Before you can start building the application, you need to make sure that you have Rails itself installed.
 
-To run Spree 3.2 you need the latest Rails version, 5.0.2.
+To run Spree 3.3 you need the latest Rails version, 5.1.4
 
 ### Installing Rails
 
 In most cases, the easiest way to install Rails is to take advantage of RubyGems:
 
 ```bash
-$ gem install rails -v 5.0.2
+$ gem install rails -v 5.1.4
 ```
 
 ### Installing Bundler
 
-Bundler is the current standard for maintaining Ruby gem dependencies. It is recommended that you have a decent working knowledge of Bundler and how it used within Rails before attempting to install Spree. You can install Bundler using the following command:
+Bundler is the current standard for maintaining Ruby gem dependencies. It is
+recommended that you have a decent working knowledge of Bundler and how it's
+used within Rails before attempting to install Spree. You can install Bundler
+using the following command:
 
 ```bash
 $ gem install bundler
@@ -31,7 +34,9 @@ $ gem install bundler
 
 Spree also uses the ImageMagick library for manipulating images. Using this library allows for automatic resizing of product images and the creation of product image thumbnails. ImageMagick is not a Rubygem and it can be a bit tricky to install. There are, however, several excellent sources of information on the Web for how to install it. A basic Google search should help you if you get stuck.
 
-If you are using OSX, a recommended approach is to install ImageMagick using [Homebrew](http://mxcl.github.com/homebrew/). This can be done with the following command:
+If you are using macOS, a recommended approach is to install ImageMagick
+using [Homebrew](http://mxcl.github.com/homebrew/). This can be done with the
+following command:
 
 ```bash
 $ brew install imagemagick
@@ -48,7 +53,7 @@ The distribution of Spree as a Rubygem allows it to be used in a new Rails proje
 Let's start by creating a standard Rails application using the following command:
 
 ```bash
-$ rails _5.0.2_ new mystore
+$ rails _5.1.4_ new mystore
 ```
 
 ### Adding Spree to Your Rails Application
@@ -64,9 +69,9 @@ $ cd mystore
 Add Spree gems to your Gemfile:
 
 ```ruby
-gem 'spree', '~> 3.2.0'
-gem 'spree_auth_devise', github: 'spree/spree_auth_devise', branch: 'master'
-gem 'spree_gateway', github: 'spree/spree_gateway', branch: 'master'
+gem 'spree', '~> 3.3'
+gem 'spree_auth_devise', '~> 3.3'
+gem 'spree_gateway', '~> 3.3'
 ```
 
 Run `bundle install`
@@ -85,11 +90,14 @@ rails g spree_gateway:install
 
 You now have a functional Spree application after running only a few commands! To see it, you need to start a web server on your development machine. You can do this by running another command:
 
-```bash
+```
 $ rails server
 ```
 
-This will fire up an instance of the Webrick web server by default (Spree can also use several other web servers). To see your application in action, open a browser window and navigate to http://localhost:3000. You should see the Spree default home page:
+This will fire up an instance of the Webrick web server by default (Spree can
+also use several other web servers). To see your application in action, open a
+browser window and navigate to [http://localhost:3000](http://localhost:3000).
+You should see the Spree default home page:
 
 ![Spree Application Home Page](/images/developer/spree_welcome.png)
 
@@ -97,7 +105,10 @@ To stop the web server, hit Ctrl-C in the terminal window where it's running. In
 
 ### Logging Into the Backend
 
-The next thing you'll probably want to do is to log into the admin interface. Use your browser window to navigate to http://localhost:3000/admin. You can login with the username `spree@example.com` and password `spree123`.
+The next thing you'll probably want to do is to log into the admin interface.
+Use your browser window to navigate to
+[http://localhost:3000/admin](http://localhost:3000/admin). You can login with
+the username `spree@example.com` and password `spree123`.
 
 ***
 If you elected not to use the `--auto-accept` option when you added Spree to your Rails app, and did not install the seed data, the admin user will not yet exist in your database. You can run a simple rake task to create a new admin user.

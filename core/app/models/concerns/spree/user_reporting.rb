@@ -8,14 +8,14 @@ module Spree
     end
 
     def order_count
-      BigDecimal(orders.complete.size)
+      orders.complete.size
     end
 
     def average_order_value
-      if order_count.to_i > 0
+      if order_count > 0
         lifetime_value / order_count
       else
-        BigDecimal("0.00")
+        BigDecimal('0.00')
       end
     end
   end

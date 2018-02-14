@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :store_credit_auth_event, class: Spree::StoreCreditEvent do
     store_credit       { create(:store_credit) }
     action             { Spree::StoreCredit::AUTHORIZE_ACTION }

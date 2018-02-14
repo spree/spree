@@ -2,12 +2,9 @@ require 'spec_helper'
 
 describe Spree::Gateway, type: :model do
   class Provider
-    def initialize(options)
-    end
+    def initialize(options); end
 
-    def imaginary_method
-
-    end
+    def imaginary_method; end
   end
 
   class TestGateway < Spree::Gateway
@@ -16,34 +13,34 @@ describe Spree::Gateway, type: :model do
     end
   end
 
-  it "passes through all arguments on a method_missing call" do
+  it 'passes through all arguments on a method_missing call' do
     gateway = TestGateway.new
     expect(gateway.provider).to receive(:imaginary_method).with('foo')
     gateway.imaginary_method('foo')
   end
 
-  context "fetching payment sources" do
+  context 'fetching payment sources' do
     let(:order) { Spree::Order.create(user_id: 1) }
 
     let(:has_card) { create(:credit_card_payment_method) }
     let(:no_card) { create(:credit_card_payment_method) }
 
     let(:cc) do
-      create(:credit_card, payment_method: has_card, gateway_customer_profile_id: "EFWE")
+      create(:credit_card, payment_method: has_card, gateway_customer_profile_id: 'EFWE')
     end
 
     let(:payment) do
       create(:payment, order: order, source: cc, payment_method: has_card)
     end
 
-    it "finds credit cards associated on a order completed" do
+    it 'finds credit cards associated on a order completed' do
       allow(payment.order).to receive_messages completed?: true
 
       expect(no_card.reusable_sources(payment.order)).to be_empty
       expect(has_card.reusable_sources(payment.order)).not_to be_empty
     end
 
-    it "finds credit cards associated with the order user" do
+    it 'finds credit cards associated with the order user' do
       cc.update_column :user_id, 1
       allow(payment.order).to receive_messages completed?: false
 
@@ -52,7 +49,7 @@ describe Spree::Gateway, type: :model do
     end
   end
 
-  it "returns exchange multiplier for gateway" do
+  it 'returns exchange multiplier for gateway' do
     gateway = TestGateway.new
 
     rate = Spree::Gateway::FROM_DOLLAR_TO_CENT_RATE

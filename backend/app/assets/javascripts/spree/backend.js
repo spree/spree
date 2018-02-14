@@ -5,12 +5,11 @@
 //= require jquery.cookie
 //= require jquery.jstree/jquery.jstree
 //= require jquery_ujs
-//= require jquery-ui/datepicker
-//= require jquery-ui/sortable
-//= require jquery-ui/autocomplete
+//= require jquery-ui/widgets/datepicker
+//= require jquery-ui/widgets/sortable
+//= require jquery-ui/widgets/autocomplete
 //= require select2
 //= require underscore-min.js
-//= require velocity
 
 //= require spree
 //= require spree/backend/spree-select2
@@ -45,6 +44,7 @@
 //= require spree/backend/taxon_tree_menu
 //= require spree/backend/taxonomy
 //= require spree/backend/taxons
+//= require spree/backend/users/edit
 //= require spree/backend/user_picker
 //= require spree/backend/tag_picker
 //= require spree/backend/variant_autocomplete

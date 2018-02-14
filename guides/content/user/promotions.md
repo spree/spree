@@ -45,7 +45,7 @@ When you select "Item total" from the "Add Rule of Type" drop-down menu and clic
 You can then set the parameters for this type of rule. Specifically, you can establish whether an order's items must be **greater than** or **equal to or greater than** the amount you set. Click "Update".
 
 ***
-To remove a rule from a promotion, click the trash can icon next to it.
+To remove a rule from a promotion, click the cross icon next to it.
 
 ![Delete Rule Icon](/images/user/promotions/delete_rule_icon.jpg)
 ***

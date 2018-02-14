@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :shipment, class: Spree::Shipment do
     tracking 'U10000'
     cost 100.00
@@ -6,7 +6,7 @@ FactoryGirl.define do
     order
     stock_location
 
-    after(:create) do |shipment, evalulator|
+    after(:create) do |shipment, _evalulator|
       shipment.add_shipping_method(create(:shipping_method), true)
 
       shipment.order.line_items.each do |line_item|

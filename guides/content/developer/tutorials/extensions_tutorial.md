@@ -11,10 +11,6 @@ This tutorial continues where we left off in the [Getting Started](getting_start
 
 Extensions are the primary mechanism for customizing a Spree site. They provide a convenient mechanism for Spree developers to share reusable code with one another. Even if you do not plan on sharing your extensions with the community, they can still be a useful way to reuse code within your organization. Extensions are also a convenient mechanism for organizing and isolating discrete chunks of functionality.
 
-### Finding Useful Spree Extensions in the Extension Registry
-
-The [Spree Extension Registry](http://spreecommerce.com/extensions) is a searchable collection of Spree Extensions written and maintained by members of the [Spree Community](http://spreecommerce.com/community). If you need to extend your Spree application's functionality, be sure to have a look in the Extension Registry first; you may find an extension that either implements what you need or provides a good starting point for your own implementation. If you write an extension and it might be useful to others, [publish it in the registry](http://spreecommerce.com/extensions/new) and people will be able to find it and contribute as well.
-
 ## Installing an Extension
 
 We are going to be adding the [spree_i18n](https://github.com/spree-contrib/spree_i18n) extension to our store. SpreeI18n is a extension containing community contributed translations of Spree & ability to supply different attribute values per language such as product names and descriptions. Extensions can also add models, controllers, and views to create new functionality.
@@ -28,7 +24,7 @@ gem 'spree_i18n', github: 'spree-contrib/spree_i18n', branch: 'master'
 ```
 
 ***
-If you are using a 3.0.x or 2.x version of Spree, you'll need to change the `branch` to `X-X-stable` 
+If you are using a 3.0.x or 2.x version of Spree, you'll need to change the `branch` to `X-X-stable`
 to match the version of Spree you're using. For example, use `3-0-stable` if you're using Spree `3.0.x`.
 ***
 
@@ -66,7 +62,7 @@ $ cd spree_simple_sales
 
 ### Adding a Sale Price to Variants
 
-The first thing we need to do is create a migration that adds a sale_price column to [variants](http://guides.spreecommerce.org/products_and_variants.html#what-is-a-variant).
+The first thing we need to do is create a migration that adds a sale_price column to [variants](/developer/products.html#variants).
 
 We can do this with the following command:
 
@@ -77,16 +73,21 @@ bundle exec rails g migration add_sale_price_to_spree_variants sale_price:decima
 Because we are dealing with prices, we need to now edit the generated migration to ensure the correct precision and scale. Edit the file `db/migrate/XXXXXXXXXXX_add_sale_price_to_spree_variants.rb` so that it contains the following:
 
 ```ruby
-class AddSalePriceToSpreeVariants < ActiveRecord::Migration[4.2]
+class AddSalePriceToSpreeVariants < SpreeExtension::Migration[4.2]
   def change
     add_column :spree_variants, :sale_price, :decimal, precision: 8, scale: 2
   end
 end
 ```
 
+***
+We're not inheriting directly from ActiveRecord::Migration, instead we're using
+[SpreeExtension::Migration](https://github.com/spree-contrib/spree_extension/blob/master/lib/spree_extension/migration.rb) to support multiple Rails versions.
+***
+
 ### Adding Our Extension to the Spree Application
 
-Before we continue development of our extension, let's add it to the Spree application we created in the [last tutorial](/developer/getting_started.html). This will allow us to see how the extension works with an actual Spree store while we develop it.
+Before we continue development of our extension, let's add it to the Spree application we created in the [last tutorial](/developer/getting_started_tutorial.html). This will allow us to see how the extension works with an actual Spree store while we develop it.
 
 Within the `mystore` application directory, add the following line to the bottom of our `Gemfile`:
 
@@ -127,11 +128,9 @@ $ mkdir -p app/controllers/spree
 Next, create a new file in the directory we just created called `home_controller_decorator.rb` and add the following content to it:
 
 ```ruby
-module Spree
-  HomeController.class_eval do
-    def sale
-      @products = Product.joins(:variants_including_master).where('spree_variants.sale_price is not null').uniq
-    end
+Spree::HomeController.class_eval do
+  def sale
+    @products = Spree::Product.joins(:variants_including_master).where('spree_variants.sale_price is not null').distinct
   end
 end
 ```
@@ -150,7 +149,7 @@ end
 
 #### Setting the Sale Price for a Variant
 
-Now that our variants have the attribute `sale_price` available to them, let's update the sample data so we have at least one product that is on sale in our application. We will need to do this in the rails console for the time being, as we have no admin interface to set sale prices for variants. We will be adding this functionality in the [next tutorial]() in this series, Deface overrides.
+Now that our variants have the attribute `sale_price` available to them, let's update the sample data so we have at least one product that is on sale in our application. We will need to do this in the rails console for the time being, as we have no admin interface to set sale prices for variants. We will be adding this functionality in the [next tutorial](deface_overrides_tutorial) in this series, Deface overrides.
 
 So, in order to do this, first open up the rails console:
 
@@ -207,13 +206,11 @@ $ mkdir -p app/models/spree
 Next, create the file `app/models/spree/variant_decorator.rb` and add the following content to it:
 
 ```ruby
-module Spree
-  Variant.class_eval do
-    alias_method :orig_price_in, :price_in
-    def price_in(currency)
-      return orig_price_in(currency) unless sale_price.present?
-      Spree::Price.new(variant_id: self.id, amount: self.sale_price, currency: currency)
-    end
+Spree::Variant.class_eval do
+  alias_method :orig_price_in, :price_in
+  def price_in(currency)
+    return orig_price_in(currency) unless sale_price.present?
+    Spree::Price.new(variant_id: self.id, amount: self.sale_price, currency: currency)
   end
 end
 ```
@@ -282,14 +279,6 @@ end
 ```
 
 These specs test that the `price_in` method we overrode in our `VariantDecorator` returns the correct price both when the sale price is present and when it is not.
-
-## Versioning your extension
-
-Different versions of Spree may act differently with your extension. It's advisable to keep different branches of your extension actively maintained for the different branches of Spree so that your extension will work with those different versions.
-
-It's advisable that your extension follows the same versioning pattern as Spree itself. If your extension is compatible with Spree 2.0.x, then create a `2-0-stable` branch on your extension and advise people to use that branch for your extension. If it's only compatible with 1.3.x, then create a 1-3-stable branch and advise the use of that branch.
-
-Having a consistent branching naming scheme across Spree and its extensions will reduce confusion in the long run.
 
 ## Summary
 

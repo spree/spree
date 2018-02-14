@@ -92,12 +92,15 @@ en:
         description: Description
         event_name: Event Name
         expires_at: Expires At
+        generate_code: Generate coupon code
         name: Name
         path: Path
         starts_at: Starts At
         usage_limit: Usage Limit
+        promotion_category: Promotion Category
       spree/promotion_category:
         name: Name
+        code: Code
       spree/property:
         name: Name
         presentation: Presentation
@@ -348,6 +351,10 @@ en:
               greater_than_zero_restrict_delete: is greater than zero. Can not delete store credit.
             amount_authorized:
               exceeds_total_credits: Exceeds total credits.
+        spree/store_credit_category:
+          attributes:
+            base:
+              cannot_destroy_if_used_in_store_credit: Cannot delete store credit categories once they are used in store credit.
         spree/variant:
           attributes:
             base:
@@ -476,6 +483,8 @@ en:
         taxonomies: Taxonomies
         taxons: Taxons
         users: Users
+        return_authorizations: Return Authorizations
+        customer_returns: Customer Returns
       order:
         events:
           approve: approve
@@ -503,17 +512,9 @@ en:
     all_adjustments_opened: All adjustments successfully opened!
     all_departments: All departments
     all_items_have_been_returned: All items have been returned
-    already_signed_up_for_analytics: You have already signed up for Spree Analytics
     alt_text: Alternative Text
     alternative_phone: Alternative Phone
     amount: Amount
-    analytics_desc_header_1: Spree Analytics
-    analytics_desc_header_2: Live analytics integrated into your Spree dashboard
-    analytics_desc_list_1: Get live sales information as it happens
-    analytics_desc_list_2: Requires only a free Spree account to activate
-    analytics_desc_list_3: Absolutely no code to install
-    analytics_desc_list_4: It's completely free!
-    analytics_trackers: Analytics Trackers
     and: and
     approve: approve
     approver: Approver
@@ -535,7 +536,7 @@ en:
     back_to_resource_list: 'Back To %{resource} List'
     back_to_payment: Back To Payment
     back_to_rma_reason_list: Back To RMA Reason List
-    back_to_store: Go Back To Store
+    back_to_store: Back to Store
     back_to_users_list: Back To Users List
     backorderable: Backorderable
     backorderable_default: Backorderable default
@@ -600,7 +601,6 @@ en:
     continue_shopping: Continue shopping
     cost_currency: Cost Currency
     cost_price: Cost Price
-    could_not_connect_to_jirafe: Could not connect to Jirafe to sync data. This will be automatically retried later.
     could_not_create_customer_return: Could not create customer return
     could_not_create_stock_movement: There was a problem saving this stock movement. Please try again.
     count_on_hand: Count On Hand
@@ -650,16 +650,6 @@ en:
     customer_search: Customer Search
     cut: Cut
     cvv_response: CVV Response
-    dash:
-      jirafe:
-        app_id: App ID
-        app_token: App Token
-        currently_unavailable: Jirafe is currently unavailable. Spree will automatically connect to Jirafe once it is available.
-        explanation: The fields below may already be populated if you chose to register with Jirafe from the admin dashboard.
-        header: Jirafe Analytics Settings
-        site_id: Site ID
-        token: Token
-      jirafe_settings_updated: Jirafe Settings have been updated.
     date: Date
     date_completed: Date Completed
     date_picker:
@@ -716,11 +706,13 @@ en:
     error: error
     errors:
       messages:
+        blank: can't be blank
         could_not_create_taxon: Could not create taxon
         no_shipping_methods_available: No shipping methods available for selected location, please change your address and try again.
     errors_prohibited_this_record_from_being_saved:
       one: 1 error prohibited this record from being saved
       other: ! '%{count} errors prohibited this record from being saved'
+    error_user_destroy_with_orders: User associated with orders cannot be destroyed
     event: Event
     events:
       spree:
@@ -742,6 +734,7 @@ en:
     excl: excl.
     expiration: Expiration
     extension: Extension
+    extensions_directory: Extensions Directory
     existing_shipments: Existing shipments
     failed_payment_attempts: Failed Payment Attempts
     filename: Filename
@@ -765,13 +758,13 @@ en:
     gateway_error: Gateway Error
     general: General
     general_settings: General Settings
-    google_analytics: Google Analytics
-    google_analytics_id: Analytics ID
+    generate_code: Generate coupon code
     guest_checkout: Guest Checkout
     guest_user_account: Checkout as a Guest
     has_no_shipped_units: has no shipped units
     height: Height
     home: Home
+    help_center: Help Center
     i18n:
       available_locales: Available Locales
       fields: Fields
@@ -829,9 +822,7 @@ en:
     items_in_rmas: Items in Return Authorizations
     items_to_be_reimbursed: Items to be reimbursed
     items_reimbursed: Items reimbursed
-    jirafe: Jirafe
-    landing_page_rule:
-      path: Path
+    join_slack: Join Slack
     last_name: Last Name
     last_name_begins_with: Last Name Begins With
     learn_more: Learn More
@@ -945,10 +936,10 @@ en:
     notice_messages:
       product_cloned: Product has been cloned
       product_deleted: Product has been deleted
-      product_not_cloned: Product could not be cloned
-      product_not_deleted: Product could not be deleted
+      product_not_cloned: "Product could not be cloned. Reason: %{error}"
+      product_not_deleted: "Product could not be deleted. Reason: %{error}"
       variant_deleted: Variant has been deleted
-      variant_not_deleted: Variant could not be deleted
+      variant_not_deleted: "Variant could not be deleted. Reason: %{error}"
     num_orders: "# Orders"
     number: Number
     on_hand: On Hand
@@ -1028,6 +1019,7 @@ en:
     payment_processor_choose_banner_text: If you need help choosing a payment processor, please visit
     payment_processor_choose_link: our payments page
     payment_state: Payment State
+    payment_identifier: Payment Identifier
     payment_states:
       balance_due: balance due
       checkout: checkout
@@ -1079,6 +1071,8 @@ en:
     products: Products
     promotion: Promotion
     promotionable: Promotable
+    promotion_cloned: Promotion has been cloned
+    promotion_not_cloned: "Promotion has not been cloned. Reason: %{error}"
     promotion_action: Promotion Action
     promotion_action_types:
       create_adjustment:
@@ -1111,9 +1105,6 @@ en:
       item_total:
         description: Order total meets these criteria
         name: Item total
-      landing_page:
-        description: Customer must have visited the specified page
-        name: Landing Page
       one_use_per_user:
         description: Only One Use Per User
         name: One Use Per User
@@ -1156,7 +1147,6 @@ en:
     reference: Reference
     reference_contains: Reference Contains
     refund: Refund
-    refund_amount_must_be_greater_than_zero: Refund amount must be greater than zero
     refund_reasons: Refund Reasons
     refunded_amount: Refunded Amount
     refunds: Refunds
@@ -1362,7 +1352,10 @@ en:
     stock_movements: Stock Movements
     stock_movements_for_stock_location: Stock Movements for %{stock_location_name}
     stock_successfully_transferred: Stock was successfully transferred between locations.
-    stock_transfer: Stock Transfer
+    stock_transfer_name: Stock Transfer
+    stock_transfer:
+      errors:
+        must_have_variant: You must add atleast one variant.
     stock_transfers: Stock Transfers
     stop: Stop
     store: Store
@@ -1373,6 +1366,7 @@ en:
       captured: "Used"
       allocated: "Added"
       apply: Apply Store Credit
+      remove: Remove Store Credit
       applicable_amount: "%{amount} in store credit will be applied to this order."
       available_amount: "You have %{amount} in Store Credit available!"
       remaining_amount: "You have %{amount} remaining in your account's Store Credit."
@@ -1403,7 +1397,6 @@ en:
     successfully_created: ! '%{resource} has been successfully created!'
     successfully_refunded: ! '%{resource} has been successfully refunded!'
     successfully_removed: ! '%{resource} has been successfully removed!'
-    successfully_signed_up_for_analytics: Successfully signed up for Spree Analytics
     successfully_updated: ! '%{resource} has been successfully updated!'
     summary: Summary
     tax: Tax

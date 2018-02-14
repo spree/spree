@@ -1,7 +1,5 @@
 object false
-if @country
-  node(:states_required) { @country.states_required }
-end
+node(:states_required) { @country.states_required } if @country
 
 child(@states => :states) do
   attributes *state_attributes

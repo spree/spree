@@ -3,7 +3,7 @@
   <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
     <div class="container-fluid">
       <div class="row">
-        <div class="navbar-header col-sm-3 col-md-2">
+        <div class="navbar-header col-xs-3 col-md-2">
           <%= link_to(
             image_tag(Spree::Config[:admin_interface_logo], id: 'logo'),
             spree.admin_path,
@@ -15,8 +15,10 @@
               <span class="icon-bar"></span>
             </span>
         </div>
-        <div class="col-sm-9 col-md-10">
-          <div class="navbar-right" data-hook="admin_login_navigation_bar"></div>
+        <div class="col-xs-9 col-md-10">
+          <div class="navbar-right">
+            <%= render partial: 'spree/admin/shared/account_nav' %>
+          </div>
         </div>
       </div>
     </div>

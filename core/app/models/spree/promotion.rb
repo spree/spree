@@ -1,17 +1,17 @@
 module Spree
   class Promotion < Spree::Base
     MATCH_POLICIES = %w(all any)
-    UNACTIVATABLE_ORDER_STATES = ["complete", "awaiting_return", "returned"]
+    UNACTIVATABLE_ORDER_STATES = ['complete', 'awaiting_return', 'returned']
 
-    attr_reader :eligibility_errors
+    attr_reader :eligibility_errors, :generate_code
 
-    belongs_to :promotion_category
+    belongs_to :promotion_category, optional: true
 
     has_many :promotion_rules, autosave: true, dependent: :destroy
-    alias_method :rules, :promotion_rules
+    alias rules promotion_rules
 
     has_many :promotion_actions, autosave: true, dependent: :destroy
-    alias_method :actions, :promotion_actions
+    alias actions promotion_actions
 
     has_many :order_promotions, class_name: 'Spree::OrderPromotion'
     has_many :orders, through: :order_promotions, class_name: 'Spree::Order'
@@ -21,7 +21,7 @@ module Spree
     validates_associated :rules
 
     validates :name, presence: true
-    validates :path, uniqueness: { allow_blank: true }
+    validates :path, :code, uniqueness: { case_sensitive: false, allow_blank: true }
     validates :usage_limit, numericality: { greater_than: 0, allow_nil: true }
     validates :description, length: { maximum: 255 }, allow_blank: true
     validate :expires_at_must_be_later_than_starts_at, if: -> { starts_at && expires_at }
@@ -40,9 +40,9 @@ module Spree
     self.whitelisted_ransackable_attributes = ['path', 'promotion_category_id', 'code']
 
     def self.with_coupon_code(coupon_code)
-      where("lower(#{table_name}.code) = ?", coupon_code.strip.downcase)
-        .includes(:promotion_actions).where.not(spree_promotion_actions: { id: nil })
-        .first
+      where("lower(#{table_name}.code) = ?", coupon_code.strip.downcase).
+        includes(:promotion_actions).where.not(spree_promotion_actions: { id: nil }).
+        first
     end
 
     def self.active
@@ -52,6 +52,12 @@ module Spree
 
     def self.order_activatable?(order)
       order && !UNACTIVATABLE_ORDER_STATES.include?(order.state)
+    end
+
+    def generate_code=(generating_code)
+      if ActiveModel::Type::Boolean.new.cast(generating_code)
+        self.code = random_code
+      end
     end
 
     def expired?
@@ -74,10 +80,10 @@ module Spree
       action_taken = results.include?(true)
 
       if action_taken
-      # connect to the order
-      # create the join_table entry.
-        self.orders << order
-        self.save
+        # connect to the order
+        # create the join_table entry.
+        orders << order
+        save
       end
 
       action_taken
@@ -122,7 +128,7 @@ module Spree
     def eligible_rules(promotable, options = {})
       # Promotions without rules are eligible by default.
       return [] if rules.none?
-      eligible = lambda { |r| r.eligible?(promotable, options) }
+      eligible = ->(r) { r.eligible?(promotable, options) }
       specific_rules = rules.select { |rule| rule.applicable?(promotable) }
       return [] if specific_rules.none?
 
@@ -149,7 +155,7 @@ module Spree
     end
 
     def products
-      rules.where(type: "Spree::Promotion::Rules::Product").map(&:products).flatten.uniq
+      rules.where(type: 'Spree::Promotion::Rules::Product').map(&:products).flatten.uniq
     end
 
     def usage_limit_exceeded?(promotable)
@@ -203,13 +209,14 @@ module Spree
     end
 
     private
+
     def blacklisted?(promotable)
       case promotable
       when Spree::LineItem
         !promotable.product.promotionable?
       when Spree::Order
         promotable.line_items.any? &&
-          !promotable.line_items.joins(:product).where(spree_products: {promotionable: true}).any?
+          promotable.line_items.joins(:product).where(spree_products: { promotionable: true }).none?
       end
     end
 
@@ -224,9 +231,15 @@ module Spree
     end
 
     def expires_at_must_be_later_than_starts_at
-      if expires_at < starts_at
-        errors.add(:expires_at, :invalid_date_range)
+      errors.add(:expires_at, :invalid_date_range) if expires_at < starts_at
+    end
+
+    def random_code
+      coupon_code = loop do
+        random_token = SecureRandom.hex(4)
+        break random_token unless self.class.exists?(code: random_token)
       end
+      coupon_code
     end
   end
 end

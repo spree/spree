@@ -4,7 +4,7 @@
 
 <% content_for :page_actions do %>
   <%= button_link_to Spree.t(:new_user), new_admin_user_url, class: "btn-success", icon: 'add', id: 'admin_new_user_link' %>
-<% end %>
+<% end if can? :create, Spree::user_class %>
 
 <% content_for :table_filter_title do %>
   <%= Spree.t(:search) %>
@@ -18,13 +18,13 @@
         <%= f.text_field :email_cont, class: "form-control js-quick-search-target" %>
       </div>
       <div class="row">
-        <div class="col-md-6">
+        <div class="col-xs-12 col-md-6">
           <div class="form-group">
             <%= f.label Spree.t(:first_name) %>
             <%= f.text_field :bill_address_firstname_cont, class: 'form-control' %>
           </div>
         </div>
-        <div class="col-md-6">
+        <div class="col-xs-12 col-md-6">
           <div class="form-group">
             <%= f.label Spree.t(:last_name) %>
             <%= f.text_field :bill_address_lastname_cont, class: 'form-control' %>
@@ -42,26 +42,33 @@
   </div>
 <% end %>
 
-<table class="table" id="listing_users" data-hook>
-  <thead>
-    <tr data-hook="admin_users_index_headers">
-      <th>
-        <%= sort_link @search,:email, Spree.t(:user), {}, {title: 'users_email_title'} %>
-      </th>
-      <th data-hook="admin_users_index_header_actions" class="actions"></th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @users.each do |user|%>
-      <tr id="<%= spree_dom_id user %>" data-hook="admin_users_index_rows">
-        <td class='user_email'><%=link_to user.email, edit_admin_user_url(user) %></td>
-        <td data-hook="admin_users_index_row_actions" class="actions actions-2 text-right">
-          <%= link_to_edit user, no_text: true %>
-          <%= link_to_delete user, no_text: true %>
-        </td>
+<% if @users.any? %>
+  <table class="table" id="listing_users" data-hook>
+    <thead>
+      <tr data-hook="admin_users_index_headers">
+        <th>
+          <%= sort_link @search,:email, Spree.t(:user), {}, {title: 'users_email_title'} %>
+        </th>
+        <th data-hook="admin_users_index_header_actions" class="actions"></th>
       </tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      <% @users.each do |user|%>
+        <tr id="<%= spree_dom_id user %>" data-hook="admin_users_index_rows">
+          <td class='user_email'><%=link_to user.email, edit_admin_user_url(user) %></td>
+          <td data-hook="admin_users_index_row_actions" class="actions actions-2 text-right">
+            <%= link_to_edit user, no_text: true if can?(:edit, user) %>
+            <%= link_to_delete user, no_text: true if can?(:delete, user) %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <div class="alert alert-info no-objects-found">
+    <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree.user_class)) %>,
+    <%= link_to Spree.t(:add_one), new_object_url %>!
+  </div>
+<% end %>
 
 <%= paginate @users %>

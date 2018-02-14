@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 describe Spree::StockMovement, type: :model do
-
   describe 'Constants' do
     describe 'QUANTITY_LIMITS[:max]' do
       it 'return 2**31 - 1' do
@@ -16,34 +15,9 @@ describe Spree::StockMovement, type: :model do
     end
   end
 
-  describe 'Associations' do
-    it { is_expected.to belong_to(:stock_item).class_name('Spree::StockItem').inverse_of(:stock_movements) }
-    it { is_expected.to belong_to(:originator) }
-  end
-
-  describe 'Validations' do
-    it do
-      is_expected.to validate_presence_of(:stock_item)
-    end
-
-    it do
-      is_expected.to validate_presence_of(:quantity)
-    end
-
-    it do
-      is_expected.to validate_numericality_of(:quantity).
-        is_greater_than_or_equal_to(Spree::StockMovement::QUANTITY_LIMITS[:min]).
-        is_less_than_or_equal_to(Spree::StockMovement::QUANTITY_LIMITS[:max]).only_integer
-    end
-  end
-
-  describe 'Callbacks' do
-    it { is_expected.to callback(:update_stock_item_quantity).after(:create) }
-  end
-
   describe 'Scope' do
     describe '.recent' do
-      it 'should order chronologically by created at' do
+      it 'orders chronologically by created at' do
         expect(Spree::StockMovement.recent.to_sql).
           to eq Spree::StockMovement.unscoped.order(created_at: :desc).to_sql
       end
@@ -62,7 +36,8 @@ describe Spree::StockMovement, type: :model do
 
     describe '#readonly?' do
       let(:stock_movement) { create(:stock_movement, stock_item: stock_item) }
-      it 'should not update a persisted record' do
+
+      it 'does not update a persisted record' do
         expect { stock_movement.save }.to raise_error(ActiveRecord::ReadOnlyRecord)
       end
     end
@@ -100,18 +75,18 @@ describe Spree::StockMovement, type: :model do
           stock_movement.save
           stock_item.reload
         end
-        it 'should decrement the stock item count on hand' do
+        it 'decrements the stock item count on hand' do
           expect(stock_item.count_on_hand).to eq(9)
         end
       end
 
-      context "when quantity is positive" do
+      context 'when quantity is positive' do
         before do
           stock_movement.quantity = 1
           stock_movement.save
           stock_item.reload
         end
-        it "should increment the stock item count on hand" do
+        it 'increments the stock item count on hand' do
           expect(stock_item.count_on_hand).to eq(11)
         end
       end

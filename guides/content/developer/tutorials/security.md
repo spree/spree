@@ -290,7 +290,7 @@ authorize! action, resource, session[:access_token]
 ### PCI Compliance
 
 All store owners wishing to process credit card transactions should be familiar with [PCI Compliance](http://en.wikipedia.org/wiki/Pci_compliance). Spree makes
-absolutely no warranty regarding PCI compliance (or anything else for that matter - see the [LICENSE](http://spreecommerce.com/license) for details.) We do, however, follow common sense security practices in handling credit card data.
+absolutely no warranty regarding PCI compliance (or anything else for that matter - see the [LICENSE](https://github.com/spree/spree/blob/master/license.md) for details.) We do, however, follow common sense security practices in handling credit card data.
 
 ### Transmit Exactly Once
 
@@ -306,6 +306,6 @@ Spree has out of the box support for [Authorize.net CIM](http://www.authorize.ne
 
 ### Other Options
 
-There are also third-party extensions for Paypal's [Express Checkout](https://merchant.paypal.com/cgi-bin/marketingweb?cmd=_render-content&content_ID=merchant/express_checkout) (formerly called Paypal Express.) These types of checkout services handle processing of the credit card information offsite (the data never touches your server) and greatly simplify the requirements for PCI compliance.
+There are also third-party extensions for Paypal's [Express Checkout](https://developer.paypal.com/docs/classic/products/express-checkout/) (formerly called Paypal Express.) These types of checkout services handle processing of the credit card information offsite (the data never touches your server) and greatly simplify the requirements for PCI compliance.
 
 [Braintree](https://braintreepayments.com) also offers a very interesting gateway option that achieves a similar benefit to Express Checkout but allows the entire process to appear to be taking place on the site. In other words, the customer never appears to leave the store during the checkout. They describe this as a "transparent redirect." The Braintree team is very interested in helping other Ruby developers use their gateway and have provided support to Spree developers in the past who were interested in using their product.

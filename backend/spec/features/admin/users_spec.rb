@@ -5,14 +5,13 @@ describe 'Users', type: :feature do
   stub_authorization!
   include Spree::Admin::BaseHelper
 
-  let!(:country) { create(:country) }
   let!(:user_a) { create(:user_with_addresses, email: 'a@example.com') }
   let!(:user_b) { create(:user_with_addresses, email: 'b@example.com') }
 
-  let(:order) { create(:completed_order_with_totals, user: user_a, number: "R123") }
+  let(:order) { create(:completed_order_with_totals, user: user_a, number: 'R123') }
 
   let(:order_2) do
-    create(:completed_order_with_totals, user: user_a, number: "R456").tap do |o|
+    create(:completed_order_with_totals, user: user_a, number: 'R456').tap do |o|
       li = o.line_items.last
       li.update_column(:price, li.price + 10)
     end
@@ -20,15 +19,11 @@ describe 'Users', type: :feature do
 
   let(:orders) { [order, order_2] }
 
-  before do
-    stub_const('Spree::User', create(:user, email: 'example@example.com').class)
-  end
-
   shared_examples_for 'a user page' do
     it 'has lifetime stats' do
       orders
       visit current_url # need to refresh after creating the orders for specs that did not require orders
-      within("#user-lifetime-stats") do
+      within('#user-lifetime-stats') do
         [:total_sales, :num_orders, :average_order_value, :member_since].each do |stat_name|
           expect(page).to have_content Spree.t(stat_name)
         end
@@ -59,7 +54,7 @@ describe 'Users', type: :feature do
   shared_examples_for 'a sortable attribute' do
     before { click_link sort_link }
 
-    it "can sort asc" do
+    it 'can sort asc' do
       within_table(table_id) do
         expect(page).to have_text text_match_1
         expect(page).to have_text text_match_2
@@ -67,7 +62,7 @@ describe 'Users', type: :feature do
       end
     end
 
-    it "can sort desc" do
+    it 'can sort desc' do
       within_table(table_id) do
         click_link sort_link
 
@@ -79,18 +74,19 @@ describe 'Users', type: :feature do
   end
 
   before do
+    create(:country)
+    stub_const('Spree::User', create(:user, email: 'example@example.com').class)
     visit spree.admin_path
     click_link 'Users'
   end
 
   context 'users index' do
-
-    context "email" do
-      it_behaves_like "a sortable attribute" do
+    context 'email' do
+      it_behaves_like 'a sortable attribute' do
         let(:text_match_1) { user_a.email }
         let(:text_match_2) { user_b.email }
-        let(:table_id) { "listing_users" }
-        let(:sort_link) { "users_email_title" }
+        let(:table_id) { 'listing_users' }
+        let(:sort_link) { 'users_email_title' }
       end
     end
 
@@ -127,7 +123,7 @@ describe 'Users', type: :feature do
     end
 
     it 'can edit user roles' do
-      Spree::Role.create name: "admin"
+      Spree::Role.create name: 'admin'
       click_link 'Users'
       click_link user_a.email
 
@@ -138,40 +134,51 @@ describe 'Users', type: :feature do
     end
 
     it 'can edit user shipping address' do
-      click_link "Addresses"
+      click_link 'Addresses'
 
-      within("#admin_user_edit_addresses") do
-        fill_in "user_ship_address_attributes_address1", with: "1313 Mockingbird Ln"
+      within('#admin_user_edit_addresses') do
+        fill_in 'user_ship_address_attributes_address1', with: '1313 Mockingbird Ln'
         click_button 'Update'
-        expect(find_field('user_ship_address_attributes_address1').value).to eq "1313 Mockingbird Ln"
+        expect(find_field('user_ship_address_attributes_address1').value).to eq '1313 Mockingbird Ln'
       end
 
-      expect(user_a.reload.ship_address.address1).to eq "1313 Mockingbird Ln"
+      expect(user_a.reload.ship_address.address1).to eq '1313 Mockingbird Ln'
     end
 
     it 'can edit user billing address' do
-      click_link "Addresses"
+      click_link 'Addresses'
 
-      within("#admin_user_edit_addresses") do
-        fill_in "user_bill_address_attributes_address1", with: "1313 Mockingbird Ln"
+      within('#admin_user_edit_addresses') do
+        fill_in 'user_bill_address_attributes_address1', with: '1313 Mockingbird Ln'
         click_button 'Update'
-        expect(find_field('user_bill_address_attributes_address1').value).to eq "1313 Mockingbird Ln"
+        expect(find_field('user_bill_address_attributes_address1').value).to eq '1313 Mockingbird Ln'
       end
 
-      expect(user_a.reload.bill_address.address1).to eq "1313 Mockingbird Ln"
+      expect(user_a.reload.bill_address.address1).to eq '1313 Mockingbird Ln'
+    end
+
+    it 'can set shipping address to be the same as billing address' do
+      click_link 'Addresses'
+
+      within('#admin_user_edit_addresses') do
+        find('#user_use_billing').click
+        click_button 'Update'
+      end
+
+      expect(user_a.reload.ship_address.same_as?(user_a.reload.bill_address)).to eq true
     end
 
     context 'no api key exists' do
       it 'can generate a new api key' do
-        within("#admin_user_edit_api_key") do
+        within('#admin_user_edit_api_key') do
           expect(user_a.spree_api_key).to be_blank
           click_button Spree.t('generate_key', scope: 'api')
         end
 
         expect(user_a.reload.spree_api_key).to be_present
 
-        within("#admin_user_edit_api_key") do
-          expect(find("#current-api-key").text).to match /Key: #{user_a.spree_api_key}/
+        within('#admin_user_edit_api_key') do
+          expect(find('#current-api-key').text).to match(/Key: #{user_a.spree_api_key}/)
         end
       end
     end
@@ -184,56 +191,55 @@ describe 'Users', type: :feature do
       end
 
       it 'can clear an api key' do
-        within("#admin_user_edit_api_key") do
+        within('#admin_user_edit_api_key') do
           click_button Spree.t('clear_key', scope: 'api')
         end
 
         expect(user_a.reload.spree_api_key).to be_blank
-        expect { find("#current-api-key") }.to raise_error Capybara::ElementNotFound
+        expect { find('#current-api-key') }.to raise_error Capybara::ElementNotFound
       end
 
       it 'can regenerate an api key' do
         old_key = user_a.spree_api_key
 
-        within("#admin_user_edit_api_key") do
+        within('#admin_user_edit_api_key') do
           click_button Spree.t('regenerate_key', scope: 'api')
         end
 
         expect(user_a.reload.spree_api_key).to be_present
         expect(user_a.reload.spree_api_key).not_to eq old_key
 
-        within("#admin_user_edit_api_key") do
-          expect(find("#current-api-key").text).to match /Key: #{user_a.spree_api_key}/
+        within('#admin_user_edit_api_key') do
+          expect(find('#current-api-key').text).to match(/Key: #{user_a.spree_api_key}/)
         end
       end
     end
   end
 
   context 'order history with sorting' do
-
     before do
       orders
       click_link user_a.email
-      within("#sidebar") { click_link Spree.t(:"admin.user.orders") }
+      within('#sidebar') { click_link Spree.t(:"admin.user.orders") }
     end
 
     it_behaves_like 'a user page'
 
-    context "completed_at" do
-      it_behaves_like "a sortable attribute" do
+    context 'completed_at' do
+      it_behaves_like 'a sortable attribute' do
         let(:text_match_1) { order_time(order.completed_at) }
         let(:text_match_2) { order_time(order_2.completed_at) }
-        let(:table_id) { "listing_orders" }
-        let(:sort_link) { "orders_completed_at_title" }
+        let(:table_id) { 'listing_orders' }
+        let(:sort_link) { 'orders_completed_at_title' }
       end
     end
 
     [:number, :state, :total].each do |attr|
       context attr do
-        it_behaves_like "a sortable attribute" do
+        it_behaves_like 'a sortable attribute' do
           let(:text_match_1) { order.send(attr).to_s }
           let(:text_match_2) { order_2.send(attr).to_s }
-          let(:table_id) { "listing_orders" }
+          let(:table_id) { 'listing_orders' }
           let(:sort_link) { "orders_#{attr}_title" }
         end
       end
@@ -241,44 +247,43 @@ describe 'Users', type: :feature do
   end
 
   context 'items purchased with sorting' do
-
     before do
       orders
       click_link user_a.email
-      within("#sidebar") { click_link Spree.t(:"admin.user.items") }
+      within('#sidebar') { click_link Spree.t(:"admin.user.items") }
     end
 
     it_behaves_like 'a user page'
 
-    context "completed_at" do
-      it_behaves_like "a sortable attribute" do
+    context 'completed_at' do
+      it_behaves_like 'a sortable attribute' do
         let(:text_match_1) { order_time(order.completed_at) }
         let(:text_match_2) { order_time(order_2.completed_at) }
-        let(:table_id) { "listing_items" }
-        let(:sort_link) { "orders_completed_at_title" }
+        let(:table_id) { 'listing_items' }
+        let(:sort_link) { 'orders_completed_at_title' }
       end
     end
 
     [:number, :state].each do |attr|
       context attr do
-        it_behaves_like "a sortable attribute" do
+        it_behaves_like 'a sortable attribute' do
           let(:text_match_1) { order.send(attr).to_s }
           let(:text_match_2) { order_2.send(attr).to_s }
-          let(:table_id) { "listing_items" }
+          let(:table_id) { 'listing_items' }
           let(:sort_link) { "orders_#{attr}_title" }
         end
       end
     end
 
-    it "has item attributes" do
+    it 'has item attributes' do
       items = order.line_items | order_2.line_items
       expect(page).to have_table 'listing_items'
       within_table('listing_items') do
         items.each do |item|
-          expect(page).to have_selector(".item-name", text: item.product.name)
-          expect(page).to have_selector(".item-price", text: item.single_money.to_html)
-          expect(page).to have_selector(".item-quantity", text: item.quantity)
-          expect(page).to have_selector(".item-total", text: item.money.to_html)
+          expect(page).to have_selector('.item-name', text: item.product.name)
+          expect(page).to have_selector('.item-price', text: item.single_money.to_html)
+          expect(page).to have_selector('.item-quantity', text: item.quantity)
+          expect(page).to have_selector('.item-total', text: item.money.to_html)
         end
       end
     end

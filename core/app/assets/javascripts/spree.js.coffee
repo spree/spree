@@ -4,7 +4,7 @@ class window.Spree
     jQuery(document).ready(callback)
 
     # fire ready callbacks also on turbolinks page change event
-    jQuery(document).on 'page:load', ->
+    jQuery(document).on 'page:load turbolinks:load', ->
       callback(jQuery)
 
   @mountedAt: ->

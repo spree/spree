@@ -79,9 +79,4 @@ $(document).ready ->
         product.fadeOut 400, (e) ->
           product.remove()
 
-  $('#taxon_products').on "click", ".js-edit-product", (e) ->
-    product = $(this).parents(".product")
-    product_id = product.data("product-id")
-    window.location = Spree.routes.edit_product(product_id)
-
-  $(".variant_autocomplete").variantAutocomplete();
+  $(".variant_autocomplete").variantAutocomplete()

@@ -1,8 +1,8 @@
 Spree::Sample.load_sample("taxonomies")
 Spree::Sample.load_sample("products")
 
-categories = Spree::Taxonomy.find_by_name!(I18n.t('spree.taxonomy_categories_name'))
-brands = Spree::Taxonomy.find_by_name!(I18n.t('spree.taxonomy_brands_name'))
+categories = Spree::Taxonomy.find_by!(name: I18n.t('spree.taxonomy_categories_name'))
+brands = Spree::Taxonomy.find_by!(name: I18n.t('spree.taxonomy_brands_name'))
 
 products = {
   ror_tote: "Ruby on Rails Tote",
@@ -24,7 +24,7 @@ products = {
 }
 
 products.each do |key, name|
-  products[key] = Spree::Product.find_by_name!(name)
+  products[key] = Spree::Product.find_by!(name: name)
 end
 
 taxons = [
@@ -139,9 +139,10 @@ taxons = [
 taxons.each do |taxon_attrs|
   parent = Spree::Taxon.where(name: taxon_attrs[:parent]).first
   taxonomy = taxon_attrs[:taxonomy]
-  Spree::Taxon.where(name: taxon_attrs[:name]).first_or_create! do |taxon|
-    taxon.parent = parent
-    taxon.taxonomy = taxonomy
-    taxon.products = taxon_attrs[:products] if taxon_attrs[:products]
-  end
+
+  taxon = Spree::Taxon.where(name: taxon_attrs[:name]).first_or_create!
+  taxon.parent = parent
+  taxon.taxonomy = taxonomy
+  taxon.save
+  taxon.products = taxon_attrs[:products] if taxon_attrs[:products]
 end

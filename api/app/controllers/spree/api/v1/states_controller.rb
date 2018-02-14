@@ -12,9 +12,7 @@ module Spree
           end
 
           state = @states.last
-          if stale?(state)
-            respond_with(@states)
-          end
+          respond_with(@states) if stale?(state)
         end
 
         def show
@@ -23,14 +21,15 @@ module Spree
         end
 
         private
-          def scope
-            if params[:country_id]
-              @country = Country.accessible_by(current_ability, :read).find(params[:country_id])
-              return @country.states.accessible_by(current_ability, :read).order('name ASC')
-            else
-              return State.accessible_by(current_ability, :read).order('name ASC')
-            end
+
+        def scope
+          if params[:country_id]
+            @country = Country.accessible_by(current_ability, :read).find(params[:country_id])
+            @country.states.accessible_by(current_ability, :read).order('name ASC')
+          else
+            State.accessible_by(current_ability, :read).order('name ASC')
           end
+        end
       end
     end
   end

@@ -18,7 +18,7 @@ module Spree
           authorize! :create, StockItem
 
           count_on_hand = 0
-          if params[:stock_item].has_key?(:count_on_hand)
+          if params[:stock_item].key?(:count_on_hand)
             count_on_hand = params[:stock_item][:count_on_hand].to_i
           end
 
@@ -34,14 +34,19 @@ module Spree
         def update
           @stock_item = StockItem.accessible_by(current_ability, :update).find(params[:id])
 
+          if params[:stock_item].key?(:backorderable)
+            @stock_item.backorderable = params[:stock_item][:backorderable]
+            @stock_item.save
+          end
+
           count_on_hand = 0
-          if params[:stock_item].has_key?(:count_on_hand)
+          if params[:stock_item].key?(:count_on_hand)
             count_on_hand = params[:stock_item][:count_on_hand].to_i
             params[:stock_item].delete(:count_on_hand)
           end
 
           updated = params[:stock_item][:force] ? @stock_item.set_count_on_hand(count_on_hand)
-                                                : @stock_item.adjust_count_on_hand(count_on_hand)
+          : @stock_item.adjust_count_on_hand(count_on_hand)
 
           if updated
             respond_with(@stock_item, status: 200, default_template: :show)

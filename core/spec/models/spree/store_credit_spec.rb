@@ -9,9 +9,10 @@ describe 'StoreCredit' do
     subject { store_credit.save }
 
     context 'amount used is greater than zero' do
+      subject { store_credit.destroy }
+
       let(:store_credit) { create(:store_credit, amount: 100, amount_used: 1) }
       let(:validation_message) { I18n.t('activerecord.errors.models.spree/store_credit.attributes.amount_used.greater_than_zero_restrict_delete') }
-      subject { store_credit.destroy }
 
       it 'can not delete the store credit' do
         subject
@@ -23,7 +24,8 @@ describe 'StoreCredit' do
     context 'category is a non-expiring type' do
       let!(:secondary_credit_type) { create(:secondary_credit_type) }
       let(:store_credit) { build(:store_credit, credit_type: nil) }
-      before { allow(store_credit.category).to receive_message_chain(:non_expiring?).and_return(true) }
+
+      before { allow(store_credit.category).to receive(:non_expiring?).and_return(true) }
 
       it 'sets the credit type to non-expiring' do
         subject
@@ -32,7 +34,7 @@ describe 'StoreCredit' do
     end
 
     context 'category is an expiring type' do
-      before { allow(store_credit.category).to receive_message_chain(:non_expiring?).and_return(false) }
+      before { allow(store_credit.category).to receive(:non_expiring?).and_return(false) }
 
       it 'sets the credit type to non-expiring' do
         subject
@@ -43,10 +45,11 @@ describe 'StoreCredit' do
     context 'the type is set' do
       let!(:secondary_credit_type) { create(:secondary_credit_type) }
       let(:store_credit) { build(:store_credit, credit_type: secondary_credit_type) }
-      before { allow(store_credit.category).to receive_message_chain(:non_expiring?).and_return(false) }
+
+      before { allow(store_credit.category).to receive(:non_expiring?).and_return(false) }
 
       it "doesn't overwrite the type" do
-        expect { subject }.to_not change { store_credit.credit_type }
+        expect { subject }.not_to change(store_credit, :credit_type)
       end
     end
   end
@@ -56,11 +59,11 @@ describe 'StoreCredit' do
       context 'the used amount is defined' do
         let(:invalid_store_credit) { build(:store_credit, amount: 100, amount_used: 150) }
 
-        it 'should not be valid' do
-          expect(invalid_store_credit).to_not be_valid
+        it 'is not valid' do
+          expect(invalid_store_credit).not_to be_valid
         end
 
-        it 'should set the correct error message' do
+        it 'sets the correct error message' do
           invalid_store_credit.valid?
           attribute_name = I18n.t('activerecord.attributes.spree/store_credit.amount_used')
           validation_message = I18n.t('activerecord.errors.models.spree/store_credit.attributes.amount_used.cannot_be_greater_than_amount')
@@ -72,7 +75,7 @@ describe 'StoreCredit' do
       context 'the used amount is not defined yet' do
         let(:store_credit) { build(:store_credit, amount: 100) }
 
-        it 'should be valid' do
+        it 'is valid' do
           expect(store_credit).to be_valid
         end
       end
@@ -82,7 +85,7 @@ describe 'StoreCredit' do
       subject { build(:store_credit, amount_used: 101.0, amount: 100.0) }
 
       it 'is not valid' do
-        expect(subject).to_not be_valid
+        expect(subject).not_to be_valid
       end
 
       it 'adds an error message about the invalid amount used' do
@@ -96,7 +99,7 @@ describe 'StoreCredit' do
       subject { build(:store_credit, amount_authorized: 101.0, amount: 100.0) }
 
       it 'is not valid' do
-        expect(subject).to_not be_valid
+        expect(subject).not_to be_valid
       end
 
       it 'adds an error message about the invalid authorized amount' do
@@ -180,14 +183,12 @@ describe 'StoreCredit' do
         end
 
         context 'originator is present' do
-          with_model 'OriginatorThing', scope: :all
-
-          let(:originator) { OriginatorThing.create! } # won't actually be a user. just giving it a valid model here
-
           subject do
             store_credit.authorize(added_authorization_amount, store_credit.currency,
                                    action_originator: originator)
           end
+
+          let(:originator) { create(:refund, amount: 10) }
 
           it 'records the originator' do
             expect { subject }.to change { Spree::StoreCreditEvent.count }.by(1)
@@ -203,8 +204,7 @@ describe 'StoreCredit' do
 
         it 'returns true' do
           expect(store_credit.authorize(store_credit.amount, store_credit.currency,
-                                        action_authorization_code: auth_event.authorization_code)
-                ).to be true
+                                        action_authorization_code: auth_event.authorization_code)).to be true
         end
       end
     end
@@ -232,7 +232,7 @@ describe 'StoreCredit' do
     end
 
     context 'currency mismatch' do
-      subject { store_credit.validate_authorization(store_credit.amount, "EUR") }
+      subject { store_credit.validate_authorization(store_credit.amount, 'EUR') }
 
       it 'returns false' do
         expect(subject).to be false
@@ -255,9 +255,9 @@ describe 'StoreCredit' do
 
     context 'troublesome floats' do
       # 8.21.to_d < 8.21 => true
-      let(:store_credit_attrs) { { amount: 8.21 } }
-
       subject { store_credit.validate_authorization(store_credit_attrs[:amount], store_credit.currency) }
+
+      let(:store_credit_attrs) { { amount: 8.21 } }
 
       it 'returns true' do
         expect(subject).to be_truthy
@@ -288,12 +288,12 @@ describe 'StoreCredit' do
       end
 
       it 'does not update the store credit model' do
-        expect { subject }.to_not change { store_credit }
+        expect { subject }.not_to change { store_credit }
       end
     end
 
     context 'currency mismatch' do
-      subject { store_credit.capture(authorized_amount, auth_code, "EUR") }
+      subject { store_credit.capture(authorized_amount, auth_code, 'EUR') }
 
       it 'returns false' do
         expect(subject).to be false
@@ -306,19 +306,19 @@ describe 'StoreCredit' do
       end
 
       it 'does not update the store credit model' do
-        expect { subject }.to_not change { store_credit }
+        expect { subject }.not_to change { store_credit }
       end
     end
 
     context 'valid capture' do
-      let(:remaining_authorized_amount) { 1 }
-      let(:originator) { nil }
-
       subject do
         amount = authorized_amount - remaining_authorized_amount
         store_credit.capture(amount, auth_code, store_credit.currency,
                              action_originator: originator)
       end
+
+      let(:remaining_authorized_amount) { 1 }
+      let(:originator) { nil }
 
       it 'returns true' do
         expect(subject).to be_truthy
@@ -335,9 +335,7 @@ describe 'StoreCredit' do
       end
 
       context 'originator is present' do
-        with_model 'OriginatorThing', scope: :all
-
-        let(:originator) { OriginatorThing.create! } # won't actually be a user. just giving it a valid model here
+        let(:originator) { create(:refund, amount: 10) }
 
         it 'records the originator' do
           expect { subject }.to change { Spree::StoreCreditEvent.count }.by(1)
@@ -348,13 +346,13 @@ describe 'StoreCredit' do
   end
 
   describe '#void' do
-    let(:auth_code) { '1-SC-20141111111111' }
-    let(:store_credit) { create(:store_credit, amount_used: 150.0) }
-    let(:originator) { nil }
-
     subject do
       store_credit.void(auth_code, action_originator: originator)
     end
+
+    let(:auth_code) { '1-SC-20141111111111' }
+    let(:store_credit) { create(:store_credit, amount_used: 150.0) }
+    let(:originator) { nil }
 
     context 'no event found for auth_code' do
       it 'returns false' do
@@ -383,13 +381,11 @@ describe 'StoreCredit' do
       end
 
       it 'does not change the amount used on the store credit' do
-        expect { subject }.to_not change { store_credit.amount_used.to_f }
+        expect { subject }.not_to change { store_credit.amount_used.to_f }
       end
     end
 
     context 'auth event found for auth_code' do
-      let(:auth_event) { create(:store_credit_auth_event) }
-
       let(:authorized_amount) { 10.0 }
       let!(:auth_event) do
         create(:store_credit_auth_event,
@@ -407,9 +403,7 @@ describe 'StoreCredit' do
       end
 
       context 'originator is present' do
-        with_model 'OriginatorThing', scope: :all
-
-        let(:originator) { OriginatorThing.create! } # won't actually be a user. just giving it a valid model here
+        let(:originator) { create(:refund, amount: 10) }
 
         it 'records the originator' do
           expect { subject }.to change { Spree::StoreCreditEvent.count }.by(1)
@@ -420,6 +414,10 @@ describe 'StoreCredit' do
   end
 
   describe '#credit' do
+    subject do
+      store_credit.credit(credit_amount, auth_code, currency, action_originator: originator)
+    end
+
     let(:event_auth_code) { '1-SC-20141111111111' }
     let(:amount_used) { 10.0 }
     let(:store_credit) { create(:store_credit, amount_used: amount_used) }
@@ -431,10 +429,6 @@ describe 'StoreCredit' do
              store_credit: store_credit)
     end
     let(:originator) { nil }
-
-    subject do
-      store_credit.credit(credit_amount, auth_code, currency, action_originator: originator)
-    end
 
     context 'currency does not match' do
       let(:currency) { 'AUD' }
@@ -505,7 +499,7 @@ describe 'StoreCredit' do
         end
 
         it 'does not create a new store credit event on the parent store credit' do
-          expect { subject }.to_not change { store_credit.store_credit_events.count }
+          expect { subject }.not_to change { store_credit.store_credit_events.count }
         end
 
         context 'credits the passed amount to a new store credit record' do
@@ -534,9 +528,7 @@ describe 'StoreCredit' do
         end
 
         context 'originator is present' do
-          with_model 'OriginatorThing', scope: :all
-
-          let(:originator) { OriginatorThing.create! } # won't actually be a user. just giving it a valid model here
+          let(:originator) { create(:refund, amount: 10) }
 
           it 'records the originator' do
             expect { subject }.to change { Spree::StoreCreditEvent.count }.by(1)
@@ -572,9 +564,9 @@ describe 'StoreCredit' do
     end
 
     context 'amount used is defined' do
-      let(:amount_used) { 100.0 }
-
       subject { create(:store_credit, amount_used: amount_used) }
+
+      let(:amount_used) { 100.0 }
 
       it 'returns the attribute value' do
         expect(subject.amount_used).to eq amount_used
@@ -592,9 +584,9 @@ describe 'StoreCredit' do
     end
 
     context 'amount authorized is defined' do
-      let(:amount_authorized) { 100.0 }
-
       subject { create(:store_credit, amount_authorized: amount_authorized) }
+
+      let(:amount_authorized) { 100.0 }
 
       it 'returns the attribute value' do
         expect(subject.amount_authorized).to eq amount_authorized
@@ -603,10 +595,10 @@ describe 'StoreCredit' do
   end
 
   describe '#can_capture?' do
+    subject { store_credit.can_capture?(payment) }
+
     let(:store_credit) { create(:store_credit) }
     let(:payment) { create(:payment, state: payment_state) }
-
-    subject { store_credit.can_capture?(payment) }
 
     context 'pending payment' do
       let(:payment_state) { 'pending' }
@@ -650,10 +642,10 @@ describe 'StoreCredit' do
   end
 
   describe '#can_void?' do
+    subject { store_credit.can_void?(payment) }
+
     let(:store_credit) { create(:store_credit) }
     let(:payment) { create(:payment, state: payment_state) }
-
-    subject { store_credit.can_void?(payment) }
 
     context 'pending payment' do
       let(:payment_state) { 'pending' }
@@ -663,11 +655,23 @@ describe 'StoreCredit' do
       end
     end
 
-    context 'checkout payment' do
-      let(:payment_state) { 'checkout' }
+    context 'remove store credits' do
+      let(:payment_state) { :checkout }
 
-      it 'returns false' do
-        expect(subject).to be false
+      context 'when payment is in checkout and order is not completed' do
+        it { is_expected.to be true }
+      end
+
+      context 'when order is completed' do
+        before { payment.order.update_column(:completed_at, Time.current) }
+
+        it { is_expected.to be false }
+      end
+
+      context 'when payment is completed' do
+        before { payment.update_column(:state, :completed) }
+
+        it { is_expected.to be false }
       end
     end
 
@@ -697,10 +701,10 @@ describe 'StoreCredit' do
   end
 
   describe '#can_credit?' do
+    subject { store_credit.can_credit?(payment) }
+
     let(:store_credit) { create(:store_credit) }
     let(:payment) { create(:payment, state: payment_state) }
-
-    subject { store_credit.can_credit?(payment) }
 
     context 'payment is not completed' do
       let(:payment_state) { 'pending' }
@@ -737,9 +741,9 @@ describe 'StoreCredit' do
     describe '#store_events' do
       context 'create' do
         context 'user has one store credit' do
-          let(:store_credit_amount) { 100.0 }
-
           subject { create(:store_credit, amount: store_credit_amount) }
+
+          let(:store_credit_amount) { 100.0 }
 
           it 'creates a store credit event' do
             expect { subject }.to change { Spree::StoreCreditEvent.count }.by(1)
@@ -755,13 +759,13 @@ describe 'StoreCredit' do
         end
 
         context 'user has multiple store credits' do
+          subject { create(:store_credit, user: user, amount: additional_store_credit_amount) }
+
           let(:store_credit_amount) { 100.0 }
           let(:additional_store_credit_amount) { 200.0 }
 
           let(:user) { create(:user) }
           let!(:store_credit) { create(:store_credit, user: user, amount: store_credit_amount) }
-
-          subject { create(:store_credit, user: user, amount: additional_store_credit_amount) }
 
           it "saves the user's total store credit in the event" do
             amount = store_credit_amount + additional_store_credit_amount

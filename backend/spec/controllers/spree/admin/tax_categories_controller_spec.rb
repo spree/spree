@@ -8,21 +8,21 @@ module Spree
       describe 'GET #index' do
         subject { spree_get :index }
 
-        it 'should be successful' do
-          expect(subject).to be_success
+        it 'is successful' do
+          expect(subject).to be_successful
         end
       end
 
       describe 'PUT #update' do
-        let(:tax_category) { create :tax_category }
-    
-        subject { spree_put :update, {id: tax_category.id, tax_category: { name: 'Foo', tax_code: 'Bar' }}}
+        subject { spree_put :update, id: tax_category.id, tax_category: { name: 'Foo', tax_code: 'Bar' } }
 
-        it 'should redirect' do
+        let(:tax_category) { create :tax_category }
+
+        it 'redirects' do
           expect(subject).to be_redirect
         end
 
-        it 'should update' do
+        it 'updates' do
           subject
           tax_category.reload
           expect(tax_category.name).to eq('Foo')

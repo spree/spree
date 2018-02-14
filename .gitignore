@@ -10,7 +10,6 @@
 .idea
 .loadpath
 .project
-.ruby-version
 bin/*
 public/dispatch.cgi
 public/dispatch.fcgi

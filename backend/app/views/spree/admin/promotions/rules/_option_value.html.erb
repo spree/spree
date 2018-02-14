@@ -22,19 +22,19 @@
       <a class="js-remove-promo-rule-option-value delete pull-right">
         <span class="icon icon-delete"></span>
       </a>
-      <div class="col-md-6">
+      <div class="col-xs-12 col-md-6">
         <label><%= Spree.t(:product) %></label>
       </div>
-      <div class="col-md-5">
+      <div class="col-xs-12 col-md-5">
         <label><%= Spree.t(:option_values) %></label>
       </div>
       <div class="clearfix"></div>
     </div>
     <div class="panel-body row">
-      <div class="col-md-6">
+      <div class="col-xs-12 col-md-6">
         <input class="js-promo-rule-option-value-product-select fullwidth" type="hidden" value="{{ productSelect.value }}">
       </div>
-      <div class="col-md-6">
+      <div class="col-xs-12 col-md-6">
         <input class="js-promo-rule-option-value-option-values-select fullwidth" name="<%= param_prefix %>[preferred_eligible_values][{{ productSelect.value }}]" type="hidden" value={{optionValuesSelect.value}}>
       </div>
     </div>

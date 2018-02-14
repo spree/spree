@@ -1,0 +1,5 @@
+**/vendor/**
+**/dummy/**
+**/sandbox/**
+**/guides/output/**
+/cmd/lib/spree_cmd/templates/**

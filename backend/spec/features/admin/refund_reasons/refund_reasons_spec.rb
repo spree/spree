@@ -9,9 +9,11 @@ describe 'RefundReason', type: :feature, js: true do
   let!(:payment) { create(:payment, amount: payment_amount, payment_method: payment_method) }
   let!(:refund_reason) { create(:default_refund_reason, name: 'Reason #1', mutable: true) }
   let!(:refund_reason2) { create(:refund_reason, name: 'Reason #2', mutable: true) }
-  let!(:refund) { create(:refund, payment: payment, amount: amount, reason: refund_reason, transaction_id: nil) }
 
-  before { visit spree.admin_refund_reasons_path }
+  before do
+    create(:refund, payment: payment, amount: amount, reason: refund_reason, transaction_id: nil)
+    visit spree.admin_refund_reasons_path
+  end
 
   describe 'destroy' do
     it 'has refund reasons' do
@@ -50,7 +52,10 @@ describe 'RefundReason', type: :feature, js: true do
     end
 
     def delete_product_property
-      click_icon :delete
+      spree_accept_alert do
+        click_icon :delete
+        wait_for_ajax
+      end
       wait_for_ajax
     end
   end

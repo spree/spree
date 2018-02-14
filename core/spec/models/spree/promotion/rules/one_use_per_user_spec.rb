@@ -5,6 +5,7 @@ describe Spree::Promotion::Rules::OneUsePerUser, type: :model do
 
   describe '#eligible?(order)' do
     subject { rule.eligible?(order) }
+
     let(:order) { double Spree::Order, user: user }
     let(:user) { double Spree::LegacyUser }
     let(:promotion) { stub_model Spree::Promotion, used_by?: used_by }
@@ -17,10 +18,10 @@ describe Spree::Promotion::Rules::OneUsePerUser, type: :model do
         let(:used_by) { true }
 
         it { is_expected.to be false }
-        it "sets an error message" do
+        it 'sets an error message' do
           subject
           expect(rule.eligibility_errors.full_messages.first).
-            to eq "This coupon code can only be used once per user."
+            to eq 'This coupon code can only be used once per user.'
         end
       end
 
@@ -31,11 +32,12 @@ describe Spree::Promotion::Rules::OneUsePerUser, type: :model do
 
     context 'when the order is not assigned to a user' do
       let(:user) { nil }
+
       it { is_expected.to be false }
-      it "sets an error message" do
+      it 'sets an error message' do
         subject
         expect(rule.eligibility_errors.full_messages.first).
-          to eq "You need to login before applying this coupon code."
+          to eq 'You need to login before applying this coupon code.'
       end
     end
   end

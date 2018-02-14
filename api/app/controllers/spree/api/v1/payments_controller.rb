@@ -2,7 +2,6 @@ module Spree
   module Api
     module V1
       class PaymentsController < Spree::Api::BaseController
-
         before_action :find_order
         before_action :find_payment, only: [:update, :show, :authorize, :purchase, :capture, :void]
 
@@ -17,6 +16,7 @@ module Spree
         end
 
         def create
+          @order.validate_payments_attributes([payment_params])
           @payment = @order.payments.build(payment_params)
           if @payment.save
             respond_with(@payment, status: 201, default_template: :show)
@@ -58,24 +58,24 @@ module Spree
 
         private
 
-          def find_order
-            @order = Spree::Order.friendly.find(order_id)
-            authorize! :read, @order, order_token
-          end
+        def find_order
+          @order = Spree::Order.find_by!(number: order_id)
+          authorize! :read, @order, order_token
+        end
 
-          def find_payment
-            @payment = @order.payments.friendly.find(params[:id])
-          end
+        def find_payment
+          @payment = @order.payments.find_by!(number: params[:id])
+        end
 
-          def perform_payment_action(action, *args)
-            authorize! action, Payment
-            @payment.send("#{action}!", *args)
-            respond_with(@payment, default_template: :show)
-          end
+        def perform_payment_action(action, *args)
+          authorize! action, Payment
+          @payment.send("#{action}!", *args)
+          respond_with(@payment, default_template: :show)
+        end
 
-          def payment_params
-            params.require(:payment).permit(permitted_payment_attributes)
-          end
+        def payment_params
+          params.require(:payment).permit(permitted_payment_attributes)
+        end
       end
     end
   end

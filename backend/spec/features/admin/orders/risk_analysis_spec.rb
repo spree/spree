@@ -15,7 +15,7 @@ describe 'Order Risk Analysis', type: :feature do
     end
   end
 
-  context "the order is considered risky" do
+  context 'the order is considered risky' do
     before do
       allow_any_instance_of(Spree::Admin::BaseController).to receive_messages try_spree_current_user: create(:user)
 
@@ -28,7 +28,7 @@ describe 'Order Risk Analysis', type: :feature do
       expect(page).to have_content 'Risk Analysis'
     end
 
-    it "can be approved" do
+    it 'can be approved' do
       click_button('Approve')
       expect(page).to have_content 'Approver'
       expect(page).to have_content 'Approved at'
@@ -36,13 +36,13 @@ describe 'Order Risk Analysis', type: :feature do
     end
   end
 
-  context "the order is not considered risky" do
+  context 'the order is not considered risky' do
     before do
       visit_order
     end
 
     it "does not display 'Risk Analysis' box" do
-      expect(page).to_not have_content 'Risk Analysis'
+      expect(page).not_to have_content 'Risk Analysis'
     end
   end
 end

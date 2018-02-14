@@ -39,7 +39,7 @@
 
     <ul class="list-group" id="payment-method-fields" data-hook>
       <% @order.available_payment_methods.each do |method| %>
-        <li class="list-group-item">
+        <li class="list-group-item radio">
           <label>
             <%= radio_button_tag "order[payments_attributes][][payment_method_id]", method.id, method == @order.available_payment_methods.first %>
             <%= Spree.t(method.name, scope: :payment_methods, default: method.name) %>
@@ -58,10 +58,13 @@
       <% end %>
     </ul>
 
-    <p class='field' data-hook='coupon_code'>
-      <%= form.label :coupon_code %>
-      <%= form.text_field :coupon_code, class: 'form-control' %>
-    </p>
+
+    <% if Spree::Frontend::Config[:coupon_codes_enabled] %>
+      <p class='field' data-hook='coupon_code'>
+        <%= form.label :coupon_code %>
+        <%= form.text_field :coupon_code, class: 'form-control' %>
+      </p>
+    <% end %>
   </div>
 </div>
 

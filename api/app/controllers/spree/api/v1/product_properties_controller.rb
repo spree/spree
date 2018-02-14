@@ -2,7 +2,7 @@ module Spree
   module Api
     module V1
       class ProductPropertiesController < Spree::Api::BaseController
-        before_action :find_product
+        before_action :find_product, :authorize_product!
         before_action :product_property, only: [:show, :update, :destroy]
 
         def index
@@ -16,8 +16,7 @@ module Spree
           respond_with(@product_property)
         end
 
-        def new
-        end
+        def new; end
 
         def create
           authorize! :create, ProductProperty
@@ -48,7 +47,10 @@ module Spree
         private
 
         def find_product
-          @product = super(params[:product_id])
+          super(params[:product_id])
+        end
+
+        def authorize_product!
           authorize! :read, @product
         end
 
@@ -56,7 +58,7 @@ module Spree
           if @product
             @product_property ||= @product.product_properties.find_by(id: params[:id])
             @product_property ||= @product.product_properties.includes(:property).where(spree_properties: { name: params[:id] }).first
-            fail ActiveRecord::RecordNotFound unless @product_property
+            raise ActiveRecord::RecordNotFound unless @product_property
             authorize! :read, @product_property
           end
         end

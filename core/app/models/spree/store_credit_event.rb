@@ -32,7 +32,7 @@ module Spree
     end
 
     def order
-      Spree::Payment.find_by_response_code(authorization_code).try(:order)
+      Spree::Payment.find_by(response_code: authorization_code).try(:order)
     end
   end
 end

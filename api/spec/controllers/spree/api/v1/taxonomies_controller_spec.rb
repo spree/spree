@@ -5,23 +5,23 @@ module Spree
     render_views
 
     let(:taxonomy) { create(:taxonomy) }
-    let(:taxon) { create(:taxon, name: "Ruby", taxonomy: taxonomy) }
-    let(:taxon2) { create(:taxon, name: "Rails", taxonomy: taxonomy) }
+    let(:taxon) { create(:taxon, name: 'Ruby', taxonomy: taxonomy) }
+    let(:taxon2) { create(:taxon, name: 'Rails', taxonomy: taxonomy) }
     let(:attributes) { [:id, :name] }
 
     before do
       stub_authentication!
-      taxon2.children << create(:taxon, name: "3.2.2", taxonomy: taxonomy)
+      taxon2.children << create(:taxon, name: '3.2.2', taxonomy: taxonomy)
       taxon.children << taxon2
       taxonomy.root.children << taxon
     end
 
-    context "as a normal user" do
-      it "gets all taxonomies" do
+    context 'as a normal user' do
+      it 'gets all taxonomies' do
         api_get :index
 
-        expect(json_response["taxonomies"].first['name']).to eq taxonomy.name
-        expect(json_response["taxonomies"].first['root']['taxons'].count).to eq 1
+        expect(json_response['taxonomies'].first['name']).to eq taxonomy.name
+        expect(json_response['taxonomies'].first['root']['taxons'].count).to eq 1
       end
 
       it 'can control the page size through a parameter' do
@@ -39,7 +39,7 @@ module Spree
         expect(json_response['taxonomies'].first['name']).to eq expected_result.name
       end
 
-      it "gets a single taxonomy" do
+      it 'gets a single taxonomy' do
         api_get :show, id: taxonomy.id
 
         expect(json_response['name']).to eq taxonomy.name
@@ -50,7 +50,7 @@ module Spree
         expect(children.first.key?('taxons')).to be false
       end
 
-      it "gets a single taxonomy with set=nested" do
+      it 'gets a single taxonomy with set=nested' do
         api_get :show, id: taxonomy.id, set: 'nested'
 
         expect(json_response['name']).to eq taxonomy.name
@@ -59,53 +59,52 @@ module Spree
         expect(children.first.key?('taxons')).to be true
       end
 
-      it "gets the jstree-friendly version of a taxonomy" do
+      it 'gets the jstree-friendly version of a taxonomy' do
         api_get :jstree, id: taxonomy.id
-        expect(json_response["data"]).to eq(taxonomy.root.name)
-        expect(json_response["attr"]).to eq({ "id" => taxonomy.root.id, "name" => taxonomy.root.name})
-        expect(json_response["state"]).to eq("closed")
+        expect(json_response['data']).to eq(taxonomy.root.name)
+        expect(json_response['attr']).to eq('id' => taxonomy.root.id, 'name' => taxonomy.root.name)
+        expect(json_response['state']).to eq('closed')
       end
 
-      it "can learn how to create a new taxonomy" do
+      it 'can learn how to create a new taxonomy' do
         api_get :new
-        expect(json_response["attributes"]).to eq(attributes.map(&:to_s))
-        required_attributes = json_response["required_attributes"]
-        expect(required_attributes).to include("name")
+        expect(json_response['attributes']).to eq(attributes.map(&:to_s))
+        required_attributes = json_response['required_attributes']
+        expect(required_attributes).to include('name')
       end
 
-      it "cannot create a new taxonomy if not an admin" do
-        api_post :create, taxonomy: { name: "Location" }
+      it 'cannot create a new taxonomy if not an admin' do
+        api_post :create, taxonomy: { name: 'Location' }
         assert_unauthorized!
       end
 
-      it "cannot update a taxonomy" do
-        api_put :update, id: taxonomy.id, taxonomy: { name: "I hacked your store!" }
+      it 'cannot update a taxonomy' do
+        api_put :update, id: taxonomy.id, taxonomy: { name: 'I hacked your store!' }
         assert_unauthorized!
       end
 
-      it "cannot delete a taxonomy" do
+      it 'cannot delete a taxonomy' do
         api_delete :destroy, id: taxonomy.id
         assert_unauthorized!
       end
     end
 
-    context "as an admin" do
+    context 'as an admin' do
       sign_in_as_admin!
 
-      it "can create" do
-        api_post :create, taxonomy: { name: "Colors"}
+      it 'can create' do
+        api_post :create, taxonomy: { name: 'Colors' }
         expect(json_response).to have_attributes(attributes)
         expect(response.status).to eq(201)
       end
 
-      it "cannot create a new taxonomy with invalid attributes" do
+      it 'cannot create a new taxonomy with invalid attributes' do
         api_post :create, taxonomy: {}
         expect(response.status).to eq(422)
-        expect(json_response["error"]).to eq("Invalid resource. Please fix errors and try again.")
-        errors = json_response["errors"]
+        expect(json_response['error']).to eq('Invalid resource. Please fix errors and try again.')
       end
 
-      it "can destroy" do
+      it 'can destroy' do
         api_delete :destroy, id: taxonomy.id
         expect(response.status).to eq(204)
       end

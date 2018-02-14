@@ -5,44 +5,46 @@
         <%= Spree.t(:order_line_items) %>
       </h1>
     </div>
-    <table class="table table-bordered line-items" data-hook="line-items">
-      <thead>
-        <tr>
-          <th colspan="2"><%= Spree.t(:name) %></th>
-          <th class="text-center"><%= Spree.t(:price) %></th>
-          <th class="text-center"><%= Spree.t(:quantity) %></th>
-          <th class="text-center"><%= Spree.t(:total_price) %></th>
-          <th class="orders-actions text-center" data-hook="admin_order_form_line_items_header_actions"></th>
-        </tr>
-      </thead>
-      <tbody>
-        <% order.line_items.each do |item| %>
-          <tr class="line-item" id="line-item-<%= item.id %>">
-            <td class="line-item-image image text-center">
-              <%= mini_image(item.variant) %>
-            </td>
-            <td class="line-item-name text-center">
-              <%= item.name %><br><%= "(" + variant_options(item.variant) + ")" unless item.variant.option_values.empty? %>
-            </td>
-            <td class="line-item-price text-center"><%= item.single_money.to_html %></td>
-            <td class="line-item-qty-show text-center">
-              <%= item.quantity %>
-            </td>
-            <td class="line-item-qty-edit is-hidden">
-              <%= number_field_tag :quantity, item.quantity, min: 0, class: "line_item_quantity form-control", size: 5 %>
-            </td>
-            <td class="line-item-total text-center"><%= line_item_shipment_price(item, item.quantity) %></td>
-            <td class="cart-line-item-delete actions actions-4 text-center" data-hook="cart_line_item_delete">
-              <% if can? :update, item %>
-                <%= link_to_with_icon 'arrow-left', Spree.t('actions.cancel'), "#", class: 'cancel-line-item btn btn-default btn-sm', data: {action: 'cancel'}, title: Spree.t('actions.cancel'), style: 'display: none', no_text: true %>
-                <%= link_to_with_icon 'save', Spree.t('actions.save'), "#", class: 'save-line-item btn btn-success btn-sm', no_text: true, data: { :'line-item-id' => item.id, action: 'save'}, title: Spree.t('actions.save'), style: 'display: none' %>
-                <%= link_to_with_icon 'edit', Spree.t('edit'), "#", class: 'edit-line-item btn btn-primary btn-sm', data: {action: 'edit'}, title: Spree.t('edit'), no_text: true %>
-                <%= link_to_with_icon 'delete', Spree.t('delete'), "#", class: 'delete-line-item btn btn-danger btn-sm', data: { 'line-item-id' => item.id, action: 'remove'}, title: Spree.t('delete'), no_text: true %>
-              <% end %>
-            </td>
+    <div class="table-responsive">
+      <table class="table table-bordered line-items" data-hook="line-items">
+        <thead>
+          <tr>
+            <th colspan="2"><%= Spree.t(:name) %></th>
+            <th class="text-center"><%= Spree.t(:price) %></th>
+            <th class="text-center"><%= Spree.t(:quantity) %></th>
+            <th class="text-center"><%= Spree.t(:total_price) %></th>
+            <th class="orders-actions text-center" data-hook="admin_order_form_line_items_header_actions"></th>
           </tr>
-        <% end %>
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          <% order.line_items.each do |item| %>
+            <tr class="line-item" id="line-item-<%= item.id %>">
+              <td class="line-item-image image text-center">
+                <%= mini_image(item.variant) %>
+              </td>
+              <td class="line-item-name text-center">
+                <%= item.name %><br><%= "(" + variant_options(item.variant) + ")" unless item.variant.option_values.empty? %>
+              </td>
+              <td class="line-item-price text-center"><%= item.single_money.to_html %></td>
+              <td class="line-item-qty-show text-center">
+                <%= item.quantity %>
+              </td>
+              <td class="line-item-qty-edit is-hidden">
+                <%= number_field_tag :quantity, item.quantity, min: 0, class: "line_item_quantity form-control", size: 5 %>
+              </td>
+              <td class="line-item-total text-center"><%= line_item_shipment_price(item, item.quantity) %></td>
+              <td class="cart-line-item-delete actions actions-4 text-center" data-hook="cart_line_item_delete">
+                <% if can? :update, item %>
+                  <%= link_to_with_icon 'arrow-left', Spree.t('actions.cancel'), "#", class: 'cancel-line-item btn btn-default btn-sm', data: {action: 'cancel'}, title: Spree.t('actions.cancel'), style: 'display: none', no_text: true %>
+                  <%= link_to_with_icon 'save', Spree.t('actions.save'), "#", class: 'save-line-item btn btn-success btn-sm', no_text: true, data: { :'line-item-id' => item.id, action: 'save'}, title: Spree.t('actions.save'), style: 'display: none' %>
+                  <%= link_to_with_icon 'edit', Spree.t('edit'), "#", class: 'edit-line-item btn btn-primary btn-sm', data: {action: 'edit'}, title: Spree.t('edit'), no_text: true %>
+                  <%= link_to_with_icon 'delete', Spree.t('delete'), "#", class: 'delete-line-item btn btn-danger btn-sm', data: { 'line-item-id' => item.id, action: 'remove'}, title: Spree.t('delete'), no_text: true %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
   </div>
 <% end %>

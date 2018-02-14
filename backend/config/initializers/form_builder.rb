@@ -3,7 +3,7 @@
 #
 class ActionView::Helpers::FormBuilder
   def field_container(method, options = {}, &block)
-    @template.field_container(@object_name,method,options,&block)
+    @template.field_container(@object_name, method, options, &block)
   end
 
   def error_message_on(method, options = {})
@@ -11,5 +11,4 @@ class ActionView::Helpers::FormBuilder
   end
 end
 
-ActionView::Base.field_error_proc = Proc.new{ |html_tag, instance| "<span class=\"field_with_errors\">#{html_tag}</span>".html_safe }
-
+ActionView::Base.field_error_proc = proc { |html_tag, _instance| "<span class=\"field_with_errors\">#{html_tag}</span>".html_safe }

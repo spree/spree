@@ -13,7 +13,7 @@ module Spree
     DEFAULT_CREATED_BY_EMAIL = 'spree@example.com'.freeze
 
     belongs_to :user, class_name: Spree.user_class.to_s, foreign_key: 'user_id'
-    belongs_to :category, class_name: "Spree::StoreCreditCategory"
+    belongs_to :category, class_name: 'Spree::StoreCreditCategory'
     belongs_to :created_by, class_name: Spree.user_class.to_s, foreign_key: 'created_by_id'
     belongs_to :credit_type, class_name: 'Spree::StoreCreditType', foreign_key: 'type_id'
     has_many :store_credit_events
@@ -153,7 +153,7 @@ module Spree
     end
 
     def can_void?(payment)
-      payment.pending?
+      payment.pending? || (payment.checkout? && !payment.order.completed?)
     end
 
     def can_credit?(payment)
@@ -203,7 +203,10 @@ module Spree
     end
 
     def store_event
-      return unless amount_changed? || amount_used_changed? || amount_authorized_changed? || action == ELIGIBLE_ACTION
+      return unless saved_change_to_amount? ||
+          saved_change_to_amount_used? ||
+          saved_change_to_amount_authorized? ||
+          action == ELIGIBLE_ACTION
 
       event = if action
                 store_credit_events.build(action: action)
@@ -245,7 +248,7 @@ module Spree
     def associate_credit_type
       unless type_id
         credit_type_name = category.try(:non_expiring?) ? 'Non-expiring' : 'Expiring'
-        self.credit_type = Spree::StoreCreditType.find_by_name(credit_type_name)
+        self.credit_type = Spree::StoreCreditType.find_by(name: credit_type_name)
       end
     end
   end

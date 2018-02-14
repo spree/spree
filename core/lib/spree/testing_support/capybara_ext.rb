@@ -7,7 +7,7 @@ module CapybaraExt
     find(".icon-#{type}").click
   end
 
-  def eventually_fill_in(field, options={})
+  def eventually_fill_in(field, options = {})
     expect(page).to have_css('#' + field)
     fill_in field, options
   end
@@ -16,7 +16,7 @@ module CapybaraExt
     if RSpec.current_example.metadata[:js]
       within("table.table tbody tr:nth-child(#{num})", &block)
     else
-      within(:xpath, all("table.table tbody tr")[num-1].path, &block)
+      within(:xpath, all('table.table tbody tr')[num - 1].path, &block)
     end
   end
 
@@ -24,7 +24,7 @@ module CapybaraExt
     if RSpec.current_example.metadata[:js]
       find("td:nth-child(#{num})").text
     else
-      all("td")[num-1].text
+      all('td')[num - 1].text
     end
   end
 
@@ -34,8 +34,8 @@ module CapybaraExt
 
   def select2_search(value, options)
     label = find_label_by_text(options[:from])
-    within label.first(:xpath,".//..") do
-      options[:from] = "##{find(".select2-container")["id"]}"
+    within label.first(:xpath, './/..') do
+      options[:from] = "##{find('.select2-container')['id']}"
     end
     targetted_select2_search(value, options)
   end
@@ -49,18 +49,16 @@ module CapybaraExt
   def select2(value, options)
     label = find_label_by_text(options[:from])
 
-    within label.first(:xpath,".//..") do
-      options[:from] = "##{find(".select2-container")["id"]}"
+    within label.first(:xpath, './/..') do
+      options[:from] = "##{find('.select2-container')['id']}"
     end
     targetted_select2(value, options)
   end
 
-  def select2_no_label value, options={}
-    raise "Must pass a hash containing 'from'" if not options.is_a?(Hash) or not options.has_key?(:from)
+  def select2_no_label(value, options = {})
+    raise "Must pass a hash containing 'from'" if !options.is_a?(Hash) || !options.key?(:from)
 
     placeholder = options[:from]
-    minlength = options[:minlength] || 4
-
     click_link placeholder
 
     select_select2_result(value)
@@ -75,7 +73,7 @@ module CapybaraExt
   def select_select2_result(value)
     # results are in a div appended to the end of the document
     within(:xpath, '//body') do
-      page.find("div.select2-result-label", text: %r{#{Regexp.escape(value)}}i).click
+      page.find('div.select2-result-label', text: %r{#{Regexp.escape(value)}}i).click
     end
   end
 
@@ -90,9 +88,7 @@ module CapybaraExt
       label = find_label(text)
     end
 
-    if label.nil?
-      raise "Could not find label by text #{text}"
-    end
+    raise "Could not find label by text #{text}" if label.nil?
 
     label
   end
@@ -103,12 +99,11 @@ module CapybaraExt
 
   # arg delay in seconds
   def wait_for_ajax(delay = Capybara.default_max_wait_time)
-    counter = 0
-    delay_threshold = delay * 10
-    while page.evaluate_script("typeof($) === 'undefined' || $.active > 0")
-      counter += 1
-      sleep(0.1)
-      raise "AJAX request took longer than #{delay} seconds." if counter >= delay_threshold
+    Timeout.timeout(delay) do
+      active = page.evaluate_script('typeof jQuery !== "undefined" && jQuery.active')
+      until active.zero?
+        active = page.evaluate_script('typeof jQuery !== "undefined" && jQuery.active')
+      end
     end
   end
 
@@ -116,19 +111,15 @@ module CapybaraExt
   #
   # Much better than a random sleep "here and there"
   # it will not cause any delay in case the condition is fullfilled on first cycle.
+
   def wait_for_condition(delay = Capybara.default_max_wait_time)
     counter = 0
     delay_threshold = delay * 10
-    while !yield
+    until yield
       counter += 1
       sleep(0.1)
       raise "Could not achieve condition within #{delay} seconds." if counter >= delay_threshold
     end
-  end
-
-  def accept_alert
-    page.evaluate_script('window.confirm = function() { return true; }')
-    yield
   end
 
   def dismiss_alert
@@ -136,6 +127,16 @@ module CapybaraExt
     yield
     # Restore existing default
     page.evaluate_script('window.confirm = function() { return true; }')
+  end
+
+  def spree_accept_alert
+    yield
+  rescue Selenium::WebDriver::Error::UnhandledAlertError
+    page.driver.browser.switch_to.alert.accept
+  end
+
+  def disable_html5_validation
+    page.execute_script('for(var f=document.forms,i=f.length;i--;)f[i].setAttribute("novalidate",i)')
   end
 end
 
@@ -145,7 +146,7 @@ Capybara.configure do |config|
 end
 
 RSpec::Matchers.define :have_meta do |name, expected|
-  match do |actual|
+  match do |_actual|
     has_css?("meta[name='#{name}'][content='#{expected}']", visible: false)
   end
 
@@ -160,12 +161,12 @@ RSpec::Matchers.define :have_meta do |name, expected|
 end
 
 RSpec::Matchers.define :have_title do |expected|
-  match do |actual|
-    has_css?("title", text: expected, visible: false)
+  match do |_actual|
+    has_css?('title', text: expected, visible: false)
   end
 
   failure_message do |actual|
-    actual = first("title")
+    actual = first('title')
     if actual
       "expected that title would have been '#{expected}' but was '#{actual.text}'"
     else

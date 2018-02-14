@@ -10,6 +10,8 @@ env:
 gemfile:
   - gemfiles/spree_3_1.gemfile
   - gemfiles/spree_3_2.gemfile
+  - gemfiles/spree_3_3.gemfile
+  - gemfiles/spree_3_4.gemfile
   - gemfiles/spree_master.gemfile
 
 script:
@@ -17,12 +19,13 @@ script:
   - bundle exec rake spec
 
 rvm:
+  - 2.4.2
   - 2.3.1
-  - 2.2.5
+  - 2.2.7
 
-addons:
-  apt:
-    packages:
-    - mysql-server-5.6
-    - mysql-client-core-5.6
-    - mysql-client-5.6
+matrix:
+  allow_failures:
+    - gemfile: gemfiles/spree_master.gemfile
+
+before_install:
+  - mysql -u root -e "GRANT ALL ON *.* TO 'travis'@'%';"

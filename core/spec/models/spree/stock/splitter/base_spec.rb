@@ -4,17 +4,18 @@ module Spree
   module Stock
     module Splitter
       describe Base, type: :model do
+        let(:splitter1) { described_class.new(packer) }
+        let(:splitter2) { described_class.new(packer, splitter1) }
+
         let(:packer) { build(:stock_packer) }
 
-        it 'continues to splitter chain' do
-          splitter1 = Base.new(packer)
-          splitter2 = Base.new(packer, splitter1)
-          packages = []
+        let(:packages) { [] }
 
-          expect(splitter1).to receive(:split).with(packages)
-          splitter2.split(packages)
+        describe 'continues to splitter chain' do
+          it { expect(splitter1).to receive(:split).with(packages) }
+
+          after { splitter2.split(packages) }
         end
-
       end
     end
   end
