@@ -39,7 +39,7 @@ Both use cases are handled by Spree Preferences. They are easy to define, provid
 
 ## General Settings
 
-Spree comes with many application-wide preferences. They are defined in `core/app/models/spree/app_configuration.rb` and made available to your code through `Spree::Config`, e.g., `Spree::Config.site_name`.
+Spree comes with many application-wide preferences. They are defined in `core/app/models/spree/app_configuration.rb` and made available to your code through `Spree::Config`, e.g., `Spree::Config.logo`.
 
 A limited set of the general settings are available in the admin interface of your store (`/admin/general_settings`).
 
@@ -245,8 +245,8 @@ During the Spree installation process, an initializer file is created within you
 ```ruby
 Spree.config do |config|
   # Example:
-  # Uncomment to override the default site name.
-  # config.site_name = "Spree Demo Site"
+  # Uncomment to override the default logo location.
+  # config.logo = 'logo/my_store.png'
 end
 ```
 
@@ -256,7 +256,7 @@ For example if you would like to change the logo location and if you want to tax
 
 ```ruby
 Spree.config do |config|
-  config.admin_interface_logo = 'logo/my_store.png'
+  config.logo = 'logo/my_store.png'
   config.tax_using_ship_address = true
 end
 ```
