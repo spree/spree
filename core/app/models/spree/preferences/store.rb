@@ -86,7 +86,7 @@ module Spree::Preferences
 
     def should_persist?
       @persistence && Spree::Preference.table_exists?
-    rescue PG::ConnectionBad, Activerecord::NoDatabaseError # this is fix to make Deploy To Heroku button work
+    rescue PG::ConnectionBad, ActiveRecord::NoDatabaseError # this is fix to make Deploy To Heroku button work
       false
     end
   end
