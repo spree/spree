@@ -13,7 +13,7 @@
 
     <% if ((can? :update, @order) && (@order.shipments.size.zero? || @order.shipments.shipped.size.zero?)) %>
       <li<%== ' class="active"' if current == :store %> data-hook='admin_order_tabs_store_details'>
-        <%= link_to_with_icon 'edit', Spree.t(:store), store_admin_order_url(@order) %>
+        <%= link_to_with_icon 'home', Spree.t(:store), store_admin_order_url(@order) %>
       </li>
     <% end %>
 
