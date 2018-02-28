@@ -20,6 +20,13 @@ module Spree
                             end
         end
 
+        # This action is used to change selected shipping rate
+        def select
+          authorize! :update, @order, order_token
+          shipping_rates = @order.update_shipments_rates(params[:shipping_method_id])
+          render json: shipping_rates
+        end
+
         private
 
         def find_order
