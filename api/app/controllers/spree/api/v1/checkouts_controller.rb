@@ -3,7 +3,7 @@ module Spree
     module V1
       class CheckoutsController < Spree::Api::BaseController
         before_action :associate_user, only: :update
-        before_action :load_order_with_lock, only: [:next, :advance, :update, :next_or_reset]
+        before_action :load_order_with_lock, only: [:next, :advance, :update, :next_or_reset, :complete]
 
         include Spree::Core::ControllerHelpers::Auth
         include Spree::Core::ControllerHelpers::Order
@@ -42,6 +42,16 @@ module Spree
           authorize! :update, @order, order_token
           while @order.next; end
           respond_with(@order, default_template: 'spree/api/v1/orders/show', status: 200)
+        end
+
+        # Separate action for order completion
+        def complete
+          authorize! :update, @order, order_token
+
+          while !@order.complete? && @order.next; end
+          prepare_response
+        rescue StateMachines::InvalidTransition
+          transition_failed_response
         end
 
         def update
@@ -122,6 +132,14 @@ module Spree
 
         def transition_failed_response
           respond_with(@order, default_template: 'spree/api/v1/orders/could_not_transition', status: 422)
+        end
+
+        def prepare_response
+          if @order.errors.any?
+            render json: { errors: @order.errors.full_messages.join(' ') }, status: 422
+          else
+            respond_with(@order, default_template: 'spree/api/v1/orders/show', status: 200)
+          end
         end
       end
     end
