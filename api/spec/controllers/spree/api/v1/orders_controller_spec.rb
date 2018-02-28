@@ -705,5 +705,102 @@ module Spree
         end
       end
     end
+
+    context 'PUT remove_coupon_code' do
+      let(:order) { create(:order_with_line_items) }
+
+      it 'should return 404 status if promotion does not exist' do
+        api_put :remove_coupon_code, id: order.number,
+                                        order_token: order.guest_token,
+                                        coupon_code: 'example'
+
+        expect(response.status).to eq 404
+      end
+
+      context 'order with discount promotion' do
+        let!(:discount_promo_code) { 'discount' }
+        let!(:discount_promotion) { create(:promotion_with_order_adjustment, code: discount_promo_code) }
+        let(:order_with_discount_promotion) do
+          create(:order_with_line_items, coupon_code: discount_promo_code).tap do |order|
+            Spree::PromotionHandler::Coupon.new(order).apply
+          end
+        end
+
+        it 'should remove all order adjustments from order and return status 200' do
+          expect(order_with_discount_promotion.reload.total.to_f).to eq 100.0
+
+          api_put :remove_coupon_code, id: order_with_discount_promotion.number,
+                                       order_token: order_with_discount_promotion.guest_token,
+                                       coupon_code: order_with_discount_promotion.coupon_code
+
+          order_with_discount_promotion.adjustments.promotion.each { |a| puts a.amount.to_f.to_s }
+
+          expect(response.status).to eq 200
+          expect(json_response['success']).to eq Spree.t('adjustments_deleted')
+          expect(order_with_discount_promotion.reload.total.to_f).to eq 110.0
+        end
+      end
+
+      context 'order with line item discount promotion' do
+        let!(:line_item_promo_code) { 'line_item_discount' }
+        let!(:line_item_promotion) { create(:promotion_with_item_adjustment, code: line_item_promo_code) }
+        let(:order_with_line_item_promotion) do
+          create(:order_with_line_items, coupon_code: line_item_promo_code).tap do |order|
+            Spree::PromotionHandler::Coupon.new(order).apply
+          end
+        end
+
+        it 'should remove line item adjustments from order and return status 200' do
+          expect(order_with_line_item_promotion.reload.total.to_f).to eq 100.0
+
+          api_put :remove_coupon_code, id: order_with_line_item_promotion.number,
+                                          order_token: order_with_line_item_promotion.guest_token,
+                                          coupon_code: order_with_line_item_promotion.coupon_code
+
+          order_with_line_item_promotion.line_items.each do |l|
+            l.adjustments.promotion.each { |a| puts a.amount.to_f.to_s }
+          end
+
+          expect(response.status).to eq 200
+          expect(json_response['success']).to eq Spree.t('adjustments_deleted')
+          expect(order_with_line_item_promotion.reload.total.to_f).to eq 110.0
+        end
+
+        it 'should remove line item adjustments only for promotable line item' do
+          order_with_line_item_promotion.line_items << create(:line_item, price: 100)
+          order_with_line_item_promotion.update_with_updater!
+
+          expect(order_with_line_item_promotion.reload.total.to_f).to eq 200.0
+
+          api_put :remove_coupon_code, id: order_with_line_item_promotion.number,
+                                          order_token: order_with_line_item_promotion.guest_token,
+                                          coupon_code: order_with_line_item_promotion.coupon_code
+
+          expect(order_with_line_item_promotion.reload.total.to_f).to eq 210.0
+        end
+      end
+
+      context 'order with line item population promotion' do
+        let!(:line_item_promo_code) { 'line_item_population' }
+        let!(:line_item_promotion) { create(:line_item_population_promotion, code: line_item_promo_code) }
+        let(:order_with_line_item_population_promotion) do
+          create(:order_with_line_items, coupon_code: line_item_promo_code).tap do |order|
+            Spree::PromotionHandler::Coupon.new(order).apply
+          end
+        end
+
+        it 'should remove line items populated by promotion and return status 200' do
+          expect(order_with_line_item_population_promotion.line_items.size).to eq 2
+
+          api_put :remove_coupon_code, id: order_with_line_item_population_promotion.number,
+                                          order_token: order_with_line_item_population_promotion.guest_token,
+                                          coupon_code: order_with_line_item_population_promotion.coupon_code
+
+          expect(response.status).to eq 200
+          expect(json_response['success']).to eq Spree.t('adjustments_deleted')
+          expect(order_with_line_item_population_promotion.reload.line_items.size).to eq 1
+        end
+      end
+    end
   end
 end

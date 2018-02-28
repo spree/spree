@@ -48,4 +48,14 @@ FactoryBot.define do
     end
     factory :promotion_with_item_total_rule, traits: [:with_item_total_rule]
   end
+
+  factory :line_item_population_promotion, class: Spree::Promotion do
+    name 'Line item population promotion'
+
+    after(:create) do |promotion, _|
+      create_item_action = Spree::Promotion::Actions::CreateLineItems.create!
+      Spree::PromotionActionLineItem.create!(promotion_action: create_item_action, variant: create(:variant, price: 20.0))
+      promotion.actions << create_item_action
+    end
+  end
 end
