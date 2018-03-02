@@ -21,6 +21,19 @@ module Spree
         self
       end
 
+      def remove(coupon_code)
+        promotion = order.promotions.with_coupon_code(coupon_code)
+
+        if promotion.present?
+          # Order promotion has to be destroyed before line item removing
+          order.order_promotions.find_by!(promotion_id: promotion.id).destroy
+          set_success_code :adjustments_deleted
+        else
+          set_error_code :coupon_code_not_found
+        end
+        self
+      end
+
       def set_success_code(c)
         @status_code = c
         @success = Spree.t(c)

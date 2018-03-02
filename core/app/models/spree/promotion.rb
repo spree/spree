@@ -37,6 +37,8 @@ module Spree
       SQL
     }
 
+    CREATING_ITEM_ACTIONS = %w[Spree::Promotion::Actions::CreateLineItems Spree::Promotion::Actions::AddFreeSample].freeze
+
     self.whitelisted_ransackable_attributes = ['path', 'promotion_category_id', 'code']
 
     def self.with_coupon_code(coupon_code)
