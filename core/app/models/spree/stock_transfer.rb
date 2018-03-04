@@ -4,7 +4,7 @@ module Spree
 
     has_many :stock_movements, as: :originator
 
-    belongs_to :source_location, class_name: 'StockLocation'
+    belongs_to :source_location, class_name: 'StockLocation', optional: true
     belongs_to :destination_location, class_name: 'StockLocation'
 
     validates :number, uniqueness: true
@@ -36,6 +36,7 @@ module Spree
       end
     end
 
+    # receive inventory from external vendor
     def receive(destination_location, variants)
       transfer(nil, destination_location, variants)
     end
