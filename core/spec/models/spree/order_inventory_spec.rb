@@ -155,23 +155,14 @@ describe Spree::OrderInventory, type: :model do
         end
       end
 
-      it 'creates stock_movement' do
-        expect(subject.send(:remove_from_shipment, shipment, 1)).to eq(1)
-
-        stock_item = shipment.stock_location.stock_item(variant)
-        movement = stock_item.stock_movements.last
-        # movement.originator.should == shipment
-        expect(movement.quantity).to eq(1)
-      end
-
       it 'destroys backordered units first' do
         allow(shipment).to receive_messages(
           inventory_units_for_item: [
             mock_model(
-              Spree::InventoryUnit, variant_id: variant.id, quantity: 2, state: 'backordered', shipped?: false
+              Spree::InventoryUnit, variant_id: variant.id, quantity: 2, state: 'backordered', shipped?: false, backordered?: true
             ),
             mock_model(
-              Spree::InventoryUnit, variant_id: variant.id, quantity: 1, state: 'on_hand', shipped?: false
+              Spree::InventoryUnit, variant_id: variant.id, quantity: 1, state: 'on_hand', shipped?: false, backordered?: false
             )
           ]
         )
@@ -192,8 +183,8 @@ describe Spree::OrderInventory, type: :model do
       it 'destroys unshipped units first' do
         allow(shipment).to receive_messages(
           inventory_units_for_item: [
-            mock_model(Spree::InventoryUnit, variant_id: variant.id, quantity: 1, state: 'shipped', shipped?: true),
-            mock_model(Spree::InventoryUnit, variant_id: variant.id, quantity: 1, state: 'on_hand', shipped?: false)
+            mock_model(Spree::InventoryUnit, variant_id: variant.id, quantity: 1, state: 'shipped', shipped?: true, backordered?: false),
+            mock_model(Spree::InventoryUnit, variant_id: variant.id, quantity: 1, state: 'on_hand', shipped?: false, backordered?: false)
           ]
         )
 
@@ -208,8 +199,8 @@ describe Spree::OrderInventory, type: :model do
       it 'only attempts to destroy as many units as are eligible, and return amount destroyed' do
         allow(shipment).to receive_messages(
           inventory_units_for_item: [
-            mock_model(Spree::InventoryUnit, variant_id: variant.id, quantity: 1, state: 'shipped', shipped?: true),
-            mock_model(Spree::InventoryUnit, variant_id: variant.id, quantity: 1, state: 'on_hand', shipped?: false)
+            mock_model(Spree::InventoryUnit, variant_id: variant.id, quantity: 1, state: 'shipped', shipped?: true, backordered?: false),
+            mock_model(Spree::InventoryUnit, variant_id: variant.id, quantity: 1, state: 'on_hand', shipped?: false, backordered?: false)
           ]
         )
 
@@ -243,6 +234,14 @@ describe Spree::OrderInventory, type: :model do
             subject.send(:remove_from_shipment, shipment, shipment.inventory_units.sum(&:quantity))
             expect(different_inventory.reload).to be_persisted
           end
+        end
+      end
+
+      context 'backordered items are removed' do
+        it 'doesn\'t create on_hand items from backordered items' do
+          shipment.set_up_inventory('backordered', variant, order, line_item)
+
+          expect { subject.send(:remove_from_shipment, shipment, 3) }.to change { line_item.variant.stock_items.sum(:count_on_hand) }.from(-2).to(0)
         end
       end
     end

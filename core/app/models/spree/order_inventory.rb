@@ -94,6 +94,7 @@ module Spree
       shipment_units = shipment.inventory_units_for_item(line_item, variant).reject(&:shipped?).sort_by(&:state)
 
       removed_quantity = 0
+      removed_backordered = 0
 
       shipment_units.each do |inventory_unit|
         inventory_unit.quantity.times do
@@ -103,6 +104,7 @@ module Spree
           else
             inventory_unit.destroy
           end
+          removed_backordered += 1 if inventory_unit.backordered?
           removed_quantity += 1
         end
         inventory_unit.save! if inventory_unit.persisted?
@@ -112,7 +114,15 @@ module Spree
 
       # removing this from shipment, and adding to stock_location
       if order.completed?
-        shipment.stock_location.restock variant, removed_quantity, shipment
+        current_on_hand = shipment.stock_location.count_on_hand(variant)
+
+        if current_on_hand.negative? && current_on_hand.abs < removed_backordered
+          shipment.stock_location.restock_backordered variant, current_on_hand.abs, shipment
+        else
+          shipment.stock_location.restock_backordered variant, removed_backordered, shipment
+        end
+
+        shipment.stock_location.restock variant, removed_quantity - removed_backordered, shipment
       end
 
       removed_quantity
