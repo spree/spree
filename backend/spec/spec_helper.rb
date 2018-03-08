@@ -56,6 +56,10 @@ end
 
 Capybara.javascript_driver = :chrome
 
+Capybara::Screenshot.register_driver(:chrome) do |driver, path|
+  driver.browser.save_screenshot(path)
+end
+
 # Set timeout to something high enough to allow CI to pass
 Capybara.default_max_wait_time = 45
 
