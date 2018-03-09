@@ -12,7 +12,7 @@ describe 'General Settings', type: :feature do
     it 'clears the cache' do
       expect(page).not_to have_content(Spree.t(:clear_cache_ok))
       visit spree.edit_admin_general_settings_path
-      expect(page).to_not have_content(Spree.t(:clear_cache_ok))
+      expect(page).not_to have_content(Spree.t(:clear_cache_ok))
       expect(page).to have_content(Spree.t(:clear_cache_warning))
 
       page.accept_confirm do

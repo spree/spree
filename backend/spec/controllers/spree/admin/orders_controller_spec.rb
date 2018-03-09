@@ -70,11 +70,11 @@ describe Spree::Admin::OrdersController, type: :controller do
     end
 
     describe '#store' do
-      let(:cart_order) { create(:order_with_line_items) }
-
       subject do
         spree_get :store, id: cart_order.number
       end
+
+      let(:cart_order) { create(:order_with_line_items) }
 
       it 'displays a page with stores select tag' do
         expect(subject).to render_template :store

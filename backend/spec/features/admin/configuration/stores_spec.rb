@@ -6,7 +6,7 @@ describe 'Stores admin', type: :feature do
   let!(:store) { create(:store) }
 
   describe 'visiting the stores page' do
-    it 'should be on the stores page' do
+    it 'is on the stores page' do
       visit spree.admin_stores_path
 
       store_table = page.find('table')
@@ -17,7 +17,7 @@ describe 'Stores admin', type: :feature do
   end
 
   describe 'creating store' do
-    it 'should create store and associate it with the user' do
+    it 'creates store and associate it with the user' do
       visit spree.admin_stores_path
 
       click_link 'Add Store'
@@ -27,7 +27,7 @@ describe 'Stores admin', type: :feature do
       page.fill_in 'store_code', with: 'SPR'
       click_button 'Create'
 
-      expect(page.current_path).to eq spree.admin_stores_path
+      expect(page).to have_current_path spree.admin_stores_path
       store_table = page.find('table')
       expect(store_table.all('tr').count).to eq 2
       expect(Spree::Store.count).to eq 2
@@ -37,14 +37,14 @@ describe 'Stores admin', type: :feature do
   describe 'updating store' do
     let(:updated_name) { 'New Store Name' }
 
-    it 'should create store and associate it with the user' do
+    it 'creates store and associate it with the user' do
       visit spree.admin_stores_path
 
       click_link 'Edit'
       page.fill_in 'store_name', with: updated_name
       click_button 'Update'
 
-      expect(page.current_path).to eq spree.admin_stores_path
+      expect(page).to have_current_path spree.admin_stores_path
       store_table = page.find('table')
       expect(store_table).to have_content(updated_name)
       expect(store.reload.name).to eq updated_name
@@ -53,7 +53,8 @@ describe 'Stores admin', type: :feature do
 
   describe 'deleting store', js: true do
     let!(:second_store) { create(:store) }
-    it 'should update store in lifetime stats' do
+
+    it 'updates store in lifetime stats' do
       visit spree.admin_stores_path
 
       spree_accept_alert do
@@ -69,7 +70,7 @@ describe 'Stores admin', type: :feature do
   describe 'setting default store' do
     let!(:store1) { create(:store, default: false) }
 
-    it 'should set a store as default' do
+    it 'sets a store as default' do
       visit spree.admin_stores_path
       click_button 'Set as default'
 
