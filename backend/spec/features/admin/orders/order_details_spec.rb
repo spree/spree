@@ -232,7 +232,7 @@ describe 'Order Details', type: :feature, js: true do
             order.reload
 
             expect(order.shipments.count).to eq(2)
-            expect(order.shipments.last.backordered?).to eq(false)
+            expect(order.shipments.last.backordered?).to eq(true)
             expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq(1)
             expect(order.shipments.last.inventory_units_for(product.master).sum(&:quantity)).to eq(1)
           end
@@ -249,25 +249,8 @@ describe 'Order Details', type: :feature, js: true do
             order.reload
 
             expect(order.shipments.count).to eq(1)
-            expect(order.shipments.last.backordered?).to eq(false)
+            expect(order.shipments.last.backordered?).to eq(true)
             expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq(2)
-            expect(order.shipments.first.stock_location.id).to eq(stock_location2.id)
-          end
-
-          it 'allows me to split more than I have if available there' do
-            expect(order.shipments.first.stock_location.id).to eq(stock_location.id)
-
-            within_row(1) { click_icon 'split' }
-            targetted_select2 stock_location2.name, from: '#s2id_item_stock_location'
-            fill_in 'item_quantity', with: 5
-            click_icon :save
-
-            wait_for_ajax
-            order.reload
-
-            expect(order.shipments.count).to eq(1)
-            expect(order.shipments.last.backordered?).to eq(false)
-            expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq(5)
             expect(order.shipments.first.stock_location.id).to eq(stock_location2.id)
           end
 
@@ -385,7 +368,7 @@ describe 'Order Details', type: :feature, js: true do
             order.reload
 
             expect(order.shipments.count).to eq(2)
-            expect(order.shipments.last.backordered?).to eq(false)
+            expect(order.shipments.last.backordered?).to eq(true)
             expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq(1)
             expect(order.shipments.last.inventory_units_for(product.master).sum(&:quantity)).to eq(1)
           end
