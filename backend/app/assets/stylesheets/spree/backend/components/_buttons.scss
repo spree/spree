@@ -1,4 +1,5 @@
-.btn, .nav-pills > li > a {
+.btn,
+.nav-pills > li > a {
   letter-spacing: 1px;
   vertical-align: middle;
   transition: color 0.1s linear 0s,background-color 0.1s linear 0s,opacity 0.2s linear 0s !important;
@@ -9,25 +10,28 @@
   -webkit-font-feature-settings: "kern" 1;
   -moz-font-feature-settings: "kern" 1;
 }
+
 .btn {
   text-align: center;
 
   &:focus {
     outline: 0 !important;
   }
-  
+
   &:hover,
   &:focus,
   &:active,
   &.active,
   &.disabled,
   &[disabled] {
-      box-shadow: none;
+    box-shadow: none;
   }
 
   .glyphicon {
     padding-right: 3px;
   }
+
+  .ship { color: $btn-success-color; }
 }
 
 .btn-sm .glyphicon { padding: 0; }
