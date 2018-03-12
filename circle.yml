@@ -19,8 +19,6 @@ dependencies:
     - wget https://chromedriver.storage.googleapis.com/2.35/chromedriver_linux64.zip
     - unzip chromedriver_linux64.zip
     - sudo cp chromedriver /usr/local/bin/chromedriver
-    - gem uninstall bundler -x -a
-    - gem install bundler -v 1.14.6
 test:
   override:
     - './build-ci.rb test':
