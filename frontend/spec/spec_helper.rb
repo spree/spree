@@ -58,6 +58,10 @@ else
       options: Selenium::WebDriver::Chrome::Options.new(args: %w[headless disable-gpu window-size=1920,1080])
   end
   Capybara.javascript_driver = :chrome
+
+  Capybara::Screenshot.register_driver(:chrome) do |driver, path|
+    driver.browser.save_screenshot(path)
+  end
 end
 Capybara.configure do |config|
   config.default_max_wait_time = 20

@@ -31,10 +31,11 @@
     padding-right: 3px;
   }
 
-  .action-void { @extend .btn-danger; }
-  .action-capture { @extend .btn-success; }
-  .payment-action-edit { @extend .btn-primary; }
   .ship { color: $btn-success-color; }
 }
 
 .btn-sm .glyphicon { padding: 0; }
+
+.btn.action-void { @extend .btn-danger; }
+.btn.action-capture { @extend .btn-success; }
+.btn.payment-action-edit { @extend .btn-primary; }
