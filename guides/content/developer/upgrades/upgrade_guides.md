@@ -1,9 +1,9 @@
 ---
-title: "Upgrade Guidesa"
+title: "Upgrade Guides"
 section: upgrades
 ---
 
-## Upgrade Guidesa
+## Upgrade Guides
 
 We strongly advise upgrading Spree incrementally, rather than in one big go. For example, if you're upgrading a Spree store from 0.60.x to 2.4.x, you would read through all of these guides, one by one.
 
