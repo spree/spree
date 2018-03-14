@@ -84,6 +84,10 @@ module Spree
       v.options_text
     end
 
+    def frontend_available?
+      Spree::Core::Engine.frontend_available?
+    end
+
     private
 
     def create_product_image_tag(image, product, options, style)
