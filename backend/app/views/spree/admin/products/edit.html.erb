@@ -1,4 +1,7 @@
 <% content_for :page_actions do %>
+  <% if frontend_available? %>
+    <%= button_link_to Spree.t(:preview_product), product_url(@product), { class: "btn-default", icon: 'eye-open', id: 'admin_preview_product', target: :_blank } %>
+  <% end %>
   <% if can?(:create, Spree::Product) %>
     <%= button_link_to Spree.t(:new_product), new_object_url, { class: "btn-success", icon: 'add', id: 'admin_new_product' } %>
   <% end %>
