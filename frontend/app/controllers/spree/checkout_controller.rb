@@ -6,6 +6,7 @@ module Spree
   class CheckoutController < Spree::StoreController
     before_action :load_order_with_lock
     before_action :ensure_valid_state_lock_version, only: [:update]
+    before_action :set_no_cache, only: [:edit]
     before_action :set_state_if_present
 
     before_action :ensure_order_not_completed
@@ -199,6 +200,12 @@ module Spree
     def strip_zip(address_params)
       return unless address_params
       address_params[:zipcode] = address_params[:zipcode].strip if address_params[:zipcode]
+    end
+
+    def set_no_cache
+      response.headers['Cache-Control'] = 'no-cache, no-store, max-age=0, must-revalidate'
+      response.headers['Pragma'] = 'no-cache'
+      response.headers['Expires'] = Date.new(1990,01,01).httpdate
     end
   end
 end
