@@ -851,6 +851,7 @@ en:
     manual_intervention_required: Manual intervention required
     manage_variants: Manage Variants
     master_price: Master Price
+    master_sku: Master SKU
     match_choices:
       all: All
       none: None
