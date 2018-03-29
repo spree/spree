@@ -214,7 +214,7 @@ describe Spree::Api::V1::ShipmentsController, type: :controller do
           end
 
           it 'filters' do
-            expect(assigns(:shipments).map(&:id)).to match_array current_api_user.orders.complete.flat_map(&:shipments).map(&:id)
+            expect(assigns(:shipments).ids).to match_array current_api_user.orders.complete.flat_map(&:shipments).ids
           end
         end
       end

@@ -69,7 +69,7 @@ module Spree
 
         it 'returns distinct products only' do
           api_get :index
-          expect(assigns(:products).map(&:id).uniq).to eq assigns(:products).map(&:id)
+          expect(assigns(:products).ids.uniq).to eq assigns(:products).ids
         end
       end
 

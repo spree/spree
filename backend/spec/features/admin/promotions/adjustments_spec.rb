@@ -130,7 +130,7 @@ describe 'Promotion Adjustments', type: :feature, js: true do
 
       first_rule = promotion.rules.first
       expect(first_rule.class).to eq(Spree::Promotion::Rules::Product)
-      expect(first_rule.products.map(&:name)).to include('RoR Mug')
+      expect(first_rule.products.pluck(:name)).to include('RoR Mug')
 
       first_action = promotion.actions.first
       expect(first_action.class).to eq(Spree::Promotion::Actions::CreateItemAdjustments)

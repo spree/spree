@@ -225,7 +225,7 @@ describe Spree::Admin::OrdersController, type: :controller do
 
       def send_request
         spree_get :index, q: {
-          line_items_variant_id_in: Spree::Order.first.variants.map(&:id)
+          line_items_variant_id_in: Spree::Order.first.variants.ids
         }
       end
 

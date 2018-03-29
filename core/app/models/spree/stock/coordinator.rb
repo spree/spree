@@ -38,7 +38,7 @@ module Spree
       end
 
       def requested_variant_ids
-        inventory_units.map(&:variant_id).uniq
+        inventory_units.pluck(:variant_id).uniq
       end
 
       def prioritize_packages(packages)

@@ -27,7 +27,7 @@ module Spree
         end
 
         it 'sets the order_id on inventory units' do
-          expect(subject.units.map(&:order_id).uniq).to eq [order.id]
+          expect(subject.units.pluck(:order_id).uniq).to eq [order.id]
         end
       end
     end
