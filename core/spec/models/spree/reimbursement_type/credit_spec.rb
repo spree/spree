@@ -18,7 +18,7 @@ module Spree
 
     before do
       reimbursement.update!(total: reimbursement.calculated_total)
-      allow(Spree::ReimbursementType::Credit).to receive(:create_creditable).and_return(creditable)
+      allow(Spree::StoreCredit).to receive(:new).and_return(creditable)
     end
 
     describe '.reimburse' do

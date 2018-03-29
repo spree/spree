@@ -6,8 +6,8 @@ class Spree::ReimbursementType::OriginalPayment < Spree::ReimbursementType
       unpaid_amount = return_items.map { |ri| ri.total.to_d.round(2) }.sum
       payments = reimbursement.order.payments.completed
 
-      refund_list, unpaid_amount = create_refunds(reimbursement, payments, unpaid_amount, simulate)
-      refund_list
+      reimbursement_list, unpaid_amount = create_refunds(reimbursement, payments, unpaid_amount, simulate)
+      reimbursement_list
     end
   end
 end

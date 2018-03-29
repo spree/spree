@@ -29,7 +29,7 @@ module Spree
 
         context 'for store credits that the customer used' do
           before do
-            allow(Spree::ReimbursementType::StoreCredit).to receive(:store_credit_payments).and_return([payment])
+            allow(reimbursement).to receive_message_chain('order.payments.completed.store_credits').and_return([payment])
           end
 
           it 'creates readonly refunds for all store credit payments' do
@@ -43,10 +43,6 @@ module Spree
         end
 
         context 'for return items that were not paid for with store credit' do
-          before do
-            allow(Spree::ReimbursementType::StoreCredit).to receive(:store_credit_payments).and_return([])
-          end
-
           context 'creates one readonly lump credit for all outstanding balance payable to the customer' do
             it 'creates a credit that is read only' do
               expect(subject.map(&:class)).to eq [Spree::Reimbursement::Credit]
@@ -71,7 +67,7 @@ module Spree
 
         context 'for store credits that the customer used' do
           before do
-            allow(Spree::ReimbursementType::StoreCredit).to receive(:store_credit_payments).and_return([payment])
+            allow(reimbursement).to receive_message_chain('order.payments.completed.store_credits').and_return([payment])
           end
 
           it 'performs refunds for all store credit payments' do
