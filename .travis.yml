@@ -8,13 +8,7 @@ cache:
   
 addons:
   chrome: stable
-  apt:
-    sources:
-      - mysql-5.7-trusty
-    packages:
-      - mysql-server
-      - mysql-client
-
+  
 env:
   - GEM=api DB=mysql
   - GEM=api DB=postgres
