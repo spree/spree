@@ -3,11 +3,6 @@ dist: trusty
 
 language: ruby
 
-rvm:
-  - 2.4.2
-  - 2.3.4
-  - 2.2.7
-
 cache:
   bundler: true
   
@@ -25,6 +20,11 @@ env:
   - GEM=frontend DB=postgres
   - GEM=sample DB=mysql
   - GEM=sample DB=postgres
+  
+  rvm:
+  - 2.4.2
+  - 2.3.4
+  - 2.2.7
 
 before_install:
   - sudo curl --output /usr/local/bin/phantomjs https://s3.amazonaws.com/circle-downloads/phantomjs-2.1.1
