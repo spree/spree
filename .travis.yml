@@ -3,6 +3,11 @@ dist: trusty
 
 language: ruby
 
+rvm:
+  - 2.4.2
+  - 2.3.4
+  - 2.2.7
+
 cache:
   bundler: true
   
@@ -36,8 +41,3 @@ before_install:
 script:
   - bundle exec rake test_app
   - bundle exec rake spec
-
-rvm:
-  - 2.4.2
-  - 2.3.4
-  - 2.2.7
