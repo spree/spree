@@ -42,7 +42,6 @@ group :test do
   gem 'selenium-webdriver'
   gem 'simplecov'
   gem 'webmock', '~> 3.0.1'
-  gem 'poltergeist', '~> 1.10'
   gem 'timecop'
   gem 'versioncake', '~> 3.3.0'
   gem 'with_model'
