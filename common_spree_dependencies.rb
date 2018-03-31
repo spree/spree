@@ -45,7 +45,7 @@ group :test do
   gem 'poltergeist', '~> 1.10'
   gem 'timecop'
   gem 'versioncake', '~> 3.3.0'
-  gem 'with_model'  
+  gem 'with_model'
 end
 
 group :test, :development do
