@@ -40,6 +40,7 @@ group :test do
   gem 'rspec-retry'
   gem 'rspec_junit_formatter'
   gem 'select2-rails', '3.5.9.1' # 3.5.9.2 breaks several specs
+  gem 'selenium-webdriver'
   gem 'simplecov'
   gem 'webmock', '~> 3.0.1'
   gem 'timecop'
