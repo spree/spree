@@ -29,6 +29,7 @@ group :test do
   gem 'jquery-rails', '~> 4.3'
   gem 'jquery-ui-rails', '~> 6.0.1'
   gem 'launchy'
+  gem 'poltergeist', '~> 1.10'
   gem 'rabl', '~> 0.13.1'
   gem 'rack-test', '0.7.0'
   gem 'rails-controller-testing'
@@ -39,7 +40,6 @@ group :test do
   gem 'rspec-retry'
   gem 'rspec_junit_formatter'
   gem 'select2-rails', '3.5.9.1' # 3.5.9.2 breaks several specs
-  gem 'selenium-webdriver'
   gem 'simplecov'
   gem 'webmock', '~> 3.0.1'
   gem 'timecop'
