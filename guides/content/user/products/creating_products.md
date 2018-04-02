@@ -9,7 +9,7 @@ To create a new product for your store, go into the Admin Interface, click the "
 
 ![New Product Entry Form](/images/user/products/new_product_entry_form.jpg)
 
-The two mandatory fields ("Name" and "Master Price") are denoted with an asterisk (&#42;) next to the label. You can leave SKU blank. If you don't add a value for "Available On" the product will not be shown in your store.
+The three mandatory fields ("Name", "Master Price", and "Shipping Categories") are denoted with an asterisk (&#42;) next to the label. You can leave SKU blank. If you don't add a value for "Available On" the product will not be shown in your store.
 
 ***
 [Prototypes](product_prototypes) are a more complex topic, and are covered in their own guide.
