@@ -24,7 +24,7 @@
 #
 #   # Typecasting is performed on assignment
 #   s.preferred_temperature = '24'
-#   s.preferred_color # => 24
+#   s.preferred_temperature # => 24
 #
 #   # Modifications have been made to the .preferences hash
 #   s.preferences #=> {color: 'blue', temperature: 24}
