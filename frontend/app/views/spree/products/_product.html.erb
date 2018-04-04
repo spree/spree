@@ -11,7 +11,7 @@
       </div>
       <div class="panel-footer text-center">
         <span itemprop="offers" itemscope itemtype="https://schema.org/Offer">
-          <span class="price selling lead" itemprop="price" content="<%= product.price_in(current_currency).amount.to_d %>">
+          <span class="price selling lead" itemprop="price" content="<%= (product.price_in(current_currency).amount.nil?)? 0 : product.price_in(current_currency).amount.to_d %>">
             <%= display_price(product) %>
           </span>
           <span itemprop="priceCurrency" content="<%= current_currency %>"></span>
