@@ -29,7 +29,6 @@ group :test do
   gem 'jquery-rails', '~> 4.3'
   gem 'jquery-ui-rails', '~> 6.0.1'
   gem 'launchy'
-  gem 'poltergeist', '~> 1.10'
   gem 'rabl', '~> 0.13.1'
   gem 'rack-test', '0.7.0'
   gem 'rails-controller-testing'
