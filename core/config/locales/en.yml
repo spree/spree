@@ -1378,6 +1378,7 @@ en:
         unable_to_delete: Unable to delete store credit
         unable_to_fund: Unable to pay for order using store credits
         unable_to_update: Unable to update store credit
+    store_credits: Store Credits
     store_credit_categories: Store Credit Categories
     store_credit_payment_method:
       unable_to_void: "Unable to void code: %{auth_code}"
