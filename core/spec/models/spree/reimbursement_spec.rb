@@ -39,6 +39,8 @@ describe Spree::Reimbursement, type: :model do
 
     let(:reimbursement) { create(:reimbursement, customer_return: customer_return, order: order, return_items: [return_item]) }
 
+    let(:store_credit_reimbursement_type) { create(:reimbursement_type, name: 'StoreCredit', type: 'Spree::ReimbursementType::StoreCredit') }
+
     before do
       order.shipments.each do |shipment|
         shipment.inventory_units.update_all state: 'shipped'
@@ -102,6 +104,13 @@ describe Spree::Reimbursement, type: :model do
 
       it 'raises IncompleteReimbursement error' do
         expect { subject }.to raise_error(Spree::Reimbursement::IncompleteReimbursementError)
+      end
+    end
+
+    context 'when reimbursement is performed using store credits' do
+      it 'succeeds' do
+        reimbursement.return_items.last.update(preferred_reimbursement_type_id: store_credit_reimbursement_type.id)
+        expect { subject }.not_to raise_error(Spree::Reimbursement::IncompleteReimbursementError)
       end
     end
 

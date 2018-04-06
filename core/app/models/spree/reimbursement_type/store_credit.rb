@@ -4,12 +4,10 @@ class Spree::ReimbursementType::StoreCredit < Spree::ReimbursementType
   class << self
     def reimburse(reimbursement, return_items, simulate)
       unpaid_amount = return_items.sum(&:total).to_d.round(2, :down)
-      payments = store_credit_payments(reimbursement)
-      reimbursement_list = []
+      payments = reimbursement.order.payments.completed.store_credits
 
       # Credit each store credit that was used on the order
-      reimbursement_list, unpaid_amount = create_refunds(reimbursement, payments, unpaid_amount,
-                                                         simulate, reimbursement_list)
+      reimbursement_list, unpaid_amount = create_refunds(reimbursement, payments, unpaid_amount, simulate)
 
       # If there is any amount left to pay out to the customer, then create credit with that amount
       if unpaid_amount > 0.0
@@ -17,12 +15,6 @@ class Spree::ReimbursementType::StoreCredit < Spree::ReimbursementType
       end
 
       reimbursement_list
-    end
-
-    private
-
-    def store_credit_payments(reimbursement)
-      reimbursement.order.payments.completed.store_credits
     end
   end
 end

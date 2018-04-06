@@ -21,17 +21,13 @@ module Spree
       private
 
       def execute(reimbursement, simulate)
-        reimbursement_type_hash = calculate_reimbursement_types(reimbursement)
+        # Engine reimbursement_type_engine returns hash of preferred reimbursement types pointing at return items
+        # {Spree::ReimbursementType::OriginalPayment => [ReturnItem, ...], Spree::ReimbursementType::Exchange => [ReturnItem, ...]}
+        reimbursement_type_hash = reimbursement_type_engine.new(reimbursement.return_items).calculate_reimbursement_types
 
         reimbursement_type_hash.flat_map do |reimbursement_type, return_items|
           reimbursement_type.reimburse(reimbursement, return_items, simulate)
         end
-      end
-
-      def calculate_reimbursement_types(reimbursement)
-        # Engine returns hash of preferred reimbursement types pointing at return items
-        # {Spree::ReimbursementType::OriginalPayment => [ReturnItem, ...], Spree::ReimbursementType::Exchange => [ReturnItem, ...]}
-        reimbursement_type_engine.new(reimbursement.return_items).calculate_reimbursement_types
       end
     end
   end
