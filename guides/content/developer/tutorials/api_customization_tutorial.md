@@ -5,7 +5,7 @@ section: tutorial
 
 ## Introduction
 
-In this tutorial we are going to learn how we can customize the **[REST API](../../api)** provided by Spree, adding a new endpoint (or you can override an existing in core). We will do this on the extension `spree_simple_sales` created in [Extensions tutorial](extensions_tutorial). If you don't see before,please, check them!
+In this tutorial we are going to learn how we can customize the **[REST API](../../api)** provided by Spree, adding a new endpoint (or you can override an existing in core). We will do this on the extension `spree_simple_sales` created in [Extensions tutorial](extensions_tutorial). If you don't see before, please check them!
 
 ## Adding Custom Endpoints
 
@@ -81,7 +81,7 @@ The `only:` symbol defines which actions of the controller are allowed to be end
 
 Now, let's create a view to return the data defined in action for client. Spree uses [Rabl](https://github.com/nesquena/rabl) gem for field customizations, inheritance of specifications from the other `.rabl` files and many other cool features. This gem do something similar to [grape-entity](https://github.com/ruby-grape/grape-entity) presenters.
 
-First, create the required views directory with the following command:
+First, create the required views api directory with the following command:
 
 ```bash
 # The view needs be [controller]/[action].[api_version].rabl
@@ -108,7 +108,7 @@ user = Spree::user_class.first
 api_key = user.spree_api_key # Copy the api_key value
 ```
 
-Now, when we head to `http://localhost:3000/api/v1/sales`, passing the header `X-Spree-Token: [YOUR_COPIED_API_KEY]` into your browser or any REST client, we should see the json result with all productis with sale price. 
+Now, when we head to `http://localhost:3000/api/v1/sales`, passing the header `X-Spree-Token: [YOUR_COPIED_API_KEY]`, (or add a `?token=[YOUR_COPIED_API_KEY]`  to the url) into your browser or any REST client, we should see the json result with all products with sale price. 
 
 ***
 Note that you will likely need to restart our example Spree application (created in the [Getting Started](getting_started_tutorial) tutorial).
