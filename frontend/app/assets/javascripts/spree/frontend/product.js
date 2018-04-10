@@ -24,7 +24,7 @@ Spree.ready(function ($) {
 
   Spree.showVariantImages = function (variantId) {
     ($("li.vtmb")).hide();
-    ($("li.tmb + variantId")).show();
+    ($("li.tmb-" + variantId)).show();
     var currentThumb = $("#" + ($("#main-image")).data("selectedThumbId"));
 
     if (!currentThumb.hasClass("vtmb + variantId")) {
