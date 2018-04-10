@@ -87,7 +87,7 @@ module Spree::Preferences
 
     def should_persist?
       @persistence and Spree::Preference.table_exists?
-    rescue PG::ConnectionBad, Activerecord::NoDatabaseError
+    rescue PG::ConnectionBad, ActiveRecord::NoDatabaseError
       false
     end
 
