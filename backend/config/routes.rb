@@ -12,6 +12,12 @@ Spree::Core::Engine.add_routes do
 
     resources :zones
 
+    resources :stores do
+      member do
+        post :set_default
+      end
+    end
+
     resources :countries do
       resources :states
     end
@@ -77,6 +83,8 @@ Spree::Core::Engine.add_routes do
         put :approve
         put :cancel
         put :resume
+        get :store
+        put :set_store
       end
 
       resources :state_changes, only: [:index]

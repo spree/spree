@@ -1,0 +1,11 @@
+<% content_for :page_title do %>
+  <%= link_to Spree.t(:stores), spree.admin_stores_path(@store) %> /
+  <%= Spree.t(:add_store) %>
+<% end %>
+
+<%= form_for @store, url: spree.admin_stores_path(@store) do |f| %>
+  <fieldset>
+    <%= render partial: 'form', locals: { f: f } %>
+    <%= render partial: 'spree/admin/shared/new_resource_links', locals: { collection_url: spree.admin_stores_path(@store) } %>
+  </fieldset>
+<% end %>

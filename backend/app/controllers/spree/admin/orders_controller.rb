@@ -2,7 +2,7 @@ module Spree
   module Admin
     class OrdersController < Spree::Admin::BaseController
       before_action :initialize_order_events
-      before_action :load_order, only: [:edit, :update, :cancel, :resume, :approve, :resend, :open_adjustments, :close_adjustments, :cart]
+      before_action :load_order, only: [:edit, :update, :cancel, :resume, :approve, :resend, :open_adjustments, :close_adjustments, :cart, :store, :set_store]
 
       respond_to :html
 
@@ -75,6 +75,10 @@ module Spree
         end
       end
 
+      def store
+        @stores = Spree::Store.all
+      end
+
       def update
         if @order.update_attributes(params[:order]) && @order.line_items.present?
           @order.update_with_updater!
@@ -128,6 +132,16 @@ module Spree
         flash[:success] = Spree.t(:all_adjustments_closed)
 
         respond_with(@order) { |format| format.html { redirect_back fallback_location: spree.admin_order_adjustments_url(@order) } }
+      end
+
+      def set_store
+        if @order.update_attributes(store_id: params[:order][:store_id])
+          flash[:success] = flash_message_for(@order, :successfully_updated)
+        else
+          flash[:error] = @order.errors.full_messages.join(', ')
+        end
+
+        redirect_to store_admin_order_url(@order)
       end
 
       private
