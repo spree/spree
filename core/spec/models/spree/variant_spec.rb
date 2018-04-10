@@ -885,6 +885,24 @@ describe Spree::Variant, type: :model do
     end
   end
 
+  context '#backordered?' do
+    let!(:variant) { create(:variant) }
+
+    it 'returns true when out of stock and backorderable' do
+      expect(variant.backordered?).to eq(true)
+    end
+
+    it 'returns false when out of stock and not backorderable' do
+      variant.stock_items.first.update(backorderable: false)
+      expect(variant.backordered?).to eq(false)
+    end
+
+    it 'returns false when there is available item in stock' do
+      variant.stock_items.first.update(count_on_hand: 10)
+      expect(variant.backordered?).to eq(false)
+    end
+  end
+
   describe '#ensure_no_line_items' do
     let!(:line_item) { create(:line_item, variant: variant) }
 

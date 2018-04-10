@@ -273,6 +273,10 @@ module Spree
       !!discontinue_on && discontinue_on <= Time.current
     end
 
+    def backordered?
+      total_on_hand <= 0 && stock_items.exists?(backorderable: true)
+    end
+
     private
 
     def ensure_no_line_items
