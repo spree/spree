@@ -35,8 +35,11 @@ end
 
 orders.each(&:create_proposed_shipments)
 
+store = Spree::Store.default
+
 orders.each do |order|
   order.state = "complete"
+  order.store = store
   order.completed_at = Time.current - 1.day
   order.save!
 end
