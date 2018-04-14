@@ -5,11 +5,11 @@ section: tutorial
 
 ## Introduction
 
-In this tutorial we are going to learn how we can customize the **[REST API](../../api)** provided by Spree, adding a new endpoint (or you can override an existing in core). We will do this on the extension `spree_simple_sales` created in [Extensions tutorial](extensions_tutorial). If you don't see before, please check them!
+In this tutorial we are going to learn how we can customize the **[REST API](../../api)** provided by Spree, adding a new endpoint (or you can override an existing in core). We will use `spree_simple_sales` extension created in [Extensions tutorial](extensions_tutorial). If you haven't seen before, please check them!
 
 ## Adding Custom Endpoints
 
-Similarly to [Adding a Controller Action](extensions_tutorial.md#adding-a-controller-action-to-homecontroller) of [Extensions tutorial](extensions_tutorial), you can create a new controller class with a action that emits a json response from a [Rabl](https://github.com/nesquena/rabl) view.
+Similarly to [Adding a Controller Action](extensions_tutorial.md#adding-a-controller-action-to-homecontroller) of [Extensions tutorial](extensions_tutorial), you can create a new controller class with an action that emits a json response from a [Rabl](https://github.com/nesquena/rabl) view.
 
 
 ### Creating the controller and action
@@ -22,7 +22,7 @@ $ mkdir -p app/controllers/spree/api/v1
 
 Next, we will create the new controller `Spree::Api::V1:SalesController`, that inherit from `Spree::Api::BaseController` class.
 
-So, create a new file in the directory we just created called `sales_controller.rb` and add the following content to it:
+In the directory we just created add a new file called `sales_controller.rb` with the the following content:
 
 
 ```ruby
@@ -108,7 +108,7 @@ user = Spree::user_class.first
 api_key = user.spree_api_key # Copy the api_key value
 ```
 
-Now, when we head to `http://localhost:3000/api/v1/sales`, passing the header `X-Spree-Token: [YOUR_COPIED_API_KEY]`, (or add a `?token=[YOUR_COPIED_API_KEY]`  to the url) into your browser or any REST client, we should see the json result with all products with sale price. 
+Now, when we head to `http://localhost:3000/api/v1/sales`, passing the header `X-Spree-Token: [YOUR_COPIED_API_KEY]`, (or add a `?token=[YOUR_COPIED_API_KEY]`  to the url) into your browser or any REST client, we should see the json result with all products with a sale price. 
 
 ***
 Note that you will likely need to restart our example Spree application (created in the [Getting Started](getting_started_tutorial) tutorial).
