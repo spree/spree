@@ -349,7 +349,7 @@ module Spree
         order.update_with_updater!
 
         refresh_rates
-        save!
+        save! if persisted?
         new_shipment.save!
       end
     end
@@ -368,7 +368,7 @@ module Spree
         order.update_with_updater!
 
         refresh_rates
-        save!
+        save! if persisted?
         shipment_to_transfer_to.refresh_rates
         shipment_to_transfer_to.save!
       end
