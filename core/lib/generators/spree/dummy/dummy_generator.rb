@@ -86,6 +86,14 @@ module Spree
 
     end
 
+    def inject_content_security_policy
+      inside dummy_path do
+        inject_into_file 'config/initializers/content_security_policy.rb', %Q[
+  p.script_src  :self, :https, :unsafe_inline, :http, :unsafe_eval
+        ], before: /^end/, verbose: true
+      end
+    end
+
     attr :lib_name
     attr :database
 
