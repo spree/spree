@@ -76,7 +76,10 @@ Style/SymbolArray:
 Style/GuardClause:
   Enabled: false
 
-Style/TrailingCommaInLiteral:
+Style/TrailingCommaInArrayLiteral:
+  Enabled: false
+
+Style/TrailingCommaInHashLiteral:
   Enabled: false
 
 Style/BarePercentLiterals:
