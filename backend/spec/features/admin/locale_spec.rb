@@ -7,13 +7,13 @@ describe 'setting locale', type: :feature do
     I18n.locale = I18n.default_locale
     I18n.backend.store_translations(:fr,
                                     date: {
-                                      month_names: [],
+                                      month_names: []
                                     },
                                     spree: {
                                       admin: {
                                         tab: { orders: 'Ordres' }
                                       },
-                                      listing_orders: 'Ordres',
+                                      listing_orders: 'Ordres'
                                     })
     Spree::Backend::Config[:locale] = 'fr'
   end

@@ -132,7 +132,7 @@ describe Spree::Admin::ReturnAuthorizationsController, type: :controller do
     let(:params) do
       {
         order_id: order.to_param,
-        return_authorization: return_authorization_params,
+        return_authorization: return_authorization_params
       }
     end
 
@@ -140,7 +140,7 @@ describe Spree::Admin::ReturnAuthorizationsController, type: :controller do
       {
         memo: '',
         stock_location_id: stock_location.id,
-        return_authorization_reason_id: return_authorization_reason.id,
+        return_authorization_reason_id: return_authorization_reason.id
       }
     end
 
@@ -159,13 +159,13 @@ describe Spree::Admin::ReturnAuthorizationsController, type: :controller do
       {
         id: return_authorization.to_param,
         order_id: order.to_param,
-        return_authorization: return_authorization_params,
+        return_authorization: return_authorization_params
       }
     end
     let(:return_authorization_params) do
       {
         memo: '',
-        return_items_attributes: return_items_params,
+        return_items_attributes: return_items_params
       }
     end
 

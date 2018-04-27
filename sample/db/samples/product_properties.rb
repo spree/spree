@@ -107,7 +107,7 @@ products =
       "Made from" => "100% Vellum",
       "Fit" => "Loose",
       "Gender" => "Men's"
-    },
+    }
   }
 
 products.each do |name, properties|

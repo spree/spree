@@ -87,13 +87,13 @@ variants = [
     option_values: [extra_large, green],
     sku: "ROR-00010",
     cost_price: 17
-  },
+  }
 ]
 
 masters = {
   ror_baseball_jersey => {
     sku: "ROR-001",
-    cost_price: 17,
+    cost_price: 17
   },
   ror_tote => {
     sku: "ROR-00011",

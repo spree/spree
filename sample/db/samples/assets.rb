@@ -98,19 +98,19 @@ unless ENV['SKIP_SAMPLE_IMAGES']
       {
         name: file_name("apache_baseball", "png"),
         attachment: image("apache_baseball", "png")
-      },
+      }
     ],
     products[:ruby_baseball_jersey].master => [
       {
         name: file_name("ruby_baseball", "png"),
         attachment: image("ruby_baseball", "png")
-      },
+      }
     ],
     products[:spree_bag].master => [
       {
         name: file_name("spree_bag"),
         attachment: image("spree_bag")
-      },
+      }
     ],
     products[:spree_tote].master => [
       {
@@ -167,7 +167,7 @@ unless ENV['SKIP_SAMPLE_IMAGES']
         name: file_name("spree_mug_back"),
         attachment: image("spree_mug_back")
       }
-    ],
+    ]
   }
 
   products[:ror_baseball_jersey].variants.each do |variant|
