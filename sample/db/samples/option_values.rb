@@ -32,13 +32,13 @@ option_values_attributes = [
     name: "Red",
     presentation: "Red",
     position: 1,
-    option_type: color,
+    option_type: color
   },
   {
     name: "Green",
     presentation: "Green",
     position: 2,
-    option_type: color,
+    option_type: color
   },
   {
     name: "Blue",

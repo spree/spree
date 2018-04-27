@@ -85,7 +85,7 @@ describe Spree::Admin::DummyModelsController, type: :controller do
     let(:params) do
       {
         id: dummy_model.to_param,
-        dummy_model: { name: 'dummy_model renamed' },
+        dummy_model: { name: 'dummy_model renamed' }
       }
     end
 

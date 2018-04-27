@@ -8,13 +8,13 @@ products = [
     name: "Ruby on Rails Tote",
     tax_category: clothing,
     price: 15.99,
-    eur_price: 14,
+    eur_price: 14
   },
   {
     name: "Ruby on Rails Bag",
     tax_category: clothing,
     price: 22.99,
-    eur_price: 19,
+    eur_price: 19
   },
   {
     name: "Ruby on Rails Baseball Jersey",
@@ -69,7 +69,7 @@ products = [
     name: "Spree Tote",
     tax_category: clothing,
     price: 15.99,
-    eur_price: 14,
+    eur_price: 14
   },
   {
     name: "Spree Bag",
@@ -90,7 +90,7 @@ products = [
   {
     name: "Spree Stein",
     price: 16.99,
-    eur_price: 14,
+    eur_price: 14
   },
   {
     name: "Spree Mug",
