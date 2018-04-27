@@ -20,7 +20,7 @@ products = {
   spree_bag: "Spree Bag",
   spree_jr_spaghetti: "Spree Jr. Spaghetti",
   apache_baseball_jersey: "Apache Baseball Jersey",
-  ruby_baseball_jersey: "Ruby Baseball Jersey",
+  ruby_baseball_jersey: "Ruby Baseball Jersey"
 }
 
 products.each do |key, name|
@@ -117,7 +117,7 @@ taxons = [
       products[:spree_baseball_jersey],
       products[:spree_tote],
       products[:spree_bag],
-      products[:spree_jr_spaghetti],
+      products[:spree_jr_spaghetti]
     ]
   },
   {
@@ -131,9 +131,9 @@ taxons = [
       products[:ror_stein],
       products[:ror_baseball_jersey],
       products[:ror_jr_spaghetti],
-      products[:ror_ringer],
+      products[:ror_ringer]
     ]
-  },
+  }
 ]
 
 taxons.each do |taxon_attrs|
