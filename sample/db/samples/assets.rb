@@ -1,4 +1,4 @@
-unless ENV['SKIP_SAMPLE_IMAGES']
+unless ENV["SKIP_SAMPLE_IMAGES"]
   Spree::Sample.load_sample("products")
   Spree::Sample.load_sample("variants")
 
@@ -23,7 +23,7 @@ unless ENV['SKIP_SAMPLE_IMAGES']
   def image(name, type = "jpeg")
     images_path = Pathname.new(File.dirname(__FILE__)) + "images"
     path = images_path + file_name(name, type)
-    return false if !File.exist?(path)
+    return false unless File.exist?(path)
     File.open(path)
   end
 
@@ -188,10 +188,7 @@ unless ENV['SKIP_SAMPLE_IMAGES']
     puts "Loading images for #{variant.product.name}"
     attachments.each do |attrs|
       file_name = attrs.delete(:name)
-
-      if variant.images.where(attachment_file_name: file_name).none?
-        variant.images.create!(attrs)
-      end
+      variant.images.create!(attrs) if variant.images.where(attachment_file_name: file_name).none?
     end
   end
 end

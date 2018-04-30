@@ -8,15 +8,17 @@ first_order.adjustments.where(
   order: first_order,
   label: "Tax",
   state: "open",
-  mandatory: true).first_or_create! do |adj|
-    adj.amount = 0
-  end
+  mandatory: true
+).first_or_create! do |adj|
+  adj.amount = 0
+end
 
 last_order.adjustments.where(
   source: Spree::TaxRate.find_by!(name: "North America"),
   order: last_order,
   label: "Tax",
   state: "open",
-  mandatory: true).first_or_create! do |adj|
-    adj.amount = 0
-  end
+  mandatory: true
+).first_or_create! do |adj|
+  adj.amount = 0
+end

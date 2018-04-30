@@ -113,12 +113,12 @@ products.each do |product_attrs|
     product.shipping_category = default_shipping_category
   end
 
-  if new_product
-    Spree::Config[:currency] = "EUR"
-    new_product.reload
-    new_product.price = eur_price
-    new_product.save
-  end
+  next unless new_product
+
+  Spree::Config[:currency] = "EUR"
+  new_product.reload
+  new_product.price = eur_price
+  new_product.save
 end
 
 Spree::Config[:currency] = "USD"

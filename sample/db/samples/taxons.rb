@@ -1,8 +1,8 @@
 Spree::Sample.load_sample("taxonomies")
 Spree::Sample.load_sample("products")
 
-categories = Spree::Taxonomy.find_by!(name: I18n.t('spree.taxonomy_categories_name'))
-brands = Spree::Taxonomy.find_by!(name: I18n.t('spree.taxonomy_brands_name'))
+categories = Spree::Taxonomy.find_by!(name: I18n.t("spree.taxonomy_categories_name"))
+brands = Spree::Taxonomy.find_by!(name: I18n.t("spree.taxonomy_brands_name"))
 
 products = {
   ror_tote: "Ruby on Rails Tote",
@@ -29,14 +29,14 @@ end
 
 taxons = [
   {
-    name: I18n.t('spree.taxonomy_categories_name'),
+    name: I18n.t("spree.taxonomy_categories_name"),
     taxonomy: categories,
     position: 0
   },
   {
     name: "Bags",
     taxonomy: categories,
-    parent: I18n.t('spree.taxonomy_categories_name'),
+    parent: I18n.t("spree.taxonomy_categories_name"),
     position: 1,
     products: [
       products[:ror_tote],
@@ -48,7 +48,7 @@ taxons = [
   {
     name: "Mugs",
     taxonomy: categories,
-    parent: I18n.t('spree.taxonomy_categories_name'),
+    parent: I18n.t("spree.taxonomy_categories_name"),
     position: 2,
     products: [
       products[:ror_mug],
@@ -60,7 +60,7 @@ taxons = [
   {
     name: "Clothing",
     taxonomy: categories,
-    parent: I18n.t('spree.taxonomy_categories_name')
+    parent: I18n.t("spree.taxonomy_categories_name")
   },
   {
     name: "Shirts",
@@ -87,13 +87,13 @@ taxons = [
     position: 0
   },
   {
-    name: I18n.t('spree.taxonomy_brands_name'),
+    name: I18n.t("spree.taxonomy_brands_name"),
     taxonomy: brands
   },
   {
     name: "Ruby",
     taxonomy: brands,
-    parent: I18n.t('spree.taxonomy_brands_name'),
+    parent: I18n.t("spree.taxonomy_brands_name"),
     products: [
       products[:ruby_baseball_jersey]
     ]
@@ -101,7 +101,7 @@ taxons = [
   {
     name: "Apache",
     taxonomy: brands,
-    parent: I18n.t('spree.taxonomy_brands_name'),
+    parent: I18n.t("spree.taxonomy_brands_name"),
     products: [
       products[:apache_baseball_jersey]
     ]
@@ -109,7 +109,7 @@ taxons = [
   {
     name: "Spree",
     taxonomy: brands,
-    parent: I18n.t('spree.taxonomy_brands_name'),
+    parent: I18n.t("spree.taxonomy_brands_name"),
     products: [
       products[:spree_stein],
       products[:spree_mug],
@@ -123,7 +123,7 @@ taxons = [
   {
     name: "Rails",
     taxonomy: brands,
-    parent: I18n.t('spree.taxonomy_brands_name'),
+    parent: I18n.t("spree.taxonomy_brands_name"),
     products: [
       products[:ror_tote],
       products[:ror_bag],

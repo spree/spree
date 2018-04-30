@@ -158,9 +158,7 @@ masters = {
 }
 
 variants.each do |attrs|
-  if Spree::Variant.where(product_id: attrs[:product].id, sku: attrs[:sku]).none?
-    Spree::Variant.create!(attrs)
-  end
+  Spree::Variant.create!(attrs) if Spree::Variant.where(product_id: attrs[:product].id, sku: attrs[:sku]).none?
 end
 
 masters.each do |product, variant_attrs|

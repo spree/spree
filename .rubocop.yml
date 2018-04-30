@@ -55,7 +55,7 @@ Metrics/AbcSize:
  Max: 45
 
 Style/StringLiterals:
-  EnforcedStyle: single_quotes
+  EnforcedStyle: double_quotes
 
 Layout/DotPosition:
   EnforcedStyle: trailing
@@ -122,3 +122,9 @@ RSpec/NestedGroups:
 Lint/AmbiguousBlockAssociation:
   Exclude:
     - '**/spec/**/*'
+
+Style/ExpandPathArguments:
+  Enabled: false
+
+Style/NumericLiterals:
+  Enabled: false

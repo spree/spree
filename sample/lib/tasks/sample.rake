@@ -1,11 +1,11 @@
-require 'ffaker'
-require 'pathname'
-require 'spree/sample'
+require "ffaker"
+require "pathname"
+require "spree/sample"
 
 namespace :spree_sample do
-  desc 'Loads sample data'
+  desc "Loads sample data"
   task load: :environment do
-    if ARGV.include?('db:migrate')
+    if ARGV.include?("db:migrate")
       puts %Q{
 Please run db:migrate separately from spree_sample:load.
 
