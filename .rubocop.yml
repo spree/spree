@@ -55,7 +55,7 @@ Metrics/AbcSize:
  Max: 45
 
 Style/StringLiterals:
-  EnforcedStyle: double_quotes
+  EnforcedStyle: single_quotes
 
 Layout/DotPosition:
   EnforcedStyle: trailing
