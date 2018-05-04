@@ -8,20 +8,25 @@ describe Spree::Money do
     end
   end
 
-  it "formats correctly" do
-    money = Spree::Money.new(10)
-    expect(money.to_s).to eq("$10.00")
+  let(:money)    { described_class.new(10) }
+  let(:currency) { Money::Currency.new('USD') }
+
+  it 'formats correctly' do
+    expect(money.to_s).to eq('$10.00')
   end
 
-  it "can get cents" do
-    money = Spree::Money.new(10)
+  it 'can get cents' do
     expect(money.cents).to eq(1000)
   end
 
-  context "with currency" do
-    it "passed in option" do
-      money = Spree::Money.new(10, :with_currency => true, :html => false)
-      expect(money.to_s).to eq("$10.00 USD")
+  it 'can get currency' do
+    expect(money.currency).to eq(currency)
+  end
+
+  context 'with currency' do
+    it 'passed in option' do
+      money = described_class.new(10, with_currency: true, html: false)
+      expect(money.to_s).to eq('$10.00 USD')
     end
   end
 
@@ -158,7 +163,64 @@ describe Spree::Money do
     end
   end
 
-  describe "#as_json" do
+  context 'Money formatting rules' do
+    before :each do
+      configure_spree_preferences do |config|
+        config.currency = "EUR"
+      end
+    end
+
+    after :each do
+      Spree::Money.default_formatting_rules.delete(:decimal_mark)
+      Spree::Money.default_formatting_rules.delete(:thousands_separator)
+    end
+
+    let(:money) { Spree::Money.new(10) }
+
+    describe '#decimal_mark' do
+      it 'uses decimal mark set in Monetize gem' do
+        expect(money.decimal_mark).to eq('.')
+      end
+
+      it 'favors decimal mark set in default_formatting_rules' do
+        Spree::Money.default_formatting_rules[:decimal_mark] = ','
+        expect(money.decimal_mark).to eq(',')
+      end
+
+      it 'favors decimal mark passed in as a parameter on initialization' do
+        money = Spree::Money.new(10, decimal_mark: ',')
+        expect(money.decimal_mark).to eq(',')
+      end
+    end
+
+    describe '#thousands_separator' do
+      it 'uses thousands separator set in Monetize gem' do
+        expect(money.thousands_separator).to eq(',')
+      end
+
+      it 'favors decimal mark set in default_formatting_rules' do
+        Spree::Money.default_formatting_rules[:thousands_separator] = '.'
+        expect(money.thousands_separator).to eq('.')
+      end
+
+      it 'favors decimal mark passed in as a parameter on initialization' do
+        money = Spree::Money.new(10, thousands_separator: '.')
+        expect(money.thousands_separator).to eq('.')
+      end
+    end
+  end
+
+  describe '#amount_in_cents' do
+    %w[USD JPY KRW].each do |currency_name|
+      context "when currency is #{currency_name}" do
+        let(:money) { described_class.new(100, currency: currency_name) }
+
+        it { expect(money.amount_in_cents).to eq(10000) }
+      end
+    end
+  end
+
+  describe '#as_json' do
     let(:options) { double('options') }
 
     it "returns the expected string" do
