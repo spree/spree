@@ -15,11 +15,15 @@ module Spree
 
     attr_reader :money
 
-    delegate :cents, to: :money
+    delegate :cents, :currency, to: :money
 
     def initialize(amount, options={})
       @money = Monetize.parse([amount, (options[:currency] || Spree::Config[:currency])].join)
       @options = Spree::Money.default_formatting_rules.merge(options)
+    end
+
+    def amount_in_cents
+      (cents / currency.subunit_to_unit.to_f * 100).round
     end
 
     def to_s
