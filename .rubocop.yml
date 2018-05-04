@@ -122,3 +122,9 @@ RSpec/NestedGroups:
 Lint/AmbiguousBlockAssociation:
   Exclude:
     - '**/spec/**/*'
+
+Style/ExpandPathArguments:
+  Enabled: false
+
+Style/NumericLiterals:
+  Enabled: false
