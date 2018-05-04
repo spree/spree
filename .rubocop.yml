@@ -76,7 +76,10 @@ Style/SymbolArray:
 Style/GuardClause:
   Enabled: false
 
-Style/TrailingCommaInLiteral:
+Style/TrailingCommaInArrayLiteral:
+  Enabled: false
+
+Style/TrailingCommaInHashLiteral:
   Enabled: false
 
 Style/BarePercentLiterals:
@@ -119,3 +122,9 @@ RSpec/NestedGroups:
 Lint/AmbiguousBlockAssociation:
   Exclude:
     - '**/spec/**/*'
+
+Style/ExpandPathArguments:
+  Enabled: false
+
+Style/NumericLiterals:
+  Enabled: false

@@ -12,7 +12,7 @@ Please run db:migrate separately from spree_sample:load.
 Running db:migrate and spree_sample:load at the same time has been known to
 cause problems where columns may be not available during sample data loading.
 
-Migrations have been run. Please run "rake spree_sample:load" by itself now.
+Migrations have been run. Please run 'rake spree_sample:load' by itself now.
       }
       exit(1)
     end

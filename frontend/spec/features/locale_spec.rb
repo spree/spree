@@ -34,7 +34,7 @@ describe 'setting locale', type: :feature do
       {
         'en' => 'This field is required.',
         'fr' => 'Ce champ est obligatoire.',
-        'de' => 'Dieses Feld ist ein Pflichtfeld.',
+        'de' => 'Dieses Feld ist ein Pflichtfeld.'
       }
     end
 

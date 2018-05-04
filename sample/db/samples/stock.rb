@@ -1,4 +1,4 @@
-Spree::Sample.load_sample("variants")
+Spree::Sample.load_sample('variants')
 
 country =  Spree::Country.find_by(iso: 'US')
 location = Spree::StockLocation.first_or_create!(name: 'default',
