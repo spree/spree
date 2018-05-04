@@ -5,7 +5,7 @@ module Spree
       path = if File.exist?(File.join(Rails.root, 'db', 'samples', "#{file}.rb"))
                File.expand_path(File.join(Rails.root, 'db', 'samples', "#{file}.rb"))
              else
-        # Otherwise we will use this gems default file.
+               # Otherwise we will use this gems default file.
                File.expand_path(samples_path + "#{file}.rb")
              end
       # Check to see if the specified file has been loaded before
@@ -14,8 +14,6 @@ module Spree
         puts "Loaded #{file.titleize} samples"
       end
     end
-
-    private
 
     def self.samples_path
       Pathname.new(File.join(File.dirname(__FILE__), '..', '..', 'db', 'samples'))
