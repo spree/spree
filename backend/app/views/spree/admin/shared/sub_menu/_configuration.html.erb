@@ -1,5 +1,6 @@
 <ul data-hook="admin_configurations_sidebar_menu" class="collapse nav nav-pills nav-stacked" id="sidebar-configuration">
   <%= configurations_sidebar_menu_item(Spree.t(:general_settings), spree.edit_admin_general_settings_path) if can? :manage, Spree::Config %>
+  <%= configurations_sidebar_menu_item(Spree.t(:stores), spree.admin_stores_path) if can? :manage, Spree::Store %>
   <%= configurations_sidebar_menu_item(Spree.t(:tax_categories), spree.admin_tax_categories_path) if can? :manage, Spree::TaxCategory %>
   <%= configurations_sidebar_menu_item(Spree.t(:tax_rates), spree.admin_tax_rates_path) if can? :manage, Spree::TaxRate %>
   <%= configurations_sidebar_menu_item(Spree.t(:zones), spree.admin_zones_path) if can? :manage, Spree::Zone %>

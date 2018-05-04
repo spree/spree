@@ -77,6 +77,13 @@
         <% end %>
       </div>
 
+      <div data-hook="admin_product_form_sku">
+        <%= f.field_container :master_sku, class: ['form-group'] do %>
+          <%= f.label :master_sku, Spree.t(:master_sku) %>
+          <%= f.text_field :sku, size: 16, class: 'form-control' %>
+        <% end %>
+      </div>
+
       <% if @product.has_variants? %>
         <div data-hook="admin_product_form_multiple_variants" class="well">
           <%= f.label :skus, Spree.t(:sku).pluralize %>
@@ -100,13 +107,6 @@
           </div>
         </div>
       <% else %>
-        <div data-hook="admin_product_form_sku">
-          <%= f.field_container :sku, class: ['form-group'] do %>
-            <%= f.label :sku, Spree.t(:sku) %>
-            <%= f.text_field :sku, size: 16, class: 'form-control' %>
-          <% end %>
-        </div>
-
         <div id="shipping_specs" class="row">
           <div class="col-xs-12 col-md-6">
             <div id="shipping_specs_weight_field" data-hook="admin_product_form_weight" class="form-group">

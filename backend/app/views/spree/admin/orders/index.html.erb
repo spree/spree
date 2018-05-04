@@ -50,21 +50,21 @@
         <div class="col-xs-12 col-md-4">
           <div class="form-group">
             <%= label_tag :q_state_eq, Spree.t(:status) %>
-            <%= f.select :state_eq, Spree::Order.state_machines[:state].states.map {|s| [Spree.t("order_state.#{s.name}"), s.value]}, {include_blank: true}, class: 'select2 js-filterable' %>
+            <%= f.select :state_eq, Spree::Order.state_machines[:state].states.map {|s| [Spree.t("order_state.#{s.name}"), s.value]}, { include_blank: true }, class: 'select2 js-filterable' %>
           </div>
         </div>
 
         <div class="col-xs-12 col-md-4">
           <div class="form-group">
             <%= label_tag :q_payment_state_eq, Spree.t(:payment_state) %>
-            <%= f.select :payment_state_eq, Spree::Order::PAYMENT_STATES.map {|s| [Spree.t("payment_states.#{s}"), s]}, {include_blank: true}, class: 'select2 js-filterable' %>
+            <%= f.select :payment_state_eq, Spree::Order::PAYMENT_STATES.map {|s| [Spree.t("payment_states.#{s}"), s]}, { include_blank: true }, class: 'select2 js-filterable' %>
           </div>
         </div>
 
         <div class="col-xs-12 col-md-4">
           <div class="form-group">
             <%= label_tag :q_shipment_state_eq, Spree.t(:shipment_state) %>
-            <%= f.select :shipment_state_eq, Spree::Order::SHIPMENT_STATES.map {|s| [Spree.t("shipment_states.#{s}"), s]}, {include_blank: true}, class: 'select2 js-filterable' %>
+            <%= f.select :shipment_state_eq, Spree::Order::SHIPMENT_STATES.map {|s| [Spree.t("shipment_states.#{s}"), s]}, { include_blank: true }, class: 'select2 js-filterable' %>
           </div>
         </div>
 
@@ -107,7 +107,14 @@
         <div class="col-xs-12 col-md-4">
           <div class="form-group">
             <%= label_tag :q_promotions_id_in, Spree.t(:promotion) %>
-            <%= f.select :promotions_id_in, Spree::Promotion.applied.pluck(:name, :id), {include_blank: true}, class: 'select2' %>
+            <%= f.select :promotions_id_in, Spree::Promotion.applied.pluck(:name, :id), { include_blank: true }, class: 'select2' %>
+          </div>
+        </div>
+
+        <div class="col-xs-12 col-md-4">
+          <div class="form-group">
+            <%= label_tag :q_store_id_in, Spree.t(:store) %>
+            <%= f.select :store_id_in, Spree::Store.order(:name).pluck(:name, :id), { include_blank: true }, class: 'select2' %>
           </div>
         </div>
 

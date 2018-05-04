@@ -851,6 +851,7 @@ en:
     manual_intervention_required: Manual intervention required
     manage_variants: Manage Variants
     master_price: Master Price
+    master_sku: Master SKU
     match_choices:
       all: All
       none: None
@@ -1378,6 +1379,7 @@ en:
         unable_to_delete: Unable to delete store credit
         unable_to_fund: Unable to pay for order using store credits
         unable_to_update: Unable to update store credit
+    store_credits: Store Credits
     store_credit_categories: Store Credit Categories
     store_credit_payment_method:
       unable_to_void: "Unable to void code: %{auth_code}"
@@ -1390,6 +1392,10 @@ en:
       unable_to_find_for_action: "Could not find store credit for auth code: %{auth_code} for action: %{action}"
       user_has_no_store_credits: "User does not have any available store credit"
       select_one_store_credit: "Select store credit to go towards remaining balance"
+    store_default: Default store
+    store_set_default_button: Set as default
+    store_not_set_as_default: Couldn't set store %{store} as a default store
+    store_set_as_default: Store %{store} is now a default store
     street_address: Street Address
     street_address_2: Street Address (cont'd)
     subtotal: Subtotal

@@ -12,7 +12,7 @@ module Spree
         viewable_type: 'Spree::Variant',
         attachment: image,
         alt: 'position 1',
-        position: 1,
+        position: 1
       }
     end
 

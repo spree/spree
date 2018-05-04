@@ -1,0 +1,38 @@
+<% content_for :page_title do %>
+  <%= Spree.t(:"admin.user.stores") %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= button_link_to Spree.t(:add_store), spree.new_admin_store_path(@user), class: "btn-success", icon: 'add' if can?(:create, Spree::Store) %>
+<% end %>
+
+<% if @stores.any? %>
+  <table class="table">
+    <thead>
+      <th><%= Spree.t(:name) %></th>
+      <th><%= Spree.t(:url) %></th>
+      <th data-hook="admin_stores_index_header_actions" class="actions"></th>
+    <thead>
+    <tbody>
+      <% @stores.each do |store| %>
+        <tr>
+          <td><%= store.name %></td>
+          <td><%= store.url %></td>
+          <td class="actions actions-2 text-center" data-hook="admin_stores_index_row_actions">
+            <% if store.default %>
+              <%= button_link_to(Spree.t(:store_default), '#', class: 'btn-success btn-sm') %>
+            <% else %>
+              <%= button_link_to(Spree.t(:store_set_default_button), spree.set_default_admin_store_path(store), method: :post, class: 'btn-default btn-sm') if can?(:edit, store) %>
+            <% end %>
+            <%= link_to_edit_url spree.edit_admin_store_path(store), no_text: true if can?(:edit, store) %>
+            <%= link_to_delete store, no_text: true, url: spree.admin_store_path(store) if can?(:destroy, store) %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <div class="alert alert-info no-objects-found">
+    <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::StoreCredit)) %>
+  </div>
+<% end %>

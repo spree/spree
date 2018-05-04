@@ -1,15 +1,15 @@
 prototypes = [
   {
-    name: "Shirt",
-    properties: ["Manufacturer", "Brand", "Model", "Shirt Type", "Sleeve Type", "Material", "Fit", "Gender"]
+    name: 'Shirt',
+    properties: ['Manufacturer', 'Brand', 'Model', 'Shirt Type', 'Sleeve Type', 'Material', 'Fit', 'Gender']
   },
   {
-    name: "Bag",
-    properties: ["Type", "Size", "Material"]
+    name: 'Bag',
+    properties: ['Type', 'Size', 'Material']
   },
   {
-    name: "Mugs",
-    properties: ["Size", "Type"]
+    name: 'Mugs',
+    properties: ['Size', 'Type']
   }
 ]
 

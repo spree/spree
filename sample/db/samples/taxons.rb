@@ -1,26 +1,26 @@
-Spree::Sample.load_sample("taxonomies")
-Spree::Sample.load_sample("products")
+Spree::Sample.load_sample('taxonomies')
+Spree::Sample.load_sample('products')
 
 categories = Spree::Taxonomy.find_by!(name: I18n.t('spree.taxonomy_categories_name'))
 brands = Spree::Taxonomy.find_by!(name: I18n.t('spree.taxonomy_brands_name'))
 
 products = {
-  ror_tote: "Ruby on Rails Tote",
-  ror_bag: "Ruby on Rails Bag",
-  ror_mug: "Ruby on Rails Mug",
-  ror_stein: "Ruby on Rails Stein",
-  ror_baseball_jersey: "Ruby on Rails Baseball Jersey",
-  ror_jr_spaghetti: "Ruby on Rails Jr. Spaghetti",
-  ror_ringer: "Ruby on Rails Ringer T-Shirt",
-  spree_stein: "Spree Stein",
-  spree_mug: "Spree Mug",
-  spree_ringer: "Spree Ringer T-Shirt",
-  spree_baseball_jersey: "Spree Baseball Jersey",
-  spree_tote: "Spree Tote",
-  spree_bag: "Spree Bag",
-  spree_jr_spaghetti: "Spree Jr. Spaghetti",
-  apache_baseball_jersey: "Apache Baseball Jersey",
-  ruby_baseball_jersey: "Ruby Baseball Jersey",
+  ror_tote: 'Ruby on Rails Tote',
+  ror_bag: 'Ruby on Rails Bag',
+  ror_mug: 'Ruby on Rails Mug',
+  ror_stein: 'Ruby on Rails Stein',
+  ror_baseball_jersey: 'Ruby on Rails Baseball Jersey',
+  ror_jr_spaghetti: 'Ruby on Rails Jr. Spaghetti',
+  ror_ringer: 'Ruby on Rails Ringer T-Shirt',
+  spree_stein: 'Spree Stein',
+  spree_mug: 'Spree Mug',
+  spree_ringer: 'Spree Ringer T-Shirt',
+  spree_baseball_jersey: 'Spree Baseball Jersey',
+  spree_tote: 'Spree Tote',
+  spree_bag: 'Spree Bag',
+  spree_jr_spaghetti: 'Spree Jr. Spaghetti',
+  apache_baseball_jersey: 'Apache Baseball Jersey',
+  ruby_baseball_jersey: 'Ruby Baseball Jersey'
 }
 
 products.each do |key, name|
@@ -34,7 +34,7 @@ taxons = [
     position: 0
   },
   {
-    name: "Bags",
+    name: 'Bags',
     taxonomy: categories,
     parent: I18n.t('spree.taxonomy_categories_name'),
     position: 1,
@@ -46,7 +46,7 @@ taxons = [
     ]
   },
   {
-    name: "Mugs",
+    name: 'Mugs',
     taxonomy: categories,
     parent: I18n.t('spree.taxonomy_categories_name'),
     position: 2,
@@ -58,14 +58,14 @@ taxons = [
     ]
   },
   {
-    name: "Clothing",
+    name: 'Clothing',
     taxonomy: categories,
     parent: I18n.t('spree.taxonomy_categories_name')
   },
   {
-    name: "Shirts",
+    name: 'Shirts',
     taxonomy: categories,
-    parent: "Clothing",
+    parent: 'Clothing',
     position: 0,
     products: [
       products[:ror_jr_spaghetti],
@@ -73,9 +73,9 @@ taxons = [
     ]
   },
   {
-    name: "T-Shirts",
+    name: 'T-Shirts',
     taxonomy: categories,
-    parent: "Clothing",
+    parent: 'Clothing',
     products: [
       products[:ror_baseball_jersey],
       products[:ror_ringer],
@@ -91,7 +91,7 @@ taxons = [
     taxonomy: brands
   },
   {
-    name: "Ruby",
+    name: 'Ruby',
     taxonomy: brands,
     parent: I18n.t('spree.taxonomy_brands_name'),
     products: [
@@ -99,7 +99,7 @@ taxons = [
     ]
   },
   {
-    name: "Apache",
+    name: 'Apache',
     taxonomy: brands,
     parent: I18n.t('spree.taxonomy_brands_name'),
     products: [
@@ -107,7 +107,7 @@ taxons = [
     ]
   },
   {
-    name: "Spree",
+    name: 'Spree',
     taxonomy: brands,
     parent: I18n.t('spree.taxonomy_brands_name'),
     products: [
@@ -117,11 +117,11 @@ taxons = [
       products[:spree_baseball_jersey],
       products[:spree_tote],
       products[:spree_bag],
-      products[:spree_jr_spaghetti],
+      products[:spree_jr_spaghetti]
     ]
   },
   {
-    name: "Rails",
+    name: 'Rails',
     taxonomy: brands,
     parent: I18n.t('spree.taxonomy_brands_name'),
     products: [
@@ -131,9 +131,9 @@ taxons = [
       products[:ror_stein],
       products[:ror_baseball_jersey],
       products[:ror_jr_spaghetti],
-      products[:ror_ringer],
+      products[:ror_ringer]
     ]
-  },
+  }
 ]
 
 taxons.each do |taxon_attrs|

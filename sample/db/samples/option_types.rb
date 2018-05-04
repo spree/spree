@@ -1,12 +1,12 @@
 option_types_attributes = [
   {
-    name: "tshirt-size",
-    presentation: "Size",
+    name: 'tshirt-size',
+    presentation: 'Size',
     position: 1
   },
   {
-    name: "tshirt-color",
-    presentation: "Color",
+    name: 'tshirt-color',
+    presentation: 'Color',
     position: 2
   }
 ]
