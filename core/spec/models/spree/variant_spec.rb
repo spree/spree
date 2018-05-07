@@ -778,13 +778,19 @@ describe Spree::Variant, type: :model do
           context 'price nil and currency present' do
             before { variant.price = nil }
 
-            it { expect { variant.send(:check_price) }.to raise_error(RuntimeError, 'No master variant found to infer price') }
+            it 'adds absence of master error' do
+              variant.send(:check_price)
+              expect(variant.errors[:base]).to include I18n.t('activerecord.errors.models.spree/variant.attributes.base.no_master_variant_found_to_infer_price')
+            end
           end
 
           context 'price nil and currency nil' do
             before { variant.price = nil }
 
-            it { expect { variant.send(:check_price) }.to raise_error(RuntimeError, 'No master variant found to infer price') }
+            it 'adds absence of master error' do
+              variant.send(:check_price)
+              expect(variant.errors[:base]).to include I18n.t('activerecord.errors.models.spree/variant.attributes.base.no_master_variant_found_to_infer_price')
+            end
           end
         end
       end

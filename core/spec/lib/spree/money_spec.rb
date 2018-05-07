@@ -7,14 +7,19 @@ describe Spree::Money do
     end
   end
 
+  let(:money)    { described_class.new(10) }
+  let(:currency) { Money::Currency.new('USD') }
+
   it 'formats correctly' do
-    money = described_class.new(10)
     expect(money.to_s).to eq('$10.00')
   end
 
   it 'can get cents' do
-    money = described_class.new(10)
     expect(money.cents).to eq(1000)
+  end
+
+  it 'can get currency' do
+    expect(money.currency).to eq(currency)
   end
 
   context 'with currency' do
@@ -155,6 +160,16 @@ describe Spree::Money do
       it 'favors decimal mark passed in as a parameter on initialization' do
         money = described_class.new(10, thousands_separator: '.')
         expect(money.thousands_separator).to eq('.')
+      end
+    end
+  end
+
+  describe '#amount_in_cents' do
+    %w[USD JPY KRW].each do |currency_name|
+      context "when currency is #{currency_name}" do
+        let(:money) { described_class.new(100, currency: currency_name) }
+
+        it { expect(money.amount_in_cents).to eq(10000) }
       end
     end
   end
