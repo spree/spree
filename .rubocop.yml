@@ -15,6 +15,7 @@ AllCops:
     - '**/*.gemspec'
     - '**/dummy/**/*'
     - '**/vendor/**/*'
+    - '**/spec_helper.rb'
 
 Layout/MultilineOperationIndentation:
   EnforcedStyle: indented
@@ -122,3 +123,6 @@ RSpec/NestedGroups:
 Lint/AmbiguousBlockAssociation:
   Exclude:
     - '**/spec/**/*'
+
+Style/NumericLiterals:
+  Enabled: false

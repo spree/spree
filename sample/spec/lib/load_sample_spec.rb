@@ -10,7 +10,7 @@ describe 'Load samples' do
     end
   end
 
-  it "doesn't raise any error" do
+  it 'doesnt raise any error' do
     expect do
       SpreeSample::Engine.load_samples
     end.not_to raise_error
