@@ -68,7 +68,6 @@ describe 'Properties', type: :feature, js: true do
     end
 
     it 'shows validation errors' do
-      disable_html5_validation
       fill_in 'property_name', with: ''
       click_button 'Update'
       expect(page).to have_content("Name can't be blank")

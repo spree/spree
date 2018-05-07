@@ -11,8 +11,7 @@ module Spree
       end
 
       def update
-        return unless @adjustable
-        return unless @adjustable.persisted?
+        return unless adjustable_still_exists?
 
         totals = {
           non_taxable_adjustment_total: 0,
@@ -42,6 +41,10 @@ module Spree
 
       def adjusters
         Rails.application.config.spree.adjusters
+      end
+
+      def adjustable_still_exists?
+        @adjustable && @adjustable.class.exists?(@adjustable.id)
       end
     end
   end

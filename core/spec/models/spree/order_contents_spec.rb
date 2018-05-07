@@ -294,7 +294,7 @@ describe Spree::OrderContents, type: :model do
 
       it 'doesnt try to update unexistent items' do
         filtered_params = { line_items_attributes: {
-          '0' => { id: shirt.id, quantity: 0 },
+          '0' => { id: shirt.id, quantity: 0 }
         } }
         expect(subject.order).to receive(:update_attributes).with(filtered_params)
         subject.update_cart params
