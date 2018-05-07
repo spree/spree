@@ -169,19 +169,39 @@ describe 'Products', type: :feature do
         expect(page).not_to have_content('Variants')
       end
 
-      it 'keeps option values selected if validation fails' do
-        disable_html5_validation
-        fill_in 'product_name', with: 'Baseball Cap'
-        fill_in 'product_sku', with: 'B100'
-        fill_in 'product_price', with: '100'
-        select 'Size', from: 'Prototype'
-        wait_for_ajax
-        check 'Large'
-        click_button 'Create'
-        expect(page).to have_content("Shipping Category can't be blank")
-        expect(field_labeled('Size')).to be_checked
-        expect(field_labeled('Large')).to be_checked
-        expect(field_labeled('Small')).not_to be_checked
+      context 'with html5 validations' do
+        it 'keeps option values selected if validation fails' do
+          fill_in 'product_name', with: 'Baseball Cap'
+          fill_in 'product_sku', with: 'B100'
+          fill_in 'product_price', with: '100'
+          select 'Size', from: 'Prototype'
+          wait_for_ajax
+          check 'Large'
+          click_button 'Create'
+
+          message = page.find('#product_shipping_category_id').native.attribute('validationMessage')
+          expect(message).to eq('Please select an item in the list.')
+          expect(field_labeled('Size')).to be_checked
+          expect(field_labeled('Large')).to be_checked
+          expect(field_labeled('Small')).not_to be_checked
+        end
+      end
+
+      context 'without html5 validations' do
+        it 'keeps option values selected if validation fails' do
+          disable_html5_validation
+          fill_in 'product_name', with: 'Baseball Cap'
+          fill_in 'product_sku', with: 'B100'
+          fill_in 'product_price', with: '100'
+          select 'Size', from: 'Prototype'
+          wait_for_ajax
+          check 'Large'
+          click_button 'Create'
+          expect(page).to have_content("Shipping Category can't be blank")
+          expect(field_labeled('Size')).to be_checked
+          expect(field_labeled('Large')).to be_checked
+          expect(field_labeled('Small')).not_to be_checked
+        end
       end
     end
 
