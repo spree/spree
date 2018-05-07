@@ -18,30 +18,12 @@ module Spree
         end
 
         def actionable?(line_item)
-          pid = line_item.product.id
-          ovids = line_item.variant.option_values.pluck(:id)
+          product_id = line_item.product.id
+          option_values_ids = line_item.variant.option_value_ids
+          eligible_product_ids = preferred_eligible_values.keys
+          eligible_value_ids = preferred_eligible_values[product_id]
 
-          product_ids.include?(pid) && (value_ids(pid) - ovids).empty?
-        end
-
-        def preferred_eligible_values_with_numerification
-          values = preferred_eligible_values_without_numerification || {}
-          Hash[values.keys.map(&:to_i).zip(
-            values.values.map do |v|
-              (v.is_a?(Array) ? v : v.split(",")).map(&:to_i)
-            end
-          )]
-        end
-        alias_method_chain :preferred_eligible_values, :numerification
-
-        private
-
-        def product_ids
-          preferred_eligible_values.keys
-        end
-
-        def value_ids(product_id)
-          preferred_eligible_values[product_id]
+          eligible_product_ids.include?(product_id) && (eligible_value_ids & option_values_ids).present?
         end
       end
     end
