@@ -466,7 +466,7 @@ describe Spree::CheckoutController, type: :controller do
           state: 'payment',
           apply_store_credit: 'Apply Store Credit',
           order: {
-            payments_attributes: [{ payment_method_id: payment_method_id }],
+            payments_attributes: [{ payment_method_id: payment_method_id }]
           }
         }
       end
@@ -521,7 +521,7 @@ describe Spree::CheckoutController, type: :controller do
           state: 'payment',
           remove_store_credit: 'Remove Store Credit',
           order: {
-            payments_attributes: [{ payment_method_id: payment_method_id }],
+            payments_attributes: [{ payment_method_id: payment_method_id }]
           }
         }
       end

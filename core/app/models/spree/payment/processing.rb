@@ -29,7 +29,7 @@ module Spree
       # a new pending payment record for the remaining amount to capture later.
       def capture!(amount = nil)
         return true if completed?
-        amount ||= money.money.cents
+        amount ||= money.amount_in_cents
         started_processing!
         protect_from_connection_error do
           # Standard ActiveMerchant capture usage
@@ -114,7 +114,7 @@ module Spree
 
       def gateway_action(source, action, success_state)
         protect_from_connection_error do
-          response = payment_method.send(action, money.money.cents,
+          response = payment_method.send(action, money.amount_in_cents,
                                          source,
                                          gateway_options)
           handle_response(response, success_state, :failure)
