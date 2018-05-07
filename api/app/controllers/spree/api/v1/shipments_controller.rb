@@ -141,31 +141,31 @@ module Spree
             order: {
               bill_address: {
                 state: {},
-                country: {},
+                country: {}
               },
               ship_address: {
                 state: {},
-                country: {},
+                country: {}
               },
               adjustments: {},
               payments: {
                 order: {},
-                payment_method: {},
-              },
+                payment_method: {}
+              }
             },
             inventory_units: {
               line_item: {
                 product: {},
-                variant: {},
+                variant: {}
               },
               variant: {
                 product: {},
                 default_price: {},
                 option_values: {
-                  option_type: {},
-                },
-              },
-            },
+                  option_type: {}
+                }
+              }
+            }
           }
         end
       end

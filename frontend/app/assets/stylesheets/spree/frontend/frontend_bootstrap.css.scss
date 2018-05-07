@@ -24,10 +24,12 @@
     }
   }
 
-  .navbar-nav > li > a {
-    padding-top: 0;
-    padding-bottom: 10px;
-    line-height: $line-height-computed;
+  @media (max-width: 767px) {
+    .navbar-nav > li > a {
+      padding-top: 0;
+      padding-bottom: 10px;
+      line-height: $line-height-computed;
+    }
   }
 
   .nav a {

@@ -6,7 +6,7 @@ module Spree
                                               ReturnItem::EligibilityValidator::TimeSincePurchase,
                                               ReturnItem::EligibilityValidator::RMARequired,
                                               ReturnItem::EligibilityValidator::InventoryShipped,
-                                              ReturnItem::EligibilityValidator::NoReimbursements,
+                                              ReturnItem::EligibilityValidator::NoReimbursements
                                             ]
 
     def eligible_for_return?
