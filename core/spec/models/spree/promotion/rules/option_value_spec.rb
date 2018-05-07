@@ -90,7 +90,7 @@ describe Spree::Promotion::Rules::OptionValue do
       context 'when not all of the option values match' do
         let(:option_value_ids) { [option_value_blue.id, option_value_medium.id] }
 
-        it { is_expected.to be false }
+        it { is_expected.to be true }
       end
     end
     context "when the line item's product doesn't match" do
