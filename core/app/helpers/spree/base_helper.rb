@@ -92,7 +92,7 @@ module Spree
 
     def create_product_image_tag(image, product, options, style)
       options.reverse_merge! alt: image.alt.blank? ? product.name : image.alt
-      image_tag image.attachment.url(style), options
+      image_tag main_app.url_for(image.url(style)), options
     end
 
     def define_image_method(style)
@@ -118,8 +118,7 @@ module Spree
     # Returns style of image or nil
     def image_style_from_method_name(method_name)
       if method_name.to_s.match(/_image$/) && style = method_name.to_s.sub(/_image$/, '')
-        possible_styles = Spree::Image.attachment_definitions[:attachment][:styles]
-        style if style.in? possible_styles.with_indifferent_access
+        style if style.in? Spree::Image.styles.with_indifferent_access
       end
     end
   end

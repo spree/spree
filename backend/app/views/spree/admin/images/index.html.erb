@@ -38,7 +38,7 @@
             <% end %>
           </td>
           <td class="image">
-            <%= link_to image_tag(image.attachment.url(:mini)), image.attachment.url(:product) %>
+            <%= link_to image_tag(main_app.url_for(image.url(:mini))), main_app.url_for(image.url(:product)) %>
           </td>
           <% if has_variants %>
             <td><%= options_text_for(image) %></td>

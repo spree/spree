@@ -6,7 +6,7 @@
       <% if variant.images.length == 0 %>
         <%= link_to small_image(variant.product), variant.product %>
       <% else %>
-        <%= link_to image_tag(variant.images.first.attachment.url(:small)), variant.product %>
+        <%= link_to image_tag(main_app.url_for(variant.images.first.url(:small))), variant.product %>
       <% end %>
     </td>
     <td class="cart-item-description" data-hook="cart_item_description">

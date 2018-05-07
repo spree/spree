@@ -361,7 +361,11 @@ en:
               cannot_destroy_if_attached_to_line_items: Cannot delete variants once they are attached to line items.
               no_master_variant_found_to_infer_price: No master variant found to infer price
               must_supply_price_for_variant_or_master: Must supply price for variant or master price for product.
-
+        spree/image:
+          attributes:
+            attachment:
+              not_allowed_content_type: has not allowed content type
+              attachment_must_be_present: must be present
   devise:
     confirmations:
       confirmed: Your account was successfully confirmed. You are now signed in.

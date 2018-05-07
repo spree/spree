@@ -9,6 +9,8 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
 
   before do
     visit spree.root_path
+    allow(ENV).to receive(:[]).and_call_original
+    allow(ENV).to receive(:[]).with(:USE_PAPERCLIP).and_return(true)
   end
 
   it 'is able to show the shopping cart after adding a product to it' do
@@ -156,6 +158,7 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
     before do
       # Need to have two images to trigger the error
       image = File.open(File.expand_path('../../fixtures/thinking-cat.jpg', __FILE__))
+
       product.images.create!(attachment: image)
       product.images.create!(attachment: image)
 

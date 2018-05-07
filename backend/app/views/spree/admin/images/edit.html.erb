@@ -13,7 +13,7 @@
       <div class="form-group">
         <div data-hook="thumbnail" class="col-xs-12 col-md-3 text-center">
           <%= f.label Spree.t(:thumbnail) %>
-          <%= link_to image_tag(@image.attachment.url(:small)), @image.attachment.url(:product) %>
+          <%= link_to image_tag(main_app.url_for(@image.url(:small))), main_app.url_for(@image.url(:product)) %>
         </div>
         <div class="col-xs-12 col-md-9">
           <%= render partial: 'form', locals: { f: f } %>

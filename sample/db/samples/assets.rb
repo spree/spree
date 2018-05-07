@@ -30,6 +30,20 @@ unless ENV['SKIP_SAMPLE_IMAGES']
     "#{name}.#{type}"
   end
 
+  def attach_paperclip_image(variant, name, type)
+    if variant.images.where(attachment_file_name: file_name(name, type)).none?
+      image = image(name, type)
+      variant.images.create!(attachment: image)
+    end
+  end
+
+  def attach_active_storage_image(variant, name, type)
+    if variant.images.with_attached_attachment.where(active_storage_blobs: { filename: file_name(name, type) }).none?
+      image = image(name, type)
+      variant.images.create!(attachment: { io: image, filename: file_name(name, type) })
+    end
+  end
+
   images = {
     products[:ror_tote].master => [
       {
@@ -172,22 +186,25 @@ unless ENV['SKIP_SAMPLE_IMAGES']
   products[:ror_baseball_jersey].variants.each do |variant|
     color = variant.option_value('tshirt-color').downcase
 
-    if variant.images.where(attachment_file_name: file_name("ror_baseball_jersey_#{color}", 'png')).none?
-      main_image = image("ror_baseball_jersey_#{color}", 'png')
-      variant.images.create!(attachment: main_image)
-    end
-
-    if variant.images.where(attachment_file_name: file_name("ror_baseball_jersey_back_#{color}", 'png')).none?
-      back_image = image("ror_baseball_jersey_back_#{color}", 'png')
-      variant.images.create!(attachment: back_image)
+    if Rails.application.config.use_paperclip
+      attach_paperclip_image(variant, "ror_baseball_jersey_#{color}", 'png')
+      attach_paperclip_image(variant, "ror_baseball_jersey_back_#{color}", 'png')
+    else
+      attach_active_storage_image(variant, "ror_baseball_jersey_#{color}", 'png')
+      attach_active_storage_image(variant, "ror_baseball_jersey_back_#{color}", 'png')
     end
   end
 
   images.each do |variant, attachments|
     puts "Loading images for #{variant.product.name}"
     attachments.each do |attrs|
-      file_name = attrs.delete(:name)
-      variant.images.create!(attrs) if variant.images.where(attachment_file_name: file_name).none?
+      if Rails.application.config.use_paperclip
+        file_name = attrs.delete(:name)
+        variant.images.create!(attrs) if variant.images.where(attachment_file_name: file_name).none?
+      else
+        name, type = attrs.delete(:name).split('.')
+        attach_active_storage_image(variant, name, type)
+      end
     end
   end
 end

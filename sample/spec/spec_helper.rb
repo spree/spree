@@ -1,6 +1,7 @@
 # This file is copied to ~/spec when you run 'ruby script/generate rspec'
 # from the project root directory.
 ENV['RAILS_ENV'] ||= 'test'
+
 require File.expand_path('../dummy/config/environment', __FILE__)
 require 'rspec/rails'
 require 'ffaker'
@@ -17,6 +18,13 @@ RSpec.configure do |config|
   # examples within a transaction, comment the following line or assign false
   # instead of true.
   config.use_transactional_fixtures = true
+
+  # Config for running specs while have transition period from Paperclip to ActiveStorage
+  if Rails.application.config.use_paperclip
+    config.filter_run_excluding active_storage: true
+  else
+    config.filter_run_including active_storage: true
+  end
 
   config.include FactoryBot::Syntax::Methods
 

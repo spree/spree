@@ -21,7 +21,7 @@
           <tr id="<%= spree_dom_id variant %>" data-hook="admin_product_stock_management_index_rows">
             <td class="image text-center">
               <% if variant.images.present? %>
-                <%= image_tag variant.images.first.attachment.url(:mini) %>
+                <%= image_tag main_app.url_for(variant.images.first.url(:mini)) %>
               <% end %>
             </td>
             <td>

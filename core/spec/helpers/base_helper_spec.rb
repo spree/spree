@@ -56,7 +56,8 @@ describe Spree::BaseHelper, type: :helper do
 
     before do
       Spree::Image.class_eval do
-        attachment_definitions[:attachment][:styles].merge!(very_strange: '1x1')
+        styles[:very_strange] = '1x1'
+        styles.merge!(foobar: '2x2')
       end
     end
 
@@ -66,6 +67,14 @@ describe Spree::BaseHelper, type: :helper do
 
     it 'raises NoMethodError when style is not exists' do
       expect { another_strange_image(product) }.to raise_error(NoMethodError)
+    end
+
+    it 'does not raise errors when helper method called' do
+      expect { foobar_image(product) }.not_to raise_error
+    end
+
+    it 'raises NoMethodError when statement with name equal to style name called' do
+      expect { foobar(product) }.to raise_error(NoMethodError)
     end
   end
 
@@ -113,23 +122,6 @@ describe Spree::BaseHelper, type: :helper do
   end
 
   # Regression test for #5384
-  context 'custom image helpers conflict with inproper statements' do
-    let(:product) { mock_model(Spree::Product, images: [], variant_images: []) }
-
-    before do
-      Spree::Image.class_eval do
-        attachment_definitions[:attachment][:styles].merge!(foobar: '1x1')
-      end
-    end
-
-    it 'does not raise errors when helper method called' do
-      expect { foobar_image(product) }.not_to raise_error
-    end
-
-    it 'raises NoMethodError when statement with name equal to style name called' do
-      expect { foobar(product) }.to raise_error(NoMethodError)
-    end
-  end
 
   context 'pretty_time' do
     it 'prints in a format' do
