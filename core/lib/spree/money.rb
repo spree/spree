@@ -40,6 +40,16 @@ module Spree
       to_s
     end
 
+    def decimal_mark
+      return @money.decimal_mark if @options[:decimal_mark].nil?
+      @options[:decimal_mark]
+    end
+
+    def thousands_separator
+      return @money.thousands_separator if @options[:thousands_separator].nil?
+      @options[:thousands_separator]
+    end
+
     def ==(obj)
       @money == obj.money
     end
