@@ -40,9 +40,4 @@
     <%= f.text_field :code, class: 'form-control', required: true %>
     <%= f.error_message_on :code %>
   <% end %>
-  <%= f.field_container :default, class: ['form-group'] do %>
-    <%= f.label :default, Spree.t(:default)  %>
-    <%= f.check_box :default %>
-    <%= f.error_message_on :default %>
-  <% end %>
 </div>
