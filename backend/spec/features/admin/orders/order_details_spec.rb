@@ -275,7 +275,7 @@ describe 'Order Details', type: :feature, js: true do
             expect(order.shipments.first.stock_location.id).to eq(stock_location2.id)
           end
 
-          it 'allows me to split more than I have if available there' do
+          it 'does not allow to split more than in the original shipment' do
             expect(order.shipments.first.stock_location.id).to eq(stock_location.id)
 
             within_row(1) { click_icon 'split' }
@@ -288,7 +288,7 @@ describe 'Order Details', type: :feature, js: true do
 
             expect(order.shipments.count).to eq(1)
             expect(order.shipments.last.backordered?).to eq(false)
-            expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq(5)
+            expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq(2)
             expect(order.shipments.first.stock_location.id).to eq(stock_location2.id)
           end
 

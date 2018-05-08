@@ -338,40 +338,22 @@ module Spree
     end
 
     def transfer_to_location(variant, quantity, stock_location)
-      raise ArgumentError if quantity <= 0
-
-      transaction do
-        new_shipment = order.shipments.create!(stock_location: stock_location)
-
-        order.contents.remove(variant, quantity, shipment: self)
-        order.contents.add(variant, quantity, shipment: new_shipment)
-        order.create_tax_charge!
-        order.update_with_updater!
-
-        refresh_rates
-        save! if persisted?
-        new_shipment.save!
-      end
+      transfer_to_shipment(
+        variant,
+        quantity,
+        order.shipments.build(stock_location: stock_location)
+      )
     end
 
     def transfer_to_shipment(variant, quantity, shipment_to_transfer_to)
-      quantity_already_shipment_to_transfer_to = shipment_to_transfer_to.manifest.find do |mi|
-        mi.line_item.variant == variant
-      end.try(:quantity) || 0
-      final_quantity = quantity + quantity_already_shipment_to_transfer_to
-
-      raise ArgumentError if quantity <= 0 || self == shipment_to_transfer_to
-
-      transaction do
-        order.contents.remove(variant, final_quantity, shipment: self)
-        order.contents.add(variant, final_quantity, shipment: shipment_to_transfer_to)
-        order.update_with_updater!
-
-        refresh_rates
-        save! if persisted?
-        shipment_to_transfer_to.refresh_rates
-        shipment_to_transfer_to.save!
-      end
+      Spree::FulfilmentChanger.new(
+        current_stock_location: stock_location,
+        desired_stock_location: shipment_to_transfer_to.stock_location,
+        current_shipment:       self,
+        desired_shipment:       shipment_to_transfer_to,
+        variant:                variant,
+        quantity:               quantity
+      ).run!
     end
 
     private
