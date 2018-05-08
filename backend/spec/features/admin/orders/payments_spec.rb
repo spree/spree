@@ -40,7 +40,6 @@ describe 'Payments', type: :feature, js: true do
       it 'capturing a check payment from a new order' do
         click_icon(:capture)
         expect(page).not_to have_content('Cannot perform requested operation')
-        expect(page).to have_content('Payment Updated')
       end
 
       it 'voids a check payment from a new order' do
