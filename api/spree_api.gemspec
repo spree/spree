@@ -23,4 +23,5 @@ Gem::Specification.new do |s|
   s.add_dependency 'rabl', '~> 0.13.1'
   s.add_dependency 'versioncake', '~> 3.4.0'
   s.add_dependency 'fast_jsonapi', '~> 1.1.0'
+  s.add_dependency 'doorkeeper'
 end
