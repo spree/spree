@@ -1,6 +1,6 @@
 class CreateDoorkeeperTables < ActiveRecord::Migration[5.1]
   def change
-    create_table :oauth_applications do |t|
+    create_table :spree_oauth_applications do |t|
       t.string  :name,         null: false
       t.string  :uid,          null: false
       t.string  :secret,       null: false
@@ -10,9 +10,9 @@ class CreateDoorkeeperTables < ActiveRecord::Migration[5.1]
       t.timestamps             null: false
     end
 
-    add_index :oauth_applications, :uid, unique: true
+    add_index :spree_oauth_applications, :uid, unique: true
 
-    create_table :oauth_access_grants do |t|
+    create_table :spree_oauth_access_grants do |t|
       t.integer  :resource_owner_id, null: false
       t.references :application,     null: false
       t.string   :token,             null: false
@@ -23,14 +23,14 @@ class CreateDoorkeeperTables < ActiveRecord::Migration[5.1]
       t.string   :scopes
     end
 
-    add_index :oauth_access_grants, :token, unique: true
+    add_index :spree_oauth_access_grants, :token, unique: true
     add_foreign_key(
-      :oauth_access_grants,
-      :oauth_applications,
+      :spree_oauth_access_grants,
+      :spree_oauth_applications,
       column: :application_id
     )
 
-    create_table :oauth_access_tokens do |t|
+    create_table :spree_oauth_access_tokens do |t|
       t.integer  :resource_owner_id
       t.references :application
 
@@ -57,12 +57,12 @@ class CreateDoorkeeperTables < ActiveRecord::Migration[5.1]
       t.string   :previous_refresh_token, null: false, default: ""
     end
 
-    add_index :oauth_access_tokens, :token, unique: true
-    add_index :oauth_access_tokens, :resource_owner_id
-    add_index :oauth_access_tokens, :refresh_token, unique: true
+    add_index :spree_oauth_access_tokens, :token, unique: true
+    add_index :spree_oauth_access_tokens, :resource_owner_id
+    add_index :spree_oauth_access_tokens, :refresh_token, unique: true
     add_foreign_key(
-      :oauth_access_tokens,
-      :oauth_applications,
+      :spree_oauth_access_tokens,
+      :spree_oauth_applications,
       column: :application_id
     )
   end
