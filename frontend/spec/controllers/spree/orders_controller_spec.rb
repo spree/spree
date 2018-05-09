@@ -118,7 +118,7 @@ describe Spree::OrdersController, type: :controller do
   context 'line items quantity is 0' do
     let(:order) { Spree::Order.create }
     let(:variant) { create(:variant) }
-    let!(:line_item) { order.contents.add(variant, 1) }
+    let!(:line_item) { Spree::Cart::AddItem.call(order: order, variant: variant).value }
 
     before do
       allow(controller).to receive(:check_authorization)

@@ -43,7 +43,7 @@ module Spree
           promotion_action_line_items.each do |item|
             current_quantity = order.quantity_of(item.variant)
             if current_quantity < item.quantity && item_available?(item)
-              line_item = order.contents.add(item.variant, item.quantity - current_quantity)
+              line_item = Spree::Cart::AddItem.call(order: order, variant: item.variant, quantity: item.quantity - current_quantity).value
               action_taken = true if line_item.try(:valid?)
             end
           end
@@ -62,7 +62,7 @@ module Spree
           promotion_action_line_items.each do |item|
             line_item = order.find_line_item_by_variant(item.variant)
             next unless line_item.present?
-            order.contents.remove(item.variant, (item.quantity || 1))
+            Spree::Cart::RemoveItem.call(order: order, variant: item.variant, quantity: (item.quantity || 1))
             action_taken = true
           end
 

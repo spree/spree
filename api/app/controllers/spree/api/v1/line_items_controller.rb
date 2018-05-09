@@ -10,12 +10,11 @@ module Spree
 
         def create
           variant = Spree::Variant.find(params[:line_item][:variant_id])
-          @line_item = order.contents.add(
-            variant,
-            params[:line_item][:quantity] || 1,
-            line_item_params[:options] || {}
-          )
 
+          @line_item = Spree::Cart::AddItem.call(order: order,
+                                                 variant: variant,
+                                                 quantity: params[:line_item][:quantity],
+                                                 options: line_item_params[:options]).value
           if @line_item.errors.empty?
             respond_with(@line_item, status: 201, default_template: :show)
           else
@@ -25,7 +24,8 @@ module Spree
 
         def update
           @line_item = find_line_item
-          if @order.contents.update_cart(line_items_attributes)
+
+          if Spree::Cart::Update.call(order: @order, params: line_items_attributes).success?
             @line_item.reload
             respond_with(@line_item, default_template: :show)
           else
@@ -35,7 +35,8 @@ module Spree
 
         def destroy
           @line_item = find_line_item
-          @order.contents.remove_line_item(@line_item)
+          Spree::Cart::RemoveLineItem.new.call(order: @order, line_item: @line_item)
+
           respond_with(@line_item, status: 204)
         end
 

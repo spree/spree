@@ -50,7 +50,7 @@ describe Spree::OrderInventory, type: :model do
         variant.stock_items.destroy_all
 
         # The before_save callback in LineItem would verify inventory
-        line_item = order.contents.add variant, 1, shipment: shipment
+        line_item = Spree::Cart::AddItem.call(order: order, variant: variant, options: { shipment: shipment }).value
 
         units = shipment.inventory_units_for(line_item.variant)
         expect(units.sum(&:quantity)).to eq 1
@@ -66,7 +66,7 @@ describe Spree::OrderInventory, type: :model do
       it 'creates only on hand inventory units' do
         variant.stock_items.destroy_all
 
-        line_item = order.contents.add variant, 1
+        line_item = Spree::Cart::AddItem.call(order: order, variant: variant).value
         subject.verify(shipment)
 
         units = shipment.inventory_units_for(line_item.variant)

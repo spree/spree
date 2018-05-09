@@ -155,7 +155,7 @@ module Spree
         packages = @order.shipments.map(&:to_package)
         @differentiator = Spree::Stock::Differentiator.new(@order, packages)
         @differentiator.missing.each do |variant, quantity|
-          @order.contents.remove(variant, quantity)
+          Spree::Cart::RemoveItem.call(order: @order, variant: variant, quantity: quantity)
         end
       end
 

@@ -24,7 +24,11 @@ module Spree
           authorize! :create, Shipment
           quantity = params[:quantity].to_i
           @shipment = @order.shipments.create(stock_location_id: params.fetch(:stock_location_id))
-          @order.contents.add(variant, quantity, shipment: @shipment)
+
+          @line_item = Spree::Cart::AddItem.call(order: @order,
+                                                 variant: variant,
+                                                 quantity: quantity,
+                                                 options: { shipment: @shipment }).value
 
           respond_with(@shipment.reload, default_template: :show)
         end
@@ -55,7 +59,11 @@ module Spree
         def add
           quantity = params[:quantity].to_i
 
-          @shipment.order.contents.add(variant, quantity, shipment: @shipment)
+          Spree::Cart::AddItem.call(order: @shipment.order,
+                                    variant: variant,
+                                    quantity: quantity,
+                                    options: { shipment: @shipment })
+
           respond_with(@shipment, default_template: :show)
         end
 
@@ -65,7 +73,8 @@ module Spree
                      else
                        @shipment.inventory_units_for(variant).sum(:quantity)
                      end
-          @shipment.order.contents.remove(variant, quantity, shipment: @shipment)
+
+          Spree::Cart::RemoveItem.call(order: @shipment.order, variant: variant, quantity: quantity, options: { shipment: @shipment })
 
           if @shipment.inventory_units.any?
             @shipment.reload
