@@ -31,6 +31,7 @@ group :test do
   gem 'rspec-rails', '~> 3.7.2'
   gem 'rspec-retry'
   gem 'rspec_junit_formatter'
+  gem 'jsonapi-rspec'
   gem 'simplecov'
   gem 'webmock', '~> 3.0.1'
   gem 'selenium-webdriver'
