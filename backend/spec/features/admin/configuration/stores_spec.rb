@@ -20,7 +20,7 @@ describe 'Stores admin', type: :feature do
     it 'creates store and associate it with the user' do
       visit spree.admin_stores_path
 
-      click_link 'Add Store'
+      click_link 'New Store'
       page.fill_in 'store_name', with: 'Spree Example Test'
       page.fill_in 'store_url', with: 'test.localhost'
       page.fill_in 'store_mail_from_address', with: 'spree@example.com'
