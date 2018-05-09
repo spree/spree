@@ -157,7 +157,7 @@ module Spree
         end
       end
 
-      @payment_sources = try_spree_current_user.payment_sources if try_spree_current_user && try_spree_current_user.respond_to?(:payment_sources)
+      @payment_sources = try_spree_current_user.payment_sources if try_spree_current_user.respond_to?(:payment_sources)
     end
 
     def add_store_credit_payments
@@ -170,7 +170,9 @@ module Spree
         params.delete(:payment_source)
 
         # Return to the Payments page if additional payment is needed.
-        (redirect_to checkout_state_path(@order.state) and return) if @order.payments.valid.sum(:amount) < @order.total
+        if @order.payments.valid.sum(:amount) < @order.total # rubocop:disable Style/IfUnlessModifier
+          redirect_to checkout_state_path(@order.state) and return
+        end
       end
     end
 
