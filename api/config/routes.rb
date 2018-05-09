@@ -122,6 +122,16 @@ Spree::Core::Engine.add_routes do
       get '/taxons/products', to: 'taxons#products', as: :taxon_products
     end
 
+    namespace :v2 do
+      get 'swagger.yml', to: 'swagger#index', as: 'swagger', format: 'yml'
+
+      namespace :storefront do
+        namespace :cart do
+          post 'add_item'
+        end
+      end
+    end
+
     spree_path = Rails.application.routes.url_helpers.try(:spree_path, trailing_slash: true) || '/'
 
     match 'v:api/*path', to: redirect { |params, request|
