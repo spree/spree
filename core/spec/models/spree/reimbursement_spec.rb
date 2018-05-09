@@ -110,7 +110,7 @@ describe Spree::Reimbursement, type: :model do
     context 'when reimbursement is performed using store credits' do
       it 'succeeds' do
         reimbursement.return_items.last.update(preferred_reimbursement_type_id: store_credit_reimbursement_type.id)
-        expect { subject }.not_to raise_error(Spree::Reimbursement::IncompleteReimbursementError)
+        expect { subject }.not_to raise_error
       end
     end
 
