@@ -123,10 +123,9 @@ Spree::Core::Engine.add_routes do
     end
 
     namespace :v2 do
-      get 'swagger.yml', to: 'swagger#index', as: 'swagger', format: 'yml'
-
       namespace :storefront do
         namespace :cart do
+          post 'create'
           post 'add_item'
         end
       end
