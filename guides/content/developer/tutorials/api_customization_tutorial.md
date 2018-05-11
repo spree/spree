@@ -90,12 +90,83 @@ $ mkdir -p app/views/spree/api/v1/sales/index.v1.rabl
 
 Next, create the file `app/views/spree/api/v1/sales/index.v1.rabl` and add the following content to it:
 
-```erb
+```ruby
 collection @products
-attributes *product_attributes
+attributes *product_attributes << :sale_price
 ```
 
-Open your terminal and execute the rails console:
+### Testing Our endpoint
+
+Like described in [Testing Our Decorator](extensions_tutorial.md#testing-our-decorator) it's always a good idea to test your code, including your api new/changed endpoints. Let's write a integration test that simulate your api of simple unit tests for `sales_controller.rb`
+
+#### Creating and running the test
+
+1. Verify if the `Gemfile` of our extensions contains the gems below, into `:test` the group:
+
+```ruby
+group :test do
+    gem 'rails-controller-testing'
+    gem 'rspec-rails', '~> 3.7.2'
+    gem 'rspec-activemodel-mocks'
+end
+```
+> **PS:** The `rspec-activemodel-mocks` is need to use `stub_*` methods (e.g `stub_model` called by `stub_authentication!`)
+
+2. Copy the file [spree/controller_hacks.rb](https://github.com/spree/spree/blob/master/api/spec/support/controller_hacks.rb) to `spec/support` folder. That is required to use `api_*` methods to simulate api requests (e.g `api_get :action`, `api_post :action`...)
+
+3. Replicate the extension's controller directory structure in our spec directory by running the following command
+
+```bash
+$ mkdir -p spec/controllers/spree/api/v1
+```
+
+Now, let's create a new file in this directory called `sales_controller_spec.rb` and add the following test to it:
+
+```ruby
+require 'spec_helper'
+
+module Spree
+    describe Api::V1::SalesController, type: :controller do
+        
+        render_views
+
+        # 8.00 it's a example value. Use any other value that your wish!
+        let!(:product) { create(:product, sale_price: 8.00) }
+        let!(:other_product) { create(:product) }
+        let!(:user) { create(:user) }
+
+        before do
+            # Mock API autentication using a "spree_api_key"
+            stub_authentication!
+        end
+
+        it 'retrieves a list of products in sale' do
+            api_get :index
+            expect(json_response.size).to eq(1)
+            expect(json_response.first["sale_price"].to_f).to eq(product.sale_price)
+        end
+    end
+end
+```
+
+Open your terminal and execute `rspec` command to run all tests:
+
+```bash
+rspec
+```
+
+You should see the output below in your terminal:
+
+```bash
+3 examples found.
+
+Finished in 0.00005 seconds
+3 examples, 0 failures
+```
+
+#### Get the endpoint result
+
+In your terminal, execute the `rails console`:
 
 ```bash
 rails console
