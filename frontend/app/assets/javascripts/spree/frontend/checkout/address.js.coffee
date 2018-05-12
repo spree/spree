@@ -1,6 +1,6 @@
 Spree.ready ($) ->
   Spree.onAddress = () ->
-    if ($ '#checkout_form_address').is('*')
+    if ($ '#checkout_form_address').length
       getCountryId = (region) ->
         $('#' + region + 'country select').val()
 
