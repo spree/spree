@@ -1,7 +1,7 @@
 #= require spree/frontend/coupon_manager
 
 Spree.ready ($) ->
-  if ($ 'form#update-cart').is('*')
+  if ($ 'form#update-cart').length
     ($ 'form#update-cart a.delete').show().one 'click', ->
       ($ this).parents('.line-item').first().find('input.line_item_quantity').val 0
       ($ this).parents('form').first().submit()

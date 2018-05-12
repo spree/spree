@@ -1,9 +1,9 @@
 #= require spree/frontend/coupon_manager
 Spree.ready ($) ->
   Spree.onPayment = () ->
-    if ($ '#checkout_form_payment').is('*')
+    if ($ '#checkout_form_payment').length
 
-      if ($ '#existing_cards').is('*')
+      if ($ '#existing_cards').length
         ($ '#payment-method-fields').hide()
         ($ '#payment-methods').hide()
 
