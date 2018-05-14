@@ -85,6 +85,7 @@ describe 'Payments', type: :feature, js: true do
       click_button 'Update'
       expect(page).to have_content('successfully created!')
 
+      skip 'Test failing with phantomjs on CI only.' if Capybara.javascript_driver == :poltergeist
       click_icon(:capture)
       wait_for_ajax
       expect(find('#payment_status').text).to eq('paid')
