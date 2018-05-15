@@ -14,7 +14,7 @@ module Spree
           taxon_id = params['taxon']
 
           # redirect requests using taxon id's to their permalinks
-          if !taxon_id.blank? && !taxon_id.is_a?(Hash) && taxon = Taxon.find(taxon_id)
+          if !taxon_id.blank? && !taxon_id.is_a?(Hash) && taxon = Taxon.find(taxon_id) # rubocop:disable Lint/AssignmentInCondition
             params.delete('taxon')
 
             return build_response(params, "#{request.script_name}t/#{taxon.permalink}")
