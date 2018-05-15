@@ -345,7 +345,7 @@ describe 'Order' do
     end
 
     it 'returns a negative amount' do
-      expect(subject.display_total_applicable_store_credit.money.cents).to eq (total_applicable_store_credit * -100.0)
+      expect(subject.display_total_applicable_store_credit.amount_in_cents).to eq (total_applicable_store_credit * -100.0)
     end
   end
 
@@ -363,7 +363,7 @@ describe 'Order' do
     end
 
     it 'returns a negative amount' do
-      expect(subject.display_total_applied_store_credit.money.cents).to eq (total_applied_store_credit * -100.0)
+      expect(subject.display_total_applied_store_credit.amount_in_cents).to eq (total_applied_store_credit * -100.0)
     end
   end
 
@@ -381,7 +381,7 @@ describe 'Order' do
     end
 
     it 'returns the order_total_after_store_credit amount' do
-      expect(subject.display_order_total_after_store_credit.money.cents).to eq (order_total_after_store_credit * 100.0)
+      expect(subject.display_order_total_after_store_credit.amount_in_cents).to eq (order_total_after_store_credit * 100.0)
     end
   end
 
@@ -399,7 +399,7 @@ describe 'Order' do
     end
 
     it 'returns the total_available_store_credit amount' do
-      expect(subject.display_total_available_store_credit.money.cents).to eq (total_available_store_credit * 100.0)
+      expect(subject.display_total_available_store_credit.amount_in_cents).to eq (total_available_store_credit * 100.0)
     end
   end
 
@@ -420,7 +420,7 @@ describe 'Order' do
 
     it "returns all of the user's available store credit minus what's applied to the order amount" do
       amount_remaining = total_available_store_credit - total_applicable_store_credit
-      expect(subject.display_store_credit_remaining_after_capture.money.cents).to eq (amount_remaining * 100.0)
+      expect(subject.display_store_credit_remaining_after_capture.amount_in_cents).to eq (amount_remaining * 100.0)
     end
   end
 end

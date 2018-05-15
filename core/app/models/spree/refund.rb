@@ -43,7 +43,7 @@ module Spree
     def perform!
       return true if transaction_id.present?
 
-      credit_cents = Spree::Money.new(amount.to_f, currency: payment.currency).money.cents
+      credit_cents = Spree::Money.new(amount.to_f, currency: payment.currency).amount_in_cents
 
       @response = process!(credit_cents)
 
