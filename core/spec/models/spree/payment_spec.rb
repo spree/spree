@@ -323,7 +323,7 @@ describe Spree::Payment, type: :model do
         context "if successful" do
           context 'for entire amount' do
             before do
-              expect(payment.payment_method).to receive(:capture).with(payment.display_amount.money.cents, payment.response_code, anything).and_return(success_response)
+              expect(payment.payment_method).to receive(:capture).with(payment.display_amount.amount_in_cents, payment.response_code, anything).and_return(success_response)
             end
 
             it "should make payment complete" do
@@ -339,7 +339,7 @@ describe Spree::Payment, type: :model do
           end
 
           context 'for partial amount' do
-            let(:original_amount) { payment.money.money.cents }
+            let(:original_amount) { payment.money.amount_in_cents }
             let(:capture_amount) { original_amount - 100 }
 
             before do
