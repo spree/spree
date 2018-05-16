@@ -4,7 +4,7 @@ module Spree
       class OrdersController < Spree::Api::BaseController
         skip_before_action :authenticate_user, only: :apply_coupon_code
 
-        before_action :find_order, except: [:create, :mine, :current, :index, :update]
+        before_action :find_order, except: [:create, :mine, :current, :index, :update, :remove_coupon_code]
 
         # Dynamically defines our stores checkout steps to ensure we check authorization on each step.
         Order.checkout_steps.keys.each do |step|
@@ -109,6 +109,14 @@ module Spree
           @order.coupon_code = params[:coupon_code]
           @handler = PromotionHandler::Coupon.new(@order).apply
           status = @handler.successful? ? 200 : 422
+          render 'spree/api/v1/promotions/handler', status: status
+        end
+
+        def remove_coupon_code
+          find_order(true)
+          authorize! :update, @order, order_token
+          @handler = Spree::PromotionHandler::Coupon.new(@order).remove(params[:coupon_code])
+          status = @handler.successful? ? 200 : 404
           render 'spree/api/v1/promotions/handler', status: status
         end
 

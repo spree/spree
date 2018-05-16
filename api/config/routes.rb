@@ -63,7 +63,9 @@ Spree::Core::Engine.add_routes do
       get '/orders/mine', to: 'orders#mine', as: 'my_orders'
       get '/orders/current', to: 'orders#current', as: 'current_order'
 
-      resources :orders, concerns: :order_routes
+      resources :orders, concerns: :order_routes do
+        put :remove_coupon_code, on: :member
+      end
 
       resources :zones
       resources :countries, only: [:index, :show] do
