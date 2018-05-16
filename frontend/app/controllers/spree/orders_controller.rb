@@ -75,7 +75,7 @@ module Spree
     end
 
     def empty
-      @order.empty! if @order = current_order
+      current_order.try(:empty!)
 
       redirect_to spree.cart_path
     end
