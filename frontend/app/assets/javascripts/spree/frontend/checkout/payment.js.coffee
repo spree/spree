@@ -47,7 +47,6 @@ Spree.ready ($) ->
           couponStatus: $('#coupon_status')
         if $.trim(input.couponCodeField.val()).length > 0
           if new CouponManager(input).applyCoupon()
-            @submit()
             return true
           else
             Spree.enableSave()
