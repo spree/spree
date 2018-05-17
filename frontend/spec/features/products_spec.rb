@@ -155,7 +155,7 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
 
     before do
       # Need to have two images to trigger the error
-      image = File.open(File.expand_path('../../fixtures/thinking-cat.jpg', __FILE__))
+      image = File.open(File.expand_path('../../fixtures/thinking-cat.jpg', __FILE__)) # rubocop:disable Style/ExpandPathArguments
       product.images.create!(attachment: image)
       product.images.create!(attachment: image)
 
@@ -201,7 +201,7 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
     let(:variant2) { create(:variant, product: product, price: 10.99) }
 
     before do
-      image = File.open(File.expand_path('../../fixtures/thinking-cat.jpg', __FILE__))
+      image = File.open(File.expand_path('../../fixtures/thinking-cat.jpg', __FILE__)) # rubocop:disable Style/ExpandPathArguments
       variant1.images.create!(attachment: image)
       variant2.images.create!(attachment: image)
     end
