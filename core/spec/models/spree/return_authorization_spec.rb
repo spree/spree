@@ -36,7 +36,7 @@ describe Spree::ReturnAuthorization, type: :model do
 
       after do
         Spree::Config[:expedited_exchanges] = @expediteted_exchanges_config
-        subject.class.pre_expedited_exchange_hooks = @pre_exchange_hooks
+        subject.class.pre_expedited_exchange_hooks = Array(@pre_exchange_hooks)
       end
 
       context 'no items to exchange' do
