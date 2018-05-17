@@ -54,7 +54,7 @@ module Spree
     end
 
     def cache_key_for_product(product = @product)
-      (common_product_cache_keys + [product.cache_key, product.possible_promotions]).compact.join('/')
+      (common_product_cache_keys + [product.cache_key_with_version, product.possible_promotions]).compact.join('/')
     end
 
     def available_status(product) # will return a human readable string
