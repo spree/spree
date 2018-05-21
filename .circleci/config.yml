@@ -4,7 +4,7 @@ jobs: # a collection of steps
     parallelism: 4 # run four instances of this job in parallel
     working_directory: ~/spree # directory where steps will run
     docker: # run the steps with Docker
-      - image: circleci/ruby:2.4-node-browsers # ...with this image as the primary container; this is where all `steps` will run
+      - image: circleci/ruby:2.5-node-browsers # ...with this image as the primary container; this is where all `steps` will run
         environment: # environment variables for primary container
           DB: postgres
           DB_HOST: localhost

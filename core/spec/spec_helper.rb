@@ -51,6 +51,7 @@ RSpec.configure do |config|
   config.before do
     Rails.cache.clear
     reset_spree_preferences
+  rescue Errno::ENOTEMPTY
   end
 
   config.include FactoryBot::Syntax::Methods
