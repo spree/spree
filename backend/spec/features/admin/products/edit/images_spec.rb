@@ -9,12 +9,14 @@ describe 'Product Images', type: :feature, js: true do
     # Ensure attachment style keys are symbolized before running all tests
     # Otherwise this would result in this error:
     # undefined method `processors' for \"48x48>\
-    Spree::Image.attachment_definitions[:attachment][:styles].symbolize_keys!
+    Spree::Image.styles.symbolize_keys!
+    allow(ENV).to receive(:[]).and_call_original
+    allow(ENV).to receive(:[]).with(:USE_PAPERCLIP).and_return(true)
   end
 
   context 'uploading, editing, and deleting an image' do
     it 'allows an admin to upload and edit an image for a product' do
-      Spree::Image.attachment_definitions[:attachment].delete :storage
+      Spree::Image.attachment_definitions[:attachment].delete :storage if Rails.application.config.use_paperclip
 
       create(:product)
 

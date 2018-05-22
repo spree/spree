@@ -80,6 +80,13 @@ RSpec.configure do |config|
   # instead of true.
   config.use_transactional_fixtures = false
 
+  # Config for running specs while have transition period from Paperclip to ActiveStorage
+  if Rails.application.config.use_paperclip
+    config.filter_run_excluding active_storage: true
+  else
+    config.filter_run_including active_storage: true
+  end
+
   if ENV['WEBDRIVER'] == 'accessible'
     config.around(:each, inaccessible: true) do |example|
       Capybara::Accessible.skip_audit { example.run }
