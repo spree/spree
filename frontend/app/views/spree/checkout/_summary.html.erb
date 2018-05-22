@@ -12,7 +12,16 @@
         <% order.line_item_adjustments.nonzero.promotion.eligible.group_by(&:label).each do |label, adjustments| %>
           <tr class="total">
             <td><%= label %></td>
-            <td><%= Spree::Money.new(adjustments.sum(&:amount), currency: order.currency).to_html %></td>
+            <td>
+              <%= Spree::Money.new(adjustments.sum(&:amount), currency: order.currency).to_html %>
+              <%= content_tag(
+                    :span,
+                    '',
+                    class: 'glyphicon glyphicon-minus-sign delete-coupon-button',
+                    id: 'delete-promotion-coupon',
+                    value: order.line_item_adjustments.first.source.promotion.code
+                  ) %>
+            </td>
           </tr>
         <% end %>
       </tbody>
@@ -39,7 +48,16 @@
           <% order.shipment_adjustments.nonzero.promotion.eligible.group_by(&:label).each do |label, adjustments| %>
             <tr class="total">
               <td><%= label %>:</td>
-              <td><%= Spree::Money.new(adjustments.sum(&:amount), currency: order.currency).to_html %></td>
+              <td>
+                <%= Spree::Money.new(adjustments.sum(&:amount), currency: order.currency).to_html %>
+                <%= content_tag(
+                      :span,
+                      '',
+                      class: 'glyphicon glyphicon-minus-sign delete-coupon-button',
+                      id: 'delete-shipping-coupon',
+                      value: order.shipment_adjustments.first.source.promotion.code
+                    ) %>
+              </td>
             </tr>
           <% end %>
         </tbody>

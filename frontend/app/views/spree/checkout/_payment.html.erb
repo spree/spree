@@ -63,7 +63,8 @@
       <p class='field' data-hook='coupon_code'>
         <%= form.label :coupon_code %>
         <%= form.text_field :coupon_code, class: 'form-control' %>
-      </p>
+        <%= button_tag Spree.t(:coupon_code_apply), class: 'btn btn-warning', id: 'apply-coupon' %>
+       </p>
     <% end %>
   </div>
 </div>

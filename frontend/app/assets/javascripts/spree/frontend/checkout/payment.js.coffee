@@ -41,6 +41,17 @@ Spree.ready ($) ->
       # i.e. if user enters invalid data
       ($ 'input[type="radio"]:checked').click()
 
+      $('#apply-coupon').click (event) ->
+        event.preventDefault()
+        input =
+          couponCodeField: $('#order_coupon_code')
+          couponStatus: $('#coupon_status')
+
+        if $.trim(input.couponCodeField.val()).length > 0
+          if new CouponManager(input).applyCoupon()
+            location.reload()
+            return true
+
       $('#checkout_form_payment').submit (event) ->
         input =
           couponCodeField: $('#order_coupon_code')

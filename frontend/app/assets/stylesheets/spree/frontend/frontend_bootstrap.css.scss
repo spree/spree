@@ -71,6 +71,15 @@ h1 {
   margin-bottom: 30px;
 }
 
+#apply-coupon {
+  margin-top: 10px;
+}
+
+.delete-coupon-button {
+  cursor: pointer;
+  margin-left: 35px;
+}
+
 // Center cart line items
 table {
   &.table > tbody > tr {

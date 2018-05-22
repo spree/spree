@@ -85,6 +85,20 @@ describe 'Coupon code promotions', type: :feature, js: true do
           click_button 'Save and Continue'
           expect(page).to have_content('Promotion (Onetwo)   -$10.00')
         end
+
+        it 'applies promotion to an order using dedicated button' do
+          fill_in 'order_coupon_code', with: 'onetwo'
+          click_button 'Apply'
+          expect(page).to have_content('Promotion (Onetwo)   -$10.00')
+        end
+
+        it 'removes promotion from the orderd' do
+          fill_in 'order_coupon_code', with: 'onetwo'
+          click_button 'Apply'
+
+          find('.delete-coupon-button').click
+          expect(page).to have_no_content('Promotion (Onetwo)   -$10.00')
+        end
       end
     end
   end

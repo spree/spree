@@ -54,6 +54,8 @@ class window.Spree
     states_search: @pathFor('api/v1/states')
     apply_coupon_code: (order_id) ->
       Spree.pathFor("api/v1/orders/#{order_id}/apply_coupon_code")
+    remove_coupon_code: (order_id) ->
+      Spree.pathFor("api/v1/orders/#{order_id}/remove_coupon_code")
 
   @url_params:
     {}
