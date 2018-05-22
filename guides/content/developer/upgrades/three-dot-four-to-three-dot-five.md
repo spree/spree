@@ -29,10 +29,30 @@ rails spree_gateway:install:migrations
 rails db:migrate
 ```
 
-### Install Spree Analytics Trackers
+### Install Spree Analytics Trackers extension
 
-If you used analytics trackers from spree, you have to install gem
-spree_analytics_trackers from [Spree Analytics Trackers](https://github.com/spree-contrib/spree_analytics_trackers).
+If you were previously using Analytics Trackers feature you need to install it as an extension
+as it was [extracted from the core](https://github.com/spree/spree/pull/8408).
+
+1. Add [Spree Analytics Trackers](https://github.com/spree-contrib/spree_analytics_trackers) to your `Gemfile`:
+
+  ```ruby
+  gem 'spree_analytics_trackers', github: 'spree-contrib/spree_analytics_trackers'
+  ```
+
+2. Install the gem using Bundler:
+
+  ```bash
+  bundle install
+  ```
+
+3. Copy and run migrations:
+
+  ```bash
+  bundle exec rails g spree_analytics_trackers:install
+  ```
+
+You're good to go!
 
 ## Read the release notes
 
