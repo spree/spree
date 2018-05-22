@@ -11,16 +11,21 @@ module Spree
 
     def create_adjustment(order, adjustable, included = false)
       amount = compute_amount(adjustable)
-      return if amount == 0
-      adjustments.new(order: order,
-                      adjustable: adjustable,
-                      label: label,
-                      amount: amount,
-                      included: included).save
+
+      return if amount.zero?
+
+      adjustments.new(
+        adjustable: adjustable,
+        amount:     amount,
+        included:   included,
+        label:      label,
+        order:      order
+      ).save
     end
 
     def create_unique_adjustment(order, adjustable)
       return if already_adjusted?(adjustable)
+
       create_adjustment(order, adjustable)
     end
 
