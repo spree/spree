@@ -9,7 +9,11 @@ module Spree
     skip_before_action :verify_authenticity_token, only: [:populate]
 
     def show
-      @order = Order.includes(line_items: [variant: [:option_values, :images, :product]], bill_address: :state, ship_address: :state).find_by!(number: params[:id])
+      @order = Order.includes(
+        line_items: [variant: [:option_values, :images, :product]],
+        bill_address: :state,
+        ship_address: :state
+      ).find_by!(number: params[:id])
     end
 
     def update
@@ -76,7 +80,6 @@ module Spree
 
     def empty
       current_order.try(:empty!)
-
       redirect_to spree.cart_path
     end
 
@@ -91,9 +94,7 @@ module Spree
     end
 
     def check_authorization
-      order = Spree::Order.find_by(number: params[:id]) if params[:id].present?
-      order = current_order unless order
-
+      order = Spree::Order.find_by(number: params[:id]) || current_order
       if order && action_name.to_sym == :show
         authorize! :show, order, cookies.signed[:guest_token]
       elsif order
