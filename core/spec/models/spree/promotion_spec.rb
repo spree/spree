@@ -434,10 +434,10 @@ describe Spree::Promotion, type: :model do
       expect(promotion.eligible_rules(promotable)).to eq []
     end
 
-    it 'true if there are no applicable rules' do
+    it 'nil if there are no applicable rules' do
       promotion.promotion_rules = [stub_model(Spree::PromotionRule, eligible?: true, applicable?: false)]
-      allow(promotion.promotion_rules).to receive(:for).and_return([])
-      expect(promotion.eligible_rules(promotable)).to eq []
+      allow(promotion.promotion_rules).to receive(:for).and_return(nil)
+      expect(promotion.eligible_rules(promotable)).to eq nil
     end
 
     context "with 'all' match policy" do
