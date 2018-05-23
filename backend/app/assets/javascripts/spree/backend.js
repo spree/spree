@@ -2,7 +2,7 @@
 //= require bootstrap-sprockets
 //= require handlebars
 //= require jquery
-//= require jquery.cookie
+//= require js.cookie
 //= require jquery.jstree/jquery.jstree
 //= require jquery_ujs
 //= require jquery-ui/widgets/datepicker
