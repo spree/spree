@@ -27,6 +27,7 @@ module Spree
       end
 
       @order.shipments += shipments
+      @order.shipment_state = Spree::OrderUpdater.new(@order).update_shipment_state
       @order.save!
 
       shipments.each do |shipment|
