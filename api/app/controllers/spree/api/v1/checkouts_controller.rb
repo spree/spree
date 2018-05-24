@@ -32,6 +32,8 @@ module Spree
               @order.associate_user!(Spree.user_class.find(user_id))
             end
 
+            log_state_changes if params[:state]
+
             return if after_update_attributes
 
             if @order.completed? || @order.next
@@ -89,6 +91,16 @@ module Spree
             end
           end
           false
+        end
+
+        def log_state_changes
+          if @order.previous_changes[:state]
+            @order.log_state_changes(
+              state_name: 'order',
+              old_state: @order.previous_changes[:state].first,
+              new_state: @order.previous_changes[:state].last
+            )
+          end
         end
 
         def order_id
