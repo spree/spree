@@ -9,6 +9,8 @@ We strongly advise upgrading Spree incrementally, rather than in one big go. For
 
 If there are any issues with these guides, please let us know by [filing an issue](https://github.com/spree/spree/issues/new).
 
+* [3.5.x to 3.6.x](/developer/three-dot-five-to-three-dot-six)
+* [3.4.x to 3.5.x](/developer/three-dot-four-to-three-dot-five)
 * [3.3.x to 3.4.x](/developer/three-dot-three-to-three-dot-four)
 * [3.2.x to 3.3.x](/developer/three-dot-two-to-three-dot-three)
 * [3.1.x to 3.2.x](/developer/three-dot-one-to-three-dot-two)
