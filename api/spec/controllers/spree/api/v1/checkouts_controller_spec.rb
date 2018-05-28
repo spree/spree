@@ -248,6 +248,14 @@ module Spree
         expect(response.status).to eq(200)
       end
 
+      it 'can transition from confirm to delivery wtih logging state changes' do
+        order.update_columns(state: 'confirm')
+        allow_any_instance_of(Spree::Order).to receive_messages(payment_required?: false)
+        api_put :update, state: 'delivery', id: order.to_param, order_token: order.guest_token
+        expect(response.status).to eq(200)
+        expect(order.state_changes.count).to eq 3
+      end
+
       it 'prevent normal user from updating completed order' do
         order.update_columns(completed_at: Time.current, state: 'complete')
         api_put :update, id: order.to_param, order_token: order.guest_token
