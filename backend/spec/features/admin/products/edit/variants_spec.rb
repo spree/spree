@@ -17,7 +17,6 @@ describe 'Product Variants', type: :feature, js: true do
     end
 
     it 'allows admin to create a variant if there are option types' do
-      click_link 'Products'
       click_link 'Option Types'
       click_link 'new_option_type_link'
       fill_in 'option_type_name', with: 'shirt colors'
