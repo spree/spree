@@ -1,5 +1,3 @@
-#
-
 require 'spec_helper'
 
 describe Spree::Adjustment, type: :model do
@@ -8,6 +6,16 @@ describe Spree::Adjustment, type: :model do
 
   before do
     allow(order).to receive(:update_with_updater!)
+  end
+
+  describe '#amount=' do
+    let(:amount) { '1,599,99' }
+
+    before { adjustment.amount = amount }
+
+    it 'is expected to equal to localized number' do
+      expect(adjustment.amount).to eq(Spree::LocalizedNumber.parse(amount))
+    end
   end
 
   describe 'scopes' do

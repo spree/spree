@@ -73,6 +73,10 @@ module Spree
     extend DisplayMoney
     money_methods :amount
 
+    def amount=(amount)
+      self[:amount] = Spree::LocalizedNumber.parse(amount)
+    end
+
     def currency
       adjustable ? adjustable.currency : Spree::Config[:currency]
     end
