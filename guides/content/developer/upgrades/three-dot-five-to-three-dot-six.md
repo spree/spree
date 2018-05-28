@@ -3,7 +3,7 @@ title: Upgrading Spree from 3.5.x to 3.6.x
 section: upgrades
 ---
 
-This guide covers upgrading a 3.5 Spree store, to a 3.6 store.
+This guide covers upgrading a 3.5 Spree application, to a 3.6 application.
 
 ### Update Gemfile
 
@@ -26,8 +26,7 @@ to upgrade your store.
 Please follow the [official paperclip guide](https://github.com/thoughtbot/paperclip/blob/master/MIGRATING.md) if you
 want to use ActiveStorage instead of paperclip.
 
-You can keep paperclip as solution for attachment management by setting `USE_PAPERCLIP` environment variable to `true`, but keep in mind that paperclip is DEPRECATED and we will
-remove paperclip support in Spree 4.0.
+You cann still use paperclip for attachment management by setting `USE_PAPERCLIP` environment variable to `true`, but keep in mind that paperclip is DEPRECATED and we will remove paperclip support in Spree 4.0.
 
 ### Install missing migrations
 
@@ -51,4 +50,4 @@ For information about changes contained within this release, please read the [3.
 
 ## Verify that everything is OK
 
-Run you test suite, click around in your store and make sure it's performing as normal. Fix any deprecation warnings you see.
+Run you test suite, click around in your application and make sure it's performing as normal. Fix any deprecation warnings you see.
