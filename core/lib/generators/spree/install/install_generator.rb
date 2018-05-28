@@ -86,9 +86,6 @@ module Spree
       if @copy_views && Spree::Core::Engine.frontend_available?
         generate 'spree:frontend:copy_views'
       end
-      if @copy_views && Spree::Core::Engine.backend_available?
-        generate 'spree:backend:copy_views'
-      end
     end
 
     def configure_application
