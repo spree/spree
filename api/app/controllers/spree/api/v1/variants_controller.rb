@@ -63,7 +63,7 @@ module Spree
             variants = variants.with_deleted
           end
 
-          variants.accessible_by(current_ability, :read)
+          variants.eligible.accessible_by(current_ability, :read)
         end
 
         def variant_params

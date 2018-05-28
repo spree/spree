@@ -50,7 +50,7 @@ module Spree
       api_get :index, per_page: 1
       expect(json_response['count']).to eq(1)
       expect(json_response['current_page']).to eq(1)
-      expect(json_response['pages']).to eq(3)
+      expect(json_response['pages']).to eq(2)
     end
 
     it 'can query the results through a parameter' do
@@ -113,9 +113,9 @@ module Spree
       it 'can select the next page of variants' do
         api_get :index, page: 2, per_page: 1
         expect(json_response['variants'].first).to have_attributes(show_attributes)
-        expect(json_response['total_count']).to eq(3)
+        expect(json_response['total_count']).to eq(2)
         expect(json_response['current_page']).to eq(2)
-        expect(json_response['pages']).to eq(3)
+        expect(json_response['pages']).to eq(2)
       end
     end
 

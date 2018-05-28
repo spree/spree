@@ -58,6 +58,28 @@ describe Spree::Variant, type: :model do
   end
 
   describe 'scope' do
+    describe '.eligible' do
+      context 'when only master variants' do
+        let!(:product_1) { create(:product) }
+        let!(:product_2) { create(:product) }
+
+        it 'returns all of them' do
+          expect(Spree::Variant.eligible).to include(product_1.master)
+          expect(Spree::Variant.eligible).to include(product_2.master)
+        end
+      end
+
+      context 'when product has more than 1 variant' do
+        let!(:product) { create(:product) }
+        let!(:variant) { create(:variant, product: product) }
+
+        it 'filters master variant out' do
+          expect(Spree::Variant.eligible).to include(variant)
+          expect(Spree::Variant.eligible).not_to include(product.master)
+        end
+      end
+    end
+
     describe '.not_discontinued' do
       context 'when discontinued' do
         let!(:discontinued_variant) { create(:variant, discontinue_on: Time.current - 1.day) }

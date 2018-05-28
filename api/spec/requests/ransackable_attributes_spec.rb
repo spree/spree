@@ -11,7 +11,7 @@ describe 'Ransackable Attributes' do
       get "/api/v1/variants?q[orders_email_start]=#{order.email}", params: { token: user.spree_api_key }
 
       variants_response = JSON.parse(response.body)
-      expect(variants_response['total_count']).to eq(Spree::Variant.count)
+      expect(variants_response['total_count']).to eq(Spree::Variant.eligible.count)
     end
   end
 
@@ -22,7 +22,7 @@ describe 'Ransackable Attributes' do
       get "/api/v1/variants?q[orders_user_email_start]=#{order.user.email}", params: { token: user.spree_api_key }
 
       variants_response = JSON.parse(response.body)
-      expect(variants_response['total_count']).to eq(Spree::Variant.count)
+      expect(variants_response['total_count']).to eq(Spree::Variant.eligible.count)
     end
   end
 
