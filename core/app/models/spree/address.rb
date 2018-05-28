@@ -106,11 +106,6 @@ module Spree
 
     private
 
-    def clear_state_entities
-      clear_state
-      clear_state_name
-    end
-
     def clear_state
       self.state = nil
     end

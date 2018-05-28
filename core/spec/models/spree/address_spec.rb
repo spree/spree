@@ -297,15 +297,6 @@ describe Spree::Address, type: :model do
     specify { expect(address.instance_eval { require_phone? }).to be true }
   end
 
-  context '#clear_state_entities' do
-    let (:address) { create(:address) }
-
-    before { address.state_name = 'maryland' }
-
-    it { expect { address.send(:clear_state_entities) }.to change(address, :state).to(nil).from(address.state) }
-    it { expect { address.send(:clear_state_entities) }.to change(address, :state_name).to(nil).from('maryland') }
-  end
-
   context '#clear_state' do
     let (:address) { create(:address) }
 
