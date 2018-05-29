@@ -40,17 +40,6 @@ module Spree
             current_store.seo_title
           end
 
-          def render_404(_exception = nil)
-            ActiveSupport::Deprecation.warn(<<-EOS, caller)
-              #render_404 will be removed in Spree 3.6
-              You should switch to 404 handled by rails
-            EOS
-            respond_to do |type|
-              type.html { render status: :not_found, file: "#{::Rails.root}/public/404", formats: [:html], layout: nil }
-              type.all  { head :not_found }
-            end
-          end
-
           private
 
           def set_user_language
