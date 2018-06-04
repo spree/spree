@@ -11,7 +11,7 @@ describe 'Product Images', type: :feature, js: true do
     # undefined method `processors' for \"48x48>\
     Spree::Image.styles.symbolize_keys!
     allow(ENV).to receive(:[]).and_call_original
-    allow(ENV).to receive(:[]).with(:USE_PAPERCLIP).and_return(true)
+    allow(ENV).to receive(:[]).with(:SPREE_USE_PAPERCLIP).and_return(true)
   end
 
   context 'uploading, editing, and deleting an image' do
