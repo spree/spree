@@ -21,6 +21,7 @@ module Spree
 
     validates :name, presence: true, uniqueness: { scope: [:parent_id, :taxonomy_id], allow_blank: true }
     validates :permalink, uniqueness: { case_sensitive: false }
+    validates_associated :icon
     validate :check_for_root, on: :create
     with_options length: { maximum: 255 }, allow_blank: true do
       validates :meta_keywords

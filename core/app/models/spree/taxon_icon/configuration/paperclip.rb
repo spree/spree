@@ -9,6 +9,8 @@ module Spree
             attachment_definitions[:attachment][:styles]
           end
 
+          delegate :url, to: :attachment
+
           has_attached_file :attachment,
             styles: { mini: '32x32>', normal: '128x128>' },
             default_style: :mini,

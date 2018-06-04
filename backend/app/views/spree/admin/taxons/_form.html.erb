@@ -17,7 +17,7 @@
 
       <%= f.field_container :icon, class: ['form-group'] do %>
         <%= f.label :icon, Spree.t(:icon) %>
-        <%= image_tag @taxon.icon.try(:attachment).to_s %>
+        <%= image_tag main_app.url_for(@taxon.icon.try(:attachment)) if @taxon.icon %>
         <%= f.file_field :icon %>
       <% end %>
     </div>
