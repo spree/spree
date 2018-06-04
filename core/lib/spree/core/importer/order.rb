@@ -142,7 +142,7 @@ module Spree
               extra_params = line_item.except(:variant_id, :quantity, :sku)
               line_item = ensure_variant_id_from_params(line_item)
               variant = Spree::Variant.find(line_item[:variant_id])
-              line_item = order.contents.add(variant, line_item[:quantity])
+              line_item = Cart::AddItem.call(order: order, variant: variant, quantity: line_item[:quantity]).value
               # Raise any errors with saving to prevent import succeeding with line items
               # failing silently.
               if extra_params.present?

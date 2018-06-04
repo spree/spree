@@ -146,7 +146,7 @@ describe Spree::Api::V1::ShipmentsController, type: :controller do
       end
 
       it 'removes a variant from a shipment' do
-        order.contents.add(variant, 2)
+        Spree::Cart::AddItem.call(order: order, variant: variant, quantity: 2)
 
         api_put :remove, variant_id: variant.to_param, quantity: 1
         expect(response.status).to eq(200)
@@ -154,7 +154,7 @@ describe Spree::Api::V1::ShipmentsController, type: :controller do
       end
 
       it 'removes a destroyed variant from a shipment' do
-        order.contents.add(variant, 2)
+        Spree::Cart::AddItem.call(order: order, variant: variant, quantity: 2)
         variant.destroy
 
         api_put :remove, variant_id: variant.to_param, quantity: 1

@@ -50,7 +50,7 @@ module Spree
 
       after do
         # reset to avoid test pollution
-        Spree::Order.line_item_comparison_hooks = Set.new
+        Rails.application.config.spree.line_item_comparison_hooks = Set.new
       end
 
       context '2 equal line items' do

@@ -572,7 +572,7 @@ describe Spree::Order, type: :model do
 
       after do
         # reset to avoid test pollution
-        Spree::Order.line_item_comparison_hooks = Set.new
+        Rails.application.config.spree.line_item_comparison_hooks = Set.new
       end
 
       it 'matches line item when options match' do

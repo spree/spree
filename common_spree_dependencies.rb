@@ -7,6 +7,7 @@ gem 'coffee-rails'
 gem 'sass-rails'
 gem 'sqlite3', platforms: [:ruby, :mingw, :mswin, :x64_mingw]
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw]
+gem 'doorkeeper'
 
 platforms :jruby do
   gem 'jruby-openssl'
@@ -31,6 +32,7 @@ group :test do
   gem 'rspec-rails', '~> 3.7.2'
   gem 'rspec-retry'
   gem 'rspec_junit_formatter'
+  gem 'jsonapi-rspec'
   gem 'simplecov'
   gem 'webmock', '~> 3.0.1'
   gem 'selenium-webdriver'

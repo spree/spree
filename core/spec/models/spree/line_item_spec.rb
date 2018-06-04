@@ -133,7 +133,7 @@ describe Spree::LineItem, type: :model do
       end
 
       it 'creates a tax adjustment' do
-        order.contents.add(variant)
+        Spree::Cart::AddItem.call(order: order, variant: variant)
         line_item = order.find_line_item_by_variant(variant)
         expect(line_item.adjustments.tax.count).to eq(1)
       end
@@ -148,7 +148,8 @@ describe Spree::LineItem, type: :model do
       end
 
       it 'does not create a tax adjustment' do
-        order.contents.add(variant)
+        Spree::Cart::AddItem.call(order: order, variant: variant)
+
         line_item = order.find_line_item_by_variant(variant)
         expect(line_item.adjustments.tax.count).to eq(0)
       end
@@ -238,7 +239,7 @@ describe Spree::LineItem, type: :model do
     context 'nothing left on stock' do
       before do
         variant.stock_items.update_all count_on_hand: 5, backorderable: false
-        order.contents.add(variant, 5)
+        Spree::Cart::AddItem.call(order: order, variant: variant, quantity: 5)
         order.create_proposed_shipments
         order.finalize!
         order.reload
@@ -266,7 +267,7 @@ describe Spree::LineItem, type: :model do
     context '2 items left on stock' do
       before do
         variant.stock_items.update_all count_on_hand: 7, backorderable: false
-        order.contents.add(variant, 5)
+        Spree::Cart::AddItem.call(order: order, variant: variant, quantity: 5)
         order.create_proposed_shipments
         order.finalize!
         order.reload

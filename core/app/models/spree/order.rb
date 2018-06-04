@@ -145,9 +145,6 @@ module Spree
     class_attribute :update_hooks
     self.update_hooks = Set.new
 
-    class_attribute :line_item_comparison_hooks
-    self.line_item_comparison_hooks = Set.new
-
     scope :created_between, ->(start_date, end_date) { where(created_at: start_date..end_date) }
     scope :completed_between, ->(start_date, end_date) { where(completed_at: start_date..end_date) }
     scope :complete, -> { where.not(completed_at: nil) }
@@ -165,7 +162,12 @@ module Spree
     # Use this method in other gems that wish to register their own custom logic
     # that should be called when determining if two line items are equal.
     def self.register_line_item_comparison_hook(hook)
-      line_item_comparison_hooks.add(hook)
+      ActiveSupport::Deprecation.warn(<<-EOS, caller)
+        Order#add register_line_item_comparison_hook is deprecated and will be removed in Spree 4.0. Please use
+        `Rails.application.config.spree.line_item_comparison_hooks << hook` instead.
+      EOS
+
+      Rails.application.config.spree.line_item_comparison_hooks << hook
     end
 
     # For compatiblity with Calculator::PriceSack
@@ -299,11 +301,13 @@ module Spree
     #
     # def product_customizations_match
     def line_item_options_match(line_item, options)
+      ActiveSupport::Deprecation.warn(<<-EOS, caller)
+        Order#add register_line_item_comparison_hook is deprecated and will be removed in Spree 4.0. Please use
+        Spree::CompareLineItems service instead.
+      EOS
       return true unless options
 
-      line_item_comparison_hooks.all? do |hook|
-        send(hook, line_item, options)
-      end
+      CompareLineItems.new.call(order: self, line_item: line_item, options: options).value
     end
 
     # Creates new tax charges if there are any applicable rates. If prices already
@@ -319,7 +323,7 @@ module Spree
 
     def update_line_item_prices!
       transaction do
-        line_items.each(&:update_price)
+        line_items.reload.each(&:update_price)
         save!
       end
     end

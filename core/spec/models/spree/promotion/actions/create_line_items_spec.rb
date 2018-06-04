@@ -40,7 +40,7 @@ describe Spree::Promotion::Actions::CreateLineItems, type: :model do
       end
 
       it 'only adds the delta of quantity to an order' do
-        order.contents.add(shirt, 1)
+        Spree::Cart::AddItem.call(order: order, variant: shirt)
         action.perform(payload)
         line_item = order.line_items.find_by(variant_id: shirt.id)
         expect(line_item).not_to be_nil
@@ -48,7 +48,7 @@ describe Spree::Promotion::Actions::CreateLineItems, type: :model do
       end
 
       it "doesn't add if the quantity is greater" do
-        order.contents.add(shirt, 3)
+        Spree::Cart::AddItem.call(order: order, variant: shirt, quantity: 3)
         action.perform(payload)
         line_item = order.line_items.find_by(variant_id: shirt.id)
         expect(line_item).not_to be_nil

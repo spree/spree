@@ -284,7 +284,7 @@ module Spree
 
     context 'working with an order' do
       let(:variant) { create(:variant) }
-      let!(:line_item) { order.contents.add(variant, 1) }
+      let!(:line_item) { Spree::Cart::AddItem.call(order: order, variant: variant).value }
       let(:address_params) { { country_id: country.id } }
       let(:billing_address) do
         {
