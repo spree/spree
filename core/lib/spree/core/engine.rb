@@ -120,12 +120,12 @@ module Spree
       end
 
       config.to_prepare do
-        # Load spree locales before decorators
-        I18n.load_path += Dir.glob(
+        # Ensure spree locale paths are present before decorators
+        I18n.load_path.unshift(*(Dir.glob(
           File.join(
             File.dirname(__FILE__), '../../../config/locales', '*.{rb,yml}'
           )
-        )
+        ) - I18n.load_path))
 
         # Load application's model / class decorators
         Dir.glob(File.join(File.dirname(__FILE__), '../../../app/**/*_decorator*.rb')) do |c|
