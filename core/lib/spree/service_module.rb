@@ -1,16 +1,8 @@
 module Spree
   module ServiceModule
-    module Callable
-      def call(*args)
-        new.call(*args).tap do |result|
-          return yield(result) if block_given?
-        end
-      end
-    end
-
-    class MethodNotImplemented < StandardError; end
-    class WrongDataPassed < StandardError; end
-    class NonCallablePassedToRun < StandardError; end
+    class MethodNotImplemented     < StandardError; end
+    class WrongDataPassed          < StandardError; end
+    class NonCallablePassedToRun   < StandardError; end
     class CallMethodNotImplemented < StandardError; end
 
     Result = Struct.new(:success, :value) do
@@ -26,7 +18,7 @@ module Spree
     module Base
       def self.prepended(base)
         class << base
-          prepend Callable
+          prepend ::Spree::Callable
         end
       end
 

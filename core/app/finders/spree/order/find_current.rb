@@ -1,7 +1,9 @@
 module Spree
   class Order
     class FindCurrent
-      def execute(user:, store:, **params)
+      prepend Spree::Callable
+
+      def call(user:, store:, **params)
         params = params.merge(store_id: store.id)
 
         order = incomplete_orders.find_by(params)

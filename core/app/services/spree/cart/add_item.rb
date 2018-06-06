@@ -14,7 +14,7 @@ module Spree
         options ||= {}
         quantity ||= 1
 
-        line_item = Spree::LineItem::FindByVariant.new.execute(order: order, variant: variant, options: options)
+        line_item = Spree::LineItem::FindByVariant.call(order: order, variant: variant, options: options)
 
         line_item_created = line_item.nil?
         if line_item.nil?
