@@ -28,7 +28,7 @@ module Spree
 
           def dependencies
             {
-              create_cart: Spree::Cart::Create,
+              create_cart:      Spree::Cart::Create,
               add_item_to_cart: Spree::Cart::AddItem
             }
           end

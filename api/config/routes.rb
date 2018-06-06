@@ -128,6 +128,8 @@ Spree::Core::Engine.add_routes do
           post 'create'
           post 'add_item'
         end
+
+        resources :taxonomies, only: %i[index show]
       end
     end
 

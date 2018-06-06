@@ -32,14 +32,24 @@ module Spree
         end
 
         def find_spree_current_order
-          Spree::Order::FindCurrent.new.execute(user: spree_current_user,
-                                                store: spree_current_store,
-                                                guest_token: order_token,
-                                                currency: params[:currency] || current_currency)
+          Spree::Order::FindCurrent.call(
+            guest_token: order_token,
+            currency:    params[:currency] || current_currency,
+            store:       spree_current_store,
+            user:        spree_current_user
+          )
         end
 
         def current_currency
           spree_current_store.default_currency || Spree::Config[:currency]
+        end
+
+        def paginate(collection)
+          Spree::Paginator.call(
+            collection: collection,
+            page:       params[:page],
+            per_page:   params[:per_page]
+          )
         end
       end
     end
