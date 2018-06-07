@@ -1,6 +1,6 @@
 module Spree
   module Admin
-    class StockItemsController < Spree::Admin::BaseController
+    class StockItemsController < ResourceController
       before_action :determine_backorderable, only: :update
 
       def update
