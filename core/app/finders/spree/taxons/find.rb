@@ -1,51 +1,78 @@
 module Spree
   module Taxons
     class Find
-      def initialize(taxons, params)
-        @taxons = taxons
-        @params = params
+      def initialize(scope, params)
+        @scope = scope
+
+        @ids      = String(params[:ids]).split(',')
+        @parent   = params[:parent_id]
+        @taxonomy = params[:taxonomy_id]
+        @name     = params[:name]
+        @roots    = params[:roots]
       end
 
-      def execute
-        taxons = @taxons
-
-        taxons = by_ids(taxons)      if ids?
-        taxons = by_taxonomy(taxons) if taxonomy?
-        taxons = by_roots(taxons)    if roots?
+      def call
+        taxons = by_ids(scope)
+        taxons = by_parent(taxons)
+        taxons = by_taxonomy(taxons)
+        taxons = by_roots(taxons)
+        taxons = by_name(taxons)
 
         taxons
       end
 
       private
 
-      attr_accessor :params
+      attr_reader :ids, :parent, :taxonomy, :roots, :name, :scope
 
       def ids?
-        params[:ids].present?
+        ids.present?
+      end
+
+      def parent?
+        parent.present?
       end
 
       def taxonomy?
-        params[:taxonomy_id].present?
+        taxonomy.present?
       end
 
       def roots?
-        params[:roots].present?
+        roots.present?
       end
 
-      def ids
-        params[:ids].split(',')
+      def name?
+        name.present?
       end
 
       def by_ids(taxons)
+        return taxons unless ids?
+
         taxons.where(id: ids)
       end
 
+      def by_parent(taxons)
+        return taxons unless parent?
+
+        taxons.where(parent_id: parent)
+      end
+
       def by_taxonomy(taxons)
-        taxons.where(parent_id: params[:taxonomy_id])
+        return taxons unless taxonomy?
+
+        taxons.where(taxonomy_id: taxonomy)
       end
 
       def by_roots(taxons)
+        return taxons unless roots?
+
         taxons.roots
+      end
+
+      def by_name(taxons)
+        return taxons unless name?
+
+        taxons.where(name: name)
       end
     end
   end
