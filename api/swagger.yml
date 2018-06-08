@@ -1,0 +1,237 @@
+openapi: 3.0.0
+servers:
+  - url: 'http://localhost:3000/api/v2'
+info:
+  version: "1.0.0"
+  title: Spree API
+paths:
+  /cart/add_item:
+    post:
+      responses:
+        '200':
+          description: 200 response means item was added to cart successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        '404':
+          description: 404 response means that variant with specified ID wasn't found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - bearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                variant_id:
+                  type: string
+                quantity:
+                  type: number
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  schemas:
+    Error:
+      required:
+        - message
+      properties:
+        message:
+          type: string
+    Cart:
+      required:
+        - data
+        - included
+      properties:
+        data:
+          type: object
+          required:
+            - id
+            - type
+            - attributes
+            - relationships
+          properties:
+            id:
+              type: string
+            type:
+              type: string
+            attributes:
+              type: object
+              properties:
+               number:
+                 type: string
+               item_total:
+                  type: number
+               total:
+                  type: number
+               ship_total:
+                  type: numbe
+               adjustment_total:
+                  type: number
+               created_at:
+                  type: string
+               updated_at:
+                  type: string
+               included_tax_total:
+                  type: number
+               additional_tax_total:
+                  type: number
+               display_additional_tax_total:
+                  type: number
+               display_included_tax_total:
+                 type: number
+               tax_total:
+                  type: number
+               currency:
+                  type: string
+               user_id:
+                  type: number
+               state:
+                  type: string
+            relationships:
+              type: object
+              properties:
+               line_items:
+                 type: object
+                 properties:
+                   data:
+                     type: array
+                     items:
+                         type: object
+                         $ref: '#/components/schemas/Relation'
+               promotions:
+                 type: object
+                 properties:
+                   data:
+                     type: array
+                     items:
+                         type: object
+                         $ref: '#/components/schemas/Relation'
+               variants:
+                 type: object
+                 properties:
+                   data:
+                     type: array
+                     items:
+                         type: object
+                         $ref: '#/components/schemas/Relation'
+               user:
+                 type: object
+                 properties:
+                   data:
+                    type: object
+                    $ref: '#/components/schemas/Relation'
+        included:
+          type: array
+          items:
+            type: object
+            oneOf:
+              - $ref: '#/components/schemas/Variant'
+              - $ref: '#/components/schemas/User'
+              - $ref: '#/components/schemas/LineItem'
+              - $ref: '#/components/schemas/Promotion'
+    Variant:
+      required:
+        - data
+      properties:
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+            type:
+              type: string
+            attributes:
+              type: object
+              properties:
+               name:
+                 type: string
+               sku:
+                 type: string
+               price:
+                 type: string
+               weight:
+                 type: string
+               height:
+                 type: string
+               width:
+                 type: string
+               depth:
+                 type: string
+               is_master:
+                 type: string
+               slug:
+                 type: string
+               description:
+                 type: string
+               track_inventory:
+                 type: string
+    User:
+      required:
+        - data
+      properties:
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+            type:
+              type: string
+            attributes:
+              type: object
+              properties:
+               email:
+                 type: string
+    LineItem:
+      required:
+        - data
+      properties:
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+            type:
+              type: string
+            attributes:
+              type: object
+              properties:
+               quantity:
+                 type: number
+               price:
+                 type: number
+               variant_id:
+                 type: string
+    Promotion:
+      required:
+        - data
+      properties:
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+            type:
+              type: string
+            attributes:
+              type: object
+              properties:
+               name:
+                 type: number
+               description:
+                 type: number
+    Relation:
+      required:
+        - id
+        - type
+      properties:
+        id:
+          type: string
+        type:
+          type: string
