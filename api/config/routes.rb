@@ -130,6 +130,7 @@ Spree::Core::Engine.add_routes do
       namespace :storefront do
         resource :cart, controller: :cart, only: [:show, :create] do
           post 'add_item'
+          delete 'remove_item'
         end
       end
     end
