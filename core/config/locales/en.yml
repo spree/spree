@@ -366,6 +366,10 @@ en:
             attachment:
               not_allowed_content_type: has not allowed content type
               attachment_must_be_present: must be present
+        spree/taxon_icon:
+          attributes:
+            attachment:
+              not_allowed_content_type: has not allowed content type
   devise:
     confirmations:
       confirmed: Your account was successfully confirmed. You are now signed in.
