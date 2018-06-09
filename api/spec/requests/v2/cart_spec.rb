@@ -18,6 +18,7 @@ describe 'Cart Spec', type: :request do
       expect(json_response['data']).to have_type('cart')
       expect(json_response['data']).to have_attribute(:number).with_value(order.number)
       expect(json_response['data']).to have_attribute(:state).with_value('cart')
+      expect(json_response['data']).to have_attribute(:token).with_value(order.token)
       expect(json_response['data']).to have_relationships(:user, :line_items, :variants)
     end
 
