@@ -1,6 +1,6 @@
-handle_ajax_error = (last_rollback) ->
+handle_ajax_error = (last_rollback, msg) ->
   $.jstree.rollback(last_rollback)
-  show_flash("error", "<strong>" + Spree.translations.server_error + "</strong><br />" + Spree.translations.taxonomy_tree_error)
+  show_flash("error", "<strong>" + Spree.translations.server_error + "</strong><br />" + msg + Spree.translations.taxonomy_tree_error)
 
 handle_move = (e, data) ->
   last_rollback = data.rlbk
@@ -21,7 +21,7 @@ handle_move = (e, data) ->
       token: Spree.api_key
     },
     error: (XMLHttpRequest, textStatus, errorThrown) ->
-      handle_ajax_error(last_rollback)
+      handle_ajax_error(last_rollback, XMLHttpRequest.responseJSON.errors.base)
 
   true
 
