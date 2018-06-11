@@ -24,7 +24,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
     context 'for signed in user' do
       before do
         headers = { 'Authorization' => "Bearer #{token.token}" }
-        post '/api/v2/storefront/cart/create', headers: headers
+        post '/api/v2/storefront/cart', headers: headers
       end
 
       it_behaves_like 'creates an order'
@@ -36,7 +36,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
 
     context 'as guest user' do
       before do
-        post '/api/v2/storefront/cart/create'
+        post '/api/v2/storefront/cart'
       end
 
       it_behaves_like 'creates an order'
