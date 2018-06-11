@@ -21,6 +21,7 @@ module Spree
 
     alias display_ship_total display_shipment_total
     alias_attribute :ship_total, :shipment_total
+    alias_attribute :token, :guest_token # FIXME: guest_token should be renamed to just token
 
     MONEY_THRESHOLD  = 100_000_000
     MONEY_VALIDATION = {

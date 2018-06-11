@@ -1,9 +1,10 @@
 openapi: 3.0.0
 servers:
-  - url: 'http://localhost:3000/api/v2'
+  - url: 'http://localhost:3000/api/v2/storefront'
 info:
-  version: "1.0.0"
-  title: Spree API
+  version: 2.0.0
+  title: Spree API V2 - Storefront
+  description: Storefront API allows you to build your custom frontend to the Spree Commerce system. It provides you endpoints for Cart and Checkout management, Product and Taxons catalog browsing. Account management is provided by `spree_auth_devise` extension.
 paths:
   /cart/add_item:
     post:
@@ -21,7 +22,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
       security:
-        - bearerAuth: []
+        - orderToken: []
       requestBody:
         content:
           application/json:
@@ -37,6 +38,11 @@ components:
     bearerAuth:
       type: http
       scheme: bearer
+    orderToken:
+      type: apiKey
+      in: header
+      description: Order token to authorize Cart / Checkout requests. You can obtain it from `/cart` endpoint - it's part of the Order response.
+      name: X-Spree-Order-Token
   schemas:
     Error:
       required:
@@ -64,69 +70,69 @@ components:
             attributes:
               type: object
               properties:
-               number:
-                 type: string
-               item_total:
-                  type: number
-               total:
-                  type: number
-               ship_total:
-                  type: numbe
-               adjustment_total:
-                  type: number
-               created_at:
+                number:
                   type: string
-               updated_at:
+                item_total:
+                  type: number
+                total:
+                  type: number
+                ship_total:
+                  type: number
+                adjustment_total:
+                  type: number
+                created_at:
                   type: string
-               included_tax_total:
-                  type: number
-               additional_tax_total:
-                  type: number
-               display_additional_tax_total:
-                  type: number
-               display_included_tax_total:
-                 type: number
-               tax_total:
-                  type: number
-               currency:
+                updated_at:
                   type: string
-               user_id:
+                included_tax_total:
                   type: number
-               state:
+                additional_tax_total:
+                  type: number
+                display_additional_tax_total:
+                  type: number
+                display_included_tax_total:
+                  type: number
+                tax_total:
+                  type: number
+                currency:
+                  type: string
+                user_id:
+                  type: number
+                state:
                   type: string
             relationships:
               type: object
               properties:
-               line_items:
-                 type: object
-                 properties:
-                   data:
-                     type: array
-                     items:
-                         type: object
-                         $ref: '#/components/schemas/Relation'
-               promotions:
-                 type: object
-                 properties:
-                   data:
-                     type: array
-                     items:
-                         type: object
-                         $ref: '#/components/schemas/Relation'
-               variants:
-                 type: object
-                 properties:
-                   data:
-                     type: array
-                     items:
-                         type: object
-                         $ref: '#/components/schemas/Relation'
-               user:
-                 type: object
-                 properties:
-                   data:
-                    type: object
-                    $ref: '#/components/schemas/Relation'
+                line_items:
+                  type: object
+                  properties:
+                    data:
+                      type: array
+                      items:
+                        type: object
+                        $ref: '#/components/schemas/Relation'
+                promotions:
+                  type: object
+                  properties:
+                    data:
+                      type: array
+                      items:
+                        type: object
+                        $ref: '#/components/schemas/Relation'
+                variants:
+                  type: object
+                  properties:
+                    data:
+                      type: array
+                      items:
+                        type: object
+                        $ref: '#/components/schemas/Relation'
+                user:
+                  type: object
+                  properties:
+                    data:
+                      type: object
+                      $ref: '#/components/schemas/Relation'
         included:
           type: array
           items:
@@ -150,28 +156,28 @@ components:
             attributes:
               type: object
               properties:
-               name:
-                 type: string
-               sku:
-                 type: string
-               price:
-                 type: string
-               weight:
-                 type: string
-               height:
-                 type: string
-               width:
-                 type: string
-               depth:
-                 type: string
-               is_master:
-                 type: string
-               slug:
-                 type: string
-               description:
-                 type: string
-               track_inventory:
-                 type: string
+                name:
+                  type: string
+                sku:
+                  type: string
+                price:
+                  type: string
+                weight:
+                  type: string
+                height:
+                  type: string
+                width:
+                  type: string
+                depth:
+                  type: string
+                is_master:
+                  type: string
+                slug:
+                  type: string
+                description:
+                  type: string
+                track_inventory:
+                  type: string
     User:
       required:
         - data
@@ -186,8 +192,8 @@ components:
             attributes:
               type: object
               properties:
-               email:
-                 type: string
+                email:
+                  type: string
     LineItem:
       required:
         - data
@@ -202,12 +208,12 @@ components:
             attributes:
               type: object
               properties:
-               quantity:
-                 type: number
-               price:
-                 type: number
-               variant_id:
-                 type: string
+                quantity:
+                  type: number
+                price:
+                  type: number
+                variant_id:
+                  type: string
     Promotion:
       required:
         - data
@@ -222,10 +228,10 @@ components:
             attributes:
               type: object
               properties:
-               name:
-                 type: number
-               description:
-                 type: number
+                name:
+                  type: number
+                description:
+                  type: number
     Relation:
       required:
         - id

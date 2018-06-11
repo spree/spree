@@ -124,12 +124,11 @@ Spree::Core::Engine.add_routes do
 
     namespace :v2 do
       if Rails.env.development? || ENV['EXPOSE_SWAGGER']
-        get 'swagger.yml', to: 'swagger#index', as: 'swagger', format: 'yml'
+        get 'storefront.yml', to: 'swagger#storefront', as: 'swagger_storefront', format: 'yml'
       end
 
       namespace :storefront do
-        namespace :cart do
-          post 'create'
+        resource :cart, controller: :cart, only: [:show, :create] do
           post 'add_item'
         end
       end
