@@ -132,6 +132,7 @@ Spree::Core::Engine.add_routes do
           post :add_item
           post :empty
           delete :remove_line_item
+          patch :set_quantity
         end
       end
     end
