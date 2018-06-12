@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'API V2 Storefront Cart Spec', type: :request do
-  let(:user) { create(:user) }
+  let(:user)  { create(:user) }
   let(:token) { Doorkeeper::AccessToken.create!(resource_owner_id: user.id, expires_in: nil) }
   let(:order) { Spree::Order.last }
 
