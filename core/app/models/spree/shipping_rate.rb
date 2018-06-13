@@ -30,7 +30,7 @@ module Spree
 
     def tax_amount
       @_tax_amount ||= begin
-        calculator =  if tax_rate.calculator.present?
+        calculator = if tax_rate.calculator.present?
                         tax_rate.calculator
                       else
                         params = { calculable_id: tax_rate.id, calculable_type: tax_rate.class.name }
