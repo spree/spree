@@ -29,7 +29,16 @@ module Spree
     alias_attribute :base_price, :cost
 
     def tax_amount
-      @tax_amount ||= tax_rate.calculator.compute_shipping_rate(self)
+      @_tax_amount ||= begin
+        calculator =  if tax_rate.calculator.present?
+                        tax_rate.calculator
+                      else
+                        params = { calculable_id: tax_rate.id, calculable_type: tax_rate.class.name }
+                        Spree::Calculator.with_deleted.find_by(params)
+                      end
+
+        calculator.compute_shipping_rate(self)
+      end
     end
 
     def shipping_method

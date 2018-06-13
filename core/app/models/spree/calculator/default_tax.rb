@@ -48,7 +48,9 @@ module Spree
     private
 
     def rate
-      calculable
+      @_calculable || begin
+        calculable || calculable_type.constantize.with_deleted.find(calculable_id)
+      end
     end
 
     def deduced_total_by_rate(pre_tax_amount, rate)
