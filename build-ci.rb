@@ -77,7 +77,7 @@ class Project
     # system(%w[bundle exec rspec] + rspec_arguments)
     if name == 'core'
       paperclip_test = system(%w[bundle exec rspec] + rspec_arguments)
-      ENV['USE_PAPERCLIP'] = nil
+      ENV['SPREE_USE_PAPERCLIP'] = nil
       active_storage_test = system(%w[bundle exec rspec] + rspec_arguments)
       paperclip_test && active_storage_test
     else
