@@ -30,6 +30,7 @@ require 'ffaker'
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require f}
 
 require 'database_cleaner'
+require 'rspec/retry'
 
 if ENV["CHECK_TRANSLATIONS"]
   require "spree/testing_support/i18n"
@@ -124,4 +125,11 @@ RSpec.configure do |config|
 
   config.order = :random
   Kernel.srand config.seed
+
+  config.verbose_retry = true
+  config.display_try_failure_messages = true
+
+  config.around :each, type: :feature do |ex|
+    ex.run_with_retry retry: 3
+  end
 end
