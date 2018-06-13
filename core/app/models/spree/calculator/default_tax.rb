@@ -48,7 +48,7 @@ module Spree
     private
 
     def rate
-      @_calculable || begin
+      @_calculable ||= begin
         calculable || calculable_type.constantize.with_deleted.find(calculable_id)
       end
     end
