@@ -34,7 +34,7 @@ module Spree
     def edit
       @order = current_order || Order.incomplete.
                includes(line_items: [variant: [:images, :option_values, :product]]).
-               find_or_initialize_by(guest_token: cookies.signed[:guest_token])
+               find_or_initialize_by(token: cookies.signed[:token])
       associate_user
     end
 
@@ -95,9 +95,9 @@ module Spree
       order = current_order unless order
 
       if order && action_name.to_sym == :show
-        authorize! :show, order, cookies.signed[:guest_token]
+        authorize! :show, order, cookies.signed[:token]
       elsif order
-        authorize! :edit, order, cookies.signed[:guest_token]
+        authorize! :edit, order, cookies.signed[:token]
       else
         authorize! :create, Spree::Order
       end

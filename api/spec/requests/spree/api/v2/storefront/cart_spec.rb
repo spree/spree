@@ -78,12 +78,12 @@ describe 'API V2 Storefront Cart Spec', type: :request do
     end
 
     context 'with existing guest order' do
-      let(:guest_token) { 'guest_token' }
-      let!(:order) { create(:order, guest_token: guest_token) }
+      let(:custom_token) { 'custom_token' }
+      let!(:order) { create(:order, token: custom_token) }
 
       it 'adds item to cart' do
         headers = { 'Authorization' => "Bearer #{token.token}" }
-        post '/api/v2/storefront/cart/add_item', params: { variant_id: variant.id, quantity: 5, order_token: guest_token }, headers: headers
+        post '/api/v2/storefront/cart/add_item', params: { variant_id: variant.id, quantity: 5, order_token: custom_token }, headers: headers
 
         expect(response.status).to eq(200)
 

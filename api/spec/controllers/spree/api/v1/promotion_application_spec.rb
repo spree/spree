@@ -20,7 +20,7 @@ module Spree
 
       it 'can apply a coupon code to the order' do
         expect(order.total).to eq(110.00)
-        api_put :apply_coupon_code, id: order.to_param, coupon_code: '10off', order_token: order.guest_token
+        api_put :apply_coupon_code, id: order.to_param, coupon_code: '10off', order_token: order.token
         expect(response.status).to eq(200)
         expect(order.reload.total).to eq(109.00)
         expect(json_response['success']).to eq('The coupon code was successfully applied to your order.')
@@ -37,7 +37,7 @@ module Spree
         end
 
         it 'fails to apply' do
-          api_put :apply_coupon_code, id: order.to_param, coupon_code: '10off', order_token: order.guest_token
+          api_put :apply_coupon_code, id: order.to_param, coupon_code: '10off', order_token: order.token
           expect(response.status).to eq(422)
           expect(json_response['success']).to be_blank
           expect(json_response['error']).to eq('The coupon code is expired')

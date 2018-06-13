@@ -35,7 +35,7 @@ Orders have the following attributes:
 * `item_count`: The total value of line items' quantity.
 * `approver_id`: The ID of user that approved this order.
 * `confirmation_delivered`: Boolean value indicating that confirmation email was delivered.
-* `guest_token`: The guest token stored corresponding to token stored in cookies.
+* `token`: The token stored corresponding to token stored in cookies.
 * `canceler_id`: The ID of user that canceled this order.
 * `store_id`: The ID of `Store` in which this order was created.
 

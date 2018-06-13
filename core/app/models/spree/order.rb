@@ -21,7 +21,30 @@ module Spree
 
     alias display_ship_total display_shipment_total
     alias_attribute :ship_total, :shipment_total
-    alias_attribute :token, :guest_token # FIXME: guest_token should be renamed to just token
+
+    def guest_token
+      ActiveSupport::Deprecation.warn(<<-EOS, caller)
+        Order#guest_token is deprecated and will be removed in Spree 3.8. Please use Order#token instead
+      EOS
+
+      token
+    end
+
+    def guest_token?
+      ActiveSupport::Deprecation.warn(<<-EOS, caller)
+        Order#guest_token? is deprecated and will be removed in Spree 3.8. Please use Order#token? instead
+      EOS
+
+      token?
+    end
+
+    def guest_token=(value)
+      ActiveSupport::Deprecation.warn(<<-EOS, caller)
+        Order#guest_token= is deprecated and will be removed in Spree 3.8. Please use Order#token= instead
+      EOS
+
+      self.token = value
+    end
 
     MONEY_THRESHOLD  = 100_000_000
     MONEY_VALIDATION = {
@@ -164,7 +187,7 @@ module Spree
     # that should be called when determining if two line items are equal.
     def self.register_line_item_comparison_hook(hook)
       ActiveSupport::Deprecation.warn(<<-EOS, caller)
-        Order#add register_line_item_comparison_hook is deprecated and will be removed in Spree 4.0. Please use
+        Order.register_line_item_comparison_hook is deprecated and will be removed in Spree 4.0. Please use
         `Rails.application.config.spree.line_item_comparison_hooks << hook` instead.
       EOS
 
@@ -303,7 +326,7 @@ module Spree
     # def product_customizations_match
     def line_item_options_match(line_item, options)
       ActiveSupport::Deprecation.warn(<<-EOS, caller)
-        Order#add register_line_item_comparison_hook is deprecated and will be removed in Spree 4.0. Please use
+        Order#add is deprecated and will be removed in Spree 4.0. Please use
         Spree::CompareLineItems service instead.
       EOS
       return true unless options
@@ -702,7 +725,7 @@ module Spree
     end
 
     def create_token
-      self.guest_token ||= generate_guest_token
+      self.token ||= generate_token
     end
 
     def collect_payment_methods

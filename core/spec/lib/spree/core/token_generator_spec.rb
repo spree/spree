@@ -13,8 +13,8 @@ describe Spree::Core::TokenGenerator do
 
   let(:dummy_class_instance) { DummyClass.new }
 
-  describe 'generate_guest_token' do
-    let(:generated_token) { dummy_class_instance.generate_guest_token }
+  describe 'generate_token' do
+    let(:generated_token) { dummy_class_instance.generate_token }
 
     it 'generates random token with timestamp' do
       expect(generated_token.size).to eq 35
