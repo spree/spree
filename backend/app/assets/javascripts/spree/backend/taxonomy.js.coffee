@@ -21,7 +21,7 @@ handle_move = (e, data) ->
       token: Spree.api_key
     },
     error: (XMLHttpRequest, textStatus, errorThrown) ->
-      handle_ajax_error(last_rollback, XMLHttpRequest.responseJSON.errors.base)
+      handle_ajax_error(last_rollback, XMLHttpRequest.responseJSON.errors.name)
 
   true
 
