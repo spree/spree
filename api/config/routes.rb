@@ -128,9 +128,11 @@ Spree::Core::Engine.add_routes do
       end
 
       namespace :storefront do
-        resource :cart, controller: :cart, only: [:show, :create] do
+        resource :cart, controller: :cart, only: %i[show create] do
           post 'add_item'
         end
+
+        resources :products, only: %i[index show]
       end
     end
 
