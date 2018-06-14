@@ -6,5 +6,5 @@ node(:display_total) { |o| o.display_total.to_s }
 node(:display_ship_total, &:display_ship_total)
 node(:display_tax_total, &:display_tax_total)
 node(:display_adjustment_total, &:display_adjustment_total)
-node(:token, &:guest_token)
+node(:token, &:token)
 node(:checkout_steps, &:checkout_steps)

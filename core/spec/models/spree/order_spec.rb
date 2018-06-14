@@ -106,7 +106,7 @@ describe Spree::Order, type: :model do
     end
 
     it 'creates a randomized 35 character token' do
-      expect(order.guest_token.size).to eq(35)
+      expect(order.token.size).to eq(35)
     end
   end
 

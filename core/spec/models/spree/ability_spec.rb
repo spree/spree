@@ -169,7 +169,7 @@ describe Spree::Ability, type: :model do
       context 'requested with proper token' do
         let(:token) { 'TOKEN123' }
 
-        before { allow(resource).to receive_messages guest_token: token }
+        before { allow(resource).to receive_messages token: token }
         it_behaves_like 'access granted'
         it_behaves_like 'no index allowed'
       end
@@ -177,7 +177,7 @@ describe Spree::Ability, type: :model do
       context 'requested with inproper token' do
         let(:token) { 'FAIL' }
 
-        before { allow(resource).to receive_messages guest_token: token }
+        before { allow(resource).to receive_messages token: token }
         it_behaves_like 'create only'
       end
     end

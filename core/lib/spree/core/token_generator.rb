@@ -1,10 +1,10 @@
 module Spree
   module Core
     module TokenGenerator
-      def generate_guest_token(model_class = Spree::Order)
+      def generate_token(model_class = Spree::Order)
         loop do
           token = "#{random_token}#{unique_ending}"
-          break token unless model_class.exists?(guest_token: token)
+          break token unless model_class.exists?(token: token)
         end
       end
 

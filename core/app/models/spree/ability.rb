@@ -44,10 +44,10 @@ module Spree
         can :display, OptionValue
         can :create, Order
         can :read, Order do |order, token|
-          order.user == user || order.guest_token && token == order.guest_token
+          order.user == user || order.token && token == order.token
         end
         can :update, Order do |order, token|
-          !order.completed? && (order.user == user || order.guest_token && token == order.guest_token)
+          !order.completed? && (order.user == user || order.token && token == order.token)
         end
         can :display, CreditCard, user_id: user.id
         can :display, Product

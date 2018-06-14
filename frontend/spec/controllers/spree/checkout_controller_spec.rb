@@ -19,7 +19,7 @@ describe Spree::CheckoutController, type: :controller do
   context '#edit' do
     it 'checks if the user is authorized for :edit' do
       expect(controller).to receive(:authorize!).with(:edit, order, token)
-      request.cookie_jar.signed[:guest_token] = token
+      request.cookie_jar.signed[:token] = token
       spree_get :edit, state: 'address'
     end
 
@@ -66,7 +66,7 @@ describe Spree::CheckoutController, type: :controller do
   context '#update' do
     it 'checks if the user is authorized for :edit' do
       expect(controller).to receive(:authorize!).with(:edit, order, token)
-      request.cookie_jar.signed[:guest_token] = token
+      request.cookie_jar.signed[:token] = token
       spree_post :update, state: 'address'
     end
 

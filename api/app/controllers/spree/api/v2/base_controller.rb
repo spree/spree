@@ -34,7 +34,7 @@ module Spree
         def find_spree_current_order
           Spree::Order::FindCurrent.new.execute(user: spree_current_user,
                                                 store: spree_current_store,
-                                                guest_token: order_token,
+                                                token: order_token,
                                                 currency: params[:currency] || current_currency)
         end
 

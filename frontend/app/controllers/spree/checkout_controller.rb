@@ -194,7 +194,7 @@ module Spree
     end
 
     def check_authorization
-      authorize!(:edit, current_order, cookies.signed[:guest_token])
+      authorize!(:edit, current_order, cookies.signed[:token])
     end
   end
 end
