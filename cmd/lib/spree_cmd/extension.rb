@@ -12,10 +12,11 @@ module SpreeCmd
 
       empty_directory file_name
 
-      directory 'app', "#{file_name}/app"
-      directory 'lib', "#{file_name}/lib"
-      directory 'bin', "#{file_name}/bin"
-      directory 'spec', "#{file_name}/spec"
+      directory 'app',      "#{file_name}/app"
+      directory 'lib',      "#{file_name}/lib"
+      directory 'bin',      "#{file_name}/bin"
+      directory 'spec',     "#{file_name}/spec"
+      directory 'gemfiles', "#{file_name}/gemfiles"
 
       chmod "#{file_name}/bin/rails", 0o755
 
