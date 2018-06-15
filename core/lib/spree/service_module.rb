@@ -12,6 +12,7 @@ module Spree
     class WrongDataPassed < StandardError; end
     class NonCallablePassedToRun < StandardError; end
     class CallMethodNotImplemented < StandardError; end
+    class IncompatibleParamsPassed < StandardError; end
 
     Result = Struct.new(:success, :value) do
       def success?
@@ -59,7 +60,15 @@ module Spree
           raise NonCallablePassedToRun, 'You can pass only symbol with method name or instance of callable class to run method'
         end
 
-        @_passed_input = callable.call(@_passed_input.value)
+        begin
+          @_passed_input = callable.call(@_passed_input.value)
+        rescue ArgumentError => e
+          if e.message.include? 'missing'
+            raise IncompatibleParamsPassed, "You didn't pass #{e.message} to callable '#{callable.name}'"
+          else
+            raise IncompatibleParamsPassed, "You passed #{e.message} to callable '#{callable.name}'"
+          end
+        end
       end
 
       def success(value)

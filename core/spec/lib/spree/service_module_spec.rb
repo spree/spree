@@ -204,4 +204,30 @@ describe Spree::ServiceModule do
       service.call
     end
   end
+
+  context 'not compatible params passed as result' do
+    class ServiceObjectWithIncompatibleParams
+      prepend ::Spree::ServiceModule::Base
+
+      def call(_params)
+        run :first_method
+        run :second_method
+      end
+
+      private
+
+      def first_method(_params)
+        success(first_value: 'asd', second_value: 'qwe')
+      end
+
+      def second_method(first_value:)
+        success(first_value + ' Second Method Success!')
+      end
+    end
+
+    it 'raises exception' do
+      service = ServiceObjectWithIncompatibleParams.new
+      expect { service.call }.to raise_error(Spree::ServiceModule::IncompatibleParamsPassed)
+    end
+  end
 end
