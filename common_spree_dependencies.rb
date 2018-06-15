@@ -36,6 +36,7 @@ group :test do
   gem 'simplecov'
   gem 'webmock', '~> 3.0.1'
   gem 'selenium-webdriver'
+  gem 'chromedriver-helper'
   gem 'timecop'
   gem 'rails-controller-testing'
 end
