@@ -57,9 +57,11 @@ RSpec.configure do |config|
   config.use_transactional_fixtures = true
 
   config.before do
-    Rails.cache.clear
-    reset_spree_preferences
-  rescue Errno::ENOTEMPTY
+    begin
+      Rails.cache.clear
+      reset_spree_preferences
+    rescue Errno::ENOTEMPTY
+    end
   end
 
   config.include FactoryBot::Syntax::Methods
