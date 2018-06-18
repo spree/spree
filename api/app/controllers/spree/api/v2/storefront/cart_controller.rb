@@ -14,7 +14,7 @@ module Spree
             variant = Spree::Variant.find(params[:variant_id])
 
             if spree_current_order.nil?
-              render json: { error: "Order doesn't exist" }, status: 404
+              raise ActiveRecord::RecordNotFound
             else
               spree_authorize! :update, spree_current_order, order_token
               spree_authorize! :show, variant
@@ -24,25 +24,24 @@ module Spree
             end
           end
 
-          def remove_item
-            if spree_current_order.nil?
-              render json: { error: "Order doesn't exist" }, status: 404
-            else
-              line_item = spree_current_order.line_items.find(params[:line_item_id])
+          def remove_line_item
+            raise ActiveRecord::RecordNotFound if spree_current_order.nil?
 
-              spree_authorize! :update, spree_current_order, order_token
+            spree_authorize! :update, spree_current_order, order_token
 
-              dependencies[:remove_item_from_cart].call(order: spree_current_order, line_item: line_item)
-              render json: serialized_current_order, status: 200
-            end
+            dependencies[:remove_item_from_cart].call(
+              order:     spree_current_order,
+              line_item: line_item
+            )
+            render json: serialized_current_order, status: 200
           end
 
           private
 
           def dependencies
             {
-              create_cart: Spree::Cart::Create,
-              add_item_to_cart: Spree::Cart::AddItem,
+              create_cart:           Spree::Cart::Create,
+              add_item_to_cart:      Spree::Cart::AddItem,
               remove_item_from_cart: Spree::Cart::RemoveLineItem
             }
           end
@@ -53,6 +52,10 @@ module Spree
 
           def serialize_order(order)
             Spree::V2::Storefront::CartSerializer.new(order.reload, include: [:line_items, :variants, :promotions]).serializable_hash
+          end
+
+          def line_item
+            @line_item ||= spree_current_order.line_items.find(params[:line_item_id])
           end
         end
       end
