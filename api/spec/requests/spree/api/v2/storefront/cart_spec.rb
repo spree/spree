@@ -51,7 +51,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
         headers = { 'Authorization' => "Bearer #{token.token}" }
         post '/api/v2/storefront/cart/add_item', params: { variant_id: variant.id, quantity: 5 }, headers: headers
 
-        expect(response.status).to eq(422)
+        expect(response.status).to eq(404)
       end
     end
 
@@ -98,6 +98,63 @@ describe 'API V2 Storefront Cart Spec', type: :request do
         expect(json_response['data']).to have_relationships(:user, :line_items, :variants)
         expect(json_response['included']).to include(have_type('variant').and have_id(variant.id.to_s))
       end
+    end
+  end
+
+  describe 'cart#remove_line_item' do
+    shared_examples 'removes line item' do
+      context 'without line items' do
+        let!(:line_item) { create(:line_item) }
+
+        it 'tries to remove an item and fails' do
+          delete '/api/v2/storefront/cart/remove_line_item', params: { line_item_id: line_item.id }, headers: headers
+
+          expect(response.status).to eq(404)
+        end
+      end
+
+      context 'containing line item' do
+        let!(:line_item) { create(:line_item, order: order) }
+
+        it 'removes line item from the cart' do
+          delete '/api/v2/storefront/cart/remove_line_item', params: { line_item_id: line_item.id }, headers: headers
+
+          expect(response.status).to eq(200)
+          expect(order.line_items.count).to eq(0)
+
+          expect(json_response['data']).to have_id(order.id.to_s)
+          expect(json_response['data']).to have_type('cart')
+          expect(json_response['data']).to have_attribute(:number).with_value(order.number)
+          expect(json_response['data']).to have_attribute(:state).with_value('cart')
+          expect(json_response['data']).to have_relationships(:user, :line_items, :variants)
+        end
+      end
+    end
+
+    context 'without existing order' do
+      let!(:line_item) { create(:line_item) }
+
+      it 'returns error' do
+        headers = { 'Authorization' => "Bearer #{token.token}" }
+        delete '/api/v2/storefront/cart/remove_line_item', params: { line_item_id: line_item.id }, headers: headers
+
+        expect(response.status).to eq(404)
+        expect(json_response[:error]).to eq('ActiveRecord::RecordNotFound')
+      end
+    end
+
+    context 'existing order' do
+      let!(:order) { create(:order, user: user) }
+      let!(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
+
+      it_behaves_like 'removes line item'
+    end
+
+    context 'as a guest' do
+      let!(:order) { create(:order, user: user) }
+      let!(:headers) { { 'X-Spree-Order-Token' => order.guest_token } }
+
+      it_behaves_like 'removes line item'
     end
   end
 end

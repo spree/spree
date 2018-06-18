@@ -3,6 +3,7 @@ module Spree
     module V2
       class BaseController < ActionController::API
         include CanCan::ControllerAdditions
+        rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
 
         private
 
@@ -40,6 +41,10 @@ module Spree
 
         def current_currency
           spree_current_store.default_currency || Spree::Config[:currency]
+        end
+
+        def record_not_found(exception)
+          render json: { error: exception.message }, status: 404
         end
       end
     end
