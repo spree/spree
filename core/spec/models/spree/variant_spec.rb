@@ -514,6 +514,60 @@ describe Spree::Variant, type: :model do
     end
   end
 
+  describe '#purchasable?' do
+    context 'when stock_items are not backorderable' do
+      before do
+        allow_any_instance_of(Spree::StockItem).to receive_messages(backorderable: false)
+      end
+
+      context 'when stock_items in stock' do
+        before do
+          variant.stock_items.first.update_column(:count_on_hand, 10)
+        end
+
+        it 'returns true if stock_items in stock' do
+          expect(variant.purchasable?).to be true
+        end
+      end
+
+      context 'when stock_items out of stock' do
+        before do
+          allow_any_instance_of(Spree::StockItem).to receive_messages(count_on_hand: 0)
+        end
+
+        it 'return false if stock_items out of stock' do
+          expect(variant.purchasable?).to be false
+        end
+      end
+    end
+
+    context 'when stock_items are out of stock' do
+      before do
+        allow_any_instance_of(Spree::StockItem).to receive_messages(count_on_hand: 0)
+      end
+
+      context 'when stock item are backorderable' do
+        before do
+          allow_any_instance_of(Spree::StockItem).to receive_messages(backorderable: true)
+        end
+
+        it 'returns true if stock_items are backorderable' do
+          expect(variant.purchasable?).to be true
+        end
+      end
+
+      context 'when stock_items are not backorderable' do
+        before do
+          allow_any_instance_of(Spree::StockItem).to receive_messages(backorderable: false)
+        end
+
+        it 'return false if stock_items are not backorderable' do
+          expect(variant.purchasable?).to be false
+        end
+      end
+    end
+  end
+
   describe '#total_on_hand' do
     it 'is infinite if track_inventory_levels is false' do
       Spree::Config[:track_inventory_levels] = false

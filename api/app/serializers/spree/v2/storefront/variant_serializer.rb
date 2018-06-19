@@ -3,8 +3,22 @@ module Spree
     module Storefront
       class VariantSerializer < BaseSerializer
         set_type :variant
-        attributes :name, :sku, :price, :weight, :height, :width, :depth, :is_master,
-          :slug, :description, :track_inventory
+
+        attributes :name, :sku, :price, :currency, :display_price, :weight, :height,
+                   :width, :depth, :is_master, :options_text, :slug, :description,
+                   :track_inventory
+
+        attribute :purchasable do |variant|
+          variant.purchasable?
+        end
+
+        attribute :in_stock do |variant|
+          variant.in_stock?
+        end
+
+        attribute :backorderable do |variant|
+          variant.backorderable?
+        end
       end
     end
   end
