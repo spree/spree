@@ -152,9 +152,46 @@ describe 'API V2 Storefront Cart Spec', type: :request do
 
     context 'as a guest' do
       let!(:order) { create(:order, user: user) }
-      let!(:headers) { { 'X-Spree-Order-Token' => order.guest_token } }
+      let!(:headers) { { 'X-Spree-Order-Token' => order.token } }
 
       it_behaves_like 'removes line item'
+    end
+  end
+
+  describe 'cart#empty' do
+    shared_examples 'emptying the order' do
+      it 'empties the order' do
+        post '/api/v2/storefront/cart/empty', headers: headers
+
+        expect(response.status).to eq(200)
+        expect(order.line_items.count).to eq(0)
+      end
+    end
+
+    context 'without existing order' do
+      it 'returns status code 404' do
+        headers = { 'Authorization' => "Bearer #{token.token}" }
+        post '/api/v2/storefront/cart/empty', headers: headers
+
+        expect(response.status).to eq(404)
+      end
+    end
+
+    context 'with existing order and line item' do
+      let!(:order) { create(:order, user: user) }
+      let!(:line_item) { create(:line_item, order: order) }
+      let!(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
+
+      it_behaves_like 'emptying the order'
+    end
+
+    context 'with existing guest order and line item' do
+      let(:guest_token) { 'guest_token' }
+      let!(:order) { create(:order, token: guest_token) }
+      let!(:line_item) { create(:line_item, order: order) }
+      let!(:headers) { { 'X-Spree-Order-Token' => order.token } }
+
+      it_behaves_like 'emptying the order'
     end
   end
 end

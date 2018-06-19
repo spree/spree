@@ -36,6 +36,15 @@ module Spree
             render json: serialized_current_order, status: 200
           end
 
+          def empty
+            raise ActiveRecord::RecordNotFound if spree_current_order.nil?
+
+            spree_authorize! :update, spree_current_order, order_token
+
+            spree_current_order.empty!
+            render json: serialized_current_order, status: 200
+          end
+
           private
 
           def dependencies
