@@ -8,7 +8,7 @@ This guide covers upgrading a 3.5 Spree application, to a 3.6 application.
 ### Update Gemfile
 
 ```ruby
-gem 'spree', '~> 3.6.0'
+gem 'spree', '~> 3.6.1'
 gem 'spree_auth_devise', '~> 3.3'
 gem 'spree_gateway', '~> 3.3'
 ```
