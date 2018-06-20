@@ -81,6 +81,7 @@ require 'spree/permitted_attributes'
 require 'spree/service_module'
 
 require 'spree/core/importer'
+require 'spree/core/query_filters'
 require 'spree/core/product_duplicator'
 require 'spree/core/controller_helpers/auth'
 require 'spree/core/controller_helpers/common'
