@@ -100,6 +100,10 @@ components:
                   type: number
                 state:
                   type: string
+                token:
+                  type: string
+                  example: 'abcdef123456'
+                  description: Used for authorizing any action for an order within Spree’s API
             relationships:
               type: object
               properties:
