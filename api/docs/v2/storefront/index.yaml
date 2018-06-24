@@ -4,7 +4,11 @@ servers:
 info:
   version: 2.0.0
   title: Spree API V2 - Storefront
-  description: Storefront API allows you to build your custom frontend to the Spree Commerce system. It provides you endpoints for Cart and Checkout management, Product and Taxons catalog browsing. Account management is provided by `spree_auth_devise` extension.
+  description: >-
+    Storefront API allows you to build your custom frontend to the Spree
+    Commerce system. It provides you endpoints for Cart and Checkout management,
+    Product and Taxons catalog browsing. Account management is provided by
+    `spree_auth_devise` extension.
 paths:
   /cart/add_item:
     post:
@@ -26,16 +30,18 @@ paths:
       security:
         - orderToken: []
       requestBody:
+        required: true
         content:
           application/json:
             schema:
               type: object
               properties:
                 variant_id:
-                  type: string
+                  type: integer
+                  example: 10
                 quantity:
-                  type: number
-  /products/{id}:
+                  type: integer
+                  example: 1
   '/products/{id}':
     get:
       description: >-
@@ -74,7 +80,9 @@ components:
     orderToken:
       type: apiKey
       in: header
-      description: Order token to authorize Cart / Checkout requests. You can obtain it from `/cart` endpoint - it's part of the Order response.
+      description: >-
+        Order token to authorize Cart / Checkout requests. You can obtain it
+        from `/cart` endpoint - it's part of the Order response.
       name: X-Spree-Order-Token
   schemas:
     Error:
