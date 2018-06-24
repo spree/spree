@@ -114,37 +114,37 @@ components:
                 number:
                   type: string
                 item_total:
-                  type: number
+                  type: string
                 total:
-                  type: number
+                  type: string
                 ship_total:
-                  type: number
+                  type: string
                 adjustment_total:
-                  type: number
+                  type: string
                 created_at:
                   type: string
                 updated_at:
                   type: string
                 included_tax_total:
-                  type: number
+                  type: string
                 additional_tax_total:
-                  type: number
+                  type: string
                 display_additional_tax_total:
-                  type: number
+                  type: string
                 display_included_tax_total:
-                  type: number
+                  type: string
                 tax_total:
-                  type: number
+                  type: string
                 currency:
                   type: string
-                user_id:
-                  type: number
                 state:
                   type: string
                 token:
                   type: string
-                  example: 'abcdef123456'
-                  description: Used for authorizing any action for an order within Spree’s API
+                  example: abcdef123456
+                  description: >-
+                    Used for authorizing any action for an order within Spree’s
+                    API
             relationships:
               type: object
               properties:
@@ -154,7 +154,6 @@ components:
                     data:
                       type: array
                       items:
-                        type: object
                         $ref: '#/components/schemas/Relation'
                 promotions:
                   type: object
@@ -162,7 +161,6 @@ components:
                     data:
                       type: array
                       items:
-                        type: object
                         $ref: '#/components/schemas/Relation'
                 variants:
                   type: object
@@ -170,13 +168,11 @@ components:
                     data:
                       type: array
                       items:
-                        type: object
                         $ref: '#/components/schemas/Relation'
                 user:
                   type: object
                   properties:
                     data:
-                      type: object
                       $ref: '#/components/schemas/Relation'
         included:
           type: array
@@ -184,9 +180,9 @@ components:
             type: object
             oneOf:
               - $ref: '#/components/schemas/Variant'
-              - $ref: '#/components/schemas/User'
               - $ref: '#/components/schemas/LineItem'
               - $ref: '#/components/schemas/Promotion'
+              - $ref: '#/components/schemas/User'
     Image:
       required:
         - data
@@ -240,13 +236,17 @@ components:
           properties:
             id:
               type: string
+              example: 1
             type:
               type: string
+              default: 'users'
+              example: 'users'
             attributes:
               type: object
               properties:
                 email:
                   type: string
+                  example: 'spree@example.com'
     LineItem:
       required:
         - data
@@ -256,17 +256,69 @@ components:
           properties:
             id:
               type: string
+              example: '1'
             type:
               type: string
+              default: 'line_items'
+              example: 'line_items'
             attributes:
               type: object
               properties:
-                quantity:
-                  type: number
-                price:
-                  type: number
-                variant_id:
+                name:
                   type: string
+                  example: 'Sample product'
+                quantity:
+                  type: integer
+                  example: 1
+                price:
+                  type: string
+                  example: '125.0'
+                  description: Price of Product per quantity
+                currency:
+                  type: string
+                  example: 'USD'
+                display_price:
+                  type: string
+                  example: '$125.00'
+                  description: Price of Product per quantity
+                total:
+                  type: string
+                  example: '250.0'
+                  description: >-
+                    Total price of Line Item including adjastments, promotions
+                    and taxes
+                display_total:
+                  type: string
+                  example: '$250.00'
+                  description: >-
+                    Total price of Line Item including adjastments, promotions
+                    and taxes
+                adjustment_total:
+                  type: string
+                  example: '10.0'
+                  description: TBD
+                display_adjustment_total:
+                  type: string
+                  example: '$10.00'
+                  description: TBD
+                additional_tax_total:
+                  type: string
+                  example: '5.0'
+                display_additional_tax_total:
+                  type: string
+                  example: '$5.00'
+                promo_total:
+                  type: string
+                  example: '-5.0'
+                display_promo_total:
+                  type: string
+                included_tax_total:
+                  type: string
+                  example: '0.0'
+                  description: 'Taxes included in the price, eg. VAT'
+                display_inluded_tax_total:
+                  type: string
+                  example: '$0.00'
     Promotion:
       required:
         - data
