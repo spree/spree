@@ -1,9 +1,33 @@
 require 'spec_helper'
 
 describe 'API V2 Storefront Cart Spec', type: :request do
-  let(:user) { create(:user) }
+  let(:user)  { create(:user) }
   let(:token) { Doorkeeper::AccessToken.create!(resource_owner_id: user.id, expires_in: nil) }
   let(:order) { Spree::Order.last }
+
+  shared_examples 'returns valid cart JSON' do
+    it 'returns a valid cart JSON response' do
+      expect(json_response['data']).to have_id(order.id.to_s)
+      expect(json_response['data']).to have_type('cart')
+      expect(json_response['data']).to have_attribute(:number).with_value(order.number)
+      expect(json_response['data']).to have_attribute(:state).with_value('cart')
+      expect(json_response['data']).to have_attribute(:token).with_value(order.token)
+      expect(json_response['data']).to have_relationships(:user, :line_items, :variants)
+    end
+  end
+
+  shared_context 'creates order with line_item' do
+    let!(:order)     { create(:order, user: user) }
+    let!(:line_item) { create(:line_item, order: order) }
+    let!(:headers)   { { 'Authorization' => "Bearer #{token.token}" } }
+  end
+
+  shared_context 'creates guest order with guest token' do
+    let(:guest_token) { 'guest_token' }
+    let!(:order)      { create(:order, token: guest_token) }
+    let!(:line_item)  { create(:line_item, order: order) }
+    let!(:headers)    { { 'X-Spree-Order-Token' => order.token } }
+  end
 
   describe 'cart#create' do
     shared_examples 'creates an order' do
@@ -11,14 +35,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
         expect(response.status).to eq(201)
       end
 
-      it 'returns a valid JSON response' do
-        expect(json_response['data']).to have_id(order.id.to_s)
-        expect(json_response['data']).to have_type('cart')
-        expect(json_response['data']).to have_attribute(:number).with_value(order.number)
-        expect(json_response['data']).to have_attribute(:state).with_value('cart')
-        expect(json_response['data']).to have_attribute(:token).with_value(order.token)
-        expect(json_response['data']).to have_relationships(:user, :line_items, :variants)
-      end
+      it_behaves_like 'returns valid cart JSON'
     end
 
     context 'for signed in user' do
@@ -178,18 +195,13 @@ describe 'API V2 Storefront Cart Spec', type: :request do
     end
 
     context 'with existing order and line item' do
-      let!(:order) { create(:order, user: user) }
-      let!(:line_item) { create(:line_item, order: order) }
-      let!(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
+      include_context 'creates order with line_item'
 
       it_behaves_like 'emptying the order'
     end
 
     context 'with existing guest order and line item' do
-      let(:guest_token) { 'guest_token' }
-      let!(:order) { create(:order, token: guest_token) }
-      let!(:line_item) { create(:line_item, order: order) }
-      let!(:headers) { { 'X-Spree-Order-Token' => order.token } }
+      include_context 'creates guest order with guest token'
 
       it_behaves_like 'emptying the order'
     end
@@ -235,6 +247,42 @@ describe 'API V2 Storefront Cart Spec', type: :request do
 
       expect(response.status).to eq(422)
       expect(json_response[:error]).to eq('Quantity has to be greater than 0')
+    end
+  end
+
+  describe 'cart#show' do
+    shared_examples 'showing the cart' do
+      before do
+        get '/api/v2/storefront/cart', headers: headers
+      end
+
+      it 'returns a proper HTTP status' do
+        expect(response.status).to eq(200)
+      end
+
+      it_behaves_like 'returns valid cart JSON'
+    end
+
+    context 'without existing order' do
+      let!(:headers) { { 'Authorization': "Bearer #{token.token}" } }
+
+      it 'returns status 404' do
+        get '/api/v2/storefront/cart', headers: headers
+
+        expect(response.status).to eq(404)
+      end
+    end
+
+    context 'with existing user order with line item' do
+      include_context 'creates order with line_item'
+
+      it_behaves_like 'showing the cart'
+    end
+
+    context 'with existing guest order' do
+      include_context 'creates guest order with guest token'
+
+      it_behaves_like 'showing the cart'
     end
   end
 end
