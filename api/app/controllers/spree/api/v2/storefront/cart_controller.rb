@@ -51,7 +51,8 @@ module Spree
             {
               create_cart:           Spree::Cart::Create,
               add_item_to_cart:      Spree::Cart::AddItem,
-              remove_item_from_cart: Spree::Cart::RemoveLineItem
+              remove_item_from_cart: Spree::Cart::RemoveLineItem,
+              cart_serializer:       Spree::V2::Storefront::CartSerializer
             }
           end
 
@@ -60,7 +61,7 @@ module Spree
           end
 
           def serialize_order(order)
-            Spree::V2::Storefront::CartSerializer.new(order.reload, include: [:line_items, :variants, :promotions]).serializable_hash
+            dependencies[:cart_serializer].new(order.reload, include: [:line_items, :variants, :promotions]).serializable_hash
           end
 
           def line_item
