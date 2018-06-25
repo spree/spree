@@ -30,7 +30,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
       it_behaves_like 'creates an order'
 
       it 'associates order with user' do
-        expect(json_response['data']).to have_attribute(:user_id).with_value(user.id)
+        expect(json_response['data']).to have_relationship(:user).with_data('id' => user.id.to_s, 'type' => 'user')
       end
     end
 
