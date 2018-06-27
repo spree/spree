@@ -4,10 +4,16 @@ servers:
 info:
   version: 2.0.0
   title: Spree API V2 - Storefront
-  description: Storefront API allows you to build your custom frontend to the Spree Commerce system. It provides you endpoints for Cart and Checkout management, Product and Taxons catalog browsing. Account management is provided by `spree_auth_devise` extension.
+  description: >-
+    Storefront API allows you to build your custom frontend to the Spree
+    Commerce system. It provides you endpoints for Cart and Checkout management,
+    Product and Taxons catalog browsing. Account management is provided by
+    `spree_auth_devise` extension.
 paths:
   /cart/add_item:
     post:
+      tags:
+        - Cart
       responses:
         '200':
           description: 200 response means item was added to cart successfully
@@ -24,15 +30,48 @@ paths:
       security:
         - orderToken: []
       requestBody:
+        required: true
         content:
           application/json:
             schema:
               type: object
               properties:
                 variant_id:
-                  type: string
+                  type: integer
+                  example: 10
                 quantity:
-                  type: number
+                  type: integer
+                  example: 1
+  '/products/{id}':
+    get:
+      description: >-
+        To view the details for a single product, make a request using that
+        product's permalink:<br /> <code>GET /api/v2/products/a-product</code>
+        <br />You may also query by the product's id attribute: <code>GET
+        /api/v1/products/1 </code> <br /> Note that the API will attempt a
+        permalink lookup before an ID lookup.
+      tags:
+        - Products
+      operationId: show
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '404':
+          description: 404 response means that Product with specified ID wasn't found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
 components:
   securitySchemes:
     bearerAuth:
@@ -41,7 +80,9 @@ components:
     orderToken:
       type: apiKey
       in: header
-      description: Order token to authorize Cart / Checkout requests. You can obtain it from `/cart` endpoint - it's part of the Order response.
+      description: >-
+        Order token to authorize Cart / Checkout requests. You can obtain it
+        from `/cart` endpoint - it's part of the Order response.
       name: X-Spree-Order-Token
   schemas:
     Error:
@@ -73,37 +114,37 @@ components:
                 number:
                   type: string
                 item_total:
-                  type: number
+                  type: string
                 total:
-                  type: number
+                  type: string
                 ship_total:
-                  type: number
+                  type: string
                 adjustment_total:
-                  type: number
+                  type: string
                 created_at:
                   type: string
                 updated_at:
                   type: string
                 included_tax_total:
-                  type: number
+                  type: string
                 additional_tax_total:
-                  type: number
+                  type: string
                 display_additional_tax_total:
-                  type: number
+                  type: string
                 display_included_tax_total:
-                  type: number
+                  type: string
                 tax_total:
-                  type: number
+                  type: string
                 currency:
                   type: string
-                user_id:
-                  type: number
                 state:
                   type: string
                 token:
                   type: string
-                  example: 'abcdef123456'
-                  description: Used for authorizing any action for an order within Spree’s API
+                  example: abcdef123456
+                  description: >-
+                    Used for authorizing any action for an order within Spree’s
+                    API
             relationships:
               type: object
               properties:
@@ -113,7 +154,6 @@ components:
                     data:
                       type: array
                       items:
-                        type: object
                         $ref: '#/components/schemas/Relation'
                 promotions:
                   type: object
@@ -121,7 +161,6 @@ components:
                     data:
                       type: array
                       items:
-                        type: object
                         $ref: '#/components/schemas/Relation'
                 variants:
                   type: object
@@ -129,13 +168,11 @@ components:
                     data:
                       type: array
                       items:
-                        type: object
                         $ref: '#/components/schemas/Relation'
                 user:
                   type: object
                   properties:
                     data:
-                      type: object
                       $ref: '#/components/schemas/Relation'
         included:
           type: array
@@ -143,10 +180,10 @@ components:
             type: object
             oneOf:
               - $ref: '#/components/schemas/Variant'
-              - $ref: '#/components/schemas/User'
               - $ref: '#/components/schemas/LineItem'
               - $ref: '#/components/schemas/Promotion'
-    Variant:
+              - $ref: '#/components/schemas/User'
+    Image:
       required:
         - data
       properties:
@@ -155,33 +192,41 @@ components:
           properties:
             id:
               type: string
+              example: '1'
             type:
               type: string
+              default: 'images'
+              example: 'images'
             attributes:
               type: object
               properties:
-                name:
+                viewable_type:
                   type: string
-                sku:
-                  type: string
-                price:
-                  type: string
-                weight:
-                  type: string
-                height:
-                  type: string
-                width:
-                  type: string
-                depth:
-                  type: string
-                is_master:
-                  type: string
-                slug:
-                  type: string
-                description:
-                  type: string
-                track_inventory:
-                  type: string
+                  example: 'Spree::Variant'
+                  description: 'Type of the associated record. Images can be assigned to Variants or Taxons'
+                viewable_id:
+                  type: integer
+                  example: 1
+                  description: 'Identifier of the associated record'
+                styles:
+                  type: array
+                  description: 'An array of pre-scaled image styles'
+                  items:
+                    $ref: '#/components/schemas/ImageStyle'
+    ImageStyle:
+      properties:
+        url:
+          type: string
+          example: 'http://localhost:3000/rails/active_storage/disk/eyJfcmFpbHMiOnsibWVzc2FnZSI6IkJBaEpJbWQyWVhKcFlXNTBjeTltWm1sMmRURlNORFpZWjJaSFpYUkdZMjk2WWsxM1RHWXZNVGs1T1RCak5XVmlNamN4TlRnd1pqVTBabUpqTWpCbFkyVXhZMlZpTTJFd05ERTJZemMzT0dKaE5tSTFNREkyT0dKaFpqa3paV1JtWTJWaE16aGxaQVk2QmtWVSIsImV4cCI6IjIwMTgtMDYtMjRUMTM6NTk6NTguOTY5WiIsInB1ciI6ImJsb2Jfa2V5In19--5e9ff358dc747f73754e332678c5762114ac6f3f/ror_jr_spaghetti.jpeg?content_type=image%2Fjpeg&disposition=inline%3B+filename%3D%22ror_jr_spaghetti.jpeg%22%3B+filename%2A%3DUTF-8%27%27ror_jr_spaghetti.jpeg'
+          description: 'Absolute URL of the uploaded image in selected style (width/height)'
+        width:
+          type: integer
+          example: 1920
+          description: 'Actual width of image'
+        height:
+          type: integer
+          example: 1080
+          description: 'Actual height of image'
     User:
       required:
         - data
@@ -191,13 +236,17 @@ components:
           properties:
             id:
               type: string
+              example: 1
             type:
               type: string
+              default: 'users'
+              example: 'users'
             attributes:
               type: object
               properties:
                 email:
                   type: string
+                  example: 'spree@example.com'
     LineItem:
       required:
         - data
@@ -207,17 +256,69 @@ components:
           properties:
             id:
               type: string
+              example: '1'
             type:
               type: string
+              default: 'line_items'
+              example: 'line_items'
             attributes:
               type: object
               properties:
-                quantity:
-                  type: number
-                price:
-                  type: number
-                variant_id:
+                name:
                   type: string
+                  example: 'Sample product'
+                quantity:
+                  type: integer
+                  example: 1
+                price:
+                  type: string
+                  example: '125.0'
+                  description: Price of Product per quantity
+                currency:
+                  type: string
+                  example: 'USD'
+                display_price:
+                  type: string
+                  example: '$125.00'
+                  description: Price of Product per quantity
+                total:
+                  type: string
+                  example: '250.0'
+                  description: >-
+                    Total price of Line Item including adjastments, promotions
+                    and taxes
+                display_total:
+                  type: string
+                  example: '$250.00'
+                  description: >-
+                    Total price of Line Item including adjastments, promotions
+                    and taxes
+                adjustment_total:
+                  type: string
+                  example: '10.0'
+                  description: TBD
+                display_adjustment_total:
+                  type: string
+                  example: '$10.00'
+                  description: TBD
+                additional_tax_total:
+                  type: string
+                  example: '5.0'
+                display_additional_tax_total:
+                  type: string
+                  example: '$5.00'
+                promo_total:
+                  type: string
+                  example: '-5.0'
+                display_promo_total:
+                  type: string
+                included_tax_total:
+                  type: string
+                  example: '0.0'
+                  description: 'Taxes included in the price, eg. VAT'
+                display_inluded_tax_total:
+                  type: string
+                  example: '$0.00'
     Promotion:
       required:
         - data
@@ -236,6 +337,108 @@ components:
                   type: number
                 description:
                   type: number
+    Product:
+      required:
+        - id
+        - type
+        - attributes
+        - relationships
+      properties:
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+              example: '1'
+            type:
+              type: string
+              default: 'products'
+              example: 'products'
+            attributes:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: 'Example product'
+                description:
+                  type: string
+                  example: 'Example description'
+                price:
+                  type: string
+                  example: '15.99'
+                currency:
+                  type: string
+                  example: 'USD'
+                display_price:
+                  type: string
+                  example: $15.99
+                available_on:
+                  type: string
+                  example: '2012-10-17T03:43:57Z'
+                purchasable:
+                  type: boolean
+                  example: true
+                  description: 'Indicates if any of Variants are in stock or backorderable'
+                in_stock:
+                  type: boolean
+                  example: true
+                  description: 'Indicates if any of Variants are in stock'
+                backorderable:
+                  type: boolean
+                  example: true
+                  description: 'Indicates if any of Variants are backeorderable'
+                slug:
+                  type: string
+                  example: 'example-product'
+                meta_description:
+                  type: string
+                  example: 'Example product'
+                meta_keywords:
+                  type: string
+                  example: 'example, product'
+                updated_at:
+                  type: string
+                  example: '2018-05-25T11:22:57.214-04:00'
+        relationships:
+          type: object
+          properties:
+            default_variant:
+              type: object
+              description: 'The default Variant for given product'
+              properties:
+                data:
+                  $ref: '#/components/schemas/Relation'
+            product_properties:
+              type: object
+              description: 'List of Product Properties'
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Relation'
+            option_types:
+              type: object
+              description: 'List of Product Option Types'
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Relation'
+            variants:
+              type: object
+              description: 'List of Product Variants, excluding Master Variant'
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Relation'
+        included:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/OptionType'
+              - $ref: '#/components/schemas/ProductProperty'
+              - $ref: '#/components/schemas/Variant'
     Relation:
       required:
         - id
@@ -245,3 +448,231 @@ components:
           type: string
         type:
           type: string
+    OptionType:
+      required:
+        - data
+      properties:
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+              example: '1'
+            type:
+              type: string
+              default: 'option_types'
+              example: 'option_types'
+            attributes:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: 'color'
+                presentation:
+                  type: string
+                  example: 'Color'
+                position:
+                  type: integer
+                  example: 1
+    OptionValue:
+      required:
+        - data
+        - relationships
+        - included
+      properties:
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+              example: '1'
+            type:
+              type: string
+              default: 'option_values'
+              example: 'option_values'
+            attributes:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: 'red'
+                presentation:
+                  type: string
+                  example: 'Red'
+                position:
+                  type: integer
+                  example: 1
+        relationships:
+          type: object
+          properties:
+            option_type:
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/Relation'
+        included:
+          type: array
+          items:
+            $ref: '#/components/schemas/OptionType'
+    Property:
+      required:
+        - data
+      properties:
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+              example: '1'
+            type:
+              type: string
+              default: 'properties'
+              example: 'properties'
+            attributes:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: 'material'
+                presentation:
+                  type: string
+                  example: 'Material'
+    ProductProperty:
+      required:
+        - data
+        - relationships
+        - included
+      properties:
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+              example: '1'
+            type:
+              type: string
+              default: 'product_properties'
+              example: 'product_properties'
+            attributes:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: 'silk'
+                presentation:
+                  type: string
+                  example: 'Silk'
+        relationships:
+          type: object
+          properties:
+            property:
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/Property'
+        included:
+          type: array
+          items:
+            $ref: '#/components/schemas/Property'
+    Variant:
+      required:
+        - data
+        - relationships
+        - included
+      properties:
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+              example: '1'
+            type:
+              type: string
+              default: 'variants'
+              example: 'variants'
+            attributes:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: 'Example product'
+                  description: 'Product name'
+                sku:
+                  type: string
+                  example: 'SKU-1001'
+                price:
+                  type: string
+                  example: '15.99'
+                currency:
+                  type: string
+                  example: 'USD'
+                display_price:
+                  type: string
+                  example: '$15.99'
+                weight:
+                  type: string
+                  example: '10'
+                height:
+                  type: string
+                  example: '10'
+                width:
+                  type: string
+                  example: '10'
+                depth:
+                  type: string
+                  example: '10'
+                is_master:
+                  type: boolean
+                  example: false
+                  description: 'Indicates if Variant is the master Variant'
+                options_text:
+                  type: string
+                  example: 'Size: small, Color: red'
+                slug:
+                  type: string
+                  example: 'example-product'
+                  description: 'Product slug'
+                description:
+                  type: string
+                  example: 'Example description'
+                  description: 'Product description'
+                purchasable:
+                  type: boolean
+                  example: true
+                  description: 'Indicates if Variant is in stock or backorderable'
+                in_stock:
+                  type: boolean
+                  example: true
+                  description: 'Indicates if Variant is in stock'
+                backorderable:
+                  type: boolean
+                  example: true
+                  description: 'Indicates if Variant is backorderable'
+        relationships:
+          type: object
+          properties:
+            product:
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/Relation'
+            images:
+              type: object
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Relation'
+            option_values:
+              type: object
+              properties:
+                data:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Relation'
+        included:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/Image'
+              - $ref: '#/components/schemas/OptionValue'
