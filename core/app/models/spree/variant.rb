@@ -57,6 +57,20 @@ module Spree
 
     scope :in_stock, -> { joins(:stock_items).where('count_on_hand > ? OR track_inventory = ?', 0, false) }
 
+    scope :eligible, -> {
+      where(is_master: false).or(
+        where(
+          <<-SQL
+            #{Variant.quoted_table_name}.id IN (
+              SELECT MIN(#{Variant.quoted_table_name}.id) FROM #{Variant.quoted_table_name}
+              GROUP BY #{Variant.quoted_table_name}.product_id
+              HAVING COUNT(*) = 1
+            )
+          SQL
+        )
+      )
+    }
+
     scope :not_discontinued, -> do
       where(
         arel_table[:discontinue_on].eq(nil).or(
