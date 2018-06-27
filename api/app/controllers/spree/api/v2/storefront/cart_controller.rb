@@ -45,6 +45,22 @@ module Spree
             render json: serialized_current_order, status: 200
           end
 
+          def set_quantity
+            return render_error_item_quantity unless params[:quantity].to_i > 0
+
+            line_item = spree_current_order.line_items.find(params[:line_item_id])
+
+            spree_authorize! :update, spree_current_order, order_token
+
+            result = dependencies[:set_item_quantity].call(order: spree_current_order, line_item: line_item, quantity: params[:quantity])
+
+            if result.success?
+              render json: serialized_current_order, status: 200
+            else
+              render json: { error: result.value }, status: 422
+            end
+          end
+
           private
 
           def dependencies
@@ -52,7 +68,8 @@ module Spree
               create_cart:           Spree::Cart::Create,
               add_item_to_cart:      Spree::Cart::AddItem,
               remove_item_from_cart: Spree::Cart::RemoveLineItem,
-              cart_serializer:       Spree::V2::Storefront::CartSerializer
+              cart_serializer:       Spree::V2::Storefront::CartSerializer,
+              set_item_quantity:     Spree::Cart::SetQuantity
             }
           end
 
@@ -66,6 +83,10 @@ module Spree
 
           def line_item
             @line_item ||= spree_current_order.line_items.find(params[:line_item_id])
+          end
+
+          def render_error_item_quantity
+            render json: { error: I18n.t(:wrong_quantity, scope: 'spree.api.v2.cart') }, status: 422
           end
         end
       end

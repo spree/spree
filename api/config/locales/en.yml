@@ -29,3 +29,7 @@ en:
       shipment_transfer_errors_occured: "Following errors occured while attempting this action:"
       negative_quantity: "quantity is negative"
       wrong_shipment_target: "target shipment is the same as original shipment"
+
+      v2:
+        cart:
+          wrong_quantity: "Quantity has to be greater than 0"

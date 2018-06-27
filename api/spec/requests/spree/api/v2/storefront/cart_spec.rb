@@ -194,4 +194,47 @@ describe 'API V2 Storefront Cart Spec', type: :request do
       it_behaves_like 'emptying the order'
     end
   end
+
+  describe 'cart#set_quantity' do
+    let!(:order) { create(:order, user: user) }
+    let!(:line_item) { create(:line_item, order: order) }
+
+    context 'with insufficient stock quantity and non-backorderable item' do
+      before do
+        line_item.variant.stock_items.first.update(backorderable: false)
+      end
+
+      it 'returns 422 when there is not enough stock' do
+        headers = { 'Authorization' => "Bearer #{token.token}" }
+        patch '/api/v2/storefront/cart/set_quantity', params: { order: order, line_item_id: line_item.id, quantity: 5, user: user }, headers: headers
+
+        expect(response.status).to eq(422)
+        expect(json_response[:error]).to eq('Insufficient stock quantity available')
+      end
+    end
+
+    it 'changes the quantity of line_item' do
+      headers = { 'Authorization' => "Bearer #{token.token}" }
+      patch '/api/v2/storefront/cart/set_quantity', params: { order: order, line_item_id: line_item.id, quantity: 5, user: user }, headers: headers
+
+      expect(response.status).to eq(200)
+      expect(line_item.reload.quantity).to eq(5)
+    end
+
+    it 'returns 422 when quantity is 0' do
+      headers = { 'Authorization' => "Bearer #{token.token}" }
+      patch '/api/v2/storefront/cart/set_quantity', params: { order: order, line_item_id: line_item.id, quantity: 0, user: user }, headers: headers
+
+      expect(response.status).to eq(422)
+      expect(json_response[:error]).to eq('Quantity has to be greater than 0')
+    end
+
+    it 'returns 422 when quantity is absent' do
+      headers = { 'Authorization' => "Bearer #{token.token}" }
+      patch '/api/v2/storefront/cart/set_quantity', params: { order: order, line_item_id: line_item.id, user: user }, headers: headers
+
+      expect(response.status).to eq(422)
+      expect(json_response[:error]).to eq('Quantity has to be greater than 0')
+    end
+  end
 end
