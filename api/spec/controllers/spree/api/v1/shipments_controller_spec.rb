@@ -108,16 +108,14 @@ describe Spree::Api::V1::ShipmentsController, type: :controller do
       end
     end
 
-    it 'can update a shipment' do
-      params = {
-        shipment: {
-          stock_location_id: stock_location.to_param
-        }
-      }
+    context 'should update a shipment' do
+      let(:resource_scoping) { { id: shipment.to_param, shipment: { order_id: shipment.order.to_param, stock_location_id: stock_location.to_param } } }
 
-      api_put :update, params
-      expect(response.status).to eq(200)
-      expect(json_response['stock_location_name']).to eq(stock_location.name)
+      it 'can update a shipment' do
+        api_put :update
+        expect(response.status).to eq(200)
+        expect(json_response['stock_location_name']).to eq(stock_location.name)
+      end
     end
 
     it 'can make a shipment ready' do
