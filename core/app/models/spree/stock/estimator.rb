@@ -1,7 +1,6 @@
 module Spree
   module Stock
     class Estimator
-      include VatPriceCalculation
 
       attr_reader :order, :currency
 
@@ -34,7 +33,7 @@ module Spree
 
           next unless cost
           shipping_method.shipping_rates.new(
-            cost: gross_amount(cost, taxation_options_for(shipping_method)),
+            cost: VatPriceCalculator.new.call(cost, taxation_options_for(shipping_method)),
             tax_rate: first_tax_rate_for(shipping_method.tax_category)
           )
         end.compact
