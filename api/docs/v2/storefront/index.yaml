@@ -22,11 +22,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Cart'
         '404':
-          description: 404 response means that variant with specified ID wasn't found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
+          $ref: '#/components/responses/404NotFound'
       security:
         - orderToken: []
       requestBody:
@@ -67,11 +63,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Product'
         '404':
-          description: 404 response means that Product with specified ID wasn't found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
+          $ref: '#/components/responses/404NotFound'
 components:
   securitySchemes:
     bearerAuth:
@@ -676,3 +668,10 @@ components:
             oneOf:
               - $ref: '#/components/schemas/Image'
               - $ref: '#/components/schemas/OptionValue'
+  responses:
+    404NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
