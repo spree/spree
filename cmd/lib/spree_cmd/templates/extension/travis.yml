@@ -18,9 +18,9 @@ script:
   - bundle exec rake spec
 
 rvm:
+  - 2.5.1
   - 2.4.2
   - 2.3.1
-  - 2.2.7
 
 matrix:
   allow_failures:
