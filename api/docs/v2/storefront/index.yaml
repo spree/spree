@@ -43,18 +43,14 @@ paths:
       description: >-
         To view the details for a single product, make a request using that
         product's permalink:<br /> <code>GET /api/v2/products/a-product</code>
-        <br />You may also query by the product's id attribute: <code>GET
-        /api/v1/products/1 </code> <br /> Note that the API will attempt a
+        <br /><br />You may also query by the product's id attribute:<br /><code>GET
+        /api/v1/products/1 </code> <br /><br />Note that the API will attempt a
         permalink lookup before an ID lookup.
       tags:
         - Products
       operationId: show
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/IdOrPermalink'
       responses:
         '200':
           description: ok
@@ -668,6 +664,14 @@ components:
             oneOf:
               - $ref: '#/components/schemas/Image'
               - $ref: '#/components/schemas/OptionValue'
+  parameters:
+    IdOrPermalink:
+      name: id
+      in: path
+      required: true
+      description: ID or a permalink
+      schema:
+        type: string
   responses:
     404NotFound:
       description: Resource not found
