@@ -19,6 +19,8 @@ module Spree
         attribute :backorderable do |variant|
           variant.backorderable?
         end
+
+        has_many :images
       end
     end
   end
