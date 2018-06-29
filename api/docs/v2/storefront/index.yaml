@@ -362,71 +362,62 @@ components:
                   example: $15.99
                 available_on:
                   type: string
-                  example: '2012-10-17T03:43:57Z'
-                purchasable:
-                  type: boolean
-                  example: true
-                  description: 'Indicates if any of Variants are in stock or backorderable'
-                in_stock:
-                  type: boolean
-                  example: true
-                  description: 'Indicates if any of Variants are in stock'
-                backorderable:
-                  type: boolean
-                  example: true
-                  description: 'Indicates if any of Variants are backeorderable'
-                slug:
-                  type: string
-                  example: 'example-product'
-                meta_description:
-                  type: string
-                  example: 'Example product'
-                meta_keywords:
-                  type: string
-                  example: 'example, product'
-                updated_at:
-                  type: string
-                  example: '2018-05-25T11:22:57.214-04:00'
+          $ref: '#/components/schemas/ProductData'
         relationships:
-          type: object
-          properties:
-            default_variant:
-              type: object
-              description: 'The default Variant for given product'
-              properties:
-                data:
-                  $ref: '#/components/schemas/Relation'
-            product_properties:
-              type: object
-              description: 'List of Product Properties'
-              properties:
-                data:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/Relation'
-            option_types:
-              type: object
-              description: 'List of Product Option Types'
-              properties:
-                data:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/Relation'
-            variants:
-              type: object
-              description: 'List of Product Variants, excluding Master Variant'
-              properties:
-                data:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/Relation'
+          $ref: '#/components/schemas/ProductRelationships'
         included:
           type: array
           items:
             oneOf:
               - $ref: '#/components/schemas/OptionType'
+              - $ref: '#/components/schemas/OptionValue'
               - $ref: '#/components/schemas/ProductProperty'
-              - $ref: '#/components/schemas/Variant'
+              - $ref: '#/components/schemas/Property'
+              - $ref: '#/components/schemas/VariantDataAndRelationships'
+              - $ref: '#/components/schemas/Image'
+    ProductData:
+      type: object
+      properties:
+        id:
+          type: string
+          example: '1'
+        type:
+          type: string
+          default: 'products'
+          example: 'products'
+        attributes:
+          type: object
+          properties:
+            name:
+              type: string
+              example: 'Example product'
+            description:
+              type: string
+              example: 'Example description'
+            price:
+              type: string
+              example: '15.99'
+            currency:
+              type: string
+              example: 'USD'
+            display_price:
+              type: string
+              example: $15.99
+            available_on:
+              type: string
+              example: '2012-10-17T03:43:57Z'
+            purchasable:
+              type: boolean
+              example: true
+              description: 'Indicates if any of Variants are in stock or backorderable'
+            in_stock:
+              type: boolean
+              example: true
+              description: 'Indicates if any of Variants are in stock'
+            backorderable:
+              type: boolean
+              example: true
+              description: 'Indicates if any of Variants are backeorderable'
     Relation:
       required:
         - id
