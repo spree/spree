@@ -10,13 +10,26 @@ info:
     Product and Taxons catalog browsing. Account management is provided by
     `spree_auth_devise` extension.
 paths:
-  /cart/add_item:
+
+  '/cart':
     post:
+      description: Creates new cart and order and returns their attributes. Order token, that can be obtained from attributes, can be used for guest checkout and further guest access to the order. This endpoint should be called before any other action on the cart
+      tags:
+        - Cart
+      responses:
+        '201':
+          description: 201 response means that that an order was successfully created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+    get:
+      description: Returns contents of the cart
       tags:
         - Cart
       responses:
         '200':
-          description: 200 response means item was added to cart successfully
+          description: 200 response means that correct cart was returned
           content:
             application/json:
               schema:
@@ -25,6 +38,25 @@ paths:
           $ref: '#/components/responses/404NotFound'
       security:
         - orderToken: []
+        - bearerAuth: []
+
+  '/cart/add_item':
+    post:
+      description: Adds an item to the cart
+      tags:
+        - Cart
+      responses:
+        '200':
+          description: 200 response means that the item was added to the cart successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+      security:
+        - orderToken: []
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -33,11 +65,96 @@ paths:
               type: object
               properties:
                 variant_id:
-                  type: integer
-                  example: 10
+                  type: string
                 quantity:
                   type: integer
-                  example: 1
+              example:
+                variant_id: "1"
+                quantity: 5
+
+  '/cart/set_quantity':
+    patch:
+      description: Sets the quantity of a given line item. It has to be a positive integer greater than 0.
+      tags:
+        - Cart
+      responses:
+        '200':
+          description: 200 response means that a new quantity has been successfully set for a requested line item
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        '422':
+          description: 422 response means that stock quantity is not sufficient for this request to be fulfielled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - orderToken: []
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                line_item_id:
+                  type: string
+                quantity:
+                  type: integer
+              example:
+                line_item_id: "1"
+                quantity: 5
+
+  '/cart/remove_line_item':
+    delete:
+      description: Removes line item from current order
+      tags:
+        - Cart
+      responses:
+        '200':
+          description: 200 response means that the requested line item has been removed from the order
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+      security:
+        - orderToken: []
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                line_item_id:
+                  type: string
+              example:
+                line_item_id: "1"
+
+  '/cart/empty':
+    post:
+      description: Empties the order
+      tags:
+        - Cart
+      responses:
+        '200':
+          description: 200 response means that the cart has been successfully emptied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+      security:
+        - orderToken: []
+        - bearerAuth: []
+
   '/products/{id}':
     get:
       description: >-
@@ -60,6 +177,7 @@ paths:
                 $ref: '#/components/schemas/Product'
         '404':
           $ref: '#/components/responses/404NotFound'
+
 components:
   securitySchemes:
     bearerAuth:
