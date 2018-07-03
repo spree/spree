@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-describe Spree::TaxonIcon, type: :model, active_storage: true do
+describe Spree::TaxonImage, type: :model, active_storage: true do
   context 'validation' do
-    let(:spree_image) { Spree::Image.new }
+    let(:spree_image) { Spree::TaxonImage.new }
     let(:image_file) { File.open(Spree::Core::Engine.root + 'spec/fixtures' + 'thinking-cat.jpg') }
     let(:text_file) { File.open(Spree::Core::Engine.root + 'spec/fixtures' + 'text-file.txt') }
 

@@ -377,7 +377,7 @@ en:
             attachment:
               not_allowed_content_type: has not allowed content type
               attachment_must_be_present: must be present
-        spree/taxon_icon:
+        spree/taxon_image:
           attributes:
             attachment:
               not_allowed_content_type: has not allowed content type

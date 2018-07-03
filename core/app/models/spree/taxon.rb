@@ -32,7 +32,7 @@ module Spree
     after_save :touch_ancestors_and_taxonomy
     after_touch :touch_ancestors_and_taxonomy
 
-    has_one :icon, as: :viewable, dependent: :destroy, class_name: 'Spree::TaxonIcon'
+    has_one :icon, as: :viewable, dependent: :destroy, class_name: 'Spree::TaxonImage'
 
     self.whitelisted_ransackable_associations = %w[taxonomy]
 
