@@ -178,6 +178,29 @@ paths:
         '404':
           $ref: '#/components/responses/404NotFound'
 
+  '/taxons/{id}':
+    get:
+      description: >-
+        To view the details for a single Taxon, make a request using that
+        Taxon's permalink:<br /> <code>GET /api/v2/taxons/t-shirts</code>
+        <br /><br />You may also query by the Taxons's ID attribute:<br /><code>GET
+        /api/v1/taxons/1 </code> <br /><br />Note that the API will attempt a
+        permalink lookup before an ID lookup.
+      tags:
+        - Taxons
+      operationId: show
+      parameters:
+        - $ref: '#/components/parameters/IdOrPermalink'
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Taxon'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+
 components:
   securitySchemes:
     bearerAuth:
@@ -464,6 +487,7 @@ components:
               - $ref: '#/components/schemas/Property'
               - $ref: '#/components/schemas/VariantDataAndRelationships'
               - $ref: '#/components/schemas/Image'
+              - $ref: '#/components/schemas/TaxonDataAndRelationships'
     ProductData:
       type: object
       properties:
@@ -552,6 +576,14 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/Relation'
+        taxons:
+          type: object
+          description: 'List of Taxons associated with Product'
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/Relation'
     ProductDataAndRelationships:
       properties:
         data:
@@ -567,6 +599,145 @@ components:
           type: string
         type:
           type: string
+    Taxon:
+      required:
+        - id
+        - type
+        - attributes
+        - relationships
+      properties:
+        data:
+          $ref: '#/components/schemas/TaxonData'
+        relationships:
+          $ref: '#/components/schemas/TaxonRelationships'
+        included:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/ProductDataAndRelationships'
+              - $ref: '#/components/schemas/TaxonDataAndRelationships'
+              - $ref: '#/components/schemas/TaxonomyDataAndRelationships'
+    TaxonData:
+      type: object
+      properties:
+        id:
+          type: string
+          example: '1'
+        type:
+          type: string
+          default: 'taxons'
+          example: 'taxons'
+        attributes:
+          type: object
+          properties:
+            name:
+              type: string
+              example: 'T-shirts'
+            pretty_name:
+              type: string
+              example: 'Clothes > T-shirts'
+            permalink:
+              type: string
+              example: 't-shirts'
+            seo_title:
+              type: string
+              example: 'Clothes - T-shirts'
+            meta_title:
+              type: string
+              example: 'T-shirts'
+            meta_description:
+              type: string
+              example: 'A list of cool t-shirts '
+            meta_keywords:
+              type: string
+              example: 't-shirts, cool'
+            left:
+              type: integer
+              example: 1
+            right:
+              type: integer
+              example: 2
+            position:
+              type: integer
+              example: 0
+            depth:
+              type: integer
+              example: 1
+            is_root:
+              type: boolean
+              example: true
+              description: 'Indicates if the Taxon is the root node of this Taxonomy tree'
+            is_child:
+              type: boolean
+              example: true
+              description: 'Returns true is this is a child node of this Taxonomy tree'
+            is_leaf:
+              type: boolean
+              example: false
+              description: 'Returns true if this is the end of a branch of this Taxonomy tree'
+            updated_at:
+              type: string
+              example: '2018-06-18T10:57:29.704Z'
+    TaxonRelationships:
+      type: object
+      properties:
+        parent:
+          type: object
+          description: 'Parent node'
+          properties:
+            data:
+              $ref: '#/components/schemas/Relation'
+        children:
+          type: object
+          description: 'List of child nodes'
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/Relation'
+        taxonomy:
+          type: object
+          description: 'Taxonomy associated with this Taxon'
+          properties:
+            data:
+              $ref: '#/components/schemas/Relation'
+        products:
+          type: object
+          description: 'List of active and available Products associated with this Taxon'
+          properties:
+            data:
+              type: array
+              items:
+                $ref: '#/components/schemas/Relation'
+    TaxonDataAndRelationships:
+      properties:
+        data:
+          $ref: '#/components/schemas/TaxonData'
+        relationships:
+          $ref: '#/components/schemas/TaxonRelationships'
+    TaxonomyDataAndRelationships:
+      properties:
+        data:
+          $ref: '#/components/schemas/TaxonomyData'
+    TaxonomyData:
+      type: object
+      properties:
+        id:
+          type: string
+          example: '1'
+        type:
+          type: string
+          default: 'taxonomies'
+          example: 'taxonomies'
+        attributes:
+          type: object
+          properties:
+            name:
+              type: string
+              example: 'Categories'
+            position:
+              type: integer
+              example: 0
     OptionType:
       required:
         - data
