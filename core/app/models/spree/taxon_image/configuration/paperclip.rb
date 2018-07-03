@@ -1,5 +1,5 @@
 module Spree
-  class TaxonIcon < Asset
+  class TaxonImage < Asset
     module Configuration
       module Paperclip
         extend ActiveSupport::Concern
