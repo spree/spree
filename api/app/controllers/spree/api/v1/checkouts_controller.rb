@@ -3,7 +3,7 @@ module Spree
     module V1
       class CheckoutsController < Spree::Api::BaseController
         before_action :associate_user, only: :update
-        before_action :load_order_with_lock, only: [:next, :advance, :update]
+        before_action :load_order_with_lock, only: [:next, :advance, :update, :next_or_reset, :complete]
 
         include Spree::Core::ControllerHelpers::Auth
         include Spree::Core::ControllerHelpers::Order
@@ -18,10 +18,40 @@ module Spree
           respond_with(@order, default_template: 'spree/api/v1/orders/could_not_transition', status: 422)
         end
 
+        # We don't change order's states when editing previous checkout steps,
+        # but we still need to reset shipments and adjustments data. This
+        # action moves order to next state, or resets needed data
+        def next_or_reset
+          authorize! :update, @order, order_token
+          if @order.address?
+            turn_off_override_bill_address_data
+            @order.next!
+          else
+            unless @order.reset_shipments
+              transition_failed_response
+              return
+            end
+          end
+
+          respond_with(@order, default_template: 'spree/api/v1/orders/show', status: 200)
+        rescue StateMachines::InvalidTransition
+          transition_failed_response
+        end
+
         def advance
           authorize! :update, @order, order_token
           while @order.next; end
           respond_with(@order, default_template: 'spree/api/v1/orders/show', status: 200)
+        end
+
+        # Separate action for order completion
+        def complete
+          authorize! :update, @order, order_token
+
+          while !@order.complete? && @order.next; end
+          prepare_response
+        rescue StateMachines::InvalidTransition
+          transition_failed_response
         end
 
         def update
@@ -105,6 +135,23 @@ module Spree
 
         def order_id
           super || params[:id]
+        end
+
+        # this fixes overrideing bill address data on shipment address checkout step
+        def turn_off_override_bill_address_data
+          @order.temporary_address = true if %w(address delivery).include?(@order.state)
+        end
+
+        def transition_failed_response
+          respond_with(@order, default_template: 'spree/api/v1/orders/could_not_transition', status: 422)
+        end
+
+        def prepare_response
+          if @order.errors.any?
+            render json: { errors: @order.errors.full_messages.join(' ') }, status: 422
+          else
+            respond_with(@order, default_template: 'spree/api/v1/orders/show', status: 200)
+          end
         end
       end
     end
