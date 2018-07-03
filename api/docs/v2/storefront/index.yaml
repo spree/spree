@@ -329,14 +329,10 @@ components:
             attributes:
               type: object
               properties:
-                viewable_type:
-                  type: string
-                  example: 'Spree::Variant'
-                  description: 'Type of the associated record. Images can be assigned to Variants or Taxons'
-                viewable_id:
+                position:
                   type: integer
-                  example: 1
-                  description: 'Identifier of the associated record'
+                  example: 0
+                  description: 'Sort order of images set in the Admin Panel'
                 styles:
                   type: array
                   description: 'An array of pre-scaled image styles'
@@ -617,6 +613,7 @@ components:
               - $ref: '#/components/schemas/ProductDataAndRelationships'
               - $ref: '#/components/schemas/TaxonDataAndRelationships'
               - $ref: '#/components/schemas/TaxonomyDataAndRelationships'
+              - $ref: '#/components/schemas/Image'
     TaxonData:
       type: object
       properties:
@@ -698,6 +695,12 @@ components:
         taxonomy:
           type: object
           description: 'Taxonomy associated with this Taxon'
+          properties:
+            data:
+              $ref: '#/components/schemas/Relation'
+        image:
+          type: object
+          description: 'Image associated with Taxon'
           properties:
             data:
               $ref: '#/components/schemas/Relation'
