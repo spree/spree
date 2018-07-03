@@ -1122,4 +1122,28 @@ describe Spree::Order, type: :model do
       it { expect(order).to receive_message_chain(:shipments, :any?).and_return(false) }
     end
   end
+
+  describe '#shipping_eq_billing_address' do
+    let!(:order) { create(:order) }
+
+    context 'with only bill address' do
+      it { expect(order.shipping_eq_billing_address?).to eq(false) }
+    end
+
+    context 'blank addresses' do
+      before do
+        order.bill_address = Spree::Address.new
+        order.ship_address = Spree::Address.new
+      end
+      it { expect(order.shipping_eq_billing_address?).to eq(true) }
+    end
+
+    context 'no addresses' do
+      before do
+        order.bill_address = nil
+        order.ship_address = nil
+      end
+      it { expect(order.shipping_eq_billing_address?).to eq(true) }
+    end
+  end
 end
