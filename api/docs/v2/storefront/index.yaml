@@ -178,6 +178,29 @@ paths:
         '404':
           $ref: '#/components/responses/404NotFound'
 
+  '/taxons/{id}':
+    get:
+      description: >-
+        To view the details for a single Taxon, make a request using that
+        Taxon's permalink:<br /> <code>GET /api/v2/taxons/t-shirts</code>
+        <br /><br />You may also query by the Taxons's ID attribute:<br /><code>GET
+        /api/v1/taxons/1 </code> <br /><br />Note that the API will attempt a
+        permalink lookup before an ID lookup.
+      tags:
+        - Taxons
+      operationId: show
+      parameters:
+        - $ref: '#/components/parameters/IdOrPermalink'
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Taxon'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+
 components:
   securitySchemes:
     bearerAuth:
@@ -576,6 +599,24 @@ components:
           type: string
         type:
           type: string
+    Taxon:
+      required:
+        - id
+        - type
+        - attributes
+        - relationships
+      properties:
+        data:
+          $ref: '#/components/schemas/TaxonData'
+        relationships:
+          $ref: '#/components/schemas/TaxonRelationships'
+        included:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/ProductDataAndRelationships'
+              - $ref: '#/components/schemas/TaxonDataAndRelationships'
+              - $ref: '#/components/schemas/TaxonomyDataAndRelationships'
     TaxonData:
       type: object
       properties:
@@ -595,9 +636,9 @@ components:
             pretty_name:
               type: string
               example: 'Clothes > T-shirts'
-            permnalink:
+            permalink:
               type: string
-              example: '/t/clothes/t-shirts'
+              example: 't-shirts'
             seo_title:
               type: string
               example: 'Clothes - T-shirts'
@@ -674,6 +715,10 @@ components:
           $ref: '#/components/schemas/TaxonData'
         relationships:
           $ref: '#/components/schemas/TaxonRelationships'
+    TaxonomyDataAndRelationships:
+      properties:
+        data:
+          $ref: '#/components/schemas/TaxonomyData'
     TaxonomyData:
       type: object
       properties:
