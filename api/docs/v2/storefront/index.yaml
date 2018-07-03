@@ -329,14 +329,10 @@ components:
             attributes:
               type: object
               properties:
-                viewable_type:
-                  type: string
-                  example: 'Spree::Variant'
-                  description: 'Type of the associated record. Images can be assigned to Variants or Taxons'
-                viewable_id:
+                position:
                   type: integer
-                  example: 1
-                  description: 'Identifier of the associated record'
+                  example: 0
+                  description: 'Sort order of images set in the Admin Panel'
                 styles:
                   type: array
                   description: 'An array of pre-scaled image styles'
