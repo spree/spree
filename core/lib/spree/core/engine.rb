@@ -1,7 +1,7 @@
 module Spree
   module Core
     class Engine < ::Rails::Engine
-      Environment = Struct.new(:calculators, :preferences, :payment_methods, :adjusters, :stock_splitters, :promotions)
+      Environment = Struct.new(:calculators, :preferences, :payment_methods, :adjusters, :stock_splitters, :promotions, :line_item_comparison_hooks)
       SpreeCalculators = Struct.new(:shipping_methods, :tax_rates, :promotion_actions_create_adjustments, :promotion_actions_create_item_adjustments)
       PromoEnvironment = Struct.new(:rules, :actions)
       isolate_namespace Spree
@@ -35,6 +35,10 @@ module Spree
           Spree::Stock::Splitter::ShippingCategory,
           Spree::Stock::Splitter::Backordered
         ]
+      end
+
+      initializer 'spree.register.line_item_comparison_hooks', before: :load_config_initializers do |app|
+        app.config.spree.line_item_comparison_hooks = Set.new
       end
 
       initializer 'spree.register.payment_methods', after: 'acts_as_list.insert_into_active_record' do |app|
@@ -116,12 +120,12 @@ module Spree
       end
 
       config.to_prepare do
-        # Load spree locales before decorators
-        I18n.load_path += Dir.glob(
+        # Ensure spree locale paths are present before decorators
+        I18n.load_path.unshift(*(Dir.glob(
           File.join(
             File.dirname(__FILE__), '../../../config/locales', '*.{rb,yml}'
           )
-        )
+        ) - I18n.load_path))
 
         # Load application's model / class decorators
         Dir.glob(File.join(File.dirname(__FILE__), '../../../app/**/*_decorator*.rb')) do |c|

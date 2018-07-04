@@ -58,6 +58,28 @@ describe Spree::Variant, type: :model do
   end
 
   describe 'scope' do
+    describe '.eligible' do
+      context 'when only master variants' do
+        let!(:product_1) { create(:product) }
+        let!(:product_2) { create(:product) }
+
+        it 'returns all of them' do
+          expect(Spree::Variant.eligible).to include(product_1.master)
+          expect(Spree::Variant.eligible).to include(product_2.master)
+        end
+      end
+
+      context 'when product has more than 1 variant' do
+        let!(:product) { create(:product) }
+        let!(:variant) { create(:variant, product: product) }
+
+        it 'filters master variant out' do
+          expect(Spree::Variant.eligible).to include(variant)
+          expect(Spree::Variant.eligible).not_to include(product.master)
+        end
+      end
+    end
+
     describe '.not_discontinued' do
       context 'when discontinued' do
         let!(:discontinued_variant) { create(:variant, discontinue_on: Time.current - 1.day) }
@@ -511,6 +533,60 @@ describe Spree::Variant, type: :model do
     it 'invokes Spree::Stock::Quantifier' do
       expect_any_instance_of(Spree::Stock::Quantifier).to receive(:backorderable?).and_return(true)
       subject
+    end
+  end
+
+  describe '#purchasable?' do
+    context 'when stock_items are not backorderable' do
+      before do
+        allow_any_instance_of(Spree::StockItem).to receive_messages(backorderable: false)
+      end
+
+      context 'when stock_items in stock' do
+        before do
+          variant.stock_items.first.update_column(:count_on_hand, 10)
+        end
+
+        it 'returns true if stock_items in stock' do
+          expect(variant.purchasable?).to be true
+        end
+      end
+
+      context 'when stock_items out of stock' do
+        before do
+          allow_any_instance_of(Spree::StockItem).to receive_messages(count_on_hand: 0)
+        end
+
+        it 'return false if stock_items out of stock' do
+          expect(variant.purchasable?).to be false
+        end
+      end
+    end
+
+    context 'when stock_items are out of stock' do
+      before do
+        allow_any_instance_of(Spree::StockItem).to receive_messages(count_on_hand: 0)
+      end
+
+      context 'when stock item are backorderable' do
+        before do
+          allow_any_instance_of(Spree::StockItem).to receive_messages(backorderable: true)
+        end
+
+        it 'returns true if stock_items are backorderable' do
+          expect(variant.purchasable?).to be true
+        end
+      end
+
+      context 'when stock_items are not backorderable' do
+        before do
+          allow_any_instance_of(Spree::StockItem).to receive_messages(backorderable: false)
+        end
+
+        it 'return false if stock_items are not backorderable' do
+          expect(variant.purchasable?).to be false
+        end
+      end
     end
   end
 

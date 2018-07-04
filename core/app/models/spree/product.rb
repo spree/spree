@@ -125,6 +125,21 @@ module Spree
 
     alias master_images images
 
+    # Can't use any? due to https://github.com/Netflix/fast_jsonapi/issues/259
+    def purchasable?
+      variants_including_master.count(&:purchasable?).positive?
+    end
+
+    # Can't use any? due to https://github.com/Netflix/fast_jsonapi/issues/259
+    def in_stock?
+      variants_including_master.count(&:in_stock?).positive?
+    end
+
+    # Can't use any? due to https://github.com/Netflix/fast_jsonapi/issues/259
+    def backorderable?
+      variants_including_master.count(&:backorderable?).positive?
+    end
+
     def find_or_build_master
       master || build_master
     end

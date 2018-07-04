@@ -35,14 +35,14 @@ module Spree
 
     context 'authenticating with a token' do
       it 'can add a new line item to an existing order' do
-        api_post :create, line_item: { variant_id: product.master.to_param, quantity: 1 }, order_token: order.guest_token
+        api_post :create, line_item: { variant_id: product.master.to_param, quantity: 1 }, order_token: order.token
         expect(response.status).to eq(201)
         expect(json_response).to have_attributes(attributes)
         expect(json_response['variant']['name']).not_to be_blank
       end
 
       it 'can add a new line item to an existing order with token in header' do
-        request.headers['X-Spree-Order-Token'] = order.guest_token
+        request.headers['X-Spree-Order-Token'] = order.token
         api_post :create, line_item: { variant_id: product.master.to_param, quantity: 1 }
         expect(response.status).to eq(201)
         expect(json_response).to have_attributes(attributes)
@@ -120,7 +120,7 @@ module Spree
 
       context 'order contents changed after shipments were created' do
         let!(:order) { Order.create }
-        let!(:line_item) { order.contents.add(product.master) }
+        let!(:line_item) { Spree::Cart::AddItem.call(order: order, variant: product.master).value }
 
         before { order.create_proposed_shipments }
 

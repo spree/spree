@@ -22,12 +22,12 @@ describe Spree::Api::BaseController, type: :controller do
 
     context 'with a correct order token' do
       it 'succeeds' do
-        api_get :index, order_token: order.guest_token, order_id: order.number
+        api_get :index, order_token: order.token, order_id: order.number
         expect(response.status).to eq(200)
       end
 
       it 'succeeds with an order_number parameter' do
-        api_get :index, order_token: order.guest_token, order_number: order.number
+        api_get :index, order_token: order.token, order_number: order.number
         expect(response.status).to eq(200)
       end
     end

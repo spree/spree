@@ -16,8 +16,8 @@ describe Spree::OrdersController, type: :controller do
     context '#populate' do
       it 'creates a new order when none specified' do
         spree_post :populate, variant_id: variant.id
-        expect(cookies.signed[:guest_token]).not_to be_blank
-        expect(Spree::Order.find_by(guest_token: cookies.signed[:guest_token])).to be_persisted
+        expect(cookies.signed[:token]).not_to be_blank
+        expect(Spree::Order.find_by(token: cookies.signed[:token])).to be_persisted
       end
 
       context 'with Variant' do
@@ -118,7 +118,7 @@ describe Spree::OrdersController, type: :controller do
   context 'line items quantity is 0' do
     let(:order) { Spree::Order.create }
     let(:variant) { create(:variant) }
-    let!(:line_item) { order.contents.add(variant, 1) }
+    let!(:line_item) { Spree::Cart::AddItem.call(order: order, variant: variant).value }
 
     before do
       allow(controller).to receive(:check_authorization)

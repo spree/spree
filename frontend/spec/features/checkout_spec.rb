@@ -355,6 +355,36 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
     end
   end
 
+  # Regression test for #7734
+  context 'if multiple coupon promotions applied' do
+    let(:promotion) { Spree::Promotion.create(name: 'Order Promotion', code: 'o_promotion') }
+    let(:calculator) { Spree::Calculator::FlatPercentItemTotal.create(preferred_flat_percent: '90') }
+    let(:action) { Spree::Promotion::Actions::CreateAdjustment.create(calculator: calculator) }
+
+    let(:promotion_2) { Spree::Promotion.create(name: 'Line Item Promotion', code: 'li_promotion') }
+    let(:calculator_2) { Spree::Calculator::FlatRate.create(preferred_amount: '1000') }
+    let(:action_2) { Spree::Promotion::Actions::CreateItemAdjustments.create(calculator: calculator_2) }
+
+    before do
+      promotion.actions << action
+      promotion_2.actions << action_2
+
+      add_mug_to_cart
+    end
+
+    it "totals aren't negative" do
+      fill_in 'Coupon Code', with: promotion.code
+      click_on 'Apply'
+
+      fill_in 'Coupon Code', with: promotion_2.code
+      click_on 'Apply'
+
+      expect(page).to have_content(promotion.name)
+      expect(page).to have_content(promotion_2.name)
+      expect(Spree::Order.last.total.to_f).to eq 0.0
+    end
+  end
+
   context 'if coupon promotion, submits coupon along with payment', js: true do
     let!(:promotion) { Spree::Promotion.create(name: 'Huhuhu', code: 'huhu') }
     let!(:calculator) { Spree::Calculator::FlatPercentItemTotal.create(preferred_flat_percent: '10') }

@@ -43,8 +43,10 @@ RSpec.configure do |config|
   config.raise_errors_for_deprecations!
   config.use_transactional_fixtures = true
 
+  config.include JSONAPI::RSpec
   config.include FactoryBot::Syntax::Methods
   config.include Spree::Api::TestingSupport::Helpers, type: :controller
+  config.include Spree::Api::TestingSupport::Helpers, type: :request
   config.extend Spree::Api::TestingSupport::Setup, type: :controller
   config.include Spree::TestingSupport::Preferences, type: :controller
 
@@ -54,9 +56,10 @@ RSpec.configure do |config|
 
   # Config for running specs while have transition period from Paperclip to ActiveStorage
   if Rails.application.config.use_paperclip
-    config.filter_run_excluding active_storage: true
+    config.filter_run_excluding :active_storage
   else
-    config.filter_run_including active_storage: true
+    config.filter_run_including :active_storage
+    config.run_all_when_everything_filtered = true
   end
 
   config.include VersionCake::TestHelpers, type: :controller

@@ -153,7 +153,7 @@ module Spree
         packages = @order.shipments.map(&:to_package)
         @differentiator = Spree::Stock::Differentiator.new(@order, packages)
         @differentiator.missing.each do |variant, quantity|
-          @order.contents.remove(variant, quantity)
+          Spree::Cart::RemoveItem.call(order: @order, variant: variant, quantity: quantity)
         end
       end
 
@@ -190,7 +190,7 @@ module Spree
     end
 
     def check_authorization
-      authorize!(:edit, current_order, cookies.signed[:guest_token])
+      authorize!(:edit, current_order, cookies.signed[:token])
     end
   end
 end

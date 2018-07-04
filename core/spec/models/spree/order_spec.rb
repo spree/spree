@@ -106,7 +106,7 @@ describe Spree::Order, type: :model do
     end
 
     it 'creates a randomized 35 character token' do
-      expect(order.guest_token.size).to eq(35)
+      expect(order.token.size).to eq(35)
     end
   end
 
@@ -572,7 +572,7 @@ describe Spree::Order, type: :model do
 
       after do
         # reset to avoid test pollution
-        Spree::Order.line_item_comparison_hooks = Set.new
+        Rails.application.config.spree.line_item_comparison_hooks = Set.new
       end
 
       it 'matches line item when options match' do
@@ -1120,6 +1120,30 @@ describe Spree::Order, type: :model do
       end
 
       it { expect(order).to receive_message_chain(:shipments, :any?).and_return(false) }
+    end
+  end
+
+  describe '#shipping_eq_billing_address' do
+    let!(:order) { create(:order) }
+
+    context 'with only bill address' do
+      it { expect(order.shipping_eq_billing_address?).to eq(false) }
+    end
+
+    context 'blank addresses' do
+      before do
+        order.bill_address = Spree::Address.new
+        order.ship_address = Spree::Address.new
+      end
+      it { expect(order.shipping_eq_billing_address?).to eq(true) }
+    end
+
+    context 'no addresses' do
+      before do
+        order.bill_address = nil
+        order.ship_address = nil
+      end
+      it { expect(order.shipping_eq_billing_address?).to eq(true) }
     end
   end
 end

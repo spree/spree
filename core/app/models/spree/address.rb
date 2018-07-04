@@ -55,11 +55,20 @@ module Spree
     end
 
     def same_as?(other)
-      return false if other.nil?
-      attributes.except(*EXCLUDED_KEYS_FOR_COMPARISION) == other.attributes.except(*EXCLUDED_KEYS_FOR_COMPARISION)
+      ActiveSupport::Deprecation.warn(<<-EOS, caller)
+        Address#same_as? is deprecated and will be removed in Spree 4.0. Please use Address#== instead"
+      EOS
+
+      self == other
     end
 
-    alias same_as same_as?
+    def same_as(other)
+      ActiveSupport::Deprecation.warn(<<-EOS, caller)
+        Address#same_as is deprecated and will be removed in Spree 4.0. Please use Address#== instead"
+      EOS
+
+      self == other
+    end
 
     def to_s
       "#{full_name}: #{address1}"
@@ -69,13 +78,14 @@ module Spree
       self.class.new(attributes.except('id', 'updated_at', 'created_at'))
     end
 
-    def ==(other_address)
-      self_attrs = attributes
-      other_attrs = other_address.respond_to?(:attributes) ? other_address.attributes : {}
+    def ==(other)
+      return false unless other && other.respond_to?(:value_attributes)
 
-      [self_attrs, other_attrs].each { |attrs| attrs.except!('id', 'created_at', 'updated_at') }
+      value_attributes == other.value_attributes
+    end
 
-      self_attrs == other_attrs
+    def value_attributes
+      attributes.except(*EXCLUDED_KEYS_FOR_COMPARISION)
     end
 
     def empty?
@@ -105,11 +115,6 @@ module Spree
     end
 
     private
-
-    def clear_state_entities
-      clear_state
-      clear_state_name
-    end
 
     def clear_state
       self.state = nil

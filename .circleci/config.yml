@@ -14,7 +14,7 @@ jobs: # a collection of steps
           BUNDLE_JOBS: 4
           BUNDLE_RETRY: 3
           BUNDLE_PATH: ~/spree/vendor/bundle
-          USE_PAPERCLIP: true
+          SPREE_USE_PAPERCLIP: true
       - image: circleci/postgres:10-alpine # database image
         environment: # environment variables for database
           POSTGRES_USER: postgres
@@ -29,19 +29,19 @@ jobs: # a collection of steps
       # Restore bundle cache
       - restore_cache:
           keys:
-            - spree-bundle-v2-{{ .Branch }}
-            - spree-bundle-v2
+            - spree-bundle-v2-{{ .Branch }}-{{ checksum ".ruby-version" }}
+            - spree-bundle-v2-{{ checksum ".ruby-version" }}
 
       # Install gem dependencies
       - run:
           name: Bundle Install
           command: |
-            bundle check || bundle install
+            bundle check --path=~/spree/vendor/bundle || bundle install
             ./build-ci.rb install
 
       # Store bundle cache
       - save_cache:
-          key: spree-bundle-v2-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+          key: spree-bundle-v2-{{ .Branch }}-{{ checksum ".ruby-version" }}
           paths:
             - ~/spree/vendor/bundle
 

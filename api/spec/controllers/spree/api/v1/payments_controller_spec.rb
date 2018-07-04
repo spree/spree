@@ -68,7 +68,7 @@ module Spree
         end
 
         it 'can view the payments for an order given the order token' do
-          api_get :index, order_id: order.to_param, order_token: order.guest_token
+          api_get :index, order_id: order.to_param, order_token: order.token
           expect(json_response['payments'].first).to have_attributes(attributes)
         end
       end

@@ -18,7 +18,7 @@ module Spree
 
     def update
       @variant = Spree::Variant.find(params[:variant_id]) if params[:variant_id]
-      if @order.contents.update_cart(order_params)
+      if Cart::Update.call(order: @order, params: order_params).success?
         respond_with(@order) do |format|
           format.html do
             if params.key?(:checkout)
@@ -38,7 +38,7 @@ module Spree
     def edit
       @order = current_order || Order.incomplete.
                includes(line_items: [variant: [:images, :option_values, :product]]).
-               find_or_initialize_by(guest_token: cookies.signed[:guest_token])
+               find_or_initialize_by(token: cookies.signed[:token])
       associate_user
     end
 
@@ -52,7 +52,7 @@ module Spree
       # 2,147,483,647 is crazy. See issue #2695.
       if quantity.between?(1, 2_147_483_647)
         begin
-          order.contents.add(variant, quantity, options)
+          Spree::Cart::AddItem.call(order: order, variant: variant, quantity: quantity, options: options).value
           order.update_line_item_prices!
           order.create_tax_charge!
           order.update_with_updater!
@@ -96,9 +96,9 @@ module Spree
     def check_authorization
       order = Spree::Order.find_by(number: params[:id]) || current_order
       if order && action_name.to_sym == :show
-        authorize! :show, order, cookies.signed[:guest_token]
+        authorize! :show, order, cookies.signed[:token]
       elsif order
-        authorize! :edit, order, cookies.signed[:guest_token]
+        authorize! :edit, order, cookies.signed[:token]
       else
         authorize! :create, Spree::Order
       end

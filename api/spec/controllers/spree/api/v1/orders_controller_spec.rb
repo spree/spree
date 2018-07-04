@@ -199,12 +199,12 @@ module Spree
     end
 
     it 'can view an order if the token is known' do
-      api_get :show, id: order.to_param, order_token: order.guest_token
+      api_get :show, id: order.to_param, order_token: order.token
       expect(response.status).to eq(200)
     end
 
     it 'can view an order if the token is passed in header' do
-      request.headers['X-Spree-Order-Token'] = order.guest_token
+      request.headers['X-Spree-Order-Token'] = order.token
       api_get :show, id: order.to_param
       expect(response.status).to eq(200)
     end
@@ -284,7 +284,7 @@ module Spree
 
     context 'working with an order' do
       let(:variant) { create(:variant) }
-      let!(:line_item) { order.contents.add(variant, 1) }
+      let!(:line_item) { Spree::Cart::AddItem.call(order: order, variant: variant).value }
       let(:address_params) { { country_id: country.id } }
       let(:billing_address) do
         {
@@ -711,7 +711,7 @@ module Spree
 
       it 'returns 404 status if promotion does not exist' do
         api_put :remove_coupon_code, id: order.number,
-                                     order_token: order.guest_token,
+                                     order_token: order.token,
                                      coupon_code: 'example'
 
         expect(response.status).to eq 404
@@ -730,7 +730,7 @@ module Spree
           expect(order_with_discount_promotion.reload.total.to_f).to eq 100.0
 
           api_put :remove_coupon_code, id: order_with_discount_promotion.number,
-                                       order_token: order_with_discount_promotion.guest_token,
+                                       order_token: order_with_discount_promotion.token,
                                        coupon_code: order_with_discount_promotion.coupon_code
 
           expect(response.status).to eq 200
@@ -752,7 +752,7 @@ module Spree
           expect(order_with_line_item_promotion.reload.total.to_f).to eq 100.0
 
           api_put :remove_coupon_code, id: order_with_line_item_promotion.number,
-                                       order_token: order_with_line_item_promotion.guest_token,
+                                       order_token: order_with_line_item_promotion.token,
                                        coupon_code: order_with_line_item_promotion.coupon_code
 
           expect(response.status).to eq 200
@@ -767,7 +767,7 @@ module Spree
           expect(order_with_line_item_promotion.reload.total.to_f).to eq 200.0
 
           api_put :remove_coupon_code, id: order_with_line_item_promotion.number,
-                                       order_token: order_with_line_item_promotion.guest_token,
+                                       order_token: order_with_line_item_promotion.token,
                                        coupon_code: order_with_line_item_promotion.coupon_code
 
           expect(order_with_line_item_promotion.reload.total.to_f).to eq 210.0

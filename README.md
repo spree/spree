@@ -2,10 +2,10 @@
 <img src="spree_logo.png" width="261">
 
 * Join our Slack at [slack.spreecommerce.org](http://slack.spreecommerce.org/)
+* [Success Stories](https://spreecommerce.org/stories/)
 * [Extensions](https://github.com/spree-contrib)
 * [Documentation](http://guides.spreecommerce.org)
 * [Roadmap](https://github.com/spree/spree/milestones?direction=asc&sort=due_date&state=open)
-* Spree success stories from [OpenCommerce Conf](http://opencommerceconf.org/)
 
 [![Gem Version](https://badge.fury.io/rb/spree.svg)](https://badge.fury.io/rb/spree) [![Circle CI](https://circleci.com/gh/spree/spree.svg?style=shield)](https://circleci.com/gh/spree/spree/tree/master)
 [![Code Climate](https://codeclimate.com/github/spree/spree.svg)](https://codeclimate.com/github/spree/spree)
@@ -13,7 +13,7 @@
 [![Slack Status](http://slack.spreecommerce.org/badge.svg)](http://slack.spreecommerce.org)
 
 **Spree** is a complete open source e-commerce solution built with Ruby on Rails. It
-was originally developed by Sean Schofield and is now maintained by developers from [Spark Solutions](http://sparksolutions.co) and [Vinsol](http://vinsol.com/). We're open to [contributions](#contributing) and accepting new [Core Team](https://github.com/spree/spree/wiki/Core-Team) members.
+was originally developed by Sean Schofield and is now maintained by [Spark Solutions](http://sparksolutions.co). We're open to [contributions](#contributing) and accepting new [Core Team](https://github.com/spree/spree/wiki/Core-Team) members.
 
 Spree consists of several different gems, each of which are maintained
 in a single repository and documented in a single set of
@@ -30,9 +30,9 @@ Demo
 ----
 Try Spree with direct deployment on Heroku:
 
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/spree/spree)
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/spree/spree/tree/3-6-stable)
 
-If you have want to run demo spree application on your machine, you can use our docker image with command below. It will
+If you want to run demo spree application on your machine, you can use our docker image with command below. It will
 download and run sample Spree application on http://localhost:3000
 ```shell
 docker run --rm -it -p 3000:3000 spreecommerce/spree:latest
@@ -43,10 +43,18 @@ Getting Started
 
 Add Spree gems to your Gemfile:
 
+### Rails 5.2
+
+```ruby
+gem 'spree', '~> 3.6.1'
+gem 'spree_auth_devise', '~> 3.3'
+gem 'spree_gateway', '~> 3.3'
+```
+
 ### Rails 5.1
 
 ```ruby
-gem 'spree', '~> 3.4.4'
+gem 'spree', '~> 3.5.0'
 gem 'spree_auth_devise', '~> 3.3'
 gem 'spree_gateway', '~> 3.3'
 ```
@@ -296,3 +304,15 @@ License
 ----------------------
 
 Spree is released under the [New BSD License](https://github.com/spree/spree/blob/master/license.md).
+
+
+About Spark Solutions
+----------------------
+[![Spark Solutions](http://sparksolutions.co/wp-content/uploads/2015/01/logo-ss-tr-221x100.png)][spark]
+
+Spree is maintained by [Spark Solutions Sp. z o.o.][spark].
+
+We are passionate about open source software.
+We are [available for hire][spark].
+
+[spark]:http://sparksolutions.co?utm_source=github

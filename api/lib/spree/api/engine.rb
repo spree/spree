@@ -20,7 +20,7 @@ module Spree
       initializer 'spree.api.versioncake' do |_app|
         VersionCake.setup do |config|
           config.resources do |r|
-            r.resource %r{.*}, [], [], [1]
+            r.resource %r{.*}, [], [], [1, 2]
           end
 
           config.missing_version = 1

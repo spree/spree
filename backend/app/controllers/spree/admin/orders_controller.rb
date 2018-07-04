@@ -119,7 +119,7 @@ module Spree
       end
 
       def open_adjustments
-        adjustments = @order.all_adjustments.closed
+        adjustments = @order.all_adjustments.finalized
         adjustments.update_all(state: 'open')
         flash[:success] = Spree.t(:all_adjustments_opened)
 
@@ -127,7 +127,7 @@ module Spree
       end
 
       def close_adjustments
-        adjustments = @order.all_adjustments.open
+        adjustments = @order.all_adjustments.not_finalized
         adjustments.update_all(state: 'closed')
         flash[:success] = Spree.t(:all_adjustments_closed)
 

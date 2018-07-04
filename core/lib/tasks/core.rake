@@ -167,4 +167,9 @@ use rake db:load_file[/absolute/path/to/sample/filename.rb]}
                         attachment_updated_at: taxon.icon_updated_at)
     end
   end
+
+  desc 'Migrates taxon icons to taxon images after upgrading to Spree 3.7: only needed if you used taxons icons.'
+  task migrate_taxon_icons_to_images: :environment do |_t, _args|
+    Spree::Asset.where(type: 'Spree::TaxonIcon').update_all(type: 'Spree::TaxonImage')
+  end
 end

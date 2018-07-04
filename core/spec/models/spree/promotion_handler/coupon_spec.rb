@@ -124,7 +124,7 @@ module Spree
               general_promo = Promotion.create name: 'General Promo'
               Promotion::Actions::CreateItemAdjustments.create(promotion: general_promo, calculator: calculator) # general_action
 
-              order.contents.add create(:variant)
+              Spree::Cart::AddItem.call(order: order, variant: create(:variant))
             end
 
             # regression spec for #4515
@@ -242,7 +242,7 @@ module Spree
             before do
               3.times do |_i|
                 taxable = create(:product, tax_category: @category, price: 9.0)
-                @order.contents.add(taxable.master, 1)
+                Spree::Cart::AddItem.call(order: @order, variant: taxable.master)
               end
             end
             it 'successfully applies the promo' do
@@ -260,7 +260,7 @@ module Spree
             before do
               3.times do |_i|
                 taxable = create(:product, tax_category: @category, price: 11.0)
-                @order.contents.add(taxable.master, 2)
+                Spree::Cart::AddItem.call(order: @order, variant: taxable.master, quantity: 2)
               end
             end
             it 'successfully applies the promo' do
@@ -285,7 +285,7 @@ module Spree
               allow(@order).to receive_messages coupon_code: '20off'
               3.times do |_i|
                 taxable = create(:product, tax_category: @category, price: 10.0)
-                @order.contents.add(taxable.master, 2)
+                Spree::Cart::AddItem.call(order: @order, variant: taxable.master, quantity: 2)
               end
             end
             it 'successfully applies the promo' do

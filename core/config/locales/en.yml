@@ -1,4 +1,15 @@
 en:
+  activemodel:
+    errors:
+      models:
+        spree/fulfilment_changer:
+          attributes:
+            desired_shipment:
+              can_not_transfer_within_same_shipment: can not be same as current shipment
+              not_enough_stock_at_desired_location: not enough stock in desired stock location
+            current_shipment:
+              has_already_been_shipped: has already been shipped
+              can_not_have_backordered_inventory_units: has backordered inventory units
   activerecord:
     attributes:
       spree/address:
@@ -366,6 +377,10 @@ en:
             attachment:
               not_allowed_content_type: has not allowed content type
               attachment_must_be_present: must be present
+        spree/taxon_image:
+          attributes:
+            attachment:
+              not_allowed_content_type: has not allowed content type
   devise:
     confirmations:
       confirmed: Your account was successfully confirmed. You are now signed in.
@@ -800,6 +815,7 @@ en:
       other: "and %{count} others"
     instructions_to_reset_password: Please enter your email on the form below
     insufficient_stock: Insufficient stock available, only %{on_hand} remaining
+    insufficient_stock_item_quantity: Insufficient stock quantity available
     insufficient_stock_lines_present: Some line items in this order have insufficient quantity.
     intercept_email_address: Intercept Email Address
     intercept_email_instructions: Override email recipient and replace with this address.

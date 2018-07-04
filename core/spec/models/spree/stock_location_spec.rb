@@ -11,6 +11,11 @@ module Spree
       expect(subject.stock_items.count).to eq Variant.count
     end
 
+    it 'validates uniqueness' do
+      StockLocation.create(name: 'Test')
+      expect(StockLocation.new(name: 'Test')).not_to be_valid
+    end
+
     context 'handling stock items' do
       let!(:variant) { create(:variant) }
 

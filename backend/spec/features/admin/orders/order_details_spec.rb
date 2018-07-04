@@ -10,7 +10,7 @@ describe 'Order Details', type: :feature, js: true do
   before do
     create(:shipping_method, name: 'Default')
     order.shipments.create!(stock_location_id: stock_location.id)
-    order.contents.add(product.master, 2)
+    Spree::Cart::AddItem.call(order: order, variant: product.master, quantity: 2)
   end
 
   context 'as Admin' do
@@ -275,7 +275,7 @@ describe 'Order Details', type: :feature, js: true do
             expect(order.shipments.first.stock_location.id).to eq(stock_location2.id)
           end
 
-          it 'allows me to split more than I have if available there' do
+          it 'does not allow to split more than in the original shipment' do
             expect(order.shipments.first.stock_location.id).to eq(stock_location.id)
 
             within_row(1) { click_icon 'split' }
@@ -288,7 +288,7 @@ describe 'Order Details', type: :feature, js: true do
 
             expect(order.shipments.count).to eq(1)
             expect(order.shipments.last.backordered?).to eq(false)
-            expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq(5)
+            expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq(2)
             expect(order.shipments.first.stock_location.id).to eq(stock_location2.id)
           end
 
@@ -394,7 +394,7 @@ describe 'Order Details', type: :feature, js: true do
 
         context 'multiple items in cart' do
           it 'has no problem splitting if multiple items are in the from shipment' do
-            order.contents.add(create(:variant), 2)
+            Spree::Cart::AddItem.call(order: order, variant: create(:variant), quantity: 2)
             expect(order.shipments.count).to eq(1)
             expect(order.shipments.first.manifest.count).to eq(2)
 
@@ -545,7 +545,7 @@ describe 'Order Details', type: :feature, js: true do
 
           it 'splits fine if more than one line_item is in the receiving shipment' do
             variant2 = create(:variant)
-            order.contents.add(variant2, 2, shipment: @shipment2)
+            Spree::Cart::AddItem.call(order: order, variant: variant2, quantity: 2, options: { shipment: @shipment2 })
 
             within_row(1) { click_icon 'split' }
             targetted_select2 @shipment2.number, from: '#s2id_item_stock_location'

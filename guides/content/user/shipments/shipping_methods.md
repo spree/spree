@@ -40,7 +40,7 @@ If a shipping method is available only on backend, then only your store's admini
 
 #### Tracking URL
 
-You can optionally input a tracking URL for your new shipping method. This allows customers to track the progress of their package from your [Stock Location](stock_locations) to the order's shipping address. The string ":tracking" will be replaced with the tracking number you input once you actually process the order.
+You can optionally input a tracking URL for your new shipping method. This allows customers to track the progress of their package from your [Stock Location](configuring_inventory) to the order's shipping address. The string ":tracking" will be replaced with the tracking number you input once you actually process the order.
 
 You may need to check with the shipping carrier to see if they have a Shipping Confirmation URL that customers can use for this service. Some [commonly-used tracking URLs](http://verysimple.com/2011/07/06/ups-tracking-url/) are available online.
 

@@ -122,6 +122,23 @@ Spree::Core::Engine.add_routes do
       get '/taxons/products', to: 'taxons#products', as: :taxon_products
     end
 
+    namespace :v2 do
+      if Rails.env.development? || ENV['EXPOSE_SWAGGER']
+        get 'storefront.yml', to: 'swagger#storefront', as: 'swagger_storefront', format: 'yml'
+      end
+
+      namespace :storefront do
+        resource :cart, controller: :cart, only: %i[show create] do
+          post   :add_item
+          post   :empty
+          delete :remove_line_item
+          patch :set_quantity
+        end
+
+        resources :products, only: %i[index show]
+      end
+    end
+
     spree_path = Rails.application.routes.url_helpers.try(:spree_path, trailing_slash: true) || '/'
 
     match 'v:api/*path', to: redirect { |params, request|

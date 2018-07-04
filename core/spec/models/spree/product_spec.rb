@@ -12,6 +12,24 @@ describe Spree::Product, type: :model do
     let(:product) { create(:product) }
     let(:variant) { create(:variant, product: product) }
 
+    %w[purchasable backorderable in_stock].each do |method_name|
+      describe "#{method_name}?" do
+        before { allow(product).to receive(:variants_including_master) { [product.master, variant] } }
+
+        it "returns false if no variant is #{method_name.humanize.downcase}" do
+          allow_any_instance_of(Spree::Variant).to receive("#{method_name}?").and_return(false)
+
+          expect(product.send("#{method_name}?")).to eq false
+        end
+
+        it "returns true if variant that is #{method_name.humanize.downcase} exists" do
+          allow(variant).to receive("#{method_name}?").and_return(true)
+
+          expect(product.send("#{method_name}?")).to eq true
+        end
+      end
+    end
+
     context '#duplicate' do
       before do
         allow(product).to receive_messages taxons: [create(:taxon)]

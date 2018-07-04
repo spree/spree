@@ -70,11 +70,7 @@ end
 
 require 'spree/core/version'
 
-require 'spree/core/environment_extension'
-require 'spree/core/environment/calculators'
-require 'spree/core/environment'
 require 'spree/core/number_generator'
-require 'spree/promo/environment'
 require 'spree/migrations'
 require 'spree/core/engine'
 
@@ -82,8 +78,10 @@ require 'spree/i18n'
 require 'spree/localized_number'
 require 'spree/money'
 require 'spree/permitted_attributes'
+require 'spree/service_module'
 
 require 'spree/core/importer'
+require 'spree/core/query_filters'
 require 'spree/core/product_duplicator'
 require 'spree/core/controller_helpers/auth'
 require 'spree/core/controller_helpers/common'

@@ -40,16 +40,16 @@ describe Spree::Core::ControllerHelpers::Auth, type: :controller do
     end
   end
 
-  describe '#set_guest_token' do
+  describe '#set_token' do
     controller(FakesController) do
       def index
-        set_guest_token
+        set_token
         render plain: 'index'
       end
     end
     it 'sends cookie header' do
       get :index
-      expect(response.cookies['guest_token']).not_to be_nil
+      expect(response.cookies['token']).not_to be_nil
     end
     it 'sets httponly flag' do
       get :index
