@@ -7,8 +7,8 @@ module Spree
 
         private
 
-        def run_with_bad_request_handling(&block)
-          block.call
+        def render_serialized_resource(resource, status)
+          render json: resource, status: status
         rescue ArgumentError => exception
           render json: { error: exception.message }, status: 400
         end

@@ -4,9 +4,7 @@ module Spree
       module Storefront
         class ProductsController < ::Spree::Api::V2::BaseController
           def show
-            run_with_bad_request_handling do
-              render json: serialize_resource(resource), status: 200
-            end
+            render_serialized_resource serialize_resource(resource), 200
           end
 
           private

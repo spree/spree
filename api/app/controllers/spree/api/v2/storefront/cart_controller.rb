@@ -7,7 +7,8 @@ module Spree
             spree_authorize! :create, Spree::Order
 
             order = spree_current_order || dependencies[:create_cart].call(user: spree_current_user, store: spree_current_store).value
-            render json: serialize_order(order), status: 201
+
+            render_serialized_resource serialize_order(order), 201
           end
 
           def add_item
@@ -20,7 +21,8 @@ module Spree
               spree_authorize! :show, variant
 
               dependencies[:add_item_to_cart].call(order: spree_current_order, variant: variant, quantity: params[:quantity])
-              render json: serialized_current_order, status: 200
+
+              render_serialized_resource serialized_current_order, 200
             end
           end
 
@@ -33,7 +35,8 @@ module Spree
               order:     spree_current_order,
               line_item: line_item
             )
-            render json: serialized_current_order, status: 200
+
+            render_serialized_resource serialized_current_order, 200
           end
 
           def empty
@@ -42,7 +45,8 @@ module Spree
             spree_authorize! :update, spree_current_order, order_token
 
             spree_current_order.empty!
-            render json: serialized_current_order, status: 200
+
+            render_serialized_resource serialized_current_order, 200
           end
 
           def set_quantity
@@ -55,7 +59,7 @@ module Spree
             result = dependencies[:set_item_quantity].call(order: spree_current_order, line_item: line_item, quantity: params[:quantity])
 
             if result.success?
-              render json: serialized_current_order, status: 200
+              render_serialized_resource serialized_current_order, 200
             else
               render json: { error: result.value }, status: 422
             end
@@ -65,7 +69,8 @@ module Spree
             raise ActiveRecord::RecordNotFound if spree_current_order.nil?
 
             spree_authorize! :show, spree_current_order, order_token
-            render json: serialized_current_order, status: 200
+
+            render_serialized_resource serialized_current_order, 200
           end
 
           private
@@ -85,7 +90,7 @@ module Spree
           end
 
           def serialize_order(order)
-            dependencies[:cart_serializer].new(order.reload, include: [:line_items, :variants, :promotions]).serializable_hash
+            dependencies[:cart_serializer].new(order.reload, include: resource_includes).serializable_hash
           end
 
           def line_item
@@ -94,6 +99,18 @@ module Spree
 
           def render_error_item_quantity
             render json: { error: I18n.t(:wrong_quantity, scope: 'spree.api.v2.cart') }, status: 422
+          end
+
+          def resource_includes
+            request_includes || default_resource_includes
+          end
+
+          def default_resource_includes
+            %i[
+              line_items
+              variants
+              promotions
+            ]
           end
         end
       end
