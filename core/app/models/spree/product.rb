@@ -125,19 +125,19 @@ module Spree
 
     alias master_images images
 
-    # Can't use any? due to https://github.com/Netflix/fast_jsonapi/issues/259
+    # Cant use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
     def purchasable?
-      variants_including_master.count(&:purchasable?).positive?
+      variants_including_master.any? { |variant| variant.purchasable? }
     end
 
-    # Can't use any? due to https://github.com/Netflix/fast_jsonapi/issues/259
+    # Cant use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
     def in_stock?
-      variants_including_master.count(&:in_stock?).positive?
+      variants_including_master.any? { |variant| variant.in_stock? }
     end
 
-    # Can't use any? due to https://github.com/Netflix/fast_jsonapi/issues/259
+    # Cant use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
     def backorderable?
-      variants_including_master.count(&:backorderable?).positive?
+      variants_including_master.any? { |variant| variant.backorderable? }
     end
 
     def find_or_build_master
