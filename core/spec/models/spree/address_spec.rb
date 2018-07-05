@@ -394,17 +394,17 @@ describe Spree::Address, type: :model do
     end
   end
 
-  context '#same_as' do
+  context '#==' do
     let(:address) { create(:address) }
     let(:address2) { address.clone }
 
     context 'same addresses' do
-      it { expect(address.same_as?(address2)).to eq(true) }
+      it { expect(address == address2).to eq(true) }
     end
 
     context 'different addresses' do
       before { address2.first_name = 'Someone Else' }
-      it { expect(address.same_as?(address2)).to eq(false) }
+      it { expect(address == address2).to eq(false) }
     end
   end
 
