@@ -616,9 +616,9 @@ describe Spree::Order, type: :model do
       expect(order.created_by).to eql(created_by)
       expect(order.created_by_id).to eql(created_by.id)
 
-      expect(order.bill_address.same_as?(bill_address)).to be(true) if order.bill_address
+      expect(order.bill_address == bill_address).to be(true) if order.bill_address
 
-      expect(order.ship_address.same_as?(ship_address)).to be(true) if order.ship_address
+      expect(order.ship_address == ship_address).to be(true) if order.ship_address
     end
 
     shared_examples_for '#associate_user!' do |persisted = false|
