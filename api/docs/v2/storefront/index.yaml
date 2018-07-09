@@ -501,15 +501,11 @@ components:
                   type: number
     Product:
       required:
-        - id
-        - type
-        - attributes
-        - relationships
+        - data
+        - included
       properties:
         data:
-          $ref: '#/components/schemas/ProductData'
-        relationships:
-          $ref: '#/components/schemas/ProductRelationships'
+          $ref: '#/components/schemas/ProductAttributesAndRelationships'
         included:
           type: array
           items:
@@ -518,64 +514,54 @@ components:
               - $ref: '#/components/schemas/OptionValue'
               - $ref: '#/components/schemas/ProductProperty'
               - $ref: '#/components/schemas/Property'
-              - $ref: '#/components/schemas/VariantDataAndRelationships'
+              - $ref: '#/components/schemas/VariantAttributesAndRelationships'
               - $ref: '#/components/schemas/Image'
-              - $ref: '#/components/schemas/TaxonDataAndRelationships'
-    ProductData:
+              - $ref: '#/components/schemas/TaxonAttributesAndRelationships'
+    ProductAttributes:
       type: object
       properties:
-        id:
+        name:
           type: string
-          example: '1'
-        type:
+          example: 'Example product'
+        description:
           type: string
-          default: 'products'
-          example: 'products'
-        attributes:
-          type: object
-          properties:
-            name:
-              type: string
-              example: 'Example product'
-            description:
-              type: string
-              example: 'Example description'
-            price:
-              type: string
-              example: '15.99'
-            currency:
-              type: string
-              example: 'USD'
-            display_price:
-              type: string
-              example: $15.99
-            available_on:
-              type: string
-              example: '2012-10-17T03:43:57Z'
-            purchasable:
-              type: boolean
-              example: true
-              description: 'Indicates if any of Variants are in stock or backorderable'
-            in_stock:
-              type: boolean
-              example: true
-              description: 'Indicates if any of Variants are in stock'
-            backorderable:
-              type: boolean
-              example: true
-              description: 'Indicates if any of Variants are backeorderable'
-            slug:
-              type: string
-              example: 'example-product'
-            meta_description:
-              type: string
-              example: 'Example product'
-            meta_keywords:
-              type: string
-              example: 'example, product'
-            updated_at:
-              type: string
-              example: '2018-05-25T11:22:57.214-04:00'
+          example: 'Example description'
+        price:
+          type: string
+          example: '15.99'
+        currency:
+          type: string
+          example: 'USD'
+        display_price:
+          type: string
+          example: $15.99
+        available_on:
+          type: string
+          example: '2012-10-17T03:43:57Z'
+        purchasable:
+          type: boolean
+          example: true
+          description: 'Indicates if any of Variants are in stock or backorderable'
+        in_stock:
+          type: boolean
+          example: true
+          description: 'Indicates if any of Variants are in stock'
+        backorderable:
+          type: boolean
+          example: true
+          description: 'Indicates if any of Variants are backeorderable'
+        slug:
+          type: string
+          example: 'example-product'
+        meta_description:
+          type: string
+          example: 'Example product'
+        meta_keywords:
+          type: string
+          example: 'example, product'
+        updated_at:
+          type: string
+          example: '2018-05-25T11:22:57.214-04:00'
     ProductRelationships:
       type: object
       properties:
@@ -617,10 +603,17 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/Relation'
-    ProductDataAndRelationships:
+    ProductAttributesAndRelationships:
       properties:
-        data:
-          $ref: '#/components/schemas/ProductData'
+        id:
+          type: string
+          example: '1'
+        type:
+          type: string
+          default: 'products'
+          example: 'products'
+        attributes:
+          $ref: '#/components/schemas/ProductAttributes'
         relationships:
           $ref: '#/components/schemas/ProductRelationships'
     Relation:
@@ -634,84 +627,70 @@ components:
           type: string
     Taxon:
       required:
-        - id
-        - type
-        - attributes
-        - relationships
+        - data
+        - included
       properties:
         data:
-          $ref: '#/components/schemas/TaxonData'
-        relationships:
-          $ref: '#/components/schemas/TaxonRelationships'
+          $ref: '#/components/schemas/TaxonAttributesAndRelationships'
         included:
           type: array
           items:
             oneOf:
-              - $ref: '#/components/schemas/ProductDataAndRelationships'
-              - $ref: '#/components/schemas/TaxonDataAndRelationships'
-              - $ref: '#/components/schemas/TaxonomyDataAndRelationships'
+              - $ref: '#/components/schemas/ProductAttributesAndRelationships'
+              - $ref: '#/components/schemas/TaxonAttributesAndRelationships'
+              - $ref: '#/components/schemas/TaxonomyAttributesAndRelationships'
               - $ref: '#/components/schemas/Image'
-    TaxonData:
+    TaxonAttributes:
       type: object
       properties:
-        id:
+        name:
           type: string
-          example: '1'
-        type:
+          example: 'T-shirts'
+        pretty_name:
           type: string
-          default: 'taxons'
-          example: 'taxons'
-        attributes:
-          type: object
-          properties:
-            name:
-              type: string
-              example: 'T-shirts'
-            pretty_name:
-              type: string
-              example: 'Clothes > T-shirts'
-            permalink:
-              type: string
-              example: 't-shirts'
-            seo_title:
-              type: string
-              example: 'Clothes - T-shirts'
-            meta_title:
-              type: string
-              example: 'T-shirts'
-            meta_description:
-              type: string
-              example: 'A list of cool t-shirts '
-            meta_keywords:
-              type: string
-              example: 't-shirts, cool'
-            left:
-              type: integer
-              example: 1
-            right:
-              type: integer
-              example: 2
-            position:
-              type: integer
-              example: 0
-            depth:
-              type: integer
-              example: 1
-            is_root:
-              type: boolean
-              example: true
-              description: 'Indicates if the Taxon is the root node of this Taxonomy tree'
-            is_child:
-              type: boolean
-              example: true
-              description: 'Returns true is this is a child node of this Taxonomy tree'
-            is_leaf:
-              type: boolean
-              example: false
-              description: 'Returns true if this is the end of a branch of this Taxonomy tree'
-            updated_at:
-              type: string
-              example: '2018-06-18T10:57:29.704Z'
+          example: 'Clothes > T-shirts'
+        permalink:
+          type: string
+          example: 't-shirts'
+        seo_title:
+          type: string
+          example: 'Clothes - T-shirts'
+        meta_title:
+          type: string
+          example: 'T-shirts'
+        meta_description:
+          type: string
+          example: 'A list of cool t-shirts '
+        meta_keywords:
+          type: string
+          example: 't-shirts, cool'
+        left:
+          type: integer
+          example: 1
+        right:
+          type: integer
+          example: 2
+        position:
+          type: integer
+          example: 0
+        depth:
+          type: integer
+          example: 1
+        is_root:
+          type: boolean
+          example: true
+          description: 'Indicates if the Taxon is the root node of this Taxonomy tree'
+        is_child:
+          type: boolean
+          example: true
+          description: 'Returns true is this is a child node of this Taxonomy tree'
+        is_leaf:
+          type: boolean
+          example: false
+          description: 'Returns true if this is the end of a branch of this Taxonomy tree'
+        updated_at:
+          type: string
+          example: '2018-06-18T10:57:29.704Z'
     TaxonRelationships:
       type: object
       properties:
@@ -749,17 +728,32 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/Relation'
-    TaxonDataAndRelationships:
+    TaxonAttributesAndRelationships:
       properties:
-        data:
-          $ref: '#/components/schemas/TaxonData'
+        id:
+          type: string
+          example: '1'
+        type:
+          type: string
+          default: 'taxons'
+          example: 'taxons'
+        attributes:
+          $ref: '#/components/schemas/TaxonAttributes'
         relationships:
           $ref: '#/components/schemas/TaxonRelationships'
-    TaxonomyDataAndRelationships:
-      properties:
-        data:
-          $ref: '#/components/schemas/TaxonomyData'
-    TaxonomyData:
+    TaxonomyAttributesAndRelationships:
+      type: object
+        properties:
+          id:
+            type: string
+            example: '1'
+          type:
+            type: string
+            default: 'taxonomies'
+            example: 'taxonomies'
+          attributes:
+            $ref: '#/components/schemas/TaxonomyAttributes'
+    TaxonomyAttributes:
       type: object
       properties:
         id:
@@ -807,7 +801,6 @@ components:
     OptionValue:
       required:
         - data
-        - relationships
       properties:
         data:
           type: object
@@ -831,14 +824,14 @@ components:
                 position:
                   type: integer
                   example: 1
-        relationships:
-          type: object
-          properties:
-            option_type:
+            relationships:
               type: object
               properties:
-                data:
-                  $ref: '#/components/schemas/Relation'
+                option_type:
+                  type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/Relation'
     Property:
       required:
         - data
@@ -865,7 +858,6 @@ components:
     ProductProperty:
       required:
         - data
-        - relationships
       properties:
         data:
           type: object
@@ -886,24 +878,21 @@ components:
                 presentation:
                   type: string
                   example: 'Silk'
-        relationships:
-          type: object
-          properties:
-            property:
+            relationships:
               type: object
               properties:
-                data:
-                  $ref: '#/components/schemas/Property'
+                property:
+                  type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/Property'
     Variant:
       required:
         - data
-        - relationships
         - included
       properties:
         data:
-          $ref: '#/components/schemas/VariantData'
-        relationships:
-          $ref: '#/components/schemas/VariantRelationships'
+          $ref: '#/components/schemas/VariantAttributesAndRelationships'
         included:
           type: array
           items:
@@ -911,74 +900,64 @@ components:
               - $ref: '#/components/schemas/Image'
               - $ref: '#/components/schemas/OptionValue'
               - $ref: '#/components/schemas/OptionType'
-    VariantData:
+    VariantAttributes:
       type: object
       properties:
-        id:
+        name:
           type: string
-          example: '1'
-        type:
+          example: 'Example product'
+          description: 'Product name'
+        sku:
           type: string
-          default: 'variants'
-          example: 'variants'
-        attributes:
-          type: object
-          properties:
-            name:
-              type: string
-              example: 'Example product'
-              description: 'Product name'
-            sku:
-              type: string
-              example: 'SKU-1001'
-            price:
-              type: string
-              example: '15.99'
-            currency:
-              type: string
-              example: 'USD'
-            display_price:
-              type: string
-              example: '$15.99'
-            weight:
-              type: string
-              example: '10'
-            height:
-              type: string
-              example: '10'
-            width:
-              type: string
-              example: '10'
-            depth:
-              type: string
-              example: '10'
-            is_master:
-              type: boolean
-              example: false
-              description: 'Indicates if Variant is the master Variant'
-            options_text:
-              type: string
-              example: 'Size: small, Color: red'
-            slug:
-              type: string
-              example: 'example-product'
-              description: 'Product slug'
-            description:
-              type: string
-              example: 'Example description'
-              description: 'Product description'
-            purchasable:
-              type: boolean
-              example: true
-              description: 'Indicates if Variant is in stock or backorderable'
-            in_stock:
-              type: boolean
-              example: true
-              description: 'Indicates if Variant is in stock'
-            backorderable:
-              type: boolean
-              example: true
-              description: 'Indicates if Variant is backorderable'
+          example: 'SKU-1001'
+        price:
+          type: string
+          example: '15.99'
+        currency:
+          type: string
+          example: 'USD'
+        display_price:
+          type: string
+          example: '$15.99'
+        weight:
+          type: string
+          example: '10'
+        height:
+          type: string
+          example: '10'
+        width:
+          type: string
+          example: '10'
+        depth:
+          type: string
+          example: '10'
+        is_master:
+          type: boolean
+          example: false
+          description: 'Indicates if Variant is the master Variant'
+        options_text:
+          type: string
+          example: 'Size: small, Color: red'
+        slug:
+          type: string
+          example: 'example-product'
+          description: 'Product slug'
+        description:
+          type: string
+          example: 'Example description'
+          description: 'Product description'
+        purchasable:
+          type: boolean
+          example: true
+          description: 'Indicates if Variant is in stock or backorderable'
+        in_stock:
+          type: boolean
+          example: true
+          description: 'Indicates if Variant is in stock'
+        backorderable:
+          type: boolean
+          example: true
+          description: 'Indicates if Variant is backorderable'
     VariantRelationships:
       type: object
       properties:
@@ -1001,10 +980,17 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/Relation'
-    VariantDataAndRelationships:
+    VariantAttributesAndRelationships:
       properties:
-        data:
-          $ref: '#/components/schemas/VariantData'
+        id:
+          type: string
+          example: '1'
+        type:
+          type: string
+          default: 'variants'
+          example: 'variants'
+        attributes:
+          $ref: '#/components/schemas/VariantAttributes'
         relationships:
           $ref: '#/components/schemas/VariantRelationships'
   parameters:
