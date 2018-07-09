@@ -146,6 +146,52 @@ paths:
         - orderToken: []
         - bearerAuth: []
 
+  '/products':
+    get:
+      description: >-
+        To view the details for a single product, make a request using that
+        product's permalink:<br /> <code>GET /api/v2/products/a-product</code>
+        <br /><br />You may also query by the product's id attribute:<br /><code>GET
+        /api/v1/products/1 </code> <br /><br />Note that the API will attempt a
+        permalink lookup before an ID lookup.
+      tags:
+        - Products
+      operationId: show
+      parameters:
+        - in: query
+          name: filter
+          schema:
+            type: string
+            example: ['price=10,20','taxons=1,2,3,4','name=shirt','options[color]=red','options[color=blue','options[size]=10']
+          description: >-
+            Filter Products based on:
+            <ul>
+              <li>name (supports wild-card, partial-word match search)</li>
+              <li>taxons (categories, brands, etc)</li>
+              <li>price (range)</li>
+              <li>options (eg. color, size)</li>
+            </ul>
+        - in: query
+          name: sort
+          schema:
+            type: string
+          example: >-
+            -updated_at,price
+          description:  >-
+            Sort products based on:
+            <ul>
+              <li>price (ascending/descenging)</li>
+              <li>price (ascending/descenging)</li>
+              <li>updated_at (ascending/descenging)</li>
+            </ul>
+            Use <q>-</q> sign to set descenging sort, eg. <q>-updated_at</q>
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductsList'
   '/products/{id}':
     get:
       description: >-
