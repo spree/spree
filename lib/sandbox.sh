@@ -38,7 +38,9 @@ cd ./sandbox
 
 cat <<RUBY >> Gemfile
 gem 'spree', path: '..'
+
 gem 'spree_auth_devise', github: 'spree/spree_auth_devise', branch: 'master'
+gem 'spree_gateway', github: 'spree/spree_gateway', branch: 'master'
 
 group :test, :development do
   gem 'bullet'
@@ -52,3 +54,4 @@ bundle exec rails db:drop || true
 bundle exec rails db:create
 bundle exec rails g spree:install --auto-accept --user_class=Spree::User --enforce_available_locales=true --copy_views=false
 bundle exec rails g spree:auth:install
+bundle exec rails g spree_gateway:install
