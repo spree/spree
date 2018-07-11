@@ -36,11 +36,22 @@ fi
 
 cd ./sandbox
 
+if [ "$SPREE_AUTH_DEVISE_PATH" != "" ]; then
+  SPREE_AUTH_DEVISE_GEM="gem 'spree_auth_devise', path: '$SPREE_AUTH_DEVISE_PATH'"
+else
+  SPREE_AUTH_DEVISE_GEM="gem 'spree_auth_devise', github: 'spree/spree_auth_devise', branch: 'master'"
+fi
+
+if [ "$SPREE_GATEWAY_PATH" != "" ]; then
+  SPREE_GATEWAY_GEM="gem 'spree_gateway', path: '$SPREE_GATEWAY_PATH'"
+else
+  SPREE_GATEWAY_GEM="gem 'spree_gateway', github: 'spree/spree_gateway', branch: 'master'"
+fi
+
 cat <<RUBY >> Gemfile
 gem 'spree', path: '..'
-
-gem 'spree_auth_devise', github: 'spree/spree_auth_devise', branch: 'master'
-gem 'spree_gateway', github: 'spree/spree_gateway', branch: 'master'
+$SPREE_AUTH_DEVISE_GEM
+$SPREE_GATEWAY_GEM
 
 group :test, :development do
   gem 'bullet'
