@@ -9,6 +9,7 @@ module Spree
 
         def run_with_bad_request_handling(&block)
           block.call
+
         rescue ArgumentError => exception
           render json: { error: exception.message }, status: 400
         end
