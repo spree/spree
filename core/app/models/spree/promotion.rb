@@ -129,7 +129,7 @@ module Spree
       # Promotions without rules are eligible by default.
       return [] if rules.none?
       specific_rules = rules.select { |rule| rule.applicable?(promotable) }
-      # Promotions with no appliable rules are not eligible.
+      # Promotions without applicable rules are not eligible.
       return nil if specific_rules.none?
 
       rule_eligibility = Hash[specific_rules.map do |rule|
