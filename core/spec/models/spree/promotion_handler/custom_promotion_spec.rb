@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 class CustomPromotionRule < Spree::PromotionRule
-  def applicable?(promotable)
+  def applicable?(_promotable)
     false
   end
 end
@@ -14,7 +14,7 @@ module Spree
       let(:order) { line_item.order }
       let(:rule) { CustomPromotionRule.create(promotion: promotion) }
 
-      it 'should not be eligible' do
+      it 'is not eligible' do
         promotion.promotion_rules << rule
         expect(promotion.eligible?(order)).to be false
       end
