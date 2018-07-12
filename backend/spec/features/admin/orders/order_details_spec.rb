@@ -590,6 +590,21 @@ describe 'Order Details', type: :feature, js: true do
           end
         end
       end
+
+      context 'display order summary' do
+        before do
+          visit spree.cart_admin_order_path(order)
+        end
+
+        it 'contains elements' do
+          within('.additional-info') do
+            expect(page).to have_content('complete')
+            expect(page).to have_content('spree')
+            expect(page).to have_content('backorder')
+            expect(page).to have_content('balance due')
+          end
+        end
+      end
     end
   end
 

@@ -596,6 +596,7 @@ en:
       other: 'Subtotal (%{count} items)'
     categories: Categories
     category: Category
+    channel: Channel
     charged: Charged
     checkout: Checkout
     choose_a_customer: Choose a customer

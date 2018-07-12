@@ -16,6 +16,12 @@
         </td>
       </tr>
       <tr>
+        <td data-hook='admin_order_tab_channel_title'>
+          <strong><%= Spree.t(:channel) %>:</strong>
+        </td>
+        <td id='order_channel'><%= @order.channel %></td>
+      </tr>
+      <tr>
         <td data-hook='admin_order_tab_subtotal_title'>
           <strong><%= Spree.t(:subtotal) %>:</strong>
         </td>
