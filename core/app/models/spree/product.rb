@@ -139,6 +139,21 @@ module Spree
       variants_including_master.count(&:backorderable?).positive?
     end
 
+    # Cant use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
+    def purchasable?
+      variants_including_master.any? { |variant| variant.purchasable? }
+    end
+
+    # Cant use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
+    def in_stock?
+      variants_including_master.any? { |variant| variant.in_stock? }
+    end
+
+    # Cant use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
+    def backorderable?
+      variants_including_master.any? { |variant| variant.backorderable? }
+    end
+
     def find_or_build_master
       master || build_master
     end
