@@ -119,6 +119,13 @@
         </div>
 
         <div class="col-xs-12 col-md-4">
+          <div class="form-group">
+            <%= label_tag :q_channel_eq, Spree.t(:channel) %>
+            <%= f.select :channel_eq, Spree::Order.pluck('DISTINCT channel'), { include_blank: true }, class: 'select2 js-filterable' %>
+          </div>
+        </div>
+
+        <div class="col-xs-12 col-md-4">
 
           <div class="form-group">
 
