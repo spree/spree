@@ -1,13 +1,146 @@
 require 'spec_helper'
 
 describe 'API V2 Storefront Products Spec', type: :request do
-  let(:product) { create(:product) }
+  let!(:products)           { create_list(:product, 5) }
+  let(:taxon)               { create(:taxon) }
+  let(:product_with_taxon)  { create(:product, taxons: [taxon]) }
+  let(:product_with_name)   { create(:product, name: 'Test Product') }
+  let(:product_with_price)  { create(:product, price: 13.44) }
+  let!(:option_type)        { create(:option_type) }
+  let!(:option_value)       { create(:option_value, option_type: option_type) }
+  let(:product_with_option) { create(:product, option_types: [option_type]) }
+  let!(:variant)            { create(:variant, product: product_with_option, option_values: [option_value]) }
+  let(:product)             { create(:product) }
+
+  shared_examples 'returns proper status' do
+    it 'returns a proper HTTP status' do
+      expect(response.status).to eq 200
+    end
+  end
+
+  describe 'products#index' do
+    context 'with no params' do
+      before { get '/api/v2/storefront/products' }
+
+      it_behaves_like 'returns proper status'
+
+      it 'returns all products' do
+        expect(json_response['data'].count).to eq Spree::Product.count
+        expect(json_response['data'].first).to have_type('product')
+      end
+    end
+
+    context 'with specified ids' do
+      before { get "/api/v2/storefront/products?ids=#{products.first.id}" }
+
+      it_behaves_like 'returns proper status'
+
+      it 'returns products with specified ids' do
+        expect(json_response['data'].count).to eq 1
+        expect(json_response['data'].first).to have_id(products.first.id.to_s)
+      end
+    end
+
+    context 'with specified price range' do
+      before { get "/api/v2/storefront/products?price=#{product_with_price.price.to_f},#{product_with_price.price.to_f + 0.04}" }
+
+      it_behaves_like 'returns proper status'
+
+      it 'returns products with specified price' do
+        expect(json_response['data'].first).to have_id(product_with_price.id.to_s)
+        expect(json_response['data'].first).to have_attribute(:price).with_value(product_with_price.price.to_f.to_s)
+      end
+    end
+
+    context 'with specified taxon_ids' do
+      before { get "/api/v2/storefront/products?taxons=#{product_with_taxon.taxons.first.id}" }
+
+      it_behaves_like 'returns proper status'
+
+      it 'returns products with specified taxons' do
+        expect(json_response['data'].first).to have_id(product_with_taxon.id.to_s)
+      end
+    end
+
+    context 'with specified name' do
+      before { get "/api/v2/storefront/products?name=#{product_with_name.name}" }
+
+      it_behaves_like 'returns proper status'
+
+      it 'returns products with specified name' do
+        expect(json_response['data'].first).to have_id(product_with_name.id.to_s)
+        expect(json_response['data'].first).to have_attribute(:name).with_value(product_with_name.name)
+      end
+    end
+
+    context 'with specified options' do
+      before { get "/api/v2/storefront/products?options[#{option_type.name}]=#{option_value.name}" }
+
+      it_behaves_like 'returns proper status'
+
+      it 'returns products with specified options' do
+        expect(json_response['data'].first).to have_id(product_with_option.id.to_s)
+        expect(json_response['included']).to include(have_type('option_type').and(have_attribute(:name).with_value(option_type.name)))
+        expect(json_response['included']).to include(have_type('option_value').and(have_attribute(:name).with_value(option_value.name)))
+      end
+    end
+
+    context 'sort products' do
+      context 'sorting by price' do
+        context 'ascending order' do
+          before { get '/api/v2/storefront/products?sort=price' }
+
+          it_behaves_like 'returns proper status'
+
+          it 'returns products sorted by price' do
+            expect(json_response['data'].count).to      eq Spree::Product.count
+            expect(json_response['data'].pluck(:id)).to eq Spree::Product.joins(master: :prices).select("#{Spree::Product.table_name}.*, #{Spree::Price.table_name}.amount").distinct.order("#{Spree::Price.table_name}.amount").map(&:id).map(&:to_s)
+          end
+        end
+
+        context 'descending order' do
+          before { get '/api/v2/storefront/products?sort=-price' }
+
+          it_behaves_like 'returns proper status'
+
+          it 'returns products sorted by price with descending order' do
+            expect(json_response['data'].count).to      eq Spree::Product.count
+            expect(json_response['data'].pluck(:id)).to eq Spree::Product.joins(master: :prices).select("#{Spree::Product.table_name}.*, #{Spree::Price.table_name}.amount").distinct.order("#{Spree::Price.table_name}.amount DESC").map(&:id).map(&:to_s)
+          end
+        end
+      end
+
+      context 'sorting by updated_at' do
+        context 'ascending order' do
+          before { get '/api/v2/storefront/products?sort=updated_at' }
+
+          it_behaves_like 'returns proper status'
+
+          it 'returns products sorted by updated_at' do
+            expect(json_response['data'].count).to      eq Spree::Product.count
+            expect(json_response['data'].pluck(:id)).to eq Spree::Product.order(:updated_at).pluck(:id).map(&:to_s)
+          end
+        end
+
+        context 'descending order' do
+          before { get '/api/v2/storefront/products?sort=-updated_at' }
+
+          it_behaves_like 'returns proper status'
+
+          it 'returns products sorted by updated_at with descending order' do
+            expect(json_response['data'].count).to      eq Spree::Product.count
+            expect(json_response['data'].pluck(:id)).to eq Spree::Product.order(updated_at: :desc).pluck(:id).map(&:to_s)
+          end
+        end
+      end
+    end
+  end
 
   describe 'products#show' do
     context 'with non-existing product' do
       before { get '/api/v2/storefront/products/example' }
 
-      it 'returns a propert HTTP status' do
+      it 'returns a proper HTTP status' do
         expect(response.status).to eq 404
       end
     end
