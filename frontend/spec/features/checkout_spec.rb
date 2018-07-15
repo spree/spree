@@ -433,7 +433,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
     context 'the promotion makes order free (downgrade it total to 0.0)' do
       let(:promotion2) { Spree::Promotion.create(name: 'test-7450', code: 'test-7450') }
       let(:calculator2) do
-        Spree::Calculator::FlatRate.create(preferences: { currency: 'USD', amount: BigDecimal.new('99999') })
+        Spree::Calculator::FlatRate.create(preferences: { currency: 'USD', amount: BigDecimal('99999') })
       end
       let(:action2) { Spree::Promotion::Actions::CreateItemAdjustments.create(calculator: calculator2) }
 

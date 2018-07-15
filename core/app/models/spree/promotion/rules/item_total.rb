@@ -19,8 +19,8 @@ module Spree
         def eligible?(order, _options = {})
           item_total = order.item_total
 
-          lower_limit_condition = item_total.send(preferred_operator_min == 'gte' ? :>= : :>, BigDecimal.new(preferred_amount_min.to_s))
-          upper_limit_condition = item_total.send(preferred_operator_max == 'lte' ? :<= : :<, BigDecimal.new(preferred_amount_max.to_s))
+          lower_limit_condition = item_total.send(preferred_operator_min == 'gte' ? :>= : :>, BigDecimal(preferred_amount_min.to_s))
+          upper_limit_condition = item_total.send(preferred_operator_max == 'lte' ? :<= : :<, BigDecimal(preferred_amount_max.to_s))
 
           eligibility_errors.add(:base, ineligible_message_max) unless upper_limit_condition
           eligibility_errors.add(:base, ineligible_message_min) unless lower_limit_condition
