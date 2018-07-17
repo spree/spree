@@ -48,7 +48,7 @@ module Spree
       validates :cost_price
       validates :price
     end
-    validates :sku, uniqueness: { conditions: -> { where(deleted_at: nil, vendor_id: nil) } }, allow_blank: true
+    validates :sku, uniqueness: { conditions: -> { where(deleted_at: nil, vendor_id: nil) } }, allow_blank: true, if: Proc.new{|v| v.vendor_id.nil?}
 
     after_create :create_stock_items
     after_create :set_master_out_of_stock, unless: :is_master?
