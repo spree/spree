@@ -42,7 +42,7 @@ module Spree
 
     validate :check_price
 
-    validates :option_values, presence: true, if: {!is_master? && vendor_id.blank? }
+    validates :option_values, presence: true, if: Proc.new{|v| !v.is_master? && v.vendor_id.blank? } # skip validation if master variant cloned at shop
 
     with_options numericality: { greater_than_or_equal_to: 0, allow_nil: true } do
       validates :cost_price
