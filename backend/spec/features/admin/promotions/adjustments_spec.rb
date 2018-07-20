@@ -255,4 +255,30 @@ describe 'Promotion Adjustments', type: :feature, js: true do
       expect(first_action.calculator.preferred_amount).to eq(5)
     end
   end
+
+  context 'filtering promotions' do
+    let!(:promotion_category) { create(:promotion_category, name: 'Welcome Category') }
+
+    it 'renders selected filters' do
+      visit spree.admin_promotions_path
+
+      click_on 'Filter'
+
+      within('#table-filter') do
+        fill_in 'q_name_cont', with: 'welcome'
+        fill_in 'q_code_cont', with: 'rx01welcome'
+        fill_in 'q_path_cont', with: 'path_promo'
+        select 'Welcome Category', from: 'q_promotion_category_id_eq'
+      end
+
+      click_on 'Filter Results'
+
+      within('.table-active-filters') do
+        expect(page).to have_content('Name: welcome')
+        expect(page).to have_content('Code: rx01welcome')
+        expect(page).to have_content('Path: path_promo')
+        expect(page).to have_content('Promotion Category: Welcome Category')
+      end
+    end
+  end
 end

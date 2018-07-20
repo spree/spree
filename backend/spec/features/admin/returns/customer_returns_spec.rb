@@ -40,9 +40,11 @@ describe 'Customer Returns', type: :feature do
   describe 'searching' do
     let!(:customer_return_2) { create(:customer_return) }
 
-    it 'searches on number' do
+    before do
       visit spree.admin_customer_returns_path
+    end
 
+    it 'searches on number' do
       click_on 'Filter'
       fill_in 'q_number_cont', with: customer_return.number
       click_on 'Search'
@@ -56,6 +58,20 @@ describe 'Customer Returns', type: :feature do
 
       expect(page).to have_content(customer_return_2.number)
       expect(page).not_to have_content(customer_return.number)
+    end
+
+    it 'renders selected filters', js: true do
+      click_on 'Filter'
+
+      within('#table-filter') do
+        fill_in 'q_number_cont', with: 'RX001-01'
+      end
+
+      click_on 'Search'
+
+      within('.table-active-filters') do
+        expect(page).to have_content('Number: RX001-01')
+      end
     end
   end
 

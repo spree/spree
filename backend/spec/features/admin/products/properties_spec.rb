@@ -37,6 +37,22 @@ describe 'Properties', type: :feature, js: true do
         expect(page).to have_content('shirt size')
         expect(page).not_to have_content('shirt fit')
       end
+
+      it 'renders selected filters' do
+        click_on 'Filter'
+
+        within('#table-filter') do
+          fill_in 'q_name_cont', with: 'color'
+          fill_in 'q_presentation_cont', with: 'shade'
+        end
+
+        click_on 'Search'
+
+        within('.table-active-filters') do
+          expect(page).to have_content('Name: color')
+          expect(page).to have_content('Presentation: shade')
+        end
+      end
     end
   end
 
