@@ -38,9 +38,11 @@ describe 'Return Authorizations', type: :feature do
     let!(:return_authorization) { create(:return_authorization, state: 'authorized') }
     let!(:return_authorization_2) { create(:return_authorization, state: 'canceled') }
 
-    it 'searches on number' do
+    before do
       visit spree.admin_return_authorizations_path
+    end
 
+    it 'searches on number' do
       click_on 'Filter'
       fill_in 'q_number_cont', with: return_authorization.number
       click_on 'Search'
@@ -57,8 +59,6 @@ describe 'Return Authorizations', type: :feature do
     end
 
     it 'searches on status' do
-      visit spree.admin_return_authorizations_path
-
       click_on 'Filter'
       select Spree.t("return_authorization_states.#{return_authorization.state}"), from: 'Status'
       click_on 'Search'
@@ -72,6 +72,22 @@ describe 'Return Authorizations', type: :feature do
 
       expect(page).to have_content(return_authorization_2.number)
       expect(page).not_to have_content(return_authorization.number)
+    end
+
+    it 'renders selected filters', js: true do
+      click_on 'Filter'
+
+      within('#table-filter') do
+        fill_in 'q_number_cont', with: 'RX001-01'
+        select 'Authorized', from: 'q_state_eq'
+      end
+
+      click_on 'Search'
+
+      within('.table-active-filters') do
+        expect(page).to have_content('Number: RX001-01')
+        expect(page).to have_content('Status: Authorized')
+      end
     end
   end
 

@@ -126,9 +126,20 @@ jQuery(function($) {
         ransack_value = $this.val();
       }
 
-      label = label.text() + ': ' + ransack_value;
-      filter = '<span class="js-filter label label-default" data-ransack-field="' + ransack_field + '">' + label + '<span class="icon icon-delete js-delete-filter"></span></span>';
+      function ransackField(value) {
+        switch (value) {
+          case 'Date Range':
+            return 'Start';
+          case '':
+            return 'Stop';
+          default:
+            return value.trim();
+        }
+      }
 
+      label = ransackField(label.text()) + ': ' + ransack_value;
+
+      filter = '<span class="js-filter label label-default" data-ransack-field="' + ransack_field + '">' + label + '<span class="icon icon-delete js-delete-filter"></span></span>';
       $(".js-filters").append(filter).show();
     }
   });
