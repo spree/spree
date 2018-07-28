@@ -1,6 +1,9 @@
 require 'spec_helper'
 
 describe 'API V2 Storefront Cart Spec', type: :request do
+  let(:default_currency) { 'USD' }
+  let(:store) { create(:store, default_currency: default_currency) }
+  let(:currency) { store.default_currency }
   let(:user)  { create(:user) }
   let(:token) { Doorkeeper::AccessToken.create!(resource_owner_id: user.id, expires_in: nil) }
   let(:order) { Spree::Order.last }
@@ -17,15 +20,15 @@ describe 'API V2 Storefront Cart Spec', type: :request do
   end
 
   shared_context 'creates order with line_item' do
-    let!(:order)     { create(:order, user: user) }
-    let!(:line_item) { create(:line_item, order: order) }
+    let!(:order)     { create(:order, user: user, store: store, currency: currency) }
+    let!(:line_item) { create(:line_item, order: order, currency: currency) }
     let!(:headers)   { { 'Authorization' => "Bearer #{token.token}" } }
   end
 
   shared_context 'creates guest order with guest token' do
     let(:guest_token) { 'guest_token' }
-    let!(:order)      { create(:order, token: guest_token) }
-    let!(:line_item)  { create(:line_item, order: order) }
+    let!(:order)      { create(:order, token: guest_token, store: store, currency: currency) }
+    let!(:line_item)  { create(:line_item, order: order, currency: currency) }
     let!(:headers)    { { 'X-Spree-Order-Token' => order.token } }
   end
 
@@ -58,6 +61,19 @@ describe 'API V2 Storefront Cart Spec', type: :request do
 
       it_behaves_like 'creates an order'
     end
+
+    context 'for specified currency' do
+      before do
+        store.update!(default_currency: 'EUR')
+        post '/api/v2/storefront/cart'
+      end
+
+      it_behaves_like 'creates an order'
+
+      it 'sets proper currency' do
+        expect(json_response['data']).to have_attribute(:currency).with_value('EUR')
+      end
+    end
   end
 
   describe 'cart#add_item' do
@@ -73,7 +89,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
     end
 
     context 'with existing order' do
-      let!(:order) { create(:order, user: user) }
+      let!(:order) { create(:order, user: user, store: store, currency: currency) }
 
       it 'adds item to cart' do
         headers = { 'Authorization' => "Bearer #{token.token}" }
@@ -96,7 +112,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
 
     context 'with existing guest order' do
       let(:custom_token) { 'custom_token' }
-      let!(:order) { create(:order, token: custom_token) }
+      let!(:order) { create(:order, token: custom_token, store: store, currency: currency) }
 
       it 'adds item to cart' do
         headers = { 'Authorization' => "Bearer #{token.token}" }
@@ -161,14 +177,14 @@ describe 'API V2 Storefront Cart Spec', type: :request do
     end
 
     context 'existing order' do
-      let!(:order) { create(:order, user: user) }
+      let!(:order) { create(:order, user: user, store: store, currency: currency) }
       let!(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
 
       it_behaves_like 'removes line item'
     end
 
     context 'as a guest' do
-      let!(:order) { create(:order, user: user) }
+      let!(:order) { create(:order, user: user, store: store, currency: currency) }
       let!(:headers) { { 'X-Spree-Order-Token' => order.token } }
 
       it_behaves_like 'removes line item'
@@ -208,7 +224,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
   end
 
   describe 'cart#set_quantity' do
-    let!(:order) { create(:order, user: user) }
+    let!(:order) { create(:order, user: user, store: store, currency: currency) }
     let!(:line_item) { create(:line_item, order: order) }
 
     context 'with insufficient stock quantity and non-backorderable item' do
@@ -263,14 +279,18 @@ describe 'API V2 Storefront Cart Spec', type: :request do
       it_behaves_like 'returns valid cart JSON'
     end
 
-    context 'without existing order' do
-      let!(:headers) { { 'Authorization': "Bearer #{token.token}" } }
-
+    shared_examples 'showing 404' do
       it 'returns status 404' do
         get '/api/v2/storefront/cart', headers: headers
 
         expect(response.status).to eq(404)
       end
+    end
+
+    context 'without existing order' do
+      let!(:headers) { { 'Authorization': "Bearer #{token.token}" } }
+
+      it_behaves_like 'showing 404'
     end
 
     context 'with existing user order with line item' do
@@ -283,6 +303,23 @@ describe 'API V2 Storefront Cart Spec', type: :request do
       include_context 'creates guest order with guest token'
 
       it_behaves_like 'showing the cart'
+    end
+
+    context 'for specified currency' do
+      before do
+        store.update!(default_currency: 'EUR')
+      end
+
+      context 'with matching currency' do
+        include_context 'creates guest order with guest token'
+
+        it_behaves_like 'showing the cart'
+
+        it 'includes the same currency' do
+          get '/api/v2/storefront/cart', headers: headers
+          expect(json_response['data']).to have_attribute(:currency).with_value('EUR')
+        end
+      end
     end
   end
 end
