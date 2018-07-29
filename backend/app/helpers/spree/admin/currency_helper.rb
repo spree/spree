@@ -1,6 +1,6 @@
 module Spree
   module Admin
-    module GeneralSettingsHelper
+    module CurrencyHelper
       def currency_options
         currencies = ::Money::Currency.table.map do |_code, details|
           iso = details[:iso_code]
