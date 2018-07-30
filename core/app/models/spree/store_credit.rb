@@ -35,13 +35,8 @@ module Spree
 
     attr_accessor :action, :action_amount, :action_originator, :action_authorization_code
 
-    def display_amount
-      Spree::Money.new(amount)
-    end
-
-    def display_amount_used
-      Spree::Money.new(amount_used)
-    end
+    extend Spree::DisplayMoney
+    money_methods :amount, :amount_used
 
     def amount_remaining
       amount - amount_used - amount_authorized
