@@ -187,7 +187,7 @@ describe 'Users', type: :feature do
         click_button 'Update'
       end
 
-      expect(user_a.reload.ship_address.same_as?(user_a.reload.bill_address)).to eq true
+      expect(user_a.reload.ship_address == user_a.reload.bill_address).to eq true
     end
 
     context 'no api key exists' do
