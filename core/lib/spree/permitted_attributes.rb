@@ -93,7 +93,7 @@ module Spree
     @@store_attributes = [:name, :url, :seo_title, :code, :meta_keywords,
                           :meta_description, :default_currency, :mail_from_address]
 
-    @@store_credit_attributes = [:amount, :category_id, :memo]
+    @@store_credit_attributes = %i[amount currency category_id memo]
 
     @@taxonomy_attributes = [:name]
 
