@@ -7,8 +7,8 @@ module Spree
 
         private
 
-        def render_serialized_resource(resource, status)
-          render json: resource, status: status
+        def render_serialized_payload(payload, status)
+          render json: payload, status: status
         rescue ArgumentError => exception
           render json: { error: exception.message }, status: 400
         end
