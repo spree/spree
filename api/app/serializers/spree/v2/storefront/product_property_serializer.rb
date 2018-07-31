@@ -6,13 +6,8 @@ module Spree
 
         attribute :value
 
-        attribute :name do |product_property|
-          product_property.property_name
-        end
-
-        attribute :description do |product_property|
-          product_property.property_presentation
-        end
+        attribute :name,        &:property_name
+        attribute :description, &:property_presentation
       end
     end
   end
