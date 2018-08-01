@@ -131,8 +131,8 @@ Spree::Core::Engine.add_routes do
         resource :cart, controller: :cart, only: %i[show create] do
           post   :add_item
           post   :empty
-          delete :remove_line_item
-          patch :set_quantity
+          delete 'remove_line_item/:line_item_id', to: 'cart#remove_line_item', as: :cart_remove_line_item
+          patch  :set_quantity
         end
 
         resources :products, only: %i[index show]

@@ -108,7 +108,7 @@ paths:
                 line_item_id: "1"
                 quantity: 5
 
-  '/cart/remove_line_item':
+  '/cart/remove_line_item/:line_item_id':
     delete:
       description: Removes line item from current order
       tags:
@@ -125,17 +125,6 @@ paths:
       security:
         - orderToken: []
         - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                line_item_id:
-                  type: string
-              example:
-                line_item_id: "1"
 
   '/cart/empty':
     post:

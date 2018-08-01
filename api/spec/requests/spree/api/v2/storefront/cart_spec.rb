@@ -124,7 +124,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
         let!(:line_item) { create(:line_item) }
 
         it 'tries to remove an item and fails' do
-          delete '/api/v2/storefront/cart/remove_line_item', params: { line_item_id: line_item.id }, headers: headers
+          delete "/api/v2/storefront/cart/remove_line_item/#{line_item.id}", headers: headers
 
           expect(response.status).to eq(404)
         end
@@ -134,7 +134,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
         let!(:line_item) { create(:line_item, order: order) }
 
         it 'removes line item from the cart' do
-          delete '/api/v2/storefront/cart/remove_line_item', params: { line_item_id: line_item.id }, headers: headers
+          delete "/api/v2/storefront/cart/remove_line_item/#{line_item.id}", headers: headers
 
           expect(response.status).to eq(200)
           expect(order.line_items.count).to eq(0)
@@ -153,7 +153,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
 
       it 'returns error' do
         headers = { 'Authorization' => "Bearer #{token.token}" }
-        delete '/api/v2/storefront/cart/remove_line_item', params: { line_item_id: line_item.id }, headers: headers
+        delete "/api/v2/storefront/cart/remove_line_item/#{line_item.id}", headers: headers
 
         expect(response.status).to eq(404)
         expect(json_response[:error]).to eq('ActiveRecord::RecordNotFound')
