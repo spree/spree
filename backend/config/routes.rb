@@ -85,6 +85,8 @@ Spree::Core::Engine.add_routes do
         put :resume
         get :store
         put :set_store
+        get :channel
+        put :set_channel
       end
 
       resources :state_changes, only: [:index]

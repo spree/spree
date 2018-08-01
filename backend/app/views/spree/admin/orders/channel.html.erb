@@ -1,0 +1,7 @@
+<%= render 'spree/admin/shared/order_tabs', current: :channel %>
+
+<div data-hook="admin_order_edit_header">
+  <%= render 'spree/admin/shared/error_messages', target: @order %>
+</div>
+
+<%= render 'channel_form', order: @order if can?(:update, @order) %>

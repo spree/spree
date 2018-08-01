@@ -2,7 +2,10 @@ module Spree
   module Admin
     class OrdersController < Spree::Admin::BaseController
       before_action :initialize_order_events
-      before_action :load_order, only: [:edit, :update, :cancel, :resume, :approve, :resend, :open_adjustments, :close_adjustments, :cart, :store, :set_store]
+      before_action :load_order, only: %i[
+        edit update cancel resume approve resend open_adjustments
+        close_adjustments cart store set_store channel set_channel
+      ]
 
       respond_to :html
 
@@ -142,6 +145,16 @@ module Spree
         end
 
         redirect_to store_admin_order_url(@order)
+      end
+
+      def set_channel
+        if @order.update_attributes(channel: params[:order][:channel])
+          flash[:success] = flash_message_for(@order, :successfully_updated)
+        else
+          flash[:error] = @order.errors.full_messages.join(', ')
+        end
+
+        redirect_to channel_admin_order_url(@order)
       end
 
       private
