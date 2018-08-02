@@ -619,7 +619,12 @@ describe Spree::ReturnItem, type: :model do
           let(:return_item)      { build(:return_item) }
           let(:exchange_variant) { create(:variant, product: return_item.inventory_unit.variant.product) }
 
-          before { return_item.exchange_variant = exchange_variant }
+          before do
+            exchange_variant.stock_items.each do |item|
+              item.update_column(:backorderable, false)
+            end
+            return_item.exchange_variant = exchange_variant
+          end
 
           it 'is invalid' do
             expect(subject).not_to be_valid
