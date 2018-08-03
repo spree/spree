@@ -31,6 +31,14 @@ describe 'Product Details', type: :feature, js: true do
       expect(page).to have_content('successfully updated!')
     end
 
+    it 'handles tag changes' do
+      targetted_select2_search 'example-tag', from: '#s2id_product_tag_list'
+      wait_for_ajax
+      click_button 'Update'
+      expect(page).to have_content('successfully updated!')
+      expect(find('#s2id_product_tag_list')).to have_content('example-tag')
+    end
+
     it 'has a link to preview a product' do
       allow(Spree::Core::Engine).to receive(:frontend_available?).and_return(true)
       allow_any_instance_of(Spree::BaseHelper).to receive(:product_url).and_return('http://example.com/products/product-slug')
