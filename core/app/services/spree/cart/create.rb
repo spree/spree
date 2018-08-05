@@ -3,13 +3,13 @@ module Spree
     class Create
       prepend Spree::ServiceModule::Base
 
-      def call(user:, store:, order_params: nil)
+      def call(user:, store:, currency:, order_params: nil)
         order_params ||= {}
 
         default_params = {
           user: user,
           store: store,
-          currency: Spree::Config[:currency],
+          currency: currency,
           token: GenerateToken.new.call(Spree::Order)
         }
 
