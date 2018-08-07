@@ -140,6 +140,7 @@ module Spree
     # Needs to happen before save_permalink is called
     before_validation :set_currency
     before_validation :clone_billing_address, if: :use_billing?
+    before_validation :ensure_store_presence
     attr_accessor :use_billing
 
     before_create :create_token
@@ -150,6 +151,7 @@ module Spree
       validates :number, length: { maximum: 32, allow_blank: true }, uniqueness: { allow_blank: true }
       validates :email, length: { maximum: 254, allow_blank: true }, email: { allow_blank: true }, if: :require_email
       validates :item_count, numericality: { greater_than_or_equal_to: 0, less_than: 2**31, only_integer: true, allow_blank: true }
+      validates :store
     end
     validates :payment_state,        inclusion:    { in: PAYMENT_STATES, allow_blank: true }
     validates :shipment_state,       inclusion:    { in: SHIPMENT_STATES, allow_blank: true }
@@ -273,6 +275,10 @@ module Spree
         ship_address.attributes = bill_address.attributes.except('id', 'updated_at', 'created_at')
       end
       true
+    end
+
+    def ensure_store_presence
+      self.store ||= Spree::Store.default
     end
 
     def allow_cancel?
