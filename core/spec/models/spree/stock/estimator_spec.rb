@@ -6,9 +6,9 @@ module Spree
       subject { Estimator.new(order) }
 
       let!(:shipping_method) { create(:shipping_method) }
-      let(:package) { build(:stock_package, contents: inventory_units.map { |_i| ContentItem.new(inventory_unit) }) }
-      let(:order) { build(:order_with_line_items) }
-      let(:inventory_units) { order.inventory_units }
+      let(:package)          { build(:stock_package, contents: inventory_units.map { |_i| ContentItem.new(inventory_unit) }) }
+      let(:order)            { build(:order_with_line_items) }
+      let(:inventory_units)  { order.inventory_units }
 
       context '#shipping rates' do
         before do

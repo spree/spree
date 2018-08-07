@@ -138,9 +138,9 @@ module Spree
     accepts_nested_attributes_for :shipments
 
     # Needs to happen before save_permalink is called
-    before_validation :set_currency
-    before_validation :clone_billing_address, if: :use_billing?
     before_validation :ensure_store_presence
+    before_validation :ensure_currency_presence
+    before_validation :clone_billing_address, if: :use_billing?
     attr_accessor :use_billing
 
     before_create :create_token
@@ -152,6 +152,7 @@ module Spree
       validates :email, length: { maximum: 254, allow_blank: true }, email: { allow_blank: true }, if: :require_email
       validates :item_count, numericality: { greater_than_or_equal_to: 0, less_than: 2**31, only_integer: true, allow_blank: true }
       validates :store
+      validates :currency
     end
     validates :payment_state,        inclusion:    { in: PAYMENT_STATES, allow_blank: true }
     validates :shipment_state,       inclusion:    { in: SHIPMENT_STATES, allow_blank: true }
@@ -204,10 +205,6 @@ module Spree
     # Sum of all line item amounts pre-tax
     def pre_tax_item_amount
       line_items.to_a.sum(&:pre_tax_amount)
-    end
-
-    def currency
-      self[:currency] || Spree::Config[:currency]
     end
 
     def shipping_discount
@@ -726,8 +723,16 @@ module Spree
       use_billing.in?([true, 'true', '1'])
     end
 
+    def ensure_currency_presence
+      self.currency ||= store.default_currency || Spree::Config[:currency]
+    end
+
     def set_currency
-      self.currency = Spree::Config[:currency] if self[:currency].nil?
+      ActiveSupport::Deprecation.warn(<<-EOS, caller)
+         Spree::Order#set_currency was renamed to Spree::Order#ensure_currency_presence
+         and will be removed in Spree 3.9. Please update your code to avoid problems after update
+      EOS
+      ensure_currency_presence
     end
 
     def create_token
