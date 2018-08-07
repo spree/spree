@@ -3,12 +3,11 @@ title: "Use S3 for storage"
 section: customization
 ---
 
-## Overview
+### How to use S3 in application with Spree 3.6+ and Active Storage
 
-Currently the Spree backend does not give you the option anymore to configure s3 for image storage.
-This guide covers how you can use S3 for storing assets in Spree.
+Please use [official Ruby on Rails guide regarding Active Storage](https://edgeguides.rubyonrails.org/active_storage_overview.html#setup)
 
-### How to use S3
+### How to use S3 in application with Spree 3.5(or older) and paperclip
 
 Start with adding AWS-SDK to your gemfile with:  `gem 'aws-sdk'`, then install the gem by running `bundle install`.
 
