@@ -3,6 +3,7 @@ FactoryBot.define do
     quantity 1
     price { BigDecimal.new('10.00') }
     order
+    currency { order.currency }
     transient do
       association :product
     end
