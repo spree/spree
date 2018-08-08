@@ -5,6 +5,7 @@ FactoryBot.define do
     completed_at nil
     email { user.email }
     store
+    currency 'USD'
 
     transient do
       line_items_price BigDecimal.new(10)

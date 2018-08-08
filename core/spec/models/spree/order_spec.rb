@@ -370,14 +370,6 @@ describe Spree::Order, type: :model do
         expect(order.currency).to eq('ABC')
       end
     end
-
-    context 'when object currency is nil' do
-      before { order.currency = nil }
-
-      it 'returns the globally configured currency' do
-        expect(order.currency).to eq('USD')
-      end
-    end
   end
 
   context '#confirmation_required?' do
