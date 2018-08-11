@@ -108,11 +108,13 @@ paths:
                 line_item_id: "1"
                 quantity: 5
 
-  '/cart/remove_line_item/:line_item_id':
+  '/cart/remove_line_item/{line_item_id}':
     delete:
       description: Removes line item from current order
       tags:
         - Cart
+      parameters:
+        - $ref: '#/components/parameters/LineItemId'
       responses:
         '200':
           description: 200 response means that the requested line item has been removed from the order
@@ -967,6 +969,14 @@ components:
       description: ID or a permalink
       schema:
         type: string
+    LineItemId:
+      name: line_item_id
+      in: path
+      required: true
+      description: Line Item ID
+      schema:
+        type: string
+      example: 1
   responses:
     404NotFound:
       description: Resource not found
