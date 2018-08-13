@@ -59,8 +59,6 @@ module Spree
           def set_quantity
             return render_error_item_quantity unless params[:quantity].to_i > 0
 
-            line_item = spree_current_order.line_items.find(params[:line_item_id])
-
             spree_authorize! :update, spree_current_order, order_token
 
             result = dependencies[:set_item_quantity].call(order: spree_current_order, line_item: line_item, quantity: params[:quantity])
