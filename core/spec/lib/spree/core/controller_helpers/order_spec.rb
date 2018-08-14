@@ -48,7 +48,7 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
     end
 
     context 'gets using the token' do
-      let!(:order) { create :order, user: user }
+      let!(:order)       { create :order, user: user }
       let!(:guest_order) { create :order, user: nil, email: nil, token: 'token' }
 
       before do

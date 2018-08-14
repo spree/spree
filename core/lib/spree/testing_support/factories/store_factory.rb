@@ -4,5 +4,6 @@ FactoryBot.define do
     name 'Spree Test Store'
     url 'www.example.com'
     mail_from_address 'spree@example.org'
+    default_currency 'USD'
   end
 end

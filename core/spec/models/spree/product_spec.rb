@@ -194,6 +194,15 @@ describe Spree::Product, type: :model do
       end
     end
 
+    # Regression test for #8906
+    context 'tags' do
+      let(:tag_list) { %w[tag1 tag2] }
+
+      it "doesn't raise an error when adding tags to a product" do
+        expect { product.update(tag_list: tag_list) }.not_to raise_error
+      end
+    end
+
     # Regression test for #3737
     context 'has stock items' do
       it 'can retrieve stock items' do
