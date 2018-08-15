@@ -146,6 +146,78 @@ paths:
         - orderToken: []
         - bearerAuth: []
 
+  '/checkout/next':
+    patch:
+      description: Goes to the next Checkout step
+      tags:
+        - Checkout
+      responses:
+        '200':
+          description: 200 response means that the Checkout was transitioned to the next step
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Checkout'
+        '422':
+          description: 422 response means that Checkout couldn't transition to the next step
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+      security:
+        - orderToken: []
+        - bearerAuth: []
+
+  '/checkout/advance':
+    patch:
+      description: Advances Checkout to the farthest Checkout step validation allows, until the Complete step
+      tags:
+        - Checkout
+      responses:
+        '200':
+          description: 200 response means that the Checkout was transitioned to the next step
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Checkout'
+        '422':
+          description: 422 response means that Checkout couldn't transition to the next step
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+      security:
+        - orderToken: []
+        - bearerAuth: []
+
+  '/checkout/complete':
+    patch:
+        description: Completes the Checkout
+        tags:
+          - Checkout
+        responses:
+          '200':
+            description: 200 response means that the Checkout was completed
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Checkout'
+          '422':
+            description: 422 response means that Checkout couldn't be completed
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Error'
+          '404':
+            $ref: '#/components/responses/404NotFound'
+        security:
+          - orderToken: []
+          - bearerAuth: []
+
   '/products':
     get:
       description: >-
