@@ -149,11 +149,7 @@ paths:
   '/products':
     get:
       description: >-
-        To view the details for a single product, make a request using that
-        product's permalink:<br /> <code>GET /api/v2/products/a-product</code>
-        <br /><br />You may also query by the product's id attribute:<br /><code>GET
-        /api/v1/products/1 </code> <br /><br />Note that the API will attempt a
-        permalink lookup before an ID lookup.
+        Returns a list of Products
       tags:
         - Products
       operationId: show
@@ -162,12 +158,14 @@ paths:
           name: filter
           schema:
             type: string
-            example: ['price=10,20','taxons=1,2,3,4','name=shirt','options[color]=red','options[color=blue','options[size]=10']
+          example: >-
+           'filter[ids]=1,2,3&filter[price]=10,20&filter[taxons]=1,2,3,4&filter[name]=shirt&filter[options][color]=red&filter[options][color]=blue&filter[options][size]=10'
           description: >-
             Filter Products based on:
             <ul>
               <li>name (supports wild-card, partial-word match search)</li>
-              <li>taxons (categories, brands, etc)</li>
+              <li>ids (IDs of selected products to display)</li>
+              <li>taxons (IDs of categories, brands, etc)</li>
               <li>price (range)</li>
               <li>options (eg. color, size)</li>
             </ul>
@@ -180,7 +178,6 @@ paths:
           description:  >-
             Sort products based on:
             <ul>
-              <li>price (ascending/descenging)</li>
               <li>price (ascending/descenging)</li>
               <li>updated_at (ascending/descenging)</li>
             </ul>
@@ -198,11 +195,11 @@ paths:
         To view the details for a single product, make a request using that
         product's permalink:<br /> <code>GET /api/v2/products/a-product</code>
         <br /><br />You may also query by the product's id attribute:<br /><code>GET
-        /api/v1/products/1 </code> <br /><br />Note that the API will attempt a
+        /api/v2/products/1 </code> <br /><br />Note that the API will attempt a
         permalink lookup before an ID lookup.
       tags:
         - Products
-      operationId: show
+      operationId: index
       parameters:
         - $ref: '#/components/parameters/IdOrPermalink'
       responses:
@@ -221,7 +218,7 @@ paths:
         To view the details for a single Taxon, make a request using that
         Taxon's permalink:<br /> <code>GET /api/v2/taxons/t-shirts</code>
         <br /><br />You may also query by the Taxons's ID attribute:<br /><code>GET
-        /api/v1/taxons/1 </code> <br /><br />Note that the API will attempt a
+        /api/v2/taxons/1 </code> <br /><br />Note that the API will attempt a
         permalink lookup before an ID lookup.
       tags:
         - Taxons
@@ -257,6 +254,37 @@ components:
       properties:
         message:
           type: string
+    ListLinks:
+      properties:
+        self:
+          type: string
+          description: 'URL to the current page of the listing'
+        next:
+          type: string
+          description: 'URL to the next page of the listing'
+        prev:
+          type: string
+          description: 'URL to the previous page of the listing'
+        last:
+          type: string
+          description: 'URL to the last page of the listing'
+        first:
+          type: string
+          description: 'URL to the first page of the listing'
+    ListMeta:
+      properties:
+        count:
+          type: number
+          example: 7
+          description: 'Number of items on the current listing'
+        total_count:
+          type: number
+          example: 145
+          description: 'Number of all items matching the criteria'
+        total_pages:
+          type: number
+          example: 10
+          description: 'Numnber of all pages containing items matching the criteria'
     Cart:
       required:
         - data
@@ -517,6 +545,31 @@ components:
               - $ref: '#/components/schemas/VariantAttributesAndRelationships'
               - $ref: '#/components/schemas/Image'
               - $ref: '#/components/schemas/TaxonAttributesAndRelationships'
+    ProductsList:
+      required:
+        - links
+        - data
+        - included
+      properties:
+        links:
+          $ref: '#/components/schemas/ListLinks'
+        meta:
+          $ref: '#/components/schemas/ListMeta'
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductAttributesAndRelationships'
+        included:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/OptionType'
+              - $ref: '#/components/schemas/OptionValue'
+              - $ref: '#/components/schemas/ProductProperty'
+              - $ref: '#/components/schemas/Property'
+              - $ref: '#/components/schemas/VariantAttributesAndRelationships'
+              - $ref: '#/components/schemas/Image'
+              - $ref: '#/components/schemas/TaxonAttributesAndRelationships'
     ProductAttributes:
       type: object
       properties:
@@ -743,16 +796,16 @@ components:
           $ref: '#/components/schemas/TaxonRelationships'
     TaxonomyAttributesAndRelationships:
       type: object
-        properties:
-          id:
-            type: string
-            example: '1'
-          type:
-            type: string
-            default: 'taxonomies'
-            example: 'taxonomies'
-          attributes:
-            $ref: '#/components/schemas/TaxonomyAttributes'
+      properties:
+        id:
+          type: string
+          example: '1'
+        type:
+          type: string
+          default: 'taxonomies'
+          example: 'taxonomies'
+        attributes:
+          $ref: '#/components/schemas/TaxonomyAttributes'
     TaxonomyAttributes:
       type: object
       properties:
