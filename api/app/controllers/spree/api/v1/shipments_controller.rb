@@ -84,7 +84,7 @@ module Spree
             return
           end
 
-          @original_shipment.transfer_to_location(@variant, @quantity, @stock_location)
+          @original_shipment.transfer_to_location(@variant, @quantity, @stock_location, @options)
           render json: { success: true, message: Spree.t(:shipment_transfer_success) }, status: 201
         end
 
@@ -103,7 +103,7 @@ module Spree
           if error
             unprocessable_entity("#{Spree.t(:shipment_transfer_errors_occured, scope: 'api')} \n#{error}")
           else
-            @original_shipment.transfer_to_shipment(@variant, @quantity, @target_shipment)
+            @original_shipment.transfer_to_shipment(@variant, @quantity, @target_shipment, @options)
             render json: { success: true, message: Spree.t(:shipment_transfer_success) }, status: 201
           end
         end
@@ -114,6 +114,7 @@ module Spree
           @original_shipment         = Spree::Shipment.find_by!(number: params[:original_shipment_number])
           @variant                   = Spree::Variant.find(params[:variant_id])
           @quantity                  = params[:quantity].to_i
+          @options                   = params[:options] || {}
           authorize! :read, @original_shipment
           authorize! :create, Shipment
         end

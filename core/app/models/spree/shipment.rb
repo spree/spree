@@ -337,14 +337,14 @@ module Spree
       after_ship if new_state == 'shipped' && old_state != 'shipped'
     end
 
-    def transfer_to_location(variant, quantity, stock_location)
+    def transfer_to_location(variant, quantity, stock_location, options = {})
       raise ArgumentError if quantity <= 0
 
       transaction do
         new_shipment = order.shipments.create!(stock_location: stock_location)
 
-        order.contents.remove(variant, quantity, shipment: self)
-        order.contents.add(variant, quantity, shipment: new_shipment)
+        order.contents.remove(variant, quantity, options.merge(shipment: self))
+        order.contents.add(variant, quantity, options.merge(shipment: new_shipment))
         order.create_tax_charge!
         order.update_with_updater!
 
@@ -354,7 +354,7 @@ module Spree
       end
     end
 
-    def transfer_to_shipment(variant, quantity, shipment_to_transfer_to)
+    def transfer_to_shipment(variant, quantity, shipment_to_transfer_to, options = {})
       quantity_already_shipment_to_transfer_to = shipment_to_transfer_to.manifest.find do |mi|
         mi.line_item.variant == variant
       end.try(:quantity) || 0
@@ -363,8 +363,8 @@ module Spree
       raise ArgumentError if quantity <= 0 || self == shipment_to_transfer_to
 
       transaction do
-        order.contents.remove(variant, final_quantity, shipment: self)
-        order.contents.add(variant, final_quantity, shipment: shipment_to_transfer_to)
+        order.contents.remove(variant, final_quantity, options.merge(shipment: self))
+        order.contents.add(variant, final_quantity, options.merge(shipment: shipment_to_transfer_to))
         order.update_with_updater!
 
         refresh_rates
