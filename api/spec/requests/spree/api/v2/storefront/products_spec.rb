@@ -31,7 +31,7 @@ describe 'API V2 Storefront Products Spec', type: :request do
     end
 
     context 'with specified ids' do
-      before { get "/api/v2/storefront/products?ids=#{products.first.id}" }
+      before { get "/api/v2/storefront/products?filter[ids]=#{products.first.id}" }
 
       it_behaves_like 'returns proper status'
 
@@ -42,7 +42,7 @@ describe 'API V2 Storefront Products Spec', type: :request do
     end
 
     context 'with specified price range' do
-      before { get "/api/v2/storefront/products?price=#{product_with_price.price.to_f},#{product_with_price.price.to_f + 0.04}" }
+      before { get "/api/v2/storefront/products?filter[price]=#{product_with_price.price.to_f},#{product_with_price.price.to_f + 0.04}" }
 
       it_behaves_like 'returns proper status'
 
@@ -53,7 +53,7 @@ describe 'API V2 Storefront Products Spec', type: :request do
     end
 
     context 'with specified taxon_ids' do
-      before { get "/api/v2/storefront/products?taxons=#{product_with_taxon.taxons.first.id}" }
+      before { get "/api/v2/storefront/products?filter[taxons]=#{product_with_taxon.taxons.first.id}" }
 
       it_behaves_like 'returns proper status'
 
@@ -63,7 +63,7 @@ describe 'API V2 Storefront Products Spec', type: :request do
     end
 
     context 'with specified name' do
-      before { get "/api/v2/storefront/products?name=#{product_with_name.name}" }
+      before { get "/api/v2/storefront/products?filter[name]=#{product_with_name.name}" }
 
       it_behaves_like 'returns proper status'
 
@@ -74,14 +74,25 @@ describe 'API V2 Storefront Products Spec', type: :request do
     end
 
     context 'with specified options' do
-      before { get "/api/v2/storefront/products?options[#{option_type.name}]=#{option_value.name}" }
+      before { get "/api/v2/storefront/products?filter[options][#{option_type.name}]=#{option_value.name}" }
 
       it_behaves_like 'returns proper status'
 
       it 'returns products with specified options' do
         expect(json_response['data'].first).to have_id(product_with_option.id.to_s)
-        expect(json_response['included']).to include(have_type('option_type').and(have_attribute(:name).with_value(option_type.name)))
-        expect(json_response['included']).to include(have_type('option_value').and(have_attribute(:name).with_value(option_value.name)))
+        expect(json_response['included']).to   include(have_type('option_type').and(have_attribute(:name).with_value(option_type.name)))
+        expect(json_response['included']).to   include(have_type('option_value').and(have_attribute(:name).with_value(option_value.name)))
+      end
+    end
+
+    context 'with specified multiple filters' do
+      before { get "/api/v2/storefront/products?filter[name]=#{product_with_name.name}&filter[price]=#{product_with_name.price.to_f - 0.02},#{product_with_name.price.to_f + 0.02}" }
+
+      it_behaves_like 'returns proper status'
+
+      it 'returns products with specified name and price' do
+        expect(json_response['data'].count).to eq 1
+        expect(json_response['data'].first).to have_id(product_with_name.id.to_s)
       end
     end
 
