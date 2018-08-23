@@ -4,12 +4,12 @@ module Spree
       def initialize(scope, params, current_currency)
         @scope = scope
 
-        @ids      = String(params[:ids]).split(',')
-        @price    = String(params[:price]).split(',')
+        @ids      = String(params.dig(:filter, :ids)).split(',')
+        @price    = String(params.dig(:filter, :price)).split(',')
         @currency = params[:currency] || current_currency
-        @taxons   = String(params[:taxons]).split(',')
-        @name     = params[:name]
-        @options  = params[:options].try(:to_unsafe_hash)
+        @taxons   = String(params.dig(:filter, :taxons)).split(',')
+        @name     = params.dig(:filter, :name)
+        @options  = params.dig(:filter, :options).try(:to_unsafe_hash)
       end
 
       def call
@@ -46,6 +46,10 @@ module Spree
         options.present?
       end
 
+      def name_matcher
+        Spree::Product.arel_table[:name].matches("%#{name}%")
+      end
+
       def by_ids(products)
         return products unless ids?
 
@@ -74,7 +78,7 @@ module Spree
       def by_name(products)
         return products unless name?
 
-        products.where(name: name)
+        products.where(name_matcher)
       end
 
       def by_options(products)
