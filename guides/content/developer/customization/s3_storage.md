@@ -8,7 +8,7 @@ section: customization
 Currently the Spree backend does not give you the option anymore to configure s3 for image storage.
 This guide covers how you can use S3 for storing assets in Spree.
 
-### How to use S3
+### How to use S3 with Paperclip
 
 Start with adding AWS-SDK to your gemfile with:  `gem 'aws-sdk'`, then install the gem by running `bundle install`.
 
@@ -48,3 +48,8 @@ end
 
 ```
 Note that I use the `url: ":s3_domain_url"` setting, this enabled the DNS lookup for your images without specifying the specific zone endpoint. You need to use a bucket name that makes a valid subdomain. So do not use dots if you are planning on using the DNS lookup config.
+
+### How to use S3 with ActiveStorage
+
+We are in the process of migration Spree to ActiveStorage, if you use ActiveStorage here is nice official guide how to implement it with S3.
+(https://guides.rubyonrails.org/active_storage_overview.html)
