@@ -6,6 +6,7 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= require bootstrap_3-3-7
 //= require accounting.min
 //= require spree/frontend
 <% unless options[:lib_name] == 'spree' || options[:lib_name] == 'spree/frontend' %>

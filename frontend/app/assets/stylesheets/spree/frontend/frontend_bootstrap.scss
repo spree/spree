@@ -1,8 +1,17 @@
 //Add your custom bootstrap variables here, see https://github.com/twbs/bootstrap-sass/blob/master/assets/stylesheets/bootstrap/_variables.scss for full list of variables.
 
-@import "bootstrap-sprockets";
+@import 'bootstrap_3-3-7/bootstrap-sprockets';
 @import "variables";
-@import "bootstrap";
+@import 'bootstrap_3-3-7/bootstrap';
+
+// Footer links
+#footer-left a {
+  color: lighten($brand-primary, 20);
+
+  &:hover {
+    color: lighten($brand-primary, 10);
+  }
+}
 
 // -- Spree Custom Header and Footer ---------------------
 #spree-header {
@@ -71,6 +80,10 @@ h1 {
   margin-bottom: 30px;
 }
 
+.existing-credit-card-list td {
+  padding: 5px;
+}
+
 // Center cart line items
 table {
   &.table > tbody > tr {
@@ -92,23 +105,14 @@ table {
   }
 }
 
-// Footer links
-#footer-left a {
-  color: lighten($brand-primary, 20);
 
-  &:hover {
-    color: lighten($brand-primary, 10);
-  }
-}
 
 // Updated credit-card image
 #credit-card-image {
   margin-top: -10px;
 }
 
-.existing-credit-card-list td {
-  padding: 5px;
-}
+
 
 .save-user-address-wrapper {
   display: inline-block;
