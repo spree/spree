@@ -33,10 +33,11 @@ Try Spree with direct deployment on Heroku:
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/spree/spree/tree/3-6-stable)
 
 If you want to run demo spree application on your machine, you can use our docker image with command below. It will
-download and run sample Spree application on http://localhost:3000
+download and run sample Spree application on http://localhost:3000 (Login: spree@example.com / spree123)
 ```shell
 docker run --rm -it -p 3000:3000 spreecommerce/spree:latest
 ```
+
 
 Getting Started
 ----------------------
