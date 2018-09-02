@@ -34,9 +34,7 @@ module Spree
     # 2) prevent escaping of HTML character entities
     def to_html(opts = { html: true })
       output = money.format(options.merge(opts))
-      output = output.sub(' ', '&nbsp;').html_safe if opts[:html]
-
-      output
+      output.gsub(' ', '&nbsp;').html_safe if opts[:html]
     end
 
     def as_json(*)
