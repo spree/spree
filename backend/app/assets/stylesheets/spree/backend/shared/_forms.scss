@@ -4,9 +4,9 @@
 
 label {
   text-transform: uppercase;
-  font-size: $font-size-base - 3;
+  font-size: $font-size-base;
   letter-spacing: 1px;
-  color: $gray;
+  color: $gray-500;
   font-weight: 500;
 
   input[type="radio"], input[type="checkbox"] {
@@ -46,7 +46,7 @@ input.form-control {
 }
 
 .help-block {
-  color: lighten($gray-light, 20);
+  color: lighten($gray-100, 20);
   font-weight: 300;
 }
 

@@ -2,7 +2,7 @@
   display: block;
 
   .select2-choice {
-    height: $input-height-base;
+    height: $input-height;
     line-height: 2.2;
     border-color: $input-border;
     background-image: none;
@@ -54,7 +54,7 @@
   }
 }
 
-.select2-dropdown-open.select2-drop-above .select2-choice, 
+.select2-dropdown-open.select2-drop-above .select2-choice,
 .select2-dropdown-open.select2-drop-above .select2-choices {
   background-image: none;
 }
@@ -72,7 +72,7 @@
 }
 
 .select2-result-label {
-  color: $gray;
+  color: $gray-500;
 }
 
 .select2-results .select2-highlighted {
@@ -91,8 +91,8 @@
     background-color: $input-bg;
 
     .select2-search-choice {
-      @extend .label;
-      @extend .label-info;
+      @extend .badge;
+      @extend .badge-info;
 
       box-shadow: none;
       border: none;
