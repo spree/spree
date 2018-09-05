@@ -1,7 +1,8 @@
 //= require modernizr
+//= require jquery3
+//= require popper
 //= require bootstrap-sprockets
 //= require handlebars
-//= require jquery
 //= require js.cookie
 //= require jquery.jstree/jquery.jstree
 //= require jquery_ujs

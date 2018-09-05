@@ -7,7 +7,7 @@
 
 .index-filter-button {
   .glyphicon {
-    color: $gray-light;
+    color: $gray-100;
   }
 
   button {
@@ -19,7 +19,7 @@
     border-right: none;
 
     &:focus {
-      background-color: $gray-lighter;
+      background-color: $gray-100;
       border-color: $input-border;
     }
   }

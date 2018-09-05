@@ -22,7 +22,8 @@ Gem::Specification.new do |s|
   s.add_dependency 'spree_api', s.version
   s.add_dependency 'spree_core', s.version
 
-  s.add_dependency 'bootstrap-sass',  '>= 3.3.5.1', '< 3.4'
+  s.add_dependency 'bootstrap',       '~> 4.1.3'
+  s.add_dependency 'glyphicons',      '~> 1.0.2'
   s.add_dependency 'canonical-rails', '~> 0.2.3'
   s.add_dependency 'jquery-rails',    '~> 4.3'
 

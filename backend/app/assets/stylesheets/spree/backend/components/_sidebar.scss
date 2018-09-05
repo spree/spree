@@ -1,6 +1,6 @@
 #main-sidebar {
   position: fixed;
-  top: $navbar-height + 2px;
+  top: $navbar-brand-height;
   bottom: 0;
   left: 0;
   padding: 0;
@@ -8,8 +8,8 @@
   display: block;
   overflow-x: hidden;
   overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
-  background-color: lighten($gray-lighter, 5);
-  border-right: 1px solid darken($gray-lighter, 5);
+  background-color: $gray-100;
+  border-right: 1px solid $gray-200;
 
   a {
     -webkit-font-smoothing: antialiased;
@@ -21,7 +21,7 @@
 
   ul.nav-sidebar {
     > li {
-      border-bottom: 1px solid $gray-lighter;
+      border-bottom: 1px solid $gray-100;
 
       > a {
         text-transform: uppercase;
@@ -29,7 +29,7 @@
         font-size: 12px;
         font-weight: 500;
         padding: 15px;
-        color: $gray;
+        color: $gray-500;
 
         .glyphicon {
           font-size: 18px;
@@ -40,7 +40,7 @@
         .glyphicon.pull-right {
           font-size: 8px;
           line-height: 2;
-          color: $gray-light;
+          color: $gray-100;
           position: absolute;
           right: 5px;
           top: 50%;
@@ -52,7 +52,7 @@
 
   ul.nav.nav-pills {
     background-color: white;
-    border-top: 1px solid $gray-lighter;
+    border-top: 1px solid $gray-100;
 
     li {
       a {
@@ -86,7 +86,7 @@
 
   li {
     &:hover, &.menu-active {
-      background-color: $gray-lighter;
+      background-color: $gray-100;
     }
   }
 
@@ -110,7 +110,7 @@
     display: block !important;
     height: auto !important;
     position: fixed;
-    top: $navbar-height + 2px;
+    top: $navbar-brand-height;
     bottom: 0;
     left: 0;
     padding: 0;
@@ -121,9 +121,9 @@
     left: 50px;
     min-width: 180px;
     visibility: visible;
-    background-color: lighten($gray-lighter, 5);
+    background-color: $gray-100;
     border-top: none;
-    border-right: 1px solid darken($gray-lighter, 5);
+    border-right: 1px solid $gray-200;
     padding-top: 5px;
   }
 }
