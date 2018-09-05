@@ -45,13 +45,6 @@
   }
 }
 
-#spree-footer {
-  background: $gray-700;
-  padding-top: $spacer;
-  margin-top: $line-height-base;
-  color: white;
-}
-
 // -- Spree Layout Custom Rules -------------------------
 
 .alert-notice { @extend .alert-success; }
@@ -88,15 +81,6 @@ table {
         }
       }
     }
-  }
-}
-
-// Footer links
-#footer-left a {
-  color: lighten($brand-primary, 20);
-
-  &:hover {
-    color: lighten($brand-primary, 10);
   }
 }
 
