@@ -57,3 +57,4 @@ test_app
 .ruby-gemset
 vendor/bundle
 */vendor/bundle
+.ignore
