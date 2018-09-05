@@ -145,6 +145,50 @@ describe 'API V2 Storefront Products Spec', type: :request do
         end
       end
     end
+
+    context 'paginate products' do
+      context 'with specified pagination params' do
+        before { get '/api/v2/storefront/products?page=1&per_page=2' }
+
+        it_behaves_like 'returns proper status'
+
+        it 'returns specified amount products' do
+          expect(json_response['data'].count).to eq 2
+        end
+
+        it 'returns proper meta data' do
+          expect(json_response['meta']['count']).to       eq 2
+          expect(json_response['meta']['total_count']).to eq Spree::Product.count
+        end
+
+        it 'returns proper links data' do
+          expect(json_response['links']['self']).to eq 1
+          expect(json_response['links']['next']).to eq 2
+          expect(json_response['links']['prev']).to eq 1
+        end
+      end
+
+      context 'without specified pagination params' do
+        before { get '/api/v2/storefront/products' }
+
+        it_behaves_like 'returns proper status'
+
+        it 'returns specified amount products' do
+          expect(json_response['data'].count).to eq Spree::Product.count
+        end
+
+        it 'returns proper meta data' do
+          expect(json_response['meta']['count']).to       eq json_response['data'].count
+          expect(json_response['meta']['total_count']).to eq Spree::Product.count
+        end
+
+        it 'returns proper links data' do
+          expect(json_response['links']['self']).to eq 1
+          expect(json_response['links']['next']).to eq 1
+          expect(json_response['links']['prev']).to eq 1
+        end
+      end
+    end
   end
 
   describe 'products#show' do
