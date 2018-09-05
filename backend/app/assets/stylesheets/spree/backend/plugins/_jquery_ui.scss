@@ -1,13 +1,13 @@
 .ui-widget {
   font-family: $headings-font-family;
-  font-size: $font-size-base - 1;
+  font-size: $font-size-base;
   font-weight: 400;
 }
 
 #ui-datepicker-div {
   background-color: white;
   background-image: none;
-  color: $gray;
+  color: $gray-500;
   border-color: $input-border;
   width: auto;
   padding: 20px;
@@ -48,7 +48,7 @@
     background-color: transparent;
     transition: color 0.2s ease-in-out;
     cursor: pointer;
-    
+
     span.ui-icon {
       color: $brand-success;
     }
@@ -64,7 +64,7 @@
 
   .ui-datepicker-title {
     font-weight: 500;
-    color: $gray;
+    color: $gray-500;
   }
 
   table.ui-datepicker-calendar {
@@ -82,8 +82,8 @@
       height: 29px;
       transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
 
-      .ui-state-default, 
-      .ui-widget-content .ui-state-default, 
+      .ui-state-default,
+      .ui-widget-content .ui-state-default,
       .ui-widget-header .ui-state-default {
         background-color: transparent;
         background-image: none;
@@ -93,15 +93,15 @@
       }
 
       &:hover {
-        background-color: $gray-lighter;
+        background-color: $gray-100;
       }
 
       &:active {
         background-color: $brand-success;
 
         a {
-          color: white;  
-        }        
+          color: white;
+        }
       }
     }
   }

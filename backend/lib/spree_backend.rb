@@ -1,3 +1,4 @@
 require 'spree/backend'
 require 'sprockets/rails'
-require 'bootstrap-sass'
+require 'bootstrap'
+require 'glyphicons'
