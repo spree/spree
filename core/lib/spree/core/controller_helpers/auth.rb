@@ -25,6 +25,7 @@ module Spree
         end
 
         def set_token
+          cookies.permanent.signed[:token] ||= cookies.signed[:guest_token]
           cookies.permanent.signed[:token] ||= {
             value:    generate_token,
             httponly: true
