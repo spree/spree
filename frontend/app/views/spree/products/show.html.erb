@@ -30,16 +30,16 @@
         <div id="product-description" data-hook="product_description">
           <h1 class="product-title" itemprop="name"><%= @product.name %></h1>
 
-          <div class="well" itemprop="description" data-hook="description">
+          <div itemprop="description" data-hook="description">
             <%= product_description(@product) %>
           </div>
 
-          <div id="cart-form" data-hook="cart_form">
+          <div id="cart-form" class="mt-4" data-hook="cart_form">
             <%= render partial: 'cart_form' %>
           </div>
         </div>
 
-        <div id="taxon-crumbs" class=" five " data-hook="product_taxons">
+        <div id="taxon-crumbs" class="mt-4" data-hook="product_taxons">
           <%= render partial: 'taxons' %>
         </div>
       </div>
