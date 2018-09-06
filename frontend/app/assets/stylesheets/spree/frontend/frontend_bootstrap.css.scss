@@ -51,10 +51,6 @@
 .alert-error { @extend .alert-danger; }
 .alert-alert { @extend .alert-info; }
 
-.product-body {
-  height: 170px;
-}
-
 .progress-steps {
   margin-top: $line-height-base;
 }
