@@ -47,12 +47,10 @@ Add Spree gems to your Gemfile:
 ### Rails 5.2
 
 ```ruby
-gem 'spree', '~> 3.6.3'
+gem 'spree', '~> 3.6.4'
 gem 'spree_auth_devise', '~> 3.3'
 gem 'spree_gateway', '~> 3.3'
 ```
-
-**Note: due to problems of [ransack gem](https://github.com/activerecord-hackery/ransack) with Rails `5.2.1` please use Rails `5.2.0` for now**
 
 ### Rails 5.1
 
