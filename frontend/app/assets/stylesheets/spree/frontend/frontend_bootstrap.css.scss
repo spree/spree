@@ -30,6 +30,14 @@
     }
   }
 
+  .navbar {
+    padding: 0;
+  }
+
+  .nav-link {
+    padding: $spacer;
+  }
+
   .nav a {
     color: white;
 
