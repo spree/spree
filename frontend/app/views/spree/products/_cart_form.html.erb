@@ -59,7 +59,11 @@
         </div>
 
         <% if @product.can_supply? %>
+<<<<<<< HEAD
           <div class="add-to-cart mt-2">
+=======
+          <div class="add-to-cart">
+>>>>>>> Cart form updates to latest bootstrap markup and classes
             <div class="input-group">
               <%= number_field_tag :quantity, 1, class: 'title form-control', min: 1 %>
               <div class="input-group-append">
