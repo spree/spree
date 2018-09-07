@@ -4,7 +4,7 @@
 
 <%= form_for [:admin, @product, @image], html: { multipart: true } do |f| %>
   <div data-hook="edit_image" class="card  ">
-    <div class="card-heading">
+    <div class="card-header">
       <h1 class="card-title">
         <%= @image.attachment_file_name%>
       </h1>
