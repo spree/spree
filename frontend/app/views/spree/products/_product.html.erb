@@ -1,11 +1,11 @@
 <% url = spree.product_path(product, taxon_id: taxon.try(:id)) %>
-<div id="product_<%= product.id %>" class="d-flex w-100 col-12 col-md-4 col-sm-6 product-list-item mb-4" data-hook="products_list_item" itemscope itemtype="https://schema.org/Product">
+<div id="product_<%= product.id %>" class="d-flex w-100 col-12 col-sm-6 col-lg-4 col-xl-3 product-list-item mb-4" data-hook="products_list_item" itemscope itemtype="https://schema.org/Product">
   <div class="card w-100">
     <% cache(taxon.present? ? [I18n.locale, current_currency, taxon, product] : cache_key_for_product(product)) do %>
       <div class="card-body text-center product-body">
         <%= link_to url, itemprop: "url", class: 'd-block text-center' do %>
           <%= small_image(product, itemprop: "image", class: "d-block mx-auto") %>
-          <%= content_tag(:span, truncate(product.name, length: 50), class: 'info my-3 d-block', itemprop: "name", title: product.name) %>
+          <%= content_tag(:span, truncate(product.name, length: 50), class: 'info mt-3 d-block', itemprop: "name", title: product.name) %>
         <% end %>
       </div>
       <div class="card-footer text-center">
