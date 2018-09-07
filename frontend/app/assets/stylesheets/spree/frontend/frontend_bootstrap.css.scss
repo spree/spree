@@ -11,7 +11,6 @@
 
   #header {
     background: rgba($gray-900, 0.4);
-    padding: $line-height-base 0;
   }
 
   #logo {
@@ -37,11 +36,6 @@
     &:hover, &:focus {
       background: rgba($gray-900, 0.4);
     }
-  }
-
-  .navbar {
-    border: 0;
-    margin-bottom: 0;
   }
 }
 
