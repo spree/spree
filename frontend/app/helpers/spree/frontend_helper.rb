@@ -81,7 +81,7 @@ module Spree
         css_class = 'full'
       end
 
-      link_to text.html_safe, spree.cart_path, class: "cart-info #{css_class}"
+      link_to text.html_safe, spree.cart_path, class: "cart-info nav-link #{css_class}"
     end
 
     def taxons_tree(root_taxon, current_taxon, max_level = 1)
