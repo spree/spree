@@ -1,4 +1,5 @@
 <%= render partial: 'spree/shared/error_messages', locals: { target: @order } %>
+
 <div class="table-responsive">
   <table class="table" id="cart-detail" data-hook>
     <thead>
@@ -16,7 +17,11 @@
     <% if @order.adjustments.nonzero.exists? || @order.line_item_adjustments.nonzero.exists? || @order.shipment_adjustments.nonzero.exists? || @order.shipments.any? %>
       <tr class="cart-subtotal">
         <td colspan="4" align='right'><h5><%= Spree.t(:cart_subtotal, count: @order.line_items.sum(:quantity)) %></h5></td>
-        <td colspan><h5><%= order_form.object.display_item_total %></h5></td>
+        <td colspan>
+          <h5>
+            <%= order_form.object.display_item_total %>
+          </h5>
+        </td>
         <td></td>
       </tr>
       <%= render "spree/orders/adjustments" %>
@@ -33,5 +38,4 @@
       <td></td>
     </tr>
   </table>
-
 </div>

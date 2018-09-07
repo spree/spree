@@ -27,7 +27,7 @@ module Spree
         text = Spree.t("order_state.#{state}").titleize
         text.prepend("#{i.succ}. ") if numbers
 
-        css_classes = []
+        css_classes = ['nav-item']
         current_index = states.index(@order.state)
         state_index = states.index(state)
 
@@ -45,7 +45,7 @@ module Spree
         if state_index < current_index
           content_tag('li', text, class: css_classes.join(' '))
         else
-          content_tag('li', content_tag('a', text), class: css_classes.join(' '))
+          content_tag('li', content_tag('a', text, class: "nav-link #{'active' if state == @order.state}"), class: css_classes.join(' '))
         end
       end
       content_tag('ul', raw(items.join("\n")), class: 'progress-steps nav nav-pills nav-justified', id: "checkout-step-#{@order.state}")
