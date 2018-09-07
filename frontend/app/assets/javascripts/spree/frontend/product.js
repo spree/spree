@@ -65,6 +65,8 @@ Spree.ready(function ($) {
     Spree.disableCartForm(selectedRadio);
 
     radios.click(function (event) {
+      $("#product-variants").find('li.active').removeClass("active");
+      $(this).closest("li").addClass("active");
       Spree.showVariantImages(this.value);
       Spree.updateVariantPrice($(this));
       return Spree.disableCartForm($(this));
