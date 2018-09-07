@@ -1,9 +1,9 @@
-<div class="panel-heading">
-  <h1 class="panel-title">
+<div class="card-heading">
+  <h1 class="card-title">
     <%= Spree.t(:rules) %>
   </h1>
 </div>
-<div id="rule_fields" class="panel-body">
+<div id="rule_fields" class="card-body">
 
   <%= form_tag spree.admin_promotion_promotion_rules_path(@promotion), remote: true, id: 'new_product_rule_form' do %>
     

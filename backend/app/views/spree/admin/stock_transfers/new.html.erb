@@ -20,14 +20,14 @@
 </script>
 
 <%= form_tag admin_stock_transfers_path, method: :post do %>
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <h1 class="panel-title">
+  <div class="card  ">
+    <div class="card-heading">
+      <h1 class="card-title">
         <%= Spree.t(:transfer_stock) %>
       </h1>
     </div>
 
-    <div class="panel-body">
+    <div class="card-body">
       <div data-hook="admin_stock_movements_form_fields">
         <div class="form-group" id="stock_movement_reference_field">
           <%= label_tag 'reference', raw("#{Spree.t(:reference)} (#{Spree.t(:optional)})") %>
@@ -53,14 +53,14 @@
     </div>
   </div>
 
-  <div class="panel panel-default" id="add-variant-to-transfer">
-    <div class="panel-heading">
-      <h1 class="panel-title">
+  <div class="card  " id="add-variant-to-transfer">
+    <div class="card-heading">
+      <h1 class="card-title">
         <%= Spree.t(:add_variant) %>
       </h1>
     </div>
 
-    <div class="panel-body">
+    <div class="card-body">
       <div class="row">
         <div class="col-xs-12 col-md-8">
           <div class="form-group" id="stock_movement_variant_id_field">
