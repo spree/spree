@@ -17,7 +17,7 @@ describe 'Customer Returns', type: :feature do
     end
 
     it 'displays pre tax total' do
-      within_row(1) { expect(page).to have_content(customer_return.display_pre_tax_total.to_html) }
+      within_row(1) { expect(page).to have_content(customer_return.display_pre_tax_total.to_s) }
     end
 
     it 'displays order number' do

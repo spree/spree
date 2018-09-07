@@ -303,9 +303,9 @@ describe 'Users', type: :feature do
       within_table('listing_items') do
         items.each do |item|
           expect(page).to have_selector('.item-name', text: item.product.name)
-          expect(page).to have_selector('.item-price', text: item.single_money.to_html)
+          expect(page).to have_selector('.item-price', text: item.single_money.to_s)
           expect(page).to have_selector('.item-quantity', text: item.quantity)
-          expect(page).to have_selector('.item-total', text: item.money.to_html)
+          expect(page).to have_selector('.item-total', text: item.money.to_s)
         end
       end
     end
