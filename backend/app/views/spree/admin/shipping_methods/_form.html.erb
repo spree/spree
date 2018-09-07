@@ -46,14 +46,14 @@
 
 <div class="row">
   <div data-hook="admin_shipping_method_form_availability_fields" class="col-xs-12 col-md-6">
-    <div class="panel panel-default categories">
-      <div class="panel-heading">
-        <h1 class="panel-title">
+    <div class="card   categories">
+      <div class="card-heading">
+        <h1 class="card-title">
           <%= Spree.t(:shipping_categories) %>
         </h1>
       </div>
 
-      <div class="panel-body">
+      <div class="card-body">
         <%= f.field_container :categories, class: ['form-group'] do %>
           <% Spree::ShippingCategory.all.each do |category| %>
             <div class="checkbox">
@@ -70,14 +70,14 @@
   </div>
 
   <div class="col-xs-12 col-md-6">
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <h1 class="panel-title">
+    <div class="card  ">
+      <div class="card-heading">
+        <h1 class="card-title">
           <%= Spree.t(:zones) %>
         </h1>
       </div>
 
-      <div class="panel-body">
+      <div class="card-body">
         <%= f.field_container :zones, class: ['form-group'] do %>
           <% shipping_method_zones = @shipping_method.zones.to_a %>
           <% Spree::Zone.all.each do |zone| %>
@@ -101,14 +101,14 @@
   </div>
 
   <div class="col-xs-12 col-md-6">
-    <div class="panel panel-default tax_categories">
-      <div class="panel-heading">
-        <h1 class="panel-title">
+    <div class="card   tax_categories">
+      <div class="card-heading">
+        <h1 class="card-title">
           <%= Spree.t(:tax_category) %>
         </h1>
       </div>
 
-      <div class="panel-body">
+      <div class="card-body">
         <%= f.field_container :categories, class: ['form-group'] do %>
           <%= f.select :tax_category_id, @tax_categories.map { |tc| [tc.name, tc.id] }, { include_blank: true }, class: "select2" %>
           <%= f.error_message_on :tax_category_id %>

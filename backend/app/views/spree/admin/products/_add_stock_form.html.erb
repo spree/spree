@@ -1,9 +1,9 @@
-<div class="panel-heading">
-  <h1 class="panel-title">
+<div class="card-heading">
+  <h1 class="card-title">
     <%= Spree.t(:add_stock) %>
   </h1>
 </div>
-<div class="panel-body">
+<div class="card-body">
   <%= form_for [:admin, Spree::StockMovement.new], url: admin_stock_items_path do |f| %>
     <div data-hook="admin_stock_movements_form_fields" class="row">
       <div class="col-xs-12 col-md-2">

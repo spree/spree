@@ -3,13 +3,13 @@
 <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @image } %>
 
 <%= form_for [:admin, @product, @image], html: { multipart: true } do |f| %>
-  <div data-hook="edit_image" class="panel panel-default">
-    <div class="panel-heading">
-      <h1 class="panel-title">
+  <div data-hook="edit_image" class="card  ">
+    <div class="card-heading">
+      <h1 class="card-title">
         <%= @image.attachment_file_name%>
       </h1>
     </div>
-    <div class="panel-body">
+    <div class="card-body">
       <div class="form-group">
         <div data-hook="thumbnail" class="col-xs-12 col-md-3 text-center">
           <%= f.label Spree.t(:thumbnail) %>

@@ -1,4 +1,4 @@
-<div class="panel-body">
+<div class="card-body">
   <div class="row no-marginb">
     <div class="form-group col-xs-12 col-md-6 no-marginb">
       <%= select_tag "#{param_prefix}[preferred_operator_min]", options_for_select(Spree::Promotion::Rules::ItemTotal::OPERATORS_MIN.map{|o| [Spree.t("item_total_rule.operators.#{o}"),o]}, promotion_rule.preferred_operator_min), { class: 'select2 select_item_total marginb' } %>

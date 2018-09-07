@@ -13,14 +13,14 @@
           <%# Security settings                               %>
           <%#-------------------------------------------------%>
           <% if @preferences_security.any? %>
-            <div class="panel panel-default security">
-              <div class="panel-heading">
-                <h1 class="panel-title">
+            <div class="card   security">
+              <div class="card-heading">
+                <h1 class="card-title">
                   <%= Spree.t(:security_settings) %>
                 </h1>
               </div>
 
-              <div class="panel-body">
+              <div class="card-body">
                 <% @preferences_security.each do |key|
                     type = Spree::Config.preference_type(key) %>
                     <div class="checkbox">
@@ -37,12 +37,12 @@
           <%#-------------------------------------------------%>
           <%# Clear cache                                     %>
           <%#-------------------------------------------------%>
-          <div class="panel panel-default">
-            <div class="panel-heading">
-              <h1 class="panel-title"><%= Spree.t(:clear_cache)%></h1>
+          <div class="card  ">
+            <div class="card-heading">
+              <h1 class="card-title"><%= Spree.t(:clear_cache)%></h1>
             </div>
 
-            <div class="panel-body">
+            <div class="card-body">
               <div class="clear-cache-warning alert alert-warning">
                 <%= Spree.t(:clear_cache_warning) %>
               </div>
@@ -58,14 +58,14 @@
           <%#-------------------------------------------------%>
           <%# Currency Settings                               %>
           <%#-------------------------------------------------%>
-          <div class="panel panel-default currency">
-            <div class="panel-heading">
-              <h1 class="panel-title">
+          <div class="card   currency">
+            <div class="card-heading">
+              <h1 class="card-title">
                 <%= Spree.t(:currency_settings)%>
               </h1>
             </div>
 
-            <div class="panel-body">
+            <div class="card-body">
               <div class="form-group">
                 <%= label_tag :currency, Spree.t(:choose_currency) %>
                 <%= select_tag :currency, currency_options %>
