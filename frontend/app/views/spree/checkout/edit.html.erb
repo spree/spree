@@ -16,8 +16,8 @@
     <div class="<%= if @order.state != 'confirm' then 'col-md-9' else 'col-md-12' end %>" data-hook="checkout_form_wrapper">
       <%= form_for @order, url: update_checkout_path(@order.state), html: { id: "checkout_form_#{@order.state}" } do |form| %>
         <% if @order.state == 'address' || !@order.email? %>
-          <div class="panel panel-default">
-            <div class="panel-body">
+          <div class="card card-default mb-4">
+            <div class="card-body">
               <div class="form-group">
                 <%= form.label :email %>
                 <%= form.email_field :email, class: 'form-control', required: true %>
