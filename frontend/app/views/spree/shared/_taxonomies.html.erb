@@ -5,7 +5,7 @@
     <% cache [I18n.locale, taxonomy, max_level, @taxon] do %>
       <% if taxonomy.root.children.any? %>
         <div class="mt-4">
-          <h4 class='taxonomy-root'>
+          <h4 class='taxonomy-root h5'>
             <%= Spree.t(:shop_by_taxonomy, taxonomy: taxonomy.name) %>
           </h4>
           <%= taxons_tree(taxonomy.root, @taxon, max_level) %>
