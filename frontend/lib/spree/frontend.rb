@@ -1,10 +1,12 @@
 require 'rails/all'
 require 'sprockets/rails'
 
-require 'bootstrap-sass'
 require 'canonical-rails'
 require 'deface'
 require 'jquery-rails'
+require 'bootstrap/glyphicons'
+require 'bootstrap'
+require 'popper_js'
 require 'spree/core'
 require 'spree/frontend/middleware/seo_assist'
 require 'spree/frontend/engine'

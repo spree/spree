@@ -1,18 +1,16 @@
-//Add your custom bootstrap variables here, see https://github.com/twbs/bootstrap-sass/blob/master/assets/stylesheets/bootstrap/_variables.scss for full list of variables.
 
-@import "bootstrap-sprockets";
-@import "variables";
+@import 'bootstrap/glyphicons';
 @import "bootstrap";
-
+@import "variables";
 // -- Spree Custom Header and Footer ---------------------
 #spree-header {
   background-color: $brand-primary;
-  margin-bottom: $line-height-computed;
+  // margin-bottom: $line-height-computed;
   padding-top: 0.25em;
 
   #header {
-    background: rgba($gray-darker, 0.4);
-    padding: $line-height-computed 0;
+    background: rgba($gray-700, 0.4);
+  //  padding: $line-height-computed 0;
   }
 
   #logo {
@@ -28,7 +26,7 @@
     .navbar-nav > li > a {
       padding-top: 0;
       padding-bottom: 10px;
-      line-height: $line-height-computed;
+    //  line-height: $line-height-computed;
     }
   }
 
@@ -36,7 +34,7 @@
     color: white;
 
     &:hover, &:focus {
-      background: rgba($gray-darker, 0.4);
+      background: rgba($gray-500, 0.4);
     }
   }
 
@@ -47,24 +45,24 @@
 }
 
 #spree-footer {
-  background: $gray-dark;
-  padding-top: $padding-base-horizontal;
-  margin-top: $line-height-computed;
+  background: $gray-700;
+  // padding-top: $padding-base-horizontal;
+//  margin-top: $line-height-computed;
   color: white;
 }
 
 // -- Spree Layout Custom Rules -------------------------
 
-.alert-notice { @extend .alert-success; }
-.alert-error { @extend .alert-danger; }
-.alert-alert { @extend .alert-info; }
+// .alert-notice { @extend .alert-success; }
+// .alert-error { @extend .alert-danger; }
+// .alert-alert { @extend .alert-info; }
 
 .product-body {
   height: 170px;
 }
 
 .progress-steps {
-  margin-top: $line-height-computed;
+//  margin-top: $line-height-computed;
 }
 
 h1 {
