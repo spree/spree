@@ -8,6 +8,8 @@
 //= require jquery_ujs
 //= require accounting.min
 //= require spree/frontend
+//= require popper
+//= require bootstrap
 <% unless options[:lib_name] == 'spree' || options[:lib_name] == 'spree/frontend' %>
   <% filename = "spree/frontend/#{ options[:lib_name].gsub("/", "_") }" %>
   <% filepath = File.join(File.dirname(__FILE__), "../../app/assets/javascripts/#{ filename }") %>
