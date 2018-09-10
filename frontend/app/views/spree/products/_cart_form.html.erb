@@ -56,11 +56,11 @@
           <div class="add-to-cart">
             <div class="input-group">
               <%= number_field_tag :quantity, 1, class: 'title form-control', min: 1 %>
-              <span class="input-group-btn">
+              <div class="input-group-append">
                 <%= button_tag class: 'btn btn-success', id: 'add-to-cart-button', type: :submit do %>
                   <%= Spree.t(:add_to_cart) %>
                 <% end %>
-              </span>
+              </div>
             </div>
           </div>
         <% end %>
