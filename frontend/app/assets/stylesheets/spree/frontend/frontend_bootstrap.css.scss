@@ -46,6 +46,10 @@
 .alert-error { @extend .alert-danger; }
 .alert-alert { @extend .alert-info; }
 
+.list-unstyled {
+  @include list-unstyled();
+}
+
 .progress-steps {
   margin-top: $line-height-base;
 }
