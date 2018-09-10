@@ -140,20 +140,30 @@ Spree::Core::Engine.add_routes do
       end
     end
 
+    get '/404', to: 'errors#render_404'
+
     spree_path = Rails.application.routes.url_helpers.try(:spree_path, trailing_slash: true) || '/'
 
     match 'v:api/*path', to: redirect { |params, request|
       format = ".#{params[:format]}" unless params[:format].blank?
       query  = "?#{request.query_string}" unless request.query_string.blank?
 
-      "#{spree_path}api/v1/#{params[:path]}#{format}#{query}"
+      if request.path == "#{spree_path}api/v1/#{params[:path]}#{format}#{query}"
+        "#{spree_path}api/404"
+      else
+        "#{spree_path}api/v1/#{params[:path]}#{format}#{query}"
+      end
     }, via: [:get, :post, :put, :patch, :delete]
 
     match '*path', to: redirect { |params, request|
       format = ".#{params[:format]}" unless params[:format].blank?
       query  = "?#{request.query_string}" unless request.query_string.blank?
 
-      "#{spree_path}api/v1/#{params[:path]}#{format}#{query}"
+      if request.path == "#{spree_path}api/v1/#{params[:path]}#{format}#{query}"
+        "#{spree_path}api/404"
+      else
+        "#{spree_path}api/v1/#{params[:path]}#{format}#{query}"
+      end
     }, via: [:get, :post, :put, :patch, :delete]
   end
 end
