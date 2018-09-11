@@ -27,12 +27,12 @@ module Spree
         destination_url = options[:url] || spree.send("#{options[:route]}_path")
         titleized_label = Spree.t(options[:label], default: options[:label], scope: [:admin, :tab]).titleize
 
-        css_classes = ['sidebar-menu-item']
+        css_classes = ['sidebar-menu-item d-block w-100']
 
         link = if options[:icon]
-                 link_to_with_icon(options[:icon], titleized_label, destination_url)
+                 link_to_with_icon(options[:icon], titleized_label, destination_url, class: 'd-block w-100')
                else
-                 link_to(titleized_label, destination_url)
+                 link_to(titleized_label, destination_url, class: 'd-block w-100')
                end
 
         selected = if options[:match_path].is_a? Regexp
@@ -50,7 +50,7 @@ module Spree
 
       # Single main menu item
       def main_menu_item(text, url: nil, icon: nil)
-        link_to url, 'data-toggle': 'collapse', 'data-parent': '#sidebar' do
+        link_to url, 'data-toggle': 'collapse', 'data-parent': '#sidebar', class: 'd-block w-100' do
           content_tag(:span, nil, class: "icon icon-#{icon}") +
             content_tag(:span, " #{text}", class: 'text') +
             content_tag(:span, nil, class: 'icon icon-chevron-left pull-right')
@@ -59,7 +59,7 @@ module Spree
 
       # Main menu tree menu
       def main_menu_tree(text, icon: nil, sub_menu: nil, url: '#')
-        content_tag :li, class: 'sidebar-menu-item' do
+        content_tag :li, class: 'sidebar-menu-item d-block w-100' do
           main_menu_item(text, url: url, icon: icon) +
             render(partial: "spree/admin/shared/sub_menu/#{sub_menu}")
         end
@@ -212,9 +212,9 @@ module Spree
 
       def main_part_classes
         if cookies['sidebar-minimized'] == 'true'
-          'col-xs-12 sidebar-collapsed'
+          'col-12 sidebar-collapsed'
         else
-          'col-xs-9 col-xs-offset-3 col-md-10 col-md-offset-2'
+          'col-9 offset-3 col-md-10 offset-md-2'
         end
       end
 
@@ -222,7 +222,7 @@ module Spree
         if cookies['sidebar-minimized'] == 'true'
           'col-xs-3 col-md-2 hidden-xs sidebar'
         else
-          'col-xs-3 col-md-2 sidebar'
+          'p-0 col-xs-3 col-md-2 sidebar'
         end
       end
 
