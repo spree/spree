@@ -27,7 +27,7 @@ module Spree
         destination_url = options[:url] || spree.send("#{options[:route]}_path")
         titleized_label = Spree.t(options[:label], default: options[:label], scope: [:admin, :tab]).titleize
 
-        css_classes = ['sidebar-menu-item d-block w-100']
+        css_classes = ['sidebar-menu-item d-block w-100 position-relative']
 
         link = if options[:icon]
                  link_to_with_icon(options[:icon], titleized_label, destination_url, class: 'd-block w-100')
@@ -50,10 +50,10 @@ module Spree
 
       # Single main menu item
       def main_menu_item(text, url: nil, icon: nil)
-        link_to url, 'data-toggle': 'collapse', 'data-parent': '#sidebar', class: 'd-block w-100' do
+        link_to url, 'data-toggle': 'collapse', 'data-parent': '#sidebar', class: 'd-block w-100 position-relative' do
           content_tag(:span, nil, class: "icon icon-#{icon}") +
             content_tag(:span, " #{text}", class: 'text') +
-            content_tag(:span, nil, class: 'icon icon-chevron-left pull-right')
+            content_tag(:span, nil, class: 'icon icon-chevron-left position-absolute')
         end
       end
 

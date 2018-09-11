@@ -22,14 +22,12 @@
           padding-right: 5px;
         }
 
-        .glyphicon.pull-right {
-          font-size: 8px;
+        .icon-chevron-left {
+          font-size: .5rem;
           line-height: 2;
-          color: $gray-100;
-          position: absolute;
           right: 5px;
           top: 50%;
-          margin-top: -8px;
+          margin-top: -.5rem;
         }
       }
     }
