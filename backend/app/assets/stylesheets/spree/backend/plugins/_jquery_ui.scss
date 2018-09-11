@@ -8,12 +8,12 @@
   background-color: white;
   background-image: none;
   color: $gray-500;
-  border-color: $input-border;
+  border-color: $input-border-color;
   width: auto;
   padding: 20px;
 
   &.ui-corner-all {
-    border-radius: $border-radius-base;
+    border-radius: $border-radius;
   }
 
   .ui-datepicker-header {
@@ -29,7 +29,7 @@
     text-indent: 0;
     vertical-align: bottom !important;
     width: 12px;
-    color: $brand-primary;
+    color: $primary;
 
     &.ui-icon-circle-triangle-w {
       @extend .glyphicon;
@@ -50,7 +50,7 @@
     cursor: pointer;
 
     span.ui-icon {
-      color: $brand-success;
+      color: $success;
     }
   }
 
@@ -72,7 +72,7 @@
       span {
         text-transform: uppercase;
         letter-spacing: 1px;
-        color: $brand-primary;
+        color: $primary;
         font-weight: 500;
       }
     }
@@ -97,7 +97,7 @@
       }
 
       &:active {
-        background-color: $brand-success;
+        background-color: $success;
 
         a {
           color: white;

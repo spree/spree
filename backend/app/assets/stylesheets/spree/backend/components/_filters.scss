@@ -15,12 +15,11 @@
     letter-spacing: 2px;
     font-weight: bold;
     font-size: $font-size-base - 3;
-    padding: ($padding-base-vertical + 3) $padding-base-horizontal ($padding-base-vertical + 2);
     border-right: none;
 
     &:focus {
       background-color: $gray-100;
-      border-color: $input-border;
+      border-color: $input-border-color;
     }
   }
 }
