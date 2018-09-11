@@ -1,18 +1,8 @@
-#main-sidebar {
-  z-index: 1000;
-  display: block;
-  overflow-x: hidden;
+.sidebar {
   overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
   background-color: $gray-100;
   border-right: 1px solid $gray-200;
-
-  a {
-    -webkit-font-smoothing: antialiased;
-    -webkit-text-size-adjust: 100%;
-    -ms-text-size-adjust: 100%;
-    -webkit-font-feature-settings: "kern" 1;
-    -moz-font-feature-settings: "kern" 1;
-  }
+  margin-top: 50px;
 
   ul.nav-sidebar {
     > li {
@@ -24,7 +14,7 @@
         font-size: 12px;
         font-weight: 500;
         padding: 15px;
-        color: $gray-500;
+        color: $gray-700;
 
         .glyphicon {
           font-size: 18px;

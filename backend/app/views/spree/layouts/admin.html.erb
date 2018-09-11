@@ -30,16 +30,16 @@
         <%#-------------------------------------------------%>
         <%# Sidebar                                         %>
         <%#-------------------------------------------------%>
-        <div class="<%= main_sidebar_classes %>" id="main-sidebar" data-hook="admin_tabs">
+        <aside class="<%= main_sidebar_classes %> sidebar position-fixed h-100" id="main-sidebar" data-hook="admin_tabs">
           <%= render partial: 'spree/admin/shared/main_menu' %>
 
           <%= render partial: 'spree/admin/shared/version' %>
-        </div>
+        </aside>
 
         <%#-------------------------------------------------%>
         <%# Content                                         %>
         <%#-------------------------------------------------%>
-        <div class="<%= main_part_classes %> main" id="main-part">
+        <main class="<%= main_part_classes %> main" id="main-part" role="main">
 
           <%#-------------------------------------------------%>
           <%# Content header (page title/actions)             %>
@@ -71,7 +71,7 @@
           </div>
 
 
-        </div>
+        </main>
       </div>
     </div>
 
