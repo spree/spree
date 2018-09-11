@@ -7,19 +7,6 @@
 .btn {
   text-align: center;
 
-  &:focus {
-    outline: 0 !important;
-  }
-
-  &:hover,
-  &:focus,
-  &:active,
-  &.active,
-  &.disabled,
-  &[disabled] {
-    box-shadow: none;
-  }
-
   .glyphicon {
     padding-right: 3px;
   }

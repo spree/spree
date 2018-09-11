@@ -42,9 +42,9 @@
           <td><%= link_to customer_return.order.number, spree.edit_admin_order_path(customer_return.order) %></td>
           <td>
             <% if customer_return.fully_reimbursed? %>
-              <span class="label label-success"><%= Spree.t(:reimbursed) %></span>
+              <span class="badge badge-success"><%= Spree.t(:reimbursed) %></span>
             <% else %>
-              <span class="label label-info"><%= Spree.t(:incomplete) %></span>
+              <span class="badge badge-info"><%= Spree.t(:incomplete) %></span>
             <% end %>
           </td>
           <td><%= customer_return.display_pre_tax_total.to_html %></td>

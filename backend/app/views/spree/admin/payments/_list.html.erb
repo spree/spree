@@ -19,7 +19,7 @@
         <td class="text-center"><%= payment_method_name(payment) %></td>
         <td class="text-center"><%= payment.transaction_id %></td>
         <td class="text-center">
-          <span class="label label-<%= payment.state %>">
+          <span class="badge badge-<%= payment.state %>">
             <%= Spree.t(payment.state, scope: :payment_states, default: payment.state.capitalize) %>
           </span>
         </td>

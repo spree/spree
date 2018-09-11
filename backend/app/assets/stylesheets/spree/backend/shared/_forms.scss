@@ -22,7 +22,7 @@ span.or {
 
 input.form-control {
   &:active, &:focus {
-    border-color: lighten($brand-success, 20);
+    border-color: lighten($success, 20);
     box-shadow: none;
   }
 }
@@ -30,12 +30,12 @@ input.form-control {
 .form-group {
   &.withError {
     label, .formError, .required {
-      color: $brand-danger;
+      color: $danger;
     }
 
     input,
     .select2-choice {
-      border-color: $brand-danger;
+      border-color: $danger;
     }
   }
 }
