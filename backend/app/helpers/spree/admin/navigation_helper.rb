@@ -42,7 +42,7 @@ module Spree
                    options[:icon],
                    titleized_label,
                    destination_url,
-                   class: "w-100 p-3 d-flex align-items-center #{'text-success' if selected}"
+                   class: 'w-100 p-3 d-flex align-items-center'
                  )
                else
                  link_to(
