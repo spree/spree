@@ -28,11 +28,12 @@ module Spree
         titleized_label = Spree.t(options[:label], default: options[:label], scope: [:admin, :tab]).titleize
 
         css_classes = ['sidebar-menu-item d-block w-100 position-relative']
+        link_classes = 'd-flex w-100 p-3 align-items-center'
 
         link = if options[:icon]
-                 link_to_with_icon(options[:icon], titleized_label, destination_url, class: 'd-block w-100')
+                 link_to_with_icon(options[:icon], titleized_label, destination_url, class: link_classes)
                else
-                 link_to(titleized_label, destination_url, class: 'd-block w-100')
+                 link_to(titleized_label, destination_url, class: link_classes)
                end
 
         selected = if options[:match_path].is_a? Regexp
@@ -50,8 +51,8 @@ module Spree
 
       # Single main menu item
       def main_menu_item(text, url: nil, icon: nil)
-        link_to url, 'data-toggle': 'collapse', class: 'd-block w-100 position-relative' do
-          content_tag(:span, nil, class: "icon icon-#{icon}") +
+        link_to url, 'data-toggle': 'collapse', class: 'd-flex w-100 p-3 position-relative align-items-center' do
+          content_tag(:span, nil, class: "icon icon-#{icon} mr-2") +
             content_tag(:span, " #{text}", class: 'text') +
             content_tag(:span, nil, class: 'icon icon-chevron-left position-absolute')
         end
@@ -153,7 +154,7 @@ module Spree
         text = options[:no_text] ? '' : content_tag(:span, text, class: 'text')
         options.delete(:no_text)
         if icon_name
-          icon = content_tag(:span, '', class: "icon icon-#{icon_name}")
+          icon = content_tag(:span, '', class: "mr-2 icon icon-#{icon_name}")
           text.insert(0, icon + ' ')
         end
         link_to(text.html_safe, url, options)
