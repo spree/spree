@@ -28,12 +28,11 @@ module Spree
         titleized_label = Spree.t(options[:label], default: options[:label], scope: [:admin, :tab]).titleize
 
         css_classes = ['sidebar-menu-item d-block w-100 position-relative']
-        link_classes = 'd-flex w-100 p-3 align-items-center'
 
         link = if options[:icon]
-                 link_to_with_icon(options[:icon], titleized_label, destination_url, class: link_classes)
+                 link_to_with_icon(options[:icon], titleized_label, destination_url, class: 'w-100 p-3 d-flex align-items-center')
                else
-                 link_to(titleized_label, destination_url, class: link_classes)
+                 link_to(titleized_label, destination_url, class: 'sidebar-submenu-item w-100 py-1 px-3 d-block')
                end
 
         selected = if options[:match_path].is_a? Regexp
@@ -204,10 +203,10 @@ module Spree
           url.ends_with?("#{controller.controller_name}/edit") ||
           url.ends_with?("#{controller.controller_name.singularize}/edit")
 
-        options[:class] = 'sidebar-menu-item'
+        options[:class] = 'sidebar-menu-item d-block w-100'
         options[:class] << ' selected' if is_selected
         content_tag(:li, options) do
-          link_to(link_text, url)
+          link_to(link_text, url, class: 'py-1 px-3 d-block sidebar-submenu-item')
         end
       end
 
