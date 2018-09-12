@@ -9,24 +9,19 @@
       border-bottom: 1px solid $gray-300;
 
       > a {
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        font-size: 12px;
-        font-weight: 500;
-        padding: 15px;
         color: $gray-700;
 
-        .glyphicon {
-          font-size: 18px;
-          vertical-align: bottom;
-          padding-right: 5px;
+        &:hover,
+        &[aria-expanded="true"] {
+          text-decoration: none;
+          background-color: $gray-200;
         }
 
         .icon-chevron-left,
         .icon-chevron-down {
           font-size: .5rem;
           line-height: 2;
-          right: 5px;
+          right: 1rem;
           top: 50%;
           margin-top: -.5rem;
         }
@@ -58,7 +53,7 @@
 
   .spree-version {
     position: absolute;
-    z-index: -1;
+    // z-index: -1;
     left: 15px;
     bottom: 15px;
   }
