@@ -4,6 +4,12 @@
   border-right: 1px solid $gray-200;
   margin-top: 50px;
 
+  a.sidebar-submenu-item:hover {
+    text-decoration: none;
+    background-color: $gray-200;
+    cursor: pointer
+  }
+
   ul.nav-sidebar {
     > li {
       border-bottom: 1px solid $gray-300;
