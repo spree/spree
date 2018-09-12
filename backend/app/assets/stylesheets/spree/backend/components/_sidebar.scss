@@ -12,8 +12,6 @@
 
   ul.nav-sidebar {
     > li {
-      border-bottom: 1px solid $gray-300;
-
       > a {
         color: $gray-700;
 
@@ -30,28 +28,6 @@
           right: 1rem;
           top: 50%;
           margin-top: -.5rem;
-        }
-      }
-    }
-  }
-
-  ul.nav.nav-pills {
-    background-color: white;
-    border-top: 1px solid $gray-100;
-
-    li {
-      a {
-        padding: 5px 15px;
-        font-size: 12px;
-
-        &:hover {
-          border-radius: 0;
-        }
-      }
-
-      &.selected {
-        a {
-          color: $success
         }
       }
     }

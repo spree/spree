@@ -76,7 +76,7 @@ jQuery(function($) {
 
   // Main menu active item submenu show
   var active_item = $('#main-sidebar').find('.selected');
-  active_item.closest('.nav-pills').addClass('in');
+  active_item.closest('.nav-pills').addClass('in show');
   active_item.closest('.nav-sidebar')
     .find('.icon-chevron-left')
     .removeClass('icon-chevron-left')
