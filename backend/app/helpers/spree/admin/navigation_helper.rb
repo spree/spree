@@ -29,19 +29,29 @@ module Spree
 
         css_classes = ['sidebar-menu-item d-block w-100 position-relative']
 
+        selected = if options[:match_path].is_a? Regexp
+          request.fullpath =~ options[:match_path]
+        elsif options[:match_path]
+          request.fullpath.starts_with?("#{spree.admin_path}#{options[:match_path]}")
+        else
+          args.include?(controller.controller_name.to_sym)
+        end
+
         link = if options[:icon]
-                 link_to_with_icon(options[:icon], titleized_label, destination_url, class: 'w-100 p-3 d-flex align-items-center')
+                 link_to_with_icon(
+                   options[:icon],
+                   titleized_label,
+                   destination_url,
+                   class: "w-100 p-3 d-flex align-items-center #{'text-success' if selected}"
+                 )
                else
-                 link_to(titleized_label, destination_url, class: 'sidebar-submenu-item w-100 py-1 px-3 d-block')
+                 link_to(
+                   titleized_label,
+                   destination_url,
+                   class: "sidebar-submenu-item w-100 py-1 px-3 d-block #{'text-success' if selected}"
+                 )
                end
 
-        selected = if options[:match_path].is_a? Regexp
-                     request.fullpath =~ options[:match_path]
-                   elsif options[:match_path]
-                     request.fullpath.starts_with?("#{spree.admin_path}#{options[:match_path]}")
-                   else
-                     args.include?(controller.controller_name.to_sym)
-                   end
         css_classes << 'selected' if selected
 
         css_classes << options[:css_class] if options[:css_class]
