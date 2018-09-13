@@ -15,11 +15,13 @@ Spree.ready(function ($) {
     });
 
     thumbnails.find("li").on("mouseenter", function (event) {
-      return ($("#main-image img")).attr({"src": ($(event.currentTarget)).find("a").attr("href"), "alt": ($(event.currentTarget)).find("img").attr("alt")});
+      return ($("#main-image img"))
+        .attr({"src": ($(event.currentTarget)).find("a").attr("href"), "alt": ($(event.currentTarget)).find("img").attr("alt")});
     });
 
     return thumbnails.find("li").on("mouseleave", function (event) {
-      return ($("#main-image img")).attr({"src": ($("#main-image")).data("selectedThumb"), "alt": ($("#main-image")).data("selectedThumbAlt")});
+      return ($("#main-image img"))
+        .attr({"src": ($("#main-image")).data("selectedThumb"), "alt": ($("#main-image")).data("selectedThumbAlt")});
     });
   };
 
@@ -36,7 +38,7 @@ Spree.ready(function ($) {
       }
 
       var newImg = thumb.find("a").attr("href"),
-          newAlt = thumb.find('img').attr('alt');
+          newAlt = thumb.find("img").attr("alt");
       ($("#product-images ul.thumbnails li")).removeClass("selected");
       thumb.addClass("selected");
       ($("#main-image img")).attr({"src": newImg, "alt": newAlt});
