@@ -25,25 +25,27 @@ jQuery(function ($) {
   })
 
   // Sidebar nav toggle functionality
-  $('#sidebar-toggle').on('click', function () {
-    var wrapper = $('#wrapper')
-    var main = $('#main-part')
-    var sidebar = $('#main-sidebar')
+  const sidebar_toggle = $('#sidebar-toggle')
 
-    // these should match `spree/backend/app/helpers/spree/admin/navigation_helper.rb#main_part_classes`
-    var mainWrapperCollapsedClasses = 'col-12 sidebar-collapsed'
-    var mainWrapperExpandedClasses = 'col-9 offset-3 col-md-10 offset-md-2'
+  sidebar_toggle.on('click', function() {
+    const wrapper = $('#wrapper')
+    const main    = $('#main-part')
+    const sidebar = $('#main-sidebar')
+    const version = $('.spree-version')
 
     wrapper.toggleClass('sidebar-minimized')
-    sidebar.toggleClass('hidden-xs')
+
+    // these should match `spree/backend/app/helpers/spree/admin/navigation_helper.rb#main_part_classes`
     main
-      .toggleClass(mainWrapperCollapsedClasses)
-      .toggleClass(mainWrapperExpandedClasses)
+      .toggleClass('col-12 sidebar-collapsed ml-5')
+      .toggleClass('col-9 offset-3 col-md-10 offset-md-2')
 
     if (wrapper.hasClass('sidebar-minimized')) {
       Cookies.set('sidebar-minimized', 'true', { path: '/admin' })
+      version.removeClass('d-md-block')
     } else {
       Cookies.set('sidebar-minimized', 'false', { path: '/admin' })
+      version.addClass('d-md-block')
     }
   })
 
