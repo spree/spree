@@ -34,8 +34,19 @@ jQuery(function($) {
     const main    = $('#main-part');
     const sidebar = $('#main-sidebar');
     const version = $('.spree-version');
+    const collapsed = sidebar.find('[aria-expanded="true"]')
+    const collapsedIcons = sidebar.find('.icon-chevron-down')
 
     wrapper.toggleClass('sidebar-minimized');
+
+    collapsed
+      .attr('aria-expanded', 'false')
+      .next()
+      .removeClass('show');
+
+    collapsedIcons
+      .removeClass('icon-chevron-down')
+      .addClass('icon-chevron-left');
 
     // these should match `spree/backend/app/helpers/spree/admin/navigation_helper.rb#main_part_classes`
     main
