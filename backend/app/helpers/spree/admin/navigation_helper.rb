@@ -30,12 +30,12 @@ module Spree
         css_classes = ['sidebar-menu-item d-block w-100 position-relative']
 
         selected = if options[:match_path].is_a? Regexp
-          request.fullpath =~ options[:match_path]
-        elsif options[:match_path]
-          request.fullpath.starts_with?("#{spree.admin_path}#{options[:match_path]}")
-        else
-          args.include?(controller.controller_name.to_sym)
-        end
+                     request.fullpath =~ options[:match_path]
+                   elsif options[:match_path]
+                     request.fullpath.starts_with?("#{spree.admin_path}#{options[:match_path]}")
+                   else
+                     args.include?(controller.controller_name.to_sym)
+                   end
 
         link = if options[:icon]
                  link_to_with_icon(
@@ -187,7 +187,14 @@ module Spree
           icon = content_tag(:span, '', class: "icon icon-#{icon_name}")
           text.insert(0, icon + ' ')
         end
-        button_tag(text.html_safe, options.merge(type: button_type, class: "btn btn-primary #{options[:class]}", 'data-disable-with' => "#{Spree.t(:saving)}..."))
+        button_tag(
+          text.html_safe,
+          options.merge(
+            type: button_type,
+            class: "btn btn-primary #{options[:class]}",
+            'data-disable-with' => "#{Spree.t(:saving)}..."
+          )
+        )
       end
 
       def button_link_to(text, url, html_options = {})
