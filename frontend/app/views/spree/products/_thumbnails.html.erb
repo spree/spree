@@ -11,7 +11,7 @@
       <% @product.variant_images.each do |i| %>
         <% next if @product.images.include?(i) %>
         <li class='vtmb mr-2 tmb-<%= i.viewable.id %>'>
-          <%= link_to(image_tag(main_app.url_for(i.url(:mini)), class: "img-thumbnail"), main_app.url_for(i.url(:product))) %>
+          <%= link_to(image_tag(main_app.url_for(i.url(:mini)), class: "img-thumbnail d-inline-block"), main_app.url_for(i.url(:product))) %>
         </li>
       <% end %>
     <% end %>
