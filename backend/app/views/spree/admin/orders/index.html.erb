@@ -3,7 +3,7 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= button_link_to Spree.t(:new_order), new_admin_order_url, class: "btn-success", icon: 'add', id: 'admin_new_order' %>
+  <%= button_link_to Spree.t(:new_order), new_admin_order_url, class: "btn-success text-white", icon: 'add', id: 'admin_new_order' %>
 <% end if can? :create, Spree::Order %>
 
 <% content_for :table_filter do %>
@@ -190,24 +190,24 @@
         </td>
         <td><%= link_to order.number, edit_admin_order_path(order) %></td>
         <td>
-          <span class="badge badge-<%= order.considered_risky ? 'considered_risky' : 'considered_safe' %>">
+          <span class="badge badge-primary badge-<%= order.considered_risky ? 'considered_risky' : 'considered_safe' %>">
             <%= order.considered_risky ? Spree.t("risky") : Spree.t("safe") %>
           </span>
         </td>
         <td>
-          <span class="badge badge-<%= order.state.downcase %>"><%= Spree.t("order_state.#{order.state.downcase}") %></span>
+          <span class="badge badge-primary badge-<%= order.state.downcase %>"><%= Spree.t("order_state.#{order.state.downcase}") %></span>
           <span class="icon icon-filter filterable js-add-filter" data-ransack-field="q_state_eq" data-ransack-value="<%= order.state %>"></span>
         </td>
         <td>
           <% if order.payment_state %>
-            <span class="badge badge-<%= order.payment_state %>"><%= link_to Spree.t("payment_states.#{order.payment_state}"), admin_order_payments_path(order) %></span>
+            <span class="badge badge-primary badge-<%= order.payment_state %>"><%= link_to Spree.t("payment_states.#{order.payment_state}"), admin_order_payments_path(order) %></span>
             <span class="icon icon-filter filterable js-add-filter" data-ransack-field="q_payment_state_eq" data-ransack-value="<%= order.payment_state %>"></span>
           <% end %>
         </td>
         <% if Spree::Order.checkout_step_names.include?(:delivery) %>
           <td>
             <% if order.shipment_state %>
-              <span class="badge badge-<%= order.shipment_state %>"><%= Spree.t("shipment_states.#{order.shipment_state}") %></span>
+              <span class="badge badge-primary badge-<%= order.shipment_state %>"><%= Spree.t("shipment_states.#{order.shipment_state}") %></span>
               <span class="icon icon-filter filterable js-add-filter" data-ransack-field="q_shipment_state_eq" data-ransack-value="<%= order.shipment_state %>"></span>
             <% end %>
           </td>
