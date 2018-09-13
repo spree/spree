@@ -91,7 +91,7 @@ module Spree
     private
 
     def create_product_image_tag(image, product, options, style)
-      options.reverse_merge! alt: image.alt.blank? ? product.name : image.alt
+      options.merge! alt: image.alt.blank? ? product.name : image.alt
       image_tag main_app.url_for(image.url(style)), options
     end
 
