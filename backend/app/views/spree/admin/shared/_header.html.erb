@@ -7,11 +7,14 @@
         spree.admin_path,
         class: "logo navbar-brand"
       ) %>
-      <span class="navbar-toggle" id="sidebar-toggle">
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </span>
+      <button
+        id="sidebar-toggle"
+        class="navbar-toggler h-100 position-absolute m-0 p-0"
+        type="button"
+        aria-expanded="false"
+        aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
     </div>
     <div class="col-9 col-md-10">
       <%= render partial: 'spree/admin/shared/account_nav' %>
