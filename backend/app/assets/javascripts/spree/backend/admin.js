@@ -31,8 +31,8 @@ jQuery(function ($) {
     var sidebar = $('#main-sidebar')
 
     // these should match `spree/backend/app/helpers/spree/admin/navigation_helper.rb#main_part_classes`
-    var mainWrapperCollapsedClasses = 'col-xs-12 sidebar-collapsed'
-    var mainWrapperExpandedClasses = 'col-xs-9 col-xs-offset-3 col-md-10 col-md-offset-2'
+    var mainWrapperCollapsedClasses = 'col-12 sidebar-collapsed'
+    var mainWrapperExpandedClasses = 'col-9 offset-3 col-md-10 offset-md-2'
 
     wrapper.toggleClass('sidebar-minimized')
     sidebar.toggleClass('hidden-xs')

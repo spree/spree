@@ -4,6 +4,7 @@
   border-right: 1px solid $gray-200;
   margin-top: 50px;
   height: calc(100% - 50px);
+  z-index: 999;
 
   a.sidebar-submenu-item:hover {
     text-decoration: none;
@@ -65,7 +66,7 @@
     display: block !important;
     height: auto !important;
     position: fixed;
-    top: $navbar-brand-height;
+    top: 50px;
     bottom: 0;
     left: 0;
     padding: 0;
