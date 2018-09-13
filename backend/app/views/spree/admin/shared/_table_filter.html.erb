@@ -13,8 +13,10 @@
         <% end %>
       </div>
       <% unless defined?(simple) %>
-        <div id="table-filter" data-hook class="well filter-well">
-          <%= yield :table_filter %>
+        <div id="table-filter" data-hook class="card bg-light well filter-well">
+          <div class="card-body">
+            <%= yield :table_filter %>
+          </div>
         </div>
       <% end %>
     </div>
