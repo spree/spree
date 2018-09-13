@@ -3,6 +3,7 @@
   background-color: $gray-100;
   border-right: 1px solid $gray-200;
   margin-top: 50px;
+  height: calc(100% - 50px);
 
   a.sidebar-submenu-item:hover {
     text-decoration: none;
@@ -31,13 +32,6 @@
         }
       }
     }
-  }
-
-  .spree-version {
-    position: absolute;
-    // z-index: -1;
-    left: 15px;
-    bottom: 15px;
   }
 }
 
