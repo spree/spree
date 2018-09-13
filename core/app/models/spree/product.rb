@@ -203,6 +203,11 @@ module Spree
       variants_including_master.any?(&:can_supply?)
     end
 
+    # determine if any variant (including master) is out of stock and backorderable
+    def backordered?
+      variants_including_master.any?(&:backordered?)
+    end
+
     # split variants list into hash which shows mapping of opt value onto matching variants
     # eg categorise_variants_from_option(color) => {"red" -> [...], "blue" -> [...]}
     def categorise_variants_from_option(opt_type)
