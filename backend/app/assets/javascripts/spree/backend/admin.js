@@ -151,7 +151,7 @@ jQuery(function($) {
 
       label = ransackField(label.text()) + ': ' + ransack_value;
 
-      filter = '<span class="js-filter label label-default" data-ransack-field="' + ransack_field + '">' + label + '<span class="icon icon-delete js-delete-filter"></span></span>';
+      filter = '<span class="js-filter badge badge-secondary" data-ransack-field="' + ransack_field + '">' + label + '<span class="icon icon-delete js-delete-filter"></span></span>';
       $(".js-filters").append(filter).show();
     }
   });

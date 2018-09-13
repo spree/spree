@@ -1,8 +1,9 @@
 table.table {
+  font-size: $font-size-sm;
   thead {
     th {
       text-transform: uppercase;
-      font-size: $font-size-sm;
+      font-size: $small-font-size;
       padding-top: 14px;
       padding-bottom: 14px;
       vertical-align: middle;
@@ -37,11 +38,10 @@ table.table {
   display: none;
   margin: -0.5em 0 0.9em 0;
 
-  .label {
+  .badge {
     display: inline-block;
     margin-right: 0.5em;
     margin-bottom: 0.5em;
-    font-size: 85%;
 
     &:hover {
       opacity: 0.8;
