@@ -3,12 +3,6 @@
 }
 
 label {
-  text-transform: uppercase;
-  font-size: $font-size-base;
-  letter-spacing: 1px;
-  color: $gray-500;
-  font-weight: 500;
-
   input[type="radio"], input[type="checkbox"] {
     margin-top: 2px;
   }
