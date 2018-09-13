@@ -1,6 +1,10 @@
 #main-part {
-  padding: $spacer ($spacer * 2) 0;
+  padding: $spacer ($spacer * 2) 0 ($spacer * 2);
   margin-top: 50px;
+}
+
+.sidebar-minimized #main-part {
+  padding: $spacer ($spacer * 2) 0 ($spacer * 5);
 }
 
 #logo {
