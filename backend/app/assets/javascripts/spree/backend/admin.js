@@ -48,7 +48,7 @@ jQuery(function ($) {
 
     // these should match `spree/backend/app/helpers/spree/admin/navigation_helper.rb#main_part_classes`
     main
-      .toggleClass('col-12 sidebar-collapsed ml-5')
+      .toggleClass('col-12 sidebar-collapsed')
       .toggleClass('col-9 offset-3 col-md-10 offset-md-2')
 
     if (wrapper.hasClass('sidebar-minimized')) {

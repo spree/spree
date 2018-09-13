@@ -229,7 +229,7 @@ module Spree
 
       def main_part_classes
         if cookies['sidebar-minimized'] == 'true'
-          'col-12 sidebar-collapsed ml-5'
+          'col-12 sidebar-collapsed'
         else
           'col-9 offset-3 col-md-10 offset-md-2'
         end
