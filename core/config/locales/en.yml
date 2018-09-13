@@ -1024,6 +1024,8 @@ en:
     order_updated: Order Updated
     orders: Orders
     out_of_stock: Out of Stock
+    backordered_info: Selected item is backordered so expect delays
+    backordered_confirm_info: Selected item is backordered so expect delays. Are you sure you want to order it?
     overview: Overview
     package_from: package from
     pagination:

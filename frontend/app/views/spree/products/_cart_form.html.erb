@@ -1,5 +1,5 @@
 <%= form_for :order, url: populate_orders_path do |f| %>
-  <div class="row" id="inside-product-cart-form" data-hook="inside_product_cart_form" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
+  <div class="row"id="inside-product-cart-form" data-hook="inside_product_cart_form" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
     <% if @product.variants_and_option_values(current_currency).any? %>
       <div id="product-variants" class="col-md-6">
         <h3 class="product-section-title"><%= Spree.t(:variants) %></h3>
@@ -10,6 +10,7 @@
                 <%= radio_button_tag "variant_id", variant.id, index == 0,
                     'data-price' => variant.price_in(current_currency).money,
                     'data-in-stock' => variant.can_supply?,
+                    'data-backordered' => variant.backordered?,
                     class: 'form-check-input'
                 %>
                 <%= label_tag "variant_id_#{ variant.id }", class: "form-check-label" do %>
@@ -49,6 +50,11 @@
             <span class="out-of-stock d-block mt-2">
               <%= Spree.t(:out_of_stock) %>
             </span>
+          <% end %>
+          <% if @product.backordered? %>
+            <div class="alert alert-warning" id="cart-backordered-info">
+              <%= Spree.t(:backordered_info) %>
+            </div>
           <% end %>
         </div>
 
