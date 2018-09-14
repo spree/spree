@@ -89,6 +89,9 @@
     border-color: $input-border-color;
     background-image: none;
     background-color: $input-bg;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
 
     .select2-search-choice {
       @extend .badge;
