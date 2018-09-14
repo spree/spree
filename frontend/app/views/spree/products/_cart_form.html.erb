@@ -8,7 +8,8 @@
             <li>
               <%= radio_button_tag "variant_id", variant.id, index == 0,
                   'data-price' => variant.price_in(current_currency).money,
-                  'data-in-stock' => variant.can_supply?
+                  'data-in-stock' => variant.can_supply?,
+                  'data-backordered' => variant.backordered?
               %>
               <%= label_tag "variant_id_#{ variant.id }" do %>
                 <span class="variant-description">
@@ -45,6 +46,11 @@
           <% elsif @product.variants.empty? %>
             <br />
             <span class="out-of-stock"><%= Spree.t(:out_of_stock) %></span>
+          <% end %>
+          <% if @product.backordered? %>
+            <div class="alert alert-warning" id="cart-backordered-info">
+              <%= Spree.t(:backordered_info) %>
+            </div>
           <% end %>
         </div>
 

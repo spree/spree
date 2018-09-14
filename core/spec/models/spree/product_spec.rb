@@ -608,6 +608,24 @@ describe Spree::Product, type: :model do
     end
   end
 
+  context '#backordered?' do
+    let!(:product) { create(:product) }
+
+    it 'returns true when out of stock and backorderable' do
+      expect(product.backordered?).to eq(true)
+    end
+
+    it 'returns false when out of stock and not backorderable' do
+      product.stock_items.first.update(backorderable: false)
+      expect(product.backordered?).to eq(false)
+    end
+
+    it 'returns false when there is available item in stock' do
+      product.stock_items.first.update(count_on_hand: 10)
+      expect(product.backordered?).to eq(false)
+    end
+  end
+
   describe '#ensure_no_line_items' do
     let(:product) { create(:product) }
     let!(:line_item) { create(:line_item, variant: product.master) }

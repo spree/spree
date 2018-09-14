@@ -146,6 +146,78 @@ paths:
         - orderToken: []
         - bearerAuth: []
 
+  '/checkout/next':
+    patch:
+      description: Goes to the next Checkout step
+      tags:
+        - Checkout
+      responses:
+        '200':
+          description: 200 response means that the Checkout was transitioned to the next step
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        '422':
+          description: 422 response means that Checkout couldn't transition to the next step
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+      security:
+        - orderToken: []
+        - bearerAuth: []
+
+  '/checkout/advance':
+    patch:
+      description: Advances Checkout to the furthest Checkout step validation allows, until the Complete step
+      tags:
+        - Checkout
+      responses:
+        '200':
+          description: 200 response means that the Checkout was transitioned to the next step
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        '422':
+          description: 422 response means that Checkout couldn't transition to the next step
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+      security:
+        - orderToken: []
+        - bearerAuth: []
+
+  '/checkout/complete':
+    patch:
+        description: Completes the Checkout
+        tags:
+          - Checkout
+        responses:
+          '200':
+            description: 200 response means that the Checkout was completed
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Cart'
+          '422':
+            description: 422 response means that Checkout couldn't be completed
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Error'
+          '404':
+            $ref: '#/components/responses/404NotFound'
+        security:
+          - orderToken: []
+          - bearerAuth: []
+
   '/products':
     get:
       description: >-
@@ -284,7 +356,10 @@ components:
         total_pages:
           type: number
           example: 10
-          description: 'Numnber of all pages containing items matching the criteria'
+          description: 'Number of all pages containing items matching the criteria'
+    Timestamp:
+      type: string
+      example: '2018-05-25T11:22:57.214-04:00'
     Cart:
       required:
         - data
@@ -307,32 +382,71 @@ components:
               properties:
                 number:
                   type: string
+                  example: 'R123456789'
+                email:
+                  type: string
+                  example: 'spree@example.com'
                 item_total:
                   type: string
+                  example: '19.99'
+                display_item_total:
+                  type: string
+                  example: '$19.99'
                 total:
                   type: string
+                  example: '29.99'
+                display_total:
+                  type: string
+                  example: '$29.99'
                 ship_total:
                   type: string
+                  example: '0.00'
+                display_ship_total:
+                  type: string
+                  example: '$19.99'
                 adjustment_total:
                   type: string
+                  example: '10.00'
+                display_adjustment_total:
+                  type: string
+                  example: '$10.00'
                 created_at:
-                  type: string
+                  $ref: '#/components/schemas/Timestamp'
                 updated_at:
-                  type: string
+                  $ref: '#/components/schemas/Timestamp'
                 included_tax_total:
                   type: string
+                  example: '5.00'
                 additional_tax_total:
                   type: string
+                  example: '5.00'
                 display_additional_tax_total:
                   type: string
+                  example: '$5.00'
                 display_included_tax_total:
                   type: string
+                  example: '$5.00'
                 tax_total:
                   type: string
+                  example: '10.00'
+                display_tax_total:
+                  type: string
+                  example: '$10.00'
+                item_count:
+                  type: number
+                  example: 2
+                  description: 'Total quantity number of all items added to the Cart'
+                special_instructions:
+                  type: string
+                  example: 'Please wrap it as a gift'
+                  description: 'Message added by the Customer'
                 currency:
                   type: string
+                  example: 'USD'
                 state:
                   type: string
+                  example: 'address'
+                  description: 'State of the Cart in the Checkout flow'
                 token:
                   type: string
                   example: abcdef123456
@@ -613,8 +727,7 @@ components:
           type: string
           example: 'example, product'
         updated_at:
-          type: string
-          example: '2018-05-25T11:22:57.214-04:00'
+          $ref: '#/components/schemas/Timestamp'
     ProductRelationships:
       type: object
       properties:
