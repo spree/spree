@@ -19,6 +19,8 @@
     font-size: $small-font-size;
     border-color: $input-border-color;
     border-right: none;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
     background-color: $white;
 
     &:hover, &:focus {
@@ -28,5 +30,7 @@
 
   .js-quick-search {
     font-size: $font-size-sm;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
   }
 }
