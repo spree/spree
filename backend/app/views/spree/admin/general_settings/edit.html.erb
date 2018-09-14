@@ -8,14 +8,14 @@
     <fieldset class="general no-border-top">
 
       <div class="row">
-        <div class="col-xs-12 col-md-6">
+        <div class="col-12 col-lg-6">
           <%#-------------------------------------------------%>
           <%# Security settings                               %>
           <%#-------------------------------------------------%>
           <% if @preferences_security.any? %>
-            <div class="card   security">
+            <div class="card mb-3 security">
               <div class="card-header">
-                <h1 class="card-title">
+                <h1 class="card-title mb-0 h5">
                   <%= Spree.t(:security_settings) %>
                 </h1>
               </div>
@@ -37,9 +37,9 @@
           <%#-------------------------------------------------%>
           <%# Clear cache                                     %>
           <%#-------------------------------------------------%>
-          <div class="card  ">
+          <div class="card mb-3">
             <div class="card-header">
-              <h1 class="card-title"><%= Spree.t(:clear_cache)%></h1>
+              <h1 class="card-title mb-0 h5"><%= Spree.t(:clear_cache)%></h1>
             </div>
 
             <div class="card-body">
@@ -53,14 +53,14 @@
           </div>
 
         </div>
-        <div class="col-xs-12 col-md-6">
+        <div class="col-12 col-lg-6">
 
           <%#-------------------------------------------------%>
           <%# Currency Settings                               %>
           <%#-------------------------------------------------%>
-          <div class="card   currency">
+          <div class="card mb-3 currency">
             <div class="card-header">
-              <h1 class="card-title">
+              <h1 class="card-title mb-0 h5">
                 <%= Spree.t(:currency_settings)%>
               </h1>
             </div>

@@ -1,9 +1,9 @@
-<div id="<%= "shipment_#{shipment.id}" %>" data-hook="admin_shipment_form" class="card  ">
+<div id="<%= "shipment_#{shipment.id}" %>" data-hook="admin_shipment_form" class="card mb-3">
 
   <%= render partial: "spree/admin/variants/split", formats: :js %>
 
   <div class="card-header stock-location no-borderb" data-hook="stock-location">
-    <h1 class="card-title">
+    <h1 class="card-title mb-0 h5">
       <span class="shipment-number"><%= shipment.number %></span>
       -
       <span class="shipment-state"><%= Spree.t("shipment_states.#{shipment.state}") %></span>

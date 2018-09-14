@@ -5,9 +5,9 @@
   <%= @user.email %>
 <% end %>
 
-<div data-hook="admin_user_edit_general_settings" class="card  ">
+<div data-hook="admin_user_edit_general_settings" class="card mb-3">
   <div class="card-header">
-    <h1 class="card-title">
+    <h1 class="card-title mb-0 h5">
       <%= Spree.t(:general_settings) %>
     </h1>
   </div>
@@ -29,9 +29,9 @@
   </div>
 </div>
 
-<div data-hook="admin_user_api_key" id="admin_user_edit_api_key" class="card  ">
+<div data-hook="admin_user_api_key" id="admin_user_edit_api_key" class="card mb-3">
   <div class="card-header">
-    <h1 class="card-title">
+    <h1 class="card-title mb-0 h5">
       <%= Spree.t('access', scope: 'api') %>
     </h1>
   </div>
