@@ -12,11 +12,8 @@
 .badge-open,
 .badge-authorized
 {
-  background-color: $success;
-
-  a {
-    color: white !important;
-  }
+  background-color: darken($success, 15);
+  color: $white;
 }
 
 // Red
@@ -26,6 +23,7 @@
 .badge-invalid,
 .badge-closed {
   background-color: $danger;
+  color: $gray-900;
 }
 
 // Orange
@@ -48,8 +46,5 @@
 .badge-notice,
 .badge-partial {
   background-color: $warning;
-
-  a {
-    color: white !important;
-  }
+  color: $gray-900;
 }
