@@ -1,13 +1,13 @@
 table.table {
   font-size: $font-size-sm;
+
   thead {
     th {
       text-transform: uppercase;
       font-size: $small-font-size;
       padding-top: 14px;
       padding-bottom: 14px;
-      vertical-align: middle;
-      letter-spacing: 1px;
+      vertical-align: top;
 
       a {
         .glyphicon {
@@ -16,10 +16,12 @@ table.table {
       }
     }
   }
+
   tbody {
     tr {
       td {
         vertical-align: middle;
+
         .filterable {
           font-size: 0.8em;
           margin-left: 0.2em;
@@ -27,6 +29,7 @@ table.table {
           cursor: pointer;
         }
       }
+
       &:hover td .filterable {
         color: #666;
       }

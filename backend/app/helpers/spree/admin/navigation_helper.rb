@@ -163,7 +163,7 @@ module Spree
         text = options[:no_text] ? '' : content_tag(:span, text, class: 'text')
         options.delete(:no_text)
         if icon_name
-          icon = content_tag(:span, '', class: "mr-2 icon icon-#{icon_name}")
+          icon = content_tag(:span, '', class: "#{'mr-2' if !text.empty?} icon icon-#{icon_name}")
           text.insert(0, icon + ' ')
         end
         link_to(text.html_safe, url, options)
