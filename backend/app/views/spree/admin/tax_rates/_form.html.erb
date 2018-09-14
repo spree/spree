@@ -1,13 +1,13 @@
 <div data-hook="admin_tax_rate_form_fields">
-  <div class="card  " data-hook="tax_rates">
+  <div class="card mb-3" data-hook="tax_rates">
     <div class="card-header">
-      <h1 class="card-title">
+      <h1 class="card-title mb-0 h5">
         <%= Spree.t(:general_settings) %>
       </h1>
     </div>
 
     <div class="card-body">
-      <div class="col-xs-12 col-md-6">
+      <div class="col-12 col-lg-6">
         <div data-hook="name" class="form-group">
           <%= f.label :name, Spree.t(:name) %>
           <%= f.text_field :name, class: 'form-control' %>
@@ -30,7 +30,7 @@
         </div>
       </div>
 
-      <div class="col-xs-12 col-md-6">
+      <div class="col-12 col-lg-6">
         <div data-hook="zone" class="form-group">
           <%= f.label :zone, Spree.t(:zone) %>
           <%= f.collection_select(:zone_id, @available_zones, :id, :name, {}, {class: 'select2'}) %>

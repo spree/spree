@@ -12,9 +12,9 @@
 <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @option_type } %>
 
 <%= form_for [:admin, @option_type] do |f| %>
-  <div class="card  ">
+  <div class="card mb-3">
     <div class="card-header">
-      <h1 class="card-title">
+      <h1 class="card-title mb-0 h5">
         <%= Spree.t(:option_values) %>
       </h1>
     </div>
