@@ -3,7 +3,7 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= button_link_to Spree.t(:new_property), new_object_url, { class: "btn-success", icon: 'add', 'data-update' => 'new_property', id: 'new_property_link' } %>
+  <%= button_link_to Spree.t(:new_property), new_object_url, { class: "btn-success text-white", icon: 'add', 'data-update' => 'new_property', id: 'new_property_link' } %>
 <% end if can?(:create, Spree::Property) %>
 
 <% content_for :table_filter do %>
@@ -13,14 +13,14 @@
       <%- locals = {f: f} %>
 
       <div class="row">
-        <div class="col-xs-12 col-md-6">
+        <div class="col-12 col-lg-6">
           <div data-hook="admin_property_index_search" class="form-group">
             <%= f.label :name_cont, Spree.t(:name) %>
             <%= f.text_field :name_cont, class: "form-control js-quick-search-target js-filterable" %>
           </div>
         </div>
 
-        <div class="col-xs-12 col-md-6">
+        <div class="col-12 col-lg-6">
           <div class="form-group">
             <%= f.label :presentation_cont, Spree.t(:presentation) %>
             <%= f.text_field :presentation_cont, class: "form-control js-filterable" %>
