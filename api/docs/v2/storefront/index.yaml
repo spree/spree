@@ -360,6 +360,63 @@ components:
     Timestamp:
       type: string
       example: '2018-05-25T11:22:57.214-04:00'
+    Address:
+      required:
+        - data
+      properties:
+        data:
+          type: object
+          required:
+            - id
+            - type
+            - attributes
+          properties:
+            id:
+              type: string
+              example: '1'
+            type:
+              type: string
+              default: 'addresses'
+              example: 'addresses'
+            attributes:
+              type: object
+              properties:
+                firstname:
+                  type: string
+                  example: 'John'
+                lastname:
+                  type: string
+                  example: 'Doe'
+                address1:
+                  type: string
+                  example: '1600 Amphitheatre Pkwy'
+                address2:
+                  type: string
+                  example: 'Suite 1'
+                city:
+                  type: string
+                  example: 'Mountain View'
+                zipcode:
+                  type: string
+                  example: '94043'
+                phone:
+                  type: string
+                  example: '(+1) 123 456 789'
+                state_name:
+                  type: string
+                  example: 'California'
+                state_code:
+                  type: string
+                  example: 'CA'
+                country_name:
+                  type: string
+                  example: 'United States of America'
+                country_iso3:
+                  type: string
+                  example: 'USA'
+                company:
+                  type: string
+                  example: 'Google Inc.'
     Cart:
       required:
         - data
@@ -482,6 +539,16 @@ components:
                   properties:
                     data:
                       $ref: '#/components/schemas/Relation'
+                billing_address:
+                  type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/Relation'
+                shipping_address:
+                  type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/Relation'
         included:
           type: array
           items:
@@ -491,6 +558,7 @@ components:
               - $ref: '#/components/schemas/LineItem'
               - $ref: '#/components/schemas/Promotion'
               - $ref: '#/components/schemas/User'
+              - $ref: '#/components/schemas/Address'
     Image:
       required:
         - data
