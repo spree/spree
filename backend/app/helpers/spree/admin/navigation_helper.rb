@@ -193,7 +193,7 @@ module Spree
         if html_options[:method] &&
             !html_options[:method].to_s.casecmp('get').zero? &&
             !html_options[:remote]
-          form_tag(url, method: html_options.delete(:method), class: 'display-inline') do
+          form_tag(url, method: html_options.delete(:method), class: 'd-inline') do
             button(text, html_options.delete(:icon), nil, html_options)
           end
         else
@@ -204,7 +204,7 @@ module Spree
 
           html_options.delete('data-update') unless html_options['data-update']
 
-          html_options[:class] = html_options[:class] ? "btn #{html_options[:class]}" : 'btn btn-default'
+          html_options[:class] = html_options[:class] ? "btn #{html_options[:class]}" : 'btn btn-outline-secondary'
 
           if html_options[:icon]
             icon = content_tag(:span, '', class: "icon icon-#{html_options[:icon]}")
