@@ -1,10 +1,8 @@
-.form-control {
-  box-shadow: none;
-}
-
 label {
-  input[type="radio"], input[type="checkbox"] {
-    margin-top: 2px;
+  font-size: $font-size-sm;
+
+  &:hover {
+    cursor: pointer;
   }
 }
 
@@ -17,7 +15,6 @@ span.or {
 input.form-control {
   &:active, &:focus {
     border-color: lighten($success, 20);
-    box-shadow: none;
   }
 }
 
