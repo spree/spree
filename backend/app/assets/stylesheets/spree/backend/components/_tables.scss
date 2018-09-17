@@ -24,8 +24,8 @@ table.table {
         vertical-align: middle;
 
         .filterable {
-          font-size: 0.8em;
-          margin-left: 0.2em;
+          font-size: .8em;
+          margin-left: .2em;
           color: white; // hidden, but space is reserved for the icon
           cursor: pointer;
         }
@@ -40,19 +40,19 @@ table.table {
 
 .table-active-filters {
   display: none;
-  margin: -0.5em 0 0.9em 0;
+  margin: -.5em 0 .9em 0;
 
   .badge {
     display: inline-block;
-    margin-right: 0.5em;
-    margin-bottom: 0.5em;
+    margin-right: .5em;
+    margin-bottom: .5em;
 
     &:hover {
-      opacity: 0.8;
+      opacity: .8;
     }
 
     span.icon {
-      margin: 0.3em 0 0 0.6em;
+      margin: .3em 0 0 .6em;
       font-size: 80%;
       cursor: pointer;
     }
