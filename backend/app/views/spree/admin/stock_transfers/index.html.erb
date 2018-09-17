@@ -11,7 +11,7 @@
     <legend><%= Spree.t(:search) %></legend>
     <%= search_form_for @q, url: admin_stock_transfers_path do |f| %>
 
-      <div class="row no-marginb">
+      <div class="row mb-0">
         <div class="col-12 col-md-4">
           <div class="form-group">
             <%= f.label :reference_cont, Spree.t(:reference_contains) %>
