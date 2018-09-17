@@ -3,7 +3,11 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= button_link_to Spree.t(:new_order), new_admin_order_url, class: "btn-success text-white", icon: 'add', id: 'admin_new_order' %>
+  <%= button_link_to Spree.t(:new_order),
+    new_admin_order_url,
+    class: "btn-success",
+      icon: 'add',
+      id: 'admin_new_order' %>
 <% end if can? :create, Spree::Order %>
 
 <% content_for :table_filter do %>
@@ -17,7 +21,10 @@
             <div class="row pb-0">
               <div class="col-12 col-lg-6">
                 <div class="input-group">
-                  <%= f.text_field :created_at_gt, class: 'datepicker datepicker-from form-control js-filterable', value: params[:q][:created_at_gt], placeholder: Spree.t(:start) %>
+                  <%= f.text_field :created_at_gt,
+                    class: 'datepicker datepicker-from form-control js-filterable',
+                      value: params[:q][:created_at_gt],
+                      placeholder: Spree.t(:start) %>
                   <div class="input-group-append">
                     <span class="input-group-text">
                       <i class="icon icon-calendar"></i>
@@ -28,7 +35,10 @@
               </div>
               <div class="col-12 col-lg-6">
                 <div class="input-group">
-                  <%= f.text_field :created_at_lt, class: 'datepicker datepicker-to form-control js-filterable', value: params[:q][:created_at_lt], placeholder: Spree.t(:stop) %>
+                  <%= f.text_field :created_at_lt,
+                    class: 'datepicker datepicker-to form-control js-filterable',
+                      value: params[:q][:created_at_lt],
+                      placeholder: Spree.t(:stop) %>
                   <div class="input-group-append">
                     <span class="input-group-text">
                       <i class="icon icon-calendar"></i>
@@ -54,7 +64,10 @@
         <div class="col-12 col-lg-4">
           <div class="form-group">
             <%= label_tag :q_state_eq, Spree.t(:status) %>
-            <%= f.select :state_eq, Spree::Order.state_machines[:state].states.map {|s| [Spree.t("order_state.#{s.name}"), s.value]}, { include_blank: true }, class: 'select2 js-filterable' %>
+            <%= f.select :state_eq,
+              Spree::Order.state_machines[:state].states.map {|s| [Spree.t("order_state.#{s.name}"), s.value]},
+              { include_blank: true },
+              class: 'select2 js-filterable' %>
           </div>
         </div>
 
