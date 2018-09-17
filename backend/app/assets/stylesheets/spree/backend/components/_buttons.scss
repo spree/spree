@@ -14,10 +14,6 @@
   .ship { color: #fff; }
 }
 
-.btn-success {
-  color: $white;
-}
-
 .btn-sm .glyphicon { padding: 0; }
 
 .btn.action-void { @extend .btn-danger; }
