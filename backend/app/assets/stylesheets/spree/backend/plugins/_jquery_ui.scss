@@ -94,8 +94,12 @@
         font-weight: 300;
       }
 
-      &.ui-datepicker-current-day {
+      .ui-state-active {
         background-color: $success;
+
+        &:hover {
+          background-color: darken($success, 7.5%)
+        }
       }
 
       &:hover {
