@@ -3,14 +3,20 @@
 <% end %>
 
 <% content_for :page_tabs do %>
-  <li class="<%= "active" if params[:q][:state_eq].blank? %>">
-    <%= link_to Spree.t(:all), spree.admin_return_authorizations_path %>
+  <li class="nav-item">
+    <%= link_to Spree.t(:all),
+      spree.admin_return_authorizations_path,
+      class: "nav-link #{'active' if params[:q][:state_eq].blank?}" %>
   </li>
-  <li class="<%= "active" if params[:q][:state_eq] == "authorized" %>">
-    <%= link_to Spree.t(:authorized), params.merge({q: {state_eq: :authorized}}).permit! %>
+  <li class="nav-item">
+    <%= link_to Spree.t(:authorized),
+      params.merge({q: {state_eq: :authorized}}).permit!,
+      class: "nav-link #{'active' if params[:q][:state_eq] == 'authorized'}" %>
   </li>
-  <li class="<%= "active" if params[:q][:state_eq] == "canceled" %>">
-    <%= link_to Spree.t(:canceled), params.merge({q: {state_eq: :canceled}}).permit! %>
+  <li class="nav-item">
+    <%= link_to Spree.t(:canceled),
+      params.merge({q: {state_eq: :canceled}}).permit!,
+      class: "nav-link #{'active' if params[:q][:state_eq] == 'canceled'}" %>
   </li>
 <% end %>
 
