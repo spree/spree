@@ -58,3 +58,40 @@ table.table {
     }
   }
 }
+
+.card {
+  > .table,
+  .table-responsive > .table {
+		border-right: 0;
+		border-left: 0;
+    margin-bottom: 0;
+
+		&:last-child, &:last-of-type {
+			border-bottom: 0;
+		}
+
+		td:first-child,
+		th:first-child {
+			border-left: 0;
+		}
+
+		td:last-child,
+		th:last-child {
+			border-right: 0;
+		}
+
+		tr:first-child td,
+		tr:first-child th {
+			border-top: 0;
+		}
+
+		tr:last-child td {
+			border-bottom: 0;
+		}
+	}
+
+  .card-header + .table,
+  .card-header + .table-responsive > .table {
+		border-top: 0;
+	}
+}
