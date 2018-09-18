@@ -85,7 +85,7 @@
       </div>
 
       <% if @product.has_variants? %>
-        <div data-hook="admin_product_form_multiple_variants" class="card bg-light">
+        <div data-hook="admin_product_form_multiple_variants" class="card bg-light mb-3">
           <div class="card-body">
             <%= f.label :skus, Spree.t(:sku).pluralize %>
             <div class="info marginb">
