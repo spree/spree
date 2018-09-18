@@ -222,7 +222,8 @@ handle_date_picker_fields = function(){
     monthNames: Spree.translations.month_names,
     prevText: Spree.translations.previous,
     nextText: Spree.translations.next,
-    showOn: "focus"
+    showOn: "focus",
+    showAnim: ""
   });
 
   // Correctly display range dates
