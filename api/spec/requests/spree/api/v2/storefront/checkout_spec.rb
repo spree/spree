@@ -98,4 +98,176 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
       end
     end
   end
+
+  describe 'checkout#update' do
+    let!(:country_zone) { create(:zone, name: 'CountryZone') }
+    let!(:state)        { create(:state) }
+    let!(:country)      { state.country }
+    # { country_zone.members.create(zoneable: country) }
+    let!(:stock_location) { create(:stock_location) }
+
+    let!(:shipping_method) { create(:shipping_method, zones: [country_zone]) }
+    let!(:payment_method)  { create(:credit_card_payment_method) }
+
+    before do
+      allow_any_instance_of(Spree::Order).to receive_messages(confirmation_required?: true)
+      allow_any_instance_of(Spree::Order).to receive_messages(payment_required?: true)
+    end
+
+    context 'line_items' do
+      before do
+        line_item = order.line_items.first
+        params    = {
+          order: {
+            line_items: {
+              0 => {
+                id: line_item.id,
+                quantity: 2
+              }
+            }
+          }
+        }
+
+        headers = { 'Authorization' => "Bearer #{token.token}" }
+        put '/api/v2/storefront/checkout', params: params, headers: headers
+      end
+
+      it 'can update line_items' do
+        expect(response.status).to eq(200)
+      end
+    end
+
+    context 'addresses' do
+      let(:country_zone) { create(:zone, name: 'CountryZone') }
+      let(:state)        { create(:state) }
+      let(:country)      { state.country }
+      let!(:address) do
+        {
+          firstname:  'John',
+          lastname:   'Doe',
+          address1:   '7735 Old Georgetown Road',
+          city:       'Bethesda',
+          phone:      '3014445002',
+          zipcode:    '20814',
+          state_id:   state.id,
+          country_id: country.id
+        }
+      end
+
+      before do
+        params = {
+          order: {
+            bill_address: address,
+            ship_address: address
+          }
+        }
+
+        headers = { 'Authorization' => "Bearer #{token.token}" }
+        put '/api/v2/storefront/checkout', params: params, headers: headers
+      end
+
+      it 'can update addresses' do
+        expect(response.status).to eq(200)
+
+        expect(order.bill_address.first_name).to eq 'John'
+        expect(order.ship_address.first_name).to eq 'John'
+      end
+    end
+
+    context 'payment' do
+      context 'payment method' do
+        before do
+          params = {
+            order: {
+              payments_attributes: [
+                {
+                  payment_method_id: payment_method.id
+                }
+              ]
+            }
+          }
+
+          headers = { 'Authorization' => "Bearer #{token.token}" }
+          put '/api/v2/storefront/checkout', params: params, headers: headers
+        end
+
+        it 'can update payment method' do
+          expect(response.status).to eq(200)
+
+          expect(order.payments.first.payment_method_id).to eq payment_method.id
+        end
+      end
+
+      context 'payment source' do
+        before do
+          source_attributes = {
+            number: '4111111111111111',
+            month: 1.month.from_now.month,
+            year: 1.month.from_now.year,
+            verification_value: '123',
+            name: 'Spree Commerce'
+          }
+
+          params = {
+            order: {
+              payments_attributes: [
+                {
+                  payment_method_id: payment_method.id
+                }
+              ]
+            },
+            payment_source: {
+              payment_method.id.to_s => source_attributes
+            }
+          }
+
+          headers = { 'Authorization' => "Bearer #{token.token}" }
+          put '/api/v2/storefront/checkout', params: params, headers: headers
+        end
+
+        it 'can update payment method with source' do
+          expect(response.status).to eq(200)
+
+          expect(order.payments.last.source.name).to        eq('Spree Commerce')
+          expect(order.payments.last.source.last_digits).to eq('1111')
+        end
+      end
+    end
+
+    context 'special instructions' do
+      before do
+        params = {
+          order: {
+            special_instructions: "Don't drop it"
+          }
+        }
+
+        headers = { 'Authorization' => "Bearer #{token.token}" }
+        put '/api/v2/storefront/checkout', params: params, headers: headers
+      end
+
+      it 'can update the special instructions for an order' do
+        expect(response.status).to eq(200)
+        expect(json_response['data']).to have_attribute(:special_instructions).with_value("Don't drop it")
+      end
+    end
+
+    context 'email' do
+      before do
+        params = {
+          order: {
+            email: 'guest@spreecommerce.org'
+          }
+        }
+
+        headers = { 'Authorization' => "Bearer #{token.token}" }
+        put '/api/v2/storefront/checkout', params: params, headers: headers
+      end
+
+      it 'can assign an email to the order' do
+        expect(response.status).to eq(200)
+        expect(json_response['data']).to have_attribute(:email).with_value('guest@spreecommerce.org')
+      end
+    end
+  end
 end

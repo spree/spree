@@ -27,6 +27,21 @@ module Spree
             render_order spree_current_order
           end
 
+          def update
+            spree_authorize! :update, spree_current_order, order_token
+            result = dependencies[:updater].call(
+              order: spree_current_order,
+              params: params,
+              request_env: request.headers.env
+            )
+
+            if result.success?
+              render_serialized_payload serialize_order(result.value), 200
+            else
+              render_serialized_payload result.value, 422
+            end
+          end
+
           private
 
           def dependencies
@@ -34,6 +49,7 @@ module Spree
               next_state_procceder: Spree::Checkout::Next,
               advance_proceeder:    Spree::Checkout::Advance,
               completer:            Spree::Checkout::Complete,
+              updater:              Spree::Checkout::Update,
               cart_serializer:      Spree::V2::Storefront::CartSerializer
             }
           end

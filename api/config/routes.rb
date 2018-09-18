@@ -136,7 +136,7 @@ Spree::Core::Engine.add_routes do
           patch  :apply_coupon_code
         end
 
-        resource :checkout, controller: :checkout do
+        resource :checkout, controller: :checkout, only: %i[update] do
           patch :next
           patch :advance
           patch :complete
