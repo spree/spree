@@ -49,15 +49,15 @@ $(document).ready(function () {
       toggleItemEdit();
 
       $.ajax({
-        type: "PUT",
+        type: 'PUT',
         url: Spree.url(url),
         data: {
           variant_id: variant_id,
           token: Spree.api_key
         }
-      }).done(function( msg ) {
+      }).done(function () {
         window.location.reload();
-      }).fail(function(msg) {
+      }).fail(function (msg) {
         alert(msg.responseJSON.message)
       });
     }
@@ -77,7 +77,7 @@ $(document).ready(function () {
       }
     }).done(function () {
       window.location.reload();
-    }).error(function (msg) {
+    }).fail(function (msg) {
       console.log(msg);
     });
   });
@@ -108,7 +108,7 @@ $(document).ready(function () {
       }
     }).done(function () {
       window.location.reload();
-    }).error(function (msg) {
+    }).fail(function (msg) {
       console.log(msg);
     });
   });
@@ -192,16 +192,16 @@ adjustShipmentItems = function(shipment_number, variant_id, quantity){
 
     if(new_quantity!=0){
       $.ajax({
-        type: "PUT",
+        type: 'PUT',
         url: Spree.url(url),
         data: {
           variant_id: variant_id,
           quantity: new_quantity,
           token: Spree.api_key
         }
-      }).done(function( msg ) {
+      }).done(function () {
         window.location.reload();
-      }).fail(function(msg) {
+      }).fail(function (msg) {
         alert(msg.responseJSON.message)
       });
     }
@@ -241,18 +241,18 @@ startItemSplit = function(event){
 
   var variant = {};
   $.ajax({
-    type: "GET",
+    type: 'GET',
     async: false,
     url: Spree.url(Spree.routes.variants_api),
     data: {
       q: {
-        "id_eq": variant_id
+        'id_eq': variant_id
       },
       token: Spree.api_key
     }
-  }).success(function( data ) {
+  }).done(function (data) {
     variant = data['variants'][0];
-  }).error(function( msg ) {
+  }).fail(function (msg) {
     console.log(msg);
   });
 
@@ -289,39 +289,39 @@ completeItemSplit = function(event) {
     if (new_shipment != undefined) {
       // TRANSFER TO A NEW LOCATION
       $.ajax({
-        type: "POST",
+        type: 'POST',
         async: false,
-        url: Spree.url(Spree.routes.shipments_api + "/transfer_to_location"),
+        url: Spree.url(Spree.routes.shipments_api + '/transfer_to_location'),
         data: {
-            original_shipment_number: original_shipment_number,
-            variant_id: variant_id,
-            quantity: quantity,
-            stock_location_id: stock_location_id,
-            token: Spree.api_key
+          original_shipment_number: original_shipment_number,
+          variant_id: variant_id,
+          quantity: quantity,
+          stock_location_id: stock_location_id,
+          token: Spree.api_key
         }
-      }).error(function(msg) {
-          alert(msg.responseJSON.exception);
-      }).done(function(msg) {
-          window.location.reload();
+      }).done(function () {
+        window.location.reload();
+      }).fail(function (msg) {
+        alert(msg.responseJSON.exception);
       });
     } else {
-        // TRANSFER TO AN EXISTING SHIPMENT
-        $.ajax({
-            type: "POST",
-            async: false,
-            url: Spree.url(Spree.routes.shipments_api + "/transfer_to_shipment"),
-            data: {
-                original_shipment_number: original_shipment_number,
-                target_shipment_number: target_shipment_number,
-                variant_id: variant_id,
-                quantity: quantity,
-                token: Spree.api_key
-            }
-        }).error(function(msg) {
-            alert(msg.responseJSON.exception);
-        }).done(function(msg) {
-            window.location.reload();
-        });
+      // TRANSFER TO AN EXISTING SHIPMENT
+      $.ajax({
+        type: 'POST',
+        async: false,
+        url: Spree.url(Spree.routes.shipments_api + '/transfer_to_shipment'),
+        data: {
+          original_shipment_number: original_shipment_number,
+          target_shipment_number: target_shipment_number,
+          variant_id: variant_id,
+          quantity: quantity,
+          token: Spree.api_key
+        }
+      }).done(function () {
+        window.location.reload();
+      }).fail(function (msg) {
+        alert(msg.responseJSON.exception);
+      });
     }
   }
 }
@@ -351,17 +351,17 @@ addVariantFromStockLocation = function(event) {
 
   if(shipment==undefined){
     $.ajax({
-      type: "POST",
-      url: Spree.url(Spree.routes.shipments_api + "?shipment[order_id]=" + order_number),
+      type: 'POST',
+      url: Spree.url(Spree.routes.shipments_api + '?shipment[order_id]=' + order_number),
       data: {
         variant_id: variant_id,
         quantity: quantity,
         stock_location_id: stock_location_id,
         token: Spree.api_key
       }
-    }).done(function( msg ) {
+    }).done(function () {
       window.location.reload();
-    }).error(function( msg ) {
+    }).fail(function (msg) {
       console.log(msg);
     });
   }else{
