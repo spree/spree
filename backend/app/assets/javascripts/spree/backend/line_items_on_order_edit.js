@@ -30,7 +30,7 @@ adjustLineItems = function(order_number, variant_id, quantity){
     var url = Spree.routes.orders_api + "/" + order_number + '/line_items';
 
     $.ajax({
-        type: "POST",
+        type: 'POST',
         url: Spree.url(url),
         data: {
           line_item: {
@@ -39,10 +39,10 @@ adjustLineItems = function(order_number, variant_id, quantity){
           },
           token: Spree.api_key
         }
-    }).done(function( msg ) {
+    }).done(function () {
         window.Spree.advanceOrder();
         window.location.reload();
-    }).fail(function(msg) {
+    }).fail(function (msg) {
       if (typeof msg.responseJSON.message != 'undefined') {
         alert(msg.responseJSON.message);
       } else {

@@ -141,7 +141,7 @@ var initProductActions = function () {
 
     setupRemoveLineItems();
     // Add line item to list
-    $('.promotion_action.create_line_items button.add').unbind('click').click(function () {
+    $('.promotion_action.create_line_items button.add').off('click').click(function () {
       var $container = $(this).parents('.promotion_action');
       var product_name = $container.find('input[name="add_product_name"]').val();
       var variant_id = $container.find('input[name="add_variant_id"]').val();
