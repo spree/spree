@@ -218,8 +218,9 @@ function handle_date_picker_fields () {
     monthNames: Spree.translations.month_names,
     prevText: Spree.translations.previous,
     nextText: Spree.translations.next,
-    showOn: 'focus'
-  })
+    showOn: 'focus',
+    showAnim: ''
+  });
 
   // Correctly display range dates
   $('.date-range-filter .datepicker-from').datepicker('option', 'onSelect', function (selectedDate) {

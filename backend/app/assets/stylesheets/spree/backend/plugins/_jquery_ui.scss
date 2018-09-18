@@ -82,7 +82,7 @@
     td {
       width: 31px;
       height: 29px;
-      transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+      // transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
 
       .ui-state-default,
       .ui-widget-content .ui-state-default,
@@ -94,11 +94,15 @@
         font-weight: 300;
       }
 
+      .ui-state-highlight {
+        @include button-variant($secondary, $secondary);
+      }
+
       .ui-state-active {
-        background-color: $success;
+        @include button-variant($success, $success);
 
         &:hover {
-          background-color: darken($success, 7.5%)
+          background-color: darken($success, 7);
         }
       }
 
@@ -116,4 +120,3 @@
     }
   }
 }
-
