@@ -49,9 +49,9 @@
     <%= f.field_container :usage_limit do %>
       <%= f.label :usage_limit %>
       <%= f.number_field :usage_limit, min: 0, class: 'form-control' %>
-      <p class="help-block">
+      <small class="form-text text-muted">
         <%= Spree.t(:current_promotion_usage, count: @promotion.credits_count) %>
-      </p>
+      </small>
     <% end %>
 
     <div id="starts_at_field" class="form-group">

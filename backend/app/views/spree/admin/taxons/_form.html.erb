@@ -10,9 +10,9 @@
       <%= f.field_container :permalink, class: ['form-group'] do %>
         <%= label_tag :permalink_part, Spree.t(:permalink) %> <span class="required">*</span>
         <%= text_field_tag :permalink_part, @permalink_part, class: 'form-control', required: true %>
-        <p class="help-block" id="permalink_part_display">
+        <small class="form-text text-muted" id="permalink_part_display">
           <%= @taxon.permalink.split('/')[0...-1].join('/') + '/' %>
-        </p>
+        </small>
       <% end %>
 
       <%= f.field_container :icon, class: ['form-group'] do %>
