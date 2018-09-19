@@ -75,7 +75,7 @@
             <label><%= Spree.t(:tracking_number) %>:</label>
             <%= text_field_tag :tracking, shipment.tracking, class: "form-control" %>
           </td>
-          <td class="actions">
+          <td class="actions text-center">
             <% if can? :update, shipment %>
               <%= link_to_with_icon 'cancel', Spree.t('actions.cancel'), "#", class: 'cancel-tracking btn btn-primary btn-sm', data: {action: 'cancel'}, title: Spree.t('actions.cancel'), no_text: true %>
               <%= link_to_with_icon 'save', Spree.t('actions.save'), "#", class: 'save-tracking btn btn-success btn-sm', data: {'shipment-number' => shipment.number, action: 'save'}, title: Spree.t('actions.save'), no_text: true %>
