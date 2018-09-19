@@ -12,12 +12,6 @@ span.or {
   padding: 0 10px;
 }
 
-input.form-control {
-  &:active, &:focus {
-    border-color: lighten($success, 20);
-  }
-}
-
 .form-group {
   &.withError {
     label, .formError, .required {
@@ -29,17 +23,4 @@ input.form-control {
       border-color: $danger;
     }
   }
-}
-
-.help-block {
-  color: lighten($gray-100, 20);
-  font-weight: 300;
-}
-
-.checkbox > .help-block {
-  margin-top: 0;
-}
-
-.display-inline {
-  display: inline;
 }
