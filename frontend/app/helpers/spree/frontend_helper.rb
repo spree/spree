@@ -77,7 +77,8 @@ module Spree
         text = "<span class='glyphicon glyphicon-shopping-cart'></span> #{text}: (#{Spree.t('empty')})"
         css_class = 'empty'
       else
-        text = "<span class='glyphicon glyphicon-shopping-cart'></span> #{text}: (#{simple_current_order.item_count})  <span class='amount'>#{simple_current_order.display_total.to_html}</span>"
+        text = "<span class='glyphicon glyphicon-shopping-cart'></span> #{text}: (#{simple_current_order.item_count})
+                <span class='amount'>#{simple_current_order.display_total.to_html}</span>"
         css_class = 'full'
       end
 
@@ -86,6 +87,7 @@ module Spree
 
     def taxons_tree(root_taxon, current_taxon, max_level = 1)
       return '' if max_level < 1 || root_taxon.leaf?
+
       content_tag :div, class: 'list-group' do
         taxons = root_taxon.children.map do |taxon|
           css_class = current_taxon && current_taxon.self_and_ancestors.include?(taxon) ? 'list-group-item list-group-item-action active' : 'list-group-item list-group-item-action'
