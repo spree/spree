@@ -92,7 +92,7 @@
     background-image: none;
     background-color: $input-bg;
     display: flex;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     align-items: center;
 
     .select2-search-choice {
