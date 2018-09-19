@@ -161,7 +161,7 @@ describe 'Orders Listing', type: :feature do
     end
 
     it 'is able to apply a ransack filter by clicking a quickfilter icon', js: true do
-      label_pending = page.find '.label-pending'
+      label_pending = page.find '.badge-pending'
       parent_td = label_pending.find(:xpath, '..')
 
       # Click the quick filter Pending for order #R100
