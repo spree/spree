@@ -220,7 +220,7 @@
 
             <%= link_to Spree.t("payment_states.#{order.payment_state}"),
               admin_order_payments_path(order),
-              class: "badge badge-#{order.payment_state} text-dark" %>
+              class: "badge badge-#{order.payment_state}" %>
 
             <span class="icon icon-filter filterable js-add-filter"
               data-ransack-field="q_payment_state_eq"
