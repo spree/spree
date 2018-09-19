@@ -130,9 +130,14 @@ module Spree
       # renders hidden field and link to remove record using nested_attributes
       def link_to_icon_remove_fields(form)
         url = form.object.persisted? ? [:admin, form.object] : '#'
-        css_class = 'spree_remove_fields btn btn-sm btn-danger'
-        title = Spree.t(:remove)
-        link_to_with_icon('delete', '', url, class: css_class, data: { action: 'remove' }, title: title) + form.hidden_field(:_destroy)
+        link_to_with_icon('delete', '', url,
+                          class: 'spree_remove_fields btn btn-sm btn-danger',
+                          data: {
+                            action: 'remove'
+                          },
+                          title: Spree.t(:remove),
+                          no_text: true
+                         ) + form.hidden_field(:_destroy)
       end
 
       def spree_dom_id(record)
