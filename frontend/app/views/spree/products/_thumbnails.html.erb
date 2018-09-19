@@ -3,7 +3,7 @@
   <ul id="product-thumbnails" class="thumbnails list-inline" data-hook>
     <% @product.images.each do |i| %>
       <li class='tmb-all tmb-<%= i.viewable.id %>'>
-        <% img_tag = i.alt.present? ? image_tag(main_app.url_for(i.url(:mini)), class: "thumbnail", alt: i.alt) : image_tag(main_app.url_for(i.url(:mini)), class: "thumbnail", alt: image_alt(main_app.url_for(i.url(:mini)))) %>
+        <% img_tag = image_tag(main_app.url_for(i.url(:mini)), class: "thumbnail", alt: set_image_alt(i, :mini)) %>
         <%= link_to(img_tag, main_app.url_for(i.url(:product))) %>
       </li>
     <% end %>
@@ -12,7 +12,7 @@
       <% @product.variant_images.each do |i| %>
         <% next if @product.images.include?(i) %>
         <li class='vtmb tmb-<%= i.viewable.id %>'>
-          <% img_tag = i.alt.present? ? image_tag(main_app.url_for(i.url(:mini)), class: "thumbnail", alt: i.alt) : image_tag(main_app.url_for(i.url(:mini)), class: "thumbnail", alt: image_alt(main_app.url_for(i.url(:mini)))) %>
+          <% img_tag = image_tag(main_app.url_for(i.url(:mini)), class: "thumbnail", alt: set_image_alt(i, :mini)) %>
           <%= link_to(img_tag, main_app.url_for(i.url(:product))) %>
         </li>
       <% end %>

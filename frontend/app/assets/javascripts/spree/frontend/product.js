@@ -9,6 +9,7 @@ Spree.ready(function ($) {
     thumbnails.find("a").on("click", function (event) {
       ($("#main-image")).data("selectedThumb", ($(event.currentTarget)).attr("href"));
       ($("#main-image")).data("selectedThumbId", ($(event.currentTarget)).parent().attr("id"));
+      ($("#main-image")).data("selectedThumbAlt", ($(event.currentTarget)).find("img").attr("alt"));
       thumbnails.find("li").removeClass("selected");
       ($(event.currentTarget)).parent("li").addClass("selected");
       return false;
