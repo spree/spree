@@ -25,14 +25,14 @@
       </div>
       <div data-hook="active" class="form-group">
         <strong><%= Spree.t(:active) %></strong>
-        <div class="radio">
+        <div class="radio my-2">
           <%= label_tag :payment_method_active_true do %>
             <%= radio_button :payment_method, :active, true %>
             <%= Spree.t(:say_yes) %>
           <% end %>
         </div>
 
-        <div class="radio">
+        <div class="radio my-2">
           <%= label_tag :payment_method_active_false do %>
             <%= radio_button :payment_method, :active, false %>
             <%= Spree.t(:say_no) %>
