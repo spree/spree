@@ -68,7 +68,8 @@ module Spree
         text = "<span class='glyphicon glyphicon-shopping-cart'></span> #{text}: (#{Spree.t('empty')})"
         css_class = 'empty'
       else
-        text = "<span class='glyphicon glyphicon-shopping-cart'></span> #{text}: (#{simple_current_order.item_count})  <span class='amount'>#{simple_current_order.display_total.to_html}</span>"
+        text = "<span class='glyphicon glyphicon-shopping-cart'></span> #{text}: (#{simple_current_order.item_count})
+                <span class='amount'>#{simple_current_order.display_total.to_html}</span>"
         css_class = 'full'
       end
 
