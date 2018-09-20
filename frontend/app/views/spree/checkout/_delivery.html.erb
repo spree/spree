@@ -1,4 +1,4 @@
-<div class="card  " id='shipping_method' data-hook>
+<div class="card" id='shipping_method' data-hook>
   <div class="card-header">
     <h3 class="card-title mb-0 h5"><%= Spree.t(:delivery) %></h3>
   </div>
@@ -55,7 +55,7 @@
                       cost: rate.display_cost
                   } %>
                   <span class="rate-name"><%= rate.name %></span>
-                  <span class="badge rate-cost"><%= rate.display_cost %></span>
+                  <span class="badge badge-secondary rate-cost"><%= rate.display_cost %></span>
                 </label>
               </li>
             <% end %>
@@ -106,9 +106,7 @@
   </div>
 </div>
 
-<br />
-
-<div class="card mt-4 text-right form-buttons" data-hook="buttons">
+<div class="card my-4 text-right form-buttons" data-hook="buttons">
   <div class="card-body">
     <%= submit_tag Spree.t(:save_and_continue), class: 'btn btn-lg btn-success' %>
   </div>
