@@ -45,10 +45,10 @@ module Spree
         if state_index < current_index
           content_tag('li', text, class: css_classes.join(' '))
         else
-          content_tag('li', content_tag('a', text, class: "nav-link #{'active' if state == @order.state}"), class: css_classes.join(' '))
+          content_tag('li', content_tag('a', text, class: "nav-link #{'active text-white' if state == @order.state}"), class: css_classes.join(' '))
         end
       end
-      content_tag('ul', raw(items.join("\n")), class: 'progress-steps nav nav-pills nav-justified', id: "checkout-step-#{@order.state}")
+      content_tag('ul', raw(items.join("\n")), class: 'progress-steps nav nav-pills nav-justified flex-column flex-md-row', id: "checkout-step-#{@order.state}")
     end
 
     def flash_messages(opts = {})
