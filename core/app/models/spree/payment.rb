@@ -43,6 +43,7 @@ module Spree
     validates :amount, numericality: true
 
     delegate :store_credit?, to: :payment_method, allow_nil: true
+    delegate :name,          to: :payment_method, allow_nil: true, prefix: true
     default_scope { order(:created_at) }
 
     scope :from_credit_card, -> { where(source_type: 'Spree::CreditCard') }
