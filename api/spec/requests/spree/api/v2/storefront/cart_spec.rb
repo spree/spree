@@ -33,7 +33,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
       expect(json_response['data']).to have_attribute(:item_count).with_value(order.item_count)
       expect(json_response['data']).to have_attribute(:special_instructions).with_value(order.special_instructions)
       expect(json_response['data']).to have_attribute(:display_total).with_value(order.display_total.to_s)
-      expect(json_response['data']).to have_relationships(:user, :line_items, :variants, :billing_address, :shipping_address)
+      expect(json_response['data']).to have_relationships(:user, :line_items, :variants, :billing_address, :shipping_address, :payments)
     end
   end
 
@@ -114,7 +114,6 @@ describe 'API V2 Storefront Cart Spec', type: :request do
         post '/api/v2/storefront/cart/add_item', params: { variant_id: variant.id, quantity: 5 }, headers: headers
 
         expect(response.status).to eq(200)
-
         expect(order.line_items.count).to eq(1)
         expect(order.line_items.first.variant).to eq(variant)
         expect(order.line_items.first.quantity).to eq(5)
