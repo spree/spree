@@ -33,7 +33,7 @@ module Spree
 
         if state_index < current_index
           css_classes << 'completed'
-          text = link_to text, checkout_state_path(state)
+          text = link_to text, checkout_state_path(state), class: 'nav-link'
         end
 
         css_classes << 'next' if state_index == current_index + 1
