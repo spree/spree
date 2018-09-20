@@ -13,8 +13,16 @@ module Spree
         has_many   :line_items
         has_many   :variants
         has_many   :promotions
+        has_many   :payments
 
         belongs_to :user
+        belongs_to :billing_address,
+          id_method_name: :bill_address_id,
+          serializer:     :address
+
+        belongs_to :shipping_address,
+          id_method_name: :ship_address_id,
+          serializer:     :address
       end
     end
   end

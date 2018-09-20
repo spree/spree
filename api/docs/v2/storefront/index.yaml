@@ -146,6 +146,60 @@ paths:
         - orderToken: []
         - bearerAuth: []
 
+  '/cart/apply_coupon_code':
+    patch:
+      description: Applies a coupon code to the Cart
+      tags:
+        - Cart
+      responses:
+        '200':
+          description: 200 response means that coupon code was applied successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        '422':
+          description: 422 response means that coupon code couldn't be applied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - orderToken: []
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                coupon_code:
+                  type: string
+                  example: 'DISCOUNT10'
+
+  '/cart/remove_coupon_code':
+    delete:
+      description: Removes a coupon code from the Cart
+      tags:
+        - Cart
+      responses:
+        '200':
+          description: 200 response means that coupon code was removed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        '422':
+          description: 422 response means that coupon code couldn't be removed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - orderToken: []
+        - bearerAuth: []
+
   '/checkout/next':
     patch:
       description: Goes to the next Checkout step
@@ -700,15 +754,17 @@ components:
           properties:
             id:
               type: string
+              example: '1'
             type:
               type: string
+              example: 'promotions'
+              default: 'promotions'
             attributes:
               type: object
               properties:
                 name:
-                  type: number
-                description:
-                  type: number
+                  type: string
+                  example: '10% Discount'
     Product:
       required:
         - data
