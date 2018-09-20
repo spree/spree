@@ -132,7 +132,7 @@ module Spree
         # get all the shipment states for this order
         shipment_states = shipments.states
         order.shipment_state = if shipment_states.size > 1
-          # multiple shiment states means it's most likely partially shipped
+          # multiple shipment states means it's most likely partially shipped
                                  'partial'
                                else
           # will return nil if no shipments are found

@@ -29,6 +29,9 @@ module Spree
 
     validate :state_validate, :postal_code_validate
 
+    delegate :name, :iso3, to: :country, prefix: true
+    delegate :abbr,        to: :state,   prefix: true, allow_nil: true
+
     alias_attribute :first_name, :firstname
     alias_attribute :last_name, :lastname
 
