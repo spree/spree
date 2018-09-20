@@ -1,7 +1,7 @@
 <%= form_for :order, url: populate_orders_path do |f| %>
   <div class="row"id="inside-product-cart-form" data-hook="inside_product_cart_form" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
     <% if @product.variants_and_option_values(current_currency).any? %>
-      <div id="product-variants" class="col-md-6">
+      <div id="product-variants" class="col-lg-6 mt-4">
         <h3 class="product-section-title"><%= Spree.t(:variants) %></h3>
         <ul class="list-group">
           <% @product.variants_and_option_values(current_currency).each_with_index do |variant, index| %>
@@ -34,7 +34,7 @@
     <% end %>
 
     <% if @product.price_in(current_currency) && !@product.price.nil? %>
-      <div data-hook="product_price" class="col-md-5">
+      <div data-hook="product_price" class="col-lg-5 mt-4">
         <div id="product-price">
           <h3 class="product-section-title"><%= Spree.t(:price) %></h3>
           <div>
@@ -59,7 +59,7 @@
         </div>
 
         <% if @product.can_supply? %>
-          <div class="add-to-cart">
+          <div class="add-to-cart mt-2">
             <div class="input-group">
               <%= number_field_tag :quantity, 1, class: 'title form-control', min: 1 %>
               <div class="input-group-append">
