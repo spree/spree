@@ -22,7 +22,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'awesome_nested_set', '~> 3.0.1'
   s.add_dependency 'carmen', '~> 1.0.0'
   s.add_dependency 'cancancan', '~> 1.9.2'
-  s.add_dependency 'deface', '~> 1.0.0'
+  s.add_dependency 'deface', '~> 1.0'
   s.add_dependency 'ffaker', '~> 1.16'
   s.add_dependency 'font-awesome-rails', '~> 4.0'
   s.add_dependency 'friendly_id', '~> 5.0.4'
