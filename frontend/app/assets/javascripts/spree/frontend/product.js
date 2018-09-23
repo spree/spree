@@ -3,22 +3,26 @@ Spree.ready(function ($) {
   Spree.addImageHandlers = function () {
     var thumbnails = $("#product-images ul.thumbnails");
     ($("#main-image")).data("selectedThumb", ($("#main-image img")).attr("src"));
+    ($("#main-image")).data("selectedThumbAlt", ($("#main-image img")).attr("alt"));
     thumbnails.find("li").eq(0).addClass("selected");
 
     thumbnails.find("a").on("click", function (event) {
       ($("#main-image")).data("selectedThumb", ($(event.currentTarget)).attr("href"));
       ($("#main-image")).data("selectedThumbId", ($(event.currentTarget)).parent().attr("id"));
+      ($("#main-image")).data("selectedThumbAlt", ($(event.currentTarget)).find("img").attr("alt"));
       thumbnails.find("li").removeClass("selected");
       ($(event.currentTarget)).parent("li").addClass("selected");
       return false;
     });
 
     thumbnails.find("li").on("mouseenter", function (event) {
-      return ($("#main-image img")).attr("src", ($(event.currentTarget)).find("a").attr("href"));
+      return ($("#main-image img"))
+        .attr({"src": ($(event.currentTarget)).find("a").attr("href"), "alt": ($(event.currentTarget)).find("img").attr("alt")});
     });
 
     return thumbnails.find("li").on("mouseleave", function (event) {
-      return ($("#main-image img")).attr("src", ($("#main-image")).data("selectedThumb"));
+      return ($("#main-image img"))
+        .attr({"src": ($("#main-image")).data("selectedThumb"), "alt": ($("#main-image")).data("selectedThumbAlt")});
     });
   };
 
@@ -34,11 +38,12 @@ Spree.ready(function ($) {
         thumb = $(($("#product-images ul.thumbnails li:visible")).eq(0));
       }
 
-      var newImg = thumb.find("a").attr("href");
+      var newImg = thumb.find("a").attr("href"),
+          newAlt = thumb.find("img").attr("alt");
       ($("#product-images ul.thumbnails li")).removeClass("selected");
       thumb.addClass("selected");
-      ($("#main-image img")).attr("src", newImg);
-      ($("#main-image")).data("selectedThumb", newImg);
+      ($("#main-image img")).attr({"src": newImg, "alt": newAlt});
+      ($("#main-image")).data({"selectedThumb": newImg, "selectedThumbAlt": newAlt});
       return ($("#main-image")).data("selectedThumbId", thumb.attr("id"));
     }
   };
