@@ -1,5 +1,6 @@
 Spree.ready(function ($) {
   Spree.addImageHandlers = function () {
+
     var thumbnails = $('#product-images ul.thumbnails')
 
     $('#main-image').data('selectedThumb', $('#main-image img').attr('src'))

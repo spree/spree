@@ -2,13 +2,8 @@
 <% if (@product.images + @product.variant_images).uniq.size > 1 %>
   <ul id="product-thumbnails" class="thumbnails d-flex w-100 pl-0 my-4" data-hook>
     <% @product.images.each do |i| %>
-<<<<<<< HEAD
-      <li class='tmb-all mb-2 tmb-<%= i.viewable.id %>'>
-        <% img_tag = image_tag(main_app.url_for(i.url(:mini)), class: "thumbnail", alt: set_image_alt(i, :mini)) %>
-=======
       <li class='tmb-all mr-2 tmb-<%= i.viewable.id %>'>
         <% img_tag = image_tag(main_app.url_for(i.url(:mini)), class: "thumbnail d-inline-block", alt: set_image_alt(i, :mini)) %>
->>>>>>> Fix product thumbnails styles
         <%= link_to(img_tag, main_app.url_for(i.url(:product))) %>
       </li>
     <% end %>
@@ -16,13 +11,8 @@
     <% if @product.has_variants? %>
       <% @product.variant_images.each do |i| %>
         <% next if @product.images.include?(i) %>
-<<<<<<< HEAD
-        <li class='vtmb mb-2  tmb-<%= i.viewable.id %>'>
-          <% img_tag = image_tag(main_app.url_for(i.url(:mini)), class: "thumbnail", alt: set_image_alt(i, :mini)) %>
-=======
         <li class='vtmb mr-2 tmb-<%= i.viewable.id %>'>
           <% img_tag = image_tag(main_app.url_for(i.url(:mini)), class: "thumbnail d-inline-block", alt: set_image_alt(i, :mini)) %>
->>>>>>> Fix product thumbnails styles
           <%= link_to(img_tag, main_app.url_for(i.url(:product))) %>
         </li>
       <% end %>
