@@ -76,20 +76,20 @@ class Project
     # remove after, Paperclip going to be deprecated
     # system(%w[bundle exec rspec] + rspec_arguments)
     if name == 'core'
-      paperclip_test = system(%w[bundle exec rspec] + rspec_arguments)
+      paperclip_test = system(%w[bundle exec rspec] + rspec_arguments('paperclip'))
       ENV['SPREE_USE_PAPERCLIP'] = nil
-      active_storage_test = system(%w[bundle exec rspec] + rspec_arguments)
+      active_storage_test = system(%w[bundle exec rspec] + rspec_arguments('active_storage'))
       paperclip_test && active_storage_test
     else
       system(%w[bundle exec rspec] + rspec_arguments)
     end
   end
 
-  def rspec_arguments
+  def rspec_arguments(custom_name = name)
     args = []
     args += %w[--order random]
     if report_dir = ENV['CIRCLE_TEST_REPORTS']
-      args += %W[-r rspec_junit_formatter --format RspecJunitFormatter -o #{report_dir}/rspec/#{name}.xml]
+      args += %W[-r rspec_junit_formatter --format RspecJunitFormatter -o #{report_dir}/rspec/#{custom_name}.xml]
     end
     args
   end
