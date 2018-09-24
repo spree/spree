@@ -68,7 +68,7 @@
           <td><%= stock_transfer.source_location.try(:name) %></td>
           <td><%= stock_transfer.destination_location.try(:name) %></td>
           <td class="actions actions-1">
-            <%= link_to_with_icon 'show', Spree.t(:show), admin_stock_transfer_path(stock_transfer), class: 'btn btn-default btn-sm', no_text: true, data: {action: 'view'} %>
+            <%= link_to_with_icon 'show', Spree.t(:show), admin_stock_transfer_path(stock_transfer), class: 'btn btn-outline-secondary btn-sm', no_text: true, data: {action: 'view'} %>
           </td>
         </tr>
       <% end %>
