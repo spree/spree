@@ -5,8 +5,8 @@ module Spree
   describe Api::V1::OrdersController, type: :controller do
     render_views
 
-    let!(:order) { create(:order) }
-    let(:variant) { create(:variant) }
+    let!(:order)    { create(:order) }
+    let(:variant)   { create(:variant) }
     let(:line_item) { create(:line_item) }
 
     let(:attributes) do
@@ -43,7 +43,7 @@ module Spree
 
     context 'the current api user is authenticated' do
       let(:current_api_user) { order.user }
-      let(:order) { create(:order, line_items: [line_item]) }
+      let(:order)            { create(:order, line_items: [line_item]) }
 
       it 'can view all of their own orders' do
         api_get :mine
@@ -142,7 +142,7 @@ module Spree
     describe 'GET #show' do
       subject { api_get :show, id: order.to_param }
 
-      let(:order) { create :order_with_line_items }
+      let(:order)      { create :order_with_line_items }
       let(:adjustment) { FactoryBot.create(:adjustment, order: order) }
 
       before do
@@ -211,7 +211,7 @@ module Spree
 
     context 'with BarAbility registered' do
       before { Spree::Ability.register_ability(::BarAbility) }
-      after { Spree::Ability.remove_ability(::BarAbility) }
+      after  { Spree::Ability.remove_ability(::BarAbility) }
 
       it 'can view an order' do
         user = mock_model(Spree::LegacyUser)
@@ -283,8 +283,8 @@ module Spree
     end
 
     context 'working with an order' do
-      let(:variant) { create(:variant) }
-      let!(:line_item) { Spree::Cart::AddItem.call(order: order, variant: variant).value }
+      let(:variant)        { create(:variant) }
+      let!(:line_item)     { Spree::Cart::AddItem.call(order: order, variant: variant).value }
       let(:address_params) { { country_id: country.id } }
       let(:billing_address) do
         {
@@ -572,7 +572,7 @@ module Spree
       context 'caching enabled' do
         before do
           ActionController::Base.perform_caching = true
-          3.times { Order.create }
+          3.times { create(:order) }
         end
 
         it 'returns unique orders' do

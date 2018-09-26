@@ -98,6 +98,28 @@ describe 'Users', type: :feature do
         expect(page).not_to have_text user_b.email
       end
     end
+
+    context 'filtering users', js: true do
+      it 'renders selected filters' do
+        click_on 'Filter'
+
+        within('#table-filter') do
+          fill_in 'q_email_cont', with: 'a@example.com'
+          fill_in 'q_bill_address_firstname_cont', with: 'John'
+          fill_in 'q_bill_address_lastname_cont', with: 'Doe'
+          fill_in 'q_bill_address_company_cont', with: 'Company'
+        end
+
+        click_on 'Search'
+
+        within('.table-active-filters') do
+          expect(page).to have_content('Email: a@example.com')
+          expect(page).to have_content('First Name: John')
+          expect(page).to have_content('Last Name: Doe')
+          expect(page).to have_content('Company: Company')
+        end
+      end
+    end
   end
 
   context 'editing users' do
@@ -165,7 +187,7 @@ describe 'Users', type: :feature do
         click_button 'Update'
       end
 
-      expect(user_a.reload.ship_address.same_as?(user_a.reload.bill_address)).to eq true
+      expect(user_a.reload.ship_address == user_a.reload.bill_address).to eq true
     end
 
     context 'no api key exists' do

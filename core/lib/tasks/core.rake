@@ -172,4 +172,18 @@ use rake db:load_file[/absolute/path/to/sample/filename.rb]}
   task migrate_taxon_icons_to_images: :environment do |_t, _args|
     Spree::Asset.where(type: 'Spree::TaxonIcon').update_all(type: 'Spree::TaxonImage')
   end
+
+  desc 'Ensure all Order associated with Store after upgrading to Spree 3.7'
+  task associate_orders_with_store: :environment do |_t, _args|
+    Spree::Order.where(store_id: nil).update_all(store_id: Spree::Store.default.id)
+  end
+
+  desc 'Ensure all Order has currency present after upgrading to Spree 3.7'
+  task ensure_order_currency_presence: :environment do |_t, _args|
+    Spree::Order.where(currency: nil).find_in_batches do |orders|
+      orders.each do |order|
+        order.update!(currency: order.store.default_currency || Spree::Config[:currency])
+      end
+    end
+  end
 end

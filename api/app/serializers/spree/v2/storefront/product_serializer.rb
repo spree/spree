@@ -8,17 +8,9 @@ module Spree
                    :available_on, :slug, :meta_description, :meta_keywords,
                    :updated_at
 
-        attribute :purchasable do |product|
-          product.purchasable?
-        end
-
-        attribute :in_stock do |product|
-          product.in_stock?
-        end
-
-        attribute :backorderable do |product|
-          product.backorderable?
-        end
+        attribute :purchasable,   &:purchasable?
+        attribute :in_stock,      &:in_stock?
+        attribute :backorderable, &:backorderable?
 
         has_many :variants
         has_many :option_types

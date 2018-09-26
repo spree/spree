@@ -15,6 +15,7 @@ describe Spree::CheckoutController, type: :controller do
   context 'when using GBP' do
     before do
       Spree::Config[:currency] = 'GBP'
+      FactoryBot.create(:store, default_currency: 'GBP')
     end
 
     context 'when order is in delivery' do

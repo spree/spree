@@ -33,6 +33,7 @@ module Spree
 
         def permitted_product_attributes
           permitted_attributes.product_attributes + [
+            :store_id,
             product_properties_attributes: permitted_product_properties_attributes
           ]
         end

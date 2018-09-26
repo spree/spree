@@ -194,6 +194,15 @@ describe Spree::Product, type: :model do
       end
     end
 
+    # Regression test for #8906
+    context 'tags' do
+      let(:tag_list) { %w[tag1 tag2] }
+
+      it "doesn't raise an error when adding tags to a product" do
+        expect { product.update(tag_list: tag_list) }.not_to raise_error
+      end
+    end
+
     # Regression test for #3737
     context 'has stock items' do
       it 'can retrieve stock items' do
@@ -596,6 +605,24 @@ describe Spree::Product, type: :model do
 
     it 'fetches Category Taxon' do
       expect(product.category).to eql(taxonomy.taxons.first)
+    end
+  end
+
+  context '#backordered?' do
+    let!(:product) { create(:product) }
+
+    it 'returns true when out of stock and backorderable' do
+      expect(product.backordered?).to eq(true)
+    end
+
+    it 'returns false when out of stock and not backorderable' do
+      product.stock_items.first.update(backorderable: false)
+      expect(product.backordered?).to eq(false)
+    end
+
+    it 'returns false when there is available item in stock' do
+      product.stock_items.first.update(count_on_hand: 10)
+      expect(product.backordered?).to eq(false)
     end
   end
 

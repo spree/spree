@@ -7,8 +7,8 @@ module Spree
 
         private
 
-        def render_serialized_resource(resource, status)
-          render json: resource, status: status
+        def render_serialized_payload(payload, status)
+          render json: payload, status: status
         rescue ArgumentError => exception
           render json: { error: exception.message }, status: 400
         end
@@ -43,7 +43,7 @@ module Spree
             store:    spree_current_store,
             user:     spree_current_user,
             token:    order_token,
-            currency: params[:currency] || current_currency
+            currency: current_currency
           )
         end
 

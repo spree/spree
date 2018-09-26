@@ -1,6 +1,10 @@
 class MigrateOldPreferences < ActiveRecord::Migration[4.2]
   def up
-    migrate_preferences(Spree::Calculator)
+    if Spree::Calculator.respond_to?(:with_deleted)
+      migrate_preferences(Spree::Calculator.with_deleted)
+    else
+      migrate_preferences(Spree::Calculator)
+    end
     migrate_preferences(Spree::PaymentMethod)
     migrate_preferences(Spree::PromotionRule)
   end

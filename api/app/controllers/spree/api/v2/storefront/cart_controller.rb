@@ -6,9 +6,16 @@ module Spree
           def create
             spree_authorize! :create, Spree::Order
 
-            order = spree_current_order || dependencies[:create_cart].call(user: spree_current_user, store: spree_current_store).value
+            order_params = {
+              user: spree_current_user,
+              store: spree_current_store,
+              currency: current_currency
+            }
 
-            render_serialized_resource serialize_order(order), 201
+            order   = spree_current_order if spree_current_order.present?
+            order ||= dependencies[:create_cart].call(order_params).value
+
+            render_serialized_payload serialize_order(order), 201
           end
 
           def add_item
@@ -22,7 +29,7 @@ module Spree
 
               dependencies[:add_item_to_cart].call(order: spree_current_order, variant: variant, quantity: params[:quantity])
 
-              render_serialized_resource serialized_current_order, 200
+              render_serialized_payload serialized_current_order, 200
             end
           end
 
@@ -36,7 +43,7 @@ module Spree
               line_item: line_item
             )
 
-            render_serialized_resource serialized_current_order, 200
+            render_serialized_payload serialized_current_order, 200
           end
 
           def empty
@@ -46,20 +53,18 @@ module Spree
 
             spree_current_order.empty!
 
-            render_serialized_resource serialized_current_order, 200
+            render_serialized_payload serialized_current_order, 200
           end
 
           def set_quantity
             return render_error_item_quantity unless params[:quantity].to_i > 0
-
-            line_item = spree_current_order.line_items.find(params[:line_item_id])
 
             spree_authorize! :update, spree_current_order, order_token
 
             result = dependencies[:set_item_quantity].call(order: spree_current_order, line_item: line_item, quantity: params[:quantity])
 
             if result.success?
-              render_serialized_resource serialized_current_order, 200
+              render_serialized_payload serialized_current_order, 200
             else
               render json: { error: result.value }, status: 422
             end
@@ -70,7 +75,7 @@ module Spree
 
             spree_authorize! :show, spree_current_order, order_token
 
-            render_serialized_resource serialized_current_order, 200
+            render_serialized_payload serialized_current_order, 200
           end
 
           private

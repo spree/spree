@@ -33,10 +33,11 @@ Try Spree with direct deployment on Heroku:
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/spree/spree/tree/3-6-stable)
 
 If you want to run demo spree application on your machine, you can use our docker image with command below. It will
-download and run sample Spree application on http://localhost:3000
+download and run sample Spree application on http://localhost:3000 (Login: spree@example.com / spree123)
 ```shell
 docker run --rm -it -p 3000:3000 spreecommerce/spree:latest
 ```
+
 
 Getting Started
 ----------------------
@@ -46,7 +47,7 @@ Add Spree gems to your Gemfile:
 ### Rails 5.2
 
 ```ruby
-gem 'spree', '~> 3.6.1'
+gem 'spree', '~> 3.6.4'
 gem 'spree_auth_devise', '~> 3.3'
 gem 'spree_gateway', '~> 3.3'
 ```
@@ -152,6 +153,7 @@ Spree Extensions provide additional features not present in the Core system.
 | [spree_i18n](https://github.com/spree-contrib/spree_i18n) | [![Build Status](https://travis-ci.org/spree-contrib/spree_i18n.svg?branch=master)](https://travis-ci.org/spree-contrib/spree_i18n) | I18n translation files for Spree Commerce
 | [spree-multi-domain](https://github.com/spree-contrib/spree-multi-domain) | [![Build Status](https://travis-ci.org/spree-contrib/spree-multi-domain.svg?branch=master)](https://travis-ci.org/spree-contrib/spree-multi-domain) | Multiple Spree stores on different domains - single unified backed for processing orders
 | [spree_multi_currency](https://github.com/spree-contrib/spree_multi_currency) | [![Build Status](https://travis-ci.org/spree-contrib/spree_multi_currency.svg?branch=master)](https://travis-ci.org/spree-contrib/spree_multi_currency) | Provides UI to allow configuring multiple currencies in Spree |
+| [spree-mollie-gateway](https://github.com/mollie/spree-mollie-gateway) | [![Build Status](https://travis-ci.org/mollie/spree-mollie-gateway.svg?branch=master)](https://github.com/mollie/spree-mollie-gateway) | Official [Mollie](https://www.mollie.com) payment gateway for Spree Commerce. |
 | [spree_braintree_vzero](https://github.com/spree-contrib/spree_braintree_vzero) | [![Build Status](https://travis-ci.org/spree-contrib/spree_braintree_vzero.svg?branch=master)](https://travis-ci.org/spree-contrib/spree_braintree_vzero) | Official Spree Braintree v.zero + PayPal extension |
 | [spree_address_book](https://github.com/spree-contrib/spree_address_book) | [![Build Status](https://travis-ci.org/spree-contrib/spree_address_book.svg?branch=master)](https://travis-ci.org/spree-contrib/spree_address_book) | Adds address book for users to Spree |
 | [spree_digital](https://github.com/spree-contrib/spree_digital) | [![Build Status](https://travis-ci.org/spree-contrib/spree_digital.svg?branch=master)](https://travis-ci.org/spree-contrib/spree_digital) | A Spree extension to enable downloadable products |

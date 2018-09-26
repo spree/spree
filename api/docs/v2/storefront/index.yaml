@@ -108,11 +108,13 @@ paths:
                 line_item_id: "1"
                 quantity: 5
 
-  '/cart/remove_line_item':
+  '/cart/remove_line_item/{line_item_id}':
     delete:
       description: Removes line item from current order
       tags:
         - Cart
+      parameters:
+        - $ref: '#/components/parameters/LineItemId'
       responses:
         '200':
           description: 200 response means that the requested line item has been removed from the order
@@ -125,17 +127,6 @@ paths:
       security:
         - orderToken: []
         - bearerAuth: []
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                line_item_id:
-                  type: string
-              example:
-                line_item_id: "1"
 
   '/cart/empty':
     post:
@@ -155,17 +146,186 @@ paths:
         - orderToken: []
         - bearerAuth: []
 
+  '/cart/apply_coupon_code':
+    patch:
+      description: Applies a coupon code to the Cart
+      tags:
+        - Cart
+      responses:
+        '200':
+          description: 200 response means that coupon code was applied successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        '422':
+          description: 422 response means that coupon code couldn't be applied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - orderToken: []
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                coupon_code:
+                  type: string
+                  example: 'DISCOUNT10'
+
+  '/cart/remove_coupon_code':
+    delete:
+      description: Removes a coupon code from the Cart
+      tags:
+        - Cart
+      responses:
+        '200':
+          description: 200 response means that coupon code was removed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        '422':
+          description: 422 response means that coupon code couldn't be removed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - orderToken: []
+        - bearerAuth: []
+
+  '/checkout/next':
+    patch:
+      description: Goes to the next Checkout step
+      tags:
+        - Checkout
+      responses:
+        '200':
+          description: 200 response means that the Checkout was transitioned to the next step
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        '422':
+          description: 422 response means that Checkout couldn't transition to the next step
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+      security:
+        - orderToken: []
+        - bearerAuth: []
+
+  '/checkout/advance':
+    patch:
+      description: Advances Checkout to the furthest Checkout step validation allows, until the Complete step
+      tags:
+        - Checkout
+      responses:
+        '200':
+          description: 200 response means that the Checkout was transitioned to the next step
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        '422':
+          description: 422 response means that Checkout couldn't transition to the next step
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+      security:
+        - orderToken: []
+        - bearerAuth: []
+
+  '/checkout/complete':
+    patch:
+        description: Completes the Checkout
+        tags:
+          - Checkout
+        responses:
+          '200':
+            description: 200 response means that the Checkout was completed
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Cart'
+          '422':
+            description: 422 response means that Checkout couldn't be completed
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Error'
+          '404':
+            $ref: '#/components/responses/404NotFound'
+        security:
+          - orderToken: []
+          - bearerAuth: []
+
+  '/products':
+    get:
+      description: >-
+        Returns a list of Products
+      tags:
+        - Products
+      operationId: show
+      parameters:
+        - in: query
+          name: filter
+          schema:
+            type: string
+          example: >-
+           'filter[ids]=1,2,3&filter[price]=10,20&filter[taxons]=1,2,3,4&filter[name]=shirt&filter[options][color]=red&filter[options][color]=blue&filter[options][size]=10'
+          description: >-
+            Filter Products based on:
+            <ul>
+              <li>name (supports wild-card, partial-word match search)</li>
+              <li>ids (IDs of selected products to display)</li>
+              <li>taxons (IDs of categories, brands, etc)</li>
+              <li>price (range)</li>
+              <li>options (eg. color, size)</li>
+            </ul>
+        - in: query
+          name: sort
+          schema:
+            type: string
+          example: >-
+            -updated_at,price
+          description:  >-
+            Sort products based on:
+            <ul>
+              <li>price (ascending/descenging)</li>
+              <li>updated_at (ascending/descenging)</li>
+            </ul>
+            Use <q>-</q> sign to set descenging sort, eg. <q>-updated_at</q>
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductsList'
   '/products/{id}':
     get:
       description: >-
         To view the details for a single product, make a request using that
         product's permalink:<br /> <code>GET /api/v2/products/a-product</code>
         <br /><br />You may also query by the product's id attribute:<br /><code>GET
-        /api/v1/products/1 </code> <br /><br />Note that the API will attempt a
+        /api/v2/products/1 </code> <br /><br />Note that the API will attempt a
         permalink lookup before an ID lookup.
       tags:
         - Products
-      operationId: show
+      operationId: index
       parameters:
         - $ref: '#/components/parameters/IdOrPermalink'
       responses:
@@ -184,7 +344,7 @@ paths:
         To view the details for a single Taxon, make a request using that
         Taxon's permalink:<br /> <code>GET /api/v2/taxons/t-shirts</code>
         <br /><br />You may also query by the Taxons's ID attribute:<br /><code>GET
-        /api/v1/taxons/1 </code> <br /><br />Note that the API will attempt a
+        /api/v2/taxons/1 </code> <br /><br />Note that the API will attempt a
         permalink lookup before an ID lookup.
       tags:
         - Taxons
@@ -220,6 +380,97 @@ components:
       properties:
         message:
           type: string
+    ListLinks:
+      properties:
+        self:
+          type: string
+          description: 'URL to the current page of the listing'
+        next:
+          type: string
+          description: 'URL to the next page of the listing'
+        prev:
+          type: string
+          description: 'URL to the previous page of the listing'
+        last:
+          type: string
+          description: 'URL to the last page of the listing'
+        first:
+          type: string
+          description: 'URL to the first page of the listing'
+    ListMeta:
+      properties:
+        count:
+          type: number
+          example: 7
+          description: 'Number of items on the current listing'
+        total_count:
+          type: number
+          example: 145
+          description: 'Number of all items matching the criteria'
+        total_pages:
+          type: number
+          example: 10
+          description: 'Number of all pages containing items matching the criteria'
+    Timestamp:
+      type: string
+      example: '2018-05-25T11:22:57.214-04:00'
+    Address:
+      required:
+        - data
+      properties:
+        data:
+          type: object
+          required:
+            - id
+            - type
+            - attributes
+          properties:
+            id:
+              type: string
+              example: '1'
+            type:
+              type: string
+              default: 'addresses'
+              example: 'addresses'
+            attributes:
+              type: object
+              properties:
+                firstname:
+                  type: string
+                  example: 'John'
+                lastname:
+                  type: string
+                  example: 'Doe'
+                address1:
+                  type: string
+                  example: '1600 Amphitheatre Pkwy'
+                address2:
+                  type: string
+                  example: 'Suite 1'
+                city:
+                  type: string
+                  example: 'Mountain View'
+                zipcode:
+                  type: string
+                  example: '94043'
+                phone:
+                  type: string
+                  example: '(+1) 123 456 789'
+                state_name:
+                  type: string
+                  example: 'California'
+                state_code:
+                  type: string
+                  example: 'CA'
+                country_name:
+                  type: string
+                  example: 'United States of America'
+                country_iso3:
+                  type: string
+                  example: 'USA'
+                company:
+                  type: string
+                  example: 'Google Inc.'
     Cart:
       required:
         - data
@@ -242,32 +493,71 @@ components:
               properties:
                 number:
                   type: string
+                  example: 'R123456789'
+                email:
+                  type: string
+                  example: 'spree@example.com'
                 item_total:
                   type: string
+                  example: '19.99'
+                display_item_total:
+                  type: string
+                  example: '$19.99'
                 total:
                   type: string
+                  example: '29.99'
+                display_total:
+                  type: string
+                  example: '$29.99'
                 ship_total:
                   type: string
+                  example: '0.00'
+                display_ship_total:
+                  type: string
+                  example: '$19.99'
                 adjustment_total:
                   type: string
+                  example: '10.00'
+                display_adjustment_total:
+                  type: string
+                  example: '$10.00'
                 created_at:
-                  type: string
+                  $ref: '#/components/schemas/Timestamp'
                 updated_at:
-                  type: string
+                  $ref: '#/components/schemas/Timestamp'
                 included_tax_total:
                   type: string
+                  example: '5.00'
                 additional_tax_total:
                   type: string
+                  example: '5.00'
                 display_additional_tax_total:
                   type: string
+                  example: '$5.00'
                 display_included_tax_total:
                   type: string
+                  example: '$5.00'
                 tax_total:
                   type: string
+                  example: '10.00'
+                display_tax_total:
+                  type: string
+                  example: '$10.00'
+                item_count:
+                  type: number
+                  example: 2
+                  description: 'Total quantity number of all items added to the Cart'
+                special_instructions:
+                  type: string
+                  example: 'Please wrap it as a gift'
+                  description: 'Message added by the Customer'
                 currency:
                   type: string
+                  example: 'USD'
                 state:
                   type: string
+                  example: 'address'
+                  description: 'State of the Cart in the Checkout flow'
                 token:
                   type: string
                   example: abcdef123456
@@ -303,6 +593,16 @@ components:
                   properties:
                     data:
                       $ref: '#/components/schemas/Relation'
+                billing_address:
+                  type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/Relation'
+                shipping_address:
+                  type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/Relation'
         included:
           type: array
           items:
@@ -312,6 +612,7 @@ components:
               - $ref: '#/components/schemas/LineItem'
               - $ref: '#/components/schemas/Promotion'
               - $ref: '#/components/schemas/User'
+              - $ref: '#/components/schemas/Address'
     Image:
       required:
         - data
@@ -453,26 +754,24 @@ components:
           properties:
             id:
               type: string
+              example: '1'
             type:
               type: string
+              example: 'promotions'
+              default: 'promotions'
             attributes:
               type: object
               properties:
                 name:
-                  type: number
-                description:
-                  type: number
+                  type: string
+                  example: '10% Discount'
     Product:
       required:
-        - id
-        - type
-        - attributes
-        - relationships
+        - data
+        - included
       properties:
         data:
-          $ref: '#/components/schemas/ProductData'
-        relationships:
-          $ref: '#/components/schemas/ProductRelationships'
+          $ref: '#/components/schemas/ProductAttributesAndRelationships'
         included:
           type: array
           items:
@@ -481,64 +780,78 @@ components:
               - $ref: '#/components/schemas/OptionValue'
               - $ref: '#/components/schemas/ProductProperty'
               - $ref: '#/components/schemas/Property'
-              - $ref: '#/components/schemas/VariantDataAndRelationships'
+              - $ref: '#/components/schemas/VariantAttributesAndRelationships'
               - $ref: '#/components/schemas/Image'
-              - $ref: '#/components/schemas/TaxonDataAndRelationships'
-    ProductData:
+              - $ref: '#/components/schemas/TaxonAttributesAndRelationships'
+    ProductsList:
+      required:
+        - links
+        - data
+        - included
+      properties:
+        links:
+          $ref: '#/components/schemas/ListLinks'
+        meta:
+          $ref: '#/components/schemas/ListMeta'
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductAttributesAndRelationships'
+        included:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/OptionType'
+              - $ref: '#/components/schemas/OptionValue'
+              - $ref: '#/components/schemas/ProductProperty'
+              - $ref: '#/components/schemas/Property'
+              - $ref: '#/components/schemas/VariantAttributesAndRelationships'
+              - $ref: '#/components/schemas/Image'
+              - $ref: '#/components/schemas/TaxonAttributesAndRelationships'
+    ProductAttributes:
       type: object
       properties:
-        id:
+        name:
           type: string
-          example: '1'
-        type:
+          example: 'Example product'
+        description:
           type: string
-          default: 'products'
-          example: 'products'
-        attributes:
-          type: object
-          properties:
-            name:
-              type: string
-              example: 'Example product'
-            description:
-              type: string
-              example: 'Example description'
-            price:
-              type: string
-              example: '15.99'
-            currency:
-              type: string
-              example: 'USD'
-            display_price:
-              type: string
-              example: $15.99
-            available_on:
-              type: string
-              example: '2012-10-17T03:43:57Z'
-            purchasable:
-              type: boolean
-              example: true
-              description: 'Indicates if any of Variants are in stock or backorderable'
-            in_stock:
-              type: boolean
-              example: true
-              description: 'Indicates if any of Variants are in stock'
-            backorderable:
-              type: boolean
-              example: true
-              description: 'Indicates if any of Variants are backeorderable'
-            slug:
-              type: string
-              example: 'example-product'
-            meta_description:
-              type: string
-              example: 'Example product'
-            meta_keywords:
-              type: string
-              example: 'example, product'
-            updated_at:
-              type: string
-              example: '2018-05-25T11:22:57.214-04:00'
+          example: 'Example description'
+        price:
+          type: string
+          example: '15.99'
+        currency:
+          type: string
+          example: 'USD'
+        display_price:
+          type: string
+          example: $15.99
+        available_on:
+          type: string
+          example: '2012-10-17T03:43:57Z'
+        purchasable:
+          type: boolean
+          example: true
+          description: 'Indicates if any of Variants are in stock or backorderable'
+        in_stock:
+          type: boolean
+          example: true
+          description: 'Indicates if any of Variants are in stock'
+        backorderable:
+          type: boolean
+          example: true
+          description: 'Indicates if any of Variants are backeorderable'
+        slug:
+          type: string
+          example: 'example-product'
+        meta_description:
+          type: string
+          example: 'Example product'
+        meta_keywords:
+          type: string
+          example: 'example, product'
+        updated_at:
+          $ref: '#/components/schemas/Timestamp'
     ProductRelationships:
       type: object
       properties:
@@ -580,10 +893,17 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/Relation'
-    ProductDataAndRelationships:
+    ProductAttributesAndRelationships:
       properties:
-        data:
-          $ref: '#/components/schemas/ProductData'
+        id:
+          type: string
+          example: '1'
+        type:
+          type: string
+          default: 'products'
+          example: 'products'
+        attributes:
+          $ref: '#/components/schemas/ProductAttributes'
         relationships:
           $ref: '#/components/schemas/ProductRelationships'
     Relation:
@@ -597,84 +917,70 @@ components:
           type: string
     Taxon:
       required:
-        - id
-        - type
-        - attributes
-        - relationships
+        - data
+        - included
       properties:
         data:
-          $ref: '#/components/schemas/TaxonData'
-        relationships:
-          $ref: '#/components/schemas/TaxonRelationships'
+          $ref: '#/components/schemas/TaxonAttributesAndRelationships'
         included:
           type: array
           items:
             oneOf:
-              - $ref: '#/components/schemas/ProductDataAndRelationships'
-              - $ref: '#/components/schemas/TaxonDataAndRelationships'
-              - $ref: '#/components/schemas/TaxonomyDataAndRelationships'
+              - $ref: '#/components/schemas/ProductAttributesAndRelationships'
+              - $ref: '#/components/schemas/TaxonAttributesAndRelationships'
+              - $ref: '#/components/schemas/TaxonomyAttributesAndRelationships'
               - $ref: '#/components/schemas/Image'
-    TaxonData:
+    TaxonAttributes:
       type: object
       properties:
-        id:
+        name:
           type: string
-          example: '1'
-        type:
+          example: 'T-shirts'
+        pretty_name:
           type: string
-          default: 'taxons'
-          example: 'taxons'
-        attributes:
-          type: object
-          properties:
-            name:
-              type: string
-              example: 'T-shirts'
-            pretty_name:
-              type: string
-              example: 'Clothes > T-shirts'
-            permalink:
-              type: string
-              example: 't-shirts'
-            seo_title:
-              type: string
-              example: 'Clothes - T-shirts'
-            meta_title:
-              type: string
-              example: 'T-shirts'
-            meta_description:
-              type: string
-              example: 'A list of cool t-shirts '
-            meta_keywords:
-              type: string
-              example: 't-shirts, cool'
-            left:
-              type: integer
-              example: 1
-            right:
-              type: integer
-              example: 2
-            position:
-              type: integer
-              example: 0
-            depth:
-              type: integer
-              example: 1
-            is_root:
-              type: boolean
-              example: true
-              description: 'Indicates if the Taxon is the root node of this Taxonomy tree'
-            is_child:
-              type: boolean
-              example: true
-              description: 'Returns true is this is a child node of this Taxonomy tree'
-            is_leaf:
-              type: boolean
-              example: false
-              description: 'Returns true if this is the end of a branch of this Taxonomy tree'
-            updated_at:
-              type: string
-              example: '2018-06-18T10:57:29.704Z'
+          example: 'Clothes > T-shirts'
+        permalink:
+          type: string
+          example: 't-shirts'
+        seo_title:
+          type: string
+          example: 'Clothes - T-shirts'
+        meta_title:
+          type: string
+          example: 'T-shirts'
+        meta_description:
+          type: string
+          example: 'A list of cool t-shirts '
+        meta_keywords:
+          type: string
+          example: 't-shirts, cool'
+        left:
+          type: integer
+          example: 1
+        right:
+          type: integer
+          example: 2
+        position:
+          type: integer
+          example: 0
+        depth:
+          type: integer
+          example: 1
+        is_root:
+          type: boolean
+          example: true
+          description: 'Indicates if the Taxon is the root node of this Taxonomy tree'
+        is_child:
+          type: boolean
+          example: true
+          description: 'Returns true is this is a child node of this Taxonomy tree'
+        is_leaf:
+          type: boolean
+          example: false
+          description: 'Returns true if this is the end of a branch of this Taxonomy tree'
+        updated_at:
+          type: string
+          example: '2018-06-18T10:57:29.704Z'
     TaxonRelationships:
       type: object
       properties:
@@ -712,17 +1018,32 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/Relation'
-    TaxonDataAndRelationships:
+    TaxonAttributesAndRelationships:
       properties:
-        data:
-          $ref: '#/components/schemas/TaxonData'
+        id:
+          type: string
+          example: '1'
+        type:
+          type: string
+          default: 'taxons'
+          example: 'taxons'
+        attributes:
+          $ref: '#/components/schemas/TaxonAttributes'
         relationships:
           $ref: '#/components/schemas/TaxonRelationships'
-    TaxonomyDataAndRelationships:
+    TaxonomyAttributesAndRelationships:
+      type: object
       properties:
-        data:
-          $ref: '#/components/schemas/TaxonomyData'
-    TaxonomyData:
+        id:
+          type: string
+          example: '1'
+        type:
+          type: string
+          default: 'taxonomies'
+          example: 'taxonomies'
+        attributes:
+          $ref: '#/components/schemas/TaxonomyAttributes'
+    TaxonomyAttributes:
       type: object
       properties:
         id:
@@ -770,7 +1091,6 @@ components:
     OptionValue:
       required:
         - data
-        - relationships
       properties:
         data:
           type: object
@@ -794,14 +1114,14 @@ components:
                 position:
                   type: integer
                   example: 1
-        relationships:
-          type: object
-          properties:
-            option_type:
+            relationships:
               type: object
               properties:
-                data:
-                  $ref: '#/components/schemas/Relation'
+                option_type:
+                  type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/Relation'
     Property:
       required:
         - data
@@ -828,7 +1148,6 @@ components:
     ProductProperty:
       required:
         - data
-        - relationships
       properties:
         data:
           type: object
@@ -849,24 +1168,21 @@ components:
                 presentation:
                   type: string
                   example: 'Silk'
-        relationships:
-          type: object
-          properties:
-            property:
+            relationships:
               type: object
               properties:
-                data:
-                  $ref: '#/components/schemas/Property'
+                property:
+                  type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/Property'
     Variant:
       required:
         - data
-        - relationships
         - included
       properties:
         data:
-          $ref: '#/components/schemas/VariantData'
-        relationships:
-          $ref: '#/components/schemas/VariantRelationships'
+          $ref: '#/components/schemas/VariantAttributesAndRelationships'
         included:
           type: array
           items:
@@ -874,74 +1190,64 @@ components:
               - $ref: '#/components/schemas/Image'
               - $ref: '#/components/schemas/OptionValue'
               - $ref: '#/components/schemas/OptionType'
-    VariantData:
+    VariantAttributes:
       type: object
       properties:
-        id:
+        name:
           type: string
-          example: '1'
-        type:
+          example: 'Example product'
+          description: 'Product name'
+        sku:
           type: string
-          default: 'variants'
-          example: 'variants'
-        attributes:
-          type: object
-          properties:
-            name:
-              type: string
-              example: 'Example product'
-              description: 'Product name'
-            sku:
-              type: string
-              example: 'SKU-1001'
-            price:
-              type: string
-              example: '15.99'
-            currency:
-              type: string
-              example: 'USD'
-            display_price:
-              type: string
-              example: '$15.99'
-            weight:
-              type: string
-              example: '10'
-            height:
-              type: string
-              example: '10'
-            width:
-              type: string
-              example: '10'
-            depth:
-              type: string
-              example: '10'
-            is_master:
-              type: boolean
-              example: false
-              description: 'Indicates if Variant is the master Variant'
-            options_text:
-              type: string
-              example: 'Size: small, Color: red'
-            slug:
-              type: string
-              example: 'example-product'
-              description: 'Product slug'
-            description:
-              type: string
-              example: 'Example description'
-              description: 'Product description'
-            purchasable:
-              type: boolean
-              example: true
-              description: 'Indicates if Variant is in stock or backorderable'
-            in_stock:
-              type: boolean
-              example: true
-              description: 'Indicates if Variant is in stock'
-            backorderable:
-              type: boolean
-              example: true
-              description: 'Indicates if Variant is backorderable'
+          example: 'SKU-1001'
+        price:
+          type: string
+          example: '15.99'
+        currency:
+          type: string
+          example: 'USD'
+        display_price:
+          type: string
+          example: '$15.99'
+        weight:
+          type: string
+          example: '10'
+        height:
+          type: string
+          example: '10'
+        width:
+          type: string
+          example: '10'
+        depth:
+          type: string
+          example: '10'
+        is_master:
+          type: boolean
+          example: false
+          description: 'Indicates if Variant is the master Variant'
+        options_text:
+          type: string
+          example: 'Size: small, Color: red'
+        slug:
+          type: string
+          example: 'example-product'
+          description: 'Product slug'
+        description:
+          type: string
+          example: 'Example description'
+          description: 'Product description'
+        purchasable:
+          type: boolean
+          example: true
+          description: 'Indicates if Variant is in stock or backorderable'
+        in_stock:
+          type: boolean
+          example: true
+          description: 'Indicates if Variant is in stock'
+        backorderable:
+          type: boolean
+          example: true
+          description: 'Indicates if Variant is backorderable'
     VariantRelationships:
       type: object
       properties:
@@ -964,10 +1270,17 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/Relation'
-    VariantDataAndRelationships:
+    VariantAttributesAndRelationships:
       properties:
-        data:
-          $ref: '#/components/schemas/VariantData'
+        id:
+          type: string
+          example: '1'
+        type:
+          type: string
+          default: 'variants'
+          example: 'variants'
+        attributes:
+          $ref: '#/components/schemas/VariantAttributes'
         relationships:
           $ref: '#/components/schemas/VariantRelationships'
   parameters:
@@ -978,6 +1291,14 @@ components:
       description: ID or a permalink
       schema:
         type: string
+    LineItemId:
+      name: line_item_id
+      in: path
+      required: true
+      description: Line Item ID
+      schema:
+        type: string
+      example: 1
   responses:
     404NotFound:
       description: Resource not found

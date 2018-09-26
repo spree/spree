@@ -34,7 +34,7 @@ module Spree
               'meta_keywords' => nil,
               'seo_title' => nil,
               'mail_from_address' => 'spree@example.org',
-              'default_currency' => nil,
+              'default_currency' => 'USD',
               'code' => store.code,
               'default' => true
             },
@@ -46,7 +46,7 @@ module Spree
               'meta_keywords' => nil,
               'seo_title' => nil,
               'mail_from_address' => 'spree@example.org',
-              'default_currency' => nil,
+              'default_currency' => 'USD',
               'code' => non_default_store.code,
               'default' => false
             }
@@ -64,7 +64,7 @@ module Spree
           'meta_keywords' => nil,
           'seo_title' => nil,
           'mail_from_address' => 'spree@example.org',
-          'default_currency' => nil,
+          'default_currency' => 'USD',
           'code' => store.code,
           'default' => true
         )

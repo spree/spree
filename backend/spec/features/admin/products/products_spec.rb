@@ -418,6 +418,26 @@ describe 'Products', type: :feature do
         expect(find('#product_price').value.to_f).to eq(product.price.to_f)
       end
     end
+
+    context 'filtering products', js: true do
+      it 'renders selected filters' do
+        visit spree.admin_products_path
+
+        click_on 'Filter'
+
+        within('#table-filter') do
+          fill_in 'q_name_cont', with: 'Backpack'
+          fill_in 'q_variants_including_master_sku_cont', with: 'BAG-00001'
+        end
+
+        click_on 'Search'
+
+        within('.table-active-filters') do
+          expect(page).to have_content('Name: Backpack')
+          expect(page).to have_content('SKU: BAG-00001')
+        end
+      end
+    end
   end
 
   context 'with only product permissions' do

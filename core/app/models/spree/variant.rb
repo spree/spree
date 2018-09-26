@@ -56,6 +56,8 @@ module Spree
     after_touch :clear_in_stock_cache
 
     scope :in_stock, -> { joins(:stock_items).where('count_on_hand > ? OR track_inventory = ?', 0, false) }
+    scope :backorderable, -> { joins(:stock_items).where(spree_stock_items: { backorderable: true }) }
+    scope :in_stock_or_backorderable, -> { in_stock.or(backorderable) }
 
     scope :eligible, -> {
       where(is_master: false).or(
@@ -269,6 +271,10 @@ module Spree
 
     def discontinued?
       !!discontinue_on && discontinue_on <= Time.current
+    end
+
+    def backordered?
+      total_on_hand <= 0 && stock_items.exists?(backorderable: true)
     end
 
     private
