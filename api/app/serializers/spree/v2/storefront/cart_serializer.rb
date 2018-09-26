@@ -14,6 +14,7 @@ module Spree
         has_many   :variants
         has_many   :promotions
         has_many   :payments
+        has_many   :shipments
 
         belongs_to :user
         belongs_to :billing_address,
