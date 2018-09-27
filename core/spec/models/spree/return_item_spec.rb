@@ -733,5 +733,13 @@ describe Spree::ReturnItem, type: :model do
         it { expect { subject }.not_to change { stock_item.reload.count_on_hand } }
       end
     end
+
+    describe '#currency' do
+      subject { return_item }
+
+      it 'responds to currency method' do
+        expect(subject.respond_to?(:currency)).to eq true
+      end
+    end
   end
 end
