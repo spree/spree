@@ -163,6 +163,10 @@ module Spree
       self.pre_tax_amount = refund_amount_calculator.new.compute(self)
     end
 
+    def currency
+      return_authorization.try(:currency) || Spree::Config[:currency]
+    end
+
     private
 
     def persist_acceptance_status_errors
@@ -174,10 +178,6 @@ module Spree
 
       Spree::StockItem.find_by(variant_id: inventory_unit.variant_id,
                                stock_location_id: customer_return.stock_location_id)
-    end
-
-    def currency
-      return_authorization.try(:currency) || Spree::Config[:currency]
     end
 
     def process_inventory_unit!
