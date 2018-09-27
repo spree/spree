@@ -135,8 +135,10 @@ describe Spree::Adjustment, type: :model do
   end
 
   context '#currency' do
-    it 'returns the globally configured currency' do
-      expect(adjustment.currency).to eq 'USD'
+    let(:order) { Spree::Order.new(currency: 'EUR') }
+
+    it 'returns the order currency' do
+      expect(adjustment.currency).to eq 'EUR'
     end
   end
 

@@ -3,7 +3,6 @@
 # the one component of Spree.
 source 'https://rubygems.org'
 
-gem 'coffee-rails'
 gem 'sass-rails'
 gem 'sqlite3', platforms: [:ruby, :mingw, :mswin, :x64_mingw]
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw]
