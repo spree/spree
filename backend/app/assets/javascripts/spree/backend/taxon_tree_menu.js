@@ -1,8 +1,6 @@
 var root = typeof exports !== 'undefined' && exports !== null ? exports : this
 
 root.taxon_tree_menu = function (obj, context) {
-  // eslint-disable-next-line no-unused-vars
-  var baseUrl = Spree.url(Spree.routes.taxonomy_taxons_path)
   var adminBaseUrl = Spree.url(Spree.routes.admin_taxonomy_taxons_path)
   var editUrl = adminBaseUrl.clone()
   editUrl.setPath(editUrl.path() + '/' + obj.attr('id') + '/edit')

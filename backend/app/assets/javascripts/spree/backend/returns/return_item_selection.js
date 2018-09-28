@@ -10,10 +10,10 @@ $(document).ready(function () {
     var totalPretaxRefund = 0
     var checkedItems = formFields.find('input.add-item:checked')
     $.each(checkedItems, function (i, checkbox) {
-      var returnItemRow = $(checkbox).parents('tr'); var returnQuantity; var amount; var purchasedQuantity
-      returnQuantity = parseInt(returnItemRow.find('.refund-quantity-input').val(), 10)
-      purchasedQuantity = parseInt(returnItemRow.find('.purchased-quantity').text(), 10)
-      amount = (returnQuantity / purchasedQuantity) * parseFloat(returnItemRow.find('.charged-amount').data('chargedAmount'))
+      var returnItemRow = $(checkbox).parents('tr')
+      var returnQuantity = parseInt(returnItemRow.find('.refund-quantity-input').val(), 10)
+      var purchasedQuantity = parseInt(returnItemRow.find('.purchased-quantity').text(), 10)
+      var amount = (returnQuantity / purchasedQuantity) * parseFloat(returnItemRow.find('.charged-amount').data('chargedAmount'))
       returnItemRow.find('.refund-amount-input').val(amount.toFixed(2))
       totalPretaxRefund += amount
     })
