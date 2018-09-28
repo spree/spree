@@ -1,13 +1,13 @@
 $(document).ready(function () {
-  'use strict';
+  'use strict'
 
   if ($('#new_state_link').length) {
     $('#country').on('change', function () {
-      var new_state_link_href = $('#new_state_link').prop('href');
-      var selected_country_id = $('#country option:selected').prop('value');
-      var new_link = new_state_link_href.replace(/countries\/(\d+)/,
-        'countries/' + selected_country_id);
-      $('#new_state_link').attr('href', new_link);
-    });
+      var newStateLinkHref = $('#new_state_link').prop('href')
+      var selectedCountryId = $('#country option:selected').prop('value')
+      var newLink = newStateLinkHref.replace(/countries\/(\d+)/,
+        'countries/' + selectedCountryId)
+      $('#new_state_link').attr('href', newLink)
+    })
   };
-});
+})
