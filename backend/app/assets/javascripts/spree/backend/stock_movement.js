@@ -1,5 +1,6 @@
+/* global variantTemplate */
 $(function () {
-  var el = $('#stock_movement_stock_item_id');
+  var el = $('#stock_movement_stock_item_id')
   el.select2({
     placeholder: 'Find a stock item', // translate
     ajax: {
@@ -12,23 +13,23 @@ $(function () {
           per_page: 50,
           page: page,
           token: Spree.api_key
-        };
+        }
       },
       results: function (data, page) {
-        var more = (page * 50) < data.count;
+        var more = (page * 50) < data.count
         return {
           results: data.stock_items,
           more: more
-        };
+        }
       }
     },
-    formatResult: function (stock_item) {
+    formatResult: function (stockItem) {
       return variantTemplate({
-        variant: stock_item.variant
-      });
+        variant: stockItem.variant
+      })
     },
-    formatSelection: function (stock_item) {
-      return Select2.util.escapeMarkup(stock_item.variant.name + '(' + stock_item.variant.options_text + ')');
+    formatSelection: function (stockItem) {
+      return Select2.util.escapeMarkup(stockItem.variant.name + '(' + stockItem.variant.options_text + ')')
     }
-  });
-});
+  })
+})
