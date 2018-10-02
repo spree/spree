@@ -296,4 +296,22 @@ describe Spree::FulfilmentChanger do
       end
     end
   end
+
+  context 'when stock_item is last on_hand' do
+    before do
+      variant.stock_items.first.update_column(:count_on_hand, 1)
+    end
+
+    let(:current_shipment_inventory_unit_count) { 1 }
+    let(:quantity) { 1 }
+
+    it 'is successful' do
+      expect(subject).to be true
+    end
+
+    it 'has inventory unit on_hand' do
+      subject
+      expect(desired_shipment.inventory_units.first.state).to eq('on_hand')
+    end
+  end
 end
