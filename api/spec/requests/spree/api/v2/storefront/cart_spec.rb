@@ -350,4 +350,32 @@ describe 'API V2 Storefront Cart Spec', type: :request do
       end
     end
   end
+
+  describe 'cart#add_coupon' do
+    let!(:order) { create(:order, user: user, store: store, currency: currency) }
+    let!(:line_item) { create(:line_item, order: order) }
+    let!(:shipment) { create(:shipment, order: order) }
+    let!(:promotion) { Spree::Promotion.create(name: 'Free shipping', code: 'freeship') }
+    let(:coupon_code) { promotion.code }
+    let!(:promotion_action) { Spree::PromotionAction.create(promotion_id: promotion.id, type: 'Spree::Promotion::Actions::FreeShipping') }
+
+    context 'with coupon code for free shipping' do
+      let(:adjustment_value) { -(shipment.cost.to_f) }
+
+      it 'applies coupon code correctly' do
+        headers = { 'Authorization' => "Bearer #{token.token}" }
+        patch '/api/v2/storefront/cart/apply_coupon_code', params: { user: user, coupon_code: coupon_code }, headers: headers
+
+        expect(json_response['data']).to have_attribute(:adjustment_total).with_value(adjustment_value.to_s)
+      end
+
+      it 'does not apply the coupon code' do
+        headers = { 'Authorization' => "Bearer #{token.token}" }
+        patch '/api/v2/storefront/cart/apply_coupon_code', params: { user: user, coupon_code: 'zxr' }, headers: headers
+
+        expect(response.status).to eq(422)
+      end
+    end
+
+  end
 end

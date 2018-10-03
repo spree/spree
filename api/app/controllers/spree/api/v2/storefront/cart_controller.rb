@@ -83,6 +83,19 @@ module Spree
             render_serialized_payload serialized_current_order, 200
           end
 
+          def apply_coupon_code
+            spree_authorize! :update, spree_current_order, order_token
+
+            spree_current_order.coupon_code = params[:coupon_code]
+            result = dependencies[:coupon_handler].new(spree_current_order).apply
+
+            if result.error.blank?
+              render_serialized_payload serialized_current_order, 200
+            else
+              render json: { error: result.error }, status: 422
+            end
+          end
+
           private
 
           def dependencies
@@ -91,7 +104,8 @@ module Spree
               add_item_to_cart:      Spree::Cart::AddItem,
               remove_item_from_cart: Spree::Cart::RemoveLineItem,
               cart_serializer:       Spree::V2::Storefront::CartSerializer,
-              set_item_quantity:     Spree::Cart::SetQuantity
+              set_item_quantity:     Spree::Cart::SetQuantity,
+              coupon_handler:        Spree::PromotionHandler::Coupon
             }
           end
 
