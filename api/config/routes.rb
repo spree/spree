@@ -133,6 +133,7 @@ Spree::Core::Engine.add_routes do
           post   :empty
           delete 'remove_line_item/:line_item_id', to: 'cart#remove_line_item', as: :cart_remove_line_item
           patch  :set_quantity
+          patch  :apply_coupon_code
         end
 
         resource :checkout, controller: :checkout do
