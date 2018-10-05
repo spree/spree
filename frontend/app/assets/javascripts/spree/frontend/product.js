@@ -24,14 +24,20 @@ Spree.ready(function ($) {
       return false
     })
 
-    thumbnails.find("li").on("mouseenter", function (event) {
+    thumbnails.find('li').on('mouseenter', function (event) {
       $(this).find('img').addClass('border-success')
-      return ($("#main-image img")).attr("src", ($(event.currentTarget)).find("a").attr("href"))
+      return ($('#main-image img')).attr({
+        src: $(event.currentTarget).find('a').attr('href'),
+        alt: $(event.currentTarget).find('img').attr('alt')
+      })
     })
 
-    return thumbnails.find("li").on("mouseleave", function (event) {
+    return thumbnails.find('li').on('mouseleave', function (event) {
       $(this).find('img').removeClass('border-success')
-      return ($("#main-image img")).attr("src", ($("#main-image")).data("selectedThumb"))
+      return $('#main-image img').attr({
+        src: $('#main-image').data('selectedThumb'),
+        alt: $('#main-image').data('selectedThumbAlt')
+      })
     })
   }
 
