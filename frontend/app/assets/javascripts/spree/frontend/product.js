@@ -15,19 +15,17 @@ Spree.ready(function ($) {
     })
 
     thumbnails.find('li').on('mouseenter', function (event) {
-      return ($('#main-image img'))
-        .attr({
-          src: $(event.currentTarget).find('a').attr('href'),
-          alt: $(event.currentTarget).find('img').attr('alt')
-        })
+      return ($('#main-image img')).attr({
+        src: $(event.currentTarget).find('a').attr('href'),
+        alt: $(event.currentTarget).find('img').attr('alt')
+      })
     })
 
     return thumbnails.find('li').on('mouseleave', function (event) {
-      return $('#main-image img')
-        .attr({
-          src: $('#main-image').data('selectedThumb'),
-          alt: $('#main-image').data('selectedThumbAlt')
-        })
+      return $('#main-image img').attr({
+        src: $('#main-image').data('selectedThumb'),
+        alt: $('#main-image').data('selectedThumbAlt')
+      })
     })
   }
 
