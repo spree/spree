@@ -88,7 +88,7 @@ module Spree
     end
 
     def currency
-      adjustable ? adjustable.currency : Spree::Config[:currency]
+      adjustable ? adjustable.currency : order.currency
     end
 
     def promotion?

@@ -1,8 +1,8 @@
-'use strict';
-
-var set_taxon_select = function(selector){
-  function formatTaxon(taxon) {
-    return Select2.util.escapeMarkup(taxon.pretty_name);
+'use strict'
+// eslint-disable-next-line camelcase
+function set_taxon_select (selector) {
+  function formatTaxon (taxon) {
+    return Select2.util.escapeMarkup(taxon.pretty_name)
   }
 
   if ($(selector).length > 0) {
@@ -14,10 +14,10 @@ var set_taxon_select = function(selector){
           ids: element.val(),
           without_children: true,
           token: Spree.api_key
-        });
+        })
         return $.getJSON(url, null, function (data) {
-          return callback(data['taxons']);
-        });
+          return callback(data['taxons'])
+        })
       },
       ajax: {
         url: Spree.routes.taxons_api,
@@ -31,22 +31,22 @@ var set_taxon_select = function(selector){
               name_cont: term
             },
             token: Spree.api_key
-          };
+          }
         },
         results: function (data, page) {
-          var more = page < data.pages;
+          var more = page < data.pages
           return {
             results: data['taxons'],
             more: more
-          };
+          }
         }
       },
       formatResult: formatTaxon,
       formatSelection: formatTaxon
-    });
+    })
   }
 }
 
 $(document).ready(function () {
   set_taxon_select('#product_taxon_ids')
-});
+})

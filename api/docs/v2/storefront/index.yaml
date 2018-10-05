@@ -146,6 +146,132 @@ paths:
         - orderToken: []
         - bearerAuth: []
 
+  '/cart/apply_coupon_code':
+    patch:
+      description: Applies a coupon code to the Cart
+      tags:
+        - Cart
+      responses:
+        '200':
+          description: 200 response means that coupon code was applied successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        '422':
+          description: 422 response means that coupon code couldn't be applied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - orderToken: []
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                coupon_code:
+                  type: string
+                  example: 'DISCOUNT10'
+
+  '/cart/remove_coupon_code':
+    delete:
+      description: Removes a coupon code from the Cart
+      tags:
+        - Cart
+      responses:
+        '200':
+          description: 200 response means that coupon code was removed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        '422':
+          description: 422 response means that coupon code couldn't be removed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - orderToken: []
+        - bearerAuth: []
+
+  '/checkout/next':
+    patch:
+      description: Goes to the next Checkout step
+      tags:
+        - Checkout
+      responses:
+        '200':
+          description: 200 response means that the Checkout was transitioned to the next step
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        '422':
+          description: 422 response means that Checkout couldn't transition to the next step
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+      security:
+        - orderToken: []
+        - bearerAuth: []
+
+  '/checkout/advance':
+    patch:
+      description: Advances Checkout to the furthest Checkout step validation allows, until the Complete step
+      tags:
+        - Checkout
+      responses:
+        '200':
+          description: 200 response means that the Checkout was transitioned to the next step
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        '422':
+          description: 422 response means that Checkout couldn't transition to the next step
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+      security:
+        - orderToken: []
+        - bearerAuth: []
+
+  '/checkout/complete':
+    patch:
+        description: Completes the Checkout
+        tags:
+          - Checkout
+        responses:
+          '200':
+            description: 200 response means that the Checkout was completed
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Cart'
+          '422':
+            description: 422 response means that Checkout couldn't be completed
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Error'
+          '404':
+            $ref: '#/components/responses/404NotFound'
+        security:
+          - orderToken: []
+          - bearerAuth: []
+
   '/products':
     get:
       description: >-
@@ -284,7 +410,67 @@ components:
         total_pages:
           type: number
           example: 10
-          description: 'Numnber of all pages containing items matching the criteria'
+          description: 'Number of all pages containing items matching the criteria'
+    Timestamp:
+      type: string
+      example: '2018-05-25T11:22:57.214-04:00'
+    Address:
+      required:
+        - data
+      properties:
+        data:
+          type: object
+          required:
+            - id
+            - type
+            - attributes
+          properties:
+            id:
+              type: string
+              example: '1'
+            type:
+              type: string
+              default: 'addresses'
+              example: 'addresses'
+            attributes:
+              type: object
+              properties:
+                firstname:
+                  type: string
+                  example: 'John'
+                lastname:
+                  type: string
+                  example: 'Doe'
+                address1:
+                  type: string
+                  example: '1600 Amphitheatre Pkwy'
+                address2:
+                  type: string
+                  example: 'Suite 1'
+                city:
+                  type: string
+                  example: 'Mountain View'
+                zipcode:
+                  type: string
+                  example: '94043'
+                phone:
+                  type: string
+                  example: '(+1) 123 456 789'
+                state_name:
+                  type: string
+                  example: 'California'
+                state_code:
+                  type: string
+                  example: 'CA'
+                country_name:
+                  type: string
+                  example: 'United States of America'
+                country_iso3:
+                  type: string
+                  example: 'USA'
+                company:
+                  type: string
+                  example: 'Google Inc.'
     Cart:
       required:
         - data
@@ -307,32 +493,71 @@ components:
               properties:
                 number:
                   type: string
+                  example: 'R123456789'
+                email:
+                  type: string
+                  example: 'spree@example.com'
                 item_total:
                   type: string
+                  example: '19.99'
+                display_item_total:
+                  type: string
+                  example: '$19.99'
                 total:
                   type: string
+                  example: '29.99'
+                display_total:
+                  type: string
+                  example: '$29.99'
                 ship_total:
                   type: string
+                  example: '0.00'
+                display_ship_total:
+                  type: string
+                  example: '$19.99'
                 adjustment_total:
                   type: string
+                  example: '10.00'
+                display_adjustment_total:
+                  type: string
+                  example: '$10.00'
                 created_at:
-                  type: string
+                  $ref: '#/components/schemas/Timestamp'
                 updated_at:
-                  type: string
+                  $ref: '#/components/schemas/Timestamp'
                 included_tax_total:
                   type: string
+                  example: '5.00'
                 additional_tax_total:
                   type: string
+                  example: '5.00'
                 display_additional_tax_total:
                   type: string
+                  example: '$5.00'
                 display_included_tax_total:
                   type: string
+                  example: '$5.00'
                 tax_total:
                   type: string
+                  example: '10.00'
+                display_tax_total:
+                  type: string
+                  example: '$10.00'
+                item_count:
+                  type: number
+                  example: 2
+                  description: 'Total quantity number of all items added to the Cart'
+                special_instructions:
+                  type: string
+                  example: 'Please wrap it as a gift'
+                  description: 'Message added by the Customer'
                 currency:
                   type: string
+                  example: 'USD'
                 state:
                   type: string
+                  example: 'address'
+                  description: 'State of the Cart in the Checkout flow'
                 token:
                   type: string
                   example: abcdef123456
@@ -368,6 +593,16 @@ components:
                   properties:
                     data:
                       $ref: '#/components/schemas/Relation'
+                billing_address:
+                  type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/Relation'
+                shipping_address:
+                  type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/Relation'
         included:
           type: array
           items:
@@ -377,6 +612,7 @@ components:
               - $ref: '#/components/schemas/LineItem'
               - $ref: '#/components/schemas/Promotion'
               - $ref: '#/components/schemas/User'
+              - $ref: '#/components/schemas/Address'
     Image:
       required:
         - data
@@ -518,15 +754,17 @@ components:
           properties:
             id:
               type: string
+              example: '1'
             type:
               type: string
+              example: 'promotions'
+              default: 'promotions'
             attributes:
               type: object
               properties:
                 name:
-                  type: number
-                description:
-                  type: number
+                  type: string
+                  example: '10% Discount'
     Product:
       required:
         - data
@@ -613,8 +851,7 @@ components:
           type: string
           example: 'example, product'
         updated_at:
-          type: string
-          example: '2018-05-25T11:22:57.214-04:00'
+          $ref: '#/components/schemas/Timestamp'
     ProductRelationships:
       type: object
       properties:
