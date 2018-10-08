@@ -79,7 +79,7 @@ $(document).ready(function () {
       }
     }).done(function () {
       window.location.reload()
-    }).error(function (msg) {
+    }).fail(function (msg) {
       console.log(msg)
     })
   })
@@ -110,7 +110,7 @@ $(document).ready(function () {
       }
     }).done(function () {
       window.location.reload()
-    }).error(function (msg) {
+    }).fail(function (msg) {
       console.log(msg)
     })
   })
@@ -202,7 +202,7 @@ function adjustShipmentItems (shipmentNumber, variantId, quantity) {
       }
     }).done(function (msg) {
       window.location.reload()
-    }).error(function (msg) {
+    }).fail(function (msg) {
       alert(msg.responseJSON.message)
     })
   }
@@ -252,10 +252,10 @@ function startItemSplit (event) {
       },
       token: Spree.api_key
     }
-  }).success(function (data) {
+  }).done(function (data) {
     variant = data['variants'][0]
-  }).error(function (msg) {
-    console.log(msg)
+  }).fail(function (error) {
+    console.error(error)
   })
 
   var maxQuantity = link.closest('tr').data('item-quantity')
@@ -301,8 +301,8 @@ function completeItemSplit (event) {
           stock_location_id: stockLocationId,
           token: Spree.api_key
         }
-      }).error(function (msg) {
-        alert(msg.responseJSON.exception)
+      }).fail(function (error) {
+        alert(error.responseJSON.exception)
       }).done(function (msg) {
         window.location.reload()
       })
@@ -319,8 +319,8 @@ function completeItemSplit (event) {
           quantity: quantity,
           token: Spree.api_key
         }
-      }).error(function (msg) {
-        alert(msg.responseJSON.exception)
+      }).fail(function (error) {
+        alert(error.responseJSON.exception)
       }).done(function (msg) {
         window.location.reload()
       })
@@ -364,8 +364,8 @@ function addVariantFromStockLocation (event) {
       }
     }).done(function (msg) {
       window.location.reload()
-    }).error(function (msg) {
-      console.log(msg)
+    }).fail(function (error) {
+      console.error(error)
     })
   } else {
     // add to existing shipment
