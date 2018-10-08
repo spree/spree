@@ -5,12 +5,12 @@ $(document).ready(function () {
 
   // handle variant selection, show stock level.
   $('#add_variant_id').change(function () {
-    var variantId = $(this).val()
+    var variantId = parseInt($(this).val())
 
     var variant = _.find(window.variants, function (variant) {
-      // eslint-disable-next-line eqeqeq
-      return variant.id == variantId
+      return variant.id === variantId
     })
+
     $('#stock_details').html(variantStockTemplate({ variant: variant }))
     $('#stock_details').show()
 
@@ -58,7 +58,7 @@ $(document).ready(function () {
           variant_id: variantId,
           token: Spree.api_key
         }
-      }).done(function () {
+      }).done(function (msg) {
         window.location.reload()
       }).fail(function (msg) {
         alert(msg.responseJSON.message || msg.responseJSON.exception)
@@ -79,19 +79,11 @@ $(document).ready(function () {
         token: Spree.api_key
       }
     }).done(function () {
-<<<<<<< HEAD
       window.location.reload()
-    }).error(function (msg) {
+    }).fail(function (msg) {
       alert(msg.responseJSON.message || msg.responseJSON.exception)
     })
   })
-=======
-      window.location.reload();
-    }).fail(function (msg) {
-      console.log(msg);
-    });
-  });
->>>>>>> Remove jquery 3 deprecations from js files
 
   // handle shipping method edit click
   $('a.edit-method').click(toggleMethodEdit)
@@ -118,21 +110,13 @@ $(document).ready(function () {
         token: Spree.api_key
       }
     }).done(function () {
-<<<<<<< HEAD
       window.location.reload()
-    }).error(function (msg) {
+    }).fail(function (msg) {
       alert(msg.responseJSON.message || msg.responseJSON.exception)
     })
   })
-=======
-      window.location.reload();
-    }).fail(function (msg) {
-      console.log(msg);
-    });
-  });
->>>>>>> Remove jquery 3 deprecations from js files
 
-  function toggleTrackingEdit (event) {
+  function toggleTrackingEdit(event) {
     event.preventDefault()
 
     var link = $(this)
@@ -144,7 +128,7 @@ $(document).ready(function () {
   $('a.edit-tracking').click(toggleTrackingEdit)
   $('a.cancel-tracking').click(toggleTrackingEdit)
 
-  function createTrackingValueContent (data) {
+  function createTrackingValueContent(data) {
     var selectedShippingMethod = data.shipping_methods.filter(function (method) {
       return method.id === data.selected_shipping_rate.shipping_method_id
     })[0]
@@ -190,7 +174,7 @@ $(document).ready(function () {
   })
 })
 
-function adjustShipmentItems (shipmentNumber, variantId, quantity) {
+function adjustShipmentItems(shipmentNumber, variantId, quantity) {
   var shipment = _.findWhere(shipments, { number: shipmentNumber + '' })
   var inventoryUnits = _.where(shipment.inventory_units, { variant_id: variantId })
   var url = Spree.routes.shipments_api + '/' + shipmentNumber
@@ -208,7 +192,6 @@ function adjustShipmentItems (shipmentNumber, variantId, quantity) {
   }
   url += '.json'
 
-<<<<<<< HEAD
   if (newQuantity !== 0) {
     $.ajax({
       type: 'PUT',
@@ -224,26 +207,9 @@ function adjustShipmentItems (shipmentNumber, variantId, quantity) {
       alert(msg.responseJSON.message || msg.responseJSON.exception)
     })
   }
-=======
-    if(new_quantity!=0){
-      $.ajax({
-        type: 'PUT',
-        url: Spree.url(url),
-        data: {
-          variant_id: variant_id,
-          quantity: new_quantity,
-          token: Spree.api_key
-        }
-      }).done(function () {
-        window.location.reload();
-      }).fail(function (msg) {
-        alert(msg.responseJSON.message)
-      });
-    }
->>>>>>> Remove jquery 3 deprecations from js files
 }
 
-function toggleMethodEdit () {
+function toggleMethodEdit() {
   var link = $(this)
   link.parents('tbody').find('tr.edit-method').toggle()
   link.parents('tbody').find('tr.show-method').toggle()
@@ -251,7 +217,7 @@ function toggleMethodEdit () {
   return false
 }
 
-function toggleItemEdit () {
+function toggleItemEdit() {
   var link = $(this)
   var linkParent = link.parent()
   linkParent.find('a.edit-item').toggle()
@@ -265,7 +231,7 @@ function toggleItemEdit () {
   return false
 }
 
-function startItemSplit (event) {
+function startItemSplit(event) {
   event.preventDefault()
   $('.cancel-split').each(function () {
     $(this).click()
@@ -283,14 +249,13 @@ function startItemSplit (event) {
     url: Spree.url(Spree.routes.variants_api),
     data: {
       q: {
-<<<<<<< HEAD
         'id_eq': variantId
       },
       token: Spree.api_key
     }
-  }).success(function (data) {
+  }).done(function (data) {
     variant = data['variants'][0]
-  }).error(function (msg) {
+  }).fail(function (msg) {
     alert(msg.responseJSON.message || msg.responseJSON.exception)
   })
 
@@ -301,28 +266,9 @@ function startItemSplit (event) {
   $('a.save-split').click(completeItemSplit)
 
   $('#item_stock_location').select2({ width: 'resolve', placeholder: Spree.translations.item_stock_placeholder })
-=======
-        'id_eq': variant_id
-      },
-      token: Spree.api_key
-    }
-  }).done(function (data) {
-    variant = data['variants'][0];
-  }).fail(function (msg) {
-    console.log(msg);
-  });
-
-  var max_quantity = link.closest('tr').data('item-quantity');
-  var split_item_template = Handlebars.compile($('#variant_split_template').text());
-  link.closest('tr').after(split_item_template({ variant: variant, shipments: shipments, max_quantity: max_quantity }));
-  $('a.cancel-split').click(cancelItemSplit);
-  $('a.save-split').click(completeItemSplit);
-
-  $('#item_stock_location').select2({ width: 'resolve', placeholder: Spree.translations.item_stock_placeholder });
->>>>>>> Remove jquery 3 deprecations from js files
 }
 
-function completeItemSplit (event) {
+function completeItemSplit(event) {
   event.preventDefault()
 
   if ($('#item_stock_location').val() === '') {
@@ -341,25 +287,13 @@ function completeItemSplit (event) {
   var selectedShipment = stockItemRow.find($('#item_stock_location').select2('data').element)
   var targetShipmentNumber = selectedShipment.data('shipment-number')
   var newShipment = selectedShipment.data('new-shipment')
-  // eslint-disable-next-line
-  if (stockLocationId !== 'new_shipment') {
-    var splitItems = function (opts) {
+  // eslint-disable-next-line eqeqeq
+  if (stockLocationId != 'new_shipment') {
+    if (newShipment !== undefined) {
+      // TRANSFER TO A NEW LOCATION
       $.ajax({
         type: 'POST',
         async: false,
-<<<<<<< HEAD
-        url: opts.url,
-        data: opts.data
-      }).error(function (msg) {
-        alert(msg.responseJSON.message || msg.responseJSON.exception)
-      }).done(function () {
-        window.location.reload()
-      })
-    }
-
-    if (newShipment !== undefined) {
-      // TRANSFER TO A NEW LOCATION
-      splitItems({
         url: Spree.url(Spree.routes.shipments_api + '/transfer_to_location'),
         data: {
           original_shipment_number: originalShipmentNumber,
@@ -368,10 +302,16 @@ function completeItemSplit (event) {
           stock_location_id: stockLocationId,
           token: Spree.api_key
         }
+      }).fail(function (msg) {
+        alert(msg.responseJSON.message || msg.responseJSON.exception)
+      }).done(function (msg) {
+        window.location.reload()
       })
     } else {
       // TRANSFER TO AN EXISTING SHIPMENT
-      splitItems({
+      $.ajax({
+        type: 'POST',
+        async: false,
         url: Spree.url(Spree.routes.shipments_api + '/transfer_to_shipment'),
         data: {
           original_shipment_number: originalShipmentNumber,
@@ -380,45 +320,16 @@ function completeItemSplit (event) {
           quantity: quantity,
           token: Spree.api_key
         }
+      }).fail(function (msg) {
+        alert(msg.responseJSON.message || msg.responseJSON.exception)
+      }).done(function (msg) {
+        window.location.reload()
       })
-=======
-        url: Spree.url(Spree.routes.shipments_api + '/transfer_to_location'),
-        data: {
-          original_shipment_number: original_shipment_number,
-          variant_id: variant_id,
-          quantity: quantity,
-          stock_location_id: stock_location_id,
-          token: Spree.api_key
-        }
-      }).done(function () {
-        window.location.reload();
-      }).fail(function (msg) {
-        alert(msg.responseJSON.exception);
-      });
-    } else {
-      // TRANSFER TO AN EXISTING SHIPMENT
-      $.ajax({
-        type: 'POST',
-        async: false,
-        url: Spree.url(Spree.routes.shipments_api + '/transfer_to_shipment'),
-        data: {
-          original_shipment_number: original_shipment_number,
-          target_shipment_number: target_shipment_number,
-          variant_id: variant_id,
-          quantity: quantity,
-          token: Spree.api_key
-        }
-      }).done(function () {
-        window.location.reload();
-      }).fail(function (msg) {
-        alert(msg.responseJSON.exception);
-      });
->>>>>>> Remove jquery 3 deprecations from js files
     }
   }
 }
 
-function cancelItemSplit (event) {
+function cancelItemSplit(event) {
   event.preventDefault()
   var link = $(this)
   var prevRow = link.closest('tr').prev()
@@ -428,7 +339,7 @@ function cancelItemSplit (event) {
   prevRow.find('a.delete-item').toggle()
 }
 
-function addVariantFromStockLocation (event) {
+function addVariantFromStockLocation(event) {
   event.preventDefault()
 
   $('#stock_details').hide()
@@ -444,10 +355,7 @@ function addVariantFromStockLocation (event) {
   if (shipment === undefined) {
     $.ajax({
       type: 'POST',
-<<<<<<< HEAD
       // eslint-disable-next-line camelcase
-=======
->>>>>>> Remove jquery 3 deprecations from js files
       url: Spree.url(Spree.routes.shipments_api + '?shipment[order_id]=' + order_number),
       data: {
         variant_id: variantId,
@@ -455,25 +363,14 @@ function addVariantFromStockLocation (event) {
         stock_location_id: stockLocationId,
         token: Spree.api_key
       }
-<<<<<<< HEAD
     }).done(function (msg) {
       window.location.reload()
-    }).error(function (msg) {
+    }).fail(function (msg) {
       alert(msg.responseJSON.message || msg.responseJSON.exception)
     })
   } else {
     // add to existing shipment
     adjustShipmentItems(shipment.number, variantId, quantity)
-=======
-    }).done(function () {
-      window.location.reload();
-    }).fail(function (msg) {
-      console.log(msg);
-    });
-  }else{
-    //add to existing shipment
-    adjustShipmentItems(shipment.number, variant_id, quantity);
->>>>>>> Remove jquery 3 deprecations from js files
   }
   return 1
 }
