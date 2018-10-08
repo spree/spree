@@ -31,7 +31,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'highline', '~> 1.6.18' # Necessary for the install generator
   s.add_dependency 'kaminari', '~> 1.0.1'
   s.add_dependency 'monetize', '~> 1.1'
-  s.add_dependency 'paperclip', '~> 6.0.0'
+  s.add_dependency 'paperclip', '~> 6.1.0'
   s.add_dependency 'paranoia', '~> 2.4.1'
   s.add_dependency 'premailer-rails'
   s.add_dependency 'acts-as-taggable-on', '~> 6.0'
