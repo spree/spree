@@ -559,7 +559,7 @@ describe Spree::Order, type: :model do
 
     context 'match line item with options' do
       before do
-        Spree::Order.register_line_item_comparison_hook(:foos_match)
+        Rails.application.config.spree.line_item_comparison_hooks << :foos_match
       end
 
       after do
