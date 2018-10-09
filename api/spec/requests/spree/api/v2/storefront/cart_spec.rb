@@ -10,6 +10,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
 
   shared_examples 'returns valid cart JSON' do
     it 'returns a valid cart JSON response' do
+      order.reload
       expect(json_response['data']).to have_id(order.id.to_s)
       expect(json_response['data']).to have_type('cart')
       expect(json_response['data']).to have_attribute(:number).with_value(order.number)
@@ -96,10 +97,20 @@ describe 'API V2 Storefront Cart Spec', type: :request do
 
   describe 'cart#add_item' do
     let(:variant) { create(:variant) }
+    let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
+
+    shared_examples 'add item' do
+      it 'with success' do
+        expect(response.status).to eq(200)
+        expect(order.line_items.count).to eq(1)
+        expect(order.line_items.first.variant).to eq(variant)
+        expect(order.line_items.first.quantity).to eq(5)
+        expect(json_response['included']).to include(have_type('variant').and have_id(variant.id.to_s))
+      end
+    end
 
     context 'without existing order' do
       it 'returns error' do
-        headers = { 'Authorization' => "Bearer #{token.token}" }
         post '/api/v2/storefront/cart/add_item', params: { variant_id: variant.id, quantity: 5 }, headers: headers
 
         expect(response.status).to eq(404)
@@ -109,45 +120,26 @@ describe 'API V2 Storefront Cart Spec', type: :request do
     context 'with existing order' do
       let!(:order) { create(:order, user: user, store: store, currency: currency) }
 
-      it 'adds item to cart' do
-        headers = { 'Authorization' => "Bearer #{token.token}" }
+      before do
         post '/api/v2/storefront/cart/add_item', params: { variant_id: variant.id, quantity: 5 }, headers: headers
-
-        expect(response.status).to eq(200)
-        expect(order.line_items.count).to eq(1)
-        expect(order.line_items.first.variant).to eq(variant)
-        expect(order.line_items.first.quantity).to eq(5)
-
-        expect(json_response['data']).to have_id(order.id.to_s)
-        expect(json_response['data']).to have_type('cart')
-        expect(json_response['data']).to have_attribute(:number).with_value(order.number)
-        expect(json_response['data']).to have_attribute(:state).with_value('cart')
-        expect(json_response['data']).to have_relationships(:user, :line_items, :variants)
-        expect(json_response['included']).to include(have_type('variant').and have_id(variant.id.to_s))
       end
+
+      it_behaves_like 'add item'
+
+      it_behaves_like 'returns valid cart JSON'
     end
 
     context 'with existing guest order' do
       let(:custom_token) { 'custom_token' }
       let!(:order) { create(:order, token: custom_token, store: store, currency: currency) }
 
-      it 'adds item to cart' do
-        headers = { 'Authorization' => "Bearer #{token.token}" }
+      before do
         post '/api/v2/storefront/cart/add_item', params: { variant_id: variant.id, quantity: 5, order_token: custom_token }, headers: headers
-
-        expect(response.status).to eq(200)
-
-        expect(order.line_items.count).to eq(1)
-        expect(order.line_items.first.variant).to eq(variant)
-        expect(order.line_items.first.quantity).to eq(5)
-
-        expect(json_response['data']).to have_id(order.id.to_s)
-        expect(json_response['data']).to have_type('cart')
-        expect(json_response['data']).to have_attribute(:number).with_value(order.number)
-        expect(json_response['data']).to have_attribute(:state).with_value('cart')
-        expect(json_response['data']).to have_relationships(:user, :line_items, :variants)
-        expect(json_response['included']).to include(have_type('variant').and have_id(variant.id.to_s))
       end
+
+      it_behaves_like 'add item'
+
+      it_behaves_like 'returns valid cart JSON'
     end
   end
 
