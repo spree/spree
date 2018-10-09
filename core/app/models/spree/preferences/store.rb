@@ -86,7 +86,11 @@ module Spree::Preferences
     end
 
     def should_persist?
-      @persistence and Spree::Preference.table_exists?
+      if ENV['DISABLE_DB_CONNECTION'].present?
+        false
+      else
+        @persistence and Spree::Preference.table_exists?
+      end
     end
 
   end
