@@ -42,7 +42,17 @@ paths:
 
   '/cart/add_item':
     post:
-      description: Adds an item to the cart
+      description: >-
+        <p>Adds an item to the cart</p>
+        <br />
+        <p>
+          Additional parameters passed in <strong>options</strong> hash
+          must be registered in <cite>config/initialiers/spree.rb</cite>, eg.
+        </p>
+        <br />
+        <blockquote>
+          Spree::PermittedAttributes.line_item_attributes << :foo
+        </blockquote>
       tags:
         - Cart
       responses:
@@ -68,9 +78,19 @@ paths:
                   type: string
                 quantity:
                   type: integer
+                options:
+                  type: object
+                  description: >-
+                    Additional custom options.
+                    You need to add them via
+                    `Spree::PermittedAttributes.line_item_attributes << :foo`
+                    in `config/initialiers/spree.rb`
               example:
                 variant_id: "1"
                 quantity: 5
+                options:
+                  foo: "bar"
+                  bar: "foo"
 
   '/cart/set_quantity':
     patch:

@@ -99,7 +99,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
     let(:variant) { create(:variant) }
     let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
 
-    shared_examples 'add item' do
+    shared_examples 'adds item' do
       it 'with success' do
         expect(response.status).to eq(200)
         expect(order.line_items.count).to eq(1)
@@ -124,7 +124,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
         post '/api/v2/storefront/cart/add_item', params: { variant_id: variant.id, quantity: 5 }, headers: headers
       end
 
-      it_behaves_like 'add item'
+      it_behaves_like 'adds item'
 
       it_behaves_like 'returns valid cart JSON'
     end
@@ -137,9 +137,28 @@ describe 'API V2 Storefront Cart Spec', type: :request do
         post '/api/v2/storefront/cart/add_item', params: { variant_id: variant.id, quantity: 5, order_token: custom_token }, headers: headers
       end
 
-      it_behaves_like 'add item'
+      it_behaves_like 'adds item'
 
       it_behaves_like 'returns valid cart JSON'
+    end
+
+    context 'with options' do
+      let!(:order) { create(:order, user: user, store: store, currency: currency) }
+      let(:options) { { cost_price: 1.99 } }
+
+      before do
+        Spree::PermittedAttributes.line_item_attributes << :cost_price
+
+        post '/api/v2/storefront/cart/add_item', params: { variant_id: variant.id, quantity: 5, options: options }, headers: headers
+      end
+
+      it_behaves_like 'adds item'
+
+      it_behaves_like 'returns valid cart JSON'
+
+      it 'sets custom attributes values' do
+        expect(order.line_items.first.cost_price).to eq(1.99)
+      end
     end
   end
 
