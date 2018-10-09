@@ -91,7 +91,7 @@ describe 'Store credits admin', type: :feature do
 
       expect(page).to have_current_path(spree.admin_user_store_credits_path(store_credit.user))
       store_credit_table = page.find('table')
-      expect(store_credit_table).to have_content(Spree::Money.new(updated_amount, currency: store_credit.currency).to_s)
+      expect(store_credit_table).to have_content(Spree::Money.new(updated_amount, currency: store_credit.currency).to_html)
       expect(store_credit.reload.amount.to_f).to eq updated_amount.to_f
     end
   end
