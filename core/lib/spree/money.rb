@@ -2,6 +2,8 @@
 
 require 'money'
 
+Money.locale_backend = :i18n
+
 module Spree
   class Money
     class <<self
