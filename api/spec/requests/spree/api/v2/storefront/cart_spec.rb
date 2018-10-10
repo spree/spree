@@ -391,5 +391,19 @@ describe 'API V2 Storefront Cart Spec', type: :request do
         end
       end
     end
+
+    context 'without coupon code' do
+      context 'does not apply the coupon code' do
+        before do
+          patch '/api/v2/storefront/cart/apply_coupon_code', params: { user: user, coupon_code: '' }, headers: headers
+        end
+
+        it 'returns 422 status with an error' do
+          expect(response.status).to eq(422)
+
+          expect(json_response[:error]).to eq("The coupon code you entered doesn't exist. Please try again.")
+        end
+      end
+    end
   end
 end
