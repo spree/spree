@@ -27,7 +27,12 @@ module Spree
               spree_authorize! :update, spree_current_order, order_token
               spree_authorize! :show, variant
 
-              dependencies[:add_item_to_cart].call(order: spree_current_order, variant: variant, quantity: params[:quantity])
+              dependencies[:add_item_to_cart].call(
+                order: spree_current_order,
+                variant: variant,
+                quantity: params[:quantity],
+                options: params[:options]
+              )
 
               render_serialized_payload serialized_current_order, 200
             end
