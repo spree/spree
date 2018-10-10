@@ -32,11 +32,8 @@ module Spree
 
     # 1) prevent blank, breaking spaces
     # 2) prevent escaping of HTML character entities
-    def to_html(opts = { html: true })
-      output = money.format(options.merge(opts))
-      output = output.sub(' ', '&nbsp;').html_safe if opts[:html]
-
-      output
+    def to_html(opts = { html_wrap: true })
+      money.format(options.merge(opts)).html_safe
     end
 
     def as_json(*)
