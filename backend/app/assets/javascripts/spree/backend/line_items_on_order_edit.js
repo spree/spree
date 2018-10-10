@@ -8,8 +8,7 @@ $(document).ready(function () {
     var variantId = $(this).val()
 
     var variant = _.find(window.variants, function (variant) {
-      // eslint-disable-next-line eqeqeq
-      return variant.id == variantId
+      return variant.id === variantId
     })
     $('#stock_details').html(variantLineItemTemplate({ variant: variant }))
     $('#stock_details').show()
@@ -43,8 +42,7 @@ function adjustLineItems (orderNumber, variantId, quantity) {
     window.Spree.advanceOrder()
     window.location.reload()
   }).fail(function (msg) {
-    // eslint-disable-next-line eqeqeq
-    if (typeof msg.responseJSON.message != 'undefined') {
+    if (typeof msg.responseJSON.message !== 'undefined') {
       alert(msg.responseJSON.message)
     } else {
       alert(msg.responseJSON.exception)

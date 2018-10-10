@@ -9,7 +9,7 @@
 <% pagination_class ||= '' %>
 
 <%= paginator.render do %>
-  <ul class="pagination <%= pagination_class %>">
+  <ul class="pagination mt-4 <%= pagination_class %>">
     <%= first_page_tag unless current_page.first? %>
     <%= prev_page_tag unless current_page.first? %>
     <% each_page do |page| %>

@@ -1,27 +1,31 @@
 Spree.ready(function ($) {
   Spree.addImageHandlers = function () {
-    var thumbnails = $('#product-images ul.thumbnails');
-    ($('#main-image')).data('selectedThumb', ($('#main-image img')).attr('src'));
-    ($('#main-image')).data('selectedThumbAlt', ($('#main-image img')).attr('alt'))
+    var thumbnails = $('#product-images ul.thumbnails')
+    $('#main-image').data('selectedThumb', $('#main-image img').attr('src'))
+    $('#main-image').data('selectedThumbAlt', $('#main-image img').attr('alt'))
     thumbnails.find('li').eq(0).addClass('selected')
 
     thumbnails.find('a').on('click', function (event) {
-      ($('#main-image')).data('selectedThumb', ($(event.currentTarget)).attr('href'));
-      ($('#main-image')).data('selectedThumbId', ($(event.currentTarget)).parent().attr('id'));
-      ($('#main-image')).data('selectedThumbAlt', ($(event.currentTarget)).find('img').attr('alt'))
-      thumbnails.find('li').removeClass('selected');
-      ($(event.currentTarget)).parent('li').addClass('selected')
+      $('#main-image').data('selectedThumb', $(event.currentTarget).attr('href'))
+      $('#main-image').data('selectedThumbId', $(event.currentTarget).parent().attr('id'))
+      $('#main-image').data('selectedThumbAlt', $(event.currentTarget).find('img').attr('alt'))
+      thumbnails.find('li').removeClass('selected')
+      $(event.currentTarget).parent('li').addClass('selected')
       return false
     })
 
     thumbnails.find('li').on('mouseenter', function (event) {
-      return ($('#main-image img'))
-        .attr({ 'src': ($(event.currentTarget)).find('a').attr('href'), 'alt': ($(event.currentTarget)).find('img').attr('alt') })
+      return ($('#main-image img')).attr({
+        src: $(event.currentTarget).find('a').attr('href'),
+        alt: $(event.currentTarget).find('img').attr('alt')
+      })
     })
 
     return thumbnails.find('li').on('mouseleave', function (event) {
-      return ($('#main-image img'))
-        .attr({ 'src': ($('#main-image')).data('selectedThumb'), 'alt': ($('#main-image')).data('selectedThumbAlt') })
+      return $('#main-image img').attr({
+        src: $('#main-image').data('selectedThumb'),
+        alt: $('#main-image').data('selectedThumbAlt')
+      })
     })
   }
 
@@ -65,13 +69,18 @@ Spree.ready(function ($) {
 
   if (radios.length > 0) {
     var selectedRadio = $("#product-variants input[type='radio'][checked='checked']")
+
     Spree.showVariantImages(selectedRadio.attr('value'))
     Spree.updateVariantPrice(selectedRadio)
     Spree.disableCartForm(selectedRadio)
 
     radios.click(function (event) {
+      $('#product-variants').find('li.active').removeClass('active')
+      $(this).closest('li').addClass('active')
+
       Spree.showVariantImages(this.value)
       Spree.updateVariantPrice($(this))
+
       return Spree.disableCartForm($(this))
     })
   }

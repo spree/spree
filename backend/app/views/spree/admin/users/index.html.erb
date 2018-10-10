@@ -18,13 +18,13 @@
         <%= f.text_field :email_cont, class: "form-control js-quick-search-target js-filterable" %>
       </div>
       <div class="row">
-        <div class="col-xs-12 col-md-6">
+        <div class="col-12 col-lg-6">
           <div class="form-group">
             <%= f.label :bill_address_firstname_cont, Spree.t(:first_name) %>
             <%= f.text_field :bill_address_firstname_cont, class: 'form-control js-filterable' %>
           </div>
         </div>
-        <div class="col-xs-12 col-md-6">
+        <div class="col-12 col-lg-6">
           <div class="form-group">
             <%= f.label :bill_address_lastname_cont, Spree.t(:last_name) %>
             <%= f.text_field :bill_address_lastname_cont, class: 'form-control js-filterable' %>
@@ -71,4 +71,4 @@
   </div>
 <% end %>
 
-<%= paginate @users %>
+<%= paginate @users, theme: 'twitter-bootstrap-4' %>

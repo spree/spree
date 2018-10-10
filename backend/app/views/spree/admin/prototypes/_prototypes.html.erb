@@ -10,12 +10,20 @@
       <tr id="row_<%= prototype.id %>" data-hook="available_row">
         <td><%= prototype.name %></td>
         <td class="actions actions-1">
-          <%= link_to_with_icon 'save', Spree.t(:select), select_admin_prototype_url(prototype), class: ' btn btn-default btn-sm ajax select_properties_from_prototype', no_text: true %>
+          <%= link_to_with_icon 'save',
+            Spree.t(:select),
+            select_admin_prototype_url(prototype),
+            class: 'btn btn-success btn-sm ajax select_properties_from_prototype',
+            no_text: true %>
         </td>
       </tr>
     <% end %>
     <% if @prototypes.empty? %>
-     <tr data-hook="available_none"><td colspan="2"><% Spree.t(:none) %>.</td></tr>
+      <tr data-hook="available_none">
+        <td colspan="2">
+          <% Spree.t(:none) %>.
+        </td>
+      </tr>
     <% end %>
   </tbody>
 </table>

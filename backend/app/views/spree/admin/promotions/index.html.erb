@@ -10,7 +10,7 @@
   <div data-hook="admin_promotions_index_search">
     <%= search_form_for [:admin, @search] do |f| %>
       <div class="row">
-        <div class="col-xs-12 col-md-6">
+        <div class="col-12 col-lg-6">
           <div class="form-group">
             <%= label_tag :q_name_cont, Spree.t(:name) %>
             <%= f.text_field :name_cont, tabindex: 1, class: "form-control js-quick-search-target js-filterable" %>
@@ -22,7 +22,7 @@
           </div>
         </div>
 
-        <div class="col-xs-12 col-md-6">
+        <div class="col-12 col-lg-6">
           <div class="form-group">
             <%= label_tag :q_path_cont, Spree.t(:path) %>
             <%= f.text_field :path_cont, tabindex: 1, class: "form-control js-filterable" %>
@@ -42,7 +42,7 @@
   </div>
 <% end %>
 
-<%= paginate @promotions %>
+<%= paginate @promotions, theme: 'twitter-bootstrap-4' %>
 
 <% if @promotions.any? %>
   <table class="table">

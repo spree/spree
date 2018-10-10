@@ -1,11 +1,18 @@
-<div class="promotion_rule promotion-block panel panel-default" id="<%= dom_id promotion_rule %>">
+<div class="promotion_rule promotion-block card mb-3" id="<%= dom_id promotion_rule %>">
   <% type_name = promotion_rule.class.name.demodulize.underscore %>
-  <div class="panel-heading">
-    <%= link_to_with_icon 'delete', '', spree.admin_promotion_promotion_rule_path(@promotion, promotion_rule), remote: true, method: :delete, class: 'delete pull-right' %>
-    <h3 class='panel-title promotion-title <%= 'no-text' if type_name == 'user_logged_in' || type_name == 'first_order'%>'><%= Spree.t("promotion_rule_types.#{type_name}.description") %></h3>
+  <div class="card-header d-flex justify-content-between">
+    <%= link_to_with_icon 'delete', '',
+      spree.admin_promotion_promotion_rule_path(@promotion, promotion_rule),
+      remote: true,
+      method: :delete,
+      class: 'delete order-2' %>
+    <h3 class='card-title h5 mb-0 promotion-title'>
+      <%= Spree.t("promotion_rule_types.#{type_name}.description") %>
+    </h3>
   </div>
   <% param_prefix = "promotion[promotion_rules_attributes][#{promotion_rule.id}]" %>
   <%= hidden_field_tag "#{param_prefix}[id]", promotion_rule.id %>
 
-  <%= render partial: "spree/admin/promotions/rules/#{type_name}", locals: { promotion_rule: promotion_rule, param_prefix: param_prefix } %>
+  <%= render partial: "spree/admin/promotions/rules/#{type_name}",
+    locals: { promotion_rule: promotion_rule, param_prefix: param_prefix } %>
 </div>

@@ -1,7 +1,7 @@
 /**
 This is a collection of javascript functions and whatnot
 under the spree namespace that do stuff we find helpful.
-Hopefully, this will evolve into a propper class.
+Hopefully, this will evolve into a proper class.
 **/
 
 /* global Cookies, AUTH_TOKEN, order_number */
@@ -25,25 +25,38 @@ jQuery(function ($) {
   })
 
   // Sidebar nav toggle functionality
-  $('#sidebar-toggle').on('click', function () {
-    var wrapper = $('#wrapper')
-    var main = $('#main-part')
-    var sidebar = $('#main-sidebar')
+  const sidebarToggle = $('#sidebar-toggle')
 
-    // these should match `spree/backend/app/helpers/spree/admin/navigation_helper.rb#main_part_classes`
-    var mainWrapperCollapsedClasses = 'col-xs-12 sidebar-collapsed'
-    var mainWrapperExpandedClasses = 'col-xs-9 col-xs-offset-3 col-md-10 col-md-offset-2'
+  sidebarToggle.on('click', function () {
+    const wrapper = $('#wrapper')
+    const main = $('#main-part')
+    const sidebar = $('#main-sidebar')
+    const version = $('.spree-version')
+    const collapsed = sidebar.find('[aria-expanded="true"]')
+    const collapsedIcons = sidebar.find('.icon-chevron-down')
 
     wrapper.toggleClass('sidebar-minimized')
-    sidebar.toggleClass('hidden-xs')
+
+    collapsed
+      .attr('aria-expanded', 'false')
+      .next()
+      .removeClass('show')
+
+    collapsedIcons
+      .removeClass('icon-chevron-down')
+      .addClass('icon-chevron-left')
+
+    // these should match `spree/backend/app/helpers/spree/admin/navigation_helper.rb#main_part_classes`
     main
-      .toggleClass(mainWrapperCollapsedClasses)
-      .toggleClass(mainWrapperExpandedClasses)
+      .toggleClass('col-12 sidebar-collapsed')
+      .toggleClass('col-9 offset-3 col-md-10 offset-md-2')
 
     if (wrapper.hasClass('sidebar-minimized')) {
       Cookies.set('sidebar-minimized', 'true', { path: '/admin' })
+      version.removeClass('d-md-block')
     } else {
       Cookies.set('sidebar-minimized', 'false', { path: '/admin' })
+      version.addClass('d-md-block')
     }
   })
 
@@ -136,7 +149,7 @@ jQuery(function ($) {
 
       label = ransackField(label.text()) + ': ' + ransackValue
 
-      filter = '<span class="js-filter label label-default" data-ransack-field="' + ransackFieldId + '">' + label + '<span class="icon icon-delete js-delete-filter"></span></span>'
+      filter = '<span class="js-filter badge badge-secondary" data-ransack-field="' + ransackField + '">' + label + '<span class="icon icon-delete js-delete-filter"></span></span>'
       $('.js-filters').append(filter).show()
     }
   })
@@ -189,7 +202,7 @@ $.fn.radioControlsVisibilityOfElement = function (dependentElementSelector) {
   var radioGroup = $("input[name='" + this.get(0).name + "']")
   radioGroup.each(function () {
     $(this).click(function () {
-      // eslint-disable-next-line eqeqeq
+      // eslint-disable-next-line
       $(dependentElementSelector).visible(this.checked && this.value == showValue)
     })
     if (this.checked) { this.click() }
@@ -205,7 +218,8 @@ function handle_date_picker_fields () {
     monthNames: Spree.translations.month_names,
     prevText: Spree.translations.previous,
     nextText: Spree.translations.next,
-    showOn: 'focus'
+    showOn: 'focus',
+    showAnim: ''
   })
 
   // Correctly display range dates
@@ -222,13 +236,13 @@ $(document).ready(function () {
   $('.observe_field').on('change', function () {
     var target = $(this).data('update')
     $(target).hide()
-    $.ajax({ dataType: 'html',
+    $.ajax({
+      dataType: 'html',
       url: $(this).data('base-url') + encodeURIComponent($(this).val()),
-      type: 'get',
-      success: function (data) {
-        $(target).html(data)
-        $(target).show()
-      }
+      type: 'GET'
+    }).done(function (data) {
+      $(target).html(data)
+      $(target).show()
     })
   })
 
@@ -263,18 +277,16 @@ $(document).ready(function () {
           _method: 'delete',
           authenticity_token: AUTH_TOKEN
         },
-        dataType: 'script',
-        success: function (response) {
-          var $flashElement = $('.alert-success')
-          if ($flashElement.length) {
-            el.parents('tr').fadeOut('hide', function () {
-              $(this).remove()
-            })
-          }
-        },
-        error: function (response, textStatus, errorThrown) {
-          show_flash('error', response.responseText)
+        dataType: 'script'
+      }).done(function () {
+        var $flashElement = $('.alert-success')
+        if ($flashElement.length) {
+          el.parents('tr').fadeOut('hide', function () {
+            $(this).remove()
+          })
         }
+      }).fail(function (response) {
+        show_flash('error', response.responseText)
       })
     }
     return false
@@ -293,16 +305,13 @@ $(document).ready(function () {
         data: {
           _method: 'delete',
           authenticity_token: AUTH_TOKEN
-        },
-        success: function (response) {
-          el.parents('tr').fadeOut('hide', function () {
-            $(this).remove()
-          })
-        },
-        error: function (response, textStatus, errorThrown) {
-          show_flash('error', response.responseText)
         }
-
+      }).done(function () {
+        el.parents('tr').fadeOut('hide', function () {
+          $(this).remove()
+        })
+      }).fail(function (response) {
+        show_flash('error', response.responseText)
       })
     }
     return false
@@ -311,13 +320,13 @@ $(document).ready(function () {
   $('body').on('click', '.select_properties_from_prototype', function () {
     $('#busy_indicator').show()
     var clickedLink = $(this)
-    $.ajax({ dataType: 'script',
+    $.ajax({
+      dataType: 'script',
       url: clickedLink.prop('href'),
-      type: 'get',
-      success: function (data) {
-        clickedLink.parent('td').parent('tr').hide()
-        $('#busy_indicator').hide()
-      }
+      type: 'GET'
+    }).done(function () {
+      clickedLink.parent('td').parent('tr').hide()
+      $('#busy_indicator').hide()
     })
     return false
   })
@@ -352,12 +361,13 @@ $(document).ready(function () {
             type: 'POST',
             dataType: 'script',
             url: $(ui.item).closest('table.sortable').data('sortable-link'),
-            data: positions,
-            success: function (data) { $('#progress').hide() }
+            data: positions
+          }).done(function () {
+            $('#progress').hide()
           })
         },
         start: function (event, ui) {
-          // Set correct height for placehoder (from dragged tr)
+          // Set correct height for placeholder (from dragged tr)
           ui.placeholder.height(ui.item.height())
           // Fix placeholder content to make it correct width
           ui.placeholder.html("<td colspan='" + (tdCount - 1) + "'></td><td class='actions'></td>")
@@ -382,7 +392,7 @@ $(document).ready(function () {
       data: {
         token: Spree.api_key
       },
-      // eslint-disable-next-line camelcase
+      // eslint-disable-next-line
       url: Spree.url(Spree.routes.checkouts_api + '/' + order_number + '/advance')
     }).done(function () {
       window.location.reload()

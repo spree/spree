@@ -1,0 +1,21 @@
+.header {
+  .navbar {
+    background-color: $navbar-inverse-bg;
+    padding: 0;
+
+    a:hover {
+      text-decoration: none;
+    }
+  }
+
+  .dropdown-toggle {
+    &[aria-expanded="true"] {
+      background-color: $gray-900;
+    }
+
+    &:hover,
+    &:focus {
+      text-decoration: none;
+    }
+  }
+}

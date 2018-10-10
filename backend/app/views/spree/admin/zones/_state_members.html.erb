@@ -1,12 +1,12 @@
 <div id="state_members" data-hook="member">
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <h1 class="panel-title">
+  <div class="card mb-3">
+    <div class="card-header">
+      <h1 class="card-title mb-0 h5">
         <%= Spree.t(:states) %>
       </h1>
     </div>
 
-    <div class="panel-body">
+    <div class="card-body">
       <%= zone_form.field_container :state_ids, class: ['form-group'] do %>
         <%= zone_form.label :state_ids, Spree.t(:states) %>
         <%= zone_form.collection_select :state_ids, @states, :id, :name, {}, { multiple: true, class: "select2" } %>

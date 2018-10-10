@@ -5,7 +5,7 @@
 
 <%= form_for @promotion, url: object_url, method: :put do |f| %>
   <div class="row">
-    <div class="col-xs-12">
+    <div class="col-12">
       <%= render partial: 'form', locals: { f: f } %>
       <%= render partial: 'spree/admin/shared/edit_resource_links' %>
     </div>
@@ -14,14 +14,14 @@
 <% end %>
 
 <div id="promotion-filters" class="row">
-  <div id="rules_container" class="col-xs-12 col-md-6">
-    <div class="panel panel-default">
+  <div id="rules_container" class="col-12 col-md-6">
+    <div class="card  ">
       <%= render partial: 'rules' %>
     </div>
   </div>
 
-  <div id="actions_container" class="col-xs-12 col-md-6">
-    <div class="panel panel-default">
+  <div id="actions_container" class="col-12 col-md-6">
+    <div class="card  ">
       <%= render partial: 'actions' %>
     </div>
   </div>

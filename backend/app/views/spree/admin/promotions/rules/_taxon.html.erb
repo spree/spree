@@ -1,9 +1,9 @@
-<div class="panel-body">
+<div class="card-body">
   <div class="form-group taxons_rule_taxons">
     <%= label_tag "#{param_prefix}_taxon_ids_string", Spree.t('taxon_rule.choose_taxons') %>
     <%= hidden_field_tag "#{param_prefix}[taxon_ids_string]", promotion_rule.taxon_ids.join(","), class: "taxon_picker", id: 'product_taxon_ids' %>
   </div>
-  <div class="form-group no-marginb">
+  <div class="form-group mb-0">
     <%= label_tag Spree.t('taxon_rule.label') %>
     <%= select_tag("#{param_prefix}[preferred_match_policy]", options_for_select(Spree::Promotion::Rules::Taxon::MATCH_POLICIES.map{|s| [Spree.t("taxon_rule.match_#{s}"),s] }, promotion_rule.preferred_match_policy), {class: 'select_taxon form-control'}) %>
   </div>
