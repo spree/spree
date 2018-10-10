@@ -39,7 +39,7 @@ module Spree
       opts[:html_wrap] = opts[:html]
       opts.delete(:html)
 
-      output = money.format(options.merge(opts))
+      output = money.format(@options.merge(opts))
       if opts[:html_wrap]
         output.gsub!(/<\/?[^>]*>/, '') # we don't want wrap every element in span
         output = output.sub(' ', '&nbsp;').html_safe
