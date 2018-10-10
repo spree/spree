@@ -62,6 +62,7 @@ describe 'Order Details', type: :feature, js: true do
         within('table.stock-levels') do
           fill_in 'variant_quantity', with: 2
           click_icon :add
+          wait_for_ajax
         end
 
         within('#order_total') do
