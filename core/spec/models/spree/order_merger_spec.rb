@@ -44,7 +44,7 @@ module Spree
 
     context 'merging using extension-specific line_item_comparison_hooks' do
       before do
-        Spree::Order.register_line_item_comparison_hook(:foos_match)
+        Rails.application.config.spree.line_item_comparison_hooks << :foos_match
         allow(Spree::Variant).to receive(:price_modifier_amount).and_return(0.00)
       end
 
