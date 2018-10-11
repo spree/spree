@@ -4,8 +4,10 @@ module Spree
       prepend Spree::ServiceModule::Base
 
       def call(order:, variant:, quantity: nil, options: {})
-        run :add_to_line_item
-        run Spree::Cart::Recalculate
+        ApplicationRecord.transaction do
+          run :add_to_line_item
+          run Spree::Cart::Recalculate
+        end
       end
 
       private
