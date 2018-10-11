@@ -15,7 +15,7 @@ $(function () {
     this.destination = $('#transfer_destination_location_id')
     this.source.change(this.populate_destination.bind(this))
     $('#transfer_receive_stock').change(this.receive_stock_change.bind(this))
-    $.getJSON(Spree.url(Spree.routes.stock_locations_api) + '?token=' + Spree.api_key, function (data) {
+    $.getJSON(Spree.url(Spree.routes.stock_locations_api) + '?token=' + Spree.api_key + '&per_page=1000', function (data) {
       this.locations = (function () {
         var ref = data.stock_locations
         var results = []
