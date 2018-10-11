@@ -17,6 +17,8 @@ module Spree
           else
             set_error_code :coupon_code_not_found
           end
+        else
+          set_error_code :coupon_code_not_found
         end
         self
       end

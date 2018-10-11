@@ -253,14 +253,16 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
     it 'allows user to enter a new source' do
       choose 'use_existing_card_no'
 
-      fill_in 'Name on card', with: 'Spree Commerce'
-      fill_in 'Card Number', with: '4111111111111111'
-      fill_in 'card_expiry', with: '04 / 20'
-      fill_in 'Card Code', with: '123'
+      native_fill_in 'Name on card', 'Spree Commerce'
+      native_fill_in 'Card Number',  '4111111111111111'
+      native_fill_in 'card_expiry',  '04 / 20'
+      native_fill_in 'Card Code',    '123'
 
       expect { click_on 'Save and Continue' }.to change { Spree::CreditCard.count }.by 1
 
       click_on 'Place Order'
+
+      expect(page).to have_content(Spree.t(:thank_you_for_your_order))
       expect(page).to have_current_path(spree.order_path(Spree::Order.last))
     end
   end
