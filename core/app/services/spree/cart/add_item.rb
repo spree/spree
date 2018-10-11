@@ -33,7 +33,7 @@ module Spree
 
         line_item.target_shipment = options[:shipment] if options.key? :shipment
 
-        return failure(line_item.errors.full_messages.join(', ')) unless line_item.save
+        return failure(line_item) unless line_item.save
 
         ::Spree::TaxRate.adjust(order, [line_item.reload]) if line_item_created
         success(order: order, line_item: line_item, line_item_created: line_item_created, options: options)

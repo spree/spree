@@ -50,7 +50,7 @@ module Spree
         begin
           result = Spree::Cart::AddItem.call(order: order, variant: variant, quantity: quantity, options: options)
           if result.failure?
-            error = result.value
+            error = result.value.errors.full_messages.join(', ')
           else
             order.update_line_item_prices!
             order.create_tax_charge!
