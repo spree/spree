@@ -14,7 +14,7 @@ module Spree
     class CallMethodNotImplemented < StandardError; end
     class IncompatibleParamsPassed < StandardError; end
 
-    Result = Struct.new(:success, :value) do
+    Result = Struct.new(:success, :value, :error) do
       def success?
         success
       end
@@ -72,11 +72,11 @@ module Spree
       end
 
       def success(value)
-        Result.new(true, value)
+        Result.new(true, value, nil)
       end
 
-      def failure(value)
-        Result.new(false, value)
+      def failure(value, error_message = nil)
+        Result.new(false, value, error_message)
       end
 
       def enforce_data_format
