@@ -48,10 +48,14 @@ module Spree
       # 2,147,483,647 is crazy. See issue #2695.
       if quantity.between?(1, 2_147_483_647)
         begin
-          Spree::Cart::AddItem.call(order: order, variant: variant, quantity: quantity, options: options).value
-          order.update_line_item_prices!
-          order.create_tax_charge!
-          order.update_with_updater!
+          result = Spree::Cart::AddItem.call(order: order, variant: variant, quantity: quantity, options: options)
+          if result.failure?
+            error = result.value.errors.full_messages.join(', ')
+          else
+            order.update_line_item_prices!
+            order.create_tax_charge!
+            order.update_with_updater!
+          end
         rescue ActiveRecord::RecordInvalid => e
           error = e.record.errors.full_messages.join(', ')
         end
