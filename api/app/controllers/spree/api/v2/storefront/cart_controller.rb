@@ -27,14 +27,18 @@ module Spree
               spree_authorize! :update, spree_current_order, order_token
               spree_authorize! :show, variant
 
-              dependencies[:add_item_to_cart].call(
+              result = dependencies[:add_item_to_cart].call(
                 order: spree_current_order,
                 variant: variant,
                 quantity: params[:quantity],
                 options: params[:options]
               )
 
-              render_serialized_payload serialized_current_order, 200
+              if result.success?
+                render_serialized_payload serialized_current_order, 200
+              else
+                render json: { error: result.error }, status: 422
+              end
             end
           end
 
@@ -71,7 +75,7 @@ module Spree
             if result.success?
               render_serialized_payload serialized_current_order, 200
             else
-              render json: { error: result.value }, status: 422
+              render json: { error: result.error }, status: 422
             end
           end
 

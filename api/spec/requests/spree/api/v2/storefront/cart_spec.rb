@@ -265,7 +265,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
         patch '/api/v2/storefront/cart/set_quantity', params: { order: order, line_item_id: line_item.id, quantity: 5, user: user }, headers: headers
 
         expect(response.status).to eq(422)
-        expect(json_response[:error]).to eq('Insufficient stock quantity available')
+        expect(json_response[:error]).to eq("Quantity selected of \"#{line_item.name}\" is not available.")
       end
     end
 
