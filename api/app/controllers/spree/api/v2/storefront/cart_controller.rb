@@ -35,7 +35,7 @@ module Spree
               )
 
               if result.success?
-                render_serialized_payload serialized_current_order, 200
+                render_serialized_payload serialized_current_order
               else
                 render_error_payload(result.error)
               end
@@ -52,7 +52,7 @@ module Spree
               line_item: line_item
             )
 
-            render_serialized_payload serialized_current_order, 200
+            render_serialized_payload serialized_current_order
           end
 
           def empty
@@ -62,7 +62,7 @@ module Spree
 
             spree_current_order.empty!
 
-            render_serialized_payload serialized_current_order, 200
+            render_serialized_payload serialized_current_order
           end
 
           def set_quantity
@@ -73,7 +73,7 @@ module Spree
             result = dependencies[:set_item_quantity].call(order: spree_current_order, line_item: line_item, quantity: params[:quantity])
 
             if result.success?
-              render_serialized_payload serialized_current_order, 200
+              render_serialized_payload serialized_current_order
             else
               render_error_payload(result.error)
             end
@@ -84,7 +84,7 @@ module Spree
 
             spree_authorize! :show, spree_current_order, order_token
 
-            render_serialized_payload serialized_current_order, 200
+            render_serialized_payload serialized_current_order
           end
 
           def apply_coupon_code
@@ -94,7 +94,7 @@ module Spree
             result = dependencies[:coupon_handler].new(spree_current_order).apply
 
             if result.error.blank?
-              render_serialized_payload serialized_current_order, 200
+              render_serialized_payload serialized_current_order
             else
               render_error_payload(result.error)
             end
