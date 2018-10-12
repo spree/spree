@@ -160,6 +160,21 @@ describe 'API V2 Storefront Cart Spec', type: :request do
         expect(order.line_items.first.cost_price).to eq(1.99)
       end
     end
+
+    context 'with quantity unnavailble' do
+      let!(:order) { create(:order, user: user, store: store, currency: currency) }
+      let(:variant) { create(:variant) }
+
+      before do
+        variant.stock_items.first.update(backorderable: false)
+        post '/api/v2/storefront/cart/add_item', params: { variant_id: variant.id, quantity: 11 }, headers: headers
+      end
+
+      it 'returns 422 when there is not enough stock' do
+        expect(response.status).to eq(422)
+        expect(json_response[:error]).to eq("Quantity selected of \"#{variant.name} (#{variant.options_text})\" is not available.")
+      end
+    end
   end
 
   describe 'cart#remove_line_item' do
