@@ -42,7 +42,7 @@ module Spree
             if order.errors.present?
               render_serialized_payload order.errors, 422
             else
-              render_serialized_payload serialize_order(order), 200
+              render_serialized_payload serialize_order(order)
             end
           end
 
