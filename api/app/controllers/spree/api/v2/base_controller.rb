@@ -10,7 +10,11 @@ module Spree
         def render_serialized_payload(payload, status)
           render json: payload, status: status
         rescue ArgumentError => exception
-          render json: { error: exception.message }, status: 400
+          render_error_payload(exception.message, 400)
+        end
+
+        def render_error_payload(error, status = 422)
+          render json: { error: error }, status: status
         end
 
         def spree_current_store
@@ -56,7 +60,7 @@ module Spree
         end
 
         def record_not_found(exception)
-          render json: { error: exception.message }, status: 404
+          render_error_payload(exception.message, 404)
         end
       end
     end

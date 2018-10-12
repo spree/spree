@@ -37,7 +37,7 @@ module Spree
               if result.success?
                 render_serialized_payload serialized_current_order, 200
               else
-                render json: { error: result.error }, status: 422
+                render_error_payload(result.error)
               end
             end
           end
@@ -75,7 +75,7 @@ module Spree
             if result.success?
               render_serialized_payload serialized_current_order, 200
             else
-              render json: { error: result.error }, status: 422
+              render_error_payload(result.error)
             end
           end
 
@@ -96,7 +96,7 @@ module Spree
             if result.error.blank?
               render_serialized_payload serialized_current_order, 200
             else
-              render json: { error: result.error }, status: 422
+              render_error_payload(result.error)
             end
           end
 
