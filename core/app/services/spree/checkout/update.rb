@@ -6,7 +6,7 @@ module Spree
       def call(order:, params:, permitted_attributes:, request_env:)
         return success(order) if order.update_from_params(params, permitted_attributes, request_env)
 
-        failure(order.errors)
+        failure(order, order.errors.full_messages.join(', '))
       end
 
       private

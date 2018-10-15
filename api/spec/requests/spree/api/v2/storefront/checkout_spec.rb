@@ -4,12 +4,12 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
   let!(:user)  { create(:user) }
   let!(:token) { Doorkeeper::AccessToken.create!(resource_owner_id: user.id, expires_in: nil) }
   let!(:order) { create(:order_with_line_items, user: user) }
+  let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
 
   describe 'checkout#next' do
     context 'without line items' do
       before do
         order.line_items.destroy_all
-        headers = { 'Authorization' => "Bearer #{token.token}" }
         patch '/api/v2/storefront/checkout/next', headers: headers
       end
 
@@ -21,7 +21,6 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
 
     context 'with line_items and email' do
       before do
-        headers = { 'Authorization' => "Bearer #{token.token}" }
         patch '/api/v2/storefront/checkout/next', headers: headers
       end
 
@@ -34,7 +33,6 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
     context 'without payment info' do
       before do
         order.update_column(:state, 'payment')
-        headers = { 'Authorization' => "Bearer #{token.token}" }
         patch '/api/v2/storefront/checkout/next', headers: headers
       end
 
@@ -49,7 +47,6 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
     context 'with payment data' do
       before do
         create(:payment, amount: order.total, order: order)
-        headers = { 'Authorization' => "Bearer #{token.token}" }
         patch '/api/v2/storefront/checkout/advance', headers: headers
       end
 
@@ -61,7 +58,6 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
 
     context 'without payment data' do
       before do
-        headers = { 'Authorization' => "Bearer #{token.token}" }
         patch '/api/v2/storefront/checkout/advance', headers: headers
       end
 
@@ -76,7 +72,6 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
     context 'with payment data' do
       before do
         create(:payment, amount: order.total, order: order)
-        headers = { 'Authorization' => "Bearer #{token.token}" }
         patch '/api/v2/storefront/checkout/complete', headers: headers
       end
 
@@ -88,7 +83,6 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
 
     context 'without payment data' do
       before do
-        headers = { 'Authorization' => "Bearer #{token.token}" }
         patch '/api/v2/storefront/checkout/complete', headers: headers
       end
 
@@ -112,12 +106,13 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
     before do
       allow_any_instance_of(Spree::Order).to receive_messages(confirmation_required?: true)
       allow_any_instance_of(Spree::Order).to receive_messages(payment_required?: true)
+      put '/api/v2/storefront/checkout', params: params, headers: headers
     end
 
     context 'line_items' do
-      before do
-        line_item = order.line_items.first
-        params    = {
+      let(:line_item) { order.line_items.first }
+      let(:params) {
+        {
           order: {
             line_items: {
               0 => {
@@ -127,10 +122,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
             }
           }
         }
-
-        headers = { 'Authorization' => "Bearer #{token.token}" }
-        put '/api/v2/storefront/checkout', params: params, headers: headers
-      end
+      }
 
       it 'can update line_items' do
         expect(response.status).to eq(200)
@@ -154,17 +146,14 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
         }
       end
 
-      before do
-        params = {
+      let(:params) {
+        {
           order: {
             bill_address: address,
             ship_address: address
           }
         }
-
-        headers = { 'Authorization' => "Bearer #{token.token}" }
-        put '/api/v2/storefront/checkout', params: params, headers: headers
-      end
+      }
 
       it 'can update addresses' do
         expect(response.status).to eq(200)
@@ -176,8 +165,8 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
 
     context 'payment' do
       context 'payment method' do
-        before do
-          params = {
+        let(:params) {
+          {
             order: {
               payments_attributes: [
                 {
@@ -186,10 +175,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
               ]
             }
           }
-
-          headers = { 'Authorization' => "Bearer #{token.token}" }
-          put '/api/v2/storefront/checkout', params: params, headers: headers
-        end
+        }
 
         it 'can update payment method' do
           expect(response.status).to eq(200)
@@ -199,16 +185,17 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
       end
 
       context 'payment source' do
-        before do
-          source_attributes = {
+        let(:source_attributes) {
+          {
             number: '4111111111111111',
             month: 1.month.from_now.month,
             year: 1.month.from_now.year,
             verification_value: '123',
             name: 'Spree Commerce'
           }
-
-          params = {
+        }
+        let(:params) {
+          {
             order: {
               payments_attributes: [
                 {
@@ -220,10 +207,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
               payment_method.id.to_s => source_attributes
             }
           }
-
-          headers = { 'Authorization' => "Bearer #{token.token}" }
-          put '/api/v2/storefront/checkout', params: params, headers: headers
-        end
+        }
 
         it 'can update payment method with source' do
           expect(response.status).to eq(200)
@@ -235,16 +219,13 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
     end
 
     context 'special instructions' do
-      before do
-        params = {
+      let(:params) {
+        {
           order: {
             special_instructions: "Don't drop it"
           }
         }
-
-        headers = { 'Authorization' => "Bearer #{token.token}" }
-        put '/api/v2/storefront/checkout', params: params, headers: headers
-      end
+      }
 
       it 'can update the special instructions for an order' do
         expect(response.status).to eq(200)
@@ -253,20 +234,34 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
     end
 
     context 'email' do
-      before do
-        params = {
+      let(:params) {
+        {
           order: {
             email: 'guest@spreecommerce.org'
           }
         }
-
-        headers = { 'Authorization' => "Bearer #{token.token}" }
-        put '/api/v2/storefront/checkout', params: params, headers: headers
-      end
+      }
 
       it 'can assign an email to the order' do
         expect(response.status).to eq(200)
         expect(json_response['data']).to have_attribute(:email).with_value('guest@spreecommerce.org')
+      end
+    end
+
+    context 'with invalid params' do
+      let(:order) { create(:order_with_line_items, user: user, state: :delivery) }
+
+      let(:params) {
+        {
+          order: {
+            email: 'wrong_email'
+          }
+        }
+      }
+
+      it 'returns validation errors' do
+        expect(response.status).to eq(422)
+        expect(json_response['error']).to eq('Customer E-Mail is invalid')
       end
     end
   end
