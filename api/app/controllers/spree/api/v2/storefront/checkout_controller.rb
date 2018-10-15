@@ -38,9 +38,9 @@ module Spree
             )
 
             if result.success?
-              render_serialized_payload serialize_order(result.value), 200
+              render_serialized_payload serialize_order(result.value)
             else
-              render_serialized_payload result.value, 422
+              render_error_payload(result.error)
             end
           end
 
