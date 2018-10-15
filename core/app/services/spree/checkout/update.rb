@@ -2,7 +2,6 @@ module Spree
   module Checkout
     class Update
       prepend Spree::ServiceModule::Base
-      include Spree::Core::ControllerHelpers::StrongParameters
 
       def call(order:, params:, request_env:)
         return success(order) if order.update_from_params(params, permitted_checkout_attributes, request_env)

@@ -3,6 +3,7 @@ module Spree
     module V2
       class BaseController < ActionController::API
         include CanCan::ControllerAdditions
+        include Spree::Core::ControllerHelpers::StrongParameters
         rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
 
         private
