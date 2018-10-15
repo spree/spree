@@ -29,9 +29,11 @@ module Spree
 
           def update
             spree_authorize! :update, spree_current_order, order_token
+
             result = dependencies[:updater].call(
               order: spree_current_order,
               params: params,
+              permitted_attributes: dependencies[:permitted_attributes],
               request_env: request.headers.env
             )
 
@@ -50,7 +52,9 @@ module Spree
               advance_proceeder:    Spree::Checkout::Advance,
               completer:            Spree::Checkout::Complete,
               updater:              Spree::Checkout::Update,
-              cart_serializer:      Spree::V2::Storefront::CartSerializer
+              cart_serializer:      Spree::V2::Storefront::CartSerializer,
+              # defined in https://github.com/spree/spree/blob/master/core/lib/spree/core/controller_helpers/strong_parameters.rb#L19
+              permitted_attributes: permitted_checkout_attributes
             }
           end
 
