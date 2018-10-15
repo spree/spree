@@ -1,19 +1,16 @@
 module Spree
   module Checkout
     class Advance
-      def initialize(order)
-        @order = order
-      end
+      prepend Spree::ServiceModule::Base
 
-      def call
-        Spree::Checkout::Next.new(order).call until cannot_make_transition?
+      def call(order:)
+        Spree::Checkout::Next.call(order: order) until cannot_make_transition?(order)
+        success(order)
       end
 
       private
 
-      attr_reader :order
-
-      def cannot_make_transition?
+      def cannot_make_transition?(order)
         order.confirm? || order.complete? || order.errors.present?
       end
     end

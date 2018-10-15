@@ -6,25 +6,25 @@ module Spree
           def next
             spree_authorize! :update, spree_current_order, order_token
 
-            dependencies[:next_state_procceder].new(spree_current_order).call
+            result = dependencies[:next_state_procceder].call(order: spree_current_order)
 
-            render_order spree_current_order
+            render_order(result)
           end
 
           def advance
             spree_authorize! :update, spree_current_order, order_token
 
-            dependencies[:advance_proceeder].new(spree_current_order).call
+            result = dependencies[:advance_proceeder].call(order: spree_current_order)
 
-            render_order spree_current_order
+            render_order(result)
           end
 
           def complete
             spree_authorize! :update, spree_current_order, order_token
 
-            dependencies[:completer].new(spree_current_order).call
+            result = dependencies[:completer].call(order: spree_current_order)
 
-            render_order spree_current_order
+            render_order(result)
           end
 
           def update
@@ -37,11 +37,7 @@ module Spree
               request_env: request.headers.env
             )
 
-            if result.success?
-              render_serialized_payload serialize_order(result.value)
-            else
-              render_error_payload(result.error)
-            end
+            render_order(result)
           end
 
           private
@@ -58,11 +54,11 @@ module Spree
             }
           end
 
-          def render_order(order)
-            if order.errors.present?
-              render_serialized_payload order.errors, 422
+          def render_order(result)
+            if result.success?
+              render_serialized_payload serialize_order(result.value)
             else
-              render_serialized_payload serialize_order(order)
+              render_error_payload(result.error)
             end
           end
 
