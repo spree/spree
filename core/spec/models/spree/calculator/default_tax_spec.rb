@@ -140,7 +140,7 @@ describe Spree::Calculator::DefaultTax, type: :model do
 
       context 'with a 40$ promo' do
         before do
-          allow(line_item).to receive(:taxable_adjustment_total).and_return(BigDecimal.new('-40'))
+          allow(line_item).to receive(:taxable_adjustment_total).and_return(BigDecimal('-40'))
           Spree::TaxRate.store_pre_tax_amount(line_item, [rate])
         end
 

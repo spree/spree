@@ -1,5 +1,5 @@
 FactoryBot.define do
-  sequence(:random_float) { BigDecimal.new("#{rand(200)}.#{rand(99)}") }
+  sequence(:random_float) { BigDecimal("#{rand(200)}.#{rand(99)}") }
 
   factory :base_variant, class: Spree::Variant do
     price           { 19.99 }
