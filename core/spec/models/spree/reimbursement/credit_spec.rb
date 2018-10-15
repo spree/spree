@@ -12,7 +12,7 @@ module Spree
         before { allow(reimbursement).to receive(:credits).and_return([credit_double, credit_double]) }
 
         it 'sums the amounts of all of the reimbursements credits' do
-          expect(subject).to eq BigDecimal.new('199.98')
+          expect(subject).to eq BigDecimal('199.98')
         end
       end
     end
