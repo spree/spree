@@ -8,10 +8,6 @@ module Spree
 
         failure(order, order.errors.full_messages.join(', '))
       end
-
-      private
-
-      attr_reader :order, :params, :request_env
     end
   end
 end
