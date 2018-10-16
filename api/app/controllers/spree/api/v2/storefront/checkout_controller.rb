@@ -6,25 +6,38 @@ module Spree
           def next
             spree_authorize! :update, spree_current_order, order_token
 
-            dependencies[:next_state_procceder].new(spree_current_order).call
+            result = dependencies[:next_state_procceder].call(order: spree_current_order)
 
-            render_order spree_current_order
+            render_order(result)
           end
 
           def advance
             spree_authorize! :update, spree_current_order, order_token
 
-            dependencies[:advance_proceeder].new(spree_current_order).call
+            result = dependencies[:advance_proceeder].call(order: spree_current_order)
 
-            render_order spree_current_order
+            render_order(result)
           end
 
           def complete
             spree_authorize! :update, spree_current_order, order_token
 
-            dependencies[:completer].new(spree_current_order).call
+            result = dependencies[:completer].call(order: spree_current_order)
 
-            render_order spree_current_order
+            render_order(result)
+          end
+
+          def update
+            spree_authorize! :update, spree_current_order, order_token
+
+            result = dependencies[:updater].call(
+              order: spree_current_order,
+              params: params,
+              permitted_attributes: dependencies[:permitted_attributes],
+              request_env: request.headers.env
+            )
+
+            render_order(result)
           end
 
           private
@@ -34,15 +47,18 @@ module Spree
               next_state_procceder: Spree::Checkout::Next,
               advance_proceeder:    Spree::Checkout::Advance,
               completer:            Spree::Checkout::Complete,
-              cart_serializer:      Spree::V2::Storefront::CartSerializer
+              updater:              Spree::Checkout::Update,
+              cart_serializer:      Spree::V2::Storefront::CartSerializer,
+              # defined in https://github.com/spree/spree/blob/master/core/lib/spree/core/controller_helpers/strong_parameters.rb#L19
+              permitted_attributes: permitted_checkout_attributes
             }
           end
 
-          def render_order(order)
-            if order.errors.present?
-              render_serialized_payload order.errors, 422
+          def render_order(result)
+            if result.success?
+              render_serialized_payload serialize_order(result.value)
             else
-              render_serialized_payload serialize_order(order)
+              render_error_payload(result.error)
             end
           end
 
