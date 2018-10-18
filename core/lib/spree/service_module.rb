@@ -11,7 +11,6 @@ module Spree
     class MethodNotImplemented < StandardError; end
     class WrongDataPassed < StandardError; end
     class NonCallablePassedToRun < StandardError; end
-    class CallMethodNotImplemented < StandardError; end
     class IncompatibleParamsPassed < StandardError; end
 
     Result = Struct.new(:success, :value, :error) do
@@ -34,12 +33,8 @@ module Spree
       def call(input = nil)
         input ||= {}
         @_passed_input = Result.new(true, input)
-        begin
-          result = super
-          @_passed_input = result if result.is_a? Result
-        rescue NoMethodError
-          raise CallMethodNotImplemented, 'You have to implement `call` method in your class before using it'
-        end
+        result = super
+        @_passed_input = result if result.is_a? Result
         enforce_data_format
         @_passed_input
       end
