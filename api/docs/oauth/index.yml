@@ -1,0 +1,64 @@
+openapi: 3.0.0
+servers:
+  - url: 'http://localhost:3000/spree_oauth'
+info:
+  version: 1.0.0
+  title: Spree OAuth 2.0 Authentication
+  description: >-
+    Spree uses the [Doorkeeper](https://github.com/doorkeeper-gem/doorkeeper) gem
+    for handling OAuth. This integration is built into `spree_api` gem.
+paths:
+  '/token':
+    post:
+      description: >-
+        Creates a new Bearer token. This token is essential to identify which
+        user is performing API actions.
+      tags:
+        - Token
+      responses:
+        '200':
+          description: 200 response means that that a token was succesfully created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token:
+                    type: string
+                    example: 2480c16561d1391ea81ca5336b651e9a29f4524f6dee8c7f3f02a600159189c3
+                  token_type:
+                    type: string
+                    example: Bearer
+                    default: Bearer
+                  expires_in:
+                    type: integer
+                    example: 7200
+                  refresh_token:
+                    type: string
+                    example: f5d78642252eeb3f3001f67b196ac21a27afc030462a54060b0ebbdae2b8dc9c
+                  created_at:
+                    type: integer
+                    example: 1539863418
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                grant_type:
+                  type: string
+                  default: password
+                  description: >-
+                    Selected doorkeeper grant type, see
+                    https://github.com/doorkeeper-gem/doorkeeper/wiki/Using-Resource-Owner-Password-Credentials-flow
+                username:
+                  type: string
+                  description: User email address
+                password:
+                  type: string
+                  description: User password
+              example:
+                grant_type: password
+                usernme: spree@example.com
+                password: spree123

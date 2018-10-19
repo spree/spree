@@ -7,7 +7,7 @@ Doorkeeper.configure do
 
   resource_owner_from_credentials do
     user = Spree.user_class.find_for_database_authentication(email: params[:username])
-    user if user && user.valid_for_authentication? { user.valid_password?(params[:password]) }
+    user if user&.valid_for_authentication? { user.valid_password?(params[:password]) }
   end
 
   use_refresh_token
