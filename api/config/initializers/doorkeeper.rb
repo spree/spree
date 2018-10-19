@@ -3,7 +3,7 @@ Doorkeeper.configure do
   use_refresh_token
   # api_only uncomment after release of new doorkeeper version
 
-  resource_owner_authenticator { current_user }
+  resource_owner_authenticator { current_spree_user }
 
   resource_owner_from_credentials do
     user = Spree.user_class.find_for_database_authentication(email: params[:username])
