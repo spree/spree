@@ -10,6 +10,10 @@ Doorkeeper.configure do
     user if user&.valid_for_authentication? { user.valid_password?(params[:password]) }
   end
 
+  admin_authenticator do |routes|
+    current_spree_user&.has_spree_role?('admin') || redirect_to(routes.root_url)
+  end
+
   use_refresh_token
 
   grant_flows %w(password)
