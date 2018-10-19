@@ -10,7 +10,6 @@ info:
     Product and Taxons catalog browsing. Account management is provided by
     `spree_auth_devise` extension.
 paths:
-
   '/cart':
     post:
       description: Creates new cart and order and returns their attributes. Order token, that can be obtained from attributes, can be used for guest checkout and further guest access to the order. This endpoint should be called before any other action on the cart
@@ -386,6 +385,11 @@ components:
     bearerAuth:
       type: http
       scheme: bearer
+      description: >-
+        User token to authorize Cart / Checkout requests. You can obtain it
+        from `http://your_store_url.com/spree_oauth` endpoint.
+        It is required to associate an Order with User.
+        See OAuth documentation for more details.
     orderToken:
       type: apiKey
       in: header
