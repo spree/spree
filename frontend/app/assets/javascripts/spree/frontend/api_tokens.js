@@ -2,12 +2,12 @@ Spree.fetchApiTokens = function () {
   fetch(Spree.routes.api_tokens, {
     method: 'GET',
     credentials: 'same-origin'
-  }).then(response => {
+  }).then(function (response) {
     switch (response.status) {
       case 200:
-        response.json().then(json => {
-          Spree.orderToken = json.order_token,
-          Spree.oauthToken = json.oauth_token
+        response.json().then(function (json) {
+          SpreeAPI.orderToken = json.order_token
+          SpreeAPI.oauthToken = json.oauth_token
         })
         break
     }

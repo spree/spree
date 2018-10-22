@@ -1,6 +1,7 @@
 //= require bootstrap-sprockets
 //= require jquery.payment
 //= require spree
+//= require spree/api/main
 //= require spree/frontend/api_tokens
 //= require spree/frontend/cart
 //= require spree/frontend/checkout
