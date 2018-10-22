@@ -17,3 +17,14 @@ Spree.routes.api_v2_storefront_cart_apply_coupon_code = Spree.pathFor('api/v2/st
 SpreeAPI.handle500error = function () {
   alert('Internal Server Error')
 }
+
+SpreeAPI.prepareHeaders = function (headers) {
+  // if signed in we need to pass the Bearer authorization token
+  // to assign this newly created Order to the currently signed in user
+  if (SpreeAPI.oauthToken) {
+    headers['Authorization'] = 'Bearer ' + SpreeAPI.oauthToken
+  }
+  headers['Accept'] = 'application/json'
+  headers['Content-Type'] = 'application/json'
+  return headers
+}
