@@ -35,9 +35,7 @@ describe 'Coupon code promotions', type: :feature, js: true do
     # OrdersController
     context 'on the payment page' do
       before do
-        visit spree.root_path
-        click_link 'RoR Mug'
-        click_button 'add-to-cart-button'
+        add_to_cart('RoR Mug')
         click_button 'Checkout'
         fill_in 'order_email', with: 'spree@example.com'
         fill_in 'First Name', with: 'John'

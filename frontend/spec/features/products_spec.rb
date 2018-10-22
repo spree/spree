@@ -13,12 +13,19 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
     allow(ENV).to receive(:[]).with(:SPREE_USE_PAPERCLIP).and_return(true)
   end
 
-  it 'is able to show the shopping cart after adding a product to it' do
+  it 'is able to show the shopping cart after adding a product to it', js: true do
     click_link 'Ruby on Rails Ringer T-Shirt'
     expect(page).to have_content('$19.99')
 
+    expect(page).to have_selector('form#add-to-cart-form')
+    expect(page).to have_selector('button#add-to-cart-button')
+    wait_for_condition do
+      expect(page.find('#add-to-cart-button').disabled?).to eq(false)
+    end
     click_button 'add-to-cart-button'
-    expect(page).to have_content('Shopping Cart')
+    wait_for_condition do
+      expect(page).to have_content(Spree.t(:shopping_cart))
+    end
   end
 
   describe 'correct displaying of microdata' do
@@ -316,11 +323,19 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
                              'Ruby on Rails Ringer T-Shirt'])
   end
 
-  it 'is able to put a product without a description in the cart' do
+  it 'is able to put a product without a description in the cart', js: true do
     product = FactoryBot.create(:base_product, description: nil, name: 'Sample', price: '19.99')
     visit spree.product_path(product)
+    expect(page).to have_selector('form#add-to-cart-form')
+    expect(page).to have_selector('button#add-to-cart-button')
     expect(page).to have_content 'This product has no description'
+    wait_for_condition do
+      expect(page.find('#add-to-cart-button').disabled?).to eq(false)
+    end
     click_button 'add-to-cart-button'
+    wait_for_condition do
+      expect(page).to have_content(Spree.t(:shopping_cart))
+    end
     expect(page).to have_content 'This product has no description'
   end
 

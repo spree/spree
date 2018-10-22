@@ -26,9 +26,7 @@ describe 'Free shipping promotions', type: :feature, js: true do
 
   context 'free shipping promotion automatically applied' do
     before do
-      visit spree.root_path
-      click_link 'RoR Mug'
-      click_button 'add-to-cart-button'
+      add_to_cart('RoR Mug')
       click_button 'Checkout'
       fill_in 'order_email', with: 'spree@example.com'
       fill_in 'First Name', with: 'John'
