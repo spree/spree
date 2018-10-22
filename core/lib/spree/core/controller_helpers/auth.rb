@@ -33,6 +33,13 @@ module Spree
           cookies.permanent.signed[:guest_token] ||= cookies.permanent.signed[:token]
         end
 
+        def current_oauth_token
+          user = try_spree_current_user
+          return unless user
+
+          @current_oauth_token ||= Doorkeeper::AccessToken.active_for(user).last || Doorkeeper::AccessToken.create!(resource_owner_id: user.id)
+        end
+
         def store_location
           # disallow return to login, logout, signup pages
           authentication_routes = [:spree_signup_path, :spree_login_path, :spree_logout_path]

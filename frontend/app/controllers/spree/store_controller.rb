@@ -17,6 +17,13 @@ module Spree
       fresh_when(simple_current_order)
     end
 
+    def api_tokens
+      render json: {
+        order_token: current_order&.token,
+        oauth_token: current_oauth_token&.token
+      }
+    end
+
     protected
 
     def config_locale
