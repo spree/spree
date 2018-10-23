@@ -8,7 +8,7 @@ FactoryBot.define do
     currency     { 'USD' }
 
     transient do
-      line_items_price { BigDecimal.new(10) }
+      line_items_price { BigDecimal(10) }
     end
 
     factory :order_with_totals do
