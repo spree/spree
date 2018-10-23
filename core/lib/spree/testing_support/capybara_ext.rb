@@ -1,4 +1,9 @@
 module CapybaraExt
+  # https://bugs.chromium.org/p/chromedriver/issues/detail?id=1771
+  def native_fill_in(selector, text)
+    text.to_s.split('').each { |char| find_field(selector).native.send_keys(char) }
+  end
+
   def page!
     save_and_open_page
   end

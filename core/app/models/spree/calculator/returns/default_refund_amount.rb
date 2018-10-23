@@ -31,7 +31,7 @@ module Spree
       end
 
       def percentage_of_line_item(return_item)
-        return_item.return_quantity / BigDecimal.new(inventory_unit.line_item.quantity)
+        return_item.return_quantity / BigDecimal(inventory_unit.line_item.quantity)
       end
     end
   end

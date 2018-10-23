@@ -253,14 +253,16 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
     it 'allows user to enter a new source' do
       choose 'use_existing_card_no'
 
-      fill_in 'Name on card', with: 'Spree Commerce'
-      fill_in 'Card Number', with: '4111111111111111'
-      fill_in 'card_expiry', with: '04 / 20'
-      fill_in 'Card Code', with: '123'
+      native_fill_in 'Name on card', 'Spree Commerce'
+      native_fill_in 'Card Number',  '4111111111111111'
+      native_fill_in 'card_expiry',  '04 / 20'
+      native_fill_in 'Card Code',    '123'
 
       expect { click_on 'Save and Continue' }.to change { Spree::CreditCard.count }.by 1
 
       click_on 'Place Order'
+
+      expect(page).to have_content(Spree.t(:thank_you_for_your_order))
       expect(page).to have_current_path(spree.order_path(Spree::Order.last))
     end
   end
@@ -433,7 +435,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
     context 'the promotion makes order free (downgrade it total to 0.0)' do
       let(:promotion2) { Spree::Promotion.create(name: 'test-7450', code: 'test-7450') }
       let(:calculator2) do
-        Spree::Calculator::FlatRate.create(preferences: { currency: 'USD', amount: BigDecimal.new('99999') })
+        Spree::Calculator::FlatRate.create(preferences: { currency: 'USD', amount: BigDecimal('99999') })
       end
       let(:action2) { Spree::Promotion::Actions::CreateItemAdjustments.create(calculator: calculator2) }
 

@@ -1,17 +1,13 @@
 module Spree
   module Checkout
     class Next
-      def initialize(order)
-        @order = order
+      prepend Spree::ServiceModule::Base
+
+      def call(order:)
+        return success(order.reload) if order.next
+
+        failure(order, order.errors.full_messages.join(', '))
       end
-
-      def call
-        order.next
-      end
-
-      private
-
-      attr_reader :order
     end
   end
 end

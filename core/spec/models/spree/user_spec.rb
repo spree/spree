@@ -69,7 +69,7 @@ end
 
 describe Spree.user_class, type: :model do
   context 'reporting' do
-    let(:order_value) { BigDecimal.new('80.94') }
+    let(:order_value) { BigDecimal('80.94') }
     let(:order_count) { 4 }
     let(:orders) { Array.new(order_count, double(total: order_value)) }
 
