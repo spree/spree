@@ -2,6 +2,8 @@ module Spree
   class CreditCard < Spree::Base
     include ActiveMerchant::Billing::CreditCardMethods
 
+    acts_as_paranoid
+
     belongs_to :payment_method
     belongs_to :user, class_name: Spree.user_class.to_s, foreign_key: 'user_id',
                       optional: true
