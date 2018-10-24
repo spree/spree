@@ -117,6 +117,22 @@ describe Spree::Payment, type: :model do
   end
 
   context 'validations' do
+    context 'when payment source is not required' do
+      it 'do not validate source presence' do
+        allow(gateway).to receive_messages source_required: false
+
+        payment.source = nil
+        expect(payment).to be_valid
+      end
+    end
+
+    context 'with payment source required' do
+      it 'validate source presence' do
+        payment.source = nil
+        expect(payment).not_to be_valid
+      end
+    end
+
     it 'returns useful error messages when source is invalid' do
       payment.source = Spree::CreditCard.new
       expect(payment).not_to be_valid

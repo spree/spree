@@ -24,6 +24,7 @@ module Spree
 
     validates :payment_method, presence: true
     validates :number, uniqueness: true
+    validates :source, presence: true, if: -> { payment_method&.source_required? }
 
     before_validation :validate_source
 
