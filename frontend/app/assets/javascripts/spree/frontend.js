@@ -1,6 +1,8 @@
 //= require bootstrap-sprockets
 //= require jquery.payment
 //= require spree
+//= require polyfill.min
+//= require fetch.umd
 //= require spree/api/main
 //= require spree/frontend/api_tokens
 //= require spree/frontend/cart
