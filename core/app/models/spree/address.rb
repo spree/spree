@@ -78,7 +78,7 @@ module Spree
     end
 
     def clone
-      self.class.new(attributes.except('id', 'updated_at', 'created_at'))
+      self.class.new(value_attributes)
     end
 
     def ==(other)
