@@ -1,4 +1,5 @@
 //= require spree/api/storefront/cart
+//= require spree/frontend/cart
 
 Spree.ready(function ($) {
   Spree.addImageHandlers = function () {
@@ -105,7 +106,7 @@ Spree.ready(function () {
       // we need to ensure that we have an existing cart we want to add the item to
       // if we have already a cart assigned to this guest / user this won't create
       // another one
-      SpreeAPI.Storefront.ensureCart(
+      Spree.ensureCart(
         function () {
           SpreeAPI.Storefront.addToCart(
             variantId,
@@ -120,9 +121,7 @@ Spree.ready(function () {
             },
             function (error) { alert(error) } // failure callback for 422 and 50x errors
           )
-        },
-        function (error) { alert(error) }, // failure callback for 422 and 50x errors,
-        true // set token cookie when creating a new order
+        }
       )
     })
   }

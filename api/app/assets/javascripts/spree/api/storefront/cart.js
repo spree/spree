@@ -1,13 +1,7 @@
 //= require spree/api/main
 
-SpreeAPI.Storefront.createCart = function (successCallback, failureCallback, setCookie) {
-  // setting this cookie is essential for communication with Rails frontend
-  var createCartUrl = Spree.routes.api_v2_storefront_cart_create
-  if (setCookie) {
-    createCartUrl += '?set_cookie=true'
-  }
-
-  fetch(createCartUrl, {
+SpreeAPI.Storefront.createCart = function (successCallback, failureCallback) {
+  fetch(Spree.routes.api_v2_storefront_cart_create, {
     method: 'POST',
     headers: SpreeAPI.prepareHeaders({})
   }).then(function (response) {
@@ -20,21 +14,12 @@ SpreeAPI.Storefront.createCart = function (successCallback, failureCallback, set
         break
       case 201:
         response.json().then(function (json) {
-          Spree.current_order_token = json.data.attributes.token // legacy - should be removed later
           SpreeAPI.orderToken = json.data.attributes.token
           successCallback()
         })
         break
     }
   })
-}
-
-SpreeAPI.Storefront.ensureCart = function (successCallback, failureCallback, setCookie) {
-  if (SpreeAPI.orderToken) {
-    successCallback()
-  } else {
-    SpreeAPI.Storefront.createCart(successCallback, failureCallback, setCookie)
-  }
 }
 
 SpreeAPI.Storefront.addToCart = function (variantId, quantity, options, successCallback, failureCallback) {
