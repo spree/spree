@@ -19,11 +19,17 @@ SpreeAPI.handle500error = function () {
 }
 
 SpreeAPI.prepareHeaders = function (headers) {
+  if (typeof headers === 'undefined') {
+    headers = {}
+  }
+
   // if signed in we need to pass the Bearer authorization token
-  // to assign this newly created Order to the currently signed in user
+  // so backend will recognize that actions are authorized in scope of this user
   if (SpreeAPI.oauthToken) {
     headers['Authorization'] = 'Bearer ' + SpreeAPI.oauthToken
   }
+
+  // default headers, required for POST/PATCH/DELETE requests
   headers['Accept'] = 'application/json'
   headers['Content-Type'] = 'application/json'
   return headers

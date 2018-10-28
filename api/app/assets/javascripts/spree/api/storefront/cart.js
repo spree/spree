@@ -3,7 +3,7 @@
 SpreeAPI.Storefront.createCart = function (successCallback, failureCallback) {
   fetch(Spree.routes.api_v2_storefront_cart_create, {
     method: 'POST',
-    headers: SpreeAPI.prepareHeaders({})
+    headers: SpreeAPI.prepareHeaders()
   }).then(function (response) {
     switch (response.status) {
       case 422:
