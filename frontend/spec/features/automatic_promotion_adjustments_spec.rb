@@ -30,9 +30,7 @@ describe 'Automatic promotions', type: :feature, js: true do
 
   context 'on the cart page' do
     before do
-      visit spree.root_path
-      click_link product.name
-      click_button 'add-to-cart-button'
+      add_to_cart(product.name)
     end
 
     it 'automatically applies the promotion once the order crosses the threshold' do
