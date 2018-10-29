@@ -1,5 +1,5 @@
-<%= form_for :order, url: populate_orders_path do |f| %>
-  <div class="row"id="inside-product-cart-form" data-hook="inside_product_cart_form" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
+<%= form_for :order, html: { id: 'add-to-cart-form' } do |f| %>
+  <div class="row" id="inside-product-cart-form" data-hook="inside_product_cart_form" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
     <% if @product.variants_and_option_values(current_currency).any? %>
       <div id="product-variants" class="col-lg-6 mt-4">
         <h3 class="product-section-title"><%= Spree.t(:variants) %></h3>
@@ -63,7 +63,7 @@
             <div class="input-group">
               <%= number_field_tag :quantity, 1, class: 'title form-control', min: 1 %>
               <div class="input-group-append">
-                <%= button_tag class: 'btn btn-success', id: 'add-to-cart-button', type: :submit do %>
+                <%= button_tag class: 'btn btn-success', id: 'add-to-cart-button', type: :submit, disabled: true do %>
                   <%= Spree.t(:add_to_cart) %>
                 <% end %>
               </div>

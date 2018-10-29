@@ -1,3 +1,9 @@
+spree_path = Rails.application.routes.url_helpers.try(:spree_path, trailing_slash: true) || '/'
+
+Rails.application.routes.draw do
+  use_doorkeeper scope: "#{spree_path}/spree_oauth"
+end
+
 Spree::Core::Engine.add_routes do
   namespace :api, defaults: { format: 'json' } do
     namespace :v1 do
@@ -136,7 +142,7 @@ Spree::Core::Engine.add_routes do
           patch  :apply_coupon_code
         end
 
-        resource :checkout, controller: :checkout do
+        resource :checkout, controller: :checkout, only: %i[update] do
           patch :next
           patch :advance
           patch :complete
@@ -148,8 +154,6 @@ Spree::Core::Engine.add_routes do
     end
 
     get '/404', to: 'errors#render_404'
-
-    spree_path = Rails.application.routes.url_helpers.try(:spree_path, trailing_slash: true) || '/'
 
     match 'v:api/*path', to: redirect { |params, request|
       format = ".#{params[:format]}" unless params[:format].blank?

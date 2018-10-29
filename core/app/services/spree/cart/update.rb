@@ -4,7 +4,7 @@ module Spree
       prepend Spree::ServiceModule::Base
 
       def call(order:, params:)
-        return failure(false) unless order.update_attributes(filter_order_items(order, params))
+        return failure(order, order.errors.full_messages.join(', ')) unless order.update_attributes(filter_order_items(order, params))
 
         order.line_items = order.line_items.select { |li| li.quantity > 0 }
         # Update totals, then check if the order is eligible for any cart promotions.
@@ -17,7 +17,7 @@ module Spree
           order.payments.store_credits.checkout.destroy_all
           order.update_with_updater!
         end
-        success(true)
+        success(order)
       end
 
       private

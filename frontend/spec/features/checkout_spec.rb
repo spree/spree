@@ -281,9 +281,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
       click_on 'Save and Continue'
       expect(page).to have_current_path(spree.checkout_state_path('payment'))
 
-      visit spree.root_path
-      click_link bag.name
-      click_button 'add-to-cart-button'
+      add_to_cart(bag.name)
 
       click_on 'Checkout'
       click_on 'Save and Continue'
@@ -337,9 +335,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
       let!(:bag) { create(:product, name: 'RoR Bag') }
 
       before do
-        visit spree.root_path
-        click_link bag.name
-        click_button 'add-to-cart-button'
+        add_to_cart(bag.name)
       end
 
       it 'redirects user back to address step' do
@@ -435,7 +431,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
     context 'the promotion makes order free (downgrade it total to 0.0)' do
       let(:promotion2) { Spree::Promotion.create(name: 'test-7450', code: 'test-7450') }
       let(:calculator2) do
-        Spree::Calculator::FlatRate.create(preferences: { currency: 'USD', amount: BigDecimal.new('99999') })
+        Spree::Calculator::FlatRate.create(preferences: { currency: 'USD', amount: BigDecimal('99999') })
       end
       let(:action2) { Spree::Promotion::Actions::CreateItemAdjustments.create(calculator: calculator2) }
 
@@ -746,8 +742,6 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
   end
 
   def add_mug_to_cart
-    visit spree.root_path
-    click_link mug.name
-    click_button 'add-to-cart-button'
+    add_to_cart(mug.name)
   end
 end

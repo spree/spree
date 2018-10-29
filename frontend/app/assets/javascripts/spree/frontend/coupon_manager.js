@@ -14,7 +14,6 @@ CouponManager.prototype.applyCoupon = function () {
       })
       this.couponCodeField.parent().append(this.couponStatus)
     }
-    this.createUrl()
     this.couponStatus.removeClass()
     this.sendRequest()
     return this.couponApplied
@@ -23,25 +22,24 @@ CouponManager.prototype.applyCoupon = function () {
   }
 }
 
-CouponManager.prototype.createUrl = function () {
-  this.url = Spree.url(Spree.routes.apply_coupon_code(Spree.current_order_id), {
-    order_token: Spree.current_order_token,
-    coupon_code: this.couponCode
-  })
-  return this.url
-}
-
 CouponManager.prototype.sendRequest = function () {
   return $.ajax({
     async: false,
-    method: 'PUT',
-    url: this.url
+    method: 'PATCH',
+    url: Spree.routes.api_v2_storefront_cart_apply_coupon_code,
+    dataType: 'json',
+    headers: {
+      'X-Spree-Order-Token': Spree.current_order_token
+    },
+    data: {
+      coupon_code: this.couponCode
+    }
   }).done(function () {
     this.couponCodeField.val('')
     this.couponStatus.addClass('alert-success').html(Spree.translations.coupon_code_applied)
     this.couponApplied = true
   }.bind(this)).fail(function (xhr) {
-    var handler = JSON.parse(xhr.responseText)
+    var handler = xhr.responseJSON
     this.couponStatus.addClass('alert-error').html(handler['error'])
   }.bind(this))
 }

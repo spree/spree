@@ -4,8 +4,10 @@ module Spree
       prepend Spree::ServiceModule::Base
 
       def call(order:, variant:, quantity: nil, options: {})
-        run :add_to_line_item
-        run Spree::Cart::Recalculate
+        ApplicationRecord.transaction do
+          run :add_to_line_item
+          run Spree::Cart::Recalculate
+        end
       end
 
       private
@@ -18,7 +20,7 @@ module Spree
 
         line_item_created = line_item.nil?
         if line_item.nil?
-          opts = ::Spree::PermittedAttributes.line_item_attributes.each_with_object({}) do |attribute, result|
+          opts = ::Spree::PermittedAttributes.line_item_attributes.flatten.each_with_object({}) do |attribute, result|
             result[attribute] = options[attribute]
           end.merge(currency: order.currency).delete_if { |_key, value| value.nil? }
 
@@ -30,7 +32,9 @@ module Spree
         end
 
         line_item.target_shipment = options[:shipment] if options.key? :shipment
-        line_item.save!
+
+        return failure(line_item, line_item.errors.full_messages.join(', ')) unless line_item.save
+
         ::Spree::TaxRate.adjust(order, [line_item.reload]) if line_item_created
         success(order: order, line_item: line_item, line_item_created: line_item_created, options: options)
       end
