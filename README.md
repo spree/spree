@@ -35,7 +35,7 @@ Try Spree with direct deployment on Heroku:
 If you want to run demo spree application on your machine, you can use our docker image with command below. It will
 download and run sample Spree application on http://localhost:3000 (Login: spree@example.com / spree123)
 ```shell
-docker run --rm -it -p 3000:3000 spreecommerce/spree:latest
+docker run --rm -it -p 3000:3000 spreecommerce/spree:3.6.4
 ```
 
 
