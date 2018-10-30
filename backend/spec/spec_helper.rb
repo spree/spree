@@ -41,27 +41,9 @@ require 'spree/testing_support/flash'
 require 'spree/testing_support/url_helpers'
 require 'spree/testing_support/order_walkthrough'
 require 'spree/testing_support/capybara_ext'
+require 'spree/testing_support/capybara_config'
 
 require 'spree/core/controller_helpers/strong_parameters'
-
-require 'capybara-screenshot/rspec'
-
-Capybara.save_path = ENV['CIRCLE_ARTIFACTS'] if ENV['CIRCLE_ARTIFACTS']
-
-Capybara.register_driver :chrome do |app|
-  Capybara::Selenium::Driver.new app,
-    browser: :chrome,
-    options: Selenium::WebDriver::Chrome::Options.new(args: %w[disable-popup-blocking headless disable-gpu window-size=1920,1080])
-end
-
-Capybara.javascript_driver = :chrome
-
-Capybara::Screenshot.register_driver(:chrome) do |driver, path|
-  driver.browser.save_screenshot(path)
-end
-
-# Set timeout to something high enough to allow CI to pass
-Capybara.default_max_wait_time = 45
 
 RSpec.configure do |config|
   config.color = true

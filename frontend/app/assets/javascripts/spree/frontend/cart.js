@@ -37,3 +37,23 @@ Spree.fetch_cart = function () {
     return $('#link-to-cart').html(data)
   })
 }
+
+Spree.ensureCart = function (successCallback) {
+  if (SpreeAPI.orderToken) {
+    successCallback()
+  } else {
+    fetch(Spree.routes.ensure_cart, {
+      method: 'POST',
+      credentials: 'same-origin'
+    }).then(function (response) {
+      switch (response.status) {
+        case 200:
+          response.json().then(function (json) {
+            SpreeAPI.orderToken = json.token
+            successCallback()
+          })
+          break
+      }
+    })
+  }
+}
