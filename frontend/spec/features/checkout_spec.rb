@@ -254,7 +254,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
       choose 'use_existing_card_no'
 
       fill_in 'Name on card', with: 'Spree Commerce'
-      fill_in 'Card Number', with: '4111111111111111'
+      fill_in 'Card Number', with: '1'
       fill_in 'card_expiry', with: '04 / 20'
       fill_in 'Card Code', with: '123'
 
