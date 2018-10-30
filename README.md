@@ -267,11 +267,9 @@ please ensure that you have a postgres user:
 createuser -s -r postgres
 ```
 
-And also ensure that you have [PhantomJS](http://phantomjs.org/) installed as well:
-
-```shell
-brew update && brew install phantomjs
-```
+And also ensure that you have [ChromeDriver](http://chromedriver.chromium.org) installed as well.
+Please follow this
+[instruction](https://github.com/SeleniumHQ/selenium/wiki/ChromeDriver) to install it.
 
 To execute all the tests, you may want to run this command at the
 root of the Spree project to generate test applications and run
