@@ -9,6 +9,8 @@ globals:
   Select2: true
   Handlebars: true
   Raphael: true
+  SpreeAPI: true
+  SpreePaths: true
 
 env:
   browser: true

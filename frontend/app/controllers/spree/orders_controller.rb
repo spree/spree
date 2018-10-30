@@ -40,6 +40,12 @@ module Spree
 
     # Adds a new item to the order (creating a new order if none already exists)
     def populate
+      ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
+        OrdersController#populate is deprecated and will be removed in Spree 4.0.
+        Please use `/api/v2/storefront/cart/add_item` endpoint instead.
+        See documentation: https://github.com/spree/spree/blob/master/api/docs/v2/storefront/index.yaml#L42
+      DEPRECATION
+
       order    = current_order(create_order_if_necessary: true)
       variant  = Spree::Variant.find(params[:variant_id])
       quantity = params[:quantity].to_i
@@ -74,6 +80,11 @@ module Spree
     end
 
     def populate_redirect
+      ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
+        OrdersController#populate is deprecated and will be removed in Spree 4.0.
+        Please use `/api/v2/storefront/cart/add_item` endpoint instead.
+        See documentation: https://github.com/spree/spree/blob/master/api/docs/v2/storefront/index.yaml#L42
+      DEPRECATION
       flash[:error] = Spree.t(:populate_get_error)
       redirect_to cart_path
     end

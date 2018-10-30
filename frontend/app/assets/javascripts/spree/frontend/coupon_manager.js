@@ -14,21 +14,12 @@ CouponManager.prototype.applyCoupon = function () {
       })
       this.couponCodeField.parent().append(this.couponStatus)
     }
-    this.createUrl()
     this.couponStatus.removeClass()
     this.sendRequest()
     return this.couponApplied
   } else {
     return true
   }
-}
-
-CouponManager.prototype.createUrl = function () {
-  this.url = Spree.url(Spree.routes.apply_coupon_code(Spree.current_order_id), {
-    order_token: Spree.current_order_token,
-    coupon_code: this.couponCode
-  })
-  return this.url
 }
 
 CouponManager.prototype.sendRequest = function () {
