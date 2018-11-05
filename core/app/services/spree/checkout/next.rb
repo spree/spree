@@ -6,7 +6,7 @@ module Spree
       def call(order:)
         return success(order.reload) if order.next
 
-        failure(order, order.errors.full_messages.join(', '))
+        failure(order)
       end
     end
   end
