@@ -1,65 +1,94 @@
 version: 2 # use CircleCI 2.0
-jobs: # a collection of steps
-  build: # runs not using Workflows must have a `build` job as entry point
-    parallelism: 4 # run four instances of this job in parallel
-    working_directory: ~/spree # directory where steps will run
-    docker: # run the steps with Docker
-      - image: circleci/ruby:2.5-node-browsers # ...with this image as the primary container; this is where all `steps` will run
-        environment: # environment variables for primary container
-          DB: postgres
-          DB_HOST: localhost
-          DB_USERNAME: postgres
-          CIRCLE_TEST_REPORTS: /tmp/test-results
-          CIRCLE_ARTIFACTS: /tmp/test-artifacts
-          BUNDLE_JOBS: 4
-          BUNDLE_RETRY: 3
-          BUNDLE_PATH: ~/spree/vendor/bundle
-          SPREE_USE_PAPERCLIP: true
-      - image: circleci/postgres:10-alpine # database image
-        environment: # environment variables for database
-          POSTGRES_USER: postgres
-    steps: # a collection of executable commands
-      - checkout # special step to check out source code to working directory
 
-      # Which version of bundler?
-      - run:
-          name: Which bundler?
-          command: bundle -v
+defaults: &defaults
+  environment: &environment
+    CIRCLE_TEST_REPORTS: /tmp/test-results
+    CIRCLE_ARTIFACTS: /tmp/test-artifacts
+    BUNDLE_JOBS: 4
+    BUNDLE_RETRY: 3
+    BUNDLE_PATH: ~/spree/vendor/bundle
+    SPREE_USE_PAPERCLIP: true
+  working_directory: ~/spree
+  docker:
+    - image: &image circleci/ruby:2.5-node-browsers
 
-      # Restore bundle cache
+run_tests: &run_tests
+  <<: *defaults
+  parallelism: 4
+  steps:
+    - checkout
+    - restore_cache:
+        keys:
+          - spree-bundle-v2-{{ .Branch }}-{{ checksum ".ruby-version" }}
+          - spree-bundle-v2-{{ checksum ".ruby-version" }}
+    - run:
+        name: Ensure Bundle Install
+        command: |
+          bundle check --path=~/spree/vendor/bundle || bundle install
+          ./build-ci.rb install
+    - run:
+        name: Run rspec in parallel
+        command: BUNDLE_GEMFILE=../Gemfile ./build-ci.rb test
+    - store_artifacts:
+        path: /tmp/test-artifacts
+        destination: test-artifacts
+    - store_artifacts:
+        path: /tmp/test-results
+        destination: raw-test-output
+    - store_test_results:
+        path: /tmp/test-results
+
+jobs:
+  bundle_install:
+    <<: *defaults
+    steps:
+      - checkout
       - restore_cache:
           keys:
             - spree-bundle-v2-{{ .Branch }}-{{ checksum ".ruby-version" }}
             - spree-bundle-v2-{{ checksum ".ruby-version" }}
-
-      # Install gem dependencies
       - run:
           name: Bundle Install
           command: |
             bundle check --path=~/spree/vendor/bundle || bundle install
             ./build-ci.rb install
-
-      # Store bundle cache
       - save_cache:
           key: spree-bundle-v2-{{ .Branch }}-{{ checksum ".ruby-version" }}
           paths:
             - ~/spree/vendor/bundle
 
-      - run:
-          name: Wait for DB
-          command: dockerize -wait tcp://localhost:5432 -timeout 1m
+  run_tests_postgres:
+    <<: *run_tests
+    environment:
+      <<: *environment
+      DB: postgres
+      DB_HOST: localhost
+      DB_USERNAME: postgres
+    docker:
+      - image: *image
+      - image: circleci/postgres:10-alpine
+        environment:
+          POSTGRES_USER: postgres
 
-      - run:
-          name: Run rspec in parallel
-          command: BUNDLE_GEMFILE=../Gemfile ./build-ci.rb test
+  run_tests_mysql:
+    <<: *run_tests
+    environment:
+      <<: *environment
+      DB: mysql
+      DB_HOST: 127.0.0.1
+      DB_USERNAME: root
+    docker:
+      - image: *image
+      - image: circleci/mysql:5.7
 
-      - store_artifacts:
-          path: /tmp/test-artifacts
-          destination: test-artifacts
-
-      - store_artifacts:
-          path: /tmp/test-results
-          destination: raw-test-output
-
-      - store_test_results:
-          path: /tmp/test-results
+workflows:
+  version: 2
+  main:
+    jobs:
+      - bundle_install
+      - run_tests_postgres:
+          requires:
+            - bundle_install
+      - run_tests_mysql:
+          requires:
+            - bundle_install

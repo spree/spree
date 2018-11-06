@@ -8,6 +8,7 @@ if ENV['COVERAGE']
     add_group 'Models', 'app/models'
     add_group 'Views', 'app/views'
     add_group 'Jobs', 'app/jobs'
+    add_group 'Services', 'app/services'
     add_group 'Libraries', 'lib'
   end
 end

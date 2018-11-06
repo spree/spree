@@ -7,6 +7,7 @@ if ENV['COVERAGE']
     add_group 'Mailers', 'app/mailers'
     add_group 'Models', 'app/models'
     add_group 'Views', 'app/views'
+    add_group 'Serializers', 'app/serializers'
     add_group 'Libraries', 'lib'
   end
 end
