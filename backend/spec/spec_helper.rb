@@ -58,14 +58,6 @@ RSpec.configure do |config|
   # instead of true.
   config.use_transactional_fixtures = false
 
-  # Config for running specs while have transition period from Paperclip to ActiveStorage
-  if Rails.application.config.use_paperclip
-    config.filter_run_excluding :active_storage
-  else
-    config.filter_run_including :active_storage
-    config.run_all_when_everything_filtered = true
-  end
-
   config.before :suite do
     Capybara.match = :prefer_exact
     DatabaseCleaner.clean_with :truncation

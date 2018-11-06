@@ -56,14 +56,6 @@ RSpec.configure do |config|
     Spree::Api::Config[:requires_authentication] = true
   end
 
-  # Config for running specs while have transition period from Paperclip to ActiveStorage
-  if Rails.application.config.use_paperclip
-    config.filter_run_excluding :active_storage
-  else
-    config.filter_run_including :active_storage
-    config.run_all_when_everything_filtered = true
-  end
-
   config.include VersionCake::TestHelpers, type: :controller
   config.before(:each, type: :controller) do
     set_request_version('', 1)

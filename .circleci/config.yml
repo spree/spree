@@ -7,7 +7,6 @@ defaults: &defaults
     BUNDLE_JOBS: 4
     BUNDLE_RETRY: 3
     BUNDLE_PATH: ~/spree/vendor/bundle
-    SPREE_USE_PAPERCLIP: true
   working_directory: ~/spree
   docker:
     - image: &image circleci/ruby:2.5-node-browsers
@@ -57,9 +56,9 @@ jobs:
           paths:
             - ~/spree/vendor/bundle
 
-  run_tests_postgres:
+  run_tests_postgres: &run_tests_postgres
     <<: *run_tests
-    environment:
+    environment: &postgres_environment
       <<: *environment
       DB: postgres
       DB_HOST: localhost
@@ -69,6 +68,12 @@ jobs:
       - image: circleci/postgres:10-alpine
         environment:
           POSTGRES_USER: postgres
+
+  run_tests_postgres_paperclip:
+      <<: *run_tests_postgres
+      environment:
+        <<: *postgres_environment
+        SPREE_USE_PAPERCLIP: true
 
   run_tests_mysql:
     <<: *run_tests
@@ -91,4 +96,8 @@ workflows:
             - bundle_install
       - run_tests_mysql:
           requires:
+            - bundle_install
+      - run_tests_postgres_paperclip:
+          requires:
+            - run_tests_postgres
             - bundle_install

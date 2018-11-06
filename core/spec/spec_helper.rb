@@ -45,14 +45,6 @@ RSpec.configure do |config|
   config.mock_with :rspec
   config.raise_errors_for_deprecations!
 
-  # Config for running specs while have transition period from Paperclip to ActiveStorage
-  if Rails.application.config.use_paperclip
-    config.filter_run_excluding :active_storage
-  else
-    config.filter_run_including :active_storage
-    config.run_all_when_everything_filtered = true
-  end
-
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, comment the following line or assign false
   # instead of true.
