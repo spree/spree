@@ -42,6 +42,7 @@ require 'spree/testing_support/url_helpers'
 require 'spree/testing_support/order_walkthrough'
 require 'spree/testing_support/capybara_ext'
 require 'spree/testing_support/capybara_config'
+require 'spree/testing_support/image_helpers'
 
 require 'spree/core/controller_helpers/strong_parameters'
 
@@ -105,6 +106,7 @@ RSpec.configure do |config|
   config.include Spree::TestingSupport::UrlHelpers
   config.include Spree::TestingSupport::ControllerRequests, type: :controller
   config.include Spree::TestingSupport::Flash
+  config.include Spree::TestingSupport::ImageHelpers
 
   config.include Spree::Core::ControllerHelpers::StrongParameters, type: :controller
 

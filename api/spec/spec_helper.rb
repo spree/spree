@@ -31,6 +31,7 @@ Dir[File.dirname(__FILE__) + '/support/**/*.rb'].each { |f| require f }
 
 require 'spree/testing_support/factories'
 require 'spree/testing_support/preferences'
+require 'spree/testing_support/image_helpers'
 
 require 'spree/api/testing_support/caching'
 require 'spree/api/testing_support/helpers'
@@ -51,6 +52,7 @@ RSpec.configure do |config|
   config.include Spree::Api::TestingSupport::Helpers, type: :request
   config.extend Spree::Api::TestingSupport::Setup, type: :controller
   config.include Spree::TestingSupport::Preferences, type: :controller
+  config.include Spree::TestingSupport::ImageHelpers
 
   config.before do
     Spree::Api::Config[:requires_authentication] = true

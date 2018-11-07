@@ -44,6 +44,7 @@ require 'spree/testing_support/url_helpers'
 require 'spree/testing_support/order_walkthrough'
 require 'spree/testing_support/caching'
 require 'spree/testing_support/capybara_config'
+require 'spree/testing_support/image_helpers'
 
 RSpec.configure do |config|
   config.color = true
@@ -104,6 +105,7 @@ RSpec.configure do |config|
   config.include Spree::TestingSupport::UrlHelpers
   config.include Spree::TestingSupport::ControllerRequests, type: :controller
   config.include Spree::TestingSupport::Flash
+  config.include Spree::TestingSupport::ImageHelpers
 
   config.order = :random
   Kernel.srand config.seed

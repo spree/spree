@@ -70,7 +70,7 @@ module Spree
     end
 
     it 'variants returned contain images data' do
-      variant.images.create!(attachment: image('thinking-cat.jpg'))
+      create_image(variant, image('thinking-cat.jpg'))
 
       api_get :index
 
@@ -131,7 +131,7 @@ module Spree
     end
 
     it 'can see a single variant with images' do
-      variant.images.create!(attachment: image('thinking-cat.jpg'))
+      create_image(variant, image('thinking-cat.jpg'))
 
       api_get :show, id: variant.to_param
 
