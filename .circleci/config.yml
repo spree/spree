@@ -18,8 +18,8 @@ run_tests: &run_tests
     - checkout
     - restore_cache:
         keys:
-          - spree-bundle-v2-{{ .Branch }}-{{ checksum ".ruby-version" }}
-          - spree-bundle-v2-{{ checksum ".ruby-version" }}
+          - spree-bundle-v3-{{ .Branch }}-{{ checksum ".ruby-version" }}
+          - spree-bundle-v3-{{ checksum ".ruby-version" }}
     - run:
         name: Ensure Bundle Install
         command: |
@@ -44,15 +44,15 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - spree-bundle-v2-{{ .Branch }}-{{ checksum ".ruby-version" }}
-            - spree-bundle-v2-{{ checksum ".ruby-version" }}
+            - spree-bundle-v3-{{ .Branch }}-{{ checksum ".ruby-version" }}
+            - spree-bundle-v3-{{ checksum ".ruby-version" }}
       - run:
           name: Bundle Install
           command: |
             bundle check --path=~/spree/vendor/bundle || bundle install
             ./build-ci.rb install
       - save_cache:
-          key: spree-bundle-v2-{{ .Branch }}-{{ checksum ".ruby-version" }}
+          key: spree-bundle-v3-{{ .Branch }}-{{ checksum ".ruby-version" }}
           paths:
             - ~/spree/vendor/bundle
 
@@ -84,7 +84,8 @@ jobs:
       DB_USERNAME: root
     docker:
       - image: *image
-      - image: circleci/mysql:5.7
+      - image: circleci/mysql:8-ram
+        command: [--default-authentication-plugin=mysql_native_password]
 
 workflows:
   version: 2
