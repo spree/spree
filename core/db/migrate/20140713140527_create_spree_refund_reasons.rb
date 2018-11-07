@@ -5,7 +5,7 @@ class CreateSpreeRefundReasons < ActiveRecord::Migration[4.2]
       t.boolean :active, default: true
       t.boolean :mutable, default: true
 
-      t.timestamps null: false
+      t.timestamps null: false, precision: 6
     end
 
     add_column :spree_refunds, :refund_reason_id, :integer

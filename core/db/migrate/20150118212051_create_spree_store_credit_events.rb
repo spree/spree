@@ -9,7 +9,7 @@ class CreateSpreeStoreCreditEvents < ActiveRecord::Migration[4.2]
       t.integer  :originator_id
       t.string   :originator_type
       t.datetime :deleted_at
-      t.timestamps null: false
+      t.timestamps null: false, precision: 6
     end
     add_index :spree_store_credit_events, :store_credit_id
     add_index :spree_store_credit_events, [:originator_id, :originator_type], name: :spree_store_credit_events_originator
