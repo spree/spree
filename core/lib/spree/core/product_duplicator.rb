@@ -58,7 +58,12 @@ module Spree
 
     def duplicate_image(image)
       new_image = image.dup
-      new_image.assign_attributes(attachment: image.attachment.clone)
+      if Rails.application.config.use_paperclip
+        new_image.assign_attributes(attachment: image.attachment.clone)
+      else
+        new_image.attachment.attach(image.attachment.blob)
+      end
+      new_image.save!
       new_image
     end
 

@@ -5,19 +5,23 @@ module Spree
     let(:product) { create(:product, properties: [create(:property, name: 'MyProperty')]) }
     let!(:duplicator) { Spree::ProductDuplicator.new(product) }
 
-    let(:image) { File.open(File.expand_path('../../../fixtures/thinking-cat.jpg', __FILE__)) }
+    let(:file) { File.open(File.expand_path('../../../fixtures/thinking-cat.jpg', __FILE__)) }
     let(:params) do
       {
         viewable_id: product.master.id,
         viewable_type: 'Spree::Variant',
-        attachment: image,
+        attachment: file,
         alt: 'position 1',
         position: 1
       }
     end
 
     before do
-      Spree::Image.create(params)
+      new_image = Spree::Image.new(params)
+      unless Rails.application.config.use_paperclip
+        new_image.attachment.attach(io: file, filename: File.basename(file))
+      end
+      new_image.save!
     end
 
     it 'will duplicate the product' do
