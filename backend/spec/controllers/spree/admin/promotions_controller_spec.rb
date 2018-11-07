@@ -53,8 +53,7 @@ describe Spree::Admin::PromotionsController, type: :controller do
 
       it 'creates a copy of promotion with changed fields' do
         subject
-        new_promo = Spree::Promotion.order(:created_at).last
-
+        new_promo = Spree::Promotion.last
         expect(new_promo.name).to eq 'New name1'
         expect(new_promo.code).to eq 'code1_new'
         expect(new_promo.path).to eq 'path1_new'
