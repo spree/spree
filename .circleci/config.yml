@@ -18,7 +18,7 @@ run_tests: &run_tests
     - checkout
     - restore_cache:
         keys:
-          - spree-bundle-v3-{{ .Branch }}-{{ checksum ".ruby-version" }}
+          - spree-bundle-v3-{{ checksum ".ruby-version" }}-{{ .Branch }}
           - spree-bundle-v3-{{ checksum ".ruby-version" }}
     - run:
         name: Ensure Bundle Install
@@ -44,7 +44,7 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - spree-bundle-v3-{{ .Branch }}-{{ checksum ".ruby-version" }}
+            - spree-bundle-v3-{{ checksum ".ruby-version" }}-{{ .Branch }}
             - spree-bundle-v3-{{ checksum ".ruby-version" }}
       - run:
           name: Bundle Install
@@ -52,7 +52,7 @@ jobs:
             bundle check --path=~/spree/vendor/bundle || bundle install
             ./build-ci.rb install
       - save_cache:
-          key: spree-bundle-v3-{{ .Branch }}-{{ checksum ".ruby-version" }}
+          key: spree-bundle-v3-{{ checksum ".ruby-version" }}-{{ .Branch }}
           paths:
             - ~/spree/vendor/bundle
 
