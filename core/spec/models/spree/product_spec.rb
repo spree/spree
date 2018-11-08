@@ -476,13 +476,23 @@ describe Spree::Product, type: :model do
 
   context '#images' do
     let(:product) { create(:product) }
-    let(:image) { File.open(File.expand_path('../../../fixtures/thinking-cat.jpg', __FILE__)) }
-    let(:params) { { viewable_id: product.master.id, viewable_type: 'Spree::Variant', attachment: image, alt: 'position 2', position: 2 } }
+    let(:file) { File.open(File.expand_path('../../../fixtures/thinking-cat.jpg', __FILE__)) }
+    let(:params) { { viewable_id: product.master.id, viewable_type: 'Spree::Variant', attachment: file, alt: 'position 2', position: 2 } }
 
     before do
-      Spree::Image.create(params)
-      Spree::Image.create(params.merge(alt: 'position 1', position: 1))
-      Spree::Image.create(params.merge(viewable_type: 'ThirdParty::Extension', alt: 'position 1', position: 2))
+      images = [
+        Spree::Image.create(params),
+        Spree::Image.create(params.merge(alt: 'position 1', position: 1)),
+        Spree::Image.create(params.merge(viewable_type: 'ThirdParty::Extension', alt: 'position 1', position: 2))
+      ]
+      # fix for ActiveStorage
+      unless Rails.application.config.use_paperclip
+        images.each_with_index do |image, index|
+          image.attachment.attach(io: file, filename: "thinking-cat-#{index + 1}.jpg", content_type: 'image/jpeg')
+          image.save!
+          file.rewind # we need to do this to avoid `ActiveStorage::IntegrityError`
+        end
+      end
     end
 
     it 'only looks for variant images' do

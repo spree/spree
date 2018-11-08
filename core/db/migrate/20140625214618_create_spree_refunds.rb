@@ -6,7 +6,7 @@ class CreateSpreeRefunds < ActiveRecord::Migration[4.2]
       t.decimal :amount, precision: 10, scale: 2, default: 0.0, null: false
       t.string :transaction_id
 
-      t.timestamps null: false
+      t.timestamps null: false, precision: 6
     end
   end
 end

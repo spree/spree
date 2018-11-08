@@ -72,22 +72,12 @@ class Project
   # @return [Boolean]
   #   the success of the tests
   def run_tests
-    # HACK: supporting test coverage as for Paperclip, as for ActiveStorage
-    # remove after, Paperclip going to be deprecated
-    # system(%w[bundle exec rspec] + rspec_arguments)
-    if name == 'core'
-      paperclip_test = system(%w[bundle exec rspec] + rspec_arguments('paperclip'))
-      ENV['SPREE_USE_PAPERCLIP'] = nil
-      active_storage_test = system(%w[bundle exec rspec] + rspec_arguments('active_storage'))
-      paperclip_test && active_storage_test
-    else
-      system(%w[bundle exec rspec] + rspec_arguments)
-    end
+    system(%w[bundle exec rspec] + rspec_arguments)
   end
 
   def rspec_arguments(custom_name = name)
     args = []
-    args += %w[--order random]
+    args += %w[--order random --format documentation --profile 10]
     if report_dir = ENV['CIRCLE_TEST_REPORTS']
       args += %W[-r rspec_junit_formatter --format RspecJunitFormatter -o #{report_dir}/rspec/#{custom_name}.xml]
     end

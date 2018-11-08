@@ -123,7 +123,6 @@ module Spree
         # This is to include all products and not just deleted products.
         @search = @collection.ransack(params[:q].reject { |k, _v| k.to_s == 'deleted_at_null' })
         @collection = @search.result.
-                      distinct_by_product_ids(params[:q][:s]).
                       includes(product_includes).
                       page(params[:page]).
                       per(params[:per_page] || Spree::Config[:admin_products_per_page])

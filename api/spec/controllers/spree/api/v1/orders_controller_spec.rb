@@ -440,7 +440,7 @@ module Spree
         end
 
         it 'can list its line items with images' do
-          order.line_items.first.variant.images.create!(attachment: image('thinking-cat.jpg'))
+          create_image(order.line_items.first.variant, image('thinking-cat.jpg'))
 
           api_get :show, id: order.to_param
 
