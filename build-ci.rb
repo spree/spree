@@ -77,7 +77,7 @@ class Project
 
   def rspec_arguments(custom_name = name)
     args = []
-    args += %w[--order random]
+    args += %w[--order random --format documentation --profile 10]
     if report_dir = ENV['CIRCLE_TEST_REPORTS']
       args += %W[-r rspec_junit_formatter --format RspecJunitFormatter -o #{report_dir}/rspec/#{custom_name}.xml]
     end
