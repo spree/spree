@@ -83,11 +83,68 @@ jobs:
       DB_HOST: 127.0.0.1
       DB_USERNAME: root
       COVERAGE: true
-      COVERAGE_DIR: /tmp/test/simplecov
+      COVERAGE_DIR: /tmp/workspace/simplecov
     docker:
       - image: *image
       - image: circleci/mysql:8-ram
         command: [--default-authentication-plugin=mysql_native_password]
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - spree-bundle-v3-{{ checksum ".ruby-version" }}-{{ .Branch }}
+            - spree-bundle-v3-{{ checksum ".ruby-version" }}
+      - run:
+          name: Ensure Bundle Install
+          command: |
+            bundle check --path=~/spree/vendor/bundle || bundle install
+            ./build-ci.rb install
+      - run:
+          name: Run rspec in parallel
+          command: BUNDLE_GEMFILE=../Gemfile ./build-ci.rb test
+      - store_artifacts:
+          path: /tmp/test-artifacts
+          destination: test-artifacts
+      - store_artifacts:
+          path: /tmp/test-results
+          destination: raw-test-output
+      - store_test_results:
+          path: /tmp/test-results
+      - persist_to_workspace:
+          root: /tmp/workspace
+          paths:
+            - simplecov
+
+  send_test_coverage:
+    <<: *defaults
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /tmp/workspace
+      - run:
+          name:  Download cc-test-reporter
+          command: |
+            mkdir -p tmp/
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./tmp/cc-test-reporter
+            chmod +x ./tmp/cc-test-reporter
+      - run:
+          name: Setup ENVs
+          command: |
+            export GIT_BRANCH="$CIRCLE_BRANCH"
+            export GIT_COMMIT_SHA="$CIRCLE_SHA1"
+            export GIT_COMMITTED_AT="$(date +%s)"
+      - run:
+          name: Format test coverage
+          command: |
+            ./tmp/cc-test-reporter format-coverage -t simplecov -o tmp/codeclimate.api.json /tmp/workspace/simplecov/api/.resultset.json
+            ./tmp/cc-test-reporter format-coverage -t simplecov -o tmp/codeclimate.backend.json /tmp/workspace/simplecov/backend/.resultset.json
+            ./tmp/cc-test-reporter format-coverage -t simplecov -o tmp/codeclimate.core.json /tmp/workspace/simplecov/core/.resultset.json
+            ./tmp/cc-test-reporter format-coverage -t simplecov -o tmp/codeclimate.frontend.json /tmp/workspace/simplecov/frontend/.resultset.json
+      - run:
+          name: Upload coverage results to Code Climate
+          command: |
+            ./tmp/cc-test-reporter sum-coverage tmp/codeclimate.*.json -p 4 -o tmp/codeclimate.total.json
+            ./tmp/cc-test-reporter upload-coverage -i tmp/codeclimate.total.json
 
 workflows:
   version: 2
@@ -103,4 +160,6 @@ workflows:
       - run_tests_postgres_paperclip:
           requires:
             - run_tests_postgres
-            - bundle_install
+      - send_test_coverage:
+          requires:
+            - run_tests_mysql
