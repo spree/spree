@@ -8,6 +8,8 @@ if ENV['COVERAGE']
     add_group 'Models', 'app/models'
     add_group 'Views', 'app/views'
     add_group 'Libraries', 'lib'
+
+    coverage_dir "#{ENV['COVERAGE_DIR']}/frontend" if ENV['COVERAGE_DIR']
   end
 end
 

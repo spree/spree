@@ -82,6 +82,8 @@ jobs:
       DB: mysql
       DB_HOST: 127.0.0.1
       DB_USERNAME: root
+      COVERAGE: true
+      COVERAGE_DIR: /tmp/test/simplecov
     docker:
       - image: *image
       - image: circleci/mysql:8-ram

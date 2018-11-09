@@ -10,6 +10,8 @@ if ENV['COVERAGE']
     add_group 'Jobs', 'app/jobs'
     add_group 'Services', 'app/services'
     add_group 'Libraries', 'lib'
+
+    coverage_dir "#{ENV['COVERAGE_DIR']}/core" if ENV['COVERAGE_DIR']
   end
 end
 

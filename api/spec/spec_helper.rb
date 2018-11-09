@@ -9,6 +9,8 @@ if ENV['COVERAGE']
     add_group 'Views', 'app/views'
     add_group 'Serializers', 'app/serializers'
     add_group 'Libraries', 'lib'
+
+    coverage_dir "#{ENV['COVERAGE_DIR']}/api" if ENV['COVERAGE_DIR']
   end
 end
 
