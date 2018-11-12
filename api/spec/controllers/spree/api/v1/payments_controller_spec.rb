@@ -36,6 +36,7 @@ module Spree
         end
 
         it 'can create a new payment' do
+          allow_any_instance_of(Spree::PaymentMethod).to receive(:source_required?).and_return(false)
           api_post :create, payment: { payment_method_id: PaymentMethod.first.id, amount: 50 }
           expect(response.status).to eq(201)
           expect(json_response).to have_attributes(attributes)

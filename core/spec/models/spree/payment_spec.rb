@@ -119,7 +119,7 @@ describe Spree::Payment, type: :model do
   context 'validations' do
     context 'when payment source is not required' do
       it 'do not validate source presence' do
-        allow(gateway).to receive_messages source_required: false
+        allow_any_instance_of(Spree::PaymentMethod).to receive(:source_required?).and_return(false)
 
         payment.source = nil
         expect(payment).to be_valid
@@ -559,7 +559,7 @@ describe Spree::Payment, type: :model do
       it 'updates payment_state and shipments' do
         expect(order.updater).to receive(:update_payment_state)
         expect(order.updater).to receive(:update_shipment_state)
-        Spree::Payment.create(amount: 100, order: order, payment_method: gateway)
+        Spree::Payment.create(amount: 100, order: order, payment_method: gateway, source: card)
       end
     end
 
