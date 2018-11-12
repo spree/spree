@@ -260,9 +260,13 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
         }
       end
 
-      it 'returns validation errors' do
+      it 'returns 422 HTTP status' do
         expect(response.status).to eq(422)
+      end
+
+      it 'returns validation errors' do
         expect(json_response['error']).to eq('Customer E-Mail is invalid')
+        expect(json_response['errors']).to eq('email' => ['is invalid'])
       end
     end
   end
