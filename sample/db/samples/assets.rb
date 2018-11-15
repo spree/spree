@@ -23,6 +23,7 @@ unless ENV['SKIP_SAMPLE_IMAGES']
     images_path = Pathname.new(File.dirname(__FILE__)) + 'images'
     path = images_path + file_name(name, type)
     return false unless File.exist?(path)
+
     File.open(path)
   end
 
