@@ -52,6 +52,7 @@ BlockLength:
   Exclude:
     - '**/spec/**/*'
     - '**/*.rake'
+    - '**/factories/**/*'
 
 Metrics/AbcSize:
  Max: 45
