@@ -45,6 +45,7 @@ describe Spree::Variant, type: :model do
       before do
         product.master.stock_items.first.set_count_on_hand(5)
       end
+
       context 'when product is created without variants but with stock' do
         it { expect(product.master).to be_in_stock }
       end
@@ -297,6 +298,7 @@ describe Spree::Variant, type: :model do
   context '#cost_currency' do
     context 'when cost currency is nil' do
       before { variant.cost_currency = nil }
+
       it 'populates cost currency with the default value on save' do
         variant.save!
         expect(variant.cost_currency).to eql 'USD'
@@ -305,10 +307,11 @@ describe Spree::Variant, type: :model do
   end
 
   describe '.price_in' do
+    subject { variant.price_in(currency).display_amount }
+
     before do
       variant.prices << create(:price, variant: variant, currency: 'EUR', amount: 33.33)
     end
-    subject { variant.price_in(currency).display_amount }
 
     context 'when currency is not specified' do
       let(:currency) { nil }
@@ -336,11 +339,11 @@ describe Spree::Variant, type: :model do
   end
 
   describe '.amount_in' do
+    subject { variant.amount_in(currency) }
+
     before do
       variant.prices << create(:price, variant: variant, currency: 'EUR', amount: 33.33)
     end
-
-    subject { variant.amount_in(currency) }
 
     context 'when currency is not specified' do
       let(:currency) { nil }
@@ -657,6 +660,7 @@ describe Spree::Variant, type: :model do
 
   describe 'deleted_at scope' do
     before { variant.destroy && variant.reload }
+
     it 'has a price if deleted' do
       variant.price = 10
       expect(variant.price).to eq(10)
@@ -828,10 +832,12 @@ describe Spree::Variant, type: :model do
       context 'product and master_variant present and equal' do
         context 'price nil and currency present' do
           before { variant.price = nil }
+
           it { expect(variant.send(:check_price)).to be(nil) }
 
           context 'check variant price' do
             before { variant.send(:check_price) }
+
             it { expect(variant.price).to eq(variant.product.master.price) }
           end
         end

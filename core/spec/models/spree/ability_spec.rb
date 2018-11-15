@@ -40,12 +40,12 @@ describe Spree::Ability, type: :model do
 
   context '#abilities_to_register' do
     it 'adds the ability to the list of abilities' do
-      allow_any_instance_of(Spree::Ability).to receive(:abilities_to_register) { [FooAbility] }
+      allow_any_instance_of(Spree::Ability).to receive(:abilities_to_register).and_return([FooAbility])
       expect(Spree::Ability.new(user).abilities).to include FooAbility
     end
 
     it 'applies the registered abilities permissions' do
-      allow_any_instance_of(Spree::Ability).to receive(:abilities_to_register) { [FooAbility] }
+      allow_any_instance_of(Spree::Ability).to receive(:abilities_to_register).and_return([FooAbility])
       expect(Spree::Ability.new(user).can?(:update, mock_model(Spree::Order, id: 1))).to be true
     end
   end
@@ -55,6 +55,7 @@ describe Spree::Ability, type: :model do
 
     context 'with admin user' do
       before { allow(user).to receive(:has_spree_role?).and_return(true) }
+
       it_behaves_like 'access granted'
       it_behaves_like 'index allowed'
     end
@@ -157,12 +158,14 @@ describe Spree::Ability, type: :model do
 
       context 'requested by same user' do
         before { resource.user = user }
+
         it_behaves_like 'access granted'
         it_behaves_like 'no index allowed'
       end
 
       context 'requested by other user' do
         before { resource.user = Spree.user_class.new }
+
         it_behaves_like 'create only'
       end
 
@@ -170,6 +173,7 @@ describe Spree::Ability, type: :model do
         let(:token) { 'TOKEN123' }
 
         before { allow(resource).to receive_messages token: token }
+
         it_behaves_like 'access granted'
         it_behaves_like 'no index allowed'
       end
@@ -178,6 +182,7 @@ describe Spree::Ability, type: :model do
         let(:token) { 'FAIL' }
 
         before { allow(resource).to receive_messages token: token }
+
         it_behaves_like 'create only'
       end
     end
@@ -237,6 +242,7 @@ describe Spree::Ability, type: :model do
         it_behaves_like 'access granted'
         it_behaves_like 'no index allowed'
       end
+
       context 'requested by other user' do
         let(:resource) { create(:user) }
 

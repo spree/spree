@@ -12,9 +12,9 @@ module Spree
         let(:packages) { [] }
 
         describe 'continues to splitter chain' do
-          it { expect(splitter1).to receive(:split).with(packages) }
-
           after { splitter2.split(packages) }
+
+          it { expect(splitter1).to receive(:split).with(packages) }
         end
       end
     end

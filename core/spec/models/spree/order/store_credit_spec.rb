@@ -268,11 +268,13 @@ describe 'Order' do
   describe '#total_applicable_store_credit' do
     context 'order is in the confirm state' do
       before { order.update_attributes(state: 'confirm') }
+
       include_examples 'check total store credit from payments'
     end
 
     context 'order is completed' do
       before { order.update_attributes(state: 'complete') }
+
       include_examples 'check total store credit from payments'
     end
 
@@ -353,11 +355,13 @@ describe 'Order' do
 
     context 'order has store credit payment' do
       before { allow(subject).to receive(:total_applied_store_credit).and_return(10.0) }
+
       it { expect(subject.using_store_credit?).to be true }
     end
 
     context 'order has no store credit payments' do
       before { allow(subject).to receive(:total_applied_store_credit).and_return(0.0) }
+
       it { expect(subject.using_store_credit?).to be false }
     end
   end

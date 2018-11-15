@@ -15,6 +15,7 @@ describe Spree::Promotion::Rules::UserLoggedIn, type: :model do
 
     context 'when user is not logged in' do
       before { allow(order).to receive_messages(user: nil) } # better to be explicit here
+
       it { expect(rule).not_to be_eligible(order) }
       it 'sets an error message' do
         rule.eligible?(order)

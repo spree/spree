@@ -118,6 +118,7 @@ describe Spree::Reimbursement, type: :model do
       let(:exchange_variant) { build(:variant) }
 
       before { return_item.exchange_variant = exchange_variant }
+
       it 'generates an exchange shipment for the order for the exchange items' do
         expect { subject }.to change { order.reload.shipments.count }.by 1
         expect(order.shipments.last.inventory_units.first.variant).to eq exchange_variant

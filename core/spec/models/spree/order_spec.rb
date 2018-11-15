@@ -131,6 +131,8 @@ describe Spree::Order, type: :model do
       order.update_column :state, 'complete'
     end
 
+    after { Spree::Config.set track_inventory_levels: true }
+
     it 'sets completed_at' do
       expect(order).to receive(:touch).with(:completed_at)
       order.finalize!
@@ -161,7 +163,6 @@ describe Spree::Order, type: :model do
       expect(order.shipment_state).to eq('ready')
     end
 
-    after { Spree::Config.set track_inventory_levels: true }
     it 'does not sell inventory units if track_inventory_levels is false' do
       Spree::Config.set track_inventory_levels: false
       expect(Spree::InventoryUnit).not_to receive(:sell_units)
@@ -256,7 +257,7 @@ describe Spree::Order, type: :model do
 
     context 'when no variants are destroyed' do
       it 'does not restart checkout' do
-        expect(order).to receive(:restart_checkout_flow).never
+        expect(order).not_to receive(:restart_checkout_flow)
         subject
       end
 
@@ -431,8 +432,9 @@ describe Spree::Order, type: :model do
   end
 
   describe '#tax_address' do
-    before { Spree::Config[:tax_using_ship_address] = tax_using_ship_address }
     subject { order.tax_address }
+
+    before { Spree::Config[:tax_using_ship_address] = tax_using_ship_address }
 
     context 'when tax_using_ship_address is true' do
       let(:tax_using_ship_address) { true }
@@ -591,9 +593,9 @@ describe Spree::Order, type: :model do
 
     let(:order_attributes) do
       {
-        user:         nil,
-        email:        nil,
-        created_by:   nil,
+        user: nil,
+        email: nil,
+        created_by: nil,
         bill_address: nil,
         ship_address: nil
       }
@@ -766,6 +768,7 @@ describe Spree::Order, type: :model do
       @order.line_items = [create(:line_item, price: 1.0, quantity: 2),
                            create(:line_item, price: 1.0, quantity: 1)]
     end
+
     it 'returns the correct lum sum of items' do
       expect(@order.amount).to eq(3.0)
     end
@@ -1047,6 +1050,7 @@ describe Spree::Order, type: :model do
         resumed_order.inventory_units.update_all(state: 'returned')
         resumed_order.return
       end
+
       it { expect(resumed_order).to be_returned }
     end
 
@@ -1055,6 +1059,7 @@ describe Spree::Order, type: :model do
         resumed_order.inventory_units.first.update_attribute(:state, 'returned')
         resumed_order.return
       end
+
       it { expect(resumed_order).to be_resumed }
     end
   end
@@ -1127,6 +1132,7 @@ describe Spree::Order, type: :model do
         order.bill_address = Spree::Address.new
         order.ship_address = Spree::Address.new
       end
+
       it { expect(order.shipping_eq_billing_address?).to eq(true) }
     end
 
@@ -1135,6 +1141,7 @@ describe Spree::Order, type: :model do
         order.bill_address = nil
         order.ship_address = nil
       end
+
       it { expect(order.shipping_eq_billing_address?).to eq(true) }
     end
   end

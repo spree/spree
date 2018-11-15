@@ -7,13 +7,13 @@ describe Spree::Promotion::Rules::Product, type: :model do
   context '#eligible?(order)' do
     let(:order) { Spree::Order.new }
 
+    before do
+      3.times { |i| instance_variable_set("@product#{i}", mock_model(Spree::Product)) }
+    end
+
     it 'is eligible if there are no products' do
       allow(rule).to receive_messages(eligible_products: [])
       expect(rule).to be_eligible(order)
-    end
-
-    before do
-      3.times { |i| instance_variable_set("@product#{i}", mock_model(Spree::Product)) }
     end
 
     context "with 'any' match policy" do
@@ -30,6 +30,7 @@ describe Spree::Promotion::Rules::Product, type: :model do
           allow(order).to receive_messages(products: [@product1])
           allow(rule).to receive_messages(eligible_products: [@product2, @product3])
         end
+
         it { expect(rule).not_to be_eligible(order) }
         it 'sets an error message' do
           rule.eligible?(order)
@@ -53,6 +54,7 @@ describe Spree::Promotion::Rules::Product, type: :model do
           allow(order).to receive_messages(products: [@product1, @product2])
           allow(rule).to receive_messages(eligible_products: [@product1, @product2, @product3])
         end
+
         it { expect(rule).not_to be_eligible(order) }
         it 'sets an error message' do
           rule.eligible?(order)
@@ -76,6 +78,7 @@ describe Spree::Promotion::Rules::Product, type: :model do
           allow(order).to receive_messages(products: [@product1, @product2])
           allow(rule).to receive_messages(eligible_products: [@product2, @product3])
         end
+
         it { expect(rule).not_to be_eligible(order) }
         it 'sets an error message' do
           rule.eligible?(order)

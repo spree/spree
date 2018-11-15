@@ -149,9 +149,9 @@ describe Spree::InventoryUnit, type: :model do
   end
 
   describe '#current_or_new_return_item' do
-    before { allow(inventory_unit).to receive_messages(pre_tax_amount: 100.0) }
-
     subject { inventory_unit.current_or_new_return_item }
+
+    before { allow(inventory_unit).to receive_messages(pre_tax_amount: 100.0) }
 
     context 'associated with a return item' do
       let(:return_item) { create(:return_item) }

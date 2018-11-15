@@ -22,11 +22,11 @@ module Spree
     let(:preferred_reimbursement_type) { Spree::ReimbursementType::Credit.new }
 
     describe '#valid_preferred_reimbursement_type?' do
+      subject { dummy.valid_preferred_reimbursement_type?(return_item) }
+
       before do
         allow(dummy).to receive(:past_reimbursable_time_period?).and_return(true)
       end
-
-      subject { dummy.valid_preferred_reimbursement_type?(return_item) }
 
       context 'is valid' do
         it 'if it is not past the reimbursable time period' do

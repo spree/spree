@@ -7,6 +7,7 @@ describe Spree::Country, type: :model do
   describe '.default' do
     context 'when default_country_id config is set' do
       before { Spree::Config[:default_country_id] = canada.id }
+
       it 'will return the country from the config' do
         expect(described_class.default.id).to eql canada.id
       end
@@ -14,6 +15,7 @@ describe Spree::Country, type: :model do
 
     context 'config is not set though record for america exists' do
       before { america.touch }
+
       it 'will return the US' do
         expect(described_class.default.id).to eql america.id
       end
@@ -21,6 +23,7 @@ describe Spree::Country, type: :model do
 
     context 'when config is not set and america is not created' do
       before { canada.touch }
+
       it 'will return the first record' do
         expect(described_class.default.id).to eql canada.id
       end
@@ -37,6 +40,7 @@ describe Spree::Country, type: :model do
 
       context 'error should be default country cannot be deleted' do
         before { subject }
+
         it { expect(america.errors[:base]).to include(Spree.t(:default_country_cannot_be_deleted)) }
       end
     end

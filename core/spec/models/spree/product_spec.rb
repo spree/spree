@@ -362,11 +362,13 @@ describe Spree::Product, type: :model do
 
       describe 'is not used' do
         before { product.set_property(name, 'bar') }
+
         it { is_expected.to eq name }
       end
 
       describe 'is used' do
         before { product.set_property(name, 'bar', presentation) }
+
         it { is_expected.to eq presentation }
       end
     end
@@ -476,7 +478,7 @@ describe Spree::Product, type: :model do
 
   context '#images' do
     let(:product) { create(:product) }
-    let(:file) { File.open(File.expand_path('../../../fixtures/thinking-cat.jpg', __FILE__)) }
+    let(:file) { File.open(File.expand_path('../../fixtures/thinking-cat.jpg', __dir__)) }
     let(:params) { { viewable_id: product.master.id, viewable_type: 'Spree::Variant', attachment: file, alt: 'position 2', position: 2 } }
 
     before do

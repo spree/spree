@@ -682,6 +682,7 @@ describe Spree::Payment, type: :model do
 
   describe '#currency' do
     before { allow(order).to receive(:currency).and_return('ABC') }
+
     it 'returns the order currency' do
       expect(payment.currency).to eq('ABC')
     end

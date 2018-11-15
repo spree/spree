@@ -157,6 +157,7 @@ THIS IS THE BEST PRODUCT EVER!
 
       context 'renders a product description default description incase description is blank' do
         before { product.description = '' }
+
         it { expect(product_description(product)).to eq(Spree.t(:product_has_no_description)) }
       end
     end
@@ -167,16 +168,19 @@ THIS IS THE BEST PRODUCT EVER!
 
         it { is_expected.to eq(Spree.t(:product_has_no_description)) }
       end
+
       context 'variant has a description' do
         let(:description) { 'test_desc' }
 
         it { is_expected.to eq(description) }
       end
+
       context 'description has nonbreaking spaces' do
         let(:description) { 'test&nbsp;desc' }
 
         it { is_expected.to eq('test desc') }
       end
+
       context 'description has line endings' do
         let(:description) { "test\n\r\ndesc" }
 
@@ -240,7 +244,7 @@ THIS IS THE BEST PRODUCT EVER!
         let(:zone) { Spree::Zone.new }
 
         it 'includes the current_tax_zone' do
-          is_expected.to eq('en/USD/spree/zones/new/spree/products/new/')
+          expect(subject).to eq('en/USD/spree/zones/new/spree/products/new/')
         end
       end
 
