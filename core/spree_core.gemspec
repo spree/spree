@@ -28,7 +28,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'deface', '~> 1.0'
   s.add_dependency 'ffaker', '~> 2.2'
   s.add_dependency 'friendly_id', '~> 5.2.1'
-  s.add_dependency 'highline', '~> 1.6.18' # Necessary for the install generator
+  s.add_dependency 'highline', '~> 2.0.0' # Necessary for the install generator
   s.add_dependency 'kaminari', '~> 1.0.1'
   s.add_dependency 'money', '~> 6.13'
   s.add_dependency 'monetize', '~> 1.9'
