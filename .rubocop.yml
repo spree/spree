@@ -16,6 +16,7 @@ AllCops:
     - '**/dummy/**/*'
     - '**/vendor/**/*'
     - '**/spec_helper.rb'
+    - '**/templates/**/*'
 
 Layout/MultilineOperationIndentation:
   EnforcedStyle: indented
