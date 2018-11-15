@@ -7,7 +7,7 @@ import Layout from '../components/Layout'
 
 export default function Template({ data }) {
   const { markdownRemark: guide } = data
-  console.log(data.sidebarNav.group)
+
   return (
     <Layout nav={data.sidebarNav ? data.sidebarNav.group : []}>
       <div className="blog-guide-container">
