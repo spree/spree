@@ -211,6 +211,7 @@ module Spree
 
     context 'with BarAbility registered' do
       before { Spree::Ability.register_ability(::BarAbility) }
+
       after  { Spree::Ability.remove_ability(::BarAbility) }
 
       it 'can view an order' do
@@ -550,6 +551,7 @@ module Spree
 
       context 'with no orders' do
         before { Spree::Order.delete_all }
+
         it 'still returns a root :orders key' do
           api_get :index
           expect(json_response['orders']).to eq([])
@@ -572,8 +574,10 @@ module Spree
       context 'caching enabled' do
         before do
           ActionController::Base.perform_caching = true
-          3.times { create(:order) }
+          create_list(:order, 3)
         end
+
+        after { ActionController::Base.perform_caching = false }
 
         it 'returns unique orders' do
           api_get :index
@@ -582,8 +586,6 @@ module Spree
           expect(orders.count).to be >= 3
           expect(orders.map { |o| o[:id] }).to match_array Order.pluck(:id)
         end
-
-        after { ActionController::Base.perform_caching = false }
       end
 
       it 'lists payments source with gateway info' do

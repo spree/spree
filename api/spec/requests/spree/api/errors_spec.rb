@@ -15,4 +15,3 @@ describe 'API Errors Spec', type: :request do
     end
   end
 end
-
