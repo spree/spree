@@ -3,7 +3,7 @@ require 'spree/responder'
 module ActionController
   class Base
     def respond_with(*resources, &block)
-      if Spree::BaseController.spree_responders.keys.include?(self.class.to_s.to_sym)
+      if Spree::BaseController.spree_responders.key?(self.class.to_s.to_sym)
         # Checkout AS Array#extract_options! and original respond_with
         # implementation for a better picture of this hack
         if resources.last.is_a? Hash
