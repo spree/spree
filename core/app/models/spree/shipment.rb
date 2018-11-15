@@ -75,8 +75,8 @@ module Spree
       after_transition do |shipment, transition|
         shipment.state_changes.create!(
           previous_state: transition.from,
-          next_state:     transition.to,
-          name:           'shipment'
+          next_state: transition.to,
+          name: 'shipment'
         )
       end
     end
@@ -117,6 +117,7 @@ module Spree
       return 'pending' unless order.can_ship?
       return 'pending' if inventory_units.any? &:backordered?
       return 'shipped' if shipped?
+
       order.paid? || Spree::Config[:auto_capture_on_dispatch] ? 'ready' : 'pending'
     end
 
@@ -184,6 +185,7 @@ module Spree
 
       payments_pool = pending_payments.each_with_object([]) do |payment, pool|
         break if payments_amount >= shipment_to_pay
+
         payments_amount += payment.uncaptured_amount
         pool << payment
       end
@@ -243,6 +245,7 @@ module Spree
 
     def set_up_inventory(state, variant, order, line_item, quantity = 1)
       return if quantity <= 0
+
       inventory_units.create(
         state: state,
         variant_id: variant.id,
@@ -254,6 +257,7 @@ module Spree
 
     def shipped=(value)
       return unless value == '1' && shipped_at.nil?
+
       self.shipped_at = Time.current
     end
 
@@ -349,10 +353,10 @@ module Spree
       Spree::FulfilmentChanger.new(
         current_stock_location: stock_location,
         desired_stock_location: shipment_to_transfer_to.stock_location,
-        current_shipment:       self,
-        desired_shipment:       shipment_to_transfer_to,
-        variant:                variant,
-        quantity:               quantity
+        current_shipment: self,
+        desired_shipment: shipment_to_transfer_to,
+        variant: variant,
+        quantity: quantity
       ).run!
     end
 
@@ -363,7 +367,7 @@ module Spree
     end
 
     def can_get_rates?
-      order.ship_address && order.ship_address.valid?
+      order.ship_address&.valid?
     end
 
     def manifest_restock(item)

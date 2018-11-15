@@ -33,6 +33,7 @@ module Spree
           cost = shipping_method.calculator.compute(package)
 
           next unless cost
+
           shipping_method.shipping_rates.new(
             cost: gross_amount(cost, taxation_options_for(shipping_method)),
             tax_rate: first_tax_rate_for(shipping_method.tax_category)
@@ -52,6 +53,7 @@ module Spree
 
       def first_tax_rate_for(tax_category)
         return unless @order.tax_zone && tax_category
+
         Spree::TaxRate.for_tax_category(tax_category).
           potential_rates_for_zone(@order.tax_zone).first
       end

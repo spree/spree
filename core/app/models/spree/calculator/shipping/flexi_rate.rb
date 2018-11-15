@@ -25,9 +25,9 @@ module Spree
       def flexi_rate_calculator
         ::Spree::Calculator::FlexiRate.new(
           preferred_additional_item: preferred_additional_item,
-          preferred_first_item:      preferred_first_item,
-          preferred_max_items:       preferred_max_items,
-          preferred_currency:        preferred_currency
+          preferred_first_item: preferred_first_item,
+          preferred_max_items: preferred_max_items,
+          preferred_currency: preferred_currency
         )
       end
     end

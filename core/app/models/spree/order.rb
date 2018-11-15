@@ -48,13 +48,13 @@ module Spree
 
     MONEY_THRESHOLD  = 100_000_000
     MONEY_VALIDATION = {
-      presence:     true,
+      presence: true,
       numericality: {
         greater_than: -MONEY_THRESHOLD,
-        less_than:     MONEY_THRESHOLD,
-        allow_blank:   true
+        less_than: MONEY_THRESHOLD,
+        allow_blank: true
       },
-      format:       { with: /\A-?\d+(?:\.\d{1,2})?\z/, allow_blank: true }
+      format: { with: /\A-?\d+(?:\.\d{1,2})?\z/, allow_blank: true }
     }.freeze
 
     POSITIVE_MONEY_VALIDATION = MONEY_VALIDATION.deep_dup.tap do |validation|
@@ -280,6 +280,7 @@ module Spree
 
     def allow_cancel?
       return false if !completed? || canceled?
+
       shipment_state.nil? || %w{ready backorder pending}.include?(shipment_state)
     end
 
@@ -498,16 +499,16 @@ module Spree
     def log_state_changes(state_name:, old_state:, new_state:)
       state_changes.create(
         previous_state: old_state,
-        next_state:     new_state,
-        name:           state_name,
-        user_id:        user_id
+        next_state: new_state,
+        name: state_name,
+        user_id: user_id
       )
     end
 
     def coupon_code=(code)
       @coupon_code = begin
                        code.strip.downcase
-                     rescue
+                     rescue StandardError
                        nil
                      end
     end

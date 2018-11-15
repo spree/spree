@@ -34,6 +34,7 @@ module Spree
     # Temporarily tie a customer_return to one order
     def order
       return nil if return_items.blank?
+
       return_items.first.inventory_unit.order
     end
 

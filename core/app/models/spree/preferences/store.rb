@@ -48,10 +48,10 @@ module Spree::Preferences
 
         # does it exist in the database?
         val = if preference = Spree::Preference.find_by(key: key)
-          # it does exist
+                # it does exist
                 preference.value
               else
-          # use the fallback value
+                # use the fallback value
                 yield
               end
 
@@ -89,7 +89,7 @@ module Spree::Preferences
       return unless should_persist?
 
       preference = Spree::Preference.find_by(key: cache_key)
-      preference.destroy if preference
+      preference&.destroy
     end
 
     def should_persist?

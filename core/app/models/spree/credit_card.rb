@@ -81,7 +81,7 @@ module Spree
     def number=(num)
       @number = begin
                   num.gsub(/[^0-9]/, '')
-                rescue
+                rescue StandardError
                   nil
                 end
     end
@@ -95,7 +95,7 @@ module Spree
                        when 'dinersclub' then 'diners_club'
                        when '' then try_type_from_number
                        else type
-      end
+                       end
     end
 
     def set_last_digits

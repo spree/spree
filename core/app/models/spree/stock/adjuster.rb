@@ -36,6 +36,7 @@ module Spree
 
       def update_backorder
         return if backorder_package.nil?
+
         if fulfilled?
           backorder_package.remove_item backorder_item
         elsif backorder_item.present?
