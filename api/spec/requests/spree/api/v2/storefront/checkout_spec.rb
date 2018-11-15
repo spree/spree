@@ -105,6 +105,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
     let!(:payment_method)  { create(:credit_card_payment_method) }
 
     before do
+      allow_any_instance_of(Spree::PaymentMethod).to receive(:source_required?).and_return(false)
       allow_any_instance_of(Spree::Order).to receive_messages(confirmation_required?: true)
       allow_any_instance_of(Spree::Order).to receive_messages(payment_required?: true)
       put '/api/v2/storefront/checkout', params: params, headers: headers

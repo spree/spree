@@ -2,6 +2,12 @@ module Spree
   class CreditCard < Spree::Base
     include ActiveMerchant::Billing::CreditCardMethods
 
+    if !ENV['SPREE_DISABLE_DB_CONNECTION'] &&
+        connection.data_source_exists?(:spree_credit_cards) &&
+        connection.column_exists?(:spree_credit_cards, :deleted_at)
+      acts_as_paranoid
+    end
+
     belongs_to :payment_method
     belongs_to :user, class_name: Spree.user_class.to_s, foreign_key: 'user_id',
                       optional: true
