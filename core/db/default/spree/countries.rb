@@ -11,7 +11,7 @@ Carmen::Country.all.each do |country|
   ).first_or_create
 end
 
-Spree::Config[:default_country_id] = Spree::Country.find_by(iso: "US").id
+Spree::Config[:default_country_id] = Spree::Country.find_by(iso: 'US').id
 
 # find countries that do not use postal codes (by iso) and set 'zipcode_required' to false for them.
 
