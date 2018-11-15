@@ -107,6 +107,7 @@ module Spree
 
       def collection
         return @collection if @collection.present?
+
         params[:q] ||= {}
         params[:q][:deleted_at_null] ||= '1'
         params[:q][:not_discontinued] ||= '1'
@@ -131,6 +132,7 @@ module Spree
 
       def create_before
         return if params[:product][:prototype_id].blank?
+
         @prototype = Spree::Prototype.find(params[:product][:prototype_id])
       end
 
@@ -138,6 +140,7 @@ module Spree
         # note: we only reset the product properties if we're receiving a post
         #       from the form on that tab
         return unless params[:clear_product_properties]
+
         params[:product] ||= {}
       end
 

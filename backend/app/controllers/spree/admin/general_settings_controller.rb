@@ -10,6 +10,7 @@ module Spree
       def update
         params.each do |name, value|
           next unless Spree::Config.has_preference? name
+
           Spree::Config[name] = value
         end
 

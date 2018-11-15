@@ -113,6 +113,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
 
   def resource
     return @resource if @resource
+
     parent_model_name = parent_data[:model_name] if parent_data
     @resource = Spree::Admin::Resource.new controller_path, controller_name, parent_model_name, object_name
   end
@@ -176,6 +177,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
 
   def collection
     return parent.send(controller_name) if parent_data.present?
+
     if model_class.respond_to?(:accessible_by) &&
         !current_ability.has_block?(params[:action], model_class)
       model_class.accessible_by(current_ability, action)
@@ -212,7 +214,7 @@ class Spree::Admin::ResourceController < Spree::Admin::BaseController
   end
 
   def object_url(object = nil, options = {})
-    target = object ? object : @object
+    target = object || @object
     if parent_data.present?
       spree.send "admin_#{resource.model_name}_#{resource.object_name}_url", parent, target, options
     else
