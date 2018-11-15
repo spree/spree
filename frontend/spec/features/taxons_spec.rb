@@ -30,6 +30,7 @@ describe 'viewing products', type: :feature, inaccessible: true do
     before do
       visit '/t/category/super-clothing/t-shirts'
     end
+
     it 'renders breadcrumbs' do
       expect(page.find('#breadcrumbs')).to have_link('T-Shirts')
     end
