@@ -93,6 +93,9 @@ Style/MutableConstant:
 Style/PercentLiteralDelimiters:
   Enabled: false
 
+Style/IfUnlessModifier:
+  Enabled: false
+
 Naming/VariableNumber:
   Enabled: false
 
