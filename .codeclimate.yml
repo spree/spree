@@ -17,3 +17,4 @@ exclude_patterns:
   - "**/script/"
   - "**/vendor/"
   - "public/"
+  - "guides/"
