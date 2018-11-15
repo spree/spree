@@ -2,7 +2,7 @@ if ENV['COVERAGE']
   # Run Coverage report
   require 'simplecov'
   SimpleCov.start 'rails' do
-    add_group 'Libraries', 'lib'
+    add_group 'Libraries', 'lib/spree'
 
     add_filter '/bin/'
     add_filter '/db/'

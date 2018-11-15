@@ -8,12 +8,14 @@ if ENV['COVERAGE']
     add_group 'Services', 'app/services'
     add_group 'Sorters', 'app/sorters'
     add_group 'Validators', 'app/validators'
-    add_group 'Libraries', 'lib'
+    add_group 'Libraries', 'lib/spree'
 
     add_filter '/bin/'
     add_filter '/db/'
     add_filter '/script/'
     add_filter '/spec/'
+    add_filter '/lib/spree/testing_support/'
+    add_filter '/lib/generators/'
 
     coverage_dir "#{ENV['COVERAGE_DIR']}/core" if ENV['COVERAGE_DIR']
   end
