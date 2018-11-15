@@ -30,10 +30,10 @@ module Spree
           authorize! :create, Spree::Order
           if can?(:admin, Spree::Order)
             order_user = if @current_user_roles.include?('admin') && order_params[:user_id]
-                          Spree.user_class.find(order_params[:user_id])
-                        else
-                          current_api_user
-            end
+                           Spree.user_class.find(order_params[:user_id])
+                         else
+                           current_api_user
+                         end
 
             import_params = if @current_user_roles.include?('admin')
                               params[:order].present? ? params[:order].permit! : {}
