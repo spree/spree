@@ -6,10 +6,10 @@ describe 'Payments', type: :feature, js: true do
   context 'with a pre-existing payment' do
     let!(:payment) do
       create(:payment,
-             order:          order,
-             amount:         order.outstanding_balance,
+             order: order,
+             amount: order.outstanding_balance,
              payment_method: create(:credit_card_payment_method),
-             state:          state)
+             state: state)
     end
 
     let(:order) { create(:completed_order_with_totals, number: 'R100', line_items_count: 5) }

@@ -153,6 +153,7 @@ describe 'New Order', type: :feature do
       allow(Spree.user_class).to receive(:find_by).and_return(user)
       create(:credit_card, default: true, user: user)
     end
+
     it 'transitions to delivery not to complete' do
       select2_search product.name, from: Spree.t(:name_or_sku)
       within('table.stock-levels') do

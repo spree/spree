@@ -11,8 +11,8 @@ describe Spree::Admin::Orders::CustomerDetailsController, type: :controller do
     let(:order) do
       mock_model(
         Spree::Order,
-        total:           100,
-        number:          'R123456789',
+        total: 100,
+        number: 'R123456789',
         billing_address: mock_model(Spree::Address)
       )
     end
@@ -51,11 +51,14 @@ describe Spree::Admin::Orders::CustomerDetailsController, type: :controller do
 
           context 'having successful response' do
             before { send_request(attributes) }
+
             it { expect(response).to have_http_status(302) }
             it { expect(response).to redirect_to(edit_admin_order_url(order)) }
           end
 
           context 'with correct method flow' do
+            after { send_request(attributes) }
+
             it { expect(order).to receive(:update_attributes).with(ActionController::Parameters.new(attributes[:order]).permit(permitted_order_attributes)) }
             it { expect(order).not_to receive(:next) }
             it { expect(order).to receive(:address?) }
@@ -66,7 +69,6 @@ describe Spree::Admin::Orders::CustomerDetailsController, type: :controller do
             it { expect(controller).to receive(:load_order).and_call_original }
             it { expect(controller).to receive(:guest_checkout?).twice.and_call_original }
             it { expect(controller).not_to receive(:load_user).and_call_original }
-            after { send_request(attributes) }
           end
         end
 
@@ -77,15 +79,17 @@ describe Spree::Admin::Orders::CustomerDetailsController, type: :controller do
 
           context 'having failure response' do
             before { send_request(attributes) }
+
             it { expect(response).to render_template(:edit) }
           end
 
           context 'with correct method flow' do
+            after { send_request(attributes) }
+
             it { expect(order).to receive(:update_attributes).with(ActionController::Parameters.new(attributes[:order]).permit(permitted_order_attributes)) }
             it { expect(controller).to receive(:load_order).and_call_original }
             it { expect(controller).to receive(:guest_checkout?).and_call_original }
             it { expect(controller).not_to receive(:load_user).and_call_original }
-            after { send_request(attributes) }
           end
         end
       end
@@ -107,11 +111,14 @@ describe Spree::Admin::Orders::CustomerDetailsController, type: :controller do
 
           context 'having successful response' do
             before { send_request(changed_attributes) }
+
             it { expect(response).to have_http_status(302) }
             it { expect(response).to redirect_to(edit_admin_order_url(order)) }
           end
 
           context 'with correct method flow' do
+            after { send_request(changed_attributes) }
+
             it { expect(order).to receive(:update_attributes).with(ActionController::Parameters.new(attributes[:order]).permit(permitted_order_attributes)) }
             it { expect(order).to receive(:associate_user!).with(user, order.email.blank?) }
             it { expect(order).not_to receive(:next) }
@@ -123,7 +130,6 @@ describe Spree::Admin::Orders::CustomerDetailsController, type: :controller do
             it { expect(controller).to receive(:load_order).and_call_original }
             it { expect(controller).to receive(:guest_checkout?).twice.and_call_original }
             it { expect(controller).to receive(:load_user).and_call_original }
-            after { send_request(changed_attributes) }
           end
         end
 
@@ -135,15 +141,17 @@ describe Spree::Admin::Orders::CustomerDetailsController, type: :controller do
 
           context 'having failure response' do
             before { send_request(changed_attributes) }
+
             it { expect(response).to render_template(:edit) }
           end
 
           context 'with correct method flow' do
+            after { send_request(changed_attributes) }
+
             it { expect(order).not_to receive(:update_attributes).with(ActionController::Parameters.new(attributes[:order]).permit(permitted_order_attributes)) }
             it { expect(controller).to receive(:load_order).and_call_original }
             it { expect(controller).to receive(:guest_checkout?).and_call_original }
             it { expect(controller).to receive(:load_user).and_call_original }
-            after { send_request(changed_attributes) }
           end
         end
 
@@ -166,8 +174,9 @@ describe Spree::Admin::Orders::CustomerDetailsController, type: :controller do
             end
 
             context 'with correct method flow' do
-              it { expect(Spree.user_class).to receive(:find_by).with(id: user.id.to_s).and_return(user) }
               after { send_request(changed_attributes) }
+
+              it { expect(Spree.user_class).to receive(:find_by).with(id: user.id.to_s).and_return(user) }
             end
           end
 
@@ -183,12 +192,13 @@ describe Spree::Admin::Orders::CustomerDetailsController, type: :controller do
             end
 
             context 'with correct method flow' do
+              after { send_request(changed_attributes) }
+
               it { expect(Spree.user_class).to receive(:find_by).with(id: user.id.to_s).and_return(nil) }
               it 'expects user class to receive find_by with email' do
                 expect(Spree.user_class).to receive(:find_by).
                   with(email: changed_attributes[:order][:email]).and_return(nil)
               end
-              after { send_request(changed_attributes) }
             end
           end
         end
