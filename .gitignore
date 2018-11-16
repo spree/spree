@@ -58,3 +58,13 @@ test_app
 vendor/bundle
 */vendor/bundle
 .ignore
+
+# new guides
+guides/output
+guides/logs
+guides/.cache
+guides/public
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.yarn-integrity
