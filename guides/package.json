@@ -10,6 +10,7 @@
     "gatsby-plugin-offline": "^2.0.11",
     "gatsby-plugin-react-helmet": "^3.0.0",
     "gatsby-plugin-sharp": "^2.0.7",
+    "gatsby-plugin-sitemap": "^2.0.2",
     "gatsby-remark-autolink-headers": "^2.0.11",
     "gatsby-remark-copy-linked-files": "^2.0.6",
     "gatsby-remark-external-links": "^0.0.4",

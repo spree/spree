@@ -45,7 +45,11 @@ export default class Layout extends React.Component {
                     <Sidebar nav={this.props.nav} />
                   </div>
                 )}
-                <div className={this.props.nav ? 'w-80 ml3 lh-copy' : 'w-100'}>
+                <div
+                  className={`nested-links ${
+                    this.props.nav ? 'w-80 ml3 lh-copy' : 'w-100'
+                  }`}
+                >
                   {this.props.children}
                 </div>
               </div>

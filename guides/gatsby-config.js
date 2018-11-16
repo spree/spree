@@ -1,8 +1,10 @@
 module.exports = {
   siteMetadata: {
-    title: 'Spree Documentation'
+    title: 'Spree Documentation',
+    siteUrl: 'https://guides.spreecommerce.org'
   },
   plugins: [
+    'gatsby-plugin-sitemap',
     'gatsby-plugin-react-helmet',
     'gatsby-transformer-remark',
     {
