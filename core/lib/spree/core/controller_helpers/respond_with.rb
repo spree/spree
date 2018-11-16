@@ -36,6 +36,8 @@ module Spree
           end
 
           def respond_override(options = {})
+            ActiveSupport::Deprecation.warn 'ControllerHelpers::RespondWith is deprecated and will be removed in Spree 4.0.'
+
             unless options.blank?
               action_name = options.keys.first
               action_value = options.values.first
