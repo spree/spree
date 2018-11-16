@@ -36,6 +36,8 @@ module Spree
         # it was manually populated somewhere else. In that case the item
         # needs to be manually removed from the order by the customer
         def perform(options = {})
+          warn "`CreateLineItems` is deprecated. Use `CreateAdjustedLineItems` instead."
+
           order = options[:order]
           return unless eligible? order
 
