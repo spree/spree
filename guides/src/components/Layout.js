@@ -8,47 +8,51 @@ import Sidebar from './Sidebar'
 
 import 'tachyons/css/tachyons.css'
 
-const Layout = ({ children, nav }) => (
-  <StaticQuery
-    query={graphql`
-      query SiteTitleQuery {
-        site {
-          siteMetadata {
-            title
+export default class Layout extends React.Component {
+  static propTypes = {
+    children: PropTypes.node.isRequired,
+    nav: PropTypes.array
+  }
+
+  render() {
+    return (
+      <StaticQuery
+        query={graphql`
+          query SiteTitleQuery {
+            site {
+              siteMetadata {
+                title
+              }
+            }
           }
-        }
-      }
-    `}
-    render={data => (
-      <>
-        <Helmet
-          title={data.site.siteMetadata.title}
-          meta={[
-            { name: 'description', content: 'Sample' },
-            { name: 'keywords', content: 'sample, something' }
-          ]}
-        >
-          <html lang="en" />
-        </Helmet>
-        <div className="sans-serif dark-gray">
-          <Header siteTitle={data.site.siteMetadata.title} />
-          <div className="mw9 center pa3 flex">
-            {nav && (
-              <div className="w-20">
-                <Sidebar nav={nav} />
+        `}
+        render={data => (
+          <>
+            <Helmet
+              title={data.site.siteMetadata.title}
+              meta={[
+                { name: 'description', content: 'Sample' },
+                { name: 'keywords', content: 'sample, something' }
+              ]}
+            >
+              <html lang="en" />
+            </Helmet>
+            <div className="sans-serif dark-gray">
+              <Header siteTitle={data.site.siteMetadata.title} />
+              <div className="mw9 center pa3 flex">
+                {this.props.nav && (
+                  <div className="w-20">
+                    <Sidebar nav={this.props.nav} />
+                  </div>
+                )}
+                <div className={this.props.nav ? 'w-80' : 'w-100'}>
+                  {this.props.children}
+                </div>
               </div>
-            )}
-            <div className={nav ? 'w-80' : 'w-100'}>{children}</div>
-          </div>
-        </div>
-      </>
-    )}
-  />
-)
-
-Layout.propTypes = {
-  children: PropTypes.node.isRequired,
-  nav: PropTypes.array
+            </div>
+          </>
+        )}
+      />
+    )
+  }
 }
-
-export default Layout

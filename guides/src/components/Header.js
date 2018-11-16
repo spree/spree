@@ -3,6 +3,7 @@ import { Link } from 'gatsby'
 
 import Logo from './Logo'
 import NavItem from './NavItem'
+import DocSearch from './DocSearch'
 
 const Header = () => (
   <header className="bb b--near-white">
@@ -10,6 +11,8 @@ const Header = () => (
       <Link to="/" className="link green">
         <Logo />
       </Link>
+
+      <DocSearch />
 
       <nav>
         <NavItem url="/api">Api</NavItem>
