@@ -8,7 +8,7 @@ exports.createPages = ({ actions, graphql }) => {
 
   return graphql(`
     {
-      allFile(filter: { ext: { eq: ".md" }, base: { ne: "index.md" } }) {
+      allFile(filter: { ext: { eq: ".md" } }) {
         edges {
           node {
             relativeDirectory
@@ -52,8 +52,29 @@ exports.onCreateNode = ({ node, getNode, actions }) => {
     const slug = createFilePath({ node, getNode, basePath: `content` })
     createNodeField({
       node,
-      name: `slug`,
+      name: 'slug',
       value: slug.replace(/(\/$)/, '.html')
+    })
+
+    const pathArray = slug.split('/').filter(item => item !== '')
+    pathArray.pop()
+
+    createNodeField({
+      node,
+      name: 'path',
+      value: pathArray
+    })
+
+    createNodeField({
+      node,
+      name: 'depth',
+      value: pathArray.length
+    })
+
+    createNodeField({
+      node,
+      name: 'rootSection',
+      value: pathArray[0]
     })
   }
 }

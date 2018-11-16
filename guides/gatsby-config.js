@@ -30,6 +30,13 @@ module.exports = {
             }
           },
           {
+            resolve: 'gatsby-remark-external-links',
+            options: {
+              target: '_blank',
+              rel: 'noopener noreferrer'
+            }
+          },
+          {
             resolve: 'gatsby-remark-autolink-headers',
             options: {
               offsetY: 16

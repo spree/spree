@@ -12,6 +12,7 @@
     "gatsby-plugin-sharp": "^2.0.7",
     "gatsby-remark-autolink-headers": "^2.0.11",
     "gatsby-remark-copy-linked-files": "^2.0.6",
+    "gatsby-remark-external-links": "^0.0.4",
     "gatsby-remark-images": "^2.0.6",
     "gatsby-remark-prismjs": "^3.0.3",
     "gatsby-remark-smartypants": "^2.0.6",

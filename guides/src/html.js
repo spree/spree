@@ -9,6 +9,10 @@ export default class HTML extends React.Component {
     return (
       <html lang="en" {...this.props.htmlAttributes}>
         <head>
+          <link
+            rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css"
+          />
           {JS_NPM_URLS.map(url => (
             <link key={url} rel="preload" href={url} as="script" />
           ))}

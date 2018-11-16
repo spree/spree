@@ -6,16 +6,16 @@ import { graphql } from 'gatsby'
 import Layout from '../components/Layout'
 
 export default function Template({ data }) {
-  const { markdownRemark: guide } = data
+  const { guide } = data
 
   return (
     <Layout nav={data.sidebarNav ? data.sidebarNav.group : []}>
-      <div className="blog-guide-container">
+      <div className="guide-container">
         <Helmet title={`Spree Guides :: ${guide.frontmatter.title}`} />
-        <div className="blog-guide">
+        <div className="guide">
           <h1>{guide.frontmatter.title}</h1>
           <div
-            className="blog-guide-content"
+            className="guide-content"
             dangerouslySetInnerHTML={{ __html: guide.html }}
           />
         </div>
@@ -51,7 +51,7 @@ export const pageQuery = graphql`
         }
       }
     }
-    markdownRemark(id: { eq: $id }) {
+    guide: markdownRemark(id: { eq: $id }) {
       html
       frontmatter {
         title
