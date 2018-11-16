@@ -110,6 +110,9 @@ Style/UnneededPercentQ:
 Lint/ParenthesesAsGroupedExpression:
   Enabled: false
 
+Style/NumericPredicate:
+  Enabled: false
+
 Metrics/PerceivedComplexity:
   Max: 10
 
