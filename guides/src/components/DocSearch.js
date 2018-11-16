@@ -23,12 +23,14 @@ export default class DocSearch extends React.Component {
     const { enabled } = this.state
 
     return enabled ? (
-      <form>
+      <form className="ml3">
         <input
+          className="pa3 w6 br1 ba b--moon-gray"
           id="algolia-doc-search"
           type="search"
           placeholder="Search docs"
           aria-label="Search docs"
+          size="50"
         />
       </form>
     ) : null

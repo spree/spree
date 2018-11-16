@@ -6,15 +6,15 @@ import NavItem from './NavItem'
 import DocSearch from './DocSearch'
 
 const Header = () => (
-  <header className="bb b--near-white">
-    <div className="mw9 center pa3 flex items-center justify-between">
-      <Link to="/" className="link green">
+  <header className="bb b--moon-gray">
+    <div className="mw9 center pa3 flex items-center w-100">
+      <Link to="/" className="link green db">
         <Logo />
       </Link>
 
       <DocSearch />
 
-      <nav>
+      <nav className="w-100 tr">
         <NavItem url="/api">Api</NavItem>
         <NavItem url="/developer">Developer</NavItem>
         <NavItem url="/user">User</NavItem>

@@ -2,7 +2,7 @@ import * as React from 'react'
 import PropTypes from 'prop-types'
 import { Link } from 'gatsby'
 
-const linkClasses = 'link mr3 fw5 blue'
+const linkClasses = 'link mr3 fw5 gray'
 
 const NavItem = ({ url, children }) => {
   if (url.startsWith('http')) {
@@ -13,7 +13,7 @@ const NavItem = ({ url, children }) => {
     )
   } else {
     return (
-      <Link className={linkClasses} to={url}>
+      <Link className={linkClasses} to={url} activeClassName="green">
         {children}
       </Link>
     )
