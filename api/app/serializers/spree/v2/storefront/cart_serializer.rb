@@ -19,11 +19,11 @@ module Spree
         belongs_to :user
         belongs_to :billing_address,
           id_method_name: :bill_address_id,
-          serializer:     :address
+          serializer: :address
 
         belongs_to :shipping_address,
           id_method_name: :ship_address_id,
-          serializer:     :address
+          serializer: :address
       end
     end
   end

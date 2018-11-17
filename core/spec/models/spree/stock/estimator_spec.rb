@@ -43,11 +43,13 @@ module Spree
 
         context "when the order's ship address is in a different zone" do
           before { shipping_method.zones.each { |z| z.members.delete_all } }
+
           it_behaves_like "shipping rate doesn't match"
         end
 
         context 'when the calculator is not available for that order' do
           before { allow_any_instance_of(ShippingMethod).to receive_message_chain(:calculator, :available?).and_return(false) }
+
           it_behaves_like "shipping rate doesn't match"
         end
 
@@ -158,11 +160,13 @@ module Spree
 
           context 'when the order does not have a tax zone' do
             before { allow(order).to receive(:tax_zone).and_return nil }
+
             it_behaves_like 'shipping rate matches'
           end
 
           context "when the order's tax zone is the default zone" do
             before { allow(order).to receive(:tax_zone).and_return(default_zone) }
+
             it_behaves_like 'shipping rate matches'
           end
 

@@ -54,7 +54,8 @@ module Spree
         @search = Spree::Order.includes(
           line_items: {
             variant: [:product, { option_values: :option_type }]
-          }).ransack(params[:q].merge(user_id_eq: @user.id))
+          }
+        ).ransack(params[:q].merge(user_id_eq: @user.id))
         @orders = @search.result.page(params[:page])
       end
 
@@ -80,6 +81,7 @@ module Spree
 
       def collection
         return @collection if @collection.present?
+
         @collection = super
         @search = @collection.ransack(params[:q])
         @collection = @search.result.page(params[:page]).per(Spree::Config[:admin_users_per_page])

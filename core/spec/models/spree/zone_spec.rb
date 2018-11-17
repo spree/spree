@@ -22,11 +22,11 @@ describe Spree::Zone, type: :model do
         let(:zone_not_with_default_tax) { create(:zone, kind: 'country', default_tax: false) }
 
         it 'is expected to include zone with default tax' do
-          is_expected.to include(zone_with_default_tax)
+          expect(subject).to include(zone_with_default_tax)
         end
 
         it 'is expected to not include zone with default tax' do
-          is_expected.not_to include(zone_not_with_default_tax)
+          expect(subject).not_to include(zone_not_with_default_tax)
         end
       end
     end

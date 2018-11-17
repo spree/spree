@@ -4,9 +4,9 @@ namespace :exchanges do
   task charge_unreturned_items: :environment do
     unreturned_return_items_scope = Spree::ReturnItem.awaiting_return.exchange_processed
     unreturned_return_items = unreturned_return_items_scope.joins(:exchange_inventory_units).where([
-      'spree_inventory_units.created_at < :days_ago AND spree_inventory_units.state = :iu_state',
-      days_ago: Spree::Config[:expedited_exchanges_days_window].days.ago, iu_state: 'shipped'
-    ]).distinct.to_a
+                                                                                                     'spree_inventory_units.created_at < :days_ago AND spree_inventory_units.state = :iu_state',
+                                                                                                     days_ago: Spree::Config[:expedited_exchanges_days_window].days.ago, iu_state: 'shipped'
+                                                                                                   ]).distinct.to_a
 
     # Determine that a return item has already been deemed unreturned and therefore charged
     # by the fact that its exchange inventory unit has popped off to a different order
@@ -56,7 +56,7 @@ namespace :exchanges do
         order.finalize!
 
         failed_orders << order unless order.completed? && order.valid?
-      rescue
+      rescue StandardError
         failed_orders << order
       end
     end

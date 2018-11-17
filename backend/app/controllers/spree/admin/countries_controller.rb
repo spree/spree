@@ -3,9 +3,9 @@ module Spree
     class CountriesController < ResourceController
       private
 
-        def collection
-          super.order(:name)
-        end
+      def collection
+        super.order(:name)
+      end
     end
   end
 end

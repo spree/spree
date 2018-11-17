@@ -18,9 +18,9 @@ describe Spree::Admin::OrdersController, type: :controller do
     let(:order) do
       mock_model(
         Spree::Order,
-        completed?:      true,
-        total:           100,
-        number:          'R123456789',
+        completed?: true,
+        total: 100,
+        number: 'R123456789',
         all_adjustments: adjustments,
         billing_address: mock_model(Spree::Address)
       )
@@ -138,14 +138,16 @@ describe Spree::Admin::OrdersController, type: :controller do
           end
 
           describe 'expects to receive' do
+            after { send_request }
+
             it { expect(order).to receive(:completed?).and_return(false) }
             it { expect(order).to receive(:refresh_shipment_rates).with(display_value).and_return(true) }
             it { expect(order).to receive_message_chain(:shipments, :shipped, :exists?).and_return(true) }
-            after { send_request }
           end
 
           describe 'response' do
             before { send_request }
+
             it { expect(response).to be_redirect }
             it { expect(response).to redirect_to(edit_admin_order_url(order)) }
           end
@@ -157,14 +159,16 @@ describe Spree::Admin::OrdersController, type: :controller do
           end
 
           describe 'expects to receive' do
+            after { send_request }
+
             it { expect(order).to receive(:completed?).and_return(false) }
             it { expect(order).to receive(:refresh_shipment_rates).with(display_value).and_return(true) }
             it { expect(order).to receive_message_chain(:shipments, :shipped, :exists?).and_return(false) }
-            after { send_request }
           end
 
           describe 'response' do
             before { send_request }
+
             it { expect(response).to render_template :cart }
           end
         end
@@ -182,12 +186,14 @@ describe Spree::Admin::OrdersController, type: :controller do
           end
 
           describe 'expects to receive' do
-            it { expect(order).to receive_message_chain(:shipments, :shipped, :exists?).and_return(true) }
             after { send_request }
+
+            it { expect(order).to receive_message_chain(:shipments, :shipped, :exists?).and_return(true) }
           end
 
           describe 'response' do
             before { send_request }
+
             it { expect(response).to be_redirect }
             it { expect(response).to redirect_to(edit_admin_order_url(order)) }
           end
@@ -199,12 +205,14 @@ describe Spree::Admin::OrdersController, type: :controller do
           end
 
           describe 'expects to receive' do
-            it { expect(order).to receive_message_chain(:shipments, :shipped, :exists?).and_return(false) }
             after { send_request }
+
+            it { expect(order).to receive_message_chain(:shipments, :shipped, :exists?).and_return(false) }
           end
 
           describe 'response' do
             before { send_request }
+
             it { expect(response).to render_template :cart }
           end
         end
@@ -382,7 +390,7 @@ describe Spree::Admin::OrdersController, type: :controller do
     it 'restricts returned order(s) on index when using OrderSpecificAbility' do
       number = order.number
 
-      3.times { create(:completed_order_with_totals) }
+      create_list(:completed_order_with_totals, 3)
       expect(Spree::Order.complete.count).to eq 4
 
       with_ability(OrderSpecificAbility) do

@@ -105,7 +105,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
         expect(order.line_items.count).to eq(1)
         expect(order.line_items.first.variant).to eq(variant)
         expect(order.line_items.first.quantity).to eq(5)
-        expect(json_response['included']).to include(have_type('variant').and have_id(variant.id.to_s))
+        expect(json_response['included']).to include(have_type('variant').and(have_id(variant.id.to_s)))
       end
     end
 
@@ -376,7 +376,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
     let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
 
     context 'with coupon code for free shipping' do
-      let(:adjustment_value) { -(shipment.cost.to_f) }
+      let(:adjustment_value) { -shipment.cost.to_f }
 
       context 'applies coupon code correctly' do
         before do
@@ -388,7 +388,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
         end
 
         it 'includes the promotion in the response' do
-          expect(json_response['included']).to include(have_type('promotion').and have_id(promotion.id.to_s))
+          expect(json_response['included']).to include(have_type('promotion').and(have_id(promotion.id.to_s)))
         end
 
         it_behaves_like 'returns valid cart JSON'

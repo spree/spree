@@ -137,13 +137,13 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
       let(:country)      { state.country }
       let!(:address) do
         {
-          firstname:  'John',
-          lastname:   'Doe',
-          address1:   '7735 Old Georgetown Road',
-          city:       'Bethesda',
-          phone:      '3014445002',
-          zipcode:    '20814',
-          state_id:   state.id,
+          firstname: 'John',
+          lastname: 'Doe',
+          address1: '7735 Old Georgetown Road',
+          city: 'Bethesda',
+          phone: '3014445002',
+          zipcode: '20814',
+          state_id: state.id,
           country_id: country.id
         }
       end

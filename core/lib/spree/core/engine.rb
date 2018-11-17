@@ -103,7 +103,8 @@ module Spree
           Promotion::Actions::CreateAdjustment,
           Promotion::Actions::CreateItemAdjustments,
           Promotion::Actions::CreateLineItems,
-          Promotion::Actions::FreeShipping]
+          Promotion::Actions::FreeShipping
+        ]
       end
 
       # filter sensitive information during logging
@@ -112,7 +113,8 @@ module Spree
           :password,
           :password_confirmation,
           :number,
-          :verification_value]
+          :verification_value
+        ]
       end
 
       initializer 'spree.core.checking_migrations' do

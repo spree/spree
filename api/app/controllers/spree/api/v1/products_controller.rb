@@ -5,11 +5,11 @@ module Spree
         before_action :find_product, only: [:update, :show, :destroy]
 
         def index
-          if params[:ids]
-            @products = product_scope.where(id: params[:ids].split(',').flatten)
-          else
-            @products = product_scope.ransack(params[:q]).result
-          end
+          @products = if params[:ids]
+                        product_scope.where(id: params[:ids].split(',').flatten)
+                      else
+                        product_scope.ransack(params[:q]).result
+                      end
 
           @products = @products.distinct.page(params[:page]).per(params[:per_page])
           expires_in 15.minutes, public: true
@@ -104,7 +104,7 @@ module Spree
                            :variants
                          else
                            :variants_attributes
-          end
+                         end
 
           params.require(:product).permit(
             variants_key => [permitted_variant_attributes, :id]

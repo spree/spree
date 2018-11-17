@@ -10,7 +10,7 @@ describe 'Adjustments Promotions', type: :feature do
            code: '10_off',
            starts_at: 1.day.ago,
            expires_at: 1.day.from_now,
-           adjustment_rate:  10)
+           adjustment_rate: 10)
 
     order = create(:order_with_totals)
     line_item = order.line_items.first

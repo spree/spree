@@ -43,6 +43,28 @@ class Project
     end
   end
 
+  # Process CLI arguments
+  #
+  # @param [Array<String>] arguments
+  #
+  # @return [Boolean]
+  #   the success of the CLI run
+  def self.run_cli(arguments)
+    raise ArgumentError if arguments.length > 1
+
+    mode = arguments.fetch(0, DEFAULT_MODE)
+
+    case mode
+    when 'install'
+      install
+      true
+    when 'test'
+      test
+    else
+      raise "Unknown mode: #{mode.inspect}"
+    end
+  end
+
   private
 
   # Check if current bundle is already usable
@@ -154,30 +176,9 @@ class Project
   #
   # @return [undefined]
   def self.log(message)
-    $stderr.puts(message)
+    warn(message)
   end
   private_class_method :log
-
-  # Process CLI arguments
-  #
-  # @param [Array<String>] arguments
-  #
-  # @return [Boolean]
-  #   the success of the CLI run
-  def self.run_cli(arguments)
-    raise ArgumentError if arguments.length > 1
-    mode = arguments.fetch(0, DEFAULT_MODE)
-
-    case mode
-    when 'install'
-      install
-      true
-    when 'test'
-      test
-    else
-      raise "Unknown mode: #{mode.inspect}"
-    end
-  end
-end # Project
+end
 
 exit Project.run_cli(ARGV)

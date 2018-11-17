@@ -5,7 +5,7 @@ module Spree
     let!(:product) { create(:product, properties: [create(:property, name: 'MyProperty')]) }
     let!(:duplicator) { Spree::ProductDuplicator.new(product) }
 
-    let(:file) { File.open(File.expand_path('../../../fixtures/thinking-cat.jpg', __FILE__)) }
+    let(:file) { File.open(File.expand_path('../../fixtures/thinking-cat.jpg', __dir__)) }
     let(:params) do
       {
         viewable_id: product.master.id,

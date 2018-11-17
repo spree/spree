@@ -350,6 +350,7 @@ describe Spree::Address, type: :model do
 
       context 'state belongs to the same country associated with address' do
         before { clear_state_entities }
+
         it { expect(address.state).to eq(state) }
         it { expect(address.state_name).to be_nil }
       end
@@ -404,6 +405,7 @@ describe Spree::Address, type: :model do
 
     context 'different addresses' do
       before { address2.first_name = 'Someone Else' }
+
       it { expect(address == address2).to eq(false) }
     end
   end

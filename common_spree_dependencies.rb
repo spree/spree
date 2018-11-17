@@ -42,7 +42,7 @@ group :test do
 end
 
 group :test, :development do
-  gem 'rubocop', require: false
+  gem 'rubocop', '~> 0.60.0', require: false
   gem 'rubocop-rspec', require: false
   gem 'pry-byebug'
 end

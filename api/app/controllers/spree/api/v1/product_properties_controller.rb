@@ -59,6 +59,7 @@ module Spree
             @product_property ||= @product.product_properties.find_by(id: params[:id])
             @product_property ||= @product.product_properties.includes(:property).where(spree_properties: { name: params[:id] }).first
             raise ActiveRecord::RecordNotFound unless @product_property
+
             authorize! :read, @product_property
           end
         end

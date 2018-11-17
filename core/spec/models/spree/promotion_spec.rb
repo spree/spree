@@ -43,6 +43,7 @@ describe Spree::Promotion, type: :model do
 
         context 'is not valid' do
           before { @valid_promotion.valid? }
+
           it { expect(@valid_promotion).not_to be_valid }
           it { expect(@valid_promotion.errors[:expires_at]).to include(I18n.t(:invalid_date_range, scope: 'activerecord.errors.models.spree/promotion.attributes.expires_at')) }
         end
@@ -69,11 +70,11 @@ describe Spree::Promotion, type: :model do
       let!(:promotion_with_code) { Spree::Promotion.create! name: 'test1', code: 'code' }
 
       it 'is expected to not include promotion without code' do
-        is_expected.not_to include(promotion_without_code)
+        expect(subject).not_to include(promotion_without_code)
       end
 
       it 'is expected to include promotion with code' do
-        is_expected.to include(promotion_with_code)
+        expect(subject).to include(promotion_with_code)
       end
     end
 
@@ -89,11 +90,11 @@ describe Spree::Promotion, type: :model do
       end
 
       it 'is expected to not include promotion not applied' do
-        is_expected.not_to include(promotion_not_applied)
+        expect(subject).not_to include(promotion_not_applied)
       end
 
       it 'is expected to include promotion applied' do
-        is_expected.to include(promotion_applied)
+        expect(subject).to include(promotion_applied)
       end
     end
 
@@ -104,11 +105,11 @@ describe Spree::Promotion, type: :model do
       let!(:promotion_advertised) { Spree::Promotion.create! name: 'test1', advertise: true }
 
       it 'is expected to not include promotion not advertised' do
-        is_expected.not_to include(promotion_not_advertised)
+        expect(subject).not_to include(promotion_not_advertised)
       end
 
       it 'is expected to include promotion advertised' do
-        is_expected.to include(promotion_advertised)
+        expect(subject).to include(promotion_advertised)
       end
     end
   end
@@ -198,6 +199,7 @@ describe Spree::Promotion, type: :model do
           expect(promotion.orders.first).to eql @order
         end
       end
+
       context 'when not activated' do
         it 'will not assign the order' do
           @order.state = 'complete'
@@ -284,11 +286,11 @@ describe Spree::Promotion, type: :model do
     let!(:adjustment) do
       order = create(:order)
       Spree::Adjustment.create!(
-        order:      order,
+        order: order,
         adjustable: order,
-        source:     action,
-        amount:     10,
-        label:      'Promotional adjustment'
+        source: action,
+        amount: 10,
+        label: 'Promotional adjustment'
       )
     end
 
@@ -381,6 +383,7 @@ describe Spree::Promotion, type: :model do
 
     context 'when promotion is expired' do
       before { promotion.expires_at = Time.current - 10.days }
+
       it { is_expected.to be false }
     end
 
@@ -404,6 +407,7 @@ describe Spree::Promotion, type: :model do
         it { is_expected.to be false }
       end
     end
+
     context 'when promotable is a Spree::Order' do
       let(:promotable) { create :order }
 
@@ -418,8 +422,10 @@ describe Spree::Promotion, type: :model do
           before do
             line_item.product.update_column(:promotionable, false)
           end
+
           it { is_expected.to be false }
         end
+
         context 'and at least one item is promotionable' do
           it { is_expected.to be true }
         end
@@ -454,6 +460,7 @@ describe Spree::Promotion, type: :model do
           promotion.promotion_rules = [promo1, promo2]
           allow(promotion.promotion_rules).to receive(:for).and_return(promotion.promotion_rules)
         end
+
         it 'returns the eligible rules' do
           expect(promotion.eligible_rules(promotable)).to eq [promo1, promo2]
         end
@@ -473,6 +480,7 @@ describe Spree::Promotion, type: :model do
           promotion.promotion_rules = [promo1, promo2]
           allow(promotion.promotion_rules).to receive(:for).and_return(promotion.promotion_rules)
         end
+
         it 'returns nil' do
           expect(promotion.eligible_rules(promotable)).to be_nil
         end
@@ -506,6 +514,7 @@ describe Spree::Promotion, type: :model do
           promotion.promotion_rules = [promo]
           allow(promotion.promotion_rules).to receive(:for).and_return(promotion.promotion_rules)
         end
+
         it 'returns nil' do
           expect(promotion.eligible_rules(promotable)).to be_nil
         end
@@ -533,7 +542,7 @@ describe Spree::Promotion, type: :model do
 
     context 'when the order is eligible for promotion' do
       context 'when there are no rules' do
-        it { is_expected.to be }
+        it { is_expected.to be true }
       end
 
       context 'when there are rules' do
@@ -543,13 +552,13 @@ describe Spree::Promotion, type: :model do
           context 'when all rules allow action on the line item' do
             let(:rules) { [true_rule] }
 
-            it { is_expected.to be }
+            it { is_expected.to be true }
           end
 
           context 'when at least one rule does not allow action on the line item' do
             let(:rules) { [true_rule, false_rule] }
 
-            it { is_expected.not_to be }
+            it { is_expected.not_to be true }
           end
         end
 
@@ -559,13 +568,13 @@ describe Spree::Promotion, type: :model do
           context 'when at least one rule allows action on the line item' do
             let(:rules) { [true_rule, false_rule] }
 
-            it { is_expected.to be }
+            it { is_expected.to be true }
           end
 
           context 'when no rules allow action on the line item' do
             let(:rules) { [false_rule] }
 
-            it { is_expected.not_to be }
+            it { is_expected.not_to be true }
           end
         end
       end
@@ -573,7 +582,8 @@ describe Spree::Promotion, type: :model do
 
     context 'when the order is not eligible for the promotion' do
       before { promotion.starts_at = Time.current + 2.days }
-      it { is_expected.not_to be }
+
+      it { is_expected.not_to be true }
     end
   end
 

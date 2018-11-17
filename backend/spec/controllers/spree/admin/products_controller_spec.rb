@@ -42,20 +42,22 @@ describe Spree::Admin::ProductsController, type: :controller do
       end
 
       describe 'expects to receive' do
+        after { send_request }
+
         it { expect(Spree::Product).to receive(:friendly).and_return(products) }
         it { expect(products).to receive(:find).with(product.id.to_s).and_return(product) }
         it { expect(product).to receive(:destroy).and_return(true) }
-
-        after { send_request }
       end
 
       describe 'assigns' do
         before { send_request }
+
         it { expect(assigns(:product)).to eq(product) }
       end
 
       describe 'response' do
         before { send_request }
+
         it { expect(response).to have_http_status(:ok) }
         it { expect(flash[:success]).to eq(Spree.t('notice_messages.product_deleted')) }
       end
@@ -72,20 +74,22 @@ describe Spree::Admin::ProductsController, type: :controller do
       end
 
       describe 'expects to receive' do
+        after { send_request }
+
         it { expect(Spree::Product).to receive(:friendly).and_return(products) }
         it { expect(products).to receive(:find).with(product.id.to_s).and_return(product) }
         it { expect(product).to receive(:destroy).and_return(false) }
-
-        after { send_request }
       end
 
       describe 'assigns' do
         before { send_request }
+
         it { expect(assigns(:product)).to eq(product) }
       end
 
       describe 'response' do
         before { send_request }
+
         it { expect(response).to have_http_status(:ok) }
 
         it 'set flash error' do
@@ -130,6 +134,7 @@ describe Spree::Admin::ProductsController, type: :controller do
 
       describe 'response' do
         before { send_request }
+
         it { expect(response).to have_http_status(:found) }
         it { expect(response).to be_redirect }
 

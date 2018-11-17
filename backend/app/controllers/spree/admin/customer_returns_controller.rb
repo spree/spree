@@ -57,6 +57,7 @@ module Spree
 
         @customer_return.return_items = return_items_params.map do |item_params|
           next unless item_params.delete('returned') == '1'
+
           return_item = item_params[:id] ? Spree::ReturnItem.find(item_params[:id]) : Spree::ReturnItem.new
           return_item.attributes = item_params
           return_item

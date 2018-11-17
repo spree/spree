@@ -22,6 +22,7 @@ module Spree
       scopes.each do |name|
         # We should not define price scopes here, as they require something slightly different
         next if name.to_s.include?('master_price')
+
         parts = name.to_s.match(/(.*)_by_(.*)/)
         scope(name.to_s, -> { order(Arel.sql("#{Product.quoted_table_name}.#{parts[2]} #{parts[1] == 'ascend' ? 'ASC' : 'DESC'}")) })
       end
@@ -29,10 +30,10 @@ module Spree
 
     def self.property_conditions(property)
       properties = Property.table_name
-      conditions = case property
-                   when String   then { "#{properties}.name" => property }
-                   when Property then { "#{properties}.id" => property.id }
-                   else { "#{properties}.id" => property.to_i }
+      case property
+      when String   then { "#{properties}.name" => property }
+      when Property then { "#{properties}.id" => property.id }
+      else { "#{properties}.id" => property.to_i }
       end
     end
 
@@ -109,7 +110,7 @@ module Spree
                    when String     then { "#{option_types}.name" => option }
                    when OptionType then { "#{option_types}.id" => option.id }
                    else { "#{option_types}.id" => option.to_i }
-      end
+                   end
 
       joins(:option_types).where(conditions)
     end
@@ -120,7 +121,7 @@ module Spree
                        when String then OptionType.find_by(name: option) || option.to_i
                        when OptionType then option.id
                        else option.to_i
-      end
+                       end
 
       conditions = "#{option_values}.name = ? AND #{option_values}.option_type_id = ?", value, option_type_id
       group('spree_products.id').joins(variants_including_master: :option_values).where(conditions)
@@ -210,25 +211,27 @@ module Spree
       group('spree_products.id').joins(:taxons).where(Taxon.arel_table[:name].eq(name))
     end
 
-    private
-
     def self.price_table_name
       Price.quoted_table_name
     end
+    private_class_method :price_table_name
 
     # specifically avoid having an order for taxon search (conflicts with main order)
     def self.prepare_taxon_conditions(taxons)
       ids = taxons.map { |taxon| taxon.self_and_descendants.pluck(:id) }.flatten.uniq
       joins(:classifications).where(Classification.table_name => { taxon_id: ids })
     end
+    private_class_method :prepare_taxon_conditions
 
     # Produce an array of keywords for use in scopes.
     # Always return array with at least an empty string to avoid SQL errors
     def self.prepare_words(words)
       return [''] if words.blank?
+
       a = words.split(/[,\s]/).map(&:strip)
       a.any? ? a : ['']
     end
+    private_class_method :prepare_words
 
     def self.get_taxons(*ids_or_records_or_names)
       taxons = Taxon.table_name
@@ -242,5 +245,6 @@ module Spree
         end
       end.compact.flatten.uniq
     end
-    end
+    private_class_method :get_taxons
+  end
 end

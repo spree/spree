@@ -108,15 +108,16 @@ module Spree
                             size: 10,
                             class: 'input_string form-control'
                           }
-        end
+                        end
 
         field_options.merge!(readonly: options[:readonly],
                              disabled: options[:disabled],
-                             size:     options[:size])
+                             size: options[:size])
       end
 
       def preference_fields(object, form)
         return unless object.respond_to?(:preferences)
+
         fields = object.preferences.keys.map do |key|
           if object.has_preference?(key)
             form.label("preferred_#{key}", Spree.t(key) + ': ') +
@@ -127,9 +128,11 @@ module Spree
       end
 
       # renders hidden field and link to remove record using nested_attributes
-      def link_to_icon_remove_fields(f)
-        url = f.object.persisted? ? [:admin, f.object] : '#'
-        link_to_with_icon('delete', '', url, class: 'spree_remove_fields btn btn-sm btn-danger', data: { action: 'remove' }, title: Spree.t(:remove)) + f.hidden_field(:_destroy)
+      def link_to_icon_remove_fields(form)
+        url = form.object.persisted? ? [:admin, form.object] : '#'
+        css_class = 'spree_remove_fields btn btn-sm btn-danger'
+        title = Spree.t(:remove)
+        link_to_with_icon('delete', '', url, class: css_class, data: { action: 'remove' }, title: title) + form.hidden_field(:_destroy)
       end
 
       def spree_dom_id(record)

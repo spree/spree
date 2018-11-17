@@ -87,6 +87,7 @@ describe Spree::Calculator::DefaultTax, type: :model do
             expect(calculator.compute(line_item)).to eq(1.38)
           end
         end
+
         it "is equal to the item's full price * rate" do
           Spree::TaxRate.store_pre_tax_amount(line_item, [rate])
           expect(calculator.compute(line_item)).to eq(1.43)

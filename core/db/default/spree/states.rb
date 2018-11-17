@@ -1,6 +1,7 @@
 Spree::Country.where(states_required: true).each do |country|
   carmen_country = Carmen::Country.named(country.name)
-  next if !carmen_country
+  next unless carmen_country
+
   carmen_country.subregions.each do |subregion|
     country.states.where(
       name: subregion.name,

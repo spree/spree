@@ -191,6 +191,8 @@ describe 'Order Details', type: :feature, js: true do
             tote.master.stock_items.update_all count_on_hand: 0, backorderable: true
           end
 
+          after { Spree::Config[:track_inventory_levels] = true }
+
           it 'adds variant to order just fine' do
             select2_search tote.name, from: Spree.t(:name_or_sku)
             within('table.stock-levels') do
@@ -204,8 +206,6 @@ describe 'Order Details', type: :feature, js: true do
               expect(page).to have_content(tote.name)
             end
           end
-
-          after { Spree::Config[:track_inventory_levels] = true }
         end
       end
 
@@ -238,6 +238,7 @@ describe 'Order Details', type: :feature, js: true do
         before { visit spree.edit_admin_order_path(order) }
         # can not properly implement until poltergeist supports checking alert text
         # see https://github.com/teampoltergeist/poltergeist/pull/516
+
         it 'should warn you if you have not selected a location or shipment'
 
         context 'there is enough stock at the other location' do
@@ -445,6 +446,8 @@ describe 'Order Details', type: :feature, js: true do
               tote.master.stock_items.update_all count_on_hand: 0, backorderable: true
             end
 
+            after { Spree::Config[:track_inventory_levels] = true }
+
             it 'adds variant to order just fine' do
               select2_search tote.name, from: Spree.t(:name_or_sku)
               within('table.stock-levels') do
@@ -458,8 +461,6 @@ describe 'Order Details', type: :feature, js: true do
                 expect(page).to have_content(tote.name)
               end
             end
-
-            after { Spree::Config[:track_inventory_levels] = true }
           end
         end
 

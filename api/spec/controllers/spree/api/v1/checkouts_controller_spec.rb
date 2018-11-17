@@ -10,11 +10,11 @@ module Spree
       end
 
       it 'invokes load_order_with_lock' do
-        expect(controller).to receive(:load_order_with_lock).exactly(1).times
+        expect(controller).to receive(:load_order_with_lock).once
       end
 
       it 'invokes load_order' do
-        expect(controller).to receive(:load_order).with(true).exactly(1).times.and_return(true)
+        expect(controller).to receive(:load_order).with(true).once.and_return(true)
       end
 
       context 'ensure no double_render_error' do
@@ -113,13 +113,13 @@ module Spree
 
         let(:address) do
           {
-            firstname:  'John',
-            lastname:   'Doe',
-            address1:   '7735 Old Georgetown Road',
-            city:       'Bethesda',
-            phone:      '3014445002',
-            zipcode:    '20814',
-            state_id:   @state.id,
+            firstname: 'John',
+            lastname: 'Doe',
+            address1: '7735 Old Georgetown Road',
+            city: 'Bethesda',
+            phone: '3014445002',
+            zipcode: '20814',
+            state_id: @state.id,
             country_id: @country.id
           }
         end

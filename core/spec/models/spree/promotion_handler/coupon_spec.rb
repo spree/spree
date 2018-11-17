@@ -102,6 +102,7 @@ module Spree
             # Regression test for #4211
             context 'with incorrect coupon code casing' do
               before { allow(order).to receive_messages coupon_code: '10OFF' }
+
               it 'successfully activates promo' do
                 expect(order.total).to eq(130)
                 subject.apply
@@ -238,6 +239,7 @@ module Spree
             @order = Spree::Order.create!
             allow(@order).to receive_messages coupon_code: '10off'
           end
+
           context 'and the product price is less than promo discount' do
             before do
               3.times do |_i|
@@ -245,6 +247,7 @@ module Spree
                 Spree::Cart::AddItem.call(order: @order, variant: taxable.master)
               end
             end
+
             it 'successfully applies the promo' do
               # 3 * (9 + 0.9)
               expect(@order.total).to eq(29.7)
@@ -256,6 +259,7 @@ module Spree
               expect(@order.additional_tax_total).to eq(0)
             end
           end
+
           context 'and the product price is greater than promo discount' do
             before do
               3.times do |_i|
@@ -263,6 +267,7 @@ module Spree
                 Spree::Cart::AddItem.call(order: @order, variant: taxable.master, quantity: 2)
               end
             end
+
             it 'successfully applies the promo' do
               # 3 * (22 + 2.2)
               expect(@order.total.to_f).to eq(72.6)
@@ -274,6 +279,7 @@ module Spree
               expect(@order.additional_tax_total).to eq(3.6)
             end
           end
+
           context 'and multiple quantity per line item' do
             before do
               twnty_off = Promotion.create name: 'promo', code: '20off'
@@ -288,6 +294,7 @@ module Spree
                 Spree::Cart::AddItem.call(order: @order, variant: taxable.master, quantity: 2)
               end
             end
+
             it 'successfully applies the promo' do
               # 3 * ((2 * 10) + 2.0)
               expect(@order.total.to_f).to eq(66)

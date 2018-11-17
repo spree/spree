@@ -75,6 +75,7 @@ module Spree
     # If stock was -20 but then was -25 (decrease of 5 units), do nothing.
     def process_backorders(number)
       return unless number.positive?
+
       units = backordered_inventory_units.first(number) # We can process atmost n backorders
 
       units.each do |unit|

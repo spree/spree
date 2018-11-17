@@ -20,6 +20,7 @@ describe Spree::StockItem, type: :model do
 
     context 'backorderable' do
       before { subject.backorderable = true }
+
       it { expect(subject).to be_available }
     end
 
@@ -229,6 +230,7 @@ describe Spree::StockItem, type: :model do
 
     context 'binary_inventory_cache is set to true' do
       before { Spree::Config.binary_inventory_cache = true }
+
       context 'in_stock? changes' do
         it 'touches its variant' do
           expect do
@@ -301,6 +303,7 @@ describe Spree::StockItem, type: :model do
           before do
             subject.backorderable = false
           end
+
           it_behaves_like 'valid count_on_hand'
         end
 
@@ -308,6 +311,7 @@ describe Spree::StockItem, type: :model do
           before do
             subject.backorderable = true
           end
+
           it_behaves_like 'valid count_on_hand'
         end
       end
@@ -317,12 +321,14 @@ describe Spree::StockItem, type: :model do
           before do
             subject.backorderable = true
           end
+
           context 'when both count_on_hand and count_on_hand_was are positive' do
             context 'when count_on_hand is greater than count_on_hand_was' do
               before do
                 subject.update_column(:count_on_hand, 3)
                 subject.send(:count_on_hand=, subject.count_on_hand + 3)
               end
+
               it_behaves_like 'valid count_on_hand'
             end
 
@@ -342,6 +348,7 @@ describe Spree::StockItem, type: :model do
                 subject.update_column(:count_on_hand, -3)
                 subject.send(:count_on_hand=, subject.count_on_hand + 2)
               end
+
               it_behaves_like 'valid count_on_hand'
             end
 
@@ -361,6 +368,7 @@ describe Spree::StockItem, type: :model do
                 subject.update_column(:count_on_hand, -3)
                 subject.send(:count_on_hand=, subject.count_on_hand + 6)
               end
+
               it_behaves_like 'valid count_on_hand'
             end
           end
@@ -371,6 +379,7 @@ describe Spree::StockItem, type: :model do
                 subject.update_column(:count_on_hand, 3)
                 subject.send(:count_on_hand=, subject.count_on_hand - 6)
               end
+
               it_behaves_like 'valid count_on_hand'
             end
           end
@@ -387,6 +396,7 @@ describe Spree::StockItem, type: :model do
                 subject.update_column(:count_on_hand, 3)
                 subject.send(:count_on_hand=, subject.count_on_hand + 3)
               end
+
               it_behaves_like 'valid count_on_hand'
             end
 
@@ -406,6 +416,7 @@ describe Spree::StockItem, type: :model do
                 subject.update_column(:count_on_hand, -3)
                 subject.send(:count_on_hand=, subject.count_on_hand + 2)
               end
+
               it_behaves_like 'valid count_on_hand'
             end
 
@@ -425,6 +436,7 @@ describe Spree::StockItem, type: :model do
                 subject.update_column(:count_on_hand, -3)
                 subject.send(:count_on_hand=, subject.count_on_hand + 6)
               end
+
               it_behaves_like 'valid count_on_hand'
             end
           end
@@ -435,6 +447,7 @@ describe Spree::StockItem, type: :model do
                 subject.update_column(:count_on_hand, 3)
                 subject.send(:count_on_hand=, subject.count_on_hand - 6)
               end
+
               it_behaves_like 'not valid count_on_hand'
             end
           end

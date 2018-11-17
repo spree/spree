@@ -73,16 +73,14 @@ use rake db:load_file[/absolute/path/to/sample/filename.rb]}
     ActiveRecord::Base.send(:subclasses).each(&:reset_column_information)
 
     load_defaults = Spree::Country.count == 0
-    unless load_defaults # ask if there are already Countries => default data hass been loaded
-      load_defaults = agree('Countries present, load sample data anyways? [y/n]: ')
-    end
+    load_defaults ||= agree('Countries present, load sample data anyways? [y/n]: ')
     Rake::Task['db:seed'].invoke if load_defaults
 
     if Rails.env.production? && Spree::Product.count > 0
       load_sample = agree('WARNING: In Production and products exist in database, load sample data anyways? [y/n]:')
     else
       load_sample = true if ENV['AUTO_ACCEPT']
-      load_sample = agree('Load Sample Data? [y/n]: ') unless load_sample
+      load_sample ||= agree('Load Sample Data? [y/n]: ')
     end
 
     if load_sample

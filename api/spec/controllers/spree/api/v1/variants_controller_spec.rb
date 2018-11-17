@@ -25,8 +25,9 @@ module Spree
         [{ option_values: :option_type }, :product, :default_price, :images, { stock_items: :stock_location }]
       end
 
-      it { expect(controller).to receive(:variant_includes).and_return(variants_includes_list) }
       after { api_get :index }
+
+      it { expect(controller).to receive(:variant_includes).and_return(variants_includes_list) }
     end
 
     it 'adds for_currency_and_available_price_amount scope to variants list' do

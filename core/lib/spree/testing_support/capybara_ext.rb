@@ -106,9 +106,7 @@ module CapybaraExt
   def wait_for_ajax(delay = Capybara.default_max_wait_time)
     Timeout.timeout(delay) do
       active = page.evaluate_script('typeof jQuery !== "undefined" && jQuery.active')
-      until active.zero?
-        active = page.evaluate_script('typeof jQuery !== "undefined" && jQuery.active')
-      end
+      active = page.evaluate_script('typeof jQuery !== "undefined" && jQuery.active') until active.zero?
     end
   end
 

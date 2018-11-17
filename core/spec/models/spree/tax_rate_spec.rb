@@ -79,12 +79,12 @@ describe Spree::TaxRate, type: :model do
       end
 
       context 'when there is a default tax zone' do
+        subject { Spree::TaxRate.match(order.tax_zone) }
+
         before do
           @zone = create(:zone, name: 'Country Zone', default_tax: true, zone_members: [])
           @zone.zone_members.create(zoneable: country)
         end
-
-        subject { Spree::TaxRate.match(order.tax_zone) }
 
         let(:included_in_price) { false }
         let!(:rate) do
