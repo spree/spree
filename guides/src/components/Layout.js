@@ -42,7 +42,10 @@ export default class Layout extends React.Component {
               <div className="mw9 center pa3 flex">
                 {this.props.nav && (
                   <div className="w-20">
-                    <Sidebar nav={this.props.nav} />
+                    <Sidebar
+                      nav={this.props.nav}
+                      activeSection={this.props.activeSection}
+                    />
                   </div>
                 )}
                 <div

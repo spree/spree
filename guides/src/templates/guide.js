@@ -8,10 +8,11 @@ import Layout from '../components/Layout'
 export default function Template({ data }) {
   const { guide } = data
 
-  console.log(guide)
-
   return (
-    <Layout nav={data.sidebarNav ? data.sidebarNav.group : []}>
+    <Layout
+      nav={data.sidebarNav ? data.sidebarNav.group : []}
+      activeSection={guide.fields.section}
+    >
       <div className="guide-container">
         <Helmet title={`Spree Guides :: ${guide.frontmatter.title}`} />
         <div className="guide">
@@ -55,7 +56,9 @@ export const pageQuery = graphql`
       }
     }
     guide: markdownRemark(id: { eq: $id }) {
-      id
+      fields {
+        section
+      }
       html
       frontmatter {
         title
