@@ -8,7 +8,8 @@ import IconOpen from 'react-feather/dist/icons/chevron-down'
 
 export default class Sidebar extends React.Component {
   static propTypes = {
-    nav: PropTypes.array.isRequired
+    nav: PropTypes.array.isRequired,
+    activeSection: PropTypes.string
   }
 
   state = {

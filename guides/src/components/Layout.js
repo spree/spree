@@ -11,7 +11,8 @@ import 'tachyons/css/tachyons.css'
 export default class Layout extends React.Component {
   static propTypes = {
     children: PropTypes.node.isRequired,
-    nav: PropTypes.array
+    nav: PropTypes.array,
+    activeSection: PropTypes.string
   }
 
   render() {

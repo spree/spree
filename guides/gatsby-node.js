@@ -1,14 +1,6 @@
 const path = require('path')
 const { createFilePath } = require(`gatsby-source-filesystem`)
-const {
-  split,
-  dropLast,
-  replace,
-  without,
-  length,
-  last,
-  equals
-} = require('ramda')
+const { split, dropLast, replace, without, length, last } = require('ramda')
 
 exports.createPages = ({ actions, graphql }) => {
   const { createPage } = actions
@@ -91,14 +83,5 @@ exports.onCreateNode = ({ node, getNode, actions }) => {
       name: 'section',
       value: sectionFieldValue || 'null'
     })
-
-    // console.log(`
-    //   array: ${pathArray};
-    //   slug: ${slugFieldValue};
-    //   depth: ${depthFieldValue};
-    //   rootSection: ${rootSectionValue};
-    //   section: ${sectionFieldValue};
-    //   ---------------------------------------------------
-    // `)
   }
 }
