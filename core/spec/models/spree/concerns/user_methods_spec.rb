@@ -12,6 +12,7 @@ describe Spree::UserMethods do
 
     context 'with a role' do
       before { test_user.spree_roles << role }
+
       it { is_expected.to be_truthy }
     end
 

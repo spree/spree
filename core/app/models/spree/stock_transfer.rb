@@ -26,7 +26,7 @@ module Spree
     def transfer(source_location, destination_location, variants)
       transaction do
         variants.each_pair do |variant, quantity|
-          source_location.unstock(variant, quantity, self) if source_location
+          source_location&.unstock(variant, quantity, self)
           destination_location.restock(variant, quantity, self)
 
           self.source_location = source_location

@@ -98,7 +98,7 @@ module Spree
     private
 
     def accurate_title
-      if @order && @order.completed?
+      if @order&.completed?
         Spree.t(:order_number, number: @order.number)
       else
         Spree.t(:shopping_cart)
@@ -107,7 +107,7 @@ module Spree
 
     def check_authorization
       order = Spree::Order.find_by(number: params[:id]) if params[:id].present?
-      order = current_order unless order
+      order ||= current_order
 
       if order && action_name.to_sym == :show
         authorize! :show, order, cookies.signed[:token]

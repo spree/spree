@@ -37,7 +37,8 @@ module Spree
           in_stock_variant.stock_items.first.update_column(:count_on_hand, 10)
           not_backorderable_variant.stock_items.first.update_column(:backorderable, false)
 
-          expect(SameProduct.eligible_variants(in_stock_variant)).to eq [in_stock_variant, backorderable_variant]
+          expect(SameProduct.eligible_variants(in_stock_variant)).to include(in_stock_variant)
+          expect(SameProduct.eligible_variants(in_stock_variant)).to include(backorderable_variant)
         end
       end
     end

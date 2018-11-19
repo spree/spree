@@ -43,6 +43,7 @@ module Spree
       else
         order.shipments.each do |shipment|
           break if quantity.zero?
+
           quantity -= remove_from_shipment(shipment, quantity)
         end
       end
@@ -101,6 +102,7 @@ module Spree
       shipment_units.each do |inventory_unit|
         inventory_unit.quantity.times do
           break if removed_quantity == quantity
+
           if inventory_unit.quantity > 1
             inventory_unit.decrement(:quantity)
           else

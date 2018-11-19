@@ -16,6 +16,7 @@ AllCops:
     - '**/dummy/**/*'
     - '**/vendor/**/*'
     - '**/spec_helper.rb'
+    - '**/templates/**/*'
 
 Layout/MultilineOperationIndentation:
   EnforcedStyle: indented
@@ -51,6 +52,8 @@ BlockLength:
   Exclude:
     - '**/spec/**/*'
     - '**/*.rake'
+    - '**/factories/**/*'
+    - '**/config/routes.rb'
 
 Metrics/AbcSize:
  Max: 45
@@ -92,6 +95,9 @@ Style/MutableConstant:
 Style/PercentLiteralDelimiters:
   Enabled: false
 
+Style/IfUnlessModifier:
+  Enabled: false
+
 Naming/VariableNumber:
   Enabled: false
 
@@ -102,6 +108,9 @@ Style/UnneededPercentQ:
   Enabled: false
 
 Lint/ParenthesesAsGroupedExpression:
+  Enabled: false
+
+Style/NumericPredicate:
   Enabled: false
 
 Metrics/PerceivedComplexity:

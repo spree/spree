@@ -6,7 +6,7 @@ class CreateSpreeReturnAuthorizationInventoryUnit < ActiveRecord::Migration[4.2]
       t.integer :exchange_variant_id
       t.datetime :received_at
 
-      t.timestamps null: false
+      t.timestamps null: false, precision: 6
     end
   end
 end

@@ -6,7 +6,7 @@ module Spree
 
         remaining_total = outstanding_balance
 
-        if user && user.store_credits.any?
+        if user&.store_credits&.any?
           payment_method = Spree::PaymentMethod::StoreCredit.available.first
           raise 'Store credit payment method could not be found' unless payment_method
 
@@ -28,12 +28,14 @@ module Spree
 
       def covered_by_store_credit?
         return false unless user
+
         user.total_available_store_credit >= total
       end
       alias covered_by_store_credit covered_by_store_credit?
 
       def total_available_store_credit
         return 0.0 unless user
+
         user.total_available_store_credit
       end
 

@@ -31,6 +31,7 @@ describe 'Customer Details', type: :feature, js: true do
       visit spree.new_admin_order_path
     end
     # Regression test for #3335 & #5317
+
     it 'associates a user when not using guest checkout' do
       select2_search product.name, from: Spree.t(:name_or_sku)
       within('table.stock-levels') do

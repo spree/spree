@@ -48,7 +48,7 @@ module Spree
             spree_authorize! :update, spree_current_order, order_token
 
             dependencies[:remove_item_from_cart].call(
-              order:     spree_current_order,
+              order: spree_current_order,
               line_item: line_item
             )
 
@@ -104,12 +104,12 @@ module Spree
 
           def dependencies
             {
-              create_cart:           Spree::Cart::Create,
-              add_item_to_cart:      Spree::Cart::AddItem,
+              create_cart: Spree::Cart::Create,
+              add_item_to_cart: Spree::Cart::AddItem,
               remove_item_from_cart: Spree::Cart::RemoveLineItem,
-              cart_serializer:       Spree::V2::Storefront::CartSerializer,
-              set_item_quantity:     Spree::Cart::SetQuantity,
-              coupon_handler:        Spree::PromotionHandler::Coupon
+              cart_serializer: Spree::V2::Storefront::CartSerializer,
+              set_item_quantity: Spree::Cart::SetQuantity,
+              coupon_handler: Spree::PromotionHandler::Coupon
             }
           end
 

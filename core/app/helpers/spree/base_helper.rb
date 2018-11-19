@@ -80,8 +80,8 @@ module Spree
     end
 
     # human readable list of variant options
-    def variant_options(v, _options = {})
-      v.options_text
+    def variant_options(variant, _options = {})
+      variant.options_text
     end
 
     def frontend_available?

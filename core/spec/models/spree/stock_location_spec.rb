@@ -49,11 +49,13 @@ module Spree
           context 'passes backorderable default config' do
             context 'true' do
               before { subject.backorderable_default = true }
+
               it { expect(stock_item.backorderable).to be true }
             end
 
             context 'false' do
               before { subject.backorderable_default = false }
+
               it { expect(stock_item.backorderable).to be false }
             end
           end

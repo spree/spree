@@ -104,9 +104,7 @@ module Spree
 
     def set_state_if_present
       if params[:state]
-        if @order.can_go_to_state?(params[:state]) && !skip_state_validation?
-          redirect_to checkout_state_path(@order.state)
-        end
+        redirect_to checkout_state_path(@order.state) if @order.can_go_to_state?(params[:state]) && !skip_state_validation?
         @order.state = params[:state]
       end
     end
@@ -159,9 +157,7 @@ module Spree
         end
       end
 
-      if try_spree_current_user && try_spree_current_user.respond_to?(:payment_sources)
-        @payment_sources = try_spree_current_user.payment_sources
-      end
+      @payment_sources = try_spree_current_user.payment_sources if try_spree_current_user&.respond_to?(:payment_sources)
     end
 
     def add_store_credit_payments
@@ -174,9 +170,7 @@ module Spree
         params.delete(:payment_source)
 
         # Return to the Payments page if additional payment is needed.
-        if @order.payments.valid.sum(:amount) < @order.total
-          redirect_to checkout_state_path(@order.state) and return
-        end
+        redirect_to checkout_state_path(@order.state) and return if @order.payments.valid.sum(:amount) < @order.total
       end
     end
 

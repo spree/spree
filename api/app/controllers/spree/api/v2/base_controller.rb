@@ -15,7 +15,11 @@ module Spree
         end
 
         def render_error_payload(error, status = 422)
-          render json: { error: error }, status: status
+          if error.is_a?(Struct)
+            render json: { error: error.to_s, errors: error.to_h }, status: status
+          elsif error.is_a?(String)
+            render json: { error: error }, status: status
+          end
         end
 
         def spree_current_store
@@ -45,9 +49,9 @@ module Spree
 
         def find_spree_current_order
           Spree::Order::FindCurrent.new.execute(
-            store:    spree_current_store,
-            user:     spree_current_user,
-            token:    order_token,
+            store: spree_current_store,
+            user: spree_current_user,
+            token: order_token,
             currency: current_currency
           )
         end

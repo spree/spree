@@ -10,7 +10,7 @@ FactoryBot.define do
     shipping_category { |r| Spree::ShippingCategory.first || r.association(:shipping_category) }
 
     # ensure stock item will be created for this products master
-    before(:create) { create(:stock_location) if Spree::StockLocation.count == 0 }
+    before(:create) { create(:stock_location) unless Spree::StockLocation.any? }
 
     factory :custom_product do
       name  { 'Custom Product' }

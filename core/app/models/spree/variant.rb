@@ -175,6 +175,7 @@ module Spree
         end
       else
         return if current_value.name == opt_value
+
         option_values.delete(current_value)
       end
 
@@ -291,7 +292,7 @@ module Spree
     end
 
     def set_master_out_of_stock
-      if product.master && product.master.in_stock?
+      if product.master&.in_stock?
         product.master.stock_items.update_all(backorderable: false)
         product.master.stock_items.each(&:reduce_count_on_hand_to_zero)
       end
@@ -300,8 +301,9 @@ module Spree
     # Ensures a new variant takes the product master price when price is not supplied
     def check_price
       if price.nil? && Spree::Config[:require_master_price]
-        return errors.add(:base, :no_master_variant_found_to_infer_price)  unless product && product.master
+        return errors.add(:base, :no_master_variant_found_to_infer_price)  unless product&.master
         return errors.add(:base, :must_supply_price_for_variant_or_master) if self == product.master
+
         self.price = product.master.price
       end
       if price.present? && currency.nil?

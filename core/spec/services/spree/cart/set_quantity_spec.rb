@@ -29,7 +29,7 @@ module Spree
 
           expect(result.success).to eq(false)
           expect(result.value).to be_a LineItem
-          expect(result.error).to eq("Quantity selected of \"#{line_item.name}\" is not available.")
+          expect(result.error.to_s).to eq("Quantity selected of \"#{line_item.name}\" is not available.")
         end
       end
     end

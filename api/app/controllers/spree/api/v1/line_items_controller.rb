@@ -55,9 +55,9 @@ module Spree
 
         def line_items_attributes
           { line_items_attributes: {
-              id: params[:id],
-              quantity: params[:line_item][:quantity],
-              options: line_item_params[:options] || {}
+            id: params[:id],
+            quantity: params[:line_item][:quantity],
+            options: line_item_params[:options] || {}
           } }
         end
 

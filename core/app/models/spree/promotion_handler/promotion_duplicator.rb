@@ -40,10 +40,10 @@ module Spree
 
           @new_promotion.promotion_actions << new_action
 
-          if action.try(:promotion_action_line_items)
-            action.promotion_action_line_items.each do |item|
-              new_action.promotion_action_line_items << item.dup
-            end
+          next unless action.try(:promotion_action_line_items)
+
+          action.promotion_action_line_items.each do |item|
+            new_action.promotion_action_line_items << item.dup
           end
         end
       end

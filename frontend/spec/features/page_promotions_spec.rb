@@ -4,9 +4,9 @@ describe 'page promotions', type: :feature, js: true do
   before do
     create(:product, name: 'RoR Mug', price: 20)
 
-    promotion = Spree::Promotion.create!(name:       '$10 off',
-                                         path:       'test',
-                                         starts_at:  1.day.ago,
+    promotion = Spree::Promotion.create!(name: '$10 off',
+                                         path: 'test',
+                                         starts_at: 1.day.ago,
                                          expires_at: 1.day.from_now)
 
     calculator = Spree::Calculator::FlatRate.new

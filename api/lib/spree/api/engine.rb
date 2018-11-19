@@ -47,7 +47,7 @@ module Spree
       config.to_prepare &method(:activate).to_proc
 
       def self.root
-        @root ||= Pathname.new(File.expand_path('../../../../', __FILE__))
+        @root ||= Pathname.new(File.expand_path('../../..', __dir__))
       end
     end
   end

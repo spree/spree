@@ -566,6 +566,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
       expect(page).not_to have_content(Spree.t(:thank_you_for_your_order))
     end
   end
+
   context "order's address is outside the default included tax zone" do
     context 'so that no taxation applies to its product' do
       before do
@@ -707,6 +708,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
           additional_store_credit.update(amount: 5)
           click_button 'Apply Store Credit'
         end
+
         it 'remove store credits button should remove store_credits' do
           click_button 'Remove Store Credit'
           expect(page).to have_current_path(spree.checkout_state_path(:payment))

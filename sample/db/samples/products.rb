@@ -114,6 +114,7 @@ products.each do |product_attrs|
   end
 
   next unless new_product
+
   Spree::Config[:currency] = 'EUR'
   new_product.reload
   new_product.price = eur_price

@@ -163,11 +163,8 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
     let!(:variant) { build(:variant, price: 5.59, product: product, option_values: []) }
 
     before do
-      # Need to have two images to trigger the error
-      image = File.open(File.expand_path('../../fixtures/thinking-cat.jpg', __FILE__))
-
-      product.images.create!(attachment: image)
-      product.images.create!(attachment: image)
+      image = File.open(File.expand_path('../fixtures/thinking-cat.jpg', __dir__))
+      create_image(product, image)
 
       product.option_types << option_value.option_type
       variant.option_values << option_value
@@ -211,9 +208,8 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
     let(:variant2) { create(:variant, product: product, price: 10.99) }
 
     before do
-      image = File.open(File.expand_path('../../fixtures/thinking-cat.jpg', __FILE__))
-      variant1.images.create!(attachment: image)
-      variant2.images.create!(attachment: image)
+      image = File.open(File.expand_path('../fixtures/thinking-cat.jpg', __dir__))
+      create_image(variant1, image)
     end
 
     it 'does not display no image available' do

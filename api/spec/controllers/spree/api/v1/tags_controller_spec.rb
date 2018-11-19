@@ -18,14 +18,14 @@ module Spree
           ActionController::Base.perform_caching = true
         end
 
+        after do
+          ActionController::Base.perform_caching = false
+        end
+
         it 'returns unique tags' do
           api_get :index
           tag_ids = json_response['tags'].map { |p| p['id'] }
           expect(tag_ids.uniq.count).to eq(tag_ids.count)
-        end
-
-        after do
-          ActionController::Base.perform_caching = false
         end
       end
 

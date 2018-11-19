@@ -67,6 +67,7 @@ describe Spree::OrderContents, type: :model do
 
       shared_context 'discount changes order total' do
         before { subject.add(variant, 1) }
+
         it { expect(subject.order.total).not_to eq variant.price }
       end
 

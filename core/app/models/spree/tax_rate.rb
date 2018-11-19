@@ -30,6 +30,7 @@ module Spree
     # Gets the array of TaxRates appropriate for the specified tax zone
     def self.match(order_tax_zone)
       return [] unless order_tax_zone
+
       potential_rates_for_zone(order_tax_zone)
     end
 
@@ -82,6 +83,7 @@ module Spree
 
     def self.included_tax_amount_for(options)
       return 0 unless options[:tax_zone] && options[:tax_category]
+
       potential_rates_for_zone(options[:tax_zone]).
         included_in_price.
         for_tax_category(options[:tax_category]).
@@ -107,6 +109,7 @@ module Spree
 
     def amount_for_label
       return '' unless show_rate_in_label?
+
       ' ' + ActiveSupport::NumberHelper::NumberToPercentageConverter.convert(
         amount * 100,
         locale: I18n.locale
