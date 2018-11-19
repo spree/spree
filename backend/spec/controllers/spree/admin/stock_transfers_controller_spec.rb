@@ -9,14 +9,16 @@ module Spree
         transfer.source_location_id = 1
         transfer.destination_location_id = 2
         transfer.reference = 'PO 666'
-      end end
+      end
+    end
 
     let!(:stock_transfer2) do
       StockTransfer.create do |transfer|
         transfer.source_location_id = 3
         transfer.destination_location_id = 4
         transfer.reference = 'PO 666'
-      end end
+      end
+    end
 
     context '#index' do
       it 'gets all transfers without search criteria' do

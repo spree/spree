@@ -47,18 +47,18 @@ module Spree
 
           def dependencies
             {
-              collection_sorter:     Spree::Products::Sort,
-              collection_finder:     Spree::Products::Find,
-              collection_paginator:  Spree::Shared::Paginate,
+              collection_sorter: Spree::Products::Sort,
+              collection_finder: Spree::Products::Find,
+              collection_paginator: Spree::Shared::Paginate,
               collection_serializer: Spree::V2::Storefront::ProductSerializer,
-              resource_serializer:   Spree::V2::Storefront::ProductSerializer
+              resource_serializer: Spree::V2::Storefront::ProductSerializer
             }
           end
 
           def collection_options(collection)
             {
-              links:   collection_links(collection),
-              meta:    collection_meta(collection),
+              links: collection_links(collection),
+              meta: collection_meta(collection),
               include: collection_includes
             }
           end
@@ -85,14 +85,14 @@ module Spree
 
           def scope_includes
             {
-              classifications:    :taxon,
+              classifications: :taxon,
               product_properties: :property,
-              option_types:       :option_values,
-              variants:           %i[default_price option_values]
+              option_types: :option_values,
+              variants: %i[default_price option_values]
             }
           end
 
-          alias_method :collection_includes, :resource_includes
+          alias collection_includes resource_includes
         end
       end
     end

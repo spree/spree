@@ -16,11 +16,13 @@ describe Spree::ZoneMember, type: :model do
 
       context 'zoneable is not of defunct kind' do
         before { zone_member.update(zoneable: state) }
+
         it { expect(defunct_without_kind).to include(zone_member) }
       end
 
       context 'zoneable is absent' do
         before { zone_member.update_column(:zoneable_id, nil) }
+
         it { expect(defunct_without_kind).to include(zone_member) }
       end
     end

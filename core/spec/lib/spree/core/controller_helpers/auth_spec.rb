@@ -89,15 +89,18 @@ describe Spree::Core::ControllerHelpers::Auth, type: :controller do
       before do
         allow(controller).to receive_messages(try_spree_current_user: double('User', id: 1, last_incomplete_spree_order: nil))
       end
+
       it 'redirects forbidden path' do
         get :index
         expect(response).to redirect_to(spree.forbidden_path)
       end
     end
+
     context 'when guest user' do
       before do
         allow(controller).to receive_messages(try_spree_current_user: nil)
       end
+
       it 'redirects login path' do
         allow(controller).to receive_messages(spree_login_path: '/login')
         get :index

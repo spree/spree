@@ -45,10 +45,10 @@ module Spree
           def dependencies
             {
               next_state_procceder: Spree::Checkout::Next,
-              advance_proceeder:    Spree::Checkout::Advance,
-              completer:            Spree::Checkout::Complete,
-              updater:              Spree::Checkout::Update,
-              cart_serializer:      Spree::V2::Storefront::CartSerializer,
+              advance_proceeder: Spree::Checkout::Advance,
+              completer: Spree::Checkout::Complete,
+              updater: Spree::Checkout::Update,
+              cart_serializer: Spree::V2::Storefront::CartSerializer,
               # defined in https://github.com/spree/spree/blob/master/core/lib/spree/core/controller_helpers/strong_parameters.rb#L19
               permitted_attributes: permitted_checkout_attributes
             }

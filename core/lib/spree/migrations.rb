@@ -26,6 +26,7 @@ module Spree
         engine_in_app = app_migrations.map do |file_name|
           name, engine = file_name.split('.', 2)
           next unless match_engine?(engine)
+
           name
         end.compact
 
@@ -53,6 +54,7 @@ module Spree
     def app_migrations
       Dir.entries(app_dir).map do |file_name|
         next if ['.', '..'].include? file_name
+
         name = file_name.split('_', 2).last
         name.empty? ? next : name
       end.compact! || []

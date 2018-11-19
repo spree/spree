@@ -97,7 +97,7 @@ module Spree
     end
 
     def check_for_root
-      if taxonomy.try(:root).present? && parent_id == nil
+      if taxonomy.try(:root).present? && parent_id.nil?
         errors.add(:root_conflict, 'this taxonomy already has a root taxon')
       end
     end

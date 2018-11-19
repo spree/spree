@@ -85,7 +85,7 @@ First, create the required views api directory with the following command:
 
 ```bash
 # The view needs be [controller]/[action].[api_version].rabl
-$ mkdir -p app/views/spree/api/v1/sales/index.v1.rabl
+$ mkdir -p app/views/spree/api/v1/sales
 ```
 
 Next, create the file `app/views/spree/api/v1/sales/index.v1.rabl` and add the following content to it:
@@ -112,9 +112,11 @@ end
 ```
 > **PS:** The `rspec-activemodel-mocks` is need to use `stub_*` methods (e.g `stub_model` called by `stub_authentication!`)
 
-2. Copy the file [spree/controller_hacks.rb](https://github.com/spree/spree/blob/master/api/spec/support/controller_hacks.rb) to `spec/support` folder. That is required to use `api_*` methods to simulate api requests (e.g `api_get :action`, `api_post :action`...)
+2. `bundle install`
+   
+3. Copy the file [spree/controller_hacks.rb](https://github.com/spree/spree/blob/master/api/spec/support/controller_hacks.rb) to `spec/support` folder. That is required to use `api_*` methods to simulate api requests (e.g `api_get :action`, `api_post :action`...)
 
-3. Replicate the extension's controller directory structure in our spec directory by running the following command
+4. Replicate the extension's controller directory structure in our spec directory by running the following command
 
 ```bash
 $ mkdir -p spec/controllers/spree/api/v1

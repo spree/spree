@@ -100,6 +100,7 @@ module Spree
     # the specific object amount passed here.
     def update!(target = adjustable)
       return amount if closed? || source.blank?
+
       amount = source.compute_amount(target)
       attributes = { amount: amount, updated_at: Time.current }
       attributes[:eligible] = source.promotion.eligible?(target) if promotion?

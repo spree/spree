@@ -105,6 +105,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
     let!(:payment_method)  { create(:credit_card_payment_method) }
 
     before do
+      allow_any_instance_of(Spree::PaymentMethod).to receive(:source_required?).and_return(false)
       allow_any_instance_of(Spree::Order).to receive_messages(confirmation_required?: true)
       allow_any_instance_of(Spree::Order).to receive_messages(payment_required?: true)
       put '/api/v2/storefront/checkout', params: params, headers: headers
@@ -136,13 +137,13 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
       let(:country)      { state.country }
       let!(:address) do
         {
-          firstname:  'John',
-          lastname:   'Doe',
-          address1:   '7735 Old Georgetown Road',
-          city:       'Bethesda',
-          phone:      '3014445002',
-          zipcode:    '20814',
-          state_id:   state.id,
+          firstname: 'John',
+          lastname: 'Doe',
+          address1: '7735 Old Georgetown Road',
+          city: 'Bethesda',
+          phone: '3014445002',
+          zipcode: '20814',
+          state_id: state.id,
           country_id: country.id
         }
       end
@@ -260,9 +261,13 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
         }
       end
 
-      it 'returns validation errors' do
+      it 'returns 422 HTTP status' do
         expect(response.status).to eq(422)
+      end
+
+      it 'returns validation errors' do
         expect(json_response['error']).to eq('Customer E-Mail is invalid')
+        expect(json_response['errors']).to eq('email' => ['is invalid'])
       end
     end
   end

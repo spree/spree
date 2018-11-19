@@ -58,6 +58,7 @@ describe Spree::ShippingMethod, type: :model do
 
       context 'one associated' do
         before { subject.shipping_categories.push create(:shipping_category) }
+
         it { expect(subject.error_on(:base).size).to eq(0) }
       end
     end

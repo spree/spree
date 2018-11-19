@@ -62,6 +62,7 @@ module Spree
           promotion_action_line_items.each do |item|
             line_item = order.find_line_item_by_variant(item.variant)
             next unless line_item.present?
+
             Spree::Cart::RemoveItem.call(order: order, variant: item.variant, quantity: (item.quantity || 1))
             action_taken = true
           end

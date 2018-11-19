@@ -85,6 +85,7 @@ module Spree
 
         context 'as a user' do
           before { allow(user).to receive_messages has_spree_role?: false }
+
           it 'does not assign the order to the other user' do
             params = { user_id: other_user.id }
             order = Importer::Order.import(user, params)

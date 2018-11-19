@@ -90,7 +90,7 @@ module Spree
       def load_data
         @amount = params[:amount] || load_order.total
         @payment_methods = @order.collect_backend_payment_methods
-        if @payment and @payment.payment_method
+        if @payment&.payment_method
           @payment_method = @payment.payment_method
         else
           @payment_method = @payment_methods.find { |payment_method| payment_method.id == params[:payment][:payment_method_id].to_i } if params[:payment]

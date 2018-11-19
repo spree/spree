@@ -11,7 +11,7 @@ module Spree
 
           def self.styles
             @styles ||= {
-              mini:   '32x32>',
+              mini: '32x32>',
               normal: '128x128>'
             }
           end

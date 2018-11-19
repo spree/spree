@@ -82,7 +82,7 @@ module Spree
     end
 
     def ==(other)
-      return false unless other && other.respond_to?(:value_attributes)
+      return false unless other&.respond_to?(:value_attributes)
 
       value_attributes == other.value_attributes
     end
@@ -140,6 +140,7 @@ module Spree
       # or when disabled by preference
       return if country.blank? || !Spree::Config[:address_requires_state]
       return unless country.states_required
+
       # ensure associated state belongs to country
       if state.present?
         if state.country == country

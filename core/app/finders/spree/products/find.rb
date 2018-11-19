@@ -63,7 +63,7 @@ module Spree
           distinct.
           where(
             spree_prices: {
-              amount:   price.min..price.max,
+              amount: price.min..price.max,
               currency: currency
             }
           )

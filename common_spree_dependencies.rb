@@ -4,6 +4,7 @@
 source 'https://rubygems.org'
 
 gem 'sass-rails'
+gem 'sass', '~> 3.6.0' # https://github.com/sass/ruby-sass/issues/94
 gem 'sqlite3', platforms: [:ruby, :mingw, :mswin, :x64_mingw]
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw]
 gem 'doorkeeper'
@@ -41,7 +42,7 @@ group :test do
 end
 
 group :test, :development do
-  gem 'rubocop', require: false
+  gem 'rubocop', '~> 0.60.0', require: false
   gem 'rubocop-rspec', require: false
   gem 'pry-byebug'
 end

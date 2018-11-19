@@ -7,9 +7,7 @@ module Spree
 
     context 'order totals' do
       before do
-        2.times do
-          create(:line_item, order: order, price: 10)
-        end
+        create_list(:line_item, 2, order: order, price: 10)
       end
 
       it 'updates payment totals' do

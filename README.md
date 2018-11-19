@@ -9,7 +9,7 @@
 
 [![Gem Version](https://badge.fury.io/rb/spree.svg)](https://badge.fury.io/rb/spree) [![Circle CI](https://circleci.com/gh/spree/spree.svg?style=shield)](https://circleci.com/gh/spree/spree/tree/master)
 [![Code Climate](https://codeclimate.com/github/spree/spree.svg)](https://codeclimate.com/github/spree/spree)
-[![codebeat](https://codebeat.co/badges/16feb8a2-abf0-4fbb-a130-20b689efcfc0)](https://codebeat.co/projects/github-com-spree-spree)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/8277fc2bb0b1f777084f/test_coverage)](https://codeclimate.com/github/spree/spree/test_coverage)
 [![Slack Status](http://slack.spreecommerce.org/badge.svg)](http://slack.spreecommerce.org)
 
 **Spree** is a complete open source e-commerce solution built with Ruby on Rails. It
@@ -267,11 +267,9 @@ please ensure that you have a postgres user:
 createuser -s -r postgres
 ```
 
-And also ensure that you have [PhantomJS](http://phantomjs.org/) installed as well:
-
-```shell
-brew update && brew install phantomjs
-```
+And also ensure that you have [ChromeDriver](http://chromedriver.chromium.org) installed as well.
+Please follow this
+[instruction](https://github.com/SeleniumHQ/selenium/wiki/ChromeDriver) to install it.
 
 To execute all the tests, you may want to run this command at the
 root of the Spree project to generate test applications and run

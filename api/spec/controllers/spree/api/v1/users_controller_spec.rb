@@ -88,7 +88,7 @@ module Spree
       end
 
       it 'only gets own details on index' do
-        2.times { create(:user) }
+        create_list(:user, 2)
         api_get :index, token: user.spree_api_key
 
         expect(Spree.user_class.count).to eq 3
@@ -105,7 +105,7 @@ module Spree
       it 'gets all users' do
         allow(Spree::LegacyUser).to receive(:find_by).with(hash_including(:spree_api_key)) { current_api_user }
 
-        2.times { create(:user) }
+        create_list(:user, 2)
 
         api_get :index
         expect(Spree.user_class.count).to eq 2
@@ -114,7 +114,7 @@ module Spree
       end
 
       it 'can control the page size through a parameter' do
-        2.times { create(:user) }
+        create_list(:user, 2)
         api_get :index, per_page: 1
         expect(json_response['count']).to eq(1)
         expect(json_response['current_page']).to eq(1)

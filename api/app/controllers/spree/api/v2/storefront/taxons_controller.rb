@@ -31,17 +31,17 @@ module Spree
 
           def dependencies
             {
-              collection_finder:     Spree::Taxons::Find,
-              collection_paginator:  Spree::Shared::Paginate,
+              collection_finder: Spree::Taxons::Find,
+              collection_paginator: Spree::Shared::Paginate,
               collection_serializer: Spree::V2::Storefront::TaxonSerializer,
-              resource_serializer:   Spree::V2::Storefront::TaxonSerializer
+              resource_serializer: Spree::V2::Storefront::TaxonSerializer
             }
           end
 
           def collection_options(collection)
             {
-              links:   collection_links(collection),
-              meta:    collection_meta(collection),
+              links: collection_links(collection),
+              meta: collection_meta(collection),
               include: collection_includes
             }
           end
@@ -76,7 +76,7 @@ module Spree
             ]
           end
 
-          alias_method :collection_includes, :resource_includes
+          alias collection_includes resource_includes
         end
       end
     end

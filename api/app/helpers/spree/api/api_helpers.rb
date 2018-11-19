@@ -177,7 +177,7 @@ module Spree
       ]
 
       def variant_attributes
-        if @current_user_roles && @current_user_roles.include?('admin')
+        if @current_user_roles&.include?('admin')
           @@variant_attributes + [:cost_price]
         else
           @@variant_attributes
