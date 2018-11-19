@@ -1,6 +1,20 @@
 import * as React from 'react'
 import PropTypes from 'prop-types'
 import { Link } from 'gatsby'
+import { compose, join, juxt, toUpper, head, tail, isNil, unless } from 'ramda'
+
+const capitalize = compose(
+  join(''),
+  juxt([
+    compose(
+      toUpper,
+      head
+    ),
+    tail
+  ])
+)
+
+const capitalizeIfNotNil = unless(isNil, capitalize)
 
 const Sidebar = ({ nav }) => (
   <aside>
@@ -8,22 +22,16 @@ const Sidebar = ({ nav }) => (
       <ul className="list ma0 pl0">
         {nav.map((item, index) => (
           <li key={index}>
-            <h3>
-              <span className="ttc">
-                {item.section.split('/').length > 1
-                  ? item.section.split('/')[1]
-                  : item.section.split('/')[0]}
-              </span>
-            </h3>
+            <h3>{capitalizeIfNotNil(item.section)}</h3>
             <ul>
-              {item.edges.map((edge, index) => (
-                <li key={index}>
+              {item.edges.map(edge => (
+                <li key={edge.node.id}>
                   <Link
-                    to={edge.node.relativePath.replace('.md', '.html')}
-                    className="link gray db mv1"
+                    to={edge.node.fields.slug}
                     activeClassName="green"
+                    className="link gray db mv1"
                   >
-                    {edge.node.childMarkdownRemark.frontmatter.title}
+                    {edge.node.frontmatter.title}
                   </Link>
                 </li>
               ))}

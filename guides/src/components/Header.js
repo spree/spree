@@ -15,10 +15,10 @@ const Header = () => (
       <DocSearch />
 
       <nav className="w-100 tr">
-        <NavItem url="/api">Api</NavItem>
-        <NavItem url="/developer">Developer</NavItem>
-        <NavItem url="/user">User</NavItem>
-        <NavItem url="/release_notes">Release-notes</NavItem>
+        <NavItem url="/api.html">Api</NavItem>
+        <NavItem url="/developer.html">Developer</NavItem>
+        <NavItem url="/user.html">User</NavItem>
+        <NavItem url="/release_notes.html">Release-notes</NavItem>
         <NavItem url="http://slack.spreecommerce.org/">Slack</NavItem>
         <NavItem url="https://heroku.com/deploy?template=https://github.com/spree/spree">
           Demo

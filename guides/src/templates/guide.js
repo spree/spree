@@ -8,11 +8,14 @@ import Layout from '../components/Layout'
 export default function Template({ data }) {
   const { guide } = data
 
+  console.log(guide)
+
   return (
     <Layout nav={data.sidebarNav ? data.sidebarNav.group : []}>
       <div className="guide-container">
         <Helmet title={`Spree Guides :: ${guide.frontmatter.title}`} />
         <div className="guide">
+          {console.log(data)}
           <h1>{guide.frontmatter.title}</h1>
           <div
             className="guide-content"
@@ -29,29 +32,30 @@ Template.propTypes = {
 }
 
 export const pageQuery = graphql`
-  query GuideById($id: String!, $section: String!) {
-    sidebarNav: allFile(
+  query GuideById($id: String, $rootSection: String) {
+    sidebarNav: allMarkdownRemark(
       filter: {
-        ext: { eq: ".md" }
-        base: { ne: "index.md" }
-        relativeDirectory: { glob: $section }
+        fields: { rootSection: { eq: $rootSection }, section: { ne: "null" } }
       }
     ) {
-      group(field: relativeDirectory) {
+      group(field: fields___section) {
         section: fieldValue
         edges {
           node {
-            relativePath
-            childMarkdownRemark {
-              frontmatter {
-                title
-              }
+            fields {
+              section
+              slug
+              rootSection
+            }
+            frontmatter {
+              title
             }
           }
         }
       }
     }
     guide: markdownRemark(id: { eq: $id }) {
+      id
       html
       frontmatter {
         title
