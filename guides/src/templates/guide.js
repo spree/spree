@@ -12,6 +12,7 @@ export default function Template({ data }) {
     <Layout
       nav={data.sidebarNav ? data.sidebarNav.group : []}
       activeSection={guide.fields.section}
+      activeRootSection={guide.fields.rootSection}
     >
       <div className="guide-container">
         <Helmet title={`Spree Guides :: ${guide.frontmatter.title}`} />
@@ -58,6 +59,7 @@ export const pageQuery = graphql`
     guide: markdownRemark(id: { eq: $id }) {
       fields {
         section
+        rootSection
       }
       html
       frontmatter {

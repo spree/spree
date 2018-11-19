@@ -43,7 +43,7 @@ export default class Sidebar extends React.Component {
 
   render() {
     return (
-      <aside>
+      <aside className="mt4">
         <nav>
           <ul className="list ma0 pl0">
             {this.props.nav.map((item, index) => (

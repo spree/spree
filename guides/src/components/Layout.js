@@ -12,7 +12,8 @@ export default class Layout extends React.Component {
   static propTypes = {
     children: PropTypes.node.isRequired,
     nav: PropTypes.array,
-    activeSection: PropTypes.string
+    activeSection: PropTypes.string,
+    activeRootSection: PropTypes.string
   }
 
   render() {
@@ -39,7 +40,10 @@ export default class Layout extends React.Component {
               <html lang="en" />
             </Helmet>
             <div className="sans-serif dark-gray">
-              <Header siteTitle={data.site.siteMetadata.title} />
+              <Header
+                siteTitle={data.site.siteMetadata.title}
+                activeRootSection={this.props.activeRootSection}
+              />
               <div className="mw9 center pa3 flex">
                 {this.props.nav && (
                   <div className="w-20">
