@@ -62,7 +62,7 @@ export default class Sidebar extends React.Component {
                   <span>{this.capitalizeSectionTitle(item.section)}</span>
                 </h3>
                 <ul
-                  className={`list pl0 ml3 ${
+                  className={`list pl0 ml3 mb4 ${
                     this.sectionIsOpen(item.section) ? '' : 'dn'
                   }`}
                 >
