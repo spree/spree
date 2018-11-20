@@ -148,7 +148,7 @@ paths:
         - bearerAuth: []
 
   '/cart/empty':
-    post:
+    patch:
       description: Empties the order
       tags:
         - Cart
