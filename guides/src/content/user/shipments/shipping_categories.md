@@ -16,7 +16,7 @@ During checkout, the shipping categories assigned to the products in your custom
 
 To create a new shipping category, go to the Admin Interface, click the "Configuration" tab, click the "Shipping Categories" link, and then click the "New Shipping Category" button. Enter a name for your new shipping category and click the "Create" button.
 
-![New Shipping Category](/images/user/shipments/new_shipping_category.jpg)
+![New Shipping Category](../../../images/user/shipments/new_shipping_category.jpg)
 
 ### Adding a Shipping Category to a Product
 
@@ -24,7 +24,7 @@ Once you've created your shipping categories you can assign the appropriate cate
 
 Once you are in edit mode for the product, select the shipping category you want to assign to the product from the "Shipping Categories" drop-down menu, and click "Update".
 
-![Select Shipping Category](/images/user/shipments/select_shipping_category.jpg)
+![Select Shipping Category](../../../images/user/shipments/select_shipping_category.jpg)
 
 ## Next Step
 
