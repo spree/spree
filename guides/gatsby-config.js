@@ -29,7 +29,10 @@ module.exports = {
           {
             resolve: `gatsby-remark-images`,
             options: {
-              maxWidth: 590
+              maxWidth: 1000,
+              showCaptions: true,
+              quality: 100,
+              withWebp: true
             }
           },
           {
@@ -89,13 +92,11 @@ module.exports = {
     {
       resolve: `gatsby-plugin-manifest`,
       options: {
-        name: 'gatsby-starter-default',
-        short_name: 'starter',
+        name: 'spree-guides',
+        short_name: 'guides',
         start_url: '/',
         background_color: '#663399',
-        theme_color: '#663399',
-        display: 'minimal-ui',
-        icon: 'src/images/gatsby-icon.png' // This path is relative to the root of the site.
+        theme_color: '#663399'
       }
     }
     // this (optional) plugin enables Progressive Web App + Offline functionality

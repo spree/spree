@@ -7,7 +7,7 @@ section: creating_products
 
 To create a new product for your store, go into the Admin Interface, click the "Products" tab, and click the "New Product" button.
 
-![New Product Entry Form](/images/user/products/new_product_entry_form.jpg)
+![New Product Entry Form](../../../images/user/products/new_product_entry_form.jpg)
 
 The three mandatory fields ("Name", "Master Price", and "Shipping Categories") are denoted with an asterisk (&#42;) next to the label. You can leave SKU blank. If you don't add a value for "Available On" the product will not be shown in your store.
 
@@ -19,7 +19,7 @@ The three mandatory fields ("Name", "Master Price", and "Shipping Categories") a
 
 After you click the "Create" button, the Spree application brings you to a more detailed product entry page, where you can input more information about your new product.
 
-![Product Edit Form](/images/user/products/product_edit_form.jpg)
+![Product Edit Form](../../../images/user/products/product_edit_form.jpg)
 
 * **Name** - This field will either be blank, or the same as what you entered on the initial page. You can change this field whenever you like.
 * **Permalink** - The permalink is automatically created by the application for you when the product is first saved, and is based on the product's name. This is what is appended to the end of a URL when someone visits the page for a particular product. You can change the permalink, but should exercise extreme caution in doing so to avoid naming collisions with other products in your database.
@@ -46,7 +46,7 @@ A store whose products had no images to look at would be pretty boring, and prob
 
 Just click the "Images" link under "Product Details" on the right-hand side of the screen. Any images that you may have already uploaded will be previewed for you. To add a new image for your product, click the "New Image" button.
 
-![New Product Image Form](/images/user/products/new_image_form.jpg)
+![New Product Image Form](../../../images/user/products/new_image_form.jpg)
 
 Select the Image file, and enter the Alternative Text for the image. Alternative Text is what appears when someone has their browser's image-rendering turned off, as with certain types of screen readers.
 
@@ -97,11 +97,11 @@ Let's create the large, star-wrapped, blue-lidded tumbler Variant as an example.
 
 On your tumbler product edit page, click the "Variants" link. Click the "New Variant" button.
 
-![New Product Variant](/images/user/products/new_variant.jpg)
+![New Product Variant](../../../images/user/products/new_variant.jpg)
 
 Select the appropriate values for the Option Types. As you can see, you also have the choice to enter values for this particular Variant that may be different from what you input on the Product's main page. Let's raise the price on our Variant to $20. Click the "Create" button.
 
-![Variants List](/images/user/products/variants_list.jpg)
+![Variants List](../../../images/user/products/variants_list.jpg)
 
 ## Product Properties
 
@@ -117,13 +117,13 @@ Let's assume that you have two stock locations - your main New York warehouse an
 
 Now, go back to the Tumblers product page, and click the "Stock Management" link.
 
-![Stock Management Page](/images/user/products/stock_management.jpg)
+![Stock Management Page](../../../images/user/products/stock_management.jpg)
 
 For this guide, let's say we want to say that we have 7 of our tumbler variant in the New York warehouse, and 3 in Detroit. To accomplish this, change the quantity to 7, select "New York Warehouse" from the "Stock Location" drop-down list, and select "large-blue-stars" from the "Variant" drop-down list. Click the "Add Stock button".
 
 The "Stock Location Info" table will update, showing you that there are 7 of these items in the New York warehouse. Repeat these steps, adding 3 tumblers from the Detroit warehouse.
 
-![Stock Location Info](/images/user/products/stock_location_info.jpg)
+![Stock Location Info](../../../images/user/products/stock_location_info.jpg)
 
 Your Stock Location Info table should now look like the one pictured above.
 

@@ -27,7 +27,7 @@ Shipments have the following attributes:
 
 A shipment can go through many different states, as illustrated below.
 
-![Shipment flow](/images/developer/core/shipment_flow.jpg)
+![Shipment flow](../../../images/developer/core/shipment_flow.jpg)
 
 An explanation of the different states:
 

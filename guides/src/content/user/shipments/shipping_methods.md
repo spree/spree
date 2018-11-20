@@ -10,7 +10,7 @@ Now that you have set up all of the pieces you need, it's time to put them toget
 
 To add a new shipping method to your store, go to the Admin Interface and click "Configuration", then "Shipping Methods". Click the "New Shipping Method" button to open the New Shipping Method form.
 
-![New Shipping Method](/images/user/shipments/new_shipping_method.jpg)
+![New Shipping Method](../../../images/user/shipments/new_shipping_method.jpg)
 
 #### Name
 
@@ -52,7 +52,7 @@ Please note that Spree Commerce, Inc. makes no claims of warranty or accuracy fo
 
 Some shipping methods may only apply to certain types of products in your store, regardless of where those items are being shipped. You may only want to send over-sized items via UPS Ground, for example, and not via USPS Priority. The options shown in the "Categories" section correspond to the [Shipping Categories](shipping_categories) you set up in an earlier section of this guide series.
 
-![Shipping Method Categories](/images/user/shipments/shipping_method_categories.jpg)
+![Shipping Method Categories](../../../images/user/shipments/shipping_method_categories.jpg)
 
 Check the boxes next to the categories you want served by your new shipping method.
 
@@ -60,7 +60,7 @@ Check the boxes next to the categories you want served by your new shipping meth
 
 In [a previous step to this guide](zones) you learned about how to set up geographical zones for your store. Within the form's "Zones" section, you need to specify which zones are served by this shipping method. The "EU_VAT" (European Value-Added Tax) zone could be served by USPS First Class International, but could _not_ be served by USPS Priority Mail.
 
-![Shipping Method Zones](/images/user/shipments/shipping_method_zones.jpg)
+![Shipping Method Zones](../../../images/user/shipments/shipping_method_zones.jpg)
 
 Check the boxes next to any zones you want served by this shipping method.
 
@@ -68,11 +68,11 @@ Check the boxes next to any zones you want served by this shipping method.
 
 Each shipping method is associated with one [Calculator](calculators). You can choose one of the built-in Spree calculators, or one you made yourself.
 
-![Shipping Method Calculator](/images/user/shipments/shipping_method_calculator.jpg)
+![Shipping Method Calculator](../../../images/user/shipments/shipping_method_calculator.jpg)
 
 Once you've made your calculator selection, click the "Create" button to finalize your new shipping method. The screen will refresh with one or more fields you'll use to set the parameters of your calculator. For example, creating a shipping method with a flat percent calculator will produce a screen like this:
 
-![Shipping Method Flat Percent](/images/user/shipments/shipping_method_flat_percent.jpg)
+![Shipping Method Flat Percent](../../../images/user/shipments/shipping_method_flat_percent.jpg)
 
 If necessary, you can re-read the [Calculators](calculators) portion of this guide series to better understand the options. Click the "Update" button, and your shipping method is now complete!
 
@@ -80,7 +80,7 @@ If necessary, you can re-read the [Calculators](calculators) portion of this gui
 
 To edit an existing method, go to the Admin Interface and click "Configuration", then "Shipping Methods". Click the "Edit" icon next to any of the shipping methods in the list.
 
-![Edit Shipping Method](/images/user/shipments/edit_shipping_method.jpg)
+![Edit Shipping Method](../../../images/user/shipments/edit_shipping_method.jpg)
 
 The form and all options that come up are the same as those you used in creating your shipping methods.
 
@@ -88,6 +88,6 @@ The form and all options that come up are the same as those you used in creating
 
 To delete a shipping method, go to the Admin Interface and click "Configuration", then "Shipping Methods". Click the "Delete" icon next to any of the shipping methods in the list.
 
-![Delete Shipping Method](/images/user/shipments/delete_shipping_method.jpg)
+![Delete Shipping Method](../../../images/user/shipments/delete_shipping_method.jpg)
 
 Confirm that you want to delete the shipping method by clicking "OK".

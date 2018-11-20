@@ -6,17 +6,17 @@ title: Editing Users
 
 There is a possibility to edit existing users. Simply when you enter **Users** tab search for the certain user that you would like to edit and press **Edit icon**.
 
-![User edit option](/images/user/users/user_edit_option.jpg)
+![User edit option](../../../images/user/users/user_edit_option.jpg)
 
 ## General Settings
 
 When you first open the account edition page you will see **General Settings**.
 
-![User's general settings](/images/user/users/user_edit_inside.jpg)
+![User's general settings](../../../images/user/users/user_edit_inside.jpg)
 
 In this page you can make additional changes to the user like email, roles and password. Also you can see, **Clear** and **Regenerate Key** API Key.
 
-![API Key](/images/user/users/user_edit_inside_api.jpg)
+![API Key](../../../images/user/users/user_edit_inside_api.jpg)
 
 Moreover there are **Lifetime Stats** collected by the Spree. You can see the following:
 
@@ -26,14 +26,14 @@ Moreover there are **Lifetime Stats** collected by the Spree. You can see the fo
 * **Store Credits** - You can get more information about Store Credits below.
 * **Member Since** - Shows the date when the user created an account on your page.
 
-![Lifetime Stats](/images/user/users/user_edit_inside_lifetimestats.jpg)
+![Lifetime Stats](../../../images/user/users/user_edit_inside_lifetimestats.jpg)
 
 ### Addresses
 
 In this section you can manage addresses (**Shipping** and **Billing**) defined by the user during the checkout. There are also **Lifetime Stats** visible on the bottom of this page.
 When you make changes in addresses, you have to press **Update** button in order to save the changes, also if you don't want to save them simply press **Cancel** button.
 
-![User Addresses](/images/user/users/user_edit_inside_address.jpg)
+![User Addresses](../../../images/user/users/user_edit_inside_address.jpg)
 
 ### Orders
 
@@ -44,7 +44,7 @@ There is a simply review of all orders created by the user. There are also **Lif
 * **State** - It shows current state for the certain order, you can find more [about order state here](order_states).
 * **Total** - It shows total price for the certain order.
 
-![User's orders](/images/user/users/user_edit_orders.jpg)
+![User's orders](../../../images/user/users/user_edit_orders.jpg)
 
 ### Items
 
@@ -58,22 +58,22 @@ Very simlar to **Orders** tab, however, few more options are present here about 
 * **State** - As previously aformentioned above there is more information [here](order_states).
 * **Order #** - It shows order's unique ID that hyperlinks you to order's details.
 
-![User's Items](/images/user/users/user_edit_inside_items.jpg)
+![User's Items](../../../images/user/users/user_edit_inside_items.jpg)
 
 ### Store Credits
 
 Firstly, to add store credits to the User, you have to create a **Category** which you can learn about more [here](configuring_store_credit_categories).
 Once you create a category you can assign Store Credits to the Users by simply, clicking **Edit** on certain User and pressing **Store Credit** in right panel.
 
-![User edit inside](/images/user/users/store_credit_user_add.jpg)
+![User edit inside](../../../images/user/users/store_credit_user_add.jpg)
 
 You will see **Store Credit** panel. Like in every other tab in the User's account you can see **Lifetime Stats**.
 
-![Store Credit panel](/images/user/users/store_credit_user.jpg)
+![Store Credit panel](../../../images/user/users/store_credit_user.jpg)
 
 To add Store Credits press **Add Store Credit**. At this point, you can choose value that the User will receive, set Category and describe something important within **Memo** field. Memo field is visible to all other admins that will edit Store Credits added by you. Then just press **Create** button to accept your changes or simply press **Cancel** to exit without saving the changes.
 
-![Store Credit inside](/images/user/users/store_credit_user_new.jpg)
+![Store Credit inside](../../../images/user/users/store_credit_user_new.jpg)
 
 Now you can see how the Store Credits are assigned to the user. New options are visible here:
 
@@ -83,38 +83,38 @@ Now you can see how the Store Credits are assigned to the user. New options are 
 * **Created By** - The Admin's email that added Store Credits to the certain User.
 * **Issued On** - Date of granting Store Credits.
 
-![Store Credit added to the User account](/images/user/users/store_credit_user_added.jpg)
+![Store Credit added to the User account](../../../images/user/users/store_credit_user_added.jpg)
 
 As an Admin you are able to edit or delete Store Credits previously assigned to the User.
 
-![Store Credit Edit](/images/user/users/store_credit_user_added_edit.jpg)
+![Store Credit Edit](../../../images/user/users/store_credit_user_added_edit.jpg)
 
-![Store Credit Delete](/images/user/users/store_credit_user_added_delete.jpg)
+![Store Credit Delete](../../../images/user/users/store_credit_user_added_delete.jpg)
 
 Editing Store Credits will present you the same options like adding them.
 
-![Store Credit Edit Inside options](/images/user/users/store_credit_user_added_edit_inside.jpg)
+![Store Credit Edit Inside options](../../../images/user/users/store_credit_user_added_edit_inside.jpg)
 
 Those Store Credits are visible to the User in few places during checkout. It's worth to mention that the User is not forced to use Store Credits during Payment step - the Spree default. Spree gives a user choice to pay full price with Credit Card or use Store Credits.
 
-![User's choice](/images/user/users/store_credit_front_apply.jpg)
+![User's choice](../../../images/user/users/store_credit_front_apply.jpg)
 
 Once the User decides to use the Store Credits there is a possibility to cancel this choice.
 
-![User's choice to remove](/images/user/users/store_credit_front_applied.jpg)
+![User's choice to remove](../../../images/user/users/store_credit_front_applied.jpg)
 
 If the user use Store Credits and the amount will not cover whole order's price, rest will be charged off the Credit Card or PayPal.
 
-![Information about Credit Card and Store Credits](/images/user/users/store_credit_front_confirm.jpg)
+![Information about Credit Card and Store Credits](../../../images/user/users/store_credit_front_confirm.jpg)
 
 Once the order has been placed there is recapitulation of the order. The user can see the following: **Billing Adress**, **Shipping Address**, **Shipment method** which is previously chosed by the user, **Payment Information** - here, the user can see if and how much of Store Credits has been spent on the order, **Items purchased** and information about order's payment.
 
-![Placed order](/images/user/users/store_credit_front_placed_order.jpg)
+![Placed order](../../../images/user/users/store_credit_front_placed_order.jpg)
 
 As an Admin you are able to check how the user paid for the order. Simply choose order that you would like to inspect and follow to **Payments** tab. If you don't know yet how to find this tab you can find out [here](entering_orders). Admin has to capture the payment manually by default. In order to enable Automatic Payment Capture for the future payments we strongly recommend to read about it [here](payment_methods).
 
-![Admin panel Payments](/images/user/users/store_credit_order_paid.jpg)
+![Admin panel Payments](../../../images/user/users/store_credit_order_paid.jpg)
 
 Also as an Admin you can observe used Store Credits in **Users -> Store Credits**.
 
-![Used Store Credits](/images/user/users/store_credit_user_paid.jpg)
+![Used Store Credits](../../../images/user/users/store_credit_user_paid.jpg)

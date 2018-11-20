@@ -10,19 +10,19 @@ Roles are used to define user's permissions on your website. This option gives y
 
 To create new role you have to click **New Role** button that is placed in the right upper corner of this page.
 
-![New Role button](/images/user/config/new_role_button.jpg)
+![New Role button](../../../images/user/config/new_role_button.jpg)
 
 Simply input name for the certain role and press Update button.
 
-![New Role inside](/images/user/config/new_role_inside.jpg)
+![New Role inside](../../../images/user/config/new_role_inside.jpg)
 
 When the role is created you can still edit the name by pressing **Edit** button.
 
-![Edit Role](/images/user/config/edit_role_icon.jpg)
+![Edit Role](../../../images/user/config/edit_role_icon.jpg)
 
 Or Delete it by pressing **Delete** button.
 
-![Delete Role](/images/user/config/delete_role_icon.jpg)
+![Delete Role](../../../images/user/config/delete_role_icon.jpg)
 
 ## Assigning Role to the User
 

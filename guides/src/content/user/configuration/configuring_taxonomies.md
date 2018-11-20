@@ -6,7 +6,7 @@ title: Taxonomies
 
 Taxonomies are the Spree system's approach to category trees. The heading of a tree is called a _Taxonomy_. Any child branches are called _Taxons_. Taxons themselves can have their own branches. So you could have something like the following categories structure:
 
-![Taxonomy Tree](/images/user/config/taxonomy_tree.jpg)
+![Taxonomy Tree](../../../images/user/config/taxonomy_tree.jpg)
 
 In this example, "Categories" is the name of the Taxonomy. It has three child branches - "Luggage", "Housewares", and "Clothing". The last two branches each have three of their own child branches. Thus, "Clothing" is a child taxon to "Categories" and a parent taxon to "Men's".
 
@@ -16,7 +16,7 @@ To reach the Taxonomies list, first go to your Admin Interface, then click "Conf
 
 To create a new taxonomy, click the "New Taxonomy" button. Enter a name for the taxonomy and click "Create".
 
-![New Taxonomy](/images/user/config/new_taxonomy.jpg)
+![New Taxonomy](../../../images/user/config/new_taxonomy.jpg)
 
 You can then [add child taxons](#adding-a-taxon-to-a-taxonomy) to your new taxonomy.
 
@@ -24,15 +24,15 @@ You can then [add child taxons](#adding-a-taxon-to-a-taxonomy) to your new taxon
 
 To edit an existing taxonomy, click the "Edit" icon next to the name in the Taxonomies list.
 
-![Edit Taxonomy Icon](/images/user/config/edit_taxonomy_icon.jpg)
+![Edit Taxonomy Icon](../../../images/user/config/edit_taxonomy_icon.jpg)
 
 Here, you can change the name of the Taxonomy. You can also [reorder the child taxons](#reorder-a-taxon), [delete a taxon](#delete-a-taxon), [add a new taxon](#adding-a-taxon-to-a-taxonomy), or [edit a taxon](#edit-a-taxon). Make your changes, then click the Update button.
 
-![Edit Taxonomy](/images/user/config/edit_taxonomy.jpg)
+![Edit Taxonomy](../../../images/user/config/edit_taxonomy.jpg)
 
 ### Delete a Taxonomy
 
-![Delete Taxonomy Icon](/images/user/config/delete_taxonomy_icon.jpg)
+![Delete Taxonomy Icon](../../../images/user/config/delete_taxonomy_icon.jpg)
 
 To delete a taxonomy, click the "Delete" icon next to the name in the Taxonomies list. Click "OK" to confirm.
 
@@ -40,11 +40,11 @@ To delete a taxonomy, click the "Delete" icon next to the name in the Taxonomies
 
 Once you have created a taxonomy, you may want to add child taxons to it. Do do this, right-click the name of the Taxonomy, and click "Add".
 
-![Add Taxon to Taxonomy](/images/user/config/add_taxon_to_taxonomy.jpg)
+![Add Taxon to Taxonomy](../../../images/user/config/add_taxon_to_taxonomy.jpg)
 
 This will cause a new input field to open up, with "New node" in it. Replace this text with the name of your new taxon, and hit Enter. You'll now see the child tax in the taxonomy tree.
 
-![New Taxon](/images/user/config/new_taxon.jpg)
+![New Taxon](../../../images/user/config/new_taxon.jpg)
 
 Click "Update" to save your addition.
 
@@ -52,11 +52,11 @@ Click "Update" to save your addition.
 
 If your site needs sub-trees, just add taxons to other taxons. To do so, right-click the name of what will become the parent taxon, and click Add.
 
-![Add Taxon to Another Taxon](/images/user/config/add_taxon_to_taxon.jpg)
+![Add Taxon to Another Taxon](../../../images/user/config/add_taxon_to_taxon.jpg)
 
 Enter the name of the child taxon and click enter. Repeat this process for any sub-trees you need.
 
-![Complex Taxonomy Tree](/images/user/config/complex_taxonomy_tree.jpg)
+![Complex Taxonomy Tree](../../../images/user/config/complex_taxonomy_tree.jpg)
 
 Remember to save your changes by clicking the "Update" button after you have added any taxons.
 
@@ -70,17 +70,17 @@ Taxons are displayed in the order you add them by default. To reorder them, just
 
 Let's assume, for example, that we want the "Children's" taxon to be listed first, above "Women's" and "Men's". Just drag and drop the taxon to its new location.
 
-![Reordering Taxons](/images/user/config/reorder_taxons.jpg)
+![Reordering Taxons](../../../images/user/config/reorder_taxons.jpg)
 
 You can even drag a parent taxon into the tree of a different parent taxon, merging it into the second taxon's sub-tree.
 
-![Parent-to-Parent Taxon Merge](/images/user/config/parent_into_parent_taxon_merge.jpg)
+![Parent-to-Parent Taxon Merge](../../../images/user/config/parent_into_parent_taxon_merge.jpg)
 
 ### Edit a Taxon
 
 To edit a taxon's name, just right-click it and click "Edit".
 
-![Edit Taxon Form](/images/user/config/edit_taxon.jpg)
+![Edit Taxon Form](../../../images/user/config/edit_taxon.jpg)
 
 Here, you can edit several aspects of the taxon:
 
@@ -98,7 +98,7 @@ Remember to click "Update" after you make your changes.
 
 To delete a taxon, right-click it in the taxonomy tree and click "Remove".
 
-![Remove a Taxon](/images/user/config/remove_taxon.jpg)
+![Remove a Taxon](../../../images/user/config/remove_taxon.jpg)
 
 Click "OK" to confirm.
 
@@ -106,4 +106,4 @@ Click "OK" to confirm.
 
 To associate a product with one or more taxons, go to the Admin Interface, and click the "Products" tab. Locate the product you want to edit, and click its "Edit" icon. Select the taxons for the product in the Taxons field.
 
-![Add Taxons to a Product](/images/user/config/add_taxons_to_product.jpg)
+![Add Taxons to a Product](../../../images/user/config/add_taxons_to_product.jpg)

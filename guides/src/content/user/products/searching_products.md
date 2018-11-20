@@ -19,7 +19,7 @@ Next to each product there are 3 buttons.
 * **Clone** - Allows you to make a [duplicate of the certain product](cloning_products).
 * **Delete** - Allows you to [delete certain product](deleting_products).
 
-![Product Search](/images/user/products/products_landing.jpg)
+![Product Search](../../../images/user/products/products_landing.jpg)
 
 ## Filtering products
 
@@ -27,7 +27,7 @@ You may not always want to see all of the products in the shop - the Spree defau
 
 You can choose one or more of the following options to narrow your product search, then click the **Filter** button to extend filter options in dropdown.
 
-![Filter products](/images/user/products/filtering_products.jpg)
+![Filter products](../../../images/user/products/filtering_products.jpg)
 
 ### Name
 

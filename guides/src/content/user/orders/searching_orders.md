@@ -5,7 +5,7 @@ section: searching_orders
 
 When you click the **Orders** tab on the Admin Interface, you are instantly presented with a summary of the most recent orders your store has received.
 
-![Initial List of Orders](/images/user/orders/list_of_orders.jpg)
+![Initial List of Orders](../../../images/user/orders/list_of_orders.jpg)
 
 The list shows you the following information about each order:
 
@@ -23,7 +23,7 @@ Next to each row is an "Edit" icon. Clicking this icon allows you to [make chang
 
 You may not always want to see all of the most recent orders - the Spree default. You may want to view only those orders that you need to pack and ship, or only those from a particular customer. Spree gives you the flexibility to quickly find only those orders you need.
 
-![Order Filter Options](/images/user/orders/filter_options.jpg)
+![Order Filter Options](../../../images/user/orders/filter_options.jpg)
 
 You can choose one or more of the following options to narrow your order search, then click the **Filter Results** button to update the results.
 

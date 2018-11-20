@@ -18,19 +18,19 @@ Tax Categories is Spree's way of grouping products into those which are taxed in
 
 To access your store's existing Tax Categories, go to your Admin Interface, click "Configuration" then "Tax Categories".
 
-![Tax Categories](/images/user/config/tax_categories.jpg)
+![Tax Categories](../../../images/user/config/tax_categories.jpg)
 
 You can edit existing Tax Categories by clicking the "Edit" icon next to each in the list.
 
-![Edit Tax Category Link](/images/user/config/edit_tax_category_link.jpg)
+![Edit Tax Category Link](../../../images/user/config/edit_tax_category_link.jpg)
 
 You can also remove a Tax Category by clicking the "Delete" icon next to the category, then clicking "OK" to confirm.
 
-![Delete Tax Category Link](/images/user/config/delete_tax_category_link.jpg)
+![Delete Tax Category Link](../../../images/user/config/delete_tax_category_link.jpg)
 
 To create a new Tax Category, click the "New Tax Category" button.
 
-![New Tax Category Form](/images/user/config/new_tax_category_form.jpg)
+![New Tax Category Form](../../../images/user/config/new_tax_category_form.jpg)
 
 You supply a name, an optional description, and whether or not this is the default tax category for this store.
 
@@ -46,11 +46,11 @@ Tax rates are how it all comes together. A product with a given [Tax Category](#
 
 To add a new Tax Rate, go to your Admin Interface. Click "Configuration" then "Tax Rates".
 
-![Tax Rates](/images/user/config/tax_rates.jpg)
+![Tax Rates](../../../images/user/config/tax_rates.jpg)
 
 Here, you can see all of your existing tax rates and how they are configured. To create a new tax rate, click the "New Tax Rate" button.
 
-![New Tax Rate](/images/user/config/new_tax_rate.jpg)
+![New Tax Rate](../../../images/user/config/new_tax_rate.jpg)
 
 * **Name** - Give your new tax rate a meaningful name (like "Taxable US Goods", for example)
 * **Zone** - You'll need to make separate tax rates for each zone you serve, per category. Suppose you have a "Clothing" tax category, and you sell to both the US and Europe. You'll need to make two different tax rates - one for the US zone, and one for the European zone.
@@ -64,6 +64,6 @@ Here, you can see all of your existing tax rates and how they are configured. To
 
 Finally, European stores will benefit from the Tax Settings page.
 
-![Tax Settings](/images/user/config/tax_settings.jpg)
+![Tax Settings](../../../images/user/config/tax_settings.jpg)
 
 When this option is checked, your Spree site will take its default [tax category](#tax_categories), find the corresponding [tax rate](#tax-rate), and multiply it times the shipping rate for each available [shipping method](shipping_methods) offered to a customer during checkout.

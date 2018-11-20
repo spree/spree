@@ -8,7 +8,7 @@ Products are at the core of any e-commerce site. Selling them is the whole reaso
 
 From your store's Admin Interface, you can manage all of the common tasks associated with managing your products. To reach the Admin Interface, first log into your store with your admin user account, then go to the `/admin` directory of your site. Click the "Products" tab.
 
-![Products Admin](/images/user/products/products_admin.jpg)
+![Products Admin](../../../images/user/products/products_admin.jpg)
 
 From here you can:
 

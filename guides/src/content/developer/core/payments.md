@@ -15,7 +15,7 @@ When a payment is created, it is given a unique, 8-character identifier. This is
 
 A payment can go through many different states, as illustrated below.
 
-![Payment flow](/images/developer/core/payment_flow.jpg)
+![Payment flow](../../../images/developer/core/payment_flow.jpg)
 
 An explanation of the different states:
 

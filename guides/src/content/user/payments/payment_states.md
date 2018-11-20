@@ -19,15 +19,15 @@ The possible payment states are:
 
 A payment does not necessarily go through each of these states in sequential order as illustrated below:
 
-![Payments Flow](/images/developer/core/payment_flow.jpg)
+![Payments Flow](../../../images/developer/core/payment_flow.jpg)
 
 You can determine the payment state for a particular order by going to the Admin Interface and clicking on the "Orders" tab. Find the order you want to look up and click on it. Then click on the "Payments" link.
 
-![Payment Look Up](/images/user/payments/payments_look_up.jpg)
+![Payment Look Up](../../../images/user/payments/payments_look_up.jpg)
 
 The details for the payment will appear. The "Payment State" column will display one of the possible payment states listed above.
 
-![Payment Details](/images/user/payments/payment_details.jpg)
+![Payment Details](../../../images/user/payments/payment_details.jpg)
 
 ## Authorize vs Capture
 
@@ -41,16 +41,16 @@ Note: Not all payment gateways allow for the two step *authorize and then captur
 
 To capture a payment using the Admin Interface, click on the "Orders" tab. Find the order you want to look up and click on it. Then click on the "Payments" link. The order details will appear. Click on the "Capture" icon to initiate the capture process.
 
-![Capture a Payment](/images/user/payments/payment_capture.jpg)
+![Capture a Payment](../../../images/user/payments/payment_capture.jpg)
 
 ## Void a Payment
 
 To void a payment, go to the Admin Interface. click on the "Orders" tab. Find the order you want to look up and click on it. Then click on the "Payments" link. The order details will appear. Click on the "Void" icon to void the transaction.
 
-![Void a Payment](/images/user/payments/payment_void.jpg)
+![Void a Payment](../../../images/user/payments/payment_void.jpg)
 
 ## Payment's amount edit
 
 Additionally, before accepting or voiding the payment you can edit the amount by clicking "Edit" button.
 
-![Edit button](/images/user/payments/payment_edit_button.jpg)
+![Edit button](../../../images/user/payments/payment_edit_button.jpg)

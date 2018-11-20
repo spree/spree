@@ -14,7 +14,7 @@ To reach the Stock Locations management panel, go to your Admin Interface, click
 
 To add a stock location to your store, click the "New Stock Location" button.
 
-![New Stock Location](/images/user/config/new_stock_location.jpg)
+![New Stock Location](../../../images/user/config/new_stock_location.jpg)
 
 Here, you can input everything of relevance about your stock location: name, address, and phone are the most obvious. The three checkboxes on the right-hand side merit more explanation:
 
@@ -28,7 +28,7 @@ Input the values for all of the fields, and click "Create" to add your new stock
 
 To edit a stock location, click the "Edit" icon next to it in the Stock Locations list.
 
-![Edit Stock Location Icon](/images/user/config/edit_stock_location_icon.jpg)
+![Edit Stock Location Icon](../../../images/user/config/edit_stock_location_icon.jpg)
 
 Make the desired changes in the form and click "Update".
 
@@ -36,7 +36,7 @@ Make the desired changes in the form and click "Update".
 
 To remove a stock location, click the "Delete" icon next to it in the Stock Locations list.
 
-![Delete Stock Location Icon](/images/user/config/delete_stock_location_icon.jpg)
+![Delete Stock Location Icon](../../../images/user/config/delete_stock_location_icon.jpg)
 
 Click "OK" to confirm the deletion.
 
@@ -44,7 +44,7 @@ Click "OK" to confirm the deletion.
 
 Notice the "Stock Movements" link on the Stock Locations list.
 
-![Stock Movements Link](/images/user/config/stock_movements_link.jpg)
+![Stock Movements Link](../../../images/user/config/stock_movements_link.jpg)
 
 Clicking this link will show you all of the stock movements that have taken place for this stock location, both positive and negative.
 
@@ -56,7 +56,7 @@ If you have more than one stock location, your Spree store offers you a way to r
 
 To create a new stock transfer, go to your Admin Interface, click "Configuration", then "Stock Transfers", then click the "New Stock Transfer" button.
 
-![New Stock Transfer](/images/user/config/new_stock_transfer.jpg)
+![New Stock Transfer](../../../images/user/config/new_stock_transfer.jpg)
 
 You can enter an optional Reference Number - this could correlate to a PO number, a transfer request number, a tracking number, or any other identifier you wish to use.
 
@@ -64,7 +64,7 @@ Next, select your Source and Destination stock locations. If you are receiving s
 
 Select a product variant from the "Variant" drop-down list and enter the quantity of that product being transferred. Click the "Add" button.
 
-![Stock Transfer Readied](/images/user/config/stock_transfer.jpg)
+![Stock Transfer Readied](../../../images/user/config/stock_transfer.jpg)
 
 ***
 If you try to transfer an item that you do not have in stock at your Source location, the Spree system will record a stock transfer with a quantity of 0.
@@ -72,8 +72,8 @@ If you try to transfer an item that you do not have in stock at your Source loca
 
 The new stock transfer is readied. Once you have added all of the items you want to transfer, click the "Transfer Stock" button.
 
-![Stock Transfer Complete](/images/user/config/stock_transfer_complete.jpg)
+![Stock Transfer Complete](../../../images/user/config/stock_transfer_complete.jpg)
 
 Now when you look at the [Stock Movements](#stock-movements) for each of the stock locations, you see that there are two new entries that correspond to the stock transfer, both with a system-assigned "Action" number (actually, the id for the stock transfer).
 
-![Resulting Stock Movements](/images/user/config/resulting_stock_movements.jpg)
+![Resulting Stock Movements](../../../images/user/config/resulting_stock_movements.jpg)

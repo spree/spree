@@ -12,7 +12,7 @@ Next to each user there are 2 buttons and additionaly you can sort them by name 
 * **Delete** - Allows you to [delete the user permanently](deleting_users).
 * **Sort by user's name** - Allows you to sort the users by name (A-Z, Z-A).
 
-![User search options](/images/user/users/users_tab.jpg)
+![User search options](../../../images/user/users/users_tab.jpg)
 
 ## Filtering Users
 
@@ -20,7 +20,7 @@ You may not always want to see all of the users - the Spree default. You may wan
 
 You can choose one or more of the following options to narrow your user search, then click the **Filter** button to extend filter options in dropdown.
 
-![User search option](/images/user/users/users_search_option.jpg)
+![User search option](../../../images/user/users/users_search_option.jpg)
 
 ### Email
 

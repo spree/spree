@@ -99,7 +99,7 @@ also use several other web servers). To see your application in action, open a
 browser window and navigate to [http://localhost:3000](http://localhost:3000).
 You should see the Spree default home page:
 
-![Spree Application Home Page](/images/developer/spree_welcome.png)
+![Spree Application Home Page](../../../images/developer/spree_welcome.png)
 
 To stop the web server, hit Ctrl-C in the terminal window where it's running. In development mode, Spree does not generally require you to stop the server; changes you make in files will be automatically picked up by the server.
 
@@ -120,7 +120,7 @@ $ rake spree_auth:admin:create
 
 Upon successful authentication, you should see the admin screen:
 
-![Admin Screen](/images/developer/overview.png)
+![Admin Screen](../../../images/developer/overview.png)
 
 Feel free to explore some of the backend features that Spree has to offer and to verify that your installation is working properly.
 

@@ -36,11 +36,11 @@ Read through the following explanatory text to add one of the supported payment 
 
 To configure one of the supported payment gateways, you must first install the [Spree_Gateway](https://github.com/spree/spree_gateway) extension on your store. More than likely, you will want to ask someone from your technical team to do this. Once this extension has been installed, you can configure one of the supported gateways in the Admin Interface by clicking the "Configuration" tab and then clicking the "New Payment Method" button.
 
-![New Payment Method Form](/images/user/payments/new_payment_method.jpg)
+![New Payment Method Form](../../../images/user/payments/new_payment_method.jpg)
 
 If you installed the [Spree_Gateway](https://github.com/spree/spree_gateway) extension, you will see a long list of gateways in the "Provider" drop down menu. Select the one that you would like to add.
 
-![Select Payment Gateway Provider](/images/user/payments/add_payment_provider.jpg)
+![Select Payment Gateway Provider](../../../images/user/payments/add_payment_provider.jpg)
 
 #### Display
 
@@ -54,7 +54,7 @@ The Backend is the Admin Interface for your store. Site administrators typically
 
 There is a possibility to set Auto Capture feature for your payment methods. Once you set Auto Capture on **Yes** option for a particular payment method, all the payments will be captured automatically. At this point all the payments will be captured without Admin's direct interference. However,  **Use App Default (false)** is default setting for newly created Payment Method.
 
-![Set up Auto Capture Payment Method](/images/user/config/auto_capture_payment_method.jpg)
+![Set up Auto Capture Payment Method](../../../images/user/config/auto_capture_payment_method.jpg)
 
 #### Active
 
@@ -64,7 +64,7 @@ Select "Yes" if you want the payment method to be active on your store. Select "
 
 Give the payment method a name. The value you enter will appear on the customer-facing area of your store, on the Payment page as seen below:
 
-![Payment Method Name](/images/user/payments/payment_method_name.jpg)
+![Payment Method Name](../../../images/user/payments/payment_method_name.jpg)
 
 #### Description
 
@@ -80,7 +80,7 @@ It is possible to add a new payment gateway that is not included on the supporte
 
 To edit the configuration settings for an existing payment method, go to the Admin Interface, click the "Configuration" tab, and then click the "Payment Methods" link. Find the payment method that you would like to edit on the list that appears. Click the "Edit" icon next to the payment method to edit its settings.
 
-![Edit Payment Method](/images/user/payments/edit_payment_method.jpg)
+![Edit Payment Method](../../../images/user/payments/edit_payment_method.jpg)
 
 Make the desired changes to the payment method settings and then click "Update" to save them.
 

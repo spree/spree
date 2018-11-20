@@ -14,17 +14,17 @@ When the customer enters their shipping address during checkout, Spree uses that
 
 To create a new zone, go to the Admin Interface, click the "Configuration" tab, click the "Zones" link, and then click the "New Zone" button. Enter a name and description for your new zone. Decide if you want it to be the default zone selected for the purposes of calculating sales tax. Choose whether you want the zone to be country-based or state-based. Click the "Create" button once complete.
 
-![New Zone](/images/user/shipments/new_zone.jpg)
+![New Zone](../../../images/user/shipments/new_zone.jpg)
 
 ### Adding Members to a Zone
 
 Once you have a zone set up, you can associate either countries or states with it. To do this, go back to the Zones list (from the Admin Interface, click "Configuration", then "Zones"). Click the "Edit" icon next to the zone you just created.
 
-![Edit Zone Form](/images/user/shipments/edit_zone.jpg)
+![Edit Zone Form](../../../images/user/shipments/edit_zone.jpg)
 
 Choose a country or state from the drop-down box. Follow the same steps to add additional countries or states for the Zone.
 
-![Add Multiple Members](/images/user/shipments/add_multi_to_zone.jpg)
+![Add Multiple Members](../../../images/user/shipments/add_multi_to_zone.jpg)
 
 Click "Update" once complete.
 
@@ -32,7 +32,7 @@ Click "Update" once complete.
 
 It is easy to remove a state or country from one of your zones. Just go to your Admin Interface and click "Configuration", then "Zones". Click the "Edit" icon next to the zone you want to change. To remove a member of the zone, just click the X icon below its name.
 
-![Remove a Zone Member](/images/user/shipments/remove_zone_member.jpg)
+![Remove a Zone Member](../../../images/user/shipments/remove_zone_member.jpg)
 
 ## Next Step
 

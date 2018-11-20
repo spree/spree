@@ -15,11 +15,11 @@ There will come times when you need to edit orders that are placed in your store
 
 First, go to your Admin Interface. Click the "Orders" tab, and [locate the order](searching_orders) you want to change.
 
-![Edit Order Link](/images/user/orders/edit_order_link.jpg)
+![Edit Order Link](../../../images/user/orders/edit_order_link.jpg)
 
 This will bring up the order edit page:
 
-![Order Edit Page](/images/user/orders/order_edit.jpg)
+![Order Edit Page](../../../images/user/orders/order_edit.jpg)
 
 You can change any of the following components of an order from here:
 

@@ -6,7 +6,7 @@ title: Product Properties
 
 Depending on the nature of your store and the products you sell, you may want to add "Properties" to your product descriptions. Properties are typically used to provide additional information about a product to help the customer make a better purchase decision. Here is an example of how a product's properties would display on the customer-facing area of a store:
 
-![New Product Variant](/images/user/products/properties_example.jpg)
+![New Product Variant](../../../images/user/products/properties_example.jpg)
 
 ### Adding a Product Property
 
@@ -25,7 +25,7 @@ Follow these steps to add a product Property. In this example, we are going to a
 
 Now, when you navigate to the product's page in your store, you will see the new Country of Origin property in the "Properties" list.
 
-![Properties List](/images/user/products/properties_list.jpg)
+![Properties List](../../../images/user/products/properties_list.jpg)
 
 ***
 You can add as many "Product Properties" to an individual "Product" as you like - just use the "Add Product Properties" button on the Product Properties page for an individual product.
