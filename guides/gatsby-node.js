@@ -1,6 +1,6 @@
 const path = require('path')
 const { createFilePath } = require(`gatsby-source-filesystem`)
-const { split, dropLast, replace, without, length, last } = require('ramda')
+const R = require('ramda')
 
 exports.createPages = ({ actions, graphql }) => {
   const { createPage } = actions
@@ -23,6 +23,7 @@ exports.createPages = ({ actions, graphql }) => {
                 depth
                 rootSection
                 section
+                isIndex
               }
             }
           }
@@ -43,7 +44,8 @@ exports.createPages = ({ actions, graphql }) => {
           section: node.content.fields.section,
           rootSection: node.content.fields.rootSection,
           slug: node.content.fields.slug,
-          depth: node.content.fields.depth
+          depth: node.content.fields.depth,
+          isIndex: node.content.fields.isIndex
         }
       })
     })
@@ -54,16 +56,20 @@ exports.onCreateNode = ({ node, getNode, actions }) => {
   const { createNodeField } = actions
   if (node.internal.type === `MarkdownRemark`) {
     const slug = createFilePath({ node, getNode, basePath: `content` })
-    const pathArray = without([''], split('/', slug))
-    const slugFieldValue = replace(/(\/$)/, '.html', slug)
+    const pathArray = R.without([''], R.split('/', slug))
     const rootSectionValue = pathArray[0]
-    const depthFieldValue = length(dropLast(1, pathArray))
-    const sectionFieldValue = last(dropLast(1, pathArray))
+    const isIndex = R.contains('index.md', R.split('/', node.fileAbsolutePath))
+    const depthFieldValue = isIndex
+      ? R.length(pathArray)
+      : R.length(R.dropLast(1, pathArray))
+    const sectionFieldValue = isIndex
+      ? R.last(pathArray)
+      : R.last(R.dropLast(1, pathArray))
 
     createNodeField({
       node,
       name: 'slug',
-      value: slugFieldValue
+      value: slug
     })
 
     createNodeField({
@@ -82,6 +88,12 @@ exports.onCreateNode = ({ node, getNode, actions }) => {
       node,
       name: 'section',
       value: sectionFieldValue || 'null'
+    })
+
+    createNodeField({
+      node,
+      name: 'isIndex',
+      value: isIndex
     })
   }
 }

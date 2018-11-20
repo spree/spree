@@ -20,24 +20,21 @@ const Header = ({ activeRootSection }) => (
       <DocSearch />
 
       <nav className="w-100 tr">
-        <NavItem isActive={isActive(activeRootSection, 'api')} url="/api.html">
+        <NavItem isActive={isActive(activeRootSection, 'api')} url="/api">
           Api
         </NavItem>
         <NavItem
           isActive={isActive(activeRootSection, 'developer')}
-          url="/developer.html"
+          url="/developer"
         >
           Developer
         </NavItem>
-        <NavItem
-          isActive={isActive(activeRootSection, 'user')}
-          url="/user.html"
-        >
+        <NavItem isActive={isActive(activeRootSection, 'user')} url="/user">
           User
         </NavItem>
         <NavItem
           isActive={isActive(activeRootSection, 'release_notes')}
-          url="/release_notes.html"
+          url="/release_notes"
         >
           Release-notes
         </NavItem>
@@ -51,7 +48,7 @@ const Header = ({ activeRootSection }) => (
 )
 
 Header.propTypes = {
-  activeRootSection: PropTypes.bool
+  activeRootSection: PropTypes.string
 }
 
 export default Header

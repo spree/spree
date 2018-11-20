@@ -17,7 +17,6 @@ export default function Template({ data }) {
       <div className="guide-container">
         <Helmet title={`Spree Guides :: ${guide.frontmatter.title}`} />
         <div className="guide">
-          {console.log(data)}
           <h1>{guide.frontmatter.title}</h1>
           <div
             className="guide-content"
@@ -48,6 +47,7 @@ export const pageQuery = graphql`
               section
               slug
               rootSection
+              isIndex
             }
             frontmatter {
               title
