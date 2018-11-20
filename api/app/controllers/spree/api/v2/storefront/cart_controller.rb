@@ -100,6 +100,18 @@ module Spree
             end
           end
 
+          def remove_coupon_code
+            spree_authorize! :update, spree_current_order, order_token
+
+            result = dependencies[:coupon_handler].new(spree_current_order).remove(params[:coupon_code])
+
+            if result.error.blank?
+              render_serialized_payload serialized_current_order
+            else
+              render_error_payload(result.error)
+            end
+          end
+
           private
 
           def dependencies

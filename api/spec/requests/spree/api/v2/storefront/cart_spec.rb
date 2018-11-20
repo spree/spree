@@ -277,7 +277,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
 
       it 'returns 422 when there is not enough stock' do
         headers = { 'Authorization' => "Bearer #{token.token}" }
-        patch '/api/v2/storefront/cart/set_quantity', params: { order: order, line_item_id: line_item.id, quantity: 5, user: user }, headers: headers
+        patch '/api/v2/storefront/cart/set_quantity', params: { order: order, line_item_id: line_item.id, quantity: 5 }, headers: headers
 
         expect(response.status).to eq(422)
         expect(json_response[:error]).to eq("Quantity selected of \"#{line_item.name}\" is not available.")
@@ -286,7 +286,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
 
     it 'changes the quantity of line_item' do
       headers = { 'Authorization' => "Bearer #{token.token}" }
-      patch '/api/v2/storefront/cart/set_quantity', params: { order: order, line_item_id: line_item.id, quantity: 5, user: user }, headers: headers
+      patch '/api/v2/storefront/cart/set_quantity', params: { order: order, line_item_id: line_item.id, quantity: 5 }, headers: headers
 
       expect(response.status).to eq(200)
       expect(line_item.reload.quantity).to eq(5)
@@ -294,7 +294,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
 
     it 'returns 422 when quantity is 0' do
       headers = { 'Authorization' => "Bearer #{token.token}" }
-      patch '/api/v2/storefront/cart/set_quantity', params: { order: order, line_item_id: line_item.id, quantity: 0, user: user }, headers: headers
+      patch '/api/v2/storefront/cart/set_quantity', params: { order: order, line_item_id: line_item.id, quantity: 0 }, headers: headers
 
       expect(response.status).to eq(422)
       expect(json_response[:error]).to eq('Quantity has to be greater than 0')
@@ -302,7 +302,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
 
     it 'returns 422 when quantity is absent' do
       headers = { 'Authorization' => "Bearer #{token.token}" }
-      patch '/api/v2/storefront/cart/set_quantity', params: { order: order, line_item_id: line_item.id, user: user }, headers: headers
+      patch '/api/v2/storefront/cart/set_quantity', params: { order: order, line_item_id: line_item.id }, headers: headers
 
       expect(response.status).to eq(422)
       expect(json_response[:error]).to eq('Quantity has to be greater than 0')
@@ -380,7 +380,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
 
       context 'applies coupon code correctly' do
         before do
-          patch '/api/v2/storefront/cart/apply_coupon_code', params: { user: user, coupon_code: coupon_code }, headers: headers
+          patch '/api/v2/storefront/cart/apply_coupon_code', params: { coupon_code: coupon_code }, headers: headers
         end
 
         it 'changes the adjustment total' do
@@ -394,9 +394,9 @@ describe 'API V2 Storefront Cart Spec', type: :request do
         it_behaves_like 'returns valid cart JSON'
       end
 
-      context 'does not apply the coupon code' do
+      context 'does not apply the coupon code that doesnt exists' do
         before do
-          patch '/api/v2/storefront/cart/apply_coupon_code', params: { user: user, coupon_code: 'zxr' }, headers: headers
+          patch '/api/v2/storefront/cart/apply_coupon_code', params: { coupon_code: 'zxr' }, headers: headers
         end
 
         it 'returns 422 status with an error' do
@@ -410,7 +410,65 @@ describe 'API V2 Storefront Cart Spec', type: :request do
     context 'without coupon code' do
       context 'does not apply the coupon code' do
         before do
-          patch '/api/v2/storefront/cart/apply_coupon_code', params: { user: user, coupon_code: '' }, headers: headers
+          patch '/api/v2/storefront/cart/apply_coupon_code', params: { coupon_code: '' }, headers: headers
+        end
+
+        it 'returns 422 status with an error' do
+          expect(response.status).to eq(422)
+
+          expect(json_response[:error]).to eq("The coupon code you entered doesn't exist. Please try again.")
+        end
+      end
+    end
+  end
+
+  describe 'cart#remove_coupon_code' do
+    let(:coupon_code) { 'discount' }
+    let!(:promotion) { create(:promotion_with_order_adjustment, code: coupon_code) }
+    let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
+
+    context 'with coupon code applied' do
+      let!(:order) do
+        create(:order_with_line_items, coupon_code: coupon_code, user: user, store: store, currency: currency).tap do |order|
+          Spree::PromotionHandler::Coupon.new(order).apply
+        end
+      end
+
+      context 'removes coupon code correctly' do
+        before do
+          delete "/api/v2/storefront/cart/remove_coupon_code/#{coupon_code}", headers: headers
+        end
+
+        it 'changes the adjustment total to 0.0' do
+          expect(json_response['data']).to have_attribute(:adjustment_total).with_value(0.0.to_s)
+        end
+
+        it 'doesnt includes the promotion in the response' do
+          expect(json_response['included']).not_to include(have_type('promotion'))
+        end
+
+        it_behaves_like 'returns valid cart JSON'
+      end
+
+      context 'tries to remove not-applied promotion' do
+        before do
+          delete '/api/v2/storefront/cart/remove_coupon_code/something-else', headers: headers
+        end
+
+        it 'returns 422 status with an error' do
+          expect(response.status).to eq(422)
+
+          expect(json_response[:error]).to eq("The coupon code you entered doesn't exist. Please try again.")
+        end
+      end
+    end
+
+    context 'without coupon code applied' do
+      let!(:order) { create(:order, user: user, store: store, currency: currency) }
+
+      context 'tries to remove not-applied promotion' do
+        before do
+          delete "/api/v2/storefront/cart/remove_coupon_code/#{coupon_code}", headers: headers
         end
 
         it 'returns 422 status with an error' do
