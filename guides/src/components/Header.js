@@ -11,8 +11,13 @@ const isActive = (activeRootSection, currentSection) => {
 }
 
 const Header = ({ activeRootSection }) => (
-  <header className="bb b--moon-gray">
-    <div className="mw9 center pa3 flex items-center w-100">
+  <header
+    css={{
+      backgroundImage: 'linear-gradient(to right, #ECF6D3 0, #BBCBDA 100%)',
+      boxShadow: '0 0 15px 0 #ededed'
+    }}
+  >
+    <div className="mw9 center pv3 ph4 flex items-center w-100">
       <Link to="/" className="link green db">
         <Logo />
       </Link>

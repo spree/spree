@@ -2,7 +2,8 @@ import * as React from 'react'
 import PropTypes from 'prop-types'
 import { Link } from 'gatsby'
 
-const linkClasses = isActive => `link mr3 fw5 ${isActive ? 'green' : 'gray'}`
+const linkClasses = isActive =>
+  `link mr4 fw4 f4 ${isActive ? 'dark-green' : 'dark-gray'}`
 
 const NavItem = ({ url, children, isActive }) => {
   if (url.startsWith('http')) {
