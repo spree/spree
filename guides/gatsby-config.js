@@ -48,11 +48,15 @@ module.exports = {
               rel: 'noopener noreferrer'
             }
           },
+          // {
+          //   resolve: 'gatsby-remark-autolink-headers',
+          //   options: {
+          //     offsetY: 16
+          //   }
+          // },
           {
-            resolve: 'gatsby-remark-autolink-headers',
-            options: {
-              offsetY: 16
-            }
+            resolve: 'gatsby-remark-component',
+            options: { components: ['json-error', 'h1', 'h2'] }
           },
           {
             resolve: `gatsby-remark-prismjs`,

@@ -46,7 +46,7 @@ export default class Layout extends React.Component {
               />
               <div className="mw9 center pa3 flex">
                 {this.props.nav && (
-                  <div className="w-20">
+                  <div className="w-20 pr2">
                     <Sidebar
                       nav={this.props.nav}
                       activeSection={this.props.activeSection}
@@ -55,7 +55,7 @@ export default class Layout extends React.Component {
                 )}
                 <div
                   className={`nested-links ${
-                    this.props.nav ? 'w-80 ml3 lh-copy' : 'w-100'
+                    this.props.nav ? 'w-80 ml3 lh-copy pl4' : 'w-100'
                   }`}
                 >
                   {this.props.children}

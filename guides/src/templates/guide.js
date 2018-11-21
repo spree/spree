@@ -7,9 +7,18 @@ import RehypeReact from 'rehype-react'
 import Layout from '../components/Layout'
 import JsonError from '../components/JsonError'
 
+import H1 from '../components/base/H1'
+import H2 from '../components/base/H2'
+import P from '../components/base/P'
+
 const renderAst = new RehypeReact({
   createElement: React.createElement,
-  components: { 'json-error': JsonError }
+  components: {
+    'json-error': JsonError,
+    h1: H1,
+    h2: H2,
+    p: P
+  }
 }).Compiler
 
 export default function Template({ data }) {
