@@ -83,12 +83,12 @@ export default class Sidebar extends React.Component {
                     <h3 className="flex items-center mt0 fw5">
                       {this.sectionIsOpen(item.section) ? (
                         <IconOpen
-                          className="pointer"
+                          className="pointer moon-gray"
                           onClick={() => this._toggleSection(item.section)}
                         />
                       ) : (
                         <IconClose
-                          className="pointer"
+                          className="pointer moon-gray"
                           onClick={() => this._toggleSection(item.section)}
                         />
                       )}
