@@ -148,7 +148,7 @@ paths:
         - bearerAuth: []
 
   '/cart/empty':
-    post:
+    patch:
       description: Empties the order
       tags:
         - Cart
@@ -197,11 +197,19 @@ paths:
                   type: string
                   example: 'DISCOUNT10'
 
-  '/cart/remove_coupon_code':
+  '/cart/remove_coupon_code/{coupon_code}':
     delete:
       description: Removes a coupon code from the Cart
       tags:
         - Cart
+      parameters:
+        - name: coupon_code
+          in: path
+          required: true
+          description: Coupon code applied to Order
+          schema:
+            type: string
+          example: 'DISCOUNT10'
       responses:
         '200':
           description: 200 response means that coupon code was removed successfully
