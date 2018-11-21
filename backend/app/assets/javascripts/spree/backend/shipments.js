@@ -301,7 +301,7 @@ function completeItemSplit (event) {
         window.location.reload()
       })
     }
-    
+
     if (newShipment !== undefined) {
       // TRANSFER TO A NEW LOCATION
       splitItems({
