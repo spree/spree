@@ -111,7 +111,7 @@ export default class Sidebar extends React.Component {
                       )}
                     </h3>
                     <ul
-                      className={`list pl0 ml3 mb4 ${
+                      className={`list pl2 ml3 mb4 ${
                         this.sectionIsOpen(item.section) ? '' : 'dn'
                       }`}
                     >
