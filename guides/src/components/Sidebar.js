@@ -34,12 +34,18 @@ export default class Sidebar extends React.Component {
     )
   }
 
-  _openSection = section => {
-    return this.setState({ openSection: section })
-  }
-
-  _closeSection = () => {
-    return this.setState({ openSection: null })
+  _toggleSection = section => {
+    this.setState(prevState => {
+      if (prevState.openSection !== section) {
+        return { openSection: section }
+      } else if (prevState.openSection !== null) {
+        console.log('2')
+        return { openSection: null }
+      } else {
+        console.log('3')
+        return { openSection: null }
+      }
+    })
   }
 
   normalizeNavBlock = block => {
@@ -78,27 +84,31 @@ export default class Sidebar extends React.Component {
                       {this.sectionIsOpen(item.section) ? (
                         <IconOpen
                           className="pointer"
-                          onClick={() => this._closeSection()}
+                          onClick={() => this._toggleSection(item.section)}
                         />
                       ) : (
                         <IconClose
                           className="pointer"
-                          onClick={() => this._openSection(item.section)}
+                          onClick={() => this._toggleSection(item.section)}
                         />
                       )}
-                      <span>
-                        {R.length(this.navBlockIndex(item.edges)) > 0 ? (
-                          <Link
-                            to={this.getNavBlockIndexSlug(item.edges)}
-                            activeClassName="green"
-                            className="link black db fw5"
-                          >
-                            {this.capitalizeSectionTitle(item.section)}
-                          </Link>
-                        ) : (
-                          this.capitalizeSectionTitle(item.section)
-                        )}
-                      </span>
+
+                      {R.length(this.navBlockIndex(item.edges)) > 0 ? (
+                        <Link
+                          to={this.getNavBlockIndexSlug(item.edges)}
+                          activeClassName="green"
+                          className="link black db fw5"
+                        >
+                          {this.capitalizeSectionTitle(item.section)}
+                        </Link>
+                      ) : (
+                        <span
+                          className="pointer"
+                          onClick={() => this._toggleSection(item.section)}
+                        >
+                          {this.capitalizeSectionTitle(item.section)}
+                        </span>
+                      )}
                     </h3>
                     <ul
                       className={`list pl0 ml3 mb4 ${

@@ -20,21 +20,21 @@ const Header = ({ activeRootSection }) => (
       <DocSearch />
 
       <nav className="w-100 tr">
-        <NavItem isActive={isActive(activeRootSection, 'api')} url="/api">
+        <NavItem isActive={isActive(activeRootSection, 'api')} url="/api/">
           Api
         </NavItem>
         <NavItem
           isActive={isActive(activeRootSection, 'developer')}
-          url="/developer"
+          url="/developer/"
         >
           Developer
         </NavItem>
-        <NavItem isActive={isActive(activeRootSection, 'user')} url="/user">
+        <NavItem isActive={isActive(activeRootSection, 'user')} url="/user/">
           User
         </NavItem>
         <NavItem
           isActive={isActive(activeRootSection, 'release_notes')}
-          url="/release_notes"
+          url="/release_notes/"
         >
           Release-notes
         </NavItem>
