@@ -7,8 +7,11 @@ description: Use the Spree Commerce storefront API to access Address data.
 
 Retrieve details about a particular address:
 
+<json-error>Testing</json-error>
+
 ```text
-GET /api/v1/orders/1/addresses/1```
+GET /api/v1/orders/1/addresses/1
+```
 
 Order addresses through the API will only be visible to admins and the users who own particular orders related to that addresses.
 If a user attempts to access an order address that does not belong to him, he
@@ -19,6 +22,7 @@ Users may pass in the order's token in order to be authorized to view an order a
 ```text
 GET /api/v1/orders/1/addresses/1?order_token=abcdef123456
 ```
+
 The `order_token` parameter will work for authorizing any action for an order address within Spree's API.
 
 ### Response
@@ -31,7 +35,8 @@ The `order_token` parameter will work for authorizing any action for an order ad
 To update an address, make a request like this:
 
 ```text
-PUT /api/v1/orders/1/addresses/1?address[firstname]=Ryan```
+PUT /api/v1/orders/1/addresses/1?address[firstname]=Ryan
+```
 
 This request will update the `firstname` field for an address to the value of \"Ryan\"
 

@@ -30,6 +30,7 @@
     "react-emotion": "^9.2.12",
     "react-feather": "^1.1.4",
     "react-helmet": "^5.2.0",
+    "rehype-react": "^3.1.0",
     "serve": "^10.1.1",
     "tachyons": "^4.11.1"
   },

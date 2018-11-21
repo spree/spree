@@ -2,8 +2,15 @@ import * as React from 'react'
 import PropTypes from 'prop-types'
 import Helmet from 'react-helmet'
 import { graphql } from 'gatsby'
+import RehypeReact from 'rehype-react'
 
 import Layout from '../components/Layout'
+import JsonError from '../components/JsonError'
+
+const renderAst = new RehypeReact({
+  createElement: React.createElement,
+  components: { 'json-error': JsonError }
+}).Compiler
 
 export default function Template({ data }) {
   const { guide } = data
@@ -18,10 +25,7 @@ export default function Template({ data }) {
         <Helmet title={`Spree Guides :: ${guide.frontmatter.title}`} />
         <div className="guide">
           <h1>{guide.frontmatter.title}</h1>
-          <div
-            className="guide-content"
-            dangerouslySetInnerHTML={{ __html: guide.html }}
-          />
+          {renderAst(guide.htmlAst)}
         </div>
       </div>
     </Layout>
@@ -62,7 +66,7 @@ export const pageQuery = graphql`
         section
         rootSection
       }
-      html
+      htmlAst
       frontmatter {
         title
       }

@@ -1,4 +1,5 @@
 import * as React from 'react'
+import IconSearch from 'react-feather/dist/icons/search'
 
 export default class DocSearch extends React.Component {
   state = {
@@ -23,14 +24,16 @@ export default class DocSearch extends React.Component {
     const { enabled } = this.state
 
     return enabled ? (
-      <form className="ml3">
+      <form className="ml4 relative">
+        <IconSearch className="absolute z-999 top-0 mt2 pt1 ml3 moon-gray" />
         <input
-          className="pa3 w6 br1 ba b--moon-gray"
+          className="pv3 pr3 w6 br1 ba b--transparent"
           id="algolia-doc-search"
           type="search"
-          placeholder="Search docs"
+          placeholder="Search docs..."
           aria-label="Search docs"
           size="50"
+          css={{ paddingLeft: '3rem' }}
         />
       </form>
     ) : null
