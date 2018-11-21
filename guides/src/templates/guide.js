@@ -38,6 +38,7 @@ export const pageQuery = graphql`
       filter: {
         fields: { rootSection: { eq: $rootSection }, section: { ne: "null" } }
       }
+      sort: { fields: [frontmatter___title], order: DESC }
     ) {
       group(field: fields___section) {
         section: fieldValue
