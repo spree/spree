@@ -61,7 +61,7 @@ $(document).ready(function () {
       }).done(function (msg) {
         window.location.reload()
       }).fail(function (msg) {
-        alert(msg.responseJSON.message)
+        alert(msg.responseJSON.message || msg.responseJSON.exception);
       })
     }
     return false
@@ -81,7 +81,7 @@ $(document).ready(function () {
     }).done(function () {
       window.location.reload()
     }).error(function (msg) {
-      console.log(msg)
+      alert(msg.responseJSON.message || msg.responseJSON.exception);
     })
   })
 
@@ -112,7 +112,7 @@ $(document).ready(function () {
     }).done(function () {
       window.location.reload()
     }).error(function (msg) {
-      console.log(msg)
+      alert(msg.responseJSON.message || msg.responseJSON.exception);
     })
   })
 
@@ -204,7 +204,7 @@ function adjustShipmentItems (shipmentNumber, variantId, quantity) {
     }).done(function (msg) {
       window.location.reload()
     }).fail(function (msg) {
-      alert(msg.responseJSON.message)
+      alert(msg.responseJSON.message || msg.responseJSON.exception);
     })
   }
 }
@@ -256,7 +256,7 @@ function startItemSplit (event) {
   }).success(function (data) {
     variant = data['variants'][0]
   }).error(function (msg) {
-    console.log(msg)
+    alert(msg.responseJSON.message || msg.responseJSON.exception);
   })
 
   var maxQuantity = link.closest('tr').data('item-quantity')
@@ -288,7 +288,7 @@ function completeItemSplit (event) {
   var targetShipmentNumber = selectedShipment.data('shipment-number')
   var newShipment = selectedShipment.data('new-shipment')
   // eslint-disable-next-line eqeqeq
-  if (stockLocationId != 'new_shipment') {
+  if (stockLocationId !== 'new_shipment') {
     if (newShipment !== undefined) {
       // TRANSFER TO A NEW LOCATION
       $.ajax({
@@ -303,7 +303,7 @@ function completeItemSplit (event) {
           token: Spree.api_key
         }
       }).error(function (msg) {
-        alert(msg.responseJSON.exception)
+        alert(msg.responseJSON.message || msg.responseJSON.exception);
       }).done(function (msg) {
         window.location.reload()
       })
@@ -321,7 +321,7 @@ function completeItemSplit (event) {
           token: Spree.api_key
         }
       }).error(function (msg) {
-        alert(msg.responseJSON.exception)
+        alert(msg.responseJSON.message || msg.responseJSON.exception);
       }).done(function (msg) {
         window.location.reload()
       })
@@ -366,7 +366,7 @@ function addVariantFromStockLocation (event) {
     }).done(function (msg) {
       window.location.reload()
     }).error(function (msg) {
-      console.log(msg)
+      alert(msg.responseJSON.message || msg.responseJSON.exception);
     })
   } else {
     // add to existing shipment
