@@ -19,7 +19,7 @@ ids
 ### Response
 
 <%= headers 200 %>
-<%= json(:option_type){ |h| [h] } %>
+<json sample="option_type"></json>
 
 ## Search
 

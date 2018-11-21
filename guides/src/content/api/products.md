@@ -8,12 +8,14 @@ description: Use the Spree Commerce storefront API to access Product data.
 List products visible to the authenticated user. If the user is not an admin, they will only be able to see products which have an `available_on` date in the past. If the user is an admin, they are able to see all products.
 
 ```text
-GET /api/v1/products```
+GET /api/v1/products
+```
 
 Products are paginated and can be iterated through by passing along a `page` parameter:
 
 ```text
-GET /api/v1/products?page=2```
+GET /api/v1/products?page=2
+```
 
 ### Parameters
 

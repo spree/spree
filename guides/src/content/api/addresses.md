@@ -27,8 +27,8 @@ The `order_token` parameter will work for authorizing any action for an order ad
 
 ### Response
 
-<%= headers 200 %>
-<%= json(:address) %>
+<status code="200"></status>
+<json sample="address"></json>
 
 ## Update
 

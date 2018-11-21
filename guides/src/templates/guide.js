@@ -9,15 +9,21 @@ import JsonError from '../components/JsonError'
 
 import H1 from '../components/base/H1'
 import H2 from '../components/base/H2'
+import H3 from '../components/base/H3'
 import P from '../components/base/P'
+import Json from '../components/helpers/Json'
+import Status from '../components/helpers/Status'
 
 const renderAst = new RehypeReact({
   createElement: React.createElement,
   components: {
-    'json-error': JsonError,
     h1: H1,
     h2: H2,
-    p: P
+    h3: H3,
+    p: P,
+    json: Json,
+    status: Status,
+    'json-error': JsonError
   }
 }).Compiler
 

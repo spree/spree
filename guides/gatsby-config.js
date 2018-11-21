@@ -33,6 +33,10 @@ module.exports = {
       options: {
         plugins: [
           {
+            resolve: 'gatsby-remark-component'
+            // options: { components: ['json', 'p', 'h1', 'h2', 'h3'] }
+          },
+          {
             resolve: `gatsby-remark-images`,
             options: {
               maxWidth: 1000,
@@ -47,16 +51,6 @@ module.exports = {
               target: '_blank',
               rel: 'noopener noreferrer'
             }
-          },
-          // {
-          //   resolve: 'gatsby-remark-autolink-headers',
-          //   options: {
-          //     offsetY: 16
-          //   }
-          // },
-          {
-            resolve: 'gatsby-remark-component',
-            options: { components: ['json-error', 'h1', 'h2'] }
           },
           {
             resolve: `gatsby-remark-prismjs`,
