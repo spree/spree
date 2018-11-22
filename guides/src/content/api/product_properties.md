@@ -74,7 +74,7 @@ Or you can use a property's name:
 ### Response
 
 <status code="200"></status>
-<%= json(:product_property) %>
+<json sample="product_property"></json>
 
 ## Create
 
@@ -89,7 +89,7 @@ If a property with that name does not already exist, then it will automatically 
 ### Response
 
 <status code="201"></status>
-<%= json(:product_property) %>
+<json sample="product_property"></json>
 
 ## Update
 
@@ -106,7 +106,7 @@ You may also use a property's id if you know it:
 ### Response
 
 <status code="200"></status>
-<%= json(:product_property) %>
+<json sample="product_property"></json>
 
 ## Delete
 

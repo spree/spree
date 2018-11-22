@@ -12,7 +12,8 @@ You may make a request using product\'s permalink or id attribute.
 Note that the API will attempt a permalink lookup before an ID lookup.
 
 ```text
-GET /api/v1/products/a-product/images```
+GET /api/v1/products/a-product/images
+```
 
 ### Response
 
@@ -24,12 +25,13 @@ end %>
 ## Show
 
 ```text
-GET /api/v1/products/a-product/images/1```
+GET /api/v1/products/a-product/images/1
+```
 
 ### Successful Response
 
 <status code="200"></status>
-<%= json :image %>
+<json sample="image"></json>
 
 ### Not Found Response
 
@@ -40,7 +42,8 @@ GET /api/v1/products/a-product/images/1```
 You can learn about the potential attributes (required and non-required) for a product's image by making this request:
 
 ```text
-GET /api/v1/products/a-product/images/new```
+GET /api/v1/products/a-product/images/new
+```
 
 ### Response
 
@@ -60,17 +63,19 @@ GET /api/v1/products/a-product/images/new```
 To upload a new image through the API, make this request with the necessary parameters:
 
 ```text
-POST /api/v1/products/a-product/images```
+POST /api/v1/products/a-product/images
+```
 
 For instance, a request using cURL will look like this:
 
-```text
+```bash
 curl -i -X POST \
   -H "X-Spree-Token: USER_TOKEN" \
   -H "Content-Type: multipart/form-data" \
   -F "image[attachment]=@/absolute/path/to/image.jpg" \
   -F "type=image/jpeg" \
-  http://localhost:3000/api/v1/products/a-product/images```
+  http://localhost:3000/api/v1/products/a-product/images
+```
 
 ### Successful response
 
@@ -83,17 +88,19 @@ curl -i -X POST \
 To update an image, make this request with the necessary parameters:
 
 ```text
-PUT /api/v1/products/a-product/images/1```
+PUT /api/v1/products/a-product/images/1
+```
 
 A cURL request to update a product image would look like this:
 
-```text
+```bash
 curl -i -X PUT \
   -H "X-Spree-Token: USER_TOKEN" \
   -H "Content-Type: multipart/form-data" \
   -F "image[attachment]=@/new/path/to/image.jpg" \
   -F "type=image/jpeg" \
-  http://localhost:3000/api/v1/products/a-product/images/1```
+  http://localhost:3000/api/v1/products/a-product/images/1
+```
 
 ### Successful response
 
@@ -106,7 +113,8 @@ curl -i -X PUT \
 To delete a product image, make this request:
 
 ```text
-DELETE /api/v1/products/a-product/images/1```
+DELETE /api/v1/products/a-product/images/1
+```
 
 This request will remove the record from the database.
 

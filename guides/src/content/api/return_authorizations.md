@@ -70,7 +70,7 @@ To get information for a single return authorization, make a request like this:
 ### Response
 
 <status code="200"></status>
-<%= json(:return_authorization) %>
+<json sample="return_authorization"></json>
 
 ## Create
 
@@ -83,7 +83,7 @@ To create a return authorization, make a request like this:
 For instance, if you want to create a return authorization with a number, make
 above request with following parameters:
 
-```text
+```json
 {
   "order_id": "R1234567",
   "return_authorization": {
@@ -96,7 +96,7 @@ above request with following parameters:
 ### Response
 
 <status code="201"></status>
-<%= json(:return_authorization) %>
+<json sample="return_authorization"></json>
 
 ## Update
 
@@ -113,9 +113,7 @@ For instance, to update a return authorization's number, make this request:
 ### Response
 
 <status code="200"></status>
-<%= json(:return_authorization) do |h|
-  h.merge("memo" => "Broken")
-end %>
+<json sample="return_authorization" merge='{"memo": "Broken"}'></json>
 
 ## Delete
 

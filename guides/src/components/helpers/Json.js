@@ -16,6 +16,18 @@ import LINE_ITEM from '../../data/line_item'
 import ORDER_FAILED_TRANSITION from '../../data/order_failed_transition'
 import COUNTRY_WITH_STATE from '../../data/country_with_state'
 import COUNTRIES from '../../data/countries'
+import ZONE from '../../data/zone'
+import TAXONOMY from '../../data/taxonomy'
+import NEW_TAXONOMY from '../../data/new_taxonomy'
+import TAXON_WITH_CHILDREN from '../../data/taxon_with_children'
+import STOCK_MOVEMENT from '../../data/stock_movement'
+import STATE from '../../data/state'
+import SHIPMENT_SMALL from '../../data/shipment_small'
+import RETURN_AUTHORIZATION from '../../data/return_authorization'
+import PRODUCT from '../../data/product'
+import PRODUCT_PROPERTY from '../../data/product_property'
+import PAYMENT from '../../data/payment'
+import ORDER_SHOW from '../../data/order_show'
 
 const DATA_SAMPLES = {
   address: ADDRESS,
@@ -29,7 +41,19 @@ const DATA_SAMPLES = {
   line_item: LINE_ITEM,
   order_failed_transition: ORDER_FAILED_TRANSITION,
   country_with_state: COUNTRY_WITH_STATE,
-  countries: COUNTRIES
+  countries: COUNTRIES,
+  zone: ZONE,
+  taxonomy: TAXONOMY,
+  new_taxonomy: NEW_TAXONOMY,
+  taxon_with_children: TAXON_WITH_CHILDREN,
+  stock_movement: STOCK_MOVEMENT,
+  state: STATE,
+  shipment_small: SHIPMENT_SMALL,
+  return_authorization: RETURN_AUTHORIZATION,
+  product: PRODUCT,
+  product_property: PRODUCT_PROPERTY,
+  payment: PAYMENT,
+  order_show: ORDER_SHOW
 }
 
 export default class Json extends React.Component {

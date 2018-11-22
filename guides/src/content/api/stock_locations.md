@@ -10,12 +10,14 @@ description: Use the Spree Commerce storefront API to access StockLocation data.
 To get a list of stock locations, make this request:
 
 ```text
-GET /api/v1/stock_locations```
+GET /api/v1/stock_locations
+```
 
 Stock locations are paginated and can be iterated through by passing along a `page` parameter:
 
 ```text
-GET /api/v1/stock_locations?page=2```
+GET /api/v1/stock_locations?page=2
+```
 
 ### Parameters
 
@@ -42,7 +44,8 @@ end %>
 To search for a particular stock location, make a request like this:
 
 ```text
-GET /api/v1/stock_locations?q[name_cont]=default```
+GET /api/v1/stock_locations?q[name_cont]=default
+```
 
 The searching API is provided through the Ransack gem which Spree depends on. The `name_cont` here is called a predicate, and you can learn more about them by reading about [Predicates on the Ransack wiki](https://github.com/ernie/ransack/wiki/Basic-Searching).
 
@@ -65,7 +68,8 @@ end %>
 To get information for a single stock location, make this request:
 
 ```text
-GET /api/v1/stock_locations/1```
+GET /api/v1/stock_locations/1
+```
 
 ### Response
 
@@ -79,7 +83,8 @@ GET /api/v1/stock_locations/1```
 To create a stock location, make a request like this:
 
 ```text
-POST /api/v1/stock_locations```
+POST /api/v1/stock_locations
+```
 
 Assuming in this instance that you want to create a stock location with a name of `East Coast`, send through the parameters like this:
 
@@ -102,7 +107,8 @@ end %>
 To update a stock location, make a request like this:
 
 ```text
-PUT /api/v1/stock_locations/1```
+PUT /api/v1/stock_locations/1
+```
 
 To update stock location information, use parameters like this:
 
@@ -125,7 +131,8 @@ end %>
 To delete a stock location, make a request like this:
 
 ```text
-DELETE /api/v1/stock_locations/1```
+DELETE /api/v1/stock_locations/1
+```
 
 This request will also delete any related `stock item` records.
 

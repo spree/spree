@@ -10,12 +10,14 @@ description: Use the Spree Commerce storefront API to access Shipment data.
 Retrieve a list of the current user's shipments by making this request:
 
 ```text
-GET /api/v1/shipments/mine```
+GET /api/v1/shipments/mine
+```
 
 Shipments are paginated and can be iterated through by passing along a `page` parameter:
 
 ```text
-GET /api/v1/shipments/mine?page=2```
+GET /api/v1/shipments/mine?page=2
+```
 
 ### Parameters
 
@@ -50,7 +52,8 @@ The following attributes are required when creating a shipment:
 To create a shipment, make a request like this:
 
 ```text
-POST /api/v1/shipments?shipment[order_id]=R123456789```
+POST /api/v1/shipments?shipment[order_id]=R123456789
+```
 
 The `order_id` is the number of the order to create a shipment for and is provided as part of the URL string as shown above. The shipment will be created at the selected stock location and include the variant selected.
 
@@ -65,7 +68,7 @@ Assuming in this instance that you want to create a shipment with a stock_locati
 ### Response
 
 <status code="200"></status>
-<%= json(:shipment_small) %>
+<json sample="shipment_small"></json>
 
 ## Update
 
@@ -74,7 +77,8 @@ Assuming in this instance that you want to create a shipment with a stock_locati
 To update shipment information, make a request like this:
 
 ```text
-PUT /api/v1/shipments/H123456789?shipment[tracking]=TRK9000```
+PUT /api/v1/shipments/H123456789?shipment[tracking]=TRK9000
+```
 
 To update order ship method inspect order/shipments/shipping_rates for available shipping_rate_id values and use following api call:
 
@@ -83,7 +87,7 @@ To update order ship method inspect order/shipments/shipping_rates for available
 ### Response
 
 <status code="200"></status>
-<%= json(:shipment_small) %>
+<json sample="shipment_small"></json>
 
 ## Ready
 
@@ -100,9 +104,7 @@ You may choose to update shipment attributes with this request as well:
 ### Response
 
 <status code="200"></status>
-<%= json(:shipment_small) do |h|
-  h.merge("state" => "ready")
-end %>
+<json sample="shipment_small" merge='{"state": "ready"}'></json>
 
 ## Ship
 
@@ -119,9 +121,7 @@ You may choose to update shipment attributes with this request as well:
 ### Response
 
 <status code="200"></status>
-<%= json(:shipment_small) do |h|
-  h.merge("state" => "shipped")
-end %>
+<json sample="shipment_small" merge='{"state": "shipped"}'></json>
 
 ## Add Variant
 
@@ -131,18 +131,20 @@ To add a variant to a shipment, make a request like this:
 
     PUT /api/v1/shipments/H123456789/add
 
-<%= json \
-  order_id: 123456,
-  stock_location_id: 1,
-  variant_id: 10
-%>
+```json
+{
+  "order_id": 123456,
+  "stock_location_id": 1,
+  "variant_id": 10
+}
+```
 
 
 
 ### Response
 
 <status code="200"></status>
-<%= json(:shipment_small) %>
+<json sample="shipment_small"></json>
 
 ## Remove Variant
 
@@ -155,4 +157,4 @@ To remove a variant from a shipment, make a request like this:
 ### Response
 
 <status code="200"></status>
-<%= json(:shipment_small) %>
+<json sample="shipment_small"></json>

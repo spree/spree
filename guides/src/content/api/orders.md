@@ -10,12 +10,14 @@ description: Use the Spree Commerce storefront API to access Order data.
 Retrieve a list of orders by making this request:
 
 ```text
-GET /api/v1/orders```
+GET /api/v1/orders
+```
 
 Orders are paginated and can be iterated through by passing along a `page` parameter:
 
 ```text
-GET /api/v1/orders?page=2```
+GET /api/v1/orders?page=2
+```
 
 ### Parameters
 
@@ -42,7 +44,8 @@ end %>
 To search for a particular order, make a request like this:
 
 ```text
-GET /api/v1/orders?q[email_cont]=bob```
+GET /api/v1/orders?q[email_cont]=bob
+```
 
 The searching API is provided through the Ransack gem which Spree depends on. The `email_cont` here is called a predicate, and you can learn more about them by reading about [Predicates on the Ransack wiki](https://github.com/ernie/ransack/wiki/Basic-Searching).
 
@@ -63,19 +66,22 @@ end %>
 Results can be returned in a specific order by specifying which field to sort by when making a request.
 
 ```text
-GET /api/v1/orders?q[s]=number%20desc```
+GET /api/v1/orders?q[s]=number%20desc
+```
 
 It is also possible to sort results using an associated object's field.
 
 ```text
-GET /api/v1/orders?q[s]=user_name%20asc```
+GET /api/v1/orders?q[s]=user_name%20asc
+```
 
 ## Show
 
 To view the details for a single order, make a request using that order\'s number:
 
 ```text
-GET /api/v1/orders/R123456789```
+GET /api/v1/orders/R123456789
+```
 
 Orders through the API will only be visible to admins and the users who own
 them. If a user attempts to access an order that does not belong to them, they
@@ -92,7 +98,7 @@ The `order_token` parameter will work for authorizing any action for an order wi
 ### Successful Response
 
 <status code="200"></status>
-<%= json :order_show %>
+<json sample="order_show"></json>
 
 ### Not Found Response
 
@@ -115,13 +121,16 @@ end %>
 To create a new order through the API, make this request:
 
 ```text
-POST /api/v1/orders```
+POST /api/v1/orders
+```
 
 If you wish to create an order with a line item matching to a variant whose ID is \"1\" and quantity is 5, make this request:
 
 ```text
 POST /api/v1/orders
+```
 
+```json
 {
   "order": {
     "line_items": [
@@ -159,7 +168,8 @@ To add address information to an order, please see the [checkout transitions](ch
 To empty an order\'s cart, make this request:
 
 ```text
-PUT /api/v1/orders/R1234567/empty```
+PUT /api/v1/orders/R1234567/empty
+```
 
 All line items will be removed from the cart and the order\'s information will
 be cleared. Inventory that was previously depleted by this order will be

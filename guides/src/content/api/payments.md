@@ -84,7 +84,7 @@ To create a new payment, make a request like this:
 ### Response
 
 <status code="201"></status>
-<%= json(:payment) %>
+<json sample="payment"></json>
 
 ## Show
 
@@ -95,7 +95,7 @@ To get information for a particular payment, make a request like this:
 ### Response
 
 <status code="200"></status>
-<%= json(:payment) %>
+<json sample="payment"></json>
 
 ## Authorize
 
@@ -106,12 +106,16 @@ To authorize a payment, make a request like this:
 ### Response
 
 <status code="200"></status>
-<%= json :payment %>
+<json sample="payment"></json>
 
 ### Failed Response
 
 <status code="422"></status>
-<%= json error: "There was a problem with the payment gateway: [text]" %>
+```json
+{
+  "error": "There was a problem with the payment gateway: [text]"
+}
+```
 
 ## Capture
 
@@ -124,12 +128,16 @@ To capture a payment, make a request like this:
 ### Response
 
 <status code="200"></status>
-<%= json :payment %>
+<json sample="payment"></json>
 
 ### Failed Response
 
 <status code="422"></status>
-<%= json error: "There was a problem with the payment gateway: [text]" %>
+```json
+{
+  "error": "There was a problem with the payment gateway: [text]"
+}
+```
 
 ## Purchase
 
@@ -142,12 +150,16 @@ To make a purchase with a payment, make a request like this:
 ### Response
 
 <status code="200"></status>
-<%= json :payment %>
+<json sample="payment"></json>
 
 ### Failed Response
 
 <status code="422"></status>
-<%= json error: "There was a problem with the payment gateway: [text]" %>
+```json
+{
+  "error": "There was a problem with the payment gateway: [text]"
+}
+```
 
 ## Void
 
@@ -158,12 +170,16 @@ To void a payment, make a request like this:
 ### Response
 
 <status code="200"></status>
-<%= json :payment %>
+<json sample="payment"></json>
 
 ### Failed Response
 
 <status code="422"></status>
-<%= json error: "There was a problem with the payment gateway: [text]" %>
+```json
+{
+  "error": "There was a problem with the payment gateway: [text]"
+}
+```
 
 ## Credit
 
@@ -176,14 +192,22 @@ If the payment is over the payment's credit allowed limit, a "Credit Over Limit"
 ### Response
 
 <status code="200"></status>
-<%= json :payment %>
+<json sample="payment"></json>
 
 ### Failed Response
 
 <status code="422"></status>
-<%= json error: "There was a problem with the payment gateway: [text]" %>
+```json
+{
+  "error": "There was a problem with the payment gateway: [text]"
+}
+```
 
 ### Credit Over Limit Response
 
 <status code="422"></status>
-<%= json error: "This payment can only be credited up to [amount]. Please specify an amount less than or equal to this number." %>
+```json
+{
+  "error": "This payment can only be credited up to [amount]. Please specify an amount less than or equal to this number."
+}
+```
