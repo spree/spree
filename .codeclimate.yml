@@ -16,5 +16,6 @@ exclude_patterns:
   - "**/bin/"
   - "**/script/"
   - "**/vendor/"
+  - "**/spec/"
   - "public/"
   - "guides/"
