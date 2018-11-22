@@ -21,7 +21,7 @@ option_type_id
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json(:option_value){ |h| [h] } %>
 
 ## Search
@@ -36,7 +36,7 @@ The searching API is provided through the Ransack gem which Spree depends on. Th
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json(:option_value){ |h| [h] } %>
 
 ### Sorting results
@@ -57,7 +57,7 @@ GET /api/v1/option_values/1
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json(:option_value) %>
 
 ## New
@@ -70,7 +70,7 @@ GET /api/v1/option_values/new
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json \
   "attributes": [
       "id", "name", "presentation", "option_type_name", "option_type_id",
@@ -83,7 +83,7 @@ GET /api/v1/option_values/new
 
 ## Create
 
-<%= admin_only %>
+<alert type="admin_only"></alert>
 
 To create a new option value through the API, make this request with the necessary parameters:
 
@@ -99,11 +99,11 @@ POST /api/v1/option_values?option_value[name]=sports&option_value[presentation]=
 
 ### Successful Response
 
-<%= headers 201 %>
+<status code="201"></status>
 
 ### Failed Response
 
-<%= headers 422 %>
+<status code="422"></status>
 <%= json \
   error: "Invalid resource. Please fix errors and try again.",
   errors: {
@@ -114,7 +114,7 @@ POST /api/v1/option_values?option_value[name]=sports&option_value[presentation]=
 
 ## Update
 
-<%= admin_only %>
+<alert type="admin_only"></alert>
 
 To update an option value's details, make this request with the necessary parameters:
 
@@ -130,11 +130,11 @@ PUT /api/v1/option_values/1?option_value[name]=sport&option_value[presentation]=
 
 ### Successful Response
 
-<%= headers 201 %>
+<status code="201"></status>
 
 ### Failed Response
 
-<%= headers 422 %>
+<status code="422"></status>
 <%= json \
   error: "Invalid resource. Please fix errors and try again.",
   errors: {
@@ -146,7 +146,7 @@ PUT /api/v1/option_values/1?option_value[name]=sport&option_value[presentation]=
 
 ## Delete
 
-<%= admin_only %>
+<alert type="admin_only"></alert>
 
 To delete an option value, make this request:
 
@@ -156,4 +156,4 @@ DELETE /api/v1/option_values/1
 
 This request removes an option value from database.
 
-<%= headers 204 %>
+<status code="204"></status>

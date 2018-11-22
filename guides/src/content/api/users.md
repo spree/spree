@@ -19,7 +19,7 @@ GET /api/v1/users?page=2```
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json(:user) do |h|
     { users: [h], count: 25, pages: 5, current_page: 1 }
 end %>
@@ -34,7 +34,7 @@ GET /api/v1/users/1```
 
 ### Successful Response
 
-<%= headers 200 %> <%= json :user %>
+<status code="200"></status> <%= json :user %>
 
 ### Not Found Response
 
@@ -49,12 +49,12 @@ user by making this request:
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json attributes: ["<attribute1>", "<attribute2>"], required_attributes: [] %>
 
 ## Creating a new new
 
-<%= admin_only %>
+<alert type="admin_only"></alert>
 
 To create a new user through the API, make this request with the necessary
 parameters:
@@ -70,17 +70,17 @@ POST /api/v1/users?user[email]=spree@example.com&user[password]=password```
 
 ### Successful response
 
-<%= headers 201 %>
+<status code="201"></status>
 
 ### Failed response
 
-<%= headers 422 %>
+<status code="422"></status>
 <%= json error: "Invalid resource. Please fix errors and try again.",
          errors: { email: ["can't be blank"] } %>
 
 ## Updating a user
 
-<%= admin_only %>
+<alert type="admin_only"></alert>
 
 To update a user\'s details, make this request with the necessary parameters:
 
@@ -93,17 +93,17 @@ For instance, to update a user\'s password, send it through like this:
 
 ### Successful response
 
-<%= headers 201 %>
+<status code="201"></status>
 
 ### Failed response
 
-<%= headers 422 %>
+<status code="422"></status>
 <%= json error: "Invalid resource. Please fix errors and try again.",
          errors: { email: ["can't be blank"] } %>
 
 ## Deleting a user
 
-<%= admin_only %>
+<alert type="admin_only"></alert>
 
 To delete a user, make this request:
 
@@ -112,5 +112,5 @@ DELETE /api/v1/users/1```
 
 ### Response
 
-<%= headers 204 %>
+<status code="204"></status>
 

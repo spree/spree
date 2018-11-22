@@ -48,7 +48,7 @@ You may encounter the follow error messages when using the API.
 
 #### Invalid API Key
 
-<%= headers 401 %>
+<status code="401"></status>
 <%= json(error: "Invalid API key ([key]) specified.") %>
 
 #### No API Key specified

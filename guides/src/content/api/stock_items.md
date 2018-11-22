@@ -5,7 +5,7 @@ description: Use the Spree Commerce storefront API to access StockItem data.
 
 ## Index
 
-<%= admin_only %>
+<alert type="admin_only"></alert>
 
 To return a paginated list of all stock items for a stock location, make this request, passing the stock location id you wish to see stock items for:
 
@@ -22,7 +22,7 @@ per_page
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json(:stock_item) do |h|
 { stock_items: [h],
   count: 25,
@@ -32,7 +32,7 @@ end %>
 
 ## Search
 
-<%= admin_only %>
+<alert type="admin_only"></alert>
 
 To search for a particular stock item, make a request like this:
 
@@ -45,7 +45,7 @@ The search results are paginated.
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json(:stock_item) do |h|
  { stock_items: [h],
    count: 25,
@@ -62,7 +62,7 @@ GET /api/v1/stock_locations/1/stock_items?q[s]=variant_id%20asc```
 
 ## Show
 
-<%= admin_only %>
+<alert type="admin_only"></alert>
 
 To view the details for a single stock item, make a request using that stock item's id, along with its `stock_location_id`:
 
@@ -71,7 +71,7 @@ GET /api/v1/stock_locations/1/stock_items/2```
 
 ### Successful Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json :stock_item %>
 
 ### Not Found Response
@@ -80,7 +80,7 @@ GET /api/v1/stock_locations/1/stock_items/2```
 
 ## Create
 
-<%= admin_only %>
+<alert type="admin_only"></alert>
 
 To create a new stock item for a stock location, make this request with the necessary parameters:
 
@@ -98,12 +98,12 @@ For instance, a request to create a new stock item with a count_on_hand of 10 an
 
 ### Successful response
 
-<%= headers 201 %>
+<status code="201"></status>
 <%= json(:stock_item) %>
 
 ### Failed response
 
-<%= headers 422 %>
+<status code="422"></status>
 <%= json \
   error: "Invalid resource. Please fix errors and try again.",
   errors: {
@@ -112,7 +112,7 @@ For instance, a request to create a new stock item with a count_on_hand of 10 an
 
 ## Update
 
-<%= admin_only %>
+<alert type="admin_only"></alert>
 
 Note that using this endpoint, count_on_hand <strong>IS APPENDED</strong> to its current value.
 
@@ -143,14 +143,14 @@ Or alternatively with the force attribute to replace the current count_on_hand w
 
 ### Successful response
 
-<%= headers 201 %>
+<status code="201"></status>
 <%= json(:stock_item) do |h|
   h.merge("count_on_hand" => 30)
 end %>
 
 ### Failed response
 
-<%= headers 422 %>
+<status code="422"></status>
 <%= json \
   error: "Invalid resource. Please fix errors and try again.",
   errors: {
@@ -159,7 +159,7 @@ end %>
 
 ## Delete
 
-<%= admin_only %>
+<alert type="admin_only"></alert>
 
 To delete a stock item, make this request:
 
@@ -168,4 +168,4 @@ DELETE /api/v1/stock_locations/1/stock_items/2```
 
 ### Response
 
-<%= headers 204 %>
+<status code="204"></status>

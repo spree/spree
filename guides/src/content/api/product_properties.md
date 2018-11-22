@@ -27,7 +27,7 @@ per_page
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json(:product_property) do |h|
 { product_properties: [h],
   count: 10,
@@ -47,7 +47,7 @@ The search results are paginated.
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json(:product_property) do |h|
  { product_properties: [h],
    count: 10,
@@ -73,12 +73,12 @@ Or you can use a property's name:
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json(:product_property) %>
 
 ## Create
 
-<%= admin_only %>
+<alert type="admin_only"></alert>
 
 To create a new product property, make a request like this:
 
@@ -88,12 +88,12 @@ If a property with that name does not already exist, then it will automatically 
 
 ### Response
 
-<%= headers 201 %>
+<status code="201"></status>
 <%= json(:product_property) %>
 
 ## Update
 
-<%= admin_only %>
+<alert type="admin_only"></alert>
 
 To update an existing product property, make a request like this:
 
@@ -105,15 +105,15 @@ You may also use a property's id if you know it:
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json(:product_property) %>
 
 ## Delete
 
-<%= admin_only %>
+<alert type="admin_only"></alert>
 
 To delete a product property, make a request like this:
 
     DELETE /api/v1/products/1/product_properties/size
 
-<%= headers 204 %>
+<status code="204"></status>

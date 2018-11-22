@@ -24,7 +24,7 @@ set
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json(:taxonomy) do |h|
 { taxonomies: [h],
   count: 25,
@@ -45,7 +45,7 @@ The search results are paginated.
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json(:taxonomy) do |h|
  { taxonomies: [h],
    count: 5,
@@ -74,12 +74,12 @@ GET /api/v1/taxonomies/1```
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json(:taxonomy) %>
 
 ## Create
 
-<%= admin_only %>
+<alert type="admin_only"></alert>
 
 To create a taxonomy, make a request like this:
 
@@ -97,12 +97,12 @@ created for you with the same name as the taxon.
 
 ### Response
 
-<%= headers 201 %>
+<status code="201"></status>
 <%= json(:new_taxonomy) %>
 
 ## Update
 
-<%= admin_only %>
+<alert type="admin_only"></alert>
 
 To update a taxonomy, make a request like this:
 
@@ -116,12 +116,12 @@ PUT /api/v1/taxonomies/1?taxonomy[name]=Brand```
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json(:taxonomy) %>
 
 ## Delete
 
-<%= admin_only %>
+<alert type="admin_only"></alert>
 
 To delete a taxonomy, make a request like this:
 
@@ -130,7 +130,7 @@ DELETE /api/v1/taxonomies/1```
 
 ### Response
 
-<%= headers 204 %>
+<status code="204"></status>
 
 ## List taxons
 
@@ -145,7 +145,7 @@ without_children
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json(:taxon_with_children) do |h|
   { "taxons" => [h],
     "count" => 7,
@@ -165,13 +165,13 @@ like this:
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json(:taxon_with_children) %>
 
 
 ## Taxon Create
 
-<%= admin_only %>
+<alert type="admin_only"></alert>
 
 To create a taxon, make a request like this:
 
@@ -183,7 +183,7 @@ To create a new taxon with the name "Brands", make this request:
 
 ### Response
 
-<%= headers 201 %>
+<status code="201"></status>
 <%= json(:taxon_without_children) do |h|
   h.merge({
     "name" => "Brands",
@@ -197,7 +197,7 @@ end %>
 
 ## Taxon Update
 
-<%= admin_only %>
+<alert type="admin_only"></alert>
 
 To update a taxon, make a request like this:
 
@@ -209,7 +209,7 @@ For example, to update the taxon's name to "Brand", make this request:
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json(:taxon_with_children) do |h|
   h.merge({
     "name" => "Brands",
@@ -222,7 +222,7 @@ end %>
 
 ## Taxon Delete
 
-<%= admin_only %>
+<alert type="admin_only"></alert>
 
 To delete a taxon, make a request like this:
 
@@ -232,4 +232,4 @@ To delete a taxon, make a request like this:
 
 ### Response
 
-<%= headers 204 %>
+<status code="204"></status>

@@ -25,7 +25,7 @@ per_page
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json(:zone) do |h|
 { zones: [h],
   count: 25,
@@ -46,7 +46,7 @@ The search results are paginated.
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json(:zone) do |h|
  { zones: [h],
    count: 25,
@@ -70,12 +70,12 @@ GET /api/v1/zones/1```
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json(:zone) %>
 
 ## Create
 
-<%= admin_only %>
+<alert type="admin_only"></alert>
 
 To create a zone, make a request like this:
 
@@ -98,14 +98,14 @@ a zone member which is a `Spree::Country` record with the `id` attribute of 1, s
 
 ### Response
 
-<%= headers 201 %>
+<status code="201"></status>
 <%= json(:zone) do |h|
   h.merge("name" => "North Pole")
 end %>
 
 ## Update
 
-<%= admin_only %>
+<alert type="admin_only"></alert>
 
 To update a zone, make a request like this:
 
@@ -127,12 +127,12 @@ To update zone and zone member information, use parameters like this:
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json(:zone) %>
 
 ## Delete
 
-<%= admin_only %>
+<alert type="admin_only"></alert>
 
 To delete a zone, make a request like this:
 
@@ -143,4 +143,4 @@ This request will also delete any related `zone_member` records.
 
 ### Response
 
-<%= headers 204 %>
+<status code="204"></status>

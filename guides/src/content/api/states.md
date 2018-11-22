@@ -29,7 +29,7 @@ GET /api/v1/states?country_id=1```
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json(:state) do |h|
 { states: [h],
   count: 25,
@@ -46,5 +46,5 @@ GET /api/v1/states/1```
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json(:state) %>

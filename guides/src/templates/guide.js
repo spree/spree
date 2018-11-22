@@ -13,6 +13,7 @@ import H3 from '../components/base/H3'
 import P from '../components/base/P'
 import Json from '../components/helpers/Json'
 import Status from '../components/helpers/Status'
+import Alert from '../components/helpers/Alert'
 
 const renderAst = new RehypeReact({
   createElement: React.createElement,
@@ -23,7 +24,8 @@ const renderAst = new RehypeReact({
     p: P,
     json: Json,
     status: Status,
-    'json-error': JsonError
+    'json-error': JsonError,
+    alert: Alert
   }
 }).Compiler
 

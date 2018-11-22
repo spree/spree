@@ -18,7 +18,7 @@ ids
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <json sample="option_type"></json>
 
 ## Search
@@ -33,7 +33,7 @@ The searching API is provided through the Ransack gem which Spree depends on. Th
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json(:option_type){ |h| [h] } %>
 
 ### Sorting results
@@ -54,8 +54,8 @@ GET /api/v1/option_types/1
 
 ### Response
 
-<%= headers 200 %>
-<%= json(:option_type) %>
+<status code="200"></status>
+<json sample="option_type"></json>
 
 ## New
 
@@ -67,19 +67,21 @@ GET /api/v1/option_types/new
 
 ### Response
 
-<%= headers 200 %>
-<%= json \
+<status code="200"></status>
+```json
+{
   "attributes": [
-      "id", "name", "presentation", "position"
+    "id", "name", "presentation", "position"
   ],
   "required_attributes": [
-      "name", "presentation"
+    "name", "presentation"
   ]
-%>
+}
+```
 
 ## Create
 
-<%= admin_only %>
+<alert type="admin_only"></alert>
 
 To create a new option type through the API, make this request with the necessary parameters:
 
@@ -95,22 +97,24 @@ POST api/v1/option_types/?option_type[name]=tshirt-category&option_type[presenta
 
 ### Successful Response
 
-<%= headers 201 %>
+<status code="201"></status></status>
 
 ### Failed Response
 
-<%= headers 422 %>
-<%= json \
-  error: "Invalid resource. Please fix errors and try again.",
-  errors: {
+<status code="422"></status>
+```json
+{
+  "error": "Invalid resource. Please fix errors and try again.",
+  "errors": {
     "name": ["can't be blank"],
-     "presentation": ["can't be blank"]
+    "presentation": ["can't be blank"]
   }
-%>
+}
+```
 
 ## Update
 
-<%= admin_only %>
+<alert type="admin_only"></alert>
 
 To update a option type's details, make this request with the necessary parameters:
 
@@ -126,23 +130,24 @@ PUT /api/v1/option_types/3?option_type[name]=t-category
 
 ### Successful Response
 
-<%= headers 201 %>
+<status code="201"></status>
 
 ### Failed Response
 
-<%= headers 422 %>
-<%= json \
-  error: "Invalid resource. Please fix errors and try again.",
-  errors: {
-    name: ["can't be blank"],
-    presentation: ["can't be blank"]
+<status code="422"></status>
+```json
+{
+  "error": "Invalid resource. Please fix errors and try again.",
+  "errors": {
+    "name": ["can't be blank"],
+    "presentation": ["can't be blank"]
   }
-%>
-
+}
+```
 
 ## Delete
 
-<%= admin_only %>
+<alert type="admin_only"></alert>
 
 To delete a option type, make this request:
 
@@ -152,4 +157,4 @@ DELETE /api/v1/option_types/1
 
 This request removes a option type from database.
 
-<%= headers 204 %>
+<status code="204"></status>

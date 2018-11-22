@@ -5,7 +5,7 @@ description: Use the Spree Commerce storefront API to access Order data.
 
 ## Index
 
-<%= admin_only %>
+<alert type="admin_only"></alert>
 
 Retrieve a list of orders by making this request:
 
@@ -27,7 +27,7 @@ per_page
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json(:order) do |h|
   { orders: [h],
     count: 25,
@@ -37,7 +37,7 @@ end %>
 
 ## Search
 
-<%= admin_only %>
+<alert type="admin_only"></alert>
 
 To search for a particular order, make a request like this:
 
@@ -50,7 +50,7 @@ The search results are paginated.
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json(:order) do |h|
   { orders: [h],
     count: 25,
@@ -91,7 +91,7 @@ The `order_token` parameter will work for authorizing any action for an order wi
 
 ### Successful Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json :order_show %>
 
 ### Not Found Response
@@ -133,7 +133,7 @@ POST /api/v1/orders
 
 ### Successful response
 
-<%= headers 201 %>
+<status code="201"></status>
 <%= json :order_show do |h|
   h["line_items"][0]["quantity"] = 5
   h
@@ -141,7 +141,7 @@ end %>
 
 ### Failed response
 
-<%= headers 422 %>
+<status code="422"></status>
 <%= json \
   error: "Invalid resource. Please fix errors and try again.",
   errors: {

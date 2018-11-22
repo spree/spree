@@ -25,7 +25,7 @@ per_page
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json(:payment) do |h|
 { payments: [h],
   count: 2,
@@ -45,7 +45,7 @@ The search results are paginated.
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json(:payment) do |h|
 { payments: [h],
   count: 2,
@@ -67,7 +67,7 @@ In order to create a new payment, you will need to know about the available paym
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json \
   attributes:
   ["id", "source_type", "source_id", "amount",
@@ -83,7 +83,7 @@ To create a new payment, make a request like this:
 
 ### Response
 
-<%= headers 201 %>
+<status code="201"></status>
 <%= json(:payment) %>
 
 ## Show
@@ -94,7 +94,7 @@ To get information for a particular payment, make a request like this:
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json(:payment) %>
 
 ## Authorize
@@ -105,12 +105,12 @@ To authorize a payment, make a request like this:
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json :payment %>
 
 ### Failed Response
 
-<%= headers 422 %>
+<status code="422"></status>
 <%= json error: "There was a problem with the payment gateway: [text]" %>
 
 ## Capture
@@ -123,12 +123,12 @@ To capture a payment, make a request like this:
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json :payment %>
 
 ### Failed Response
 
-<%= headers 422 %>
+<status code="422"></status>
 <%= json error: "There was a problem with the payment gateway: [text]" %>
 
 ## Purchase
@@ -141,12 +141,12 @@ To make a purchase with a payment, make a request like this:
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json :payment %>
 
 ### Failed Response
 
-<%= headers 422 %>
+<status code="422"></status>
 <%= json error: "There was a problem with the payment gateway: [text]" %>
 
 ## Void
@@ -157,12 +157,12 @@ To void a payment, make a request like this:
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json :payment %>
 
 ### Failed Response
 
-<%= headers 422 %>
+<status code="422"></status>
 <%= json error: "There was a problem with the payment gateway: [text]" %>
 
 ## Credit
@@ -175,15 +175,15 @@ If the payment is over the payment's credit allowed limit, a "Credit Over Limit"
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json :payment %>
 
 ### Failed Response
 
-<%= headers 422 %>
+<status code="422"></status>
 <%= json error: "There was a problem with the payment gateway: [text]" %>
 
 ### Credit Over Limit Response
 
-<%= headers 422 %>
+<status code="422"></status>
 <%= json error: "This payment can only be credited up to [amount]. Please specify an amount less than or equal to this number." %>

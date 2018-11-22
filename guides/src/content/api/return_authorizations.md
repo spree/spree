@@ -5,7 +5,7 @@ description: Use the Spree Commerce storefront API to access ReturnAuthorization
 
 # Return Authorizations API
 
-<%= admin_only %>
+<alert type="admin_only"></alert>
 
 ## Index
 
@@ -27,7 +27,7 @@ per_page
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json(:return_authorization) do |h|
 { return_authorizations: [h],
   count: 2,
@@ -53,7 +53,7 @@ Results can be returned in a specific order by specifying which field to sort by
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json(:return_authorization) do |h|
  { return_authorizations: [h],
    count: 1,
@@ -69,12 +69,12 @@ To get information for a single return authorization, make a request like this:
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json(:return_authorization) %>
 
 ## Create
 
-<%= admin_only %>
+<alert type="admin_only"></alert>
 
 To create a return authorization, make a request like this:
 
@@ -95,12 +95,12 @@ above request with following parameters:
 
 ### Response
 
-<%= headers 201 %>
+<status code="201"></status>
 <%= json(:return_authorization) %>
 
 ## Update
 
-<%= admin_only %>
+<alert type="admin_only"></alert>
 
 To update a return authorization, make a request like this:
 
@@ -112,14 +112,14 @@ For instance, to update a return authorization's number, make this request:
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json(:return_authorization) do |h|
   h.merge("memo" => "Broken")
 end %>
 
 ## Delete
 
-<%= admin_only %>
+<alert type="admin_only"></alert>
 
 To delete a return authorization, make a request like this:
 
@@ -127,4 +127,4 @@ To delete a return authorization, make a request like this:
 
 ### Response
 
-<%= headers 204 %>
+<status code="204"></status>

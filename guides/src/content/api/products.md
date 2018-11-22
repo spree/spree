@@ -36,7 +36,7 @@ per_page
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json(:product) do |h|
 { products: [h],
   count: 25,
@@ -57,7 +57,7 @@ The search results are paginated.
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json(:product) do |h|
 { products: [h],
   count: 25,
@@ -93,7 +93,7 @@ Note that the API will attempt a permalink lookup before an ID lookup.
 
 ### Successful Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json :product %>
 
 ### Not Found Response
@@ -109,7 +109,7 @@ GET /api/v1/products/new```
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json \
   attributes: [
     :id, :name, :description, :price, :display_price, :available_on,
@@ -120,7 +120,7 @@ GET /api/v1/products/new```
 
 ## Create
 
-<%= admin_only %>
+<alert type="admin_only"></alert>
 
 To create a new product through the API, make this request with the necessary parameters:
 
@@ -134,11 +134,11 @@ POST /api/v1/products?product[name]=Headphones&product[price]=100&product[shippi
 
 ### Successful response
 
-<%= headers 201 %>
+<status code="201"></status>
 
 ### Failed response
 
-<%= headers 422 %>
+<status code="422"></status>
 <%= json \
   error: "Invalid resource. Please fix errors and try again.",
   errors: {
@@ -150,7 +150,7 @@ POST /api/v1/products?product[name]=Headphones&product[price]=100&product[shippi
 
 ## Update
 
-<%= admin_only %>
+<alert type="admin_only"></alert>
 
 To update a product\'s details, make this request with the necessary parameters:
 
@@ -164,11 +164,11 @@ PUT /api/v1/products/a-product?product[name]=Headphones```
 
 ### Successful response
 
-<%= headers 201 %>
+<status code="201"></status>
 
 ### Failed response
 
-<%= headers 422 %>
+<status code="422"></status>
 <%= json \
   error: "Invalid resource. Please fix errors and try again.",
   errors: {
@@ -180,7 +180,7 @@ PUT /api/v1/products/a-product?product[name]=Headphones```
 
 ## Delete
 
-<%= admin_only %>
+<alert type="admin_only"></alert>
 
 To delete a product, make this request:
 
@@ -189,4 +189,4 @@ DELETE /api/v1/products/a-product```
 
 This request, much like a typical product \"deletion\" through the admin interface, will not actually remove the record from the database. It simply sets the `deleted_at` field to the current time on the product, as well as all of that product\'s variants.
 
-<%= headers 204 %>
+<status code="204"></status>

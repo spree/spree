@@ -15,8 +15,8 @@ This will create a new line item representing a single item for the variant with
 
 ### Response
 
-<%= headers 201 %>
-<%= json(:line_item) %>
+<status code="201"></status>
+<json sample="line_item"></json>
 
 ## Update
 
@@ -28,10 +28,8 @@ This request will update the line item with the ID of 1 for the order, updating 
 
 ### Response
 
-<%= headers 200 %>
-<%= json(:line_item) do |h|
-  h.merge({ "quantity" => 1 })
-end %>
+<status code="200"></status>
+<json sample="line_item" merge='{"quantity": 1}'></json>
 
 ## Delete
 
@@ -41,4 +39,4 @@ To delete a line item, make a request like this:
 
 ### Response
 
-<%= headers 204 %>
+<status code="204"></status>

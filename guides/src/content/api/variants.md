@@ -33,7 +33,7 @@ per_page
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json(:variant_big) do |h|
 { variants: [h],
   count: 25,
@@ -66,7 +66,7 @@ The search results are paginated.
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json(:variant_big) do |h|
  { variants: [h],
    count: 1,
@@ -101,7 +101,7 @@ GET /api/v1/variants/1?product_id=ruby-on-rails-tote```
 
 ### Successful Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json :variant %>
 
 ### Not Found Response
@@ -117,7 +117,7 @@ GET /api/v1/products/ruby-on-rails-tote/variants/new```
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json \
   attributes: [
     :id, :name, :sku, :price, :weight, :height,
@@ -128,7 +128,7 @@ GET /api/v1/products/ruby-on-rails-tote/variants/new```
 
 ## Create
 
-<%= admin_only %>
+<alert type="admin_only"></alert>
 
 To create a new variant for a product, make this request with the necessary parameters:
 
@@ -142,14 +142,14 @@ POST /api/v1/products/ruby-on-rails-tote/variants/?variant[sku]=12345&variant[pr
 
 ### Successful response
 
-<%= headers 201 %>
+<status code="201"></status>
 <%= json :variant_big do |h|
     h.merge("sku"=>12345, "price"=>19.99)
 end %>
 
 ### Failed response
 
-<%= headers 422 %>
+<status code="422"></status>
 <%= json \
   error: "Invalid resource. Please fix errors and try again.",
   errors: {
@@ -158,7 +158,7 @@ end %>
 
 ## Update
 
-<%= admin_only %>
+<alert type="admin_only"></alert>
 
 To update a variant\'s details, make this request with the necessary parameters:
 
@@ -172,14 +172,14 @@ PUT /api/v1/products/ruby-on-rails-tote/variants/2?variant[sku]=12345```
 
 ### Successful response
 
-<%= headers 201 %>
+<status code="201"></status>
 <%= json :variant_big do |h|
   h.merge("sku"=>12345)
 end %>
 
 ### Failed response
 
-<%= headers 422 %>
+<status code="422"></status>
 <%= json \
   error: "Invalid resource. Please fix errors and try again.",
   errors: {
@@ -188,7 +188,7 @@ end %>
 
 ## Delete
 
-<%= admin_only %>
+<alert type="admin_only"></alert>
 
 To delete a variant, make this request:
 
@@ -197,4 +197,4 @@ DELETE /api/v1/products/ruby-on-rails-tote/variants/2```
 
 This request, much like a typical variant \"deletion\" through the admin interface, will not actually remove the record from the database. It simply sets the `deleted_at` field to the current time on the variant.
 
-<%= headers 204 %>
+<status code="204"></status>

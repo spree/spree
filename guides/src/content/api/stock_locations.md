@@ -5,7 +5,7 @@ description: Use the Spree Commerce storefront API to access StockLocation data.
 
 ## Index
 
-<%= admin_only %>
+<alert type="admin_only"></alert>
 
 To get a list of stock locations, make this request:
 
@@ -27,7 +27,7 @@ per_page
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json(:stock_location) do |h|
 { stock_locations: [h],
   count: 5,
@@ -37,7 +37,7 @@ end %>
 
 ## Search
 
-<%= admin_only %>
+<alert type="admin_only"></alert>
 
 To search for a particular stock location, make a request like this:
 
@@ -50,7 +50,7 @@ The search results are paginated.
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json(:stock_location) do |h|
 { stock_locations: [h],
   count: 5,
@@ -60,7 +60,7 @@ end %>
 
 ## Show
 
-<%= admin_only %>
+<alert type="admin_only"></alert>
 
 To get information for a single stock location, make this request:
 
@@ -69,12 +69,12 @@ GET /api/v1/stock_locations/1```
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json(:stock_location) %>
 
 ## Create
 
-<%= admin_only %>
+<alert type="admin_only"></alert>
 
 To create a stock location, make a request like this:
 
@@ -90,14 +90,14 @@ Assuming in this instance that you want to create a stock location with a name o
 
 ### Response
 
-<%= headers 201 %>
+<status code="201"></status>
 <%= json(:stock_location) do |h|
   h.merge("name" => "East Coast")
 end %>
 
 ## Update
 
-<%= admin_only %>
+<alert type="admin_only"></alert>
 
 To update a stock location, make a request like this:
 
@@ -113,14 +113,14 @@ To update stock location information, use parameters like this:
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json(:stock_location) do |h|
   h.merge("name" => "North Pole")
 end %>
 
 ## Delete
 
-<%= admin_only %>
+<alert type="admin_only"></alert>
 
 To delete a stock location, make a request like this:
 
@@ -131,4 +131,4 @@ This request will also delete any related `stock item` records.
 
 ### Response
 
-<%= headers 204 %>
+<status code="204"></status>

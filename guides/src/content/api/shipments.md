@@ -27,7 +27,7 @@ per_page
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json(:shipment) do |h|
 {
   shipments: [h],
@@ -39,7 +39,7 @@ end %>
 
 ## Create
 
-<%= admin_only %>
+<alert type="admin_only"></alert>
 
 The following attributes are required when creating a shipment:
 
@@ -64,12 +64,12 @@ Assuming in this instance that you want to create a shipment with a stock_locati
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json(:shipment_small) %>
 
 ## Update
 
-<%= admin_only %>
+<alert type="admin_only"></alert>
 
 To update shipment information, make a request like this:
 
@@ -82,12 +82,12 @@ To update order ship method inspect order/shipments/shipping_rates for available
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json(:shipment_small) %>
 
 ## Ready
 
-<%= admin_only %>
+<alert type="admin_only"></alert>
 
 To mark a shipment as ready, make a request like this:
 
@@ -99,14 +99,14 @@ You may choose to update shipment attributes with this request as well:
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json(:shipment_small) do |h|
   h.merge("state" => "ready")
 end %>
 
 ## Ship
 
-<%= admin_only %>
+<alert type="admin_only"></alert>
 
 To mark a shipment as shipped, make a request like this:
 
@@ -118,14 +118,14 @@ You may choose to update shipment attributes with this request as well:
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json(:shipment_small) do |h|
   h.merge("state" => "shipped")
 end %>
 
 ## Add Variant
 
-<%= admin_only %>
+<alert type="admin_only"></alert>
 
 To add a variant to a shipment, make a request like this:
 
@@ -141,12 +141,12 @@ To add a variant to a shipment, make a request like this:
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json(:shipment_small) %>
 
 ## Remove Variant
 
-<%= admin_only %>
+<alert type="admin_only"></alert>
 
 To remove a variant from a shipment, make a request like this:
 
@@ -154,5 +154,5 @@ To remove a variant from a shipment, make a request like this:
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json(:shipment_small) %>

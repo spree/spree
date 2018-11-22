@@ -16,7 +16,7 @@ GET /api/v1/products/a-product/images```
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json(:image) do |h|
 { images: [h] }
 end %>
@@ -28,7 +28,7 @@ GET /api/v1/products/a-product/images/1```
 
 ### Successful Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json :image %>
 
 ### Not Found Response
@@ -44,7 +44,7 @@ GET /api/v1/products/a-product/images/new```
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json \
   attributes: [
     :id, :position, :attachment_content_type, :attachment_file_name, :type,
@@ -55,7 +55,7 @@ GET /api/v1/products/a-product/images/new```
 
 ## Create
 
-<%= admin_only %>
+<alert type="admin_only"></alert>
 
 To upload a new image through the API, make this request with the necessary parameters:
 
@@ -74,11 +74,11 @@ curl -i -X POST \
 
 ### Successful response
 
-<%= headers 201 %>
+<status code="201"></status>
 
 ## Update
 
-<%= admin_only %>
+<alert type="admin_only"></alert>
 
 To update an image, make this request with the necessary parameters:
 
@@ -97,11 +97,11 @@ curl -i -X PUT \
 
 ### Successful response
 
-<%= headers 201 %>
+<status code="201"></status>
 
 ## Delete
 
-<%= admin_only %>
+<alert type="admin_only"></alert>
 
 To delete a product image, make this request:
 
@@ -110,4 +110,4 @@ DELETE /api/v1/products/a-product/images/1```
 
 This request will remove the record from the database.
 
-<%= headers 204 %>
+<status code="204"></status>

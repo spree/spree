@@ -7,8 +7,6 @@ description: Use the Spree Commerce storefront API to access Address data.
 
 Retrieve details about a particular address:
 
-<json-error>Testing</json-error>
-
 ```text
 GET /api/v1/orders/1/addresses/1
 ```
@@ -42,10 +40,8 @@ This request will update the `firstname` field for an address to the value of \"
 
 ### Response
 
-<%= headers 200 %>
-<%= json(:address) do |h|
-  h.merge("firstname" => "Ryan")
-end %>
+<status code="200"></status>
+<json sample="address" merge='{"firstname": "Ryan"}'></json>
 
 Valid address fields are:
 

@@ -5,7 +5,7 @@ description: Use the Spree Commerce storefront API to access StockMovement data.
 
 ## Index
 
-<%= admin_only %>
+<alert type="admin_only"></alert>
 
 To return a paginated list of all stock movements for a stock location, make this request, passing the stock location id you wish to see stock items for:
 
@@ -22,7 +22,7 @@ per_page
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json(:stock_movement) do |h|
 { stock_movements: [h],
   count: 25,
@@ -32,7 +32,7 @@ end %>
 
 ## Search
 
-<%= admin_only %>
+<alert type="admin_only"></alert>
 
 To search for a particular stock movement, make a request like this:
 
@@ -45,7 +45,7 @@ The search results are paginated.
 
 ### Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json(:stock_movement) do |h|
  { stock_movements: [h],
    count: 25,
@@ -62,7 +62,7 @@ GET /api/v1/stock_locations/1/stock_movements?q[s]=quantity%20asc```
 
 ## Show
 
-<%= admin_only %>
+<alert type="admin_only"></alert>
 
 To view the details for a single stock movement, make a request using that stock movement's id, along with its `stock_location_id`:
 
@@ -71,7 +71,7 @@ GET /api/v1/stock_locations/1/stock_movements/1```
 
 ### Successful Response
 
-<%= headers 200 %>
+<status code="200"></status>
 <%= json :stock_movement %>
 
 ### Not Found Response
@@ -80,7 +80,7 @@ GET /api/v1/stock_locations/1/stock_movements/1```
 
 ## Create
 
-<%= admin_only %>
+<alert type="admin_only"></alert>
 
 To create a new stock movement for a stock location, make this request with the necessary parameters:
 
@@ -98,12 +98,12 @@ For instance, a request to create a new stock movement with a quantity of 10, th
 
 ### Successful response
 
-<%= headers 201 %>
+<status code="201"></status>
 <%= json(:stock_movement) %>
 
 ### Failed response
 
-<%= headers 422 %>
+<status code="422"></status>
 <%= json \
   error: "Invalid resource. Please fix errors and try again.",
   errors: {
@@ -112,7 +112,7 @@ For instance, a request to create a new stock movement with a quantity of 10, th
 
 ## Update
 
-<%= admin_only %>
+<alert type="admin_only"></alert>
 
 To update a stock movement's details, make this request with the necessary parameters:
 
@@ -128,14 +128,14 @@ For instance, to update a stock movement's quantity, send it through like this:
 
 ### Successful response
 
-<%= headers 201 %>
+<status code="201"></status>
 <%= json(:stock_movement) do |h|
   h.merge("quantity" => 30)
 end %>
 
 ### Failed response
 
-<%= headers 422 %>
+<status code="422"></status>
 <%= json \
   error: "Invalid resource. Please fix errors and try again.",
   errors: {

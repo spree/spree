@@ -7,13 +7,13 @@ description: Use the Spree Commerce storefront API to access Country data.
 
 Retrieve a list of all countries by making this request:
 
-```text
+```
 GET /api/v1/countries
 ```
 
 Countries are paginated and can be iterated through by passing along a `page` parameter:
 
-```text
+```
 GET /api/v1/countries?page=2
 ```
 
@@ -27,19 +27,14 @@ per_page
 
 ### Response
 
-<%= headers 200 %>
-<%= json(:country) do |h|
-{ countries: [h],
-  count: 25,
-  current_page: 1,
-  pages: 5 }
-end %>
+<status code="200"></status>
+<json sample="countries"></json>
 
 ## Search
 
 To search for a particular country, make a request like this:
 
-```text
+```
 GET /api/v1/countries?q[name_cont]=united
 ```
 
@@ -49,17 +44,12 @@ The search results are paginated.
 
 ### Response
 
-<%= headers 200 %>
-<%= json(:country) do |h|
- { countries: [h],
-   count: 25,
-   current_page: 1,
-   pages: 5 }
-end %>
+<status code="200"></status>
+<json sample="countries"></json>
 
 Results can be returned in a specific order by specifying which field to sort by when making a request.
 
-```text
+```
 GET /api/v1/countries?q[s]=name%20desc
 ```
 
@@ -67,11 +57,11 @@ GET /api/v1/countries?q[s]=name%20desc
 
 Retrieve details about a particular country:
 
-```text
+```
 GET /api/v1/countries/1
 ```
 
 ### Response
 
-<%= headers 200 %>
-<%= json(:country_with_state) %>
+<status code="200"></status>
+<json sample="country_with_state"></json>
