@@ -80,7 +80,7 @@ GET /api/v1/zones/1
 
 ## Create
 
-<alert type="admin_only"></alert>
+<alert type="admin_only" kind="danger"></alert>
 
 To create a zone, make a request like this:
 
@@ -114,7 +114,7 @@ end %>
 
 ## Update
 
-<alert type="admin_only"></alert>
+<alert type="admin_only" kind="danger"></alert>
 
 To update a zone, make a request like this:
 
@@ -142,7 +142,7 @@ To update zone and zone member information, use parameters like this:
 
 ## Delete
 
-<alert type="admin_only"></alert>
+<alert type="admin_only" kind="danger"></alert>
 
 To delete a zone, make a request like this:
 

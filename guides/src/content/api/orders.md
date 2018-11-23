@@ -5,7 +5,7 @@ description: Use the Spree Commerce storefront API to access Order data.
 
 ## Index
 
-<alert type="admin_only"></alert>
+<alert type="admin_only" kind="danger"></alert>
 
 Retrieve a list of orders by making this request:
 
@@ -39,7 +39,7 @@ end %>
 
 ## Search
 
-<alert type="admin_only"></alert>
+<alert type="admin_only" kind="danger"></alert>
 
 To search for a particular order, make a request like this:
 

@@ -41,7 +41,7 @@ end %>
 
 ## Create
 
-<alert type="admin_only"></alert>
+<alert type="admin_only" kind="danger"></alert>
 
 The following attributes are required when creating a shipment:
 
@@ -72,7 +72,7 @@ Assuming in this instance that you want to create a shipment with a stock_locati
 
 ## Update
 
-<alert type="admin_only"></alert>
+<alert type="admin_only" kind="danger"></alert>
 
 To update shipment information, make a request like this:
 
@@ -91,7 +91,7 @@ To update order ship method inspect order/shipments/shipping_rates for available
 
 ## Ready
 
-<alert type="admin_only"></alert>
+<alert type="admin_only" kind="danger"></alert>
 
 To mark a shipment as ready, make a request like this:
 
@@ -108,7 +108,7 @@ You may choose to update shipment attributes with this request as well:
 
 ## Ship
 
-<alert type="admin_only"></alert>
+<alert type="admin_only" kind="danger"></alert>
 
 To mark a shipment as shipped, make a request like this:
 
@@ -125,7 +125,7 @@ You may choose to update shipment attributes with this request as well:
 
 ## Add Variant
 
-<alert type="admin_only"></alert>
+<alert type="admin_only" kind="danger"></alert>
 
 To add a variant to a shipment, make a request like this:
 
@@ -148,7 +148,7 @@ To add a variant to a shipment, make a request like this:
 
 ## Remove Variant
 
-<alert type="admin_only"></alert>
+<alert type="admin_only" kind="danger"></alert>
 
 To remove a variant from a shipment, make a request like this:
 

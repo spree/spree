@@ -76,7 +76,7 @@ To transition an order to its next step, make a request like this:
 PUT /api/v1/checkouts/:number/next.json
 ```
 
-If the request is successfull you'll get a 200 response using the same order
+If the request is successful you'll get a 200 response using the same order
 template shown when creating the order with the state updated. See example of
 failed response below.
 
@@ -292,11 +292,11 @@ With parameters such as these:
 }
 ```
 
-***
+<alert kind="note">
 Please ensure you select a shipping rate for each shipment in the order. In the request
 above, the `selected_shipping_rate_id` should be the id of the shipping rate you want to
 use and the `id` should be the id of the shipment you are choosing this shipping rate for.
-***
+</alert>
 
 ## Confirm
 
@@ -321,10 +321,10 @@ You can create a payment by passing in parameters such as this:
   }
 ```
 
-***
-The numbered key in the `payment_source` hash directly corresponds to the
+<alert kind="note">
+  The numbered key in the `payment_source` hash directly corresponds to the
 `payment_method_id` attribute within the `payment_attributes` key.
-***
+</alert>
 
 You can also use an existing card for the order by submitting the credit card
 id. See an example request:

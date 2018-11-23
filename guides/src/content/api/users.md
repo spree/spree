@@ -65,7 +65,7 @@ GET /api/v1/users/new
 
 ## Creating a new new
 
-<alert type="admin_only"></alert>
+<alert type="admin_only" kind="danger"></alert>
 
 To create a new user through the API, make this request with the necessary
 parameters:
@@ -99,7 +99,7 @@ POST /api/v1/users?user[email]=spree@example.com&user[password]=password
 
 ## Updating a user
 
-<alert type="admin_only"></alert>
+<alert type="admin_only" kind="danger"></alert>
 
 To update a user\'s details, make this request with the necessary parameters:
 
@@ -131,7 +131,7 @@ PUT /api/v1/users/1?user[password]=password
 
 ## Deleting a user
 
-<alert type="admin_only"></alert>
+<alert type="admin_only" kind="danger"></alert>
 
 To delete a user, make this request:
 

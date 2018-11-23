@@ -126,7 +126,7 @@ GET /api/v1/products/new
 
 ## Create
 
-<alert type="admin_only"></alert>
+<alert type="admin_only" kind="danger"></alert>
 
 To create a new product through the API, make this request with the necessary parameters:
 
@@ -158,7 +158,7 @@ POST /api/v1/products?product[name]=Headphones&product[price]=100&product[shippi
 
 ## Update
 
-<alert type="admin_only"></alert>
+<alert type="admin_only" kind="danger"></alert>
 
 To update a product\'s details, make this request with the necessary parameters:
 
@@ -192,7 +192,7 @@ PUT /api/v1/products/a-product?product[name]=Headphones
 
 ## Delete
 
-<alert type="admin_only"></alert>
+<alert type="admin_only" kind="danger"></alert>
 
 To delete a product, make this request:
 

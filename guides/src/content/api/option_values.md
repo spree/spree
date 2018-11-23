@@ -83,7 +83,7 @@ GET /api/v1/option_values/new
 
 ## Create
 
-<alert type="admin_only"></alert>
+<alert type="admin_only" kind="danger"></alert>
 
 To create a new option value through the API, make this request with the necessary parameters:
 
@@ -114,7 +114,7 @@ POST /api/v1/option_values?option_value[name]=sports&option_value[presentation]=
 
 ## Update
 
-<alert type="admin_only"></alert>
+<alert type="admin_only" kind="danger"></alert>
 
 To update an option value's details, make this request with the necessary parameters:
 
@@ -146,7 +146,7 @@ PUT /api/v1/option_values/1?option_value[name]=sport&option_value[presentation]=
 
 ## Delete
 
-<alert type="admin_only"></alert>
+<alert type="admin_only" kind="danger"></alert>
 
 To delete an option value, make this request:
 

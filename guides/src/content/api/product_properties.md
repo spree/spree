@@ -78,7 +78,7 @@ Or you can use a property's name:
 
 ## Create
 
-<alert type="admin_only"></alert>
+<alert type="admin_only" kind="danger"></alert>
 
 To create a new product property, make a request like this:
 
@@ -93,7 +93,7 @@ If a property with that name does not already exist, then it will automatically 
 
 ## Update
 
-<alert type="admin_only"></alert>
+<alert type="admin_only" kind="danger"></alert>
 
 To update an existing product property, make a request like this:
 
@@ -110,7 +110,7 @@ You may also use a property's id if you know it:
 
 ## Delete
 
-<alert type="admin_only"></alert>
+<alert type="admin_only" kind="danger"></alert>
 
 To delete a product property, make a request like this:
 

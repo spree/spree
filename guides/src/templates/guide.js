@@ -59,7 +59,7 @@ export const pageQuery = graphql`
       filter: {
         fields: { rootSection: { eq: $rootSection }, section: { ne: "null" } }
       }
-      sort: { fields: [frontmatter___title], order: DESC }
+      sort: { fields: [frontmatter___title], order: ASC }
     ) {
       group(field: fields___section) {
         section: fieldValue

@@ -5,7 +5,7 @@ description: Use the Spree Commerce storefront API to access StockMovement data.
 
 ## Index
 
-<alert type="admin_only"></alert>
+<alert type="admin_only" kind="danger"></alert>
 
 To return a paginated list of all stock movements for a stock location, make this request, passing the stock location id you wish to see stock items for:
 
@@ -33,7 +33,7 @@ end %>
 
 ## Search
 
-<alert type="admin_only"></alert>
+<alert type="admin_only" kind="danger"></alert>
 
 To search for a particular stock movement, make a request like this:
 
@@ -65,7 +65,7 @@ GET /api/v1/stock_locations/1/stock_movements?q[s]=quantity%20asc
 
 ## Show
 
-<alert type="admin_only"></alert>
+<alert type="admin_only" kind="danger"></alert>
 
 To view the details for a single stock movement, make a request using that stock movement's id, along with its `stock_location_id`:
 
@@ -84,7 +84,7 @@ GET /api/v1/stock_locations/1/stock_movements/1
 
 ## Create
 
-<alert type="admin_only"></alert>
+<alert type="admin_only" kind="danger"></alert>
 
 To create a new stock movement for a stock location, make this request with the necessary parameters:
 
@@ -117,7 +117,7 @@ For instance, a request to create a new stock movement with a quantity of 10, th
 
 ## Update
 
-<alert type="admin_only"></alert>
+<alert type="admin_only" kind="danger"></alert>
 
 To update a stock movement's details, make this request with the necessary parameters:
 

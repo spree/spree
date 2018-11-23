@@ -58,7 +58,7 @@ GET /api/v1/products/a-product/images/new
 
 ## Create
 
-<alert type="admin_only"></alert>
+<alert type="admin_only" kind="danger"></alert>
 
 To upload a new image through the API, make this request with the necessary parameters:
 
@@ -83,7 +83,7 @@ curl -i -X POST \
 
 ## Update
 
-<alert type="admin_only"></alert>
+<alert type="admin_only" kind="danger"></alert>
 
 To update an image, make this request with the necessary parameters:
 
@@ -108,7 +108,7 @@ curl -i -X PUT \
 
 ## Delete
 
-<alert type="admin_only"></alert>
+<alert type="admin_only" kind="danger"></alert>
 
 To delete a product image, make this request:
 

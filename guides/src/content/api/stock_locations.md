@@ -5,7 +5,7 @@ description: Use the Spree Commerce storefront API to access StockLocation data.
 
 ## Index
 
-<alert type="admin_only"></alert>
+<alert type="admin_only" kind="danger"></alert>
 
 To get a list of stock locations, make this request:
 
@@ -39,7 +39,7 @@ end %>
 
 ## Search
 
-<alert type="admin_only"></alert>
+<alert type="admin_only" kind="danger"></alert>
 
 To search for a particular stock location, make a request like this:
 
@@ -63,7 +63,7 @@ end %>
 
 ## Show
 
-<alert type="admin_only"></alert>
+<alert type="admin_only" kind="danger"></alert>
 
 To get information for a single stock location, make this request:
 
@@ -78,7 +78,7 @@ GET /api/v1/stock_locations/1
 
 ## Create
 
-<alert type="admin_only"></alert>
+<alert type="admin_only" kind="danger"></alert>
 
 To create a stock location, make a request like this:
 
@@ -102,7 +102,7 @@ end %>
 
 ## Update
 
-<alert type="admin_only"></alert>
+<alert type="admin_only" kind="danger"></alert>
 
 To update a stock location, make a request like this:
 
@@ -126,7 +126,7 @@ end %>
 
 ## Delete
 
-<alert type="admin_only"></alert>
+<alert type="admin_only" kind="danger"></alert>
 
 To delete a stock location, make a request like this:
 

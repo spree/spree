@@ -139,7 +139,7 @@ GET /api/v1/products/ruby-on-rails-tote/variants/new
 
 ## Create
 
-<alert type="admin_only"></alert>
+<alert type="admin_only" kind="danger"></alert>
 
 To create a new variant for a product, make this request with the necessary parameters:
 
@@ -171,7 +171,7 @@ end %>
 
 ## Update
 
-<alert type="admin_only"></alert>
+<alert type="admin_only" kind="danger"></alert>
 
 To update a variant\'s details, make this request with the necessary parameters:
 
@@ -205,7 +205,7 @@ end %>
 
 ## Delete
 
-<alert type="admin_only"></alert>
+<alert type="admin_only" kind="danger"></alert>
 
 To delete a variant, make this request:
 

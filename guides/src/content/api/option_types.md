@@ -81,7 +81,7 @@ GET /api/v1/option_types/new
 
 ## Create
 
-<alert type="admin_only"></alert>
+<alert type="admin_only" kind="danger"></alert>
 
 To create a new option type through the API, make this request with the necessary parameters:
 
@@ -114,7 +114,7 @@ POST api/v1/option_types/?option_type[name]=tshirt-category&option_type[presenta
 
 ## Update
 
-<alert type="admin_only"></alert>
+<alert type="admin_only" kind="danger"></alert>
 
 To update a option type's details, make this request with the necessary parameters:
 
@@ -147,7 +147,7 @@ PUT /api/v1/option_types/3?option_type[name]=t-category
 
 ## Delete
 
-<alert type="admin_only"></alert>
+<alert type="admin_only" kind="danger"></alert>
 
 To delete a option type, make this request:
 

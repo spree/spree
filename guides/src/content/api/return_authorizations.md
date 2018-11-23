@@ -5,7 +5,7 @@ description: Use the Spree Commerce storefront API to access ReturnAuthorization
 
 # Return Authorizations API
 
-<alert type="admin_only"></alert>
+<alert type="admin_only" kind="danger"></alert>
 
 ## Index
 
@@ -74,7 +74,7 @@ To get information for a single return authorization, make a request like this:
 
 ## Create
 
-<alert type="admin_only"></alert>
+<alert type="admin_only" kind="danger"></alert>
 
 To create a return authorization, make a request like this:
 
@@ -100,7 +100,7 @@ above request with following parameters:
 
 ## Update
 
-<alert type="admin_only"></alert>
+<alert type="admin_only" kind="danger"></alert>
 
 To update a return authorization, make a request like this:
 
@@ -117,7 +117,7 @@ For instance, to update a return authorization's number, make this request:
 
 ## Delete
 
-<alert type="admin_only"></alert>
+<alert type="admin_only" kind="danger"></alert>
 
 To delete a return authorization, make a request like this:
 

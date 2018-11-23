@@ -84,7 +84,7 @@ GET /api/v1/taxonomies/1
 
 ## Create
 
-<alert type="admin_only"></alert>
+<alert type="admin_only" kind="danger"></alert>
 
 To create a taxonomy, make a request like this:
 
@@ -109,7 +109,7 @@ created for you with the same name as the taxon.
 
 ## Update
 
-<alert type="admin_only"></alert>
+<alert type="admin_only" kind="danger"></alert>
 
 To update a taxonomy, make a request like this:
 
@@ -130,7 +130,7 @@ PUT /api/v1/taxonomies/1?taxonomy[name]=Brand
 
 ## Delete
 
-<alert type="admin_only"></alert>
+<alert type="admin_only" kind="danger"></alert>
 
 To delete a taxonomy, make a request like this:
 
@@ -181,7 +181,7 @@ like this:
 
 ## Taxon Create
 
-<alert type="admin_only"></alert>
+<alert type="admin_only" kind="danger"></alert>
 
 To create a taxon, make a request like this:
 
@@ -207,7 +207,7 @@ end %>
 
 ## Taxon Update
 
-<alert type="admin_only"></alert>
+<alert type="admin_only" kind="danger"></alert>
 
 To update a taxon, make a request like this:
 
@@ -232,7 +232,7 @@ end %>
 
 ## Taxon Delete
 
-<alert type="admin_only"></alert>
+<alert type="admin_only" kind="danger"></alert>
 
 To delete a taxon, make a request like this:
 
