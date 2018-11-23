@@ -1078,22 +1078,12 @@ components:
     TaxonomyAttributes:
       type: object
       properties:
-        id:
+        name:
           type: string
-          example: '1'
-        type:
-          type: string
-          default: 'taxonomy'
-          example: 'taxonomy'
-        attributes:
-          type: object
-          properties:
-            name:
-              type: string
-              example: 'Categories'
-            position:
-              type: integer
-              example: 0
+          example: 'Categories'
+        position:
+          type: integer
+          example: 0
     OptionType:
       required:
         - data
