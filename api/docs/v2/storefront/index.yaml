@@ -462,8 +462,8 @@ components:
               example: '1'
             type:
               type: string
-              default: 'addresses'
-              example: 'addresses'
+              default: 'address'
+              example: 'address'
             attributes:
               type: object
               properties:
@@ -657,8 +657,8 @@ components:
               example: '1'
             type:
               type: string
-              default: 'images'
-              example: 'images'
+              default: 'image'
+              example: 'image'
             attributes:
               type: object
               properties:
@@ -697,8 +697,8 @@ components:
               example: 1
             type:
               type: string
-              default: 'users'
-              example: 'users'
+              default: 'user'
+              example: 'user'
             attributes:
               type: object
               properties:
@@ -717,8 +717,8 @@ components:
               example: '1'
             type:
               type: string
-              default: 'line_items'
-              example: 'line_items'
+              default: 'line_item'
+              example: 'line_item'
             attributes:
               type: object
               properties:
@@ -789,8 +789,8 @@ components:
               example: '1'
             type:
               type: string
-              example: 'promotions'
-              default: 'promotions'
+              example: 'promotion'
+              default: 'promotion'
             attributes:
               type: object
               properties:
@@ -932,8 +932,8 @@ components:
           example: '1'
         type:
           type: string
-          default: 'products'
-          example: 'products'
+          default: 'product'
+          example: 'product'
         attributes:
           $ref: '#/components/schemas/ProductAttributes'
         relationships:
@@ -1057,8 +1057,8 @@ components:
           example: '1'
         type:
           type: string
-          default: 'taxons'
-          example: 'taxons'
+          default: 'taxon'
+          example: 'taxon'
         attributes:
           $ref: '#/components/schemas/TaxonAttributes'
         relationships:
@@ -1071,8 +1071,8 @@ components:
           example: '1'
         type:
           type: string
-          default: 'taxonomies'
-          example: 'taxonomies'
+          default: 'taxonomy'
+          example: 'taxonomy'
         attributes:
           $ref: '#/components/schemas/TaxonomyAttributes'
     TaxonomyAttributes:
@@ -1083,8 +1083,8 @@ components:
           example: '1'
         type:
           type: string
-          default: 'taxonomies'
-          example: 'taxonomies'
+          default: 'taxonomy'
+          example: 'taxonomy'
         attributes:
           type: object
           properties:
@@ -1106,8 +1106,8 @@ components:
               example: '1'
             type:
               type: string
-              default: 'option_types'
-              example: 'option_types'
+              default: 'option_type'
+              example: 'option_type'
             attributes:
               type: object
               properties:
@@ -1132,8 +1132,8 @@ components:
               example: '1'
             type:
               type: string
-              default: 'option_values'
-              example: 'option_values'
+              default: 'option_value'
+              example: 'option_value'
             attributes:
               type: object
               properties:
@@ -1166,8 +1166,8 @@ components:
               example: '1'
             type:
               type: string
-              default: 'properties'
-              example: 'properties'
+              default: 'property'
+              example: 'property'
             attributes:
               type: object
               properties:
@@ -1189,8 +1189,8 @@ components:
               example: '1'
             type:
               type: string
-              default: 'product_properties'
-              example: 'product_properties'
+              default: 'product_property'
+              example: 'product_property'
             attributes:
               type: object
               properties:
@@ -1309,8 +1309,8 @@ components:
           example: '1'
         type:
           type: string
-          default: 'variants'
-          example: 'variants'
+          default: 'variant'
+          example: 'variant'
         attributes:
           $ref: '#/components/schemas/VariantAttributes'
         relationships:
