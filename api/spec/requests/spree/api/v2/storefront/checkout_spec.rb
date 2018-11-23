@@ -1,96 +1,179 @@
 require 'spec_helper'
 
+require 'shared_examples/api_v2/base'
+require 'shared_examples/api_v2/current_order'
+
 describe 'API V2 Storefront Checkout Spec', type: :request do
-  let!(:user)  { create(:user) }
-  let!(:token) { Doorkeeper::AccessToken.create!(resource_owner_id: user.id, expires_in: nil) }
-  let!(:order) { create(:order_with_line_items, user: user) }
-  let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
+  let(:default_currency) { 'USD' }
+  let(:store) { create(:store, default_currency: default_currency) }
+  let(:currency) { store.default_currency }
+  let(:user)  { create(:user) }
+  let(:order) { create(:order, user: user, store: store, currency: currency) }
   let(:payment) { create(:payment, amount: order.total, order: order) }
+  let(:shipment) { create(:shipment, order: order) }
+
+  include_context 'API v2 tokens'
 
   describe 'checkout#next' do
     let(:exec_next) { patch '/api/v2/storefront/checkout/next', headers: headers }
 
-    context 'without line items' do
-      before do
-        order.line_items.destroy_all
-        exec_next
+    shared_examples 'perform next' do
+      context 'without line items' do
+        before do
+          order.line_items.destroy_all
+          exec_next
+        end
+
+        it_behaves_like 'returns 422 HTTP status'
+
+        it 'cannot transition to address without a line item' do
+          expect(json_response['error']).to include(Spree.t(:there_are_no_items_for_this_order))
+        end
       end
 
-      it 'cannot transition to address without a line item' do
-        expect(response.status).to eq(422)
-        expect(json_response['error']).to include(Spree.t(:there_are_no_items_for_this_order))
+      context 'with line_items and email' do
+        before { exec_next }
+
+        it_behaves_like 'returns 200 HTTP status'
+        it_behaves_like 'returns valid cart JSON'
+
+        it 'can transition an order to the next state' do
+          expect(order.reload.state).to eq('address')
+          expect(json_response['data']).to have_attribute(:state).with_value('address')
+        end
+      end
+
+      context 'without payment info' do
+        before do
+          order.update_column(:state, 'payment')
+          exec_next
+        end
+
+        it_behaves_like 'returns 422 HTTP status'
+
+        it 'returns an error' do
+          expect(json_response['error']).to include(Spree.t(:no_payment_found))
+        end
+
+        it 'doesnt advance pass payment state' do
+          expect(order.reload.state).to eq('payment')
+        end
       end
     end
 
-    context 'with line_items and email' do
-      before { exec_next }
+    context 'as a guest user' do
+      include_context 'creates guest order with guest token'
 
-      it 'can transition an order to the next state' do
-        expect(response.status).to eq(200)
-        expect(json_response['data']).to have_attribute(:state).with_value('address')
-      end
+      it_behaves_like 'perform next'
     end
 
-    context 'without payment info' do
-      before do
-        order.update_column(:state, 'payment')
-        exec_next
-      end
+    context 'as a signed in user' do
+      include_context 'creates order with line item'
 
-      it 'doesnt advance payment state if order has no payment' do
-        expect(response.status).to eq(422)
-        expect(json_response['error']).to include(Spree.t(:no_payment_found))
-      end
+      it_behaves_like 'perform next'
     end
   end
 
   describe 'checkout#advance' do
     let(:exec_advance) { patch '/api/v2/storefront/checkout/advance', headers: headers }
 
-    context 'with payment data' do
+    shared_examples 'perform advance' do
       before do
-        payment
-        exec_advance
+        order.update_column(:state, 'payment')
       end
 
-      it 'advances an order till complete or confirm step' do
-        expect(response.status).to eq(200)
-        expect(json_response['data']).to have_attribute(:state).with_value('confirm')
+      context 'with payment data' do
+        before do
+          payment
+          exec_advance
+        end
+
+        it_behaves_like 'returns 200 HTTP status'
+        it_behaves_like 'returns valid cart JSON'
+
+        it 'advances an order till complete or confirm step' do
+          expect(order.reload.state).to eq('confirm')
+          expect(json_response['data']).to have_attribute(:state).with_value('confirm')
+        end
+      end
+
+      context 'without payment data' do
+        before { exec_advance }
+
+        it_behaves_like 'returns 200 HTTP status'
+        it_behaves_like 'returns valid cart JSON'
+
+        it 'doesnt advance pass payment state' do
+          expect(order.reload.state).to eq('payment')
+          expect(json_response['data']).to have_attribute(:state).with_value('payment')
+        end
       end
     end
 
-    context 'without payment data' do
-      before { exec_advance }
+    context 'as a guest user' do
+      include_context 'creates guest order with guest token'
 
-      it 'doesnt advance above the payment step' do
-        expect(response.status).to eq(200)
-        expect(json_response['data']).to have_attribute(:state).with_value('payment')
-      end
+      it_behaves_like 'perform advance'
+    end
+
+    context 'as a signed in user' do
+      include_context 'creates order with line item'
+
+      it_behaves_like 'perform advance'
     end
   end
 
   describe 'checkout#complete' do
     let(:exec_complete) { patch '/api/v2/storefront/checkout/complete', headers: headers }
 
-    context 'with payment data' do
+    shared_examples 'perform complete' do
       before do
-        payment
-        exec_complete
+        order.update_column(:state, 'confirm')
       end
 
-      it 'advances an order till complete step' do
-        expect(response.status).to eq(200)
-        expect(json_response['data']).to have_attribute(:state).with_value('complete')
+      context 'with payment data' do
+        before do
+          payment
+          shipment
+          exec_complete
+        end
+
+        it_behaves_like 'returns 200 HTTP status'
+        it_behaves_like 'returns valid cart JSON'
+
+        it 'completes an order' do
+          expect(order.reload.state).to eq('complete')
+          expect(order.completed_at).not_to be_nil
+          expect(json_response['data']).to have_attribute(:state).with_value('complete')
+        end
+      end
+
+      context 'without payment data' do
+        before { exec_complete }
+
+        it_behaves_like 'returns 422 HTTP status'
+
+        it 'returns an error' do
+          expect(json_response['error']).to include(Spree.t(:no_payment_found))
+        end
+
+        it 'doesnt completes an order' do
+          expect(order.reload.state).not_to eq('complete')
+          expect(order.completed_at).to be_nil
+        end
       end
     end
 
-    context 'without payment data' do
-      before { exec_complete }
+    context 'as a guest user' do
+      include_context 'creates guest order with guest token'
 
-      it 'returns errors' do
-        expect(response.status).to eq(422)
-        expect(json_response['error']).to include(Spree.t(:no_payment_found))
-      end
+      it_behaves_like 'perform complete'
+    end
+
+    context 'as a signed in user' do
+      include_context 'creates order with line item'
+
+      it_behaves_like 'perform complete'
     end
   end
 
@@ -98,177 +181,205 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
     let!(:country_zone) { create(:zone, name: 'CountryZone') }
     let!(:state)        { create(:state) }
     let!(:country)      { state.country }
-    # { country_zone.members.create(zoneable: country) }
     let!(:stock_location) { create(:stock_location) }
 
     let!(:shipping_method) { create(:shipping_method, zones: [country_zone]) }
     let!(:payment_method)  { create(:credit_card_payment_method) }
 
+    let(:exec_update) { patch '/api/v2/storefront/checkout', params: params, headers: headers }
+
+    include_context 'creates order with line item'
+
     before do
       allow_any_instance_of(Spree::PaymentMethod).to receive(:source_required?).and_return(false)
       allow_any_instance_of(Spree::Order).to receive_messages(confirmation_required?: true)
       allow_any_instance_of(Spree::Order).to receive_messages(payment_required?: true)
-      put '/api/v2/storefront/checkout', params: params, headers: headers
     end
 
-    context 'line_items' do
-      let(:line_item) { order.line_items.first }
-      let(:params) do
-        {
-          order: {
-            line_items: {
-              0 => {
-                id: line_item.id,
-                quantity: 2
+    shared_examples 'perform update' do
+      context 'addresses' do
+        let(:address) do
+          {
+            firstname: 'John',
+            lastname: 'Doe',
+            address1: '7735 Old Georgetown Road',
+            city: 'Bethesda',
+            phone: '3014445002',
+            zipcode: '20814',
+            state_id: state.id,
+            country_id: country.id
+          }
+        end
+
+        let(:params) do
+          {
+            order: {
+              bill_address_attributes: address,
+              ship_address_attributes: address
+            }
+          }
+        end
+
+        before { exec_update }
+
+        it_behaves_like 'returns 200 HTTP status'
+        it_behaves_like 'returns valid cart JSON'
+
+        it 'updates addresses' do
+          order.reload
+          expect(order.bill_address).not_to be_nil
+          expect(order.ship_address).not_to be_nil
+          address.keys.each do |key|
+            expect(order.bill_address[key]).to eq address[key]
+          end
+        end
+      end
+
+      context 'payment' do
+        context 'payment method' do
+          let(:params) do
+            {
+              order: {
+                payments_attributes: [
+                  {
+                    payment_method_id: payment_method.id
+                  }
+                ]
               }
             }
-          }
-        }
+          end
+
+          before { exec_update }
+
+          it_behaves_like 'returns 200 HTTP status'
+          it_behaves_like 'returns valid cart JSON'
+
+          it 'updates payment method' do
+            expect(order.payments).not_to be_empty
+            expect(order.payments.first.payment_method_id).to eq payment_method.id
+          end
+        end
+
+        context 'payment source' do
+          let(:source_attributes) do
+            {
+              number: '4111111111111111',
+              month: 1.month.from_now.month,
+              year: 1.month.from_now.year,
+              verification_value: '123',
+              name: 'Spree Commerce'
+            }
+          end
+          let(:params) do
+            {
+              order: {
+                payments_attributes: [
+                  {
+                    payment_method_id: payment_method.id
+                  }
+                ]
+              },
+              payment_source: {
+                payment_method.id.to_s => source_attributes
+              }
+            }
+          end
+
+          before { exec_update }
+
+          it_behaves_like 'returns 200 HTTP status'
+          it_behaves_like 'returns valid cart JSON'
+
+          it 'updates payment method with source' do
+            expect(order.payments).not_to be_empty
+            expect(order.payments.last.source.name).to eq('Spree Commerce')
+            expect(order.payments.last.source.last_digits).to eq('1111')
+          end
+        end
       end
 
-      it 'can update line_items' do
-        expect(response.status).to eq(200)
-      end
-    end
-
-    context 'addresses' do
-      let(:country_zone) { create(:zone, name: 'CountryZone') }
-      let(:state)        { create(:state) }
-      let(:country)      { state.country }
-      let!(:address) do
-        {
-          firstname: 'John',
-          lastname: 'Doe',
-          address1: '7735 Old Georgetown Road',
-          city: 'Bethesda',
-          phone: '3014445002',
-          zipcode: '20814',
-          state_id: state.id,
-          country_id: country.id
-        }
-      end
-
-      let(:params) do
-        {
-          order: {
-            bill_address: address,
-            ship_address: address
-          }
-        }
-      end
-
-      it 'can update addresses' do
-        expect(response.status).to eq(200)
-
-        expect(order.bill_address.first_name).to eq 'John'
-        expect(order.ship_address.first_name).to eq 'John'
-      end
-    end
-
-    context 'payment' do
-      context 'payment method' do
+      context 'special instructions' do
         let(:params) do
           {
             order: {
-              payments_attributes: [
-                {
-                  payment_method_id: payment_method.id
-                }
-              ]
+              special_instructions: "Don't drop it"
             }
           }
         end
 
-        it 'can update payment method' do
-          expect(response.status).to eq(200)
+        before { exec_update }
 
-          expect(order.payments.first.payment_method_id).to eq payment_method.id
+        it_behaves_like 'returns 200 HTTP status'
+        it_behaves_like 'returns valid cart JSON'
+
+        it 'updates the special instructions' do
+          expect(order.reload.special_instructions).to eq("Don't drop it")
+        end
+
+        it 'returns updated special instructions' do
+          expect(json_response['data']).to have_attribute(:special_instructions).with_value("Don't drop it")
         end
       end
 
-      context 'payment source' do
-        let(:source_attributes) do
-          {
-            number: '4111111111111111',
-            month: 1.month.from_now.month,
-            year: 1.month.from_now.year,
-            verification_value: '123',
-            name: 'Spree Commerce'
-          }
-        end
+      context 'email' do
         let(:params) do
           {
             order: {
-              payments_attributes: [
-                {
-                  payment_method_id: payment_method.id
-                }
-              ]
-            },
-            payment_source: {
-              payment_method.id.to_s => source_attributes
+              email: 'guest@spreecommerce.org'
             }
           }
         end
 
-        it 'can update payment method with source' do
-          expect(response.status).to eq(200)
+        before { exec_update }
 
-          expect(order.payments.last.source.name).to eq('Spree Commerce')
-          expect(order.payments.last.source.last_digits).to eq('1111')
+        it_behaves_like 'returns 200 HTTP status'
+        it_behaves_like 'returns valid cart JSON'
+
+        it 'updates email' do
+          expect(order.reload.email).to eq('guest@spreecommerce.org')
+        end
+
+        it 'returns updated email' do
+          expect(json_response['data']).to have_attribute(:email).with_value('guest@spreecommerce.org')
+        end
+      end
+
+      context 'with invalid params' do
+        let(:params) do
+          {
+            order: {
+              email: 'wrong_email'
+            }
+          }
+        end
+
+        before do
+          order.update_column(:state, 'delivery')
+          exec_update
+        end
+
+        it_behaves_like 'returns 422 HTTP status'
+
+        it 'returns an error' do
+          expect(json_response['error']).to eq('Customer E-Mail is invalid')
+        end
+
+        it 'returns validation errors' do
+          expect(json_response['errors']).to eq('email' => ['is invalid'])
         end
       end
     end
 
-    context 'special instructions' do
-      let(:params) do
-        {
-          order: {
-            special_instructions: "Don't drop it"
-          }
-        }
-      end
+    context 'as a guest user' do
+      include_context 'creates guest order with guest token'
 
-      it 'can update the special instructions for an order' do
-        expect(response.status).to eq(200)
-        expect(json_response['data']).to have_attribute(:special_instructions).with_value("Don't drop it")
-      end
+      it_behaves_like 'perform update'
     end
 
-    context 'email' do
-      let(:params) do
-        {
-          order: {
-            email: 'guest@spreecommerce.org'
-          }
-        }
-      end
+    context 'as a signed in user' do
+      include_context 'creates order with line item'
 
-      it 'can assign an email to the order' do
-        expect(response.status).to eq(200)
-        expect(json_response['data']).to have_attribute(:email).with_value('guest@spreecommerce.org')
-      end
-    end
-
-    context 'with invalid params' do
-      let(:order) { create(:order_with_line_items, user: user, state: :delivery) }
-
-      let(:params) do
-        {
-          order: {
-            email: 'wrong_email'
-          }
-        }
-      end
-
-      it 'returns 422 HTTP status' do
-        expect(response.status).to eq(422)
-      end
-
-      it 'returns validation errors' do
-        expect(json_response['error']).to eq('Customer E-Mail is invalid')
-        expect(json_response['errors']).to eq('email' => ['is invalid'])
-      end
+      it_behaves_like 'perform update'
     end
   end
 end

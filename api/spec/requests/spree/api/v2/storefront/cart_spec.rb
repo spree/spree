@@ -1,311 +1,322 @@
 require 'spec_helper'
 
+require 'shared_examples/api_v2/base'
+require 'shared_examples/api_v2/current_order'
+
 describe 'API V2 Storefront Cart Spec', type: :request do
   let(:default_currency) { 'USD' }
   let(:store) { create(:store, default_currency: default_currency) }
   let(:currency) { store.default_currency }
   let(:user)  { create(:user) }
-  let(:token) { Doorkeeper::AccessToken.create!(resource_owner_id: user.id, expires_in: nil) }
-  let(:order) { Spree::Order.last }
+  let(:order) { create(:order, user: user, store: store, currency: currency) }
+  let(:variant) { create(:variant) }
 
-  shared_examples 'returns valid cart JSON' do
-    it 'returns a valid cart JSON response' do
-      order.reload
-      expect(json_response['data']).to have_id(order.id.to_s)
-      expect(json_response['data']).to have_type('cart')
-      expect(json_response['data']).to have_attribute(:number).with_value(order.number)
-      expect(json_response['data']).to have_attribute(:state).with_value('cart')
-      expect(json_response['data']).to have_attribute(:token).with_value(order.token)
-      expect(json_response['data']).to have_attribute(:total).with_value(order.total.to_s)
-      expect(json_response['data']).to have_attribute(:item_total).with_value(order.item_total.to_s)
-      expect(json_response['data']).to have_attribute(:ship_total).with_value(order.ship_total.to_s)
-      expect(json_response['data']).to have_attribute(:adjustment_total).with_value(order.adjustment_total.to_s)
-      expect(json_response['data']).to have_attribute(:included_tax_total).with_value(order.included_tax_total.to_s)
-      expect(json_response['data']).to have_attribute(:additional_tax_total).with_value(order.additional_tax_total.to_s)
-      expect(json_response['data']).to have_attribute(:display_additional_tax_total).with_value(order.display_additional_tax_total.to_s)
-      expect(json_response['data']).to have_attribute(:display_included_tax_total).with_value(order.display_included_tax_total.to_s)
-      expect(json_response['data']).to have_attribute(:tax_total).with_value(order.tax_total.to_s)
-      expect(json_response['data']).to have_attribute(:currency).with_value(order.currency.to_s)
-      expect(json_response['data']).to have_attribute(:email).with_value(order.email)
-      expect(json_response['data']).to have_attribute(:display_item_total).with_value(order.display_item_total.to_s)
-      expect(json_response['data']).to have_attribute(:display_ship_total).with_value(order.display_ship_total.to_s)
-      expect(json_response['data']).to have_attribute(:display_adjustment_total).with_value(order.display_adjustment_total.to_s)
-      expect(json_response['data']).to have_attribute(:display_tax_total).with_value(order.display_tax_total.to_s)
-      expect(json_response['data']).to have_attribute(:item_count).with_value(order.item_count)
-      expect(json_response['data']).to have_attribute(:special_instructions).with_value(order.special_instructions)
-      expect(json_response['data']).to have_attribute(:display_total).with_value(order.display_total.to_s)
-      expect(json_response['data']).to have_relationships(:user, :line_items, :variants, :billing_address, :shipping_address, :payments, :shipments)
+  include_context 'API v2 tokens'
+
+  shared_examples 'coupon code error' do
+    it_behaves_like 'returns 422 HTTP status'
+
+    it 'returns an error' do
+      expect(json_response[:error]).to eq("The coupon code you entered doesn't exist. Please try again.")
     end
   end
 
-  shared_context 'creates order with line_item' do
-    let!(:order)     { create(:order, user: user, store: store, currency: currency) }
-    let!(:line_item) { create(:line_item, order: order, currency: currency) }
-    let!(:headers)   { { 'Authorization' => "Bearer #{token.token}" } }
-  end
-
-  shared_context 'creates guest order with guest token' do
-    let(:guest_token) { 'guest_token' }
-    let!(:order)      { create(:order, token: guest_token, store: store, currency: currency) }
-    let!(:line_item)  { create(:line_item, order: order, currency: currency) }
-    let!(:headers)    { { 'X-Spree-Order-Token' => order.token } }
+  shared_context 'coupon codes' do
+    let!(:line_item) { create(:line_item, order: order) }
+    let!(:shipment) { create(:shipment, order: order) }
+    let!(:promotion) { Spree::Promotion.create(name: 'Free shipping', code: 'freeship') }
+    let(:coupon_code) { promotion.code }
+    let!(:promotion_action) { Spree::PromotionAction.create(promotion_id: promotion.id, type: 'Spree::Promotion::Actions::FreeShipping') }
+    let(:exec_coupon_remove) { delete "/api/v2/storefront/cart/remove_coupon_code/#{coupon_code}", headers: headers }
   end
 
   describe 'cart#create' do
+    let(:order) { Spree::Order.last }
+    let(:execute_create) { post '/api/v2/storefront/cart', headers: headers }
+
     shared_examples 'creates an order' do
-      it 'returns a proper HTTP status' do
-        expect(response.status).to eq(201)
+      before { execute_create }
+
+      it_behaves_like 'returns valid cart JSON'
+      it_behaves_like 'returns 201 HTTP status'
+    end
+
+    shared_examples 'creates an order with different currency' do
+      before do
+        store.default_currency = 'EUR'
+        store.save!
+        execute_create
       end
 
       it_behaves_like 'returns valid cart JSON'
-    end
-
-    context 'for signed in user' do
-      before do
-        headers = { 'Authorization' => "Bearer #{token.token}" }
-        post '/api/v2/storefront/cart', headers: headers
-      end
-
-      it_behaves_like 'creates an order'
-
-      it 'associates order with user' do
-        expect(json_response['data']).to have_relationship(:user).with_data('id' => user.id.to_s, 'type' => 'user')
-      end
-    end
-
-    context 'as guest user' do
-      before do
-        post '/api/v2/storefront/cart'
-      end
-
-      it_behaves_like 'creates an order'
-    end
-
-    context 'for specified currency' do
-      before do
-        store.update!(default_currency: 'EUR')
-        post '/api/v2/storefront/cart'
-      end
-
-      it_behaves_like 'creates an order'
+      it_behaves_like 'returns 201 HTTP status'
 
       it 'sets proper currency' do
         expect(json_response['data']).to have_attribute(:currency).with_value('EUR')
       end
     end
+
+    context 'as a signed in user' do
+      let(:headers) { headers_bearer }
+
+      it_behaves_like 'creates an order'
+      it_behaves_like 'creates an order with different currency'
+
+      context 'user association' do
+        before { execute_create }
+
+        it 'associates order with user' do
+          expect(json_response['data']).to have_relationship(:user).with_data('id' => user.id.to_s, 'type' => 'user')
+        end
+      end
+    end
+
+    context 'as a guest user' do
+      let(:headers) { {} }
+
+      it_behaves_like 'creates an order'
+      it_behaves_like 'creates an order with different currency'
+    end
   end
 
   describe 'cart#add_item' do
-    let(:variant) { create(:variant) }
-    let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
+    let(:options) { {} }
+    let(:params) { { variant_id: variant.id, quantity: 5, options: options } }
+    let(:execute_add) { post '/api/v2/storefront/cart/add_item', params: params, headers: headers }
+
+    before do
+      Spree::PermittedAttributes.line_item_attributes << :cost_price
+    end
 
     shared_examples 'adds item' do
+      before { execute_add }
+
+      it_behaves_like 'returns 200 HTTP status'
+      it_behaves_like 'returns valid cart JSON'
+
       it 'with success' do
-        expect(response.status).to eq(200)
-        expect(order.line_items.count).to eq(1)
-        expect(order.line_items.first.variant).to eq(variant)
-        expect(order.line_items.first.quantity).to eq(5)
+        expect(order.line_items.count).to eq(2)
+        expect(order.line_items.last.variant).to eq(variant)
+        expect(order.line_items.last.quantity).to eq(5)
         expect(json_response['included']).to include(have_type('variant').and(have_id(variant.id.to_s)))
       end
-    end
 
-    context 'without existing order' do
-      it 'returns error' do
-        post '/api/v2/storefront/cart/add_item', params: { variant_id: variant.id, quantity: 5 }, headers: headers
+      context 'with options' do
+        let(:options) { { cost_price: 1.99 } }
 
-        expect(response.status).to eq(404)
+        it 'sets custom attributes values' do
+          expect(order.line_items.last.cost_price).to eq(1.99)
+        end
       end
     end
 
-    context 'with existing order' do
-      let!(:order) { create(:order, user: user, store: store, currency: currency) }
-
-      before do
-        post '/api/v2/storefront/cart/add_item', params: { variant_id: variant.id, quantity: 5 }, headers: headers
-      end
-
-      it_behaves_like 'adds item'
-
-      it_behaves_like 'returns valid cart JSON'
-    end
-
-    context 'with existing guest order' do
-      let(:custom_token) { 'custom_token' }
-      let!(:order) { create(:order, token: custom_token, store: store, currency: currency) }
-
-      before do
-        post '/api/v2/storefront/cart/add_item', params: { variant_id: variant.id, quantity: 5, order_token: custom_token }, headers: headers
-      end
-
-      it_behaves_like 'adds item'
-
-      it_behaves_like 'returns valid cart JSON'
-    end
-
-    context 'with options' do
-      let!(:order) { create(:order, user: user, store: store, currency: currency) }
-      let(:options) { { cost_price: 1.99 } }
-
-      before do
-        Spree::PermittedAttributes.line_item_attributes << :cost_price
-
-        post '/api/v2/storefront/cart/add_item', params: { variant_id: variant.id, quantity: 5, options: options }, headers: headers
-      end
-
-      it_behaves_like 'adds item'
-
-      it_behaves_like 'returns valid cart JSON'
-
-      it 'sets custom attributes values' do
-        expect(order.line_items.first.cost_price).to eq(1.99)
-      end
-    end
-
-    context 'with quantity unnavailble' do
-      let!(:order) { create(:order, user: user, store: store, currency: currency) }
-      let(:variant) { create(:variant) }
-
+    shared_examples 'doesnt add item with quantity unnavailble' do
       before do
         variant.stock_items.first.update(backorderable: false)
-        post '/api/v2/storefront/cart/add_item', params: { variant_id: variant.id, quantity: 11 }, headers: headers
+        params[:quantity] = 11
+        execute_add
       end
 
-      it 'returns 422 when there is not enough stock' do
-        expect(response.status).to eq(422)
+      it_behaves_like 'returns 422 HTTP status'
+
+      it 'returns an error' do
         expect(json_response[:error]).to eq("Quantity selected of \"#{variant.name} (#{variant.options_text})\" is not available.")
+      end
+    end
+
+    context 'as a signed in user' do
+      context 'with existing order' do
+        include_context 'creates order with line item'
+
+        it_behaves_like 'adds item'
+        it_behaves_like 'doesnt add item with quantity unnavailble'
+      end
+
+      context 'without existing order' do
+        let(:headers) { headers_bearer }
+
+        before { execute_add }
+
+        it_behaves_like 'returns 404 HTTP status'
+      end
+    end
+
+    context 'as a guest user' do
+      context 'with existing order' do
+        include_context 'creates guest order with guest token'
+
+        it_behaves_like 'adds item'
+        it_behaves_like 'doesnt add item with quantity unnavailble'
+      end
+
+      context 'without existing order' do
+        let(:headers) { { 'X-Spree-Order-Token' => 'wrong-token' } }
+
+        before { execute_add }
+
+        it_behaves_like 'returns 404 HTTP status'
       end
     end
   end
 
   describe 'cart#remove_line_item' do
     shared_examples 'removes line item' do
+      before { delete "/api/v2/storefront/cart/remove_line_item/#{line_item.id}", headers: headers }
+
       context 'without line items' do
         let!(:line_item) { create(:line_item) }
 
-        it 'tries to remove an item and fails' do
-          delete "/api/v2/storefront/cart/remove_line_item/#{line_item.id}", headers: headers
-
-          expect(response.status).to eq(404)
-        end
+        it_behaves_like 'returns 404 HTTP status'
       end
 
       context 'containing line item' do
         let!(:line_item) { create(:line_item, order: order) }
 
+        it_behaves_like 'returns 200 HTTP status'
+        it_behaves_like 'returns valid cart JSON'
+
         it 'removes line item from the cart' do
-          delete "/api/v2/storefront/cart/remove_line_item/#{line_item.id}", headers: headers
-
-          expect(response.status).to eq(200)
           expect(order.line_items.count).to eq(0)
-
-          expect(json_response['data']).to have_id(order.id.to_s)
-          expect(json_response['data']).to have_type('cart')
-          expect(json_response['data']).to have_attribute(:number).with_value(order.number)
-          expect(json_response['data']).to have_attribute(:state).with_value('cart')
-          expect(json_response['data']).to have_relationships(:user, :line_items, :variants)
         end
       end
     end
 
-    context 'without existing order' do
-      let!(:line_item) { create(:line_item) }
-
-      it 'returns error' do
-        headers = { 'Authorization' => "Bearer #{token.token}" }
-        delete "/api/v2/storefront/cart/remove_line_item/#{line_item.id}", headers: headers
-
-        expect(response.status).to eq(404)
-        expect(json_response[:error]).to eq('ActiveRecord::RecordNotFound')
-      end
-    end
-
-    context 'existing order' do
-      let!(:order) { create(:order, user: user, store: store, currency: currency) }
-      let!(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
+    context 'as a signed in user' do
+      include_context 'creates order with line item'
 
       it_behaves_like 'removes line item'
     end
 
-    context 'as a guest' do
-      let!(:order) { create(:order, user: user, store: store, currency: currency) }
-      let!(:headers) { { 'X-Spree-Order-Token' => order.token } }
+    context 'as a guest user' do
+      include_context 'creates guest order with guest token'
 
       it_behaves_like 'removes line item'
     end
   end
 
   describe 'cart#empty' do
+    let(:execute_empty) { patch '/api/v2/storefront/cart/empty', headers: headers }
+
     shared_examples 'emptying the order' do
+      before { execute_empty }
+
+      it_behaves_like 'returns 200 HTTP status'
+      it_behaves_like 'returns valid cart JSON'
+
       it 'empties the order' do
-        patch '/api/v2/storefront/cart/empty', headers: headers
-
-        expect(response.status).to eq(200)
-        expect(order.line_items.count).to eq(0)
+        expect(order.reload.line_items.count).to eq(0)
       end
     end
 
-    context 'without existing order' do
-      it 'returns status code 404' do
-        headers = { 'Authorization' => "Bearer #{token.token}" }
-        patch '/api/v2/storefront/cart/empty', headers: headers
+    context 'as a signed in user' do
+      context 'without order' do
+        let!(:headers) { headers_bearer }
 
-        expect(response.status).to eq(404)
+        before { execute_empty }
+
+        it_behaves_like 'returns 404 HTTP status'
+      end
+
+      context 'with existing order with line item' do
+        include_context 'creates order with line item'
+
+        it_behaves_like 'emptying the order'
       end
     end
 
-    context 'with existing order and line item' do
-      include_context 'creates order with line_item'
+    context 'as a guest user' do
+      context 'without order' do
+        let(:headers) { { 'X-Spree-Order-Token' => 'wrong-token' } }
 
-      it_behaves_like 'emptying the order'
-    end
+        before { execute_empty }
 
-    context 'with existing guest order and line item' do
-      include_context 'creates guest order with guest token'
+        it_behaves_like 'returns 404 HTTP status'
+      end
 
-      it_behaves_like 'emptying the order'
+      context 'with existing guest order with line item' do
+        include_context 'creates guest order with guest token'
+
+        it_behaves_like 'emptying the order'
+      end
     end
   end
 
   describe 'cart#set_quantity' do
-    let!(:order) { create(:order, user: user, store: store, currency: currency) }
-    let!(:line_item) { create(:line_item, order: order) }
+    let(:line_item) { create(:line_item, order: order) }
+    let(:params) { { order: order, line_item_id: line_item.id, quantity: 5 } }
+    let(:execute_update) { patch '/api/v2/storefront/cart/set_quantity', params: params, headers: headers }
 
-    context 'with insufficient stock quantity and non-backorderable item' do
-      before do
-        line_item.variant.stock_items.first.update(backorderable: false)
-      end
+    shared_examples 'wrong quantity parameter' do
+      it_behaves_like 'returns 422 HTTP status'
 
-      it 'returns 422 when there is not enough stock' do
-        headers = { 'Authorization' => "Bearer #{token.token}" }
-        patch '/api/v2/storefront/cart/set_quantity', params: { order: order, line_item_id: line_item.id, quantity: 5 }, headers: headers
-
-        expect(response.status).to eq(422)
-        expect(json_response[:error]).to eq("Quantity selected of \"#{line_item.name}\" is not available.")
+      it 'returns an error' do
+        expect(json_response[:error]).to eq('Quantity has to be greater than 0')
       end
     end
 
-    it 'changes the quantity of line_item' do
-      headers = { 'Authorization' => "Bearer #{token.token}" }
-      patch '/api/v2/storefront/cart/set_quantity', params: { order: order, line_item_id: line_item.id, quantity: 5 }, headers: headers
+    shared_examples 'set quantity' do
+      context 'non-existing line item' do
+        before do
+          params[:line_item_id] = 9999
+          execute_update
+        end
 
-      expect(response.status).to eq(200)
-      expect(line_item.reload.quantity).to eq(5)
+        it_behaves_like 'returns 404 HTTP status'
+      end
+
+      context 'with insufficient stock quantity and non-backorderable item' do
+        before do
+          line_item.variant.stock_items.first.update(backorderable: false)
+          execute_update
+        end
+
+        it_behaves_like 'returns 422 HTTP status'
+
+        it 'returns an error' do
+          expect(json_response[:error]).to eq("Quantity selected of \"#{line_item.name}\" is not available.")
+        end
+      end
+
+      context 'changes the quantity of line item' do
+        before { execute_update }
+
+        it_behaves_like 'returns 200 HTTP status'
+        it_behaves_like 'returns valid cart JSON'
+
+        it 'successfully changes the quantity' do
+          expect(line_item.reload.quantity).to eq(5)
+        end
+      end
+
+      context '0 passed as quantity' do
+        before do
+          params[:quantity] = 0
+          execute_update
+        end
+
+        it_behaves_like 'wrong quantity parameter'
+      end
+
+      context 'quantity not passed' do
+        before do
+          params[:quantity] = nil
+          execute_update
+        end
+
+        it_behaves_like 'wrong quantity parameter'
+      end
     end
 
-    it 'returns 422 when quantity is 0' do
-      headers = { 'Authorization' => "Bearer #{token.token}" }
-      patch '/api/v2/storefront/cart/set_quantity', params: { order: order, line_item_id: line_item.id, quantity: 0 }, headers: headers
+    context 'as a guest user' do
+      include_context 'creates guest order with guest token'
 
-      expect(response.status).to eq(422)
-      expect(json_response[:error]).to eq('Quantity has to be greater than 0')
+      it_behaves_like 'set quantity'
     end
 
-    it 'returns 422 when quantity is absent' do
-      headers = { 'Authorization' => "Bearer #{token.token}" }
-      patch '/api/v2/storefront/cart/set_quantity', params: { order: order, line_item_id: line_item.id }, headers: headers
+    context 'as a signed in user' do
+      include_context 'creates order with line item'
 
-      expect(response.status).to eq(422)
-      expect(json_response[:error]).to eq('Quantity has to be greater than 0')
+      it_behaves_like 'set quantity'
     end
   end
 
@@ -315,29 +326,26 @@ describe 'API V2 Storefront Cart Spec', type: :request do
         get '/api/v2/storefront/cart', headers: headers
       end
 
-      it 'returns a proper HTTP status' do
-        expect(response.status).to eq(200)
-      end
-
+      it_behaves_like 'returns 200 HTTP status'
       it_behaves_like 'returns valid cart JSON'
     end
 
     shared_examples 'showing 404' do
-      it 'returns status 404' do
+      before do
         get '/api/v2/storefront/cart', headers: headers
-
-        expect(response.status).to eq(404)
       end
+
+      it_behaves_like 'returns 404 HTTP status'
     end
 
     context 'without existing order' do
-      let!(:headers) { { 'Authorization': "Bearer #{token.token}" } }
+      let!(:headers) { headers_bearer }
 
       it_behaves_like 'showing 404'
     end
 
     context 'with existing user order with line item' do
-      include_context 'creates order with line_item'
+      include_context 'creates order with line item'
 
       it_behaves_like 'showing the cart'
     end
@@ -367,116 +375,116 @@ describe 'API V2 Storefront Cart Spec', type: :request do
   end
 
   describe 'cart#apply_coupon_code' do
-    let!(:order) { create(:order, user: user, store: store, currency: currency) }
-    let!(:line_item) { create(:line_item, order: order) }
-    let!(:shipment) { create(:shipment, order: order) }
-    let!(:promotion) { Spree::Promotion.create(name: 'Free shipping', code: 'freeship') }
-    let(:coupon_code) { promotion.code }
-    let!(:promotion_action) { Spree::PromotionAction.create(promotion_id: promotion.id, type: 'Spree::Promotion::Actions::FreeShipping') }
-    let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
+    include_context 'coupon codes'
 
-    context 'with coupon code for free shipping' do
-      let(:adjustment_value) { -shipment.cost.to_f }
+    before do
+      patch '/api/v2/storefront/cart/apply_coupon_code', params: { coupon_code: coupon_code }, headers: headers
+    end
 
-      context 'applies coupon code correctly' do
-        before do
-          patch '/api/v2/storefront/cart/apply_coupon_code', params: { coupon_code: coupon_code }, headers: headers
+    shared_examples 'apply coupon code' do
+      context 'with coupon code for free shipping' do
+        let(:adjustment_value) { -shipment.cost.to_f }
+
+        context 'applies coupon code correctly' do
+          it_behaves_like 'returns 200 HTTP status'
+          it_behaves_like 'returns valid cart JSON'
+
+          it 'changes the adjustment total' do
+            expect(json_response['data']).to have_attribute(:adjustment_total).with_value(adjustment_value.to_s)
+          end
+
+          it 'includes the promotion in the response' do
+            expect(json_response['included']).to include(have_type('promotion').and(have_id(promotion.id.to_s)))
+          end
         end
 
-        it 'changes the adjustment total' do
-          expect(json_response['data']).to have_attribute(:adjustment_total).with_value(adjustment_value.to_s)
-        end
+        context 'does not apply the coupon code' do
+          let!(:coupon_code) { 'zxr' }
 
-        it 'includes the promotion in the response' do
-          expect(json_response['included']).to include(have_type('promotion').and(have_id(promotion.id.to_s)))
+          it_behaves_like 'coupon code error'
         end
-
-        it_behaves_like 'returns valid cart JSON'
       end
 
-      context 'does not apply the coupon code that doesnt exists' do
-        before do
-          patch '/api/v2/storefront/cart/apply_coupon_code', params: { coupon_code: 'zxr' }, headers: headers
-        end
+      context 'without coupon code' do
+        context 'does not apply the coupon code' do
+          let!(:coupon_code) { '' }
 
-        it 'returns 422 status with an error' do
-          expect(response.status).to eq(422)
-
-          expect(json_response[:error]).to eq("The coupon code you entered doesn't exist. Please try again.")
+          it_behaves_like 'coupon code error'
         end
       end
     end
 
-    context 'without coupon code' do
-      context 'does not apply the coupon code' do
-        before do
-          patch '/api/v2/storefront/cart/apply_coupon_code', params: { coupon_code: '' }, headers: headers
-        end
+    context 'as a guest user' do
+      include_context 'creates guest order with guest token'
 
-        it 'returns 422 status with an error' do
-          expect(response.status).to eq(422)
+      it_behaves_like 'apply coupon code'
+    end
 
-          expect(json_response[:error]).to eq("The coupon code you entered doesn't exist. Please try again.")
-        end
-      end
+    context 'as a signed in user' do
+      include_context 'creates order with line item'
+
+      it_behaves_like 'apply coupon code'
     end
   end
 
   describe 'cart#remove_coupon_code' do
-    let(:coupon_code) { 'discount' }
-    let!(:promotion) { create(:promotion_with_order_adjustment, code: coupon_code) }
-    let(:headers) { { 'Authorization' => "Bearer #{token.token}" } }
+    include_context 'coupon codes'
 
-    context 'with coupon code applied' do
-      let!(:order) do
-        create(:order_with_line_items, coupon_code: coupon_code, user: user, store: store, currency: currency).tap do |order|
+    shared_examples 'remove coupon code' do
+      context 'with coupon code applied' do
+        before do
+          order.coupon_code = promotion.code
           Spree::PromotionHandler::Coupon.new(order).apply
+          order.save!
+        end
+
+        it 'has applied promotion' do
+          expect(order.promotions).to include(promotion)
+        end
+
+        context 'removes coupon code correctly' do
+          before { exec_coupon_remove }
+
+          it_behaves_like 'returns 200 HTTP status'
+          it_behaves_like 'returns valid cart JSON'
+
+          it 'changes the adjustment total to 0.0' do
+            expect(json_response['data']).to have_attribute(:adjustment_total).with_value(0.0.to_s)
+          end
+
+          it 'doesnt includes the promotion in the response' do
+            expect(json_response['included']).not_to include(have_type('promotion'))
+          end
+        end
+
+        context 'tries to remove not-applied promotion' do
+          let(:coupon_code) { 'something-else' }
+
+          before { exec_coupon_remove }
+
+          it_behaves_like 'coupon code error'
         end
       end
 
-      context 'removes coupon code correctly' do
-        before do
-          delete "/api/v2/storefront/cart/remove_coupon_code/#{coupon_code}", headers: headers
-        end
+      context 'without coupon code applied' do
+        context 'tries to remove not-applied promotion' do
+          before { exec_coupon_remove }
 
-        it 'changes the adjustment total to 0.0' do
-          expect(json_response['data']).to have_attribute(:adjustment_total).with_value(0.0.to_s)
-        end
-
-        it 'doesnt includes the promotion in the response' do
-          expect(json_response['included']).not_to include(have_type('promotion'))
-        end
-
-        it_behaves_like 'returns valid cart JSON'
-      end
-
-      context 'tries to remove not-applied promotion' do
-        before do
-          delete '/api/v2/storefront/cart/remove_coupon_code/something-else', headers: headers
-        end
-
-        it 'returns 422 status with an error' do
-          expect(response.status).to eq(422)
-
-          expect(json_response[:error]).to eq("The coupon code you entered doesn't exist. Please try again.")
+          it_behaves_like 'coupon code error'
         end
       end
     end
 
-    context 'without coupon code applied' do
-      let!(:order) { create(:order, user: user, store: store, currency: currency) }
+    context 'as a guest user' do
+      include_context 'creates guest order with guest token'
 
-      context 'tries to remove not-applied promotion' do
-        before do
-          delete "/api/v2/storefront/cart/remove_coupon_code/#{coupon_code}", headers: headers
-        end
+      it_behaves_like 'remove coupon code'
+    end
 
-        it 'returns 422 status with an error' do
-          expect(response.status).to eq(422)
+    context 'as a signed in user' do
+      include_context 'creates order with line item'
 
-          expect(json_response[:error]).to eq("The coupon code you entered doesn't exist. Please try again.")
-        end
-      end
+      it_behaves_like 'remove coupon code'
     end
   end
 end
