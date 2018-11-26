@@ -366,6 +366,8 @@ paths:
               <li>updated_at (ascending/descenging)</li>
             </ul>
             Use <q>-</q> sign to set descenging sort, eg. <q>-updated_at</q>
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PerPageParam'
       responses:
         '200':
           description: ok
@@ -1351,6 +1353,9 @@ components:
       description: ID or a permalink
       schema:
         type: string
+      examples:
+        ID: '1'
+        Permalink: 'some-product'
     LineItemId:
       name: line_item_id
       in: path
@@ -1358,7 +1363,23 @@ components:
       description: Line Item ID
       schema:
         type: string
+      example: '1'
+    PageParam:
+      name: page
+      in: query
+      description: Number of requested page when paginating collection
+      schema:
+        type: integer
       example: 1
+      minimum: 1
+    PerPageParam:
+      name: per_page
+      in: query
+      description: Number of requested records per page when paginating collection
+      schema:
+        type: integer
+      example: 1
+      minimum: 1
     CartIncludeParam:
       name: include
       in: query
