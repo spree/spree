@@ -23,6 +23,12 @@ describe 'API v2 JSON API Resource Includes Spec', type: :request do
     end
   end
 
+  shared_examples 'requested no resources' do
+    it 'nothing is returned' do
+      expect(json_response['included']).not_to be_present
+    end
+  end
+
   context 'singular resource' do
     context 'without include param' do
       before { get "/api/v2/storefront/products/#{product.id}" }
@@ -34,7 +40,7 @@ describe 'API v2 JSON API Resource Includes Spec', type: :request do
       context 'empty param' do
         before { get "/api/v2/storefront/products/#{product.id}?include=" }
 
-        it_behaves_like 'default resources'
+        it_behaves_like 'requested no resources'
       end
 
       context 'present param' do
@@ -56,7 +62,7 @@ describe 'API v2 JSON API Resource Includes Spec', type: :request do
       context 'empty param' do
         before { get '/api/v2/storefront/products?include=' }
 
-        it_behaves_like 'default resources'
+        it_behaves_like 'requested no resources'
       end
 
       context 'present param' do

@@ -57,7 +57,13 @@ module Spree
         end
 
         def request_includes
-          params[:include].split(',') if params[:include].present?
+          # if API user want's to receive only the bare-minimum
+          # the API will return only the main resource without any included
+          if params[:include]&.blank?
+            []
+          elsif params[:include].present?
+            params[:include].split(',')
+          end
         end
 
         def resource_includes
