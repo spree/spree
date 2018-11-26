@@ -66,10 +66,6 @@ module Spree
             dependencies[:cart_serializer].new(order.reload, include: resource_includes).serializable_hash
           end
 
-          def resource_includes
-            request_includes || default_resource_includes
-          end
-
           def default_resource_includes
             %i[
               line_items

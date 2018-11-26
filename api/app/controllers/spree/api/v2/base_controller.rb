@@ -57,7 +57,26 @@ module Spree
         end
 
         def request_includes
-          params[:include].split(',').map(&:intern) if params[:include].present?
+          # if API user want's to receive only the bare-minimum
+          # the API will return only the main resource without any included
+          if params[:include]&.blank?
+            []
+          elsif params[:include].present?
+            params[:include].split(',')
+          end
+        end
+
+        def resource_includes
+          (request_includes || default_resource_includes).map(&:intern)
+        end
+
+        # overwrite this method in your controllers to set JSON API default include value
+        # https://jsonapi.org/format/#fetching-includes
+        # eg.:
+        # %w[images variants]
+        # ['variant.images', 'line_items']
+        def default_resource_includes
+          []
         end
 
         def current_currency
