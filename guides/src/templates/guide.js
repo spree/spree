@@ -14,6 +14,7 @@ import P from '../components/base/P'
 import Json from '../components/helpers/Json'
 import Status from '../components/helpers/Status'
 import Alert from '../components/helpers/Alert'
+import Params from '../components/helpers/Params'
 
 const renderAst = new RehypeReact({
   createElement: React.createElement,
@@ -25,7 +26,8 @@ const renderAst = new RehypeReact({
     json: Json,
     status: Status,
     'json-error': JsonError,
-    alert: Alert
+    alert: Alert,
+    params: Params
   }
 }).Compiler
 

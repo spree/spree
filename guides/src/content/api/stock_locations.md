@@ -21,11 +21,15 @@ GET /api/v1/stock_locations?page=2
 
 ### Parameters
 
-page
-: The page number of stock location to display.
-
-per_page
-: The number of stock locations to return per page
+<params params='[
+  {
+    "name": "page",
+    "description": "The page number of stock location to display."
+  }, {
+    "name": "per_page",
+    "description": "The number of stock locations to return per page"
+  }
+]'></params>
 
 ### Response
 

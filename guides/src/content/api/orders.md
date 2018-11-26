@@ -21,11 +21,15 @@ GET /api/v1/orders?page=2
 
 ### Parameters
 
-page
-: The page number of order to display.
-
-per_page
-: The number of orders to return per page
+<params params='[
+  {
+    "name": "page",
+    "description": "The page number of order to display."
+  }, {
+    "name": "per_page",
+    "description": "The number of orders to return per page"
+  }
+]'></params>
 
 ### Response
 

@@ -14,14 +14,18 @@ GET /api/v1/taxonomies
 
 ### Parameters
 
-page
-: The page number of taxonomy to display.
-
-per_page
-: The number of taxonomies to return per page
-
-set
-: Displays the complete expanded taxonomy tree if set to ``nested``.
+<params params='[
+  {
+    "name": "page",
+    "description": "The page number of taxonomy to display."
+  }, {
+    "name": "per_page",
+    "description": "The number of taxonomies to return per page"
+  }, {
+    "name": "set",
+    "description": "Displays the complete expanded taxonomy tree if set to `nested`."
+  }
+]'></params>
 
 ### Response
 

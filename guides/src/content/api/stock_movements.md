@@ -15,11 +15,15 @@ GET /api/v1/stock_locations/1/stock_movements
 
 ### Parameters
 
-page
-: The page number of stock movements to display.
-
-per_page
-: The number of stock movements to return per page
+<params params='[
+  {
+    "name": "page",
+    "description": "The page number of stock movements to display."
+  }, {
+    "name": "per_page",
+    "description": "The number of stock movements to return per page"
+  }
+]'></params>
 
 ### Response
 

@@ -19,11 +19,16 @@ Return authorizations are paginated and can be iterated through by passing along
 
 ### Parameters
 
-page
-: The page number of return authorization to display.
+<params params='[
+  {
+    "name": "page",
+    "description": "The page number of return authorization to display."
+  }, {
+    "name": "per_page",
+    "description": "The number of return authorizations to return per page"
+  }
+]'></params>
 
-per_page
-: The number of return authorizations to return per page
 
 ### Response
 

@@ -19,11 +19,15 @@ Product properties are paginated and can be iterated through by passing along a 
 
 ### Parameters
 
-page
-: The page number of product properties to display.
-
-per_page
-: The number of product properties to return per page
+<params params='[
+  {
+    "name": "page",
+    "description": "The page number of product properties to display."
+  }, {
+    "name": "per_page",
+    "description": "The number of product properties to return per page"
+  }
+]'></params>
 
 ### Response
 

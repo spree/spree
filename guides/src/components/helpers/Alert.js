@@ -1,11 +1,11 @@
 import * as React from 'react'
 import PropTypes from 'prop-types'
 import { cx } from 'emotion'
-import remark from 'remark'
-import html from 'remark-html'
 
 import IconAlert from 'react-feather/dist/icons/alert-circle'
 import IconNote from 'react-feather/dist/icons/file-text'
+
+import renderHtml from '../../utils/renderHtml'
 
 export default class Alert extends React.Component {
   static propTypes = {
@@ -37,18 +37,6 @@ export default class Alert extends React.Component {
     note: <IconNote className={this.getIconClasses('note')} />
   }
 
-  renderHtml = markdown => {
-    let result = ''
-    remark()
-      .use(html)
-      .process(markdown, (error, file) => {
-        if (error) throw error
-        result = file.contents
-      })
-
-    return result
-  }
-
   render() {
     const { type, kind, children } = this.props
     return (
@@ -68,7 +56,7 @@ export default class Alert extends React.Component {
                 margin: 0
               }
             }}
-            dangerouslySetInnerHTML={{ __html: this.renderHtml(children[0]) }}
+            dangerouslySetInnerHTML={{ __html: renderHtml(children[0]) }}
           />
         )}
       </div>

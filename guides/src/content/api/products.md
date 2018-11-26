@@ -19,20 +19,24 @@ GET /api/v1/products?page=2
 
 ### Parameters
 
-show_deleted
-: **boolean** - `true` to show deleted products, `false` to hide them. Default: `false`. **Only available to users with an admin role.**
-
-show_discontinued
-: **boolean** - `true` to show discontinued products, `false` to hide them. Default: `false`. **Only available to users with an admin role.**
-
-ids
-: A comma-separated list of products ids. Specifying this parameter will display the respective products.
-
-page
-: The page number of products to display.
-
-per_page
-: The number of products to return per page
+<params params='[
+  {
+    "name": "show_deleted",
+    "description": "**boolean** - `true` to show deleted products, `false` to hide them. Default: `false`. **Only available to users with an admin role.**"
+  }, {
+    "name": "show_discontinued",
+    "description": "**boolean** - `true` to show discontinued products, `false` to hide them. Default: `false`. **Only available to users with an admin role.**"
+  }, {
+    "name": "ids",
+    "description": "A comma-separated list of products ids. Specifying this parameter will display the respective products."
+  }, {
+    "name": "page",
+    "description": "The page number of product properties to display."
+  }, {
+    "name": "per_page",
+    "description": "The number of product properties to return per page"
+  }
+]'></params>
 
 ### Response
 

@@ -19,11 +19,15 @@ GET /api/v1/zones?page=2
 
 ### Parameters
 
-page
-: The page number of zone to display.
-
-per_page
-: The number of zones to return per page
+<params params='[
+  {
+    "name": "page",
+    "description": "The page number of zone to display."
+  }, {
+    "name": "per_page",
+    "description": "The number of zones to return per page"
+  }
+]'></params>
 
 ### Response
 

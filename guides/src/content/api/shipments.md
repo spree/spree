@@ -21,11 +21,15 @@ GET /api/v1/shipments/mine?page=2
 
 ### Parameters
 
-page
-: The page number of shipments to display.
-
-per_page
-: The number of shipments to return per page.
+<params params='[
+  {
+    "name": "page",
+    "description": "The page number of shipments to display."
+  }, {
+    "name": "per_page",
+    "description": "The number of shipments to return per page."
+  }
+]'></params>
 
 ### Response
 
@@ -138,8 +142,6 @@ To add a variant to a shipment, make a request like this:
   "variant_id": 10
 }
 ```
-
-
 
 ### Response
 

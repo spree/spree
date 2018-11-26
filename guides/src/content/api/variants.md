@@ -25,14 +25,18 @@ GET /api/v1/variants?product_id=ruby-on-rails-tote
 
 ### Parameters
 
-show_deleted
-: **boolean** - `true` to show deleted variants, `false` to hide them. Default: `false`. **Only available to users with an admin role.**
-
-page
-: The page number of variants to display.
-
-per_page
-: The number of variants to return per page
+<params params='[
+  {
+    "name": "show_deleted",
+    "description": "**boolean** - `true` to show deleted variants, `false` to hide them. Default: `false`. **Only available to users with an admin role.**"
+  }, {
+    "name": "page",
+    "description": "The page number of variants to display."
+  }, {
+    "name": "per_page",
+    "description": "The number of variants to return per page"
+  }
+]'></params>
 
 ### Response
 

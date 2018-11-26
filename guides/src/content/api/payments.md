@@ -17,11 +17,15 @@ Payments are paginated and can be iterated through by passing along a `page` par
 
 ### Parameters
 
-page
-: The page number of payment to display.
-
-per_page
-: The number of payments to return per page
+<params params='[
+  {
+    "name": "page",
+    "description": "The page number of payments to display."
+  }, {
+    "name": "per_page",
+    "description": "The number of payments to return per page"
+  }
+]'></params>
 
 ### Response
 

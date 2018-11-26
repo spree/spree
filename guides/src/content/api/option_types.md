@@ -13,8 +13,13 @@ GET /api/v1/option_types
 
 ### Parameters
 
-ids
-: A comma-separated list of option type ids. Specifying this parameter will display the respective option types.
+<params params='[
+  {
+    "name": "ids",
+    "description": "A comma-separated list of option type ids. Specifying this parameter will display the respective option types."
+  }
+]'></params>
+
 
 ### Response
 
