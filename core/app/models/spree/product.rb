@@ -149,6 +149,14 @@ module Spree
       variants.any?
     end
 
+    def default_variant
+      has_variants? ? variants.first : master
+    end
+
+    def default_variant_id
+      default_variant.id
+    end
+
     def tax_category
       super || TaxCategory.find_by(is_default: true)
     end

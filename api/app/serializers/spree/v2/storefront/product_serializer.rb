@@ -17,8 +17,8 @@ module Spree
         has_many :product_properties
 
         has_one  :default_variant,
-          object_method_name: :master,
-          id_method_name: :master_id,
+          object_method_name: :default_variant,
+          id_method_name: :default_variant_id,
           record_type: :variant,
           serializer: :variant
       end
