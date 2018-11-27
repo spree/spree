@@ -3,6 +3,8 @@ module Spree
     module V2
       module Storefront
         class CheckoutController < ::Spree::Api::V2::BaseController
+          before_action :ensure_order
+
           def next
             spree_authorize! :update, spree_current_order, order_token
 
@@ -41,6 +43,10 @@ module Spree
           end
 
           private
+
+          def ensure_order
+            raise ActiveRecord::RecordNotFound if spree_current_order.nil?
+          end
 
           def dependencies
             {
