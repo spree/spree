@@ -3,11 +3,11 @@ title: Product Properties
 description: Use the Spree Commerce storefront API to access ProductProperty data.
 ---
 
-<%= warning "Requests to this API will only succeed if the user making them has access to the underlying products. If the user is not an admin and the product is not available yet, users will receive a 404 response from this API." %>
+<alert kind="warning">
+  Requests to this API will only succeed if the user making them has access to the underlying products. If the user is not an admin and the product is not available yet, users will receive a 404 response from this API.
+</alert>
 
-## Index
-
-List
+## List
 
 Retrieve a list of all product properties for a product by making this request:
 
@@ -32,12 +32,7 @@ Product properties are paginated and can be iterated through by passing along a 
 ### Response
 
 <status code="200"></status>
-<%= json(:product_property) do |h|
-{ product_properties: [h],
-  count: 10,
-  current_page: 1,
-  pages: 2 }
-end %>
+<json sample="product_properties"></json>
 
 ## Search
 
@@ -52,12 +47,7 @@ The search results are paginated.
 ### Response
 
 <status code="200"></status>
-<%= json(:product_property) do |h|
- { product_properties: [h],
-   count: 10,
-   current_page: 1,
-   pages: 2 }
-end %>
+<json sample="product_properties"></json>
 
 ### Sorting results
 

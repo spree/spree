@@ -74,7 +74,7 @@ GET /api/v1/stock_locations/1/stock_movements/1
 
 ### Not Found Response
 
-<%= not_found %>
+<alert type="not_found"></alert>
 
 ## Create
 

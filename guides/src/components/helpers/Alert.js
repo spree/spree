@@ -25,6 +25,12 @@ export default class Alert extends React.Component {
         <Status code="404" />
         <Json sample="404" />
       </React.Fragment>
+    ),
+    authorization_failure: (
+      <React.Fragment>
+        <Status code="401" />
+        <Json sample="401" />
+      </React.Fragment>
     )
   }
 
@@ -56,8 +62,10 @@ export default class Alert extends React.Component {
     return (
       <div
         className={cx(this.__classes[kind], {
-          'mt4 flex items-center ba pl4 pr3 pv3 br2 fw6 relative':
-            type !== 'not_found'
+          'mt4 flex items-center ba pl4 pr3 pv3 br2 fw6 relative': ![
+            'authorization_failure',
+            'not_found'
+          ].includes(type)
         })}
       >
         {this.__icons[kind]}

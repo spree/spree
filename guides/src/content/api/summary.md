@@ -44,7 +44,7 @@ You may encounter the follow error messages when using the API.
 
 #### Authorization Failure
 
-<%= authorization_failure %>
+<alert type="authorization_failure"></alert>
 
 #### Invalid API Key
 

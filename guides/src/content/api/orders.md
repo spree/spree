@@ -100,7 +100,7 @@ The `order_token` parameter will work for authorizing any action for an order wi
 
 ### Authorization Failure
 
-<%= authorization_failure %>
+<alert type="authorization_failure"></alert>
 
 ## Show (delivery)
 

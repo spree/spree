@@ -222,7 +222,9 @@ To delete a taxon, make a request like this:
 
     DELETE /api/v1/taxonomies/1/taxons/1
 
-<%= warning "This will cause all child taxons to be deleted as well." %>
+<alert kind="warning">
+  This will cause all child taxons to be deleted as well.
+</alert>
 
 ### Response
 

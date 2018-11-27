@@ -1,4 +1,5 @@
 import IMAGE from './image'
+import IMAGES from './images'
 import OPTION_TYPE from './option_type'
 import OPTION_TYPES from './option_types'
 import OPTION_VALUE from './option_value'
@@ -37,16 +38,19 @@ import RETURN_AUTHORIZATIONS from './return_authorizations'
 import PRODUCT from './product'
 import PRODUCTS from './products'
 import PRODUCT_PROPERTY from './product_property'
+import PRODUCT_PROPERTIES from './product_properties'
 import PAYMENT from './payment'
 import PAYMENTS from './payments'
 import ORDER_SHOW from './order_show'
 import ORDER_SHOW_2 from './order_show_2'
 import ORDERS from './orders'
 import _404 from './404'
+import _401 from './401'
 
 export default {
   address: ADDRESS,
   image: IMAGE,
+  images: IMAGES,
   option_type: OPTION_TYPE,
   option_types: OPTION_TYPES,
   option_value: OPTION_VALUE,
@@ -84,10 +88,12 @@ export default {
   product: PRODUCT,
   products: PRODUCTS,
   product_property: PRODUCT_PROPERTY,
+  product_properties: PRODUCT_PROPERTIES,
   payment: PAYMENT,
   payments: PAYMENTS,
   order_show: ORDER_SHOW,
   order_show_2: ORDER_SHOW_2,
   orders: ORDERS,
-  404: _404
+  404: _404,
+  401: _401
 }

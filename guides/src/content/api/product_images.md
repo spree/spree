@@ -18,9 +18,7 @@ GET /api/v1/products/a-product/images
 ### Response
 
 <status code="200"></status>
-<%= json(:image) do |h|
-{ images: [h] }
-end %>
+<json sample="images"></json>
 
 ## Show
 
@@ -35,7 +33,7 @@ GET /api/v1/products/a-product/images/1
 
 ### Not Found Response
 
-<%= not_found %>
+<alert type="not_found"></alert>
 
 ## New
 
