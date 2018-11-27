@@ -5,6 +5,7 @@ module Spree
         include CanCan::ControllerAdditions
         include Spree::Core::ControllerHelpers::StrongParameters
         rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
+        rescue_from CanCan::AccessDenied, with: :access_denied
 
         private
 
@@ -83,8 +84,12 @@ module Spree
           spree_current_store.default_currency || Spree::Config[:currency]
         end
 
-        def record_not_found(exception)
-          render_error_payload(exception.message, 404)
+        def record_not_found
+          render_error_payload(I18n.t(:resource_not_found, scope: 'spree.api'), 404)
+        end
+
+        def access_denied(exception)
+          render_error_payload(exception.message, 403)
         end
       end
     end
