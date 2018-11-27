@@ -1,6 +1,6 @@
 import * as React from 'react'
 import PropTypes from 'prop-types'
-import SyntaxHighlighter from 'react-syntax-highlighter'
+import { PrismAsyncLight as SyntaxHighlighter } from 'react-syntax-highlighter'
 import syntaxTheme from 'react-syntax-highlighter/dist/esm/styles/prism/solarizedlight'
 import * as R from 'ramda'
 
