@@ -34,14 +34,7 @@ GET /api/v1/shipments/mine?page=2
 ### Response
 
 <status code="200"></status>
-<%= json(:shipment) do |h|
-{
-  shipments: [h],
-  count: 25,
-  current_page: 1,
-  pages: 5
-}
-end %>
+<json sample="shipments"></json>
 
 ## Create
 
@@ -63,11 +56,13 @@ The `order_id` is the number of the order to create a shipment for and is provid
 
 Assuming in this instance that you want to create a shipment with a stock_location_id of `1` and a variant_id of `10` for order `R1234567`, send through the parameters like this:
 
-<%= json \
-  order_id: "R1234567",
-  stock_location_id: 1,
-  variant_id: 10
-%>
+```json
+{
+  "order_id": "R1234567",
+  "stock_location_id": "1",
+  "variant_id": "10"
+}
+```
 
 ### Response
 

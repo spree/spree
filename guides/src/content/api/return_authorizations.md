@@ -33,12 +33,7 @@ Return authorizations are paginated and can be iterated through by passing along
 ### Response
 
 <status code="200"></status>
-<%= json(:return_authorization) do |h|
-{ return_authorizations: [h],
-  count: 2,
-  current_page: 1,
-  pages: 1 }
-end %>
+<json sample="return_authorizations"></json>
 
 ## Search
 
@@ -59,12 +54,7 @@ Results can be returned in a specific order by specifying which field to sort by
 ### Response
 
 <status code="200"></status>
-<%= json(:return_authorization) do |h|
- { return_authorizations: [h],
-   count: 1,
-   current_page: 1,
-   pages: 1 }
-end %>
+<json sample="return_authorizations" merge='{"count": 1}'></json>
 
 ## Show
 

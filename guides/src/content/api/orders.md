@@ -96,7 +96,7 @@ The `order_token` parameter will work for authorizing any action for an order wi
 
 ### Not Found Response
 
-<%= not_found %>
+<alert type="not_found"></alert>
 
 ### Authorization Failure
 

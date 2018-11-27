@@ -48,13 +48,15 @@ GET /api/v1/products/a-product/images/new
 ### Response
 
 <status code="200"></status>
-<%= json \
-  attributes: [
-    :id, :position, :attachment_content_type, :attachment_file_name, :type,
-    :attachment_updated_at, :attachment_width, :attachment_height, :alt
+```json
+{
+  "attributes": [
+    "id", "position", "attachment_content_type", "attachment_file_name", "type",
+    "attachment_updated_at", "attachment_width", "attachment_height", "alt"
   ],
-  required_attributes: []
- %>
+  "required_attributes": []
+}
+```
 
 ## Create
 

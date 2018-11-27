@@ -34,12 +34,7 @@ GET /api/v1/states?country_id=1
 ### Response
 
 <status code="200"></status>
-<%= json(:state) do |h|
-{ states: [h],
-  count: 25,
-  pages: 5,
-  current_page: 1 }
-end %>
+<json sample="states"></json>
 
 ## Show
 

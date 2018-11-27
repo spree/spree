@@ -3,7 +3,6 @@ import OPTION_TYPE from './option_type'
 import OPTION_TYPES from './option_types'
 import OPTION_VALUE from './option_value'
 import OPTION_VALUES from './option_values'
-import STOCK_ITEM from './stock_item'
 import USER from './user'
 import USERS from './users'
 import VARIANT from './variant'
@@ -20,13 +19,23 @@ import ZONES from './zones'
 import TAXONOMY from './taxonomy'
 import TAXONOMIES from './taxonomies'
 import NEW_TAXONOMY from './new_taxonomy'
+import TAXON from './taxon'
 import TAXON_WITH_CHILDREN from './taxon_with_children'
+import TAXONS_WITH_CHILDREN from './taxons_with_children'
+import STOCK_ITEM from './stock_item'
+import STOCK_ITEMS from './stock_items'
 import STOCK_MOVEMENT from './stock_movement'
+import STOCK_MOVEMENTS from './stock_movements'
+import STOCK_LOCATION from './stock_location'
+import STOCK_LOCATIONS from './stock_locations'
 import STATE from './state'
+import STATES from './states'
 import SHIPMENT_SMALL from './shipment_small'
 import SHIPMENTS from './shipments'
 import RETURN_AUTHORIZATION from './return_authorization'
+import RETURN_AUTHORIZATIONS from './return_authorizations'
 import PRODUCT from './product'
+import PRODUCTS from './products'
 import PRODUCT_PROPERTY from './product_property'
 import PAYMENT from './payment'
 import PAYMENTS from './payments'
@@ -42,7 +51,6 @@ export default {
   option_types: OPTION_TYPES,
   option_value: OPTION_VALUE,
   option_values: OPTION_VALUES,
-  stock_item: STOCK_ITEM,
   user: USER,
   users: USERS,
   variant: VARIANT,
@@ -58,13 +66,23 @@ export default {
   taxonomy: TAXONOMY,
   taxonomies: TAXONOMIES,
   new_taxonomy: NEW_TAXONOMY,
+  taxon: TAXON,
   taxon_with_children: TAXON_WITH_CHILDREN,
+  taxons_with_children: TAXONS_WITH_CHILDREN,
+  stock_item: STOCK_ITEM,
+  stock_items: STOCK_ITEMS,
   stock_movement: STOCK_MOVEMENT,
+  stock_movements: STOCK_MOVEMENTS,
+  stock_location: STOCK_LOCATION,
+  stock_locations: STOCK_LOCATIONS,
   state: STATE,
+  states: STATES,
   shipment_small: SHIPMENT_SMALL,
   shipments: SHIPMENTS,
   return_authorization: RETURN_AUTHORIZATION,
+  return_authorizations: RETURN_AUTHORIZATIONS,
   product: PRODUCT,
+  products: PRODUCTS,
   product_property: PRODUCT_PROPERTY,
   payment: PAYMENT,
   payments: PAYMENTS,

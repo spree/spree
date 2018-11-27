@@ -41,12 +41,7 @@ GET /api/v1/products?page=2
 ### Response
 
 <status code="200"></status>
-<%= json(:product) do |h|
-{ products: [h],
-  count: 25,
-  pages: 5,
-  current_page: 1 }
-end %>
+<json sample="products"></json>
 
 ## Search
 
@@ -63,12 +58,7 @@ The search results are paginated.
 ### Response
 
 <status code="200"></status>
-<%= json(:product) do |h|
-{ products: [h],
-  count: 25,
-  pages: 5,
-  current_page: 1 }
-end %>
+<json sample="products"></json>
 
 ### Sorting results
 
@@ -107,7 +97,7 @@ Note that the API will attempt a permalink lookup before an ID lookup.
 
 ### Not Found Response
 
-<%= not_found %>
+<alert type="not_found"></alert>
 
 ## New
 
@@ -120,13 +110,16 @@ GET /api/v1/products/new
 ### Response
 
 <status code="200"></status>
-<%= json \
-  attributes: [
-    :id, :name, :description, :price, :display_price, :available_on,
-    :slug, :meta_description, :meta_keywords, :shipping_category_id, :taxon_ids, :total_on_hand
+```json
+{
+  "attributes": [
+    "id", "name", "description", "price", "display_price", "available_on",
+    "slug", "meta_description", "meta_keywords", "shipping_category_id",
+    "taxon_ids", "total_on_hand"
   ],
-  required_attributes: [:name, :shipping_category, :price]
- %>
+  "required_attributes": ["name", "shipping_category", "price"]
+}
+```
 
 ## Create
 
@@ -151,14 +144,16 @@ POST /api/v1/products?product[name]=Headphones&product[price]=100&product[shippi
 ### Failed response
 
 <status code="422"></status>
-<%= json \
-  error: "Invalid resource. Please fix errors and try again.",
-  errors: {
-    name: ["can't be blank"],
-    price: ["can't be blank"],
-    shipping_category_id: ["can't be blank"]
+```json
+{
+  "error": "Invalid resource. Please fix errors and try again.",
+  "errors": {
+    "name": ["can't be blank"],
+    "price": ["can't be blank"],
+    "shipping_category_id": ["can't be blank"]
   }
-%>
+}
+```
 
 ## Update
 

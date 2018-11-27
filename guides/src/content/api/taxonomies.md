@@ -144,21 +144,17 @@ To get a list for all taxons underneath the root taxon for a taxonomy (and their
 
 ### Parameters
 
-without_children
-: Displays only immediate children of taxons if set to ``true``.
+<params params='[
+  {
+    "name": "without_children",
+    "description": "Displays only immediate children of taxons if set to `true`."
+  }
+]'></params>
 
 ### Response
 
 <status code="200"></status>
-<%= json(:taxon_with_children) do |h|
-  { "taxons" => [h],
-    "count" => 7,
-    "total_count" => 7,
-    "current_page" => 1,
-    "per_page" => 25,
-    "pages" => 1
-  }
-end %>
+<json sample="taxons_with_children"></json>
 
 ## A single taxon
 
@@ -171,7 +167,6 @@ like this:
 
 <status code="200"></status>
 <json sample="taxon_with_children"></json>
-
 
 ## Taxon Create
 
@@ -188,16 +183,13 @@ To create a new taxon with the name "Brands", make this request:
 ### Response
 
 <status code="201"></status>
-<%= json(:taxon_without_children) do |h|
-  h.merge({
-    "name" => "Brands",
-    "pretty_name" => "Brands",
-    "permalink" => "brands/brands",
-    "meta_title" => "Brands",
-    "meta_description" => "Brands"
-  })
-end %>
-
+<json sample="taxon" merge='{
+    "name": "Brands",
+    "pretty_name": "Brands",
+    "permalink": "brands/brands",
+    "meta_title": "Brands",
+    "meta_description": "Brands"
+  }'></json>
 
 ## Taxon Update
 

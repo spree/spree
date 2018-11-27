@@ -40,7 +40,7 @@ You may encounter the follow error messages when using the API.
 
 #### Not Found
 
-<%= not_found %>
+<alert type="not_found"></alert>
 
 #### Authorization Failure
 
@@ -49,7 +49,9 @@ You may encounter the follow error messages when using the API.
 #### Invalid API Key
 
 <status code="401"></status>
-<%= json(error: "Invalid API key ([key]) specified.") %>
+```json
+{ "error": "Invalid API key ([key]) specified." }
+```
 
 #### No API Key specified
 

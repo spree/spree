@@ -28,12 +28,7 @@ GET /api/v1/stock_locations/1/stock_movements
 ### Response
 
 <status code="200"></status>
-<%= json(:stock_movement) do |h|
-{ stock_movements: [h],
-  count: 25,
-  current_page: 1,
-  pages: 5 }
-end %>
+<json sample="stock_movements"></json>
 
 ## Search
 
@@ -52,12 +47,7 @@ The search results are paginated.
 ### Response
 
 <status code="200"></status>
-<%= json(:stock_movement) do |h|
- { stock_movements: [h],
-   count: 25,
-   current_page: 1,
-   pages: 5 }
-end %>
+<json sample="stock_movements"></json>
 
 ### Sorting results
 
@@ -80,7 +70,7 @@ GET /api/v1/stock_locations/1/stock_movements/1
 ### Successful Response
 
 <status code="200"></status>
-<%= json :stock_movement %>
+<json sample="stock_movement"></json>
 
 ### Not Found Response
 
@@ -98,12 +88,15 @@ POST /api/v1/stock_locations/1/stock_movements
 
 For instance, a request to create a new stock movement with a quantity of 10, the action set to received, and a stock_item_id of 1 would look like this::
 
-<%= json \
-  stock_movement: {
-    quantity: "10",
-    stock_item_id: "1",
-    action: "received"
-  } %>
+```json
+{
+  "stock_movement": {
+    "quantity": 10,
+    "stock_item_id": "1",
+    "action": "received"
+  }
+}
+```
 
 ### Successful response
 
@@ -113,11 +106,12 @@ For instance, a request to create a new stock movement with a quantity of 10, th
 ### Failed response
 
 <status code="422"></status>
-<%= json \
-  error: "Invalid resource. Please fix errors and try again.",
-  errors: {
-  }
-%>
+```json
+{
+  "error": "Invalid resource. Please fix errors and try again.",
+  "errors": {}
+}
+```
 
 ## Update
 
@@ -131,23 +125,25 @@ PUT /api/v1/stock_locations/1/stock_movements/1
 
 For instance, to update a stock movement's quantity, send it through like this:
 
-<%= json \
-  stock_movement: {
-    quantity: "30",
-  } %>
+```json
+{
+  "stock_movement": {
+    "quantity": 30,
+  }
+}
+```
 
 ### Successful response
 
 <status code="201"></status>
-<%= json(:stock_movement) do |h|
-  h.merge("quantity" => 30)
-end %>
+<json sample="stock_movement" merge='{"quantity": 30}'></json>
 
 ### Failed response
 
 <status code="422"></status>
-<%= json \
-  error: "Invalid resource. Please fix errors and try again.",
-  errors: {
-  }
-%>
+```json
+{
+  "error": "Invalid resource. Please fix errors and try again.",
+  "errors": {}
+}
+```

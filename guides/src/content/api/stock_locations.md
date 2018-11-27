@@ -34,12 +34,7 @@ GET /api/v1/stock_locations?page=2
 ### Response
 
 <status code="200"></status>
-<%= json(:stock_location) do |h|
-{ stock_locations: [h],
-  count: 5,
-  current_page: 1,
-  pages: 1 }
-end %>
+<json sample="stock_locations"></json>
 
 ## Search
 
@@ -58,12 +53,7 @@ The search results are paginated.
 ### Response
 
 <status code="200"></status>
-<%= json(:stock_location) do |h|
-{ stock_locations: [h],
-  count: 5,
-  current_page: 1,
-  pages: 1 }
-end %>
+<json sample="stock_locations"></json>
 
 ## Show
 
@@ -78,7 +68,7 @@ GET /api/v1/stock_locations/1
 ### Response
 
 <status code="200"></status>
-<%= json(:stock_location) %>
+<json sample="stock_location"></json>
 
 ## Create
 
@@ -92,17 +82,18 @@ POST /api/v1/stock_locations
 
 Assuming in this instance that you want to create a stock location with a name of `East Coast`, send through the parameters like this:
 
-<%= json \
-  stock_location: {
-    name: "East Coast"
-  } %>
+```json
+{
+  "stock_location": {
+    "name": "East Coast"
+  }
+}
+```
 
 ### Response
 
 <status code="201"></status>
-<%= json(:stock_location) do |h|
-  h.merge("name" => "East Coast")
-end %>
+<json sample="stock_location" merge='{"name": "East Coast"}'></json>
 
 ## Update
 
@@ -116,17 +107,18 @@ PUT /api/v1/stock_locations/1
 
 To update stock location information, use parameters like this:
 
-<%= json \
-  stock_location: {
-    name: "North Pole"
-  } %>
+```json
+{
+  "stock_location": {
+    "name": "North Pole"
+  }
+}
+```
 
 ### Response
 
 <status code="200"></status>
-<%= json(:stock_location) do |h|
-  h.merge("name" => "North Pole")
-end %>
+<json sample="stock_location" merge='{"name": "North Pole"}'></json>
 
 ## Delete
 

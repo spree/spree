@@ -62,12 +62,14 @@ In order to create a new payment, you will need to know about the available paym
 ### Response
 
 <status code="200"></status>
-<%= json \
-  attributes:
-  ["id", "source_type", "source_id", "amount",
+```json
+{
+  "attributes": ["id", "source_type", "source_id", "amount",
    "display_amount", "payment_method_id", "state", "avs_response",
    "created_at", "updated_at", "number"],
-  payment_methods: [Spree::Resources::PAYMENT_METHOD] %>
+  "payment_methods": [Spree::Resources::PAYMENT_METHOD]
+}
+```
 
 ## Create
 

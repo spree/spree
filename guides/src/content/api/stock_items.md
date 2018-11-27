@@ -28,12 +28,7 @@ GET /api/v1/stock_locations/1/stock_items
 ### Response
 
 <status code="200"></status>
-<%= json(:stock_item) do |h|
-{ stock_items: [h],
-  count: 25,
-  current_page: 1,
-  pages: 5 }
-end %>
+<json sample="stock_items"></json>
 
 ## Search
 
@@ -52,12 +47,7 @@ The search results are paginated.
 ### Response
 
 <status code="200"></status>
-<%= json(:stock_item) do |h|
- { stock_items: [h],
-   count: 25,
-   current_page: 1,
-   pages: 5 }
-end %>
+<json sample="stock_items"></json>
 
 ### Sorting results
 
@@ -80,11 +70,11 @@ GET /api/v1/stock_locations/1/stock_items/2
 ### Successful Response
 
 <status code="200"></status>
-<%= json :stock_item %>
+<json sample="stock_item"></json>
 
 ### Not Found Response
 
-<%= not_found %>
+<alert type="not_found"></alert>
 
 ## Create
 
@@ -98,12 +88,15 @@ POST /api/v1/stock_locations/1/stock_items
 
 For instance, a request to create a new stock item with a count_on_hand of 10 and a variant_id of 1 would look like this::
 
-<%= json \
-  stock_item: {
-    count_on_hand: "10",
-    variant_id: "1",
-    backorderable: "true"
-  } %>
+```json
+{
+  "stock_item": {
+    "count_on_hand": 10,
+    "variant_id": "1",
+    "backorderable": true
+  }
+}
+```
 
 ### Successful response
 
@@ -113,11 +106,12 @@ For instance, a request to create a new stock item with a count_on_hand of 10 an
 ### Failed response
 
 <status code="422"></status>
-<%= json \
-  error: "Invalid resource. Please fix errors and try again.",
-  errors: {
-  }
-%>
+```json
+{
+  "error": "Invalid resource. Please fix errors and try again.",
+  "errors": {}
+}
+```
 
 ## Update
 
@@ -138,34 +132,39 @@ PUT /api/v1/stock_locations/1/stock_items/2
 
 For instance, to update a stock item's count_on_hand, send it through like this:
 
-<%= json \
-  stock_item: {
-    count_on_hand: "30",
-  } %>
+```json
+{
+  "stock_item": {
+    "count_on_hand": 30
+  }
+}
+```
 
 Or alternatively with the force attribute to replace the current count_on_hand with a new value:
 
-<%= json \
-  stock_item: {
-    count_on_hand: "30",
-    force: true,
-  } %>
+```json
+{
+  "stock_item": {
+    "count_on_hand": 30,
+    "force": true,
+  }
+}
+```
 
 ### Successful response
 
 <status code="201"></status>
-<%= json(:stock_item) do |h|
-  h.merge("count_on_hand" => 30)
-end %>
+<json sample="stock_item" merge='{"count_on_hand": 30}'></json>
 
 ### Failed response
 
 <status code="422"></status>
-<%= json \
-  error: "Invalid resource. Please fix errors and try again.",
-  errors: {
-  }
-%>
+```json
+{
+  "error": "Invalid resource. Please fix errors and try again.",
+  "errors": {}
+}
+```
 
 ## Delete
 
