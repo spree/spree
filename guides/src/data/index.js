@@ -46,6 +46,7 @@ import ORDER_SHOW_2 from './order_show_2'
 import ORDERS from './orders'
 import _404 from './404'
 import _401 from './401'
+import _NO_API_KEY from './_no_api_key'
 
 export default {
   address: ADDRESS,
@@ -95,5 +96,6 @@ export default {
   order_show_2: ORDER_SHOW_2,
   orders: ORDERS,
   404: _404,
-  401: _401
+  401: _401,
+  no_api_key: _NO_API_KEY
 }

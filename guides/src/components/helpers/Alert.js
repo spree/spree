@@ -31,6 +31,12 @@ export default class Alert extends React.Component {
         <Status code="401" />
         <Json sample="401" />
       </React.Fragment>
+    ),
+    no_api_key: (
+      <React.Fragment>
+        <Status code="401" />
+        <Json sample="no_api_key" />
+      </React.Fragment>
     )
   }
 
@@ -64,7 +70,8 @@ export default class Alert extends React.Component {
         className={cx(this.__classes[kind], {
           'mt4 flex items-center ba pl4 pr3 pv3 br2 fw6 relative': ![
             'authorization_failure',
-            'not_found'
+            'not_found',
+            'no_api_key'
           ].includes(type)
         })}
       >

@@ -55,7 +55,7 @@ You may encounter the follow error messages when using the API.
 
 #### No API Key specified
 
-<%= no_api_key %>
+<alert type="no_api_key"></alert>
 
 ## Rules
 
