@@ -6,17 +6,26 @@ import IconAlert from 'react-feather/dist/icons/alert-circle'
 import IconNote from 'react-feather/dist/icons/file-text'
 import IconWarning from 'react-feather/dist/icons/alert-triangle'
 
+import Status from './Status'
+import Json from './Json'
+
 import renderHtml from '../../utils/renderHtml'
 
 export default class Alert extends React.Component {
   static propTypes = {
-    type: PropTypes.oneOf(['admin_only']),
+    type: PropTypes.oneOf(['admin_only', 'not_found']),
     kind: PropTypes.oneOf(['danger', 'warning', 'info', 'note']),
     children: PropTypes.array
   }
 
   __messages = {
-    admin_only: 'This action is only accessible by an admin user.'
+    admin_only: 'This action is only accessible by an admin user.',
+    not_found: (
+      <React.Fragment>
+        <Status code="404" />
+        <Json sample="404" />
+      </React.Fragment>
+    )
   }
 
   __classes = {
@@ -46,10 +55,10 @@ export default class Alert extends React.Component {
     const { type, kind, children } = this.props
     return (
       <div
-        className={cx(
-          this.__classes[kind],
-          'mt4 flex items-center ba pl4 pr3 pv3 br2 fw6 relative'
-        )}
+        className={cx(this.__classes[kind], {
+          'mt4 flex items-center ba pl4 pr3 pv3 br2 fw6 relative':
+            type !== 'not_found'
+        })}
       >
         {this.__icons[kind]}
         {this.__messages[type]}

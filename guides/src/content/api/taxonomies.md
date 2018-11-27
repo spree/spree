@@ -30,12 +30,7 @@ GET /api/v1/taxonomies
 ### Response
 
 <status code="200"></status>
-<%= json(:taxonomy) do |h|
-{ taxonomies: [h],
-  count: 25,
-  current_page: 1,
-  pages: 5 }
-end %>
+<json sample="taxonomies"></json>
 
 ## Search
 
@@ -52,12 +47,7 @@ The search results are paginated.
 ### Response
 
 <status code="200"></status>
-<%= json(:taxonomy) do |h|
- { taxonomies: [h],
-   count: 5,
-   current_page: 1,
-   pages: 2 }
-end %>
+<json sample="taxonomies"></json>
 
 ### Sorting results
 
@@ -224,15 +214,13 @@ For example, to update the taxon's name to "Brand", make this request:
 ### Response
 
 <status code="200"></status>
-<%= json(:taxon_with_children) do |h|
-  h.merge({
-    "name" => "Brands",
-    "pretty_name" => "Brands",
-    "permalink" => "brands/brands",
-    "meta_title" => "Brands",
-    "meta_description" => "Brands"
-  })
-end %>
+<json sample="taxon_with_children" merge='{
+    "name": "Brands",
+    "pretty_name": "Brands",
+    "permalink": "brands/brands",
+    "meta_title": "Brands",
+    "meta_description": "Brands"
+  }'></json>
 
 ## Taxon Delete
 

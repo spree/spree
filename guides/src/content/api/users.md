@@ -22,9 +22,7 @@ GET /api/v1/users?page=2
 ### Response
 
 <status code="200"></status>
-<%= json(:user) do |h|
-    { users: [h], count: 25, pages: 5, current_page: 1 }
-end %>
+<json sample="users"></json>
 
 ## A single user
 
@@ -42,7 +40,7 @@ GET /api/v1/users/1
 
 ### Not Found Response
 
-<%= not_found %>
+<alert type="not_found"></alert>
 
 ## Pre-creation of a user
 

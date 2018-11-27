@@ -32,12 +32,7 @@ GET /api/v1/zones?page=2
 ### Response
 
 <status code="200"></status>
-<%= json(:zone) do |h|
-{ zones: [h],
-  count: 25,
-  current_page: 1,
-  pages: 5 }
-end %>
+<json sample="zones"></json>
 
 ## Search
 
@@ -54,12 +49,7 @@ The search results are paginated.
 ### Response
 
 <status code="200"></status>
-<%= json(:zone) do |h|
- { zones: [h],
-   count: 25,
-   current_page: 1,
-   pages: 5 }
-end %>
+<json sample="zones"></json>
 
 ### Sorting results
 
@@ -112,9 +102,7 @@ a zone member which is a `Spree::Country` record with the `id` attribute of 1, s
 ### Response
 
 <status code="201"></status>
-<%= json(:zone) do |h|
-  h.merge("name" => "North Pole")
-end %>
+<json sample="zone" merge='{"name": "North Pole"}'></json>
 
 ## Update
 
@@ -128,16 +116,19 @@ PUT /api/v1/zones/1
 
 To update zone and zone member information, use parameters like this:
 
-<%= json \
-  zone: {
-    name: "North Pole",
-    zone_members: [
+```json
+{
+  "zone": {
+    "name": "North Pole",
+    "zone_members": [
       {
-        zoneable_type: "Spree::Country",
-        zoneable_id: 1
+        "zoneable_type": "Spree::Country",
+        "zoneable_id": 1
       }
     ]
-  } %>
+  }
+}
+```
 
 ### Response
 

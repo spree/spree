@@ -41,13 +41,7 @@ GET /api/v1/variants?product_id=ruby-on-rails-tote
 ### Response
 
 <status code="200"></status>
-<%= json(:variant_big) do |h|
-{ variants: [h],
-  count: 25,
-  total_count: 25,
-  current_page: 1,
-  pages: 1 }
-end %>
+<json sample="variants_big"></json>
 
 ## Search
 
@@ -77,13 +71,7 @@ The search results are paginated.
 ### Response
 
 <status code="200"></status>
-<%= json(:variant_big) do |h|
- { variants: [h],
-   count: 1,
-   total_count: 1,
-   current_page: 1,
-   pages: 1 }
-end %>
+<json sample="variants_big" merge='{"count": 1, "total_count": 1, "current_page": 1,  "pages": 1}'></json>
 
 ### Sorting results
 
@@ -120,7 +108,7 @@ GET /api/v1/variants/1?product_id=ruby-on-rails-tote
 
 ### Not Found Response
 
-<%= not_found %>
+<alert type="not_found"></alert>
 
 ## New
 
@@ -133,13 +121,15 @@ GET /api/v1/products/ruby-on-rails-tote/variants/new
 ### Response
 
 <status code="200"></status>
-<%= json \
-  attributes: [
-    :id, :name, :sku, :price, :weight, :height,
-    :width, :depth, :is_master, :slug, :description, :track_inventory
+```json
+{
+  "attributes": [
+    "id", "name", "sku", "price", "weight", "height",
+    "width", "depth", "is_master", "slug", "description", "track_inventory"
   ],
-  required_attributes: []
- %>
+  "required_attributes": []
+}
+```
 
 ## Create
 
@@ -160,18 +150,17 @@ POST /api/v1/products/ruby-on-rails-tote/variants/?variant[sku]=12345&variant[pr
 ### Successful response
 
 <status code="201"></status>
-<%= json :variant_big do |h|
-    h.merge("sku"=>12345, "price"=>19.99)
-end %>
+<json sample="variant_big" merge='{"sku": "12345", "price": 19.99}'></json>
 
 ### Failed response
 
 <status code="422"></status>
-<%= json \
-  error: "Invalid resource. Please fix errors and try again.",
-  errors: {
-  }
-%>
+```json
+{
+  "error": "Invalid resource. Please fix errors and try again.",
+  "errors": {}
+}
+```
 
 ## Update
 
@@ -192,9 +181,7 @@ PUT /api/v1/products/ruby-on-rails-tote/variants/2?variant[sku]=12345
 ### Successful response
 
 <status code="201"></status>
-<%= json :variant_big do |h|
-  h.merge("sku"=>12345)
-end %>
+<json sample="variant_big" merge='{"sku": "12345"}'></json>
 
 ### Failed response
 
@@ -202,8 +189,7 @@ end %>
 ```json
 {
   "error": "Invalid resource. Please fix errors and try again.",
-  "errors": {
-  }
+  "errors": {}
 }
 ```
 
