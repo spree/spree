@@ -9,8 +9,7 @@ const H3 = ({ children }) => (
     id={kebabCase(children)}
     className="flex w-100 relative overflow-visible items-center hide-child f4 dark-gray"
   >
-    <HeaderLink text={children} />
-    <span>{children}</span>
+    <HeaderLink text={children}>{children}</HeaderLink>
   </h3>
 )
 

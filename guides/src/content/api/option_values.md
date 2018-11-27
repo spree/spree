@@ -26,7 +26,7 @@ GET /api/v1/option_values
 ### Response
 
 <status code="200"></status>
-<%= json(:option_value){ |h| [h] } %>
+<json sample="option_values"></json>
 
 ## Search
 
@@ -41,7 +41,7 @@ The searching API is provided through the Ransack gem which Spree depends on. Th
 ### Response
 
 <status code="200"></status>
-<%= json(:option_value){ |h| [h] } %>
+<json sample="option_values"></json>
 
 ### Sorting results
 
@@ -62,7 +62,7 @@ GET /api/v1/option_values/1
 ### Response
 
 <status code="200"></status>
-<%= json(:option_value) %>
+<json sample="option_value"></json>
 
 ## New
 
@@ -75,7 +75,8 @@ GET /api/v1/option_values/new
 ### Response
 
 <status code="200"></status>
-<%= json \
+```json
+{
   "attributes": [
       "id", "name", "presentation", "option_type_name", "option_type_id",
       "option_type_presentation"
@@ -83,7 +84,8 @@ GET /api/v1/option_values/new
   "required_attributes": [
       "name", "presentation"
   ]
-%>
+}
+```
 
 ## Create
 
@@ -108,13 +110,15 @@ POST /api/v1/option_values?option_value[name]=sports&option_value[presentation]=
 ### Failed Response
 
 <status code="422"></status>
-<%= json \
-  error: "Invalid resource. Please fix errors and try again.",
-  errors: {
+```json
+{
+  "error": "Invalid resource. Please fix errors and try again.",
+  "errors": {
     "name": ["can't be blank"],
      "presentation": ["can't be blank"]
   }
-%>
+}
+```
 
 ## Update
 
@@ -139,13 +143,15 @@ PUT /api/v1/option_values/1?option_value[name]=sport&option_value[presentation]=
 ### Failed Response
 
 <status code="422"></status>
-<%= json \
-  error: "Invalid resource. Please fix errors and try again.",
-  errors: {
-    name: ["can't be blank"],
-    presentation: ["can't be blank"]
+```json
+{
+  "error": "Invalid resource. Please fix errors and try again.",
+  "errors": {
+    "name": ["can't be blank"],
+    "presentation": ["can't be blank"]
   }
-%>
+}
+```
 
 
 ## Delete

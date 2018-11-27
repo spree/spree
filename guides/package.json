@@ -14,7 +14,7 @@
     "gatsby-plugin-react-helmet": "^3.0.0",
     "gatsby-plugin-sharp": "^2.0.7",
     "gatsby-plugin-sitemap": "^2.0.2",
-    "gatsby-remark-component": "^1.1.3",
+    "gatsby-remark-component": "devilcoders/gatsby-remark-component",
     "gatsby-remark-copy-linked-files": "^2.0.6",
     "gatsby-remark-external-links": "^0.0.4",
     "gatsby-remark-images": "^3.0.0",

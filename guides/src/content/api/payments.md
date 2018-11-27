@@ -30,12 +30,7 @@ Payments are paginated and can be iterated through by passing along a `page` par
 ### Response
 
 <status code="200"></status>
-<%= json(:payment) do |h|
-{ payments: [h],
-  count: 2,
-  current_page: 1,
-  pages: 2 }
-end %>
+<json sample="payments"></json>
 
 ## Search
 
@@ -50,12 +45,7 @@ The search results are paginated.
 ### Response
 
 <status code="200"></status>
-<%= json(:payment) do |h|
-{ payments: [h],
-  count: 2,
-  current_page: 1,
-  pages: 2 }
-end %>
+<json sample="payments"></json>
 
 ### Sorting results
 
@@ -123,7 +113,9 @@ To authorize a payment, make a request like this:
 
 ## Capture
 
-<%= warning "Capturing a payment is typically done shortly after authorizing the payment. If you are auto-capturing payments, you may be able to use the purchase endpoint instead." %>
+<alert kind="warning">
+  Capturing a payment is typically done shortly after authorizing the payment. If you are auto-capturing payments, you may be able to use the purchase endpoint instead.
+</alert>
 
 To capture a payment, make a request like this:
 
@@ -145,7 +137,9 @@ To capture a payment, make a request like this:
 
 ## Purchase
 
-<%= warning "Purchasing a payment is typically done only if you are not authorizing payments before-hand. If you are authorizing payments, then use the authorize and capture endpoints instead." %>
+<alert kind="warning">
+  Purchasing a payment is typically done only if you are not authorizing payments before-hand. If you are authorizing payments, then use the authorize and capture endpoints instead.
+</alert>
 
 To make a purchase with a payment, make a request like this:
 

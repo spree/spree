@@ -39,7 +39,7 @@ The searching API is provided through the Ransack gem which Spree depends on. Th
 ### Response
 
 <status code="200"></status>
-<%= json(:option_type){ |h| [h] } %>
+<json sample="option_types"></json>
 
 ### Sorting results
 

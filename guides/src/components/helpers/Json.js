@@ -6,7 +6,9 @@ import * as R from 'ramda'
 
 import IMAGE from '../../data/image'
 import OPTION_TYPE from '../../data/option_type'
+import OPTION_TYPES from '../../data/option_types'
 import OPTION_VALUE from '../../data/option_value'
+import OPTION_VALUES from '../../data/option_values'
 import STOCK_ITEM from '../../data/stock_item'
 import USER from '../../data/user'
 import VARIANT from '../../data/variant'
@@ -23,17 +25,23 @@ import TAXON_WITH_CHILDREN from '../../data/taxon_with_children'
 import STOCK_MOVEMENT from '../../data/stock_movement'
 import STATE from '../../data/state'
 import SHIPMENT_SMALL from '../../data/shipment_small'
+import SHIPMENTS from '../../data/shipments'
 import RETURN_AUTHORIZATION from '../../data/return_authorization'
 import PRODUCT from '../../data/product'
 import PRODUCT_PROPERTY from '../../data/product_property'
 import PAYMENT from '../../data/payment'
+import PAYMENTS from '../../data/payments'
 import ORDER_SHOW from '../../data/order_show'
+import ORDER_SHOW_2 from '../../data/order_show_2'
+import ORDERS from '../../data/orders'
 
 const DATA_SAMPLES = {
   address: ADDRESS,
   image: IMAGE,
   option_type: OPTION_TYPE,
+  option_types: OPTION_TYPES,
   option_value: OPTION_VALUE,
+  option_values: OPTION_VALUES,
   stock_item: STOCK_ITEM,
   user: USER,
   variant: VARIANT,
@@ -49,11 +57,15 @@ const DATA_SAMPLES = {
   stock_movement: STOCK_MOVEMENT,
   state: STATE,
   shipment_small: SHIPMENT_SMALL,
+  shipments: SHIPMENTS,
   return_authorization: RETURN_AUTHORIZATION,
   product: PRODUCT,
   product_property: PRODUCT_PROPERTY,
   payment: PAYMENT,
-  order_show: ORDER_SHOW
+  payments: PAYMENTS,
+  order_show: ORDER_SHOW,
+  order_show_2: ORDER_SHOW_2,
+  orders: ORDERS
 }
 
 export default class Json extends React.Component {
@@ -77,7 +89,11 @@ export default class Json extends React.Component {
   render() {
     return (
       <div>
-        <SyntaxHighlighter language="json" style={syntaxTheme}>
+        <SyntaxHighlighter
+          language="json"
+          style={syntaxTheme}
+          className="ba b--yellow"
+        >
           {this.normalizeJson(this.props.sample, this.props.merge)}
         </SyntaxHighlighter>
       </div>

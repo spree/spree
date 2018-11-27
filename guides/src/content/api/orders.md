@@ -34,12 +34,7 @@ GET /api/v1/orders?page=2
 ### Response
 
 <status code="200"></status>
-<%= json(:order) do |h|
-  { orders: [h],
-    count: 25,
-    current_page: 1,
-    pages: 5 }
-end %>
+<json sample="orders"></json>
 
 ## Search
 
@@ -58,12 +53,7 @@ The search results are paginated.
 ### Response
 
 <status code="200"></status>
-<%= json(:order) do |h|
-  { orders: [h],
-    count: 25,
-    current_page: 1,
-    pages: 5 }
-end %>
+<json sample="orders"></json>
 
 ### Sorting results
 
@@ -116,9 +106,7 @@ The `order_token` parameter will work for authorizing any action for an order wi
 
 When an order is in the "delivery" state, additional shipments information will be returned in the API:
 
-<%= json(:shipment) do |h|
- { shipments: [h] }
-end %>
+<json sample="shipments"></json>
 
 ## Create
 
@@ -147,21 +135,20 @@ POST /api/v1/orders
 ### Successful response
 
 <status code="201"></status>
-<%= json :order_show do |h|
-  h["line_items"][0]["quantity"] = 5
-  h
-end %>
+<json sample="order_show_2"></json>
 
 ### Failed response
 
 <status code="422"></status>
-<%= json \
-  error: "Invalid resource. Please fix errors and try again.",
-  errors: {
-    name: ["can't be blank"],
-    price: ["can't be blank"]
+```json
+{
+  "error": "Invalid resource. Please fix errors and try again.",
+  "errors": {
+    "name": ["can't be blank"],
+    "price": ["can't be blank"]
   }
-%>
+}
+```
 
 ## Update Address
 
