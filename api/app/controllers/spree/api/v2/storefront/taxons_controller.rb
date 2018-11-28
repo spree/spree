@@ -62,14 +62,6 @@ module Spree
             Spree::Taxon.includes(:parent, :children).accessible_by(current_ability, :read)
           end
 
-          def default_resource_includes
-            %i[
-              parent
-              taxonomy
-              children
-              products
-              image
-            ]
           end
 
           alias collection_includes resource_includes

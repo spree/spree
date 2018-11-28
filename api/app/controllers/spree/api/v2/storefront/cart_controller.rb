@@ -136,14 +136,6 @@ module Spree
           def render_error_item_quantity
             render json: { error: I18n.t(:wrong_quantity, scope: 'spree.api.v2.cart') }, status: 422
           end
-
-          def default_resource_includes
-            %i[
-              line_items
-              variants
-              promotions
-            ]
-          end
         end
       end
     end

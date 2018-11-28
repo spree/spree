@@ -67,18 +67,6 @@ module Spree
             Spree::Product.includes(scope_includes)
           end
 
-          def default_resource_includes
-            %i[
-              variants
-              variants.images
-              default_variant
-              default_variant.images
-              option_types
-              option_types.option_values
-              product_properties
-            ]
-          end
-
           def scope_includes
             {
               classifications: :taxon,
