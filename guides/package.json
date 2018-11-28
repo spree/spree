@@ -24,6 +24,7 @@
     "gatsby-transformer-remark": "^2.1.12",
     "gatsby-transformer-sharp": "^2.1.4",
     "lodash.kebabcase": "^4.1.1",
+    "lodash.startcase": "^4.4.0",
     "prismjs": "^1.15.0",
     "prop-types": "^15.6.2",
     "ramda": "^0.26.0",

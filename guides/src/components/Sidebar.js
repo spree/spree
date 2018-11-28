@@ -2,6 +2,7 @@ import * as React from 'react'
 import PropTypes from 'prop-types'
 import { Link } from 'gatsby'
 import * as R from 'ramda'
+import startCase from 'lodash.startcase'
 
 import IconClose from 'react-feather/dist/icons/chevron-right'
 import IconOpen from 'react-feather/dist/icons/chevron-down'
@@ -99,14 +100,14 @@ export default class Sidebar extends React.Component {
                           activeClassName="green"
                           className="link black db fw5"
                         >
-                          {this.capitalizeSectionTitle(item.section)}
+                          {this.capitalizeSectionTitle(startCase(item.section))}
                         </Link>
                       ) : (
                         <span
                           className="pointer"
                           onClick={() => this._toggleSection(item.section)}
                         >
-                          {this.capitalizeSectionTitle(item.section)}
+                          {this.capitalizeSectionTitle(startCase(item.section))}
                         </span>
                       )}
                     </h3>
