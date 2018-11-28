@@ -27,10 +27,10 @@ is often useful if you need to update a customized version.
 
 ### Dos and Don'ts
 
-!!!
+<alert kind="danger">
 Try to avoid modifying `config/boot.rb` and
 `config/environment.rb`: use [initializers](#initializers) instead.
-!!!
+</alert>
 
 ### Tracking changes for overridden code
 
