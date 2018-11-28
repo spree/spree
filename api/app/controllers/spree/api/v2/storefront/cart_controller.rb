@@ -3,6 +3,8 @@ module Spree
     module V2
       module Storefront
         class CartController < ::Spree::Api::V2::BaseController
+          before_action :ensure_order, except: :create
+
           def create
             spree_authorize! :create, Spree::Order
 
@@ -21,30 +23,24 @@ module Spree
           def add_item
             variant = Spree::Variant.find(params[:variant_id])
 
-            if spree_current_order.nil?
-              raise ActiveRecord::RecordNotFound
+            spree_authorize! :update, spree_current_order, order_token
+            spree_authorize! :show, variant
+
+            result = dependencies[:add_item_to_cart].call(
+              order: spree_current_order,
+              variant: variant,
+              quantity: params[:quantity],
+              options: params[:options]
+            )
+
+            if result.success?
+              render_serialized_payload serialized_current_order
             else
-              spree_authorize! :update, spree_current_order, order_token
-              spree_authorize! :show, variant
-
-              result = dependencies[:add_item_to_cart].call(
-                order: spree_current_order,
-                variant: variant,
-                quantity: params[:quantity],
-                options: params[:options]
-              )
-
-              if result.success?
-                render_serialized_payload serialized_current_order
-              else
-                render_error_payload(result.error)
-              end
+              render_error_payload(result.error)
             end
           end
 
           def remove_line_item
-            raise ActiveRecord::RecordNotFound if spree_current_order.nil?
-
             spree_authorize! :update, spree_current_order, order_token
 
             dependencies[:remove_item_from_cart].call(
@@ -56,8 +52,6 @@ module Spree
           end
 
           def empty
-            raise ActiveRecord::RecordNotFound if spree_current_order.nil?
-
             spree_authorize! :update, spree_current_order, order_token
 
             spree_current_order.empty!
@@ -80,8 +74,6 @@ module Spree
           end
 
           def show
-            raise ActiveRecord::RecordNotFound if spree_current_order.nil?
-
             spree_authorize! :show, spree_current_order, order_token
 
             render_serialized_payload serialized_current_order
@@ -113,6 +105,10 @@ module Spree
           end
 
           private
+
+          def ensure_order
+            raise ActiveRecord::RecordNotFound if spree_current_order.nil?
+          end
 
           def dependencies
             {

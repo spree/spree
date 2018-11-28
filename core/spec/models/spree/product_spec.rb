@@ -647,4 +647,40 @@ describe Spree::Product, type: :model do
       expect(product.errors[:base]).to include I18n.t('activerecord.errors.models.spree/product.attributes.base.cannot_destroy_if_attached_to_line_items')
     end
   end
+
+  context '#default_variant' do
+    let(:product) { create(:product) }
+
+    context 'product has variants' do
+      let!(:variant) { create(:variant, product: product) }
+
+      it 'returns first non-master variant' do
+        expect(product.default_variant).to eq(variant)
+      end
+    end
+
+    context 'product without variants' do
+      it 'returns master variant' do
+        expect(product.default_variant).to eq(product.master)
+      end
+    end
+  end
+
+  context '#default_variant_id' do
+    let(:product) { create(:product) }
+
+    context 'product has variants' do
+      let!(:variant) { create(:variant, product: product) }
+
+      it 'returns first non-master variant ID' do
+        expect(product.default_variant_id).to eq(variant.id)
+      end
+    end
+
+    context 'product without variants' do
+      it 'returns master variant ID' do
+        expect(product.default_variant_id).to eq(product.master.id)
+      end
+    end
+  end
 end

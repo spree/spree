@@ -1,27 +1,43 @@
-openapi: 3.0.0
+openapi: '3.0.0'
 servers:
   - url: 'http://localhost:3000/api/v2/storefront'
 info:
   version: 2.0.0
   title: Spree API V2 - Storefront
   description: >-
-    Storefront API allows you to build your custom frontend to the Spree
-    Commerce system. It provides you endpoints for Cart and Checkout management,
-    Product and Taxons catalog browsing. Account management is provided by
-    `spree_auth_devise` extension.
+    <p>
+      Storefront API v2 is a modern REST API based on the
+      <a href="https://jsonapi.org/" target="_blank">JSON API spec</a>
+      which provides you with necessary endpoints to build amazing user
+      intefaces either in JavaScript frameworks or native mobile libraries.
+    </p>
+    <p>
+      Please read our introduction to the API v2 [insert link here]
+    </p>
+    <p>
+      Click here to download Postman collection with example operations
+    </p>
 paths:
   '/cart':
     post:
-      description: Creates new cart and order and returns their attributes. Order token, that can be obtained from attributes, can be used for guest checkout and further guest access to the order. This endpoint should be called before any other action on the cart
+      description: >-
+        <p>Creates new Cart and returns it attributes.</p>
+        <br />
+        <p>
+          <strong>token</strong> attribute, can be used for authorization of all operations
+          on this particular Cart and Checkout.
+        </p>
       tags:
         - Cart
       responses:
         '201':
-          description: 201 response means that that an order was successfully created
+          description: 201 response means that that a Cart was successfully created
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Cart'
+      parameters:
+        - $ref: '#/components/parameters/CartIncludeParam'
     get:
       description: Returns contents of the cart
       tags:
@@ -38,11 +54,13 @@ paths:
       security:
         - orderToken: []
         - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/CartIncludeParam'
 
   '/cart/add_item':
     post:
       description: >-
-        <p>Adds an item to the cart</p>
+        <p>Adds a Product Variant to the Cart</p>
         <br />
         <p>
           Additional parameters passed in <strong>options</strong> hash
@@ -66,6 +84,8 @@ paths:
       security:
         - orderToken: []
         - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/CartIncludeParam'
       requestBody:
         required: true
         content:
@@ -87,9 +107,6 @@ paths:
               example:
                 variant_id: "1"
                 quantity: 5
-                options:
-                  foo: "bar"
-                  bar: "foo"
 
   '/cart/set_quantity':
     patch:
@@ -112,6 +129,8 @@ paths:
       security:
         - orderToken: []
         - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/CartIncludeParam'
       requestBody:
         required: true
         content:
@@ -134,6 +153,7 @@ paths:
         - Cart
       parameters:
         - $ref: '#/components/parameters/LineItemId'
+        - $ref: '#/components/parameters/CartIncludeParam'
       responses:
         '200':
           description: 200 response means that the requested line item has been removed from the order
@@ -164,6 +184,8 @@ paths:
       security:
         - orderToken: []
         - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/CartIncludeParam'
 
   '/cart/apply_coupon_code':
     patch:
@@ -186,6 +208,8 @@ paths:
       security:
         - orderToken: []
         - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/CartIncludeParam'
       requestBody:
         required: true
         content:
@@ -210,6 +234,7 @@ paths:
           schema:
             type: string
           example: 'DISCOUNT10'
+        - $ref: '#/components/parameters/CartIncludeParam'
       responses:
         '200':
           description: 200 response means that coupon code was removed successfully
@@ -250,6 +275,8 @@ paths:
       security:
         - orderToken: []
         - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/CartIncludeParam'
 
   '/checkout/advance':
     patch:
@@ -274,6 +301,8 @@ paths:
       security:
         - orderToken: []
         - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/CartIncludeParam'
 
   '/checkout/complete':
     patch:
@@ -298,6 +327,8 @@ paths:
         security:
           - orderToken: []
           - bearerAuth: []
+        parameters:
+        - $ref: '#/components/parameters/CartIncludeParam'
 
   '/products':
     get:
@@ -335,6 +366,8 @@ paths:
               <li>updated_at (ascending/descenging)</li>
             </ul>
             Use <q>-</q> sign to set descenging sort, eg. <q>-updated_at</q>
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PerPageParam'
       responses:
         '200':
           description: ok
@@ -394,16 +427,23 @@ components:
       type: http
       scheme: bearer
       description: >-
-        User token to authorize Cart / Checkout requests. You can obtain it
+        User token to authorize Cart and Checkout requests. You can obtain it
         from `http://your_store_url.com/spree_oauth` endpoint.
-        It is required to associate an Order with User.
+        It is required to associate Cart with the User.
         See OAuth documentation for more details.
     orderToken:
       type: apiKey
       in: header
       description: >-
-        Order token to authorize Cart / Checkout requests. You can obtain it
-        from `/cart` endpoint - it's part of the Order response.
+        <p>
+          Order token to authorize Cart and Checkout requests.
+          Useful for guest checouts when you don't have the user token
+          (bearerAuth)
+        </p>
+        <p>
+          You can obtain it from the `/cart` endpoint -
+          it's part of the response (value of the `token` field).
+        </p>
       name: X-Spree-Order-Token
   schemas:
     Error:
@@ -1313,6 +1353,9 @@ components:
       description: ID or a permalink
       schema:
         type: string
+      examples:
+        ID: '1'
+        Permalink: 'some-product'
     LineItemId:
       name: line_item_id
       in: path
@@ -1320,7 +1363,43 @@ components:
       description: Line Item ID
       schema:
         type: string
+      example: '1'
+    PageParam:
+      name: page
+      in: query
+      description: Number of requested page when paginating collection
+      schema:
+        type: integer
       example: 1
+      minimum: 1
+    PerPageParam:
+      name: per_page
+      in: query
+      description: Number of requested records per page when paginating collection
+      schema:
+        type: integer
+      example: 1
+      minimum: 1
+    CartIncludeParam:
+      name: include
+      in: query
+      schema:
+        type: string
+      description: >-
+        <p>Specify what related resources (relationships) you would like to receive in the response body.</p>
+        <p>You can also fetch relationships of relationships.</p>
+        <p>Passing empty string will result with none relationships being returned.</p>
+        <p>
+          Format:
+          <ul>
+            <li>line_items,variants,promotions</li>
+            <li>variants,variants.images</li>
+          </ul>
+        <p>
+          More information:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>
+        </p>
+      example: 'line_items,variants,variants.images,billing_address,shipping_address,user,payments,shipments,promotions'
   responses:
     404NotFound:
       description: Resource not found

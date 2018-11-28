@@ -27,15 +27,14 @@ describe 'API V2 Storefront Cart Spec', type: :request do
     let!(:promotion) { Spree::Promotion.create(name: 'Free shipping', code: 'freeship') }
     let(:coupon_code) { promotion.code }
     let!(:promotion_action) { Spree::PromotionAction.create(promotion_id: promotion.id, type: 'Spree::Promotion::Actions::FreeShipping') }
-    let(:exec_coupon_remove) { delete "/api/v2/storefront/cart/remove_coupon_code/#{coupon_code}", headers: headers }
   end
 
   describe 'cart#create' do
     let(:order) { Spree::Order.last }
-    let(:execute_create) { post '/api/v2/storefront/cart', headers: headers }
+    let(:execute) { post '/api/v2/storefront/cart', headers: headers }
 
     shared_examples 'creates an order' do
-      before { execute_create }
+      before { execute }
 
       it_behaves_like 'returns valid cart JSON'
       it_behaves_like 'returns 201 HTTP status'
@@ -45,7 +44,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
       before do
         store.default_currency = 'EUR'
         store.save!
-        execute_create
+        execute
       end
 
       it_behaves_like 'returns valid cart JSON'
@@ -63,7 +62,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
       it_behaves_like 'creates an order with different currency'
 
       context 'user association' do
-        before { execute_create }
+        before { execute }
 
         it 'associates order with user' do
           expect(json_response['data']).to have_relationship(:user).with_data('id' => user.id.to_s, 'type' => 'user')
@@ -82,14 +81,14 @@ describe 'API V2 Storefront Cart Spec', type: :request do
   describe 'cart#add_item' do
     let(:options) { {} }
     let(:params) { { variant_id: variant.id, quantity: 5, options: options } }
-    let(:execute_add) { post '/api/v2/storefront/cart/add_item', params: params, headers: headers }
+    let(:execute) { post '/api/v2/storefront/cart/add_item', params: params, headers: headers }
 
     before do
       Spree::PermittedAttributes.line_item_attributes << :cost_price
     end
 
     shared_examples 'adds item' do
-      before { execute_add }
+      before { execute }
 
       it_behaves_like 'returns 200 HTTP status'
       it_behaves_like 'returns valid cart JSON'
@@ -114,7 +113,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
       before do
         variant.stock_items.first.update(backorderable: false)
         params[:quantity] = 11
-        execute_add
+        execute
       end
 
       it_behaves_like 'returns 422 HTTP status'
@@ -125,43 +124,33 @@ describe 'API V2 Storefront Cart Spec', type: :request do
     end
 
     context 'as a signed in user' do
-      context 'with existing order' do
-        include_context 'creates order with line item'
+      include_context 'creates order with line item'
 
+      context 'with existing order' do
         it_behaves_like 'adds item'
         it_behaves_like 'doesnt add item with quantity unnavailble'
       end
 
-      context 'without existing order' do
-        let(:headers) { headers_bearer }
-
-        before { execute_add }
-
-        it_behaves_like 'returns 404 HTTP status'
-      end
+      it_behaves_like 'no current order'
     end
 
     context 'as a guest user' do
-      context 'with existing order' do
-        include_context 'creates guest order with guest token'
+      include_context 'creates guest order with guest token'
 
+      context 'with existing order' do
         it_behaves_like 'adds item'
         it_behaves_like 'doesnt add item with quantity unnavailble'
       end
 
-      context 'without existing order' do
-        let(:headers) { { 'X-Spree-Order-Token' => 'wrong-token' } }
-
-        before { execute_add }
-
-        it_behaves_like 'returns 404 HTTP status'
-      end
+      it_behaves_like 'no current order'
     end
   end
 
   describe 'cart#remove_line_item' do
+    let(:execute) { delete "/api/v2/storefront/cart/remove_line_item/#{line_item.id}", headers: headers }
+
     shared_examples 'removes line item' do
-      before { delete "/api/v2/storefront/cart/remove_line_item/#{line_item.id}", headers: headers }
+      before { execute }
 
       context 'without line items' do
         let!(:line_item) { create(:line_item) }
@@ -184,21 +173,29 @@ describe 'API V2 Storefront Cart Spec', type: :request do
     context 'as a signed in user' do
       include_context 'creates order with line item'
 
-      it_behaves_like 'removes line item'
+      context 'with existing order' do
+        it_behaves_like 'removes line item'
+      end
+
+      it_behaves_like 'no current order'
     end
 
     context 'as a guest user' do
       include_context 'creates guest order with guest token'
 
-      it_behaves_like 'removes line item'
+      context 'with existing order' do
+        it_behaves_like 'removes line item'
+      end
+
+      it_behaves_like 'no current order'
     end
   end
 
   describe 'cart#empty' do
-    let(:execute_empty) { patch '/api/v2/storefront/cart/empty', headers: headers }
+    let(:execute) { patch '/api/v2/storefront/cart/empty', headers: headers }
 
     shared_examples 'emptying the order' do
-      before { execute_empty }
+      before { execute }
 
       it_behaves_like 'returns 200 HTTP status'
       it_behaves_like 'returns valid cart JSON'
@@ -209,42 +206,30 @@ describe 'API V2 Storefront Cart Spec', type: :request do
     end
 
     context 'as a signed in user' do
-      context 'without order' do
-        let!(:headers) { headers_bearer }
-
-        before { execute_empty }
-
-        it_behaves_like 'returns 404 HTTP status'
-      end
-
       context 'with existing order with line item' do
         include_context 'creates order with line item'
 
         it_behaves_like 'emptying the order'
       end
+
+      it_behaves_like 'no current order'
     end
 
     context 'as a guest user' do
-      context 'without order' do
-        let(:headers) { { 'X-Spree-Order-Token' => 'wrong-token' } }
-
-        before { execute_empty }
-
-        it_behaves_like 'returns 404 HTTP status'
-      end
-
       context 'with existing guest order with line item' do
         include_context 'creates guest order with guest token'
 
         it_behaves_like 'emptying the order'
       end
+
+      it_behaves_like 'no current order'
     end
   end
 
   describe 'cart#set_quantity' do
     let(:line_item) { create(:line_item, order: order) }
     let(:params) { { order: order, line_item_id: line_item.id, quantity: 5 } }
-    let(:execute_update) { patch '/api/v2/storefront/cart/set_quantity', params: params, headers: headers }
+    let(:execute) { patch '/api/v2/storefront/cart/set_quantity', params: params, headers: headers }
 
     shared_examples 'wrong quantity parameter' do
       it_behaves_like 'returns 422 HTTP status'
@@ -258,7 +243,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
       context 'non-existing line item' do
         before do
           params[:line_item_id] = 9999
-          execute_update
+          execute
         end
 
         it_behaves_like 'returns 404 HTTP status'
@@ -267,7 +252,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
       context 'with insufficient stock quantity and non-backorderable item' do
         before do
           line_item.variant.stock_items.first.update(backorderable: false)
-          execute_update
+          execute
         end
 
         it_behaves_like 'returns 422 HTTP status'
@@ -278,7 +263,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
       end
 
       context 'changes the quantity of line item' do
-        before { execute_update }
+        before { execute }
 
         it_behaves_like 'returns 200 HTTP status'
         it_behaves_like 'returns valid cart JSON'
@@ -291,7 +276,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
       context '0 passed as quantity' do
         before do
           params[:quantity] = 0
-          execute_update
+          execute
         end
 
         it_behaves_like 'wrong quantity parameter'
@@ -300,11 +285,13 @@ describe 'API V2 Storefront Cart Spec', type: :request do
       context 'quantity not passed' do
         before do
           params[:quantity] = nil
-          execute_update
+          execute
         end
 
         it_behaves_like 'wrong quantity parameter'
       end
+
+      it_behaves_like 'no current order'
     end
 
     context 'as a guest user' do
@@ -377,11 +364,11 @@ describe 'API V2 Storefront Cart Spec', type: :request do
   describe 'cart#apply_coupon_code' do
     include_context 'coupon codes'
 
-    before do
-      patch '/api/v2/storefront/cart/apply_coupon_code', params: { coupon_code: coupon_code }, headers: headers
-    end
+    let(:execute) { patch '/api/v2/storefront/cart/apply_coupon_code', params: { coupon_code: coupon_code }, headers: headers }
 
     shared_examples 'apply coupon code' do
+      before { execute }
+
       context 'with coupon code for free shipping' do
         let(:adjustment_value) { -shipment.cost.to_f }
 
@@ -417,17 +404,27 @@ describe 'API V2 Storefront Cart Spec', type: :request do
     context 'as a guest user' do
       include_context 'creates guest order with guest token'
 
-      it_behaves_like 'apply coupon code'
+      context 'with existing order' do
+        it_behaves_like 'apply coupon code'
+      end
+
+      it_behaves_like 'no current order'
     end
 
     context 'as a signed in user' do
       include_context 'creates order with line item'
 
-      it_behaves_like 'apply coupon code'
+      context 'with existing order' do
+        it_behaves_like 'apply coupon code'
+      end
+
+      it_behaves_like 'no current order'
     end
   end
 
   describe 'cart#remove_coupon_code' do
+    let(:execute) { delete "/api/v2/storefront/cart/remove_coupon_code/#{coupon_code}", headers: headers }
+
     include_context 'coupon codes'
 
     shared_examples 'remove coupon code' do
@@ -443,7 +440,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
         end
 
         context 'removes coupon code correctly' do
-          before { exec_coupon_remove }
+          before { execute }
 
           it_behaves_like 'returns 200 HTTP status'
           it_behaves_like 'returns valid cart JSON'
@@ -460,7 +457,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
         context 'tries to remove not-applied promotion' do
           let(:coupon_code) { 'something-else' }
 
-          before { exec_coupon_remove }
+          before { execute }
 
           it_behaves_like 'coupon code error'
         end
@@ -468,11 +465,13 @@ describe 'API V2 Storefront Cart Spec', type: :request do
 
       context 'without coupon code applied' do
         context 'tries to remove not-applied promotion' do
-          before { exec_coupon_remove }
+          before { execute }
 
           it_behaves_like 'coupon code error'
         end
       end
+
+      it_behaves_like 'no current order'
     end
 
     context 'as a guest user' do
