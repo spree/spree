@@ -15,13 +15,13 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
   include_context 'API v2 tokens'
 
   describe 'checkout#next' do
-    let(:exec_next) { patch '/api/v2/storefront/checkout/next', headers: headers }
+    let(:execute) { patch '/api/v2/storefront/checkout/next', headers: headers }
 
     shared_examples 'perform next' do
       context 'without line items' do
         before do
           order.line_items.destroy_all
-          exec_next
+          execute
         end
 
         it_behaves_like 'returns 422 HTTP status'
@@ -32,7 +32,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
       end
 
       context 'with line_items and email' do
-        before { exec_next }
+        before { execute }
 
         it_behaves_like 'returns 200 HTTP status'
         it_behaves_like 'returns valid cart JSON'
@@ -46,7 +46,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
       context 'without payment info' do
         before do
           order.update_column(:state, 'payment')
-          exec_next
+          execute
         end
 
         it_behaves_like 'returns 422 HTTP status'
@@ -59,6 +59,8 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
           expect(order.reload.state).to eq('payment')
         end
       end
+
+      it_behaves_like 'no current order'
     end
 
     context 'as a guest user' do
@@ -75,7 +77,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
   end
 
   describe 'checkout#advance' do
-    let(:exec_advance) { patch '/api/v2/storefront/checkout/advance', headers: headers }
+    let(:execute) { patch '/api/v2/storefront/checkout/advance', headers: headers }
 
     shared_examples 'perform advance' do
       before do
@@ -85,7 +87,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
       context 'with payment data' do
         before do
           payment
-          exec_advance
+          execute
         end
 
         it_behaves_like 'returns 200 HTTP status'
@@ -98,7 +100,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
       end
 
       context 'without payment data' do
-        before { exec_advance }
+        before { execute }
 
         it_behaves_like 'returns 200 HTTP status'
         it_behaves_like 'returns valid cart JSON'
@@ -108,6 +110,8 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
           expect(json_response['data']).to have_attribute(:state).with_value('payment')
         end
       end
+
+      it_behaves_like 'no current order'
     end
 
     context 'as a guest user' do
@@ -124,7 +128,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
   end
 
   describe 'checkout#complete' do
-    let(:exec_complete) { patch '/api/v2/storefront/checkout/complete', headers: headers }
+    let(:execute) { patch '/api/v2/storefront/checkout/complete', headers: headers }
 
     shared_examples 'perform complete' do
       before do
@@ -135,7 +139,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
         before do
           payment
           shipment
-          exec_complete
+          execute
         end
 
         it_behaves_like 'returns 200 HTTP status'
@@ -149,7 +153,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
       end
 
       context 'without payment data' do
-        before { exec_complete }
+        before { execute }
 
         it_behaves_like 'returns 422 HTTP status'
 
@@ -162,6 +166,8 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
           expect(order.completed_at).to be_nil
         end
       end
+
+      it_behaves_like 'no current order'
     end
 
     context 'as a guest user' do
@@ -186,7 +192,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
     let!(:shipping_method) { create(:shipping_method, zones: [country_zone]) }
     let!(:payment_method)  { create(:credit_card_payment_method) }
 
-    let(:exec_update) { patch '/api/v2/storefront/checkout', params: params, headers: headers }
+    let(:execute) { patch '/api/v2/storefront/checkout', params: params, headers: headers }
 
     include_context 'creates order with line item'
 
@@ -220,7 +226,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
           }
         end
 
-        before { exec_update }
+        before { execute }
 
         it_behaves_like 'returns 200 HTTP status'
         it_behaves_like 'returns valid cart JSON'
@@ -249,7 +255,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
             }
           end
 
-          before { exec_update }
+          before { execute }
 
           it_behaves_like 'returns 200 HTTP status'
           it_behaves_like 'returns valid cart JSON'
@@ -285,7 +291,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
             }
           end
 
-          before { exec_update }
+          before { execute }
 
           it_behaves_like 'returns 200 HTTP status'
           it_behaves_like 'returns valid cart JSON'
@@ -307,7 +313,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
           }
         end
 
-        before { exec_update }
+        before { execute }
 
         it_behaves_like 'returns 200 HTTP status'
         it_behaves_like 'returns valid cart JSON'
@@ -330,7 +336,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
           }
         end
 
-        before { exec_update }
+        before { execute }
 
         it_behaves_like 'returns 200 HTTP status'
         it_behaves_like 'returns valid cart JSON'
@@ -355,7 +361,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
 
         before do
           order.update_column(:state, 'delivery')
-          exec_update
+          execute
         end
 
         it_behaves_like 'returns 422 HTTP status'
@@ -367,6 +373,12 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
         it 'returns validation errors' do
           expect(json_response['errors']).to eq('email' => ['is invalid'])
         end
+      end
+
+      context 'without order' do
+        let(:params) { {} }
+
+        it_behaves_like 'no current order'
       end
     end
 

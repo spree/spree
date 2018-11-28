@@ -49,3 +49,23 @@ shared_examples 'returns valid cart JSON' do
     expect(json_response['data']).to have_relationships(:user, :line_items, :variants, :billing_address, :shipping_address, :payments, :shipments, :promotions)
   end
 end
+
+shared_examples 'no current order' do
+  context "order doesn't exist" do
+    before do
+      order.destroy
+      execute
+    end
+
+    it_behaves_like 'returns 404 HTTP status'
+  end
+
+  context 'already completed order' do
+    before do
+      order.update_column(:completed_at, Time.current)
+      execute
+    end
+
+    it_behaves_like 'returns 404 HTTP status'
+  end
+end
