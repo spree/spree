@@ -59,24 +59,25 @@ module Spree
             {
               links: collection_links(collection),
               meta: collection_meta(collection),
-              include: collection_includes
+              include: resource_includes
             }
           end
 
           def scope
-            Spree::Product.includes(scope_includes)
+            Spree::Product.accessible_by(current_ability, :read).includes(scope_includes)
           end
 
           def scope_includes
             {
-              classifications: :taxon,
+              master: :default_price,
+              variants: [],
+              variant_images: [],
+              taxons: [],
               product_properties: :property,
               option_types: :option_values,
-              variants: %i[default_price option_values]
+              variants_including_master: %i[default_price option_values]
             }
           end
-
-          alias collection_includes resource_includes
         end
       end
     end

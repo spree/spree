@@ -42,7 +42,7 @@ module Spree
             {
               links: collection_links(collection),
               meta: collection_meta(collection),
-              include: collection_includes
+              include: resource_includes
             }
           end
 
@@ -59,12 +59,20 @@ module Spree
           end
 
           def scope
-            Spree::Taxon.includes(:parent, :children).accessible_by(current_ability, :read)
+            Spree::Taxon.accessible_by(current_ability, :read).includes(scope_includes)
           end
 
-          end
+          def scope_includes
+            node_includes = %i[icon products parent taxonomy]
 
-          alias collection_includes resource_includes
+            {
+              parent: node_includes,
+              children: node_includes,
+              taxonomy: [root: node_includes],
+              products: [],
+              icon: []
+            }
+          end
         end
       end
     end
