@@ -15,6 +15,7 @@ module Spree
         has_many :variants
         has_many :option_types
         has_many :product_properties
+        has_many :taxons
 
         has_one  :default_variant,
           object_method_name: :default_variant,
