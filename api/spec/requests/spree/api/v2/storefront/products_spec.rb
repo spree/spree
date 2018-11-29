@@ -74,7 +74,7 @@ describe 'API V2 Storefront Products Spec', type: :request do
     end
 
     context 'with specified options' do
-      before { get "/api/v2/storefront/products?filter[options][#{option_type.name}]=#{option_value.name}" }
+      before { get "/api/v2/storefront/products?filter[options][#{option_type.name}]=#{option_value.name}&include=option_types,variants.option_values" }
 
       it_behaves_like 'returns proper status'
 

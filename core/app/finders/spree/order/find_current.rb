@@ -15,7 +15,19 @@ module Spree
       private
 
       def incomplete_orders
-        Spree::Order.incomplete.includes(line_items: [variant: [:images, :option_values, :product]])
+        Spree::Order.incomplete.includes(scope_includes)
+      end
+
+      def scope_includes
+        {
+          line_items: [
+            variant: [
+              :images,
+              option_values: :option_type,
+              product: :product_properties,
+            ]
+          ]
+        }
       end
     end
   end
