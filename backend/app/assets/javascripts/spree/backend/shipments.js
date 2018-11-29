@@ -287,14 +287,14 @@ function completeItemSplit (event) {
   var selectedShipment = stockItemRow.find($('#item_stock_location').select2('data').element)
   var targetShipmentNumber = selectedShipment.data('shipment-number')
   var newShipment = selectedShipment.data('new-shipment')
-  // eslint-disable-next-line eqeqeq
+  // eslint-disable-next-line
   if (stockLocationId !== 'new_shipment') {
-    const splitItems = ({ url, data }) => {
+    var splitItems = function (opts) {
       $.ajax({
         type: 'POST',
         async: false,
-        url,
-        data
+        url: opts.url,
+        data: opts.data
       }).error(function (msg) {
         alert(msg.responseJSON.message || msg.responseJSON.exception)
       }).done(function () {
