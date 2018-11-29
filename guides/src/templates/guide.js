@@ -5,7 +5,6 @@ import { graphql } from 'gatsby'
 import RehypeReact from 'rehype-react'
 
 import Layout from '../components/Layout'
-import JsonError from '../components/JsonError'
 
 import H1 from '../components/base/H1'
 import H2 from '../components/base/H2'
@@ -25,7 +24,6 @@ const renderAst = new RehypeReact({
     p: P,
     json: Json,
     status: Status,
-    'json-error': JsonError,
     alert: Alert,
     params: Params
   }
@@ -42,10 +40,7 @@ export default function Template({ data }) {
     >
       <div className="guide-container">
         <Helmet title={`Spree Guides :: ${guide.frontmatter.title}`} />
-        <div className="guide">
-          <h1>{guide.frontmatter.title}</h1>
-          {renderAst(guide.htmlAst)}
-        </div>
+        <div className="guide">{renderAst(guide.htmlAst)}</div>
       </div>
     </Layout>
   )

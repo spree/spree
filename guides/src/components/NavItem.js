@@ -4,13 +4,13 @@ import { Link } from 'gatsby'
 import startCase from 'lodash.startcase'
 
 const linkClasses = isActive =>
-  `link mr4 fw4 f4 ${isActive ? 'dark-green' : 'dark-gray'}`
+  `link mr4 fw4 f4 ${isActive ? 'spree-green' : 'dark-gray'}`
 
 const NavItem = ({ url, children, isActive }) => {
   if (url.startsWith('http')) {
     return (
       <a className={linkClasses()} href={url} target="_blank">
-        {startCase(children)}
+        {children}
       </a>
     )
   } else {

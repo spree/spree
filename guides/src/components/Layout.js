@@ -2,11 +2,40 @@ import * as React from 'react'
 import PropTypes from 'prop-types'
 import Helmet from 'react-helmet'
 import { StaticQuery, graphql } from 'gatsby'
+import { injectGlobal } from 'emotion'
 
 import Header from './Header'
 import Sidebar from './Sidebar'
 
+import styles from '../utils/styles'
+
 import 'tachyons/css/tachyons.css'
+
+injectGlobal`
+  body {
+    font-family: 'IBM Plex Sans', sans-serif;
+  }
+
+  code,
+  pre,
+  .code {
+    font-family: 'IBM Plex Mono', monospace !important;
+  }
+
+  p > code,
+  li > code {
+    font-size: .825rem;
+    padding: .10rem .25rem !important;
+  }
+
+  .spree-blue { color: #0066CC }
+  .bg-spree-blue { background-color: #0066CC }
+  .b--spree-blue { border-color: #0066CC }
+
+  .spree-green { color: #99CC00 }
+  .bg-spree-green { background-color: #99CC00 }
+  .b--spree-green { border-color: #99CC00 }
+`
 
 export default class Layout extends React.Component {
   static propTypes = {
@@ -39,27 +68,26 @@ export default class Layout extends React.Component {
             >
               <html lang="en" />
             </Helmet>
-            <div className="sans-serif dark-gray">
+            <div className="dark-gray">
               <Header
                 siteTitle={data.site.siteMetadata.title}
                 activeRootSection={this.props.activeRootSection}
               />
-              <div className="mw9 center pa3 flex">
-                {this.props.nav && (
-                  <div className="w-20 pr2">
-                    <Sidebar
-                      nav={this.props.nav}
-                      activeSection={this.props.activeSection}
-                    />
-                  </div>
-                )}
-                <div
-                  className={`nested-links ${
-                    this.props.nav ? 'w-80 ml3 lh-copy pl4' : 'w-100'
-                  }`}
-                >
-                  {this.props.children}
-                </div>
+              {this.props.nav && (
+                <Sidebar
+                  nav={this.props.nav}
+                  activeSection={this.props.activeSection}
+                />
+              )}
+
+              <div
+                className="nested-links lh-copy pl5 pr4 pt3"
+                css={{
+                  marginLeft: this.props.nav ? styles.sidebar.width : '0',
+                  marginTop: styles.header.height
+                }}
+              >
+                {this.props.children}
               </div>
             </div>
           </>

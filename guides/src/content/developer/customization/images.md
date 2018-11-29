@@ -1,5 +1,5 @@
 ---
-title: "Images Customization"
+title: 'Images Customization'
 section: customization
 ---
 
@@ -48,11 +48,11 @@ You can also create image variations on the fly in your templates, eg.
 <%%= image_tag(main_app.url_for(@product.images.first.attachment.variant(resize: '150x150'))) %>
 ```
 
-### Using Amazon S3 as storage system 
+### Using Amazon S3 as storage system
 
 Please refer to the official [Active Storage documentation](https://guides.rubyonrails.org/active_storage_overview.html#amazon-s3-service)
 
-You can also use [Microsoft Azure Storage](https://guides.rubyonrails.org/active_storage_overview.html#microsoft-azure-storage-service) 
+You can also use [Microsoft Azure Storage](https://guides.rubyonrails.org/active_storage_overview.html#microsoft-azure-storage-service)
 or [Google Cloud Storage](https://guides.rubyonrails.org/active_storage_overview.html#google-cloud-storage-service)
 
 ## Paperclip
@@ -87,15 +87,15 @@ Default behavior is to resize the image and maintain aspect ratio (i.e.
 the :product version of a 480x400 image will be 240x200). Some commonly
 used options are:
 
--   trailing `#`, image will be centrally cropped, ensuring the requested
-dimensions
--   trailing `>`, image will only be modified if it is currently larger
-than the requested dimensions. (i.e. the :small thumb for a 100x100
-original image will be unchanged)
+- trailing `#`, image will be centrally cropped, ensuring the requested
+  dimensions
+- trailing `>`, image will only be modified if it is currently larger
+  than the requested dimensions. (i.e. the :small thumb for a 100x100
+  original image will be unchanged)
 
-### Using Amazon S3 as storage system 
+### Using Amazon S3 as storage system
 
-Start with adding AWS-SDK to your `Gemfile` with:  `gem 'aws-sdk-s3'`, then install the gem by running `bundle install`.
+Start with adding AWS-SDK to your `Gemfile` with: `gem 'aws-sdk-s3'`, then install the gem by running `bundle install`.
 
 When that's done you need to configure Spree to use Amazon S3. You can add an initializer or just use the spree.rb initializer located at `config/intializers/spree.rb`.
 
@@ -123,4 +123,5 @@ attachment_config.each do |key, value|
 end
 
 ```
+
 Note that I use the `url: ":s3_domain_url"` setting, this enabled the DNS lookup for your images without specifying the specific zone endpoint. You need to use a bucket name that makes a valid subdomain. So do not use dots if you are planning on using the DNS lookup config.

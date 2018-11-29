@@ -1,7 +1,7 @@
 import * as React from 'react'
 import PropTypes from 'prop-types'
 import { PrismAsyncLight as SyntaxHighlighter } from 'react-syntax-highlighter'
-import syntaxTheme from 'react-syntax-highlighter/dist/esm/styles/prism/solarizedlight'
+import syntaxTheme from 'react-syntax-highlighter/dist/esm/styles/prism/tomorrow'
 import * as R from 'ramda'
 
 import DATA_SAMPLES from '../../data'
@@ -27,11 +27,7 @@ export default class Json extends React.Component {
   render() {
     return (
       <div>
-        <SyntaxHighlighter
-          language="json"
-          style={syntaxTheme}
-          className="ba b--yellow"
-        >
+        <SyntaxHighlighter language="json" style={syntaxTheme}>
           {this.normalizeJson(this.props.sample, this.props.merge)}
         </SyntaxHighlighter>
       </div>

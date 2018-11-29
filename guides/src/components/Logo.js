@@ -9,13 +9,20 @@ const Logo = () => (
         placeholderImage: file(relativePath: { eq: "logo.png" }) {
           childImageSharp {
             fixed(height: 50) {
-              ...GatsbyImageSharpFixed
+              ...GatsbyImageSharpFixed_withWebp_noBase64
             }
           }
         }
       }
     `}
-    render={data => <Img fixed={data.placeholderImage.childImageSharp.fixed} />}
+    render={data => (
+      <Img
+        critical
+        alt="Spree Commerce Guides"
+        fadeIn={false}
+        fixed={data.placeholderImage.childImageSharp.fixed}
+      />
+    )}
   />
 )
 export default Logo

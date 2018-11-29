@@ -1,5 +1,5 @@
 ---
-title: "Calculators"
+title: 'Calculators'
 section: core
 ---
 
@@ -41,7 +41,7 @@ This calculator takes an order and calculates an amount using this calculation:
 [item total] x [flat percentage]
 ```
 
-For example, if an order had an item total of $31 and the calculator was configured to have a flat percent amount of 10, the discount would be $3.10, because $31 x 10% = $3.10.
+For example, if an order had an item total of $31 and the calculator was configured to have a flat percent amount of 10, the discount would be$3.10, because $31 x 10% =$3.10.
 
 ### Flat Rate
 
@@ -64,38 +64,38 @@ This calculator is typically used for promotional discounts when you want a spec
 
 This calculator takes three preferences:
 
-* `first_item`: The discounted price of the first item(s).
-* `additional_item`: The discounted price of subsequent items.
-* `max_items`: The maximum number of items this discount applies to.
+- `first_item`: The discounted price of the first item(s).
+- `additional_item`: The discounted price of subsequent items.
+- `max_items`: The maximum number of items this discount applies to.
 
 The calculator computes based on this:
 
-[first item discount] + (([items_count*] - 1) x [additional item discount])
+    [first item discount] + (([items_count*] - 1) x [additional item discount])
 
-* up to the `max_items`
+- up to the `max_items`
 
-Thus, if you have ten items in your shopping cart, your `first_item` preference is set to $10, your `additional_items` preference is set to $5, and your `max_items` preference is set to 4, the total discount would be $25:
+Thus, if you have ten items in your shopping cart, your `first_item` preference is set to \$10, your `additional_items` preference is set to $5, and your `max_items` preference is set to 4, the total discount would be$25:
 
-* $10 for the first item
-* $5 for each of the 3 subsequent items: $5 * 3 = $15
-* $0 for the remaining 6 items
+- \$10 for the first item
+- $5 for each of the 3 subsequent items:$5 \* 3 = \$15
+- \$0 for the remaining 6 items
 
 ### Free Shipping
 
 This calculator will take an object, and then work out the shipping total for that object. Useful for when you want to apply free shipping to an order.
 
-$$$
+$$
 This is a little confusing and vague. Need to investigate more and explain better. Also, might this be obsolete with the new split shipments functionality?
-$$$
+$$
 
-### <a id="per-item"></a>Per Item
+### Per Item
 
 The Per Item calculator computes a value for every item within an order. This is useful for providing a discount for a specific product, without it affecting others.
 
 This calculator takes two preferences:
 
-* `amount`: The amount per item to calculate.
-* `currency`: The currency for this calculator.
+- `amount`: The amount per item to calculate.
+- `currency`: The currency for this calculator.
 
 This calculator depends on its `calculable` responding to a `promotion` method, which should return a `Spree::Promotion` (or similar) object. This object should then return a list of rules, which should respond to a `products` method. This is used to return a result of matching products.
 
@@ -105,9 +105,9 @@ The list of matching products is compared against the line items for the order b
 
 Every matching product within an order will add to the calculator's total. For example, assuming the calculator has an `amount` of 5 and there's an order with the following line items:
 
-* Product A: $15.00 x 2 (within matching products)
-* Product B: $10.00 x 1 (within matching products)
-* Product C: $20.00 x 4 (excluded from matching products)
+- Product A: \$15.00 x 2 (within matching products)
+- Product B: \$10.00 x 1 (within matching products)
+- Product C: \$20.00 x 4 (excluded from matching products)
 
 The calculation would be:
 
@@ -122,9 +122,9 @@ The Percent Per Item calculator works in a near-identical fashion to the [Per It
 
 Assuming a calculator amount of 10% and an order such as this:
 
-* Product A: $15.00 x 2 (within matching products)
-* Product B: $10.00 x 1 (within matching products)
-* Product C: $20.00 x 4 (excluded from matching products)
+- Product A: \$15.00 x 2 (within matching products)
+- Product B: \$10.00 x 1 (within matching products)
+- Product C: \$20.00 x 4 (excluded from matching products)
 
 The calculation would be:
 
@@ -132,18 +132,18 @@ The calculation would be:
     = ($30 x 10%) + ($10 x 10%)
     = $3 + $1
 
-The calculator will calculate a discount of $4.
+The calculator will calculate a discount of \$4.
 
 ### Price Sack
 
 The Price Sack calculator is useful for when you want to provide a discount for an order which is over a certain price. The calculator has four preferences:
 
-* `minimal_amount`: The minimum amount for the line items total to trigger the calculator.
-* `discount_amount`: The amount to discount from the order if the line items total is equal to or greater than the `minimal_amount`.
-* `normal_amount`: The amount to discount from the order if the line items total is less than the `minimal_amount`.
-* `currency`: The currency for this calculator. Defaults to the currency you have set for your store with `Spree::Config[:currency]`
+- `minimal_amount`: The minimum amount for the line items total to trigger the calculator.
+- `discount_amount`: The amount to discount from the order if the line items total is equal to or greater than the `minimal_amount`.
+- `normal_amount`: The amount to discount from the order if the line items total is less than the `minimal_amount`.
+- `currency`: The currency for this calculator. Defaults to the currency you have set for your store with `Spree::Config[:currency]`
 
-Suppose you have a Price Sack calculator with a `minimal_amount` preference of $50, a `normal_amount` preference of $2, and a `discount_amount` of $5. An order with a line items total of $60 would result in a discount of $5 for the whole order. An order of $20 would result in a discount of $2.
+Suppose you have a Price Sack calculator with a `minimal_amount` preference of \$50, a `normal_amount` preference of $2, and a `discount_amount` of$5. An order with a line items total of $60 would result in a discount of$5 for the whole order. An order of $20 would result in a discount of$2.
 
 ## Creating a New Calculator
 

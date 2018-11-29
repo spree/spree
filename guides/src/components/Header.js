@@ -6,27 +6,32 @@ import Logo from './Logo'
 import NavItem from './NavItem'
 import DocSearch from './DocSearch'
 
+import styles from '../utils/styles'
+
+import IconSlack from 'react-feather/dist/icons/slack'
+import IconGithub from 'react-feather/dist/icons/github'
+
 const isActive = (activeRootSection, currentSection) => {
   return activeRootSection === currentSection
 }
 
 const Header = ({ activeRootSection }) => (
   <header
+    className="bb b--light-gray fixed w-100 top-0 bg-white z-999"
     css={{
-      backgroundImage: 'linear-gradient(to right, #ECF6D3 0, #BBCBDA 100%)',
-      boxShadow: '0 0 15px 0 #ededed'
+      height: styles.header.height
     }}
   >
-    <div className="mw9 center pv3 ph4 flex items-center w-100">
+    <div className="mw9 center ph4 flex items-center w-100 h-100">
       <Link to="/" className="link green db">
         <Logo />
       </Link>
 
       <DocSearch />
 
-      <nav className="w-100 tr">
+      <nav className="w-100 tr flex items-center justify-end">
         <NavItem isActive={isActive(activeRootSection, 'api')} url="/api/">
-          Api
+          API
         </NavItem>
         <NavItem
           isActive={isActive(activeRootSection, 'developer')}
@@ -43,9 +48,14 @@ const Header = ({ activeRootSection }) => (
         >
           Release-notes
         </NavItem>
-        <NavItem url="http://slack.spreecommerce.org/">Slack</NavItem>
         <NavItem url="https://heroku.com/deploy?template=https://github.com/spree/spree">
           Demo
+        </NavItem>
+        <NavItem url="https://slack.spreecommerce.org/">
+          <IconSlack />
+        </NavItem>
+        <NavItem url="https://github.com/spree/spree">
+          <IconGithub />
         </NavItem>
       </nav>
     </div>

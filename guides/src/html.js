@@ -10,6 +10,10 @@ export default class HTML extends React.Component {
       <html lang="en" {...this.props.htmlAttributes}>
         <head>
           <link
+            href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono|IBM+Plex+Sans"
+            rel="stylesheet"
+          />
+          <link
             rel="stylesheet"
             href="https://cdn.jsdelivr.net/npm/docsearch.js@2/dist/cdn/docsearch.min.css"
           />
@@ -25,7 +29,7 @@ export default class HTML extends React.Component {
           <link rel="icon" href="/favicon.ico" />
           {this.props.headComponents}
         </head>
-        <body {...this.props.bodyAttributes} className="bg-white">
+        <body {...this.props.bodyAttributes} className="bg-white f5">
           <div
             id="___gatsby"
             dangerouslySetInnerHTML={{ __html: this.props.body }}

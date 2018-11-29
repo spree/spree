@@ -4,8 +4,10 @@ import { Link } from 'gatsby'
 import * as R from 'ramda'
 import startCase from 'lodash.startcase'
 
-import IconClose from 'react-feather/dist/icons/chevron-right'
-import IconOpen from 'react-feather/dist/icons/chevron-down'
+import style from '../utils/styles'
+
+import IconClose from 'react-feather/dist/icons/plus'
+import IconOpen from 'react-feather/dist/icons/minus'
 
 export default class Sidebar extends React.Component {
   static propTypes = {
@@ -74,7 +76,13 @@ export default class Sidebar extends React.Component {
 
   render() {
     return (
-      <aside className="mt4">
+      <aside
+        className="fixed bg-white z-2 top-0 br b--light-gray vh-100 ph4 pt4"
+        css={{
+          width: style.sidebar.width,
+          marginTop: style.header.height
+        }}
+      >
         <nav>
           <ul className="list ma0 pl0">
             {this.props.nav.map((item, index) => (
@@ -97,14 +105,14 @@ export default class Sidebar extends React.Component {
                       {R.length(this.navBlockIndex(item.edges)) > 0 ? (
                         <Link
                           to={this.getNavBlockIndexSlug(item.edges)}
-                          activeClassName="green"
-                          className="link black db fw5"
+                          activeClassName="spree-green"
+                          className="link spree-blue db fw5 ml3"
                         >
                           {this.capitalizeSectionTitle(startCase(item.section))}
                         </Link>
                       ) : (
                         <span
-                          className="pointer"
+                          className="pointer spree-blue ml3"
                           onClick={() => this._toggleSection(item.section)}
                         >
                           {this.capitalizeSectionTitle(startCase(item.section))}
@@ -112,7 +120,7 @@ export default class Sidebar extends React.Component {
                       )}
                     </h3>
                     <ul
-                      className={`list pl2 ml3 mb4 ${
+                      className={`list pl2 ml4 mb4 ${
                         this.sectionIsOpen(item.section) ? '' : 'dn'
                       }`}
                     >
@@ -120,8 +128,8 @@ export default class Sidebar extends React.Component {
                         <li key={index}>
                           <Link
                             to={item.url}
-                            activeClassName="green"
-                            className="link gray db mv2"
+                            activeClassName="spree-green fw5"
+                            className="link gray db mv2 fw4"
                           >
                             {item.title}
                           </Link>
