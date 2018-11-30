@@ -12,7 +12,9 @@ module Spree
         attribute :in_stock,      &:in_stock?
         attribute :backorderable, &:backorderable?
 
+        belongs_to :product
         has_many :images
+        has_many :option_values
       end
     end
   end

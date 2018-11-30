@@ -80,7 +80,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
 
   describe 'cart#add_item' do
     let(:options) { {} }
-    let(:params) { { variant_id: variant.id, quantity: 5, options: options } }
+    let(:params) { { variant_id: variant.id, quantity: 5, options: options, include: 'variants' } }
     let(:execute) { post '/api/v2/storefront/cart/add_item', params: params, headers: headers }
 
     before do
@@ -364,7 +364,8 @@ describe 'API V2 Storefront Cart Spec', type: :request do
   describe 'cart#apply_coupon_code' do
     include_context 'coupon codes'
 
-    let(:execute) { patch '/api/v2/storefront/cart/apply_coupon_code', params: { coupon_code: coupon_code }, headers: headers }
+    let(:params) { { coupon_code: coupon_code, include: 'promotions' } }
+    let(:execute) { patch '/api/v2/storefront/cart/apply_coupon_code', params: params, headers: headers }
 
     shared_examples 'apply coupon code' do
       before { execute }
@@ -423,7 +424,8 @@ describe 'API V2 Storefront Cart Spec', type: :request do
   end
 
   describe 'cart#remove_coupon_code' do
-    let(:execute) { delete "/api/v2/storefront/cart/remove_coupon_code/#{coupon_code}", headers: headers }
+    let(:params) { { include: 'promotions' } }
+    let(:execute) { delete "/api/v2/storefront/cart/remove_coupon_code/#{coupon_code}", params: params, headers: headers }
 
     include_context 'coupon codes'
 

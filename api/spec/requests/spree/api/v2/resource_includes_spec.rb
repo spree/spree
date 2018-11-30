@@ -8,14 +8,6 @@ describe 'API v2 JSON API Resource Includes Spec', type: :request do
   let!(:option_value) { create(:option_value, option_type: product_option_type.option_type) }
   let(:default_variant) { product.master }
 
-  shared_examples 'default resources' do
-    it 'are returned' do
-      expect(json_response['included']).to be_present
-      expect(json_response['included']).to include(have_type('variant').and have_id(default_variant.id.to_s))
-      expect(json_response['included']).to include(have_type('option_type').and have_id(product.option_types.first.id.to_s))
-    end
-  end
-
   shared_examples 'requested resources' do
     it 'are returned' do
       expect(json_response['included']).to be_present
@@ -43,7 +35,7 @@ describe 'API v2 JSON API Resource Includes Spec', type: :request do
     context 'without include param' do
       before { get "/api/v2/storefront/products/#{product.id}" }
 
-      it_behaves_like 'default resources'
+      it_behaves_like 'requested no resources'
     end
 
     context 'with include param' do
@@ -73,7 +65,7 @@ describe 'API v2 JSON API Resource Includes Spec', type: :request do
     context 'without include param' do
       before { get '/api/v2/storefront/products' }
 
-      it_behaves_like 'default resources'
+      it_behaves_like 'requested no resources'
     end
 
     context 'with include param' do

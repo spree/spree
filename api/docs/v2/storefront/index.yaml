@@ -368,6 +368,7 @@ paths:
             Use <q>-</q> sign to set descenging sort, eg. <q>-updated_at</q>
         - $ref: '#/components/parameters/PageParam'
         - $ref: '#/components/parameters/PerPageParam'
+        - $ref: '#/components/parameters/ProductIncludeParam'
       responses:
         '200':
           description: ok
@@ -388,6 +389,7 @@ paths:
       operationId: index
       parameters:
         - $ref: '#/components/parameters/IdOrPermalink'
+        - $ref: '#/components/parameters/ProductIncludeParam'
       responses:
         '200':
           description: ok
@@ -1388,7 +1390,6 @@ components:
       description: >-
         <p>Specify what related resources (relationships) you would like to receive in the response body.</p>
         <p>You can also fetch relationships of relationships.</p>
-        <p>Passing empty string will result with none relationships being returned.</p>
         <p>
           Format:
           <ul>
@@ -1400,6 +1401,25 @@ components:
           <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>
         </p>
       example: 'line_items,variants,variants.images,billing_address,shipping_address,user,payments,shipments,promotions'
+    ProductIncludeParam:
+      name: include
+      in: query
+      schema:
+        type: string
+      description: >-
+        <p>Specify what related resources (relationships) you would like to receive in the response body.</p>
+        <p>You can also fetch relationships of relationships.</p>
+        <p>
+          Format:
+          <ul>
+            <li>default_variant,variants,option_types,product_properties,taxons,images</li>
+            <li>variants,variants.images,variants.option_values</li>
+          </ul>
+        <p>
+          More information:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>
+        </p>
+      example: 'default_variant,variants,option_types,product_properties,taxons,images'
   responses:
     404NotFound:
       description: Resource not found
