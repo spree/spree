@@ -32,7 +32,7 @@ module Spree
 
     after_create :update_tax_charge
 
-    delegate :name, :description, :sku, :should_track_inventory?, :product, :options_text, to: :variant
+    delegate :name, :description, :sku, :should_track_inventory?, :product, :options_text, :slug, to: :variant
     delegate :brand, :category, to: :product
     delegate :tax_zone, to: :order
 
