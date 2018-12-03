@@ -64,10 +64,15 @@ injectGlobal`
 
   .menu-content li > label > span {
     font-size: 16px;
-    padding-left: 1rem;
+    padding-left: 2.5rem;
     color: #0066CC;
     font-weight: 500;
     font-size: 1.15rem;
+  }
+
+  .menu-content li > label > svg {
+    position: absolute;
+    left: 1.5rem;
   }
 
   .menu-content li > label > span[type] {
