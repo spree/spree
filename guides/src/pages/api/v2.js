@@ -8,6 +8,7 @@ const IndexPage = () => (
     <RedocStandalone
       specUrl="https://raw.githubusercontent.com/spark-solutions/spree/master/api/docs/v2/storefront/index.yaml"
       options={{
+        disableSearch: true,
         scrollYOffset: 80,
         hideDownloadButton: true,
         theme: {

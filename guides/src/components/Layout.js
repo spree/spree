@@ -25,7 +25,7 @@ injectGlobal`
   p > code,
   li > code {
     font-size: .825rem;
-    padding: .10rem .25rem !important;
+    padding: .15rem .5rem .20rem !important;
   }
 
   .spree-blue { color: #0066CC }
@@ -41,13 +41,45 @@ injectGlobal`
     align-items: center;
   }
 
-  label[role="menuitem"] > span[type] {
+  label[role="menuitem"].active {
+    background-color: transparent;
+  }
+
+  label[role="menuitem"].active > span {
+    color: #99CC00;
+  }
+
+  .menu-content {
+    border-right: 1px solid #eee;
+    padding-top: 1.5rem;
+  }
+
+  .menu-content li > label {
+    padding: .5rem 0 .5rem 1rem;
+  }
+
+  .menu-content li > label > span {
+    font-size: 16px;
+    padding-left: 1rem;
+    color: #0066CC;
+    font-weight: 500;
+    font-size: 1.15rem;
+  }
+
+  .menu-content li > label > span[type] {
+    color: #FFF;
+    font-weight: 600;
     min-width: 3.5rem;
     font-size: 13px;
     width: auto;
     height: auto;
     padding: .25rem .5rem;
     font-family: 'IBM Plex Mono', monospace !important;
+  }
+
+  .menu-content li > ul > li > label > span {
+    font-size: 1rem;
+    color: #777;
   }
 `
 

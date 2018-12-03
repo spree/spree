@@ -30,14 +30,15 @@ const Header = ({ activeRootSection }) => (
       <DocSearch />
 
       <nav className="w-100 tr flex items-center justify-end">
-        <NavItem isActive={isActive(activeRootSection, 'api')} url="/api/">
-          API v1
-        </NavItem>
         <NavItem
-          isActive={isActive(activeRootSection, 'api/v2')}
-          url="/api/v2/"
+          isActive={
+            isActive(activeRootSection, 'api') ||
+            isActive(activeRootSection, 'api/overview') ||
+            isActive(activeRootSection, 'api/v2')
+          }
+          url="/api/overview/"
         >
-          API v2
+          API
         </NavItem>
         <NavItem
           isActive={isActive(activeRootSection, 'developer')}
