@@ -22,13 +22,13 @@ module.exports = {
         path: `${__dirname}/src/images`
       }
     },
-    {
-      resolve: `gatsby-source-filesystem`,
-      options: {
-        name: `openapi`,
-        path: `../api/docs/v2/storefront`
-      }
-    },
+    // {
+    //   resolve: `gatsby-source-filesystem`,
+    //   options: {
+    //     name: `openapi`,
+    //     path: `../api/docs/v2/storefront`
+    //   }
+    // },
     {
       resolve: `gatsby-source-filesystem`,
       options: {
