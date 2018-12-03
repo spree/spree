@@ -15,7 +15,7 @@ const NavItem = ({ url, children, isActive }) => {
     )
   } else {
     return (
-      <Link className={linkClasses(isActive)} to={url} activeClassName="green">
+      <Link className={linkClasses(isActive)} to={url}>
         {startCase(children)}
       </Link>
     )

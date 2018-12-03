@@ -8,6 +8,7 @@ module.exports = {
     'gatsby-plugin-sitemap',
     'gatsby-plugin-react-helmet',
     'gatsby-transformer-remark',
+    'gatsby-transformer-yaml',
     {
       resolve: `gatsby-plugin-emotion`,
       options: {
@@ -19,6 +20,13 @@ module.exports = {
       options: {
         name: `images`,
         path: `${__dirname}/src/images`
+      }
+    },
+    {
+      resolve: `gatsby-source-filesystem`,
+      options: {
+        name: `openapi`,
+        path: `../api/docs/v2/storefront`
       }
     },
     {

@@ -2,7 +2,7 @@ import * as React from 'react'
 import PropTypes from 'prop-types'
 import Helmet from 'react-helmet'
 import { StaticQuery, graphql } from 'gatsby'
-import { injectGlobal } from 'emotion'
+import { injectGlobal, cx } from 'emotion'
 
 import Header from './Header'
 import Sidebar from './Sidebar'
@@ -35,6 +35,20 @@ injectGlobal`
   .spree-green { color: #99CC00 }
   .bg-spree-green { background-color: #99CC00 }
   .b--spree-green { border-color: #99CC00 }
+
+  label[role="menuitem"] {
+    display: flex;
+    align-items: center;
+  }
+
+  label[role="menuitem"] > span[type] {
+    min-width: 3.5rem;
+    font-size: 13px;
+    width: auto;
+    height: auto;
+    padding: .25rem .5rem;
+    font-family: 'IBM Plex Mono', monospace !important;
+  }
 `
 
 export default class Layout extends React.Component {
@@ -81,7 +95,9 @@ export default class Layout extends React.Component {
               )}
 
               <div
-                className="nested-links lh-copy pl5 pr4 pt3"
+                className={cx(
+                  this.props.nav && 'nested-links lh-copy pl5 pr4 pt3'
+                )}
                 css={{
                   marginLeft: this.props.nav ? styles.sidebar.width : '0',
                   marginTop: styles.header.height

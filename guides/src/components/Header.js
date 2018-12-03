@@ -22,8 +22,8 @@ const Header = ({ activeRootSection }) => (
       height: styles.header.height
     }}
   >
-    <div className="mw9 center ph4 flex items-center w-100 h-100">
-      <Link to="/" className="link green db">
+    <div className="ph4 flex items-center w-100 h-100">
+      <Link to="/" className="link db">
         <Logo />
       </Link>
 
@@ -31,7 +31,13 @@ const Header = ({ activeRootSection }) => (
 
       <nav className="w-100 tr flex items-center justify-end">
         <NavItem isActive={isActive(activeRootSection, 'api')} url="/api/">
-          API
+          API v1
+        </NavItem>
+        <NavItem
+          isActive={isActive(activeRootSection, 'api/v2')}
+          url="/api/v2/"
+        >
+          API v2
         </NavItem>
         <NavItem
           isActive={isActive(activeRootSection, 'developer')}

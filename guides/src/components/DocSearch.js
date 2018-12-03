@@ -27,7 +27,7 @@ export default class DocSearch extends React.Component {
       <form className="ml4 relative">
         <IconSearch className="absolute z-999 top-0 mt2 pt1 ml3 moon-gray" />
         <input
-          className="pv3 pr3 w6 br2 ba b--moon-gray"
+          className="pv3 pr3 w6 ba b--moon-gray"
           id="algolia-doc-search"
           type="search"
           placeholder="Search docs..."
