@@ -770,6 +770,12 @@ components:
                 quantity:
                   type: integer
                   example: 1
+                slug:
+                  type: string
+                  example: 'sample-product'
+                options_text:
+                  type: string
+                  example: 'Size: small, Color: red'
                 price:
                   type: string
                   example: '125.0'
