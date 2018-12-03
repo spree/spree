@@ -54,6 +54,10 @@ injectGlobal`
     padding-top: 1.5rem;
   }
 
+  .menu-content a[target="_blank"]{
+    display: none
+  }
+
   .menu-content li > label {
     padding: .5rem 0 .5rem 1rem;
   }
