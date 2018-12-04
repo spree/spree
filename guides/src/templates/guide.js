@@ -23,6 +23,7 @@ const renderAst = new RehypeReact({
     h2: H2,
     h3: H3,
     p: P,
+    hr: Hr,
     json: Json,
     status: Status,
     alert: Alert,
