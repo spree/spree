@@ -10,6 +10,14 @@ module.exports = {
     'gatsby-transformer-remark',
     'gatsby-transformer-yaml',
     {
+      resolve: 'gatsby-plugin-robots-txt',
+      options: {
+        host: 'https://guides.spreecommerce.org',
+        sitemap: 'https://guides.spreecommerce.org/sitemap.xml',
+        policy: [{ userAgent: '*', disallow: ['/'] }]
+      }
+    },
+    {
       resolve: `gatsby-plugin-emotion`,
       options: {
         // Accepts all options defined by `babel-plugin-emotion` plugin.

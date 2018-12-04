@@ -12,6 +12,7 @@
     "gatsby-plugin-manifest": "^2.0.5",
     "gatsby-plugin-offline": "^2.0.11",
     "gatsby-plugin-react-helmet": "^3.0.0",
+    "gatsby-plugin-robots-txt": "^1.3.0",
     "gatsby-plugin-sharp": "^2.0.7",
     "gatsby-plugin-sitemap": "^2.0.2",
     "gatsby-remark-component": "devilcoders/gatsby-remark-component",
