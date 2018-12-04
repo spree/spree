@@ -15,6 +15,12 @@ const IndexPage = () => (
           colors: {
             primary: {
               main: '#0066CC'
+            },
+            success: {
+              main: '#99CC00'
+            },
+            border: {
+              dark: '#EEE'
             }
           },
           typography: {
@@ -25,9 +31,9 @@ const IndexPage = () => (
               fontFamily: '"IBM Plex Sans", sans-serif;'
             },
             code: {
-              fontSize: '14px',
+              fontSize: '16px',
               fontFamily: '"IBM Plex Mono", monospace;',
-              fontWeight: 600,
+              fontWeight: 400,
               backgroundColor: '#0066CC',
               color: '#FFF'
             }

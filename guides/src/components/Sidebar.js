@@ -6,8 +6,8 @@ import startCase from 'lodash.startcase'
 
 import style from '../utils/styles'
 
-import IconClose from 'react-feather/dist/icons/plus'
-import IconOpen from 'react-feather/dist/icons/minus'
+import IconClose from 'react-feather/dist/icons/chevron-right'
+import IconOpen from 'react-feather/dist/icons/chevron-down'
 
 export default class Sidebar extends React.Component {
   static propTypes = {
