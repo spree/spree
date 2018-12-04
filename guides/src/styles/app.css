@@ -100,4 +100,5 @@ label[role='menuitem'] svg polygon {
 .menu-content li > ul > li > label > span {
   font-size: 1rem;
   color: #777;
+  padding-left: 0.25rem;
 }

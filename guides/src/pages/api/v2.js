@@ -18,6 +18,7 @@ const IndexPage = () => (
             }
           },
           typography: {
+            smoothing: 'unset',
             fontSize: '16px',
             fontFamily: '"IBM Plex Sans", sans-serif;',
             headings: {
