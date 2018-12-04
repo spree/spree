@@ -336,7 +336,7 @@ paths:
         Returns a list of Products
       tags:
         - Products
-      operationId: show
+      operationId: index
       parameters:
         - in: query
           name: filter
@@ -386,7 +386,7 @@ paths:
         permalink lookup before an ID lookup.
       tags:
         - Products
-      operationId: index
+      operationId: show
       parameters:
         - $ref: '#/components/parameters/IdOrPermalink'
         - $ref: '#/components/parameters/ProductIncludeParam'
