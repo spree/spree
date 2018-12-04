@@ -77,7 +77,7 @@ export default class Sidebar extends React.Component {
   render() {
     return (
       <aside
-        className="fixed bg-white z-2 top-0 br b--light-gray vh-100 ph4 pt4"
+        className="overflow-auto fixed bg-white z-2 top-0 br b--light-gray vh-100 ph4 pt4"
         css={{
           width: style.sidebar.width,
           marginTop: style.header.height
