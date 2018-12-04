@@ -6,6 +6,7 @@ import RehypeReact from 'rehype-react'
 
 import Layout from '../components/Layout'
 
+import Hr from '../components/base/Hr'
 import H1 from '../components/base/H1'
 import H2 from '../components/base/H2'
 import H3 from '../components/base/H3'
