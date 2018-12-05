@@ -33,7 +33,7 @@ export default class Layout extends React.Component {
           }
         `}
         render={data => (
-          <>
+          <React.Fragment>
             <Helmet
               title={data.site.siteMetadata.title}
               meta={[
@@ -67,7 +67,7 @@ export default class Layout extends React.Component {
                 {this.props.children}
               </div>
             </div>
-          </>
+          </React.Fragment>
         )}
       />
     )

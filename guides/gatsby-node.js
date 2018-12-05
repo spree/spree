@@ -1,13 +1,11 @@
 const path = require('path')
 const { createFilePath } = require(`gatsby-source-filesystem`)
 const R = require('ramda')
-// const SwaggerParser = require('swagger-parser')
 
 exports.createPages = ({ actions, graphql }) => {
   const { createPage } = actions
 
   const guideTemplate = path.resolve(`src/templates/guide.js`)
-  // const openApiTemplate = path.resolve(`src/templates/openApi.js`)
 
   return graphql(`
     {
@@ -36,62 +34,6 @@ exports.createPages = ({ actions, graphql }) => {
     if (result.errors) {
       return Promise.reject(result.errors)
     }
-
-    // const ApiParser = new SwaggerParser()
-
-    // ApiParser.parse('../api/docs/v2/storefront/index.yaml').then(api => {
-    //   const parsedApi = { tags: [] }
-
-    //   Object.keys(api.paths).map(path => {
-    //     Object.keys(api.paths[path]).map(method => {
-    //       api.paths[path][method]['tags'].map(tag => {
-    //         const tagObject = {
-    //           name: tag,
-    //           paths: [
-    //             {
-    //               name: path,
-    //               methods: {
-    //                 name: method,
-    //                 data: api.paths[path][method]
-    //               }
-    //             }
-    //           ]
-    //         }
-
-    //         const tagIndex = R.findIndex(R.propEq('name', tag))(parsedApi.tags)
-
-    //         if (tagIndex > 0) {
-    //           parsedApi.tags[tagIndex]['paths'].push(tagObject.paths)
-    //         } else {
-    //           parsedApi.tags.push(tagObject)
-    //         }
-    //       })
-    //     })
-    //   })
-
-    //   const normalizedData = []
-
-    //   parsedApi.tags.forEach(tag => {
-    //     const tagName = tag.name
-    //     const tagIndex = R.findIndex(R.propEq('name', tagName))(normalizedData)
-
-    //     if (R.isNil(tagIndex) || tagIndex === -1) {
-    //       normalizedData.push(tag)
-    //     } else {
-    //       normalizedData[tagIndex]['paths'].push(tag.paths)
-    //     }
-    //   })
-
-    //   normalizedData.forEach(tag =>
-    //     createPage({
-    //       path: `/api/v2/storefront/${R.toLower(tag.name)}`,
-    //       component: openApiTemplate,
-    //       context: {
-    //         paths: tag.paths
-    //       }
-    //     })
-    //   )
-    // })
 
     result.data.guides.edges.forEach(({ node }) => {
       createPage({
