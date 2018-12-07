@@ -1,6 +1,9 @@
 module.exports = {
   siteMetadata: {
-    title: 'Spree Documentation',
+    title: 'Spree Guides',
+    titleTemplate: '%s :: Spree Guides',
+    twitterUsername: '@spreecommerce',
+    image: '/images/logo.png',
     siteUrl: 'https://guides.spreecommerce.org',
     description: 'Spree Guides'
   },

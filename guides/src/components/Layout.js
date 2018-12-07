@@ -57,11 +57,14 @@ export default class Layout extends React.Component {
 
               <div
                 className={cx(
-                  this.props.nav && 'nested-links lh-copy pl5 pr4 pt3'
+                  this.props.nav && 'nested-links lh-copy pa4 pl5-l pr4-l pt3'
                 )}
                 css={{
-                  marginLeft: this.props.nav ? styles.sidebar.width : '0',
-                  marginTop: styles.header.height
+                  marginTop: styles.header.height,
+
+                  '@media (min-width: 60rem)': {
+                    marginLeft: this.props.nav ? styles.sidebar.width : '0'
+                  }
                 }}
               >
                 {this.props.children}

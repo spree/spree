@@ -8,6 +8,7 @@ module.exports = {
     jest: true
   },
   rules: {
+    'no-var': 'error',
     'prettier/prettier': 'error'
   }
 }

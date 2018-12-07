@@ -24,7 +24,7 @@ export default class DocSearch extends React.Component {
     const { enabled } = this.state
 
     return enabled ? (
-      <form className="ml4 relative">
+      <form className="ml4 relative dn db-l">
         <IconSearch className="absolute z-999 top-0 mt2 pt1 ml3 moon-gray" />
         <input
           className="pv3 pr3 w6 ba b--moon-gray"
