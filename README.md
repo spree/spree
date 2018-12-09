@@ -146,7 +146,7 @@ Extensions
 Spree Extensions provide additional features not present in the Core system.
 
 
-| Extension | Spree 3.1+ support | Description |
+| Extension | Spree 3.2+ support | Description |
 | --- | --- | --- |
 | [spree_gateway](https://github.com/spree/spree_gateway) | [![Build Status](https://travis-ci.org/spree/spree_gateway.svg?branch=master)](https://travis-ci.org/spree/spree_gateway) | Community supported Spree Payment Method Gateways
 | [spree_auth_devise](https://github.com/spree/spree_auth_devise) | [![Build Status](https://travis-ci.org/spree/spree_auth_devise.svg?branch=master)](https://travis-ci.org/spree/spree_auth_devise) | Provides authentication services for Spree, using the Devise gem.
