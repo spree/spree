@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { Link } from 'gatsby'
 import * as R from 'ramda'
 import startCase from 'lodash.startcase'
+import { cx } from 'emotion'
 
 import style from '../utils/styles'
 
@@ -12,7 +13,8 @@ import IconOpen from 'react-feather/dist/icons/chevron-down'
 export default class Sidebar extends React.Component {
   static propTypes = {
     nav: PropTypes.array.isRequired,
-    activeSection: PropTypes.string
+    activeSection: PropTypes.string,
+    isMobile: PropTypes.bool
   }
 
   state = {
@@ -42,10 +44,8 @@ export default class Sidebar extends React.Component {
       if (prevState.openSection !== section) {
         return { openSection: section }
       } else if (prevState.openSection !== null) {
-        console.log('2')
         return { openSection: null }
       } else {
-        console.log('3')
         return { openSection: null }
       }
     })
@@ -77,7 +77,11 @@ export default class Sidebar extends React.Component {
   render() {
     return (
       <aside
-        className="overflow-auto dn db-l fixed-l bg-white z-2 top-0 br b--light-gray vh-100 ph4 pt4"
+        className={cx(
+          { 'dn db-l fixed-l br b--light-gray ph4 pt4': !this.props.isMobile },
+          { db: this.props.isMobile },
+          'overflow-auto z-2 top-0 vh-100'
+        )}
         css={{
           width: style.sidebar.width,
           marginTop: style.header.height

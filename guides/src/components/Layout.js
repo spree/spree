@@ -47,6 +47,7 @@ export default class Layout extends React.Component {
               <Header
                 siteTitle={data.site.siteMetadata.title}
                 activeRootSection={this.props.activeRootSection}
+                nav={this.props.nav}
               />
               {this.props.nav && (
                 <Sidebar

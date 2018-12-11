@@ -56,7 +56,7 @@ export const pageQuery = graphql`
   query GuideById($id: String, $rootSection: String) {
     sidebarNav: allMarkdownRemark(
       filter: {
-        fields: { rootSection: { eq: $rootSection }, section: { ne: "null" } }
+        fields: { rootSection: { eq: $rootSection }, section: { ne: null } }
       }
       sort: { fields: [frontmatter___title], order: ASC }
     ) {

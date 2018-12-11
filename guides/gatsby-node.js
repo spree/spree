@@ -92,7 +92,7 @@ exports.onCreateNode = ({ node, getNode, actions }) => {
     createNodeField({
       node,
       name: 'section',
-      value: sectionFieldValue || 'null'
+      value: sectionFieldValue || null
     })
 
     createNodeField({

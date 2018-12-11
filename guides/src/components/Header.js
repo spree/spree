@@ -5,6 +5,7 @@ import { Link } from 'gatsby'
 import Logo from './Logo'
 import NavItem from './NavItem'
 import DocSearch from './DocSearch'
+import Sidebar from './Sidebar'
 
 import styles from '../utils/styles'
 
@@ -17,7 +18,12 @@ const isActive = (activeRootSection, currentSection) => {
   return activeRootSection === currentSection
 }
 
-class Header extends React.PureComponent {
+export default class Header extends React.PureComponent {
+  static propTypes = {
+    activeRootSection: PropTypes.string,
+    nav: PropTypes.array
+  }
+
   state = {
     menuIsOpen: false
   }
@@ -34,7 +40,7 @@ class Header extends React.PureComponent {
           height: styles.header.height
         }}
       >
-        <div className="ph4 flex items-center w-100 h-100">
+        <div className="z-3 relative ph4 flex items-center w-100 h-100">
           <Link to="/" className="link db">
             <Logo />
           </Link>
@@ -103,44 +109,11 @@ class Header extends React.PureComponent {
         </div>
 
         {this.state.menuIsOpen && (
-          <nav className="fixed w-100 vh-100 bg-white-90 pa4 flex flex-column">
-            <NavItem
-              isActive={
-                isActive(this.props.activeRootSection, 'api') ||
-                isActive(this.props.activeRootSection, 'api/overview') ||
-                isActive(this.props.activeRootSection, 'api/v2')
-              }
-              url="/api/overview/"
-            >
-              API
-            </NavItem>
-            <NavItem
-              isActive={isActive(this.props.activeRootSection, 'developer')}
-              url="/developer/"
-            >
-              Developer
-            </NavItem>
-            <NavItem
-              isActive={isActive(this.props.activeRootSection, 'user')}
-              url="/user/"
-            >
-              User
-            </NavItem>
-            <NavItem
-              isActive={isActive(this.props.activeRootSection, 'release_notes')}
-              url="/release_notes/"
-            >
-              Release-notes
-            </NavItem>
-          </nav>
+          <div className="top-0 fixed w-100 vh-100 bg-white pl4 flex flex-column">
+            <Sidebar nav={this.props.nav} isMobile />
+          </div>
         )}
       </header>
     )
   }
 }
-
-Header.propTypes = {
-  activeRootSection: PropTypes.string
-}
-
-export default Header

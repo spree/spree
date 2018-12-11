@@ -31,6 +31,7 @@
     "prismjs": "^1.15.0",
     "prop-types": "^15.6.2",
     "ramda": "^0.26.0",
+    "ramda-adjunct": "^2.13.0",
     "react": "^16.5.1",
     "react-dom": "^16.5.1",
     "react-emotion": "^10.0.0",
