@@ -163,14 +163,6 @@ module Spree
         icon_name ? content_tag(:i, '', class: icon_name) : ''
       end
 
-      def icon(icon_name)
-        ActiveSupport::Deprecation.warn(<<-EOS, caller)
-         Admin::NavigationHelper#icon was renamed to Admin::NavigationHelper#spree_icon
-         and will be removed in Spree 3.6. Please update your code to avoid problems after update
-        EOS
-        spree_icon(icon_name)
-      end
-
       # Override: Add disable_with option to prevent multiple request on consecutive clicks
       def button(text, icon_name = nil, button_type = 'submit', options = {})
         if icon_name
