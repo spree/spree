@@ -75,78 +75,89 @@ export default class Sidebar extends React.Component {
     this.navBlockIndex(block)[0]['node']['fields']['slug']
 
   render() {
+    const { isMobile } = this.props
     return (
-      <aside
-        className={cx(
-          { 'dn db-l fixed-l br b--light-gray ph4 pt4': !this.props.isMobile },
-          { db: this.props.isMobile },
-          'overflow-auto z-2 top-0 vh-100'
-        )}
-        css={{
-          width: style.sidebar.width,
-          marginTop: style.header.height
-        }}
-      >
-        <nav>
-          <ul className="list ma0 pl0">
-            {this.props.nav.map((item, index) => (
-              <React.Fragment key={index}>
-                {R.length(this.normalizeNavBlock(item.edges)) > 0 && (
-                  <li key={index}>
-                    <h3 className="flex items-center mt0 fw5">
-                      {this.sectionIsOpen(item.section) ? (
-                        <IconOpen
-                          className="pointer moon-gray"
-                          onClick={() => this._toggleSection(item.section)}
-                        />
-                      ) : (
-                        <IconClose
-                          className="pointer moon-gray"
-                          onClick={() => this._toggleSection(item.section)}
-                        />
-                      )}
+      <>
+        {this.props.nav && (
+          <aside
+            className={cx(
+              { 'dn db-l fixed-l br b--light-gray ph4 pt4 vh-100': !isMobile },
+              { 'db pt2': isMobile },
+              'overflow-auto z-2 top-0'
+            )}
+            css={{
+              width: style.sidebar.width,
+              marginTop: isMobile ? 0 : style.header.height
+            }}
+          >
+            <nav>
+              <ul className="list ma0 pl0">
+                {this.props.nav.map((item, index) => (
+                  <React.Fragment key={index}>
+                    {R.length(this.normalizeNavBlock(item.edges)) > 0 && (
+                      <li key={index}>
+                        <h3 className="flex items-center mt0 fw5 f5 f3-l">
+                          {this.sectionIsOpen(item.section) ? (
+                            <IconOpen
+                              className="pointer moon-gray"
+                              onClick={() => this._toggleSection(item.section)}
+                            />
+                          ) : (
+                            <IconClose
+                              className="pointer moon-gray"
+                              onClick={() => this._toggleSection(item.section)}
+                            />
+                          )}
 
-                      {R.length(this.navBlockIndex(item.edges)) > 0 ? (
-                        <Link
-                          to={this.getNavBlockIndexSlug(item.edges)}
-                          activeClassName="spree-green"
-                          className="link spree-blue db fw5 ml3"
+                          {R.length(this.navBlockIndex(item.edges)) > 0 ? (
+                            <Link
+                              to={this.getNavBlockIndexSlug(item.edges)}
+                              activeClassName="spree-green"
+                              className="link spree-blue db fw5 ml3"
+                            >
+                              {this.capitalizeSectionTitle(
+                                startCase(item.section)
+                              )}
+                            </Link>
+                          ) : (
+                            <span
+                              className="pointer spree-blue ml3"
+                              onClick={() => this._toggleSection(item.section)}
+                            >
+                              {this.capitalizeSectionTitle(
+                                startCase(item.section)
+                              )}
+                            </span>
+                          )}
+                        </h3>
+                        <ul
+                          className={`list pl2 ml4 mb4 ${
+                            this.sectionIsOpen(item.section) ? '' : 'dn'
+                          }`}
                         >
-                          {this.capitalizeSectionTitle(startCase(item.section))}
-                        </Link>
-                      ) : (
-                        <span
-                          className="pointer spree-blue ml3"
-                          onClick={() => this._toggleSection(item.section)}
-                        >
-                          {this.capitalizeSectionTitle(startCase(item.section))}
-                        </span>
-                      )}
-                    </h3>
-                    <ul
-                      className={`list pl2 ml4 mb4 ${
-                        this.sectionIsOpen(item.section) ? '' : 'dn'
-                      }`}
-                    >
-                      {this.normalizeNavBlock(item.edges).map((item, index) => (
-                        <li key={index}>
-                          <Link
-                            to={item.url}
-                            activeClassName="spree-green fw5"
-                            className="link gray db mv2 fw4"
-                          >
-                            {item.title}
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  </li>
-                )}
-              </React.Fragment>
-            ))}
-          </ul>
-        </nav>
-      </aside>
+                          {this.normalizeNavBlock(item.edges).map(
+                            (item, index) => (
+                              <li key={index}>
+                                <Link
+                                  to={item.url}
+                                  activeClassName="spree-green fw5"
+                                  className="link gray db mv2 fw4"
+                                >
+                                  {item.title}
+                                </Link>
+                              </li>
+                            )
+                          )}
+                        </ul>
+                      </li>
+                    )}
+                  </React.Fragment>
+                ))}
+              </ul>
+            </nav>
+          </aside>
+        )}
+      </>
     )
   }
 }

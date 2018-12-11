@@ -14,10 +14,6 @@ import IconGithub from 'react-feather/dist/icons/github'
 import IconBurger from 'react-feather/dist/icons/menu'
 import IconBurgerClose from 'react-feather/dist/icons/x-circle'
 
-const isActive = (activeRootSection, currentSection) => {
-  return activeRootSection === currentSection
-}
-
 export default class Header extends React.PureComponent {
   static propTypes = {
     activeRootSection: PropTypes.string,
@@ -31,6 +27,15 @@ export default class Header extends React.PureComponent {
   _toggleMenu = () => {
     this.setState({ menuIsOpen: !this.state.menuIsOpen })
   }
+
+  isActive = currentSection => {
+    return this.props.activeRootSection === currentSection
+  }
+
+  isApiSectionActive = () =>
+    this.isActive('api') ||
+    this.isActive('api/overview') ||
+    this.isActive('api/v2')
 
   render() {
     return (
@@ -49,33 +54,25 @@ export default class Header extends React.PureComponent {
 
           <nav className="w-100 tr dn flex-l items-center justify-end">
             <NavItem
-              isActive={
-                isActive(this.props.activeRootSection, 'api') ||
-                isActive(this.props.activeRootSection, 'api/overview') ||
-                isActive(this.props.activeRootSection, 'api/v2')
-              }
+              text="API"
+              isActive={this.isApiSectionActive()}
               url="/api/overview/"
-            >
-              API
-            </NavItem>
+            />
             <NavItem
-              isActive={isActive(this.props.activeRootSection, 'developer')}
+              text="Developer"
+              isActive={this.isActive('developer')}
               url="/developer/"
-            >
-              Developer
-            </NavItem>
+            />
             <NavItem
-              isActive={isActive(this.props.activeRootSection, 'user')}
+              text="User"
+              isActive={this.isActive('user')}
               url="/user/"
-            >
-              User
-            </NavItem>
+            />
             <NavItem
-              isActive={isActive(this.props.activeRootSection, 'release_notes')}
+              text="Release Notes"
+              isActive={this.isActive('release_notes')}
               url="/release_notes/"
-            >
-              Release-notes
-            </NavItem>
+            />
             <NavItem url="https://heroku.com/deploy?template=https://github.com/spree/spree">
               Demo
             </NavItem>
@@ -96,12 +93,12 @@ export default class Header extends React.PureComponent {
             </NavItem>
             {this.state.menuIsOpen ? (
               <IconBurgerClose
-                className="pointer dib dn-l"
+                className="pointer dib dn-l mv2 mv0-l"
                 onClick={() => this._toggleMenu()}
               />
             ) : (
               <IconBurger
-                className="pointer dib dn-l"
+                className="pointer dib dn-l mv2 mv0-l"
                 onClick={() => this._toggleMenu()}
               />
             )}
@@ -109,8 +106,50 @@ export default class Header extends React.PureComponent {
         </div>
 
         {this.state.menuIsOpen && (
-          <div className="top-0 fixed w-100 vh-100 bg-white pl4 flex flex-column">
-            <Sidebar nav={this.props.nav} isMobile />
+          <div
+            className="top-0 fixed w-100 vh-100 bg-white pl4 flex flex-column"
+            css={{
+              marginTop: styles.header.height
+            }}
+          >
+            <nav className="flex flex-column">
+              <NavItem
+                text="API"
+                isActive={this.isApiSectionActive()}
+                url="/api/overview/"
+              >
+                {this.isApiSectionActive() && (
+                  <Sidebar nav={this.props.nav} isMobile />
+                )}
+              </NavItem>
+              <NavItem
+                text="Developer"
+                isActive={this.isActive('developer')}
+                url="/developer/"
+              >
+                {this.isActive('developer') && (
+                  <Sidebar nav={this.props.nav} isMobile />
+                )}
+              </NavItem>
+              <NavItem
+                text="User"
+                isActive={this.isActive('user')}
+                url="/user/"
+              >
+                {this.isActive('user') && (
+                  <Sidebar nav={this.props.nav} isMobile />
+                )}
+              </NavItem>
+              <NavItem
+                text="Release Notes"
+                isActive={this.isActive('release_notes')}
+                url="/release_notes/"
+              >
+                {this.isActive('release_notes') && (
+                  <Sidebar nav={this.props.nav} isMobile />
+                )}
+              </NavItem>
+            </nav>
           </div>
         )}
       </header>
