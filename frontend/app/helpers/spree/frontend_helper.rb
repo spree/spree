@@ -21,14 +21,6 @@ module Spree
       content_tag(:nav, crumb_list, id: 'breadcrumbs', class: 'col-md-12')
     end
 
-    def breadcrumbs(taxon, separator = '&nbsp;')
-      ActiveSupport::Deprecation.warn(<<-EOS, caller)
-        Spree::FrontendHelper#breadcrumbs was renamed to Spree::FrontendHelper#spree_breadcrumbs
-        and will be removed in Spree 3.6. Please update your code to avoid problems after update
-      EOS
-      spree_breadcrumbs(taxon, separator)
-    end
-
     def checkout_progress(numbers: false)
       states = @order.checkout_steps
       items = states.each_with_index.map do |state, i|
