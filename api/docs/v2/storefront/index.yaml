@@ -339,20 +339,37 @@ paths:
       operationId: index
       parameters:
         - in: query
-          name: filter
+          name: filter[ids]
           schema:
             type: string
-          example: >-
-           'filter[ids]=1,2,3&filter[price]=10,20&filter[taxons]=1,2,3,4&filter[name]=shirt&filter[options][color]=red&filter[options][color]=blue&filter[options][size]=10'
+          example: 1,2,3
+          description: Filter Prodcuts based on IDs of Prodcuts
+        - in: query
+          name: filter[price]
+          schema:
+            type: string
+          example: 10,100
+          description: Filter Prodcuts based on price (minimum, maximum range)
+        - in: query
+          name: filter[taxons]
+          schema:
+            type: string
+          example: 1,2,3,4,5,6,7,8,9,10,11
+          description: Filter Prodcuts based on taxons (IDs of categories, brands, etc)
+        - in: query
+          name: filter[name]
+          schema:
+            type: string
+          example: rails
+          description: Find Prodcuts with matching name (supports wild-card, partial-word match search)
+        - in: query
+          name: 'filter[options][tshirt-color]'
+          schema:
+            type: string
+          example: Red
           description: >-
-            Filter Products based on:
-            <ul>
-              <li>name (supports wild-card, partial-word match search)</li>
-              <li>ids (IDs of selected products to display)</li>
-              <li>taxons (IDs of categories, brands, etc)</li>
-              <li>price (range)</li>
-              <li>options (eg. color, size)</li>
-            </ul>
+            Find Prodcuts with Variants that have the specified option (eg. color, size)
+            and value (eg. red, XS)
         - in: query
           name: sort
           schema:
@@ -1386,7 +1403,7 @@ components:
       description: Number of requested records per page when paginating collection
       schema:
         type: integer
-      example: 1
+      example: 10
       minimum: 1
     CartIncludeParam:
       name: include
