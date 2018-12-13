@@ -1,7 +1,14 @@
 import * as React from 'react'
+import PropTypes from 'prop-types'
+import { cx } from 'emotion'
+
 import IconSearch from 'react-feather/dist/icons/search'
 
 export default class DocSearch extends React.Component {
+  static propTypes = {
+    isOpen: PropTypes.bool.isRequired
+  }
+
   state = {
     enabled: true
   }
@@ -24,15 +31,29 @@ export default class DocSearch extends React.Component {
     const { enabled } = this.state
 
     return enabled ? (
-      <form className="ml4 relative dn db-l">
+      <form
+        css={{
+          '& > .algolia-autocomplete': {
+            position: 'static !important',
+            width: '100%'
+          }
+        }}
+        className={cx(
+          { 'db absolute left-0': this.props.isOpen },
+          { dn: !this.props.isOpen },
+          `ml4-l pr0-l ph3 relative db-l w-100 w-auto-l`
+        )}
+      >
         <IconSearch className="absolute z-999 top-0 mt2 pt1 ml3 moon-gray" />
         <input
-          className="pv3 pr3 w6 ba b--moon-gray"
+          className={cx(
+            { 'w-100': this.props.isOpen },
+            'pv3 pr3 w6 ba b--moon-gray'
+          )}
           id="algolia-doc-search"
           type="search"
           placeholder="Search docs..."
           aria-label="Search docs"
-          size="40"
           css={{
             paddingLeft: '3rem'
           }}

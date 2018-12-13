@@ -1,6 +1,7 @@
 import * as React from 'react'
 import PropTypes from 'prop-types'
 import { Link } from 'gatsby'
+import { cx } from 'emotion'
 
 import Logo from './Logo'
 import NavItem from './NavItem'
@@ -12,7 +13,8 @@ import styles from '../utils/styles'
 import IconSlack from 'react-feather/dist/icons/slack'
 import IconGithub from 'react-feather/dist/icons/github'
 import IconBurger from 'react-feather/dist/icons/menu'
-import IconBurgerClose from 'react-feather/dist/icons/x-circle'
+import IconClose from 'react-feather/dist/icons/x-circle'
+import IconSearch from 'react-feather/dist/icons/search'
 
 export default class Header extends React.PureComponent {
   static propTypes = {
@@ -21,7 +23,8 @@ export default class Header extends React.PureComponent {
   }
 
   state = {
-    menuIsOpen: false
+    menuIsOpen: false,
+    searchIsOpen: false
   }
 
   _toggleMenu = () => {
@@ -30,6 +33,10 @@ export default class Header extends React.PureComponent {
 
   isActive = currentSection => {
     return this.props.activeRootSection === currentSection
+  }
+
+  _toggleSearch = () => {
+    this.setState({ searchIsOpen: !this.state.searchIsOpen })
   }
 
   isApiSectionActive = () =>
@@ -46,11 +53,18 @@ export default class Header extends React.PureComponent {
         }}
       >
         <div className="z-3 relative ph4 flex items-center w-100 h-100">
-          <Link to="/" className="link db">
+          <Link
+            to="/"
+            className={cx(
+              { db: !this.state.searchIsOpen },
+              { dn: this.state.searchIsOpen },
+              'link'
+            )}
+          >
             <Logo />
           </Link>
 
-          <DocSearch />
+          <DocSearch isOpen={this.state.searchIsOpen} />
 
           <nav className="w-100 tr dn flex-l items-center justify-end">
             <NavItem
@@ -85,6 +99,18 @@ export default class Header extends React.PureComponent {
           </nav>
 
           <nav className="dn-l justify-end w-100 flex">
+            {this.state.searchIsOpen ? (
+              <IconClose
+                className="pointer dib dn-l mv2 mr3 z-999 right-0 absolute pr3"
+                onClick={this._toggleSearch}
+              />
+            ) : (
+              <IconSearch
+                className="pointer dib dn-l mv2 mv0-l mr3"
+                onClick={this._toggleSearch}
+              />
+            )}
+
             <NavItem url="https://slack.spreecommerce.org/">
               <IconSlack />
             </NavItem>
@@ -92,7 +118,7 @@ export default class Header extends React.PureComponent {
               <IconGithub />
             </NavItem>
             {this.state.menuIsOpen ? (
-              <IconBurgerClose
+              <IconClose
                 className="pointer dib dn-l mv2 mv0-l"
                 onClick={() => this._toggleMenu()}
               />
