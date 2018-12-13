@@ -36,6 +36,13 @@ export default class DocSearch extends React.Component {
           '& > .algolia-autocomplete': {
             position: 'static !important',
             width: '100%'
+          },
+          '& .ds-dropdown-menu': {
+            minWidth: '100% !important',
+
+            '@media (min-width: 60rem)': {
+              minWidth: '500px !important'
+            }
           }
         }}
         className={cx(
