@@ -96,7 +96,7 @@ export default class Sidebar extends React.Component {
                   <React.Fragment key={index}>
                     {R.length(this.normalizeNavBlock(item.edges)) > 0 && (
                       <li key={index}>
-                        <h3 className="flex items-center mt0 fw5 f5 f3-l">
+                        <h3 className="flex items-center mt0 fw5 f5 f4-l">
                           {this.sectionIsOpen(item.section) ? (
                             <IconOpen
                               className="pointer moon-gray"
