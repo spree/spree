@@ -1,4 +1,4 @@
-openapi: '3.0.0'
+openapi: 3.0.0
 servers:
   - url: 'http://localhost:3000/api/v2/storefront'
 info:
