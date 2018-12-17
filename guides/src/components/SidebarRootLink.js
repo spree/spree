@@ -43,7 +43,7 @@ SidebarRootLink.propTypes = {
   toggleSection: PropTypes.func.isRequired,
   itemsLength: PropTypes.number.isRequired,
   title: PropTypes.string.isRequired,
-  href: PropTypes.string
+  href: PropTypes.oneOfType([PropTypes.string, PropTypes.bool]).isRequired
 }
 
 export default SidebarRootLink
