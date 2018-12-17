@@ -42,19 +42,16 @@ export default class Sidebar extends React.Component {
     ])
   )
 
-  sectionIsOpen = section => {
-    return or(
+  sectionIsOpen = section =>
+    or(
       equals(section, this.state.openSection),
       equals(section, this.props.activeSection)
     )
-  }
 
   _toggleSection = section => {
     this.setState(prevState => {
       if (prevState.openSection !== section) {
         return { openSection: section }
-      } else if (prevState.openSection !== null) {
-        return { openSection: null }
       } else {
         return { openSection: null }
       }
@@ -93,11 +90,10 @@ export default class Sidebar extends React.Component {
             className={cx(
               { 'dn db-l fixed-l br b--light-gray ph4 pt4 vh-100': !isMobile },
               { 'db pt2': isMobile },
-              'overflow-auto z-2 top-0'
+              'overflow-auto z-2'
             )}
             css={{
-              width: style.sidebar.width,
-              marginTop: isMobile ? 0 : style.header.height
+              width: style.sidebar.width
             }}
           >
             <nav>

@@ -12,6 +12,9 @@ p > code,
 li > code {
   font-size: 0.825rem;
   padding: 0.15rem 0.5rem 0.2rem !important;
+  display: inline-flex;
+  overflow: auto;
+  max-width: 100%;
 }
 
 .spree-blue {

@@ -61,8 +61,6 @@ export default class Layout extends React.Component {
                   this.props.nav && 'nested-links lh-copy pa4 pl5-l pr4-l pt3'
                 )}
                 css={{
-                  marginTop: styles.header.height,
-
                   '@media (min-width: 60rem)': {
                     marginLeft: this.props.nav ? styles.sidebar.width : '0'
                   }

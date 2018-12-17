@@ -48,15 +48,12 @@ export default class DocSearch extends React.Component {
         className={cx(
           { 'db absolute left-0': this.props.isOpen },
           { dn: !this.props.isOpen },
-          `ml4-l pr0-l ph3 relative db-l w-100 w-auto-l`
+          `mh4-l pr0-l ph3 relative db-l w-100`
         )}
       >
         <IconSearch className="absolute z-999 top-0 mt2 pt1 ml3 moon-gray" />
         <input
-          className={cx(
-            { 'w-100': this.props.isOpen },
-            'pv3 pr3 w6 ba b--moon-gray'
-          )}
+          className="pv3 pr3 w6 br2 ba b--moon-gray w-100"
           id="algolia-doc-search"
           type="search"
           placeholder="Search docs..."

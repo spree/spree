@@ -1,12 +1,12 @@
 import * as React from 'react'
 import { RedocStandalone } from 'redoc'
 
-import Layout from '../../components/Layout'
+import Layout from '../../../components/Layout'
 
-const IndexPage = () => (
+const AuthenticationPage = () => (
   <Layout activeRootSection="api/v2">
     <RedocStandalone
-      specUrl="https://raw.githubusercontent.com/spree/spree/master/api/docs/v2/storefront/index.yaml"
+      specUrl="https://raw.githubusercontent.com/spree/spree/master/api/docs/oauth/index.yml"
       options={{
         disableSearch: true,
         scrollYOffset: 80,
@@ -51,4 +51,4 @@ const IndexPage = () => (
   </Layout>
 )
 
-export default IndexPage
+export default AuthenticationPage

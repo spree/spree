@@ -3,7 +3,9 @@ import PropTypes from 'prop-types'
 import { Link } from 'gatsby'
 
 const linkClasses = isActive =>
-  `dib mv2 mv0-l link mr3 fw4 f4 ${isActive ? 'spree-green' : 'dark-gray'}`
+  `dib mv2 mv0-l link mr3 fw4 f4 nowrap ${
+    isActive ? 'spree-green' : 'dark-gray'
+  }`
 
 const NavItem = ({ url, children, isActive, text }) => {
   if (url.startsWith('http')) {

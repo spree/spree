@@ -47,8 +47,9 @@ export default class Header extends React.PureComponent {
   render() {
     return (
       <header
-        className="bb b--light-gray fixed w-100 top-0 bg-white z-999"
+        className="bb b--light-gray w-100 top-0 bg-white z-999"
         css={{
+          position: 'sticky',
           height: styles.header.height
         }}
       >
