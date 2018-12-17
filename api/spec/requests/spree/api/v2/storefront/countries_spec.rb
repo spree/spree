@@ -27,6 +27,76 @@ describe 'Storefront API v2 Countries spec', type: :request do
     end
   end
 
+  describe 'countries#index' do
+    context 'with no params' do
+      before { get '/api/v2/storefront/countries' }
+
+      it_behaves_like 'returns 200 HTTP status'
+
+      it 'returns all countries' do
+        expect(json_response['data'].size).to eq(2)
+        expect(json_response['data'][0]).to have_type('country')
+        expect(json_response['data'][0]).to have_relationships(:states)
+      end
+    end
+
+    context 'paginate countries' do
+      context 'with specified pagination params' do
+        before { get '/api/v2/storefront/countries?page=1&per_page=1' }
+
+        it_behaves_like 'returns 200 HTTP status'
+
+        it 'returns specified amount of countries' do
+          expect(json_response['data'].count).to eq 1
+        end
+
+        it 'returns proper meta data' do
+          expect(json_response['meta']['count']).to       eq 1
+          expect(json_response['meta']['total_count']).to eq Spree::Country.count
+        end
+
+        it 'returns proper links data' do
+          expect(json_response['links']['self']).to include('/api/v2/storefront/countries?page=1&per_page=1')
+          expect(json_response['links']['next']).to include('/api/v2/storefront/countries?page=2&per_page=1')
+          expect(json_response['links']['prev']).to include('/api/v2/storefront/countries?page=1&per_page=1')
+        end
+      end
+
+      context 'without specified pagination params' do
+        before { get '/api/v2/storefront/countries' }
+
+        it_behaves_like 'returns 200 HTTP status'
+
+        it 'returns specified amount of countries' do
+          expect(json_response['data'].count).to eq Spree::Country.count
+        end
+
+        it 'returns proper meta data' do
+          expect(json_response['meta']['count']).to       eq json_response['data'].count
+          expect(json_response['meta']['total_count']).to eq Spree::Country.count
+        end
+
+        it 'returns proper links data' do
+          expect(json_response['links']['self']).to include('/api/v2/storefront/countries')
+          expect(json_response['links']['next']).to include('/api/v2/storefront/countries?page=1')
+          expect(json_response['links']['prev']).to include('/api/v2/storefront/countries?page=1')
+        end
+      end
+    end
+
+    context 'with specified options' do
+      before { get '/api/v2/storefront/countries?include=states' }
+
+      it_behaves_like 'returns 200 HTTP status'
+
+      it 'returns country with included states' do
+        expect(json_response['data'].first).to have_id(country.id.to_s)
+        expect(json_response['included']).to   include(have_type('state').and(have_attribute(:abbr).with_value(states.first.abbr)))
+        expect(json_response['included']).to   include(have_type('state').and(have_attribute(:name).with_value(states.first.name)))
+      end
+    end
+  end
+
   describe 'country#show' do
     context 'by iso' do
       before do
