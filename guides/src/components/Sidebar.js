@@ -1,14 +1,24 @@
 import * as React from 'react'
 import PropTypes from 'prop-types'
 import { Link } from 'gatsby'
-import * as R from 'ramda'
+import {
+  join,
+  juxt,
+  compose,
+  toUpper,
+  head,
+  tail,
+  equals,
+  or,
+  length,
+  filter
+} from 'ramda'
 import startCase from 'lodash.startcase'
 import { cx } from 'emotion'
 
 import style from '../utils/styles'
 
-import IconClose from 'react-feather/dist/icons/chevron-right'
-import IconOpen from 'react-feather/dist/icons/chevron-down'
+import SidebarRootLink from './SidebarRootLink'
 
 export default class Sidebar extends React.Component {
   static propTypes = {
@@ -21,21 +31,21 @@ export default class Sidebar extends React.Component {
     openSection: null
   }
 
-  capitalizeSectionTitle = R.compose(
-    R.join(''),
-    R.juxt([
-      R.compose(
-        R.toUpper,
-        R.head
+  capitalizeSectionTitle = compose(
+    join(''),
+    juxt([
+      compose(
+        toUpper,
+        head
       ),
-      R.tail
+      tail
     ])
   )
 
   sectionIsOpen = section => {
-    return R.or(
-      R.equals(section, this.state.openSection),
-      R.equals(section, this.props.activeSection)
+    return or(
+      equals(section, this.state.openSection),
+      equals(section, this.props.activeSection)
     )
   }
 
@@ -68,7 +78,7 @@ export default class Sidebar extends React.Component {
 
   navBlockIndex = block => {
     const hasIndex = item => item.node.fields.isIndex === true
-    return R.filter(hasIndex, block)
+    return filter(hasIndex, block)
   }
 
   getNavBlockIndexSlug = block =>
@@ -94,42 +104,23 @@ export default class Sidebar extends React.Component {
               <ul className="list ma0 pl0">
                 {this.props.nav.map((item, index) => (
                   <React.Fragment key={index}>
-                    {R.length(this.normalizeNavBlock(item.edges)) > 0 && (
+                    {length(this.normalizeNavBlock(item.edges)) > 0 && (
                       <li key={index}>
-                        <h3 className="flex items-center mt0 fw5 f5 f4-l">
-                          {this.sectionIsOpen(item.section) ? (
-                            <IconOpen
-                              className="pointer moon-gray"
-                              onClick={() => this._toggleSection(item.section)}
-                            />
-                          ) : (
-                            <IconClose
-                              className="pointer moon-gray"
-                              onClick={() => this._toggleSection(item.section)}
-                            />
+                        <SidebarRootLink
+                          title={this.capitalizeSectionTitle(
+                            startCase(item.section)
                           )}
-
-                          {R.length(this.navBlockIndex(item.edges)) > 0 ? (
-                            <Link
-                              to={this.getNavBlockIndexSlug(item.edges)}
-                              activeClassName="spree-green"
-                              className="link spree-blue db fw5 ml3"
-                            >
-                              {this.capitalizeSectionTitle(
-                                startCase(item.section)
-                              )}
-                            </Link>
-                          ) : (
-                            <span
-                              className="pointer spree-blue ml3"
-                              onClick={() => this._toggleSection(item.section)}
-                            >
-                              {this.capitalizeSectionTitle(
-                                startCase(item.section)
-                              )}
-                            </span>
-                          )}
-                        </h3>
+                          isOpen={this.sectionIsOpen(item.section)}
+                          toggleSection={() =>
+                            this._toggleSection(item.section)
+                          }
+                          itemsLength={length(this.navBlockIndex(item.edges))}
+                          href={
+                            length(this.navBlockIndex(item.edges)) > 0
+                              ? this.getNavBlockIndexSlug(item.edges)
+                              : false
+                          }
+                        />
                         <ul
                           className={`list pl2 ml4 mb4 ${
                             this.sectionIsOpen(item.section) ? '' : 'dn'
