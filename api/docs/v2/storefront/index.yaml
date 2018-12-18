@@ -602,16 +602,22 @@ components:
                   example: '$29.99'
                 ship_total:
                   type: string
-                  example: '0.00'
+                  example: '0.0'
                 display_ship_total:
                   type: string
                   example: '$19.99'
                 adjustment_total:
                   type: string
-                  example: '10.00'
+                  example: '10.0'
                 display_adjustment_total:
                   type: string
                   example: '$10.00'
+                promo_total:
+                  type: string
+                  example: '-10.0'
+                display_promo_total:
+                  type: string
+                  example: '-$10.00'
                 created_at:
                   $ref: '#/components/schemas/Timestamp'
                 updated_at:
@@ -621,7 +627,7 @@ components:
                   example: '5.00'
                 additional_tax_total:
                   type: string
-                  example: '5.00'
+                  example: '5.0'
                 display_additional_tax_total:
                   type: string
                   example: '$5.00'
@@ -630,7 +636,7 @@ components:
                   example: '$5.00'
                 tax_total:
                   type: string
-                  example: '10.00'
+                  example: '10.0'
                 display_tax_total:
                   type: string
                   example: '$10.00'
@@ -862,6 +868,15 @@ components:
                 name:
                   type: string
                   example: '10% Discount'
+                descriptiom:
+                  type: string
+                  example: 'Super discount for you'
+                amount:
+                  type: string
+                  example: '-10.0'
+                display_amount:
+                  type: string
+                  example: '-$10.00'
     Product:
       required:
         - data
