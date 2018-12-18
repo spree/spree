@@ -1,17 +1,13 @@
-import * as React from 'react'
-
-import Sidebar from './Sidebar'
-
-const sidebarData = [
+export default [
   {
-    section: 'API v2',
+    section: 'API V2',
     edges: [
       {
         node: {
           fields: {
             isIndex: false,
-            rootSection: 'API v2',
-            section: 'API v2',
+            rootSection: 'API V2',
+            section: 'API V2',
             slug: 'api/v2/authentication'
           },
           frontmatter: {
@@ -23,8 +19,8 @@ const sidebarData = [
         node: {
           fields: {
             isIndex: false,
-            rootSection: 'API v2',
-            section: 'API v2',
+            rootSection: 'API V2',
+            section: 'API V2',
             slug: 'api/v2/extend-the-api'
           },
           frontmatter: {
@@ -36,8 +32,8 @@ const sidebarData = [
         node: {
           fields: {
             isIndex: false,
-            rootSection: 'API v2',
-            section: 'API v2',
+            rootSection: 'API V2',
+            section: 'API V2',
             slug: 'api/v2/storefront'
           },
           frontmatter: {
@@ -49,8 +45,8 @@ const sidebarData = [
         node: {
           fields: {
             isIndex: true,
-            rootSection: 'API v2',
-            section: 'API v2',
+            rootSection: 'API V2',
+            section: 'API V2',
             slug: 'api/v2/'
           },
           frontmatter: {
@@ -61,7 +57,3 @@ const sidebarData = [
     ]
   }
 ]
-
-const SidebarApi = () => <Sidebar nav={sidebarData} />
-
-export default SidebarApi

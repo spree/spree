@@ -1,11 +1,11 @@
 import * as React from 'react'
 
 import Layout from '../../../components/Layout'
-import SidebarApi from '../../../components/SidebarApi'
+import openApiNav from '../../../utils/openApiNav'
 
 const IndexPage = () => (
-  <Layout activeRootSection="api/v2">
-    <SidebarApi />
+  <Layout activeSection="API V2" nav={openApiNav}>
+    <p>API v2 Index Content</p>
   </Layout>
 )
 
