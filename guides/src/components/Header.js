@@ -134,12 +134,12 @@ export default class Header extends React.PureComponent {
 
         {this.state.menuIsOpen && (
           <div
-            className="top-0 fixed w-100 vh-100 bg-white pl4 flex flex-column"
+            className="overflow-auto top-0 fixed w-100 top-0 bottom-0 bg-white pl4 flex flex-column"
             css={{
               marginTop: styles.header.height
             }}
           >
-            <nav className="flex flex-column">
+            <nav className="flex flex-column overflow-auto">
               <NavItem
                 text="API"
                 isActive={this.isApiSectionActive()}

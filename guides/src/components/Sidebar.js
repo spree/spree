@@ -103,6 +103,7 @@ export default class Sidebar extends React.Component {
                     {length(this.normalizeNavBlock(item.edges)) > 0 && (
                       <li key={index}>
                         <SidebarRootLink
+                          isSingleRoot={length(this.props.nav) < 2}
                           title={this.capitalizeSectionTitle(
                             startCase(item.section)
                           )}
@@ -118,9 +119,20 @@ export default class Sidebar extends React.Component {
                           }
                         />
                         <ul
-                          className={`list pl2 ml4 mb4 ${
-                            this.sectionIsOpen(item.section) ? '' : 'dn'
-                          }`}
+                          className={cx(
+                            { db: this.sectionIsOpen(item.section) },
+                            {
+                              dn:
+                                !this.sectionIsOpen(item.section) &&
+                                length(this.props.nav) > 2
+                            },
+                            {
+                              'db dn-l':
+                                !this.sectionIsOpen(item.section) &&
+                                length(this.props.nav) < 2
+                            },
+                            'list pl2 ml4 mb4'
+                          )}
                         >
                           {this.normalizeNavBlock(item.edges).map(
                             (item, index) => (
