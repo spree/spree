@@ -5,8 +5,8 @@ import kebabCase from 'lodash.kebabcase'
 import IconLink from 'react-feather/dist/icons/link-2'
 
 const HeaderLink = ({ text, children }) => (
-  <a href={`#${kebabCase(text)}`} className="db link flex">
-    <IconLink className="child absolute pr1 top-0 mt2 left--2" />
+  <a href={`#${kebabCase(text)}`} className="flex items-center link flex nl4">
+    <IconLink className="child pr2" />
     <span className="blue db">{children}</span>
   </a>
 )
