@@ -440,6 +440,65 @@ paths:
         '404':
           $ref: '#/components/responses/404NotFound'
 
+  '/countries':
+    get:
+      description: >-
+        Returns a list of Countries
+      tags:
+        - Countries
+      operationId: index
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PerPageParam'
+        - $ref: '#/components/parameters/CountryIncludeParam'
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CountriesList'
+
+  '/countries/{id}':
+    get:
+      description: >-
+        To view the details for a single Country, make a request using that
+        Country's iso code:<br /> <code>GET /api/v2/storefront/countries/gb</code>
+        <br /><br />You may also query by the Country's iso3 code:<br /><code>GET
+        /api/v2/storefront/coutries/gbr </code> <br /><br />Note that the API will attempt a
+        iso lookup before an iso3 lookup.
+      tags:
+        - Countries
+      parameters:
+        - $ref: '#/components/parameters/IsoOrIso3'
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Country'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+
+  '/countries/default':
+    get:
+      description: >-
+        To view the details for a default Country, use:
+        <br /> <code>GET /api/v2/storefront/countries/default</code>.
+      tags:
+        - Countries
+      operationId: show
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Country'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+
 components:
   securitySchemes:
     bearerAuth:
@@ -1385,6 +1444,92 @@ components:
           $ref: '#/components/schemas/VariantAttributes'
         relationships:
           $ref: '#/components/schemas/VariantRelationships'
+    Country:
+      required:
+        - data
+        - included
+      properties:
+        data:
+          $ref: '#/components/schemas/CountryAttributesAndRelationships'
+        included:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/State'
+    CountriesList:
+      required:
+        - links
+        - data
+        - included
+      properties:
+        links:
+          $ref: '#/components/schemas/ListLinks'
+        meta:
+          $ref: '#/components/schemas/ListMeta'
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/CountryAttributesAndRelationships'
+        included:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/State'
+    CountryAttributes:
+      type: object
+      properties:
+        iso:
+          type: string
+          example: 'us'
+        iso3:
+          type: string
+          example: 'usa'
+        iso_name:
+          type: string
+          example: 'UNITED STATES'
+        name:
+          type: string
+          example: 'United States'
+        states_required:
+          type: boolean
+          example: true
+        zipcode_required:
+          type: boolean
+          example: true
+        default:
+          type: boolean
+          example: true
+    CountryRelationships:
+      type: object
+      properties:
+        states:
+          type: object
+          description: 'States associated with this Country'
+          properties:
+            data:
+              $ref: '#/components/schemas/Relation'
+    CountryAttributesAndRelationships:
+      properties:
+        id:
+          type: string
+          example: '1'
+        type:
+          type: string
+          default: 'country'
+          example: 'country'
+        attributes:
+          $ref: '#/components/schemas/CountryAttributes'
+        relationships:
+          $ref: '#/components/schemas/CountryRelationships'
+    State:
+      type: object
+      properties:
+        abbr:
+          type: string
+          example: 'NY'
+        name:
+          type: string
+          example: 'New York'
   parameters:
     IdOrPermalink:
       name: id
@@ -1458,6 +1603,30 @@ components:
           <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>
         </p>
       example: 'default_variant,variants,option_types,product_properties,taxons,images'
+    IsoOrIso3:
+      name: id
+      in: path
+      required: true
+      description: iso or iso3
+      schema:
+        type: string
+    CountryIncludeParam:
+      name: include
+      in: query
+      schema:
+        type: string
+      description: >-
+        <p>Specify what related resources (relationships) you would like to receive in the response body.</p>
+        <p>
+          Format:
+          <ul>
+            <li>states</li>
+          </ul>
+        <p>
+          More information:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>
+        </p>
+      example: 'states'
   responses:
     404NotFound:
       description: Resource not found
