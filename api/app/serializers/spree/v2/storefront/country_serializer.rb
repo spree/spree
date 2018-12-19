@@ -11,7 +11,7 @@ module Spree
           object == Spree::Country.default
         end
 
-        has_many :states
+        has_many :states, if: proc { |_record, params| params && params[:include_states] }
       end
     end
   end
