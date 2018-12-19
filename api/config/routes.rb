@@ -129,8 +129,6 @@ Spree::Core::Engine.add_routes do
     end
 
     namespace :v2 do
-      get 'storefront.yml', to: 'swagger#storefront', as: 'swagger_storefront', format: 'yml' if Rails.env.development? || ENV['EXPOSE_SWAGGER']
-
       namespace :storefront do
         resource :cart, controller: :cart, only: %i[show create] do
           post   :add_item
