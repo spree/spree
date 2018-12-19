@@ -338,12 +338,7 @@ paths:
         - Products
       operationId: index
       parameters:
-        - in: query
-          name: filter[ids]
-          schema:
-            type: string
-          example: 1,2,3
-          description: Filter Prodcuts based on IDs of Prodcuts
+        - $ref: '#/components/parameters/FilterByIds'
         - in: query
           name: filter[price]
           schema:
@@ -417,6 +412,44 @@ paths:
         '404':
           $ref: '#/components/responses/404NotFound'
 
+  '/taxons':
+    get:
+      description: >-
+        Returns a list of Taxons. You can filter out taxons by...
+      tags:
+        - Taxons
+      parameters:
+        - $ref: '#/components/parameters/FilterByIds'
+        - $ref: '#/components/parameters/FilterByName'
+        - in: query
+          name: filter[parent_id]
+          schema:
+            type: string
+          example: '1'
+          description: Fetch children nodes of specified Taxon
+        - in: query
+          name: filter[taxonomy_id]
+          schema:
+            type: string
+          example: '1'
+          description: Fetch Taxons in a specified Taxonomy
+        - in: query
+          name: filter[roots]
+          schema:
+            type: boolean
+          example: false
+          description: Fetch only root Taxons (Taxonomies)
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PerPageParam'
+        - $ref: '#/components/parameters/TaxonIncludeParam'
+      responses:
+        '200':
+          description: Returns a list of Taxons
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaxonsList'
+
   '/taxons/{id}':
     get:
       description: >-
@@ -430,6 +463,7 @@ paths:
       operationId: show
       parameters:
         - $ref: '#/components/parameters/IdOrPermalink'
+        - $ref: '#/components/parameters/TaxonIncludeParam'
       responses:
         '200':
           description: Returns the reqested Taxon
@@ -1201,6 +1235,54 @@ components:
           $ref: '#/components/schemas/TaxonAttributes'
         relationships:
           $ref: '#/components/schemas/TaxonRelationships'
+    TaxonsList:
+      required:
+        - links
+        - data
+        - included
+      properties:
+        links:
+          $ref: '#/components/schemas/ListLinks'
+        meta:
+          $ref: '#/components/schemas/ListMeta'
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/TaxonAttributesAndRelationships'
+        included:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/TaxonAttributesAndRelationships'
+              - $ref: '#/components/schemas/TaxonImage'
+              - $ref: '#/components/schemas/TaxonomyAttributesAndRelationships'
+              - $ref: '#/components/schemas/ProductAttributesAndRelationships'
+    TaxonImage:
+      required:
+        - data
+      properties:
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+              example: '1'
+            type:
+              type: string
+              default: 'taxon_image'
+              example: 'taxon_image'
+            attributes:
+              type: object
+              properties:
+                position:
+                  type: integer
+                  example: 0
+                  description: 'Sort order of images set in the Admin Panel'
+                styles:
+                  type: array
+                  description: 'An array of pre-scaled image styles'
+                  items:
+                    $ref: '#/components/schemas/ImageStyle'
     TaxonomyAttributesAndRelationships:
       type: object
       properties:
@@ -1591,6 +1673,27 @@ components:
           <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>
         </p>
       example: 'default_variant,variants,option_types,product_properties,taxons,images'
+    TaxonIncludeParam:
+      name: include
+      in: query
+      schema:
+        type: string
+      description: >-
+        <p>Specify what related resources (relationships) you would like to receive in the response body.</p>
+        <p>You can also fetch relationships of relationships.</p>
+        <p>
+          Format:
+          <ul>
+            <li>parent,taxonomy,children,image,products</li>
+            <li>children.children</li>
+            <li>parent.children</li>
+            <li>children,products.default_variant</li>
+          </ul>
+        <p>
+          More information:
+          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>
+        </p>
+      example: 'parent,taxonomy,children,image,products'
     IsoOrIso3:
       name: iso
       in: path
@@ -1606,6 +1709,20 @@ components:
       description: >-
         Pass `states` as value to include States / Regions for each Country
       example: 'states'
+    FilterByIds:
+      in: query
+      name: filter[ids]
+      schema:
+        type: string
+      example: 1,2,3
+      description: Fetch only resources with corresponding IDs
+    FilterByName:
+      in: query
+      name: filter[name]
+      schema:
+        type: string
+      example: rails
+      description: Find resources with matching name (supports wild-card, partial-word match search)
   responses:
     404NotFound:
       description: Resource not found
