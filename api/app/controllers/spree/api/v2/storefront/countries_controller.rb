@@ -38,10 +38,10 @@ module Spree
           end
 
           def resource
-            return Spree::Country.default if params[:id] == 'default'
+            return scope.default if params[:iso] == 'default'
 
-            scope.find_by(iso: params[:id].upcase) ||
-              scope.find_by(iso3: params[:id].upcase)
+            scope.find_by(iso: params[:iso]&.upcase) ||
+              scope.find_by(iso3: params[:iso]&.upcase)
           end
 
           def dependencies

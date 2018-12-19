@@ -145,7 +145,8 @@ Spree::Core::Engine.add_routes do
           patch :complete
         end
 
-        resources :countries, only: %i[index show]
+        resources :countries, only: %i[index]
+        get '/countries/:iso', to: 'countries#show', as: :country
         resources :products, only: %i[index show]
         resources :taxons,   only: %i[index show]
       end

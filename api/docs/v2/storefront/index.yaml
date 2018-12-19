@@ -459,7 +459,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/CountriesList'
 
-  '/countries/{id}':
+  '/countries/{iso}':
     get:
       description: >-
         To view the details for a single Country, make a request using that
@@ -1604,10 +1604,10 @@ components:
         </p>
       example: 'default_variant,variants,option_types,product_properties,taxons,images'
     IsoOrIso3:
-      name: id
+      name: iso
       in: path
       required: true
-      description: iso or iso3
+      description: ISO or ISO3
       schema:
         type: string
     CountryIncludeParam:
