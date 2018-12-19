@@ -43,14 +43,16 @@ export default class Sidebar extends React.Component {
   }
 
   render() {
-    const { isMobile } = this.props
     return (
       <>
         {this.props.nav && (
           <aside
             className={cx(
-              { 'dn db-l fixed-l br b--light-gray ph4 pt4 vh-100': !isMobile },
-              { 'db pt2': isMobile },
+              {
+                'dn db-l fixed-l br b--light-gray ph4 pt4 vh-100': !this.props
+                  .isMobile
+              },
+              { 'db pt2': this.props.isMobile },
               'overflow-auto z-2'
             )}
             css={{
