@@ -336,7 +336,6 @@ paths:
         Returns a list of Products
       tags:
         - Products
-      operationId: index
       parameters:
         - $ref: '#/components/parameters/FilterByIds'
         - in: query
@@ -398,7 +397,6 @@ paths:
         permalink lookup before an ID lookup.
       tags:
         - Products
-      operationId: show
       parameters:
         - $ref: '#/components/parameters/IdOrPermalink'
         - $ref: '#/components/parameters/ProductIncludeParam'
@@ -460,7 +458,6 @@ paths:
         permalink lookup before an ID lookup.
       tags:
         - Taxons
-      operationId: show
       parameters:
         - $ref: '#/components/parameters/IdOrPermalink'
         - $ref: '#/components/parameters/TaxonIncludeParam'
@@ -480,7 +477,6 @@ paths:
         Returns a list of all Countries
       tags:
         - Countries
-      operationId: index
       responses:
         '200':
           description: Returns a list of all Countries
@@ -519,7 +515,6 @@ paths:
         By default this will be the US.
       tags:
         - Countries
-      operationId: show
       parameters:
         - $ref: '#/components/parameters/CountryIncludeParam'
       responses:
@@ -529,8 +524,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Country'
-        '404':
-          $ref: '#/components/responses/404NotFound'
 
 components:
   securitySchemes:
