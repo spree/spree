@@ -332,6 +332,25 @@ paths:
         parameters:
         - $ref: '#/components/parameters/CartIncludeParam'
 
+  '/checkout/payment_methods':
+    get:
+      description: >-
+        Returns a list of available Payment Methods
+      tags:
+        - Checkout
+      responses:
+        '200':
+          description: Returns a list of available Payment Methods
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentMethodsList'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+      security:
+        - orderToken: []
+        - bearerAuth: []
+
   '/products':
     get:
       description: >-
@@ -1595,6 +1614,36 @@ components:
         name:
           type: string
           example: 'New York'
+    PaymentMethodsList:
+      required:
+        - data
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/PaymentMethod'
+    PaymentMethod:
+      properties:
+        id:
+          type: string
+          example: '1'
+        type:
+          type: string
+          default: 'payment_method'
+          example: 'payment_method'
+        attributes:
+          type: object
+          properties:
+            type:
+              type: string
+              example: 'Spree::Gateway::StripeGateway'
+            name:
+              type: string
+              example: 'Stripe'
+            description:
+              type: string
+              example: 'Stripe Payments'
+
   parameters:
     IdOrPermalink:
       name: id
