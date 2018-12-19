@@ -3,7 +3,7 @@ servers:
   - url: 'http://localhost:3000/api/v2/storefront'
 info:
   version: 2.0.0
-  title: Spree API V2 - Storefront
+  title: Storefront API
   description: >-
     <p>
       Storefront API v2 is a modern REST API based on the
@@ -15,7 +15,7 @@ info:
       Please read our introduction to the API v2 [insert link here]
     </p>
     <p>
-      Click here to download Postman collection with example operations
+      <a href="https://raw.githubusercontent.com/spree/spree/master/api/docs/v2/storefront/index.yaml">Import this documentation to Postman</a>
     </p>
 paths:
   '/cart':
@@ -31,7 +31,7 @@ paths:
         - Cart
       responses:
         '201':
-          description: 201 response means that that a Cart was successfully created
+          description: Cart was successfully created
           content:
             application/json:
               schema:
@@ -44,7 +44,7 @@ paths:
         - Cart
       responses:
         '200':
-          description: 200 response means that correct cart was returned
+          description: Correct cart was returned
           content:
             application/json:
               schema:
@@ -60,7 +60,7 @@ paths:
   '/cart/add_item':
     post:
       description: >-
-        <p>Adds a Product Variant to the Cart</p>
+        Adds a Product Variant to the Cart
         <br />
         <p>
           Additional parameters passed in <strong>options</strong> hash
@@ -74,7 +74,7 @@ paths:
         - Cart
       responses:
         '200':
-          description: 200 response means that the item was added to the cart successfully
+          description: Item was added to the Cart successfully
           content:
             application/json:
               schema:
@@ -115,13 +115,13 @@ paths:
         - Cart
       responses:
         '200':
-          description: 200 response means that a new quantity has been successfully set for a requested line item
+          description: New quantity has been successfully set for a requested Line Item
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Cart'
         '422':
-          description: 422 response means that stock quantity is not sufficient for this request to be fulfielled
+          description: Stock quantity is not sufficient for this request to be fulfielled
           content:
             application/json:
               schema:
@@ -148,7 +148,7 @@ paths:
 
   '/cart/remove_line_item/{line_item_id}':
     delete:
-      description: Removes line item from current order
+      description: Removes Line Item from Cart
       tags:
         - Cart
       parameters:
@@ -156,7 +156,7 @@ paths:
         - $ref: '#/components/parameters/CartIncludeParam'
       responses:
         '200':
-          description: 200 response means that the requested line item has been removed from the order
+          description: Requested Line Item has been removed from the Cart
           content:
             application/json:
               schema:
@@ -169,12 +169,12 @@ paths:
 
   '/cart/empty':
     patch:
-      description: Empties the order
+      description: Empties the Cart
       tags:
         - Cart
       responses:
         '200':
-          description: 200 response means that the cart has been successfully emptied
+          description: Cart has been successfully emptied
           content:
             application/json:
               schema:
@@ -194,13 +194,13 @@ paths:
         - Cart
       responses:
         '200':
-          description: 200 response means that coupon code was applied successfully
+          description: Cupon code was applied successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Cart'
         '422':
-          description: 422 response means that coupon code couldn't be applied
+          description: Coupon code couldn't be applied
           content:
             application/json:
               schema:
@@ -237,13 +237,13 @@ paths:
         - $ref: '#/components/parameters/CartIncludeParam'
       responses:
         '200':
-          description: 200 response means that coupon code was removed successfully
+          description: Coupon code was removed successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Cart'
         '422':
-          description: 422 response means that coupon code couldn't be removed
+          description: Coupon code couldn't be removed
           content:
             application/json:
               schema:
@@ -259,13 +259,13 @@ paths:
         - Checkout
       responses:
         '200':
-          description: 200 response means that the Checkout was transitioned to the next step
+          description: Checkout transitioned to the next step
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Cart'
         '422':
-          description: 422 response means that Checkout couldn't transition to the next step
+          description: Checkout couldn't transition to the next step
           content:
             application/json:
               schema:
@@ -285,13 +285,13 @@ paths:
         - Checkout
       responses:
         '200':
-          description: 200 response means that the Checkout was transitioned to the next step
+          description: Checkout was advanced to to the furthest step
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Cart'
         '422':
-          description: 422 response means that Checkout couldn't transition to the next step
+          description: Checkout couldn't transition to the next step
           content:
             application/json:
               schema:
@@ -311,13 +311,13 @@ paths:
           - Checkout
         responses:
           '200':
-            description: 200 response means that the Checkout was completed
+            description: Checkout was completed
             content:
               application/json:
                 schema:
                   $ref: '#/components/schemas/Cart'
           '422':
-            description: 422 response means that Checkout couldn't be completed
+            description: Checkout couldn't be completed
             content:
               application/json:
                 schema:
@@ -388,7 +388,7 @@ paths:
         - $ref: '#/components/parameters/ProductIncludeParam'
       responses:
         '200':
-          description: ok
+          description: Returns a list of Products
           content:
             application/json:
               schema:
@@ -409,7 +409,7 @@ paths:
         - $ref: '#/components/parameters/ProductIncludeParam'
       responses:
         '200':
-          description: ok
+          description: Returns the requested Product
           content:
             application/json:
               schema:
@@ -432,7 +432,7 @@ paths:
         - $ref: '#/components/parameters/IdOrPermalink'
       responses:
         '200':
-          description: ok
+          description: Returns the reqested Taxon
           content:
             application/json:
               schema:
@@ -1527,8 +1527,10 @@ components:
       schema:
         type: string
       examples:
-        ID: '1'
-        Permalink: 'some-product'
+        ID:
+          value: '1'
+        Permalink:
+          value: 'some-product'
     LineItemId:
       name: line_item_id
       in: path
@@ -1544,7 +1546,6 @@ components:
       schema:
         type: integer
       example: 1
-      minimum: 1
     PerPageParam:
       name: per_page
       in: query
@@ -1552,7 +1553,6 @@ components:
       schema:
         type: integer
       example: 10
-      minimum: 1
     CartIncludeParam:
       name: include
       in: query
