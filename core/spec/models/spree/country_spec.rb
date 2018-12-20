@@ -49,4 +49,16 @@ describe Spree::Country, type: :model do
       it { expect(canada.destroy).to be_truthy }
     end
   end
+
+  context '#default?' do
+    before { Spree::Config[:default_country_id] = america.id }
+
+    it 'returns true for default country' do
+      expect(america.default?).to eq(true)
+    end
+
+    it 'returns false for other countries' do
+      expect(canada.default?).to eq(false)
+    end
+  end
 end
