@@ -729,10 +729,10 @@ module Spree
     end
 
     def set_currency
-      ActiveSupport::Deprecation.warn(<<-EOS, caller)
+      ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
          Spree::Order#set_currency was renamed to Spree::Order#ensure_currency_presence
-         and will be removed in Spree 3.9. Please update your code to avoid problems after update
-      EOS
+         and will be removed in Spree 4.0. Please update your code to avoid problems after update
+      DEPRECATION
       ensure_currency_presence
     end
 
