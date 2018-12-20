@@ -1,3 +1,5 @@
+/* Basic styles  */
+
 body {
   font-family: 'IBM Plex Sans', sans-serif;
 }
@@ -16,6 +18,8 @@ li > code {
   overflow: auto;
   max-width: 100%;
 }
+
+/* Colors */
 
 .spree-blue {
   color: #0066cc;
@@ -36,6 +40,8 @@ li > code {
 .b--spree-green {
   border-color: #99cc00;
 }
+
+/* ReDoc Overrides */
 
 label[role='menuitem'] {
   display: flex;

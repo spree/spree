@@ -2,9 +2,21 @@ import * as React from 'react'
 import { RedocStandalone } from 'redoc'
 
 import Layout from '../../../components/Layout'
+import Breadcrumbs from '../../../components/Breadcrumbs'
+
+const crumbs = [
+  {
+    name: 'API',
+    url: '/api/overview'
+  },
+  {
+    name: 'Authentication'
+  }
+]
 
 const AuthenticationPage = () => (
   <Layout activeRootSection="api/v2">
+    <Breadcrumbs crumbs={crumbs} />
     <RedocStandalone
       specUrl="https://raw.githubusercontent.com/spree/spree/master/api/docs/oauth/index.yml"
       options={{
