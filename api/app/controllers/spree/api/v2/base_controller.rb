@@ -80,6 +80,16 @@ module Spree
           []
         end
 
+        def sparse_fields
+          return unless params[:fields]&.respond_to?(:each)
+
+          fields = {}
+          params[:fields].
+            select { |_, v| v.is_a?(String) }.
+            each { |type, values| fields[type.intern] = values.split(',').map(&:intern) }
+          fields.presence
+        end
+
         def current_currency
           spree_current_store.default_currency || Spree::Config[:currency]
         end
