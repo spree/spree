@@ -23,25 +23,25 @@ module Spree
     alias_attribute :ship_total, :shipment_total
 
     def guest_token
-      ActiveSupport::Deprecation.warn(<<-EOS, caller)
-        Order#guest_token is deprecated and will be removed in Spree 3.8. Please use Order#token instead
-      EOS
+      ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
+        Order#guest_token is deprecated and will be removed in Spree 4.0. Please use Order#token instead
+      DEPRECATION
 
       token
     end
 
     def guest_token?
-      ActiveSupport::Deprecation.warn(<<-EOS, caller)
-        Order#guest_token? is deprecated and will be removed in Spree 3.8. Please use Order#token? instead
-      EOS
+      ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
+        Order#guest_token? is deprecated and will be removed in Spree 4.0. Please use Order#token? instead
+      DEPRECATION
 
       token?
     end
 
     def guest_token=(value)
-      ActiveSupport::Deprecation.warn(<<-EOS, caller)
-        Order#guest_token= is deprecated and will be removed in Spree 3.8. Please use Order#token= instead
-      EOS
+      ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
+        Order#guest_token= is deprecated and will be removed in Spree 4.0. Please use Order#token= instead
+      DEPRECATION
 
       self.token = value
     end
