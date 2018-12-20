@@ -1,4 +1,5 @@
 module Spree
-  class TaxonImage < Image
+  class TaxonImage < Asset
+    include Rails.application.config.use_paperclip ? Configuration::Paperclip : Configuration::ActiveStorage
   end
 end
