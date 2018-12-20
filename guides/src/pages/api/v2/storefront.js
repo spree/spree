@@ -5,13 +5,9 @@ import Layout from '../../../components/Layout'
 import Breadcrumbs from '../../../components/Breadcrumbs'
 
 const crumbs = [
-  {
-    name: 'API',
-    url: '/api/overview'
-  },
-  {
-    name: 'StoreFront'
-  }
+  { name: 'API', url: '/api/overview' },
+  { name: 'V2', url: '/api/v2' },
+  { name: 'Storefront' }
 ]
 
 const IndexPage = () => (
