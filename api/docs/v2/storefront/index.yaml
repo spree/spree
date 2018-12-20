@@ -7,7 +7,7 @@ info:
   description: >-
     <p>
       Storefront API v2 is a modern REST API based on the
-      <a href="https://jsonapi.org/" target="_blank">JSON API spec</a>
+      <a href="https://jsonapi.org/" target="_blank" rel="noopener">JSON API spec</a>
       which provides you with necessary endpoints to build amazing user
       intefaces either in JavaScript frameworks or native mobile libraries.
     </p>
@@ -15,7 +15,9 @@ info:
       Please read our introduction to the API v2 [insert link here]
     </p>
     <p>
-      <a href="https://raw.githubusercontent.com/spree/spree/master/api/docs/v2/storefront/index.yaml">Import this documentation to Postman</a>
+      <a href="https://raw.githubusercontent.com/spree/spree/master/api/docs/v2/storefront/index.yaml" target="_blank" rel="noopener">
+        Import this documentation to Postman
+      </a>
     </p>
 paths:
   '/cart':
@@ -194,7 +196,7 @@ paths:
         - Cart
       responses:
         '200':
-          description: Cupon code was applied successfully
+          description: Cuopon code was applied successfully
           content:
             application/json:
               schema:
@@ -285,7 +287,7 @@ paths:
         - Checkout
       responses:
         '200':
-          description: Checkout was advanced to to the furthest step
+          description: Checkout was advanced to the furthest step
           content:
             application/json:
               schema:
@@ -1644,7 +1646,9 @@ components:
           </ul>
         <p>
           More information:
-          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>
+          <a href="https://jsonapi.org/format/#fetching-includes" target="_blank" rel="noopener">
+            https://jsonapi.org/format/#fetching-includes
+          </a>
         </p>
       example: 'line_items,variants,variants.images,billing_address,shipping_address,user,payments,shipments,promotions'
     ProductIncludeParam:
@@ -1663,7 +1667,9 @@ components:
           </ul>
         <p>
           More information:
-          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>
+          <a href="https://jsonapi.org/format/#fetching-includes" target="_blank" rel="noopener">
+            https://jsonapi.org/format/#fetching-includes
+          </a>
         </p>
       example: 'default_variant,variants,option_types,product_properties,taxons,images'
     TaxonIncludeParam:
@@ -1684,7 +1690,9 @@ components:
           </ul>
         <p>
           More information:
-          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>
+          <a href="https://jsonapi.org/format/#fetching-includes" target="_blank" rel="noopener">
+            https://jsonapi.org/format/#fetching-includes
+          </a>
         </p>
       example: 'parent,taxonomy,children,image,products'
     IsoOrIso3:
