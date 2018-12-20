@@ -443,23 +443,19 @@ paths:
   '/countries':
     get:
       description: >-
-        Returns a list of Countries
+        Returns a list of all Countries
       tags:
         - Countries
       operationId: index
-      parameters:
-        - $ref: '#/components/parameters/PageParam'
-        - $ref: '#/components/parameters/PerPageParam'
-        - $ref: '#/components/parameters/CountryIncludeParam'
       responses:
         '200':
-          description: ok
+          description: Returns a list of all Countries
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/CountriesList'
 
-  '/countries/{id}':
+  '/countries/{iso}':
     get:
       description: >-
         To view the details for a single Country, make a request using that
@@ -471,9 +467,10 @@ paths:
         - Countries
       parameters:
         - $ref: '#/components/parameters/IsoOrIso3'
+        - $ref: '#/components/parameters/CountryIncludeParam'
       responses:
         '200':
-          description: ok
+          description: Returns the requested Country
           content:
             application/json:
               schema:
@@ -484,14 +481,16 @@ paths:
   '/countries/default':
     get:
       description: >-
-        To view the details for a default Country, use:
-        <br /> <code>GET /api/v2/storefront/countries/default</code>.
+        Returns the default Country for the application.
+        By default this will be the US.
       tags:
         - Countries
       operationId: show
+      parameters:
+        - $ref: '#/components/parameters/CountryIncludeParam'
       responses:
         '200':
-          description: ok
+          description: Returns the default Country
           content:
             application/json:
               schema:
@@ -1458,23 +1457,12 @@ components:
               - $ref: '#/components/schemas/State'
     CountriesList:
       required:
-        - links
         - data
-        - included
       properties:
-        links:
-          $ref: '#/components/schemas/ListLinks'
-        meta:
-          $ref: '#/components/schemas/ListMeta'
         data:
           type: array
           items:
             $ref: '#/components/schemas/CountryAttributesAndRelationships'
-        included:
-          type: array
-          items:
-            oneOf:
-              - $ref: '#/components/schemas/State'
     CountryAttributes:
       type: object
       properties:
@@ -1604,10 +1592,10 @@ components:
         </p>
       example: 'default_variant,variants,option_types,product_properties,taxons,images'
     IsoOrIso3:
-      name: id
+      name: iso
       in: path
       required: true
-      description: iso or iso3
+      description: ISO or ISO3
       schema:
         type: string
     CountryIncludeParam:
@@ -1616,16 +1604,7 @@ components:
       schema:
         type: string
       description: >-
-        <p>Specify what related resources (relationships) you would like to receive in the response body.</p>
-        <p>
-          Format:
-          <ul>
-            <li>states</li>
-          </ul>
-        <p>
-          More information:
-          <a href="https://jsonapi.org/format/#fetching-includes">https://jsonapi.org/format/#fetching-includes</a>
-        </p>
+        Pass `states` as value to include States / Regions for each Country
       example: 'states'
   responses:
     404NotFound:
