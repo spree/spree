@@ -37,7 +37,7 @@ describe 'Taxons Spec', type: :request do
         expect(json_response['data'][0]).to have_type('taxon')
         expect(json_response['data'][0]).to have_id(taxonomy.root.id.to_s)
         expect(json_response['data'][0]).to have_relationship(:parent).with_data(nil)
-        expect(json_response['data'][0]).to have_relationships(:parent, :children)
+        expect(json_response['data'][0]).to have_relationships(:parent, :taxonomy, :children, :products, :image)
       end
     end
 
