@@ -46,6 +46,15 @@ module Spree
           end
 
           def scope
+            return shippable_countries if params['filter'['shippable']] == 'true'
+            all_countries
+          end
+
+          def shippable_countries
+            Spree::ShippingMethod.all.map(&:zones).flatten.reduce([]) { |countries, zone| countries + zone.country_list }.uniq
+          end
+
+          def all_countries
             Spree::Country.accessible_by(current_ability, :read)
           end
         end
