@@ -29,7 +29,7 @@ module Spree
     alias_attribute :base_price, :cost
 
     def tax_amount
-      @tax_amount ||= tax_rate.calculator.compute_shipping_rate(self)
+      @tax_amount ||= tax_rate&.calculator&.compute_shipping_rate(self) || BigDecimal(0)
     end
 
     def shipping_method

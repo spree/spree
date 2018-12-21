@@ -133,4 +133,12 @@ describe Spree::ShippingRate, type: :model do
       expect(shipping_rate.tax_rate).to eq(tax_rate)
     end
   end
+
+  context '#tax_amount' do
+    context 'without tax rate' do
+      it 'returns 0.0' do
+        expect(shipping_rate.tax_amount).to eq(0.0)
+      end
+    end
+  end
 end
