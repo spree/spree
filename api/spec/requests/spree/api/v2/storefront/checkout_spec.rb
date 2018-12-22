@@ -241,6 +241,40 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
         end
       end
 
+      context 'shipment' do
+        let!(:default_selected_shipping_rate_id) { shipment.selected_shipping_rate_id }
+        let(:new_selected_shipping_rate_id) { Spree::ShippingRate.last.id }
+        let!(:shipping_method) { shipment.shipping_method }
+        let!(:second_shipping_method) { create(:shipping_method, name: 'Fedex') }
+
+        let(:params) do
+          {
+            order: {
+              shipments_attributes: {
+                '0' => { selected_shipping_rate_id: new_selected_shipping_rate_id, id: shipment.id }
+              }
+            }
+          }
+        end
+
+        before do
+          shipment
+          shipment.add_shipping_method(second_shipping_method)
+          execute
+        end
+
+        it_behaves_like 'returns 200 HTTP status'
+        it_behaves_like 'returns valid cart JSON'
+
+        it 'updates shipment' do
+          shipment.reload
+          expect(shipment.shipping_rates.count).to eq(2)
+          expect(shipment.selected_shipping_rate_id).to eq(new_selected_shipping_rate_id)
+          expect(shipment.selected_shipping_rate_id).not_to eq(default_selected_shipping_rate_id)
+          expect(shipment.shipping_method).to eq(second_shipping_method)
+        end
+      end
+
       context 'payment' do
         context 'payment method' do
           let(:params) do
