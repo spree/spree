@@ -22,6 +22,34 @@ describe 'Storefront API v2 Account spec', type: :request do
       expect(json_response['data']).to have_attribute(:completed_orders).with_value(user.orders.complete.count)
     end
 
+    context 'with params "include=default_billing_address"' do
+      before { get '/api/v2/storefront/account?include=default_billing_address', headers: headers }
+
+      it 'returns account data with included default billing address' do
+        expect(json_response['included']).to    include(have_type('address'))
+        expect(json_response['included'][0]).to eq(Spree::V2::Storefront::AddressSerializer.new(user.billing_address).as_json['data'])
+      end
+    end
+
+    context 'with params "include=default_shipping_address"' do
+      before { get '/api/v2/storefront/account?include=default_shipping_address', headers: headers }
+
+      it 'returns account data with included default shipping address' do
+        expect(json_response['included']).to    include(have_type('address'))
+        expect(json_response['included'][0]).to eq(Spree::V2::Storefront::AddressSerializer.new(user.shipping_address).as_json['data'])
+      end
+    end
+
+    context 'with params include=default_billing_address,default_shipping_address' do
+      before { get '/api/v2/storefront/account?include=default_billing_address,default_shipping_address', headers: headers }
+
+      it 'returns account data with included default billing and shipping addresses' do
+        expect(json_response['included']).to    include(have_type('address'))
+        expect(json_response['included'][0]).to eq(Spree::V2::Storefront::AddressSerializer.new(user.billing_address).as_json['data'])
+        expect(json_response['included'][1]).to eq(Spree::V2::Storefront::AddressSerializer.new(user.shipping_address).as_json['data'])
+      end
+    end
+
     context 'as a guest user' do
       let(:headers) { {} }
 
