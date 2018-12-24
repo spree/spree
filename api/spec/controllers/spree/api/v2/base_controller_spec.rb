@@ -46,4 +46,46 @@ describe Spree::Api::V2::BaseController, type: :controller do
       end
     end
   end
+
+  describe '#sparse_fields' do
+    shared_examples 'invalid params format' do
+      it 'returns nil' do
+        expect(dummy_controller.send(:sparse_fields)).to eq(nil)
+      end
+    end
+
+    context 'not passed in params' do
+      before do
+        dummy_controller.params = {}
+      end
+
+      it_behaves_like 'invalid params format'
+    end
+
+    context 'with no field type specified' do
+      before do
+        dummy_controller.params = { fields: 'name,slug,price' }
+      end
+
+      it_behaves_like 'invalid params format'
+    end
+
+    context 'with type values not comma separated' do
+      before do
+        dummy_controller.params = { fields: { product: { values: 'name,slug,price' } } }
+      end
+
+      it_behaves_like 'invalid params format'
+    end
+
+    context 'with valid params format' do
+      before do
+        dummy_controller.params = { fields: { product: 'name,slug,price' } }
+      end
+
+      it 'returns specified params' do
+        expect(dummy_controller.send(:sparse_fields)).to eq(product: [:name, :slug, :price])
+      end
+    end
+  end
 end

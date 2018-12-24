@@ -146,6 +146,8 @@ Spree::Core::Engine.add_routes do
           get :payment_methods
         end
 
+        resource :account, controller: :account, only: %i[show]
+
         resources :countries, only: %i[index]
         get '/countries/:iso', to: 'countries#show', as: :country
         resources :products, only: %i[index show]
