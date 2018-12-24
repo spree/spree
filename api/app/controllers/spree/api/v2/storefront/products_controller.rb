@@ -25,7 +25,8 @@ module Spree
           def serialize_resource(resource)
             dependencies[:resource_serializer].new(
               resource,
-              include: resource_includes
+              include: resource_includes,
+              fields: sparse_fields
             ).serializable_hash
           end
 
@@ -59,7 +60,8 @@ module Spree
             {
               links: collection_links(collection),
               meta: collection_meta(collection),
-              include: resource_includes
+              include: resource_includes,
+              fields: sparse_fields
             }
           end
 
