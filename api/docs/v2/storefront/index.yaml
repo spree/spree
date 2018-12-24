@@ -546,6 +546,27 @@ paths:
               schema:
                 $ref: '#/components/schemas/Country'
 
+  '/account':
+    get:
+      description: >-
+        Returns current user information
+      tags:
+        - Account
+      operationId: show
+      parameters:
+        - $ref: '#/components/parameters/AccountIncludeParam'
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+      security:
+        - bearerAuth: []
+
 components:
   securitySchemes:
     bearerAuth:
@@ -1643,6 +1664,58 @@ components:
             description:
               type: string
               example: 'Stripe Payments'
+    Account:
+      required:
+        - data
+        - included
+      properties:
+        data:
+          $ref: '#/components/schemas/AccountAttributesAndRelationships'
+        included:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/Address'
+    AccountAttributes:
+      type: object
+      properties:
+        email:
+          type: string
+          example: 'spree@example.com'
+        store_credits:
+          type: number
+          example: 150.75
+        completed_orders:
+          type: number
+          example: 3
+    AccountRelationships:
+      type: object
+      properties:
+        default_billing_address:
+          type: object
+          description: 'Default billing address associated with this Account'
+          properties:
+            data:
+              $ref: '#/components/schemas/Relation'
+        default_shipping_address:
+          type: object
+          description: 'Default shipping address associated with this Account'
+          properties:
+            data:
+              $ref: '#/components/schemas/Relation'
+    AccountAttributesAndRelationships:
+      properties:
+        id:
+          type: string
+          example: '1'
+        type:
+          type: string
+          default: 'user'
+          example: 'user'
+        attributes:
+          $ref: '#/components/schemas/AccountAttributes'
+        relationships:
+          $ref: '#/components/schemas/AccountRelationships'
 
   parameters:
     IdOrPermalink:
@@ -1759,6 +1832,14 @@ components:
       description: >-
         Pass `states` as value to include States / Regions for each Country
       example: 'states'
+    AccountIncludeParam:
+      name: include
+      in: query
+      schema:
+        type: string
+      description: >-
+        Pass `default_billing_address` and/or `default_shipping_address` as value to include selected addresses information
+      example: 'default_billing_address,default_shipping_address'
     FilterByIds:
       in: query
       name: filter[ids]
