@@ -4,10 +4,13 @@ import kebabCase from 'lodash.kebabcase'
 
 import HeaderLink from './HeaderLink'
 
+import v from '../../utils/styles'
+
 const H2 = ({ children }) => (
   <h2
+    css={{ paddingTop: v.linkOffset, marginTop: `-${v.linkOffset}` }}
     id={kebabCase(children)}
-    className="pt6 nt6 flex w-100 relative overflow-visible items-center hide-child f3 fw5"
+    className="flex w-100 relative overflow-visible items-center hide-child f3 fw5"
   >
     <HeaderLink text={children}>{children}</HeaderLink>
   </h2>

@@ -40,8 +40,8 @@ export default function Template({ data }) {
       activeSection={guide.fields.section}
       activeRootSection={guide.fields.rootSection}
     >
+      <Helmet title={`Spree Guides :: ${guide.frontmatter.title}`} />
       <div className="guide-container">
-        <Helmet title={`Spree Guides :: ${guide.frontmatter.title}`} />
         <div className="guide">{renderAst(guide.htmlAst)}</div>
       </div>
     </Layout>

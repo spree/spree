@@ -4,5 +4,6 @@ export default {
   },
   header: {
     height: '5rem'
-  }
+  },
+  linkOffset: '6.1rem'
 }

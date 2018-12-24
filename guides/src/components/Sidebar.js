@@ -14,12 +14,13 @@ const byOnlyNonIndexNodes = item => !item.node.fields.isIndex
 const byOnlyIndexNodes = item => item.node.fields.isIndex
 
 const navBlockIndex = block => filter(byOnlyIndexNodes, block)
-const normalizeNavBlock = block => filter(byOnlyNonIndexNodes, block)
+const normalizeNavBlock = (block, sort = 'ASC') =>
+  filter(byOnlyNonIndexNodes, block)
 
 const getNavBlockIndexSlug = block =>
   navBlockIndex(block)[0]['node']['fields']['slug']
 
-export default class Sidebar extends React.Component {
+export default class Sidebar extends React.PureComponent {
   static propTypes = {
     nav: PropTypes.array.isRequired,
     activeSection: PropTypes.string,
