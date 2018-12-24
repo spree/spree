@@ -9,8 +9,8 @@ module Spree
 
         private
 
-        def render_serialized_payload(payload, status = 200)
-          render json: payload, status: status
+        def render_serialized_payload(status = 200)
+          render json: yield, status: status
         rescue ArgumentError => exception
           render_error_payload(exception.message, 400)
         end
