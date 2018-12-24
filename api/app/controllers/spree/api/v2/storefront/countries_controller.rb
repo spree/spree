@@ -23,6 +23,7 @@ module Spree
             dependencies[:resource_serializer].new(
               resource,
               include: resource_includes,
+              fields: sparse_fields,
               params: { include_states: true }
             ).serializable_hash
           end
