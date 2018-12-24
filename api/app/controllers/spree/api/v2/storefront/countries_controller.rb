@@ -6,11 +6,11 @@ module Spree
           include Spree::Api::V2::CollectionOptionsHelpers
 
           def index
-            render_serialized_payload serialize_collection(collection)
+            render_serialized_payload { serialize_collection(collection) }
           end
 
           def show
-            render_serialized_payload serialize_resource(resource)
+            render_serialized_payload { serialize_resource(resource) }
           end
 
           private
