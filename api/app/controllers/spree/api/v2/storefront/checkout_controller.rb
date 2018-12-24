@@ -43,7 +43,7 @@ module Spree
           end
 
           def payment_methods
-            render_serialized_payload serialize_payment_methods(spree_current_order.available_payment_methods)
+            render_serialized_payload { serialize_payment_methods(spree_current_order.available_payment_methods) }
           end
 
           private
@@ -67,14 +67,14 @@ module Spree
 
           def render_order(result)
             if result.success?
-              render_serialized_payload serialize_order(result.value)
+              render_serialized_payload { serialize_order(result.value) }
             else
               render_error_payload(result.error)
             end
           end
 
           def serialize_order(order)
-            dependencies[:cart_serializer].new(order.reload, include: resource_includes).serializable_hash
+            dependencies[:cart_serializer].new(order.reload, include: resource_includes, fields: sparse_fields).serializable_hash
           end
 
           def serialize_payment_methods(payment_methods)

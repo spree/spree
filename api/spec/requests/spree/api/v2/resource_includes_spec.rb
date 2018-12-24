@@ -45,6 +45,12 @@ describe 'API v2 JSON API Resource Includes Spec', type: :request do
         it_behaves_like 'requested no resources'
       end
 
+      context 'with non-existing relation requested' do
+        before { get "/api/v2/storefront/products/#{product.id}?include=does_not_exist" }
+
+        it_behaves_like 'returns 400 HTTP status'
+      end
+
       context 'present param' do
         context 'without nested resources' do
           before { get "/api/v2/storefront/products/#{product.id}?include=default_variant" }
