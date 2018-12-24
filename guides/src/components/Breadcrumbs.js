@@ -2,9 +2,10 @@ import * as React from 'react'
 import PropTypes from 'prop-types'
 import { Link } from 'gatsby'
 import { last, equals } from 'ramda'
-import { cx } from 'emotion'
 
 import IconSplit from 'react-feather/dist/icons/chevron-right'
+
+import Crumb from './Crumb'
 
 /**
  * @description Checks if the current breadcrumb is the last one in array
@@ -15,21 +16,9 @@ import IconSplit from 'react-feather/dist/icons/chevron-right'
 const isLast = (currentCrumb, allCrumbs) =>
   equals(currentCrumb, last(allCrumbs))
 
-const Crumb = ({ name, isActive }) => (
-  <span
-    className={cx(
-      { 'spree-green': isActive },
-      { 'spree-blue': !isActive },
-      'f4 fw5 dib mr2'
-    )}
-  >
-    {name}
-  </span>
-)
-
 const Breadcrumbs = ({ crumbs }) => (
-  <nav className="bb b--light-gray">
-    <ul className="list ph4 flex items-center">
+  <nav className="bb b--light-gray pv3">
+    <ul className="list ph4 mv0 flex items-center">
       {crumbs.map((crumb, index) => (
         <li className="flex items-center" key={index}>
           {crumb.url ? (
@@ -45,11 +34,6 @@ const Breadcrumbs = ({ crumbs }) => (
     </ul>
   </nav>
 )
-
-Crumb.propTypes = {
-  name: PropTypes.string.isRequired,
-  isActive: PropTypes.bool
-}
 
 Breadcrumbs.propTypes = {
   crumbs: PropTypes.arrayOf(

@@ -5,7 +5,7 @@ import { Link } from 'gatsby'
 const Button = ({ to, children }) => (
   <Link
     to={to}
-    className="dib link ttu bg-spree-blue pv3 ph4 white br2 lh-copy"
+    className="fw6 dib link ttu bg-spree-blue pv3 ph4 white br2 lh-copy"
   >
     {children}
   </Link>

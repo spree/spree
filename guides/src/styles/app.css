@@ -2,17 +2,23 @@
 
 body {
   font-family: 'IBM Plex Sans', sans-serif;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 code,
 pre,
-.code {
+.code,
+.redoc-json {
   font-family: 'IBM Plex Mono', monospace !important;
+  font-size: 0.825rem !important;
+  line-height: 1.3;
 }
 
 p > code,
 li > code {
-  font-size: 0.825rem;
+  font-size: 0.825rem !important;
   padding: 0.15rem 0.5rem 0.2rem !important;
   display: inline-flex;
   overflow: auto;
@@ -102,7 +108,9 @@ label[role='menuitem'] svg polygon {
 }
 
 .menu-content li > ul > li > label > span {
-  font-size: 1rem;
+  font-size: 0.825rem;
   color: #777;
   padding-left: 0.25rem;
+  padding-right: 0.5rem;
+  line-height: 1.3;
 }
