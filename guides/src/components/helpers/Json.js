@@ -1,7 +1,7 @@
 import * as React from 'react'
 import PropTypes from 'prop-types'
 import { PrismAsyncLight as SyntaxHighlighter } from 'react-syntax-highlighter'
-import syntaxTheme from 'react-syntax-highlighter/dist/esm/styles/prism/tomorrow'
+import syntaxTheme from 'react-syntax-highlighter/dist/esm/styles/prism/duotone-light'
 import * as R from 'ramda'
 
 import DATA_SAMPLES from '../../data'

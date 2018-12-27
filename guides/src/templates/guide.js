@@ -10,6 +10,7 @@ import Hr from '../components/base/Hr'
 import H1 from '../components/base/H1'
 import H2 from '../components/base/H2'
 import H3 from '../components/base/H3'
+import H4 from '../components/base/H4'
 import P from '../components/base/P'
 import Json from '../components/helpers/Json'
 import Status from '../components/helpers/Status'
@@ -22,6 +23,7 @@ const renderAst = new RehypeReact({
     h1: H1,
     h2: H2,
     h3: H3,
+    h4: H4,
     p: P,
     hr: Hr,
     json: Json,

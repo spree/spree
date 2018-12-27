@@ -6,18 +6,18 @@ import HeaderLink from './HeaderLink'
 
 import v from '../../utils/styles'
 
-const H3 = ({ children }) => (
-  <h3
+const H4 = ({ children }) => (
+  <h4
     css={{ paddingTop: v.linkOffset, marginTop: `-${v.linkOffset}` }}
     id={kebabCase(children)}
-    className="flex fw5 w-100 relative overflow-visible items-center hide-child f4"
+    className="flex fw5 w-100 relative overflow-visible items-center hide-child f5"
   >
     <HeaderLink text={children}>{children}</HeaderLink>
-  </h3>
+  </h4>
 )
 
-H3.propTypes = {
+H4.propTypes = {
   children: PropTypes.node.isRequired
 }
 
-export default H3
+export default H4

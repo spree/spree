@@ -56,7 +56,7 @@ export default class Layout extends React.Component {
                 />
               )}
 
-              <div
+              <main
                 className={cx(
                   this.props.nav && 'nested-links lh-copy pa4 pl5-l pr4-l pt3'
                 )}
@@ -67,7 +67,7 @@ export default class Layout extends React.Component {
                 }}
               >
                 {this.props.children}
-              </div>
+              </main>
             </div>
           </React.Fragment>
         )}

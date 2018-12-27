@@ -68,7 +68,7 @@ export default class Alert extends React.Component {
     return (
       <div
         className={cx(this.__classes[kind], {
-          'mt4 flex items-center ba pl4 pr3 pv3 br2 fw6 relative': ![
+          'mt4 flex items-center ba pl4 pr3 pv3 br2 f5 fw5 relative': ![
             'authorization_failure',
             'not_found',
             'no_api_key'
