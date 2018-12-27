@@ -116,14 +116,6 @@ module Spree
               params: { show_rates: true }
             ).serializable_hash
           end
-
-          def default_resource_includes
-            %i[
-              line_items
-              variants
-              promotions
-            ]
-          end
         end
       end
     end
