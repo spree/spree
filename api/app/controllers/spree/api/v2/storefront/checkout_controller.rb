@@ -60,6 +60,12 @@ module Spree
             render_order(result)
           end
 
+          def shipping_rates
+            result = dependencies[:shipping_rates_getter].call(order: spree_current_order)
+
+            render_serialized_payload { serialize_shipping_rates(result.value) }
+          end
+
           def payment_methods
             render_serialized_payload { serialize_payment_methods(spree_current_order.available_payment_methods) }
           end
@@ -80,6 +86,8 @@ module Spree
               updater: Spree::Checkout::Update,
               cart_serializer: Spree::V2::Storefront::CartSerializer,
               payment_methods_serializer: Spree::V2::Storefront::PaymentMethodSerializer,
+              shipping_rates_getter: Spree::Checkout::GetShippingRates,
+              shipping_rates_serializer: Spree::V2::Storefront::ShipmentSerializer,
               # defined in https://github.com/spree/spree/blob/master/core/lib/spree/core/controller_helpers/strong_parameters.rb#L19
               permitted_attributes: permitted_checkout_attributes
             }
@@ -99,6 +107,14 @@ module Spree
 
           def serialize_payment_methods(payment_methods)
             dependencies[:payment_methods_serializer].new(payment_methods).serializable_hash
+          end
+
+          def serialize_shipping_rates(shipments)
+            dependencies[:shipping_rates_serializer].new(
+              shipments,
+              include: [:shipping_rates],
+              params: { show_rates: true }
+            ).serializable_hash
           end
 
           def default_resource_includes

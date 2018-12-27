@@ -525,4 +525,65 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
       it_behaves_like 'returns a list of available payment methods'
     end
   end
+
+  describe 'checkout#shipping_rates' do
+    let(:execute) { get '/api/v2/storefront/checkout/shipping_rates', headers: headers }
+
+    let(:country) { Spree::Country.default }
+    let(:zone) { create(:zone, name: 'US') }
+    let(:shipping_method) { create(:shipping_method) }
+    let(:address) { create(:address, country: country) }
+
+    let(:shipment) { order.shipments.first }
+    let(:shipping_rate) { shipment.selected_shipping_rate }
+
+    shared_examples 'returns a list of shipments with shipping rates' do
+      before do
+        order.shipping_address = address
+        order.save!
+        zone.countries << country
+        shipping_method.zones = [zone]
+        order.create_proposed_shipments
+        execute
+        order.reload
+      end
+
+      it_behaves_like 'returns 200 HTTP status'
+
+      it 'returns valid shipments JSON' do
+        expect(json_response['data']).not_to be_empty
+        expect(json_response['data'].size).to eq(order.shipments.count)
+        expect(json_response['data'][0]).to have_id(shipment.id.to_s)
+        expect(json_response['data'][0]).to have_type('shipment')
+        expect(json_response['data'][0]).to have_relationships(:shipping_rates)
+        expect(json_response['included']).to be_present
+        expect(json_response['included'].size).to eq(shipment.shipping_rates.count)
+        shipment.shipping_rates.each do |shipping_rate|
+          expect(json_response['included']).to include(have_type('shipping_rate').and have_id(shipping_rate.id.to_s))
+        end
+        expect(json_response['included'][0]).to have_id(shipping_rate.id.to_s)
+        expect(json_response['included'][0]).to have_type('shipping_rate')
+        expect(json_response['included'][0]).to have_attribute(:name).with_value(shipping_method.name)
+        expect(json_response['included'][0]).to have_attribute(:cost).with_value(shipping_rate.cost.to_s)
+        expect(json_response['included'][0]).to have_attribute(:display_cost).with_value(shipping_rate.display_cost.to_s)
+        expect(json_response['included'][0]).to have_attribute(:display_cost).with_value(shipping_rate.display_cost.to_s)
+        expect(json_response['included'][0]).to have_attribute(:tax_amount).with_value(shipping_rate.tax_amount.to_s)
+        expect(json_response['included'][0]).to have_attribute(:display_tax_amount).with_value(shipping_rate.display_tax_amount.to_s)
+        expect(json_response['included'][0]).to have_attribute(:shipping_method_id).with_value(shipping_method.id)
+        expect(json_response['included'][0]).to have_attribute(:selected).with_value(true)
+      end
+    end
+
+    context 'as a guest user' do
+      include_context 'creates guest order with guest token'
+
+      it_behaves_like 'returns a list of shipments with shipping rates'
+    end
+
+    context 'as a signed in user' do
+      include_context 'creates order with line item'
+
+      it_behaves_like 'returns a list of shipments with shipping rates'
+    end
+  end
 end
