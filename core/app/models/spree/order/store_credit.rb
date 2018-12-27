@@ -2,10 +2,10 @@ module Spree
   class Order < Spree::Base
     module StoreCredit
       def add_store_credit_payments(amount = nil)
-        ActiveSupport::Deprecation.warn(<<-EOS, caller)
+        ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
           Spree::Order#add_store_credit_payments method is deprecated and will be removed in Spree 4.0.
-          Please use Spree::Checkout::AddStoreCredit service to remove item from cart.
-        EOS
+          Please use Spree::Checkout::AddStoreCredit service to add Store Credit to Order.
+        DEPRECATION
 
         Spree::Checkout::AddStoreCredit.call(order: self, amount: amount)
       end

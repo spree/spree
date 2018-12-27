@@ -7,10 +7,12 @@ module Spree
         @order = order
         return failed unless @order
 
-        @order.payments.store_credits.where(state: :checkout).map(&:invalidate!)
         remaining_total = amount ? [amount, @order.outstanding_balance].min : @order.outstanding_balance
 
-        apply_store_credits(remaining_total) if @order.user&.store_credits&.any?
+        ApplicationRecord.transaction do
+          @order.payments.store_credits.where(state: :checkout).map(&:invalidate!)
+          apply_store_credits(remaining_total) if @order.user&.store_credits&.any?
+        end
 
         @order.reload.payments.store_credits.valid.any? ? success(@order) : failure(@order)
       end
