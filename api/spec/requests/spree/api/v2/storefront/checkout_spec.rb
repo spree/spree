@@ -495,6 +495,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
 
   describe 'checkout#payment_methods' do
     let(:execute) { get '/api/v2/storefront/checkout/payment_methods', headers: headers }
+    let!(:payment_method) { create(:credit_card_payment_method) }
     let(:payment_methods) { order.available_payment_methods }
 
     shared_examples 'returns a list of available payment methods' do
@@ -503,13 +504,12 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
       it_behaves_like 'returns 200 HTTP status'
 
       it 'returns valid payment methods JSON' do
-        payment_methods.each_with_index do |payment_method, index|
-          expect(json_response['data'][index]).to have_id(payment_method.id.to_s)
-          expect(json_response['data'][index]).to have_type('payment_method')
-          expect(json_response['data'][index]).to have_attribute(:name).with_value(payment_method.name)
-          expect(json_response['data'][index]).to have_attribute(:description).with_value(payment_method.description)
-          expect(json_response['data'][index]).to have_attribute(:type).with_value(payment_method.type)
-        end
+        expect(json_response['data']).not_to be_empty
+        expect(json_response['data'][0]).to have_id(payment_method.id.to_s)
+        expect(json_response['data'][0]).to have_type('payment_method')
+        expect(json_response['data'][0]).to have_attribute(:name).with_value(payment_method.name)
+        expect(json_response['data'][0]).to have_attribute(:description).with_value(payment_method.description)
+        expect(json_response['data'][0]).to have_attribute(:type).with_value(payment_method.type)
       end
     end
 
