@@ -116,3 +116,14 @@ label[role='menuitem'] svg polygon {
   padding-right: 0.5rem;
   line-height: 1.3;
 }
+
+.react-tabs__tab--selected {
+  font-weight: 500 !important;
+  font-size: 1rem !important;
+  text-transform: uppercase;
+}
+
+.tab-success.react-tabs__tab--selected {
+  background-color: #99cc00 !important;
+  color: white !important;
+}
