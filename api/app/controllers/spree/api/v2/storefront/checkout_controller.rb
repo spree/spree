@@ -8,7 +8,7 @@ module Spree
           def next
             spree_authorize! :update, spree_current_order, order_token
 
-            result = dependencies[:next_state_procceder].call(order: spree_current_order)
+            result = dependencies[:next_state_handler].call(order: spree_current_order)
 
             render_order(result)
           end
@@ -16,7 +16,7 @@ module Spree
           def advance
             spree_authorize! :update, spree_current_order, order_token
 
-            result = dependencies[:advance_proceeder].call(order: spree_current_order)
+            result = dependencies[:advance_handler].call(order: spree_current_order)
 
             render_order(result)
           end
@@ -42,6 +42,17 @@ module Spree
             render_order(result)
           end
 
+          def add_store_credit
+            spree_authorize! :update, spree_current_order, order_token
+
+            result = dependencies[:add_store_credit_handler].call(
+              order: spree_current_order,
+              amount: params[:amount].try(:to_f)
+            )
+
+            render_order(result)
+          end
+
           def payment_methods
             render_serialized_payload { serialize_payment_methods(spree_current_order.available_payment_methods) }
           end
@@ -54,8 +65,9 @@ module Spree
 
           def dependencies
             {
-              next_state_procceder: Spree::Checkout::Next,
-              advance_proceeder: Spree::Checkout::Advance,
+              next_state_handler: Spree::Checkout::Next,
+              advance_handler: Spree::Checkout::Advance,
+              add_store_credit_handler: Spree::Checkout::AddStoreCredit,
               completer: Spree::Checkout::Complete,
               updater: Spree::Checkout::Update,
               cart_serializer: Spree::V2::Storefront::CartSerializer,

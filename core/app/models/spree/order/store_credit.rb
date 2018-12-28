@@ -1,25 +1,13 @@
 module Spree
   class Order < Spree::Base
     module StoreCredit
-      def add_store_credit_payments
-        payments.store_credits.where(state: :checkout).map(&:invalidate!)
+      def add_store_credit_payments(amount = nil)
+        ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
+          Spree::Order#add_store_credit_payments method is deprecated and will be removed in Spree 4.0.
+          Please use Spree::Checkout::AddStoreCredit service to add Store Credit to Order.
+        DEPRECATION
 
-        remaining_total = outstanding_balance
-
-        if user&.store_credits&.any?
-          payment_method = Spree::PaymentMethod::StoreCredit.available.first
-          raise 'Store credit payment method could not be found' unless payment_method
-
-          user.store_credits.order_by_priority.each do |credit|
-            break if remaining_total.zero?
-            next if credit.amount_remaining.zero?
-
-            amount_to_take = store_credit_amount(credit, remaining_total)
-            create_store_credit_payment(payment_method, credit, amount_to_take)
-            remaining_total -= amount_to_take
-          end
-          payments.store_credits.checkout
-        end
+        Spree::Checkout::AddStoreCredit.call(order: self, amount: amount)
       end
 
       def remove_store_credit_payments
@@ -81,22 +69,6 @@ module Spree
 
       def display_store_credit_remaining_after_capture
         Spree::Money.new(total_available_store_credit - total_applicable_store_credit, currency: currency)
-      end
-
-      private
-
-      def create_store_credit_payment(payment_method, credit, amount)
-        payments.create!(
-          source: credit,
-          payment_method: payment_method,
-          amount: amount,
-          state: 'checkout',
-          response_code: credit.generate_authorization_code
-        )
-      end
-
-      def store_credit_amount(credit, total)
-        [credit.amount_remaining, total].min
       end
     end
   end

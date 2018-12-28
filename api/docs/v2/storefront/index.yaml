@@ -332,6 +332,40 @@ paths:
         parameters:
         - $ref: '#/components/parameters/CartIncludeParam'
 
+  '/checkout/add_store_credit':
+    post:
+      description: Adds StoreCredit payments if a user has any
+      tags:
+        - Checkout
+      responses:
+        '200':
+          description: StoreCredit payment created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        '422':
+          description: StoreCredit couldn't be created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+      security:
+        - orderToken: []
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: amount
+          description: >-
+            Amount of StoreCredit to use.
+            As much as possible StoreCredit will be applied if no amount is passed.
+          schema:
+            type: string
+          example: 100.0
+        - $ref: '#/components/parameters/CartIncludeParam'
+
   '/checkout/payment_methods':
     get:
       description: >-

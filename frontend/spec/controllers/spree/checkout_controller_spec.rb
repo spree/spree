@@ -529,7 +529,7 @@ describe Spree::CheckoutController, type: :controller do
       before do
         create(:store_credit_payment_method)
         create(:store_credit, user: user, amount: credit_amount)
-        order.add_store_credit_payments
+        Spree::Checkout::AddStoreCredit.call(order: order)
       end
 
       def expect_invalid_store_credit_payment(order)
