@@ -2,7 +2,7 @@ import * as React from 'react'
 import PropTypes from 'prop-types'
 
 const P = ({ children }) => (
-  <p className="f5 lh-copy dark-gray mv4">{children}</p>
+  <p className="f5 dark-gray mv4 relative z-1">{children}</p>
 )
 
 P.propTypes = {

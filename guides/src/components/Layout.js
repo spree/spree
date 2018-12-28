@@ -58,7 +58,8 @@ export default class Layout extends React.Component {
 
               <main
                 className={cx(
-                  this.props.nav && 'nested-links lh-copy pa4 pl5-l pr4-l pt3'
+                  this.props.nav &&
+                    'bg-white nested-links lh-copy pa4 ph5-l pt3'
                 )}
                 css={{
                   '@media (min-width: 60rem)': {

@@ -1,17 +1,23 @@
-/* Basic styles  */
-
 body {
-  font-family: 'IBM Plex Sans', sans-serif;
+  font-family: 'Source Sans Pro', sans-serif;
+  color: #495057;
 
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+:target {
+  display: block;
+  position: relative;
+  margin-top: -110px;
+  padding-top: 110px;
 }
 
 code,
 pre,
 .code,
 .redoc-json {
-  font-family: 'IBM Plex Mono', monospace !important;
+  font-family: 'Roboto Mono', monospace !important;
   font-size: 1rem !important;
   line-height: 1.3;
 }
@@ -20,11 +26,32 @@ pre,
   font-size: 0.88rem !important;
 }
 
+main p,
+main li {
+  line-height: 1.9;
+}
+
 p > code,
 li > code {
   padding: 0.15rem 0.5rem 0.2rem !important;
   overflow: auto;
   max-width: 100%;
+
+  background-color: #f9f9f9;
+  border-radius: 3px;
+  border: 1px solid #ededed;
+  font-size: 0.9rem !important;
+  transition: box-shadow 0.3s ease-in-out;
+}
+
+p > code:hover,
+li > code:hover {
+  box-shadow: 0 0 1.5rem 0 rgba(34, 139, 230, 0.1);
+}
+
+.gatsby-highlight {
+  position: relative;
+  z-index: 1;
 }
 
 /* Colors */
@@ -47,6 +74,10 @@ li > code {
 }
 .b--spree-green {
   border-color: #99cc00;
+}
+
+.spree-green-2 {
+  color: #66a80f;
 }
 
 /* ReDoc Overrides */

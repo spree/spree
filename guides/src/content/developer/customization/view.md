@@ -1,14 +1,15 @@
 ---
-title: "View Customization"
+title: 'View Customization'
 section: customization
 ---
 
 ## Overview
+
 View customization allows you to extend or replace any view within a
 Spree store. This guide explains the options available, including:
 
--   Overwriting view templates
--   Using Deface for small view customizations
+- Overwriting view templates
+- Using Deface for small view customizations
 
 ## Template Replacements
 
@@ -82,7 +83,7 @@ This override **inserts** <code><p>Registration is the future!</p></code> **befo
 
 ### Available actions
 
-Deface applies an __action__ to element(s) matching the supplied CSS selector. These actions are passed when defining a new override are supplied as the key while the CSS selector for the target element(s) is the value, for example:
+Deface applies an **action** to element(s) matching the supplied CSS selector. These actions are passed when defining a new override are supplied as the key while the CSS selector for the target element(s) is the value, for example:
 
 ```ruby
 remove: "p.junk"
@@ -94,34 +95,38 @@ insert_bottom: "ul#giant-list"
 
 Deface currently supports the following actions:
 
-* <tt>:remove</tt> - Removes all elements that match the supplied selector
-* <tt>:replace</tt> - Replaces all elements that match the supplied selector, with the content supplied
-* <tt>:replace_contents</tt> - Replaces the contents of all elements that match the supplied selector
-* <tt>:surround</tt> - Surrounds all elements that match the supplied selector, expects replacement markup to contain <%%= render_original %> placeholder
-* <tt>:surround_contents</tt> - Surrounds the contents of all elements that match the supplied selector, expects replacement markup to contain <%%= render_original %> placeholder
-* <tt>:insert_after</tt> - Inserts after all elements that match the supplied selector
-* <tt>:insert_before</tt> - Inserts before all elements that match the supplied selector
-* <tt>:insert_top</tt> - Inserts inside all elements that match the supplied selector, as the first child
-* <tt>:insert_bottom</tt> - Inserts inside all elements that match the supplied selector, as the last child
-* <tt>:set_attributes</tt> - Sets attributes on all elements that match the supplied selector, replacing existing attribute value if present or adding if not. Expects :attributes option to be passed.
-* <tt>:add_to_attributes</tt> - Appends value to attributes on all elements that match the supplied selector, adds attribute if not present. Expects :attributes option to be passed.
-* <tt>:remove_from_attributes</tt> - Removes value from attributes on all elements that match the supplied selector. Expects :attributes option to be passed.
+- <tt>:remove</tt> - Removes all elements that match the supplied selector
+- <tt>:replace</tt> - Replaces all elements that match the supplied selector, with the content supplied
+- <tt>:replace_contents</tt> - Replaces the contents of all elements that match the supplied selector
+- <tt>:surround</tt> - Surrounds all elements that match the supplied selector, expects replacement markup to contain <%%= render_original %> placeholder
+- <tt>:surround_contents</tt> - Surrounds the contents of all elements that match the supplied selector, expects replacement markup to contain <%%= render_original %> placeholder
+- <tt>:insert_after</tt> - Inserts after all elements that match the supplied selector
+- <tt>:insert_before</tt> - Inserts before all elements that match the supplied selector
+- <tt>:insert_top</tt> - Inserts inside all elements that match the supplied selector, as the first child
+- <tt>:insert_bottom</tt> - Inserts inside all elements that match the supplied selector, as the last child
+- <tt>:set_attributes</tt> - Sets attributes on all elements that match the supplied selector, replacing existing attribute value if present or adding if not. Expects :attributes option to be passed.
+- <tt>:add_to_attributes</tt> - Appends value to attributes on all elements that match the supplied selector, adds attribute if not present. Expects :attributes option to be passed.
+- <tt>:remove_from_attributes</tt> - Removes value from attributes on all elements that match the supplied selector. Expects :attributes option to be passed.
 
-***
+---
+
 Not all actions are applicable to all elements. For example, <tt>:insert_top</tt> and <tt>:insert_bottom</tt> expects a parent element with children.
-***
+
+---
 
 ### Supplying content
 
 Deface supports three options for supplying content to be used by an override:
 
-* <tt>:text</tt> - String containing markup
-* <tt>:partial</tt> - Relative path to a partial
-* <tt>:template</tt> - Relative path to a template
+- <tt>:text</tt> - String containing markup
+- <tt>:partial</tt> - Relative path to a partial
+- <tt>:template</tt> - Relative path to a template
 
-***
+---
+
 As Deface operates on the Erb source the content supplied to an override can include Erb, it is not limited to just HTML. You also have access to all variables accessible in the original Erb context.
-***
+
+---
 
 ### Targeting elements
 
@@ -178,15 +183,15 @@ For example, spree/products/show.html.erb looks as follows:
 As you can see from the example above the `data-hook` can be present in
 a number of ways:
 
--   On elements with **no** `id` attribute the `data-hook` attribute
-    contains a value similar to what would be included in the `id`
-    attribute.
--   On elements with an `id` attribute the `data-hook` attribute does
-    **not** normally contain a value.
--   Occasionally on elements with an `id` attribute the `data-hook` will
-    contain a value different from the elements id. This is generally to
-    support migration from the old 0.60.x style of hooks, where the old
-    hook names were converted into `data-hook` versions.
+- On elements with **no** `id` attribute the `data-hook` attribute
+  contains a value similar to what would be included in the `id`
+  attribute.
+- On elements with an `id` attribute the `data-hook` attribute does
+  **not** normally contain a value.
+- Occasionally on elements with an `id` attribute the `data-hook` will
+  contain a value different from the elements id. This is generally to
+  support migration from the old 0.60.x style of hooks, where the old
+  hook names were converted into `data-hook` versions.
 
 The suggested way to target an element is to use the `data-hook`
 attribute wherever possible. Here are a few examples based on
@@ -205,7 +210,7 @@ override to ensure maximum protection against changes:
 
 ```ruby
  insert_top: "[data-hook='thumbnails'], #thumbnails[data-hook]"
- ```
+```
 
 ### Targeting ruby blocks
 
@@ -214,13 +219,14 @@ contents (and importantly not against the finished / generated HTML). In
 order for Deface to make ruby blocks contained in a view parseable they
 are converted into a pseudo markup as follows.
 
-***
+---
+
 Version 1.0 of Deface, used in Spree 2.1, changed the code tag syntax.
-Formerly code tags were parsed as `<code erb-loud>` and `<code
-erb-silent>`.  They are now parsed as `<erb loud>` and `<erb silent>`.
+Formerly code tags were parsed as `<code erb-loud>` and `<code erb-silent>`. They are now parsed as `<erb loud>` and `<erb silent>`.
 Deface overrides which used selectors like `code[erb-loud]` should now
 use `erb[loud]`.
-***
+
+---
 
 Given the following Erb file:
 
@@ -235,7 +241,7 @@ Given the following Erb file:
 Would be seen by Deface as:
 
 ```html
-<html>
+<!-- <html>
   <erb[silent]> if products.empty? </erb>
   <erb[loud]> Spree.t(:no_products_found) </erb>
   <erb[silent]> elsif params.key?(:keywords) </erb>
@@ -243,7 +249,7 @@ Would be seen by Deface as:
   <h3><erb[loud]> Spree.t(:products) </erb></h3>
 
   <erb[silent]> end </erb>
-</html>
+</html> -->
 ```
 
 So you can target ruby code blocks with the same standard CSS3 style
@@ -272,11 +278,13 @@ after upgrades.
 Once you've reviewed the new source you can update the `:original` value
 to new source to clear the warning.
 
-***
+---
+
 Deface removes all whitespace from both the actual and `:original`
 source values before comparing, to reduce false warnings caused by basic
 whitespace differences.
-***
+
+---
 
 ### Organizing Overrides
 
@@ -284,10 +292,12 @@ The suggested method for organizing your overrides is to create a
 separate file for each override inside the **app/overrides** directory,
 naming each file the same as the **:name** specified within.
 
-***
+---
+
 Using this method will ensure your overrides are compatible with
 future theming developments (editor).
-***
+
+---
 
 ### More information on Deface
 

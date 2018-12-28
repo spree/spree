@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import * as React from 'react'
 
 const JS_NPM_URLS = [
@@ -10,7 +11,7 @@ export default class HTML extends React.Component {
       <html lang="en" {...this.props.htmlAttributes}>
         <head>
           <link
-            href="https://fonts.googleapis.com/css?family=IBM+Plex+Mono|IBM+Plex+Sans"
+            href="https://fonts.googleapis.com/css?family=Roboto+Mono:400,400i,500,500i|Source+Sans+Pro:400,400i,600,600i"
             rel="stylesheet"
           />
           <link

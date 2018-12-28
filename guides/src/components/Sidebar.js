@@ -82,7 +82,7 @@ export default class Sidebar extends React.PureComponent {
                   .isMobile
               },
               { 'db pt2': this.props.isMobile },
-              'overflow-auto z-2'
+              'overflow-auto z-2 bg-near-white'
             )}
             css={{
               width: style.sidebar.width
@@ -131,7 +131,7 @@ export default class Sidebar extends React.PureComponent {
                             <li key={index}>
                               <Link
                                 to={item.node.fields.slug}
-                                activeClassName="spree-green fw5"
+                                activeClassName="spree-green fw6"
                                 className="link gray db mv2 fw4"
                               >
                                 {item.node.frontmatter.title}

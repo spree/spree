@@ -43,9 +43,7 @@ export default function Template({ data }) {
       activeRootSection={guide.fields.rootSection}
     >
       <Helmet title={`Spree Guides :: ${guide.frontmatter.title}`} />
-      <div className="guide-container">
-        <div className="guide">{renderAst(guide.htmlAst)}</div>
-      </div>
+      <article className="mt2">{renderAst(guide.htmlAst)}</article>
     </Layout>
   )
 }
