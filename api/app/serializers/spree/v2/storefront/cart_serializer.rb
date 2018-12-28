@@ -12,7 +12,8 @@ module Spree
 
         has_many   :line_items
         has_many   :variants
-        has_many   :promotions, object_method_name: :order_promotions
+        has_many   :promotions, object_method_name: :order_promotions,
+                                id_method_name: :order_promotion_ids
         has_many   :payments
         has_many   :shipments
 

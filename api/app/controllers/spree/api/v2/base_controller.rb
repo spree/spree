@@ -9,8 +9,8 @@ module Spree
 
         private
 
-        def render_serialized_payload(payload, status = 200)
-          render json: payload, status: status
+        def render_serialized_payload(status = 200)
+          render json: yield, status: status
         rescue ArgumentError => exception
           render_error_payload(exception.message, 400)
         end
@@ -78,6 +78,16 @@ module Spree
         # ['variant.images', 'line_items']
         def default_resource_includes
           []
+        end
+
+        def sparse_fields
+          return unless params[:fields]&.respond_to?(:each)
+
+          fields = {}
+          params[:fields].
+            select { |_, v| v.is_a?(String) }.
+            each { |type, values| fields[type.intern] = values.split(',').map(&:intern) }
+          fields.presence
         end
 
         def current_currency

@@ -394,4 +394,81 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
       it_behaves_like 'perform update'
     end
   end
+
+  describe 'checkout#add_store_credits' do
+    let(:order_total) { 500.00 }
+    let(:params) { { order_token: order.token } }
+    let(:execute) { post '/api/v2/storefront/checkout/add_store_credit', params: params, headers: headers }
+
+    before do
+      create(:store_credit_payment_method)
+      execute
+    end
+
+    context 'for guest or user without store credit' do
+      let!(:order) { create(:order, total: order_total) }
+
+      it_behaves_like 'returns 422 HTTP status'
+    end
+
+    context 'for user with store credits' do
+      let!(:store_credit) { create(:store_credit, amount: order_total) }
+      let!(:order) { create(:order, user: store_credit.user, total: order_total) }
+
+      shared_examples 'valid payload' do |amount|
+        it 'returns StoreCredit payment' do
+          expect(json_response['data']).to have_relationship(:payments)
+          payment = Spree::Payment.find(json_response['data']['relationships']['payments']['data'][0]['id'].to_i)
+          expect(payment.amount).to eq amount
+          expect(payment.payment_method.class).to eq Spree::PaymentMethod::StoreCredit
+        end
+      end
+
+      context 'with no amount param' do
+        it_behaves_like 'returns 200 HTTP status'
+        it_behaves_like 'valid payload', 500.0
+      end
+
+      context 'with amount params requested' do
+        let(:requested_amount) { 300.0 }
+        let(:params) { { order_token: order.token, amount: requested_amount } }
+
+        it_behaves_like 'returns 200 HTTP status'
+        it_behaves_like 'valid payload', 300.0
+      end
+    end
+  end
+
+  describe 'checkout#payment_methods' do
+    let(:execute) { get '/api/v2/storefront/checkout/payment_methods', headers: headers }
+    let(:payment_methods) { order.available_payment_methods }
+
+    shared_examples 'returns a list of available payment methods' do
+      before { execute }
+
+      it_behaves_like 'returns 200 HTTP status'
+
+      it 'returns valid payment methods JSON' do
+        payment_methods.each_with_index do |payment_method, index|
+          expect(json_response['data'][index]).to have_id(payment_method.id.to_s)
+          expect(json_response['data'][index]).to have_type('payment_method')
+          expect(json_response['data'][index]).to have_attribute(:name).with_value(payment_method.name)
+          expect(json_response['data'][index]).to have_attribute(:description).with_value(payment_method.description)
+          expect(json_response['data'][index]).to have_attribute(:type).with_value(payment_method.type)
+        end
+      end
+    end
+
+    context 'as a guest user' do
+      include_context 'creates guest order with guest token'
+
+      it_behaves_like 'returns a list of available payment methods'
+    end
+
+    context 'as a signed in user' do
+      include_context 'creates order with line item'
+
+      it_behaves_like 'returns a list of available payment methods'
+    end
+  end
 end
