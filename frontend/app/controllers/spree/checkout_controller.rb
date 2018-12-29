@@ -162,7 +162,7 @@ module Spree
 
     def add_store_credit_payments
       if params.key?(:apply_store_credit)
-        @order.add_store_credit_payments
+        Spree::Checkout::AddStoreCredit.call(order: @order)
 
         # Remove other payment method parameters.
         params[:order].delete(:payments_attributes)

@@ -6,7 +6,7 @@ module Spree
           def show
             raise ActiveRecord::RecordNotFound if spree_current_user.nil?
 
-            render_serialized_payload serialize_resource(resource)
+            render_serialized_payload { serialize_resource(resource) }
           end
 
           private
@@ -18,7 +18,8 @@ module Spree
           def serialize_resource(resource)
             dependencies[:resource_serializer].new(
               resource,
-              include: resource_includes
+              include: resource_includes,
+              fields: sparse_fields
             ).serializable_hash
           end
 

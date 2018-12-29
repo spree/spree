@@ -40,6 +40,7 @@ paths:
                 $ref: '#/components/schemas/Cart'
       parameters:
         - $ref: '#/components/parameters/CartIncludeParam'
+        - $ref: '#/components/parameters/SparseFieldsParam'
     get:
       description: Returns contents of the cart
       tags:
@@ -58,6 +59,7 @@ paths:
         - bearerAuth: []
       parameters:
         - $ref: '#/components/parameters/CartIncludeParam'
+        - $ref: '#/components/parameters/SparseFieldsParam'
 
   '/cart/add_item':
     post:
@@ -88,6 +90,7 @@ paths:
         - bearerAuth: []
       parameters:
         - $ref: '#/components/parameters/CartIncludeParam'
+        - $ref: '#/components/parameters/SparseFieldsParam'
       requestBody:
         required: true
         content:
@@ -133,6 +136,7 @@ paths:
         - bearerAuth: []
       parameters:
         - $ref: '#/components/parameters/CartIncludeParam'
+        - $ref: '#/components/parameters/SparseFieldsParam'
       requestBody:
         required: true
         content:
@@ -156,6 +160,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/LineItemId'
         - $ref: '#/components/parameters/CartIncludeParam'
+        - $ref: '#/components/parameters/SparseFieldsParam'
       responses:
         '200':
           description: Requested Line Item has been removed from the Cart
@@ -188,6 +193,7 @@ paths:
         - bearerAuth: []
       parameters:
         - $ref: '#/components/parameters/CartIncludeParam'
+        - $ref: '#/components/parameters/SparseFieldsParam'
 
   '/cart/apply_coupon_code':
     patch:
@@ -212,6 +218,7 @@ paths:
         - bearerAuth: []
       parameters:
         - $ref: '#/components/parameters/CartIncludeParam'
+        - $ref: '#/components/parameters/SparseFieldsParam'
       requestBody:
         required: true
         content:
@@ -237,6 +244,7 @@ paths:
             type: string
           example: 'DISCOUNT10'
         - $ref: '#/components/parameters/CartIncludeParam'
+        - $ref: '#/components/parameters/SparseFieldsParam'
       responses:
         '200':
           description: Coupon code was removed successfully
@@ -279,6 +287,7 @@ paths:
         - bearerAuth: []
       parameters:
         - $ref: '#/components/parameters/CartIncludeParam'
+        - $ref: '#/components/parameters/SparseFieldsParam'
 
   '/checkout/advance':
     patch:
@@ -305,6 +314,7 @@ paths:
         - bearerAuth: []
       parameters:
         - $ref: '#/components/parameters/CartIncludeParam'
+        - $ref: '#/components/parameters/SparseFieldsParam'
 
   '/checkout/complete':
     patch:
@@ -330,6 +340,41 @@ paths:
           - orderToken: []
           - bearerAuth: []
         parameters:
+        - $ref: '#/components/parameters/CartIncludeParam'
+        - $ref: '#/components/parameters/SparseFieldsParam'
+
+  '/checkout/add_store_credit':
+    post:
+      description: Adds StoreCredit payments if a user has any
+      tags:
+        - Checkout
+      responses:
+        '200':
+          description: StoreCredit payment created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        '422':
+          description: StoreCredit couldn't be created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+      security:
+        - orderToken: []
+        - bearerAuth: []
+      parameters:
+        - in: query
+          name: amount
+          description: >-
+            Amount of StoreCredit to use.
+            As much as possible StoreCredit will be applied if no amount is passed.
+          schema:
+            type: string
+          example: 100.0
         - $ref: '#/components/parameters/CartIncludeParam'
 
   '/checkout/payment_methods':
@@ -401,6 +446,7 @@ paths:
         - $ref: '#/components/parameters/PageParam'
         - $ref: '#/components/parameters/PerPageParam'
         - $ref: '#/components/parameters/ProductIncludeParam'
+        - $ref: '#/components/parameters/SparseFieldsParam'
       responses:
         '200':
           description: Returns a list of Products
@@ -421,6 +467,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/IdOrPermalink'
         - $ref: '#/components/parameters/ProductIncludeParam'
+        - $ref: '#/components/parameters/SparseFieldsParam'
       responses:
         '200':
           description: Returns the requested Product
@@ -461,6 +508,7 @@ paths:
         - $ref: '#/components/parameters/PageParam'
         - $ref: '#/components/parameters/PerPageParam'
         - $ref: '#/components/parameters/TaxonIncludeParam'
+        - $ref: '#/components/parameters/SparseFieldsParam'
       responses:
         '200':
           description: Returns a list of Taxons
@@ -482,6 +530,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/IdOrPermalink'
         - $ref: '#/components/parameters/TaxonIncludeParam'
+        - $ref: '#/components/parameters/SparseFieldsParam'
       responses:
         '200':
           description: Returns the reqested Taxon
@@ -519,6 +568,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/IsoOrIso3'
         - $ref: '#/components/parameters/CountryIncludeParam'
+        - $ref: '#/components/parameters/SparseFieldsParam'
       responses:
         '200':
           description: Returns the requested Country
@@ -538,6 +588,7 @@ paths:
         - Countries
       parameters:
         - $ref: '#/components/parameters/CountryIncludeParam'
+        - $ref: '#/components/parameters/SparseFieldsParam'
       responses:
         '200':
           description: Returns the default Country
@@ -555,6 +606,7 @@ paths:
       operationId: show
       parameters:
         - $ref: '#/components/parameters/AccountIncludeParam'
+        - $ref: '#/components/parameters/SparseFieldsParam'
       responses:
         '200':
           description: ok
@@ -1854,6 +1906,26 @@ components:
         type: string
       example: rails
       description: Find resources with matching name (supports wild-card, partial-word match search)
+    SparseFieldsParam:
+      in: query
+      name: fields
+      style: deepObject
+      description: >-
+        <p>Specify what attributes for given types you would like to receive in the response body.</p>
+        <p>
+          Format:
+          <ul>
+            <li>fields[cart]=total,currency,number</li>
+          </ul>
+        <p>
+          More information:
+          <a href="https://jsonapi.org/format/#fetching-sparse-fieldsets" target="_blank" rel="noopener">
+            https://jsonapi.org/format/#fetching-sparse-fieldsets
+          </a>
+        </p>
+      example: { "cart": "total,currency,number" }
+      schema:
+        type: object
   responses:
     404NotFound:
       description: Resource not found
