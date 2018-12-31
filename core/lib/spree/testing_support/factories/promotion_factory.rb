@@ -48,4 +48,14 @@ FactoryBot.define do
     end
     factory :promotion_with_item_total_rule, traits: [:with_item_total_rule]
   end
+
+  factory :free_shipping_promotion, class: Spree::Promotion do
+    name { 'Free Shipping Promotion' }
+
+    after(:create) do |promotion|
+      action = Spree::Promotion::Actions::FreeShipping.new
+      action.promotion = promotion
+      action.save
+    end
+  end
 end
