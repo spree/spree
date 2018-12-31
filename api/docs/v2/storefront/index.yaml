@@ -20,6 +20,50 @@ info:
       </a>
     </p>
 paths:
+  '/account/credit_cards':
+    get:
+      description: >-
+        <p>Return credit cards with payment_method id</p>
+      tags:
+        - Account
+      responses:
+        '201':
+          description: Listing user credit cards.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreditCard'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/CreditCardParam'
+        - in: query
+          name: filter[payment_method_id]
+          schema:
+            type: integer
+          example: 2
+          description: Filter based on payment method ID
+  '/account/credit_cards/default':
+    get:
+      description: >-
+        <p>Return user default credit card</p>
+      tags:
+        - Account
+      responses:
+        '201':
+          description: Listing user default credit card.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreditCard'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/CreditCardParam'
   '/cart':
     post:
       description: >-
@@ -1121,6 +1165,54 @@ components:
               - $ref: '#/components/schemas/User'
               - $ref: '#/components/schemas/Address'
               - $ref: '#/components/schemas/ShipmentAttributesWithoutRelationsips'
+    CreditCard:
+      required:
+        - data
+        - attributes
+        - relationships
+      properties:
+        data:
+          type: object
+          properties:
+            id:
+              type: integer
+              example: 1
+            cc_type:
+              type: string
+              example: 'credit_card'
+            attributes:
+              type: object
+              properties:
+                type:
+                  type: string
+                  example: 'visa'
+                last_digits:
+                  type: string
+                  example: '1232'
+                month:
+                  type: integer
+                  example: 10
+                year:
+                  type: integer
+                  example: 2019
+                name:
+                  type: string
+                  example: 'John Doe'
+            relationships:
+              type: object
+              properties:
+                payment_method:
+                  type: object
+                  properties:
+                    data:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                          example: '1'
+                        type:
+                          type: string
+                          example: 'payment_method'
     Image:
       required:
         - data
@@ -2139,6 +2231,13 @@ components:
         country_id: 232
 
   parameters:
+    CreditCardParam:
+      name: user_id
+      in: path
+      required: true
+      description: Current user id
+      schema:
+        type: integer
     IdOrPermalink:
       name: id
       in: path
