@@ -1,0 +1,15 @@
+module Spree
+  module V2
+    module Storefront
+      module Account
+        class CreditCardSerializer < BaseSerializer
+          set_type :credit_card
+
+          attributes :cc_type, :last_digits, :month, :year, :name
+
+          belongs_to :payment_method
+        end
+      end
+    end
+  end
+end
