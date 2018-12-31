@@ -12,6 +12,43 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
   let(:payment) { create(:payment, amount: order.total, order: order) }
   let(:shipment) { create(:shipment, order: order) }
 
+  let(:address) do
+    {
+      firstname: 'John',
+      lastname: 'Doe',
+      address1: '7735 Old Georgetown Road',
+      city: 'Bethesda',
+      phone: '3014445002',
+      zipcode: '20814',
+      state_id: state.id,
+      country_id: country.id
+    }
+  end
+
+  let(:payment_source_attributes) do
+    {
+      number: '4111111111111111',
+      month: 1.month.from_now.month,
+      year: 1.month.from_now.year,
+      verification_value: '123',
+      name: 'Spree Commerce'
+    }
+  end
+  let(:payment_params) do
+    {
+      order: {
+        payments_attributes: [
+          {
+            payment_method_id: payment_method.id
+          }
+        ]
+      },
+      payment_source: {
+        payment_method.id.to_s => payment_source_attributes
+      }
+    }
+  end
+
   include_context 'API v2 tokens'
 
   describe 'checkout#next' do
@@ -204,19 +241,6 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
 
     shared_examples 'perform update' do
       context 'addresses' do
-        let(:address) do
-          {
-            firstname: 'John',
-            lastname: 'Doe',
-            address1: '7735 Old Georgetown Road',
-            city: 'Bethesda',
-            phone: '3014445002',
-            zipcode: '20814',
-            state_id: state.id,
-            country_id: country.id
-          }
-        end
-
         let(:params) do
           {
             order: {
@@ -301,29 +325,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
         end
 
         context 'payment source' do
-          let(:source_attributes) do
-            {
-              number: '4111111111111111',
-              month: 1.month.from_now.month,
-              year: 1.month.from_now.year,
-              verification_value: '123',
-              name: 'Spree Commerce'
-            }
-          end
-          let(:params) do
-            {
-              order: {
-                payments_attributes: [
-                  {
-                    payment_method_id: payment_method.id
-                  }
-                ]
-              },
-              payment_source: {
-                payment_method.id.to_s => source_attributes
-              }
-            }
-          end
+          let(:params) { payment_params }
 
           before { execute }
 
@@ -584,6 +586,94 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
       include_context 'creates order with line item'
 
       it_behaves_like 'returns a list of shipments with shipping rates'
+    end
+  end
+
+  describe 'full checkout flow' do
+    let!(:country) { create(:country) }
+    let(:state) { create(:state, country: country) }
+    let!(:shipping_method) do
+      create(:shipping_method).tap do |shipping_method|
+        shipping_method.zones = [zone]
+      end
+    end
+    let!(:zone) { create(:zone) }
+    let!(:zone_member) { create(:zone_member, zone: zone, zoneable: country) }
+    let!(:payment_method) { create(:credit_card_payment_method) }
+
+    let(:customer_params) do
+      {
+        order: {
+          email: 'new@customer.org',
+          bill_address_attributes: address,
+          ship_address_attributes: address
+        }
+      }
+    end
+
+    let(:shipment_params) do
+      {
+        order: {
+          shipments_attributes: {
+            '0' => { selected_shipping_rate_id: shipping_rate_id, id: shipment_id }
+          }
+        }
+      }
+    end
+
+    let(:shipping_rate_id) do
+      json_response['data'].first['relationships']['shipping_rates']['data'].first['id']
+    end
+    let(:shipment_id) { json_response['data'].first['id'] }
+
+    shared_examples 'transitions through checkout from start to finish' do
+      before do
+        zone.countries << country
+        shipping_method.zones = [zone]
+      end
+
+      it 'completes checkout' do
+        # we need to set customer information (email, billing & shipping address)
+        patch '/api/v2/storefront/checkout', params: customer_params, headers: headers
+        expect(response.status).to eq(200)
+
+        # getting back shipping rates
+        get '/api/v2/storefront/checkout/shipping_rates', headers: headers
+        expect(response.status).to eq(200)
+
+        # selecting shipping method
+        patch '/api/v2/storefront/checkout', params: shipment_params, headers: headers
+        expect(response.status).to eq(200)
+
+        # getting back list of available payment methods
+        get '/api/v2/storefront/checkout/payment_methods', headers: headers
+        expect(response.status).to eq(200)
+        expect(json_response['data'].first['id']).to eq(payment_method.id.to_s)
+
+        # creating a CC for selected payment method
+        patch '/api/v2/storefront/checkout', params: payment_params, headers: headers
+        expect(response.status).to eq(200)
+
+        # complete the checkout
+        patch '/api/v2/storefront/checkout/complete', headers: headers
+        expect(response.status).to eq(200)
+        expect(order.reload.completed_at).not_to be_nil
+        expect(order.state).to eq('complete')
+        expect(order.shipments.first.shipping_method).to eq(shipping_method)
+        expect(order.payments.valid.first.payment_method).to eq(payment_method)
+      end
+    end
+
+    context 'as a guest user' do
+      include_context 'creates guest order with guest token'
+
+      it_behaves_like 'transitions through checkout from start to finish'
+    end
+
+    context 'as a signed in user' do
+      include_context 'creates order with line item'
+
+      it_behaves_like 'transitions through checkout from start to finish'
     end
   end
 end
