@@ -59,6 +59,12 @@ describe 'Storefront API v2 CreditCards spec', type: :request do
       it_behaves_like 'returns valid user credit cards resource JSON'
 
       it 'returns user default credit_card' do
+        expect(json_response['data'][0]).to have_id(default_credit_card.id.to_s)
+        expect(json_response['data'][0]).to have_attribute(:cc_type).with_value(default_credit_card.cc_type)
+        expect(json_response['data'][0]).to have_attribute(:last_digits).with_value(default_credit_card.last_digits)
+        expect(json_response['data'][0]).to have_attribute(:name).with_value(default_credit_card.name)
+        expect(json_response['data'][0]).to have_attribute(:month).with_value(default_credit_card.month)
+        expect(json_response['data'][0]).to have_attribute(:year).with_value(default_credit_card.year)
         expect(json_response['data'].size).to eq(1)
       end
     end

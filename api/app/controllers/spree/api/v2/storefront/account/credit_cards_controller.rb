@@ -5,24 +5,22 @@ module Spree
         module Account
           class CreditCardsController < ::Spree::Api::V2::BaseController
             def index
-              render_serialized_payload serialize_resource(resource)
+              render_serialized_payload { serialize_resource(resource) }
             end
 
             def show
-              render_serialized_payload serialize_resource(resource)
+              render_serialized_payload { serialize_resource(resource) }
             end
 
             private
 
             def resource
-              return scope.credit_cards.default if params[:id].eql?('default')
-              return scope.credit_cards.where(payment_method_id: params[:filter]['payment_method_id']) if params[:filter].present?
-
-              scope.credit_cards
+              dependencies[:resource_finder].new.execute(scope: scope, params: params)
             end
 
             def dependencies
               {
+                resource_finder: Spree::CreditCards::Find,
                 credit_card_serializer: Spree::V2::Storefront::Account::CreditCardSerializer
               }
             end

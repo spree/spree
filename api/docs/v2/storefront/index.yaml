@@ -23,11 +23,11 @@ paths:
   '/account/credit_cards':
     get:
       description: >-
-        <p>Return credit cards with payment_method id</p>
+        Returns a list of Credit Cards for the signed in User
       tags:
         - Account
       responses:
-        '201':
+        '200':
           description: Listing user credit cards.
           content:
             application/json:
@@ -48,11 +48,11 @@ paths:
   '/account/credit_cards/default':
     get:
       description: >-
-        <p>Return user default credit card</p>
+        Return the User's default Credit Card
       tags:
         - Account
       responses:
-        '201':
+        '200':
           description: Listing user default credit card.
           content:
             application/json:
