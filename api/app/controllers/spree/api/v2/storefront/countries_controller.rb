@@ -29,7 +29,7 @@ module Spree
           end
 
           def collection
-            scope
+            dependencies[:collection_finder].new(scope, params).call
           end
 
           def resource
@@ -42,7 +42,8 @@ module Spree
           def dependencies
             {
               collection_serializer: Spree::V2::Storefront::CountrySerializer,
-              resource_serializer: Spree::V2::Storefront::CountrySerializer
+              resource_serializer: Spree::V2::Storefront::CountrySerializer,
+              collection_finder: Spree::Countries::Find
             }
           end
 
