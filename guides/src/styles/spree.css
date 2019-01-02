@@ -1,23 +1,29 @@
-/*
-Name:   Duotone Light
-Author: Simurai, adapted from DuoTone themes for Atom (http://simurai.com/projects/2016/01/01/duotone-themes)
+pre[class*='language-'] {
+  font-size: 1em;
+  line-height: 1.5em;
+  letter-spacing: 0.3px;
+  word-spacing: 1px;
+  color: #495057;
+  padding: 2rem;
+  background-color: #f8f9fa;
+  border-radius: 3px;
+  border: 1px solid #ededed;
+  overflow: auto;
+  transition: box-shadow 0.3s ease-in-out;
+  position: relative;
+  z-index: 3;
+}
 
-Conversion: Bram de Haan (http://atelierbram.github.io/Base2Tone-prism/output/prism/prism-base2tone-morning-light.css)
-Generated with Base16 Builder (https://github.com/base16-builder/base16-builder)
-*/
+pre[class*='language-']:hover {
+  box-shadow: 0 0 1.5rem 0 rgba(34, 139, 230, 0.1);
+}
 
 code[class*='language-'],
 pre[class*='language-'] {
-  font-family: Consolas, Menlo, Monaco, 'Andale Mono WT', 'Andale Mono',
-    'Lucida Console', 'Lucida Sans Typewriter', 'DejaVu Sans Mono',
-    'Bitstream Vera Sans Mono', 'Liberation Mono', 'Nimbus Mono L',
-    'Courier New', Courier, monospace;
-  font-size: 14px;
   line-height: 1.375;
   direction: ltr;
   text-align: left;
   white-space: pre;
-  word-spacing: normal;
   word-break: normal;
 
   -moz-tab-size: 4;
@@ -28,8 +34,6 @@ pre[class*='language-'] {
   -moz-hyphens: none;
   -ms-hyphens: none;
   hyphens: none;
-  background: #faf8f5;
-  color: #728fcb;
 }
 
 pre[class*='language-']::-moz-selection,
@@ -37,7 +41,7 @@ pre[class*='language-'] ::-moz-selection,
 code[class*='language-']::-moz-selection,
 code[class*='language-'] ::-moz-selection {
   text-shadow: none;
-  background: #faf8f5;
+  background: #e3f3f7;
 }
 
 pre[class*='language-']::selection,
@@ -45,7 +49,7 @@ pre[class*='language-'] ::selection,
 code[class*='language-']::selection,
 code[class*='language-'] ::selection {
   text-shadow: none;
-  background: #faf8f5;
+  background: #e3f3f7;
 }
 
 /* Code blocks */
@@ -69,7 +73,7 @@ pre[class*='language-'] {
 }
 
 .token.punctuation {
-  color: #b6ad9a;
+  color: #baa827;
 }
 
 .token.namespace {
@@ -79,12 +83,12 @@ pre[class*='language-'] {
 .token.tag,
 .token.operator,
 .token.number {
-  color: #063289;
+  color: #0066cc;
 }
 
 .token.property,
 .token.function {
-  color: #b29762;
+  color: #e67700;
 }
 
 .token.tag-id,
@@ -95,7 +99,7 @@ pre[class*='language-'] {
 
 code.language-javascript,
 .token.attr-name {
-  color: #896724;
+  color: #7fa902;
 }
 
 code.language-css,
@@ -115,7 +119,7 @@ code.language-scss,
 .token.statement,
 .token.regex,
 .token.atrule {
-  color: #728fcb;
+  color: #0066cc;
 }
 
 .token.placeholder,

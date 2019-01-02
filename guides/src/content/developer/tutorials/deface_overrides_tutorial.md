@@ -39,13 +39,12 @@ So we want to override `spree/admin/products/_form.html.erb`. Here is the part o
 
 ```erb
 <div class="right four columns omega" data-hook="admin_product_form_right">
-<%%= f.field_container :price do %>
-    <%%= f.label :price, raw(Spree.t(:master_price) + content_tag(:span, ' *',
-     class: 'required')) %>
-    <%%= f.text_field :price, value: number_to_currency(@product.price,
-      unit: '') %>
-    <%%= f.error_message_on :price %>
-<%% end %>
+  <%= f.field_container :price do %>
+    <%= f.label :price, raw(Spree.t(:master_price) + content_tag(:span, ' *', class: 'required')) %>
+    <%= f.text_field :price, value: number_to_currency(@product.price, unit: '')%>
+    <%= f.error_message_on :price %>
+  <% end %>
+</div>
 ```
 
 We want our override to insert another field container after the price field container. We can do this by creating a new file `app/overrides/add_sale_price_to_product_edit.rb` and adding the following content:
