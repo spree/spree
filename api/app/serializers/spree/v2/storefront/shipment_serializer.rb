@@ -4,8 +4,10 @@ module Spree
       class ShipmentSerializer < BaseSerializer
         set_type :shipment
 
-        attributes :tracking, :number, :cost, :display_cost, :discounted_cost, :display_discounted_cost,
-                   :final_price, :display_final_price, :item_cost, :display_item_cost, :shipped_at
+        attributes :number, :final_price, :display_final_price,
+                   :state, :shipped_at, :tracking_url
+
+        attribute :free, &:free?
 
         has_many :shipping_rates, if: proc { |_record, params| params&.dig(:show_rates) }
       end

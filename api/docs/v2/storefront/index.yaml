@@ -580,6 +580,28 @@ paths:
         - orderToken: []
         - bearerAuth: []
 
+  '/checkout/shipping_rates':
+    get:
+      description: >-
+        Returns a list of available Shipping Rates for Checkout.
+        Shipping Rates are grouped against Shipments.
+        Each checkout cna have multiple Shipments eg. some products are available
+        in stock and will be send out instantly and some needs to be backordered.
+      tags:
+        - Checkout
+      responses:
+        '200':
+          description: Returns a list of available Shipping Rates for Checkout
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShippingRatesList'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+      security:
+        - orderToken: []
+        - bearerAuth: []
+
   '/products':
     get:
       description: >-
@@ -1900,6 +1922,133 @@ components:
             description:
               type: string
               example: 'Stripe Payments'
+    ShipmentAttributesWithoutRelationsips:
+      properties:
+        id:
+          type: string
+          example: '1'
+        type:
+          type: string
+          default: 'shipment'
+          example: 'shipment'
+        attributes:
+          $ref: '#/components/schemas/ShipmentAttributes'
+        relationships:
+          type: object
+    ShipmentAttributesAndRelationsips:
+      properties:
+        id:
+          type: string
+          example: '1'
+        type:
+          type: string
+          default: 'shipment'
+          example: 'shipment'
+        attributes:
+          $ref: '#/components/schemas/ShipmentAttributes'
+        relationships:
+          properties:
+            shipping_rates:
+              properties:
+                data:
+                  type: array
+                  items:
+                    oneOf:
+                      - $ref: '#/components/schemas/Relation'
+    ShipmentAttributes:
+      properties:
+        number:
+          type: string
+          example: 'H121354'
+          descriptipon: 'Unique Shipment identifier'
+        free:
+          type: boolean
+          example: true
+          description: 'Indicates if the Shipping Rate is free, eg. when Free shipping promo applied to Cart'
+        final_price:
+          type: string
+          example: '10.0'
+          description: 'Price to be presented for the Customer'
+        display_final_price:
+          type: string
+          example: '$10.00'
+        tracking_url:
+          type: string
+          example: 'https://tools.usps.com/go/TrackConfirmAction?tRef=fullpage&tLc=2&text28777=&tLabels=4123412434%2C'
+          description: 'Tracking URL to the service provider website'
+        state:
+          type: string
+          example: 'shipped'
+          description: >-
+            Status of the Shipment. For list of all available statuses please refer:
+            <a href="https://guides.spreecommerce.org/developer/shipments.html#overview" target="_blank" rel="noopener">
+              Shipment section in Spree Guides
+            </a>
+        shipped_at:
+          type: string
+          format: 'date-time'
+          example: '2019-01-02 13:42:12 UTC'
+          description: 'Date when Shipment was being sent from the warehouse'
+    ShippingRatesList:
+      required:
+        - data
+        - included
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ShipmentAttributesAndRelationsips'
+        included:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/ShippingRate'
+    ShippingRate:
+      properties:
+        id:
+          type: string
+          example: '1'
+        type:
+          type: string
+          default: 'shipping_rate'
+          example: 'shipping_rate'
+        attributes:
+          type: object
+          properties:
+            name:
+              type: string
+              example: 'USPS Ground'
+            selected:
+              type: boolean
+              example: true
+            free:
+              type: boolean
+              example: true
+              description: 'Indicates if the Shipping Rate is free, eg. when Free shipping promo applied to Cart'
+            final_price:
+              type: string
+              example: '10.0'
+              description: 'Price to be presented for the Customer'
+            display_final_price:
+              type: string
+              example: '$10.00'
+            cost:
+              type: string
+              example: '10.0'
+              description: 'Price of the service without discounts applied'
+            display_cost:
+              type: string
+              example: '$10.00'
+            tax_amount:
+              type: string
+              example: '0.0'
+              description: 'Eligible tax for service (if any)'
+            display_tax_amount:
+              type: string
+              example: '$0.00'
+            shipping_method_id:
+              type: integer
+              example: 1
     Account:
       required:
         - data
