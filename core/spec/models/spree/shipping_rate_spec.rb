@@ -141,4 +141,26 @@ describe Spree::ShippingRate, type: :model do
       end
     end
   end
+
+  context '#final_price' do
+    let(:free_shipping_promotion) { create(:free_shipping_promotion, code: 'freeship') }
+    let(:order) { shipment.order }
+
+    it 'returns 0 if free shipping promotion is applied' do
+      order.coupon_code = free_shipping_promotion.code
+      Spree::PromotionHandler::Coupon.new(order).apply
+      expect(order.promotions).to include(free_shipping_promotion)
+      expect(shipping_rate.final_price).to eq(0.0)
+    end
+
+    it 'returns 0 if cost is lesser than the discount amount' do
+      allow_any_instance_of(Spree::ShippingRate).to receive_messages(discount_amount: -20.0)
+      expect(shipping_rate.final_price).to eq(0.0)
+    end
+
+    it 'returns cost minus discount amount' do
+      allow_any_instance_of(Spree::ShippingRate).to receive_messages(discount_amount: -5.0)
+      expect(shipping_rate.final_price).to eq(5.0)
+    end
+  end
 end
