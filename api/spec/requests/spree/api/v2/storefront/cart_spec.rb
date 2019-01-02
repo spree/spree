@@ -388,6 +388,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
             expect(json_response['included']).to include(have_type('promotion').and(have_id(order_promotion_id)))
             expect(json_response['included']).to include(have_type('promotion').and(have_attribute(:amount).with_value(adjustment_value.to_s)))
             expect(json_response['included']).to include(have_type('promotion').and(have_attribute(:display_amount).with_value(adjustment_value_in_money.to_s)))
+            expect(json_response['included']).to include(have_type('promotion').and(have_attribute(:code).with_value(promotion.code)))
           end
         end
 
