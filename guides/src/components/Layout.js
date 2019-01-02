@@ -1,16 +1,24 @@
+// --- Dependencies
 import * as React from 'react'
 import PropTypes from 'prop-types'
 import Helmet from 'react-helmet'
 import { StaticQuery, graphql } from 'gatsby'
 import { cx } from 'emotion'
 
+// --- Components
 import Header from './Header'
 import Sidebar from './Sidebar'
 
+// --- Utils
 import styles from '../utils/styles'
 
+// --- Styles
 import 'tachyons/css/tachyons.css'
 import '../styles/app.css'
+
+/**
+ * Component
+ */
 
 export default class Layout extends React.Component {
   static propTypes = {

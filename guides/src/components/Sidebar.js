@@ -78,11 +78,11 @@ export default class Sidebar extends React.PureComponent {
           <aside
             className={cx(
               {
-                'dn db-l fixed-l br b--light-gray ph4 pt4 vh-100': !this.props
-                  .isMobile
+                'dn db-l fixed-l br bg-near-white b--light-gray ph4 pt4 vh-100': !this
+                  .props.isMobile
               },
-              { 'db pt2': this.props.isMobile },
-              'overflow-auto z-2 bg-near-white'
+              { 'db pt2 bg-white': this.props.isMobile },
+              'overflow-auto z-2'
             )}
             css={{
               width: style.sidebar.width

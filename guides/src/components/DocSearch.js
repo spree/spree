@@ -59,7 +59,8 @@ export default class DocSearch extends React.Component {
           placeholder="Search docs..."
           aria-label="Search docs"
           css={{
-            paddingLeft: '3rem'
+            paddingLeft: '3rem',
+            WebkitAppearance: 'none'
           }}
         />
       </form>

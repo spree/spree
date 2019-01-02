@@ -15,6 +15,7 @@ import IconGithub from 'react-feather/dist/icons/github'
 import IconBurger from 'react-feather/dist/icons/menu'
 import IconClose from 'react-feather/dist/icons/x-circle'
 import IconSearch from 'react-feather/dist/icons/search'
+import IconContact from 'react-feather/dist/icons/message-circle'
 
 export default class Header extends React.PureComponent {
   static propTypes = {
@@ -91,6 +92,9 @@ export default class Header extends React.PureComponent {
             <NavItem url="https://heroku.com/deploy?template=https://github.com/spree/spree">
               Demo
             </NavItem>
+
+            <NavItem url="https://new.spreecommerce.org/">Contact Us</NavItem>
+
             <NavItem url="https://slack.spreecommerce.org/">
               <IconSlack />
             </NavItem>
@@ -100,14 +104,17 @@ export default class Header extends React.PureComponent {
           </nav>
 
           <nav className="dn-l justify-end w-100 flex">
+            <NavItem url="https://new.spreecommerce.org/">
+              <IconContact />
+            </NavItem>
             {this.state.searchIsOpen ? (
               <IconClose
-                className="pointer dib dn-l mv2 mr3 z-999 right-0 absolute pr3"
+                className="pointer dib dn-l mv2 mr3 z-999 right-0 absolute pr3 pv2 gray"
                 onClick={this._toggleSearch}
               />
             ) : (
               <IconSearch
-                className="pointer dib dn-l mv2 mv0-l mr3"
+                className="pointer dib dn-l mv2 mv0-l mr0 pv2 ph1 gray"
                 onClick={this._toggleSearch}
               />
             )}
@@ -120,12 +127,12 @@ export default class Header extends React.PureComponent {
             </NavItem>
             {this.state.menuIsOpen ? (
               <IconClose
-                className="pointer dib dn-l mv2 mv0-l"
+                className="pointer dib dn-l mv2 mv0-l gray pa2"
                 onClick={() => this._toggleMenu()}
               />
             ) : (
               <IconBurger
-                className="pointer dib dn-l mv2 mv0-l"
+                className="pointer dib dn-l mv2 mv0-l gray pa2"
                 onClick={() => this._toggleMenu()}
               />
             )}
@@ -139,7 +146,7 @@ export default class Header extends React.PureComponent {
               marginTop: styles.header.height
             }}
           >
-            <nav className="flex flex-column overflow-auto">
+            <nav className="flex flex-column overflow-auto mr4 mr0-l">
               <NavItem
                 text="API"
                 isActive={this.isApiSectionActive()}
