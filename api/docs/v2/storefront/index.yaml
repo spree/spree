@@ -376,6 +376,33 @@ paths:
             type: string
           example: 100.0
         - $ref: '#/components/parameters/CartIncludeParam'
+        - $ref: '#/components/parameters/SparseFieldsParam'
+  '/checkout/remove_store_credit':
+    post:
+      description: Remove StoreCredit payments if any applied
+      tags:
+        - Checkout
+      responses:
+        '200':
+          description: StoreCredit payment removed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        '422':
+          description: StoreCredit payments weren't removed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+      security:
+        - orderToken: []
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/CartIncludeParam'
+        - $ref: '#/components/parameters/SparseFieldsParam'
 
   '/checkout/payment_methods':
     get:
