@@ -14,7 +14,9 @@ module Spree
         has_many   :variants
         has_many   :promotions, object_method_name: :order_promotions,
                                 id_method_name: :order_promotion_ids
-        has_many   :payments
+        has_many   :payments do |cart|
+          cart.payments.valid
+        end
         has_many   :shipments
 
         belongs_to :user
