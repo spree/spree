@@ -3,7 +3,7 @@ module Spree
     belongs_to :order, class_name: 'Spree::Order'
     belongs_to :promotion, class_name: 'Spree::Promotion'
 
-    delegate :name, :description, to: :promotion
+    delegate :name, :description, :code, to: :promotion
     delegate :currency, to: :order
 
     extend Spree::DisplayMoney
