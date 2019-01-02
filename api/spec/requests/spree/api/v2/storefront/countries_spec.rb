@@ -9,7 +9,6 @@ describe 'Storefront API v2 Countries spec', type: :request do
     Spree::Config[:default_country_id] = country.id
     country
   end
-
   shared_examples 'returns valid country resource JSON' do
     it 'returns a valid country resource JSON response' do
       expect(response.status).to eq(200)
@@ -28,14 +27,46 @@ describe 'Storefront API v2 Countries spec', type: :request do
   end
 
   describe 'countries#index' do
-    before { get '/api/v2/storefront/countries' }
+    context 'general' do
 
-    it_behaves_like 'returns 200 HTTP status'
+      before { get '/api/v2/storefront/countries' }
 
-    it 'returns all countries' do
-      expect(json_response['data'].size).to eq(Spree::Country.count)
-      expect(json_response['data'][0]).to have_type('country')
-      expect(json_response['data'][0]).not_to have_relationships(:states)
+      it_behaves_like 'returns 200 HTTP status'
+
+      it 'returns all countries' do
+        expect(json_response['data'].size).to eq(Spree::Country.count)
+        expect(json_response['data'][0]).to have_type('country')
+        expect(json_response['data'][0]).not_to have_relationships(:states)
+      end
+    end
+
+    context 'with shipping country filtering' do
+      let!(:new_country) { create(:country) }
+      let!(:zone) { create(:zone) }
+      let!(:shipping_method) { create(:shipping_method) }
+      let!(:shippable_url) { '/api/v2/storefront/countries?filter[shippable]=true' }
+      let!(:to_return) { shipping_method.zones.reduce([]) { |collection, zone| collection + zone.country_list } }
+
+      it 'returns countries that the current store ships to' do
+        get shippable_url
+        expect(json_response['data'].size).to eq(to_return.size)
+      end
+
+      it 'does not return country second time if it appears in multiple zones' do
+        zone.countries << country
+        shipping_method.zones << zone
+        get shippable_url
+        expect(json_response['data'].size).to eq(to_return.size)
+      end
+
+      it 'returns countries from multiple shipping methods' do
+        new_country = create(:country)
+        new_shipping_method = create(:shipping_method)
+        new_shipping_method.zones.first.countries << new_country
+        to_return << new_country
+        get shippable_url
+        expect(json_response['data'].pluck(:id)).to include(new_country.id.to_s)
+      end
     end
   end
 
