@@ -5,7 +5,7 @@ module Spree
         module Account
           class CreditCardsController < ::Spree::Api::V2::BaseController
             def index
-              render_serialized_payload { serialize_resource(resource) }
+              render_serialized_payload { serialize_collection(resource) }
             end
 
             def show
@@ -21,12 +21,20 @@ module Spree
             def dependencies
               {
                 resource_finder: Spree::CreditCards::Find,
-                credit_card_serializer: Spree::V2::Storefront::Account::CreditCardSerializer
+                collection_serializer: Spree::V2::Storefront::Account::CreditCardSerializer,
+                resource_serializer: Spree::V2::Storefront::Account::CreditCardSerializer
               }
             end
 
+            def serialize_collection(resource)
+              dependencies[:collection_serializer].new(
+                resource,
+                include: resource_includes
+              ).serializable_hash
+            end
+
             def serialize_resource(resource)
-              dependencies[:credit_card_serializer].new(resource).serializable_hash
+              dependencies[:resource_serializer].new(resource).serializable_hash
             end
 
             def scope

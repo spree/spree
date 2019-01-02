@@ -23,7 +23,7 @@ describe 'Storefront API v2 CreditCards spec', type: :request do
 
   describe 'credit_cards#index' do
     context 'with filter options' do
-      before { get "/api/v2/storefront/account/credit_cards?filter[payment_method_id]=#{credit_cards.first.payment_method_id}", headers: headers_bearer, params: params }
+      before { get "/api/v2/storefront/account/credit_cards?filter[payment_method_id]=#{credit_cards.first.payment_method_id}&include=payment_method", headers: headers_bearer, params: params }
 
       it_behaves_like 'returns valid user credit cards resource JSON'
 
