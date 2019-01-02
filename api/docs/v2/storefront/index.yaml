@@ -891,62 +891,53 @@ components:
       type: string
       example: '2018-05-25T11:22:57.214-04:00'
     Address:
-      required:
-        - data
       properties:
-        data:
+        id:
+          type: string
+          example: '1'
+        type:
+          type: string
+          default: 'address'
+          example: 'address'
+        attributes:
           type: object
-          required:
-            - id
-            - type
-            - attributes
           properties:
-            id:
+            firstname:
               type: string
-              example: '1'
-            type:
+              example: 'John'
+            lastname:
               type: string
-              default: 'address'
-              example: 'address'
-            attributes:
-              type: object
-              properties:
-                firstname:
-                  type: string
-                  example: 'John'
-                lastname:
-                  type: string
-                  example: 'Doe'
-                address1:
-                  type: string
-                  example: '1600 Amphitheatre Pkwy'
-                address2:
-                  type: string
-                  example: 'Suite 1'
-                city:
-                  type: string
-                  example: 'Mountain View'
-                zipcode:
-                  type: string
-                  example: '94043'
-                phone:
-                  type: string
-                  example: '(+1) 123 456 789'
-                state_name:
-                  type: string
-                  example: 'California'
-                state_code:
-                  type: string
-                  example: 'CA'
-                country_name:
-                  type: string
-                  example: 'United States of America'
-                country_iso3:
-                  type: string
-                  example: 'USA'
-                company:
-                  type: string
-                  example: 'Google Inc.'
+              example: 'Doe'
+            address1:
+              type: string
+              example: '1600 Amphitheatre Pkwy'
+            address2:
+              type: string
+              example: 'Suite 1'
+            city:
+              type: string
+              example: 'Mountain View'
+            zipcode:
+              type: string
+              example: '94043'
+            phone:
+              type: string
+              example: '(+1) 123 456 789'
+            state_name:
+              type: string
+              example: 'California'
+            state_code:
+              type: string
+              example: 'CA'
+            country_name:
+              type: string
+              example: 'United States of America'
+            country_iso3:
+              type: string
+              example: 'USA'
+            company:
+              type: string
+              example: 'Google Inc.'
     Cart:
       required:
         - data
@@ -962,8 +953,11 @@ components:
           properties:
             id:
               type: string
+              example: '1'
             type:
               type: string
+              example: 'cart'
+              default: 'cart'
             attributes:
               type: object
               properties:
@@ -1085,16 +1079,27 @@ components:
                   properties:
                     data:
                       $ref: '#/components/schemas/Relation'
+                payments:
+                  type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/Relation'
+                shipments:
+                  type: object
+                  properties:
+                    data:
+                      $ref: '#/components/schemas/Relation'
         included:
           type: array
           items:
             type: object
             oneOf:
-              - $ref: '#/components/schemas/Variant'
+              - $ref: '#/components/schemas/VariantAttributesAndRelationships'
               - $ref: '#/components/schemas/LineItem'
               - $ref: '#/components/schemas/Promotion'
               - $ref: '#/components/schemas/User'
               - $ref: '#/components/schemas/Address'
+              - $ref: '#/components/schemas/ShipmentAttributesWithoutRelationsips'
     Image:
       required:
         - data
@@ -1136,132 +1141,123 @@ components:
           example: 1080
           description: 'Actual height of image'
     User:
-      required:
-        - data
       properties:
-        data:
+        id:
+          type: string
+          example: 1
+        type:
+          type: string
+          default: 'user'
+          example: 'user'
+        attributes:
           type: object
           properties:
-            id:
+            email:
               type: string
-              example: 1
-            type:
-              type: string
-              default: 'user'
-              example: 'user'
-            attributes:
-              type: object
-              properties:
-                email:
-                  type: string
-                  example: 'spree@example.com'
+              example: 'spree@example.com'
     LineItem:
-      required:
-        - data
       properties:
-        data:
+        id:
+          type: string
+          example: '1'
+        type:
+          type: string
+          default: 'line_item'
+          example: 'line_item'
+        attributes:
           type: object
           properties:
-            id:
+            name:
               type: string
-              example: '1'
-            type:
+              example: 'Sample product'
+            quantity:
+              type: integer
+              example: 1
+            slug:
               type: string
-              default: 'line_item'
-              example: 'line_item'
-            attributes:
-              type: object
-              properties:
-                name:
-                  type: string
-                  example: 'Sample product'
-                quantity:
-                  type: integer
-                  example: 1
-                slug:
-                  type: string
-                  example: 'sample-product'
-                options_text:
-                  type: string
-                  example: 'Size: small, Color: red'
-                price:
-                  type: string
-                  example: '125.0'
-                  description: Price of Product per quantity
-                currency:
-                  type: string
-                  example: 'USD'
-                display_price:
-                  type: string
-                  example: '$125.00'
-                  description: Price of Product per quantity
-                total:
-                  type: string
-                  example: '250.0'
-                  description: >-
-                    Total price of Line Item including adjastments, promotions
-                    and taxes
-                display_total:
-                  type: string
-                  example: '$250.00'
-                  description: >-
-                    Total price of Line Item including adjastments, promotions
-                    and taxes
-                adjustment_total:
-                  type: string
-                  example: '10.0'
-                  description: TBD
-                display_adjustment_total:
-                  type: string
-                  example: '$10.00'
-                  description: TBD
-                additional_tax_total:
-                  type: string
-                  example: '5.0'
-                display_additional_tax_total:
-                  type: string
-                  example: '$5.00'
-                promo_total:
-                  type: string
-                  example: '-5.0'
-                display_promo_total:
-                  type: string
-                included_tax_total:
-                  type: string
-                  example: '0.0'
-                  description: 'Taxes included in the price, eg. VAT'
-                display_inluded_tax_total:
-                  type: string
-                  example: '$0.00'
+              example: 'sample-product'
+            options_text:
+              type: string
+              example: 'Size: small, Color: red'
+            price:
+              type: string
+              example: '125.0'
+              description: Price of Product per quantity
+            currency:
+              type: string
+              example: 'USD'
+            display_price:
+              type: string
+              example: '$125.00'
+              description: Price of Product per quantity
+            total:
+              type: string
+              example: '250.0'
+              description: >-
+                Total price of Line Item including adjastments, promotions
+                and taxes
+            display_total:
+              type: string
+              example: '$250.00'
+              description: >-
+                Total price of Line Item including adjastments, promotions
+                and taxes
+            adjustment_total:
+              type: string
+              example: '10.0'
+              description: TBD
+            display_adjustment_total:
+              type: string
+              example: '$10.00'
+              description: TBD
+            additional_tax_total:
+              type: string
+              example: '5.0'
+            display_additional_tax_total:
+              type: string
+              example: '$5.00'
+            promo_total:
+              type: string
+              example: '-5.0'
+            display_promo_total:
+              type: string
+            included_tax_total:
+              type: string
+              example: '0.0'
+              description: 'Taxes included in the price, eg. VAT'
+            display_inluded_tax_total:
+              type: string
+              example: '$0.00'
+        relationships:
+          variant:
+            type: object
+            properties:
+              data:
+                $ref: '#/components/schemas/Relation'
     Promotion:
-      required:
-        - data
       properties:
-        data:
+        id:
+          type: string
+          example: '1'
+        type:
+          type: string
+          example: 'promotion'
+          default: 'promotion'
+        attributes:
           type: object
           properties:
-            id:
+            name:
               type: string
-              example: '1'
-            type:
+              example: '10% Discount'
+            descriptiom:
               type: string
-              example: 'promotion'
-              default: 'promotion'
-            attributes:
-              type: object
-              properties:
-                name:
-                  type: string
-                  example: '10% Discount'
-                descriptiom:
-                  type: string
-                  example: 'Super discount for you'
-                amount:
-                  type: string
-                  example: '-10.0'
-                display_amount:
-                  type: string
-                  example: '-$10.00'
+              example: 'Super discount for you'
+            amount:
+              type: string
+              example: '-10.0'
+            display_amount:
+              type: string
+              example: '-$10.00'
     Product:
       required:
         - data
@@ -2049,6 +2045,7 @@ components:
             shipping_method_id:
               type: integer
               example: 1
+              description: 'ID of a Shipping Method. You will need this for the Checkout Update action'
     Account:
       required:
         - data
