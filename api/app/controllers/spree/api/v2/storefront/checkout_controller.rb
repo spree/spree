@@ -53,6 +53,13 @@ module Spree
             render_order(result)
           end
 
+          def remove_store_credit
+            spree_authorize! :update, spree_current_order, order_token
+
+            result = dependencies[:remove_store_credit_handler].call(order: spree_current_order)
+            render_order(result)
+          end
+
           def payment_methods
             render_serialized_payload { serialize_payment_methods(spree_current_order.available_payment_methods) }
           end
@@ -68,6 +75,7 @@ module Spree
               next_state_handler: Spree::Checkout::Next,
               advance_handler: Spree::Checkout::Advance,
               add_store_credit_handler: Spree::Checkout::AddStoreCredit,
+              remove_store_credit_handler: Spree::Checkout::RemoveStoreCredit,
               completer: Spree::Checkout::Complete,
               updater: Spree::Checkout::Update,
               cart_serializer: Spree::V2::Storefront::CartSerializer,

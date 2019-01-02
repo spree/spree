@@ -395,7 +395,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
     end
   end
 
-  describe 'checkout#add_store_credits' do
+  describe 'checkout#add_store_credit' do
     let(:order_total) { 500.00 }
     let(:params) { { order_token: order.token } }
     let(:execute) { post '/api/v2/storefront/checkout/add_store_credit', params: params, headers: headers }
@@ -436,6 +436,26 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
         it_behaves_like 'returns 200 HTTP status'
         it_behaves_like 'valid payload', 300.0
       end
+    end
+  end
+
+  describe 'checkout#remove_store_credit' do
+    let(:order_total) { 500.00 }
+    let(:params) { { order_token: order.token, include: 'payments', fields: { payment: 'state' } } }
+    let(:execute) { post '/api/v2/storefront/checkout/remove_store_credit', params: params, headers: headers }
+    let!(:store_credit) { create(:store_credit, amount: order_total) }
+    let!(:order) { create(:order, user: store_credit.user, total: order_total) }
+
+    before do
+      create(:store_credit_payment_method)
+      Spree::Checkout::AddStoreCredit.call(order: order)
+      execute
+    end
+
+    it_behaves_like 'returns 200 HTTP status'
+
+    it 'returns no valid StoreCredit payment' do
+      expect(json_response['included'].empty?).to eq true
     end
   end
 
