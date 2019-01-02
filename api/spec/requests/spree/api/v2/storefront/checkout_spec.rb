@@ -12,6 +12,43 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
   let(:payment) { create(:payment, amount: order.total, order: order) }
   let(:shipment) { create(:shipment, order: order) }
 
+  let(:address) do
+    {
+      firstname: 'John',
+      lastname: 'Doe',
+      address1: '7735 Old Georgetown Road',
+      city: 'Bethesda',
+      phone: '3014445002',
+      zipcode: '20814',
+      state_id: state.id,
+      country_id: country.id
+    }
+  end
+
+  let(:payment_source_attributes) do
+    {
+      number: '4111111111111111',
+      month: 1.month.from_now.month,
+      year: 1.month.from_now.year,
+      verification_value: '123',
+      name: 'Spree Commerce'
+    }
+  end
+  let(:payment_params) do
+    {
+      order: {
+        payments_attributes: [
+          {
+            payment_method_id: payment_method.id
+          }
+        ]
+      },
+      payment_source: {
+        payment_method.id.to_s => payment_source_attributes
+      }
+    }
+  end
+
   include_context 'API v2 tokens'
 
   describe 'checkout#next' do
@@ -204,19 +241,6 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
 
     shared_examples 'perform update' do
       context 'addresses' do
-        let(:address) do
-          {
-            firstname: 'John',
-            lastname: 'Doe',
-            address1: '7735 Old Georgetown Road',
-            city: 'Bethesda',
-            phone: '3014445002',
-            zipcode: '20814',
-            state_id: state.id,
-            country_id: country.id
-          }
-        end
-
         let(:params) do
           {
             order: {
@@ -238,6 +262,40 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
           address.keys.each do |key|
             expect(order.bill_address[key]).to eq address[key]
           end
+        end
+      end
+
+      context 'shipment' do
+        let!(:default_selected_shipping_rate_id) { shipment.selected_shipping_rate_id }
+        let(:new_selected_shipping_rate_id) { Spree::ShippingRate.last.id }
+        let!(:shipping_method) { shipment.shipping_method }
+        let!(:second_shipping_method) { create(:shipping_method, name: 'Fedex') }
+
+        let(:params) do
+          {
+            order: {
+              shipments_attributes: {
+                '0' => { selected_shipping_rate_id: new_selected_shipping_rate_id, id: shipment.id }
+              }
+            }
+          }
+        end
+
+        before do
+          shipment
+          shipment.add_shipping_method(second_shipping_method)
+          execute
+        end
+
+        it_behaves_like 'returns 200 HTTP status'
+        it_behaves_like 'returns valid cart JSON'
+
+        it 'updates shipment' do
+          shipment.reload
+          expect(shipment.shipping_rates.count).to eq(2)
+          expect(shipment.selected_shipping_rate_id).to eq(new_selected_shipping_rate_id)
+          expect(shipment.selected_shipping_rate_id).not_to eq(default_selected_shipping_rate_id)
+          expect(shipment.shipping_method).to eq(second_shipping_method)
         end
       end
 
@@ -267,29 +325,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
         end
 
         context 'payment source' do
-          let(:source_attributes) do
-            {
-              number: '4111111111111111',
-              month: 1.month.from_now.month,
-              year: 1.month.from_now.year,
-              verification_value: '123',
-              name: 'Spree Commerce'
-            }
-          end
-          let(:params) do
-            {
-              order: {
-                payments_attributes: [
-                  {
-                    payment_method_id: payment_method.id
-                  }
-                ]
-              },
-              payment_source: {
-                payment_method.id.to_s => source_attributes
-              }
-            }
-          end
+          let(:params) { payment_params }
 
           before { execute }
 
@@ -461,6 +497,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
 
   describe 'checkout#payment_methods' do
     let(:execute) { get '/api/v2/storefront/checkout/payment_methods', headers: headers }
+    let!(:payment_method) { create(:credit_card_payment_method) }
     let(:payment_methods) { order.available_payment_methods }
 
     shared_examples 'returns a list of available payment methods' do
@@ -469,13 +506,12 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
       it_behaves_like 'returns 200 HTTP status'
 
       it 'returns valid payment methods JSON' do
-        payment_methods.each_with_index do |payment_method, index|
-          expect(json_response['data'][index]).to have_id(payment_method.id.to_s)
-          expect(json_response['data'][index]).to have_type('payment_method')
-          expect(json_response['data'][index]).to have_attribute(:name).with_value(payment_method.name)
-          expect(json_response['data'][index]).to have_attribute(:description).with_value(payment_method.description)
-          expect(json_response['data'][index]).to have_attribute(:type).with_value(payment_method.type)
-        end
+        expect(json_response['data']).not_to be_empty
+        expect(json_response['data'][0]).to have_id(payment_method.id.to_s)
+        expect(json_response['data'][0]).to have_type('payment_method')
+        expect(json_response['data'][0]).to have_attribute(:name).with_value(payment_method.name)
+        expect(json_response['data'][0]).to have_attribute(:description).with_value(payment_method.description)
+        expect(json_response['data'][0]).to have_attribute(:type).with_value(payment_method.type)
       end
     end
 
@@ -489,6 +525,158 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
       include_context 'creates order with line item'
 
       it_behaves_like 'returns a list of available payment methods'
+    end
+  end
+
+  describe 'checkout#shipping_rates' do
+    let(:execute) { get '/api/v2/storefront/checkout/shipping_rates', headers: headers }
+
+    let(:country) { Spree::Country.default }
+    let(:zone) { create(:zone, name: 'US') }
+    let(:shipping_method) { create(:shipping_method) }
+    let(:address) { create(:address, country: country) }
+
+    let(:shipment) { order.shipments.first }
+    let(:shipping_rate) { shipment.selected_shipping_rate }
+
+    shared_examples 'returns a list of shipments with shipping rates' do
+      before do
+        order.shipping_address = address
+        order.save!
+        zone.countries << country
+        shipping_method.zones = [zone]
+        order.create_proposed_shipments
+        execute
+        order.reload
+      end
+
+      it_behaves_like 'returns 200 HTTP status'
+
+      it 'returns valid shipments JSON' do
+        expect(json_response['data']).not_to be_empty
+        expect(json_response['data'].size).to eq(order.shipments.count)
+        expect(json_response['data'][0]).to have_id(shipment.id.to_s)
+        expect(json_response['data'][0]).to have_type('shipment')
+        expect(json_response['data'][0]).to have_relationships(:shipping_rates)
+        expect(json_response['included']).to be_present
+        expect(json_response['included'].size).to eq(shipment.shipping_rates.count)
+        shipment.shipping_rates.each do |shipping_rate|
+          expect(json_response['included']).to include(have_type('shipping_rate').and have_id(shipping_rate.id.to_s))
+        end
+        expect(json_response['included'][0]).to have_id(shipping_rate.id.to_s)
+        expect(json_response['included'][0]).to have_type('shipping_rate')
+        expect(json_response['included'][0]).to have_attribute(:name).with_value(shipping_method.name)
+        expect(json_response['included'][0]).to have_attribute(:final_price).with_value(shipping_rate.final_price.to_s)
+        expect(json_response['included'][0]).to have_attribute(:display_final_price).with_value(shipping_rate.display_final_price.to_s)
+        expect(json_response['included'][0]).to have_attribute(:cost).with_value(shipping_rate.cost.to_s)
+        expect(json_response['included'][0]).to have_attribute(:display_cost).with_value(shipping_rate.display_cost.to_s)
+        expect(json_response['included'][0]).to have_attribute(:display_cost).with_value(shipping_rate.display_cost.to_s)
+        expect(json_response['included'][0]).to have_attribute(:tax_amount).with_value(shipping_rate.tax_amount.to_s)
+        expect(json_response['included'][0]).to have_attribute(:display_tax_amount).with_value(shipping_rate.display_tax_amount.to_s)
+        expect(json_response['included'][0]).to have_attribute(:shipping_method_id).with_value(shipping_method.id)
+        expect(json_response['included'][0]).to have_attribute(:selected).with_value(shipping_rate.selected)
+        expect(json_response['included'][0]).to have_attribute(:free).with_value(shipping_rate.free?)
+      end
+    end
+
+    context 'as a guest user' do
+      include_context 'creates guest order with guest token'
+
+      it_behaves_like 'returns a list of shipments with shipping rates'
+    end
+
+    context 'as a signed in user' do
+      include_context 'creates order with line item'
+
+      it_behaves_like 'returns a list of shipments with shipping rates'
+    end
+  end
+
+  describe 'full checkout flow' do
+    let!(:country) { create(:country) }
+    let(:state) { create(:state, country: country) }
+    let!(:shipping_method) do
+      create(:shipping_method).tap do |shipping_method|
+        shipping_method.zones = [zone]
+      end
+    end
+    let!(:zone) { create(:zone) }
+    let!(:zone_member) { create(:zone_member, zone: zone, zoneable: country) }
+    let!(:payment_method) { create(:credit_card_payment_method) }
+
+    let(:customer_params) do
+      {
+        order: {
+          email: 'new@customer.org',
+          bill_address_attributes: address,
+          ship_address_attributes: address
+        }
+      }
+    end
+
+    let(:shipment_params) do
+      {
+        order: {
+          shipments_attributes: {
+            '0' => { selected_shipping_rate_id: shipping_rate_id, id: shipment_id }
+          }
+        }
+      }
+    end
+
+    let(:shipping_rate_id) do
+      json_response['data'].first['relationships']['shipping_rates']['data'].first['id']
+    end
+    let(:shipment_id) { json_response['data'].first['id'] }
+
+    shared_examples 'transitions through checkout from start to finish' do
+      before do
+        zone.countries << country
+        shipping_method.zones = [zone]
+      end
+
+      it 'completes checkout' do
+        # we need to set customer information (email, billing & shipping address)
+        patch '/api/v2/storefront/checkout', params: customer_params, headers: headers
+        expect(response.status).to eq(200)
+
+        # getting back shipping rates
+        get '/api/v2/storefront/checkout/shipping_rates', headers: headers
+        expect(response.status).to eq(200)
+
+        # selecting shipping method
+        patch '/api/v2/storefront/checkout', params: shipment_params, headers: headers
+        expect(response.status).to eq(200)
+
+        # getting back list of available payment methods
+        get '/api/v2/storefront/checkout/payment_methods', headers: headers
+        expect(response.status).to eq(200)
+        expect(json_response['data'].first['id']).to eq(payment_method.id.to_s)
+
+        # creating a CC for selected payment method
+        patch '/api/v2/storefront/checkout', params: payment_params, headers: headers
+        expect(response.status).to eq(200)
+
+        # complete the checkout
+        patch '/api/v2/storefront/checkout/complete', headers: headers
+        expect(response.status).to eq(200)
+        expect(order.reload.completed_at).not_to be_nil
+        expect(order.state).to eq('complete')
+        expect(order.shipments.first.shipping_method).to eq(shipping_method)
+        expect(order.payments.valid.first.payment_method).to eq(payment_method)
+      end
+    end
+
+    context 'as a guest user' do
+      include_context 'creates guest order with guest token'
+
+      it_behaves_like 'transitions through checkout from start to finish'
+    end
+
+    context 'as a signed in user' do
+      include_context 'creates order with line item'
+
+      it_behaves_like 'transitions through checkout from start to finish'
     end
   end
 end
