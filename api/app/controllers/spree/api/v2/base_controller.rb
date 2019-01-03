@@ -40,23 +40,6 @@ module Spree
           @current_ability ||= Spree::Ability.new(spree_current_user)
         end
 
-        def order_token
-          request.headers['X-Spree-Order-Token'] || params[:order_token]
-        end
-
-        def spree_current_order
-          @spree_current_order ||= find_spree_current_order
-        end
-
-        def find_spree_current_order
-          Spree::Orders::FindCurrent.new.execute(
-            store: spree_current_store,
-            user: spree_current_user,
-            token: order_token,
-            currency: current_currency
-          )
-        end
-
         def request_includes
           # if API user want's to receive only the bare-minimum
           # the API will return only the main resource without any included
