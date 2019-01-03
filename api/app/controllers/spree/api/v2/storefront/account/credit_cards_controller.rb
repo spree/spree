@@ -26,15 +26,20 @@ module Spree
               }
             end
 
-            def serialize_collection(resource)
+            def serialize_collection(collection)
               dependencies[:collection_serializer].new(
-                resource,
-                include: resource_includes
+                collection,
+                include: resource_includes,
+                fields: sparse_fields
               ).serializable_hash
             end
 
             def serialize_resource(resource)
-              dependencies[:resource_serializer].new(resource).serializable_hash
+              dependencies[:resource_serializer].new(
+                resource,
+                include: resource_includes,
+                fields: sparse_fields
+              ).serializable_hash
             end
 
             def scope
