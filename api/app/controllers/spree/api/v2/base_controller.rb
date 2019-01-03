@@ -49,7 +49,7 @@ module Spree
         end
 
         def find_spree_current_order
-          Spree::Order::FindCurrent.new.execute(
+          Spree::Orders::FindCurrent.new.execute(
             store: spree_current_store,
             user: spree_current_user,
             token: order_token,
