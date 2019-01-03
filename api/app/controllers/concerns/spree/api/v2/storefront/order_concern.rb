@@ -41,12 +41,6 @@ module Spree
           def serialized_current_order
             serialize_order(spree_current_order)
           end
-
-          def dependencies
-            {
-              cart_serializer: Spree::V2::Storefront::CartSerializer
-            }
-          end
         end
       end
     end

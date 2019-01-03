@@ -20,6 +20,28 @@ info:
       </a>
     </p>
 paths:
+  '/account':
+    get:
+      description: >-
+        Returns current user information
+      tags:
+        - Account
+      operationId: 'Account Information'
+      parameters:
+        - $ref: '#/components/parameters/AccountIncludeParam'
+        - $ref: '#/components/parameters/SparseFieldsParam'
+      responses:
+        '200':
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+      security:
+        - bearerAuth: []
+
   '/account/credit_cards':
     get:
       description: >-
@@ -32,19 +54,20 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CreditCard'
+                $ref: '#/components/schemas/CreditCardList'
         '404':
           $ref: '#/components/responses/404NotFound'
       security:
         - bearerAuth: []
       parameters:
-        - $ref: '#/components/parameters/CreditCardParam'
         - in: query
           name: filter[payment_method_id]
           schema:
             type: integer
           example: 2
           description: Filter based on payment method ID
+        - $ref: '#/components/parameters/CreditCardIncludeParam'
+        - $ref: '#/components/parameters/SparseFieldsParam'
   '/account/credit_cards/default':
     get:
       description: >-
@@ -60,10 +83,11 @@ paths:
                 $ref: '#/components/schemas/CreditCard'
         '404':
           $ref: '#/components/responses/404NotFound'
+      parameters:
+        - $ref: '#/components/parameters/CreditCardIncludeParam'
+        - $ref: '#/components/parameters/SparseFieldsParam'
       security:
         - bearerAuth: []
-      parameters:
-        - $ref: '#/components/parameters/CreditCardParam'
   '/cart':
     post:
       description: >-
@@ -554,7 +578,7 @@ paths:
         - orderToken: []
         - bearerAuth: []
       parameters:
-      - $ref: '#/components/parameters/CartIncludeParam'
+        - $ref: '#/components/parameters/CartIncludeParam'
 
   '/checkout/add_store_credit':
     post:
@@ -870,28 +894,6 @@ paths:
               schema:
                 $ref: '#/components/schemas/Country'
 
-  '/account':
-    get:
-      description: >-
-        Returns current user information
-      tags:
-        - Account
-      operationId: 'Account Information'
-      parameters:
-        - $ref: '#/components/parameters/AccountIncludeParam'
-        - $ref: '#/components/parameters/SparseFieldsParam'
-      responses:
-        '200':
-          description: ok
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Account'
-        '404':
-          $ref: '#/components/responses/404NotFound'
-      security:
-        - bearerAuth: []
-
 components:
   securitySchemes:
     bearerAuth:
@@ -1165,54 +1167,71 @@ components:
               - $ref: '#/components/schemas/User'
               - $ref: '#/components/schemas/Address'
               - $ref: '#/components/schemas/ShipmentAttributesWithoutRelationsips'
+    CreditCardList:
+      required:
+        - data
+        - included
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/CreditCardAttributesWithRelationships'
+        included:
+          type: array
+          items:
+            type: object
+            oneOf:
+              - $ref: '#/components/schemas/PaymentMethod'
     CreditCard:
       required:
         - data
-        - attributes
-        - relationships
+        - included
       properties:
         data:
           type: object
+          $ref: '#/components/schemas/CreditCardAttributesWithRelationships'
+        included:
+          type: array
+          items:
+            type: object
+            oneOf:
+              - $ref: '#/components/schemas/PaymentMethod'
+    CreditCardAttributes:
+      properties:
+        cc_type:
+          type: string
+          example: 'visa'
+        last_digits:
+          type: string
+          example: '1232'
+        month:
+          type: integer
+          example: 10
+        year:
+          type: integer
+          example: 2019
+        name:
+          type: string
+          example: 'John Doe'
+    CreditCardAttributesWithRelationships:
+      properties:
+        id:
+          type: string
+          example: '1'
+        type:
+          type: string
+          example: 'credit_card'
+        attributes:
+          type: object
+          $ref: '#/components/schemas/CreditCardAttributes'
+        relationships:
+          type: object
           properties:
-            id:
-              type: integer
-              example: 1
-            cc_type:
-              type: string
-              example: 'credit_card'
-            attributes:
+            payment_method:
               type: object
               properties:
-                type:
-                  type: string
-                  example: 'visa'
-                last_digits:
-                  type: string
-                  example: '1232'
-                month:
-                  type: integer
-                  example: 10
-                year:
-                  type: integer
-                  example: 2019
-                name:
-                  type: string
-                  example: 'John Doe'
-            relationships:
-              type: object
-              properties:
-                payment_method:
-                  type: object
-                  properties:
-                    data:
-                      type: object
-                      properties:
-                        id:
-                          type: string
-                          example: '1'
-                        type:
-                          type: string
-                          example: 'payment_method'
+                data:
+                  $ref: '#/components/schemas/Relation'
     Image:
       required:
         - data
@@ -2231,13 +2250,27 @@ components:
         country_id: 232
 
   parameters:
-    CreditCardParam:
-      name: user_id
-      in: path
-      required: true
-      description: Current user id
+    CreditCardIncludeParam:
+      name: include
+      in: query
+      required: false
       schema:
-        type: integer
+        type: string
+      example: 'payment_method'
+      description: >-
+        <p>Specify what related resources (relationships) you would like to receive in the response body.</p>
+          <p>You can also fetch relationships of relationships.</p>
+          <p>
+            Format:
+            <ul>
+              <li>payment_method</li>
+            </ul>
+          <p>
+          More information:
+          <a href="https://jsonapi.org/format/#fetching-includes" target="_blank" rel="noopener">
+              https://jsonapi.org/format/#fetching-includes
+          </a>
+        </p>
     IdOrPermalink:
       name: id
       in: path

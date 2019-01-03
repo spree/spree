@@ -23,7 +23,7 @@ describe 'Storefront API v2 CreditCards spec', type: :request do
 
   describe 'credit_cards#index' do
     context 'with filter options' do
-      before { get "/api/v2/storefront/account/credit_cards?filter[payment_method_id]=#{credit_cards.first.payment_method_id}&include=payment_method", headers: headers_bearer, params: params }
+      before { get "/api/v2/storefront/account/credit_cards?filter[payment_method_id]=#{credit_cards.first.payment_method_id}&include=payment_method", headers: headers_bearer }
 
       it_behaves_like 'returns valid user credit cards resource JSON'
 
@@ -33,7 +33,7 @@ describe 'Storefront API v2 CreditCards spec', type: :request do
     end
 
     context 'without options' do
-      before { get '/api/v2/storefront/account/credit_cards', headers: headers_bearer, params: params }
+      before { get '/api/v2/storefront/account/credit_cards', headers: headers_bearer }
 
       it_behaves_like 'returns valid user credit cards resource JSON'
 
@@ -43,10 +43,10 @@ describe 'Storefront API v2 CreditCards spec', type: :request do
       end
     end
 
-    context 'with missing params' do
-      before { get '/api/v2/storefront/account/credit_cards', headers: headers_bearer }
+    context 'with missing authorization token' do
+      before { get '/api/v2/storefront/account/credit_cards' }
 
-      it_behaves_like 'returns 404 HTTP status'
+      it_behaves_like 'returns 403 HTTP status'
     end
   end
 
@@ -54,25 +54,23 @@ describe 'Storefront API v2 CreditCards spec', type: :request do
     context 'by "default"' do
       let!(:default_credit_card) { create(:credit_card, user_id: user.id, default: true) }
 
-      before { get '/api/v2/storefront/account/credit_cards/default', headers: headers_bearer, params: params }
-
-      it_behaves_like 'returns valid user credit cards resource JSON'
+      before { get '/api/v2/storefront/account/credit_cards/default', headers: headers_bearer }
 
       it 'returns user default credit_card' do
-        expect(json_response['data'][0]).to have_id(default_credit_card.id.to_s)
-        expect(json_response['data'][0]).to have_attribute(:cc_type).with_value(default_credit_card.cc_type)
-        expect(json_response['data'][0]).to have_attribute(:last_digits).with_value(default_credit_card.last_digits)
-        expect(json_response['data'][0]).to have_attribute(:name).with_value(default_credit_card.name)
-        expect(json_response['data'][0]).to have_attribute(:month).with_value(default_credit_card.month)
-        expect(json_response['data'][0]).to have_attribute(:year).with_value(default_credit_card.year)
-        expect(json_response['data'].size).to eq(1)
+        expect(json_response['data']).to have_id(default_credit_card.id.to_s)
+        expect(json_response['data']).to have_attribute(:cc_type).with_value(default_credit_card.cc_type)
+        expect(json_response['data']).to have_attribute(:last_digits).with_value(default_credit_card.last_digits)
+        expect(json_response['data']).to have_attribute(:name).with_value(default_credit_card.name)
+        expect(json_response['data']).to have_attribute(:month).with_value(default_credit_card.month)
+        expect(json_response['data']).to have_attribute(:year).with_value(default_credit_card.year)
+        expect(json_response.size).to eq(1)
       end
     end
 
-    context 'with missing params' do
-      before { get '/api/v2/storefront/account/credit_cards/default', headers: headers_bearer }
+    context 'with missing authorization token' do
+      before { get '/api/v2/storefront/account/credit_cards/default' }
 
-      it_behaves_like 'returns 404 HTTP status'
+      it_behaves_like 'returns 403 HTTP status'
     end
   end
 end

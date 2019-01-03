@@ -43,7 +43,9 @@ module Spree
             end
 
             def scope
-              Spree.user_class.accessible_by(current_ability, :read).find(params[:user_id])
+              raise CanCan::AccessDenied if spree_current_user.nil?
+
+              spree_current_user.credit_cards.accessible_by(current_ability, :read)
             end
           end
         end
