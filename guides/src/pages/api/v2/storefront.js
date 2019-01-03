@@ -34,13 +34,13 @@ const IndexPage = () => (
           typography: {
             smoothing: 'unset',
             fontSize: '16px',
-            fontFamily: '"IBM Plex Sans", sans-serif;',
+            fontFamily: '"Source Sans Pro", sans-serif;',
             headings: {
-              fontFamily: '"IBM Plex Sans", sans-serif;'
+              fontFamily: '"Source Sans Pro", sans-serif;'
             },
             code: {
               fontSize: '16px',
-              fontFamily: '"IBM Plex Mono", monospace;',
+              fontFamily: '"Roboto Mono", monospace;',
               fontWeight: 400,
               backgroundColor: '#0066CC',
               color: '#FFF'
@@ -51,7 +51,7 @@ const IndexPage = () => (
           },
           menu: {
             width: '19rem',
-            backgroundColor: '#FFF'
+            backgroundColor: '#f4f4f4'
           }
         }
       }}
