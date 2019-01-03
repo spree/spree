@@ -732,6 +732,10 @@ en:
         blank: can't be blank
         could_not_create_taxon: Could not create taxon
         no_shipping_methods_available: No shipping methods available for selected location, please change your address and try again.
+      services:
+        get_shipping_rates:
+          no_shipping_address: To generate Shipping Rates Order needs to have a Shipping Address
+          no_line_items: To generate Shipping Rates you need to add some Line Items to Order
     errors_prohibited_this_record_from_being_saved:
       one: 1 error prohibited this record from being saved
       other: ! '%{count} errors prohibited this record from being saved'
