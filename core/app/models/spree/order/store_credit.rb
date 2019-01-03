@@ -11,7 +11,12 @@ module Spree
       end
 
       def remove_store_credit_payments
-        payments.checkout.store_credits.map(&:invalidate!) unless completed?
+        ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
+          Spree::Order#remove_store_credit_payments method is deprecated and will be removed in Spree 4.0.
+          Please use Spree::Checkout::RemoveStoreCredit service to remove Store Credit from Order.
+        DEPRECATION
+
+        Spree::Checkout::RemoveStoreCredit.call(order: self)
       end
 
       def covered_by_store_credit?
