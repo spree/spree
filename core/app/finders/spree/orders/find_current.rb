@@ -1,5 +1,5 @@
 module Spree
-  class Order < Spree::Base
+  module Orders
     class FindCurrent
       def execute(user:, store:, **params)
         params = params.merge(store_id: store.id)
