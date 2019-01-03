@@ -1,0 +1,6 @@
+deployments:
+  MyAppName:
+        filename:
+          ./Dockerfile
+        port_forwarding:
+          80:3000
