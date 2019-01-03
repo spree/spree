@@ -7,7 +7,7 @@
 * [Extensions](https://github.com/spree/spree#extensions)
 * [Documentation](http://guides.spreecommerce.org)
 * [Roadmap](https://github.com/spree/spree/milestones?direction=asc&sort=due_date&state=open)
-* [Maintenance-Policy](https://github.com/spree/spree/wiki/Maintenance-Policy)
+* [Maintenance Policy](https://github.com/spree/spree/wiki/Maintenance-Policy)
 
 [![Gem Version](https://badge.fury.io/rb/spree.svg)](https://badge.fury.io/rb/spree) [![Circle CI](https://circleci.com/gh/spree/spree.svg?style=shield)](https://circleci.com/gh/spree/spree/tree/master)
 [![Code Climate](https://codeclimate.com/github/spree/spree.svg)](https://codeclimate.com/github/spree/spree)
