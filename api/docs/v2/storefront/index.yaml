@@ -1229,11 +1229,12 @@ components:
               type: string
               example: '$0.00'
         relationships:
-          variant:
-            type: object
-            properties:
-              data:
-                $ref: '#/components/schemas/Relation'
+          properties:
+            variant:
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/Relation'
     Promotion:
       properties:
         id:
@@ -1956,7 +1957,7 @@ components:
         number:
           type: string
           example: 'H121354'
-          descriptipon: 'Unique Shipment identifier'
+          description: 'Unique Shipment identifier'
         free:
           type: boolean
           example: true
