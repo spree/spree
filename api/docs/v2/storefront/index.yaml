@@ -875,9 +875,9 @@ components:
   schemas:
     Error:
       required:
-        - message
+        - error
       properties:
-        message:
+        error:
           type: string
     ListLinks:
       properties:
