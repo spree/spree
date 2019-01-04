@@ -184,7 +184,7 @@ paths:
       description: Empties the Cart
       tags:
         - Cart
-      operation: 'Empty Cart'
+      operationId: 'Empty Cart'
       responses:
         '200':
           description: Cart has been successfully emptied
