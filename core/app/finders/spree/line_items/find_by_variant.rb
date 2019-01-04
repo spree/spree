@@ -1,5 +1,5 @@
 module Spree
-  class LineItem < Spree::Base
+  module LineItems
     class FindByVariant
       def execute(order:, variant:, options: {})
         order.line_items.detect do |line_item|

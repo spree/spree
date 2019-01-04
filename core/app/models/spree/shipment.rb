@@ -103,6 +103,7 @@ module Spree
       inventory_units.any?(&:backordered?)
     end
 
+    # TODO: delegate currency to Order, order.currency is mandatory
     def currency
       order ? order.currency : Spree::Config[:currency]
     end
@@ -132,6 +133,12 @@ module Spree
 
     def final_price_with_items
       item_cost + final_price
+    end
+
+    def free?
+      return true if final_price == BigDecimal(0)
+
+      adjustments.promotion.any? { |p| p.source.type == 'Spree::Promotion::Actions::FreeShipping' }
     end
 
     def finalize!

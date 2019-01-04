@@ -3,9 +3,11 @@
 
 * Join our Slack at [slack.spreecommerce.org](http://slack.spreecommerce.org/)
 * [Success Stories](https://spreecommerce.org/stories/)
-* [Extensions](https://github.com/spree-contrib)
+* [Integrations](https://spreecommerce.org/integrations/)
+* [Extensions](https://github.com/spree/spree#extensions)
 * [Documentation](http://guides.spreecommerce.org)
 * [Roadmap](https://github.com/spree/spree/milestones?direction=asc&sort=due_date&state=open)
+* [Maintenance Policy](https://github.com/spree/spree/wiki/Maintenance-Policy)
 
 [![Gem Version](https://badge.fury.io/rb/spree.svg)](https://badge.fury.io/rb/spree) [![Circle CI](https://circleci.com/gh/spree/spree.svg?style=shield)](https://circleci.com/gh/spree/spree/tree/master)
 [![Code Climate](https://codeclimate.com/github/spree/spree.svg)](https://codeclimate.com/github/spree/spree)
@@ -67,17 +69,6 @@ gem 'spree', '~> 3.2.7'
 gem 'spree_auth_devise', '~> 3.3'
 gem 'spree_gateway', '~> 3.3'
 ```
-
-### Rails 4.2
-
-```ruby
-gem 'spree', '~> 3.1.12'
-gem 'spree_auth_devise', '~> 3.3'
-gem 'spree_gateway', '~> 3.3'
-```
-
-**Note: If you're using fresh Rails 5.1 application, you need to run `bundle update i18n` before following steps
-below.**
 
 
 Run `bundle install`

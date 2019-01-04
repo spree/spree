@@ -17,7 +17,7 @@ module Spree
       private
 
       def remove_from_line_item(order:, variant:, quantity:, options:)
-        line_item = Spree::LineItem::FindByVariant.new.execute(order: order, variant: variant, options: options)
+        line_item = Spree::LineItems::FindByVariant.new.execute(order: order, variant: variant, options: options)
 
         raise ActiveRecord::RecordNotFound if line_item.nil?
 

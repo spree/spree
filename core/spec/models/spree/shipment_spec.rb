@@ -170,6 +170,24 @@ describe Spree::Shipment, type: :model do
     expect(shipment.final_price).to eq(8)
   end
 
+  context '#free?' do
+    let!(:order) { create(:order) }
+    let!(:shipment) { create(:shipment, cost: 10, order: order) }
+    let(:free_shipping_promotion) { create(:free_shipping_promotion, code: 'freeship') }
+
+    it 'returns true if final_price is equal to 0' do
+      shipment.adjustment_total = -10
+      expect(shipment.free?).to eq(true)
+    end
+
+    it 'returns when Free Shipping promotion is applied' do
+      order.coupon_code = free_shipping_promotion.code
+      Spree::PromotionHandler::Coupon.new(order).apply
+      expect(order.promotions).to include(free_shipping_promotion)
+      expect(shipment.free?).to eq(true)
+    end
+  end
+
   context 'manifest' do
     let(:order) { Spree::Order.create }
     let(:variant) { create(:variant) }
