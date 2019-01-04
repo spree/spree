@@ -17,7 +17,7 @@ module Spree
           # sometimes Order can have multiple promotions but the promo engine
           # will only apply those that are more beneficial for the customer
           # TODO: we should probably move this code out of the serializer
-          promotion_ids = cart.all_adjustments.nonzero.promotion.map { |a| a.source.promotion_id }.uniq
+          promotion_ids = cart.all_adjustments.eligible.nonzero.promotion.map { |a| a.source.promotion_id }.uniq
 
           cart.order_promotions.where(promotion_id: promotion_ids).uniq(&:promotion_id)
         end
