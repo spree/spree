@@ -898,7 +898,6 @@ components:
         type:
           type: string
           default: 'address'
-          example: 'address'
         attributes:
           type: object
           properties:
@@ -956,7 +955,6 @@ components:
               example: '1'
             type:
               type: string
-              example: 'cart'
               default: 'cart'
             attributes:
               type: object
@@ -1113,7 +1111,6 @@ components:
             type:
               type: string
               default: 'image'
-              example: 'image'
             attributes:
               type: object
               properties:
@@ -1148,7 +1145,6 @@ components:
         type:
           type: string
           default: 'user'
-          example: 'user'
         attributes:
           type: object
           properties:
@@ -1163,7 +1159,6 @@ components:
         type:
           type: string
           default: 'line_item'
-          example: 'line_item'
         attributes:
           type: object
           properties:
@@ -1242,7 +1237,6 @@ components:
           example: '1'
         type:
           type: string
-          example: 'promotion'
           default: 'promotion'
         attributes:
           type: object
@@ -1395,7 +1389,6 @@ components:
         type:
           type: string
           default: 'product'
-          example: 'product'
         attributes:
           $ref: '#/components/schemas/ProductAttributes'
         relationships:
@@ -1520,7 +1513,6 @@ components:
         type:
           type: string
           default: 'taxon'
-          example: 'taxon'
         attributes:
           $ref: '#/components/schemas/TaxonAttributes'
         relationships:
@@ -1560,7 +1552,6 @@ components:
             type:
               type: string
               default: 'taxon_image'
-              example: 'taxon_image'
             attributes:
               type: object
               properties:
@@ -1582,7 +1573,6 @@ components:
         type:
           type: string
           default: 'taxonomy'
-          example: 'taxonomy'
         attributes:
           $ref: '#/components/schemas/TaxonomyAttributes'
     TaxonomyAttributes:
@@ -1607,7 +1597,6 @@ components:
             type:
               type: string
               default: 'option_type'
-              example: 'option_type'
             attributes:
               type: object
               properties:
@@ -1633,7 +1622,6 @@ components:
             type:
               type: string
               default: 'option_value'
-              example: 'option_value'
             attributes:
               type: object
               properties:
@@ -1667,7 +1655,6 @@ components:
             type:
               type: string
               default: 'property'
-              example: 'property'
             attributes:
               type: object
               properties:
@@ -1690,7 +1677,6 @@ components:
             type:
               type: string
               default: 'product_property'
-              example: 'product_property'
             attributes:
               type: object
               properties:
@@ -1810,7 +1796,6 @@ components:
         type:
           type: string
           default: 'variant'
-          example: 'variant'
         attributes:
           $ref: '#/components/schemas/VariantAttributes'
         relationships:
@@ -1876,7 +1861,6 @@ components:
         type:
           type: string
           default: 'country'
-          example: 'country'
         attributes:
           $ref: '#/components/schemas/CountryAttributes'
         relationships:
@@ -1906,7 +1890,6 @@ components:
         type:
           type: string
           default: 'payment_method'
-          example: 'payment_method'
         attributes:
           type: object
           properties:
@@ -1927,7 +1910,6 @@ components:
         type:
           type: string
           default: 'shipment'
-          example: 'shipment'
         attributes:
           $ref: '#/components/schemas/ShipmentAttributes'
         relationships:
@@ -1940,7 +1922,6 @@ components:
         type:
           type: string
           default: 'shipment'
-          example: 'shipment'
         attributes:
           $ref: '#/components/schemas/ShipmentAttributes'
         relationships:
@@ -2008,7 +1989,6 @@ components:
         type:
           type: string
           default: 'shipping_rate'
-          example: 'shipping_rate'
         attributes:
           type: object
           properties:
@@ -2094,7 +2074,6 @@ components:
         type:
           type: string
           default: 'user'
-          example: 'user'
         attributes:
           $ref: '#/components/schemas/AccountAttributes'
         relationships:
