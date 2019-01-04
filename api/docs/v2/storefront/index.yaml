@@ -31,6 +31,7 @@ paths:
         </p>
       tags:
         - Cart
+      operationId: 'Create Cart'
       responses:
         '201':
           description: Cart was successfully created
@@ -45,6 +46,7 @@ paths:
       description: Returns contents of the cart
       tags:
         - Cart
+      operationId: 'Get Cart'
       responses:
         '200':
           description: Correct cart was returned
@@ -76,6 +78,7 @@ paths:
         </blockquote>
       tags:
         - Cart
+      operationId: 'Add Item'
       responses:
         '200':
           description: Item was added to the Cart successfully
@@ -118,6 +121,7 @@ paths:
       description: Sets the quantity of a given line item. It has to be a positive integer greater than 0.
       tags:
         - Cart
+      operationId: 'Set Quantity'
       responses:
         '200':
           description: New quantity has been successfully set for a requested Line Item
@@ -157,6 +161,7 @@ paths:
       description: Removes Line Item from Cart
       tags:
         - Cart
+      operationId: 'Remove Line Item'
       parameters:
         - $ref: '#/components/parameters/LineItemId'
         - $ref: '#/components/parameters/CartIncludeParam'
@@ -179,6 +184,7 @@ paths:
       description: Empties the Cart
       tags:
         - Cart
+      operation: 'Empty Cart'
       responses:
         '200':
           description: Cart has been successfully emptied
@@ -200,6 +206,7 @@ paths:
       description: Applies a coupon code to the Cart
       tags:
         - Cart
+      operationId: 'Apply Coupon Code'
       responses:
         '200':
           description: Cuopon code was applied successfully
@@ -235,6 +242,7 @@ paths:
       description: Removes a coupon code from the Cart
       tags:
         - Cart
+      operationId: 'Remove Coupon Code'
       parameters:
         - name: coupon_code
           in: path
@@ -369,6 +377,7 @@ paths:
         </p>
       tags:
         - Checkout
+      operationId: 'Update Checkout'
       responses:
         '200':
           description: Checkout was updated
@@ -425,6 +434,7 @@ paths:
       description: Goes to the next Checkout step
       tags:
         - Checkout
+      operationId: 'Checkout Next'
       responses:
         '200':
           description: Checkout transitioned to the next step
@@ -452,6 +462,7 @@ paths:
       description: Advances Checkout to the furthest Checkout step validation allows, until the Complete step
       tags:
         - Checkout
+      operationId: 'Advance Checkout'
       responses:
         '200':
           description: Checkout was advanced to the furthest step
@@ -479,6 +490,7 @@ paths:
       description: Completes the Checkout
       tags:
         - Checkout
+      operationId: 'Complete Checkout'
       responses:
         '200':
           description: Checkout was completed
@@ -502,18 +514,19 @@ paths:
 
   '/checkout/add_store_credit':
     post:
-      description: Adds StoreCredit payments if a user has any
+      description: Adds Store Credit payments if a user has any
       tags:
         - Checkout
+      operationId: 'Add Store Credit'
       responses:
         '200':
-          description: StoreCredit payment created
+          description: Store Credit payment created
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Cart'
         '422':
-          description: StoreCredit couldn't be created
+          description: Store Credit couldn't be created
           content:
             application/json:
               schema:
@@ -527,8 +540,8 @@ paths:
         - in: query
           name: amount
           description: >-
-            Amount of StoreCredit to use.
-            As much as possible StoreCredit will be applied if no amount is passed.
+            Amount of Store Credit to use.
+            As much as possible Store Credit will be applied if no amount is passed.
           schema:
             type: string
           example: 100.0
@@ -536,18 +549,19 @@ paths:
         - $ref: '#/components/parameters/SparseFieldsParam'
   '/checkout/remove_store_credit':
     post:
-      description: Remove StoreCredit payments if any applied
+      description: Remove Store Credit payments if any applied
       tags:
         - Checkout
+      operationId: 'Remove Store Credit'
       responses:
         '200':
-          description: StoreCredit payment removed
+          description: Store Credit payment removed
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Cart'
         '422':
-          description: StoreCredit payments weren't removed
+          description: Store Credit payments weren't removed
           content:
             application/json:
               schema:
@@ -567,6 +581,7 @@ paths:
         Returns a list of available Payment Methods
       tags:
         - Checkout
+      operationId: 'Payment Methods'
       responses:
         '200':
           description: Returns a list of available Payment Methods
@@ -589,6 +604,7 @@ paths:
         in stock and will be send out instantly and some needs to be backordered.
       tags:
         - Checkout
+      operationId: 'Shipping Rates'
       responses:
         '200':
           description: Returns a list of available Shipping Rates for Checkout
@@ -608,6 +624,7 @@ paths:
         Returns a list of Products
       tags:
         - Products
+      operationId: 'Products List'
       parameters:
         - $ref: '#/components/parameters/FilterByIds'
         - in: query
@@ -670,6 +687,7 @@ paths:
         permalink lookup before an ID lookup.
       tags:
         - Products
+      operationId: 'Show Product'
       parameters:
         - $ref: '#/components/parameters/IdOrPermalink'
         - $ref: '#/components/parameters/ProductIncludeParam'
@@ -690,6 +708,7 @@ paths:
         Returns a list of Taxons. You can filter out taxons by...
       tags:
         - Taxons
+      operationId: 'Taxons List'
       parameters:
         - $ref: '#/components/parameters/FilterByIds'
         - $ref: '#/components/parameters/FilterByName'
@@ -733,6 +752,7 @@ paths:
         permalink lookup before an ID lookup.
       tags:
         - Taxons
+      operationId: 'Show Taxon'
       parameters:
         - $ref: '#/components/parameters/IdOrPermalink'
         - $ref: '#/components/parameters/TaxonIncludeParam'
@@ -753,6 +773,7 @@ paths:
         Returns a list of all Countries
       tags:
         - Countries
+      operationId: 'Countries List'
       responses:
         '200':
           description: Returns a list of all Countries
@@ -771,6 +792,7 @@ paths:
         iso lookup before an iso3 lookup.
       tags:
         - Countries
+      operationId: 'Show Country'
       parameters:
         - $ref: '#/components/parameters/IsoOrIso3'
         - $ref: '#/components/parameters/CountryIncludeParam'
@@ -792,6 +814,7 @@ paths:
         By default this will be the US.
       tags:
         - Countries
+      operationId: 'Default Country'
       parameters:
         - $ref: '#/components/parameters/CountryIncludeParam'
         - $ref: '#/components/parameters/SparseFieldsParam'
@@ -809,7 +832,7 @@ paths:
         Returns current user information
       tags:
         - Account
-      operationId: show
+      operationId: 'Account Information'
       parameters:
         - $ref: '#/components/parameters/AccountIncludeParam'
         - $ref: '#/components/parameters/SparseFieldsParam'
