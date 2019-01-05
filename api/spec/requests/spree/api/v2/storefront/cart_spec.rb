@@ -373,7 +373,6 @@ describe 'API V2 Storefront Cart Spec', type: :request do
       context 'with coupon code for free shipping' do
         let(:adjustment_value) { -shipment.cost.to_f }
         let(:adjustment_value_in_money) { Spree::Money.new(adjustment_value, currency: order.currency) }
-        let(:order_promotion_id) { order.order_promotions.find_by(promotion: promotion).id.to_s }
 
         context 'applies coupon code correctly' do
           it_behaves_like 'returns 200 HTTP status'
@@ -385,7 +384,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
           end
 
           it 'includes the promotion in the response' do
-            expect(json_response['included']).to include(have_type('promotion').and(have_id(order_promotion_id)))
+            expect(json_response['included']).to include(have_type('promotion').and(have_id(promotion.id.to_s)))
             expect(json_response['included']).to include(have_type('promotion').and(have_attribute(:amount).with_value(adjustment_value.to_s)))
             expect(json_response['included']).to include(have_type('promotion').and(have_attribute(:display_amount).with_value(adjustment_value_in_money.to_s)))
             expect(json_response['included']).to include(have_type('promotion').and(have_attribute(:code).with_value(promotion.code)))
