@@ -35,6 +35,10 @@ module Spree
           authorize!(action, subject, *args)
         end
 
+        def require_spree_current_user
+          raise CanCan::AccessDenied if spree_current_user.nil?
+        end
+
         # Needs to be overriden so that we use Spree's Ability rather than anyone else's.
         def current_ability
           @current_ability ||= Spree::Ability.new(spree_current_user)

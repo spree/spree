@@ -37,8 +37,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Account'
-        '404':
-          $ref: '#/components/responses/404NotFound'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
       security:
         - bearerAuth: []
 
@@ -55,8 +55,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CreditCardList'
-        '404':
-          $ref: '#/components/responses/404NotFound'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
       security:
         - bearerAuth: []
       parameters:
@@ -81,8 +81,8 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CreditCard'
-        '404':
-          $ref: '#/components/responses/404NotFound'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
       parameters:
         - $ref: '#/components/parameters/CreditCardIncludeParam'
         - $ref: '#/components/parameters/SparseFieldsParam'
@@ -2430,6 +2430,12 @@ components:
   responses:
     404NotFound:
       description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    403Forbidden:
+      description: You are not authorized to access this page.
       content:
         application/json:
           schema:

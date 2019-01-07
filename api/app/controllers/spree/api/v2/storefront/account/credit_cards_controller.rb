@@ -4,6 +4,8 @@ module Spree
       module Storefront
         module Account
           class CreditCardsController < ::Spree::Api::V2::BaseController
+            before_action :require_spree_current_user
+
             def index
               render_serialized_payload { serialize_collection(resource) }
             end
@@ -43,8 +45,6 @@ module Spree
             end
 
             def scope
-              raise CanCan::AccessDenied if spree_current_user.nil?
-
               spree_current_user.credit_cards.accessible_by(current_ability, :read)
             end
           end
