@@ -1,7 +1,7 @@
 Doorkeeper.configure do
   orm :active_record
   use_refresh_token
-  # api_only uncomment after release of new doorkeeper version
+  api_only
 
   resource_owner_authenticator { current_spree_user }
 

@@ -40,9 +40,6 @@ module SpreeCmd
 
         Your extension has been generated with a gemspec dependency on Spree #{spree_version}.
 
-        For more information on the versioning of Spree.
-        See http://guides.spreecommerce.org/developer/extensions_tutorial.html#versioning-your-extension
-
         #{'*' * 80}
       }
     end
