@@ -48,6 +48,7 @@ paths:
         Returns a list of Credit Cards for the signed in User
       tags:
         - Account
+      operationId: 'Credit Cards list'
       responses:
         '200':
           description: Listing user credit cards.
@@ -74,6 +75,7 @@ paths:
         Return the User's default Credit Card
       tags:
         - Account
+      operationId: 'Default Credit Card'
       responses:
         '200':
           description: Listing user default credit card.
