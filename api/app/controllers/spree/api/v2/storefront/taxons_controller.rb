@@ -53,7 +53,7 @@ module Spree
           end
 
           def collection
-            dependencies[:collection_finder].new(scope, params).call
+            dependencies[:collection_finder].new(scope: scope, params: params).execute
           end
 
           def resource

@@ -1,7 +1,7 @@
 module Spree
   module Taxons
     class Find
-      def initialize(scope, params)
+      def initialize(scope:, params:)
         @scope = scope
 
         @ids      = String(params[:ids]).split(',')
@@ -11,7 +11,7 @@ module Spree
         @roots    = params[:roots]
       end
 
-      def call
+      def execute
         taxons = by_ids(scope)
         taxons = by_parent(taxons)
         taxons = by_taxonomy(taxons)

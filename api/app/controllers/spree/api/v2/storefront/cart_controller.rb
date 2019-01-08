@@ -3,6 +3,7 @@ module Spree
     module V2
       module Storefront
         class CartController < ::Spree::Api::V2::BaseController
+          include Spree::Api::V2::Storefront::OrderConcern
           before_action :ensure_order, except: :create
 
           def create
@@ -33,11 +34,7 @@ module Spree
               options: params[:options]
             )
 
-            if result.success?
-              render_serialized_payload { serialized_current_order }
-            else
-              render_error_payload(result.error)
-            end
+            render_order(result)
           end
 
           def remove_line_item
@@ -66,11 +63,7 @@ module Spree
 
             result = dependencies[:set_item_quantity].call(order: spree_current_order, line_item: line_item, quantity: params[:quantity])
 
-            if result.success?
-              render_serialized_payload { serialized_current_order }
-            else
-              render_error_payload(result.error)
-            end
+            render_order(result)
           end
 
           def show
@@ -106,10 +99,6 @@ module Spree
 
           private
 
-          def ensure_order
-            raise ActiveRecord::RecordNotFound if spree_current_order.nil?
-          end
-
           def dependencies
             {
               create_cart: Spree::Cart::Create,
@@ -119,14 +108,6 @@ module Spree
               set_item_quantity: Spree::Cart::SetQuantity,
               coupon_handler: Spree::PromotionHandler::Coupon
             }
-          end
-
-          def serialized_current_order
-            serialize_order(spree_current_order)
-          end
-
-          def serialize_order(order)
-            dependencies[:cart_serializer].new(order.reload, include: resource_includes, fields: sparse_fields).serializable_hash
           end
 
           def line_item
