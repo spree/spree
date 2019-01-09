@@ -3,6 +3,7 @@ module Spree
     module V2
       module Storefront
         class CheckoutController < ::Spree::Api::V2::BaseController
+          include Spree::Api::V2::Storefront::OrderConcern
           before_action :ensure_order
 
           def next
@@ -72,10 +73,6 @@ module Spree
 
           private
 
-          def ensure_order
-            raise ActiveRecord::RecordNotFound if spree_current_order.nil?
-          end
-
           def dependencies
             {
               next_state_handler: Spree::Checkout::Next,
@@ -91,18 +88,6 @@ module Spree
               # defined in https://github.com/spree/spree/blob/master/core/lib/spree/core/controller_helpers/strong_parameters.rb#L19
               permitted_attributes: permitted_checkout_attributes
             }
-          end
-
-          def render_order(result)
-            if result.success?
-              render_serialized_payload { serialize_order(result.value) }
-            else
-              render_error_payload(result.error)
-            end
-          end
-
-          def serialize_order(order)
-            dependencies[:cart_serializer].new(order.reload, include: resource_includes, fields: sparse_fields).serializable_hash
           end
 
           def serialize_payment_methods(payment_methods)

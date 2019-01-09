@@ -35,26 +35,13 @@ module Spree
           authorize!(action, subject, *args)
         end
 
+        def require_spree_current_user
+          raise CanCan::AccessDenied if spree_current_user.nil?
+        end
+
         # Needs to be overriden so that we use Spree's Ability rather than anyone else's.
         def current_ability
           @current_ability ||= Spree::Ability.new(spree_current_user)
-        end
-
-        def order_token
-          request.headers['X-Spree-Order-Token'] || params[:order_token]
-        end
-
-        def spree_current_order
-          @spree_current_order ||= find_spree_current_order
-        end
-
-        def find_spree_current_order
-          Spree::Orders::FindCurrent.new.execute(
-            store: spree_current_store,
-            user: spree_current_user,
-            token: order_token,
-            currency: current_currency
-          )
         end
 
         def request_includes

@@ -50,24 +50,24 @@ Add Spree gems to your Gemfile:
 
 ```ruby
 gem 'spree', '~> 3.6.4'
-gem 'spree_auth_devise', '~> 3.3'
-gem 'spree_gateway', '~> 3.3'
+gem 'spree_auth_devise', '~> 3.4'
+gem 'spree_gateway', '~> 3.4'
 ```
 
 ### Rails 5.1
 
 ```ruby
 gem 'spree', '~> 3.5.0'
-gem 'spree_auth_devise', '~> 3.3'
-gem 'spree_gateway', '~> 3.3'
+gem 'spree_auth_devise', '~> 3.4'
+gem 'spree_gateway', '~> 3.4'
 ```
 
 ### Rails 5.0
 
 ```ruby
 gem 'spree', '~> 3.2.7'
-gem 'spree_auth_devise', '~> 3.3'
-gem 'spree_gateway', '~> 3.3'
+gem 'spree_auth_devise', '~> 3.4'
+gem 'spree_gateway', '~> 3.4'
 ```
 
 
@@ -112,12 +112,6 @@ bundle exec rake db:migrate
 bundle exec rake db:seed
 bundle exec rake spree_sample:load
 ```
-
-Bundle Issues
-----------------------
-
-If you encountered any problems with `bundler`, please try downgrading to bundler `1.13.7` or earlier.
-
 
 Browse Store
 ----------------------
