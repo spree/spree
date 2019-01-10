@@ -15,9 +15,10 @@ paths:
         user is performing API actions.
       tags:
         - Token
+      operationId: Create Token
       responses:
         '200':
-          description: 200 response means that that a token was succesfully created
+          description: Token was succesfully created
           content:
             application/json:
               schema:
@@ -33,6 +34,7 @@ paths:
                   expires_in:
                     type: integer
                     example: 7200
+                    description: 'Time (in seconds) after which the access token will expire'
                   refresh_token:
                     type: string
                     example: f5d78642252eeb3f3001f67b196ac21a27afc030462a54060b0ebbdae2b8dc9c
@@ -42,7 +44,7 @@ paths:
       requestBody:
         required: true
         content:
-          application/json:
+          application/x-www-form-urlencoded:
             schema:
               type: object
               properties:
