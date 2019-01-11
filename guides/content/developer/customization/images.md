@@ -32,6 +32,7 @@ module YourApplication
       end
 
       def self.prepended(base)
+        base.inheritance_column = nil
         base.singleton_class.prepend ClassMethods
       end
     end
