@@ -19,6 +19,7 @@ gem 'spree_gateway', '~> 3.4'
 
 ```bash
 rails spree:install:migrations
+rails spree_api:install:migrations
 rails spree_auth:install:migrations
 rails spree_gateway:install:migrations
 ```
