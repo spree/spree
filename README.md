@@ -21,38 +21,42 @@ Spree consists of several different gems, each of which are maintained
 in a single repository and documented in a single set of
 [online documentation](http://guides.spreecommerce.org/).
 
-* spree_api (RESTful API)
-* spree_frontend (Customer frontend)
-* spree_backend (Admin panel)
-* spree_cmd (Command-line tools)
-* spree_core (Models & Mailers, the basic components of Spree that it can't run without)
-* spree_sample (Sample data)
+* **spree_api** (new REST API v2 and legacy REST API v1, [GraphQL support](https://github.com/spree/spree/issues/9176) coming soon)
+* **spree_frontend** (default Rails customer frontend)
+* **spree_backend** (Admin Panel)
+* **spree_cmd** (Command-line tools)
+* **spree_core** (Models, Services & Mailers, the basic components of Spree that it can't run without)
+* **spree_sample** (Sample data)
+
+You don't need to install all of the components. Only the **Core** is mandatory. 
 
 Demo
 ----
-Try Spree with direct deployment on Heroku:
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/spree/spree/tree/3-6-stable)
 
-If you want to run demo spree application on your machine, you can use our docker image with command below. It will
-download and run sample Spree application on http://localhost:3000 (Login: spree@example.com / spree123)
+If you want to run the demo on your local machine, you can use our docker image. It will download and run sample Spree application on http://localhost:3000
 ```shell
 docker run --rm -it -p 3000:3000 spreecommerce/spree:3.6.4
 ```
+
+Admin Panel credentials - login: `spree@example.com` / password: `spree123`
 
 
 Getting Started
 ----------------------
 
-Add Spree gems to your Gemfile:
+Add Spree gems to your `Gemfile`:
 
 ### Rails 5.2
 
 ```ruby
-gem 'spree', '~> 3.6.4'
+gem 'spree', '~> 3.7.0.rc1'
 gem 'spree_auth_devise', '~> 3.4'
 gem 'spree_gateway', '~> 3.4'
 ```
+
+Rails 5.2 versions come with [ActiveStorage support](https://spreecommerce.org/spree-3-5-and-3-6-with-rails-5-2-ruby-2-5-and-activestorage-support-released/). You can still use Paperclip (see [instructions](https://guides.spreecommerce.org/developer/images.html#paperclip)).
 
 ### Rails 5.1
 
