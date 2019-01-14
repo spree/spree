@@ -81,7 +81,7 @@ module Spree
       )
     end
 
-    scope :not_deleted, -> { where("#{Variant.quoted_table_name}.deleted_at IS NULL") }
+    scope :not_deleted, -> { where("#{Spree::Variant.quoted_table_name}.deleted_at IS NULL") }
 
     scope :for_currency_and_available_price_amount, ->(currency = nil) do
       currency ||= Spree::Config[:currency]
@@ -112,7 +112,7 @@ module Spree
       if self[:tax_category_id].nil?
         product.tax_category
       else
-        TaxCategory.find(self[:tax_category_id])
+        Spree::TaxCategory.find(self[:tax_category_id])
       end
     end
 
