@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.summary     = 'backend e-commerce functionality for the Spree project.'
   s.description = 'Required dependency for Spree'
 
-  s.required_ruby_version = '>= 2.3.0'
+  s.required_ruby_version = '>= 2.3.3'
 
   s.author      = 'Sean Schofield'
   s.email       = 'sean@spreecommerce.com'
