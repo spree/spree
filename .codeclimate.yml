@@ -18,4 +18,3 @@ exclude_patterns:
   - "**/vendor/"
   - "**/spec/"
   - "public/"
-  - "guides/"
