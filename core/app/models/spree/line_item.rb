@@ -20,7 +20,7 @@ module Spree
     validates :quantity, numericality: { only_integer: true, message: Spree.t('validation.must_be_int') }
     validates :price, numericality: true
 
-    validates_with Stock::AvailabilityValidator
+    validates_with Spree::Stock::AvailabilityValidator
     validate :ensure_proper_currency, if: -> { order.present? }
 
     before_destroy :verify_order_inventory_before_destroy, if: -> { order.has_checkout_step?('delivery') }
@@ -85,7 +85,7 @@ module Spree
     alias money display_total
 
     def sufficient_stock?
-      Stock::Quantifier.new(variant).can_supply? quantity
+      Spree::Stock::Quantifier.new(variant).can_supply? quantity
     end
 
     def insufficient_stock?
@@ -153,7 +153,7 @@ module Spree
     end
 
     def recalculate_adjustments
-      Adjustable::AdjustmentsUpdater.update(self)
+      Spree::Adjustable::AdjustmentsUpdater.update(self)
     end
 
     def update_tax_charge
