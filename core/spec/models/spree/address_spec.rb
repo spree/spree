@@ -291,6 +291,28 @@ describe Spree::Address, type: :model do
     end
   end
 
+  context '#state_name_text' do
+    context 'state_name is blank' do
+      let(:state) { create(:state, name: 'virginia', abbr: nil) }
+      let(:address) { create(:address, state: state, state_name: nil) }
+
+      specify { expect(address.state_name_text).to eq('virginia') }
+    end
+
+    context 'state is blank' do
+      let(:address) { create(:address, state: nil, state_name: 'virginia') }
+
+      specify { expect(address.state_name_text).to eq('virginia') }
+    end
+
+    context 'state and state_name are present' do
+      let(:state) { create(:state, name: 'virginia', abbr: nil) }
+      let(:address) { create(:address, state: state, state_name: 'virginia') }
+
+      specify { expect(address.state_name_text).to eq('virginia') }
+    end
+  end
+
   context 'defines require_phone? helper method' do
     let(:address) { stub_model(Spree::Address) }
 
