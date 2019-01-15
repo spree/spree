@@ -293,21 +293,21 @@ describe Spree::Address, type: :model do
 
   context '#state_name_text' do
     context 'state_name is blank' do
-      let(:state) { stub_model(Spree::State, name: 'virginia', abbr: nil) }
-      let(:address) { stub_model(Spree::Address, state: state, state_name: nil) }
+      let(:state) { create(:state, name: 'virginia', abbr: nil) }
+      let(:address) { create(:address, state: state, state_name: nil) }
 
       specify { expect(address.state_name_text).to eq('virginia') }
     end
 
     context 'state is blank' do
-      let(:address) { stub_model(Spree::Address, state: nil, state_name: 'virginia') }
+      let(:address) { create(:address, state: nil, state_name: 'virginia') }
 
       specify { expect(address.state_name_text).to eq('virginia') }
     end
 
     context 'state and state_name are present' do
-      let(:state) { stub_model(Spree::State, name: 'virginia', abbr: nil) }
-      let(:address) { stub_model(Spree::Address, state: state, state_name: 'virginia') }
+      let(:state) { create(:state, name: 'virginia', abbr: nil) }
+      let(:address) { create(:address, state: state, state_name: 'virginia') }
 
       specify { expect(address.state_name_text).to eq('virginia') }
     end

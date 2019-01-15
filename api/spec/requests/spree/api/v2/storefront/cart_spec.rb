@@ -359,6 +359,47 @@ describe 'API V2 Storefront Cart Spec', type: :request do
         end
       end
     end
+
+    context 'with option: include' do
+      let(:bill_addr_params) { { include: 'billing_address' } }
+      let(:ship_addr_params) { { include: 'billing_address' } }
+
+      include_context 'creates order with line item'
+      it_behaves_like 'showing the cart'
+
+      it 'will return included bill_address' do
+        get '/api/v2/storefront/cart', params: bill_addr_params, headers: headers
+        expect(json_response[:included][0]).to have_attribute(:firstname).with_value(order.bill_address.firstname)
+        expect(json_response[:included][0]).to have_attribute(:lastname).with_value(order.bill_address.lastname)
+        expect(json_response[:included][0]).to have_attribute(:address1).with_value(order.bill_address.address1)
+        expect(json_response[:included][0]).to have_attribute(:address2).with_value(order.bill_address.address2)
+        expect(json_response[:included][0]).to have_attribute(:city).with_value(order.bill_address.city)
+        expect(json_response[:included][0]).to have_attribute(:zipcode).with_value(order.bill_address.zipcode)
+        expect(json_response[:included][0]).to have_attribute(:phone).with_value(order.bill_address.phone)
+        expect(json_response[:included][0]).to have_attribute(:state_name).with_value(order.bill_address.state_name_text)
+        expect(json_response[:included][0]).to have_attribute(:company).with_value(order.bill_address.company)
+        expect(json_response[:included][0]).to have_attribute(:country_name).with_value(order.bill_address.country_name)
+        expect(json_response[:included][0]).to have_attribute(:country_iso3).with_value(order.bill_address.country_iso3)
+        expect(json_response[:included][0]).to have_attribute(:state_code).with_value(order.bill_address.state_abbr)
+      end
+
+      it 'will return included ship_address' do
+        get '/api/v2/storefront/cart', params: ship_addr_params, headers: headers
+
+        expect(json_response[:included][0]).to have_attribute(:firstname).with_value(order.bill_address.firstname)
+        expect(json_response[:included][0]).to have_attribute(:lastname).with_value(order.bill_address.lastname)
+        expect(json_response[:included][0]).to have_attribute(:address1).with_value(order.bill_address.address1)
+        expect(json_response[:included][0]).to have_attribute(:address2).with_value(order.bill_address.address2)
+        expect(json_response[:included][0]).to have_attribute(:city).with_value(order.bill_address.city)
+        expect(json_response[:included][0]).to have_attribute(:zipcode).with_value(order.bill_address.zipcode)
+        expect(json_response[:included][0]).to have_attribute(:phone).with_value(order.bill_address.phone)
+        expect(json_response[:included][0]).to have_attribute(:state_name).with_value(order.bill_address.state_name_text)
+        expect(json_response[:included][0]).to have_attribute(:company).with_value(order.bill_address.company)
+        expect(json_response[:included][0]).to have_attribute(:country_name).with_value(order.bill_address.country_name)
+        expect(json_response[:included][0]).to have_attribute(:country_iso3).with_value(order.bill_address.country_iso3)
+        expect(json_response[:included][0]).to have_attribute(:state_code).with_value(order.bill_address.state_abbr)
+      end
+    end
   end
 
   describe 'cart#apply_coupon_code' do
