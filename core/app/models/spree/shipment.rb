@@ -269,7 +269,7 @@ module Spree
     end
 
     def shipping_method
-      selected_shipping_rate.try(:shipping_method) || shipping_rates.first.try(:shipping_method)
+      selected_shipping_rate&.shipping_method || shipping_rates.first&.shipping_method
     end
 
     def tax_category
@@ -292,7 +292,7 @@ module Spree
     end
 
     def tracking_url
-      @tracking_url ||= shipping_method.build_tracking_url(tracking)
+      @tracking_url ||= shipping_method&.build_tracking_url(tracking)
     end
 
     def update_amounts
