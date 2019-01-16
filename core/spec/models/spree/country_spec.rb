@@ -5,7 +5,7 @@ describe Spree::Country, type: :model do
   let(:canada)  { create :country, name: 'Canada', iso_name: 'CANADA', numcode: '124' }
 
 
-  describe '.country_by_iso' do
+  describe '.by_iso' do
     let(:dummy_iso) { 'XY' }
 
     it 'will return Country by iso' do

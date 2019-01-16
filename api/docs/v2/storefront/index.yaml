@@ -363,7 +363,7 @@ paths:
                 phone: '3014445002',
                 zipcode: '20814',
                 state_name: 'MD',
-                country_id: 232
+                country_iso: 'US'
               }
             },
             ship_address_attributes: {
@@ -375,7 +375,7 @@ paths:
                 phone: '3014445002',
                 zipcode: '20814',
                 state_name: 'MD',
-                country_id: 232
+                country_iso: 'US'
               }
             }
           }
