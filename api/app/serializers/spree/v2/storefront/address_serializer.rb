@@ -8,6 +8,7 @@ module Spree
                    :company, :country_name, :country_iso3
 
         attribute :state_code, &:state_abbr
+        attribute :state_name, &:state_name_text
       end
     end
   end
