@@ -57,6 +57,10 @@ module Spree
       state.try(:abbr) || state.try(:name) || state_name
     end
 
+    def state_name_text
+      state_name.present? ? state_name : state&.name
+    end
+
     def same_as?(other)
       ActiveSupport::Deprecation.warn(<<-EOS, caller)
         Address#same_as? is deprecated and will be removed in Spree 4.0. Please use Address#== instead"
