@@ -29,8 +29,8 @@ module Spree
 
     validate :state_validate, :postal_code_validate
 
-    delegate :name, :iso3, to: :country, prefix: true
-    delegate :abbr,        to: :state,   prefix: true, allow_nil: true
+    delegate :name, :iso3, :iso, :iso_name, to: :country, prefix: true
+    delegate :abbr, to: :state, prefix: true, allow_nil: true
 
     alias_attribute :first_name, :firstname
     alias_attribute :last_name, :lastname
@@ -47,6 +47,14 @@ module Spree
       else
         build_default
       end
+    end
+
+    def iso_name
+      ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
+    Address#iso_name is deprecated and will be removed in Spree 4.0.
+    Please use Address#country_iso_name instead
+      DEPRECATION
+      country_iso_name
     end
 
     def full_name

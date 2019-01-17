@@ -21,7 +21,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
       phone: '3014445002',
       zipcode: '20814',
       state_id: state.id,
-      country_id: country.id
+      country_iso: country.iso
     }
   end
 
@@ -259,9 +259,14 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
           order.reload
           expect(order.bill_address).not_to be_nil
           expect(order.ship_address).not_to be_nil
-          address.keys.each do |key|
-            expect(order.bill_address[key]).to eq address[key]
-          end
+          expect(order.bill_address.firstname).to eq address[:firstname]
+          expect(order.bill_address.lastname).to eq address[:lastname]
+          expect(order.bill_address.address1).to eq address[:address1]
+          expect(order.bill_address.city).to eq address[:city]
+          expect(order.bill_address.phone).to eq address[:phone]
+          expect(order.bill_address.zipcode).to eq address[:zipcode]
+          expect(order.bill_address.state_id).to eq address[:state_id]
+          expect(order.bill_address.country.iso).to eq address[:country_iso]
         end
       end
 
