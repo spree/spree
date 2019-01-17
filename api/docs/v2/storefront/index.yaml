@@ -2237,9 +2237,13 @@ components:
         state_name:
           type: string
           description: 'State/region/province 2 letter abbrevation'
-        country_id:
-          type: number
-          description: 'ID number of Country in the database'
+        country_iso:
+          type: string
+          description: >-
+            Country ISO (2-chars) or ISO3 (3-chars) code, list of codes:
+            <a href="https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes" target="_blank" rel="noopener">
+              https://en.wikipedia.org/wiki/List_of_ISO_3166_country_codes
+            </a>
       example:
         firstname: 'John'
         lastname: 'Snow'
@@ -2249,7 +2253,7 @@ components:
         phone: '3014445002'
         zipcode: '20814'
         state_name: 'MD'
-        country_id: 232
+        country_iso: 'US'
 
   parameters:
     CreditCardIncludeParam:
