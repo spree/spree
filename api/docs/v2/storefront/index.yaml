@@ -2439,10 +2439,18 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Error'
+            properties:
+              error:
+                type: string
+                example: 'The resource you were looking for could not be found.'
+                default: 'The resource you were looking for could not be found.'
     403Forbidden:
       description: You are not authorized to access this page.
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Error'
+            properties:
+              error:
+                type: string
+                example: 'You are not authorized to access this page.'
+                default: 'You are not authorized to access this page.'
