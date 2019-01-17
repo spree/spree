@@ -5,8 +5,7 @@ module Spree
         set_type :variant
 
         attributes :name, :sku, :price, :currency, :display_price, :weight, :height,
-                   :width, :depth, :is_master, :options_text, :slug, :description,
-                   :track_inventory
+                   :width, :depth, :is_master, :options_text, :slug, :description
 
         attribute :purchasable,   &:purchasable?
         attribute :in_stock,      &:in_stock?
