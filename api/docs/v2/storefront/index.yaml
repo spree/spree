@@ -137,13 +137,13 @@ paths:
   '/order_status/{number}':
     get:
       description: >-
-        Return Guest User Order
+        Returns placed Order
       tags:
-        - Guest User
-      operationId: 'Guest User Order'
+        - Order Status
+      operationId: 'Order Status'
       responses:
         '200':
-          description: Listing guest user order.
+          description: Requested Order information
           content:
             application/json:
               schema:
