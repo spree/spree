@@ -3,7 +3,7 @@ module Spree
     module V2
       module Storefront
         class OrderStatusController < ::Spree::Api::V2::BaseController
-          include Spree::Api::V2::CollectionOptionsHelpers
+          include Spree::Api::V2::Storefront::OrderConcern
 
           def show
             render_serialized_payload { serialize_resource(resource) }
@@ -12,7 +12,7 @@ module Spree
           private
 
           def resource
-            resource = dependencies[:resource_finder].new(number: params[:number]).execute.take
+            resource = dependencies[:resource_finder].new(number: params[:number], token: order_token).execute.take
             raise ActiveRecord::RecordNotFound if resource.nil?
 
             resource
