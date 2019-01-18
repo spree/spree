@@ -4,6 +4,27 @@ describe Spree::Country, type: :model do
   let(:america) { create :country }
   let(:canada)  { create :country, name: 'Canada', iso_name: 'CANADA', numcode: '124' }
 
+
+  describe '.by_iso' do
+    let(:dummy_iso) { 'XY' }
+
+    it 'will return Country by iso' do
+      expect(described_class.by_iso(america.iso)).to eq america
+    end
+
+    it 'will return Country by iso3' do
+      expect(described_class.by_iso(america.iso3)).to eq america
+    end
+
+    it 'will return nil with wrong iso or iso3' do
+      expect(described_class.by_iso(dummy_iso)).to eq nil
+    end
+
+    it 'will return Country by lower iso' do
+      expect(described_class.by_iso(america.iso.downcase)).to eq america
+    end
+  end
+
   describe '.default' do
     context 'when default_country_id config is set' do
       before { Spree::Config[:default_country_id] = canada.id }

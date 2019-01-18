@@ -24,7 +24,7 @@ module Spree
           end
 
           def dependencies
-            { resource_serializer: Spree::V2::Storefront::AccountSerializer }
+            { resource_serializer: Spree::V2::Storefront::UserSerializer }
           end
         end
       end
