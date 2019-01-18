@@ -1,10 +1,14 @@
+// --- Dependencies
 import * as React from 'react'
 import PropTypes from 'prop-types'
 import kebabCase from 'lodash.kebabcase'
 
+// --- Components
 import HeaderLink from './HeaderLink'
 
-import v from '../../utils/styles'
+/**
+ * Component
+ */
 
 const H4 = ({ children }) => (
   <h4
