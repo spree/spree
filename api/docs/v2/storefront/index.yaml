@@ -134,6 +134,26 @@ paths:
         - $ref: '#/components/parameters/SparseFieldsParam'
       security:
         - bearerAuth: []
+  '/order_status/{number}':
+    get:
+      description: >-
+        Return Guest User Order
+      tags:
+        - Guest User
+      operationId: 'Guest User Order'
+      responses:
+        '200':
+          description: Listing guest user order.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+      parameters:
+        - $ref: '#/components/parameters/OrderParam'
+        - $ref: '#/components/parameters/CartIncludeParam'
+        - $ref: '#/components/parameters/SparseFieldsParam'
   '/cart':
     post:
       description: >-
