@@ -1,4 +1,4 @@
-Spree Installer
+Spree CMD
 ===============
 
 Command line utility to create new Spree extensions
