@@ -20,7 +20,7 @@ module Spree
       private
 
       def scope
-        user? ? user.orders.complete.includes(scope_includes) : Spree::Order.complete.includes(scope_includes)
+        user? ? user.orders.complete.includes(scope_includes) : Spree::Order.includes(scope_includes)
       end
 
       def user?
