@@ -27,8 +27,11 @@ bundle exec rails new sandbox --database="$RAILSDB" \
   --skip-rc \
   --skip-spring \
   --skip-test \
-  --skip-yarn \
-  --skip-coffee
+  --skip-coffee \
+  --skip-system-test \
+  --skip-turbolinks \
+  --skip-action-cable \
+  --skip-bootsnap
 
 if [ ! -d "sandbox" ]; then
   echo 'sandbox rails application failed'
@@ -54,6 +57,8 @@ gem 'spree', path: '..'
 $SPREE_AUTH_DEVISE_GEM
 $SPREE_GATEWAY_GEM
 
+gem 'webpacker', '~> 4.0.0'
+
 group :test, :development do
   gem 'bullet'
   gem 'pry-byebug'
@@ -69,3 +74,4 @@ bundle exec rails db:create
 bundle exec rails g spree:install --auto-accept --user_class=Spree::User --enforce_available_locales=true --copy_views=false
 bundle exec rails g spree:auth:install
 bundle exec rails g spree_gateway:install
+bundle exec rails webpacker:install
