@@ -32,8 +32,6 @@ describe Spree::Admin::OrdersController, type: :controller do
     before do
       request.env['HTTP_REFERER'] = 'http://localhost:3000'
       # ensure no respond_overrides are in effect
-      Spree::BaseController.spree_responders[:OrdersController].clear if Spree::BaseController.spree_responders[:OrdersController].present?
-
       allow(Spree::Order).to receive_message_chain(:includes, find_by!: order)
     end
 
