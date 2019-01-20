@@ -90,6 +90,50 @@ paths:
         - $ref: '#/components/parameters/SparseFieldsParam'
       security:
         - bearerAuth: []
+  '/account/orders':
+    get:
+      description: Returns Orders placed by the User. Only completed ones.
+      tags:
+        - Account
+      operationId: 'Completed Orders'
+      responses:
+        '200':
+          description: Listing user completed orders.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartList'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+      parameters:
+        - $ref: '#/components/parameters/CartIncludeParam'
+        - $ref: '#/components/parameters/SparseFieldsParam'
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/PerPageParam'
+      security:
+        - bearerAuth: []
+  '/account/orders/{number}':
+    get:
+      description: >-
+        Return the User's completed Order
+      tags:
+        - Account
+      operationId: 'Completed User Order'
+      responses:
+        '200':
+          description: Listing user completed order.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+      parameters:
+        - $ref: '#/components/parameters/OrderParam'
+        - $ref: '#/components/parameters/CartIncludeParam'
+        - $ref: '#/components/parameters/SparseFieldsParam'
+      security:
+        - bearerAuth: []
   '/cart':
     post:
       description: >-
@@ -1015,149 +1059,12 @@ components:
       properties:
         data:
           type: object
+          $ref: '#/components/schemas/CartAttributesWithRelationships'
           required:
             - id
             - type
             - attributes
             - relationships
-          properties:
-            id:
-              type: string
-              example: '1'
-            type:
-              type: string
-              default: 'cart'
-            attributes:
-              type: object
-              properties:
-                number:
-                  type: string
-                  example: 'R123456789'
-                email:
-                  type: string
-                  example: 'spree@example.com'
-                item_total:
-                  type: string
-                  example: '19.99'
-                display_item_total:
-                  type: string
-                  example: '$19.99'
-                total:
-                  type: string
-                  example: '29.99'
-                display_total:
-                  type: string
-                  example: '$29.99'
-                ship_total:
-                  type: string
-                  example: '0.0'
-                display_ship_total:
-                  type: string
-                  example: '$19.99'
-                adjustment_total:
-                  type: string
-                  example: '10.0'
-                display_adjustment_total:
-                  type: string
-                  example: '$10.00'
-                promo_total:
-                  type: string
-                  example: '-10.0'
-                display_promo_total:
-                  type: string
-                  example: '-$10.00'
-                created_at:
-                  $ref: '#/components/schemas/Timestamp'
-                updated_at:
-                  $ref: '#/components/schemas/Timestamp'
-                included_tax_total:
-                  type: string
-                  example: '5.00'
-                additional_tax_total:
-                  type: string
-                  example: '5.0'
-                display_additional_tax_total:
-                  type: string
-                  example: '$5.00'
-                display_included_tax_total:
-                  type: string
-                  example: '$5.00'
-                tax_total:
-                  type: string
-                  example: '10.0'
-                display_tax_total:
-                  type: string
-                  example: '$10.00'
-                item_count:
-                  type: number
-                  example: 2
-                  description: 'Total quantity number of all items added to the Cart'
-                special_instructions:
-                  type: string
-                  example: 'Please wrap it as a gift'
-                  description: 'Message added by the Customer'
-                currency:
-                  type: string
-                  example: 'USD'
-                state:
-                  type: string
-                  example: 'address'
-                  description: 'State of the Cart in the Checkout flow'
-                token:
-                  type: string
-                  example: abcdef123456
-                  description: >-
-                    Used for authorizing any action for an order within Spree’s
-                    API
-            relationships:
-              type: object
-              properties:
-                line_items:
-                  type: object
-                  properties:
-                    data:
-                      type: array
-                      items:
-                        $ref: '#/components/schemas/Relation'
-                promotions:
-                  type: object
-                  properties:
-                    data:
-                      type: array
-                      items:
-                        $ref: '#/components/schemas/Relation'
-                variants:
-                  type: object
-                  properties:
-                    data:
-                      type: array
-                      items:
-                        $ref: '#/components/schemas/Relation'
-                user:
-                  type: object
-                  properties:
-                    data:
-                      $ref: '#/components/schemas/Relation'
-                billing_address:
-                  type: object
-                  properties:
-                    data:
-                      $ref: '#/components/schemas/Relation'
-                shipping_address:
-                  type: object
-                  properties:
-                    data:
-                      $ref: '#/components/schemas/Relation'
-                payments:
-                  type: object
-                  properties:
-                    data:
-                      $ref: '#/components/schemas/Relation'
-                shipments:
-                  type: object
-                  properties:
-                    data:
-                      $ref: '#/components/schemas/Relation'
         included:
           type: array
           items:
@@ -1169,9 +1076,171 @@ components:
               - $ref: '#/components/schemas/User'
               - $ref: '#/components/schemas/Address'
               - $ref: '#/components/schemas/ShipmentAttributesWithoutRelationsips'
-    CreditCardList:
+    CartList:
       required:
         - data
+        - included
+      properties:
+        data:
+          required:
+            - id
+            - type
+            - attributes
+            - relationships
+          type: array
+          items:
+            $ref: '#/components/schemas/CartAttributesWithRelationships'
+        included:
+          type: array
+          items:
+            type: object
+            oneOf:
+              - $ref: '#/components/schemas/VariantAttributesAndRelationships'
+              - $ref: '#/components/schemas/LineItem'
+              - $ref: '#/components/schemas/Promotion'
+              - $ref: '#/components/schemas/User'
+              - $ref: '#/components/schemas/Address'
+              - $ref: '#/components/schemas/ShipmentAttributesWithoutRelationsips'
+    CartAttributesWithRelationships:
+      properties:
+        id:
+          type: string
+          example: '1'
+        type:
+          type: string
+          example: 'cart'
+        attributes:
+          $ref: '#/components/schemas/CartAttributes'
+        relationships:
+          $ref: '#/components/schemas/CartRelationships'
+    CartRelationships:
+      type: object
+      properties:
+        line_items:
+          type: object
+          description: ''
+          properties:
+            data:
+              $ref: '#/components/schemas/Relation'
+        promotions:
+          type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/Relation'
+        variants:
+          type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/Relation'
+        user:
+          type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/Relation'
+        billing_address:
+          type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/Relation'
+        shipping_address:
+          type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/Relation'
+        payments:
+          type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/Relation'
+        shipments:
+          type: object
+          properties:
+            data:
+              $ref: '#/components/schemas/Relation'
+    CartAttributes:
+      type: object
+      properties:
+        number:
+          type: string
+          example: 'R123456789'
+        email:
+          type: string
+          example: 'spree@example.com'
+        item_total:
+          type: string
+          example: '19.99'
+        display_item_total:
+          type: string
+          example: '$19.99'
+        total:
+          type: string
+          example: '29.99'
+        display_total:
+          type: string
+          example: '$29.99'
+        ship_total:
+          type: string
+          example: '0.0'
+        display_ship_total:
+          type: string
+          example: '$19.99'
+        adjustment_total:
+          type: string
+          example: '10.0'
+        display_adjustment_total:
+          type: string
+          example: '$10.00'
+        promo_total:
+          type: string
+          example: '-10.0'
+        display_promo_total:
+          type: string
+          example: '-$10.00'
+        created_at:
+          $ref: '#/components/schemas/Timestamp'
+        updated_at:
+          $ref: '#/components/schemas/Timestamp'
+        included_tax_total:
+          type: string
+          example: '5.00'
+        additional_tax_total:
+          type: string
+          example: '5.0'
+        display_additional_tax_total:
+          type: string
+          example: '$5.00'
+        display_included_tax_total:
+          type: string
+          example: '$5.00'
+        tax_total:
+          type: string
+          example: '10.0'
+        display_tax_total:
+          type: string
+          example: '$10.00'
+        item_count:
+          type: number
+          example: 2
+          description: 'Total quantity number of all items added to the Cart'
+        special_instructions:
+          type: string
+          example: 'Please wrap it as a gift'
+          description: 'Message added by the Customer'
+        currency:
+          type: string
+          example: 'USD'
+        state:
+          type: string
+          example: 'address'
+          description: 'State of the Cart in the Checkout flow'
+        token:
+          type: string
+          example: abcdef123456
+          description: >-
+            Used for authorizing any action for an order within Spree’s
+            API
+    CreditCardList:
+      required:
         - included
       properties:
         data:
@@ -2310,7 +2379,15 @@ components:
       description: Number of requested records per page when paginating collection
       schema:
         type: integer
-      example: 10
+      example:
+    OrderParam:
+      name: number
+      in: path
+      required: true
+      description: Number of Order
+      schema:
+        type: string
+      example: 'R653163382'
     CartIncludeParam:
       name: include
       in: query
