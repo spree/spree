@@ -4,6 +4,8 @@ module Spree
       class PaymentSerializer < BaseSerializer
         set_type :payment
 
+        has_one :source, polymorphic: true
+
         attributes :amount, :response_code, :number, :cvv_response_code, :cvv_response_message,
                    :payment_method_id, :payment_method_name
       end
