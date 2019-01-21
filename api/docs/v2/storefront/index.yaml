@@ -1283,7 +1283,7 @@ components:
         year:
           type: integer
           example: 2019
-          descriptiom: 'Expiration date year'
+          description: 'Expiration date year'
         name:
           type: string
           example: 'John Doe'
