@@ -1,10 +1,16 @@
+// --- Dependencies
 import * as React from 'react'
 import PropTypes from 'prop-types'
 import { Link } from 'gatsby'
 import { cx } from 'emotion'
 
+// --- Icons
 import IconClose from 'react-feather/dist/icons/chevron-right'
 import IconOpen from 'react-feather/dist/icons/chevron-down'
+
+/**
+ * Component
+ */
 
 const SidebarRootLink = ({
   isSingleRoot,

@@ -1,6 +1,11 @@
+// --- Dependencies
 import * as React from 'react'
 import { StaticQuery, graphql } from 'gatsby'
 import Img from 'gatsby-image'
+
+/**
+ * Component
+ */
 
 const Logo = () => (
   <StaticQuery
@@ -25,4 +30,5 @@ const Logo = () => (
     )}
   />
 )
+
 export default Logo

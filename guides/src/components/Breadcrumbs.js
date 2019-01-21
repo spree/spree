@@ -1,11 +1,18 @@
+// --- Dependencies
 import * as React from 'react'
 import PropTypes from 'prop-types'
 import { Link } from 'gatsby'
 import { last, equals } from 'ramda'
 
+// --- Icons
 import IconSplit from 'react-feather/dist/icons/chevron-right'
 
+// --- Components
 import Crumb from './Crumb'
+
+/**
+ * Helpers
+ */
 
 /**
  * @description Checks if the current breadcrumb is the last one in array
@@ -15,6 +22,10 @@ import Crumb from './Crumb'
  */
 const isLast = (currentCrumb, allCrumbs) =>
   equals(currentCrumb, last(allCrumbs))
+
+/**
+ * Component
+ */
 
 const Breadcrumbs = ({ crumbs }) => (
   <nav className="bb b--light-gray pv3">

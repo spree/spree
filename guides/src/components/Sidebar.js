@@ -1,3 +1,4 @@
+// --- Dependencies
 import * as React from 'react'
 import PropTypes from 'prop-types'
 import { Link } from 'gatsby'
@@ -15,10 +16,16 @@ import {
 import startCase from 'lodash.startcase'
 import { cx } from 'emotion'
 
+// --- Utils
 import style from '../utils/styles'
 import capitalize from '../utils/capitalize'
 
+// --- Components
 import SidebarRootLink from './SidebarRootLink'
+
+/**
+ * Helpers
+ */
 
 const byOnlyNonIndexNodes = item => !item.node.fields.isIndex
 const byOnlyIndexNodes = item => item.node.fields.isIndex
@@ -47,6 +54,10 @@ const normalizeNavBlock = (block, sort = 'ASC') =>
 
 const getNavBlockIndexSlug = block =>
   navBlockIndex(block)[0]['node']['fields']['slug']
+
+/**
+ * Component
+ */
 
 export default class Sidebar extends React.PureComponent {
   static propTypes = {

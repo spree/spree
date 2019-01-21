@@ -1,15 +1,23 @@
+// --- Dependencies
 import * as React from 'react'
 import PropTypes from 'prop-types'
 import { cx } from 'emotion'
 
+// --- Icons
 import IconAlert from 'react-feather/dist/icons/alert-circle'
 import IconNote from 'react-feather/dist/icons/file-text'
 import IconWarning from 'react-feather/dist/icons/alert-triangle'
 
+// --- Components
 import Status from './Status'
 import Json from './Json'
 
+// --- Utils
 import renderHtml from '../../utils/renderHtml'
+
+/**
+ * Component
+ */
 
 export default class Alert extends React.Component {
   static propTypes = {
