@@ -44,7 +44,7 @@ describe 'setting locale', type: :feature do
       end
     end
 
-    it 'shows translated jquery.validate error messages', js: true do
+    xit 'shows translated jquery.validate error messages', js: true do
       visit spree.root_path
       click_link mug.name
       click_button 'add-to-cart-button'
