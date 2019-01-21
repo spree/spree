@@ -1275,15 +1275,23 @@ components:
         last_digits:
           type: string
           example: '1232'
+          description: 'Last 4 digits of CC number'
         month:
           type: integer
           example: 10
+          description: 'Expiration date month'
         year:
           type: integer
           example: 2019
+          descriptiom: 'Expiration date year'
         name:
           type: string
           example: 'John Doe'
+          description: 'Card holder name'
+        default:
+          type: boolean
+          example: true
+          description: 'Defines if this is the default CC for a signed in user'
     CreditCardAttributesWithRelationships:
       properties:
         id:
