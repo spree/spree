@@ -11,10 +11,10 @@ module Spree
         def create
           variant = Spree::Variant.find(params[:line_item][:variant_id])
 
-          @line_item = Spree::Cart::AddItem.call(order: order,
-                                                 variant: variant,
-                                                 quantity: params[:line_item][:quantity],
-                                                 options: line_item_params[:options]).value
+          @line_item = Spree::Dependencies.cart_add_item_service.call(order: order,
+                                                                         variant: variant,
+                                                                         quantity: params[:line_item][:quantity],
+                                                                         options: line_item_params[:options]).value
           if @line_item.errors.empty?
             respond_with(@line_item, status: 201, default_template: :show)
           else

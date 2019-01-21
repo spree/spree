@@ -16,7 +16,7 @@ module Spree
             }
 
             order   = spree_current_order if spree_current_order.present?
-            order ||= dependencies[:create_cart].call(order_params).value
+            order ||= create_service.call(order_params).value
 
             render_serialized_payload(201) { serialize_order(order) }
           end
@@ -27,7 +27,7 @@ module Spree
             spree_authorize! :update, spree_current_order, order_token
             spree_authorize! :show, variant
 
-            result = dependencies[:add_item_to_cart].call(
+            result = add_item_service.call(
               order: spree_current_order,
               variant: variant,
               quantity: params[:quantity],
@@ -40,7 +40,7 @@ module Spree
           def remove_line_item
             spree_authorize! :update, spree_current_order, order_token
 
-            dependencies[:remove_item_from_cart].call(
+            remove_item_service.call(
               order: spree_current_order,
               line_item: line_item
             )
@@ -51,6 +51,8 @@ module Spree
           def empty
             spree_authorize! :update, spree_current_order, order_token
 
+            # TODO: we should extract this logic into service and let
+            # developers overwrite it
             spree_current_order.empty!
 
             render_serialized_payload { serialized_current_order }
@@ -61,7 +63,7 @@ module Spree
 
             spree_authorize! :update, spree_current_order, order_token
 
-            result = dependencies[:set_item_quantity].call(order: spree_current_order, line_item: line_item, quantity: params[:quantity])
+            result = set_item_quantity_service.call(order: spree_current_order, line_item: line_item, quantity: params[:quantity])
 
             render_order(result)
           end
@@ -76,7 +78,7 @@ module Spree
             spree_authorize! :update, spree_current_order, order_token
 
             spree_current_order.coupon_code = params[:coupon_code]
-            result = dependencies[:coupon_handler].new(spree_current_order).apply
+            result = coupon_handler.new(spree_current_order).apply
 
             if result.error.blank?
               render_serialized_payload { serialized_current_order }
@@ -88,7 +90,7 @@ module Spree
           def remove_coupon_code
             spree_authorize! :update, spree_current_order, order_token
 
-            result = dependencies[:coupon_handler].new(spree_current_order).remove(params[:coupon_code])
+            result = coupon_handler.new(spree_current_order).remove(params[:coupon_code])
 
             if result.error.blank?
               render_serialized_payload { serialized_current_order }
@@ -99,15 +101,28 @@ module Spree
 
           private
 
-          def dependencies
-            {
-              create_cart: Spree::Cart::Create,
-              add_item_to_cart: Spree::Cart::AddItem,
-              remove_item_from_cart: Spree::Cart::RemoveLineItem,
-              cart_serializer: Spree::V2::Storefront::CartSerializer,
-              set_item_quantity: Spree::Cart::SetQuantity,
-              coupon_handler: Spree::PromotionHandler::Coupon
-            }
+          def resource_serializer
+            Spree::Api::Dependencies.storefront_cart_serializer
+          end
+
+          def create_service
+            Spree::Api::Dependencies.storefront_cart_create_service
+          end
+
+          def add_item_service
+            Spree::Api::Dependencies.storefront_cart_add_item_service
+          end
+
+          def set_item_quantity_service
+            Spree::Api::Dependencies.storefront_cart_set_item_quantity_service
+          end
+
+          def remove_item_service
+            Spree::Api::Dependencies.storefront_cart_remove_item_service
+          end
+
+          def coupon_handler
+            Spree::Api::Dependencies.storefront_coupon_handler
           end
 
           def line_item
