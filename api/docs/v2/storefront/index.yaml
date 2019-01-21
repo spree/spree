@@ -1424,6 +1424,12 @@ components:
             display_additional_tax_total:
               type: string
               example: '$5.00'
+            discounted_amount:
+              type: string
+              example: '125.0'
+            display_discounted_amount:
+              type: string
+              example: '$125.00'
             promo_total:
               type: string
               example: '-5.0'
