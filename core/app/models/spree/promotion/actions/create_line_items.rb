@@ -43,7 +43,9 @@ module Spree
           promotion_action_line_items.each do |item|
             current_quantity = order.quantity_of(item.variant)
             if current_quantity < item.quantity && item_available?(item)
-              line_item = Spree::Cart::AddItem.call(order: order, variant: item.variant, quantity: item.quantity - current_quantity).value
+              line_item = Spree::Dependencies.cart_add_item_service.call(order: order,
+                                                                            variant: item.variant,
+                                                                            quantity: item.quantity - current_quantity).value
               action_taken = true if line_item.try(:valid?)
             end
           end

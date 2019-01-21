@@ -8,11 +8,15 @@ module Spree
 
     def add(variant, quantity = 1, options = {})
       ActiveSupport::Deprecation.warn(<<-EOS, caller)
-        OrderContents#add method is deprecated and will be removed in Spree 4.0. Please use Spree::Cart::AddItem service
+        OrderContents#add method is deprecated and will be removed in Spree 4.0.
+        Please use Spree::Dependencies.cart_add_item_service
         to add items to cart.
       EOS
 
-      Spree::Cart::AddItem.call(order: order, variant: variant, quantity: quantity, options: options).value
+      Spree::Dependencies.cart_add_item_service.call(order: order,
+                                                        variant: variant,
+                                                        quantity: quantity,
+                                                        options: options).value
     end
 
     def remove(variant, quantity = 1, options = {})

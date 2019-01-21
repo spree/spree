@@ -37,6 +37,7 @@ module Spree
 
       initializer 'spree.api.environment', before: :load_config_initializers do |_app|
         Spree::Api::Config = Spree::ApiConfiguration.new
+        Spree::Api::Dependencies = Spree::ApiDependencies.new
       end
 
       initializer 'spree.api.checking_migrations' do
