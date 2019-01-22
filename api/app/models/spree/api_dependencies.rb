@@ -8,6 +8,7 @@ module Spree
       # cart services
       @storefront_cart_create_service = Spree::Dependencies.cart_create_service
       @storefront_cart_add_item_service = Spree::Dependencies.cart_add_item_service
+      @storefront_cart_remove_line_item_service = Spree::Dependencies.cart_remove_line_item_service
       @storefront_cart_remove_item_service = Spree::Dependencies.cart_remove_item_service
       @storefront_cart_set_item_quantity_service = Spree::Dependencies.cart_set_item_quantity_service
 
@@ -49,7 +50,7 @@ module Spree
       @storefront_taxon_finder = Spree::Dependencies.taxon_finder
     end
 
-    attr_accessor :storefront_cart_create_service, :storefront_cart_add_item_service,
+    attr_accessor :storefront_cart_create_service, :storefront_cart_add_item_service, :storefront_cart_remove_line_item_service,
                   :storefront_cart_remove_item_service, :storefront_cart_set_item_quantity_service,
                   :storefront_coupon_handler, :storefront_checkout_next_service, :storefront_checkout_advance_service,
                   :storefront_checkout_update_service, :storefront_checkout_complete_service, :storefront_checkout_add_store_credit_service,
