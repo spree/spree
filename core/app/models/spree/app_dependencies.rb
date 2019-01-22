@@ -11,7 +11,8 @@ module Spree
                   :checkout_complete_service, :checkout_add_store_credit_service,
                   :checkout_remove_store_credit_service, :checkout_get_shipping_rates_service,
                   :coupon_handler, :country_finder, :current_order_finder, :credit_card_finder,
-                  :completed_order_finder, :order_sorter, :collection_paginator
+                  :completed_order_finder, :order_sorter, :collection_paginator, :products_sorter,
+                  :products_finder
 
     private
 
@@ -33,6 +34,7 @@ module Spree
 
       #sorter
       @order_sorter = Spree::Orders::Sort
+      @products_sorter = Spree::Products::Sort
 
       #paginator
       @collection_paginator = Spree::Shared::Paginate
@@ -47,6 +49,7 @@ module Spree
       @current_order_finder = Spree::Orders::FindCurrent
       @completed_order_finder = Spree::Orders::FindComplete
       @credit_card_finder = Spree::CreditCards::Find
+      @products_finder = Spree::Products::Find
     end
   end
 end

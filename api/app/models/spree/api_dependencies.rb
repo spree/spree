@@ -30,9 +30,11 @@ module Spree
       @storefront_user_serializer = Spree::V2::Storefront::UserSerializer
       @storefront_shipment_serializer = Spree::V2::Storefront::ShipmentSerializer
       @storedront_payment_method_serializer = Spree::V2::Storefront::PaymentMethodSerializer
+      @storefront_product_serializer = Spree::V2::Storefront::ProductSerializer
 
       #sorters
       @storefront_order_sorter = Spree::Dependencies.order_sorter
+      @storefront_products_sorter = Spree::Dependencies.products_sorter
 
       #paginators
       @storefront_collection_paginator = Spree::Dependencies.collection_paginator
@@ -42,6 +44,7 @@ module Spree
       @storefront_current_order_finder = Spree::Dependencies.current_order_finder
       @storefront_completed_order_finder = Spree::Dependencies.completed_order_finder
       @storefront_credit_card_finder = Spree::Dependencies.credit_card_finder
+      @storefront_products_finder = Spree::Dependencies.products_finder
     end
 
     attr_accessor :storefront_cart_create_service, :storefront_cart_add_item_service,
@@ -51,6 +54,7 @@ module Spree
                   :storefront_checkout_remove_store_credit_service, :storefront_checkout_get_shipping_rates_service,
                   :storefront_cart_serializer, :storefront_credit_card_serializer, :storefront_credit_card_finder, :storefront_shipment_serializer, :storedront_payment_method_serializer,
                   :storefront_country_finder, :storefront_country_serializer, :storefront_current_order_finder, :storefront_completed_order_finder,
-                  :storefront_order_sorter, :storefront_collection_paginator, :storefront_user_serializer
+                  :storefront_order_sorter, :storefront_collection_paginator, :storefront_user_serializer, :storefront_products_sorter,
+                  :storefront_products_finder, :storefront_product_serializer
   end
 end
