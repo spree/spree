@@ -54,10 +54,10 @@ module Spree
       # 2,147,483,647 is crazy. See issue #2695.
       if quantity.between?(1, 2_147_483_647)
         begin
-          result = Spree::Dependencies.cart_add_item_service.call(order: order,
-                                                                     variant: variant,
-                                                                     quantity: quantity,
-                                                                     options: options)
+          result = cart_add_item_service.call(order: order,
+                                              variant: variant,
+                                              quantity: quantity,
+                                              options: options)
           if result.failure?
             error = result.value.errors.full_messages.join(', ')
           else
@@ -135,6 +135,10 @@ module Spree
         flash[:error] = Spree.t(:order_not_found)
         redirect_to root_path and return
       end
+    end
+
+    def cart_add_item_service
+      Spree::Dependencies.cart_add_item_service.constantize
     end
   end
 end
