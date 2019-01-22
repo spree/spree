@@ -9,7 +9,7 @@ module Spree
           def next
             spree_authorize! :update, spree_current_order, order_token
 
-            result = next_service.call(order: spree_current_order)
+            result = next_service.constantize.call(order: spree_current_order)
 
             render_order(result)
           end
@@ -17,7 +17,7 @@ module Spree
           def advance
             spree_authorize! :update, spree_current_order, order_token
 
-            result = advance_service.call(order: spree_current_order)
+            result = advance_service.constantize.call(order: spree_current_order)
 
             render_order(result)
           end
@@ -25,7 +25,7 @@ module Spree
           def complete
             spree_authorize! :update, spree_current_order, order_token
 
-            result = complete_service.call(order: spree_current_order)
+            result = complete_service.constantize.call(order: spree_current_order)
 
             render_order(result)
           end
@@ -33,7 +33,7 @@ module Spree
           def update
             spree_authorize! :update, spree_current_order, order_token
 
-            result = update_service.call(
+            result = update_service.constantize.call(
               order: spree_current_order,
               params: params,
               # defined in https://github.com/spree/spree/blob/master/core/lib/spree/core/controller_helpers/strong_parameters.rb#L19
@@ -47,7 +47,7 @@ module Spree
           def add_store_credit
             spree_authorize! :update, spree_current_order, order_token
 
-            result = add_store_credit_service.call(
+            result = add_store_credit_service.constantize.call(
               order: spree_current_order,
               amount: params[:amount].try(:to_f)
             )
@@ -58,12 +58,12 @@ module Spree
           def remove_store_credit
             spree_authorize! :update, spree_current_order, order_token
 
-            result = remove_store_credit_service.call(order: spree_current_order)
+            result = remove_store_credit_service.constantize.call(order: spree_current_order)
             render_order(result)
           end
 
           def shipping_rates
-            result = get_shipping_rates_service.call(order: spree_current_order)
+            result = get_shipping_rates_service.constantize.call(order: spree_current_order)
 
             render_serialized_payload { serialize_shipping_rates(result.value) }
           end
@@ -103,7 +103,7 @@ module Spree
           end
 
           def payment_methods_serializer
-            Spree::Api::Dependencies.storedront_payment_method_serializer
+            Spree::Api::Dependencies.storefront_payment_method_serializer
           end
 
           def get_shipping_rates_service
@@ -115,11 +115,11 @@ module Spree
           end
 
           def serialize_payment_methods(payment_methods)
-            payment_methods_serializer.new(payment_methods).serializable_hash
+            payment_methods_serializer.constantize.new(payment_methods).serializable_hash
           end
 
           def serialize_shipping_rates(shipments)
-            shipping_rates_serializer.new(
+            shipping_rates_serializer.constantize.new(
               shipments,
               include: [:shipping_rates],
               params: { show_rates: true }

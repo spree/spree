@@ -20,33 +20,33 @@ module Spree
             private
 
             def paginated_collection
-              collection_paginator.new(sorted_collection, params).call
+              collection_paginator.constantize.new(sorted_collection, params).call
             end
 
             def sorted_collection
-              collection_sorter.new(collection, params).call
+              collection_sorter.constantize.new(collection, params).call
             end
 
             def collection
-              collection_finder.new(user: spree_current_user).execute
+              collection_finder.constantize.new(user: spree_current_user).execute
             end
 
             def resource
-              resource = resource_finder.new(user: spree_current_user, number: params[:id]).execute.take
+              resource = resource_finder.constantize.new(user: spree_current_user, number: params[:id]).execute.take
               raise ActiveRecord::RecordNotFound if resource.nil?
 
               resource
             end
 
             def serialize_collection(collection)
-              collection_serializer.new(
+              collection_serializer.constantize.new(
                 collection,
                 collection_options(collection)
               ).serializable_hash
             end
 
             def serialize_resource(resource)
-              resource_serializer.new(
+              resource_serializer.constantize.new(
                 resource,
                 include: resource_includes,
                 sparse_fields: sparse_fields

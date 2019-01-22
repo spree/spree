@@ -13,19 +13,24 @@ module Spree
         to add items to cart.
       EOS
 
-      Spree::Dependencies.cart_add_item_service.call(order: order,
-                                                        variant: variant,
-                                                        quantity: quantity,
-                                                        options: options).value
+      Spree::Dependencies.cart_add_item_service.constantize.call(order: order,
+                                                                 variant: variant,
+                                                                 quantity: quantity,
+                                                                 options: options).value
     end
 
     def remove(variant, quantity = 1, options = {})
       ActiveSupport::Deprecation.warn(<<-EOS, caller)
-        OrderContents#remove method is deprecated and will be removed in Spree 4.0. Please use Spree::Cart::RemoveItem
+        OrderContents#remove method is deprecated and will be removed in Spree 4.0.
+        Please use Spree::Cart::RemoveItem.cart_remove_item_service
         service to remove item from cart.
       EOS
 
-      Spree::Cart::RemoveItem.call(order: order, variant: variant, quantity: quantity, options: options).value
+      # change this dependencies to Spree::Cart::RemoveItem
+      Spree::Dependencies.cart_remove_item_service.constantize.call(order: order,
+                                                                    variant: variant,
+                                                                    quantity: quantity,
+                                                                    options: options).value
     end
 
     def remove_line_item(line_item, options = {})

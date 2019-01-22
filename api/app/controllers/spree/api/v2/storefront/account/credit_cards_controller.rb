@@ -17,7 +17,7 @@ module Spree
             private
 
             def resource
-              resource_finder.new.execute(scope: scope, params: params)
+              resource_finder.constantize.new.execute(scope: scope, params: params)
             end
 
             def collection_serializer
@@ -33,7 +33,7 @@ module Spree
             end
 
             def serialize_collection(collection)
-              collection_serializer.new(
+              collection_serializer.constantize.new(
                 collection,
                 include: resource_includes,
                 fields: sparse_fields
@@ -41,7 +41,7 @@ module Spree
             end
 
             def serialize_resource(resource)
-              resource_serializer.new(
+              resource_serializer.constantize.new(
                 resource,
                 include: resource_includes,
                 fields: sparse_fields

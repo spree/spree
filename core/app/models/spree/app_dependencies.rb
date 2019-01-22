@@ -18,39 +18,39 @@ module Spree
 
     def set_default_services
       # cart
-      @cart_create_service = Spree::Cart::Create
-      @cart_add_item_service = Spree::Cart::AddItem
-      @cart_remove_item_service = Spree::Cart::RemoveLineItem
-      @cart_set_item_quantity_service = Spree::Cart::SetQuantity
+      @cart_create_service = 'Spree::Cart::Create'
+      @cart_add_item_service = 'Spree::Cart::AddItem'
+      @cart_remove_item_service = 'Spree::Cart::RemoveLineItem'
+      @cart_set_item_quantity_service = 'Spree::Cart::SetQuantity'
 
       # checkout
-      @checkout_next_service = Spree::Checkout::Next
-      @checkout_advance_service = Spree::Checkout::Advance
-      @checkout_update_service = Spree::Checkout::Update
-      @checkout_complete_service = Spree::Checkout::Complete
-      @checkout_add_store_credit_service = Spree::Checkout::AddStoreCredit
-      @checkout_remove_store_credit_service = Spree::Checkout::RemoveStoreCredit
-      @checkout_get_shipping_rates_service = Spree::Checkout::GetShippingRates
+      @checkout_next_service = 'Spree::Checkout::Next'
+      @checkout_advance_service = 'Spree::Checkout::Advance'
+      @checkout_update_service = 'Spree::Checkout::Update'
+      @checkout_complete_service = 'Spree::Checkout::Complete'
+      @checkout_add_store_credit_service = 'Spree::Checkout::AddStoreCredit'
+      @checkout_remove_store_credit_service = 'Spree::Checkout::RemoveStoreCredit'
+      @checkout_get_shipping_rates_service = 'Spree::Checkout::GetShippingRates'
 
       #sorter
-      @order_sorter = Spree::Orders::Sort
-      @products_sorter = Spree::Products::Sort
+      @order_sorter = 'Spree::Orders::Sort'
+      @products_sorter = 'Spree::Products::Sort'
 
       #paginator
-      @collection_paginator = Spree::Shared::Paginate
+      @collection_paginator = 'Spree::Shared::Paginate'
 
       # coupons
       # TODO: we should split this service into 2 seperate - Add and Remove
-      @coupon_handler = Spree::PromotionHandler::Coupon
+      @coupon_handler = 'Spree::PromotionHandler::Coupon'
     end
 
     def set_default_finders
-      @country_finder = Spree::Countries::Find
-      @current_order_finder = Spree::Orders::FindCurrent
-      @completed_order_finder = Spree::Orders::FindComplete
-      @credit_card_finder = Spree::CreditCards::Find
-      @products_finder = Spree::Products::Find
-      @taxon_finder = Spree::Taxons::Find
+      @country_finder = 'Spree::Countries::Find'
+      @current_order_finder = 'Spree::Orders::FindCurrent'
+      @completed_order_finder = 'Spree::Orders::FindComplete'
+      @credit_card_finder = 'Spree::CreditCards::Find'
+      @products_finder = 'Spree::Products::Find'
+      @taxon_finder = 'Spree::Taxons::Find'
     end
   end
 end
