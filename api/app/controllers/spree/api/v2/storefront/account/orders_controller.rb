@@ -20,48 +20,61 @@ module Spree
             private
 
             def paginated_collection
-              dependencies[:collection_paginator].new(sorted_collection, params).call
+              collection_paginator.new(sorted_collection, params).call
             end
 
             def sorted_collection
-              dependencies[:collection_sorter].new(collection, params).call
+              collection_sorter.new(collection, params).call
             end
 
             def collection
-              dependencies[:collection_finder].new(user: spree_current_user).execute
+              collection_finder.new(user: spree_current_user).execute
             end
 
             def resource
-              resource = dependencies[:resource_finder].new(user: spree_current_user, number: params[:id]).execute.take
+              resource = resource_finder.new(user: spree_current_user, number: params[:id]).execute.take
               raise ActiveRecord::RecordNotFound if resource.nil?
 
               resource
             end
 
             def serialize_collection(collection)
-              dependencies[:collection_serializer].new(
+              collection_serializer.new(
                 collection,
                 collection_options(collection)
               ).serializable_hash
             end
 
             def serialize_resource(resource)
-              dependencies[:resource_serializer].new(
+              resource_serializer.new(
                 resource,
                 include: resource_includes,
                 sparse_fields: sparse_fields
               ).serializable_hash
             end
 
-            def dependencies
-              {
-                collection_sorter: Spree::Orders::Sort,
-                resource_finder: Spree::Orders::FindComplete,
-                resource_serializer: Spree::V2::Storefront::CartSerializer,
-                collection_serializer: Spree::V2::Storefront::CartSerializer,
-                collection_finder: Spree::Orders::FindComplete,
-                collection_paginator: Spree::Shared::Paginate
-              }
+            def collection_serializer
+              Spree::Api::Dependencies.storefront_cart_serializer
+            end
+
+            def resource_serializer
+              Spree::Api::Dependencies.storefront_cart_serializer
+            end
+
+            def collection_finder
+              Spree::Api::Dependencies.storefront_completed_order_finder
+            end
+
+            def resource_finder
+              Spree::Api::Dependencies.storefront_completed_order_finder
+            end
+
+            def collection_sorter
+              Spree::Api::Dependencies.storefront_order_sorter
+            end
+
+            def collection_paginator
+              Spree::Api::Dependencies.storefront_collection_paginator
             end
 
             def collection_options(collection)
