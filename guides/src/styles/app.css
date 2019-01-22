@@ -92,7 +92,8 @@ label[role='menuitem'].active {
 }
 
 label[role='menuitem'].active > span {
-  color: #99cc00;
+  color: #779e01;
+  font-weight: 600;
 }
 
 label[role='menuitem'] svg {
@@ -141,7 +142,7 @@ label[role='menuitem'] svg polygon {
 }
 
 .menu-content li > ul > li > label > span {
-  font-size: 0.825rem;
+  font-size: 1rem;
   color: #777;
   padding-left: 0.25rem;
   padding-right: 0.5rem;

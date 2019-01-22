@@ -477,6 +477,41 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
         it_behaves_like 'returns 200 HTTP status'
         it_behaves_like 'valid payload', 300.0
       end
+
+      context 'with option include' do
+        let!(:payment) { Spree::Payment.all.first }
+
+        context 'payments.source' do
+          let(:execute) { post '/api/v2/storefront/checkout/add_store_credit?include=payments.source', params: params, headers: headers }
+
+          it 'return relationship with store_credit' do
+            expect(json_response['included'][0]).to have_type('store_credit')
+
+            expect(json_response['included'][0]).to have_attribute(:amount).with_value(payment.source.amount.to_s)
+            expect(json_response['included'][0]).to have_attribute(:amount_used).with_value(payment.source.amount_used.to_s)
+            expect(json_response['included'][0]).to have_attribute(:created_at)
+
+            expect(json_response['included'][0]).to have_relationship(:category)
+            expect(json_response['included'][0]).to have_relationship(:store_credit_events)
+            expect(json_response['included'][0]).to have_relationship(:credit_type)
+          end
+        end
+
+        context 'payments.payment_method' do
+          let(:execute) { post '/api/v2/storefront/checkout/add_store_credit?include=payments.payment_method', params: params, headers: headers }
+
+          it 'return relationship with payment_method' do
+            expect(json_response['included'][0]).to have_type('payment_method')
+
+            expect(json_response['included'][0]).to have_attribute(:type).with_value(payment.payment_method.type)
+            expect(json_response['included'][0]).to have_attribute(:name).with_value(payment.payment_method.name)
+            expect(json_response['included'][0]).to have_attribute(:description).with_value(payment.payment_method.description)
+
+            expect(json_response['included'][1]).to have_relationship(:source)
+            expect(json_response['included'][1]).to have_relationship(:payment_method)
+          end
+        end
+      end
     end
   end
 

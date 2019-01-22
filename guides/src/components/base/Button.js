@@ -1,6 +1,11 @@
+// --- Dependencies
 import * as React from 'react'
 import PropTypes from 'prop-types'
 import { Link } from 'gatsby'
+
+/**
+ * Component
+ */
 
 const Button = ({ to, children }) => (
   <Link
