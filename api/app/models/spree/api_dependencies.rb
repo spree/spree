@@ -27,6 +27,7 @@ module Spree
       @storefront_cart_serializer = Spree::V2::Storefront::CartSerializer
       @storefront_credit_card_serializer = Spree::V2::Storefront::CreditCardSerializer
       @storefront_country_serializer = Spree::V2::Storefront::CountrySerializer
+      @storefront_user_serializer = Spree::V2::Storefront::UserSerializer
       @storefront_shipment_serializer = Spree::V2::Storefront::ShipmentSerializer
       @storedront_payment_method_serializer = Spree::V2::Storefront::PaymentMethodSerializer
 
@@ -50,6 +51,6 @@ module Spree
                   :storefront_checkout_remove_store_credit_service, :storefront_checkout_get_shipping_rates_service,
                   :storefront_cart_serializer, :storefront_credit_card_serializer, :storefront_credit_card_finder, :storefront_shipment_serializer, :storedront_payment_method_serializer,
                   :storefront_country_finder, :storefront_country_serializer, :storefront_current_order_finder, :storefront_completed_order_finder,
-                  :storefront_order_sorter, :storefront_collection_paginator
+                  :storefront_order_sorter, :storefront_collection_paginator, :storefront_user_serializer
   end
 end
