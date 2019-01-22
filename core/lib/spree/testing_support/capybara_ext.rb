@@ -135,8 +135,9 @@ module CapybaraExt
   def spree_accept_alert
     yield
   rescue Selenium::WebDriver::Error::UnhandledAlertError
-    alert = page.driver.browser.switch_to.alert
-    alert&.text&.strip.eql?('undefined') ? alert.accept : alert.accept
+    Selenium::WebDriver::Wait.new(timeout: 5)
+      .until { page.driver.browser.switch_to.alert }
+      .accept
   end
 
   def disable_html5_validation
