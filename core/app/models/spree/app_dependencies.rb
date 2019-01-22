@@ -12,7 +12,7 @@ module Spree
                   :checkout_remove_store_credit_service, :checkout_get_shipping_rates_service,
                   :coupon_handler, :country_finder, :current_order_finder, :credit_card_finder,
                   :completed_order_finder, :order_sorter, :collection_paginator, :products_sorter,
-                  :products_finder
+                  :products_finder, :taxon_finder
 
     private
 
@@ -50,6 +50,7 @@ module Spree
       @completed_order_finder = Spree::Orders::FindComplete
       @credit_card_finder = Spree::CreditCards::Find
       @products_finder = Spree::Products::Find
+      @taxon_finder = Spree::Taxons::Find
     end
   end
 end
