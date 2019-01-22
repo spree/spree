@@ -10,7 +10,7 @@ module Spree
           user: user,
           store: store,
           currency: currency,
-          token: GenerateToken.new.call(Spree::Order)
+          token: Spree::GenerateToken.new.call(Spree::Order)
         }
 
         order = Spree::Order.create!(default_params.merge(order_params))
