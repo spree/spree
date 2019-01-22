@@ -39,6 +39,37 @@ describe Spree::Address, type: :model do
     end
   end
 
+  describe 'delegated method' do
+    context 'Country' do
+      let(:country) { create(:country, name: 'United States', iso_name: 'UNITED STATES', iso: 'US', iso3: 'USA') }
+      let(:address) { create(:address, country: country) }
+
+      context '#country_name' do
+        it 'return proper country_iso_name' do
+          expect(address.country_name).to eq 'United States'
+        end
+      end
+
+      context '#country_iso_name' do
+        it 'return proper country_iso_name' do
+          expect(address.country_iso_name).to eq 'UNITED STATES'
+        end
+      end
+
+      context '#country_iso' do
+        it 'return proper country_iso_name' do
+          expect(address.country_iso).to eq 'US'
+        end
+      end
+
+      context '#country_iso3' do
+        it 'return proper country_iso_name' do
+          expect(address.country_iso3).to eq 'USA'
+        end
+      end
+    end
+  end
+
   context 'aliased attributes' do
     let(:address) { Spree::Address.new }
 
@@ -288,6 +319,28 @@ describe Spree::Address, type: :model do
       let(:address) { stub_model(Spree::Address, state: state) }
 
       specify { expect(address.state_text).to eq('virginia') }
+    end
+  end
+
+  context '#state_name_text' do
+    context 'state_name is blank' do
+      let(:state) { create(:state, name: 'virginia', abbr: nil) }
+      let(:address) { create(:address, state: state, state_name: nil) }
+
+      specify { expect(address.state_name_text).to eq('virginia') }
+    end
+
+    context 'state is blank' do
+      let(:address) { create(:address, state: nil, state_name: 'virginia') }
+
+      specify { expect(address.state_name_text).to eq('virginia') }
+    end
+
+    context 'state and state_name are present' do
+      let(:state) { create(:state, name: 'virginia', abbr: nil) }
+      let(:address) { create(:address, state: state, state_name: 'virginia') }
+
+      specify { expect(address.state_name_text).to eq('virginia') }
     end
   end
 

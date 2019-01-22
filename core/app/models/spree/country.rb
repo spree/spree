@@ -22,6 +22,10 @@ module Spree
       default || find_by(iso: 'US') || first
     end
 
+    def self.by_iso(iso)
+      where(['LOWER(iso) = ?', iso.downcase]).or(where(['LOWER(iso3) = ?', iso.downcase])).take
+    end
+
     def default?
       id == Spree::Config[:default_country_id]
     end

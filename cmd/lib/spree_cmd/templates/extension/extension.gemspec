@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.version     = <%= class_name %>.version
   s.summary     = 'Add extension summary here'
   s.description = 'Add (optional) extension description here'
-  s.required_ruby_version = '>= 2.3.0'
+  s.required_ruby_version = '>= 2.3.3'
 
   s.author    = 'You'
   s.email     = 'you@example.com'
@@ -29,6 +29,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'appraisal'
   s.add_development_dependency 'capybara'
   s.add_development_dependency 'capybara-screenshot'
+  s.add_development_dependency 'coffee-rails'
   s.add_development_dependency 'database_cleaner'
   s.add_development_dependency 'factory_bot'
   s.add_development_dependency 'ffaker'

@@ -2,7 +2,6 @@
 
 <% content_for :page_title do %>
   / <%= plural_resource_name(Spree::StateChange) %>
-  / <%= Spree::StateChange.human_attribute_name(:state_changes) %>
 <% end %>
 
 <% if @state_changes.any? %>

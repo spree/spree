@@ -21,7 +21,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
       phone: '3014445002',
       zipcode: '20814',
       state_id: state.id,
-      country_id: country.id
+      country_iso: country.iso
     }
   end
 
@@ -259,9 +259,14 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
           order.reload
           expect(order.bill_address).not_to be_nil
           expect(order.ship_address).not_to be_nil
-          address.keys.each do |key|
-            expect(order.bill_address[key]).to eq address[key]
-          end
+          expect(order.bill_address.firstname).to eq address[:firstname]
+          expect(order.bill_address.lastname).to eq address[:lastname]
+          expect(order.bill_address.address1).to eq address[:address1]
+          expect(order.bill_address.city).to eq address[:city]
+          expect(order.bill_address.phone).to eq address[:phone]
+          expect(order.bill_address.zipcode).to eq address[:zipcode]
+          expect(order.bill_address.state_id).to eq address[:state_id]
+          expect(order.bill_address.country.iso).to eq address[:country_iso]
         end
       end
 
@@ -471,6 +476,41 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
 
         it_behaves_like 'returns 200 HTTP status'
         it_behaves_like 'valid payload', 300.0
+      end
+
+      context 'with option include' do
+        let!(:payment) { Spree::Payment.all.first }
+
+        context 'payments.source' do
+          let(:execute) { post '/api/v2/storefront/checkout/add_store_credit?include=payments.source', params: params, headers: headers }
+
+          it 'return relationship with store_credit' do
+            expect(json_response['included'][0]).to have_type('store_credit')
+
+            expect(json_response['included'][0]).to have_attribute(:amount).with_value(payment.source.amount.to_s)
+            expect(json_response['included'][0]).to have_attribute(:amount_used).with_value(payment.source.amount_used.to_s)
+            expect(json_response['included'][0]).to have_attribute(:created_at)
+
+            expect(json_response['included'][0]).to have_relationship(:category)
+            expect(json_response['included'][0]).to have_relationship(:store_credit_events)
+            expect(json_response['included'][0]).to have_relationship(:credit_type)
+          end
+        end
+
+        context 'payments.payment_method' do
+          let(:execute) { post '/api/v2/storefront/checkout/add_store_credit?include=payments.payment_method', params: params, headers: headers }
+
+          it 'return relationship with payment_method' do
+            expect(json_response['included'][0]).to have_type('payment_method')
+
+            expect(json_response['included'][0]).to have_attribute(:type).with_value(payment.payment_method.type)
+            expect(json_response['included'][0]).to have_attribute(:name).with_value(payment.payment_method.name)
+            expect(json_response['included'][0]).to have_attribute(:description).with_value(payment.payment_method.description)
+
+            expect(json_response['included'][1]).to have_relationship(:source)
+            expect(json_response['included'][1]).to have_relationship(:payment_method)
+          end
+        end
       end
     end
   end

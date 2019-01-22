@@ -15,13 +15,15 @@
             <% end %>
           </li>
         <% end %>
-        <li>
-          <%= link_to spree.edit_admin_user_path(try_spree_current_user) do %>
-            <i class="glyphicon glyphicon-user"></i>
-            &nbsp;
-            <%= Spree.t(:account) %>
-          <% end %>
-        </li>
+        <% if can?(:manage, try_spree_current_user) %>
+          <li>
+            <%= link_to spree.edit_admin_user_path(try_spree_current_user) do %>
+              <i class="glyphicon glyphicon-user"></i>
+              &nbsp;
+              <%= Spree.t(:account) %>
+            <% end %>
+          </li>
+        <% end %>
         <% if spree.respond_to? :admin_logout_path %>
           <li>
             <%= link_to spree.admin_logout_path do %>

@@ -23,8 +23,8 @@ module Spree
             def dependencies
               {
                 resource_finder: Spree::CreditCards::Find,
-                collection_serializer: Spree::V2::Storefront::Account::CreditCardSerializer,
-                resource_serializer: Spree::V2::Storefront::Account::CreditCardSerializer
+                collection_serializer: Spree::V2::Storefront::CreditCardSerializer,
+                resource_serializer: Spree::V2::Storefront::CreditCardSerializer
               }
             end
 
