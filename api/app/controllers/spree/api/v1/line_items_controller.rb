@@ -35,7 +35,7 @@ module Spree
 
         def destroy
           @line_item = find_line_item
-          Spree::Dependencies.cart_remove_item_service.constantize.call(order: @order, line_item: @line_item)
+          Spree::Dependencies.cart_remove_line_item_service.constantize.call(order: @order, line_item: @line_item)
 
           respond_with(@line_item, status: 204)
         end

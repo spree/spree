@@ -40,7 +40,7 @@ module Spree
           def remove_line_item
             spree_authorize! :update, spree_current_order, order_token
 
-            remove_item_service.constantize.call(
+            remove_line_item_service.constantize.call(
               order: spree_current_order,
               line_item: line_item
             )
@@ -117,8 +117,8 @@ module Spree
             Spree::Api::Dependencies.storefront_cart_set_item_quantity_service
           end
 
-          def remove_item_service
-            Spree::Api::Dependencies.storefront_cart_remove_item_service
+          def remove_line_item_service
+            Spree::Api::Dependencies.storefront_cart_remove_line_item_service
           end
 
           def coupon_handler
