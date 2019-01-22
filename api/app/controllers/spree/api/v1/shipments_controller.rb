@@ -74,7 +74,7 @@ module Spree
                        @shipment.inventory_units_for(variant).sum(:quantity)
                      end
 
-          Spree::Cart::RemoveItem.call(order: @shipment.order, variant: variant, quantity: quantity, options: { shipment: @shipment })
+          Spree::Dependencies.cart_remove_item_service.constantize.call(order: @shipment.order, variant: variant, quantity: quantity, options: { shipment: @shipment })
 
           if @shipment.inventory_units.any?
             @shipment.reload
