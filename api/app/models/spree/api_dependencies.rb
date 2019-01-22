@@ -25,6 +25,7 @@ module Spree
 
       # serializers
       @storefront_cart_serializer = Spree::V2::Storefront::CartSerializer
+      @storefront_credit_card_serializer = Spree::V2::Storefront::CreditCardSerializer
       @storefront_country_serializer = Spree::V2::Storefront::CountrySerializer
       @storefront_shipment_serializer = Spree::V2::Storefront::ShipmentSerializer
       @storedront_payment_method_serializer = Spree::V2::Storefront::PaymentMethodSerializer
@@ -32,6 +33,7 @@ module Spree
       # finders
       @storefront_country_finder = Spree::Dependencies.country_finder
       @storefront_current_order_finder = Spree::Dependencies.current_order_finder
+      @storefront_credit_card_finder = Spree::Dependencies.credit_card_finder
     end
 
     attr_accessor :storefront_cart_create_service, :storefront_cart_add_item_service,
@@ -39,7 +41,7 @@ module Spree
                   :storefront_coupon_handler, :storefront_checkout_next_service, :storefront_checkout_advance_service,
                   :storefront_checkout_update_service, :storefront_checkout_complete_service, :storefront_checkout_add_store_credit_service,
                   :storefront_checkout_remove_store_credit_service, :storefront_checkout_get_shipping_rates_service,
-                  :storefront_cart_serializer, :storefront_shipment_serializer, :storedront_payment_method_serializer,
+                  :storefront_cart_serializer, :storefront_credit_card_serializer, :storefront_credit_card_finder, :storefront_shipment_serializer, :storedront_payment_method_serializer,
                   :storefront_country_finder, :storefront_country_serializer, :storefront_current_order_finder
   end
 end

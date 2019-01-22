@@ -10,7 +10,7 @@ module Spree
                   :checkout_next_service, :checkout_advance_service, :checkout_update_service,
                   :checkout_complete_service, :checkout_add_store_credit_service,
                   :checkout_remove_store_credit_service, :checkout_get_shipping_rates_service,
-                  :coupon_handler, :country_finder, :current_order_finder
+                  :coupon_handler, :country_finder, :current_order_finder, :credit_card_finder
 
     private
 
@@ -38,6 +38,7 @@ module Spree
     def set_default_finders
       @country_finder = Spree::Countries::Find
       @current_order_finder = Spree::Orders::FindCurrent
+      @credit_card_finder = Spree::CreditCards::Find
     end
   end
 end
