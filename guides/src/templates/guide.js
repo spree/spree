@@ -16,6 +16,9 @@ import Json from '../components/helpers/Json'
 import Status from '../components/helpers/Status'
 import Alert from '../components/helpers/Alert'
 import Params from '../components/helpers/Params'
+import Table from '../components/base/Table'
+import Td from '../components/base/Td'
+import Th from '../components/base/Th'
 
 const renderAst = new RehypeReact({
   createElement: React.createElement,
@@ -29,7 +32,10 @@ const renderAst = new RehypeReact({
     json: Json,
     status: Status,
     alert: Alert,
-    params: Params
+    params: Params,
+    table: Table,
+    td: Td,
+    th: Th
   }
 }).Compiler
 

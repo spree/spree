@@ -4,10 +4,9 @@ module Spree
       class CreditCardSerializer < BaseSerializer
         set_type :credit_card
 
-        attributes :cc_type, :last_digits, :month, :year, :name
+        attributes :cc_type, :last_digits, :month, :year, :name, :default
 
-        belongs_to :payment_method,
-                   serializer: Spree::V2::Storefront::PaymentMethodSerializer
+        belongs_to :payment_method
       end
     end
   end

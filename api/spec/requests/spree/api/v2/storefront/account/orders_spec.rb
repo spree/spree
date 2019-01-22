@@ -4,8 +4,7 @@ require 'shared_examples/api_v2/current_order'
 
 describe 'Storefront API v2 Orders spec', type: :request do
   let!(:user) { create(:user_with_addresses) }
-  let!(:orders) { create_list(:order, 4, state: 'complete', user: user, completed_at: Time.current) }
-  let(:order) { orders.first }
+  let!(:order) { create(:order, state: 'complete', user: user, completed_at: Time.current) }
 
   include_context 'API v2 tokens'
 
@@ -14,7 +13,8 @@ describe 'Storefront API v2 Orders spec', type: :request do
       before { get '/api/v2/storefront/account/orders?include=billing_address', headers: headers_bearer }
 
       it 'returns orders' do
-        expect(json_response['data'].size).to eq Spree::Order.count
+        expect(json_response['data'].size).to eq 1
+        expect(json_response['data']).to be_kind_of(Array)
 
         expect(json_response['data'][0]).to be_present
         expect(json_response['data'][0]).to have_id(order.id.to_s)
@@ -52,6 +52,11 @@ describe 'Storefront API v2 Orders spec', type: :request do
     end
 
     context 'with specified pagination params' do
+      let!(:order) { create(:order, state: 'complete', user: user, completed_at: Time.current) }
+      let!(:order_1) { create(:order, state: 'complete', user: user, completed_at: Time.current + 1.day) }
+      let!(:order_2) { create(:order, state: 'complete', user: user, completed_at: Time.current + 2.days) }
+      let!(:order_3) { create(:order, state: 'complete', user: user, completed_at: Time.current + 3.days) }
+
       before { get '/api/v2/storefront/account/orders?page=1&per_page=2', headers: headers_bearer }
 
       it_behaves_like 'returns 200 HTTP status'
@@ -95,6 +100,11 @@ describe 'Storefront API v2 Orders spec', type: :request do
 
 
     context 'sort orders' do
+      let!(:order) { create(:order, state: 'complete', user: user, completed_at: Time.current) }
+      let!(:order_1) { create(:order, state: 'complete', user: user, completed_at: Time.current + 1.day) }
+      let!(:order_2) { create(:order, state: 'complete', user: user, completed_at: Time.current + 2.days) }
+      let!(:order_3) { create(:order, state: 'complete', user: user, completed_at: Time.current + 3.days) }
+
       context 'sorting by completed_at' do
         context 'ascending order' do
           before { get '/api/v2/storefront/account/orders?sort=completed_at', headers: headers_bearer }
@@ -102,19 +112,19 @@ describe 'Storefront API v2 Orders spec', type: :request do
           it_behaves_like 'returns 200 HTTP status'
 
           it 'returns orders sorted by completed_at' do
-            expect(json_response['data'].count).to      eq Spree::Order.count
-            expect(json_response['data'].pluck(:id)).to eq Spree::Order.order("#{Spree::Order.table_name}.completed_at").map(&:id).map(&:to_s)
+            expect(json_response['data'].count).to eq Spree::Order.count
+            expect(json_response['data'].pluck(:id)).to eq Spree::Order.select('*').order(completed_at: :desc).pluck(:id).map(&:to_s)
           end
         end
 
         context 'descending order' do
-          before { get '/api/v2/storefront/account/orders?sort=-completed_at', headers: headers_bearer  }
+          before { get '/api/v2/storefront/account/orders?sort=-completed_at', headers: headers_bearer }
 
           it_behaves_like 'returns 200 HTTP status'
 
           it 'returns orders sorted by completed_at' do
-            expect(json_response['data'].count).to      eq Spree::Order.count
-            expect(json_response['data'].pluck(:id)).to eq Spree::Order.order("#{Spree::Order.table_name}.completed_at").map(&:id).map(&:to_s)
+            expect(json_response['data'].count).to eq Spree::Order.count
+            expect(json_response['data'].pluck(:id)).to eq Spree::Order.select('*').order(completed_at: :asc).pluck(:id).map(&:to_s)
           end
         end
       end
@@ -149,7 +159,7 @@ describe 'Storefront API v2 Orders spec', type: :request do
     end
 
     context 'with missing order number' do
-      before { get "/api/v2/storefront/account/orders/23212", headers: headers_bearer }
+      before { get '/api/v2/storefront/account/orders/23212', headers: headers_bearer }
 
       it_behaves_like 'returns 404 HTTP status'
     end

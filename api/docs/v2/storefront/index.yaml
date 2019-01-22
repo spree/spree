@@ -1275,15 +1275,23 @@ components:
         last_digits:
           type: string
           example: '1232'
+          description: 'Last 4 digits of CC number'
         month:
           type: integer
           example: 10
+          description: 'Expiration date month'
         year:
           type: integer
           example: 2019
+          description: 'Expiration date year'
         name:
           type: string
           example: 'John Doe'
+          description: 'Card holder name'
+        default:
+          type: boolean
+          example: true
+          description: 'Defines if this is the default CC for a signed in user'
     CreditCardAttributesWithRelationships:
       properties:
         id:
@@ -1416,6 +1424,12 @@ components:
             display_additional_tax_total:
               type: string
               example: '$5.00'
+            discounted_amount:
+              type: string
+              example: '125.0'
+            display_discounted_amount:
+              type: string
+              example: '$125.00'
             promo_total:
               type: string
               example: '-5.0'

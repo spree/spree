@@ -1,14 +1,27 @@
+// --- Dependencies
 import * as React from 'react'
 import { RedocStandalone } from 'redoc'
 
+// --- Utils
+import styles from '../../../utils/styles'
+
+// --- Components
 import Layout from '../../../components/Layout'
 import Breadcrumbs from '../../../components/Breadcrumbs'
+
+/**
+ * Helpers
+ */
 
 const crumbs = [
   { name: 'API', url: '/api/overview' },
   { name: 'V2', url: '/api/v2' },
   { name: 'Authentication' }
 ]
+
+/**
+ * Component
+ */
 
 const AuthenticationPage = () => (
   <Layout activeRootSection="api/v2">
@@ -19,41 +32,7 @@ const AuthenticationPage = () => (
         disableSearch: true,
         scrollYOffset: 80,
         hideDownloadButton: true,
-        theme: {
-          colors: {
-            primary: {
-              main: '#0066CC'
-            },
-            success: {
-              main: '#99CC00'
-            },
-            border: {
-              dark: '#EEE'
-            }
-          },
-          typography: {
-            smoothing: 'unset',
-            fontSize: '16px',
-            fontFamily: '"IBM Plex Sans", sans-serif;',
-            headings: {
-              fontFamily: '"IBM Plex Sans", sans-serif;'
-            },
-            code: {
-              fontSize: '16px',
-              fontFamily: '"IBM Plex Mono", monospace;',
-              fontWeight: 400,
-              backgroundColor: '#0066CC',
-              color: '#FFF'
-            }
-          },
-          rightPanel: {
-            backgroundColor: '#444'
-          },
-          menu: {
-            width: '19rem',
-            backgroundColor: '#FFF'
-          }
-        }
+        theme: styles.redocTheme
       }}
     />
   </Layout>

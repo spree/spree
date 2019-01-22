@@ -1,0 +1,17 @@
+{
+  "presets": [["babel-preset-gatsby"]],
+  "plugins": [
+    [
+      "module-resolver",
+      {
+        "root": ["./src"],
+        "alias": {
+          "components": "./components",
+          "pages": "./pages",
+          "utils": "./utils",
+          "templates": "./templates"
+        }
+      }
+    ]
+  ]
+}
