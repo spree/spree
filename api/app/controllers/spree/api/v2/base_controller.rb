@@ -9,6 +9,10 @@ module Spree
 
         private
 
+        def collection_paginator
+          Spree::Api::Dependencies.storefront_collection_paginator
+        end
+
         def render_serialized_payload(status = 200)
           render json: yield, status: status
         rescue ArgumentError => exception
