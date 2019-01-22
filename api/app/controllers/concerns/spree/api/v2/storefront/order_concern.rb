@@ -26,7 +26,7 @@ module Spree
           end
 
           def find_spree_current_order
-            Spree::Api::Dependencies.storefront_current_order_finder.new.execute(
+            Spree::Api::Dependencies.storefront_current_order_finder.constantize.new.execute(
               store: spree_current_store,
               user: spree_current_user,
               token: order_token,
@@ -35,7 +35,7 @@ module Spree
           end
 
           def serialize_order(order)
-            resource_serializer.new(order.reload, include: resource_includes, fields: sparse_fields).serializable_hash
+            resource_serializer.constantize.new(order.reload, include: resource_includes, fields: sparse_fields).serializable_hash
           end
 
           def serialized_current_order

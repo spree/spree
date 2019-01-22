@@ -25,7 +25,7 @@ module Spree
           quantity = params[:quantity].to_i
           @shipment = @order.shipments.create(stock_location_id: params.fetch(:stock_location_id))
 
-          @line_item = Spree::Dependencies.cart_add_item_service.call(order: @order,
+          @line_item = Spree::Dependencies.cart_add_item_service.constantize.call(order: @order,
                                                                          variant: variant,
                                                                          quantity: quantity,
                                                                          options: { shipment: @shipment }).value
@@ -59,7 +59,7 @@ module Spree
         def add
           quantity = params[:quantity].to_i
 
-          Spree::Dependencies.cart_add_item_service.call(order: @shipment.order,
+          Spree::Dependencies.cart_add_item_service.constantize.call(order: @shipment.order,
                                                             variant: variant,
                                                             quantity: quantity,
                                                             options: { shipment: @shipment })

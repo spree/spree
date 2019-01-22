@@ -16,7 +16,7 @@ module Spree
             }
 
             order   = spree_current_order if spree_current_order.present?
-            order ||= create_service.call(order_params).value
+            order ||= create_service.constantize.call(order_params).value
 
             render_serialized_payload(201) { serialize_order(order) }
           end
@@ -27,7 +27,7 @@ module Spree
             spree_authorize! :update, spree_current_order, order_token
             spree_authorize! :show, variant
 
-            result = add_item_service.call(
+            result = add_item_service.constantize.call(
               order: spree_current_order,
               variant: variant,
               quantity: params[:quantity],
@@ -40,7 +40,7 @@ module Spree
           def remove_line_item
             spree_authorize! :update, spree_current_order, order_token
 
-            remove_item_service.call(
+            remove_item_service.constantize.call(
               order: spree_current_order,
               line_item: line_item
             )
@@ -63,7 +63,7 @@ module Spree
 
             spree_authorize! :update, spree_current_order, order_token
 
-            result = set_item_quantity_service.call(order: spree_current_order, line_item: line_item, quantity: params[:quantity])
+            result = set_item_quantity_service.constantize.call(order: spree_current_order, line_item: line_item, quantity: params[:quantity])
 
             render_order(result)
           end
@@ -78,7 +78,7 @@ module Spree
             spree_authorize! :update, spree_current_order, order_token
 
             spree_current_order.coupon_code = params[:coupon_code]
-            result = coupon_handler.new(spree_current_order).apply
+            result = coupon_handler.constantize.new(spree_current_order).apply
 
             if result.error.blank?
               render_serialized_payload { serialized_current_order }
@@ -90,7 +90,7 @@ module Spree
           def remove_coupon_code
             spree_authorize! :update, spree_current_order, order_token
 
-            result = coupon_handler.new(spree_current_order).remove(params[:coupon_code])
+            result = coupon_handler.constantize.new(spree_current_order).remove(params[:coupon_code])
 
             if result.error.blank?
               render_serialized_payload { serialized_current_order }

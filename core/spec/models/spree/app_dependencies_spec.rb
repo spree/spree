@@ -7,7 +7,7 @@ describe Spree::AppDependencies, type: :model do
   let (:deps) { Spree::AppDependencies.new }
 
   it 'returns the default value' do
-    expect(deps.cart_create_service).to eq(Spree::Cart::Create)
+    expect(deps.cart_create_service).to eq('Spree::Cart::Create')
   end
 
   it 'allows to overwrite the value' do

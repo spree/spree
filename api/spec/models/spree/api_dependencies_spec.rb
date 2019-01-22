@@ -13,7 +13,7 @@ describe Spree::ApiDependencies, type: :model do
   let (:deps) { Spree::ApiDependencies.new }
 
   it 'returns the default value' do
-    expect(deps.storefront_cart_serializer).to eq(Spree::V2::Storefront::CartSerializer)
+    expect(deps.storefront_cart_serializer).to eq('Spree::V2::Storefront::CartSerializer')
   end
 
   it 'allows to overwrite the value' do

@@ -11,7 +11,7 @@ module Spree
         def create
           variant = Spree::Variant.find(params[:line_item][:variant_id])
 
-          @line_item = Spree::Dependencies.cart_add_item_service.call(order: order,
+          @line_item = Spree::Dependencies.cart_add_item_service.constantize.call(order: order,
                                                                          variant: variant,
                                                                          quantity: params[:line_item][:quantity],
                                                                          options: line_item_params[:options]).value
@@ -35,7 +35,7 @@ module Spree
 
         def destroy
           @line_item = find_line_item
-          Spree::Cart::RemoveLineItem.new.call(order: @order, line_item: @line_item)
+          Spree::Dependencies.cart_remove_item_service.constantize.call(order: @order, line_item: @line_item)
 
           respond_with(@line_item, status: 204)
         end

@@ -16,14 +16,14 @@ module Spree
           private
 
           def serialize_collection(collection)
-            collection_serializer.new(
+            collection_serializer.constantize.new(
               collection,
               collection_options(collection)
             ).serializable_hash
           end
 
           def serialize_resource(resource)
-            resource_serializer.new(
+            resource_serializer.constantize.new(
               resource,
               include: resource_includes,
               fields: sparse_fields
@@ -52,11 +52,11 @@ module Spree
           end
 
           def paginated_collection
-            collection_paginator.new(collection, params).call
+            collection_paginator.constantize.new(collection, params).call
           end
 
           def collection
-            collection_finder.new(scope: scope, params: params).execute
+            collection_finder.constantize.new(scope: scope, params: params).execute
           end
 
           def resource

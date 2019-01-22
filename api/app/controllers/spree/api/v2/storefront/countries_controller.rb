@@ -16,11 +16,11 @@ module Spree
           private
 
           def serialize_collection(collection)
-            collection_serializer.new(collection).serializable_hash
+            collection_serializer.constantize.new(collection).serializable_hash
           end
 
           def serialize_resource(resource)
-            resource_serializer.new(
+            resource_serializer.constantize.new(
               resource,
               include: resource_includes,
               fields: sparse_fields,
@@ -29,7 +29,7 @@ module Spree
           end
 
           def collection
-            collection_finder.new(scope, params).call
+            collection_finder.constantize.new(scope, params).call
           end
 
           def resource
