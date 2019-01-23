@@ -6,13 +6,13 @@ module Spree
     end
 
     attr_accessor :cart_create_service, :cart_add_item_service, :cart_remove_item_service,
-                  :cart_remove_line_item_service, :cart_set_item_quantity_service,
-                  :checkout_next_service, :checkout_advance_service, :checkout_update_service,
+                  :cart_remove_line_item_service, :cart_set_item_quantity_service, :cart_recalculate_service,
+                  :cart_update_service, :checkout_next_service, :checkout_advance_service, :checkout_update_service,
                   :checkout_complete_service, :checkout_add_store_credit_service,
                   :checkout_remove_store_credit_service, :checkout_get_shipping_rates_service,
                   :coupon_handler, :country_finder, :current_order_finder, :credit_card_finder,
-                  :completed_order_finder, :order_sorter, :collection_paginator, :products_sorter,
-                  :products_finder, :taxon_finder
+                  :completed_order_finder, :order_sorter, :order_merger_service, :collection_paginator, :products_sorter,
+                  :products_finder, :taxon_finder, :find_by_variant
 
     private
 
@@ -20,6 +20,8 @@ module Spree
       # cart
       @cart_create_service = 'Spree::Cart::Create'
       @cart_add_item_service = 'Spree::Cart::AddItem'
+      @cart_update_service = 'Spree::Cart::Update'
+      @cart_recalculate_service = 'Spree::Cart::Recalculate'
       @cart_remove_item_service = 'Spree::Cart::RemoveItem'
       @cart_remove_line_item_service = 'Spree::Cart::RemoveLineItem'
       @cart_set_item_quantity_service = 'Spree::Cart::SetQuantity'
@@ -32,6 +34,9 @@ module Spree
       @checkout_add_store_credit_service = 'Spree::Checkout::AddStoreCredit'
       @checkout_remove_store_credit_service = 'Spree::Checkout::RemoveStoreCredit'
       @checkout_get_shipping_rates_service = 'Spree::Checkout::GetShippingRates'
+
+      #order
+      @order_merger_service = 'Spree::CompareLineItems'
 
       #sorter
       @order_sorter = 'Spree::Orders::Sort'
@@ -52,6 +57,7 @@ module Spree
       @credit_card_finder = 'Spree::CreditCards::Find'
       @products_finder = 'Spree::Products::Find'
       @taxon_finder = 'Spree::Taxons::Find'
+      @find_by_variant = 'Spree::LineItems::FindByVariant'
     end
   end
 end

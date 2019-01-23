@@ -153,7 +153,7 @@ module Spree
         packages = @order.shipments.map(&:to_package)
         @differentiator = Spree::Stock::Differentiator.new(@order, packages)
         @differentiator.missing.each do |variant, quantity|
-          Spree::Cart::RemoveItem.call(order: @order, variant: variant, quantity: quantity)
+          Spree::Dependencies.cart_remove_item_service.constantize.call(order: @order, variant: variant, quantity: quantity)
         end
       end
 
@@ -196,11 +196,11 @@ module Spree
     end
 
     def add_store_credit_service
-      Spree::Dependencies.add_store_credit_service.constantize
+      Spree::Dependencies.checkout_add_store_credit_service.constantize
     end
 
     def remove_store_credit_service
-      Spree::Dependencies.remove_store_credit_service.constantize
+      Spree::Dependencies.checkout_remove_store_credit_service.constantize
     end
   end
 end

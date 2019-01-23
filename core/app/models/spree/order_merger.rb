@@ -29,7 +29,9 @@ module Spree
     def find_matching_line_item(other_order_line_item)
       order.line_items.detect do |my_li|
         my_li.variant == other_order_line_item.variant &&
-          CompareLineItems.new.call(order: order, line_item: my_li, options: other_order_line_item.serializable_hash).value
+          Spree::Dependencies.order_merger_service.constantize.new.call(order: order,
+                                                                        line_item: my_li,
+                                                                        options: other_order_line_item.serializable_hash).value
       end
     end
 
