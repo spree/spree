@@ -65,7 +65,9 @@ module Spree
             line_item = order.find_line_item_by_variant(item.variant)
             next unless line_item.present?
 
-            Spree::Cart::RemoveItem.call(order: order, variant: item.variant, quantity: (item.quantity || 1))
+            Spree::Dependencies.cart_remove_item_service.constantize.call(order: order,
+                                                                          variant: item.variant,
+                                                                          quantity: (item.quantity || 1))
             action_taken = true
           end
 
