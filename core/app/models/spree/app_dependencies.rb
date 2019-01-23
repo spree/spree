@@ -11,13 +11,14 @@ module Spree
                   :checkout_complete_service, :checkout_add_store_credit_service,
                   :checkout_remove_store_credit_service, :checkout_get_shipping_rates_service,
                   :coupon_handler, :country_finder, :current_order_finder, :credit_card_finder,
-                  :completed_order_finder, :order_sorter, :order_merger_service, :collection_paginator, :products_sorter,
-                  :products_finder, :taxon_finder, :find_by_variant
+                  :completed_order_finder, :order_sorter, :cart_compare_line_items_service, :collection_paginator, :products_sorter,
+                  :products_finder, :taxon_finder, :line_item_by_variant_finder
 
     private
 
     def set_default_services
       # cart
+      @cart_compare_line_items_service = 'Spree::CompareLineItems'
       @cart_create_service = 'Spree::Cart::Create'
       @cart_add_item_service = 'Spree::Cart::AddItem'
       @cart_update_service = 'Spree::Cart::Update'
@@ -34,9 +35,6 @@ module Spree
       @checkout_add_store_credit_service = 'Spree::Checkout::AddStoreCredit'
       @checkout_remove_store_credit_service = 'Spree::Checkout::RemoveStoreCredit'
       @checkout_get_shipping_rates_service = 'Spree::Checkout::GetShippingRates'
-
-      #order
-      @order_merger_service = 'Spree::CompareLineItems'
 
       #sorter
       @order_sorter = 'Spree::Orders::Sort'
@@ -57,7 +55,7 @@ module Spree
       @credit_card_finder = 'Spree::CreditCards::Find'
       @products_finder = 'Spree::Products::Find'
       @taxon_finder = 'Spree::Taxons::Find'
-      @find_by_variant = 'Spree::LineItems::FindByVariant'
+      @line_item_by_variant_finder = 'Spree::LineItems::FindByVariant'
     end
   end
 end
