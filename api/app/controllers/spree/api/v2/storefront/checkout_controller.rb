@@ -63,7 +63,7 @@ module Spree
           end
 
           def shipping_rates
-            result = get_shipping_rates_service.constantize.call(order: spree_current_order)
+            result = shipping_rates_service.constantize.call(order: spree_current_order)
 
             render_serialized_payload { serialize_shipping_rates(result.value) }
           end
@@ -106,7 +106,7 @@ module Spree
             Spree::Api::Dependencies.storefront_payment_method_serializer
           end
 
-          def get_shipping_rates_service
+          def shipping_rates_service
             Spree::Api::Dependencies.storefront_checkout_get_shipping_rates_service
           end
 

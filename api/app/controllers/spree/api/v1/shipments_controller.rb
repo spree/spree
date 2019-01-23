@@ -26,9 +26,9 @@ module Spree
           @shipment = @order.shipments.create(stock_location_id: params.fetch(:stock_location_id))
 
           @line_item = Spree::Dependencies.cart_add_item_service.constantize.call(order: @order,
-                                                                         variant: variant,
-                                                                         quantity: quantity,
-                                                                         options: { shipment: @shipment }).value
+                                                                                  variant: variant,
+                                                                                  quantity: quantity,
+                                                                                  options: { shipment: @shipment }).value
 
           respond_with(@shipment.reload, default_template: :show)
         end
@@ -60,9 +60,9 @@ module Spree
           quantity = params[:quantity].to_i
 
           Spree::Dependencies.cart_add_item_service.constantize.call(order: @shipment.order,
-                                                            variant: variant,
-                                                            quantity: quantity,
-                                                            options: { shipment: @shipment })
+                                                                     variant: variant,
+                                                                     quantity: quantity,
+                                                                     options: { shipment: @shipment })
 
           respond_with(@shipment, default_template: :show)
         end
@@ -74,7 +74,10 @@ module Spree
                        @shipment.inventory_units_for(variant).sum(:quantity)
                      end
 
-          Spree::Dependencies.cart_remove_item_service.constantize.call(order: @shipment.order, variant: variant, quantity: quantity, options: { shipment: @shipment })
+          Spree::Dependencies.cart_remove_item_service.constantize.call(order: @shipment.order,
+                                                                        variant: variant,
+                                                                        quantity: quantity,
+                                                                        options: { shipment: @shipment })
 
           if @shipment.inventory_units.any?
             @shipment.reload

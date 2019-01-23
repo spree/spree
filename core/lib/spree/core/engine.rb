@@ -1,7 +1,14 @@
 module Spree
   module Core
     class Engine < ::Rails::Engine
-      Environment = Struct.new(:calculators, :preferences, :dependencies, :payment_methods, :adjusters, :stock_splitters, :promotions, :line_item_comparison_hooks)
+      Environment = Struct.new(:calculators,
+                               :preferences,
+                               :dependencies,
+                               :payment_methods,
+                               :adjusters,
+                               :stock_splitters,
+                               :promotions,
+                               :line_item_comparison_hooks)
       SpreeCalculators = Struct.new(:shipping_methods, :tax_rates, :promotion_actions_create_adjustments, :promotion_actions_create_item_adjustments)
       PromoEnvironment = Struct.new(:rules, :actions)
       isolate_namespace Spree

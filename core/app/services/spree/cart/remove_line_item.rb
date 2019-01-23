@@ -8,8 +8,8 @@ module Spree
         ActiveRecord::Base.transaction do
           line_item.destroy!
           Spree::Dependencies.cart_recalculate_service.constantize.new.call(order: order,
-                                                                                       line_item: line_item,
-                                                                                       options: options)
+                                                                            line_item: line_item,
+                                                                            options: options)
         end
         success(line_item)
       end

@@ -10,8 +10,8 @@ module Spree
         ActiveRecord::Base.transaction do
           line_item = remove_from_line_item(order: order, variant: variant, quantity: quantity, options: options)
           Spree::Dependencies.cart_recalculate_service.constantize.call(line_item: line_item,
-                                                                                       order: order,
-                                                                                       options: options)
+                                                                        order: order,
+                                                                        options: options)
           success(line_item)
         end
       end
