@@ -35,7 +35,7 @@ module Spree
           end
 
           def serialize_order(order)
-            resource_serializer.constantize.new(order.reload, include: resource_includes, fields: sparse_fields).serializable_hash
+            resource_serializer.new(order.reload, include: resource_includes, fields: sparse_fields).serializable_hash
           end
 
           def serialized_current_order

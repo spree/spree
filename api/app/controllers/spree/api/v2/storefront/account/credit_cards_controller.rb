@@ -17,23 +17,23 @@ module Spree
             private
 
             def resource
-              resource_finder.constantize.new.execute(scope: scope, params: params)
+              resource_finder.new.execute(scope: scope, params: params)
             end
 
             def collection_serializer
-              Spree::Api::Dependencies.storefront_credit_card_serializer
+              Spree::Api::Dependencies.storefront_credit_card_serializer.constantize
             end
 
             def resource_serializer
-              Spree::Api::Dependencies.storefront_credit_card_serializer
+              Spree::Api::Dependencies.storefront_credit_card_serializer.constantize
             end
 
             def resource_finder
-              Spree::Api::Dependencies.storefront_credit_card_finder
+              Spree::Api::Dependencies.storefront_credit_card_finder.constantize
             end
 
             def serialize_collection(collection)
-              collection_serializer.constantize.new(
+              collection_serializer.new(
                 collection,
                 include: resource_includes,
                 fields: sparse_fields
@@ -41,7 +41,7 @@ module Spree
             end
 
             def serialize_resource(resource)
-              resource_serializer.constantize.new(
+              resource_serializer.new(
                 resource,
                 include: resource_includes,
                 fields: sparse_fields

@@ -16,7 +16,7 @@ module Spree
           end
 
           def serialize_resource(resource)
-            resource_serializer.constantize.new(
+            resource_serializer.new(
               resource,
               include: resource_includes,
               fields: sparse_fields
@@ -24,7 +24,7 @@ module Spree
           end
 
           def resource_serializer
-            Spree::Api::Dependencies.storefront_user_serializer
+            Spree::Api::Dependencies.storefront_user_serializer.constantize
           end
         end
       end
