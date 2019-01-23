@@ -138,7 +138,7 @@ label[role='menuitem'] svg polygon {
   width: auto;
   height: auto;
   padding: 0.25rem 0.5rem;
-  font-family: 'IBM Plex Mono', monospace !important;
+  font-family: 'Roboto Mono', monospace !important;
 }
 
 .menu-content li > ul > li > label > span {
@@ -161,5 +161,5 @@ label[role='menuitem'] svg polygon {
 }
 
 td[kind='field'] {
-  font-family: 'Ibm Plex Mono', monospace;
+  font-family: 'Roboto Mono', monospace;
 }
