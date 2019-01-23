@@ -92,6 +92,8 @@ describe 'New Order', type: :feature do
             fill_in 'variant_quantity', with: 2
             click_icon :add
             wait_for_ajax
+
+            page.driver.browser.switch_to.alert.accept
           end
         end
       end
