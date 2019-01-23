@@ -76,6 +76,7 @@ export const pageQuery = graphql`
     sidebarNav: allMarkdownRemark(
       filter: {
         fields: { rootSection: { eq: $rootSection }, section: { ne: null } }
+        frontmatter: { hidden: { ne: true } }
       }
       sort: { fields: [frontmatter___title], order: ASC }
     ) {
