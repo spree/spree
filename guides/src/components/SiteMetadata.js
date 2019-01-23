@@ -61,7 +61,7 @@ const SiteMetadata = ({
 )
 
 SiteMetadata.propTypes = {
-  pathname: PropTypes.string.isRequired,
+  pathname: PropTypes.string,
   description: PropTypes.string,
   title: PropTypes.string
 }
