@@ -1,6 +1,7 @@
 ---
 title: Upgrading Spree from 3.2.x to 3.3.x
 section: upgrades
+order: 4
 ---
 
 This guide covers upgrading a 3.2.x Spree store, to a 3.3.x store.
@@ -92,7 +93,7 @@ Seel also [RubyThursday episode](https://rubythursday.com/episodes/ruby-snack-27
 ### Add jquery.validate to your project if you've used it directly from Spree
 
 If your application.js file includes line
- `//= require jquery.validate/jquery.validate.min`
+`//= require jquery.validate/jquery.validate.min`
 you will need to add it this file manually to your project because this library was
 [removed from Spree in favour of native HTML5 validation](https://github.com/spree/spree/pull/8173).
 

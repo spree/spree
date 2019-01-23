@@ -2,17 +2,7 @@
 import * as React from 'react'
 import PropTypes from 'prop-types'
 import { Link } from 'gatsby'
-import {
-  equals,
-  or,
-  length,
-  filter,
-  sortWith,
-  path,
-  descend,
-  ascend,
-  contains
-} from 'ramda'
+import { equals, or, length, filter } from 'ramda'
 import startCase from 'lodash.startcase'
 import { cx } from 'emotion'
 
@@ -30,27 +20,8 @@ import SidebarRootLink from './SidebarRootLink'
 const byOnlyNonIndexNodes = item => !item.node.fields.isIndex
 const byOnlyIndexNodes = item => item.node.fields.isIndex
 
-const pickTitleField = path(['node', 'frontmatter', 'title'])
-
-const sortByASC = sortWith([ascend(pickTitleField)])
-const sortByDESC = sortWith([descend(pickTitleField)])
-
-const sectionsToBeSortedDESC = ['upgrades', 'release_notes']
-
-const sectionSort = section =>
-  contains(section, sectionsToBeSortedDESC) ? 'DESC' : 'ASC'
-
-const sortBy = direction => {
-  if (direction === 'ASC') {
-    return sortByASC
-  } else {
-    return sortByDESC
-  }
-}
-
 const navBlockIndex = block => filter(byOnlyIndexNodes, block)
-const normalizeNavBlock = (block, sort = 'ASC') =>
-  filter(byOnlyNonIndexNodes, sortBy(sort)(block))
+const normalizeNavBlock = block => filter(byOnlyNonIndexNodes, block)
 
 const getNavBlockIndexSlug = block =>
   navBlockIndex(block)[0]['node']['fields']['slug']
@@ -135,10 +106,7 @@ export default class Sidebar extends React.PureComponent {
                             'list pl2 ml4 mb4'
                           )}
                         >
-                          {normalizeNavBlock(
-                            item.edges,
-                            sectionSort(item.section)
-                          ).map((item, index) => (
+                          {normalizeNavBlock(item.edges).map((item, index) => (
                             <li key={index}>
                               <Link
                                 to={item.node.fields.slug}

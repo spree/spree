@@ -2,7 +2,7 @@
 title: Upgrading Spree from 1.0.x to 1.1.x
 section: upgrades
 hidden: false
-order: 0
+order: 14
 ---
 
 ## Overview

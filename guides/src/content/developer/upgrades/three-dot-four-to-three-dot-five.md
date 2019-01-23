@@ -1,6 +1,7 @@
 ---
 title: Upgrading Spree from 3.4.x to 3.5.x
 section: upgrades
+order: 2
 ---
 
 This guide covers upgrading a 3.4 Spree store, to a 3.5 store.
@@ -36,21 +37,21 @@ as it was [extracted from the core](https://github.com/spree/spree/pull/8408).
 
 1. Add [Spree Analytics Trackers](https://github.com/spree-contrib/spree_analytics_trackers) to your `Gemfile`:
 
-  ```ruby
-  gem 'spree_analytics_trackers', github: 'spree-contrib/spree_analytics_trackers'
-  ```
+```ruby
+gem 'spree_analytics_trackers', github: 'spree-contrib/spree_analytics_trackers'
+```
 
 2. Install the gem using Bundler:
 
-  ```bash
-  bundle install
-  ```
+```bash
+bundle install
+```
 
 3. Copy and run migrations:
 
-  ```bash
-  bundle exec rails g spree_analytics_trackers:install
-  ```
+```bash
+bundle exec rails g spree_analytics_trackers:install
+```
 
 You're good to go!
 

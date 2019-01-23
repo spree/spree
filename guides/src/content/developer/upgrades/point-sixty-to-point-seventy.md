@@ -1,6 +1,7 @@
 ---
 title: Upgrading Spree from 0.60.x to 0.70.x
 section: upgrades
+order: 16
 ---
 
 ## Overview
@@ -19,7 +20,7 @@ Spree 0.60.x depends on Rails 3.0.12, whereas Spree 0.70.x depends on any Rails
 version from 3.1.1 up to 3.1.4. The first step in upgrading Spree is to
 upgrade the Rails version in the `Gemfile`:
 
-```ruby
+````ruby
 gem 'rails', '3.1.12'```
 
 For more information, please read the [Upgrading Ruby on Rails Guide](http://guides.rubyonrails.org/upgrading_ruby_on_rails.html#upgrading-from-rails-3-0-to-rails-3-1).
@@ -82,10 +83,11 @@ module YourStore
 
   # Version of your assets, change this if you want to expire all your assets
   config.assets.version = '1.0'
-  
+
   end
 end```
 
 ## Verify that everything is OK
 
 Click around in your store and make sure it's performing as normal. Fix any deprecation warnings you see.
+````
