@@ -78,7 +78,7 @@ export const pageQuery = graphql`
         fields: { rootSection: { eq: $rootSection }, section: { ne: null } }
         frontmatter: { hidden: { ne: true } }
       }
-      sort: { fields: [frontmatter___title], order: ASC }
+      sort: { fields: [frontmatter___order, frontmatter___title], order: ASC }
     ) {
       group(field: fields___section) {
         section: fieldValue

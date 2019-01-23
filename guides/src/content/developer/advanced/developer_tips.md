@@ -1,6 +1,7 @@
 ---
-title: "Developer Tips and Tricks"
+title: 'Developer Tips and Tricks'
 section: advanced
+order: 2
 ---
 
 ## Overview
@@ -98,12 +99,12 @@ So here's a compromise: have an extra extension, say `spree-tweaks`, to
 contain your small collection of modified files, which is loaded first in the extension order. The
 benefits are:
 
--   it's clear what you are overriding, and easier to check against core
-    changes
--   you can base your project on an official gem release or a
-    `spree/master` commit stage
--   such tweaks can become part of your client site project and be
-    managed with SCM etc.
+- it's clear what you are overriding, and easier to check against core
+  changes
+- you can base your project on an official gem release or a
+  `spree/master` commit stage
+- such tweaks can become part of your client site project and be
+  managed with SCM etc.
 
 If you find yourself wanting extensive changes to core, this technique
 probably won't work so well.

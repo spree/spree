@@ -1,6 +1,7 @@
 ---
-title: "Seo Considerations"
+title: 'Seo Considerations'
 section: advanced
+order: 0
 ---
 
 ## Overview
@@ -10,7 +11,6 @@ implementing and developing an ecommerce solution to ensure competitive
 search engine performance. The following guide outlines current Spree
 Search Engine Optimization features and future optimization development
 possibilities.
-
 
 ## Existing Search Engine Optimization Features
 
@@ -26,8 +26,7 @@ Each controller is configured to serve the content using these keyword-relevant,
 
 Several enhancements have been made to improve on-page keyword targeting. The admin interface provides the ability to manage meta descriptions and meta keywords at the product level. Additionally, H1 tags are used throughout the site for product and taxonomy names. The ease of extension development and layout changes allows you to target keywords throughout the site.
 
-Starting with Spree 2.0, Taxons also have `meta_keywords` and `meta_description` on them. (You can configure these in the Admin > Configuration > Taxonomies). If you want to add keywords and description to another kind of object in Spree, you can do so simply by adding those two fields (`meta_keywords` and `meta_description`) onto the object in question. The Spree controller must instantiate an instance variable of the same class name as the controller (so, for example, `@taxon` for the TaxonsController) for this to work. Check out the `meta_data` method on spree_core/app/helpers/spree/base_helper.rb for details on how that works. 
-
+Starting with Spree 2.0, Taxons also have `meta_keywords` and `meta_description` on them. (You can configure these in the Admin > Configuration > Taxonomies). If you want to add keywords and description to another kind of object in Spree, you can do so simply by adding those two fields (`meta_keywords` and `meta_description`) onto the object in question. The Spree controller must instantiate an instance variable of the same class name as the controller (so, for example, `@taxon` for the TaxonsController) for this to work. Check out the `meta_data` method on spree_core/app/helpers/spree/base_helper.rb for details on how that works.
 
 ### Clean Content
 
@@ -82,19 +81,18 @@ Webmaster Tools and Quantcast. Social media optimization tools such as
 Pinterest, Reddit, Digg, Delicious, Facebook, Google+ and Twitter may
 also be integrated to improve social networking site performance.
 
-Many of these can be implemented with minimal changes to your Spree store. 
+Many of these can be implemented with minimal changes to your Spree store.
 
 ### Spree SEO Extensions
 
 The following list shows extensions that can improve search engine
 performance. Refer to the GitHub README for developer notes.
 
--   [Spree Sitemap Generator](https://github.com/spree-contrib/spree_sitemap)
--   [Static Content Management](https://github.com/spree-contrib/spree_static_content)
--   [Product Reviews](https://github.com/spree-contrib/spree_reviews)
+- [Spree Sitemap Generator](https://github.com/spree-contrib/spree_sitemap)
+- [Static Content Management](https://github.com/spree-contrib/spree_static_content)
+- [Product Reviews](https://github.com/spree-contrib/spree_reviews)
 
 (for stores older than Spree 1.0, check out [Spree Sitemap Generation](https://github.com/romul/spree_dynamic_sitemaps))
-
 
 ## Planned Search Engine Optimization Features (TODO)
 
