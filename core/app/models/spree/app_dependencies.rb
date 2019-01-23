@@ -36,11 +36,11 @@ module Spree
       @checkout_remove_store_credit_service = 'Spree::Checkout::RemoveStoreCredit'
       @checkout_get_shipping_rates_service = 'Spree::Checkout::GetShippingRates'
 
-      #sorter
+      # sorter
       @order_sorter = 'Spree::Orders::Sort'
       @products_sorter = 'Spree::Products::Sort'
 
-      #paginator
+      # paginator
       @collection_paginator = 'Spree::Shared::Paginate'
 
       # coupons

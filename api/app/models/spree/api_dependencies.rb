@@ -37,11 +37,11 @@ module Spree
       @storefront_payment_method_serializer = 'Spree::V2::Storefront::PaymentMethodSerializer'
       @storefront_product_serializer = 'Spree::V2::Storefront::ProductSerializer'
 
-      #sorters
+      # sorters
       @storefront_order_sorter = Spree::Dependencies.order_sorter
       @storefront_products_sorter = Spree::Dependencies.products_sorter
 
-      #paginators
+      # paginators
       @storefront_collection_paginator = Spree::Dependencies.collection_paginator
 
       # finders
@@ -58,11 +58,12 @@ module Spree
                   :storefront_cart_remove_item_service, :storefront_cart_set_item_quantity_service, :storefront_cart_recalculate_service,
                   :storefront_cart_update, :storefront_coupon_handler, :storefront_checkout_next_service, :storefront_checkout_advance_service,
                   :storefront_checkout_update_service, :storefront_checkout_complete_service, :storefront_checkout_add_store_credit_service,
-                  :storefront_checkout_remove_store_credit_service, :storefront_checkout_get_shipping_rates_service, :storefront_cart_compare_line_items_service,
-                  :storefront_cart_serializer, :storefront_credit_card_serializer, :storefront_credit_card_finder, :storefront_shipment_serializer,
-                  :storefront_payment_method_serializer, :storefront_country_finder, :storefront_country_serializer, :storefront_current_order_finder,
-                  :storefront_completed_order_finder, :storefront_order_sorter, :storefront_collection_paginator, :storefront_user_serializer,
-                  :storefront_products_sorter, :storefront_products_finder, :storefront_product_serializer, :storefront_taxon_serializer,
-                  :storefront_taxon_finder, :storefront_find_by_variant_finder, :storefront_cart_update_service
+                  :storefront_checkout_remove_store_credit_service, :storefront_checkout_get_shipping_rates_service,
+                  :storefront_cart_compare_line_items_service, :storefront_cart_serializer, :storefront_credit_card_serializer,
+                  :storefront_credit_card_finder, :storefront_shipment_serializer, :storefront_payment_method_serializer, :storefront_country_finder,
+                  :storefront_country_serializer, :storefront_current_order_finder, :storefront_completed_order_finder, :storefront_order_sorter,
+                  :storefront_collection_paginator, :storefront_user_serializer, :storefront_products_sorter, :storefront_products_finder,
+                  :storefront_product_serializer, :storefront_taxon_serializer, :storefront_taxon_finder, :storefront_find_by_variant_finder,
+                  :storefront_cart_update_service
   end
 end

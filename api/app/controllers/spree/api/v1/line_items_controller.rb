@@ -12,9 +12,9 @@ module Spree
           variant = Spree::Variant.find(params[:line_item][:variant_id])
 
           @line_item = Spree::Dependencies.cart_add_item_service.constantize.call(order: order,
-                                                                                            variant: variant,
-                                                                                            quantity: params[:line_item][:quantity],
-                                                                                            options: line_item_params[:options]).value
+                                                                                  variant: variant,
+                                                                                  quantity: params[:line_item][:quantity],
+                                                                                  options: line_item_params[:options]).value
           if @line_item.errors.empty?
             respond_with(@line_item, status: 201, default_template: :show)
           else
