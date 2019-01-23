@@ -10,7 +10,7 @@ module Spree
         private
 
         def collection_paginator
-          Spree::Api::Dependencies.storefront_collection_paginator
+          Spree::Api::Dependencies.storefront_collection_paginator.constantize
         end
 
         def render_serialized_payload(status = 200)
