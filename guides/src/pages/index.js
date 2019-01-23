@@ -3,7 +3,7 @@ import * as React from 'react'
 import Layout from '../components/Layout'
 
 const IndexPage = () => (
-  <Layout>
+  <Layout pathname="/" title="Home">
     <div className="center mw9 ph4 mt5">
       <p className="lh-copy f3 tc mw7 center">
         Spree Commerce is a complete modular, API-driven open source e-commerce

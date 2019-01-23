@@ -6,10 +6,11 @@
       {
         "root": ["./src"],
         "alias": {
-          "components": "./components",
-          "pages": "./pages",
-          "utils": "./utils",
-          "templates": "./templates"
+          "components": "./src/components",
+          "pages": "./src/pages",
+          "utils": "./src/utils",
+          "templates": "./src/templates",
+          "images": "./src/images"
         }
       }
     ]

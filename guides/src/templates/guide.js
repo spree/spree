@@ -1,7 +1,6 @@
 // --- Dependencies
 import * as React from 'react'
 import PropTypes from 'prop-types'
-import Helmet from 'react-helmet'
 import { graphql } from 'gatsby'
 import RehypeReact from 'rehype-react'
 
@@ -53,11 +52,12 @@ export default function Template({ data }) {
 
   return (
     <Layout
+      title={guide.frontmatter.title}
+      description={guide.frontmatter.description}
       nav={data.sidebarNav ? data.sidebarNav.group : []}
       activeSection={guide.fields.section}
       activeRootSection={guide.fields.rootSection}
     >
-      <Helmet title={`Spree Guides :: ${guide.frontmatter.title}`} />
       <article className="mt2">{renderAst(guide.htmlAst)}</article>
     </Layout>
   )
@@ -104,6 +104,7 @@ export const pageQuery = graphql`
       htmlAst
       frontmatter {
         title
+        description
       }
     }
   }

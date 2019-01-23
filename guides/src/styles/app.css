@@ -67,10 +67,10 @@ li > code:hover {
 }
 
 .spree-green {
-  color: #99cc00;
+  color: #779e01;
 }
 .bg-spree-green {
-  background-color: #99cc00;
+  background-color: #779e01;
 }
 .b--spree-green {
   border-color: #99cc00;
@@ -158,4 +158,8 @@ label[role='menuitem'] svg polygon {
 .tab-success.react-tabs__tab--selected {
   background-color: #99cc00 !important;
   color: white !important;
+}
+
+td[kind='field'] {
+  font-family: 'Ibm Plex Mono', monospace;
 }
