@@ -11,9 +11,9 @@ const Logo = () => (
   <StaticQuery
     query={graphql`
       query {
-        placeholderImage: file(relativePath: { eq: "logo.png" }) {
+        placeholderImage: file(relativePath: { eq: "logo-spark.png" }) {
           childImageSharp {
-            fixed(height: 50) {
+            fixed(height: 100) {
               ...GatsbyImageSharpFixed_withWebp_noBase64
             }
           }
@@ -23,7 +23,7 @@ const Logo = () => (
     render={data => (
       <Img
         critical
-        alt="Spree Commerce Guides"
+        alt="Spark Solutions"
         fadeIn={false}
         fixed={data.placeholderImage.childImageSharp.fixed}
       />

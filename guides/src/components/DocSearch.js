@@ -1,8 +1,14 @@
+// --- Dependencies
 import * as React from 'react'
 import PropTypes from 'prop-types'
 import { cx } from 'emotion'
 
+// --- Icons
 import IconSearch from 'react-feather/dist/icons/search'
+
+/**
+ * Component
+ */
 
 export default class DocSearch extends React.Component {
   static propTypes = {

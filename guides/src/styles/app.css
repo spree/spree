@@ -67,10 +67,10 @@ li > code:hover {
 }
 
 .spree-green {
-  color: #99cc00;
+  color: #779e01;
 }
 .bg-spree-green {
-  background-color: #99cc00;
+  background-color: #779e01;
 }
 .b--spree-green {
   border-color: #99cc00;
@@ -138,7 +138,7 @@ label[role='menuitem'] svg polygon {
   width: auto;
   height: auto;
   padding: 0.25rem 0.5rem;
-  font-family: 'IBM Plex Mono', monospace !important;
+  font-family: 'Roboto Mono', monospace !important;
 }
 
 .menu-content li > ul > li > label > span {
@@ -158,4 +158,8 @@ label[role='menuitem'] svg polygon {
 .tab-success.react-tabs__tab--selected {
   background-color: #99cc00 !important;
   color: white !important;
+}
+
+td[kind='field'] {
+  font-family: 'Roboto Mono', monospace;
 }

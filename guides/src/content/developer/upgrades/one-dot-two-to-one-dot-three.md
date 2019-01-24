@@ -1,6 +1,7 @@
 ---
 title: Upgrading Spree from 1.2.x to 1.3.x
 section: upgrades
+order: 12
 ---
 
 ## Overview
@@ -18,10 +19,10 @@ version of Spree will have a 1-3-stable branch.
 
 For best results, use the 1-3-stable branch from GitHub:
 
-```ruby
+````ruby
 gem 'spree', github: 'spree/spree', branch: '1-3-stable'```
 
-Run `bundle update spree`. 
+Run `bundle update spree`.
 
 ## Bump jquery-rails
 
@@ -87,3 +88,4 @@ For information about changes contained with this release, please read the [1.3.
 ## Verify that everything is OK
 
 Click around in your store and make sure it's performing as normal. Fix any deprecation warnings you see.
+````

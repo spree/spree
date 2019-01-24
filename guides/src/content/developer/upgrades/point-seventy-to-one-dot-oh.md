@@ -1,6 +1,7 @@
 ---
 title: Upgrading Spree from 0.70.x to 1.0.x
 section: upgrades
+order: 15
 ---
 
 ## Overview
@@ -29,7 +30,7 @@ command as before.
 
 Spree 1.0 depends on any Rails 3.1 release afer Rails 3.1.10. Ensure that you have that dependency specified in your Gemfile:
 
-```ruby
+````ruby
 gem 'rails', '~> 3.1.10'
 
 ## Upgrade Spree
@@ -39,7 +40,7 @@ For best results, use the 1-0-stable branch from GitHub:
 ```ruby
 gem 'spree', github: 'spree/spree', branch: '1-0-stable'```
 
-Run `bundle update spree`. 
+Run `bundle update spree`.
 
 ## Rename middleware classes
 
@@ -86,3 +87,4 @@ to its assets must be removed also. Remove references to spree_dash from:
 ## Verify that everything is OK
 
 Click around in your store and make sure it's performing as normal. Fix any deprecation warnings you see.
+````

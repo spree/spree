@@ -1,6 +1,11 @@
+// --- Dependencies
 import * as React from 'react'
 import PropTypes from 'prop-types'
 import renderHtml from '../../utils/renderHtml'
+
+/**
+ * Component
+ */
 
 export default class Params extends React.Component {
   static propTypes = {
