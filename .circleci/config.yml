@@ -30,6 +30,20 @@ jobs: # a collection of steps
           keys:
             - spree-bundle-v2-{{ .Branch }}
             - spree-bundle-v2
+            - phantomjs-2-1-1
+
+      - run:
+          name: Install phantomjs
+          command: |
+            if ! [ $(which phantomjs) ]; then
+                sudo curl --output /usr/local/bin/phantomjs https://s3.amazonaws.com/circle-downloads/phantomjs-2.1.1
+            fi
+            sudo chmod ugo+x /usr/local/bin/phantomjs
+
+      - save_cache:
+           key: phantomjs-2.1.1
+           paths:
+           - /usr/local/bin/phantomjs
 
       # Install gem dependencies
       - run:
