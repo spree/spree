@@ -1,6 +1,7 @@
 ---
 title: Upgrading Spree from 1.1.x to 1.2.x
 section: upgrades
+order: 13
 ---
 
 ## Overview
@@ -18,10 +19,10 @@ version of Spree will have a 1-2-stable branch.
 
 For best results, use the 1-2-stable branch from GitHub:
 
-```ruby
+````ruby
 gem 'spree', github: 'spree/spree', branch: '1-2-stable'```
 
-Run `bundle update spree`. 
+Run `bundle update spree`.
 
 ## Authentication dependency
 
@@ -56,3 +57,4 @@ For information about changes contained with this release, please read the [1.2.
 ## Verify that everything is OK
 
 Click around in your store and make sure it's performing as normal. Fix any deprecation warnings you see.
+````

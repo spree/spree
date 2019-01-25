@@ -7,6 +7,9 @@ export default {
   },
   linkOffset: '6.1rem',
   redocTheme: {
+    schema: {
+      typeNameColor: '#0066CC'
+    },
     colors: {
       primary: {
         main: '#0066CC'

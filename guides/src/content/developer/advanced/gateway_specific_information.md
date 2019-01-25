@@ -1,6 +1,7 @@
 ---
 title: Gateway Specific Information
 section: advanced
+order: 1
 ---
 
 ## Gateway Specific Information
@@ -9,7 +10,7 @@ section: advanced
 
 The transaction with Authoriet.Net comes in two flavors: One, you pass the 16-digit credit card to authorize.net and obtain a transaction key uniquely identifying that transaction. You can't charge that customer's credit card again. Two, you can use the Customer Information Manager ("CIM") to save a user's credit card attached to their account. AuthorizeNetCIM accomplishes this by obtaining two tokens: one uniquely identifying the user and another uniquely identifying credit card.
 
-In short, if you want to build a feature where a user can "Save this card for later"  you need to use the CIM method when the user has selected to save their credit card and the non-CIM method when the user hasn't.
+In short, if you want to build a feature where a user can "Save this card for later" you need to use the CIM method when the user has selected to save their credit card and the non-CIM method when the user hasn't.
 
 For your dev, QA, and staging environments we recommend you set up a Authorize.Net sandbox environment, which is available for free to all developers at [http://developer.authorize.net](http://developer.authorize.net).
 
@@ -29,7 +30,7 @@ Test server with test mode On - Probably redundant, you generally will never nee
 
 Test server with test mode Off - Probably how you want your dev, QA, and staging servers set up. You can use a real credit card or any of the Authorize.net FAKE (aka "test") credit card numbers to get a successful transaction.
 
-Live server with test mode On - You're going to do this the _very first time_ you ever set up you new Spree store. When Test Mode is ON and your store is live (the  first day you "go live"), you're going to put in a real credit card into the gateway and you will simulate a tranasction on your website. Your credit card will not actually be charged for this transaction, although Authorize.net will return a successful response to your Spree store to simulate what it would be like for a real customer. This will be the final step of verifying that your Authorize.net gateway is working before switching Test Mode to "Off" (thus making yout store ready for business)
+Live server with test mode On - You're going to do this the _very first time_ you ever set up you new Spree store. When Test Mode is ON and your store is live (the first day you "go live"), you're going to put in a real credit card into the gateway and you will simulate a tranasction on your website. Your credit card will not actually be charged for this transaction, although Authorize.net will return a successful response to your Spree store to simulate what it would be like for a real customer. This will be the final step of verifying that your Authorize.net gateway is working before switching Test Mode to "Off" (thus making yout store ready for business)
 
 Live server with test mode Off - This is how your live, production website operates when the store is in business.
 

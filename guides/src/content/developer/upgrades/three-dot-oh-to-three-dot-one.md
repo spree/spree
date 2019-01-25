@@ -1,6 +1,7 @@
 ---
 title: Upgrading Spree from 3.0.x to 3.1.x
 section: upgrades
+order: 6
 ---
 
 This guide covers upgrading a 3.0.x Spree store, to a 3.1.x store. This
@@ -74,7 +75,6 @@ extends 'spree/api/v1/zones/show'
 ### Remove Spree::Config.check_for_spree_alerts
 
 If you were disabling the alert checks you'll now want to remove this preference as it's no longer used.
-
 
 ## Read the release notes
 

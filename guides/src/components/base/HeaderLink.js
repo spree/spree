@@ -1,8 +1,14 @@
+// --- Dependencies
 import * as React from 'react'
 import PropTypes from 'prop-types'
 import kebabCase from 'lodash.kebabcase'
 
+// --- Icons
 import IconLink from 'react-feather/dist/icons/link-2'
+
+/**
+ * Component
+ */
 
 const HeaderLink = ({ text, children }) => (
   <a href={`#${kebabCase(text)}`} className="flex items-center link flex nl4">

@@ -1,6 +1,8 @@
 ---
 title: Upgrading Spree from 1.0.x to 1.1.x
 section: upgrades
+hidden: false
+order: 14
 ---
 
 ## Overview
@@ -18,7 +20,7 @@ version of Spree will have a 1-1-stable branch.
 
 Spree 1.1 depends on any Rails 3.2 release afer Rails 3.2.9. Ensure that you have that dependency specified in your Gemfile:
 
-```ruby
+````ruby
 gem 'rails', '~> 3.2.9'```
 
 Along with this, you may have to also update your assets group in the Gemfile:
@@ -31,7 +33,7 @@ group :assets do
 end
 
 gem 'jquery-rails', '2.1.4'
-```
+````
 
 For more information, please refer to the [Upgrading Ruby on Rails guide](http://guides.rubyonrails.org/upgrading_ruby_on_rails.html#upgrading-from-rails-3-1-to-rails-3-2).
 
@@ -39,10 +41,10 @@ For more information, please refer to the [Upgrading Ruby on Rails guide](http:/
 
 For best results, use the 1-1-stable branch from GitHub:
 
-```ruby
+````ruby
 gem 'spree', github: 'spree/spree', branch: '1-1-stable'```
 
-Run `bundle update spree`. 
+Run `bundle update spree`.
 
 ## Copy and run migrations
 
@@ -68,3 +70,4 @@ For information about what has changed in this release, please read the [1.1.0 R
 ## Verify that everything is OK
 
 Click around in your store and make sure it's performing as normal. Fix any deprecation warnings you see.
+````

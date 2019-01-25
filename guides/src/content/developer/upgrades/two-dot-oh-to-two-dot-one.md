@@ -1,6 +1,7 @@
 ---
 title: Upgrading Spree from 2.0.x to 2.1.x
 section: upgrades
+order: 10
 ---
 
 ## Overview
@@ -26,7 +27,7 @@ guide](http://guides.rubyonrails.org/upgrading_ruby_on_rails.html#upgrading-
 from-rails-3-2-to-rails-4-0) to learn what needs to be done for your
 application to migrate to Rails 4.
 
-```ruby
+````ruby
 gem 'rails', '~> 4.0.0'```
 
 ## Upgrade Spree
@@ -53,3 +54,4 @@ For information about changes contained with this release, please read the [2.1.
 ## Verify that everything is OK
 
 Click around in your store and make sure it's performing as normal. Fix any deprecation warnings you see.
+````
