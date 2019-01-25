@@ -1,6 +1,7 @@
 ---
 title: Upgrading Spree from 2.1.x to 2.2.x
 section: upgrades
+order: 9
 ---
 
 ## Overview
@@ -26,7 +27,7 @@ gem 'rails', '~> 4.0.6'
 
 For best results, use the 2-2-stable branch from GitHub:
 
-```ruby
+````ruby
 gem 'spree', github: 'spree/spree', branch: '2-2-stable'```
 
 Run `bundle update spree`.
@@ -59,3 +60,4 @@ Please consult [this section](http://guides.spreecommerce.org/release_notes/spre
 ## Verify that everything is OK
 
 Click around in your store and make sure it's performing as normal. Fix any deprecation warnings you see.
+````

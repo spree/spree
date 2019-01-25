@@ -1,6 +1,7 @@
 ---
 title: Upgrading Spree from 3.6 to 3.7
 section: upgrades
+order: 0
 ---
 
 This guide covers upgrading a 3.6 Spree application, to version 3.7.
@@ -48,13 +49,13 @@ To ensure all existing `Order` are associated with `Store` please run this:
 rails db:associate_orders_with_store
 ```
 
-This will associate all Orders without Store to the default Store. 
+This will associate all Orders without Store to the default Store.
 This can take some time depending on your volume of data.
 
 ### Ensure all Orders have currency present
 
-To enhance multi currency capabilities we've made `currency` presence 
-obligatory in `Order` model. To ensure all existing `Orders` have `currency` 
+To enhance multi currency capabilities we've made `currency` presence
+obligatory in `Order` model. To ensure all existing `Orders` have `currency`
 present please run this command:
 
 ```bash

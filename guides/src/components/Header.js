@@ -1,21 +1,29 @@
+// --- Dependencies
 import * as React from 'react'
 import PropTypes from 'prop-types'
 import { Link } from 'gatsby'
 import { cx } from 'emotion'
 
+// --- Components
 import Logo from './Logo'
 import NavItem from './NavItem'
 import DocSearch from './DocSearch'
 import Sidebar from './Sidebar'
 
+// --- Utils
 import styles from '../utils/styles'
 
+// --- Icons
 import IconSlack from 'react-feather/dist/icons/slack'
 import IconGithub from 'react-feather/dist/icons/github'
 import IconBurger from 'react-feather/dist/icons/menu'
 import IconClose from 'react-feather/dist/icons/x-circle'
 import IconSearch from 'react-feather/dist/icons/search'
 import IconContact from 'react-feather/dist/icons/message-circle'
+
+/**
+ * Component
+ */
 
 export default class Header extends React.PureComponent {
   static propTypes = {
@@ -54,7 +62,7 @@ export default class Header extends React.PureComponent {
           height: styles.header.height
         }}
       >
-        <div className="z-3 relative ph4 flex items-center w-100 h-100">
+        <div className="z-3 relative ph4 flex items-center mw9 center h-100">
           <Link
             to="/"
             className={cx(
