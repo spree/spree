@@ -1,6 +1,7 @@
 module Spree
   class AppDependencies
     INJECTION_POINTS = [
+      :ability_class,
       :cart_create_service, :cart_add_item_service, :cart_remove_item_service,
       :cart_remove_line_item_service, :cart_set_item_quantity_service, :cart_recalculate_service,
       :cart_update_service, :checkout_next_service, :checkout_advance_service, :checkout_update_service,
@@ -12,6 +13,7 @@ module Spree
     ]
 
     def initialize
+      set_default_abitily
       set_default_services
       set_default_finders
     end
@@ -19,6 +21,10 @@ module Spree
     attr_accessor *INJECTION_POINTS
 
     private
+
+    def set_default_abitily
+      @ability_class = 'Spree::Ability'
+    end
 
     def set_default_services
       # cart
