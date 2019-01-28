@@ -1,5 +1,7 @@
 module Spree
   class ApiDependencies
+    include Spree::DependenciesHelper
+
     INJECTION_POINTS = [
       :storefront_cart_create_service, :storefront_cart_add_item_service, :storefront_cart_remove_line_item_service,
       :storefront_cart_remove_item_service, :storefront_cart_set_item_quantity_service, :storefront_cart_recalculate_service,
@@ -12,11 +14,15 @@ module Spree
       :storefront_collection_paginator, :storefront_user_serializer, :storefront_products_sorter, :storefront_products_finder,
       :storefront_product_serializer, :storefront_taxon_serializer, :storefront_taxon_finder, :storefront_find_by_variant_finder,
       :storefront_cart_update_service
-    ]
+    ].freeze
+
+    attr_accessor *INJECTION_POINTS
 
     def initialize
       set_storefront_defaults
     end
+
+    private
 
     def set_storefront_defaults
       # cart services
@@ -67,7 +73,5 @@ module Spree
       @storefront_products_finder = Spree::Dependencies.products_finder
       @storefront_taxon_finder = Spree::Dependencies.taxon_finder
     end
-
-    attr_accessor *INJECTION_POINTS
   end
 end
