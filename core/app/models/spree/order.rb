@@ -335,7 +335,7 @@ module Spree
       EOS
       return true unless options
 
-      CompareLineItems.new.call(order: self, line_item: line_item, options: options).value
+      Spree::Dependencies.cart_compare_line_items_service.constantize.new.call(order: self, line_item: line_item, options: options).value
     end
 
     # Creates new tax charges if there are any applicable rates. If prices already

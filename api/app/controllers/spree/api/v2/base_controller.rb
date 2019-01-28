@@ -9,6 +9,10 @@ module Spree
 
         private
 
+        def collection_paginator
+          Spree::Api::Dependencies.storefront_collection_paginator.constantize
+        end
+
         def render_serialized_payload(status = 200)
           render json: yield, status: status
         rescue ArgumentError => exception
@@ -41,7 +45,7 @@ module Spree
 
         # Needs to be overriden so that we use Spree's Ability rather than anyone else's.
         def current_ability
-          @current_ability ||= Spree::Ability.new(spree_current_user)
+          @current_ability ||= Spree::Dependencies.ability_class.constantize.new(spree_current_user)
         end
 
         def request_includes
