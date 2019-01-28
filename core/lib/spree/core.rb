@@ -59,6 +59,20 @@ module Spree
     yield(Spree::Config)
   end
 
+  # Used to set dependencies for Spree.
+  #
+  # Example:
+  #
+  #   Spree.dependencies do |dependency|
+  #     dependency.cart_add_item_service = MyCustomAddToCart
+  #   end
+  #
+  # This method is defined within the core gem on purpose.
+  # Some people may only wish to use the Core part of Spree.
+  def self.dependencies
+    yield(Spree::Dependencies)
+  end
+
   module Core
     autoload :ProductFilters, 'spree/core/product_filters'
     autoload :TokenGenerator, 'spree/core/token_generator'
