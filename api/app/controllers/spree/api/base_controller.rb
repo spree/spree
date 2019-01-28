@@ -107,7 +107,7 @@ module Spree
       end
 
       def current_ability
-        Spree::Ability.new(current_api_user)
+        Spree::Dependencies.ability_class.constantize.new(current_api_user)
       end
 
       def invalid_resource!(resource)
