@@ -1,5 +1,7 @@
 module Spree
   class AppDependencies
+    include Spree::DependenciesHelper
+
     INJECTION_POINTS = [
       :ability_class,
       :cart_create_service, :cart_add_item_service, :cart_remove_item_service,
@@ -10,15 +12,15 @@ module Spree
       :coupon_handler, :country_finder, :current_order_finder, :credit_card_finder,
       :completed_order_finder, :order_sorter, :cart_compare_line_items_service, :collection_paginator, :products_sorter,
       :products_finder, :taxon_finder, :line_item_by_variant_finder
-    ]
+    ].freeze
+
+    attr_accessor *INJECTION_POINTS
 
     def initialize
       set_default_abitily
       set_default_services
       set_default_finders
     end
-
-    attr_accessor *INJECTION_POINTS
 
     private
 
