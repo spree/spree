@@ -15,17 +15,15 @@ assets and how you can extend and customize them including:
 
 ## Spree's Asset Pipeline
 
-With the release of 3.1 Rails now supports powerful asset management
-features and Spree fully leverages these features to further extend and
-simplify its customization potential. Using asset customization
+Using asset customization
 techniques outlined below you be able to adapt all the JavaScript,
 stylesheets and images contained in Spree to easily provide a fully
 custom experience.
 
 All Spree generated (or upgraded) applications include an `app/assets`
-directory (as is standard for all Rails 3.1 apps). We've taken this one
+directory. We've taken this one
 step further by subdividing each top level asset directory (images,
-JavaScript files, stylesheets) into frontend and backend directories. This is
+JavaScript files, stylesheets) into `frontend` and `backend` directories. This is
 designed to keep assets from the frontend and backend from conflicting with each other.
 
 A typical assets directory for a Spree application will look like:
@@ -89,9 +87,8 @@ relevant all.css or all.js in the host Spree application. For example,
 //= require_tree .
 ```
 
-External JavaScript libraries, stylesheets and images have also be
-relocated into vendor/assets (again Rails 3.1 standard approach), and
-all core extensions no longer have public directories.
+External JavaScript libraries, stylesheets and images have also been
+relocated into vendor/assets.
 
 ## Managing your application's assets
 

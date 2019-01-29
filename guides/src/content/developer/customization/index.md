@@ -36,36 +36,6 @@ section of the [Getting Started with Spree](getting_started_tutorial.html) guide
 for how to setup the host application). Application customizations are
 not generally shared or re-used in any way.
 
-#### Extension
-
-Extensions enable developers to enhance or add functionality to Spree,
-and are generally discrete pieces of functionality that are shared and
-intended to be installed in multiple Spree implementations.
-
-Extensions are generally distributed as ruby gems and implemented as
-standard Rails 3 engines so they provide a natural way to bundle all the
-changes needed to implement larger features.
-
-Visit the [Extension Registry](https://github.com/spree-contrib) to
-get an idea of the type and volume of extensions available.
-
-#### Theme
-
-Themes are designed to overhaul the entire look and feel of a Spree
-store (or its administration system). Themes are distributed in exactly
-the same manner as extensions, but don't generally include logic
-customizations.
-
-***
-For more implementation details on Extensions and Themes please
-refer to the [Extensions & Themes](extensions_tutorial.html) guide.
-***
-
-### Customization Options
-
-Once you've decided how you're going to manage your customizations, you
-then need to choose the correct option to achieve the desired changes.
-
 #### View Customizations
 
 Allows you to change and/or extend the look and feel of a Spree store
@@ -78,13 +48,21 @@ Allows changing the static assets provided by Spree, this includes
 stylesheets, JavaScript files and images. For details see the [Asset
 Customization](asset_customization.html) guide.
 
-#### Use S3 for storage
-
-Setup Spree to store your images on S3. For details see the
- [Use S3 for storage](s3_storage.html) guide
-
 #### Logic Customizations
 
 Enables the changing and/or extension of the logic of Spree to meet your
 specific business requirements. For details see the [Logic
 Customization](logic_customization.html) guide.
+
+#### Extension
+
+Extensions enable developers to enhance or add functionality to Spree,
+and are generally discrete pieces of functionality that are shared and
+intended to be installed in multiple Spree implementations.
+
+Extensions are generally distributed as ruby gems and implemented as
+standard Rails 3 engines so they provide a natural way to bundle all the
+changes needed to implement larger features.
+
+Visit the [Extension Registry](https://github.com/spree-contrib) to
+get an idea of the type and volume of extensions available.
