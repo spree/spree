@@ -27,6 +27,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'spree_extension'
 
   s.add_development_dependency 'appraisal'
+  s.add_development_dependency 'awesome_print'
   s.add_development_dependency 'capybara'
   s.add_development_dependency 'capybara-screenshot'
   s.add_development_dependency 'coffee-rails'
