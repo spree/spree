@@ -7,20 +7,12 @@ describe Spree::TaxonImage, type: :model do
     let(:text_file) { File.open(Spree::Core::Engine.root + 'spec/fixtures' + 'text-file.txt') }
 
     it 'has allowed attachment content type' do
-      if Rails.application.config.use_paperclip
-        spree_image.attachment = image_file
-      else
-        spree_image.attachment.attach(io: image_file, filename: 'thinking-cat.jpg', content_type: 'image/jpeg')
-      end
+      spree_image.attachment.attach(io: image_file, filename: 'thinking-cat.jpg', content_type: 'image/jpeg')
       expect(spree_image).to be_valid
     end
 
     it 'has no allowed attachment content type' do
-      if Rails.application.config.use_paperclip
-        spree_image.attachment = text_file
-      else
-        spree_image.attachment.attach(io: text_file, filename: 'text-file.txt', content_type: 'text/plain')
-      end
+      spree_image.attachment.attach(io: text_file, filename: 'text-file.txt', content_type: 'text/plain')
       expect(spree_image).not_to be_valid
     end
   end
