@@ -34,16 +34,16 @@ describe 'Homepage', type: :feature do
       end
 
       it 'has a link to return authorizations' do
-        within('.sidebar') { page.find_link('Return Authorizations')['/admin/return_authorizations'] }
+        within('#main-sidebar') { page.find_link('Return Authorizations')['/admin/return_authorizations'] }
       end
 
       it 'has a link to customer returns' do
-        within('.sidebar') { page.find_link('Customer Returns')['/admin/customer_returns'] }
+        within('#main-sidebar') { page.find_link('Customer Returns')['/admin/customer_returns'] }
       end
 
       context 'version number' do
         it 'is displayed' do
-          within('.sidebar') { expect(page).to have_content(Spree.version) }
+          within('#main-sidebar') { expect(page).to have_content(Spree.version) }
         end
 
         context 'if turned off' do
@@ -51,7 +51,7 @@ describe 'Homepage', type: :feature do
 
           it 'is not displayed' do
             visit spree.admin_path
-            within('.sidebar') { expect(page).not_to have_content(Spree.version) }
+            within('#main-sidebar') { expect(page).not_to have_content(Spree.version) }
           end
         end
       end
@@ -63,19 +63,19 @@ describe 'Homepage', type: :feature do
       end
 
       it 'has a link to products' do
-        within('.sidebar') { page.find_link('Products')['/admin/products'] }
+        within('#main-sidebar') { page.find_link('Products')['/admin/products'] }
       end
 
       it 'has a link to option types' do
-        within('.sidebar') { page.find_link('Option Types')['/admin/option_types'] }
+        within('#main-sidebar') { page.find_link('Option Types')['/admin/option_types'] }
       end
 
       it 'has a link to properties' do
-        within('.sidebar') { page.find_link('Properties')['/admin/properties'] }
+        within('#main-sidebar') { page.find_link('Properties')['/admin/properties'] }
       end
 
       it 'has a link to prototypes' do
-        within('.sidebar') { page.find_link('Prototypes')['/admin/prototypes'] }
+        within('#main-sidebar') { page.find_link('Prototypes')['/admin/prototypes'] }
       end
     end
   end

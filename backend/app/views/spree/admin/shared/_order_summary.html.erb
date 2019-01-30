@@ -22,6 +22,12 @@
         <td id='order_channel'><%= @order.channel %></td>
       </tr>
       <tr>
+        <td data-hook='admin_order_tab_currency_title'>
+          <strong><%= Spree.t(:currency) %>:</strong>
+        </td>
+        <td id='order_currency'><%= @order.currency %></td>
+      </tr>
+      <tr>
         <td data-hook='admin_order_tab_subtotal_title'>
           <strong><%= Spree.t(:subtotal) %>:</strong>
         </td>

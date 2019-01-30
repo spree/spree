@@ -209,26 +209,6 @@ module Spree
           link_to(link_text, url)
         end
       end
-
-      def main_part_classes
-        if cookies['sidebar-minimized'] == 'true'
-          'col-xs-12 sidebar-collapsed'
-        else
-          'col-xs-9 col-xs-offset-3 col-md-10 col-md-offset-2'
-        end
-      end
-
-      def main_sidebar_classes
-        if cookies['sidebar-minimized'] == 'true'
-          'col-xs-3 col-md-2 hidden-xs sidebar'
-        else
-          'col-xs-3 col-md-2 sidebar'
-        end
-      end
-
-      def wrapper_classes
-        'sidebar-minimized' if cookies['sidebar-minimized'] == 'true'
-      end
     end
   end
 end

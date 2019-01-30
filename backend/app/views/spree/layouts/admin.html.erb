@@ -24,13 +24,13 @@
     <%#-------------------------------------------------%>
     <%# Main content                                    %>
     <%#-------------------------------------------------%>
-    <div id="wrapper" class="container-fluid <%= wrapper_classes %>">
+    <div id="wrapper" class="container-fluid">
       <div class="row">
 
         <%#-------------------------------------------------%>
         <%# Sidebar                                         %>
         <%#-------------------------------------------------%>
-        <div class="<%= main_sidebar_classes %>" id="main-sidebar" data-hook="admin_tabs">
+        <div id="main-sidebar" data-hook="admin_tabs">
           <%= render partial: 'spree/admin/shared/main_menu' %>
 
           <%= render partial: 'spree/admin/shared/version' %>
@@ -39,7 +39,7 @@
         <%#-------------------------------------------------%>
         <%# Content                                         %>
         <%#-------------------------------------------------%>
-        <div class="<%= main_part_classes %> main" id="main-part">
+        <div id="main-part">
 
           <%#-------------------------------------------------%>
           <%# Content header (page title/actions)             %>
@@ -55,7 +55,7 @@
             <%#-------------------------------------------------%>
             <%# Main content                                    %>
             <%#-------------------------------------------------%>
-            <div class="<%= content_for?(:sidebar) ? 'with-sidebar col-xs-8 col-md-9' : 'col-xs-12'  %>" id="content" data-hook>
+            <div class="<%= content_for?(:sidebar) ? 'with-sidebar col-xs-12 col-md-9' : 'col-xs-12'  %>" id="content" data-hook>
               <%= render partial: 'spree/admin/shared/table_filter' if content_for?(:table_filter)%>
               <%= yield %>
             </div>
@@ -64,7 +64,7 @@
             <%# Inner aside                                     %>
             <%#-------------------------------------------------%>
             <% if content_for?(:sidebar) %>
-              <div class="col-xs-4 col-md-3">
+              <div class="col-xs-12 col-md-3">
                 <%= render partial: 'spree/admin/shared/sidebar' %>
               </div>
             <% end %>
@@ -74,10 +74,11 @@
         </div>
       </div>
     </div>
-
+    <%= render partial: 'spree/admin/shared/user_menu_modal' %>
     <%#-------------------------------------------------%>
     <%# Insert footer scripts here                      %>
     <%#-------------------------------------------------%>
     <div data-hook="admin_footer_scripts"></div>
+
   </body>
 </html>

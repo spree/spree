@@ -4,7 +4,7 @@ under the spree namespace that do stuff we find helpful.
 Hopefully, this will evolve into a propper class.
 **/
 
-/* global Cookies, AUTH_TOKEN, order_number */
+/* global AUTH_TOKEN, order_number, bodyScrollLock */
 
 jQuery(function ($) {
   // Add some tips
@@ -26,26 +26,19 @@ jQuery(function ($) {
 
   // Sidebar nav toggle functionality
   $('#sidebar-toggle').on('click', function () {
-    var wrapper = $('#wrapper')
-    var main = $('#main-part')
-    var sidebar = $('#main-sidebar')
-
-    // these should match `spree/backend/app/helpers/spree/admin/navigation_helper.rb#main_part_classes`
-    var mainWrapperCollapsedClasses = 'col-xs-12 sidebar-collapsed'
-    var mainWrapperExpandedClasses = 'col-xs-9 col-xs-offset-3 col-md-10 col-md-offset-2'
-
-    wrapper.toggleClass('sidebar-minimized')
-    sidebar.toggleClass('hidden-xs')
-    main
-      .toggleClass(mainWrapperCollapsedClasses)
-      .toggleClass(mainWrapperExpandedClasses)
-
-    if (wrapper.hasClass('sidebar-minimized')) {
-      Cookies.set('sidebar-minimized', 'true', { path: '/admin' })
+    var targetElement = document.querySelector('#main-sidebar')
+    $('body').toggleClass('sidebar-opened')
+    if ($('body').hasClass('sidebar-opened')) {
+      bodyScrollLock.disableBodyScroll(targetElement)
     } else {
-      Cookies.set('sidebar-minimized', 'false', { path: '/admin' })
+      bodyScrollLock.clearAllBodyScrollLocks()
     }
   })
+
+  window.addEventListener('resize', removeLock)
+  function removeLock () {
+    bodyScrollLock.clearAllBodyScrollLocks()
+  }
 
   $('.sidebar-menu-item').mouseover(function () {
     if ($('#wrapper').hasClass('sidebar-minimized')) {
