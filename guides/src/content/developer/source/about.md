@@ -122,27 +122,9 @@ Ruby, including:
 -   [Why's (Poignant) Guide to
     Ruby](http://mislav.uniqpath.com/poignant-guide/)
 
-## Performance Considerations
-
-Rails 3.1 introduced the concept of the asset pipeline. Unfortunately this causes some significant performance issues when running Spree in development mode. The good news is you can improve performance significantly by using a special precompile task.
-
-```bash
-$ bundle exec rake assets:precompile
-```
-
-Using the precompile rake task in development will prevent any changes to asset files from being automatically included in when you reload the page. You must re-run the precompile task for changes to become available.
-
-Rails also provides the following rake task that will delete the entire `public/assets` directory, this can be helpful to clear out development assets before committing.
-
-```bash
-$ bundle exec rake assets:clean
-```
-
-It might also be worthwhile to include the public/assets directory in your `.gitignore` file.
-
 ## Open Source License
 
-Copyright © 2007-2017, Spree Commerce Inc. and other contributors.
+Copyright © 2007-2019, Spree Commerce Inc. and other contributors.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
