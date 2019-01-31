@@ -34,7 +34,7 @@ paths:
         '200':
           description: ok
           content:
-            application/json:
+            application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/Account'
         '403':
@@ -53,7 +53,7 @@ paths:
         '200':
           description: Listing user credit cards.
           content:
-            application/json:
+            application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/CreditCardList'
         '403':
@@ -80,7 +80,7 @@ paths:
         '200':
           description: Listing user default credit card.
           content:
-            application/json:
+            application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/CreditCard'
         '403':
@@ -100,7 +100,7 @@ paths:
         '200':
           description: Listing user completed orders.
           content:
-            application/json:
+            application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/CartList'
         '403':
@@ -123,7 +123,7 @@ paths:
         '200':
           description: Listing user completed order.
           content:
-            application/json:
+            application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/Cart'
         '403':
@@ -150,7 +150,7 @@ paths:
         '201':
           description: Cart was successfully created
           content:
-            application/json:
+            application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/Cart'
       parameters:
@@ -165,7 +165,7 @@ paths:
         '200':
           description: Correct cart was returned
           content:
-            application/json:
+            application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/Cart'
         '404':
@@ -197,7 +197,7 @@ paths:
         '200':
           description: Item was added to the Cart successfully
           content:
-            application/json:
+            application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/Cart'
         '404':
@@ -211,7 +211,7 @@ paths:
       requestBody:
         required: true
         content:
-          application/json:
+          application/vnd.api+json:
             schema:
               type: object
               properties:
@@ -240,13 +240,13 @@ paths:
         '200':
           description: New quantity has been successfully set for a requested Line Item
           content:
-            application/json:
+            application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/Cart'
         '422':
           description: Stock quantity is not sufficient for this request to be fulfielled
           content:
-            application/json:
+            application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/Error'
       security:
@@ -258,7 +258,7 @@ paths:
       requestBody:
         required: true
         content:
-          application/json:
+          application/vnd.api+json:
             schema:
               type: object
               properties:
@@ -284,7 +284,7 @@ paths:
         '200':
           description: Requested Line Item has been removed from the Cart
           content:
-            application/json:
+            application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/Cart'
         '404':
@@ -303,7 +303,7 @@ paths:
         '200':
           description: Cart has been successfully emptied
           content:
-            application/json:
+            application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/Cart'
         '404':
@@ -325,13 +325,13 @@ paths:
         '200':
           description: Cuopon code was applied successfully
           content:
-            application/json:
+            application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/Cart'
         '422':
           description: Coupon code couldn't be applied
           content:
-            application/json:
+            application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/Error'
       security:
@@ -343,7 +343,7 @@ paths:
       requestBody:
         required: true
         content:
-          application/json:
+          application/vnd.api+json:
             schema:
               type: object
               properties:
@@ -371,13 +371,13 @@ paths:
         '200':
           description: Coupon code was removed successfully
           content:
-            application/json:
+            application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/Cart'
         '422':
           description: Coupon code couldn't be removed
           content:
-            application/json:
+            application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/Error'
       security:
@@ -496,13 +496,13 @@ paths:
         '200':
           description: Checkout was updated
           content:
-            application/json:
+            application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/Cart'
         '422':
           description: Checkout couldn't be updated
           content:
-            application/json:
+            application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/Error'
         '404':
@@ -515,7 +515,7 @@ paths:
       requestBody:
         required: true
         content:
-          application/json:
+          application/vnd.api+json:
             schema:
               type: object
               properties:
@@ -553,13 +553,13 @@ paths:
         '200':
           description: Checkout transitioned to the next step
           content:
-            application/json:
+            application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/Cart'
         '422':
           description: Checkout couldn't transition to the next step
           content:
-            application/json:
+            application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/Error'
         '404':
@@ -581,13 +581,13 @@ paths:
         '200':
           description: Checkout was advanced to the furthest step
           content:
-            application/json:
+            application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/Cart'
         '422':
           description: Checkout couldn't transition to the next step
           content:
-            application/json:
+            application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/Error'
         '404':
@@ -609,13 +609,13 @@ paths:
         '200':
           description: Checkout was completed
           content:
-            application/json:
+            application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/Cart'
         '422':
           description: Checkout couldn't be completed
           content:
-            application/json:
+            application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/Error'
         '404':
@@ -636,13 +636,13 @@ paths:
         '200':
           description: Store Credit payment created
           content:
-            application/json:
+            application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/Cart'
         '422':
           description: Store Credit couldn't be created
           content:
-            application/json:
+            application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/Error'
         '404':
@@ -671,13 +671,13 @@ paths:
         '200':
           description: Store Credit payment removed
           content:
-            application/json:
+            application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/Cart'
         '422':
           description: Store Credit payments weren't removed
           content:
-            application/json:
+            application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/Error'
         '404':
@@ -700,7 +700,7 @@ paths:
         '200':
           description: Returns a list of available Payment Methods
           content:
-            application/json:
+            application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/PaymentMethodsList'
         '404':
@@ -723,7 +723,7 @@ paths:
         '200':
           description: Returns a list of available Shipping Rates for Checkout
           content:
-            application/json:
+            application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/ShippingRatesList'
         '404':
@@ -788,7 +788,7 @@ paths:
         '200':
           description: Returns a list of Products
           content:
-            application/json:
+            application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/ProductsList'
   '/products/{id}':
@@ -810,7 +810,7 @@ paths:
         '200':
           description: Returns the requested Product
           content:
-            application/json:
+            application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/Product'
         '404':
@@ -852,7 +852,7 @@ paths:
         '200':
           description: Returns a list of Taxons
           content:
-            application/json:
+            application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/TaxonsList'
 
@@ -875,7 +875,7 @@ paths:
         '200':
           description: Returns the reqested Taxon
           content:
-            application/json:
+            application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/Taxon'
         '404':
@@ -892,7 +892,7 @@ paths:
         '200':
           description: Returns a list of all Countries
           content:
-            application/json:
+            application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/CountriesList'
 
@@ -915,7 +915,7 @@ paths:
         '200':
           description: Returns the requested Country
           content:
-            application/json:
+            application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/Country'
         '404':
@@ -936,7 +936,7 @@ paths:
         '200':
           description: Returns the default Country
           content:
-            application/json:
+            application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/Country'
 
@@ -2528,7 +2528,7 @@ components:
     404NotFound:
       description: Resource not found
       content:
-        application/json:
+        application/vnd.api+json:
           schema:
             properties:
               error:
@@ -2538,7 +2538,7 @@ components:
     403Forbidden:
       description: You are not authorized to access this page.
       content:
-        application/json:
+        application/vnd.api+json:
           schema:
             properties:
               error:
