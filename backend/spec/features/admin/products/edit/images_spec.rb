@@ -27,8 +27,9 @@ describe 'Product Images', type: :feature, js: true do
       attach_file('image_attachment', file_path)
       click_button 'Create'
       expect(page).to have_content('successfully created!')
-
-      click_icon(:edit)
+      within(".actions") do
+        click_icon(:edit)
+      end
       fill_in 'image_alt', with: 'ruby on rails t-shirt'
       click_button 'Update'
       expect(page).to have_content('successfully updated!')
