@@ -115,15 +115,19 @@ div.navbar-right {
     padding-bottom: 0;
 }
 
+@media (min-width: 992px) {
+  #sidebar.in,
+  #sidebar.collapse {
+  display: block!important;
+  height: auto !important;
+  }
+}
 @media (min-width: 768px) and (max-width: 991px) {
 
   .with-sidebar{
     margin-bottom: 15px;
   }
-  aside#sidebar{
-    margin-left: -15px;
-    margin-right: -15px;
-  }
+
 
   .content-header.page-header {
     margin-top: 0;text-align: center;
@@ -132,6 +136,15 @@ div.navbar-right {
   .content-header.page-header .page-actions {
     margin-top: 15px;
     text-align: center;
+  }
+
+  #sidebar{ margin: 15px -15px;}
+  #sidebar.in,
+  #sidebar.collapsing {
+    display: block!important;
+  }
+  #sidebar-options {
+    margin: 5px -15px 5px auto;
   }
 }
 
@@ -275,6 +288,15 @@ div.navbar-right {
       .content-header.page-header .page-actions {
         margin-top: 15px;
         text-align: center;
+      }
+
+      #sidebar{ margin: 15px -15px;}
+      #sidebar.in,
+      #sidebar.collapsing {
+        display: block!important;
+      }
+      #sidebar-options {
+        margin: 5px -15px 5px auto;
       }
 
 }

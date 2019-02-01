@@ -40,19 +40,6 @@ jQuery(function ($) {
     bodyScrollLock.clearAllBodyScrollLocks()
   }
 
-  $('.sidebar-menu-item').mouseover(function () {
-    if ($('#wrapper').hasClass('sidebar-minimized')) {
-      $(this).addClass('menu-active')
-      $(this).find('ul.nav').addClass('submenu-active')
-    }
-  })
-  $('.sidebar-menu-item').mouseout(function () {
-    if ($('#wrapper').hasClass('sidebar-minimized')) {
-      $(this).removeClass('menu-active')
-      $(this).find('ul.nav').removeClass('submenu-active')
-    }
-  })
-
   // TODO: remove this js temp behaviour and fix this decent
   // Temp quick search
   // When there was a search term, copy it

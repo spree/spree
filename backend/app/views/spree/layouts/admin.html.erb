@@ -40,7 +40,6 @@
         <%# Content                                         %>
         <%#-------------------------------------------------%>
         <div id="main-part">
-
           <%#-------------------------------------------------%>
           <%# Content header (page title/actions)             %>
           <%#-------------------------------------------------%>
@@ -53,25 +52,24 @@
             <%= flash_alert(flash) %>
 
             <%#-------------------------------------------------%>
-            <%# Main content                                    %>
-            <%#-------------------------------------------------%>
-            <div class="<%= content_for?(:sidebar) ? 'with-sidebar col-xs-12 col-md-9' : 'col-xs-12'  %>" id="content" data-hook>
-              <%= render partial: 'spree/admin/shared/table_filter' if content_for?(:table_filter)%>
-              <%= yield %>
-            </div>
-
-            <%#-------------------------------------------------%>
             <%# Inner aside                                     %>
             <%#-------------------------------------------------%>
             <% if content_for?(:sidebar) %>
-              <div class="col-xs-12 col-md-3">
+              <div class="col-xs-12 col-md-3 col-md-push-9">
                 <%= render partial: 'spree/admin/shared/sidebar' %>
               </div>
             <% end %>
+
+            <%#-------------------------------------------------%>
+            <%# Main content                                    %>
+            <%#-------------------------------------------------%>
+            <div class="<%= content_for?(:sidebar) ? 'with-sidebar col-xs-12 col-md-9 col-md-pull-3' : 'col-xs-12'  %>" id="content" data-hook>
+              <%= render partial: 'spree/admin/shared/table_filter' if content_for?(:table_filter)%>
+              <%= yield %>
+            </div>
           </div>
-
-
         </div>
+
       </div>
     </div>
     <%= render partial: 'spree/admin/shared/user_menu_modal' %>

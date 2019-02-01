@@ -1,5 +1,6 @@
 <% if content_for?(:sidebar) %>
-  <aside id="sidebar" class="main-right-sidebar" data-hook>
+<button type="button" id="sidebar-options" class="btn btn-default visible-xs visible-sm" data-toggle="collapse" data-target="#sidebar"><span class="icon icon-list-alt"></span> <%= Spree.t(:options) %></button>
+  <aside id="sidebar" class="main-right-sidebar hidden-xs hidden-sm visable-md visable-lg" data-hook>
     <%= yield :sidebar %>
   </aside>
 <% end %>
