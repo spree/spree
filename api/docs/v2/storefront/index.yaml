@@ -134,6 +134,26 @@ paths:
         - $ref: '#/components/parameters/SparseFieldsParam'
       security:
         - bearerAuth: []
+  '/order_status/{number}':
+    get:
+      description: >-
+        Returns placed Order
+      tags:
+        - Order Status
+      operationId: 'Order Status'
+      responses:
+        '200':
+          description: Requested Order information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+      parameters:
+        - $ref: '#/components/parameters/OrderParam'
+        - $ref: '#/components/parameters/CartIncludeParam'
+        - $ref: '#/components/parameters/SparseFieldsParam'
   '/cart':
     post:
       description: >-
