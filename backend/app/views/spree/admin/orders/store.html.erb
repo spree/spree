@@ -1,5 +1,5 @@
 <%= render 'spree/admin/shared/order_tabs', current: :store %>
-
+<%= render 'order_actions', order: @order, events: @order_events %>
 <div data-hook="admin_order_edit_header">
   <%= render 'spree/admin/shared/error_messages', target: @order %>
 </div>

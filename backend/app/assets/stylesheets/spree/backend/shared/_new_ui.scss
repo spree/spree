@@ -22,6 +22,11 @@ span#sidebar-toggle {
 
 .content-header.page-header {
   margin-top: 0;
+  text-align: left;
+}
+
+.content-header.page-header h1 {
+  text-align: left;
 }
 
 a:focus {
@@ -272,7 +277,7 @@ div.navbar-right {
       span.icon-filter {
         display: none;
       }
-      
+
       .page-actions a {
         margin: 5px 0;
       }
