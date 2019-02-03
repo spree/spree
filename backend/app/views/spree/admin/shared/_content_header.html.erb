@@ -14,7 +14,7 @@
         <div class="page-actions col-xs-12 col-md-6" data-hook="toolbar">
           <%= yield :page_actions %>
           <% if content_for?(:sidebar) %>
-          <a type="button" id="toggle-dynamic-content-menu" class="btn btn-default hidden-md hidden-lg"><span class="icon icon-list-alt"></span> <%= Spree.t(:options) %></a>
+          <a id="toggle-dynamic-content-menu" class="btn btn-default hidden-md hidden-lg"><span class="icon icon-list-alt"></span> <%= Spree.t(:options) %></a>
           <% end %>
         </div>
       <% end %>
