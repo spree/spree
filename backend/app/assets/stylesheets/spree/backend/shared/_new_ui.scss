@@ -272,6 +272,10 @@ div.navbar-right {
       span.icon-filter {
         display: none;
       }
+      
+      .page-actions a {
+        margin: 5px 0;
+      }
 
       #main-sidebar ul.nav.nav-pills li a {
         padding: 15px;
@@ -295,10 +299,6 @@ div.navbar-right {
 
       .content-header.page-header {
         margin-top: 0;text-align: center;
-      }
-
-      .page-actions a {
-        margin: 5px 0;
       }
 
       #sidebar-options {
