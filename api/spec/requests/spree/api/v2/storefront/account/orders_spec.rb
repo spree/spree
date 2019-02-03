@@ -1,6 +1,4 @@
 require 'spec_helper'
-require 'shared_examples/api_v2/base'
-require 'shared_examples/api_v2/current_order'
 
 describe 'Storefront API v2 Orders spec', type: :request do
   let!(:user) { create(:user_with_addresses) }

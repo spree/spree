@@ -1,6 +1,4 @@
 require 'spec_helper'
-require 'shared_examples/api_v2/base'
-require 'shared_examples/api_v2/current_order'
 
 describe 'Storefront API v2 OrderStatus spec', type: :request do
   let!(:order) { create(:order, state: 'complete', completed_at: Time.current) }
