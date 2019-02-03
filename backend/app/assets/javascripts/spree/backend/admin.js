@@ -36,7 +36,7 @@ jQuery(function ($) {
     }
   })
 
-  // Sidebar nav toggle functionality
+  // dynamic content toggle functionality
   $('#toggle-dynamic-content-menu').on('click', function () {
     var targetElement2 = document.querySelector('#sidebar')
     $('body').removeClass('sidebar-opened')
@@ -48,11 +48,9 @@ jQuery(function ($) {
     }
   })
 
-  // Sidebar nav toggle functionality
   $('#close-dynamic-content-menu').on('click', function () {
-    var targetElement2 = document.querySelector('#dynamic-content-menu')
     $('body').removeClass('dynamic-content-menu-opened')
-      bodyScrollLock.clearAllBodyScrollLocks()
+    bodyScrollLock.clearAllBodyScrollLocks()
   })
 
   window.addEventListener('resize', removeLock)
