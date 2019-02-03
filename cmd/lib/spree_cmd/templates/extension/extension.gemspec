@@ -32,7 +32,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'capybara-screenshot'
   s.add_development_dependency 'coffee-rails'
   s.add_development_dependency 'database_cleaner'
-  s.add_development_dependency 'factory_bot'
+  s.add_development_dependency 'factory_bot', '~> 4.7'
   s.add_development_dependency 'ffaker'
   s.add_development_dependency 'mysql2'
   s.add_development_dependency 'pg'
