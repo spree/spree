@@ -115,40 +115,55 @@ div.navbar-right {
     padding-bottom: 0;
 }
 
-@media (min-width: 992px) {
-  #sidebar.in,
-  #sidebar.collapse {
-  display: block!important;
-  height: auto !important;
-  }
-}
-@media (min-width: 768px) and (max-width: 991px) {
 
-  .with-sidebar{
-    margin-bottom: 15px;
-  }
+@media (max-width: 991px) {
+        #close-dynamic-content-menu {
+          text-align: center;
+          margin: 15px -5px 0 auto;
+        }
+
+       div#dynamic-content-menu {
+         position: fixed;
+         z-index: 9999;
+         left: 0;
+         height: 100vh;
+         margin: 0;
+         float: none;
+         overflow: hidden;
+         background: white;
+         border-top: 1px solid $input-border;
+
+         -webkit-transition: all $menu-speed ease;
+         -moz-transition: all $menu-speed ease;
+         -o-transition: all $menu-speed ease;
+         -ms-transition: all $menu-speed ease;
+         transition: all $menu-speed ease;
+            top: 110%;
+
+       }
+
+       aside#sidebar {
+         margin: 0;
+         border:none;
+         background: transparent;
+         margin-left: -15px;
+         margin-right: -15px;
+         height: 90%;
+         overflow: scroll;
+       }
+
+      body.dynamic-content-menu-opened div#dynamic-content-menu {
 
 
-  .content-header.page-header {
-    margin-top: 0;text-align: center;
-  }
+        -webkit-transition: all $menu-speed ease;
+        -moz-transition: all $menu-speed ease;
+        -o-transition: all $menu-speed ease;
+        -ms-transition: all $menu-speed ease;
+        transition: all $menu-speed ease;
+           top: 0;
 
-  .content-header.page-header .page-actions {
-    margin-top: 15px;
-    text-align: center;
-  }
+      }
 
-  #sidebar{ margin: 15px -15px;}
-  #sidebar.in,
-  #sidebar.collapsing {
-    display: block!important;
-  }
-  #sidebar-options {
-    margin: 5px -15px 5px auto;
-  }
-}
-
-@media (max-width: 767px) {
 
       span#sidebar-toggle {
       display: block;
@@ -181,6 +196,7 @@ div.navbar-right {
       transition: all $menu-speed ease;
       left: 0;
       overflow-y: scroll;
+
       }
 
       #sidebar-toggle span:nth-child(3) {
@@ -265,10 +281,7 @@ div.navbar-right {
       .with-sidebar{
         margin-bottom: 15px;
       }
-      aside#sidebar{
-        margin-left: -15px;
-        margin-right: -15px;
-      }
+
       .center-xs {
         width: 90px;
         margin: auto;
@@ -284,18 +297,16 @@ div.navbar-right {
         margin-top: 0;text-align: center;
       }
 
-      .content-header.page-header .page-actions {
-        margin-top: 15px;
-        text-align: center;
+      .page-actions a {
+        margin: 5px 0;
       }
 
-      #sidebar{ margin: 15px -15px;}
-      #sidebar.in,
-      #sidebar.collapsing {
-        display: block!important;
-      }
       #sidebar-options {
         margin: 5px -15px 5px auto;
+      }
+
+      .navbar-nav {
+        margin: 7.5px -15px;
       }
 
 }

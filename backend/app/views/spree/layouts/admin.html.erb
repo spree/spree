@@ -52,21 +52,23 @@
             <%= flash_alert(flash) %>
 
             <%#-------------------------------------------------%>
+            <%# Main content                                    %>
+            <%#-------------------------------------------------%>
+            <div class="<%= content_for?(:sidebar) ? 'with-sidebar col-xs-12 col-md-9' : 'col-xs-12'  %>" id="content" data-hook>
+              <%= render partial: 'spree/admin/shared/table_filter' if content_for?(:table_filter)%>
+              <%= yield %>
+            </div>
+
+            <%#-------------------------------------------------%>
             <%# Inner aside                                     %>
             <%#-------------------------------------------------%>
             <% if content_for?(:sidebar) %>
-              <div class="col-xs-12 col-md-3 col-md-push-9">
+              <div class="col-xs-12 col-md-3" id="dynamic-content-menu">
+                <button type="button" id="close-dynamic-content-menu" class="btn btn-default visible-xs visible-sm"><span class="icon icon-delete"></span> <%= Spree.t(:close) %></button>
                 <%= render partial: 'spree/admin/shared/sidebar' %>
               </div>
             <% end %>
 
-            <%#-------------------------------------------------%>
-            <%# Main content                                    %>
-            <%#-------------------------------------------------%>
-            <div class="<%= content_for?(:sidebar) ? 'with-sidebar col-xs-12 col-md-9 col-md-pull-3' : 'col-xs-12'  %>" id="content" data-hook>
-              <%= render partial: 'spree/admin/shared/table_filter' if content_for?(:table_filter)%>
-              <%= yield %>
-            </div>
           </div>
         </div>
 

@@ -27,12 +27,32 @@ jQuery(function ($) {
   // Sidebar nav toggle functionality
   $('#sidebar-toggle').on('click', function () {
     var targetElement = document.querySelector('#main-sidebar')
+    $('body').removeClass('dynamic-content-menu-opened')
     $('body').toggleClass('sidebar-opened')
     if ($('body').hasClass('sidebar-opened')) {
       bodyScrollLock.disableBodyScroll(targetElement)
     } else {
       bodyScrollLock.clearAllBodyScrollLocks()
     }
+  })
+
+  // Sidebar nav toggle functionality
+  $('#toggle-dynamic-content-menu').on('click', function () {
+    var targetElement2 = document.querySelector('#sidebar')
+    $('body').removeClass('sidebar-opened')
+    $('body').toggleClass('dynamic-content-menu-opened')
+    if ($('body').hasClass('dynamic-content-menu-opened')) {
+      bodyScrollLock.disableBodyScroll(targetElement2)
+    } else {
+      bodyScrollLock.clearAllBodyScrollLocks()
+    }
+  })
+
+  // Sidebar nav toggle functionality
+  $('#close-dynamic-content-menu').on('click', function () {
+    var targetElement2 = document.querySelector('#dynamic-content-menu')
+    $('body').removeClass('dynamic-content-menu-opened')
+      bodyScrollLock.clearAllBodyScrollLocks()
   })
 
   window.addEventListener('resize', removeLock)

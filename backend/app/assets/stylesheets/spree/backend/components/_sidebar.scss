@@ -106,6 +106,27 @@
     display: none;
   }
 
+  li.sidebar-menu-item:hover > ul {
+    display: block !important;
+    height: auto !important;
+    position: fixed;
+    top: $navbar-height + 2px;
+    bottom: 0;
+    left: 0;
+    padding: 0;
+    z-index: 1000;
+    display: block;
+    overflow-x: hidden;
+    overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+    left: 50px;
+    min-width: 180px;
+    visibility: visible;
+    background-color: lighten($gray-lighter, 5);
+    border-top: none;
+    border-right: 1px solid darken($gray-lighter, 5);
+    padding-top: 5px;
+  }
+
   .submenu-active {
     display: block !important;
     height: auto !important;

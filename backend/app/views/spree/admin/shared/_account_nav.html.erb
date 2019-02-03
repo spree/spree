@@ -1,9 +1,9 @@
 <% if try_spree_current_user %>
 <ul class="nav navbar-nav">
   <li>
-    <a href="#" id="account-email-menu" data-toggle="modal" data-target="#myModal">
+    <a href="#" id="account-email-menu" data-toggle="modal" data-target="#userNavModal">
       <i class="glyphicon glyphicon-user"></i>
-      <span class="hidden-xs"><%= try_spree_current_user.email %> <i class="caret"></i></span>
+      <span class="hidden-xs hidden-sm"><%= try_spree_current_user.email %> <i class="caret"></i></span>
     </a>
   </li>
 </ul>
