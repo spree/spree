@@ -13,7 +13,7 @@
       <% if content_for?(:page_actions) %>
         <div class="page-actions col-xs-6" data-hook="toolbar">
           <%= yield :page_actions %>
-          <a type="button" id="toggle-dynamic-content-menu" class="btn btn-default hidden-md hidden-lg"><span class="icon icon-list-alt"></span> <%= Spree.t(:options) %></a>
+          <a type="button" id="toggle-dynamic-content-menu" class=" <%= content_for?(:sidebar) ? 'btn btn-default hidden-md hidden-lg' : 'hidden'  %>"><span class="icon icon-list-alt"></span> <%= Spree.t(:options) %></a>
         </div>
       <% end %>
 
