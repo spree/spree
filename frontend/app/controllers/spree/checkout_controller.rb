@@ -153,7 +153,7 @@ module Spree
         packages = @order.shipments.map(&:to_package)
         @differentiator = Spree::Stock::Differentiator.new(@order, packages)
         @differentiator.missing.each do |variant, quantity|
-          Spree::Cart::RemoveItem.call(order: @order, variant: variant, quantity: quantity)
+          Spree::Dependencies.cart_remove_item_service.constantize.call(order: @order, variant: variant, quantity: quantity)
         end
       end
 
@@ -162,7 +162,7 @@ module Spree
 
     def add_store_credit_payments
       if params.key?(:apply_store_credit)
-        Spree::Checkout::AddStoreCredit.call(order: @order)
+        add_store_credit_service.call(order: @order)
 
         # Remove other payment method parameters.
         params[:order].delete(:payments_attributes)
@@ -176,7 +176,7 @@ module Spree
 
     def remove_store_credit_payments
       if params.key?(:remove_store_credit)
-        Spree::Checkout::RemoveStoreCredit.call(order: @order)
+        remove_store_credit_service.call(order: @order)
         redirect_to checkout_state_path(@order.state) and return
       end
     end
@@ -193,6 +193,14 @@ module Spree
 
     def set_cache_header
       response.headers['Cache-Control'] = 'no-store'
+    end
+
+    def add_store_credit_service
+      Spree::Dependencies.checkout_add_store_credit_service.constantize
+    end
+
+    def remove_store_credit_service
+      Spree::Dependencies.checkout_remove_store_credit_service.constantize
     end
   end
 end

@@ -8,20 +8,29 @@ module Spree
 
     def add(variant, quantity = 1, options = {})
       ActiveSupport::Deprecation.warn(<<-EOS, caller)
-        OrderContents#add method is deprecated and will be removed in Spree 4.0. Please use Spree::Cart::AddItem service
+        OrderContents#add method is deprecated and will be removed in Spree 4.0.
+        Please use Spree::Dependencies.cart_add_item_service
         to add items to cart.
       EOS
 
-      Spree::Cart::AddItem.call(order: order, variant: variant, quantity: quantity, options: options).value
+      Spree::Dependencies.cart_add_item_service.constantize.call(order: order,
+                                                                 variant: variant,
+                                                                 quantity: quantity,
+                                                                 options: options).value
     end
 
     def remove(variant, quantity = 1, options = {})
       ActiveSupport::Deprecation.warn(<<-EOS, caller)
-        OrderContents#remove method is deprecated and will be removed in Spree 4.0. Please use Spree::Cart::RemoveItem
+        OrderContents#remove method is deprecated and will be removed in Spree 4.0.
+        Please use Spree::Dependencies.cart_remove_item_service
         service to remove item from cart.
       EOS
 
-      Spree::Cart::RemoveItem.call(order: order, variant: variant, quantity: quantity, options: options).value
+      # change this dependencies to Spree::Cart::RemoveItem
+      Spree::Dependencies.cart_remove_item_service.constantize.call(order: order,
+                                                                    variant: variant,
+                                                                    quantity: quantity,
+                                                                    options: options).value
     end
 
     def remove_line_item(line_item, options = {})
@@ -34,11 +43,12 @@ module Spree
 
     def update_cart(params)
       ActiveSupport::Deprecation.warn(<<-EOS, caller)
-        OrderContents#update_cart method is deprecated and will be removed in Spree 4.0. Please use Spree::Cart::Update
+        OrderContents#update_cart method is deprecated and will be removed in Spree 4.0.
+        Spree::Dependencies.cart_update_service
         service to update cart.
       EOS
 
-      Spree::Cart::Update.call(order: order, params: params).value
+      Spree::Dependencies.cart_update_service.constantize.call(order: order, params: params).value
     end
   end
 end

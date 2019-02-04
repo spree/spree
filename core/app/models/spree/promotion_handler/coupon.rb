@@ -76,7 +76,7 @@ module Spree
           line_item = order.find_line_item_by_variant(item.variant)
           next if line_item.blank?
 
-          order.contents.remove(item.variant, item.quantity)
+          Spree::Dependencies.cart_remove_item_service(order: order, item: item.variant, quantity: item.quantity)
         end
       end
 

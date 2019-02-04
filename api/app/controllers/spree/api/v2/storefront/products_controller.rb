@@ -16,14 +16,14 @@ module Spree
           private
 
           def serialize_collection(collection)
-            dependencies[:collection_serializer].new(
+            collection_serializer.new(
               collection,
               collection_options(collection)
             ).serializable_hash
           end
 
           def serialize_resource(resource)
-            dependencies[:resource_serializer].new(
+            resource_serializer.new(
               resource,
               include: resource_includes,
               fields: sparse_fields
@@ -31,29 +31,35 @@ module Spree
           end
 
           def paginated_collection
-            dependencies[:collection_paginator].new(sorted_collection, params).call
+            collection_paginator.new(sorted_collection, params).call
           end
 
           def sorted_collection
-            dependencies[:collection_sorter].new(collection, params, current_currency).call
+            collection_sorter.new(collection, params, current_currency).call
           end
 
           def collection
-            dependencies[:collection_finder].new(scope: scope, params: params, current_currency: current_currency).execute
+            collection_finder.new(scope: scope, params: params, current_currency: current_currency).execute
           end
 
           def resource
             scope.find_by(slug: params[:id]) || scope.find(params[:id])
           end
 
-          def dependencies
-            {
-              collection_sorter: Spree::Products::Sort,
-              collection_finder: Spree::Products::Find,
-              collection_paginator: Spree::Shared::Paginate,
-              collection_serializer: Spree::V2::Storefront::ProductSerializer,
-              resource_serializer: Spree::V2::Storefront::ProductSerializer
-            }
+          def collection_sorter
+            Spree::Api::Dependencies.storefront_products_sorter.constantize
+          end
+
+          def collection_finder
+            Spree::Api::Dependencies.storefront_products_finder.constantize
+          end
+
+          def collection_serializer
+            Spree::Api::Dependencies.storefront_product_serializer.constantize
+          end
+
+          def resource_serializer
+            Spree::Api::Dependencies.storefront_product_serializer.constantize
           end
 
           def collection_options(collection)

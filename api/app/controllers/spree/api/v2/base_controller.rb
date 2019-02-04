@@ -7,19 +7,27 @@ module Spree
         rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
         rescue_from CanCan::AccessDenied, with: :access_denied
 
+        def content_type
+          Spree::Api::Config[:api_v2_content_type]
+        end
+
         private
 
+        def collection_paginator
+          Spree::Api::Dependencies.storefront_collection_paginator.constantize
+        end
+
         def render_serialized_payload(status = 200)
-          render json: yield, status: status
+          render json: yield, status: status, content_type: content_type
         rescue ArgumentError => exception
           render_error_payload(exception.message, 400)
         end
 
         def render_error_payload(error, status = 422)
           if error.is_a?(Struct)
-            render json: { error: error.to_s, errors: error.to_h }, status: status
+            render json: { error: error.to_s, errors: error.to_h }, status: status, content_type: content_type
           elsif error.is_a?(String)
-            render json: { error: error }, status: status
+            render json: { error: error }, status: status, content_type: content_type
           end
         end
 
@@ -41,7 +49,7 @@ module Spree
 
         # Needs to be overriden so that we use Spree's Ability rather than anyone else's.
         def current_ability
-          @current_ability ||= Spree::Ability.new(spree_current_user)
+          @current_ability ||= Spree::Dependencies.ability_class.constantize.new(spree_current_user)
         end
 
         def request_includes

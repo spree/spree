@@ -16,15 +16,15 @@ module Spree
           end
 
           def serialize_resource(resource)
-            dependencies[:resource_serializer].new(
+            resource_serializer.new(
               resource,
               include: resource_includes,
               fields: sparse_fields
             ).serializable_hash
           end
 
-          def dependencies
-            { resource_serializer: Spree::V2::Storefront::UserSerializer }
+          def resource_serializer
+            Spree::Api::Dependencies.storefront_user_serializer.constantize
           end
         end
       end

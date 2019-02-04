@@ -1,8 +1,5 @@
 require 'spec_helper'
 
-require 'shared_examples/api_v2/base'
-require 'shared_examples/api_v2/current_order'
-
 describe 'API V2 Storefront Cart Spec', type: :request do
   let(:default_currency) { 'USD' }
   let(:store) { create(:store, default_currency: default_currency) }
