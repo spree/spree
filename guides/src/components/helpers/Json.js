@@ -1,8 +1,7 @@
 // --- Dependencies
 import * as React from 'react'
 import PropTypes from 'prop-types'
-import { PrismAsyncLight as SyntaxHighlighter } from 'react-syntax-highlighter'
-import syntaxTheme from 'react-syntax-highlighter/dist/esm/styles/prism/duotone-light'
+import Highlight, { defaultProps } from 'prism-react-renderer'
 import * as R from 'ramda'
 
 // --- Utils
@@ -33,9 +32,24 @@ export default class Json extends React.Component {
   render() {
     return (
       <div>
-        <SyntaxHighlighter language="json" style={syntaxTheme}>
-          {this.normalizeJson(this.props.sample, this.props.merge)}
-        </SyntaxHighlighter>
+        <Highlight
+          {...defaultProps}
+          theme=""
+          code={this.normalizeJson(this.props.sample, this.props.merge)}
+          language="json"
+        >
+          {({ className, style, tokens, getLineProps, getTokenProps }) => (
+            <pre className={className}>
+              {tokens.map((line, i) => (
+                <div {...getLineProps({ line, key: i })}>
+                  {line.map((token, key) => (
+                    <span {...getTokenProps({ token, key })} />
+                  ))}
+                </div>
+              ))}
+            </pre>
+          )}
+        </Highlight>
       </div>
     )
   }

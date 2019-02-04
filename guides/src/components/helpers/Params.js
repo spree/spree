@@ -18,7 +18,7 @@ export default class Params extends React.Component {
       <dl className="pa3 ba b--lightest-blue bg-washed-blue br2 gray">
         {params.map((param, index) => (
           <React.Fragment key={index}>
-            <dt className="code fw6 dark-gray">{param.name}:</dt>
+            <dt className="code fw4 dark-gray">{param.name}:</dt>
             <dd
               className="mb2 fw4"
               css={{

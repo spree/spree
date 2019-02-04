@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'shared_examples/api_v2/base'
 
 describe 'API v2 JSON API Resource Includes Spec', type: :request do
   let!(:products) { create_list(:product, 5) }
