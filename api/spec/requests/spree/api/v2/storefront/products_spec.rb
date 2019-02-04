@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'shared_examples/api_v2/base'
 
 describe 'API V2 Storefront Products Spec', type: :request do
   let!(:products)           { create_list(:product, 5) }

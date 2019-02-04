@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'shared_examples/api_v2/base'
 
 describe 'Storefront API v2 CreditCards spec', type: :request do
   let!(:user) { create(:user) }

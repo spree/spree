@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'shared_examples/api_v2/base'
 
 describe 'API v2 Errors spec', type: :request do
   context 'record not found' do
