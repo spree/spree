@@ -38,9 +38,9 @@ module Spree
     # correct rate amounts in the future. For example:
     # https://github.com/spree/spree/issues/4318#issuecomment-34723428
     def self.store_pre_tax_amount(item, rates)
-      pre_tax_amount = case item
-                       when Spree::LineItem then item.discounted_amount
-                       when Spree::Shipment then item.discounted_cost
+      pre_tax_amount = case item.class.to_s
+                       when 'Spree::LineItem' then item.discounted_amount
+                       when 'Spree::Shipment' then item.discounted_cost
                        end
 
       included_rates = rates.select(&:included_in_price)

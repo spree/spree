@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'shared_examples/api_v2/base'
 
 describe 'Storefront API v2 Account spec', type: :request do
   include_context 'API v2 tokens'

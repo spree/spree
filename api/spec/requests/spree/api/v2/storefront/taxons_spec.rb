@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'shared_examples/api_v2/base'
 
 describe 'Taxons Spec', type: :request do
   let!(:taxonomy)  { create(:taxonomy) }
