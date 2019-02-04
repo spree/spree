@@ -1,10 +1,10 @@
-a,
-button,
 [role="button"],
 input,
 label,
 select,
-textarea {
+textarea,
+a,
+button {
   touch-action: manipulation;
 }
 
@@ -49,17 +49,18 @@ aside#sidebar {
 }
 
 #main-sidebar {
-  width:  $sidebar-width ;
+  width: $sidebar-width;
   overflow-y: scroll;
   top: 51px;
 }
-
 
 #main-part {
   padding-left: $sidebar-width + 35;
 }
 
-div#main-part, div#main-sidebar, body {
+body,
+div#main-part,
+div#main-sidebar {
   background-color: $ui-background-color;
 }
 
@@ -75,15 +76,19 @@ div#content {
   background-color: $nav-background-color;
   border-color: $input-border;
 }
+
 .navbar-inverse .navbar-nav > li > a {
   color: #555555 !important;
 }
 
-.navbar-inverse .navbar-nav > .open > a, .navbar-inverse .navbar-nav > .open > a:hover, .navbar-inverse .navbar-nav > .open > a:focus {
+.navbar-inverse .navbar-nav > .open > a,
+.navbar-inverse .navbar-nav > .open > a:focus,
+.navbar-inverse .navbar-nav > .open > a:hover {
   background-color: #ddd;
 }
 
-.navbar-inverse .navbar-toggle:hover, .navbar-inverse .navbar-toggle:focus {
+.navbar-inverse .navbar-toggle:focus,
+.navbar-inverse .navbar-toggle:hover {
   background-color: $nav-background-color;
 }
 
@@ -92,12 +97,13 @@ div#content {
 }
 
 .content-header.page-header .page-actions form {
-margin: 2px 0;
+  margin: 2px 0;
 }
 
 div#test p:first-child {
   text-decoration: underline;
 }
+
 div#test p:last-child {
   color: red;
 }
@@ -116,69 +122,68 @@ div.navbar-right {
 }
 
 .page-header {
-    margin: 40px -15px 20px;
-    padding-bottom: 0;
+  margin: 40px -15px 20px;
+  padding-bottom: 0;
 }
 
 @media (max-width: 991px) {
-      #close-dynamic-content-menu {
-        text-align: center;
-        margin: 15px -5px 0 auto;
-      }
+  #close-dynamic-content-menu {
+    text-align: center;
+    margin: 15px -5px 0 auto;
+  }
 
-     div#dynamic-content-menu {
-       position: fixed;
-       z-index: 9999;
-       left: 0;
-       height: 100vh;
-       margin: 0;
-       float: none;
-       overflow: hidden;
-       background: white;
-       border-top: 1px solid $input-border;
-       -webkit-transition: all $menu-speed ease;
-       -moz-transition: all $menu-speed ease;
-       -o-transition: all $menu-speed ease;
-       -ms-transition: all $menu-speed ease;
-       transition: all $menu-speed ease;
-          top: 110%;
+  div#dynamic-content-menu {
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    height: 100vh;
+    margin: 0;
+    float: none;
+    overflow: hidden;
+    background: white;
+    border-top: 1px solid $input-border;
+    -webkit-transition: all $menu-speed ease;
+    -moz-transition: all $menu-speed ease;
+    -o-transition: all $menu-speed ease;
+    -ms-transition: all $menu-speed ease;
+    transition: all $menu-speed ease;
+    top: 110%;
+  }
 
-     }
+  aside#sidebar {
+    margin: 0;
+    border: none;
+    background: transparent;
+    margin-left: -15px;
+    margin-right: -15px;
+    height: 80%;
+    overflow: scroll;
+  }
 
-     aside#sidebar {
-       margin: 0;
-       border:none;
-       background: transparent;
-       margin-left: -15px;
-       margin-right: -15px;
-       height: 80%;
-       overflow: scroll;
-     }
+  body.dynamic-content-menu-opened div#dynamic-content-menu {
+    top: 0;
+  }
 
-    body.dynamic-content-menu-opened div#dynamic-content-menu {
-      top: 0;
-    }
-
-    span#sidebar-toggle {
+  span#sidebar-toggle {
     display: block;
     left: 15px;
-    }
+  }
 
-    a.logo.navbar-brand {
-      padding: 5px 0;
-    }
+  a.logo.navbar-brand {
+    padding: 5px 0;
+  }
 
-    div#main-sidebar {
-    width: 100% ;
+  div#main-sidebar {
+    width: 100%;
     -webkit-transition: all $menu-speed ease;
     -moz-transition: all $menu-speed ease;
     -o-transition: all $menu-speed ease;
     -ms-transition: all $menu-speed ease;
     transition: all $menu-speed ease;
     left: -100%;
-    }
+  }
 
-    body.sidebar-opened div#main-sidebar {
+  body.sidebar-opened div#main-sidebar {
     width: 100%;
     -webkit-transition: all $menu-speed ease;
     -moz-transition: all $menu-speed ease;
@@ -187,112 +192,113 @@ div.navbar-right {
     transition: all $menu-speed ease;
     left: 0;
     overflow-y: scroll;
-    }
+  }
 
-    #sidebar-toggle span:nth-child(3) {
-      -webkit-transition: all $menu-speed ease;
-      -moz-transition: all $menu-speed ease;
-      -o-transition: all $menu-speed ease;
-      -ms-transition: all $menu-speed ease;
-      transition: all $menu-speed ease;
-      transform: rotate(0deg);
-    }
+  #sidebar-toggle span:nth-child(3) {
+    -webkit-transition: all $menu-speed ease;
+    -moz-transition: all $menu-speed ease;
+    -o-transition: all $menu-speed ease;
+    -ms-transition: all $menu-speed ease;
+    transition: all $menu-speed ease;
+    transform: rotate(0deg);
+  }
 
-    #sidebar-toggle span:nth-child(2) {
-      -webkit-transition: all 200ms ;
-      -moz-transition: all 200ms ;
-      -o-transition: all 200ms ;
-      -ms-transition: all 200ms ;
-      transition: all 200ms ;
-      background-color: #555;
-    }
+  #sidebar-toggle span:nth-child(2) {
+    -webkit-transition: all 200ms;
+    -moz-transition: all 200ms;
+    -o-transition: all 200ms;
+    -ms-transition: all 200ms;
+    transition: all 200ms;
+    background-color: #555;
+  }
 
-    #sidebar-toggle span:nth-child(1) {
-      -webkit-transition: all $menu-speed ease;
-      -moz-transition: all $menu-speed ease;
-      -o-transition: all $menu-speed ease;
-      -ms-transition: all $menu-speed ease;
-      transition: all $menu-speed ease;
-      transform: rotate(0deg);
-    }
+  #sidebar-toggle span:nth-child(1) {
+    -webkit-transition: all $menu-speed ease;
+    -moz-transition: all $menu-speed ease;
+    -o-transition: all $menu-speed ease;
+    -ms-transition: all $menu-speed ease;
+    transition: all $menu-speed ease;
+    transform: rotate(0deg);
+  }
 
-    body.sidebar-opened #sidebar-toggle span:nth-child(1) {
-      -webkit-transition: all $menu-speed ease;
-      -moz-transition: all $menu-speed ease;
-      -o-transition: all $menu-speed ease;
-      -ms-transition: all $menu-speed ease;
-      transition: all $menu-speed ease;
-      transform: rotate(45deg);
-      position: absolute;
-      top: 10px;
-    }
+  body.sidebar-opened #sidebar-toggle span:nth-child(1) {
+    -webkit-transition: all $menu-speed ease;
+    -moz-transition: all $menu-speed ease;
+    -o-transition: all $menu-speed ease;
+    -ms-transition: all $menu-speed ease;
+    transition: all $menu-speed ease;
+    transform: rotate(45deg);
+    position: absolute;
+    top: 10px;
+  }
 
-    body.sidebar-opened #sidebar-toggle span:nth-child(2) {
-      position: absolute;
-      -webkit-transition: all 200ms ;
-      -moz-transition: all 200ms ;
-      -o-transition: all 200ms ;
-      -ms-transition: all 200ms ;
-      transition: all 200ms ;
-      background-color: transparent;
-    }
+  body.sidebar-opened #sidebar-toggle span:nth-child(2) {
+    position: absolute;
+    -webkit-transition: all 200ms;
+    -moz-transition: all 200ms;
+    -o-transition: all 200ms;
+    -ms-transition: all 200ms;
+    transition: all 200ms;
+    background-color: transparent;
+  }
 
-    body.sidebar-opened #sidebar-toggle span:nth-child(3) {
-      -webkit-transition: all $menu-speed ease;
-      -moz-transition: all $menu-speed ease;
-      -o-transition: all $menu-speed ease;
-      -ms-transition: all $menu-speed ease;
-      transition: all $menu-speed ease;
-      transform: rotate(-45deg);
-      position: absolute;
-      top: 6px;
-    }
+  body.sidebar-opened #sidebar-toggle span:nth-child(3) {
+    -webkit-transition: all $menu-speed ease;
+    -moz-transition: all $menu-speed ease;
+    -o-transition: all $menu-speed ease;
+    -ms-transition: all $menu-speed ease;
+    transition: all $menu-speed ease;
+    transform: rotate(-45deg);
+    position: absolute;
+    top: 6px;
+  }
 
-    #main-part {
-      padding-left: 35px;
-    }
+  #main-part {
+    padding-left: 35px;
+  }
 
-    span.icon-filter {
-      display: none;
-    }
+  span.icon-filter {
+    display: none;
+  }
 
-    .page-actions a {
-      margin: 5px 0;
-    }
+  .page-actions a {
+    margin: 5px 0;
+  }
 
-    #main-sidebar ul.nav.nav-pills li a {
-      padding: 15px;
-      font-size: 12px;
-    }
+  #main-sidebar ul.nav.nav-pills li a {
+    padding: 15px;
+    font-size: 12px;
+  }
 
-    .with-sidebar{
-      margin-bottom: 15px;
-    }
+  .with-sidebar {
+    margin-bottom: 15px;
+  }
 
-    .center-xs {
-      width: 90px;
-      margin: auto;
-      text-align: center;
-    }
+  .center-xs {
+    width: 90px;
+    margin: auto;
+    text-align: center;
+  }
 
-    #account-email-menu {
-      padding: 7px 30px;
-      font-size: 1.5em;
-    }
+  #account-email-menu {
+    padding: 7px 30px;
+    font-size: 1.5em;
+  }
 
-    .content-header.page-header {
-      margin-top: 0;text-align: center;
-    }
+  .content-header.page-header {
+    margin-top: 0;
+    text-align: center;
+  }
 
-    #sidebar-options {
-      margin: 5px -15px 5px auto;
-    }
+  #sidebar-options {
+    margin: 5px -15px 5px auto;
+  }
 
-    .navbar-nav {
-      margin: 7.5px -15px;
-    }
+  .navbar-nav {
+    margin: 7.5px -15px;
+  }
 
-    div.page-actions{
+  div.page-actions {
     text-align: center !important;
     position: fixed;
     bottom: 0;
@@ -301,5 +307,4 @@ div.navbar-right {
     background: white;
     border-top: 1px solid tan;
   }
-
 }
