@@ -51,8 +51,8 @@ Add Spree gems to your `Gemfile`:
 ### Rails 5.2
 
 ```ruby
-gem 'spree', '~> 3.7.0.rc1'
-gem 'spree_auth_devise', '~> 3.4'
+gem 'spree', '~> 3.7.0'
+gem 'spree_auth_devise', '~> 3.5'
 gem 'spree_gateway', '~> 3.4'
 ```
 
@@ -62,7 +62,7 @@ Rails 5.2 versions come with [ActiveStorage support](https://spreecommerce.org/s
 
 ```ruby
 gem 'spree', '~> 3.5.0'
-gem 'spree_auth_devise', '~> 3.4'
+gem 'spree_auth_devise', '~> 3.5'
 gem 'spree_gateway', '~> 3.4'
 ```
 
@@ -70,7 +70,7 @@ gem 'spree_gateway', '~> 3.4'
 
 ```ruby
 gem 'spree', '~> 3.2.7'
-gem 'spree_auth_devise', '~> 3.4'
+gem 'spree_auth_devise', '~> 3.5'
 gem 'spree_gateway', '~> 3.4'
 ```
 
