@@ -13,7 +13,7 @@ const IndexPage = () => (
   <Layout pathname="/" title="Home">
     <div className="center mw9 ph4 mt5">
       <p className="lh-copy f3 tc mw7 center mb5">
-        <a href="https://spreecommerge.org" className="spree-blue fw6">
+        <a href="https://spreecommerce.org" className="spree-blue fw6">
           Spree Commerce
         </a> is a complete
         modular, API-driven open source e-commerce solution built with Ruby on

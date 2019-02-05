@@ -97,13 +97,15 @@ export default class Header extends React.PureComponent {
               isActive={this.isActive('release_notes')}
               url="/release_notes/"
             />
-            <NavItem url="https://heroku.com/deploy?template=https://github.com/spree/spree">
+            <NavItem url="https://heroku.com/deploy?template=https://github.com/spree/spree/tree/3-7-stable">
               Demo
             </NavItem>
 
-            <NavItem url="https://new.spreecommerce.org/">Contact Us</NavItem>
+            <NavItem url="https://spreecommerce.org/contact/">
+              Contact Us
+            </NavItem>
 
-            <NavItem url="https://slack.spreecommerce.org/">
+            <NavItem url="http://slack.spreecommerce.org/">
               <IconSlack />
             </NavItem>
             <NavItem url="https://github.com/spree/spree">
@@ -112,7 +114,7 @@ export default class Header extends React.PureComponent {
           </nav>
 
           <nav className="dn-l justify-end w-100 flex">
-            <NavItem url="https://new.spreecommerce.org/">
+            <NavItem url="https://spreecommerce.org/contact/">
               <IconContact />
             </NavItem>
             {this.state.searchIsOpen ? (
@@ -127,7 +129,7 @@ export default class Header extends React.PureComponent {
               />
             )}
 
-            <NavItem url="https://slack.spreecommerce.org/">
+            <NavItem url="http://slack.spreecommerce.org/">
               <IconSlack />
             </NavItem>
             <NavItem url="https://github.com/spree/spree">
