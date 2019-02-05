@@ -1,5 +1,5 @@
 
-<img src="spree_logo.png" width="261">
+<a href="https://spreecommerce.org" target="_blank" rel="follow"><img src="spree_logo.png" width="261" alt="Spree Commerce"></a>
 
 * Join our Slack at [slack.spreecommerce.org](http://slack.spreecommerce.org/)
 * [Success Stories](https://spreecommerce.org/stories/)
@@ -57,6 +57,8 @@ gem 'spree_gateway', '~> 3.4'
 ```
 
 Rails 5.2 versions come with [ActiveStorage support](https://spreecommerce.org/spree-3-5-and-3-6-with-rails-5-2-ruby-2-5-and-activestorage-support-released/). You can still use Paperclip (see [instructions](https://guides.spreecommerce.org/developer/images.html#paperclip)).
+
+[Spree 3.7 introduces REST API v2 and new customization system called Dependencies](https://spreecommerce.org/exciting-new-features-in-spree-3-7-0-release/) - we recommend starting with this version as it will be an easy upgrade to [Spree 4.0](https://github.com/spree/spree/milestone/37).
 
 ### Rails 5.1
 
