@@ -1,10 +1,12 @@
 .content-header.page-header {
-  margin-top: 15px;
+  margin-top: 0;
+  margin-bottom: 10px;
 
   h1 {
     font-size: $font-size-h1 / 1.5;
     margin: 0;
     line-height: 38px;
+    text-align: left;
   }
 
   &.with-page-tabs {
@@ -26,7 +28,13 @@
     text-align: right;
 
     form {
-      display: inline-block
+      display: inline-block;
+      margin: 2px 0;
     }
   }
+}
+
+.page-header {
+  margin: 40px -15px 20px;
+  padding-bottom: 0;
 }

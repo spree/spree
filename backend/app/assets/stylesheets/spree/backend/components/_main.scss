@@ -1,15 +1,47 @@
+body {
+  background-color: $ui-background-color;
+}
+
+#logo {
+  width: auto;
+  height: 40px;
+}
+
+
 #main-part {
-  padding: 15px 35px 0;
-  &.sidebar-collapsed {
-    padding-left: 85px;
-  }
+  padding-top: 15px;
+  padding-right: 35px;
+  padding-bottom: 0;
+  padding-left: $sidebar-width + 35;
+  background-color: $ui-background-color;
 }
 
 .logo.navbar-brand {
   padding: 5px 15px;
 }
 
-#logo {
-  width: auto;
-  height: 40px;
+div#content {
+  background-color: $panel-background-color;
+
+  padding: 15px;
+  border-radius: $ui-border-radius;
+  overflow-x: scroll;
+  box-shadow: 0 0 0 1px rgba(63,63,68,0.05),0 1px 3px 0 rgba(63,63,68,0.15);
+}
+
+table#listing_orders tr {
+  height: 48px;
+}
+
+
+aside#sidebar {
+  background-color: white;
+  padding: 10px;
+  border: 1px solid $input-border;
+  border-radius: $ui-border-radius;
+  margin-right: -15px;
+}
+
+.pagination {
+  margin: 0;
 }

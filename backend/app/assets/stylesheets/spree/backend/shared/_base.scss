@@ -14,6 +14,28 @@ body {
   display: none;
 }
 
+[role="button"],
+input,
+label,
+select,
+textarea,
+a,
+button {
+  touch-action: manipulation;
+}
+
+img {
+  max-width: 100%;
+}
+
+td.image img {
+  max-width: 50px;
+}
+
+a:focus {
+  outline: 0;
+}
+
 // No-margin and no-padding helper classes
 @each $side in top bottom left right {
   .no-margin-#{$side}  { margin-#{side}: 0; }

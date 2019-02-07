@@ -16,14 +16,6 @@ jQuery(function ($) {
     $('span.icon', $(this)).toggleClass('icon-chevron-down')
   })
 
-  $('#main-sidebar').find('[data-toggle="collapse"]').on('click', function () {
-    if ($(this).find('.icon-chevron-left').length === 1) {
-      $(this).find('.icon-chevron-left').removeClass('icon-chevron-left').addClass('icon-chevron-down')
-    } else {
-      $(this).find('.icon-chevron-down').removeClass('icon-chevron-down').addClass('icon-chevron-left')
-    }
-  })
-
   // Sidebar nav toggle functionality
   $('#sidebar-toggle').on('click', function () {
     var targetElement = document.querySelector('#main-sidebar')
@@ -72,6 +64,7 @@ jQuery(function ($) {
   // Main menu active item submenu show
   var activeItem = $('#main-sidebar').find('.selected')
   activeItem.closest('.nav-pills').addClass('in')
+  activeItem.closest('.main-menu-item').addClass('active')
   activeItem.closest('.nav-sidebar')
     .find('.icon-chevron-left')
     .removeClass('icon-chevron-left')

@@ -1,15 +1,23 @@
 /*------------------------------------------
   Colors
   -----------------------------------------*/
-  $brand-primary: #478DC1;
-  $brand-success: #7DB942;
+  $brand-primary: #0076BF;
+  $brand-success: #74CE3A;
   $brand-info:    #48B0F7;
   $brand-warning: #F8D053;
   $brand-danger:  #F55753;
   $input-border:  darken(#EDEDED, 5);
-  $ui-background-color: #f9fafb;
+
+  //UI
+  $ui-background-color: #f6f8fa;
   $panel-background-color: #fff;
-  $nav-background-color: #fff;
+
+  // Sidebar
+  $navbar-background-color: #fff;
+  $nav-background-color: linear-gradient(to right, #ffffff 0%, #ffffff 65%, $ui-background-color 100%);
+  $subnav-background-color: $nav-background-color;
+  $nav-right-border-color: $ui-background-color;
+  $nav-seperator-border-color: $ui-background-color;
 
 /*------------------------------------------
   Components
@@ -18,6 +26,8 @@
   $ui-border-radius: $border-radius-base + 2 ;
   $padding-base-vertical: 8px;
   $padding-base-horizontal: 16px;
+
+  // Sidebar
   $sidebar-width: 210px;
   $menu-speed: 300ms;
 

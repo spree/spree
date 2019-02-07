@@ -50,16 +50,15 @@ module Spree
 
       # Single main menu item
       def main_menu_item(text, url: nil, icon: nil)
-        link_to url, 'data-toggle': 'collapse', 'data-parent': '#sidebar' do
+        link_to url, 'class':'drop-down','data-toggle': 'collapse', 'data-parent': '#sidebar' do
           content_tag(:span, nil, class: "icon icon-#{icon}") +
-            content_tag(:span, " #{text}", class: 'text') +
-            content_tag(:span, nil, class: 'icon icon-chevron-left pull-right')
+            content_tag(:span, " #{text}", class: 'text')
         end
       end
 
       # Main menu tree menu
       def main_menu_tree(text, icon: nil, sub_menu: nil, url: '#')
-        content_tag :li, class: 'sidebar-menu-item' do
+        content_tag :li, class: 'sidebar-menu-item main-menu-item' do
           main_menu_item(text, url: url, icon: icon) +
             render(partial: "spree/admin/shared/sub_menu/#{sub_menu}")
         end

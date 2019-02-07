@@ -1,150 +1,99 @@
 #main-sidebar {
   position: fixed;
-  top: $navbar-height + 2px;
+  top: $navbar-height;
+  width: $sidebar-width;
   bottom: 0;
   left: 0;
   padding: 0;
   z-index: 1000;
   display: block;
   overflow-x: hidden;
-  overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
-  background-color: lighten($gray-lighter, 5);
-  border-right: 1px solid darken($gray-lighter, 5);
+  overflow-y: scroll;
+  background: $nav-background-color;
 
-  a {
-    -webkit-font-smoothing: antialiased;
-    -webkit-text-size-adjust: 100%;
-    -ms-text-size-adjust: 100%;
-    -webkit-font-feature-settings: "kern" 1;
-    -moz-font-feature-settings: "kern" 1;
-  }
+    a {
+      -webkit-font-smoothing: antialiased;
+      -webkit-text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%;
+      -webkit-font-feature-settings: "kern" 1;
+      -moz-font-feature-settings: "kern" 1;
+    }
 
-  ul.nav-sidebar {
-    > li {
-      border-bottom: 1px solid $gray-lighter;
+      ul.nav {
+        > li {
 
-      > a {
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        font-size: 12px;
-        font-weight: 500;
-        padding: 15px;
-        color: $gray;
+          &.selected {
+            border-left: 4px solid $brand-success;
+            background: $ui-background-color;
 
-        .glyphicon {
-          font-size: 18px;
-          vertical-align: bottom;
-          padding-right: 5px;
-        }
+              a {
+                padding-left: 11px;
+            > span.icon {
+              color: $brand-primary !important;
+              }
+            }
+          }
+          &.active > a > span.icon {
+            color: $brand-primary !important;
+          }
 
-        .glyphicon.pull-right {
-          font-size: 8px;
-          line-height: 2;
-          color: $gray-light;
-          position: absolute;
-          right: 5px;
-          top: 50%;
-          margin-top: -8px;
+          > a {
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 12px;
+            font-weight: 500;
+            padding: 15px 0 15px 15px;
+            color: $gray;
+
+            .glyphicon {
+              font-size: 18px;
+              vertical-align: bottom;
+              padding-right: 5px;
+            }
+
+            .glyphicon.pull-right {
+              font-size: 8px;
+              line-height: 2;
+              color: $gray-light;
+              position: absolute;
+              right: 5px;
+              top: 50%;
+              margin-top: -8px;
+            }
+          > span.icon {
+              color: $gray;
+            }
+
+            &:hover {
+              color: black !important;
+              background-color: rgba(255, 255, 255, 0) !important;
+            }
+
         }
       }
-    }
-  }
 
-  ul.nav.nav-pills {
-    background-color: white;
-    border-top: 1px solid $gray-lighter;
+      ul.nav.nav-pills {
+        background: $subnav-background-color;
+        li {
+          a {
+            padding: 5px 0  5px 43px;
+            font-weight: 400;
+            text-transform: capitalize;
+            color: $gray;
 
-    li {
-      a {
-        padding: 5px 15px;
-        font-size: 12px;
+          }
 
-        &:hover {
-          border-radius: 0;
+          &.selected {
+            a {
+              padding: 5px 0  5px 39px;
+              color: $brand-primary !important;
+            }
+          }
         }
-      }
 
-      &.selected {
-        a {
-          color: $brand-success
-        }
-      }
-    }
-  }
-
-  .spree-version {
-    position: absolute;
-    z-index: -1;
-    left: 15px;
-    bottom: 15px;
-  }
-}
-
-#wrapper.sidebar-minimized #main-sidebar {
-  width: 50px;
-  overflow: visible;
-
-  li {
-    &:hover, &.menu-active {
-      background-color: $gray-lighter;
-    }
-  }
-
-  .icon-link, [data-toggle="collapse"] {
-    text-align: center;
-
-    .icon {
-      padding: 0;
     }
 
-    .text, .icon-chevron-left, .icon-chevron-down {
-      display: none;
-    }
-  }
 
-  ul.collapse.in {
-    display: none;
-  }
 
-  li.sidebar-menu-item:hover > ul {
-    display: block !important;
-    height: auto !important;
-    position: fixed;
-    top: $navbar-height + 2px;
-    bottom: 0;
-    left: 0;
-    padding: 0;
-    z-index: 1000;
-    display: block;
-    overflow-x: hidden;
-    overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
-    left: 50px;
-    min-width: 180px;
-    visibility: visible;
-    background-color: lighten($gray-lighter, 5);
-    border-top: none;
-    border-right: 1px solid darken($gray-lighter, 5);
-    padding-top: 5px;
-  }
-
-  .submenu-active {
-    display: block !important;
-    height: auto !important;
-    position: fixed;
-    top: $navbar-height + 2px;
-    bottom: 0;
-    left: 0;
-    padding: 0;
-    z-index: 1000;
-    display: block;
-    overflow-x: hidden;
-    overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
-    left: 50px;
-    min-width: 180px;
-    visibility: visible;
-    background-color: lighten($gray-lighter, 5);
-    border-top: none;
-    border-right: 1px solid darken($gray-lighter, 5);
-    padding-top: 5px;
   }
 }

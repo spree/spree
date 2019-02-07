@@ -1,14 +1,53 @@
 #sidebar-toggle {
-  display: block;
+  display: none;
   border: none;
-  padding: 0;
+  padding: 5px;
   margin: 0;
   position: absolute;
   right: 0;
-  margin-top: 17px;
+  width: 30px;
+  height: 30px;
+  margin-top: 15px;
   cursor: pointer;
+  background-color: $navbar-background-color;
+}
+
+.navbar-inverse .navbar-nav > li > a {
+  color: #555555 !important;
+}
+
+.navbar-inverse .navbar-nav > .open > a,
+.navbar-inverse .navbar-nav > .open > a:focus,
+.navbar-inverse .navbar-nav > .open > a:hover {
+  background-color: #ddd;
+}
+
+.navbar-inverse .navbar-toggle:focus,
+.navbar-inverse .navbar-toggle:hover {
+  background-color: $nav-background-color;
+}
+
+.navbar-inverse .navbar-toggle .icon-bar {
+  background-color: #555;
+}
+
+
+.navbar-inverse {
+  background-color: $navbar-background-color;
+  border-color: $input-border;
 }
 
 .navbar .row {
   padding-bottom: 0;
+}
+
+div.navbar-right {
+  float: right !important;
+  margin-right: -15px;
+}
+
+.nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
+  background: linear-gradient(to bottom, #ffffff 0%,#ffffff 54%, $ui-background-color 100%);
+  border: 1px solid $input-border;
+  border-bottom-color: $ui-background-color;
 }
