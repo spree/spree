@@ -69,12 +69,6 @@ jobs:
         environment:
           POSTGRES_USER: postgres
 
-  run_tests_postgres_paperclip:
-      <<: *run_tests_postgres
-      environment:
-        <<: *postgres_environment
-        SPREE_USE_PAPERCLIP: true
-
   run_tests_mysql:
     <<: *run_tests
     environment:
@@ -157,9 +151,6 @@ workflows:
       - run_tests_mysql:
           requires:
             - bundle_install
-      - run_tests_postgres_paperclip:
-          requires:
-            - run_tests_postgres
       - send_test_coverage:
           requires:
             - run_tests_mysql
