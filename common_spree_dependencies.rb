@@ -4,7 +4,7 @@
 source 'https://rubygems.org'
 
 gem 'sass-rails'
-gem 'sqlite3', platforms: [:ruby, :mingw, :mswin, :x64_mingw]
+gem 'sqlite3', '~> 1.3.6', platforms: [:ruby, :mingw, :mswin, :x64_mingw]
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw]
 
 platforms :jruby do
