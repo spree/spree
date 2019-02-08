@@ -4,4 +4,8 @@
   <%= render 'spree/admin/shared/error_messages', target: @order %>
 </div>
 
+<% content_for :page_title do %>
+  / <%= Spree.t(:store) %>
+<% end %>
+
 <%= render 'store_form', order: @order if can?(:update, @order) %>

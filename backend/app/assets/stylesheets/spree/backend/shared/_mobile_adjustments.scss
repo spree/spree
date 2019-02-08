@@ -54,6 +54,8 @@
 
   a.logo.navbar-brand {
     padding: 5px 0;
+    width: 100%;
+    text-align: center;
   }
 
   div#main-sidebar {
@@ -162,8 +164,8 @@
     margin-bottom: 15px;
   }
 
-  .center-xs {
-    width: 90px;
+  .navbar-center .center-xs {
+    width: 200px;
     margin: auto;
     text-align: center;
   }

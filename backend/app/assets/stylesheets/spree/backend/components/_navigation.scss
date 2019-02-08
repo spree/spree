@@ -45,6 +45,10 @@
 }
 
 
+.navbar-brand > img {
+  display: inline ;
+}
+
 .navbar-inverse {
   background-color: $navbar-background-color;
   border-color: $input-border;

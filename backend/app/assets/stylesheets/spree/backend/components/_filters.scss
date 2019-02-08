@@ -18,9 +18,20 @@
     padding: ($padding-base-vertical + 3) $padding-base-horizontal ($padding-base-vertical + 2);
     border-right: none;
 
-    &:focus {
-      background-color: $gray-lighter;
-      border-color: $input-border;
+    &:hover {
+      background-color: white;
+      border-color: #e0e0e0;
     }
+
+    &:focus {
+      background-color: white;
+      border-color: #e0e0e0;
+    }
+    
+    &:active {
+      background-color: white;
+      border-color: #e0e0e0;
+    }
+
   }
 }
