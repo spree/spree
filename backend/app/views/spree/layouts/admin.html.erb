@@ -6,15 +6,6 @@
 
   <body class="admin">
 
-    <%#-------------------------------------------------%>
-    <%# Loading progress bars                           %>
-    <%#-------------------------------------------------%>
-    <div id="progress">
-      <div class="alert alert-info alert-progress">
-        <div class="spinner"><%= Spree.t(:loading) %>...</div>
-        <div class="progress-message"><%= Spree.t(:loading) %>...</div>
-      </div>
-    </div>
 
     <%#-------------------------------------------------%>
     <%# Header navbar                                   %>
@@ -43,7 +34,6 @@
           <%#-------------------------------------------------%>
           <%= render partial: 'spree/admin/shared/content_header' %>
 
-          <div class="row">
             <%#-------------------------------------------------%>
             <%# Alerts                                          %>
             <%#-------------------------------------------------%>
@@ -66,8 +56,6 @@
                 <%= render partial: 'spree/admin/shared/sidebar' %>
               </div>
             <% end %>
-
-          </div>
         </div>
 
       </div>
@@ -78,5 +66,14 @@
     <%#-------------------------------------------------%>
     <div data-hook="admin_footer_scripts"></div>
 
+    <%#-------------------------------------------------%>
+    <%# Loading progress bars                           %>
+    <%#-------------------------------------------------%>
+    <div id="progress">
+      <div class="alert alert-info alert-progress">
+        <div class="spinner"><%= Spree.t(:loading) %>...</div>
+        <div class="progress-message"><%= Spree.t(:loading) %>...</div>
+      </div>
+    </div>
   </body>
 </html>

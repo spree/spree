@@ -9,6 +9,7 @@
   display: block;
   overflow-x: hidden;
   overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
   background: $nav-background-color;
 
     a {
@@ -23,18 +24,18 @@
         > li {
 
           &.selected {
-            border-left: 4px solid $brand-success;
-            background: $ui-background-color;
+            border-left: 4px solid $random-accent;
+            background: linear-gradient(to right, lighten($ui-background-color, 5) 0%, $ui-background-color 100%);
 
               a {
                 padding-left: 11px;
             > span.icon {
-              color: $brand-primary !important;
+              color: $brand-primary;
               }
             }
           }
           &.active > a > span.icon {
-            color: $brand-primary !important;
+            color: $brand-primary;
           }
 
           > a {
@@ -50,23 +51,13 @@
               vertical-align: bottom;
               padding-right: 5px;
             }
-
-            .glyphicon.pull-right {
-              font-size: 8px;
-              line-height: 2;
-              color: $gray-light;
-              position: absolute;
-              right: 5px;
-              top: 50%;
-              margin-top: -8px;
-            }
           > span.icon {
               color: $gray;
             }
 
             &:hover {
-              color: black !important;
-              background-color: rgba(255, 255, 255, 0) !important;
+              color: darken($gray, 10);
+              background: rgba(255, 255, 255, 0);
             }
 
         }

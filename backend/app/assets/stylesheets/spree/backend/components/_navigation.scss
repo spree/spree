@@ -43,11 +43,21 @@
 
 div.navbar-right {
   float: right !important;
-  margin-right: -15px;
+  margin-right: -$grid-gutter-width;
 }
 
 .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
-  background: linear-gradient(to bottom, #ffffff 0%,#ffffff 54%, $ui-background-color 100%);
+  background: linear-gradient(to bottom, #ffffff 0%,#ffffff 65%, $ui-background-color 100%);
   border: 1px solid $input-border;
   border-bottom-color: $ui-background-color;
+  border-top-color: $random-accent;
+  border-top-width: 3px;
+  padding-top: 8px
+}
+
+.nav > li > a:hover, .nav > li > a:focus {
+  text-decoration: none;
+  background-color: $ui-background-color;
+  border-color:  $ui-background-color;
+  border-bottom-color: $input-border;
 }

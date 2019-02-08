@@ -21,7 +21,18 @@ select,
 textarea,
 a,
 button {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  outline: none;
   touch-action: manipulation;
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: 100%;
+}
+
+input, textarea {
+    font-size: initial;
+
 }
 
 img {
@@ -44,4 +55,9 @@ a:focus {
 
 .alert-error {
   @extend .alert-danger;
+}
+
+// hide outline on focus for elements which are given focus by JS
+[tabindex='-1']:focus {
+  outline: none;
 }

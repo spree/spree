@@ -55,3 +55,8 @@ table.table {
     }
   }
 }
+
+.table-responsive {
+  overflow-x: scroll;
+  -webkit-overflow-scrolling: touch;
+}

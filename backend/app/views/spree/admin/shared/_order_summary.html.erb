@@ -47,6 +47,13 @@
         </tr>
       <% end %>
 
+      <tr>
+        <td data-hook='admin_order_tab_total_title'>
+          <strong><%= Spree.t(:total) %>:</strong>
+        </td>
+        <td id='order_total'><%= @order.display_total.to_html %></td>
+      </tr>
+
       <% if @order.included_tax_total != 0 %>
         <tr>
           <td data-hook='admin_order_tab_included_tax_title'>
@@ -68,13 +75,6 @@
           </td>
         </tr>
       <% end %>
-
-      <tr>
-        <td data-hook='admin_order_tab_total_title'>
-          <strong><%= Spree.t(:total) %>:</strong>
-        </td>
-        <td id='order_total'><%= @order.display_total.to_html %></td>
-      </tr>
 
       <% if @order.completed? %>
         <tr>

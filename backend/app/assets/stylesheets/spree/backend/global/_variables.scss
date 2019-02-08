@@ -6,15 +6,17 @@
   $brand-info:    #48B0F7;
   $brand-warning: #F8D053;
   $brand-danger:  #F55753;
+  $random-accent: #DBA704;
   $input-border:  darken(#EDEDED, 5);
 
   //UI
-  $ui-background-color: #f6f8fa;
+  $ui-background-color: #f4f6f8;
   $panel-background-color: #fff;
+  $pannel-shaddow: 0 0 0 1px rgba(63,63,68,0.05),0 1px 3px 0 rgba(63,63,68,0.15);
 
   // Sidebar
-  $navbar-background-color: #fff;
-  $nav-background-color: linear-gradient(to right, #ffffff 0%, #ffffff 65%, $ui-background-color 100%);
+  $navbar-background-color: #ffffff;
+  $nav-background-color: #f4f6f8;
   $subnav-background-color: $nav-background-color;
   $nav-right-border-color: $ui-background-color;
   $nav-seperator-border-color: $ui-background-color;
@@ -50,3 +52,5 @@
   Wells
   -----------------------------------------*/
   $well-bg: #fbfbfb;
+
+  $grid-gutter-width: 10px;

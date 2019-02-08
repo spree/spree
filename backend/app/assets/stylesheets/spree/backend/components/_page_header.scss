@@ -1,6 +1,6 @@
 .content-header.page-header {
   margin-top: 0;
-  margin-bottom: 10px;
+  margin-bottom: $grid-gutter-width;
 
   h1 {
     font-size: $font-size-h1 / 1.5;
@@ -11,16 +11,16 @@
 
   &.with-page-tabs {
     border-bottom: 0;
-    margin-bottom: 6px;
+    margin-bottom: $grid-gutter-width;
     padding-bottom: 0;
 
     h1 {
-      margin-bottom: 8px;
+      margin-bottom: $grid-gutter-width;
     }
 
     .nav-tabs {
-      padding-left: 15px;
-      padding-top: 15px;
+      padding-left: $grid-gutter-width;
+      padding-top: $grid-gutter-width;
     }
   }
 
@@ -35,6 +35,6 @@
 }
 
 .page-header {
-  margin: 40px -15px 20px;
+
   padding-bottom: 0;
 }
