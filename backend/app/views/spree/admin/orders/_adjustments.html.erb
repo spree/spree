@@ -19,7 +19,7 @@
             <td>
               <strong><%= label %>:</strong>
             </td>
-            <td class="total">
+            <td class="total" style="width:35%;">
               <span>
                 <%= Spree::Money.new(
                   adjustments.sum(&:amount),

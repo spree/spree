@@ -2,6 +2,12 @@ button.close {
   font-size: 2em;
 }
 
+td.actions-3 a, td.actions-3 button {
+  margin: $grid-gutter-width / 6;
+}
+
+td.actions-3 {width: 140px;}
+
 .btn,
 .nav-pills > li > a {
   letter-spacing: 1px;

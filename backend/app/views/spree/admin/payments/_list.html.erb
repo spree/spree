@@ -23,7 +23,7 @@
             <%= Spree.t(payment.state, scope: :payment_states, default: payment.state.capitalize) %>
           </span>
         </td>
-        <td class="actions actions-2 text-center">
+        <td class="actions actions-3 text-center" style="width:140px;">
           <% payment.actions.each do |action| %>
             <% if action == 'credit' %>
               <%= link_to_with_icon('refund', Spree.t(:refund), new_admin_order_payment_refund_path(@order, payment), no_text: true, class: "btn btn-default btn-sm") if can?(:create, Spree::Refund) %>

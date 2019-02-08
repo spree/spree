@@ -14,10 +14,6 @@
     margin: 5px 0;
   }
 
-  td.actions-3 a, td.actions-3 button {
-    margin: $grid-gutter-width / 4;
-  }
-
   div#dynamic-content-menu {
     position: fixed;
     z-index: 9999;
@@ -209,11 +205,11 @@
 
     > span.icon {
       font-size:16px;
-      padding: 5px 10px;
+      padding: 3px 10px;
     }
   }
 
-  a#admin_new_order {
+  div.page-actions .btn.btn-success {
     font-size:16px;
 
     > span.icon {
