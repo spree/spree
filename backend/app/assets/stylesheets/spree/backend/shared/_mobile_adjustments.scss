@@ -10,6 +10,10 @@
     margin: $grid-gutter-width $grid-gutter-width 0 auto;
   }
 
+  td.actions-3 a, td.actions-3 button {
+    margin: $grid-gutter-width / 2;
+  }
+
   div#dynamic-content-menu {
     position: fixed;
     z-index: 9999;
