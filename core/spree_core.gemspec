@@ -26,7 +26,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'carmen', '~> 1.0.0'
   s.add_dependency 'cancancan', '~> 2.0'
   s.add_dependency 'deface', '~> 1.0'
-  s.add_dependency 'ffaker', '~> 2.2'
+  s.add_dependency 'ffaker', '~> 2.9'
   s.add_dependency 'friendly_id', '~> 5.2.1'
   s.add_dependency 'highline', '~> 2.0.0' # Necessary for the install generator
   s.add_dependency 'kaminari', '~> 1.0.1'
