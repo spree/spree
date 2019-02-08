@@ -15,7 +15,7 @@
   color: #555555 !important;
 }
 
-.nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
+.nav-tabs > li.active > a:focus, .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover{
   background: linear-gradient(to bottom, #ffffff 0%,#ffffff 65%, $ui-background-color 100%);
   border: 1px solid $input-border;
   border-bottom-color: $ui-background-color;

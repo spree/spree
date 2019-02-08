@@ -23,21 +23,6 @@
       ul.nav {
         > li {
 
-          &.selected {
-            border-left: 4px solid $random-accent;
-            background: linear-gradient(to right, lighten($ui-background-color, 5) 0%, $ui-background-color 100%);
-
-              a {
-                padding-left: 11px;
-            > span.icon {
-              color: $brand-primary;
-              }
-            }
-          }
-          &.active > a > span.icon {
-            color: $brand-primary;
-          }
-
           > a {
             text-transform: uppercase;
             letter-spacing: 1px;
@@ -51,7 +36,8 @@
               vertical-align: bottom;
               padding-right: 5px;
             }
-          > span.icon {
+
+            > span.icon {
               color: $gray;
             }
 
@@ -59,7 +45,22 @@
               color: darken($gray, 10);
               background: rgba(255, 255, 255, 0);
             }
+        }
 
+        &.selected {
+          border-left: 4px solid $random-accent;
+          background: linear-gradient(to right, lighten($ui-background-color, 5) 0%, $ui-background-color 100%);
+
+            a {
+              padding-left: 11px;
+          > span.icon {
+            color: $brand-primary;
+            }
+          }
+        }
+
+        &.active > a > span.icon {
+          color: $brand-primary;
         }
       }
 
