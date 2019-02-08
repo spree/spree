@@ -10,6 +10,10 @@
     margin: $grid-gutter-width $grid-gutter-width 0 auto;
   }
 
+  .page-actions a {
+    margin: 5px 0;
+  }
+
   td.actions-3 a, td.actions-3 button {
     margin: $grid-gutter-width / 2;
   }
@@ -143,10 +147,6 @@
 
   span.icon-filter {
     display: none;
-  }
-
-  .page-actions a {
-    margin: 5px 0;
   }
 
   #main-sidebar ul.nav > li > a {

@@ -50,7 +50,7 @@ module Spree
 
       # Single main menu item
       def main_menu_item(text, url: nil, icon: nil)
-        link_to url, 'class':'drop-down','data-toggle': 'collapse', 'data-parent': '#sidebar' do
+        link_to url, class: 'drop-down', 'data-toggle': 'collapse', 'data-parent': '#sidebar' do
           content_tag(:span, nil, class: "icon icon-#{icon}") +
             content_tag(:span, " #{text}", class: 'text')
         end
