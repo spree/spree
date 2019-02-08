@@ -24,8 +24,14 @@
 .label-considered_risky,
 .label-error,
 .label-invalid,
+.label-canceled,
+.label-void,
 .label-closed {
   background-color: $brand-danger;
+
+  a {
+    color: white !important;
+  }
 }
 
 // Orange
@@ -42,13 +48,10 @@
 .label-delivery,
 .label-payment,
 .label-confirm,
-.label-canceled,
-.label-void,
 .label-inactive,
 .label-notice,
 .label-partial {
   background-color: $brand-warning;
-
   a {
     color: white !important;
   }

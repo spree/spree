@@ -15,7 +15,7 @@
   }
 
   td.actions-3 a, td.actions-3 button {
-    margin: $grid-gutter-width / 2;
+    margin: $grid-gutter-width / 4;
   }
 
   div#dynamic-content-menu {
@@ -191,7 +191,6 @@
   }
 
   div.page-actions {
-
     text-align: center !important;
     position: fixed;
     bottom: 0;
@@ -207,9 +206,18 @@
 
   div.page-actions button, div.page-actions a {
     font-size:0;
+
     > span.icon {
-      font-size:14px;
+      font-size:16px;
       padding: 5px 10px;
+    }
+  }
+
+  a#admin_new_order {
+    font-size:16px;
+
+    > span.icon {
+      padding: 0;
     }
   }
 
