@@ -43,7 +43,7 @@ describe 'Homepage', type: :feature do
 
       context 'version number' do
         it 'is displayed' do
-          within('#main-sidebar') { expect(page).to have_content(Spree.version) }
+          within('#userNavModal') { expect(page).to have_content(Spree.version) }
         end
 
         context 'if turned off' do
