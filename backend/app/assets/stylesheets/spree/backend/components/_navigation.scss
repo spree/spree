@@ -15,7 +15,17 @@
   color: #555555 !important;
 }
 
-.nav-tabs > li.active > a:focus, .nav-tabs > li.active > a, .nav-tabs > li.active > a:hover{
+.nav > li > a:hover,
+.nav > li > a:focus {
+  text-decoration: none;
+  background-color: $ui-background-color;
+  border-color:  $ui-background-color;
+  border-bottom-color: $input-border;
+}
+
+.nav-tabs > li.active > a,
+.nav-tabs > li.active > a:hover,
+.nav-tabs > li.active > a:focus {
   background: linear-gradient(to bottom, #ffffff 0%,#ffffff 65%, $ui-background-color 100%);
   border: 1px solid $input-border;
   border-bottom-color: $ui-background-color;
@@ -24,15 +34,8 @@
   padding-top: 8px
 }
 
-.nav > li > a:hover, .nav > li > a:focus {
-  text-decoration: none;
-  background-color: $ui-background-color;
-  border-color:  $ui-background-color;
-  border-bottom-color: $input-border;
-}
-
-.navbar-inverse .navbar-toggle:focus,
-.navbar-inverse .navbar-toggle:hover {
+.navbar-inverse .navbar-toggle:hover,
+.navbar-inverse .navbar-toggle:focus {
   background-color: $nav-background-color;
 }
 
