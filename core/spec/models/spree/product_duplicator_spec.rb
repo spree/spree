@@ -18,9 +18,7 @@ module Spree
 
     before do
       new_image = Spree::Image.new(params)
-      unless Rails.application.config.use_paperclip
-        new_image.attachment.attach(io: file, filename: File.basename(file))
-      end
+      new_image.attachment.attach(io: file, filename: File.basename(file))
       new_image.save!
     end
 
