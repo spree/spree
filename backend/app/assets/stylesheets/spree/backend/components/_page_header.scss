@@ -1,7 +1,8 @@
 .content-header.page-header {
   margin-top: 0;
   margin-bottom: $grid-gutter-width;
-  padding-bottom: $grid-gutter-width;
+  padding-bottom: 0;
+   border-bottom: none;
 
   h1 {
     font-size: $font-size-h1 / 1.5;
@@ -33,9 +34,4 @@
       margin: 2px 0;
     }
   }
-}
-
-.page-header {
-
-  padding-bottom: 0;
 }
