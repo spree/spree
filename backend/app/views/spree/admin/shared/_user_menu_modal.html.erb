@@ -60,11 +60,14 @@
 
         <% end %>
       </div>
-      <div class="modal-footer">
-                  <%= render partial: 'spree/admin/shared/version' %>
+      <% if can?(:admin, current_store) && Spree::Config[:admin_show_version] %>
+        <div class="modal-footer">
+          <div class="spree-version">
+            <%= Spree.version %>
+          </div>
+        </div>
+      <% end %>
       </div>
     </div>
-
   </div>
-</div>
 </div>
