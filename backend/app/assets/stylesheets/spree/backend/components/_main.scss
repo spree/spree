@@ -1,5 +1,8 @@
+html {
+  background: $ui-background-color;
+}
 body {
-  background-color: $ui-background-color;
+  background: $ui-background-color;
 }
 
 #logo {
@@ -15,6 +18,7 @@ body {
   background-color: $ui-background-color;
 
 }
+
 #listing_orders span.label {
   display: block;
   padding: 0.5em;

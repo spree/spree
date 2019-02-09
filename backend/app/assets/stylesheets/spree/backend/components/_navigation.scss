@@ -12,6 +12,11 @@
   background-color: $navbar-background-color;
 }
 
+nav.navbar{
+  height: $navbar-height;
+}
+
+
 .navbar-inverse .navbar-nav > li > a {
   color: #555555 !important;
 }

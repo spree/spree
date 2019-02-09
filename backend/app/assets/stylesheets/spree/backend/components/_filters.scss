@@ -2,8 +2,13 @@
   display: none;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
-  margin-top: 20px;
+  margin-top: $grid-gutter-width;
 }
+
+.filter-wrap {
+  margin-bottom: $grid-gutter-width;
+}
+
 
 .index-filter-button {
   .glyphicon {
@@ -27,7 +32,7 @@
       background-color: white;
       border-color: #e0e0e0;
     }
-    
+
     &:active {
       background-color: white;
       border-color: #e0e0e0;
