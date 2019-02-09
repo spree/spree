@@ -20,6 +20,7 @@ table.table {
     tr {
       td {
         vertical-align: middle;
+        border-color: $gray-lighter;
         .filterable {
           font-size: 0.8em;
           margin-left: 0.2em;

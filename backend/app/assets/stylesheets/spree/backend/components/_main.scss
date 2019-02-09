@@ -3,12 +3,12 @@ html {
 }
 body {
   background: $ui-background-color;
+  padding-bottom: 60px;
 }
 
 #logo {
   height: 100%;
 }
-
 
 #main-part {
   padding-top: $grid-gutter-width;
@@ -16,8 +16,9 @@ body {
   padding-bottom: $grid-gutter-width;
   padding-left: $sidebar-width + $grid-gutter-width;
   background-color: $ui-background-color;
-
+  margin-bottom: $grid-gutter-width * 2 ;
 }
+
 
 #listing_orders span.label {
   display: block;
@@ -62,4 +63,15 @@ padding-right: 0;
 
 .pagination {
   margin: 0;
+}
+
+@media (min-width: $ui-max-width + ($sidebar-width * 2)) {
+
+  .container-fluid{
+      max-width: $ui-max-width;
+  }
+
+  #main-part {
+    padding-left:  $grid-gutter-width;
+  }
 }
