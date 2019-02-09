@@ -8,7 +8,9 @@
 .filter-wrap {
   margin-bottom: $grid-gutter-width;
 }
-
+#promotion-filters {
+  margin-top: $grid-gutter-width;
+}
 
 .index-filter-button {
   .glyphicon {
