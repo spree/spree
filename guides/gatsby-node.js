@@ -3,7 +3,14 @@ const { createFilePath } = require(`gatsby-source-filesystem`)
 const R = require('ramda')
 
 exports.createPages = ({ actions, graphql }) => {
-  const { createPage } = actions
+  const { createPage, createRedirect } = actions
+
+  createRedirect({
+    fromPath: `/developer/getting_started_tutorial.html`,
+    isPermanent: true,
+    redirectInBrowser: true,
+    toPath: `/developer/tutorials/getting_started_tutorial.html`
+  })
 
   const guideTemplate = path.resolve(`src/templates/guide.js`)
 
