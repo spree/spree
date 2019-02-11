@@ -26,7 +26,7 @@
         <tr id="<%= spree_dom_id(return_authorization) %>" data-hook="rma_row">
           <td><%= return_authorization.number %></td>
           <td>
-            <span class="label label-<%= return_authorization.state %>">
+            <span class="badge badge-<%= return_authorization.state %>">
               <%= Spree.t("return_authorization_states.#{return_authorization.state}") %>
             </span>
           </td>

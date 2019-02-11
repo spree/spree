@@ -1,16 +1,18 @@
-<div class="panel panel-default" id="order_details" data-hook>
-  <div class="panel-heading">
-    <h3 class="panel-title"><%= Spree.t(:confirm) %></h3>
+<div class="card" id="order_details" data-hook>
+  <div class="card-header">
+    <h3 class="card-title mb-0 h5"><%= Spree.t(:confirm) %></h3>
   </div>
-  <div class="panel-body">
+  <div class="card-body">
     <%= render partial: 'spree/shared/order_details', locals: { order: @order } %>
   </div>
 </div>
 
-<div class="well text-right form-buttons" data-hook="buttons">
-  <% if @order.using_store_credit? %>
-    <%= button_tag Spree.t('store_credit.remove'), name: 'remove_store_credit', class: 'continue btn' %>
-  <% end %>
-  <%= submit_tag Spree.t(:place_order), class: 'btn btn-lg btn-success' %>
-  <script>Spree.disableSaveOnClick();</script>
+<div class="card text-right form-buttons mt-4" data-hook="buttons">
+  <div class="card-body">
+    <% if @order.using_store_credit? %>
+      <%= button_tag Spree.t('store_credit.remove'), name: 'remove_store_credit', class: 'continue btn' %>
+    <% end %>
+    <%= submit_tag Spree.t(:place_order), class: 'btn btn-lg btn-success' %>
+    <script>Spree.disableSaveOnClick();</script>
+  </div>
 </div>

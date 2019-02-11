@@ -1,15 +1,22 @@
 <% @taxons = @taxon && @taxon.parent ? @taxon.parent.children : Spree::Taxon.roots %>
-<%= form_tag spree.products_path, method: :get, class: "navbar-form" do %>
-  <div class="form-group">
-    <% cache [I18n.locale, @taxons] do %>
-      <%= select_tag :taxon,
-            options_for_select([[Spree.t(:all_departments), '']] +
-                                  @taxons.map {|t| [t.name, t.id]},
-                                  @taxon ? @taxon.id : params[:taxon]), 'aria-label' => 'Taxon', class: "form-control" %>
-    <% end %>
-  </div>
-  <div class="form-group">
-    <%= search_field_tag :keywords, params[:keywords], placeholder: Spree.t(:search), class: "form-control" %>
-  </div>
+<%= form_tag spree.products_path, method: :get,
+  class: "ml-2 form-inline" do %>
+
+  <% cache [I18n.locale, @taxons] do %>
+    <%= select_tag :taxon,
+      options_for_select(
+        [[Spree.t(:all_departments), '']] +
+        @taxons.map {|t| [t.name, t.id]},
+        @taxon ? @taxon.id : params[:taxon]
+      ),
+      aria: { label: 'Taxon' },
+      class: "form-control mr-2 mb-2 mb-md-0" %>
+  <% end %>
+
+  <%= search_field_tag :keywords,
+    params[:keywords],
+    placeholder: Spree.t(:search),
+    class: "form-control mr-2 mb-2 mb-md-0" %>
+
   <%= submit_tag Spree.t(:search), name: nil, class: "btn btn-success" %>
 <% end %>

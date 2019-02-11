@@ -12,13 +12,13 @@
 <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @option_type } %>
 
 <%= form_for [:admin, @option_type] do |f| %>
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <h1 class="panel-title">
+  <div class="card mb-3">
+    <div class="card-header">
+      <h1 class="card-title mb-0 h5">
         <%= Spree.t(:option_values) %>
       </h1>
     </div>
-    <div class="panel-body">
+    <div class="card-body">
       <%= render partial: 'form', locals: { f: f } %>
     </div>
     <table class="table table-condensed table-bordered sortable" data-hook data-sortable-link="<%= update_values_positions_admin_option_types_url %>">
@@ -42,7 +42,7 @@
         <% end %>
       </tbody>
     </table>
-    <div class="panel-footer text-center">
+    <div class="card-footer text-center">
       <%= render partial: 'spree/admin/shared/edit_resource_links' %>
     </div>
   </div>

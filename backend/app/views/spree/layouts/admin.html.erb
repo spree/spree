@@ -30,16 +30,19 @@
         <%#-------------------------------------------------%>
         <%# Sidebar                                         %>
         <%#-------------------------------------------------%>
-        <div class="<%= main_sidebar_classes %>" id="main-sidebar" data-hook="admin_tabs">
+        <aside
+          class="<%= main_sidebar_classes %> sidebar position-fixed d-flex justify-content-between flex-column px-0"
+          id="main-sidebar"
+          data-hook="admin_tabs">
           <%= render partial: 'spree/admin/shared/main_menu' %>
 
           <%= render partial: 'spree/admin/shared/version' %>
-        </div>
+        </aside>
 
         <%#-------------------------------------------------%>
         <%# Content                                         %>
         <%#-------------------------------------------------%>
-        <div class="<%= main_part_classes %> main" id="main-part">
+        <main class="<%= main_part_classes %> main" id="main-part" role="main">
 
           <%#-------------------------------------------------%>
           <%# Content header (page title/actions)             %>
@@ -55,7 +58,7 @@
             <%#-------------------------------------------------%>
             <%# Main content                                    %>
             <%#-------------------------------------------------%>
-            <div class="<%= content_for?(:sidebar) ? 'with-sidebar col-xs-8 col-md-9' : 'col-xs-12'  %>" id="content" data-hook>
+            <div class="<%= content_for?(:sidebar) ? 'with-sidebar col-8 col-md-9' : 'col-12'  %>" id="content" data-hook>
               <%= render partial: 'spree/admin/shared/table_filter' if content_for?(:table_filter)%>
               <%= yield %>
             </div>
@@ -64,14 +67,14 @@
             <%# Inner aside                                     %>
             <%#-------------------------------------------------%>
             <% if content_for?(:sidebar) %>
-              <div class="col-xs-4 col-md-3">
+              <div class="col-4 col-md-3">
                 <%= render partial: 'spree/admin/shared/sidebar' %>
               </div>
             <% end %>
           </div>
 
 
-        </div>
+        </main>
       </div>
     </div>
 

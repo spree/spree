@@ -25,25 +25,38 @@ jQuery(function ($) {
   })
 
   // Sidebar nav toggle functionality
-  $('#sidebar-toggle').on('click', function () {
-    var wrapper = $('#wrapper')
-    var main = $('#main-part')
-    var sidebar = $('#main-sidebar')
+  const sidebar_toggle = $('#sidebar-toggle')
 
-    // these should match `spree/backend/app/helpers/spree/admin/navigation_helper.rb#main_part_classes`
-    var mainWrapperCollapsedClasses = 'col-xs-12 sidebar-collapsed'
-    var mainWrapperExpandedClasses = 'col-xs-9 col-xs-offset-3 col-md-10 col-md-offset-2'
+  sidebar_toggle.on('click', function() {
+    const wrapper = $('#wrapper')
+    const main    = $('#main-part')
+    const sidebar = $('#main-sidebar')
+    const version = $('.spree-version')
+    const collapsed = sidebar.find('[aria-expanded="true"]')
+    const collapsedIcons = sidebar.find('.icon-chevron-down')
 
     wrapper.toggleClass('sidebar-minimized')
-    sidebar.toggleClass('hidden-xs')
+
+    collapsed
+      .attr('aria-expanded', 'false')
+      .next()
+      .removeClass('show')
+
+    collapsedIcons
+      .removeClass('icon-chevron-down')
+      .addClass('icon-chevron-left')
+
+    // these should match `spree/backend/app/helpers/spree/admin/navigation_helper.rb#main_part_classes`
     main
-      .toggleClass(mainWrapperCollapsedClasses)
-      .toggleClass(mainWrapperExpandedClasses)
+      .toggleClass('col-12 sidebar-collapsed')
+      .toggleClass('col-9 offset-3 col-md-10 offset-md-2')
 
     if (wrapper.hasClass('sidebar-minimized')) {
       Cookies.set('sidebar-minimized', 'true', { path: '/admin' })
+      version.removeClass('d-md-block')
     } else {
       Cookies.set('sidebar-minimized', 'false', { path: '/admin' })
+      version.addClass('d-md-block')
     }
   })
 
@@ -72,16 +85,16 @@ jQuery(function ($) {
   })
 
   // Main menu active item submenu show
-  var activeItem = $('#main-sidebar').find('.selected')
-  activeItem.closest('.nav-pills').addClass('in')
-  activeItem.closest('.nav-sidebar')
+  var active_item = $('#main-sidebar').find('.selected')
+  active_item.closest('.nav-pills').addClass('in show')
+  active_item.closest('.nav-sidebar')
     .find('.icon-chevron-left')
     .removeClass('icon-chevron-left')
     .addClass('icon-chevron-down')
 
   // Replace ▼ and ▲ in sort_link with nicer icons
   $('.sort_link').each(function () {
-    // Remove the &nbsp; in the text
+    // Remove the &nbsp in the text
     var sortLinkText = $(this).text().replace('\xA0', '')
 
     if (sortLinkText.indexOf('▼') >= 0) {
@@ -136,8 +149,8 @@ jQuery(function ($) {
 
       label = ransackField(label.text()) + ': ' + ransackValue
 
-      filter = '<span class="js-filter label label-default" data-ransack-field="' + ransackFieldId + '">' + label + '<span class="icon icon-delete js-delete-filter"></span></span>'
-      $('.js-filters').append(filter).show()
+      filter = '<span class="js-filter badge badge-secondary" data-ransack-field="' + ransackFieldId + '">' + label + '<span class="icon icon-delete js-delete-filter"></span></span>'
+      $(".js-filters").append(filter).show()
     }
   })
 
@@ -205,7 +218,8 @@ function handle_date_picker_fields () {
     monthNames: Spree.translations.month_names,
     prevText: Spree.translations.previous,
     nextText: Spree.translations.next,
-    showOn: 'focus'
+    showOn: 'focus',
+    showAnim: ''
   })
 
   // Correctly display range dates
@@ -217,18 +231,18 @@ function handle_date_picker_fields () {
   })
 }
 
-$(document).ready(function () {
+$(document).ready(function(){
   handle_date_picker_fields()
-  $('.observe_field').on('change', function () {
-    var target = $(this).data('update')
+  $('.observe_field').on('change', function() {
+    target = $(this).data('update')
     $(target).hide()
-    $.ajax({ dataType: 'html',
+    $.ajax({
+      dataType: 'html',
       url: $(this).data('base-url') + encodeURIComponent($(this).val()),
-      type: 'get',
-      success: function (data) {
-        $(target).html(data)
-        $(target).show()
-      }
+      type: 'GET'
+    }).done(function (data) {
+      $(target).html(data)
+      $(target).show()
     })
   })
 
@@ -263,25 +277,23 @@ $(document).ready(function () {
           _method: 'delete',
           authenticity_token: AUTH_TOKEN
         },
-        dataType: 'script',
-        success: function (response) {
-          var $flashElement = $('.alert-success')
-          if ($flashElement.length) {
-            el.parents('tr').fadeOut('hide', function () {
-              $(this).remove()
-            })
-          }
-        },
-        error: function (response, textStatus, errorThrown) {
-          show_flash('error', response.responseText)
+        dataType: 'script'
+      }).done(function () {
+        var $flash_element = $('.alert-success')
+        if ($flash_element.length) {
+          el.parents('tr').fadeOut('hide', function () {
+            $(this).remove()
+          })
         }
+      }).fail(function (response) {
+        show_flash('error', response.responseText)
       })
     }
     return false
   })
 
   $('body').on('click', 'a.spree_remove_fields', function () {
-    var el = $(this)
+    el = $(this)
     el.prev('input[type=hidden]').val('1')
     el.closest('.fields').hide()
     if (el.prop('href').substr(-1) === '#') {
@@ -293,31 +305,28 @@ $(document).ready(function () {
         data: {
           _method: 'delete',
           authenticity_token: AUTH_TOKEN
-        },
-        success: function (response) {
-          el.parents('tr').fadeOut('hide', function () {
-            $(this).remove()
-          })
-        },
-        error: function (response, textStatus, errorThrown) {
-          show_flash('error', response.responseText)
         }
-
+      }).done(function () {
+        el.parents('tr').fadeOut('hide', function () {
+          $(this).remove()
+        })
+      }).fail(function (response) {
+        show_flash('error', response.responseText)
       })
     }
     return false
   })
 
-  $('body').on('click', '.select_properties_from_prototype', function () {
+  $('body').on('click', '.select_properties_from_prototype', function(){
     $('#busy_indicator').show()
-    var clickedLink = $(this)
-    $.ajax({ dataType: 'script',
-      url: clickedLink.prop('href'),
-      type: 'get',
-      success: function (data) {
-        clickedLink.parent('td').parent('tr').hide()
-        $('#busy_indicator').hide()
-      }
+    var clicked_link = $(this)
+    $.ajax({
+      dataType: 'script',
+      url: clicked_link.prop('href'),
+      type: 'GET'
+    }).done(function () {
+      clicked_link.parent('td').parent('tr').hide()
+      $('#busy_indicator').hide()
     })
     return false
   })
@@ -337,13 +346,13 @@ $(document).ready(function () {
         handle: '.handle',
         helper: fixHelper,
         placeholder: 'ui-sortable-placeholder',
-        update: function (event, ui) {
+        update: function(event, ui) {
           var tbody = this
           $('#progress').show()
-          var positions = {}
-          $.each($('tr', tbody), function (position, obj) {
-            var reg = /spree_(\w+_?)+_(\d+)/
-            var parts = reg.exec($(obj).prop('id'))
+          positions = {}
+          $.each($('tr', tbody), function(position, obj) {
+            reg = /spree_(\w+_?)+_(\d+)/
+            parts = reg.exec($(obj).prop('id'))
             if (parts) {
               positions['positions[' + parts[2] + ']'] = position + 1
             }
@@ -352,8 +361,9 @@ $(document).ready(function () {
             type: 'POST',
             dataType: 'script',
             url: $(ui.item).closest('table.sortable').data('sortable-link'),
-            data: positions,
-            success: function (data) { $('#progress').hide() }
+            data: positions
+          }).done(function () {
+            $('#progress').hide()
           })
         },
         start: function (event, ui) {
@@ -375,16 +385,15 @@ $(document).ready(function () {
     $(this).parent().fadeOut()
   })
 
-  window.Spree.advanceOrder = function () {
+  window.Spree.advanceOrder = function() {
     $.ajax({
       type: 'PUT',
       async: false,
       data: {
         token: Spree.api_key
       },
-      // eslint-disable-next-line camelcase
       url: Spree.url(Spree.routes.checkouts_api + '/' + order_number + '/advance')
-    }).done(function () {
+    }).done(function() {
       window.location.reload()
     })
   }

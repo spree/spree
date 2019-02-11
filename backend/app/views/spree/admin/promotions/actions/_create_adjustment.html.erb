@@ -1,6 +1,6 @@
-<div class="panel-body calculator-fields">
-  <div class="row no-marginb">
-    <div class="form-group col-xs-12 col-md-6 no-marginb">
+<div class="card-body calculator-fields">
+  <div class="row mb-0">
+    <div class="form-group col-12 col-md-6 mb-0">
       <% field_name = "#{param_prefix}[calculator_type]" %>
       <%= label_tag field_name, Spree.t(:calculator) %>
       <%= select_tag field_name,
@@ -8,7 +8,7 @@
                      class: 'type-select select2' %>
     </div>
     <% unless promotion_action.new_record? %>
-      <div class="form-group col-xs-12 col-md-6 no-marginb settings">
+      <div class="form-group col-12 col-md-6 mb-0 settings">
         <% type_name = promotion_action.calculator.type.demodulize.underscore %>
         <% if lookup_context.exists?("fields",
             ["spree/admin/promotions/calculators/#{type_name}"], true) %>
@@ -23,7 +23,7 @@
     <% end %>
   </div>
   <% if promotion_action.calculator.respond_to?(:preferences) %>
-    <div class="alert alert-info js-warning margint no-marginb">
+    <div class="alert alert-info js-warning margint mb-0">
       <%= Spree.t(:calculator_settings_warning) %>
     </div>
   <% end %>

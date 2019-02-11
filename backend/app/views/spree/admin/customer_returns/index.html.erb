@@ -31,9 +31,9 @@
             <td><%= pretty_time(customer_return.created_at) %></td>
             <td>
               <% if customer_return.fully_reimbursed? %>
-                <span class="label label-success"><%= Spree.t(:reimbursed) %></span>
+                <span class="badge badge-success"><%= Spree.t(:reimbursed) %></span>
               <% else %>
-                <span class="label label-info"><%= Spree.t(:incomplete) %></span>
+                <span class="badge badge-info"><%= Spree.t(:incomplete) %></span>
               <% end %>
             </td>
             <td class='actions actions-1' data-hook="admin_orders_customer_returns_index_row_actions">
