@@ -1,16 +1,16 @@
 <%= render partial: "spree/admin/variants/autocomplete", formats: :js %>
 <%= render partial: "spree/admin/variants/autocomplete_stock", formats: :js %>
 
-<div class="panel panel-default" id="add-line-item" data-hook>
-  <div class="panel-heading">
-    <h1 class="panel-title">
+<div class="card mb-3" id="add-line-item" data-hook>
+  <div class="card-header">
+    <h1 class="card-title mb-0 h5">
       <%= Spree.t(:add_product) %>
     </h1>
   </div>
-  <div class="panel-body">
+  <div class="card-body">
     <div data-hook="add_product_name">
       <%= label_tag :add_variant_id, Spree.t(:name_or_sku) %>
-      <%= hidden_field_tag :add_variant_id, "", class: "variant_autocomplete fullwidth-input" %>
+      <%= hidden_field_tag :add_variant_id, "", class: "variant_autocomplete d-block w-100" %>
     </div>
 
     <div id="stock_details"></div>

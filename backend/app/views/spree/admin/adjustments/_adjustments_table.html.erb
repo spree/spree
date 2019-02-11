@@ -1,5 +1,5 @@
-<div class="panel-heading">
-  <h3 class="panel-title"><%= Spree.t(:order_adjustments) %></h3>
+<div class="card-header">
+  <h3 class="card-title mb-0 h5"><%= Spree.t(:order_adjustments) %></h3>
 </div>
 
 <table class="table table-bordered adjustments" data-hook="adjustments">
@@ -18,12 +18,12 @@
 </table>
 
 <% if can?(:edit, Spree::Adjustment) %>
-  <div class="panel-footer">
-    <div class="row text-center">
-      <div class="col-xs-12 col-md-6">
+  <div class="card-footer">
+    <div class="row text-center pb-0">
+      <div class="col-12 col-lg-6">
         <%= button_to Spree.t(:open_all_adjustments), open_adjustments_admin_order_path(@order), method: :get, class: "btn btn-success" %>
       </div>
-      <div class="col-xs-12 col-md-6">
+      <div class="col-12 col-lg-6">
         <%= button_to Spree.t(:close_all_adjustments), close_adjustments_admin_order_path(@order), method: :get, class: "btn btn-danger" %>
       </div>
     </div>

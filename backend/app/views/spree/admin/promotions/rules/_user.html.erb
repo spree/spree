@@ -1,5 +1,5 @@
-<div class="panel-body">
-  <div class="form-group no-marginb">
+<div class="card-body">
+  <div class="form-group mb-0">
     <%= label_tag Spree.t('user_rule.choose_users') %>
     <input type='hidden' name='<%= param_prefix %>[user_ids_string]' class='user_picker' value='<%= promotion_rule.user_ids.join(",") %>'>
   </div>

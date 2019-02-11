@@ -1,11 +1,11 @@
-<div class="panel-heading">
-  <h1 class="panel-title">
+<div class="card-header">
+  <h1 class="card-title mb-0 h5">
     <%= Spree.t(:rules) %>
   </h1>
 </div>
-<div id="rule_fields" class="panel-body">
+<div id="rule_fields" class="card-body">
 
-  <%= form_tag spree.admin_promotion_promotion_rules_path(@promotion), remote: true, id: 'new_product_rule_form' do %>
+  <%= form_tag spree.admin_promotion_promotion_rules_path(@promotion), remote: true, id: 'new_product_rule_form', class: 'mb-3' do %>
     
     <div class="form-group">
       <%= label_tag :promotion_rule_type, Spree.t(:add_rule_of_type) %>
@@ -20,7 +20,7 @@
   <%= form_for @promotion, url: object_url, method: :put do |f| %>
     <div id="promotion-policy-select">
       <% Spree::Promotion::MATCH_POLICIES.each do |policy| %>
-        <div class="radio">
+        <div class="radio my-2">
           <%= f.label "match_policy_#{policy}" do %>
             <%= f.radio_button :match_policy, policy %>
             <%= Spree.t "promotion_form.match_policies.#{policy}" %>

@@ -1,14 +1,16 @@
-<div class="panel panel-default" id='shipping_method' data-hook>
-  <div class="panel-heading">
-    <h3 class="panel-title"><%= Spree.t(:delivery) %></h3>
+<div class="card" id='shipping_method' data-hook>
+  <div class="card-header">
+    <h3 class="card-title mb-0 h5"><%= Spree.t(:delivery) %></h3>
   </div>
-  <div class="panel-body" data-hook="shipping_method_inner">
+  <div class="card-body" data-hook="shipping_method_inner">
     <div id="methods">
       <%= form.fields_for :shipments do |ship_form| %>
         <div class="shipment">
-          <h4 class="stock-location" data-hook="stock-location">
+          <h4 class="stock-location h5" data-hook="stock-location">
             <%= Spree.t(:package_from) %>
-            <strong class="stock-location-name" data-hook="stock-location-name"><%= ship_form.object.stock_location.name %></strong>
+            <strong class="stock-location-name" data-hook="stock-location-name">
+              <%= ship_form.object.stock_location.name %>
+            </strong>
           </h4>
 
           <table class="table stock-contents" data-hook="stock-contents">
@@ -38,14 +40,22 @@
             </tbody>
           </table>
 
-          <h4 class="stock-shipping-method-title"><%= Spree.t(:shipping_method) %></h4>
+          <h4 class="stock-shipping-method-title h5">
+            <%= Spree.t(:shipping_method) %>
+          </h4>
+
           <ul class="list-group shipping-methods">
             <% ship_form.object.shipping_rates.each do |rate| %>
               <li class="list-group-item shipping-method">
                 <label>
-                  <%= ship_form.radio_button :selected_shipping_rate_id, rate.id, data: { behavior: 'shipping-method-selector', cost: rate.display_cost } %>
+                  <%= ship_form.radio_button :selected_shipping_rate_id,
+                    rate.id,
+                    data: {
+                      behavior: 'shipping-method-selector',
+                      cost: rate.display_cost
+                  } %>
                   <span class="rate-name"><%= rate.name %></span>
-                  <span class="badge rate-cost"><%= rate.display_cost %></span>
+                  <span class="badge badge-secondary rate-cost"><%= rate.display_cost %></span>
                 </label>
               </li>
             <% end %>
@@ -55,7 +65,7 @@
 
       <% if @differentiator.try(:missing?) %>
         <div class="shipment unshippable">
-          <h3 class="stock-location" data-hook="stock-location">
+          <h3 class="stock-location mb-0 h5" data-hook="stock-location">
             <%= Spree.t(:unshippable_items) %>
           </h3>
           <table class="table stock-contents" data-hook="stock-missing">
@@ -87,17 +97,19 @@
     </div>
     <% if Spree::Config[:shipping_instructions] %>
       <p id="minstrs" data-hook>
-        <h4><%= Spree.t(:shipping_instructions) %></h4>
+        <h4 class="h5">
+          <%= Spree.t(:shipping_instructions) %>
+        </h4>
         <%= form.text_area :special_instructions, cols: 40, rows: 4, class: "form-control" %>
       </p>
     <% end %>
   </div>
 </div>
 
-<br />
-
-<div class="well text-right form-buttons" data-hook="buttons">
-  <%= submit_tag Spree.t(:save_and_continue), class: 'btn btn-lg btn-success' %>
+<div class="card my-4 text-right form-buttons" data-hook="buttons">
+  <div class="card-body">
+    <%= submit_tag Spree.t(:save_and_continue), class: 'btn btn-lg btn-success' %>
+  </div>
 </div>
 
 <%= javascript_include_tag 'spree/frontend/checkout/shipment' %>

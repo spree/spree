@@ -1,7 +1,7 @@
 <% if adjustments.eligible.exists? %>
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <h1 class="panel-title">
+  <div class="card mb-3">
+    <div class="card-header">
+      <h1 class="card-title mb-0 h5">
         <%= title %>
       </h1>
     </div>
@@ -31,5 +31,6 @@
         <% end %>
       </tbody>
     </table>
+
   </div>
 <% end %>

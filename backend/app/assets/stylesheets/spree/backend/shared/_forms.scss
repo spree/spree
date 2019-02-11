@@ -1,16 +1,8 @@
-.form-control {
-  box-shadow: none;
-}
-
 label {
-  text-transform: uppercase;
-  font-size: $font-size-base - 3;
-  letter-spacing: 1px;
-  color: $gray;
-  font-weight: 500;
+  font-size: $font-size-sm;
 
-  input[type="radio"], input[type="checkbox"] {
-    margin-top: 2px;
+  &:hover {
+    cursor: pointer;
   }
 }
 
@@ -20,40 +12,15 @@ span.or {
   padding: 0 10px;
 }
 
-input.form-control {
-  &:active, &:focus {
-    border-color: lighten($brand-success, 20);
-    box-shadow: none;
-  }
-}
-
 .form-group {
   &.withError {
     label, .formError, .required {
-      color: $brand-danger;
+      color: $danger;
     }
 
     input,
     .select2-choice {
-      border-color: $brand-danger;
+      border-color: $danger;
     }
   }
-}
-
-.fullwidth-input {
-  display: block;
-  width: 100%;
-}
-
-.help-block {
-  color: lighten($gray-light, 20);
-  font-weight: 300;
-}
-
-.checkbox > .help-block {
-  margin-top: 0;
-}
-
-.display-inline {
-  display: inline;
 }

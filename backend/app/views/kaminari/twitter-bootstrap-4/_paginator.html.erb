@@ -6,8 +6,10 @@
     remote:        data-remote
     paginator:     the paginator that renders the pagination tags inside
 -%>
+<% pagination_class ||= '' %>
+
 <%= paginator.render do %>
-  <ul class="pagination pagination-sm">
+  <ul class="pagination mt-4 <%= pagination_class %>">
     <%= first_page_tag unless current_page.first? %>
     <%= prev_page_tag unless current_page.first? %>
     <% each_page do |page| %>

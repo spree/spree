@@ -62,6 +62,7 @@ describe 'Order Details', type: :feature, js: true do
         within('table.stock-levels') do
           fill_in 'variant_quantity', with: 2
           click_icon :add
+          wait_for_ajax
         end
 
         within('#order_total') do
@@ -210,13 +211,15 @@ describe 'Order Details', type: :feature, js: true do
       end
 
       context 'variant out of stock and not backorderable' do
+        let(:tote) { create(:product, name: 'Tote', price: 15.00) }
+
         before do
-          product.master.stock_items.first.update_column(:backorderable, false)
-          product.master.stock_items.first.update_column(:count_on_hand, 0)
+          tote.master.stock_items.first.update(backorderable: false)
+          tote.master.stock_items.first.update(count_on_hand: 0)
         end
 
-        it 'displays out of stock instead of add button' do
-          select2_search product.name, from: Spree.t(:name_or_sku)
+        it 'does not add a product to the order' do
+          select2_search tote.name, from: Spree.t(:name_or_sku)
 
           within('table.stock-levels') do
             expect(page).to have_content(Spree.t(:out_of_stock))

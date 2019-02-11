@@ -5,15 +5,14 @@
 <% end %>
 
 <div class="row index-pagination-row">
-  <div class="col-xs-6">
-    <%= paginate collection %>
+  <div class="col-6">
+    <%= paginate collection, theme: 'twitter-bootstrap-4' %>
   </div>
-  <div class="col-xs-6">
+  <div class="col-6 justify-content-end">
     <div class="pagination-wrap">
-      <%= form_tag(per_page_dropdown_params(args), { method: :get, class: 'js-per-page-form form-inline' }) do %>
+      <%= form_tag(per_page_dropdown_params(args), { method: :get, class: 'js-per-page-form form-inline justify-content-end' }) do %>
         <%= per_page_dropdown %>
       <% end %>
-      <div class="clearfix"></div>
     </div>
   </div>
 </div>

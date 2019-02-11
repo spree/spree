@@ -1,20 +1,22 @@
 <% if content_for?(:table_filter) %>
   <div class="filter-wrap row">
-    <div class="col-xs-12">
+    <div class="col-12">
       <div class="input-group index-filter-button">
         <span class="input-group-btn">
-          <button class="btn btn-default js-show-index-filters" type="button">
+          <button class="btn js-show-index-filters" type="button">
             <span class="icon icon-chevron-right"></span>
             <%= Spree.t(:filter) %>
           </button>
         </span>
-        <%= form_tag request.fullpath, id: "quick-search" do %>
+        <%= form_tag request.fullpath, id: "quick-search", class: 'flex-grow-1' do %>
           <%= text_field_tag :quick_search, nil, class: "form-control js-quick-search", placeholder: Spree.t(:quick_search) %>
         <% end %>
       </div>
       <% unless defined?(simple) %>
-        <div id="table-filter" data-hook class="well filter-well">
-          <%= yield :table_filter %>
+        <div id="table-filter" data-hook class="card bg-light filter-well">
+          <div class="card-body">
+            <%= yield :table_filter %>
+          </div>
         </div>
       <% end %>
     </div>

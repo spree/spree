@@ -1,25 +1,22 @@
 /*------------------------------------------
   Colors
   -----------------------------------------*/
-  $brand-primary: #478DC1;
-  $brand-success: #7DB942;
-  $brand-info:    #48B0F7;
-  $brand-warning: #F8D053;
-  $brand-danger:  #F55753;
+  $primary: darken(#478DC1, 10);
+  $success: darken(#7DB942, 2);
+  $info:    #48B0F7;
+  $warning: #F8D053;
+  $danger:  #F55753;
 
-  $input-border:  darken(#EDEDED, 5);
+  $input-border-color:  darken(#EDEDED, 5);
 
 /*------------------------------------------
   Components
   -----------------------------------------*/
-  $border-radius-base: 2px;
-  $padding-base-vertical: 8px;
-  $padding-base-horizontal: 16px;
+  $border-radius: 2px;
 
 /*------------------------------------------
   Fonts
   -----------------------------------------*/
-  $headings-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
   $headings-font-weight: 300;
 
 /*------------------------------------------
@@ -29,9 +26,9 @@
 /*------------------------------------------
   Navbar
   -----------------------------------------*/
-  $navbar-inverse-bg: darken($brand-primary, 35);
+  $navbar-inverse-bg: darken($primary, 15);
 
 /*------------------------------------------
-  Wells
+  Forms
   -----------------------------------------*/
-  $well-bg: #fbfbfb;
+  $label-margin-bottom: 0;

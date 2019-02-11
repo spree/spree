@@ -1,41 +1,43 @@
-<% if can? :admin, Spree::Order %>
-  <ul class="nav nav-sidebar">
-    <%= tab *Spree::BackendConfiguration::ORDER_TABS, icon: 'shopping-cart' %>
-  </ul>
-<% end %>
+<nav>
+  <% if can? :admin, Spree::Order %>
+    <ul class="nav nav-sidebar border-bottom">
+      <%= tab *Spree::BackendConfiguration::ORDER_TABS, icon: 'shopping-cart' %>
+    </ul>
+  <% end %>
 
-<% if can?(:admin, Spree::ReturnAuthorization) || can?(:admin, Spree::CustomerReturn) %>
-  <ul class="nav nav-sidebar">
-    <%= main_menu_tree Spree.t(:returns), icon: "transfer", sub_menu: "returns", url: "#sidebar-returns" %>
-  </ul>
-<% end %>
+  <% if can?(:admin, Spree::ReturnAuthorization) || can?(:admin, Spree::CustomerReturn) %>
+    <ul class="nav nav-sidebar border-bottom">
+      <%= main_menu_tree Spree.t(:returns), icon: "transfer", sub_menu: "returns", url: "#sidebar-returns" %>
+    </ul>
+  <% end %>
 
-<% if can? :admin, Spree::Product %>
-  <ul class="nav nav-sidebar">
-    <%= main_menu_tree Spree.t(:products), icon: "th-large", sub_menu: "product", url: "#sidebar-product" %>
-  </ul>
-<% end %>
+  <% if can? :admin, Spree::Product %>
+    <ul class="nav nav-sidebar border-bottom">
+      <%= main_menu_tree Spree.t(:products), icon: "th-large", sub_menu: "product", url: "#sidebar-product" %>
+    </ul>
+  <% end %>
 
-<% if can? :admin, Spree::Admin::ReportsController %>
-  <ul class="nav nav-sidebar">
-    <%= tab *Spree::BackendConfiguration::REPORT_TABS, icon: 'file'  %>
-  </ul>
-<% end %>
+  <% if can? :admin, Spree::Admin::ReportsController %>
+    <ul class="nav nav-sidebar border-bottom">
+      <%= tab *Spree::BackendConfiguration::REPORT_TABS, icon: 'file'  %>
+    </ul>
+  <% end %>
 
-<% if can? :admin, Spree::Promotion %>
-  <ul class="nav nav-sidebar">
-    <%= main_menu_tree Spree.t(:promotions), icon: "gift", sub_menu: "promotion", url: "#sidebar-promotions" %>
-  </ul>
-<% end %>
+  <% if can? :admin, Spree::Promotion %>
+    <ul class="nav nav-sidebar border-bottom">
+      <%= main_menu_tree Spree.t(:promotions), icon: "gift", sub_menu: "promotion", url: "#sidebar-promotions" %>
+    </ul>
+  <% end %>
 
-<% if Spree.user_class && can?(:admin, Spree.user_class) %>
-  <ul class="nav nav-sidebar">
-    <%= tab *Spree::BackendConfiguration::USER_TABS, url: spree.admin_users_path, icon: 'user' %>
-  </ul>
-<% end %>
+  <% if Spree.user_class && can?(:admin, Spree.user_class) %>
+    <ul class="nav nav-sidebar border-bottom">
+      <%= tab *Spree::BackendConfiguration::USER_TABS, url: spree.admin_users_path, icon: 'user' %>
+    </ul>
+  <% end %>
 
-<% if can? :admin, current_store %>
-  <ul class="nav nav-sidebar">
-    <%= main_menu_tree Spree.t(:configurations), icon: "wrench", sub_menu: "configuration", url: "#sidebar-configuration" %>
-  </ul>
-<% end %>
+  <% if can? :admin, current_store %>
+    <ul class="nav nav-sidebar border-bottom">
+      <%= main_menu_tree Spree.t(:configurations), icon: "wrench", sub_menu: "configuration", url: "#sidebar-configuration" %>
+    </ul>
+  <% end %>
+</nav>

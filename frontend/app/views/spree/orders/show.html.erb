@@ -1,7 +1,8 @@
 <fieldset id="order_summary" data-hook>
   <h1><%= accurate_title %></h1>
+
   <% if order_just_completed?(@order) %>
-    <strong><%= Spree.t(:thank_you_for_your_order) %></strong>
+    <p><strong><%= Spree.t(:thank_you_for_your_order) %></strong></p>
   <% end %>
 
   <div id="order" data-hook>
