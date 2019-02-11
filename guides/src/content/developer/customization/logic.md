@@ -1,6 +1,7 @@
 ---
 title: Logic Customization
 section: customization
+order: 4
 ---
 
 ## Overview

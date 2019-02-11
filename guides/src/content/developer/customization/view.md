@@ -1,6 +1,7 @@
 ---
 title: 'View Customization'
 section: customization
+order: 0
 ---
 
 ## Overview

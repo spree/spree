@@ -1,6 +1,8 @@
 ---
 title: Using Dependendencies system
+title: Dependendencies system
 section: customization
+order: 3
 ---
 
 # Using Dependendencies system

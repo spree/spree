@@ -1,6 +1,7 @@
 ---
 title: "Custom Authentication"
 section: customization
+order: 6
 ---
 
 ## Overview

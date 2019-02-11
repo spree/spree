@@ -1,6 +1,7 @@
 ---
 title: 'Images Customization'
 section: customization
+order: 2
 ---
 
 ## Overview

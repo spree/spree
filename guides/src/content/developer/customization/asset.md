@@ -1,6 +1,7 @@
 ---
 title: "Asset Customization"
 section: customization
+order: 1
 ---
 
 ## Overview
