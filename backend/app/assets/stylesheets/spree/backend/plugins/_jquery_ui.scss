@@ -1,19 +1,19 @@
 .ui-widget {
   font-family: $headings-font-family;
-  font-size: $font-size-base - 1;
+  font-size: $font-size-base;
   font-weight: 400;
 }
 
 #ui-datepicker-div {
   background-color: white;
   background-image: none;
-  color: $gray;
-  border-color: $input-border;
+  color: $gray-500;
+  border-color: $input-border-color;
   width: auto;
   padding: 20px;
 
   &.ui-corner-all {
-    border-radius: $border-radius-base;
+    border-radius: $border-radius;
   }
 
   .ui-datepicker-header {
@@ -28,8 +28,8 @@
     background-image: none;
     text-indent: 0;
     vertical-align: bottom !important;
-    width: 12px;
-    color: $brand-primary;
+    width: 14px;
+    color: $primary;
 
     &.ui-icon-circle-triangle-w {
       @extend .glyphicon;
@@ -48,23 +48,25 @@
     background-color: transparent;
     transition: color 0.2s ease-in-out;
     cursor: pointer;
-    
+
     span.ui-icon {
-      color: $brand-success;
+      color: $success;
     }
   }
 
   .ui-datepicker-next-hover {
-    right: 2;
+    right: 2px;
+    top: 2px;
   }
 
   .ui-datepicker-prev-hover {
-    left: 2;
+    left: 2px;
+    top: 2px;
   }
 
   .ui-datepicker-title {
     font-weight: 500;
-    color: $gray;
+    color: $gray-500;
   }
 
   table.ui-datepicker-calendar {
@@ -72,7 +74,7 @@
       span {
         text-transform: uppercase;
         letter-spacing: 1px;
-        color: $brand-primary;
+        color: $primary;
         font-weight: 500;
       }
     }
@@ -80,10 +82,10 @@
     td {
       width: 31px;
       height: 29px;
-      transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+      // transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
 
-      .ui-state-default, 
-      .ui-widget-content .ui-state-default, 
+      .ui-state-default,
+      .ui-widget-content .ui-state-default,
       .ui-widget-header .ui-state-default {
         background-color: transparent;
         background-image: none;
@@ -92,18 +94,29 @@
         font-weight: 300;
       }
 
+      .ui-state-highlight {
+        @include button-variant($secondary, $secondary);
+      }
+
+      .ui-state-active {
+        @include button-variant($success, $success);
+
+        &:hover {
+          background-color: darken($success, 7);
+        }
+      }
+
       &:hover {
-        background-color: $gray-lighter;
+        background-color: $gray-100;
       }
 
       &:active {
-        background-color: $brand-success;
+        background-color: $success;
 
         a {
-          color: white;  
-        }        
+          color: white;
+        }
       }
     }
   }
 }
-

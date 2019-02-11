@@ -6,6 +6,8 @@
     per_page:      number of items to fetch per page
     remote:        data-remote
 -%>
-<li class="last">
-  <%= link_to_unless current_page.last?, t('views.pagination.last').html_safe, url, remote: remote %>
-</li>
+<% unless current_page.last? %>
+  <li class="last next page-item"><%# "next" class present for border styling in twitter bootstrap %>
+    <%= link_to_unless current_page.last?, raw(t 'views.pagination.last'), url, remote: remote, class: 'page-link' %>
+  </li>
+<% end %>

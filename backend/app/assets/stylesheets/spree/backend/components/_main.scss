@@ -1,12 +1,10 @@
 #main-part {
-  padding: 15px 35px 0;
-  &.sidebar-collapsed {
-    padding-left: 85px;
-  }
+  padding: $spacer ($spacer * 2) 0 ($spacer * 2);
+  margin-top: 50px;
 }
 
-.logo.navbar-brand {
-  padding: 5px 15px;
+.sidebar-minimized #main-part {
+  padding: $spacer ($spacer * 2) 0 ($spacer * 5);
 }
 
 #logo {

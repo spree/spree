@@ -1,10 +1,10 @@
-<div class="panel-heading">
-  <h1 class="panel-title">
+<div class="card-header">
+  <h1 class="card-title mb-0 h5">
     <%= Spree.t(:promotion_actions) %>
   </h1>
 </div>
-<div id="action_fields" class="panel-body">
-  <%= form_tag spree.admin_promotion_promotion_actions_path(@promotion), remote: true, id: 'new_promotion_action_form' do %>
+<div id="action_fields" class="card-body">
+  <%= form_tag spree.admin_promotion_promotion_actions_path(@promotion), remote: true, id: 'new_promotion_action_form', class: 'mb-3' do %>
     <% options = options_for_select(  Rails.application.config.spree.promotions.actions.map(&:name).map {|name| [ Spree.t("promotion_action_types.#{name.demodulize.underscore}.name"), name] } ) %>
 
     <div class="form-group">

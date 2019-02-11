@@ -1,4 +1,4 @@
-<div class="panel-body calculator-fields">
+<div class="card-body calculator-fields">
   <% promotion_action.promotion_action_line_items.each do |item| %>
     <% variant = item.variant %>
 
@@ -15,9 +15,9 @@
         <% line_item_prefix = "#{param_prefix}[promotion_action_line_items_attributes][#{index}]" %>
         <div class="form-group">
           <%= label_tag "#{line_item_prefix}_variant_id", Spree.t(:variant) %>
-          <%= hidden_field_tag "#{line_item_prefix}[variant_id]", line_item.variant_id, class: "variant_autocomplete fullwidth-input" %>
+          <%= hidden_field_tag "#{line_item_prefix}[variant_id]", line_item.variant_id, class: "variant_autocomplete" %>
         </div>
-        <div class="form-group no-marginb">
+        <div class="form-group mb-0">
           <%= label_tag "#{line_item_prefix}_quantity", Spree.t(:quantity) %>
           <%= number_field_tag "#{line_item_prefix}[quantity]", line_item.quantity, min: 1, class: 'form-control' %>
         </div>

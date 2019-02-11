@@ -1,82 +1,38 @@
-#main-sidebar {
-  position: fixed;
-  top: $navbar-height + 2px;
-  bottom: 0;
-  left: 0;
-  padding: 0;
-  z-index: 1000;
-  display: block;
-  overflow-x: hidden;
+.sidebar {
   overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
-  background-color: lighten($gray-lighter, 5);
-  border-right: 1px solid darken($gray-lighter, 5);
+  background-color: $gray-100;
+  border-right: 1px solid $gray-200;
+  margin-top: 50px;
+  height: calc(100% - 50px);
+  z-index: 999;
 
-  a {
-    -webkit-font-smoothing: antialiased;
-    -webkit-text-size-adjust: 100%;
-    -ms-text-size-adjust: 100%;
-    -webkit-font-feature-settings: "kern" 1;
-    -moz-font-feature-settings: "kern" 1;
+  a.sidebar-submenu-item:hover {
+    text-decoration: none;
+    background-color: $gray-200;
+    cursor: pointer
   }
 
   ul.nav-sidebar {
     > li {
-      border-bottom: 1px solid $gray-lighter;
-
       > a {
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        font-size: 12px;
-        font-weight: 500;
-        padding: 15px;
-        color: $gray;
+        color: $gray-700;
 
-        .glyphicon {
-          font-size: 18px;
-          vertical-align: bottom;
-          padding-right: 5px;
+        &:hover,
+        &[aria-expanded="true"] {
+          text-decoration: none;
+          background-color: $gray-200;
         }
 
-        .glyphicon.pull-right {
-          font-size: 8px;
+        .icon-chevron-left,
+        .icon-chevron-down {
+          font-size: .5rem;
           line-height: 2;
-          color: $gray-light;
-          position: absolute;
-          right: 5px;
+          right: 1rem;
           top: 50%;
-          margin-top: -8px;
+          margin-top: -.5rem;
         }
       }
     }
-  }
-
-  ul.nav.nav-pills {
-    background-color: white;
-    border-top: 1px solid $gray-lighter;
-
-    li {
-      a {
-        padding: 5px 15px;
-        font-size: 12px;
-
-        &:hover {
-          border-radius: 0;
-        }
-      }
-
-      &.selected {
-        a {
-          color: $brand-success
-        }
-      }
-    }
-  }
-
-  .spree-version {
-    position: absolute;
-    z-index: -1;
-    left: 15px;
-    bottom: 15px;
   }
 }
 
@@ -86,7 +42,7 @@
 
   li {
     &:hover, &.menu-active {
-      background-color: $gray-lighter;
+      background-color: $gray-100;
     }
   }
 
@@ -110,7 +66,7 @@
     display: block !important;
     height: auto !important;
     position: fixed;
-    top: $navbar-height + 2px;
+    top: 50px;
     bottom: 0;
     left: 0;
     padding: 0;
@@ -121,9 +77,9 @@
     left: 50px;
     min-width: 180px;
     visibility: visible;
-    background-color: lighten($gray-lighter, 5);
+    background-color: $gray-100;
     border-top: none;
-    border-right: 1px solid darken($gray-lighter, 5);
+    border-right: 1px solid $gray-200;
     padding-top: 5px;
   }
 }

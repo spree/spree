@@ -140,12 +140,12 @@ function initProductActions () {
 
     setupRemoveLineItems()
     // Add line item to list
-    $('.promotion_action.create_line_items button.add').unbind('click').click(function () {
+    $('.promotion_action.create_line_items button.add').off('click').click(function () {
       var $container = $(this).parents('.promotion_action')
-      var productName = $container.find('input[name="add_product_name"]').val()
-      var variantId = $container.find('input[name="add_variant_id"]').val()
+      var product_name = $container.find('input[name="add_product_name"]').val()
+      var variant_id = $container.find('input[name="add_variant_id"]').val()
       var quantity = $container.find('input[name="add_quantity"]').val()
-      if (variantId) {
+      if (variant_id) {
         // Add to the table
         var newRow = '<tr><td>' + productName + '</td><td>' + quantity + '</td><td><img src="/assets/admin/icons/cross.png"/></td></tr>'
         $container.find('table').append(newRow)

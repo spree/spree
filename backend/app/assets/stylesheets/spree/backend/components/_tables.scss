@@ -1,12 +1,14 @@
 table.table {
+  font-size: $font-size-sm;
+
   thead {
     th {
       text-transform: uppercase;
-      font-size: $font-size-base - 3px;
+      font-size: $small-font-size;
       padding-top: 14px;
       padding-bottom: 14px;
-      vertical-align: middle;
-      letter-spacing: 1px;
+      vertical-align: top;
+      border-top: 0;
 
       a {
         .glyphicon {
@@ -15,17 +17,20 @@ table.table {
       }
     }
   }
+
   tbody {
     tr {
       td {
         vertical-align: middle;
+
         .filterable {
-          font-size: 0.8em;
-          margin-left: 0.2em;
+          font-size: .8em;
+          margin-left: .2em;
           color: white; // hidden, but space is reserved for the icon
           cursor: pointer;
         }
       }
+
       &:hover td .filterable {
         color: #666;
       }
@@ -35,22 +40,58 @@ table.table {
 
 .table-active-filters {
   display: none;
-  margin: -0.5em 0 0.9em 0;
+  margin: -.5em 0 .9em;
 
-  .label {
+  .badge {
     display: inline-block;
-    margin-right: 0.5em;
-    margin-bottom: 0.5em;
-    font-size: 85%;
+    margin-right: .5em;
+    margin-bottom: .5em;
 
     &:hover {
-      opacity: 0.8;
+      opacity: .8;
     }
 
     span.icon {
-      margin: 0.3em 0 0 0.6em;
+      margin: .3em 0 0 .6em;
       font-size: 80%;
       cursor: pointer;
     }
   }
+}
+
+.card {
+  > .table,
+  .table-responsive > .table {
+  	border-right: 0;
+  	border-left: 0;
+    margin-bottom: 0;
+
+    &:last-child, &:last-of-type {
+			border-bottom: 0;
+		}
+
+  	td:first-child,
+		th:first-child {
+			border-left: 0;
+		}
+
+  	td:last-child,
+		th:last-child {
+			border-right: 0;
+		}
+
+  	tr:first-child td,
+		tr:first-child th {
+			border-top: 0;
+		}
+
+  	tr:last-child td {
+			border-bottom: 0;
+		}
+	}
+
+  .card-header + .table,
+  .card-header + .table-responsive > .table {
+    border-top: 0;
+	}
 }

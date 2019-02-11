@@ -1,4 +1,6 @@
-//= require bootstrap-sprockets
+//= require jquery3
+//= require popper
+//= require bootstrap
 //= require jquery.payment
 //= require spree
 //= require polyfill.min

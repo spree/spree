@@ -6,45 +6,47 @@
   <%= button_link_to Spree.t(:new_stock_transfer), new_admin_stock_transfer_path, { icon: 'add', class: 'btn-success' } %>
 <% end if can? :create, Spree::StockTransfer %>
 
-<div data-hook="admin_orders_index_search" class="well">
-  <fieldset>
-    <legend><%= Spree.t(:search) %></legend>
-    <%= search_form_for @q, url: admin_stock_transfers_path do |f| %>
+<div data-hook="admin_orders_index_search" class="card bg-light mb-3">
+  <div class="card-body">
+    <fieldset>
+      <legend class="border-bottom"><%= Spree.t(:search) %></legend>
+      <%= search_form_for @q, url: admin_stock_transfers_path do |f| %>
 
-      <div class="row no-marginb">
-        <div class="col-xs-12 col-md-4">
-          <div class="form-group">
-            <%= f.label :reference_cont, Spree.t(:reference_contains) %>
-            <%= f.text_field :reference_cont, class: 'form-control' %>
+        <div class="row mb-0">
+          <div class="col-12 col-lg-4">
+            <div class="form-group">
+              <%= f.label :reference_cont, Spree.t(:reference_contains) %>
+              <%= f.text_field :reference_cont, class: 'form-control' %>
+            </div>
+          </div>
+
+          <div class="col-12 col-lg-4">
+            <div class="form-group">
+              <%= f.label :source_location, Spree.t(:source) %>
+              <%= f.select :source_location_id_eq,
+                  options_from_collection_for_select(@stock_locations, :id, :name, @q.source_location_id_eq),
+                  { include_blank: true }, class: 'select2' %>
+            </div>
+          </div>
+
+          <div class="col-12 col-lg-4">
+            <div class="form-group">
+              <%= f.label :destination_location, Spree.t(:destination) %>
+              <%= f.select :destination_location_id_eq,
+                  options_from_collection_for_select(@stock_locations, :id, :name, @q.destination_location_id_eq),
+                  { include_blank: true }, class: 'select2' %>
+            </div>
           </div>
         </div>
 
-        <div class="col-xs-12 col-md-4">
-          <div class="form-group">
-            <%= f.label :source_location, Spree.t(:source) %>
-            <%= f.select :source_location_id_eq,
-                 options_from_collection_for_select(@stock_locations, :id, :name, @q.source_location_id_eq),
-                 { include_blank: true }, class: 'select2' %>
+        <div class="form-actions">
+          <div data-hook="admin_stock_transfers_index_search_buttons">
+            <%= button Spree.t(:filter_results), 'search' %>
           </div>
         </div>
-
-        <div class="col-xs-12 col-md-4">
-          <div class="form-group">
-            <%= f.label :destination_location, Spree.t(:destination) %>
-            <%= f.select :destination_location_id_eq,
-                 options_from_collection_for_select(@stock_locations, :id, :name, @q.destination_location_id_eq),
-                 { include_blank: true }, class: 'select2' %>
-          </div>
-        </div>
-      </div>
-
-      <div class="form-actions">
-        <div data-hook="admin_stock_transfers_index_search_buttons">
-          <%= button Spree.t(:filter_results), 'search' %>
-        </div>
-      </div>
-    <% end %>
-  </fieldset>
+      <% end %>
+    </fieldset>
+  </div>
 </div>
 
 <% if @stock_transfers.any? %>
@@ -66,7 +68,7 @@
           <td><%= stock_transfer.source_location.try(:name) %></td>
           <td><%= stock_transfer.destination_location.try(:name) %></td>
           <td class="actions actions-1">
-            <%= link_to_with_icon 'show', Spree.t(:show), admin_stock_transfer_path(stock_transfer), class: 'btn btn-default btn-sm', no_text: true, data: {action: 'view'} %>
+            <%= link_to_with_icon 'show', Spree.t(:show), admin_stock_transfer_path(stock_transfer), class: 'btn btn-outline-secondary btn-sm', no_text: true, data: {action: 'view'} %>
           </td>
         </tr>
       <% end %>
@@ -79,4 +81,4 @@
   </div>
 <% end %>
 
-<%= paginate @stock_transfers %>
+<%= paginate @stock_transfers, theme: 'twitter-bootstrap-4' %>

@@ -3,8 +3,10 @@
   <%= Spree.t(:sales_totals) %>
 <% end %>
 
-<div class="well">
-  <%= render partial: 'spree/admin/shared/report_order_criteria' %>
+<div class="card bg-light mb-3">
+  <div class="card-body">
+    <%= render partial: 'spree/admin/shared/report_order_criteria' %>
+  </div>
 </div>
 
 <table class="table table-bordered admin-report" data-hook="sales_total">

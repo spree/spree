@@ -7,7 +7,7 @@
 <% end %>
 
 <fieldset data-hook="admin_user_order_history">
-  <%= paginate @orders %>
+  <%= paginate @orders, theme: 'twitter-bootstrap-4' %>
 
   <% if @orders.any? %>
     <%# TODO add search interface %>
@@ -46,7 +46,7 @@
     </div>
   <% end %>
 
-  <%= paginate @orders %>
+  <%= paginate @orders, theme: 'twitter-bootstrap-4' %>
 </fieldset>
 
 <%= render 'spree/admin/users/lifetime_stats' %>

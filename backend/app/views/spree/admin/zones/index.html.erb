@@ -6,7 +6,7 @@
   <%= button_link_to Spree.t(:new_zone), new_object_url, class: "btn-success", icon: 'add', id: 'admin_new_zone_link' %>
 <% end if can? :create, Spree::Zone %>
 
-<%= paginate @zones %>
+<%= paginate @zones, theme: 'twitter-bootstrap-4' %>
 
 <% if @zones.any? %>
   <table class="table" id='listing_zones' data-hook>
@@ -41,4 +41,4 @@
   </div>
 <% end %>
 
-<%= paginate @zones %>
+<%= paginate @zones, theme: 'twitter-bootstrap-4' %>

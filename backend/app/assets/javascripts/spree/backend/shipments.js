@@ -5,12 +5,12 @@ $(document).ready(function () {
 
   // handle variant selection, show stock level.
   $('#add_variant_id').change(function () {
-    var variantId = $(this).val()
+    var variantId = parseInt($(this).val())
 
     var variant = _.find(window.variants, function (variant) {
-      // eslint-disable-next-line eqeqeq
-      return variant.id == variantId
+      return variant.id === variantId
     })
+
     $('#stock_details').html(variantStockTemplate({ variant: variant }))
     $('#stock_details').show()
 
@@ -80,7 +80,7 @@ $(document).ready(function () {
       }
     }).done(function () {
       window.location.reload()
-    }).error(function (msg) {
+    }).fail(function (msg) {
       alert(msg.responseJSON.message || msg.responseJSON.exception)
     })
   })
@@ -111,12 +111,12 @@ $(document).ready(function () {
       }
     }).done(function () {
       window.location.reload()
-    }).error(function (msg) {
+    }).fail(function (msg) {
       alert(msg.responseJSON.message || msg.responseJSON.exception)
     })
   })
 
-  function toggleTrackingEdit (event) {
+  function toggleTrackingEdit(event) {
     event.preventDefault()
 
     var link = $(this)
@@ -128,7 +128,7 @@ $(document).ready(function () {
   $('a.edit-tracking').click(toggleTrackingEdit)
   $('a.cancel-tracking').click(toggleTrackingEdit)
 
-  function createTrackingValueContent (data) {
+  function createTrackingValueContent(data) {
     var selectedShippingMethod = data.shipping_methods.filter(function (method) {
       return method.id === data.selected_shipping_rate.shipping_method_id
     })[0]
@@ -174,7 +174,7 @@ $(document).ready(function () {
   })
 })
 
-function adjustShipmentItems (shipmentNumber, variantId, quantity) {
+function adjustShipmentItems(shipmentNumber, variantId, quantity) {
   var shipment = _.findWhere(shipments, { number: shipmentNumber + '' })
   var inventoryUnits = _.where(shipment.inventory_units, { variant_id: variantId })
   var url = Spree.routes.shipments_api + '/' + shipmentNumber
@@ -209,7 +209,7 @@ function adjustShipmentItems (shipmentNumber, variantId, quantity) {
   }
 }
 
-function toggleMethodEdit () {
+function toggleMethodEdit() {
   var link = $(this)
   link.parents('tbody').find('tr.edit-method').toggle()
   link.parents('tbody').find('tr.show-method').toggle()
@@ -217,7 +217,7 @@ function toggleMethodEdit () {
   return false
 }
 
-function toggleItemEdit () {
+function toggleItemEdit() {
   var link = $(this)
   var linkParent = link.parent()
   linkParent.find('a.edit-item').toggle()
@@ -231,7 +231,7 @@ function toggleItemEdit () {
   return false
 }
 
-function startItemSplit (event) {
+function startItemSplit(event) {
   event.preventDefault()
   $('.cancel-split').each(function () {
     $(this).click()
@@ -253,9 +253,9 @@ function startItemSplit (event) {
       },
       token: Spree.api_key
     }
-  }).success(function (data) {
+  }).done(function (data) {
     variant = data['variants'][0]
-  }).error(function (msg) {
+  }).fail(function (msg) {
     alert(msg.responseJSON.message || msg.responseJSON.exception)
   })
 
@@ -268,7 +268,7 @@ function startItemSplit (event) {
   $('#item_stock_location').select2({ width: 'resolve', placeholder: Spree.translations.item_stock_placeholder })
 }
 
-function completeItemSplit (event) {
+function completeItemSplit(event) {
   event.preventDefault()
 
   if ($('#item_stock_location').val() === '') {
@@ -287,24 +287,13 @@ function completeItemSplit (event) {
   var selectedShipment = stockItemRow.find($('#item_stock_location').select2('data').element)
   var targetShipmentNumber = selectedShipment.data('shipment-number')
   var newShipment = selectedShipment.data('new-shipment')
-  // eslint-disable-next-line
-  if (stockLocationId !== 'new_shipment') {
-    var splitItems = function (opts) {
+  // eslint-disable-next-line eqeqeq
+  if (stockLocationId != 'new_shipment') {
+    if (newShipment !== undefined) {
+      // TRANSFER TO A NEW LOCATION
       $.ajax({
         type: 'POST',
         async: false,
-        url: opts.url,
-        data: opts.data
-      }).error(function (msg) {
-        alert(msg.responseJSON.message || msg.responseJSON.exception)
-      }).done(function () {
-        window.location.reload()
-      })
-    }
-
-    if (newShipment !== undefined) {
-      // TRANSFER TO A NEW LOCATION
-      splitItems({
         url: Spree.url(Spree.routes.shipments_api + '/transfer_to_location'),
         data: {
           original_shipment_number: originalShipmentNumber,
@@ -313,10 +302,16 @@ function completeItemSplit (event) {
           stock_location_id: stockLocationId,
           token: Spree.api_key
         }
+      }).fail(function (msg) {
+        alert(msg.responseJSON.message || msg.responseJSON.exception)
+      }).done(function (msg) {
+        window.location.reload()
       })
     } else {
       // TRANSFER TO AN EXISTING SHIPMENT
-      splitItems({
+      $.ajax({
+        type: 'POST',
+        async: false,
         url: Spree.url(Spree.routes.shipments_api + '/transfer_to_shipment'),
         data: {
           original_shipment_number: originalShipmentNumber,
@@ -325,12 +320,16 @@ function completeItemSplit (event) {
           quantity: quantity,
           token: Spree.api_key
         }
+      }).fail(function (msg) {
+        alert(msg.responseJSON.message || msg.responseJSON.exception)
+      }).done(function (msg) {
+        window.location.reload()
       })
     }
   }
 }
 
-function cancelItemSplit (event) {
+function cancelItemSplit(event) {
   event.preventDefault()
   var link = $(this)
   var prevRow = link.closest('tr').prev()
@@ -340,7 +339,7 @@ function cancelItemSplit (event) {
   prevRow.find('a.delete-item').toggle()
 }
 
-function addVariantFromStockLocation (event) {
+function addVariantFromStockLocation(event) {
   event.preventDefault()
 
   $('#stock_details').hide()
@@ -366,7 +365,7 @@ function addVariantFromStockLocation (event) {
       }
     }).done(function (msg) {
       window.location.reload()
-    }).error(function (msg) {
+    }).fail(function (msg) {
       alert(msg.responseJSON.message || msg.responseJSON.exception)
     })
   } else {
