@@ -49,8 +49,9 @@ describe 'Shipments', type: :feature do
       expect(order.shipments.count).to eq(1)
 
       within_row(1) { click_icon :split }
+      wait_for_ajax
       targetted_select2 'LA', from: '#s2id_item_stock_location'
-      click_icon :save
+      click_icon :'save-split'
       wait_for_ajax
       expect(page.find("#shipment_#{order.shipments.first.id}")).to be_present
 

@@ -1,9 +1,9 @@
-<div class="panel-body">
+<div class="card-body">
   <div class="form-group products_rule_products">
     <%= label_tag "#{param_prefix}_product_ids_string", Spree.t('product_rule.choose_products') %>
     <%= hidden_field_tag "#{param_prefix}[product_ids_string]", promotion_rule.product_ids.join(","), class: "product_picker" %>
   </div>
-  <div class="form-group no-marginb">
+  <div class="form-group mb-0">
     <%= label_tag Spree.t('product_rule.label') %>
     <%= select_tag("#{param_prefix}[preferred_match_policy]", options_for_select(Spree::Promotion::Rules::Product::MATCH_POLICIES.map{|s| [Spree.t("product_rule.match_#{s}"),s] }, promotion_rule.preferred_match_policy), {class: 'select_product form-control'}) %>
   </div>

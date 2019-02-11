@@ -1,5 +1,5 @@
 <div class="row">
-  <div data-hook="admin_variant_form_fields" class="col-xs-12 col-md-6">
+  <div data-hook="admin_variant_form_fields" class="col-12 col-md-6">
     <div data-hook="variants">
       <% @product.option_types.each do |option_type| %>
         <div class="form-group" data-hook="presentation">
@@ -38,7 +38,7 @@
     </div>
   </div>
 
-  <div class="col-xs-12 col-md-6" data-hook="admin_variant_form_additional_fields">
+  <div class="col-12 col-md-6" data-hook="admin_variant_form_additional_fields">
     <% [:weight, :height, :width, :depth].each do |field| %>
       <div class="form-group" data-hook="<%= field %>"><%= f.label field, Spree.t(field) %>
         <% value = number_with_precision(@variant.send(field), precision: 2) %>

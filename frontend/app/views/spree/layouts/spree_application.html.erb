@@ -16,10 +16,13 @@
 
         <%= render partial: 'spree/shared/sidebar' if content_for? :sidebar %>
 
-        <div id="content" class="<%= !content_for?(:sidebar) ? "col-sm-12" : "col-sm-8 col-md-9" %>" data-hook>
+        <main
+          id="content"
+          class="mt-4 <%= !content_for?(:sidebar) ? "col-sm-12" : "col-sm-12 col-md-9" %>"
+          data-hook>
           <%= flash_messages %>
           <%= yield %>
-        </div>
+        </main>
 
         <%= yield :templates %>
       </div>

@@ -1,26 +1,23 @@
 <header class="header logged-in">
 
-  <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-    <div class="container-fluid">
-      <div class="row">
-        <div class="navbar-header col-xs-3 col-md-2">
-          <%= link_to(
-            image_tag(Spree::Config[:admin_interface_logo], id: 'logo'),
-            spree.admin_path,
-            class: "logo navbar-brand"
-          ) %>
-            <span class="navbar-toggle" id="sidebar-toggle">
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-              <span class="icon-bar"></span>
-            </span>
-        </div>
-        <div class="col-xs-9 col-md-10">
-          <div class="navbar-right">
-            <%= render partial: 'spree/admin/shared/account_nav' %>
-          </div>
-        </div>
-      </div>
+  <nav class="navbar fixed-top navbar-dark align-items-stretch" role="navigation">
+    <div class="navbar-header col-3 col-md-2">
+      <%= link_to(
+        image_tag(Spree::Config[:admin_interface_logo], id: 'logo'),
+        spree.admin_path,
+        class: "logo navbar-brand"
+      ) %>
+      <button
+        id="sidebar-toggle"
+        class="navbar-toggler h-100 position-absolute m-0 p-0"
+        type="button"
+        aria-expanded="false"
+        aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+    </div>
+    <div class="col-9 col-md-10 pr-0">
+      <%= render partial: 'spree/admin/shared/account_nav' %>
     </div>
   </nav>
 

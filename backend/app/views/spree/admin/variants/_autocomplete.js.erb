@@ -1,15 +1,15 @@
 <script type='text/template' id='variant_autocomplete_template'>
-  <div class='variant-autocomplete-item media'>
-    <figure class='variant-image media-left'>
+  <div class='variant-autocomplete-item media align-items-center'>
+    <figure class='variant-image media-left mb-0 mr-3'>
       {{#if variant.image }}
-        <img src='{{variant.image}}' class="thumbnail no-marginb" />
+        <img src='{{variant.image}}' class="thumbnail mb-0" />
       {{ else }}
-        <img src='<%= image_path("noimage/mini.png") %>' class="thumbnail no-marginb" />
+        <img src='<%= image_path("noimage/mini.png") %>' class="thumbnail mb-0" />
       {{/if}}
     </figure>
 
     <div class='variant-details media-body'>
-      <h5 class="variant-name media-heading">{{variant.name}}</h5>
+      <h5 class="variant-name media-heading h6 mb-0">{{variant.name}}</h5>
       {{#if variant.option_values}}
         {{#each variant.option_values}}
           <strong>{{this.option_type_presentation}}:</strong> {{this.presentation}}<br/>

@@ -1,12 +1,12 @@
-<div class="panel-heading">
-  <h1 class="panel-title">
+<div class="card-header">
+  <h1 class="card-title mb-0 h5">
     <%= Spree.t(:add_stock) %>
   </h1>
 </div>
-<div class="panel-body">
+<div class="card-body">
   <%= form_for [:admin, Spree::StockMovement.new], url: admin_stock_items_path do |f| %>
     <div data-hook="admin_stock_movements_form_fields" class="row">
-      <div class="col-xs-12 col-md-2">
+      <div class="col-12 col-lg-2">
         <div class="form-group">
           <%= f.field_container :quantity do %>
             <%= f.label :quantity, Spree.t(:quantity) %>
@@ -14,7 +14,7 @@
           <% end %>
         </div>
       </div>
-      <div class="col-xs-12 col-md-5">
+      <div class="col-12 col-lg-5">
         <div class="form-group">
           <%= f.field_container :stock_location do %>
             <%= label_tag :stock_location_id, Spree.t(:stock_location) %>
@@ -24,7 +24,7 @@
         </div>
       </div>
 
-      <div class="col-xs-12 col-md-5">
+      <div class="col-12 col-lg-5">
         <div class="form-group">
           <%= f.field_container :variant_id do %>
             <%= label_tag 'variant_id', Spree.t(:variant) %>

@@ -1,12 +1,12 @@
-<div id="calculator_fields" data-hook class="panel panel-default">
+<div id="calculator_fields" data-hook class="card mb-3">
 
-  <div class="panel-heading">
-    <h1 class="panel-title">
+  <div class="card-header">
+    <h1 class="card-title mb-0 h5">
       <%= Spree.t(:calculator) %>
     </h1>
   </div>
 
-  <div id="preference-settings" data-hook class="panel-body">
+  <div id="preference-settings" data-hook class="card-body">
     <div class="form-group">
       <%= f.label(:calculator_type, Spree.t(:calculator), for: 'calc_type') %>
       <%= f.select(:calculator_type, @calculators.map { |c| [c.description, c.name] }, {}, {id: 'calc_type', class: 'select2'}) %>

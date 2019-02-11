@@ -2,12 +2,12 @@
 <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @product } %>
 
 <% if can? :create, Spree::StockMovement %>
-  <div id="add_stock_form" class="panel panel-default">
+  <div id="add_stock_form" class="card mb-3">
     <%= render 'add_stock_form' %>
   </div>
 <% end %>
 
-<div class="panel panel-default">
+<div class="card mb-3">
   <table class="table table-bordered" id="listing_product_stock">
     <thead>
       <tr data-hook="admin_product_stock_management_index_headers">
@@ -41,7 +41,7 @@
             </td>
 
             <td colspan="3" class="stock_location_info">
-              <table class="table table-bordered no-marginb">
+              <table class="table table-bordered mb-0">
                 <thead>
                   <th><%= Spree.t(:stock_location) %></th>
                   <th class="text-center"><%= Spree.t(:count_on_hand) %></th>

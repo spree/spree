@@ -3,21 +3,36 @@
 <% end %>
 
 <% content_for :sidebar do %>
-  <ul class="nav nav-pills nav-stacked" data-hook="admin_user_tab_options">
-    <li<%== ' class="active"' if current == :account %>>
-      <%= link_to_with_icon 'user', Spree.t(:"admin.user.account"), spree.edit_admin_user_path(@user) %>
+  <ul class="nav flex-column nav-pills" data-hook="admin_user_tab_options">
+    <li>
+      <%= link_to_with_icon 'user',
+        Spree.t(:"admin.user.account"),
+        spree.edit_admin_user_path(@user),
+        class: "nav-link #{'active' if current == :account}" %>
     </li>
-    <li<%== ' class="active"' if current == :address %>>
-      <%= link_to_with_icon 'user', Spree.t(:"admin.user.addresses"), spree.addresses_admin_user_path(@user) %>
+    <li>
+      <%= link_to_with_icon 'user',
+        Spree.t(:"admin.user.addresses"),
+        spree.addresses_admin_user_path(@user),
+        class: "nav-link #{'active' if current == :address}" %>
     </li>
-    <li<%== ' class="active"' if current == :orders %>>
-      <%= link_to_with_icon 'shopping-cart', Spree.t(:"admin.user.orders"), spree.orders_admin_user_path(@user) %>
+    <li>
+      <%= link_to_with_icon 'shopping-cart',
+        Spree.t(:"admin.user.orders"),
+        spree.orders_admin_user_path(@user),
+        class: "nav-link #{'active' if current == :orders}" %>
     </li>
-    <li<%== ' class="active"' if current == :items %>>
-      <%= link_to_with_icon 'edit', Spree.t(:"admin.user.items"), spree.items_admin_user_path(@user) %>
+    <li>
+      <%= link_to_with_icon 'edit',
+        Spree.t(:"admin.user.items"),
+        spree.items_admin_user_path(@user),
+        class: "nav-link #{'active' if current == :items}" %>
     </li>
-    <li<%== ' class="active"' if current == :store_credits %>>
-      <%= link_to_with_icon 'money', Spree.t(:"admin.user.store_credits"), spree.admin_user_store_credits_path(@user) %>
+    <li>
+      <%= link_to_with_icon 'money',
+        Spree.t(:"admin.user.store_credits"),
+        spree.admin_user_store_credits_path(@user),
+        class: "nav-link #{'active' if current == :store_credits}" %>
     </li>
   </ul>
 <% end %>

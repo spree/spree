@@ -4,10 +4,20 @@
 %>
 
 <tr id="<%= spree_dom_id(adjustment) %>" class="<%= adjustment.eligible? ? 'eligible' : 'ineligible' %>" data-hook="adjustment_row">
-  <td><%= display_adjustable(adjustment.adjustable) %></td>
-  <td><%= adjustment.label %></td>
-  <td class="text-center"><%= adjustment.display_amount.to_html %></td>
-  <td class="text-center"><span class="label label-<%= adjustment.state %>"><%= adjustment.state %></td>
+  <td>
+    <%= display_adjustable(adjustment.adjustable) %>
+  </td>
+  <td>
+    <%= adjustment.label %>
+  </td>
+  <td class="text-center">
+    <%= adjustment.display_amount.to_html %>
+  </td>
+  <td class="text-center">
+    <span class="badge badge-<%= adjustment.state %>">
+      <%= adjustment.state %>
+    </span>
+  </td>
   <td class="actions actions-2 text-center">
     <% if adjustment.open? %>
       <%= link_to_edit(adjustment, no_text: true) if can?(:edit, adjustment) %>

@@ -2,14 +2,15 @@
   display: block;
 
   .select2-choice {
-    height: $input-height-base;
+    height: $input-height;
     line-height: 2.2;
-    border-color: $input-border;
+    border-color: $input-border-color;
     background-image: none;
     background-color: $input-bg;
 
-    &, .select2-arrow {
-      border-radius: $border-radius-base;
+    &,
+    .select2-arrow {
+      border-radius: $border-radius;
     }
 
     .select2-arrow {
@@ -17,7 +18,7 @@
       background-color: $input-bg;
       border-top-left-radius: 0;
       border-bottom-left-radius: 0;
-      border-left-color: $input-border;
+      border-left-color: $input-border-color;
 
       b {
         background-position: 0 7px;
@@ -37,13 +38,14 @@
 }
 
 .select2-search input {
-  border-color: $input-border;
-  border-radius: $border-radius-base;
+  border-color: $input-border-color;
+  border-radius: $border-radius;
+  background-image: none;
 }
 
 .select2-drop {
   &, &.select2-drop-above {
-    border-radius: $border-radius-base;
+    border-radius: $border-radius;
     box-shadow: none;
   }
 }
@@ -54,13 +56,13 @@
   }
 }
 
-.select2-dropdown-open.select2-drop-above .select2-choice, 
+.select2-dropdown-open.select2-drop-above .select2-choice,
 .select2-dropdown-open.select2-drop-above .select2-choices {
   background-image: none;
 }
 
 .select2-dropdown-open.select2-drop-above .select2-choice {
-  border-radius: 0 0 $border-radius-base $border-radius-base;
+  border-radius: 0 0 $border-radius $border-radius;
 }
 
 .select2-drop-above,
@@ -68,15 +70,15 @@
 .select2-dropdown-open .select2-choice,
 .select2-drop.select2-drop-above.select2-drop-active,
 .select2-drop.select2-drop-active {
-  border-color: lighten($brand-success, 20);
+  border-color: lighten($success, 20);
 }
 
 .select2-result-label {
-  color: $gray;
+  color: $gray-900;
 }
 
 .select2-results .select2-highlighted {
-  background-color: $brand-primary;
+  background-color: $primary;
 
   .select2-result-label {
     color: white;
@@ -86,13 +88,16 @@
 .select2-container-multi {
   .select2-choices {
     line-height: 1.8;
-    border-color: $input-border;
+    border-color: $input-border-color;
     background-image: none;
     background-color: $input-bg;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
 
     .select2-search-choice {
-      @extend .label;
-      @extend .label-info;
+      @extend .badge;
+      @extend .badge-info;
 
       box-shadow: none;
       border: none;
@@ -121,7 +126,7 @@
   &.select2-container-active {
     .select2-choices {
       box-shadow: none;
-      border-color: lighten($brand-success, 20);
+      border-color: lighten($success, 20);
     }
   }
 }

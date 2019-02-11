@@ -6,23 +6,43 @@
     <% filters.each do |filter| %>
       <% labels = filter[:labels] || filter[:conds].map {|m,c| [m,m]} %>
       <% next if labels.empty? %>
-      <div class="navigation" data-hook="navigation">
-        <h4 class="filter-title"> <%= filter[:name] %> </h4>
+      <div 
+        class="navigation mt-4"
+        data-hook="navigation"
+        aria-labelledby="products_search_wrapper"
+        role="group">
+
+        <h4 class="filter-title mt-0 h5" id="products_search_wrapper">
+          <%= filter[:name] %>
+        </h4>
+
         <ul class="list-group">
           <% labels.each do |nm,val| %>
             <% label = "#{filter[:name]}_#{nm}".gsub(/\s+/,'_') %>
             <li class="list-group-item">
-              <input type="checkbox"
-                     id="<%= label %>"
-                     name="search[<%= filter[:scope].to_s %>][]"
-                     value="<%= val %>"
-                     <%= params[:search].present? && params[:search][filter[:scope]] && params[:search][filter[:scope]].include?(val.to_s) ? "checked" : "" %> />
-              <label class="nowrap" for="<%= label %>"> <%= nm %> </label>
+              <div class="form-check">
+                <input
+                  aria-labelledby="products_search_wrapper"
+                  type="checkbox"
+                  class="form-check-input"
+                  id="<%= label %>"
+                  name="search[<%= filter[:scope].to_s %>][]"
+                  value="<%= val %>"
+                  <%= params[:search].present? &&
+                    params[:search][filter[:scope]] &&
+                    params[:search][filter[:scope]].include?(val.to_s) ?
+                      "checked" :
+                      "" %> />
+                <label class="nowrap form-check-label" for="<%= label %>">
+                  <%= nm %>
+                </label>
+              </div>
             </li>
           <% end %>
         </ul>
       </div>
     <% end %>
-    <%= submit_tag Spree.t(:search), name: nil, class: 'btn btn-primary' %>
+
+    <%= submit_tag Spree.t(:search), name: nil, class: 'mt-4 btn btn-primary' %>
   <% end %>
 <% end %>

@@ -15,7 +15,7 @@
     <%= f.text_field :description, class: 'form-control' %>
   <% end %>
 
-  <%= f.field_container :is_default, class: ['checkbox'] do %>
+  <%= f.field_container :is_default, class: ['form-group checkbox'] do %>
     <%= f.label :is_default do %>
       <%= f.check_box :is_default %>
       <%= Spree.t(:default) %>

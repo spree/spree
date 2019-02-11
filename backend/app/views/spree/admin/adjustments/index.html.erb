@@ -9,7 +9,7 @@
 <% end %>
 
 <% if @adjustments.present? %>
-  <div class="panel panel-default">
+  <div class="card mb-3">
     <%= render partial: 'adjustments_table' %>
   </div>
 <% else %>
@@ -19,11 +19,13 @@
 <% end %>
 
 <% if @order.can_add_coupon? %>
-  <div class="well" data-hook="adjustments_new_coupon_code">
-    <div class="form-group">
-      <%= text_field_tag "coupon_code", "", placeholder: Spree.t(:coupon_code), class: "form-control" %>
+  <div class="card bg-light mb-3" data-hook="adjustments_new_coupon_code">
+    <div class="card-body">
+      <div class="form-group">
+        <%= text_field_tag "coupon_code", "", placeholder: Spree.t(:coupon_code), class: "form-control" %>
+      </div>
+      <%= button Spree.t(:add_coupon_code), 'plus', 'submit', id: "add_coupon_code" %>
     </div>
-    <%= button Spree.t(:add_coupon_code), 'plus', 'submit', id: "add_coupon_code" %>
   </div>
 <% end %>
 
