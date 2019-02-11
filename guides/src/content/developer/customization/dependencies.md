@@ -1,5 +1,4 @@
 ---
-title: Using Dependendencies system
 title: Dependendencies system
 section: customization
 order: 3
@@ -9,7 +8,7 @@ order: 3
 
 ## Overview
 
-Dependendencies is a a new way to customize Spree. With Dependencies you can easily replace parts of Spree internals with your custom classes. You can replace Services, Abilities and Serializers. More will come in the future.
+Dependendencies is a a new way to customize Spree. With Dependencies you can easily replace parts of Spree internals with your custom classes. You can replace [Services](https://github.com/spree/spree/tree/master/core/app/services/spree), Abilities and [Serializers](https://github.com/spree/spree/tree/master/api/app/serializers/spree/v2). More will come in the future.
 
 <alert kind="warning">
   Dependencies are available in [Spree 3.7](/release_notes/3_7_0.html) and later.
@@ -33,6 +32,10 @@ Create a `app/controllers/spree/api/v2/storefront/cart_controller_decorator.rb`
   Spree::Api::V2::Storefront::CartController.prepend MyCartControllerDecorator
 ```
 
+This will change the serializer in this API endpoint to `MyNewAwesomeCartSerializer` and also it will swap the default `add_item_service` to `MyNewAwesomeAddItemToCart`.
+
+Different API endpoints can have different dependency injection points. You can review their [source code](https://github.com/spree/spree/tree/master/api/app/controllers/spree/api/v2) to see what you can configure.
+
 ## API level customization
 
 Storefront and Platform APIs have separate Dependencies injection points so you can easily customize one without touching the other.
@@ -47,7 +50,7 @@ Spree::Api::Dependencies[:storefront_cart_add_item_service] = 'MyNewAwesomeAddIt
 This will swap the default Cart serializer and Add Item to Cart service for your custom ones within all Storefront API endpoints that uses those classes.
 
 <alert kind="warning">
-  Values set in the initializer has to be strings, eg. `MyNewAwesomeAddItemToCart`
+  Values set in the initializer has to be strings, eg. `'MyNewAwesomeAddItemToCart'`
 </alert>
 
 ## Application (global) customization
@@ -76,7 +79,7 @@ Spree::Api::Dependencies[:storefront_cart_add_item_service] = 'AnotherAddItemToC
 The second line will have precedence over the first one, and the Storefront API will use `AnotherAddItemToCart` and the rest of the application will use `MyNewAwesomeAddItemToCart`
 
 <alert kind="warning">
-  Values set in the initializer has to be strings, eg. `MyNewAwesomeAddItemToCart`
+  Values set in the initializer has to be strings, eg. `'MyNewAwesomeAddItemToCart'`
 </alert>
 
 ## Default values
