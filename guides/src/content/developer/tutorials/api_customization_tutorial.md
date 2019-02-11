@@ -1,7 +1,13 @@
 ---
-title: REST API Customization
+title: REST API v1 Customization
 section: tutorial
 ---
+
+# Legacy REST API v1 Customization
+
+<alert kind="warning">
+  For API v2 customization please refer [Extend the API v2 page](/api/v2/extend-the-api)
+</alert>
 
 ## Introduction
 
@@ -9,7 +15,7 @@ In this tutorial we are going to learn how we can customize the **[REST API](../
 
 ## Adding Custom Endpoints
 
-Similarly to [Adding a Controller Action](extensions_tutorial.md#adding-a-controller-action-to-homecontroller) of [Extensions tutorial](extensions_tutorial), you can create a new controller class with an action that emits a json response from a [Rabl](https://github.com/nesquena/rabl) view.
+Similarly to [Adding a Controller Action](extensions_tutorial.html#adding-a-controller-action-to-homecontroller) of [Extensions tutorial](extensions_tutorial), you can create a new controller class with an action that emits a json response from a [Rabl](https://github.com/nesquena/rabl) view.
 
 
 ### Creating the controller and action
@@ -17,7 +23,7 @@ Similarly to [Adding a Controller Action](extensions_tutorial.md#adding-a-contro
 Let's create a new custom endpoint to `api/v1/sales`. For this, make sure you are in the `spree_simple_sales` root directory and run the following command to create the directory structure for our new controller api:
 
 ```bash
-$ mkdir -p app/controllers/spree/api/v1
+mkdir -p app/controllers/spree/api/v1
 ```
 
 Next, we will create the new controller `Spree::Api::V1:SalesController`, that inherit from `Spree::Api::BaseController` class.
@@ -27,26 +33,26 @@ In the directory we just created add a new file called `sales_controller.rb` wit
 
 ```ruby
 module Spree
-    module Api
-        module V1
-            class SalesController < Spree::Api::BaseController
-                def index
-                    @products = Spree::Product.joins(:variants_including_master).where('spree_variants.sale_price is not null').distinct
-                    
-                    expires_in 15.minutes, public: true
-                    
-                    headers['Surrogate-Control'] = "max-age=#{15.minutes}"
-                    respond_with(@products)
-                end
-            end
+  module Api
+    module V1
+      class SalesController < Spree::Api::BaseController
+        def index
+          @products = Spree::Product.joins(:variants_including_master).where('spree_variants.sale_price is not null').distinct
+
+          expires_in 15.minutes, public: true
+
+          headers['Surrogate-Control'] = "max-age=#{15.minutes}"
+          respond_with(@products)
         end
+      end
     end
+  end
 end
 ```
 
-***
-Note that distinct of `Spree::HomeController` from the previous tutorial, we are extending from `Spree::Api` module now
-***
+<alert kind="note">
+  Note that distinct of `Spree::HomeController` from the previous tutorial, we are extending from `Spree::Api` module now
+</alert>
 
 The difference from `Spree::HomeController.home` action is the 3 last extra lines, that perform:
 
@@ -59,7 +65,6 @@ We also need to add a route to this endpoint/action in our `config/routes.rb` fi
 
 ```ruby
 Spree::Core::Engine.add_routes do
-
   # The route added in previous tutorial
   get "/sale" => "home#sale"
 
@@ -69,13 +74,12 @@ Spree::Core::Engine.add_routes do
       resources :sales, only: [:index]
     end
   end
-
 end
 ```
 
-***
-The `only:` symbol defines which actions of the controller are allowed to be endpoints. Whether you don't define this, Spree will try execute a `SalesController.show()` action method, that in this case, not exists!
-***
+<alert kind="note">
+  The `only:` symbol defines which actions of the controller are allowed to be endpoints. Whether you don't define this, Spree will try execute a `SalesController.show()` action method, that in this case, not exists!
+</alert>
 
 ### Creating a View
 
@@ -85,7 +89,7 @@ First, create the required views api directory with the following command:
 
 ```bash
 # The view needs be [controller]/[action].[api_version].rabl
-$ mkdir -p app/views/spree/api/v1/sales
+mkdir -p app/views/spree/api/v1/sales
 ```
 
 Next, create the file `app/views/spree/api/v1/sales/index.v1.rabl` and add the following content to it:
@@ -105,9 +109,9 @@ Like described in [Testing Our Decorator](extensions_tutorial.md#testing-our-dec
 
 ```ruby
 group :test do
-    gem 'rails-controller-testing'
-    gem 'rspec-rails', '~> 3.7.2'
-    gem 'rspec-activemodel-mocks'
+  gem 'rails-controller-testing'
+  gem 'rspec-rails', '~> 3.8.0'
+  gem 'rspec-activemodel-mocks'
 end
 ```
 > **PS:** The `rspec-activemodel-mocks` is need to use `stub_*` methods (e.g `stub_model` called by `stub_authentication!`)
@@ -119,7 +123,7 @@ end
 4. Replicate the extension's controller directory structure in our spec directory by running the following command
 
 ```bash
-$ mkdir -p spec/controllers/spree/api/v1
+mkdir -p spec/controllers/spree/api/v1
 ```
 
 Now, let's create a new file in this directory called `sales_controller_spec.rb` and add the following test to it:
@@ -128,26 +132,25 @@ Now, let's create a new file in this directory called `sales_controller_spec.rb`
 require 'spec_helper'
 
 module Spree
-    describe Api::V1::SalesController, type: :controller do
-        
-        render_views
+  describe Api::V1::SalesController, type: :controller do
+    render_views
 
-        # 8.00 it's a example value. Use any other value that your wish!
-        let!(:product) { create(:product, sale_price: 8.00) }
-        let!(:other_product) { create(:product) }
-        let!(:user) { create(:user) }
+    # 8.00 it's a example value. Use any other value that your wish!
+    let!(:product) { create(:product, sale_price: 8.00) }
+    let!(:other_product) { create(:product) }
+    let!(:user) { create(:user) }
 
-        before do
-            # Mock API autentication using a "spree_api_key"
-            stub_authentication!
-        end
-
-        it 'retrieves a list of products in sale' do
-            api_get :index
-            expect(json_response.size).to eq(1)
-            expect(json_response.first["sale_price"].to_f).to eq(product.sale_price)
-        end
+    before do
+      # Mock API autentication using a "spree_api_key"
+      stub_authentication!
     end
+
+    it 'retrieves a list of products in sale' do
+      api_get :index
+      expect(json_response.size).to eq(1)
+      expect(json_response.first["sale_price"].to_f).to eq(product.sale_price)
+    end
+  end
 end
 ```
 
@@ -183,6 +186,6 @@ api_key = user.spree_api_key # Copy the api_key value
 
 Now, when we head to `http://localhost:3000/api/v1/sales`, passing the header `X-Spree-Token: [YOUR_COPIED_API_KEY]`, (or add a `?token=[YOUR_COPIED_API_KEY]`  to the url) into your browser or any REST client, we should see the json result with all products with a sale price. 
 
-***
-Note that you will likely need to restart our example Spree application (created in the [Getting Started](getting_started_tutorial) tutorial).
-***
+<alert kind="note">
+  Note that you will likely need to restart our example Spree application (created in the [Getting Started](getting_started_tutorial) tutorial).
+</alert>
