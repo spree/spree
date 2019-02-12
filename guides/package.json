@@ -1,8 +1,8 @@
 {
   "name": "spree-guides",
-  "description": "Spree Documentation",
-  "version": "3.7.0",
-  "author": "Alexey Topolyanskiy <devilcoders@alexify.me>",
+  "description": "Spree Guides",
+  "version": "2.0.0",
+  "author": "Spark Solutions <we@sparksolutions.co>",
   "dependencies": {
     "@emotion/core": "^10.0.2",
     "emotion": "^10.0.0",
@@ -78,6 +78,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/gatsbyjs/gatsby-starter-default"
+    "url": "https://github.com/spree/spree"
   }
 }
