@@ -1,0 +1,25 @@
+<!-- Modal -->
+<div class="modal fade" id="configModal" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"><i class="glyphicon glyphicon-cog"> </i> <%= Spree.t(:configurations) %></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <%= render(partial: "spree/admin/shared/sub_menu/configuration") %>
+      </div>
+      <% if can?(:admin, current_store) && Spree::Config[:admin_show_version] %>
+        <div class="modal-footer">
+          <div class="spree-version">
+            <%= Spree.version %>
+          </div>
+        </div>
+      <% end %>
+      </div>
+    </div>
+  </div>
+</div>

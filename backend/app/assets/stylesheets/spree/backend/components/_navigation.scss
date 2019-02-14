@@ -1,6 +1,11 @@
-.navbar-toggler {
-  border: none;
-  right: 0;
-  top: 0;
-  cursor: pointer;
+
+.nav-tabs > li.active > a,
+.nav-tabs > li.active > a:hover,
+.nav-tabs > li.active > a:focus {
+  background: linear-gradient(to bottom, #ffffff 0%,#ffffff 65%, $ui-background-color 100%);
+  border: 1px solid $input-border;
+  border-bottom-color: $ui-background-color;
+  border-top-color: $random-accent;
+  border-top-width: 3px;
+  padding-top: 8px
 }

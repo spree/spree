@@ -1,3 +1,9 @@
+// Blue
+.badge-info{
+    color: white !important;
+}
+
+
 // Green
 .badge-completed,
 .badge-complete,
@@ -5,13 +11,13 @@
 .badge-considered_safe,
 .badge-paid,
 .badge-shipped,
-.badge-ready,
 .badge-active,
 .badge-success,
 .badge-sold,
 .badge-open,
 .badge-authorized {
   @include badge-variant($success);
+    color: white !important;
 }
 
 // Red
@@ -19,8 +25,11 @@
 .badge-considered_risky,
 .badge-error,
 .badge-invalid,
+.badge-canceled,
+.badge-void,
 .badge-closed {
   @include badge-variant($danger);
+    color: white !important;
 }
 
 // Orange
@@ -36,11 +45,11 @@
 .badge-address,
 .badge-delivery,
 .badge-payment,
+.badge-ready,
 .badge-confirm,
-.badge-canceled,
-.badge-void,
 .badge-inactive,
 .badge-notice,
 .badge-partial {
   @include badge-variant($warning);
+  color: white !important;
 }

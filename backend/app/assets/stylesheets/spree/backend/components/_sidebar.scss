@@ -1,85 +1,149 @@
-.sidebar {
-  overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
-  background-color: $gray-100;
-  border-right: 1px solid $gray-200;
-  margin-top: 50px;
-  height: calc(100% - 50px);
-  z-index: 999;
+#main-sidebar {
+  position: fixed;
+  top: 0;
+  width: $sidebar-width;
+  bottom: 0;
+  left: 0;
+  padding: 0;
+  padding-bottom: $header-footer-height;
+  z-index: $zindex-fixed + 1 ;
+  display: block;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+  background: $sidebar-background-color;
+  border-right: 1px solid $sidebar-border-color;
 
-  a.sidebar-submenu-item:hover {
-    text-decoration: none;
-    background-color: $gray-200;
-    cursor: pointer
-  }
+    a {
+    width: 90px;
+    }
 
-  ul.nav-sidebar {
-    > li {
-      > a {
-        color: $gray-700;
+      ul.nav {
+        > li {
 
-        &:hover,
-        &[aria-expanded="true"] {
-          text-decoration: none;
-          background-color: $gray-200;
+          > a {
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 15px 0 15px 15px;
+            color: $sidebar-text-color;
+
+            .glyphicon {
+              font-size: 18px;
+              vertical-align: bottom;
+              padding-right: 5px;
+            }
+
+            > span.icon {
+              color: $sidebar-icon-color;
+            }
+
+            &:hover {
+              color: $sidebar-text-hover-color;
+              background: rgba(255, 255, 255, 0);
+            }
         }
 
-        .icon-chevron-left,
-        .icon-chevron-down {
-          font-size: .5rem;
-          line-height: 2;
-          right: 1rem;
-          top: 50%;
-          margin-top: -.5rem;
+        &.selected {
+          border-left: 4px solid $sidebar-active-accent-color;
+          background: $nav-item-selected-color;
+
+            a {
+              padding-left: 11px;
+          > span.icon {
+            color: $sidebar-icon-active-color;
+            }
+          }
+        }
+
+        &.active > a > span.icon {
+          color: $sidebar-icon-active-color;
         }
       }
+
+      ul.nav.nav-pills {
+        background: $subnav-background-color;
+        li {
+          a {
+            padding: 7px 0  7px 50px;
+            font-weight: 400;
+            text-transform: capitalize;
+            color: $sidebar-text-color;
+
+          &:hover {
+            color: $sidebar-text-hover-color;
+          }
+          }
+
+          &.selected {
+            a {
+              padding-left: 46px;
+              color:   $sidebar-active-color !important;
+            }
+          }
+        }
+
     }
-  }
-}
 
-#wrapper.sidebar-minimized #main-sidebar {
-  width: 50px;
-  overflow: visible;
-
-  li {
-    &:hover, &.menu-active {
-      background-color: $gray-100;
-    }
   }
 
-  .icon-link, [data-toggle="collapse"] {
+  #menu-footer{
+    width: $sidebar-width;
     text-align: center;
-
-    .icon {
+    position: fixed;
+    bottom: 0;
+    left: $grid-gutter-width / 2;
+    height: $header-footer-height;
+    background: $sidebar-background-color;
+    z-index: 1010;
+    ul {
+      margin: 0;
       padding: 0;
-    }
+      left:0;
+      &:hover {
+        background: darken($sidebar-background-color, 2);
+      }
+      &:focus {
+        background: $sidebar-background-color;
+      }
+      &:active {
+        background: $sidebar-background-color;
+      }
 
-    .text, .icon-chevron-left, .icon-chevron-down {
+    span.text {
       display: none;
     }
+    li {
+      font-size: 1.2em;
+      color: $sidebar-text-color;
+      i.glyphicon {
+        padding: 0;
+      }
+      &:hover {
+        i{color:$sidebar-text-hover-color;}
+        background: darken($sidebar-background-color, 2);
+
+      }
+      &:focus {
+        background: $sidebar-background-color;
+      }
+      &:active {
+        background: $sidebar-background-color;
+      }
+    }
+    }
   }
 
-  ul.collapse.in {
-    display: none;
-  }
+}
 
-  .submenu-active {
-    display: block !important;
-    height: auto !important;
-    position: fixed;
-    top: 50px;
-    bottom: 0;
-    left: 0;
-    padding: 0;
-    z-index: 1000;
-    display: block;
-    overflow-x: hidden;
-    overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
-    left: 50px;
-    min-width: 180px;
-    visibility: visible;
-    background-color: $gray-100;
-    border-top: none;
-    border-right: 1px solid $gray-200;
-    padding-top: 5px;
-  }
+
+ul#sidebar-configuration {
+          list-style: none;
+          margin: 0;
+          padding: 0;
+          li {
+            padding: 10px;
+            a {}
+          }
 }

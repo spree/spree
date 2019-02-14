@@ -2,7 +2,15 @@
   display: none;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
-  margin-top: 20px;
+  margin-top: 10px;
+}
+
+.filter-wrap {
+  margin-bottom: $grid-gutter-width;
+}
+
+div.index-pagination-row {
+  margin: $grid-gutter-width 0;
 }
 
 .index-filter-button {

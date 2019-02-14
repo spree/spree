@@ -1,6 +1,14 @@
 table.table {
   font-size: $font-size-sm;
 
+  .badge {
+    display: block;
+    padding: .5em;
+  }
+  .btn-sm {
+    margin: 2px;
+  }
+
   thead {
     th {
       text-transform: uppercase;
@@ -20,6 +28,7 @@ table.table {
 
   tbody {
     tr {
+      background: rgba(255, 255, 255, 0.90);
       td {
         vertical-align: middle;
 

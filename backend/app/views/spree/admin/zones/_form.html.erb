@@ -27,14 +27,14 @@
         <div data-hook="type" class="form-group">
           <strong><%= Spree.t(:type) %></strong>
           <div class="radio my-2">
+            <%= zone_form.radio_button('kind', 'country', { id: 'country_based' }) %>
             <%= label_tag :country_based do %>
-              <%= zone_form.radio_button('kind', 'country', { id: 'country_based' }) %>
               <%= Spree.t(:country_based) %>
             <% end %>
           </div>
           <div class="radio my-2">
+            <%= zone_form.radio_button('kind', 'state', { id: 'state_based' }) %>
             <%= label_tag :state_based do %>
-              <%= zone_form.radio_button('kind', 'state', { id: 'state_based' }) %>
               <%= Spree.t(:state_based) %>
             <% end %>
           </div>

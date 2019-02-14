@@ -4,14 +4,14 @@
       <% if previous_cards.any? %>
         <% previous_cards.each do |card| %>
           <li>
+            <%= radio_button_tag :card, card.id, card == previous_cards.first %> <%= card.display_number %>
             <label>
-              <%= radio_button_tag :card, card.id, card == previous_cards.first %> <%= card.display_number %>
             </label>
           </li>
         <% end %>
         <li>
+          <%= radio_button_tag :card, 'new', false, { id: "card_new#{payment_method.id}" } %> <%= Spree.t(:use_new_cc) %>
           <label>
-            <%= radio_button_tag :card, 'new', false, { id: "card_new#{payment_method.id}" } %> <%= Spree.t(:use_new_cc) %>
           </label>
         </li>
       <% end %>

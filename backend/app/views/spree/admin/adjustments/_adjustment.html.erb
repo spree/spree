@@ -4,7 +4,7 @@
 %>
 
 <tr id="<%= spree_dom_id(adjustment) %>" class="<%= adjustment.eligible? ? 'eligible' : 'ineligible' %>" data-hook="adjustment_row">
-  <td>
+  <td colspan="6">
     <%= display_adjustable(adjustment.adjustable) %>
   </td>
   <td>

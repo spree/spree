@@ -1,9 +1,46 @@
-.row {
-  padding: 0 0 15px 0;
+a {
+  text-decoration: none !important;
 }
 
 .is-hidden {
   display: none;
+}
+
+
+input[type=number], input[type=text], input[type=password], input[type=email], input[type=tel] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  outline: none;
+}
+
+[role="button"],
+input,
+label,
+select,
+textarea,
+a,
+button {
+  touch-action: manipulation;
+  -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: 100%;
+}
+
+input, textarea {
+    font-size: initial;
+
+}
+
+img {
+  max-width: 100%;
+}
+
+td.image img {
+  max-width: 50px;
+}
+
+a:focus {
+  outline: 0;
 }
 
 // No-margin and no-padding helper classes
@@ -14,4 +51,15 @@
 
 .alert-error {
   @extend .alert-danger;
+}
+
+.card {
+  // some weird overflow issue with select2 inside card.
+  word-wrap: normal;
+}
+
+
+// hide outline on focus for elements which are given focus by JS
+[tabindex='-1']:focus {
+  outline: none;
 }

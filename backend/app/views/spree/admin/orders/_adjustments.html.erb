@@ -9,14 +9,14 @@
     <table class="table table-bordered">
       <thead>
         <tr>
-          <th><%= Spree.t('name')%></th>
+          <th colspan="6"><%= Spree.t('name')%></th>
           <th><%= Spree.t('amount')%></th>
         </tr>
       </thead>
       <tbody id="order-charges" data-hook="order_details_adjustments">
         <% adjustments.eligible.group_by(&:label).each do |label, adjustments| %>
           <tr class="total">
-            <td>
+            <td colspan="6">
               <strong><%= label %>:</strong>
             </td>
             <td class="total">

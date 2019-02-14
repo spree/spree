@@ -1,43 +1,70 @@
 <nav>
+  <div class="row">
+    <div class="col d-none d-lg-block ">
+      <%= link_to(
+    image_tag(Spree::Config[:admin_interface_logo], id: ''),
+    spree.admin_path,
+    class: "d-block py-2 my-auto ml-3"
+  ) %>
+    </div>
+
+    <div class="col d-block d-lg-none text-right p-2 pr-3">
+      <button
+        class="close-menu navbar-toggle btn btn-outline-primary"
+        aria-expanded="false">
+        <%= Spree.t(:close) %>
+      </button>
+    </div>
+
+  </div>
   <% if can? :admin, Spree::Order %>
-    <ul class="nav nav-sidebar border-bottom">
+    <ul class="nav nav-sidebar">
       <%= tab *Spree::BackendConfiguration::ORDER_TABS, icon: 'shopping-cart' %>
     </ul>
   <% end %>
 
   <% if can?(:admin, Spree::ReturnAuthorization) || can?(:admin, Spree::CustomerReturn) %>
-    <ul class="nav nav-sidebar border-bottom">
+    <ul class="nav nav-sidebar">
       <%= main_menu_tree Spree.t(:returns), icon: "transfer", sub_menu: "returns", url: "#sidebar-returns" %>
     </ul>
   <% end %>
 
   <% if can? :admin, Spree::Product %>
-    <ul class="nav nav-sidebar border-bottom">
+    <ul class="nav nav-sidebar">
       <%= main_menu_tree Spree.t(:products), icon: "th-large", sub_menu: "product", url: "#sidebar-product" %>
     </ul>
   <% end %>
 
   <% if can? :admin, Spree::Admin::ReportsController %>
-    <ul class="nav nav-sidebar border-bottom">
+    <ul class="nav nav-sidebar">
       <%= tab *Spree::BackendConfiguration::REPORT_TABS, icon: 'file'  %>
     </ul>
   <% end %>
 
   <% if can? :admin, Spree::Promotion %>
-    <ul class="nav nav-sidebar border-bottom">
+    <ul class="nav nav-sidebar">
       <%= main_menu_tree Spree.t(:promotions), icon: "gift", sub_menu: "promotion", url: "#sidebar-promotions" %>
     </ul>
   <% end %>
 
   <% if Spree.user_class && can?(:admin, Spree.user_class) %>
-    <ul class="nav nav-sidebar border-bottom">
+    <ul class="nav nav-sidebar">
       <%= tab *Spree::BackendConfiguration::USER_TABS, url: spree.admin_users_path, icon: 'user' %>
     </ul>
   <% end %>
 
-  <% if can? :admin, current_store %>
-    <ul class="nav nav-sidebar border-bottom">
-      <%= main_menu_tree Spree.t(:configurations), icon: "wrench", sub_menu: "configuration", url: "#sidebar-configuration" %>
+  <div id="menu-footer" class="row">
+    <% if can? :admin, current_store %>
+      <ul class="nav nav-sidebar col-6" id="configurations-menu" data-toggle="modal" data-target="#configModal">
+        <li class="my-auto mx-auto">
+          <i class="glyphicon glyphicon-cog"></i>
+        </li>
+      </ul>
+    <% end %>
+    <ul class="nav nav-sidebar col-6" data-toggle="modal">
+      <li class="my-auto mx-auto" id="account-email-menu" data-toggle="modal" data-target="#userNavModal">
+          <i class="glyphicon glyphicon-user"></i>
+      </li>
     </ul>
-  <% end %>
+  </div>
 </nav>

@@ -21,10 +21,11 @@
       <thead>
         <tr>
           <th colspan="2"><%= Spree.t(:item_description) %></th>
-          <th width="15%" class="text-center"><%= Spree.t(:price) %></th>
-          <th width="15%" class="text-center"><%= Spree.t(:quantity) %></th>
-          <th width="15%" class="text-center"><%= Spree.t(:total) %></th>
-          <th class="orders-actions actions text-center" data-hook="admin_order_form_line_items_header_actions"></th>
+          <th><%= Spree.t(:price) %></th>
+          <th><%= Spree.t(:availability) %></th>
+          <th><%= Spree.t(:quantity) %></th>
+          <th><%= Spree.t(:total) %></th>
+          <th></th>
         </tr>
       </thead>
 
@@ -33,13 +34,11 @@
 
         <% unless shipment.shipped? %>
           <tr class="edit-method is-hidden total">
-            <td colspan="5">
-              <div class="field alpha five columns">
+            <td colspan="6">
                 <%= label_tag 'selected_shipping_rate_id', Spree.t(:shipping_method) %>
                 <%= select_tag :selected_shipping_rate_id,
                       options_for_select(shipment.shipping_rates.map {|sr| ["#{sr.name} #{sr.display_price}", sr.id] }, shipment.selected_shipping_rate_id),
                       { class: 'select2', data: {'shipment-number' => shipment.number } } %>
-              </div>
             </td>
             <td class="actions text-center">
               <% if can? :update, shipment %>
@@ -55,11 +54,11 @@
               <td colspan="4">
                 <strong><%= rate.name %></strong>
               </td>
-              <td class="total text-center">
+              <td colspan="2" class="total text-center">
                 <%= shipment.display_cost %>
               </td>
             <% else %>
-              <td colspan='5'><%= Spree.t(:no_shipping_method_selected) %></td>
+              <td><%= Spree.t(:no_shipping_method_selected) %></td>
             <% end %>
 
             <td class="actions text-center">
@@ -71,7 +70,7 @@
 
 
         <tr class="edit-tracking is-hidden total">
-          <td colspan="5">
+          <td colspan="6">
             <label><%= Spree.t(:tracking_number) %>:</label>
             <%= text_field_tag :tracking, shipment.tracking, class: "form-control" %>
           </td>
@@ -85,14 +84,14 @@
 
         <% if order.special_instructions.present? %>
           <tr class='special_instructions'>
-            <td colspan="5">
+            <td colspan="6">
               <strong><%= Spree.t(:special_instructions) %>:&nbsp;</strong><%= order.special_instructions %>
             </td>
           </tr>
         <% end %>
 
         <tr class="show-tracking total">
-          <td colspan="5" class="tracking-value">
+          <td colspan="6" class="tracking-value">
             <% if shipment.tracking.present? %>
               <strong><%= Spree.t(:tracking) %>:</strong> <%= link_to_tracking(shipment, target: '_blank') %>
             <% else %>

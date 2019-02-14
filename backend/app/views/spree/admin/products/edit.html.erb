@@ -2,14 +2,10 @@
   <% if frontend_available? %>
     <%= button_link_to Spree.t(:preview_product), product_url(@product), { class: "btn-outline-secondary", icon: 'eye-open', id: 'admin_preview_product', target: :_blank } %>
   <% end %>
-  <% if can?(:create, Spree::Product) %>
-    <%= button_link_to Spree.t(:new_product), new_object_url, { class: "btn-success", icon: 'add', id: 'admin_new_product' } %>
-  <% end %>
 <% end %>
 
 <%= render partial: 'spree/admin/shared/product_tabs', locals: {current: :details} %>
 <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @product } %>
-
 <%= form_for [:admin, @product], method: :put, html: { multipart: true } do |f| %>
   <fieldset>
     <%= render partial: 'form', locals: { f: f } %>

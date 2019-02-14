@@ -42,13 +42,13 @@ module Spree
                    options[:icon],
                    titleized_label,
                    destination_url,
-                   class: 'w-100 p-3 d-flex align-items-center'
+                   class: 'w-100 d-flex align-items-center'
                  )
                else
                  link_to(
                    titleized_label,
                    destination_url,
-                   class: "sidebar-submenu-item w-100 py-1 px-3 d-block #{'text-success' if selected}"
+                   class: "sidebar-submenu-item w-100 d-block #{'text-success' if selected}"
                  )
                end
 
@@ -60,10 +60,9 @@ module Spree
 
       # Single main menu item
       def main_menu_item(text, url: nil, icon: nil)
-        link_to url, 'data-toggle': 'collapse', class: 'd-flex w-100 p-3 position-relative align-items-center' do
+        link_to url, 'data-toggle': 'collapse', class: 'd-flex w-100 position-relative align-items-center drop-down' do
           content_tag(:span, nil, class: "icon icon-#{icon} mr-2") +
-            content_tag(:span, " #{text}", class: 'text') +
-            content_tag(:span, nil, class: 'icon icon-chevron-left position-absolute')
+            content_tag(:span, " #{text}", class: 'text')
         end
       end
 
@@ -203,7 +202,7 @@ module Spree
 
           html_options.delete('data-update') unless html_options['data-update']
 
-          html_options[:class] = html_options[:class] ? "btn #{html_options[:class]}" : 'btn btn-outline-secondary'
+          html_options[:class] = html_options[:class] ? "btn #{html_options[:class]}" : 'btn btn-primary'
 
           if html_options[:icon]
             icon = content_tag(:span, '', class: "icon icon-#{html_options[:icon]}")
@@ -226,25 +225,6 @@ module Spree
         end
       end
 
-      def main_part_classes
-        if cookies['sidebar-minimized'] == 'true'
-          'col-12 sidebar-collapsed'
-        else
-          'col-9 offset-3 col-md-10 offset-md-2'
-        end
-      end
-
-      def main_sidebar_classes
-        if cookies['sidebar-minimized'] == 'true'
-          'col-3 col-md-2 sidebar'
-        else
-          'p-0 col-3 col-md-2 sidebar'
-        end
-      end
-
-      def wrapper_classes
-        'sidebar-minimized' if cookies['sidebar-minimized'] == 'true'
-      end
     end
   end
 end

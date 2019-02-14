@@ -4,7 +4,7 @@
       <%= mini_image(item.variant) %>
     </td>
 
-    <td class="item-name">
+    <td style="width: 100%;" class="item-name">
       <%= item.variant.product.name %>
       <br />
       <%= "(#{item.variant.options_text})" if item.variant.options_text.present? %>
@@ -22,8 +22,8 @@
     </td>
 
     <% unless shipment.shipped? %>
-      <td class="item-qty-edit is-hidden">
-        <%= number_field_tag :quantity, item.quantity, min: 0, class: "line_item_quantity form-control", size: 5 %>
+      <td class="item-qty-edit">
+        <%= number_field_tag :quantity, item.quantity, min: 0, class: "line_item_quantity form-control", size: 3 %>
       </td>
     <% end %>
 
@@ -31,7 +31,7 @@
       <%= line_item_shipment_price(item.line_item, item.quantity) %>
     </td>
 
-    <td class="cart-item-delete actions actions-3 text-center" data-hook="cart_item_delete">
+    <td class="cart-item-delete text-center" data-hook="cart_item_delete">
       <% if((!shipment.shipped?) && can?(:update, item.line_item)) %>
         <%= link_to_with_icon 'pencil', Spree.t('actions.edit'), "#", class: 'edit-item btn btn-outline-secondary btn-sm', title: Spree.t('actions.edit'), no_text: true %>
         <%= link_to_with_icon 'cancel', Spree.t('actions.cancel'), "#", class: 'cancel-item  btn btn-primary btn-sm', data: { action: 'cancel' }, title: Spree.t('actions.cancel'), style: 'display: none', no_text: true %>

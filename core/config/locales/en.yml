@@ -890,6 +890,7 @@ en:
     meta_keywords: Meta Keywords
     meta_title: Meta Title
     metadata: Metadata
+    menu: Menu
     mutable: Mutable
     minimal_amount: Minimal Amount
     missing_return_authorization: ! 'Missing Return Authorization for %{item_name}.'

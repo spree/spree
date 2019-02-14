@@ -1,5 +1,12 @@
 <% if content_for?(:sidebar) %>
   <aside id="sidebar" class="main-right-sidebar" data-hook>
+    <div class="col flex-column d-lg-none text-right py-2">
+      <button
+        class="close-menu navbar-toggle btn btn-outline-primary"
+        aria-expanded="false">
+        <%= Spree.t(:close) %>
+      </button>
+    </div>
     <%= yield :sidebar %>
   </aside>
 <% end %>

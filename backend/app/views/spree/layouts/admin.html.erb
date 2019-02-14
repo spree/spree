@@ -4,52 +4,36 @@
     <%= render partial: 'spree/admin/shared/head' %>
   </head>
 
-  <body class="admin">
-
-    <%#-------------------------------------------------%>
-    <%# Loading progress bars                           %>
-    <%#-------------------------------------------------%>
-    <div id="progress">
-      <div class="alert alert-info alert-progress">
-        <div class="spinner"><%= Spree.t(:loading) %>...</div>
-        <div class="progress-message"><%= Spree.t(:loading) %>...</div>
-      </div>
-    </div>
-
+  <body class="admin" id="admin">
     <%#-------------------------------------------------%>
     <%# Header navbar                                   %>
     <%#-------------------------------------------------%>
     <%= render partial: 'spree/admin/shared/header' %>
 
     <%#-------------------------------------------------%>
+    <%# Sidebar                                         %>
+    <%#-------------------------------------------------%>
+    <aside
+      id="main-sidebar"
+      data-hook="admin_tabs">
+      <%= render partial: 'spree/admin/shared/main_menu' %>
+    </aside>
+
+    <%#-------------------------------------------------%>
     <%# Main content                                    %>
     <%#-------------------------------------------------%>
-    <div id="wrapper" class="container-fluid <%= wrapper_classes %>">
-      <div class="row">
-
-        <%#-------------------------------------------------%>
-        <%# Sidebar                                         %>
-        <%#-------------------------------------------------%>
-        <aside
-          class="<%= main_sidebar_classes %> sidebar position-fixed d-flex justify-content-between flex-column px-0"
-          id="main-sidebar"
-          data-hook="admin_tabs">
-          <%= render partial: 'spree/admin/shared/main_menu' %>
-
-          <%= render partial: 'spree/admin/shared/version' %>
-        </aside>
+    <div id="wrapper" class="container-fluid">
 
         <%#-------------------------------------------------%>
         <%# Content                                         %>
         <%#-------------------------------------------------%>
-        <main class="<%= main_part_classes %> main" id="main-part" role="main">
+        <main class="main row" id="main-part" role="main">
 
           <%#-------------------------------------------------%>
           <%# Content header (page title/actions)             %>
           <%#-------------------------------------------------%>
           <%= render partial: 'spree/admin/shared/content_header' %>
 
-          <div class="row">
             <%#-------------------------------------------------%>
             <%# Alerts                                          %>
             <%#-------------------------------------------------%>
@@ -58,8 +42,8 @@
             <%#-------------------------------------------------%>
             <%# Main content                                    %>
             <%#-------------------------------------------------%>
-            <div class="<%= content_for?(:sidebar) ? 'with-sidebar col-8 col-md-9' : 'col-12'  %>" id="content" data-hook>
-              <%= render partial: 'spree/admin/shared/table_filter' if content_for?(:table_filter)%>
+            <%= render partial: 'spree/admin/shared/table_filter' if content_for?(:table_filter)%>
+            <div class="<%= content_for?(:sidebar) ? 'with-sidebar p-2 col-12 col-lg-9' : 'p-2 col-12'  %>" id="content" data-hook>
               <%= yield %>
             </div>
 
@@ -67,14 +51,24 @@
             <%# Inner aside                                     %>
             <%#-------------------------------------------------%>
             <% if content_for?(:sidebar) %>
-              <div class="col-4 col-md-3">
+              <div class="col-12 col-lg-3" id="dynamic-content-menu">
                 <%= render partial: 'spree/admin/shared/sidebar' %>
               </div>
             <% end %>
-          </div>
 
 
         </main>
+    </div>
+    <%= render partial: 'spree/admin/shared/user_menu_modal' %>
+    <%= render partial: 'spree/admin/shared/config_modal' %>
+
+    <%#-------------------------------------------------%>
+    <%# Loading progress bars                           %>
+    <%#-------------------------------------------------%>
+    <div id="progress">
+      <div class="alert alert-info alert-progress">
+        <div class="spinner"><%= Spree.t(:loading) %>...</div>
+        <div class="progress-message"><%= Spree.t(:loading) %>...</div>
       </div>
     </div>
 

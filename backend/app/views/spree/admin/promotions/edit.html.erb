@@ -1,7 +1,9 @@
+
 <% content_for :page_title do %>
   <%= link_to Spree.t(:promotions), admin_promotions_url %> /
   <%= @promotion.name %>
 <% end %>
+
 
 <%= form_for @promotion, url: object_url, method: :put do |f| %>
   <div class="row">
@@ -10,18 +12,18 @@
       <%= render partial: 'spree/admin/shared/edit_resource_links' %>
     </div>
   </div>
-
 <% end %>
+
 
 <div id="promotion-filters" class="row">
   <div id="rules_container" class="col-12 col-md-6">
-    <div class="card  ">
+    <div class="card">
       <%= render partial: 'rules' %>
     </div>
   </div>
 
   <div id="actions_container" class="col-12 col-md-6">
-    <div class="card  ">
+    <div class="card" style="word-wrap: normal;">
       <%= render partial: 'actions' %>
     </div>
   </div>

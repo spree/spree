@@ -4,9 +4,10 @@ under the spree namespace that do stuff we find helpful.
 Hopefully, this will evolve into a propper class.
 **/
 
-/* global Cookies, AUTH_TOKEN, order_number */
+/* global AUTH_TOKEN, order_number, bodyScrollLock */
 
 jQuery(function ($) {
+
   // Add some tips
   $('.with-tip').tooltip()
 
@@ -16,62 +17,58 @@ jQuery(function ($) {
     $('span.icon', $(this)).toggleClass('icon-chevron-down')
   })
 
-  $('#main-sidebar').find('[data-toggle="collapse"]').on('click', function () {
-    if ($(this).find('.icon-chevron-left').length === 1) {
-      $(this).find('.icon-chevron-left').removeClass('icon-chevron-left').addClass('icon-chevron-down')
-    } else {
-      $(this).find('.icon-chevron-down').removeClass('icon-chevron-down').addClass('icon-chevron-left')
-    }
-  })
-
   // Sidebar nav toggle functionality
-  const sidebar_toggle = $('#sidebar-toggle')
-
-  sidebar_toggle.on('click', function() {
-    const wrapper = $('#wrapper')
-    const main    = $('#main-part')
-    const sidebar = $('#main-sidebar')
-    const version = $('.spree-version')
-    const collapsed = sidebar.find('[aria-expanded="true"]')
-    const collapsedIcons = sidebar.find('.icon-chevron-down')
-
-    wrapper.toggleClass('sidebar-minimized')
-
-    collapsed
-      .attr('aria-expanded', 'false')
-      .next()
-      .removeClass('show')
-
-    collapsedIcons
-      .removeClass('icon-chevron-down')
-      .addClass('icon-chevron-left')
-
-    // these should match `spree/backend/app/helpers/spree/admin/navigation_helper.rb#main_part_classes`
-    main
-      .toggleClass('col-12 sidebar-collapsed')
-      .toggleClass('col-9 offset-3 col-md-10 offset-md-2')
-
-    if (wrapper.hasClass('sidebar-minimized')) {
-      Cookies.set('sidebar-minimized', 'true', { path: '/admin' })
-      version.removeClass('d-md-block')
+  $('#sidebar-toggle').on('click', function () {
+    var targetElement = document.querySelector('#main-sidebar')
+    $('body').removeClass('dynamic-content-menu-opened')
+    $('body').addClass('sidebar-opened')
+    if ($('body').hasClass('sidebar-opened')) {
+      bodyScrollLock.disableBodyScroll(targetElement)
     } else {
-      Cookies.set('sidebar-minimized', 'false', { path: '/admin' })
-      version.addClass('d-md-block')
+      bodyScrollLock.clearAllBodyScrollLocks()
     }
   })
 
-  $('.sidebar-menu-item').mouseover(function () {
-    if ($('#wrapper').hasClass('sidebar-minimized')) {
-      $(this).addClass('menu-active')
-      $(this).find('ul.nav').addClass('submenu-active')
+  // dynamic content toggle functionality
+  $('#toggle-dynamic-content-menu').on('click', function () {
+    $('body').removeClass('sidebar-opened')
+    var targetElement2 = document.querySelector('#sidebar')
+    $('body').toggleClass('dynamic-content-menu-opened')
+    if ($('body').hasClass('dynamic-content-menu-opened')) {
+      bodyScrollLock.disableBodyScroll(targetElement2)
+    } else {
+      bodyScrollLock.clearAllBodyScrollLocks()
     }
   })
-  $('.sidebar-menu-item').mouseout(function () {
-    if ($('#wrapper').hasClass('sidebar-minimized')) {
-      $(this).removeClass('menu-active')
-      $(this).find('ul.nav').removeClass('submenu-active')
+
+  $(window).on('shown.bs.modal', function() {
+      $('body').removeClass('sidebar-opened dynamic-content-menu-opened')
+  });
+
+  $(window).on('hidden.bs.modal', function() {
+    bodyScrollLock.clearAllBodyScrollLocks()
+  });
+
+  // dynamic content toggle functionality
+  $('[data-toggle="modal"]').on('click', function () {
+    var targetElement3 = document.querySelector('#sidebar-configuration')
+    $('body').toggleClass('XXX')
+    if ($('body').hasClass('modal-open')) {
+      bodyScrollLock.disableBodyScroll(targetElement3)
+    } else {
+      bodyScrollLock.clearAllBodyScrollLocks()
     }
   })
+
+  $('.close-menu').on('click', function () {
+    $('body').removeClass('dynamic-content-menu-opened sidebar-opened')
+    bodyScrollLock.clearAllBodyScrollLocks()
+  })
+
+  window.addEventListener('resize', removeLock)
+  function removeLock () {
+    bodyScrollLock.clearAllBodyScrollLocks()
+  }
 
   // TODO: remove this js temp behaviour and fix this decent
   // Temp quick search
@@ -85,16 +82,17 @@ jQuery(function ($) {
   })
 
   // Main menu active item submenu show
-  var active_item = $('#main-sidebar').find('.selected')
-  active_item.closest('.nav-pills').addClass('in show')
-  active_item.closest('.nav-sidebar')
+  var activeItem = $('#main-sidebar').find('.selected')
+  activeItem.closest('.nav-pills').addClass('in show')
+  activeItem.closest('.main-menu-item').addClass('active')
+  activeItem.closest('.nav-sidebar')
     .find('.icon-chevron-left')
     .removeClass('icon-chevron-left')
     .addClass('icon-chevron-down')
 
   // Replace ▼ and ▲ in sort_link with nicer icons
   $('.sort_link').each(function () {
-    // Remove the &nbsp in the text
+    // Remove the &nbsp; in the text
     var sortLinkText = $(this).text().replace('\xA0', '')
 
     if (sortLinkText.indexOf('▼') >= 0) {
@@ -149,8 +147,8 @@ jQuery(function ($) {
 
       label = ransackField(label.text()) + ': ' + ransackValue
 
-      filter = '<span class="js-filter badge badge-secondary" data-ransack-field="' + ransackFieldId + '">' + label + '<span class="icon icon-delete js-delete-filter"></span></span>'
-      $(".js-filters").append(filter).show()
+      filter = '<span class="js-filter label label-default" data-ransack-field="' + ransackFieldId + '">' + label + '<span class="icon icon-delete js-delete-filter"></span></span>'
+      $('.js-filters').append(filter).show()
     }
   })
 
@@ -218,8 +216,7 @@ function handle_date_picker_fields () {
     monthNames: Spree.translations.month_names,
     prevText: Spree.translations.previous,
     nextText: Spree.translations.next,
-    showOn: 'focus',
-    showAnim: ''
+    showOn: 'focus'
   })
 
   // Correctly display range dates
@@ -231,18 +228,18 @@ function handle_date_picker_fields () {
   })
 }
 
-$(document).ready(function(){
+$(document).ready(function () {
   handle_date_picker_fields()
-  $('.observe_field').on('change', function() {
-    target = $(this).data('update')
+  $('.observe_field').on('change', function () {
+    var target = $(this).data('update')
     $(target).hide()
-    $.ajax({
-      dataType: 'html',
+    $.ajax({ dataType: 'html',
       url: $(this).data('base-url') + encodeURIComponent($(this).val()),
-      type: 'GET'
-    }).done(function (data) {
-      $(target).html(data)
-      $(target).show()
+      type: 'get',
+      success: function (data) {
+        $(target).html(data)
+        $(target).show()
+      }
     })
   })
 
@@ -277,23 +274,25 @@ $(document).ready(function(){
           _method: 'delete',
           authenticity_token: AUTH_TOKEN
         },
-        dataType: 'script'
-      }).done(function () {
-        var $flash_element = $('.alert-success')
-        if ($flash_element.length) {
-          el.parents('tr').fadeOut('hide', function () {
-            $(this).remove()
-          })
+        dataType: 'script',
+        success: function (response) {
+          var $flashElement = $('.alert-success')
+          if ($flashElement.length) {
+            el.parents('tr').fadeOut('hide', function () {
+              $(this).remove()
+            })
+          }
+        },
+        error: function (response, textStatus, errorThrown) {
+          show_flash('error', response.responseText)
         }
-      }).fail(function (response) {
-        show_flash('error', response.responseText)
       })
     }
     return false
   })
 
   $('body').on('click', 'a.spree_remove_fields', function () {
-    el = $(this)
+    var el = $(this)
     el.prev('input[type=hidden]').val('1')
     el.closest('.fields').hide()
     if (el.prop('href').substr(-1) === '#') {
@@ -305,28 +304,31 @@ $(document).ready(function(){
         data: {
           _method: 'delete',
           authenticity_token: AUTH_TOKEN
+        },
+        success: function (response) {
+          el.parents('tr').fadeOut('hide', function () {
+            $(this).remove()
+          })
+        },
+        error: function (response, textStatus, errorThrown) {
+          show_flash('error', response.responseText)
         }
-      }).done(function () {
-        el.parents('tr').fadeOut('hide', function () {
-          $(this).remove()
-        })
-      }).fail(function (response) {
-        show_flash('error', response.responseText)
+
       })
     }
     return false
   })
 
-  $('body').on('click', '.select_properties_from_prototype', function(){
+  $('body').on('click', '.select_properties_from_prototype', function () {
     $('#busy_indicator').show()
-    var clicked_link = $(this)
-    $.ajax({
-      dataType: 'script',
-      url: clicked_link.prop('href'),
-      type: 'GET'
-    }).done(function () {
-      clicked_link.parent('td').parent('tr').hide()
-      $('#busy_indicator').hide()
+    var clickedLink = $(this)
+    $.ajax({ dataType: 'script',
+      url: clickedLink.prop('href'),
+      type: 'get',
+      success: function (data) {
+        clickedLink.parent('td').parent('tr').hide()
+        $('#busy_indicator').hide()
+      }
     })
     return false
   })
@@ -346,13 +348,13 @@ $(document).ready(function(){
         handle: '.handle',
         helper: fixHelper,
         placeholder: 'ui-sortable-placeholder',
-        update: function(event, ui) {
+        update: function (event, ui) {
           var tbody = this
           $('#progress').show()
-          positions = {}
-          $.each($('tr', tbody), function(position, obj) {
-            reg = /spree_(\w+_?)+_(\d+)/
-            parts = reg.exec($(obj).prop('id'))
+          var positions = {}
+          $.each($('tr', tbody), function (position, obj) {
+            var reg = /spree_(\w+_?)+_(\d+)/
+            var parts = reg.exec($(obj).prop('id'))
             if (parts) {
               positions['positions[' + parts[2] + ']'] = position + 1
             }
@@ -361,9 +363,8 @@ $(document).ready(function(){
             type: 'POST',
             dataType: 'script',
             url: $(ui.item).closest('table.sortable').data('sortable-link'),
-            data: positions
-          }).done(function () {
-            $('#progress').hide()
+            data: positions,
+            success: function (data) { $('#progress').hide() }
           })
         },
         start: function (event, ui) {
@@ -385,15 +386,16 @@ $(document).ready(function(){
     $(this).parent().fadeOut()
   })
 
-  window.Spree.advanceOrder = function() {
+  window.Spree.advanceOrder = function () {
     $.ajax({
       type: 'PUT',
       async: false,
       data: {
         token: Spree.api_key
       },
+      // eslint-disable-next-line camelcase
       url: Spree.url(Spree.routes.checkouts_api + '/' + order_number + '/advance')
-    }).done(function() {
+    }).done(function () {
       window.location.reload()
     })
   }

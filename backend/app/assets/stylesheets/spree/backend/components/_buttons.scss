@@ -1,25 +1,13 @@
-.btn,
-.nav-pills > li > a {
-  vertical-align: middle;
-  transition: color 0.1s linear 0s, background-color 0.1s linear 0s, opacity 0.2s linear 0s !important;
-}
+$mynewcolor: $success;
 
-.btn {
-  text-align: center;
-
-  .glyphicon {
-    padding-right: 3px;
+.btn-success{
+  &:hover{
+    color:#fff !important;
   }
-
-  .ship { color: #fff; }
+    color:#fff !important;
+    @include button-variant($mynewcolor, darken($mynewcolor, 7.5%), darken($mynewcolor, 10%), lighten($mynewcolor,5%), lighten($mynewcolor, 10%), darken($mynewcolor,20%));
 }
 
-.btn-sm .glyphicon { padding: 0; }
-
-.btn.action-void { @extend .btn-danger; }
-.btn.action-capture { @extend .btn-success; }
-.btn.payment-action-edit {
-  @extend .btn-primary;
-
-  color: $white !important;
+.btn-outline-success {
+    @include button-outline-variant($mynewcolor, darken($mynewcolor,4%), lighten($mynewcolor,5%), $mynewcolor);
 }

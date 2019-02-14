@@ -1,6 +1,6 @@
 <% if content_for?(:table_filter) %>
-  <div class="filter-wrap row">
-    <div class="col-12">
+  <div class="filter-wrap col-12">
+    <div class="row">
       <div class="input-group index-filter-button">
         <span class="input-group-btn">
           <button class="btn js-show-index-filters" type="button">
@@ -13,7 +13,7 @@
         <% end %>
       </div>
       <% unless defined?(simple) %>
-        <div id="table-filter" data-hook class="card bg-light filter-well">
+        <div id="table-filter" data-hook class="card filter-well col-12">
           <div class="card-body">
             <%= yield :table_filter %>
           </div>
@@ -21,6 +21,5 @@
       <% end %>
     </div>
   </div>
-
   <div class="table-active-filters js-filters"></div>
 <% end %>

@@ -19,7 +19,7 @@
           <div class="form-group">
             <%= label_tag :q_created_at_gt, Spree.t(:date_range) %>
             <div class="row pb-0">
-              <div class="col-12 col-lg-6">
+              <div class="col-6">
                 <div class="input-group">
                   <%= f.text_field :created_at_gt,
                     class: 'datepicker datepicker-from form-control js-filterable',
@@ -33,7 +33,7 @@
                 </div>
 
               </div>
-              <div class="col-12 col-lg-6">
+              <div class="col-6">
                 <div class="input-group">
                   <%= f.text_field :created_at_lt,
                     class: 'datepicker datepicker-to form-control js-filterable',
@@ -67,7 +67,7 @@
             <%= f.select :state_eq,
               Spree::Order.state_machines[:state].states.map {|s| [Spree.t("order_state.#{s.name}"), s.value]},
               { include_blank: true },
-              class: 'select2 js-filterable' %>
+              class: 'select2' %>
           </div>
         </div>
 
@@ -142,18 +142,18 @@
           </div>
         </div>
 
-        <div class="col-12 col-lg-4">
+        <div class="col-12 col-lg-8">
 
-          <div class="form-group">
+          <div class="form-group row">
 
-            <div class="checkbox mt-2">
+            <div class="col-12 col-md-6 checkbox mt-2">
               <%= label_tag 'q_completed_at_not_null' do %>
                 <%= f.check_box :completed_at_not_null, {checked: @show_only_completed}, '1', '0' %>
                 <%= Spree.t(:show_only_complete_orders) %>
               <% end %>
             </div>
 
-            <div class="checkbox mt-2">
+            <div class="col-12 col-md-6 checkbox mt-2">
               <%= label_tag 'q_considered_risky_eq' do %>
                 <%= f.check_box :considered_risky_eq, {checked: (params[:q][:considered_risky_eq] == '1')}, '1', '' %>
                 <%= Spree.t(:show_only_considered_risky) %>
@@ -176,10 +176,9 @@
 
 <% end %>
 
-<%= render 'spree/admin/shared/index_table_options', collection: @orders %>
-
 <% if @orders.any? %>
-  <table class="table" id="listing_orders" data-hook>
+<div class="row">
+  <table class="table" id="listing_orders">
     <thead>
       <tr data-hook="admin_orders_index_headers">
         <% if @show_only_completed %>
@@ -213,7 +212,6 @@
         </td>
         <td>
           <span class="badge badge-<%= order.state.downcase %>"><%= Spree.t("order_state.#{order.state.downcase}") %></span>
-          <span class="icon icon-filter filterable js-add-filter" data-ransack-field="q_state_eq" data-ransack-value="<%= order.state %>"></span>
         </td>
         <td>
           <% if order.payment_state %>
@@ -221,17 +219,12 @@
             <%= link_to Spree.t("payment_states.#{order.payment_state}"),
               admin_order_payments_path(order),
               class: "badge badge-#{order.payment_state}" %>
-
-            <span class="icon icon-filter filterable js-add-filter"
-              data-ransack-field="q_payment_state_eq"
-              data-ransack-value="<%= order.payment_state %>"></span>
           <% end %>
         </td>
         <% if Spree::Order.checkout_step_names.include?(:delivery) %>
           <td>
             <% if order.shipment_state %>
               <span class="badge badge-<%= order.shipment_state %>"><%= Spree.t("shipment_states.#{order.shipment_state}") %></span>
-              <span class="icon icon-filter filterable js-add-filter" data-ransack-field="q_shipment_state_eq" data-ransack-value="<%= order.shipment_state %>"></span>
             <% end %>
           </td>
         <% end %>
@@ -240,9 +233,6 @@
             <%= link_to order.email, edit_admin_user_path(order.user) %>
           <% else %>
             <%= mail_to order.email %>
-          <% end %>
-          <% if order.user || order.email %>
-            <span class="icon icon-filter filterable js-add-filter" data-ransack-field="q_email_cont" data-ransack-value="<%= order.email %>"></span>
           <% end %>
         </td>
         <td><%= order.display_total.to_html %></td>
@@ -253,6 +243,7 @@
     <% end %>
     </tbody>
   </table>
+</div>
 <% else %>
   <div class="alert alert-info no-objects-found">
     <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::Order)) %>,

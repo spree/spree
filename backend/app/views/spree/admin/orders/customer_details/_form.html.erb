@@ -34,15 +34,15 @@
               </div>
             <% else %>
               <div class="radio no-margint">
+                <%= radio_button_tag :guest_checkout, true, guest %>
                 <%= label_tag :guest_checkout_true do %>
-                  <%= radio_button_tag :guest_checkout, true, guest %>
                   <%= Spree.t(:say_yes) %>
                 <% end %>
               </div>
               <div class="radio">
+                <%= radio_button_tag :guest_checkout, false, !guest, disabled: @order.cart? %>
                 <%= label_tag :guest_checkout_false do %>
-                  <%= radio_button_tag :guest_checkout, false, !guest, disabled: @order.cart? %>
-                  <%= Spree.t(:say_no) %>
+                <%= Spree.t(:say_no) %>
                 <% end %>
               </div>
               <%= f.hidden_field :user_id, value: @order.user_id %>

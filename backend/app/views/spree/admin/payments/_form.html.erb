@@ -7,8 +7,8 @@
     <strong><%= Spree.t(:payment_method) %></strong>
     <% @payment_methods.each do |method| %>
       <div class="radio" data-id="<%= Spree.t(method.name, scope: :payment_methods, default: method.name).parameterize %>">
+        <%= radio_button_tag 'payment[payment_method_id]', method.id, method == @payment_method, { class: "payment_methods_radios" } %>
         <label data-hook="payment_method_field">
-          <%= radio_button_tag 'payment[payment_method_id]', method.id, method == @payment_method, { class: "payment_methods_radios" } %>
           <%= Spree.t(method.name, scope: :payment_methods, default: method.name) %>
         </label>
       </div>

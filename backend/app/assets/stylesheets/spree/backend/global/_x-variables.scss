@@ -20,8 +20,8 @@
   $main-aside-bg-color: darken(white, 2);
 
   // Sidebar Color Styling
-  $sidebar-background-color: $ui-background-color;
-  $sidebar-active-accent-color: $success;
+  $sidebar-background-color: #ffffff;
+  $sidebar-active-accent-color: $random-accent;
   $sidebar-border-color: $ui-background-color;
   $sidebar-text-color: #686868 ;
   $sidebar-text-hover-color: #323232;
@@ -30,7 +30,7 @@
   $sidebar-icon-active-color: $primary;
   $subnav-background-color: $sidebar-background-color;
   $sidebar-nav-seperator-border-color: $sidebar-background-color;
-  $nav-item-selected-color: $ui-background-color;
+  $nav-item-selected-color: linear-gradient(to right, lighten($ui-background-color, 5) 0%, $ui-background-color 100%);
 
 
   $body-bg:                   $ui-background-color;
@@ -38,7 +38,7 @@
   Components
   -----------------------------------------*/
   $ui-max-width: 1600px;
-  $border-radius : 3px;
+  $border-radius : 2px;
   $ui-border-radius: $border-radius ;
   $padding-base-vertical: 8px;
   $padding-base-horizontal: 16px;
