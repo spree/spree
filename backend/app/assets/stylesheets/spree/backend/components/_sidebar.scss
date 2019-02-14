@@ -18,6 +18,15 @@
     width: 90px;
     }
 
+    ul#sidebar-configuration {
+              list-style: none;
+              margin: 0;
+              padding: 0;
+              li {
+                padding: 10px;
+              }
+    }
+
       ul.nav {
         > li {
 
@@ -135,15 +144,4 @@
     }
   }
 
-}
-
-
-ul#sidebar-configuration {
-          list-style: none;
-          margin: 0;
-          padding: 0;
-          li {
-            padding: 10px;
-            a {}
-          }
 }

@@ -8,7 +8,7 @@ describe 'Tax Rates', type: :feature do
   # Regression test for #1422
   it 'can create a new tax rate' do
     visit spree.admin_path
-    click_link 'Configuration'
+    find('#configurations-menu').click
     click_link 'Tax Rates'
     click_link 'New Tax Rate'
     fill_in 'Rate', with: '0.05'

@@ -7,7 +7,7 @@ describe 'Roles', type: :feature do
     create(:role, name: 'admin')
     create(:role, name: 'user')
     visit spree.admin_path
-    click_link 'Configuration'
+    find('#configurations-menu').click
     # Crap workaround for animation to finish expanding so click doesn't hit ReimbursementTypes.
     sleep 1
     click_link 'Roles'

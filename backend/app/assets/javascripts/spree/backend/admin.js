@@ -7,7 +7,6 @@ Hopefully, this will evolve into a propper class.
 /* global AUTH_TOKEN, order_number, bodyScrollLock */
 
 jQuery(function ($) {
-
   // Add some tips
   $('.with-tip').tooltip()
 
@@ -42,12 +41,12 @@ jQuery(function ($) {
   })
 
   $(window).on('shown.bs.modal', function() {
-      $('body').removeClass('sidebar-opened dynamic-content-menu-opened')
-  });
+    $('body').removeClass('sidebar-opened dynamic-content-menu-opened')
+  })
 
   $(window).on('hidden.bs.modal', function() {
     bodyScrollLock.clearAllBodyScrollLocks()
-  });
+  })
 
   // dynamic content toggle functionality
   $('[data-toggle="modal"]').on('click', function () {

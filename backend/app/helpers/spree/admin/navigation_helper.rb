@@ -224,7 +224,6 @@ module Spree
           link_to(link_text, url, class: "#{'text-success' if is_selected} py-1 px-3 d-block sidebar-submenu-item")
         end
       end
-
     end
   end
 end

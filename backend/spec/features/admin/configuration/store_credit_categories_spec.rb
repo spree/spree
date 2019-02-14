@@ -5,7 +5,7 @@ describe 'Store Credit Categories', type: :feature, js: true do
 
   before do
     visit spree.admin_path
-    click_link 'Configuration'
+    find('#configurations-menu').click
   end
 
   context 'admin visiting store credit categories list' do
