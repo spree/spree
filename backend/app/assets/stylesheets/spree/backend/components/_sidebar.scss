@@ -14,11 +14,8 @@
   background: $sidebar-background-color;
   border-right: 1px solid $sidebar-border-color;
 
-    a {
-    width: 90px;
-    }
-
-
+    a#logo{width: 90px;}
+    
       ul.nav {
         li {
           a {
@@ -89,16 +86,7 @@
   }
 
 
-  #menu-footer{
-    ul#sidebar-configuration {
-              list-style: none;
-              margin: 0;
-              padding: 0;
-              li {
-                padding: 10px;
-              }
-    }
-    
+  #menu-footer {
     width: $sidebar-width;
     text-align: center;
     position: fixed;
@@ -107,6 +95,7 @@
     height: $header-footer-height;
     background: $sidebar-background-color;
     z-index: 1010;
+
     ul {
       margin: 0;
       padding: 0;
@@ -121,28 +110,41 @@
         background: $sidebar-background-color;
       }
 
-    span.text {
-      display: none;
-    }
-    li {
-      font-size: 1.2em;
-      color: $sidebar-text-color;
-      i.glyphicon {
-        padding: 0;
+      span.text {
+        display: none;
       }
-      &:hover {
-        i{color:$sidebar-text-hover-color;}
-        background: darken($sidebar-background-color, 2);
+
+      li {
+        font-size: 1.2em;
+        color: $sidebar-text-color;
+        i.glyphicon {
+          padding: 0;
+        }
+
+        &:hover {
+          i{color:$sidebar-text-hover-color;}
+          background: darken($sidebar-background-color, 2);
+        }
+
+        &:focus {
+          background: $sidebar-background-color;
+        }
+
+        &:active {
+          background: $sidebar-background-color;
+        }
 
       }
-      &:focus {
-        background: $sidebar-background-color;
-      }
-      &:active {
-        background: $sidebar-background-color;
-      }
     }
+
+    ul#sidebar-configuration {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+
+        li {
+          padding: 10px;
+        }
     }
   }
-
 }

@@ -2,9 +2,10 @@
   <div class="row">
     <div class="col d-none d-lg-block ">
       <%= link_to(
-    image_tag(Spree::Config[:admin_interface_logo], id: ''),
+    image_tag(Spree::Config[:admin_interface_logo]),
     spree.admin_path,
-    class: "d-block py-2 my-auto ml-3"
+    class: "d-block py-2 my-auto ml-3",
+    id: 'logo'
   ) %>
     </div>
 
