@@ -31,8 +31,8 @@ jQuery(function ($) {
   // dynamic content toggle functionality
   $('#toggle-dynamic-content-menu').on('click', function () {
     $('body').removeClass('sidebar-opened')
-    var targetElement2 = document.querySelector('#sidebar')
-    $('body').toggleClass('dynamic-content-menu-opened')
+    var targetElement2 = document.querySelector('#sidebar-content')
+    $('body').addClass('dynamic-content-menu-opened')
     if ($('body').hasClass('dynamic-content-menu-opened')) {
       bodyScrollLock.disableBodyScroll(targetElement2)
     } else {

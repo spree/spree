@@ -1,8 +1,8 @@
 // Blue
-.badge-info{
+.badge-info {
+  @include badge-variant($primary);
     color: white !important;
 }
-
 
 // Green
 .badge-completed,

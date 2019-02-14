@@ -30,7 +30,7 @@ describe 'Order Details', type: :feature, js: true do
 
       it 'after selecting a store assings a new store to order' do
         select2_search new_store.name, from: 'Store'
-        fwithin('.form-actions') do
+        within('.form-actions') do
            find('[name=button]').click
          end
 
