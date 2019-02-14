@@ -18,19 +18,10 @@
     width: 90px;
     }
 
-    ul#sidebar-configuration {
-              list-style: none;
-              margin: 0;
-              padding: 0;
-              li {
-                padding: 10px;
-              }
-    }
 
       ul.nav {
-        > li {
-
-          > a {
+        li {
+          a {
             text-transform: uppercase;
             letter-spacing: 1px;
             font-size: 14px;
@@ -97,7 +88,17 @@
 
   }
 
+
   #menu-footer{
+    ul#sidebar-configuration {
+              list-style: none;
+              margin: 0;
+              padding: 0;
+              li {
+                padding: 10px;
+              }
+    }
+    
     width: $sidebar-width;
     text-align: center;
     position: fixed;

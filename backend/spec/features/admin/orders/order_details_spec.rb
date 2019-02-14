@@ -30,7 +30,9 @@ describe 'Order Details', type: :feature, js: true do
 
       it 'after selecting a store assings a new store to order' do
         select2_search new_store.name, from: 'Store'
-        find('[name=button]').click
+        fwithin('.form-actions') do
+           find('[name=button]').click
+         end
 
         expect(page).to have_content(new_store.name)
       end

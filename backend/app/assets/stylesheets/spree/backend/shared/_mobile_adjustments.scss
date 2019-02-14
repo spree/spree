@@ -1,6 +1,5 @@
 @media (max-width: 991px) {
 
-
   body {
     margin-bottom: 30px;
     padding-top: 50px;
@@ -97,18 +96,35 @@
     padding-left: $grid-gutter-width;
   }
 
-  aside#main-sidebar ul.nav > li > a {
-    font-size: 16px;
+  aside#main-sidebar {
+      ul.nav {
+
+        li {
+            a {
+              font-size: 18px;
+                span.icon{
+                  vertical-align: unset;
+                }
+            }
+        }
+
+        ul.nav.nav-pills {
+          li {
+            a {
+              font-size: 18px;
+              padding-top: 15px;
+              padding-bottom: 15px;
+              padding-left: 60px;
+            }
+            &.selected a {
+              padding-left: 56px;
+            }
+          }
+        }
+
+      }
   }
 
-  aside#main-sidebar ul.nav > li > a > span.icon {
-    vertical-align: unset;
-  }
-  aside#main-sidebar ul.nav ul.nav.nav-pills li a,
-  aside#main-sidebar ul.nav ul.nav.nav-pills li.selected a {
-    padding: 15px 0 15px 40px;
-    font-size: 16px;
-  }
 
   .with-sidebar {
     margin-bottom: 15px;
