@@ -43,6 +43,6 @@
         stock_admin_product_url(@product),
         class: "nav-link #{'active' if current == :stock}" %>
 
-    <% end if can?(:admin, Spree::Stock) && !@product.deleted? %>
+    <% end if can?(:admin, Spree::StockItem) && !@product.deleted? %>
   </ul>
 <% end %>
