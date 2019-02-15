@@ -1,7 +1,6 @@
 ## Pull requests
 
-We gladly accept pull requests to add documentation, fix bugs and, in some circumstances,
-add new features to Spree.
+We gladly accept pull requests to add new features, bug fixes, documentation updated and overall any improvements to the codebase! All contributions (even the smallest ones) are welcome!
 
 Here's a quick guide:
 
@@ -13,15 +12,15 @@ Here's a quick guide:
 
 4. Create a sandbox environment
 
-  ```
-    rake sandbox
+  ```bash
+  bundle exec rake sandbox
   ```
 
 5. To run a sandbox application:
 
-  ```
+  ```bash
   cd sandbox
-  rails s
+  bundle exec rails s
   ```
 
 6. Create new branch then make changes and add tests for your changes. Only
