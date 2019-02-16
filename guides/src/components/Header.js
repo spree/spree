@@ -63,8 +63,8 @@ export default class Header extends React.PureComponent {
         }}
       >
         <div className="z-3 relative ph4 flex items-center mw9 center h-100">
-          <Link
-            to="/"
+          <a
+            href="https://spreecommerce.org"
             className={cx(
               { db: !this.state.searchIsOpen },
               { dn: this.state.searchIsOpen },
@@ -72,7 +72,7 @@ export default class Header extends React.PureComponent {
             )}
           >
             <Logo />
-          </Link>
+          </a>
 
           <DocSearch isOpen={this.state.searchIsOpen} />
 

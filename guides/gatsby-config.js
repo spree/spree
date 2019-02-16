@@ -1,7 +1,7 @@
 module.exports = {
   siteMetadata: {
-    title: 'Spree Guides',
-    titleTemplate: '%s :: Spree Guides',
+    title: 'Spree Commerce Documentation',
+    titleTemplate: '%s :: Spree Commerce - Ruby on Rails e-commerce platform',
     twitter: '@spreecommerce',
     image: '/images/logo.png',
     siteUrl: 'https://guides.spreecommerce.org',
