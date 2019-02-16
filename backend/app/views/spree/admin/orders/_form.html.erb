@@ -3,7 +3,7 @@
     <%= render 'spree/admin/shared/error_messages', target: @line_item %>
   <% end %>
 
-  <% if Spree::Order.checkout_step_names.include?(:delivery) %>
+  <% if @order.shipments.present? %>
     <%= render partial: "spree/admin/orders/shipment", collection: @order.shipments.order(:created_at), locals: {order: order} %>
   <% else %>
     <%= render "spree/admin/orders/line_items", order: order %>
