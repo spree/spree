@@ -4,6 +4,8 @@ section: customization
 order: 1
 ---
 
+# Asset Customization
+
 ## Overview
 
 This guide covers how Spree manages its JavaScript, stylesheet and image
@@ -111,7 +113,8 @@ manual inclusion in your extensions installation instructions or provide
 a Rails generator to do so.
 
 For an example of an extension using a generator to install assets and
-migrations take a look at the [install_generator for spree_fancy](https://github.com/spree/spree_fancy/blob/master/lib/generators/spree_fancy/install/install_generator.rb).
+migrations take a look at the 
+[install generator for Braintree Vzero](https://github.com/spree-contrib/spree_braintree_vzero/blob/master/lib/generators/spree_braintree_vzero/install/install_generator.rb).
 
 ## Overriding Spree's core assets
 
@@ -163,10 +166,10 @@ directory.
 For example, to replace `spree/frontend/all.css` you would save the replacement
 to `your_app/vendor/assets/stylesheets/spree/frontend/all.css`.
 
-***
+<alert kind="note">
 This same method can also be used to override stylesheets provided by
 third-party extensions.
-***
+</alert>
 
 ### Overriding individual JavaScript functions
 
@@ -224,16 +227,7 @@ corresponding path within your application's or extension's
 For example, to replace `spree/frontend/all.js` you would save the replacement to
 `your_app/vendor/assets/javascripts/spree/frontend/all.js`.
 
-***
+<alert kind="note">
 This same method can be used to override JavaScript files provided
 by third-party extensions.
-***
-
-### Overriding images
-
-Finally, images can be replaced by substituting the required file into
-the same path within your application or extension as the file you would
-like to replace.
-
-For example, to replace the Spree logo you would simply copy your logo
-to: `your_app/vendor/assets/images/logo/spree_50.png`.
+</alert>
