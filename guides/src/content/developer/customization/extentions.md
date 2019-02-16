@@ -1,6 +1,7 @@
 ---
 title: Extensions
 section: customization
+order: 9
 ---
 
 # Extensions

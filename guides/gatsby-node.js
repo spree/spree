@@ -12,6 +12,13 @@ exports.createPages = ({ actions, graphql }) => {
     toPath: `/developer/tutorials/getting_started_tutorial.html`
   })
 
+  createRedirect({
+    fromPath: `/developer/api_customization_tutorial.html`,
+    isPermanent: true,
+    redirectInBrowser: true,
+    toPath: `/developer/customization/api_v1.html`
+  })
+
   const guideTemplate = path.resolve(`src/templates/guide.js`)
 
   return graphql(`

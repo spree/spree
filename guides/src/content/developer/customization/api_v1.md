@@ -1,12 +1,13 @@
 ---
-title: REST API v1 Customization
-section: tutorial
+title: REST API v1
+section: customization
+order: 7
 ---
 
 # Legacy REST API v1 Customization
 
 <alert kind="warning">
-  For API v2 customization please refer [Extend the API v2 page](/api/v2/extend-the-api)
+  For API v2 customization please refer [API v2 section](api_v2)
 </alert>
 
 ## Introduction

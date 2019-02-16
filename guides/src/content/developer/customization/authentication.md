@@ -1,7 +1,7 @@
 ---
 title: "Custom Authentication"
 section: customization
-order: 6
+order: 8
 ---
 
 # Custom Authentication
