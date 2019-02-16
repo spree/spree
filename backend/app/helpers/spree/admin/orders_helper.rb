@@ -4,7 +4,7 @@ module Spree
       # Renders all the extension partials that may have been specified in the extensions
       def event_links(order, events)
         links = []
-        events.sort.each do |event|
+        events.each do |event|
           next unless order.send("can_#{event}?")
 
           label = Spree.t(event, scope: 'admin.order.events', default: Spree.t(event))
