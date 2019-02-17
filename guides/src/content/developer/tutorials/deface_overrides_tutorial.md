@@ -4,8 +4,6 @@ section: tutorial
 hidden: true
 ---
 
-# Deface
-
 <alert kind="warning">
   Using Deface is not recommended. Please refer to [View Customization section](/developer/customization/view.html) for more information.
 </alert>

@@ -4,8 +4,6 @@ section: customization
 order: 1
 ---
 
-# Asset Customization
-
 ## Overview
 
 This guide covers how Spree manages its JavaScript, stylesheet and image

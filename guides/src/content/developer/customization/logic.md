@@ -4,8 +4,6 @@ section: customization
 order: 4
 ---
 
-# Logic Customization
-
 ## Overview
 
 It is highly recommended to use [Dependencies](dependencies.html) and [Extensions](extensions.html) first rather than to apply patches to Spree Core. Still if you don't find those to be efficient you can pretty much overwrite any part of Spree following this guide.

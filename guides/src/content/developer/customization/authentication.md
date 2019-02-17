@@ -4,8 +4,6 @@ section: customization
 order: 8
 ---
 
-# Custom Authentication
-
 ## Overview
 
 This guide covers using a custom authentication setup with Spree, such

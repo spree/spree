@@ -2,8 +2,6 @@
 title: Legacy REST API v1 guide
 ---
 
-# Legacy REST API v1 guide
-
 <alert kind="warning">
   If you're implementing a new project please use [REST API v2](/api/v2). 
   API v1 is a legacy API - it won't be extended and improved.

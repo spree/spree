@@ -4,8 +4,6 @@ section: customization
 order: 9
 ---
 
-# Extensions
-
 ## What is a Spree Extension?
 
 Extensions provide a convenient mechanism for Spree developers to share reusable code with one another. Even if you do not plan on sharing your extensions with the community, they can still be a useful way to reuse code within your organization. Extensions are also a convenient mechanism for organizing and isolating discrete chunks of functionality.

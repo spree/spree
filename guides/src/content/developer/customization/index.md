@@ -3,8 +3,6 @@ title: "Customization Overview"
 section: customization
 ---
 
-# Spree Customization
-
 This section explains the customization and extension techniques you can
 use to adapt a generic Spree store to meet your specific design and
 functional requirements, including:

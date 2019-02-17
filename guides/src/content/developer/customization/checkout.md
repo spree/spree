@@ -4,8 +4,6 @@ section: customization
 order: 5
 ---
 
-# Checkout Flow
-
 ## Overview
 
 The Spree checkout process has been designed for maximum flexibility. It's been redesigned several times now, each iteration has benefited from the feedback of real world deployment experience. It is relatively simple to customize the checkout process to suit your needs. Secure transmission of customer information is possible via SSL and credit card information is never stored in the database.

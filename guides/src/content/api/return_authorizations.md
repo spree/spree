@@ -3,10 +3,6 @@ title: Return Authorizations
 description: Use the Spree Commerce storefront API to access ReturnAuthorization data.
 ---
 
-# Return Authorizations API
-
-<alert type="admin_only" kind="danger"></alert>
-
 ## Index
 
 To list all return authorizations for an order, make a request like this:

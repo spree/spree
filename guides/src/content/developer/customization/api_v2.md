@@ -1,7 +1,5 @@
 ---
-title: REST API v2
+title: API v2 Customization
 section: customization
 order: 6
 ---
-
-# REST API v2 Customization

@@ -1,10 +1,8 @@
 ---
-title: REST API v1
+title: API v1 Customization
 section: customization
 order: 7
 ---
-
-# Legacy REST API v1 Customization
 
 <alert kind="warning">
   For API v2 customization please refer [API v2 section](api_v2)

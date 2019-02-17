@@ -4,8 +4,6 @@ section: tutorial
 order: 0
 ---
 
-# Getting Started
-
 ## Prerequisites
 
 Before starting this tutorial, make sure you have Ruby and RubyGems installed on your system. This is fairly straightforward, but differs depending on which operating system you use.

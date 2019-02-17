@@ -1,10 +1,8 @@
 ---
-title: 'Seo Considerations'
+title: 'Improve SEO'
 section: advanced
 order: 0
 ---
-
-# How to improve SEO of your Spree Commerce store
 
 ## Overview
 

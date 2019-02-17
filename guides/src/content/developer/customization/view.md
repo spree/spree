@@ -4,8 +4,6 @@ section: customization
 order: 0
 ---
 
-# View Customization
-
 ## Overview
 
 View customization allows you to extend or replace any view within a

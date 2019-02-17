@@ -58,7 +58,10 @@ export default function Template({ data }) {
       activeSection={guide.fields.section}
       activeRootSection={guide.fields.rootSection}
     >
-      <article className="mt2">{renderAst(guide.htmlAst)}</article>
+      <article className="mt2">
+        <H1>{guide.frontmatter.title}</H1>
+        {renderAst(guide.htmlAst)}
+      </article>
     </Layout>
   )
 }
