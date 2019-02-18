@@ -1,10 +1,11 @@
 import * as React from 'react'
 import PropTypes from 'prop-types'
+import { OutboundLink } from 'gatsby-plugin-google-gtag'
 
 const ExternalLink = ({ url, children }) => (
-  <a href={url} rel="nofollow" target="_blank">
+  <OutboundLink href={url} rel="nofollow" target="_blank">
     {children}
-  </a>
+  </OutboundLink>
 )
 
 ExternalLink.propTypes = {
