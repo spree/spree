@@ -2,6 +2,7 @@
 <a href="https://spreecommerce.org" target="_blank" rel="follow"><img src="spree_logo.png" width="261" alt="Spree Commerce"></a>
 
 * Join our Slack at [slack.spreecommerce.org](http://slack.spreecommerce.org/)
+* [Start a new project or get tech support](https://spreecommerce.org/contact/)
 * [Success Stories](https://spreecommerce.org/stories/)
 * [Integrations](https://spreecommerce.org/integrations/)
 * [Extensions](https://github.com/spree/spree#extensions)
