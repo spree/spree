@@ -21,10 +21,10 @@ export default [
             isIndex: false,
             rootSection: 'API V2',
             section: 'API V2',
-            slug: 'api/v2/extend-the-api'
+            slug: 'api/v2/storefront'
           },
           frontmatter: {
-            title: 'Extend The API'
+            title: 'Storefront'
           }
         }
       },
@@ -34,10 +34,10 @@ export default [
             isIndex: false,
             rootSection: 'API V2',
             section: 'API V2',
-            slug: 'api/v2/storefront'
+            slug: 'developer/customization/api_v2.html'
           },
           frontmatter: {
-            title: 'Storefront'
+            title: 'Extending & customizing the API'
           }
         }
       },
