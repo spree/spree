@@ -10,14 +10,18 @@ import Section from 'components/Section'
  */
 
 const IndexPage = () => (
-  <Layout pathname="/" title="Home">
+  <Layout
+    pathname="/"
+    title="Home"
+    description="Spree Commerce API, documentation, guides & tutorials"
+  >
     <div className="center mw9 ph4 mt5">
       <p className="lh-copy f3 tc mw7 center mb5">
         <a href="https://spreecommerce.org" className="spree-blue fw6">
           Spree Commerce
-        </a> is a complete
-        modular, API-driven open source e-commerce solution built with Ruby on
-        Rails
+        </a>
+        &nbsp;is a complete modular, API-driven open source e-commerce solution
+        &nbsp;built with Ruby on Rails
       </p>
 
       <div className="mw8 center">

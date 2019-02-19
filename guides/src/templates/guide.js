@@ -56,10 +56,21 @@ export default function Template({ data }) {
     title: guide.frontmatter.title
   }
 
+  let pageTitle = guide.frontmatter.title
+  if (guide.fields.rootSection) {
+    pageTitle += ` | ${guide.fields.rootSection.replace(/_/, ' ')}`
+  }
+
+  let pageDescription = guide.frontmatter.description
+  if (!pageDescription) {
+    const removalRegexp = /Overview|Introduction|Major\/New Features/
+    pageDescription = guide.excerpt.replace(removalRegexp, '').trim()
+  }
+
   return (
     <Layout
-      title={guide.frontmatter.title}
-      description={guide.frontmatter.description}
+      title={pageTitle}
+      description={pageDescription}
       nav={data.sidebarNav ? data.sidebarNav.group : []}
       activeSection={guide.fields.section}
       activeRootSection={guide.fields.rootSection}
@@ -67,7 +78,9 @@ export default function Template({ data }) {
       <article className="mt2">
         <H1>{guide.frontmatter.title}</H1>
         {renderAst(guide.htmlAst)}
-        {!guide.fields.isIndex && <DiscussionEmbed shortname={disqusShortname} config={disqusConfig} />}
+        {!guide.fields.isIndex &&
+          <DiscussionEmbed shortname={disqusShortname} config={disqusConfig} />
+        }
       </article>
     </Layout>
   )
@@ -103,6 +116,7 @@ export const pageQuery = graphql`
             frontmatter {
               title
             }
+            excerpt
           }
         }
       }
@@ -118,6 +132,7 @@ export const pageQuery = graphql`
         title
         description
       }
+      excerpt(pruneLength: 160)
     }
   }
 `
