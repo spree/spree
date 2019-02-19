@@ -5,7 +5,7 @@ section: core
 
 ## Overview
 
-Promotions within Spree are used to provide discounts to orders, as well as to add potential additional items at no extra cost. Promotions are one of the most complex areas within Spree, as there are a large number of moving parts to consider. Although this guide will explain Promotions from a developer's perspective, if you are new to this area you can learn a lot from the Admin > Promotions tab where you can set up new Promotions, edit rules & actions, etc. 
+Promotions within Spree are used to provide discounts to orders, as well as to add potential additional items at no extra cost. Promotions are one of the most complex areas within Spree, as there are a large number of moving parts to consider. Although this guide will explain Promotions from a developer's perspective, if you are new to this area you can learn a lot from the Admin > Promotions tab where you can set up new Promotions, edit rules & actions, etc.
 
 Promotions can be activated in three different ways:
 

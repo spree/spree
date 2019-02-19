@@ -3,8 +3,6 @@ title: Shipments
 description: Use the Spree Commerce storefront API to access Shipment data.
 ---
 
-# Shipments API
-
 ## Mine
 
 Retrieve a list of the current user's shipments by making this request:

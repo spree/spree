@@ -24,5 +24,5 @@ help you with your issue much more effectively.
 !!!
 If you think you have discovered a security issue with Spree, please do not
 report them publicly. Instead, email [our security
-address](mailto:security@spreecommerce.com)
+address](mailto:hi@spreecommerce.org)
 !!!

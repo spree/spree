@@ -3,8 +3,6 @@ title: Line Items
 description: Use the Spree Commerce storefront API to access LineItem data.
 ---
 
-# Line Items API
-
 ## Create
 
 To create a new line item, make a request like this:

@@ -1,7 +1,7 @@
 module.exports = {
   siteMetadata: {
-    title: 'Spree Guides',
-    titleTemplate: '%s :: Spree Guides',
+    title: 'Spree Commerce Documentation',
+    titleTemplate: '%s :: Spree Commerce - Ruby on Rails e-commerce platform',
     twitter: '@spreecommerce',
     image: '/images/logo.png',
     siteUrl: 'https://guides.spreecommerce.org',
@@ -17,6 +17,20 @@ module.exports = {
         host: 'https://guides.spreecommerce.org',
         sitemap: 'https://guides.spreecommerce.org/sitemap.xml',
         policy: [{ userAgent: '*', disallow: ['/'] }]
+      }
+    },
+    {
+      resolve: `gatsby-plugin-google-gtag`,
+      options: {
+        // You can add multiple tracking ids and a pageview event will be fired for all of them.
+        trackingIds: [
+          'UA-104990445-1' // Google Analytics / GA
+        ],
+        // This object is used for configuration specific to this plugin
+        pluginConfig: {
+          // Puts tracking script in the head instead of the body
+          head: true
+        }
       }
     },
     {
