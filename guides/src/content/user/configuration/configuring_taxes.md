@@ -1,5 +1,6 @@
 ---
 title: Taxes
+order: 0
 ---
 
 ## Introduction
@@ -8,9 +9,11 @@ Taxation, as you undoubtedly already know, is a very complicated topic. It can b
 
 There are a few concepts you need to understand in order to configure your site adequately:
 
-* [Tax Categories](#tax-categories)
-* [Zones](#zones)
-* [Tax Rates](#tax-rates)
+- [Introduction](#introduction)
+- [Tax Categories](#tax-categories)
+- [Zones](#zones)
+- [Tax Rates](#tax-rates)
+- [Tax Settings](#tax-settings)
 
 ## Tax Categories
 

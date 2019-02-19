@@ -8,14 +8,11 @@ The guides in this section will walk you through making all of those configurati
 
 You will learn how to:
 
-* [Set up General Settings](configuring_general_settings)
-* [Set up Taxation](configuring_taxes)
-* [Create Zones, Countries, and States](configuring_geography)
-* [Configure Payment Methods](payment_methods)
-* [Understand how the Taxonomies works](configuring_taxonomies)
-* [Create Shipments and calculate them](configuring_shipping)
-* [Make additional Inventory Settings](configuring_inventory)
-* [Add robust Google Analytics](configuring_analytics)
-* [Configure Reimbursement Types](configuring_reimbursement_types)
-* [Configure Return Authorization Reasons](configuring_return_authorization_reasons)
-* [Set Store Credit categories](configuring_store_credit_categories)
+* [Configure Taxes](/user/configuration/configuring_taxes.html)
+* [Configure Zones](/user/configuration/configuring_geography.html)
+* [Configure Payment Methods](/user/payments/payment_methods.html)
+* [Configure Shipping Methods](/user/shipments/shipping_methods.html)
+* [Configure Inventory](/user/configuration/configuring_inventory.html)
+* [Configure Reimbursement Types](/user/configuration/configuring_reimbursement_types.html)
+* [Configure Return Authorization Reasons](/user/configuration/configuring_return_authorization_reasons.html)
+* [Set Store Credit categories](/user/configuration/configuring_store_credit_categories.html)
