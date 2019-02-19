@@ -18,6 +18,55 @@ ID = "49ded9cc-27d3-4e02-b186-4fd7fd334ed8"
   # Default build command.
   command = "yarn run build"
 
+# release notes redirects
 [[redirects]]
   from = "/release_notes/spree_*"
   to = "/release_notes/:splat"
+
+# User - Users section redirects
+[[redirects]]
+  from = "/user/creating_users.html"
+  to = "/user/users/creating_users.html"
+
+[[redirects]]
+  from = "/user/searching_users.html"
+  to = "/user/users/searching_users.html"
+
+[[redirects]]
+  from = "/user/deleting_users.html"
+  to = "/user/users/deleting_users.html"
+
+[[redirects]]
+  from = "/user/editing_users.html"
+  to = "/user/users/editing_users.html"
+
+# upgrade redirects
+[[redirects]]
+  from = "/developer/three-dot-*"
+  to = "/developer/upgrades/three-dot-:splat"
+
+[[redirects]]
+  from = "/developer/two-dot-*"
+  to = "/developer/upgrades/two-dot-:splat"
+
+[[redirects]]
+  from = "/developer/one-dot-*"
+  to = "/developer/upgrades/one-dot-:splat"
+
+[[redirects]]
+  from = "/developer/point-*"
+  to = "/developer/upgrades/point-:splat"
+
+# tutorials redirects
+[[redirects]]
+  from = "/developer/getting_started_tutorial.html"
+  to = "/developer/tutorials/getting_started_tutorial.html"
+
+[[redirects]]
+  from = "/developer/api_customization_tutorial.html"
+  to = "/developer/customization/api_v1.html"
+
+# other
+[[redirects]]
+  from = "/user/configuring_taxonomies.html"
+  to = "/user/products/taxonomies_and_taxons.html"
