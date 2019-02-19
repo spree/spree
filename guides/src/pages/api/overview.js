@@ -5,11 +5,14 @@ import Section from 'components/Section'
 import ExternalLink from 'components/ExternalLink'
 
 const IndexPage = () => (
-  <Layout pathname="/" title="Home">
+  <Layout
+    pathname="/"
+    title="Spree API"
+    activeRootSection="api"
+    description="Spree Commerce REST API v2, REST API v1 & GrapQL documentation"
+  >
     <div className="center mw9 ph4 mt5">
-      <p className="lh-copy f3 tc mw7 center mb5">
-        Choose API version
-      </p>
+      <p className="lh-copy f3 tc mw7 center mb5">Choose API version</p>
 
       <div className="mw8 center">
         <div className="flex flex-row flex-column-m mv4">

@@ -10,7 +10,7 @@ import H3 from '../../../components/base/H3'
 import P from '../../../components/base/P'
 
 const IndexPage = () => (
-  <Layout activeSection="API V2" nav={openApiNav}>
+  <Layout activeSection="API V2" nav={openApiNav} activeRootSection="api">
     <H1>REST API v2</H1>
     <P>
       Modern lightweight REST API based on &nbsp;
