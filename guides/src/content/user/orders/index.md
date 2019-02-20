@@ -2,8 +2,6 @@
 title: Orders
 ---
 
-## Orders
-
 Much of your time administering your Spree store will be spent manipulating customer orders - processing payments, issuing refunds, confirming shipments, etc.
 
 In these guides, you will learn how to:

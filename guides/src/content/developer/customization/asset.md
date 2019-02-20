@@ -1,6 +1,7 @@
 ---
 title: "Asset Customization"
 section: customization
+order: 1
 ---
 
 ## Overview
@@ -15,17 +16,15 @@ assets and how you can extend and customize them including:
 
 ## Spree's Asset Pipeline
 
-With the release of 3.1 Rails now supports powerful asset management
-features and Spree fully leverages these features to further extend and
-simplify its customization potential. Using asset customization
+Using asset customization
 techniques outlined below you be able to adapt all the JavaScript,
 stylesheets and images contained in Spree to easily provide a fully
 custom experience.
 
 All Spree generated (or upgraded) applications include an `app/assets`
-directory (as is standard for all Rails 3.1 apps). We've taken this one
+directory. We've taken this one
 step further by subdividing each top level asset directory (images,
-JavaScript files, stylesheets) into frontend and backend directories. This is
+JavaScript files, stylesheets) into `frontend` and `backend` directories. This is
 designed to keep assets from the frontend and backend from conflicting with each other.
 
 A typical assets directory for a Spree application will look like:
@@ -89,9 +88,8 @@ relevant all.css or all.js in the host Spree application. For example,
 //= require_tree .
 ```
 
-External JavaScript libraries, stylesheets and images have also be
-relocated into vendor/assets (again Rails 3.1 standard approach), and
-all core extensions no longer have public directories.
+External JavaScript libraries, stylesheets and images have also been
+relocated into vendor/assets.
 
 ## Managing your application's assets
 
@@ -113,7 +111,8 @@ manual inclusion in your extensions installation instructions or provide
 a Rails generator to do so.
 
 For an example of an extension using a generator to install assets and
-migrations take a look at the [install_generator for spree_fancy](https://github.com/spree/spree_fancy/blob/master/lib/generators/spree_fancy/install/install_generator.rb).
+migrations take a look at the 
+[install generator for Braintree Vzero](https://github.com/spree-contrib/spree_braintree_vzero/blob/master/lib/generators/spree_braintree_vzero/install/install_generator.rb).
 
 ## Overriding Spree's core assets
 
@@ -165,10 +164,10 @@ directory.
 For example, to replace `spree/frontend/all.css` you would save the replacement
 to `your_app/vendor/assets/stylesheets/spree/frontend/all.css`.
 
-***
+<alert kind="note">
 This same method can also be used to override stylesheets provided by
 third-party extensions.
-***
+</alert>
 
 ### Overriding individual JavaScript functions
 
@@ -226,16 +225,7 @@ corresponding path within your application's or extension's
 For example, to replace `spree/frontend/all.js` you would save the replacement to
 `your_app/vendor/assets/javascripts/spree/frontend/all.js`.
 
-***
+<alert kind="note">
 This same method can be used to override JavaScript files provided
 by third-party extensions.
-***
-
-### Overriding images
-
-Finally, images can be replaced by substituting the required file into
-the same path within your application or extension as the file you would
-like to replace.
-
-For example, to replace the Spree logo you would simply copy your logo
-to: `your_app/vendor/assets/images/logo/spree_50.png`.
+</alert>

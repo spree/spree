@@ -1,5 +1,6 @@
 ---
 title: Reports
+section: reports
 ---
 
 ## Introduction

@@ -3,7 +3,7 @@ title: Creating a New User
 section: creating_users
 ---
 
-# Introduction
+## Introduction
 
 To create a new user for your store, go into the Admin Interface, click the **Users** tab, and click the **New User button**.
 
