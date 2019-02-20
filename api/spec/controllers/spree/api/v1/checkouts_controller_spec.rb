@@ -56,6 +56,7 @@ module Spree
         order = create(:order_with_line_items)
         # Order should be in a pristine state
         # Without doing this, the order may transition from 'cart' straight to 'delivery'
+        Spree::ShippingRate.where(shipment_id: order.shipment_ids).delete_all
         order.shipments.delete_all
         order
       end
