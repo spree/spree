@@ -124,7 +124,7 @@ module Spree
     has_many :order_promotions, class_name: 'Spree::OrderPromotion'
     has_many :promotions, through: :order_promotions, class_name: 'Spree::Promotion'
 
-    has_many :shipments, dependent: :destroy, inverse_of: :order do
+    has_many :shipments, class_name: 'Spree::Shipment', dependent: :destroy, inverse_of: :order do
       def states
         pluck(:state).uniq
       end

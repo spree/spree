@@ -11,7 +11,7 @@ module Spree
 
       def shipments
         packages.map do |package|
-          package.to_shipment.tap { |s| s.address = order.ship_address }
+          package.to_shipment.tap { |s| s.address_id = order.ship_address_id }
         end
       end
 
