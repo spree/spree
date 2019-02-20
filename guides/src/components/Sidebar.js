@@ -26,6 +26,9 @@ const normalizeNavBlock = block => filter(byOnlyNonIndexNodes, block)
 const getNavBlockIndexSlug = block =>
   navBlockIndex(block)[0]['node']['fields']['slug']
 
+const getFirstNavItemSlug = block =>
+  block.length > 0 ? block[0]['node']['fields']['slug'] : false
+
 /**
  * Component
  */
@@ -83,11 +86,11 @@ export default class Sidebar extends React.PureComponent {
                           toggleSection={() =>
                             this._toggleSection(item.section)
                           }
-                          itemsLength={length(navBlockIndex(item.edges))}
+                          itemsLength={length(item.edges)}
                           href={
                             length(navBlockIndex(item.edges)) > 0
                               ? getNavBlockIndexSlug(item.edges)
-                              : false
+                              : getFirstNavItemSlug(item.edges)
                           }
                         />
                         <ul

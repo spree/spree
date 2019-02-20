@@ -1,15 +1,17 @@
 {
   "name": "spree-guides",
-  "description": "Spree Documentation",
-  "version": "3.7.0",
-  "author": "Alexey Topolyanskiy <devilcoders@alexify.me>",
+  "description": "Spree Guides",
+  "version": "2.0.0",
+  "author": "Spark Solutions <we@sparksolutions.co>",
   "dependencies": {
     "@emotion/core": "^10.0.2",
+    "disqus-react": "^1.0.5",
     "emotion": "^10.0.0",
     "emotion-server": "^10.0.0",
     "gatsby": "^2.0.19",
     "gatsby-image": "^2.0.15",
     "gatsby-plugin-emotion": "^4.0.1",
+    "gatsby-plugin-google-gtag": "^1.0.13",
     "gatsby-plugin-manifest": "^2.0.5",
     "gatsby-plugin-offline": "^2.0.11",
     "gatsby-plugin-react-helmet": "^3.0.0",
@@ -78,6 +80,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/gatsbyjs/gatsby-starter-default"
+    "url": "https://github.com/spree/spree"
   }
 }

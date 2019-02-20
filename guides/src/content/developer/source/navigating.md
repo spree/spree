@@ -68,7 +68,7 @@ You can install the gem dependencies for Spree after cloning the
 repository using this Bundler-provided command:
 
 ```bash
-$ bundle install
+bundle install
 ```
 
 This allows you to quickly and painlessly have the exact gem depedencies
@@ -178,7 +178,7 @@ To run this Rake task, go into the root of the Spree project and run
 this command:
 
 ```bash
-$ bundle exec rake sandbox
+bundle exec rake sandbox
 ```
 
 This will create a barebones rails application configured with the Spree
@@ -192,22 +192,22 @@ The Spree gem can easily be built from the source. Run these two
 commands in the root of the Spree project to do this:
 
 ```bash
-$ bundle exec rake clean
-$ bundle exec rake gem
+bundle exec rake clean
+bundle exec rake gem
 ```
 
 Most likely you will want to build and install all of the related gems.
 Fortunately, there is a simple Rake task for that.
 
 ```bash
-$ bundle exec rake gem:install
+bundle exec rake gem:install
 ```
 
 You can also build just one specific gem.
 
 ```bash
-$ cd core
-$ bundle exec rake gem
+cd core
+bundle exec rake gem
 ```
 
 ## Tips for Working with the Source
@@ -230,7 +230,7 @@ are. You will need to update the bundle if you want to update to code
 that is newer since the last time you updated.
 
 ```bash
-$ bundle update
+bundle update
 ```
 
 ### Developing on the "Edge"

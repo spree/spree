@@ -29,10 +29,6 @@ Stock Items represent the inventory at a stock location for a specific variant. 
 Note: Stock items are created automatically for each stock location you have. You don't need to manage these manually.
 ***
 
-!!!
-**Count On Hand** is no longer an attribute on variants. It has been moved to stock items, as those are now used for inventory management.
-!!!
-
 ### Stock Movements
 
 ![image](../images/developer/core/stock_movements.png)

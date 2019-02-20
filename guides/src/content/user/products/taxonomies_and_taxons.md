@@ -1,5 +1,5 @@
 ---
-title: Taxonomies
+title: Taxonomies and Taxons
 ---
 
 ## Introduction
@@ -12,7 +12,7 @@ In this example, "Categories" is the name of the Taxonomy. It has three child br
 
 To reach the Taxonomies list, first go to your Admin Interface, then click "Configurations" and "Taxonomies".
 
-### Create a New Taxonomy
+## Create a New Taxonomy
 
 To create a new taxonomy, click the "New Taxonomy" button. Enter a name for the taxonomy and click "Create".
 
@@ -20,7 +20,7 @@ To create a new taxonomy, click the "New Taxonomy" button. Enter a name for the 
 
 You can then [add child taxons](#adding-a-taxon-to-a-taxonomy) to your new taxonomy.
 
-### Edit a Taxonomy
+## Edit a Taxonomy
 
 To edit an existing taxonomy, click the "Edit" icon next to the name in the Taxonomies list.
 
@@ -30,13 +30,13 @@ Here, you can change the name of the Taxonomy. You can also [reorder the child t
 
 ![Edit Taxonomy](../../../images/user/config/edit_taxonomy.jpg)
 
-### Delete a Taxonomy
+## Delete a Taxonomy
 
 ![Delete Taxonomy Icon](../../../images/user/config/delete_taxonomy_icon.jpg)
 
 To delete a taxonomy, click the "Delete" icon next to the name in the Taxonomies list. Click "OK" to confirm.
 
-### Adding a Taxon to a Taxonomy
+## Adding a Taxon to a Taxonomy
 
 Once you have created a taxonomy, you may want to add child taxons to it. Do do this, right-click the name of the Taxonomy, and click "Add".
 
@@ -48,7 +48,7 @@ This will cause a new input field to open up, with "New node" in it. Replace thi
 
 Click "Update" to save your addition.
 
-### Adding a Taxon to Another Taxon
+## Adding a Taxon to Another Taxon
 
 If your site needs sub-trees, just add taxons to other taxons. To do so, right-click the name of what will become the parent taxon, and click Add.
 
@@ -60,11 +60,11 @@ Enter the name of the child taxon and click enter. Repeat this process for any s
 
 Remember to save your changes by clicking the "Update" button after you have added any taxons.
 
-***
+<alert kind="note">
 When you navigate away from your taxonomy's page, then navigate back to it, sub-trees will be collapsed by default. To see child taxons, just click the arrow next to the parent taxon.
-***
+</alert>
 
-### Reorder a Taxon
+## Reorder a Taxon
 
 Taxons are displayed in the order you add them by default. To reorder them, just drag and drop them to their correct location in the tree.
 
@@ -76,7 +76,7 @@ You can even drag a parent taxon into the tree of a different parent taxon, merg
 
 ![Parent-to-Parent Taxon Merge](../../../images/user/config/parent_into_parent_taxon_merge.jpg)
 
-### Edit a Taxon
+## Edit a Taxon
 
 To edit a taxon's name, just right-click it and click "Edit".
 
@@ -94,7 +94,7 @@ Here, you can edit several aspects of the taxon:
 
 Remember to click "Update" after you make your changes.
 
-### Delete a Taxon
+## Delete a Taxon
 
 To delete a taxon, right-click it in the taxonomy tree and click "Remove".
 
@@ -102,7 +102,7 @@ To delete a taxon, right-click it in the taxonomy tree and click "Remove".
 
 Click "OK" to confirm.
 
-### Associating Products with Taxons
+## Associating Products with Taxons
 
 To associate a product with one or more taxons, go to the Admin Interface, and click the "Products" tab. Locate the product you want to edit, and click its "Edit" icon. Select the taxons for the product in the Taxons field.
 

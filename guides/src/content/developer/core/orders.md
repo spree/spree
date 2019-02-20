@@ -39,7 +39,6 @@ Orders have the following attributes:
 * `canceler_id`: The ID of user that canceled this order.
 * `store_id`: The ID of `Store` in which this order was created.
 
-
 Some methods you may find useful:
 
 * `outstanding_balance`: The outstanding balance for the order, calculated by taking the `total` and subtracting `payment_total`.

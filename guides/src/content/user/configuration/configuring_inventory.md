@@ -1,5 +1,6 @@
 ---
-title: Inventory Settings
+title: Inventory
+order: 1
 ---
 
 ## Introduction

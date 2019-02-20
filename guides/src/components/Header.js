@@ -1,7 +1,6 @@
 // --- Dependencies
 import * as React from 'react'
 import PropTypes from 'prop-types'
-import { Link } from 'gatsby'
 import { cx } from 'emotion'
 
 // --- Components
@@ -63,8 +62,8 @@ export default class Header extends React.PureComponent {
         }}
       >
         <div className="z-3 relative ph4 flex items-center mw9 center h-100">
-          <Link
-            to="/"
+          <a
+            href="https://spreecommerce.org"
             className={cx(
               { db: !this.state.searchIsOpen },
               { dn: this.state.searchIsOpen },
@@ -72,7 +71,7 @@ export default class Header extends React.PureComponent {
             )}
           >
             <Logo />
-          </Link>
+          </a>
 
           <DocSearch isOpen={this.state.searchIsOpen} />
 
@@ -97,13 +96,15 @@ export default class Header extends React.PureComponent {
               isActive={this.isActive('release_notes')}
               url="/release_notes/"
             />
-            <NavItem url="https://heroku.com/deploy?template=https://github.com/spree/spree">
+            <NavItem url="https://heroku.com/deploy?template=https://github.com/spree/spree/tree/3-7-stable">
               Demo
             </NavItem>
 
-            <NavItem url="https://new.spreecommerce.org/">Contact Us</NavItem>
+            <NavItem url="https://spreecommerce.org/contact/">
+              Contact Us
+            </NavItem>
 
-            <NavItem url="https://slack.spreecommerce.org/">
+            <NavItem url="http://slack.spreecommerce.org/">
               <IconSlack />
             </NavItem>
             <NavItem url="https://github.com/spree/spree">
@@ -112,7 +113,7 @@ export default class Header extends React.PureComponent {
           </nav>
 
           <nav className="dn-l justify-end w-100 flex">
-            <NavItem url="https://new.spreecommerce.org/">
+            <NavItem url="https://spreecommerce.org/contact/">
               <IconContact />
             </NavItem>
             {this.state.searchIsOpen ? (
@@ -127,7 +128,7 @@ export default class Header extends React.PureComponent {
               />
             )}
 
-            <NavItem url="https://slack.spreecommerce.org/">
+            <NavItem url="http://slack.spreecommerce.org/">
               <IconSlack />
             </NavItem>
             <NavItem url="https://github.com/spree/spree">

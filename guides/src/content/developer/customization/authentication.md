@@ -1,6 +1,7 @@
 ---
 title: "Custom Authentication"
 section: customization
+order: 8
 ---
 
 ## Overview
@@ -13,32 +14,12 @@ reading this guide, you will be familiar with:
 
 -   Setting up Spree to work with your custom authentication
 
-## Background
-
-Traditionally, applications that use Spree have needed to use the
-`Spree::User` model that came with the `spree_auth` component of Spree.
-With the advent of 1.2, this is no longer a restriction. The
-`spree_auth` component of Spree has been removed and is now purely
-opt-in. If you have an application that has used the `spree_auth`
-component in the past and you wish to continue doing so, you will need
-to add this extra line to your `Gemfile`:
-
-```ruby
-gem 'spree_auth_devise'
-```
-
-By having this authentication component outside of Spree, applications
-that wish to use their own authentication may do so, and applications
-that have previously used `spree_auth`'s functionality may continue
-doing so by using this gem.
-
 ### The User Model
 
 This guide assumes that you have a pre-existing model inside your
 application that represents the users of your application already. This
 model could be provided by gems such as
-[Devise](https://github.com/plataformatec/devise) or
-[Sorcery](https://github.com/NoamB/sorcery). This guide also assumes
+[Devise](https://github.com/plataformatec/devise). This guide also assumes
 that the application that this `User` model exists in is already a Spree
 application.
 
@@ -54,13 +35,13 @@ initializer located at `config/initializers/spree.rb` by changing this
 line:
 
 ```ruby
-Spree.user_class = "Spree::User"
+Spree.user_class = 'Spree::User'
 ```
 
 To this:
 
 ```ruby
-Spree.user_class = "User"
+Spree.user_class = 'User'
 ```
 
 Next, you need to run the custom user generator for Spree which will
@@ -72,7 +53,7 @@ lives at `lib/spree/authentication_helpers.rb` to the
 Run this generator with this command:
 
 ```bash
-$ bundle exec rails g spree:custom_user User
+bundle exec rails g spree:custom_user User
 ```
 
 This will tell the generator that you want to use the `User` class as
@@ -80,13 +61,13 @@ the class that represents users in Spree. Run the new migration by
 running this:
 
 ```bash
-$ bundle exec rake db:migrate
+bundle exec rake db:migrate
 ```
 
 Next you will need to define some methods to tell Spree where to find
 your application's authentication routes.
 
-#### Authentication Helpers
+### Authentication Helpers
 
 There are some authentication helpers of Spree's that you will need to
 possibly override. The file at `lib/spree/authentication_helpers.rb`
@@ -145,14 +126,14 @@ application.
 * `spree_logout_path` The location of the logout feature of your
 application.
 
-***
+<alert kind="note">
 URLs inside the `spree_login_path`, `spree_signup_path` and
 `spree_logout_path` methods **must** have `main_app` prefixed if they
 are inside your application. This is because Spree will otherwise
 attempt to route to a `login_path`, `signup_path` or `logout_path`
 inside of itself, which does not exist. By prefixing with `main_app`,
 you tell it to look at the application's routes.
-***
+</alert>
 
 You will need to define the `login_path`, `signup_path` and
 `logout_path` routes yourself, by using code like this inside your
@@ -176,11 +157,11 @@ and `spree_logout_path` methods inside
 `lib/spree/authentication_helpers.rb` to use the routing helper methods
 already provided by the authentication setup you have, if you wish.
 
-***
+<alert kind="note">
 Any modifications made to `lib/spree/authentication_helpers.rb`
 while the server is running will require a restart, as wth any other
 modification to other files in `lib`.
-***
+</alert>
 
 ## The User Model
 
@@ -191,8 +172,9 @@ include Spree::UserMethods
 include Spree::UserAddress
 include Spree::UserPaymentSource
 ```
+
 The first of these methods are the ones added for the `has_and_belongs_to_many` association
-called "spree_roles". This association will retrieve all the roles that
+called `spree_roles`. This association will retrieve all the roles that
 a user has for Spree.
 
 The second of these is the `spree_orders` association. This will return
@@ -213,15 +195,15 @@ such as accessing the admin section. Admin users of your system should
 be assigned the Spree admin role, like this:
 
 ```ruby
-user = User.find_by(email: "master@example.com")
-user.spree_roles << Spree::Role.find_or_create_by(name: "admin")
+user = User.find_by(email: 'master@example.com')
+user.spree_roles << Spree::Role.where(name: 'admin').first_or_create
 ```
 
 To test that this has worked, use the `has_spree_role?` method, like
 this:
 
 ```ruby
-user.has_spree_role?("admin")
+user.has_spree_role?('admin')
 ```
 
 If this returns `true`, then the user has admin permissions within
@@ -235,24 +217,11 @@ which will generate and clear the Spree API key respectively.
 
 ## Login link
 
-To make the login link appear on Spree pages, you will need to use a
-Deface override. Create a new file at
-`app/overrides/auth_login_bar.rb` and put this content inside it:
+To make the login link appear on Spree pages, you will need to modify 
+`spree/shared/_nav_bar.html.erb` file which you can copy over from Spree codebase
+to your project (detailed in [View Customization section](view_customization)).
 
-```ruby
-Deface::Override.new(virtual_path: "spree/shared/_nav_bar",
-  name: "auth_login_bar",
-  insert_before: "li#search-bar",
-  partial: "spree/shared/login_bar",
-  disabled: false,
-  original: 'eb3fa668cd98b6a1c75c36420ef1b238a1fc55ad')
-```
-
-This override references a partial called "spree/shared/login_bar".
-This will live in a new partial called
-`app/views/spree/shared/_login_bar.html.erb` in your application. You
-may choose to call this file something different, the name is not
-important. This file will then contain this code:
+You will need to add this code:
 
 ```erb
 <%% if spree_current_user %>

@@ -1,6 +1,7 @@
 ---
-title: "The Checkout Flow API"
+title: "Checkout Flow"
 section: customization
+order: 5
 ---
 
 ## Overview
@@ -42,7 +43,7 @@ def check_registration
 end
 ```
 
-The configuration of the guest checkout option is done via [Preferences](preferences). Spree will allow guest checkout by default. Use the `allow_guest_checkout` preference to change the default setting.
+The configuration of the guest checkout option is done via [Preferences](/developer/core/preferences.html). Spree will allow guest checkout by default. Use the `allow_guest_checkout` preference to change the default setting.
 
 ### Address Information
 
@@ -50,21 +51,17 @@ This step allows the customer to add both their billing and shipping information
 
 The address fields include a select box for choosing state/province. The list of states will be populated via JavaScript and will contain all of the states listed in the database for the currently selected country. If there are no states configured for a particular country, or if the user has JavaScript disabled, the select box will be replaced by a text field instead.
 
-***
-The default "seed" data for Spree only includes the U.S. states. It's easy enough to add states or provinces for other countries but beyond the scope of the Spree project to maintain such a list.
-***
+<alert kind="note">
+  The default "seed" data for Spree only includes the U.S. states. It's easy enough to add states or provinces for other countries but beyond the scope of the Spree project to maintain such a list.
+</alert>
 
-***
-The state field can be disabled entirely by using the `Spree::Config[:address_requires_state]` preference. You can also allow for an "alternate phone" field by using the `Spree::Config[:alternative_shipping_phone]` and `Spree::Config[:alternative_shipping]` fields.
-***
+<alert kind="note">
+  The state field can be disabled entirely by using the `Spree::Config[:address_requires_state]` preference. You can also allow for an "alternate phone" field by using the `Spree::Config[:alternative_shipping_phone]` and `Spree::Config[:alternative_shipping]` fields.
+</alert>
 
-The list of countries that appear in the country select box can also be configured. Spree will list all countries by default, but you can configure exactly which countries you would like to appear. The list can be limited to a specific set of countries by configuring the `Spree::Config[:checkout_zone]` preference and setting its value to the name of a [Zone](addresses#zones) containing the countries you wish to use. Spree assumes that the list of billing and shipping countries will be the same. You can always change this logic via an extension if this does not suit your needs.
+The list of countries that appear in the country select box can also be configured. Spree will list all countries by default, but you can configure exactly which countries you would like to appear. The list can be limited to a specific set of countries by configuring the `Spree::Config[:checkout_zone]` preference and setting its value to the name of a [Zone](/developer/core/addresses.html#zones) containing the countries you wish to use. Spree assumes that the list of billing and shipping countries will be the same. You can always change this logic via an extension if this does not suit your needs.
 
 ### Delivery Options
-
-$$$
-Better shipment documentation here after split_shipments merge.
-$$$
 
 During this step, the user may choose a delivery method. Spree assumes the list of shipping methods to be dependent on the shipping address. This is one of the reasons why it is difficult to support single page checkout for customers who have disabled JavaScript.
 
@@ -78,13 +75,13 @@ Several gateways such as ActiveMerchant and Beanstream provide a secure method f
 
 If you do not want to use a gateway with payment profiles then you will need to customize the checkout process so that your final step submits the credit card information. You can then perform an authorization before the order is saved. This is perfectly secure because the credit card information is not ever saved. It's transmitted to the gateway and then discarded like normal.
 
-!!!
-Spree discards the credit card number after this step is processed. If
-you do not have a gateway with payment profiles enabled then your card
-information will be lost before it's time to authorize the card.
-!!!
+<alert kind="warning">
+  Spree discards the credit card number after this step is processed. If
+  you do not have a gateway with payment profiles enabled then your card
+  information will be lost before it's time to authorize the card.
+</alert>
 
-For more information about payments, please see the [Payments guide](payments).
+For more information about payments, please see the [Payments guide](/developer/core/payments.html).
 
 ### Confirmation
 
@@ -150,11 +147,11 @@ The `update` action performs the following:
 * Redirects to the next checkout step if the `current_order.state` is anything
   other than `complete`, else redirect to the `order_path` for `current_order`
 
-***
-For security reasons, the `Spree::CheckoutController` will not update the
-order once the checkout process is complete. It is therefore impossible for an
-order to be tampered with (ex. changing the quantity) after checkout.
-***
+<alert kind="note">
+  For security reasons, the `Spree::CheckoutController` will not update the
+  order once the checkout process is complete. It is therefore impossible for an
+  order to be tampered with (ex. changing the quantity) after checkout.
+</alert>
 
 ### Filters
 
@@ -167,7 +164,7 @@ define several `before_actions` for the `Spree::CheckoutController`:
 
 ### The Order Model and State Machine
 
- The `Spree::Order` state machine is the foundation of the checkout process. Spree makes use of the [state_machine](https://github.com/pluginaweek/state_machine) gem in the `Spree::Order` model as well as in several other places (such as `Spree::Shipment` and `Spree::InventoryUnit`.)
+ The `Spree::Order` state machine is the foundation of the checkout process. Spree makes use of the [state_machines](hhttps://github.com/state-machines/state_machines) gem in the `Spree::Order` model as well as in several other places (such as `Spree::Shipment` and `Spree::InventoryUnit`.)
 
 The default checkout flow for the `Spree::Order` model is defined in
 `app/models/spree/order/checkout.rb` of spree_core.
@@ -182,9 +179,9 @@ simple enough to write a quick script to periodically purge incomplete orders
 from the system. The end result is a simplified data model along with the
 ability for store owners to search and report on incomplete/abandoned orders.
 
-***
-For more information on the state machine gem please see the [README](https://github.com/pluginaweek/state_machine)
-***
+<alert kind="note">
+  For more information on the state machines gem please see the [README](hhttps://github.com/state-machines/state_machines)
+</alert>
 
 ## Checkout Customization
 
@@ -224,13 +221,11 @@ This callback would prevent transitioning to the `delivery` step if
 Each of the default checkout steps has its own partial defined in the
 spree frontend `app/views/spree/checkout` directory. Changing the view for an
 existing step is as simple as overriding the relevant partial in your site
-extension. It's also possible the default partial in question defines a usable
-theme hook, in which case you could add your functionality by using
-[Deface](https://github.com/spree/deface)
+extension.
 
 ## The Checkout Flow DSL
 
-Since Spree 1.2, Spree comes with a new checkout DSL that allows you succinctly define the
+Spree comes with a new checkout DSL that allows you succinctly define the
 different steps of your checkout. This new DSL allows you to customize *just*
 the checkout flow, while maintaining the unrelated admin states, such as
 "canceled" and "resumed", that an order can transition to. Ultimately, it
@@ -262,10 +257,6 @@ from delivery to one of payment, confirm or complete. In the default checkout,
 we never want to transition from delivery to confirm, and therefore have removed
 it using the `remove_transition` method of the Checkout DSL. The resulting
 transitions between states look like the image below:
-
-$$$
-State diagram
-$$$
 
 These two helper methods are provided on `Spree::Order` instances for your
 convenience:
@@ -331,11 +322,11 @@ en:
     new_step: New Step
 ```
 
-***
-The default use of the breadcrumb is entirely optional.  It does not need
-to correspond to checkout states, nor does every state need to be represented.
-Feel free to customize this behavior to meet your exact requirements.
-***
+<alert kind="note">
+  The default use of the breadcrumb is entirely optional.  It does not need
+  to correspond to checkout states, nor does every state need to be represented.
+  Feel free to customize this behavior to meet your exact requirements.
+</alert>
 
 ## Payment Profiles
 
@@ -371,7 +362,7 @@ def create_profile(payment)
 end
 ```
 
-!!!
+<alert kind="warning">
 Most gateways do not yet support payment profiles but the default
 checkout process of Spree assumes that you have selected a gateway that supports
 this feature.  This allows users to enter credit card information during the
@@ -381,4 +372,4 @@ only safe way to handle this was to post the credit card information in the
 final step.  It should be possible to customize the checkout so that the credit
 card information is entered on the final step and then you can authorize the
 card before Spree automatically discards the sensitive data before saving.
-!!!
+</alert>

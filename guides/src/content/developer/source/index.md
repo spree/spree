@@ -3,8 +3,6 @@ title: "Source Code"
 section: source-code
 ---
 
-## Source Code
-
 Spree's functionality is split across seven different components:
 
 * [**API**](http://api.spreecommerce.com): Provides a HTTP JSON API for several of Spree's components.

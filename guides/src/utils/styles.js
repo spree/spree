@@ -1,6 +1,6 @@
 export default {
   sidebar: {
-    width: '19rem'
+    width: '16rem'
   },
   header: {
     height: '5rem'
@@ -23,13 +23,13 @@ export default {
     },
     typography: {
       smoothing: 'unset',
-      fontSize: '16px',
+      fontSize: '1rem',
       fontFamily: '"Source Sans Pro", sans-serif;',
       headings: {
         fontFamily: '"Source Sans Pro", sans-serif;'
       },
       code: {
-        fontSize: '16px',
+        fontSize: '0.9rem',
         fontFamily: '"Roboto Mono", monospace;',
         fontWeight: 400
       }
@@ -38,7 +38,7 @@ export default {
       backgroundColor: '#444'
     },
     menu: {
-      width: '19rem',
+      width: '16rem',
       backgroundColor: '#f4f4f4'
     }
   }

@@ -3,8 +3,6 @@ title: Checkouts
 description: Use the Spree Commerce storefront API to access Checkout data.
 ---
 
-# Checkouts API
-
 ## Introduction
 
 The checkout API functionality can be used to advance an existing order's state.

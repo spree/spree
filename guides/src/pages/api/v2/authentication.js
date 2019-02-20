@@ -24,7 +24,7 @@ const crumbs = [
  */
 
 const AuthenticationPage = () => (
-  <Layout activeRootSection="api/v2">
+  <Layout activeRootSection="api">
     <Breadcrumbs crumbs={crumbs} />
     <RedocStandalone
       specUrl="https://raw.githubusercontent.com/spree/spree/master/api/docs/oauth/index.yml"

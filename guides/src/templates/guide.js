@@ -3,6 +3,7 @@ import * as React from 'react'
 import PropTypes from 'prop-types'
 import { graphql } from 'gatsby'
 import RehypeReact from 'rehype-react'
+import { DiscussionEmbed } from 'disqus-react'
 
 // --- Components
 import Layout from '../components/Layout'
@@ -49,16 +50,38 @@ const renderAst = new RehypeReact({
 
 export default function Template({ data }) {
   const { guide } = data
+  const disqusShortname = 'spree-guides'
+  const disqusConfig = {
+    identifier: data.id,
+    title: guide.frontmatter.title
+  }
+
+  let pageTitle = guide.frontmatter.title
+  if (guide.fields.rootSection) {
+    pageTitle += ` | ${guide.fields.rootSection.replace(/_/, ' ')}`
+  }
+
+  let pageDescription = guide.frontmatter.description
+  if (!pageDescription) {
+    const removalRegexp = /Overview|Introduction|Major\/New Features/
+    pageDescription = guide.excerpt.replace(removalRegexp, '').trim()
+  }
 
   return (
     <Layout
-      title={guide.frontmatter.title}
-      description={guide.frontmatter.description}
+      title={pageTitle}
+      description={pageDescription}
       nav={data.sidebarNav ? data.sidebarNav.group : []}
       activeSection={guide.fields.section}
       activeRootSection={guide.fields.rootSection}
     >
-      <article className="mt2">{renderAst(guide.htmlAst)}</article>
+      <article className="mt2">
+        <H1>{guide.frontmatter.title}</H1>
+        {renderAst(guide.htmlAst)}
+        {!guide.fields.isIndex &&
+          <DiscussionEmbed shortname={disqusShortname} config={disqusConfig} />
+        }
+      </article>
     </Layout>
   )
 }
@@ -93,6 +116,7 @@ export const pageQuery = graphql`
             frontmatter {
               title
             }
+            excerpt
           }
         }
       }
@@ -101,12 +125,14 @@ export const pageQuery = graphql`
       fields {
         section
         rootSection
+        isIndex
       }
       htmlAst
       frontmatter {
         title
         description
       }
+      excerpt(pruneLength: 160)
     }
   }
 `

@@ -39,8 +39,7 @@ const SidebarRootLink = ({
     {itemsLength > 0 ? (
       <Link
         to={href}
-        activeClassName="spree-green"
-        className="link spree-blue db fw5 ml3"
+        className={cx({ 'spree-green': isOpen }, 'link spree-blue db fw5 ml3')}
       >
         {title}
       </Link>
