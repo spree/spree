@@ -8,8 +8,8 @@ When you click the **Users** tab you will see **Filter dropdown**, **New User bu
 
 Next to each user there are 2 buttons and additionaly you can sort them by name by simply clicking **User** above the user's emails.
 
-* **Edit** - Allows you to make [additional edition in the user's settings](editing_users).
-* **Delete** - Allows you to [delete the user permanently](deleting_users).
+* **Edit** - Allows you to make [additional edition in the user's settings](/user/users/editing_users.html).
+* **Delete** - Allows you to [delete the user permanently](/user/users/deleting_users.html).
 * **Sort by user's name** - Allows you to sort the users by name (A-Z, Z-A).
 
 ![User search options](../../../images/user/users/users_tab.jpg)

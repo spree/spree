@@ -75,7 +75,7 @@ Whereas [Rules](#rules) establish whether a promotion applies or not, Actions de
 
 ### Create Adjustments
 
-When you select "Create adjustment" from the "Add Action of Type" drop-down menu and click "Add", the system presents you with several calculator options. These are the same as the options you read about in the [calculators guide](calculators), except that instead of a [price sack calculator](calculators#price-sack), there are two additional calculators: percent per item and free shipping.
+When you select "Create adjustment" from the "Add Action of Type" drop-down menu and click "Add", the system presents you with several calculator options. These are the same as the options you read about in the [calculators guide](/user/shipments/calculators.html), except that instead of a [price sack calculator](/user/shipments/calculators.html#price-sack), there are two additional calculators: percent per item and free shipping.
 
 ![Create Adjustments Action Calculators](../../../images/user/promotions/create_adjustment.jpg)
 
