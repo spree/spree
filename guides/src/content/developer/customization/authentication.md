@@ -217,9 +217,9 @@ which will generate and clear the Spree API key respectively.
 
 ## Login link
 
-To make the login link appear on Spree pages, you will need to modify 
+To make the login link appear on Spree pages, you will need to modify
 `spree/shared/_nav_bar.html.erb` file which you can copy over from Spree codebase
-to your project (detailed in [View Customization section](view_customization)).
+to your project (detailed in [View Customization section](/developer/customization/view.html)).
 
 You will need to add this code:
 

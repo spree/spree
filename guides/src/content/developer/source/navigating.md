@@ -33,7 +33,7 @@ $ git clone git://github.com/spree/spree.git
 ***
 If you are planning on contributing to Spree you should create a
 fork through GitHub and push fixes to clearly labeled branches (see the
-[Contributors Guide](contributing) for details.)
+[Contributors Guide](https://github.com/spree/spree/blob/master/.github/CONTRIBUTING.md) for details.)
 ***
 
 ### Browsing the Repository and/or Downloading the Source Code
@@ -286,4 +286,4 @@ $ spree extension foo
 You need to have the Spree gem installed in order to use the `spree` command.
 ***
 
-Please see the [Creating Extensions](extensions_tutorial) guide for more details.
+Please see the [Creating Extensions](/developer/tutorials/extensions_tutorial.html) guide for more details.

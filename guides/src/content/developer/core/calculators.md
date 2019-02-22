@@ -25,7 +25,7 @@ The following are descriptions of the currently available calculators in Spree. 
 
 ### Default Tax
 
-For information about this calculator, please read the [Taxation](taxation) guide.
+For information about this calculator, please read the [Taxation](/developer/core/taxation.html) guide.
 
 ### Flat Percent Per Item Total
 

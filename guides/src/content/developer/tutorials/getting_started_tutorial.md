@@ -122,6 +122,6 @@ Feel free to explore some of the Admin Panel features that Spree has to offer an
 
 If you've followed the steps described in this tutorial, you should now have a fully functional Spree application up and running.
 
-We recommend you should continue to [Customization section](/developer/customization) to learn how to modify and extend your Spree application.
+We recommend you should continue to [Customization section](/developer/customization/) to learn how to modify and extend your Spree application.
 
-To learn more about Spree internals please refer [Core section](/developer/core).
+To learn more about Spree internals please refer [Core section](/developer/core/).
