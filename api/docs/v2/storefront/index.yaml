@@ -484,15 +484,15 @@ paths:
                 }
               ]
             },
-            payment_source: [
-              {
+            payment_source: {
+              1: {
                 number: '4111111111111111',
                 month: '01',
                 year: '2022',
                 verification_value: '123',
                 name: 'John Doe'
               }
-            ]
+            }
           }
         </pre>
         <br />
