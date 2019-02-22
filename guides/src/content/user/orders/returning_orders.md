@@ -18,7 +18,7 @@ To create an RMA for a shipped order, click the order's "Return Authorizations" 
 
 To use it, just select each line item to be returned, either a reimbursement type or exchange item. Select Quantity of the items(s), its set to "1" by default. For example, customer wants to return a damaged item. Selecting the "Original" reimbursement type will refund a user back to their original payment method when the items are returned and approved.  Selecting an exchange item will create a new shipment to ship the exchange item to the customer.  The form will automatically calculate the RMA value based on the sale price of the item(s), but you will have to confirm the amount when the reimbursement is issued. This gives you a chance to adjust for handling fees, restocking fees, damages, etc.
 
-Input the reason and any memo notes for the return, and select the [Stock Location](configuring_inventory) the item is coming back to. Click the "Create" button.
+Input the reason and any memo notes for the return, and select the [Stock Location](/user/configuration/configuring_inventory.html) the item is coming back to. Click the "Create" button.
 
 Now, you just need to wait for the package to be received at your location.
 
@@ -38,7 +38,7 @@ Once you receive a return package, you need to create a "Customer Return". To do
 
 ![Receive RMA Button](../../../images/user/orders/customer_return_link.jpg)
 
-Select which of the authorized return items were received or mark all of them by simply clicking next to product on the left side checkbox, and to which [Stock Location](creating_products). You can also set if the item that has been returned by the User is still **Resellable** or not. Once you are done, click the "Create" button.
+Select which of the authorized return items were received or mark all of them by simply clicking next to product on the left side checkbox, and to which [Stock Location](/user/products/creating_products.html). You can also set if the item that has been returned by the User is still **Resellable** or not. Once you are done, click the "Create" button.
 
 ![Receive RMA Button](../../../images/user/orders/customer_return_form.jpg)
 

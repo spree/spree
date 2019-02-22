@@ -28,4 +28,4 @@ Once you are in edit mode for the product, select the shipping category you want
 
 ## Next Step
 
-Now that you understand how Shipping Categories work, let's move on to the next piece of the Spree shipping system - shipping [zones](zones).
+Now that you understand how Shipping Categories work, let's move on to the next piece of the Spree shipping system - shipping [zones](/user/shipments/zones.html).

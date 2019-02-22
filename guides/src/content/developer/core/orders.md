@@ -26,8 +26,8 @@ Orders have the following attributes:
 * `ship_address_id`: The ID for the related `Address` object with shipping address information.
 * `shipping_method_id`: The ID for the related `ShippingMethod` object.
 * `created_by_id`: The ID of object that created this order.
-* `shipment_state`: The current shipment state of the order. For possible states, please see the [Shipments guide](shipments).
-* `payment_state`: The current payment state of the order. For possible states, please see the [Payments guide](payments).
+* `shipment_state`: The current shipment state of the order. For possible states, please see the [Shipments guide](/developer/core/shipments.html).
+* `payment_state`: The current payment state of the order. For possible states, please see the [Payments guide](/developer/core/payments.html).
 * `special_instructions`: Any special instructions for the store to do with this order. Will only appear if `Spree::Config[:shipping_instructions]` is set to `true`.
 * `currency`: The currency for this order. Determined by the `Spree::Config[:currency]` value that was set at the time of order.
 * `last_ip_address`: The last IP address used to update this order in the frontend.
@@ -49,7 +49,7 @@ Some methods you may find useful:
 
 ## The Order State Machine
 
-Orders flow through a state machine, beginning at a `cart` state and ending up at a `complete` state. The intermediary states can be configured using the [Checkout Flow API](checkout).
+Orders flow through a state machine, beginning at a `cart` state and ending up at a `complete` state. The intermediary states can be configured using the [Checkout Flow API](/developer/customization/checkout.html).
 
 The default states are as follows:
 
@@ -89,17 +89,17 @@ An order can link to two `Address` objects. The shipping address indicates where
 
 The billing address indicates where the user who's paying for the order is located. This can alter the tax rate for the order, which in turn can change how much the final order total can be.
 
-For more information about addresses, please read the [Addresses](addresses) guide.
+For more information about addresses, please read the [Addresses](/developer/core/addresses.html) guide.
 
 ## Adjustments
 
-Adjustments are used to affect an order's final cost, either by decreasing it ([Promotions](promotions)) or by increasing it ([Shipping](shipments), [Taxes](taxation)).
+Adjustments are used to affect an order's final cost, either by decreasing it ([Promotions](/developer/core/promotions.html)) or by increasing it ([Shipping](/developer/core/shipments.html), [Taxes](/developer/core/taxation.html)).
 
-For more information about adjustments, please see the [Adjustments](adjustments) guide.
+For more information about adjustments, please see the [Adjustments](/developer/core/adjustments.html) guide.
 
 ## Payments
 
-Payment records are used to track payment information about an order. For more information, please read the [Payments](payments) guide.
+Payment records are used to track payment information about an order. For more information, please read the [Payments](/developer/core/payments.html) guide.
 
 ## Return Authorizations
 
