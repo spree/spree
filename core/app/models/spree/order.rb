@@ -103,15 +103,15 @@ module Spree
     belongs_to :store, class_name: 'Spree::Store'
 
     with_options dependent: :destroy do
-      has_many :state_changes, as: :stateful
-      has_many :line_items, -> { order(:created_at) }, inverse_of: :order
-      has_many :payments
-      has_many :return_authorizations, inverse_of: :order
-      has_many :adjustments, -> { order(:created_at) }, as: :adjustable
+      has_many :state_changes, as: :stateful, class_name: 'Spree::StateChange'
+      has_many :line_items, -> { order(:created_at) }, inverse_of: :order, class_name: 'Spree::LineItem'
+      has_many :payments, class_name: 'Spree::Payment'
+      has_many :return_authorizations, inverse_of: :order, class_name: 'Spree::ReturnAuthorization'
+      has_many :adjustments, -> { order(:created_at) }, as: :adjustable, class_name: 'Spree::Adjustment'
     end
-    has_many :reimbursements, inverse_of: :order
+    has_many :reimbursements, inverse_of: :order, class_name: 'Spree::Reimbursement'
     has_many :line_item_adjustments, through: :line_items, source: :adjustments
-    has_many :inventory_units, inverse_of: :order
+    has_many :inventory_units, inverse_of: :order, class_name: 'Spree::InventoryUnit'
     has_many :variants, through: :line_items
     has_many :products, through: :variants
     has_many :refunds, through: :payments
@@ -124,7 +124,7 @@ module Spree
     has_many :order_promotions, class_name: 'Spree::OrderPromotion'
     has_many :promotions, through: :order_promotions, class_name: 'Spree::Promotion'
 
-    has_many :shipments, dependent: :destroy, inverse_of: :order do
+    has_many :shipments, class_name: 'Spree::Shipment', dependent: :destroy, inverse_of: :order do
       def states
         pluck(:state).uniq
       end
