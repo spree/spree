@@ -28,8 +28,12 @@ module Spree
 
     context 'merging together two orders with line items for the same variant' do
       before do
-        order_1.contents.add(variant, 1)
-        order_2.contents.add(variant, 1)
+        Spree::Dependencies.cart_add_item_service.constantize.call(order: order_1,
+                                                                 variant: variant,
+                                                                 quantity: 1)
+        Spree::Dependencies.cart_add_item_service.constantize.call(order: order_2,
+                                                                 variant: variant,
+                                                                 quantity: 1)
       end
 
       specify do
@@ -55,8 +59,14 @@ module Spree
 
       context '2 equal line items' do
         before do
-          @line_item_1 = order_1.contents.add(variant, 1, foos: {})
-          @line_item_2 = order_2.contents.add(variant, 1, foos: {})
+          @line_item_1 = Spree::Dependencies.cart_add_item_service.constantize.call(order: order_1,
+                                                                 variant: variant,
+                                                                 quantity: 1,
+                                                                 options: {foos: {}}).value
+          @line_item_2 = Spree::Dependencies.cart_add_item_service.constantize.call(order: order_2,
+                                                                 variant: variant,
+                                                                 quantity: 1,
+                                                                 options: {foos: {}}).value
         end
 
         specify do
@@ -74,8 +84,15 @@ module Spree
         before do
           allow(order_1).to receive(:foos_match).and_return(false)
 
-          order_1.contents.add(variant, 1, foos: {})
-          order_2.contents.add(variant, 1, foos: { bar: :zoo })
+          Spree::Dependencies.cart_add_item_service.constantize.call(order: order_1,
+                                                                 variant: variant,
+                                                                 quantity: 1,
+                                                                 options: {foos: {}})
+
+          Spree::Dependencies.cart_add_item_service.constantize.call(order: order_2,
+                                                                 variant: variant,
+                                                                 quantity: 1,
+                                                                 options: {foos: {bar: :zoo}})
         end
 
         specify do
@@ -97,8 +114,12 @@ module Spree
       let(:variant_2) { create(:variant) }
 
       before do
-        order_1.contents.add(variant, 1)
-        order_2.contents.add(variant_2, 1)
+        Spree::Dependencies.cart_add_item_service.constantize.call(order: order_1,
+                                                                 variant: variant,
+                                                                 quantity: 1)
+        Spree::Dependencies.cart_add_item_service.constantize.call(order: order_2,
+                                                                 variant: variant_2,
+                                                                 quantity: 1)
       end
 
       specify do
@@ -119,8 +140,12 @@ module Spree
       let(:variant_2) { create(:variant) }
 
       before do
-        order_1.contents.add(variant, 1)
-        order_2.contents.add(variant_2, 1)
+        Spree::Dependencies.cart_add_item_service.constantize.call(order: order_1,
+                                                                 variant: variant,
+                                                                 quantity: 1)
+        Spree::Dependencies.cart_add_item_service.constantize.call(order: order_2,
+                                                                 variant: variant_2,
+                                                                 quantity: 1)
       end
 
       it 'creates errors with invalid line items' do
