@@ -41,7 +41,7 @@ Each product in your store will need a tax category assigned to it to accurately
 
 ## Zones
 
-In addition to a product's tax category, the zone an order is being shipped to will play a role in determining the tax amount. You can read more about how zones work in the [Zones guide](zones).
+In addition to a product's tax category, the zone an order is being shipped to will play a role in determining the tax amount. You can read more about how zones work in the [Zones guide](#zones).
 
 ## Tax Rates
 
@@ -69,4 +69,4 @@ Finally, European stores will benefit from the Tax Settings page.
 
 ![Tax Settings](../../../images/user/config/tax_settings.jpg)
 
-When this option is checked, your Spree site will take its default [tax category](#tax_categories), find the corresponding [tax rate](#tax-rate), and multiply it times the shipping rate for each available [shipping method](shipping_methods) offered to a customer during checkout.
+When this option is checked, your Spree site will take its default [tax category](#tax_categories), find the corresponding [tax rate](#tax-rate), and multiply it times the shipping rate for each available [shipping method](/user/shipments/shipping_methods.html) offered to a customer during checkout.

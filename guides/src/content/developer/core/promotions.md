@@ -40,7 +40,7 @@ When a `CreateAdjustment` action is undertaken, an adjustment is automatically a
 
 Once the adjustment has been applied to the order, its eligibility is re-checked every time the order is saved, by way of the `Promotion#eligible?` method, which uses `Promotion#eligible_rules` to determine if the promotion is still eligible based on its rules. For how this process works, please see the [rules section](#rules) below.
 
-An adjustment to an order from a promotion depends on the calculators. For more information about calculators, please see the [Calculators guide](calculators).
+An adjustment to an order from a promotion depends on the calculators. For more information about calculators, please see the [Calculators guide](/developer/core/calculators.html).
 
 ### Creating an item adjustment
 
@@ -48,7 +48,7 @@ When a `CreateItemAdjustments` action is undertaken, an adjustment is automatica
 
 The eligibility of the item for this promotion is re-checked whenever the item is updated. Its eligibility is based off the rules of the promotion.
 
-An adjustment to an order from a promotion depends on the calculators. For more information about calculators, please see the [Calculators guide](calculators).
+An adjustment to an order from a promotion depends on the calculators. For more information about calculators, please see the [Calculators guide](/developer/core/calculators.html).
 
 !!!
 The Spree::Promotion::Actions::CreateItemAdjustments object has a specific bloat issue in Spree 2.2 and will not scale on larger stores. Spree 2.3 fixes the root cause of the problem. For this reason, you may want to upgrade to Spree 2.3 before using this promotion action.
@@ -111,7 +111,7 @@ Spree 2.4 adds an two more rules in addition to the five listed above:
 * `One Use Per User`: Can be used only once per customer.
 * `Taxon(s)`: Order includes product(s) with taxons that you associate to this rule.
 
-Rules are used by Spree to determine if a promotion is applicable to an order and can be matched in one of two ways: all of the rules must match, or one rule must match. This is determined by the `match_policy` attribute on the `Promotion` object. As you will see in the Admin, you can set the match_policy to be "any" or "all" of the rules associated with the Promotion. When set to "any" the Promotion will be considered eligible if any one of the rules applies, when set to "all" it will be eligible only if all the rules apply. 
+Rules are used by Spree to determine if a promotion is applicable to an order and can be matched in one of two ways: all of the rules must match, or one rule must match. This is determined by the `match_policy` attribute on the `Promotion` object. As you will see in the Admin, you can set the match_policy to be "any" or "all" of the rules associated with the Promotion. When set to "any" the Promotion will be considered eligible if any one of the rules applies, when set to "all" it will be eligible only if all the rules apply.
 
 
 
@@ -127,11 +127,11 @@ module Spree
         def applicable?(promotable)
           promotable.is_a?(Spree::Order)
         end
-      
+
         def eligible?(order, options = {})
           ...
         end
-      
+
         def actionable?(line_item)
           ...
         end

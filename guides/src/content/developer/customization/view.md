@@ -35,7 +35,7 @@ All of those views will be added to your `app/views` directory under `spree` fol
 
 ### Switch storefront layout
 
-If you want to leave most of the views in tact and you want to only change the layout file you can change it by setting a [preference](/developer/core/preferences) in your Spree initializer (`config/initializers/spree.rb`), eg.
+If you want to leave most of the views in tact and you want to only change the layout file you can change it by setting a [preference](/developer/core/preferences.html) in your Spree initializer (`config/initializers/spree.rb`), eg.
 
 ```ruby
 Spree.config do |config|
@@ -43,7 +43,7 @@ Spree.config do |config|
 end
 ```
 
-This will use the the `app/views/layouts/application.html.erb` file. 
+This will use the the `app/views/layouts/application.html.erb` file.
 
 This is useful when you're not using the default Spree frontend (aka the `spree_frontend` gem).
 
@@ -57,7 +57,7 @@ Spree.config do |config|
 end
 ```
 
-This will use a file under `app/assets/images/my_new_logo.png` path. 
+This will use a file under `app/assets/images/my_new_logo.png` path.
 
 ## Admin Panel (Backend)
 
@@ -91,7 +91,7 @@ Spree::BackendConfiguration::ORDER_TABS << :my_custom_orders
 
 This will add a link to `spree.admin_my_custom_orders_path` route under the `Orders` tab.
 
-You can add links to `ORDER_TABS`, `PRODUCT_TABS`, `REPORT_TABS`, `CONFIGURATION_TABS`, `PROMOTION_TABS`, `USER_TABS`. 
+You can add links to `ORDER_TABS`, `PRODUCT_TABS`, `REPORT_TABS`, `CONFIGURATION_TABS`, `PROMOTION_TABS`, `USER_TABS`.
 
 ### Import admin views into your application
 

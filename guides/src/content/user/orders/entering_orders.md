@@ -97,13 +97,13 @@ You need only enter the "Amount" (positive for a charge on the order; negative f
 
 ![New Adjustment Form](../../../images/user/orders/new_adjustment_form.jpg)
 
-For a better understanding of adjustments, please read the [Developer Adjustments Guide](/developer/adjustments).
+For a better understanding of adjustments, please read the [Developer Adjustments Guide](/developer/core/adjustments.html).
 
 Once you have finished all of the changes you want in the order's Adjustments, click "Continue".
 
 ## Payments
 
-If you are manually entering this order, it is presumed that you have received payment either in person, on the phone, or through some other non-website means. You can manually enter payment using any of your site's configured [payment methods](payment_methods).
+If you are manually entering this order, it is presumed that you have received payment either in person, on the phone, or through some other non-website means. You can manually enter payment using any of your site's configured [payment methods](/user/payments/payment_methods.html).
 
 Just click the "Payments" link in the right panel section.
 
@@ -117,6 +117,6 @@ Then, click the "New Payment" link to enter the information for the credit card 
 
 ![New Payment Method Link](../../../images/user/orders/new_payment_method_link.jpg)
 
-Don't forget that you will need to [capture the payment](payment_states#authorize-vs-capture) on the credit card (unless your store is set up to automatically authorize and capture a paymentś).
+Don't forget that you will need to [capture the payment](/user/payments/payment_states.html#authorize-vs-capture) on the credit card (unless your store is set up to automatically authorize and capture a paymentś).
 
-For more on payments, be sure to read both the [Payment Methods](payment_methods) and [Payment States](payment_states) guides.
+For more on payments, be sure to read both the [Payment Methods](/user/payments/payment_methods.html) and [Payment States](/user/payments/payment_states.html) guides.

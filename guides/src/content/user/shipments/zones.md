@@ -4,7 +4,7 @@ title: Zones
 
 ## Zones
 
-Zones serve as a way to define shipping rules for a particular geographic area. A zone is made up of a set of either countries or states. Zones are used within Spree to define the rules for a [Shipping Method](shipping_methods).
+Zones serve as a way to define shipping rules for a particular geographic area. A zone is made up of a set of either countries or states. Zones are used within Spree to define the rules for a [Shipping Method](/user/shipments/shipping_methods.html).
 
 Each shipping method can be assigned to only one zone. For example, if one of the shipping methods for your store is UPS Ground (a US-only shipping carrier), then the zone for that shipping method should be defined as the United States.
 
@@ -36,4 +36,4 @@ It is easy to remove a state or country from one of your zones. Just go to your 
 
 ## Next Step
 
-Once you have set up all of the shipping zones you need, it's time to move on to the next Spree shipping component: [Calculators](calculators).
+Once you have set up all of the shipping zones you need, it's time to move on to the next Spree shipping component: [Calculators](/user/shipments/calculators.html).

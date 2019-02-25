@@ -40,7 +40,7 @@ If a shipping method is available only on backend, then only your store's admini
 
 #### Tracking URL
 
-You can optionally input a tracking URL for your new shipping method. This allows customers to track the progress of their package from your [Stock Location](configuring_inventory) to the order's shipping address. The string ":tracking" will be replaced with the tracking number you input once you actually process the order.
+You can optionally input a tracking URL for your new shipping method. This allows customers to track the progress of their package from your [Stock Location](/user/configuration/configuring_inventory.html) to the order's shipping address. The string ":tracking" will be replaced with the tracking number you input once you actually process the order.
 
 You may need to check with the shipping carrier to see if they have a Shipping Confirmation URL that customers can use for this service. Some [commonly-used tracking URLs](http://verysimple.com/2011/07/06/ups-tracking-url/) are available online.
 
@@ -50,7 +50,7 @@ Please note that Spree Commerce, Inc. makes no claims of warranty or accuracy fo
 
 #### Categories
 
-Some shipping methods may only apply to certain types of products in your store, regardless of where those items are being shipped. You may only want to send over-sized items via UPS Ground, for example, and not via USPS Priority. The options shown in the "Categories" section correspond to the [Shipping Categories](shipping_categories) you set up in an earlier section of this guide series.
+Some shipping methods may only apply to certain types of products in your store, regardless of where those items are being shipped. You may only want to send over-sized items via UPS Ground, for example, and not via USPS Priority. The options shown in the "Categories" section correspond to the [Shipping Categories](/user/shipments/shipping_categories.html) you set up in an earlier section of this guide series.
 
 ![Shipping Method Categories](../../../images/user/shipments/shipping_method_categories.jpg)
 
@@ -58,7 +58,7 @@ Check the boxes next to the categories you want served by your new shipping meth
 
 #### Zones
 
-In [a previous step to this guide](zones) you learned about how to set up geographical zones for your store. Within the form's "Zones" section, you need to specify which zones are served by this shipping method. The "EU_VAT" (European Value-Added Tax) zone could be served by USPS First Class International, but could _not_ be served by USPS Priority Mail.
+In [a previous step to this guide](/user/shipments/zones.html) you learned about how to set up geographical zones for your store. Within the form's "Zones" section, you need to specify which zones are served by this shipping method. The "EU_VAT" (European Value-Added Tax) zone could be served by USPS First Class International, but could _not_ be served by USPS Priority Mail.
 
 ![Shipping Method Zones](../../../images/user/shipments/shipping_method_zones.jpg)
 
@@ -66,7 +66,7 @@ Check the boxes next to any zones you want served by this shipping method.
 
 #### Calculator
 
-Each shipping method is associated with one [Calculator](calculators). You can choose one of the built-in Spree calculators, or one you made yourself.
+Each shipping method is associated with one [Calculator](/user/shipments/calculators.html). You can choose one of the built-in Spree calculators, or one you made yourself.
 
 ![Shipping Method Calculator](../../../images/user/shipments/shipping_method_calculator.jpg)
 
@@ -74,7 +74,7 @@ Once you've made your calculator selection, click the "Create" button to finaliz
 
 ![Shipping Method Flat Percent](../../../images/user/shipments/shipping_method_flat_percent.jpg)
 
-If necessary, you can re-read the [Calculators](calculators) portion of this guide series to better understand the options. Click the "Update" button, and your shipping method is now complete!
+If necessary, you can re-read the [Calculators](/user/shipments/calculators.html) portion of this guide series to better understand the options. Click the "Update" button, and your shipping method is now complete!
 
 ### Editing a Shipping Method
 
