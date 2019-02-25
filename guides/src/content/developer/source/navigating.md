@@ -27,7 +27,7 @@ The authoritative git repository is hosted by
 clone the git repository using the following command:
 
 ```bash
-$ git clone git://github.com/spree/spree.git
+git clone git://github.com/spree/spree.git
 ```
 
 ***
