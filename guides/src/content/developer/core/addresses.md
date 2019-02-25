@@ -28,9 +28,9 @@ When an order's address is linked to a country or a state, that can ultimately a
 
 A zone is comprised of many different "zone members", which can either be a set of countries or a set of states.
 
-Every order has a "tax zone", which indicates if a user should or shouldn't be taxed when placing an order. For more information, please see the [Taxation](taxation) guide.
+Every order has a "tax zone", which indicates if a user should or shouldn't be taxed when placing an order. For more information, please see the [Taxation](/developer/core/taxation.html) guide.
 
-In addition to tax zones, orders also have shipping methods. These are provided to the user based on their address information, and once selected lock in how an order is going to be shipped to that user. For more information, please see the [Shipments](shipments) guide.
+In addition to tax zones, orders also have shipping methods. These are provided to the user based on their address information, and once selected lock in how an order is going to be shipped to that user. For more information, please see the [Shipments](/developer/core/shipments.html) guide.
 
 ## Countries
 

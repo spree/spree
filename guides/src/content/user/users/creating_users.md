@@ -15,4 +15,4 @@ The three mandatory fields ("Email", "Password" and "Password Confirmation") and
 
 ## Editing existing user
 
-Once you have created an account you are redirected to User edition page about which you can find more [here](editing_users).
+Once you have created an account you are redirected to User edition page about which you can find more [here](/user/users/editing_users.html).

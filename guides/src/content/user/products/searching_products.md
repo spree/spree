@@ -13,11 +13,11 @@ The list shows you the following information about each order:
 * **Name with image** - Actual name and the image visible on front.
 * **Master price** - Main price of the product (there might also be different price for the variants).
 
-Next to each product there are 3 buttons. 
+Next to each product there are 3 buttons.
 
-* **Edit** - Allows you to make [additional edition in the product](editing_products).
-* **Clone** - Allows you to make a [duplicate of the certain product](cloning_products).
-* **Delete** - Allows you to [delete certain product](deleting_products).
+* **Edit** - Allows you to make [additional edition in the product](/user/products/editing_products.html).
+* **Clone** - Allows you to make a [duplicate of the certain product](/user/products/cloning_products.html).
+* **Delete** - Allows you to [delete certain product](/user/products/deleting_products.html).
 
 ![Product Search](../../../images/user/products/products_landing.jpg)
 

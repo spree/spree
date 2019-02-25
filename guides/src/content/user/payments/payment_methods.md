@@ -86,4 +86,4 @@ Make the desired changes to the payment method settings and then click "Update" 
 
 ## Processing Payments
 
-Processing orders and the payments associated with them are covered in detail in the [Processing Orders guide](processing_orders).
+Processing orders and the payments associated with them are covered in detail in the [Processing Orders guide](/user/orders/processing_orders.html).

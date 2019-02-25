@@ -419,28 +419,24 @@ paths:
           order: {
             email: 'john@snow.org',
             bill_address_attributes: {
-              {
-                firstname: 'John',
-                lastname: 'Snow',
-                address1: '7735 Old Georgetown Road',
-                city: 'Bethesda',
-                phone: '3014445002',
-                zipcode: '20814',
-                state_name: 'MD',
-                country_iso: 'US'
-              }
+              firstname: 'John',
+              lastname: 'Snow',
+              address1: '7735 Old Georgetown Road',
+              city: 'Bethesda',
+              phone: '3014445002',
+              zipcode: '20814',
+              state_name: 'MD',
+              country_iso: 'US'
             },
             ship_address_attributes: {
-              {
-                firstname: 'John',
-                lastname: 'Snow',
-                address1: '7735 Old Georgetown Road',
-                city: 'Bethesda',
-                phone: '3014445002',
-                zipcode: '20814',
-                state_name: 'MD',
-                country_iso: 'US'
-              }
+              firstname: 'John',
+              lastname: 'Snow',
+              address1: '7735 Old Georgetown Road',
+              city: 'Bethesda',
+              phone: '3014445002',
+              zipcode: '20814',
+              state_name: 'MD',
+              country_iso: 'US'
             }
           }
         </pre>
@@ -462,9 +458,12 @@ paths:
         <br />
         <pre>
           order: {
-            shipments_attributes: {
-              '0' => { selected_shipping_rate_id: 1, id: 1}
-            }
+            shipments_attributes: [
+              {
+                id: 1,
+                selected_shipping_rate_id: 1
+              }
+            ]
           }
         </pre>
         <br />
@@ -486,7 +485,7 @@ paths:
               ]
             },
             payment_source: {
-              '1' => {
+              1: {
                 number: '4111111111111111',
                 month: '01',
                 year: '2022',

@@ -5,16 +5,16 @@ order: 7
 ---
 
 <alert kind="warning">
-  For API v2 customization please refer [API v2 section](api_v2)
+  For API v2 customization please refer [API v2 section](/developer/customization/api_v2.html)
 </alert>
 
 ## Introduction
 
-In this tutorial we are going to learn how we can customize the **[REST API](../../api)** provided by Spree, adding a new endpoint (or you can override an existing in core). We will use `spree_simple_sales` extension created in [Extensions tutorial](extensions_tutorial). If you haven't seen before, please check them!
+In this tutorial we are going to learn how we can customize the **[REST API](../../api)** provided by Spree, adding a new endpoint (or you can override an existing in core). We will use `spree_simple_sales` extension created in [Extensions tutorial](/developer/tutorials/extensions_tutorial.html). If you haven't seen before, please check them!
 
 ## Adding Custom Endpoints
 
-Similarly to [Adding a Controller Action](extensions_tutorial.html#adding-a-controller-action-to-homecontroller) of [Extensions tutorial](extensions_tutorial), you can create a new controller class with an action that emits a json response from a [Rabl](https://github.com/nesquena/rabl) view.
+Similarly to [Adding a Controller Action](extensions_tutorial.html#adding-a-controller-action-to-homecontroller) of [Extensions tutorial](/developer/tutorials/extensions_tutorial.html), you can create a new controller class with an action that emits a json response from a [Rabl](https://github.com/nesquena/rabl) view.
 
 
 ### Creating the controller and action
@@ -100,7 +100,7 @@ attributes *product_attributes << :sale_price
 
 ### Testing Our endpoint
 
-Like described in [Testing Our Decorator](extensions_tutorial.md#testing-our-decorator) it's always a good idea to test your code, including your api new/changed endpoints. Let's write a integration test that simulate your api of simple unit tests for `sales_controller.rb`
+Like described in [Testing Our Decorator](/developer/tutorials/extensions_tutorial.html#testing-our-decorator) it's always a good idea to test your code, including your api new/changed endpoints. Let's write a integration test that simulate your api of simple unit tests for `sales_controller.rb`
 
 #### Creating and running the test
 
@@ -116,7 +116,7 @@ end
 > **PS:** The `rspec-activemodel-mocks` is need to use `stub_*` methods (e.g `stub_model` called by `stub_authentication!`)
 
 2. `bundle install`
-   
+
 3. Copy the file [spree/controller_hacks.rb](https://github.com/spree/spree/blob/master/api/spec/support/controller_hacks.rb) to `spec/support` folder. That is required to use `api_*` methods to simulate api requests (e.g `api_get :action`, `api_post :action`...)
 
 4. Replicate the extension's controller directory structure in our spec directory by running the following command
@@ -183,8 +183,8 @@ user = Spree::user_class.first
 api_key = user.spree_api_key # Copy the api_key value
 ```
 
-Now, when we head to `http://localhost:3000/api/v1/sales`, passing the header `X-Spree-Token: [YOUR_COPIED_API_KEY]`, (or add a `?token=[YOUR_COPIED_API_KEY]`  to the url) into your browser or any REST client, we should see the json result with all products with a sale price. 
+Now, when we head to `http://localhost:3000/api/v1/sales`, passing the header `X-Spree-Token: [YOUR_COPIED_API_KEY]`, (or add a `?token=[YOUR_COPIED_API_KEY]`  to the url) into your browser or any REST client, we should see the json result with all products with a sale price.
 
 <alert kind="note">
-  Note that you will likely need to restart our example Spree application (created in the [Getting Started](getting_started_tutorial) tutorial).
+  Note that you will likely need to restart our example Spree application (created in the [Getting Started](/developer/tutorials/getting_started_tutorial.html) tutorial).
 </alert>

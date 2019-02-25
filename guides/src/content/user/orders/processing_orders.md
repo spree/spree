@@ -4,7 +4,7 @@ title: Processing Orders
 
 ## Introduction
 
-Once an order comes into your store - whether it is entered by a customer through the website frontend or you [manually enter it yourself](entering_orders) through the admin backend - it needs to be processed. That means these steps need to be taken:
+Once an order comes into your store - whether it is entered by a customer through the website frontend or you [manually enter it yourself](/user/orders/entering_orders.html) through the admin backend - it needs to be processed. That means these steps need to be taken:
 
 1. Verify that the products are, in fact, in stock and shippable.
 2. Process the payment(s) on the order.
