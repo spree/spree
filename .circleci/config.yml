@@ -23,7 +23,7 @@ run_tests: &run_tests
     - run:
         name: Ensure Bundle Install
         command: |
-          bundle check --path=~/spree/vendor/bundle || bundle install
+          bundle install --path=~/spree/vendor/bundle
           ./build-ci.rb install
     - run:
         name: Run rspec in parallel
@@ -49,10 +49,10 @@ jobs:
       - run:
           name: Bundle Install
           command: |
-            bundle check --path=~/spree/vendor/bundle || bundle install
+            bundle install --path=~/spree/vendor/bundle
             ./build-ci.rb install
       - save_cache:
-          key: spree-bundle-v3-{{ checksum ".ruby-version" }}-{{ .Branch }}
+          key: spree-bundle-v3-{{ checksum ".ruby-version" }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
           paths:
             - ~/spree/vendor/bundle
 
@@ -97,7 +97,7 @@ jobs:
       - run:
           name: Ensure Bundle Install
           command: |
-            bundle check --path=~/spree/vendor/bundle || bundle install
+            bundle install --path=~/spree/vendor/bundle
             ./build-ci.rb install
       - run:
           name: Run rspec in parallel
