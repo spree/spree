@@ -10,6 +10,8 @@ module Spree
 
       fill_in 'Name', with: 'Brazil'
       fill_in 'Iso Name', with: 'BRL'
+      fill_in 'Iso', with: 'BR'
+      fill_in 'Iso3', with: 'BRL'
       click_button 'Create'
 
       spree_accept_alert do
