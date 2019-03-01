@@ -540,6 +540,7 @@ module Spree
     def apply_free_shipping_promotions
       Spree::PromotionHandler::FreeShipping.new(self).activate
       shipments.each { |shipment| Spree::Adjustable::AdjustmentsUpdater.update(shipment) }
+      create_shipment_tax_charge!
       update_with_updater!
     end
 

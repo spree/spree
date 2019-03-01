@@ -533,6 +533,8 @@ describe Spree::Order, type: :model do
 
       expect(Spree::Adjustable::AdjustmentsUpdater).to receive(:update).with(shipment)
 
+      expect(Spree::TaxRate).to receive(:adjust).with(order, [shipment])
+
       expect(order.updater).to receive(:update)
       order.apply_free_shipping_promotions
     end
