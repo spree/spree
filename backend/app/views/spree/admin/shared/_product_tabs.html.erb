@@ -19,6 +19,6 @@
     <% end if can?(:admin, Spree::ProductProperty) && !@product.deleted? %>
     <%= content_tag :li, class: ('active' if current == :stock) do %>
       <%= link_to_with_icon 'home', Spree.t(:stock), stock_admin_product_url(@product) %>
-    <% end if can?(:admin, Spree::Stock) && !@product.deleted? %>
+    <% end if can?(:admin, Spree::StockItem) && !@product.deleted? %>
   </ul>
 <% end %>

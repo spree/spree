@@ -14,7 +14,7 @@ module Spree
         belongs_to :parent,   record_type: :taxon, serializer: :taxon
         belongs_to :taxonomy, record_type: :taxonomy
 
-        has_many   :children, record_type: :child, serializer: :taxon
+        has_many   :children, record_type: :taxon, serializer: :taxon
         has_many   :products, record_type: :product
 
         has_one    :image,
