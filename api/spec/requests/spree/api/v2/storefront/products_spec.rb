@@ -35,6 +35,17 @@ describe 'API V2 Storefront Products Spec', type: :request do
       end
     end
 
+    context 'with specified skus' do
+      before { get "/api/v2/storefront/products?filter[skus]=#{products.first.default_variant.sku}" }
+
+      it_behaves_like 'returns 200 HTTP status'
+
+      it 'returns products with specified ids' do
+        expect(json_response['data'].count).to eq 1
+        expect(json_response['data'].first).to have_id(products.first.id.to_s)
+      end
+    end
+
     context 'with specified price range' do
       before { get "/api/v2/storefront/products?filter[price]=#{product_with_price.price.to_f},#{product_with_price.price.to_f + 0.04}" }
 
