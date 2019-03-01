@@ -761,6 +761,7 @@ paths:
       operationId: 'Products List'
       parameters:
         - $ref: '#/components/parameters/FilterByIds'
+        - $ref: '#/components/parameters/FilterBySKUs'
         - in: query
           name: filter[price]
           schema:
@@ -2517,6 +2518,13 @@ components:
         type: string
       example: 1,2,3
       description: Fetch only resources with corresponding IDs
+    FilterBySKUs:
+      in: query
+      name: filter[skus]
+      schema:
+        type: string
+      example: SKU-123,SKU-345
+      description: Fetch only resources with corresponding SKUs
     FilterByName:
       in: query
       name: filter[name]
