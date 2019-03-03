@@ -5,7 +5,7 @@ section: tutorial
 
 ## Getting Started
 
-Let's build a simple [extension](/developer/customization/extentions.html). Suppose we want the ability to mark certain products as being on sale. We'd like to be able to set a sale price on a product and show products that are on sale on a separate products page. This is a great example of how an extension can be used to build on the solid Spree foundation.
+Let's build a simple [extension](/developer/customization/extensions.html). Suppose we want the ability to mark certain products as being on sale. We'd like to be able to set a sale price on a product and show products that are on sale on a separate products page. This is a great example of how an extension can be used to build on the solid Spree foundation.
 
 So let's start by generating the extension. Run the following command from a directory of your choice outside of our Spree application:
 
