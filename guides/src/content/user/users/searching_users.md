@@ -2,8 +2,6 @@
 title: Searching Users
 ---
 
-# Searching Users
-
 When you click the **Users** tab you will see **Filter dropdown**, **New User button** and all existing users that have ever created an account on your page.
 
 Next to each user there are 2 buttons and additionaly you can sort them by name by simply clicking **User** above the user's emails.
@@ -22,18 +20,10 @@ You can choose one or more of the following options to narrow your user search, 
 
 ![User search option](../../../images/user/users/users_search_option.jpg)
 
-### Email
+* **Email** - Allows you to search the user by the email.
 
-Allows you to search the user by the email.
+* **First Name** - Allows you to search the user by the first name used during registration.
 
-### First Name
+* **Last Name** - Allows you to search the user by the last name used during registration.
 
-Allows you to search the user by the first name used during registration.
-
-### Last Name
-
-Allows you to search the user by the last name used during registration.
-
-### Company
-
-Allows you to search the user by the company.
+* **Company** - Allows you to search the user by the company.

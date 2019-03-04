@@ -30,8 +30,8 @@ For example, if there are 4 items in an order and the flat rate per item amount 
 
 The Flat Percent calculator allows you to calculate shipping costs as a percent of the total amount charged for the order. The amount is calculated as follows:
 
-```ruby
-[item total] x [flat percentage]```
+`ruby
+[item total] x [flat percentage]`
 
 For example, if an order had an item total of $31 and the calculator was configured to have a flat percent amount of 10, the shipping cost would be $3.10, because $31 x 10% = $3.10.
 
