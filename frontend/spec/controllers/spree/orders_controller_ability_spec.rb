@@ -17,17 +17,6 @@ module Spree
         allow(controller).to receive_messages spree_current_user: user
       end
 
-      context '#populate' do
-        it 'checks if user is authorized for :edit' do
-          expect(controller).to receive(:authorize!).with(:edit, order, token)
-          spree_post :populate, variant_id: variant.id
-        end
-        it 'checks against the specified order' do
-          expect(controller).to receive(:authorize!).with(:edit, specified_order, token)
-          spree_post :populate, id: specified_order.number, variant_id: variant.id
-        end
-      end
-
       context '#edit' do
         it 'checks if user is authorized for :edit' do
           expect(controller).to receive(:authorize!).with(:edit, order, token)
