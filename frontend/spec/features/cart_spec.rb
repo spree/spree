@@ -27,14 +27,6 @@ describe 'Cart', type: :feature, inaccessible: true, js: true do
     expect(page).to have_selector('button#update-button[disabled]')
   end
 
-  # Regression test for #2006
-  it "does not error out with a 404 when GET'ing to /orders/populate" do
-    visit '/orders/populate'
-    within('.alert-error') do
-      expect(page).to have_content(Spree.t(:populate_get_error))
-    end
-  end
-
   it 'allows you to remove an item from the cart' do
     add_mug_to_cart
     line_item = Spree::LineItem.first!
