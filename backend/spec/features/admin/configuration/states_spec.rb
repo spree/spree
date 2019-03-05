@@ -6,7 +6,7 @@ describe 'States', type: :feature do
   let!(:country) { create(:country) }
 
   before do
-    @hungary = Spree::Country.create!(name: 'Hungary', iso_name: 'Hungary')
+    @hungary = Spree::Country.create!(name: 'Hungary', iso_name: 'Hungary', iso: 'HU', iso3: 'HUN')
   end
 
   def go_to_states_page
