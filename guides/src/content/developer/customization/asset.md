@@ -111,7 +111,7 @@ manual inclusion in your extensions installation instructions or provide
 a Rails generator to do so.
 
 For an example of an extension using a generator to install assets and
-migrations take a look at the 
+migrations take a look at the
 [install generator for Braintree Vzero](https://github.com/spree-contrib/spree_braintree_vzero/blob/master/lib/generators/spree_braintree_vzero/install/install_generator.rb).
 
 ## Overriding Spree's core assets

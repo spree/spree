@@ -164,7 +164,7 @@ define several `before_actions` for the `Spree::CheckoutController`:
 
 ### The Order Model and State Machine
 
- The `Spree::Order` state machine is the foundation of the checkout process. Spree makes use of the [state_machines](hhttps://github.com/state-machines/state_machines) gem in the `Spree::Order` model as well as in several other places (such as `Spree::Shipment` and `Spree::InventoryUnit`.)
+ The `Spree::Order` state machine is the foundation of the checkout process. Spree makes use of the [state_machines](https://github.com/state-machines/state_machines) gem in the `Spree::Order` model as well as in several other places (such as `Spree::Shipment` and `Spree::InventoryUnit`.)
 
 The default checkout flow for the `Spree::Order` model is defined in
 `app/models/spree/order/checkout.rb` of spree_core.
@@ -180,7 +180,7 @@ from the system. The end result is a simplified data model along with the
 ability for store owners to search and report on incomplete/abandoned orders.
 
 <alert kind="note">
-  For more information on the state machines gem please see the [README](hhttps://github.com/state-machines/state_machines)
+  For more information on the state machines gem please see the [README](https://github.com/state-machines/state_machines)
 </alert>
 
 ## Checkout Customization
