@@ -186,17 +186,6 @@ module Spree
       update_hooks.add(hook)
     end
 
-    # Use this method in other gems that wish to register their own custom logic
-    # that should be called when determining if two line items are equal.
-    def self.register_line_item_comparison_hook(hook)
-      ActiveSupport::Deprecation.warn(<<-EOS, caller)
-        Order.register_line_item_comparison_hook is deprecated and will be removed in Spree 4.0. Please use
-        `Rails.application.config.spree.line_item_comparison_hooks << hook` instead.
-      EOS
-
-      Rails.application.config.spree.line_item_comparison_hooks << hook
-    end
-
     # For compatiblity with Calculator::PriceSack
     def amount
       line_items.inject(0.0) { |sum, li| sum + li.amount }
