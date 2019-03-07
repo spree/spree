@@ -22,30 +22,6 @@ module Spree
     alias display_ship_total display_shipment_total
     alias_attribute :ship_total, :shipment_total
 
-    def guest_token
-      ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
-        Order#guest_token is deprecated and will be removed in Spree 4.0. Please use Order#token instead
-      DEPRECATION
-
-      token
-    end
-
-    def guest_token?
-      ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
-        Order#guest_token? is deprecated and will be removed in Spree 4.0. Please use Order#token? instead
-      DEPRECATION
-
-      token?
-    end
-
-    def guest_token=(value)
-      ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
-        Order#guest_token= is deprecated and will be removed in Spree 4.0. Please use Order#token= instead
-      DEPRECATION
-
-      self.token = value
-    end
-
     MONEY_THRESHOLD  = 100_000_000
     MONEY_VALIDATION = {
       presence: true,
