@@ -729,14 +729,6 @@ module Spree
       self.currency ||= store.default_currency || Spree::Config[:currency]
     end
 
-    def set_currency
-      ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
-         Spree::Order#set_currency was renamed to Spree::Order#ensure_currency_presence
-         and will be removed in Spree 4.0. Please update your code to avoid problems after update
-      DEPRECATION
-      ensure_currency_presence
-    end
-
     def create_token
       self.token ||= generate_token
     end
