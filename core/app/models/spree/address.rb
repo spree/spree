@@ -61,22 +61,6 @@ module Spree
       state_name.present? ? state_name : state&.name
     end
 
-    def same_as?(other)
-      ActiveSupport::Deprecation.warn(<<-EOS, caller)
-        Address#same_as? is deprecated and will be removed in Spree 4.0. Please use Address#== instead"
-      EOS
-
-      self == other
-    end
-
-    def same_as(other)
-      ActiveSupport::Deprecation.warn(<<-EOS, caller)
-        Address#same_as is deprecated and will be removed in Spree 4.0. Please use Address#== instead"
-      EOS
-
-      self == other
-    end
-
     def to_s
       "#{full_name}: #{address1}"
     end
