@@ -280,27 +280,8 @@ module Spree
     def find_line_item_by_variant(variant, options = {})
       line_items.detect do |line_item|
         line_item.variant_id == variant.id &&
-          line_item_options_match(line_item, options)
+          Spree::Dependencies.cart_compare_line_items_service.constantize.new.call(order: self, line_item: line_item, options: options).value
       end
-    end
-
-    # This method enables extensions to participate in the
-    # "Are these line items equal" decision.
-    #
-    # When adding to cart, an extension would send something like:
-    # params[:product_customizations]={...}
-    #
-    # and would provide:
-    #
-    # def product_customizations_match
-    def line_item_options_match(line_item, options)
-      ActiveSupport::Deprecation.warn(<<-EOS, caller)
-        Order#line_item_options_match is deprecated and will be removed in Spree 4.0. Please use
-        Spree::Dependencies.cart_compare_line_items_service.constantize service instead.
-      EOS
-      return true unless options
-
-      Spree::Dependencies.cart_compare_line_items_service.constantize.new.call(order: self, line_item: line_item, options: options).value
     end
 
     # Creates new tax charges if there are any applicable rates. If prices already
