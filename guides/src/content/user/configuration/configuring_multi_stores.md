@@ -4,7 +4,7 @@ title: Spree Multi Store
 
 ## Introduction
 
-Spree 3.5 was released with brand new great feature - Multi Store support. This means that in a single Spree Admin panel you can control multiple shops based on Spree, assign domains and manage orders, besides that there is an option to personalize products for certain shop described [here](#product-and-shop-currency).
+Spree 3.5 was released with Multi Store support. This means that in a single Spree Admin panel you can control multiple shops based on Spree, assign domains and manage orders, besides that there is an option to personalize products for certain shop described [here](#product-and-shop-currency).
 
 ### Setup
 
