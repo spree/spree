@@ -2,8 +2,12 @@ require 'spec_helper'
 
 describe Spree::Country, type: :model do
   let(:america) { create :country }
-  let(:canada)  { create :country, name: 'Canada', iso_name: 'CANADA', numcode: '124' }
+  let(:canada)  { create :country, name: 'Canada', iso_name: 'CANADA', iso: 'CA', iso3: 'CAN', numcode: '124' }
 
+  it 'validates uniqueness' do
+    canada.touch
+    expect(Spree::Country.new(name: 'Canada', iso: 'CA', iso3: 'CAN', iso_name: 'CANADA')).not_to be_valid
+  end
 
   describe '.by_iso' do
     let(:dummy_iso) { 'XY' }
