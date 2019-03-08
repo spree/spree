@@ -330,8 +330,8 @@ module Spree
     # def product_customizations_match
     def line_item_options_match(line_item, options)
       ActiveSupport::Deprecation.warn(<<-EOS, caller)
-        Order#add is deprecated and will be removed in Spree 4.0. Please use
-        Spree::CompareLineItems service instead.
+        Order#line_item_options_match is deprecated and will be removed in Spree 4.0. Please use
+        Spree::Dependencies.cart_compare_line_items_service.constantize service instead.
       EOS
       return true unless options
 
