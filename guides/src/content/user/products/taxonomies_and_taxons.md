@@ -100,7 +100,7 @@ To delete a taxon, right-click it in the taxonomy tree and click "Remove".
 
 ![Remove a Taxon](../../../images/user/config/remove_taxon.jpg)
 
-Click "OK" to confirm.
+Press "OK" to confirm.
 
 ## Associating Products with Taxons
 

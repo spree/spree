@@ -15,5 +15,8 @@ From here you can:
 * [Edit Existing Products](/user/products/editing_products.html)
 * [Clone Existing Products](/user/products/cloning_products.html)
 * [Search Existing Products](/user/products/searching_products.html)
+* [Manage Taxonomies and Taxons](/user/products/taxonomies_and_taxons.html)
+* [Set product Option types](/user/products/product_options.html) (allows you to manage variant types)
+* [Set product category](/user/products/product_prototypes.html)
 
 In addition, you can set up new [Product Option Types and Values](/user/products/product_options.html); add, edit, and remove [Product Properties](/user/products/product_properties.html); and work with [Product Prototypes](/user/products/product_prototypes.html).

@@ -9,7 +9,6 @@ Taxation, as you undoubtedly already know, is a very complicated topic. It can b
 
 There are a few concepts you need to understand in order to configure your site adequately:
 
-- [Introduction](#introduction)
 - [Tax Categories](#tax-categories)
 - [Zones](#zones)
 - [Tax Rates](#tax-rates)
@@ -69,4 +68,4 @@ Finally, European stores will benefit from the Tax Settings page.
 
 ![Tax Settings](../../../images/user/config/tax_settings.jpg)
 
-When this option is checked, your Spree site will take its default [tax category](#tax_categories), find the corresponding [tax rate](#tax-rate), and multiply it times the shipping rate for each available [shipping method](/user/shipments/shipping_methods.html) offered to a customer during checkout.
+When this option is checked, your Spree site will take it as a default [tax category](#tax-categories), find the corresponding [tax rate](#tax-rates), and multiply it times the shipping rate for each available [shipping method](/user/shipments/shipping_methods.html) offered to a customer during checkout.

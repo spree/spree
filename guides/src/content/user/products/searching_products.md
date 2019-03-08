@@ -29,10 +29,6 @@ You can choose one or more of the following options to narrow your product searc
 
 ![Filter products](../../../images/user/products/filtering_products.jpg)
 
-### Name
+* **Name** - You can filter particular product by its name.
 
-You can filter particular product by its name.
-
-### SKU
-
-Every time you create a product you may want to assign an SKU Number to make a search much faster and simplify shipping flow. You can use that number to search product.
+* **SKU** - Every time you create a product you may want to assign an SKU Number to make a search much faster and simplify shipping flow. You can use that number to search product.
