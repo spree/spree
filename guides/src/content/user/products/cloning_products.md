@@ -17,9 +17,9 @@ This will create a copy of the product and it will now appear in your product in
 
 You may want to change the name of the product to remove the "COPY OF" text and to rename the permalink and SKU so it matches your product name.
 
-!!!
+<alert kind="warning">
 Be very careful in assigning arbitrary permalinks, so that you don't accidentally assign two products the same permalink.
-!!!
+</alert>
 
 You can edit the information associated with a cloned product just like you would for any other product. To do this, click on the product from your inventory list. In the "Name" field, delete the "COPY OF" text. To modify the permalink name, enter your desired value in the "Permalink" field. To modify the product SKU, enter your desired value in the "SKU" field. Once you've made your changes, scroll to the bottom of the page and click "Update".
 

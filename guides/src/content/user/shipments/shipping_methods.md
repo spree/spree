@@ -12,7 +12,7 @@ To add a new shipping method to your store, go to the Admin Interface and click 
 
 ![New Shipping Method](../../../images/user/shipments/new_shipping_method.jpg)
 
-#### Name
+### Name
 
 Enter a name for the shipping method. This is the exact wording that the customer will see at checkout. This should include both the carrier (USPS, UPS, Fedex, DHL, etc.) as well as the service type (First Class Mail, Overnight, Ground, etc.) So it would be very common to need several shipping methods for your store, for example:
 
@@ -26,7 +26,7 @@ Enter a name for the shipping method. This is the exact wording that the custome
 
 Remember that you will need to associate one or more [zones](#zones) with each shipping method in order for it to appear as an option at checkout.
 
-#### Display
+### Display
 
 From the "Display" drop-down box, choose whether you want to have the option display only on the backend, the frontend, or both.
 
@@ -38,7 +38,7 @@ If a shipping method is available only on backend, then only your store's admini
 * With your online produce market you provide personal delivery of goods, but only to your best local customers.
 * Yours is a photography studio. You usually sell prints that physical delivery, but for some clients you are willing to send electronic media that they can print themselves.
 
-#### Tracking URL
+### Tracking URL
 
 You can optionally input a tracking URL for your new shipping method. This allows customers to track the progress of their package from your [Stock Location](/user/configuration/configuring_inventory.html) to the order's shipping address. The string ":tracking" will be replaced with the tracking number you input once you actually process the order.
 
@@ -48,7 +48,7 @@ You may need to check with the shipping carrier to see if they have a Shipping C
 Please note that Spree Commerce, Inc. makes no claims of warranty or accuracy for the information presented on third-party websites. We strongly urge you to verify the information independently before you put it into production on your store.
 !!!
 
-#### Categories
+### Categories
 
 Some shipping methods may only apply to certain types of products in your store, regardless of where those items are being shipped. You may only want to send over-sized items via UPS Ground, for example, and not via USPS Priority. The options shown in the "Categories" section correspond to the [Shipping Categories](/user/shipments/shipping_categories.html) you set up in an earlier section of this guide series.
 
@@ -56,7 +56,7 @@ Some shipping methods may only apply to certain types of products in your store,
 
 Check the boxes next to the categories you want served by your new shipping method.
 
-#### Zones
+### Zones
 
 In [a previous step to this guide](/user/shipments/zones.html) you learned about how to set up geographical zones for your store. Within the form's "Zones" section, you need to specify which zones are served by this shipping method. The "EU_VAT" (European Value-Added Tax) zone could be served by USPS First Class International, but could _not_ be served by USPS Priority Mail.
 
@@ -64,7 +64,7 @@ In [a previous step to this guide](/user/shipments/zones.html) you learned about
 
 Check the boxes next to any zones you want served by this shipping method.
 
-#### Calculator
+### Calculator
 
 Each shipping method is associated with one [Calculator](/user/shipments/calculators.html). You can choose one of the built-in Spree calculators, or one you made yourself.
 
