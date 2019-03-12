@@ -79,15 +79,6 @@ module Spree
       spree.nested_taxons_path(taxon.permalink)
     end
 
-    # human readable list of variant options
-    def variant_options(variant, _options = {})
-      ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
-        BaseHelper#variant_options is deprecated and will be removed in Spree 4.0.
-        Please use Variant#options_text or LineItem#options_text
-      DEPRECATION
-      variant.options_text
-    end
-
     def frontend_available?
       Spree::Core::Engine.frontend_available?
     end
