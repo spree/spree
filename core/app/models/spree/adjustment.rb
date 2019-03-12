@@ -48,16 +48,6 @@ module Spree
 
     self.competing_promos_source_types = ['Spree::PromotionAction']
 
-    scope :open, -> {
-      ActiveSupport::Deprecation.warn 'Adjustment.open is deprecated. Please use Adjustment.not_finalized instead', caller
-      not_finalized
-    }
-
-    scope :closed, -> {
-      ActiveSupport::Deprecation.warn 'Adjustment.closed is deprecated. Please use Adjustment.finalized instead', caller
-      finalized
-    }
-
     scope :not_finalized, -> { where(state: 'open') }
     scope :finalized, -> { where(state: 'closed') }
     scope :tax, -> { where(source_type: 'Spree::TaxRate') }
