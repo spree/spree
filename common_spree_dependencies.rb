@@ -25,7 +25,6 @@ group :test do
   gem 'factory_bot_rails', '~> 4.8'
   gem 'rspec-activemodel-mocks', '~> 1.0'
   gem 'rspec-collection_matchers'
-  gem 'rspec-its'
   gem 'rspec-rails', '~> 3.7.2'
   gem 'rspec-retry'
   gem 'rspec_junit_formatter'
