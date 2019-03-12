@@ -292,7 +292,7 @@ describe Spree::StockItem, type: :model do
           subject.save
         end
 
-        it 'has 1 error_on' do
+        it 'has 1 error on count_on_hand' do
           expect(subject.errors).not_to be_empty
           expect(subject.errors.messages[:count_on_hand]).to be_present
         end
