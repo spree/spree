@@ -17,14 +17,14 @@ module Spree
     attr_accessor *INJECTION_POINTS
 
     def initialize
-      set_default_abitily
+      set_default_ability
       set_default_services
       set_default_finders
     end
 
     private
 
-    def set_default_abitily
+    def set_default_ability
       @ability_class = 'Spree::Ability'
     end
 
