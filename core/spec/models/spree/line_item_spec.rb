@@ -251,7 +251,7 @@ describe Spree::LineItem, type: :model do
         line_item.target_shipment = order.shipments.first
         line_item.valid?
 
-        expect(line_item.errors_on(:quantity).size).to eq(0)
+        expect(line_item.errors).to be_empty
       end
 
       it 'doesnt allow to increase item quantity' do
@@ -260,7 +260,8 @@ describe Spree::LineItem, type: :model do
         line_item.target_shipment = order.shipments.first
         line_item.valid?
 
-        expect(line_item.errors_on(:quantity).size).to eq(1)
+        expect(line_item.errors).not_to be_empty
+        expect(line_item.errors.messages[:quantity]).to be_present
       end
     end
 
@@ -279,7 +280,7 @@ describe Spree::LineItem, type: :model do
         line_item.target_shipment = order.shipments.first
         line_item.valid?
 
-        expect(line_item.errors_on(:quantity).size).to eq(0)
+        expect(line_item.errors).to be_empty
       end
 
       it 'doesnt allow to increase quantity over stock availability' do
@@ -288,7 +289,8 @@ describe Spree::LineItem, type: :model do
         line_item.target_shipment = order.shipments.first
         line_item.valid?
 
-        expect(line_item.errors_on(:quantity).size).to eq(1)
+        expect(line_item.errors).not_to be_empty
+        expect(line_item.errors.messages[:quantity]).to be_present
       end
     end
   end
@@ -299,7 +301,7 @@ describe Spree::LineItem, type: :model do
       line_item.currency = order.currency
       line_item.valid?
 
-      expect(line_item.error_on(:currency).size).to eq(0)
+      expect(line_item.errors).to be_empty
     end
   end
 
@@ -309,7 +311,8 @@ describe Spree::LineItem, type: :model do
       line_item.currency = 'no currency'
       line_item.valid?
 
-      expect(line_item.error_on(:currency).size).to eq(1)
+      expect(line_item.errors).not_to be_empty
+      expect(line_item.errors.messages[:currency]).to be_present
     end
   end
 
