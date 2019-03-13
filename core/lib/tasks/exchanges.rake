@@ -48,7 +48,7 @@ namespace :exchanges do
         # the order builds a shipment on its own on transition to delivery, but we want
         # the original exchange shipment, not the built one
         order.shipments.destroy_all
-        shipments.each { |shipment| shipment.update!(order_id: order.id) }
+        shipments.each { |shipment| shipment.update(order_id: order.id) }
         order.update!(state: 'confirm')
 
         order.reload.next!
