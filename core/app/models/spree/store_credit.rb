@@ -52,7 +52,6 @@ module Spree
       else
         authorization_code = generate_authorization_code
       end
-
       if validate_authorization(amount, order_currency)
         update_attributes!(
           action: AUTHORIZE_ACTION,

@@ -83,7 +83,8 @@ describe Spree::CreditCard, type: :model do
 
     it 'validates name presence' do
       credit_card.valid?
-      expect(credit_card.error_on(:name).size).to eq(1)
+      expect(credit_card.errors).not_to be_empty
+      expect(credit_card.errors.messages[:name]).to be_present
     end
 
     it 'only validates on create' do
