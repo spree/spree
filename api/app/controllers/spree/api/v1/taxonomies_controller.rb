@@ -29,7 +29,7 @@ module Spree
 
         def update
           authorize! :update, taxonomy
-          if taxonomy.update_attributes(taxonomy_params)
+          if taxonomy.update(taxonomy_params)
             respond_with(taxonomy, status: 200, default_template: :show)
           else
             invalid_resource!(taxonomy)

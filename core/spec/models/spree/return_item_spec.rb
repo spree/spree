@@ -24,8 +24,8 @@ describe Spree::ReturnItem, type: :model do
     let(:return_item)    { create(:return_item, inventory_unit: inventory_unit) }
 
     before do
-      inventory_unit.update_attributes!(state: 'shipped')
-      return_item.update_attributes!(reception_status: 'awaiting')
+      inventory_unit.update!(state: 'shipped')
+      return_item.update!(reception_status: 'awaiting')
       allow(return_item).to receive(:eligible_for_return?).and_return(true)
     end
 
@@ -44,8 +44,8 @@ describe Spree::ReturnItem, type: :model do
       let!(:customer_return) { create(:customer_return_without_return_items, return_items: [return_item], stock_location_id: inventory_unit.shipment.stock_location_id) }
 
       before do
-        inventory_unit.update_attributes!(state: 'shipped')
-        return_item.update_attributes!(reception_status: 'awaiting')
+        inventory_unit.update!(state: 'shipped')
+        return_item.update!(reception_status: 'awaiting')
       end
 
       it 'increases the count on hand' do
@@ -53,16 +53,16 @@ describe Spree::ReturnItem, type: :model do
       end
 
       context 'when the variant is not resellable' do
-        before { return_item.update_attributes(resellable: false) }
+        before { return_item.update(resellable: false) }
 
         it { expect { subject }.not_to change { stock_item.reload.count_on_hand } }
       end
 
       context 'when variant does not track inventory' do
         before do
-          inventory_unit.update_attributes!(state: 'shipped')
-          inventory_unit.variant.update_attributes!(track_inventory: false)
-          return_item.update_attributes!(reception_status: 'awaiting')
+          inventory_unit.update!(state: 'shipped')
+          inventory_unit.variant.update!(track_inventory: false)
+          return_item.update!(reception_status: 'awaiting')
         end
 
         it 'does not increase the count on hand' do
@@ -701,7 +701,7 @@ describe Spree::ReturnItem, type: :model do
     let(:return_item) { create(:return_item, inventory_unit: inventory_unit, reception_status: 'awaiting') }
     let!(:stock_item) { inventory_unit.find_stock_item }
 
-    before { return_item.update_attributes!(reception_status: 'awaiting') }
+    before { return_item.update!(reception_status: 'awaiting') }
 
     it { expect { subject }.to change(inventory_unit, :state).to('returned').from('shipped') }
 

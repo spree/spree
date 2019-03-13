@@ -25,7 +25,7 @@ module Spree
           params[:user].delete(:password_confirmation)
         end
 
-        if @user.update_attributes(user_params)
+        if @user.update(user_params)
           flash[:success] = Spree.t(:account_updated)
           redirect_to edit_admin_user_path(@user)
         else
@@ -35,7 +35,7 @@ module Spree
 
       def addresses
         if request.put?
-          if @user.update_attributes(user_params)
+          if @user.update(user_params)
             flash.now[:success] = Spree.t(:account_updated)
           end
 

@@ -80,7 +80,7 @@ module Spree
       end
 
       def update
-        if @order.update_attributes(params[:order]) && @order.line_items.present?
+        if @order.update(params[:order]) && @order.line_items.present?
           @order.update_with_updater!
           unless @order.completed?
             # Jump to next step if order is not completed.
@@ -135,7 +135,7 @@ module Spree
       end
 
       def set_store
-        if @order.update_attributes(store_id: params[:order][:store_id])
+        if @order.update(store_id: params[:order][:store_id])
           flash[:success] = flash_message_for(@order, :successfully_updated)
         else
           flash[:error] = @order.errors.full_messages.join(', ')

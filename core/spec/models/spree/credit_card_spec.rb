@@ -313,6 +313,6 @@ describe Spree::CreditCard, type: :model do
     second = FactoryBot.create(:credit_card, user: user, default: false)
     first.update_columns(year: Time.current.year, month: 1.month.ago.month)
 
-    expect { second.update_attributes!(default: true) }.not_to raise_error
+    expect { second.update!(default: true) }.not_to raise_error
   end
 end

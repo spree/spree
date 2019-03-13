@@ -29,7 +29,7 @@ module Spree
 
         def update
           authorize! :update, zone
-          if zone.update_attributes(zone_params)
+          if zone.update(zone_params)
             respond_with(zone, status: 200, default_template: :show)
           else
             invalid_resource!(zone)

@@ -171,7 +171,7 @@ module Spree
     private
 
     def persist_acceptance_status_errors
-      update_attributes(acceptance_status_errors: validator.errors)
+      update(acceptance_status_errors: validator.errors)
     end
 
     def stock_item

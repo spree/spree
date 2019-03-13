@@ -162,12 +162,12 @@ describe Spree.user_class, type: :model do
       context 'part of the store credit has been used' do
         let(:amount_used) { 35.00 }
 
-        before { store_credit.update_attributes(amount_used: amount_used) }
+        before { store_credit.update(amount_used: amount_used) }
 
         context 'part of the store credit has been authorized' do
           let(:authorized_amount) { 10 }
 
-          before { additional_store_credit.update_attributes(amount_authorized: authorized_amount) }
+          before { additional_store_credit.update(amount_authorized: authorized_amount) }
 
           it 'returns sum of amounts minus used amount and authorized amount' do
             available_store_credit = amount + additional_amount - amount_used - authorized_amount
@@ -186,7 +186,7 @@ describe Spree.user_class, type: :model do
         context 'part of the store credit has been authorized' do
           let(:authorized_amount) { 10 }
 
-          before { additional_store_credit.update_attributes(amount_authorized: authorized_amount) }
+          before { additional_store_credit.update(amount_authorized: authorized_amount) }
 
           it 'returns sum of amounts minus authorized amount' do
             expect(subject.total_available_store_credit.to_f).to eq (amount + additional_amount - authorized_amount)

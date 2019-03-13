@@ -54,7 +54,7 @@ module Spree
       end
 
       if validate_authorization(amount, order_currency)
-        update_attributes!(
+        update!(
           action: AUTHORIZE_ACTION,
           action_amount: amount,
           action_originator: options[:action_originator],
@@ -85,7 +85,7 @@ module Spree
           errors.add(:base, Spree.t('store_credit_payment_method.currency_mismatch'))
           false
         else
-          update_attributes!(
+          update!(
             action: CAPTURE_ACTION,
             action_amount: amount,
             action_originator: options[:action_originator],
@@ -103,7 +103,7 @@ module Spree
 
     def void(authorization_code, options = {})
       if auth_event = store_credit_events.find_by(action: AUTHORIZE_ACTION, authorization_code: authorization_code)
-        update_attributes!(
+        update!(
           action: VOID_ACTION,
           action_amount: auth_event.amount,
           action_authorization_code: authorization_code,
@@ -209,7 +209,7 @@ module Spree
                 store_credit_events.where(action: ALLOCATION_ACTION).first_or_initialize
               end
 
-      event.update_attributes!(
+      event.update!(
         amount: action_amount || amount,
         authorization_code: action_authorization_code || event.authorization_code || generate_authorization_code,
         user_total_amount: user.total_available_store_credit,

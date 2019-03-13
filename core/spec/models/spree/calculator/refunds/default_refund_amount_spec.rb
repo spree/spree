@@ -24,7 +24,7 @@ describe Spree::Calculator::Returns::DefaultRefundAmount, type: :model do
 
       before do
         order.adjustments << create(:adjustment, order: order, amount: adjustment_amount, eligible: true, label: 'Adjustment', source_type: 'Spree::Order')
-        order.adjustments.first.update_attributes(amount: adjustment_amount)
+        order.adjustments.first.update(amount: adjustment_amount)
       end
 
       it { is_expected.to eq (pre_tax_amount - adjustment_amount.abs) / line_item_quantity }

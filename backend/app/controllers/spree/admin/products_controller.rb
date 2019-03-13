@@ -26,7 +26,7 @@ module Spree
           params[:product][:option_type_ids] = params[:product][:option_type_ids].split(',')
         end
         invoke_callbacks(:update, :before)
-        if @object.update_attributes(permitted_resource_params)
+        if @object.update(permitted_resource_params)
           invoke_callbacks(:update, :after)
           flash[:success] = flash_message_for(@object, :successfully_updated)
           respond_with(@object) do |format|
