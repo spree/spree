@@ -40,14 +40,6 @@ module Spree
               ).serializable_hash
             end
 
-            def serialize_resource(resource)
-              resource_serializer.new(
-                resource,
-                include: resource_includes,
-                fields: sparse_fields
-              ).serializable_hash
-            end
-
             def scope
               spree_current_user.credit_cards.accessible_by(current_ability, :read)
             end

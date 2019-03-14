@@ -31,6 +31,15 @@ module Spree
         def pagination_url(page)
           url_for(collection_permitted_params.merge(page: page))
         end
+
+        def collection_options(collection)
+          {
+            links: collection_links(collection),
+            meta: collection_meta(collection),
+            include: resource_includes,
+            fields: sparse_fields
+          }
+        end
       end
     end
   end
