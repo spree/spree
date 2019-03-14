@@ -19,10 +19,6 @@ module Spree
 
             private
 
-            def paginated_collection
-              collection_paginator.new(sorted_collection, params).call
-            end
-
             def sorted_collection
               collection_sorter.new(collection, params).call
             end
@@ -36,21 +32,6 @@ module Spree
               raise ActiveRecord::RecordNotFound if resource.nil?
 
               resource
-            end
-
-            def serialize_collection(collection)
-              collection_serializer.new(
-                collection,
-                collection_options(collection)
-              ).serializable_hash
-            end
-
-            def serialize_resource(resource)
-              resource_serializer.new(
-                resource,
-                include: resource_includes,
-                sparse_fields: sparse_fields
-              ).serializable_hash
             end
 
             def collection_serializer
@@ -75,15 +56,6 @@ module Spree
 
             def collection_paginator
               Spree::Api::Dependencies.storefront_collection_paginator.constantize
-            end
-
-            def collection_options(collection)
-              {
-                links: collection_links(collection),
-                meta: collection_meta(collection),
-                include: resource_includes,
-                sparse_fields: sparse_fields
-              }
             end
           end
         end
