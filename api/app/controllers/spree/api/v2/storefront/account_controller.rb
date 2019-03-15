@@ -15,14 +15,6 @@ module Spree
             spree_current_user
           end
 
-          def serialize_resource(resource)
-            resource_serializer.new(
-              resource,
-              include: resource_includes,
-              fields: sparse_fields
-            ).serializable_hash
-          end
-
           def resource_serializer
             Spree::Api::Dependencies.storefront_user_serializer.constantize
           end
