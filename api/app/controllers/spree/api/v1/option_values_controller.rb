@@ -30,7 +30,7 @@ module Spree
 
         def update
           @option_value = scope.accessible_by(current_ability, :update).find(params[:id])
-          if @option_value.update_attributes(option_value_params)
+          if @option_value.update(option_value_params)
             render :show
           else
             invalid_resource!(@option_value)

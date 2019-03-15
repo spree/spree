@@ -29,7 +29,7 @@ module Spree
           authorize! params[:action], @payment
           if !@payment.editable?
             render 'update_forbidden', status: 403
-          elsif @payment.update_attributes(payment_params)
+          elsif @payment.update(payment_params)
             respond_with(@payment, default_template: :show)
           else
             invalid_resource!(@payment)

@@ -181,7 +181,7 @@ describe Spree::Order, type: :model do
       it 'updates totals' do
         allow(order).to receive_messages(ensure_available_shipping_rates: true)
         line_item = FactoryBot.create(:line_item, price: 10, adjustment_total: 10)
-        line_item.variant.update_attributes!(price: 10)
+        line_item.variant.update!(price: 10)
         order.line_items << line_item
         tax_rate = create(:tax_rate, tax_category: line_item.tax_category, amount: 0.05)
         allow(Spree::TaxRate).to receive_messages match: [tax_rate]
@@ -197,7 +197,7 @@ describe Spree::Order, type: :model do
       it 'updates prices' do
         allow(order).to receive_messages(ensure_available_shipping_rates: true)
         line_item = FactoryBot.create(:line_item, price: 10, adjustment_total: 10)
-        line_item.variant.update_attributes!(price: 20)
+        line_item.variant.update!(price: 20)
         order.line_items << line_item
         tax_rate = create :tax_rate,
                           included_in_price: true,
@@ -660,7 +660,7 @@ describe Spree::Order, type: :model do
     let(:params) { {} }
 
     it 'calls update_atributes without order params' do
-      expect(order).to receive(:update_attributes).with({})
+      expect(order).to receive(:update).with({})
       order.update_from_params(params, permitted_params)
     end
 
@@ -728,7 +728,7 @@ describe Spree::Order, type: :model do
       let(:params) { ActionController::Parameters.new(order: { bad_param: 'okay' }) }
 
       it 'does not let through unpermitted attributes' do
-        expect(order).to receive(:update_attributes).with(ActionController::Parameters.new.permit!)
+        expect(order).to receive(:update).with(ActionController::Parameters.new.permit!)
         order.update_from_params(params, permitted_params)
       end
 

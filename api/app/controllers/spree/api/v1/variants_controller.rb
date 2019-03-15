@@ -38,7 +38,7 @@ module Spree
 
         def update
           @variant = scope.accessible_by(current_ability, :update).find(params[:id])
-          if @variant.update_attributes(variant_params)
+          if @variant.update(variant_params)
             respond_with(@variant, status: 200, default_template: :show)
           else
             invalid_resource!(@product)

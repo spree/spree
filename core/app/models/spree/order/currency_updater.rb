@@ -27,7 +27,7 @@ module Spree
         price = price_from_line_item(line_item)
 
         if price
-          line_item.update_attributes!(currency: price.currency, price: price.amount)
+          line_item.update!(currency: price.currency, price: price.amount)
         else
           raise "no #{currency} price found for #{line_item.product.name} (#{line_item.variant.sku})"
         end

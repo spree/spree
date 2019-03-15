@@ -41,14 +41,14 @@ describe 'viewing products', type: :feature, inaccessible: true do
 
   describe 'meta tags and title' do
     it 'displays metas' do
-      t_shirts.update_attributes metas
+      t_shirts.update metas
       visit '/t/category/super-clothing/t-shirts'
       expect(page).to have_meta(:description, 'Brand new Ruby on Rails TShirts')
       expect(page).to have_meta(:keywords, 'ror, tshirt, ruby')
     end
 
     it 'display title if set' do
-      t_shirts.update_attributes metas
+      t_shirts.update metas
       visit '/t/category/super-clothing/t-shirts'
       expect(page).to have_title('Ruby On Rails TShirt')
     end
@@ -60,7 +60,7 @@ describe 'viewing products', type: :feature, inaccessible: true do
 
     # Regression test for #2814
     it "doesn't use meta_title as heading on page" do
-      t_shirts.update_attributes metas
+      t_shirts.update metas
       visit '/t/category/super-clothing/t-shirts'
       within('h1.taxon-title') do
         expect(page).to have_content(t_shirts.name)
@@ -68,7 +68,7 @@ describe 'viewing products', type: :feature, inaccessible: true do
     end
 
     it 'uses taxon name in title when meta_title set to empty string' do
-      t_shirts.update_attributes meta_title: ''
+      t_shirts.update meta_title: ''
       visit '/t/category/super-clothing/t-shirts'
       expect(page).to have_title('Category - T-Shirts - ' + store_name)
     end

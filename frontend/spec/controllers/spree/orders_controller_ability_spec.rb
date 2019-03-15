@@ -41,12 +41,12 @@ module Spree
 
       context '#update' do
         it 'checks if user is authorized for :edit' do
-          allow(order).to receive :update_attributes
+          allow(order).to receive :update
           expect(controller).to receive(:authorize!).with(:edit, order, token)
           spree_post :update, order: { email: 'foo@bar.com' }
         end
         it 'checks against the specified order' do
-          allow(order).to receive :update_attributes
+          allow(order).to receive :update
           expect(controller).to receive(:authorize!).with(:edit, specified_order, token)
           spree_post :update, order: { email: 'foo@bar.com' }, id: specified_order.number
         end

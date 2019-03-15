@@ -102,32 +102,32 @@ describe Spree::Admin::UsersController, type: :controller do
     end
 
     it 'allows shipping address attributes through' do
-      expect(mock_user).to receive(:update_attributes).with(ActionController::Parameters.new(
+      expect(mock_user).to receive(:update).with(ActionController::Parameters.new(
         'ship_address_attributes' => { 'city' => 'New York' }
       ).permit(ship_address_attributes: permitted_address_attributes))
       spree_put :update, id: mock_user.id, user: { ship_address_attributes: { city: 'New York' } }
     end
 
     it 'allows billing address attributes through' do
-      expect(mock_user).to receive(:update_attributes).with(ActionController::Parameters.new(
+      expect(mock_user).to receive(:update).with(ActionController::Parameters.new(
         'bill_address_attributes' => { 'city' => 'New York' }
       ).permit(bill_address_attributes: permitted_address_attributes))
       spree_put :update, id: mock_user.id, user: { bill_address_attributes: { city: 'New York' } }
     end
 
     it 'allows updating without password resetting' do
-      expect(mock_user).to receive(:update_attributes).with(hash_not_including(password: '', password_confirmation: ''))
+      expect(mock_user).to receive(:update).with(hash_not_including(password: '', password_confirmation: ''))
       spree_put :update, id: mock_user.id, user: { password: '', password_confirmation: '', email: 'spree@example.com' }
     end
 
     it 'redirects to user edit page' do
-      expect(mock_user).to receive(:update_attributes).with(hash_not_including(email: '')).and_return(true)
+      expect(mock_user).to receive(:update).with(hash_not_including(email: '')).and_return(true)
       spree_put :update, id: mock_user.id, user: { email: 'spree@example.com' }
       expect(response).to redirect_to(spree.edit_admin_user_path(mock_user))
     end
 
     it 'render edit page when update got errors' do
-      expect(mock_user).to receive(:update_attributes).with(hash_not_including(email: '')).and_return(false)
+      expect(mock_user).to receive(:update).with(hash_not_including(email: '')).and_return(false)
       spree_put :update, id: mock_user.id, user: { email: 'invalid_email' }
       expect(response).to render_template(:edit)
     end

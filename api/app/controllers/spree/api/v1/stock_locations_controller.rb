@@ -24,7 +24,7 @@ module Spree
 
         def update
           authorize! :update, stock_location
-          if stock_location.update_attributes(stock_location_params)
+          if stock_location.update(stock_location_params)
             respond_with(stock_location, status: 200, default_template: :show)
           else
             invalid_resource!(stock_location)

@@ -36,7 +36,7 @@ module Spree
 
         def update
           @option_type = Spree::OptionType.accessible_by(current_ability, :update).find(params[:id])
-          if @option_type.update_attributes(option_type_params)
+          if @option_type.update(option_type_params)
             render :show
           else
             invalid_resource!(@option_type)
