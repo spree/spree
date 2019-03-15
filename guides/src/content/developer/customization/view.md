@@ -24,7 +24,7 @@ For example, to override product details page, create the file `app/views/spree/
 
 ### Import storefront views into your application
 
-You can export all views from spree frontend into your application
+You can import all views from spree frontend into your application
 using this command (in your application root directory):
 
 ```bash
