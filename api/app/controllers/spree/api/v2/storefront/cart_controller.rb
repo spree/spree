@@ -99,6 +99,18 @@ module Spree
             end
           end
 
+          def estimate_shipping_rates
+            spree_authorize! :show, spree_current_order, order_token
+
+            result = estimate_shipping_rates_service.call(order: spree_current_order, country_iso: params[:country_iso])
+
+            if result.error.blank?
+
+            else
+              render_error_payload(result.error)
+            end
+          end
+
           private
 
           def resource_serializer
@@ -123,6 +135,10 @@ module Spree
 
           def coupon_handler
             Spree::Api::Dependencies.storefront_coupon_handler.constantize
+          end
+
+          def estimate_shipping_rates_service
+            Spree::Api::Dependencies.storefront_cart_estimate_shipping_rates_service.constantize
           end
 
           def line_item

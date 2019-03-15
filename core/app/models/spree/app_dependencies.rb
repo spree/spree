@@ -38,6 +38,7 @@ module Spree
       @cart_remove_item_service = 'Spree::Cart::RemoveItem'
       @cart_remove_line_item_service = 'Spree::Cart::RemoveLineItem'
       @cart_set_item_quantity_service = 'Spree::Cart::SetQuantity'
+      @cart_estimate_shipping_rates_service = 'Spree::Cart::EstimateShippingRates'
 
       # checkout
       @checkout_next_service = 'Spree::Checkout::Next'
