@@ -283,7 +283,7 @@ describe Spree::StockItem, type: :model do
         end
 
         it 'has :no errors_on' do
-          expect(subject.errors_on(:count_on_hand).size).to eq(0)
+          expect(subject.errors).to be_empty
         end
       end
 
@@ -292,8 +292,9 @@ describe Spree::StockItem, type: :model do
           subject.save
         end
 
-        it 'has 1 error_on' do
-          expect(subject.error_on(:count_on_hand).size).to eq(1)
+        it 'has 1 error on count_on_hand' do
+          expect(subject.errors).not_to be_empty
+          expect(subject.errors.messages[:count_on_hand]).to be_present
         end
         it { expect(subject.errors[:count_on_hand]).to include 'must be greater than or equal to 0' }
       end

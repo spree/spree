@@ -49,14 +49,6 @@ module Spree
       end
     end
 
-    def iso_name
-      ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
-    Address#iso_name is deprecated and will be removed in Spree 4.0.
-    Please use Address#country_iso_name instead
-      DEPRECATION
-      country_iso_name
-    end
-
     def full_name
       "#{firstname} #{lastname}".strip
     end
@@ -67,22 +59,6 @@ module Spree
 
     def state_name_text
       state_name.present? ? state_name : state&.name
-    end
-
-    def same_as?(other)
-      ActiveSupport::Deprecation.warn(<<-EOS, caller)
-        Address#same_as? is deprecated and will be removed in Spree 4.0. Please use Address#== instead"
-      EOS
-
-      self == other
-    end
-
-    def same_as(other)
-      ActiveSupport::Deprecation.warn(<<-EOS, caller)
-        Address#same_as is deprecated and will be removed in Spree 4.0. Please use Address#== instead"
-      EOS
-
-      self == other
     end
 
     def to_s

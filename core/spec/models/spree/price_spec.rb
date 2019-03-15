@@ -42,24 +42,24 @@ describe Spree::Price, type: :model do
 
     context 'when the amount is less than 0' do
       let(:amount) { -1 }
+      before { subject.valid? }
 
-      it 'has 1 error_on' do
-        expect(subject.error_on(:amount).size).to eq(1)
+      it 'has 1 error on amount' do
+        expect(subject.errors.messages[:amount].size).to eq(1)
       end
       it 'populates errors' do
-        subject.valid?
         expect(subject.errors.messages[:amount].first).to eq 'must be greater than or equal to 0'
       end
     end
 
     context 'when the amount is greater than maximum amount' do
       let(:amount) { Spree::Price::MAXIMUM_AMOUNT + 1 }
+      before { subject.valid? }
 
-      it 'has 1 error_on' do
-        expect(subject.error_on(:amount).size).to eq(1)
+      it 'has 1 error on amount' do
+        expect(subject.errors.messages[:amount].size).to eq(1)
       end
       it 'populates errors' do
-        subject.valid?
         expect(subject.errors.messages[:amount].first).to eq "must be less than or equal to #{Spree::Price::MAXIMUM_AMOUNT}"
       end
     end
