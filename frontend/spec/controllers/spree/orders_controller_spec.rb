@@ -80,7 +80,7 @@ describe Spree::OrdersController, type: :controller do
         end
 
         it 'redirects to cart path (on success)' do
-          allow(order).to receive(:update_attributes).and_return true
+          allow(order).to receive(:update).and_return true
           spree_put :update, {}, order_id: 1
           expect(response).to redirect_to(spree.cart_path)
         end

@@ -15,21 +15,6 @@ module Spree
 
           private
 
-          def serialize_collection(collection)
-            collection_serializer.new(
-              collection,
-              collection_options(collection)
-            ).serializable_hash
-          end
-
-          def serialize_resource(resource)
-            resource_serializer.new(
-              resource,
-              include: resource_includes,
-              fields: sparse_fields
-            ).serializable_hash
-          end
-
           def collection_serializer
             Spree::Api::Dependencies.storefront_taxon_serializer.constantize
           end
@@ -40,15 +25,6 @@ module Spree
 
           def collection_finder
             Spree::Api::Dependencies.storefront_taxon_finder.constantize
-          end
-
-          def collection_options(collection)
-            {
-              links: collection_links(collection),
-              meta: collection_meta(collection),
-              include: resource_includes,
-              fields: sparse_fields
-            }
           end
 
           def paginated_collection

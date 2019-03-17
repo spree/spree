@@ -13,7 +13,7 @@ module Spree
           authorize! :update, inventory_unit.order
 
           inventory_unit.transaction do
-            if inventory_unit.update_attributes(inventory_unit_params)
+            if inventory_unit.update(inventory_unit_params)
               fire
               render :show, status: 200
             else

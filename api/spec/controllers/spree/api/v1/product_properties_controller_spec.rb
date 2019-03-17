@@ -112,7 +112,7 @@ module Spree
 
         context 'when product property is invalid' do
           before do
-            expect_any_instance_of(Spree::ProductProperty).to receive(:update_attributes).and_return false
+            expect_any_instance_of(Spree::ProductProperty).to receive(:update).and_return false
           end
 
           it 'responds 422' do

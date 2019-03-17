@@ -246,7 +246,7 @@ module Spree
                 attributes[:payments_attributes].first[:request_env] = request_env
               end
 
-              success = update_attributes(attributes)
+              success = update(attributes)
               set_shipments_cost if shipments.any?
             end
 

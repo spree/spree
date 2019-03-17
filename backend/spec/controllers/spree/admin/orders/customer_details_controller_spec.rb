@@ -43,7 +43,7 @@ describe Spree::Admin::Orders::CustomerDetailsController, type: :controller do
       context 'using guest checkout' do
         context 'having valid parameters' do
           before do
-            allow(order).to receive_messages(update_attributes: true)
+            allow(order).to receive_messages(update: true)
             allow(order).to receive_messages(next: false)
             allow(order).to receive_messages(address?: false)
             allow(order).to receive_messages(refresh_shipment_rates: true)
@@ -59,7 +59,7 @@ describe Spree::Admin::Orders::CustomerDetailsController, type: :controller do
           context 'with correct method flow' do
             after { send_request(attributes) }
 
-            it { expect(order).to receive(:update_attributes).with(ActionController::Parameters.new(attributes[:order]).permit(permitted_order_attributes)) }
+            it { expect(order).to receive(:update).with(ActionController::Parameters.new(attributes[:order]).permit(permitted_order_attributes)) }
             it { expect(order).not_to receive(:next) }
             it { expect(order).to receive(:address?) }
             it 'does refresh the shipment rates with all shipping methods' do
@@ -74,7 +74,7 @@ describe Spree::Admin::Orders::CustomerDetailsController, type: :controller do
 
         context 'having invalid parameters' do
           before do
-            allow(order).to receive_messages(update_attributes: false)
+            allow(order).to receive_messages(update: false)
           end
 
           context 'having failure response' do
@@ -86,7 +86,7 @@ describe Spree::Admin::Orders::CustomerDetailsController, type: :controller do
           context 'with correct method flow' do
             after { send_request(attributes) }
 
-            it { expect(order).to receive(:update_attributes).with(ActionController::Parameters.new(attributes[:order]).permit(permitted_order_attributes)) }
+            it { expect(order).to receive(:update).with(ActionController::Parameters.new(attributes[:order]).permit(permitted_order_attributes)) }
             it { expect(controller).to receive(:load_order).and_call_original }
             it { expect(controller).to receive(:guest_checkout?).and_call_original }
             it { expect(controller).not_to receive(:load_user).and_call_original }
@@ -100,7 +100,7 @@ describe Spree::Admin::Orders::CustomerDetailsController, type: :controller do
         context 'having valid parameters' do
           before do
             allow(Spree.user_class).to receive(:find_by).and_return(user)
-            allow(order).to receive_messages(update_attributes: true)
+            allow(order).to receive_messages(update: true)
             allow(order).to receive_messages(next: false)
             allow(order).to receive_messages(address?: false)
             allow(order).to receive_messages(refresh_shipment_rates: true)
@@ -119,7 +119,7 @@ describe Spree::Admin::Orders::CustomerDetailsController, type: :controller do
           context 'with correct method flow' do
             after { send_request(changed_attributes) }
 
-            it { expect(order).to receive(:update_attributes).with(ActionController::Parameters.new(attributes[:order]).permit(permitted_order_attributes)) }
+            it { expect(order).to receive(:update).with(ActionController::Parameters.new(attributes[:order]).permit(permitted_order_attributes)) }
             it { expect(order).to receive(:associate_user!).with(user, order.email.blank?) }
             it { expect(order).not_to receive(:next) }
             it { expect(order).to receive(:address?) }
@@ -148,7 +148,7 @@ describe Spree::Admin::Orders::CustomerDetailsController, type: :controller do
           context 'with correct method flow' do
             after { send_request(changed_attributes) }
 
-            it { expect(order).not_to receive(:update_attributes).with(ActionController::Parameters.new(attributes[:order]).permit(permitted_order_attributes)) }
+            it { expect(order).not_to receive(:update).with(ActionController::Parameters.new(attributes[:order]).permit(permitted_order_attributes)) }
             it { expect(controller).to receive(:load_order).and_call_original }
             it { expect(controller).to receive(:guest_checkout?).and_call_original }
             it { expect(controller).to receive(:load_user).and_call_original }
@@ -159,7 +159,7 @@ describe Spree::Admin::Orders::CustomerDetailsController, type: :controller do
           context 'having valid parameters' do
             before do
               allow(Spree.user_class).to receive(:find_by).and_return(user)
-              allow(order).to receive_messages(update_attributes: true)
+              allow(order).to receive_messages(update: true)
               allow(order).to receive_messages(next: false)
               allow(order).to receive_messages(address?: false)
               allow(order).to receive_messages(refresh_shipment_rates: true)

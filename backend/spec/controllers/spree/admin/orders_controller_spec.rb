@@ -365,7 +365,7 @@ describe Spree::Admin::OrdersController, type: :controller do
 
     it 'denies access to users with an bar role' do
       with_ability(BarAbility) do
-        allow(order).to receive(:update_attributes).and_return true
+        allow(order).to receive(:update).and_return true
         allow(order).to receive(:user).and_return Spree.user_class.new
         allow(order).to receive(:token).and_return nil
         user.spree_roles.clear

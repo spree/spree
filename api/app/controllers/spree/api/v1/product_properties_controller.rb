@@ -31,7 +31,7 @@ module Spree
         def update
           authorize! :update, @product_property
 
-          if @product_property.update_attributes(product_property_params)
+          if @product_property.update(product_property_params)
             respond_with(@product_property, status: 200, default_template: :show)
           else
             invalid_resource!(@product_property)

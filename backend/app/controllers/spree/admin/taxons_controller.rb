@@ -42,7 +42,7 @@ module Spree
           @update_children = true if params[:taxon][:name] != @taxon.name || params[:taxon][:permalink] != @taxon.permalink
 
           @taxon.create_icon(attachment: taxon_params[:icon]) if taxon_params[:icon]
-          @taxon.update_attributes(taxon_params.except(:icon))
+          @taxon.update(taxon_params.except(:icon))
         end
         if successful
           flash[:success] = flash_message_for(@taxon, :successfully_updated)

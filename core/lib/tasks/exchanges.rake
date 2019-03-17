@@ -30,7 +30,7 @@ namespace :exchanges do
         return_items.group_by(&:exchange_variant).map do |variant, variant_return_items|
           variant_inventory_units = variant_return_items.map(&:exchange_inventory_units).flatten
           line_item = Spree::LineItem.create!(variant: variant, quantity: variant_return_items.count, order: order)
-          variant_inventory_units.each { |i| i.update_attributes!(line_item_id: line_item.id, order_id: order.id) }
+          variant_inventory_units.each { |i| i.update!(line_item_id: line_item.id, order_id: order.id) }
         end
 
         order.reload.update_with_updater!
@@ -48,8 +48,8 @@ namespace :exchanges do
         # the order builds a shipment on its own on transition to delivery, but we want
         # the original exchange shipment, not the built one
         order.shipments.destroy_all
-        shipments.each { |shipment| shipment.update_attributes!(order_id: order.id) }
-        order.update_attributes!(state: 'confirm')
+        shipments.each { |shipment| shipment.update(order_id: order.id) }
+        order.update!(state: 'confirm')
 
         order.reload.next!
         order.update_with_updater!

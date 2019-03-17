@@ -354,7 +354,7 @@ is an example of the implementation of `create_profile` used in the
 def create_profile(payment)
   if payment.source.gateway_customer_profile_id.nil?
     profile_hash = create_customer_profile(payment)
-    payment.source.update_attributes({
+    payment.source.update({
       gateway_customer_profile_id: profile_hash[:customer_profile_id],
       gateway_payment_profile_id: profile_hash[:customer_payment_profile_id])
     })

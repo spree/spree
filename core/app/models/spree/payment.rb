@@ -227,7 +227,7 @@ module Spree
           state: 'pending',
           capture_on_dispatch: true
         ).authorize!
-        update_attributes(amount: captured_amount)
+        update(amount: captured_amount)
       end
     end
 
@@ -252,7 +252,7 @@ module Spree
       return unless store_credit? && source.is_a?(Spree::StoreCredit)
 
       # creates the store credit event
-      source.update_attributes!(action: Spree::StoreCredit::ELIGIBLE_ACTION,
+      source.update!(action: Spree::StoreCredit::ELIGIBLE_ACTION,
                                 action_amount: amount,
                                 action_authorization_code: response_code)
     end

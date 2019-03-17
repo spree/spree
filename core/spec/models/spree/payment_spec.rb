@@ -708,7 +708,7 @@ describe Spree::Payment, type: :model do
       # Sets the payment's order to a different Ruby object entirely
       payment.order = Spree::Order.find(payment.order_id)
       email = 'foo@example.com'
-      order.update_attributes(email: email)
+      order.update(email: email)
       expect(payment.gateway_options[:email]).to eq(email)
     end
   end
