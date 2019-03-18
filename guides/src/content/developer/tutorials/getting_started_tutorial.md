@@ -67,13 +67,12 @@ After you create the store application, switch to its folder to continue work di
 cd mystore
 ```
 
-Add Spree gems and correct sqlite3 in your Gemfile:
+Add Spree gems to your Gemfile:
 
 ```ruby
 gem 'spree', '~> 3.7'
 gem 'spree_auth_devise', '~> 3.5'
 gem 'spree_gateway', '~> 3.4'
-gem 'sqlite3', '~> 1.3.6'
 ```
 
 Run `bundle install`
