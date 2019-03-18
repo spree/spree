@@ -13,7 +13,7 @@ module Spree
       :storefront_country_serializer, :storefront_current_order_finder, :storefront_completed_order_finder, :storefront_order_sorter,
       :storefront_collection_paginator, :storefront_user_serializer, :storefront_products_sorter, :storefront_products_finder,
       :storefront_product_serializer, :storefront_taxon_serializer, :storefront_taxon_finder, :storefront_find_by_variant_finder,
-      :storefront_cart_update_service
+      :storefront_cart_update_service, :storefront_cart_estimate_shipping_rates_service, :storefront_estimated_shipment_serializer
     ].freeze
 
     attr_accessor *INJECTION_POINTS
@@ -34,6 +34,7 @@ module Spree
       @storefront_cart_remove_item_service = Spree::Dependencies.cart_remove_item_service
       @storefront_cart_set_item_quantity_service = Spree::Dependencies.cart_set_item_quantity_service
       @storefront_cart_recalculate_service = Spree::Dependencies.cart_recalculate_service
+      @storefront_cart_estimate_shipping_rates_service = Spree::Dependencies.cart_estimate_shipping_rates_service
 
       # coupon code handler
       @storefront_coupon_handler = Spree::Dependencies.coupon_handler
@@ -56,6 +57,7 @@ module Spree
       @storefront_taxon_serializer = 'Spree::V2::Storefront::TaxonSerializer'
       @storefront_payment_method_serializer = 'Spree::V2::Storefront::PaymentMethodSerializer'
       @storefront_product_serializer = 'Spree::V2::Storefront::ProductSerializer'
+      @storefront_estimated_shipment_serializer = 'Spree::V2::Storefront::EstimatedShippingRateSerializer'
 
       # sorters
       @storefront_order_sorter = Spree::Dependencies.order_sorter

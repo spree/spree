@@ -105,7 +105,7 @@ module Spree
             result = estimate_shipping_rates_service.call(order: spree_current_order, country_iso: params[:country_iso])
 
             if result.error.blank?
-
+              render_serialized_payload { serialize_estimated_shipping_rates(result.value) }
             else
               render_error_payload(result.error)
             end
@@ -147,6 +147,17 @@ module Spree
 
           def render_error_item_quantity
             render json: { error: I18n.t(:wrong_quantity, scope: 'spree.api.v2.cart') }, status: 422
+          end
+
+          def estimate_shipping_rates_serializer
+            Spree::Api::Dependencies.storefront_estimated_shipment_serializer.constantize
+          end
+
+          def serialize_estimated_shipping_rates(shipping_rates)
+            estimate_shipping_rates_serializer.new(
+              shipping_rates,
+              params: { currency: spree_current_order.currency }
+            ).serializable_hash
           end
         end
       end
