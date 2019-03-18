@@ -39,6 +39,9 @@ const IndexPage = () => (
       Simplified <Link to="/api/v2/storefront#section/Authentication">authentication</Link>
       &nbsp;to support both signed in users and guest checkouts.
     </P>
+    <ExternalLink url="https://github.com/spree/spree-storefront-api-v2-js-sdk">
+      Download JavaScript/TypeScript SDK
+    </ExternalLink>
     <H3>
       Platform <em>(Work in Progress)</em>
     </H3>
