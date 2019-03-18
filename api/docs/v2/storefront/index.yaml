@@ -404,6 +404,36 @@ paths:
         - orderToken: []
         - bearerAuth: []
 
+  '/cart/estimate_shipping_rates/{country_iso}':
+    get:
+      description:  Returns a list of Estimated Shipping Rates for Cart
+      tags:
+        - Cart
+      operationId: 'Estimate Shipping Rates'
+      parameters:
+        - name: country_iso
+          in: path
+          required: false
+          description: >-
+            Country ISO or ISO3 symbol to get estimations for this destination,
+            by default we'll try to reuse Cart shipping address or the default Country for the current Store
+          schema:
+            type: string
+          example: 'USA'
+        - $ref: '#/components/parameters/SparseFieldsParam'
+      responses:
+        '200':
+          description: Returns a list of estimated Shipping Rates for Cart
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/EstimateShippingRatesList'
+        '404':
+          $ref: '#/components/responses/404NotFound'
+      security:
+        - orderToken: []
+        - bearerAuth: []
+
   '/checkout':
     patch:
       description: >-
@@ -2233,6 +2263,14 @@ components:
           items:
             oneOf:
               - $ref: '#/components/schemas/ShippingRate'
+    EstimateShippingRatesList:
+      required:
+        - data
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ShippingRate'
     ShippingRate:
       properties:
         id:

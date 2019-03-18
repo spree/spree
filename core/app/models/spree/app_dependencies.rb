@@ -11,7 +11,7 @@ module Spree
       :checkout_remove_store_credit_service, :checkout_get_shipping_rates_service,
       :coupon_handler, :country_finder, :current_order_finder, :credit_card_finder,
       :completed_order_finder, :order_sorter, :cart_compare_line_items_service, :collection_paginator, :products_sorter,
-      :products_finder, :taxon_finder, :line_item_by_variant_finder
+      :products_finder, :taxon_finder, :line_item_by_variant_finder, :cart_estimate_shipping_rates_service
     ].freeze
 
     attr_accessor *INJECTION_POINTS
