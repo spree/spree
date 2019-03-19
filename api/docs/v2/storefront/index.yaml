@@ -12,7 +12,15 @@ info:
       intefaces either in JavaScript frameworks or native mobile libraries.
     </p>
     <p>
-      Please read our introduction to the API v2 [insert link here]
+      Please read our <a href="https://guides.spreecommerce.org/api/v2/">
+        introduction to the API v2
+      </a>
+    </p>
+    <p>
+      Download our
+      <a href="https://github.com/spree/spree-storefront-api-v2-js-sdk">
+        official JavaScript & TypeScript SDK
+      </a>
     </p>
     <p>
       <a href="https://raw.githubusercontent.com/spree/spree/master/api/docs/v2/storefront/index.yaml" target="_blank" rel="noopener">

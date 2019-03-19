@@ -51,7 +51,7 @@ bundle exec rspec spec/models/spree/state_spec.rb:7
 
 ### Using Factories
 
-Spree uses [factory_bot](https://github.com/thoughtbot/factory_bot) to create valid records for testing purpose. All of the factories are also packaged in the gem. So if you are writing an extension or if you just want to play with Spree models then you can use these factories as illustrated below.
+Spree uses [factory_bot](https://github.com/thoughtbot/factory_bot) to create valid records for testing purpose. All of the factories are also packaged in the gem. So if you are writing an extension or if you just want to play with Spree models then you can use these factories as illustrated below or add it directly to `rails_helper`.
 
 ```bash
 rails console
