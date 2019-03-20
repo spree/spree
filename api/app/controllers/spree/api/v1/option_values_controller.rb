@@ -47,9 +47,9 @@ module Spree
 
         def scope
           @scope ||= if params[:option_type_id]
-                       Spree::OptionType.find(params[:option_type_id]).option_values.accessible_by(current_ability, :read)
+                       Spree::OptionType.find(params[:option_type_id]).option_values.accessible_by(current_ability, :show)
                      else
-                       Spree::OptionValue.accessible_by(current_ability, :read).load
+                       Spree::OptionValue.accessible_by(current_ability, :show).load
                      end
         end
 

@@ -49,7 +49,7 @@ module Spree
 
         def product
           if params[:product_id]
-            @product ||= Spree::Product.accessible_by(current_ability, :read).
+            @product ||= Spree::Product.accessible_by(current_ability, :show).
                          friendly.find(params[:product_id])
           end
         end
@@ -65,7 +65,7 @@ module Spree
             variants = variants.with_deleted
           end
 
-          variants.eligible.accessible_by(current_ability, :read)
+          variants.eligible.accessible_by(current_ability)
         end
 
         def variant_params

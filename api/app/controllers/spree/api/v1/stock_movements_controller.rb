@@ -5,7 +5,7 @@ module Spree
         before_action :stock_location, except: [:update, :destroy]
 
         def index
-          authorize! :read, StockMovement
+          authorize! :index, StockMovement
           @stock_movements = scope.ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
           respond_with(@stock_movements)
         end
@@ -29,11 +29,11 @@ module Spree
 
         def stock_location
           render 'spree/api/v1/shared/stock_location_required', status: 422 and return unless params[:stock_location_id]
-          @stock_location ||= StockLocation.accessible_by(current_ability, :read).find(params[:stock_location_id])
+          @stock_location ||= StockLocation.accessible_by(current_ability, :show).find(params[:stock_location_id])
         end
 
         def scope
-          @stock_location.stock_movements.accessible_by(current_ability, :read)
+          @stock_location.stock_movements.accessible_by(current_ability, :show)
         end
 
         def stock_movement_params

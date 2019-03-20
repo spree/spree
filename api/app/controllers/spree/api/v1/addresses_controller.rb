@@ -5,7 +5,7 @@ module Spree
         before_action :find_order
 
         def show
-          authorize! :read, @order, order_token
+          authorize! :show, @order, order_token
           @address = find_address
           respond_with(@address)
         end

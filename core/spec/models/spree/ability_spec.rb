@@ -111,6 +111,7 @@ describe Spree::Ability, type: :model do
         expect(ability).to be_able_to :update, user
         # ability.should_not be_able_to :create, resource_user # Fails
         # It can create new users if is has access to the :admin, User!!
+        expect(ability).to be_able_to :create, user
 
         # TODO: change the Ability class so only users and customers get the extra premissions?
 
