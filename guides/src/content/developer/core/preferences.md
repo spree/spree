@@ -11,12 +11,8 @@ To implement preferences for a model, simply add a new column called `preference
 
 ```ruby
 class AddPreferencesColumnToSpreeProducts < ActiveRecord::Migration[4.2]
-  def up
+  def change
     add_column :spree_products, :preferences, :text
-  end
-
-  def down
-    remove_column :spree_products, :preferences
   end
 end
 ```
