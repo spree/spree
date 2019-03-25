@@ -6,7 +6,7 @@
   "dependencies": {
     "@emotion/core": "^10.0.2",
     "disqus-react": "^1.0.5",
-    "emotion": "^10.0.0",
+    "emotion": "^10.0.9",
     "emotion-server": "^10.0.0",
     "gatsby": "^2.0.19",
     "gatsby-image": "^2.0.15",
