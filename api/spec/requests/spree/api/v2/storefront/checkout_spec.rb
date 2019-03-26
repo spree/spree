@@ -607,7 +607,6 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
         expect(json_response['included'][0]).to have_attribute(:display_final_price).with_value(shipping_rate.display_final_price.to_s)
         expect(json_response['included'][0]).to have_attribute(:cost).with_value(shipping_rate.cost.to_s)
         expect(json_response['included'][0]).to have_attribute(:display_cost).with_value(shipping_rate.display_cost.to_s)
-        expect(json_response['included'][0]).to have_attribute(:display_cost).with_value(shipping_rate.display_cost.to_s)
         expect(json_response['included'][0]).to have_attribute(:tax_amount).with_value(shipping_rate.tax_amount.to_s)
         expect(json_response['included'][0]).to have_attribute(:display_tax_amount).with_value(shipping_rate.display_tax_amount.to_s)
         expect(json_response['included'][0]).to have_attribute(:shipping_method_id).with_value(shipping_method.id)
