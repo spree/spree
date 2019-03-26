@@ -47,6 +47,7 @@ module Spree
         handle_error(current_line_item) unless current_line_item.save
       else
         other_order_line_item.order_id = order.id
+        other_order_line_item.adjustments.update_all(order_id: order.id)
         handle_error(other_order_line_item) unless other_order_line_item.save
       end
     end
