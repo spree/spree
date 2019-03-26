@@ -44,5 +44,5 @@ Gem::Specification.new do |s|
   s.add_dependency 'sprockets-rails'
   s.add_dependency 'mini_magick', '~> 4.8.0'
 
-  s.add_development_dependency 'email_spec', '~> 1.6'
+  s.add_development_dependency 'email_spec', '~> 2.2'
 end
