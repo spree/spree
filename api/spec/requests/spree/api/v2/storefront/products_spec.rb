@@ -110,7 +110,7 @@ describe 'API V2 Storefront Products Spec', type: :request do
 
       it 'returns products with deleted products' do
         expect(json_response['data'].count).to eq 7
-        expect(json_response['data'].last).to have_id(deleted_product.id.to_s)
+        expect(json_response['data'].pluck(:id)).to include(deleted_product.id.to_s)
       end
     end
 
@@ -121,7 +121,20 @@ describe 'API V2 Storefront Products Spec', type: :request do
 
       it 'returns products with discontinued products' do
         expect(json_response['data'].count).to eq 7
-        expect(json_response['data'].last).to have_id(discontinued_product.id.to_s)
+        expect(json_response['data'].pluck(:id)).to include(discontinued_product.id.to_s)
+      end
+    end
+
+    context 'with included discontinued and deleted' do
+      before do
+        get "/api/v2/storefront/products?filter[show_deleted]=#{true}&filter[show_discontinued]=#{true}"
+      end
+
+      it_behaves_like 'returns 200 HTTP status'
+
+      it 'returns available, deleted and discontinued products' do
+        expect(json_response['data'].count).to eq 8
+        expect(json_response['data'].pluck(:id)).to include(deleted_product.id.to_s, discontinued_product.id.to_s)
       end
     end
 
