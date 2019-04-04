@@ -4188,10 +4188,10 @@ emojis-list@^2.0.0:
   resolved "https://registry.yarnpkg.com/emojis-list/-/emojis-list-2.1.0.tgz#4daa4d9db00f9819880c79fa457ae5b09a1fd389"
   integrity sha1-TapNnbAPmBmIDHn6RXrlsJof04k=
 
-emotion-server@^10.0.0:
-  version "10.0.6"
-  resolved "https://registry.yarnpkg.com/emotion-server/-/emotion-server-10.0.6.tgz#8d1c9060549d9d787e68fc5279781d23a585e370"
-  integrity sha512-W05XYS0+OPz4Fomtj5Mk3qC6uiAzMQh9ZmXAvjGkpxCYo6JrY52l1qMFUdL2JWsaCJ9O+BxaPiZurVsaoPxprA==
+emotion-server@^10.0.9:
+  version "10.0.9"
+  resolved "https://registry.yarnpkg.com/emotion-server/-/emotion-server-10.0.9.tgz#494a94bd5c7a64d517f1e116d27c830d060f6b0e"
+  integrity sha512-SSOEsOEEkI2JrM5kxAbo3jJq6PEn3jDrdk3blOPaBQlhjwCbL5ZswzruIIdtNvFXvPlgWZJSr3Pdy/3mCC+I2Q==
   dependencies:
     create-emotion-server "10.0.0"
 
