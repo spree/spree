@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.version     = <%= class_name %>.version
   s.summary     = 'Add extension summary here'
   s.description = 'Add (optional) extension description here'
-  s.required_ruby_version = '>= 2.3.3'
+  s.required_ruby_version = '>= 2.2.7'
 
   s.author    = 'You'
   s.email     = 'you@example.com'
