@@ -789,6 +789,18 @@ paths:
             Find Prodcuts with Variants that have the specified option (eg. color, size)
             and value (eg. red, XS)
         - in: query
+          name: 'filter[show_deleted]'
+          schema:
+            type: boolean
+          example: true
+          description: Returns also deleted products
+        - in: query
+          name: 'filter[show_discontinued]'
+          schema:
+            type: boolean
+          example: true
+          description: Returns also discontinued products
+        - in: query
           name: sort
           schema:
             type: string
