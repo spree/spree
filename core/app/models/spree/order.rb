@@ -1,4 +1,4 @@
-require 'spree/order/checkout'
+require_dependency 'spree/order/checkout'
 
 module Spree
   class Order < Spree::Base
