@@ -24,7 +24,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'acts_as_list', '~> 0.8'
   s.add_dependency 'awesome_nested_set', '~> 3.1.4'
   s.add_dependency 'carmen', '>= 1.0', '< 1.2'
-  s.add_dependency 'cancancan', '~> 2.0'
+  s.add_dependency 'cancancan', '>= 2', '< 4'
   s.add_dependency 'deface', '~> 1.0'
   s.add_dependency 'ffaker', '~> 2.9'
   s.add_dependency 'friendly_id', '~> 5.2.1'
