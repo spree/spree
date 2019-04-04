@@ -90,7 +90,10 @@ module Spree
           def remove_coupon_code
             spree_authorize! :update, spree_current_order, order_token
 
-            result = coupon_handler.new(spree_current_order).remove(params[:coupon_code])
+            coupon_code = params[:coupon_code].present? ? 
+                          params[:coupon_code] : spree_current_order.promotions.coupons.first&.code
+            return render_error_payload(Spree.t('v2.cart.no_coupon_code', scope: 'api')) if coupon_code.nil?
+            result = coupon_handler.new(spree_current_order).remove(coupon_code) 
 
             if result.error.blank?
               render_serialized_payload { serialized_current_order }
