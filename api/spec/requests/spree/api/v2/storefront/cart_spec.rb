@@ -506,6 +506,34 @@ describe 'API V2 Storefront Cart Spec', type: :request do
 
           it_behaves_like 'coupon code error'
         end
+
+        context 'tries to remove an empty string' do
+          let!(:coupon_code) { '' }
+  
+          before { execute }
+  
+          it 'changes the adjustment total to 0.0' do
+            expect(json_response['data']).to have_attribute(:adjustment_total).with_value(0.0.to_s)
+          end
+
+          it 'doesnt includes the promotion in the response' do
+            expect(json_response['included']).not_to include(have_type('promotion'))
+          end
+        end
+  
+        context 'tries to remove nil' do
+          let(:coupon_code) { nil }
+  
+          before { execute }
+  
+          it 'changes the adjustment total to 0.0' do
+            expect(json_response['data']).to have_attribute(:adjustment_total).with_value(0.0.to_s)
+          end
+
+          it 'doesnt includes the promotion in the response' do
+            expect(json_response['included']).not_to include(have_type('promotion'))
+          end
+        end
       end
 
       context 'without coupon code applied' do
@@ -513,6 +541,28 @@ describe 'API V2 Storefront Cart Spec', type: :request do
           before { execute }
 
           it_behaves_like 'coupon code error'
+        end
+      end
+
+      context 'without coupon code applied' do
+        context 'tries to remove not-applied promotion' do
+          before { execute }
+
+          it_behaves_like 'coupon code error'
+        end
+
+        context 'tries to remove nil' do
+          let(:coupon_code) { nil }
+          before { execute }
+
+          it_behaves_like 'returns 422 HTTP status'
+        end
+
+        context 'tries to remove an empty string' do
+          let(:coupon_code) { '' }
+          before { execute }
+
+          it_behaves_like 'returns 422 HTTP status'
         end
       end
 
