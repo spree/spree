@@ -380,7 +380,7 @@ paths:
       parameters:
         - name: coupon_code
           in: path
-          required: true
+          optional: true
           description: Coupon code applied to Order
           schema:
             type: string
@@ -396,6 +396,12 @@ paths:
                 $ref: '#/components/schemas/Cart'
         '422':
           description: Coupon code couldn't be removed
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        'when coupon code is nil or empty string'
+          description: No coupon code provided and the Order doesn't have any coupon code promotions applied
           content:
             application/vnd.api+json:
               schema:
