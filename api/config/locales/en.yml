@@ -33,3 +33,4 @@ en:
       v2:
         cart:
           wrong_quantity: "Quantity has to be greater than 0"
+          no_coupon_code: "No coupon code provided and the Order doesn't have any coupon code promotions applied"
