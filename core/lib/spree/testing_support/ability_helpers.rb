@@ -29,19 +29,6 @@ shared_examples_for 'access denied' do
   end
 end
 
-shared_examples_for 'admin granted' do
-  it 'should allow admin' do
-    expect(ability).to be_able_to(:admin, resource, token) if token
-    expect(ability).to be_able_to(:admin, resource) unless token
-  end
-end
-
-shared_examples_for 'admin denied' do
-  it 'should not allow admin' do
-    expect(ability).to_not be_able_to(:admin, resource)
-  end
-end
-
 shared_examples_for 'index allowed' do
   it 'should allow index' do
     expect(ability).to be_able_to(:index, resource)
