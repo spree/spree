@@ -253,10 +253,6 @@ module Spree
       inventory_units.all?(&:returned?)
     end
 
-    def contents
-      @contents ||= Spree::OrderContents.new(self)
-    end
-
     # Associates the specified user with the order.
     def associate_user!(user, override_email = true)
       self.user           = user
