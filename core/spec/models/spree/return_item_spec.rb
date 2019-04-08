@@ -110,7 +110,7 @@ describe Spree::ReturnItem, type: :model do
       end
 
       context 'an exchange' do
-        subject { build(:exchange_return_item) }
+        subject { create(:exchange_return_item) }
 
         it { expect(subject.pre_tax_amount).to eq 0.0 }
       end

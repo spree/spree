@@ -7,7 +7,8 @@ module Spree
 
       let!(:shipping_method) { create(:shipping_method) }
       let(:package)          { build(:stock_package, contents: inventory_units.map { |_i| ContentItem.new(inventory_unit) }) }
-      let(:order)            { build(:order_with_line_items) }
+      let(:ship_address)     { create(:ship_address) }
+      let(:order)            { build(:order_with_line_items, ship_address: ship_address) }
       let(:inventory_units)  { order.inventory_units }
 
       context '#shipping rates' do
