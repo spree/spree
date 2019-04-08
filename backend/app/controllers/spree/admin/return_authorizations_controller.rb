@@ -36,7 +36,7 @@ module Spree
       end
 
       def load_reimbursement_types
-        @reimbursement_types = Spree::ReimbursementType.accessible_by(current_ability, :read).active
+        @reimbursement_types = Spree::ReimbursementType.accessible_by(current_ability).active
       end
 
       def load_return_authorization_reasons

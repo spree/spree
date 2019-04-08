@@ -133,12 +133,12 @@ module Spree
 
       def product_scope
         if @current_user_roles.include?('admin')
-          scope = Product.with_deleted.accessible_by(current_ability, :read).includes(*product_includes)
+          scope = Product.with_deleted.accessible_by(current_ability, :show).includes(*product_includes)
 
           scope = scope.not_deleted unless params[:show_deleted]
           scope = scope.not_discontinued unless params[:show_discontinued]
         else
-          scope = Product.accessible_by(current_ability, :read).active.includes(*product_includes)
+          scope = Product.accessible_by(current_ability, :show).active.includes(*product_includes)
         end
 
         scope
@@ -158,7 +158,7 @@ module Spree
 
       def authorize_for_order
         @order = Spree::Order.find_by(number: order_id)
-        authorize! :read, @order, order_token
+        authorize! :show, @order, order_token
       end
     end
   end

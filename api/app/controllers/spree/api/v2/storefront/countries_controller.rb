@@ -52,7 +52,7 @@ module Spree
           end
 
           def scope
-            Spree::Country.accessible_by(current_ability, :read)
+            Spree::Country.accessible_by(current_ability, :show)
           end
         end
       end

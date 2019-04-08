@@ -65,12 +65,12 @@ module Spree
 
         def stock_location
           render 'spree/api/v1/shared/stock_location_required', status: 422 and return unless params[:stock_location_id]
-          @stock_location ||= StockLocation.accessible_by(current_ability, :read).find(params[:stock_location_id])
+          @stock_location ||= StockLocation.accessible_by(current_ability, :show).find(params[:stock_location_id])
         end
 
         def scope
           includes = { variant: [{ option_values: :option_type }, :product] }
-          @stock_location.stock_items.accessible_by(current_ability, :read).includes(includes)
+          @stock_location.stock_items.accessible_by(current_ability, :show).includes(includes)
         end
 
         def stock_item_params

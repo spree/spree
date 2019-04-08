@@ -40,7 +40,7 @@ module Spree
           end
 
           def scope
-            Spree::Taxon.accessible_by(current_ability, :read).includes(scope_includes)
+            Spree::Taxon.accessible_by(current_ability, :show).includes(scope_includes)
           end
 
           def scope_includes
