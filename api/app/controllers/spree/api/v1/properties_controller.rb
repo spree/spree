@@ -5,7 +5,7 @@ module Spree
         before_action :find_property, only: [:show, :update, :destroy]
 
         def index
-          @properties = Spree::Property.accessible_by(current_ability, :read)
+          @properties = Spree::Property.accessible_by(current_ability)
 
           @properties = if params[:ids]
                           @properties.where(id: params[:ids].split(',').flatten)
@@ -56,9 +56,9 @@ module Spree
         private
 
         def find_property
-          @property = Spree::Property.accessible_by(current_ability, :read).find(params[:id])
+          @property = Spree::Property.accessible_by(current_ability, :show).find(params[:id])
         rescue ActiveRecord::RecordNotFound
-          @property = Spree::Property.accessible_by(current_ability, :read).find_by!(name: params[:id])
+          @property = Spree::Property.accessible_by(current_ability, :show).find_by!(name: params[:id])
         end
 
         def property_params

@@ -41,7 +41,7 @@ module Spree
             end
 
             def scope
-              spree_current_user.credit_cards.accessible_by(current_ability, :read)
+              spree_current_user.credit_cards.accessible_by(current_ability, :show)
             end
           end
         end

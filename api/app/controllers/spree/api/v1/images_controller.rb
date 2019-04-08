@@ -3,12 +3,12 @@ module Spree
     module V1
       class ImagesController < Spree::Api::BaseController
         def index
-          @images = scope.images.accessible_by(current_ability, :read)
+          @images = scope.images.accessible_by(current_ability)
           respond_with(@images)
         end
 
         def show
-          @image = Image.accessible_by(current_ability, :read).find(params[:id])
+          @image = Image.accessible_by(current_ability, :show).find(params[:id])
           respond_with(@image)
         end
 

@@ -20,7 +20,7 @@ module Spree
 
         def create
           @order = Spree::Order.find_by!(number: params.fetch(:shipment).fetch(:order_id))
-          authorize! :read, @order
+          authorize! :show, @order
           authorize! :create, Shipment
           quantity = params[:quantity].to_i
           @shipment = @order.shipments.create(stock_location_id: params.fetch(:stock_location_id))
@@ -126,7 +126,7 @@ module Spree
           @original_shipment         = Spree::Shipment.find_by!(number: params[:original_shipment_number])
           @variant                   = Spree::Variant.find(params[:variant_id])
           @quantity                  = params[:quantity].to_i
-          authorize! :read, @original_shipment
+          authorize! :show, @original_shipment
           authorize! :create, Shipment
         end
 
