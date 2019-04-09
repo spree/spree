@@ -169,9 +169,7 @@ module Spree
           end
 
           def check_coupon_codes
-            spree_current_order.promotions.coupons.map do |coupon|
-              coupon.code
-            end
+            spree_current_order.promotions.coupons.map(&:code)
           end
 
           def select_error(coupon_codes)
@@ -185,7 +183,7 @@ module Spree
               results << coupon_handler.new(spree_current_order).remove(coupon_code)
             end
 
-            results.select { |result| result.error }
+            results.select(&:error)
           end
         end
       end
