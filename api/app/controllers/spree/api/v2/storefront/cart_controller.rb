@@ -90,10 +90,30 @@ module Spree
           def remove_coupon_code
             spree_authorize! :update, spree_current_order, order_token
 
-            result = coupon_handler.new(spree_current_order).remove(params[:coupon_code])
+            coupon_code = if params[:coupon_code].present?
+                            params[:coupon_code]
+                          else
+                            spree_current_order.promotions.coupons.first&.code
+                          end
+
+            return render_error_payload(Spree.t('v2.cart.no_coupon_code', scope: 'api')) if coupon_code.nil?
+
+            result = coupon_handler.new(spree_current_order).remove(coupon_code)
 
             if result.error.blank?
               render_serialized_payload { serialized_current_order }
+            else
+              render_error_payload(result.error)
+            end
+          end
+
+          def estimate_shipping_rates
+            spree_authorize! :show, spree_current_order, order_token
+
+            result = estimate_shipping_rates_service.call(order: spree_current_order, country_iso: params[:country_iso])
+
+            if result.error.blank?
+              render_serialized_payload { serialize_estimated_shipping_rates(result.value) }
             else
               render_error_payload(result.error)
             end
@@ -125,12 +145,27 @@ module Spree
             Spree::Api::Dependencies.storefront_coupon_handler.constantize
           end
 
+          def estimate_shipping_rates_service
+            Spree::Api::Dependencies.storefront_cart_estimate_shipping_rates_service.constantize
+          end
+
           def line_item
             @line_item ||= spree_current_order.line_items.find(params[:line_item_id])
           end
 
           def render_error_item_quantity
             render json: { error: I18n.t(:wrong_quantity, scope: 'spree.api.v2.cart') }, status: 422
+          end
+
+          def estimate_shipping_rates_serializer
+            Spree::Api::Dependencies.storefront_estimated_shipment_serializer.constantize
+          end
+
+          def serialize_estimated_shipping_rates(shipping_rates)
+            estimate_shipping_rates_serializer.new(
+              shipping_rates,
+              params: { currency: spree_current_order.currency }
+            ).serializable_hash
           end
         end
       end

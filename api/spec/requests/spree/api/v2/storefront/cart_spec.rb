@@ -506,6 +506,34 @@ describe 'API V2 Storefront Cart Spec', type: :request do
 
           it_behaves_like 'coupon code error'
         end
+
+        context 'tries to remove an empty string' do
+          let!(:coupon_code) { '' }
+  
+          before { execute }
+  
+          it 'changes the adjustment total to 0.0' do
+            expect(json_response['data']).to have_attribute(:adjustment_total).with_value(0.0.to_s)
+          end
+
+          it 'doesnt includes the promotion in the response' do
+            expect(json_response['included']).not_to include(have_type('promotion'))
+          end
+        end
+  
+        context 'tries to remove nil' do
+          let(:coupon_code) { nil }
+  
+          before { execute }
+  
+          it 'changes the adjustment total to 0.0' do
+            expect(json_response['data']).to have_attribute(:adjustment_total).with_value(0.0.to_s)
+          end
+
+          it 'doesnt includes the promotion in the response' do
+            expect(json_response['included']).not_to include(have_type('promotion'))
+          end
+        end
       end
 
       context 'without coupon code applied' do
@@ -513,6 +541,28 @@ describe 'API V2 Storefront Cart Spec', type: :request do
           before { execute }
 
           it_behaves_like 'coupon code error'
+        end
+      end
+
+      context 'without coupon code applied' do
+        context 'tries to remove not-applied promotion' do
+          before { execute }
+
+          it_behaves_like 'coupon code error'
+        end
+
+        context 'tries to remove nil' do
+          let(:coupon_code) { nil }
+          before { execute }
+
+          it_behaves_like 'returns 422 HTTP status'
+        end
+
+        context 'tries to remove an empty string' do
+          let(:coupon_code) { '' }
+          before { execute }
+
+          it_behaves_like 'returns 422 HTTP status'
         end
       end
 
@@ -529,6 +579,61 @@ describe 'API V2 Storefront Cart Spec', type: :request do
       include_context 'creates order with line item'
 
       it_behaves_like 'remove coupon code'
+    end
+  end
+
+  describe 'cart#estimate_shipping_rates' do
+    let(:order) { create(:order, user: user, store: store, currency: currency) }
+    let(:params) { { country_iso: 'USA' } }
+    let(:execute) { get '/api/v2/storefront/cart/estimate_shipping_rates', params: params, headers: headers }
+
+    let(:country) { create(:country, iso: 'USA') }
+    let(:zone) { create(:zone, name: 'US') }
+    let(:shipping_method) { create(:shipping_method) }
+    let(:address) { create(:address, country: country) }
+
+    let(:shipment) { order.shipments.first }
+    let(:shipping_rate) { shipment.selected_shipping_rate }
+
+    shared_examples 'returns a list of shipments with shipping rates' do
+      before do
+        order.shipping_address = address
+        zone.countries << country
+        shipping_method.zones = [zone]
+        order.create_proposed_shipments
+        execute
+      end
+
+      it_behaves_like 'returns 200 HTTP status'
+
+      it 'returns valid shipments JSON' do
+        expect(json_response['data']).not_to be_empty
+        expect(json_response['data'][0]).to have_type('shipping_rate')
+        expect(json_response['data'][0]['attributes']).to be_present
+        expect(json_response['data'][0]).to have_type('shipping_rate')
+        expect(json_response['data'][0]).to have_attribute(:name).with_value(shipping_method.name)
+        expect(json_response['data'][0]).to have_attribute(:cost).with_value(shipping_rate.cost.to_s)
+        expect(json_response['data'][0]).to have_attribute(:tax_amount).with_value(shipping_rate.tax_amount.to_s)
+        expect(json_response['data'][0]).to have_attribute(:shipping_method_id).with_value(shipping_method.id)
+        expect(json_response['data'][0]).to have_attribute(:selected).with_value(shipping_rate.selected)
+        expect(json_response['data'][0]).to have_attribute(:final_price).with_value(shipping_rate.final_price.to_s)
+        expect(json_response['data'][0]).to have_attribute(:free).with_value(shipping_rate.free?)
+        expect(json_response['data'][0]).to have_attribute(:display_final_price).with_value(shipping_rate.display_final_price.to_s)
+        expect(json_response['data'][0]).to have_attribute(:display_cost).with_value(shipping_rate.display_cost.to_s)
+        expect(json_response['data'][0]).to have_attribute(:display_tax_amount).with_value(shipping_rate.display_tax_amount.to_s)
+      end
+    end
+
+    context 'as a guest user' do
+      include_context 'creates guest order with guest token'
+
+      it_behaves_like 'returns a list of shipments with shipping rates'
+    end
+
+    context 'as a signed in user' do
+      include_context 'creates order with line item'
+
+      it_behaves_like 'returns a list of shipments with shipping rates'
     end
   end
 end
