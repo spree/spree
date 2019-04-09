@@ -47,41 +47,41 @@ module Spree
           return [] unless shipments_hash
 
           shipments_hash.each do |s|
-            begin
-              shipment = order.shipments.build
-              shipment.tracking       = s[:tracking]
-              shipment.stock_location = Spree::StockLocation.find_by(admin_name: s[:stock_location]) || Spree::StockLocation.find_by!(name: s[:stock_location])
-              inventory_units = create_inventory_units_from_order_and_params(order, s[:inventory_units])
+            shipment = order.shipments.build
+            shipment.tracking       = s[:tracking]
+            shipment.stock_location = Spree::StockLocation.find_by(admin_name: s[:stock_location]) ||
+              Spree::StockLocation.find_by!(name: s[:stock_location])
+            inventory_units = create_inventory_units_from_order_and_params(order, s[:inventory_units])
 
-              inventory_units.each do |inventory_unit|
-                inventory_unit.shipment = shipment
-
-                if s[:shipped_at].present?
-                  inventory_unit.pending = false
-                  inventory_unit.state = 'shipped'
-                end
-
-                inventory_unit.save!
-              end
+            inventory_units.each do |inventory_unit|
+              inventory_unit.shipment = shipment
 
               if s[:shipped_at].present?
-                shipment.shipped_at = s[:shipped_at]
-                shipment.state      = 'shipped'
+                inventory_unit.pending = false
+                inventory_unit.state = 'shipped'
               end
 
-              shipment.save!
-
-              shipping_method = Spree::ShippingMethod.find_by(name: s[:shipping_method]) || Spree::ShippingMethod.find_by!(admin_name: s[:shipping_method])
-              rate = shipment.shipping_rates.create!(shipping_method: shipping_method, cost: s[:cost])
-
-              shipment.selected_shipping_rate_id = rate.id
-              shipment.update_amounts
-
-              adjustments = s.delete(:adjustments_attributes)
-              create_adjustments_from_params(adjustments, order, shipment)
-            rescue Exception => e
-              raise "Order import shipments: #{e.message} #{s}"
+              inventory_unit.save!
             end
+
+            if s[:shipped_at].present?
+              shipment.shipped_at = s[:shipped_at]
+              shipment.state      = 'shipped'
+            end
+
+            shipment.save!
+
+            shipping_method = Spree::ShippingMethod.find_by(name: s[:shipping_method]) ||
+              Spree::ShippingMethod.find_by!(admin_name: s[:shipping_method])
+            rate = shipment.shipping_rates.create!(shipping_method: shipping_method, cost: s[:cost])
+
+            shipment.selected_shipping_rate_id = rate.id
+            shipment.update_amounts
+
+            adjustments = s.delete(:adjustments_attributes)
+            create_adjustments_from_params(adjustments, order, shipment)
+          rescue Exception => e
+            raise "Order import shipments: #{e.message} #{s}"
           end
         end
 
@@ -102,23 +102,21 @@ module Spree
           return {} unless line_items
 
           line_items.each do |line_item|
-            begin
-              adjustments = line_item.delete(:adjustments_attributes)
-              extra_params = line_item.except(:variant_id, :quantity, :sku)
-              line_item = ensure_variant_id_from_params(line_item)
-              variant = Spree::Variant.find(line_item[:variant_id])
-              line_item = Cart::AddItem.call(order: order, variant: variant, quantity: line_item[:quantity]).value
-              # Raise any errors with saving to prevent import succeeding with line items
-              # failing silently.
-              if extra_params.present?
-                line_item.update!(extra_params)
-              else
-                line_item.save!
-              end
-              create_adjustments_from_params(adjustments, order, line_item)
-            rescue Exception => e
-              raise "Order import line items: #{e.message} #{line_item}"
+            adjustments = line_item.delete(:adjustments_attributes)
+            extra_params = line_item.except(:variant_id, :quantity, :sku)
+            line_item = ensure_variant_id_from_params(line_item)
+            variant = Spree::Variant.find(line_item[:variant_id])
+            line_item = Cart::AddItem.call(order: order, variant: variant, quantity: line_item[:quantity]).value
+            # Raise any errors with saving to prevent import succeeding with line items
+            # failing silently.
+            if extra_params.present?
+              line_item.update!(extra_params)
+            else
+              line_item.save!
             end
+            create_adjustments_from_params(adjustments, order, line_item)
+          rescue Exception => e
+            raise "Order import line items: #{e.message} #{line_item}"
           end
         end
 
@@ -126,18 +124,16 @@ module Spree
           return [] unless adjustments
 
           adjustments.each do |a|
-            begin
-              adjustment = (adjustable || order).adjustments.build(
-                order: order,
-                amount: a[:amount].to_f,
-                label: a[:label],
-                source_type: source_type_from_adjustment(a)
-              )
-              adjustment.save!
-              adjustment.close!
-            rescue Exception => e
-              raise "Order import adjustments: #{e.message} #{a}"
-            end
+            adjustment = (adjustable || order).adjustments.build(
+              order: order,
+              amount: a[:amount].to_f,
+              label: a[:label],
+              source_type: source_type_from_adjustment(a)
+            )
+            adjustment.save!
+            adjustment.close!
+          rescue Exception => e
+            raise "Order import adjustments: #{e.message} #{a}"
           end
         end
 
@@ -145,19 +141,17 @@ module Spree
           return [] unless payments_hash
 
           payments_hash.each do |p|
-            begin
-              payment = order.payments.build order: order
-              payment.amount = p[:amount].to_f
-              # Order API should be using state as that's the normal payment field.
-              # spree_wombat serializes payment state as status so imported orders should fall back to status field.
-              payment.state = p[:state] || p[:status] || 'completed'
-              payment.created_at = p[:created_at] if p[:created_at]
-              payment.payment_method = Spree::PaymentMethod.find_by!(name: p[:payment_method])
-              payment.source = create_source_payment_from_params(p[:source], payment) if p[:source]
-              payment.save!
-            rescue Exception => e
-              raise "Order import payments: #{e.message} #{p}"
-            end
+            payment = order.payments.build order: order
+            payment.amount = p[:amount].to_f
+            # Order API should be using state as that's the normal payment field.
+            # spree_wombat serializes payment state as status so imported orders should fall back to status field.
+            payment.state = p[:state] || p[:status] || 'completed'
+            payment.created_at = p[:created_at] if p[:created_at]
+            payment.payment_method = Spree::PaymentMethod.find_by!(name: p[:payment_method])
+            payment.source = create_source_payment_from_params(p[:source], payment) if p[:source]
+            payment.save!
+          rescue Exception => e
+            raise "Order import payments: #{e.message} #{p}"
           end
         end
 
