@@ -32,14 +32,12 @@ module Spree
       root = translations
       processed_keys = []
       translation_keys.each do |key|
-        begin
-          root = root.fetch(key.to_sym)
-          processed_keys << key.to_sym
-        rescue KeyError
-          error = "#{(processed_keys << key).join('.')} (#{I18n.locale})"
-          unless Spree.missing_translation_messages.include?(error)
-            Spree.missing_translation_messages << error
-          end
+        root = root.fetch(key.to_sym)
+        processed_keys << key.to_sym
+      rescue KeyError
+        error = "#{(processed_keys << key).join('.')} (#{I18n.locale})"
+        unless Spree.missing_translation_messages.include?(error)
+          Spree.missing_translation_messages << error
         end
       end
     end
