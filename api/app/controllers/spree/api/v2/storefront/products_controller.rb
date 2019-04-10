@@ -44,7 +44,7 @@ module Spree
           end
 
           def scope
-            Spree::Product.accessible_by(current_ability, :read).includes(scope_includes)
+            Spree::Product.accessible_by(current_ability, :show).includes(scope_includes)
           end
 
           def scope_includes

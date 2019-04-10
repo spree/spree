@@ -25,7 +25,7 @@ module Spree
         private
 
         def inventory_unit
-          @inventory_unit ||= InventoryUnit.accessible_by(current_ability, :read).find(params[:id])
+          @inventory_unit ||= InventoryUnit.accessible_by(current_ability, :show).find(params[:id])
         end
 
         def prepare_event

@@ -6,9 +6,9 @@ module Spree
           @taxons = if taxonomy
                       taxonomy.root.children
                     elsif params[:ids]
-                      Spree::Taxon.includes(:children).accessible_by(current_ability, :read).where(id: params[:ids].split(','))
+                      Spree::Taxon.includes(:children).accessible_by(current_ability).where(id: params[:ids].split(','))
                     else
-                      Spree::Taxon.includes(:children).accessible_by(current_ability, :read).order(:taxonomy_id, :lft)
+                      Spree::Taxon.includes(:children).accessible_by(current_ability).order(:taxonomy_id, :lft)
                     end
           @taxons = @taxons.ransack(params[:q]).result
           @taxons = @taxons.page(params[:page]).per(params[:per_page])
@@ -74,12 +74,12 @@ module Spree
 
         def taxonomy
           if params[:taxonomy_id].present?
-            @taxonomy ||= Spree::Taxonomy.accessible_by(current_ability, :read).find(params[:taxonomy_id])
+            @taxonomy ||= Spree::Taxonomy.accessible_by(current_ability, :show).find(params[:taxonomy_id])
           end
         end
 
         def taxon
-          @taxon ||= taxonomy.taxons.accessible_by(current_ability, :read).find(params[:id])
+          @taxon ||= taxonomy.taxons.accessible_by(current_ability, :show).find(params[:id])
         end
 
         def taxon_params
