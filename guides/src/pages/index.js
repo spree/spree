@@ -25,30 +25,28 @@ const IndexPage = () => (
       </p>
 
       <div className="mw8 center">
-        <div className="flex flex-row flex-column-m mv4">
-          <Section path="/api/overview" title="API Guides" className="mr3">
+        <div className="flex flex-column flex-wrap flex-row-ns mv4 w-100">
+          <Section path="/api/overview" title="API Guides">
             The REST API is designed to give developers a convenient way to
             access data contained within Spree. With a standard read/write
             interface to store data, it is now very simple to write third party
-            applications (JavaScript/Mobile/other technologies) that can
-            talk to your Spree store.
+            applications (JavaScript/Mobile/other technologies) that can talk to
+            your Spree store.
           </Section>
 
-          <Section path="/developer" title="Developer Guides" className="ml3">
+          <Section path="/developer" title="Developer Guides">
             This part of Spree’s documentation covers the technical aspects of
             Spree. If you are working with Rails and are building a Spree store,
             this is the documentation for you.
           </Section>
-        </div>
 
-        <div className="flex flex-row flex-column-m mb5">
-          <Section path="/user" title="User Guides" className="mr3">
+          <Section path="/user" title="User Guides">
             This documentation is intended for business owners and site
             administrators of Spree e-commerce sites. Everything you need to
             know to configure and manage your Spree store can be found here.
           </Section>
 
-          <Section path="/release_notes" title="Release Notes" className="ml3">
+          <Section path="/release_notes" title="Release Notes">
             Each major new release of Spree has an accompanying set of release
             notes. The purpose of these notes is to provide a high level
             overview of what has changed since the previous version of Spree.
