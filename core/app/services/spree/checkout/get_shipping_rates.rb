@@ -7,6 +7,7 @@ module Spree
         run :reload_order
         run :ensure_shipping_address
         run :ensure_line_items_present
+        run :move_order_to_delivery_state
         run :generate_shipping_rates
         run :return_shipments
       end
@@ -42,6 +43,12 @@ module Spree
 
       def return_shipments(order:)
         success(order.shipments.includes([shipping_rates: :shipping_method]))
+      end
+
+      def move_order_to_delivery_state(order:)
+        Spree::Dependencies.checkout_next_service.constantize.call(order: order) until order.state == 'delivery'
+
+        success(order: order)
       end
     end
   end
