@@ -29,7 +29,7 @@ const Section = ({ title, path, children, className }) => (
 
 Section.propTypes = {
   title: PropTypes.string.isRequired,
-  path: PropTypes.string.isRequired,
+  path: PropTypes.string,
   children: PropTypes.node.isRequired,
   className: PropTypes.string
 }
