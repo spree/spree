@@ -103,6 +103,7 @@ module Spree
                 before_transition to: :delivery, do: :set_shipments_cost
                 before_transition to: :delivery, do: :create_shipment_tax_charge!
                 before_transition from: :delivery, do: :apply_free_shipping_promotions
+                before_transition to: :delivery, do: :apply_unassigned_promotions
               end
 
               before_transition to: :resumed, do: :ensure_line_item_variants_are_not_discontinued
