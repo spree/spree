@@ -30,7 +30,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'awesome_print'
   s.add_development_dependency 'capybara'
   s.add_development_dependency 'capybara-screenshot'
-  s.add_development_dependency 'chromedriver-helper'
   s.add_development_dependency 'coffee-rails'
   s.add_development_dependency 'database_cleaner'
   s.add_development_dependency 'factory_bot', '~> 4.7'
@@ -40,7 +39,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'pry'
   s.add_development_dependency 'rspec-rails'
   s.add_development_dependency 'sass-rails'
-  s.add_development_dependency 'selenium-webdriver'
   s.add_development_dependency 'simplecov'
   s.add_development_dependency 'sqlite3', '~> 1.3.6'
+  s.add_development_dependency 'webdrivers', '~> 3.8.0'
 end

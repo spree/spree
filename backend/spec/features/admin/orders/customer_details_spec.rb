@@ -51,6 +51,7 @@ describe 'Customer Details', type: :feature, js: true do
       expect_form_value('#order_bill_address_attributes_country_id', user.bill_address.country_id.to_s)
       expect_form_value('#order_bill_address_attributes_state_id', user.bill_address.state_id.to_s)
       expect_form_value('#order_bill_address_attributes_phone', user.bill_address.phone)
+      wait_for { !page.has_button?('Update') }
       click_button 'Update'
       expect(Spree::Order.last.user).to eq(user)
     end

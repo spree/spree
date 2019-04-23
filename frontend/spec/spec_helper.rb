@@ -47,6 +47,7 @@ require 'spree/testing_support/order_walkthrough'
 require 'spree/testing_support/caching'
 require 'spree/testing_support/capybara_config'
 require 'spree/testing_support/image_helpers'
+require 'webdrivers'
 
 RSpec.configure do |config|
   config.color = true

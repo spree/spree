@@ -34,6 +34,7 @@ describe 'Product Details', type: :feature, js: true do
     it 'handles tag changes' do
       targetted_select2_search 'example-tag', from: '#s2id_product_tag_list'
       wait_for_ajax
+      wait_for { !page.has_button?('Update') }
       click_button 'Update'
       expect(page).to have_content('successfully updated!')
       expect(find('#s2id_product_tag_list')).to have_content('example-tag')

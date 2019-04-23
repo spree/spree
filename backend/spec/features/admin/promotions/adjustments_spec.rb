@@ -117,6 +117,7 @@ describe 'Promotion Adjustments', type: :feature, js: true do
       select2 'Product(s)', from: 'Add rule of type'
       within('#rule_fields') { click_button 'Add' }
       select2_search 'RoR Mug', from: 'Choose products'
+      wait_for { !page.has_button?('Update') }
       within('#rule_fields') { click_button 'Update' }
 
       select2 'Create per-line-item adjustment', from: 'Add action of type'
@@ -208,6 +209,7 @@ describe 'Promotion Adjustments', type: :feature, js: true do
       page.find('.select2-input').set('RoR Mug')
       page.find('.select2-highlighted').click
 
+      wait_for { !page.has_button?('Update') }
       within('#actions_container') { click_button 'Update' }
 
       select2 'Create whole-order adjustment', from: 'Add action of type'
