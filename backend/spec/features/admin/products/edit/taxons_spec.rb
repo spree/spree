@@ -29,6 +29,7 @@ describe 'Product Taxons', type: :feature, js: true do
       expect(selected_taxons).to match_array([taxon_1.id])
 
       select2_search 'Clothing', from: 'Taxons'
+      wait_for { !page.has_button?('Update') }
       click_button 'Update'
       expect(selected_taxons).to match_array([taxon_1.id, taxon_2.id])
 

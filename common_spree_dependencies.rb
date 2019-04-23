@@ -17,6 +17,10 @@ platforms :ruby do
   gem 'pg', '~> 0.18'
 end
 
+group :development do
+  gem 'webdrivers', '~> 3.8.0'
+end
+
 group :test do
   gem 'capybara', '~> 2.16'
   gem 'capybara-screenshot', '~> 1.0'
@@ -30,8 +34,6 @@ group :test do
   gem 'jsonapi-rspec'
   gem 'simplecov'
   gem 'webmock', '~> 3.0.1'
-  gem 'selenium-webdriver'
-  gem 'chromedriver-helper'
   gem 'timecop'
   gem 'rails-controller-testing'
 end
