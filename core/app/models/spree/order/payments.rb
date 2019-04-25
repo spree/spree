@@ -52,7 +52,9 @@ module Spree
 
             payment.public_send(method)
 
-            if payment.completed? && payment_total != total
+            # Payment updates the order total if capture_on_dispatch is *not* set; don't do this twice
+            # See: https://github.com/spree/spree/issues/8148
+            if payment.completed? && payment.capture_on_dispatch
               self.payment_total += payment.amount
             end
           end
