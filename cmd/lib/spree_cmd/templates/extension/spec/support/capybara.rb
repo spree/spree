@@ -18,5 +18,4 @@ RSpec.configure do
     driver.browser.save_screenshot(path)
   end
 
-  Selenium::WebDriver.logger.level = :error
 end
