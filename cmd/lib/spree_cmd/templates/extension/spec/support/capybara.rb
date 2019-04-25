@@ -5,6 +5,8 @@ require 'capybara/rails'
 
 RSpec.configure do
   Capybara.register_driver :chrome do |app|
+    Selenium::WebDriver.logger.level = :error
+
     Capybara::Selenium::Driver.new app,
       browser: :chrome,
       options: Selenium::WebDriver::Chrome::Options.new(
