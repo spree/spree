@@ -165,6 +165,7 @@ describe 'New Order', type: :feature do
       wait_for_ajax
       click_link 'Customer'
       select_customer
+      wait_for { !page.has_button?('Update') }
       click_button 'Update'
       expect(Spree::Order.last.state).to eq 'delivery'
     end
