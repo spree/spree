@@ -14,4 +14,6 @@ RSpec.configure do
   Capybara::Screenshot.register_driver(:chrome) do |driver, path|
     driver.browser.save_screenshot(path)
   end
+
+  Selenium::WebDriver.logger.level = :error
 end
