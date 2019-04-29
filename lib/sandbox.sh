@@ -62,7 +62,6 @@ group :test, :development do
 end
 RUBY
 
-sed -i.bak -e "/^gem.*sqlite3/ s/$/, '~> 1.3.6'/" Gemfile && rm Gemfile.bak
 bundle install --gemfile Gemfile
 bundle exec rails db:drop || true
 bundle exec rails db:create
