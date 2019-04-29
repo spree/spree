@@ -1,4 +1,7 @@
 require_dependency 'spree/order/checkout'
+require_dependency 'spree/order/currency_updater'
+require_dependency 'spree/order/payments'
+require_dependency 'spree/order/store_credit'
 
 module Spree
   class Order < Spree::Base
