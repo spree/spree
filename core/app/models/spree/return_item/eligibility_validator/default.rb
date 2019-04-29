@@ -1,7 +1,3 @@
-# we need to require this manually as Rails 6 zeitwerk auto-loader will search for a file
-# called `r_m_a_required`
-require_relative 'rma_required'
-
 module Spree
   class ReturnItem::EligibilityValidator::Default < Spree::ReturnItem::EligibilityValidator::BaseValidator
     class_attribute :permitted_eligibility_validators
