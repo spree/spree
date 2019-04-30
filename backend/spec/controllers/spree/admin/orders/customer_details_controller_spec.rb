@@ -37,7 +37,7 @@ describe Spree::Admin::Orders::CustomerDetailsController, type: :controller do
       end
 
       def send_request(params = {})
-        spree_put :update, params
+        put :update, params: params
       end
 
       context 'using guest checkout' do

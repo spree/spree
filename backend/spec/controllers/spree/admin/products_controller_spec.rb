@@ -9,7 +9,7 @@ describe Spree::Admin::ProductsController, type: :controller do
     # Regression test for #1259
     it 'can find a product by SKU' do
       product = create(:product, sku: 'ABC123')
-      spree_get :index, q: { sku_start: 'ABC123' }
+      get :index, params: { q: { sku_start: 'ABC123' } }
       expect(assigns[:collection]).not_to be_empty
       expect(assigns[:collection]).to include(product)
     end
@@ -20,7 +20,10 @@ describe Spree::Admin::ProductsController, type: :controller do
     let!(:product) { create(:product) }
 
     specify do
-      spree_put :update, id: product.to_param, product: { product_properties_attributes: { '1' => { property_name: 'Foo', value: 'bar' } } }
+      put :update, params: {
+        id: product.to_param,
+        product: { product_properties_attributes: { '1' => { property_name: 'Foo', value: 'bar' } } }
+      }
       expect(flash[:success]).to eq("Product #{product.name.inspect} has been successfully updated!")
     end
   end
@@ -31,7 +34,7 @@ describe Spree::Admin::ProductsController, type: :controller do
     let(:products) { double(ActiveRecord::Relation) }
 
     def send_request
-      spree_delete :destroy, id: product, format: :js
+      delete :destroy, params: { id: product, format: :js }
     end
 
     context 'will successfully destroy product' do
@@ -102,7 +105,7 @@ describe Spree::Admin::ProductsController, type: :controller do
 
   describe '#clone' do
     subject(:send_request) do
-      spree_post :clone, id: product, format: :js
+      post :clone, params: { id: product, format: :js }
     end
 
     let!(:product) { create(:custom_product, name: 'MyProduct', sku: 'MySku') }
@@ -151,7 +154,7 @@ describe Spree::Admin::ProductsController, type: :controller do
 
     it 'restricts stock location based on accessible attributes' do
       expect(Spree::StockLocation).to receive(:accessible_by).and_return([])
-      spree_get :stock, id: product
+      get :stock, params: { id: product }
     end
   end
 end

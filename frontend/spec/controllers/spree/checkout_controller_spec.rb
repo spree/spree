@@ -20,31 +20,31 @@ describe Spree::CheckoutController, type: :controller do
     it 'checks if the user is authorized for :edit' do
       expect(controller).to receive(:authorize!).with(:edit, order, token)
       request.cookie_jar.signed[:token] = token
-      spree_get :edit, state: 'address'
+      get :edit, params: { state: 'address' }
     end
 
     it 'redirects to the cart path unless checkout_allowed?' do
       allow(order).to receive_messages checkout_allowed?: false
-      spree_get :edit, state: 'delivery'
+      get :edit, params: { state: 'delivery' }
       expect(response).to redirect_to(spree.cart_path)
     end
 
     it 'redirects to the cart path if current_order is nil' do
       allow(controller).to receive(:current_order).and_return(nil)
-      spree_get :edit, state: 'delivery'
+      get :edit, params: { state: 'delivery' }
       expect(response).to redirect_to(spree.cart_path)
     end
 
     it 'redirects to cart if order is completed' do
       allow(order).to receive_messages(completed?: true)
-      spree_get :edit, state: 'address'
+      get :edit, params: { state: 'address' }
       expect(response).to redirect_to(spree.cart_path)
     end
 
     # Regression test for #2280
     it 'redirects to current step trying to access a future step' do
       order.update_column(:state, 'address')
-      spree_get :edit, state: 'delivery'
+      get :edit, params: { state: 'delivery' }
       expect(response).to redirect_to spree.checkout_state_path('address')
     end
 
@@ -58,7 +58,7 @@ describe Spree::CheckoutController, type: :controller do
       it 'associates the order with a user' do
         order.update_column :user_id, nil
         expect(order).to receive(:associate_user!).with(user)
-        spree_get :edit, {}, order_id: 1
+        get :edit, params: { order_id: 1 }
       end
     end
   end
@@ -67,17 +67,18 @@ describe Spree::CheckoutController, type: :controller do
     it 'checks if the user is authorized for :edit' do
       expect(controller).to receive(:authorize!).with(:edit, order, token)
       request.cookie_jar.signed[:token] = token
-      spree_post :update, state: 'address'
+      post :update, params: { state: 'address' }
     end
 
     context 'save successful' do
       def spree_post_address
-        spree_post :update,
+        post :update, params: {
                    state: 'address',
                    order: {
                      bill_address_attributes: address_params,
                      use_billing: true
                    }
+                 }
       end
 
       before do
@@ -98,7 +99,7 @@ describe Spree::CheckoutController, type: :controller do
         end
 
         it 'assigns order' do
-          spree_post :update, state: 'address'
+          post :update, params: { state: 'address' }
           expect(assigns[:order]).not_to be_nil
         end
 
@@ -115,26 +116,28 @@ describe Spree::CheckoutController, type: :controller do
         context 'current_user respond to save address method' do
           it 'calls persist order address on user' do
             expect(user).to receive(:persist_order_address)
-            spree_post :update,
+            post :update, params: {
                        state: 'address',
                        order: {
                          bill_address_attributes: address_params,
                          use_billing: true
                        },
                        save_user_address: '1'
+                     }
           end
         end
 
         context 'current_user doesnt respond to persist_order_address' do
           it 'doesnt raise any error' do
             expect do
-              spree_post :update,
+              post :update, params: {
                          state: 'address',
                          order: {
                            bill_address_attributes: address_params,
                            use_billing: true
                          },
                          save_user_address: '1'
+                       }
             end.not_to raise_error
           end
         end
@@ -168,7 +171,7 @@ describe Spree::CheckoutController, type: :controller do
             @expected_bill_address_id = order.bill_address.id
             @expected_ship_address_id = order.ship_address.id
 
-            spree_post :update, update_params
+            post :update, params: update_params
             order.reload
           end
 
@@ -192,17 +195,17 @@ describe Spree::CheckoutController, type: :controller do
 
         # This inadvertently is a regression test for #2694
         it 'redirects to the order view' do
-          spree_post :update, state: 'confirm'
+          post :update, params: { state: 'confirm' }
           expect(response).to redirect_to spree.order_path(order)
         end
 
         it 'populates the flash message' do
-          spree_post :update, state: 'confirm'
+          post :update, params: { state: 'confirm' }
           expect(flash.notice).to eq(Spree.t(:order_processed_successfully))
         end
 
         it 'removes completed order from current_order' do
-          spree_post :update, { state: 'confirm' }, order_id: 'foofah'
+          post :update, params: { state: 'confirm', order_id: 'foofah' }
           expect(assigns(:current_order)).to be_nil
           expect(assigns(:order)).to eql controller.current_order
         end
@@ -223,7 +226,7 @@ describe Spree::CheckoutController, type: :controller do
 
         context 'correct' do
           it 'properly updates and increment version' do
-            spree_post :update, post_params
+            post :update, params: post_params
             expect(order.state_lock_version).to eq 1
           end
         end
@@ -235,16 +238,16 @@ describe Spree::CheckoutController, type: :controller do
 
           it 'order should receieve ensure_valid_order_version callback' do
             expect_any_instance_of(described_class).to receive(:ensure_valid_state_lock_version)
-            spree_post :update, post_params
+            post :update, params: post_params
           end
 
           it 'order should receieve with_lock message' do
             expect(order).to receive(:with_lock)
-            spree_post :update, post_params
+            post :update, params: post_params
           end
 
           it 'redirects back to current state' do
-            spree_post :update, post_params
+            post :update, params: post_params
             expect(response).to redirect_to spree.checkout_state_path('address')
             expect(flash[:error]).to eq 'The order has already been updated.'
           end
@@ -259,23 +262,23 @@ describe Spree::CheckoutController, type: :controller do
       end
 
       it 'does not assign order' do
-        spree_post :update, state: 'address'
+        post :update, params: { state: 'address' }
         expect(assigns[:order]).not_to be_nil
       end
 
       it 'does not change the order state' do
-        spree_post :update, state: 'address'
+        post :update, params: { state: 'address' }
       end
 
       it 'renders the edit template' do
-        spree_post :update, state: 'address'
+        post :update, params: { state: 'address' }
         expect(response).to render_template :edit
       end
 
       it 'renders order in payment state when payment fails' do
         order.update_column(:state, 'confirm')
         allow(controller).to receive(:insufficient_payment?).and_return(true)
-        spree_post :update, state: 'confirm'
+        post :update, params: { state: 'confirm' }
         expect(order.state).to eq('payment')
       end
     end
@@ -285,11 +288,11 @@ describe Spree::CheckoutController, type: :controller do
 
       it 'does not change the state if order is completed' do
         expect(order).not_to receive(:update_attribute)
-        spree_post :update, state: 'confirm'
+        post :update, params: { state: 'confirm' }
       end
 
       it 'redirects to the cart_path' do
-        spree_post :update, state: 'confirm'
+        post :update, params: { state: 'confirm' }
         expect(response).to redirect_to spree.cart_path
       end
     end
@@ -298,7 +301,7 @@ describe Spree::CheckoutController, type: :controller do
       before do
         allow(order).to receive_messages user: user
         allow(order).to receive(:update).and_raise(Spree::Core::GatewayError.new('Invalid something or other.'))
-        spree_post :update, state: 'address'
+        post :update, params: { state: 'address' }
       end
 
       it 'renders the edit template and display exception message' do
@@ -335,7 +338,7 @@ describe Spree::CheckoutController, type: :controller do
           expect(order.shipments.count).to eq(1)
           order.shipments.first.shipping_rates.delete_all
 
-          spree_put :update, state: order.state, order: {}
+          put :update, params: { state: order.state, order: {} }
           expect(flash[:error]).to eq(Spree.t(:items_cannot_be_shipped))
           expect(response).to redirect_to(spree.checkout_state_path('address'))
         end
@@ -349,7 +352,7 @@ describe Spree::CheckoutController, type: :controller do
         end
 
         it 'due to the order having errors' do
-          spree_put :update, state: order.state, order: {}
+          put :update, params: { state: order.state, order: {} }
           expect(flash[:error]).to eql("Base error\nAdjustments error")
           expect(response).to redirect_to(spree.checkout_state_path('address'))
         end
@@ -374,7 +377,7 @@ describe Spree::CheckoutController, type: :controller do
 
       it 'when GatewayError is raised' do
         allow_any_instance_of(Spree::Payment).to receive(:process!).and_raise(Spree::Core::GatewayError.new(Spree.t(:payment_processing_failed)))
-        spree_put :update, state: order.state, order: {}
+        put :update, params: { state: order.state, order: {} }
         expect(flash[:error]).to eq(Spree.t(:payment_processing_failed))
       end
     end
@@ -396,7 +399,7 @@ describe Spree::CheckoutController, type: :controller do
 
     context 'and back orders are not allowed' do
       before do
-        spree_post :update, state: 'payment'
+        post :update, params: { state: 'payment' }
       end
 
       it 'redirects to cart' do
@@ -420,11 +423,11 @@ describe Spree::CheckoutController, type: :controller do
 
     it "doesn't set shipping address on the order" do
       expect(order).not_to receive(:ship_address=)
-      spree_post :update, state: order.state
+      post :update, params: { state: order.state }
     end
 
     it "doesn't remove unshippable items before payment" do
-      expect { spree_post :update, state: 'payment' }.
+      expect { post :update, params: { state: 'payment' } }.
         not_to change(order, :line_items)
     end
   end
@@ -433,7 +436,7 @@ describe Spree::CheckoutController, type: :controller do
     allow(order).to receive_messages payment_required?: true
     allow(controller).to receive_messages check_authorization: true
 
-    expect { spree_post :update, state: 'payment' }.
+    expect { post :update, params: { state: 'payment' } }.
       to change { order.reload.line_items.length }
   end
 
@@ -448,12 +451,14 @@ describe Spree::CheckoutController, type: :controller do
     end
 
     it 'does not advance the order extra even when called twice' do
-      spree_put :update, state: 'payment',
+      put :update, params: { state: 'payment',
                          order: { payments_attributes: [{ payment_method_id: payment_method_id }] }
+                       }
       order.reload
       expect(order.state).to eq 'confirm'
-      spree_put :update, state: 'payment',
+      put :update, params: { state: 'payment',
                          order: { payments_attributes: [{ payment_method_id: payment_method_id }] }
+                       }
       order.reload
       expect(order.state).to eq 'confirm'
     end
@@ -483,7 +488,7 @@ describe Spree::CheckoutController, type: :controller do
       end
 
       it 'can fully pay with store credits while removing other payment attributes' do
-        spree_put :update, put_attrs
+        put :update, params: put_attrs
 
         order.reload
         expect(order.state).to eq 'confirm'
@@ -493,7 +498,7 @@ describe Spree::CheckoutController, type: :controller do
       it 'can fully pay with store credits while removing an existing card' do
         credit_card = create(:credit_card, user: user, payment_method: Spree::PaymentMethod.first)
         put_attrs[:order][:existing_card] = credit_card.id
-        spree_put :update, put_attrs
+        put :update, params: put_attrs
 
         order.reload
         expect(order.state).to eq 'confirm'
@@ -504,7 +509,7 @@ describe Spree::CheckoutController, type: :controller do
         let(:credit_amount) { order.total - 1.00 }
 
         it 'returns to payment for partial store credit' do
-          spree_put :update, put_attrs
+          put :update, params: put_attrs
 
           order.reload
           expect(order.state).to eq 'payment'
@@ -538,7 +543,7 @@ describe Spree::CheckoutController, type: :controller do
       end
 
       it 'can fully pay with store credits while removing other payment attributes' do
-        spree_put :update, put_attrs
+        put :update, params: put_attrs
 
         order.reload
         expect(order.state).to eq 'payment'

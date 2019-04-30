@@ -30,7 +30,7 @@ describe Spree::Admin::ReportsController, type: :controller do
 
   describe 'GET index' do
     it 'is ok' do
-      spree_get :index
+      get :index
       expect(response).to be_ok
     end
   end

@@ -5,7 +5,7 @@ describe Spree::Admin::ReturnItemsController, type: :controller do
 
   describe '#update' do
     subject do
-      spree_put :update, id: return_item.to_param, return_item: { acceptance_status: new_acceptance_status }
+      put :update, params: { id: return_item.to_param, return_item: { acceptance_status: new_acceptance_status } }
     end
 
     let(:customer_return) { create(:customer_return) }

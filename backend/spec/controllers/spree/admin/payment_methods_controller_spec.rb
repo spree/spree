@@ -13,7 +13,7 @@ module Spree
     # regression test for #2094
     it 'does not clear password on update' do
       expect(payment_method.preferred_password).to eq('haxme')
-      spree_put :update, id: payment_method.id, payment_method: { type: payment_method.class.to_s, preferred_password: '' }
+      put :update, params: { id: payment_method.id, payment_method: { type: payment_method.class.to_s, preferred_password: '' } }
       expect(response).to redirect_to(spree.edit_admin_payment_method_path(payment_method))
 
       payment_method.reload
@@ -21,7 +21,7 @@ module Spree
     end
 
     it 'saves payment method preferences on update' do
-      spree_put :update,
+      put :update, params: {
                 id: payment_method.id,
                 payment_method: {
                   type: payment_method.class.to_s,
@@ -30,6 +30,7 @@ module Spree
                 gateway_with_password: {
                   preferred_password: 'abc'
                 }
+              }
 
       payment_method.reload
       expect(payment_method.preferred_password).to eq('abc')
@@ -38,14 +39,14 @@ module Spree
     context 'tries to save invalid payment' do
       it "doesn't break, responds nicely" do
         expect do
-          spree_post :create, payment_method: { name: '', type: 'Spree::Gateway::Bogus' }
+          post :create, params: { payment_method: { name: '', type: 'Spree::Gateway::Bogus' } }
         end.not_to raise_error
       end
     end
 
     it 'can create a payment method of a valid type' do
       expect do
-        spree_post :create, payment_method: { name: 'Test Method', type: 'Spree::Gateway::Bogus' }
+        post :create, params: { payment_method: { name: 'Test Method', type: 'Spree::Gateway::Bogus' } }
       end.to change(Spree::PaymentMethod, :count).by(1)
 
       expect(response).to be_redirect
@@ -54,7 +55,7 @@ module Spree
 
     it 'can not create a payment method of an invalid type' do
       expect do
-        spree_post :create, payment_method: { name: 'Invalid Payment Method', type: 'Spree::InvalidType' }
+        post :create, params: { payment_method: { name: 'Invalid Payment Method', type: 'Spree::InvalidType' } }
       end.to change(Spree::PaymentMethod, :count).by(0)
 
       expect(response).to be_redirect

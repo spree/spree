@@ -23,13 +23,13 @@ describe Spree::OrdersController, type: :controller do
         it 'renders the edit view (on failure)' do
           # email validation is only after address state
           order.update_column(:state, 'delivery')
-          spree_put :update, { order: { email: '' } }, order_id: order.id
+          put :update, params: { order: { email: '' }, order_id: order.id }
           expect(response).to render_template :edit
         end
 
         it 'redirects to cart path (on success)' do
           allow(order).to receive(:update).and_return true
-          spree_put :update, {}, order_id: 1
+          put :update, params: { order_id: 1 }
           expect(response).to redirect_to(spree.cart_path)
         end
       end
@@ -43,7 +43,7 @@ describe Spree::OrdersController, type: :controller do
       it 'destroys line items in the current order' do
         allow(controller).to receive(:current_order).and_return(order)
         expect(order).to receive(:empty!)
-        spree_put :empty
+        put :empty
         expect(response).to redirect_to(spree.cart_path)
       end
     end
@@ -56,7 +56,7 @@ describe Spree::OrdersController, type: :controller do
       end
 
       it 'cannot update a blank order' do
-        spree_put :update, order: { email: 'foo' }
+        put :update, params: { order: { email: 'foo' } }
         expect(flash[:error]).to eq(Spree.t(:order_not_found))
         expect(response).to redirect_to(spree.root_path)
       end
@@ -75,7 +75,7 @@ describe Spree::OrdersController, type: :controller do
 
     it 'removes line items on update' do
       expect(order.line_items.count).to eq 1
-      spree_put :update, order: { line_items_attributes: { '0' => { id: line_item.id, quantity: 0 } } }
+      put :update, params: { order: { line_items_attributes: { '0' => { id: line_item.id, quantity: 0 } } } }
       expect(order.reload.line_items.count).to eq 0
     end
   end

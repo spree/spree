@@ -7,19 +7,19 @@ describe Spree::ProductsController, type: :controller do
   # Regression test for #1390
   it 'allows admins to view non-active products' do
     allow(controller).to receive_messages spree_current_user: mock_model(Spree.user_class, has_spree_role?: true, last_incomplete_spree_order: nil, spree_api_key: 'fake')
-    spree_get :show, id: product.to_param
+    get :show, params: { id: product.to_param }
     expect(response.status).to eq(200)
   end
 
   it 'cannot view non-active products' do
-    expect { spree_get :show, id: product.to_param }.to raise_error(ActiveRecord::RecordNotFound)
+    expect { get :show, params: { id: product.to_param } }.to raise_error(ActiveRecord::RecordNotFound)
   end
 
   it 'provides the current user to the searcher class' do
     user = mock_model(Spree.user_class, last_incomplete_spree_order: nil, spree_api_key: 'fake')
     allow(controller).to receive_messages spree_current_user: user
     expect_any_instance_of(Spree::Config.searcher_class).to receive(:current_user=).with(user)
-    spree_get :index
+    get :index
     expect(response.status).to eq(200)
   end
 
@@ -30,7 +30,7 @@ describe Spree::ProductsController, type: :controller do
     request.env['HTTP_REFERER'] = 'not|a$url'
 
     # Previously a URI::InvalidURIError exception was being thrown
-    expect { spree_get :show, id: product.to_param }.not_to raise_error
+    expect { get :show, params: { id: product.to_param } }.not_to raise_error
   end
 
   context 'with history slugs present' do
@@ -41,7 +41,7 @@ describe Spree::ProductsController, type: :controller do
       product.name = product.name + ' Brand New'
       product.slug = nil
       product.save!
-      spree_get :show, id: legacy_params
+      get :show, params: { id: legacy_params }
       expect(response.status).to eq(301)
     end
 
@@ -49,7 +49,7 @@ describe Spree::ProductsController, type: :controller do
       product.name = product.name + ' Brand New'
       product.slug = nil
       product.save!
-      spree_get :show, id: product.id
+      get :show, params: { id: product.id }
       expect(response.status).to eq(301)
     end
 
@@ -58,7 +58,7 @@ describe Spree::ProductsController, type: :controller do
       product.name = product.name + ' Brand New'
       product.slug = nil
       product.save!
-      spree_get :show, id: legacy_params, taxon_id: taxon.id
+      get :show, params: { id: legacy_params, taxon_id: taxon.id }
       expect(response.status).to eq(301)
       expect(response.header['Location']).to include("taxon_id=#{taxon.id}")
     end
@@ -70,7 +70,7 @@ describe Spree::ProductsController, type: :controller do
       allow(controller).to receive_messages build_searcher: searcher
       expect(searcher).to receive_message_chain('retrieve_products.includes')
 
-      spree_get :index
+      get :index
     end
 
     it "does not call includes when it's not available" do
@@ -78,7 +78,7 @@ describe Spree::ProductsController, type: :controller do
       allow(controller).to receive_messages build_searcher: searcher
       allow(searcher).to receive(:retrieve_products).and_return([])
 
-      spree_get :index
+      get :index
 
       expect(assigns(:products)).to eq([])
     end
