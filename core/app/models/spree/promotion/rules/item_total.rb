@@ -39,7 +39,7 @@ module Spree
         end
 
         def ineligible_message_max
-          if preferred_operator_max == 'gte'
+          if preferred_operator_max == 'lt'
             eligibility_error_message(:item_total_more_than_or_equal, amount: formatted_amount_max)
           else
             eligibility_error_message(:item_total_more_than, amount: formatted_amount_max)
