@@ -43,10 +43,8 @@ public/google_base.xml
 public/template_google_base.xml
 coverage/*
 var
-TAGS
 nbproject
 ./vendor
-tags
 *.swp
 rerun.txt
 test_app
