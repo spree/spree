@@ -1148,4 +1148,10 @@ describe Spree::Order, type: :model do
       it { expect(order.shipping_eq_billing_address?).to eq(true) }
     end
   end
+
+  describe '#destroying order will trigger ship and bill addresses destroy' do
+    let!(:order) { create(:order_with_line_items) }
+
+    it { expect { order.destroy }.to change { Spree::Address.count }.by(-2) }
+  end
 end
