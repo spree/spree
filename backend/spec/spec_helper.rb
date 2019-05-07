@@ -109,11 +109,6 @@ RSpec.configure do |config|
 
   config.include Spree::Core::ControllerHelpers::StrongParameters, type: :controller
 
-  config.include VersionCake::TestHelpers, type: :controller
-  config.before(:each, type: :controller) do
-    set_request_version('', 1)
-  end
-
   config.verbose_retry = true
   config.display_try_failure_messages = true
 

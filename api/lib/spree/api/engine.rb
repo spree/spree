@@ -1,5 +1,4 @@
 require 'rails/engine'
-require 'versioncake'
 
 module Spree
   module Api
@@ -15,17 +14,6 @@ module Spree
         # and therefore display miliseconds. Otherwise it would fall to
         # JSON.dump which doesn't display the miliseconds
         config.json_engine = ActiveSupport::JSON
-      end
-
-      initializer 'spree.api.versioncake' do |_app|
-        VersionCake.setup do |config|
-          config.resources do |r|
-            r.resource %r{.*}, [], [], [1, 2]
-          end
-
-          config.missing_version = 1
-          config.extraction_strategy = :http_header
-        end
       end
 
       # sets the manifests / assets to be precompiled, even when initialize_on_precompile is false
