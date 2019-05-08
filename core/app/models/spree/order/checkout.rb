@@ -221,7 +221,10 @@ module Spree
             run_callbacks :updating_from_params do
               # Set existing card after setting permitted parameters because
               # rails would slice parameters containg ruby objects, apparently
-              existing_card_id = @updating_params[:order] ? @updating_params[:order].delete(:existing_card) : nil
+              # existing_card_id = @updating_params[:order] ? @updating_params[:order].delete(:existing_card) : nil
+
+              # Note: this is added from old code spree 2.3
+              existing_card_id = @updating_params[:existing_card] || (@updating_params[:order] ? @updating_params[:order][:existing_card] : nil)
 
               attributes = if @updating_params[:order]
                              @updating_params[:order].permit(permitted_params).delete_if { |_k, v| v.nil? }
