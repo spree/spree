@@ -245,6 +245,6 @@ module Spree
         end
       end.compact.flatten.uniq
     end
-    private_class_method :get_taxons
+    # private_class_method :get_taxons
   end
 end
