@@ -28,7 +28,7 @@ group :test do
   gem 'email_spec'
   gem 'factory_bot_rails', '~> 5.0'
   gem 'rspec-activemodel-mocks', '~> 1.0'
-  gem 'rspec-rails', '~> 3.8.2'
+  gem 'rspec-rails', '~> 4.0.0.beta2'
   gem 'rspec-retry'
   gem 'rspec_junit_formatter'
   gem 'jsonapi-rspec'
