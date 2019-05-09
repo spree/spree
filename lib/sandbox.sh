@@ -51,6 +51,10 @@ else
 fi
 
 cat <<RUBY >> Gemfile
+# temp Rails 6 gems
+gem 'acts-as-taggable-on', '~> 6.0', github: 'spark-solutions/acts-as-taggable-on', branch: 'fix/rails-6-and-failing-specs'
+gem 'awesome_nested_set', '~> 3.1.4', github: 'collectiveidea/awesome_nested_set', branch: 'master'
+
 gem 'spree', path: '..'
 $SPREE_AUTH_DEVISE_GEM
 $SPREE_GATEWAY_GEM
