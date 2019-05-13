@@ -50,8 +50,12 @@ describe 'Shipments', type: :feature do
 
       within_row(1) { click_icon :split }
       targetted_select2 'LA', from: '#s2id_item_stock_location'
-      click_icon :save
-      wait_for_ajax
+
+      spree_accept_alert do
+        click_icon :save
+        wait_for_ajax
+      end
+
       expect(page.find("#shipment_#{order.shipments.first.id}")).to be_present
 
       within_row(2) { click_icon :split }
