@@ -3,7 +3,7 @@ require 'carmen'
 if Spree::Country.all.blant?
   # populate only blank DB
   Spree::Country.create(
-    Carmen::Country.all.map{ |country|
+    Carmen::Country.all.map do |country|
       {
         name: country.name,
         iso3: country.alpha_3_code,
@@ -12,7 +12,7 @@ if Spree::Country.all.blant?
         numcode: country.numeric_code,
         states_required: country.subregions?
       }
-    }
+    end
   )
 end
 
