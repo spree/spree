@@ -18,13 +18,19 @@ script:
   - bundle exec rake spec
 
 rvm:
+  - 2.6.3
   - 2.5.1
   - 2.4.2
-  - 2.3.3
+  - 2.3.8
 
 matrix:
   allow_failures:
     - gemfile: gemfiles/spree_master.gemfile
+  exclude:
+  - rvm: 2.3.8
+    gemfile: gemfiles/spree_master.gemfile
+  - rvm: 2.4.2
+    gemfile: gemfiles/spree_master.gemfile
 
 before_install:
   - mysql -u root -e "GRANT ALL ON *.* TO 'travis'@'%';"
