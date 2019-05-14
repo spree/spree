@@ -33,6 +33,7 @@ describe 'Product Variants', type: :feature, js: true do
       within_row(1) { click_icon :edit }
 
       select2_search 'shirt', from: 'Option Types'
+      wait_for { !page.has_button?('Update') }
       click_button 'Update'
       expect(page).to have_content('successfully updated!')
 

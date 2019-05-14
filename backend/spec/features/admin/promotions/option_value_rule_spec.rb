@@ -32,6 +32,7 @@ describe 'Promotion with option value rule', type: :feature do
       )
     end
 
+    wait_for { !page.has_button?('Update') }
     within('#rules_container') { click_button 'Update' }
 
     first_rule = promotion.rules.reload.first
@@ -60,6 +61,7 @@ describe 'Promotion with option value rule', type: :feature do
         find('.delete').click
       end
 
+      wait_for { !page.has_button?('Update') }
       within('#rule_fields') { click_button 'Update' }
 
       first_rule = promotion.rules.reload.first
