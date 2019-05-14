@@ -1,6 +1,6 @@
 require 'carmen'
 
-if Spree::Country.all.blant?
+if Spree::Country.all.blank?
   # populate only blank DB
   Spree::Country.create(
     Carmen::Country.all.map do |country|
