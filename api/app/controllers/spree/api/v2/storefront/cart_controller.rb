@@ -90,20 +90,16 @@ module Spree
           def remove_coupon_code
             spree_authorize! :update, spree_current_order, order_token
 
-            coupon_code = if params[:coupon_code].present?
-                            params[:coupon_code]
-                          else
-                            spree_current_order.promotions.coupons.first&.code
-                          end
+            coupon_codes = select_coupon_codes
 
-            return render_error_payload(Spree.t('v2.cart.no_coupon_code', scope: 'api')) if coupon_code.nil?
+            return render_error_payload(Spree.t('v2.cart.no_coupon_code', scope: 'api')) if coupon_codes.empty?
 
-            result = coupon_handler.new(spree_current_order).remove(coupon_code)
+            result_errors = coupon_codes.count > 1 ? select_errors(coupon_codes) : select_error(coupon_codes)
 
-            if result.error.blank?
+            if result_errors.blank?
               render_serialized_payload { serialized_current_order }
             else
-              render_error_payload(result.error)
+              render_error_payload(result_errors)
             end
           end
 
@@ -166,6 +162,28 @@ module Spree
               shipping_rates,
               params: { currency: spree_current_order.currency }
             ).serializable_hash
+          end
+
+          def select_coupon_codes
+            params[:coupon_code].present? ? [params[:coupon_code]] : check_coupon_codes
+          end
+
+          def check_coupon_codes
+            spree_current_order.promotions.coupons.map(&:code)
+          end
+
+          def select_error(coupon_codes)
+            result = coupon_handler.new(spree_current_order).remove(coupon_codes.first)
+            result.error
+          end
+
+          def select_errors(coupon_codes)
+            results = []
+            coupon_codes.each do |coupon_code|
+              results << coupon_handler.new(spree_current_order).remove(coupon_code)
+            end
+
+            results.select(&:error)
           end
         end
       end
