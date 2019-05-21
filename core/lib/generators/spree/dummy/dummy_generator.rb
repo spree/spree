@@ -38,6 +38,8 @@ module Spree
       opts[:skip_spring] = true
       opts[:skip_test] = true
       opts[:skip_yarn] = true
+      opts[:skip_javascript] = true
+      opts[:skip_bootsnap] = true
 
       puts 'Generating dummy Rails application...'
       invoke Rails::Generators::AppGenerator,
