@@ -33,12 +33,14 @@ module Spree
       :id, :firstname, :lastname, :first_name, :last_name,
       :address1, :address2, :city, :country_iso, :country_id, :state_id,
       :zipcode, :phone, :state_name, :alternative_phone, :company,
+      :user_id, :deleted_at,
       country: [:iso, :name, :iso3, :iso_name],
       state: [:name, :abbr]
     ]
 
     @@checkout_attributes = [
-      :coupon_code, :email, :shipping_method_id, :special_instructions, :use_billing, :user_id
+      :coupon_code, :email, :shipping_method_id, :special_instructions, :use_billing, 
+      :user_id, :bill_address_id, :ship_address_id
     ]
 
     @@customer_return_attributes = [:stock_location_id, return_items_attributes: [:id, :inventory_unit_id, :return_authorization_id, :returned, :pre_tax_amount, :acceptance_status, :exchange_variant_id, :resellable]]
