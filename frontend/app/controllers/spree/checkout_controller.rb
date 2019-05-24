@@ -4,6 +4,8 @@ module Spree
   # checkout which has nothing to do with updating an order that this approach
   # is waranted.
   class CheckoutController < Spree::StoreController
+    include Spree::Checkout::AddressBook
+
     before_action :set_cache_header, only: [:edit]
     before_action :load_order_with_lock
     before_action :ensure_valid_state_lock_version, only: [:update]

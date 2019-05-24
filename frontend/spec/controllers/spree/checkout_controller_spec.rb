@@ -112,35 +112,6 @@ describe Spree::CheckoutController, type: :controller do
           spree_post_address
           expect(response).to redirect_to spree.checkout_state_path('delivery')
         end
-
-        context 'current_user respond to save address method' do
-          it 'calls persist order address on user' do
-            expect(user).to receive(:persist_order_address)
-            post :update, params: {
-                       state: 'address',
-                       order: {
-                         bill_address_attributes: address_params,
-                         use_billing: true
-                       },
-                       save_user_address: '1'
-                     }
-          end
-        end
-
-        context 'current_user doesnt respond to persist_order_address' do
-          it 'doesnt raise any error' do
-            expect do
-              post :update, params: {
-                         state: 'address',
-                         order: {
-                           bill_address_attributes: address_params,
-                           use_billing: true
-                         },
-                         save_user_address: '1'
-                       }
-            end.not_to raise_error
-          end
-        end
       end
 
       context 'with the order in the address state' do
@@ -549,6 +520,56 @@ describe Spree::CheckoutController, type: :controller do
         expect(order.state).to eq 'payment'
         expect_invalid_store_credit_payment(order)
       end
+    end
+  end
+
+  context 'Address Book' do
+    let!(:user) { create(:user) }
+    let!(:variant) { create(:product, sku: 'Demo-SKU').master }
+    let!(:address) { create(:address, user: user) }
+    let!(:order) { create(:order, bill_address_id: nil, ship_address_id: nil, user: user, state: 'address') }
+    let(:address_params) { address.value_attributes.merge(firstname: 'Something Else') }
+
+    before do
+      Spree::Cart::AddItem.call(order: order, variant: variant, quantity: 1)
+      allow(controller).to receive(:spree_current_user).and_return(user)
+      allow(controller).to receive(:current_store).and_return(order.store)
+      allow(order).to receive_messages user: user
+      allow(order).to receive(:available_shipping_methods).and_return [stub_model(Spree::ShippingMethod)]
+      allow(order).to receive(:available_payment_methods).and_return [stub_model(Spree::PaymentMethod)]
+      allow(order).to receive(:ensure_available_shipping_rates).and_return true
+    end
+
+    describe 'on address step' do
+      it 'set equal address ids' do
+        put_address_to_order(bill_address_id: address.id, ship_address_id: address.id)
+        expect(order.bill_address).to be_present
+        expect(order.ship_address).to be_present
+        expect(order.bill_address_id).to eq address.id
+        expect(order.bill_address_id).to eq order.ship_address_id
+      end
+
+      it 'set bill_address_id and use_billing' do
+        put_address_to_order(bill_address_id: address.id, use_billing: true)
+        expect(order.bill_address).to be_present
+        expect(order.ship_address).to be_present
+        expect(order.bill_address_id).to eq address.id
+        expect(order.bill_address_id).to eq order.ship_address_id
+      end
+
+      it 'set address attributes' do
+        put_address_to_order(bill_address_attributes: address_params, use_billing: true, save_user_address: '1')
+        expect(order.bill_address).not_to be_nil
+        expect(order.ship_address).not_to be_nil
+        expect(order.bill_address_id).to eq order.ship_address_id
+      end
+    end
+
+    private
+
+    def put_address_to_order(params)
+      put :update, params: { state: 'address', order: params }
+      order.reload
     end
   end
 end
