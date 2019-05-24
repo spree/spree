@@ -468,4 +468,43 @@ describe Spree::Address, type: :model do
 
     it { expect(_address.country).to eq(Spree::Country.default) }
   end
+
+  context 'editable & destroy' do
+    let(:address) { create(:address) }
+    let(:address2) { create(:address) }
+    let(:order) { create(:completed_order_with_totals) }
+    let(:user) { create(:user) }
+
+    before { order.update_attribute(:bill_address, address2) }
+
+    it 'has required attributes' do
+      expect(Spree::Address.required_fields).to eq([:firstname, :lastname, :address1, :city, :country, :zipcode, :phone])
+    end
+
+    it 'is editable' do
+      expect(address).to be_editable
+    end
+
+    it 'can be deleted' do
+      expect(address).to be_can_be_deleted
+    end
+
+    it "isn't editable when there is an associated order" do
+      expect(address2).to_not be_editable
+    end
+
+    it "can't be deleted when there is an associated order" do
+      expect(address2).to_not be_can_be_deleted
+    end
+
+    it 'is destroyed without saving used' do
+      address.destroy
+      expect(Spree::Address.where(['id = (?)', address.id])).to be_empty
+    end
+
+    it 'is destroyed deleted timestamp' do
+      address2.destroy
+      expect(Spree::Address.where(['id = (?)', address2.id])).to_not be_empty
+    end
+  end
 end

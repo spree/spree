@@ -50,6 +50,12 @@ module Spree
       end
     end
 
+    def self.required_fields
+      Spree::Address.validators.map do |v|
+        v.is_a?(ActiveModel::Validations::PresenceValidator) ? v.attributes : []
+      end.flatten
+    end
+
     def full_name
       "#{firstname} #{lastname}".strip
     end
@@ -104,6 +110,28 @@ module Spree
 
     def require_zipcode?
       country ? country.zipcode_required? : true
+    end
+
+    def editable?
+      new_record? || (shipments.empty? && !Order.complete.where('bill_address_id = ? OR ship_address_id = ?', id, id).exists?)
+    end
+
+    def can_be_deleted?
+      shipments.empty? && !Order.where('bill_address_id = ? OR ship_address_id = ?', id, id).exists?
+    end
+
+    def check
+      attrs = attributes.except('id', 'updated_at', 'created_at')
+      the_same_address = user&.addresses&.find_by(attrs)
+      the_same_address || self
+    end
+
+    def destroy
+      if can_be_deleted?
+        super
+      else
+        update_column :deleted_at, Time.current
+      end
     end
 
     private
