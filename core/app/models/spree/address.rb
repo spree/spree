@@ -69,7 +69,14 @@ module Spree
     end
 
     def to_s
-      "#{full_name}: #{address1}"
+      [
+        full_name,
+        company,
+        address1,
+        address2,
+        "#{city}, #{state_text} #{zipcode}",
+        country.to_s
+      ].reject(&:blank?).map { |attribute| ERB::Util.html_escape(attribute) }.join('<br/>')
     end
 
     def clone

@@ -507,4 +507,24 @@ describe Spree::Address, type: :model do
       expect(Spree::Address.where(['id = (?)', address2.id])).to_not be_empty
     end
   end
+
+  describe '#to_s' do
+    let(:address) { create(:address) }
+
+    it 'is displayed as string' do
+      a = address
+      expect(address.to_s).to eq("#{a.full_name}<br/>#{a.company}<br/>#{a.address1}<br/>#{a.address2}<br/>#{a.city}, #{a.state_text} #{a.zipcode}<br/>#{a.country}")
+      address.company = nil
+      expect(address.to_s).to eq("#{a.full_name}<br/>#{a.address1}<br/>#{a.address2}<br/>#{a.city}, #{a.state_text} #{a.zipcode}<br/>#{a.country}")
+    end
+
+    context 'address contains HTML' do
+      it 'properly escapes HTML' do
+        dangerous_string = '<script>alert("BOOM!")</script>'
+        address = create(:address, first_name: dangerous_string)
+
+        expect(address.to_s).not_to include(dangerous_string)
+      end
+    end
+  end
 end
