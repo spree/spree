@@ -12,7 +12,7 @@ module Spree
 
     # we're not freezing this on purpose so developers can extend and manage
     # those attributes depending of the logic of their applications
-    EXCLUDED_KEYS_FOR_COMPARISION = %w(id updated_at created_at)
+    EXCLUDED_KEYS_FOR_COMPARISION = %w(id updated_at created_at deleted_at user_id)
 
     belongs_to :country, class_name: 'Spree::Country'
     belongs_to :state, class_name: 'Spree::State', optional: true
