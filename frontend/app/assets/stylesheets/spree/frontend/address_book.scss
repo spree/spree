@@ -1,0 +1,8 @@
+div#checkout #checkout_form_address {
+  #billing, #shipping {
+    .select_address label { float: none; }
+    input[type=radio] { width: auto; }
+  }
+}
+
+.hidden { display: none; }
