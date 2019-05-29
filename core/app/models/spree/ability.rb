@@ -42,6 +42,12 @@ module Spree
         can :update, Order do |order, token|
           !order.completed? && (order.user == user || order.token && token == order.token)
         end
+        can :manage, Spree::Address do |address|
+          address.user == user
+        end
+        can :create, Spree::Address do |_address|
+          user.id.present?
+        end
         can :read, CreditCard, user_id: user.id
         can :read, Product
         can :read, ProductProperty

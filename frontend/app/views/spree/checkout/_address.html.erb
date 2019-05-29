@@ -27,6 +27,7 @@
                 <label class="form-check-label">
                   <%= form.radio_button "#{address_name}_id", address.id, checked: (address.id == try_spree_current_user["#{address_name}_id"] || idx == 0) %> <%= address.to_s.html_safe %>
                 </label>
+                <a class="mb-3" href="<%= edit_address_path(address) %>" data-hook="edit_address"><%= Spree.t(:edit) %></a>
               </span>
               <% end %>
               <div class="form-check">
