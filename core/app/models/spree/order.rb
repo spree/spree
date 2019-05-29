@@ -486,6 +486,11 @@ module Spree
       update_with_updater!
     end
 
+    # Applies user promotions when login after filling the cart
+    def apply_unassigned_promotions
+      ::Spree::PromotionHandler::Cart.new(self).activate
+    end
+
     # Clean shipments and make order back to address state
     #
     # At some point the might need to force the order to transition from address
