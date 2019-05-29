@@ -6,7 +6,6 @@ shared_context 'checkout address book' do
     @zone.countries << Spree::Country.all
     @tax_category = Spree::TaxCategory.first || create(:tax_category)
     @shipping = Spree::ShippingMethod.find_by_name('UPS Ground') || create(:shipping_method, tax_category: @tax_category)
-    @product = Spree::Product.find_by_name('Ruby on Rails Mug')
 
     create(:check_payment_method)
     reset_spree_preferences do |config|
@@ -14,15 +13,9 @@ shared_context 'checkout address book' do
       config.alternative_shipping_phone = false
     end
 
-    visit spree.root_path
-    click_link 'Ruby on Rails Mug'
-    wait_for_condition do
-      expect(page.find('#add-to-cart-button').disabled?).to eq(false)
-    end
-    click_button 'add-to-cart-button'
-    wait_for_condition do
-      expect(page).to have_content(Spree.t(:shopping_cart))
-    end
+    create(:product_in_stock, name: 'Ruby on Rails Mug', price: 13.99)
+
+    add_to_cart('Ruby on Rails Mug')
   end
 
   let(:state) { @state }

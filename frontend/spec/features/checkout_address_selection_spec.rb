@@ -4,20 +4,6 @@ describe 'Address selection during checkout', type: :feature, js: true do
   let!(:store) { create(:store, default: true) }
   let(:state) { Spree::State.all.first || create(:state) }
 
-  before do
-    taxonomy = create(:taxonomy, name: 'Categories')
-    root = taxonomy.root
-    # create(:shipping_method)
-    clothing_taxon = create(:taxon, name: 'Clothing', parent_id: root.id)
-    bags_taxon = create(:taxon, name: 'Bags', parent_id: root.id)
-    mugs_taxon = create(:taxon, name: 'Mugs', parent_id: root.id)
-
-    create(:product_in_stock, name: 'Ruby on Rails Ringer T-Shirt',
-                              price: 17.99, taxons: [clothing_taxon])
-    create(:product_in_stock, name: 'Ruby on Rails Mug', price: 13.99,
-                              taxons: [mugs_taxon])
-  end
-
   describe 'guest user' do
     include_context 'checkout address book'
     before do
@@ -45,12 +31,6 @@ describe 'Address selection during checkout', type: :feature, js: true do
   describe 'as authenticated user with saved addresses' do
     include_context 'checkout address book'
 
-    let(:billing) { build(:address, state: state) }
-    let(:shipping) do
-      build(:address, address1: FFaker::Address.street_address, state: state)
-    end
-    let(:user) { @user }
-
     before do
       @user = create(:user)
       @user.addresses << create(:address, address1: FFaker::Address.street_address, state: state, alternative_phone: nil)
@@ -60,10 +40,13 @@ describe 'Address selection during checkout', type: :feature, js: true do
       allow_any_instance_of(Spree::CheckoutController).to receive_messages(skip_state_validation?: true)
 
       click_button 'Checkout'
-
-      find('#link-to-cart a').click
-      click_button 'Checkout'
     end
+
+    let(:billing) { build(:address, state: state) }
+    let(:shipping) do
+      build(:address, address1: FFaker::Address.street_address, state: state)
+    end
+    let(:user) { @user }
 
     it 'does not see billing or shipping address form' do
       expect(find('#billing .inner', visible: false)).not_to be_visible
