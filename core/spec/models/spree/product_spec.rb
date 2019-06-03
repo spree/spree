@@ -364,6 +364,10 @@ describe Spree::Product, type: :model do
       end
     end
 
+    it 'aliases :price= to :amount=' do
+      expect(Spree::Product).to respond_to :amount=
+    end
+
     # Regression test for #2455
     it "does not overwrite properties' presentation names" do
       Spree::Property.where(name: 'foo').first_or_create!(presentation: "Foo's Presentation Name")

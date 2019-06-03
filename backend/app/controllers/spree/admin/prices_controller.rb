@@ -8,7 +8,6 @@ module Spree
         params[:vp].each do |variant_id, prices|
           variant = Spree::Variant.find(variant_id)
           next unless variant
-
           supported_currencies.each do |currency|
             price = variant.price_in(currency.iso_code)
             price.price = (prices[currency.iso_code].blank? ? nil : prices[currency.iso_code])
