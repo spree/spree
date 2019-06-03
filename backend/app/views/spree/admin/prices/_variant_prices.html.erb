@@ -1,0 +1,28 @@
+<% panel_class ||= 'panel-default' %>
+
+<div class="col-md-6">
+	<div class="panel <%= panel_class %>">
+	  <div class="panel-heading">
+	  	<h3 class="panel-title">
+	  		<span class="sku"><%= variant.sku %></span>
+
+	  		<span class="text-muted pull-right">
+	  			<%= variant.is_master? ? Spree.t(:master) : variant.options_text.blank? ? Spree.t(:variant) : variant.options_text %>
+	  		</span>
+	  	</h3>
+	  </div>
+
+	  <div class="panel-body no-padding-bottom">
+		  <% supported_currencies.each do |currency| %>
+		    <% code  = currency.iso_code %>
+		    <% price = variant.price_in(code) %>
+		    <div class="form-group">
+		      <%= label_tag "vp[#{variant.id}][#{code}]", code, class: 'control-label col-md-2' %>
+		      <div class="col-md-10">
+			      <%= text_field_tag "vp[#{variant.id}][#{code}]", (price && price.price ? price.display_amount.money : ''), class: 'form-control' %>
+			     </div>
+		    </div>
+		  <% end %>
+	  </div>
+	</div>
+</div>

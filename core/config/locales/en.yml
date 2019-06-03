@@ -569,6 +569,9 @@ en:
     agree_to_privacy_policy: Agree to Privacy Policy
     agree_to_terms_of_service: Agree to Terms of Service
     all: All
+    allow_currency_change:
+      short: Allow Currency Change
+      long: Allow users to change their currency via the currency picker.
     all_adjustments_closed: All adjustments successfully closed!
     all_adjustments_opened: All adjustments successfully opened!
     all_departments: All departments
@@ -731,6 +734,7 @@ en:
     credited: Credited
     credits: Credits
     currency: Currency
+    currencies: Currencies
     currency_settings: Currency Settings
     current: Current
     current_promotion_usage: ! 'Current Usage: %{count}'
@@ -988,6 +992,7 @@ en:
     manage_promotion_categories: Manage Promotion Categories
     manual_intervention_required: Manual intervention required
     manage_variants: Manage Variants
+    master: Master
     master_price: Master Price
     master_sku: Master SKU
     match_choices:
@@ -1089,6 +1094,7 @@ en:
     not_found: ! '%{resource} is not found'
     note: Note
     notice_messages:
+      prices_saved: Prices successfully saved
       product_cloned: Product has been cloned
       product_deleted: Product has been deleted
       product_not_cloned: "Product could not be cloned. Reason: %{error}"
@@ -1247,6 +1253,7 @@ en:
     previous: Previous
     previous_state_missing: "n/a"
     price: Price
+    prices: Prices
     price_range: Price Range
     price_sack: Price Sack
     process: Process
@@ -1491,6 +1498,9 @@ en:
     shopping_cart: Shopping Cart
     show: Show
     show_active: Show Active
+    show_currency_selector:
+      short: Show Currency Selector
+      long_html: Display the currency picker in the main nav bar. This will only display if there are multiple supported currencies, and <strong>Allow currency change</strong> option is enabled.
     show_deleted: Show Deleted
     show_discontinued: Show Discontinued
     show_only_complete_orders: Only show complete orders
@@ -1613,6 +1623,9 @@ en:
     successfully_removed: ! '%{resource} has been successfully removed!'
     successfully_updated: ! '%{resource} has been successfully updated!'
     summary: Summary
+    supported_currencies:
+      short: Supported Currencies
+      long: A comma separated list of supported currencies
     tax: Tax
     tax_included: "Tax (incl.)"
     tax_categories: Tax Categories
@@ -1706,6 +1719,7 @@ en:
     value: Value
     variant: Variant
     variant_placeholder: Choose a variant
+    variant_prices_search_placeholder: Search for SKU or variant name...
     variants: Variants
     version: Version
     void: Void

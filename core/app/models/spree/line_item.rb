@@ -57,6 +57,11 @@ module Spree
     end
 
     def update_price
+      currency_price = Spree::Price.where(
+        currency: order.currency,
+        variant_id: variant_id
+      ).first
+
       self.price = variant.price_including_vat_for(tax_zone: tax_zone)
     end
 

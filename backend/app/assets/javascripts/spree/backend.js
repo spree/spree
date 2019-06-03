@@ -24,6 +24,7 @@
 //= require spree/backend/handlebar_extensions
 //= require spree/backend/line_items
 //= require spree/backend/line_items_on_order_edit
+//= require spree/backend/multi_currency
 //= require spree/backend/option_type_autocomplete
 //= require spree/backend/option_value_picker
 //= require spree/backend/orders/edit

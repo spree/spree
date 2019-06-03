@@ -1,0 +1,24 @@
+<%= render 'spree/admin/shared/product_tabs', current: 'Prices' %>
+
+<form>
+      <div class="form-group has-feedback">
+        <input class="form-control input-lg" placeholder="<%= Spree.t('variant_prices_search_placeholder') %>" type="text" id="variant-price-search"/>
+        <span class="glyphicon glyphicon-search form-control-feedback" aria-hidden="true"></span>
+        <hr/>
+      </div>
+    </form>
+
+<%= form_tag nil, { class: 'form-horizontal' } do %>
+
+  <div class="row" id="variant-prices">
+    <%= render 'variant_prices', variant: @product.master, panel_class: 'panel-primary' %>
+    <% @product.variants.each do |variant| %>
+      <%= render 'variant_prices', variant: variant %>
+    <% end %>
+  </div>
+  <div class="form-actions" data-hook="buttons">
+    <%= button Spree.t('actions.update'), 'update' %>
+    <span class="or"><%= Spree.t(:or) %></span>
+    <%= button_link_to Spree.t('actions.cancel'), admin_product_path(@product), icon: 'delete' %>
+  </div>
+<% end %>

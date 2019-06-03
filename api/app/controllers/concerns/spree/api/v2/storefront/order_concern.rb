@@ -30,8 +30,22 @@ module Spree
               store: current_store,
               user: spree_current_user,
               token: order_token,
-              currency: current_currency
+              currency: use_current_currency
             )
+          end
+
+          def use_current_currency
+            if session.key?(:currency) && supported_currencies.map(&:iso_code).include?(session[:currency])
+              session[:currency]
+            else
+              Spree::Config[:currency]
+            end
+          end
+
+          def supported_currencies
+            Spree::Config[:supported_currencies].split(',').map do |code|
+              ::Money::Currency.find(code.strip)
+            end
           end
 
           def serialize_order(order)
