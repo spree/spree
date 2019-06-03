@@ -16,6 +16,10 @@ describe 'Order', type: :feature, js: true do
   context 'when existing in the cart' do
     it 'changes its currency, if user switches the currency.' do
       visit spree.product_path(product)
+<<<<<<< HEAD
+=======
+      binding.pry
+>>>>>>> 4eadff5c14... Adds spree_multi_currency logic to spree 4.0
       click_button 'Add To Cart'
       expect(page).to have_text '$19.99'
       select 'EUR', from: 'currency'
