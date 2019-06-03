@@ -35,15 +35,20 @@ module Spree
 
       def update_currency_settings
         params.each do |name, value|
-          next unless Spree::Config.has_preference? name
-          if name == 'supported_currencies'
-            value = value.split(',')
-                         .map { |curr| ::Money::Currency.find(curr.strip).try(:iso_code) }
-                         .concat([Spree::Config[:currency]])
-                         .uniq.compact.join(',')
-          end
+          next unless Spree::Config.has_preference?(name) && name.eql?('supported_currencies')
+
+          value = update_value(value)
           Spree::Config[name] = value
         end
+      end
+
+      def update_value(value)
+        value.split(',').
+          map { |curr| ::Money::Currency.find(curr.strip).try(:iso_code) }.
+          concat([Spree::Config[:currency]]).
+          uniq.
+          compact.
+          join(',')
       end      
     end
   end

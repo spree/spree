@@ -15,20 +15,20 @@ describe 'Updating currencies settings', type: :feature, js: true do
     visit spree.edit_admin_general_settings_path
 
     # Test initial state
-    expect(find_field('supported_currencies').value).to eq 'USD'
-    expect(find('#allow_currency_change')).to_not be_checked
-    expect(find('#show_currency_selector')).to_not be_checked
+    expect(page).to have_field('supported_currencies', with: 'USD')
+    expect(page).to have_unchecked_field('allow_currency_change')
+    expect(page).to have_unchecked_field('show_currency_selector')
 
     # Interact with the form
     fill_in 'supported_currencies', with: 'USD,PLN'
-    find(:css, '#allow_currency_change').set(true)
-    find(:css, '#show_currency_selector').set(true)
+    check('allow_currency_change')
+    check('show_currency_selector')
     click_button 'Update'
 
     # Test final state
     expect(page).to have_content 'General Settings has been successfully updated!'
-    expect(find_field('supported_currencies').value).to eq 'USD,PLN'
-    expect(find('#allow_currency_change')).to be_checked
-    expect(find('#show_currency_selector')).to be_checked
+    expect(page).to have_field('supported_currencies', with: 'USD,PLN')
+    expect(page).to have_checked_field('allow_currency_change')
+    expect(page).to have_checked_field('show_currency_selector')
   end
 end

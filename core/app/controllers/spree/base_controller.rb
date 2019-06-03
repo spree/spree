@@ -7,7 +7,7 @@ class Spree::BaseController < ApplicationController
   include Spree::Core::ControllerHelpers::Search
   include Spree::Core::ControllerHelpers::Store
   include Spree::Core::ControllerHelpers::StrongParameters
-  include Spree::Core::CurrencyHelpers
+  include Spree::Core::ControllerHelpers::CurrencyHelpers
 
   respond_to :html
 end

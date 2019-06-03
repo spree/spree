@@ -38,11 +38,7 @@ module Spree
             if session.key?(:currency) && supported_currencies.map(&:iso_code).include?(session[:currency])
               session[:currency]
             else
-<<<<<<< HEAD
               spree_current_store.default_currency || Spree::Config[:currency]
-=======
-              Spree::Config[:currency]
->>>>>>> 4eadff5c14... Adds spree_multi_currency logic to spree 4.0
             end
           end
 

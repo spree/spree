@@ -186,10 +186,13 @@ describe Spree::LineItem, type: :model do
 
       expect(price).to receive(:price_including_vat_for).and_return(12)
 <<<<<<< HEAD
+<<<<<<< HEAD
 
       reset_spree_preferences do |config|
         config.allow_currency_change = true
       end
+=======
+>>>>>>> 4eadff5c14... Adds spree_multi_currency logic to spree 4.0
 =======
 >>>>>>> 4eadff5c14... Adds spree_multi_currency logic to spree 4.0
     end

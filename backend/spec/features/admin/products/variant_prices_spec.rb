@@ -9,10 +9,7 @@ describe 'Variant Prices', type: :feature, js: true do
     before do
       reset_spree_preferences do |config|
         config.supported_currencies = 'USD,EUR'
-<<<<<<< HEAD
         config.allow_currency_change = true
-=======
->>>>>>> 4eadff5c14... Adds spree_multi_currency logic to spree 4.0
       end
     end
 

@@ -5,13 +5,24 @@ module Spree
         extend ActiveSupport::Concern
 
         included do
+          helper_method :supported_currencies
           helper_method :current_currency
           helper_method :current_store
           helper_method :current_price_options
         end
 
         def current_currency
-          current_store.default_currency
+          if session.key?(:currency) && supported_currencies.map(&:iso_code).include?(session[:currency])
+            session[:currency]
+          else
+            current_store.default_currency
+          end
+        end
+
+        def supported_currencies
+          Spree::Config[:supported_currencies].split(',').map do |code|
+            ::Money::Currency.find(code.strip)
+          end
         end
 
         def current_store

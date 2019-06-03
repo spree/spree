@@ -57,7 +57,6 @@ module Spree
     end
 
     def update_price
-<<<<<<< HEAD
       if Spree::Config.allow_currency_change == true
         currency_price = Spree::Price.where(
           currency: order.currency,
@@ -68,14 +67,6 @@ module Spree
       else
         self.price = variant.price_including_vat_for(tax_zone: tax_zone)
       end
-=======
-      currency_price = Spree::Price.where(
-        currency: order.currency,
-        variant_id: variant_id
-      ).first
-
-      self.price = variant.price_including_vat_for(tax_zone: tax_zone)
->>>>>>> 4eadff5c14... Adds spree_multi_currency logic to spree 4.0
     end
 
     def copy_tax_category

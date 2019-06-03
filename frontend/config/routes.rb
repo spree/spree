@@ -36,9 +36,5 @@ Spree::Core::Engine.add_routes do
   post '/ensure_cart', to: 'store#ensure_cart'
   get '/products/:id/related', to: 'products#related'
 
-<<<<<<< HEAD
   get '/currency/set', to: 'currency#set', defaults: { format: :json }, as: :set_currency
-=======
-  post '/currency/set', to: 'currency#set', defaults: { format: :json }, as: :set_currency
->>>>>>> 4eadff5c14... Adds spree_multi_currency logic to spree 4.0
 end

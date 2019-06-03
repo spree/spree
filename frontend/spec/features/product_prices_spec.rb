@@ -34,6 +34,7 @@ describe 'Product with prices in multiple currencies', type: :feature, js: true 
 
       it 'will not render the currency selector' do
         visit spree.product_path(product)
+        expect(page).to have_current_path(spree.product_path(product))
         expect(page).to_not have_text 'Currency'
       end
     end
@@ -50,6 +51,7 @@ describe 'Product with prices in multiple currencies', type: :feature, js: true 
 
         it 'will not render the currency selector' do
           visit spree.product_path(product)
+          expect(page).to have_current_path(spree.product_path(product))
           expect(page).to_not have_text 'Currency'
         end
       end

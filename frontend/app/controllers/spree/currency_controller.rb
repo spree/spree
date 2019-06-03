@@ -3,7 +3,7 @@ module Spree
     def set
       @currency = supported_currencies.find { |currency| currency.iso_code == params[:currency] }
       # Make sure that we update the current order, so the currency change is reflected.
-      current_order.update_attributes!(currency: @currency.iso_code) if current_order
+      current_order&.update_attributes!(currency: @currency.iso_code)
       session[:currency] = params[:currency] if Spree::Config[:allow_currency_change]
       respond_to do |format|
         format.json { render json: !@currency.nil? }
