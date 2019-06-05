@@ -55,11 +55,18 @@
   <%= field_container f.object, :state, class: ["form-group", "#{type}-row"] do %>
     <%= f.label :state_id, Spree.t(:state) %>
     <span id="<%= s_or_b %>state">
+      <% if f.object.country.try(:states) %>
+
       <%= f.text_field :state_name,
-            style: "display: #{f.object.country.states.empty? ? 'block' : 'none' };",
-            disabled: !f.object.country.states.empty?, class: 'form-control state_name' %>
-      <%= f.collection_select :state_id, f.object.country.states.sort, :id, :name, { include_blank: true }, { class: 'select2', style: "display: #{f.object.country.states.empty? ? 'none' : 'block' };", disabled: f.object.country.states.empty? } %>
-    </span>
+            style: "display: #{f.object.country.try(:states) && f.object.country.states.empty? ? 'block' : 'none' };",
+            disabled: !(f.object.country.try(:states) && f.object.country.states.empty?), class: 'form-control state_name' %>
+        <%= f.collection_select :state_id, f.object.country.states.sort, :id, :name, { include_blank: true }, { class: 'select2', style: "display: #{ f.object.country.states.empty? ? 'none' : 'block' };", disabled: f.object.country.states.empty? } %>
+      <% else %>
+        <div>
+          <em>No country set.</em>
+        </div>
+      <% end %>
+      </span>
     <%= error_message_on f.object, :state_id %>
   <% end %>
 
