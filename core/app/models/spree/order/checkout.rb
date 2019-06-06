@@ -94,7 +94,6 @@ module Spree
                 before_transition from: :address, do: :update_line_item_prices!
                 before_transition from: :address, do: :create_tax_charge!
                 before_transition to: :address, do: :assign_default_addresses!
-                before_transition from: :address, do: :persist_user_address!
               end
 
               if states[:delivery]
@@ -257,29 +256,11 @@ module Spree
 
           def assign_default_addresses!
             if user
-              clone_billing
+              self.bill_address = user.bill_address if !bill_address_id && user.bill_address&.valid?
               # Skip setting ship address if order doesn't have a delivery checkout step
               # to avoid triggering validations on shipping address
-              clone_shipping if checkout_steps.include?('delivery')
+              self.ship_address = user.ship_address if !ship_address_id && user.ship_address&.valid? && checkout_steps.include?('delivery')
             end
-          end
-
-          def clone_billing
-            return unless !bill_address_id && user.bill_address.try(:valid?)
-
-            self.bill_address = user.bill_address.try(:clone)
-          end
-
-          def clone_shipping
-            return unless !ship_address_id && user.ship_address.try(:valid?)
-
-            self.ship_address = user.ship_address.try(:clone)
-          end
-
-          def persist_user_address!
-            return unless !temporary_address && user && user.respond_to?(:persist_order_address) && bill_address_id
-
-            user.persist_order_address(self)
           end
 
           def persist_user_credit_card

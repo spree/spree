@@ -9,6 +9,7 @@ module Spree
     include Spree::Order::CurrencyUpdater
     include Spree::Order::Payments
     include Spree::Order::StoreCredit
+    include Spree::Order::AddressBook
     include Spree::Core::NumberGenerator.new(prefix: 'R')
     include Spree::Core::TokenGenerator
 
@@ -228,15 +229,6 @@ module Spree
 
     def merger
       @merger ||= Spree::OrderMerger.new(self)
-    end
-
-    def clone_billing_address
-      if bill_address && ship_address.nil?
-        self.ship_address = bill_address.clone
-      else
-        ship_address.attributes = bill_address.attributes.except('id', 'updated_at', 'created_at')
-      end
-      true
     end
 
     def ensure_store_presence

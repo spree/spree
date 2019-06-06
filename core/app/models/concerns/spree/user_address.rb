@@ -13,6 +13,9 @@ module Spree
 
       accepts_nested_attributes_for :ship_address, :bill_address
 
+      has_many :addresses, -> { where(deleted_at: nil).order('updated_at DESC') },
+                           class_name: 'Spree::Address', foreign_key: :user_id
+
       def persist_order_address(order)
         b_address = bill_address || build_bill_address
         b_address.attributes = order.bill_address.value_attributes

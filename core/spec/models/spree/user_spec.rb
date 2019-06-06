@@ -207,4 +207,21 @@ describe Spree.user_class, type: :model do
       end
     end
   end
+
+  context 'address book' do
+    let(:address) { create(:address) }
+    let(:address2) { create(:address) }
+
+    before do
+      address.user = subject
+      address.save
+      address2.user = subject
+      address2.save
+    end
+
+    it 'has many addresses' do
+      expect(subject).to respond_to(:addresses)
+      expect(subject.addresses).to eq [address2, address]
+    end
+  end
 end

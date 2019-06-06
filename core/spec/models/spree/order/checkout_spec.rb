@@ -223,40 +223,6 @@ describe Spree::Order, type: :model do
         expect(order.state).to eq('delivery')
       end
 
-      it 'does not call persist_order_address if there is no address on the order' do
-        # otherwise, it will crash
-        allow(order).to receive_messages(ensure_available_shipping_rates: true)
-
-        order.user = FactoryBot.create(:user)
-        order.save!
-
-        expect(order.user).not_to receive(:persist_order_address).with(order)
-        order.next!
-      end
-
-      it "calls persist_order_address on the order's user" do
-        allow(order).to receive_messages(ensure_available_shipping_rates: true)
-
-        order.user = FactoryBot.create(:user)
-        order.ship_address = FactoryBot.create(:address)
-        order.bill_address = FactoryBot.create(:address)
-        order.save!
-
-        expect(order.user).to receive(:persist_order_address).with(order)
-        order.next!
-      end
-
-      it "does not call persist_order_address on the order's user for a temporary address" do
-        allow(order).to receive_messages(ensure_available_shipping_rates: true)
-
-        order.user = FactoryBot.create(:user)
-        order.temporary_address = true
-        order.save!
-
-        expect(order.user).not_to receive(:persist_order_address)
-        order.next!
-      end
-
       context 'cannot transition to delivery' do
         context 'with an existing shipment' do
           before do

@@ -10,6 +10,7 @@
 //= require spree/frontend/cart
 //= require spree/frontend/checkout
 //= require spree/frontend/checkout/address
+//= require spree/frontend/checkout/address_book
 //= require spree/frontend/checkout/payment
 //= require spree/frontend/product
 
