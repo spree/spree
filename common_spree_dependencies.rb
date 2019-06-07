@@ -17,10 +17,6 @@ platforms :ruby do
   gem 'pg', '~> 0.18'
 end
 
-group :development do
-  gem 'webdrivers', '~> 3.8.0'
-end
-
 group :test do
   gem 'capybara', '~> 2.16'
   gem 'capybara-screenshot', '~> 1.0'
@@ -44,4 +40,5 @@ group :test, :development do
   gem 'rubocop', '~> 0.60.0', require: false
   gem 'rubocop-rspec', require: false
   gem 'pry-byebug'
+  gem 'webdrivers', '~> 4.0.0'
 end
