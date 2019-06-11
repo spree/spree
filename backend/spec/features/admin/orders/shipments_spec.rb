@@ -52,7 +52,7 @@ describe 'Shipments', type: :feature do
       wait_for_ajax
       targetted_select2 'LA', from: '#s2id_item_stock_location'
       
-      spree_accept_alert do
+      handle_js_confirm do
         click_icon :'save-split'
         wait_for_ajax
       end

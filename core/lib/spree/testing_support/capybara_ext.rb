@@ -134,7 +134,7 @@ module CapybaraExt
 
   def spree_accept_alert
     yield
-  rescue Selenium::WebDriver::Error::UnhandledAlertError
+  rescue Selenium::WebDriver::Error::UnhandledAlertError, Selenium::WebDriver::Error::NoSuchAlertError
     Selenium::WebDriver::Wait.new(timeout: 5)
       .until { page.driver.browser.switch_to.alert }
       .accept
@@ -142,6 +142,14 @@ module CapybaraExt
 
   def disable_html5_validation
     page.execute_script('for(var f=document.forms,i=f.length;i--;)f[i].setAttribute("novalidate",i)')
+  end
+
+  def handle_js_confirm(accept = true)
+    page.evaluate_script 'window.original_confirm_function = window.confirm'
+    page.evaluate_script "window.confirm = function(msg) { return #{accept}; }"
+    yield
+  ensure
+    page.evaluate_script 'window.confirm = window.original_confirm_function'
   end
 end
 

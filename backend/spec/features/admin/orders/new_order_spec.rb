@@ -85,15 +85,12 @@ describe 'New Order', type: :feature do
       expect(page).to have_css('#stock_details')
     end
 
-    context 'on increase in quantity the product should be removed from order', js: true do
+    context 'on increase in quantity the product should be removed from order' do
       before do
-        spree_accept_alert do
+        accept_alert do
           within('table.stock-levels') do
             fill_in 'variant_quantity', with: 2
             click_icon :add
-            wait_for_ajax
-
-            page.driver.browser.switch_to.alert.accept
           end
         end
       end

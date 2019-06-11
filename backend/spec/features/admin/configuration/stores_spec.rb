@@ -57,7 +57,7 @@ describe 'Stores admin', type: :feature do
     it 'updates store in lifetime stats' do
       visit spree.admin_stores_path
 
-      spree_accept_alert do
+      handle_js_confirm do
         page.all('.icon-delete')[1].click
         wait_for_ajax
       end
