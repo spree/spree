@@ -134,7 +134,7 @@ module CapybaraExt
 
   def spree_accept_alert
     yield
-  rescue Selenium::WebDriver::Error::UnhandledAlertError
+  rescue Selenium::WebDriver::Error::UnhandledAlertError, Selenium::WebDriver::Error::NoSuchAlertError
     Selenium::WebDriver::Wait.new(timeout: 5)
       .until { page.driver.browser.switch_to.alert }
       .accept
