@@ -231,7 +231,7 @@ function handle_date_picker_fields () {
   })
 }
 
-$(document).ready(function(){
+$(document).ready(function() {
   handle_date_picker_fields()
   $('.observe_field').on('change', function() {
     target = $(this).data('update')

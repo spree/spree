@@ -36,6 +36,7 @@ module Spree
       def update_currency_settings
         params.each do |name, value|
           next unless Spree::Config.has_preference? name
+
           if name == 'supported_currencies'
             value = value.split(',')
                          .map { |curr| ::Money::Currency.find(curr.strip).try(:iso_code) }
