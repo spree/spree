@@ -74,7 +74,7 @@ describe 'Order Details', type: :feature, js: true do
         expect(page).to have_content('spree t-shirt')
 
         within_row(1) do
-          spree_accept_alert do
+          handle_js_confirm do
             click_icon :delete
             wait_for_ajax
           end
@@ -303,9 +303,8 @@ describe 'Order Details', type: :feature, js: true do
             targetted_select2 stock_location2.name, from: '#s2id_item_stock_location'
             fill_in 'item_quantity', with: 'ff'
 
-            spree_accept_alert do
+            page.accept_confirm do
               click_icon :save
-              wait_for_ajax
             end
 
             expect(order.shipments.count).to eq(1)
@@ -320,9 +319,8 @@ describe 'Order Details', type: :feature, js: true do
             targetted_select2 stock_location2.name, from: '#s2id_item_stock_location'
             fill_in 'item_quantity', with: 0
 
-            spree_accept_alert do
+            page.accept_confirm do
               click_icon :save
-              wait_for_ajax
             end
 
             expect(order.shipments.count).to eq(1)
@@ -331,9 +329,8 @@ describe 'Order Details', type: :feature, js: true do
 
             fill_in 'item_quantity', with: -1
 
-            spree_accept_alert do
+            page.accept_confirm do
               click_icon :save
-              wait_for_ajax
             end
 
             expect(order.shipments.count).to eq(1)
@@ -538,9 +535,8 @@ describe 'Order Details', type: :feature, js: true do
             targetted_select2 order.shipments.first.number, from: '#s2id_item_stock_location'
             fill_in 'item_quantity', with: 1
 
-            spree_accept_alert do
+            page.accept_confirm do
               click_icon :save
-              wait_for_ajax
             end
 
             expect(order.shipments.count).to eq(2)

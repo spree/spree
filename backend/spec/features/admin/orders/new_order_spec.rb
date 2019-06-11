@@ -87,7 +87,7 @@ describe 'New Order', type: :feature do
 
     context 'on increase in quantity the product should be removed from order', js: true do
       before do
-        spree_accept_alert do
+        handle_js_confirm do
           within('table.stock-levels') do
             fill_in 'variant_quantity', with: 2
             click_icon :add
