@@ -34,7 +34,7 @@ describe 'Product Images', type: :feature, js: true do
       expect(page).to have_content('successfully updated!')
       expect(page).to have_content('ruby on rails t-shirt')
 
-      spree_accept_alert do
+      handle_js_confirm do
         click_icon :delete
         wait_for_ajax
       end

@@ -106,7 +106,7 @@ describe 'Adjustments', type: :feature do
 
   context 'deleting an adjustment' do
     it 'updates the total', js: true do
-      spree_accept_alert do
+      handle_js_confirm do
         within_row(2) do
           click_icon(:delete)
           wait_for_ajax

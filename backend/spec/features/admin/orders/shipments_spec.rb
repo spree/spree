@@ -51,8 +51,8 @@ describe 'Shipments', type: :feature do
       within_row(1) { click_icon :split }
       targetted_select2 'LA', from: '#s2id_item_stock_location'
 
-      spree_accept_alert do
-        click_icon :save
+      handle_js_confirm do
+        click_icon :'save-split'
         wait_for_ajax
       end
 
