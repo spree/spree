@@ -101,7 +101,7 @@ describe 'Prototypes', type: :feature, js: true do
     click_link 'Products'
     click_link 'Prototypes'
 
-    spree_accept_alert do
+    handle_js_confirm do
       within("#spree_prototype_#{shirt_prototype.id}") do
         page.find('.delete-resource').click
       end

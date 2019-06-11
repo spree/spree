@@ -14,7 +14,7 @@ module Spree
       fill_in 'Iso3', with: 'BRL'
       click_button 'Create'
 
-      spree_accept_alert do
+      handle_js_confirm do
         click_icon :delete
         wait_for_ajax
       end
