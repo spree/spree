@@ -142,8 +142,6 @@ module Spree
           Rails.configuration.cache_classes ? require(c) : load(c)
         end
       end
-
-      require 'spree/core/controller_helpers/currency_helpers'
     end
   end
 end

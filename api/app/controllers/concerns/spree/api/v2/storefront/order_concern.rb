@@ -38,7 +38,7 @@ module Spree
             if session.key?(:currency) && supported_currencies.map(&:iso_code).include?(session[:currency])
               session[:currency]
             else
-              Spree::Config[:currency]
+              spree_current_store.default_currency || Spree::Config[:currency]
             end
           end
 
