@@ -9,6 +9,7 @@ describe 'Variant Prices', type: :feature, js: true do
     before do
       reset_spree_preferences do |config|
         config.supported_currencies = 'USD,EUR'
+        config.allow_currency_change = true
       end
     end
 
