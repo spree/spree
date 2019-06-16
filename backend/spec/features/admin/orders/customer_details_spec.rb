@@ -20,9 +20,8 @@ describe 'Customer Details', type: :feature, js: true do
   # Value attribute is dynamically set via JS, so not observable via a CSS/XPath selector
   # As the browser might take time to make the values visible in the dom we need to
   # "intelligiently" wait for that event o prevent a race.
-  def expect_form_value(id, value)
-    node = page.find(id)
-    wait_for_condition { node.value.eql?(value) }
+  def expect_form_value(selector, value)
+    expect(page).to have_css(selector){ |n| n.value.eql?(value) }
   end
 
   context 'brand new order' do
@@ -81,7 +80,7 @@ describe 'Customer Details', type: :feature, js: true do
         end
 
         click_button 'Update'
-        expect(find_field('order_bill_address_attributes_state_name').value).to eq('Piaui')
+        expect(page).to have_field('order_bill_address_attributes_state_name', with: 'Piaui')
       end
     end
 
@@ -99,7 +98,7 @@ describe 'Customer Details', type: :feature, js: true do
       # Regression test for #2950 + #2433
       # This act should transition the state of the order as far as it will go too
       within('#order_tab_summary') do
-        expect(find('.state').text).to eq('complete')
+        expect(page).to have_css('.state', text: 'complete')
       end
     end
 

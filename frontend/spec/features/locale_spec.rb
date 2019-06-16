@@ -40,7 +40,7 @@ describe 'setting locale', type: :feature do
 
     def check_error_text(text)
       %w(firstname lastname address1 city).each do |attr|
-        expect(find("#b#{attr} label.error").text).to eq(text)
+        expect(page).to have_css("#b#{attr} label.error", exact_text: text)
       end
     end
   end

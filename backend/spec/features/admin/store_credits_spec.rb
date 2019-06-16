@@ -106,12 +106,10 @@ describe 'Store credits admin', type: :feature do
     end
 
     it 'updates store credit in lifetime stats' do
-      handle_js_confirm do
+      accept_confirm do
         click_icon :delete
-        wait_for_ajax
       end
-      store_credit = page.find('#user-lifetime-stats #store_credit')
-      expect(store_credit.text).to eq(Spree::Money.new(0).to_s)
+      expect(page).to have_css('#user-lifetime-stats #store_credit', text: Spree::Money.new(0).to_s)
     end
   end
 

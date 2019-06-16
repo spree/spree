@@ -41,7 +41,6 @@ describe 'New Order', type: :feature do
 
     click_on 'Shipments'
     click_on 'Ship'
-    wait_for_ajax
 
     expect(page).to have_content('shipped')
   end

@@ -40,7 +40,7 @@ describe 'Taxonomies and taxons', type: :feature do
     click_link 'Delete From Taxon'
     wait_for_ajax
 
-    visit current_path
+    refresh
     select_clothing_from_select2
 
     expect(page).to have_content('No results')

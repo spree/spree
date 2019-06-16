@@ -1,7 +1,11 @@
 module CapybaraExt
   # https://bugs.chromium.org/p/chromedriver/issues/detail?id=1771
-  def native_fill_in(selector, text)
-    text.to_s.split('').each { |char| find_field(selector).native.send_keys(char) }
+  def delayed_fill_in(selector, text)
+    field = find_field(selector)
+    text.to_s.split('').each do |char|
+      sleep 0.05
+      field.send_keys(char)
+    end
   end
 
   def page!
@@ -10,11 +14,6 @@ module CapybaraExt
 
   def click_icon(type)
     find(".icon-#{type}").click
-  end
-
-  def eventually_fill_in(field, options = {})
-    expect(page).to have_css('#' + field)
-    fill_in field, options
   end
 
   def within_row(num, &block)
@@ -110,46 +109,8 @@ module CapybaraExt
     end
   end
 
-  # "Intelligiently" wait on condition
-  #
-  # Much better than a random sleep "here and there"
-  # it will not cause any delay in case the condition is fullfilled on first cycle.
-
-  def wait_for_condition(delay = Capybara.default_max_wait_time)
-    counter = 0
-    delay_threshold = delay * 10
-    until yield
-      counter += 1
-      sleep(0.1)
-      raise "Could not achieve condition within #{delay} seconds." if counter >= delay_threshold
-    end
-  end
-
-  def dismiss_alert
-    page.evaluate_script('window.confirm = function() { return false; }')
-    yield
-    # Restore existing default
-    page.evaluate_script('window.confirm = function() { return true; }')
-  end
-
-  def spree_accept_alert
-    yield
-  rescue Selenium::WebDriver::Error::UnhandledAlertError, Selenium::WebDriver::Error::NoSuchAlertError
-    Selenium::WebDriver::Wait.new(timeout: 5)
-      .until { page.driver.browser.switch_to.alert }
-      .accept
-  end
-
   def disable_html5_validation
     page.execute_script('for(var f=document.forms,i=f.length;i--;)f[i].setAttribute("novalidate",i)')
-  end
-
-  def handle_js_confirm(accept = true)
-    page.evaluate_script 'window.original_confirm_function = window.confirm'
-    page.evaluate_script "window.confirm = function(msg) { return #{accept}; }"
-    yield
-  ensure
-    page.evaluate_script 'window.confirm = window.original_confirm_function'
   end
 end
 

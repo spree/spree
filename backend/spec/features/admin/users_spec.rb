@@ -22,7 +22,7 @@ describe 'Users', type: :feature do
   shared_examples_for 'a user page' do
     it 'has lifetime stats' do
       orders
-      visit current_url # need to refresh after creating the orders for specs that did not require orders
+      refresh # need to refresh after creating the orders for specs that did not require orders
       within('#user-lifetime-stats') do
         [:total_sales, :num_orders, :average_order_value, :member_since].each do |stat_name|
           expect(page).to have_content Spree.t(stat_name)
@@ -30,7 +30,7 @@ describe 'Users', type: :feature do
         expect(page).to have_content (order.total + order_2.total)
         expect(page).to have_content orders.count
         expect(page).to have_content (orders.sum(&:total) / orders.count)
-        expect(page).to have_content pretty_time(user_a.created_at)
+        expect(page).to have_content pretty_time(user_a.created_at).gsub(/[[:space:]]+/, ' ')
       end
     end
 
@@ -133,7 +133,7 @@ describe 'Users', type: :feature do
 
       expect(user_a.reload.email).to eq 'a@example.com99'
       expect(page).to have_text 'Account updated'
-      expect(find_field('user_email').value).to eq 'a@example.com99'
+      expect(page).to have_field('user_email', with: 'a@example.com99')
     end
 
     it 'can edit the user password' do
@@ -152,7 +152,7 @@ describe 'Users', type: :feature do
       check 'user_spree_role_admin'
       click_button 'Update'
       expect(page).to have_text 'Account updated'
-      expect(find_field('user_spree_role_admin')['checked']).to be true
+      expect(page).to have_checked_field('user_spree_role_admin')
     end
 
     it 'can edit user shipping address' do
@@ -161,7 +161,7 @@ describe 'Users', type: :feature do
       within('#admin_user_edit_addresses') do
         fill_in 'user_ship_address_attributes_address1', with: '1313 Mockingbird Ln'
         click_button 'Update'
-        expect(find_field('user_ship_address_attributes_address1').value).to eq '1313 Mockingbird Ln'
+        expect(page).to have_field('user_ship_address_attributes_address1', with: '1313 Mockingbird Ln')
       end
 
       expect(user_a.reload.ship_address.address1).to eq '1313 Mockingbird Ln'
@@ -173,7 +173,7 @@ describe 'Users', type: :feature do
       within('#admin_user_edit_addresses') do
         fill_in 'user_bill_address_attributes_address1', with: '1313 Mockingbird Ln'
         click_button 'Update'
-        expect(find_field('user_bill_address_attributes_address1').value).to eq '1313 Mockingbird Ln'
+        expect(page).to have_field('user_bill_address_attributes_address1', with: '1313 Mockingbird Ln')
       end
 
       expect(user_a.reload.bill_address.address1).to eq '1313 Mockingbird Ln'
@@ -200,7 +200,7 @@ describe 'Users', type: :feature do
         expect(user_a.reload.spree_api_key).to be_present
 
         within('#admin_user_edit_api_key') do
-          expect(find('#current-api-key').text).to match(/Key: #{user_a.spree_api_key}/)
+          expect(page).to have_css('#current-api-key', text: /Key: #{user_a.spree_api_key}/)
         end
       end
     end
@@ -209,7 +209,7 @@ describe 'Users', type: :feature do
       before do
         user_a.generate_spree_api_key!
         expect(user_a.reload.spree_api_key).to be_present
-        visit current_path
+        refresh
       end
 
       it 'can clear an api key' do
@@ -218,7 +218,7 @@ describe 'Users', type: :feature do
         end
 
         expect(user_a.reload.spree_api_key).to be_blank
-        expect { find('#current-api-key') }.to raise_error Capybara::ElementNotFound
+        expect(page).not_to have_css('#current-api-key')
       end
 
       it 'can regenerate an api key' do
@@ -232,7 +232,7 @@ describe 'Users', type: :feature do
         expect(user_a.reload.spree_api_key).not_to eq old_key
 
         within('#admin_user_edit_api_key') do
-          expect(find('#current-api-key').text).to match(/Key: #{user_a.spree_api_key}/)
+          expect(page).to have_css('#current-api-key', text: /Key: #{user_a.spree_api_key}/)
         end
       end
     end

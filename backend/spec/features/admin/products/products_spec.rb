@@ -179,11 +179,12 @@ describe 'Products', type: :feature do
           check 'Large'
           click_button 'Create'
 
-          message = page.find('#product_shipping_category_id').native.attribute('validationMessage')
-          expect(message).to eq('Please select an item in the list.')
-          expect(field_labeled('Size')).to be_checked
-          expect(field_labeled('Large')).to be_checked
-          expect(field_labeled('Small')).not_to be_checked
+          expect(page).to have_css('#product_shipping_category_id') do |el|
+            el['validationMessage'] == 'Please select an item in the list.'
+          end
+          expect(page).to have_checked_field('Size')
+          expect(page).to have_checked_field('Large')
+          expect(page).to have_unchecked_field('Small')
         end
       end
 
@@ -198,9 +199,9 @@ describe 'Products', type: :feature do
           check 'Large'
           click_button 'Create'
           expect(page).to have_content("Shipping Category can't be blank")
-          expect(field_labeled('Size')).to be_checked
-          expect(field_labeled('Large')).to be_checked
-          expect(field_labeled('Small')).not_to be_checked
+          expect(page).to have_checked_field('Size')
+          expect(page).to have_checked_field('Large')
+          expect(page).to have_unchecked_field('Small')
         end
       end
     end
@@ -265,7 +266,7 @@ describe 'Products', type: :feature do
         it 'shows localized price value on validation errors', js: true do
           fill_in 'product_price', with: '19,99'
           click_button 'Create'
-          expect(find('input#product_price').value).to eq('19,99')
+          expect(page).to have_field(id: 'product_price', with: '19,99')
         end
       end
 
@@ -396,7 +397,7 @@ describe 'Products', type: :feature do
           click_button 'Update'
           weight_prev = find('#product_weight').value
           click_button 'Update'
-          expect(find('#product_weight').value).to eq(weight_prev)
+          expect(page).to have_field(id: 'product_weight', with: weight_prev)
         end
       end
     end
@@ -406,16 +407,19 @@ describe 'Products', type: :feature do
 
       it 'is still viewable' do
         visit spree.admin_products_path
-        handle_js_confirm do
+        accept_confirm do
           click_icon :delete
-          wait_for_ajax
         end
+        wait_for_ajax
+
         click_on 'Filter'
         # This will show our deleted product
         check 'Show Deleted'
         click_on 'Search'
         click_link product.name
-        expect(find('#product_price').value.to_f).to eq(product.price.to_f)
+        expect(page).to have_field(id: 'product_price') do |field|
+          field.value.to_f == product.price.to_f
+        end
       end
     end
 

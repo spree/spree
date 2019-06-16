@@ -16,13 +16,13 @@ describe 'Product Details', type: :feature, js: true do
       click_link 'Details'
 
       expect(find('.content-header h1').text.strip).to eq('Products / Bún thịt nướng')
-      expect(find('input#product_name').value).to eq('Bún thịt nướng')
-      expect(find('input#product_slug').value).to eq('bun-th-t-n-ng')
+      expect(page).to have_field(id: 'product_name', with: 'Bún thịt nướng')
+      expect(page).to have_field(id: 'product_slug', with: 'bun-th-t-n-ng')
       expect(find('textarea#product_description').text.strip).to eq('lorem ipsum')
-      expect(find('input#product_price').value).to eq('19.99')
-      expect(find('input#product_cost_price').value).to eq('17.00')
-      expect(find('input#product_available_on').value).to eq('2013/08/14')
-      expect(find('input#product_sku').value).to eq('A100')
+      expect(page).to have_field(id: 'product_price', with: '19.99')
+      expect(page).to have_field(id: 'product_cost_price', with: '17.00')
+      expect(page).to have_field(id: 'product_available_on', with: '2013/08/14')
+      expect(page).to have_field(id: 'product_sku', with: 'A100')
     end
 
     it 'handles slug changes' do
@@ -37,7 +37,7 @@ describe 'Product Details', type: :feature, js: true do
       wait_for { !page.has_button?('Update') }
       click_button 'Update'
       expect(page).to have_content('successfully updated!')
-      expect(find('#s2id_product_tag_list')).to have_content('example-tag')
+      expect(page).to have_css('#s2id_product_tag_list', text: 'example-tag')
     end
 
     it 'has a link to preview a product' do

@@ -34,11 +34,11 @@ describe 'Address', type: :feature, inaccessible: true do
         click_button 'Checkout'
 
         select canada.name, from: @country_css
-        expect(page).to have_selector(@state_select_css, visible: false)
+        expect(page).to have_selector(@state_select_css, visible: :hidden)
         expect(page).to have_selector(@state_name_css, visible: true)
-        expect(find(@state_name_css)['class']).not_to match(/hidden/)
-        expect(find(@state_name_css)['class']).to match(/required/)
-        expect(find(@state_select_css)['class']).not_to match(/required/)
+        expect(page).to have_css(@state_name_css, class: ['!hidden'])
+        expect(page).to have_css(@state_name_css, class: ['required'])
+        expect(page).to have_css(@state_select_css, class: ['!required'])
         expect(page).not_to have_selector("input#{@state_name_css}[disabled]")
       end
     end
@@ -51,10 +51,10 @@ describe 'Address', type: :feature, inaccessible: true do
 
         select canada.name, from: @country_css
         expect(page).to have_selector(@state_select_css, visible: true)
-        expect(page).to have_selector(@state_name_css, visible: false)
-        expect(find(@state_select_css)['class']).to match(/required/)
-        expect(find(@state_select_css)['class']).not_to match(/hidden/)
-        expect(find(@state_name_css)['class']).not_to match(/required/)
+        expect(page).to have_selector(@state_name_css, visible: :hidden)
+        expect(page).to have_css(@state_select_css, class: ['required'])
+        expect(page).to have_css(@state_select_css, class: ['!hidden'])
+        expect(page).to have_css(@state_name_css, class: ['!required'])
       end
     end
 
@@ -68,11 +68,11 @@ describe 'Address', type: :feature, inaccessible: true do
         page.find(@state_name_css).set('Toscana')
 
         select france.name, from: @country_css
-        expect(page.find(@state_name_css)).to have_content('')
+        expect(page).to have_css(@state_name_css, exact_text: '')
         until page.evaluate_script('$.active').to_i.zero?
-          expect(find(@state_name_css)['class']).not_to match(/hidden/)
-          expect(find(@state_name_css)['class']).not_to match(/required/)
-          expect(find(@state_select_css)['class']).not_to match(/required/)
+          expect(page).to have_css(@state_name_css, class: ['!hidden'])
+          expect(page).to have_css(@state_name_css, class: ['!required'])
+          expect(page).to have_css(@state_select_css, class: ['!required'])
         end
       end
     end
@@ -85,8 +85,8 @@ describe 'Address', type: :feature, inaccessible: true do
       click_button 'Checkout'
 
       select france.name, from: @country_css
-      expect(page).to have_selector(@state_select_css, visible: false)
-      expect(page).to have_selector(@state_name_css, visible: false)
+      expect(page).to have_selector(@state_select_css, visible: :hidden)
+      expect(page).to have_selector(@state_name_css, visible: :hidden)
     end
   end
 end

@@ -31,10 +31,10 @@ describe 'Product Images', type: :feature, js: true do
       expect(page).to have_content('successfully updated!')
       expect(page).to have_content('ruby on rails t-shirt')
 
-      handle_js_confirm do
+      accept_confirm do
         click_icon :delete
-        wait_for_ajax
       end
+      wait_for_ajax
       expect(page).not_to have_content('ruby on rails t-shirt')
     end
   end
@@ -54,7 +54,7 @@ describe 'Product Images', type: :feature, js: true do
 
       # ensure variant header is displayed
       within('thead') do
-        expect(page.body).to have_content('Variant')
+        expect(page).to have_content('Variant')
       end
 
       # ensure variant header is displayed

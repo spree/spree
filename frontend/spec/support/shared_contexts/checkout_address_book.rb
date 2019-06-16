@@ -60,6 +60,6 @@ shared_context 'checkout address book' do
       address.address2.to_s,
       "#{address.city} #{address.state ? address.state.abbr : address.state_name} #{address.zipcode}",
       address.country.to_s
-    ].reject(&:empty?).join(' ')
+    ].reject(&:empty?).join("\n")
   end
 end
