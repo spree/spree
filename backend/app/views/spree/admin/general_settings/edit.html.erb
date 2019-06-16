@@ -13,7 +13,7 @@
           <%# Security settings                               %>
           <%#-------------------------------------------------%>
           <% if @preferences_security.any? %>
-            <div class="card mb-3 security">
+            <div class="card mb-3" id="general-settings-security" data-hook="general_settings_security">
               <div class="card-header">
                 <h1 class="card-title mb-0 h5">
                   <%= Spree.t(:security_settings) %>
