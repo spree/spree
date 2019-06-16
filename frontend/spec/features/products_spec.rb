@@ -17,14 +17,9 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
     expect(page).to have_content('$19.99')
 
     expect(page).to have_selector('form#add-to-cart-form')
-    expect(page).to have_selector('button#add-to-cart-button')
-    wait_for_condition do
-      expect(page.find('#add-to-cart-button').disabled?).to eq(false)
-    end
+    expect(page).to have_selector(:button, id: 'add-to-cart-button', disabled: false)
     click_button 'add-to-cart-button'
-    wait_for_condition do
-      expect(page).to have_content(Spree.t(:shopping_cart))
-    end
+    expect(page).to have_content(Spree.t(:shopping_cart))
   end
 
   describe 'correct displaying of microdata' do
@@ -153,7 +148,7 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
     fill_in 'keywords', with: 'shirt'
     click_button 'Search'
 
-    expect(page.all('#products .product-list-item').size).to eq(1)
+    expect(page).to have_css('#products .product-list-item').once
   end
 
   context 'a product with variants' do
@@ -263,11 +258,11 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
   end
 
   it 'is able to hide products without price' do
-    expect(page.all('#products .product-list-item').size).to eq(9)
+    expect(page).to have_css('#products .product-list-item').exactly(9).times
     Spree::Config.show_products_without_price = false
     Spree::Config.currency = 'CAN'
     visit spree.root_path
-    expect(page.all('#products .product-list-item').size).to eq(0)
+    expect(page).not_to have_css('#products .product-list-item')
   end
 
   it 'is able to display products priced under 10 dollars' do
@@ -282,7 +277,7 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
     check 'Price_Range_$15.00_-_$18.00'
     within(:css, '#sidebar_products_search') { click_button 'Search' }
 
-    expect(page.all('#products .product-list-item').size).to eq(3)
+    expect(page).to have_css('#products .product-list-item').exactly(3).times
     tmp = page.all('#products .product-list-item a').map(&:text).flatten.compact
     tmp.delete('')
     expect(tmp.sort!).to eq(['Ruby on Rails Mug', 'Ruby on Rails Stein', 'Ruby on Rails Tote'])
@@ -294,13 +289,11 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
     check 'Price_Range_$15.00_-_$18.00'
     within(:css, '#sidebar_products_search') { click_button 'Search' }
 
-    expect(page.all('#products .product-list-item').size).to eq(2)
-    products = page.all('#products .product-list-item span[itemprop=name]')
-    expect(products.count).to eq(2)
+    expect(page).to have_css('#products .product-list-item').twice
+    expect(page).to have_css('#products .product-list-item span[itemprop=name]').twice
 
     find('.pagination .next a').click
-    products = page.all('#products .product-list-item span[itemprop=name]')
-    expect(products.count).to eq(1)
+    expect(page).to have_css('#products .product-list-item span[itemprop=name]').once
   end
 
   it 'is able to display products priced 18 dollars and above' do
@@ -309,7 +302,7 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
     check 'Price_Range_$20.00_or_over'
     within(:css, '#sidebar_products_search') { click_button 'Search' }
 
-    expect(page.all('#products .product-list-item').size).to eq(4)
+    expect(page).to have_css('#products .product-list-item').exactly(4).times
     tmp = page.all('#products .product-list-item a').map(&:text).flatten.compact
     tmp.delete('')
     expect(tmp.sort!).to eq(['Ruby on Rails Bag',
@@ -322,15 +315,10 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
     product = FactoryBot.create(:base_product, description: nil, name: 'Sample', price: '19.99')
     visit spree.product_path(product)
     expect(page).to have_selector('form#add-to-cart-form')
-    expect(page).to have_selector('button#add-to-cart-button')
+    expect(page).to have_button(id: 'add-to-cart-button', disabled: false)
     expect(page).to have_content 'This product has no description'
-    wait_for_condition do
-      expect(page.find('#add-to-cart-button').disabled?).to eq(false)
-    end
     click_button 'add-to-cart-button'
-    wait_for_condition do
-      expect(page).to have_content(Spree.t(:shopping_cart))
-    end
+    expect(page).to have_content(Spree.t(:shopping_cart))
     expect(page).to have_content 'This product has no description'
   end
 

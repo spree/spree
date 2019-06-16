@@ -56,9 +56,8 @@ describe 'ReturnAuthorizationReason', type: :feature, js: true do
     end
 
     def delete_product_property
-      handle_js_confirm do
+      accept_confirm do
         click_icon :delete
-        wait_for_ajax
       end
       wait_for_ajax
     end

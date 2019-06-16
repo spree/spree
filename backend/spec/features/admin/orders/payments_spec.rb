@@ -20,10 +20,6 @@ describe 'Payments', type: :feature, js: true do
       click_link 'Payments'
     end
 
-    def refresh_page
-      visit current_path
-    end
-
     # Regression tests for #1453
     context 'with a check payment' do
       let(:order) { create(:completed_order_with_totals, number: 'R100') }
@@ -69,7 +65,7 @@ describe 'Payments', type: :feature, js: true do
       end
 
       click_icon :void
-      expect(find('#payment_status').text).to eq('balance due')
+      expect(page).to have_css('#payment_status', exact_text: 'balance due')
       expect(page).to have_content('Payment Updated')
 
       within_row(1) do
@@ -84,9 +80,8 @@ describe 'Payments', type: :feature, js: true do
       expect(page).to have_content('successfully created!')
 
       click_icon(:capture)
-      wait_for_ajax
-      expect(find('#payment_status').text).to eq('paid')
 
+      expect(page).to have_css('#payment_status', exact_text: 'paid')
       expect(page).not_to have_selector('#new_payment_section')
     end
 
@@ -204,7 +199,7 @@ describe 'Payments', type: :feature, js: true do
       before { visit spree.admin_order_payments_path(order) }
 
       it 'is able to reuse customer payment source', js: false do
-        expect(find("#card_#{cc.id}")).to be_checked
+        expect(page).to have_checked_field(id: "card_#{cc.id}")
         click_button 'Continue'
         expect(page).to have_content('Payment has been successfully created!')
       end

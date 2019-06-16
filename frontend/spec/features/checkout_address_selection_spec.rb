@@ -49,8 +49,8 @@ describe 'Address selection during checkout', type: :feature, js: true do
     let(:user) { @user }
 
     it 'does not see billing or shipping address form' do
-      expect(find('#billing .inner', visible: false)).not_to be_visible
-      expect(find('#shipping .inner', visible: false)).not_to be_visible
+      expect(page).to have_css('#billing .inner', visible: :hidden)
+      expect(page).to have_css('#shipping .inner', visible: :hidden)
     end
 
     it 'lists saved addresses for billing and shipping' do
@@ -104,7 +104,7 @@ describe 'Address selection during checkout', type: :feature, js: true do
       # TODO: the JS error reporting isn't working with our current iteration
       # this is what this piece of code ('field is required') tests
       it 'shows address form with error' do
-        allow(Capybara).to receive(:ignore_hidden_elements).and_return(false)
+        # allow(Capybara).to receive(:ignore_hidden_elements).and_return(false)
         within('#billing') do
           choose Spree.t('address_book.other_address')
           fill_in_address(address)
@@ -126,7 +126,7 @@ describe 'Address selection during checkout', type: :feature, js: true do
 
     describe 'entering 2 new addresses', js: true do
       it 'assigns 2 new addresses to order' do
-        allow(Capybara).to receive(:ignore_hidden_elements).and_return(false)
+        # allow(Capybara).to receive(:ignore_hidden_elements).and_return(false)
         within('#billing') do
           choose Spree.t('address_book.other_address')
           fill_in_address(billing)
@@ -169,7 +169,7 @@ describe 'Address selection during checkout', type: :feature, js: true do
       end
 
       it 'assigns addresses to orders' do
-        allow(Capybara).to receive(:ignore_hidden_elements).and_return(false)
+        # allow(Capybara).to receive(:ignore_hidden_elements).and_return(false)
         address = user.addresses.first
         choose "order_bill_address_id_#{address.id}"
         within('#shipping') do
@@ -204,14 +204,14 @@ describe 'Address selection during checkout', type: :feature, js: true do
         expect(saddress1_message).to eq('Please fill out this field.')
 
         within('#billing') do
-          expect(find("#order_bill_address_id_#{address.id}")).to be_checked
+          expect(page).to have_checked_field(id: "order_bill_address_id_#{address.id}")
         end
       end
     end
 
     describe 'using saved address for billing and shipping', js: true do
       it 'addresseses to order' do
-        allow(Capybara).to receive(:ignore_hidden_elements).and_return(false)
+        # allow(Capybara).to receive(:ignore_hidden_elements).and_return(false)
         address = user.addresses.first
         choose "order_bill_address_id_#{address.id}"
         check 'Use Billing Address'
@@ -255,7 +255,7 @@ describe 'Address selection during checkout', type: :feature, js: true do
       end
 
       it 'assigns addresses to orders' do
-        allow(Capybara).to receive(:ignore_hidden_elements).and_return(false)
+        # allow(Capybara).to receive(:ignore_hidden_elements).and_return(false)
         address = user.addresses.first
         uncheck 'order_use_billing'
         choose "order_ship_address_id_#{address.id}"
@@ -291,7 +291,7 @@ describe 'Address selection during checkout', type: :feature, js: true do
         expect(baddress1_message).to eq('Please fill out this field.')
 
         within('#shipping') do
-          expect(find("#order_ship_address_id_#{address.id}")).to be_checked
+          expect(page).to have_checked_field(id: "order_ship_address_id_#{address.id}")
         end
       end
     end

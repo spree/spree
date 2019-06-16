@@ -74,9 +74,8 @@ describe 'Order Details', type: :feature, js: true do
         expect(page).to have_content('spree t-shirt')
 
         within_row(1) do
-          handle_js_confirm do
+          accept_confirm do
             click_icon :delete
-            wait_for_ajax
           end
         end
 
@@ -90,7 +89,7 @@ describe 'Order Details', type: :feature, js: true do
 
         within_row(1) do
           # Click "cancel" on confirmation dialog
-          dismiss_alert do
+          dismiss_confirm do
             click_icon :delete
           end
         end
@@ -361,10 +360,8 @@ describe 'Order Details', type: :feature, js: true do
               targetted_select2 stock_location2.name, from: '#s2id_item_stock_location'
               fill_in 'item_quantity', with: 2
 
-              spree_accept_alert do
-                click_icon :save
-                wait_for_ajax
-              end
+              click_icon :save
+              wait_for_ajax
 
               expect(order.shipments.count).to eq(1)
               expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq(2)
@@ -511,19 +508,15 @@ describe 'Order Details', type: :feature, js: true do
             targetted_select2 @shipment2.number, from: '#s2id_item_stock_location'
             fill_in 'item_quantity', with: 1
 
-            spree_accept_alert do
-              click_icon :save
-              wait_for_ajax
-            end
+            click_icon :save
+            wait_for_ajax
 
             within_row(1) { click_icon 'split' }
             targetted_select2 @shipment2.number, from: '#s2id_item_stock_location'
             fill_in 'item_quantity', with: 200
 
-            spree_accept_alert do
-              click_icon :save
-              wait_for_ajax
-            end
+            click_icon :save
+            wait_for_ajax
 
             expect(order.shipments.count).to eq(2)
             expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq(1)
@@ -697,10 +690,7 @@ describe 'Order Details', type: :feature, js: true do
       order.refresh_shipment_rates
       visit spree.edit_admin_order_path(order)
       click_on 'Ship'
-      wait_for_ajax
-      within '.shipment-state' do
-        expect(page).to have_content('shipped')
-      end
+      expect(page).to have_css('.shipment-state', text: 'shipped')
     end
   end
 end

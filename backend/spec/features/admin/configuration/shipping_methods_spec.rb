@@ -10,7 +10,7 @@ describe 'Shipping Methods', type: :feature do
   end
 
   before do
-    Capybara.ignore_hidden_elements = false
+    # Capybara.ignore_hidden_elements = false
     # HACK: To work around no email prompting on check out
     allow_any_instance_of(Spree::Order).to receive_messages(require_email: false)
     create(:check_payment_method)
@@ -51,9 +51,9 @@ describe 'Shipping Methods', type: :feature do
         click_icon :edit
       end
 
-      expect(find(:css, '.calculator-settings-warning')).not_to be_visible
+      expect(page).to have_css('.calculator-settings-warning', visible: :hidden)
       select2_search('Flexible Rate', from: 'Calculator')
-      expect(find(:css, '.calculator-settings-warning')).to be_visible
+      expect(page).to have_css('.calculator-settings-warning')
 
       click_button 'Update'
       expect(page).not_to have_content('Shipping method is not found')

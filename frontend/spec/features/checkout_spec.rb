@@ -19,12 +19,12 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
       end
 
       it 'defaults checkbox to checked' do
-        expect(find('input#order_use_billing')).to be_checked
+        expect(page).to have_checked_field(id: 'order_use_billing')
       end
 
       it 'remains checked when used and visitor steps back to address step' do
         fill_in_address
-        expect(find('input#order_use_billing')).to be_checked
+        expect(page).to have_checked_field(id: 'order_use_billing')
       end
     end
 
@@ -85,13 +85,13 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
       add_mug_to_cart
       click_button 'Checkout'
 
-      expect(find('input#order_state_lock_version', visible: false).value).to eq '0'
+      expect(page).to have_field(id: 'order_state_lock_version', type: :hidden, with: '0')
 
       fill_in 'order_email', with: 'test@example.com'
       fill_in_address
       click_button 'Save and Continue'
 
-      expect(find('input#order_state_lock_version', visible: false).value).to eq '1'
+      expect(page).to have_field(id: 'order_state_lock_version', type: :hidden, with: '1')
     end
   end
 
@@ -120,7 +120,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
       click_button 'Save and Continue'
       click_button 'Place Order'
       expect(page).to have_content('Bogus Gateway: Forced failure')
-      expect(page.current_url).to include('/checkout/payment')
+      expect(page).to have_current_path(%r{/checkout/payment})
     end
   end
 
@@ -199,7 +199,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
     end
 
     before do
-      Capybara.ignore_hidden_elements = false
+      # Capybara.ignore_hidden_elements = false
       order = OrderWalkthrough.up_to(:payment)
       allow(order).to receive_messages(available_payment_methods: [check_payment, credit_cart_payment])
       order.user = create(:user)
@@ -212,15 +212,15 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
     end
 
     it 'the first payment method should be selected' do
-      payment_method_css = '#order_payments_attributes__payment_method_id_'
-      expect(find("#{payment_method_css}#{check_payment.id}")).to be_checked
-      expect(find("#{payment_method_css}#{credit_cart_payment.id}")).not_to be_checked
+      payment_method_id_prefix = 'order_payments_attributes__payment_method_id_'
+      expect(page).to have_checked_field(id: "#{payment_method_id_prefix}#{check_payment.id}")
+      expect(page).to have_unchecked_field(id: "#{payment_method_id_prefix}#{credit_cart_payment.id}")
     end
 
     it 'the fields for the other payment methods should be hidden' do
       payment_method_css = '#payment_method_'
-      expect(find("#{payment_method_css}#{check_payment.id}")).to be_visible
-      expect(find("#{payment_method_css}#{credit_cart_payment.id}")).not_to be_visible
+      expect(page).to have_css("#{payment_method_css}#{check_payment.id}", visible: true)
+      expect(page).to have_css("#{payment_method_css}#{credit_cart_payment.id}", visible: :hidden)
     end
   end
 
@@ -242,7 +242,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
     end
 
     it 'selects first source available and customer moves on' do
-      expect(find('#use_existing_card_yes')).to be_checked
+      expect(page).to have_checked_field(id: 'use_existing_card_yes')
 
       expect { click_on 'Save and Continue' }.not_to change { Spree::CreditCard.count }
 
@@ -253,16 +253,16 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
     it 'allows user to enter a new source' do
       choose 'use_existing_card_no'
 
-      native_fill_in 'Name on card', 'Spree Commerce'
-      native_fill_in 'Card Number',  '4111111111111111'
-      native_fill_in 'card_expiry',  '04 / 20'
-      native_fill_in 'Card Code',    '123'
+      delayed_fill_in 'Name on card', 'Spree Commerce'
+      delayed_fill_in 'Card Number',  '4111111111111111'
+      delayed_fill_in 'card_expiry',  '04 / 20'
+      delayed_fill_in 'Card Code',    '123'
 
       expect { click_on 'Save and Continue' }.to change { Spree::CreditCard.count }.by 1
 
       click_on 'Place Order'
 
-      expect(page).to have_content(Spree.t(:thank_you_for_your_order))
+      expect(page).to have_content(Spree.t(:thank_you_for_your_order).gsub(/[[:space:]]+/, ' '))
       expect(page).to have_current_path(spree.order_path(Spree::Order.last))
     end
   end
@@ -558,7 +558,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
     end
 
     it 'displays a thank you message' do
-      expect(page).to have_content(Spree.t(:thank_you_for_your_order))
+      expect(page).to have_content(Spree.t(:thank_you_for_your_order).gsub(/[[:space:]]+/, ' '))
     end
 
     it 'does not display a thank you message on that order future visits' do
@@ -648,7 +648,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
         click_on 'Add To Cart'
 
         expect(page).not_to have_content('$100.00')
-        expect(page.all('td.cart-item-price')).to all(have_content('$81.30'))
+        expect(page.all('td.cart-item-price', minimum: 2)).to all(have_content('$81.30'))
       end
     end
   end

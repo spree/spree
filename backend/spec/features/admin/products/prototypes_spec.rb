@@ -89,7 +89,9 @@ describe 'Prototypes', type: :feature, js: true do
 
       click_icon :edit
 
-      expect(find_field('prototype_property_ids').value).to be_empty
+      expect(page).to have_field('prototype_property_ids') do |field|
+        field.empty?
+      end
     end
   end
 
@@ -101,13 +103,11 @@ describe 'Prototypes', type: :feature, js: true do
     click_link 'Products'
     click_link 'Prototypes'
 
-    handle_js_confirm do
+    accept_confirm do
       within("#spree_prototype_#{shirt_prototype.id}") do
         page.find('.delete-resource').click
       end
-      wait_for_ajax
-
-      expect(page).to have_content("Prototype \"#{shirt_prototype.name}\" has been successfully removed!")
     end
+    expect(page).to have_content("Prototype \"#{shirt_prototype.name}\" has been successfully removed!")
   end
 end

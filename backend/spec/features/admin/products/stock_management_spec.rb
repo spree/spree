@@ -23,7 +23,7 @@ describe 'Stock Management', type: :feature, js: true do
       end
 
       it 'persists the value when page reload' do
-        visit current_path
+        refresh
         expect(backorderable).not_to be_checked
       end
     end
@@ -38,7 +38,7 @@ describe 'Stock Management', type: :feature, js: true do
       end
 
       it 'persists the value when page reloaded' do
-        visit current_path
+        refresh
         expect(track_inventory).not_to be_checked
       end
     end
@@ -49,13 +49,13 @@ describe 'Stock Management', type: :feature, js: true do
     # assert that the redirect is *not* happening.
     it 'can toggle backorderable for the second variant stock item' do
       new_location = create(:stock_location, name: 'Another Location')
-      visit current_url
+      refresh
 
       new_location_backorderable = find "#stock_item_backorderable_#{new_location.id}"
       new_location_backorderable.set(false)
       wait_for_ajax
 
-      expect(page.current_url).to include('/admin/products')
+      expect(page).to have_current_path(%r{/admin/products})
     end
 
     it 'can create a new stock movement' do
@@ -87,7 +87,7 @@ describe 'Stock Management', type: :feature, js: true do
 
       before do
         variant.stock_items.first.update_column(:count_on_hand, 30)
-        visit current_url
+        refresh
       end
 
       it 'can create a new stock movement for the specified variant' do
@@ -118,7 +118,7 @@ describe 'Stock Management', type: :feature, js: true do
 
       it 'redirects to stock locations page', js: false do
         expect(page).to have_content(Spree.t(:stock_management_requires_a_stock_location))
-        expect(page.current_url).to include('admin/stock_locations')
+        expect(page).to have_current_path(%r{admin/stock_locations})
       end
     end
   end

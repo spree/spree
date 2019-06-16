@@ -19,20 +19,19 @@ describe 'Stock Locations', type: :feature do
   end
 
   it 'can delete an existing stock location', js: true do
-    visit current_path
-    expect(find('#listing_stock_locations')).to have_content(stock_location.name)
-    handle_js_confirm do
+    refresh
+    expect(page).to have_css('#listing_stock_locations', text: stock_location.name)
+    accept_confirm do
       click_icon :delete
-      # Wait for API request to complete.
-      wait_for_ajax
     end
-    visit current_path
+    wait_for_ajax
+    refresh
     wait_for { !page.has_text?('No Stock Locations found') }
     expect(page).to have_content('No Stock Locations found')
   end
 
   it 'can update an existing stock location', js: true do
-    visit current_path
+    refresh
 
     expect(page).to have_content(stock_location.name)
 

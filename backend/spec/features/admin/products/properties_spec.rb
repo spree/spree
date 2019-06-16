@@ -143,18 +143,17 @@ describe 'Properties', type: :feature, js: true do
     end
 
     def delete_product_property
-      handle_js_confirm do
+      accept_confirm do
         click_icon :delete
-        wait_for_ajax
       end
+      wait_for_ajax
     end
 
     def check_property_row_count(expected_row_count)
       within('#sidebar') do
         click_link 'Properties'
       end
-      expect(page).to have_css('tbody#product_properties')
-      expect(all('tbody#product_properties tr').count).to eq(expected_row_count)
+      expect(page).to have_css('tbody#product_properties tr', count: expected_row_count)
     end
   end
 end
