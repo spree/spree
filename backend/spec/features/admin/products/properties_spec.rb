@@ -103,10 +103,9 @@ describe 'Properties', type: :feature, js: true do
     # Regression test for #2279
     it 'successfully create and then remove product property' do
       fill_in_property
-      # Sometimes the page doesn't load before the all check is done
-      # lazily finding the element gives the page 10 seconds
+
       expect(page).to have_css('tbody#product_properties tr:nth-child(2)')
-      expect(all('tbody#product_properties tr').count).to eq(2)
+      expect(page).to have_css('tbody#product_properties tr').twice
 
       delete_product_property
 

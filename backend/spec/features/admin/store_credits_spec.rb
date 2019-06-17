@@ -22,7 +22,7 @@ describe 'Store credits admin', type: :feature do
       expect(page).to have_current_path(spree.admin_user_store_credits_path(store_credit.user))
 
       store_credit_table = page.find('table')
-      expect(store_credit_table.all('tr').count).to eq 1
+      expect(store_credit_table).to have_css('tr').once
       expect(store_credit_table).to have_content(Spree::Money.new(store_credit.amount, currency: store_credit.currency).to_s)
       expect(store_credit_table).to have_content(Spree::Money.new(store_credit.amount_used, currency: store_credit.currency).to_s)
       expect(store_credit_table).to have_content(store_credit.category_name)
@@ -49,7 +49,7 @@ describe 'Store credits admin', type: :feature do
         expect(page).to have_current_path(spree.admin_user_store_credits_path(store_credit.user))
 
         store_credit_table = page.find('table')
-        expect(store_credit_table.all('tr').count).to eq 2
+        expect(store_credit_table).to have_css('tr').twice
         expect(Spree::StoreCredit.count).to eq 2
       end
     end
@@ -65,7 +65,7 @@ describe 'Store credits admin', type: :feature do
         expect(page).to have_current_path(spree.admin_user_store_credits_path(store_credit.user))
 
         store_credit_table = page.find('table')
-        expect(store_credit_table.all('tr').count).to eq 2
+        expect(store_credit_table).to have_css('tr').twice
         expect(Spree::StoreCredit.count).to eq 2
         expect(Spree::StoreCredit.last.currency).to eq 'EUR'
         expect(store_credit_table).to have_content('€100.00')

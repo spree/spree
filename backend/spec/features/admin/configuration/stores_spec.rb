@@ -10,7 +10,7 @@ describe 'Stores admin', type: :feature do
       visit spree.admin_stores_path
 
       store_table = page.find('table')
-      expect(store_table.all('tr').count).to eq 1
+      expect(store_table).to have_css('tr').once
       expect(store_table).to have_content(store.name)
       expect(store_table).to have_content(store.url)
     end
@@ -29,7 +29,7 @@ describe 'Stores admin', type: :feature do
 
       expect(page).to have_current_path spree.admin_stores_path
       store_table = page.find('table')
-      expect(store_table.all('tr').count).to eq 2
+      expect(store_table).to have_css('tr').twice
       expect(Spree::Store.count).to eq 2
     end
   end
