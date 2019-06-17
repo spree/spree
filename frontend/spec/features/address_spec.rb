@@ -46,21 +46,17 @@ describe 'Address', type: :feature, inaccessible: true do
       end
     end
 
-    context 'user changes to country without states required' do
+    context 'user changes to country without states required', :focus do
       let!(:france) { create(:country, name: 'France', states_required: false, iso: 'FRA') }
 
       it 'clears the state name' do
-        skip 'This is failing on the CI server, but not when you run the tests manually... It also does not fail locally on a machine.'
         click_button 'Checkout'
         select canada.name, from: @country_css
         page.find(@state_name_css).set('Toscana')
 
         select france.name, from: @country_css
-        expect(page).to have_css(@state_name_css, exact_text: '')
-        until page.evaluate_script('$.active').to_i.zero?
-          expect(page).to have_css(@state_name_css, class: ['!hidden', '!required'])
-          expect(page).to have_css(@state_select_css, class: ['!required'])
-        end
+        expect(page).to have_css(@state_name_css, filter_set: :field, disabled: true, with: '', visible: :hidden, class: ['!hidden', '!required'])
+        expect(page).to have_css(@state_select_css, visible: :hidden, class: ['!required'])
       end
     end
   end
