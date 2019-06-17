@@ -3,15 +3,9 @@ require 'spec_helper'
 describe 'Address', type: :feature, inaccessible: true do
   stub_authorization!
 
-  after do
-    Capybara.ignore_hidden_elements = true
-  end
-
   before do
     create(:product, name: 'RoR Mug')
     create(:order_with_totals, state: 'cart')
-
-    Capybara.ignore_hidden_elements = false
 
     visit spree.root_path
 
@@ -34,12 +28,9 @@ describe 'Address', type: :feature, inaccessible: true do
         click_button 'Checkout'
 
         select canada.name, from: @country_css
-        expect(page).to have_selector(@state_select_css, visible: :hidden)
-        expect(page).to have_selector(@state_name_css, visible: true)
-        expect(page).to have_css(@state_name_css, class: ['!hidden'])
-        expect(page).to have_css(@state_name_css, class: ['required'])
-        expect(page).to have_css(@state_select_css, class: ['!required'])
-        expect(page).not_to have_selector("input#{@state_name_css}[disabled]")
+        expect(page).to have_css(@state_select_css, visible: :hidden, class: ['!required'])
+        expect(page).to have_css(@state_name_css, visible: true, class: ['!hidden', 'required'])
+        expect(page).not_to have_css("input#{@state_name_css}[disabled]")
       end
     end
 
@@ -50,11 +41,8 @@ describe 'Address', type: :feature, inaccessible: true do
         click_button 'Checkout'
 
         select canada.name, from: @country_css
-        expect(page).to have_selector(@state_select_css, visible: true)
-        expect(page).to have_selector(@state_name_css, visible: :hidden)
-        expect(page).to have_css(@state_select_css, class: ['required'])
-        expect(page).to have_css(@state_select_css, class: ['!hidden'])
-        expect(page).to have_css(@state_name_css, class: ['!required'])
+        expect(page).to have_css(@state_select_css, visible: true, class: ['!hidden', 'required'])
+        expect(page).to have_css(@state_name_css, visible: :hidden, class: ['!required'])
       end
     end
 
@@ -70,8 +58,7 @@ describe 'Address', type: :feature, inaccessible: true do
         select france.name, from: @country_css
         expect(page).to have_css(@state_name_css, exact_text: '')
         until page.evaluate_script('$.active').to_i.zero?
-          expect(page).to have_css(@state_name_css, class: ['!hidden'])
-          expect(page).to have_css(@state_name_css, class: ['!required'])
+          expect(page).to have_css(@state_name_css, class: ['!hidden', '!required'])
           expect(page).to have_css(@state_select_css, class: ['!required'])
         end
       end

@@ -194,12 +194,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
     let(:credit_cart_payment) { create(:credit_card_payment_method) }
     let(:check_payment) { create(:check_payment_method) }
 
-    after do
-      Capybara.ignore_hidden_elements = true
-    end
-
     before do
-      # Capybara.ignore_hidden_elements = false
       order = OrderWalkthrough.up_to(:payment)
       allow(order).to receive_messages(available_payment_methods: [check_payment, credit_cart_payment])
       order.user = create(:user)
