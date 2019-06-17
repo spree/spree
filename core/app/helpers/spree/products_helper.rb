@@ -36,7 +36,7 @@ module Spree
                     else
                       product.description.to_s.gsub(/(.*?)\r?\n\r?\n/m, '<p>\1</p>')
                     end
-      description.blank? ? Spree.t(:product_has_no_description) : raw(description)
+      description.blank? ? Spree.t(:product_has_no_description) : description
     end
 
     def line_item_description_text(description_text)
