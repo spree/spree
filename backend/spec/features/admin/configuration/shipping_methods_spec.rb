@@ -5,12 +5,7 @@ describe 'Shipping Methods', type: :feature do
   let!(:zone) { create(:global_zone) }
   let!(:shipping_method) { create(:shipping_method, zones: [zone]) }
 
-  after do
-    Capybara.ignore_hidden_elements = true
-  end
-
   before do
-    # Capybara.ignore_hidden_elements = false
     # HACK: To work around no email prompting on check out
     allow_any_instance_of(Spree::Order).to receive_messages(require_email: false)
     create(:check_payment_method)

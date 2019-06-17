@@ -104,7 +104,6 @@ describe 'Address selection during checkout', type: :feature, js: true do
       # TODO: the JS error reporting isn't working with our current iteration
       # this is what this piece of code ('field is required') tests
       it 'shows address form with error' do
-        # allow(Capybara).to receive(:ignore_hidden_elements).and_return(false)
         within('#billing') do
           choose Spree.t('address_book.other_address')
           fill_in_address(address)
@@ -126,7 +125,6 @@ describe 'Address selection during checkout', type: :feature, js: true do
 
     describe 'entering 2 new addresses', js: true do
       it 'assigns 2 new addresses to order' do
-        # allow(Capybara).to receive(:ignore_hidden_elements).and_return(false)
         within('#billing') do
           choose Spree.t('address_book.other_address')
           fill_in_address(billing)
@@ -169,7 +167,6 @@ describe 'Address selection during checkout', type: :feature, js: true do
       end
 
       it 'assigns addresses to orders' do
-        # allow(Capybara).to receive(:ignore_hidden_elements).and_return(false)
         address = user.addresses.first
         choose "order_bill_address_id_#{address.id}"
         within('#shipping') do
@@ -211,7 +208,6 @@ describe 'Address selection during checkout', type: :feature, js: true do
 
     describe 'using saved address for billing and shipping', js: true do
       it 'addresseses to order' do
-        # allow(Capybara).to receive(:ignore_hidden_elements).and_return(false)
         address = user.addresses.first
         choose "order_bill_address_id_#{address.id}"
         check 'Use Billing Address'
@@ -255,7 +251,6 @@ describe 'Address selection during checkout', type: :feature, js: true do
       end
 
       it 'assigns addresses to orders' do
-        # allow(Capybara).to receive(:ignore_hidden_elements).and_return(false)
         address = user.addresses.first
         uncheck 'order_use_billing'
         choose "order_ship_address_id_#{address.id}"

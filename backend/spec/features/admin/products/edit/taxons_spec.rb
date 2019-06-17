@@ -3,14 +3,6 @@ require 'spec_helper'
 describe 'Product Taxons', type: :feature, js: true do
   stub_authorization!
 
-  after do
-    Capybara.ignore_hidden_elements = true
-  end
-
-  before do
-    # Capybara.ignore_hidden_elements = false
-  end
-
   context 'managing taxons' do
     def selected_taxons
       find('#product_taxon_ids', visible: :hidden).value.split(',').map(&:to_i).uniq
