@@ -1,3 +1,5 @@
+require_dependency 'spree/payment/gateway_options'
+
 module Spree
   class Payment < Spree::Base
     module Processing
