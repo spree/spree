@@ -348,7 +348,7 @@ describe 'Products', type: :feature do
         end
 
         within(:css, 'tr.product_property:first-child') do
-          expect(first('input[type=text]').value).to eq('baseball_cap_color')
+          expect(page).to have_field(id: /property_name$/, with: 'baseball_cap_color')
         end
       end
 

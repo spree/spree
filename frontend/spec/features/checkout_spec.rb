@@ -142,8 +142,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
       click_button 'Save and Continue'
       click_button 'Save and Continue'
 
-      continue_button = find('#checkout .btn-success')
-      expect(continue_button.value).to eq 'Place Order'
+      expect(find('#checkout')).to have_button(class: 'btn-success', value: 'Place Order')
     end
   end
 

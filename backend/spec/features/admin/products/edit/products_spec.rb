@@ -15,10 +15,10 @@ describe 'Product Details', type: :feature, js: true do
     it 'lists the product details' do
       click_link 'Details'
 
-      expect(find('.content-header h1').text.strip).to eq('Products / Bún thịt nướng')
+      expect(page).to have_css('.content-header h1', text: 'Products / Bún thịt nướng')
       expect(page).to have_field(id: 'product_name', with: 'Bún thịt nướng')
       expect(page).to have_field(id: 'product_slug', with: 'bun-th-t-n-ng')
-      expect(find('textarea#product_description').text.strip).to eq('lorem ipsum')
+      expect(page).to have_field(id: 'product_description', with: 'lorem ipsum')
       expect(page).to have_field(id: 'product_price', with: '19.99')
       expect(page).to have_field(id: 'product_cost_price', with: '17.00')
       expect(page).to have_field(id: 'product_available_on', with: '2013/08/14')

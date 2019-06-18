@@ -46,7 +46,7 @@ describe 'Address', type: :feature, inaccessible: true do
       end
     end
 
-    context 'user changes to country without states required', :focus do
+    context 'user changes to country without states required' do
       let!(:france) { create(:country, name: 'France', states_required: false, iso: 'FRA') }
 
       it 'clears the state name' do
