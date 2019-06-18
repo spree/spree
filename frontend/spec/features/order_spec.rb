@@ -59,7 +59,7 @@ describe 'orders', type: :feature do
     specify do
       visit spree.order_path(order)
       within '.payment-info' do
-        expect { find('img') }.to raise_error(Capybara::ElementNotFound)
+        expect(page).not_to have_selector('img')
       end
     end
   end

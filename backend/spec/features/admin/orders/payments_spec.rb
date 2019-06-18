@@ -139,10 +139,11 @@ describe 'Payments', type: :feature, js: true do
             click_icon(:edit)
             fill_in('amount', with: 'invalid')
             click_icon(:save)
-            expect(find('td.amount input').value).to eq('invalid')
-            expect(payment.reload.amount).to eq(150.00)
           end
+
           expect(page).to have_selector('.alert-error', text: 'Invalid resource. Please fix errors and try again.')
+          expect(page).to have_field('amount', with: 'invalid')
+          expect(payment.reload.amount).to eq(150.00)
         end
       end
     end
@@ -174,8 +175,7 @@ describe 'Payments', type: :feature, js: true do
         fill_in 'Expiration', with: "09 / #{Time.current.year + 1}"
         fill_in 'Card Code', with: '007'
         # Regression test for #4277
-        sleep(1)
-        expect(find('.ccType', visible: false).value).to eq('visa')
+        expect(page).to have_field(class: 'ccType', type: :hidden, with: 'visa')
         click_button 'Continue'
         expect(page).to have_content('Payment has been successfully created!')
       end
