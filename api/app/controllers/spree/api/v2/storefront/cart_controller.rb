@@ -23,7 +23,6 @@ module Spree
 
           def add_item
             variant = Spree::Variant.find(params[:variant_id])
-
             spree_authorize! :update, spree_current_order, order_token
             spree_authorize! :show, variant
 
@@ -33,11 +32,6 @@ module Spree
               quantity: params[:quantity],
               options: params[:options]
             )
-
-            if result.success == true && %w(address delivery payment).include?(spree_current_order.state)
-              update_cart
-              result.value.reload.update_price
-            end
 
             render_order(result)
           end
@@ -189,15 +183,6 @@ module Spree
             end
 
             results.select(&:error)
-          end
-
-          def update_cart
-            spree_current_order.transaction do
-              spree_current_order.line_items.reload.each(&:update_price)
-              spree_current_order.save!
-              spree_current_order.update_totals
-              spree_current_order.save!
-            end
           end
         end
       end
