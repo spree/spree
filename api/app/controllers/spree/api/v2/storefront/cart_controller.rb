@@ -23,6 +23,7 @@ module Spree
 
           def add_item
             variant = Spree::Variant.find(params[:variant_id])
+
             spree_authorize! :update, spree_current_order, order_token
             spree_authorize! :show, variant
 
