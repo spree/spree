@@ -26,10 +26,8 @@ describe 'Tiered Calculator Promotions' do
     fill_in 'Base Percent', with: 5
 
     within('.tier') do
-      find('.js-base-input').set(100)
-      page.execute_script("$('.js-base-input').change();")
-      find('.js-value-input').set(10)
-      page.execute_script("$('.js-value-input').change();")
+      fill_in(class: 'js-base-input', with: '100')
+      fill_in(class: 'js-value-input', with: '10')
     end
     within('#actions_container') { click_button 'Update' }
 

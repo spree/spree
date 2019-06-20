@@ -32,32 +32,29 @@ module CapybaraExt
     end
   end
 
-  def set_select2_field(field, value)
-    page.execute_script %Q{$('#{field}').select2('val', '#{value}')}
-  end
-
   def select2_search(value, options)
-    label = find_label_by_text(options[:from])
-    within label.first(:xpath, './/..') do
-      options[:from] = "##{find('.select2-container')['id']}"
-    end
+    options[:from] = select2_from_label(options[:from])
     targetted_select2_search(value, options)
   end
 
   def targetted_select2_search(value, options)
     select2_el = find(:css, options[:from])
-    page.execute_script "$(arguments[0]).select2('open')", select2_el
-    page.execute_script "$('#{options[:dropdown_css]} input.select2-input').val('#{value}').trigger('keyup-change');"
+    select2_el.click
+    page.document.find('.select2-search input.select2-input,
+                        .select2-search-field input.select2-input.select2-focused').send_keys(value)
     select_select2_result(value)
   end
 
   def select2(value, options)
-    label = find_label_by_text(options[:from])
-
-    within label.first(:xpath, './/..') do
-      options[:from] = "##{find('.select2-container')['id']}"
-    end
+    options[:from] = select2_from_label(options[:from])
     targetted_select2(value, options)
+  end
+
+  def select2_from_label(from)
+    label = find(:label, from, class: '!select2-offscreen')
+    within label.first(:xpath, './/..') do
+      "##{find('.select2-container')['id']}"
+    end
   end
 
   def select2_no_label(value, options = {})
@@ -77,29 +74,7 @@ module CapybaraExt
 
   def select_select2_result(value)
     # results are in a div appended to the end of the document
-    within(:xpath, '//body') do
-      page.find('div.select2-result-label', text: %r{#{Regexp.escape(value)}}i).click
-    end
-  end
-
-  def find_label_by_text(text)
-    label = find_label(text)
-    counter = 0
-
-    # Because JavaScript testing is prone to errors...
-    while label.nil? && counter < 10
-      sleep(1)
-      counter += 1
-      label = find_label(text)
-    end
-
-    raise "Could not find label by text #{text}" if label.nil?
-
-    label
-  end
-
-  def find_label(text)
-    first(:xpath, "//label[text()[contains(.,'#{text}')]]")
+    page.document.find('div.select2-result-label', text: %r{#{Regexp.escape(value)}}i).click
   end
 
   # arg delay in seconds
