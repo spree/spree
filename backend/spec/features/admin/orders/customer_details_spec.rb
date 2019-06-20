@@ -33,11 +33,13 @@ describe 'Customer Details', type: :feature, js: true do
 
     it 'associates a user when not using guest checkout' do
       select2_search product.name, from: Spree.t(:name_or_sku)
+
       within('table.stock-levels') do
         fill_in 'variant_quantity', with: 1
         click_icon :add
       end
-      wait_for_ajax
+      expect(page).to have_css('.card', text: 'Order Line Items')
+
       click_link 'Customer'
       targetted_select2 'foobar@example.com', from: '#s2id_customer_search'
       # 5317 - Address prefills using user's default.

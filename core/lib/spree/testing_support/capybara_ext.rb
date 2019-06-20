@@ -45,7 +45,8 @@ module CapybaraExt
   end
 
   def targetted_select2_search(value, options)
-    page.execute_script %Q{$('#{options[:from]}').select2('open')}
+    select2_el = find(:css, options[:from])
+    page.execute_script "$(arguments[0]).select2('open')", select2_el
     page.execute_script "$('#{options[:dropdown_css]} input.select2-input').val('#{value}').trigger('keyup-change');"
     select_select2_result(value)
   end

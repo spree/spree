@@ -60,7 +60,7 @@ describe 'Stores admin', type: :feature do
       accept_confirm do
         page.all('.icon-delete', minimum: 2)[1].click
       end
-      wait_for_ajax
+      expect(page).to have_content('has been successfully removed!')
 
       expect(Spree::Store.find_by_id(second_store.id)).to be_nil
     end

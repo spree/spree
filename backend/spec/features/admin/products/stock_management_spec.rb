@@ -14,11 +14,11 @@ describe 'Stock Management', type: :feature, js: true do
     end
 
     context "toggle backorderable for a variant's stock item" do
-      let(:backorderable) { find '.stock_item_backorderable' }
+      let(:backorderable) { find_field(class: 'stock_item_backorderable') }
 
       before do
         expect(backorderable).to be_checked
-        backorderable.set(false)
+        backorderable.uncheck
         wait_for_ajax
       end
 
@@ -29,11 +29,11 @@ describe 'Stock Management', type: :feature, js: true do
     end
 
     context "toggle track inventory for a variant's stock item" do
-      let(:track_inventory) { find '.track_inventory_checkbox' }
+      let(:track_inventory) { find_field(class: 'track_inventory_checkbox') }
 
       before do
         expect(track_inventory).to be_checked
-        track_inventory.set(false)
+        track_inventory.uncheck
         wait_for_ajax
       end
 
@@ -51,8 +51,8 @@ describe 'Stock Management', type: :feature, js: true do
       new_location = create(:stock_location, name: 'Another Location')
       refresh
 
-      new_location_backorderable = find "#stock_item_backorderable_#{new_location.id}"
-      new_location_backorderable.set(false)
+      new_location_backorderable = find_field(id: "stock_item_backorderable_#{new_location.id}", checked: true)
+      new_location_backorderable.uncheck
       wait_for_ajax
 
       expect(page).to have_current_path(%r{/admin/products})

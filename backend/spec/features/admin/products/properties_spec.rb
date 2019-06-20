@@ -145,7 +145,8 @@ describe 'Properties', type: :feature, js: true do
       accept_confirm do
         click_icon :delete
       end
-      wait_for_ajax
+      expect(page.document).to have_content('successfully removed!')
+                           .or have_content('Cannot delete record')
     end
 
     def check_property_row_count(expected_row_count)

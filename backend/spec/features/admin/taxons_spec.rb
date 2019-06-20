@@ -37,8 +37,10 @@ describe 'Taxonomies and taxons', type: :feature do
 
     find('.product').hover
     find('.product .dropdown-toggle').click
+
     click_link 'Delete From Taxon'
-    wait_for_ajax
+
+    expect(page).not_to have_css('.product')
 
     refresh
     select_clothing_from_select2

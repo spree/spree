@@ -59,7 +59,6 @@ describe 'Option Types', type: :feature, js: true do
     click_link 'Option Types'
     within('table#listing_option_types') { click_icon :edit }
 
-    wait_for_ajax
     expect(page).to have_css('tbody#option_values tr', count: 1)
 
     # Add a new option type
