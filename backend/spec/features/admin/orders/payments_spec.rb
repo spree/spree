@@ -123,10 +123,7 @@ describe 'Payments', type: :feature, js: true do
           within_row(1) do
             click_icon(:edit)
 
-            # Can't use fill_in here, as under poltergeist that will unfocus (and
-            # thus submit) the field under poltergeist
-            find('td.amount input').click
-            page.execute_script("$('td.amount input').val('$1')")
+            find('td.amount input').send_keys([:backspace] * 6, '$1')
 
             click_icon(:cancel)
             expect(page).to have_selector('td.amount span', text: '$150.00')

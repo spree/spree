@@ -169,7 +169,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
       visit spree.checkout_state_path(:payment)
 
       # prevent form submit to verify button is disabled
-      page.execute_script("$('#checkout_form_payment').submit(function(){return false;})")
+      find('#checkout_form_payment').execute_script('$(this).submit(function(){return false;})')
 
       expect(page).not_to have_selector('input.btn.disabled')
       click_button 'Save and Continue'
@@ -181,7 +181,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
       visit spree.checkout_state_path(:confirm)
 
       # prevent form submit to verify button is disabled
-      page.execute_script("$('#checkout_form_confirm').submit(function(){return false;})")
+      find('#checkout_form_confirm').execute_script('$(this).submit(function(){return false;})')
 
       expect(page).not_to have_selector('input.btn.disabled')
       click_button 'Place Order'
