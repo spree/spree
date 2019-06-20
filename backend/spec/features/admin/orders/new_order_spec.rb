@@ -24,8 +24,10 @@ describe 'New Order', type: :feature do
 
   it 'completes new order successfully without using the cart', js: true do
     select2_search product.name, from: Spree.t(:name_or_sku)
+
     click_icon :add
-    wait_for_ajax
+    expect(page).to have_css('.card', text: 'Order Line Items')
+
     click_on 'Customer'
     select_customer
 
@@ -134,7 +136,7 @@ describe 'New Order', type: :feature do
       click_on 'Shipments'
       select2_search product.name, from: Spree.t(:name_or_sku)
       click_icon :add
-      wait_for_ajax
+      expect(page).not_to have_content('Your order is empty')
 
       click_on 'Payments'
       click_on 'Continue'
@@ -154,11 +156,13 @@ describe 'New Order', type: :feature do
 
     it 'transitions to delivery not to complete' do
       select2_search product.name, from: Spree.t(:name_or_sku)
+
       within('table.stock-levels') do
         fill_in 'variant_quantity', with: 1
         click_icon :add
       end
-      wait_for_ajax
+      expect(page).not_to have_content('Your order is empty')
+
       click_link 'Customer'
       select_customer
       wait_for { !page.has_button?('Update') }

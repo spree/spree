@@ -150,10 +150,8 @@ describe 'Products', type: :feature do
         fill_in 'product_sku', with: 'B100'
         fill_in 'product_price', with: '100'
         fill_in 'product_available_on', with: '2012/01/24'
-        # Just so the datepicker gets out of poltergeists way.
-        page.execute_script("$('#ui-datepicker-div').hide();")
+        find('#product_available_on').send_keys(:tab)
         select 'Size', from: 'Prototype'
-        wait_for_ajax
         check 'Large'
         select @shipping_category.name, from: 'product_shipping_category_id'
         click_button 'Create'
@@ -175,7 +173,6 @@ describe 'Products', type: :feature do
           fill_in 'product_sku', with: 'B100'
           fill_in 'product_price', with: '100'
           select 'Size', from: 'Prototype'
-          wait_for_ajax
           check 'Large'
           click_button 'Create'
 
@@ -195,7 +192,6 @@ describe 'Products', type: :feature do
           fill_in 'product_sku', with: 'B100'
           fill_in 'product_price', with: '100'
           select 'Size', from: 'Prototype'
-          wait_for_ajax
           check 'Large'
           click_button 'Create'
           expect(page).to have_content("Shipping Category can't be blank")
@@ -344,7 +340,6 @@ describe 'Products', type: :feature do
 
         within("#prototypes tr#row_#{prototype.id}") do
           click_link 'Select'
-          wait_for_ajax
         end
 
         within(:css, 'tr.product_property:first-child') do
@@ -410,7 +405,7 @@ describe 'Products', type: :feature do
         accept_confirm do
           click_icon :delete
         end
-        wait_for_ajax
+        expect(page).to have_content('Product has been deleted')
 
         click_on 'Filter'
         # This will show our deleted product

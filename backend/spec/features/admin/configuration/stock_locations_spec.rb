@@ -24,7 +24,7 @@ describe 'Stock Locations', type: :feature do
     accept_confirm do
       click_icon :delete
     end
-    wait_for_ajax
+    expect(page).not_to have_css('#listing_stock_locations tbody tr')
     refresh
     wait_for { !page.has_text?('No Stock Locations found') }
     expect(page).to have_content('No Stock Locations found')

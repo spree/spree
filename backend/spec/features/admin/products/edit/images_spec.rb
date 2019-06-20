@@ -34,7 +34,8 @@ describe 'Product Images', type: :feature, js: true do
       accept_confirm do
         click_icon :delete
       end
-      wait_for_ajax
+
+      expect(page).to have_content('successfully removed!')
       expect(page).not_to have_content('ruby on rails t-shirt')
     end
   end
