@@ -30,7 +30,7 @@ describe 'Shipping Methods', type: :feature do
 
       fill_in 'shipping_method_name', with: 'bullock cart'
 
-      within('#shipping_method_categories_field') do
+      within('#shipping_method_categories_field', match: :first) do
         check first("input[type='checkbox']")['name']
       end
 
