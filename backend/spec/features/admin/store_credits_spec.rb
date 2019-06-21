@@ -21,7 +21,7 @@ describe 'Store credits admin', type: :feature do
       click_link 'Store Credits'
       expect(page).to have_current_path(spree.admin_user_store_credits_path(store_credit.user))
 
-      store_credit_table = page.find('table')
+      store_credit_table = page.find('table', match: :first)
       expect(store_credit_table).to have_css('tr').once
       expect(store_credit_table).to have_content(Spree::Money.new(store_credit.amount, currency: store_credit.currency).to_s)
       expect(store_credit_table).to have_content(Spree::Money.new(store_credit.amount_used, currency: store_credit.currency).to_s)
@@ -48,7 +48,7 @@ describe 'Store credits admin', type: :feature do
 
         expect(page).to have_current_path(spree.admin_user_store_credits_path(store_credit.user))
 
-        store_credit_table = page.find('table')
+        store_credit_table = page.find('table', match: :first)
         expect(store_credit_table).to have_css('tr').twice
         expect(Spree::StoreCredit.count).to eq 2
       end
@@ -64,7 +64,7 @@ describe 'Store credits admin', type: :feature do
 
         expect(page).to have_current_path(spree.admin_user_store_credits_path(store_credit.user))
 
-        store_credit_table = page.find('table')
+        store_credit_table = page.find('table', match: :first)
         expect(store_credit_table).to have_css('tr').twice
         expect(Spree::StoreCredit.count).to eq 2
         expect(Spree::StoreCredit.last.currency).to eq 'EUR'
@@ -90,7 +90,7 @@ describe 'Store credits admin', type: :feature do
       click_button 'Update'
 
       expect(page).to have_current_path(spree.admin_user_store_credits_path(store_credit.user))
-      store_credit_table = page.find('table')
+      store_credit_table = page.first('table')
       expect(store_credit_table).to have_content(Spree::Money.new(updated_amount, currency: store_credit.currency).to_s)
       expect(store_credit.reload.amount.to_f).to eq updated_amount.to_f
     end

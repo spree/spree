@@ -235,10 +235,13 @@ describe 'Order Details', type: :feature, js: true do
 
       context 'splitting to location' do
         before { visit spree.edit_admin_order_path(order) }
-        # can not properly implement until poltergeist supports checking alert text
-        # see https://github.com/teampoltergeist/poltergeist/pull/516
 
-        it 'should warn you if you have not selected a location or shipment'
+        it 'should warn you if you have not selected a location or shipment' do
+          within_row(1) { click_icon :split }
+          accept_alert "Please select the split destination" do
+            click_icon :save
+          end
+        end
 
         context 'there is enough stock at the other location' do
           it 'allows me to make a split' do
@@ -419,8 +422,8 @@ describe 'Order Details', type: :feature, js: true do
 
             it 'adds variant to order just fine' do
               select2_search tote.name, from: Spree.t(:name_or_sku)
-              within('table.stock-levels') do
-                fill_in 'stock_item_quantity', with: 1
+              within('table.stock-levels tbody tr', match: :first) do
+                fill_in 'stock_item_quantity', match: :first, with: 1
                 click_icon :add
               end
 
@@ -445,7 +448,7 @@ describe 'Order Details', type: :feature, js: true do
             it 'adds variant to order just fine' do
               select2_search tote.name, from: Spree.t(:name_or_sku)
               within('table.stock-levels') do
-                fill_in 'stock_item_quantity', with: 1
+                fill_in 'stock_item_quantity', match: :first, with: 1
                 click_icon :add
               end
 
@@ -659,7 +662,7 @@ describe 'Order Details', type: :feature, js: true do
 
     it 'can add tracking information' do
       visit spree.edit_admin_order_path(order)
-      within('table.table tr:nth-child(5)') do
+      within('table.stock-contents tr:nth-child(5)', match: :first) do
         click_icon :edit
       end
       fill_in 'tracking', with: 'FOOBAR'

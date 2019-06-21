@@ -119,4 +119,7 @@ RSpec.configure do |config|
   config.around :each, type: :feature do |ex|
     ex.run_with_retry retry: 3
   end
+
+  config.filter_run_including focus: true unless ENV['CI']
+  config.run_all_when_everything_filtered = true
 end

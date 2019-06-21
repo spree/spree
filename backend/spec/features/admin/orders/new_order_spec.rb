@@ -141,9 +141,7 @@ describe 'New Order', type: :feature do
       click_on 'Payments'
       click_on 'Continue'
 
-      within('.additional-info .state') do
-        expect(page).to have_content('complete')
-      end
+      expect(page).to have_css('.additional-info .state', text: 'complete')
     end
   end
 

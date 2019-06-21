@@ -63,7 +63,7 @@ RSpec.configure do |config|
   config.use_transactional_fixtures = false
 
   config.before :suite do
-    Capybara.match = :prefer_exact
+    Capybara.match = :smart
     DatabaseCleaner.clean_with :truncation
   end
 
@@ -114,6 +114,9 @@ RSpec.configure do |config|
 
   config.order = :random
   Kernel.srand config.seed
+
+  config.filter_run_including focus: true unless ENV['CI']
+  config.run_all_when_everything_filtered = true
 end
 
 module Spree
