@@ -32,11 +32,13 @@
 <% end %>
 
 <%= javascript_tag do %>
-  var properties = <%= raw(@properties.to_json) %>;
+  var source = '<%= spree.get_properties_admin_product_product_properties_path(@product.id) %>';
   $('#product_properties').on('keydown', 'input.autocomplete', function() {
     already_auto_completed = $(this).is('ac_input');
     if (!already_auto_completed) {
-      $(this).autocomplete({source: properties});
+      $(this).autocomplete({source: source,
+                            minLength: 3,
+                          });
       $(this).focus();
     }
   });

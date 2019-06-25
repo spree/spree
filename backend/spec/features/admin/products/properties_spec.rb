@@ -77,6 +77,7 @@ describe 'Properties', type: :feature, js: true do
   context 'linking a property to a product' do
     before do
       create(:product)
+      create(:property, name: 'fooBar')
       visit spree.admin_products_path
       click_icon :edit
       within('#sidebar') do
@@ -114,6 +115,14 @@ describe 'Properties', type: :feature, js: true do
 
       expect(page).not_to have_content('Product is not found')
 
+      check_property_row_count(2)
+    end
+
+    it 'successfully create product property from existing properties' do
+      fill_in 'product_product_properties_attributes_0_property_name', with: 'foo'
+      find('#ui-id-2').click
+      fill_in 'product_product_properties_attributes_0_value', with: 'bar'
+      click_button 'Update'
       check_property_row_count(2)
     end
 
