@@ -46,7 +46,7 @@ Spree::Image.prepend ::YourApplication::Spree::ImageDecorator
 You can also create image variations on the fly in your templates, eg.
 
 ```erb
-<%%= image_tag(main_app.url_for(@product.images.first.attachment.variant(resize: '150x150'))) %>
+<%= image_tag(main_app.url_for(@product.images.first.attachment.variant(resize: '150x150'))) %>
 ```
 
 ### Using Amazon S3 as storage system
