@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Spree
   module Backend
     class Engine < ::Rails::Engine
@@ -15,7 +17,9 @@ module Spree
       # sets the manifests / assets to be precompiled, even when initialize_on_precompile is false
       initializer 'spree.assets.precompile', group: :all do |app|
         app.config.assets.paths << "#{Rails.root}/app/assets/fonts"
-        app.config.assets.precompile << /\.(?:svg|eot|woff|ttf)$/
+        unless Sprockets::Rails::VERSION.split('.', 2)[0].to_i >= 3
+          app.config.assets.precompile << /\.(?:svg|eot|woff|ttf)$/
+        end
 
         app.config.assets.precompile += %w[
           spree/backend/all*
