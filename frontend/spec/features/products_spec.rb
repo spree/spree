@@ -353,4 +353,58 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
       end
     end
   end
+  
+  context 'when rendering the product description' do
+    context 'when <script> tag exists' do
+      it 'prevents the script from running', js: true do
+        description = '<script>window.alert("Message")</script>'
+        product = FactoryBot.create(:base_product, description: description, name: 'Sample', price: '19.99')
+        visit spree.product_path(product)
+
+        begin
+          page.driver.browser.switch_to.alert
+          fail "XSS alert exists"
+        rescue Selenium::WebDriver::Error::NoSuchAlertError
+        end
+      end
+
+      it 'returns sanitized js text in html' do
+        description = '<script>window.alert("Message")</script>'
+        product = FactoryBot.create(:base_product, description: description, name: 'Sample', price: '19.99')
+        visit spree.product_path(product)
+
+        within('div#product-description') do
+          within('[data-hook=description]') do
+            expect(text).to eq('window.alert("Message")')
+          end
+        end
+      end
+    end
+
+    context 'when <a> tag exists' do
+      it 'returns <a> tag in html' do
+        description = '<a href="example.com">link</a>'
+        product = FactoryBot.create(:base_product, description: description, name: 'Sample', price: '19.99')
+        visit spree.product_path(product)
+
+        within('div#product-description') do
+          node = find('[data-hook=description]')
+          expect(node).to have_selector 'a'
+        end
+      end
+    end
+
+    context 'when there are multiple lines' do
+      it 'returns <p> tag in html' do
+        description = "first paragraph\n\nsecond paragraph"
+        product = FactoryBot.create(:base_product, description: description, name: 'Sample', price: '19.99')
+        visit spree.product_path(product)
+
+        within('div#product-description') do
+          node = find('[data-hook=description]')
+          expect(node).to have_selector 'p'
+        end
+      end
+    end
+  end
 end
