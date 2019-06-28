@@ -15,7 +15,7 @@ describe 'User editing saved address during checkout', type: :feature, js: true 
     fill_in I18n.t('activerecord.attributes.spree/address.address1'), with: new_street
     click_button 'Update'
     user.reload
-    page.driver.browser.navigate.refresh
+    refresh
     expect(page).to have_current_path spree.checkout_state_path('address')
     within('h1') { expect(page).to have_content('Checkout') }
     within('#billing') do
@@ -33,7 +33,7 @@ describe 'User editing saved address during checkout', type: :feature, js: true 
     fill_in I18n.t('activerecord.attributes.spree/address.address1'), with: new_street
     click_button 'Update'
     user.reload
-    page.driver.browser.navigate.refresh
+    refresh
     expect(page).to have_current_path spree.checkout_state_path('address')
     within('h1') { expect(page).to have_content('Checkout') }
     find('#order_use_billing').click # checking hidden elements in capybara is funky

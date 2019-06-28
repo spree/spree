@@ -341,19 +341,17 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
       end
     end
   end
-  
+
   context 'when rendering the product description' do
     context 'when <script> tag exists' do
       it 'prevents the script from running', js: true do
         description = '<script>window.alert("Message")</script>'
         product = FactoryBot.create(:base_product, description: description, name: 'Sample', price: '19.99')
-        visit spree.product_path(product)
 
-        begin
-          page.driver.browser.switch_to.alert
-          fail "XSS alert exists"
-        rescue Selenium::WebDriver::Error::NoSuchAlertError
-        end
+        accept_alert(wait: 1) { visit spree.product_path(product) }
+        fail "XSS alert exists"
+
+      rescue Capybara::ModalNotFound
       end
 
       it 'returns sanitized js text in html' do
