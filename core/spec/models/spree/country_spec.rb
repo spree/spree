@@ -71,8 +71,26 @@ describe Spree::Country, type: :model do
     end
 
     context 'when deleting not a default country' do
-      it 'destroys country successfully' do
-        expect(canada.destroy).to be_truthy
+      context 'when country has no dependent addresses' do
+        it 'destroys country successfully' do
+          expect(canada.destroy).to be_truthy
+        end
+      end
+
+      context 'when country has dependent addresses' do
+        before do
+          create(:ship_address, country: canada, zipcode: 'l3l 4p4')
+        end
+
+        it 'does not destroy country' do
+          expect(canada.destroy).to be_falsy
+        end
+
+        it 'sets correct error message' do
+          canada.destroy
+
+          expect(canada.errors[:base]).to include('Cannot delete record because dependent addresses exist')
+        end
       end
     end
   end
