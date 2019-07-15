@@ -18,8 +18,8 @@ run_tests: &run_tests
     - checkout
     - restore_cache:
         keys:
-          - spree-bundle-v3-{{ checksum ".ruby-version" }}-{{ .Branch }}
-          - spree-bundle-v3-{{ checksum ".ruby-version" }}
+          - spree-bundle-v4-{{ checksum ".ruby-version" }}-{{ .Branch }}
+          - spree-bundle-v4-{{ checksum ".ruby-version" }}
     - run:
         name: Ensure Bundle Install
         command: |
@@ -44,15 +44,15 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - spree-bundle-v3-{{ checksum ".ruby-version" }}-{{ .Branch }}
-            - spree-bundle-v3-{{ checksum ".ruby-version" }}
+            - spree-bundle-v4-{{ checksum ".ruby-version" }}-{{ .Branch }}
+            - spree-bundle-v4-{{ checksum ".ruby-version" }}
       - run:
           name: Bundle Install
           command: |
             bundle install --path=~/spree/vendor/bundle
             ./build-ci.rb install
       - save_cache:
-          key: spree-bundle-v3-{{ checksum ".ruby-version" }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+          key: spree-bundle-v4-{{ checksum ".ruby-version" }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
           paths:
             - ~/spree/vendor/bundle
 
@@ -92,8 +92,8 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - spree-bundle-v3-{{ checksum ".ruby-version" }}-{{ .Branch }}
-            - spree-bundle-v3-{{ checksum ".ruby-version" }}
+            - spree-bundle-v4-{{ checksum ".ruby-version" }}-{{ .Branch }}
+            - spree-bundle-v4-{{ checksum ".ruby-version" }}
       - run:
           name: Ensure Bundle Install
           command: |
