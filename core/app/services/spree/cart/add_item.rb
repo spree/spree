@@ -35,7 +35,9 @@ module Spree
 
         return failure(line_item) unless line_item.save
 
-        ::Spree::TaxRate.adjust(order, [line_item.reload]) if line_item_created
+        line_item.reload.update_price
+
+        ::Spree::TaxRate.adjust(order, [line_item]) if line_item_created
         success(order: order, line_item: line_item, line_item_created: line_item_created, options: options)
       end
     end
