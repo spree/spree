@@ -150,10 +150,8 @@ describe 'Products', type: :feature do
         fill_in 'product_sku', with: 'B100'
         fill_in 'product_price', with: '100'
         fill_in 'product_available_on', with: '2012/01/24'
-        # Just so the datepicker gets out of poltergeists way.
-        page.execute_script("$('#ui-datepicker-div').hide();")
+        find('#product_available_on').send_keys(:tab)
         select 'Size', from: 'Prototype'
-        wait_for_ajax
         check 'Large'
         select @shipping_category.name, from: 'product_shipping_category_id'
         click_button 'Create'
@@ -175,15 +173,15 @@ describe 'Products', type: :feature do
           fill_in 'product_sku', with: 'B100'
           fill_in 'product_price', with: '100'
           select 'Size', from: 'Prototype'
-          wait_for_ajax
           check 'Large'
           click_button 'Create'
 
-          message = page.find('#product_shipping_category_id').native.attribute('validationMessage')
-          expect(message).to eq('Please select an item in the list.')
-          expect(field_labeled('Size')).to be_checked
-          expect(field_labeled('Large')).to be_checked
-          expect(field_labeled('Small')).not_to be_checked
+          expect(page).to have_css('#product_shipping_category_id') do |el|
+            el['validationMessage'] == 'Please select an item in the list.'
+          end
+          expect(page).to have_checked_field('Size')
+          expect(page).to have_checked_field('Large')
+          expect(page).to have_unchecked_field('Small')
         end
       end
 
@@ -194,13 +192,12 @@ describe 'Products', type: :feature do
           fill_in 'product_sku', with: 'B100'
           fill_in 'product_price', with: '100'
           select 'Size', from: 'Prototype'
-          wait_for_ajax
           check 'Large'
           click_button 'Create'
           expect(page).to have_content("Shipping Category can't be blank")
-          expect(field_labeled('Size')).to be_checked
-          expect(field_labeled('Large')).to be_checked
-          expect(field_labeled('Small')).not_to be_checked
+          expect(page).to have_checked_field('Size')
+          expect(page).to have_checked_field('Large')
+          expect(page).to have_unchecked_field('Small')
         end
       end
     end
@@ -265,7 +262,7 @@ describe 'Products', type: :feature do
         it 'shows localized price value on validation errors', js: true do
           fill_in 'product_price', with: '19,99'
           click_button 'Create'
-          expect(find('input#product_price').value).to eq('19,99')
+          expect(page).to have_field(id: 'product_price', with: '19,99')
         end
       end
 
@@ -343,11 +340,10 @@ describe 'Products', type: :feature do
 
         within("#prototypes tr#row_#{prototype.id}") do
           click_link 'Select'
-          wait_for_ajax
         end
 
         within(:css, 'tr.product_property:first-child') do
-          expect(first('input[type=text]').value).to eq('baseball_cap_color')
+          expect(page).to have_field(id: /property_name$/, with: 'baseball_cap_color')
         end
       end
 
@@ -396,7 +392,7 @@ describe 'Products', type: :feature do
           click_button 'Update'
           weight_prev = find('#product_weight').value
           click_button 'Update'
-          expect(find('#product_weight').value).to eq(weight_prev)
+          expect(page).to have_field(id: 'product_weight', with: weight_prev)
         end
       end
     end
@@ -406,16 +402,19 @@ describe 'Products', type: :feature do
 
       it 'is still viewable' do
         visit spree.admin_products_path
-        handle_js_confirm do
+        accept_confirm do
           click_icon :delete
-          wait_for_ajax
         end
+        expect(page).to have_content('Product has been deleted')
+
         click_on 'Filter'
         # This will show our deleted product
         check 'Show Deleted'
         click_on 'Search'
         click_link product.name
-        expect(find('#product_price').value.to_f).to eq(product.price.to_f)
+        expect(page).to have_field(id: 'product_price') do |field|
+          field.value.to_f == product.price.to_f
+        end
       end
     end
 

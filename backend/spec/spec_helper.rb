@@ -63,7 +63,7 @@ RSpec.configure do |config|
   config.use_transactional_fixtures = false
 
   config.before :suite do
-    Capybara.match = :prefer_exact
+    Capybara.match = :smart
     DatabaseCleaner.clean_with :truncation
   end
 
@@ -83,20 +83,16 @@ RSpec.configure do |config|
     reset_spree_preferences
   end
 
-  config.after do
-    # wait_for_ajax sometimes fails so we should clean db first to get rid of false failed specs
-    DatabaseCleaner.clean
-
-    # Ensure js requests finish processing before advancing to the next test
-    wait_for_ajax if RSpec.current_example.metadata[:js]
-  end
-
   config.after(:each, type: :feature) do |example|
     missing_translations = page.body.scan(/translation missing: #{I18n.locale}\.(.*?)[\s<\"&]/)
     if missing_translations.any?
       puts "Found missing translations: #{missing_translations.inspect}"
       puts "In spec: #{example.location}"
     end
+  end
+
+  config.append_after do
+    DatabaseCleaner.clean
   end
 
   config.include FactoryBot::Syntax::Methods
@@ -118,6 +114,9 @@ RSpec.configure do |config|
 
   config.order = :random
   Kernel.srand config.seed
+
+  config.filter_run_including focus: true unless ENV['CI']
+  config.run_all_when_everything_filtered = true
 end
 
 module Spree

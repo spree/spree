@@ -19,17 +19,17 @@ describe 'page promotions', type: :feature, js: true do
   end
 
   it 'automatically applies a page promotion upon visiting' do
-    expect(page).not_to have_content('Promotion ($10 off) -$10.00')
+    expect(page).not_to have_content('Promotion ($10 off) -$10.00', normalize_ws: true)
     visit '/content/test'
     visit '/cart'
-    expect(page).to have_content('Promotion ($10 off) -$10.00')
-    expect(page).to have_content('Subtotal (1 item) $20.00')
+    expect(page).to have_content("Promotion ($10 off)\n-$10.00")
+    expect(page).to have_content("Subtotal (1 item)\n$20.00")
   end
 
   it "does not activate an adjustment for a path that doesn't have a promotion" do
-    expect(page).not_to have_content('Promotion ($10 off) -$10.00')
+    expect(page).not_to have_content('Promotion ($10 off) -$10.00', normalize_ws: true)
     visit '/content/cvv'
     visit '/cart'
-    expect(page).not_to have_content('Promotion ($10 off) -$10.00')
+    expect(page).not_to have_content('Promotion ($10 off) -$10.00', normalize_ws: true)
   end
 end

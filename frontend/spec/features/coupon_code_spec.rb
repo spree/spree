@@ -57,14 +57,14 @@ describe 'Coupon code promotions', type: :feature, js: true do
         expect(page).to have_content(Spree.t(:coupon_code_not_found))
         fill_in 'order_coupon_code', with: 'onetwo'
         click_button 'Save and Continue'
-        expect(page).to have_content('Promotion (Onetwo)   -$10.00')
+        expect(page).to have_content('Promotion (Onetwo) -$10.00')
       end
 
       context 'with a promotion' do
         it 'applies a promotion to an order' do
           fill_in 'order_coupon_code', with: 'onetwo'
           click_button 'Save and Continue'
-          expect(page).to have_content('Promotion (Onetwo)   -$10.00')
+          expect(page).to have_content('Promotion (Onetwo) -$10.00')
         end
       end
     end

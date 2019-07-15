@@ -30,7 +30,7 @@ describe 'Free shipping promotions', type: :feature, js: true do
     # Regression test for #4428
     it 'applies the free shipping promotion' do
       within('#checkout-summary') do
-        expect(page).to have_content('Shipping total:  $10.00')
+        expect(page).to have_content('Shipping total: $10.00')
         expect(page).to have_content('Promotion (Free Shipping): -$10.00')
       end
     end

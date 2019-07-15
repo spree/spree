@@ -20,7 +20,7 @@ describe 'Cart', type: :feature, inaccessible: true, js: true do
   it 'prevents double clicking the remove button on cart' do
     add_mug_to_cart
     # prevent form submit to verify button is disabled
-    page.execute_script("$('#update-cart').submit(function(){return false;})")
+    find('#update-cart').execute_script('$(this).submit(function(){return false;})')
 
     expect(page).not_to have_selector('button#update-button[disabled]')
     page.find(:css, '.delete span').click

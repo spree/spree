@@ -59,10 +59,10 @@ describe 'Order Details', type: :feature, js: true do
 
       it 'can add an item to a shipment' do
         select2_search 'spree t-shirt', from: Spree.t(:name_or_sku)
+
         within('table.stock-levels') do
           fill_in 'variant_quantity', with: 2
           click_icon :add
-          wait_for_ajax
         end
 
         within('#order_total') do
@@ -74,9 +74,8 @@ describe 'Order Details', type: :feature, js: true do
         expect(page).to have_content('spree t-shirt')
 
         within_row(1) do
-          handle_js_confirm do
+          accept_confirm do
             click_icon :delete
-            wait_for_ajax
           end
         end
 
@@ -90,7 +89,7 @@ describe 'Order Details', type: :feature, js: true do
 
         within_row(1) do
           # Click "cancel" on confirmation dialog
-          dismiss_alert do
+          dismiss_confirm do
             click_icon :delete
           end
         end
@@ -171,12 +170,11 @@ describe 'Order Details', type: :feature, js: true do
 
           it 'adds variant to order just fine' do
             select2_search tote.name, from: Spree.t(:name_or_sku)
+
             within('table.stock-levels') do
               fill_in 'variant_quantity', with: 1
               click_icon :add
             end
-
-            wait_for_ajax
 
             within('.line-items') do
               expect(page).to have_content(tote.name)
@@ -200,8 +198,6 @@ describe 'Order Details', type: :feature, js: true do
               fill_in 'variant_quantity', with: 1
               click_icon :add
             end
-
-            wait_for_ajax
 
             within('.line-items') do
               expect(page).to have_content(tote.name)
@@ -239,10 +235,13 @@ describe 'Order Details', type: :feature, js: true do
 
       context 'splitting to location' do
         before { visit spree.edit_admin_order_path(order) }
-        # can not properly implement until poltergeist supports checking alert text
-        # see https://github.com/teampoltergeist/poltergeist/pull/516
 
-        it 'should warn you if you have not selected a location or shipment'
+        it 'should warn you if you have not selected a location or shipment' do
+          within_row(1) { click_icon :split }
+          accept_alert "Please select the split destination" do
+            click_icon :save
+          end
+        end
 
         context 'there is enough stock at the other location' do
           it 'allows me to make a split' do
@@ -253,7 +252,8 @@ describe 'Order Details', type: :feature, js: true do
             targetted_select2 stock_location2.name, from: '#s2id_item_stock_location'
             click_icon :save
 
-            wait_for_ajax
+            expect(page).to have_css('#order-form-wrapper div', id: /^shipment_\d$/).exactly(2).times
+
             order.reload
 
             expect(order.shipments.count).to eq(2)
@@ -270,7 +270,7 @@ describe 'Order Details', type: :feature, js: true do
             fill_in 'item_quantity', with: 2
             click_icon :save
 
-            wait_for_ajax
+            expect(page).not_to have_css('tr.stock-item-split')
             order.reload
 
             expect(order.shipments.count).to eq(1)
@@ -287,7 +287,7 @@ describe 'Order Details', type: :feature, js: true do
             fill_in 'item_quantity', with: 5
             click_icon :save
 
-            wait_for_ajax
+            expect(page).not_to have_css('tr.stock-item-split')
             order.reload
 
             expect(order.shipments.count).to eq(1)
@@ -303,7 +303,7 @@ describe 'Order Details', type: :feature, js: true do
             targetted_select2 stock_location2.name, from: '#s2id_item_stock_location'
             fill_in 'item_quantity', with: 'ff'
 
-            page.accept_confirm do
+            page.accept_confirm "quantity is negative" do
               click_icon :save
             end
 
@@ -319,7 +319,7 @@ describe 'Order Details', type: :feature, js: true do
             targetted_select2 stock_location2.name, from: '#s2id_item_stock_location'
             fill_in 'item_quantity', with: 0
 
-            page.accept_confirm do
+            page.accept_confirm "quantity is negative" do
               click_icon :save
             end
 
@@ -329,7 +329,7 @@ describe 'Order Details', type: :feature, js: true do
 
             fill_in 'item_quantity', with: -1
 
-            page.accept_confirm do
+            page.accept_confirm "quantity is negative" do
               click_icon :save
             end
 
@@ -361,10 +361,8 @@ describe 'Order Details', type: :feature, js: true do
               targetted_select2 stock_location2.name, from: '#s2id_item_stock_location'
               fill_in 'item_quantity', with: 2
 
-              spree_accept_alert do
-                click_icon :save
-                wait_for_ajax
-              end
+              click_icon :save
+              expect(page).not_to have_css('tr.stock-item-split')
 
               expect(order.shipments.count).to eq(1)
               expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq(2)
@@ -380,12 +378,11 @@ describe 'Order Details', type: :feature, js: true do
               within_row(1) { click_icon 'split' }
               targetted_select2 stock_location2.name, from: '#s2id_item_stock_location'
               fill_in 'item_quantity', with: 2
-              click_icon :save
 
-              wait_for_ajax
+              click_icon :save
+              expect(page).not_to have_css('tr.stock-item-split')
 
               order.reload
-
               expect(order.shipments.count).to eq(1)
               expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq(2)
               expect(order.shipments.first.stock_location.id).to eq(stock_location2.id)
@@ -403,9 +400,9 @@ describe 'Order Details', type: :feature, js: true do
             targetted_select2 stock_location2.name, from: '#s2id_item_stock_location'
             click_icon :save
 
-            wait_for_ajax
-            order.reload
+            expect(page).to have_css('#order-form-wrapper div', id: /^shipment_\d$/).exactly(2).times
 
+            order.reload
             expect(order.shipments.count).to eq(2)
             expect(order.shipments.last.backordered?).to eq(false)
             expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq(1)
@@ -425,12 +422,12 @@ describe 'Order Details', type: :feature, js: true do
 
             it 'adds variant to order just fine' do
               select2_search tote.name, from: Spree.t(:name_or_sku)
-              within('table.stock-levels') do
-                fill_in 'stock_item_quantity', with: 1
+              within('table.stock-levels tbody tr', match: :first) do
+                fill_in 'stock_item_quantity', match: :first, with: 1
                 click_icon :add
               end
 
-              wait_for_ajax
+              expect(page).to have_css('#s2id_add_variant_id', text: 'Choose a variant')
 
               within('[data-hook=admin_order_form_fields]') do
                 expect(page).to have_content(tote.name)
@@ -451,11 +448,9 @@ describe 'Order Details', type: :feature, js: true do
             it 'adds variant to order just fine' do
               select2_search tote.name, from: Spree.t(:name_or_sku)
               within('table.stock-levels') do
-                fill_in 'stock_item_quantity', with: 1
+                fill_in 'stock_item_quantity', match: :first, with: 1
                 click_icon :add
               end
-
-              wait_for_ajax
 
               within('[data-hook=admin_order_form_fields]') do
                 expect(page).to have_content(tote.name)
@@ -492,11 +487,11 @@ describe 'Order Details', type: :feature, js: true do
           within_row(1) { click_icon 'split' }
           targetted_select2 @shipment2.number, from: '#s2id_item_stock_location'
           fill_in 'item_quantity', with: 2
+
           click_icon :save
 
-          wait_for_ajax
+          expect(page).to have_css('#order-form-wrapper div', id: /^shipment_\d$/).once
           order.reload
-
           expect(order.shipments.count).to eq(1)
           expect(order.shipments.last.inventory_units_for(product.master).sum(&:quantity)).to eq(2)
         end
@@ -511,19 +506,16 @@ describe 'Order Details', type: :feature, js: true do
             targetted_select2 @shipment2.number, from: '#s2id_item_stock_location'
             fill_in 'item_quantity', with: 1
 
-            spree_accept_alert do
-              click_icon :save
-              wait_for_ajax
-            end
+            click_icon :save
+            expect(page).not_to have_css('tr.stock-item-split')
 
             within_row(1) { click_icon 'split' }
             targetted_select2 @shipment2.number, from: '#s2id_item_stock_location'
             fill_in 'item_quantity', with: 200
 
-            spree_accept_alert do
-              click_icon :save
-              wait_for_ajax
-            end
+            click_icon :save
+            expect(page).not_to have_css('tr.stock-item-split')
+            order.reload
 
             expect(order.shipments.count).to eq(2)
             expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq(1)
@@ -535,10 +527,11 @@ describe 'Order Details', type: :feature, js: true do
             targetted_select2 order.shipments.first.number, from: '#s2id_item_stock_location'
             fill_in 'item_quantity', with: 1
 
-            page.accept_confirm do
+            page.accept_confirm "target shipment is the same as original shipment" do
               click_icon :save
             end
 
+            order.reload
             expect(order.shipments.count).to eq(2)
             expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq(2)
           end
@@ -552,7 +545,7 @@ describe 'Order Details', type: :feature, js: true do
             fill_in 'item_quantity', with: 1
             click_icon :save
 
-            wait_for_ajax
+            expect(page).to have_css("#shipment_#{@shipment2.id} tr.stock-item").twice
 
             expect(order.shipments.count).to eq(2)
             expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq 1
@@ -571,9 +564,9 @@ describe 'Order Details', type: :feature, js: true do
             within_row(1) { click_icon 'split' }
             targetted_select2 @shipment2.number, from: '#s2id_item_stock_location'
             fill_in 'item_quantity', with: 1
-            click_icon :save
 
-            wait_for_ajax
+            click_icon :save
+            expect(page).not_to have_css('tr.stock-item-split')
 
             expect(@shipment2.reload.backordered?).to eq(true)
 
@@ -582,7 +575,7 @@ describe 'Order Details', type: :feature, js: true do
             fill_in 'item_quantity', with: 1
             click_icon :save
 
-            wait_for_ajax
+            expect(page).to have_css('#order-form-wrapper div', id: /^shipment_\d$/).once
 
             expect(order.shipments.count).to eq(1)
             expect(order.shipments.last.inventory_units_for(product.master).sum(&:quantity)).to eq(2)
@@ -669,7 +662,7 @@ describe 'Order Details', type: :feature, js: true do
 
     it 'can add tracking information' do
       visit spree.edit_admin_order_path(order)
-      within('table.table tr:nth-child(5)') do
+      within('table.stock-contents tr:nth-child(5)', match: :first) do
         click_icon :edit
       end
       fill_in 'tracking', with: 'FOOBAR'
@@ -697,10 +690,7 @@ describe 'Order Details', type: :feature, js: true do
       order.refresh_shipment_rates
       visit spree.edit_admin_order_path(order)
       click_on 'Ship'
-      wait_for_ajax
-      within '.shipment-state' do
-        expect(page).to have_content('shipped')
-      end
+      expect(page).to have_css('.shipment-state', text: 'shipped')
     end
   end
 end

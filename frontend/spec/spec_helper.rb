@@ -90,16 +90,16 @@ RSpec.configure do |config|
     reset_spree_preferences
   end
 
-  config.after do
-    DatabaseCleaner.clean
-  end
-
   config.after(:each, type: :feature) do |example|
     missing_translations = page.body.scan(/translation missing: #{I18n.locale}\.(.*?)[\s<\"&]/)
     if missing_translations.any?
       puts "Found missing translations: #{missing_translations.inspect}"
       puts "In spec: #{example.location}"
     end
+  end
+
+  config.append_after do
+    DatabaseCleaner.clean
   end
 
   config.include FactoryBot::Syntax::Methods
@@ -119,4 +119,7 @@ RSpec.configure do |config|
   config.around :each, type: :feature do |ex|
     ex.run_with_retry retry: 3
   end
+
+  config.filter_run_including focus: true unless ENV['CI']
+  config.run_all_when_everything_filtered = true
 end

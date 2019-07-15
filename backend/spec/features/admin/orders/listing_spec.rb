@@ -87,7 +87,7 @@ describe 'Orders Listing', type: :feature do
       click_on 'Filter Results'
 
       # Insure checkbox still checked
-      expect(find('#q_considered_risky_eq')).to be_checked
+      expect(page).to have_checked_field(id: 'q_considered_risky_eq')
       # Insure we have the risky order, R100
       within_row(1) do
         expect(page).to have_content('R100')
@@ -125,11 +125,11 @@ describe 'Orders Listing', type: :feature do
         click_on 'Filter'
         uncheck 'q_completed_at_not_null'
         click_on 'Filter Results'
-        within('.pagination') do
+        within('.pagination', match: :first) do
           click_link '2'
         end
         expect(page).to have_content('incomplete@example.com')
-        expect(find('#q_completed_at_not_null')).not_to be_checked
+        expect(page).to have_unchecked_field(id: 'q_completed_at_not_null')
       end
     end
 
@@ -194,14 +194,15 @@ describe 'Orders Listing', type: :feature do
     # regression tests for https://github.com/spree/spree/issues/6888
     context 'per page dropdown', js: true do
       before do
-        select '45', from: 'per_page'
-        wait_for_ajax
+        within('div.index-pagination-row', match: :first) do
+          select '45', from: 'per_page'
+        end
         expect(page).to have_select('per_page', selected: '45')
         expect(page).to have_selector(:css, 'select.per-page-selected-45')
       end
 
       it 'adds per_page parameter to url' do
-        expect(current_url).to match(/per_page\=45/)
+        expect(page).to have_current_path(/per_page\=45/)
       end
 
       it 'can be used with search filtering' do
@@ -210,15 +211,16 @@ describe 'Orders Listing', type: :feature do
         click_on 'Filter Results'
         expect(page).not_to have_content('R100')
         within_row(1) { expect(page).to have_content('R200') }
-        expect(current_url).to match(/per_page\=45/)
+        expect(page).to have_current_path(/per_page\=45/)
         expect(page).to have_select('per_page', selected: '45')
-        select '60', from: 'per_page'
-        wait_for_ajax
+        within('div.index-pagination-row', match: :first) do
+          select '60', from: 'per_page'
+        end
+        expect(page).to have_current_path(/per_page\=60/)
         expect(page).to have_select('per_page', selected: '60')
         expect(page).to have_selector(:css, 'select.per-page-selected-60')
         expect(page).not_to have_content('R100')
         within_row(1) { expect(page).to have_content('R200') }
-        expect(current_url).to match(/per_page\=60/)
       end
     end
 
@@ -246,7 +248,7 @@ describe 'Orders Listing', type: :feature do
           fill_in 'q_email_cont', with: 'john_smith@example.com'
           fill_in 'q_line_items_variant_sku_eq', with: 'BAG-00001'
           select 'Promo', from: 'q_promotions_id_in'
-          select 'Spree Test Store', from: 'q_store_id_in'
+          select 'Spree Test Store', match: :first, from: 'q_store_id_in'
           select 'spree', from: 'q_channel_eq'
         end
 

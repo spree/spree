@@ -1,7 +1,11 @@
 module CapybaraExt
   # https://bugs.chromium.org/p/chromedriver/issues/detail?id=1771
-  def native_fill_in(selector, text)
-    text.to_s.split('').each { |char| find_field(selector).native.send_keys(char) }
+  def delayed_fill_in(selector, text)
+    field = find_field(selector)
+    text.to_s.split('').each do |char|
+      sleep 0.05
+      field.send_keys(char)
+    end
   end
 
   def page!
@@ -9,19 +13,14 @@ module CapybaraExt
   end
 
   def click_icon(type)
-    find(".icon-#{type}").click
-  end
-
-  def eventually_fill_in(field, options = {})
-    expect(page).to have_css('#' + field)
-    fill_in field, options
+    first(".icon-#{type}").click
   end
 
   def within_row(num, &block)
     if RSpec.current_example.metadata[:js]
-      within("table.table tbody tr:nth-child(#{num})", &block)
+      within("table.table tbody tr:nth-child(#{num})", match: :first, &block)
     else
-      within(:xpath, all('table.table tbody tr')[num - 1].path, &block)
+      within(all('table.table tbody tr')[num - 1], &block)
     end
   end
 
@@ -33,31 +32,29 @@ module CapybaraExt
     end
   end
 
-  def set_select2_field(field, value)
-    page.execute_script %Q{$('#{field}').select2('val', '#{value}')}
-  end
-
   def select2_search(value, options)
-    label = find_label_by_text(options[:from])
-    within label.first(:xpath, './/..') do
-      options[:from] = "##{find('.select2-container')['id']}"
-    end
+    options[:from] = select2_from_label(options[:from])
     targetted_select2_search(value, options)
   end
 
   def targetted_select2_search(value, options)
-    page.execute_script %Q{$('#{options[:from]}').select2('open')}
-    page.execute_script "$('#{options[:dropdown_css]} input.select2-input').val('#{value}').trigger('keyup-change');"
+    select2_el = find(:css, options[:from])
+    select2_el.click
+    page.document.find('.select2-search input.select2-input,
+                        .select2-search-field input.select2-input.select2-focused').send_keys(value)
     select_select2_result(value)
   end
 
   def select2(value, options)
-    label = find_label_by_text(options[:from])
-
-    within label.first(:xpath, './/..') do
-      options[:from] = "##{find('.select2-container')['id']}"
-    end
+    options[:from] = select2_from_label(options[:from])
     targetted_select2(value, options)
+  end
+
+  def select2_from_label(from)
+    label = find(:label, from, class: '!select2-offscreen')
+    within label.first(:xpath, './/..') do
+      "##{find('.select2-container')['id']}"
+    end
   end
 
   def select2_no_label(value, options = {})
@@ -77,29 +74,7 @@ module CapybaraExt
 
   def select_select2_result(value)
     # results are in a div appended to the end of the document
-    within(:xpath, '//body') do
-      page.find('div.select2-result-label', text: %r{#{Regexp.escape(value)}}i).click
-    end
-  end
-
-  def find_label_by_text(text)
-    label = find_label(text)
-    counter = 0
-
-    # Because JavaScript testing is prone to errors...
-    while label.nil? && counter < 10
-      sleep(1)
-      counter += 1
-      label = find_label(text)
-    end
-
-    raise "Could not find label by text #{text}" if label.nil?
-
-    label
-  end
-
-  def find_label(text)
-    first(:xpath, "//label[text()[contains(.,'#{text}')]]")
+    page.document.find('div.select2-result-label', match: :first, text: %r{#{Regexp.escape(value)}}i).click
   end
 
   # arg delay in seconds
@@ -110,46 +85,8 @@ module CapybaraExt
     end
   end
 
-  # "Intelligiently" wait on condition
-  #
-  # Much better than a random sleep "here and there"
-  # it will not cause any delay in case the condition is fullfilled on first cycle.
-
-  def wait_for_condition(delay = Capybara.default_max_wait_time)
-    counter = 0
-    delay_threshold = delay * 10
-    until yield
-      counter += 1
-      sleep(0.1)
-      raise "Could not achieve condition within #{delay} seconds." if counter >= delay_threshold
-    end
-  end
-
-  def dismiss_alert
-    page.evaluate_script('window.confirm = function() { return false; }')
-    yield
-    # Restore existing default
-    page.evaluate_script('window.confirm = function() { return true; }')
-  end
-
-  def spree_accept_alert
-    yield
-  rescue Selenium::WebDriver::Error::UnhandledAlertError, Selenium::WebDriver::Error::NoSuchAlertError
-    Selenium::WebDriver::Wait.new(timeout: 5)
-      .until { page.driver.browser.switch_to.alert }
-      .accept
-  end
-
   def disable_html5_validation
     page.execute_script('for(var f=document.forms,i=f.length;i--;)f[i].setAttribute("novalidate",i)')
-  end
-
-  def handle_js_confirm(accept = true)
-    page.evaluate_script 'window.original_confirm_function = window.confirm'
-    page.evaluate_script "window.confirm = function(msg) { return #{accept}; }"
-    yield
-  ensure
-    page.evaluate_script 'window.confirm = window.original_confirm_function'
   end
 end
 
@@ -162,7 +99,7 @@ rescue Selenium::WebDriver::Error::TimeOutError
 end
 
 Capybara.configure do |config|
-  config.match = :prefer_exact
+  config.match = :smart
   config.ignore_hidden_elements = true
 end
 
@@ -177,21 +114,6 @@ RSpec::Matchers.define :have_meta do |name, expected|
       "expected that meta #{name} would have content='#{expected}' but was '#{actual[:content]}'"
     else
       "expected that meta #{name} would exist with content='#{expected}'"
-    end
-  end
-end
-
-RSpec::Matchers.define :have_title do |expected|
-  match do |_actual|
-    has_css?('title', text: expected, visible: false)
-  end
-
-  failure_message do |actual|
-    actual = first('title')
-    if actual
-      "expected that title would have been '#{expected}' but was '#{actual.text}'"
-    else
-      "expected that title would exist with '#{expected}'"
     end
   end
 end

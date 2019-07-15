@@ -10,7 +10,7 @@ describe 'Stores admin', type: :feature do
       visit spree.admin_stores_path
 
       store_table = page.find('table')
-      expect(store_table.all('tr').count).to eq 1
+      expect(store_table).to have_css('tr').once
       expect(store_table).to have_content(store.name)
       expect(store_table).to have_content(store.url)
     end
@@ -29,7 +29,7 @@ describe 'Stores admin', type: :feature do
 
       expect(page).to have_current_path spree.admin_stores_path
       store_table = page.find('table')
-      expect(store_table.all('tr').count).to eq 2
+      expect(store_table).to have_css('tr').twice
       expect(Spree::Store.count).to eq 2
     end
   end
@@ -57,11 +57,10 @@ describe 'Stores admin', type: :feature do
     it 'updates store in lifetime stats' do
       visit spree.admin_stores_path
 
-      handle_js_confirm do
-        page.all('.icon-delete')[1].click
-        wait_for_ajax
+      accept_confirm do
+        page.all('.icon-delete', minimum: 2)[1].click
       end
-      wait_for_ajax
+      expect(page).to have_content('has been successfully removed!')
 
       expect(Spree::Store.find_by_id(second_store.id)).to be_nil
     end

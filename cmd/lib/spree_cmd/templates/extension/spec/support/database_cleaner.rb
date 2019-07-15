@@ -19,7 +19,7 @@ RSpec.configure do |config|
   end
 
   # After each spec clean the database.
-  config.after do
+  config.append_after do
     DatabaseCleaner.clean
   end
 end
