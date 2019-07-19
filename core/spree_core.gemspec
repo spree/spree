@@ -43,7 +43,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'stringex'
   s.add_dependency 'twitter_cldr', '~> 4.3'
   s.add_dependency 'sprockets-rails'
-  s.add_dependency 'mini_magick', '~> 4.8.0'
+  s.add_dependency 'mini_magick', '~> 4.9.4'
 
   s.add_development_dependency 'email_spec', '~> 1.6'
 end
