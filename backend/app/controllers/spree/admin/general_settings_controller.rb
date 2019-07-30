@@ -49,7 +49,7 @@ module Spree
           uniq.
           compact.
           join(',')
-      end      
+      end
     end
   end
 end

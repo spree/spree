@@ -126,7 +126,6 @@ module Spree
              :images, to: :find_or_build_master
 
     alias master_images images
-    alias_method :amount=, :price=
 
     # Cant use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
     def purchasable?
