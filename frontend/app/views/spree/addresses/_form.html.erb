@@ -2,12 +2,12 @@
 
 <% Spree::Address::ADDRESS_FIELDS.each do |field| %>
   <% if field == "country" %>
-    <p class="form-group" id="<%= "#{address_id}country" %>">
+    <div class="form-group" id="<%= "#{address_id}country" %>">
       <%= address_form.label :country_id, Spree.t(:country) %><span class="required">*</span><br />
       <span id="<%= "#{address_id}country-selection" %>">
         <%= address_form.collection_select :country_id, available_countries, :id, :name, {}, {:class => 'required form-control'} %>
       </span>
-    </p>
+    </div>
   <% elsif field == "state" %>
     <%= address_field(address_form, :state, address_id) { address_state(address_form, address.country, address_id) } if Spree::Config[:address_requires_state] %>
   <% else %>
