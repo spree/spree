@@ -6,8 +6,7 @@ Spree.ready(function ($) {
         if (countryId != null) {
           if (Spree.Checkout[countryId] == null) {
             $.ajax({
-              async: false,
-              method: 'GET',
+              async: false, method: 'GET',
               url: '/api/v2/storefront/countries/' + countryId + '?include=states',
               dataType: 'json'
             }).done(function (data) {
