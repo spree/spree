@@ -118,7 +118,7 @@ Spree.ready(function ($) {
       orderUseBilling.change(function () {
         updateShippingFormState (orderUseBilling)
       })
-      updateShippingFormState (orderUseBilling)
+      updateShippingFormState(orderUseBilling)
     }
     function updateShippingFormState (orderUseBilling) {
       if (orderUseBilling.is(':checked')) {

@@ -37,7 +37,7 @@ module Spree
 
             scope.find_by(iso: params[:iso]&.upcase) ||
               scope.find_by(id: params[:iso]&.upcase) ||
-                scope.find_by(iso3: params[:iso]&.upcase)
+              scope.find_by(iso3: params[:iso]&.upcase)
           end
 
           def resource_serializer
