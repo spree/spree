@@ -47,7 +47,6 @@ Spree.ready(function ($) {
           zipcodeInput.prop('required', true)
           zipcodeInput.prop('disabled', false).show()
           zipcodePara.show()
-
         } else {
           zipcodeInput.val('')
           zipcodeSpanRequired.hide()
@@ -86,7 +85,6 @@ Spree.ready(function ($) {
           stateSpanRequired.show()
           if (statesRequired) {
             stateSelect.addClass('required')
-
           }
           stateSelect.removeClass('hidden')
           stateInput.removeClass('required')
@@ -118,12 +116,11 @@ Spree.ready(function ($) {
 
       var orderUseBilling = $('input#order_use_billing')
       orderUseBilling.change(function () {
-        updateShippingFormState(orderUseBilling)
+        updateShippingFormState (orderUseBilling)
       })
-      updateShippingFormState(orderUseBilling)
+      updateShippingFormState (orderUseBilling)
     }
-
-    function updateShippingFormState(orderUseBilling) {
+    function updateShippingFormState (orderUseBilling) {
       if (orderUseBilling.is(':checked')) {
         $('#shipping .inner').hide()
         $('#shipping .inner input, #shipping .inner select').prop('disabled', true)
@@ -133,11 +130,9 @@ Spree.ready(function ($) {
         Spree.updateState('s')
       }
     }
-
-    function getCountryId(region) {
+    function getCountryId (region) {
       return $('#' + region + 'country select').val()
     }
-
   }
   Spree.onAddress()
 })
