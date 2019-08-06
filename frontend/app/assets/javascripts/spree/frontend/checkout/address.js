@@ -1,27 +1,27 @@
-Spree.ready(function($) {
-  Spree.onAddress = function() {
+Spree.ready(function ($) {
+  Spree.onAddress = function () {
     if ($('#checkout_form_address').length) {
-      Spree.updateState = function(region) {
+      Spree.updateState = function (region) {
         var countryId = getCountryId(region)
         if (countryId != null) {
           if (Spree.Checkout[countryId] == null) {
             $.ajax({
               async: false,
               method: 'GET',
-              url: "/api/v2/storefront/countries/" + countryId + "?include=states",
+              url: '/api/v2/storefront/countries/' + countryId + '?include=states',
               dataType: 'json'
-            }).done(function(data) {
+            }).done(function (data) {
               var json = data.included
-              var x_states = []
+              var xStates = []
               for (var i = 0; i < json.length; i++) {
-                var obj = json[i];
-                x_states.push({
-                  "id": obj.id,
-                  "name": obj.attributes.name
+                var obj = json[i]
+                xStates.push({
+                  'id': obj.id,
+                  'name': obj.attributes.name
                 })
               }
               Spree.Checkout[countryId] = {
-                states: x_states,
+                states: xStates,
                 states_required: data.data.attributes.states_required,
                 zipcode_required: data.data.attributes.zipcode_required
               }
@@ -35,7 +35,7 @@ Spree.ready(function($) {
         }
       }
 
-      Spree.toggleZipcode = function(data, region) {
+      Spree.toggleZipcode = function (data, region) {
         var zipcodeRequired = data.zipcode_required
         var zipcodePara = $('#' + region + 'zipcode')
         var zipcodeInput = zipcodePara.find('input')
@@ -57,7 +57,7 @@ Spree.ready(function($) {
         }
       }
 
-      Spree.fillStates = function(data, region) {
+      Spree.fillStates = function (data, region) {
         var selected, statesWithBlank
         var statesRequired = data.states_required
         var states = data.states
@@ -73,7 +73,7 @@ Spree.ready(function($) {
             name: '',
             id: ''
           }].concat(states)
-          $.each(statesWithBlank, function(idx, state) {
+          $.each(statesWithBlank, function (idx, state) {
             var opt = $(document.createElement('option')).attr('value', state.id).html(state.name)
             if (selected === state.id) {
               opt.prop('selected', true)
@@ -108,16 +108,16 @@ Spree.ready(function($) {
           stateSelect.removeClass('required')
         }
       }
-      $('#bcountry select').change(function() {
+      $('#bcountry select').change(function () {
         Spree.updateState('b')
       })
-      $('#scountry select').change(function() {
+      $('#scountry select').change(function () {
         Spree.updateState('s')
       })
       Spree.updateState('b')
 
       var orderUseBilling = $('input#order_use_billing')
-      orderUseBilling.change(function() {
+      orderUseBilling.change(function () {
         updateShippingFormState(orderUseBilling)
       })
       updateShippingFormState(orderUseBilling)
