@@ -5,7 +5,7 @@
     <div class="form-group" id="<%= "#{address_id}country" %>">
       <%= address_form.label :country_id, Spree.t(:country) %><span class="required">*</span><br />
       <span id="<%= "#{address_id}country-selection" %>">
-        <%= address_form.collection_select :country_id, available_countries, :iso, :name, {}, {:class => 'required form-control'} %>
+        <%= address_form.collection_select :country_id, available_countries, :id, :name, {}, {:class => 'required form-control'} %>
       </span>
     </div>
   <% elsif field == "state" %>
