@@ -381,15 +381,15 @@ paths:
 
   '/cart/remove_coupon_code/{coupon_code}':
     delete:
-      description: Removes a coupon code from the Cart
+      description: Removes a coupon code from the Cart. If no `coupon_code` parameter is passed will remove all applied coupon codes.
       tags:
         - Cart
       operationId: 'Remove Coupon Code'
       parameters:
         - name: coupon_code
           in: path
-          required: true
-          description: Coupon code applied to Order
+          required: false
+          description: Selected Coupon code for removal
           schema:
             type: string
           example: 'DISCOUNT10'
