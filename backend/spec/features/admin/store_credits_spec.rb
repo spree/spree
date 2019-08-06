@@ -106,7 +106,7 @@ describe 'Store credits admin', type: :feature do
     end
 
     it 'updates store credit in lifetime stats' do
-      spree_accept_alert do
+      handle_js_confirm do
         click_icon :delete
         wait_for_ajax
       end

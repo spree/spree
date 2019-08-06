@@ -536,6 +536,76 @@ describe 'API V2 Storefront Cart Spec', type: :request do
         end
       end
 
+      context 'when multiple coupon codes are applied' do
+        let!(:promotion_with_item_adjustment) do
+          create(
+            :promotion_with_item_adjustment,
+            code: 'line_item_promo'
+          )
+        end
+
+        let!(:promotion_with_order_adjustment) do
+          create(
+            :promotion_with_order_adjustment,
+            code: 'order_promo'
+          )
+        end
+
+        before do
+          order.coupon_code = promotion_with_item_adjustment.code
+          Spree::PromotionHandler::Coupon.new(order).apply
+          order.coupon_code = promotion_with_order_adjustment.code
+          Spree::PromotionHandler::Coupon.new(order).apply
+          order.save!
+        end
+
+        it 'has applied promotions' do
+          expect(order.promotions).to include(promotion_with_item_adjustment, promotion_with_order_adjustment)
+        end
+
+        context 'removes coupon code correctly' do
+          let!(:coupon_code) { promotion_with_order_adjustment.code }
+          before { execute }
+
+          it_behaves_like 'returns 200 HTTP status'
+          it_behaves_like 'returns valid cart JSON'
+
+          it 'changes the adjustment total to 0.0' do
+            expect(json_response['data']).not_to have_attribute(:adjustment_total).with_value(0.0.to_s)
+          end
+
+          it 'includes the second promotion in the response' do
+            expect(json_response['included']).to include(have_type('promotion'))
+          end
+        end
+
+        context 'tries to remove an empty string' do
+          let!(:coupon_code) { '' }
+          before { execute }
+  
+          it 'changes the adjustment total to 0.0' do
+            expect(json_response['data']).to have_attribute(:adjustment_total).with_value(0.0.to_s)
+          end
+
+          it 'doesnt includes the promotion in the response' do
+            expect(json_response['included']).not_to include(have_type('promotion'))
+          end
+        end
+  
+        context 'tries to remove nil' do
+          let(:coupon_code) { nil }
+          before { execute }
+  
+          it 'changes the adjustment total to 0.0' do
+            expect(json_response['data']).to have_attribute(:adjustment_total).with_value(0.0.to_s)
+          end
+
+          it 'doesnt includes the promotion in the response' do
+            expect(json_response['included']).not_to include(have_type('promotion'))
+          end
+        end
+      end
+
       context 'without coupon code applied' do
         context 'tries to remove not-applied promotion' do
           before { execute }

@@ -22,7 +22,7 @@ describe 'Stock Locations', type: :feature do
     visit current_path
 
     expect(find('#listing_stock_locations')).to have_content(stock_location.name)
-    spree_accept_alert do
+    handle_js_confirm do
       click_icon :delete
       # Wait for API request to complete.
       wait_for_ajax
