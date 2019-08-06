@@ -15,8 +15,9 @@ Spree.ready(function ($) {
                 var x_states = []
                 for(var i = 0; i < json.length; i++) {
                     var obj = json[i];
-                    x_states.push(obj.attributes)
+                    x_states.push({ "id" : obj.id, "name" : obj.attributes.name})
                 }
+                console.log(x_states);
                 Spree.Checkout[countryId] = {
                   states: x_states,
                   states_required: data.data.attributes.states_required,

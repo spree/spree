@@ -4,7 +4,7 @@ module Spree
       class StateSerializer < BaseSerializer
         set_type :state
 
-        attributes :id, :abbr, :name
+        attributes :abbr, :name
       end
     end
   end
