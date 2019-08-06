@@ -11,14 +11,9 @@ Spree.ready(function ($) {
               url: '/api/v2/storefront/countries/' + countryId + '?include=states',
               dataType: 'json'
             }).done(function (data) {
-              var json = data.included
-              var xStates = []
+              var json = data.included; var xStates = []
               for (var i = 0; i < json.length; i++) {
-                var obj = json[i]
-                xStates.push({
-                  'id': obj.id,
-                  'name': obj.attributes.name
-                })
+                var obj = json[i]; xStates.push({ 'id': obj.id, 'name': obj.attributes.name })
               }
               Spree.Checkout[countryId] = {
                 states: xStates,
@@ -116,7 +111,7 @@ Spree.ready(function ($) {
 
       var orderUseBilling = $('input#order_use_billing')
       orderUseBilling.change(function () {
-        updateShippingFormState (orderUseBilling)
+        updateShippingFormState(orderUseBilling)
       })
       updateShippingFormState(orderUseBilling)
     }
