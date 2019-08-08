@@ -36,11 +36,6 @@
     <%= form.text_field :city, class: 'form-control', required: true %>
   </div>
 
-
-
-
-
-<div class="essentials">
   <div class="form-group" id=<%="#{address_id}country" %>>
     <%= form.label :country_id do %>
       <%= Spree.t(:country) %><abbr class="required" title="required">*</abbr>
@@ -82,7 +77,6 @@
     <% end %>
     <%= form.text_field :zipcode, class: 'form-control', required: address.require_zipcode? %>
   </div>
-</div>
 
 
   <div class="form-group" id=<%="#{address_id}phone" %>>

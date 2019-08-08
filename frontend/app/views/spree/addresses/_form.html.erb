@@ -9,7 +9,7 @@
       </span>
     </div>
   <% elsif field == "state" %>
-    <%= address_field(address_form, :state, address_id) { address_state(address_form, address.country, address_id) } if Spree::Config[:address_requires_state] %>
+    <%= address_field(address_form, :state, address_id) { address_state(address_form, address.country, address_id)} if Spree::Config[:address_requires_state] %>
   <% else %>
     <% next if field == "company" && !Spree::Config[:company] %>
     <% next if field == "alternative_#{address_id}_phone" && !Spree::Config["alternative_#{address_id}_phone"] %>

@@ -31,20 +31,19 @@ Spree.ready(function ($) {
         var zipcodeRequired = data.zipcode_required
         var zipcodePara = $('#' + region + 'zipcode')
         var zipcodeInput = zipcodePara.find('input')
-        var zipcodeSpanRequired = zipcodePara.find('[id$="zipcode-required"]')
+        var zipcodeSpanRequired = zipcodePara.find('span')
 
         if (zipcodeRequired) {
-          zipcodeInput.removeClass('hidden')
-          zipcodeInput.addClass('required')
           zipcodeInput.prop('required', true)
-          zipcodeInput.prop('disabled', false).show()
-          zipcodePara.show()
+          zipcodeSpanRequired.show()
+          // zipcodeInput.prop('disabled', false)
+          // zipcodePara.show()
         } else {
           zipcodeInput.val('')
+          zipcodeInput.prop('required', false)
           zipcodeSpanRequired.hide()
-          zipcodeInput.removeClass('required')
-          zipcodeInput.prop('required', false).hide()
-          zipcodePara.hide()
+          // zipcodeInput.prop('disabled', true)
+          // zipcodePara.hide()
         }
       }
 
@@ -55,7 +54,7 @@ Spree.ready(function ($) {
         var statePara = $('#' + region + 'state')
         var stateSelect = statePara.find('select')
         var stateInput = statePara.find('input')
-        var stateSpanRequired = statePara.find('[id$="state-required"]')
+        var stateSpanRequired = statePara.find('span')
 
         if (states.length > 0) {
           selected = parseInt(stateSelect.val())
@@ -71,22 +70,26 @@ Spree.ready(function ($) {
             }
             stateSelect.append(opt)
           })
+          stateSelect.prop('required', false)
           stateSelect.prop('disabled', false).show()
           stateInput.hide().prop('disabled', true)
           statePara.show()
-          stateSpanRequired.show()
+          stateSpanRequired.hide()
+          stateSelect.removeClass('required')
+
           if (statesRequired) {
             stateSelect.addClass('required')
+            stateSpanRequired.show()
+            stateSelect.prop('required', true)
           }
           stateSelect.removeClass('hidden')
           stateInput.removeClass('required')
-          stateSelect.prop('required', true)
         } else {
           stateSelect.hide().prop('disabled', true)
           stateInput.show()
           if (statesRequired) {
             stateSpanRequired.show()
-            stateInput.addClass('required')
+            stateInput.addClass('required form-control')
           } else {
             stateInput.val('')
             stateSpanRequired.hide()
