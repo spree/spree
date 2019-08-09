@@ -31,7 +31,7 @@ Spree.ready(function ($) {
         var zipcodeRequired = data.zipcode_required
         var zipcodePara = $('#' + region + 'zipcode')
         var zipcodeInput = zipcodePara.find('input')
-        var zipcodeSpanRequired = zipcodePara.find('span')
+        var zipcodeSpanRequired = zipcodePara.find('abbr')
 
         if (zipcodeRequired) {
           zipcodeInput.prop('required', true)
@@ -54,7 +54,7 @@ Spree.ready(function ($) {
         var statePara = $('#' + region + 'state')
         var stateSelect = statePara.find('select')
         var stateInput = statePara.find('input')
-        var stateSpanRequired = statePara.find('span')
+        var stateSpanRequired = statePara.find('abbr')
 
         if (states.length > 0) {
           selected = parseInt(stateSelect.val())
