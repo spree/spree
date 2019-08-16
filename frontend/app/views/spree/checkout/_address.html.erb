@@ -12,16 +12,16 @@
         </div>
         <div class="card-body">
           <% if address_type == 'shipping' %>
-            <p class="mb-0 form-check" data-hook="use_billing">
+            <div class="mb-0 form-check" data-hook="use_billing">
               <%= label_tag :order_use_billing, id: 'use_billing' do %>
                 <%= check_box_tag 'order[use_billing]', '1', @order.shipping_eq_billing_address?, { class: 'form-check-input'} %>
                 <%= Spree.t(:use_billing_address) %>
               <% end %>
-            </p>
+            </div>
           <% end %>
           <% if @addresses.present? %>
           <div class="select_address">
-            <p class="form-group">
+            <div class="form-group">
               <% @addresses.each_with_index do |address, idx| %>
               <span class="d-block mb-2" id="<%= [address_type, dom_id(address)].join('_') %>">
                 <label class="form-check-label">
@@ -35,7 +35,7 @@
                   <%= form.radio_button "#{address_name}_id", 0, class: 'form-check-input' %> <%= Spree.t('address_book.other_address') %>
                 </label>
               </div>
-            </p>
+            </div>
           </div>
           <% end %>
           <%= form.fields_for address_name do |address_form| %>

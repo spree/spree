@@ -2,7 +2,7 @@
 module Spree
   module AddressesHelper
     def address_field(form, method, address_id = 'b', &handler)
-      content_tag :p, id: [address_id, method].join, class: 'form-group' do
+      content_tag :div, id: [address_id, method].join, class: 'form-group' do
         if handler
           yield
         else
@@ -21,15 +21,15 @@ module Spree
         form.collection_select(:state_id, country.states.order(:name),
                               :id, :name,
                               { include_blank: true },
-                               class: have_states ? 'required form-control' : 'hidden',
+                               class: have_states ? 'form-control' : 'hidden',
                                disabled: !have_states) +
           form.text_field(:state_name,
-                          class: !have_states ? 'required' : 'hidden',
+                          class: !have_states ? 'form-control' : 'hidden',
                           disabled: have_states)
       ].join.tr('"', "'").delete("\n")
 
       form.label(:state, Spree.t(:state)) + '<span class="req">*</span><br />'.html_safe +
-        content_tag(:noscript, form.text_field(:state_name, class: 'required')) +
+        content_tag(:noscript, form.text_field(:state_name, class: 'required form-control')) +
         javascript_tag("document.write(\"#{state_elements.html_safe}\");")
     end
   end
