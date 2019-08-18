@@ -73,18 +73,12 @@ module Spree
       end
 
       initializer 'spree.promo.register.promotion.calculators' do |app|
-        app.config.spree.calculators.promotion_actions_create_adjustments = [
-          Spree::Calculator::FlatPercentItemTotal,
+        app.config.spree.calculators.promotion_actions_create_item_adjustments = [
+          Spree::Calculator::PercentOnLineItem,
           Spree::Calculator::FlatRate,
           Spree::Calculator::FlexiRate,
           Spree::Calculator::TieredPercent,
           Spree::Calculator::TieredFlatRate
-        ]
-
-        app.config.spree.calculators.promotion_actions_create_item_adjustments = [
-          Spree::Calculator::PercentOnLineItem,
-          Spree::Calculator::FlatRate,
-          Spree::Calculator::FlexiRate
         ]
       end
 
@@ -108,7 +102,6 @@ module Spree
 
       initializer 'spree.promo.register.promotions.actions' do |app|
         app.config.spree.promotions.actions = [
-          Promotion::Actions::CreateAdjustment,
           Promotion::Actions::CreateItemAdjustments,
           Promotion::Actions::CreateLineItems,
           Promotion::Actions::FreeShipping

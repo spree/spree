@@ -789,7 +789,7 @@ en:
     first_name: First Name
     first_name_begins_with: First Name Begins With
     flat_percent: Flat Percent
-    flat_rate_per_order: Flat Rate
+    flat_rate_per_order: Fixed Amount
     flexible_rate: Flexible Rate
     forgot_password: Forgot Password?
     free_shipping: Free Shipping
@@ -1126,13 +1126,13 @@ en:
         name: Create whole-order adjustment
       create_item_adjustments:
         description: Creates a promotion credit adjustment on a line item
-        name: Create per-line-item adjustment
+        name: Discount Line Item(s)
       create_line_items:
         description: Populates the cart with the specified quantity of variant
-        name: Create line items
+        name: Add Line Item(s)
       free_shipping:
         description: Makes all shipments for the order free
-        name: Free shipping
+        name: Free Shipping
     promotion_actions: Actions
     promotion_category: Promotion Category
     promotion_form:
