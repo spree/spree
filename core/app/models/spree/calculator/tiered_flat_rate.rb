@@ -18,7 +18,7 @@ module Spree
       Spree.t(:tiered_flat_rate)
     end
 
-    def compute(object, _line_item_value, _line_items_total_value)
+    def compute(object, _line_item_value = nil , _line_items_total_value = nil)
       base, amount = preferred_tiers.sort.reverse.detect { |b, _| object.amount >= b }
       amount || preferred_base_amount
     end

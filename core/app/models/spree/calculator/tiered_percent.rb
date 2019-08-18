@@ -22,7 +22,7 @@ module Spree
       Spree.t(:tiered_percent)
     end
 
-    def compute(object, _line_item_value, _line_items_total_value)
+    def compute(object, _line_item_value = nil , _line_items_total_value = nil)
       base, percent = preferred_tiers.sort.reverse.detect { |b, _| object.amount >= b }
       (object.amount * (percent || preferred_base_percent) / 100).round(2)
     end
