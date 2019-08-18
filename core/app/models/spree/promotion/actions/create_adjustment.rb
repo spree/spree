@@ -19,9 +19,8 @@ module Spree
         def compute_amount(line_item)
           return 0 unless promotion.line_item_actionable?(line_item.order, line_item)
 
+          amounts = [line_item.amount, compute(line_item)]
           order   = line_item.order
-          # Brakes down discount amount and divide it amongst line items proportionately.
-          amounts = [line_item.amount, compute(line_item, line_item.amount, order.item_total)]
 
           # Prevent negative order totals
           amounts << order.amount - order.adjustments.sum(:amount).abs if order.adjustments.any?
