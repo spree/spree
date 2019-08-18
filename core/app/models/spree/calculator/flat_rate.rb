@@ -9,9 +9,9 @@ module Spree
       Spree.t(:flat_rate_per_order)
     end
 
-    def compute(object = nil)
+    def compute(object = nil, line_item_value, line_items_total_value)
       if object && preferred_currency.casecmp(object.currency.upcase).zero?
-        preferred_amount
+        preferred_amount * (line_item_value / line_items_total_value)
       else
         0
       end

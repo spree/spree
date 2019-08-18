@@ -8,17 +8,26 @@ module Spree
         before_validation -> { self.calculator ||= Calculator::FlatPercentItemTotal.new }
 
         def perform(options = {})
-          order = options[:order]
+          order     = options[:order]
+          promotion = options[:promotion]
 
-          create_unique_adjustment(order, order)
+          create_unique_adjustments(order, order.line_items) do |line_item|
+            promotion.line_item_actionable?(order, line_item)
+          end
+
         end
 
-        def compute_amount(order)
-          [order_total(order), compute(order)].min * -1
-        end
+        def compute_amount(line_item)
+          return 0 unless promotion.line_item_actionable?(line_item.order, line_item)
 
-        def order_total(order)
-          order.item_total + order.ship_total - order.shipping_discount
+          order   = line_item.order
+          # Brakes down discount amount and divide it amongst line items proportionately.
+          amounts = [ line_item.amount, compute(line_item, line_item.amount, order.item_total ) ]
+
+          # Prevent negative order totals
+          amounts << order.amount - order.adjustments.sum(:amount).abs if order.adjustments.any?
+
+          amounts.min * -1
         end
       end
     end
