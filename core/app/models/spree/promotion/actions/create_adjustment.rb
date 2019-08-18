@@ -14,7 +14,6 @@ module Spree
           create_unique_adjustments(order, order.line_items) do |line_item|
             promotion.line_item_actionable?(order, line_item)
           end
-
         end
 
         def compute_amount(line_item)
@@ -22,7 +21,7 @@ module Spree
 
           order   = line_item.order
           # Brakes down discount amount and divide it amongst line items proportionately.
-          amounts = [ line_item.amount, compute(line_item, line_item.amount, order.item_total ) ]
+          amounts = [line_item.amount, compute(line_item, line_item.amount, order.item_total)]
 
           # Prevent negative order totals
           amounts << order.amount - order.adjustments.sum(:amount).abs if order.adjustments.any?
