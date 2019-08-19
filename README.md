@@ -49,6 +49,17 @@ Getting Started
 
 Add Spree gems to your `Gemfile`:
 
+### Rails 6.0
+
+```ruby
+gem 'acts-as-taggable-on', '~> 6.0', github: 'spark-solutions/acts-as-taggable-on', branch: 'fix/rails-6-and-failing-specs'
+gem 'awesome_nested_set', '~> 3.1.4', github: 'collectiveidea/awesome_nested_set', branch: 'master'
+gem 'state_machines-activemodel', github: 'state-machines/state_machines-activemodel', branch: 'master'
+gem 'spree', '~> 4.0.0.beta'
+gem 'spree_auth_devise', '~> 4.0.0.beta'
+gem 'spree_gateway', '~> 3.4'
+```
+
 ### Rails 5.2
 
 ```ruby
