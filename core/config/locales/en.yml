@@ -696,6 +696,7 @@ en:
     date_range: Date Range
     default: Default
     default_country_cannot_be_deleted: Default country cannot be deleted
+    default_currency: Default currency
     default_refund_amount: Default Refund Amount
     default_tax: Default Tax
     default_tax_zone: Default Tax Zone
