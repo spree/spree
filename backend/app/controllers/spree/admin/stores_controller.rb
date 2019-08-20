@@ -2,6 +2,7 @@ module Spree
   module Admin
     class StoresController < Spree::Admin::BaseController
       before_action :load_store, only: [:new, :edit, :update]
+      before_action :set_default_currency, only: :new
 
       def index
         @stores = Spree::Store.all
@@ -73,6 +74,10 @@ module Spree
 
       def load_store
         @store = Spree::Store.find_by(id: params[:id]) || Spree::Store.new
+      end
+
+      def set_default_currency
+        @store.default_currency = Spree::Config[:currency]
       end
     end
   end
