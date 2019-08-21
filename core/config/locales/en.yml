@@ -790,7 +790,8 @@ en:
     first_name: First Name
     first_name_begins_with: First Name Begins With
     flat_percent: Flat Percent
-    flat_rate_per_order: Flat Rate
+    flat_rate_per_order: Fixed Amount
+    flat_rate_item_total: Fixed Amount (collectively)
     flexible_rate: Flexible Rate
     forgot_password: Forgot Password?
     free_shipping: Free Shipping
@@ -1126,8 +1127,8 @@ en:
         description: Creates a credit adjustment on the order total, (no tax is adjusted)
         name: Discount Order Total (no tax adjustments)
       create_item_adjustments:
-        description: Discounts each apliccable line item
-        name: Discount Line Item(s)
+        description: Discounts applicable line items
+        name: Discount Line Items
       create_line_items:
         description: Populates the cart with the specified quantity of variant
         name: Add Line Item(s)
