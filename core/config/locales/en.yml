@@ -1123,14 +1123,14 @@ en:
     promotion_action: Promotion Action
     promotion_action_types:
       create_adjustment:
-        description: Creates a promotion credit adjustment on the order
-        name: Create whole-order adjustment
+        description: Creates a credit adjustment on the order total, (no tax is adjusted)
+        name: Discount Order Total (no tax adjustments)
       create_item_adjustments:
-        description: Creates a promotion credit adjustment on a line item
-        name: Create per-line-item adjustment
+        description: Discounts each apliccable line item
+        name: Discount Line Item(s)
       create_line_items:
         description: Populates the cart with the specified quantity of variant
-        name: Create line items
+        name: Add Line Item(s)
       free_shipping:
         description: Makes all shipments for the order free
         name: Free shipping
