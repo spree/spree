@@ -9,7 +9,6 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw]
 
 # temp Rails 6 gems
 gem 'acts-as-taggable-on', '~> 6.0', github: 'spark-solutions/acts-as-taggable-on', branch: 'fix/rails-6-and-failing-specs'
-gem 'state_machines-activemodel', github: 'state-machines/state_machines-activemodel', branch: 'master'
 
 platforms :jruby do
   gem 'jruby-openssl'
