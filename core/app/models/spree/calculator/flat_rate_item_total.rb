@@ -12,8 +12,7 @@ module Spree
     def compute(object = nil)
 
       order = object.order
-
-      # 1
+      
       # Is it possible to get applicable line_items total amount, rather than order.amount
 
       if object && preferred_currency.casecmp(object.currency.upcase).zero?
