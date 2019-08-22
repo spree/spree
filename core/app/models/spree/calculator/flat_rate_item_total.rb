@@ -12,7 +12,7 @@ module Spree
     def compute(object = nil)
       order = object.order
 
-      # Is it possible to get applicable line_items total amount, rather than order.amount
+      # Is it possible to get the promo applicable line_items total in here?, rather than order.amount
 
       if object && preferred_currency.casecmp(object.currency.upcase).zero?
         (preferred_amount / order.amount) * object.amount
