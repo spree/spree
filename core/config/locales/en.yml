@@ -790,8 +790,7 @@ en:
     first_name: First Name
     first_name_begins_with: First Name Begins With
     flat_percent: Flat Percent
-    flat_rate_per_order: Fixed Amount
-    flat_rate_item_total: Fixed Amount (collectively)
+    flat_rate: Flat Rate
     flexible_rate: Flexible Rate
     forgot_password: Forgot Password?
     free_shipping: Free Shipping

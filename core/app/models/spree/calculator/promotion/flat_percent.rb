@@ -1,10 +1,12 @@
+require_dependency 'spree/calculator'
+
 module Spree
-  class Calculator
-    class PercentOnLineItem < Calculator
+  module Calculator::Promotion
+    class FlatPercent < Calculator
       preference :percent, :decimal, default: 0
 
       def self.description
-        Spree.t(:percent_per_item)
+        Spree.t(:flat_percent)
       end
 
       def compute(object, _line_items_total = nil)

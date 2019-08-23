@@ -2,7 +2,7 @@ require_dependency 'spree/shipping_calculator'
 
 module Spree
   module Calculator::Shipping
-    class FlatPercentItemTotal < ShippingCalculator
+    class FlatPercent < ShippingCalculator
       preference :flat_percent, :decimal, default: 0
 
       def self.description

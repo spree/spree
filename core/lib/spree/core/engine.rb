@@ -34,7 +34,7 @@ module Spree
         ]
 
         app.config.spree.calculators.tax_rates = [
-          Spree::Calculator::DefaultTax
+          Spree::Calculator::Tax::DefaultTax
         ]
       end
 
@@ -74,18 +74,17 @@ module Spree
 
       initializer 'spree.promo.register.promotion.calculators' do |app|
         app.config.spree.calculators.promotion_actions_create_adjustments = [
-          Spree::Calculator::FlatPercentItemTotal,
-          Spree::Calculator::FlatRate,
-          Spree::Calculator::FlexiRate,
-          Spree::Calculator::TieredPercent,
-          Spree::Calculator::TieredFlatRate
+          Spree::Calculator::Promotion::FlatPercent,
+          Spree::Calculator::Promotion::FlatRate,
+          Spree::Calculator::Promotion::FlexiRate,
+          Spree::Calculator::Promotion::TieredPercent,
+          Spree::Calculator::Promotion::TieredFlatRate
         ]
 
         app.config.spree.calculators.promotion_actions_create_item_adjustments = [
-          Spree::Calculator::PercentOnLineItem,
-          Spree::Calculator::FlatRateOnLineItem,
-          Spree::Calculator::FlatRate,
-          Spree::Calculator::FlexiRate
+          Spree::Calculator::Promotion::FlatPercent,
+          Spree::Calculator::Promotion::FlatRate,
+          Spree::Calculator::Promotion::FlexiRate
         ]
       end
 
