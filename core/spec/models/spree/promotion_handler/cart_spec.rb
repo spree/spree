@@ -9,7 +9,7 @@ module Spree
       let(:order) { line_item.order }
 
       let(:promotion) { Promotion.create(name: 'At line items') }
-      let(:calculator) { Calculator::FlatPercentItemTotal.new(preferred_flat_percent: 10) }
+      let(:calculator) { Calculator::PercentOnLineItem.new(preferred_percent: 10) }
 
       context 'activates in LineItem level' do
         let!(:action) { Promotion::Actions::CreateItemAdjustments.create(promotion: promotion, calculator: calculator) }
