@@ -12,6 +12,7 @@ module Spree
 
       def compute(object = nil, line_items_total = 0)
         if object && preferred_currency.casecmp(object.currency.upcase).zero?
+          
           if line_items_total == 0
             preferred_amount
           else

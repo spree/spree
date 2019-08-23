@@ -32,7 +32,7 @@ For information about this calculator, please read the [Taxation](/developer/cor
 This calculator has one preference: `flat_percent` and can be set like this:
 
 ```ruby
-calculator.preferred_flat_percent = 10
+calculator.preferred_percent = 10
 ```
 
 This calculator takes an order and calculates an amount using this calculation:

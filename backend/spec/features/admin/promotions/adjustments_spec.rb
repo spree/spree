@@ -24,7 +24,7 @@ describe 'Promotion Adjustments', type: :feature, js: true do
       wait_for { !page.has_button?('Update') }
       within('#rule_fields') { click_button 'Update' }
 
-      select2 'Create whole-order adjustment', from: 'Add action of type'
+      select2 'Discount Order Total (no tax adjustments)', from: 'Add action of type'
       within('#action_fields') { click_button 'Add' }
       select2 'Flat Rate', from: 'Calculator'
       wait_for { !page.has_button?('Update') }
@@ -56,7 +56,7 @@ describe 'Promotion Adjustments', type: :feature, js: true do
       promotion = Spree::Promotion.find_by(name: 'Promotion')
       expect(page).to have_content(promotion.name)
 
-      select2 'Create whole-order adjustment', from: 'Add action of type'
+      select2 'Discount Order Total (no tax adjustments)', from: 'Add action of type'
       within('#action_fields') { click_button 'Add' }
       select2 'Flat Rate', from: 'Calculator'
       wait_for { !page.has_button?('Update') }
@@ -90,7 +90,7 @@ describe 'Promotion Adjustments', type: :feature, js: true do
       wait_for { !page.has_button?('Update') }
       within('#rule_fields') { click_button 'Update' }
 
-      select2 'Create whole-order adjustment', from: 'Add action of type'
+      select2 'Discount Order Total (no tax adjustments)', from: 'Add action of type'
       within('#action_fields') { click_button 'Add' }
       select2 'Flat Percent', from: 'Calculator'
       wait_for { !page.has_button?('Update') }
@@ -109,8 +109,8 @@ describe 'Promotion Adjustments', type: :feature, js: true do
       first_action = promotion.actions.first
       expect(first_action.class).to eq(Spree::Promotion::Actions::CreateAdjustment)
       first_action_calculator = first_action.calculator
-      expect(first_action_calculator.class).to eq(Spree::Spree::Calculator::Promotion::FlatPercent)
-      expect(first_action_calculator.preferred_flat_percent).to eq(10)
+      expect(first_action_calculator.class).to eq(Spree::Calculator::Promotion::FlatPercent)
+      expect(first_action_calculator.preferred_percent).to eq(10)
     end
 
     it 'allows an admin to create an product promo with percent per item discount' do
@@ -128,7 +128,7 @@ describe 'Promotion Adjustments', type: :feature, js: true do
       wait_for { !page.has_button?('Update') }
       within('#rule_fields') { click_button 'Update' }
 
-      select2 'Create per-line-item adjustment', from: 'Add action of type'
+      select2 'Discount Line Items', from: 'Add action of type'
       within('#action_fields') { click_button 'Add' }
       select2 'Percent Per Item', from: 'Calculator'
       wait_for { !page.has_button?('Update') }
@@ -146,7 +146,7 @@ describe 'Promotion Adjustments', type: :feature, js: true do
       first_action = promotion.actions.first
       expect(first_action.class).to eq(Spree::Promotion::Actions::CreateItemAdjustments)
       first_action_calculator = first_action.calculator
-      expect(first_action_calculator.class).to eq(Spree::Spree::Calculator::Promotion::FlatPercent)
+      expect(first_action_calculator.class).to eq(Spree::Calculator::Promotion::FlatPercent)
       expect(first_action_calculator.preferred_percent).to eq(10)
     end
 
@@ -185,7 +185,7 @@ describe 'Promotion Adjustments', type: :feature, js: true do
 
       expect(page).to have_content(promotion.name)
 
-      select2 'Create whole-order adjustment', from: 'Add action of type'
+      select2 'Discount Order Total (no tax adjustments)', from: 'Add action of type'
       within('#action_fields') { click_button 'Add' }
       select2 'Flat Rate', from: 'Calculator'
       wait_for { !page.has_button?('Update') }
@@ -225,7 +225,7 @@ describe 'Promotion Adjustments', type: :feature, js: true do
       wait_for { !page.has_button?('Update') }
       within('#actions_container') { click_button 'Update' }
 
-      select2 'Create whole-order adjustment', from: 'Add action of type'
+      select2 'Discount Order Total (no tax adjustments)', from: 'Add action of type'
       within('#new_promotion_action_form') { click_button 'Add' }
       select2 'Flat Rate', from: 'Calculator'
       wait_for { !page.has_button?('Update') }
@@ -255,7 +255,7 @@ describe 'Promotion Adjustments', type: :feature, js: true do
       wait_for { !page.has_button?('Update') }
       within('#rule_fields') { click_button 'Update' }
 
-      select2 'Create whole-order adjustment', from: 'Add action of type'
+      select2 'Discount Order Total (no tax adjustments)', from: 'Add action of type'
       within('#action_fields') { click_button 'Add' }
       select2 'Flat Rate', from: 'Calculator'
       wait_for { !page.has_button?('Update') }

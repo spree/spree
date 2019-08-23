@@ -72,7 +72,7 @@ describe 'Cart', type: :feature, inaccessible: true, js: true do
 
   describe 'add promotion coupon on cart page' do
     let!(:promotion) { Spree::Promotion.create(name: 'Huhuhu', code: 'huhu') }
-    let!(:calculator) { Spree::Spree::Calculator::Promotion::FlatPercent.create(preferred_flat_percent: '10') }
+    let!(:calculator) { Spree::Calculator::Promotion::FlatPercent.create(preferred_percent: '10') }
     let!(:action) { Spree::Promotion::Actions::CreateItemAdjustments.create(calculator: calculator) }
 
     before do

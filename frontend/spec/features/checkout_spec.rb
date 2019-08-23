@@ -350,7 +350,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
   # Regression test for #7734
   context 'if multiple coupon promotions applied' do
     let(:promotion) { Spree::Promotion.create(name: 'Order Promotion', code: 'o_promotion') }
-    let(:calculator) { Spree::Spree::Calculator::Promotion::FlatPercent.create(preferred_flat_percent: '90') }
+    let(:calculator) { Spree::Calculator::Promotion::FlatPercent.create(preferred_percent: '90') }
     let(:action) { Spree::Promotion::Actions::CreateAdjustment.create(calculator: calculator) }
 
     let(:promotion_2) { Spree::Promotion.create(name: 'Line Item Promotion', code: 'li_promotion') }
@@ -379,7 +379,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
 
   context 'if coupon promotion, submits coupon along with payment', js: true do
     let!(:promotion) { Spree::Promotion.create(name: 'Huhuhu', code: 'huhu') }
-    let!(:calculator) { Spree::Spree::Calculator::Promotion::FlatPercent.create(preferred_flat_percent: '10') }
+    let!(:calculator) { Spree::Calculator::Promotion::FlatPercent.create(preferred_percent: '10') }
     let!(:action) { Spree::Promotion::Actions::CreateItemAdjustments.create(calculator: calculator) }
 
     before do

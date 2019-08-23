@@ -766,7 +766,7 @@ module Spree
           order_with_line_item_promotion.line_items << create(:line_item, price: 100)
           order_with_line_item_promotion.update_with_updater!
 
-          expect(order_with_line_item_promotion.reload.total.to_f).to eq 200.0
+          expect(order_with_line_item_promotion.reload.total.to_f).to eq 209.09
 
           api_put :remove_coupon_code, id: order_with_line_item_promotion.number,
                                        order_token: order_with_line_item_promotion.token,

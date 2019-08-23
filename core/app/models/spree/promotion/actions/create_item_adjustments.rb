@@ -18,9 +18,9 @@ module Spree
 
         def compute_amount(line_item)
           return 0 unless promotion.line_item_actionable?(line_item.order, line_item)
-          order   = line_item.order
+          order = line_item.order
 
-          matched_line_items = order.line_items.select do |line_item|
+          matched_line_items = order.line_items.select do |item|
             promotion.line_item_actionable?(order, line_item)
           end
 
