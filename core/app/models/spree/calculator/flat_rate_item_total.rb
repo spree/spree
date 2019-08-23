@@ -9,13 +9,11 @@ module Spree
       Spree.t(:flat_rate_item_total)
     end
 
-    def compute(object = nil)
+    def compute(object = nil, line_items_total = 0)
       order = object.order
 
-      # Is it possible to get the promo applicable line_items total in here?, rather than order.amount
-
       if object && preferred_currency.casecmp(object.currency.upcase).zero?
-        (preferred_amount / order.amount) * object.amount
+        (preferred_amount / line_items_total) * object.amount
       else
         0
       end

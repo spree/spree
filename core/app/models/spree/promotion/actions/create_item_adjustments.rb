@@ -18,9 +18,14 @@ module Spree
 
         def compute_amount(line_item)
           return 0 unless promotion.line_item_actionable?(line_item.order, line_item)
-
-          amounts = [line_item.amount, compute(line_item).ceil(4)]
           order   = line_item.order
+
+          matched_line_items = order.line_items.select do |line_item|
+            promotion.line_item_actionable?(order, line_item)
+          end
+
+          line_items_total = matched_line_items.sum(&:amount)
+          amounts = [line_item.amount, compute(line_item, line_items_total)]
 
           # Prevent negative order totals
           amounts << order.amount - order.adjustments.sum(:amount).abs if order.adjustments.any?
