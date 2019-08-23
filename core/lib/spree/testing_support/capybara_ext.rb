@@ -85,6 +85,16 @@ module CapybaraExt
     end
   end
 
+  def wait_for_condition(delay = Capybara.default_max_wait_time)
+    counter = 0
+    delay_threshold = delay * 10
+    until yield
+      counter += 1
+      sleep(0.1)
+      raise "Could not achieve condition within #{delay} seconds." if counter >= delay_threshold
+    end
+  end
+
   def disable_html5_validation
     page.execute_script('for(var f=document.forms,i=f.length;i--;)f[i].setAttribute("novalidate",i)')
   end
