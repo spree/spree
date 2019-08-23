@@ -62,7 +62,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
-    "babel-eslint": "^10.0.1",
+    "babel-eslint": "^10.0.2",
     "babel-plugin-module-resolver": "^3.1.2",
     "babel-preset-gatsby": "^0.1.6",
     "eslint": "^5.15.3",
