@@ -1,7 +1,7 @@
 require 'spec_helper'
 
-describe Spree::Calculator::FlatRate, type: :model do
-  let(:calculator) { Spree::Calculator::FlatRate.new }
+describe Spree::Calculator::Promotion::FlatRate, type: :model do
+  let(:calculator) { Spree::Calculator::Promotion::FlatRate.new }
 
   let(:order) do
     mock_model(

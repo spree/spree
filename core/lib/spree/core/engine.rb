@@ -26,7 +26,7 @@ module Spree
 
       initializer 'spree.register.calculators' do |app|
         app.config.spree.calculators.shipping_methods = [
-          Spree::Calculator::Shipping::FlatPercentItemTotal,
+          Spree::Calculator::Shipping::FlatPercent,
           Spree::Calculator::Shipping::FlatRate,
           Spree::Calculator::Shipping::FlexiRate,
           Spree::Calculator::Shipping::PerItem,

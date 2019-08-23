@@ -44,7 +44,7 @@ describe 'Promotion Adjustments', type: :feature, js: true do
       first_action = promotion.actions.first
       expect(first_action.class).to eq(Spree::Promotion::Actions::CreateAdjustment)
       first_action_calculator = first_action.calculator
-      expect(first_action_calculator.class).to eq(Spree::Calculator::FlatRate)
+      expect(first_action_calculator.class).to eq(Spree::Calculator::Promotion::FlatRate)
       expect(first_action_calculator.preferred_amount).to eq(5)
     end
 
@@ -71,7 +71,7 @@ describe 'Promotion Adjustments', type: :feature, js: true do
       first_action = promotion.actions.first
       expect(first_action.class).to eq(Spree::Promotion::Actions::CreateAdjustment)
       first_action_calculator = first_action.calculator
-      expect(first_action_calculator.class).to eq(Spree::Calculator::FlatRate)
+      expect(first_action_calculator.class).to eq(Spree::Calculator::Promotion::FlatRate)
       expect(first_action_calculator.preferred_amount).to eq(5)
     end
 
@@ -109,7 +109,7 @@ describe 'Promotion Adjustments', type: :feature, js: true do
       first_action = promotion.actions.first
       expect(first_action.class).to eq(Spree::Promotion::Actions::CreateAdjustment)
       first_action_calculator = first_action.calculator
-      expect(first_action_calculator.class).to eq(Spree::Calculator::FlatPercentItemTotal)
+      expect(first_action_calculator.class).to eq(Spree::Spree::Calculator::Promotion::FlatPercent)
       expect(first_action_calculator.preferred_flat_percent).to eq(10)
     end
 
@@ -146,7 +146,7 @@ describe 'Promotion Adjustments', type: :feature, js: true do
       first_action = promotion.actions.first
       expect(first_action.class).to eq(Spree::Promotion::Actions::CreateItemAdjustments)
       first_action_calculator = first_action.calculator
-      expect(first_action_calculator.class).to eq(Spree::Calculator::PercentOnLineItem)
+      expect(first_action_calculator.class).to eq(Spree::Spree::Calculator::Promotion::FlatPercent)
       expect(first_action_calculator.preferred_percent).to eq(10)
     end
 
@@ -201,7 +201,7 @@ describe 'Promotion Adjustments', type: :feature, js: true do
       first_action = promotion.actions.first
       expect(first_action.class).to eq(Spree::Promotion::Actions::CreateAdjustment)
       first_action_calculator = first_action.calculator
-      expect(first_action_calculator.class).to eq(Spree::Calculator::FlatRate)
+      expect(first_action_calculator.class).to eq(Spree::Calculator::Promotion::FlatRate)
       expect(first_action_calculator.preferred_amount).to eq(4)
     end
 
@@ -271,7 +271,7 @@ describe 'Promotion Adjustments', type: :feature, js: true do
 
       first_action = promotion.actions.first
       expect(first_action.class).to eq(Spree::Promotion::Actions::CreateAdjustment)
-      expect(first_action.calculator.class).to eq(Spree::Calculator::FlatRate)
+      expect(first_action.calculator.class).to eq(Spree::Calculator::Promotion::FlatRate)
       expect(first_action.calculator.preferred_amount).to eq(5)
     end
   end

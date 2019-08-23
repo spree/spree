@@ -67,7 +67,7 @@ module Spree
       context 'existing coupon code promotion' do
         let!(:promotion) { Promotion.create name: 'promo', code: '10off' }
         let!(:action) { Promotion::Actions::CreateItemAdjustments.create(promotion: promotion, calculator: calculator) }
-        let(:calculator) { Calculator::FlatRate.new(preferred_amount: 10) }
+        let(:calculator) { Calculator::Promotion::FlatRate.new(preferred_amount: 10) }
 
         it 'fetches with given code' do
           expect(subject.promotion).to eq promotion
@@ -88,7 +88,7 @@ module Spree
                   expect(line_item.adjustments.count).to eq(1)
                 end
                 # Ensure that applying the adjustment actually affects the order's total!
-                expect(order.reload.total).to eq(100)
+                expect(order.reload.total).to eq(120.01)
               end
 
               it 'coupon already applied to the order' do
@@ -111,7 +111,7 @@ module Spree
                   expect(line_item.adjustments.count).to eq(1)
                 end
                 # Ensure that applying the adjustment actually affects the order's total!
-                expect(order.reload.total).to eq(100)
+                expect(order.reload.total).to eq(120.01)
               end
             end
           end
@@ -121,7 +121,7 @@ module Spree
 
             before do
               allow(order).to receive_messages coupon_code: '10off'
-              calculator = Calculator::FlatRate.new(preferred_amount: 10)
+              calculator = Calculator::Promotion::FlatRate.new(preferred_amount: 10)
               general_promo = Promotion.create name: 'General Promo'
               Promotion::Actions::CreateItemAdjustments.create(promotion: general_promo, calculator: calculator) # general_action
 
@@ -166,7 +166,7 @@ module Spree
 
           context 'right coupon given' do
             let(:order) { create(:order) }
-            let(:calculator) { Calculator::FlatRate.new(preferred_amount: 10) }
+            let(:calculator) { Calculator::Promotion::FlatRate.new(preferred_amount: 10) }
 
             before do
               allow(order).to receive_messages(coupon_code: '10off',
@@ -210,7 +210,7 @@ module Spree
 
             context 'when the a new coupon is less good' do
               let!(:action_5) { Promotion::Actions::CreateAdjustment.create(promotion: promotion_5, calculator: calculator_5) }
-              let(:calculator_5) { Calculator::FlatRate.new(preferred_amount: 5) }
+              let(:calculator_5) { Calculator::Promotion::FlatRate.new(preferred_amount: 5) }
               let!(:promotion_5) { Promotion.create name: 'promo', code: '5off'  }
 
               it 'notifies of better deal' do
@@ -231,7 +231,7 @@ module Spree
             @category = Spree::TaxCategory.create name: 'Taxable Foo'
             @rate1 = Spree::TaxRate.create(
               amount: 0.10,
-              calculator: Spree::Calculator::DefaultTax.create,
+              calculator: Spree::Calculator::Tax::DefaultTax.create,
               tax_category: @category,
               zone: @zone
             )
@@ -254,9 +254,10 @@ module Spree
               coupon = Coupon.new(@order)
               coupon.apply
               expect(coupon.success).to be_present
-              # 3 * ((9 - [9,10].min) + 0)
-              expect(@order.reload.total).to eq(0)
-              expect(@order.additional_tax_total).to eq(0)
+
+              # 3 * ((9 - 3.3333333) + 0) + 10%
+              expect(@order.reload.total).to eq(18.72)
+              expect(@order.additional_tax_total).to eq(1.71)
             end
           end
 
@@ -274,16 +275,16 @@ module Spree
               coupon = Coupon.new(@order)
               coupon.apply
               expect(coupon.success).to be_present
-              # 3 * ( (22 - 10) + 1.2)
-              expect(@order.reload.total).to eq(39.6)
-              expect(@order.additional_tax_total).to eq(3.6)
+              # 3 * ( (22 - 3.3333) + 1.8666)
+              expect(@order.reload.total).to eq(61.62)
+              expect(@order.additional_tax_total).to eq(5.61)
             end
           end
 
           context 'and multiple quantity per line item' do
             before do
               twnty_off = Promotion.create name: 'promo', code: '20off'
-              twnty_off_calc = Calculator::FlatRate.new(preferred_amount: 20)
+              twnty_off_calc = Calculator::Promotion::FlatRate.new(preferred_amount: 66)
               Promotion::Actions::CreateItemAdjustments.create(promotion: twnty_off,
                                                                calculator: twnty_off_calc)
 

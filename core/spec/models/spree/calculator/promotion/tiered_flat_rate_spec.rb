@@ -1,7 +1,7 @@
 require 'spec_helper'
 
-describe Spree::Calculator::TieredFlatRate, type: :model do
-  let(:calculator) { Spree::Calculator::TieredFlatRate.new }
+describe Spree::Calculator::Promotion::TieredFlatRate, type: :model do
+  let(:calculator) { Spree::Calculator::Promotion::TieredFlatRate.new }
 
   describe '#valid?' do
     subject { calculator.valid? }

@@ -350,11 +350,11 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
   # Regression test for #7734
   context 'if multiple coupon promotions applied' do
     let(:promotion) { Spree::Promotion.create(name: 'Order Promotion', code: 'o_promotion') }
-    let(:calculator) { Spree::Calculator::FlatPercentItemTotal.create(preferred_flat_percent: '90') }
+    let(:calculator) { Spree::Spree::Calculator::Promotion::FlatPercent.create(preferred_flat_percent: '90') }
     let(:action) { Spree::Promotion::Actions::CreateAdjustment.create(calculator: calculator) }
 
     let(:promotion_2) { Spree::Promotion.create(name: 'Line Item Promotion', code: 'li_promotion') }
-    let(:calculator_2) { Spree::Calculator::FlatRate.create(preferred_amount: '1000') }
+    let(:calculator_2) { Spree::Calculator::Promotion::FlatRate.create(preferred_amount: '1000') }
     let(:action_2) { Spree::Promotion::Actions::CreateItemAdjustments.create(calculator: calculator_2) }
 
     before do
@@ -379,7 +379,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
 
   context 'if coupon promotion, submits coupon along with payment', js: true do
     let!(:promotion) { Spree::Promotion.create(name: 'Huhuhu', code: 'huhu') }
-    let!(:calculator) { Spree::Calculator::FlatPercentItemTotal.create(preferred_flat_percent: '10') }
+    let!(:calculator) { Spree::Spree::Calculator::Promotion::FlatPercent.create(preferred_flat_percent: '10') }
     let!(:action) { Spree::Promotion::Actions::CreateItemAdjustments.create(calculator: calculator) }
 
     before do
@@ -425,7 +425,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
     context 'the promotion makes order free (downgrade it total to 0.0)' do
       let(:promotion2) { Spree::Promotion.create(name: 'test-7450', code: 'test-7450') }
       let(:calculator2) do
-        Spree::Calculator::FlatRate.create(preferences: { currency: 'USD', amount: BigDecimal('99999') })
+        Spree::Calculator::Promotion::FlatRate.create(preferences: { currency: 'USD', amount: BigDecimal('99999') })
       end
       let(:action2) { Spree::Promotion::Actions::CreateItemAdjustments.create(calculator: calculator2) }
 

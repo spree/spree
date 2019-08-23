@@ -19,7 +19,7 @@ describe 'Coupon code promotions', type: :feature, js: true do
                                            starts_at: 1.day.ago,
                                            expires_at: 1.day.from_now)
 
-      calculator = Spree::Calculator::FlatRate.new
+      calculator = Spree::Calculator::Promotion::FlatRate.new
       calculator.preferred_amount = 10
 
       action = Spree::Promotion::Actions::CreateItemAdjustments.new

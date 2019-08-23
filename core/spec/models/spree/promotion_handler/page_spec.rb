@@ -8,7 +8,7 @@ module Spree
       let(:promotion) { Promotion.create(name: '10% off', path: '10off') }
 
       before do
-        calculator = Calculator::PercentOnLineItem.new(preferred_percent: 10)
+        calculator = Spree::Calculator::Promotion::FlatPercent.new(preferred_percent: 10)
         action = Promotion::Actions::CreateItemAdjustments.create(calculator: calculator)
         promotion.actions << action
       end

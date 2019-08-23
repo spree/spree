@@ -64,7 +64,7 @@ module Spree
 
     context 'running promotions' do
       let(:promotion) { create(:promotion) }
-      let(:calculator) { Spree::Calculator::FlatRate.new(preferred_amount: 10) }
+      let(:calculator) { Spree::Calculator::Promotion::FlatRate.new(preferred_amount: 10) }
 
       context 'one active order promotion' do
         let!(:action) { Spree::Promotion::Actions::CreateAdjustment.create(promotion: promotion, calculator: calculator) }
@@ -102,13 +102,13 @@ module Spree
           Spree::TaxRate.create(
             amount: 0.25,
             included_in_price: true,
-            calculator: Spree::Calculator::DefaultTax.create,
+            calculator: Spree::Calculator::Tax::DefaultTax.create,
             tax_category: category,
             zone: create(:zone_with_country, default_tax: true)
           )
         end
         let(:variant) { create(:variant, price: 1000) }
-        let(:calculator) { Spree::Calculator::PercentOnLineItem.new(preferred_percent: 50) }
+        let(:calculator) { Spree::Calculator::Promotion::FlatPercent.new(preferred_percent: 50) }
         let!(:action) { Spree::Promotion::Actions::CreateItemAdjustments.create(promotion: promotion, calculator: calculator) }
 
         it 'updates included_tax_total' do

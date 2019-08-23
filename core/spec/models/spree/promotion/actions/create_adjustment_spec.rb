@@ -74,7 +74,7 @@ describe Spree::Promotion::Actions::CreateAdjustment, type: :model do
   # From promotion spec:
   context '#perform' do
     before do
-      action.calculator = Spree::Calculator::FlatRate.new(preferred_amount: 10)
+      action.calculator = Spree::Calculator::Promotion::FlatRate.new(preferred_amount: 10)
       promotion.promotion_actions = [action]
       allow(action).to receive_messages(promotion: promotion)
     end

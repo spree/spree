@@ -23,7 +23,7 @@ module Spree
       private
 
       def flexi_rate_calculator
-        ::Spree::Calculator::FlexiRate.new(
+        ::Spree::Calculator::Promotion::FlexiRate.new(
           preferred_additional_item: preferred_additional_item,
           preferred_first_item: preferred_first_item,
           preferred_max_items: preferred_max_items,

@@ -35,7 +35,7 @@ describe 'Tiered Calculator Promotions' do
     expect(first_action.class).to eq Spree::Promotion::Actions::CreateAdjustment
 
     first_action_calculator = first_action.calculator
-    expect(first_action_calculator.class).to eq Spree::Calculator::TieredPercent
+    expect(first_action_calculator.class).to eq Spree::Calculator::Promotion::TieredPercent
     expect(first_action_calculator.preferred_base_percent).to eq 5
     expect(first_action_calculator.preferred_tiers).to eq Hash[100.0 => 10.0]
   end
@@ -46,7 +46,7 @@ describe 'Tiered Calculator Promotions' do
     before do
       action = promotion.actions.first
 
-      action.calculator = Spree::Calculator::TieredFlatRate.new
+      action.calculator = Spree::Calculator::Promotion::TieredFlatRate.new
       action.calculator.preferred_base_amount = 5
       action.calculator.preferred_tiers = Hash[100 => 10, 200 => 15, 300 => 20]
       action.calculator.save!

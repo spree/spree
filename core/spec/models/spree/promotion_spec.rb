@@ -143,9 +143,9 @@ describe Spree::Promotion, type: :model do
     end
 
     it 'deeply autosaves records and preferences' do
-      promotion.actions[0].calculator.preferred_flat_percent = 10
+      promotion.actions[0].calculator.preferred_percent = 10
       promotion.save!
-      expect(Spree::Calculator.first.preferred_flat_percent).to eq(10)
+      expect(Spree::Calculator.first.preferred_percent).to eq(10)
     end
   end
 
@@ -276,7 +276,7 @@ describe Spree::Promotion, type: :model do
     end
 
     let!(:action) do
-      calculator = Spree::Calculator::FlatRate.new
+      calculator = Spree::Calculator::Promotion::FlatRate.new
       action_params = { promotion: promotion, calculator: calculator }
       action = Spree::Promotion::Actions::CreateAdjustment.create(action_params)
       promotion.actions << action
@@ -311,12 +311,12 @@ describe Spree::Promotion, type: :model do
     let(:line_item) { create :line_item, order: order }
     let(:promotion) { Spree::Promotion.create name: 'promo', code: '10off' }
     let(:order_action) do
-      action = Spree::Promotion::Actions::CreateAdjustment.create(calculator: Spree::Calculator::FlatPercentItemTotal.new)
+      action = Spree::Promotion::Actions::CreateAdjustment.create(calculator: Spree::Calculator::Promotion::FlatPercent.new)
       promotion.actions << action
       action
     end
     let(:item_action) do
-      action = Spree::Promotion::Actions::CreateItemAdjustments.create(calculator: Spree::Calculator::FlatPercentItemTotal.new)
+      action = Spree::Promotion::Actions::CreateItemAdjustments.create(calculator: Spree::Calculator::Promotion::FlatPercent.new)
       promotion.actions << action
       action
     end
@@ -690,7 +690,7 @@ describe Spree::Promotion, type: :model do
 
       expect(other_line_item).not_to eq line_item
       expect(other_line_item.adjustments.size).to eq(1)
-      expect(order.adjustment_total).to eq(-10)
+      expect(order.adjustment_total).to eq(-5)
     end
   end
 

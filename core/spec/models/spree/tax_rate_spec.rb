@@ -5,7 +5,7 @@ describe Spree::TaxRate, type: :model do
     let(:order) { create(:order) }
     let(:country) { create(:country) }
     let(:tax_category) { create(:tax_category) }
-    let(:calculator) { Spree::Calculator::FlatRate.new }
+    let(:calculator) { Spree::Calculator::Promotion::FlatRate.new }
 
     it 'returns an empty array when tax_zone is nil' do
       allow(order).to receive_messages tax_zone: nil
@@ -52,7 +52,7 @@ describe Spree::TaxRate, type: :model do
             amount: 2,
             zone: @zone,
             tax_category: tax_category,
-            calculator: Spree::Calculator::FlatRate.new
+            calculator: Spree::Calculator::Promotion::FlatRate.new
           )
 
           allow(order).to receive_messages tax_zone: @zone
@@ -213,7 +213,7 @@ describe Spree::TaxRate, type: :model do
         Spree::TaxRate.create(
           name: 'German VAT',
           amount: 0.19,
-          calculator: Spree::Calculator::DefaultTax.create,
+          calculator: Spree::Calculator::Tax::DefaultTax.create,
           tax_category: moss_category,
           zone: germany_zone,
           included_in_price: true
@@ -223,7 +223,7 @@ describe Spree::TaxRate, type: :model do
         Spree::TaxRate.create(
           name: 'French VAT',
           amount: 0.25,
-          calculator: Spree::Calculator::DefaultTax.create,
+          calculator: Spree::Calculator::Tax::DefaultTax.create,
           tax_category: moss_category,
           zone: france_zone,
           included_in_price: true
@@ -233,7 +233,7 @@ describe Spree::TaxRate, type: :model do
         Spree::TaxRate.create(
           name: 'EU_VAT',
           amount: 0.19,
-          calculator: Spree::Calculator::DefaultTax.create,
+          calculator: Spree::Calculator::Tax::DefaultTax.create,
           tax_category: normal_category,
           zone: eu_zone,
           included_in_price: true
@@ -385,13 +385,13 @@ describe Spree::TaxRate, type: :model do
       @category2   = Spree::TaxCategory.create(name: 'Non Taxable')
       @rate1 = Spree::TaxRate.create(
         amount: 0.10,
-        calculator: Spree::Calculator::DefaultTax.create,
+        calculator: Spree::Calculator::Tax::DefaultTax.create,
         tax_category: @category,
         zone: @zone
       )
       @rate2 = Spree::TaxRate.create(
         amount: 0.05,
-        calculator: Spree::Calculator::DefaultTax.create,
+        calculator: Spree::Calculator::Tax::DefaultTax.create,
         tax_category: @category,
         zone: @zone
       )
@@ -441,7 +441,7 @@ describe Spree::TaxRate, type: :model do
             new_rate = Spree::TaxRate.create(
               amount: 0.2,
               included_in_price: true,
-              calculator: Spree::Calculator::DefaultTax.create,
+              calculator: Spree::Calculator::Tax::DefaultTax.create,
               tax_category: @category,
               zone: create(:zone_with_country)
             )

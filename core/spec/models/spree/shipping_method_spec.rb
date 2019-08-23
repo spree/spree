@@ -12,14 +12,14 @@ describe Spree::ShippingMethod, type: :model do
   context 'calculators' do
     it "rejects calculators that don't inherit from Spree::ShippingCalculator" do
       allow(Spree::ShippingMethod).to receive_message_chain(:spree_calculators, :shipping_methods).and_return([
-                                                                                                                Spree::Calculator::Shipping::FlatPercentItemTotal,
+                                                                                                                Spree::Calculator::Shipping::FlatPercent,
                                                                                                                 Spree::Calculator::Shipping::PriceSack,
-                                                                                                                Spree::Calculator::DefaultTax,
+                                                                                                                Spree::Calculator::Tax::DefaultTax,
                                                                                                                 DummyShippingCalculator # included as regression test for https://github.com/spree/spree/issues/3109
                                                                                                               ])
 
-      expect(Spree::ShippingMethod.calculators).to eq([Spree::Calculator::Shipping::FlatPercentItemTotal, Spree::Calculator::Shipping::PriceSack, DummyShippingCalculator])
-      expect(Spree::ShippingMethod.calculators).not_to eq([Spree::Calculator::DefaultTax])
+      expect(Spree::ShippingMethod.calculators).to eq([Spree::Calculator::Shipping::FlatPercent, Spree::Calculator::Shipping::PriceSack, DummyShippingCalculator])
+      expect(Spree::ShippingMethod.calculators).not_to eq([Spree::Calculator::Tax::DefaultTax])
     end
   end
 

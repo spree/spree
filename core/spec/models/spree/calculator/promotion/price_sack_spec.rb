@@ -1,8 +1,8 @@
 require 'spec_helper'
 
-describe Spree::Calculator::PriceSack, type: :model do
+describe Spree::Calculator::Promotion::PriceSack, type: :model do
   let(:calculator) do
-    calculator = Spree::Calculator::PriceSack.new
+    calculator = Spree::Calculator::Promotion::PriceSack.new
     calculator.preferred_minimal_amount = 5
     calculator.preferred_normal_amount = 10
     calculator.preferred_discount_amount = 1

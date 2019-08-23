@@ -1,7 +1,7 @@
 require 'spec_helper'
 
-describe Spree::Calculator::FlexiRate, type: :model do
-  let(:calculator) { Spree::Calculator::FlexiRate.new }
+describe Spree::Calculator::Promotion::FlexiRate, type: :model do
+  let(:calculator) { Spree::Calculator::Promotion::FlexiRate.new }
 
   let(:order) do
     mock_model(
@@ -35,7 +35,7 @@ describe Spree::Calculator::FlexiRate, type: :model do
     end
 
     it 'allows creation of new object with all the attributes' do
-      Spree::Calculator::FlexiRate.new(preferred_first_item: 1, preferred_additional_item: 1, preferred_max_items: 1)
+      Spree::Calculator::Promotion::FlexiRate.new(preferred_first_item: 1, preferred_additional_item: 1, preferred_max_items: 1)
     end
   end
 end

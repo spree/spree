@@ -7,7 +7,7 @@ describe Spree::Adjustable::Adjuster::Promotion, type: :model do
   let(:order_subject) { Spree::Adjustable::AdjustmentsUpdater.new(order) }
 
   context 'best promotion is always applied' do
-    let(:calculator) { Spree::Calculator::FlatRate.new(preferred_amount: 10) }
+    let(:calculator) { Spree::Calculator::Promotion::FlatRate.new(preferred_amount: 10) }
     let(:source) { Spree::Promotion::Actions::CreateItemAdjustments.create calculator: calculator }
 
     def create_adjustment(label, amount)

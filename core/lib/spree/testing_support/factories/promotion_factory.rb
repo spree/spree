@@ -8,7 +8,7 @@ FactoryBot.define do
       end
 
       after(:create) do |promotion, evaluator|
-        calculator = Spree::Calculator::FlatRate.new
+        calculator = Spree::Calculator::Promotion::FlatRate.new
         calculator.preferred_amount = evaluator.adjustment_rate
         Spree::Promotion::Actions::CreateItemAdjustments.create!(calculator: calculator, promotion: promotion)
       end
@@ -21,7 +21,7 @@ FactoryBot.define do
       end
 
       after(:create) do |promotion, evaluator|
-        calculator = Spree::Calculator::FlatRate.new
+        calculator = Spree::Calculator::Promotion::FlatRate.new
         calculator.preferred_amount = evaluator.weighted_order_adjustment_amount
         action = Spree::Promotion::Actions::CreateAdjustment.create!(calculator: calculator)
         promotion.actions << action
