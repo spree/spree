@@ -7,7 +7,7 @@ module Spree
         Spree.t(:percent_per_item)
       end
 
-      def compute(object)
+      def compute(object, _line_items_total = nil)
         (object.amount * preferred_percent) / 100
       end
     end

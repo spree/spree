@@ -8,7 +8,7 @@ module Spree
       before { subject.preferred_percent = 15 }
 
       it 'computes based on item price and quantity' do
-        expect(subject.compute(line_item)).to eq 15
+        expect(subject.compute(line_item, anything)).to eq 15
       end
     end
   end

@@ -1,7 +1,7 @@
 require_dependency 'spree/calculator'
 
 module Spree
-  class Calculator::FlatRateItemTotal < Calculator
+  class Calculator::FlatRateOnLineItem < Calculator
     preference :amount, :decimal, default: 0
     preference :currency, :string, default: -> { Spree::Config[:currency] }
 
