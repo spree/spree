@@ -102,7 +102,7 @@ module Spree
           Spree::TaxRate.create(
             amount: 0.25,
             included_in_price: true,
-            calculator: Spree::Calculator::Tax::DefaultTax.create,
+            calculator: Spree::Calculator::DefaultTax.create,
             tax_category: category,
             zone: create(:zone_with_country, default_tax: true)
           )

@@ -34,7 +34,7 @@ module Spree
         ]
 
         app.config.spree.calculators.tax_rates = [
-          Spree::Calculator::Tax::DefaultTax
+          Spree::Calculator::DefaultTax
         ]
       end
 

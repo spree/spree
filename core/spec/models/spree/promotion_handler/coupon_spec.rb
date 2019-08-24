@@ -231,7 +231,7 @@ module Spree
             @category = Spree::TaxCategory.create name: 'Taxable Foo'
             @rate1 = Spree::TaxRate.create(
               amount: 0.10,
-              calculator: Spree::Calculator::Tax::DefaultTax.create,
+              calculator: Spree::Calculator::DefaultTax.create,
               tax_category: @category,
               zone: @zone
             )

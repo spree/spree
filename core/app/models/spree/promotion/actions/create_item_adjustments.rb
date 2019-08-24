@@ -21,7 +21,7 @@ module Spree
 
           order = line_item.order
 
-          matched_line_items = order.line_items.select do |item|
+          matched_line_items = order.line_items.select do |line_item|
             promotion.line_item_actionable?(order, line_item)
           end
 

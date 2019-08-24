@@ -7,7 +7,7 @@ FactoryBot.define do
     after(:create) { |c| c.set_preference(:amount, 0) }
   end
 
-  factory :default_tax_calculator, class: Spree::Calculator::Tax::DefaultTax do
+  factory :default_tax_calculator, class: Spree::Calculator::DefaultTax do
   end
 
   factory :shipping_calculator, class: Spree::Calculator::Shipping::FlatRate do

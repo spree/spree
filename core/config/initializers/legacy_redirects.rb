@@ -16,6 +16,3 @@ Spree::Calculator::TieredPercent                  = Spree::Calculator::Promotion
 
 # SHIPPING was moved From => To
 Spree::Calculator::Shipping::FlatPercentItemTotal = Spree::Calculator::Shipping::FlatPercent
-
-# TAX was moved From => To
-Spree::Calculator::DefaultTax                     = Spree::Calculator::Tax::DefaultTax

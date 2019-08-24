@@ -1,12 +1,12 @@
 require 'spec_helper'
 
-describe Spree::Calculator::Tax::DefaultTax, type: :model do
+describe Spree::Calculator::DefaultTax, type: :model do
   let!(:country) { create(:country) }
   let!(:zone) { create(:zone, name: 'Country Zone', default_tax: true, zone_members: []) }
   let!(:tax_category) { create(:tax_category, tax_rates: []) }
   let!(:rate) { create(:tax_rate, tax_category: tax_category, amount: 0.05, included_in_price: included_in_price) }
   let(:included_in_price) { false }
-  let!(:calculator) { Spree::Calculator::Tax::DefaultTax.new(calculable: rate) }
+  let!(:calculator) { Spree::Calculator::DefaultTax.new(calculable: rate) }
   let!(:order) { create(:order) }
   let!(:line_item) { create(:line_item, price: 10, quantity: 3, tax_category: tax_category) }
   let!(:shipment) { create(:shipment, cost: 15) }
@@ -126,7 +126,7 @@ describe Spree::Calculator::Tax::DefaultTax, type: :model do
 
   context 'when given a line_item' do
     subject do
-      Spree::Calculator::Tax::DefaultTax.new(calculable: rate).
+      Spree::Calculator::DefaultTax.new(calculable: rate).
         compute_line_item(line_item)
     end
 

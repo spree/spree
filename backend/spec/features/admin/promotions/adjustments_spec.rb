@@ -128,7 +128,7 @@ describe 'Promotion Adjustments', type: :feature, js: true do
       wait_for { !page.has_button?('Update') }
       within('#rule_fields') { click_button 'Update' }
 
-      select2 'Discount Line Items', from: 'Add action of type'
+      select2 'Discount Line Item(s)', from: 'Add action of type'
       within('#action_fields') { click_button 'Add' }
       select2 'Flat Percent', from: 'Calculator'
       wait_for { !page.has_button?('Update') }

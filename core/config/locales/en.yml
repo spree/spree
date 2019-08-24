@@ -1127,7 +1127,7 @@ en:
         name: Discount Order Total (no tax adjustments)
       create_item_adjustments:
         description: Discounts applicable line items
-        name: Discount Line Items
+        name: Discount Line Item(s)
       create_line_items:
         description: Populates the cart with the specified quantity of variant
         name: Add Line Item(s)
