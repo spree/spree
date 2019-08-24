@@ -3,7 +3,7 @@ require 'spec_helper'
 module Spree
   module Calculator::Shipping
     describe FlatPercent, type: :model do
-      subject { FlatPercent.new(preferred_percent: 10) }
+      subject { FlatPercent.new(preferred_flat_percent: 10) }
 
       let(:variant1) { build(:variant, price: 10.11) }
       let(:variant2) { build(:variant, price: 20.2222) }

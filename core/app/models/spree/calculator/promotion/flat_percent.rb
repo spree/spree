@@ -10,7 +10,13 @@ module Spree
       end
 
       def compute(object, _line_items_total = nil)
-        (object.amount * preferred_percent) / 100
+        computed_amount = (object.amount * preferred_percent / 100).round(2)
+
+        if computed_amount > object.amount
+          object.amount
+        else
+          computed_amount
+        end
       end
     end
   end

@@ -9,10 +9,17 @@ describe Spree::Calculator::Promotion::FlatPercent, type: :model do
   context 'compute' do
     it 'rounds result correctly' do
       allow(line_item).to receive_messages amount: 31.08
-      expect(calculator.compute(line_item)).to eq 3.1079999999999997
+      expect(calculator.compute(line_item)).to eq 3.11
 
       allow(line_item).to receive_messages amount: 31.00
       expect(calculator.compute(line_item)).to eq 3.10
+    end
+
+    it 'returns object.amount if computed amount is greater' do
+      allow(calculator).to receive_messages preferred_percent: 110
+      allow(line_item).to receive_messages amount: 30.00
+
+      expect(calculator.compute(line_item)).to eq 30.0
     end
   end
 end
