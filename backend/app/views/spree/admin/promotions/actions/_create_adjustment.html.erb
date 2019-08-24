@@ -1,6 +1,7 @@
-<div class="card-body calculator-fields">
+<div class="card-body calculator-fields pb-0">
   <div class="row mb-0">
     <div class="form-group col-12 mb-0">
+
       <% field_name = "#{param_prefix}[calculator_type]" %>
       <%= label_tag field_name, Spree.t(:calculator) %>
       <%= select_tag field_name,
@@ -20,12 +21,14 @@
             calculator: promotion_action.calculator, prefix: param_prefix %>
         <% end %>
         <%= hidden_field_tag "#{param_prefix}[calculator_attributes][id]", promotion_action.calculator.id %>
+        <hr>
+        <h6><small><%= Spree.t(:tax_not_adjusted) %></small></h6>
       </div>
     <% end %>
   </div>
   <% if promotion_action.calculator.respond_to?(:preferences) %>
     <div class="alert alert-info js-warning margint mb-0">
-      <%= Spree.t(:calculator_settings_warning) %>
+      <span class="small"><%= Spree.t(:calculator_settings_warning) %></span>
     </div>
   <% end %>
 </div>

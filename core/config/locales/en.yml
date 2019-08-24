@@ -1123,13 +1123,13 @@ en:
     promotion_action: Promotion Action
     promotion_action_types:
       create_adjustment:
-        description: Creates a credit adjustment on the order total, (tax is not adjusted)
+        description: Creates a credit adjustment on the order total*
         name: Discount Order Total
       create_item_adjustments:
         description: Discounts all applicable line items
         name: Discount Line Items
       create_line_items:
-        description: Populates the cart with the specified quantity of variant
+        description: Adds a specified quantity of a variant to the order
         name: Add Line Items
       free_shipping:
         description: Makes all shipments for the order free
@@ -1455,6 +1455,7 @@ en:
     summary: Summary
     tax: Tax
     tax_included: "Tax (incl.)"
+    tax_not_adjusted: "*Shipping and line item taxes are not adjusted when using this type of discount. If your business charges sales tax, it is recommended that you use line-item based discounts."
     tax_categories: Tax Categories
     tax_category: Tax Category
     tax_code: Tax Code

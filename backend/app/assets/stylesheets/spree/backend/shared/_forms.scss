@@ -13,6 +13,9 @@ span.or {
 }
 
 .form-group {
+  .variant_autocomplete {
+    width:100%;
+  }
   &.withError {
     label, .formError, .required {
       color: $danger;
