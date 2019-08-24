@@ -95,7 +95,7 @@ describe 'Promotion Adjustments', type: :feature, js: true do
       select2 'Flat Percent', from: 'Calculator'
       wait_for { !page.has_button?('Update') }
       within('#actions_container') { click_button 'Update' }
-      within('.calculator-fields') { fill_in 'Flat Percent', with: '10' }
+      within('.calculator-fields') { fill_in 'Percent', with: '10' }
       wait_for { !page.has_button?('Update') }
       within('#actions_container') { click_button 'Update' }
 
@@ -130,7 +130,7 @@ describe 'Promotion Adjustments', type: :feature, js: true do
 
       select2 'Discount Line Items', from: 'Add action of type'
       within('#action_fields') { click_button 'Add' }
-      select2 'Percent Per Item', from: 'Calculator'
+      select2 'Flat Percent', from: 'Calculator'
       wait_for { !page.has_button?('Update') }
       within('#actions_container') { click_button 'Update' }
       within('.calculator-fields') { fill_in 'Percent', with: '10' }
@@ -214,7 +214,7 @@ describe 'Promotion Adjustments', type: :feature, js: true do
 
       expect(page).to have_content(promotion.name)
 
-      select2 'Create line items', from: 'Add action of type'
+      select2 'Add Line Item(s)', from: 'Add action of type'
 
       within('#action_fields') { click_button 'Add' }
 

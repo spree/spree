@@ -26,7 +26,6 @@ module Spree
           end
 
           line_items_total = matched_line_items.sum(&:amount)
-          
           amounts = [line_item.amount, compute(line_item, line_items_total)]
           amounts << order.amount - order.adjustments.sum(:amount).abs if order.adjustments.any?
           amounts.min * -1
