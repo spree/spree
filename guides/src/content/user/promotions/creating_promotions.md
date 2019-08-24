@@ -31,7 +31,7 @@ There are five types of rules. You can only add one rule of each type to a singl
 
 ### Item Total
 
-When you select "Item total" from the "Add Rule of Type" drop-down menu and click "Add", you are declaring an Item Total rule.
+When you select "Item Total" from the "Add Rule of Type" drop-down menu and click "Add", you are declaring an Item Total rule.
 
 ![Item Total Rule](../../../images/user/promotions/item_total_rule.jpg)
 
@@ -59,7 +59,7 @@ You can use the User rule type to restrict a promotion to only those customers y
 
 ### First Order
 
-Select "First order" from the "Add Rule of Type" drop-down menu and click "Add" then "Update" to add a rule of this type to your promotion. This rule will restrict the promotion to only those customers ordering from you for the first time.
+Select "First Order" from the "Add Rule of Type" drop-down menu and click "Add" then "Update" to add a rule of this type to your promotion. This rule will restrict the promotion to only those customers ordering from you for the first time.
 
 ![First Order Rule](../../../images/user/promotions/first_order_rule.jpg)
 

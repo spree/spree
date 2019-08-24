@@ -1123,17 +1123,17 @@ en:
     promotion_action: Promotion Action
     promotion_action_types:
       create_adjustment:
-        description: Creates a credit adjustment on the order total, (no tax is adjusted)
-        name: Discount Order Total (no tax adjustments)
+        description: Creates a credit adjustment on the order total, (tax is not adjusted)
+        name: Discount Order Total
       create_item_adjustments:
-        description: Discounts applicable line items
-        name: Discount Line Item(s)
+        description: Discounts all applicable line items
+        name: Discount Line Items
       create_line_items:
         description: Populates the cart with the specified quantity of variant
-        name: Add Line Item(s)
+        name: Add Line Items
       free_shipping:
         description: Makes all shipments for the order free
-        name: Free shipping
+        name: Free Shipping
     promotion_actions: Actions
     promotion_category: Promotion Category
     promotion_form:
@@ -1148,10 +1148,10 @@ en:
         name: Country
       first_order:
         description: Must be the customer's first order
-        name: First order
+        name: First Order
       item_total:
         description: Order total meets these criteria
-        name: Item total
+        name: Item Total
       one_use_per_user:
         description: Only One Use Per User
         name: One Use Per User

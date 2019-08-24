@@ -10,7 +10,7 @@ describe 'Tiered Calculator Promotions' do
   end
 
   it 'adding a tiered percent calculator', js: true do
-    select2 'Discount Order Total (no tax adjustments)', from: 'Add action of type'
+    select2 'Discount Order Total', from: 'Add action of type'
     within('#action_fields') { click_button 'Add' }
 
     select2 'Tiered Percent', from: 'Calculator'

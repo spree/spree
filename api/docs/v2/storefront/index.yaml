@@ -2230,7 +2230,7 @@ components:
         free:
           type: boolean
           example: true
-          description: 'Indicates if the Shipping Rate is free, eg. when Free shipping promo applied to Cart'
+          description: 'Indicates if the Shipping Rate is free, eg. when Free Shipping promo applied to Cart'
         final_price:
           type: string
           example: '10.0'
@@ -2297,7 +2297,7 @@ components:
             free:
               type: boolean
               example: true
-              description: 'Indicates if the Shipping Rate is free, eg. when Free shipping promo applied to Cart'
+              description: 'Indicates if the Shipping Rate is free, eg. when Free Shipping promo applied to Cart'
             final_price:
               type: string
               example: '10.0'

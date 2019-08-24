@@ -16,7 +16,7 @@ describe 'Promotion Adjustments', type: :feature, js: true do
       promotion = Spree::Promotion.find_by(name: 'Promotion')
       expect(page).to have_content(promotion.name)
 
-      select2 'Item total', from: 'Add rule of type'
+      select2 'Item Total', from: 'Add rule of type'
       within('#rule_fields') { click_button 'Add' }
 
       fill_in id: "promotion_promotion_rules_attributes_#{Spree::Promotion.count}_preferred_amount_min", with: 30
@@ -24,7 +24,7 @@ describe 'Promotion Adjustments', type: :feature, js: true do
       wait_for { !page.has_button?('Update') }
       within('#rule_fields') { click_button 'Update' }
 
-      select2 'Discount Order Total (no tax adjustments)', from: 'Add action of type'
+      select2 'Discount Order Total', from: 'Add action of type'
       within('#action_fields') { click_button 'Add' }
       select2 'Flat Rate', from: 'Calculator'
       wait_for { !page.has_button?('Update') }
@@ -56,7 +56,7 @@ describe 'Promotion Adjustments', type: :feature, js: true do
       promotion = Spree::Promotion.find_by(name: 'Promotion')
       expect(page).to have_content(promotion.name)
 
-      select2 'Discount Order Total (no tax adjustments)', from: 'Add action of type'
+      select2 'Discount Order Total', from: 'Add action of type'
       within('#action_fields') { click_button 'Add' }
       select2 'Flat Rate', from: 'Calculator'
       wait_for { !page.has_button?('Update') }
@@ -82,7 +82,7 @@ describe 'Promotion Adjustments', type: :feature, js: true do
 
       expect(page).to have_content(promotion.name)
 
-      select2 'Item total', from: 'Add rule of type'
+      select2 'Item Total', from: 'Add rule of type'
       within('#rule_fields') { click_button 'Add' }
 
       fill_in id: 'promotion_promotion_rules_attributes_1_preferred_amount_min', with: 30
@@ -90,7 +90,7 @@ describe 'Promotion Adjustments', type: :feature, js: true do
       wait_for { !page.has_button?('Update') }
       within('#rule_fields') { click_button 'Update' }
 
-      select2 'Discount Order Total (no tax adjustments)', from: 'Add action of type'
+      select2 'Discount Order Total', from: 'Add action of type'
       within('#action_fields') { click_button 'Add' }
       select2 'Flat Percent', from: 'Calculator'
       wait_for { !page.has_button?('Update') }
@@ -128,7 +128,7 @@ describe 'Promotion Adjustments', type: :feature, js: true do
       wait_for { !page.has_button?('Update') }
       within('#rule_fields') { click_button 'Update' }
 
-      select2 'Discount Line Item(s)', from: 'Add action of type'
+      select2 'Discount Line Items', from: 'Add action of type'
       within('#action_fields') { click_button 'Add' }
       select2 'Flat Percent', from: 'Calculator'
       wait_for { !page.has_button?('Update') }
@@ -157,14 +157,14 @@ describe 'Promotion Adjustments', type: :feature, js: true do
       promotion = Spree::Promotion.find_by(name: 'Promotion')
       expect(page).to have_content(promotion.name)
 
-      select2 'Item total', from: 'Add rule of type'
+      select2 'Item Total', from: 'Add rule of type'
       within('#rule_fields') { click_button 'Add' }
       fill_in id: 'promotion_promotion_rules_attributes_1_preferred_amount_min', with: '50'
       fill_in id: 'promotion_promotion_rules_attributes_1_preferred_amount_max', with: '150'
       wait_for { !page.has_button?('Update') }
       within('#rule_fields') { click_button 'Update' }
 
-      select2 'Free shipping', from: 'Add action of type'
+      select2 'Free Shipping', from: 'Add action of type'
       within('#action_fields') { click_button 'Add' }
       expect(page).to have_content('Makes all shipments for the order free')
 
@@ -185,7 +185,7 @@ describe 'Promotion Adjustments', type: :feature, js: true do
 
       expect(page).to have_content(promotion.name)
 
-      select2 'Discount Order Total (no tax adjustments)', from: 'Add action of type'
+      select2 'Discount Order Total', from: 'Add action of type'
       within('#action_fields') { click_button 'Add' }
       select2 'Flat Rate', from: 'Calculator'
       wait_for { !page.has_button?('Update') }
@@ -214,7 +214,7 @@ describe 'Promotion Adjustments', type: :feature, js: true do
 
       expect(page).to have_content(promotion.name)
 
-      select2 'Add Line Item(s)', from: 'Add action of type'
+      select2 'Add Line Items', from: 'Add action of type'
 
       within('#action_fields') { click_button 'Add' }
 
@@ -225,7 +225,7 @@ describe 'Promotion Adjustments', type: :feature, js: true do
       wait_for { !page.has_button?('Update') }
       within('#actions_container') { click_button 'Update' }
 
-      select2 'Discount Order Total (no tax adjustments)', from: 'Add action of type'
+      select2 'Discount Order Total', from: 'Add action of type'
       within('#new_promotion_action_form') { click_button 'Add' }
       select2 'Flat Rate', from: 'Calculator'
       wait_for { !page.has_button?('Update') }
@@ -248,14 +248,14 @@ describe 'Promotion Adjustments', type: :feature, js: true do
 
       expect(page).to have_content(promotion.name)
 
-      select2 'Item total', from: 'Add rule of type'
+      select2 'Item Total', from: 'Add rule of type'
       within('#rule_fields') { click_button 'Add' }
       fill_in id: 'promotion_promotion_rules_attributes_1_preferred_amount_min', with: '50'
       fill_in id: 'promotion_promotion_rules_attributes_1_preferred_amount_max', with: '150'
       wait_for { !page.has_button?('Update') }
       within('#rule_fields') { click_button 'Update' }
 
-      select2 'Discount Order Total (no tax adjustments)', from: 'Add action of type'
+      select2 'Discount Order Total', from: 'Add action of type'
       within('#action_fields') { click_button 'Add' }
       select2 'Flat Rate', from: 'Calculator'
       wait_for { !page.has_button?('Update') }

@@ -32,7 +32,7 @@ There are four actions that come with spree:
 * An order-level adjustment
 * An item-level adjustment
 * Create line items
-* Free shipping
+* Free Shipping
 
 ### Creating an Adjustment
 
