@@ -36,7 +36,7 @@
     "ramda": "^0.26.0",
     "ramda-adjunct": "^2.16.1",
     "react": "^16.5.1",
-    "react-dom": "^16.5.1",
+    "react-dom": "^16.9.0",
     "react-emotion": "^10.0.0",
     "react-feather": "^1.1.4",
     "react-helmet": "^5.2.0",
