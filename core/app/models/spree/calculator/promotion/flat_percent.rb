@@ -9,7 +9,7 @@ module Spree
         Spree.t(:flat_percent)
       end
 
-      def compute(object, _line_items_total = nil)
+      def compute(object, _object_a = nil, _object_b = nil, _object_c = nil)
         computed_amount = (object.amount * preferred_percent / 100).round(2)
 
         if computed_amount > object.amount

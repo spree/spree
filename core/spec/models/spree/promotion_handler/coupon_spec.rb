@@ -88,7 +88,7 @@ module Spree
                   expect(line_item.adjustments.count).to eq(1)
                 end
                 # Ensure that applying the adjustment actually affects the order's total!
-                expect(order.reload.total).to eq(120.01)
+                expect(order.reload.total).to eq(120.00)
               end
 
               it 'coupon already applied to the order' do
@@ -111,7 +111,7 @@ module Spree
                   expect(line_item.adjustments.count).to eq(1)
                 end
                 # Ensure that applying the adjustment actually affects the order's total!
-                expect(order.reload.total).to eq(120.01)
+                expect(order.reload.total).to eq(120.00)
               end
             end
           end
@@ -256,7 +256,7 @@ module Spree
               expect(coupon.success).to be_present
 
               # 3 * ((9 - 3.3333333) + 0) + 10%
-              expect(@order.reload.total).to eq(18.72)
+              expect(@order.reload.total).to eq(18.71)
               expect(@order.additional_tax_total).to eq(1.71)
             end
           end
@@ -276,7 +276,7 @@ module Spree
               coupon.apply
               expect(coupon.success).to be_present
               # 3 * ( (22 - 3.3333) + 1.8666)
-              expect(@order.reload.total).to eq(61.62)
+              expect(@order.reload.total).to eq(61.61)
               expect(@order.additional_tax_total).to eq(5.61)
             end
           end

@@ -16,7 +16,7 @@ module Spree
         true
       end
 
-      def compute(object, _line_items_total = nil)
+      def compute(object, _object_a = nil, _object_b = nil, _object_c = nil)
         compute_from_quantity(object.quantity)
       end
 

@@ -10,7 +10,7 @@ module Spree
         Spree.t(:flat_rate)
       end
 
-      def compute(object = nil, line_items_total = 0)
+      def compute(object = nil _object_a = nil, _object_b = nil, _object_c = nil)
         if object && preferred_currency.casecmp(object.currency.upcase).zero?
           if line_items_total == 0
             preferred_amount
