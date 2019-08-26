@@ -10,7 +10,7 @@ module Spree
         Spree.t(:flat_rate)
       end
 
-      def compute(object = nil, actionable_line_items_total = 0, last_actionable_line_item_id, ams)
+      def compute(object = nil, actionable_line_items_total = 0, last_actionable_line_item_id = nil, ams = nil)
         if object && preferred_currency.casecmp(object.currency.upcase).zero?
           if actionable_line_items_total == 0
           # If this is an Order Total type of Adjustment do this
