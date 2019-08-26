@@ -21,7 +21,6 @@
 module Spree
   class Product < Spree::Base
     extend FriendlyId
-    include ActsAsTaggable
     include Spree::ProductScopes
 
     friendly_id :slug_candidates, use: :history

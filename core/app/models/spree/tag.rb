@@ -1,4 +1,4 @@
 module Spree
-  class Tag < ActsAsTaggableOn::Tag
+  class Tag
   end
 end

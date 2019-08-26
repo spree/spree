@@ -197,13 +197,6 @@
     <% end %>
   </div>
 
-  <div data-hook="admin_product_form_tag_list">
-    <%= f.field_container :tag_list, class: ['form-group'] do %>
-      <%= f.label :tag_list, Spree.t(:tags) %>
-      <%= f.hidden_field :tag_list, value: @product.tag_list.join(','), class: 'tag_picker' %>
-    <% end %>
-  </div>
-
   <div data-hook="admin_product_form_meta">
     <div data-hook="admin_product_form_meta_title">
       <%= f.field_container :meta_title, class: ['form-group'] do %>

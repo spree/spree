@@ -194,15 +194,6 @@ describe Spree::Product, type: :model do
       end
     end
 
-    # Regression test for #8906
-    context 'tags' do
-      let(:tag_list) { %w[tag1 tag2] }
-
-      it "doesn't raise an error when adding tags to a product" do
-        expect { product.update(tag_list: tag_list) }.not_to raise_error
-      end
-    end
-
     # Regression test for #3737
     context 'has stock items' do
       it 'can retrieve stock items' do
@@ -582,20 +573,6 @@ describe Spree::Product, type: :model do
 
     it 'is true' do
       expect(product_discontinued.discontinued?).to be(true)
-    end
-  end
-
-  context 'acts_as_taggable' do
-    let(:product) { create(:product) }
-
-    it 'adds tags' do
-      product.tag_list.add('awesome')
-      expect(product.tag_list).to include('awesome')
-    end
-
-    it 'removes tags' do
-      product.tag_list.remove('awesome')
-      expect(product.tag_list).not_to include('awesome')
     end
   end
 
