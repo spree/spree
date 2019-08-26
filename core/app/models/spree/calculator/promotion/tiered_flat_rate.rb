@@ -20,7 +20,7 @@ module Spree
       end
 
       def compute(object)
-        base, amount = preferred_tiers.sort.reverse.detect { |b, _| object.amount >= b }
+        _base, amount = preferred_tiers.sort.reverse.detect { |b, _| object.amount >= b }
         amount || preferred_base_amount
       end
 
