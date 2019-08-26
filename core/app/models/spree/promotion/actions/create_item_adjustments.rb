@@ -23,21 +23,14 @@ module Spree
           matched_line_items = order.line_items.select do |line_item|
             promotion.line_item_actionable?(order, line_item)
           end
-
           ams = []
           matched_line_items.each do |i|
             unless i.equal?(matched_line_items.last)
               ams << i.amount
             end
           end
-
           total = matched_line_items.sum(&:amount)
-          if matched_line_items.last.id == matched_line_items.first.id
-            id = nil
-          else
-            id = matched_line_items.last.id
-          end
-
+          id = matched_line_items.last.id unless matched_line_items.last.id == matched_line_items.first.id
           amounts = [line_item.amount, compute(line_item, total, id, ams)]
           amounts << order.amount - order.adjustments.sum(:amount).abs if order.adjustments.any?
           amounts.min * -1
