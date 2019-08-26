@@ -20,8 +20,8 @@ module Spree
           order = line_item.order
           return 0 unless promotion.line_item_actionable?(order, line_item)
 
-          matched_line_items = order.line_items.select do |line_item|
-            promotion.line_item_actionable?(order, line_item)
+          matched_line_items = order.line_items.select do |item|
+            promotion.line_item_actionable?(order, item)
           end
           ams = []
           matched_line_items.each do |i|
