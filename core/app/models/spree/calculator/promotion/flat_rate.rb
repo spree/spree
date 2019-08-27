@@ -3,6 +3,7 @@ require_dependency 'spree/calculator'
 module Spree
   module Calculator::Promotion
     class FlatRate < Calculator
+      preference :apply_collectively, :boolean, default: false
       preference :amount, :decimal, default: 0
       preference :currency, :string, default: -> { Spree::Config[:currency] }
 
@@ -12,7 +13,7 @@ module Spree
 
       def compute(object = nil, actionable_line_items_total = 0, last_actionable_line_item_id = nil, ams = nil)
         if object && preferred_currency.casecmp(object.currency.upcase).zero?
-          if actionable_line_items_total == 0
+          if actionable_line_items_total == 0 || !apply_collectively
             preferred_amount
           elsif object.id == last_actionable_line_item_id && !last_actionable_line_item_id.nil?
             discounts_used = []

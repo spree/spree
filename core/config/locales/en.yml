@@ -458,7 +458,7 @@ en:
     activate: Activate
     active: Active
     add: Add
-    add_action_of_type: Add action of type
+    add_action_of_type: When this promotion is activated
     add_country: Add Country
     add_coupon_code: Add Coupon Code
     add_new_header: Add New Header
@@ -552,6 +552,7 @@ en:
     alternative_phone: Alternative Phone
     amount: Amount
     and: and
+    apply_collectively: Apply collectively
     approve: approve
     approver: Approver
     approved_at: Approved at
@@ -703,6 +704,7 @@ en:
     delete: Delete
     deleted: Deleted
     delete_from_taxon: Delete From Taxon
+    discount_line_items_using: Discount line items by a
     discontinued_variants_present: Some line items in this order have products that are no longer available.
     delivery: Delivery
     depth: Depth
@@ -1123,17 +1125,17 @@ en:
     promotion_action: Promotion Action
     promotion_action_types:
       create_adjustment:
-        description: Creates a credit adjustment on the order total*
-        name: Discount Order Total
+        description: Order Total Discount*
+        name: Apply discount to the order total
       create_item_adjustments:
-        description: Discounts all applicable line items
-        name: Discount Line Items
+        description: Line Items Discount
+        name: Apply discount to the line items
       create_line_items:
-        description: Adds a specified quantity of a variant to the order
-        name: Add Line Items
+        description: Add Items To The Order
+        name: Add line items to the order
       free_shipping:
-        description: Makes all shipments for the order free
-        name: Free Shipping
+        description: Free Shipping
+        name: Add free shipping to the order
     promotion_actions: Actions
     promotion_category: Promotion Category
     promotion_form:
