@@ -13,7 +13,7 @@ module Spree
 
       def compute(object = nil, actionable_line_items_total = 0, last_actionable_line_item_id = nil, ams = nil)
         if object && preferred_currency.casecmp(object.currency.upcase).zero?
-          if actionable_line_items_total == 0 || !apply_collectively
+          if actionable_line_items_total == 0 || !preferred_apply_collectively == true
             preferred_amount
           elsif object.id == last_actionable_line_item_id && !last_actionable_line_item_id.nil?
             discounts_used = []
