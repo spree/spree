@@ -67,7 +67,7 @@ module Spree
           attributes.delete(:id)
 
           if address&.editable?
-            address.update_attributes(attributes)
+            address.update(attributes)
             return address
           else
             attributes.delete(:id)

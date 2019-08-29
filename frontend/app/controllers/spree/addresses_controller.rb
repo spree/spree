@@ -28,7 +28,7 @@ module Spree
 
     def update
       if @address.editable?
-        if @address.update_attributes(address_params)
+        if @address.update(address_params)
           flash[:notice] = Spree.t(:successfully_updated, scope: :address_book)
           redirect_back_or_default(addresses_path)
         else
