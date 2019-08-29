@@ -49,6 +49,14 @@ Getting Started
 
 Add Spree gems to your `Gemfile`:
 
+### Rails 6.0
+
+```ruby
+gem 'spree', '~> 4.0.0.beta'
+gem 'spree_auth_devise', '~> 4.0.0.rc1'
+gem 'spree_gateway', '~> 3.6'
+```
+
 ### Rails 5.2
 
 ```ruby
