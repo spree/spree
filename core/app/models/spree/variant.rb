@@ -48,7 +48,7 @@ module Spree
       validates :cost_price
       validates :price
     end
-    validates :sku, uniqueness: { conditions: -> { where(deleted_at: nil) } }, allow_blank: true
+    validates :sku, uniqueness: { conditions: -> { where(deleted_at: nil) }, case_sensitive: false }, allow_blank: true
 
     after_create :create_stock_items
     after_create :set_master_out_of_stock, unless: :is_master?
