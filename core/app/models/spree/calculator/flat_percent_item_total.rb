@@ -9,7 +9,7 @@ module Spree
     end
 
     def compute(object)
-        compute(object.amount)
+      compute(object.amount)
     end
 
     delegate :compute, to: :percent_calculator
