@@ -9,7 +9,7 @@ module Spree
     end
 
     def compute(object)
-      compute(object.amount)
+      computed_amount = compute(object)
     end
 
     delegate :compute, to: :percent_calculator
@@ -17,9 +17,7 @@ module Spree
     private
 
     def percent_calculator
-      ::Spree::Calculator::PercentOnLineItem.new(
-        preferred_percent: preferred_flat_percent
-      )
+      ::Spree::Calculator::PercentOnLineItem.new(preferred_percent: preferred_flat_percent)
     end
   end
 end
