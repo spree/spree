@@ -4,7 +4,7 @@ describe Spree::Calculator::PercentOnLineItem, type: :model do
   let(:calculator) { Spree::Calculator::PercentOnLineItem.new }
   let(:line_item) { mock_model Spree::LineItem }
 
-  before { allow(calculator).to receive_messages preferred_flat_percent: 10 }
+  before { allow(calculator).to receive_messages preferred_percent: 10 }
 
   context 'compute' do
     it 'rounds result correctly' do
@@ -17,7 +17,7 @@ describe Spree::Calculator::PercentOnLineItem, type: :model do
 
     it 'returns object.amount if computed amount is greater' do
       allow(line_item).to receive_messages amount: 30.00
-      allow(calculator).to receive_messages preferred_flat_percent: 110
+      allow(calculator).to receive_messages preferred_percent: 110
 
       expect(calculator.compute(line_item)).to eq 30.0
     end
