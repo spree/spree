@@ -72,7 +72,7 @@
     "eslint-config-standard-react": "^9.0.0",
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-node": "^8.0.0",
-    "eslint-plugin-prettier": "^3.0.0",
+    "eslint-plugin-prettier": "^3.1.0",
     "eslint-plugin-promise": "^4.0.1",
     "eslint-plugin-react": "^7.11.1",
     "eslint-plugin-standard": "^4.0.0",
