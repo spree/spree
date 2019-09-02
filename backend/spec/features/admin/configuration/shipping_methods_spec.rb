@@ -29,6 +29,7 @@ describe 'Shipping Methods', type: :feature do
       click_link 'New Shipping Method'
 
       fill_in 'shipping_method_name', with: 'bullock cart'
+      select 'Both', from: 'Display'
 
       within('#shipping_method_categories_field', match: :first) do
         check first("input[type='checkbox']")['name']
