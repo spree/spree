@@ -4,7 +4,9 @@ section: upgrades
 order: 0
 ---
 
-This guide covers upgrading a **3.7 Spree application** to **Spree 4.0**.
+This guide covers upgrading a **3.7 Spree application** to **Spree 4.0**. 
+
+If you have any questions or suggestions feel free to reach out through [Spree slack channels](http://slack.spreecommerce.org/)
 
 **If you're on an older version than 3.7 please follow previous upgrade guides and perform those upgrades incrementally**, eg.
 
@@ -18,7 +20,7 @@ This is the safest and recommended method.
 
 ### Update your Ruby version to 2.5.0 at least
 
-Soree 4.0 and Rails 6.0 requires Ruby 2.5.0 at least so you need to bump the ruby version in your project's `Gemfile` and `.ruby-version` files.
+Spree 4.0 and Rails 6.0 require Ruby 2.5.0 at least so you need to bump the ruby version in your project's `Gemfile` and `.ruby-version` files.
 
 ### Update your Rails version to 6.0
 
@@ -28,7 +30,7 @@ to upgrade your store.
 
 ### Migrate from Paperclip to ActiveStorage
 
-In Spree 3.6 we deprecated [Paperclip support in favour of ActiveStorage](/release_notes/3_6_0.html#active-storage-support). Paperclip gem itself isn't maintained anymore and it is recommended to move to ActiveStorage as it's the defualt Rails storage engine since Rails 5.2 release.
+In Spree 3.6 we deprecated [Paperclip support in favour of ActiveStorage](/release_notes/3_6_0.html#active-storage-support). Paperclip gem itself isn't maintained anymore and it is recommended to move to ActiveStorage as it is the defualt Rails storage engine since Rails 5.2 release.
 
 In Spree 4.0 we completely removed Paperclip support in favour of ActiveStorage.
 
@@ -130,7 +132,7 @@ Spree::Checkout::RemoveStoreCredit.call(order: order)
 
 ### Remove `spree_address_book` extension
 
-If you're using [Address Book](https://github.com/spree-contrib/spree_address_book) extension you need to remove it from your Gemfile as this feature set was [merged into core Spree](/release_notes/4_0_0.html#address-book-support).
+If you're using [Address Book](https://github.com/spree-contrib/spree_address_book) extension you need to remove it from your Gemfile as this feature was [merged into core Spree](/release_notes/4_0_0.html#address-book-support).
 
 ### Update Gemfile
 
@@ -157,8 +159,10 @@ rails spree_gateway:install:migrations
 rails db:migrate
 ```
 
-
-
 ### Read the release notes
 
 For information about changes contained within this release, please read the [4.0.0 Release Notes](https://guides.spreecommerce.org/release_notes/spree_4_0_0.html).
+
+### More info
+
+If you have any questions or suggestions feel free to reach out through [Spree slack channels](http://slack.spreecommerce.org/)
