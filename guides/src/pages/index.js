@@ -20,7 +20,7 @@ const IndexPage = () => (
         <a href="https://spreecommerce.org" className="spree-blue fw6">
           Spree Commerce
         </a>
-        &nbsp;is a complete modular, API-driven open source e-commerce solution
+        &nbsp;is a complete, modular, API-driven open source e-commerce solution
         &nbsp;built with Ruby on Rails
       </p>
 
