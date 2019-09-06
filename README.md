@@ -34,7 +34,7 @@ You don't need to install all of the components. Only the **Core** is mandatory.
 Demo
 ----
 
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/spree/spree/tree/3-7-stable)
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/spree/spree/tree/4-0-stable)
 
 If you want to run the demo on your local machine, you can use our docker image. It will download and run sample Spree application on http://localhost:3000
 ```shell
