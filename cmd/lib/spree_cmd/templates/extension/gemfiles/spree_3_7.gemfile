@@ -6,5 +6,6 @@ gem 'rails-controller-testing'
 gem 'spree_core', '~> 3.7.0'
 gem 'spree_backend', '~> 3.7.0'
 gem 'spree_auth_devise', '~> 3.5.0'
+gem 'sass-rails'
 
 gemspec path: '../'
