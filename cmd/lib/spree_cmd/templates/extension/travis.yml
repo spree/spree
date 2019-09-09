@@ -12,7 +12,6 @@ addons:
   postgresql: 9.4
 
 gemfile:
-  - gemfiles/spree_3_2.gemfile
   - gemfiles/spree_3_5.gemfile
   - gemfiles/spree_3_7.gemfile
   - gemfiles/spree_4_0.gemfile
