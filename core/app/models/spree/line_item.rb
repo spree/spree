@@ -36,6 +36,8 @@ module Spree
     delegate :brand, :category, to: :product
     delegate :tax_zone, to: :order
 
+    scope :promotionable, -> { joins(:product).where(spree_products: { promotionable: true }) }
+
     attr_accessor :target_shipment
 
     self.whitelisted_ransackable_associations = ['variant']
@@ -68,6 +70,7 @@ module Spree
       price * quantity
     end
 
+    alias promotionable_amount amount
     alias subtotal amount
 
     def taxable_amount
