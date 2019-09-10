@@ -21,7 +21,7 @@
     "gatsby-remark-component": "devilcoders/gatsby-remark-component",
     "gatsby-remark-copy-linked-files": "^2.0.6",
     "gatsby-remark-external-links": "^0.0.4",
-    "gatsby-remark-images": "^3.0.10",
+    "gatsby-remark-images": "^3.1.21",
     "gatsby-remark-prismjs": "^3.3.12",
     "gatsby-remark-smartypants": "^2.0.6",
     "gatsby-source-filesystem": "^2.0.4",
