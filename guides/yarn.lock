@@ -652,10 +652,10 @@
     "@babel/plugin-transform-react-jsx-self" "^7.0.0"
     "@babel/plugin-transform-react-jsx-source" "^7.0.0"
 
-"@babel/runtime@^7.0.0", "@babel/runtime@^7.1.2", "@babel/runtime@^7.5.5":
-  version "7.5.5"
-  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.5.5.tgz#74fba56d35efbeca444091c7850ccd494fd2f132"
-  integrity sha512-28QvEGyQyNkB0/m2B4FU7IEZGK2NUrcMtT6BZEFALTguLk+AUT6ofsHtPk5QyjAdUkpMJ+/Em+quwz4HOt30AQ==
+"@babel/runtime@^7.0.0", "@babel/runtime@^7.1.2", "@babel/runtime@^7.5.5", "@babel/runtime@^7.6.0":
+  version "7.6.0"
+  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.6.0.tgz#4fc1d642a9fd0299754e8b5de62c631cf5568205"
+  integrity sha512-89eSBLJsxNxOERC0Op4vd+0Bqm6wRMqMbFtV3i0/fbaWw/mJ8Q3eBvgX0G4SyrOOLCtbu98HspF8o09MRT+KzQ==
   dependencies:
     regenerator-runtime "^0.13.2"
 
@@ -5420,12 +5420,12 @@ gatsby-cli@^2.4.8:
     yargs "^11.1.0"
     yurnalist "^1.0.2"
 
-gatsby-image@^2.2.13:
-  version "2.2.13"
-  resolved "https://registry.yarnpkg.com/gatsby-image/-/gatsby-image-2.2.13.tgz#36af497f55bc404a2e5c6971ef740d82467b1eed"
-  integrity sha512-NHcmuabUh4sNdNSngX8hq0gkNgSyzULq3nrTObIDXd99DzNbr85tjY4rNRS17qPafnbpbL9kv919QzfMnRH9xw==
+gatsby-image@^2.2.18:
+  version "2.2.18"
+  resolved "https://registry.yarnpkg.com/gatsby-image/-/gatsby-image-2.2.18.tgz#5d9cee30432c7259d9c6df2468ec2322b9dcc0c3"
+  integrity sha512-08ueBEwl02Uc9izdI6FldSUJTeB41yE727wOG2PfO3dIC/LYQCIoXxJuOLdC3qpdJPoRNebo3djjW+o2O2ZkKg==
   dependencies:
-    "@babel/runtime" "^7.5.5"
+    "@babel/runtime" "^7.6.0"
     object-fit-images "^3.2.4"
     prop-types "^15.7.2"
 
