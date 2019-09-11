@@ -47,9 +47,10 @@ module Spree
 
         def set_up_options
           options_attrs.each do |name|
-            option_type = Spree::OptionType.where(name: name).first_or_initialize do |option_type|
-              option_type.presentation = name
-              option_type.save!
+            option_type = Spree::OptionType.where(name: name).first
+
+            if option_type.nil?
+              option_type = Spree::OptionType.create!(name: name, presentation: name)
             end
 
             unless product.option_types.include?(option_type)
