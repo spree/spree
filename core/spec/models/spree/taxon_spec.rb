@@ -86,15 +86,7 @@ describe Spree::Taxon, type: :model do
     let!(:taxonomy) { create(:taxonomy) }
 
     it 'does not error out' do
-      expect { select_or_create_taxonomy }.not_to raise_error
-    end
-
-    def select_or_create_taxonomy
-      if taxonomy.root.children.unscoped.where(name: 'Some name', parent_id: taxonomy.taxons.first.id).first.nil?
-        Spree::Taxon.create!(name: "Some name", parent_id: taxonomy.taxons.first.id)
-      else
-        taxonomy.root.children.unscoped.where(name: 'Some name', parent_id: taxonomy.taxons.first.id).first
-      end
+      expect { taxonomy.root.children.unscoped.where(name: 'Some name', parent_id: taxonomy.taxons.first.id).first_or_create }.not_to raise_error
     end
   end
 

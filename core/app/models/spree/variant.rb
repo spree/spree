@@ -160,7 +160,10 @@ module Spree
       # no option values on master
       return if is_master
 
-      option_type = select_or_create_option_type(opt_name)
+      option_type = Spree::OptionType.where(name: opt_name).first_or_initialize do |o|
+        o.presentation = opt_name
+        o.save!
+      end
 
       current_value = option_values.detect { |o| o.option_type.name == opt_name }
 
@@ -175,7 +178,10 @@ module Spree
         option_values.delete(current_value)
       end
 
-      option_value = select_or_create_option_value(option_type.id, opt_value)
+      option_value = Spree::OptionValue.where(option_type_id: option_type.id, name: opt_value).first_or_initialize do |o|
+        o.presentation = opt_value
+        o.save!
+      end
 
       option_values << option_value
       save
@@ -320,22 +326,6 @@ module Spree
 
     def clear_in_stock_cache
       Rails.cache.delete(in_stock_cache_key)
-    end
-
-    def select_or_create_option_type(opt_name)
-      if Spree::OptionType.where(name: opt_name).first.nil?
-        Spree::OptionType.create!(name: opt_name, presentation: opt_name)
-      else
-        Spree::OptionType.where(name: opt_name).first
-      end
-    end
-
-    def select_or_create_option_value(option_type_id, opt_value)
-      if Spree::OptionValue.where(option_type_id: option_type_id, name: opt_value).first.nil?
-        Spree::OptionValue.create!(name: opt_value, presentation: opt_value, option_type_id: option_type_id)
-      else
-        Spree::OptionValue.where(option_type_id: option_type_id, name: opt_value).first
-      end
     end
   end
 end
