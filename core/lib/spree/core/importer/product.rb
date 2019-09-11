@@ -48,7 +48,7 @@ module Spree
         def set_up_options
           options_attrs.each do |name|
             option_type = Spree::OptionType.where(name: name).first
-            
+
             if option_type.nil?
               option_type = Spree::OptionType.create!(name: name, presentation: name)
             end
