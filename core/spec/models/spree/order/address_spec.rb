@@ -55,13 +55,13 @@ describe Spree::Order, type: :model do
     describe 'mass attribute assignment for bill_address_id, ship_address_id' do
       it 'is able to mass assign bill_address_id' do
         params = { bill_address_id: address.id }
-        order.update_attributes(params)
+        order.update(params)
         expect(order.bill_address_id).to eq address.id
       end
 
       it 'is able to mass assign ship_address_id' do
         params = { ship_address_id: address.id }
-        order.update_attributes(params)
+        order.update(params)
         expect(order.ship_address_id).to eq address.id
       end
     end
