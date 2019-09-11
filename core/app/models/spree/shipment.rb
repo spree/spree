@@ -26,7 +26,7 @@ module Spree
     before_validation :set_cost_zero_when_nil
 
     validates :stock_location, presence: true
-    validates :number, uniqueness: true
+    validates_uniqueness_of :number, case_sensitive: false
 
     attr_accessor :special_instructions
 
