@@ -6,8 +6,8 @@ Spree.ready(function () {
       data: {
         currency: $(this).val()
       }
-    }).done(function() {
-      return window.location.reload()
+    }).done(function () {
+      window.location.reload()
     })
   })
 })
