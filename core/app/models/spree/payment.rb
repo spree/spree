@@ -25,7 +25,7 @@ module Spree
     has_many :refunds, inverse_of: :payment
 
     validates :payment_method, presence: true
-    validates :number, uniqueness: { case_sensitive: false }
+    validates :number, uniqueness: { case_sensitive: true }
     validates :source, presence: true, if: -> { payment_method&.source_required? }
 
     before_validation :validate_source
