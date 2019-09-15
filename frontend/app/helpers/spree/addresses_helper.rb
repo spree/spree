@@ -7,7 +7,7 @@ module Spree
           yield
         else
           is_required = Spree::Address.required_fields.include?(method)
-          separator = is_required ? '<span class="required">*</span><br />' : '<br />'
+          separator = is_required ? '<abbr class="req">*</abbr><br />' : '<br />'
           form.label(method) + separator.html_safe +
             form.text_field(method, class: [is_required ? 'required' : nil, 'form-control'].compact, required: is_required)
         end
@@ -28,7 +28,7 @@ module Spree
                           disabled: have_states)
       ].join.tr('"', "'").delete("\n")
 
-      form.label(:state, Spree.t(:state)) + '<span class="req">*</span><br />'.html_safe +
+      form.label(:state, Spree.t(:state)) + '<abbr class="req">*</abbr><br />'.html_safe +
         content_tag(:noscript, form.text_field(:state_name, class: 'required form-control')) +
         javascript_tag("document.write(\"#{state_elements.html_safe}\");")
     end

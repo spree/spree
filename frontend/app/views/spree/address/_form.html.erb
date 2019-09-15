@@ -3,13 +3,13 @@
 <div class="inner" data-hook=<%="#{address_type}_inner" %>>
   <div class="form-group" id=<%="#{address_id}firstname" %>>
     <%= form.label :firstname do %>
-      <%= Spree.t(:first_name) %><abbr class="required" title="required">*</abbr>
+      <%= Spree.t(:first_name) %><abbr class="req" title="required">*</abbr>
     <% end %>
     <%= form.text_field :firstname, class: 'form-control', required: true %>
   </div>
   <div class="form-group" id=<%="#{address_id}lastname" %>>
     <%= form.label :lastname do %>
-      <%= Spree.t(:last_name) %><abbr class="required" title="required">*</abbr>
+      <%= Spree.t(:last_name) %><abbr class="req" title="required">*</abbr>
     <% end %>
     <%= form.text_field :lastname, class: 'form-control', required: true %>
   </div>
@@ -21,7 +21,7 @@
   <% end %>
   <div class="form-group" id=<%="#{address_id}address1" %>>
     <%= form.label :address1 do %>
-      <%= Spree.t(:street_address) %><abbr class="required" title="required">*</abbr>
+      <%= Spree.t(:street_address) %><abbr class="req" title="required">*</abbr>
     <% end %>
     <%= form.text_field :address1, class: 'form-control required' %>
   </div>
@@ -31,14 +31,14 @@
   </div>
   <div class="form-group" id=<%="#{address_id}city" %>>
     <%= form.label :city do %>
-      <%= Spree.t(:city) %><abbr class="required" title="required">*</abbr>
+      <%= Spree.t(:city) %><abbr class="req" title="required">*</abbr>
     <% end %>
     <%= form.text_field :city, class: 'form-control', required: true %>
   </div>
 
   <div class="form-group" id=<%="#{address_id}country" %>>
     <%= form.label :country_id do %>
-      <%= Spree.t(:country) %><abbr class="required" title="required">*</abbr>
+      <%= Spree.t(:country) %><abbr class="req" title="required">*</abbr>
     <% end %>
     <span id=<%="#{address_id}country-selection" %>>
       <%= form.collection_select :country_id, available_countries, :id, :name, {}, { class: 'form-control', required: true } %>
@@ -49,7 +49,7 @@
     <div class="form-group" id=<%="#{address_id}state" %>>
       <% have_states = !address.country.states.empty? %>
       <%= form.label :state do %>
-        <%= Spree.t(:state) %><abbr class='required' title="required" id=<%="#{address_id}state-required"%>>*</abbr>
+        <%= Spree.t(:state) %><abbr class='req' title="required" id=<%="#{address_id}state-required"%>>*</abbr>
       <% end %>
 
       <%== state_elements = [
@@ -73,7 +73,7 @@
 
   <div class="form-group" id=<%="#{address_id}zipcode" %>>
     <%= form.label :zipcode do %>
-      <%= Spree.t(:zip) %><% if address.require_zipcode? %><abbr class="required" title="required">*</abbr><% end %>
+      <%= Spree.t(:zip) %><% if address.require_zipcode? %><abbr class="req" title="required">*</abbr><% end %>
     <% end %>
     <%= form.text_field :zipcode, class: 'form-control', required: address.require_zipcode? %>
   </div>
@@ -81,7 +81,7 @@
 
   <div class="form-group" id=<%="#{address_id}phone" %>>
     <%= form.label :phone do %>
-      <%= Spree.t(:phone) %><% if address.require_phone? %><abbr class="required" title="required">*</abbr><% end %>
+      <%= Spree.t(:phone) %><% if address.require_phone? %><abbr class="req" title="required">*</abbr><% end %>
     <% end %>
     <%= form.phone_field :phone, class: 'form-control', required: address.require_phone? %>
   </div>
