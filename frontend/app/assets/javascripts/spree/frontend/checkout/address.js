@@ -82,9 +82,11 @@ Spree.ready(function ($) {
           stateInput.show()
           if (statesRequired) {
             stateSpanRequired.show()
+            stateInput.prop('required', true)
             stateInput.addClass('required form-control')
           } else {
             stateInput.val('')
+            stateInput.prop('required', false)
             stateSpanRequired.hide()
             stateInput.removeClass('required')
           }

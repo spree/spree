@@ -9,7 +9,7 @@ module Spree
           is_required = Spree::Address.required_fields.include?(method)
           separator = is_required ? '<abbr class="req">*</abbr><br />' : '<br />'
           form.label(method) + separator.html_safe +
-            form.text_field(method, class: [is_required ? 'required' : nil, 'form-control'].compact, required: is_required)
+            form.text_field(method, class: [is_required ? 'required form-control' : nil, 'form-control'].compact, required: is_required)
         end
       end
     end
@@ -21,10 +21,10 @@ module Spree
         form.collection_select(:state_id, country.states.order(:name),
                               :id, :name,
                               { include_blank: true },
-                               class: have_states ? 'form-control' : 'hidden',
+                               class: have_states ? 'form-control' : 'hidden form-control',
                                disabled: !have_states) +
           form.text_field(:state_name,
-                          class: !have_states ? 'form-control' : 'hidden',
+                          class: !have_states ? 'form-control' : 'hidden form-control',
                           disabled: have_states)
       ].join.tr('"', "'").delete("\n")
 
