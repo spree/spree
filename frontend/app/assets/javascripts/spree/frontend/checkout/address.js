@@ -52,7 +52,7 @@ Spree.ready(function ($) {
         var stateInput = statePara.find('input')
         var stateSpanRequired = statePara.find('abbr')
 
-        if (states.length > 0 ) {
+        if (states.length > 0) {
           selected = parseInt(stateSelect.val())
           stateSelect.html('')
           statesWithBlank = [{name: '', id: ''}].concat(states)
