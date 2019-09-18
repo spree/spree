@@ -2247,10 +2247,10 @@ babel-preset-fbjs@^2.1.4:
     babel-plugin-transform-react-display-name "^6.8.0"
     babel-plugin-transform-react-jsx "^6.8.0"
 
-babel-preset-gatsby@^0.1.6:
-  version "0.1.6"
-  resolved "https://registry.yarnpkg.com/babel-preset-gatsby/-/babel-preset-gatsby-0.1.6.tgz#df9e6a813ef860ffb23dcf48a2f4c13f3f3d050c"
-  integrity sha512-DHRBQI9QDdZ51A/bKfkr+nvREttRFST0AmD0zBcKOrERlPbwlOBP+IgUOo76kSJx5z9EDhRCwkvraT6ZGzeQ6Q==
+babel-preset-gatsby@^0.1.6, babel-preset-gatsby@^0.1.7:
+  version "0.1.7"
+  resolved "https://registry.yarnpkg.com/babel-preset-gatsby/-/babel-preset-gatsby-0.1.7.tgz#53c06f2d8b5d69f1218b925992aebcc3d89997b4"
+  integrity sha512-vgzATIBl4V27QC4O9oEEv3oWcgFLw614oqSoEcMd0BaYkAtX8c6LPHN7TXDTA3EwMu+qQLyCtv7/K00liYvytA==
   dependencies:
     "@babel/plugin-proposal-class-properties" "^7.0.0"
     "@babel/plugin-syntax-dynamic-import" "^7.0.0"
