@@ -62,7 +62,7 @@ Spree.ready(function ($) {
           statesWithBlank = [{name: '', id: ''}].concat(states)
           $.each(statesWithBlank, function (idx, state) {
             var opt = $(document.createElement('option')).attr('value', state.id).html(state.name)
-            if (selected === state.id) {
+            if (selected.toString(10) === state.id.toString(10)) {
               opt.prop('selected', true)
             }
             stateSelect.append(opt)
