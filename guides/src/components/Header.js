@@ -96,7 +96,7 @@ export default class Header extends React.PureComponent {
               isActive={this.isActive('release_notes')}
               url="/release_notes/"
             />
-            <NavItem url="https://heroku.com/deploy?template=https://github.com/spree/spree/tree/3-7-stable">
+            <NavItem url="https://heroku.com/deploy?template=https://github.com/spree/spree/tree/4-0-stable">
               Demo
             </NavItem>
 
