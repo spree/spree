@@ -27,7 +27,7 @@ describe 'Taxons Spec', type: :request do
     end
 
     context 'by roots' do
-      before { get '/api/v2/storefront/taxons?roots=true' }
+      before { get '/api/v2/storefront/taxons?filter[roots]=true' }
 
       it_behaves_like 'returns 200 HTTP status'
 
@@ -41,7 +41,7 @@ describe 'Taxons Spec', type: :request do
     end
 
     context 'by parent' do
-      before { get "/api/v2/storefront/taxons?parent_id=#{taxonomy.root.id}" }
+      before { get "/api/v2/storefront/taxons?filter[parent_id]=#{taxonomy.root.id}" }
 
       it_behaves_like 'returns 200 HTTP status'
 
@@ -66,13 +66,24 @@ describe 'Taxons Spec', type: :request do
     end
 
     context 'by ids' do
-      before { get "/api/v2/storefront/taxons?ids=#{taxons.map(&:id).join(',')}" }
+      before { get "/api/v2/storefront/taxons?filter[ids]=#{taxons.map(&:id).join(',')}" }
 
       it_behaves_like 'returns 200 HTTP status'
 
       it 'returns taxons by ids' do
         expect(json_response['data'].size).to            eq(2)
         expect(json_response['data'].pluck(:id).sort).to eq(taxons.map(&:id).sort.map(&:to_s))
+      end
+    end
+
+    context 'by name' do
+      before { get "/api/v2/storefront/taxons?filter[name]=#{taxons.last.name}" }
+
+      it_behaves_like 'returns 200 HTTP status'
+
+      it 'returns taxonx by name' do
+        expect(json_response['data'].size).to eq(1)
+        expect(json_response['data'].last['attributes']['name']).to eq(taxons.last.name)
       end
     end
 
