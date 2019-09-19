@@ -25,15 +25,15 @@ jQuery(function ($) {
   })
 
   // Sidebar nav toggle functionality
-  const sidebar_toggle = $('#sidebar-toggle')
+  var sidebar_toggle = $('#sidebar-toggle')
 
   sidebar_toggle.on('click', function() {
-    const wrapper = $('#wrapper')
-    const main    = $('#main-part')
-    const sidebar = $('#main-sidebar')
-    const version = $('.spree-version')
-    const collapsed = sidebar.find('[aria-expanded="true"]')
-    const collapsedIcons = sidebar.find('.icon-chevron-down')
+    var wrapper = $('#wrapper')
+    var main    = $('#main-part')
+    var sidebar = $('#main-sidebar')
+    var version = $('.spree-version')
+    var collapsed = sidebar.find('[aria-expanded="true"]')
+    var collapsedIcons = sidebar.find('.icon-chevron-down')
 
     wrapper.toggleClass('sidebar-minimized')
 
