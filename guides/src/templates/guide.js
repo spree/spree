@@ -3,7 +3,6 @@ import * as React from 'react'
 import PropTypes from 'prop-types'
 import { graphql } from 'gatsby'
 import RehypeReact from 'rehype-react'
-import { DiscussionEmbed } from 'disqus-react'
 
 // --- Components
 import Layout from '../components/Layout'
@@ -50,11 +49,6 @@ const renderAst = new RehypeReact({
 
 export default function Template({ data }) {
   const { guide } = data
-  const disqusShortname = 'spree-guides'
-  const disqusConfig = {
-    identifier: data.id,
-    title: guide.frontmatter.title
-  }
 
   let pageTitle = guide.frontmatter.title
   if (guide.fields.rootSection) {
@@ -78,9 +72,6 @@ export default function Template({ data }) {
       <article className="mt2">
         <H1>{guide.frontmatter.title}</H1>
         {renderAst(guide.htmlAst)}
-        {!guide.fields.isIndex &&
-          <DiscussionEmbed shortname={disqusShortname} config={disqusConfig} />
-        }
       </article>
     </Layout>
   )
