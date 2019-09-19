@@ -3,12 +3,11 @@ module Spree
     class Find
       def initialize(scope:, params:)
         @scope = scope
-
-        @ids      = String(params[:ids]).split(',')
-        @parent   = params[:parent_id]
-        @taxonomy = params[:taxonomy_id]
-        @name     = params[:name]
-        @roots    = params[:roots]
+        @ids      = String(params.dig(:filter, :ids)).split(',')
+        @parent   = params.dig(:filter, :parent_id)
+        @taxonomy = params.dig(:filter, :taxonomy_id)
+        @name     = params.dig(:filter, :name)
+        @roots    = params.dig(:filter, :roots)
       end
 
       def execute
