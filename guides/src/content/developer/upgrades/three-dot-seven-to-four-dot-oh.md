@@ -18,31 +18,33 @@ If you have any questions or suggestions feel free to reach out through [Spree s
 
 This is the safest and recommended method.
 
-### Update your Ruby version to 2.5.0 at least
+## Update your Ruby version to 2.5.0 at least
 
 Spree 4.0 and Rails 6.0 require Ruby 2.5.0 at least so you need to bump the ruby version in your project's `Gemfile` and `.ruby-version` files.
 
-### Update your Rails version to 6.0
+## Update your Rails version to 6.0
 
 Please follow the
 [official Rails guide](https://edgeguides.rubyonrails.org/upgrading_ruby_on_rails.html#upgrading-from-rails-5-2-to-rails-6-0)
 to upgrade your store.
 
-### Migrate from Paperclip to ActiveStorage
+## Migrate from Paperclip to ActiveStorage
 
 In Spree 3.6 we deprecated [Paperclip support in favour of ActiveStorage](/release_notes/3_6_0.html#active-storage-support). Paperclip gem itself isn't maintained anymore and it is recommended to move to ActiveStorage as it is the defualt Rails storage engine since Rails 5.2 release.
 
 In Spree 4.0 we completely removed Paperclip support in favour of ActiveStorage.
 
+Also please remove any occurances of `Rails.application.config.use_paperclip` and `Configuration::Paperclip` in your codebase.
+
 Please follow the [official Paperclip to ActiveStorage migration guide](https://github.com/thoughtbot/paperclip/blob/master/MIGRATING.md)
 
-### Replace OrderContents with services in your codebase
+## Replace OrderContents with services in your codebase
 
 `OrderContents` was deprecated in Spree 3.7 and removed in 4.0. We've replaced it with [service objects](/release_notes/3_7_0.html#service-oriented-architecture).
 
 You need to replace any instances of `OrderContents` usage with coresponding services in your codebase.
 
-#### `OrderContents#update_cart`
+### `OrderContents#update_cart`
 
 before:
 
@@ -56,7 +58,7 @@ after:
 Spree::Cart::Update.call(order: order, params: line_items_attributes)
 ```
 
-#### `OrderContents#add`
+### `OrderContents#add`
 
 before:
 
@@ -77,7 +79,7 @@ Spree::Cart::AddItem.call(
 )
 ```
 
-#### `OrderContents#remove`
+### `OrderContents#remove`
 
 before:
 
@@ -98,7 +100,7 @@ Spree::Cart::RemoveItem.call(
 )
 ```
 
-### Replace `add_store_credit_payments` with `Checkout::AddStoreCredit`
+## Replace `add_store_credit_payments` with `Checkout::AddStoreCredit`
 
 Similar to `OrderContents` method `add_store_credit_payments` was replaced with `Checkout::AddStoreCredit` service.
 
@@ -114,7 +116,7 @@ after:
 Spree::Checkout::AddStoreCredit.call(order: order)
 ```
 
-### Replace `remove_store_credit_payments` with `Checkout::RemoveStoreCredit`
+## Replace `remove_store_credit_payments` with `Checkout::RemoveStoreCredit`
 
 Similar to `OrderContents` method `remove_store_credit_payments` was replaced with `Checkout::RemeoveStoreCredit` service.
 
@@ -130,11 +132,35 @@ after:
 Spree::Checkout::RemoveStoreCredit.call(order: order)
 ```
 
-### Remove `spree_address_book` extension
+## Remove `spree_address_book` extension
 
-If you're using [Address Book](https://github.com/spree-contrib/spree_address_book) extension you need to remove it from your Gemfile as this feature was [merged into core Spree](/release_notes/4_0_0.html#address-book-support).
+If you're using [Address Book](https://github.com/spree-contrib/spree_address_book) extension you need to remove as this feature was [merged into core Spree](/release_notes/4_0_0.html#address-book-support).
 
-### Update Gemfile
+### Remove it from Gemfile
+
+Remove this line:
+
+```ruby
+gem 'spree_address_book', github: 'spree-contrib/spree_address_book'
+```
+
+### Remove it from `vendor/assets/javascripts/spree/frontend/all.js`
+
+Remove this line if your're using `spree_frontend`:
+
+```
+//= require spree/frontend/spree_address_book
+```
+
+### Remove it from `vendor/assets/stylesheets/spree/frontend/all.css`
+
+Remove this line if your're using `spree_frontend`:
+
+```
+//= require spree/frontend/spree_address_book
+```
+
+## Update Gemfile
 
 ```ruby
 gem 'spree', '~> 4.0.0.rc2'
@@ -142,9 +168,9 @@ gem 'spree_auth_devise', '~> 4.0.0.rc2'
 gem 'spree_gateway', '~> 3.6'
 ```
 
-### Run `bundle update`
+## Run `bundle update`
 
-### Install missing migrations
+## Install missing migrations
 
 ```bash
 rails spree:install:migrations
@@ -153,16 +179,16 @@ rails spree_auth:install:migrations
 rails spree_gateway:install:migrations
 ```
 
-### Run migrations
+## Run migrations
 
 ```bash
 rails db:migrate
 ```
 
-### Read the release notes
+## Read the release notes
 
 For information about changes contained within this release, please read the [4.0.0 Release Notes](https://guides.spreecommerce.org/release_notes/spree_4_0_0.html).
 
-### More info
+## More info
 
 If you have any questions or suggestions feel free to reach out through [Spree slack channels](http://slack.spreecommerce.org/)
