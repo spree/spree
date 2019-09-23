@@ -4,15 +4,17 @@ module Spree
       def initialize(scope:, params:, current_currency:)
         @scope = scope
 
-        @ids          = String(params.dig(:filter, :ids)).split(',')
-        @skus         = String(params.dig(:filter, :skus)).split(',')
-        @price        = String(params.dig(:filter, :price)).split(',')
-        @currency     = params[:currency] || current_currency
-        @taxons       = String(params.dig(:filter, :taxons)).split(',')
-        @name         = params.dig(:filter, :name)
-        @options      = params.dig(:filter, :options).try(:to_unsafe_hash)
-        @deleted      = params.dig(:filter, :show_deleted)
-        @discontinued = params.dig(:filter, :show_discontinued)
+        @ids              = String(params.dig(:filter, :ids)).split(',')
+        @skus             = String(params.dig(:filter, :skus)).split(',')
+        @price            = String(params.dig(:filter, :price)).split(',').map(&:to_f)
+        @currency         = params[:currency] || current_currency
+        @taxons           = String(params.dig(:filter, :taxons)).split(',')
+        @name             = params.dig(:filter, :name)
+        @options          = params.dig(:filter, :options).try(:to_unsafe_hash)
+        @option_value_ids = params.dig(:filter, :option_value_ids)
+        @sort_by          = params.dig(:sort_by)
+        @deleted          = params.dig(:filter, :show_deleted)
+        @discontinued     = params.dig(:filter, :show_discontinued)
       end
 
       def execute
@@ -22,15 +24,17 @@ module Spree
         products = by_taxons(products)
         products = by_name(products)
         products = by_options(products)
+        products = by_option_value_ids(products)
         products = include_deleted(products)
         products = include_discontinued(products)
+        products = ordered(products)
 
         products
       end
 
       private
 
-      attr_reader :ids, :skus, :price, :currency, :taxons, :name, :options, :scope, :deleted, :discontinued
+      attr_reader :ids, :skus, :price, :currency, :taxons, :name, :options, :option_value_ids, :scope, :sort_by, :deleted, :discontinued
 
       def ids?
         ids.present?
@@ -54,6 +58,14 @@ module Spree
 
       def options?
         options.present?
+      end
+
+      def option_value_ids?
+        option_value_ids.present?
+      end
+
+      def sort_by?
+        sort_by.present?
       end
 
       def name_matcher
@@ -103,6 +115,27 @@ module Spree
         options.map do |key, value|
           products.with_option_value(key, value)
         end.inject(:&)
+      end
+
+      def by_option_value_ids(products)
+        return products unless option_value_ids?
+
+        products.joins(variants: :option_values).distinct.where(spree_option_values: { id: option_value_ids })
+      end
+
+      def ordered(products)
+        return products unless sort_by?
+
+        case sort_by
+        when 'default'
+          products
+        when 'newest-first'
+          products.order(available_on: :desc)
+        when 'price-high-to-low'
+          products.select('spree_products.*, spree_prices.amount').reorder('').send(:descend_by_master_price)
+        when 'price-low-to-high'
+          products.select('spree_products.*, spree_prices.amount').reorder('').send(:ascend_by_master_price)
+        end
       end
 
       def include_deleted(products)
