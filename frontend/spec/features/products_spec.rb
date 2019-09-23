@@ -22,34 +22,6 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
     expect(page).to have_content(Spree.t(:shopping_cart))
   end
 
-  describe 'correct displaying of microdata' do
-    let(:product) { Spree::Product.find_by(name: 'Ruby on Rails Ringer T-Shirt') }
-
-    it 'on products page' do
-      within("#product_#{product.id}") do
-        within('[itemprop=name]') do
-          expect(page).to have_content('Ruby on Rails Ringer T-Shirt')
-        end
-        expect(page).to have_css("[itemprop='price'][content='19.99']")
-        expect(page).to have_css("[itemprop='priceCurrency'][content='USD']")
-        expect(page).to have_css("[itemprop='url'][href='/products/ruby-on-rails-ringer-t-shirt']")
-        expect(page).to have_css("[itemprop='image'][src*='/assets/noimage/small']")
-      end
-    end
-
-    it 'on product page' do
-      click_link product.name
-      within('[data-hook=product_show]') do
-        within('[itemprop=name]') do
-          expect(page).to have_content('Ruby on Rails Ringer T-Shirt')
-        end
-        expect(page).to have_css("[itemprop='price'][content='19.99']")
-        expect(page).to have_css("[itemprop='priceCurrency'][content='USD']")
-        expect(page).to have_css("[itemprop='image'][src*='/assets/noimage/product']")
-      end
-    end
-  end
-
   describe 'meta tags and title' do
     let(:jersey) { Spree::Product.find_by(name: 'Ruby on Rails Baseball Jersey') }
     let(:metas) { { meta_description: 'Brand new Ruby on Rails Jersey', meta_title: 'Ruby on Rails Baseball Jersey Buy High Quality Geek Apparel', meta_keywords: 'ror, jersey, ruby' } }
@@ -290,10 +262,10 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
     within(:css, '#sidebar_products_search') { click_button 'Search' }
 
     expect(page).to have_css('#products .product-list-item').twice
-    expect(page).to have_css('#products .product-list-item span[itemprop=name]').twice
+    expect(page).to have_css('#products .product-list-item').twice
 
     find('.pagination .next a').click
-    expect(page).to have_css('#products .product-list-item span[itemprop=name]').once
+    expect(page).to have_css('#products .product-list-item').once
   end
 
   it 'is able to display products priced 18 dollars and above' do
