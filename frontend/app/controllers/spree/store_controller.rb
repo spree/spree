@@ -3,7 +3,7 @@ module Spree
     include Spree::Core::ControllerHelpers::Order
 
     skip_before_action :set_current_order, only: :cart_link
-    skip_before_action :verify_authenticity_token, only: :ensure_cart
+    skip_before_action :verify_authenticity_token, only: :ensure_cart, raise: false
 
     def forbidden
       render 'spree/shared/forbidden', layout: Spree::Config[:layout], status: 403
