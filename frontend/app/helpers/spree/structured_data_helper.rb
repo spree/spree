@@ -4,7 +4,7 @@ module Spree
       content_tag :script, type: 'application/ld+json' do
         raw Spree::JsonLd::ProductsSerializer.new(
           products: products,
-          host: request.host_with_port,
+          host: current_store.url,
           currency: current_currency
         ).call.to_json
       end
