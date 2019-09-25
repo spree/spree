@@ -9,7 +9,10 @@ describe 'JSON-LD hashes', type: :feature, inaccessible: true do
     end
   end
 
-  before { visit spree.root_path }
+  before do
+    create(:store)
+    visit spree.root_path
+  end
 
   context 'home page' do
     it_behaves_like 'it contains JSON-LD hash'
