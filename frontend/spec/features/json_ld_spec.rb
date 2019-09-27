@@ -5,7 +5,16 @@ describe 'JSON-LD hashes', type: :feature, inaccessible: true do
 
   shared_examples 'it contains products in JSON-LD hash' do |products|
     it 'contains products in JSON-LD hash' do
-      serialized_products.zip(products) do |serialized_product, product|
+      pairs = products.map do |product|
+        [
+          product,
+          serialized_products.detect do |serialized_product|
+            serialized_product['@id'] == "http://www.example.com/product_#{product.id}"
+          end
+        ]
+      end
+
+      pairs.each do |product, serialized_product|
         expect(serialized_product['@context']).to eq 'https://schema.org/'
         expect(serialized_product['@type']).to eq 'Product'
         expect(serialized_product['@id']).to eq "http://www.example.com/product_#{product.id}"

@@ -97,7 +97,11 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
       it 'when adding a product to the cart', js: true do
         visit spree.product_path(product)
         click_button 'Add To Cart'
-        click_link 'Home'
+
+        within('#main-nav-bar') do
+          click_link 'Home'
+        end
+
         within('.cart-info') do
           expect(page).to have_content('19.99 ₽')
         end

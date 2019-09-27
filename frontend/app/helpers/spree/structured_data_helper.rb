@@ -16,8 +16,8 @@ module Spree
       {
         '@context': 'https://schema.org/',
         '@type': 'Product',
-        '@id': "#{engine_routes_helper.root_url(host: current_store_host)}product_#{product.id}",
-        url: engine_routes_helper.product_url(product, host: current_store_host),
+        '@id': "#{spree.root_url}product_#{product.id}",
+        url: spree.product_url(product),
         name: product.name,
         image: structured_images(product),
         description: product.description,
@@ -27,7 +27,7 @@ module Spree
           price: product.price,
           priceCurrency: current_currency,
           availability: product.in_stock? ? 'InStock' : 'OutOfStock',
-          url: engine_routes_helper.product_url(product, host: current_store_host),
+          url: spree.product_url(product),
           availabilityEnds: product.discontinue_on ? product.discontinue_on.strftime('%F') : ''
         }
       }
@@ -38,19 +38,7 @@ module Spree
 
       return '' unless images.any?
 
-      app_routes_helper.rails_blob_url(images.first.attachment, host: current_store_host)
-    end
-
-    def engine_routes_helper
-      Spree::Core::Engine.routes.url_helpers
-    end
-
-    def app_routes_helper
-      Rails.application.routes.url_helpers
-    end
-
-    def current_store_host
-      current_store.url
+      main_app.rails_blob_url(images.first.attachment)
     end
   end
 end
