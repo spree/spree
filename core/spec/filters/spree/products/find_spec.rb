@@ -123,9 +123,9 @@ module Spree
           scope: Spree::Product.all,
           params: params,
           current_currency: 'USD'
-        ).execute.pluck(:id)
+        ).execute.ids
 
-        expect(product_ids).to eq Spree::Product.available.pluck(:id)
+        expect(product_ids).to match_array Spree::Product.available.ids
       end
 
       it 'returns products in newest-first order' do
@@ -137,9 +137,9 @@ module Spree
           scope: Spree::Product.all,
           params: params,
           current_currency: 'USD'
-        ).execute.pluck(:id)
+        ).execute.ids
 
-        expect(product_ids).to eq Spree::Product.available.order(available_on: :desc).pluck(:id)
+        expect(product_ids).to match_array Spree::Product.available.order(available_on: :desc).ids
       end
 
       it 'returns products in price-high-to-low order' do
@@ -151,9 +151,9 @@ module Spree
           scope: Spree::Product.all,
           params: params,
           current_currency: 'USD'
-        ).execute.pluck(:id)
+        ).execute.ids
 
-        expect(product_ids).to eq [product_2.id, product_3.id, product.id]
+        expect(product_ids).to match_array [product_2.id, product_3.id, product.id]
       end
 
       it 'returns products in price-low-to-high order' do
@@ -165,9 +165,9 @@ module Spree
           scope: Spree::Product.all,
           params: params,
           current_currency: 'USD'
-        ).execute.pluck(:id)
+        ).execute.ids
 
-        expect(product_ids).to eq [product.id, product_3.id, product_2.id]
+        expect(product_ids).to match_array [product.id, product_3.id, product_2.id]
       end
     end
   end
