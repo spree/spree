@@ -63,15 +63,6 @@ module Spree
           request.remote_ip
         end
 
-        def current_currency
-          # ensure session currency is supported
-          if session.key?(:currency) && supported_currencies.map(&:iso_code).include?(session[:currency])
-            session[:currency]
-          else
-            Spree::Config[:currency]
-          end
-        end
-
         private
 
         def last_incomplete_order(includes = {})

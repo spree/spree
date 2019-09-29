@@ -30,16 +30,8 @@ module Spree
               store: current_store,
               user: spree_current_user,
               token: order_token,
-              currency: use_current_currency
+              currency: current_currency
             )
-          end
-
-          def use_current_currency
-            if session.key?(:currency) && supported_currencies.map(&:iso_code).include?(session[:currency])
-              session[:currency]
-            else
-              spree_current_store.default_currency || Spree::Config[:currency]
-            end
           end
 
           def supported_currencies
