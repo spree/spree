@@ -163,7 +163,7 @@ Remove this line if your're using `spree_frontend`:
 ## Update Gemfile
 
 ```ruby
-gem 'spree', '~> 4.0.0.rc2'
+gem 'spree', '~> 4.0'
 gem 'spree_auth_devise', '~> 4.0'
 gem 'spree_gateway', '~> 3.6'
 ```
