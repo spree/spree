@@ -81,7 +81,7 @@ jobs:
     docker:
       - image: *image
       - image: circleci/mysql:8-ram
-        command: [--default-authentication-plugin=mysql_native_password]
+        command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_bin --default-authentication-plugin=mysql_native_password
     steps:
       - checkout
       - restore_cache:
