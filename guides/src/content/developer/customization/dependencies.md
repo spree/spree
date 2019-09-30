@@ -16,18 +16,23 @@ Dependendencies is a a new way to customize Spree. With Dependencies you can eas
 
 To replace [serializers](https://github.com/Netflix/fast_jsonapi) or Services in a specific API endpoint you can create a simple decorator:
 
-Create a `app/controllers/spree/api/v2/storefront/cart_controller_decorator.rb`
-```ruby
-  module MyCartControllerDecorator
-    def resource_serializer
-      MyNewAwesomeCartSerializer
-    end
+Create a `app/controllers/my_store/spree/cart_controller_decorator.rb`
 
-    def add_item_service
-      MyNewAwesomeAddItemToCart
+```ruby
+  module MyStore
+    module Spree
+      module CartControllerDecorator
+        def resource_serializer
+          MyNewAwesomeCartSerializer
+        end
+
+        def add_item_service
+          MyNewAwesomeAddItemToCart
+        end
+      end
     end
   end
-  Spree::Api::V2::Storefront::CartController.prepend MyCartControllerDecorator
+  Spree::Api::V2::Storefront::CartController.prepend MyStore::Spree::CartControllerDecorator
 ```
 
 This will change the serializer in this API endpoint to `MyNewAwesomeCartSerializer` and also it will swap the default `add_item_service` to `MyNewAwesomeAddItemToCart`.

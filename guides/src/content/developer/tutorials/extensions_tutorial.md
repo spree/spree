@@ -81,21 +81,23 @@ Now we need to extend `Spree::HomeController` and add an action that selects "on
 Make sure you are in the `spree_simple_sales` root directory and run the following command to create the directory structure for our controller decorator:
 
 ```bash
-mkdir -p app/controllers/spree
+mkdir -p app/controllers/spree_simple_sales/spree
 ```
 
 Next, create a new file in the directory we just created called `home_controller_decorator.rb` and add the following content to it:
 
 ```ruby
 module SpreeSimpleSales
-  module HomeControllerDecorator
-    def sale
-      @products = Spree::Product.joins(:variants_including_master).where('spree_variants.sale_price is not null').distinct
+  module Spree
+    module HomeControllerDecorator
+      def sale
+        @products = Spree::Product.joins(:variants_including_master).where('spree_variants.sale_price is not null').distinct
+      end
     end
   end
 end
 
-Spree::HomeController.prepend SpreeSimpleSales::HomeControllerDecorator
+Spree::HomeController.prepend SpreeSimpleSales::Spree::HomeControllerDecorator
 ```
 
 This will select just the products that have a variant with a `sale_price` set.
@@ -164,25 +166,27 @@ First, create the required directory structure for our new decorator:
 mkdir -p app/models/spree
 ```
 
-Next, create the file `app/models/spree/variant_decorator.rb` and add the following content to it:
+Next, create the file `app/models/spree_simple_sales/spree/variant_decorator.rb` and add the following content to it:
 
 ```ruby
 module SpreeSimpleSales
-  module VariantDecorator
-    def self.included base
-      base.class_eval do
-        alias_method :orig_price_in, :price_in
+  module Spree
+    module VariantDecorator
+      def self.included base
+        base.class_eval do
+          alias_method :orig_price_in, :price_in
+        end
       end
-    end
 
-    def price_in(currency)
-      return orig_price_in(currency) unless sale_price.present?
-      Spree::Price.new(variant_id: self.id, amount: self.sale_price, currency: currency)
+      def price_in(currency)
+        return orig_price_in(currency) unless sale_price.present?
+        Spree::Price.new(variant_id: self.id, amount: self.sale_price, currency: currency)
+      end
     end
   end
 end
 
-Spree::Variant.prepend SpreeSimpleSales::VariantDecorator
+Spree::Variant.prepend SpreeSimpleSales::Spree::VariantDecorator
 ```
 
 Here we alias the original method `price_in` to `orig_price_in` and override it. If there is a `sale_price` present on the product's master variant, we return that price. Otherwise, we call the original implementation of `price_in`.
