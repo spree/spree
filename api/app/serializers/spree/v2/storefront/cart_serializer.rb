@@ -13,10 +13,7 @@ module Spree
         has_many   :line_items
         has_many   :variants
         has_many   :promotions, id_method_name: :promotion_id do |cart|
-          # we only want to display applied and valid promotions
-          # sometimes Order can have multiple promotions but the promo engine
-          # will only apply those that are more beneficial for the customer
-          valid_promotions(cart)
+          cart.valid_promotions(cart)
         end
         has_many   :payments do |cart|
           cart.payments.valid
