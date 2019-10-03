@@ -617,6 +617,11 @@ module Spree
       end
     end
 
+    def valid_promotions(order)
+      promotion_ids = order.all_adjustments.eligible.nonzero.promotion.map { |a| a.source.promotion_id }.uniq
+      order.order_promotions.where(promotion_id: promotion_ids).uniq(&:promotion_id)
+    end
+
     private
 
     def link_by_email

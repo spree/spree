@@ -1154,4 +1154,61 @@ describe Spree::Order, type: :model do
 
     it { expect { order.destroy }.to change { Spree::Address.count }.by(-2) }
   end
+
+  describe '#valid_promotions' do
+    def create_adjustment(label, order_or_line_item, amount, source)
+      create(:adjustment,
+              order: order,
+              adjustable: order_or_line_item,
+              source: source,
+              amount: amount,
+              state: 'closed',
+              label: label,
+              mandatory: false)
+    end
+
+    let!(:order) { create(:order_with_line_items, line_items_count: 10) }
+    let(:line_item) { order.line_items.first }
+
+    let(:zero_promo) { create :promotion_with_order_adjustment, weighted_order_adjustment_amount: 0, starts_at: Time.now, code: 'Zero', id: 1 }
+    let(:order_promo) { create :promotion_with_order_adjustment, weighted_order_adjustment_amount: 10, starts_at: Time.now, code: 'Order1', id: 2 }
+    let(:line_item_promo) { create :promotion_with_item_adjustment, adjustment_rate: 10, starts_at: Time.now, code: 'LineItem', id: 3 }
+
+    let(:calculator) { Spree::Calculator::FlatRate.new(preferred_amount: 10) }
+    let(:source) { Spree::Promotion::Actions::CreateItemAdjustments.create(calculator: calculator, promotion_id: order_promo.id) }
+    let(:zero_calculator) { Spree::Calculator::FlatRate.new(preferred_amount: 0) }
+    let(:zero_source) { Spree::Promotion::Actions::CreateItemAdjustments.create calculator: zero_calculator, promotion_id: zero_promo.id }
+    let(:line_item_source) { Spree::Promotion::Actions::CreateItemAdjustments.create calculator: calculator, promotion_id: line_item_promo.id }
+
+    context 'without promotions' do
+      it 'expect to return an empty array' do
+        expect(order.valid_promotions(order)).to eq []
+      end
+    end
+
+    context 'with promotions' do
+      let!(:zero_adjustment) { create_adjustment('Zero adjustment', order, -0, zero_source) }
+      let!(:adjustment) { create_adjustment('Adjustment', order, -50, source) }
+      let!(:non_eligible_adjustment) { create_adjustment('Non Eligible Adjustment', order, -100, source) }
+      let!(:line_item_adjustment) { create_adjustment('Adjustment', line_item, -200, line_item_source) }
+
+      before do
+        promotions = [zero_promo, order_promo, line_item_promo]
+        promotions.each do |promotion|
+          promotion.orders << order
+          promotion.actions << Spree::Promotion::Actions::CreateAdjustment.new
+          promotion.rules << Spree::Promotion::Rules::FirstOrder.new
+          promotion.save!
+        end
+
+        order.all_adjustments.where(amount: [0, -50, -200]).each do |adjustment|
+          adjustment.update_column(:eligible, true)
+        end
+      end
+
+      it 'expect return valid order promotions' do
+        expect(order.valid_promotions(order)).to eq(order.order_promotions.where(promotion_id: [2, 3]))
+      end
+    end
+  end
 end
