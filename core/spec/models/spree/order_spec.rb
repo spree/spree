@@ -1182,7 +1182,7 @@ describe Spree::Order, type: :model do
 
     context 'without promotions' do
       it 'expect to return an empty array' do
-        expect(order.valid_promotions(order)).to eq []
+        expect(order.valid_promotions).to eq []
       end
     end
 
@@ -1207,7 +1207,7 @@ describe Spree::Order, type: :model do
       end
 
       it 'expect return valid order promotions' do
-        expect(order.valid_promotions(order)).to eq(order.order_promotions.where(promotion_id: [2, 3]))
+        expect(order.valid_promotions).to eq(order.order_promotions.where(promotion_id: [2, 3]))
       end
     end
   end
