@@ -622,7 +622,7 @@ module Spree
     end
 
     def valid_promotion_ids
-      promotion_ids = all_adjustments.eligible.nonzero.promotion.map { |a| a.source.promotion_id }.uniq
+      all_adjustments.eligible.nonzero.promotion.map { |a| a.source.promotion_id }.uniq
     end
 
     private
