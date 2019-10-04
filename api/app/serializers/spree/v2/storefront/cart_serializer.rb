@@ -12,7 +12,7 @@ module Spree
 
         has_many   :line_items
         has_many   :variants
-        has_many   :promotions, object_method_name: :valid_promotions, id_method_name: :promotion_id
+        has_many   :promotions, object_method_name: :valid_promotions, id_method_name: :promotion_ids
         has_many   :payments do |cart|
           cart.payments.valid
         end
