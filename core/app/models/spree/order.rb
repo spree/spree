@@ -618,8 +618,11 @@ module Spree
     end
 
     def valid_promotions
+      order_promotions.where(promotion_id: valid_promotion_ids).uniq(&:promotion_id)
+    end
+
+    def valid_promotion_ids
       promotion_ids = all_adjustments.eligible.nonzero.promotion.map { |a| a.source.promotion_id }.uniq
-      order_promotions.where(promotion_id: promotion_ids).uniq(&:promotion_id)
     end
 
     private
