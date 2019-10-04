@@ -43,7 +43,7 @@ module Spree
         private
 
         def current_tax_zone
-          current_order.try(:tax_zone) || Spree::Zone.default_tax
+          @current_tax_zone ||= current_order.try(:tax_zone) || Spree::Zone.default_tax
         end
       end
     end
