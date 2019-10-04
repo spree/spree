@@ -12,15 +12,7 @@ module Spree
 
         has_many   :line_items
         has_many   :variants
-        has_many   :promotions, id_method_name: :promotion_id do |cart|
-          # we only want to display applied and valid promotions
-          # sometimes Order can have multiple promotions but the promo engine
-          # will only apply those that are more beneficial for the customer
-          # TODO: we should probably move this code out of the serializer
-          promotion_ids = cart.all_adjustments.eligible.nonzero.promotion.map { |a| a.source.promotion_id }.uniq
-
-          cart.order_promotions.where(promotion_id: promotion_ids).uniq(&:promotion_id)
-        end
+        has_many   :promotions, object_method_name: :valid_promotions, id_method_name: :valid_promotion_ids
         has_many   :payments do |cart|
           cart.payments.valid
         end
