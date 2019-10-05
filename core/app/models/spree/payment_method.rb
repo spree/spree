@@ -75,5 +75,11 @@ module Spree
     def available_for_order?(_order)
       true
     end
+
+    def available_for_store?(store)
+      return true if store.blank?
+
+      store_id == store.id
+    end
   end
 end

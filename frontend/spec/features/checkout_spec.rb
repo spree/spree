@@ -190,8 +190,10 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
   end
 
   context 'when several payment methods are available', js: true do
-    let(:credit_cart_payment) { create(:credit_card_payment_method) }
-    let(:check_payment) { create(:check_payment_method) }
+    let(:store) { create(:store) }
+    let(:credit_cart_payment) { create(:credit_card_payment_method, store: store) }
+    let(:check_payment) { create(:check_payment_method, store: store) }
+    let(:unsupported_payment_method) { create(:payment_method) }
 
     before do
       order = OrderWalkthrough.up_to(:payment)
@@ -215,6 +217,10 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
       payment_method_css = '#payment_method_'
       expect(page).to have_css("#{payment_method_css}#{check_payment.id}", visible: true)
       expect(page).to have_css("#{payment_method_css}#{credit_cart_payment.id}", visible: :hidden)
+    end
+
+    it 'only returns supported payment method of current store' do
+      expect(page).to have_css("#payment_method_#{unsupported_payment_method.id}", visible: :hidden)
     end
   end
 
