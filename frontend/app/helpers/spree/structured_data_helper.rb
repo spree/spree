@@ -34,11 +34,11 @@ module Spree
     end
 
     def structured_images(product)
-      images = product.has_variants? ? product.variant_images : product.images
+      image = product.variant_images.first
 
-      return '' unless images.any?
+      return '' unless image
 
-      main_app.rails_blob_url(images.first.attachment)
+      main_app.rails_blob_url(image.attachment)
     end
   end
 end
