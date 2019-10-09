@@ -31,10 +31,12 @@
           </div>
         </div>
       </div>
-      <div class="form-group">
-        <%= f.label :bill_address_company_cont, Spree.t(:company) %>
-        <%= f.text_field :bill_address_company_cont, class: 'form-control js-filterable' %>
-      </div>
+      <% if Spree::Config[:company] %>
+        <div class="form-group">
+          <%= f.label :bill_address_company_cont, Spree.t(:company) %>
+          <%= f.text_field :bill_address_company_cont, class: 'form-control js-filterable' %>
+        </div>
+      <% end %>
       <div data-hook="admin_users_index_search_buttons" class="form-actions">
         <%= button Spree.t(:search), 'search' %>
       </div>

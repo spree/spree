@@ -74,6 +74,7 @@ describe 'Users', type: :feature do
   end
 
   before do
+    Spree::Config[:company] = true
     create(:country)
     stub_const('Spree::User', create(:user, email: 'example@example.com').class)
     visit spree.admin_path
