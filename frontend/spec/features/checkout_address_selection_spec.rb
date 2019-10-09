@@ -306,4 +306,66 @@ describe 'Address selection during checkout', type: :feature, js: true do
       end
     end
   end
+
+  describe 'as authenticated user without saved addresses' do
+    include_context 'checkout address book'
+
+    let(:address) { create(:address, address1: FFaker::Address.street_address, state: state, alternative_phone: nil) }
+    let(:user) { create(:user) }
+
+    before do
+      allow_any_instance_of(Spree::CheckoutController).to receive_messages(try_spree_current_user: user)
+      allow_any_instance_of(Spree::CheckoutController).to receive_messages(skip_state_validation?: true)
+    end
+
+    describe 'with unchecked save my address', js: true do
+      it 'does not add addresses to user' do
+        expect do
+          click_button 'Checkout'
+          within('#billing') { fill_in_address(address) }
+          uncheck 'save_user_address'
+          complete_checkout
+        end.not_to change { user.addresses.count }
+      end
+
+      it 'does see billing or shipping address form' do
+        click_button 'Checkout'
+        within('#billing') { fill_in_address(address) }
+        uncheck 'save_user_address'
+        complete_checkout
+        user.reload.addresses
+
+        add_to_cart(Spree::Product.last.name)
+        click_button 'Checkout'
+
+        within('#billing') do
+          should_have_address_fields
+          expect(page).not_to have_selector('.select_address')
+        end
+      end
+    end
+
+    describe 'with checked save my address', js: true do
+      it 'adds addresses to user' do
+        expect do
+          click_button 'Checkout'
+          within('#billing') { fill_in_address(address) }
+          complete_checkout
+        end.to change { user.addresses.count }.by(1)
+      end
+
+      it 'does not see billing or shipping address form' do
+        click_button 'Checkout'
+        within('#billing') { fill_in_address(address) }
+        complete_checkout
+        user.reload.addresses
+
+        add_to_cart(Spree::Product.last.name)
+        click_button 'Checkout'
+
+        expect(page).to have_css('#billing .inner', visible: :hidden)
+        expect(page).to have_css('#shipping .inner', visible: :hidden)
+      end
+    end
+  end
 end
