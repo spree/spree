@@ -1,7 +1,5 @@
 <a href="https://spreecommerce.org/contact/" target="_blank" rel="nofollow"><img src="https://spreecommerce.org/wp-content/uploads/2019/10/spree_commerce_new_ux_template.jpg" /></a>
 
-<a href="https://spreecommerce.org" target="_blank" rel="follow"><img src="spree_logo.png" width="261" alt="Spree Commerce"></a>
-
 * Join our Slack at [slack.spreecommerce.org](http://slack.spreecommerce.org/)
 * [Start a new project or get tech support](https://spreecommerce.org/contact/)
 * [Success Stories](https://spreecommerce.org/stories/)
