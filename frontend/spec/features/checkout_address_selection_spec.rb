@@ -333,6 +333,7 @@ describe 'Address selection during checkout', type: :feature, js: true do
         within('#billing') { fill_in_address(address) }
         uncheck 'save_user_address'
         complete_checkout
+        user.reload.addresses
 
         add_to_cart(Spree::Product.last.name)
         click_button 'Checkout'
@@ -351,6 +352,19 @@ describe 'Address selection during checkout', type: :feature, js: true do
           within('#billing') { fill_in_address(address) }
           complete_checkout
         end.to change { user.addresses.count }
+      end
+
+      it 'does not see billing or shipping address form' do
+        click_button 'Checkout'
+        within('#billing') { fill_in_address(address) }
+        complete_checkout
+        user.reload.addresses
+
+        add_to_cart(Spree::Product.last.name)
+        click_button 'Checkout'
+
+        expect(page).to have_css('#billing .inner', visible: :hidden)
+        expect(page).to have_css('#shipping .inner', visible: :hidden)
       end
     end
   end
