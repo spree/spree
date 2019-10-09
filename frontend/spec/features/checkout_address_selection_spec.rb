@@ -351,7 +351,7 @@ describe 'Address selection during checkout', type: :feature, js: true do
           click_button 'Checkout'
           within('#billing') { fill_in_address(address) }
           complete_checkout
-        end.to change { user.addresses.count }
+        end.to change { user.addresses.count }.by(1)
       end
 
       it 'does not see billing or shipping address form' do
