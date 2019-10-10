@@ -46,9 +46,9 @@ Admin Panel credentials - login: `spree@example.com` / password: `spree123`
 Getting Started
 ----------------------
 
-Add Spree gems to your `Gemfile`:
+### Add Spree gems to your `Gemfile`
 
-### Rails 6.0
+#### Rails 6.0
 
 ```ruby
 gem 'spree', '~> 4.0'
@@ -56,7 +56,7 @@ gem 'spree_auth_devise', '~> 4.0'
 gem 'spree_gateway', '~> 3.6'
 ```
 
-### Rails 5.2
+#### Rails 5.2
 
 ```ruby
 gem 'spree', '~> 3.7.0'
@@ -64,7 +64,7 @@ gem 'spree_auth_devise', '~> 3.5'
 gem 'spree_gateway', '~> 3.4'
 ```
 
-### Rails 5.1
+#### Rails 5.1
 
 ```ruby
 gem 'spree', '~> 3.5.0'
@@ -72,7 +72,7 @@ gem 'spree_auth_devise', '~> 3.5'
 gem 'spree_gateway', '~> 3.4'
 ```
 
-### Rails 5.0
+#### Rails 5.0
 
 ```ruby
 gem 'spree', '~> 3.2.7'
@@ -80,10 +80,9 @@ gem 'spree_auth_devise', '~> 3.5'
 gem 'spree_gateway', '~> 3.4'
 ```
 
+### Run `bundle install`
 
-Run `bundle install`
-
-Use the install generators to set up Spree:
+### Use the install generators to set up Spree
 
 ```shell
 rails g spree:install --user_class=Spree::User
