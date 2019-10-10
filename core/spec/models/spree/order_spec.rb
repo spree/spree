@@ -492,8 +492,8 @@ describe Spree::Order, type: :model do
 
   # Regression test for #4199
   context '#available_payment_methods' do
-    let(:ok_method) { double :payment_method, available_for_order?: true }
-    let(:no_method) { double :payment_method, available_for_order?: false }
+    let(:ok_method) { double :payment_method, available_for_order?: true, available_for_store?: true }
+    let(:no_method) { double :payment_method, available_for_order?: false, available_for_store?: true }
     let(:methods) { [ok_method, no_method] }
 
     it 'includes frontend payment methods' do
@@ -520,6 +520,7 @@ describe Spree::Order, type: :model do
 
     it 'does not include a payment method that is not suitable for this order' do
       allow(Spree::PaymentMethod).to receive(:available_on_front_end).and_return(methods)
+
       expect(order.available_payment_methods).to match_array [ok_method]
     end
   end

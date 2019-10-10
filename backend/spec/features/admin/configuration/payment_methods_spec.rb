@@ -4,6 +4,7 @@ describe 'Payment Methods', type: :feature do
   stub_authorization!
 
   before do
+    create(:store)
     visit spree.admin_payment_methods_path
   end
 
@@ -32,6 +33,7 @@ describe 'Payment Methods', type: :feature do
       fill_in 'payment_method_name', with: 'check90'
       fill_in 'payment_method_description', with: 'check90 desc'
       select 'PaymentMethod::Check', from: 'gtwy-type'
+      select 'Spree', from: 'store_id'
       click_button 'Create'
       expect(page).to have_content('successfully created!')
     end

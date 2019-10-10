@@ -369,8 +369,8 @@ module Spree
       payment_state == 'paid' || payment_state == 'credit_owed'
     end
 
-    def available_payment_methods
-      @available_payment_methods ||= collect_payment_methods
+    def available_payment_methods(store = nil)
+      @available_payment_methods ||= collect_payment_methods(store)
     end
 
     def insufficient_stock_lines
@@ -683,8 +683,8 @@ module Spree
       self.token ||= generate_token
     end
 
-    def collect_payment_methods
-      PaymentMethod.available_on_front_end.select { |pm| pm.available_for_order?(self) }
+    def collect_payment_methods(store = nil)
+      PaymentMethod.available_on_front_end.select { |pm| pm.available_for_order?(self) && pm.available_for_store?(store) }
     end
 
     def credit_card_nil_payment?(attributes)
