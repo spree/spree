@@ -42,6 +42,7 @@ li > code {
   border: 1px solid #ededed;
   font-size: 0.9rem !important;
   transition: box-shadow 0.3s ease-in-out;
+  word-break: break-word;
 }
 
 p > code:hover,
@@ -162,4 +163,10 @@ label[role='menuitem'] svg polygon {
 
 td[kind='field'] {
   font-family: 'Roboto Mono', monospace;
+}
+
+@media (max-width: 460px) {
+  p {
+    word-break: break-word;
+  }
 }
