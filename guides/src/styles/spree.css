@@ -36,6 +36,14 @@ pre[class*='language-'] {
   hyphens: none;
 }
 
+@media (max-width: 460px) {
+  code[class*='language-'],
+  pre[class*='language-'] {
+    word-break: break-word;
+    white-space: unset
+  }
+}
+
 pre[class*='language-']::-moz-selection,
 pre[class*='language-'] ::-moz-selection,
 code[class*='language-']::-moz-selection,
