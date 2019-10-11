@@ -2,7 +2,11 @@
 
 https://github.com/spree/spree/tree/master/guides/src/content/release_notes
 
-#### 4.0.x (Unreleased)
+#### 4.1.x (Unreleased)
+
+https://github.com/spree/spree/blob/master/guides/src/content/release_notes/4_1_0.md
+
+#### 4.0.x
 
 https://github.com/spree/spree/blob/master/guides/src/content/release_notes/4_0_0.md
 
