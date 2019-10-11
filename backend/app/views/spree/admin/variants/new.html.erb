@@ -1,3 +1,5 @@
+<%= render partial: 'spree/admin/shared/product_tabs', locals: {current: :variants} %>
+
 <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @variant } %>
 
 <%= form_for [:admin, @product, @variant] do |f| %>
