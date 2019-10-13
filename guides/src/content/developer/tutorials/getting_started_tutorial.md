@@ -10,14 +10,14 @@ Before starting this tutorial, make sure you have Ruby and RubyGems installed on
 
 By following this tutorial, you will create a simple Spree project called `mystore`. Before you can start building the application, you need to make sure that you have Rails itself installed.
 
-To run Spree 3.7 you need the latest Rails version, 5.2.2.
+To run Spree 4.0 you need the latest Rails version, 6.0.0.
 
 ### Installing Rails
 
 In most cases, the easiest way to install Rails is to take advantage of RubyGems:
 
 ```bash
-gem install rails -v 5.2.2
+gem install rails -v 6.0.0
 ```
 
 ### Installing Bundler
@@ -54,7 +54,7 @@ The distribution of Spree as a Rubygem allows it to be used in a new Rails proje
 Let's start by creating a standard Rails application using the following command:
 
 ```bash
-rails _5.2.2_ new mystore
+rails _6.0.0_ new mystore
 ```
 
 ### Adding Spree to Your Rails Application
@@ -70,9 +70,9 @@ cd mystore
 Add Spree gems to your Gemfile:
 
 ```ruby
-gem 'spree', '~> 3.7'
-gem 'spree_auth_devise', '~> 3.5'
-gem 'spree_gateway', '~> 3.4'
+gem 'spree', '~> 4.0'
+gem 'spree_auth_devise', '~> 4.0'
+gem 'spree_gateway', '~> 3.6'
 ```
 
 Run `bundle install`
