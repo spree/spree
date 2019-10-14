@@ -284,7 +284,10 @@ module Spree
     end
 
     def category
-      taxons.joins(:taxonomy).find_by(spree_taxonomies: { name: Spree.t(:taxonomy_categories_name) })
+      taxons.joins(:taxonomy).
+        where(spree_taxonomies: { name: Spree.t(:taxonomy_categories_name) }).
+        order(depth: :desc).
+        first
     end
 
     private
