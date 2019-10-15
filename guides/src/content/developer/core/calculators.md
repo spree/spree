@@ -141,7 +141,7 @@ The Price Sack calculator is useful for when you want to provide a discount for 
 - `minimal_amount`: The minimum amount for the line items total to trigger the calculator.
 - `discount_amount`: The amount to discount from the order if the line items total is equal to or greater than the `minimal_amount`.
 - `normal_amount`: The amount to discount from the order if the line items total is less than the `minimal_amount`.
-- `currency`: The currency for this calculator. Defaults to the currency you have set for your store with `Spree::Config[:currency]`
+- `currency`: The currency for this calculator. Defaults to the currency you have set for your application with `Spree::Config[:currency]`
 
 Suppose you have a Price Sack calculator with a `minimal_amount` preference of \$50, a `normal_amount` preference of $2, and a `discount_amount` of$5. An order with a line items total of $60 would result in a discount of$5 for the whole order. An order of $20 would result in a discount of$2.
 
