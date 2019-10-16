@@ -6,6 +6,7 @@ module Spree
     with_options presence: true do
       validates :code, uniqueness: { case_sensitive: false, allow_blank: true }
       validates :name, :url, :mail_from_address
+      validates :default_currency
     end
 
     before_save :ensure_default_exists_and_is_unique
