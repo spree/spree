@@ -14,6 +14,7 @@ module Spree
     # those attributes depending of the logic of their applications
     ADDRESS_FIELDS = %w(firstname lastname company address1 address2 city state zipcode country phone)
     EXCLUDED_KEYS_FOR_COMPARISION = %w(id updated_at created_at deleted_at user_id)
+    NON_CLONEABLE_ATTRIBUTES = %w(id updated_at created_at deleted_at)
 
     belongs_to :country, class_name: 'Spree::Country'
     belongs_to :state, class_name: 'Spree::State', optional: true
@@ -81,7 +82,7 @@ module Spree
     end
 
     def clone
-      self.class.new(value_attributes)
+      self.class.new(cloneable_attributes)
     end
 
     def ==(other)
@@ -201,6 +202,10 @@ module Spree
 
       postal_code = TwitterCldr::Shared::PostalCodes.for_territory(country.iso)
       errors.add(:zipcode, :invalid) unless postal_code.valid?(zipcode.to_s.strip)
+    end
+
+    def cloneable_attributes
+      attributes.except(*NON_CLONEABLE_ATTRIBUTES)
     end
   end
 end

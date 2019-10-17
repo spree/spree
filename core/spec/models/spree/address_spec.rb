@@ -2,7 +2,8 @@ require 'spec_helper'
 
 describe Spree::Address, type: :model do
   describe 'clone' do
-    it 'creates a copy of the address with the exception of the id, updated_at and created_at attributes' do
+    it 'creates a copy of the address with the exception of the id, updated_at, deleted_at, and created_at attributes' do
+      user = create(:user)
       state = create(:state)
       original = create(:address,
                         address1: 'address1',
@@ -16,7 +17,8 @@ describe Spree::Address, type: :model do
                         phone: 'phone',
                         state_id: state.id,
                         state_name: state.name,
-                        zipcode: '10001')
+                        zipcode: '10001',
+                        user_id: user.id)
 
       cloned = original.clone
 
@@ -32,6 +34,7 @@ describe Spree::Address, type: :model do
       expect(cloned.state_id).to eq(original.state_id)
       expect(cloned.state_name).to eq(original.state_name)
       expect(cloned.zipcode).to eq(original.zipcode)
+      expect(cloned.user_id).to eq(original.user_id)
 
       expect(cloned.id).not_to eq(original.id)
       expect(cloned.created_at).not_to eq(original.created_at)
