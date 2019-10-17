@@ -66,7 +66,7 @@ exports.onCreateNode = ({ node, getNode, actions }) => {
     const sectionFieldValue = isIndex
       ? R.last(pathArray)
       : R.last(R.dropLast(1, pathArray))
-    const slugWithExt = `${R.join(
+    const slugWithExt = `/${R.join(
       '/',
       R.without([''], R.split('/', slug))
     )}.html`
