@@ -38,6 +38,46 @@ Also please remove any occurances of `Rails.application.config.use_paperclip` an
 
 Please follow the [official Paperclip to ActiveStorage migration guide](https://github.com/thoughtbot/paperclip/blob/master/MIGRATING.md)
 
+## Replace `class_eval` with `Module.prepend`
+
+Rails 6.0 ships with [new code autoloader called Zeitwerk](https://medium.com/@fxn/zeitwerk-a-new-code-loader-for-ruby-ae7895977e73) which has some [strict rules in terms of file naming and contents](https://github.com/fxn/zeitwerk#file-structure). If you used `class_eval` to extend and modify Spree classes you will need to rewrite those with `Module.prepend`. Eg.
+
+Old decorator - `app/models/spree/order_decorator.rb`
+
+```ruby
+Spree::Order.class_eval do
+  has_many :new_custom_model
+
+  def some_method
+     # ...
+  end
+end
+```
+
+New decorator - `app/models/my_store/spree/order_decorator.rb`
+
+```ruby
+module MyStore
+  module Spree
+    module OrderDecorator
+      def self.prepended(base)
+        base.has_many :new_custom_model
+      end
+
+      def some_method
+        # ...
+      end
+    end
+  end
+end
+
+::Spree::Order.prepend(MyStore::Spree::OrderDecorator)
+```
+
+Please also consider other options for [Logic Customization](/developer/customization/logic.html).
+
+We recommend also reading through [Ruby modules: Include vs Prepend vs Extend](https://medium.com/@leo_hetsch/ruby-modules-include-vs-prepend-vs-extend-f09837a5b073)
+
 ## Replace OrderContents with services in your codebase
 
 `OrderContents` was deprecated in Spree 3.7 and removed in 4.0. We've replaced it with [service objects](/release_notes/3_7_0.html#service-oriented-architecture).
