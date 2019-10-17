@@ -30,8 +30,8 @@
     <%= f.error_message_on :mail_from_address %>
   <% end %>
   <%= f.field_container :default_currency, class: ['form-group'] do %>
-    <%= f.label :default_currency, Spree.t(:default_currency) %>
-    <%= f.text_field :default_currency, class: 'form-control' %>
+    <%= f.label :default_currency, Spree.t(:currency) %>
+    <%= f.select :default_currency, currency_options(@store.default_currency) %>
     <%= f.error_message_on :default_currency %>
   <% end %>
   <%= f.field_container :code, class: ['form-group'] do %>
@@ -40,3 +40,7 @@
     <%= f.error_message_on :code %>
   <% end %>
 </div>
+
+<script>
+  $('#store_default_currency').select2();
+</script>
