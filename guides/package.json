@@ -41,7 +41,7 @@
     "react-helmet": "^5.2.0",
     "redoc": "^2.0.0-rc.1",
     "rehype-react": "^3.1.0",
-    "remark": "^10.0.1",
+    "remark": "^11.0.1",
     "remark-html": "^9.0.0",
     "serve": "^10.1.1",
     "styled-components": "^4.2.0",
