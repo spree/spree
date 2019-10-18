@@ -77,12 +77,6 @@ Line items are used to keep track of items within the context of an order. These
 
 When a variant is added to an order, the price of that item is tracked along with the line item to preserve that data. If the variant's price were to change, then the line item would still have a record of the price at the time of ordering.
 
-* Inventory tracking notes
-
-$$$
-Update this section after Chris+Brian have done their thing.
-$$$
-
 ## Addresses
 
 An order can link to two `Address` objects. The shipping address indicates where the order's product(s) should be shipped to. This address is used to determine which shipping methods are available for an order.
@@ -103,9 +97,7 @@ Payment records are used to track payment information about an order. For more i
 
 ## Return Authorizations
 
-$$$
-document return authorizations.
-$$$
+An order can have many `ReturnAuthorization` objects. These records keeps track of which items have been authorized for return and how the user will be compensated -- either via exchanging the item(s) or a reimbursement.
 
 ## Updating an Order
 
