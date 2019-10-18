@@ -97,9 +97,7 @@ Payment records are used to track payment information about an order. For more i
 
 ## Return Authorizations
 
-$$$
-document return authorizations.
-$$$
+An order can have many `ReturnAuthorization` objects. These records keeps track of which items have been authorized for return and how the user will be compensated -- either via exchanging the item(s) or a reimbursement.
 
 ## Updating an Order
 
