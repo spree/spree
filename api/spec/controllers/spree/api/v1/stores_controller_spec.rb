@@ -89,7 +89,8 @@ module Spree
           url: 'spree123.example.com',
           mail_from_address: 'me@example.com',
           customer_support_email: 'sales@example.com',
-          default_currency: 'USD'
+          default_currency: 'USD',
+          supported_currencies: 'USD'
         }
         api_post :create, store: store_hash
         expect(response.status).to eq(201)

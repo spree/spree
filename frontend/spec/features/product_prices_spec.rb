@@ -2,11 +2,11 @@ require 'spec_helper'
 
 describe 'Product with prices in multiple currencies', type: :feature, js: true do
   context 'with USD, EUR and GBP as currencies' do
+    let!(:store) { create(:store, default: true) }
     let!(:product) { create(:product) }
 
     before do
       reset_spree_preferences do |config|
-        config.supported_currencies   = 'USD,EUR,GBP'
         config.allow_currency_change  = true
         config.show_currency_selector = true
       end
@@ -26,7 +26,6 @@ describe 'Product with prices in multiple currencies', type: :feature, js: true 
     context 'and :show_currency_selector is false' do
       before do
         reset_spree_preferences do |config|
-          config.supported_currencies   = 'USD,EUR,GBP'
           config.allow_currency_change  = true
           config.show_currency_selector = false
         end
@@ -43,7 +42,6 @@ describe 'Product with prices in multiple currencies', type: :feature, js: true 
       context 'and show_currency_selector is true' do
         before do
           reset_spree_preferences do |config|
-            config.supported_currencies   = 'USD,EUR,GBP'
             config.allow_currency_change  = false
             config.show_currency_selector = true
           end

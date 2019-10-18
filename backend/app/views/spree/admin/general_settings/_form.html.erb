@@ -5,12 +5,6 @@
 
   <div class="panel-body">
     <div class="form-group">
-      <label><%= Spree.t('supported_currencies.short') %></label>
-      <input type="text" class="form-control" value="<%= Spree::Config.supported_currencies %>" name="supported_currencies"/>
-      <p class="help-block"><%= Spree.t('supported_currencies.long') %></p>
-    </div>
-
-    <div class="form-group">
       <div class="checkbox">
         <label>
           <%= check_box_tag(:allow_currency_change, 1, Spree::Config.allow_currency_change) %>

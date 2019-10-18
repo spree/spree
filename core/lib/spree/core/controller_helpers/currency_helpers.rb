@@ -7,7 +7,7 @@ module Spree
         end
 
         def supported_currencies
-          Spree::Config[:supported_currencies].split(',').map { |code| ::Money::Currency.find(code.strip) }
+          current_store.supported_currencies_list
         end
       end
     end

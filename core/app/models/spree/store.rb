@@ -8,6 +8,10 @@ module Spree
       validates :default_currency
     end
 
+    if connection.column_exists?(:spree_stores, :supported_currencies)
+      validates :supported_currencies, presence: true
+    end
+
     before_save :ensure_default_exists_and_is_unique
     before_destroy :validate_not_default
 
@@ -24,6 +28,12 @@ module Spree
       Rails.cache.fetch('default_store') do
         where(default: true).first_or_initialize
       end
+    end
+
+    def supported_currencies_list
+      currencies = (read_attribute(:supported_currencies).to_s.split(',') << default_currency).map(&:to_s).map do |code|
+        ::Money::Currency.find(code.strip)
+      end.uniq.compact
     end
 
     private

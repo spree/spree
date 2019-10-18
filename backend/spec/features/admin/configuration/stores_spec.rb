@@ -65,7 +65,9 @@ describe 'Stores admin', type: :feature, js: true do
       store_table = page.find('table')
       expect(store_table).to have_content(updated_name)
       expect(store_table).to have_content(new_currency)
-      expect(store.reload.name).to eq updated_name
+      store.reload
+      expect(store.name).to eq updated_name
+      expect(store.supported_currencies).to eq new_currency
     end
   end
 

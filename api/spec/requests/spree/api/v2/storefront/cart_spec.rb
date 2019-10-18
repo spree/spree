@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe 'API V2 Storefront Cart Spec', type: :request do
   let(:default_currency) { 'USD' }
-  let(:store) { create(:store, default_currency: default_currency) }
+  let!(:store) { create(:store, default_currency: default_currency) }
   let(:currency) { store.default_currency }
   let(:user)  { create(:user) }
   let(:order) { create(:order, user: user, store: store, currency: currency) }
@@ -359,10 +359,6 @@ describe 'API V2 Storefront Cart Spec', type: :request do
     end
 
     context 'for specified currency' do
-      before do
-        Spree::Config[:supported_currencies] = 'USD,EUR'
-      end
-
       context 'store default' do
         before do
           store.update!(default_currency: 'EUR')

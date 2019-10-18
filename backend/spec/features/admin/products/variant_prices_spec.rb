@@ -2,13 +2,12 @@ require 'spec_helper'
 
 describe 'Variant Prices', type: :feature, js: true do
   stub_authorization!
-
+  let!(:store) { create(:store, default: true) }
   let!(:product) { create(:product) }
 
   context 'with USD and EUR as currencies' do
     before do
       reset_spree_preferences do |config|
-        config.supported_currencies = 'USD,EUR'
         config.allow_currency_change = true
       end
     end
