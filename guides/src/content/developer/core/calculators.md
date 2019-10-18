@@ -80,14 +80,6 @@ Thus, if you have ten items in your shopping cart, your `first_item` preference 
 - $5 for each of the 3 subsequent items:$5 \* 3 = \$15
 - \$0 for the remaining 6 items
 
-### Free Shipping
-
-This calculator will take an object, and then work out the shipping total for that object. Useful for when you want to apply free shipping to an order.
-
-$$
-This is a little confusing and vague. Need to investigate more and explain better. Also, might this be obsolete with the new split shipments functionality?
-$$
-
 ### Per Item
 
 The Per Item calculator computes a value for every item within an order. This is useful for providing a discount for a specific product, without it affecting others.
