@@ -28,6 +28,7 @@ jQuery(function ($) {
   var sidebar_toggle = $('#sidebar-toggle')
 
   sidebar_toggle.on('click', function() {
+    var body    = $('body')
     var wrapper = $('#wrapper')
     var main    = $('#main-part')
     var sidebar = $('#main-sidebar')
@@ -35,7 +36,7 @@ jQuery(function ($) {
     var collapsed = sidebar.find('[aria-expanded="true"]')
     var collapsedIcons = sidebar.find('.icon-chevron-down')
 
-    wrapper.toggleClass('sidebar-minimized')
+    body.toggleClass('sidebar-open')
 
     collapsed
       .attr('aria-expanded', 'false')
@@ -45,32 +46,6 @@ jQuery(function ($) {
     collapsedIcons
       .removeClass('icon-chevron-down')
       .addClass('icon-chevron-left')
-
-    // these should match `spree/backend/app/helpers/spree/admin/navigation_helper.rb#main_part_classes`
-    main
-      .toggleClass('col-12 sidebar-collapsed')
-      .toggleClass('col-9 offset-3 col-md-10 offset-md-2')
-
-    if (wrapper.hasClass('sidebar-minimized')) {
-      Cookies.set('sidebar-minimized', 'true', { path: '/admin' })
-      version.removeClass('d-md-block')
-    } else {
-      Cookies.set('sidebar-minimized', 'false', { path: '/admin' })
-      version.addClass('d-md-block')
-    }
-  })
-
-  $('.sidebar-menu-item').mouseover(function () {
-    if ($('#wrapper').hasClass('sidebar-minimized')) {
-      $(this).addClass('menu-active')
-      $(this).find('ul.nav').addClass('submenu-active')
-    }
-  })
-  $('.sidebar-menu-item').mouseout(function () {
-    if ($('#wrapper').hasClass('sidebar-minimized')) {
-      $(this).removeClass('menu-active')
-      $(this).find('ul.nav').removeClass('submenu-active')
-    }
   })
 
   // TODO: remove this js temp behaviour and fix this decent

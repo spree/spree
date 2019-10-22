@@ -31,7 +31,7 @@
         <%# Sidebar                                         %>
         <%#-------------------------------------------------%>
         <aside
-          class="<%= main_sidebar_classes %> sidebar position-fixed d-flex justify-content-between flex-column px-0"
+          class="col-12 col-lg-2 sidebar position-fixed d-flex justify-content-between flex-column px-0 animated"
           id="main-sidebar"
           data-hook="admin_tabs">
           <%= render partial: 'spree/admin/shared/main_menu' %>
@@ -42,7 +42,7 @@
         <%#-------------------------------------------------%>
         <%# Content                                         %>
         <%#-------------------------------------------------%>
-        <main class="<%= main_part_classes %> main" id="main-part" role="main">
+        <main class="col-12 col-lg-10 offset-lg-2 main" id="main-part" role="main">
 
           <%#-------------------------------------------------%>
           <%# Content header (page title/actions)             %>
