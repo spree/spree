@@ -24,14 +24,14 @@
     <%#-------------------------------------------------%>
     <%# Main content                                    %>
     <%#-------------------------------------------------%>
-    <div id="wrapper" class="container-fluid <%= wrapper_classes %>">
+    <div id="wrapper" class="container-fluid">
       <div class="row">
 
         <%#-------------------------------------------------%>
         <%# Sidebar                                         %>
         <%#-------------------------------------------------%>
         <aside
-          class="col-12 col-lg-2 sidebar position-fixed d-flex justify-content-between flex-column px-0 animated"
+          class="col-12 col-lg-2 sidebar position-fixed d-flex justify-content-between flex-column px-0"
           id="main-sidebar"
           data-hook="admin_tabs">
           <%= render partial: 'spree/admin/shared/main_menu' %>

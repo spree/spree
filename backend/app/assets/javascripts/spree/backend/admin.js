@@ -4,8 +4,6 @@ under the spree namespace that do stuff we find helpful.
 Hopefully, this will evolve into a propper class.
 **/
 
-/* global Cookies, AUTH_TOKEN, order_number */
-
 jQuery(function ($) {
   // Add some tips
   $('.with-tip').tooltip()
@@ -29,10 +27,7 @@ jQuery(function ($) {
 
   sidebar_toggle.on('click', function() {
     var body    = $('body')
-    var wrapper = $('#wrapper')
-    var main    = $('#main-part')
     var sidebar = $('#main-sidebar')
-    var version = $('.spree-version')
     var collapsed = sidebar.find('[aria-expanded="true"]')
     var collapsedIcons = sidebar.find('.icon-chevron-down')
 

@@ -225,26 +225,6 @@ module Spree
           link_to(link_text, url, class: "#{'text-success' if is_selected} py-1 px-3 d-block sidebar-submenu-item")
         end
       end
-
-      def main_part_classes
-        if cookies['sidebar-minimized'] == 'true'
-          'col-12 sidebar-collapsed'
-        else
-          'col-9 offset-3 col-md-10 offset-md-2'
-        end
-      end
-
-      def main_sidebar_classes
-        if cookies['sidebar-minimized'] == 'true'
-          'col-3 col-md-2 sidebar'
-        else
-          'p-0 col-3 col-md-2 sidebar'
-        end
-      end
-
-      def wrapper_classes
-        'sidebar-minimized' if cookies['sidebar-minimized'] == 'true'
-      end
     end
   end
 end
