@@ -16,33 +16,14 @@ jQuery(function ($) {
     $('span.icon', $(this)).toggleClass('icon-chevron-down')
   })
 
-  $('#main-sidebar').find('[data-toggle="collapse"]').on('click', function () {
-    if ($(this).find('.icon-chevron-left').length === 1) {
-      $(this).find('.icon-chevron-left').removeClass('icon-chevron-left').addClass('icon-chevron-down')
-    } else {
-      $(this).find('.icon-chevron-down').removeClass('icon-chevron-down').addClass('icon-chevron-left')
-    }
-  })
+
 
   // Sidebar nav toggle functionality
   var sidebar_toggle = $('#sidebar-toggle')
 
   sidebar_toggle.on('click', function() {
     var body    = $('body')
-    var sidebar = $('#main-sidebar')
-    var collapsed = sidebar.find('[aria-expanded="true"]')
-    var collapsedIcons = sidebar.find('.icon-chevron-down')
-
     body.toggleClass('sidebar-open')
-
-    collapsed
-      .attr('aria-expanded', 'false')
-      .next()
-      .removeClass('show')
-
-    collapsedIcons
-      .removeClass('icon-chevron-down')
-      .addClass('icon-chevron-left')
   })
 
   // TODO: remove this js temp behaviour and fix this decent
@@ -55,14 +36,6 @@ jQuery(function ($) {
     $('#table-filter form').submit()
     return false
   })
-
-  // Main menu active item submenu show
-  var active_item = $('#main-sidebar').find('.selected')
-  active_item.closest('.nav-pills').addClass('in show')
-  active_item.closest('.nav-sidebar')
-    .find('.icon-chevron-left')
-    .removeClass('icon-chevron-left')
-    .addClass('icon-chevron-down')
 
   // Replace ▼ and ▲ in sort_link with nicer icons
   $('.sort_link').each(function () {
