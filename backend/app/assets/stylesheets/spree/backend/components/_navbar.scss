@@ -10,19 +10,19 @@
 }
 
   .dropdown-toggle {
-    &[aria-expanded="true"] {
-      background-color: $gray-900;
-    }
-
     &:hover,
     &:focus {
       text-decoration: none;
+      outline: 0;
+      outline: none;
+      -webkit-box-shadow: none;
+      box-shadow: none;
     }
   }
 
 #nav-icon {
-  width: 30px;
-  height: 23px;
+  width: 20px;
+  height: 18px;
   position: relative;
   -webkit-transform: rotate(0deg);
   -moz-transform: rotate(0deg);
@@ -61,7 +61,7 @@
         }
 
         &:nth-child(2) {
-          top: 10px;
+          top: 7.5px;
           -webkit-transform-origin: left center;
           -moz-transform-origin: left center;
           -o-transform-origin: left center;
@@ -69,7 +69,7 @@
         }
 
         &:nth-child(3) {
-          top: 20px;
+          top: 15px;
           -webkit-transform-origin: left center;
           -moz-transform-origin: left center;
           -o-transform-origin: left center;
@@ -85,8 +85,8 @@ body.sidebar-open {
       -moz-transform: rotate(45deg);
       -o-transform: rotate(45deg);
       transform: rotate(45deg);
-      top: 0px;
-      left: 5px;
+      top: 0;
+      left: 0;
     }
 
     span:nth-child(2) {
@@ -99,8 +99,8 @@ body.sidebar-open {
       -moz-transform: rotate(-45deg);
       -o-transform: rotate(-45deg);
       transform: rotate(-45deg);
-      top: 22px;
-      left: 5px;
+      top: 15px;
+      left: 0;
     }
   }
 }

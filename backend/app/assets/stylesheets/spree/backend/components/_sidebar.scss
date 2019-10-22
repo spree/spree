@@ -52,7 +52,7 @@
     }
 
     body.sidebar-open {
-
+      overflow-x: hidden;
       #main-sidebar {
         right:0;
         transition: 0.3s ease;
