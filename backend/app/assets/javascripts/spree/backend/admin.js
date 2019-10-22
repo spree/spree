@@ -16,13 +16,11 @@ jQuery(function ($) {
     $('span.icon', $(this)).toggleClass('icon-chevron-down')
   })
 
-
-
   // Sidebar nav toggle functionality
   var sidebar_toggle = $('#sidebar-toggle')
 
   sidebar_toggle.on('click', function() {
-    var body    = $('body')
+    var body = $('body')
     body.toggleClass('sidebar-open')
   })
 
