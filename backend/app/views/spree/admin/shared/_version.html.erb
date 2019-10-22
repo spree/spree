@@ -1,6 +1,6 @@
 <% if can?(:admin, current_store) && Spree::Config[:admin_show_version] %>
   <small
-    class="spree-version <%= 'd-md-block' if cookies['sidebar-minimized'] == 'false' %> d-none font-weight-bold ml-3 my-3 text-muted"
+    class="spree-version font-weight-bold ml-3 my-3 text-muted"
     aria-label="Spree Commerce version">
     <%= Spree.version %>
   </small>
