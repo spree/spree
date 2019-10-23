@@ -10,8 +10,12 @@
 
 #multi-backdrop {
   z-index: 0;
+  height: 0;
+  width: 0;
 }
 
 body.modal-open #multi-backdrop {
   z-index: 1040;
+  width: 100vw;
+  height: 100vh;
 }
