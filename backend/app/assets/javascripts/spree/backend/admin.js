@@ -21,7 +21,7 @@ jQuery(function ($) {
   var mainSideBar    = document.querySelector('#main-sidebar')
   var body = $('body')
   var active_item = $('#main-sidebar').find('.selected')
-  
+
   active_item.closest('.nav-sidebar').addClass('active-option')
   active_item.closest('.nav-pills').addClass('in show')
 
@@ -35,8 +35,6 @@ jQuery(function ($) {
     }
 
   })
-
-
 
   // TODO: remove this js temp behaviour and fix this decent
   // Temp quick search
