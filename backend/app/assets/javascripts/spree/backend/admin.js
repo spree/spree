@@ -17,29 +17,28 @@ jQuery(function ($) {
   })
 
   // Off Canvas Sidebar Functionality
-  var sidebar_open    = $('#sidebar-open')
-  var sidebar_close   = $('#sidebar-close')
-  var mainSideBar     = document.querySelector('#main-sidebar')
+  var sidebarOpen    = $('#sidebar-open')
+  var sidebarClose   = $('#sidebar-close')
   var body            = $('body')
-  var active_item     = $('#main-sidebar').find('.selected')
-  var modal_backdrop  = $('#multi-backdrop');
+  var activeItem     = $('#main-sidebar').find('.selected')
+  var modalBackdrop  = $('#multi-backdrop')
 
-  active_item.closest('.nav-sidebar').addClass('active-option')
-  active_item.closest('.nav-pills').addClass('in show')
+  activeItem.closest('.nav-sidebar').addClass('active-option')
+  activeItem.closest('.nav-pills').addClass('in show')
 
   function openMenu() {
     body.addClass('sidebar-open modal-open')
-    modal_backdrop.addClass('show')
+    modalBackdrop.addClass('show')
   }
 
   function closeMenu() {
     body.removeClass('sidebar-open modal-open')
-    modal_backdrop.removeClass('show')
+    modalBackdrop.removeClass('show')
   }
 
-  sidebar_open.click(openMenu)
-  sidebar_close.click(closeMenu)
-  modal_backdrop.click(closeMenu)
+  sidebarOpen.click(openMenu)
+  sidebarClose.click(closeMenu)
+  modalBackdrop.click(closeMenu)
 
   // TODO: remove this js temp behaviour and fix this decent
   // Temp quick search
