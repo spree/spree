@@ -1,13 +1,15 @@
 <% if try_spree_current_user %>
 <div class="btn-group">
+
   <button type="button" class="btn dropdown-toggle text-light pr-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
     <i class="glyphicon glyphicon-user"></i>
     <span class="d-none d-md-inline"><%= try_spree_current_user.email %></span>
   </button>
-  <div class="dropdown-menu dropdown-menu-right mt-2">
+
+  <div class="dropdown-menu dropdown-menu-right mt-2 p-0">
 
     <% if spree.respond_to? :root_path %>
-      <button class="dropdown-item" type="button">
+      <button class="dropdown-item px-0" type="button">
         <%= link_to spree.root_path, target: :blank, class: 'd-block text-dark py-2 px-4' do %>
           <i class="glyphicon glyphicon-new-window"></i>
           &nbsp;
@@ -17,7 +19,7 @@
     <% end %>
 
     <% if can?(:manage, try_spree_current_user) %>
-      <button class="dropdown-item" type="button">
+      <button class="dropdown-item px-0" type="button">
         <%= link_to spree.edit_admin_user_path(try_spree_current_user), class: 'd-block text-dark py-2 px-4' do %>
           <i class="glyphicon glyphicon-user"></i>
           &nbsp;
@@ -27,7 +29,7 @@
     <% end %>
 
     <% if spree.respond_to? :admin_logout_path %>
-      <button class="dropdown-item" type="button">
+      <button class="dropdown-item px-0" type="button">
         <%= link_to spree.admin_logout_path, class: 'd-block text-dark py-2 px-4' do %>
           <i class="glyphicon glyphicon-log-out"></i>
           &nbsp;
@@ -38,7 +40,7 @@
 
     <div class="dropdown-divider"></div>
 
-    <button class="dropdown-item" type="button">
+    <button class="dropdown-item px-0" type="button">
       <%= link_to 'http://guides.spreecommerce.org', target: :blank, class: 'd-block text-dark py-2 px-4' do %>
         <i class="glyphicon glyphicon-info-sign"></i>
         &nbsp;
@@ -46,7 +48,7 @@
       <% end %>
     </button>
 
-    <button class="dropdown-item" type="button">
+    <button class="dropdown-item px-0" type="button">
       <%= link_to 'http://slack.spreecommerce.org', target: :blank, class: 'd-block text-dark py-2 px-4' do %>
         <i class="glyphicon glyphicon-comment"></i>
         &nbsp;
@@ -54,7 +56,7 @@
       <% end %>
     </button>
 
-    <button class="dropdown-item" type="button">
+    <button class="dropdown-item px-0" type="button">
       <%= link_to 'https://github.com/spree-contrib', target: :blank, class: 'd-block text-dark py-2 px-4' do %>
         <i class="glyphicon glyphicon-download"></i>
         &nbsp;
