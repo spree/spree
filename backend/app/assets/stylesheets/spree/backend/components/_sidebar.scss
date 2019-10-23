@@ -12,6 +12,12 @@
     cursor: pointer
   }
 
+  ul.active-option {
+    .icon-chevron-left {
+      transform: rotate(-90deg);
+    }
+  }
+
   ul.nav-sidebar {
     > li {
       > a {
@@ -29,13 +35,18 @@
           right: 1rem;
           top: 50%;
           margin-top: -.5rem;
-          transition: .3s ease-in-out;
-
         }
 
         &[aria-expanded="true"] {
           .icon-chevron-left {
             transform: rotate(-90deg);
+            transition: .3s ease-in-out;
+          }
+        }
+
+        &[aria-expanded="false"] {
+          .icon-chevron-left {
+            transform: rotate(0deg);
             transition: .3s ease-in-out;
           }
         }

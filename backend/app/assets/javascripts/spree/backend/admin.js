@@ -16,13 +16,27 @@ jQuery(function ($) {
     $('span.icon', $(this)).toggleClass('icon-chevron-down')
   })
 
-  // Sidebar nav toggle functionality
+  // Off Canvas Sidebar Functionality
   var sidebar_toggle = $('#sidebar-toggle')
+  var mainSideBar    = document.querySelector('#main-sidebar')
+  var body = $('body')
+  var active_item = $('#main-sidebar').find('.selected')
+  
+  active_item.closest('.nav-sidebar').addClass('active-option')
+  active_item.closest('.nav-pills').addClass('in show')
 
   sidebar_toggle.on('click', function() {
-    var body = $('body')
     body.toggleClass('sidebar-open')
+
+    if ($('body').hasClass('sidebar-open')) {
+      bodyScrollLock.disableBodyScroll(mainSideBar)
+    } else {
+      bodyScrollLock.clearAllBodyScrollLocks()
+    }
+
   })
+
+
 
   // TODO: remove this js temp behaviour and fix this decent
   // Temp quick search
