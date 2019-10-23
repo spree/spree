@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Order, type: :model do
-  let(:order) { Spree::Order.new }
+  let(:order) { build(:order) }
 
   before do
     # Ensure state machine has been re-defined correctly
@@ -106,9 +106,7 @@ describe Spree::Order, type: :model do
     end
 
     before do
-      2.times do
-        create(:line_item, order: order, price: 10)
-      end
+      create_list(:line_item, 2, order: order, price: 10)
 
       allow(order.line_items).to receive(:find_by).with(hash_including(:variant_id)) { line_items.first }
 

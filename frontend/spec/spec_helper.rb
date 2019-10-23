@@ -1,13 +1,15 @@
 if ENV['COVERAGE']
   # Run Coverage report
   require 'simplecov'
-  SimpleCov.start do
-    add_group 'Controllers', 'app/controllers'
-    add_group 'Helpers', 'app/helpers'
-    add_group 'Mailers', 'app/mailers'
-    add_group 'Models', 'app/models'
-    add_group 'Views', 'app/views'
-    add_group 'Libraries', 'lib'
+  SimpleCov.start 'rails' do
+    add_group 'Libraries', 'lib/spree'
+
+    add_filter '/bin/'
+    add_filter '/db/'
+    add_filter '/script/'
+    add_filter '/spec/'
+
+    coverage_dir "#{ENV['COVERAGE_DIR']}/frontend" if ENV['COVERAGE_DIR']
   end
 end
 
@@ -43,32 +45,13 @@ require 'spree/testing_support/flash'
 require 'spree/testing_support/url_helpers'
 require 'spree/testing_support/order_walkthrough'
 require 'spree/testing_support/caching'
-
-require 'capybara-screenshot/rspec'
-
-Capybara.save_path = ENV['CIRCLE_ARTIFACTS'] if ENV['CIRCLE_ARTIFACTS']
-
-if ENV['WEBDRIVER'] == 'accessible'
-  require 'capybara/accessible'
-  Capybara.javascript_driver = :accessible
-else
-  Capybara.register_driver :chrome do |app|
-    Capybara::Selenium::Driver.new app,
-      browser: :chrome,
-      options: Selenium::WebDriver::Chrome::Options.new(args: %w[headless disable-gpu window-size=1920,1080])
-  end
-  Capybara.javascript_driver = :chrome
-
-  Capybara::Screenshot.register_driver(:chrome) do |driver, path|
-    driver.browser.save_screenshot(path)
-  end
-end
-Capybara.configure do |config|
-  config.default_max_wait_time = 20
-end
+require 'spree/testing_support/capybara_config'
+require 'spree/testing_support/image_helpers'
+require 'webdrivers'
 
 RSpec.configure do |config|
   config.color = true
+  config.default_formatter = 'doc'
   config.fail_fast = ENV['FAIL_FAST'] || false
   config.fixture_path = File.join(__dir__, 'fixtures')
   config.infer_spec_type_from_file_location!
@@ -79,14 +62,6 @@ RSpec.configure do |config|
   # examples within a transaction, comment the following line or assign false
   # instead of true.
   config.use_transactional_fixtures = false
-
-  # Config for running specs while have transition period from Paperclip to ActiveStorage
-  if Rails.application.config.use_paperclip
-    config.filter_run_excluding :active_storage
-  else
-    config.filter_run_including :active_storage
-    config.run_all_when_everything_filtered = true
-  end
 
   if ENV['WEBDRIVER'] == 'accessible'
     config.around(:each, inaccessible: true) do |example|
@@ -115,10 +90,6 @@ RSpec.configure do |config|
     reset_spree_preferences
   end
 
-  config.after do
-    DatabaseCleaner.clean
-  end
-
   config.after(:each, type: :feature) do |example|
     missing_translations = page.body.scan(/translation missing: #{I18n.locale}\.(.*?)[\s<\"&]/)
     if missing_translations.any?
@@ -127,12 +98,17 @@ RSpec.configure do |config|
     end
   end
 
+  config.append_after do
+    DatabaseCleaner.clean
+  end
+
   config.include FactoryBot::Syntax::Methods
 
   config.include Spree::TestingSupport::Preferences
   config.include Spree::TestingSupport::UrlHelpers
   config.include Spree::TestingSupport::ControllerRequests, type: :controller
   config.include Spree::TestingSupport::Flash
+  config.include Spree::TestingSupport::ImageHelpers
 
   config.order = :random
   Kernel.srand config.seed
@@ -143,4 +119,7 @@ RSpec.configure do |config|
   config.around :each, type: :feature do |ex|
     ex.run_with_retry retry: 3
   end
+
+  config.filter_run_including focus: true unless ENV['CI']
+  config.run_all_when_everything_filtered = true
 end

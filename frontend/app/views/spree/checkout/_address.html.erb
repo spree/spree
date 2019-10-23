@@ -1,44 +1,68 @@
-<div class="row">
-  <div class="col-sm-6" data-hook="billing_fieldset_wrapper">
-    <div class="panel panel-default" id="billing" data-hook>
-      <%= form.fields_for :bill_address do |bill_form| %>
-        <div class="panel-heading">
-          <h3 class="panel-title"><%= Spree.t(:billing_address) %></h3>
-        </div>
-        <div class="panel-body">
-          <%= render partial: 'spree/address/form', locals: { form: bill_form, address_type: 'billing', address: @order.bill_address } %>
-        </div>
-      <% end %>
-    </div>
-  </div>
+<% @addresses = try_spree_current_user ? try_spree_current_user.addresses : [] %>
 
-  <div class="col-sm-6" data-hook="shipping_fieldset_wrapper">
-    <div class="panel panel-default" id="shipping" data-hook>
-      <%= form.fields_for :ship_address do |ship_form| %>
-        <div class="panel-heading">
-          <h3 class="panel-title"><%= Spree.t(:shipping_address) %></h3>
+<div class="row">
+  <% ['billing', 'shipping'].each do |address_type|
+    address_name = "#{address_type[0...4]}_address" %>
+    <div class="col-12 col-md-6 mb-4" data-hook="<%= address_type %>_fieldset_wrapper">
+      <div class="card card-default" id="<%= address_type %>" data-hook>
+        <div class="card-header">
+          <h5 class="mb-0">
+            <%= Spree.t(address_type + '_address') %>
+          </h5>
         </div>
-        <div class="panel-body">
-          <p class="field checkbox" data-hook="use_billing">
-            <%= label_tag :order_use_billing, id: 'use_billing' do %>
-              <%= check_box_tag 'order[use_billing]', '1', @order.shipping_eq_billing_address? %>
-              <%= Spree.t(:use_billing_address) %>
-            <% end %>
-          </p>
-          <%= render partial: 'spree/address/form', locals: { form: ship_form, address_type: 'shipping', address: @order.ship_address } %>
+        <div class="card-body">
+          <% if address_type == 'shipping' %>
+            <div class="mb-0 form-check" data-hook="use_billing">
+              <%= label_tag :order_use_billing, id: 'use_billing' do %>
+                <%= check_box_tag 'order[use_billing]', '1', @order.shipping_eq_billing_address?, { class: 'form-check-input'} %>
+                <%= Spree.t(:use_billing_address) %>
+              <% end %>
+            </div>
+          <% end %>
+          <% if @addresses.present? %>
+          <div class="select_address">
+            <div class="form-group">
+              <% @addresses.each_with_index do |address, idx| %>
+              <span class="d-block mb-2" id="<%= [address_type, dom_id(address)].join('_') %>">
+                <label class="form-check-label">
+                  <%= form.radio_button "#{address_name}_id", address.id, checked: (address.id == try_spree_current_user["#{address_name}_id"] || idx == 0) %> <%= address.to_s.html_safe %>
+                </label>
+                <a class="mb-3" href="<%= edit_address_path(address) %>" data-hook="edit_address"><%= Spree.t(:edit) %></a>
+              </span>
+              <% end %>
+              <div class="form-check">
+                <label class="form-check-label">
+                  <%= form.radio_button "#{address_name}_id", 0, class: 'form-check-input' %> <%= Spree.t('address_book.other_address') %>
+                </label>
+              </div>
+            </div>
+          </div>
+          <% end %>
+          <%= form.fields_for address_name do |address_form| %>
+            <div class="inner" data-hook=<%="#{address_type}_inner" %>>
+              <%= render partial: 'spree/addresses/form', locals: {
+                address_name: address_name,
+                address_form: address_form,
+                address_type: address_type,
+                address: Spree::Address.default
+              } %>
+            </div>
+          <% end %>
         </div>
-      <% end %>
+      </div>
     </div>
-  </div>
+  <% end %>
 </div>
 
-<div class="well text-right form-buttons" data-hook="buttons">
-  <%= submit_tag Spree.t(:save_and_continue), class: 'btn btn-lg btn-success' %>
-  <% if try_spree_current_user %>
-    <span data-hook="save_user_address" class='save-user-address-wrapper'>
-      &nbsp; &nbsp;
-      <%= check_box_tag 'save_user_address', '1', try_spree_current_user.respond_to?(:persist_order_address) %>
-      <%= label_tag :save_user_address, Spree.t(:save_my_address) %>
-    </span>
-  <% end %>
+<div class="card text-right form-buttons my-4" data-hook="buttons">
+  <div class="card-body">
+    <%= submit_tag Spree.t(:save_and_continue), class: 'btn btn-lg btn-success' %>
+    <% if try_spree_current_user %>
+      <span data-hook="save_user_address" class='save-user-address-wrapper'>
+        &nbsp; &nbsp;
+        <%= check_box_tag 'save_user_address', '1', try_spree_current_user.respond_to?(:persist_order_address) %>
+        <%= label_tag :save_user_address, Spree.t(:save_my_address) %>
+      </span>
+    <% end %>
+  </div>
 </div>

@@ -1,11 +1,15 @@
+<%= render partial: 'spree/admin/shared/product_tabs', locals: {current: :variants} %>
+
 <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @variant } %>
 
 <%= form_for [:admin, @product, @variant] do |f| %>
-  <div class="well">
-    <fieldset data-hook="admin_variant_new_form">
-      <legend><%= Spree.t(:new_variant) %></legend>
-      <%= render partial: 'form', locals: { f: f } %>
-      <%= render partial: 'spree/admin/shared/new_resource_links' %>
-    </fieldset>
+  <div class="card mb-3 bg-light">
+    <div class="card-body">
+      <fieldset data-hook="admin_variant_new_form">
+        <legend class="border-bottom"><%= Spree.t(:new_variant) %></legend>
+        <%= render partial: 'form', locals: { f: f } %>
+        <%= render partial: 'spree/admin/shared/new_resource_links' %>
+      </fieldset>
+    </div>
   </div>
 <% end %>

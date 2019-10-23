@@ -17,7 +17,7 @@ module Spree
       @quantity               = params[:quantity]
       @available_quantity     = [
         desired_stock_location.try(:count_on_hand, variant).to_i,
-        0
+        current_quantity
       ].max
     end
 
@@ -86,6 +86,10 @@ module Spree
 
     def reload_shipment_inventory_units
       [current_shipment, desired_shipment].each { |shipment| shipment.inventory_units.reload }
+    end
+
+    def current_quantity
+      desired_stock_location == current_stock_location ? quantity : 0
     end
 
     def handle_stock_counts?

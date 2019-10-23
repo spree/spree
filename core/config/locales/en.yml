@@ -377,7 +377,7 @@ en:
             attachment:
               not_allowed_content_type: has not allowed content type
               attachment_must_be_present: must be present
-        spree/taxon_icon:
+        spree/taxon_image:
           attributes:
             attachment:
               not_allowed_content_type: has not allowed content type
@@ -478,6 +478,20 @@ en:
     address1: Address
     address2: Address (contd.)
     addresses: Addresses
+    address_book:
+      other_address: "Other address"
+      add_new_shipping_address: "Add new address"
+      new_shipping_address: "New Address"
+      edit_shipping_address: "Edit Address"
+      no_shipping_addresses_on_file: "No addresses on file"
+      shipping_addresses: "Addresses"
+      successfully_created: "Address has been successfully created."
+      successfully_removed: "Address has been successfully removed."
+      successfully_saved: "Saved successfully"
+      unsuccessfully_saved: "There was an error while trying to save your address."
+      successfully_updated: "Updated successfully"
+      unsuccessfully_updated: "There was an update while trying to update your address."
+      save: "Save"
     adjustable: Adjustable
     adjustment: Adjustment
     adjustment_amount: Amount
@@ -596,6 +610,7 @@ en:
       other: 'Subtotal (%{count} items)'
     categories: Categories
     category: Category
+    channel: Channel
     charged: Charged
     checkout: Checkout
     choose_a_customer: Choose a customer
@@ -681,6 +696,7 @@ en:
     date_range: Date Range
     default: Default
     default_country_cannot_be_deleted: Default country cannot be deleted
+    default_currency: Default currency
     default_refund_amount: Default Refund Amount
     default_tax: Default Tax
     default_tax_zone: Default Tax Zone
@@ -731,6 +747,10 @@ en:
         blank: can't be blank
         could_not_create_taxon: Could not create taxon
         no_shipping_methods_available: No shipping methods available for selected location, please change your address and try again.
+      services:
+        get_shipping_rates:
+          no_shipping_address: To generate Shipping Rates Order needs to have a Shipping Address
+          no_line_items: To generate Shipping Rates you need to add some Line Items to Order
     errors_prohibited_this_record_from_being_saved:
       one: 1 error prohibited this record from being saved
       other: ! '%{count} errors prohibited this record from being saved'
@@ -815,6 +835,7 @@ en:
       other: "and %{count} others"
     instructions_to_reset_password: Please enter your email on the form below
     insufficient_stock: Insufficient stock available, only %{on_hand} remaining
+    insufficient_stock_item_quantity: Insufficient stock quantity available
     insufficient_stock_lines_present: Some line items in this order have insufficient quantity.
     intercept_email_address: Intercept Email Address
     intercept_email_instructions: Override email recipient and replace with this address.
@@ -1022,6 +1043,8 @@ en:
     order_updated: Order Updated
     orders: Orders
     out_of_stock: Out of Stock
+    backordered_info: Selected item is backordered so expect delays
+    backordered_confirm_info: Selected item is backordered so expect delays. Are you sure you want to order it?
     overview: Overview
     package_from: package from
     pagination:

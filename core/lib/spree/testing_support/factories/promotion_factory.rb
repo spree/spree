@@ -1,10 +1,10 @@
 FactoryBot.define do
   factory :promotion, class: Spree::Promotion do
-    name 'Promo'
+    name { 'Promo' }
 
     trait :with_line_item_adjustment do
       transient do
-        adjustment_rate 10
+        adjustment_rate { 10 }
       end
 
       after(:create) do |promotion, evaluator|
@@ -17,7 +17,7 @@ FactoryBot.define do
 
     trait :with_order_adjustment do
       transient do
-        weighted_order_adjustment_amount 10
+        weighted_order_adjustment_amount { 10 }
       end
 
       after(:create) do |promotion, evaluator|
@@ -32,7 +32,7 @@ FactoryBot.define do
 
     trait :with_item_total_rule do
       transient do
-        item_total_threshold_amount 10
+        item_total_threshold_amount { 10 }
       end
 
       after(:create) do |promotion, evaluator|
@@ -47,5 +47,15 @@ FactoryBot.define do
       end
     end
     factory :promotion_with_item_total_rule, traits: [:with_item_total_rule]
+  end
+
+  factory :free_shipping_promotion, class: Spree::Promotion do
+    name { 'Free Shipping Promotion' }
+
+    after(:create) do |promotion|
+      action = Spree::Promotion::Actions::FreeShipping.new
+      action.promotion = promotion
+      action.save
+    end
   end
 end

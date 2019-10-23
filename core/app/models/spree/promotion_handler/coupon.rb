@@ -17,6 +17,8 @@ module Spree
           else
             set_error_code :coupon_code_not_found
           end
+        else
+          set_error_code :coupon_code_not_found
         end
         self
       end
@@ -39,14 +41,14 @@ module Spree
         self
       end
 
-      def set_success_code(c)
-        @status_code = c
-        @success = Spree.t(c)
+      def set_success_code(code)
+        @status_code = code
+        @success = Spree.t(code)
       end
 
-      def set_error_code(c)
-        @status_code = c
-        @error = Spree.t(c)
+      def set_error_code(code)
+        @status_code = code
+        @error = Spree.t(code)
       end
 
       def promotion
@@ -73,13 +75,15 @@ module Spree
         Spree::PromotionActionLineItem.where(promotion_action: create_line_item_actions_ids).find_each do |item|
           line_item = order.find_line_item_by_variant(item.variant)
           next if line_item.blank?
-          order.contents.remove(item.variant, item.quantity)
+
+          Spree::Dependencies.cart_remove_item_service(order: order, item: item.variant, quantity: item.quantity)
         end
       end
 
       def handle_present_promotion
         return promotion_usage_limit_exceeded if promotion.usage_limit_exceeded?(order)
         return promotion_applied if promotion_exists_on_order?
+
         unless promotion.eligible?(order)
           self.error = promotion.eligibility_errors.full_messages.first unless promotion.eligibility_errors.blank?
           return (error || ineligible_for_this_order)

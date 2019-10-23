@@ -20,7 +20,7 @@ module Spree
 
         def index
           authorize! :admin, ReturnAuthorization
-          @return_authorizations = order.return_authorizations.accessible_by(current_ability, :read).
+          @return_authorizations = order.return_authorizations.accessible_by(current_ability).
                                    ransack(params[:q]).result.
                                    page(params[:page]).per(params[:per_page])
           respond_with(@return_authorizations)
@@ -32,13 +32,13 @@ module Spree
 
         def show
           authorize! :admin, ReturnAuthorization
-          @return_authorization = order.return_authorizations.accessible_by(current_ability, :read).find(params[:id])
+          @return_authorization = order.return_authorizations.accessible_by(current_ability, :show).find(params[:id])
           respond_with(@return_authorization)
         end
 
         def update
           @return_authorization = order.return_authorizations.accessible_by(current_ability, :update).find(params[:id])
-          if @return_authorization.update_attributes(return_authorization_params)
+          if @return_authorization.update(return_authorization_params)
             respond_with(@return_authorization, default_template: :show)
           else
             invalid_resource!(@return_authorization)
@@ -58,7 +58,7 @@ module Spree
 
         def order
           @order ||= Spree::Order.find_by!(number: order_id)
-          authorize! :read, @order
+          authorize! :show, @order
         end
 
         def return_authorization_params

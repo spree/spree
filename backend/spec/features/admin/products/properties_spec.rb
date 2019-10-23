@@ -37,6 +37,22 @@ describe 'Properties', type: :feature, js: true do
         expect(page).to have_content('shirt size')
         expect(page).not_to have_content('shirt fit')
       end
+
+      it 'renders selected filters' do
+        click_on 'Filter'
+
+        within('#table-filter') do
+          fill_in 'q_name_cont', with: 'color'
+          fill_in 'q_presentation_cont', with: 'shade'
+        end
+
+        click_on 'Search'
+
+        within('.table-active-filters') do
+          expect(page).to have_content('Name: color')
+          expect(page).to have_content('Presentation: shade')
+        end
+      end
     end
   end
 
@@ -87,10 +103,9 @@ describe 'Properties', type: :feature, js: true do
     # Regression test for #2279
     it 'successfully create and then remove product property' do
       fill_in_property
-      # Sometimes the page doesn't load before the all check is done
-      # lazily finding the element gives the page 10 seconds
+
       expect(page).to have_css('tbody#product_properties tr:nth-child(2)')
-      expect(all('tbody#product_properties tr').count).to eq(2)
+      expect(page).to have_css('tbody#product_properties tr').twice
 
       delete_product_property
 
@@ -127,18 +142,18 @@ describe 'Properties', type: :feature, js: true do
     end
 
     def delete_product_property
-      spree_accept_alert do
+      accept_confirm do
         click_icon :delete
-        wait_for_ajax
       end
+      expect(page.document).to have_content('successfully removed!')
+                           .or have_content('Cannot delete record')
     end
 
     def check_property_row_count(expected_row_count)
       within('#sidebar') do
         click_link 'Properties'
       end
-      expect(page).to have_css('tbody#product_properties')
-      expect(all('tbody#product_properties tr').count).to eq(expected_row_count)
+      expect(page).to have_css('tbody#product_properties tr', count: expected_row_count)
     end
   end
 end

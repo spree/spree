@@ -1,16 +1,16 @@
-<div id="<%= "shipment_#{shipment.id}" %>" data-hook="admin_shipment_form" class="panel panel-default">
+<div id="<%= "shipment_#{shipment.id}" %>" data-hook="admin_shipment_form" class="card mb-3">
 
   <%= render partial: "spree/admin/variants/split", formats: :js %>
 
-  <div class="panel-heading stock-location no-borderb" data-hook="stock-location">
-    <h1 class="panel-title">
+  <div class="card-header stock-location no-borderb" data-hook="stock-location">
+    <h1 class="d-flex flex-wrap align-items-center card-title mb-0 h5">
       <span class="shipment-number"><%= shipment.number %></span>
       -
       <span class="shipment-state"><%= Spree.t("shipment_states.#{shipment.state}") %></span>
       <%= Spree.t(:package_from) %>
       <strong class="stock-location-name" data-hook="stock-location-name">'<%= shipment.stock_location.name %>'</strong>
       <% if shipment.ready? and can? :update, shipment %>
-        <%= link_to Spree.t(:ship), 'javascript:;', class: 'ship pull-right btn btn-success', data: { 'shipment-number' => shipment.number } %>
+        <%= link_to Spree.t(:ship), 'javascript:;', class: 'ship ml-auto btn btn-success', data: { 'shipment-number' => shipment.number } %>
         <div class='clearfix'></div>
       <% end %>
     </h1>
@@ -75,7 +75,7 @@
             <label><%= Spree.t(:tracking_number) %>:</label>
             <%= text_field_tag :tracking, shipment.tracking, class: "form-control" %>
           </td>
-          <td class="actions">
+          <td class="actions text-center">
             <% if can? :update, shipment %>
               <%= link_to_with_icon 'cancel', Spree.t('actions.cancel'), "#", class: 'cancel-tracking btn btn-primary btn-sm', data: {action: 'cancel'}, title: Spree.t('actions.cancel'), no_text: true %>
               <%= link_to_with_icon 'save', Spree.t('actions.save'), "#", class: 'save-tracking btn btn-success btn-sm', data: {'shipment-number' => shipment.number, action: 'save'}, title: Spree.t('actions.save'), no_text: true %>

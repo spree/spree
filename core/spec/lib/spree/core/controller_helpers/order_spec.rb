@@ -13,6 +13,7 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
 
   describe '#simple_current_order' do
     before { allow(controller).to receive_messages(try_spree_current_user: user) }
+
     it 'returns an empty order' do
       expect(controller.simple_current_order.item_count).to eq 0
     end
@@ -27,6 +28,7 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
       allow(controller).to receive_messages(current_store: store)
       allow(controller).to receive_messages(try_spree_current_user: user)
     end
+
     context 'create_order_if_necessary option is false' do
       let!(:order) { create :order, user: user, store: store }
 
@@ -34,6 +36,7 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
         expect(controller.current_order).to eq order
       end
     end
+
     context 'create_order_if_necessary option is true' do
       it 'creates new order' do
         expect do
@@ -48,7 +51,7 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
     end
 
     context 'gets using the token' do
-      let!(:order) { create :order, user: user }
+      let!(:order)       { create :order, user: user }
       let!(:guest_order) { create :order, user: nil, email: nil, token: 'token' }
 
       before do
@@ -67,6 +70,7 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
     before do
       allow(controller).to receive_messages(current_order: order, try_spree_current_user: user)
     end
+
     context "user's email is blank" do
       let(:user) { create(:user, email: '') }
 
@@ -75,6 +79,7 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
         controller.associate_user
       end
     end
+
     context "user isn't blank" do
       it 'does not calls Spree::Order#associate_user! method' do
         expect_any_instance_of(Spree::Order).not_to receive(:associate_user!)

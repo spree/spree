@@ -1,8 +1,7 @@
-<div class="panel panel-default">
-  <div class="panel-heading">
-    <h3 class="panel-title"><%= Spree.t(:summary) %></h3>
+<div class="card mb-3">
+  <div class="card-header">
+    <h3 class="card-title mb-0 h5"><%= Spree.t(:summary) %></h3>
   </div>
-
   <table class="table table-condensed table-bordered" id="order_tab_summary" data-hook>
     <tbody class="additional-info">
       <tr>
@@ -10,10 +9,16 @@
           <strong><%= Spree.t(:status) %>:</strong>
         </td>
         <td>
-          <span class="state label label-<%= @order.state %>">
+          <span class="state badge badge-<%= @order.state %>">
             <%= Spree.t(@order.state, scope: :order_state) %>
           </span>
         </td>
+      </tr>
+      <tr>
+        <td data-hook='admin_order_tab_channel_title'>
+          <strong><%= Spree.t(:channel) %>:</strong>
+        </td>
+        <td id='order_channel'><%= @order.channel %></td>
       </tr>
       <tr>
         <td data-hook='admin_order_tab_subtotal_title'>
@@ -70,7 +75,7 @@
             <strong><%= Spree.t(:shipment) %>:</strong>
           </td>
           <td id='shipment_status'>
-            <span class="state label label-<%= @order.shipment_state %>">
+            <span class="state badge badge-<%= @order.shipment_state %>">
               <%= Spree.t(@order.shipment_state, scope: :shipment_states, default: [:missing, "none"]) %>
             </span>
           </td>
@@ -80,7 +85,7 @@
             <strong><%= Spree.t(:payment) %>:</strong>
           </td>
           <td id='payment_status'>
-            <span class="state label label-<%= @order.payment_state %>">
+            <span class="state badge badge-<%= @order.payment_state %>">
               <%= Spree.t(@order.payment_state, scope: :payment_states, default: [:missing, "none"]) %>
             </span>
           </td>

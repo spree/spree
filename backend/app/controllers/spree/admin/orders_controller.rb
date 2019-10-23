@@ -24,7 +24,7 @@ module Spree
         if params[:q][:created_at_gt].present?
           params[:q][:created_at_gt] = begin
                                          Time.zone.parse(params[:q][:created_at_gt]).beginning_of_day
-                                       rescue
+                                       rescue StandardError
                                          ''
                                        end
         end
@@ -32,7 +32,7 @@ module Spree
         if params[:q][:created_at_lt].present?
           params[:q][:created_at_lt] = begin
                                          Time.zone.parse(params[:q][:created_at_lt]).end_of_day
-                                       rescue
+                                       rescue StandardError
                                          ''
                                        end
         end
@@ -80,7 +80,7 @@ module Spree
       end
 
       def update
-        if @order.update_attributes(params[:order]) && @order.line_items.present?
+        if @order.update(params[:order]) && @order.line_items.present?
           @order.update_with_updater!
           unless @order.completed?
             # Jump to next step if order is not completed.
@@ -135,7 +135,7 @@ module Spree
       end
 
       def set_store
-        if @order.update_attributes(store_id: params[:order][:store_id])
+        if @order.update(store_id: params[:order][:store_id])
           flash[:success] = flash_message_for(@order, :successfully_updated)
         else
           flash[:error] = @order.errors.full_messages.join(', ')

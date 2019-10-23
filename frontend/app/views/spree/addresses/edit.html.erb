@@ -1,0 +1,23 @@
+<div class="col-lg-6 offset-lg-3">
+  <div class="card mb-3">
+    <div class="card-header">
+      <h3 class="card-title mb-0 h5"><%= t(:edit_shipping_address, scope: :address_book) %></h3>
+    </div>
+    <div class="card-body">
+      <%= render 'spree/shared/error_messages', target: @address %>
+      <%= form_for @address, html: { id: 'checkout_form_address' } do |f| %>
+        <fieldset>
+          <div class="inner">
+            <%= render 'spree/addresses/form',
+              address_name: 'address',
+              address_form: f,
+              address_type: 'shipping',
+              address: @address
+            %>
+          </div>
+          <%= f.submit Spree.t(:update), class: 'btn btn-primary' %>
+        </fieldset>
+      <% end %>
+    </div>
+  </div>
+</div>

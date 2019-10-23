@@ -2,9 +2,9 @@
 
 source 'https://rubygems.org'
 
-gem 'spree', '~> 3.5.0'
-gem 'spree_auth_devise', '~> 3.3.0'
-gem 'mysql2', '~> 0.5.1'
 gem 'rails-controller-testing'
+gem 'spree_core', '~> 3.5.0'
+gem 'spree_backend', '~> 3.5.0'
+gem 'spree_auth_devise', '~> 3.4.0'
 
 gemspec path: '../'

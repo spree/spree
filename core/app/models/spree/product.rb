@@ -21,7 +21,8 @@
 module Spree
   class Product < Spree::Base
     extend FriendlyId
-    include ActsAsTaggable
+    include Spree::ProductScopes
+
     friendly_id :slug_candidates, use: :history
 
     acts_as_paranoid
@@ -100,7 +101,7 @@ module Spree
       validates :price, if: proc { Spree::Config[:require_master_price] }
     end
 
-    validates :slug, presence: true, uniqueness: { allow_blank: true }
+    validates :slug, presence: true, uniqueness: { allow_blank: true, case_sensitive: false }
     validate :discontinue_on_must_be_later_than_available_on, if: -> { available_on && discontinue_on }
 
     attr_accessor :option_values_hash
@@ -125,6 +126,21 @@ module Spree
 
     alias master_images images
 
+    # Cant use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
+    def purchasable?
+      variants_including_master.any?(&:purchasable?)
+    end
+
+    # Cant use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
+    def in_stock?
+      variants_including_master.any?(&:in_stock?)
+    end
+
+    # Cant use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
+    def backorderable?
+      variants_including_master.any?(&:backorderable?)
+    end
+
     def find_or_build_master
       master || build_master
     end
@@ -132,6 +148,14 @@ module Spree
     # the master variant is not a member of the variants array
     def has_variants?
       variants.any?
+    end
+
+    def default_variant
+      has_variants? ? variants.first : master
+    end
+
+    def default_variant_id
+      default_variant.id
     end
 
     def tax_category
@@ -147,6 +171,7 @@ module Spree
     # Ensures option_types and product_option_types exist for keys in option_values_hash
     def ensure_option_types_exist_for_values_hash
       return if option_values_hash.nil?
+
       required_option_type_ids = option_values_hash.keys.map(&:to_i)
       missing_option_type_ids = required_option_type_ids - option_type_ids
       missing_option_type_ids.each do |id|
@@ -188,10 +213,16 @@ module Spree
       variants_including_master.any?(&:can_supply?)
     end
 
+    # determine if any variant (including master) is out of stock and backorderable
+    def backordered?
+      variants_including_master.any?(&:backordered?)
+    end
+
     # split variants list into hash which shows mapping of opt value onto matching variants
     # eg categorise_variants_from_option(color) => {"red" -> [...], "blue" -> [...]}
     def categorise_variants_from_option(opt_type)
       return {} unless option_types.include?(opt_type)
+
       variants.active.group_by { |v| v.option_values.detect { |o| o.option_type == opt_type } }
     end
 
@@ -253,7 +284,10 @@ module Spree
     end
 
     def category
-      taxons.joins(:taxonomy).find_by(spree_taxonomies: { name: Spree.t(:taxonomy_categories_name) })
+      taxons.joins(:taxonomy).
+        where(spree_taxonomies: { name: Spree.t(:taxonomy_categories_name) }).
+        order(depth: :desc).
+        first
     end
 
     private
@@ -270,6 +304,7 @@ module Spree
 
     def any_variants_not_track_inventory?
       return true unless Spree::Config.track_inventory_levels
+
       if variants_including_master.loaded?
         variants_including_master.any? { |v| !v.track_inventory? }
       else
@@ -294,6 +329,7 @@ module Spree
 
     def ensure_master
       return unless new_record?
+
       self.master ||= build_master
     end
 
@@ -400,5 +436,3 @@ module Spree
     end
   end
 end
-
-require_dependency 'spree/product/scopes'

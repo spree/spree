@@ -76,7 +76,7 @@ module Spree
           ]
         }
 
-        persisted_order.update_attributes(attributes)
+        persisted_order.update(attributes)
         expect(persisted_order.unprocessed_payments.last.source.number).to be_present
       end
     end
@@ -84,11 +84,13 @@ module Spree
     context 'checking if order is paid' do
       context 'payment_state is paid' do
         before { allow(order).to receive_messages payment_state: 'paid' }
+
         it { expect(order).to be_paid }
       end
 
       context 'payment_state is credit_owned' do
         before { allow(order).to receive_messages payment_state: 'credit_owed' }
+
         it { expect(order).to be_paid }
       end
     end
@@ -237,11 +239,13 @@ module Spree
     context 'payment required?' do
       context 'total is zero' do
         before { allow(order).to receive_messages(total: 0) }
+
         it { expect(order.payment_required?).to be false }
       end
 
       context 'total > zero' do
         before { allow(order).to receive_messages(total: 1) }
+
         it { expect(order.payment_required?).to be true }
       end
     end

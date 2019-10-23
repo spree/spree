@@ -2,7 +2,7 @@
 
   <div data-hook="payment_method" class="row">
 
-    <div class="col-xs-12 col-md-4">
+    <div class="col-12 col-md-4">
       <div id="preference-settings" data-hook class="form-group">
         <%= f.label :type, Spree.t(:provider) %>
         <%= collection_select(:payment_method, :type, @providers, :to_s, :name, {}, {id: 'gtwy-type', class: 'select2'}) %>
@@ -15,6 +15,10 @@
           <% end %>
         <% end %>
       </div>
+      <div data-hook="store" class="form-group">
+        <%= label_tag :payment_method_store, Spree.t(:store) %>
+        <%= collection_select(:payment_method, :store_id, @stores, :id, :name, { include_blank: true }, {id: 'store_id', class: 'select2'}) %>
+      </div>
       <div data-hook="display" class="form-group">
         <%= label_tag :payment_method_display_on, Spree.t(:display) %>
         <%= select(:payment_method, :display_on, Spree::PaymentMethod::DISPLAY.collect { |display| [Spree.t(display), display.to_s] }, {}, {class: 'select2'}) %>
@@ -25,14 +29,14 @@
       </div>
       <div data-hook="active" class="form-group">
         <strong><%= Spree.t(:active) %></strong>
-        <div class="radio">
+        <div class="radio my-2">
           <%= label_tag :payment_method_active_true do %>
             <%= radio_button :payment_method, :active, true %>
             <%= Spree.t(:say_yes) %>
           <% end %>
         </div>
 
-        <div class="radio">
+        <div class="radio my-2">
           <%= label_tag :payment_method_active_false do %>
             <%= radio_button :payment_method, :active, false %>
             <%= Spree.t(:say_no) %>
@@ -41,7 +45,7 @@
       </div>
     </div>
 
-    <div class="col-xs-12 col-md-8">
+    <div class="col-12 col-md-8">
       <%= field_container :payment_method, :name, class: ['form-group'], 'data-hook' => 'name' do %>
         <%= label_tag :payment_method_name, Spree.t(:name) %>
         <%= text_field :payment_method, :name, class: 'form-control' %>

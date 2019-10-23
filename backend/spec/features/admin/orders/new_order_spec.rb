@@ -24,8 +24,10 @@ describe 'New Order', type: :feature do
 
   it 'completes new order successfully without using the cart', js: true do
     select2_search product.name, from: Spree.t(:name_or_sku)
+
     click_icon :add
-    wait_for_ajax
+    expect(page).to have_css('.card', text: 'Order Line Items')
+
     click_on 'Customer'
     select_customer
 
@@ -41,7 +43,6 @@ describe 'New Order', type: :feature do
 
     click_on 'Shipments'
     click_on 'Ship'
-    wait_for_ajax
 
     expect(page).to have_content('shipped')
   end
@@ -85,13 +86,12 @@ describe 'New Order', type: :feature do
       expect(page).to have_css('#stock_details')
     end
 
-    context 'on increase in quantity the product should be removed from order', js: true do
+    context 'on increase in quantity the product should be removed from order' do
       before do
-        spree_accept_alert do
+        accept_alert do
           within('table.stock-levels') do
             fill_in 'variant_quantity', with: 2
             click_icon :add
-            wait_for_ajax
           end
         end
       end
@@ -136,14 +136,12 @@ describe 'New Order', type: :feature do
       click_on 'Shipments'
       select2_search product.name, from: Spree.t(:name_or_sku)
       click_icon :add
-      wait_for_ajax
+      expect(page).not_to have_content('Your order is empty')
 
       click_on 'Payments'
       click_on 'Continue'
 
-      within('.additional-info .state') do
-        expect(page).to have_content('complete')
-      end
+      expect(page).to have_css('.additional-info .state', text: 'complete')
     end
   end
 
@@ -153,15 +151,19 @@ describe 'New Order', type: :feature do
       allow(Spree.user_class).to receive(:find_by).and_return(user)
       create(:credit_card, default: true, user: user)
     end
+
     it 'transitions to delivery not to complete' do
       select2_search product.name, from: Spree.t(:name_or_sku)
+
       within('table.stock-levels') do
         fill_in 'variant_quantity', with: 1
         click_icon :add
       end
-      wait_for_ajax
+      expect(page).not_to have_content('Your order is empty')
+
       click_link 'Customer'
       select_customer
+      wait_for { !page.has_button?('Update') }
       click_button 'Update'
       expect(Spree::Order.last.state).to eq 'delivery'
     end

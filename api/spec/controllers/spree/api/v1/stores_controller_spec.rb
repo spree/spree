@@ -34,7 +34,7 @@ module Spree
               'meta_keywords' => nil,
               'seo_title' => nil,
               'mail_from_address' => 'spree@example.org',
-              'default_currency' => nil,
+              'default_currency' => 'USD',
               'code' => store.code,
               'default' => true
             },
@@ -46,7 +46,7 @@ module Spree
               'meta_keywords' => nil,
               'seo_title' => nil,
               'mail_from_address' => 'spree@example.org',
-              'default_currency' => nil,
+              'default_currency' => 'USD',
               'code' => non_default_store.code,
               'default' => false
             }
@@ -64,7 +64,7 @@ module Spree
           'meta_keywords' => nil,
           'seo_title' => nil,
           'mail_from_address' => 'spree@example.org',
-          'default_currency' => nil,
+          'default_currency' => 'USD',
           'code' => store.code,
           'default' => true
         )
@@ -75,7 +75,8 @@ module Spree
           code: 'spree123',
           name: 'Hack0rz',
           url: 'spree123.example.com',
-          mail_from_address: 'me@example.com'
+          mail_from_address: 'me@example.com',
+          default_currency: 'USD'
         }
         api_post :create, store: store_hash
         expect(response.status).to eq(201)

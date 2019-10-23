@@ -1,13 +1,13 @@
 <% @body_id = 'product-details' %>
 
 <% cache cache_key_for_product do %>
-  <div data-hook="product_show" class="row" itemscope itemtype="https://schema.org/Product">
-    <div class="col-md-4 col-sm-5" data-hook="product_left_part">
+  <div data-hook="product_show" class="row">
+    <div class="col-lg-4 col-md-5" data-hook="product_left_part">
       <div data-hook="product_left_part_wrap">
         <div id="product-images" data-hook="product_images">
-          <div id="main-image" class="panel panel-default" data-hook>
-            <div class="panel-body text-center">
-              <%= product_image(@product, itemprop: "image") %>
+          <div id="main-image" class="card  " data-hook>
+            <div class="card-body text-center">
+              <%= product_image(@product) %>
             </div>
           </div>
           <div id="thumbnails" data-hook>
@@ -25,13 +25,13 @@
       </div>
     </div>
 
-    <div class="col-md-8 col-sm-7" data-hook="product_right_part">
+    <div class="col-lg-8 col-md-7" data-hook="product_right_part">
       <div data-hook="product_right_part_wrap">
         <div id="product-description" data-hook="product_description">
-          <h1 class="product-title" itemprop="name"><%= @product.name %></h1>
+          <h1 class="product-title mt-2"><%= @product.name %></h1>
 
-          <div class="well" itemprop="description" data-hook="description">
-            <%= product_description(@product) %>
+          <div data-hook="description">
+            <%= sanitize product_description(@product) %>
           </div>
 
           <div id="cart-form" data-hook="cart_form">
@@ -39,10 +39,12 @@
           </div>
         </div>
 
-        <div id="taxon-crumbs" class=" five " data-hook="product_taxons">
+        <div id="taxon-crumbs" class="mt-4" data-hook="product_taxons">
           <%= render partial: 'taxons' %>
         </div>
       </div>
     </div>
   </div>
 <% end %>
+
+<%= products_structured_data([@product]) %>

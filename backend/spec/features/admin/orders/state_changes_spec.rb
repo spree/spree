@@ -10,6 +10,7 @@ describe 'Order - State Changes', type: :feature do
       order.next!
       visit spree.admin_order_state_changes_path(order)
     end
+
     it 'are viewable' do
       within_row(1) do
         within('td:nth-child(1)') { expect(page).to have_content('Order') }

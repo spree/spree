@@ -6,21 +6,31 @@
 }
 
 .index-filter-button {
+  font-size: $font-size-sm;
   .glyphicon {
-    color: $gray-light;
+    color: $gray-800;
   }
 
   button {
+    height: 100%;
     text-transform: uppercase;
     letter-spacing: 2px;
     font-weight: bold;
-    font-size: $font-size-base - 3;
-    padding: ($padding-base-vertical + 3) $padding-base-horizontal ($padding-base-vertical + 2);
+    font-size: $small-font-size;
+    border-color: $input-border-color;
     border-right: none;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    background-color: $white;
 
-    &:focus {
-      background-color: $gray-lighter;
-      border-color: $input-border;
+    &:hover, &:focus {
+      background-color: $gray-100;
     }
+  }
+
+  .js-quick-search {
+    font-size: $font-size-sm;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
   }
 }

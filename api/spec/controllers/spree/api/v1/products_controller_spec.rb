@@ -35,14 +35,14 @@ module Spree
           ActionController::Base.perform_caching = true
         end
 
+        after do
+          ActionController::Base.perform_caching = false
+        end
+
         it 'returns unique products' do
           api_get :index
           product_ids = json_response['products'].map { |p| p['id'] }
           expect(product_ids.uniq.count).to eq(product_ids.count)
-        end
-
-        after do
-          ActionController::Base.perform_caching = false
         end
       end
 
@@ -130,9 +130,9 @@ module Spree
       end
 
       it 'gets a single product' do
-        product.master.images.create!(attachment: image('thinking-cat.jpg'))
+        create_image(product.master, image('thinking-cat.jpg'))
         create(:variant, product: product)
-        product.variants.first.images.create!(attachment: image('thinking-cat.jpg'))
+        create_image(product.variants.first, image('thinking-cat.jpg'))
         product.set_property('spree', 'rocks')
         product.taxons << create(:taxon)
 
@@ -165,13 +165,13 @@ module Spree
       context 'tracking is disabled' do
         before { Config.track_inventory_levels = false }
 
+        after { Config.track_inventory_levels = true }
+
         it 'still displays valid json with total_on_hand Float::INFINITY' do
           api_get :show, id: product.to_param
           expect(response).to be_ok
           expect(json_response[:total_on_hand]).to eq nil
         end
-
-        after { Config.track_inventory_levels = true }
       end
 
       context 'finds a product by slug first then by id' do
@@ -421,19 +421,22 @@ module Spree
         end
 
         describe 'expects to receive' do
+          after { send_request }
+
           it { expect(controller).to receive(:product_scope).and_return(products) }
           it { expect(products).to receive(:friendly).and_return(products) }
           it { expect(products).to receive(:find).with(product.id.to_s).and_return(product) }
-          after { send_request }
         end
 
         describe 'assigns' do
           before { send_request }
+
           it { expect(assigns(:product)).to eq(product) }
         end
 
         describe 'response' do
           before { send_request }
+
           it { expect(response).to have_http_status(:ok) }
           it { expect(json_response[:id]).to eq(product.id) }
           it { expect(json_response[:name]).to eq(product.name) }
@@ -448,19 +451,22 @@ module Spree
         end
 
         describe 'expects to receive' do
+          after { send_request }
+
           it { expect(controller).to receive(:product_scope).and_return(products) }
           it { expect(products).to receive(:friendly).and_return(products) }
           it { expect(products).to receive(:find_by).with(id: product.id.to_s).and_return(product) }
-          after { send_request }
         end
 
         describe 'assigns' do
           before { send_request }
+
           it { expect(assigns(:product)).to eq(product) }
         end
 
         describe 'response' do
           before { send_request }
+
           it { expect(response).to have_http_status(:ok) }
           it { expect(json_response[:id]).to eq(product.id) }
           it { expect(json_response[:name]).to eq(product.name) }
@@ -475,19 +481,22 @@ module Spree
         end
 
         describe 'expects to receive' do
+          after { send_request }
+
           it { expect(controller).to receive(:product_scope).and_return(products) }
           it { expect(products).to receive(:friendly).and_return(products) }
           it { expect(products).to receive(:find_by).with(id: product.id.to_s).and_return(nil) }
-          after { send_request }
         end
 
         describe 'assigns' do
           before { send_request }
+
           it { expect(assigns(:product)).to eq(nil) }
         end
 
         describe 'response' do
           before { send_request }
+
           it { assert_not_found! }
         end
       end

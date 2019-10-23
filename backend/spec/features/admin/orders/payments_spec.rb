@@ -6,10 +6,10 @@ describe 'Payments', type: :feature, js: true do
   context 'with a pre-existing payment' do
     let!(:payment) do
       create(:payment,
-             order:          order,
-             amount:         order.outstanding_balance,
+             order: order,
+             amount: order.outstanding_balance,
              payment_method: create(:credit_card_payment_method),
-             state:          state)
+             state: state)
     end
 
     let(:order) { create(:completed_order_with_totals, number: 'R100', line_items_count: 5) }
@@ -18,10 +18,6 @@ describe 'Payments', type: :feature, js: true do
     before do
       visit spree.edit_admin_order_path(order)
       click_link 'Payments'
-    end
-
-    def refresh_page
-      visit current_path
     end
 
     # Regression tests for #1453
@@ -69,7 +65,7 @@ describe 'Payments', type: :feature, js: true do
       end
 
       click_icon :void
-      expect(find('#payment_status').text).to eq('balance due')
+      expect(page).to have_css('#payment_status', exact_text: 'balance due')
       expect(page).to have_content('Payment Updated')
 
       within_row(1) do
@@ -84,9 +80,8 @@ describe 'Payments', type: :feature, js: true do
       expect(page).to have_content('successfully created!')
 
       click_icon(:capture)
-      wait_for_ajax
-      expect(find('#payment_status').text).to eq('paid')
 
+      expect(page).to have_css('#payment_status', exact_text: 'paid')
       expect(page).not_to have_selector('#new_payment_section')
     end
 
@@ -128,10 +123,7 @@ describe 'Payments', type: :feature, js: true do
           within_row(1) do
             click_icon(:edit)
 
-            # Can't use fill_in here, as under poltergeist that will unfocus (and
-            # thus submit) the field under poltergeist
-            find('td.amount input').click
-            page.execute_script("$('td.amount input').val('$1')")
+            find('td.amount input').send_keys([:backspace] * 6, '$1')
 
             click_icon(:cancel)
             expect(page).to have_selector('td.amount span', text: '$150.00')
@@ -144,10 +136,11 @@ describe 'Payments', type: :feature, js: true do
             click_icon(:edit)
             fill_in('amount', with: 'invalid')
             click_icon(:save)
-            expect(find('td.amount input').value).to eq('invalid')
-            expect(payment.reload.amount).to eq(150.00)
           end
+
           expect(page).to have_selector('.alert-error', text: 'Invalid resource. Please fix errors and try again.')
+          expect(page).to have_field('amount', with: 'invalid')
+          expect(payment.reload.amount).to eq(150.00)
         end
       end
     end
@@ -179,8 +172,7 @@ describe 'Payments', type: :feature, js: true do
         fill_in 'Expiration', with: "09 / #{Time.current.year + 1}"
         fill_in 'Card Code', with: '007'
         # Regression test for #4277
-        sleep(1)
-        expect(find('.ccType', visible: false).value).to eq('visa')
+        expect(page).to have_field(class: 'ccType', type: :hidden, with: 'visa')
         click_button 'Continue'
         expect(page).to have_content('Payment has been successfully created!')
       end
@@ -204,7 +196,7 @@ describe 'Payments', type: :feature, js: true do
       before { visit spree.admin_order_payments_path(order) }
 
       it 'is able to reuse customer payment source', js: false do
-        expect(find("#card_#{cc.id}")).to be_checked
+        expect(page).to have_checked_field(id: "card_#{cc.id}")
         click_button 'Continue'
         expect(page).to have_content('Payment has been successfully created!')
       end

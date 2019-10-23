@@ -21,10 +21,10 @@ describe 'Store credits admin', type: :feature do
       click_link 'Store Credits'
       expect(page).to have_current_path(spree.admin_user_store_credits_path(store_credit.user))
 
-      store_credit_table = page.find('table')
-      expect(store_credit_table.all('tr').count).to eq 1
-      expect(store_credit_table).to have_content(Spree::Money.new(store_credit.amount).to_s)
-      expect(store_credit_table).to have_content(Spree::Money.new(store_credit.amount_used).to_s)
+      store_credit_table = page.find('table', match: :first)
+      expect(store_credit_table).to have_css('tr').once
+      expect(store_credit_table).to have_content(Spree::Money.new(store_credit.amount, currency: store_credit.currency).to_s)
+      expect(store_credit_table).to have_content(Spree::Money.new(store_credit.amount_used, currency: store_credit.currency).to_s)
       expect(store_credit_table).to have_content(store_credit.category_name)
       expect(store_credit_table).to have_content(store_credit.created_by_email)
     end
@@ -39,17 +39,37 @@ describe 'Store credits admin', type: :feature do
       allow_any_instance_of(Spree::Admin::StoreCreditsController).to receive(:try_spree_current_user).and_return(admin_user)
     end
 
-    it 'creates store credit and associate it with the user' do
-      click_link 'Add Store Credit'
-      page.fill_in 'store_credit_amount', with: '102.00'
-      select 'Exchange', from: 'store_credit_category_id'
-      click_button 'Create'
+    describe 'with default currency' do
+      it 'creates store credit and associate it with the user' do
+        click_link 'Add Store Credit'
+        page.fill_in 'store_credit_amount', with: '102.00'
+        select 'Exchange', from: 'store_credit_category_id'
+        click_button 'Create'
 
-      expect(page).to have_current_path(spree.admin_user_store_credits_path(store_credit.user))
+        expect(page).to have_current_path(spree.admin_user_store_credits_path(store_credit.user))
 
-      store_credit_table = page.find('table')
-      expect(store_credit_table.all('tr').count).to eq 2
-      expect(Spree::StoreCredit.count).to eq 2
+        store_credit_table = page.find('table', match: :first)
+        expect(store_credit_table).to have_css('tr').twice
+        expect(Spree::StoreCredit.count).to eq 2
+      end
+    end
+
+    describe 'with selected currency' do
+      it 'creates store credit and associate it with the user' do
+        click_link 'Add Store Credit'
+        page.fill_in 'store_credit_amount', with: '100.00'
+        select 'EUR', from: 'store_credit_currency'
+        select 'Exchange', from: 'store_credit_category_id'
+        click_button 'Create'
+
+        expect(page).to have_current_path(spree.admin_user_store_credits_path(store_credit.user))
+
+        store_credit_table = page.find('table', match: :first)
+        expect(store_credit_table).to have_css('tr').twice
+        expect(Spree::StoreCredit.count).to eq 2
+        expect(Spree::StoreCredit.last.currency).to eq 'EUR'
+        expect(store_credit_table).to have_content('€100.00')
+      end
     end
   end
 
@@ -70,8 +90,8 @@ describe 'Store credits admin', type: :feature do
       click_button 'Update'
 
       expect(page).to have_current_path(spree.admin_user_store_credits_path(store_credit.user))
-      store_credit_table = page.find('table')
-      expect(store_credit_table).to have_content(Spree::Money.new(updated_amount).to_s)
+      store_credit_table = page.first('table')
+      expect(store_credit_table).to have_content(Spree::Money.new(updated_amount, currency: store_credit.currency).to_s)
       expect(store_credit.reload.amount.to_f).to eq updated_amount.to_f
     end
   end
@@ -86,12 +106,10 @@ describe 'Store credits admin', type: :feature do
     end
 
     it 'updates store credit in lifetime stats' do
-      spree_accept_alert do
+      accept_confirm do
         click_icon :delete
-        wait_for_ajax
       end
-      store_credit = page.find('#user-lifetime-stats #store_credit')
-      expect(store_credit.text).to eq(Spree::Money.new(0).to_s)
+      expect(page).to have_css('#user-lifetime-stats #store_credit', text: Spree::Money.new(0).to_s)
     end
   end
 

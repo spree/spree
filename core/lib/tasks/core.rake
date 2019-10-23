@@ -73,16 +73,14 @@ use rake db:load_file[/absolute/path/to/sample/filename.rb]}
     ActiveRecord::Base.send(:subclasses).each(&:reset_column_information)
 
     load_defaults = Spree::Country.count == 0
-    unless load_defaults # ask if there are already Countries => default data hass been loaded
-      load_defaults = agree('Countries present, load sample data anyways? [y/n]: ')
-    end
+    load_defaults ||= agree('Countries present, load sample data anyways? [y/n]: ')
     Rake::Task['db:seed'].invoke if load_defaults
 
     if Rails.env.production? && Spree::Product.count > 0
       load_sample = agree('WARNING: In Production and products exist in database, load sample data anyways? [y/n]:')
     else
       load_sample = true if ENV['AUTO_ACCEPT']
-      load_sample = agree('Load Sample Data? [y/n]: ') unless load_sample
+      load_sample ||= agree('Load Sample Data? [y/n]: ')
     end
 
     if load_sample
@@ -165,6 +163,25 @@ use rake db:load_file[/absolute/path/to/sample/filename.rb]}
                         attachment_content_type: taxon.icon_content_type,
                         attachment_file_size: taxon.icon_file_size,
                         attachment_updated_at: taxon.icon_updated_at)
+    end
+  end
+
+  desc 'Migrates taxon icons to taxon images after upgrading to Spree 3.7: only needed if you used taxons icons.'
+  task migrate_taxon_icons_to_images: :environment do |_t, _args|
+    Spree::Asset.where(type: 'Spree::TaxonIcon').update_all(type: 'Spree::TaxonImage')
+  end
+
+  desc 'Ensure all Order associated with Store after upgrading to Spree 3.7'
+  task associate_orders_with_store: :environment do |_t, _args|
+    Spree::Order.where(store_id: nil).update_all(store_id: Spree::Store.default.id)
+  end
+
+  desc 'Ensure all Order has currency present after upgrading to Spree 3.7'
+  task ensure_order_currency_presence: :environment do |_t, _args|
+    Spree::Order.where(currency: nil).find_in_batches do |orders|
+      orders.each do |order|
+        order.update!(currency: order.store.default_currency || Spree::Config[:currency])
+      end
     end
   end
 end

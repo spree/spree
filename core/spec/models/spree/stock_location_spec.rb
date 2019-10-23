@@ -11,6 +11,11 @@ module Spree
       expect(subject.stock_items.count).to eq Variant.count
     end
 
+    it 'validates uniqueness' do
+      StockLocation.create(name: 'Test')
+      expect(StockLocation.new(name: 'Test')).not_to be_valid
+    end
+
     context 'handling stock items' do
       let!(:variant) { create(:variant) }
 
@@ -44,11 +49,13 @@ module Spree
           context 'passes backorderable default config' do
             context 'true' do
               before { subject.backorderable_default = true }
+
               it { expect(stock_item.backorderable).to be true }
             end
 
             context 'false' do
               before { subject.backorderable_default = false }
+
               it { expect(stock_item.backorderable).to be false }
             end
           end

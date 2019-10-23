@@ -23,6 +23,7 @@ unless ENV['SKIP_SAMPLE_IMAGES']
     images_path = Pathname.new(File.dirname(__FILE__)) + 'images'
     path = images_path + file_name(name, type)
     return false unless File.exist?(path)
+
     File.open(path)
   end
 
@@ -186,25 +187,15 @@ unless ENV['SKIP_SAMPLE_IMAGES']
   products[:ror_baseball_jersey].variants.each do |variant|
     color = variant.option_value('tshirt-color').downcase
 
-    if Rails.application.config.use_paperclip
-      attach_paperclip_image(variant, "ror_baseball_jersey_#{color}", 'png')
-      attach_paperclip_image(variant, "ror_baseball_jersey_back_#{color}", 'png')
-    else
-      attach_active_storage_image(variant, "ror_baseball_jersey_#{color}", 'png')
-      attach_active_storage_image(variant, "ror_baseball_jersey_back_#{color}", 'png')
-    end
+    attach_active_storage_image(variant, "ror_baseball_jersey_#{color}", 'png')
+    attach_active_storage_image(variant, "ror_baseball_jersey_back_#{color}", 'png')
   end
 
   images.each do |variant, attachments|
     puts "Loading images for #{variant.product.name}"
     attachments.each do |attrs|
-      if Rails.application.config.use_paperclip
-        file_name = attrs.delete(:name)
-        variant.images.create!(attrs) if variant.images.where(attachment_file_name: file_name).none?
-      else
-        name, type = attrs.delete(:name).split('.')
-        attach_active_storage_image(variant, name, type)
-      end
+      name, type = attrs.delete(:name).split('.')
+      attach_active_storage_image(variant, name, type)
     end
   end
 end

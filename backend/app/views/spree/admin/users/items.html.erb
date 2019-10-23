@@ -7,7 +7,7 @@
 <% end %>
 
 <fieldset data-hook="admin_user_items_purchased">
-  <%= paginate @orders %>
+  <%= paginate @orders, theme: 'twitter-bootstrap-4' %>
 
   <% if @orders.any? %>
     <%# TODO add search interface %>
@@ -30,7 +30,9 @@
                 <%= mini_image(item.variant) %>
               </td>
               <td class="item-name">
-                <%= item.name %><br><%= "(" + variant_options(item.variant) + ")" unless item.variant.option_values.empty? %>
+                <%= item.name %>
+                <br />
+                <%= "(#{item.options_text})" if item.options_text.present? %>
                 <% if item.sku.present? %>
                   <strong><%= Spree.t(:sku) %>:</strong> <%= item.variant.sku %>
                 <% end %>
@@ -58,7 +60,7 @@
       <%= link_to Spree.t(:add_one), spree.new_admin_order_path %>!
     </div>
   <% end %>
-  <%= paginate @orders %>
+  <%= paginate @orders, theme: 'twitter-bootstrap-4' %>
 </fieldset>
 
 <%= render 'spree/admin/users/lifetime_stats' %>

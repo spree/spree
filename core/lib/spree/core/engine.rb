@@ -1,7 +1,14 @@
 module Spree
   module Core
     class Engine < ::Rails::Engine
-      Environment = Struct.new(:calculators, :preferences, :payment_methods, :adjusters, :stock_splitters, :promotions, :line_item_comparison_hooks)
+      Environment = Struct.new(:calculators,
+                               :preferences,
+                               :dependencies,
+                               :payment_methods,
+                               :adjusters,
+                               :stock_splitters,
+                               :promotions,
+                               :line_item_comparison_hooks)
       SpreeCalculators = Struct.new(:shipping_methods, :tax_rates, :promotion_actions_create_adjustments, :promotion_actions_create_item_adjustments)
       PromoEnvironment = Struct.new(:rules, :actions)
       isolate_namespace Spree
@@ -12,8 +19,9 @@ module Spree
       end
 
       initializer 'spree.environment', before: :load_config_initializers do |app|
-        app.config.spree = Environment.new(SpreeCalculators.new, Spree::AppConfiguration.new)
+        app.config.spree = Environment.new(SpreeCalculators.new, Spree::AppConfiguration.new, Spree::AppDependencies.new)
         Spree::Config = app.config.spree.preferences
+        Spree::Dependencies = app.config.spree.dependencies
       end
 
       initializer 'spree.register.calculators' do |app|
@@ -103,7 +111,8 @@ module Spree
           Promotion::Actions::CreateAdjustment,
           Promotion::Actions::CreateItemAdjustments,
           Promotion::Actions::CreateLineItems,
-          Promotion::Actions::FreeShipping]
+          Promotion::Actions::FreeShipping
+        ]
       end
 
       # filter sensitive information during logging
@@ -112,7 +121,8 @@ module Spree
           :password,
           :password_confirmation,
           :number,
-          :verification_value]
+          :verification_value
+        ]
       end
 
       initializer 'spree.core.checking_migrations' do

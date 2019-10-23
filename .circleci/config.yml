@@ -1,65 +1,156 @@
 version: 2 # use CircleCI 2.0
-jobs: # a collection of steps
-  build: # runs not using Workflows must have a `build` job as entry point
-    parallelism: 4 # run four instances of this job in parallel
-    working_directory: ~/spree # directory where steps will run
-    docker: # run the steps with Docker
-      - image: circleci/ruby:2.5-node-browsers # ...with this image as the primary container; this is where all `steps` will run
-        environment: # environment variables for primary container
-          DB: postgres
-          DB_HOST: localhost
-          DB_USERNAME: postgres
-          CIRCLE_TEST_REPORTS: /tmp/test-results
-          CIRCLE_ARTIFACTS: /tmp/test-artifacts
-          BUNDLE_JOBS: 4
-          BUNDLE_RETRY: 3
-          BUNDLE_PATH: ~/spree/vendor/bundle
-          SPREE_USE_PAPERCLIP: true
-      - image: circleci/postgres:10-alpine # database image
-        environment: # environment variables for database
-          POSTGRES_USER: postgres
-    steps: # a collection of executable commands
-      - checkout # special step to check out source code to working directory
 
-      # Which version of bundler?
-      - run:
-          name: Which bundler?
-          command: bundle -v
+defaults: &defaults
+  environment: &environment
+    CIRCLE_TEST_REPORTS: /tmp/test-results
+    CIRCLE_ARTIFACTS: /tmp/test-artifacts
+    BUNDLE_JOBS: 4
+    BUNDLE_RETRY: 3
+    BUNDLE_PATH: ~/spree/vendor/bundle
+  working_directory: ~/spree
+  docker:
+    - image: &image circleci/ruby:2.5-node-browsers
 
-      # Restore bundle cache
+run_tests: &run_tests
+  <<: *defaults
+  parallelism: 4
+  steps:
+    - checkout
+    - restore_cache:
+        keys:
+          - spree-bundle-v4-{{ checksum ".ruby-version" }}-{{ .Branch }}
+          - spree-bundle-v4-{{ checksum ".ruby-version" }}
+    - run:
+        name: Ensure Bundle Install
+        command: |
+          bundle install --path=~/spree/vendor/bundle
+          ./build-ci.rb install
+    - run:
+        name: Run rspec in parallel
+        command: BUNDLE_GEMFILE=../Gemfile ./build-ci.rb test
+    - store_artifacts:
+        path: /tmp/test-artifacts
+        destination: test-artifacts
+    - store_artifacts:
+        path: /tmp/test-results
+        destination: raw-test-output
+    - store_test_results:
+        path: /tmp/test-results
+
+jobs:
+  bundle_install:
+    <<: *defaults
+    steps:
+      - checkout
       - restore_cache:
           keys:
-            - spree-bundle-v2-{{ .Branch }}
-            - spree-bundle-v2
-
-      # Install gem dependencies
+            - spree-bundle-v4-{{ checksum ".ruby-version" }}-{{ .Branch }}
+            - spree-bundle-v4-{{ checksum ".ruby-version" }}
       - run:
           name: Bundle Install
           command: |
-            bundle check || bundle install
+            bundle install --path=~/spree/vendor/bundle
             ./build-ci.rb install
-
-      # Store bundle cache
       - save_cache:
-          key: spree-bundle-v2-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+          key: spree-bundle-v4-{{ checksum ".ruby-version" }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
           paths:
             - ~/spree/vendor/bundle
 
-      - run:
-          name: Wait for DB
-          command: dockerize -wait tcp://localhost:5432 -timeout 1m
+  run_tests_postgres: &run_tests_postgres
+    <<: *run_tests
+    environment: &postgres_environment
+      <<: *environment
+      DB: postgres
+      DB_HOST: localhost
+      DB_USERNAME: postgres
+    docker:
+      - image: *image
+      - image: circleci/postgres:10-alpine
+        environment:
+          POSTGRES_USER: postgres
 
+  run_tests_mysql:
+    <<: *run_tests
+    environment:
+      <<: *environment
+      DB: mysql
+      DB_HOST: 127.0.0.1
+      DB_USERNAME: root
+      COVERAGE: true
+      COVERAGE_DIR: /tmp/workspace/simplecov
+    docker:
+      - image: *image
+      - image: circleci/mysql:8-ram
+        command: [--default-authentication-plugin=mysql_native_password]
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - spree-bundle-v4-{{ checksum ".ruby-version" }}-{{ .Branch }}
+            - spree-bundle-v4-{{ checksum ".ruby-version" }}
+      - run:
+          name: Ensure Bundle Install
+          command: |
+            bundle install --path=~/spree/vendor/bundle
+            ./build-ci.rb install
       - run:
           name: Run rspec in parallel
           command: BUNDLE_GEMFILE=../Gemfile ./build-ci.rb test
-
       - store_artifacts:
           path: /tmp/test-artifacts
           destination: test-artifacts
-
       - store_artifacts:
           path: /tmp/test-results
           destination: raw-test-output
-
       - store_test_results:
           path: /tmp/test-results
+      - persist_to_workspace:
+          root: /tmp/workspace
+          paths:
+            - simplecov
+
+  send_test_coverage:
+    <<: *defaults
+    steps:
+      - checkout
+      - attach_workspace:
+          at: /tmp/workspace
+      - run:
+          name:  Download cc-test-reporter
+          command: |
+            mkdir -p tmp/
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./tmp/cc-test-reporter
+            chmod +x ./tmp/cc-test-reporter
+      - run:
+          name: Setup ENVs
+          command: |
+            export GIT_BRANCH="$CIRCLE_BRANCH"
+            export GIT_COMMIT_SHA="$CIRCLE_SHA1"
+            export GIT_COMMITTED_AT="$(date +%s)"
+      - run:
+          name: Format test coverage
+          command: |
+            ./tmp/cc-test-reporter format-coverage -t simplecov -o tmp/codeclimate.api.json /tmp/workspace/simplecov/api/.resultset.json
+            ./tmp/cc-test-reporter format-coverage -t simplecov -o tmp/codeclimate.backend.json /tmp/workspace/simplecov/backend/.resultset.json
+            ./tmp/cc-test-reporter format-coverage -t simplecov -o tmp/codeclimate.core.json /tmp/workspace/simplecov/core/.resultset.json
+            ./tmp/cc-test-reporter format-coverage -t simplecov -o tmp/codeclimate.frontend.json /tmp/workspace/simplecov/frontend/.resultset.json
+      - run:
+          name: Upload coverage results to Code Climate
+          command: |
+            ./tmp/cc-test-reporter sum-coverage tmp/codeclimate.*.json -p 4 -o tmp/codeclimate.total.json
+            ./tmp/cc-test-reporter upload-coverage -i tmp/codeclimate.total.json
+
+workflows:
+  version: 2
+  main:
+    jobs:
+      - bundle_install
+      - run_tests_postgres:
+          requires:
+            - bundle_install
+      - run_tests_mysql:
+          requires:
+            - bundle_install
+      - send_test_coverage:
+          requires:
+            - run_tests_mysql

@@ -5,7 +5,7 @@ module Spree
         before_action :find_order
 
         def show
-          authorize! :read, @order, order_token
+          authorize! :show, @order, order_token
           @address = find_address
           respond_with(@address)
         end
@@ -14,7 +14,7 @@ module Spree
           authorize! :update, @order, order_token
           @address = find_address
 
-          if @address.update_attributes(address_params)
+          if @address.update(address_params)
             respond_with(@address, default_template: :show)
           else
             invalid_resource!(@address)

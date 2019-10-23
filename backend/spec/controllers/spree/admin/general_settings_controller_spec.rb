@@ -9,7 +9,7 @@ describe Spree::Admin::GeneralSettingsController, type: :controller do
   end
 
   describe '#clear_cache' do
-    subject { spree_post :clear_cache }
+    subject { post :clear_cache }
 
     shared_examples 'a HTTP 204 response' do
       it 'grant access to users with an admin role' do

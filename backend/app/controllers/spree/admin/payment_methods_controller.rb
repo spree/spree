@@ -37,7 +37,7 @@ module Spree
           attributes.delete(k) if k.include?('password') && attributes[k].blank?
         end
 
-        if @payment_method.update_attributes(attributes)
+        if @payment_method.update(attributes)
           invoke_callbacks(:update, :after)
           flash[:success] = Spree.t(:successfully_updated, resource: Spree.t(:payment_method))
           redirect_to edit_admin_payment_method_path(@payment_method)
@@ -54,6 +54,7 @@ module Spree
       end
 
       def load_data
+        @stores = Spree::Store.all
         @providers = Gateway.providers.sort_by(&:name)
       end
 
@@ -72,6 +73,7 @@ module Spree
       def preferences_params
         key = ActiveModel::Naming.param_key(@payment_method)
         return {} unless params.key? key
+
         params.require(key).permit!
       end
     end

@@ -11,7 +11,7 @@ module Spree
       @searcher = build_searcher(params.merge(include_images: true))
       @products = @searcher.retrieve_products
       @products = @products.includes(:possible_promotions) if @products.respond_to?(:includes)
-      @taxonomies = Spree::Taxonomy.includes(root: :children)
+      @taxonomies = load_taxonomies
     end
 
     def show
@@ -57,6 +57,10 @@ module Spree
         params.permit!
         redirect_to url_for(params), status: :moved_permanently
       end
+    end
+
+    def load_taxonomies
+      Spree::Taxonomy.includes(root: :children)
     end
   end
 end

@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.summary     = 'Frontend e-commerce functionality for the Spree project.'
   s.description = s.summary
 
-  s.required_ruby_version = '>= 2.2.7'
+  s.required_ruby_version = '>= 2.5.0'
 
   s.author      = 'Sean Schofield'
   s.email       = 'sean@spreecommerce.com'
@@ -22,8 +22,9 @@ Gem::Specification.new do |s|
   s.add_dependency 'spree_api', s.version
   s.add_dependency 'spree_core', s.version
 
-  s.add_dependency 'bootstrap-sass',  '>= 3.3.5.1', '< 3.4'
-  s.add_dependency 'canonical-rails', '~> 0.2.3'
+  s.add_dependency 'bootstrap',       '~> 4.3.1'
+  s.add_dependency 'glyphicons',      '~> 1.0.2'
+  s.add_dependency 'canonical-rails', '~> 0.2.5'
   s.add_dependency 'jquery-rails',    '~> 4.3'
 
   s.add_development_dependency 'capybara-accessible'

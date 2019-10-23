@@ -1,8 +1,11 @@
-<div class="panel panel-default" id="payment" data-hook>
-  <div class="panel-heading">
-    <h3 class="panel-title"><%= Spree.t(:payment_information) %></h3>
+<div class="card" id="payment" data-hook>
+  <div class="card-header">
+    <h3 class="card-title mb-0 h5">
+      <%= Spree.t(:payment_information) %>
+    </h3>
   </div>
-  <div class="panel-body" data-hook="checkout_payment_step">
+
+  <div class="card-body" data-hook="checkout_payment_step">
     <% if @payment_sources.present? %>
       <div class="card_options">
         <%= radio_button_tag 'use_existing_card', 'yes', true %>
@@ -21,12 +24,12 @@
             <tbody>
               <% @payment_sources.each do |card| %>
                 <tr id="<%= dom_id(card,'spree')%>" class="<%= cycle('even', 'odd') %>">
-                  <td><%= card.name %></td>
-                  <td><%= card.display_number %></td>
-                  <td><%= card.month %> / <%= card.year %></td>
                   <td>
                     <%= radio_button_tag "order[existing_card]", card.id, (card == @payment_sources.first), { class: "existing-cc-radio" }  %>
                   </td>
+                  <td><%= card.name %></td>
+                  <td><%= card.display_number %></td>
+                  <td><%= card.month %> / <%= card.year %></td>
                 </tr>
               <% end %>
             </tbody>
@@ -38,7 +41,7 @@
     <%= render partial: 'spree/checkout/payment/storecredit' %>
 
     <ul class="list-group" id="payment-method-fields" data-hook>
-      <% @order.available_payment_methods.each do |method| %>
+      <% @order.available_payment_methods(current_store).each do |method| %>
         <li class="list-group-item radio">
           <label>
             <%= radio_button_tag "order[payments_attributes][][payment_method_id]", method.id, method == @order.available_payment_methods.first %>
@@ -48,7 +51,7 @@
       <% end %>
     </ul>
 
-    <ul class="nav" id="payment-methods" data-hook>
+    <ul id="payment-methods" class="list-unstyled position-relative" data-hook>
       <% @order.available_payment_methods.each do |method| %>
         <li id="payment_method_<%= method.id %>" class="<%= 'last' if method == @order.available_payment_methods.last %>" data-hook>
           <fieldset>
@@ -60,7 +63,7 @@
 
 
     <% if Spree::Frontend::Config[:coupon_codes_enabled] %>
-      <p class='field' data-hook='coupon_code'>
+      <p class='field mb-0' data-hook='coupon_code'>
         <%= form.label :coupon_code %>
         <%= form.text_field :coupon_code, class: 'form-control' %>
       </p>
@@ -68,7 +71,9 @@
   </div>
 </div>
 
-<div class="well text-right form-buttons" data-hook="buttons">
-  <%= submit_tag Spree.t(:save_and_continue), class: 'btn btn-lg btn-success primary' %>
-  <script>Spree.disableSaveOnClick();</script>
+<div class="card text-right form-buttons my-4" data-hook="buttons">
+  <div class="card-body">
+    <%= submit_tag Spree.t(:save_and_continue), class: 'btn btn-lg btn-success primary' %>
+    <script>Spree.disableSaveOnClick();</script>
+  </div>
 </div>

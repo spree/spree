@@ -26,7 +26,7 @@ module Spree
     before_validation :set_cost_zero_when_nil
 
     validates :stock_location, presence: true
-    validates :number, uniqueness: true
+    validates :number, uniqueness: { case_sensitive: true }
 
     attr_accessor :special_instructions
 
@@ -75,8 +75,8 @@ module Spree
       after_transition do |shipment, transition|
         shipment.state_changes.create!(
           previous_state: transition.from,
-          next_state:     transition.to,
-          name:           'shipment'
+          next_state: transition.to,
+          name: 'shipment'
         )
       end
     end
@@ -103,6 +103,7 @@ module Spree
       inventory_units.any?(&:backordered?)
     end
 
+    # TODO: delegate currency to Order, order.currency is mandatory
     def currency
       order ? order.currency : Spree::Config[:currency]
     end
@@ -117,6 +118,7 @@ module Spree
       return 'pending' unless order.can_ship?
       return 'pending' if inventory_units.any? &:backordered?
       return 'shipped' if shipped?
+
       order.paid? || Spree::Config[:auto_capture_on_dispatch] ? 'ready' : 'pending'
     end
 
@@ -131,6 +133,12 @@ module Spree
 
     def final_price_with_items
       item_cost + final_price
+    end
+
+    def free?
+      return true if final_price == BigDecimal(0)
+
+      adjustments.promotion.any? { |p| p.source.type == 'Spree::Promotion::Actions::FreeShipping' }
     end
 
     def finalize!
@@ -184,6 +192,7 @@ module Spree
 
       payments_pool = pending_payments.each_with_object([]) do |payment, pool|
         break if payments_amount >= shipment_to_pay
+
         payments_amount += payment.uncaptured_amount
         pool << payment
       end
@@ -243,6 +252,7 @@ module Spree
 
     def set_up_inventory(state, variant, order, line_item, quantity = 1)
       return if quantity <= 0
+
       inventory_units.create(
         state: state,
         variant_id: variant.id,
@@ -254,11 +264,12 @@ module Spree
 
     def shipped=(value)
       return unless value == '1' && shipped_at.nil?
+
       self.shipped_at = Time.current
     end
 
     def shipping_method
-      selected_shipping_rate.try(:shipping_method) || shipping_rates.first.try(:shipping_method)
+      selected_shipping_rate&.shipping_method || shipping_rates.first&.shipping_method
     end
 
     def tax_category
@@ -281,7 +292,7 @@ module Spree
     end
 
     def tracking_url
-      @tracking_url ||= shipping_method.build_tracking_url(tracking)
+      @tracking_url ||= shipping_method&.build_tracking_url(tracking)
     end
 
     def update_amounts
@@ -296,7 +307,7 @@ module Spree
 
     # Update Shipment and make sure Order states follow the shipment changes
     def update_attributes_and_order(params = {})
-      if update_attributes params
+      if update params
         if params.key? :selected_shipping_rate_id
           # Changing the selected Shipping Rate won't update the cost (for now)
           # so we persist the Shipment#cost before calculating order shipment
@@ -349,10 +360,10 @@ module Spree
       Spree::FulfilmentChanger.new(
         current_stock_location: stock_location,
         desired_stock_location: shipment_to_transfer_to.stock_location,
-        current_shipment:       self,
-        desired_shipment:       shipment_to_transfer_to,
-        variant:                variant,
-        quantity:               quantity
+        current_shipment: self,
+        desired_shipment: shipment_to_transfer_to,
+        variant: variant,
+        quantity: quantity
       ).run!
     end
 
@@ -363,7 +374,7 @@ module Spree
     end
 
     def can_get_rates?
-      order.ship_address && order.ship_address.valid?
+      order.ship_address&.valid?
     end
 
     def manifest_restock(item)

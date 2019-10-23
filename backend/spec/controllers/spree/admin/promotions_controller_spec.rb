@@ -9,33 +9,33 @@ describe Spree::Admin::PromotionsController, type: :controller do
 
   context '#index' do
     it 'succeeds' do
-      spree_get :index
+      get :index
       expect(assigns[:promotions]).to match_array [promotion2, promotion1]
     end
 
     it 'assigns promotion categories' do
-      spree_get :index
+      get :index
       expect(assigns[:promotion_categories]).to match_array [category]
     end
 
     context 'search' do
       it 'pages results' do
-        spree_get :index, per_page: '1'
+        get :index, params: { per_page: '1' }
         expect(assigns[:promotions]).to eq [promotion2]
       end
 
       it 'filters by name' do
-        spree_get :index, q: { name_cont: promotion1.name }
+        get :index, params: { q: { name_cont: promotion1.name } }
         expect(assigns[:promotions]).to eq [promotion1]
       end
 
       it 'filters by code' do
-        spree_get :index, q: { code_cont: promotion1.code }
+        get :index, params: { q: { code_cont: promotion1.code } }
         expect(assigns[:promotions]).to eq [promotion1]
       end
 
       it 'filters by path' do
-        spree_get :index, q: { path_cont: promotion1.path }
+        get :index, params: { q: { path_cont: promotion1.path } }
         expect(assigns[:promotions]).to eq [promotion1]
       end
     end
@@ -44,7 +44,7 @@ describe Spree::Admin::PromotionsController, type: :controller do
   context '#clone' do
     context 'cloning valid promotion' do
       subject do
-        spree_post :clone, id: promotion1.id
+        post :clone, params: { id: promotion1.id }
       end
 
       it 'creates a copy of promotion' do
@@ -53,8 +53,7 @@ describe Spree::Admin::PromotionsController, type: :controller do
 
       it 'creates a copy of promotion with changed fields' do
         subject
-        new_promo = Spree::Promotion.order(:created_at).last
-
+        new_promo = Spree::Promotion.last
         expect(new_promo.name).to eq 'New name1'
         expect(new_promo.code).to eq 'code1_new'
         expect(new_promo.path).to eq 'path1_new'
@@ -63,7 +62,7 @@ describe Spree::Admin::PromotionsController, type: :controller do
 
     context 'cloning invalid promotion' do
       subject do
-        spree_post :clone, id: promotion3.id
+        post :clone, params: { id: promotion3.id }
       end
 
       let!(:promotion3) { create(:promotion, name: 'Name3', code: 'code3', path: '') }

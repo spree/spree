@@ -8,19 +8,19 @@
     <fieldset class="general no-border-top">
 
       <div class="row">
-        <div class="col-xs-12 col-md-6">
+        <div class="col-12 col-lg-6">
           <%#-------------------------------------------------%>
           <%# Security settings                               %>
           <%#-------------------------------------------------%>
           <% if @preferences_security.any? %>
-            <div class="panel panel-default security">
-              <div class="panel-heading">
-                <h1 class="panel-title">
+            <div class="card mb-3" id="general-settings-security" data-hook="general_settings_security">
+              <div class="card-header">
+                <h1 class="card-title mb-0 h5">
                   <%= Spree.t(:security_settings) %>
                 </h1>
               </div>
 
-              <div class="panel-body">
+              <div class="card-body">
                 <% @preferences_security.each do |key|
                     type = Spree::Config.preference_type(key) %>
                     <div class="checkbox">
@@ -37,12 +37,12 @@
           <%#-------------------------------------------------%>
           <%# Clear cache                                     %>
           <%#-------------------------------------------------%>
-          <div class="panel panel-default">
-            <div class="panel-heading">
-              <h1 class="panel-title"><%= Spree.t(:clear_cache)%></h1>
+          <div class="card mb-3" id="general-settings-cache" data-hook="general_settings_cache">
+            <div class="card-header">
+              <h1 class="card-title mb-0 h5"><%= Spree.t(:clear_cache)%></h1>
             </div>
 
-            <div class="panel-body">
+            <div class="card-body">
               <div class="clear-cache-warning alert alert-warning">
                 <%= Spree.t(:clear_cache_warning) %>
               </div>
@@ -53,19 +53,19 @@
           </div>
 
         </div>
-        <div class="col-xs-12 col-md-6">
+        <div class="col-12 col-lg-6">
 
           <%#-------------------------------------------------%>
           <%# Currency Settings                               %>
           <%#-------------------------------------------------%>
-          <div class="panel panel-default currency">
-            <div class="panel-heading">
-              <h1 class="panel-title">
+          <div class="card mb-3" id="general-settings-currency" data-hook="general_settings_currency">
+            <div class="card-header">
+              <h1 class="card-title mb-0 h5">
                 <%= Spree.t(:currency_settings)%>
               </h1>
             </div>
 
-            <div class="panel-body">
+            <div class="card-body">
               <div class="form-group">
                 <%= label_tag :currency, Spree.t(:choose_currency) %>
                 <%= select_tag :currency, currency_options %>

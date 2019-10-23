@@ -2,16 +2,6 @@ require 'spec_helper'
 
 describe Spree::ServiceModule do
   context 'noncallable thing passed to run' do
-    class ServiceObjectWithoutCall
-      prepend ::Spree::ServiceModule::Base
-    end
-
-    it 'raises NonCallablePassedToRun' do
-      expect { ServiceObjectWithoutCall.new.call }.to raise_error(Spree::ServiceModule::CallMethodNotImplemented)
-    end
-  end
-
-  context 'noncallable thing passed to run' do
     class ServiceObjectWithUncallableThing
       prepend ::Spree::ServiceModule::Base
 
@@ -202,6 +192,32 @@ describe Spree::ServiceModule do
       service = ServiceObjectWithSuccess.new
       expect(service).to receive(:first_method).with({}).and_call_original
       service.call
+    end
+  end
+
+  context 'not compatible params passed as result' do
+    class ServiceObjectWithIncompatibleParams
+      prepend ::Spree::ServiceModule::Base
+
+      def call(_params)
+        run :first_method
+        run :second_method
+      end
+
+      private
+
+      def first_method(_params)
+        success(first_value: 'asd', second_value: 'qwe')
+      end
+
+      def second_method(first_value:)
+        success(first_value + ' Second Method Success!')
+      end
+    end
+
+    it 'raises exception' do
+      service = ServiceObjectWithIncompatibleParams.new
+      expect { service.call }.to raise_error(Spree::ServiceModule::IncompatibleParamsPassed)
     end
   end
 end

@@ -1,73 +1,79 @@
 <h3><%= Spree.t(:order_summary) %></h3>
 
-<table class="table" data-hook="order_summary">
-  <tbody>
-    <tr data-hook="item_total">
-      <td><strong><%= Spree.t(:item_total) %>:</strong></td>
-      <td><strong><%= order.display_item_total.to_html %></strong></td>
-    </tr>
+<div class="table-responsive">
+  <table class="table" data-hook="order_summary">
+    <tbody>
+      <tr data-hook="item_total">
+        <td><strong><%= Spree.t(:item_total) %>:</strong></td>
+        <td><strong><%= order.display_item_total.to_html %></strong></td>
+      </tr>
 
-    <% if order.line_item_adjustments.nonzero.exists? %>
-      <tbody data-hook="order_details_promotion_adjustments">
-        <% order.line_item_adjustments.nonzero.promotion.eligible.group_by(&:label).each do |label, adjustments| %>
+      <% if order.line_item_adjustments.nonzero.exists? %>
+        <tbody data-hook="order_details_promotion_adjustments">
+          <% order.line_item_adjustments.nonzero.promotion.eligible.group_by(&:label).each do |label, adjustments| %>
+            <tr class="total">
+              <td><%= label %></td>
+              <td><%= Spree::Money.new(adjustments.sum(&:amount), currency: order.currency).to_html %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      <% end %>
+
+      <tbody data-hook="order_details_tax_adjustments">
+        <% order.all_adjustments.nonzero.tax.eligible.group_by(&:label).each do |label, adjustments| %>
           <tr class="total">
             <td><%= label %></td>
             <td><%= Spree::Money.new(adjustments.sum(&:amount), currency: order.currency).to_html %></td>
           </tr>
         <% end %>
       </tbody>
-    <% end %>
 
-    <tbody data-hook="order_details_tax_adjustments">
-      <% order.all_adjustments.nonzero.tax.eligible.group_by(&:label).each do |label, adjustments| %>
-        <tr class="total">
-          <td><%= label %></td>
-          <td><%= Spree::Money.new(adjustments.sum(&:amount), currency: order.currency).to_html %></td>
+      <% if order.passed_checkout_step?("address") && order.shipments.any? %>
+        <tr data-hook="shipping_total">
+          <td><%= Spree.t(:shipping_total) %>:</td>
+          <% shipping_total = Spree::Money.new(order.shipments.to_a.sum(&:cost), currency: order.currency) %>
+          <td data-hook='shipping-total' data-currency='<%= Money::Currency.find(order.currency).symbol %>' thousands-separator='<%= shipping_total.thousands_separator %>' decimal-mark='<%= shipping_total.decimal_mark %>'><%= shipping_total.to_html %></td>
         </tr>
+
+        <% if order.shipment_adjustments.nonzero.exists? %>
+          <tbody data-hook="order_details_shipment_promotion_adjustments">
+            <% order.shipment_adjustments.nonzero.promotion.eligible.group_by(&:label).each do |label, adjustments| %>
+              <tr class="total">
+                <td><%= label %>:</td>
+                <td><%= Spree::Money.new(adjustments.sum(&:amount), currency: order.currency).to_html %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        <% end %>
       <% end %>
-    </tbody>
 
-    <% if order.passed_checkout_step?("address") && order.shipments.any? %>
-      <tr data-hook="shipping_total">
-        <td><%= Spree.t(:shipping_total) %>:</td>
-        <% shipping_total = Spree::Money.new(order.shipments.to_a.sum(&:cost), currency: order.currency) %>
-        <td data-hook='shipping-total' data-currency='<%= Money::Currency.find(order.currency).symbol %>' thousands-separator='<%= shipping_total.thousands_separator %>' decimal-mark='<%= shipping_total.decimal_mark %>'><%= shipping_total.to_html %></td>
-      </tr>
-
-      <% if order.shipment_adjustments.nonzero.exists? %>
-        <tbody data-hook="order_details_shipment_promotion_adjustments">
-          <% order.shipment_adjustments.nonzero.promotion.eligible.group_by(&:label).each do |label, adjustments| %>
+      <% if order.adjustments.nonzero.eligible.exists? %>
+        <tbody id="summary-order-charges" data-hook>
+          <% order.adjustments.nonzero.eligible.each do |adjustment| %>
+          <% next if (adjustment.source_type == 'Spree::TaxRate') and (adjustment.amount == 0) %>
             <tr class="total">
-              <td><%= label %>:</td>
-              <td><%= Spree::Money.new(adjustments.sum(&:amount), currency: order.currency).to_html %></td>
+              <td><%= adjustment.label %>:</td>
+              <td><%= adjustment.display_amount.to_html %></td>
             </tr>
           <% end %>
         </tbody>
       <% end %>
-    <% end %>
 
-    <% if order.adjustments.nonzero.eligible.exists? %>
-      <tbody id="summary-order-charges" data-hook>
-        <% order.adjustments.nonzero.eligible.each do |adjustment| %>
-        <% next if (adjustment.source_type == 'Spree::TaxRate') and (adjustment.amount == 0) %>
-          <tr class="total">
-            <td><%= adjustment.label %>:</td>
-            <td><%= adjustment.display_amount.to_html %></td>
-          </tr>
-        <% end %>
-      </tbody>
-    <% end %>
-
-    <tr data-hook="order_total">
-      <td><strong><%= Spree.t(:order_total) %>:</strong></td>
-      <td><strong><span id='summary-order-total' class="lead text-primary" data-currency=<%= Money::Currency.find(order.currency).symbol %>><%= order.display_total.to_html %></span></strong></td>
-    </tr>
-
-    <% if order.using_store_credit? %>
-      <tr data-hook="order_details_store_credit">
-        <td><strong><%= Spree.t(:store_credit_name) %>:</strong></td>
-        <td><span id='summary-store-credit'><%= order.display_total_applied_store_credit.to_html %></span></td>
+      <tr data-hook="order_total">
+        <td><strong><%= Spree.t(:order_total) %>:</strong></td>
+        <td>
+          <strong>
+            <span id='summary-order-total' class="lead text-primary" data-currency="<%= Money::Currency.find(order.currency).symbol %>"><%= order.display_total.to_html %></span>
+          </strong>
+        </td>
       </tr>
-    <% end %>
-  </tbody>
-</table>
+
+      <% if order.using_store_credit? %>
+        <tr data-hook="order_details_store_credit">
+          <td><strong><%= Spree.t(:store_credit_name) %>:</strong></td>
+          <td><span id='summary-store-credit'><%= order.display_total_applied_store_credit.to_html %></span></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

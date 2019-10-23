@@ -10,27 +10,27 @@
   <div data-hook="admin_promotions_index_search">
     <%= search_form_for [:admin, @search] do |f| %>
       <div class="row">
-        <div class="col-xs-12 col-md-6">
+        <div class="col-12 col-lg-6">
           <div class="form-group">
             <%= label_tag :q_name_cont, Spree.t(:name) %>
-            <%= f.text_field :name_cont, tabindex: 1, class: "form-control js-quick-search-target" %>
+            <%= f.text_field :name_cont, tabindex: 1, class: "form-control js-quick-search-target js-filterable" %>
           </div>
 
           <div class="form-group">
             <%= label_tag :q_code_cont, Spree.t(:code) %>
-            <%= f.text_field :code_cont, tabindex: 1, class: "form-control" %>
+            <%= f.text_field :code_cont, tabindex: 1, class: "form-control js-filterable" %>
           </div>
         </div>
 
-        <div class="col-xs-12 col-md-6">
+        <div class="col-12 col-lg-6">
           <div class="form-group">
             <%= label_tag :q_path_cont, Spree.t(:path) %>
-            <%= f.text_field :path_cont, tabindex: 1, class: "form-control" %>
+            <%= f.text_field :path_cont, tabindex: 1, class: "form-control js-filterable" %>
           </div>
 
           <div class="form-group">
             <%= label_tag :q_promotion_category_id_eq, Spree.t(:promotion_category) %>
-            <%= f.collection_select(:promotion_category_id_eq, @promotion_categories, :id, :name, { include_blank: Spree.t('match_choices.all') }, { class: 'select2' }) %>
+            <%= f.collection_select(:promotion_category_id_eq, @promotion_categories, :id, :name, { include_blank: Spree.t('match_choices.all') }, { class: 'select2 js-filterable' }) %>
           </div>
         </div>
       </div>
@@ -42,7 +42,7 @@
   </div>
 <% end %>
 
-<%= paginate @promotions %>
+<%= paginate @promotions, theme: 'twitter-bootstrap-4' %>
 
 <% if @promotions.any? %>
   <table class="table">

@@ -23,7 +23,7 @@ describe 'current order tracking', type: :controller do # rubocop:disable RSpec/
 
     it "doesn't create a new order out of the blue" do
       expect do
-        spree_get :index
+        get :index
       end.not_to change { Spree::Order.count }
     end
   end
@@ -37,7 +37,7 @@ describe Spree::OrdersController, type: :controller do
   describe Spree::OrdersController do
     it "doesn't create a new order out of the blue" do
       expect do
-        spree_get :edit
+        get :edit
       end.not_to change { Spree::Order.count }
     end
   end

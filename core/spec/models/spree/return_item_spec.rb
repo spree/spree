@@ -24,8 +24,8 @@ describe Spree::ReturnItem, type: :model do
     let(:return_item)    { create(:return_item, inventory_unit: inventory_unit) }
 
     before do
-      inventory_unit.update_attributes!(state: 'shipped')
-      return_item.update_attributes!(reception_status: 'awaiting')
+      inventory_unit.update!(state: 'shipped')
+      return_item.update!(reception_status: 'awaiting')
       allow(return_item).to receive(:eligible_for_return?).and_return(true)
     end
 
@@ -44,8 +44,8 @@ describe Spree::ReturnItem, type: :model do
       let!(:customer_return) { create(:customer_return_without_return_items, return_items: [return_item], stock_location_id: inventory_unit.shipment.stock_location_id) }
 
       before do
-        inventory_unit.update_attributes!(state: 'shipped')
-        return_item.update_attributes!(reception_status: 'awaiting')
+        inventory_unit.update!(state: 'shipped')
+        return_item.update!(reception_status: 'awaiting')
       end
 
       it 'increases the count on hand' do
@@ -53,15 +53,16 @@ describe Spree::ReturnItem, type: :model do
       end
 
       context 'when the variant is not resellable' do
-        before { return_item.update_attributes(resellable: false) }
+        before { return_item.update(resellable: false) }
+
         it { expect { subject }.not_to change { stock_item.reload.count_on_hand } }
       end
 
       context 'when variant does not track inventory' do
         before do
-          inventory_unit.update_attributes!(state: 'shipped')
-          inventory_unit.variant.update_attributes!(track_inventory: false)
-          return_item.update_attributes!(reception_status: 'awaiting')
+          inventory_unit.update!(state: 'shipped')
+          inventory_unit.variant.update!(track_inventory: false)
+          return_item.update!(reception_status: 'awaiting')
         end
 
         it 'does not increase the count on hand' do
@@ -109,7 +110,7 @@ describe Spree::ReturnItem, type: :model do
       end
 
       context 'an exchange' do
-        subject { build(:exchange_return_item) }
+        subject { create(:exchange_return_item) }
 
         it { expect(subject.pre_tax_amount).to eq 0.0 }
       end
@@ -407,10 +408,13 @@ describe Spree::ReturnItem, type: :model do
   describe '#exchange_requested?' do
     context 'exchange variant exists' do
       before { allow(subject).to receive(:exchange_variant) { mock_model(Spree::Variant) } }
+
       it { expect(subject.exchange_requested?).to eq true }
     end
+
     context 'exchange variant does not exist' do
       before { allow(subject).to receive(:exchange_variant).and_return(nil) }
+
       it { expect(subject.exchange_requested?).to eq false }
     end
   end
@@ -418,10 +422,13 @@ describe Spree::ReturnItem, type: :model do
   describe '#exchange_processed?' do
     context 'exchange inventory unit exists' do
       before { allow(subject).to receive(:exchange_inventory_units) { [mock_model(Spree::InventoryUnit)] } }
+
       it { expect(subject.exchange_processed?).to eq true }
     end
+
     context 'exchange inventory unit does not exist' do
       before { allow(subject).to receive(:exchange_inventory_units).and_return([]) }
+
       it { expect(subject.exchange_processed?).to eq false }
     end
   end
@@ -438,6 +445,7 @@ describe Spree::ReturnItem, type: :model do
 
     context 'exchange has not been requested' do
       before { allow(subject).to receive(:exchange_requested?).and_return(false) }
+
       it { expect(subject.exchange_required?).to be false }
     end
 
@@ -446,6 +454,7 @@ describe Spree::ReturnItem, type: :model do
         allow(subject).to receive(:exchange_requested?).and_return(true)
         allow(subject).to receive(:exchange_processed?).and_return(true)
       end
+
       it { expect(subject.exchange_required?).to be false }
     end
   end
@@ -619,7 +628,12 @@ describe Spree::ReturnItem, type: :model do
           let(:return_item)      { build(:return_item) }
           let(:exchange_variant) { create(:variant, product: return_item.inventory_unit.variant.product) }
 
-          before { return_item.exchange_variant = exchange_variant }
+          before do
+            exchange_variant.stock_items.each do |item|
+              item.update_column(:backorderable, false)
+            end
+            return_item.exchange_variant = exchange_variant
+          end
 
           it 'is invalid' do
             expect(subject).not_to be_valid
@@ -687,7 +701,7 @@ describe Spree::ReturnItem, type: :model do
     let(:return_item) { create(:return_item, inventory_unit: inventory_unit, reception_status: 'awaiting') }
     let!(:stock_item) { inventory_unit.find_stock_item }
 
-    before { return_item.update_attributes!(reception_status: 'awaiting') }
+    before { return_item.update!(reception_status: 'awaiting') }
 
     it { expect { subject }.to change(inventory_unit, :state).to('returned').from('shipped') }
 
@@ -706,26 +720,38 @@ describe Spree::ReturnItem, type: :model do
     context 'stock should not restock' do
       context 'return_item is not resellable' do
         before { return_item.resellable = false }
+
         it { expect(subject).to be_nil }
         it { expect { subject }.not_to change { stock_item.reload.count_on_hand } }
       end
 
       context 'variant should not track inventory' do
         before { return_item.variant.track_inventory = false }
+
         it { expect(subject).to be_nil }
         it { expect { subject }.not_to change { stock_item.reload.count_on_hand } }
       end
 
       context 'stock_item not present' do
         before { stock_item.destroy }
+
         it { expect(subject).to be_nil }
         it { expect { subject }.not_to change { stock_item.reload.count_on_hand } }
       end
 
       context 'when restock inventory preference false' do
         before { Spree::Config[:restock_inventory] = false }
+
         it { expect(subject).to be_nil }
         it { expect { subject }.not_to change { stock_item.reload.count_on_hand } }
+      end
+    end
+
+    describe '#currency' do
+      subject { return_item }
+
+      it 'responds to currency method' do
+        expect(subject.respond_to?(:currency)).to eq true
       end
     end
   end

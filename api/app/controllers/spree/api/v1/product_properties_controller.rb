@@ -6,7 +6,7 @@ module Spree
         before_action :product_property, only: [:show, :update, :destroy]
 
         def index
-          @product_properties = @product.product_properties.accessible_by(current_ability, :read).
+          @product_properties = @product.product_properties.accessible_by(current_ability).
                                 ransack(params[:q]).result.
                                 page(params[:page]).per(params[:per_page])
           respond_with(@product_properties)
@@ -31,7 +31,7 @@ module Spree
         def update
           authorize! :update, @product_property
 
-          if @product_property.update_attributes(product_property_params)
+          if @product_property.update(product_property_params)
             respond_with(@product_property, status: 200, default_template: :show)
           else
             invalid_resource!(@product_property)
@@ -51,7 +51,7 @@ module Spree
         end
 
         def authorize_product!
-          authorize! :read, @product
+          authorize! :show, @product
         end
 
         def product_property
@@ -59,7 +59,8 @@ module Spree
             @product_property ||= @product.product_properties.find_by(id: params[:id])
             @product_property ||= @product.product_properties.includes(:property).where(spree_properties: { name: params[:id] }).first
             raise ActiveRecord::RecordNotFound unless @product_property
-            authorize! :read, @product_property
+
+            authorize! :show, @product_property
           end
         end
 

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'Cart', type: :feature, inaccessible: true do
+describe 'Cart', type: :feature, inaccessible: true, js: true do
   before { Timecop.scale(100) }
 
   after { Timecop.return }
@@ -9,9 +9,7 @@ describe 'Cart', type: :feature, inaccessible: true do
   let!(:product) { variant.product }
 
   def add_mug_to_cart
-    visit spree.root_path
-    click_link product.name
-    click_button 'add-to-cart-button'
+    add_to_cart(product.name)
   end
 
   it 'shows cart icon on non-cart pages' do
@@ -19,25 +17,17 @@ describe 'Cart', type: :feature, inaccessible: true do
     expect(page).to have_selector('li#link-to-cart a', visible: true)
   end
 
-  it 'prevents double clicking the remove button on cart', js: true do
+  it 'prevents double clicking the remove button on cart' do
     add_mug_to_cart
     # prevent form submit to verify button is disabled
-    page.execute_script("$('#update-cart').submit(function(){return false;})")
+    find('#update-cart').execute_script('$(this).submit(function(){return false;})')
 
     expect(page).not_to have_selector('button#update-button[disabled]')
     page.find(:css, '.delete span').click
     expect(page).to have_selector('button#update-button[disabled]')
   end
 
-  # Regression test for #2006
-  it "does not error out with a 404 when GET'ing to /orders/populate" do
-    visit '/orders/populate'
-    within('.alert-error') do
-      expect(page).to have_content(Spree.t(:populate_get_error))
-    end
-  end
-
-  it 'allows you to remove an item from the cart', js: true do
+  it 'allows you to remove an item from the cart' do
     add_mug_to_cart
     line_item = Spree::LineItem.first!
     within('#line_items') do
@@ -53,7 +43,7 @@ describe 'Cart', type: :feature, inaccessible: true do
     end
   end
 
-  it 'allows you to empty the cart', js: true do
+  it 'allows you to empty the cart' do
     add_mug_to_cart
     expect(page).to have_content(product.name)
     click_on 'Empty Cart'
@@ -68,7 +58,7 @@ describe 'Cart', type: :feature, inaccessible: true do
   context 'product contains variants but no option values' do
     before { variant.option_values.destroy_all }
 
-    it 'still adds product to cart', inaccessible: true do
+    it 'still adds product to cart' do
       add_mug_to_cart
       visit spree.cart_path
       expect(page).to have_content(product.name)
@@ -80,7 +70,7 @@ describe 'Cart', type: :feature, inaccessible: true do
     expect(page).to have_selector("div[data-hook='cart_container']")
   end
 
-  describe 'add promotion coupon on cart page', js: true do
+  describe 'add promotion coupon on cart page' do
     let!(:promotion) { Spree::Promotion.create(name: 'Huhuhu', code: 'huhu') }
     let!(:calculator) { Spree::Calculator::FlatPercentItemTotal.create(preferred_flat_percent: '10') }
     let!(:action) { Spree::Promotion::Actions::CreateItemAdjustments.create(calculator: calculator) }

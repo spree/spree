@@ -16,7 +16,7 @@ module Spree
           end
 
           def dimensions_for_style(style)
-            self.class.styles.with_indifferent_access[style] || default_style
+            self.class.styles.with_indifferent_access[style] || self.class.styles.with_indifferent_access[default_style]
           end
         end
       end

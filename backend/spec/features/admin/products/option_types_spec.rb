@@ -59,31 +59,28 @@ describe 'Option Types', type: :feature, js: true do
     click_link 'Option Types'
     within('table#listing_option_types') { click_icon :edit }
 
-    wait_for_ajax
-    page.find('tbody#option_values', visible: true)
-
-    expect(all('tbody#option_values tr').select(&:visible?).count).to eq(1)
+    expect(page).to have_css('tbody#option_values tr', count: 1)
 
     # Add a new option type
     click_link 'Add Option Value'
-    expect(all('tbody#option_values tr').select(&:visible?).count).to eq(2)
+    expect(page).to have_css('tbody#option_values tr', count: 2)
 
     # Remove default option type
     within('tbody#option_values') do
       click_icon :delete
     end
     # Check that there was no HTTP request
-    expect(all('div#progress[style]').count).to eq(0)
+    expect(page).not_to have_css('div#progress[style]')
     # Assert that the field is hidden automatically
-    expect(all('tbody#option_values tr').select(&:visible?).count).to eq(1)
+    expect(page).to have_css('tbody#option_values tr', count: 1)
 
     # Remove added option type
     within('tbody#option_values') do
       click_icon :delete
     end
     # Check that there was no HTTP request
-    expect(all('div#progress[style]').count).to eq(0)
+    expect(page).not_to have_css('div#progress[style]')
     # Assert that the field is hidden automatically
-    expect(all('tbody#option_values tr').select(&:visible?).count).to eq(0)
+    expect(page).not_to have_css('tbody#option_values tr')
   end
 end

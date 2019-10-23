@@ -30,6 +30,7 @@ describe 'viewing products', type: :feature, inaccessible: true do
     before do
       visit '/t/category/super-clothing/t-shirts'
     end
+
     it 'renders breadcrumbs' do
       expect(page.find('#breadcrumbs')).to have_link('T-Shirts')
     end
@@ -40,14 +41,14 @@ describe 'viewing products', type: :feature, inaccessible: true do
 
   describe 'meta tags and title' do
     it 'displays metas' do
-      t_shirts.update_attributes metas
+      t_shirts.update metas
       visit '/t/category/super-clothing/t-shirts'
       expect(page).to have_meta(:description, 'Brand new Ruby on Rails TShirts')
       expect(page).to have_meta(:keywords, 'ror, tshirt, ruby')
     end
 
     it 'display title if set' do
-      t_shirts.update_attributes metas
+      t_shirts.update metas
       visit '/t/category/super-clothing/t-shirts'
       expect(page).to have_title('Ruby On Rails TShirt')
     end
@@ -59,7 +60,7 @@ describe 'viewing products', type: :feature, inaccessible: true do
 
     # Regression test for #2814
     it "doesn't use meta_title as heading on page" do
-      t_shirts.update_attributes metas
+      t_shirts.update metas
       visit '/t/category/super-clothing/t-shirts'
       within('h1.taxon-title') do
         expect(page).to have_content(t_shirts.name)
@@ -67,7 +68,7 @@ describe 'viewing products', type: :feature, inaccessible: true do
     end
 
     it 'uses taxon name in title when meta_title set to empty string' do
-      t_shirts.update_attributes meta_title: ''
+      t_shirts.update meta_title: ''
       visit '/t/category/super-clothing/t-shirts'
       expect(page).to have_title('Category - T-Shirts - ' + store_name)
     end
@@ -82,7 +83,7 @@ describe 'viewing products', type: :feature, inaccessible: true do
     it 'is able to visit brand Ruby on Rails' do
       within(:css, '#taxonomies') { click_link 'Ruby on Rails' }
 
-      expect(page.all('#products .product-list-item').size).to eq(7)
+      expect(page).to have_css('#products .product-list-item').exactly(7).times
       tmp = page.all('#products .product-list-item a').map(&:text).flatten.compact
       tmp.delete('')
       array = ['Ruby on Rails Bag',
@@ -98,7 +99,7 @@ describe 'viewing products', type: :feature, inaccessible: true do
     it 'is able to visit brand Ruby' do
       within(:css, '#taxonomies') { click_link 'Ruby' }
 
-      expect(page.all('#products .product-list-item').size).to eq(1)
+      expect(page).to have_css('#products .product-list-item').once
       tmp = page.all('#products .product-list-item a').map(&:text).flatten.compact
       tmp.delete('')
       expect(tmp.sort!).to eq(['Ruby Baseball Jersey'])
@@ -107,7 +108,7 @@ describe 'viewing products', type: :feature, inaccessible: true do
     it 'is able to visit brand Apache' do
       within(:css, '#taxonomies') { click_link 'Apache' }
 
-      expect(page.all('#products .product-list-item').size).to eq(1)
+      expect(page).to have_css('#products .product-list-item').once
       tmp = page.all('#products .product-list-item a').map(&:text).flatten.compact
       tmp.delete('')
       expect(tmp.sort!).to eq(['Apache Baseball Jersey'])
@@ -116,7 +117,7 @@ describe 'viewing products', type: :feature, inaccessible: true do
     it 'is able to visit category Clothing' do
       click_link 'Clothing'
 
-      expect(page.all('#products .product-list-item').size).to eq(5)
+      expect(page).to have_css('#products .product-list-item').exactly(5).times
       tmp = page.all('#products .product-list-item a').map(&:text).flatten.compact
       tmp.delete('')
       expect(tmp.sort!).to eq(['Apache Baseball Jersey',
@@ -129,7 +130,7 @@ describe 'viewing products', type: :feature, inaccessible: true do
     it 'is able to visit category Mugs' do
       click_link 'Mugs'
 
-      expect(page.all('#products .product-list-item').size).to eq(2)
+      expect(page).to have_css('#products .product-list-item').twice
       tmp = page.all('#products .product-list-item a').map(&:text).flatten.compact
       tmp.delete('')
       expect(tmp.sort!).to eq(['Ruby on Rails Mug', 'Ruby on Rails Stein'])
@@ -138,7 +139,7 @@ describe 'viewing products', type: :feature, inaccessible: true do
     it 'is able to visit category Bags' do
       click_link 'Bags'
 
-      expect(page.all('#products .product-list-item').size).to eq(2)
+      expect(page).to have_css('#products .product-list-item').twice
       tmp = page.all('#products .product-list-item a').map(&:text).flatten.compact
       tmp.delete('')
       expect(tmp.sort!).to eq(['Ruby on Rails Bag', 'Ruby on Rails Tote'])

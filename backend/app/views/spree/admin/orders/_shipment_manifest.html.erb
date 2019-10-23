@@ -5,7 +5,9 @@
     </td>
 
     <td class="item-name">
-      <%= item.variant.product.name %><br><%= "(" + variant_options(item.variant) + ")" unless item.variant.option_values.empty? %>
+      <%= item.variant.product.name %>
+      <br />
+      <%= "(#{item.variant.options_text})" if item.variant.options_text.present? %>
       <% if item.variant.sku.present? %>
         <strong><%= Spree.t(:sku) %>:</strong> <%= item.variant.sku %>
       <% end %>
@@ -31,7 +33,7 @@
 
     <td class="cart-item-delete actions actions-3 text-center" data-hook="cart_item_delete">
       <% if((!shipment.shipped?) && can?(:update, item.line_item)) %>
-        <%= link_to_with_icon 'pencil', Spree.t('actions.edit'), "#", class: 'edit-item btn btn-default btn-sm', title: Spree.t('actions.edit'), no_text: true %>
+        <%= link_to_with_icon 'pencil', Spree.t('actions.edit'), "#", class: 'edit-item btn btn-outline-secondary btn-sm', title: Spree.t('actions.edit'), no_text: true %>
         <%= link_to_with_icon 'cancel', Spree.t('actions.cancel'), "#", class: 'cancel-item  btn btn-primary btn-sm', data: { action: 'cancel' }, title: Spree.t('actions.cancel'), style: 'display: none', no_text: true %>
         <%= link_to_with_icon 'ok', Spree.t('actions.save'), "#", class: 'save-item btn btn-success btn-sm', data: {'shipment-number' => shipment.number, 'variant-id' => item.variant.id, action: 'save'}, title: Spree.t('actions.save'), style: 'display: none', no_text: true %>
         <%= link_to_with_icon 'split', Spree.t('split'), "#", class: 'split-item btn btn-primary btn-sm', data: {action: 'split', 'variant-id' => item.variant.id}, title: Spree.t('split'), no_text: true %>

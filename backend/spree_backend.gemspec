@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.summary     = 'backend e-commerce functionality for the Spree project.'
   s.description = 'Required dependency for Spree'
 
-  s.required_ruby_version = '>= 2.2.7'
+  s.required_ruby_version = '>= 2.5.0'
 
   s.author      = 'Sean Schofield'
   s.email       = 'sean@spreecommerce.com'
@@ -22,7 +22,8 @@ Gem::Specification.new do |s|
   s.add_dependency 'spree_api', s.version
   s.add_dependency 'spree_core', s.version
 
-  s.add_dependency 'bootstrap-sass',  '~> 3.3'
+  s.add_dependency 'bootstrap',       '~> 4.3.1'
+  s.add_dependency 'glyphicons',      '~> 1.0.2'
   s.add_dependency 'jquery-rails',    '~> 4.3'
   s.add_dependency 'jquery-ui-rails', '~> 6.0.1'
   s.add_dependency 'select2-rails',   '3.5.9.1' # 3.5.9.2 breaks several specs

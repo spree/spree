@@ -1,7 +1,7 @@
 <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @promotion } %>
 
 <div class="row" id="general_fields" >
-  <div class="col-xs-6 col-md-3">
+  <div class="col-6 col-md-3">
     <%= f.field_container :name, class: ['form-group'] do %>
       <%= f.label :name %>
       <%= f.text_field :name, class: 'form-control' %>
@@ -33,7 +33,7 @@
     <% end %>
   </div>
 
-  <div class="col-xs-12 col-md-6">
+  <div class="col-12 col-md-6">
     <%= f.field_container :description, class: ['form-group'] do %>
       <%= f.label :description %>
       <%= f.text_area :description, rows: 7, class: 'form-control' %>
@@ -45,23 +45,23 @@
     <% end %>
   </div>
 
-  <div id="expiry_fields" class="col-xs-6 col-md-3">
+  <div id="expiry_fields" class="col-6 col-md-3">
     <%= f.field_container :usage_limit do %>
       <%= f.label :usage_limit %>
       <%= f.number_field :usage_limit, min: 0, class: 'form-control' %>
-      <p class="help-block">
+      <small class="form-text text-muted">
         <%= Spree.t(:current_promotion_usage, count: @promotion.credits_count) %>
-      </p>
+      </small>
     <% end %>
 
     <div id="starts_at_field" class="form-group">
       <%= f.label :starts_at %>
-      <%= f.text_field :starts_at, value: datepicker_field_value(@promotion.starts_at), class: 'datepicker datepicker-from form-control' %>
+      <%= f.datetime_field :starts_at, class: 'form-control' %>
     </div>
 
     <div id="expires_at_field" class="form-group">
       <%= f.label :expires_at %>
-      <%= f.text_field :expires_at, value: datepicker_field_value(@promotion.expires_at), class: 'datepicker datepicker-to form-control' %>
+      <%= f.datetime_field :expires_at, class: 'form-control' %>
     </div>
   </div>
 </div>

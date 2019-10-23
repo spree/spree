@@ -6,10 +6,10 @@
   <div data-hook="admin_return_authorisations_index_filters">
     <%= search_form_for [:admin, @search], url: spree.admin_customer_returns_path do |f| %>
       <div class="row">
-        <div class="col-xs-12">
+        <div class="col-12">
           <div class="form-group">
             <%= f.label :number_cont, Spree.t(:number) %>
-            <%= f.text_field :number_cont, class: "form-control js-quick-search-target" %>
+            <%= f.text_field :number_cont, class: "form-control js-quick-search-target js-filterable" %>
           </div>
         </div>
       </div>
@@ -42,9 +42,9 @@
           <td><%= link_to customer_return.order.number, spree.edit_admin_order_path(customer_return.order) %></td>
           <td>
             <% if customer_return.fully_reimbursed? %>
-              <span class="label label-success"><%= Spree.t(:reimbursed) %></span>
+              <span class="badge badge-success"><%= Spree.t(:reimbursed) %></span>
             <% else %>
-              <span class="label label-info"><%= Spree.t(:incomplete) %></span>
+              <span class="badge badge-info"><%= Spree.t(:incomplete) %></span>
             <% end %>
           </td>
           <td><%= customer_return.display_pre_tax_total.to_html %></td>

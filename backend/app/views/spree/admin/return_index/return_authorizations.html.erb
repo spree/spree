@@ -3,14 +3,20 @@
 <% end %>
 
 <% content_for :page_tabs do %>
-  <li class="<%= "active" if params[:q][:state_eq].blank? %>">
-    <%= link_to Spree.t(:all), spree.admin_return_authorizations_path %>
+  <li class="nav-item">
+    <%= link_to Spree.t(:all),
+      spree.admin_return_authorizations_path,
+      class: "nav-link #{'active' if params[:q][:state_eq].blank?}" %>
   </li>
-  <li class="<%= "active" if params[:q][:state_eq] == "authorized" %>">
-    <%= link_to Spree.t(:authorized), params.merge({q: {state_eq: :authorized}}).permit! %>
+  <li class="nav-item">
+    <%= link_to Spree.t(:authorized),
+      params.merge({q: {state_eq: :authorized}}).permit!,
+      class: "nav-link #{'active' if params[:q][:state_eq] == 'authorized'}" %>
   </li>
-  <li class="<%= "active" if params[:q][:state_eq] == "canceled" %>">
-    <%= link_to Spree.t(:canceled), params.merge({q: {state_eq: :canceled}}).permit! %>
+  <li class="nav-item">
+    <%= link_to Spree.t(:canceled),
+      params.merge({q: {state_eq: :canceled}}).permit!,
+      class: "nav-link #{'active' if params[:q][:state_eq] == 'canceled'}" %>
   </li>
 <% end %>
 
@@ -18,16 +24,16 @@
   <div data-hook="admin_return_authorisations_index_filters">
     <%= search_form_for [:admin, @search], url: spree.admin_return_authorizations_path do |f| %>
       <div class="row">
-        <div class="col-xs-12 col-md-6">
+        <div class="col-12 col-lg-6">
           <div class="form-group">
             <%= f.label :number_cont, Spree.t(:number) %>
-            <%= f.text_field :number_cont, class: "form-control js-quick-search-target" %>
+            <%= f.text_field :number_cont, class: "form-control js-quick-search-target js-filterable" %>
           </div>
         </div>
-        <div class="col-xs-12 col-md-6">
+        <div class="col-12 col-lg-6">
           <div class="form-group">
             <%= label_tag :q_state_eq, Spree.t(:status) %>
-            <%= f.select :state_eq, Spree::ReturnAuthorization.state_machines[:state].states.collect {|s| [Spree.t("return_authorization_states.#{s.name}"), s.value]}, {include_blank: true}, class: 'select2' %>
+            <%= f.select :state_eq, Spree::ReturnAuthorization.state_machines[:state].states.collect {|s| [Spree.t("return_authorization_states.#{s.name}"), s.value]}, {include_blank: true}, class: 'select2 js-filterable' %>
           </div>
         </div>
       </div>
@@ -58,7 +64,7 @@
           <td><%= link_to return_authorization.number, spree.edit_admin_order_return_authorization_path(return_authorization.order, return_authorization) %></td>
           <td><%= link_to return_authorization.order.number, spree.edit_admin_order_path(return_authorization.order) %></td>
           <td>
-            <span class="label label-<%= return_authorization.state %>"><%= Spree.t("return_authorization_states.#{return_authorization.state}") %></span>
+            <span class="badge badge-<%= return_authorization.state %>"><%= Spree.t("return_authorization_states.#{return_authorization.state}") %></span>
           </td>
           <td class="actions actions-1 text-right">
             <%= link_to_edit return_authorization, url: spree.edit_admin_order_return_authorization_path(return_authorization.order, return_authorization), no_text: true if can?(:edit, return_authorization) %>

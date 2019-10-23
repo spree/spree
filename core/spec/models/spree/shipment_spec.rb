@@ -170,6 +170,24 @@ describe Spree::Shipment, type: :model do
     expect(shipment.final_price).to eq(8)
   end
 
+  context '#free?' do
+    let!(:order) { create(:order) }
+    let!(:shipment) { create(:shipment, cost: 10, order: order) }
+    let(:free_shipping_promotion) { create(:free_shipping_promotion, code: 'freeship') }
+
+    it 'returns true if final_price is equal to 0' do
+      shipment.adjustment_total = -10
+      expect(shipment.free?).to eq(true)
+    end
+
+    it 'returns when Free Shipping promotion is applied' do
+      order.coupon_code = free_shipping_promotion.code
+      Spree::PromotionHandler::Coupon.new(order).apply
+      expect(order.promotions).to include(free_shipping_promotion)
+      expect(shipment.free?).to eq(true)
+    end
+  end
+
   context 'manifest' do
     let(:order) { Spree::Order.create }
     let(:variant) { create(:variant) }
@@ -277,6 +295,7 @@ describe Spree::Shipment, type: :model do
 
     context 'when order cannot ship' do
       before { allow(order).to receive_messages can_ship?: false }
+
       it "results in a 'pending' state" do
         expect(shipment).to receive(:update_columns).with(state: 'pending', updated_at: kind_of(Time))
         shipment.update!(order)
@@ -285,6 +304,7 @@ describe Spree::Shipment, type: :model do
 
     context 'when order is paid' do
       before { allow(order).to receive_messages paid?: true }
+
       it "results in a 'ready' state" do
         expect(shipment).to receive(:update_columns).with(state: 'ready', updated_at: kind_of(Time))
         shipment.update!(order)
@@ -295,6 +315,7 @@ describe Spree::Shipment, type: :model do
 
     context 'when order has balance due' do
       before { allow(order).to receive_messages paid?: false }
+
       it "results in a 'pending' state" do
         shipment.state = 'ready'
         expect(shipment).to receive(:update_columns).with(state: 'pending', updated_at: kind_of(Time))
@@ -306,6 +327,7 @@ describe Spree::Shipment, type: :model do
 
     context 'when order has a credit owed' do
       before { allow(order).to receive_messages payment_state: 'credit_owed', paid?: true }
+
       it "results in a 'ready' state" do
         shipment.state = 'pending'
         expect(shipment).to receive(:update_columns).with(state: 'ready', updated_at: kind_of(Time))
@@ -351,15 +373,15 @@ describe Spree::Shipment, type: :model do
           end
         end
 
+        after do
+          Spree::ShipmentHandler.send(:remove_const, :UPS)
+        end
+
         it "calls the custom handler's 'perform' method" do
           shipment.state = 'pending'
           allow(shipment).to receive_messages determine_state: 'shipped'
           expect_any_instance_of(Spree::ShipmentHandler::UPS).to receive(:perform)
           shipment.update!(order)
-        end
-
-        after do
-          Spree::ShipmentHandler.send(:remove_const, :UPS)
         end
       end
 
@@ -615,11 +637,11 @@ describe Spree::Shipment, type: :model do
 
     it 'factors in additional adjustments to adjustment total' do
       shipment.adjustments.create!(
-        order:    order,
-        label:    'Additional',
-        amount:   5,
+        order: order,
+        label: 'Additional',
+        amount: 5,
         included: false,
-        state:    'closed'
+        state: 'closed'
       )
       shipment.update_amounts
       expect(shipment.reload.adjustment_total).to eq(5)
@@ -627,11 +649,11 @@ describe Spree::Shipment, type: :model do
 
     it 'does not factor in included adjustments to adjustment total' do
       shipment.adjustments.create!(
-        order:    order,
-        label:    'Included',
-        amount:   5,
+        order: order,
+        label: 'Included',
+        amount: 5,
         included: true,
-        state:    'closed'
+        state: 'closed'
       )
       shipment.update_amounts
       expect(shipment.reload.adjustment_total).to eq(0)
@@ -737,7 +759,7 @@ describe Spree::Shipment, type: :model do
 
       new_shipment = order.reload.shipments.last
 
-      expect(new_shipment.stock_location).to_not eq(shipment.stock_location)
+      expect(new_shipment.stock_location).not_to eq(shipment.stock_location)
     end
 
     it 'sets proper costs for new shipment' do

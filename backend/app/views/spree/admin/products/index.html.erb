@@ -12,27 +12,27 @@
     <%= search_form_for [:admin, @search] do |f| %>
       <%- locals = {f: f} %>
       <div data-hook="admin_products_index_search" class="row">
-        <div class="col-xs-12 col-md-6">
+        <div class="col-12 col-lg-6">
           <div class="form-group">
             <%= f.label :name_cont, Spree.t(:name) %>
-            <%= f.text_field :name_cont, size: 15, class: "form-control js-quick-search-target" %>
+            <%= f.text_field :name_cont, size: 15, class: "form-control js-quick-search-target js-filterable" %>
           </div>
         </div>
-        <div class="col-xs-12 col-md-6">
+        <div class="col-12 col-lg-6">
           <div class="form-group">
             <%= f.label :variants_including_master_sku_cont, Spree.t(:sku) %>
-            <%= f.text_field :variants_including_master_sku_cont, size: 15, class: "form-control" %>
+            <%= f.text_field :variants_including_master_sku_cont, size: 15, class: "form-control js-filterable" %>
           </div>
         </div>
-        <div class="col-xs-12 col-md-12">
-          <div class="field checkbox">
+        <div class="col-12">
+          <div class="field checkbox mb-2">
             <label>
               <%= f.check_box :deleted_at_null, {checked: params[:q][:deleted_at_null] == '0'}, '0', '1' %>
               <%= Spree.t(:show_deleted) %>
             </label>
           </div>
 
-          <div class="field checkbox">
+          <div class="field checkbox mb-2">
             <label>
               <%= f.check_box :not_discontinued, {checked: params[:q][:not_discontinued] == '0'}, '0', '1' %>
               <%= Spree.t(:show_discontinued ) %>

@@ -56,11 +56,11 @@ describe 'ReturnAuthorizationReason', type: :feature, js: true do
     end
 
     def delete_product_property
-      spree_accept_alert do
+      accept_confirm do
         click_icon :delete
-        wait_for_ajax
       end
-      wait_for_ajax
+      expect(page.document).to have_content('successfully removed!')
+                           .or have_content('Cannot delete record')
     end
   end
 end

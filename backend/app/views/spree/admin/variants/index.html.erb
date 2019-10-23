@@ -41,8 +41,8 @@
   <div class="no-objects-found alert alert-info">
     <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::Variant)) %>
     <% if can?(:create, Spree::Variant) && !@product.empty_option_values? %>
-       - <%= link_to(Spree.t(:add_one), spree.new_admin_product_variant_path(@product)) %>
-    <% end %>!
+      - <%= link_to(Spree.t(:add_one), spree.new_admin_product_variant_path(@product)) %>!
+    <% end %>
   </div>
 <% end %>
 
@@ -51,7 +51,7 @@
     <p class='first_add_option_types no-objects-found' data-hook="first_add_option_types">
       <%= Spree.t(:to_add_variants_you_must_first_define) %>
       <%= link_to(Spree.t(:option_types), spree.admin_product_url(@product)) %>
-      <% if can?(:display, Spree::OptionType) && can?([:create, :display], Spree::OptionValue) %>
+      <% if can?(:read, Spree::OptionType) && can?([:create, :read], Spree::OptionValue) %>
         <%= Spree.t(:and) %>
         <%= link_to Spree.t(:option_values), spree.admin_option_types_url %>
       <% end %>
@@ -59,7 +59,7 @@
   <% end %>
 <% else %>
   <% content_for :page_actions do %>
-    <%= button_link_to(Spree.t(:new_variant), spree.new_admin_product_variant_url(@product), { remote: :true, icon: 'add', :'data-update' => 'new_variant', class: 'btn-success', id: 'new_var_link' }) if can? :create, Spree::Variant %>
-    <%= button_link_to (@deleted.blank? ? Spree.t(:show_deleted) : Spree.t(:show_active)), spree.admin_product_variants_url(@product, deleted: @deleted.blank? ? "on" : "off"), { class: 'btn-default', icon: 'filter' } %>
+    <%= button_link_to(Spree.t(:new_variant), spree.new_admin_product_variant_url(@product), { icon: 'add', :'data-update' => 'new_variant', class: 'btn-success', id: 'new_var_link' }) if can? :create, Spree::Variant %>
+    <%= button_link_to (@deleted.blank? ? Spree.t(:show_deleted) : Spree.t(:show_active)), spree.admin_product_variants_url(@product, deleted: @deleted.blank? ? "on" : "off"), { class: 'btn-outline-secondary', icon: 'filter' } %>
   <% end %>
 <% end %>

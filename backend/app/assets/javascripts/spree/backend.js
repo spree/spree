@@ -1,7 +1,8 @@
 //= require modernizr
+//= require jquery3
+//= require popper
 //= require bootstrap-sprockets
 //= require handlebars
-//= require jquery
 //= require js.cookie
 //= require jquery.jstree/jquery.jstree
 //= require jquery_ujs
@@ -67,14 +68,14 @@ Spree.routes.users_api = Spree.pathFor('api/v1/users')
 Spree.routes.tags_api = Spree.pathFor('api/v1/tags')
 Spree.routes.variants_api = Spree.pathFor('api/v1/variants')
 
-Spree.routes.edit_product = function(product_id) {
-  return Spree.adminPathFor('products/' + product_id + '/edit')
+Spree.routes.edit_product = function (productId) {
+  return Spree.adminPathFor('products/' + productId + '/edit')
 }
 
-Spree.routes.payments_api = function(order_id) {
-  return Spree.pathFor('api/v1/orders/' + order_id + '/payments')
+Spree.routes.payments_api = function (orderId) {
+  return Spree.pathFor('api/v1/orders/' + orderId + '/payments')
 }
 
-Spree.routes.stock_items_api = function(stock_location_id) {
-  return Spree.pathFor('api/v1/stock_locations/' + stock_location_id + '/stock_items')
+Spree.routes.stock_items_api = function (stockLocationId) {
+  return Spree.pathFor('api/v1/stock_locations/' + stockLocationId + '/stock_items')
 }

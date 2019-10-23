@@ -15,6 +15,7 @@ describe Spree::CheckoutController, type: :controller do
   context 'when using GBP' do
     before do
       Spree::Config[:currency] = 'GBP'
+      FactoryBot.create(:store, default_currency: 'GBP')
     end
 
     context 'when order is in delivery' do
@@ -26,7 +27,7 @@ describe Spree::CheckoutController, type: :controller do
       end
 
       it 'displays rate cost in correct currency' do
-        spree_get :edit
+        get :edit
         html = Nokogiri::HTML(response.body)
         expect(html.css('.rate-cost').text).to eq '£10.00'
       end

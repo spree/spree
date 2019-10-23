@@ -38,7 +38,7 @@ module Spree
 
         def update
           @variant = scope.accessible_by(current_ability, :update).find(params[:id])
-          if @variant.update_attributes(variant_params)
+          if @variant.update(variant_params)
             respond_with(@variant, status: 200, default_template: :show)
           else
             invalid_resource!(@product)
@@ -48,8 +48,10 @@ module Spree
         private
 
         def product
-          @product ||= Spree::Product.accessible_by(current_ability, :read).
-                       friendly.find(params[:product_id]) if params[:product_id]
+          if params[:product_id]
+            @product ||= Spree::Product.accessible_by(current_ability, :show).
+                         friendly.find(params[:product_id])
+          end
         end
 
         def scope
@@ -63,7 +65,7 @@ module Spree
             variants = variants.with_deleted
           end
 
-          variants.accessible_by(current_ability, :read)
+          variants.eligible.accessible_by(current_ability)
         end
 
         def variant_params

@@ -27,7 +27,7 @@ describe Spree::Reimbursement, type: :model do
     let!(:tax_zone) { create(:zone_with_country, default_tax: true) }
 
     let(:order)                   { create(:order_with_line_items, state: 'payment', line_items_count: 1, line_items_price: line_items_price, shipment_cost: 0) }
-    let(:line_items_price)        { BigDecimal.new(10) }
+    let(:line_items_price)        { BigDecimal(10) }
     let(:line_item)               { order.line_items.first }
     let(:inventory_unit)          { line_item.inventory_units.first }
     let(:payment)                 { build(:payment, amount: payment_amount, order: order, state: 'completed') }
@@ -118,6 +118,7 @@ describe Spree::Reimbursement, type: :model do
       let(:exchange_variant) { build(:variant) }
 
       before { return_item.exchange_variant = exchange_variant }
+
       it 'generates an exchange shipment for the order for the exchange items' do
         expect { subject }.to change { order.reload.shipments.count }.by 1
         expect(order.shipments.last.inventory_units.first.variant).to eq exchange_variant

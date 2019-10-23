@@ -24,6 +24,7 @@ module Spree
 
       def add_adjustment(adjustment, opts = {})
         return unless adjustment.promotion?
+
         source = opts[:source] || adjustment.source
         promotion = opts[:promotion] || source.promotion
 

@@ -18,9 +18,9 @@ describe Spree::Admin::OrdersController, type: :controller do
     let(:order) do
       mock_model(
         Spree::Order,
-        completed?:      true,
-        total:           100,
-        number:          'R123456789',
+        completed?: true,
+        total: 100,
+        number: 'R123456789',
         all_adjustments: adjustments,
         billing_address: mock_model(Spree::Address)
       )
@@ -32,15 +32,13 @@ describe Spree::Admin::OrdersController, type: :controller do
     before do
       request.env['HTTP_REFERER'] = 'http://localhost:3000'
       # ensure no respond_overrides are in effect
-      Spree::BaseController.spree_responders[:OrdersController].clear if Spree::BaseController.spree_responders[:OrdersController].present?
-
       allow(Spree::Order).to receive_message_chain(:includes, find_by!: order)
     end
 
     context '#approve' do
       it 'approves an order' do
         expect(order).to receive(:approved_by).with(controller.try_spree_current_user)
-        spree_put :approve, id: order.number
+        put :approve, params: { id: order.number }
         expect(flash[:success]).to eq Spree.t(:order_approved)
       end
     end
@@ -48,7 +46,7 @@ describe Spree::Admin::OrdersController, type: :controller do
     context '#cancel' do
       it 'cancels an order' do
         expect(order).to receive(:canceled_by).with(controller.try_spree_current_user)
-        spree_put :cancel, id: order.number
+        put :cancel, params: { id: order.number }
         expect(flash[:success]).to eq Spree.t(:order_canceled)
       end
     end
@@ -56,14 +54,14 @@ describe Spree::Admin::OrdersController, type: :controller do
     context '#resume' do
       it 'resumes an order' do
         expect(order).to receive(:resume!)
-        spree_put :resume, id: order.number
+        put :resume, params: { id: order.number }
         expect(flash[:success]).to eq Spree.t(:order_resumed)
       end
     end
 
     context 'pagination' do
       it 'can page through the orders' do
-        spree_get :index, page: 2, per_page: 10
+        get :index, params: { page: 2, per_page: 10 }
         expect(assigns[:orders].offset_value).to eq(10)
         expect(assigns[:orders].limit_value).to eq(10)
       end
@@ -71,7 +69,7 @@ describe Spree::Admin::OrdersController, type: :controller do
 
     describe '#store' do
       subject do
-        spree_get :store, id: cart_order.number
+        get :store, params: { id: cart_order.number }
       end
 
       let(:cart_order) { create(:order_with_line_items) }
@@ -84,7 +82,7 @@ describe Spree::Admin::OrdersController, type: :controller do
     # Test for #3346
     context '#new' do
       it 'a new order has the current user assigned as a creator' do
-        spree_get :new
+        get :new
         expect(assigns[:order].created_by).to eq(controller.try_spree_current_user)
       end
     end
@@ -96,7 +94,7 @@ describe Spree::Admin::OrdersController, type: :controller do
       end
 
       after do
-        spree_get :edit, id: order.number
+        get :edit, params: { id: order.number }
       end
 
       it { expect(controller).to receive(:can_not_transition_without_customer_info) }
@@ -122,7 +120,7 @@ describe Spree::Admin::OrdersController, type: :controller do
 
     describe '#cart' do
       def send_request
-        spree_get :cart, id: order.number
+        get :cart, params: { id: order.number }
       end
 
       context 'when order is not completed' do
@@ -138,14 +136,16 @@ describe Spree::Admin::OrdersController, type: :controller do
           end
 
           describe 'expects to receive' do
+            after { send_request }
+
             it { expect(order).to receive(:completed?).and_return(false) }
             it { expect(order).to receive(:refresh_shipment_rates).with(display_value).and_return(true) }
             it { expect(order).to receive_message_chain(:shipments, :shipped, :exists?).and_return(true) }
-            after { send_request }
           end
 
           describe 'response' do
             before { send_request }
+
             it { expect(response).to be_redirect }
             it { expect(response).to redirect_to(edit_admin_order_url(order)) }
           end
@@ -157,14 +157,16 @@ describe Spree::Admin::OrdersController, type: :controller do
           end
 
           describe 'expects to receive' do
+            after { send_request }
+
             it { expect(order).to receive(:completed?).and_return(false) }
             it { expect(order).to receive(:refresh_shipment_rates).with(display_value).and_return(true) }
             it { expect(order).to receive_message_chain(:shipments, :shipped, :exists?).and_return(false) }
-            after { send_request }
           end
 
           describe 'response' do
             before { send_request }
+
             it { expect(response).to render_template :cart }
           end
         end
@@ -182,12 +184,14 @@ describe Spree::Admin::OrdersController, type: :controller do
           end
 
           describe 'expects to receive' do
-            it { expect(order).to receive_message_chain(:shipments, :shipped, :exists?).and_return(true) }
             after { send_request }
+
+            it { expect(order).to receive_message_chain(:shipments, :shipped, :exists?).and_return(true) }
           end
 
           describe 'response' do
             before { send_request }
+
             it { expect(response).to be_redirect }
             it { expect(response).to redirect_to(edit_admin_order_url(order)) }
           end
@@ -199,12 +203,14 @@ describe Spree::Admin::OrdersController, type: :controller do
           end
 
           describe 'expects to receive' do
-            it { expect(order).to receive_message_chain(:shipments, :shipped, :exists?).and_return(false) }
             after { send_request }
+
+            it { expect(order).to receive_message_chain(:shipments, :shipped, :exists?).and_return(false) }
           end
 
           describe 'response' do
             before { send_request }
+
             it { expect(response).to render_template :cart }
           end
         end
@@ -224,9 +230,11 @@ describe Spree::Admin::OrdersController, type: :controller do
       end
 
       def send_request
-        spree_get :index, q: {
-          line_items_variant_id_in: Spree::Order.first.variants.map(&:id)
-        }
+        get :index, params: {
+          q: {
+                line_items_variant_id_in: Spree::Order.first.variants.map(&:id)
+            }
+          }
       end
 
       it 'does not display duplicate results' do
@@ -251,11 +259,11 @@ describe Spree::Admin::OrdersController, type: :controller do
       it 'changes all the closed adjustments to open' do
         expect(adjustments).to receive(:finalized).and_return(closed)
         expect(closed).to receive(:update_all).with(state: 'open')
-        spree_post :open_adjustments, id: order.number
+        post :open_adjustments, params: { id: order.number }
       end
 
       it 'sets the flash success message' do
-        spree_post :open_adjustments, id: order.number
+        post :open_adjustments, params: { id: order.number }
         expect(flash[:success]).to eql('All adjustments successfully opened!')
       end
 
@@ -265,7 +273,7 @@ describe Spree::Admin::OrdersController, type: :controller do
         end
 
         it 'redirects back' do
-          spree_post :open_adjustments, id: order.number
+          post :open_adjustments, params: { id: order.number }
           expect(response).to redirect_to('/')
         end
       end
@@ -276,7 +284,7 @@ describe Spree::Admin::OrdersController, type: :controller do
         end
 
         it 'refirects to fallback location' do
-          spree_post :open_adjustments, id: order.number
+          post :open_adjustments, params: { id: order.number }
           expect(response).to redirect_to(admin_order_adjustments_url(order))
         end
       end
@@ -293,11 +301,11 @@ describe Spree::Admin::OrdersController, type: :controller do
       it 'changes all the open adjustments to closed' do
         expect(adjustments).to receive(:not_finalized).and_return(open)
         expect(open).to receive(:update_all).with(state: 'closed')
-        spree_post :close_adjustments, id: order.number
+        post :close_adjustments, params: { id: order.number }
       end
 
       it 'sets the flash success message' do
-        spree_post :close_adjustments, id: order.number
+        post :close_adjustments, params: { id: order.number }
         expect(flash[:success]).to eql('All adjustments successfully closed!')
       end
 
@@ -307,7 +315,7 @@ describe Spree::Admin::OrdersController, type: :controller do
         end
 
         it 'redirects back' do
-          spree_post :close_adjustments, id: order.number
+          post :close_adjustments, params: { id: order.number }
           expect(response).to redirect_to('/')
         end
       end
@@ -318,7 +326,7 @@ describe Spree::Admin::OrdersController, type: :controller do
         end
 
         it 'refirects to fallback location' do
-          spree_post :close_adjustments, id: order.number
+          post :close_adjustments, params: { id: order.number }
           expect(response).to redirect_to(admin_order_adjustments_url(order))
         end
       end
@@ -343,51 +351,51 @@ describe Spree::Admin::OrdersController, type: :controller do
 
     it 'grants access to users with an admin role' do
       user.spree_roles << Spree::Role.find_or_create_by(name: 'admin')
-      spree_post :index
+      post :index
       expect(response).to render_template :index
     end
 
     it 'grants access to users with an bar role' do
       with_ability(BarAbility) do
         user.spree_roles << Spree::Role.find_or_create_by(name: 'bar')
-        spree_post :index
+        post :index
         expect(response).to render_template :index
       end
     end
 
     it 'denies access to users with an bar role' do
       with_ability(BarAbility) do
-        allow(order).to receive(:update_attributes).and_return true
+        allow(order).to receive(:update).and_return true
         allow(order).to receive(:user).and_return Spree.user_class.new
         allow(order).to receive(:token).and_return nil
         user.spree_roles.clear
         user.spree_roles << Spree::Role.find_or_create_by(name: 'bar')
-        spree_put :update, id: order.number
+        put :update, params: { id: order.number }
         expect(response).to redirect_to(spree.forbidden_path)
       end
     end
 
     it 'denies access to users without an admin role' do
       allow(user).to receive_messages has_spree_role?: false
-      spree_post :index
+      post :index
       expect(response).to redirect_to(spree.forbidden_path)
     end
 
     it 'denies access to not signed in users' do
       allow(controller).to receive_messages spree_current_user: nil
-      spree_get :index
+      get :index
       expect(response).to redirect_to('/')
     end
 
     it 'restricts returned order(s) on index when using OrderSpecificAbility' do
       number = order.number
 
-      3.times { create(:completed_order_with_totals) }
+      create_list(:completed_order_with_totals, 3)
       expect(Spree::Order.complete.count).to eq 4
 
       with_ability(OrderSpecificAbility) do
         allow(user).to receive_messages has_spree_role?: false
-        spree_get :index
+        get :index
         expect(response).to render_template :index
         expect(assigns['orders'].distinct(false).size).to eq 1
         expect(assigns['orders'].first.number).to eq number
@@ -401,7 +409,7 @@ describe Spree::Admin::OrdersController, type: :controller do
 
     it 'raise active record not found' do
       expect do
-        spree_get :edit, id: 99_999_999
+        get :edit, params: { id: 99_999_999 }
       end.to raise_error ActiveRecord::RecordNotFound
     end
   end

@@ -26,10 +26,10 @@ describe Spree::FulfilmentChanger do
     described_class.new(
       current_stock_location: current_shipment.stock_location,
       desired_stock_location: desired_shipment.stock_location,
-      current_shipment:       current_shipment,
-      desired_shipment:       desired_shipment,
-      variant:                variant,
-      quantity:               quantity
+      current_shipment: current_shipment,
+      desired_shipment: desired_shipment,
+      variant: variant,
+      quantity: quantity
     )
   end
 
@@ -99,7 +99,7 @@ describe Spree::FulfilmentChanger do
           end
 
           it 'does not unstock the desired location' do
-            expect { subject }.not_to change { stock_item.count_on_hand }
+            expect { subject }.not_to change(stock_item, :count_on_hand)
           end
         end
       end
@@ -294,6 +294,24 @@ describe Spree::FulfilmentChanger do
         subject
         expect(shipment_splitter.errors.messages).to eq(desired_stock_location: ["can't be blank"])
       end
+    end
+  end
+
+  context 'when stock_item is last on_hand' do
+    before do
+      variant.stock_items.first.update_column(:count_on_hand, 1)
+    end
+
+    let(:current_shipment_inventory_unit_count) { 1 }
+    let(:quantity) { 1 }
+
+    it 'is successful' do
+      expect(subject).to be true
+    end
+
+    it 'has inventory unit on_hand' do
+      subject
+      expect(desired_shipment.inventory_units.first.state).to eq('on_hand')
     end
   end
 end

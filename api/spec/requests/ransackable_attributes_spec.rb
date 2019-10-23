@@ -6,23 +6,23 @@ describe 'Ransackable Attributes' do
 
   context 'filtering by attributes one association away' do
     it 'does not allow the filtering of variants by order attributes' do
-      2.times { create(:variant) }
+      create_list(:variant, 2)
 
       get "/api/v1/variants?q[orders_email_start]=#{order.email}", params: { token: user.spree_api_key }
 
       variants_response = JSON.parse(response.body)
-      expect(variants_response['total_count']).to eq(Spree::Variant.count)
+      expect(variants_response['total_count']).to eq(Spree::Variant.eligible.count)
     end
   end
 
   context 'filtering by attributes two associations away' do
     it 'does not allow the filtering of variants by user attributes' do
-      2.times { create(:variant) }
+      create_list(:variant, 2)
 
       get "/api/v1/variants?q[orders_user_email_start]=#{order.user.email}", params: { token: user.spree_api_key }
 
       variants_response = JSON.parse(response.body)
-      expect(variants_response['total_count']).to eq(Spree::Variant.count)
+      expect(variants_response['total_count']).to eq(Spree::Variant.eligible.count)
     end
   end
 

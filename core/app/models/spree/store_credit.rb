@@ -35,13 +35,8 @@ module Spree
 
     attr_accessor :action, :action_amount, :action_originator, :action_authorization_code
 
-    def display_amount
-      Spree::Money.new(amount)
-    end
-
-    def display_amount_used
-      Spree::Money.new(amount_used)
-    end
+    extend Spree::DisplayMoney
+    money_methods :amount, :amount_used
 
     def amount_remaining
       amount - amount_used - amount_authorized
@@ -57,9 +52,8 @@ module Spree
       else
         authorization_code = generate_authorization_code
       end
-
       if validate_authorization(amount, order_currency)
-        update_attributes!(
+        update!(
           action: AUTHORIZE_ACTION,
           action_amount: amount,
           action_originator: options[:action_originator],
@@ -90,7 +84,7 @@ module Spree
           errors.add(:base, Spree.t('store_credit_payment_method.currency_mismatch'))
           false
         else
-          update_attributes!(
+          update!(
             action: CAPTURE_ACTION,
             action_amount: amount,
             action_originator: options[:action_originator],
@@ -108,7 +102,7 @@ module Spree
 
     def void(authorization_code, options = {})
       if auth_event = store_credit_events.find_by(action: AUTHORIZE_ACTION, authorization_code: authorization_code)
-        update_attributes!(
+        update!(
           action: VOID_ACTION,
           action_amount: auth_event.amount,
           action_authorization_code: authorization_code,
@@ -204,9 +198,9 @@ module Spree
 
     def store_event
       return unless saved_change_to_amount? ||
-          saved_change_to_amount_used? ||
-          saved_change_to_amount_authorized? ||
-          action == ELIGIBLE_ACTION
+        saved_change_to_amount_used? ||
+        saved_change_to_amount_authorized? ||
+        action == ELIGIBLE_ACTION
 
       event = if action
                 store_credit_events.build(action: action)
@@ -214,7 +208,7 @@ module Spree
                 store_credit_events.where(action: ALLOCATION_ACTION).first_or_initialize
               end
 
-      event.update_attributes!(
+      event.update!(
         amount: action_amount || amount,
         authorization_code: action_authorization_code || event.authorization_code || generate_authorization_code,
         user_total_amount: user.total_available_store_credit,

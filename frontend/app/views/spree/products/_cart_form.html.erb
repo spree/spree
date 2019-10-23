@@ -1,26 +1,30 @@
-<%= form_for :order, url: populate_orders_path do |f| %>
+<%= form_for :order, html: { id: 'add-to-cart-form' } do |f| %>
   <div class="row" id="inside-product-cart-form" data-hook="inside_product_cart_form" itemprop="offers" itemscope itemtype="https://schema.org/Offer">
     <% if @product.variants_and_option_values(current_currency).any? %>
-      <div id="product-variants" class="col-md-6">
+      <div id="product-variants" class="col-lg-6 mt-4">
         <h3 class="product-section-title"><%= Spree.t(:variants) %></h3>
         <ul class="list-group">
           <% @product.variants_and_option_values(current_currency).each_with_index do |variant, index| %>
-            <li>
-              <%= radio_button_tag "variant_id", variant.id, index == 0,
-                  'data-price' => variant.price_in(current_currency).money,
-                  'data-in-stock' => variant.can_supply?
-              %>
-              <%= label_tag "variant_id_#{ variant.id }" do %>
-                <span class="variant-description">
-                  <%= variant_options variant %>
-                </span>
-                <% if variant_price variant %>
-                  <span class="price diff"><%= variant_price variant %></span>
+            <li class="list-group-item <%= "active" if index == 0 %>">
+              <div class="form-check">
+                <%= radio_button_tag "variant_id", variant.id, index == 0,
+                    'data-price' => variant.price_in(current_currency).money,
+                    'data-in-stock' => variant.can_supply?,
+                    'data-backordered' => variant.backordered?,
+                    class: 'form-check-input'
+                %>
+                <%= label_tag "variant_id_#{ variant.id }", class: "form-check-label" do %>
+                  <span class="variant-description">
+                    <%= variant.options_text %>
+                  </span>
+                  <% if variant_price variant %>
+                    <span class="price diff"><%= variant_price variant %></span>
+                  <% end %>
+                  <% unless variant.can_supply? %>
+                    <span class="out-of-stock"><%= Spree.t(:out_of_stock) %></span>
+                  <% end %>
                 <% end %>
-                <% unless variant.can_supply? %>
-                  <span class="out-of-stock"><%= Spree.t(:out_of_stock) %></span>
-                <% end %>
-              <% end %>
+              </div>
             </li>
           <% end%>
         </ul>
@@ -30,9 +34,9 @@
     <% end %>
 
     <% if @product.price_in(current_currency) && !@product.price.nil? %>
-      <div data-hook="product_price" class="col-md-5">
+      <div data-hook="product_price" class="col-lg-5 mt-4">
         <div id="product-price">
-          <h6 class="product-section-title"><%= Spree.t(:price) %></h6>
+          <h3 class="product-section-title"><%= Spree.t(:price) %></h3>
           <div>
             <span class="lead price selling" itemprop="price" content="<%= @product.price_in(current_currency).amount.to_d %>">
               <%= display_price(@product) %>
@@ -43,28 +47,32 @@
           <% if @product.master.can_supply? %>
             <link itemprop="availability" href="https://schema.org/InStock" />
           <% elsif @product.variants.empty? %>
-            <br />
-            <span class="out-of-stock"><%= Spree.t(:out_of_stock) %></span>
+            <span class="out-of-stock d-block mt-2">
+              <%= Spree.t(:out_of_stock) %>
+            </span>
+          <% end %>
+          <% if @product.backordered? %>
+            <div class="alert alert-warning" id="cart-backordered-info">
+              <%= Spree.t(:backordered_info) %>
+            </div>
           <% end %>
         </div>
 
         <% if @product.can_supply? %>
-          <div class="add-to-cart">
-            <br />
+          <div class="add-to-cart mt-2">
             <div class="input-group">
               <%= number_field_tag :quantity, 1, class: 'title form-control', min: 1 %>
-              <span class="input-group-btn">
-                <%= button_tag class: 'btn btn-success', id: 'add-to-cart-button', type: :submit do %>
+              <div class="input-group-append">
+                <%= button_tag class: 'btn btn-success', id: 'add-to-cart-button', type: :submit, disabled: true do %>
                   <%= Spree.t(:add_to_cart) %>
                 <% end %>
-              </span>
+              </div>
             </div>
           </div>
         <% end %>
       </div>
     <% else %>
       <div id="product-price">
-        <br />
         <div>
           <span class="price selling" itemprop="price">
             <%= Spree.t('product_not_available_in_this_currency') %>

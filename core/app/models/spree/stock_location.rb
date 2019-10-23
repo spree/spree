@@ -7,7 +7,7 @@ module Spree
     belongs_to :state, class_name: 'Spree::State', optional: true
     belongs_to :country, class_name: 'Spree::Country'
 
-    validates :name, presence: true
+    validates :name, presence: true, uniqueness: { allow_blank: true, case_sensitive: false }
 
     scope :active, -> { where(active: true) }
     scope :order_default, -> { order(default: :desc, name: :asc) }

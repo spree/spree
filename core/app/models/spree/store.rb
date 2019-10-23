@@ -1,10 +1,12 @@
 module Spree
   class Store < Spree::Base
     has_many :orders, class_name: 'Spree::Order'
+    has_many :payment_methods, class_name: 'Spree::PaymentMethod'
 
     with_options presence: true do
       validates :code, uniqueness: { case_sensitive: false, allow_blank: true }
       validates :name, :url, :mail_from_address
+      validates :default_currency
     end
 
     before_save :ensure_default_exists_and_is_unique

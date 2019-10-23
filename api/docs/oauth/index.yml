@@ -1,0 +1,77 @@
+openapi: 3.0.0
+servers:
+  - url: 'http://localhost:3000/spree_oauth'
+info:
+  version: 1.0.0
+  title: Spree OAuth 2.0 Authentication
+  description: >-
+    Spree uses the [Doorkeeper](https://github.com/doorkeeper-gem/doorkeeper) gem
+    for handling OAuth. This integration is built into `spree_api` gem.
+paths:
+  '/token':
+    post:
+      description: >-
+        Creates or refreshes a Bearer token required to authorize calls API calls
+      tags:
+        - Token
+      operationId: Create or Refresh Token
+      responses:
+        '200':
+          description: Token was succesfully created or refreshed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/CreateTokenBody'
+                - $ref: '#/components/schemas/RefreshTokenBody'
+components:
+  schemas:
+    Token:
+      properties:
+        access_token:
+          type: string
+          example: 2480c16561d1391ea81ca5336b651e9a29f4524f6dee8c7f3f02a600159189c3
+        token_type:
+          type: string
+          example: Bearer
+          default: Bearer
+        expires_in:
+          type: integer
+          example: 7200
+          description: 'Time (in seconds) after which the access token will expire'
+        refresh_token:
+          type: string
+          example: f5d78642252eeb3f3001f67b196ac21a27afc030462a54060b0ebbdae2b8dc9c
+        created_at:
+          type: integer
+          example: 1539863418
+    CreateTokenBody:
+      properties:
+        grant_type:
+          type: string
+          default: password
+          description: >-
+            Use `password` to create a token and `refresh_token` to refresh it
+        username:
+          type: string
+          description: User email address
+          example: 'spree@example.com'
+        password:
+          type: string
+          description: User password
+          example: 'spree123'
+    RefreshTokenBody:
+      properties:
+        grant_type:
+          type: string
+          default: refresh_token
+        refresh_token:
+          type: string
+          description: Rerefresh token obtained from the old created token
+          example: 27af95fd57a424e5d01aaf5eab1324a8d5c0ca57daf384fae39f811a5144330143301'

@@ -15,7 +15,7 @@
 
     <div data-hook="new_product_attrs" class="row">
       <% unless @product.has_variants? %>
-        <div data-hook="new_product_sku" class="col-xs-12 col-md-4">
+        <div data-hook="new_product_sku" class="col-12 col-md-4">
           <%= f.field_container :sku, class: ['form-group'] do %>
             <%= f.label :sku, Spree.t(:sku) %>
             <%= f.text_field :sku, size: 16, class: 'form-control' %>
@@ -24,14 +24,14 @@
         </div>
       <% end %>
 
-      <div data-hook="new_product_prototype" class="col-xs-12 col-md-4">
+      <div data-hook="new_product_prototype" class="col-12 col-md-4">
         <%= f.field_container :prototype, class: ['form-group'] do %>
           <%= f.label :prototype_id, Spree.t(:prototype) %>
           <%= f.collection_select :prototype_id, Spree::Prototype.all, :id, :name, {include_blank: true}, {class: 'select2'} %>
         <% end %>
       </div>
 
-      <div data-hook="new_product_price" class="col-xs-12 col-md-4">
+      <div data-hook="new_product_price" class="col-12 col-md-4">
         <%= f.field_container :price, class: ['form-group'] do %>
           <%= f.label :price, Spree.t(:master_price) %> <span class="required">*</span>
           <%= f.text_field :price, value: number_to_currency(@product.price, unit: ''), class: 'form-control', required: :required %>
@@ -39,7 +39,7 @@
         <% end %>
       </div>
 
-      <div data-hook="new_product_available_on" class="col-xs-12 col-md-4">
+      <div data-hook="new_product_available_on" class="col-12 col-md-4">
         <%= f.field_container :available_on, class: ['form-group'] do %>
           <%= f.label :available_on, Spree.t(:available_on) %>
           <%= f.error_message_on :available_on %>
@@ -47,7 +47,7 @@
         <% end %>
       </div>
 
-      <div data-hook="new_product_shipping_category" class="col-xs-12 col-md-4">
+      <div data-hook="new_product_shipping_category" class="col-12 col-md-4">
         <%= f.field_container :shipping_category, class: ['form-group'] do %>
           <%= f.label :shipping_category_id, Spree.t(:shipping_categories) %><span class="required">*</span>
           <%= f.collection_select(:shipping_category_id, @shipping_categories, :id, :name, { include_blank: Spree.t('match_choices.none') }, { class: 'select2', required: :required }) %>
@@ -58,7 +58,7 @@
     </div>
 
     <div data-hook="product-from-prototype" id="product-from-prototype">
-      <%= render file: 'spree/admin/prototypes/show' if @prototype %>
+      <%= render template: 'spree/admin/prototypes/show' if @prototype %>
     </div>
 
     <%= render partial: 'spree/admin/shared/new_resource_links' %>

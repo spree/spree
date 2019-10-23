@@ -21,7 +21,7 @@
         position: absolute;
         top: 14px;
         left: 16px;
-        color: $gray;
+        color: $gray-500;
         cursor: move;
       }
       .btn-group {
@@ -59,7 +59,7 @@
           font-weight: bold;
         }
         div.price {
-          color: $gray;
+          color: $gray-500;
         }
       }
       &:hover {

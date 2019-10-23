@@ -83,7 +83,8 @@ describe Spree::CreditCard, type: :model do
 
     it 'validates name presence' do
       credit_card.valid?
-      expect(credit_card.error_on(:name).size).to eq(1)
+      expect(credit_card.errors).not_to be_empty
+      expect(credit_card.errors.messages[:name]).to be_present
     end
 
     it 'only validates on create' do
@@ -313,6 +314,6 @@ describe Spree::CreditCard, type: :model do
     second = FactoryBot.create(:credit_card, user: user, default: false)
     first.update_columns(year: Time.current.year, month: 1.month.ago.month)
 
-    expect { second.update_attributes!(default: true) }.not_to raise_error
+    expect { second.update!(default: true) }.not_to raise_error
   end
 end

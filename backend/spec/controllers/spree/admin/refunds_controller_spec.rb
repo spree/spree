@@ -6,10 +6,11 @@ describe Spree::Admin::RefundsController do
   describe 'POST create' do
     context 'a Spree::Core::GatewayError is raised' do
       subject do
-        spree_post :create,
+        post :create, params: {
                    refund: { amount: '50.0', refund_reason_id: '1' },
                    order_id: payment.order.to_param,
                    payment_id: payment.to_param
+                 }
       end
 
       let(:payment) { create(:payment) }

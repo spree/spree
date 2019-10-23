@@ -14,6 +14,7 @@ module Spree
       variant_amount = variant.amount_in(current_currency)
       product_amount = variant.product.amount_in(current_currency)
       return if variant_amount == product_amount || product_amount.nil?
+
       diff   = variant.amount_in(current_currency) - product_amount
       amount = Spree::Money.new(diff.abs, currency: current_currency).to_html
       label  = diff > 0 ? :add : :subtract
@@ -35,7 +36,7 @@ module Spree
                     else
                       product.description.to_s.gsub(/(.*?)\r?\n\r?\n/m, '<p>\1</p>')
                     end
-      description.blank? ? Spree.t(:product_has_no_description) : raw(description)
+      description.blank? ? Spree.t(:product_has_no_description) : description
     end
 
     def line_item_description_text(description_text)
@@ -63,7 +64,7 @@ module Spree
 
       if product.available?
         Spree.t(:available)
-      elsif product.available_on && product.available_on.future?
+      elsif product.available_on&.future?
         Spree.t(:pending_sale)
       else
         Spree.t(:no_available_date_set)

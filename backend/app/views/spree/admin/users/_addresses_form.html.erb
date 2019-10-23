@@ -1,13 +1,13 @@
 <div class="row">
-  <div data-hook="bill_address_wrapper" class="col-xs-12 col-md-6">
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <h1 class="panel-title">
+  <div data-hook="bill_address_wrapper" class="col-12 col-lg-6">
+    <div class="card mb-3">
+      <div class="card-header">
+        <h1 class="card-title mb-0 h5">
           <%= Spree.t(:billing_address) %>
         </h1>
       </div>
 
-      <div class="panel-body">
+      <div class="card-body">
         <%= f.fields_for :bill_address, (@user.bill_address || Spree::Address.default(@user, "bill")) do |ba_form| %>
           <% ba_form.object ||= Spree::Address.new(country: Spree::Country.new) %>
           <%= render partial: 'spree/admin/shared/address_form', locals: { f: ba_form, type: "billing" } %>
@@ -16,18 +16,18 @@
     </div>
   </div>
 
-  <div data-hook="ship_address_wrapper" class="col-xs-12 col-md-6">
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <h1 class="panel-title">
+  <div data-hook="ship_address_wrapper" class="col-12 col-lg-6">
+    <div class="card mb-3">
+      <div class="card-header">
+        <h1 class="card-title mb-0 h5">
           <%= Spree.t(:shipping_address) %>
         </h1>
       </div>
 
-      <div class="panel-body">
+      <div class="card-body">
           <p class="field checkbox" data-hook="use_billing">
             <%= label_tag :use_billing, id: 'use_billing' do %>
-              <% checked = @user.bill_address.nil? ? false : @user.bill_address.same_as?(@user.ship_address) %>
+              <% checked = @user.bill_address.nil? ? false : @user.bill_address == @user.ship_address %>
               <%= check_box_tag 'user[use_billing]', '1', checked %>
               <%= Spree.t(:use_billing_address) %>
             <% end %>

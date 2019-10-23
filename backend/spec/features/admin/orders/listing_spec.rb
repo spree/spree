@@ -30,13 +30,13 @@ describe 'Orders Listing', type: :feature do
     it 'lists existing orders' do
       within_row(1) do
         expect(column_text(2)).to eq 'R100'
-        expect(find('td:nth-child(3)')).to have_css '.label-considered_risky'
+        expect(find('td:nth-child(3)')).to have_css '.badge-considered_risky'
         expect(column_text(4)).to eq 'cart'
       end
 
       within_row(2) do
         expect(column_text(2)).to eq 'R200'
-        expect(find('td:nth-child(3)')).to have_css '.label-considered_safe'
+        expect(find('td:nth-child(3)')).to have_css '.badge-considered_safe'
       end
     end
 
@@ -87,7 +87,7 @@ describe 'Orders Listing', type: :feature do
       click_on 'Filter Results'
 
       # Insure checkbox still checked
-      expect(find('#q_considered_risky_eq')).to be_checked
+      expect(page).to have_checked_field(id: 'q_considered_risky_eq')
       # Insure we have the risky order, R100
       within_row(1) do
         expect(page).to have_content('R100')
@@ -125,11 +125,11 @@ describe 'Orders Listing', type: :feature do
         click_on 'Filter'
         uncheck 'q_completed_at_not_null'
         click_on 'Filter Results'
-        within('.pagination') do
+        within('.pagination', match: :first) do
           click_link '2'
         end
         expect(page).to have_content('incomplete@example.com')
-        expect(find('#q_completed_at_not_null')).not_to be_checked
+        expect(page).to have_unchecked_field(id: 'q_completed_at_not_null')
       end
     end
 
@@ -161,7 +161,7 @@ describe 'Orders Listing', type: :feature do
     end
 
     it 'is able to apply a ransack filter by clicking a quickfilter icon', js: true do
-      label_pending = page.find '.label-pending'
+      label_pending = page.find '.badge-pending'
       parent_td = label_pending.find(:xpath, '..')
 
       # Click the quick filter Pending for order #R100
@@ -194,14 +194,15 @@ describe 'Orders Listing', type: :feature do
     # regression tests for https://github.com/spree/spree/issues/6888
     context 'per page dropdown', js: true do
       before do
-        select '45', from: 'per_page'
-        wait_for_ajax
+        within('div.index-pagination-row', match: :first) do
+          select '45', from: 'per_page'
+        end
         expect(page).to have_select('per_page', selected: '45')
         expect(page).to have_selector(:css, 'select.per-page-selected-45')
       end
 
       it 'adds per_page parameter to url' do
-        expect(current_url).to match(/per_page\=45/)
+        expect(page).to have_current_path(/per_page\=45/)
       end
 
       it 'can be used with search filtering' do
@@ -210,15 +211,64 @@ describe 'Orders Listing', type: :feature do
         click_on 'Filter Results'
         expect(page).not_to have_content('R100')
         within_row(1) { expect(page).to have_content('R200') }
-        expect(current_url).to match(/per_page\=45/)
+        expect(page).to have_current_path(/per_page\=45/)
         expect(page).to have_select('per_page', selected: '45')
-        select '60', from: 'per_page'
-        wait_for_ajax
+        within('div.index-pagination-row', match: :first) do
+          select '60', from: 'per_page'
+        end
+        expect(page).to have_current_path(/per_page\=60/)
         expect(page).to have_select('per_page', selected: '60')
         expect(page).to have_selector(:css, 'select.per-page-selected-60')
         expect(page).not_to have_content('R100')
         within_row(1) { expect(page).to have_content('R200') }
-        expect(current_url).to match(/per_page\=60/)
+      end
+    end
+
+    context 'filtering orders', js: true do
+      let(:promotion) { create(:promotion_with_item_adjustment) }
+
+      before do
+        order1.promotions << promotion
+        order1.save
+        visit spree.admin_orders_path
+      end
+
+      it 'renders selected filters' do
+        click_on 'Filter'
+
+        within('#table-filter') do
+          fill_in 'q_created_at_gt', with: '2018/01/01'
+          fill_in 'q_created_at_lt', with: '2018/06/30'
+          fill_in 'q_number_cont', with: 'R100'
+          select 'cart', from: 'q_state_eq'
+          select 'paid', from: 'q_payment_state_eq'
+          select 'pending', from: 'q_shipment_state_eq'
+          fill_in 'q_bill_address_firstname_start', with: 'John'
+          fill_in 'q_bill_address_lastname_start', with: 'Smith'
+          fill_in 'q_email_cont', with: 'john_smith@example.com'
+          fill_in 'q_line_items_variant_sku_eq', with: 'BAG-00001'
+          select 'Promo', from: 'q_promotions_id_in'
+          select 'Spree Test Store', match: :first, from: 'q_store_id_in'
+          select 'spree', from: 'q_channel_eq'
+        end
+
+        click_on 'Filter Results'
+
+        within('.table-active-filters') do
+          expect(page).to have_content('Start: 2018/01/01')
+          expect(page).to have_content('Stop: 2018/06/30')
+          expect(page).to have_content('Order: R100')
+          expect(page).to have_content('Status: cart')
+          expect(page).to have_content('Payment State: paid')
+          expect(page).to have_content('Shipment State: pending')
+          expect(page).to have_content('First Name Begins With: John')
+          expect(page).to have_content('Last Name Begins With: Smith')
+          expect(page).to have_content('Email: john_smith@example.com')
+          expect(page).to have_content('SKU: BAG-00001')
+          expect(page).to have_content('Promotion: Promo')
+          expect(page).to have_content('Store: Spree Test Store')
+          expect(page).to have_content('Channel: spree')
+        end
       end
     end
   end

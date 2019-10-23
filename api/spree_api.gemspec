@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.homepage      = 'http://spreecommerce.org'
   s.license       = 'BSD-3-Clause'
 
-  s.required_ruby_version = '>= 2.2.7'
+  s.required_ruby_version = '>= 2.5.0'
 
   s.files         = `git ls-files`.split($\).reject { |f| f.match(/^spec/) && !f.match(/^spec\/fixtures/) }
   s.executables   = s.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
@@ -20,8 +20,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'jsonapi-rspec'
 
   s.add_dependency 'spree_core', s.version
-  s.add_dependency 'rabl', '~> 0.13.1'
-  s.add_dependency 'versioncake', '~> 3.4.0'
-  s.add_dependency 'fast_jsonapi', '~> 1.1.0'
-  s.add_dependency 'doorkeeper'
+  s.add_dependency 'rabl', '~> 0.14.2'
+  s.add_dependency 'fast_jsonapi', '~> 1.5'
+  s.add_dependency 'doorkeeper', '~> 5.2', '>= 5.2.1'
 end

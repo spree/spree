@@ -1,0 +1,18 @@
+<% address_id = address_type.chars.first %>
+
+<% Spree::Address::ADDRESS_FIELDS.each do |field| %>
+  <% if field == "country" %>
+    <div class="form-group" id="<%= "#{address_id}country" %>">
+      <%= address_form.label :country_id, Spree.t(:country) %><span class="required">*</span><br />
+      <span id="<%= "#{address_id}country-selection" %>">
+        <%= address_form.collection_select :country_id, available_countries, :id, :name, {}, {:class => 'required form-control'} %>
+      </span>
+    </div>
+  <% elsif field == "state" %>
+    <%= address_field(address_form, :state, address_id) { address_state(address_form, address.country, address_id)} if Spree::Config[:address_requires_state] %>
+  <% else %>
+    <% next if field == "company" && !Spree::Config[:company] %>
+    <% next if field == "alternative_#{address_id}_phone" && !Spree::Config["alternative_#{address_id}_phone"] %>
+    <%= address_field(address_form, field.to_sym, address_id) %>
+  <% end %>
+<% end %>

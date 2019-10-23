@@ -1,13 +1,15 @@
+require_relative 'r_m_a_required'
+
 module Spree
   class ReturnItem::EligibilityValidator::Default < Spree::ReturnItem::EligibilityValidator::BaseValidator
     class_attribute :permitted_eligibility_validators
     self.permitted_eligibility_validators = [
-                                              ReturnItem::EligibilityValidator::OrderCompleted,
-                                              ReturnItem::EligibilityValidator::TimeSincePurchase,
-                                              ReturnItem::EligibilityValidator::RMARequired,
-                                              ReturnItem::EligibilityValidator::InventoryShipped,
-                                              ReturnItem::EligibilityValidator::NoReimbursements
-                                            ]
+      ReturnItem::EligibilityValidator::OrderCompleted,
+      ReturnItem::EligibilityValidator::TimeSincePurchase,
+      ReturnItem::EligibilityValidator::RMARequired,
+      ReturnItem::EligibilityValidator::InventoryShipped,
+      ReturnItem::EligibilityValidator::NoReimbursements
+    ]
 
     def eligible_for_return?
       validators.all?(&:eligible_for_return?)

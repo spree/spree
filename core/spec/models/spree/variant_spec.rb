@@ -45,6 +45,7 @@ describe Spree::Variant, type: :model do
       before do
         product.master.stock_items.first.set_count_on_hand(5)
       end
+
       context 'when product is created without variants but with stock' do
         it { expect(product.master).to be_in_stock }
       end
@@ -58,6 +59,28 @@ describe Spree::Variant, type: :model do
   end
 
   describe 'scope' do
+    describe '.eligible' do
+      context 'when only master variants' do
+        let!(:product_1) { create(:product) }
+        let!(:product_2) { create(:product) }
+
+        it 'returns all of them' do
+          expect(Spree::Variant.eligible).to include(product_1.master)
+          expect(Spree::Variant.eligible).to include(product_2.master)
+        end
+      end
+
+      context 'when product has more than 1 variant' do
+        let!(:product) { create(:product) }
+        let!(:variant) { create(:variant, product: product) }
+
+        it 'filters master variant out' do
+          expect(Spree::Variant.eligible).to include(variant)
+          expect(Spree::Variant.eligible).not_to include(product.master)
+        end
+      end
+    end
+
     describe '.not_discontinued' do
       context 'when discontinued' do
         let!(:discontinued_variant) { create(:variant, discontinue_on: Time.current - 1.day) }
@@ -275,6 +298,7 @@ describe Spree::Variant, type: :model do
   context '#cost_currency' do
     context 'when cost currency is nil' do
       before { variant.cost_currency = nil }
+
       it 'populates cost currency with the default value on save' do
         variant.save!
         expect(variant.cost_currency).to eql 'USD'
@@ -283,10 +307,11 @@ describe Spree::Variant, type: :model do
   end
 
   describe '.price_in' do
+    subject { variant.price_in(currency).display_amount }
+
     before do
       variant.prices << create(:price, variant: variant, currency: 'EUR', amount: 33.33)
     end
-    subject { variant.price_in(currency).display_amount }
 
     context 'when currency is not specified' do
       let(:currency) { nil }
@@ -314,11 +339,11 @@ describe Spree::Variant, type: :model do
   end
 
   describe '.amount_in' do
+    subject { variant.amount_in(currency) }
+
     before do
       variant.prices << create(:price, variant: variant, currency: 'EUR', amount: 33.33)
     end
-
-    subject { variant.amount_in(currency) }
 
     context 'when currency is not specified' do
       let(:currency) { nil }
@@ -514,6 +539,60 @@ describe Spree::Variant, type: :model do
     end
   end
 
+  describe '#purchasable?' do
+    context 'when stock_items are not backorderable' do
+      before do
+        allow_any_instance_of(Spree::StockItem).to receive_messages(backorderable: false)
+      end
+
+      context 'when stock_items in stock' do
+        before do
+          variant.stock_items.first.update_column(:count_on_hand, 10)
+        end
+
+        it 'returns true if stock_items in stock' do
+          expect(variant.purchasable?).to be true
+        end
+      end
+
+      context 'when stock_items out of stock' do
+        before do
+          allow_any_instance_of(Spree::StockItem).to receive_messages(count_on_hand: 0)
+        end
+
+        it 'return false if stock_items out of stock' do
+          expect(variant.purchasable?).to be false
+        end
+      end
+    end
+
+    context 'when stock_items are out of stock' do
+      before do
+        allow_any_instance_of(Spree::StockItem).to receive_messages(count_on_hand: 0)
+      end
+
+      context 'when stock item are backorderable' do
+        before do
+          allow_any_instance_of(Spree::StockItem).to receive_messages(backorderable: true)
+        end
+
+        it 'returns true if stock_items are backorderable' do
+          expect(variant.purchasable?).to be true
+        end
+      end
+
+      context 'when stock_items are not backorderable' do
+        before do
+          allow_any_instance_of(Spree::StockItem).to receive_messages(backorderable: false)
+        end
+
+        it 'return false if stock_items are not backorderable' do
+          expect(variant.purchasable?).to be false
+        end
+      end
+    end
+  end
+
   describe '#total_on_hand' do
     it 'is infinite if track_inventory_levels is false' do
       Spree::Config[:track_inventory_levels] = false
@@ -581,6 +660,7 @@ describe Spree::Variant, type: :model do
 
   describe 'deleted_at scope' do
     before { variant.destroy && variant.reload }
+
     it 'has a price if deleted' do
       variant.price = 10
       expect(variant.price).to eq(10)
@@ -640,7 +720,7 @@ describe Spree::Variant, type: :model do
 
     it 'changes updated_at' do
       Timecop.scale(1000) do
-        expect { variant.discontinue! }.to change(variant, :updated_at)
+        expect { variant.discontinue! }.to change(variant.reload, :updated_at)
       end
     end
   end
@@ -752,10 +832,12 @@ describe Spree::Variant, type: :model do
       context 'product and master_variant present and equal' do
         context 'price nil and currency present' do
           before { variant.price = nil }
+
           it { expect(variant.send(:check_price)).to be(nil) }
 
           context 'check variant price' do
             before { variant.send(:check_price) }
+
             it { expect(variant.price).to eq(variant.product.master.price) }
           end
         end
@@ -806,6 +888,24 @@ describe Spree::Variant, type: :model do
   describe '#updated_at' do
     it 'creates variant with updated_at timestamp' do
       expect(variant.updated_at).not_to be_nil
+    end
+  end
+
+  context '#backordered?' do
+    let!(:variant) { create(:variant) }
+
+    it 'returns true when out of stock and backorderable' do
+      expect(variant.backordered?).to eq(true)
+    end
+
+    it 'returns false when out of stock and not backorderable' do
+      variant.stock_items.first.update(backorderable: false)
+      expect(variant.backordered?).to eq(false)
+    end
+
+    it 'returns false when there is available item in stock' do
+      variant.stock_items.first.update(count_on_hand: 10)
+      expect(variant.backordered?).to eq(false)
     end
   end
 

@@ -17,11 +17,11 @@
 </div>
 
 <% if products.any? %>
-  <div id="products" class="row" data-hook>
+  <div id="products" class="row d-flex" data-hook>
     <%= render partial: 'spree/products/product', collection: products, locals: { taxon: @taxon } %>
   </div>
 <% end %>
 
 <% if products.respond_to?(:total_pages) %>
-  <%= paginate products, theme: 'twitter-bootstrap-3' %>
+  <%= paginate products, theme: 'twitter-bootstrap-4' %>
 <% end %>

@@ -1,24 +1,22 @@
 @import 'global/variables';
 
-@import 'bootstrap-sprockets';
 @import 'bootstrap';
+@import 'glyphicons';
+@import 'shared/glyphicons_urls_fix';
 
+@import 'components/navbar';
 @import 'components/sidebar';
 @import 'components/tables';
-@import 'components/labels';
+@import 'components/badges';
 @import 'components/main';
 @import 'components/page_header';
 @import 'components/icons';
 @import 'components/buttons';
-@import 'components/wells';
 @import 'components/filters';
-@import 'components/panels';
 @import 'components/navigation';
 @import 'components/taxon_products_view';
 @import 'components/progress';
 @import 'components/spinner';
-
-@import 'sections/account';
 
 @import 'plugins/select2';
 @import 'plugins/jquery_ui';

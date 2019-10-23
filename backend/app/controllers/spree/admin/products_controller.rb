@@ -26,7 +26,7 @@ module Spree
           params[:product][:option_type_ids] = params[:product][:option_type_ids].split(',')
         end
         invoke_callbacks(:update, :before)
-        if @object.update_attributes(permitted_resource_params)
+        if @object.update(permitted_resource_params)
           invoke_callbacks(:update, :after)
           flash[:success] = flash_message_for(@object, :successfully_updated)
           respond_with(@object) do |format|
@@ -81,7 +81,7 @@ module Spree
       def stock
         @variants = @product.variants.includes(*variant_stock_includes)
         @variants = [@product.master] if @variants.empty?
-        @stock_locations = StockLocation.accessible_by(current_ability, :read)
+        @stock_locations = StockLocation.accessible_by(current_ability)
         if @stock_locations.empty?
           flash[:error] = Spree.t(:stock_management_requires_a_stock_location)
           redirect_to admin_stock_locations_path
@@ -107,6 +107,7 @@ module Spree
 
       def collection
         return @collection if @collection.present?
+
         params[:q] ||= {}
         params[:q][:deleted_at_null] ||= '1'
         params[:q][:not_discontinued] ||= '1'
@@ -123,7 +124,6 @@ module Spree
         # This is to include all products and not just deleted products.
         @search = @collection.ransack(params[:q].reject { |k, _v| k.to_s == 'deleted_at_null' })
         @collection = @search.result.
-                      distinct_by_product_ids(params[:q][:s]).
                       includes(product_includes).
                       page(params[:page]).
                       per(params[:per_page] || Spree::Config[:admin_products_per_page])
@@ -132,6 +132,7 @@ module Spree
 
       def create_before
         return if params[:product][:prototype_id].blank?
+
         @prototype = Spree::Prototype.find(params[:product][:prototype_id])
       end
 
@@ -139,6 +140,7 @@ module Spree
         # note: we only reset the product properties if we're receiving a post
         #       from the form on that tab
         return unless params[:clear_product_properties]
+
         params[:product] ||= {}
       end
 

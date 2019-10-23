@@ -28,12 +28,17 @@ module Spree
           expect(SameProduct.eligible_variants(variant)).not_to include other_product_variant
         end
 
-        it 'only returns variants that are on hand' do
-          product = create(:product, variants: Array.new(2) { create(:variant) })
+        it 'only returns variants that are on hand or backorderable' do
+          product = create(:product, variants: Array.new(3) { create(:variant) })
           in_stock_variant = product.variants.first
+          backorderable_variant = product.variants.second
+          not_backorderable_variant = product.variants.third
 
           in_stock_variant.stock_items.first.update_column(:count_on_hand, 10)
-          expect(SameProduct.eligible_variants(in_stock_variant)).to eq [in_stock_variant]
+          not_backorderable_variant.stock_items.first.update_column(:backorderable, false)
+
+          expect(SameProduct.eligible_variants(in_stock_variant)).to include(in_stock_variant)
+          expect(SameProduct.eligible_variants(in_stock_variant)).to include(backorderable_variant)
         end
       end
     end

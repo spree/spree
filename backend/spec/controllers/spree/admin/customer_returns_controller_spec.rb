@@ -7,7 +7,7 @@ module Spree
 
       describe '#index' do
         subject do
-          spree_get :index, order_id: customer_return.order.to_param
+          get :index, params: { order_id: customer_return.order.to_param }
         end
 
         let(:order)           { customer_return.order }
@@ -26,7 +26,7 @@ module Spree
 
       describe '#new' do
         subject do
-          spree_get :new, order_id: order.to_param
+          get :new, params: { order_id: order.to_param }
         end
 
         let(:order) { create(:shipped_order, line_items_count: 1) }
@@ -74,7 +74,7 @@ module Spree
 
       describe '#edit' do
         subject do
-          spree_get :edit, order_id: order.to_param, id: customer_return.to_param
+          get :edit, params: { order_id: order.to_param, id: customer_return.to_param }
         end
 
         let(:order) { customer_return.order }
@@ -117,7 +117,7 @@ module Spree
 
       describe '#create' do
         subject do
-          spree_post :create, customer_return_params
+          post :create, params: customer_return_params
         end
 
         let(:order) { create(:shipped_order, line_items_count: 1) }

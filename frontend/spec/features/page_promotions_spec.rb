@@ -1,12 +1,12 @@
 require 'spec_helper'
 
-describe 'page promotions', type: :feature do
+describe 'page promotions', type: :feature, js: true do
   before do
     create(:product, name: 'RoR Mug', price: 20)
 
-    promotion = Spree::Promotion.create!(name:       '$10 off',
-                                         path:       'test',
-                                         starts_at:  1.day.ago,
+    promotion = Spree::Promotion.create!(name: '$10 off',
+                                         path: 'test',
+                                         starts_at: 1.day.ago,
                                          expires_at: 1.day.from_now)
 
     calculator = Spree::Calculator::FlatRate.new
@@ -15,23 +15,21 @@ describe 'page promotions', type: :feature do
     action = Spree::Promotion::Actions::CreateItemAdjustments.create(calculator: calculator)
     promotion.actions << action
 
-    visit spree.root_path
-    click_link 'RoR Mug'
-    click_button 'add-to-cart-button'
+    add_to_cart('RoR Mug')
   end
 
   it 'automatically applies a page promotion upon visiting' do
-    expect(page).not_to have_content('Promotion ($10 off) -$10.00')
+    expect(page).not_to have_content('Promotion ($10 off) -$10.00', normalize_ws: true)
     visit '/content/test'
     visit '/cart'
-    expect(page).to have_content('Promotion ($10 off) -$10.00')
-    expect(page).to have_content('Subtotal (1 item) $20.00')
+    expect(page).to have_content("Promotion ($10 off)\n-$10.00")
+    expect(page).to have_content("Subtotal (1 item)\n$20.00")
   end
 
   it "does not activate an adjustment for a path that doesn't have a promotion" do
-    expect(page).not_to have_content('Promotion ($10 off) -$10.00')
+    expect(page).not_to have_content('Promotion ($10 off) -$10.00', normalize_ws: true)
     visit '/content/cvv'
     visit '/cart'
-    expect(page).not_to have_content('Promotion ($10 off) -$10.00')
+    expect(page).not_to have_content('Promotion ($10 off) -$10.00', normalize_ws: true)
   end
 end

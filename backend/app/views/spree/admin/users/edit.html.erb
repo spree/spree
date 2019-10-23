@@ -5,14 +5,14 @@
   <%= @user.email %>
 <% end %>
 
-<div data-hook="admin_user_edit_general_settings" class="panel panel-default">
-  <div class="panel-heading">
-    <h1 class="panel-title">
+<div data-hook="admin_user_edit_general_settings" class="card mb-3">
+  <div class="card-header">
+    <h1 class="card-title mb-0 h5">
       <%= Spree.t(:general_settings) %>
     </h1>
   </div>
 
-  <div class="panel-body">
+  <div class="card-body">
     <div data-hook="admin_user_edit_form_header">
       <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @user } %>
     </div>
@@ -29,14 +29,14 @@
   </div>
 </div>
 
-<div data-hook="admin_user_api_key" id="admin_user_edit_api_key" class="panel panel-default">
-  <div class="panel-heading">
-    <h1 class="panel-title">
+<div data-hook="admin_user_api_key" id="admin_user_edit_api_key" class="card mb-3">
+  <div class="card-header">
+    <h1 class="card-title mb-0 h5">
       <%= Spree.t('access', scope: 'api') %>
     </h1>
   </div>
 
-  <div class="panel-body">
+  <div class="card-body">
     <% if @user.spree_api_key.present? %>
       <div class="form-group">
         <div id="current-api-key">

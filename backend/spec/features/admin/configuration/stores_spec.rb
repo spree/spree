@@ -10,14 +10,22 @@ describe 'Stores admin', type: :feature do
       visit spree.admin_stores_path
 
       store_table = page.find('table')
-      expect(store_table.all('tr').count).to eq 1
+      expect(store_table).to have_css('tr').once
       expect(store_table).to have_content(store.name)
       expect(store_table).to have_content(store.url)
     end
   end
 
   describe 'creating store' do
-    it 'creates store and associate it with the user' do
+    it 'sets default currency value' do
+      visit spree.admin_stores_path
+
+      click_link 'New Store'
+
+      expect(page).to have_selector("input[value='USD']")
+    end
+
+    it 'saving store' do
       visit spree.admin_stores_path
 
       click_link 'New Store'
@@ -25,28 +33,32 @@ describe 'Stores admin', type: :feature do
       page.fill_in 'store_url', with: 'test.localhost'
       page.fill_in 'store_mail_from_address', with: 'spree@example.com'
       page.fill_in 'store_code', with: 'SPR'
+      page.fill_in 'store_default_currency', with: 'EUR'
       click_button 'Create'
 
       expect(page).to have_current_path spree.admin_stores_path
       store_table = page.find('table')
-      expect(store_table.all('tr').count).to eq 2
+      expect(store_table).to have_css('tr').twice
       expect(Spree::Store.count).to eq 2
     end
   end
 
   describe 'updating store' do
     let(:updated_name) { 'New Store Name' }
+    let(:new_currency) { 'EUR' }
 
-    it 'creates store and associate it with the user' do
+    it do
       visit spree.admin_stores_path
 
       click_link 'Edit'
       page.fill_in 'store_name', with: updated_name
+      page.fill_in 'store_default_currency', with: new_currency
       click_button 'Update'
 
       expect(page).to have_current_path spree.admin_stores_path
       store_table = page.find('table')
       expect(store_table).to have_content(updated_name)
+      expect(store_table).to have_content(new_currency)
       expect(store.reload.name).to eq updated_name
     end
   end
@@ -57,11 +69,10 @@ describe 'Stores admin', type: :feature do
     it 'updates store in lifetime stats' do
       visit spree.admin_stores_path
 
-      spree_accept_alert do
-        page.all('.icon-delete')[1].click
-        wait_for_ajax
+      accept_confirm do
+        page.all('.icon-delete', minimum: 2)[1].click
       end
-      wait_for_ajax
+      expect(page).to have_content('has been successfully removed!')
 
       expect(Spree::Store.find_by_id(second_store.id)).to be_nil
     end

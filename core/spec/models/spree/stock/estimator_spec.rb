@@ -6,9 +6,10 @@ module Spree
       subject { Estimator.new(order) }
 
       let!(:shipping_method) { create(:shipping_method) }
-      let(:package) { build(:stock_package, contents: inventory_units.map { |_i| ContentItem.new(inventory_unit) }) }
-      let(:order) { build(:order_with_line_items) }
-      let(:inventory_units) { order.inventory_units }
+      let(:package)          { build(:stock_package, contents: inventory_units.map { |_i| ContentItem.new(inventory_unit) }) }
+      let(:ship_address)     { create(:ship_address) }
+      let(:order)            { build(:order_with_line_items, ship_address: ship_address) }
+      let(:inventory_units)  { order.inventory_units }
 
       context '#shipping rates' do
         before do
@@ -43,11 +44,13 @@ module Spree
 
         context "when the order's ship address is in a different zone" do
           before { shipping_method.zones.each { |z| z.members.delete_all } }
+
           it_behaves_like "shipping rate doesn't match"
         end
 
         context 'when the calculator is not available for that order' do
           before { allow_any_instance_of(ShippingMethod).to receive_message_chain(:calculator, :available?).and_return(false) }
+
           it_behaves_like "shipping rate doesn't match"
         end
 
@@ -158,11 +161,13 @@ module Spree
 
           context 'when the order does not have a tax zone' do
             before { allow(order).to receive(:tax_zone).and_return nil }
+
             it_behaves_like 'shipping rate matches'
           end
 
           context "when the order's tax zone is the default zone" do
             before { allow(order).to receive(:tax_zone).and_return(default_zone) }
+
             it_behaves_like 'shipping rate matches'
           end
 

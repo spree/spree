@@ -1,12 +1,14 @@
 <% @body_id = 'cart' %>
 
-<div data-hook="cart_container">
+<div data-hook="cart_container" class="col-12">
   <h1><%= Spree.t(:shopping_cart) %></h1>
 
   <% if @order.line_items.empty? %>
     <div data-hook="empty_cart">
       <div class="alert alert-info"><%= Spree.t(:your_cart_is_empty) %></div>
-      <p><%= link_to Spree.t(:continue_shopping), products_path, class: 'btn btn-default' %></p>
+      <p>
+        <%= link_to Spree.t(:continue_shopping), products_path, class: 'btn btn-outline-secondary' %>
+      </p>
     </div>
   <% else %>
     <div data-hook="outside_cart_form">
@@ -17,34 +19,38 @@
             <%= render partial: 'form', locals: { order_form: order_form } %>
           </div>
 
-          <div class="links col-md-3 navbar-form pull-right text-right" data-hook="cart_buttons">
-            <div class="form-group">
-              <%= button_tag class: 'btn btn-primary', id: 'update-button' do %>
-                <%= Spree.t(:update) %>
-              <% end %>
-              <%= button_tag class: 'btn btn-lg btn-success', id: 'checkout-link', name: 'checkout' do %>
-                <%= Spree.t(:checkout) %>
-              <% end %>
+          <div class="row">
+            <% if Spree::Frontend::Config[:coupon_codes_enabled] %>
+              <div class='col-md-6 form-inline' data-hook='coupon_code'>
+                <%= order_form.label :coupon_code, class: 'mr-2' %>
+                <div class="input-group">
+                  <%= order_form.text_field :coupon_code, size: '30', class: 'form-control' %>
+                  <div class="input-group-append">
+                    <%= button_tag Spree.t(:coupon_code_apply), class: 'btn btn-outline-secondary' %>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+
+            <div class="links col-md-6 d-flex justify-content-end" data-hook="cart_buttons">
+              <div class="form-group">
+                <%= button_tag class: 'btn btn-primary', id: 'update-button' do %>
+                  <%= Spree.t(:update) %>
+                <% end %>
+                <%= button_tag class: 'btn btn-lg btn-success', id: 'checkout-link', name: 'checkout' do %>
+                  <%= Spree.t(:checkout) %>
+                <% end %>
+              </div>
             </div>
           </div>
-
-          <% if Spree::Frontend::Config[:coupon_codes_enabled] %>
-            <div class='col-md-6 form-inline pull-right' data-hook='coupon_code'>
-              <label>
-                <%= order_form.label :coupon_code %>
-                <%= order_form.text_field :coupon_code, size: '30', class: 'form-control' %>
-                <%= button_tag Spree.t(:coupon_code_apply), class: 'btn btn-default' %>
-              </label>
-            </div>
-          <% end %>
         </div>
       <% end %>
     </div>
 
-    <div id="empty-cart" class="col-md-3 pull-left" data-hook>
+    <div id="empty-cart" class="mt-4" data-hook>
       <%= form_tag empty_cart_path, method: :put do %>
         <p id="clear_cart_link" data-hook>
-          <%= submit_tag Spree.t(:empty_cart), class: 'btn btn-default' %>
+          <%= submit_tag Spree.t(:empty_cart), class: 'btn btn-outline-secondary' %>
           <%= Spree.t(:or) %>
           <%= link_to Spree.t(:continue_shopping), products_path, class: 'continue' %>
         </p>
@@ -54,6 +60,5 @@
 </div>
 
 <script>
-  Spree.current_order_id = "<%= @order.number %>"
   Spree.current_order_token = "<%= @order.token %>"
 </script>
