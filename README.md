@@ -198,7 +198,7 @@ bundle install
 
 ### Sandbox
 
-Create a sandbox Rails application for testing purposes which automatically perform all necessary database setup
+Create a sandbox Rails application for testing purposes which automatically performs all necessary database setup
 
 ```shell
 bundle exec rake sandbox
