@@ -33,7 +33,6 @@ jQuery(function ($) {
     } else {
       bodyScrollLock.clearAllBodyScrollLocks()
     }
-
   })
 
   // TODO: remove this js temp behaviour and fix this decent
