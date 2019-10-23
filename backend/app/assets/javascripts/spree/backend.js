@@ -17,7 +17,6 @@
 //= require spree/backend/address_states
 //= require spree/backend/adjustments
 //= require spree/backend/admin
-//= require spree/backend/body_scroll_lock
 //= require spree/backend/calculator
 //= require spree/backend/checkouts/edit
 //= require spree/backend/gateway

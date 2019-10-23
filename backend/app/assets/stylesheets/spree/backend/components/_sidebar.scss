@@ -1,4 +1,4 @@
-.sidebar {
+aside#main-sidebar {
   overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
   background-color: $gray-100;
   border-right: 1px solid $gray-200;
@@ -13,6 +13,7 @@
   }
 
   ul.active-option {
+    background-color: $gray-200;
     .icon-chevron-left {
       transform: rotate(-90deg);
     }
@@ -26,7 +27,6 @@
         &:hover,
         &[aria-expanded="true"] {
           text-decoration: none;
-          background-color: $gray-200;
         }
 
         .icon-chevron-left {
@@ -55,20 +55,37 @@
   }
 }
 
+// Laptops down
 @media (max-width: 991px) {
-
-    #main-sidebar {
-      right:100%;
+    aside#main-sidebar {
+      width: 50%;
+      left: -100%;
+      margin-top: 0;
+      height: 100%;
       transition: 0.3s ease;
+      z-index: 1041;
     }
 
     body.sidebar-open {
       overflow-x: hidden;
-      #main-sidebar {
-        right:0;
+      aside#main-sidebar {
+        left:0;
         transition: 0.3s ease;
       }
 
     }
+}
 
+// Tablets down
+@media (max-width: 767px) {
+    aside#main-sidebar {
+      width: 60%;
+    }
+}
+
+// Tablets down
+@media (max-width: 576px) {
+    aside#main-sidebar {
+      width: 100%;
+    }
 }

@@ -4,7 +4,7 @@ under the spree namespace that do stuff we find helpful.
 Hopefully, this will evolve into a propper class.
 **/
 
-/* global AUTH_TOKEN, order_number, bodyScrollLock */
+/* global AUTH_TOKEN, order_number */
 
 jQuery(function ($) {
   // Add some tips
@@ -17,23 +17,29 @@ jQuery(function ($) {
   })
 
   // Off Canvas Sidebar Functionality
-  var sidebar_toggle = $('#sidebar-toggle')
-  var mainSideBar    = document.querySelector('#main-sidebar')
-  var body = $('body')
-  var active_item = $('#main-sidebar').find('.selected')
+  var sidebar_open    = $('#sidebar-open')
+  var sidebar_close   = $('#sidebar-close')
+  var mainSideBar     = document.querySelector('#main-sidebar')
+  var body            = $('body')
+  var active_item     = $('#main-sidebar').find('.selected')
+  var modal_backdrop  = $('#multi-backdrop');
 
   active_item.closest('.nav-sidebar').addClass('active-option')
   active_item.closest('.nav-pills').addClass('in show')
 
-  sidebar_toggle.on('click', function() {
-    body.toggleClass('sidebar-open')
+  function openMenu() {
+    body.addClass('sidebar-open modal-open')
+    modal_backdrop.addClass('show')
+  }
 
-    if ($('body').hasClass('sidebar-open')) {
-      bodyScrollLock.disableBodyScroll(mainSideBar)
-    } else {
-      bodyScrollLock.clearAllBodyScrollLocks()
-    }
-  })
+  function closeMenu() {
+    body.removeClass('sidebar-open modal-open')
+    modal_backdrop.removeClass('show')
+  }
+
+  sidebar_open.click(openMenu)
+  sidebar_close.click(closeMenu)
+  modal_backdrop.click(closeMenu)
 
   // TODO: remove this js temp behaviour and fix this decent
   // Temp quick search

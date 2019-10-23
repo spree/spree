@@ -1,4 +1,15 @@
 <nav>
+  <div class="text-right d-lg-none">
+    <button
+      id="sidebar-close"
+      class="mt-2 mr-2 btn btn-outline-secondary"
+      type="button"
+      aria-expanded="false"
+      aria-label="Toggle navigation">
+      <%= Spree.t(:close) %>
+    </button>
+  </div>
+
   <% if can? :admin, Spree::Order %>
     <ul class="nav nav-sidebar border-bottom">
       <%= tab *Spree::BackendConfiguration::ORDER_TABS, icon: 'shopping-cart' %>

@@ -7,3 +7,11 @@
   width: auto;
   height: 40px;
 }
+
+#multi-backdrop {
+  z-index: 0;
+}
+
+body.modal-open #multi-backdrop {
+  z-index: 1040;
+}
