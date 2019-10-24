@@ -11,7 +11,24 @@
     padding-right: 3px;
   }
 
-  .ship { color: #fff; }
+  .ship {
+    color: #fff;
+  }
+
+  .icon {
+    width: 1rem;
+    height: 1rem;
+    margin-bottom: 2px;
+  }
+
+}
+
+.actions {
+  .icon {
+    width: 1rem !important;
+    height: 1rem !important;
+    margin-bottom: 2px !important;
+  }
 }
 
 .btn-sm .glyphicon { padding: 0; }
@@ -22,4 +39,14 @@
   @extend .btn-primary;
 
   color: $white !important;
+}
+
+.btn-success .icon,
+.btn-primary .icon,
+.btn-danger .icon {
+  filter: invert(100%);
+}
+
+.btn-outline-secondary {
+  &:hover .icon {filter: invert(100%);}
 }

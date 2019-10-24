@@ -6,16 +6,24 @@
     a:hover {
       text-decoration: none;
     }
+
+    .btn {
+      &:hover,
+      &:focus {
+        text-decoration: none;
+        outline: 0;
+        outline: none;
+        -webkit-box-shadow: none;
+        box-shadow: none;
+      }
+    }
+    
+    #accountNav {
+      i {
+        font-size: 1.3em;
+        line-height: 1rem;
+      }
+    }
+
   }
 }
-
-  .dropdown-toggle {
-    &:hover,
-    &:focus {
-      text-decoration: none;
-      outline: 0;
-      outline: none;
-      -webkit-box-shadow: none;
-      box-shadow: none;
-    }
-  }

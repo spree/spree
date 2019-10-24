@@ -19,3 +19,7 @@ body.modal-open #multi-backdrop {
   width: 100vw;
   height: 100vh;
 }
+
+.nav-link.active .icon {
+    filter: invert(100%);
+}

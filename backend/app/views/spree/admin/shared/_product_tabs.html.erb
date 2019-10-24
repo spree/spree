@@ -14,7 +14,7 @@
     <% end if can?(:admin, Spree::Product) %>
 
     <%= content_tag :li do %>
-      <%= link_to_with_icon 'picture',
+      <%= link_to_with_icon 'images',
         Spree.t(:images),
         spree.admin_product_images_url(@product),
         class: "nav-link #{'active' if current == :images}" %>
@@ -22,7 +22,7 @@
     <% end if can?(:admin, Spree::Image) && !@product.deleted? %>
 
     <%= content_tag :li do %>
-      <%= link_to_with_icon 'th-large',
+      <%= link_to_with_icon 'variants',
         Spree.t(:variants),
         spree.admin_product_variants_url(@product),
         class: "nav-link #{'active' if current == :variants}" %>
@@ -38,7 +38,7 @@
     <% end if can?(:admin, Spree::ProductProperty) && !@product.deleted? %>
 
     <%= content_tag :li do %>
-      <%= link_to_with_icon 'home',
+      <%= link_to_with_icon 'stock',
         Spree.t(:stock),
         stock_admin_product_url(@product),
         class: "nav-link #{'active' if current == :stock}" %>
