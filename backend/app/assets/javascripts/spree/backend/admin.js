@@ -320,7 +320,6 @@ $(document).ready(function(){
             dataType: 'script',
             url: $(ui.item).closest('table.sortable').data('sortable-link'),
             data: positions
-
           }).done(function () {
             $('#progress').hide()
           })
@@ -338,6 +337,7 @@ $(document).ready(function(){
         }
 
       })
+
   })
 
   $('a.dismiss').click(function () {
