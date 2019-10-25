@@ -7,7 +7,7 @@
   <ul class="nav flex-column nav-pills" data-hook="admin_order_tabs">
     <% if ((can? :update, @order) && (@order.shipments.size.zero? || @order.shipments.shipped.size.zero?)) %>
       <li data-hook='admin_order_tabs_cart_details'>
-        <%= link_to_with_icon 'shopping-cart',
+        <%= link_to_with_icon 'cart',
           Spree.t(:cart),
           cart_admin_order_url(@order),
           class: "#{'active' if current == :cart} nav-link" %>
@@ -52,7 +52,7 @@
 
     <% if can?(:index, Spree::Payment) %>
       <li data-hook='admin_order_tabs_payments'>
-        <%= link_to_with_icon 'credit-card',
+        <%= link_to_with_icon 'payments',
           Spree.t(:payments),
           spree.admin_order_payments_url(@order),
           class: "#{'active' if current == :payments} nav-link" %>
@@ -62,7 +62,7 @@
     <% if can? :index, Spree::ReturnAuthorization %>
       <% if @order.completed? %>
         <li data-hook='admin_order_tabs_return_authorizations'>
-          <%= link_to_with_icon 'exclamation-mark-triangle',
+          <%= link_to_with_icon 'enter',
             Spree.t(:return_authorizations),
             spree.admin_order_return_authorizations_url(@order),
             class: "#{'active' if current == :return_authorizations} nav-link" %>

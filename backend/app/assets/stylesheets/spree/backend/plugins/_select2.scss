@@ -105,7 +105,6 @@
     .select2-search-choice {
       @extend .badge;
       @extend .badge-info;
-
       box-shadow: none;
       border: none;
       background-image: none;
@@ -133,14 +132,12 @@
   }
 }
 
-
 .select2-search input,
 .select2-search-choice-close,
 .select2-container .select2-choice abbr,
 .select2-container .select2-choice .select2-arrow b {
     background-size: 0.8rem !important;
 }
-
 
 .select2-container.select2-allowclear .select2-choice abbr{
   @extend .icon-close ;
@@ -177,10 +174,4 @@
   .select2-container-multi .select2-choices .select2-search-choice .select2-search-choice-close:hover {
     @extend .icon-white ;
     background-position: 50% !important;
-  }
-
-  .select2-offscreen, .select2-offscreen:focus {
-    width: 0px !important;
-    height: 0px !important;
-    visibility: hidden !important;
   }

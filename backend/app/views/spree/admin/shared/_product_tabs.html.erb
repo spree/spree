@@ -22,7 +22,7 @@
     <% end if can?(:admin, Spree::Image) && !@product.deleted? %>
 
     <%= content_tag :li do %>
-      <%= link_to_with_icon 'variants',
+      <%= link_to_with_icon 'adjustments-y',
         Spree.t(:variants),
         spree.admin_product_variants_url(@product),
         class: "nav-link #{'active' if current == :variants}" %>
@@ -30,7 +30,7 @@
     <% end if can?(:admin, Spree::Variant) && !@product.deleted? %>
 
     <%= content_tag :li do %>
-      <%= link_to_with_icon 'list-alt',
+      <%= link_to_with_icon 'orders-list',
         Spree.t(:properties),
         spree.admin_product_product_properties_url(@product),
         class: "nav-link #{'active' if current == :properties}" %>
@@ -38,7 +38,7 @@
     <% end if can?(:admin, Spree::ProductProperty) && !@product.deleted? %>
 
     <%= content_tag :li do %>
-      <%= link_to_with_icon 'stock',
+      <%= link_to_with_icon 'items',
         Spree.t(:stock),
         stock_admin_product_url(@product),
         class: "nav-link #{'active' if current == :stock}" %>
