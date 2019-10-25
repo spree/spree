@@ -1,6 +1,10 @@
 table.table {
   font-size: $font-size-sm;
 
+  .badge {
+    font-size: 0.85em;
+  }
+
   thead {
     th {
       text-transform: uppercase;
@@ -18,7 +22,6 @@ table.table {
         vertical-align: middle;
 
         .filterable {
-          font-size: .8em;
           margin-left: .2em;
           color: white; // hidden, but space is reserved for the icon
           cursor: pointer;
@@ -43,12 +46,6 @@ table.table {
 
     &:hover {
       opacity: .8;
-    }
-
-    span.icon {
-      margin: .3em 0 0 .6em;
-      font-size: 80%;
-      cursor: pointer;
     }
   }
 }

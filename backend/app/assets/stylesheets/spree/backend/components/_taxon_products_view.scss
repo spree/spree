@@ -6,6 +6,7 @@
     > * {
       margin-left: 2%;
     }
+
     li.product {
       position: relative;
       float: left;
@@ -14,20 +15,14 @@
       border-radius: 4px;
       min-width: 12rem;
       max-width: 14rem;
-      background: #f4f4f4;
+      background: $gray-100;
 
-      .image {
-        .thumbnail {
-          width: 100%;
-        }
+      .thumbnail {
+        width: 100%;
       }
+
       .product-info {
         font-size: 0.8em;
-      }
-      &:hover {
-        .btn-group {
-          display: inline-block;
-        }
       }
     }
   }
