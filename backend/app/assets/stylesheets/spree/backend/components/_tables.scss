@@ -1,6 +1,10 @@
 table.table {
   font-size: $font-size-sm;
 
+  th.handel-head {
+    width: 50px;
+  }
+
   .badge {
     font-size: 0.85em;
   }
@@ -18,6 +22,7 @@ table.table {
 
   tbody {
     tr {
+      background: white;
       td {
         vertical-align: middle;
 

@@ -61,9 +61,9 @@ module Spree
       # Single main menu item
       def main_menu_item(text, url: nil, icon: nil)
         link_to url, 'data-toggle': 'collapse', class: 'd-flex w-100 p-3 position-relative align-items-center' do
-          content_tag(:span, nil, class: "icon icon-#{icon} mr-2 icon-lg") +
+          content_tag(:span, nil, class: "icon icon-#{icon} mr-2") +
             content_tag(:span, " #{text}", class: 'text') +
-            content_tag(:span, nil, class: 'icon icon-chevron-left icon-md position-absolute')
+            content_tag(:span, nil, class: 'icon icon-chevron-left icon-sm position-absolute')
         end
       end
 
@@ -162,7 +162,7 @@ module Spree
         text = options[:no_text] ? '' : content_tag(:span, text, class: 'text')
         options.delete(:no_text)
         if icon_name
-          icon = content_tag(:span, '', class: "#{'mr-2' unless text.empty?} icon icon-#{icon_name} icon-lg")
+          icon = content_tag(:span, '', class: "#{'mr-2' unless text.empty?} icon icon-#{icon_name}")
           text = "#{icon} #{text}"
         end
         link_to(text.html_safe, url, options)

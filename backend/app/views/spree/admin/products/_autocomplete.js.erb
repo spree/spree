@@ -1,10 +1,16 @@
 <script type='text/template' id='product_template'>
   <li id="product_{{ product.id }}" data-product-id='{{ product.id }}' data-taxons="{{ product.taxon_ids }}" class="product card p-2">
     <nav class="navbar navbar-light bg-light justify-content-between px-0 pt-0" style="background-color:transparent !important;">
-      <a class="btn btn-outline-dark sort-handle js-sort-handle"><span class="icon icon-move"></span></a>
+      <a class=" sort-handle js-sort-handle">
+        <span class="icon icon-move icon-lg"></span>
+      </a>
       <div>
-        <a class="btn btn-primary" href="{{ edit_product_url product.id }}" class="edit-product js-edit-product"><span class="icon icon-edit"></span></a>
-        <a class="btn btn-danger" href="javascript:;" class="delete-product js-delete-product"><span class="icon icon-close"></span></a>
+        <a href="{{ edit_product_url product.id }}" class="btn btn-primary edit-product js-edit-product">
+          <span class="icon icon-edit"></span>
+        </a>
+        <a href="javascript:;" class="btn btn-danger delete-product js-delete-product">
+          <span class="icon icon-close"></span>
+        </a>
       </div>
     </nav>
     <div class='image'>

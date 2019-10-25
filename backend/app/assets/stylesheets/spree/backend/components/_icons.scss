@@ -12,14 +12,19 @@
 }
 
 // Spree Icon Sizing
-.icon-sm {
+.icon-xs {
   width: 0.6rem !important;
   height: 0.6rem !important;
 }
 
+.icon-sm {
+  width: 0.8rem !important;
+  height: 0.8rem !important;
+}
+
 .icon-md {
-  width: 1rem !important;
-  height: 1rem !important;
+  width: 1.2rem !important;
+  height: 1.2rem !important;
 }
 
 .icon-lg {
