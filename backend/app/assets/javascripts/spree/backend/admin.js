@@ -307,7 +307,7 @@ $(document).ready(function(){
         update: function(event, ui) {
           var tbody = this
           $('#progress').show()
-          positions = {}
+          positions = { authenticity_token: AUTH_TOKEN, }
           $.each($('tr', tbody), function(position, obj) {
             reg = /spree_(\w+_?)+_(\d+)/
             parts = reg.exec($(obj).prop('id'))
@@ -320,6 +320,7 @@ $(document).ready(function(){
             dataType: 'script',
             url: $(ui.item).closest('table.sortable').data('sortable-link'),
             data: positions
+
           }).done(function () {
             $('#progress').hide()
           })
