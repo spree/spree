@@ -213,6 +213,7 @@
         </td>
         <td>
           <span class="badge badge-<%= order.state.downcase %>"><%= Spree.t("order_state.#{order.state.downcase}") %></span>
+          <span class="icon icon-filter filterable js-add-filter" data-ransack-field="q_state_eq" data-ransack-value="<%= order.state %>"></span>
         </td>
         <td>
           <% if order.payment_state %>
@@ -220,12 +221,17 @@
             <%= link_to Spree.t("payment_states.#{order.payment_state}"),
               admin_order_payments_path(order),
               class: "badge badge-#{order.payment_state}" %>
+
+            <span class="icon icon-filter filterable js-add-filter"
+              data-ransack-field="q_payment_state_eq"
+              data-ransack-value="<%= order.payment_state %>"></span>
           <% end %>
         </td>
         <% if Spree::Order.checkout_step_names.include?(:delivery) %>
           <td>
             <% if order.shipment_state %>
               <span class="badge badge-<%= order.shipment_state %>"><%= Spree.t("shipment_states.#{order.shipment_state}") %></span>
+              <span class="icon icon-filter filterable js-add-filter" data-ransack-field="q_shipment_state_eq" data-ransack-value="<%= order.shipment_state %>"></span>
             <% end %>
           </td>
         <% end %>
@@ -236,6 +242,7 @@
             <%= mail_to order.email %>
           <% end %>
           <% if order.user || order.email %>
+            <span class="icon icon-filter filterable js-add-filter" data-ransack-field="q_email_cont" data-ransack-value="<%= order.email %>"></span>
           <% end %>
         </td>
         <td><%= order.display_total.to_html %></td>

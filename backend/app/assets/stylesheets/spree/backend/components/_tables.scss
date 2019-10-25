@@ -28,13 +28,15 @@ table.table {
 
         .filterable {
           margin-left: .2em;
-          color: white; // hidden, but space is reserved for the icon
+          @extend .icon-white ;
           cursor: pointer;
+          width: 0.9rem;
+          height:0.9rem;
         }
       }
 
       &:hover td .filterable {
-        color: #666;
+        @extend .icon-grey-30 ;
       }
     }
   }

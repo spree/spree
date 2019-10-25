@@ -160,6 +160,19 @@ describe 'Orders Listing', type: :feature do
       end
     end
 
+    it 'is able to apply a ransack filter by clicking a quickfilter icon', js: true do
+      label_pending = page.find '.badge-pending'
+      parent_td = label_pending.find(:xpath, '..')
+
+      # Click the quick filter Pending for order #R100
+      within(parent_td) do
+        find('.js-add-filter').click
+      end
+
+      expect(page).to have_content('R100')
+      expect(page).not_to have_content('R200')
+    end
+
     context 'filter on shipment state' do
       it 'only shows the orders with the selected shipment state' do
         select Spree.t("payment_states.#{order1.shipment_state}"), from: 'Shipment State'
