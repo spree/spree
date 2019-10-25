@@ -7,31 +7,15 @@
 .btn {
   text-align: center;
 
-  .glyphicon {
-    padding-right: 3px;
-  }
-
   .ship {
     color: #fff;
   }
 
   .icon {
-    width: 1rem;
-    height: 1rem;
     margin-bottom: 2px;
   }
 
 }
-
-.actions {
-  .icon {
-    width: 1rem !important;
-    height: 1rem !important;
-    margin-bottom: 2px !important;
-  }
-}
-
-.btn-sm .glyphicon { padding: 0; }
 
 .btn.action-void { @extend .btn-danger; }
 .btn.action-capture { @extend .btn-success; }
@@ -46,7 +30,9 @@
 .btn-danger .icon {
   filter: invert(100%);
 }
-
+.btn-outline-dark, 
 .btn-outline-secondary {
-  &:hover .icon {filter: invert(100%);}
+  &:hover .icon {
+    filter: invert(100%);
+  }
 }

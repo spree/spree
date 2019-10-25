@@ -13,7 +13,6 @@ jQuery(function ($) {
   $('.js-show-index-filters').click(function () {
     $('.filter-well').slideToggle()
     $(this).parents('.filter-wrap').toggleClass('collapsed')
-    $('span.icon', $(this)).toggleClass('icon-chevron-down')
   })
 
   // Off Canvas Sidebar Functionality

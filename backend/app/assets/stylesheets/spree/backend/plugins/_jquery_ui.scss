@@ -32,13 +32,13 @@
     color: $primary;
 
     &.ui-icon-circle-triangle-w {
-      @extend .glyphicon;
-      @extend .glyphicon-chevron-left;
+      // @extend .glyphicon;
+      // @extend .glyphicon-chevron-left;
     }
 
     &.ui-icon-circle-triangle-e {
-      @extend .glyphicon;
-      @extend .glyphicon-chevron-right;
+      // @extend .glyphicon;
+      // @extend .glyphicon-chevron-right;
     }
   }
 

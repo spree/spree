@@ -1,25 +1,21 @@
 <script type='text/template' id='product_template'>
-  <li id='product_{{ product.id }}' data-product-id='{{ product.id }}' data-taxons="{{ product.taxon_ids }}" class='product'>
-    <a class="sort-handle js-sort-handle"><span class="icon icon-move"></span></a>
-    <div class="btn-group">
-      <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-        <span class="caret"></span>
-      </button>
-      <ul class="dropdown-menu" role="menu" data-hook="taxon_product_dropdown">
-        <li><a href="{{ edit_product_url product.id }}" class="edit-product js-edit-product"><%= Spree.t(:edit) %></a></li>
-        <li><a href="javascript:;" class="delete-product js-delete-product"><%= Spree.t(:delete_from_taxon) %></a></li>
-      </ul>
-    </div>
+  <li id="product_{{ product.id }}" data-product-id='{{ product.id }}' data-taxons="{{ product.taxon_ids }}" class="product card p-2">
+    <nav class="navbar navbar-light bg-light justify-content-between px-0 pt-0" style="background-color:transparent !important;">
+      <a class="btn btn-outline-dark sort-handle js-sort-handle"><span class="icon icon-move"></span></a>
+      <div>
+        <a class="btn btn-primary" href="{{ edit_product_url product.id }}" class="edit-product js-edit-product"><span class="icon icon-edit"></span></a>
+        <a class="btn btn-danger" href="javascript:;" class="delete-product js-delete-product"><span class="icon icon-close"></span></a>
+      </div>
+    </nav>
     <div class='image'>
       {{#if product.image }}
-        <img src='{{product.image}}' alt='{{ product.name }}' class='thumbnail' />
+        <img src='{{product.image}}' alt='{{ product.name }}' class='thumbnail rounded border border' />
       {{ else }}
         <img src='<%= image_path("noimage/small.png") %>' alt='{{product.name }}' class='thumbnail' />
       {{/if}}
     </div>
-    <div class="product-info">
-      <div class="name">{{ product.name }}</div>
-      <div class="price">{{ product.display_price }}</div>
+    <div class="p-0 pt-1 text-center product-info">
+      <p class="price card-text">{{ product.name }}</p>
     </div>
   </li>
 </script>
