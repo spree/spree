@@ -16,23 +16,26 @@
   }
 
 }
+.btn-secondary .icon,
+.btn-outline-secondary .icon {
+  @extend .icon-grey-40 ;
+}
 
 .btn.action-void { @extend .btn-danger; }
 .btn.action-capture { @extend .btn-success; }
 .btn.payment-action-edit {
   @extend .btn-primary;
-
-  color: $white !important;
+  @extend .icon-white ;
 }
 
 .btn-success .icon,
 .btn-primary .icon,
 .btn-danger .icon {
-  filter: invert(100%);
+  @extend .icon-white ;
 }
-.btn-outline-dark, 
+.btn-outline-dark,
 .btn-outline-secondary {
   &:hover .icon {
-    filter: invert(100%);
+    @extend .icon-white ;
   }
 }

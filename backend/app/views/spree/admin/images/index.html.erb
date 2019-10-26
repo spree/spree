@@ -29,12 +29,12 @@
       </tr>
     </thead>
 
-    <tbody>
+    <tbody id="sortVert">
       <% (@product.variant_images).each do |image| %>
         <tr id="<%= spree_dom_id image %>" data-hook="images_row">
           <td class="move-handle text-center">
             <% if can? :edit, image %>
-              <span class="icon icon-move handle"></span>
+              <span class="icon icon-sort handle icon-md"></span>
             <% end %>
           </td>
           <td class="image">

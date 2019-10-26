@@ -2,6 +2,7 @@
   .navbar {
     background-color: $navbar-inverse-bg;
     padding: 0;
+    height: 50px;
 
     a:hover {
       text-decoration: none;
@@ -17,7 +18,7 @@
         box-shadow: none;
       }
     }
-    
+
     #accountNav {
       i {
         font-size: 1.3em;

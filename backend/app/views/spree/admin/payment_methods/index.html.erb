@@ -18,12 +18,12 @@
         <th data-hook="admin_payment_methods_index_header_actions" class="actions"></th>
       </tr>
     </thead>
-    <tbody>
+    <tbody id="sortVert">
       <% @payment_methods.each do |method|%>
         <tr id="<%= spree_dom_id method %>" data-hook="admin_payment_methods_index_rows">
           <td class="move-handle text-center">
             <% if can?(:edit, method) %>
-              <span class="icon icon-move handle"></span>
+              <span class="icon icon-sort handle icon-md"></span>
             <% end %>
           </td>
           <td><%= method.name %></td>

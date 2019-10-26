@@ -5,7 +5,7 @@
   <%= button_link_to(
     Spree.t(:add_product_properties),
     "javascript:;",
-    { icon: 'add', :'data-target' => "tbody#product_properties", class: 'btn-success spree_add_fields' }) %>
+    { icon: 'add', :'data-target' => "tbody#sortVert", class: 'btn-success spree_add_fields' }) %>
 
   <span class="js-new-ptype-link">
     <%= button_link_to Spree.t(:select_from_prototype),
@@ -26,7 +26,7 @@
           <th class="actions"></th>
         </tr>
       </thead>
-      <tbody id="product_properties" data-hook>
+      <tbody id="sortVert">
         <%= f.fields_for :product_properties do |pp_form| %>
           <%= render 'product_property_fields', f: pp_form %>
         <% end %>

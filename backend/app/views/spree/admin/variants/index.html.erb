@@ -13,12 +13,12 @@
         <th class="actions"></th>
       </tr>
     </thead>
-    <tbody>
+    <tbody id="sortVert">
     <% @variants.each do |variant| %>
       <tr id="<%= spree_dom_id variant %>" <%= 'style="color:red;"' if variant.deleted? %> data-hook="variants_row">
         <td class="move-handle">
           <% if can? :edit, variant %>
-            <span class="icon icon-move handle"></span>
+            <span class="icon icon-sort handle icon-md"></span>
           <% end %>
         </td>
         <td><%= variant.options_text %></td>

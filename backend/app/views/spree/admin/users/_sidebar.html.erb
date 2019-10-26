@@ -29,7 +29,7 @@
         class: "nav-link #{'active' if current == :items}" %>
     </li>
     <li>
-      <%= link_to_with_icon 'money',
+      <%= link_to_with_icon 'payments',
         Spree.t(:"admin.user.store_credits"),
         spree.admin_user_store_credits_path(@user),
         class: "nav-link #{'active' if current == :store_credits}" %>

@@ -87,10 +87,9 @@
       <% if @product.has_variants? %>
         <div data-hook="admin_product_form_multiple_variants" class="card bg-light mb-3">
           <div class="card-body">
-            <%= f.label :skus, Spree.t(:sku).pluralize %>
-            <div class="info marginb">
-              <%= Spree.t(:info_product_has_multiple_skus, count: @product.variants.size) %>
-              <ul class="text_list">
+          <h5 class="card-title"><%= f.label :skus, Spree.t(:sku).pluralize %></h5>
+              <h6 class="card-subtitle mb-2 text-muted"><%= Spree.t(:info_product_has_multiple_skus, count: @product.variants.size) %> </h6>
+              <ul class="list-unstyled">
                 <% @product.variants.first(5).each do |variant| %>
                   <li><%= variant.sku %></li>
                 <% end %>
@@ -100,7 +99,6 @@
                   <%= Spree.t(:info_number_of_skus_not_shown, count: @product.variants.size - 5) %>
                 </em>
               <% end %>
-            </div>
             <div class="info-actions">
               <% if can?(:admin, Spree::Variant) %>
                 <%= link_to_with_icon 'variants', Spree.t(:manage_variants), spree.admin_product_variants_url(@product), class: "btn btn-outline-secondary" %>
