@@ -10,19 +10,24 @@
   .ship {
     color: #fff;
   }
-
   .icon {
     margin-bottom: 2px;
   }
-
 }
+
 .btn-secondary .icon,
 .btn-outline-secondary .icon {
   @extend .icon-grey-40 ;
 }
 
-.btn.action-void { @extend .btn-danger; }
-.btn.action-capture { @extend .btn-success; }
+.btn.action-void {
+  @extend .btn-danger;
+}
+
+.btn.action-capture {
+  @extend .btn-success;
+}
+
 .btn.payment-action-edit {
   @extend .btn-primary;
   @extend .icon-white ;
@@ -33,6 +38,7 @@
 .btn-danger .icon {
   @extend .icon-white ;
 }
+
 .btn-outline-dark,
 .btn-outline-secondary {
   &:hover .icon {

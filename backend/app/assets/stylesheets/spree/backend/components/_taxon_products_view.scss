@@ -13,3 +13,14 @@
     }
   }
 }
+ul#taxon_products, tbody#sortVert {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+
+  li.moving-this div.card {
+    background: #48B0F7 !important;
+  }
+}

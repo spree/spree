@@ -295,6 +295,8 @@ $(document).ready(function(){
     Sortable.create(element, {
       handle: '.move-handle',
       animation: 550,
+      ghostClass: 'bg-info',
+      forceFallback: true,
       onEnd: function (evt) {
         var itemEl = evt.item
         var positions = { authenticity_token: AUTH_TOKEN }

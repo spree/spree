@@ -8,7 +8,9 @@ $(function () {
   if (el !== null && el !== '') {
     Sortable.create(el, {
       handle: '.sort-handle',
+      ghostClass: 'moving-this',
       animation: 550,
+      forceFallback: true,
       onEnd: function (evt) {
         var itemEl = evt.item.getAttribute('data-product-id')
         var newin = evt.newIndex
