@@ -23,3 +23,7 @@ body.modal-open #multi-backdrop {
 .nav-link.active .icon {
     filter: invert(100%);
 }
+
+.sort-handle {
+  cursor: grab;
+}
