@@ -63,19 +63,19 @@ describe 'Option Types', type: :feature, js: true do
 
     # Add a new option type
     click_link 'Add Option Value'
-    expect(page).to have_css('tbody#option_values tr', count: 2)
+    expect(page).to have_css('tbody#sortVert tr', count: 2)
 
     # Remove default option type
-    within('tbody#option_values') do
+    within('tbody#sortVert') do
       click_icon :delete
     end
     # Check that there was no HTTP request
     expect(page).not_to have_css('div#progress[style]')
     # Assert that the field is hidden automatically
-    expect(page).to have_css('tbody#option_values tr', count: 1)
+    expect(page).to have_css('tbody#sortVert tr', count: 1)
 
     # Remove added option type
-    within('tbody#option_values') do
+    within('tbody#sortVert') do
       click_icon :delete
     end
     # Check that there was no HTTP request
