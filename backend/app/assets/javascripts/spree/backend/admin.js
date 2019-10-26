@@ -293,11 +293,11 @@ $(document).ready(function(){
   var element = document.getElementById('sortVert')
   if (element !== null && element !== '') {
     Sortable.create(element, {
-    handle: '.move-handle',
-    animation: 550,
+      handle: '.move-handle',
+      animation: 550,
       onEnd: function (evt) {
-        var itemEl = evt.item;
-        var positions = { authenticity_token: AUTH_TOKEN, }
+        var itemEl = evt.item
+        var positions = { authenticity_token: AUTH_TOKEN }
         $.each($('tr', element), function(position, obj) {
           reg = /spree_(\w+_?)+_(\d+)/
           parts = reg.exec($(obj).prop('id'))
