@@ -1,17 +1,17 @@
-/* global productTemplate */
+/* global productTemplate, Sortable */
 $(function () {
   window.productTemplate = Handlebars.compile($('#product_template').text())
   var taxonProducts = $('#taxon_products')
   var taxonId = $('#taxon_id')
 
-  var el = document.getElementById('taxon_products');
-  if(el !== null && el !== '') {
+  var el = document.getElementById('taxon_products')
+  if (el !== null && el !== '') {
     Sortable.create(el, {
       handle: '.sort-handle',
       animation: 550,
       onEnd: function (evt) {
-        var itemEl  = evt.item.getAttribute('data-product-id') ;
-        var newin   = evt.newIndex;
+        var itemEl = evt.item.getAttribute('data-product-id')
+        var newin = evt.newIndex
         return $.ajax({
           url: Spree.routes.classifications_api,
           method: 'PUT',
@@ -24,7 +24,7 @@ $(function () {
           }
         })
       }
-    });
+    })
   }
 
   if (taxonId.length > 0) {

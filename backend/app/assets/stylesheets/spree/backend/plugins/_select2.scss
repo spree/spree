@@ -19,9 +19,16 @@
       border-top-left-radius: 0;
       border-bottom-left-radius: 0;
       border-left-color: $input-border-color;
+      width: 24px;
 
       b {
         background-position: 0 7px;
+        @extend .icon-chevron-down ;
+        overflow: hidden !important;
+        vertical-align: middle !important;
+        background-repeat: no-repeat !important;
+        background-size: 1rem !important;
+        background-position: 54% !important;
       }
     }
 
@@ -40,7 +47,12 @@
 .select2-search input {
   border-color: $input-border-color;
   border-radius: $border-radius;
-  background-image: none;
+  @extend .icon-search ;
+  overflow: hidden !important;
+  vertical-align: middle !important;
+  background-repeat: no-repeat !important;
+  background-size: 1rem !important;
+  background-position: 99% !important;
 }
 
 .select2-drop {
@@ -149,29 +161,7 @@
   right:30px;
 }
 
-  .select2-container .select2-choice .select2-arrow {
-    width: 24px;
-  }
-
-  .select2-search input {
-    @extend .icon-search ;
-    overflow: hidden !important;
-    vertical-align: middle !important;
-    background-repeat: no-repeat !important;
-    background-size: 1rem !important;
-    background-position: 99% !important;
-  }
-
-  .select2-container .select2-choice .select2-arrow b {
-    @extend .icon-chevron-down ;
-    overflow: hidden !important;
-    vertical-align: middle !important;
-    background-repeat: no-repeat !important;
-    background-size: 1rem !important;
-    background-position: 54% !important;
-  }
-
-  .select2-container-multi .select2-choices .select2-search-choice .select2-search-choice-close:hover {
-    @extend .icon-white ;
-    background-position: 50% !important;
-  }
+.select2-container-multi .select2-choices .select2-search-choice .select2-search-choice-close:hover {
+  @extend .icon-white ;
+  background-position: 50% !important;
+}

@@ -12,7 +12,6 @@
 //= require select2
 //= require underscore-min.js
 
-
 //= require spree
 //= require spree/backend/spree-select2
 //= require spree/backend/address_states

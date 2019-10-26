@@ -4,7 +4,7 @@ under the spree namespace that do stuff we find helpful.
 Hopefully, this will evolve into a propper class.
 **/
 
-/* global AUTH_TOKEN, order_number */
+/* global AUTH_TOKEN, order_number, Sortable */
 
 jQuery(function ($) {
   // Add some tips
@@ -290,30 +290,29 @@ $(document).ready(function(){
   })
 
   // Sortable List Up-Down
-  var element = document.getElementById('sortVert');
-  if(element !== null && element !== '') {
-      Sortable.create(element, {
-        handle: '.move-handle',
-        animation: 550,
-        onEnd: function (evt) {
-          var itemEl = evt.item;
-          var positions = { authenticity_token: AUTH_TOKEN, }
-
-          $.each($('tr', element), function(position, obj) {
-            reg = /spree_(\w+_?)+_(\d+)/
-            parts = reg.exec($(obj).prop('id'))
-            if (parts) {
-              positions['positions[' + parts[2] + ']'] = position + 1
-            }
-          })
-          $.ajax({
-                type: 'POST',
-                dataType: 'json',
-                url: $(itemEl).closest('table.sortable').data('sortable-link'),
-                data: positions
-              })
+  var element = document.getElementById('sortVert')
+  if (element !== null && element !== '') {
+    Sortable.create(element, {
+    handle: '.move-handle',
+    animation: 550,
+      onEnd: function (evt) {
+        var itemEl = evt.item;
+        var positions = { authenticity_token: AUTH_TOKEN, }
+        $.each($('tr', element), function(position, obj) {
+          reg = /spree_(\w+_?)+_(\d+)/
+          parts = reg.exec($(obj).prop('id'))
+          if (parts) {
+            positions['positions[' + parts[2] + ']'] = position + 1
           }
-      });
+        })
+        $.ajax({
+          type: 'POST',
+          dataType: 'json',
+          url: $(itemEl).closest('table.sortable').data('sortable-link'),
+          data: positions
+        })
+      }
+    })
   }
 
   // Close notifications
