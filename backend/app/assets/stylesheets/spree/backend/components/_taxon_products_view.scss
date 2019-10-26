@@ -1,22 +1,8 @@
 .taxon-products-view {
   ul.taxon {
-    list-style: none;
-    margin-left: -2%;
-    padding: 0;
-    > * {
-      margin-left: 2%;
-    }
 
     li.product {
-      position: relative;
-      float: left;
-      width: 18%;
-      margin-bottom: 2%;
-      border-radius: 4px;
-      min-width: 12rem;
-      max-width: 14rem;
-      background: $gray-100;
-
+      list-style: none;
       .thumbnail {
         width: 100%;
       }
