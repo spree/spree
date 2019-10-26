@@ -6,7 +6,7 @@
       <th class="actions"></th>
     </tr>
   </thead>
-  <tbody>
+  <tbody id="sortVert">
     <% @taxonomies.each do |taxonomy| %>
       <tr id="<%= spree_dom_id taxonomy %>" data-hook="taxonomies_row" >
         <td class="move-handle">

@@ -4,23 +4,28 @@ $(function () {
   var taxonProducts = $('#taxon_products')
   var taxonId = $('#taxon_id')
 
-  taxonProducts.sortable({
-    handle: '.js-sort-handle'
-  })
-
-  taxonProducts.on('sortstop', function (event, ui) {
-    return $.ajax({
-      url: Spree.routes.classifications_api,
-      method: 'PUT',
-      dataType: 'json',
-      data: {
-        token: Spree.api_key,
-        product_id: ui.item.data('product-id'),
-        taxon_id: $('#taxon_id').val(),
-        position: ui.item.index()
+  var el = document.getElementById('taxon_products');
+  if(el !== null && el !== '') {
+    Sortable.create(el, {
+      handle: '.sort-handle',
+      animation: 550,
+      onEnd: function (evt) {
+        var itemEl  = evt.item.getAttribute('data-product-id') ;
+        var newin   = evt.newIndex;
+        return $.ajax({
+          url: Spree.routes.classifications_api,
+          method: 'PUT',
+          dataType: 'json',
+          data: {
+            token: Spree.api_key,
+            product_id: itemEl,
+            taxon_id: $('#taxon_id').val(),
+            position: newin
+          }
+        })
       }
-    })
-  })
+    });
+  }
 
   if (taxonId.length > 0) {
     taxonId.select2({

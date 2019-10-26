@@ -20,7 +20,7 @@
       <th class="actions"></th>
     </tr>
   </thead>
-  <tbody>
+  <tbody id="sortVert">
     <% @option_types.each do |option_type| %>
       <tr class="spree_option_type <%= cycle('odd', 'even')%>" id="<%= spree_dom_id option_type %>" data-hook="option_row">
         <td class="move-handle text-center">

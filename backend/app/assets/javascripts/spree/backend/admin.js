@@ -275,7 +275,7 @@ $(document).ready(function(){
     return false
   })
 
-  $('body').on('click', '.select_properties_from_prototype', function(){
+  $('body').on('click', '.select_properties_from_prototype', function() {
     $('#busy_indicator').show()
     var clicked_link = $(this)
     $.ajax({
@@ -289,26 +289,17 @@ $(document).ready(function(){
     return false
   })
 
-  // Fix sortable helper
-  var fixHelper = function (e, ui) {
-    ui.children().each(function () {
-      $(this).width($(this).width())
-    })
-    return ui
-  }
+  // Sortable List Up-Down
+  var element = document.getElementById('sortVert');
+  if(element !== null && element !== '') {
+      Sortable.create(element, {
+        handle: '.move-handle',
+        animation: 550,
+        onEnd: function (evt) {
+          var itemEl = evt.item;
+          var positions = { authenticity_token: AUTH_TOKEN, }
 
-  $('table.sortable').ready(function () {
-    var tdCount = $(this).find('tbody tr:first-child td').length
-    $('table.sortable tbody').sortable(
-      {
-        handle: '.handle',
-        helper: fixHelper,
-        placeholder: 'ui-sortable-placeholder',
-        update: function(event, ui) {
-          var tbody = this
-          $('#progress').show()
-          positions = { authenticity_token: AUTH_TOKEN, }
-          $.each($('tr', tbody), function(position, obj) {
+          $.each($('tr', element), function(position, obj) {
             reg = /spree_(\w+_?)+_(\d+)/
             parts = reg.exec($(obj).prop('id'))
             if (parts) {
@@ -316,34 +307,21 @@ $(document).ready(function(){
             }
           })
           $.ajax({
-            type: 'POST',
-            dataType: 'script',
-            url: $(ui.item).closest('table.sortable').data('sortable-link'),
-            data: positions
-          }).done(function () {
-            $('#progress').hide()
-          })
-        },
-        start: function (event, ui) {
-          // Set correct height for placehoder (from dragged tr)
-          ui.placeholder.height(ui.item.height())
-          // Fix placeholder content to make it correct width
-          ui.placeholder.html("<td colspan='" + (tdCount - 1) + "'></td><td class='actions'></td>")
-        },
-        stop: function (event, ui) {
-          // Fix odd/even classes after reorder
-          $('table.sortable tr:even').removeClass('odd even').addClass('even')
-          $('table.sortable tr:odd').removeClass('odd even').addClass('odd')
-        }
+                type: 'POST',
+                dataType: 'json',
+                url: $(itemEl).closest('table.sortable').data('sortable-link'),
+                data: positions
+              })
+          }
+      });
+  }
 
-      })
-
-  })
-
+  // Close notifications
   $('a.dismiss').click(function () {
     $(this).parent().fadeOut()
   })
 
+  // Utility
   window.Spree.advanceOrder = function() {
     $.ajax({
       type: 'PUT',

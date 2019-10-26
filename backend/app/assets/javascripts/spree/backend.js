@@ -1,4 +1,5 @@
 //= require modernizr
+//= require sortable
 //= require jquery3
 //= require popper
 //= require bootstrap-sprockets
@@ -7,10 +8,10 @@
 //= require jquery.jstree/jquery.jstree
 //= require jquery_ujs
 //= require jquery-ui/widgets/datepicker
-//= require jquery-ui/widgets/sortable
 //= require jquery-ui/widgets/autocomplete
 //= require select2
 //= require underscore-min.js
+
 
 //= require spree
 //= require spree/backend/spree-select2
