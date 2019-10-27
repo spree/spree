@@ -29,7 +29,6 @@ table.table {
       background: white;
       td {
         vertical-align: middle;
-
         .filterable {
           margin-left: .2em;
           @extend .icon-white ;
@@ -103,13 +102,12 @@ table.table {
   border-radius: 5px;
   width:100%;
   text-align: right;
-  opacity: 1;
-
-  .actions{
-    display: none;
-  }
-
-td {
+  opacity: 0;
+  td {
     border-top: none;
+    opacity:0;
+    &:first-child {
+    opacity: 1;
+    }
   }
 }
