@@ -12,20 +12,20 @@ root.taxon_tree_menu = function (obj, context) {
       }
     },
     rename: {
-      label: '<span class="icon icon-pencil"></span> ' + Spree.translations.rename,
+      label: '<span class="icon icon-edit"></span> ' + Spree.translations.rename,
       action: function (obj) {
         return context.rename(obj)
       }
     },
     remove: {
-      label: '<span class="icon icon-trash"></span> ' + Spree.translations.remove,
+      label: '<span class="icon icon-delete"></span> ' + Spree.translations.remove,
       action: function (obj) {
         return context.remove(obj)
       }
     },
     edit: {
       separator_before: true,
-      label: '<span class="icon icon-cog"></span> ' + Spree.translations.edit,
+      label: '<span class="icon icon-settings"></span> ' + Spree.translations.edit,
       action: function () {
         window.location = editUrl.toString()
         return window.location

@@ -10,7 +10,7 @@ $(function () {
       handle: '.sort-handle',
       ghostClass: 'moving-this',
       animation: 550,
-      easing: "cubic-bezier(1, 0, 0, 1)",
+      easing: 'cubic-bezier(1, 0, 0, 1)',
       swapThreshold: 0.9,
       forceFallback: true,
       onEnd: function (evt) {

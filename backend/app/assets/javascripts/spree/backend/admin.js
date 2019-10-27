@@ -296,7 +296,7 @@ $(document).ready(function(){
       handle: '.move-handle',
       animation: 550,
       ghostClass: 'bg-light',
-      easing: "cubic-bezier(1, 0, 0, 1)",
+      easing: 'cubic-bezier(1, 0, 0, 1)',
       swapThreshold: 0.9,
       forceFallback: true,
       onEnd: function (evt) {
