@@ -37,10 +37,10 @@
   @extend .icon-white ;
 }
 
-a.payment-action-save .icon,
 .btn-success .icon,
 .btn-primary .icon,
-.btn-danger .icon {
+.btn-danger .icon,
+a.payment-action-save .icon {
   @extend .icon-white ;
 }
 

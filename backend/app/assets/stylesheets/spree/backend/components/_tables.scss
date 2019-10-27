@@ -97,6 +97,19 @@ table.table {
     border-top: 0;
 	}
 }
-.no-wrap {
-  white-space: nowrap;
+
+.sortable-drag-v {
+  border: 1px solid $info;
+  border-radius: 5px;
+  width:100%;
+  text-align: right;
+  opacity: 1;
+
+  .actions{
+    display: none;
+  }
+
+td {
+    border-top: none;
+  }
 }
