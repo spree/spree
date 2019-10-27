@@ -1,4 +1,6 @@
-
+.payment-action-save {
+  @include button-variant($success, $success, $success );
+}
 
 .btn,
 .nav-pills > li > a {
@@ -35,12 +37,14 @@
   @extend .icon-white ;
 }
 
+a.payment-action-save .icon,
 .btn-success .icon,
 .btn-primary .icon,
 .btn-danger .icon {
   @extend .icon-white ;
 }
 
+.payment-action-save,
 .btn-outline-dark,
 .btn-outline-secondary {
   &:hover .icon,

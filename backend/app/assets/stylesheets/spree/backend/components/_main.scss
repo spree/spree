@@ -27,3 +27,7 @@ body.modal-open #multi-backdrop {
 .sort-handle {
   cursor: grab;
 }
+
+.no-filter {
+  filter:none !important;
+}
