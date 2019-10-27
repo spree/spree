@@ -41,7 +41,9 @@
 
 .btn-outline-dark,
 .btn-outline-secondary {
-  &:hover .icon {
+  &:hover .icon,
+  &:focus .icon,
+  &:active .icon, {
     @extend .icon-white ;
   }
 }

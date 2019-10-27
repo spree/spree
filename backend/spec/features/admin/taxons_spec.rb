@@ -35,7 +35,10 @@ describe 'Taxonomies and taxons', type: :feature do
     visit spree.admin_taxons_path
     select_clothing_from_select2
 
-    find('.delete-product').click
+    find('.product').hover
+    find('.product .dropdown-toggle').click
+
+    click_link 'Remove'
 
     expect(page).not_to have_css('.product')
 

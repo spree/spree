@@ -5,6 +5,15 @@
         <a class=" sort-handle js-sort-handle">
           <span class="icon icon-move icon-lg"></span>
         </a>
+        <div class="dropdown ">
+          <button class="btn btn-outline-secondary dropdown-toggle products-ddb" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span class="icon icon-chevron-down"></span>
+          </button>
+          <div class="dropdown-menu dropdown-menu-right p-0 mt-1" aria-labelledby="dropdownMenuButton">
+            <a href="{{ edit_product_url product.id }}" class="edit-product js-edit-product dropdown-item p-1"><%= Spree.t(:edit) %></a>
+            <a href="javascript:;" class="delete-product js-delete-product dropdown-item p-1"><%= Spree.t(:remove) %></a>
+          </div>
+        </div>
       </nav>
       <div class='image'>
         {{#if product.image }}
@@ -16,15 +25,6 @@
       <div class="p-0 pt-1 text-center product-info">
         <p class="price card-text">{{ product.name }}</p>
       </div>
-      <div class="text-center">
-        <a href="{{ edit_product_url product.id }}" class="btn btn-primary edit-product js-edit-product">
-          <span class="icon icon-edit"></span>
-        </a>
-        <a href="javascript:;" class="btn btn-danger delete-product js-delete-product">
-          <span class="icon icon-close"></span>
-        </a>
-      </div>
-
     </div>
   </li>
 </script>

@@ -179,6 +179,8 @@
 <%= render 'spree/admin/shared/index_table_options', collection: @orders %>
 
 <% if @orders.any? %>
+<div class="table-responsive">
+
   <table class="table" id="listing_orders" data-hook>
     <thead>
       <tr data-hook="admin_orders_index_headers">
@@ -211,11 +213,11 @@
             <%= order.considered_risky ? Spree.t("risky") : Spree.t("safe") %>
           </span>
         </td>
-        <td>
+        <td class="no-wrap">
           <span class="badge badge-<%= order.state.downcase %>"><%= Spree.t("order_state.#{order.state.downcase}") %></span>
           <span class="icon icon-filter filterable js-add-filter" data-ransack-field="q_state_eq" data-ransack-value="<%= order.state %>"></span>
         </td>
-        <td>
+        <td class="no-wrap">
           <% if order.payment_state %>
 
             <%= link_to Spree.t("payment_states.#{order.payment_state}"),
@@ -228,14 +230,14 @@
           <% end %>
         </td>
         <% if Spree::Order.checkout_step_names.include?(:delivery) %>
-          <td>
+          <td class="no-wrap">
             <% if order.shipment_state %>
               <span class="badge badge-<%= order.shipment_state %>"><%= Spree.t("shipment_states.#{order.shipment_state}") %></span>
               <span class="icon icon-filter filterable js-add-filter" data-ransack-field="q_shipment_state_eq" data-ransack-value="<%= order.shipment_state %>"></span>
             <% end %>
           </td>
         <% end %>
-        <td>
+        <td class="no-wrap">
           <% if order.user %>
             <%= link_to order.email, edit_admin_user_path(order.user) %>
           <% else %>
@@ -253,6 +255,8 @@
     <% end %>
     </tbody>
   </table>
+
+</div>
 <% else %>
   <div class="alert alert-info no-objects-found">
     <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::Order)) %>,
