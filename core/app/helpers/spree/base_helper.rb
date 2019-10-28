@@ -33,7 +33,11 @@ module Spree
     end
 
     def logo(image_path = Spree::Config[:logo])
-      link_to image_tag(image_path), spree.respond_to?(:root_path) ? spree.root_path : main_app.root_path
+      path = spree.respond_to?(:root_path) ? spree.root_path : main_app.root_path
+
+      link_to path, 'aria-label': Spree.t('go_to_homepage') do
+        image_tag image_path, alt: current_store.name
+      end
     end
 
     def meta_data
@@ -58,7 +62,7 @@ module Spree
 
     def meta_data_tags
       meta_data.map do |name, content|
-        tag('meta', name: name, content: content)
+        tag('meta', name: name, content: content) unless name.nil? || content.nil?
       end.join("\n")
     end
 
@@ -97,12 +101,10 @@ module Spree
         if product.images.empty?
           if !product.is_a?(Spree::Variant) && !product.variant_images.empty?
             create_product_image_tag(product.variant_images.first, product, options, style)
+          elsif product.is_a?(Spree::Variant) && !product.product.variant_images.empty?
+            create_product_image_tag(product.product.variant_images.first, product, options, style)
           else
-            if product.is_a?(Variant) && !product.product.variant_images.empty?
-              create_product_image_tag(product.product.variant_images.first, product, options, style)
-            else
-              image_tag "noimage/#{style}.png", options
-            end
+            image_tag "noimage/#{style}.png", options
           end
         else
           create_product_image_tag(product.images.first, product, options, style)
