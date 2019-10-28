@@ -1,21 +1,12 @@
+require 'csv'
+
 Spree::Sample.load_sample('taxonomies')
 
-TAXON_NAMES = %w(Men Women Sportswear)
-CHILDREN_TAXON_NAMES = [
-  ["Men", "Shirts"],
-  ["Men", "T-shirts"],
-  ["Men", "Sweaters"],
-  ["Men", "Jackets and Coats"],
-  ["Women", "Skirts"],
-  ["Women", "Dresses"],
-  ["Women", "Shirts and Blouses"],
-  ["Women", "Sweaters"],
-  ["Women", "Tops and T-shirts"],
-  ["Women", "Jackets and Coats"],
-  ["Sportswear", "Tops"],
-  ["Sportswear", "Sweatshirts"],
-  ["Sportswear", "Pants"]
-]
+CHILDREN_TAXON_NAMES = CSV.read(File.join(__dir__, 'variants.csv')).map do |(parent_name, taxon_name, _product_name, _color_name)|
+  [parent_name, taxon_name]
+end.uniq
+
+TAXON_NAMES = CHILDREN_TAXON_NAMES.map { |(parent_name, taxon_name)| parent_name }
 
 categories = Spree::Taxonomy.find_by!(name: I18n.t('spree.taxonomy_categories_name'))
 categories_taxon = Spree::Taxon.where(name: I18n.t('spree.taxonomy_categories_name')).first_or_create!

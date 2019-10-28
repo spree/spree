@@ -1,0 +1,194 @@
+Men,Shirts,denim shirt,blue
+Men,Shirts,denim shirt,light_blue
+Men,Shirts,checked shirt,red
+Men,Shirts,covered placket shirt,dark_blue
+Men,Shirts,covered placket shirt,white
+Men,Shirts,slim fit shirt,dark_blue
+Men,Shirts,slim fit shirt,light_blue
+Men,Shirts,slim fit shirt,burgundy
+Men,Shirts,short sleeve shirt,burgundy
+Men,Shirts,printed short sleeve shirt,brown
+Men,Shirts,regular shirt,blue
+Men,Shirts,checked slim fit shirt,black
+Men,Shirts,dotted shirt,white
+Men,Shirts,linen shirt,light_blue
+Men,Shirts,linen shirt,pink
+Men,Shirts,regular shirt with rolled up sleeves,light_blue
+Men,T-shirts,polo t-shirt,light_blue
+Men,T-shirts,polo t-shirt,pink
+Men,T-shirts,polo t-shirt,red
+Men,T-shirts,long sleeve t-shirt,grey
+Men,T-shirts,3_4 sleeve t-shirt,white
+Men,T-shirts,t-shirt with holes,grey
+Men,T-shirts,raw-edge t-shirt,brown
+Men,T-shirts,v-neck t-shirt,grey
+Men,T-shirts,v-neck t-shirt,white
+Men,T-shirts,tank top,pink
+Men,T-shirts,basic t-shirt,grey
+Men,T-shirts,basic t-shirt,burgundy
+Men,T-shirts,basic t-shirt,white
+Men,T-shirts,basic t-shirt,black
+Men,Sweaters,high neck sweater,black
+Men,Sweaters,stripped jumper,brown
+Men,Sweaters,long sleeve jumper with pocket,ecru
+Men,Sweaters,jumper,grey
+Men,Sweaters,long sleeve sweatshirt,mint
+Men,Sweaters,long sleeve sweatshirt,light_blue
+Men,Sweaters,long sleeve sweatshirt,pink
+Men,Sweaters,long sleeve sweatshirt,orange
+Men,Sweaters,hoodie,grey
+Men,Sweaters,zipped high neck sweater,green
+Men,Sweaters,long sleeve jumper,dark_blue
+Men,Sweaters,long sleeve jumper,beige
+Men,Jackets and Coats,suede biker jacket,brown
+Men,Jackets and Coats,hooded jacket,beige
+Men,Jackets and Coats,anorak with hood,yellow
+Men,Jackets and Coats,anorak with hood,white
+Men,Jackets and Coats,denim jacket,light_blue
+Men,Jackets and Coats,wool-blend short coat,brown
+Men,Jackets and Coats,down jacket with hood,dark_blue
+Men,Jackets and Coats,down jacket with hood,blue
+Men,Jackets and Coats,down jacket with hood,khaki
+Men,Jackets and Coats,down jacket with hood,yellow
+Men,Jackets and Coats,wool-blend coat,beige
+Men,Jackets and Coats,jacket with liner,black
+Women,Skirts,flared midi skirt,burgundy
+Women,Skirts,midi skirt with bottoms,green
+Women,Skirts,midi skirt with bottoms,blue
+Women,Skirts,midi skirt with bottoms,grey
+Women,Skirts,fitted skirt,orange
+Women,Skirts,a-line suede skirt,dark_blue
+Women,Skirts,a-line suede skirt,purple
+Women,Skirts,leather skirt with lacing,black
+Women,Skirts,flared skirt,orange
+Women,Skirts,skater skirt,brown
+Women,Skirts,skater short skirt,white
+Women,Skirts,floral flared skirt,light_blue
+Women,Skirts,floral flared skirt,black
+Women,Skirts,pleated skirt 2,green
+Women,Skirts,pleated skirt 2,light_blue
+Women,Skirts,pleated skirt 2,pink
+Women,Skirts,pleated skirt 2,red
+Women,Skirts,pleated skirt 2,black
+Women,Skirts,pleated skirt 2,orange
+Women,Dresses,floral wrap dress,black
+Women,Dresses,v-neck floral maxi dress,pink
+Women,Dresses,v-neck floral maxi dress,white
+Women,Dresses,v-neck floral maxi dress,black
+Women,Dresses,flared dress,red
+Women,Dresses,flared dress,black
+Women,Dresses,elegant flared dress,black
+Women,Dresses,elegant flared dress,orange
+Women,Dresses,long sleeve knitted dress,grey
+Women,Dresses,long sleeve knitted dress,beige
+Women,Dresses,long sleeve knitted dress,black
+Women,Dresses,striped shirt dress,light_blue
+Women,Dresses,striped shirt dress,grey
+Women,Dresses,printed dress,light_blue
+Women,Dresses,printed dress,pink
+Women,Dresses,printed slit-sleeves dress,light_blue
+Women,Dresses,printed slit-sleeves dress,grey
+Women,Dresses,printed slit-sleeves dress,black
+Women,Dresses,dress with belt,red
+Women,Dresses,dress with belt,burgundy
+Women,Dresses,v-neck floral dress,light_blue
+Women,Dresses,v-neck floral dress,grey
+Women,Dresses,v-neck floral dress,black
+Women,Dresses,flounced dress,beige
+Women,Dresses,slit maxi dress,red
+Women,Shirts and Blouses,semi-sheer shirt with floral cuffs,brown
+Women,Shirts and Blouses,semi-sheer shirt with floral cuffs,white
+Women,Shirts and Blouses,striped shirt,blue
+Women,Shirts and Blouses,striped shirt,red
+Women,Shirts and Blouses,v-neck wide shirt,dark_blue
+Women,Shirts and Blouses,v-neck wide shirt,white
+Women,Shirts and Blouses,printed wrapped blouse,white
+Women,Shirts and Blouses,pleated sleeve v-neck shirt,orange
+Women,Shirts and Blouses,cotton shirt,light_blue
+Women,Shirts and Blouses,blouse with wide flounced sleeve,pink
+Women,Shirts and Blouses,elegant blouse with chocker,mint
+Women,Shirts and Blouses,elegant blouse with chocker,pink
+Women,Shirts and Blouses,elegant blouse with chocker,white
+Women,Shirts and Blouses,floral shirt,pink
+Women,Shirts and Blouses,floral shirt,beige
+Women,Shirts and Blouses,semi-sheer shirt with pockets,white
+Women,Shirts and Blouses,v-neck shirt,pink
+Women,Shirts and Blouses,v-neck shirt,white
+Women,Shirts and Blouses,printed shirt,green
+Women,Sweaters,asymetric sweater with wide sleeves,blue
+Women,Sweaters,asymetric sweater with wide sleeves,grey
+Women,Sweaters,asymetric sweater with wide sleeves,red
+Women,Sweaters,asymetric sweater with wide sleeves,white
+Women,Sweaters,oversized knitted sweater,red
+Women,Sweaters,oversized sweatshirt,brown
+Women,Sweaters,knitted high neck sweater,blue
+Women,Sweaters,knitted high neck sweater,pink
+Women,Sweaters,knitted high neck sweater,white
+Women,Sweaters,knitted v-neck sweater,blue
+Women,Sweaters,knitted v-neck sweater,red
+Women,Sweaters,knitted v-neck sweater,beige
+Women,Sweaters,long sleeve sweatshirt,mint
+Women,Sweaters,cropped fitted sweater,red
+Women,Sweaters,cropped fitted sweater,yellow
+Women,Tops and T-shirts,crop top with tie,red
+Women,Tops and T-shirts,printed t-shirt,white
+Women,Tops and T-shirts,scrappy top,black
+Women,Tops and T-shirts,pleated sleeve t-shirt,beige
+Women,Tops and T-shirts,pleated sleeve t-shirt,white
+Women,Tops and T-shirts,scrappy crop top with tie,grey
+Women,Tops and T-shirts,crop top,black
+Women,Tops and T-shirts,loose t-shirt with pocket imitation,white
+Women,Tops and T-shirts,sleeveless loose top,white
+Women,Tops and T-shirts,basic loose t-shirt,green
+Women,Tops and T-shirts,basic loose t-shirt,blue
+Women,Tops and T-shirts,basic loose t-shirt,pink
+Women,Tops and T-shirts,basic loose t-shirt,red
+Women,Tops and T-shirts,basic loose t-shirt,white
+Women,Tops and T-shirts,basic loose t-shirt,orange
+Women,Tops and T-shirts,basic t-shirt,yellow
+Women,Tops and T-shirts,basic t-shirt,orange
+Women,Jackets and Coats,coat with pockets,pink
+Women,Jackets and Coats,coat with pockets,burgundy
+Women,Jackets and Coats,coat with pockets,black
+Women,Jackets and Coats,long wool-blend coat with belt,dark_blue
+Women,Jackets and Coats,long wool-blend coat with belt,beige
+Women,Jackets and Coats,asymetric coat,white
+Women,Jackets and Coats,long coat with belt,beige
+Women,Jackets and Coats,down jacket,white
+Women,Jackets and Coats,zipped jacket,blue
+Women,Jackets and Coats,loose-fitted jacket,light_blue
+Women,Jackets and Coats,double-breasted jacket,white
+Women,Jackets and Coats,leather biker jacket,black
+Women,Jackets and Coats,wool-blend coat with belt,burgundy
+Women,Jackets and Coats,wool-blend coat with belt,lila
+Women,Jackets and Coats,denim hooded jacket,blue
+Women,Jackets and Coats,bomber jacket,khaki
+Sportswear,Tops,sports bra low support,grey
+Sportswear,Tops,sports bra low support,lila
+Sportswear,Tops,long sleeves yoga crop top,mint
+Sportswear,Tops,long sleeves yoga crop top,light_blue
+Sportswear,Tops,long sleeves yoga crop top,pink
+Sportswear,Tops,oversize t-shirt wrapped on back,pink
+Sportswear,Tops,long sleeves crop top,black
+Sportswear,Tops,laced crop top,black
+Sportswear,Tops,sports bra medium support,black
+Sportswear,Tops,sports bra ,green
+Sportswear,Tops,sports bra ,blue
+Sportswear,Tops,sports bra ,burgundy
+Sportswear,Tops,sport cropp top,burgundy
+Sportswear,Sweatshirts,running sweatshirt,light_blue
+Sportswear,Sweatshirts,leightweight running jacket,grey
+Sportswear,Sweatshirts,oversize sweatshirt,pink
+Sportswear,Sweatshirts,sport windproof jacket,blue
+Sportswear,Sweatshirts,sport waistcoat,purple
+Sportswear,Pants,shined pants,light_blue
+Sportswear,Pants,shined pants,grey
+Sportswear,Pants,shined pants,black
+Sportswear,Pants,short pants,black
+Sportswear,Pants,printed pants with holes,black
+Sportswear,Pants,pants,black
+Sportswear,Pants,printed pants,grey
+Sportswear,Pants,high waist pants with pockets,pink
+Sportswear,Pants,high waist pants with pockets,purple
+Sportswear,Pants,high waist pants,blue
+Sportswear,Pants,high waist pants,burgundy
