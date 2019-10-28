@@ -31,7 +31,7 @@ taxon.permalink = taxon.permalink.gsub('categories/', '')
 taxon.taxonomy = categories
 taxon.save!
 
-["Bestsellers", "Trending", "Streetstyle", "Summer Sale"].each do |taxon_name|
+['Bestsellers', 'Trending', 'Streetstyle', 'Summer Sale'].each do |taxon_name|
   taxon = categories_taxon.children.where(name: taxon_name).first_or_create!
   taxon.permalink = taxon.permalink.gsub('categories/', '')
   taxon.taxonomy = categories

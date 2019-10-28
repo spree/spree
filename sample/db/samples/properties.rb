@@ -1,7 +1,7 @@
 properties = {
   brand: 'Brand',
   model: 'Model',
-  manufacturer:	'Manufacturer',
+  manufacturer: 'Manufacturer',
   made_from: 'Made from',
   fit: 'Fit',
   gender: 'Gender',
