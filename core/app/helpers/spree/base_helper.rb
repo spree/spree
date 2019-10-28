@@ -62,7 +62,7 @@ module Spree
 
     def meta_data_tags
       meta_data.map do |name, content|
-        tag('meta', name: name, content: content)
+        tag('meta', name: name, content: content) unless name.nil? || content.nil?
       end.join("\n")
     end
 
