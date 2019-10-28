@@ -11,6 +11,12 @@ location.update_attributes!(
   active: true
 )
 
+product_1 = Spree::Product.find_by!(name: 'Denim Shirt')
+product_2 = Spree::Product.find_by!(name: 'Checked Shirt')
+
+product_1.master.stock_items.find_by!(stock_location: location).update!(count_on_hand: 1)
+product_2.master.stock_items.find_by!(stock_location: location).update!(count_on_hand: 1)
+
 Spree::Variant.all.each do |variant|
   next if variant.is_master? && variant.product.has_variants?
 
