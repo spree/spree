@@ -801,6 +801,7 @@ en:
     general: General
     general_settings: General Settings
     generate_code: Generate coupon code
+    go_to_homepage: Go to Home Page
     guest_checkout: Guest Checkout
     guest_user_account: Checkout as a Guest
     has_no_shipped_units: has no shipped units
