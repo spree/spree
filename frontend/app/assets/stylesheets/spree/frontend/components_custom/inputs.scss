@@ -1,0 +1,33 @@
+.spree-flat-input {
+  transition: basic-transition(border-color);
+  border-left: none;
+  border-top: none;
+  border-right: none;
+  padding: 8px 0;
+  width: 100%;
+  border-width: 1px;
+  border-color: theme-color('dark-text');
+  border-radius: 0;
+  outline: none;
+  font-size: font-px-to-rem(14px);
+
+  &:focus {
+    border-color: theme-color('primary');
+  }
+
+  @include media-breakpoint-up(lg) {
+    font-size: font-px-to-rem(23px);
+  }
+}
+
+.spree-flat-select {
+  @extend .spree-flat-input;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  &-arrow {
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+}
