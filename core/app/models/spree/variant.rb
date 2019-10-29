@@ -121,7 +121,11 @@ module Spree
       end
 
       values.to_a.map! do |ov|
-        "#{ov.option_type.presentation}: #{ov.presentation}"
+        if ov.option_type.name == 'color'
+          "#{ov.option_type.presentation}: #{ov.name}"
+        else
+          "#{ov.option_type.presentation}: #{ov.presentation}"
+        end
       end
 
       values.to_sentence(words_connector: ', ', two_words_connector: ', ')
