@@ -33,12 +33,12 @@ class Spree::Variant::OptionsPresentation
     end
   end
 
-  def present_color_option(ov)
-    "#{ov.option_type.presentation}: #{ov.name}"
+  def present_color_option(option)
+    "#{option.option_type.presentation}: #{option.name}"
   end
 
-  def present_option(ov)
-    "#{ov.option_type.presentation}: #{ov.presentation}"
+  def present_option(option)
+    "#{option.option_type.presentation}: #{option.presentation}"
   end
 
   def join_options(options)
