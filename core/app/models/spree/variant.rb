@@ -116,19 +116,7 @@ module Spree
     end
 
     def options_text
-      values = option_values.sort do |a, b|
-        a.option_type.position <=> b.option_type.position
-      end
-
-      values.to_a.map! do |ov|
-        if ov.option_type.name == 'color'
-          "#{ov.option_type.presentation}: #{ov.name}"
-        else
-          "#{ov.option_type.presentation}: #{ov.presentation}"
-        end
-      end
-
-      values.to_sentence(words_connector: ', ', two_words_connector: ', ')
+      Spree::Variant::OptionsPresentation.new(self).to_sentence
     end
 
     # Default to master name
