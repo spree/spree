@@ -3,7 +3,7 @@ Spree::Sample.load_sample('products')
 
 product = Spree::Product.find_by!(name: 'Denim Shirt')
 size = Spree::OptionValue.find_by!(name: 'xs')
-color = Spree::OptionValue.find_by!(name: 'Red')
+color = Spree::OptionValue.find_by!(name: 'red')
 eligible_values = "#{size.id},#{color.id}"
 
 promotion = Spree::Promotion.where(
