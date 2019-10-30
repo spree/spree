@@ -3,6 +3,8 @@ class Spree::Variant::OptionsPresentation
 
   attr_reader :variant
 
+  delegate :option_values, to: :variant
+
   def initialize(variant)
     @variant = variant
   end
@@ -16,10 +18,6 @@ class Spree::Variant::OptionsPresentation
   end
 
   private
-
-  def option_values
-    variant.option_values.includes(:option_type).to_a
-  end
 
   def sort_options(options)
     options.sort_by { |o| o.option_type.position }
