@@ -48,14 +48,14 @@ describe 'Shipments', type: :feature do
       expect(order.shipments.count).to eq(1)
 
       within_row(1) { click_icon :split }
-      select2 'LA', css: '#s2id_item_stock_location', search: true, match: :first
+      select2 'LA', css: '.stock-item-split', search: true, match: :first
       click_icon :'save-split'
 
       expect(page).to have_css('#order-form-wrapper div', id: /^shipment_\d$/).exactly(2).times
       expect(page).to have_css("#shipment_#{order.shipments.first.id}")
 
       within_row(2) { click_icon :split }
-      select2 "LA(#{order.reload.shipments.last.number})", css: '#s2id_item_stock_location', search: true, match: :first
+      select2 "LA(#{order.reload.shipments.last.number})", css: '.stock-item-split', search: true, match: :first
       click_icon :save
       wait_for_ajax
 

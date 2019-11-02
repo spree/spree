@@ -21,7 +21,7 @@ describe 'Variants', type: :feature do
       expect(page).to have_field(id: 'variant_height', with: '3.00')
       expect(page).to have_field(id: 'variant_width', with: '1.00')
       expect(page).to have_field(id: 'variant_depth', with: '1.50')
-      expect(page).to have_css('#s2id_variant_tax_category_id', text: 'None')
+      expect(page).to have_css('.form-group[data-hook="tax_category"]', text: 'None')
     end
   end
 

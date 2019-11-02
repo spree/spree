@@ -49,6 +49,6 @@ describe 'Taxonomies and taxons', type: :feature do
   end
 
   def select_clothing_from_select2
-    select2 'Clothing', css: '#s2id_taxon_id', search: true
+    select2 'Clothing', css: '.taxon-products-view', search: true
   end
 end

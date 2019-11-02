@@ -43,7 +43,7 @@ describe 'Product Variants', type: :feature, js: true do
       within('#sidebar') { click_link 'Variants' }
       click_link 'New Variant'
 
-      select2 'black', css: '#s2id_variant_option_value_ids'
+      select2 'black', from: 'Colors'
       fill_in 'variant_sku', with: 'A100'
       click_button 'Create'
       expect(page).to have_content('successfully created!')

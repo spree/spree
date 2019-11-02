@@ -153,7 +153,7 @@ describe 'Products', type: :feature do
         find('#product_available_on').send_keys(:tab)
         select2 'Size', from: 'Prototype'
         check 'Large'
-        select2 @shipping_category.name, css: '#s2id_product_shipping_category_id'
+        select2 @shipping_category.name, css: '#product_shipping_category_field'
         click_button 'Create'
         expect(page).to have_content('successfully created!')
         expect(Spree::Product.last.variants.length).to eq(1)
@@ -176,7 +176,7 @@ describe 'Products', type: :feature do
           check 'Large'
           click_button 'Create'
 
-          expect(page).to have_css('#s2id_product_shipping_category_id') do |el|
+          expect(page).to have_css('#product_shipping_category_field') do |el|
             el['validationMessage'] == 'Please select an item in the list.'
           end
           expect(page).to have_checked_field('Size')

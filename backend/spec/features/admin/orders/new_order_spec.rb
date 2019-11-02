@@ -176,13 +176,13 @@ describe 'New Order', type: :feature do
     fill_in "Street Address (cont'd)",   with: '#101'
     fill_in 'City',                      with: 'Bethesda'
     fill_in 'Zip',                       with: '20170'
-    select2 state.name,                   css: "#s2id_order_#{kind}_address_attributes_state_id"
+    select2 state.name,                   css: "#bstate"
     fill_in 'Phone',                     with: '123-456-7890'
   end
 
   def select_customer
     within 'div#select-customer' do
-      select2 user.email, css: '#s2id_customer_search', search: true
+      select2 user.email, css: '#customer-search-field', search: true
     end
   end
 end

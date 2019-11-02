@@ -41,7 +41,7 @@ describe 'Customer Details', type: :feature, js: true do
       expect(page).to have_css('.card', text: 'Order Line Items')
 
       click_link 'Customer'
-      select2 'foobar@example.com', css: '#s2id_customer_search', search: true
+      select2 'foobar@example.com', css: '#customer-search-field', search: true
       # 5317 - Address prefills using user's default.
       expect_form_value('#order_bill_address_attributes_firstname', user.bill_address.firstname)
       expect_form_value('#order_bill_address_attributes_lastname', user.bill_address.lastname)

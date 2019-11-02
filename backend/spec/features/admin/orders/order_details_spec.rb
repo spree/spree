@@ -249,7 +249,7 @@ describe 'Order Details', type: :feature, js: true do
             expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq(2)
 
             within_row(1) { click_icon 'split' }
-            select2 stock_location2.name, css: '#s2id_item_stock_location', search: true, match: :first
+            select2 stock_location2.name, css: '.stock-item-split', search: true, match: :first
             click_icon :save
 
             expect(page).to have_css('#order-form-wrapper div', id: /^shipment_\d$/).exactly(2).times
@@ -266,7 +266,7 @@ describe 'Order Details', type: :feature, js: true do
             expect(order.shipments.first.stock_location.id).to eq(stock_location.id)
 
             within_row(1) { click_icon 'split' }
-            select2 stock_location2.name, css: '#s2id_item_stock_location', search: true, match: :first
+            select2 stock_location2.name, css: '.stock-item-split', search: true, match: :first
             fill_in 'item_quantity', with: 2
             click_icon :save
 
@@ -283,7 +283,7 @@ describe 'Order Details', type: :feature, js: true do
             expect(order.shipments.first.stock_location.id).to eq(stock_location.id)
 
             within_row(1) { click_icon 'split' }
-            select2 stock_location2.name, css: '#s2id_item_stock_location', search: true, match: :first
+            select2 stock_location2.name, css: '.stock-item-split', search: true, match: :first
             fill_in 'item_quantity', with: 5
             click_icon :save
 
@@ -300,7 +300,7 @@ describe 'Order Details', type: :feature, js: true do
             expect(order.shipments.first.stock_location.id).to eq(stock_location.id)
 
             within_row(1) { click_icon 'split' }
-            select2 stock_location2.name, css: '#s2id_item_stock_location', search: true, match: :first
+            select2 stock_location2.name, css: '.stock-item-split', search: true, match: :first
             fill_in 'item_quantity', with: 'ff'
 
             page.accept_confirm "quantity is negative" do
@@ -316,7 +316,7 @@ describe 'Order Details', type: :feature, js: true do
             expect(order.shipments.first.stock_location.id).to eq(stock_location.id)
 
             within_row(1) { click_icon 'split' }
-            select2 stock_location2.name, css: '#s2id_item_stock_location', search: true, match: :first
+            select2 stock_location2.name, css: '.stock-item-split', search: true, match: :first
             fill_in 'item_quantity', with: 0
 
             page.accept_confirm "quantity is negative" do
@@ -358,7 +358,7 @@ describe 'Order Details', type: :feature, js: true do
               product.master.stock_items.last.update_column(:count_on_hand, 0)
 
               within_row(1) { click_icon 'split' }
-              select2 stock_location2.name, css: '#s2id_item_stock_location', search: true, match: :first
+              select2 stock_location2.name, css: '.stock-item-split', search: true, match: :first
               fill_in 'item_quantity', with: 2
 
               click_icon :save
@@ -376,7 +376,7 @@ describe 'Order Details', type: :feature, js: true do
               product.master.stock_items.last.update_column(:backorderable, true)
 
               within_row(1) { click_icon 'split' }
-              select2 stock_location2.name, css: '#s2id_item_stock_location', search: true, match: :first
+              select2 stock_location2.name, css: '.stock-item-split', search: true, match: :first
               fill_in 'item_quantity', with: 2
 
               click_icon :save
@@ -397,7 +397,7 @@ describe 'Order Details', type: :feature, js: true do
             expect(order.shipments.first.manifest.count).to eq(2)
 
             within_row(1) { click_icon 'split' }
-            select2 stock_location2.name, css: '#s2id_item_stock_location', search: true, match: :first
+            select2 stock_location2.name, css: '.stock-item-split', search: true, match: :first
             click_icon :save
 
             expect(page).to have_css('#order-form-wrapper div', id: /^shipment_\d$/).exactly(2).times
@@ -427,7 +427,7 @@ describe 'Order Details', type: :feature, js: true do
                 click_icon :add
               end
 
-              expect(page).to have_css('#s2id_add_variant_id', text: 'Choose a variant')
+              expect(page).to have_css('[data-hook="add_product_name"]', text: 'Choose a variant')
 
               within('[data-hook=admin_order_form_fields]') do
                 expect(page).to have_content(tote.name)
@@ -485,7 +485,7 @@ describe 'Order Details', type: :feature, js: true do
           expect(order.shipments.count).to eq(2)
 
           within_row(1) { click_icon 'split' }
-          select2 @shipment2.number, css: '#s2id_item_stock_location', search: true, match: :first
+          select2 @shipment2.number, css: '.stock-item-split', search: true, match: :first
           fill_in 'item_quantity', with: 2
 
           click_icon :save
@@ -503,14 +503,14 @@ describe 'Order Details', type: :feature, js: true do
             expect(order.shipments.count).to eq(2)
 
             within_row(1) { click_icon 'split' }
-            select2 @shipment2.number, css: '#s2id_item_stock_location', search: true, match: :first
+            select2 @shipment2.number, css: '.stock-item-split', search: true, match: :first
             fill_in 'item_quantity', with: 1
 
             click_icon :save
             expect(page).not_to have_css('tr.stock-item-split')
 
             within_row(1) { click_icon 'split' }
-            select2 @shipment2.number, css: '#s2id_item_stock_location', search: true, match: :first
+            select2 @shipment2.number, css: '.stock-item-split', search: true, match: :first
             fill_in 'item_quantity', with: 200
 
             click_icon :save
@@ -524,7 +524,7 @@ describe 'Order Details', type: :feature, js: true do
 
           it 'does not allow a shipment to split stock to itself' do
             within_row(1) { click_icon 'split' }
-            select2 order.shipments.first.number, css: '#s2id_item_stock_location', search: true, match: :first
+            select2 order.shipments.first.number, css: '.stock-item-split', search: true, match: :first
             fill_in 'item_quantity', with: 1
 
             page.accept_confirm "target shipment is the same as original shipment" do
@@ -541,7 +541,7 @@ describe 'Order Details', type: :feature, js: true do
             Spree::Cart::AddItem.call(order: order, variant: variant2, quantity: 2, options: { shipment: @shipment2 })
 
             within_row(1) { click_icon 'split' }
-            select2 @shipment2.number, css: '#s2id_item_stock_location', search: true, match: :first
+            select2 @shipment2.number, css: '.stock-item-split', search: true, match: :first
             fill_in 'item_quantity', with: 1
             click_icon :save
 
@@ -562,7 +562,7 @@ describe 'Order Details', type: :feature, js: true do
             expect(@shipment2.reload.backordered?).to eq(false)
 
             within_row(1) { click_icon 'split' }
-            select2 @shipment2.number, css: '#s2id_item_stock_location', search: true, match: :first
+            select2 @shipment2.number, css: '.stock-item-split', search: true, match: :first
             fill_in 'item_quantity', with: 1
 
             click_icon :save
@@ -571,7 +571,7 @@ describe 'Order Details', type: :feature, js: true do
             expect(@shipment2.reload.backordered?).to eq(true)
 
             within_row(1) { click_icon 'split' }
-            select2 @shipment2.number, css: '#s2id_item_stock_location', search: true, match: :first
+            select2 @shipment2.number, css: '.stock-item-split', search: true, match: :first
             fill_in 'item_quantity', with: 1
             click_icon :save
 
