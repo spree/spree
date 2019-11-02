@@ -48,7 +48,7 @@ describe 'Shipping Methods', type: :feature do
       end
 
       expect(page).to have_css('.calculator-settings-warning', visible: :hidden)
-      select2_search('Flexible Rate', from: 'Calculator')
+      select2 'Flexible Rate', from: 'Calculator'
       expect(page).to have_css('.calculator-settings-warning')
 
       click_button 'Update'
