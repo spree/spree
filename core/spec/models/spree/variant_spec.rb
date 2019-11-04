@@ -372,16 +372,16 @@ describe Spree::Variant, type: :model do
 
   describe '#options_text' do
     let(:variant) { build :variant }
-    let(:fake_options_presentation) { double :fake_options_presentation }
+    let(:fake_presenter) { double :fake_presenter }
 
     subject(:options_text) { variant.options_text }
 
     before do
-      allow(Spree::VariantOptionsPresenter).to receive(:new).with(variant).and_return(fake_options_presentation)
+      allow(Spree::VariantOptionsPresenter).to receive(:new).with(variant).and_return(fake_presenter)
     end
 
     it 'calls Spree::VariantOptionsPresenter' do
-      expect(fake_options_presentation).to receive(:to_sentence)
+      expect(fake_presenter).to receive(:to_sentence)
 
       options_text
     end
