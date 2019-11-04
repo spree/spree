@@ -47,7 +47,7 @@ describe 'States', type: :feature do
       click_button 'Create'
       expect(page).to have_content('successfully created!')
       expect(page).to have_content('Pest megye')
-      expect(page).to have_css('#s2id_country span', exact_text: 'Hungary')
+      expect(page).to have_css('.form-group[data-hook="country"]', text: 'Hungary')
     end
 
     it 'shows validation errors', js: true do
@@ -63,8 +63,7 @@ describe 'States', type: :feature do
     end
 
     def choose_country(country)
-      find('#s2id_country').click
-      find('ul.select2-results li', text: country).click
+      select2 country, css: '.form-group[data-hook="country"]'
     end
   end
 end

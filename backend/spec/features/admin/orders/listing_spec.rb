@@ -237,19 +237,19 @@ describe 'Orders Listing', type: :feature do
         click_on 'Filter'
 
         within('#table-filter') do
-          fill_in 'q_created_at_gt', with: '2018/01/01'
-          fill_in 'q_created_at_lt', with: '2018/06/30'
+          select2 'cart', from: 'Status'
+          select2 'paid', from: 'Payment State'
+          select2 'pending', from: 'Shipment State'
           fill_in 'q_number_cont', with: 'R100'
-          select 'cart', from: 'q_state_eq'
-          select 'paid', from: 'q_payment_state_eq'
-          select 'pending', from: 'q_shipment_state_eq'
-          fill_in 'q_bill_address_firstname_start', with: 'John'
-          fill_in 'q_bill_address_lastname_start', with: 'Smith'
           fill_in 'q_email_cont', with: 'john_smith@example.com'
           fill_in 'q_line_items_variant_sku_eq', with: 'BAG-00001'
-          select 'Promo', from: 'q_promotions_id_in'
-          select 'Spree Test Store', match: :first, from: 'q_store_id_in'
-          select 'spree', from: 'q_channel_eq'
+          select2 'Promo', from: 'Promotion'
+          fill_in 'q_bill_address_firstname_start', with: 'John'
+          select2 'Spree Test Store', from: 'Store', match: :first
+          fill_in 'q_bill_address_lastname_start', with: 'Smith'
+          select2 'spree', from: 'Channel'
+          fill_in 'q_created_at_gt', with: '2018/01/01'
+          fill_in 'q_created_at_lt', with: '2018/06/30'
         end
 
         click_on 'Filter Results'
@@ -263,9 +263,9 @@ describe 'Orders Listing', type: :feature do
           expect(page).to have_content('Shipment State: pending')
           expect(page).to have_content('First Name Begins With: John')
           expect(page).to have_content('Last Name Begins With: Smith')
+          expect(page).to have_content('Promotion: Promo')
           expect(page).to have_content('Email: john_smith@example.com')
           expect(page).to have_content('SKU: BAG-00001')
-          expect(page).to have_content('Promotion: Promo')
           expect(page).to have_content('Store: Spree Test Store')
           expect(page).to have_content('Channel: spree')
         end

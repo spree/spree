@@ -79,19 +79,14 @@ describe 'Prototypes', type: :feature, js: true do
       click_link 'Prototypes'
 
       click_icon :edit
-      property_ids = find_field('prototype_property_ids').value.map(&:to_i)
-      expect(property_ids).to match_array [model_property.id, brand_property.id]
 
-      unselect 'Brand', from: 'prototype_property_ids'
-      unselect 'Model', from: 'prototype_property_ids'
+      first('a[class="select2-search-choice-close"]').click
+      find('a[class="select2-search-choice-close"]').click
 
       click_button 'Update'
 
       click_icon :edit
-
-      expect(page).to have_field('prototype_property_ids') do |field|
-        field.empty?
-      end
+      expect(page).to have_no_css('.select2-search-choice')
     end
   end
 

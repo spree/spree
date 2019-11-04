@@ -13,9 +13,9 @@ describe 'Stock Transfers', type: :feature, js: true do
     visit spree.admin_stock_transfers_path
     click_on 'New Stock Transfer'
 
-    select2_search variant.sku, from: 'Variant'
+    select2 variant.sku, from: 'Variant', search: true, match: :first
 
-    content = "#{variant.name} - #{variant.sku} (#{variant.options_text})"
+    content = "#{variant.name} (#{variant.options_text}) - #{variant.sku}"
     expect(page).to have_content(content)
   end
 
@@ -29,7 +29,7 @@ describe 'Stock Transfers', type: :feature, js: true do
     click_on 'New Stock Transfer'
     fill_in 'reference', with: 'PO 666'
 
-    select2_search variant.name, from: 'Variant'
+    select2 variant.name, from: 'Variant', search: true
 
     click_button 'Add'
     click_button 'Transfer Stock'
@@ -64,8 +64,9 @@ describe 'Stock Transfers', type: :feature, js: true do
 
       fill_in 'reference', with: 'PO 666'
       check 'transfer_receive_stock'
-      select('NY', from: 'transfer_destination_location_id')
-      select2_search variant.name, from: 'Variant'
+      select2 'NY', from: 'Destination'
+
+      select2 variant.name, from: 'Variant', search: true
 
       click_button 'Add'
       click_button 'Transfer Stock'
@@ -81,8 +82,8 @@ describe 'Stock Transfers', type: :feature, js: true do
 
       fill_in 'reference', with: 'PO 666'
 
-      select('NY', from: 'transfer_destination_location_id')
-      select2_search variant.name, from: 'Variant'
+      select2 'NY', from: 'Destination'
+      select2 variant.name, from: 'Variant', search: true
 
       click_button 'Add'
       click_button 'Transfer Stock'
