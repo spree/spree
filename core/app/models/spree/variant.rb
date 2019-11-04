@@ -116,7 +116,7 @@ module Spree
     end
 
     def options_text
-      Spree::Variant::OptionsPresentation.new(self).to_sentence
+      Spree::VariantOptionsPresenter.new(self).to_sentence
     end
 
     # Default to master name
