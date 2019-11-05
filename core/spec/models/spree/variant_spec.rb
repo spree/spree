@@ -377,10 +377,10 @@ describe Spree::Variant, type: :model do
     subject(:options_text) { variant.options_text }
 
     before do
-      allow(Spree::VariantOptionsPresenter).to receive(:new).with(variant).and_return(fake_presenter)
+      allow(Spree::Variants::OptionsPresenter).to receive(:new).with(variant).and_return(fake_presenter)
     end
 
-    it 'calls Spree::VariantOptionsPresenter' do
+    it 'calls Spree::Variants::OptionsPresenter' do
       expect(fake_presenter).to receive(:to_sentence)
 
       options_text

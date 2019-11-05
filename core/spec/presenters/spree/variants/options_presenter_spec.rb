@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Spree::VariantOptionsPresenter do
+describe Spree::Variants::OptionsPresenter do
   describe '#to_sentence' do
     let(:option_type_1) { create :option_type, position: 2, name: 'Foo Type', presentation: 'Foo Type' }
     let(:option_type_2) { create :option_type, position: 1, name: 'Bar Type', presentation: 'Bar Type' }
