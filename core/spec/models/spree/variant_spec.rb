@@ -370,20 +370,20 @@ describe Spree::Variant, type: :model do
     end
   end
 
-  # Regression test for #2432
-  describe 'options_text' do
-    let!(:variant) { build(:variant, option_values: []) }
-    let!(:master) { create(:master_variant) }
+  describe '#options_text' do
+    let(:variant) { build :variant }
+    let(:fake_presenter) { double :fake_presenter }
+
+    subject(:options_text) { variant.options_text }
 
     before do
-      # Order bar than foo
-      variant.option_values << create(:option_value, name: 'Foo', presentation: 'Foo', option_type: create(:option_type, position: 2, name: 'Foo Type', presentation: 'Foo Type'))
-      variant.option_values << create(:option_value, name: 'Bar', presentation: 'Bar', option_type: create(:option_type, position: 1, name: 'Bar Type', presentation: 'Bar Type'))
-      variant.save
+      allow(Spree::Variants::OptionsPresenter).to receive(:new).with(variant).and_return(fake_presenter)
     end
 
-    it 'orders by bar than foo' do
-      expect(variant.options_text).to eql 'Bar Type: Bar, Foo Type: Foo'
+    it 'calls Spree::Variants::OptionsPresenter' do
+      expect(fake_presenter).to receive(:to_sentence)
+
+      options_text
     end
   end
 

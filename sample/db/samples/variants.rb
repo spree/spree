@@ -24,7 +24,7 @@ VARIANTS.each do |(parent_name, taxon_name, product_name, color_name)|
         product.variants.new do |variant|
           variant.cost_price = product.price
           variant.option_values = option_values
-          variant.sku = product.sku + '_' + option_values.map(&:presentation).join('_')
+          variant.sku = product.sku + '_' + option_values.map(&:name).join('_')
           variant.tax_category = clothing_tax_category
           variant.save!
         end
@@ -34,7 +34,7 @@ VARIANTS.each do |(parent_name, taxon_name, product_name, color_name)|
       product.variants.new do |variant|
         variant.cost_price = product.price
         variant.option_values = option_values
-        variant.sku = product.sku + '_' + option_values.map(&:presentation).join('_')
+        variant.sku = product.sku + '_' + option_values.map(&:name).join('_')
         variant.tax_category = clothing_tax_category
         variant.save!
       end
