@@ -15,13 +15,13 @@ Promotions can be activated in three different ways:
 
 Promotions for these individual ways are activated through their corresponding `PromotionHandler` class, once they've been checked for eligibility.
 
-Promotions relate to two other main components: `actions` and `rules`. When a promotion is activated, the actions for the promotion are performed, passing in the payload from the `fire_event` call that triggered the activator becoming active. Rules are used to determine if a promotion meets certain criteria in order to be applicable. (In Spree 2.1 and prior, you need to explicitly associate a Promotion to an event like spree.order.contents_changed, spree.order.contents_changed, spree.checkout.coupon_code_added, etc. As of Spree 2.2, this is no longer necessary and the event_name column has been dropped.)
+Promotions relate to two other main components: `actions` and `rules`. When a promotion is activated, the actions for the promotion are performed, passing in the payload from the `fire_event` call that triggered the activator becoming active. Rules are used to determine if a promotion meets certain criteria in order to be applicable.
 
 In some special cases where a promotion has a `code` or a `path` configured for it, the promotion will only be activated if the payload's code or path match the promotion's. The `code` attribute is used for promotion codes, where a user must enter a code to receive the promotion, and the `path` attribute is used to apply a promotion once a user has visited a specific path.
 
-!!!
+<alert kind="note">
 Path-based promotions will only work when the `Spree::PromotionHandler::Page` class is used, as in `Spree::ContentController` from `spree_frontend`.
-!!!
+</alert>
 
 A promotion may also have a `usage_limit` attribute set, which restricts how many times the promotion can be used.
 
@@ -49,10 +49,6 @@ When a `CreateItemAdjustments` action is undertaken, an adjustment is automatica
 The eligibility of the item for this promotion is re-checked whenever the item is updated. Its eligibility is based off the rules of the promotion.
 
 An adjustment to an order from a promotion depends on the calculators. For more information about calculators, please see the [Calculators guide](/developer/core/calculators.html).
-
-!!!
-The Spree::Promotion::Actions::CreateItemAdjustments object has a specific bloat issue in Spree 2.2 and will not scale on larger stores. Spree 2.3 fixes the root cause of the problem. For this reason, you may want to upgrade to Spree 2.3 before using this promotion action.
-!!!
 
 ### Free Shipping
 
@@ -99,21 +95,16 @@ en:
 
 ## Rules
 
-There are five rules which come with Spree 2.2 and Spree 2.3:
-
 * `FirstOrder`: The user's order is their first.
 * `ItemTotal`: The order's total is greater than (or equal to) a given value.
 * `Product`: An order contains a specific product.
 * `User` The order is by a specific user.
 * `UserLoggedIn`: The user is logged in.
-
-Spree 2.4 adds an two more rules in addition to the five listed above:
 * `One Use Per User`: Can be used only once per customer.
 * `Taxon(s)`: Order includes product(s) with taxons that you associate to this rule.
+* `Country`: Ship Address country used for this Order matches the selected Country, eg. US-only Orders
 
 Rules are used by Spree to determine if a promotion is applicable to an order and can be matched in one of two ways: all of the rules must match, or one rule must match. This is determined by the `match_policy` attribute on the `Promotion` object. As you will see in the Admin, you can set the match_policy to be "any" or "all" of the rules associated with the Promotion. When set to "any" the Promotion will be considered eligible if any one of the rules applies, when set to "all" it will be eligible only if all the rules apply.
-
-
 
 ### Registering a New Rule
 
@@ -147,14 +138,15 @@ If your promotion supports some giving discounts on some line items, but not oth
 
 For example, if you are giving a promotion on specific products only, `eligible?` should return true if the order contains one of the products eligible for promotion, and `actionable?` should return true when the line item specified is one of the specific products for this promotion.
 
-
 You can then register the promotion using this code inside `config/initializers/spree.rb`:
 
 ```ruby
 Rails.application.config.spree.promotions.rules << Spree::Promotion::Rules::MyPromotionRule
 ```
 
-NOTE: proper location and file name for the rule in this example would be: `app/models/spree/promotion/rules/my_promotion_rule.rb`
+<alert kind="note">
+Proper location and file name for the rule in this example would be: `app/models/spree/promotion/rules/my_promotion_rule.rb`
+</alert>
 
 To get your rule to appear in the admin promotions interface you have a few more changes to make.
 
@@ -164,7 +156,7 @@ This file can be as simple as an empty file if your rule requires no parameters,
 
 And finally, your new rule must have a name and description defined for the locale you will be using it in. For English, edit `config/locales/en.yml` and add the following to support our new example rule:
 
-```yml
+```yaml
 en:
   spree:
     promotion_rule_types:
@@ -174,7 +166,3 @@ en:
 ```
 
 Restart your application. Once this rule has been registered, it will be available within Spree's admin interface.
-
-$$$
-Write about Spree::Promo::CouponApplicator
-$$$
