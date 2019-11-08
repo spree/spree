@@ -19,6 +19,7 @@ import Params from '../components/helpers/Params'
 import Table from '../components/base/Table'
 import Td from '../components/base/Td'
 import Th from '../components/base/Th'
+import Toc from '../components/Toc'
 
 /**
  * Helpers
@@ -69,6 +70,7 @@ export default function Template({ data }) {
       activeSection={guide.fields.section}
       activeRootSection={guide.fields.rootSection}
     >
+      {guide.tableOfContents && <Toc toc={guide.tableOfContents} />}
       <article className="mt2">
         <H1>{guide.frontmatter.title}</H1>
         {renderAst(guide.htmlAst)}
@@ -113,6 +115,7 @@ export const pageQuery = graphql`
       }
     }
     guide: markdownRemark(id: { eq: $id }) {
+      tableOfContents(maxDepth: 3)
       fields {
         section
         rootSection

@@ -170,3 +170,52 @@ td[kind='field'] {
     word-break: break-word;
   }
 }
+
+/* ------------------------ */
+/* Table of Contents styles */
+/* ------------------------ */
+.toc {
+  top: 140px;
+  right: 0;
+  max-height: 100%;
+  overflow: auto;
+}
+
+.toc ul {
+  margin: 0 1rem;
+  padding: 0;
+  list-style: none;
+}
+
+.toc nav > ul {
+  margin: 0;
+}
+
+.toc p {
+  margin: 0;
+  display: inline-block;
+}
+
+.toc li {
+  line-height: 1.4;
+  margin-bottom: 0.5rem;
+}
+
+.toc a {
+  text-decoration: none;
+  color: #777;
+}
+
+.toc a:hover {
+  color: #779e01;
+}
+
+.toc a:focus {
+  text-decoration: underline;
+}
+
+@media screen and (min-width: 60em) {
+  .toc + article {
+    margin-right: 16rem;
+  }
+}

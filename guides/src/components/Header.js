@@ -75,7 +75,7 @@ export default class Header extends React.PureComponent {
 
           <DocSearch isOpen={this.state.searchIsOpen} />
 
-          <nav className="w-100 tr dn flex-l items-center justify-end">
+          <nav className="h-100 w-100 tr dn flex-l items-center justify-end">
             <NavItem
               text="API"
               isActive={this.isApiSectionActive()}
@@ -123,7 +123,7 @@ export default class Header extends React.PureComponent {
               />
             ) : (
               <IconSearch
-                className="pointer dib dn-l mv2 mv0-l mr0 pv2 ph1 gray"
+                className="pointer dib dn-l mv2 mv0-l mr0 ph1 gray"
                 onClick={this._toggleSearch}
               />
             )}
