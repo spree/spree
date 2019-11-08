@@ -20,6 +20,7 @@ import Table from '../components/base/Table'
 import Td from '../components/base/Td'
 import Th from '../components/base/Th'
 import Toc from '../components/Toc'
+import MarkdownPageFooter from '../components/MarkdownPageFooter'
 
 /**
  * Helpers
@@ -74,6 +75,12 @@ export default function Template({ data }) {
       <article className="mt2">
         <H1>{guide.frontmatter.title}</H1>
         {renderAst(guide.htmlAst)}
+        <MarkdownPageFooter
+          section={guide.fields.section}
+          title={guide.frontmatter.title}
+          group={data.sidebarNav.group}
+          isIndex={guide.fields.isIndex}
+        />
       </article>
     </Layout>
   )
