@@ -9,6 +9,8 @@ import Slugger from 'github-slugger'
  */
 
 const styleToc = css`
+  top: 140px;
+
   @media screen and (min-width: 60em) {
     & + article {
       margin-right: 16rem;
