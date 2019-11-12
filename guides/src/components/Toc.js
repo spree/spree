@@ -2,50 +2,13 @@
 /** @jsx jsx */
 import PropTypes from 'prop-types'
 import { css, jsx } from '@emotion/core'
+import Slugger from 'github-slugger'
 
 /**
  * Styles
  */
 
 const styleToc = css`
-  top: 140px;
-  right: 0;
-  max-height: 100%;
-  overflow: auto;
-
-  ul {
-    margin: 0 1rem;
-    padding: 0;
-    list-style: none;
-  }
-
-  nav > ul {
-    margin: 0;
-  }
-
-  p {
-    margin: 0;
-    display: inline-block;
-  }
-
-  li {
-    line-height: 1.4;
-    margin-bottom: 0.5rem;
-  }
-
-  a {
-    text-decoration: none;
-    color: #777;
-
-    &:hover {
-      color: #779e01;
-    }
-
-    &:focus {
-      text-decoration: underline;
-    }
-  }
-
   @media screen and (min-width: 60em) {
     & + article {
       margin-right: 16rem;
@@ -54,18 +17,53 @@ const styleToc = css`
 `
 
 /**
+ * Helpers
+ */
+
+const getSlugHref = string => {
+  const slugger = new Slugger()
+
+  return `#${slugger.slug(string)}`
+}
+
+const getMarginDepth = depth => ([1, 2].includes(depth) ? 0 : depth)
+
+/**
  * Component
  */
 
-const Toc = ({ toc }) => (
-  <aside className="ml3 fixed w5 dn db-l" css={styleToc}>
+const Toc = ({ headings }) => (
+  <aside className="ml3 fixed w5 dn db-l overflow-auto right-0" css={styleToc}>
     <h4 className="ttu mt0 mb3">Table Of Contents</h4>
-    <nav dangerouslySetInnerHTML={{ __html: toc }} />
+
+    <nav>
+      {headings.map(heading => {
+        const slug = getSlugHref(heading.value)
+        const margin = `ml${getMarginDepth(heading.depth)}`
+
+        if (heading.depth >= 4) return
+
+        return (
+          <a
+            key={slug}
+            className={`db gray hover-spree-green mb1 pointer link ${margin}`}
+            href={slug}
+          >
+            {heading.value}
+          </a>
+        )
+      })}
+    </nav>
   </aside>
 )
 
 Toc.propTypes = {
-  toc: PropTypes.string.isRequired
+  headings: PropTypes.arrayOf(
+    PropTypes.shape({
+      depth: PropTypes.number,
+      value: PropTypes.string
+    })
+  )
 }
 
 export default Toc

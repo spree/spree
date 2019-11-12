@@ -71,8 +71,8 @@ export default function Template({ data }) {
       activeSection={guide.fields.section}
       activeRootSection={guide.fields.rootSection}
     >
-      {guide.tableOfContents && <Toc toc={guide.tableOfContents} />}
-      <article className="mt2">
+      {guide.headings.length > 0 && <Toc headings={guide.headings} />}
+      <article className="mt2 nested-links">
         <H1>{guide.frontmatter.title}</H1>
         {renderAst(guide.htmlAst)}
         <MarkdownPageFooter
@@ -122,7 +122,10 @@ export const pageQuery = graphql`
       }
     }
     guide: markdownRemark(id: { eq: $id }) {
-      tableOfContents(maxDepth: 3)
+      headings {
+        depth
+        value
+      }
       fields {
         section
         rootSection

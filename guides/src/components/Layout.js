@@ -51,9 +51,7 @@ export default class Layout extends React.Component {
           )}
 
           <main
-            className={cx(
-              this.props.nav && 'bg-white nested-links lh-copy pa4 ph5-l pt3'
-            )}
+            className={cx(this.props.nav && 'bg-white lh-copy pa4 ph5-l pt3')}
             css={{
               '@media (min-width: 60rem)': {
                 marginLeft: this.props.nav ? styles.sidebar.width : '0'
