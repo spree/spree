@@ -27,7 +27,6 @@
     "gatsby-source-filesystem": "^2.0.4",
     "gatsby-transformer-remark": "^2.3.8",
     "gatsby-transformer-sharp": "^2.1.4",
-    "github-slugger": "^1.2.1",
     "lodash.kebabcase": "^4.1.1",
     "lodash.startcase": "^4.4.0",
     "mobx": "^4.2.0",

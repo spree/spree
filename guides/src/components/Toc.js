@@ -2,7 +2,7 @@
 /** @jsx jsx */
 import PropTypes from 'prop-types'
 import { css, jsx } from '@emotion/core'
-import Slugger from 'github-slugger'
+import kebabCase from 'lodash.kebabcase'
 
 /**
  * Styles
@@ -10,6 +10,9 @@ import Slugger from 'github-slugger'
 
 const styleToc = css`
   top: 140px;
+  max-height: calc(100% - 140px);
+  overflow-y: auto;
+  overflow-x: hidden;
 
   @media screen and (min-width: 60em) {
     & + article {
@@ -22,11 +25,7 @@ const styleToc = css`
  * Helpers
  */
 
-const getSlugHref = string => {
-  const slugger = new Slugger()
-
-  return `#${slugger.slug(string)}`
-}
+const getSlugHref = text => `#${kebabCase(text)}`
 
 const getMarginDepth = depth => ([1, 2].includes(depth) ? 0 : depth)
 
@@ -35,7 +34,7 @@ const getMarginDepth = depth => ([1, 2].includes(depth) ? 0 : depth)
  */
 
 const Toc = ({ headings }) => (
-  <aside className="ml3 fixed w5 dn db-l overflow-auto right-0" css={styleToc}>
+  <aside className="ml3 mw5 fixed dn db-l overflow-auto right-1" css={styleToc}>
     <h4 className="ttu mt0 mb3">Table Of Contents</h4>
 
     <nav>
@@ -51,7 +50,7 @@ const Toc = ({ headings }) => (
             className={`db gray hover-spree-green mb1 pointer link ${margin}`}
             href={slug}
           >
-            {heading.value}
+            <span dangerouslySetInnerHTML={{ __html: heading.value }} />
           </a>
         )
       })}
