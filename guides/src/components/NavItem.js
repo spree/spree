@@ -8,7 +8,7 @@ import { Link } from 'gatsby'
  */
 
 const linkClasses = isActive =>
-  `bb-l bw2-l h-100 inline-flex items-center link fw5 f5 nowrap ph2 ${
+  `bb-l bw2-l dib flex-l items-center-l h-100-l mv2 mv0-l link mr0 fw5 f5 nowrap pa2 ${
     isActive
       ? 'b--spree-green spree-green b--gray w-100 w-auto-l'
       : 'gray b--transparent'

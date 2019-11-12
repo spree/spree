@@ -123,7 +123,7 @@ export default class Header extends React.PureComponent {
               />
             ) : (
               <IconSearch
-                className="pointer dib dn-l mv2 mv0-l mr0 ph1 gray"
+                className="pointer dib dn-l mv2 mv0-l mr0 ph1 pv2 gray"
                 onClick={this._toggleSearch}
               />
             )}
