@@ -91,5 +91,9 @@ module Spree
     def set_image_alt(image)
       return image.alt if image.alt.present?
     end
+
+    def icon(name:, classes: '', width:, height:)
+      inline_svg "#{name}.svg", class: "spree-icon #{classes}", size: "#{width}px*#{height}px"
+    end
   end
 end

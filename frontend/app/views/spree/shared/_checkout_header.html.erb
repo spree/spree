@@ -1,0 +1,18 @@
+<div id="spree-header">
+  <header id="header" class="d-flex align-items-center bg-white header-spree border-bottom">
+    <div class="container position-relative">
+      <div class="position-absolute checkout-header-link">
+        <%= icon(name: 'arrow-right',
+                classes: 'spree-icon-arrow spree-icon-arrow-left',
+                width: 7,
+                height: 14) %>
+        <%= link_to Spree.t('checkout.back_to_cart'), cart_path, class: "text-uppercase" %>
+      </div>
+      <div class="d-flex flex-nowrap align-items-center justify-content-center">
+        <figure class="logo flex-grow-0 flex-xl-grow-0 order-xl-0 header-spree-fluid-logo">
+          <%= logo %>
+        </figure>
+      </div>
+    </div>
+  </header>
+</div>
