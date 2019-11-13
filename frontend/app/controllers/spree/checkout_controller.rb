@@ -26,6 +26,8 @@ module Spree
 
     rescue_from Spree::Core::GatewayError, with: :rescue_from_spree_gateway_error
 
+    layout 'spree/layouts/checkout'
+
     # Updates the order and advances to the next state (when possible.)
     def update
       if @order.update_from_params(params, permitted_checkout_attributes, request.headers.env)
@@ -37,7 +39,6 @@ module Spree
 
         if @order.completed?
           @current_order = nil
-          flash.notice = Spree.t(:order_processed_successfully)
           flash['order_completed'] = true
           redirect_to completion_route
         else
