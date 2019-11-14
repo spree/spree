@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="22.573" height="22.505" viewBox="0 0 22.573 22.505">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #232323;
+        stroke: #232323;
+      }
+    </style>
+  </defs>
+  <g data-name="Group 519" transform="translate(-679.5 -214.339)">
+    <g transform="translate(680 214.839)">
+      <path data-name="Path 6" class="cls-1" d="M21.364,20.408l-5.226-5.226a9.177,9.177,0,1,0-.906.906l5.226,5.226a.648.648,0,0,0,.453.191.628.628,0,0,0,.453-.191A.645.645,0,0,0,21.364,20.408ZM1.333,9.169a7.882,7.882,0,1,1,7.882,7.887A7.891,7.891,0,0,1,1.333,9.169Z" transform="translate(-0.05 0)"/>
+    </g>
+  </g>
+</svg>
