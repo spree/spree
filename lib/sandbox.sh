@@ -57,7 +57,6 @@ $SPREE_GATEWAY_GEM
 
 group :test, :development do
   gem 'bullet'
-  gem 'inline_svg'
   gem 'pry-byebug'
   gem 'rack-mini-profiler'
   gem 'awesome_print'
