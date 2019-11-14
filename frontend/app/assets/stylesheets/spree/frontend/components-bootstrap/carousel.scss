@@ -1,0 +1,60 @@
+.carousel {
+  &-indicators {
+    &-indicator {
+      $size: 6px;
+      border: 1px solid theme-color("secondary");
+      background: theme-color("light");
+      width: $size;
+      height: $size;
+      flex: 0 0 auto;
+      border-radius: 50%;
+      &.active {
+        background: theme-color("secondary");
+      }
+    }
+  }
+  &-vertically-animated {
+    // Source: https://stackoverflow.com/questions/42910076/bootstrap-4-alpha-6-vertical-carousel
+    .carousel-item-next.carousel-item-left,
+    .carousel-item-prev.carousel-item-right {
+        -webkit-transform: translate3d(0, 0, 0);
+                transform: translate3d(0, 0, 0);
+    }
+
+    .carousel-item-next,
+    .active.carousel-item-right {
+        -webkit-transform: translate3d(0, 100%, 0);
+                transform: translate3d(0, 100% 0);
+    }
+
+    .carousel-item-prev,
+    .active.carousel-item-left {
+    -webkit-transform: translate3d(0,-100%, 0);
+            transform: translate3d(0,-100%, 0);
+    }
+  }
+  &-icon {
+    &-control {
+      @mixin arrow {
+        top: 0;
+        width: 15%;
+      }
+      &-rounded {
+        $size: 44px;
+        border-radius: 50%;
+        width: $size;
+        height: $size;
+        background: theme-color("light");
+        // background: theme-color("dark");
+      }
+      &--previous {
+        left: 0;
+        @include arrow;
+      }
+      &--next {
+        right: 0;
+        @include arrow;
+      }
+    }
+  }
+}

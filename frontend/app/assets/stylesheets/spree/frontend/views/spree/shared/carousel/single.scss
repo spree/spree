@@ -1,0 +1,113 @@
+.product-carousel {
+  &-control {
+    $arrow-width: 15%;
+
+    @mixin arrow {
+      top: 0;
+      width: $arrow-width;
+    }
+    &--previous {
+      left: -$arrow-width;
+      @include arrow;
+    }
+    &--next {
+      right: -$arrow-width;
+      @include arrow;
+    }
+    &-rounded {
+      $size: 44px;
+      border-radius: 50%;
+      width: $size;
+      height: $size;
+      background: theme-color("light");
+    }
+  }
+  &-item {
+    transition: transform 0.1s ease-in-out;
+
+    &-squared {
+      position: relative;
+      height: 0;
+      padding: 0 0 100% / $photo-width-to-height-ratio 0;
+      img {
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        object-fit: contain;
+      }
+    }
+    &:not(.carousel-item) {
+      display: none;
+    }
+  }
+  &-indicators {
+    text-align: center;
+    padding: 5px 10px 0;
+    overflow-x: auto;
+    position: static;
+    white-space: nowrap;
+    display: block;
+    margin: 0;
+
+    &-indicator {
+      display: none;
+      &--visible {
+        display: inline-block;
+      }
+    }
+
+    li {
+      $image-width: 60px;
+      $image-height: 82px;
+
+      width: $image-width;
+      height: $image-height;
+      flex: none;
+      border-radius: 0;
+      border: none;
+      background: none;
+      opacity: 1;
+
+      &:first-child {
+        margin-left: 0;
+      }
+
+      &:last-child {
+        margin-right: 0;
+      }
+
+      img {
+        width: auto;
+        height: auto;
+        max-height: $image-height;
+        max-width: $image-width;
+        margin: 0 auto;
+        border: 1px solid transparent;
+      }
+
+      &.active {
+        img {
+          border-color: theme-color('dark-text')
+        }
+      }
+    }
+  }
+  &--empty {
+    padding: 0 0 100% / $photo-width-to-height-ratio 0;
+    background: theme-color('light');
+    &>* {
+      display: none !important;
+    }
+  }
+  &-overlay {
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: 0;
+    z-index: 1;
+    &-modal-opener {
+      cursor: image-url('picture-zoom.svg'), auto
+    }
+  }
+
+}
