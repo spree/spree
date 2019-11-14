@@ -6,7 +6,6 @@ source 'https://rubygems.org'
 gem 'sass-rails'
 gem 'sqlite3', '~> 1.4.0', platforms: [:ruby, :mingw, :mswin, :x64_mingw]
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw]
-gem 'inline_svg', '~> 1.5'
 
 platforms :jruby do
   gem 'jruby-openssl'
