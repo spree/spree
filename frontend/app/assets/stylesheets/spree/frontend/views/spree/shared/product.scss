@@ -1,0 +1,42 @@
+.product-component {
+  &-name {
+    $font-size: font-px-to-rem(12px);
+
+    font-weight: 500;
+    color: theme-color('dark');
+    font-size: $font-size;
+    line-height: $font-size;
+    margin-top: calc-spacer(2);
+
+    @include media-breakpoint-up(md) {
+      $font-size: font-px-to-rem(18px);
+
+      font-size: $font-size;
+      line-height: $font-size;
+      margin-top: calc-spacer(3);
+    }
+  }
+
+  &-price {
+    $font-size: font-px-to-rem(14px);
+
+    color: theme-color('dark');
+    font-weight: 600;
+    font-size: $font-size;
+    line-height: $font-size;
+    margin-top: calc-spacer(2);
+
+    @include media-breakpoint-up(md) {
+      $font-size: font-px-to-rem(20px);
+
+      font-size: $font-size;
+      line-height: $font-size;
+      margin-top: calc-spacer(3);
+    }
+  }
+}
+
+.product-component-image {
+  width: 100%;
+  display: block;
+}

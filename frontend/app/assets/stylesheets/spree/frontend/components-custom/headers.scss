@@ -1,0 +1,28 @@
+.spree-header {
+  font-size: font-px-to-rem(18px);
+  text-transform: uppercase;
+  color: theme-color('dark-text');
+  text-align: center;
+
+  &.header-sm {
+    font-size: font-px-to-rem(14px);
+  }
+
+  @include media-breakpoint-up(sm) {
+    font-size: font-px-to-rem(34px);
+    line-height: 0.91;
+
+    &.header-sm {
+      font-size: font-px-to-rem(27px);
+    }
+  }
+
+  @include media-breakpoint-up(lg) {
+    font-size: font-px-to-rem(32px);
+    line-height: 0.88;
+
+    &.header-sm {
+      font-size: font-px-to-rem(20px);
+    }
+  }
+}
