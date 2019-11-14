@@ -1,0 +1,42 @@
+.footer-spree {
+  max-width: $spree-header-max-width;
+
+  .logo img {
+    height: 27px;
+    width: 62px;
+    @include media-breakpoint-up(xl) {
+      height: 52px;
+      width: 122px;
+    }
+  }
+  &-contact-note {
+    font-size: font-px-to-rem(12px);
+    @include media-breakpoint-up(xl) {
+      font-size: font-px-to-rem(14px);
+    }
+    }
+  &-copyright{
+    color: theme-color('dark');
+    font-size: font-px-to-rem(9px);
+
+    @include media-breakpoint-up(xl) {
+      font-size: font-px-to-rem(14px);
+    }
+  }
+  &-label {
+    @include media-breakpoint-up(xl) {
+      color: theme-color('dark');
+      font-size: font-px-to-rem(16px);
+      font-weight: 500;
+    }
+  }
+  &-info {
+    font-size: font-px-to-rem(14px);
+  }
+  &-menu-links {
+    a {
+      color: theme-color('dark');
+      font-size: font-px-to-rem(14px);
+    }
+  }
+}

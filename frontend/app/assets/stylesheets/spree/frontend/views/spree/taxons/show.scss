@@ -1,0 +1,41 @@
+#no-taxon-banner {
+  img {
+    object-fit: cover;
+  }
+}
+.taxon {
+  &-icon {
+    img {
+      object-fit: cover;
+    }
+  }
+  &-title {
+    font-size: font-px-to-rem(20px);
+    font-weight: 500;
+    margin-bottom: 10px;
+    @include media-breakpoint-up(md) {
+      font-size: font-px-to-rem(32px);
+    }
+  }
+  &-description {
+    font-size: font-px-to-rem(14px);
+    font-weight: 500;
+  }
+  &-subcategories {
+    overflow-x: auto;
+    white-space: nowrap;
+    font-weight: bold;
+    &-wrapper{
+      position: sticky;
+      top: 90px;
+      z-index: 2;
+      background: white;
+    }
+    > a, &-selected {
+      color: theme-color("dark-text");
+    }
+    &-selected {
+      border-bottom: 5px solid theme-color('dark-text');
+    }
+  }
+}

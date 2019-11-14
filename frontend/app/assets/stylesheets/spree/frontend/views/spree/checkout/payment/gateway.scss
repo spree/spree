@@ -1,0 +1,16 @@
+.payment-gateway {
+  &-fields {
+    display: grid;
+    grid-template: repeat(3, 1fr) / 1fr 1fr;
+    grid-column-gap: 20px;
+  }
+  &-field {
+    grid-column: span 2;
+    padding-bottom: 33px;
+    margin-bottom: 0;
+
+    &[data-hook='card_expiration'], &[data-hook='card_code'] {
+      grid-column: span 1;
+    }
+  }
+}
