@@ -4,8 +4,6 @@ module Spree
   # checkout which has nothing to do with updating an order that this approach
   # is waranted.
   class CheckoutController < Spree::StoreController
-    layout 'spree/layouts/checkout'
-
     include Spree::Checkout::AddressBook
 
     before_action :set_cache_header, only: [:edit]
