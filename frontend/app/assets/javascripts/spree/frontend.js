@@ -1,4 +1,5 @@
 //= require jquery3
+//= require jquery_ujs
 //= require popper
 //= require bootstrap
 //= require jquery.payment
@@ -6,13 +7,8 @@
 //= require polyfill.min
 //= require fetch.umd
 //= require spree/api/main
-//= require spree/frontend/api_tokens
-//= require spree/frontend/cart
-//= require spree/frontend/checkout
-//= require spree/frontend/checkout/address
-//= require spree/frontend/checkout/address_book
-//= require spree/frontend/checkout/payment
-//= require spree/frontend/product
+//= require lazysizes.min
+//= require_tree ./frontend
 
 Spree.routes.api_tokens = Spree.pathFor('api_tokens')
 Spree.routes.ensure_cart = Spree.pathFor('ensure_cart')

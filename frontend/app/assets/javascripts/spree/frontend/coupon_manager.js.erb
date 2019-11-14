@@ -3,6 +3,9 @@ function CouponManager (input) {
   this.couponCodeField = this.input.couponCodeField
   this.couponApplied = false
   this.couponStatus = this.input.couponStatus
+  this.couponButton = this.input.couponButton
+  this.couponErrorIcon = document.createElement("img")
+  this.couponErrorIcon.src = '<%= image_path('error.svg') %>'
 }
 
 CouponManager.prototype.applyCoupon = function () {
@@ -40,6 +43,9 @@ CouponManager.prototype.sendRequest = function () {
     this.couponApplied = true
   }.bind(this)).fail(function (xhr) {
     var handler = xhr.responseJSON
+    this.couponCodeField.addClass('error')
+    this.couponButton.addClass('error')
     this.couponStatus.addClass('alert-error').html(handler['error'])
+    this.couponStatus.prepend(this.couponErrorIcon)
   }.bind(this))
 }
