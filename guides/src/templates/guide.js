@@ -19,6 +19,7 @@ import Params from '../components/helpers/Params'
 import Table from '../components/base/Table'
 import Td from '../components/base/Td'
 import Th from '../components/base/Th'
+import Toc from '../components/Toc'
 import MarkdownPageFooter from '../components/MarkdownPageFooter'
 
 /**
@@ -70,7 +71,8 @@ export default function Template({ data }) {
       activeSection={guide.fields.section}
       activeRootSection={guide.fields.rootSection}
     >
-      <article className="mt2">
+      {guide.headings.length > 0 && <Toc headings={guide.headings} />}
+      <article className="mt2 nested-links">
         <H1>{guide.frontmatter.title}</H1>
         {renderAst(guide.htmlAst)}
         <MarkdownPageFooter
@@ -120,6 +122,10 @@ export const pageQuery = graphql`
       }
     }
     guide: markdownRemark(id: { eq: $id }) {
+      headings {
+        depth
+        value
+      }
       fields {
         section
         rootSection
