@@ -12,6 +12,10 @@
       @include media-breakpoint-up(lg) {
         font-size: font-px-to-rem(18px);
       }
+      @include media-breakpoint-up(xl) {
+        top: 50%;
+        transform: translateY(-50%);
+      }
       a {
         color: theme-color('dark-text');
         padding-left: 15px;
