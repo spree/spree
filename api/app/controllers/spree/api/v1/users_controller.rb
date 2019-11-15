@@ -6,14 +6,22 @@ module Spree
 
         def index
           @users = Spree.user_class.accessible_by(current_ability, :show)
+          if Rails.version.to_f < 6.0
+            @users = if params[:ids]
+                      @users.ransack(id_in: params[:ids].split(','))
+                    else
+                      @users.ransack(params[:q])
+                    end
 
-          @users = if params[:ids]
-                     @users.ransack(id_in: params[:ids].split(','))
-                   else
-                     @users.ransack(params[:q])
-                   end
+            @users = @users.result.page(params[:page]).per(params[:per_page])
+          else
+            @users = if params[:ids]
+                      @users.where(id: params[:ids])
+                    else
+                      @users
+                    end
+          end
 
-          @users = @users.result.page(params[:page]).per(params[:per_page])
           expires_in 15.minutes, public: true
           headers['Surrogate-Control'] = "max-age=#{15.minutes}"
           respond_with(@users)
