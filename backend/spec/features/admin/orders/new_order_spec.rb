@@ -36,14 +36,12 @@ describe 'New Order', type: :feature do
     click_on 'Update'
 
     click_on 'Payments'
-    expect(page).to have_current_path("/admin/orders/#{Spree::Order.last.number}/payments/new")
     click_on 'Update'
 
     expect(page).to have_current_path(spree.admin_order_payments_path(Spree::Order.last))
     click_icon 'capture'
 
     click_on 'Shipments'
-    expect(page).to have_current_path("/admin/orders/#{Spree::Order.last.number}/edit")
     click_on 'Ship'
 
     expect(page).to have_content('shipped')
@@ -70,7 +68,6 @@ describe 'New Order', type: :feature do
       click_on 'Update'
 
       click_on 'Shipments'
-      expect(page).to have_current_path("/admin/orders/#{Spree::Order.last.number}/edit")
 
       within('.stock-contents') do
         expect(page).to have_content(product.name)
