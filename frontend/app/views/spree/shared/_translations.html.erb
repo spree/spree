@@ -1,7 +1,9 @@
 <script>
-  Spree.translations = <%==
-  {
-    coupon_code_applied: Spree.t(:coupon_code_applied)
-  }.to_json
-%>
+  window.addEventListener('turbolinks:load', function() {
+      Spree.translations = <%==
+    {
+      coupon_code_applied: Spree.t(:coupon_code_applied)
+    }.to_json
+  %>
+  });
 </script>
