@@ -140,10 +140,6 @@ module Spree
       content_tag(:nav, crumb_list, id: 'breadcrumbs', class: 'col-12 mt-1 mt-sm-3 mt-lg-4', aria: { label: 'breadcrumb' })
     end
 
-    def icon(name:, classes: '', width:, height:)
-      inline_svg "#{name}.svg", class: "spree-icon #{classes}", size: "#{width}px*#{height}px"
-    end
-
     def permitted_product_params
       product_filters = Rails.cache.fetch('spree/product-filters', expires_in: 5.minutes) { Spree::OptionType.pluck(:name) }
       params.permit(product_filters << :sort_by)
