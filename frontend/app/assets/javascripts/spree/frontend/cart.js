@@ -18,7 +18,7 @@ Spree.ready(function ($) {
     $('form#update-cart input.shopping-cart-item-quantity-input').on('change', function(e) {
       $('#update-cart').submit()
     })
-    $('form#update-cart button.shopping-cart-item-quantity-decrease-btn').on('click', function() {
+    $('form#update-cart button.shopping-cart-item-quantity-decrease-btn').off('click').on('click', function() {
       var itemId = $(this).attr('data-id')
       var input = $("input[data-id='" + itemId + "']")
       var inputValue = parseInt($(input).val(), 10)
@@ -28,7 +28,7 @@ Spree.ready(function ($) {
         $('#update-cart').submit()
       }
     })
-    $('form#update-cart button.shopping-cart-item-quantity-increase-btn').on('click', function() {
+    $('form#update-cart button.shopping-cart-item-quantity-increase-btn').off('click').on('click', function() {
       var itemId = $(this).attr('data-id')
       var input = $("input[data-id='" + itemId + "']")
       var inputValue = parseInt($(input).val(), 10)
