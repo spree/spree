@@ -176,5 +176,17 @@ module Spree
     def icon(name:, classes: '', width:, height:)
       inline_svg "#{name}.svg", class: "spree-icon #{classes}", size: "#{width}px*#{height}px"
     end
+
+    def taxons_tree(root_taxon, current_taxon, max_level = 1)
+      return '' if max_level < 1 || root_taxon.leaf?
+
+      content_tag :div, class: 'list-group' do
+        taxons = root_taxon.children.map do |taxon|
+          css_class = current_taxon&.self_and_ancestors&.include?(taxon) ? 'list-group-item list-group-item-action active' : 'list-group-item list-group-item-action'
+          link_to(taxon.name, seo_url(taxon), class: css_class) + taxons_tree(taxon, current_taxon, max_level - 1)
+        end
+        safe_join(taxons, "\n")
+      end
+    end
   end
 end
