@@ -8,12 +8,14 @@ module Spree
           @users = Spree.user_class.accessible_by(current_ability, :show)
           @users = if params[:ids]
                      @users.where(id: params[:ids])
+                   elsif params[:q]
+                     @users.left_outer_joins(:ship_address, :bill_address).where("email LIKE (?)", "%#{params[:q][:email_start]}%")
+                           .or(@users.left_outer_joins(:ship_address, :bill_address).where("spree_addresses.firstname LIKE (?)", "%#{params[:q][:ship_address_firstname_start]}%"))
+                           .or(@users.left_outer_joins(:ship_address, :bill_address).where("spree_addresses.lastname LIKE (?)", "%#{params[:q][:ship_address_lastname_start]}%"))
+                           .or(@users.left_outer_joins(:ship_address, :bill_address).where("spree_addresses.firstname LIKE (?)", "%#{params[:q][:bill_address_firstname_start]}%"))
+                           .or(@users.left_outer_joins(:ship_address, :bill_address).where("spree_addresses.lastname LIKE (?)", "%#{params[:q][:bill_address_lastname_start]}%"))
                    else
-                     @users.joins(:ship_address, :bill_address).where("email LIKE (?)", "%#{params[:q][:email_start]}%")
-                           .or(@users.joins(:ship_address, :bill_address).where("spree_addresses.firstname LIKE (?)", "%#{params[:q][:ship_address_firstname_start]}%"))
-                           .or(@users.joins(:ship_address, :bill_address).where("spree_addresses.lastname LIKE (?)", "%#{params[:q][:ship_address_lastname_start]}%"))
-                           .or(@users.joins(:ship_address, :bill_address).where("spree_addresses.firstname LIKE (?)", "%#{params[:q][:bill_address_firstname_start]}%"))
-                           .or(@users.joins(:ship_address, :bill_address).where("spree_addresses.lastname LIKE (?)", "%#{params[:q][:bill_address_lastname_start]}%"))
+                     @users
                    end
 
           @users = @users.page(params[:page]).per(params[:per_page])
