@@ -66,9 +66,14 @@
 
     &-line-item {
       padding: 10px;
+      width: 80%;
+
+      @include media-breakpoint-up(lg) {
+        width: auto;
+      }
 
       a {
-        max-width: 40%;
+        max-width: 50%;
         margin-right: 20px;
 
         @include media-breakpoint-up(lg) {
