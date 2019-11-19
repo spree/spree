@@ -10,13 +10,10 @@ module Spree
           if params[:ids]
             @users = @users.where(id: params[:ids])
           elsif params[:q]
-            users_with_ship_address = @users.email_or_ship_address(params[:q][:email_start], @users)
-            users_with_bill_address = @users.email_or_bill_address(params[:q][:email_start], @users)
+            users_with_ship_address_ids = @users.with_ship_address_ids(params[:q][:ship_address_firstname_start], @users)
+            users_with_bill_address_ids = @users.with_bill_address_ids(params[:q][:ship_address_firstname_start], @users)
 
-            users_sa_count = users_with_ship_address.count
-            users_ba_count = users_with_bill_address.count
-
-            users_sa_count > users_ba_count ? @users = users_with_ship_address : @users = users_with_bill_address
+            @users = @users.with_email_or_addresses_id(params[:q][:email_start], users_with_ship_address_ids, users_with_bill_address_ids, @users)
           end
 
           @users = @users.page(params[:page]).per(params[:per_page])
