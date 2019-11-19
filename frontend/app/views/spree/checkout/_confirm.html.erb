@@ -1,18 +1,63 @@
-<div class="card" id="order_details" data-hook>
-  <div class="card-header">
-    <h3 class="card-title mb-0 h5"><%= Spree.t(:confirm) %></h3>
-  </div>
-  <div class="card-body">
-    <%= render partial: 'spree/shared/order_details', locals: { order: @order } %>
-  </div>
-</div>
+<div class="checkout-confirm" id="order_details" data-hook>
+  <h5 class="text-uppercase checkout-content-header">
+    <%= Spree.t(:summary) %>
+  </h5>
+  <h4 class="d-none d-sm-block d-lg-none checkout-content-subheader">
+    <%= Spree.t(:products) %>
+  </h4>
+  <div class="checkout-confirm-products">
+    <span class="text-uppercase mb-1 checkout-confirm-th"><%= Spree.t('checkout.product') %></span>
+    <span class="text-uppercase mb-1 checkout-confirm-th"><%= Spree.t(:price) %></span>
+    <span class="text-uppercase mb-1 checkout-confirm-th"><%= Spree.t(:quantity) %></span>
+    <span class="text-uppercase mb-1 checkout-confirm-th"><%= Spree.t(:total) %></span>
+    <% @order.line_items.each do |item| %>
+      <div class="checkout-confirm-product">
+        <%= link_to plp_image(item.variant.product, ''), item.variant.product %>
 
-<div class="card text-right form-buttons mt-4" data-hook="buttons">
-  <div class="card-body">
-    <% if @order.using_store_credit? %>
-      <%= button_tag Spree.t('store_credit.remove'), name: 'remove_store_credit', class: 'continue btn' %>
+        <div class="checkout-confirm-product-desc">
+          <div class="checkout-confirm-product-name">
+            <div><%= item.name %></div>
+          </div>
+          <div class="checkout-confirm-product-price">
+            <%= item.single_money.to_html %>
+          </div>
+          <div class="checkout-confirm-product-qty">
+            <span>Quantity:</span>
+            <span class="font-weight-bold">&nbsp;<%= item.quantity %></span>
+          </div>
+          <div class="checkout-confirm-product-total">
+            <%= item.display_amount.to_html %>
+          </div>
+         </div>
+      </div>
     <% end %>
-    <%= submit_tag Spree.t(:place_order), class: 'btn btn-lg btn-success' %>
-    <script>Spree.disableSaveOnClick();</script>
+  </div>
+  <div class="checkout-confirm-delivery-informations">
+    <div class="d-lg-none checkout-confirm-delivery-informations-header">
+      <%= Spree.t(:delivery_information) %>
+    </div>
+    <dl>
+      <div>
+        <dt><%= Spree.t(:shipping_address) %></dt>
+        <dd><%= sanitize @order.ship_address.to_s, tags: %w[br] %></dd>
+      </div>
+      <div>
+        <dt><%= Spree.t(:billing_address) %></dt>
+        <dd><%= sanitize @order.bill_address.to_s, tags: %w[br] %></dd>
+      </div>
+      <div>
+        <dt><%= Spree.t(:shipping) %></dt>
+        <dd><%= @order.shipments.first.shipping_method.name %></dd>
+      </div>
+      <div>
+        <dt class="text-uppercase"><%= Spree.t(:payment) %></dt>
+        <dd>
+          <% payment = @order.payments.valid.first %>
+          <%= payment.source_type.sub('Spree::', '').underscore.humanize %>
+          <br/>
+          <%= payment.source.last_digits.rjust(16, '*') %>
+        </dd>
+      </div>
+    </dl>
   </div>
 </div>
