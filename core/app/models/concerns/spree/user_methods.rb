@@ -29,6 +29,18 @@ module Spree
 
       self.whitelisted_ransackable_associations = %w[bill_address ship_address]
       self.whitelisted_ransackable_attributes = %w[id email]
+
+      scope :email_or_ship_address, -> (param, users) {
+        left_outer_joins(:ship_address).where("email LIKE ?", "%#{param}%")
+        .or(users.left_outer_joins(:ship_address).where("spree_addresses.firstname like ?", "%#{param}%"))
+        .or(users.left_outer_joins(:ship_address).where("spree_addresses.lastname like ?", "%#{param}%"))
+      }
+
+      scope :email_or_bill_address, -> (param, users) {
+        left_outer_joins(:bill_address).where("email LIKE ?", "%#{param}%")
+        .or(users.left_outer_joins(:bill_address).where("spree_addresses.firstname like ?", "%#{param}%"))
+        .or(users.left_outer_joins(:bill_address).where("spree_addresses.lastname like ?", "%#{param}%"))
+      }
     end
 
     # has_spree_role? simply needs to return true or false whether a user has a role or not.
