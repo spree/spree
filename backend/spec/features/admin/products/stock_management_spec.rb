@@ -60,7 +60,6 @@ describe 'Stock Management', type: :feature, js: true do
 
     it 'can create a new stock movement' do
       fill_in 'stock_movement_quantity', with: 5
-      select2 'default', from: 'Stock Location'
       click_button 'Add Stock'
 
       expect(page).to have_content('successfully created')
@@ -72,7 +71,6 @@ describe 'Stock Management', type: :feature, js: true do
 
     it 'can create a new negative stock movement' do
       fill_in 'stock_movement_quantity', with: -5
-      select2 'default', from: 'Stock Location'
       click_button 'Add Stock'
 
       expect(page).to have_content('successfully created')

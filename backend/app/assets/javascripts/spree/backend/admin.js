@@ -320,6 +320,48 @@ $(document).ready(function(){
     })
   }
 
+  $('table.sortable').ready(function () {
+    var tdCount = $(this).find('tbody tr:first-child td').length
+    $('table.sortable tbody').sortable(
+      {
+        handle: '.handle',
+        helper: fixHelper,
+        placeholder: 'ui-sortable-placeholder',
+        update: function(event, ui) {
+          var tbody = this
+          $('#progress').show()
+          var positions = { authenticity_token: AUTH_TOKEN }
+          $.each($('tr', tbody), function(position, obj) {
+            reg = /spree_(\w+_?)+_(\d+)/
+            parts = reg.exec($(obj).prop('id'))
+            if (parts) {
+              positions['positions[' + parts[2] + ']'] = position + 1
+            }
+          })
+          $.ajax({
+            type: 'POST',
+            dataType: 'script',
+            url: $(ui.item).closest('table.sortable').data('sortable-link'),
+            data: positions
+          }).done(function () {
+            $('#progress').hide()
+          })
+        },
+        start: function (event, ui) {
+          // Set correct height for placehoder (from dragged tr)
+          ui.placeholder.height(ui.item.height())
+          // Fix placeholder content to make it correct width
+          ui.placeholder.html("<td colspan='" + (tdCount - 1) + "'></td><td class='actions'></td>")
+        },
+        stop: function (event, ui) {
+          // Fix odd/even classes after reorder
+          $('table.sortable tr:even').removeClass('odd even').addClass('even')
+          $('table.sortable tr:odd').removeClass('odd even').addClass('odd')
+        }
+
+      })
+  })
+
   // Close notifications
   $('a.dismiss').click(function () {
     $(this).parent().fadeOut()

@@ -49,7 +49,6 @@ describe 'Taxonomies and taxons', type: :feature do
   end
 
   def select_clothing_from_select2
-    targetted_select2_search 'Clothing', from: '#s2id_taxon_id'
-    wait_for_ajax
+    select2 'Clothing', css: '.taxon-products-view', search: true
   end
 end

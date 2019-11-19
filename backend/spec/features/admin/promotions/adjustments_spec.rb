@@ -26,7 +26,7 @@ describe 'Promotion Adjustments', type: :feature, js: true do
 
       select2 'Create whole-order adjustment', from: 'Add action of type'
       within('#action_fields') { click_button 'Add' }
-      select2 'Flat Rate', from: 'Calculator'
+      select2 'Flat Rate', from: 'Calculator', search: true, match: :first
       wait_for { !page.has_button?('Update') }
       within('#actions_container') { click_button 'Update' }
 
@@ -58,7 +58,7 @@ describe 'Promotion Adjustments', type: :feature, js: true do
 
       select2 'Create whole-order adjustment', from: 'Add action of type'
       within('#action_fields') { click_button 'Add' }
-      select2 'Flat Rate', from: 'Calculator'
+      select2 'Flat Rate', from: 'Calculator', search: true, match: :first
       wait_for { !page.has_button?('Update') }
       within('#actions_container') { click_button 'Update' }
       within('#action_fields') { fill_in 'Amount', with: '5' }
@@ -124,7 +124,7 @@ describe 'Promotion Adjustments', type: :feature, js: true do
 
       select2 'Product(s)', from: 'Add rule of type'
       within('#rule_fields') { click_button 'Add' }
-      select2_search 'RoR Mug', from: 'Choose products'
+      select2 'RoR Mug', from: 'Choose products', search: true
       wait_for { !page.has_button?('Update') }
       within('#rule_fields') { click_button 'Update' }
 
@@ -187,7 +187,7 @@ describe 'Promotion Adjustments', type: :feature, js: true do
 
       select2 'Create whole-order adjustment', from: 'Add action of type'
       within('#action_fields') { click_button 'Add' }
-      select2 'Flat Rate', from: 'Calculator'
+      select2 'Flat Rate', from: 'Calculator', search: true, match: :first
       wait_for { !page.has_button?('Update') }
       within('#actions_container') { click_button 'Update' }
       within('.calculator-fields') { fill_in 'Amount', with: '4' }
@@ -227,7 +227,7 @@ describe 'Promotion Adjustments', type: :feature, js: true do
 
       select2 'Create whole-order adjustment', from: 'Add action of type'
       within('#new_promotion_action_form') { click_button 'Add' }
-      select2 'Flat Rate', from: 'Calculator'
+      select2 'Flat Rate', from: 'Calculator', search: true, match: :first
       wait_for { !page.has_button?('Update') }
       within('#actions_container') { click_button 'Update' }
       within('.create_adjustment .calculator-fields') { fill_in 'Amount', with: '40.00' }
@@ -257,7 +257,7 @@ describe 'Promotion Adjustments', type: :feature, js: true do
 
       select2 'Create whole-order adjustment', from: 'Add action of type'
       within('#action_fields') { click_button 'Add' }
-      select2 'Flat Rate', from: 'Calculator'
+      select2 'Flat Rate', from: 'Calculator', search: true, match: :first
       wait_for { !page.has_button?('Update') }
       within('#actions_container') { click_button 'Update' }
       within('.calculator-fields') { fill_in 'Amount', with: '5' }
@@ -288,7 +288,7 @@ describe 'Promotion Adjustments', type: :feature, js: true do
         fill_in 'q_name_cont', with: 'welcome'
         fill_in 'q_code_cont', with: 'rx01welcome'
         fill_in 'q_path_cont', with: 'path_promo'
-        select 'Welcome Category', from: 'q_promotion_category_id_eq'
+        select2 'Welcome Category', from: 'Promotion Category'
       end
 
       click_on 'Filter Results'

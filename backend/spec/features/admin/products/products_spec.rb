@@ -151,16 +151,16 @@ describe 'Products', type: :feature do
         fill_in 'product_price', with: '100'
         fill_in 'product_available_on', with: '2012/01/24'
         find('#product_available_on').send_keys(:tab)
-        select 'Size', from: 'Prototype'
+        select2 'Size', from: 'Prototype'
         check 'Large'
-        select @shipping_category.name, from: 'product_shipping_category_id'
+        select2 @shipping_category.name, css: '#product_shipping_category_field'
         click_button 'Create'
         expect(page).to have_content('successfully created!')
         expect(Spree::Product.last.variants.length).to eq(1)
       end
 
       it 'does not display variants when prototype does not contain option types' do
-        select 'Random', from: 'Prototype'
+        select2 'Random', from: 'Prototype'
 
         fill_in 'product_name', with: 'Baseball Cap'
 
@@ -172,11 +172,11 @@ describe 'Products', type: :feature do
           fill_in 'product_name', with: 'Baseball Cap'
           fill_in 'product_sku', with: 'B100'
           fill_in 'product_price', with: '100'
-          select 'Size', from: 'Prototype'
+          select2 'Size', from: 'Prototype'
           check 'Large'
           click_button 'Create'
 
-          expect(page).to have_css('#product_shipping_category_id') do |el|
+          expect(page).to have_css('#product_shipping_category_field') do |el|
             el['validationMessage'] == 'Please select an item in the list.'
           end
           expect(page).to have_checked_field('Size')
@@ -191,7 +191,7 @@ describe 'Products', type: :feature do
           fill_in 'product_name', with: 'Baseball Cap'
           fill_in 'product_sku', with: 'B100'
           fill_in 'product_price', with: '100'
-          select 'Size', from: 'Prototype'
+          select2 'Size', from: 'Prototype'
           check 'Large'
           click_button 'Create'
           expect(page).to have_content("Shipping Category can't be blank")

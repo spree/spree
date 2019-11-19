@@ -8,10 +8,10 @@ import { Link } from 'gatsby'
  */
 
 const linkClasses = isActive =>
-  `dib mv2 mv0-l link mr2-l mr0 fw5 f5 nowrap pv2 ph1 ph2-l ${
+  `bb-l bw2-l dib flex-l items-center-l h-100-l mv2 mv0-l link mr0 fw5 f5 nowrap pa2 ${
     isActive
-      ? 'white bg-spree-green fw6 br2-l ph3 ph1-l w-100 w-auto-l'
-      : 'gray'
+      ? 'b--spree-green spree-green b--gray w-100 w-auto-l'
+      : 'gray b--transparent'
   }`
 
 /**
@@ -24,7 +24,7 @@ const NavItem = ({ url, children, isActive, text }) =>
       {children}
     </a>
   ) : (
-    <span>
+    <span className="dib h-100">
       <Link className={linkClasses(isActive)} to={url}>
         {text}
       </Link>

@@ -36,7 +36,7 @@ The state transition for these is handled by the processing code within Spree; h
 
 ## Payment Methods
 
-Payment methods represent the different options a customer has for making a payment. Most sites will accept credit card payments through a payment gateway, but there are other options. Spree also comes with built-in support for a Check payment, which can be used to represent any offline payment. There are also third-party extensions that provide support for some other interesting options such as [spree_braintree_vzero](https://github.com/spree-contrib/spree_braintree_vzero) for Braintree & PayPal payment methods.
+Payment methods represent the different options a customer has for making a payment. Most sites will accept credit card payments through a payment gateway, but there are other options. Spree also comes with built-in support for a Check payment, which can be used to represent any offline payment. There are also third-party extensions that provide support for some other interesting options such as [Spree Braintree Vzero](https://github.com/spree-contrib/spree_braintree_vzero) for Braintree & PayPal payment methods.
 
 A `PaymentMethod` can have the following attributes:
 
@@ -131,18 +131,17 @@ The returned object from both the `purchase` and `authorize` methods on the paym
 
 If the `purchase!` route is taken and is successful, the payment is marked as `completed`. If it fails, it is marked as `failed`. If the `authorize` method is successful, the payment is transitioned to the `pending` state so that it can be manually captured later by calling the `capture!` method. If it is unsuccessful, it is also transitioned to the `failed` state.
 
-***
+<alert kind="note">
 Once a payment has been saved, it also updates the order. This may trigger the `payment_state` to change, which would reflect the current payment state of the order. The possible states are:
-
 * `balance_due`: Indicates that payment is required for this order
 * `failed`: Indicates that the last payment for the order failed
 * `credit_owed`: This order has been paid for in excess of its total
 * `paid`: This order has been paid for in full.
-***
+</alert>
 
-!!!
+<alert kind="warning">
 You may want to keep tabs on the number of orders with a `payment_state` of `failed`. A sudden increase in the number of such orders could indicate a problem with your credit card gateway and most likely indicates a serious problem affecting customer satisfaction. You should check the latest `log_entries` for the most recent payments in the store if this is happening.
-!!!
+</alert>
 
 ### Log Entries
 
@@ -152,30 +151,38 @@ You can get a list of these log entries by calling the `log_entries` on any `Spr
 
 ## Supported Gateways
 
-Access to a number of payment gateways is handled with the usage of the [spree_gateway](https://github.com/spree/spree_gateway) extension. This extension currently supports the following gateways:
+Access to a number of payment gateways is handled with the usage of the [Spree Gateway](https://github.com/spree/spree_gateway) extension. This extension currently supports the following gateways:
 
-* Authorize.Net
-* Balanced
-* Beanstram
+* Authorize.net
+* Apple Pay (via Stripe)
+* BanWire
+* Bambora (previously Beanstream)
 * Braintree
-* eWAY
-* LinkPoint
+* CyberSource
+* ePay
+* eWay
+* maxipago
+* MasterCard Payment Gateway Service (formerly MiGS)
 * Moneris
-* PayPal
-* Sage Pay
-* Samurai
-* Skrill
-* Stripe
-* USA ePay
-* WorldPay
+* PayJunction
+* Payflow
+* Paymill
+* Pin Payments
+* QuickPay
+* sage Pay
+* SecurePay
+* Spreedly
+* Stripe (with Stripe Elements)
+* USAePay
+* Worldpay (previously Cardsave)
 
 With the `spree_gateway` gem included in your application's `Gemfile`, these gateways will be selectable in the admin backend for payment methods.
 
-***
+<alert kind="note">
 These are just some of the gateways which are supported by the Active Merchant gem. You can see a [list of all the Active Merchant gateways on that project's GitHub page](https://github.com/Shopify/active_merchant#supported-direct-payment-gateways).
+</alert>
 
 In order to implement a new gateway in the spree_gateway project, please refer to the other gateways within `app/models/spree/gateway` inside that project.
-***
 
 ## Adding your custom gateway
 
@@ -187,4 +194,4 @@ by adding the following code in your spree.rb for example:
 Rails.application.config.spree.payment_methods << YourCustomGateway
 ```
 
-[spree_braintree_vzero](https://github.com/spree-contrib/spree_braintree_vzero) is a good example of a standalone custom gateways.
+[Spree Braintree Vzero](https://github.com/spree-contrib/spree_braintree_vzero) is a good example of a standalone custom gateways.

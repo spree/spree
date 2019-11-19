@@ -135,9 +135,9 @@ Each shipping method is only applicable to a specific `Zone`. For example, you w
 
 If you are using shipping categories, these can be used to qualify or disqualify a given shipping method.
 
-***
-**Note**: Shipping methods can now have multiple shipping categories assigned to them. This allows the shipping methods available to an order to be determined by the shipping categories of the items in a shipment.
-***
+<alert kind="note">
+Shipping methods can now have multiple shipping categories assigned to them. This allows the shipping methods available to an order to be determined by the shipping categories of the items in a shipment.
+</alert>
 
 ### Zones
 
@@ -149,9 +149,9 @@ The Shipping Address entered during checkout will define the zone the customer i
 
 Shipping Categories are useful if you sell products whose shipping pricing vary depending on the type of product (TVs and Mugs, for instance).
 
-***
+<alert kind="note">
 For simple setups, where shipping for all products is priced the same (ie. T-shirt-only shop), all products would be assigned to the default shipping category for the store.
-***
+</alert>
 
 Some examples of Shipping Categories would be:
 
@@ -159,11 +159,7 @@ Some examples of Shipping Categories would be:
 * Regular
 * Heavy (for items over a certain weight)
 
-Shipping Categories are created in the admin interface ("Configuration" -> "Shipping Categories") and then assigned to products ("Products" -> "Edit").
-
-$$$
-Follow up: on a clean install + seed data I ended up with two Shipping Categories - "Default Shipping" and "Default"
-$$$
+Shipping Categories are created in the admin interface (`Configuration` -> `Shipping Categories`) and then assigned to products (`Products` -> `Edit`).
 
 During checkout, the shipping categories of the products in your order will determine which calculator will be used to price its shipping for each Shipping Method.
 
@@ -193,9 +189,9 @@ After entering a shipping address, the system displays the available shipping op
 
 The customer must choose a shipping method for each shipment before proceeding to the next stage. At the confirmation step, the shipping cost will be shown and included in the order's total.
 
-***
+<alert kind="note">
 You can enable collection of extra _shipping instructions_ by setting the option `Spree::Config.shipping_instructions` to `true`. This is set to `false` by default. See [Shipping Instructions](#shipping-instructions) below.
-***
+</alert>
 
 ### What the Order's Administrator Sees
 
@@ -237,7 +233,7 @@ The option `Spree::Config[:shipping_instructions]` controls collection of additi
 
 ## The Active Shipping Extension
 
-The popular `spree_active_shipping` extension harnesses the `active_shipping` gem to interface with carrier APIs such as USPS, Fedex and UPS, ultimately providing Spree-compatible calculators for the different delivery services of those carriers.
+The popular `Spree Active Shipping` extension harnesses the `active_shipping` gem to interface with carrier APIs such as USPS, Fedex and UPS, ultimately providing Spree-compatible calculators for the different delivery services of those carriers.
 
 To install the `spree-active-shipping` extension add the following to your `Gemfile`:
 
@@ -250,7 +246,7 @@ and run `bundle install` from the command line.
 
 As an example of how to use the [spree_active_shipping extension](https://github.com/spree/spree_active_shipping) we'll demonstrate how to configure it to work with the USPS API. The other carriers follow a very similar pattern.
 
-For each USPS delivery service you want to offer (e.g. "USPS Media Mail"), you will need to create a `ShippingMethod` with a descriptive name ("Configuration" -> "Shipping Methods") and a `Calculator` (registered in the `active_shipping` extension) that ties the delivery service and the shipping method together.
+For each USPS delivery service you want to offer (e.g. "USPS Media Mail"), you will need to create a `ShippingMethod` with a descriptive name (`Configuration` -> `Shipping Methods`) and a `Calculator` (registered in the `active_shipping` extension) that ties the delivery service and the shipping method together.
 
 ### Default Calculators
 
@@ -299,9 +295,9 @@ class Calculator::Usps::FirstClassMailInternationalParcels < Calculator::Usps::B
 end
 ```
 
-!!!
+<alert kind="warning">
 Note that, unlike calculators that you write yourself, these calculators do not have to implement a `compute` instance method that returns a shipping amount. The superclasses take care of that requirement.
-!!!
+</alert>
 
 There is one gotcha to bear in mind: the string returned by the `description` method must _exactly_ match the name of the USPS delivery service. To determine the exact spelling of the delivery service, you'll need to examine what gets returned from the API:
 
@@ -409,9 +405,9 @@ end
 
 ### Introduction
 
-Split shipments are a new feature as of Spree 2.0 that addresses the needs of complex Spree stores that require sophisticated shipping and warehouse logic. This includes detailed inventory management and allows for shipping from multiple locations.
+Split shipments are a feature for more complex Spree applications that require sophisticated shipping and warehouse logic. This includes detailed inventory management and allows for shipping from multiple locations.
 
-![image](../images/developer/core/split_shipments_checkout.png)
+![image](../../../images/developer/core/split_shipments_checkout.png)
 
 ### Creating Proposed Shipments
 
@@ -496,16 +492,24 @@ The prioritizer is also a customization point. If you want to customize which pa
 
 The `Adjuster` visits each package in an order and ensures the correct number of items are in each package. To customize this functionality, you need to do two things:
 
-* Subclass the [Spree::Stock::Adjuster](https://github.com/spree/spree/blob/a55db75bbebc40f5705fc3010d1e5a2190bde79b/core/app/models/spree/stock/adjuster.rb) class and override the the `adjust` method to get the desired functionality.
-* Decorate the `Spree::Stock::Coordinator` and override the `prioritize_packages` method, passing in your custom adjuster class to the `Prioritizer` initializer. For example, if our adjuster was called `Spree::Stock::CustomAdjuster`, we would do the following:
+1. Subclass the [Spree::Stock::Adjuster](https://github.com/spree/spree/blob/master/core/app/models/spree/stock/adjuster.rb) class and override the the `adjust` method to get the desired functionality.
+2. Decorate the `Spree::Stock::Coordinator` and override the `prioritize_packages` method, passing in your custom adjuster class to the `Prioritizer` initializer. For example, if our adjuster was called `Spree::Stock::CustomAdjuster`, we would do the following in `app/my_store/spree/stock/coordinator_decorator.rb`:
 
 ```ruby
-Spree::Stock::Coordinator.class_eval do
-  def prioritize_packages(packages)
-    prioritizer = Prioritizer.new(order, packages, Spree::Stock::CustomAdjuster)
-    prioritizer.prioritized_packages
+module MyStore
+  module Spree
+    module Stock
+      module CoordinatorDecorator do
+        def prioritize_packages(packages)
+          prioritizer = Prioritizer.new(order, packages, ::Spree::Stock::CustomAdjuster)
+          prioritizer.prioritized_packages
+        end
+      end
+    end
   end
 end
+
+::Spree::Stock::Coordinator.prepend(MyStore::Spree::Stock::CoordinatorDecorator)
 ```
 
 ### The Estimator

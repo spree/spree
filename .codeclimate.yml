@@ -18,3 +18,4 @@ exclude_patterns:
   - "**/vendor/"
   - "**/spec/"
   - "public/"
+  - "sample/db/samples"
