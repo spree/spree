@@ -105,7 +105,9 @@
     right: 0;
     top: 0;
     z-index: 1;
+    justify-content: center;
     &-modal-opener {
+      flex-basis: 430px;
       cursor: image-url('picture-zoom.svg'), auto
     }
   }
