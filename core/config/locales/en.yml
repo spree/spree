@@ -1560,3 +1560,20 @@ en:
     zipcode: Zip Code
     zone: Zone
     zones: Zones
+  navigation:
+    categories:
+      women: women
+      men: men
+      sportswear: sportswear
+    subcategories:
+      dresses: dresses
+      jackets_and_coats: jackets & coats
+      shirts_and_blouses: shirts & blouses
+      skirts: skirts
+      sweaters: sweaters
+      t_shirts_and_tops: tops & t-shirts
+      shirts: shirts
+      t_shirts: t-shirts
+      pants: pants
+      sweatshirts: sweatshirts
+      tops: tops
