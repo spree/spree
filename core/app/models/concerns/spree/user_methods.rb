@@ -30,25 +30,25 @@ module Spree
       self.whitelisted_ransackable_associations = %w[bill_address ship_address]
       self.whitelisted_ransackable_attributes = %w[id email]
 
-      scope :with_ship_address_ids, -> (query, scope) {
+      scope :with_ship_address, -> (query, scope = nil) {
+        scope ||= self
         left_outer_joins(:ship_address)
         .where("spree_addresses.firstname like ?", "%#{query}%")
         .or(scope.left_outer_joins(:ship_address).where("spree_addresses.lastname like ?", "%#{query}%"))
-        .ids
       }
 
-      scope :with_bill_address_ids, -> (query, scope) {
+      scope :with_bill_address, -> (query, scope = nil) {
+        scope ||= self
         left_outer_joins(:bill_address)
         .where("spree_addresses.firstname like ?", "%#{query}%")
         .or(scope.left_outer_joins(:bill_address)
         .where("spree_addresses.lastname like ?", "%#{query}%"))
-        .ids
       }
 
-      scope :with_email_or_addresses_id, -> (query, second_query, third_query, scope) {
+      scope :with_email_or_addresses_ids, -> (query, addresses_ids  =  [], scope = nil) {
+        scope ||= self
         where("email LIKE ?", "%#{query}%")
-        .or(scope.where(id: second_query))
-        .or(scope.where(id: third_query))
+        .or(scope.where(id: addresses_ids))
       }
     end
 
