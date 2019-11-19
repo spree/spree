@@ -1,6 +1,7 @@
 .order-show {
   padding-bottom: 40px;
   padding-top: 40px;
+  font-weight: 500;
 
   & > .order-show-check-mark {
     width: 56px;
@@ -21,19 +22,27 @@
 
   dd {
     padding-bottom: 18px;
+    font-size: font-px-to-rem(14px);
     @include media-breakpoint-up(sm) {
       padding-bottom: 0px;
       margin-bottom: 80px;
       font-size: font-px-to-rem(22px);
     }
+    @include media-breakpoint-up(lg) {
+      font-size: font-px-to-rem(18px);
+    }
   }
 
   dt {
     padding: 18px;
+    font-weight: 500;
     @include media-breakpoint-up(sm) {
       padding: 0;
       margin-bottom: 32px;
       font-size: font-px-to-rem(25px);
+    }
+    @include media-breakpoint-up(lg) {
+      font-size: font-px-to-rem(22px);
     }
   }
 
@@ -117,34 +126,68 @@
 
         &-name {
           grid-area: n;
-          @include media-breakpoint-up(lg) {
+          font-size: font-px-to-rem(14px);
+          @include media-breakpoint-up(sm) {
             font-size: font-px-to-rem(26px);
+          }
+          @include media-breakpoint-up(lg) {
+            font-size: font-px-to-rem(32px);
           }
         }
 
         &-subtitle {
           grid-area: s;
-          @include media-breakpoint-up(lg) {
+          @include media-breakpoint-up(sm) {
             font-size: font-px-to-rem(14px);
+          }
+          @include media-breakpoint-up(lg) {
+            font-size: font-px-to-rem(18px);
           }
         }
 
         &-price {
           grid-area: p;
+          font-size: font-px-to-rem(14px);
           @include media-breakpoint-up(sm) {
+            font-size: font-px-to-rem(26px);
             margin-bottom: 24px;
+          }
+          @include media-breakpoint-up(lg) {
+            font-size: font-px-to-rem(20px);
+          }
+          div:last-child {
+            @include media-breakpoint-up(lg) {
+              font-size: font-px-to-rem(22px);
+            }
           }
         }
 
         &-quantity {
           grid-area: q;
+          font-size: font-px-to-rem(12px);
           @include media-breakpoint-up(sm) {
             font-size: font-px-to-rem(22px);
+          }
+          @include media-breakpoint-up(lg) {
+            font-size: font-px-to-rem(20px);
+          }
+          span {
+            @include media-breakpoint-up(lg) {
+              font-size: font-px-to-rem(22px);
+            }
           }
         }
 
         &-total {
           grid-area: t;
+          @include media-breakpoint-up(lg) {
+            font-size: font-px-to-rem(20px);
+          }
+          div:last-child {
+            @include media-breakpoint-up(lg) {
+              font-size: font-px-to-rem(22px);
+            }
+          }
         }
 
         &-quantity {
