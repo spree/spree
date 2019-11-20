@@ -435,13 +435,4 @@ module Spree
       end
     end
   end
-
-  def self.available
-    where.not('available_on = ? AND available_on > ?', nil, Time.current).
-      where('deleted_at = ? AND discontinue_on = ?', nil, nil).
-      or(
-        where.not('available_on = ? AND available_on > ?', nil, Time.current).
-        where('deleted_at = ? AND discontinue_on > ?', nil, Time.current)
-      )
-  end
 end
