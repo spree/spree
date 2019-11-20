@@ -110,13 +110,13 @@ module Spree
     def plp_image(product, image_class)
       image = product.master.images.first
       image_url = image&.plp_url || asset_path('noimage/plp.png')
-      image_style = image&.style(:plp)
+      image_dimensions = image&.style_dimensions(:plp)
 
       lazy_image(
         src: image_url,
         alt: product.name,
-        width: image_style&.dig(:width) || 278,
-        height: image_style&.dig(:height) || 371,
+        width: image_dimensions&.dig(:width) || 278,
+        height: image_dimensions&.dig(:height) || 371,
         class: "product-component-image d-block mw-100 #{image_class}"
       )
     end
