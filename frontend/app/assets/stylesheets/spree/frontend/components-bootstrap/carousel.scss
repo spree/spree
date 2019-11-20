@@ -38,6 +38,9 @@
       @mixin arrow {
         top: 0;
         width: 15%;
+        @include media-breakpoint-up(xl) {
+          width: auto;
+        }
       }
       &-rounded {
         $size: 44px;
@@ -45,15 +48,20 @@
         width: $size;
         height: $size;
         background: theme-color("light");
-        // background: theme-color("dark");
       }
       &--previous {
         left: 0;
         @include arrow;
+        @include media-breakpoint-up(xl) {
+          left: -30px;
+        }
       }
       &--next {
         right: 0;
         @include arrow;
+        @include media-breakpoint-up(xl) {
+          right: -30px;
+        }
       }
     }
   }
