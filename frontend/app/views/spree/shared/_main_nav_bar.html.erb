@@ -1,16 +1,16 @@
-<nav id="main-nav-bar" class="navbar">
-  <ul class="nav" data-hook>
-    <li id="home-link" class="nav-item" data-hook>
-      <%= link_to Spree.t(:home), spree.root_path, class: 'nav-link' %>
+<ul class="nav h-100 main-nav-bar" data-hook>
+  <% categories_data.each do |category| %>
+    <li class="navbar main-nav-bar-dropdown main-nav-bar-category" data-hook>
+      <a href="<%= category[:url] %>" class="p-2 main-nav-bar-item main-nav-bar-category-button">
+        <%= category[:name] %>
+      </a>
+
+      <div class="w-100 shadow main-nav-bar-category-dropdown">
+        <%= render partial: 'spree/shared/category_nav_bar', locals: {
+          link_categories: category[:subcategories],
+          category: category[:name]
+        } %>
+      </div>
     </li>
-  </ul>
-  <ul class="nav navbar-right" data-hook>
-    <li id="link-to-cart" class="nav-item" data-hook>
-      <noscript>
-        <%= link_to_cart %>
-      </noscript>
-      &nbsp;
-    </li>
-    <script>Spree.fetch_cart()</script>
-  </ul>
-</nav>
+  <% end %>
+</ul>
