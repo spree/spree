@@ -8,10 +8,11 @@ module Spree
       end
 
       def call
-        products = updated_at(scope)
+        products = scope.available
+        products = updated_at(products)
         products = price(products)
 
-        products
+        products.distinct
       end
 
       private
