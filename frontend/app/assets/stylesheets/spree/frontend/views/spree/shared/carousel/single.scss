@@ -9,10 +9,16 @@
     &--previous {
       left: -$arrow-width;
       @include arrow;
+      @include media-breakpoint-between(md, md) {
+        left: 0;
+      }
     }
     &--next {
       right: -$arrow-width;
       @include arrow;
+      @include media-breakpoint-between(md, md) {
+        right: 0;
+      }
     }
     &-rounded {
       $size: 44px;
