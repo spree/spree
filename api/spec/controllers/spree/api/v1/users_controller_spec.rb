@@ -113,19 +113,97 @@ module Spree
         expect(json_response['users'].size).to eq 2
       end
 
+      context 'can query the results through' do
+        let(:first_bill_address) { create(:bill_address, firstname: 'John', lastname: 'Snow') }
+        let(:second_bill_address) { create(:bill_address, firstname: 'Michael', lastname: 'Michael') }
+
+        let!(:first_user) { create(:user, bill_address: first_bill_address, email: 'actor@example.com') }
+        let!(:second_user) { create(:user, bill_address: second_bill_address, email: 'singer@example.com') }
+
+        before do
+          allow(Spree::LegacyUser).to receive(:find_by).with(hash_including(:spree_api_key)) { current_api_user }
+        end
+
+        it 'existing bill_address firstname parameter' do
+          api_get :index, q: {
+            email_start: 'John',
+            bill_address_firstname_start: 'John',
+            bill_address_lastname_start: 'John',
+            ship_address_firstname_start: 'John',
+            ship_address_lastname_start: 'John'
+          }
+
+          expect(Spree.user_class.count).to eq 2
+          expect(json_response['count']).to eq 1
+          expect(json_response['users'].size).to eq 1
+          expect(json_response['users'].first['email']).to eq first_user.email
+        end
+
+        it 'existing bill_address lastname parameter' do
+          api_get :index, q: {
+            email_start: 'Snow',
+            bill_address_firstname_start: 'Snow',
+            bill_address_lastname_start: 'Snow',
+            ship_address_firstname_start: 'Snow',
+            ship_address_lastname_start: 'Snow'
+          }
+
+          expect(Spree.user_class.count).to eq 2
+          expect(json_response['count']).to eq 1
+          expect(json_response['users'].size).to eq 1
+          expect(json_response['users'].first['email']).to eq first_user.email
+        end
+
+        it 'existing bill_address firstname and lastname parameter' do
+          api_get :index, q: { 
+            email_start: 'Michael',
+            bill_address_firstname_start: 'Michael',
+            bill_address_lastname_start: 'Michael',
+            ship_address_firstname_start: 'Michael',
+            ship_address_lastname_start: 'Michael'
+          }
+
+          expect(Spree.user_class.count).to eq 2
+          expect(json_response['count']).to eq 1
+          expect(json_response['users'].size).to eq 1
+          expect(json_response['users'].first['email']).to eq second_user.email
+        end
+
+        it 'non-existenting ship_address firstname parameter' do
+          api_get :index, q: { 
+            email_start: 'Result',
+            bill_address_firstname_start: 'Result',
+            bill_address_lastname_start: 'Result',
+            ship_address_firstname_start: 'Result',
+            ship_address_lastname_start: 'Result'
+          }
+
+          expect(Spree.user_class.count).to eq 2
+          expect(json_response['count']).to eq 0
+          expect(json_response['users'].size).to eq 0
+        end
+
+        it 'existing email paramter' do
+          api_get :index, q: {
+            email_start: 'actor',
+            bill_address_firstname_start: 'actor',
+            bill_address_lastname_start: 'actor',
+            ship_address_firstname_start: 'actor',
+            ship_address_lastname_start: 'actor'
+          }
+
+          expect(Spree.user_class.count).to eq 2
+          expect(json_response['count']).to eq(1)
+          expect(json_response['users'].first['email']).to eq first_user.email
+        end
+      end
+
       it 'can control the page size through a parameter' do
         create_list(:user, 2)
         api_get :index, per_page: 1
         expect(json_response['count']).to eq(1)
         expect(json_response['current_page']).to eq(1)
         expect(json_response['pages']).to eq(2)
-      end
-
-      it 'can query the results through a paramter' do
-        expected_result = create(:user, email: 'brian@spreecommerce.com')
-        api_get :index, q: { email_cont: 'brian' }
-        expect(json_response['count']).to eq(1)
-        expect(json_response['users'].first['email']).to eq expected_result.email
       end
 
       it 'can create' do
