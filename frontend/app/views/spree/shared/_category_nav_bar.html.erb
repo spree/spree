@@ -1,0 +1,41 @@
+<div class="container p-0 d-flex justify-content-xl-around mx-auto">
+  <div class="row">
+    <div class="category-links">
+      <div class="category-links-header text-uppercase">
+        <%= Spree.t('category_nav_bar.categories')%>
+      </div>
+
+      <ul class="pl-0">
+        <% link_categories.each do |link_category| %>
+          <li>
+            <a href="<%= link_category.values.first %>" class="text-uppercase" >
+              <%= I18n.t("navigation.subcategories.#{link_category.keys.first}") %>
+            </a>
+          </li>
+        <% end %>
+      </ul>
+    </div>
+
+    <%= link_to nested_taxons_path('streetstyle') do %>
+      <div class="category-image category-image text-center mx-3">
+        <%= main_nav_image(category, "summer_collection") %>
+
+        <div class="category-box">
+          <div class="category-box-small-text"><%= Spree.t('category_nav_bar.new_collection') %></div>
+          <div class="category-box-big-text"><%= Spree.t('category_nav_bar.summer_2019') %></div>
+        </div>
+      </div>
+    <% end %>
+
+    <%= link_to nested_taxons_path('summer-sale') do %>
+      <div class="category-image category-image text-center mx-3">
+        <%= main_nav_image(category, "special_offers") %>
+
+        <div class="category-box">
+          <div class="category-box-small-text"><%= Spree.t('category_nav_bar.special_offers') %></div>
+          <div class="category-box-big-text"><%= Spree.t('category_nav_bar.get_up_to_30_percent_off') %></div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>
