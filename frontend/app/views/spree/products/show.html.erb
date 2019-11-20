@@ -1,50 +1,102 @@
+<%= render 'spree/shared/product_added_modal' %>
+
 <% @body_id = 'product-details' %>
 
 <% cache cache_key_for_product do %>
-  <div data-hook="product_show" class="row">
-    <div class="col-lg-4 col-md-5" data-hook="product_left_part">
-      <div data-hook="product_left_part_wrap">
-        <div id="product-images" data-hook="product_images">
-          <div id="main-image" class="card  " data-hook>
-            <div class="card-body text-center">
-              <%= product_image(@product) %>
+  <div class="container">
+    <%= spree_breadcrumbs(@product.category, '', @product) %>
+  </div>
+
+  <div class="container pt-4 product-details">
+
+    <div class="modal fade" id="picturesModal" tabindex="-1" role="dialog" >
+      <div class="modal-dialog mw-100" role="document">
+        <div class="modal-content">
+          <div class="modal-body d-flex flex-column">
+            <button class="modal-close" type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&#x2715;</span>
+            </button>
+            <div class="d-flex product-details-images">
+              <% if @product.variant_images.size > 1 %>
+                <div class="d-none d-sm-block product-details-thumbnails" data-hook="product_thumbnails">
+                  <%= render 'spree/shared/carousel/thumbnails',
+                             group_id: 'main-product-modal-carousel',
+                             id: 'productModalThumbnailsCarousel',
+                             trigger_id: 'productCarousel',
+                             per_page: 5
+                  %>
+                </div>
+              <% end %>
+              <div class="product-details-single" data-hook="product_images">
+                <%= render 'spree/shared/carousel/single',
+                           group_id: 'main-product-modal-carousel',
+                           id: 'productModalCarousel',
+                           trigger_id: 'productCarousel',
+                           zoomed: true
+                %>
+              </div>
             </div>
           </div>
-          <div id="thumbnails" data-hook>
-            <%= render partial: 'thumbnails' %>
-          </div>
-        </div>
-
-        <div data-hook="product_properties">
-          <%= render partial: 'properties' %>
-        </div>
-
-        <div data-hook="promotions">
-          <%= render partial: 'promotions' %>
         </div>
       </div>
     </div>
 
-    <div class="col-lg-8 col-md-7" data-hook="product_right_part">
-      <div data-hook="product_right_part_wrap">
-        <div id="product-description" data-hook="product_description">
-          <h1 class="product-title mt-2"><%= @product.name %></h1>
-
-          <div data-hook="description">
-            <%= sanitize product_description(@product) %>
+    <div class="row" data-hook="product_show">
+      <div
+        class="col-12 col-md-7 col-lg-7 d-flex align-self-start justify-content-between product-details-images"
+        data-hook="product_left_part_wrap"
+      >
+        <% if @product.variant_images.size > 1 %>
+          <div class="d-none d-md-block product-details-thumbnails" data-hook="product_thumbnails">
+            <%= render 'spree/shared/carousel/thumbnails',
+                       group_id: 'main-product-carousel',
+                       id: 'productThumbnailsCarousel',
+                       trigger_id: 'productCarousel',
+                       per_page: 5
+            %>
           </div>
-
-          <div id="cart-form" data-hook="cart_form">
-            <%= render partial: 'cart_form' %>
-          </div>
-        </div>
-
-        <div id="taxon-crumbs" class="mt-4" data-hook="product_taxons">
-          <%= render partial: 'taxons' %>
+        <% end %>
+        <div class="product-details-single" data-hook="product_images">
+          <%= render 'spree/shared/carousel/single',
+                     group_id: 'main-product-carousel',
+                     id: 'productCarousel',
+                     trigger_id: 'productCarousel',
+                     zoomed: false
+          %>
         </div>
       </div>
+      <div id="product-description" class="col-12 col-md-5" data-hook="product_right_part_wrap">
+        <h1 class="mt-3 mt-md-0 text-center text-md-left product-details-title"><%= @product.name %></h1>
+        <div id="cart-form" data-hook="cart_form">
+          <%= render 'cart_form', variant_change_identifier: 'productCarousel' %>
+        </div>
+      </div>
+    </div>
+    <div class="pb-4 pt-md-5 row" data-hook="product_description">
+      <div class="col-12 col-md-7 col-lg-6">
+        <%= render partial: 'description' %>
+      </div>
+      <div class="d-none d-lg-block col-lg-1"></div>
+      <div class="col-12 col-md-5" data-hook="product_properties">
+        <%= render partial: 'properties' %>
+      </div>
+      <div class="col-12" data-hook="promotions">
+        <%= render partial: 'promotions' %>
+      </div>
+    </div>
+
+    <div id="no-product-available" class="no-product-available-dropdown">
+      <%= render partial: 'spree/shared/no_product_available' %>
     </div>
   </div>
+
+  <% if related_products.any? %>
+    <div class="product-details-related">
+      <p class="font-weight-bold text-center text-uppercase product-details-carousel-text"><%= Spree.t('pdp.you_may_also_like') %></p>
+
+      <%= render 'carousel', id: 'related-products-carousel', products: related_products %>
+    </div>
+  <% end %>
 <% end %>
 
 <%= products_structured_data([@product]) %>

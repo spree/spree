@@ -1,6 +1,8 @@
 module Spree
   class ProductsController < Spree::StoreController
-    before_action :load_product, only: :show
+    include Spree::ProductsHelper
+
+    before_action :load_product, :load_variants, only: :show
     before_action :load_taxon, only: :index
 
     helper 'spree/taxons'
@@ -12,15 +14,15 @@ module Spree
       @products = @searcher.retrieve_products
       @products = @products.includes(:possible_promotions) if @products.respond_to?(:includes)
       @taxonomies = load_taxonomies
+      @option_types = load_options
     end
 
     def show
-      @variants = @product.variants_including_master.
-                  spree_base_scopes.
-                  active(current_currency).
-                  includes([:option_values, :images])
+      @product_summary = Spree::ProductSummaryPresenter.new(@product).call
+
       @product_properties = @product.product_properties.includes(:property)
       @taxon = params[:taxon_id].present? ? Spree::Taxon.find(params[:taxon_id]) : @product.taxons.first
+
       redirect_if_legacy_path
     end
 
@@ -34,6 +36,10 @@ module Spree
       end
     end
 
+    def load_options
+      Spree::OptionType.includes(:option_values)
+    end
+
     def load_product
       @products = if try_spree_current_user.try(:has_spree_role?, 'admin')
                     Product.with_deleted
@@ -41,12 +47,29 @@ module Spree
                     Product.active(current_currency)
                   end
 
-      @product = @products.includes(:variants_including_master, variant_images: :viewable).
-                 friendly.distinct(false).find(params[:id])
+      @product = @products.includes(:master)
+                   .friendly
+                   .find(params[:id])
     end
 
     def load_taxon
       @taxon = Spree::Taxon.find(params[:taxon]) if params[:taxon].present?
+    end
+
+    def load_taxonomies
+      Spree::Taxonomy.includes(root: :children)
+    end
+
+    def load_variants
+      @variants = @product
+                    .variants_including_master
+                    .spree_base_scopes
+                    .active(current_currency)
+                    .includes(
+                      :default_price,
+                      option_values: :option_type,
+                      images: { attachment_attachment: :blob }
+                    )
     end
 
     def redirect_if_legacy_path
@@ -57,10 +80,6 @@ module Spree
         params.permit!
         redirect_to url_for(params), status: :moved_permanently
       end
-    end
-
-    def load_taxonomies
-      Spree::Taxonomy.includes(root: :children)
     end
   end
 end
