@@ -13,7 +13,7 @@ module Spree
         products = price(products)
         products = available(products)
 
-        products
+        products.distinct
       end
 
       private
