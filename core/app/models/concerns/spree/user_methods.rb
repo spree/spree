@@ -30,26 +30,16 @@ module Spree
       self.whitelisted_ransackable_associations = %w[bill_address ship_address]
       self.whitelisted_ransackable_attributes = %w[id email]
 
-      scope :with_ship_address, -> (query, scope = nil) {
-        scope ||= self
-        left_outer_joins(:ship_address)
-        .where("spree_addresses.firstname like ?", "%#{query}%")
-        .or(scope.left_outer_joins(:ship_address).where("spree_addresses.lastname like ?", "%#{query}%"))
-      }
+      def self.with_address(query, address = :ship_address)
+        left_outer_joins(address).
+        where("#{Spree::Address.table_name}.firstname like ?", "%#{query}%").
+        or(self.left_outer_joins(address).where("#{Spree::Address.table_name}.lastname like ?", "%#{query}%"))
+      end
 
-      scope :with_bill_address, -> (query, scope = nil) {
-        scope ||= self
-        left_outer_joins(:bill_address)
-        .where("spree_addresses.firstname like ?", "%#{query}%")
-        .or(scope.left_outer_joins(:bill_address)
-        .where("spree_addresses.lastname like ?", "%#{query}%"))
-      }
-
-      scope :with_email_or_addresses_ids, -> (query, addresses_ids  =  [], scope = nil) {
-        scope ||= self
-        where("email LIKE ?", "%#{query}%")
-        .or(scope.where(id: addresses_ids))
-      }
+      def self.with_email_or_addresses_ids(query, addresses_ids = [])
+        where('email LIKE ?', "%#{query}%").
+        or(self.where(id: addresses_ids))
+      end
     end
 
     # has_spree_role? simply needs to return true or false whether a user has a role or not.
