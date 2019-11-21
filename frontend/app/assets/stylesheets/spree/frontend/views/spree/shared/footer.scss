@@ -18,9 +18,19 @@
   &-copyright{
     color: theme-color('dark');
     font-size: font-px-to-rem(9px);
+    a {
+      color: theme-color('dark');
+    }
 
     @include media-breakpoint-up(xl) {
       font-size: font-px-to-rem(14px);
+    }
+
+    &-logo-spark {
+      height: 14px;
+      @include media-breakpoint-up(md) {
+        height: 21px;
+      }
     }
   }
   &-label {
