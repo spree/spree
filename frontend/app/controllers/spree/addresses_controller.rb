@@ -11,10 +11,10 @@ module Spree
     def create
       @address = spree_current_user.addresses.build(address_params)
       if @address.save
-        flash[:notice] = Spree.t(:successfully_created, scope: :address_book)
-        redirect_to :index
+        flash[:notice] = I18n.t(:successfully_created, scope: :address_book)
+        redirect_to account_path
       else
-        render :new
+        render :action => 'new'
       end
     end
 

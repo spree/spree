@@ -1,0 +1,17 @@
+<div class="col-lg-6 offset-lg-3">
+  <div class="card mb-3">
+    <div class="card-header">
+      <h3 class="card-title mb-0 h6"><%= Spree.t(:editing_user) %></h3>
+    </div>
+    <div class="card-body">
+      <%= render partial: 'spree/shared/error_messages', locals: { target: @user } %>
+
+      <%= form_for Spree::User.new, as: @user, url: spree.user_path(@user), :method => :put do |f| %>
+        <%= render partial: 'spree/shared/user_form', locals: { f: f, remember_me_field: false } %>
+        <div>
+          <%= f.submit Spree.t(:update), :class => 'btn btn-primary' %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
