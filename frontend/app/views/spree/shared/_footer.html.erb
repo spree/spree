@@ -3,10 +3,12 @@
     <div class="row d-xl-flex justify-content-xl-around pb-xl-5">
       <div class="d-flex d-xl-block flex-xl-grow-0 col-xl-4">
         <figure class="logo mx-auto mx-xl-0 pt-xl-2 pb-xl-1" data-hook>
-          <%= image_tag 'logo@3x.png', alt: 'Spree Logo' %>
+          <%= link_to 'http://spreecommerce.org/', target: '_blank', 'aria-label': 'Go to Spree Commerce' do %>
+            <%= image_tag 'logo@3x.png', alt: 'Spree Logo' %>
+          <% end %>
         </figure>
         <div class="d-none d-xl-block pt-xl-2 footer-spree-info">
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+          Spree Commerce is an open source Ecommerce framework decision makers want, developers enjoy.
         </div>
       </div>
       <div class="d-block flex-nowrap py-2 order-xl-last col-xl-3 offset-xl-1">

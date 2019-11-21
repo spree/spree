@@ -1,7 +1,20 @@
 <div class="border-bottom border-top">
   <div class="container">
-    <div class="d-flex justify-content-center justify-content-xl-start py-3 footer-spree-copyright">
-      © 2019 Spree. All Rights Reserved.
+    <div class="d-flex flex-column flex-md-row align-items-center justify-content-center py-3 footer-spree-copyright">
+      <div class="mb-2 mb-md-0 order-md-3">
+        © 2019
+        <%= link_to 'Spree Commerce', 'https://spreecommerce.org/', target: '_blank', 'aria-label': 'Go to Spree Commerce' %>.
+        All Rights Reserved.
+      </div>
+      <div class="d-none d-md-inline-block mr-2 order-md-2">|</div>
+      <div class="mb-1 mb-md-0 order-md-0">
+        Designed and developed by
+      </div>
+      <div class="order-md-1">
+        <%= link_to 'https://sparksolutions.co/', target: '_blank', 'aria-label': 'Go to Spark Solutions' do %>
+          <%= inline_svg 'logo_spark.svg', class: 'footer-spree-copyright-logo-spark mx-2' %>
+        <% end %>
+      </div>
     </div>
   </div>
 </div>
