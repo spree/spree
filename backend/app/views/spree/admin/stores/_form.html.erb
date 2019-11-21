@@ -8,7 +8,7 @@
     </div>
     <div class="card-body">
       <%= f.field_container :name, class: ['form-group'] do %>
-        <%= f.label :name, raw(Spree.t(:name) + content_tag(:span, ' *', class: 'required')) %>
+        <%= f.label :name, raw(Spree.t(:name) + required_span_tag) %>
         <%= f.text_field :name, class: 'form-control', required: true %>
         <%= f.error_message_on :name %>
       <% end %>

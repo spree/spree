@@ -32,8 +32,7 @@ describe 'Stores admin', type: :feature do
       page.fill_in 'store_name', with: 'Spree Example Test'
       page.fill_in 'store_url', with: 'test.localhost'
       page.fill_in 'store_mail_from_address', with: 'spree@example.com'
-      page.fill_in 'store_code', with: 'SPR'
-      page.fill_in 'store_default_currency', with: 'EUR'
+      select2 'EUR', from: 'Currency'
       click_button 'Create'
 
       expect(page).to have_current_path spree.admin_stores_path
@@ -52,7 +51,7 @@ describe 'Stores admin', type: :feature do
 
       click_link 'Edit'
       page.fill_in 'store_name', with: updated_name
-      page.fill_in 'store_default_currency', with: new_currency
+      select2 new_currency, from: 'Currency'
       click_button 'Update'
 
       expect(page).to have_current_path spree.admin_stores_path
