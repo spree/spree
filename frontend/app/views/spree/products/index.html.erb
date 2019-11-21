@@ -36,7 +36,7 @@
       <%= render 'spree/products/filters_desktop', permitted_params: permitted_params %>
       <div class="col-md-12 col-lg-8" data-hook="homepage_products">
         <div class="row">
-          <% cache params.permit do %>
+          <% cache(params.permit!) do %>
             <% @products.each do |product| %>
               <div class="col-lg-6 col-sm-4 col-6 mb-3 mb-md-4 pr-0 pl-md-4 pl-sm-4">
                 <%= render 'spree/shared/product', product: product, image_class: 'product-component-plp-image' %>

@@ -70,7 +70,7 @@ module Spree
     end
 
     def load_products
-      retrieved = Rails.cache.fetch params.permit do
+      retrieved = Rails.cache.fetch params.permit! do
         searcher = build_searcher(params.merge(include_images: true))
         products = searcher.retrieve_products.includes(:variants_including_master, master: :default_price)
         products_total_count = products.total_count
