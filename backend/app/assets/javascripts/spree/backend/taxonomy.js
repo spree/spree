@@ -12,7 +12,7 @@ function handleMove (e, data) {
   var newParent = data.rslt.np
   var url = Spree.url(base_url).clone()
   url.setPath(url.path() + '/' + node.prop('id'))
-  if (newParent.attr("id") == data.rslt.op.attr("id") && position > data.rslt.cop) {
+  if (newParent.attr('id') === data.rslt.op.attr('id') && position > data.rslt.cop) {
     position = position - 1
   }
   $.ajax({
