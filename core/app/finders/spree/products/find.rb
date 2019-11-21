@@ -151,12 +151,10 @@ module Spree
       def include_available(products)
         if available
           products
+        elsif discontinued
+          products.available(Time.current, '0')
         else
-          if discontinued
-            products.available(Time.current, '0')
-          else
-            products.available
-          end
+          products.available
         end
       end
     end
