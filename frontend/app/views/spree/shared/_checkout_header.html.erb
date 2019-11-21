@@ -6,7 +6,8 @@
                 classes: 'spree-icon-arrow spree-icon-arrow-left',
                 width: 7,
                 height: 14) %>
-        <%= link_to Spree.t('checkout.back_to_cart'), cart_path, class: "text-uppercase" %>
+        <%= link_to Spree.t('checkout.back_to_cart'), cart_path, class: "d-none d-sm-inline text-uppercase" %>
+        <%= link_to Spree.t('back'), cart_path, class: "d-sm-none text-uppercase" %>
       </div>
       <div class="d-flex flex-nowrap align-items-center justify-content-center">
         <figure class="logo flex-grow-0 flex-xl-grow-0 order-xl-0 header-spree-fluid-logo">
