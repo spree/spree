@@ -4,16 +4,14 @@ module Spree
       def initialize(scope, params, current_currency)
         @scope    = scope
         @sort     = params[:sort]
-        @filter   = params[:filter]
         @currency = params[:currency] || current_currency
       end
 
       def call
         products = updated_at(scope)
         products = price(products)
-        products = available(products)
 
-        products.distinct
+        products
       end
 
       private
@@ -54,16 +52,6 @@ module Spree
           distinct.
           where(spree_prices: { currency: currency }).
           order("#{Spree::Price.table_name}.amount #{order_direction}")
-      end
-
-      def available(products)
-        if @filter
-          if @filter[:show_discontinued]
-            return products
-          end
-        end
-
-        products.available(Time.current)
       end
     end
   end

@@ -15,6 +15,7 @@ module Spree
         @sort_by          = params.dig(:sort_by)
         @deleted          = params.dig(:filter, :show_deleted)
         @discontinued     = params.dig(:filter, :show_discontinued)
+        @available        = params.dig(:filter, :show_available)
       end
 
       def execute
@@ -27,6 +28,7 @@ module Spree
         products = by_option_value_ids(products)
         products = include_deleted(products)
         products = include_discontinued(products)
+        products = include_available(products)
         products = ordered(products)
 
         products
@@ -34,7 +36,7 @@ module Spree
 
       private
 
-      attr_reader :ids, :skus, :price, :currency, :taxons, :name, :options, :option_value_ids, :scope, :sort_by, :deleted, :discontinued
+      attr_reader :ids, :skus, :price, :currency, :taxons, :name, :options, :option_value_ids, :scope, :sort_by, :deleted, :discontinued, :available
 
       def ids?
         ids.present?
@@ -144,6 +146,18 @@ module Spree
 
       def include_discontinued(products)
         discontinued ? products : products.not_discontinued
+      end
+
+      def include_available(products)
+        if available
+          products
+        else
+          if discontinued
+            products.available(Time.current, '0')
+          else
+            products.available
+          end
+        end
       end
     end
   end
