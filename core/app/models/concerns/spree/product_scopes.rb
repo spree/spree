@@ -199,9 +199,9 @@ module Spree
       end
       search_scopes << :not_discontinued
       # Can't use add_search_scope for this as it needs a default argument
-      def self.available(available_on = nil, only_not_discontinued = true, _currency = nil)
+      def self.available(available_on = nil, _currency = nil)
         available_on ||= Time.current
-        not_discontinued(only_not_discontinued).joins(master: :prices).where("#{Product.quoted_table_name}.available_on <= ?", available_on)
+        not_discontinued.joins(master: :prices).where("#{Product.quoted_table_name}.available_on <= ?", available_on)
       end
       search_scopes << :available
 
