@@ -1,4 +1,4 @@
-require 'rails_helper'
+require 'spec_helper'
 
 describe Spree::Variants::OptionTypesPresenter do
   let(:option_type_1) { create :option_type, position: 2 }
