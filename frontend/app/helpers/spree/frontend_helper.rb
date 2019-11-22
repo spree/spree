@@ -76,6 +76,33 @@ module Spree
       link_to text.html_safe, spree.cart_path, class: "cart-info nav-link #{css_class}"
     end
 
+    def asset_exists?(path)
+      if Rails.env.production?
+        Rails.application.assets_manifest.find_sources(path).present?
+      else
+        Rails.application.assets.find_asset(path).present?
+      end
+    end
+
+    def main_nav_image(category, type)
+      image_path = "#{type}_#{category}.jpg"
+      image_url = asset_path(asset_exists?(image_path) ? image_path : 'noimage/plp.png')
+
+      lazy_image(
+        src: image_url,
+        alt: category,
+        width: 350,
+        height: 234
+      )
+    end
+
+    def lazy_image(src:, alt:, width:, height:, srcset:'', **options)
+      # We need placeholder image with the correct size to prevent page from jumping
+      placeholder = "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20#{width}%20#{height}'%3E%3C/svg%3E"
+
+      image_tag placeholder, data: { src: src, srcset: srcset }, class: "#{options[:class]} lazyload", alt: alt
+    end
+
     def taxons_tree(root_taxon, current_taxon, max_level = 1)
       return '' if max_level < 1 || root_taxon.leaf?
 
