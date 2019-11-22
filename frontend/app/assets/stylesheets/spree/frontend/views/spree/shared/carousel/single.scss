@@ -5,19 +5,20 @@
     @mixin arrow {
       top: 0;
       width: $arrow-width;
+      z-index: 1;
     }
     &--previous {
       left: -$arrow-width;
       @include arrow;
       @include media-breakpoint-between(md, md) {
-        left: 0;
+        left: 15px;
       }
     }
     &--next {
       right: -$arrow-width;
       @include arrow;
       @include media-breakpoint-between(md, md) {
-        right: 0;
+        right: 15px;
       }
     }
     &-rounded {
