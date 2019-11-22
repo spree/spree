@@ -1,4 +1,4 @@
-$(function() {
+Spree.ready(function($) {
   $('#sort-by-overlay-show-button').click(function() { $('#sort-by-overlay').show() })
   $('#sort-by-overlay-hide-button').click(function() { $('#sort-by-overlay').hide() })
 
