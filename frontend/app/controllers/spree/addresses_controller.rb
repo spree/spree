@@ -12,7 +12,7 @@ module Spree
       @address = spree_current_user.addresses.build(address_params)
       if @address.save
         flash[:notice] = I18n.t(:successfully_created, scope: :address_book)
-        redirect_to account_path
+        redirect_to spree.account_path
       else
         render :action => 'new'
       end
