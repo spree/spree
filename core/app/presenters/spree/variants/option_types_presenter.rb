@@ -28,7 +28,7 @@ module Spree
       def default_variant_data
         return {} if option_types.empty?
 
-        @_default_variant_data ||= begin
+        @default_variant_data ||= begin
           find_in_stock_variant_data || find_backorderable_variant_data || find_first_variant_data
         end
       end
@@ -48,7 +48,7 @@ module Spree
           return { variant: variant, option_value: option_value } if variant
         end
 
-        return nil
+        nil
       end
 
       def find_first_variant_data
