@@ -1,12 +1,12 @@
 <% if try_spree_current_user %>
   <li>
-    <%= link_to Spree.t(:my_account), spree.account_path %>
+    <%= link_to Spree.t(:my_account), spree.account_path if spree.responds_to?(:account_path) %>
   </li>
   <li>
-    <%= link_to Spree.t(:logout), spree.logout_path %>
+    <%= link_to Spree.t(:logout), spree.logout_path if spree.responds_to?(:logout_path) %>
   </li>
 <% else %>
   <li id="link-to-login">
-    <%= link_to Spree.t(:login), spree.login_path %>
+    <%= link_to Spree.t(:login), spree.login_path if spree.responds_to?(:login_path) %>
   </li>
 <% end %>
