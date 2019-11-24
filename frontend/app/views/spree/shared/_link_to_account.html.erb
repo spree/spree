@@ -1,0 +1,7 @@
+<% if spree_current_user %>
+  <%= link_to Spree.t('nav_bar.my_account'), spree.account_path, class: 'dropdown-item' %>
+  <%= link_to Spree.t('nav_bar.log_out'), spree.logout_path, class: 'dropdown-item'%>
+<% else %>
+  <%= link_to Spree.t('nav_bar.log_in'), spree.login_path, class: 'dropdown-item' %>
+  <%= link_to Spree.t('nav_bar.sign_up'), spree.signup_path, class: 'dropdown-item' %>
+<% end %>

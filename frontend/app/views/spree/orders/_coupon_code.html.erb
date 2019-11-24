@@ -1,0 +1,23 @@
+<% if promotion.nil? %>
+  <div class='shopping-cart-coupon-code' data-hook='coupon_code'>
+    <div class="input-group">
+      <%= order_form.text_field :coupon_code, size: '30', class: 'form-control border-right-0', placeholder: Spree.t('cart.add_promo_code') %>
+      <div class="input-group-append">
+        <%= button_tag '+', name: '', id: 'shopping-cart-coupon-code-button', class: 'btn border-left-0' %>
+      </div>
+    </div>
+  </div>
+<% else %>
+  <div class='shopping-cart-coupon-code' data-hook='coupon_code'>
+    <div class="input-group">
+      <%= order_form.text_field :applied_coupon_code, name: '', size: '30', class: 'form-control border-right-0 disabled', value: promotion.label %>
+      <div class="input-group-append">
+        <%= button_tag name: '', class: 'btn border-left-0 disabled' do %>
+          <%= icon(name: 'check-mark',
+                   width: 12,
+                   height: 9)  %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>
