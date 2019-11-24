@@ -112,7 +112,7 @@
           <%= Spree.t('nav_bar.my_account') %>
         </div>
         <div class="pt-2">
-          <% if spree_current_user %>
+          <% if try_spree_current_user %>
             <%= link_to Spree.t('nav_bar.my_orders'), spree.account_path(anchor: "account-my-orders") %>
           <% else %>
             <%= link_to Spree.t('nav_bar.log_in'), spree.login_path %>

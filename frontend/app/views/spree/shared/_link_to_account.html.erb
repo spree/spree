@@ -1,4 +1,4 @@
-<% if spree_current_user %>
+<% if try_spree_current_user %>
   <%= link_to Spree.t('nav_bar.my_account'), spree.account_path, class: 'dropdown-item' %>
   <%= link_to Spree.t('nav_bar.log_out'), spree.logout_path, class: 'dropdown-item'%>
 <% else %>
