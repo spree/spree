@@ -7,10 +7,7 @@ module Spree
       end
 
       def execute
-        Spree::Variant
-          .where(id: active_variants)
-          .joins(:option_values)
-          .order("spree_option_values.position ASC")
+        Spree::Variant.where(id: active_variants).joins(:option_values).order('spree_option_values.position ASC')
       end
 
       private
