@@ -13,7 +13,7 @@ module Spree
         end
 
         def retrieve_products
-          @products = get_base_scope
+          @products = get_extended_base_scope&.available
           curr_page = page || 1
 
           unless Spree::Config.show_products_without_price
@@ -33,10 +33,20 @@ module Spree
 
         protected
 
-        def get_base_scope
+        def get_extended_base_scope
           base_scope = Spree::Product.spree_base_scopes.active
-          base_scope = base_scope.in_taxon(taxon) unless taxon.blank?
           base_scope = get_products_conditions_for(base_scope, keywords)
+          base_scope = Spree::Products::Find.new(
+            scope: base_scope,
+            params: {
+              filter: {
+                price: price,
+                option_value_ids: option_value_ids,
+                taxons: taxon&.id
+              },
+              sort_by: sort_by
+            },
+            current_currency: current_currency).execute
           base_scope = add_search_scopes(base_scope)
           base_scope = add_eagerload_scopes(base_scope)
           base_scope
@@ -58,9 +68,7 @@ module Spree
           # separate queries most of the time but opt for a join as soon as any
           # `where` constraints affecting joined tables are added to the search;
           # which is the case as soon as a taxon is added to the base scope.
-          scope = scope.preload(:tax_category)
-          scope = scope.preload(master: :prices)
-          scope = scope.preload(master: :images) if include_images
+          scope = scope.preload(master: { images: { attachment_attachment: :blob } }) if include_images
           scope
         end
 
@@ -81,15 +89,40 @@ module Spree
         # method should return new scope based on base_scope
         def get_products_conditions_for(base_scope, query)
           unless query.blank?
-            base_scope = base_scope.like_any([:name, :description], query.split)
+            base_scope = base_scope.like_any([:name, :description], [query])
           end
           base_scope
+        end
+
+        def get_products_option_values_conditions(base_scope, option_value_ids)
+          unless option_value_ids.blank?
+            base_scope = base_scope.joins(variants: :option_values).where(spree_option_values: { id: option_value_ids })
+          end
+          base_scope
+        end
+
+        def get_price_range(price_param)
+          return if price_param.blank?
+
+          if price_param == 'Less than $50'
+            low_price = 0
+            high_price = 50
+          else
+            low_price, high_price = price_param.remove('$').split(' - ')
+          end
+          "#{low_price},#{high_price}"
         end
 
         def prepare(params)
           @properties[:taxon] = params[:taxon].blank? ? nil : Spree::Taxon.find(params[:taxon])
           @properties[:keywords] = params[:keywords]
+          colors = params[:color]&.split(',') || []
+          sizes = params[:size]&.split(',') || []
+          lengths = params[:length]&.split(',') || []
+          @properties[:option_value_ids] = colors | sizes | lengths
+          @properties[:price] = get_price_range(params[:price])
           @properties[:search] = params[:search]
+          @properties[:sort_by] = params[:sort_by] || 'default'
           @properties[:include_images] = params[:include_images]
 
           per_page = params[:per_page].to_i

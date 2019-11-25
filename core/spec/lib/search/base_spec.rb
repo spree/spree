@@ -48,15 +48,15 @@ describe Spree::Core::Search::Base do
   it 'maps search params to named scopes' do
     params = { per_page: '', search: { 'price_range_any' => ['Under $10.00'] } }
     searcher = described_class.new(ActionController::Parameters.new(params))
-    expect(searcher.send(:get_base_scope).to_sql).to match(/<= 10/)
+    expect(searcher.send(:get_extended_base_scope).to_sql).to match(/<= 10/)
     expect(searcher.retrieve_products.count).to eq(1)
   end
 
   it 'maps multiple price_range_any filters' do
     params = { per_page: '', search: { 'price_range_any' => ['Under $10.00', '$10.00 - $15.00'] } }
     searcher = described_class.new(ActionController::Parameters.new(params))
-    expect(searcher.send(:get_base_scope).to_sql).to match(/<= 10/)
-    expect(searcher.send(:get_base_scope).to_sql).to match(/between 10.0 and 15.0/i)
+    expect(searcher.send(:get_extended_base_scope).to_sql).to match(/<= 10/)
+    expect(searcher.send(:get_extended_base_scope).to_sql).to match(/between 10.0 and 15.0/i)
     expect(searcher.retrieve_products.count).to eq(2)
   end
 
