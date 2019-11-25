@@ -60,6 +60,17 @@ describe Spree::Core::Search::Base do
     expect(searcher.retrieve_products.count).to eq(2)
   end
 
+  it 'accepts multiple currencies' do
+    Spree::Config[:currency] = 'PLN'
+    params_pln = { per_page: '', search: { 'price_range_any' => ['Under 10.00 zł', '10.00 zł - 15.00 zł'] } }
+    params_gbp = { per_page: '', search: { 'price_range_any' => ['Under £10.00', '£10.00 - £15.00'] } }
+    searcher_pln = described_class.new(ActionController::Parameters.new(params_pln))
+    searcher_gbp = described_class.new(ActionController::Parameters.new(params_gbp))
+    expect(searcher_pln.send(:get_extended_base_scope).to_sql).to match(/<= 10/)
+    expect(searcher_pln.send(:get_extended_base_scope).to_sql).to match(/between 10.0 and 15.0/i)
+    expect(searcher_pln.retrieve_products.count).to eq(2)
+  end
+
   it 'uses ransack if scope not found' do
     params = { per_page: '', search: { 'name_not_cont' => 'Shirt' } }
     searcher = described_class.new(ActionController::Parameters.new(params))
