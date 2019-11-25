@@ -17,11 +17,11 @@
     }
   }
   &-images {
-    &>.product-details-thumbnails {
+    & > .product-details-thumbnails {
       width: (1 / 7) * 100%;
       flex: 0 1 auto;
       margin-right: $grid-gutter-width / 2;
-      &+.product-details-single {
+      & + .product-details-single {
         @include media-breakpoint-up(sm) {
           margin-left: $grid-gutter-width / 2;
         }
@@ -32,7 +32,7 @@
         }
       }
     }
-    &>.product-details-single {
+    & > .product-details-single {
       width: (6 / 7) * 100%;
       flex: 1 1 auto;
       // It's simpler to use a desktop-first approach here to counter container gutters and make the carousel edge-to-edge on xs.
@@ -51,7 +51,11 @@
     }
   }
   &-carousel {
-    a, a:hover, a:active, a:visited, a:focus {
+    a,
+    a:hover,
+    a:active,
+    a:visited,
+    a:focus {
       text-decoration: none !important;
     }
     &-text {
@@ -70,8 +74,43 @@
     margin: 56px auto 102px auto;
   }
   .modal-dialog {
-    width: fit-content;
-    max-width: fit-content;
+    &--zoom {
+      &.modal-dialog .modal-content {
+        padding: 0;
+        .modal-close {
+          top: 5px;
+        }
+        @media (min-height: 780px) {
+          padding: 62px;
+          .modal-close {
+            top: -30px;
+          }
+        }
+        @media (min-height: $zoom-height-breakpoint) {
+          padding: 102px;
+        }
+        .product-details-thumbnails {
+          height: calc(493px / #{$photo-width-to-height-ratio});
+          @media (min-height: 780px) {
+            height: calc(493px / #{$photo-width-to-height-ratio-zoom});
+          }
+          @media (min-height: $zoom-height-breakpoint) {
+            width: 149px;
+            height: calc(650px / #{$photo-width-to-height-ratio-zoom});
+            margin-right: 4rem;
+          }
+        }
+
+        .product-details-single {
+          width: 493px;
+          flex: none;
+
+          @media (min-height: $zoom-height-breakpoint) {
+            width: 650px;
+          }
+        }
+      }
+    }
     .modal-content {
       padding: 62px;
       .product-details-single {
