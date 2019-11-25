@@ -97,6 +97,7 @@ en:
         on_hand: On Hand
         shipping_category: Shipping Category
         tax_category: Tax Category
+        less_than: Less than
       spree/promotion:
         advertise: Advertise
         code: Code
