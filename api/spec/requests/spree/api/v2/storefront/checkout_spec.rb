@@ -405,7 +405,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
         it_behaves_like 'returns 422 HTTP status'
 
         it 'returns an error' do
-          expect(json_response['error']).to eq('Customer E-Mail is invalid')
+          expect(json_response['error']).to eq('Email is invalid')
         end
 
         it 'returns validation errors' do
