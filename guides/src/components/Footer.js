@@ -42,7 +42,7 @@ const Footer = ({ hasSidebar }) => (
       className="inline-flex"
       href="https://sparksolutions.co/"
       target="_blank"
-      rel="noopener noreferrer"
+      rel="follow"
     >
       <img
         src={LogoSrc}
@@ -58,7 +58,7 @@ const Footer = ({ hasSidebar }) => (
         className="link spree-blue hover-spree-green"
         href="https://spreecommerce.org"
         target="_blank"
-        rel="noopener noreferrer"
+        rel="follow"
       >
         Spree Commerce.
       </a>{' '}
