@@ -38,9 +38,31 @@ const Footer = ({ hasSidebar }) => (
     )}
   >
     <span>Designed and developed by</span>
-    <img src={LogoSrc} height={21} className="dib mh2" />
+    <a
+      className="inline-flex"
+      href="https://sparksolutions.co/"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <img
+        src={LogoSrc}
+        height={21}
+        className="dib mh2"
+        alt="Spree Commerce & Ruby on Rails developers"
+        title="Spree Commerce & Ruby on Rails developers"
+      />
+    </a>
     <span className="pl2-l bl-l b--light-silver">
-      © Spree Commerce. {getYear()} All Rights Reserved.
+      ©{' '}
+      <a
+        className="link spree-blue hover-spree-green"
+        href="https://spreecommerce.org"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Spree Commerce.
+      </a>{' '}
+      {getYear()} All Rights Reserved.
     </span>
   </footer>
 )
