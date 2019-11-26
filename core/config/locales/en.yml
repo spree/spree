@@ -55,7 +55,7 @@ en:
         completed_at: Completed At
         coupon_code: Coupon Code
         created_at: Order Date
-        email: Customer E-Mail
+        email: Email
         ip_address: IP Address
         item_total: Item Total
         number: Number
@@ -142,7 +142,7 @@ en:
         name: Site Name
         mail_from_address: Mail From Address
       spree/store_credit:
-        amount_used: "Amount used"
+        amount_used: Amount used
       spree/store_credit_category:
         name: Name
       spree/tax_category:
@@ -381,6 +381,9 @@ en:
           attributes:
             attachment:
               not_allowed_content_type: has not allowed content type
+  address_book:
+    save: Save
+    successfully_created: New address has been successfully created
   devise:
     confirmations:
       confirmed: Your account was successfully confirmed. You are now signed in.
@@ -434,6 +437,13 @@ en:
       format:
         precision: 1
 
+  pagination:
+    first: "&laquo;"
+    last: "&raquo;"
+    previous: "&lsaquo;"
+    next: "&rsaquo;"
+    truncate: "&hellip;"
+
   spree:
     abbreviation: Abbreviation
     accept: Accept
@@ -461,6 +471,7 @@ en:
     add_action_of_type: Add action of type
     add_country: Add Country
     add_coupon_code: Add Coupon Code
+    add_new_address: Add new address
     add_new_header: Add New Header
     add_new_style: Add New Style
     add_one: Add One
@@ -472,12 +483,18 @@ en:
     add_stock: Add Stock
     add_to_cart: Add To Cart
     add_variant: Add Variant
+    add_store: New Store
     add_store_credit: Add Store Credit
+    added_to_cart: 'Added to bag successfully!'
     additional_item: Additional Item
     address: Address
     address1: Address
     address2: Address (contd.)
     addresses: Addresses
+    address_action_popup:
+      delete_button: yes, delete
+      delete_text: Do you really want <br /> to delete this address?
+      delete_title: Are you sure?
     address_book:
       other_address: "Other address"
       add_new_shipping_address: "Add new address"
@@ -526,6 +543,10 @@ en:
           cancel: cancel
           resume: resume
           resend: Resend
+      orders:
+        cart: Cart
+      return_authorization:
+        product: Product
       user:
         account: Account
         addresses: Addresses
@@ -548,6 +569,7 @@ en:
     all_adjustments_opened: All adjustments successfully opened!
     all_departments: All departments
     all_items_have_been_returned: All items have been returned
+    already_have_account: Already have an account?
     alt_text: Alternative Text
     alternative_phone: Alternative Phone
     amount: Amount
@@ -605,14 +627,33 @@ en:
     card_type: Brand
     card_type_is: Card type is
     cart: Cart
+    cart_page:
+      add_promo_code: ADD PROMO CODE
+      checkout: checkout
+      empty_info: 'Your cart is empty.<br />There are no items in your cart.'
+      header: Your shopping bag
+      product: product
+      quantity: quantity
+      title: Shopping Cart
     cart_subtotal:
       one: 'Subtotal (1 item)'
       other: 'Subtotal (%{count} items)'
     categories: Categories
     category: Category
+    category_nav_bar:
+      get_up_to_30_percent_off: GET UP TO 30% OFF
+      jackets_and_coats: JACKET & COASTS
+      new_collection: NEW COLLECTION
+      special_offers: SPECIAL OFFERS
+      summer_2019: SUMMER 2019
     channel: Channel
     charged: Charged
     checkout: Checkout
+    checkout_page:
+      back_to_cart: back to the cart
+      delivery_method: delivery method
+      header: Checkout
+      product: Product
     choose_a_customer: Choose a customer
     choose_a_taxon_to_sort_products_for: "Choose a taxon to sort products for"
     choose_currency: Choose Currency
@@ -635,6 +676,7 @@ en:
     confirm_delete: Confirm Deletion
     confirm_password: Password Confirmation
     continue: Continue
+    continue_as_guest: Continue as a guest
     continue_shopping: Continue shopping
     cost_currency: Cost Currency
     cost_price: Cost Price
@@ -705,6 +747,7 @@ en:
     delete_from_taxon: Delete From Taxon
     discontinued_variants_present: Some line items in this order have products that are no longer available.
     delivery: Delivery
+    delivery_information: Delivery Information
     depth: Depth
     details: Details
     description: Description
@@ -716,6 +759,7 @@ en:
     dismiss_banner: No. Thanks! I'm not interested, do not display this message again
     display: Display
     doesnt_track_inventory: It doesn't track inventory
+    dont_have_account: Don't have an account yet?
     edit: Edit
     editing_resource: 'Editing %{resource}'
     editing_rma_reason: Editing RMA Reason
@@ -792,7 +836,7 @@ en:
     flat_percent: Flat Percent
     flat_rate_per_order: Flat Rate
     flexible_rate: Flexible Rate
-    forgot_password: Forgot Password?
+    forgot_password: Forgot password?
     free_shipping: Free Shipping
     free_shipping_amount: "-"
     front_end: Front End
@@ -801,12 +845,34 @@ en:
     general: General
     general_settings: General Settings
     generate_code: Generate coupon code
+    go_to_category: Go to category
+    go_to_facebook: Go to facebook
     go_to_homepage: Go to Home Page
+    go_to_instagram: Go to instagram
+    go_to_twitter: Go to twitter
     guest_checkout: Guest Checkout
     guest_user_account: Checkout as a Guest
     has_no_shipped_units: has no shipped units
     height: Height
     home: Home
+    homepage:
+      bestsellers: BESTSELLERS
+      fashion_trends: FASHION TRENDS
+      fashion_trends_note: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.
+      men: MEN
+      new: NEW
+      new_collection: NEW COLLECTION
+      read_more: READ MORE
+      shoes: SHOES
+      shop_now: SHOP NOW
+      sportswear: SPORTSWEAR
+      streetstyle: STREETSTYLE
+      summer_2019: Summer 2019
+      summer_collection:  Summer Collection
+      summer_sale: SUMMER SALE
+      trending: TRENDING
+      up_to_60: UP TO 60%
+      women: WOMEN
     help_center: Help Center
     i18n:
       available_locales: Available Locales
@@ -879,6 +945,8 @@ en:
     location: Location
     lock: Lock
     log_entries: "Log Entries"
+    log_in: Log in
+    log_in_to_continue: Log in to continue
     logs: "Logs"
     logged_in_as: Logged in as
     logged_in_succesfully: Logged in successfully
@@ -887,6 +955,7 @@ en:
     login_as_existing: Login as Existing Customer
     login_failed: Login authentication failed.
     login_name: Login
+    logo_alt: Brand logo
     logout: Logout
     look_for_similar_items: Look for similar items
     make_refund: Make refund
@@ -917,9 +986,20 @@ en:
     name: Name
     name_on_card: Name on card
     name_or_sku: Name or SKU (enter at least first 3 characters of product name)
+    nav_bar:
+      close_menu: Close menu
+      go_to_previous_menu: Go to previous menu
+      log_in: LOG IN
+      log_out: LOG OUT
+      my_account: MY ACCOUNT
+      my_orders: MY ORDERS
+      show_menu: Show menu
+      show_search: Show search
+      show_user_menu: Show user menu
+      sign_up: SIGN UP
     new: New
     new_adjustment: New Adjustment
-    new_customer: New Customer
+    new_customer: Create new account
     new_customer_return: New Customer Return
     new_country: New Country
     new_image: New Image
@@ -958,9 +1038,13 @@ en:
     new_zone: New Zone
     next: Next
     no_actions_added: No actions added
+    no_address_given: No address given
     no_available_date_set: No available date set
     no_payment_found: No payment found
     no_pending_payments: No pending payments
+    no_product_available:
+      for_this_quantity: Sorry, it looks like some products are not available in selected quantity.
+      opps: Oops!
     no_products_found: No products found
     no_results: No results
     no_rules_added: No rules added
@@ -987,6 +1071,7 @@ en:
       variant_not_deleted: "Variant could not be deleted. Reason: %{error}"
     num_orders: "# Orders"
     number: Number
+    ok: OK
     on_hand: On Hand
     open: Open
     open_all_adjustments: Open All Adjustments
@@ -1038,13 +1123,15 @@ en:
       payment: payment
       resumed: resumed
       returned: returned
+    order_success: Order placed successfully
+    order_success_explain: Your order information will be sent to your email
     order_summary: Order Summary
     order_sure_want_to: Are you sure you want to %{event} this order?
     order_total: Order Total
     order_updated: Order Updated
     orders: Orders
     out_of_stock: Out of Stock
-    backordered_info: Selected item is backordered so expect delays
+    backordered_info: Backordered
     backordered_confirm_info: Selected item is backordered so expect delays. Are you sure you want to order it?
     overview: Overview
     package_from: package from
@@ -1058,6 +1145,7 @@ en:
     pay: pay
     payment: Payment
     payment_could_not_be_created: Payment could not be created.
+    payment_identifier: Payment Identifier
     payment_information: Payment Information
     payment_method: Payment Method
     payment_methods: Payment Methods
@@ -1066,7 +1154,6 @@ en:
     payment_processor_choose_banner_text: If you need help choosing a payment processor, please visit
     payment_processor_choose_link: our payments page
     payment_state: Payment State
-    payment_identifier: Payment Identifier
     payment_states:
       balance_due: balance due
       checkout: checkout
@@ -1077,8 +1164,17 @@ en:
       pending: pending
       processing: processing
       void: void
+    payment_type: Payment type
     payment_updated: Payment Updated
     payments: Payments
+    pdp:
+      checkout: Checkout
+      description: Description
+      details: Details
+      products_included_in_promotion: Products included in the promotion
+      quantity: Quantity
+      view_cart: View cart
+      you_may_also_like: You may also like
     percent: Percent
     percent_per_item: Percent Per Item
     permalink: Permalink
@@ -1088,6 +1184,31 @@ en:
     place_order: Place Order
     please_define_payment_methods: Please define some payment methods first.
     please_enter_reasonable_quantity: Please enter a reasonable quantity.
+    plp:
+      best_selling: BEST SELLING
+      clear_all: CLEAR ALL
+      collection: COLLECTION
+      color: COLOR
+      done: DONE
+      default: DEFAULT
+      filter_by: FILTER BY
+      home: Home
+      newest_first: NEWEST FIRST
+      no_results: No results
+      no_results_found: No results found
+      not_found_filters1: We couldn’t find a match for these filters.
+      not_found_filters2: Please try another choose.
+      not_found_text1: We couldn’t find products for '%{keywords}'.
+      not_found_text2: Please try another search.
+      price: PRICE
+      price_high_to_low: PRICE (HIGH - LOW)
+      price_low_to_high: PRICE (LOW - HIGH)
+      result: RESULT
+      results_for: RESULTS FOR
+      size: SIZE
+      sort_by: SORT BY
+      top_sellers: TOP SELLERS
+      type: TYPE
     populate_get_error: Something went wrong. Please try adding the item again.
     powered_by: Powered by
     pre_tax_refund_amount: Pre-Tax Refund Amount
@@ -1217,6 +1338,7 @@ en:
     rename: Rename
     report: Report
     reports: Reports
+    required_fields: required fields
     resellable: Resellable
     resend: Resend
     reset_password: Reset my password
@@ -1343,6 +1465,7 @@ en:
     show_only_complete_orders: Only show complete orders
     show_only_considered_risky: Only show risky orders
     show_rate_in_label: Show rate in label
+    sign_up: Sign Up
     sku: SKU
     skus: SKUs
     slug: Slug
@@ -1408,7 +1531,6 @@ en:
     stop: Stop
     store: Store
     stores: Stores
-    add_store: New Store
     store_credit_name: Store Credit
     store_credit:
       credit: "Credit"
@@ -1466,6 +1588,7 @@ en:
     taxon_placeholder: Add a Taxon
     tags: Tags
     tags_placeholder: Add Tags
+    taxon_missing_alt: Category banner description
     taxon_rule:
       choose_taxons: Choose taxons
       label: Order must contain x amount of these taxons
