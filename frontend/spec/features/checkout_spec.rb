@@ -281,7 +281,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
       click_on 'Save and Continue'
       expect(page).to have_current_path(spree.checkout_state_path('payment'))
 
-      add_to_cart(bag.name)
+      add_to_cart(bag)
 
       click_on 'Checkout'
       click_on 'Save and Continue'
@@ -335,7 +335,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
       let!(:bag) { create(:product, name: 'RoR Bag') }
 
       before do
-        add_to_cart(bag.name)
+        add_to_cart(bag)
       end
 
       it 'redirects user back to address step' do
@@ -744,6 +744,6 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
   end
 
   def add_mug_to_cart
-    add_to_cart(mug.name)
+    add_to_cart(mug)
   end
 end

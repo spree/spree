@@ -9,7 +9,7 @@ describe 'Cart', type: :feature, inaccessible: true, js: true do
   let!(:product) { variant.product }
 
   def add_mug_to_cart
-    add_to_cart(product.name)
+    add_to_cart(product)
   end
 
   it 'shows cart icon on non-cart pages' do

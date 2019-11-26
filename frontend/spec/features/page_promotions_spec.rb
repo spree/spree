@@ -1,9 +1,9 @@
 require 'spec_helper'
 
 describe 'page promotions', type: :feature, js: true do
-  before do
-    create(:product, name: 'RoR Mug', price: 20)
+  let(:mug) { create(:product, name: 'RoR Mug', price: 20) }
 
+  before do
     promotion = Spree::Promotion.create!(name: '$10 off',
                                          path: 'test',
                                          starts_at: 1.day.ago,
@@ -15,7 +15,7 @@ describe 'page promotions', type: :feature, js: true do
     action = Spree::Promotion::Actions::CreateItemAdjustments.create(calculator: calculator)
     promotion.actions << action
 
-    add_to_cart('RoR Mug')
+    add_to_cart(mug)
   end
 
   it 'automatically applies a page promotion upon visiting' do

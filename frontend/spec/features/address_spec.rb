@@ -3,13 +3,12 @@ require 'spec_helper'
 describe 'Address', type: :feature, inaccessible: true do
   stub_authorization!
 
+  let(:mug) { create(:product, name: 'RoR Mug') }
+
   before do
-    create(:product, name: 'RoR Mug')
     create(:order_with_totals, state: 'cart')
 
-    visit spree.root_path
-
-    add_to_cart('RoR Mug')
+    add_to_cart(mug)
 
     address = 'order_bill_address_attributes'
     @country_css = "#{address}_country_id"

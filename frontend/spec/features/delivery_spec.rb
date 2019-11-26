@@ -13,8 +13,8 @@ describe 'Delivery', type: :feature, inaccessible: true, js: true do
     sm
   end
 
-  let(:add_mug_and_navigate_to_delivery_page) do
-    add_to_cart(mug.name)
+  def add_mug_and_navigate_to_delivery_page
+    add_to_cart(mug)
     click_button 'Checkout'
 
     fill_in 'order_email', with: 'test@example.com'
