@@ -5,6 +5,7 @@ import { cx } from 'emotion'
 
 // --- Components
 import Header from 'components/Header'
+import Footer from 'components/Footer'
 import Sidebar from 'components/Sidebar'
 import SiteMetadata from 'components/SiteMetadata'
 
@@ -51,7 +52,10 @@ export default class Layout extends React.Component {
           )}
 
           <main
-            className={cx(this.props.nav && 'bg-white lh-copy pa4 ph5-l pt3')}
+            className={cx(
+              this.props.nav &&
+                'bg-white lh-copy pa4 ph5-l pt3 flex flex-column'
+            )}
             css={{
               '@media (min-width: 60rem)': {
                 marginLeft: this.props.nav ? styles.sidebar.width : '0'
@@ -60,6 +64,7 @@ export default class Layout extends React.Component {
           >
             {this.props.children}
           </main>
+          <Footer hasSidebar={this.props.nav !== undefined} />
         </div>
       </React.Fragment>
     )

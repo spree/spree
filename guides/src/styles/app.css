@@ -174,3 +174,8 @@ td[kind='field'] {
     word-break: break-word;
   }
 }
+
+/* Height fix */
+#gatsby-focus-wrapper {
+  height: 100%;
+}
