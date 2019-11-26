@@ -1,9 +1,9 @@
 <% @body_id = 'cart' %>
 
 <div data-hook="cart_container" class="container shopping-cart">
-  <%= render 'spree/shared/breadcrumbs', current_page_name: Spree.t('cart.title') %>
+  <%= render 'spree/shared/breadcrumbs', current_page_name: Spree.t('cart_page.title') %>
 
-  <h1 class="text-uppercase shopping-cart-header"><%= Spree.t('cart.header') %></h1>
+  <h1 class="text-uppercase shopping-cart-header"><%= Spree.t('cart_page.header') %></h1>
 
   <% if @order.line_items.empty? %>
     <div data-hook="empty_cart" class="shopping-cart-empty">
@@ -14,7 +14,7 @@
                    width: 83,
                    height: 83)  %>
 
-          <p class="text-center shopping-cart-empty-info"><%= Spree.t('cart.empty_info').html_safe %></p>
+          <p class="text-center shopping-cart-empty-info"><%= Spree.t('cart_page.empty_info').html_safe %></p>
         </div>
         <%= link_to Spree.t(:continue_shopping), products_path, class: 'btn btn-primary text-uppercase font-weight-bold shopping-cart-empty-continue-link' %>
       </div>
@@ -45,7 +45,7 @@
             </div>
 
             <div class="d-flex flex-column text-center shopping-cart-buttons" data-hook="cart_buttons">
-              <%= link_to Spree.t('cart.checkout'), checkout_path, class: 'btn btn-primary text-uppercase font-weight-bold cart-checkout-btn shopping-cart-buttons-checkout', id: 'checkout-link', method: :get %>
+              <%= link_to Spree.t('cart_page.checkout'), checkout_path, class: 'btn btn-primary text-uppercase font-weight-bold cart-checkout-btn shopping-cart-buttons-checkout', id: 'checkout-link', method: :get %>
               <span class="text-uppercase shopping-cart-buttons-or d-lg-none"><%= Spree.t(:or) %></span>
               <%= link_to Spree.t(:continue_shopping), products_path, class: 'btn btn-outline-primary text-uppercase font-weight-bold d-lg-none shopping-cart-buttons-continue' %>
             </div>

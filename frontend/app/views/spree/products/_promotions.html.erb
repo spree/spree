@@ -11,7 +11,7 @@
               <h4><%= promotion.name %></h4>
               <p><%= promotion.description %></p>
               <% if promotion.products.any? %>
-                <span><%= Spree.t('product.products_included_in_promotion') %>:</span>
+                <span><%= Spree.t('pdp.products_included_in_promotion') %>:</span>
               <% end %>
             </div>
             <% if promotion.products.any? %>
