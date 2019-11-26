@@ -13,9 +13,9 @@ shared_context 'checkout address book' do
       config.alternative_shipping_phone = false
     end
 
-    create(:product_in_stock, name: 'Ruby on Rails Mug', price: 13.99)
+    product = create(:product_in_stock, name: 'Ruby on Rails Mug', price: 13.99)
 
-    add_to_cart('Ruby on Rails Mug')
+    add_to_cart(product)
   end
 
   let(:state) { @state }

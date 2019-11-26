@@ -30,7 +30,7 @@ describe 'Automatic promotions', type: :feature, js: true do
 
   context 'on the cart page' do
     before do
-      add_to_cart(product.name)
+      add_to_cart(product)
     end
 
     it 'automatically applies the promotion once the order crosses the threshold' do
