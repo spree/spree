@@ -50,7 +50,7 @@ describe 'viewing products', type: :feature, inaccessible: true do
       expect(page).to have_title('Ruby On Rails TShirt')
     end
 
-    it 'displays title from taxon root and taxon name'do
+    it 'displays title from taxon root and taxon name' do
       visit '/t/category/super-clothing/t-shirts'
       expect(page).to have_title('Category - T-Shirts - ' + store_name)
     end
