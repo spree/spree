@@ -76,6 +76,7 @@ module Spree
           if search.is_a?(ActionController::Parameters)
             search.each do |name, scope_attribute|
               scope_name = name.to_sym
+
               base_scope = if base_scope.respond_to?(:search_scopes) && base_scope.search_scopes.include?(scope_name.to_sym)
                              base_scope.send(scope_name, *scope_attribute)
                            else
@@ -104,13 +105,15 @@ module Spree
         def get_price_range(price_param)
           return if price_param.blank?
 
-          less_than_string = Spree.t('activerecord.atttributes.spree/product.less_than')
-          if price_param.include(less_than_string)
+          less_than_string = I18n.t('activerecord.attributes.spree/product.less_than')
+
+          if price_param.include? less_than_string
             low_price = 0
-            high_price = Monetize.parse(price_param.remove("#{less_than_string} ")).to_a
+            high_price = Monetize.parse(price_param.remove("#{less_than_string} ")).to_i
           else
             low_price, high_price = Monetize.parse_collection(price_param).map(&:to_i)
           end
+
           "#{low_price},#{high_price}"
         end
 
@@ -121,7 +124,7 @@ module Spree
           sizes = params[:size]&.split(',') || []
           lengths = params[:length]&.split(',') || []
           @properties[:option_value_ids] = colors | sizes | lengths
-          @properties[:price] = get_price_range(params[:price_range_any])
+          @properties[:price] = get_price_range(params[:price])
           @properties[:search] = params[:search]
           @properties[:sort_by] = params[:sort_by] || 'default'
           @properties[:include_images] = params[:include_images]
