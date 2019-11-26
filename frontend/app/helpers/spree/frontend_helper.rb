@@ -206,7 +206,7 @@ module Spree
     end
 
     def icon(name:, classes: '', width:, height:)
-      inline_svg "#{name}.svg", class: "spree-icon #{classes}", size: "#{width}px*#{height}px"
+      inline_svg_tag "#{name}.svg", class: "spree-icon #{classes}", size: "#{width}px*#{height}px"
     end
   end
 end
