@@ -335,7 +335,7 @@ describe 'Address selection during checkout', type: :feature, js: true do
         complete_checkout
         user.reload.addresses
 
-        add_to_cart(Spree::Product)
+        add_to_cart(Spree::Product.last)
         click_button 'Checkout'
 
         within('#billing') do
