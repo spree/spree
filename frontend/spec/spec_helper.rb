@@ -27,10 +27,6 @@ end
 require 'rspec/rails'
 require 'ffaker'
 
-# Requires supporting files with custom matchers and macros, etc,
-# in ./support/ and its subdirectories.
-Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
-
 require 'database_cleaner'
 
 require 'spree/testing_support/i18n' if ENV['CHECK_TRANSLATIONS']
@@ -47,6 +43,10 @@ require 'spree/testing_support/caching'
 require 'spree/testing_support/capybara_config'
 require 'spree/testing_support/image_helpers'
 require 'webdrivers'
+
+# Requires supporting files with custom matchers and macros, etc,
+# in ./support/ and its subdirectories.
+Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
 
 RSpec.configure do |config|
   config.color = true
