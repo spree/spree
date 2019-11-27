@@ -891,6 +891,7 @@ en:
     images: Images
     implement_eligible_for_return: "Must implement #eligible_for_return? for your EligibilityValidator."
     implement_requires_manual_intervention: "Must implement #requires_manual_intervention? for your EligibilityValidator."
+    in_stock: In Stock
     inactive: Inactive
     incl: incl.
     included_in_price: Included in Price
