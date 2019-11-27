@@ -118,11 +118,12 @@ module Spree
         end
 
         def prepare(params)
+          colors = params[:color]&.split(',') || []
+          lengths = params[:length]&.split(',') || []
+          sizes = params[:size]&.split(',') || []
+
           @properties[:taxon] = params[:taxon].blank? ? nil : Spree::Taxon.find(params[:taxon])
           @properties[:keywords] = params[:keywords]
-          colors = params[:color]&.split(',') || []
-          sizes = params[:size]&.split(',') || []
-          lengths = params[:length]&.split(',') || []
           @properties[:option_value_ids] = colors | sizes | lengths
           @properties[:price] = get_price_range(params[:price])
           @properties[:search] = params[:search]

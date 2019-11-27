@@ -208,5 +208,21 @@ module Spree
     def icon(name:, classes: '', width:, height:)
       inline_svg "#{name}.svg", class: "spree-icon #{classes}", size: "#{width}px*#{height}px"
     end
+
+    def price_filter_values
+      [
+        "#{I18n.t('activerecord.attributes.spree/product.less_than')} #{formatted_price(50)}",
+        "#{formatted_price(50)} - #{formatted_price(100)}",
+        "#{formatted_price(101)} - #{formatted_price(150)}",
+        "#{formatted_price(151)} - #{formatted_price(200)}",
+        "#{formatted_price(201)} - #{formatted_price(30)}"
+      ]
+    end
+
+    private
+
+    def formatted_price(value)
+      Spree::Money.new(value, currency: Spree::Config[:currency], no_cents_if_whole: true).to_s
+    end
   end
 end
