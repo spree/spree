@@ -531,6 +531,8 @@ en:
         promotion_categories: Promotion Categories
         properties: Properties
         prototypes: Prototypes
+        reports_total_sales: Total Sales
+        reports_average_order_values: Average Order Value
         reports: Reports
         taxonomies: Taxonomies
         taxons: Taxons
