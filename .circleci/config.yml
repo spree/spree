@@ -152,7 +152,7 @@ jobs:
           name: Configure SSH agent
           command: |
             ssh-add -D
-            ssh-add ~/.ssh/id_rsa_version_bump
+            ssh-add ~/.ssh/id_rsa_d3645413e7d99f61e7663f2d7f0af70f
       - run: mkdir ./spree_reports_staging_temporary
       # - run: git clone git@github.com:spark-solutions/spree_reports_staging.git ./spree_reports_staging_temporary
       - run: git clone -b auto-bump-test git@github.com:spark-solutions/spree_reports_staging.git ./spree_reports_staging_temporary
