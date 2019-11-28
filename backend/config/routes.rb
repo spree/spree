@@ -145,6 +145,10 @@ Spree::Core::Engine.add_routes do
       end
     end
 
+    namespace :reports do
+      resources :total_sales, only: :index
+    end
+
     resources :reimbursement_types
     resources :refund_reasons, except: :show
     resources :return_authorization_reasons, except: :show
