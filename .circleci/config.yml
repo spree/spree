@@ -182,4 +182,4 @@ workflows:
       - update_spree_reports_staging:
           filters:
             branches:
-              only: new-email-views
+              only: spree-reports
