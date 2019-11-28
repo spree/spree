@@ -11,6 +11,7 @@
 //= require jquery-ui/widgets/autocomplete
 //= require select2
 //= require underscore-min.js
+//= require chart
 
 //= require spree
 //= require spree/backend/spree-select2
