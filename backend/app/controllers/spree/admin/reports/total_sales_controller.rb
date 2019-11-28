@@ -2,7 +2,7 @@ module Spree
   module Admin
     module Reports
       class TotalSalesController < Spree::Admin::BaseController
-        def index
+        def show
         end
       end
     end
