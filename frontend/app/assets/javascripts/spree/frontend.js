@@ -8,6 +8,7 @@
 //= require fetch.umd
 //= require spree/api/main
 //= require lazysizes.min
+//= require turbolinks
 //= require_tree ./frontend
 
 Spree.routes.api_tokens = Spree.pathFor('api_tokens')
