@@ -146,13 +146,13 @@ jobs:
     steps:
       - add_ssh_keys:
           fingerprints:
-            - "0b:96:15:2d:34:4d:bc:75:d9:fc:7f:1b:de:a5:70:d5"
+            - "d3:64:54:13:e7:d9:9f:61:e7:66:3f:2d:7f:0a:f7:0f"
       - run: ssh-keyscan -H github.com >> ~/.ssh/known_hosts
       - run:
           name: Configure SSH agent
           command: |
             ssh-add -D
-            ssh-add ~/.ssh/id_rsa_0b96152d344dbc75d9fc7f1bdea570d5
+            ssh-add ~/.ssh/id_rsa_version_bump
       - run: mkdir ./spree_reports_staging_temporary
       - run: git clone git@github.com:spark-solutions/spree_reports_staging.git ./spree_reports_staging_temporary
       - run:
