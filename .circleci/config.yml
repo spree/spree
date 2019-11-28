@@ -154,7 +154,8 @@ jobs:
             ssh-add -D
             ssh-add ~/.ssh/id_rsa_version_bump
       - run: mkdir ./spree_reports_staging_temporary
-      - run: git clone git@github.com:spark-solutions/spree_reports_staging.git ./spree_reports_staging_temporary
+      # - run: git clone git@github.com:spark-solutions/spree_reports_staging.git ./spree_reports_staging_temporary
+      - run: git clone -b auto-bump-test git@github.com:spark-solutions/spree_reports_staging.git ./spree_reports_staging_temporary
       - run:
           name: Update spree
           command: |
@@ -164,7 +165,8 @@ jobs:
             git config --global user.email "noreply@sparksolutions.co"
             git config --global user.name "AutoDeploy"
             git commit -m "Auto-commit v#${CIRCLE_BUILD_NUM}"
-            git push git@github.com:spark-solutions/spree_reports_staging.git
+            # git push git@github.com:spark-solutions/spree_reports_staging.git
+            git push git@github.com:spark-solutions/spree_reports_staging.git auto-bump-test
 workflows:
   version: 2
   main:
@@ -182,4 +184,5 @@ workflows:
       - update_spree_reports_staging:
           filters:
             branches:
-              only: spree-reports
+              # only: spree-reports
+              only: sr-5
