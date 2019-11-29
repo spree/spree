@@ -8,12 +8,15 @@ function getChartNodes (className) {
 
 /**
  * @param {HTMLCanvasElement} node DOM node
+ * @returns {object} Information to get chart data
  */
 function getChartData (node) {
   return {
     type: node.dataset.type,
-    datasets: JSON.parse(node.dataset.datasets),
-    labels: JSON.parse(node.dataset.labels)
+    label: node.dataset.label,
+    id: node.dataset.id,
+    labelKey: node.dataset.labelKey,
+    dataKey: node.dataset.dataKey
   }
 }
 
@@ -21,6 +24,7 @@ function getChartData (node) {
  * @param {string} node DOM node id to hold the chart. Should be canvas.
  * @param {string} type Chart type.
  * @param {object} data Chart.js data objects holding labels and datasets to display
+ * @returns {Chart}
  */
 function createChart (node, type, data) {
   return new Chart(node, {
@@ -48,12 +52,47 @@ function createChart (node, type, data) {
   })
 }
 
+/**
+ * @param {object} json Report data from backend api
+ * @param {string} key Key to get values from
+ * @returns {array} Array of values
+ */
+function getData (json, key) {
+  return json.map(function (item) {
+    return item[key]
+  })
+}
+
+/**
+ * @param {object} data Data referencing information for data fetching
+ * @param {Chart} chart Chart instance
+ */
+function updateChart (data, chart) {
+  return fetch(`/admin/reports/${data.id}.json`)
+    .then(function (response) {
+      return response.json()
+    })
+    .then(function (json) {
+      console.log(data.dataKey)
+      console.log(data.labelKey)
+      chart.data.datasets[0].data = getData(json, data.dataKey)
+      chart.data.labels = getData(json, data.labelKey)
+    }).finally(function () {
+      chart.update()
+    })
+}
+
 function initReports () {
   const nodes = getChartNodes('reports--chart')
 
   return Array.prototype.forEach.call(nodes, function (node) {
     const data = getChartData(node)
-    createChart(node, data.type, {labels: data.labels, datasets: data.datasets})
+    const chart = createChart(node, data.type, {
+      labels: [],
+      datasets: [{ label: data.label, data: [] }]
+    })
+
+    updateChart(data, chart)
   })
 }
 
