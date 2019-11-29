@@ -139,6 +139,7 @@ jobs:
           command: |
             ./tmp/cc-test-reporter sum-coverage tmp/codeclimate.*.json -p 4 -o tmp/codeclimate.total.json
             ./tmp/cc-test-reporter upload-coverage -i tmp/codeclimate.total.json
+
   update_spree_reports_staging:
     docker:
       - image: circleci/ruby:2.6.3-node-browsers
@@ -160,6 +161,7 @@ jobs:
           name: Update spree
           command: |
             cd spree_reports_staging_temporary
+            gem install bundler:2.0.2
             bundle update spree
             git add .
             git config --global user.email "noreply@sparksolutions.co"
