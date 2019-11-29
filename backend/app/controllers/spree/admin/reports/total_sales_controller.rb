@@ -3,7 +3,7 @@ module Spree
     module Reports
       class TotalSalesController < Spree::Admin::BaseController
         def show
-          orders = Spree::Admin::Reports::TotalSalesQuery.new.call
+          orders = Spree::Admin::Reports::TotalSalesQuery.new.call(params)
 
           respond_to do |format|
             format.html
