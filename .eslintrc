@@ -2,6 +2,7 @@
 extends: standard
 
 globals:
+  Chart: true
   Spree: true
   analytics: true
   ga: true

@@ -1,1 +1,16 @@
-Total Sales Report View
+<% content_for :page_title do %>
+  <%= link_to Spree.t(:reports), spree.admin_reports_url %> /
+  <%= Spree.t(:total_sales) %>
+<% end %>
+
+<canvas
+  id="chart--total_sales"
+  class="reports--chart"
+  width="400"
+  height="100"
+  aria-label="<%= Spree.t(:total_sales) %>"
+  role="img"
+  data-type="line"
+  data-datasets='[{"label":"Total sum of sales ($)","data":[120, 570, 1234, 44, 102, 696, 799]}]'
+  data-labels='["25/11/2019","26/11/2019","27/11/2019","28/11/2019","29/11/2019","30/11/2019","01/12/2019"]'></canvas>
+
