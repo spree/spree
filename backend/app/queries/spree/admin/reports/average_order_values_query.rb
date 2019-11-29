@@ -2,10 +2,27 @@ module Spree
   module Admin
     module Reports
       class AverageOrderValuesQuery
-        def call
-          Spree::Order.complete
-                      .group_by { |order| order.completed_at.strftime('%Y-%m-%d') }
-                      .map { |day, orders| [day, orders.sum(&:total) / orders.size] }
+        def call(opts)
+          @opts = opts
+
+          Spree::Order
+            .complete
+            .group_by { |order| order.completed_at.strftime(group_by_date) }
+            .map { |day, orders| [day, orders.sum(&:total) / orders.size] }
+        end
+
+        private
+
+        attr_accessor :opts
+
+        def group_by_date
+          group_by = opts[:group_by] || 'day'
+
+          case group_by.to_sym
+          when :month then '%Y-%m'
+          when :year then '%Y'
+          else '%Y-%m-%d'
+          end
         end
       end
     end
