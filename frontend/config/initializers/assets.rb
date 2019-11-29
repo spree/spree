@@ -5,4 +5,5 @@ Rails.application.config.assets.precompile += %w(
   homepage/*
   noimage/*
   logo@3x.png
+  arrow.svg
 )
