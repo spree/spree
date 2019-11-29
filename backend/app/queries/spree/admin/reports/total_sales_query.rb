@@ -9,6 +9,7 @@ module Spree
             .complete
             .group_by { |order| order.completed_at.strftime(group_by_date) }
             .map { |day, orders| [day, orders.sum(&:total)] }
+            .sort_by { |day, _| day }
         end
 
         private

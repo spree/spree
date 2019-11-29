@@ -22,12 +22,12 @@ describe Spree::Admin::Reports::AverageOrderValuesQuery do
       let(:group_by) { nil }
 
       it 'groups by day' do
-        expect(subject).to match_array([
-          ['2019-11-29', 150],
-          ['2019-10-29', 350],
-          ['2019-10-28', 360],
+        expect(subject).to eq [
           ['2018-11-29', 400],
-        ])
+          ['2019-10-28', 360],
+          ['2019-10-29', 350],
+          ['2019-11-29', 150]
+        ]
       end
     end
 
@@ -35,11 +35,11 @@ describe Spree::Admin::Reports::AverageOrderValuesQuery do
       let(:group_by) { 'month' }
 
       it 'groups by month' do
-        expect(subject).to match_array([
-          ['2019-11', 150],
-          ['2019-10', 355],
+        expect(subject).to eq [
           ['2018-11', 400],
-        ])
+          ['2019-10', 355],
+          ['2019-11', 150]
+        ]
       end
     end
 
@@ -47,10 +47,10 @@ describe Spree::Admin::Reports::AverageOrderValuesQuery do
       let(:group_by) { 'year' }
 
       it 'groups by year' do
-        expect(subject).to match_array([
-          ['2019', 252.5],
+        expect(subject).to eq [
           ['2018', 400],
-        ])
+          ['2019', 252.5]
+        ]
       end
     end
   end
