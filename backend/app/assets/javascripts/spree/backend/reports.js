@@ -73,8 +73,6 @@ function updateChart (data, chart) {
       return response.json()
     })
     .then(function (json) {
-      console.log(data.dataKey)
-      console.log(data.labelKey)
       chart.data.datasets[0].data = getData(json, data.dataKey)
       chart.data.labels = getData(json, data.labelKey)
     }).finally(function () {
