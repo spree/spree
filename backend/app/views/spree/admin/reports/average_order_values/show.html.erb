@@ -1,0 +1,26 @@
+<canvas id="average-order-values-chart" width="600" height="400"></canvas>
+<script>
+  var averageOrderValuesChart = new Chart('average-order-values-chart', {
+    type: 'line',
+    data: {
+      labels: [
+        '2019-11-25',
+        '2019-11-26',
+        '2019-11-27',
+        '2019-11-28',
+        '2019-11-29',
+        '2019-11-30',
+        '2019-12-01'
+      ],
+      datasets: [
+        {
+          label: 'Average Order Value',
+          data: [200.54, 204.72, 198.45, 201.11, 200.54, 209.72, 198.45],
+        },
+      ]
+    },
+    options: {
+      responsive: false
+    }
+  })
+</script>
