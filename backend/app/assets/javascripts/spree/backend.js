@@ -35,6 +35,7 @@
 //= require spree/backend/promotions
 //= require spree/backend/returns/expedited_exchanges_warning
 //= require spree/backend/returns/return_item_selection
+//= require spree/backend/reports
 //= require spree/backend/shipments
 //= require spree/backend/states
 //= require spree/backend/stock_location
@@ -78,5 +79,7 @@ Spree.routes.payments_api = function (orderId) {
 }
 
 Spree.routes.stock_items_api = function (stockLocationId) {
-  return Spree.pathFor('api/v1/stock_locations/' + stockLocationId + '/stock_items')
+  return Spree.pathFor(
+    'api/v1/stock_locations/' + stockLocationId + '/stock_items'
+  )
 }
