@@ -162,6 +162,8 @@ module Spree
     end
 
     def carousel_image_source_set(image)
+      return '' unless image
+
       widths = { lg: 1200, md: 992, sm: 768, xs: 576 }
       set = []
       widths.each do |key, value|
