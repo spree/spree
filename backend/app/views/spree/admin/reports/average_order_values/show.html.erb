@@ -1,26 +1,24 @@
-<canvas id="average-order-values-chart" width="600" height="400"></canvas>
+<canvas id="average-order-values-chart" height="500"></canvas>
+
 <script>
   var averageOrderValuesChart = new Chart('average-order-values-chart', {
     type: 'line',
     data: {
-      labels: [
-        '2019-11-25',
-        '2019-11-26',
-        '2019-11-27',
-        '2019-11-28',
-        '2019-11-29',
-        '2019-11-30',
-        '2019-12-01'
-      ],
-      datasets: [
-        {
-          label: 'Average Order Value',
-          data: [200.54, 204.72, 198.45, 201.11, 200.54, 209.72, 198.45],
-        },
-      ]
+      labels: [],
+      datasets: [{ label: 'Average Order Value', data: [] }]
     },
     options: {
-      responsive: false
+      maintainAspectRatio: false
+    }
+  })
+
+  $.ajax({
+    url: '/admin/reports/average_order_values.json',
+    success: function(data) {
+      averageOrderValuesChart.data.labels = data.map(function(entry) { return entry.day })
+      averageOrderValuesChart.data.datasets[0].data = data.map(function(entry) { return entry.averageOrderTotal })
+
+      averageOrderValuesChart.update()
     }
   })
 </script>
