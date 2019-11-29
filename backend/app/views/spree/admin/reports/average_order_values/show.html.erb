@@ -1,0 +1,24 @@
+<canvas id="average-order-values-chart" height="500"></canvas>
+
+<script>
+  var averageOrderValuesChart = new Chart('average-order-values-chart', {
+    type: 'line',
+    data: {
+      labels: [],
+      datasets: [{ label: 'Average Order Value', data: [] }]
+    },
+    options: {
+      maintainAspectRatio: false
+    }
+  })
+
+  $.ajax({
+    url: '/admin/reports/average_order_values.json',
+    success: function(data) {
+      averageOrderValuesChart.data.labels = data.map(function(entry) { return entry.day })
+      averageOrderValuesChart.data.datasets[0].data = data.map(function(entry) { return entry.averageOrderTotal })
+
+      averageOrderValuesChart.update()
+    }
+  })
+</script>
