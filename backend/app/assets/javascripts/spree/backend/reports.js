@@ -76,6 +76,12 @@ function updateChart (data, chart) {
     })
 }
 
+function getParamValue (param) {
+  const params = new Uri(window.location.search)
+
+  return params.getQueryParamValue(param)
+}
+
 /**
  * @param {HTMLSelectElement} node DOM select not to get index of
  * @param {string} param The param from URL to search through select options
@@ -83,9 +89,7 @@ function updateChart (data, chart) {
  */
 function getParamSelectedIndex (node, param) {
   const options = []
-  const selectedValue = new Uri(window.location.search).getQueryParamValue(
-    param
-  )
+  const selectedValue = getParamValue(param)
 
   Array.prototype.forEach.call(node.options, function (el) {
     options.push(el.value)
@@ -150,10 +154,19 @@ function initFilter () {
 
   // Listen to browser history change and init requests
   window.onpopstate = function (e) {
-    groupBySelect.selectedIndex = getParamSelectedIndex(
+    const groupSelectedIndex = getParamSelectedIndex(
       groupBySelect,
       'group_by'
     )
+
+    if (groupSelectedIndex === -1) {
+      groupBySelect.selectedIndex = 0
+    } else {
+      groupBySelect.selectedIndex = groupSelectedIndex
+    }
+
+    completedAtMaxInput.value = getParamValue('completed_at_max')
+    completedAtMinInput.value = getParamValue('completed_at_min')
 
     return initReports()
   }
