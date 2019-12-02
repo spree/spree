@@ -3,12 +3,12 @@ require 'spec_helper'
 describe 'Coupon code promotions', type: :feature, js: true do
   let!(:country) { create(:country, name: 'United States of America', states_required: true) }
   let!(:state) { create(:state, name: 'Alabama', country: country) }
+  let!(:mug) { create(:product, name: 'RoR Mug', price: 20) }
 
   before do
     create(:zone)
     create(:shipping_method)
     create(:check_payment_method)
-    create(:product, name: 'RoR Mug', price: 20)
     create(:store)
   end
 

@@ -18,35 +18,37 @@
       </div>
     </div>
   </li>
-  <li data-hook>
-    <div class="dropdown navbar-right-dropdown">
-      <button type="button" data-toggle="dropdown" class="navbar-right-dropdown-toggle" aria-label="<%= Spree.t('nav_bar.show_user_menu')%>">
-        <%= icon(name: 'person',
-                 classes: 'd-none d-xl-inline-block',
-                 width: 41.4,
-                 height: 36)  %>
+  <% if defined?(account_link_path) %>
+    <li data-hook>
+      <div class="dropdown navbar-right-dropdown">
+        <button type="button" data-toggle="dropdown" class="navbar-right-dropdown-toggle" aria-label="<%= Spree.t('nav_bar.show_user_menu')%>">
+          <%= icon(name: 'person',
+                  classes: 'd-none d-xl-inline-block',
+                  width: 41.4,
+                  height: 36)  %>
 
-        <%= icon(name: 'person',
-                 classes: 'd-xl-none',
-                 width: 27.6,
-                 height: 24)  %>
-      </button>
+          <%= icon(name: 'person',
+                  classes: 'd-xl-none',
+                  width: 27.6,
+                  height: 24)  %>
+        </button>
 
-      <div id="link-to-account" class="dropdown-menu dropdown-menu-right text-right">
-      </div>
-      <%# TODO: fix me in spree_auth_devise %>
-      <script>
-        window.addEventListener('turbolinks:load', function() {
-          $.ajax({
-            url: Spree.pathFor("account_link"),
-            success: function(data) {
-              return $('#link-to-account').html(data)
-            }
+        <div id="link-to-account" class="dropdown-menu dropdown-menu-right text-right">
+        </div>
+        <%# TODO: fix me in spree_auth_devise %>
+        <script>
+          window.addEventListener('turbolinks:load', function() {
+            $.ajax({
+              url: Spree.pathFor("account_link"),
+              success: function(data) {
+                return $('#link-to-account').html(data)
+              }
+            })
           })
-        })
-      </script>
-    </div>
-  </li>
+        </script>
+      </div>
+    </li>
+  <% end %>
   <li id="link-to-cart" data-hook>
     <span class="d-none d-xl-inline-block cart-icon--xl">
       <%= icon(name: 'bag',
