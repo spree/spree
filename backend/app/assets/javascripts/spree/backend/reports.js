@@ -96,10 +96,14 @@ function getParamSelectedIndex (node, param) {
 
 function updateUrlParams (e, param) {
   const url = new Uri(window.location)
-    .replaceQueryParam(param, e.target.value)
-    .toString()
 
-  window.history.pushState({}, '', url)
+  if (e.target.value === '') {
+    url.deleteQueryParam(param)
+  } else {
+    url.replaceQueryParam(param, e.target.value)
+  }
+
+  window.history.pushState({}, '', url.toString())
 
   return initReports()
 }
