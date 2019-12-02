@@ -1,24 +1,19 @@
-<canvas id="average-order-values-chart" height="500"></canvas>
+<% content_for :page_title do %>
+  <%= link_to Spree.t(:reports), spree.admin_reports_url %> /
+  <%= Spree.t(:average_order_values) %>
+<% end %>
 
-<script>
-  var averageOrderValuesChart = new Chart('average-order-values-chart', {
-    type: 'line',
-    data: {
-      labels: [],
-      datasets: [{ label: 'Average Order Value', data: [] }]
-    },
-    options: {
-      maintainAspectRatio: false
-    }
-  })
+<%= render partial: 'spree/admin/reports/group_by' %>
 
-  $.ajax({
-    url: '/admin/reports/average_order_values.json',
-    success: function(data) {
-      averageOrderValuesChart.data.labels = data.map(function(entry) { return entry.day })
-      averageOrderValuesChart.data.datasets[0].data = data.map(function(entry) { return entry.averageOrderTotal })
-
-      averageOrderValuesChart.update()
-    }
-  })
-</script>
+<canvas
+  id="chart--average-order-values"
+  class="reports--chart"
+  width="400"
+  height="100"
+  aria-label="average_order_values"
+  role="img"
+  data-id="average_order_values"
+  data-label-key="day"
+  data-data-key="averageOrderTotal"
+  data-label="average_order_values"
+  data-type="line"></canvas>

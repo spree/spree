@@ -107,9 +107,12 @@ function getParamSelectedIndex (node, param) {
 
 function initFilter () {
   const groupBySelect = document.getElementById('reports-group-by')
+  const selectedIndexFromParams = getParamSelectedIndex(groupBySelect, 'group_by')
 
   // Set selected value from URL param
-  groupBySelect.selectedIndex = getParamSelectedIndex(groupBySelect, 'group_by')
+  if (selectedIndexFromParams !== -1) {
+    groupBySelect.selectedIndex = selectedIndexFromParams
+  }
 
   // Change browser URL and init request when user select option
   groupBySelect.addEventListener('change', function (e) {
