@@ -10,6 +10,9 @@ module Spree
             format.json do
               render json: Spree::Admin::Reports::TotalSales::JsonSerializer.new.call(orders)
             end
+            format.csv do
+              render plain: Spree::Admin::Reports::TotalSales::CsvSerializer.new.call(orders)
+            end
           end
         end
       end
