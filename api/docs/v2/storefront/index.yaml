@@ -154,6 +154,8 @@ paths:
         - $ref: '#/components/parameters/OrderParam'
         - $ref: '#/components/parameters/CartIncludeParam'
         - $ref: '#/components/parameters/SparseFieldsParam'
+      security:
+        - orderToken: []
   '/cart':
     post:
       description: >-
