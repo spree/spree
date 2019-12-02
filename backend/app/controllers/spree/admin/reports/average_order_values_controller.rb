@@ -11,6 +11,10 @@ module Spree
               serializer = Spree::Admin::Reports::AverageOrderValues::JsonSerializer.new
               render json: serializer.call(objects)
             end
+            format.csv do
+              serializer = Spree::Admin::Reports::AverageOrderValues::CsvSerializer.new
+              render plain: serializer.call(objects)
+            end
           end
         end
       end
