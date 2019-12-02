@@ -1,0 +1,25 @@
+<div class="card bg-light mb-3">
+  <div class="card-body">
+    <form>
+      <div class="row">
+        <div class="form-group col-12 col-md-2">
+          <label for="reports-group-by"><%= Spree.t(:group_by) %>:</label>
+          <select id="reports-group-by">
+            <option selected value="day">Day</option>
+            <option value="week">Week</option>
+            <option value="month">Month</option>
+            <option value="year">Year</option>
+          </select>
+        </div>
+        <div class="form-group col-12 col-md-4">
+          <label for="reports-completed-at-min"><%= Spree.t(:completed_at_min) %>:</label>
+          <input type="date" class="form-control" id="reports-completed-at-min" name="reports-completed-at-min" />
+        </div>
+        <div class="form-group col-12 col-md-4">
+          <label for="reports-completed-at-max"><%= Spree.t(:completed_at_max) %>:</label>
+          <input type="date" class="form-control" id="reports-completed-at-max" name="reports-completed-at-max" />
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
