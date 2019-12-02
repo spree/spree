@@ -32,7 +32,7 @@ CouponManager.prototype.sendRequest = function () {
     url: Spree.routes.api_v2_storefront_cart_apply_coupon_code,
     dataType: 'json',
     headers: {
-      'X-Spree-Order-Token': Spree.current_order_token
+      'X-Spree-Order-Token': SpreeAPI.orderToken
     },
     data: {
       coupon_code: this.couponCode
