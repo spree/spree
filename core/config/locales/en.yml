@@ -677,6 +677,8 @@ en:
     code: Code
     company: Company
     complete: complete
+    completed_at_max: Completed at max
+    completed_at_min: Completed at min
     configuration: Configuration
     configurations: Configurations
     confirm: Confirm
@@ -770,6 +772,7 @@ en:
     display: Display
     doesnt_track_inventory: It doesn't track inventory
     dont_have_account: No account?
+    download_csv: Download CSV
     edit: Edit
     editing_resource: 'Editing %{resource}'
     editing_rma_reason: Editing RMA Reason

@@ -104,9 +104,7 @@ function initFilter() {
   const completedAtMaxInput = document.getElementById(
     "reports-completed-at-max"
   );
-
-  // Set max date attribute to today
-  completedAtMaxInput.max = new Date().toISOString().split("T")[0];
+  const downloadCsvButton = document.getElementById("download-csv");
 
   const selectedIndexFromParams = getParamSelectedIndex(
     groupBySelect,
@@ -129,6 +127,13 @@ function initFilter() {
 
   completedAtMaxInput.addEventListener("change", function(e) {
     return updateUrlParams(e, "completed_at_max");
+  });
+
+  downloadCsvButton.addEventListener("click", function(e) {
+    window.location.assign(
+      window.location.pathname.replace(/(\.html)?$/, ".csv") +
+        window.location.search
+    );
   });
 
   function updateUrlParams(e, param) {
