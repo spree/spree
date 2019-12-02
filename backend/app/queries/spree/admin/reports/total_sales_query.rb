@@ -5,8 +5,10 @@ module Spree
         def call(opts)
           @opts = opts
 
-          Spree::Order
-            .complete
+          scope = base_scope
+          scope = apply_date_filters(scope)
+
+          scope
             .group_by { |order| order.completed_at.strftime(group_by_date) }
             .map { |day, orders| [day, orders.sum(&:total)] }
             .sort_by { |day, _| day }
@@ -24,6 +26,17 @@ module Spree
           when :year then '%Y'
           else '%Y-%m-%d'
           end
+        end
+
+        def base_scope
+          Spree::Order.complete
+        end
+
+        def apply_date_filters(scope)
+          scope = scope.where('completed_at >= ?', opts[:completed_at_min]) if opts[:completed_at_min]
+          scope = scope.where('completed_at <= ?', opts[:completed_at_max]) if opts[:completed_at_max]
+
+          scope
         end
       end
     end
