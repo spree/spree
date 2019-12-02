@@ -53,17 +53,6 @@ function createChart (node, type, data) {
 }
 
 /**
- * @param {object} json Report data from backend api
- * @param {string} key Key to get values from
- * @returns {array} Array of values
- */
-function getData (json, key) {
-  return json.map(function (item) {
-    return item[key]
-  })
-}
-
-/**
  * @param {string} reportId String ID of the report, comes from data-id attr.
  * @returns {string} API URL
  */
@@ -81,8 +70,8 @@ function updateChart (data, chart) {
       return response.json()
     })
     .then(function (json) {
-      chart.data.datasets[0].data = getData(json, data.dataKey)
-      chart.data.labels = getData(json, data.labelKey)
+      chart.data.datasets[0].data = json.data
+      chart.data.labels = json.labels
     })
     .finally(function () {
       chart.update()
