@@ -143,7 +143,7 @@ module Spree
       end
 
       def include_discontinued(products)
-        discontinued ? products : products.not_discontinued
+        discontinued ? products : products.available
       end
     end
   end

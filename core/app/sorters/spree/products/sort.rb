@@ -11,7 +11,7 @@ module Spree
         products = updated_at(scope)
         products = price(products)
 
-        products
+        products.distinct
       end
 
       private
