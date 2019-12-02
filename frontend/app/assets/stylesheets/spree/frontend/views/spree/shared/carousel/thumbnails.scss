@@ -3,7 +3,11 @@
     $single-gap: 5%;
     &-content {
       height: 0;
-      padding-bottom: thubnails-carousel-content-min-height(5, $single-gap, $thumbnails-carousel-single-height);
+      padding-bottom: thubnails-carousel-content-min-height(
+        5,
+        $single-gap,
+        $thumbnails-carousel-single-height
+      );
       display: block;
     }
     &-single {
@@ -11,6 +15,14 @@
       padding-bottom: $thumbnails-carousel-single-height;
       position: relative;
       display: none;
+
+      .modal-dialog--zoom & {
+        padding-bottom: $thumbnails-carousel-single-height;
+        @media (min-height: 780px) {
+          padding-bottom: $thumbnails-carousel-single-height-zoom;
+        }
+      }
+
       img {
         position: absolute;
         width: 100%;
@@ -51,8 +63,8 @@
   }
   &--empty {
     padding: 0 0 100% / $photo-width-to-height-ratio 0;
-    background: theme-color('light');
-    &>* {
+    background: theme-color("light");
+    & > * {
       display: none !important;
     }
   }
@@ -67,6 +79,19 @@
         &--visible {
           & ~ & {
             margin-top: $single-gap-md;
+          }
+
+          .modal-dialog--zoom & ~ & {
+            margin-top: 6px;
+          }
+
+          @media (min-height: $zoom-height-breakpoint) {
+            .modal-dialog--zoom & ~ & {
+              margin-top: 10px;
+            }
+            .modal-dialog--zoom & {
+              margin-top: 10px;
+            }
           }
         }
       }
