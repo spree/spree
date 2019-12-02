@@ -22,7 +22,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'activemerchant', '~> 1.67'
   s.add_dependency 'acts_as_list', '~> 0.8'
-  s.add_dependency 'awesome_nested_set', '~> 3.1.4'
+  s.add_dependency 'awesome_nested_set', '~> 3.2.0'
   s.add_dependency 'carmen', '~> 1.0.0'
   s.add_dependency 'cancancan', '~> 2.0'
   s.add_dependency 'deface', '~> 1.0'
@@ -36,7 +36,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'paranoia', '~> 2.4.1'
   s.add_dependency 'premailer-rails'
   s.add_dependency 'acts-as-taggable-on', '~> 6.0.0'
-  s.add_dependency 'rails', '~> 5.2.1', '>= 5.2.1.1'
+  s.add_dependency 'rails', '~> 5.2.4', '>= 5.2.4'
   s.add_dependency 'ransack', '~> 2.1.1'
   s.add_dependency 'responders'
   s.add_dependency 'state_machines-activerecord', '~> 0.5'
