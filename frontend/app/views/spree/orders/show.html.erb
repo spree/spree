@@ -28,10 +28,7 @@
     <div>
       <dt class="text-uppercase text-center text-lg-left"><%= Spree.t(:payment) %></dt>
       <dd class="text-center text-lg-left">
-        <% payment = @order.payments.valid.first %>
-        <%= payment.source_type.sub('Spree::', '').underscore.humanize %>
-        <br/>
-        <%= payment.source.last_digits.rjust(16, '*') %>
+        <%= render collection: @order.payments.valid, partial: 'spree/shared/payment' %>
       </dd>
     </div>
   </dl>

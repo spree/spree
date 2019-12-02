@@ -65,7 +65,7 @@
     </div>
   <% end %>
 
-  <%= hidden_field_tag 'save_user_address', true %>
+  <%= hidden_field_tag 'save_user_address', true, data: { hook: "save_user_address" } %>
 </div>
 
 <div id="delete-address-popup" class="delete-address-popup-dropdown hide-on-esc">
