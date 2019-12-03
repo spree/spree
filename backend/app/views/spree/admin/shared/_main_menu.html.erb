@@ -19,7 +19,7 @@
 
   <% if can? :admin, Spree::Admin::ReportsController %>
     <ul class="nav nav-sidebar border-bottom">
-      <%= main_menu_tree Spree.t(:reports), icon: "file", sub_menu: "report", url: "#sidebar-report" %>
+      <%= main_menu_tree Spree.t(:new_reports), icon: "file", sub_menu: "report", url: "#sidebar-report" %>
     </ul>
   <% end %>
 
