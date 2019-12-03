@@ -1,6 +1,17 @@
 <% @addresses = try_spree_current_user ? try_spree_current_user.addresses : [] %>
 
 <div class="row">
+  <div class="col-12 mb-4">
+    <p class="form-group checkout-content-inner-field">
+      <%= form.label :email, class: 'text-uppercase' %>
+      <span class="required">*</span>
+      <br />
+      <%= form.email_field :email, class: 'required spree-flat-input', required: true %>
+    </p>
+  </div>
+</div>
+
+<div class="row">
   <% ['billing', 'shipping'].each do |address_type|
     address_name = "#{address_type[0...4]}_address" %>
     <div class="col-12 mb-4" data-hook="<%= address_type %>_fieldset_wrapper">

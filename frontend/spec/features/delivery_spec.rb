@@ -14,11 +14,11 @@ describe 'Delivery', type: :feature, inaccessible: true, js: true do
   end
 
   def add_mug_and_navigate_to_delivery_page
-    add_to_cart(mug)
-    click_button 'Checkout'
+    add_to_cart(mug) do
+      click_link 'Checkout'
+    end
 
     fill_in 'order_email', with: 'test@example.com'
-    click_on 'Continue'
     fill_in_address
 
     click_button 'Save and Continue'
@@ -40,7 +40,7 @@ describe 'Delivery', type: :feature, inaccessible: true, js: true do
     end
 
     context 'shipping method is changed' do
-      before { choose(shipping_method2.name) }
+      before { find('label', text: shipping_method2.name).click }
 
       it 'shipping total and order total both are updates' do
         expect(page).to have_content('Shipping total: $20.00')
@@ -55,7 +55,7 @@ describe 'Delivery', type: :feature, inaccessible: true, js: true do
 
       add_mug_and_navigate_to_delivery_page
 
-      choose(shipping_method2.name)
+      find('label', text: shipping_method2.name).click
     end
 
     after do
