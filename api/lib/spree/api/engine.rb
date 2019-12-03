@@ -26,6 +26,8 @@ module Spree
       initializer 'spree.api.environment', before: :load_config_initializers do |_app|
         Spree::Api::Config = Spree::ApiConfiguration.new
         Spree::Api::Dependencies = Spree::ApiDependencies.new
+        Spree::Graphql::Dependencies = Spree::GraphqlDependencies.new
+
       end
 
       initializer 'spree.api.checking_migrations' do
