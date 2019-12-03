@@ -92,7 +92,7 @@ describe Spree::Admin::Reports::Orders::AverageOrderValues do
       let(:completed_at_min) { '2019-10-28' }
       let(:completed_at_max) { '2019-11-29' }
 
-      it 'returns results for orders younger than given date' do
+      it 'returns results for orders in specified range' do
         expect(subject).to match_array([
           ['2019-10-28', 360],
           ['2019-10-29', 350],
