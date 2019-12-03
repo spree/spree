@@ -7,7 +7,9 @@ shared_context 'checkout address book' do
     @tax_category = Spree::TaxCategory.first || create(:tax_category)
     @shipping = Spree::ShippingMethod.find_by_name('UPS Ground') || create(:shipping_method, tax_category: @tax_category)
 
+    create(:credit_card_payment_method)
     create(:check_payment_method)
+
     reset_spree_preferences do |config|
       config.company = true
       config.alternative_shipping_phone = false
@@ -32,11 +34,11 @@ shared_context 'checkout address book' do
     expect(page).to have_field(I18n.t('activerecord.attributes.spree/address.phone'))
   end
 
-  def complete_checkout
+  def complete_checkout(address)
     click_button Spree.t(:save_and_continue)
-    choose 'UPS Ground'
+    find('label > span', text: 'UPS Ground').click
     click_button Spree.t(:save_and_continue)
-    choose 'Check'
+    fill_in_credit_card_info(address)
     click_button Spree.t(:save_and_continue)
   end
 
@@ -52,13 +54,21 @@ shared_context 'checkout address book' do
     fill_in I18n.t('activerecord.attributes.spree/address.phone'), with: address.phone
   end
 
-  def expected_address_format(address)
+  def fill_in_credit_card_info(address)
+    fill_in 'Name on card', with: "#{address.firstname} #{address.lastname}"
+    fill_in 'Card Number', with: '4111111111111111'
+    fill_in 'Expire Date', with: '12/24'
+    fill_in 'Cvv', with: '123'
+  end
+
+  def expected_address_format(address_title, address)
     [
+      address_title,
       "#{address.firstname} #{address.lastname}",
       address.company.to_s,
       address.address1.to_s,
       address.address2.to_s,
-      "#{address.city} #{address.state ? address.state.abbr : address.state_name} #{address.zipcode}",
+      "#{address.city}, #{address.state ? address.state.abbr : address.state_name} #{address.zipcode}",
       address.country.to_s
     ].reject(&:empty?).join("\n")
   end
