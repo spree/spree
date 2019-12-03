@@ -3,7 +3,7 @@ module Spree
     module Reports
       class AverageOrderValuesController < Spree::Admin::BaseController
         def show
-          objects = Spree::Admin::Reports::AverageOrderValuesQuery.new.call(params)
+          objects = Spree::Admin::Reports::Orders::AverageOrderValues.new(params).call
 
           respond_to do |format|
             format.html
