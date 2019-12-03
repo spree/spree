@@ -12,24 +12,23 @@ describe 'page promotions', type: :feature, js: true do
     calculator = Spree::Calculator::FlatRate.new
     calculator.preferred_amount = 10
 
-    action = Spree::Promotion::Actions::CreateItemAdjustments.create(calculator: calculator)
+    action = Spree::Promotion::Actions::CreateAdjustment.create(calculator: calculator)
     promotion.actions << action
 
     add_to_cart(mug)
   end
 
   it 'automatically applies a page promotion upon visiting' do
-    expect(page).not_to have_content('Promotion ($10 off) -$10.00', normalize_ws: true)
+    expect(page).not_to have_field('order_applied_coupon_code', with: 'Promotion ($10 off)')
     visit '/content/test'
     visit '/cart'
-    expect(page).to have_content("Promotion ($10 off)\n-$10.00")
-    expect(page).to have_content("Subtotal (1 item)\n$20.00")
+    expect(page).to have_field('order_applied_coupon_code', with: 'Promotion ($10 off)')
   end
 
   it "does not activate an adjustment for a path that doesn't have a promotion" do
-    expect(page).not_to have_content('Promotion ($10 off) -$10.00', normalize_ws: true)
+    expect(page).not_to have_field('order_applied_coupon_code', with: 'Promotion ($10 off)')
     visit '/content/cvv'
     visit '/cart'
-    expect(page).not_to have_content('Promotion ($10 off) -$10.00', normalize_ws: true)
+    expect(page).not_to have_field('order_applied_coupon_code', with: 'Promotion ($10 off)')
   end
 end
