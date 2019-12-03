@@ -2,7 +2,7 @@
   &-header {
     font-size: font-px-to-rem(18px);
     margin-bottom: 0;
-    color: theme-color('dark-text');
+    color: theme-color("dark-text");
     @include media-breakpoint-up(sm) {
       font-size: font-px-to-rem(34px);
       margin-top: 17.5px;
@@ -69,10 +69,10 @@
     }
     &-header {
       font-weight: 500;
-      color: theme-color('secondary');
+      color: theme-color("secondary");
       .d-table-cell {
         border-top: none;
-        border-bottom: 1px solid theme-color('borders');
+        border-bottom: 1px solid theme-color("borders");
         padding: 7px 0;
       }
     }
@@ -96,7 +96,7 @@
           }
         }
         border-top: none;
-        border-bottom: 1px solid theme-color('borders');
+        border-bottom: 1px solid theme-color("borders");
         padding: 22px 0;
         vertical-align: top;
         @include media-breakpoint-up(lg) {
@@ -134,7 +134,7 @@
           font-weight: 500;
         }
         a {
-          color: theme-color('dark-text');
+          color: theme-color("dark-text");
         }
       }
 
@@ -187,7 +187,7 @@
         width: 40px;
         height: 25px;
         font-size: font-px-to-rem(14px);
-        border-color: theme-color('borders');
+        border-color: theme-color("borders");
         @include media-breakpoint-up(sm) {
           width: 60px;
           height: 51.4px;
@@ -200,19 +200,19 @@
           font-size: font-px-to-rem(20px);
         }
       }
-      input[type='number']::-webkit-outer-spin-button,
-      input[type='number']::-webkit-inner-spin-button {
+      input[type="number"]::-webkit-outer-spin-button,
+      input[type="number"]::-webkit-inner-spin-button {
         -webkit-appearance: none;
         margin: 0;
       }
-      input[type='number'] {
+      input[type="number"] {
         -moz-appearance: textfield;
       }
       button {
         font-size: font-px-to-rem(14px);
         height: 25px;
-        background-color: theme-color('light-background');
-        border-color: theme-color('borders');
+        background-color: theme-color("light-background");
+        border-color: theme-color("borders");
         @include media-breakpoint-up(sm) {
           height: 51.4px;
           font-size: font-px-to-rem(24px);
@@ -263,7 +263,7 @@
     }
     .form-control {
       font-size: font-px-to-rem(14px);
-      border: 1px solid theme-color('borders');
+      border: 1px solid theme-color("borders");
       @include media-breakpoint-up(sm) {
         font-size: font-px-to-rem(26px);
         height: 71.1px;
@@ -278,13 +278,13 @@
         pointer-events: none;
       }
       &.error {
-        border: 1px solid theme-color('danger');
+        border: 1px solid theme-color("danger");
       }
     }
     button {
       font-size: font-px-to-rem(20px);
       line-height: 13px;
-      border: 1px solid theme-color('borders');
+      border: 1px solid theme-color("borders");
       @include media-breakpoint-up(sm) {
         font-size: font-px-to-rem(36px);
       }
@@ -299,19 +299,19 @@
         pointer-events: none;
       }
       &.error {
-        border: 1px solid theme-color('danger');
+        border: 1px solid theme-color("danger");
       }
     }
     .alert-success {
-      color: theme-color('success');
-      background-color: theme-color('light-background');
+      color: theme-color("success");
+      background-color: theme-color("light-background");
       font-size: font-px-to-rem(12px);
       margin-top: 10px;
       flex-basis: 100%;
       margin-bottom: 0;
     }
     .alert-error {
-      color: theme-color('danger');
+      color: theme-color("danger");
       font-size: font-px-to-rem(12px);
       margin-top: 10px;
       flex-basis: 100%;
@@ -352,18 +352,18 @@
     }
     &-text {
       font-size: font-px-to-rem(14px);
-      color: theme-color('secondary');
+      color: theme-color("secondary");
       @include media-breakpoint-up(sm) {
         font-size: font-px-to-rem(25px);
       }
       @include media-breakpoint-up(lg) {
         font-size: font-px-to-rem(32px);
-        color: theme-color('dark-text');
+        color: theme-color("dark-text");
         margin-right: 35px;
       }
     }
     &-amount {
-      color: theme-color('dark-text');
+      color: theme-color("dark-text");
       font-weight: 600;
       letter-spacing: 1.05px;
       font-size: font-px-to-rem(22px);
@@ -405,7 +405,7 @@
         flex-basis: 50%;
         margin-bottom: 34px;
         text-decoration: underline;
-        color: theme-color('dark-text');
+        color: theme-color("dark-text");
         font-weight: 500;
         font-size: font-px-to-rem(16px);
         letter-spacing: 0.4px;
@@ -413,7 +413,7 @@
         padding: 0;
         &:hover,
         &:focus {
-          color: theme-color('dark-text');
+          color: theme-color("dark-text");
         }
       }
     }
@@ -426,11 +426,11 @@
       position: relative;
       &:before,
       &:after {
-        border-top: 1px solid theme-color('image-background');
-        content: '';
+        border-top: 1px solid theme-color("image-background");
+        content: "";
         display: table-cell;
         position: absolute;
-        top: 50%;
+        top: 47%;
         width: 45%;
       }
       &:before {
