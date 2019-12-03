@@ -14,7 +14,9 @@ function getChartData (node) {
   return {
     type: node.dataset.type,
     label: node.dataset.label,
-    id: node.dataset.id
+    id: node.dataset.id,
+    bgColor: node.dataset.bgColor,
+    lineColor: node.dataset.lineColor
   }
 }
 
@@ -24,15 +26,15 @@ function getChartData (node) {
  * @param {object} data Chart.js data objects holding labels and datasets to display
  * @returns {Chart}
  */
-function createChart (node, type, data) {
+function createChart (node, type, data, options) {
   return new Chart(node, {
     type: type,
     data: data,
     options: {
       datasets: {
         line: {
-          backgroundColor: 'rgba(71, 141, 193, 0.8)',
-          borderColor: 'rgba(71, 141, 193, 1)'
+          backgroundColor: options.bgColor || 'rgba(71, 141, 193, 0.8)',
+          borderColor: options.lineColor || 'rgba(71, 141, 193, 1)'
         }
       },
       legend: {
@@ -180,6 +182,9 @@ function initReports () {
     const chart = createChart(node, data.type, {
       labels: [],
       datasets: [{ label: data.label, data: [] }]
+    }, {
+      bgColor: data.bgColor,
+      lineColor: data.lineColor
     })
 
     updateChart(data, chart)
