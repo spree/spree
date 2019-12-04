@@ -1,3 +1,4 @@
+const GROUP_BY_ID = 'reports-group-by'
 const FONT_FAMILY =
   '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif'
 
@@ -24,7 +25,6 @@ function getChartData (node) {
  * @returns {Chart}
  */
 function createChart (node, data, options) {
-  console.log(options)
   return new Chart(node, {
     type: options.type,
     data: data,
@@ -127,6 +127,10 @@ function getParamSelectedIndex (node, param) {
   return options.indexOf(selectedValue)
 }
 
+/**
+ * @param {Event} e Event from HTMLElement
+ * @param {string} param Query param we want to toggle
+ */
 function updateUrlParams (e, param) {
   const url = new Uri(window.location)
 
@@ -141,8 +145,29 @@ function updateUrlParams (e, param) {
   return initReports()
 }
 
+function selectOption (el, dir) {
+  if (el.selectedIndex + 1 === el.options.length) {
+    el.selectedIndex = 0
+  } else if (el.selectedIndex === 0 && dir === 'prev') {
+    el.selectedIndex = el.options.length - 1
+  } else {
+    if (dir === 'next') {
+      el.selectedIndex++
+    } else {
+      el.selectedIndex--
+    }
+  }
+
+  const event = document.createEvent('HTMLEvents')
+  event.initEvent('change', true, false)
+
+  return el.dispatchEvent(event)
+}
+
 function initFilter () {
-  const groupBySelect = document.getElementById('reports-group-by')
+  const groupBySelect = document.getElementById(GROUP_BY_ID)
+  const groupByNext = document.querySelector('[data-id="'+ GROUP_BY_ID +'"] [data-action="next"]')
+  const groupByPrev = document.querySelector('[data-id="'+ GROUP_BY_ID +'"] [data-action="prev"]')
   const completedAtMinInput = document.getElementById(
     'reports-completed-at-min'
   )
@@ -179,6 +204,14 @@ function initFilter () {
       window.location.pathname.replace(/(\.html)?$/, '.csv') +
         window.location.search
     )
+  })
+
+  groupByNext.addEventListener('click', function(e) {
+    return selectOption(groupBySelect, 'next')
+  })
+
+  groupByPrev.addEventListener('click', function(e) {
+    return selectOption(groupBySelect, 'prev')
   })
 
   // Listen to browser history change and init requests
