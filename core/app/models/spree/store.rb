@@ -4,7 +4,6 @@ module Spree
     has_many :payment_methods, class_name: 'Spree::PaymentMethod'
 
     with_options presence: true do
-      validates :code, uniqueness: { case_sensitive: false, allow_blank: true }
       validates :name, :url, :mail_from_address
       validates :default_currency
     end
