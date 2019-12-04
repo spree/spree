@@ -1532,6 +1532,9 @@ en:
     stock_transfers: Stock Transfers
     stop: Stop
     store: Store
+    store:
+      errors:
+        unable_to_create: Unable to create store.
     store_set_default_button: Set as default
     stores: Stores
     store_credit_name: Store Credit
