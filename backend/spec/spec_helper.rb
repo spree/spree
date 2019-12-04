@@ -104,6 +104,7 @@ RSpec.configure do |config|
   config.include Spree::TestingSupport::ControllerRequests, type: :controller
   config.include Spree::TestingSupport::Flash
   config.include Spree::TestingSupport::ImageHelpers
+  config.extend Spree::TestingSupport::AuthorizationHelpers::Request, type: :request
 
   config.include Spree::Core::ControllerHelpers::StrongParameters, type: :controller
 
