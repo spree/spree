@@ -960,6 +960,7 @@ en:
     look_for_similar_items: Look for similar items
     make_refund: Make refund
     make_sure_the_above_reimbursement_amount_is_correct: Make sure the above reimbursement amount is correct
+    mail_from_address: Mail from address
     manage_promotion_categories: Manage Promotion Categories
     manual_intervention_required: Manual intervention required
     manage_variants: Manage Variants
@@ -1409,6 +1410,7 @@ en:
     selected_quantity_not_available: ! 'selected of %{item} is not available.'
     send_copy_of_all_mails_to: Send Copy of All Mails To
     send_mails_as: Send Mails As
+    seo_title: SEO title
     server: Server
     server_error: The server returned an error
     settings: Settings
@@ -1530,6 +1532,7 @@ en:
     stock_transfers: Stock Transfers
     stop: Stop
     store: Store
+    store_set_default_button: Set as default
     stores: Stores
     store_credit_name: Store Credit
     store_credit:

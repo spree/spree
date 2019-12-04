@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'Stores admin', type: :feature do
+describe 'Stores admin', type: :feature, js: true do
   stub_authorization!
 
   let!(:store) { create(:store) }
@@ -49,7 +49,9 @@ describe 'Stores admin', type: :feature do
     it do
       visit spree.admin_stores_path
 
-      click_link 'Edit'
+      within_row(1) do
+        click_icon :edit
+      end
       page.fill_in 'store_name', with: updated_name
       select2 new_currency, from: 'Currency'
       click_button 'Update'
@@ -62,7 +64,7 @@ describe 'Stores admin', type: :feature do
     end
   end
 
-  describe 'deleting store', js: true do
+  describe 'deleting store' do
     let!(:second_store) { create(:store) }
 
     it 'updates store in lifetime stats' do
@@ -82,7 +84,9 @@ describe 'Stores admin', type: :feature do
 
     it 'sets a store as default' do
       visit spree.admin_stores_path
-      click_button 'Set as default'
+      within_row(2) do
+        click_icon :ok
+      end
 
       expect(store.reload.default).to eq false
       expect(store1.reload.default).to eq true
