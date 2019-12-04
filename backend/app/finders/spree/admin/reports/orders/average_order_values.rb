@@ -22,12 +22,12 @@ module Spree
 
           attr_accessor :params
 
-          def completed_at_min?
-            params[:completed_at_min].present?
+          def completed_at_min
+            @completed_at_min ||= Time.zone.parse(params[:completed_at_min] || '')
           end
 
-          def completed_at_max?
-            params[:completed_at_max].present?
+          def completed_at_max
+            @completed_at_max ||= Time.zone.parse(params[:completed_at_max] || '')
           end
 
           def grouped_by(orders)
@@ -35,17 +35,15 @@ module Spree
           end
 
           def by_completed_at_min(orders)
-            return orders unless completed_at_min?
+            return orders unless completed_at_min
 
-            date = Time.zone.parse(params[:completed_at_min]).beginning_of_day
-            orders.where('completed_at >= ?', date)
+            orders.where('completed_at >= ?', completed_at_min.beginning_of_day)
           end
 
           def by_completed_at_max(orders)
-            return orders unless completed_at_max?
+            return orders unless completed_at_max
 
-            date = Time.zone.parse(params[:completed_at_max]).end_of_day
-            orders.where('completed_at <= ?', date)
+            orders.where('completed_at <= ?', completed_at_max.end_of_day)
           end
 
           def group_by_date
