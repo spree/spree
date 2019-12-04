@@ -8,14 +8,18 @@ module Spree
           end
 
           def call
+            raise 'Date range is invalid.' unless completed_at_min && completed_at_max
+
+            labels = create_report_labels
+
             orders = Spree::Order.complete
             orders = by_completed_at_min(orders)
             orders = by_completed_at_max(orders)
             orders = grouped_by(orders)
-
-            orders
-              .map { |day, results| [day, results.sum(&:total) / results.size] }
-              .sort_by { |day, _| day }
+            values = orders.map { |date, results| [date, results.sum(&:total) / results.size] }
+                           .to_h
+            
+            labels.map { |label| [label, values[label] || 0] }
           end
 
           private
@@ -23,11 +27,11 @@ module Spree
           attr_accessor :params
 
           def completed_at_min
-            @completed_at_min ||= Time.zone.parse(params[:completed_at_min] || '')
+            @completed_at_min ||= Time.zone.parse(params[:completed_at_min] || '') rescue nil
           end
 
           def completed_at_max
-            @completed_at_max ||= Time.zone.parse(params[:completed_at_max] || '')
+            @completed_at_max ||= Time.zone.parse(params[:completed_at_max] || '') rescue nil
           end
 
           def grouped_by(orders)
@@ -54,6 +58,16 @@ module Spree
             when :year then '%Y'
             else '%Y-%m-%d'
             end
+          end
+
+          def create_report_labels
+            # binding.pry
+
+            Spree::Admin::Reports::CreateReportLabels.new.call(
+              from: completed_at_min.to_date,
+              to: completed_at_max.to_date,
+              mode: params[:group_by]
+            )
           end
         end
       end

@@ -1,103 +1,81 @@
 require 'spec_helper'
 
 describe Spree::Admin::Reports::Orders::AverageOrderValues do
-  let!(:order1) { create(:completed_order_with_totals) }
-  let!(:order2) { create(:completed_order_with_totals) }
-  let!(:order3) { create(:completed_order_with_totals) }
-  let!(:order4) { create(:completed_order_with_totals) }
-  let!(:order5) { create(:completed_order_with_totals) }
-
-  before do
-    order1.update(completed_at: '2019-11-29', total: 100)
-    order2.update(completed_at: '2019-11-29', total: 200)
-    order3.update(completed_at: '2019-10-29', total: 350)
-    order4.update(completed_at: '2019-10-28', total: 360)
-    order5.update(completed_at: '2018-11-29', total: 400)
+  subject do
+    described_class.new(
+      completed_at_min: completed_at_min,
+      completed_at_max: completed_at_max,
+      group_by: group_by
+    )
   end
 
-  describe '#call' do
-    subject do
-      params = {
-        group_by: group_by,
-        completed_at_min: completed_at_min,
-        completed_at_max: completed_at_max
-      }
+  let(:completed_at_min) { nil }
+  let(:completed_at_max) { nil }
+  let(:group_by) { nil }
 
-      described_class.new(params).call
+  context 'when the date range is not present' do
+    let(:completed_at_min) { '2019-12-12' }
+
+    it 'raises an error' do
+      expect { subject.call }.to raise_error 'Date range is invalid.'
     end
+  end
 
-    let(:group_by) { nil }
-    let(:completed_at_min) { nil }
-    let(:completed_at_max) { nil }
+  context 'when the date range is invalid' do
+    let(:completed_at_min) { '2019-12-12' }
+    let(:completed_at_max) { '2019' }
 
-    context 'when no group_by param is present' do
-      let(:group_by) { nil }
+    it 'raises an error' do
+      expect { subject.call }.to raise_error 'Date range is invalid.'
+    end
+  end
 
-      it 'groups by day' do
-        expect(subject).to eq [
-          ['2018-11-29', 400],
-          ['2019-10-28', 360],
-          ['2019-10-29', 350],
-          ['2019-11-29', 150]
-        ]
+  context 'when the date rage is valid' do
+    context 'when group_by is set to year' do
+      let(:completed_at_min) { '2016-01-01' }
+      let(:completed_at_max) { '2019-01-01' }
+      let(:group_by) { :year }
+
+      it 'returns average totals grouped by year' do
+        create(:completed_order_with_totals).update!(completed_at: '2016-12-12', total: 300)
+        create(:completed_order_with_totals).update!(completed_at: '2018-12-12', total: 100)
+        create(:completed_order_with_totals).update!(completed_at: '2018-12-12', total: 300)
+
+        array = subject.call
+
+        expect(array).to eq [['2016', 300], ['2017', 0], ['2018', 200], ['2019', 0]]
       end
     end
 
-    context 'when group_by param is set to month' do
-      let(:group_by) { 'month' }
+    context 'when group_by is set to month' do
+      let(:completed_at_min) { '2017-11-03' }
+      let(:completed_at_max) { '2018-02-22' }
+      let(:group_by) { :month }
 
-      it 'groups by month' do
-        expect(subject).to eq [
-          ['2018-11', 400],
-          ['2019-10', 355],
-          ['2019-11', 150]
-        ]
+      it 'returns average totals grouped by month' do
+        create(:completed_order_with_totals).update!(completed_at: '2017-12-12', total: 100)
+        create(:completed_order_with_totals).update!(completed_at: '2017-12-12', total: 200)
+        create(:completed_order_with_totals).update!(completed_at: '2018-01-01', total: 300)
+
+        array = subject.call
+
+        expect(array).to eq [['2017-11', 0], ['2017-12', 150], ['2018-01', 300], ['2018-02', 0]]
       end
     end
 
-    context 'when group_by param is set to year' do
-      let(:group_by) { 'year' }
+    context 'when group_by is set to day' do
+      let(:completed_at_min) { '2017-12-30' }
+      let(:completed_at_max) { '2018-01-2' }
+      let(:group_by) { :day }
 
-      it 'groups by year' do
-        expect(subject).to eq [
-          ['2018', 400],
-          ['2019', 252.5]
-        ]
-      end
-    end
+      it 'returns average totals grouped by day' do
+        create(:completed_order_with_totals).update!(completed_at: '2017-12-30', total: 200)
+        create(:completed_order_with_totals).update!(completed_at: '2017-12-30', total: 400)
+        create(:completed_order_with_totals).update!(completed_at: '2018-01-02', total: 600)
 
-    context 'when completed_at_min is present' do
-      let(:completed_at_min) { '2019-11-20' }
+        array = subject.call
 
-      it 'returns results for orders older than given date' do
-        expect(subject).to match_array([
-          ['2019-11-29', 150]
-        ])
-      end
-    end
-
-    context 'when completed_at_max is present' do
-      let(:completed_at_max) { '2019-11-20' }
-
-      it 'returns results for orders younger than given date' do
-        expect(subject).to match_array([
-          ['2019-10-28', 360],
-          ['2019-10-29', 350],
-          ['2018-11-29', 400],
-        ])
-      end
-    end
-
-    context 'when both completed_at_min and completed_at_max are present' do
-      let(:completed_at_min) { '2019-10-28' }
-      let(:completed_at_max) { '2019-11-29' }
-
-      it 'returns results for orders in specified range' do
-        expect(subject).to match_array([
-          ['2019-10-28', 360],
-          ['2019-10-29', 350],
-          ['2019-11-29', 150],
-        ])
+        expect(array).to eq [['2017-12-30', 300], ['2017-12-31', 0], ['2018-01-01', 0], ['2018-01-02', 600]]
       end
     end
   end
