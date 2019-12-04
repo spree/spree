@@ -3,6 +3,7 @@ shared_context 'custom products' do
     taxonomy = FactoryBot.create(:taxonomy, name: 'Categories')
     root = taxonomy.root
     clothing_taxon = FactoryBot.create(:taxon, name: 'Clothing', parent_id: root.id)
+    trending_taxon = FactoryBot.create(:taxon, name: 'Trending')
     bags_taxon = FactoryBot.create(:taxon, name: 'Bags', parent_id: root.id)
     mugs_taxon = FactoryBot.create(:taxon, name: 'Mugs', parent_id: root.id)
 
@@ -13,8 +14,8 @@ shared_context 'custom products' do
     ruby_taxon = FactoryBot.create(:taxon, name: 'Ruby', parent_id: root.id)
 
     FactoryBot.create(:custom_product, name: 'Ruby on Rails Ringer T-Shirt', price: '19.99', taxons: [rails_taxon, clothing_taxon])
-    FactoryBot.create(:custom_product, name: 'Ruby on Rails Mug', price: '15.99', taxons: [rails_taxon, mugs_taxon])
-    FactoryBot.create(:custom_product, name: 'Ruby on Rails Tote', price: '15.99', taxons: [rails_taxon, bags_taxon])
+    FactoryBot.create(:custom_product, name: 'Ruby on Rails Mug', price: '15.99', taxons: [rails_taxon, mugs_taxon, trending_taxon])
+    FactoryBot.create(:custom_product, name: 'Ruby on Rails Tote', price: '15.99', taxons: [rails_taxon, bags_taxon, trending_taxon])
     FactoryBot.create(:custom_product, name: 'Ruby on Rails Bag', price: '22.99', taxons: [rails_taxon, bags_taxon])
     FactoryBot.create(:custom_product, name: 'Ruby on Rails Baseball Jersey', price: '19.99', taxons: [rails_taxon, clothing_taxon])
     FactoryBot.create(:custom_product, name: 'Ruby on Rails Stein', price: '16.99', taxons: [rails_taxon, mugs_taxon])
