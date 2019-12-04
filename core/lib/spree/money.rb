@@ -18,6 +18,9 @@ module Spree
     delegate    :cents, :currency, to: :money
 
     def initialize(amount, options = {})
+      set_default_currency(options)
+      set_default_rounding_mode
+
       @money   = Monetize.parse([amount, (options[:currency] || Spree::Config[:currency])].join)
       @options = Spree::Money.default_formatting_rules.merge(options)
     end
@@ -60,6 +63,15 @@ module Spree
 
     def ==(obj)
       money == obj.money
+    end
+
+    def set_default_currency(options)
+      currency = options[:currency] || Spree::Config[:currency]
+      ::Money.default_currency=(currency)
+    end
+
+    def set_default_rounding_mode
+      ::Money.rounding_mode=(BigDecimal::ROUND_HALF_UP)
     end
 
     private
