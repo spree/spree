@@ -1,3 +1,6 @@
+const FONT_FAMILY =
+  '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif'
+
 /**
  * @param {string} className Class name of canvas dom nodes for charts
  * @returns {HTMLCollection} DOM nodes
@@ -11,13 +14,7 @@ function getChartNodes (className) {
  * @returns {object} Information to get chart data
  */
 function getChartData (node) {
-  return {
-    type: node.dataset.type,
-    label: node.dataset.label,
-    id: node.dataset.id,
-    bgColor: node.dataset.bgColor,
-    lineColor: node.dataset.lineColor
-  }
+  return JSON.parse(JSON.stringify(node.dataset))
 }
 
 /**
@@ -26,9 +23,10 @@ function getChartData (node) {
  * @param {object} data Chart.js data objects holding labels and datasets to display
  * @returns {Chart}
  */
-function createChart (node, type, data, options) {
+function createChart (node, data, options) {
+  console.log(options)
   return new Chart(node, {
-    type: type,
+    type: options.type,
     data: data,
     options: {
       datasets: {
@@ -37,16 +35,45 @@ function createChart (node, type, data, options) {
           borderColor: options.lineColor || 'rgba(71, 141, 193, 1)'
         }
       },
+      scales: {
+        yAxes: [{
+          ticks: {
+            padding: 10,
+            fontFamily: FONT_FAMILY
+          },
+          scaleLabel: {
+            display: true,
+            labelString: options.labelY,
+            fontColor: options.lineColor || '#2A83C6',
+            fontStyle: 'bold',
+            fontSize: 14,
+            fontFamily: FONT_FAMILY,
+            padding: 10
+          }
+        }],
+        xAxes: [{
+          ticks: {
+            padding: 10,
+            fontFamily: FONT_FAMILY
+          }
+        }]
+      },
       legend: {
-        display: false
+        display: true,
+        align: 'end',
+        labels: {
+          fontFamily: FONT_FAMILY,
+          fontSize: 16,
+          usePointStyle: true,
+          boxWidth: 5
+        }
       },
       tooltips: {
         displayColors: false,
         xPadding: 15,
         yPadding: 15,
         titleFontSize: 14,
-        titleFontFamily:
-          '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"'
+        titleFontFamily: FONT_FAMILY
       }
     }
   })
@@ -156,10 +183,7 @@ function initFilter () {
 
   // Listen to browser history change and init requests
   window.onpopstate = function (e) {
-    const groupSelectedIndex = getParamSelectedIndex(
-      groupBySelect,
-      'group_by'
-    )
+    const groupSelectedIndex = getParamSelectedIndex(groupBySelect, 'group_by')
 
     if (groupSelectedIndex === -1) {
       groupBySelect.selectedIndex = 0
@@ -179,13 +203,14 @@ function initReports () {
 
   return Array.prototype.forEach.call(chartNodes, function (node) {
     const data = getChartData(node)
-    const chart = createChart(node, data.type, {
-      labels: [],
-      datasets: [{ label: data.label, data: [] }]
-    }, {
-      bgColor: data.bgColor,
-      lineColor: data.lineColor
-    })
+    const chart = createChart(
+      node,
+      {
+        labels: [],
+        datasets: [{ label: data.label, data: [] }]
+      },
+      data
+    )
 
     updateChart(data, chart)
   })

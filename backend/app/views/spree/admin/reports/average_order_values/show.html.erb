@@ -1,19 +1,15 @@
-<% content_for :page_title do %>
-  <%= link_to Spree.t(:reports), spree.admin_reports_url %> /
-  <%= Spree.t(:average_order_values) %>
-<% end %>
-
+<%= render partial: 'spree/admin/reports/header', locals: { title: Spree.t(:average_order_values) } %>
 <%= render partial: 'spree/admin/reports/filters' %>
 
 <canvas
   id="chart--average-order-values"
   class="reports--chart"
-  width="400"
-  height="100"
+  height="120"
   aria-label="average_order_values"
   role="img"
   data-id="average_order_values"
   data-bg-color="rgba(125, 185, 66, 0.8)"
   data-line-color="rgba(125, 185, 66, 1)"
   data-label="Average Order Values"
+  data-label-y="$ USD"
   data-type="line"></canvas>

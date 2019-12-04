@@ -1,0 +1,10 @@
+<% content_for :page_title do %>
+  <%= link_to Spree.t(:reports), spree.admin_reports_url %> /
+  <%= title %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <button type="button" class="btn btn-primary" id="download-csv">
+    <%= Spree.t(:download_csv) %>
+  </button>
+<% end %>
