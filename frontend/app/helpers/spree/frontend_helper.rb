@@ -109,7 +109,7 @@ module Spree
     end
 
     def carousel_image(product, image_class)
-      image = product.master.images.first
+      image = default_image_for_product_or_variant(product)
       image_url = image&.plp_url || asset_path('noimage/plp.png')
       image_style = image&.style(:plp)
 
@@ -124,7 +124,7 @@ module Spree
     end
 
     def plp_image(product, image_class)
-      image = product.master.images.first
+      image = default_image_for_product_or_variant(product)
       image_url = image&.plp_url || asset_path('noimage/plp.png')
       image_dimensions = image&.style_dimensions(:plp)
 
