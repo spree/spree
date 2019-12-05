@@ -87,6 +87,18 @@ module Spree
       Spree::Core::Engine.frontend_available?
     end
 
+    def default_image_for_product_or_variant(product_or_variant)
+      if product_or_variant.images.empty?
+        if product_or_variant.is_a?(Spree::Product) && product_or_variant.variant_images.any?
+          product_or_variant.variant_images.first
+        elsif product_or_variant.is_a?(Spree::Variant) && product_or_variant.product.variant_images.any?
+          product_or_variant.product.variant_images.first
+        end
+      else
+        product.images.first
+      end
+    end
+
     private
 
     def create_product_image_tag(image, product, options, style)
@@ -98,16 +110,11 @@ module Spree
       self.class.send :define_method, "#{style}_image" do |product, *options|
         options = options.first || {}
         options[:alt] ||= product.name
-        if product.images.empty?
-          if !product.is_a?(Spree::Variant) && !product.variant_images.empty?
-            create_product_image_tag(product.variant_images.first, product, options, style)
-          elsif product.is_a?(Spree::Variant) && !product.product.variant_images.empty?
-            create_product_image_tag(product.product.variant_images.first, product, options, style)
-          else
-            image_tag "noimage/#{style}.png", options
-          end
+        image_path = default_image_for_product_or_variant(product)
+        if image_path.present?
+          create_product_image_tag image_path, product, options, style
         else
-          create_product_image_tag(product.images.first, product, options, style)
+          image_tag "noimage/#{style}.png", options
         end
       end
     end
