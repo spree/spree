@@ -217,14 +217,14 @@ module Spree
         "#{formatted_price(50)} - #{formatted_price(100)}",
         "#{formatted_price(101)} - #{formatted_price(150)}",
         "#{formatted_price(151)} - #{formatted_price(200)}",
-        "#{formatted_price(201)} - #{formatted_price(30)}"
+        "#{formatted_price(201)} - #{formatted_price(300)}"
       ]
     end
 
     private
 
     def formatted_price(value)
-      Spree::Money.new(value, currency: Spree::Config[:currency], no_cents_if_whole: true).to_s
+      Spree::Money.new(value, currency: current_currency, no_cents_if_whole: true).to_s
     end
   end
 end
