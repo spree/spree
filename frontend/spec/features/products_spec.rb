@@ -212,6 +212,7 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
 
     it 'displays breadcrumbs for the default taxon when none selected' do
       click_link product.name
+      expect(page).to have_current_path(spree.product_path(product))
       within('#breadcrumbs') do
         expect(page).to have_content taxon.name
       end
@@ -223,6 +224,7 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
       product.save!
       visit '/t/' + taxon.to_param
       click_link product.name
+      expect(page).to have_current_path(spree.product_path(product, taxon_id: taxon.id))
       within('#breadcrumbs') do
         expect(page).to have_content taxon.name
       end

@@ -1,4 +1,4 @@
-<%= link_to product_path product do %>
+<%= link_to spree.product_path(product, taxon_id: @taxon&.id) do %>
   <%= plp_image(product, image_class) %>
   <div class="product-component-name"><%= product.name %></div>
   <div class="product-component-price"><%= display_price(product) %></div>
