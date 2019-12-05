@@ -35,8 +35,9 @@ describe 'Cart', type: :feature, inaccessible: true, js: true do
   context 'product contains variants but no option values' do
     before { variant.option_values.destroy_all }
 
-    # TODO: enable scenario once again after the bug is fixed
-    xit 'still adds product to cart' do
+    it 'still adds product to cart' do
+      visit spree.product_path(product)
+
       add_mug_to_cart
       expect(page).to have_content(product.name)
     end

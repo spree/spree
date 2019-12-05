@@ -19,13 +19,23 @@ function CartForm($, $cartForm) {
   this.initialize = function() {
     this.selectedOptionValueIds = []
     this.variants = JSON.parse($cartForm.attr('data-variants'))
+    this.withOptionValues = Boolean($cartForm.find(OPTION_VALUE_SELECTOR).length)
 
     this.$addToCart = $cartForm.find(ADD_TO_CART_SELECTOR)
     this.$price = $cartForm.find('.price.selling')
     this.$variantIdInput = $cartForm.find(VARIANT_ID_SELECTOR)
 
-    var $optionValue = this.firstCheckedOptionValue()
-    this.applyCheckedOptionValue($optionValue)
+    this.initializeForm()
+  }
+
+  this.initializeForm = function() {
+    if (this.withOptionValues) {
+      var $optionValue = this.firstCheckedOptionValue()
+      this.applyCheckedOptionValue($optionValue)
+    } else {
+      this.updateAddToCart()
+      this.triggerVariantImages()
+    }
   }
 
   this.bindEventHandlers = function() {
@@ -132,6 +142,12 @@ function CartForm($, $cartForm) {
 
   this.selectedVariant = function() {
     var self = this
+
+    if (!this.withOptionValues) {
+      return this.variants.find(function(variant) {
+        return variant.id === parseInt(self.$variantIdInput.val())
+      })
+    }
 
     if (this.variants.length === 1 && this.variants[0].is_master) {
       return this.variants[0]
