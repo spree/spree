@@ -1,5 +1,18 @@
+/**
+ * @typedef PeriodName
+ * @type {('today'|'yesterday'|'this_week'|'last_week'|'this_month'|'last_month'|'this_year'|'last_year')}
+ */
+
+/**
+ * @typedef Period
+ * @type {object}
+ * @property {string} min - Completed At Min
+ * @property {string} max - Completed At Max
+ */
+
 Spree.Reports = {
   FONT_FAMILY: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif',
+  DATE_FORMAT: 'DD/MM/YYYY',
 
   /**
    * @param {string} className Class name of canvas dom nodes for charts
@@ -91,7 +104,7 @@ Spree.Reports = {
    * @param {Chart} chart Chart instance
    */
   updateChart: function (data, chart) {
-    return fetch(Spree.Reports.getApiURL(data.id))
+    return fetch(this.getApiURL(data.id))
       .then(function (response) {
         return response.json()
       })
@@ -117,7 +130,7 @@ Spree.Reports = {
    */
   getParamSelectedIndex: function (node, param) {
     const options = []
-    const selectedValue = Spree.Reports.getParamValue(param)
+    const selectedValue = this.getParamValue(param)
 
     Array.prototype.forEach.call(node.options, function (el) {
       options.push(el.value)
@@ -139,9 +152,16 @@ Spree.Reports = {
       url.replaceQueryParam(param, e.target.value)
     }
 
+    if (param === 'period') {
+      const period = this.getPredefinedPeriod(e.target.value)
+
+      url.replaceQueryParam('completed_at_min', period.min)
+      url.replaceQueryParam('completed_at_max', period.max)
+    }
+
     window.history.pushState({}, '', url.toString())
 
-    return Spree.Reports.initReports()
+    return this.initReports()
   },
 
   /**
@@ -176,8 +196,65 @@ Spree.Reports = {
     return el.querySelector('[data-action="' + dir + '"]')
   },
 
+  /**
+   * @param {Dayjs} min Start date
+   * @param {Dayjs} max End date
+   * @return {Period}
+   */
+  getPeriod: function (min, max) {
+    return {
+      min: min.format(this.DATE_FORMAT),
+      max: max.format(this.DATE_FORMAT)
+    }
+  },
+
+  /**
+   * @param {PeriodName} periodName One of multiple predefined periods
+   * @return {Period}
+   */
+  getPredefinedPeriod: function (periodName) {
+    switch (periodName) {
+      case 'today':
+        return this.getPeriod(dayjs(), dayjs())
+        break
+      case 'yesterday':
+        return this.getPeriod(dayjs().subtract(1, 'day'), dayjs())
+        break
+      case 'this_week':
+        return this.getPeriod(dayjs().startOf('week'), dayjs())
+        break
+      case 'last_week':
+        return this.getPeriod(
+          dayjs().startOf('week').subtract(1, 'week'),
+          dayjs().startOf('week').subtract(1, 'day')
+        )
+        break
+      case 'this_month':
+        return this.getPeriod(dayjs().startOf('month'), dayjs().endOf('month'))
+        break
+      case 'last_month':
+        return this.getPeriod(
+          dayjs().startOf('month').subtract(1, 'month'),
+          dayjs().startOf('month').subtract(1, 'day')
+        )
+        break
+      case 'this_year':
+        return this.getPeriod(dayjs().startOf('year'), dayjs().endOf('year'))
+        break
+      case 'last_year':
+        return this.getPeriod(
+          dayjs().startOf('year').subtract(1, 'year'),
+          dayjs().subtract(1, 'year').endOf('year')
+        )
+        break
+      default:
+        return this.getPeriod(dayjs().startOf('week'), dayjs())
+    }
+  },
+
   initFilter: function () {
-    const filterNodes = Spree.Reports.getNodes('js-filter-select')
+    const self = this
+    const filterNodes = self.getNodes('js-filter-select')
     const downloadCsvButton = document.getElementById('download-csv')
 
     Array.prototype.forEach.call(filterNodes, function (node) {
@@ -185,18 +262,18 @@ Spree.Reports = {
       const directions = ['prev', 'next']
 
       directions.forEach(function (dir) {
-        const button = Spree.Reports.getMoveButton(node, dir)
+        const button = self.getMoveButton(node, dir)
 
         button.addEventListener('click', function (e) {
-          return Spree.Reports.selectOptionByDirection(select, dir)
+          return self.selectOptionByDirection(select, dir)
         })
       })
 
       select.addEventListener('change', function (e) {
-        return Spree.Reports.updateUrlParams(e, e.target.dataset.param)
+        return self.updateUrlParams(e, e.target.dataset.param)
       })
 
-      const selectedIndexFromParams = Spree.Reports.getParamSelectedIndex(
+      const selectedIndexFromParams = self.getParamSelectedIndex(
         select,
         select.dataset.param
       )
@@ -218,7 +295,7 @@ Spree.Reports = {
     window.onpopstate = function (e) {
       Array.prototype.forEach.call(filterNodes, function (node) {
         const select = node.querySelector('select')
-        const index = Spree.Reports.getParamSelectedIndex(select, select.dataset.param)
+        const index = self.getParamSelectedIndex(select, select.dataset.param)
 
         if (index === -1) {
           select.selectedIndex = 0
@@ -227,16 +304,17 @@ Spree.Reports = {
         }
       })
 
-      return Spree.Reports.initReports()
+      return self.initReports()
     }
   },
 
   initReports: function () {
-    const chartNodes = Spree.Reports.getNodes('reports--chart')
+    const self = this
+    const chartNodes = self.getNodes('reports--chart')
 
     return Array.prototype.forEach.call(chartNodes, function (node) {
-      const data = Spree.Reports.getChartData(node)
-      const chart = Spree.Reports.createChart(
+      const data = self.getChartData(node)
+      const chart = self.createChart(
         node,
         {
           labels: [],
@@ -245,7 +323,7 @@ Spree.Reports = {
         data
       )
 
-      Spree.Reports.updateChart(data, chart)
+      self.updateChart(data, chart)
     })
   }
 }
