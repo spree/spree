@@ -20,7 +20,7 @@ shared_context 'custom products' do
     FactoryBot.create(:custom_product, name: 'Ruby on Rails Baseball Jersey', price: '190.99', taxons: [rails_taxon, clothing_taxon])
     FactoryBot.create(:custom_product, name: 'Ruby on Rails Stein', price: '156.99', taxons: [rails_taxon, mugs_taxon])
     FactoryBot.create(:custom_product, name: 'Ruby on Rails Jr. Spaghetti', price: '190.99', taxons: [rails_taxon, clothing_taxon])
-    FactoryBot.create(:custom_product, name: 'Ruby Baseball Jersey', price: '200.99', taxons: [ruby_taxon, clothing_taxon])
-    FactoryBot.create(:custom_product, name: 'Apache Baseball Jersey', price: '200.99', taxons: [apache_taxon, clothing_taxon])
+    FactoryBot.create(:custom_product, name: 'Ruby Baseball Jersey', price: '250.99', taxons: [ruby_taxon, clothing_taxon])
+    FactoryBot.create(:custom_product, name: 'Apache Baseball Jersey', price: '250.99', taxons: [apache_taxon, clothing_taxon])
   end
 end

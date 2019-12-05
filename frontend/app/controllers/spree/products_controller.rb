@@ -3,13 +3,16 @@ module Spree
     include Spree::ProductsHelper
 
     before_action :load_product, :load_variants, only: :show
-    before_action :load_taxon, :load_products, only: :index
+    before_action :load_taxon, only: :index
 
     helper 'spree/taxons'
 
     respond_to :html
 
     def index
+      @searcher = build_searcher(params.merge(include_images: true))
+      @products = @searcher.retrieve_products
+      @products = @products.includes(:possible_promotions) if @products.respond_to?(:includes)
       @taxonomies = load_taxonomies
       @option_types = load_options
     end
@@ -67,17 +70,6 @@ module Spree
                       option_values: :option_type,
                       images: { attachment_attachment: :blob }
                     )
-    end
-
-    def load_products
-      retrieved = Rails.cache.fetch params.permit!.merge(current_currency: current_currency) do
-        searcher = build_searcher(params.merge(include_images: true))
-        products = searcher.retrieve_products.includes(:variants_including_master, master: :default_price)
-        products_total_count = products.total_count
-        products.to_a << products_total_count
-      end
-      total_count = retrieved.pop
-      @products = Kaminari.paginate_array(retrieved, total_count: total_count).page(params[:page]).per(12)
     end
 
     def redirect_if_legacy_path

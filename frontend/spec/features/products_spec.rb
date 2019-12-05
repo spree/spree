@@ -272,12 +272,15 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
                              'Ruby on Rails Stein'])
   end
 
-  it 'is able to display products priced between 151 and 200 dollars across multiple pages' do
-    Spree::Config.products_per_page = 3
-    within(:css, '#collapseFilterPrice') { click_on '$151 - $200' }
-    expect(page).to have_css('.product-component-name').exactly(3).times
-    within(:css, '.page-item .page-link') { click_on '›' }
-    expect(page).to have_css('#products .product-list-item').once
+  context 'pagination' do
+    before { Spree::Config.products_per_page = 3 }
+
+    it 'is able to display products priced between 151 and 200 dollars across multiple pages' do
+      within(:css, '#collapseFilterPrice') { click_on '$151 - $200' }
+      expect(page).to have_css('.product-component-name').exactly(3).times
+      find('.next_page > .page-link').click
+      expect(page).to have_css('.product-component-name').once
+    end
   end
 
   it 'is able to put a product without a description in the cart', js: true do
