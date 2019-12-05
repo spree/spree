@@ -1,38 +1,51 @@
-<div class="form-group">
-  <label for="reports-group-by"><%= Spree.t(:group_by) %>:</label>
-  <div class="input-group mb-3" data-id="reports-group-by">
-    <div class="input-group-prepend">
-      <label class="input-group-text" data-action="prev">
-        <i class="icon icon-chevron-left"></i>
-      </label>
-    </div>
-    <select class="custom-select" id="reports-group-by">
-      <option selected value="day">Day</option>
-      <option value="month">Month</option>
-      <option value="year">Year</option>
-    </select>
-    <div class="input-group-append">
-      <label class="input-group-text" data-action="next">
-        <i class="icon icon-chevron-right"></i>
-      </label>
-    </div>
-  </div>
-</div>
-
-<div class="card bg-light mb-3">
-  <div class="card-body">
-    <form>
-      <div class="row">
-        <div class="form-group col-12 col-md-4">
-          <label for="reports-completed-at-min"><%= Spree.t(:completed_at_min) %>:</label>
-          <input type="date" class="form-control" id="reports-completed-at-min" name="reports-completed-at-min" />
+<div class="row">
+  <div class="col-3">
+    <div class="form-group">
+      <label for="reports-time-period"><%= Spree.t(:time_period) %>:</label>
+      <div class="input-group mb-3 js-filter-select" data-id="reports-time-period">
+        <div class="input-group-prepend">
+          <label class="input-group-text" data-action="prev">
+            <i class="icon icon-chevron-left"></i>
+          </label>
         </div>
-
-        <div class="form-group col-12 col-md-4">
-          <label for="reports-completed-at-max"><%= Spree.t(:completed_at_max) %>:</label>
-          <input type="date" class="form-control" id="reports-completed-at-max" name="reports-completed-at-max" />
+        <select class="custom-select" id="reports-time-period" data-param="period">
+          <option selected value="today">Today</option>
+          <option value="yesterday">Yesterday</option>
+          <option value="this_week">This Week</option>
+          <option value="last_week">Last Week</option>
+          <option value="this_month">This Month</option>
+          <option value="last_month">Last Month</option>
+          <option value="this_year">This Year</option>
+          <option value="last_year">Last Year</option>
+        </select>
+        <div class="input-group-append">
+          <label class="input-group-text" data-action="next">
+            <i class="icon icon-chevron-right"></i>
+          </label>
         </div>
       </div>
-    </form>
+    </div>
+  </div>
+  <div class="col-3">
+    <div class="form-group">
+      <label for="reports-group-by"><%= Spree.t(:group_by) %>:</label>
+      <div class="input-group mb-3 js-filter-select" data-id="reports-group-by">
+        <div class="input-group-prepend">
+          <label class="input-group-text" data-action="prev">
+            <i class="icon icon-chevron-left"></i>
+          </label>
+        </div>
+        <select class="custom-select" id="reports-group-by" data-param="group_by">
+          <option selected value="day">Day</option>
+          <option value="month">Month</option>
+          <option value="year">Year</option>
+        </select>
+        <div class="input-group-append">
+          <label class="input-group-text" data-action="next">
+            <i class="icon icon-chevron-right"></i>
+          </label>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

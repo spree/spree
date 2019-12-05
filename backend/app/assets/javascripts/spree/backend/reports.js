@@ -1,255 +1,256 @@
-const GROUP_BY_ID = 'reports-group-by'
-const FONT_FAMILY =
-  '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif'
+Spree.Reports = {
+  FONT_FAMILY: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif',
 
-/**
- * @param {string} className Class name of canvas dom nodes for charts
- * @returns {HTMLCollection} DOM nodes
- */
-function getChartNodes (className) {
-  return document.getElementsByClassName(className)
-}
+  /**
+   * @param {string} className Class name of canvas dom nodes for charts
+   * @returns {HTMLCollection} DOM nodes
+   */
+  getNodes: function (className) {
+    return document.getElementsByClassName(className)
+  },
 
-/**
- * @param {HTMLCanvasElement} node DOM node
- * @returns {object} Information to get chart data
- */
-function getChartData (node) {
-  return JSON.parse(JSON.stringify(node.dataset))
-}
+  /**
+   * @param {HTMLCanvasElement} node DOM node
+   * @returns {object} Information to get chart data
+   */
+  getChartData: function (node) {
+    return JSON.parse(JSON.stringify(node.dataset))
+  },
 
-/**
- * @param {string} node DOM node id to hold the chart. Should be canvas.
- * @param {string} type Chart type.
- * @param {object} data Chart.js data objects holding labels and datasets to display
- * @returns {Chart}
- */
-function createChart (node, data, options) {
-  return new Chart(node, {
-    type: options.type,
-    data: data,
-    options: {
-      datasets: {
-        line: {
-          backgroundColor: options.bgColor || 'rgba(71, 141, 193, 0.8)',
-          borderColor: options.lineColor || 'rgba(71, 141, 193, 1)'
-        }
-      },
-      scales: {
-        yAxes: [{
-          ticks: {
-            padding: 10,
-            fontFamily: FONT_FAMILY
-          },
-          scaleLabel: {
-            display: true,
-            labelString: options.labelY,
-            fontColor: options.lineColor || '#2A83C6',
-            fontStyle: 'bold',
-            fontSize: 14,
-            fontFamily: FONT_FAMILY,
-            padding: 10
+  /**
+   * @param {string} node DOM node id to hold the chart. Should be canvas.
+   * @param {string} type Chart type.
+   * @param {object} data Chart.js data objects holding labels and datasets to display
+   * @returns {Chart}
+   */
+  createChart: function (node, data, options) {
+    return new Chart(node, {
+      type: options.type,
+      data: data,
+      options: {
+        datasets: {
+          line: {
+            backgroundColor: options.bgColor || 'rgba(71, 141, 193, 0.8)',
+            borderColor: options.lineColor || 'rgba(71, 141, 193, 1)'
           }
-        }],
-        xAxes: [{
-          ticks: {
-            padding: 10,
-            fontFamily: FONT_FAMILY
+        },
+        scales: {
+          yAxes: [{
+            ticks: {
+              padding: 10,
+              fontFamily: this.FONT_FAMILY
+            },
+            scaleLabel: {
+              display: true,
+              labelString: options.labelY,
+              fontColor: options.lineColor || '#2A83C6',
+              fontStyle: 'bold',
+              fontSize: 14,
+              fontFamily: this.FONT_FAMILY,
+              padding: 10
+            }
+          }],
+          xAxes: [{
+            ticks: {
+              padding: 10,
+              fontFamily: this.FONT_FAMILY
+            }
+          }]
+        },
+        legend: {
+          display: true,
+          align: 'end',
+          labels: {
+            fontFamily: this.FONT_FAMILY,
+            fontSize: 16,
+            usePointStyle: true,
+            boxWidth: 5
           }
-        }]
-      },
-      legend: {
-        display: true,
-        align: 'end',
-        labels: {
-          fontFamily: FONT_FAMILY,
-          fontSize: 16,
-          usePointStyle: true,
-          boxWidth: 5
+        },
+        tooltips: {
+          displayColors: false,
+          xPadding: 15,
+          yPadding: 15,
+          titleFontSize: 14,
+          titleFontFamily: this.FONT_FAMILY
         }
-      },
-      tooltips: {
-        displayColors: false,
-        xPadding: 15,
-        yPadding: 15,
-        titleFontSize: 14,
-        titleFontFamily: FONT_FAMILY
+      }
+    })
+  },
+
+  /**
+   * @param {string} reportId String ID of the report, comes from data-id attr.
+   * @returns {string} API URL
+   */
+  getApiURL: function (reportId) {
+    return '/admin/reports/' + reportId + '.json' + window.location.search
+  },
+
+  /**
+   * @param {object} data Data referencing information for data fetching
+   * @param {Chart} chart Chart instance
+   */
+  updateChart: function (data, chart) {
+    return fetch(Spree.Reports.getApiURL(data.id))
+      .then(function (response) {
+        return response.json()
+      })
+      .then(function (json) {
+        chart.data.datasets[0].data = json.data
+        chart.data.labels = json.labels
+      })
+      .finally(function () {
+        chart.update()
+      })
+  },
+
+  getParamValue: function (param) {
+    const params = new Uri(window.location.search)
+
+    return params.getQueryParamValue(param)
+  },
+
+  /**
+   * @param {HTMLSelectElement} node DOM select not to get index of
+   * @param {string} param The param from URL to search through select options
+   * @returns {number} Index of option value that should be selected
+   */
+  getParamSelectedIndex: function (node, param) {
+    const options = []
+    const selectedValue = Spree.Reports.getParamValue(param)
+
+    Array.prototype.forEach.call(node.options, function (el) {
+      options.push(el.value)
+    })
+
+    return options.indexOf(selectedValue)
+  },
+
+  /**
+   * @param {Event} e Event from HTMLElement
+   * @param {string} param Query param we want to toggle
+   */
+  updateUrlParams: function (e, param) {
+    const url = new Uri(window.location)
+
+    if (e.target.value === '') {
+      url.deleteQueryParam(param)
+    } else {
+      url.replaceQueryParam(param, e.target.value)
+    }
+
+    window.history.pushState({}, '', url.toString())
+
+    return Spree.Reports.initReports()
+  },
+
+  /**
+   * @param {HTMLSelectElement} el Select element from filter
+   * @param {('next'|'prev')} dir Switch direction
+   */
+  selectOptionByDirection: function (el, dir) {
+    if (el.selectedIndex + 1 === el.options.length && dir === 'next') {
+      el.selectedIndex = 0
+    } else if (el.selectedIndex === 0 && dir === 'prev') {
+      el.selectedIndex = el.options.length - 1
+    } else {
+      if (dir === 'next') {
+        el.selectedIndex++
+      } else {
+        el.selectedIndex--
       }
     }
-  })
-}
 
-/**
- * @param {string} reportId String ID of the report, comes from data-id attr.
- * @returns {string} API URL
- */
-function getApiURL (reportId) {
-  return '/admin/reports/' + reportId + '.json' + window.location.search
-}
+    const event = document.createEvent('HTMLEvents')
+    event.initEvent('change', true, false)
 
-/**
- * @param {object} data Data referencing information for data fetching
- * @param {Chart} chart Chart instance
- */
-function updateChart (data, chart) {
-  return fetch(getApiURL(data.id))
-    .then(function (response) {
-      return response.json()
+    return el.dispatchEvent(event)
+  },
+
+  /**
+   * @param {HTMLDivElement} el Filter root node
+   * @param {('prev'|'next')} dir Move direction
+   * @return {HTMLLabelElement} Button to click on to move to next time period
+   */
+  getMoveButton: function (el, dir) {
+    return el.querySelector('[data-action="' + dir + '"]')
+  },
+
+  initFilter: function () {
+    const filterNodes = Spree.Reports.getNodes('js-filter-select')
+    const downloadCsvButton = document.getElementById('download-csv')
+
+    Array.prototype.forEach.call(filterNodes, function (node) {
+      const select = node.querySelector('select')
+      const directions = ['prev', 'next']
+
+      directions.forEach(function (dir) {
+        const button = Spree.Reports.getMoveButton(node, dir)
+
+        button.addEventListener('click', function (e) {
+          return Spree.Reports.selectOptionByDirection(select, dir)
+        })
+      })
+
+      select.addEventListener('change', function (e) {
+        return Spree.Reports.updateUrlParams(e, e.target.dataset.param)
+      })
+
+      const selectedIndexFromParams = Spree.Reports.getParamSelectedIndex(
+        select,
+        select.dataset.param
+      )
+
+      // Set selected value from URL param
+      if (selectedIndexFromParams !== -1) {
+        select.selectedIndex = selectedIndexFromParams
+      }
     })
-    .then(function (json) {
-      chart.data.datasets[0].data = json.data
-      chart.data.labels = json.labels
+
+    downloadCsvButton.addEventListener('click', function (e) {
+      window.location.assign(
+        window.location.pathname.replace(/(\.html)?$/, '.csv') +
+          window.location.search
+      )
     })
-    .finally(function () {
-      chart.update()
-    })
-}
 
-function getParamValue (param) {
-  const params = new Uri(window.location.search)
+    // Listen to browser history change and init requests
+    window.onpopstate = function (e) {
+      Array.prototype.forEach.call(filterNodes, function (node) {
+        const select = node.querySelector('select')
+        const index = Spree.Reports.getParamSelectedIndex(select, select.dataset.param)
 
-  return params.getQueryParamValue(param)
-}
+        if (index === -1) {
+          select.selectedIndex = 0
+        } else {
+          select.selectedIndex = index
+        }
+      })
 
-/**
- * @param {HTMLSelectElement} node DOM select not to get index of
- * @param {string} param The param from URL to search through select options
- * @returns {number} Index of option value that should be selected
- */
-function getParamSelectedIndex (node, param) {
-  const options = []
-  const selectedValue = getParamValue(param)
-
-  Array.prototype.forEach.call(node.options, function (el) {
-    options.push(el.value)
-  })
-
-  return options.indexOf(selectedValue)
-}
-
-/**
- * @param {Event} e Event from HTMLElement
- * @param {string} param Query param we want to toggle
- */
-function updateUrlParams (e, param) {
-  const url = new Uri(window.location)
-
-  if (e.target.value === '') {
-    url.deleteQueryParam(param)
-  } else {
-    url.replaceQueryParam(param, e.target.value)
-  }
-
-  window.history.pushState({}, '', url.toString())
-
-  return initReports()
-}
-
-function selectOption (el, dir) {
-  if (el.selectedIndex + 1 === el.options.length) {
-    el.selectedIndex = 0
-  } else if (el.selectedIndex === 0 && dir === 'prev') {
-    el.selectedIndex = el.options.length - 1
-  } else {
-    if (dir === 'next') {
-      el.selectedIndex++
-    } else {
-      el.selectedIndex--
+      return Spree.Reports.initReports()
     }
+  },
+
+  initReports: function () {
+    const chartNodes = Spree.Reports.getNodes('reports--chart')
+
+    return Array.prototype.forEach.call(chartNodes, function (node) {
+      const data = Spree.Reports.getChartData(node)
+      const chart = Spree.Reports.createChart(
+        node,
+        {
+          labels: [],
+          datasets: [{ label: data.label, data: [] }]
+        },
+        data
+      )
+
+      Spree.Reports.updateChart(data, chart)
+    })
   }
-
-  const event = document.createEvent('HTMLEvents')
-  event.initEvent('change', true, false)
-
-  return el.dispatchEvent(event)
-}
-
-function initFilter () {
-  const groupBySelect = document.getElementById(GROUP_BY_ID)
-  const groupByNext = document.querySelector('[data-id="'+ GROUP_BY_ID +'"] [data-action="next"]')
-  const groupByPrev = document.querySelector('[data-id="'+ GROUP_BY_ID +'"] [data-action="prev"]')
-  const completedAtMinInput = document.getElementById(
-    'reports-completed-at-min'
-  )
-  const completedAtMaxInput = document.getElementById(
-    'reports-completed-at-max'
-  )
-  const downloadCsvButton = document.getElementById('download-csv')
-
-  const selectedIndexFromParams = getParamSelectedIndex(
-    groupBySelect,
-    'group_by'
-  )
-
-  // Set selected value from URL param
-  if (selectedIndexFromParams !== -1) {
-    groupBySelect.selectedIndex = selectedIndexFromParams
-  }
-
-  // Change browser URL and init request when user select option
-  groupBySelect.addEventListener('change', function (e) {
-    return updateUrlParams(e, 'group_by')
-  })
-
-  completedAtMinInput.addEventListener('change', function (e) {
-    return updateUrlParams(e, 'completed_at_min')
-  })
-
-  completedAtMaxInput.addEventListener('change', function (e) {
-    return updateUrlParams(e, 'completed_at_max')
-  })
-
-  downloadCsvButton.addEventListener('click', function (e) {
-    window.location.assign(
-      window.location.pathname.replace(/(\.html)?$/, '.csv') +
-        window.location.search
-    )
-  })
-
-  groupByNext.addEventListener('click', function(e) {
-    return selectOption(groupBySelect, 'next')
-  })
-
-  groupByPrev.addEventListener('click', function(e) {
-    return selectOption(groupBySelect, 'prev')
-  })
-
-  // Listen to browser history change and init requests
-  window.onpopstate = function (e) {
-    const groupSelectedIndex = getParamSelectedIndex(groupBySelect, 'group_by')
-
-    if (groupSelectedIndex === -1) {
-      groupBySelect.selectedIndex = 0
-    } else {
-      groupBySelect.selectedIndex = groupSelectedIndex
-    }
-
-    completedAtMaxInput.value = getParamValue('completed_at_max')
-    completedAtMinInput.value = getParamValue('completed_at_min')
-
-    return initReports()
-  }
-}
-
-function initReports () {
-  const chartNodes = getChartNodes('reports--chart')
-
-  return Array.prototype.forEach.call(chartNodes, function (node) {
-    const data = getChartData(node)
-    const chart = createChart(
-      node,
-      {
-        labels: [],
-        datasets: [{ label: data.label, data: [] }]
-      },
-      data
-    )
-
-    updateChart(data, chart)
-  })
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-  initReports()
-  initFilter()
+  Spree.Reports.initReports()
+  Spree.Reports.initFilter()
 })
