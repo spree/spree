@@ -17,7 +17,7 @@
     <% if ((can?(:update, @order) && can?(:read, Spree::Store)) && (@order.shipments.size.zero? || @order.shipments.shipped.size.zero?)) %>
       <li data-hook='admin_order_tabs_store_details'>
         <%= link_to_with_icon 'home',
-          Spree.t(:store),
+          Spree.t(:store_name),
           store_admin_order_url(@order),
           class: "#{'active' if current == :store} nav-link" %>
       </li>

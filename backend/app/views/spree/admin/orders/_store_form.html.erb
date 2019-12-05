@@ -3,7 +3,7 @@
     <fieldset>
     <div data-hook="admin_order_store_field">
       <%= f.field_container :store_id, class: ['form-group'] do %>
-        <%= f.label :store_id, Spree.t(:store) %>
+        <%= f.label :store_id, Spree.t(:store_name) %>
         <%= f.collection_select(:store_id, @stores, :id, :name, { include_blank: false }, { class: "select2" }) %>
         <%= f.error_message_on :store_id %>
       <% end %>

@@ -1531,7 +1531,7 @@ en:
         must_have_variant: You must add atleast one variant.
     stock_transfers: Stock Transfers
     stop: Stop
-    store: Store
+    store_name: Store
     store:
       errors:
         unable_to_create: Unable to create store.
