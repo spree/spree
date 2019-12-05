@@ -11,11 +11,15 @@
   <dl class="w-100 d-lg-flex justify-content-lg-between">
     <div>
       <dt class="text-uppercase text-center text-lg-left"><%= Spree.t(:shipping_address) %></dt>
-      <dd class="text-center text-lg-left"><%= sanitize @order.ship_address.to_s, tags: %w[br] %></dd>
+      <dd class="text-center text-lg-left">
+        <%= render 'spree/shared/address', address: @order.ship_address %>
+      </dd>
     </div>
     <div>
       <dt class="text-uppercase text-center text-lg-left"><%= Spree.t(:billing_address) %></dt>
-      <dd class="text-center text-lg-left"><%= sanitize @order.bill_address.to_s, tags: %w[br] %></dd>
+      <dd class="text-center text-lg-left">
+        <%= render 'spree/shared/address', address: @order.bill_address %>
+      </dd>
     </div>
     <div>
       <dt class="text-uppercase text-center text-lg-left"><%= Spree.t(:shipping) %></dt>

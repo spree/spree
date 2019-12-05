@@ -96,11 +96,10 @@ describe 'orders', type: :feature do
         configure_spree_preferences { |config| config.address_requires_state = false }
       end
 
-      # TODO: enable this test when the preference will be respected again in UI
-      xit 'does not show state text' do
+      it 'does not show state text' do
         visit spree.order_path(order)
 
-        within '#order' do
+        within '#order_summary' do
           expect(page).not_to have_content(order.bill_address.state_text)
           expect(page).not_to have_content(order.ship_address.state_text)
         end
