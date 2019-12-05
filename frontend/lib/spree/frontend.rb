@@ -2,7 +2,6 @@ require 'rails/all'
 require 'sprockets/rails'
 
 require 'bootstrap'
-require 'glyphicons'
 require 'inline_svg'
 require 'popper_js'
 require 'canonical-rails'
