@@ -9,7 +9,6 @@ module Spree
     def call
       {
         name: @product.name,
-        display_price: @product.display_price.to_s,
         images: images
       }
     end

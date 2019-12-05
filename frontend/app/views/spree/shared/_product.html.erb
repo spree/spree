@@ -1,5 +1,5 @@
 <%= link_to product_path product do %>
   <%= plp_image(product, image_class) %>
   <div class="product-component-name"><%= product.name %></div>
-  <div class="product-component-price"><%= product.display_price %></div>
+  <div class="product-component-price"><%= display_price(product) %></div>
 <% end %>
