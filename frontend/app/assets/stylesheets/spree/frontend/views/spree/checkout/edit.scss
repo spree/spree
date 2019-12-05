@@ -169,7 +169,7 @@
       @include media-breakpoint-up(lg) {
         font-size: font-px-to-rem(32px);
         letter-spacing: 0.65px;
-        margin-bottom: 78px;
+        margin-bottom: 40px;
       }
     }
 
@@ -199,6 +199,34 @@
         }
         @include media-breakpoint-up(lg) {
           margin-top: 0;
+        }
+      }
+    }
+
+    .store-credit {
+      &-title {
+        font-size: font-px-to-rem(15px);
+        font-weight: 500;
+        line-height: 1.06;
+        letter-spacing: 0.4px;
+        margin-bottom: 0;
+        @include media-breakpoint-up(sm) {
+          font-size: font-px-to-rem(27px);
+          line-height: 1.22;
+          letter-spacing: 0.5px;
+        }
+        @include media-breakpoint-up(lg) {
+          font-size: font-px-to-rem(20px);
+        }
+      }
+      &-button {
+        padding: 1px 25px;
+        font-size: 16px;
+        @include media-breakpoint-up(sm) {
+          font-size: font-px-to-rem(30px);
+        }
+        @include media-breakpoint-up(lg) {
+          font-size: font-px-to-rem(20px);
         }
       }
     }

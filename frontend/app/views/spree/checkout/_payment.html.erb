@@ -3,6 +3,8 @@
     <%= Spree.t(:payment_type).upcase %>
   </p>
 
+  <%= render partial: 'spree/checkout/payment/storecredit' %>
+
   <ul id="payment-methods" class="list-unstyled position-relative" data-hook>
     <% @order.available_payment_methods.each do |method| %>
       <li class="radio">

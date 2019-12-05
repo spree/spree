@@ -54,6 +54,11 @@
         <dd>
           <%= render collection: @order.payments.valid, partial: 'spree/shared/payment' %>
         </dd>
+        <dd>
+          <% if @order.using_store_credit? %>
+            <%= button_tag Spree.t('store_credit.remove'), name: 'remove_store_credit', class: 'continue btn' %>
+          <% end %>
+        </dd>
       </div>
     </dl>
   </div>

@@ -633,39 +633,39 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
         expect(page).to have_selector('button[name="apply_store_credit"]')
 
         amount = Spree::Money.new(store_credit.amount_remaining + additional_store_credit.amount_remaining)
-        expect(page).to have_content(Spree.t('store_credit.available_amount', amount: amount))
+        expect(page).to have_content(Spree.t('store_credit.available_amount', amount: amount).strip_html_tags)
       end
 
       it 'apply store credits button should move checkout to next step if amount is sufficient' do
-        click_button 'Apply Store Credit'
+        click_button 'Apply'
         expect(page).to have_current_path(spree.order_path(order))
-        expect(page).to have_content(Spree.t('order_processed_successfully'))
+        expect(page).to have_content(Spree.t('order_success'))
       end
 
       it 'apply store credits button should wait on payment step for other payment' do
         store_credit.update(amount_used: 145)
         additional_store_credit.update(amount_used: 12)
-        click_button 'Apply Store Credit'
+        click_button 'Apply'
 
         expect(page).to have_current_path(spree.checkout_state_path(:payment))
         amount = Spree::Money.new(store_credit.amount_remaining + additional_store_credit.amount_remaining)
         remaining_amount = Spree::Money.new(order.total - amount.money.to_f)
-        expect(page).to have_content(Spree.t('store_credit.applicable_amount', amount: amount))
-        expect(page).to have_content(Spree.t('store_credit.additional_payment_needed', amount: remaining_amount))
-        expect(page).to have_content(Spree.t('store_credit.remove'))
+        expect(page).to have_content(Spree.t('store_credit.applicable_amount', amount: amount).strip_html_tags)
+        expect(page).to have_content(Spree.t('store_credit.additional_payment_needed', amount: remaining_amount).strip_html_tags)
+        expect(page).to have_content(Spree.t('store_credit.remove').upcase)
       end
 
       context 'remove store credits payments' do
         before do
           store_credit.update(amount: 5)
           additional_store_credit.update(amount: 5)
-          click_button 'Apply Store Credit'
+          click_button 'Apply'
         end
 
         it 'remove store credits button should remove store_credits' do
-          click_button 'Remove Store Credit'
+          click_button 'Remove'
           expect(page).to have_current_path(spree.checkout_state_path(:payment))
-          expect(page).to have_content(Spree.t('store_credit.available_amount', amount: order.display_total_available_store_credit))
+          expect(page).to have_content(Spree.t('store_credit.available_amount', amount: order.display_total_available_store_credit).strip_html_tags)
           expect(page).to have_selector('button[name="apply_store_credit"]')
         end
       end
