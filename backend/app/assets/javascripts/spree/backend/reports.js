@@ -218,37 +218,29 @@ Spree.Reports = {
     switch (periodName) {
       case 'today':
         return this.getPeriod(dayjs(), dayjs())
-        break
       case 'yesterday':
         return this.getPeriod(dayjs().subtract(1, 'day'), dayjs())
-        break
       case 'this_week':
         return this.getPeriod(dayjs().startOf('week'), dayjs())
-        break
       case 'last_week':
         return this.getPeriod(
           dayjs().startOf('week').subtract(1, 'week'),
           dayjs().startOf('week').subtract(1, 'day')
         )
-        break
       case 'this_month':
         return this.getPeriod(dayjs().startOf('month'), dayjs().endOf('month'))
-        break
       case 'last_month':
         return this.getPeriod(
           dayjs().startOf('month').subtract(1, 'month'),
           dayjs().startOf('month').subtract(1, 'day')
         )
-        break
       case 'this_year':
         return this.getPeriod(dayjs().startOf('year'), dayjs().endOf('year'))
-        break
       case 'last_year':
         return this.getPeriod(
           dayjs().startOf('year').subtract(1, 'year'),
           dayjs().subtract(1, 'year').endOf('year')
         )
-        break
       default:
         return this.getPeriod(dayjs().startOf('week'), dayjs())
     }
@@ -263,14 +255,24 @@ Spree.Reports = {
     const filterNodes = self.getNodes('js-filter')
     const downloadCsvButton = document.getElementById('download-csv')
     const urlParams = new Uri(window.location.search)
-    const paramMinDate = urlParams.getQueryParamValue('completed_at_min')
-    const paramMaxDate = urlParams.getQueryParamValue('completed_at_max')
+    const paramMinDate = urlParams.getQueryParamValue('completed_at_min') || dayjs().subtract(2, 'years').format(self.DATE_FORMAT)
+    const paramMaxDate = urlParams.getQueryParamValue('completed_at_max') || dayjs().format(self.DATE_FORMAT)
 
     Array.prototype.forEach.call(filterNodes, function (node) {
       const filterNode = node.getElementsByClassName('js-filter-node')[0]
-      const isDatePicker = filterNode.className
-        .split(' ')
-        .includes('datepicker')
+      const isDatePicker = function() {
+        return filterNode.className
+          .split(' ')
+          .includes('datepicker')
+      }
+
+      const getMaxDate = function () {
+        if (filterNode.dataset.param === 'completed_at_max') {
+          return self.parseDate(dayjs().format(self.DATE_FORMAT))
+        } else {
+          return self.parseDate(paramMaxDate)
+        }
+      }
 
       if (filterNode.tagName === 'SELECT') {
         const directions = ['prev', 'next']
@@ -294,11 +296,11 @@ Spree.Reports = {
         }
       }
 
-      if (isDatePicker) {
+      if (isDatePicker()) {
         $(filterNode).datepicker({
           dateFormat: 'dd-mm-yy',
           minDate: self.parseDate(paramMinDate),
-          maxDate: self.parseDate(paramMaxDate),
+          maxDate: getMaxDate(),
           onSelect: function() {
             let event
             if (typeof window.Event === 'function') {
