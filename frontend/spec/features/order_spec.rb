@@ -32,8 +32,8 @@ describe 'orders', type: :feature do
     create(:payment, order: order)
     visit spree.order_path(order)
 
-    within 'dd', text: 'Credit card' do
-      expect(page).to have_content '************1111'
+    within '#order_summary' do
+      expect(page).to have_content 'Ending in 1111'
     end
   end
 
@@ -59,8 +59,8 @@ describe 'orders', type: :feature do
     specify do
       visit spree.order_path(order)
 
-      within 'dd', text: 'Credit card' do
-        expect(page).to have_content '************1111'
+      within '#order_summary' do
+        expect(page).to have_content 'Ending in 1111'
       end
     end
   end
