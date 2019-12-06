@@ -22,9 +22,11 @@ describe 'checkout with unshippable items', type: :feature, inaccessible: true d
     allow_any_instance_of(Spree::CheckoutController).to receive_messages(ensure_sufficient_stock_lines: true)
   end
 
-  it 'displays and removes' do
+  it 'removes but does not display' do
     visit spree.checkout_state_path(:delivery)
-    expect(page).to have_content('Unshippable Items')
+    expect(order.line_items.count).to eq 2
+    expect(page).to_not have_css('.shipment.unshippable')
+    expect(page).to_not have_content('Unshippable Items')
 
     click_button 'Save and Continue'
 
