@@ -4,11 +4,10 @@
 
 <% cache cache_key_for_product do %>
   <div class="container">
-    <%= spree_breadcrumbs(@product.category, '', @product) %>
+    <%= spree_breadcrumbs(@taxon, '', @product) %>
   </div>
 
-  <div class="container pt-4 product-details">
-
+  <div class="container pt-4 product-details" data-hook="product_show">
     <div class="modal fade" id="picturesModal" tabindex="-1" role="dialog" >
       <div class="modal-dialog--zoom modal-dialog mw-100 h-100 mt-0 mb-0" role="document">
         <div class="modal-content h-100">

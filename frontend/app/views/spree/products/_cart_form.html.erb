@@ -61,9 +61,9 @@
       </ul>
     <% end %>
 
-    <%= hidden_field_tag "variant_id", default_variant.id %>
-
     <% if is_product_available_in_currency && @product.can_supply? %>
+      <%= hidden_field_tag "variant_id", default_variant.id %>
+
       <hr>
       <div>
         <div class="mb-5 mt-4">

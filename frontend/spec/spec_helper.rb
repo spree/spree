@@ -48,6 +48,8 @@ require 'webdrivers'
 # in ./support/ and its subdirectories.
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
 
+Rails.application.routes.default_url_options[:host] = 'example.com'
+
 RSpec.configure do |config|
   config.color = true
   config.default_formatter = 'doc'
