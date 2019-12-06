@@ -95,7 +95,6 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
       end
 
       it 'when adding a product to the cart', js: true do
-        visit spree.product_path(product)
         add_to_cart(product)
 
         within('.shopping-cart-total-amount') do
@@ -104,7 +103,6 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
       end
 
       it "when on the 'address' state of the cart", js: true do
-        visit spree.product_path(product)
         add_to_cart(product) do
           click_link 'Checkout'
         end
