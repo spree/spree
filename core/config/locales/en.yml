@@ -1531,10 +1531,11 @@ en:
         must_have_variant: You must add atleast one variant.
     stock_transfers: Stock Transfers
     stop: Stop
-    store_name: Store
-    store:
-      errors:
-        unable_to_create: Unable to create store.
+    store: Store
+    store_errors:
+      unable_to_create: Unable to create store.
+      unable_to_update: Unable to update store.
+      unable_to_delete: Unable to delete store.
     store_set_default_button: Set as default
     stores: Stores
     store_credit_name: Store Credit
