@@ -8,16 +8,22 @@
             <i class="icon icon-chevron-left"></i>
           </label>
         </div>
-        <select class="custom-select js-filter-node" id="reports-time-period" data-param="period">
-          <option value="today">Today</option>
-          <option value="yesterday">Yesterday</option>
-          <option selected value="this_week">This Week</option>
-          <option value="last_week">Last Week</option>
-          <option value="this_month">This Month</option>
-          <option value="last_month">Last Month</option>
-          <option value="this_year">This Year</option>
-          <option value="last_year">Last Year</option>
-        </select>
+        <%= select_tag "reports-time-period",
+          options_for_select(
+            [[ "Today", "today" ],
+            [ "Yesterday", "yesterday" ],
+            [ "This Week", "this_week" ],
+            [ "Last Week", "last_week" ],
+            [ "This Month", "this_month" ],
+            [ "Last Month", "last_month" ],
+            [ "This Year", "this_year" ],
+            [ "Last Year", "last_year" ],
+            [ "Custom", "custom" ]],
+            params[:period]
+          ),
+          class: 'custom-select js-filter-node',
+          data: { param: 'period' }
+        %>
         <div class="input-group-append">
           <label class="input-group-text" data-action="next">
             <i class="icon icon-chevron-right"></i>
@@ -36,11 +42,16 @@
             <i class="icon icon-chevron-left"></i>
           </label>
         </div>
-        <select class="custom-select js-filter-node" id="reports-group-by" data-param="group_by">
-          <option selected value="day">Day</option>
-          <option value="month">Month</option>
-          <option value="year">Year</option>
-        </select>
+        <%= select_tag "reports-group-by",
+          options_for_select(
+            [[ "Day", "day" ],
+            [ "Month", "month" ],
+            [ "Year", "year" ]],
+            params[:group_by] || 'day'
+          ),
+          class: 'custom-select js-filter-node',
+          data: { param: 'group_by' }
+        %>
         <div class="input-group-append">
           <label class="input-group-text" data-action="next">
             <i class="icon icon-chevron-right"></i>
@@ -55,6 +66,7 @@
       <label for="reports-completed-at-min"><%= Spree.t(:completed_at_min) %>:</label>
         <div class="input-group mb-3 js-filter" data-id="reports-time-period">
           <input type="text"
+            value="<%= params[:completed_at_min] %>"
             class="form-control js-filter-node datepicker datepicker-from"
             id="reports-completed-at-min"
             name="reports-completed-at-min"
@@ -73,6 +85,7 @@
         <label for="reports-completed-at-max"><%= Spree.t(:completed_at_max) %>:</label>
           <div class="input-group mb-3 js-filter" data-id="reports-time-period">
             <input type="text"
+              value="<%= params[:completed_at_max] %>"
               class="form-control js-filter-node datepicker datepicker-from"
               id="reports-completed-at-max"
               name="reports-completed-at-max"

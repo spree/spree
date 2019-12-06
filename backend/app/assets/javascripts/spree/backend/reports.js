@@ -152,15 +152,13 @@ Spree.Reports = {
       url.replaceQueryParam(param, e.target.value)
     }
 
-    if (param === 'period') {
+    if (param.includes('completed_at_')) {
+      url.deleteQueryParam('period')
+    } else if (param === 'period') {
       const period = this.getPredefinedPeriod(e.target.value)
 
       url.replaceQueryParam('completed_at_min', period.min)
       url.replaceQueryParam('completed_at_max', period.max)
-    }
-
-    if (param.includes('completed_at_')) {
-      url.deleteQueryParam('period')
     }
 
     window.history.pushState({}, '', url.toString())
@@ -292,6 +290,7 @@ Spree.Reports = {
       if (isDatePicker) {
         $(filterNode).datepicker({
           dateFormat: 'dd-mm-yy',
+          maxDate: dayjs().toDate(),
           onSelect: function() {
             let event
             if (typeof window.Event === 'function') {
