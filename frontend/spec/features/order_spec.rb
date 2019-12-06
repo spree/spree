@@ -37,12 +37,11 @@ describe 'orders', type: :feature do
     end
   end
 
-  # TODO: enable this test when other kind of payments except credit card will be supported agagin
-  xit 'has payment method name visible if not paid with credit card' do
+  it 'has payment method name visible if not paid with credit card' do
     create(:check_payment, order: order)
     visit spree.order_path(order)
 
-    within '.payment-info' do
+    within '#order_summary' do
       expect(page).to have_content 'Check'
     end
   end
