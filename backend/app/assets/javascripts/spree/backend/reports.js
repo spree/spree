@@ -254,10 +254,17 @@ Spree.Reports = {
     }
   },
 
+  parseDate: function (date) {
+    return new Date(date.split('-').reverse().join('-'))
+  },
+
   initFilter: function () {
     const self = this
     const filterNodes = self.getNodes('js-filter')
     const downloadCsvButton = document.getElementById('download-csv')
+    const urlParams = new Uri(window.location.search)
+    const paramMinDate = urlParams.getQueryParamValue('completed_at_min')
+    const paramMaxDate = urlParams.getQueryParamValue('completed_at_max')
 
     Array.prototype.forEach.call(filterNodes, function (node) {
       const filterNode = node.getElementsByClassName('js-filter-node')[0]
@@ -290,7 +297,8 @@ Spree.Reports = {
       if (isDatePicker) {
         $(filterNode).datepicker({
           dateFormat: 'dd-mm-yy',
-          maxDate: dayjs().toDate(),
+          minDate: self.parseDate(paramMinDate),
+          maxDate: self.parseDate(paramMaxDate),
           onSelect: function() {
             let event
             if (typeof window.Event === 'function') {
