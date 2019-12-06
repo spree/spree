@@ -21,7 +21,8 @@ describe 'viewing products', type: :feature, inaccessible: true do
   end
 
   it 'does not show nested taxons with a search' do
-    visit '/t/category/super-clothing?keywords=shirt'
+    visit '/products?keywords=shirt'
+
     expect(page).to have_content('Superman T-Shirt')
     expect(page).not_to have_selector("div[data-hook='taxon_children']")
   end
