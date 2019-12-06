@@ -47,15 +47,12 @@
       </div>
       <div>
         <dt><%= Spree.t(:shipping) %></dt>
-        <dd><%= @order.shipments.first.shipping_method.name %></dd>
+        <dd><%= @order.shipments.first.shipping_method&.name if @order.shipments.any? %></dd>
       </div>
       <div>
         <dt class="text-uppercase"><%= Spree.t(:payment) %></dt>
         <dd>
-          <% payment = @order.payments.valid.first %>
-          <%= payment.source_type.sub('Spree::', '').underscore.humanize %>
-          <br/>
-          <%= payment.source.last_digits.rjust(16, '*') %>
+          <%= render collection: @order.payments.valid, partial: 'spree/shared/payment' %>
         </dd>
       </div>
     </dl>
