@@ -2,13 +2,13 @@
   <div class="col-3">
     <div class="form-group">
       <label for="reports-time-period"><%= Spree.t(:time_period) %>:</label>
-      <div class="input-group mb-3 js-filter-select" data-id="reports-time-period">
+      <div class="input-group mb-3 js-filter" data-id="reports-time-period">
         <div class="input-group-prepend">
           <label class="input-group-text" data-action="prev">
             <i class="icon icon-chevron-left"></i>
           </label>
         </div>
-        <select class="custom-select" id="reports-time-period" data-param="period">
+        <select class="custom-select js-filter-node" id="reports-time-period" data-param="period">
           <option value="today">Today</option>
           <option value="yesterday">Yesterday</option>
           <option selected value="this_week">This Week</option>
@@ -26,16 +26,17 @@
       </div>
     </div>
   </div>
+
   <div class="col-3">
     <div class="form-group">
       <label for="reports-group-by"><%= Spree.t(:group_by) %>:</label>
-      <div class="input-group mb-3 js-filter-select" data-id="reports-group-by">
+      <div class="input-group mb-3 js-filter" data-id="reports-group-by">
         <div class="input-group-prepend">
           <label class="input-group-text" data-action="prev">
             <i class="icon icon-chevron-left"></i>
           </label>
         </div>
-        <select class="custom-select" id="reports-group-by" data-param="group_by">
+        <select class="custom-select js-filter-node" id="reports-group-by" data-param="group_by">
           <option selected value="day">Day</option>
           <option value="month">Month</option>
           <option value="year">Year</option>
@@ -44,6 +45,44 @@
           <label class="input-group-text" data-action="next">
             <i class="icon icon-chevron-right"></i>
           </label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-3">
+    <div class="form-group">
+      <label for="reports-completed-at-min"><%= Spree.t(:completed_at_min) %>:</label>
+        <div class="input-group mb-3 js-filter" data-id="reports-time-period">
+          <input type="text"
+            class="form-control js-filter-node datepicker datepicker-from"
+            id="reports-completed-at-min"
+            name="reports-completed-at-min"
+            data-param="completed_at_min" />
+          <div class="input-group-append">
+            <label class="input-group-text">
+              <i class="icon icon-calendar"></i>
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-3">
+      <div class="form-group">
+        <label for="reports-completed-at-max"><%= Spree.t(:completed_at_max) %>:</label>
+          <div class="input-group mb-3 js-filter" data-id="reports-time-period">
+            <input type="text"
+              class="form-control js-filter-node datepicker datepicker-from"
+              id="reports-completed-at-max"
+              name="reports-completed-at-max"
+              data-param="completed_at_max" />
+            <div class="input-group-append">
+              <label class="input-group-text">
+                <i class="icon icon-calendar"></i>
+              </label>
+            </div>
+          </div>
         </div>
       </div>
     </div>

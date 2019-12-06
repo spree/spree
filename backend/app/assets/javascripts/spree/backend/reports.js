@@ -12,7 +12,7 @@
 
 Spree.Reports = {
   FONT_FAMILY: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif',
-  DATE_FORMAT: 'DD/MM/YYYY',
+  DATE_FORMAT: 'DD-MM-YYYY',
 
   /**
    * @param {string} className Class name of canvas dom nodes for charts
@@ -159,6 +159,10 @@ Spree.Reports = {
       url.replaceQueryParam('completed_at_max', period.max)
     }
 
+    if (param.includes('completed_at_')) {
+      url.deleteQueryParam('period')
+    }
+
     window.history.pushState({}, '', url.toString())
 
     return this.initReports()
@@ -254,34 +258,57 @@ Spree.Reports = {
 
   initFilter: function () {
     const self = this
-    const filterNodes = self.getNodes('js-filter-select')
+    const filterNodes = self.getNodes('js-filter')
     const downloadCsvButton = document.getElementById('download-csv')
 
     Array.prototype.forEach.call(filterNodes, function (node) {
-      const select = node.querySelector('select')
-      const directions = ['prev', 'next']
+      const filterNode = node.getElementsByClassName('js-filter-node')[0]
+      const isDatePicker = filterNode.className
+        .split(' ')
+        .includes('datepicker')
 
-      directions.forEach(function (dir) {
-        const button = self.getMoveButton(node, dir)
+      if (filterNode.tagName === 'SELECT') {
+        const directions = ['prev', 'next']
 
-        button.addEventListener('click', function (e) {
-          return self.selectOptionByDirection(select, dir)
+        directions.forEach(function (dir) {
+          const button = self.getMoveButton(node, dir)
+
+          button.addEventListener('click', function (e) {
+            return self.selectOptionByDirection(filterNode, dir)
+          })
         })
-      })
 
-      select.addEventListener('change', function (e) {
+        const selectedIndexFromParams = self.getParamSelectedIndex(
+          filterNode,
+          filterNode.dataset.param
+        )
+
+        // Set selected value from URL param
+        if (selectedIndexFromParams !== -1) {
+          filterNode.selectedIndex = selectedIndexFromParams
+        }
+      }
+
+      if (isDatePicker) {
+        $(filterNode).datepicker({
+          dateFormat: 'dd-mm-yy',
+          onSelect: function() {
+            let event
+            if (typeof window.Event === 'function') {
+              event = new Event('change')
+              this.dispatchEvent(event)
+            } else {
+              event = document.createEvent('HTMLEvents')
+              event.initEvent('change', false, false)
+              this.dispatchEvent(event)
+            }
+          }
+        })
+      }
+
+      filterNode.addEventListener('change', function (e) {
         return self.updateUrlParams(e, e.target.dataset.param)
       })
-
-      const selectedIndexFromParams = self.getParamSelectedIndex(
-        select,
-        select.dataset.param
-      )
-
-      // Set selected value from URL param
-      if (selectedIndexFromParams !== -1) {
-        select.selectedIndex = selectedIndexFromParams
-      }
     })
 
     downloadCsvButton.addEventListener('click', function (e) {
@@ -294,13 +321,19 @@ Spree.Reports = {
     // Listen to browser history change and init requests
     window.onpopstate = function (e) {
       Array.prototype.forEach.call(filterNodes, function (node) {
-        const select = node.querySelector('select')
-        const index = self.getParamSelectedIndex(select, select.dataset.param)
+        const filterNode = node.getElementsByClassName('.js-filter-node')[0]
 
-        if (index === -1) {
-          select.selectedIndex = 0
-        } else {
-          select.selectedIndex = index
+        if (filterNode === 'SELECT') {
+          const index = self.getParamSelectedIndex(
+            filterNode,
+            filterNode.dataset.param
+          )
+
+          if (index === -1) {
+            filterNode.selectedIndex = 0
+          } else {
+            filterNode.selectedIndex = index
+          }
         }
       })
 
