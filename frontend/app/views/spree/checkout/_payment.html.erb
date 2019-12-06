@@ -5,11 +5,12 @@
 
   <%= render partial: 'spree/checkout/payment/storecredit' %>
 
-  <ul id="payment-methods" class="list-unstyled position-relative" data-hook>
+  <ul class="list-unstyled position-relative" data-hook>
     <% @order.available_payment_methods.each do |method| %>
       <li class="radio">
-        <label>
+        <label class="form-check-label spree-radio-label payment__payment-option">
           <%= radio_button_tag "order[payments_attributes][][payment_method_id]", method.id, method == @order.available_payment_methods.first %>
+          <span class="spree-radio-label-custom-input"></span>
           <%= Spree.t(method.name, scope: :payment_methods, default: method.name) %>
         </label>
       </li>

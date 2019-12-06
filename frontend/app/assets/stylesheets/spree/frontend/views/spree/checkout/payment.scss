@@ -1,0 +1,10 @@
+.payment__payment-option {
+  height: 18px;
+  line-height: 18px;
+  margin-bottom: 0.5rem;
+
+  @include media-breakpoint-up(lg) {
+    height: 27px;
+    line-height: 27px;
+  }
+}
