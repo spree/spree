@@ -180,10 +180,13 @@ Spree.Reports = {
    * @param {('next'|'prev')} dir Switch direction
    */
   selectOptionByDirection: function (el, dir) {
-    if (el.selectedIndex + 1 === el.options.length && dir === 'next') {
+    if (
+      el.options[el.selectedIndex + 1].value === 'custom' ||
+      (el.selectedIndex + 1 === el.options.length && dir === 'next')
+    ) {
       el.selectedIndex = 0
     } else if (el.selectedIndex === 0 && dir === 'prev') {
-      el.selectedIndex = el.options.length - 1
+      el.selectedIndex = el.options.length - 2
     } else {
       if (dir === 'next') {
         el.selectedIndex++
