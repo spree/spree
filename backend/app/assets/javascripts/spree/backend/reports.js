@@ -181,7 +181,11 @@ Spree.Reports = {
    */
   selectOptionByDirection: function (el, dir) {
     if (
-      el.options[el.selectedIndex + 1].value === 'custom' ||
+      (
+        el.options[el.selectedIndex + 1] &&
+        el.options[el.selectedIndex + 1].value === 'custom' &&
+        dir === 'next'
+      ) ||
       (el.selectedIndex + 1 === el.options.length && dir === 'next')
     ) {
       el.selectedIndex = 0
