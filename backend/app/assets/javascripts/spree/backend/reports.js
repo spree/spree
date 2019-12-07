@@ -11,7 +11,8 @@
  */
 
 Spree.Reports = {
-  FONT_FAMILY: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif',
+  FONT_FAMILY:
+    '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif',
   DATE_FORMAT: 'DD-MM-YYYY',
 
   /**
@@ -20,6 +21,10 @@ Spree.Reports = {
    */
   getNodes: function (className) {
     return document.getElementsByClassName(className)
+  },
+
+  getUri: function () {
+    return new Uri(window.location)
   },
 
   /**
@@ -48,27 +53,31 @@ Spree.Reports = {
           }
         },
         scales: {
-          yAxes: [{
-            ticks: {
-              padding: 10,
-              fontFamily: this.FONT_FAMILY
-            },
-            scaleLabel: {
-              display: true,
-              labelString: options.labelY,
-              fontColor: options.lineColor || '#2A83C6',
-              fontStyle: 'bold',
-              fontSize: 14,
-              fontFamily: this.FONT_FAMILY,
-              padding: 10
+          yAxes: [
+            {
+              ticks: {
+                padding: 10,
+                fontFamily: this.FONT_FAMILY
+              },
+              scaleLabel: {
+                display: true,
+                labelString: options.labelY,
+                fontColor: options.lineColor || '#2A83C6',
+                fontStyle: 'bold',
+                fontSize: 14,
+                fontFamily: this.FONT_FAMILY,
+                padding: 10
+              }
             }
-          }],
-          xAxes: [{
-            ticks: {
-              padding: 10,
-              fontFamily: this.FONT_FAMILY
+          ],
+          xAxes: [
+            {
+              ticks: {
+                padding: 10,
+                fontFamily: this.FONT_FAMILY
+              }
             }
-          }]
+          ]
         },
         legend: {
           display: true,
@@ -118,9 +127,7 @@ Spree.Reports = {
   },
 
   getParamValue: function (param) {
-    const params = new Uri(window.location.search)
-
-    return params.getQueryParamValue(param)
+    return this.getUri().getQueryParamValue(param)
   },
 
   /**
@@ -144,7 +151,7 @@ Spree.Reports = {
    * @param {string} param Query param we want to toggle
    */
   updateUrlParams: function (e, param) {
-    const url = new Uri(window.location)
+    const url = this.getUri()
 
     if (e.target.value === '') {
       url.deleteQueryParam(param)
@@ -163,7 +170,7 @@ Spree.Reports = {
 
     window.history.pushState({}, '', url.toString())
 
-    return this.initReports()
+    return this.initCharts()
   },
 
   /**
@@ -224,133 +231,189 @@ Spree.Reports = {
         return this.getPeriod(dayjs().startOf('week'), dayjs())
       case 'last_week':
         return this.getPeriod(
-          dayjs().startOf('week').subtract(1, 'week'),
-          dayjs().startOf('week').subtract(1, 'day')
+          dayjs()
+            .startOf('week')
+            .subtract(1, 'week'),
+          dayjs()
+            .startOf('week')
+            .subtract(1, 'day')
         )
       case 'this_month':
         return this.getPeriod(dayjs().startOf('month'), dayjs().endOf('month'))
       case 'last_month':
         return this.getPeriod(
-          dayjs().startOf('month').subtract(1, 'month'),
-          dayjs().startOf('month').subtract(1, 'day')
+          dayjs()
+            .startOf('month')
+            .subtract(1, 'month'),
+          dayjs()
+            .startOf('month')
+            .subtract(1, 'day')
         )
       case 'this_year':
         return this.getPeriod(dayjs().startOf('year'), dayjs().endOf('year'))
       case 'last_year':
         return this.getPeriod(
-          dayjs().startOf('year').subtract(1, 'year'),
-          dayjs().subtract(1, 'year').endOf('year')
+          dayjs()
+            .startOf('year')
+            .subtract(1, 'year'),
+          dayjs()
+            .subtract(1, 'year')
+            .endOf('year')
         )
       default:
         return this.getPeriod(dayjs().startOf('week'), dayjs())
     }
   },
 
+  /**
+   * @param {string} date Date string in format dd-mm-yyyy
+   * @returns {Date} Date object
+   */
   parseDate: function (date) {
-    return new Date(date.split('-').reverse().join('-'))
+    return new Date(
+      date
+        .split('-')
+        .reverse()
+        .join('-')
+    )
   },
 
-  initFilter: function () {
+  /**
+   * @param {HTMLElement} node - Filter HTML node
+   * @returns {Date} - Date object
+   */
+  getMaxDate: function (node) {
+    if (node.dataset.param === 'completed_at_max') {
+      return this.parseDate(dayjs().format(this.DATE_FORMAT))
+    } else {
+      return this.parseDate(
+        this.getUri().getQueryParamValue('completed_at_max')
+      )
+    }
+  },
+
+  /**
+   * @param {HTMLElement} node - Filter HTML node
+   * @returns {Date} - Date object
+   */
+  getMinDate: function (node) {
+    if (node.dataset.param === 'completed_at_min') {
+      return this.parseDate(
+        dayjs()
+          .subtract(2, 'years')
+          .format(this.DATE_FORMAT)
+      )
+    } else {
+      return this.parseDate(
+        this.getUri().getQueryParamValue('completed_at_min') ||
+          dayjs()
+            .subtract(2, 'years')
+            .format(this.DATE_FORMAT)
+      )
+    }
+  },
+
+  /**
+   * @param {HTMLElement} node - HTML node
+   * @returns {boolean}
+   */
+  isDatePicker: function (node) {
+    return node.className.split(' ').includes('datepicker')
+  },
+
+  /**
+   * @param {HTMLElement} filterWrapper - Filter parent HTML node
+   * @param {HTMLSelectElement} filterNode - Filter HTML node
+   */
+  initSelectFilter: function (filterWrapper, filterNode) {
     const self = this
-    const filterNodes = self.getNodes('js-filter')
-    const downloadCsvButton = document.getElementById('download-csv')
-    const urlParams = new Uri(window.location.search)
-    const paramMinDate = urlParams.getQueryParamValue('completed_at_min') || dayjs().subtract(2, 'years').format(self.DATE_FORMAT)
-    const paramMaxDate = urlParams.getQueryParamValue('completed_at_max') || dayjs().format(self.DATE_FORMAT)
+    const directions = ['prev', 'next']
+    const selectedIndexFromParams = self.getParamSelectedIndex(
+      filterNode,
+      filterNode.dataset.param
+    )
 
-    Array.prototype.forEach.call(filterNodes, function (node) {
-      const filterNode = node.getElementsByClassName('js-filter-node')[0]
-      const isDatePicker = function() {
-        return filterNode.className
-          .split(' ')
-          .includes('datepicker')
-      }
+    directions.forEach(function (dir) {
+      const button = self.getMoveButton(filterWrapper, dir)
 
-      const getMaxDate = function () {
-        if (filterNode.dataset.param === 'completed_at_max') {
-          return self.parseDate(dayjs().format(self.DATE_FORMAT))
+      button.addEventListener('click', function (e) {
+        return self.selectOptionByDirection(filterNode, dir)
+      })
+    })
+
+    // Set selected value from URL param
+    if (selectedIndexFromParams !== -1) {
+      filterNode.selectedIndex = selectedIndexFromParams
+    }
+  },
+
+  /**
+   * @param {HTMLInputElement} node - Filter HTML input node
+   */
+  initInputFilter: function (node) {
+    const value = this.getUri().getQueryParamValue(node.dataset.param)
+
+    if (value) {
+      node.value = value
+    }
+  },
+
+  initDatePicker: function (node) {
+    const self = this
+
+    return $(node).datepicker({
+      dateFormat: 'dd-mm-yy',
+      minDate: self.getMinDate(node),
+      maxDate: self.getMaxDate(node),
+      onSelect: function (date, instance) {
+        let event
+        if (typeof window.Event === 'function') {
+          event = new Event('change')
+          this.dispatchEvent(event)
         } else {
-          return self.parseDate(paramMaxDate)
+          event = document.createEvent('HTMLEvents')
+          event.initEvent('change', false, false)
+          this.dispatchEvent(event)
         }
       }
+    })
+  },
+
+  initDownloadButton: function () {
+    const downloadCsvButton = document.getElementById('download-csv')
+
+    return downloadCsvButton.addEventListener('click', function (e) {
+      window.location.assign(
+        window.location.pathname.replace(/(\.html)?$/, '.csv') +
+          window.location.search
+      )
+    })
+  },
+
+  initFilters: function () {
+    const self = this
+    const filterWrappers = self.getNodes('js-filter')
+
+    Array.prototype.forEach.call(filterWrappers, function (wrapper) {
+      const filterNode = wrapper.getElementsByClassName('js-filter-node')[0]
 
       if (filterNode.tagName === 'SELECT') {
-        const directions = ['prev', 'next']
+        self.initSelectFilter(wrapper, filterNode)
+      } else if (filterNode.tagName === 'INPUT') {
+        self.initInputFilter(filterNode)
 
-        directions.forEach(function (dir) {
-          const button = self.getMoveButton(node, dir)
-
-          button.addEventListener('click', function (e) {
-            return self.selectOptionByDirection(filterNode, dir)
-          })
-        })
-
-        const selectedIndexFromParams = self.getParamSelectedIndex(
-          filterNode,
-          filterNode.dataset.param
-        )
-
-        // Set selected value from URL param
-        if (selectedIndexFromParams !== -1) {
-          filterNode.selectedIndex = selectedIndexFromParams
+        if (self.isDatePicker(filterNode)) {
+          self.initDatePicker(filterNode)
         }
-      }
-
-      if (isDatePicker()) {
-        $(filterNode).datepicker({
-          dateFormat: 'dd-mm-yy',
-          minDate: self.parseDate(paramMinDate),
-          maxDate: getMaxDate(),
-          onSelect: function() {
-            let event
-            if (typeof window.Event === 'function') {
-              event = new Event('change')
-              this.dispatchEvent(event)
-            } else {
-              event = document.createEvent('HTMLEvents')
-              event.initEvent('change', false, false)
-              this.dispatchEvent(event)
-            }
-          }
-        })
       }
 
       filterNode.addEventListener('change', function (e) {
         return self.updateUrlParams(e, e.target.dataset.param)
       })
     })
-
-    downloadCsvButton.addEventListener('click', function (e) {
-      window.location.assign(
-        window.location.pathname.replace(/(\.html)?$/, '.csv') +
-          window.location.search
-      )
-    })
-
-    // Listen to browser history change and init requests
-    window.onpopstate = function (e) {
-      Array.prototype.forEach.call(filterNodes, function (node) {
-        const filterNode = node.getElementsByClassName('.js-filter-node')[0]
-
-        if (filterNode === 'SELECT') {
-          const index = self.getParamSelectedIndex(
-            filterNode,
-            filterNode.dataset.param
-          )
-
-          if (index === -1) {
-            filterNode.selectedIndex = 0
-          } else {
-            filterNode.selectedIndex = index
-          }
-        }
-      })
-
-      return self.initReports()
-    }
   },
 
-  initReports: function () {
+  initCharts: function () {
     const self = this
     const chartNodes = self.getNodes('reports--chart')
 
@@ -371,6 +434,12 @@ Spree.Reports = {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-  Spree.Reports.initReports()
-  Spree.Reports.initFilter()
+  Spree.Reports.initDownloadButton()
+  Spree.Reports.initCharts()
+  Spree.Reports.initFilters()
+
+  window.onpopstate = function (e) {
+    Spree.Reports.initCharts()
+    Spree.Reports.initFilters()
+  }
 })
