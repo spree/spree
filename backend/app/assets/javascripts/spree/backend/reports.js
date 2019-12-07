@@ -160,7 +160,7 @@ Spree.Reports = {
     }
 
     if (param.includes('completed_at_')) {
-      url.deleteQueryParam('period')
+      url.replaceQueryParam('period', 'custom')
     } else if (param === 'period') {
       const period = this.getPredefinedPeriod(e.target.value)
 
@@ -170,7 +170,9 @@ Spree.Reports = {
 
     window.history.pushState({}, '', url.toString())
 
-    return this.initCharts()
+    this.updateFilters()
+    this.refreshDatePickers()
+    return this.updateCharts()
   },
 
   /**
@@ -287,7 +289,8 @@ Spree.Reports = {
       return this.parseDate(dayjs().format(this.DATE_FORMAT))
     } else {
       return this.parseDate(
-        this.getUri().getQueryParamValue('completed_at_max')
+        this.getUri().getQueryParamValue('completed_at_max') ||
+          dayjs().format(this.DATE_FORMAT)
       )
     }
   },
@@ -321,6 +324,28 @@ Spree.Reports = {
     return node.className.split(' ').includes('datepicker')
   },
 
+  updateSelectFilter: function (node) {
+    const selectedIndexFromParams = this.getParamSelectedIndex(
+      node,
+      node.dataset.param
+    )
+
+    if (selectedIndexFromParams !== -1) {
+      node.selectedIndex = selectedIndexFromParams
+    }
+  },
+
+  /**
+   * @param {HTMLInputElement} node - Filter HTML input node
+   */
+  updateInputFilter: function (node) {
+    const value = this.getUri().getQueryParamValue(node.dataset.param)
+
+    if (value) {
+      node.value = value
+    }
+  },
+
   /**
    * @param {HTMLElement} filterWrapper - Filter parent HTML node
    * @param {HTMLSelectElement} filterNode - Filter HTML node
@@ -328,10 +353,6 @@ Spree.Reports = {
   initSelectFilter: function (filterWrapper, filterNode) {
     const self = this
     const directions = ['prev', 'next']
-    const selectedIndexFromParams = self.getParamSelectedIndex(
-      filterNode,
-      filterNode.dataset.param
-    )
 
     directions.forEach(function (dir) {
       const button = self.getMoveButton(filterWrapper, dir)
@@ -341,21 +362,7 @@ Spree.Reports = {
       })
     })
 
-    // Set selected value from URL param
-    if (selectedIndexFromParams !== -1) {
-      filterNode.selectedIndex = selectedIndexFromParams
-    }
-  },
-
-  /**
-   * @param {HTMLInputElement} node - Filter HTML input node
-   */
-  initInputFilter: function (node) {
-    const value = this.getUri().getQueryParamValue(node.dataset.param)
-
-    if (value) {
-      node.value = value
-    }
+    self.updateSelectFilter(filterNode)
   },
 
   initDatePicker: function (node) {
@@ -367,6 +374,7 @@ Spree.Reports = {
       maxDate: self.getMaxDate(node),
       onSelect: function (date, instance) {
         let event
+
         if (typeof window.Event === 'function') {
           event = new Event('change')
           this.dispatchEvent(event)
@@ -390,6 +398,39 @@ Spree.Reports = {
     })
   },
 
+  updateFilters: function () {
+    const self = this
+    const filterWrappers = self.getNodes('js-filter')
+
+    Array.prototype.forEach.call(filterWrappers, function (wrapper) {
+      const filterNode = wrapper.getElementsByClassName('js-filter-node')[0]
+
+      if (filterNode.tagName === 'SELECT') {
+        return self.updateSelectFilter(filterNode)
+      } else if (filterNode.tagName === 'INPUT') {
+        return self.updateInputFilter(filterNode)
+      }
+    })
+  },
+
+  clearDatePickers: function () {
+    const elements = document.getElementsByClassName('datepicker')
+
+    Array.prototype.forEach.call(elements, function (el) {
+      el.value = ''
+    })
+  },
+
+  refreshDatePickers: function () {
+    const self = this
+    const elements = document.getElementsByClassName('hasDatepicker')
+
+    Array.prototype.forEach.call(elements, function (el) {
+      $(el).datepicker('option', 'minDate', self.getMinDate(el))
+      $(el).datepicker('option', 'maxDate', self.getMaxDate(el))
+    })
+  },
+
   initFilters: function () {
     const self = this
     const filterWrappers = self.getNodes('js-filter')
@@ -400,20 +441,33 @@ Spree.Reports = {
       if (filterNode.tagName === 'SELECT') {
         self.initSelectFilter(wrapper, filterNode)
       } else if (filterNode.tagName === 'INPUT') {
-        self.initInputFilter(filterNode)
-
         if (self.isDatePicker(filterNode)) {
           self.initDatePicker(filterNode)
         }
       }
 
       filterNode.addEventListener('change', function (e) {
-        return self.updateUrlParams(e, e.target.dataset.param)
+        if (
+          e.target.selectedIndex && e.target.options[e.target.selectedIndex].value === 'custom'
+        ) {
+          const url = self.getUri()
+          const $pickerEl = $('[data-param="completed_at_min"]')
+
+          self.clearDatePickers()
+
+          url.deleteQueryParam('completed_at_min')
+          url.deleteQueryParam('completed_at_max')
+
+          $pickerEl.datepicker('refresh')
+          $pickerEl.datepicker('show')
+        } else {
+          return self.updateUrlParams(e, e.target.dataset.param)
+        }
       })
     })
   },
 
-  initCharts: function () {
+  updateCharts: function () {
     const self = this
     const chartNodes = self.getNodes('reports--chart')
 
@@ -435,11 +489,11 @@ Spree.Reports = {
 
 document.addEventListener('DOMContentLoaded', function () {
   Spree.Reports.initDownloadButton()
-  Spree.Reports.initCharts()
+  Spree.Reports.updateCharts()
   Spree.Reports.initFilters()
 
   window.onpopstate = function (e) {
-    Spree.Reports.initCharts()
-    Spree.Reports.initFilters()
+    Spree.Reports.updateCharts()
+    Spree.Reports.updateFilters()
   }
 })
