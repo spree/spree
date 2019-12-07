@@ -15,6 +15,7 @@ globals:
   SpreePaths: true
   CouponManager: true
   ThumbnailsCarousel: true
+  dayjs: true
 
 env:
   browser: true
