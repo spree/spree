@@ -300,18 +300,20 @@ Spree.Reports = {
    * @returns {Date} - Date object
    */
   getMinDate: function (node) {
+    const self = this
     if (node.dataset.param === 'completed_at_min') {
-      return this.parseDate(
+      return self.parseDate(
+        self.getUri().getQueryParamValue('completed_at_min') ||
         dayjs()
           .subtract(2, 'years')
           .format(this.DATE_FORMAT)
       )
     } else {
-      return this.parseDate(
-        this.getUri().getQueryParamValue('completed_at_min') ||
-          dayjs()
-            .subtract(2, 'years')
-            .format(this.DATE_FORMAT)
+      return self.parseDate(
+        self.getUri().getQueryParamValue('completed_at_min') ||
+        dayjs()
+          .subtract(2, 'years')
+          .format(this.DATE_FORMAT)
       )
     }
   },
