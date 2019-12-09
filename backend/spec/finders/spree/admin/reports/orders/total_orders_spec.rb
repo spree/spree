@@ -14,19 +14,25 @@ describe Spree::Admin::Reports::Orders::TotalOrders do
   let(:group_by) { nil }
 
   context 'when the date range is not present' do
-    let(:completed_at_min) { '2019-12-12' }
+    it 'returns a report from last 7 days' do
+      create(:completed_order_with_totals).update!(completed_at: '2019-02-13')
+      create(:completed_order_with_totals).update!(completed_at: '2019-02-13')
+      create(:completed_order_with_totals).update!(completed_at: '2019-02-14')
 
-    it 'raises an error' do
-      expect { subject.call }.to raise_error 'Date range is invalid.'
-    end
-  end
+      Timecop.freeze(2019, 02, 20) do
+        array = subject.call
 
-  context 'when the date range is invalid' do
-    let(:completed_at_min) { '2019-12-12' }
-    let(:completed_at_max) { '2019' }
-
-    it 'raises an error' do
-      expect { subject.call }.to raise_error 'Date range is invalid.'
+        expect(array).to eq [
+          ['2019-02-13', 2],
+          ['2019-02-14', 1],
+          ['2019-02-15', 0],
+          ['2019-02-16', 0],
+          ['2019-02-17', 0],
+          ['2019-02-18', 0],
+          ['2019-02-19', 0],
+          ['2019-02-20', 0]
+        ]
+      end
     end
   end
 

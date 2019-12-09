@@ -8,8 +8,6 @@ module Spree
           end
 
           def call
-            raise 'Date range is invalid.' unless range_missing?
-
             labels = create_report_labels
 
             orders = Spree::Order.complete
