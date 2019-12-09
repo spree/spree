@@ -1,0 +1,15 @@
+<%= render partial: 'spree/admin/reports/header', locals: { title: Spree.t(:average_order_values) } %>
+<%= render partial: 'spree/admin/reports/filters' %>
+
+<canvas
+  id="chart--top-products-by-unit-sold"
+  class="reports--chart"
+  height="120"
+  aria-label="top_products_by_unit_sold"
+  role="img"
+  data-id="top_products_by_unit_sold"
+  data-bg-color="rgba(125, 185, 66, 0.8)"
+  data-line-color="rgba(125, 185, 66, 1)"
+  data-label="Number Of Sold Products"
+  data-label-y="Count"
+  data-type="bar"></canvas>
