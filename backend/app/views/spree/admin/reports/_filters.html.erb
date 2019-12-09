@@ -11,7 +11,7 @@
         <%= select_tag "reports-date-range",
           options_for_select(
             Spree.t(:date_ranges).invert,
-            params[:date_range] || 'this_month'
+            params[:date_range] || 'last_seven_days'
           ),
           class: 'custom-select js-filter-node',
           data: { param: 'date_range' }

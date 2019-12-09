@@ -36,7 +36,7 @@ en:
         name: Name
         numcode: ISO Code
       spree/credit_card:
-        base: ''
+        base: ""
         cc_type: Type
         month: Month
         number: Number
@@ -431,8 +431,8 @@ en:
       not_found: not found
       not_locked: was not locked
       not_saved:
-        one: ! '1 error prohibited this %{resource} from being saved:'
-        other: ! '%{count} errors prohibited this %{resource} from being saved:'
+        one: ! "1 error prohibited this %{resource} from being saved:"
+        other: ! "%{count} errors prohibited this %{resource} from being saved:"
 
   number:
     percentage:
@@ -488,7 +488,11 @@ en:
     add_variant: Add Variant
     add_store: New Store
     add_store_credit: Add Store Credit
+<<<<<<< HEAD
     added_to_cart: Added to cart successfully!
+=======
+    added_to_cart: "Added to bag successfully!"
+>>>>>>> Add last 7 days date range
     additional_item: Additional Item
     address: Address
     address1: Address
@@ -517,8 +521,8 @@ en:
     adjustment_amount: Amount
     adjustment_labels:
       tax_rates:
-        including_tax: '%{name}%{amount} (Included in Price)'
-        excluding_tax: '%{name}%{amount}'
+        including_tax: "%{name}%{amount} (Included in Price)"
+        excluding_tax: "%{name}%{amount}"
     adjustment_successfully_closed: Adjustment has been successfully closed!
     adjustment_successfully_opened: Adjustment has been successfully opened!
     adjustment_total: Adjustment Total
@@ -586,7 +590,7 @@ en:
     are_you_sure: Are you sure?
     are_you_sure_delete: Are you sure you want to delete this record?
     associated_adjustment_closed: The associated adjustment is closed, and will not be recalculated. Do you want to open it?
-    at_symbol: '@'
+    at_symbol: "@"
     authorization_failure: Authorization Failure
     authorized: Authorized
     auto_capture: Auto Capture
@@ -598,7 +602,7 @@ en:
     back: Back
     back_end: Backend
     backordered: Backordered
-    back_to_resource_list: 'Back To %{resource} List'
+    back_to_resource_list: "Back To %{resource} List"
     back_to_payment: Back To Payment
     back_to_rma_reason_list: Back To RMA Reason List
     back_to_store: Back to Store
@@ -643,8 +647,8 @@ en:
       quantity: quantity
       title: Shopping Cart
     cart_subtotal:
-      one: 'Subtotal (1 item)'
-      other: 'Subtotal (%{count} items)'
+      one: "Subtotal (1 item)"
+      other: "Subtotal (%{count} items)"
     categories: Categories
     category: Category
     category_nav_bar:
@@ -731,7 +735,7 @@ en:
     currency: Currency
     currency_settings: Currency Settings
     current: Current
-    current_promotion_usage: ! 'Current Usage: %{count}'
+    current_promotion_usage: ! "Current Usage: %{count}"
     customer: Customer
     customer_details: Customer Details
     customer_details_updated: Customer Details Updated
@@ -749,10 +753,11 @@ en:
       year: Year
     date_picker:
       first_day: 0
-      format: ! '%Y/%m/%d'
+      format: ! "%Y/%m/%d"
       js_format: yy/mm/dd
     date_range: Date Range
     date_ranges:
+      last_seven_days: Last 7 Days
       today: Today
       yesterday: Yesterday
       this_week: This Week
@@ -788,7 +793,7 @@ en:
     dont_have_account: No account?
     download_csv: Download CSV
     edit: Edit
-    editing_resource: 'Editing %{resource}'
+    editing_resource: "Editing %{resource}"
     editing_rma_reason: Editing RMA Reason
     editing_user: Edit Your account
     eligibility_errors:
@@ -824,7 +829,7 @@ en:
           no_line_items: To generate Shipping Rates you need to add some Line Items to Order
     errors_prohibited_this_record_from_being_saved:
       one: 1 error prohibited this record from being saved
-      other: ! '%{count} errors prohibited this record from being saved'
+      other: ! "%{count} errors prohibited this record from being saved"
     error_user_destroy_with_orders: User associated with orders cannot be destroyed
     event: Event
     events:
@@ -898,7 +903,7 @@ en:
       sportswear: SPORTSWEAR
       streetstyle: STREETSTYLE
       summer_2019: Summer 2019
-      summer_collection:  Summer Collection
+      summer_collection: Summer Collection
       summer_sale: SUMMER SALE
       trending: TRENDING
       up_to_60: UP TO 60%
@@ -1009,7 +1014,7 @@ en:
     metadata: Metadata
     mutable: Mutable
     minimal_amount: Minimal Amount
-    missing_return_authorization: ! 'Missing Return Authorization for %{item_name}.'
+    missing_return_authorization: ! "Missing Return Authorization for %{item_name}."
     month: Month
     more: More
     move_stock_between_locations: Move Stock Between Locations
@@ -1082,7 +1087,7 @@ en:
     no_products_found: No products found
     no_results: No results
     no_rules_added: No rules added
-    no_resource_found: 'No %{resource} found'
+    no_resource_found: "No %{resource} found"
     no_returns_found: No returns found
     no_shipping_method_selected: No shipping method selected.
     no_state_changes: No state changes yet.
@@ -1094,7 +1099,7 @@ en:
     not: not
     not_available: N/A
     not_enough_stock: There is not enough inventory at the source location to complete this transfer.
-    not_found: ! '%{resource} is not found'
+    not_found: ! "%{resource} is not found"
     note: Note
     notice_messages:
       product_cloned: Product has been cloned
@@ -1117,7 +1122,7 @@ en:
     optional: Optional
     options: Options
     or: or
-    or_over_price: ! '%{price} or over'
+    or_over_price: ! "%{price} or over"
     order: Order
     order_adjustments: Order adjustments
     order_already_updated: The order has already been updated.
@@ -1128,8 +1133,8 @@ en:
     order_information: Order Information
     order_line_items: Order Line Items
     order_mailer:
-      subtotal: ! 'Subtotal:'
-      total: ! 'Order Total:'
+      subtotal: ! "Subtotal:"
+      total: ! "Order Total:"
       cancel_email:
         dear_customer: Dear Customer,
         instructions: Your order has been CANCELED.  Please retain this cancellation information for your records.
@@ -1171,8 +1176,8 @@ en:
     package_from: package from
     pagination:
       next_page: next page &raquo;
-      previous_page: ! '&laquo; previous page'
-      truncate: ! '&hellip;'
+      previous_page: ! "&laquo; previous page"
+      truncate: ! "&hellip;"
     password: Password
     paste: Paste
     path: Path
@@ -1296,7 +1301,7 @@ en:
       match_policies:
         all: Match all of these rules
         any: Match any of these rules
-    promotion_label: 'Promotion (%{name})'
+    promotion_label: "Promotion (%{name})"
     promotion_rule: Promotion Rule
     promotion_rule_types:
       country:
@@ -1399,14 +1404,14 @@ en:
     return_items_cannot_be_associated_with_multiple_orders: Return items cannot be associated with multiple orders.
     reimbursement_mailer:
       reimbursement_email:
-        days_to_send: ! 'You have %{days} days to send back any items awaiting exchange.'
+        days_to_send: ! "You have %{days} days to send back any items awaiting exchange."
         dear_customer: Dear Customer,
         exchange_summary: Exchange Summary
         for: for
         instructions: Your reimbursement has been processed.
         refund_summary: Refund Summary
         subject: Reimbursement Notification
-        total_refunded: ! 'Total refunded: %{total}'
+        total_refunded: ! "Total refunded: %{total}"
         thanks: Thank you for your business.
     return_number: Return Number
     return_quantity: Return Quantity
@@ -1428,8 +1433,8 @@ en:
     save_and_continue: Save and Continue
     save_my_address: Save my address
     saving: Saving
-    say_no: 'No'
-    say_yes: 'Yes'
+    say_no: "No"
+    say_yes: "Yes"
     scope: Scope
     search: Search
     search_results: Search results for '%{keywords}'
@@ -1442,7 +1447,7 @@ en:
     select_a_stock_location: Select a stock location
     select_a_store_credit_reason: Select a reason for the store credit
     select_stock: Select stock
-    selected_quantity_not_available: ! 'selected of %{item} is not available.'
+    selected_quantity_not_available: ! "selected of %{item} is not available."
     send_copy_of_all_mails_to: Send Copy of All Mails To
     send_mails_as: Send Mails As
     seo_title: SEO title
@@ -1463,7 +1468,7 @@ en:
         shipping_method: "Shipping method: %{shipping_method}"
         subject: Shipment Notification
         thanks: Thank you for your business.
-        track_information: ! 'Tracking Information: %{tracking}'
+        track_information: ! "Tracking Information: %{tracking}"
         track_link: "Tracking Link: %{url}"
     shipment_state: Shipment State
     shipment_states:
@@ -1473,8 +1478,8 @@ en:
       pending: pending
       ready: ready
       shipped: shipped
-    shipment_transfer_success: 'Variants successfully transferred'
-    shipment_transfer_error: 'There was an error transferring variants'
+    shipment_transfer_success: "Variants successfully transferred"
+    shipment_transfer_error: "There was an error transferring variants"
     shipments: Shipments
     shipped: Shipped
     shipping: Shipping
@@ -1613,10 +1618,10 @@ en:
     subtotal: Subtotal
     subtract: Subtract
     success: Success
-    successfully_created: ! '%{resource} has been successfully created!'
-    successfully_refunded: ! '%{resource} has been successfully refunded!'
-    successfully_removed: ! '%{resource} has been successfully removed!'
-    successfully_updated: ! '%{resource} has been successfully updated!'
+    successfully_created: ! "%{resource} has been successfully created!"
+    successfully_refunded: ! "%{resource} has been successfully refunded!"
+    successfully_removed: ! "%{resource} has been successfully removed!"
+    successfully_updated: ! "%{resource} has been successfully updated!"
     summary: Summary
     tax: Tax
     tax_included: "Tax (incl.)"
@@ -1642,7 +1647,7 @@ en:
     taxonomy_categories_name: Categories
     taxonomy_edit: Edit taxonomy
     taxonomy_tree_error: The requested change has not been accepted and the tree has been returned to its previous state, please try again.
-    taxonomy_tree_instruction: ! '* Right click a child in the tree to access the menu for adding, deleting or sorting a child.'
+    taxonomy_tree_instruction: ! "* Right click a child in the tree to access the menu for adding, deleting or sorting a child."
     taxons: Taxons
     test: Test
     test_mailer:

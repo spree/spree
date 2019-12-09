@@ -245,6 +245,8 @@ Spree.Reports = {
    */
   getPredefinedDateRange: function (dateRange) {
     switch (dateRange) {
+      case 'last_seven_days':
+        return this.getDateRange(dayjs().subtract(7, 'day'), dayjs())
       case 'today':
         return this.getDateRange(dayjs(), dayjs())
       case 'yesterday':
