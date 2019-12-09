@@ -100,7 +100,8 @@ Spree.Reports = {
             fontSize: 16,
             usePointStyle: true,
             boxWidth: 5
-          }
+          },
+          onClick: null
         },
         tooltips: {
           displayColors: false,
