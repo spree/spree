@@ -1,15 +1,10 @@
-<% content_for :page_title do %>
-  <%= link_to Spree.t(:reports), spree.admin_reports_url %> /
-  <%= Spree.t(:total_orders) %>
-<% end %>
-
+<%= render partial: 'spree/admin/reports/header', locals: { title: Spree.t(:total_orders) } %>
 <%= render partial: 'spree/admin/reports/filters' %>
 
 <canvas
   id="chart--total_orders"
   class="reports--chart"
-  width="400"
-  height="100"
+  height="120"
   aria-label="<%= Spree.t(:total_orders) %>"
   role="img"
   data-bg-color="rgba(71, 141, 193, 0.8)"
