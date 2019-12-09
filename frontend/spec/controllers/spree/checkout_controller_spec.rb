@@ -170,11 +170,6 @@ describe Spree::CheckoutController, type: :controller do
           expect(response).to redirect_to spree.order_path(order)
         end
 
-        it 'populates the flash message' do
-          post :update, params: { state: 'confirm' }
-          expect(flash.notice).to eq(Spree.t(:order_processed_successfully))
-        end
-
         it 'removes completed order from current_order' do
           post :update, params: { state: 'confirm', order_id: 'foofah' }
           expect(assigns(:current_order)).to be_nil
