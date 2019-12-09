@@ -729,6 +729,7 @@ en:
     customer_returns: Customer Returns
     customer_search: Customer Search
     cut: Cut
+    cvv: CVV
     cvv_response: CVV Response
     date: Date
     date_completed: Date Completed
@@ -820,6 +821,7 @@ en:
     expedited_exchanges_warning: "Any specified exchanges will ship to the customer immediately upon saving. The customer will be charged the full amount of the item if they do not return the original item within %{days_window} days."
     excl: excl.
     expiration: Expiration
+    expiration_date: Expiration Date
     extension: Extension
     extensions_directory: Extensions Directory
     existing_shipments: Existing shipments

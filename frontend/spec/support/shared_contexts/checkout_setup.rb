@@ -25,8 +25,8 @@ shared_context 'checkout setup' do
   def fill_in_credit_card_info(invalid: false)
     fill_in 'Name on card', with: 'Spree Commerce'
     fill_in 'Card Number', with: invalid ? '123' : '4111111111111111'
-    fill_in 'card_expiry', with: '12/24'
-    fill_in 'Cvv', with: '123'
+    fill_in 'Expiration Date', with: '12/24'
+    fill_in 'CVV', with: '123'
   end
 
   def add_mug_to_cart
