@@ -1665,6 +1665,7 @@ en:
     to_add_variants_you_must_first_define: To add variants, you must first define
     total: Total
     total_orders: Total Orders
+    average_order_value: Average Order Value
     orders_count: Orders Count
     total_per_item: Total per item
     total_pre_tax_refund: Total Pre-Tax Refund
