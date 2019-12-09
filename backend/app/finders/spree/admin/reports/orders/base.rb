@@ -9,11 +9,15 @@ module Spree
           attr_accessor :params
 
           def completed_at_min
-            @completed_at_min ||= Time.zone.parse(params[:completed_at_min] || '') rescue nil
+            return (Time.current - 7.days) unless params[:completed_at_min].present?
+
+            Time.zone.parse(params[:completed_at_min])
           end
 
           def completed_at_max
-            @completed_at_max ||= Time.zone.parse(params[:completed_at_max] || '') rescue nil
+            return Time.current unless params[:completed_at_max].present?
+
+            Time.zone.parse(params[:completed_at_max])
           end
 
           def grouped_by(orders)
@@ -40,10 +44,6 @@ module Spree
             when :year then '%Y'
             else '%Y-%m-%d'
             end
-          end
-
-          def range_missing?
-            completed_at_min && completed_at_max
           end
 
           def create_report_labels
