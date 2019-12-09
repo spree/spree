@@ -17,7 +17,7 @@ module Spree
                       .transform_keys { |variant| variant.sku }
                       .transform_values { |line_items| line_items.map(&:quantity).sum }
                       .to_a
-                      .sort_by { |sku, _| sku }
+                      .sort_by { |_, number_of_items_sold| -number_of_items_sold }
           end
         end
       end
