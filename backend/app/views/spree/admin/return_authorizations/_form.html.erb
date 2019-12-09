@@ -37,7 +37,7 @@
           </td>
           <td><%= inventory_unit.state.humanize %></td>
           <td class="charged-amount" data-charged-amount="<%= return_item.pre_tax_amount %>">
-            <%= return_item.variant.price %>
+            <%= return_item.display_pre_tax_amount %>
           </td>
           <td class="purchased-quantity">
             <%= inventory_unit.quantity %>
