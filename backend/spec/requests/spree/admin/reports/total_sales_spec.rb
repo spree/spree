@@ -29,7 +29,7 @@ describe 'Admin Reports - total sales spec', type: :request do
 
       it 'return JSON data for charts' do
         expect(json_response['labels']).to eq ['2019-10-11', '2019-10-12', '2019-10-13', '2019-10-14', '2019-10-15', '2019-10-16', '2019-10-17']
-        expect(json_response['data']).to   eq [100.0, 0, 0, 200.0, 350.0, 0, 0]
+        expect(json_response['data']).to   eq ['100.0', '0.0', '0.0', '200.0', '350.0', '0.0', '0.0']
       end
     end
   end
