@@ -1,0 +1,20 @@
+<% content_for :page_title do %>
+  <%= link_to Spree.t(:reports), spree.admin_reports_url %> /
+  <%= Spree.t(:total_orders) %>
+<% end %>
+
+<%= render partial: 'spree/admin/reports/filters' %>
+
+<canvas
+  id="chart--total_orders"
+  class="reports--chart"
+  width="400"
+  height="100"
+  aria-label="<%= Spree.t(:total_orders) %>"
+  role="img"
+  data-bg-color="rgba(71, 141, 193, 0.8)"
+  data-line-color="rgba(71, 141, 193, 1)"
+  data-id="total_orders"
+  data-label="<%= Spree.t(:total_orders) %>"
+  data-type="line"></canvas>
+

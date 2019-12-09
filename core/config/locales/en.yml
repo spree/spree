@@ -534,6 +534,7 @@ en:
         promotion_categories: Promotion Categories
         properties: Properties
         prototypes: Prototypes
+        reports_total_orders: Total Orders
         reports_total_sales: Total Sales
         reports_average_order_values: Average Order Value
         reports: Reports
@@ -1663,6 +1664,7 @@ en:
     time: Time
     to_add_variants_you_must_first_define: To add variants, you must first define
     total: Total
+    total_orders: Total Orders
     total_per_item: Total per item
     total_pre_tax_refund: Total Pre-Tax Refund
     total_price: Total price

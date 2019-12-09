@@ -147,6 +147,7 @@ Spree::Core::Engine.add_routes do
 
     namespace :reports do
       resource :total_sales, only: :show
+      resource :total_orders, only: :show
       resource :average_order_values, only: :show
     end
 
