@@ -10,6 +10,19 @@
  * @property {string} max - Completed At Max
  */
 
+// IE11 Polyfills
+if (!String.prototype.includes) {
+  String.prototype.includes = function (search, start) {
+    'use strict'
+
+    if (search instanceof RegExp) {
+      throw TypeError('first argument must not be a RegExp')
+    }
+    if (start === undefined) { start = 0 }
+    return this.indexOf(search, start) !== -1
+  }
+}
+
 Spree.Reports = {
   FONT_FAMILY:
     '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif',
