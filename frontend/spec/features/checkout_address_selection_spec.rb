@@ -8,7 +8,7 @@ describe 'Address selection during checkout', type: :feature, js: true do
     include_context 'checkout address book'
 
     before do
-      click_link 'Checkout'
+      click_link 'checkout'
     end
 
     it 'sees billing address form' do
@@ -37,7 +37,7 @@ describe 'Address selection during checkout', type: :feature, js: true do
 
       allow_any_instance_of(Spree::CheckoutController).to receive_messages(try_spree_current_user: @user)
 
-      click_link 'Checkout'
+      click_link 'checkout'
     end
 
     let(:billing) { build(:address, state: state) }
