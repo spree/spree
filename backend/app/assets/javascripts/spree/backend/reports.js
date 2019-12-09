@@ -1,10 +1,10 @@
 /**
- * @typedef PeriodName
+ * @typedef DateRangeName
  * @type {('today'|'yesterday'|'this_week'|'last_week'|'this_month'|'last_month'|'this_year'|'last_year')}
  */
 
 /**
- * @typedef Period
+ * @typedef DateRange
  * @type {object}
  * @property {string} min - Completed At Min
  * @property {string} max - Completed At Max
@@ -160,12 +160,12 @@ Spree.Reports = {
     }
 
     if (param.includes('completed_at_')) {
-      url.replaceQueryParam('period', 'custom')
-    } else if (param === 'period') {
-      const period = this.getPredefinedPeriod(e.target.value)
+      url.replaceQueryParam('date_range', 'custom')
+    } else if (param === 'date_range') {
+      const dateRange = this.getPredefinedDateRange(e.target.value)
 
-      url.replaceQueryParam('completed_at_min', period.min)
-      url.replaceQueryParam('completed_at_max', period.max)
+      url.replaceQueryParam('completed_at_min', dateRange.min)
+      url.replaceQueryParam('completed_at_max', dateRange.max)
     }
 
     window.history.pushState({}, '', url.toString())
@@ -208,7 +208,7 @@ Spree.Reports = {
   /**
    * @param {HTMLDivElement} el Filter root node
    * @param {('prev'|'next')} dir Move direction
-   * @return {HTMLLabelElement} Button to click on to move to next time period
+   * @return {HTMLLabelElement} Button to click on to move to next date range
    */
   getMoveButton: function (el, dir) {
     return el.querySelector('[data-action="' + dir + '"]')
@@ -217,9 +217,9 @@ Spree.Reports = {
   /**
    * @param {Dayjs} min Start date
    * @param {Dayjs} max End date
-   * @return {Period}
+   * @return {DateRange}
    */
-  getPeriod: function (min, max) {
+  getDateRange: function (min, max) {
     return {
       min: min.format(this.DATE_FORMAT),
       max: max.format(this.DATE_FORMAT)
@@ -227,19 +227,19 @@ Spree.Reports = {
   },
 
   /**
-   * @param {PeriodName} periodName One of multiple predefined periods
-   * @return {Period}
+   * @param {DateRangeName} dateRangeName One of multiple predefined date ranges
+   * @return {DateRange}
    */
-  getPredefinedPeriod: function (periodName) {
-    switch (periodName) {
+  getPredefinedDateRange: function (dateRange) {
+    switch (dateRange) {
       case 'today':
-        return this.getPeriod(dayjs(), dayjs())
+        return this.getDateRange(dayjs(), dayjs())
       case 'yesterday':
-        return this.getPeriod(dayjs().subtract(1, 'day'), dayjs())
+        return this.getDateRange(dayjs().subtract(1, 'day'), dayjs())
       case 'this_week':
-        return this.getPeriod(dayjs().startOf('week'), dayjs())
+        return this.getDateRange(dayjs().startOf('week'), dayjs())
       case 'last_week':
-        return this.getPeriod(
+        return this.getDateRange(
           dayjs()
             .startOf('week')
             .subtract(1, 'week'),
@@ -248,9 +248,9 @@ Spree.Reports = {
             .subtract(1, 'day')
         )
       case 'this_month':
-        return this.getPeriod(dayjs().startOf('month'), dayjs().endOf('month'))
+        return this.getDateRange(dayjs().startOf('month'), dayjs().endOf('month'))
       case 'last_month':
-        return this.getPeriod(
+        return this.getDateRange(
           dayjs()
             .startOf('month')
             .subtract(1, 'month'),
@@ -259,9 +259,9 @@ Spree.Reports = {
             .subtract(1, 'day')
         )
       case 'this_year':
-        return this.getPeriod(dayjs().startOf('year'), dayjs().endOf('year'))
+        return this.getDateRange(dayjs().startOf('year'), dayjs().endOf('year'))
       case 'last_year':
-        return this.getPeriod(
+        return this.getDateRange(
           dayjs()
             .startOf('year')
             .subtract(1, 'year'),
@@ -270,7 +270,7 @@ Spree.Reports = {
             .endOf('year')
         )
       default:
-        return this.getPeriod(dayjs().startOf('week'), dayjs())
+        return this.getDateRange(dayjs().startOf('week'), dayjs())
     }
   },
 
@@ -310,7 +310,6 @@ Spree.Reports = {
     const self = this
     if (node.dataset.param === 'completed_at_min') {
       return self.parseDate(
-        self.getUri().getQueryParamValue('completed_at_min') ||
         dayjs()
           .subtract(2, 'years')
           .format(this.DATE_FORMAT)

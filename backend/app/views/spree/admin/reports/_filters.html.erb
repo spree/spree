@@ -1,28 +1,20 @@
 <div class="row">
-  <div class="col-3">
+  <div class="col-12 col-md-6 col-lg-3">
     <div class="form-group">
-      <label for="reports-time-period"><%= Spree.t(:time_period) %>:</label>
-      <div class="input-group mb-3 js-filter" data-id="reports-time-period">
+      <label for="reports-date-range"><%= Spree.t(:date_range) %>:</label>
+      <div class="input-group mb-3 js-filter" data-id="reports-date-range">
         <div class="input-group-prepend">
           <label class="input-group-text" data-action="prev">
             <i class="icon icon-chevron-left"></i>
           </label>
         </div>
-        <%= select_tag "reports-time-period",
+        <%= select_tag "reports-date-range",
           options_for_select(
-            [[ "Today", "today" ],
-            [ "Yesterday", "yesterday" ],
-            [ "This Week", "this_week" ],
-            [ "Last Week", "last_week" ],
-            [ "This Month", "this_month" ],
-            [ "Last Month", "last_month" ],
-            [ "This Year", "this_year" ],
-            [ "Last Year", "last_year" ],
-            [ "Custom", "custom" ]],
-            params[:period]
+            Spree.t(:date_ranges).invert,
+            params[:date_range] || 'this_month'
           ),
           class: 'custom-select js-filter-node',
-          data: { param: 'period' }
+          data: { param: 'date_range' }
         %>
         <div class="input-group-append">
           <label class="input-group-text" data-action="next">
@@ -33,7 +25,7 @@
     </div>
   </div>
 
-  <div class="col-3">
+  <div class="col-12 col-md-6 col-lg-3">
     <div class="form-group">
       <label for="reports-group-by"><%= Spree.t(:group_by) %>:</label>
       <div class="input-group mb-3 js-filter" data-id="reports-group-by">
@@ -44,9 +36,7 @@
         </div>
         <%= select_tag "reports-group-by",
           options_for_select(
-            [[ "Day", "day" ],
-            [ "Month", "month" ],
-            [ "Year", "year" ]],
+            Spree.t(:date_groups).invert,
             params[:group_by] || 'day'
           ),
           class: 'custom-select js-filter-node',
@@ -61,10 +51,10 @@
     </div>
   </div>
 
-  <div class="col-3">
+  <div class="col-12 col-md-6 col-lg-3">
     <div class="form-group">
       <label for="reports-completed-at-min"><%= Spree.t(:completed_at_min) %>:</label>
-        <div class="input-group mb-3 js-filter" data-id="reports-time-period">
+        <div class="input-group mb-3 js-filter" data-id="reports-date-range">
           <input type="text"
             value="<%= params[:completed_at_min] %>"
             class="form-control js-filter-node datepicker datepicker-from"
@@ -80,10 +70,10 @@
       </div>
     </div>
 
-    <div class="col-3">
+    <div class="col-12 col-md-6 col-lg-3">
       <div class="form-group">
         <label for="reports-completed-at-max"><%= Spree.t(:completed_at_max) %>:</label>
-          <div class="input-group mb-3 js-filter" data-id="reports-time-period">
+          <div class="input-group mb-3 js-filter" data-id="reports-date-range">
             <input type="text"
               value="<%= params[:completed_at_max] %>"
               class="form-control js-filter-node datepicker datepicker-from"

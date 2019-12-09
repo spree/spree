@@ -743,11 +743,25 @@ en:
     cvv_response: CVV Response
     date: Date
     date_completed: Date Completed
+    date_groups:
+      day: Day
+      month: Month
+      year: Year
     date_picker:
       first_day: 0
       format: ! '%Y/%m/%d'
       js_format: yy/mm/dd
     date_range: Date Range
+    date_ranges:
+      today: Today
+      yesterday: Yesterday
+      this_week: This Week
+      last_week: Last Week
+      this_month: This Month
+      last_month: Last Month
+      this_year: This Year
+      last_year: Last Year
+      custom: Custom
     default: Default
     default_country_cannot_be_deleted: Default country cannot be deleted
     default_currency: Default currency
