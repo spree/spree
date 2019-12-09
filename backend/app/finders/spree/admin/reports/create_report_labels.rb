@@ -11,7 +11,7 @@ module Spree
         private
 
         def format(mode)
-          case mode
+          case mode.try(:to_sym)
           when :year
             '%Y'
           when :month
