@@ -3,7 +3,6 @@ module Spree
     module Reports
       class AverageOrderValuesController < Spree::Admin::BaseController
         def show
-
           respond_to do |format|
             format.html
             format.json do

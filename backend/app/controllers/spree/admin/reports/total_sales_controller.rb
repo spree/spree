@@ -3,7 +3,6 @@ module Spree
     module Reports
       class TotalSalesController < Spree::Admin::BaseController
         def show
-
           respond_to do |format|
             format.html
             format.json do
