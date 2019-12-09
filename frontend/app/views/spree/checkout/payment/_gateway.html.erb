@@ -6,14 +6,14 @@
 
   <div class="payment-gateway-fields">
     <p class="payment-gateway-field checkout-content-inner-field">
-      <%= label_tag "name_on_card_#{payment_method.id}", class: 'spree-flat-label'  do %>
+      <%= label_tag "name_on_card_#{payment_method.id}", class: 'spree-flat-label' do %>
         <%= Spree.t(:name_on_card) %>
       <% end %>
       <%= text_field_tag "#{param_prefix}[name]", "#{@order.bill_address_firstname} #{@order.bill_address_lastname}", { id: "name_on_card_#{payment_method.id}", class: 'spree-flat-input'} %>
     </p>
 
     <p class="payment-gateway-field checkout-content-inner-field" data-hook="card_number">
-      <%= label_tag "card_number", class: 'spree-flat-label'  do %>
+      <%= label_tag "card_number", class: 'spree-flat-label' do %>
         <%= Spree.t(:card_number) %>
       <% end %>
       <% options_hash = Rails.env.production? ? {autocomplete: 'off'} : {} %>
@@ -25,13 +25,13 @@
       </span>
     </p>
     <div class="payment-gateway-field checkout-content-inner-field" data-hook="card_expiration">
-      <%= label_tag "card_expiry", class: 'spree-flat-label'  do %>
-        <%= Spree.t(:expire_date) %>
+      <%= label_tag "card_expiry", class: 'spree-flat-label' do %>
+        <%= Spree.t(:expiration_date) %>
       <% end %>
       <%= text_field_tag "#{param_prefix}[expiry]", '', id: 'card_expiry', class: 'spree-flat-input cardExpiry', placeholder: "MM / YY" %>
     </div>
     <div class="payment-gateway-field checkout-content-inner-field" data-hook="card_code">
-      <%= label_tag "card_code", class: 'spree-flat-label'  do %>
+      <%= label_tag "card_code", class: 'spree-flat-label' do %>
         <%= Spree.t(:cvv) %>
       <% end %>
       <%= text_field_tag "#{param_prefix}[verification_value]", '', options_hash.merge(id: 'card_code', class: 'spree-flat-input cardCode', size: 5) %>
