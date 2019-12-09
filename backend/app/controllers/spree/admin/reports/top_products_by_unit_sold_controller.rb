@@ -9,6 +9,10 @@ module Spree
               serializer = Spree::Admin::Reports::TopProductsByUnitSold::JsonSerializer.new
               render json: serializer.call(filtered_data)
             end
+            format.csv do
+              serializer = Spree::Admin::Reports::TopProductsByUnitSold::CsvSerializer.new
+              render plain: serializer.call(filtered_data)
+            end
           end
         end
 
