@@ -12,7 +12,7 @@ describe 'Return Authorizations', type: :feature, js: true do
   before do
     visit spree.new_admin_order_return_authorization_path(shipped_order)
     find(:css, 'input.add-item').set(true)
-    
+
     find('div#s2id_return_authorization_return_items_attributes_0_preferred_reimbursement_type_id').click
     find('div.select2-result-label').click
 
@@ -23,7 +23,7 @@ describe 'Return Authorizations', type: :feature, js: true do
     find('div.select2-result-label', text: return_authorization_reason.name).click
   end
 
-  describe 'partial refunds' do
+  describe 'partial refunds', transaction: true do
     context 'when pre tax amount' do
       context 'is lower than variant price' do
         it 'creates return authorization with that amount' do
@@ -39,7 +39,7 @@ describe 'Return Authorizations', type: :feature, js: true do
         it 'creates return authorization with variant price' do
           fill_in_pre_tax_amount('20')
           click_button 'Create'
-  
+
           expect(page).to have_current_path(spree.admin_order_return_authorizations_path(shipped_order))
           expect(page).to have_css('tr#spree_return_authorization_1', text: price)
         end
@@ -57,10 +57,10 @@ describe 'Return Authorizations', type: :feature, js: true do
     end
   end
 
-  def fill_in_pre_tax_amount(text)
+  def fill_in_pre_tax_amount(amount)
     input = find('input.refund-amount-input').click
     6.times { input.send_keys :right, :backspace }
-    input.send_keys text
+    input.send_keys amount
   end
 end
 
