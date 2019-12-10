@@ -22,9 +22,9 @@ describe Spree::Admin::Reports::Orders::TopProductsByUnitSold do
   let(:variant1) { create(:variant, product: product1)}
 
   before do
-    order1.line_items.first.update(variant: product1.master)
-    order2.line_items.first.update(variant: variant1)
-    order3.line_items.first.update(variant: product2.master)
+    order1.line_items.first.update(quantity: 3, variant: product1.master)
+    order2.line_items.first.update(quantity: 2, variant: variant1)
+    order3.line_items.first.update(quantity: 1, variant: product2.master)
   end
 
   context 'when the date range is not present' do
@@ -37,7 +37,7 @@ describe Spree::Admin::Reports::Orders::TopProductsByUnitSold do
         array = subject.call
 
         expect(array).to eq [
-          [variant1.sku, 1],
+          [variant1.sku, 2],
           [product2.master.sku, 1]
         ]
       end
@@ -57,8 +57,8 @@ describe Spree::Admin::Reports::Orders::TopProductsByUnitSold do
         array = subject.call
 
         expect(array).to eq [
-          [product1.master.sku, 1],
-          [variant1.sku, 1],
+          [product1.master.sku, 3],
+          [variant1.sku, 2],
           [product2.master.sku, 1]
         ]
       end
@@ -76,7 +76,7 @@ describe Spree::Admin::Reports::Orders::TopProductsByUnitSold do
         array = subject.call
 
         expect(array).to eq [
-          [variant1.sku, 1],
+          [variant1.sku, 2],
           [product2.master.sku, 1]
         ]
       end
