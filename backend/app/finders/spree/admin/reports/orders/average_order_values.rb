@@ -14,7 +14,7 @@ module Spree
             orders = by_completed_at_min(orders)
             orders = by_completed_at_max(orders)
             orders = grouped_by(orders)
-            values = orders.map { |date, results| [date, results.sum(&:total).to_f / results.size] }
+            values = orders.map { |date, results| [date, BigDecimal(results.sum(&:total).to_f / results.size, 2)] }
                            .to_h
 
             labels.map { |label| [label, (values[label] || BigDecimal(0)).round(2)] }
