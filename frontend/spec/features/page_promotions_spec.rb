@@ -21,14 +21,14 @@ describe 'page promotions', type: :feature, js: true do
   it 'automatically applies a page promotion upon visiting' do
     expect(page).not_to have_field('order_applied_coupon_code', with: 'Promotion ($10 off)')
     visit '/content/test'
-    visit '/cart'
-    expect(page).to have_field('order_applied_coupon_code', with: 'Promotion ($10 off)')
+    visit '/checkout'
+    expect(page).to have_content('Promotion ($10 off)')
   end
 
   it "does not activate an adjustment for a path that doesn't have a promotion" do
     expect(page).not_to have_field('order_applied_coupon_code', with: 'Promotion ($10 off)')
     visit '/content/cvv'
-    visit '/cart'
-    expect(page).not_to have_field('order_applied_coupon_code', with: 'Promotion ($10 off)')
+    visit '/checkout'
+    expect(page).not_to have_content('Promotion ($10 off)')
   end
 end

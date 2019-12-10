@@ -73,12 +73,9 @@ describe 'Cart', type: :feature, inaccessible: true, js: true do
       end
 
       context 'same coupon for the second time' do
-        before { apply_coupon(promotion.code) }
-
-        # TODO: check and fix after https://spark-solutions.atlassian.net/browse/SD-585 is done
-        xit 'reflects an error that coupon already applied' do
-          expect(page).to have_content(Spree.t(:coupon_code_already_applied))
-          expect(page).to have_content(promotion.name)
+        it 'does not have coupon code input when the first coupon is applied' do
+          expect(page).to have_field('order_applied_coupon_code', with: 'Promotion (Huhuhu)')
+          expect(page).to_not have_field('order_coupon_code')
         end
       end
     end

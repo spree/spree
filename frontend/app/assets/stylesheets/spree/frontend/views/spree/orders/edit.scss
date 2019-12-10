@@ -281,6 +281,11 @@
         border: 1px solid theme-color("danger");
       }
     }
+    .btn.remove {
+      svg {
+        height: 14px;
+      }
+    }
     button {
       font-size: font-px-to-rem(20px);
       line-height: 13px;

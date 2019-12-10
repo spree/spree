@@ -36,6 +36,31 @@ Spree.ready(function ($) {
       $(input).val(inputValue + 1)
       $('#update-cart').submit()
     })
+    $('form#update-cart button#shopping-cart-coupon-code-button').off('click').on('click', function(event) {
+      var couponCodeField = $('#order_coupon_code');
+
+      if (!$.trim(couponCodeField.val()).length) {
+        event.preventDefault()
+        return false
+      }
+    })
+
+    $('form#update-cart button#shopping-cart-remove-coupon-code-button').off('click').on('click', function(event) {
+      var input = {
+        appliedCouponCodeField: $('#order_applied_coupon_code'),
+        couponCodeField: $('#order_coupon_code'),
+        couponStatus: $('#coupon_status'),
+        couponButton: $('#shopping-cart-coupon-code-button'),
+        removeCouponButton: $('#shopping-cart-remove-coupon-code-button')
+      }
+
+      if (new CouponManager(input).removeCoupon()) {
+        return true
+      } else {
+        event.preventDefault()
+        return false
+      }
+    })
   }
   formUpdateCart.submit(function (event) {
     var input = {

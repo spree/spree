@@ -38,11 +38,17 @@ describe 'Automatic promotions', type: :feature, js: true do
       # this is needed to reset a mouse focus (so quantity will update)
       find('.shopping-cart-header').click
 
-      expect(find("input[id$='order_applied_coupon_code']").value).to eq("Promotion ($10 off when you spend more than $100)")
+      click_link 'checkout'
+      expect(page).to have_content('Promotion ($10 off when you spend more than $100)')
+
+      visit '/cart'
+
       fill_in 'order_line_items_attributes_0_quantity', with: 1
       find('.shopping-cart-header').click
 
-      expect(find("input[id$='order_coupon_code']").value).not_to eq("Promotion ($10 off when you spend more than $100)")
+      click_link 'checkout'
+
+      expect(page).not_to have_content('Promotion ($10 off when you spend more than $100)')
     end
   end
 end
