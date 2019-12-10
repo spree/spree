@@ -27,7 +27,7 @@ module Spree
           private
 
           def top
-            return nil unless params[:top].present?
+            return nil if params[:top].nil?
 
             params[:top].to_i
           end
