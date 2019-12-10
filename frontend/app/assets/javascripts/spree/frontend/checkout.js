@@ -31,7 +31,7 @@ Spree.ready(function () {
         removeCouponButton: $('#shopping-cart-remove-coupon-code-button')
       }
 
-      if (new CouponManager(input).applyCoupon()) {
+      if ($.trim(input.couponCodeField.val()).length && new CouponManager(input).applyCoupon()) {
         location.reload();
         return true
       } else {

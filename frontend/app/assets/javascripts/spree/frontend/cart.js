@@ -36,6 +36,15 @@ Spree.ready(function ($) {
       $(input).val(inputValue + 1)
       $('#update-cart').submit()
     })
+    $('form#update-cart button#shopping-cart-coupon-code-button').off('click').on('click', function(event) {
+      var couponCodeField = $('#order_coupon_code');
+
+      if (!$.trim(couponCodeField.val()).length) {
+        event.preventDefault()
+        return false
+      }
+    })
+
     $('form#update-cart button#shopping-cart-remove-coupon-code-button').off('click').on('click', function(event) {
       var input = {
         appliedCouponCodeField: $('#order_applied_coupon_code'),
