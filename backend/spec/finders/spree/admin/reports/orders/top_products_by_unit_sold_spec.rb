@@ -19,9 +19,11 @@ describe Spree::Admin::Reports::Orders::TopProductsByUnitSold do
   let(:product1) { create(:product) }
   let(:product2) { create(:product) }
 
+  let(:variant1) { create(:variant, product: product1)}
+
   before do
     order1.line_items.first.update(variant: product1.master)
-    order2.line_items.first.update(variant: product1.master)
+    order2.line_items.first.update(variant: variant1)
     order3.line_items.first.update(variant: product2.master)
   end
 
@@ -35,8 +37,8 @@ describe Spree::Admin::Reports::Orders::TopProductsByUnitSold do
         array = subject.call
 
         expect(array).to eq [
-          [product1.sku, 1],
-          [product2.sku, 1]
+          [variant1.sku, 1],
+          [product2.master.sku, 1]
         ]
       end
     end
@@ -54,7 +56,11 @@ describe Spree::Admin::Reports::Orders::TopProductsByUnitSold do
 
         array = subject.call
 
-        expect(array).to eq [[product1.sku, 2], [product2.sku, 1]]
+        expect(array).to eq [
+          [product1.master.sku, 1],
+          [variant1.sku, 1],
+          [product2.master.sku, 1]
+        ]
       end
     end
 
@@ -69,7 +75,10 @@ describe Spree::Admin::Reports::Orders::TopProductsByUnitSold do
 
         array = subject.call
 
-        expect(array).to eq [[product1.sku, 1], [product2.sku, 1]]
+        expect(array).to eq [
+          [variant1.sku, 1],
+          [product2.master.sku, 1]
+        ]
       end
     end
   end
