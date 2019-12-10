@@ -17,7 +17,7 @@ module Spree
             values = orders.map { |date, results| [date, results.sum(&:total).to_f / results.size] }
                            .to_h
 
-            labels.map { |label| [label, values[label] || 0] }
+            labels.map { |label| [label, (values[label] || BigDecimal(0)).round(2)] }
           end
         end
       end

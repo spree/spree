@@ -16,7 +16,7 @@ module Spree
             orders = grouped_by(orders)
             values = orders.map { |day, results| [day, results.sum(&:total)] }.sort_by { |day, _| day }.to_h
 
-            labels.map { |label| [label, values[label] || BigDecimal(0)] }
+            labels.map { |label| [label, (values[label] || BigDecimal(0)).round(2)] }
           end
         end
       end
