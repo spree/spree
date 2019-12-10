@@ -679,8 +679,8 @@ en:
     code: Code
     company: Company
     complete: complete
-    completed_at_max: Completed at max
-    completed_at_min: Completed at min
+    completed_at_min: Date from
+    completed_at_max: Date to
     configuration: Configuration
     configurations: Configurations
     confirm: Confirm
