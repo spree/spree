@@ -57,8 +57,8 @@ shared_context 'checkout address book' do
   def fill_in_credit_card_info(address)
     fill_in 'Name on card', with: "#{address.firstname} #{address.lastname}"
     fill_in 'Card Number', with: '4111111111111111'
-    fill_in 'Expire Date', with: '12/24'
-    fill_in 'Cvv', with: '123'
+    fill_in 'Expiration Date', with: '12/24'
+    fill_in 'CVV', with: '123'
   end
 
   def expected_address_format(address_title, address)
