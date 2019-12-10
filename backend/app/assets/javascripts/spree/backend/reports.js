@@ -492,22 +492,25 @@ Spree.Reports = {
   },
 
   updateCharts: function () {
-    const self = this
-    const chartNodes = self.getNodes('reports--chart')
+    if (this.chart) {
+      this.chart.destroy()
+      this.chart = null
+    }
 
-    return Array.prototype.forEach.call(chartNodes, function (node) {
-      const data = self.getChartData(node)
-      const chart = self.createChart(
-        node,
-        {
-          labels: [],
-          datasets: [{ label: data.label, data: [] }]
-        },
-        data
-      )
+    var chartNodes = this.getNodes('reports--chart')
+    var node = chartNodes[0]
 
-      self.updateChart(data, chart)
-    })
+    var data = this.getChartData(node)
+    this.chart = this.createChart(
+      node,
+      {
+        labels: [],
+        datasets: [{ label: data.label, data: [] }]
+      },
+      data
+    )
+
+    this.updateChart(data, this.chart)
   }
 }
 
