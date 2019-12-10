@@ -84,6 +84,18 @@ RSpec.configure do |config|
     reset_spree_preferences
   end
 
+  config.around(transaction: true) do |example|
+    self.use_transactional_tests = true
+    DatabaseCleaner.strategy = :transaction
+    DatabaseCleaner.start
+
+    example.run
+
+    DatabaseCleaner.clean
+    DatabaseCleaner.strategy = :truncation
+    self.use_transactional_tests = false
+  end
+
   config.after(:each, type: :feature) do |example|
     missing_translations = page.body.scan(/translation missing: #{I18n.locale}\.(.*?)[\s<\"&]/)
     if missing_translations.any?
