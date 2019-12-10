@@ -5,12 +5,14 @@ describe Spree::Admin::Reports::Orders::TopProductsByUnitSold do
   subject do
     described_class.new(
       completed_at_min: completed_at_min,
-      completed_at_max: completed_at_max
+      completed_at_max: completed_at_max,
+      top: top
     )
   end
 
   let(:completed_at_min) { nil }
   let(:completed_at_max) { nil }
+  let(:top) { nil }
 
   let!(:order1) { create(:completed_order_with_totals) }
   let!(:order2) { create(:completed_order_with_totals) }
@@ -78,6 +80,24 @@ describe Spree::Admin::Reports::Orders::TopProductsByUnitSold do
         expect(array).to eq [
           [variant1.sku, 2],
           [product2.master.sku, 1]
+        ]
+      end
+    end
+  end
+
+  context 'when top param is present' do
+    let(:top) { 1 }
+
+    it 'returns results for given top param' do
+      order1.update!(completed_at: '2019-02-16')
+      order2.update!(completed_at: '2019-02-17')
+      order3.update!(completed_at: '2019-02-18')
+
+      Timecop.freeze(2019, 02, 20) do
+        array = subject.call
+
+        expect(array).to eq [
+          [product1.master.sku, 3]
         ]
       end
     end
