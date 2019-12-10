@@ -4,9 +4,46 @@
   </p>
 
   <div data-hook="checkout_payment_step">
+    <% if @payment_sources.present? %>
+      <div class="mb-3 card_options">
+        <label class="form-check-label spree-radio-label mb-2">
+          <%= radio_button_tag 'use_existing_card', 'yes', true %>
+          <span class="spree-radio-label-custom-input"></span>
+          <span><%= Spree.t(:use_existing_cc) %></span>
+        </label>
+        <label class="form-check-label spree-radio-label mb-2">
+          <%= radio_button_tag 'use_existing_card', 'no' %>
+          <span class="spree-radio-label-custom-input"></span>
+          <span><%= Spree.t(:use_new_cc_or_payment_method) %></span>
+        </label>
+      </div>
+
+      <div id="existing_cards">
+        <div class="form-group" data-hook="existing_cards">
+          <table class="existing-credit-card-list">
+            <tbody>
+              <% @payment_sources.each do |card| %>
+                <tr id="<%= dom_id(card,'spree')%>" class="<%= cycle('even', 'odd') %>">
+                  <td>
+                    <label class="form-check-label spree-radio-label mb-4">
+                      <%= radio_button_tag "order[existing_card]", card.id, (card == @payment_sources.first), { class: "existing-cc-radio" }  %>
+                      <span class="spree-radio-label-custom-input"></span>
+                    </label>
+                  </td>
+                  <td><%= card.name %></td>
+                  <td><%= card.display_number %></td>
+                  <td><%= card.month %> / <%= card.year %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    <% end %>
+
     <%= render partial: 'spree/checkout/payment/storecredit' %>
 
-    <ul class="list-unstyled position-relative" data-hook>
+    <ul id="payment-method-fields" class="list-unstyled position-relative" data-hook>
       <% @order.available_payment_methods.each do |method| %>
         <li class="radio">
           <label class="form-check-label spree-radio-label payment__payment-option">

@@ -8,3 +8,10 @@
     line-height: 27px;
   }
 }
+
+.existing-credit-card-list {
+  .disabled {
+    opacity: .3;
+    pointer-events: none;
+  }
+}

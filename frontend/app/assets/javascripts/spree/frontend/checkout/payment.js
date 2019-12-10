@@ -9,11 +9,13 @@ Spree.ready(function ($) {
           $('#payment-method-fields').hide()
           $('#payment-methods').hide()
           $('.existing-cc-radio').prop('disabled', false)
+          $('.existing-cc-radio').closest('tr').removeClass('disabled')
         })
         $('#use_existing_card_no').click(function () {
           $('#payment-method-fields').show()
           $('#payment-methods').show()
           $('.existing-cc-radio').prop('disabled', true)
+          $('.existing-cc-radio').closest('tr').addClass('disabled')
         })
       }
       $('.cardNumber').payment('formatCardNumber')
