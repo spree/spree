@@ -93,8 +93,8 @@ RSpec.configure do |config|
     example.run
 
     DatabaseCleaner.clean
-    DatabaseCleaner.strategy = :truncation
-    self.use_transactional_tests = false
+    # DatabaseCleaner.strategy = :truncation
+    # self.use_transactional_tests = false
   end
 
   config.after(:each, type: :feature) do |example|
