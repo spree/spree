@@ -154,8 +154,8 @@ Spree.Reports = {
    * @returns {number} Index of option value that should be selected
    */
   getParamSelectedIndex: function (node, param) {
-    const options = []
-    const selectedValue = this.getParamValue(param)
+    var options = []
+    var selectedValue = this.getParamValue(param)
 
     Array.prototype.forEach.call(node.options, function (el) {
       options.push(el.value)
@@ -169,7 +169,7 @@ Spree.Reports = {
    * @param {string} param Query param we want to toggle
    */
   updateUrlParams: function (e, param) {
-    const url = this.getUri()
+    var url = this.getUri()
 
     if (e.target.value === '') {
       url.deleteQueryParam(param)
@@ -180,7 +180,7 @@ Spree.Reports = {
     if (param.includes('completed_at_')) {
       url.replaceQueryParam('date_range', 'custom')
     } else if (param === 'date_range') {
-      const dateRange = this.getPredefinedDateRange(e.target.value)
+      var dateRange = this.getPredefinedDateRange(e.target.value)
 
       url.replaceQueryParam('completed_at_min', dateRange.min)
       url.replaceQueryParam('completed_at_max', dateRange.max)
@@ -217,7 +217,7 @@ Spree.Reports = {
       }
     }
 
-    const event = document.createEvent('HTMLEvents')
+    var event = document.createEvent('HTMLEvents')
     event.initEvent('change', true, false)
 
     return el.dispatchEvent(event)
@@ -325,7 +325,7 @@ Spree.Reports = {
    * @returns {Date} - Date object
    */
   getMinDate: function (node) {
-    const self = this
+    var self = this
     if (node.dataset.param === 'completed_at_min') {
       return self.parseDate(
         dayjs()
@@ -351,7 +351,7 @@ Spree.Reports = {
   },
 
   updateSelectFilter: function (node) {
-    const selectedIndexFromParams = this.getParamSelectedIndex(
+    var selectedIndexFromParams = this.getParamSelectedIndex(
       node,
       node.dataset.param
     )
@@ -365,7 +365,7 @@ Spree.Reports = {
    * @param {HTMLInputElement} node - Filter HTML input node
    */
   updateInputFilter: function (node) {
-    const value = this.getUri().getQueryParamValue(node.dataset.param)
+    var value = this.getUri().getQueryParamValue(node.dataset.param)
 
     if (value) {
       node.value = value
@@ -377,11 +377,11 @@ Spree.Reports = {
    * @param {HTMLSelectElement} filterNode - Filter HTML node
    */
   initSelectFilter: function (filterWrapper, filterNode) {
-    const self = this
-    const directions = ['prev', 'next']
+    var self = this
+    var directions = ['prev', 'next']
 
     directions.forEach(function (dir) {
-      const button = self.getMoveButton(filterWrapper, dir)
+      var button = self.getMoveButton(filterWrapper, dir)
 
       button.addEventListener('click', function (e) {
         return self.selectOptionByDirection(filterNode, dir)
@@ -392,14 +392,14 @@ Spree.Reports = {
   },
 
   initDatePicker: function (node) {
-    const self = this
+    var self = this
 
     return $(node).datepicker({
       dateFormat: 'dd-mm-yy',
       minDate: self.getMinDate(node),
       maxDate: self.getMaxDate(node),
       onSelect: function (date, instance) {
-        let event
+        var event
 
         if (typeof window.Event === 'function') {
           event = new Event('change')
@@ -414,7 +414,7 @@ Spree.Reports = {
   },
 
   initDownloadButton: function () {
-    const downloadCsvButton = document.getElementById('download-csv')
+    var downloadCsvButton = document.getElementById('download-csv')
 
     return downloadCsvButton.addEventListener('click', function (e) {
       window.location.assign(
@@ -425,11 +425,11 @@ Spree.Reports = {
   },
 
   updateFilters: function () {
-    const self = this
-    const filterWrappers = self.getNodes('js-filter')
+    var self = this
+    var filterWrappers = self.getNodes('js-filter')
 
     Array.prototype.forEach.call(filterWrappers, function (wrapper) {
-      const filterNode = wrapper.getElementsByClassName('js-filter-node')[0]
+      var filterNode = wrapper.getElementsByClassName('js-filter-node')[0]
 
       if (filterNode.tagName === 'SELECT') {
         return self.updateSelectFilter(filterNode)
@@ -440,7 +440,7 @@ Spree.Reports = {
   },
 
   clearDatePickers: function () {
-    const elements = document.getElementsByClassName('datepicker')
+    var elements = document.getElementsByClassName('datepicker')
 
     Array.prototype.forEach.call(elements, function (el) {
       el.value = ''
@@ -448,8 +448,8 @@ Spree.Reports = {
   },
 
   refreshDatePickers: function () {
-    const self = this
-    const elements = document.getElementsByClassName('hasDatepicker')
+    var self = this
+    var elements = document.getElementsByClassName('hasDatepicker')
 
     Array.prototype.forEach.call(elements, function (el) {
       $(el).datepicker('option', 'minDate', self.getMinDate(el))
@@ -458,11 +458,11 @@ Spree.Reports = {
   },
 
   initFilters: function () {
-    const self = this
-    const filterWrappers = self.getNodes('js-filter')
+    var self = this
+    var filterWrappers = self.getNodes('js-filter')
 
     Array.prototype.forEach.call(filterWrappers, function (wrapper) {
-      const filterNode = wrapper.getElementsByClassName('js-filter-node')[0]
+      var filterNode = wrapper.getElementsByClassName('js-filter-node')[0]
 
       if (filterNode.tagName === 'SELECT') {
         self.initSelectFilter(wrapper, filterNode)
@@ -476,8 +476,8 @@ Spree.Reports = {
         if (
           e.target.selectedIndex && e.target.options[e.target.selectedIndex].value === 'custom'
         ) {
-          const url = self.getUri()
-          const $pickerEl = $('[data-param="completed_at_min"]')
+          var url = self.getUri()
+          var $pickerEl = $('[data-param="completed_at_min"]')
 
           self.clearDatePickers()
 
