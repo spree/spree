@@ -1,6 +1,7 @@
 require 'money'
 
 Money.locale_backend = :i18n
+Money.rounding_mode = BigDecimal::ROUND_HALF_UP
 
 module Spree
   class Money
@@ -18,6 +19,7 @@ module Spree
     delegate    :cents, :currency, to: :money
 
     def initialize(amount, options = {})
+      use_default_currency
       @money   = Monetize.parse([amount, (options[:currency] || Spree::Config[:currency])].join)
       @options = Spree::Money.default_formatting_rules.merge(options)
     end
@@ -60,6 +62,11 @@ module Spree
 
     def ==(obj)
       money == obj.money
+    end
+
+    def use_default_currency
+      currency = Spree::Store.default.default_currency || Spree::Config[:currency]
+      ::Money.default_currency = currency
     end
 
     private

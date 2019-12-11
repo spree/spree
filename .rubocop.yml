@@ -104,7 +104,7 @@ Naming/VariableNumber:
 Performance/RegexpMatch:
   Enabled: false
 
-Style/UnneededPercentQ:
+Style/RedundantPercentQ:
   Enabled: false
 
 Lint/ParenthesesAsGroupedExpression:
