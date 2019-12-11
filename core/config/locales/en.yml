@@ -760,6 +760,7 @@ en:
       last_week: Last Week
       this_month: This Month
       last_month: Last Month
+      last_thirty_days: Last 30 Days
       this_year: This Year
       last_year: Last Year
       custom: Custom Date Range

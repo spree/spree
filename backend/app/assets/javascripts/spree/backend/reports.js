@@ -1,6 +1,6 @@
 /**
  * @typedef DateRangeName
- * @type {('this_week'|'last_week'|'this_month'|'last_month'|'this_year'|'last_year')}
+ * @type {('last_thirty_days'|'this_week'|'last_week'|'this_month'|'last_month'|'this_year'|'last_year')}
  */
 
 /**
@@ -263,6 +263,8 @@ Spree.Reports = {
             .startOf('week')
             .subtract(1, 'day')
         )
+      case 'last_thirty_days':
+        return this.getDateRange(dayjs().subtract(30, 'day'), dayjs())
       case 'this_month':
         return this.getDateRange(dayjs().startOf('month'), dayjs().endOf('month'))
       case 'last_month':
