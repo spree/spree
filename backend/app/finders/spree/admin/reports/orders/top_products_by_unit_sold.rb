@@ -42,3 +42,11 @@ module Spree
     end
   end
 end
+
+# Spree::Variant.joins(line_items: :order)
+#               .where(spree_orders: { state: 'complete', completed_at: date_from..date_to })
+#               .group('spree_variants.sku').select('spree_variants.sku, sum(spree_line_items.quantity) as total_quantity_sold')
+#               .order(total_quantity_sold: :desc)
+#               .limit(5)
+#               .to_a
+#               .map { |v| [v.sku, v.total_quantity_sold] }
