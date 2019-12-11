@@ -8,20 +8,17 @@ module Spree
           end
 
           def call
-            orders = Spree::Order.eager_load(line_items: :variant).complete
-            orders = by_completed_at_min(orders)
-            orders = by_completed_at_max(orders)
-            line_items = orders.map(&:line_items).flatten
+            variants = Spree::Variant.joins(line_items: :order)
+            variants = by_completed_at_min(variants)
+            variants = by_completed_at_max(variants)
 
-            line_items = line_items.group_by(&:variant)
-                                   .transform_keys { |variant| variant.sku }
-                                   .transform_values { |line_items| line_items.map(&:quantity).sum.round(2) }
-                                   .to_a
-                                   .sort_by { |_, number_of_items_sold| -number_of_items_sold }
+            variants = variants.group('spree_variants.sku')
+                               .select('spree_variants.sku, sum(spree_line_items.quantity) as total_quantity_sold')
+                               .order(total_quantity_sold: :desc)
 
-            line_items = by_top(line_items)
+            variants = by_top(variants)
 
-            line_items
+            variants.to_a.map { |v| [v.sku, v.total_quantity_sold] }
           end
 
           private
@@ -32,21 +29,25 @@ module Spree
             params[:top].to_i
           end
 
-          def by_top(line_items)
-            return line_items unless top
+          def by_top(variants)
+            return variants unless top
 
-            line_items.first(top)
+            variants.limit(top)
+          end
+
+          def by_completed_at_min(variants)
+            return variants unless completed_at_min
+
+            variants.where('spree_orders.completed_at >= ?', completed_at_min.beginning_of_day)
+          end
+
+          def by_completed_at_max(variants)
+            return variants unless completed_at_max
+
+            variants.where('spree_orders.completed_at <= ?', completed_at_max.end_of_day)
           end
         end
       end
     end
   end
 end
-
-# Spree::Variant.joins(line_items: :order)
-#               .where(spree_orders: { state: 'complete', completed_at: date_from..date_to })
-#               .group('spree_variants.sku').select('spree_variants.sku, sum(spree_line_items.quantity) as total_quantity_sold')
-#               .order(total_quantity_sold: :desc)
-#               .limit(5)
-#               .to_a
-#               .map { |v| [v.sku, v.total_quantity_sold] }
