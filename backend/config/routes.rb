@@ -14,7 +14,7 @@ Spree::Core::Engine.add_routes do
 
     resources :stores do
       member do
-        post :set_default
+        put :set_default
       end
     end
 

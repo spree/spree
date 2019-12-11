@@ -1,11 +1,11 @@
 <div data-hook="admin_adjustment_form_fields">
   <%= f.field_container :amount, class: ['form-group'] do %>
-    <%= f.label :amount, raw(Spree.t(:amount) + content_tag(:span, " *", class: "required")) %>
+    <%= f.label :amount, raw(Spree.t(:amount) + required_span_tag) %>
     <%= text_field :adjustment, :amount, class: 'form-control' %>
     <%= f.error_message_on :amount %>
   <% end %>
   <%= f.field_container :label, class: ['form-group'] do %>
-    <%= f.label :label, raw(Spree.t(:description) + content_tag(:span, " *", class: "required")) %>
+    <%= f.label :label, raw(Spree.t(:description) + required_span_tag) %>
     <%= text_field :adjustment, :label, class: 'form-control' %>
     <%= f.error_message_on :label %>
   <% end %>

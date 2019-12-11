@@ -44,7 +44,7 @@ So we want to override `spree/admin/products/_form.html.erb`. Here is the part o
 ```erb
 <div class="right four columns omega" data-hook="admin_product_form_right">
   <%= f.field_container :price do %>
-    <%= f.label :price, raw(Spree.t(:master_price) + content_tag(:span, ' *', class: 'required')) %>
+    <%= f.label :price, raw(Spree.t(:master_price) + required_span_tag) %>
     <%= f.text_field :price, value: number_to_currency(@product.price, unit: '')%>
     <%= f.error_message_on :price %>
   <% end %>
