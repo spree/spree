@@ -70,7 +70,8 @@ Spree.Reports = {
             {
               ticks: {
                 padding: 10,
-                fontFamily: this.FONT_FAMILY
+                fontFamily: this.FONT_FAMILY,
+                beginAtZero: true
               },
               scaleLabel: {
                 display: true,
