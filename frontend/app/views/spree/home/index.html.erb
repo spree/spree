@@ -9,7 +9,7 @@
       <%= Spree.t('homepage.summer_collection') %>
     </div>
     <div>
-      <%= link_to Spree.t('homepage.shop_now'), products_path, class: 'btn btn-primary spree-btn px-5' %>
+      <%= link_to Spree.t('homepage.shop_now'), spree.products_path, class: 'btn btn-primary spree-btn px-5' %>
     </div>
   </div>
 </div>
@@ -19,7 +19,7 @@
     <div class="col-6">
 
       <div class="homepage-taxon-box mb-3">
-        <%= link_to nested_taxons_path('men') do %>
+        <%= link_to spree.nested_taxons_path('men') do %>
           <img class="w-100 lazyload"
             data-src="<%= asset_path('homepage/men.jpg') %>"
             data-srcset="<%= image_source_set('homepage/men') %>"
@@ -32,7 +32,7 @@
       </div>
 
       <div class="homepage-taxon-box">
-        <%= link_to nested_taxons_path('sportswear') do %>
+        <%= link_to spree.nested_taxons_path('sportswear') do %>
           <img class="w-100 lazyload"
             data-src="<%= asset_path('homepage/sportswear.jpg') %>"
             data-srcset="<%= image_source_set('homepage/sportswear') %>"
@@ -49,7 +49,7 @@
     <div class="col-6 d-flex flex-column">
 
       <div class="homepage-taxon-box flex-grow-1">
-        <%= link_to nested_taxons_path('women') do %>
+        <%= link_to spree.nested_taxons_path('women') do %>
           <img class="w-100 lazyload"
             data-src="<%= asset_path('homepage/women.jpg') %>"
             data-srcset="<%= image_source_set('homepage/women') %>"
@@ -80,7 +80,7 @@
     <div class="homepage-fashion-trends-box-description-text text-center mb-3">
       <%= Spree.t('homepage.fashion_trends_note') %>
     </div>
-    <%= link_to Spree.t('homepage.read_more'), nested_taxons_path('trending'), class: 'btn px-5 spree-btn btn-outline-primary' %>
+    <%= link_to Spree.t('homepage.read_more'), spree.nested_taxons_path('trending'), class: 'btn px-5 spree-btn btn-outline-primary' %>
   </div>
 </div>
 
@@ -95,7 +95,7 @@
 <div class="container">
   <div class="row">
     <div class="col-12 col-lg-6">
-      <%= link_to nested_taxons_path('streetstyle') do %>
+      <%= link_to spree.nested_taxons_path('streetstyle') do %>
         <div class="homepage-bottom-box text-center mb-3">
           <img class="w-100 lazyload"
             data-src="<%= asset_path('homepage/streetstyle.jpg') %>"
@@ -115,7 +115,7 @@
     </div>
 
     <div class="col-12 col-lg-6">
-      <%= link_to nested_taxons_path('summer-sale') do %>
+      <%= link_to spree.nested_taxons_path('summer-sale') do %>
         <div class="homepage-bottom-box text-center mb-3">
           <img class="w-100 lazyload"
             data-src="<%= asset_path('homepage/summersale.jpg') %>"
