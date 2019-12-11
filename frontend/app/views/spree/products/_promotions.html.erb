@@ -17,7 +17,7 @@
             <% if promotion.products.any? %>
               <div class="list-group list-group-flush">
                 <% promotion.products.each do |product| %>
-                  <%= link_to product.name, product_path(product), class: 'list-group-item list-group-item-action' %>
+                  <%= link_to product.name, spree.product_path(product), class: 'list-group-item list-group-item-action' %>
                 <% end %>
               </div>
             <% end %>

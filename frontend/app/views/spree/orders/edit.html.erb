@@ -16,7 +16,7 @@
 
           <p class="text-center shopping-cart-empty-info"><%= Spree.t('cart_page.empty_info').html_safe %></p>
         </div>
-        <%= link_to Spree.t(:continue_shopping), products_path, class: 'btn btn-primary text-uppercase font-weight-bold shopping-cart-empty-continue-link' %>
+        <%= link_to Spree.t(:continue_shopping), spree.products_path, class: 'btn btn-primary text-uppercase font-weight-bold shopping-cart-empty-continue-link' %>
       </div>
     </div>
   <% else %>
