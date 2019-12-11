@@ -8,7 +8,7 @@
   border-color: theme-color('dark-text');
   border-radius: 0;
   outline: none;
-  font-size: font-px-to-rem(14px);
+  font-size: font-px-to-rem(12px);
   line-height: inherit;
   @include media-breakpoint-up(sm) {
     padding: 25px;
@@ -224,6 +224,10 @@ label {
 .spree-radio-label {
   position: relative;
   padding-left: 30px;
+  cursor: pointer;
+  @include media-breakpoint-up(sm) {
+    padding-left: 55px;
+  }
   @include media-breakpoint-up(lg) {
     padding-left: 52px;
   }
@@ -241,6 +245,10 @@ label {
     height: 18px;
     background-image: image-url('circle.svg');
     background-size: contain;
+    @include media-breakpoint-up(sm) {
+      width: 32px;
+      height: 32px;
+    }
     @include media-breakpoint-up(lg) {
       width: 27px;
       height: 27px;

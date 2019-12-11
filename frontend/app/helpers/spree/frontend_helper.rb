@@ -229,5 +229,15 @@ module Spree
     def formatted_price(value)
       Spree::Money.new(value, currency: current_currency, no_cents_if_whole: true).to_s
     end
+
+    def credit_card_icon(type)
+      available_icons = %w[visa american_express diners_club discover jcb maestro master]
+
+      if available_icons.include?(type)
+        image_tag "credit_cards/icons/#{type}.svg", class: 'payment-sources-list-item-image'
+      else
+        image_tag 'credit_cards/icons/generic.svg', class: 'payment-sources-list-item-image'
+      end
+    end
   end
 end

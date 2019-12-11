@@ -14,7 +14,8 @@ $theme-colors: (
   "dark-borders": #eceef0,
   "light-background": #ffffff,
   "dark-text": #232323,
-  "overlay": rgba(76, 76, 76, 0.5)
+  "overlay": rgba(76, 76, 76, 0.5),
+  "shadow": rgba(0, 0, 0, .16)
 );
 $enable-rounded: false;
 $enable-shadows: false;
