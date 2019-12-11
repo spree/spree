@@ -756,8 +756,6 @@ en:
     date_range: Date Range
     date_ranges:
       last_seven_days: Last 7 Days
-      today: Today
-      yesterday: Yesterday
       this_week: This Week
       last_week: Last Week
       this_month: This Month

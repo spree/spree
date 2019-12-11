@@ -1,6 +1,6 @@
 /**
  * @typedef DateRangeName
- * @type {('today'|'yesterday'|'this_week'|'last_week'|'this_month'|'last_month'|'this_year'|'last_year')}
+ * @type {('this_week'|'last_week'|'this_month'|'last_month'|'this_year'|'last_year')}
  */
 
 /**
@@ -248,10 +248,6 @@ Spree.Reports = {
     switch (dateRange) {
       case 'last_seven_days':
         return this.getDateRange(dayjs().subtract(7, 'day'), dayjs())
-      case 'today':
-        return this.getDateRange(dayjs(), dayjs())
-      case 'yesterday':
-        return this.getDateRange(dayjs().subtract(1, 'day'), dayjs())
       case 'this_week':
         return this.getDateRange(dayjs().startOf('week'), dayjs())
       case 'last_week':
