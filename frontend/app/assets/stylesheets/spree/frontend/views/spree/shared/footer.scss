@@ -20,6 +20,7 @@
     font-size: font-px-to-rem(9px);
     a {
       color: theme-color('dark');
+      text-decoration: underline;
     }
 
     @include media-breakpoint-up(xl) {

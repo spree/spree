@@ -1,19 +1,17 @@
 <div class="border-bottom border-top">
   <div class="container">
-    <div class="d-flex flex-column flex-md-row align-items-center justify-content-center py-3 footer-spree-copyright">
-      <div class="mb-2 mb-md-0 order-md-3">
-        © 2019
-        <%= link_to 'Spree Commerce', 'https://spreecommerce.org/', target: '_blank', 'aria-label': 'Go to Spree Commerce' %>.
-        All Rights Reserved.
-      </div>
-      <div class="d-none d-md-inline-block mr-2 order-md-2">|</div>
-      <div class="mb-1 mb-md-0 order-md-0">
-        Designed and developed by
-      </div>
-      <div class="order-md-1">
-        <%= link_to 'https://sparksolutions.co/', target: '_blank', 'aria-label': 'Go to Spark Solutions' do %>
-          <%= inline_svg_tag 'logo_spark.svg', class: 'footer-spree-copyright-logo-spark mx-2' %>
+    <div class="d-flex flex-column flex-lg-row align-items-center justify-content-center py-3 footer-spree-copyright">
+      <div>Designed and developed by</div>
+      <div class="mb-1 mb-lg-0">
+        <%= link_to 'https://sparksolutions.co/', target: :blank, 'aria-label': 'Go to Spark Solutions', rel: :follow do %>
+          <%= inline_svg_tag 'logo_spark.svg', class: 'footer-spree-copyright-logo-spark mx-2', alt: 'Spree Commerce & Ruby on Rails developers', title: 'Spree Commerce &amp; Ruby on Rails developers' %>
         <% end %>
+      </div>
+      <div class="d-none d-lg-inline-block mr-2">|</div>
+      <div>
+        © <%= Time.current.year %>
+        <%= link_to 'Spree Commerce', 'https://spreecommerce.org/', target: :blank, 'aria-label': 'Go to Spree Commerce', rel: :follow %>.
+        All Rights Reserved.
       </div>
     </div>
   </div>
