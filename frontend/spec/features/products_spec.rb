@@ -232,7 +232,7 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
   it 'is able to hide products without price' do
     expect(page).to have_css('.product-component-name').exactly(9).times
     Spree::Config.show_products_without_price = false
-    Spree::Config.currency = 'CAN'
+    Spree::Config.currency = 'CAD'
     visit spree.products_path
     expect(page).not_to have_css('.product-component-name')
   end
