@@ -63,6 +63,9 @@ Spree.Reports = {
           line: {
             backgroundColor: options.bgColor || 'rgba(71, 141, 193, 0.8)',
             borderColor: options.lineColor || 'rgba(71, 141, 193, 1)'
+          },
+          bar: {
+            backgroundColor: options.bgColor || 'rgba(71, 141, 193, 0.8)'
           }
         },
         scales: {
