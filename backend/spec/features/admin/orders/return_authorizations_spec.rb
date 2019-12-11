@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'Return Authorizations', type: :feature, js: true do
+describe 'Return Authorizations', type: :feature, js: true, use_transaction: true do
   stub_authorization!
 
   let!(:shipped_order)               { create(:shipped_order, line_items_price: 19.99) }
@@ -23,7 +23,7 @@ describe 'Return Authorizations', type: :feature, js: true do
     find('div.select2-result-label', text: return_authorization_reason.name).click
   end
 
-  describe 'partial refunds', transaction: true do
+  describe 'partial refunds' do
     context 'when pre tax amount' do
       context 'is lower than variant price' do
         it 'creates return authorization with that amount' do
@@ -31,27 +31,29 @@ describe 'Return Authorizations', type: :feature, js: true do
           click_button 'Create'
   
           expect(page).to have_current_path(spree.admin_order_return_authorizations_path(shipped_order))
-          expect(page).to have_css('tr#spree_return_authorization_1', text: '$15.30')
+          expect(page).to have_css('tr', text: '$15.30')
         end
       end
 
       context 'is greater than variant price' do
         it 'creates return authorization with variant price' do
           fill_in_pre_tax_amount('20')
+          wait_for_ajax
           click_button 'Create'
 
           expect(page).to have_current_path(spree.admin_order_return_authorizations_path(shipped_order))
-          expect(page).to have_css('tr#spree_return_authorization_1', text: price)
+          expect(page).to have_css('tr', text: price)
         end
       end
 
       context 'is a string' do
         it 'creates return authorization with variant price' do
           fill_in_pre_tax_amount('abc')
+          wait_for_ajax
           click_button 'Create'
 
           expect(page).to have_current_path(spree.admin_order_return_authorizations_path(shipped_order))
-          expect(page).to have_css('tr#spree_return_authorization_1', text: price)
+          expect(page).to have_css('tr', text: price)
         end
       end
     end

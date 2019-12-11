@@ -57,7 +57,6 @@ RSpec.configure do |config|
   config.infer_spec_type_from_file_location!
   config.mock_with :rspec
   config.raise_errors_for_deprecations!
-  config.expose_current_running_example_as :example
 
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, comment the following line or assign false
@@ -72,29 +71,24 @@ RSpec.configure do |config|
   config.before do
     Rails.cache.clear
     WebMock.disable!
-    DatabaseCleaner.strategy = if RSpec.current_example.metadata[:js]
+    DatabaseCleaner.strategy = if RSpec.current_example.metadata[:use_transaction]
+                                 :transaction
+                               elsif RSpec.current_example.metadata[:js]
                                  :truncation
                                else
                                  :transaction
                                end
+
+    if RSpec.current_example.metadata[:use_transaction]
+      self.use_transactional_tests = true
+    end
+
     # TODO: Find out why open_transactions ever gets below 0
     # See issue #3428
     ApplicationRecord.connection.increment_open_transactions if ApplicationRecord.connection.open_transactions < 0
 
     DatabaseCleaner.start
     reset_spree_preferences
-  end
-
-  config.around(transaction: true) do |example|
-    self.use_transactional_tests = true
-    DatabaseCleaner.strategy = :transaction
-    DatabaseCleaner.start
-
-    example.run
-
-    DatabaseCleaner.clean
-    # DatabaseCleaner.strategy = :truncation
-    # self.use_transactional_tests = false
   end
 
   config.after(:each, type: :feature) do |example|
