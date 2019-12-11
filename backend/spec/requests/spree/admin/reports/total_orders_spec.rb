@@ -32,5 +32,24 @@ describe 'Admin Reports - total orders spec', type: :request do
         expect(json_response['data']).to   eq [1, 0, 0, 1, 1, 0, 0]
       end
     end
+
+
+    context 'generate csv report' do
+      context 'without date range' do
+        let(:csv_response) { "date,total_orders\n2019-12-04,0\n2019-12-05,0\n2019-12-06,0\n2019-12-07,0\n2019-12-08,0\n2019-12-09,0\n2019-12-10,0\n2019-12-11,0\n" }
+
+        before { get '/admin/reports/total_orders.csv' }
+
+        it 'returns 200 HTTP status' do
+          expect(response).to have_http_status(:ok)
+        end
+
+        it 'return CSV data' do
+          expect(response.body).to eq csv_response
+          expect(response.headers['Content-Disposition']).to eq "attachment; filename=\"total_orders.csv\"; filename*=UTF-8''total_orders.csv"
+          expect(response.headers['Content-Type']).to eq 'text/csv'
+        end
+      end
+    end
   end
 end

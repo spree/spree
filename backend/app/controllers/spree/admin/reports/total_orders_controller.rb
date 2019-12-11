@@ -9,7 +9,7 @@ module Spree
               render json: Spree::Admin::Reports::TotalOrders::JsonSerializer.new.call(filtered_data)
             end
             format.csv do
-              render plain: Spree::Admin::Reports::TotalOrders::CsvSerializer.new.call(filtered_data)
+              send_data Spree::Admin::Reports::TotalOrders::CsvSerializer.new.call(filtered_data), filename: 'total_orders.csv', disposition: 'attachment'
             end
           end
         end

@@ -41,5 +41,23 @@ describe 'Admin Reports - top products by unit sold spec', type: :request do
         expect(json_response['data']).to   eq [3, 2, 1]
       end
     end
+
+    context 'generate csv report' do
+      context 'without date range' do
+        let(:csv_response) { "sku,number_of_products_sold\n" }
+
+        before { get '/admin/reports/top_products_by_unit_sold.csv' }
+
+        it 'returns 200 HTTP status' do
+          expect(response).to have_http_status(:ok)
+        end
+
+        it 'return CSV data' do
+          expect(response.body).to eq csv_response
+          expect(response.headers['Content-Disposition']).to eq "attachment; filename=\"top_products_by_unit.csv\"; filename*=UTF-8''top_products_by_unit.csv"
+          expect(response.headers['Content-Type']).to eq 'text/csv'
+        end
+      end
+    end
   end
 end

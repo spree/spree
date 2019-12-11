@@ -10,8 +10,7 @@ module Spree
               render json: serializer.call(filtered_data)
             end
             format.csv do
-              serializer = Spree::Admin::Reports::AverageOrderValues::CsvSerializer.new
-              render plain: serializer.call(filtered_data)
+              send_data Spree::Admin::Reports::AverageOrderValues::CsvSerializer.new.call(filtered_data), filename: 'average_orders_value.csv', disposition: 'attachment'
             end
           end
         end

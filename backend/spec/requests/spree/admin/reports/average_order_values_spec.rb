@@ -32,5 +32,23 @@ describe 'Admin Reports - average order values spec', type: :request do
         expect(json_response['data']).to   eq ['100.0', '0.0', '0.0', '200.0', '350.0', '0.0', '0.0']
       end
     end
+
+    context 'generate csv report' do
+      context 'without date range' do
+        let!(:csv_response) { "date,average_order_values\n2019-12-04,0.0\n2019-12-05,0.0\n2019-12-06,0.0\n2019-12-07,0.0\n2019-12-08,0.0\n2019-12-09,0.0\n2019-12-10,0.0\n2019-12-11,0.0\n" }
+
+        before { get '/admin/reports/average_order_values.csv' }
+
+        it 'returns 200 HTTP status' do
+          expect(response).to have_http_status(:ok)
+        end
+
+        it 'return CSV data' do
+          expect(response.body).to eq csv_response
+          expect(response.headers['Content-Disposition']).to eq "attachment; filename=\"average_orders_value.csv\"; filename*=UTF-8''average_orders_value.csv"
+          expect(response.headers['Content-Type']).to eq 'text/csv'
+        end
+      end
+    end
   end
 end
