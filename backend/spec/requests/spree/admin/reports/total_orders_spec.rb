@@ -36,15 +36,26 @@ describe 'Admin Reports - total orders spec', type: :request do
 
     context 'generate csv report' do
       context 'without date range' do
-        let(:csv_response) { "date,total_orders\n2019-12-04,0\n2019-12-05,0\n2019-12-06,0\n2019-12-07,0\n2019-12-08,0\n2019-12-09,0\n2019-12-10,0\n2019-12-11,0\n" }
-
-        before { get '/admin/reports/total_orders.csv' }
-
-        it 'returns 200 HTTP status' do
-          expect(response).to have_http_status(:ok)
+        let! :csv_response do
+          <<-CSV.strip_heredoc
+            date,total_orders
+            2019-12-04,0
+            2019-12-05,0
+            2019-12-06,0
+            2019-12-07,0
+            2019-12-08,0
+            2019-12-09,0
+            2019-12-10,0
+            2019-12-11,0
+          CSV
         end
 
-        it 'return CSV data' do
+        it 'returns 200 HTTP status' do
+          Timecop.freeze(2019, 12, 11) do
+            get '/admin/reports/total_orders.csv'
+          end
+
+          expect(response).to have_http_status(:ok)
           expect(response.body).to eq csv_response
           expect(response.headers['Content-Disposition']).to eq "attachment; filename=\"total_orders.csv\"; filename*=UTF-8''total_orders.csv"
           expect(response.headers['Content-Type']).to eq 'text/csv'
