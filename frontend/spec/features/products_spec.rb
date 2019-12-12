@@ -319,7 +319,7 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
         product = FactoryBot.create(:base_product, description: description, name: 'Sample', price: '19.99')
 
         accept_alert(wait: 1) { visit spree.product_path(product) }
-        fail "XSS alert exists"
+        fail 'XSS alert exists'
 
       rescue Capybara::ModalNotFound
       end

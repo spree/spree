@@ -44,9 +44,9 @@ module Spree
 
         if state_index < current_index
           css_classes << 'completed'
-          link_content = image_tag('full_circle.svg', class: "checkout-progress-steps-image")
+          link_content = image_tag('full_circle.svg', class: 'checkout-progress-steps-image')
           link_content << text
-          text = link_to(link_content, spree.checkout_state_path(state), class: "d-flex flex-column align-items-center", method: :get)
+          text = link_to(link_content, spree.checkout_state_path(state), class: 'd-flex flex-column align-items-center', method: :get)
         end
 
         css_classes << 'next' if state_index == current_index + 1
@@ -59,9 +59,9 @@ module Spree
           content_tag('li', text, class: css_classes.join(' '))
         else
           if state == @order.state
-            link_content = image_tag('full_circle.svg', class: "checkout-progress-steps-image")
+            link_content = image_tag('full_circle.svg', class: 'checkout-progress-steps-image')
           else
-            link_content = image_tag('circle.svg', class: "checkout-progress-steps-image")
+            link_content = image_tag('circle.svg', class: 'checkout-progress-steps-image')
           end
           link_content << text
           content_tag('li', content_tag('a', link_content, class: "d-flex flex-column align-items-center #{'active' if state == @order.state}"), class: css_classes.join(' '))
