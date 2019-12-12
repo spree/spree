@@ -11,6 +11,8 @@ globals:
   Raphael: true
   SpreeAPI: true
   SpreePaths: true
+  CouponManager: true
+  ThumbnailsCarousel: true
 
 env:
   browser: true

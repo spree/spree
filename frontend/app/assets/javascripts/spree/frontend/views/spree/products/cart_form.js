@@ -264,7 +264,7 @@ Spree.ready(function($) {
             cart: response.attributes
           })
         },
-        function(error) {
+        function(_error) {
           document.getElementById('overlay').classList.add('shown')
           document.getElementById('no-product-available').classList.add('shown')
           window.scrollTo(0, 0)
@@ -277,6 +277,6 @@ Spree.ready(function($) {
   $(ADD_TO_CART_FORM_SELECTOR).each(function(_cartFormIndex, cartFormElement) {
     var $cartForm = $(cartFormElement)
 
-    new CartForm($, $cartForm)
+    CartForm($, $cartForm)
   })
 })

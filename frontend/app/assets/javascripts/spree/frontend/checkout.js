@@ -37,8 +37,8 @@ Spree.ready(function () {
       } else {
         return false
       }
-
     })
+
     $('form#checkout_form_confirm button#shopping-cart-remove-coupon-code-button').off('click').on('click', function(event) {
       var input = {
         appliedCouponCodeField: $('#order_applied_coupon_code'),
