@@ -15,17 +15,17 @@ module Spree
 
     def load_taxon_products(taxon_name)
       Spree::Product.joins(:taxons).
-                    where(spree_taxons: { name: taxon_name }).
-                    eager_load(
-                      :variants_including_master,
+        where(spree_taxons: { name: taxon_name }).
+        eager_load(
+          :variants_including_master,
                       master: [
                         :default_price,
                         { images: { attachment_attachment: :blob } }
                       ]
                     ).
-                    available.
-                    limit(12).
-                    to_a
+        available.
+        limit(12).
+        to_a
     end
   end
 end

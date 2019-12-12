@@ -97,9 +97,9 @@ module Spree
 
     def product_images(product, variants)
       variants = if product.variants_and_option_values(current_currency).any?
-        variants.reject(&:is_master)
-      else
-        variants
+                   variants.reject(&:is_master)
+                 else
+                   variants
       end
 
       variants.map(&:images).flatten
@@ -113,15 +113,15 @@ module Spree
       return [] unless @product.respond_to?(:related_products)
 
       @_related_products ||= @product.
-        related_products.
-        includes(
-          master: [
-            :default_price,
-            images: { attachment_attachment: :blob }
-          ]
-        ).
-        limit(Spree::Config[:products_per_page]).
-        to_a
+                             related_products.
+                             includes(
+                               master: [
+                                 :default_price,
+                                 images: { attachment_attachment: :blob }
+                               ]
+                             ).
+                             limit(Spree::Config[:products_per_page]).
+                             to_a
     end
 
     private

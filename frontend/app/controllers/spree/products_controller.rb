@@ -48,8 +48,8 @@ module Spree
                   end
 
       @product = @products.includes(:master).
-                   friendly.
-                   find(params[:id])
+                 friendly.
+                 find(params[:id])
     end
 
     def load_taxon
@@ -62,11 +62,11 @@ module Spree
 
     def load_variants
       @variants = @product.
-                    variants_including_master.
-                    spree_base_scopes.
-                    active(current_currency).
-                    includes(
-                      :default_price,
+                  variants_including_master.
+                  spree_base_scopes.
+                  active(current_currency).
+                  includes(
+                    :default_price,
                       option_values: :option_type,
                       images: { attachment_attachment: :blob }
                     )

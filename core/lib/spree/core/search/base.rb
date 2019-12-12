@@ -46,7 +46,8 @@ module Spree
               },
               sort_by: sort_by
             },
-            current_currency: current_currency).execute
+            current_currency: current_currency
+          ).execute
           base_scope = add_search_scopes(base_scope)
           base_scope = add_eagerload_scopes(base_scope)
           base_scope
