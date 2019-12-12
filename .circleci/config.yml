@@ -24,7 +24,6 @@ run_tests: &run_tests
         name: Ensure Bundle Install
         command: |
           bundle install --path=~/spree/vendor/bundle
-          bundle exec gem list
           ./build-ci.rb install
     - run:
         name: Run rspec in parallel
