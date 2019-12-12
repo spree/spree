@@ -24,6 +24,7 @@ run_tests: &run_tests
         name: Ensure Bundle Install
         command: |
           bundle install --path=~/spree/vendor/bundle
+          bundle exec gem list
           ./build-ci.rb install
     - run:
         name: Run rspec in parallel
@@ -50,7 +51,6 @@ jobs:
           name: Bundle Install
           command: |
             bundle install --path=~/spree/vendor/bundle
-            bundle exec gem list
             ./build-ci.rb install
       - save_cache:
           key: spree-bundle-v4-{{ checksum ".ruby-version" }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
