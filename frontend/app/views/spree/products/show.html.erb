@@ -7,7 +7,7 @@
     <%= spree_breadcrumbs(@taxon, '', @product) %>
   </div>
 
-  <div class="container pt-4 product-details" data-hook="product_show">
+  <div class="container pt-4 product-details">
     <div class="modal fade" id="picturesModal" tabindex="-1" role="dialog" >
       <div class="modal-dialog--zoom modal-dialog mw-100 h-100 mt-0 mb-0" role="document">
         <div class="modal-content h-100">
@@ -17,7 +17,7 @@
             </button>
             <div class="d-flex justify-content-center align-items-center product-details-images h-100">
               <% if @product.variant_images.size > 1 %>
-                <div class="d-none d-sm-block product-details-thumbnails" data-hook="product_thumbnails">
+                <div class="d-none d-sm-block product-details-thumbnails">
                   <%= render 'spree/shared/carousel/thumbnails',
                              group_id: 'main-product-modal-carousel',
                              id: 'productModalThumbnailsCarousel',
@@ -26,7 +26,7 @@
                   %>
                 </div>
               <% end %>
-              <div class="product-details-single" data-hook="product_images">
+              <div class="product-details-single">
                 <%= render 'spree/shared/carousel/single',
                            group_id: 'main-product-modal-carousel',
                            id: 'productModalCarousel',
@@ -41,33 +41,37 @@
     </div>
 
     <div class="row" data-hook="product_show">
-      <div
-        class="col-12 col-md-7 col-lg-7 d-flex align-self-start justify-content-between product-details-images"
-        data-hook="product_left_part_wrap"
-      >
-        <% if @product.variant_images.size > 1 %>
-          <div class="d-none d-md-block product-details-thumbnails" data-hook="product_thumbnails">
-            <%= render 'spree/shared/carousel/thumbnails',
-                       group_id: 'main-product-carousel',
-                       id: 'productThumbnailsCarousel',
-                       trigger_id: 'productCarousel',
-                       per_page: 5
+      <div class="col-12 col-md-7 col-lg-7" data-hook="product_left_part">
+        <div
+          class="w-100 d-flex align-self-start justify-content-between product-details-images"
+          data-hook="product_left_part_wrap"
+        >
+          <% if @product.variant_images.size > 1 %>
+            <div class="d-none d-md-block product-details-thumbnails" data-hook="product_thumbnails">
+              <%= render 'spree/shared/carousel/thumbnails',
+                        group_id: 'main-product-carousel',
+                        id: 'productThumbnailsCarousel',
+                        trigger_id: 'productCarousel',
+                        per_page: 5
+              %>
+            </div>
+          <% end %>
+          <div class="product-details-single" data-hook="product_images">
+            <%= render 'spree/shared/carousel/single',
+                      group_id: 'main-product-carousel',
+                      id: 'productCarousel',
+                      trigger_id: 'productCarousel',
+                      zoomed: false
             %>
           </div>
-        <% end %>
-        <div class="product-details-single" data-hook="product_images">
-          <%= render 'spree/shared/carousel/single',
-                     group_id: 'main-product-carousel',
-                     id: 'productCarousel',
-                     trigger_id: 'productCarousel',
-                     zoomed: false
-          %>
         </div>
       </div>
-      <div id="product-description" class="col-12 col-md-5" data-hook="product_right_part_wrap">
-        <h1 class="mt-3 mt-md-0 text-center text-md-left product-details-title"><%= @product.name %></h1>
-        <div id="cart-form" data-hook="cart_form">
-          <%= render 'cart_form', variant_change_identifier: 'productCarousel' %>
+      <div class="col-12 col-md-5" data-hook="product_right_part">
+        <div id="product-description" data-hook="product_right_part_wrap">
+          <h1 class="mt-3 mt-md-0 text-center text-md-left product-details-title"><%= @product.name %></h1>
+          <div id="cart-form" data-hook="cart_form">
+            <%= render 'cart_form', variant_change_identifier: 'productCarousel' %>
+          </div>
         </div>
       </div>
     </div>

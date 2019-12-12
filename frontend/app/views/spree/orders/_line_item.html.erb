@@ -16,7 +16,7 @@
           <%= Spree.t(:out_of_stock) %>&nbsp;&nbsp;<br />
         </span>
       <% end %>
-      <ul class="item-details-list">
+      <ul class="item-details-list" data-hook="line_item_description">
         <% variant.option_values.sort { |ov| ov.option_type.position }.each do |ov| %>
           <li class="item-details">
             <% # TODO: rework option values so options_text method can be used here %>

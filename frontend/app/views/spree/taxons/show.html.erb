@@ -18,5 +18,7 @@
     <% end %>
   </div>
   <%= render 'subcategories', taxon: @taxon %>
-  <%= render template: 'spree/products/index', colors: @colors, sizes: @sizes %>
+  <div data-hook="taxon_products">
+    <%= render template: 'spree/products/index', colors: @colors, sizes: @sizes %>
+  </div>
 </div>
