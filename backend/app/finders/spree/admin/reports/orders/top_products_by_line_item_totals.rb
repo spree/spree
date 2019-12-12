@@ -5,6 +5,7 @@ module Spree
         class TopProductsByLineItemTotals < Base
           def initialize(params)
             @params = params
+            @top = params[:top]
           end
 
           def call
@@ -13,7 +14,7 @@ module Spree
             variants = by_completed_at_max(variants)
 
             variants = variants.group('spree_variants.sku')
-                               .select('spree_variants.sku, sum(spree_line_items.quantity) * spree_prices.amount as line_item_total')
+                               .select('spree_variants.sku, sum(spree_line_items.quantity * spree_prices.amount) as line_item_total')
                                .order(line_item_total: :desc)
 
             variants = by_top(variants)
@@ -23,14 +24,10 @@ module Spree
 
           private
 
-          def top
-            return nil if params[:top].nil?
-
-            params[:top].to_i
-          end
+          attr_reader :top
 
           def by_top(variants)
-            return variants unless top
+            return variants if top.nil?
 
             variants.limit(top)
           end
