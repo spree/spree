@@ -55,8 +55,8 @@ describe 'RefundReason', type: :feature, js: true do
       accept_confirm do
         click_icon :delete
       end
-      expect(page.document).to have_content('successfully removed!')
-                           .or have_content('Cannot delete record')
+      expect(page.document).to have_content('successfully removed!').
+                           or have_content('Cannot delete record')
     end
   end
 end

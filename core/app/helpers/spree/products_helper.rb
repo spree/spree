@@ -112,16 +112,16 @@ module Spree
     def related_products
       return [] unless @product.respond_to?(:related_products)
 
-      @_related_products ||= @product
-        .related_products
-        .includes(
+      @_related_products ||= @product.
+        related_products.
+        includes(
           master: [
             :default_price,
             images: { attachment_attachment: :blob }
           ]
-        )
-        .limit(Spree::Config[:products_per_page])
-        .to_a
+        ).
+        limit(Spree::Config[:products_per_page]).
+        to_a
     end
 
     private
