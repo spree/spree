@@ -10,7 +10,7 @@ module Spree
               render json: serializer.call(filtered_data)
             end
             format.csv do
-              send_data Spree::Admin::Reports::TopProductsByLineItemTotals::CsvSerializer.new.call(filtered_data), filename: 'top_products_by_unit.csv', disposition: 'attachment'
+              send_data Spree::Admin::Reports::TopProductsByLineItemTotals::CsvSerializer.new.call(filtered_data), filename: 'top_products_by_line_item_totals.csv', disposition: 'attachment'
             end
           end
         end
@@ -18,10 +18,7 @@ module Spree
         private
 
         def filtered_data
-          Spree::Admin::Reports::Orders::TopProductsByLineItemTotals.new(
-            params,
-            currency: current_currency
-          ).call
+          Spree::Admin::Reports::Orders::TopProductsByLineItemTotals.new(params).call
         end
       end
     end

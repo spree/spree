@@ -3,7 +3,7 @@ require 'csv'
 module Spree
   module Admin
     module Reports
-      module TopProductsByUnitSold
+      module TopProductsByLineItemTotals
         class CsvSerializer
           def call(objects)
             CSV.generate do |csv|

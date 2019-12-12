@@ -3,9 +3,8 @@ module Spree
     module Reports
       module Orders
         class TopProductsByLineItemTotals < Base
-          def initialize(params, opts = {})
+          def initialize(params)
             @params = params
-            @currency = opts[:currency]
           end
 
           def call
@@ -15,7 +14,6 @@ module Spree
 
             variants = variants.group('spree_variants.sku')
                                .select('spree_variants.sku, sum(spree_line_items.quantity) * spree_prices.amount as line_item_total')
-                               .where('spree_prices.currency = ?', currency)
                                .order(line_item_total: :desc)
 
             variants = by_top(variants)
@@ -24,8 +22,6 @@ module Spree
           end
 
           private
-
-          attr_reader :currency
 
           def top
             return nil if params[:top].nil?
