@@ -1,0 +1,34 @@
+<div class="row">
+  <% ['Billing', 'Shipping'].each do |address_type|
+    address_name = "#{address_type[0...4].downcase}_address" %>
+
+    <div data-hook="<% address_name %>_fieldset_wrapper" class="col-12 col-lg-6">
+      <div class="card mb-3">
+        <div class="card-header">
+          <h1 class="card-title mb-0 h5">
+            <%= Spree.t('existing_addresses', address_name: address_type) %>
+          </h1>
+        </div>
+
+        <div class="card-body">
+          <div data-hook="<%= address_name %>_wrapper" class="col-12 col-lg-6" id="<%= address_name %>">
+            <div class="card-body">
+              <div class="select_address">
+                <div class="form-group">
+                  <% @user.addresses.each_with_index do |address, idx| %>
+                    <span class="d-block mb-2" id="<%= [address_type[0...4].downcase, dom_id(address)].join('_') %>">
+                      <label class="form-check-label">
+                        <%= f.radio_button "#{address_name}_id", address.id %> <%= address.to_s.html_safe %>
+                      </label>
+                      <a class="mb-3" href="<%= edit_admin_address_url(address) %>" data-hook="edit_address"><%= Spree.t(:edit) %></a>
+                    </span>
+                  <% end %>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>

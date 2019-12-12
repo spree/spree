@@ -1,0 +1,19 @@
+<% content_for :page_title do %>
+  <%= Spree.t(:edit) %> <%= Spree.t(:address) %>
+<% end %>
+
+<%= render partial: 'spree/admin/shared/error_messages', locals: { target: @address } %>
+
+<%= form_for [:admin, @address] do |f| %>
+  <fieldset>
+    <div class="inner">
+      <%= render 'spree/admin/addresses/form',
+        address_name: 'address',
+        address_form: f,
+        address_type: 'shipping',
+        address: @address
+      %>
+    </div>
+    <%= f.submit Spree.t(:update), class: 'btn btn-primary' %>
+  </fieldset>
+<% end %>
