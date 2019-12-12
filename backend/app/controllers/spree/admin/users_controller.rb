@@ -43,6 +43,15 @@ module Spree
         end
       end
 
+      def update_addresses
+        if request.put?
+          if @user.update(user_addresses_params)
+            flash[:success] = Spree.t(:user_default_addresses_updated)
+            redirect_to addresses_admin_user_path(@user)
+          end
+        end
+      end
+
       def orders
         params[:q] ||= {}
         @search = Spree::Order.reverse_chronological.ransack(params[:q].merge(user_id_eq: @user.id))
@@ -95,6 +104,10 @@ module Spree
                                       spree_role_ids: [],
                                       ship_address_attributes: permitted_address_attributes,
                                       bill_address_attributes: permitted_address_attributes])
+      end
+
+      def user_addresses_params
+        params.require(:user).permit(:bill_address_id, :ship_address_id)
       end
 
       # handling raise from Spree::Admin::ResourceController#destroy

@@ -169,10 +169,13 @@ Spree::Core::Engine.add_routes do
     end
     resources :roles
 
+    resources :addresses, only: [:new, :edit, :update]
+
     resources :users do
       member do
         get :addresses
         put :addresses
+        put :update_addresses
         put :clear_api_key
         put :generate_api_key
         get :items
