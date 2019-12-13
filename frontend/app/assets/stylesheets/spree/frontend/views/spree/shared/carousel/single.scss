@@ -5,7 +5,7 @@
     @mixin arrow {
       top: 0;
       width: $arrow-width;
-      z-index: 1;
+      z-index: 2;
     }
     &--previous {
       left: -$arrow-width;
