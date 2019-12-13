@@ -50,7 +50,23 @@
   <div class="carousel-inner">
     <% products.each_slice(4).with_index do |sliced_items, index| %>
       <div class="carousel-item <%= 'active' if index == 0 %>">
-        <div class="container">
+        <div class="container position-relative">
+          <a
+            class="d-md-flex h-100 position-absolute justify-content-center align-items-center carousel-icon-control carousel-icon-control--previous"
+            href="#<%= id %>-desktop"
+            role="button"
+            data-slide="prev"
+          >
+            <span class="d-flex justify-content-center align-items-center carousel-icon-control-rounded" aria-hidden="true">
+              <%= icon(name: 'arrow-right',
+                       classes: 'spree-icon-arrow spree-icon-arrow-left',
+                       width: 20,
+                       height: 20)
+              %>
+            </span>
+            <span class="sr-only">Previous</span>
+          </a>
+
           <div class="row">
             <% sliced_items.each do |item| %>
               <div class="col-3">
@@ -60,36 +76,24 @@
               </div>
             <% end %>
           </div>
+
+          <a
+            class="d-md-flex h-100 position-absolute justify-content-center align-items-center carousel-icon-control carousel-icon-control--next"
+            href="#<%= id %>-desktop"
+            role="button"
+            data-slide="next"
+          >
+            <span class="d-flex justify-content-center align-items-center carousel-icon-control-rounded" aria-hidden="true">
+              <%= icon(name: 'arrow-right',
+                       classes: 'spree-icon-arrow spree-icon-arrow-right',
+                       width: 20,
+                       height: 20)
+              %>
+            </span>
+            <span class="sr-only">Next</span>
+          </a>
         </div>
       </div>
     <% end %>
   </div>
-  <a
-    class="d-md-flex h-100 position-absolute justify-content-center align-items-center carousel-icon-control carousel-icon-control--previous"
-    href="#<%= id %>-desktop"
-    role="button"
-    data-slide="prev"
-  >
-    <span class="d-flex justify-content-center align-items-center carousel-icon-control-rounded" aria-hidden="true">
-      <%= icon(name: 'arrow-right',
-               classes: 'spree-icon-arrow spree-icon-arrow-left',
-               width: 20,
-               height: 20) %>
-    </span>
-    <span class="sr-only">Previous</span>
-  </a>
-  <a
-    class="d-md-flex h-100 position-absolute justify-content-center align-items-center carousel-icon-control carousel-icon-control--next"
-    href="#<%= id %>-desktop"
-    role="button"
-    data-slide="next"
-  >
-    <span class="d-flex justify-content-center align-items-center carousel-icon-control-rounded" aria-hidden="true">
-      <%= icon(name: 'arrow-right',
-               classes: 'spree-icon-arrow spree-icon-arrow-right',
-               width: 20,
-               height: 20) %>
-    </span>
-    <span class="sr-only">Next</span>
-  </a>
 </div>
