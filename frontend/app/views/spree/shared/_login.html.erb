@@ -1,4 +1,4 @@
-<%= form_for Spree::User.new, as: :spree_user, url: spree.create_new_session_path do |f| %>
+<%= form_for Spree.user_class.new, as: :spree_user, url: spree.create_new_session_path do |f| %>
   <fieldset id="password-credentials">
     <div class="form-group">
       <%= f.email_field :email, class: 'form-control', tabindex: 1, placeholder: Spree.t(:email) %>
