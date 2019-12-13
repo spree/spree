@@ -1665,6 +1665,7 @@ en:
     to_add_variants_you_must_first_define: To add variants, you must first define
     total: Total
     total_orders: Total Orders
+    top_products_by_unit_sold: Top Products By Unit Sold
     average_order_value: Average Order Value
     orders_count: Orders Count
     total_per_item: Total per item
