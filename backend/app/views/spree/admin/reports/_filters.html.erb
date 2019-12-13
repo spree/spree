@@ -56,66 +56,63 @@
   <div class="col-12 col-md-6 col-lg-3">
     <div class="form-group">
       <label for="reports-completed-at-min"><%= Spree.t(:date_from) %>:</label>
+      <div class="input-group mb-3 js-filter" data-id="reports-date-range">
+        <input type="text"
+          value="<%= params[:completed_at_min] %>"
+          class="form-control js-filter-node datepicker datepicker-from"
+          id="reports-completed-at-min"
+          name="reports-completed-at-min"
+          data-param="completed_at_min" />
+        <div class="input-group-append">
+          <label class="input-group-text">
+            <i class="icon icon-calendar"></i>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-md-6 col-lg-3">
+    <div class="form-group">
+      <label for="reports-completed-at-max"><%= Spree.t(:date_to) %>:</label>
+      <div class="input-group mb-3 js-filter" data-id="reports-date-range">
+        <input type="text"
+          value="<%= params[:completed_at_max] %>"
+          class="form-control js-filter-node datepicker datepicker-from"
+          id="reports-completed-at-max"
+          name="reports-completed-at-max"
+          data-param="completed_at_max" />
+        <div class="input-group-append">
+          <label class="input-group-text">
+            <i class="icon icon-calendar"></i>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <% if local_assigns.fetch(:top_n, false) %>
+    <div class="col-12 col-md-6 col-lg-3">
+      <div class="form-group">
+        <label for="reports-date-range"><%= Spree.t(:top_n) %>:</label>
         <div class="input-group mb-3 js-filter" data-id="reports-date-range">
-          <input type="text"
-            value="<%= params[:completed_at_min] %>"
-            class="form-control js-filter-node datepicker datepicker-from"
-            id="reports-completed-at-min"
-            name="reports-completed-at-min"
-            data-param="completed_at_min" />
+          <div class="input-group-prepend">
+            <label class="input-group-text" data-action="prev">
+              <i class="icon icon-chevron-left"></i>
+            </label>
+          </div>
+          <%= select_tag "reports-date-range",
+            options_for_select((3...11), params.fetch(:top, 5)),
+            class: 'custom-select js-filter-node',
+            data: { param: 'top' }
+          %>
           <div class="input-group-append">
-            <label class="input-group-text">
-              <i class="icon icon-calendar"></i>
+            <label class="input-group-text" data-action="next">
+              <i class="icon icon-chevron-right"></i>
             </label>
           </div>
         </div>
       </div>
     </div>
-
-    <div class="col-12 col-md-6 col-lg-3">
-      <div class="form-group">
-        <label for="reports-completed-at-max"><%= Spree.t(:date_to) %>:</label>
-          <div class="input-group mb-3 js-filter" data-id="reports-date-range">
-            <input type="text"
-              value="<%= params[:completed_at_max] %>"
-              class="form-control js-filter-node datepicker datepicker-from"
-              id="reports-completed-at-max"
-              name="reports-completed-at-max"
-              data-param="completed_at_max" />
-            <div class="input-group-append">
-              <label class="input-group-text">
-                <i class="icon icon-calendar"></i>
-              </label>
-            </div>
-          </div>
-        </div>
-      </div>
-
-
-      <% if local_assigns.fetch(:top_n, false) %>
-        <div class="col-12 col-md-6 col-lg-3">
-          <div class="form-group">
-            <label for="reports-date-range"><%= Spree.t(:top_n) %>:</label>
-            <div class="input-group mb-3 js-filter" data-id="reports-date-range">
-              <div class="input-group-prepend">
-                <label class="input-group-text" data-action="prev">
-                  <i class="icon icon-chevron-left"></i>
-                </label>
-              </div>
-              <%= select_tag "reports-date-range",
-                options_for_select((3...11), params.fetch(:top, 5)),
-                class: 'custom-select js-filter-node',
-                data: { param: 'top' }
-              %>
-              <div class="input-group-append">
-                <label class="input-group-text" data-action="next">
-                  <i class="icon icon-chevron-right"></i>
-                </label>
-              </div>
-            </div>
-          </div>
-        </div>
-      <% end %>
-    </div>
-  </div>
+  <% end %>
 </div>
