@@ -174,6 +174,33 @@ describe Spree::Admin::UsersController, type: :controller do
       expect(assigns[:search].klass).to eq Spree::Order
     end
   end
+
+  describe '#update_addresses' do
+    stub_authorization!
+    let!(:address)          { create(:address) }
+    let!(:new_bill_address) { create(:address) }
+
+    before { user.update(bill_address_id: address.id) }
+
+    context 'when request put' do
+      context 'with valid params' do
+        let(:subject)  { put :update_addresses, params: { id: user.id, user: { bill_address_id: new_bill_address.id }}}
+
+        it 'updates user addresses' do
+          subject
+          expect(user.reload.bill_address_id).to eq new_bill_address.id
+        end
+
+        it 'redirects to user addresses path' do
+          expect(subject).to redirect_to addresses_admin_user_path(user)
+        end
+
+        it 'renders success flash message' do
+          expect(subject.request.flash[:success]).to eq Spree.t(:user_default_addresses_updated)
+        end
+      end
+    end
+  end
 end
 
 def use_mock_user
