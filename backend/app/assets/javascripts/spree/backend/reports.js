@@ -131,17 +131,15 @@ Spree.Reports = {
    * @param {Chart} chart Chart instance
    */
   updateChart: function (data, chart) {
-    return fetch(this.getApiURL(data.id))
-      .then(function (response) {
-        return response.json()
-      })
-      .then(function (json) {
-        chart.data.datasets[0].data = json.data
-        chart.data.labels = json.labels
-      })
-      .finally(function () {
+    $.ajax({
+      url: this.getApiURL(data.id),
+      success: function(response) {
+        chart.data.datasets[0].data = response.data
+        chart.data.labels = response.labels
+
         chart.update()
-      })
+      }
+    })
   },
 
   getParamValue: function (param) {
