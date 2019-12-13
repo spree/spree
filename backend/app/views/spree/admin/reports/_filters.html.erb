@@ -25,31 +25,33 @@
     </div>
   </div>
 
-  <div class="col-12 col-md-6 col-lg-3">
-    <div class="form-group">
-      <label for="reports-group-by"><%= Spree.t(:group_by) %>:</label>
-      <div class="input-group mb-3 js-filter" data-id="reports-group-by">
-        <div class="input-group-prepend">
-          <label class="input-group-text" data-action="prev">
-            <i class="icon icon-chevron-left"></i>
-          </label>
-        </div>
-        <%= select_tag "reports-group-by",
-          options_for_select(
-            Spree.t(:date_groups).invert,
-            params[:group_by] || 'day'
-          ),
-          class: 'custom-select js-filter-node',
-          data: { param: 'group_by' }
-        %>
-        <div class="input-group-append">
-          <label class="input-group-text" data-action="next">
-            <i class="icon icon-chevron-right"></i>
-          </label>
+  <% if local_assigns.fetch(:group_by, false) %>
+    <div class="col-12 col-md-6 col-lg-3">
+      <div class="form-group">
+        <label for="reports-group-by"><%= Spree.t(:group_by) %>:</label>
+        <div class="input-group mb-3 js-filter" data-id="reports-group-by">
+          <div class="input-group-prepend">
+            <label class="input-group-text" data-action="prev">
+              <i class="icon icon-chevron-left"></i>
+            </label>
+          </div>
+          <%= select_tag "reports-group-by",
+            options_for_select(
+              Spree.t(:date_groups).invert,
+              params[:group_by] || 'day'
+            ),
+            class: 'custom-select js-filter-node',
+            data: { param: 'group_by' }
+          %>
+          <div class="input-group-append">
+            <label class="input-group-text" data-action="next">
+              <i class="icon icon-chevron-right"></i>
+            </label>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  <% end %>
 
   <div class="col-12 col-md-6 col-lg-3">
     <div class="form-group">

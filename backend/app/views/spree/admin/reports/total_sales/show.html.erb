@@ -1,5 +1,5 @@
 <%= render partial: 'spree/admin/reports/header', locals: { title: Spree.t(:total_sales) } %>
-<%= render partial: 'spree/admin/reports/filters' %>
+<%= render partial: 'spree/admin/reports/filters', locals: { group_by: true } %>
 
 <canvas
   id="chart--total_sales"
