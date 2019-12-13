@@ -3,14 +3,14 @@ require 'spec_helper'
 describe Spree::Admin::Reports::Orders::AverageOrderValues do
   subject do
     described_class.new(
-      completed_at_min: completed_at_min,
-      completed_at_max: completed_at_max,
+      date_from: date_from,
+      date_to: date_to,
       group_by: group_by
     )
   end
 
-  let(:completed_at_min) { nil }
-  let(:completed_at_max) { nil }
+  let(:date_from) { nil }
+  let(:date_to) { nil }
   let(:group_by) { nil }
 
   context 'when the date range is not present' do
@@ -36,8 +36,8 @@ describe Spree::Admin::Reports::Orders::AverageOrderValues do
 
   context 'when the date rage is valid' do
     context 'when group_by is set to year' do
-      let(:completed_at_min) { '2016-01-01' }
-      let(:completed_at_max) { '2019-01-01' }
+      let(:date_from) { '2016-01-01' }
+      let(:date_to) { '2019-01-01' }
       let(:group_by) { :year }
 
       it 'returns average totals grouped by year' do
@@ -52,8 +52,8 @@ describe Spree::Admin::Reports::Orders::AverageOrderValues do
     end
 
     context 'when group_by is set to month' do
-      let(:completed_at_min) { '2017-11-03' }
-      let(:completed_at_max) { '2018-02-22' }
+      let(:date_from) { '2017-11-03' }
+      let(:date_to) { '2018-02-22' }
       let(:group_by) { :month }
 
       it 'returns average totals grouped by month' do
@@ -68,8 +68,8 @@ describe Spree::Admin::Reports::Orders::AverageOrderValues do
     end
 
     context 'when group_by is set to day' do
-      let(:completed_at_min) { '2017-12-30' }
-      let(:completed_at_max) { '2018-01-2' }
+      let(:date_from) { '2017-12-30' }
+      let(:date_to) { '2018-01-2' }
       let(:group_by) { :day }
 
       it 'returns average totals grouped by day' do

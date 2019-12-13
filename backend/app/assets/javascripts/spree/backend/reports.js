@@ -180,8 +180,8 @@ Spree.Reports = {
     } else if (param === 'date_range') {
       var dateRange = this.getPredefinedDateRange(e.target.value)
 
-      url.replaceQueryParam('completed_at_min', dateRange.min)
-      url.replaceQueryParam('completed_at_max', dateRange.max)
+      url.replaceQueryParam('date_from', dateRange.min)
+      url.replaceQueryParam('date_to', dateRange.max)
     }
 
     window.history.pushState({}, '', url.toString())
@@ -308,11 +308,11 @@ Spree.Reports = {
    * @returns {Date} - Date object
    */
   getMaxDate: function (node) {
-    if (node.dataset.param === 'completed_at_max') {
+    if (node.dataset.param === 'date_to') {
       return this.parseDate(dayjs().format(this.DATE_FORMAT))
     } else {
       return this.parseDate(
-        this.getUri().getQueryParamValue('completed_at_max') ||
+        this.getUri().getQueryParamValue('date_to') ||
           dayjs().format(this.DATE_FORMAT)
       )
     }
@@ -324,7 +324,7 @@ Spree.Reports = {
    */
   getMinDate: function (node) {
     var self = this
-    if (node.dataset.param === 'completed_at_min') {
+    if (node.dataset.param === 'date_from') {
       return self.parseDate(
         dayjs()
           .subtract(2, 'years')
@@ -332,7 +332,7 @@ Spree.Reports = {
       )
     } else {
       return self.parseDate(
-        self.getUri().getQueryParamValue('completed_at_min') ||
+        self.getUri().getQueryParamValue('date_from') ||
         dayjs()
           .subtract(2, 'years')
           .format(this.DATE_FORMAT)
@@ -475,12 +475,12 @@ Spree.Reports = {
           e.target.selectedIndex && e.target.options[e.target.selectedIndex].value === 'custom'
         ) {
           var url = self.getUri()
-          var $pickerEl = $('[data-param="completed_at_min"]')
+          var $pickerEl = $('[data-param="date_from"]')
 
           self.clearDatePickers()
 
-          url.deleteQueryParam('completed_at_min')
-          url.deleteQueryParam('completed_at_max')
+          url.deleteQueryParam('date_from')
+          url.deleteQueryParam('date_to')
 
           $pickerEl.datepicker('refresh')
           $pickerEl.datepicker('show')

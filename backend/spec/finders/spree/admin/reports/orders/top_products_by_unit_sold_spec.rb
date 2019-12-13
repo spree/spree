@@ -4,14 +4,14 @@ require 'spec_helper'
 describe Spree::Admin::Reports::Orders::TopProductsByUnitSold do
   subject do
     described_class.new(
-      completed_at_min: completed_at_min,
-      completed_at_max: completed_at_max,
+      date_from: date_from,
+      date_to: date_to,
       top: top
     )
   end
 
-  let(:completed_at_min) { nil }
-  let(:completed_at_max) { nil }
+  let(:date_from) { nil }
+  let(:date_to) { nil }
   let(:top) { nil }
 
   let!(:order1) { create(:completed_order_with_totals) }
@@ -48,8 +48,8 @@ describe Spree::Admin::Reports::Orders::TopProductsByUnitSold do
 
   context 'when the date range is valid' do
     context 'when date range includes all the orders' do
-      let(:completed_at_min) { '2016-01-01' }
-      let(:completed_at_max) { '2019-01-01' }
+      let(:date_from) { '2016-01-01' }
+      let(:date_to) { '2019-01-01' }
 
       it 'returns top product grouped by product SKU' do
         order1.update!(completed_at: '2016-12-12')
@@ -67,8 +67,8 @@ describe Spree::Admin::Reports::Orders::TopProductsByUnitSold do
     end
 
     context 'when date range includes only part of all orders' do
-      let(:completed_at_min) { '2017-01-01' }
-      let(:completed_at_max) { '2019-01-01' }
+      let(:date_from) { '2017-01-01' }
+      let(:date_to) { '2019-01-01' }
 
       it 'returns top products grouped by product SKU' do
         order1.update!(completed_at: '2016-12-12')

@@ -14,7 +14,7 @@ describe 'Admin Reports - average order values spec', type: :request do
   end
 
   let(:params) do
-    { completed_at_min: '2019-10-11', completed_at_max: '2019-10-17' }
+    { date_from: '2019-10-11', date_to: '2019-10-17' }
   end
 
   describe 'average_order_values#show' do

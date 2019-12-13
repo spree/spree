@@ -55,16 +55,16 @@
 
   <div class="col-12 col-md-6 col-lg-3">
     <div class="form-group">
-      <label for="reports-completed-at-min"><%= Spree.t(:date_from) %>:</label>
+      <label for="reports-date-from"><%= Spree.t(:date_from) %>:</label>
       <div class="input-group mb-3 js-filter" data-id="reports-date-range">
         <input type="text"
-          value="<%= params[:completed_at_min] %>"
+          value="<%= params[:date_from] %>"
           class="form-control js-filter-node datepicker datepicker-from"
-          id="reports-completed-at-min"
-          name="reports-completed-at-min"
-          data-param="completed_at_min" />
+          id="reports-date-from"
+          name="reports-date-from"
+          data-param="date_from" />
         <div class="input-group-append">
-          <label for="reports-completed-at-min" class="input-group-text">
+          <label for="reports-date-from" class="input-group-text">
             <i class="icon icon-calendar"></i>
           </label>
         </div>
@@ -74,16 +74,16 @@
 
   <div class="col-12 col-md-6 col-lg-3">
     <div class="form-group">
-      <label for="reports-completed-at-max"><%= Spree.t(:date_to) %>:</label>
+      <label for="reports-date-to"><%= Spree.t(:date_to) %>:</label>
       <div class="input-group mb-3 js-filter" data-id="reports-date-range">
         <input type="text"
-          value="<%= params[:completed_at_max] %>"
+          value="<%= params[:date_to] %>"
           class="form-control js-filter-node datepicker datepicker-from"
-          id="reports-completed-at-max"
-          name="reports-completed-at-max"
-          data-param="completed_at_max" />
+          id="reports-date-to"
+          name="reports-date-to"
+          data-param="date_to" />
         <div class="input-group-append">
-          <label for="reports-completed-at-max" class="input-group-text">
+          <label for="reports-date-to" class="input-group-text">
             <i class="icon icon-calendar"></i>
           </label>
         </div>

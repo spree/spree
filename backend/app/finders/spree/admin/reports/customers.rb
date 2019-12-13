@@ -17,7 +17,7 @@ module Spree
 
           create_report_labels.map do |label|
             [label, values[label] || 0]
-          end 
+          end
         end
 
         private

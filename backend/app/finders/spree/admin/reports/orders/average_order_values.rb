@@ -11,8 +11,8 @@ module Spree
             labels = create_report_labels
 
             orders = Spree::Order.complete
-            orders = by_completed_at_min(orders)
-            orders = by_completed_at_max(orders)
+            orders = by_date_from(orders)
+            orders = by_date_to(orders)
             orders = grouped_by(orders)
             values = orders.map { |date, results| [date, BigDecimal(results.sum(&:total).to_f / results.size, 2)] }
                            .to_h

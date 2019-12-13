@@ -8,32 +8,32 @@ module Spree
 
           attr_accessor :params
 
-          def completed_at_min
-            return (Time.current - 7.days) unless params[:completed_at_min].present?
+          def date_from
+            return (Time.current - 7.days) unless params[:date_from].present?
 
-            Time.zone.parse(params[:completed_at_min])
+            Time.zone.parse(params[:date_from])
           end
 
-          def completed_at_max
-            return Time.current unless params[:completed_at_max].present?
+          def date_to
+            return Time.current unless params[:date_to].present?
 
-            Time.zone.parse(params[:completed_at_max])
+            Time.zone.parse(params[:date_to])
           end
 
           def grouped_by(orders)
             orders.group_by { |order| order.completed_at.strftime(group_by_date) }
           end
 
-          def by_completed_at_min(orders)
-            return orders unless completed_at_min
+          def by_date_from(orders)
+            return orders unless date_from
 
-            orders.where('completed_at >= ?', completed_at_min.beginning_of_day)
+            orders.where('completed_at >= ?', date_from.beginning_of_day)
           end
 
-          def by_completed_at_max(orders)
-            return orders unless completed_at_max
+          def by_date_to(orders)
+            return orders unless date_to
 
-            orders.where('completed_at <= ?', completed_at_max.end_of_day)
+            orders.where('completed_at <= ?', date_to.end_of_day)
           end
 
           def group_by_date
@@ -48,8 +48,8 @@ module Spree
 
           def create_report_labels
             Spree::Admin::Reports::CreateReportLabels.new.call(
-              from: completed_at_min.to_date,
-              to: completed_at_max.to_date,
+              from: date_from.to_date,
+              to: date_to.to_date,
               mode: params[:group_by]
             )
           end

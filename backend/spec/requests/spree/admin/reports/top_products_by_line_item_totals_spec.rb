@@ -23,7 +23,7 @@ describe 'Admin Reports - top products by line item totals spec', type: :request
   end
 
   let(:params) do
-    { completed_at_min: '2019-10-11', completed_at_max: '2019-10-17' }
+    { date_from: '2019-10-11', date_to: '2019-10-17' }
   end
 
   describe 'top_products_by_line_item_totals#show' do

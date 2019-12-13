@@ -33,13 +33,13 @@ module Spree
         end
 
         def apply_date_filters(scope)
-          if opts[:completed_at_min]
-            min = Time.zone.parse(opts[:completed_at_min]).beginning_of_day
+          if opts[:date_from]
+            min = Time.zone.parse(opts[:date_from]).beginning_of_day
             scope = scope.where('completed_at >= ?', min)
           end
 
-          if opts[:completed_at_max]
-            max = Time.zone.parse(opts[:completed_at_max]).end_of_day
+          if opts[:date_to]
+            max = Time.zone.parse(opts[:date_to]).end_of_day
             scope = scope.where('completed_at <= ?', max)
           end
 
