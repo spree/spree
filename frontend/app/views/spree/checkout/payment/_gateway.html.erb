@@ -4,7 +4,7 @@
 
   <div class="payment-gateway-fields">
     <div class="mb-4 payment-gateway-field checkout-content-inner-field">
-      <%= text_field_tag "#{param_prefix}[name]", "#{@order.bill_address_firstname} #{@order.bill_address_lastname}", { id: "name_on_card_#{payment_method.id}", class: 'spree-flat-input', placeholder: Spree.t(:name_on_card)} %>
+      <%= text_field_tag "#{param_prefix}[name]", "#{@order.bill_address_firstname} #{@order.bill_address_lastname}", { id: "name_on_card", class: 'spree-flat-input', placeholder: Spree.t(:name_on_card)} %>
     </div>
 
     <div class="mb-4 payment-gateway-field checkout-content-inner-field" data-hook="card_number">
