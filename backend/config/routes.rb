@@ -151,6 +151,7 @@ Spree::Core::Engine.add_routes do
       resource :average_order_values, only: :show
       resource :top_products_by_unit_sold, only: :show, controller: :top_products_by_unit_sold
       resource :top_products_by_line_item_totals, only: :show
+      resource :customers, only: :show
     end
 
     resources :reimbursement_types
