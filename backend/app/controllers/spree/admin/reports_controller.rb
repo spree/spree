@@ -22,10 +22,20 @@ module Spree
       end
 
       def index
+        ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
+          Legacy reports are deprecated and will be removed in Spree 5.0.
+          Please use new reports.
+        DEPRECATION
+
         @reports = ReportsController.available_reports
       end
 
       def sales_total
+        ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
+          Legacy reports are deprecated and will be removed in Spree 5.0.
+          Please use new reports.
+        DEPRECATION
+
         params[:q] = {} unless params[:q]
 
         params[:q][:completed_at_gt] = if params[:q][:completed_at_gt].blank?
