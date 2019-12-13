@@ -72,7 +72,7 @@ describe 'Taxons Spec', type: :request do
 
       it 'returns taxons by ids' do
         expect(json_response['data'].size).to            eq(2)
-        expect(json_response['data'].pluck(:id).sort).to eq(taxons.map(&:id).sort.map(&:to_s))
+        expect(json_response['data'].pluck(:id).sort).to eq(taxons.map(&:id).map(&:to_s).sort)
       end
     end
 
