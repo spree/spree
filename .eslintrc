@@ -11,7 +11,13 @@ globals:
   Raphael: true
   SpreeAPI: true
   SpreePaths: true
+  CouponManager: true
+  ThumbnailsCarousel: true
 
 env:
   browser: true
   jquery: true
+
+rules:
+  space-before-function-paren: off
+  semi: off

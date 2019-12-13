@@ -28,7 +28,7 @@ describe 'Cart', type: :feature, inaccessible: true, js: true do
     expect(page).not_to have_content(product.name)
     expect(page).to have_content('Your cart is empty')
 
-    expect(page).to have_no_css ".cart-icon-count", visible: true
+    expect(page).to have_no_css '.cart-icon-count', visible: true
   end
 
   # regression for #2276

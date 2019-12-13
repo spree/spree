@@ -14,7 +14,7 @@ module Spree
         flash[:notice] = I18n.t(:successfully_created, scope: :address_book)
         redirect_to spree.account_path
       else
-        render :action => 'new'
+        render action: 'new'
       end
     end
 

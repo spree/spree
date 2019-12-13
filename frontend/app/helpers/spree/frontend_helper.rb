@@ -25,10 +25,10 @@ module Spree
       {
         success: 'success',
         registration_error: 'danger',
-        error:   'danger',
-        alert:   'danger',
+        error: 'danger',
+        alert: 'danger',
         warning: 'warning',
-        notice:  'success'
+        notice: 'success'
       }[flash_type.to_sym]
     end
 
@@ -44,9 +44,9 @@ module Spree
 
         if state_index < current_index
           css_classes << 'completed'
-          link_content = image_tag('full_circle.svg', class: "checkout-progress-steps-image")
+          link_content = image_tag('full_circle.svg', class: 'checkout-progress-steps-image')
           link_content << text
-          text = link_to(link_content, spree.checkout_state_path(state), class: "d-flex flex-column align-items-center", method: :get)
+          text = link_to(link_content, spree.checkout_state_path(state), class: 'd-flex flex-column align-items-center', method: :get)
         end
 
         css_classes << 'next' if state_index == current_index + 1
@@ -58,11 +58,11 @@ module Spree
         if state_index < current_index
           content_tag('li', text, class: css_classes.join(' '))
         else
-          if state == @order.state
-            link_content = image_tag('full_circle.svg', class: "checkout-progress-steps-image")
-          else
-            link_content = image_tag('circle.svg', class: "checkout-progress-steps-image")
-          end
+          link_content = if state == @order.state
+                           image_tag('full_circle.svg', class: 'checkout-progress-steps-image')
+                         else
+                           image_tag('circle.svg', class: 'checkout-progress-steps-image')
+                         end
           link_content << text
           content_tag('li', content_tag('a', link_content, class: "d-flex flex-column align-items-center #{'active' if state == @order.state}"), class: css_classes.join(' '))
         end
@@ -152,7 +152,7 @@ module Spree
       )
     end
 
-    def lazy_image(src:, alt:, width:, height:, srcset:'', **options)
+    def lazy_image(src:, alt:, width:, height:, srcset: '', **options)
       # We need placeholder image with the correct size to prevent page from jumping
       placeholder = "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20#{width}%20#{height}'%3E%3C/svg%3E"
 

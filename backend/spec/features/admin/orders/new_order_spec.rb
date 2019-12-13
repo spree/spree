@@ -176,7 +176,7 @@ describe 'New Order', type: :feature do
     fill_in "Street Address (cont'd)",   with: '#101'
     fill_in 'City',                      with: 'Bethesda'
     fill_in 'Zip',                       with: '20170'
-    select2 state.name,                   css: "#bstate"
+    select2 state.name,                   css: '#bstate'
     fill_in 'Phone',                     with: '123-456-7890'
   end
 

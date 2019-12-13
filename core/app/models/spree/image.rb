@@ -36,12 +36,12 @@ module Spree
 
       {
         url: polymorphic_path(attachment.variant(combine_options: {
-                                                    gravity: 'center',
-                                                    resize: size,
-                                                    extent: size,
-                                                    background: 'snow2',
-                                                    quality: 80
-                                                  }), only_path: true),
+                                                   gravity: 'center',
+                                                   resize: size,
+                                                   extent: size,
+                                                   background: 'snow2',
+                                                   quality: 80
+                                                 }), only_path: true),
         size: size,
         width: width,
         height: height

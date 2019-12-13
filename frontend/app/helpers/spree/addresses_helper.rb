@@ -8,7 +8,7 @@ module Spree
         else
           is_required = Spree::Address.required_fields.include?(method)
           separator = is_required ? '<span class="required">*</span><br />' : '<br />'
-          form.label(method, class: "text-uppercase") + separator.html_safe +
+          form.label(method, class: 'text-uppercase') + separator.html_safe +
             form.text_field(method, class: [is_required ? 'required' : nil, 'spree-flat-input'].compact, required: is_required)
         end
       end

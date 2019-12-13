@@ -32,6 +32,6 @@ PRODUCTS.each do |(parent_name, taxon_name, product_name)|
   end
 end
 
-["Bestsellers", "New", "Trending", "Streetstyle", "Summer Sale"].each do |taxon_name|
+['Bestsellers', 'New', 'Trending', 'Streetstyle', 'Summer Sale'].each do |taxon_name|
   Spree::Taxon.find_by!(name: taxon_name).products << Spree::Product.all.sample(30)
 end

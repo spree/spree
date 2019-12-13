@@ -13,7 +13,7 @@ module Spree
         end
 
         def retrieve_products
-          @products = get_extended_base_scope&.available
+          @products = extended_base_scope&.available
           curr_page = page || 1
 
           unless Spree::Config.show_products_without_price
@@ -33,7 +33,7 @@ module Spree
 
         protected
 
-        def get_extended_base_scope
+        def extended_base_scope
           base_scope = Spree::Product.spree_base_scopes.active
           base_scope = get_products_conditions_for(base_scope, keywords)
           base_scope = Spree::Products::Find.new(
@@ -46,7 +46,8 @@ module Spree
               },
               sort_by: sort_by
             },
-            current_currency: current_currency).execute
+            current_currency: current_currency
+          ).execute
           base_scope = add_search_scopes(base_scope)
           base_scope = add_eagerload_scopes(base_scope)
           base_scope

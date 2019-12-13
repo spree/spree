@@ -1,6 +1,6 @@
 Spree.ready(function($) {
   var $modalCarousel = $('#productModalThumbnailsCarousel')
-  new ThumbnailsCarousel($, $modalCarousel)
+  ThumbnailsCarousel($, $modalCarousel)
 
   var activeSingleImageIndex = function(sourceWrappingClass) {
     var $activeSingleImage = $('.' + sourceWrappingClass + ' .product-details-single [data-variant-id].active')

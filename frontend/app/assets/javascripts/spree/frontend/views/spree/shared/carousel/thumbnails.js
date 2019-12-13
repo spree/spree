@@ -130,5 +130,5 @@ Spree.ready(function($) {
 
   var $carousel = $('#productThumbnailsCarousel')
 
-  new ThumbnailsCarousel($, $carousel)
+  ThumbnailsCarousel($, $carousel)
 })

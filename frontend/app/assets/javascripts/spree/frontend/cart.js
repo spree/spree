@@ -11,7 +11,7 @@ Spree.ready(function ($) {
     $('form#update-cart input.shopping-cart-item-quantity-input').on('keyup', function(e) {
       var itemId = $(this).attr('data-id')
       var value = $(this).val()
-      var newValue = isNaN(value) || value === "" ? value : parseInt(value, 10)
+      var newValue = isNaN(value) || value === '' ? value : parseInt(value, 10)
       var targetInputs = $("form#update-cart input.shopping-cart-item-quantity-input[data-id='" + itemId + "']")
       $(targetInputs).val(newValue)
     })
