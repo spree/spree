@@ -6,7 +6,7 @@ module Spree
       def update
         if @address.editable?
           if @address.update(address_params)
-            flash[:notice] = Spree.t(:successfully_updated, resource: Spree.t(:address))
+            flash[:success] = Spree.t(:successfully_updated, resource: Spree.t(:address))
             redirect_to addresses_admin_user_path(@address.user)
           else
             render :edit
@@ -16,7 +16,7 @@ module Spree
           new_address.attributes = address_params
           @address.update_attribute(:deleted_at, Time.current)
           if new_address.save
-            flash[:notice] = Spree.t(:successfully_updated, resource: Spree.t(:address))
+            flash[:success] = Spree.t(:successfully_updated, resource: Spree.t(:address))
             redirect_to addresses_admin_user_path(@address.user)
           else
             render :edit
@@ -25,7 +25,7 @@ module Spree
       end
 
       private
-  
+
       def address_params
         params[:address].permit(
           :address,
