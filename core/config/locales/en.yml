@@ -735,6 +735,7 @@ en:
     current: Current
     current_promotion_usage: ! 'Current Usage: %{count}'
     customer: Customer
+    customers: Customers
     customer_details: Customer Details
     customer_details_updated: Customer Details Updated
     customer_return: Customer Return
@@ -1667,6 +1668,7 @@ en:
     total_customers: Total customers
     total_orders: Total Orders
     top_products_by_unit_sold: Top Products By Unit Sold
+    top_products_by_line_item_totals: Top Products By Line Item Totals
     average_order_value: Average Order Value
     orders_count: Orders Count
     total_per_item: Total per item
