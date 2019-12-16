@@ -167,7 +167,7 @@
         margin-bottom: 58px;
       }
       @include media-breakpoint-up(lg) {
-        font-size: font-px-to-rem(32px);
+        font-size: font-px-to-rem(26px);
         letter-spacing: 0.65px;
         margin-bottom: 40px;
       }
@@ -194,11 +194,20 @@
       }
 
       &-field {
+        input::-webkit-input-placeholder {
+          text-transform: uppercase;
+        }
         @include media-breakpoint-up(sm) {
           margin-top: 33px;
         }
         @include media-breakpoint-up(lg) {
           margin-top: 0;
+        }
+      }
+
+      &-half-fields {
+        > .payment-gateway-field {
+          flex-basis: 48%;
         }
       }
     }
@@ -471,8 +480,6 @@
     }
 
     #checkout-summary {
-      border-top: 1px solid theme-color('borders');
-
       @include media-breakpoint-up(sm) {
         margin-top: 71px;
         border: none;
@@ -485,10 +492,6 @@
 
     #checkout_form_confirm {
       justify-content: flex-end;
-
-      #checkout-summary {
-        border-top: none !important;
-      }
     }
   }
 }

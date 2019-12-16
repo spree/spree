@@ -221,6 +221,8 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
     end
 
     it 'allows user to enter a new source' do
+      find('label', text: 'Add a new card').click
+
       fill_in_credit_card_info
 
       expect { click_on 'Save and Continue' }.to change { Spree::CreditCard.count }.by 1
