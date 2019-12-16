@@ -27,7 +27,7 @@ PRODUCTS.each do |(parent_name, taxon_name, product_name)|
     product.option_types = [color, size]
     product.shipping_category = default_shipping_category
     product.tax_category = clothing_tax_category
-    product.sku = "#{product_name.delete(' ')}_#{product.price}"
+    product.sku = [taxon_name.delete(' '), product_name.delete(' '), product.price].join('_')
     parent.products << product
   end
 end
