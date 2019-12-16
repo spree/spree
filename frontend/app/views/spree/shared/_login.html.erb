@@ -22,7 +22,7 @@
   <%= f.submit Spree.t(:log_in), class: 'btn btn-primary btn-block spree-btn mt-2', tabindex: 4 %>
 <% end %>
 
-<% if spree.responds_to?(:recover_password_path) %>
+<% if spree.respond_to?(:recover_password_path) %>
   <div class="text-center forgot-password mb-4">
     <%= link_to Spree.t(:forgot_password), spree.recover_password_path %>
   </div>
