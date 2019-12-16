@@ -9,23 +9,18 @@
   </head>
   <body class="<%= body_class %>" id="<%= @body_id || 'default' %>" data-hook="body">
     <%= render partial: 'spree/shared/header' %>
+    <div id="overlay" class="overlay hide-on-esc"></div>
 
-    <div class="container">
-      <div class="row" data-hook>
-        <%= spree_breadcrumbs(@taxon) %>
+    <div data-hook>
+      <main id="content" data-hook>
+        <%= flash_messages %>
+        <%= yield %>
+      </main>
 
-        <%= render partial: 'spree/shared/sidebar' if content_for? :sidebar %>
-
-        <main
-          id="content"
-          class="mt-4 <%= !content_for?(:sidebar) ? "col-sm-12" : "col-sm-12 col-md-9" %>"
-          data-hook>
-          <%= flash_messages %>
-          <%= yield %>
-        </main>
-
-        <%= yield :templates %>
-      </div>
+      <%= yield :templates %>
     </div>
+
+    <%= render partial: 'spree/shared/footer' %>
+    <%= render 'spree/shared/translations' %>
   </body>
 </html>

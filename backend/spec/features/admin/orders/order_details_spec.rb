@@ -238,7 +238,7 @@ describe 'Order Details', type: :feature, js: true do
 
         it 'should warn you if you have not selected a location or shipment' do
           within_row(1) { click_icon :split }
-          accept_alert "Please select the split destination" do
+          accept_alert 'Please select the split destination' do
             click_icon :save
           end
         end
@@ -303,7 +303,7 @@ describe 'Order Details', type: :feature, js: true do
             select2 stock_location2.name, css: '.stock-item-split', search: true, match: :first
             fill_in 'item_quantity', with: 'ff'
 
-            page.accept_confirm "quantity is negative" do
+            page.accept_confirm 'quantity is negative' do
               click_icon :save
             end
 
@@ -319,7 +319,7 @@ describe 'Order Details', type: :feature, js: true do
             select2 stock_location2.name, css: '.stock-item-split', search: true, match: :first
             fill_in 'item_quantity', with: 0
 
-            page.accept_confirm "quantity is negative" do
+            page.accept_confirm 'quantity is negative' do
               click_icon :save
             end
 
@@ -329,7 +329,7 @@ describe 'Order Details', type: :feature, js: true do
 
             fill_in 'item_quantity', with: -1
 
-            page.accept_confirm "quantity is negative" do
+            page.accept_confirm 'quantity is negative' do
               click_icon :save
             end
 
@@ -527,7 +527,7 @@ describe 'Order Details', type: :feature, js: true do
             select2 order.shipments.first.number, css: '.stock-item-split', search: true, match: :first
             fill_in 'item_quantity', with: 1
 
-            page.accept_confirm "target shipment is the same as original shipment" do
+            page.accept_confirm 'target shipment is the same as original shipment' do
               click_icon :save
             end
 

@@ -15,9 +15,9 @@ describe Spree::Variants::OptionTypesPresenter do
   let!(:option_value_2_2) { create :option_value, option_type: option_type_2, position: 1 }
 
   let(:option_types) do
-    Spree::OptionType
-      .eager_load(option_values: :variants)
-      .reorder("spree_option_types.position ASC, spree_option_values.position ASC")
+    Spree::OptionType.
+      eager_load(option_values: :variants).
+      reorder('spree_option_types.position ASC, spree_option_values.position ASC')
   end
 
   describe '#default_variant' do
@@ -48,7 +48,7 @@ describe Spree::Variants::OptionTypesPresenter do
       end
     end
 
-    context "without Option Types" do
+    context 'without Option Types' do
       let(:option_types) { [] }
 
       it { is_expected.to eq(nil) }
@@ -109,7 +109,7 @@ describe Spree::Variants::OptionTypesPresenter do
       )
     end
 
-    context "without Option Types" do
+    context 'without Option Types' do
       let(:option_types) { [] }
 
       it { is_expected.to eq([]) }

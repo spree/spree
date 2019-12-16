@@ -45,7 +45,7 @@ describe 'JSON-LD hashes', type: :feature, inaccessible: true do
 
   context 'home page' do
     it_behaves_like 'it contains products in JSON-LD hash',
-                    Spree::Product.active.all
+                    Spree::Product.joins(:taxons).where(spree_taxons: { name: 'Trending' })
   end
 
   context 'products page' do
@@ -56,14 +56,22 @@ describe 'JSON-LD hashes', type: :feature, inaccessible: true do
   end
 
   context 'product page' do
-    before { click_link 'Ruby on Rails Baseball Jersey' }
+    before do
+      product = Spree::Product.find_by(name: 'Ruby on Rails Baseball Jersey')
+
+      visit spree.product_path(product)
+    end
 
     it_behaves_like 'it contains products in JSON-LD hash',
                     Spree::Product.where(name: 'Ruby on Rails Baseball Jersey')
   end
 
   context 'taxon page' do
-    before { click_link 'Bags' }
+    before do
+      taxon = Spree::Taxon.find_by(name: 'Bags')
+
+      visit spree.nested_taxons_path(taxon)
+    end
 
     it_behaves_like 'it contains products in JSON-LD hash',
                     Spree::Product.where(name: ['Ruby on Rails Tote', 'Ruby on Rails Bag'])

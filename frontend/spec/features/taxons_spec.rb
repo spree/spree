@@ -21,7 +21,8 @@ describe 'viewing products', type: :feature, inaccessible: true do
   end
 
   it 'does not show nested taxons with a search' do
-    visit '/t/category/super-clothing?keywords=shirt'
+    visit '/products?keywords=shirt'
+
     expect(page).to have_content('Superman T-Shirt')
     expect(page).not_to have_selector("div[data-hook='taxon_children']")
   end
@@ -33,9 +34,6 @@ describe 'viewing products', type: :feature, inaccessible: true do
 
     it 'renders breadcrumbs' do
       expect(page.find('#breadcrumbs')).to have_link('T-Shirts')
-    end
-    it 'marks last breadcrumb as active' do
-      expect(page.find('#breadcrumbs .active')).to have_link('T-Shirts')
     end
   end
 
@@ -62,7 +60,8 @@ describe 'viewing products', type: :feature, inaccessible: true do
     it "doesn't use meta_title as heading on page" do
       t_shirts.update metas
       visit '/t/category/super-clothing/t-shirts'
-      within('h1.taxon-title') do
+
+      within('.taxon-title') do
         expect(page).to have_content(t_shirts.name)
       end
     end
@@ -76,16 +75,13 @@ describe 'viewing products', type: :feature, inaccessible: true do
 
   context 'taxon pages' do
     include_context 'custom products'
-    before do
-      visit spree.root_path
-    end
 
     it 'is able to visit brand Ruby on Rails' do
-      within(:css, '#taxonomies') { click_link 'Ruby on Rails' }
+      visit '/t/brands/ruby-on-rails'
 
-      expect(page).to have_css('#products .product-list-item').exactly(7).times
-      tmp = page.all('#products .product-list-item a').map(&:text).flatten.compact
-      tmp.delete('')
+      expect(page).to have_css('.product-component-name').exactly(7).times
+
+      tmp = page.all('.product-component-name').map(&:text).flatten.compact
       array = ['Ruby on Rails Bag',
                'Ruby on Rails Baseball Jersey',
                'Ruby on Rails Jr. Spaghetti',
@@ -97,29 +93,27 @@ describe 'viewing products', type: :feature, inaccessible: true do
     end
 
     it 'is able to visit brand Ruby' do
-      within(:css, '#taxonomies') { click_link 'Ruby' }
+      visit '/t/brands/ruby'
 
-      expect(page).to have_css('#products .product-list-item').once
-      tmp = page.all('#products .product-list-item a').map(&:text).flatten.compact
-      tmp.delete('')
+      expect(page).to have_css('.product-component-name').once
+
+      tmp = page.all('.product-component-name').map(&:text).flatten.compact
       expect(tmp.sort!).to eq(['Ruby Baseball Jersey'])
     end
 
     it 'is able to visit brand Apache' do
-      within(:css, '#taxonomies') { click_link 'Apache' }
+      visit '/t/brands/apache'
 
-      expect(page).to have_css('#products .product-list-item').once
-      tmp = page.all('#products .product-list-item a').map(&:text).flatten.compact
-      tmp.delete('')
+      expect(page).to have_css('.product-component-name').once
+      tmp = page.all('.product-component-name').map(&:text).flatten.compact
       expect(tmp.sort!).to eq(['Apache Baseball Jersey'])
     end
 
     it 'is able to visit category Clothing' do
-      click_link 'Clothing'
+      visit '/t/categories/clothing'
 
-      expect(page).to have_css('#products .product-list-item').exactly(5).times
-      tmp = page.all('#products .product-list-item a').map(&:text).flatten.compact
-      tmp.delete('')
+      expect(page).to have_css('.product-component-name').exactly(5).times
+      tmp = page.all('.product-component-name').map(&:text).flatten.compact
       expect(tmp.sort!).to eq(['Apache Baseball Jersey',
                                'Ruby Baseball Jersey',
                                'Ruby on Rails Baseball Jersey',
@@ -128,20 +122,18 @@ describe 'viewing products', type: :feature, inaccessible: true do
     end
 
     it 'is able to visit category Mugs' do
-      click_link 'Mugs'
+      visit '/t/categories/mugs'
 
-      expect(page).to have_css('#products .product-list-item').twice
-      tmp = page.all('#products .product-list-item a').map(&:text).flatten.compact
-      tmp.delete('')
+      expect(page).to have_css('.product-component-name').twice
+      tmp = page.all('.product-component-name').map(&:text).flatten.compact
       expect(tmp.sort!).to eq(['Ruby on Rails Mug', 'Ruby on Rails Stein'])
     end
 
     it 'is able to visit category Bags' do
-      click_link 'Bags'
+      visit '/t/categories/bags'
 
-      expect(page).to have_css('#products .product-list-item').twice
-      tmp = page.all('#products .product-list-item a').map(&:text).flatten.compact
-      tmp.delete('')
+      expect(page).to have_css('.product-component-name').twice
+      tmp = page.all('.product-component-name').map(&:text).flatten.compact
       expect(tmp.sort!).to eq(['Ruby on Rails Bag', 'Ruby on Rails Tote'])
     end
   end

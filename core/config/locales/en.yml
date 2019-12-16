@@ -97,6 +97,7 @@ en:
         on_hand: On Hand
         shipping_category: Shipping Category
         tax_category: Tax Category
+        less_than: Less than
       spree/promotion:
         advertise: Advertise
         code: Code
@@ -468,6 +469,7 @@ en:
     activate: Activate
     active: Active
     add: Add
+    add_new_credit_card: Add a new card
     add_action_of_type: Add action of type
     add_country: Add Country
     add_coupon_code: Add Coupon Code
@@ -485,7 +487,7 @@ en:
     add_variant: Add Variant
     add_store: New Store
     add_store_credit: Add Store Credit
-    added_to_cart: 'Added to bag successfully!'
+    added_to_cart: Added to bag successfully!
     additional_item: Additional Item
     address: Address
     address1: Address
@@ -704,6 +706,7 @@ en:
     coupon_code_max_usage: Coupon code usage limit exceeded
     coupon_code_not_eligible: This coupon code is not eligible for this order
     coupon_code_not_found: The coupon code you entered doesn't exist. Please try again.
+    coupon_code_removed: The coupon code was successfully removed from your order.
     coupon_code_unknown_error: This coupon code could not be applied to the cart at this time.
     create: Create
     create_a_new_account: Create a new account
@@ -728,6 +731,7 @@ en:
     customer_returns: Customer Returns
     customer_search: Customer Search
     cut: Cut
+    cvv: CVV
     cvv_response: CVV Response
     date: Date
     date_completed: Date Completed
@@ -819,6 +823,7 @@ en:
     expedited_exchanges_warning: "Any specified exchanges will ship to the customer immediately upon saving. The customer will be charged the full amount of the item if they do not return the original item within %{days_window} days."
     excl: excl.
     expiration: Expiration
+    expiration_date: Expiration Date
     extension: Extension
     extensions_directory: Extensions Directory
     existing_shipments: Existing shipments
@@ -891,6 +896,7 @@ en:
     images: Images
     implement_eligible_for_return: "Must implement #eligible_for_return? for your EligibilityValidator."
     implement_requires_manual_intervention: "Must implement #requires_manual_intervention? for your EligibilityValidator."
+    in_stock: In Stock
     inactive: Inactive
     incl: incl.
     included_in_price: Included in Price
@@ -1544,12 +1550,12 @@ en:
       authorized: "Authorized"
       captured: "Used"
       allocated: "Added"
-      apply: Apply Store Credit
-      remove: Remove Store Credit
-      applicable_amount: "%{amount} in store credit will be applied to this order."
-      available_amount: "You have %{amount} in Store Credit available!"
-      remaining_amount: "You have %{amount} remaining in your account's Store Credit."
-      additional_payment_needed: Select another payment method for the remaining %{amount}.
+      apply: Apply
+      remove: Remove
+      applicable_amount: "<strong>%{amount}</strong> in store credit will be applied to this order."
+      available_amount: "You have <strong>%{amount}</strong> in Store Credit available!"
+      remaining_amount: "You have <strong>%{amount}</strong> remaining in your account's Store Credit."
+      additional_payment_needed: Select another payment method for the remaining <strong>%{amount}</strong>.
       errors:
         cannot_change_used_store_credit: You cannot change a store credit that has already been used
         unable_to_create: Unable to create store credit
@@ -1690,3 +1696,20 @@ en:
     zipcode: Zip Code
     zone: Zone
     zones: Zones
+  navigation:
+    categories:
+      women: women
+      men: men
+      sportswear: sportswear
+    subcategories:
+      dresses: dresses
+      jackets_and_coats: jackets & coats
+      shirts_and_blouses: shirts & blouses
+      skirts: skirts
+      sweaters: sweaters
+      t_shirts_and_tops: tops & t-shirts
+      shirts: shirts
+      t_shirts: t-shirts
+      pants: pants
+      sweatshirts: sweatshirts
+      tops: tops
