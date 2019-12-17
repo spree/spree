@@ -95,7 +95,7 @@ module Spree
           product_or_variant.product.variant_images.first
         end
       else
-        product.images.first
+        product_or_variant.images.first
       end
     end
 
