@@ -767,7 +767,7 @@ en:
     edit: Edit
     editing_resource: 'Editing %{resource}'
     editing_rma_reason: Editing RMA Reason
-    editing_user: Editing User
+    editing_user: Edit Your account
     eligibility_errors:
       messages:
         has_excluded_product: Your cart contains a product that prevents this coupon code from being applied.

@@ -21,6 +21,9 @@
   &:focus {
     border-color: theme-color('primary');
   }
+  &::placeholder {
+    text-transform: uppercase;
+  }
 }
 
 .spree-flat-select {
