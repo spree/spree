@@ -191,4 +191,52 @@ describe Spree::BaseHelper, type: :helper do
       end
     end
   end
+
+  describe '#default_image_for_product_or_variant' do
+    let(:product) { build :product }
+    let(:variant) { build :variant, product: product }
+
+    subject(:default_image) { default_image_for_product_or_variant(product_or_variant) }
+
+    context 'when Product passed' do
+      let(:product_or_variant) { product }
+
+      it { is_expected.to eq(nil) }
+
+      context 'and Variant has images' do
+        let!(:image_1) { create :image, viewable: variant }
+        let!(:image_2) { create :image, viewable: variant }
+
+        it { is_expected.to eq(image_1) }
+      end
+
+      context 'and master Variant has images' do
+        let!(:image_1) { create :image, viewable: product.master }
+        let!(:image_2) { create :image, viewable: product.master }
+
+        it { is_expected.to eq(image_1) }
+      end
+    end
+
+    context 'when Variant passed' do
+      let(:product_or_variant) { variant }
+
+      it { is_expected.to eq(nil) }
+
+      context 'and Variant has images' do
+        let!(:image_1) { create :image, viewable: variant }
+        let!(:image_2) { create :image, viewable: variant }
+
+        it { is_expected.to eq(image_1) }
+      end
+
+      context 'and another Variant of the Product has images' do
+        let(:variant_2) { build :variant, product: product }
+        let!(:image_1) { create :image, viewable: variant_2 }
+        let!(:image_2) { create :image, viewable: variant_2 }
+
+        it { is_expected.to eq(image_1) }
+      end
+    end
+  end
 end
