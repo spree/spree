@@ -25,7 +25,7 @@ module Spree
         expect(messages).to have_css ".alert-#{class_for('notice')}", text: 'ok'
         expect(messages).not_to have_css ".alert-#{class_for('error')}", text: 'foo'
         expect(messages).not_to have_css ".alert-#{class_for('warning')}", text: 'bar'
-        expect(messages).to eq('<div class="alert alert-success mb-0"><button class="close" data-dismiss="alert" data-hidden="true"><span>ok</span></button></div>')
+        expect(messages).to eq('<div class="alert alert-success mb-0"><button class="close" data-dismiss="alert" data-hidden="true">&times;</button><span>ok</span></div>')
       end
     end
 
