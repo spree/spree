@@ -14,9 +14,7 @@
           <%= "#{@products.total_count} #{Spree.t('plp.results_for')} '#{params[:keywords].upcase}'" %>
         </div>
       </div>
-    <% end %>
-
-    <% unless @taxon %>
+    <% elsif not @taxon %>
       <div id="no-taxon-banner">
         <div class="container">
           <%= lazy_image(
