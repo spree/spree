@@ -6,7 +6,6 @@ module Spree
     def index
       @bestsellers_products = load_taxon_products('Bestsellers')
       @trending_products = load_taxon_products('Trending')
-      @taxonomies = Spree::Taxonomy.includes(root: :children)
 
       @combined_products = [@bestsellers_products, @trending_products].flatten.uniq
     end
