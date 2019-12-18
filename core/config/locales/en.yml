@@ -16,6 +16,7 @@ en:
         address1: Address
         address2: Address (contd.)
         city: City
+        company: Company
         country: Country
         firstname: First Name
         lastname: Last Name

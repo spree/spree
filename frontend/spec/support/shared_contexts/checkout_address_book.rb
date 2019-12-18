@@ -29,7 +29,7 @@ shared_context 'checkout address book' do
     expect(page).to have_field('Last Name')
     expect(page).to have_field(I18n.t('activerecord.attributes.spree/address.address1'))
     expect(page).to have_field('City')
-    expect(page).to have_field('Country')
+    expect(page).to have_field(id: /order_(bill|ship)_address_attributes_country_id/)
     expect(page).to have_field(I18n.t('activerecord.attributes.spree/address.zipcode'))
     expect(page).to have_field(I18n.t('activerecord.attributes.spree/address.phone'))
   end
