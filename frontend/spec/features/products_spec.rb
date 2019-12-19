@@ -3,6 +3,8 @@ require 'spec_helper'
 describe 'Visiting Products', type: :feature, inaccessible: true do
   include_context 'custom products'
 
+  let(:store) { Spree::Store.default }
+
   let(:store_name) do
     ((first_store = Spree::Store.first) && first_store.name).to_s
   end
@@ -67,12 +69,12 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
 
   context 'using Russian Rubles as a currency' do
     before do
-      Spree::Config[:currency] = 'RUB'
+      store.update(default_currency: 'RUB')
     end
 
     let!(:product) do
       product = Spree::Product.find_by(name: 'Ruby on Rails Ringer T-Shirt')
-      product.price = 19.99
+      product.master.prices.create(amount: 19.99, currency: 'RUB')
       product.tap(&:save)
     end
 
@@ -232,7 +234,7 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
   it 'is able to hide products without price' do
     expect(page).to have_css('.product-component-name').exactly(9).times
     Spree::Config.show_products_without_price = false
-    Spree::Config.currency = 'CAD'
+    store.update(default_currency: 'CAD')
     visit spree.products_path
     expect(page).not_to have_css('.product-component-name')
   end
@@ -294,7 +296,7 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
 
   it 'is not able to put a product without a current price in the cart' do
     product = FactoryBot.create(:base_product, description: nil, name: 'Sample', price: '19.99')
-    Spree::Config.currency = 'CAN'
+    store.update(default_currency: 'CAN')
     Spree::Config.show_products_without_price = true
     visit spree.product_path(product)
     expect(page).to have_content 'This product is not available in the selected currency.'

@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 class FakesController < ApplicationController
+  include Spree::Core::ControllerHelpers::Store
   include Spree::Core::ControllerHelpers::Order
 end
 
@@ -8,8 +9,8 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
   controller(FakesController) {}
 
   let(:user) { create(:user) }
-  let(:order) { create(:order, user: user) }
-  let(:store) { create(:store) }
+  let(:order) { create(:order, user: user, store: store) }
+  let!(:store) { create(:store, default: true, default_currency: 'USD') }
 
   describe '#simple_current_order' do
     before { allow(controller).to receive_messages(try_spree_current_user: user) }
@@ -56,7 +57,7 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
 
       before do
         expect(controller).to receive(:current_order_params).and_return(
-          currency: Spree::Config[:currency], token: 'token', store_id: guest_order.store_id, user_id: user.id
+          currency: store.default_currency, token: 'token', store_id: guest_order.store_id, user_id: user.id
         )
       end
 
@@ -105,7 +106,6 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
 
   describe '#current_currency' do
     it 'returns current currency' do
-      Spree::Config[:currency] = 'USD'
       expect(controller.current_currency).to eq 'USD'
     end
   end
