@@ -123,6 +123,15 @@
       letter-spacing: 0.35px;
     }
 
+    &-link {
+      @include media-breakpoint-between(sm, md) {
+        svg {
+          height: 30px;
+          width: 30px;
+        }
+      }
+    }
+
     @include media-breakpoint-up(sm) {
       font-size: font-px-to-rem(30px);
       &-header {

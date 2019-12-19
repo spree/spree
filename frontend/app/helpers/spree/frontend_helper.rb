@@ -238,5 +238,11 @@ module Spree
         image_tag 'credit_cards/icons/generic.svg', class: 'payment-sources-list-item-image'
       end
     end
+
+    def checkout_edit_link(step = 'address')
+      link_to spree.checkout_state_path(step), class: 'align-text-bottom checkout-confirm-delivery-informations-link' do
+        inline_svg_tag 'edit.svg'
+      end
+    end
   end
 end
