@@ -38,19 +38,31 @@
     </div>
     <dl>
       <div>
-        <dt><%= Spree.t(:shipping_address) %></dt>
+        <dt>
+          <%= Spree.t(:shipping_address) %>
+          <%= checkout_edit_link %>
+        </dt>
         <dd><%= sanitize @order.ship_address.to_s, tags: %w[br] %></dd>
       </div>
       <div>
-        <dt><%= Spree.t(:billing_address) %></dt>
+        <dt>
+          <%= Spree.t(:billing_address) %>
+          <%= checkout_edit_link %>
+        </dt>
         <dd><%= sanitize @order.bill_address.to_s, tags: %w[br] %></dd>
       </div>
       <div>
-        <dt><%= Spree.t(:shipping) %></dt>
+        <dt>
+          <%= Spree.t(:shipping) %>
+          <%= checkout_edit_link('delivery') %>
+        </dt>
         <dd><%= @order.shipments.first.shipping_method&.name if @order.shipments.any? %></dd>
       </div>
       <div>
-        <dt class="text-uppercase"><%= Spree.t(:payment) %></dt>
+        <dt class="text-uppercase">
+          <%= Spree.t(:payment) %>
+          <%= checkout_edit_link('payment') %>
+        </dt>
         <dd>
           <%= render collection: @order.payments.valid, partial: 'spree/shared/payment' %>
         </dd>
