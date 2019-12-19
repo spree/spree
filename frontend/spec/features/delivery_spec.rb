@@ -36,14 +36,14 @@ describe 'Delivery', type: :feature, inaccessible: true, js: true do
     end
 
     it 'contains the shipping total' do
-      expect(page).to have_content('Shipping total: $10.00')
+      page.has_text? 'SHIPPING: $10.00'
     end
 
     context 'shipping method is changed' do
       before { find('label', text: shipping_method2.name).click }
 
       it 'shipping total and order total both are updates' do
-        expect(page).to have_content('Shipping total: $20.00')
+        page.has_text? 'SHIPPING: $20.00'
       end
     end
   end
@@ -64,11 +64,11 @@ describe 'Delivery', type: :feature, inaccessible: true, js: true do
     end
 
     it 'calculates shipping total correctly with different currency marker' do
-      expect(page).to have_content('Shipping total: $20,00')
+      page.has_text? 'SHIPPING: $20,00'
     end
 
     it 'calculates order total correctly with different currency marker' do
-      expect(page).to have_content('Order Total: $39,99')
+      page.has_text? 'ORDER TOTAL: $39,99'
     end
   end
 
