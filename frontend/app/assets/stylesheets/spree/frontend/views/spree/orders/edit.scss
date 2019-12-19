@@ -82,7 +82,7 @@
       .d-lg-table-cell {
         &:first-child {
           padding: 22px 16px 22px 0;
-          vertical-align: middle;
+          vertical-align: top;
           @include media-breakpoint-up(sm) {
             padding-right: 29.9px;
           }
@@ -115,11 +115,18 @@
     }
 
     &-image {
-      width: 100px;
+      width: 120px;
       text-align: center;
       @include media-breakpoint-up(lg) {
         width: 190px;
         height: 246px;
+      }
+
+      img {
+        width: 100%;
+        @include media-breakpoint-up(sm) {
+          width: auto;
+        }
       }
     }
     &-description {
