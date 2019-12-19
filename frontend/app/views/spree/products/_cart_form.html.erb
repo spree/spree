@@ -22,7 +22,7 @@
     'data-variant-change-trigger-identifier': variant_change_identifier
   } do |f| %>
   <div id="inside-product-cart-form" data-hook="inside_product_cart_form">
-    <% is_product_available_in_currency = @product.price_in(current_currency) && !@product.price.nil? %>
+    <% is_product_available_in_currency = !(@product.price_in(current_currency).amount.nil? || @product.price_in(current_currency).amount.zero?) %>
     <% default_variant = default_variant(@variants) %>
 
     <% if is_product_available_in_currency %>
