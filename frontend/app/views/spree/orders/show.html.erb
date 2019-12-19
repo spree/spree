@@ -45,7 +45,11 @@
             <%= item.name %>
           </span>
           <span class="order-show-line-items-line-item-desc-subtitle d-none d-lg-block text-break">
-            <%= item.description %>
+            <ul class="list-unstyled">
+              <% item.variant.option_values.sort { |ov| ov.option_type.position }.each do |ov| %>
+                <li><%= "#{ov.option_type.presentation}: #{ov.name.titleize}" %></li>
+              <% end %>
+            </ul>
           </span>
           <div class="order-show-line-items-line-item-desc-price">
             <div class="order-show-line-items-line-item-desc-attr-name d-none d-lg-block">Price</div>
