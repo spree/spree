@@ -5,8 +5,6 @@ module Spree
     before_action :load_product, :load_variants, only: :show
     before_action :load_taxon, only: :index
 
-    helper 'spree/taxons'
-
     respond_to :html
 
     def index
