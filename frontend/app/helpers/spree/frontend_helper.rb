@@ -227,7 +227,7 @@ module Spree
       static_filters = %w(keywords price sort_by)
 
       @option_types.
-        map { |option_type| option_type.presentation.titleize.delete(' ', '').downcase }.
+        map { |option_type| option_type.presentation.titleize.delete(' ').downcase }.
         concat(static_filters)
     end
 
