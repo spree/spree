@@ -48,8 +48,11 @@
     <div class="container">
       <div class="row">
         <div class="col-12">
-          <div class="plp-pagination">
-            <%= paginate @products, theme: 'twitter-bootstrap-4' %>
+          <div class="plp-pagination d-none d-lg-flex">
+            <%= paginate @products , theme: 'twitter-bootstrap-4' %>
+          </div>
+          <div class="plp-pagination d-lg-none">
+            <%= paginate @products , window: 2, theme: 'twitter-bootstrap-4' %>
           </div>
         </div>
       </div>
