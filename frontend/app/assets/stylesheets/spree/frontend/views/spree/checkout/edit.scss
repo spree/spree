@@ -361,7 +361,7 @@
         margin-bottom: 69px;
       }
       @include media-breakpoint-up(lg) {
-        padding: 35px 60px;
+        padding: 35px 40px;
         margin-bottom: 100px;
       }
       &-header {
@@ -395,7 +395,7 @@
           font-size: font-px-to-rem(24px);
         }
         @include media-breakpoint-up(lg) {
-          font-size: font-px-to-rem(18px);
+          font-size: font-px-to-rem(16px);
         }
         .d-table-cell {
           @include media-breakpoint-up(lg) {
@@ -409,7 +409,7 @@
             font-weight: 600;
           }
           @include media-breakpoint-up(lg) {
-            font-size: font-px-to-rem(20px);
+            font-size: font-px-to-rem(18px);
           }
         }
         &-order-total {
@@ -429,14 +429,14 @@
             margin-top: 20px;
           }
           @include media-breakpoint-up(lg) {
-            font-size: font-px-to-rem(20px);
+            font-size: font-px-to-rem(16px);
             padding: 5px 0;
             margin-top: 0;
           }
           .d-table-cell {
             @include media-breakpoint-up(lg) {
               &:last-child {
-                font-size: font-px-to-rem(24px);
+                font-size: font-px-to-rem(20px);
               }
             }
           }
@@ -490,6 +490,7 @@
 
       @include media-breakpoint-up(lg) {
         padding: 0;
+        min-width: 380px;
       }
     }
 
