@@ -395,7 +395,7 @@
           font-size: font-px-to-rem(24px);
         }
         @include media-breakpoint-up(lg) {
-          font-size: font-px-to-rem(16px);
+          font-size: font-px-to-rem(18px);
         }
         .d-table-cell {
           @include media-breakpoint-up(lg) {
@@ -407,6 +407,9 @@
         .d-table-cell.text-right {
           @include media-breakpoint-up(sm) {
             font-weight: 600;
+          }
+          @include media-breakpoint-up(lg) {
+            font-size: font-px-to-rem(20px);
           }
         }
         &-order-total {
@@ -426,14 +429,14 @@
             margin-top: 20px;
           }
           @include media-breakpoint-up(lg) {
-            font-size: font-px-to-rem(16px);
+            font-size: font-px-to-rem(20px);
             padding: 5px 0;
             margin-top: 0;
           }
           .d-table-cell {
             @include media-breakpoint-up(lg) {
               &:last-child {
-                font-size: font-px-to-rem(20px);
+                font-size: font-px-to-rem(24px);
               }
             }
           }

@@ -60,7 +60,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
         click_button 'Save and Continue'
         expect(page).not_to have_content("undefined method `promotion'")
         click_button 'Save and Continue'
-        expect(page).to have_content('Shipping total: $10.00')
+        page.has_text? ('SHIPPING: $10.00')
       end
     end
 
@@ -346,7 +346,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
       fill_in_credit_card_info
       click_on 'Save and Continue'
 
-      expect(page).to have_content(promotion.name)
+      expect(page).to have_content(promotion.name.upcase)
       expect(Spree::Payment.first.amount.to_f).to eq Spree::Order.last.total.to_f
     end
 

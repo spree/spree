@@ -39,7 +39,7 @@ describe 'Automatic promotions', type: :feature, js: true do
       find('.shopping-cart-header').click
 
       click_link 'checkout'
-      expect(page).to have_content('Promotion ($10 off when you spend more than $100)')
+      expect(page).to have_content('PROMOTION ($10 OFF WHEN YOU SPEND MORE THAN $100)')
 
       visit '/cart'
 
@@ -48,7 +48,7 @@ describe 'Automatic promotions', type: :feature, js: true do
 
       click_link 'checkout'
 
-      expect(page).not_to have_content('Promotion ($10 off when you spend more than $100)')
+      expect(page).not_to have_content('PROMOTION ($10 OFF WHEN YOU SPEND MORE THAN $100)')
     end
   end
 end
