@@ -440,11 +440,6 @@
           }
         }
       }
-      #checkout_form_confirm & {
-        @include media-breakpoint-up(lg) {
-          background-color: white;
-        }
-      }
     }
     &-save-continue-button {
       margin-bottom: 32px;
