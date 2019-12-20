@@ -68,7 +68,7 @@ module Spree
         quality: 80
       )
 
-      polymorphic_path(variant)
+      polymorphic_path(variant, only_path: true)
     end
   end
 end
