@@ -61,19 +61,17 @@
       </ul>
     <% end %>
 
-    <% if is_product_available_in_currency && @product.can_supply? %>
-      <%= hidden_field_tag "variant_id", default_variant.id %>
+    <%= hidden_field_tag "variant_id", default_variant.id %>
 
-      <hr>
-      <div>
-        <div class="mb-5 mt-4">
-          <%= render 'spree/shared/quantity_select', input_name: :quantity %>
-        </div>
-
-        <%= button_tag class: 'btn btn-primary w-100 text-uppercase font-weight-bold add-to-cart-button', id: 'add-to-cart-button', type: :submit, disabled: true do %>
-          <%= Spree.t(:add_to_cart) %>
-        <% end %>
+    <hr>
+    <div>
+      <div class="mb-5 mt-4">
+        <%= render 'spree/shared/quantity_select', input_name: :quantity %>
       </div>
-    <% end %>
+
+      <%= button_tag class: 'btn btn-primary w-100 text-uppercase font-weight-bold add-to-cart-button', id: 'add-to-cart-button', type: :submit, disabled: true do %>
+        <%= Spree.t(:add_to_cart) %>
+      <% end %>
+    </div>
   </div>
 <% end %>
