@@ -11,3 +11,4 @@ $thumbnails-carousel-single-height-zoom: 100% /
 $zoom-height-breakpoint: calc(
   650px / #{$photo-width-to-height-ratio-zoom} + 102px * 2
 );
+$spree-plp-filter-desktop-position: $spree-header-desktop-height + 77px;

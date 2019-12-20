@@ -1,6 +1,5 @@
 <% cache [@option_types, permitted_params] do %>
-  <div id="plp-filters-accordion" class="d-none d-lg-block col-lg-4 pr-5 plp-filters" data-hook="taxon_sidebar_navigation">
-
+  <div id="plp-filters-accordion" class="d-none d-lg-block col-lg-4 pr-5 position-sticky h-100 plp-filters" data-hook="taxon_sidebar_navigation">
     <% @option_types.each do |option_type| %>
       <div class="w-100 py-2 card plp-filters-card">
         <% option_type_name = option_type.presentation.titleize.gsub(' ', '') %>
@@ -9,13 +8,13 @@
         <div class="card-header <%= 'collapsed' if params[ot_downcase_name].blank? %> px-1 plp-filters-card-header" id="filters<%= option_type_name %>" data-toggle="collapse" data-target="#collapseFilter<%= option_type_name %>" aria-expanded="false" aria-controls="collapseFilter<%= option_type_name %>" role="heading" aria-level="2">
           <%= option_type.presentation %>
           <%= icon(name: 'plus',
-                   classes: 'mt-1 float-right arrow plp-filters-card-header-arrow--plus',
-                   width: 16,
-                   height: 16) %>
+                  classes: 'mt-1 float-right arrow plp-filters-card-header-arrow--plus',
+                  width: 16,
+                  height: 16) %>
           <%= icon(name: 'minus',
-                   classes: 'mt-1 float-right arrow plp-filters-card-header-arrow--minus',
-                   width: 16,
-                   height: 16) %>
+                  classes: 'mt-1 float-right arrow plp-filters-card-header-arrow--minus',
+                  width: 16,
+                  height: 16) %>
         </div>
         <div id="collapseFilter<%= option_type_name %>" class="collapse <%= 'show' unless params[ot_downcase_name].blank? %>" aria-labelledby="filters<%= option_type_name %>">
           <div class="card-body px-0 pt-1">
@@ -29,13 +28,13 @@
       <div class="card-header <%= 'collapsed' if params[:price].blank? %> px-1 plp-filters-card-header" id="filtersPrice" data-toggle="collapse" data-target="#collapseFilterPrice" aria-expanded="false" aria-controls="collapseFilterPrice" role="heading" aria-level="2">
         <%= Spree.t('plp.price') %>
         <%= icon(name: 'plus',
-                 classes: 'mt-1 float-right arrow plp-filters-card-header-arrow--plus',
-                 width: 16,
-                 height: 16) %>
+                classes: 'mt-1 float-right arrow plp-filters-card-header-arrow--plus',
+                width: 16,
+                height: 16) %>
         <%= icon(name: 'minus',
-                 classes: 'mt-1 float-right arrow plp-filters-card-header-arrow--minus',
-                 width: 16,
-                 height: 16) %>
+                classes: 'mt-1 float-right arrow plp-filters-card-header-arrow--minus',
+                width: 16,
+                height: 16) %>
       </div>
       <div id="collapseFilterPrice" class="collapse <%= 'show' unless params[:price].blank? %>" aria-labelledby="filtersPrice">
         <div class="card-body px-0 pt-1">
