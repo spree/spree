@@ -1,4 +1,4 @@
-<% cache ot_downcase_name do %>
+<% cache [ot_downcase_name, params_ot_downcase_name, permitted_params] do %>
   <% selected_option_values = params_ot_downcase_name&.split(',')&.map(&:to_i) || [] %>
   <% option_type.option_values.each do |option_value| %>
     <% id = option_value.id %>
