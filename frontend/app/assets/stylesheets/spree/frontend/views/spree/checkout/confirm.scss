@@ -99,7 +99,7 @@
       align-items: center;
       font-size: 26px;
 
-      &-qty > span {
+      &-qty > span:first-child {
         display: none;
       }
 
