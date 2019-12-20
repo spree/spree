@@ -414,7 +414,6 @@
         line-height: 1;
       }
       @include media-breakpoint-up(lg) {
-        flex-basis: 50%;
         margin-bottom: 34px;
         text-decoration: underline;
         color: theme-color("dark-text");
