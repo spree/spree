@@ -86,5 +86,14 @@ describe 'Cart', type: :feature, inaccessible: true, js: true do
         expect(page).to have_content(Spree.t(:coupon_code_not_found))
       end
     end
+
+    context 'when promotion is per line item' do
+      let!(:action) { Spree::Promotion::Actions::CreateItemAdjustments.create!(calculator: calculator) }
+
+      it 'successfully applies the promocode' do
+        apply_coupon(promotion.code)
+        expect(page).to have_field('order_applied_coupon_code', with: 'Promotion (Huhuhu)')
+      end
+    end
   end
 end

@@ -21,7 +21,11 @@
       </div>
 
       <% if display_coupon_code %>
-        <%= render 'spree/orders/coupon_code', promotion: @order.promotions.coupons.first, order_form: form, classes: 'col-lg-4 my-4' %>
+        <%= render 'spree/orders/coupon_code',
+          promotion: @order.valid_promotions.first&.promotion,
+          order_form: form,
+          classes: 'col-lg-4 my-4'
+        %>
       <% end %>
 
       <div id="checkout-summary" class="col-md-12 col-lg-auto <%= display_coupon_code ? 'col-lg-4 offset-lg-4' : 'col-lg-auto' %>" data-hook="checkout_summary_box">
