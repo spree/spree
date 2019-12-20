@@ -5,6 +5,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
 
   let(:country) { create(:country, name: 'United States of America', iso_name: 'UNITED STATES') }
   let(:state) { create(:state, name: 'Alabama', abbr: 'AL', country: country) }
+  let(:store) { Spree::Store.default }
 
   context 'visitor makes checkout as guest without registration' do
     before do
@@ -532,7 +533,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
                zones: [australia_zone],
                tax_category: default_tax_category).tap do |sm|
           sm.calculator.preferred_amount = 10
-          sm.calculator.preferred_currency = Spree::Config[:currency]
+          sm.calculator.preferred_currency = store.default_currency
           sm.calculator.save
         end
 

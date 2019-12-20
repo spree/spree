@@ -11,7 +11,7 @@ module Spree
         end
 
         def current_currency
-          Spree::Config[:currency]
+          current_store.default_currency
         end
 
         def current_store

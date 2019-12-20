@@ -89,6 +89,8 @@ RSpec.configure do |config|
     ApplicationRecord.connection.increment_open_transactions if ApplicationRecord.connection.open_transactions < 0
     DatabaseCleaner.start
     reset_spree_preferences
+
+    create(:store, default: true)
   end
 
   config.after(:each, type: :feature) do |example|

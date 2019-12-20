@@ -17,6 +17,14 @@ describe Spree::Core::ControllerHelpers::Store, type: :controller do
     end
   end
 
+  describe '#current_currency' do
+    let!(:store) { create :store, default: true, default_currency: 'GBP' }
+
+    it 'returns current store default currency' do
+      expect(controller.current_currency).to eq('GBP')
+    end
+  end
+
   describe '#current_price_options' do
     subject(:current_price_options) { controller.current_price_options }
 
