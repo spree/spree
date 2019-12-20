@@ -240,7 +240,9 @@ module Spree
     end
 
     def checkout_edit_link(step = 'address')
-      link_to spree.checkout_state_path(step), class: 'align-text-bottom checkout-confirm-delivery-informations-link' do
+      classes = 'align-text-bottom checkout-confirm-delivery-informations-link'
+
+      link_to spree.checkout_state_path(step), class: classes, method: :get do
         inline_svg_tag 'edit.svg'
       end
     end
