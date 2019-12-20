@@ -23,10 +23,5 @@
 <% end %>
 
 <% if products.respond_to?(:total_pages) %>
-  <div class="d-none d-lg-flex">
-    <%= paginate products, theme: 'twitter-bootstrap-4' %>
-  </div>
-  <div class="d-lg-none">
-    <%= paginate products, window: 2, theme: 'twitter-bootstrap-4' %>
-  </div>
+  <%= paginate products, window: 2, theme: 'twitter-bootstrap-4' %>
 <% end %>
