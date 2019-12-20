@@ -8,7 +8,7 @@
     <% if ((can? :update, @order) && (@order.shipments.size.zero? || @order.shipments.shipped.size.zero?)) %>
       <li data-hook='admin_order_tabs_cart_details'>
         <%= link_to_with_icon 'edit',
-          Spree.t(:cart),
+          Spree.t('orders.cart'),
           cart_admin_order_url(@order),
           class: "#{'active' if current == :cart} nav-link" %>
       </li>
