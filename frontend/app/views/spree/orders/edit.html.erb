@@ -37,7 +37,7 @@
 
             <% if Spree::Frontend::Config[:coupon_codes_enabled] %>
               <%= render 'coupon_code',
-                promotion: @order.valid_promotions.first&.promotion,
+                promotion: @order.valid_coupon_promotions.first,
                 order_form: order_form,
                 classes: ''
               %>

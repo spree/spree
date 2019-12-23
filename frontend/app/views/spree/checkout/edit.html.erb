@@ -22,7 +22,7 @@
 
       <% if display_coupon_code %>
         <%= render 'spree/orders/coupon_code',
-          promotion: @order.valid_promotions.first&.promotion,
+          promotion: @order.valid_coupon_promotions.first,
           order_form: form,
           classes: 'col-lg-4 my-4'
         %>
