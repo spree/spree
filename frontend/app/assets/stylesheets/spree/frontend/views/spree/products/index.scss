@@ -173,20 +173,25 @@
   &-pagination {
     display: flex;
     justify-content: center;
-    font-size: font-px-to-rem(13px);
+    font-size: font-px-to-rem(16px);
     .first,
     .prev,
     .next_page,
-    .last,
-    .next {
+    .last {
       a {
-        font-size: font-px-to-rem(20px);
-        padding: 0.1rem 0.6rem;
+        padding: 4px 11px;
       }
     }
     a {
-      color: theme-color("dark-text");
-      padding: 0.385rem 0.7rem;
+      color: theme-color('dark-text');
+      padding: 5px 13px;
+      min-width: 37px;
+      height: 37px;
+      text-align: center;
+      line-height: 25px;
+    }
+    .page-item:not(:last-child) {
+      margin-right: 7px;
     }
   }
 
