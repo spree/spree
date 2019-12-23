@@ -57,12 +57,16 @@
             </div>
           <% end %>
           <div class="product-details-single" data-hook="product_images">
-            <%= render 'spree/shared/carousel/single',
-                      group_id: 'main-product-carousel',
-                      id: 'productCarousel',
-                      trigger_id: 'productCarousel',
-                      zoomed: false
-            %>
+            <% if @product.variant_images.size == 1 %>
+              <%= plp_and_carousel_image(@product) %>
+            <% else %>
+              <%= render 'spree/shared/carousel/single',
+                        group_id: 'main-product-carousel',
+                        id: 'productCarousel',
+                        trigger_id: 'productCarousel',
+                        zoomed: false
+              %>
+            <% end %>
           </div>
         </div>
       </div>
