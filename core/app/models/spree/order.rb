@@ -625,6 +625,12 @@ module Spree
       all_adjustments.eligible.nonzero.promotion.map { |a| a.source.promotion_id }.uniq
     end
 
+    def valid_coupon_promotions
+      promotions.
+        where(id: valid_promotion_ids).
+        coupons
+    end
+
     private
 
     def link_by_email

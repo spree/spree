@@ -32,11 +32,11 @@
     <%= render 'spree/products/sort_desktop', permitted_params: permitted_params %>
     <div class="container mb-3 d-md-flex">
       <%= render 'spree/products/filters_desktop', permitted_params: permitted_params %>
-      <div class="col-md-12 col-lg-8" data-hook="homepage_products">
+      <div class="col-md-12 col-lg-9" data-hook="homepage_products">
         <div class="row">
           <% cache(params.permit!.merge(current_currency: current_currency)) do %>
             <% @products.each do |product| %>
-              <div id="product_<%= product.id %>" class="col-lg-6 col-sm-4 col-6 mb-3 mb-md-4 pr-0 pl-md-4 pl-sm-4">
+              <div id="product_<%= product.id %>" class="col-sm-4 col-6 mb-3 mb-md-4 pr-0 pl-md-4 pl-sm-4">
                 <%= render 'spree/shared/product', product: product, image_class: 'product-component-plp-image' %>
               </div>
             <% end %>

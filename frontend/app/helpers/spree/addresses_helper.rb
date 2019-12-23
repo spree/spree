@@ -7,9 +7,10 @@ module Spree
           yield
         else
           is_required = Spree::Address.required_fields.include?(method)
-          separator = is_required ? '<span class="required">*</span><br />' : '<br />'
-          form.label(method, class: 'text-uppercase') + separator.html_safe +
-            form.text_field(method, class: [is_required ? 'required' : nil, 'spree-flat-input'].compact, required: is_required)
+          form.text_field(method,
+                          class: [is_required ? 'required' : nil, 'spree-flat-input'].compact,
+                          required: is_required,
+                          placeholder: I18n.t("activerecord.attributes.spree/address.#{method}"))
         end
       end
     end
@@ -20,17 +21,14 @@ module Spree
       state_elements = [
         form.collection_select(:state_id, country.states.order(:name),
                               :id, :name,
-                              { include_blank: true },
-                                class: have_states ? 'required form-control spree-flat-select' : 'hidden',
-                                disabled: !have_states) +
-          form.text_field(:state_name,
-                          class: !have_states ? 'required' : 'hidden',
-                          disabled: have_states) +
+                               { prompt: Spree.t(:state).upcase },
+                               class: have_states ? 'required form-control spree-flat-select' : 'hidden',
+                               disabled: !have_states) +
+          form.text_field(:state_name, class: !have_states ? 'required' : 'hidden', disabled: have_states) +
           image_tag('arrow.svg', class: 'position-absolute spree-flat-select-arrow')
       ].join.tr('"', "'").delete("\n")
 
-      form.label(:state, Spree.t(:state), class: 'text-uppercase') + '<span class="req">*</span><br />'.html_safe +
-        content_tag(:noscript, form.text_field(:state_name, class: 'required')) +
+      content_tag(:noscript, form.text_field(:state_name, class: 'required')) +
         javascript_tag("document.write(\"<span class='d-block position-relative'>#{state_elements.html_safe}</span>\");")
     end
   end

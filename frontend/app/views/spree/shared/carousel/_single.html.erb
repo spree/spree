@@ -8,35 +8,37 @@
   data-interval="false"
   data-hook
 >
-  <a
-    class="d-none d-md-flex h-100 justify-content-center align-items-center product-carousel-control position-absolute product-carousel-control--previous"
-    href="#<%= id %>"
-    role="button"
-    data-slide="prev"
-  >
-    <span class="d-flex justify-content-center align-items-center product-carousel-control-rounded" aria-hidden="true">
-      <%= icon(name: 'arrow-right',
-               classes: 'spree-icon-arrow spree-icon-arrow-left',
-               width: 20,
-               height: 20) %>
-    </span>
-    <span class="sr-only">Previous</span>
-  </a>
+  <% if images.length > 1 %>
+    <a
+      class="d-none d-md-flex h-100 justify-content-center align-items-center product-carousel-control position-absolute product-carousel-control--previous"
+      href="#<%= id %>"
+      role="button"
+      data-slide="prev"
+    >
+      <span class="d-flex justify-content-center align-items-center product-carousel-control-rounded" aria-hidden="true">
+        <%= icon(name: 'arrow-right',
+                classes: 'spree-icon-arrow spree-icon-arrow-left',
+                width: 20,
+                height: 20) %>
+      </span>
+      <span class="sr-only">Previous</span>
+    </a>
 
-  <a
-    class="d-none d-md-flex h-100 justify-content-center align-items-center product-carousel-control position-absolute product-carousel-control--next"
-    href="#<%= id %>"
-    role="button"
-    data-slide="next"
-  >
-    <span class="d-flex justify-content-center align-items-center product-carousel-control-rounded" aria-hidden="true">
-      <%= icon(name: 'arrow-right',
-               classes: 'spree-icon-arrow spree-icon-arrow-right',
-               width: 20,
-               height: 20) %>
-    </span>
-    <span class="sr-only">Next</span>
-  </a>
+    <a
+      class="d-none d-md-flex h-100 justify-content-center align-items-center product-carousel-control position-absolute product-carousel-control--next"
+      href="#<%= id %>"
+      role="button"
+      data-slide="next"
+    >
+      <span class="d-flex justify-content-center align-items-center product-carousel-control-rounded" aria-hidden="true">
+        <%= icon(name: 'arrow-right',
+                classes: 'spree-icon-arrow spree-icon-arrow-right',
+                width: 20,
+                height: 20) %>
+      </span>
+      <span class="sr-only">Next</span>
+    </a>
+  <% end %>
 
   <div class="carousel-inner">
     <div class="d-flex flex-row position-absolute product-carousel-overlay">
@@ -49,7 +51,7 @@
         data-variant-is-master="<%= image.viewable_id == @product.master.id %>"
         data-variant-id="<%= image.viewable_id %>"
       >
-        <div class="product-carousel-item-squared">
+        <div class="product-carousel-item-squared <%= 'product-carousel-item-squared-only' if images.length == 1 %>">
           <% image_attrs = {
             src: main_app.url_for(image.url(zoomed ? :zoomed : :large)),
             alt: image.alt || @product.name,
