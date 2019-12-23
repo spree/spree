@@ -37,8 +37,8 @@ module Spree
           attachment_file_name: image.attachment_file_name,
           type: image.type,
           alt: image.alt,
-          url_mini: url_for(image.url(:mini)),
-          url_product: url_for(image.url(:product))
+          url_mini: rails_representation_url(image.url(:mini), only_path: true),
+          url_product: rails_representation_url(image.url(:product), only_path: true)
         }
       end
     end
