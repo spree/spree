@@ -626,9 +626,9 @@ module Spree
     end
 
     def valid_coupon_promotions
-      promotions
-        .where(id: valid_promotion_ids)
-        .coupons
+      promotions.
+        where(id: valid_promotion_ids).
+        coupons
     end
 
     private
