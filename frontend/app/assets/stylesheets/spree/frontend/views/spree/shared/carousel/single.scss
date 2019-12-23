@@ -35,7 +35,7 @@
     &-squared {
       position: relative;
       height: 0;
-      padding: 0 0 100% / $photo-width-to-height-ratio 0;
+      padding: 0 0 100% / $photo-width-to-height-ratio;
 
       .modal-dialog--zoom & {
         @media (min-height: 780px) {
@@ -48,6 +48,15 @@
         height: 100%;
         width: 100%;
         object-fit: contain;
+      }
+
+      &-only {
+        padding-bottom: 0;
+        height: auto;
+
+        img {
+          position: static;
+        }
       }
     }
     &:not(.carousel-item) {
