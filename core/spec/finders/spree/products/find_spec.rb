@@ -9,10 +9,6 @@ module Spree
     let!(:deleted_product)      { create(:product, deleted_at: Time.current - 1.day) }
     let!(:discontinued_product) { create(:product, discontinue_on: Time.current - 1.day) }
 
-    before do
-      product_3.variants.first.option_values << option_value
-    end
-
     context 'include deleted' do
       it 'returns products with discontinued' do
         params = {
@@ -93,23 +89,54 @@ module Spree
       end
     end
 
-    context 'filter by option values' do
-      it 'returns products with proper option values' do
-        params = {
+    describe 'filter by option values' do
+      let(:option_type_1) { create :option_type, name: 'size' }
+      let(:option_type_2) { create :option_type, name: 'state' }
+
+      let(:option_value_1_1) { create :option_value, option_type: option_type_1, name: 's', presentation: 'S' }
+      let(:option_value_1_2) { create :option_value, option_type: option_type_1, name: 'm', presentation: 'M' }
+      let(:option_value_2_1) { create :option_value, option_type: option_type_2, name: 'old', presentation: 'Old' }
+      let(:option_value_2_2) { create :option_value, option_type: option_type_2, name: 'new', presentation: 'New' }
+
+      let(:product_1) { create :product, option_types: [option_type_1, option_type_2] }
+      let(:product_2) { create :product, option_types: [option_type_1, option_type_2] }
+      let(:product_3) { create :product, option_types: [option_type_1, option_type_2] }
+
+      let!(:variant_1) { create :variant, product: product_1, option_values: [option_value_1_1, option_value_2_1] }
+      let!(:variant_2) { create :variant, product: product_2, option_values: [option_value_1_2, option_value_2_2] }
+      let!(:variant_3) { create :variant, product: product_3, option_values: [option_value_1_1, option_value_2_2] }
+
+      let(:option_value_ids) { [] }
+      let(:params) do
+        {
           filter: {
-            option_value_ids: [option_value.id]
+            option_value_ids: option_value_ids
           }
         }
+      end
 
-        products = Spree::Products::Find.new(
+      subject(:products) do
+        Spree::Products::Find.new(
           scope: Spree::Product.all,
           params: params,
           current_currency: 'USD'
         ).execute
+      end
 
-        expect(products).to include(product_3)
-        expect(products).to_not include(product)
-        expect(products).to_not include(product_2)
+      context 'filtering by one option' do
+        let(:option_value_ids) { [option_value_1_1.id] }
+
+        it 'returns products with proper option values' do
+          expect(products).to match_array([product_1, product_3])
+        end
+      end
+
+      context 'filtering by several options' do
+        let(:option_value_ids) { [option_value_1_1.id, option_value_2_2.id] }
+
+        it 'returns products that have both options' do
+          expect(products).to match_array([product_3])
+        end
       end
     end
 
