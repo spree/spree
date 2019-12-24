@@ -2,8 +2,8 @@
   <div id="plp-filters-accordion" class="d-none d-lg-block col-lg-3 pr-5 position-sticky h-100 plp-filters" data-hook="taxon_sidebar_navigation">
     <% @option_types.each do |option_type| %>
       <div class="w-100 py-2 card plp-filters-card">
-        <% option_type_name = option_type.presentation.titleize.gsub(' ', '') %>
-        <% ot_downcase_name = option_type_name.downcase %>
+        <% ot_downcase_name = option_type.filter_param %>
+        <% option_type_name = ot_downcase_name.titleize %>
 
         <div class="card-header <%= 'collapsed' if params[ot_downcase_name].blank? %> px-1 plp-filters-card-header" id="filters<%= option_type_name %>" data-toggle="collapse" data-target="#collapseFilter<%= option_type_name %>" aria-expanded="false" aria-controls="collapseFilter<%= option_type_name %>" role="heading" aria-level="2">
           <%= option_type.presentation %>

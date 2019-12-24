@@ -212,9 +212,7 @@ module Spree
     def filtering_params
       static_filters = %w(keywords price sort_by)
 
-      @option_types.
-        map { |option_type| option_type.presentation.titleize.delete(' ').downcase }.
-        concat(static_filters)
+      @option_types.map(&:filter_param).concat(static_filters)
     end
 
     private

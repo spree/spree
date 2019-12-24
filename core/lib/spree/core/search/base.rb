@@ -118,14 +118,18 @@ module Spree
           "#{low_price},#{high_price}"
         end
 
-        def prepare(params)
-          colors = params[:color]&.split(',') || []
-          lengths = params[:length]&.split(',') || []
-          sizes = params[:size]&.split(',') || []
+        def build_option_value_ids(params)
+          filter_params = Spree::OptionType.all.map(&:filter_param)
 
+          filter_params.reduce([]) do |acc, filter_param|
+            acc + params[filter_param].to_s.split(',')
+          end
+        end
+
+        def prepare(params)
           @properties[:taxon] = params[:taxon].blank? ? nil : Spree::Taxon.find(params[:taxon])
           @properties[:keywords] = params[:keywords]
-          @properties[:option_value_ids] = colors | sizes | lengths
+          @properties[:option_value_ids] = build_option_value_ids(params)
           @properties[:price] = get_price_range(params[:price])
           @properties[:search] = params[:search]
           @properties[:sort_by] = params[:sort_by] || 'default'
