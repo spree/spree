@@ -121,12 +121,12 @@ module Spree
         return products unless option_value_ids?
 
         product_ids = Spree::Product.
-          joins(variants: :option_values).
-          where(spree_option_values: { id: option_value_ids }).
-          group("spree_products.id, spree_variants.id").
-          having("COUNT(spree_option_values.option_type_id) = ?", option_types_count(option_value_ids)).
-          distinct.
-          pluck(:id)
+                      joins(variants: :option_values).
+                      where(spree_option_values: { id: option_value_ids }).
+                      group('spree_products.id, spree_variants.id').
+                      having('COUNT(spree_option_values.option_type_id) = ?', option_types_count(option_value_ids)).
+                      distinct.
+                      pluck(:id)
 
         products.where(id: product_ids)
       end

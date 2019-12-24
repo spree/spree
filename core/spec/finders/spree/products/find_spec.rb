@@ -26,7 +26,7 @@ module Spree
         }
 
         expect(
-          Spree::Products::Find.new(
+          described_class.new(
             scope: Spree::Product.all,
             params: params,
             current_currency: 'USD'
@@ -54,7 +54,7 @@ module Spree
         }
 
         expect(
-          Spree::Products::Find.new(
+          described_class.new(
             scope: Spree::Product.all,
             params: params,
             current_currency: 'USD'
@@ -80,7 +80,7 @@ module Spree
         }
 
         expect(
-          Spree::Products::Find.new(
+          described_class.new(
             scope: Spree::Product.all,
             params: params,
             current_currency: 'USD'
@@ -90,6 +90,14 @@ module Spree
     end
 
     describe 'filter by option values' do
+      subject(:products) do
+        described_class.new(
+          scope: Spree::Product.all,
+          params: params,
+          current_currency: 'USD'
+        ).execute
+      end
+
       let(:option_type_1) { create :option_type, name: 'size' }
       let(:option_type_2) { create :option_type, name: 'state' }
 
@@ -115,14 +123,6 @@ module Spree
         }
       end
 
-      subject(:products) do
-        Spree::Products::Find.new(
-          scope: Spree::Product.all,
-          params: params,
-          current_currency: 'USD'
-        ).execute
-      end
-
       context 'filtering by one option' do
         let(:option_value_ids) { [option_value_1_1.id] }
 
@@ -146,7 +146,7 @@ module Spree
           sort_by: 'default'
         }
 
-        product_ids = Spree::Products::Find.new(
+        product_ids = described_class.new(
           scope: Spree::Product.all,
           params: params,
           current_currency: 'USD'
@@ -160,7 +160,7 @@ module Spree
           sort_by: 'newest-first'
         }
 
-        product_ids = Spree::Products::Find.new(
+        product_ids = described_class.new(
           scope: Spree::Product.all,
           params: params,
           current_currency: 'USD'
@@ -174,7 +174,7 @@ module Spree
           sort_by: 'price-high-to-low'
         }
 
-        product_ids = Spree::Products::Find.new(
+        product_ids = described_class.new(
           scope: Spree::Product.all,
           params: params,
           current_currency: 'USD'
@@ -188,7 +188,7 @@ module Spree
           sort_by: 'price-low-to-high'
         }
 
-        product_ids = Spree::Products::Find.new(
+        product_ids = described_class.new(
           scope: Spree::Product.all,
           params: params,
           current_currency: 'USD'
