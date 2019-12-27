@@ -23,6 +23,10 @@ module Spree
 
     after_touch :touch_all_products
 
+    def filter_param
+      presentation.titleize.delete(' ').downcase
+    end
+
     private
 
     def touch_all_products
