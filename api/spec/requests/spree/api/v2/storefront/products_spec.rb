@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 describe 'API V2 Storefront Products Spec', type: :request do
+  let!(:store)                 { create(:store, default: true) }
   let!(:products)              { create_list(:product, 5) }
   let(:taxon)                  { create(:taxon) }
   let(:product_with_taxon)     { create(:product, taxons: [taxon]) }
