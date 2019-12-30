@@ -32,7 +32,7 @@
               <%= link_to Spree.t(:continue_shopping), products_path, class: 'shopping-cart-buttons-continue' %>
             </div>
 
-            <div class="text-right d-none d-lg-block shopping-cart-total">
+            <div class="text-right shopping-cart-total d-none d-lg-block">
               <div class="text-uppercase d-lg-inline-block shopping-cart-total-text"><%= Spree.t(:total) %></div>
               <div class="d-lg-inline-block shopping-cart-total-amount"><%= order_form.object.display_total %></div>
             </div>
