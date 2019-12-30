@@ -10,8 +10,8 @@
       <div class="d-none d-lg-inline-block mr-2">|</div>
       <div>
         © <%= Time.current.year %>
-        <%= link_to 'Spree Commerce', 'https://spreecommerce.org/', target: :blank, 'aria-label': 'Go to Spree Commerce', rel: :follow %>.
-        All Rights Reserved.
+        <%= link_to current_store.name, "https://#{current_store.url}" %>.
+        <%= Spree.t(:all_rights_reserved) %>.
       </div>
     </div>
   </div>
