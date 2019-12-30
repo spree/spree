@@ -358,7 +358,7 @@
       margin-bottom: 36.2px;
     }
     @include media-breakpoint-up(lg) {
-      margin-left: auto;
+      flex-basis: 50%;
       margin-top: 0;
       margin-bottom: 34px;
     }
@@ -415,7 +415,6 @@
       }
       @include media-breakpoint-up(lg) {
         height: 18px;
-        margin-top: 18px;
         text-decoration: underline;
         color: theme-color("dark-text");
         font-weight: 500;
@@ -426,6 +425,9 @@
         &:focus {
           color: theme-color("dark-text");
         }
+      }
+      &-margin {
+        margin-top: 18px;
       }
     }
     &-or {

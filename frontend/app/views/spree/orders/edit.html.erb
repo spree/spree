@@ -27,16 +27,16 @@
             <%= render partial: 'form', locals: { order_form: order_form } %>
           </div>
 
-          <div class="d-lg-flex d-none d-lg-block">
-            <%= link_to Spree.t(:continue_shopping), products_path, class: 'text-uppercase shopping-cart-buttons-continue' %>
+          <div class="d-lg-flex flex-wrap justify-content-between">
+            <div class="text-uppercase d-none d-lg-block mt-3">
+              <%= link_to Spree.t(:continue_shopping), products_path, class: 'shopping-cart-buttons-continue' %>
+            </div>
 
-            <div class="text-right shopping-cart-total">
+            <div class="text-right d-none d-lg-block shopping-cart-total">
               <div class="text-uppercase d-lg-inline-block shopping-cart-total-text"><%= Spree.t(:total) %></div>
               <div class="d-lg-inline-block shopping-cart-total-amount"><%= order_form.object.display_total %></div>
             </div>
-          </div>
 
-          <div class="d-lg-flex flex-wrap justify-content-between">
             <% if Spree::Frontend::Config[:coupon_codes_enabled] %>
               <%= render 'coupon_code',
                 promotion: @order.valid_coupon_promotions.first,
