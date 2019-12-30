@@ -1,6 +1,6 @@
 <% is_visible = params[:menu_open] ? 'block' : 'none' %>
 
-<% cache [@option_types, permitted_params, is_visible] do %>
+<% cache base_cache_key + [@option_types, permitted_params, @taxon, is_visible] do %>
   <div id="filter-by-overlay" class="d-lg-none plp-overlay" style="display: <%= is_visible %>;">
     <div class="plp-scroll">
       <div class="container">

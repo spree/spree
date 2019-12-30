@@ -99,6 +99,10 @@ module Spree
       end
     end
 
+    def base_cache_key
+      [I18n.locale, current_currency]
+    end
+
     private
 
     def create_product_image_tag(image, product, options, style)
