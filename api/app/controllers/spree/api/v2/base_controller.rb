@@ -4,6 +4,7 @@ module Spree
       class BaseController < ActionController::API
         include CanCan::ControllerAdditions
         include Spree::Core::ControllerHelpers::StrongParameters
+        include Spree::Core::ControllerHelpers::Store
         rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
         rescue_from CanCan::AccessDenied, with: :access_denied
 
@@ -48,10 +49,6 @@ module Spree
           elsif error.is_a?(String)
             render json: { error: error }, status: status, content_type: content_type
           end
-        end
-
-        def spree_current_store
-          @spree_current_store ||= Spree::Store.current(request.env['SERVER_NAME'])
         end
 
         def spree_current_user
@@ -102,10 +99,6 @@ module Spree
             select { |_, v| v.is_a?(String) }.
             each { |type, values| fields[type.intern] = values.split(',').map(&:intern) }
           fields.presence
-        end
-
-        def current_currency
-          spree_current_store.default_currency || Spree::Config[:currency]
         end
 
         def record_not_found
