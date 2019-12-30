@@ -12,7 +12,7 @@
     <span class="text-uppercase mb-1 checkout-confirm-th"><%= Spree.t(:total) %></span>
     <% @order.line_items.each do |item| %>
       <div class="checkout-confirm-product">
-        <%= link_to plp_and_carousel_image(item.variant.product, ''), item.variant.product %>
+        <%= link_to plp_and_carousel_image(item.product), item.product %>
 
         <div class="checkout-confirm-product-desc">
           <div class="checkout-confirm-product-name">
@@ -22,7 +22,7 @@
             <%= item.single_money.to_html %>
           </div>
           <div class="checkout-confirm-product-qty">
-            <span>Quantity:</span>
+            <span><%= Spree.t(:quantity) %>:</span>
             <span class="font-weight-bold">&nbsp;<%= item.quantity %></span>
           </div>
           <div class="checkout-confirm-product-total">

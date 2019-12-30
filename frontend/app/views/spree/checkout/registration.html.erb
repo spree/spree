@@ -2,7 +2,7 @@
 <div class="checkout-registration container">
   <%= render partial: 'spree/shared/login' %>
   <div class="checkout-registration-styled-or">
-    OR
+    <%= Spree.t(:or) %>
   </div>
   <% if Spree::Config[:allow_guest_checkout] %>
     <% path = spree.respond_to?(:update_checkout_registration_path) ? spree.update_checkout_registration_path : spree.signup_path %>

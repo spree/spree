@@ -36,9 +36,9 @@
     <% @order.line_items.each do |item| %>
       <div class="order-show-line-items-line-item d-flex">
         <% if item.variant.images.length == 0 %>
-          <%= link_to product_image(item.variant.product), item.variant.product %>
+          <%= link_to product_image(item.product), item.product %>
         <% else %>
-          <%= link_to image_tag(main_app.url_for(item.variant.images.first.url(:product))), item.variant.product %>
+          <%= link_to image_tag(main_app.url_for(item.variant.images.first.url(:product))), item.product %>
         <% end %>
         <div class="order-show-line-items-line-item-desc w-100">
           <span class="order-show-line-items-line-item-desc-name">
@@ -56,12 +56,16 @@
             <div class="font-weight-bold"><%= item.single_money.to_html %></div>
           </div>
           <div class="order-show-line-items-line-item-desc-quantity">
-            <div class="order-show-line-items-line-item-desc-attr-name d-none d-lg-block">Quantity</div>
-            <div class="order-show-line-items-line-item-desc-attr-name d-inline d-lg-none">Quantity:</div>
+            <div class="order-show-line-items-line-item-desc-attr-name d-none d-lg-block">
+              <%= Spree.t(:quantity) %>
+            </div>
+            <div class="order-show-line-items-line-item-desc-attr-name d-inline d-lg-none">
+              <%= Spree.t(:quantity) %>:
+            </div>
             <span class="order-show-line-items-line-item-desc-quantity-val d-lg-block"><%= item.quantity %></span>
           </div>
           <div class="order-show-line-items-line-item-desc-total d-none d-lg-block">
-            <div>Total</div>
+            <div><%= Spree.t(:total) %></div>
             <div class="font-weight-bold"><%= item.display_total.to_s %></div>
           </div>
         </div>

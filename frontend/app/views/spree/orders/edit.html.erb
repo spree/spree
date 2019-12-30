@@ -21,7 +21,7 @@
     </div>
   <% else %>
     <div data-hook="outside_cart_form">
-      <%= form_for @order, url: update_cart_path, html: { id: 'update-cart' } do |order_form| %>
+      <%= form_for @order, url: spree.update_cart_path, html: { id: 'update-cart' } do |order_form| %>
         <div data-hook="inside_cart_form">
           <div data-hook="cart_items" class="shopping-cart-table">
             <%= render partial: 'form', locals: { order_form: order_form } %>
@@ -29,7 +29,7 @@
 
           <div class="d-lg-flex flex-wrap justify-content-between">
             <div class="text-uppercase d-none d-lg-block mt-3">
-              <%= link_to Spree.t(:continue_shopping), products_path, class: 'shopping-cart-buttons-continue' %>
+              <%= link_to Spree.t(:continue_shopping), spree.products_path, class: 'shopping-cart-buttons-continue' %>
             </div>
 
             <div class="text-right shopping-cart-total d-none d-lg-block">
@@ -51,9 +51,9 @@
             </div>
 
             <div class="d-flex flex-column text-center shopping-cart-buttons" data-hook="cart_buttons">
-              <%= link_to Spree.t('cart_page.checkout'), checkout_path, class: 'btn btn-primary text-uppercase font-weight-bold cart-checkout-btn shopping-cart-buttons-checkout', id: 'checkout-link', method: :get %>
+              <%= link_to Spree.t('cart_page.checkout'), spree.checkout_path, class: 'btn btn-primary text-uppercase font-weight-bold cart-checkout-btn shopping-cart-buttons-checkout', id: 'checkout-link', method: :get %>
               <span class="text-uppercase shopping-cart-buttons-or d-lg-none"><%= Spree.t(:or) %></span>
-              <%= link_to Spree.t(:continue_shopping), products_path, class: 'btn btn-outline-primary text-uppercase font-weight-bold d-lg-none shopping-cart-buttons-continue' %>
+              <%= link_to Spree.t(:continue_shopping), spree.products_path, class: 'btn btn-outline-primary text-uppercase font-weight-bold d-lg-none shopping-cart-buttons-continue' %>
             </div>
           </div>
         </div>
