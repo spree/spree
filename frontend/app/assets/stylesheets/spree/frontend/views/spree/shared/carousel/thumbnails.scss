@@ -17,10 +17,7 @@
       display: none;
 
       .modal-dialog--zoom & {
-        padding-bottom: $thumbnails-carousel-single-height;
-        @media (min-height: 780px) {
-          padding-bottom: $thumbnails-carousel-single-height-zoom;
-        }
+        padding-bottom: $thumbnails-carousel-single-height-zoom;
       }
 
       img {
