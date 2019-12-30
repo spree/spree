@@ -5,7 +5,7 @@
     <div class="col-xs-12 col-lg-4">
       <dt class="text-uppercase account-page-user-info-item-title">
         <%= Spree.t(:email) %>
-        <%= link_to edit_user_path(@user), class: "account-page-user-info-item-title-edit" do %>
+        <%= link_to spree.edit_user_path(@user), class: "account-page-user-info-item-title-edit" do %>
           <%= inline_svg_tag 'edit.svg', class: "account-page-user-info-item-title-edit-img" %>
         <% end %>
       </dt>
@@ -55,7 +55,9 @@
               <td class="account-page-order-payment-state"><%= Spree.t("payment_states.#{order.payment_state}").titleize if order.payment_state %></td>
               <td class="account-page-order-shipment-state"><%= Spree.t("shipment_states.#{order.shipment_state}").titleize if order.shipment_state %></td>
               <td class="account-page-text-primary account-page-order-total account-page-lead"><%= order.display_total %></td>
-              <td class="account-page-arrow-container" data-order-path="<%= order_path(order) %>"><%= link_to '', order_url(order), { class: "account-page-order-arrow" } %></td>
+              <td class="account-page-arrow-container" data-order-path="<%= spree.order_path(order) %>">
+                <%= link_to '', spree.order_path(order), { class: "account-page-order-arrow" } %>
+              </td>
             </tr>
           <% end %>
         </tbody>
