@@ -276,9 +276,11 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
     before { Spree::Config.products_per_page = 3 }
 
     it 'is able to display products priced between 151 and 200 dollars across multiple pages' do
+      find(:css, '#filtersPrice').click
       within(:css, '#collapseFilterPrice') { click_on '$151 - $200' }
       expect(page).to have_css('.product-component-name').exactly(3).times
-      find('.next_page > .page-link').click
+      next_page = find_all(:css, '.next_page')
+      within(next_page[0]) { find(:css, '.page-link').click }
       expect(page).to have_css('.product-component-name').once
     end
   end
