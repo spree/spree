@@ -9,4 +9,8 @@ Spree.ready(function($) {
   $('#no-product-available-hide-button').click(function() { document.getElementById('no-product-available').classList.remove('shown') })
   $('#no-product-available-close-button').click(function() { document.getElementById('overlay').classList.remove('shown') })
   $('#no-product-available-hide-button').click(function() { document.getElementById('overlay').classList.remove('shown') })
+
+  $('.spree-sort-option').on('click', function(event) {
+    $(event.target).find('input').prop('checked', true)
+  })
 })

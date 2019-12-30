@@ -145,19 +145,20 @@
 
     &-dropdown {
       margin-left: -60px;
-      &-ul {
-        padding-inline-start: 0;
-        &-li,
-        &-li--active {
-          list-style: none;
-          a {
-            color: theme-color("dark-text");
-          }
-        }
-        &-li--active {
-          font-weight: bold;
-        }
-      }
+
+      // &-ul {
+      //   padding-inline-start: 0;
+      //   &-li,
+      //   &-li--active {
+      //     list-style: none;
+      //     a {
+      //       color: theme-color("dark-text");
+      //     }
+      //   }
+      //   &-li--active {
+      //     font-weight: bold;
+      //   }
+      // }
     }
   }
 
@@ -303,4 +304,12 @@
     height: 17.7px;
     width: 17.7px;
   }
+}
+
+.spree-sort-option {
+  color: theme-color("dark-text");
+}
+
+.spree-sort-option--checked {
+  font-weight: bold;
 }
