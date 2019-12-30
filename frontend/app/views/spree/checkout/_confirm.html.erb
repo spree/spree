@@ -22,7 +22,7 @@
             <%= item.single_money.to_html %>
           </div>
           <div class="checkout-confirm-product-qty">
-            <span>Quantity:</span>
+            <span><%= Spree.t(:quantity) %>:</span>
             <span class="font-weight-bold">&nbsp;<%= item.quantity %></span>
           </div>
           <div class="checkout-confirm-product-total">
