@@ -8,7 +8,7 @@ function CouponManager (input) {
   this.couponButton = this.input.couponButton
   this.removeCouponButton = this.input.removeCouponButton
   this.couponErrorIcon = document.createElement("img")
-  this.couponErrorIcon.src = '<%= image_path('error.svg') %>'
+  this.couponErrorIcon.src = Spree.translations.coupon_code_error_icon
 }
 
 CouponManager.prototype.applyCoupon = function () {

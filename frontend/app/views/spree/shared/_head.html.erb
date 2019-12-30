@@ -7,8 +7,4 @@
 <%= csrf_meta_tags %>
 <%= render 'spree/shared/paths' %>
 <%= javascript_include_tag 'spree/frontend/all', defer: true %>
-<!--[if lt IE 9]>
-  <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.6/html5shiv.min.js"></script>
-<![endif]-->
 <%= yield :head %>
-<%= render 'spree/shared/translations' %>

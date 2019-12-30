@@ -7,4 +7,5 @@ Rails.application.config.assets.precompile += %w(
   logo@3x.png
   arrow.svg
   check-mark-circle.svg
+  error.svg
 )

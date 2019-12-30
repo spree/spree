@@ -5,15 +5,12 @@ module Spree
     before_action :load_product, :load_variants, only: :show
     before_action :load_taxon, only: :index
 
-    helper 'spree/taxons'
-
     respond_to :html
 
     def index
       @searcher = build_searcher(params.merge(include_images: true))
       @products = @searcher.retrieve_products
       @products = @products.includes(:possible_promotions) if @products.respond_to?(:includes)
-      @taxonomies = load_taxonomies
       @option_types = load_options
     end
 
@@ -54,10 +51,6 @@ module Spree
 
     def load_taxon
       @taxon = Spree::Taxon.find(params[:taxon]) if params[:taxon].present?
-    end
-
-    def load_taxonomies
-      Spree::Taxonomy.includes(root: :children)
     end
 
     def load_variants
