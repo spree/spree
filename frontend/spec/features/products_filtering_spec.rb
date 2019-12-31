@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe 'Products filtering', :js, :caching do
+  let!(:taxon) { create :taxon }
+
   let!(:option_type_1) { create :option_type, name: 'size', presentation: 'Size' }
   let!(:option_value_1_1) { create :option_value, option_type: option_type_1, name: 's', presentation: 'S' }
   let!(:option_value_1_2) { create :option_value, option_type: option_type_1, name: 'm', presentation: 'M' }
@@ -32,7 +34,7 @@ describe 'Products filtering', :js, :caching do
   end
 
   it 'correctly filters Products' do
-    visit spree.root_path
+    visit spree.nested_taxons_path(taxon)
 
     search_by 'shirt'
     expect(page).to have_content 'First shirt'
@@ -45,5 +47,6 @@ describe 'Products filtering', :js, :caching do
     expect(page).to have_content 'First shirt'
     expect(page).to have_selected_filter_with(value: 'm')
     expect(page).to have_selected_filter_with(value: 's')
+    expect(current_path).to eq spree.products_path
   end
 end
