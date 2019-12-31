@@ -126,12 +126,17 @@ function CartForm($, $cartForm) {
   this.triggerVariantImages = function() {
     var checkedVariantId
     var variant = this.selectedVariant()
+    var $carousel = $('#productThumbnailsCarousel')
+    ThumbnailsCarousel($, $carousel)
 
     if (variant) {
       checkedVariantId = variant.id
     } else {
       checkedVariantId = this.firstCheckedOptionValue().data('variant-id')
     }
+
+    var imagesCount = this.checkImagesCount(checkedVariantId, $carousel)
+    this.showOrHideVariantImages(imagesCount, $carousel)
 
     // Wait for listeners to attach.
     setTimeout(function() {
@@ -141,6 +146,45 @@ function CartForm($, $cartForm) {
         variantId: checkedVariantId + ''
       })
     })
+  }
+
+  this.checkImagesCount = function(variantId, carousel) {
+    var images = []
+
+    carousel
+      .find('[data-variant-id]')
+      .each(function(_itemIndex, slideElement) {
+        var $slide = $(slideElement)
+        var qualifies = $slide.attr('data-variant-id') === `${variantId}`
+
+        if (qualifies === true) {
+          images.push(slideElement)
+        }
+      })
+
+    return images.length
+  }
+
+  this.showOrHideVariantImages = function(imagesCount, carousel) {
+    if (imagesCount <= 1) {
+      document.getElementById('desktop-thumbnails').classList.remove('d-md-block')
+      document.getElementById('mobile-thumbnails').classList.remove('d-sm-block')
+      $('.product-carousel-control--previous').each(function(i, e) {
+        e.classList.remove('d-md-flex')
+      });
+      $('.product-carousel-control--next').each(function(i, e) {
+        e.classList.remove('d-md-flex')
+      });
+    } else {
+      document.getElementById('desktop-thumbnails').classList.add('d-md-block')
+      document.getElementById('mobile-thumbnails').classList.add('d-sm-block')
+      $('.product-carousel-control--previous').each(function(i, e) {
+        e.classList.add('d-md-flex')
+      });
+      $('.product-carousel-control--next').each(function(i, e) {
+        e.classList.add('d-md-flex')
+      });
+    }
   }
 
   this.selectedVariant = function() {
