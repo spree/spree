@@ -26,6 +26,19 @@
       }
     }
   }
+
+  &-option-value {
+    @include media-breakpoint-up(lg) {
+      font-size: 14px;
+      margin-bottom: 2px;
+      text-transform: uppercase;
+    }
+
+    @include media-breakpoint-down(md) {
+      display: none;
+    }
+  }
+
   &-product {
     display: flex;
     border-top: 1px solid theme-color('borders');
@@ -65,9 +78,13 @@
         grid-column: span 4;
         display: grid;
         grid-template-columns: 1fr $last_3_table_cols;
-        grid-auto-rows: 250px;
         margin: 0;
-        align-items: center;
+      }
+    }
+
+    &-name {
+      @include media-breakpoint-up(lg) {
+        margin-bottom: 12px;
       }
     }
 
@@ -81,6 +98,11 @@
       &-qty {
         flex: 1;
         display: flex;
+      }
+    }
+
+    @media (min-width: 576px) and (max-width: 991px) {
+      &-qty {
         align-items: flex-end;
       }
     }
