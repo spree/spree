@@ -264,9 +264,9 @@
     }
   }
   &-coupon-code {
+    margin-bottom: 30px;
     @include media-breakpoint-up(lg) {
       flex-basis: 49%;
-      margin-bottom: 100px;
     }
     .form-control {
       font-size: font-px-to-rem(14px);
