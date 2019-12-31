@@ -11,6 +11,8 @@
         <span class="d-inline-block mb-1">
                         <%= render partial: 'spree/shared/color_select', locals: {
                           color: option_value.presentation,
+                          width: 32,
+                          height: 32,
                           selected: selected_option_values.include?(id)
                         } %>
                       </span>
