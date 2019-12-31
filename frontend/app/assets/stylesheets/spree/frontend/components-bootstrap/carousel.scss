@@ -36,11 +36,10 @@
   &-icon {
     &-control {
       @mixin arrow {
-        top: 0;
-        width: 15%;
+        top: calc(50% - 44px);
         z-index: 1;
-        @include media-breakpoint-up(xl) {
-          width: auto;
+        @include media-breakpoint-up(md) {
+          top: calc(50% - 56px);
         }
       }
       &-rounded {
@@ -51,18 +50,12 @@
         background: theme-color("light");
       }
       &--previous {
-        left: 0;
+        left: 15px;
         @include arrow;
-        @include media-breakpoint-up(xl) {
-          left: -30px;
-        }
       }
       &--next {
-        right: 0;
+        right: 15px;
         @include arrow;
-        @include media-breakpoint-up(xl) {
-          right: -30px;
-        }
       }
     }
   }
