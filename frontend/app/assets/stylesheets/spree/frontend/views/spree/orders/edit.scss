@@ -433,6 +433,7 @@
       display: table;
       white-space: nowrap;
       position: relative;
+      width: 100%;
       &:before,
       &:after {
         border-top: 1px solid theme-color("image-background");
