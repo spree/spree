@@ -3,17 +3,17 @@
     <div class="row d-xl-flex justify-content-xl-around pb-xl-5">
       <div class="d-flex d-xl-block flex-xl-grow-0 col-xl-4">
         <figure class="logo mx-auto mx-xl-0 pt-xl-2 pb-xl-1" data-hook>
-          <%= link_to 'http://spreecommerce.org/', target: '_blank', 'aria-label': 'Go to Spree Commerce' do %>
-            <%= image_tag 'logo@3x.png', alt: 'Spree Logo' %>
-          <% end %>
+          <%= logo %>
         </figure>
-        <div class="d-none d-xl-block pt-xl-2 footer-spree-info">
-          Spree Commerce is an open source Ecommerce framework decision makers want, developers enjoy.
-        </div>
+        <% if current_store.meta_description %>
+          <div class="d-none d-xl-block pt-xl-2 footer-spree-info">
+            <%= current_store.meta_description %>
+          </div>
+        <% end %>
       </div>
       <div class="d-block flex-nowrap py-2 order-xl-last col-xl-3 offset-xl-1">
         <div class="d-none d-xl-block pt-4 pb-3 pl-2 footer-spree-label">
-          Follow Us
+          <%= Spree.t(:follow_us) %>
         </div>
         <div class="d-flex d-xl-block justify-content-center mx-auto">
           <div class="d-flex">
@@ -43,12 +43,18 @@
       </div>
       <div class="py-xl-2 col-xl-3 offset-xl-1">
         <div class="d-none d-xl-block pt-4 pb-3 footer-spree-label">
-          Contact Us
+          <%= Spree.t(:contact_us) %>
         </div>
         <div class="d-flex flex-column align-items-center align-items-xl-start pb-3 flex-grow-2 footer-spree-contact-note">
-          <div>Best Shop, 2382 Locust Ave<br/>Long Beach, CA 90806, USA</div>
+          <div>
+            <%= current_store.name %>,
+            2382 Locust Ave<br/>
+            Long Beach, CA 90806, USA
+          </div>
           <div>Call us now: 760-673-8590</div>
-          <div>Email: contact@bestshop.com</div>
+          <% if current_store.mail_from_address %>
+            <div><%= Spree.t(:email) %>: <%= current_store.mail_from_address %></div>
+          <% end %>
         </div>
       </div>
     </div>

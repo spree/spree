@@ -35,8 +35,8 @@ module Spree
     def logo(image_path = Spree::Config[:logo])
       path = spree.respond_to?(:root_path) ? spree.root_path : main_app.root_path
 
-      link_to path, 'aria-label': Spree.t('go_to_homepage') do
-        image_tag image_path, alt: current_store.name
+      link_to path, 'aria-label': current_store.name do
+        image_tag image_path, alt: current_store.name, title: current_store.name
       end
     end
 
