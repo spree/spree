@@ -4,9 +4,9 @@
       <div class="carousel-item <%= 'active' if index == 0 %>">
         <div class="container">
           <div class="row">
-            <% sliced_items.each do |item| %>
+            <% sliced_items.each_with_index do |item, idx| %>
               <div class="col-6">
-                <% if item == sliced_items.first %>
+                <% if idx == 0 %>
                   <a
                     class="d-flex position-absolute justify-content-center align-items-center carousel-icon-control carousel-icon-control--previous"
                     href="#<%= id %>-mobile"
@@ -27,7 +27,7 @@
                   <%= render 'spree/shared/carousel_product', product: item, image_class: 'w-100' %>
                 <% end %>
 
-                <% if item == sliced_items.last %>
+                <% if idx == sliced_items.count - 1 %>
                   <a
                     class="d-flex position-absolute justify-content-center align-items-center carousel-icon-control carousel-icon-control--next"
                     href="#<%= id %>-mobile"
@@ -59,9 +59,9 @@
         <div class="container position-relative">
 
           <div class="row">
-            <% sliced_items.each do |item| %>
+            <% sliced_items.each_with_index do |item, idx| %>
               <div class="col-3">
-                <% if item == sliced_items.first %>
+                <% if idx == 0 %>
                   <a
                     class="d-md-flex position-absolute justify-content-center align-items-center carousel-icon-control carousel-icon-control--previous"
                     href="#<%= id %>-desktop"
@@ -83,7 +83,7 @@
                   <%= render 'spree/shared/carousel_product', product: item, image_class: 'w-100' %>
                 <% end %>
 
-                <% if item == sliced_items.last %>
+                <% if idx == sliced_items.count - 1 %>
                   <a
                     class="d-md-flex position-absolute justify-content-center align-items-center carousel-icon-control carousel-icon-control--next"
                     href="#<%= id %>-desktop"
