@@ -20,4 +20,12 @@ Spree.ready(function($) {
 
     borderElement.attr('stroke', strokeValue === '#000000' ? '#e4e5e6' : '#000000')
   })
+
+  $('.plp-overlay-ul-li').click(function() {
+    $('.plp-overlay-ul-li--active').removeClass('plp-overlay-ul-li--active')
+      .addClass('plp-overlay-ul-li')
+
+    $(this).removeClass('plp-overlay-ul-li')
+      .addClass('plp-overlay-ul-li--active')
+  })
 })
