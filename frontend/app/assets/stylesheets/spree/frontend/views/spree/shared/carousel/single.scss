@@ -1,4 +1,10 @@
 .product-carousel {
+  .modal-dialog--zoom & .carousel-inner {
+    @include zoom-modal-single-width(0px);
+    @media (min-height: 780px) {
+      @include zoom-modal-single-width(62px);
+    }
+  }
   &-control {
     $arrow-width: 15%;
 
@@ -38,9 +44,7 @@
       padding: 0 0 100% / $photo-width-to-height-ratio;
 
       .modal-dialog--zoom & {
-        @media (min-height: 780px) {
-          padding-bottom: 100% / $photo-width-to-height-ratio-zoom;
-        }
+        padding-bottom: 100% / $photo-width-to-height-ratio-zoom;
       }
 
       img {

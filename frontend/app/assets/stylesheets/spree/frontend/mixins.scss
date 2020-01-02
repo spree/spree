@@ -1,0 +1,7 @@
+@mixin zoom-modal-thumbnails-width($padding) {
+  width: calc((((100vh - 2 * #{$padding} - 2rem) / (1 / #{$photo-width-to-height-ratio-zoom})) - 32px) / 4);
+}
+
+@mixin zoom-modal-single-width($padding) {
+  width: calc((100vh - 2 * #{$padding} - 2rem) / (1 / #{$photo-width-to-height-ratio-zoom}));
+}
