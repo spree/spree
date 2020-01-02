@@ -5,6 +5,7 @@
     font-weight: 500;
     color: theme-color('dark');
     font-size: $font-size;
+    height: 1.5 * $font-size;
     line-height: $font-size;
     margin-top: calc-spacer(2);
 
@@ -12,6 +13,7 @@
       $font-size: font-px-to-rem(18px);
 
       font-size: $font-size;
+      height: 1.5 * $font-size;
       line-height: $font-size;
       margin-top: calc-spacer(3);
     }
