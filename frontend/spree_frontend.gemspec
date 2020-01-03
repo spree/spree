@@ -27,8 +27,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'canonical-rails', '~> 0.2.5'
   s.add_dependency 'inline_svg',      '~> 1.5'
   s.add_dependency 'jquery-rails',    '~> 4.3'
-  s.add_dependency 'jquery-ui-rails', '~> 6.0.1'
-  s.add_dependency 'select2-rails',   '~> 3.5.0'
   s.add_dependency 'turbolinks',      '~> 5.2.0'
 
   s.add_development_dependency 'capybara-accessible'
