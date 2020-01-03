@@ -124,11 +124,11 @@ module Spree
                              to_a
     end
 
-    private
-
     def common_product_cache_keys
-      [I18n.locale, current_currency] + price_options_cache_key
+      base_cache_key + price_options_cache_key
     end
+
+    private
 
     def price_options_cache_key
       current_price_options.sort.map(&:last).map do |value|
