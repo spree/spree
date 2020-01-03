@@ -136,4 +136,4 @@
   </div>
 </div>
 
-<%= products_structured_data(@combined_products) %>
+<%= products_structured_data((@bestsellers_products.to_a + @trending_products.to_a).uniq.compact) %>

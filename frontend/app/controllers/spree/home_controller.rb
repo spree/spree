@@ -6,8 +6,6 @@ module Spree
     def index
       @bestsellers_products = load_taxon_products('Bestsellers')
       @trending_products = load_taxon_products('Trending')
-
-      @combined_products = [@bestsellers_products, @trending_products].flatten.uniq
     end
 
     private
