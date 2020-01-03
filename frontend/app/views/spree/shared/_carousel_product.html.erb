@@ -1,6 +1,6 @@
 <%= link_to spree.product_path(product, taxon_id: @taxon&.id) do %>
   <%= plp_and_carousel_image(product, image_class) %>
 
-  <div class="product-component-name"><%= product.name %></div>
+  <div class="product-component-name" title="<%= product.name %>"><%= product.name %></div>
   <div class="product-component-price"><%= display_price(product) %></div>
 <% end %>
