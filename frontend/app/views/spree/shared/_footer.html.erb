@@ -12,32 +12,42 @@
         <% end %>
       </div>
       <div class="d-block flex-nowrap py-2 order-xl-last col-xl-3 offset-xl-1">
-        <div class="d-none d-xl-block pt-4 pb-3 pl-2 footer-spree-label">
-          <%= Spree.t(:follow_us) %>
-        </div>
+        <% unless current_store.facebook.blank? && current_store.twitter.blank? && current_store.instagram.blank? %>
+          <div class="d-none d-xl-block pt-4 pb-3 pl-2 footer-spree-label">
+            <%= Spree.t(:follow_us) %>
+          </div>
+        <% end %>
         <div class="d-flex d-xl-block justify-content-center mx-auto">
           <div class="d-flex">
-            <a href="https://www.facebook.com/spreecommerce/" target="_blank" aria-label="<%= Spree.t('go_to_facebook') %>">
-              <figure id="facebook" class="px-2" data-hook>
-              <%= icon(name: 'facebook',
-                       width: 22,
-                       height: 22)  %>
-              </figure>
-            </a>
-            <a href="https://twitter.com/spreecommerce" target="_blank" aria-label="<%= Spree.t('go_to_twitter') %>">
-              <figure id="twitter" class="px-2" data-hook>
+            <% unless current_store.facebook.blank? %>
+              <%= link_to "https://www.facebook.com/#{current_store.facebook}", target: "_blank", rel: 'nofollow noopener', 'aria-label': Spree.t('go_to_facebook') do %>
+                <figure id="facebook" class="px-2" data-hook>
+                <%= icon(name: 'facebook',
+                        width: 22,
+                        height: 22)  %>
+                </figure>
+              <% end %>
+            <% end %>
+
+            <% unless current_store.twitter.blank? %>
+              <%= link_to "https://twitter.com/#{current_store.facebook}", target: "_blank", rel: 'nofollow noopener', 'aria-label': Spree.t('go_to_twitter') do %>
+                <figure id="twitter" class="px-2" data-hook>
                 <%= icon(name: 'twitter',
-                         width: 26.3,
-                         height: 22)  %>
-              </figure>
-            </a>
-            <a href="https://www.instagram.com/spreecommerce/" target="_blank" aria-label="<%= Spree.t('go_to_instagram') %>">
-              <figure id="instagram" class="px-2" data-hook>
-              <%= icon(name: 'instagram',
-                       width: 22,
-                       height: 22)  %>
-              </figure>
-            </a>
+                        width: 22,
+                        height: 22)  %>
+                </figure>
+              <% end %>
+            <% end %>
+
+            <% unless current_store.instagram.blank? %>
+              <%= link_to "https://www.instagram.com/#{current_store.facebook}", target: "_blank", rel: 'nofollow noopener', 'aria-label': Spree.t('go_to_instagram') do %>
+                <figure id="instagram" class="px-2" data-hook>
+                <%= icon(name: 'instagram',
+                        width: 22,
+                        height: 22)  %>
+                </figure>
+              <% end %>
+            <% end %>
           </div>
         </div>
       </div>
