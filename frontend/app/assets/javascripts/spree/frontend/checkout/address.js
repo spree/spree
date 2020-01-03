@@ -58,7 +58,7 @@ Spree.ready(function ($) {
 
         if (states.length > 0) {
           selected = parseInt(stateSelect.val())
-          stateSelect.html('');
+          stateSelect.html('')
           statesWithBlank = [{name: '', id: ''}].concat(states)
           $.each(statesWithBlank, function (idx, state) {
             var opt = $(document.createElement('option')).attr('value', state.id).html(state.name)
