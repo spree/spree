@@ -13,7 +13,7 @@ module Spree
     def load_taxon_products(taxon_name)
       Spree::Product.joins(:taxons).
         where(spree_taxons: { name: taxon_name }).
-        eager_load(
+        includes(
           :variants_including_master,
                       master: [
                         :default_price,
@@ -21,8 +21,7 @@ module Spree
                       ]
                     ).
         available.
-        limit(12).
-        to_a
+        limit(12)
     end
   end
 end
