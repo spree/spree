@@ -23,9 +23,7 @@
                   </a>
                 <% end %>
 
-                <% cache(item) do %>
-                  <%= render 'spree/shared/carousel_product', product: item, image_class: 'w-100' %>
-                <% end %>
+                <%= render 'spree/shared/product', product: item, image_class: 'w-100' %>
 
                 <% if idx == sliced_items.count - 1 %>
                   <a
@@ -79,9 +77,7 @@
                   </a>
                 <% end %>
 
-                <% cache(item) do %>
-                  <%= render 'spree/shared/carousel_product', product: item, image_class: 'w-100' %>
-                <% end %>
+              <%= render 'spree/shared/product', product: item, image_class: 'w-100' %>
 
                 <% if idx == sliced_items.count - 1 %>
                   <a
