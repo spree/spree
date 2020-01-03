@@ -1,3 +1,5 @@
+//= require spree/frontend
+
 Spree.ready(function ($) {
   Spree.onAddress = function () {
     if ($('#checkout_form_address').length) {
@@ -59,7 +61,7 @@ Spree.ready(function ($) {
         if (states.length > 0) {
           selected = parseInt(stateSelect.val())
           stateSelect.html('')
-          statesWithBlank = [{name: 'STATE', id: ''}].concat(states)
+          statesWithBlank = [{name: Spree.translations.state.toUpperCase(), id: ''}].concat(states)
           $.each(statesWithBlank, function (idx, state) {
             var opt = $(document.createElement('option')).attr('value', state.id).html(state.name)
             if (selected.toString(10) === state.id.toString(10)) {
