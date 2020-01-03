@@ -17,7 +17,7 @@ Spree.ready(function ($) {
                 states_required: data.data.attributes.states_required,
                 zipcode_required: data.data.attributes.zipcode_required
               }
-              Spree.fillStates(Spree.Checkout[countryId], region)
+              // Spree.fillStates(Spree.Checkout[countryId], region)
               Spree.toggleZipcode(Spree.Checkout[countryId], region)
             })
           } else {
@@ -58,6 +58,7 @@ Spree.ready(function ($) {
 
         if (states.length > 0) {
           selected = parseInt(stateSelect.val())
+          stateSelect.html('');
           statesWithBlank = [{name: '', id: ''}].concat(states)
           $.each(statesWithBlank, function (idx, state) {
             var opt = $(document.createElement('option')).attr('value', state.id).html(state.name)
