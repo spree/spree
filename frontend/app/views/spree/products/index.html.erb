@@ -32,29 +32,7 @@
     <%= render 'spree/products/sort_desktop', permitted_params: permitted_params %>
     <div class="container mb-3 d-md-flex">
       <%= render 'spree/products/filters_desktop', permitted_params: permitted_params %>
-      <div class="col-md-12 col-lg-9" data-hook="homepage_products">
-        <div class="row">
-          <% cache(params.permit!.merge(current_currency: current_currency)) do %>
-            <% @products.each_with_index do |product, index| %>
-              <div id="product_<%= product.id %>" class="col-sm-4 col-6 mb-3 mb-md-4 pr-sm-0 pr-md-0 pl-md-4 pl-sm-4 <%= index&1 == 0 ? 'pl-0 pr-2' : 'pr-0 pl-2' %>">
-                <%= render 'spree/shared/product', product: product, image_class: 'product-component-plp-image' %>
-              </div>
-            <% end %>
-          <% end %>
-        </div>
-
-        <div class="row pl-md-4 pl-sm-4">
-          <div class="col-12">
-            <div class="plp-pagination d-none d-lg-flex">
-              <%= paginate @products, window: 2, theme: 'twitter-bootstrap-4' %>
-            </div>
-
-            <div class="plp-pagination d-lg-none">
-              <%= paginate @products, window: 1, theme: 'twitter-bootstrap-4' %>
-            </div>
-          </div>
-        </div>
-      </div>
+      <%= render 'spree/shared/products', products: @products %>
     </div>
   <% end %>
 </div>
