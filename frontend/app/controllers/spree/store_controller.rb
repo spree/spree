@@ -20,7 +20,7 @@ module Spree
 
     def api_tokens
       render json: {
-        order_token: current_order&.token,
+        order_token: simple_current_order&.token,
         oauth_token: current_oauth_token&.token
       }
     end
