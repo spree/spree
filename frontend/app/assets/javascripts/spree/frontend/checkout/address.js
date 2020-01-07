@@ -1,5 +1,3 @@
-//= require spree/frontend
-
 Spree.ready(function ($) {
   Spree.onAddress = function () {
     if ($('#checkout_form_address').length) {
