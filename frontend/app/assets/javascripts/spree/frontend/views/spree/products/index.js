@@ -15,10 +15,13 @@ Spree.ready(function($) {
   })
 
   $('.color-select').click(function() {
+    var allOptionsBorders = $('.color-select-border')
     var borderElement = $(this).find('.color-select-border')
-    var strokeValue = $(this).find('.color-select-border').attr('stroke')
 
-    borderElement.attr('stroke', strokeValue === '#000000' ? '#e4e5e6' : '#000000')
+    allOptionsBorders.each(function() {
+      $(this).attr('stroke', '#e4e5e6')
+    })
+    borderElement.attr('stroke', '#000000')
   })
 
   $('.plp-overlay-ul-li').click(function() {
