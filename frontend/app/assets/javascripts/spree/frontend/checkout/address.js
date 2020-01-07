@@ -56,7 +56,6 @@ Spree.ready(function ($) {
       }
 
       Spree.fillStates = function (data, region) {
-        Spree.addTranslation()
         var selected, statesWithBlank
         var statesRequired = data.states_required
         var states = data.states
@@ -68,6 +67,7 @@ Spree.ready(function ($) {
         if (states.length > 0) {
           selected = parseInt(stateSelect.val())
           stateSelect.html('')
+          Spree.addTranslation()
           statesWithBlank = [{name: Spree.translations.country_state.toUpperCase(), id: ''}].concat(states)
           $.each(statesWithBlank, function (idx, state) {
             var opt = $(document.createElement('option')).attr('value', state.id).html(state.name)
