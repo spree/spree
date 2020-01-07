@@ -122,6 +122,32 @@
         }
       }
 
+      &-store-credits {
+        padding: 12px 20px;
+        margin-top: 30px;
+        margin-bottom: 30px;
+        background-color: theme-color('image-background');
+        @include media-breakpoint-up(sm) {
+          padding: 21px 35px;
+          margin-top: 43px;
+        }
+
+        font-size: font-px-to-rem(16px);
+        font-weight: 500;
+        letter-spacing: 0.4px;
+        @include media-breakpoint-up(sm) {
+          font-size: font-px-to-rem(20px);
+          letter-spacing: 0.5px;
+        }
+
+        &-amount {
+          font-weight: 600;
+          @include media-breakpoint-up(sm) {
+            font-size: font-px-to-rem(22px);
+          }
+        }
+      }
+
       .delete-button-wrapper {
         order: -1;
 
