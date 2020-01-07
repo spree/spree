@@ -32,9 +32,9 @@
       </dd>
     </div>
   </dl>
-  <div class="order-show-line-items d-flex flex-column align-items-center w-100">
+  <div class="order-show-line-items d-flex flex-column align-items-center">
     <% @order.line_items.each do |item| %>
-      <div class="order-show-line-items-line-item d-flex">
+      <div class="order-show-line-items-line-item d-flex w-100">
         <% if item.variant.images.length == 0 %>
           <%= link_to product_image(item.product), item.product %>
         <% else %>
