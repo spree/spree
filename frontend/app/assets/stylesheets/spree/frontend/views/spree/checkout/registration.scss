@@ -1,6 +1,9 @@
 .checkout-registration {
   padding-bottom: 64px;
   border-bottom: 1px solid theme-color('borders');
+  @include media-breakpoint-down(sm) {
+    max-width: 574px;
+  }
 
   &-styled-or {
     font-size: 12px;
@@ -22,5 +25,9 @@
     &:after {
       margin: 0 0 0 20px;
     }
+  }
+
+  .spree-btn {
+    white-space: normal;
   }
 }
