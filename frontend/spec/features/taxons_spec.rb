@@ -53,7 +53,7 @@ describe 'viewing products', type: :feature, inaccessible: true do
 
     it 'displays title from taxon root and taxon name' do
       visit '/t/category/super-clothing/t-shirts'
-      expect(page).to have_title('Category - T-Shirts - ' + store_name)
+      expect(page).to have_title('T-Shirts - ' + store_name)
     end
 
     # Regression test for #2814
@@ -69,7 +69,7 @@ describe 'viewing products', type: :feature, inaccessible: true do
     it 'uses taxon name in title when meta_title set to empty string' do
       t_shirts.update meta_title: ''
       visit '/t/category/super-clothing/t-shirts'
-      expect(page).to have_title('Category - T-Shirts - ' + store_name)
+      expect(page).to have_title('T-Shirts - ' + store_name)
     end
   end
 
