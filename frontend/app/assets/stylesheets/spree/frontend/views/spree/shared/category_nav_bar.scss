@@ -4,7 +4,7 @@
     min-width: 176px;
 
     &-header {
-      color: theme-color('dark');
+      color: $meganav-font-color;
       font-weight: bold;
       line-height: 1.06;
       letter-spacing: 0.4px;
@@ -25,7 +25,7 @@
     }
 
     a {
-      color: theme-color('dark');
+      color: $meganav-font-color;
       font-weight: 500;
       line-height: 1.21;
       letter-spacing: 0.35px;
