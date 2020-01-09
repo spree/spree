@@ -6,15 +6,16 @@
 
   &,
   &:hover {
-    color: theme-color('dark-text');
+    color: $header-font-color;
   }
 
   &-count {
     $size: 19px;
     $border-width: 1px;
     border-radius: $size / 2;
-    background: theme-color('dark-text');
-    color: theme-color('light');
+    border: 1px solid $header-background;
+    color: $header-background;
+    background: $header-font-color;
     position: absolute;
     height: $size;
     min-width: $size;

@@ -25,7 +25,7 @@
         padding: 32px 0;
       }
       a {
-        color: theme-color("dark-text");
+        color: $header-font-color;
         text-decoration: none;
         img {
           width: 8px;
@@ -66,6 +66,7 @@
   appearance: none;
   border: none;
   background-color: transparent;
+  color: $header-font-color;
   .cls-3 {
     fill: theme-color("light-background");
   }
@@ -79,10 +80,8 @@
   appearance: none;
   border: none;
   background-color: transparent;
+  color: $header-font-color;
   &.shown {
     opacity: 1;
-  }
-  path {
-    fill: theme-color("dark-text");
   }
 }

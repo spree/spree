@@ -1,6 +1,6 @@
 .main-nav-bar {
   @mixin active-category-button {
-    border-bottom-color: theme-color('dark-text');
+    border-bottom-color: $header-font-color;
   }
 
   &-item {
@@ -36,7 +36,7 @@
         display: block;
       }
       #{$self}-button {
-        color: theme-color('dark-text');
+        color: $header-font-color;
         text-decoration: none;
         @include active-category-button;
       }
@@ -46,7 +46,7 @@
       background: none;
       border: none;
       border-bottom: 3px solid transparent;
-      color: theme-color('dark-text');
+      color: $header-font-color;
       margin: 0;
       &:focus {
         outline: none;
