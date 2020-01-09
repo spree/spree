@@ -1,4 +1,5 @@
 .footer-spree {
+  color: $footer-font-color;
   .logo img {
     height: 27px;
     width: 62px;
@@ -7,17 +8,19 @@
       width: 122px;
     }
   }
+  .spree-icon path {
+    fill: $footer-font-color;
+  }
   &-contact-note {
     font-size: font-px-to-rem(12px);
     @include media-breakpoint-up(xl) {
       font-size: font-px-to-rem(14px);
     }
-    }
+  }
   &-copyright{
-    color: theme-color('dark');
     font-size: font-px-to-rem(9px);
     a {
-      color: theme-color('dark');
+      color: $footer-font-color;
       text-decoration: underline;
     }
 
@@ -34,7 +37,6 @@
   }
   &-label {
     @include media-breakpoint-up(xl) {
-      color: theme-color('dark');
       font-size: font-px-to-rem(16px);
       font-weight: 500;
     }
@@ -44,7 +46,7 @@
   }
   &-menu-links {
     a {
-      color: theme-color('dark');
+      color: $footer-font-color;
       font-size: font-px-to-rem(14px);
     }
   }
