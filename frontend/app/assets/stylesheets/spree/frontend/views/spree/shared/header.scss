@@ -10,6 +10,8 @@ body {
 }
 
 .header-spree {
+  background: $header-background;
+  color: $header-font-color;
   position: fixed;
   top: 0;
   width: 100%;
