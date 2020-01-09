@@ -65,7 +65,7 @@
       border: none;
       z-index: 1000;
       display: none;
-      background-color: theme-color('light-background');
+      background: $meganav-background;
       background-clip: padding-box;
 
       form {
