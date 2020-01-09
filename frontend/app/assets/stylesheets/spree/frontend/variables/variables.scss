@@ -1,14 +1,5 @@
+$footer-font-color: #343a40;
 $spree-header-max-width: 1440px;
 $spree-header-mobile-height: 50px;
 $spree-header-tablet-height: 75px;
 $spree-header-desktop-height: 75px;
-$container-padding: 17px;
-$photo-width-to-height-ratio: 30001/ 37500;
-$photo-width-to-height-ratio-zoom: 28015 / 37500;
-$thumbnails-carousel-single-height: 100% / $photo-width-to-height-ratio;
-$thumbnails-carousel-single-height-zoom: 100% /
-  $photo-width-to-height-ratio-zoom;
-$zoom-height-breakpoint: calc(
-  650px / #{$photo-width-to-height-ratio-zoom} + 102px * 2
-);
-$spree-plp-filter-desktop-position: $spree-header-desktop-height + 77px;
