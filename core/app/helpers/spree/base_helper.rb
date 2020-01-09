@@ -55,8 +55,8 @@ module Spree
 
       if meta[:keywords].blank? || meta[:description].blank?
         if object && object[:name].present?
-          meta.reverse_merge!(keywords: [object.name, current_store.meta_keywords].compact.join(', '),
-                              description: [object.name, current_store.meta_description].compact.join(', '))
+          meta.reverse_merge!(keywords: [object.name, current_store.meta_keywords].reject(&:blank?).join(', '),
+                              description: [object.name, current_store.meta_description].reject(&:blank?).join(', '))
         else
           meta.reverse_merge!(keywords: current_store.meta_keywords,
                               description: current_store.meta_description)
