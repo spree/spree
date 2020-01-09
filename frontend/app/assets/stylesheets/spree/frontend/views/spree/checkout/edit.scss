@@ -17,7 +17,7 @@
         transform: translateY(-50%);
       }
       a {
-        color: theme-color('dark-text');
+        color: $header-font-color;
         padding-left: 15px;
         letter-spacing: 0.5px;
         @include media-breakpoint-down(sm) {
