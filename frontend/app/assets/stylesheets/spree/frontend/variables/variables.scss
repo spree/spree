@@ -1,4 +1,7 @@
-$footer-font-color: #343a40;
+$primary-background: #ffffff;
+$font-color: black;
+$footer-background: $primary-background;
+$footer-font-color: $font-color;
 $spree-header-max-width: 1440px;
 $spree-header-mobile-height: 50px;
 $spree-header-tablet-height: 75px;
