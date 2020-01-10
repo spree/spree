@@ -86,13 +86,17 @@
       &-image {
         z-index: 1;
         width: 23px;
+        height: 23px;
         margin-bottom: 6px;
+        color: $primary-background;
         @include media-breakpoint-up(sm) {
           width: 46px;
+          height: 46px;
           margin-bottom: 16px;
         }
         @include media-breakpoint-up(lg) {
           width: 36px;
+          height: 36px;
           margin-bottom: 13px;
         }
       }
