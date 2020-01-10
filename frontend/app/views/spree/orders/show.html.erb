@@ -44,14 +44,14 @@
           <span class="order-show-line-items-line-item-desc-name">
             <%= item.name %>
           </span>
-          <span class="order-show-line-items-line-item-desc-subtitle d-none d-lg-block text-break">
-            <ul class="list-unstyled">
+          <span class="order-show-line-items-line-item-desc-subtitle text-break text-uppercase">
+            <ul class="list-unstyled mb-0">
               <% item.variant.option_values.sort { |ov| ov.option_type.position }.each do |ov| %>
                 <li><%= "#{ov.option_type.presentation}: #{ov.name.titleize}" %></li>
               <% end %>
             </ul>
           </span>
-          <div class="order-show-line-items-line-item-desc-price">
+          <div class="order-show-line-items-line-item-desc-price mb-3">
             <div class="order-show-line-items-line-item-desc-attr-name d-none d-lg-block">Price</div>
             <div class="font-weight-bold"><%= item.single_money.to_html %></div>
           </div>
