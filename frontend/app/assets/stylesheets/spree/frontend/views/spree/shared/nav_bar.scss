@@ -42,6 +42,7 @@
 
       form {
         input#keywords{
+          background: transparent;
           color: theme-color("dark-text");
           font-size: font-px-to-rem(14px);
           width: calc(100% - 40px);
