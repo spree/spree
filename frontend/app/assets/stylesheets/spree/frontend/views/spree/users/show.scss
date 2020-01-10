@@ -126,7 +126,7 @@
         padding: 12px 20px;
         margin-top: 30px;
         margin-bottom: 30px;
-        background-color: theme-color('image-background');
+        background: $secondary-background;
         @include media-breakpoint-up(sm) {
           padding: 21px 35px;
           margin-top: 43px;
