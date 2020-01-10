@@ -118,7 +118,7 @@
   }
 
   &-taxons-separator {
-    background-color: theme-color('image-background');
+    background: $secondary-background;
     height: 40px;
 
     @include media-breakpoint-up(md) {
@@ -130,7 +130,7 @@
   }
 
   &-fashion-trends-box {
-    background-color: theme-color('image-background-light');
+    background: $secondary-background;
     padding: 30px 0px;
 
     @include media-breakpoint-up(md) {
@@ -202,7 +202,7 @@
   }
 
   &-bottom-box {
-    background-color: theme-color('image-background');
+    background: $secondary-background;
     display: flex;
     justify-content: center;
     flex-direction: column;

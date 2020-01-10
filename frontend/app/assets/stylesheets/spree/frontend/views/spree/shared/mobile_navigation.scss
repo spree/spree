@@ -20,7 +20,7 @@
     padding: 0 19px;
     &-item {
       padding: 16px 0;
-      border-bottom: 1px solid theme-color("image-background");
+      border-bottom: 1px solid $secondary-background;
       @include media-breakpoint-up(sm) {
         padding: 32px 0;
       }

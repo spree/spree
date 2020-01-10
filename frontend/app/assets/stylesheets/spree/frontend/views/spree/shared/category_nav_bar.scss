@@ -39,7 +39,7 @@
   }
 
   &-image {
-    background-color: theme-color('image-background');
+    background: $secondary-background;
     display: flex;
     justify-content: center;
     flex-direction: column;

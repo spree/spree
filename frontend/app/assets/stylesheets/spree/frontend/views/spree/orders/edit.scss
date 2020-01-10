@@ -436,7 +436,7 @@
       width: 100%;
       &:before,
       &:after {
-        border-top: 1px solid theme-color("image-background");
+        border-top: 1px solid $secondary-background;
         content: "";
         display: table-cell;
         position: absolute;
