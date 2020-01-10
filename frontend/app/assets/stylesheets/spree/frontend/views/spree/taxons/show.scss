@@ -29,7 +29,6 @@
       position: sticky;
       top: $spree-header-mobile-height;
       z-index: 2;
-      background: white;
       @include media-breakpoint-up(sm) {
         top: $spree-header-tablet-height;
       }
