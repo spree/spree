@@ -80,7 +80,7 @@
     h3 {
       margin: 0;
       width: auto;
-      background-color: #ffffff;
+      background: $primary-background;
       text-align: center;
       font-size: font-px-to-rem(14px);
       font-weight: 500;
@@ -223,7 +223,7 @@
     }
 
     &-inner {
-      background-color: white;
+      background: $primary-background;
       margin: auto;
       padding: 10px 30px;
       position: absolute;

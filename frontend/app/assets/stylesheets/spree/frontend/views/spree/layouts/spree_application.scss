@@ -1,3 +1,9 @@
+body {
+  background: $primary-background;
+}
+.modal-content {
+  background: $primary-background;
+}
 .overlay {
   position: fixed;
   visibility: hidden;

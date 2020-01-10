@@ -91,6 +91,7 @@
     top: $spree-plp-filter-desktop-position;
     left: 0;
     &-card {
+      background: $primary-background;
       border: none;
       a:hover {
         text-decoration: none;
@@ -190,8 +191,15 @@
       text-align: center;
       line-height: 25px;
     }
-    .page-item:not(:last-child) {
-      margin-right: 7px;
+    .page-item {
+      &:not(.active) {
+        .page-link {
+          background: $primary-background;
+        }
+      }
+      &:not(:last-child) {
+        margin-right: 7px;
+      }
     }
   }
 

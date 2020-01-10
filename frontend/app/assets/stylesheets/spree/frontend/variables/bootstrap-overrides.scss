@@ -10,7 +10,7 @@ $theme-colors: (
   "light-secondary": #999999,
   "borders": #e2e2e2,
   "dark-borders": #eceef0,
-  "light-background": #ffffff,
+  "light-background": $primary-background,
   "dark-text": #232323,
   "overlay": rgba(76, 76, 76, 0.5),
   "shadow": rgba(0, 0, 0, .16)
