@@ -110,7 +110,7 @@ module Spree
     end
 
     def related_products
-      return [] unless @product.respond_to?(:related_products)
+      return [] unless @product.respond_to?(:has_related_products?) && @product.has_related_products?(:related_products)
 
       @_related_products ||= @product.
                              related_products.
