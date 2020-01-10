@@ -24,8 +24,12 @@ body {
   }
 }
 
-.dropdown-item {
-  &:hover, &:focus {
-    background: $secondary-background;
+
+.dropdown-menu {
+  background: $primary-background;
+  .dropdown-item {
+    &:hover, &:focus {
+      background: $secondary-background;
+    }
   }
 }
