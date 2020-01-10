@@ -195,6 +195,7 @@
         height: 25px;
         font-size: font-px-to-rem(14px);
         border-color: theme-color("borders");
+        z-index: 1;
         @include media-breakpoint-up(sm) {
           width: 60px;
           height: 51.4px;
