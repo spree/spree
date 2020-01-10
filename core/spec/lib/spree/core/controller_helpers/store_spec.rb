@@ -4,6 +4,8 @@ class FakesController < ApplicationController
   include Spree::Core::ControllerHelpers::Auth
   include Spree::Core::ControllerHelpers::Order
   include Spree::Core::ControllerHelpers::Store
+
+  before_action :set_current_order
 end
 
 describe Spree::Core::ControllerHelpers::Store, type: :controller do
@@ -48,6 +50,7 @@ describe Spree::Core::ControllerHelpers::Store, type: :controller do
         before do
           allow(current_order).to receive(:tax_zone).and_return(other_zone)
           allow(controller).to receive(:current_order).and_return(current_order)
+          controller.instance_variable_set(:@current_order, current_order)
         end
 
         it { is_expected.to include(tax_zone: other_zone) }
@@ -72,6 +75,7 @@ describe Spree::Core::ControllerHelpers::Store, type: :controller do
         before do
           allow(current_order).to receive(:tax_zone).and_return(other_zone)
           allow(controller).to receive(:current_order).and_return(current_order)
+          controller.instance_variable_set(:@current_order, current_order)
         end
 
         it { is_expected.to include(tax_zone: other_zone) }
