@@ -7,6 +7,7 @@ module Spree
     include Spree::Checkout::AddressBook
 
     before_action :set_cache_header, only: [:edit]
+    before_action :set_current_order
     before_action :load_order_with_lock
     before_action :ensure_valid_state_lock_version, only: [:update]
     before_action :set_state_if_present
