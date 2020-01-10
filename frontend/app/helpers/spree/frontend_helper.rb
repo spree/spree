@@ -1,5 +1,7 @@
 module Spree
   module FrontendHelper
+    include InlineSvg::ActionView::Helpers
+
     def body_class
       @body_class ||= content_for?(:sidebar) ? 'two-col' : 'one-col'
       @body_class
