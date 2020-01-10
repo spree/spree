@@ -17,3 +17,9 @@
     transition: opacity 0.5s;
   }
 }
+
+.dropdown-item {
+  &:hover, &:focus {
+    background: $secondary-background;
+  }
+}

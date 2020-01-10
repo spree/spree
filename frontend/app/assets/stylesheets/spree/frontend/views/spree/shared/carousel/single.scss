@@ -32,7 +32,7 @@
       border-radius: 50%;
       width: $size;
       height: $size;
-      background: theme-color("light");
+      background: $secondary-background;
     }
   }
   &-item {
