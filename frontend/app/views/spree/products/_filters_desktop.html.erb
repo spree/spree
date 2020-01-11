@@ -1,6 +1,6 @@
-<% cache base_cache_key + [@option_types, permitted_params, @taxon] do %>
+<% cache base_cache_key + [available_option_types, permitted_params, @taxon] do %>
   <div id="plp-filters-accordion" class="d-none d-lg-block col-lg-3 pr-5 position-sticky h-100 plp-filters" data-hook="taxon_sidebar_navigation">
-    <% @option_types.each do |option_type| %>
+    <% @available_option_types.each do |option_type| %>
       <div class="w-100 py-2 card plp-filters-card">
         <% ot_downcase_name = option_type.filter_param %>
         <% option_type_name = ot_downcase_name.titleize %>

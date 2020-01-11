@@ -11,7 +11,6 @@ module Spree
       @searcher = build_searcher(params.merge(include_images: true))
       @products = @searcher.retrieve_products
       @products = @products.includes(:possible_promotions) if @products.respond_to?(:includes)
-      @option_types = load_options
     end
 
     def show
@@ -31,10 +30,6 @@ module Spree
       else
         super
       end
-    end
-
-    def load_options
-      Spree::OptionType.includes(:option_values)
     end
 
     def load_product
