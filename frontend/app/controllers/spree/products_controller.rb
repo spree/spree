@@ -2,7 +2,7 @@ module Spree
   class ProductsController < Spree::StoreController
     include Spree::ProductsHelper
 
-    before_action :load_product, :load_variants, only: :show
+    before_action :load_product, only: :show
     before_action :load_taxon, only: :index
 
     respond_to :html
@@ -14,12 +14,15 @@ module Spree
     end
 
     def show
-      @product_summary = Spree::ProductSummaryPresenter.new(@product).call
+      redirect_if_legacy_path
 
-      @product_properties = @product.product_properties.includes(:property)
       @taxon = params[:taxon_id].present? ? Spree::Taxon.find(params[:taxon_id]) : @product.taxons.first
 
-      redirect_if_legacy_path
+      if stale?(etag: product_etag, last_modified: @product.updated_at.utc, public: true)
+        @product_summary = Spree::ProductSummaryPresenter.new(@product).call
+        @product_properties = @product.product_properties.includes(:property)
+        load_variants
+      end
     end
 
     private
@@ -68,6 +71,16 @@ module Spree
         params.permit!
         redirect_to url_for(params), status: :moved_permanently
       end
+    end
+
+    def product_etag
+      [
+        store_etag,
+        @product,
+        @taxon,
+        @product.possible_promotion_ids,
+        @product.possible_promotions.maximum(:updated_at),
+      ]
     end
   end
 end
