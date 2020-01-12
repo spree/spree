@@ -2,6 +2,7 @@
 
 Spree.ready(function ($) {
   var formUpdateCart = $('form#update-cart')
+
   if (formUpdateCart.length) {
     $('form#update-cart a.delete').show().one('click', function () {
       $(this).parents('.shopping-cart-item').first().find('input.shopping-cart-item-quantity-input').val(0)
@@ -16,7 +17,7 @@ Spree.ready(function ($) {
       $(targetInputs).val(newValue)
     })
     $('form#update-cart input.shopping-cart-item-quantity-input').on('change', function(e) {
-      $('#update-cart').submit()
+      formUpdateCart.submit()
     })
     $('form#update-cart button.shopping-cart-item-quantity-decrease-btn').off('click').on('click', function() {
       var itemId = $(this).attr('data-id')
@@ -25,7 +26,7 @@ Spree.ready(function ($) {
 
       if (inputValue > 1) {
         $(input).val(inputValue - 1)
-        $('#update-cart').submit()
+        formUpdateCart.submit()
       }
     })
     $('form#update-cart button.shopping-cart-item-quantity-increase-btn').off('click').on('click', function() {
@@ -34,7 +35,7 @@ Spree.ready(function ($) {
       var inputValue = parseInt($(input).val(), 10)
 
       $(input).val(inputValue + 1)
-      $('#update-cart').submit()
+      formUpdateCart.submit()
     })
     $('form#update-cart button#shopping-cart-coupon-code-button').off('click').on('click', function(event) {
       var couponCodeField = $('#order_coupon_code');
@@ -83,13 +84,14 @@ Spree.ready(function ($) {
     }
   })
 
-  Spree.fetchCart()
+  if (!Spree.cartFetched) Spree.fetchCart()
 })
 
 Spree.fetchCart = function () {
   return $.ajax({
     url: Spree.pathFor('cart_link')
   }).done(function (data) {
+    Spree.cartFetched = true
     return $('#link-to-cart').html(data)
   })
 }
