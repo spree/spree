@@ -21,6 +21,7 @@ module Spree
                       ]
                     ).
         available.
+        order('spree_products_taxons.position').
         limit(12)
     end
   end
