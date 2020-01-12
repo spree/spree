@@ -82,9 +82,11 @@ Spree.ready(function ($) {
       }
     }
   })
+
+  Spree.fetchCart()
 })
 
-Spree.fetch_cart = function () {
+Spree.fetchCart = function () {
   return $.ajax({
     url: Spree.pathFor('cart_link')
   }).done(function (data) {

@@ -13,6 +13,11 @@ module Spree
       render 'spree/shared/unauthorized', layout: Spree::Config[:layout], status: 401
     end
 
+    def account_link
+      render partial: 'spree/shared/link_to_account'
+      fresh_when(try_spree_current_user)
+    end
+
     def cart_link
       render partial: 'spree/shared/link_to_cart'
       fresh_when(simple_current_order)
@@ -33,6 +38,14 @@ module Spree
 
     def config_locale
       Spree::Frontend::Config[:locale]
+    end
+
+    def store_etag
+      [
+        current_store,
+        current_currency,
+        config_locale
+      ]
     end
   end
 end
