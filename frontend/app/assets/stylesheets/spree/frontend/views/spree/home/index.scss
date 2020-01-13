@@ -119,6 +119,7 @@
 
   &-taxons-separator {
     background: $secondary-background;
+    color: $secondary-font-color;
     height: 40px;
 
     @include media-breakpoint-up(md) {
@@ -131,6 +132,7 @@
 
   &-fashion-trends-box {
     background: $secondary-background;
+    color: $secondary-font-color;
     padding: 30px 0px;
 
     @include media-breakpoint-up(md) {
@@ -203,6 +205,7 @@
 
   &-bottom-box {
     background: $secondary-background;
+    color: $secondary-font-color;
     display: flex;
     justify-content: center;
     flex-direction: column;

@@ -360,6 +360,7 @@
       padding: 25px 46px;
       margin-bottom: 30px;
       background: $secondary-background;
+      color: $secondary-font-color;
       @include media-breakpoint-up(sm) {
         padding: 70px 120px;
       }

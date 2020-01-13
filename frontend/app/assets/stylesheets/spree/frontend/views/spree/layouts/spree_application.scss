@@ -30,6 +30,7 @@ body {
   .dropdown-item {
     &:hover, &:focus {
       background: $secondary-background;
+      color: $secondary-font-color;
     }
   }
 }

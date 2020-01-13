@@ -127,6 +127,7 @@
         margin-top: 30px;
         margin-bottom: 30px;
         background: $secondary-background;
+        color: $secondary-font-color;
         @include media-breakpoint-up(sm) {
           padding: 21px 35px;
           margin-top: 43px;
