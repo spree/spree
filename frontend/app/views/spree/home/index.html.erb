@@ -136,4 +136,6 @@
   </div>
 </div>
 
-<%= products_structured_data((@bestsellers_products.to_a + @trending_products.to_a).uniq.compact) %>
+<% cache "spree/home/ld/#{@ld_products_updated_at}" do %>
+  <%= products_structured_data((@bestsellers_products.to_a + @trending_products.to_a).uniq.compact) %>
+<% end %>
