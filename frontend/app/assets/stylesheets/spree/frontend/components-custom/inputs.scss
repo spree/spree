@@ -94,7 +94,7 @@ label {
     font-size: 0;
     border-radius: 0;
     border: 2px solid theme-color('secondary');
-    background-color: $white;
+    background-color: $input-background;
 
     @include media-breakpoint-up(sm) {
       width: 32px;

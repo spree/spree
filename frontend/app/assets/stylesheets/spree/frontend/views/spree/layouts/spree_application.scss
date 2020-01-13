@@ -33,3 +33,9 @@ body {
     }
   }
 }
+
+.form-control,
+.form-control:focus,
+.spree-flat-input {
+  background: $input-background;
+}
