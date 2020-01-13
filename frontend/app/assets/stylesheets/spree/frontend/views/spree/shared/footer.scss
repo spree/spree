@@ -1,6 +1,7 @@
 .footer-spree {
   background: $footer-background;
   color: $footer-font-color;
+  border-color: $global-border-style !important;
   .logo img {
     height: 27px;
     width: 62px;
@@ -18,21 +19,24 @@
       font-size: font-px-to-rem(14px);
     }
   }
-  &-copyright{
-    font-size: font-px-to-rem(9px);
-    a {
-      color: $footer-font-color;
-      text-decoration: underline;
-    }
+  &-copyright {
+    border-color: $global-border-style !important;
+    &-content{
+      font-size: font-px-to-rem(9px);
+      a {
+        color: $footer-font-color;
+        text-decoration: underline;
+      }
 
-    @include media-breakpoint-up(xl) {
-      font-size: font-px-to-rem(14px);
-    }
+      @include media-breakpoint-up(xl) {
+        font-size: font-px-to-rem(14px);
+      }
 
-    &-logo-spark {
-      height: 14px;
-      @include media-breakpoint-up(md) {
-        height: 21px;
+      &-logo-spark {
+        height: 14px;
+        @include media-breakpoint-up(md) {
+          height: 21px;
+        }
       }
     }
   }
@@ -46,6 +50,7 @@
     font-size: font-px-to-rem(14px);
   }
   &-menu-links {
+    border-color: $global-border-style !important;
     a {
       color: $footer-font-color;
       font-size: font-px-to-rem(14px);

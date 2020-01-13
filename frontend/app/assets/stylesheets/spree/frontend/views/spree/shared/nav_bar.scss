@@ -18,6 +18,9 @@
         outline: none;
       }
     }
+    .dropdown-menu {
+      border-color: $global-border-style;
+    }
   }
   &-search-menu {
     position: static;
