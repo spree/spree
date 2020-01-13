@@ -240,6 +240,20 @@ THIS IS THE BEST PRODUCT EVER!
 
         it { is_expected.to eq("en/USD/spree/zones/new/spree/products/all-10-20111213-5-#{@taxon.id}") }
       end
+
+      context 'with `additional_cache_key` passed' do
+        subject { helper.cache_key_for_products(@products, 'json-ld') }
+
+        let(:updated_at) { Date.new(2011, 12, 13) }
+
+        before do
+          @taxon = create(:taxon)
+          allow(@products).to receive(:count).and_return(5)
+          allow(@products).to receive(:maximum).with(:updated_at) { updated_at }
+        end
+
+        it { is_expected.to eq("en/USD/spree/zones/new/spree/products/all-10-20111213-5-#{@taxon.id}/json-ld") }
+      end
     end
 
     context '#cache_key_for_product' do
