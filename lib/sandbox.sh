@@ -61,6 +61,8 @@ group :test, :development do
   gem 'rack-mini-profiler'
   gem 'awesome_print'
 end
+
+gem 'rack-cache'
 RUBY
 
 bundle install --gemfile Gemfile

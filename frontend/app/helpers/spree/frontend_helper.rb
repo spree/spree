@@ -147,7 +147,7 @@ module Spree
     end
 
     def permitted_product_params
-      product_filters = Rails.cache.fetch('spree/product-filters', expires_in: 5.minutes) { Spree::OptionType.pluck(:name) }
+      product_filters = available_option_types.map(&:name)
       params.permit(product_filters << :sort_by)
     end
 
@@ -214,7 +214,14 @@ module Spree
     def filtering_params
       static_filters = %w(keywords price sort_by)
 
-      @option_types.map(&:filter_param).concat(static_filters)
+      available_option_types.map(&:filter_param).concat(static_filters)
+    end
+
+    def available_option_types
+      @available_option_types ||= Rails.cache.fetch('available-option-types', expires_in: 3.minutes) do
+        Spree::OptionType.includes(:option_values).to_a
+      end
+      @available_option_types
     end
 
     private

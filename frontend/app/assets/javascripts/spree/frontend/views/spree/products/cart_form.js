@@ -263,6 +263,7 @@ Spree.ready(function($) {
             quantity_increment: quantity,
             cart: response.attributes
           })
+          Spree.fetchCart()
         },
         function(_error) {
           document.getElementById('overlay').classList.add('shown')

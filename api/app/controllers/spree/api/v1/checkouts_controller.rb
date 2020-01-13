@@ -2,13 +2,7 @@ module Spree
   module Api
     module V1
       class CheckoutsController < Spree::Api::BaseController
-        before_action :associate_user, only: :update
         before_action :load_order_with_lock, only: [:next, :advance, :update]
-
-        include Spree::Core::ControllerHelpers::Auth
-        include Spree::Core::ControllerHelpers::Order
-        # This before_action comes from Spree::Core::ControllerHelpers::Order
-        skip_before_action :set_current_order
 
         def next
           authorize! :update, @order, order_token

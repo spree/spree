@@ -5,8 +5,6 @@ module Spree
         extend ActiveSupport::Concern
 
         included do
-          before_action :set_current_order
-
           helper_method :current_order
           helper_method :simple_current_order
         end
@@ -28,6 +26,7 @@ module Spree
         # The current incomplete order from the token for use in cart and during checkout
         def current_order(options = {})
           options[:create_order_if_necessary] ||= false
+          options[:includes] ||= true
 
           if @current_order
             @current_order.last_ip_address = ip_address
@@ -66,8 +65,8 @@ module Spree
 
         private
 
-        def last_incomplete_order
-          @last_incomplete_order ||= try_spree_current_user.last_incomplete_spree_order(current_store)
+        def last_incomplete_order(includes = {})
+          @last_incomplete_order ||= try_spree_current_user.last_incomplete_spree_order(current_store, includes: includes)
         end
 
         def current_order_params
@@ -77,8 +76,15 @@ module Spree
         def find_order_by_token_or_user(options = {}, with_adjustments = false)
           options[:lock] ||= false
 
+          includes = if options[:includes]
+                       { line_items: [variant: [:images, :option_values, :product]] }
+                     else
+                       {}
+                     end
+
           # Find any incomplete orders for the token
-          incomplete_orders = Spree::Order.incomplete.includes(line_items: [variant: [:images, :option_values, :product]])
+          incomplete_orders = Spree::Order.incomplete.includes(includes)
+
           token_order_params = current_order_params.except(:user_id)
           order = if with_adjustments
                     incomplete_orders.includes(:adjustments).lock(options[:lock]).find_by(token_order_params)
@@ -87,7 +93,7 @@ module Spree
                   end
 
           # Find any incomplete orders for the current user
-          order = last_incomplete_order if order.nil? && try_spree_current_user
+          order = last_incomplete_order(includes) if order.nil? && try_spree_current_user
 
           order
         end

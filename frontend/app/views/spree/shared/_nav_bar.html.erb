@@ -33,23 +33,12 @@
                   height: 24)  %>
         </button>
 
-        <div id="link-to-account" class="dropdown-menu dropdown-menu-right text-right">
+        <div id="link-to-account" class="dropdown-menu dropdown-menu-right text-right" data-turbolinks-permanent>
         </div>
-        <%# TODO: fix me in spree_auth_devise %>
-        <script>
-          window.addEventListener('turbolinks:load', function() {
-            $.ajax({
-              url: Spree.pathFor("account_link"),
-              success: function(data) {
-                return $('#link-to-account').html(data)
-              }
-            })
-          })
-        </script>
       </div>
     </li>
   <% end %>
-  <li id="link-to-cart" data-hook>
+  <li id="link-to-cart" data-turbolinks-permanent>
     <span class="d-none d-xl-inline-block cart-icon--xl">
       <%= icon(name: 'bag',
                width: 41.8,
@@ -61,9 +50,4 @@
                height: 24)  %>
     </span>
   </li>
-  <script>
-    window.addEventListener('turbolinks:load', function() {
-      Spree.fetch_cart()
-    })
-  </script>
 </ul>
