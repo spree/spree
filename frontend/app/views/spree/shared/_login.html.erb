@@ -1,6 +1,6 @@
 <div class="col-lg-11 mx-auto">
   <h3 class="spree-mb-large spree-mt-large spree-header"><%= Spree.t(:log_in_to_continue) %></h3>
-  <%= form_for Spree.user_class.new, as: :spree_user, url: spree.create_new_session_path do |f| %>
+  <%= form_for Spree.user_class.new, as: :spree_user, url: spree_login_path do |f| %>
     <div id="password-credentials" class="mb-4">
       <div class="form-group mb-4">
         <p class="form-group checkout-content-inner-field">
@@ -13,14 +13,17 @@
         </p>
       </div>
     </div>
-    <div class="spree-checkbox-container mt-4 mt-sm-5 mt-lg-4 spree-mb-medium">
-      <div class="spree-checkbox">
-        <%= f.check_box :remember_me, tabindex: 3 %>
-        <%= f.label :remember_me, '' %>
-      </div>
 
-      <%= f.label :remember_me, Spree.t(:remember_me), class: 'spree-checkbox-label' %>
-    </div>
+    <% if Spree::Frontend::Config[:remember_me_enabled] %>
+      <div class="spree-checkbox-container mt-4 mt-sm-5 mt-lg-4 spree-mb-medium">
+        <div class="spree-checkbox">
+          <%= f.check_box :remember_me, tabindex: 3 %>
+          <%= f.label :remember_me, '' %>
+        </div>
+
+        <%= f.label :remember_me, Spree.t(:remember_me), class: 'spree-checkbox-label' %>
+      </div>
+    <% end %>
 
     <%= f.submit Spree.t(:log_in), class: 'btn btn-primary btn-block spree-btn mt-2', tabindex: 4 %>
   <% end %>
