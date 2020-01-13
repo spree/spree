@@ -2,9 +2,9 @@
   <p class="checkout-content-header">
     <%= Spree.t(:summary).upcase %>
   </p>
-  <div class='order-show d-flex flex-column flex-lg-wrap' id="order_summary" data-hook>
-    <div class="order-show-line-items d-flex flex-column align-items-center w-100 order-0 order-lg-1">
-      <div class="order-show-line-items-header d-none d-sm-block d-lg-none align-self-start mb-3">
+  <div class='checkout-confirm-order-details d-flex flex-column flex-lg-wrap' id="order_summary" data-hook>
+    <div class="checkout-confirm-order-details-line-items d-flex flex-column align-items-center w-100 order-0 order-lg-1">
+      <div class="checkout-confirm-order-details-line-items-header d-none d-sm-block d-lg-none align-self-start mb-3">
         <%= Spree.t(:products) %>
       </div>
       <div class="d-table w-100">
@@ -23,8 +23,8 @@
           </p>
         </div>
         <% @order.line_items.each do |item| %>
-          <div class="order-show-line-items-line-item w-100 d-table-row">
-            <div class="order-show-line-items-line-item-name d-table-cell align-middle py-3 py-sm-4">
+          <div class="checkout-confirm-order-details-line-items-line-item w-100 d-table-row">
+            <div class="checkout-confirm-order-details-line-items-line-item-name d-table-cell align-middle py-3 py-sm-4">
               <div class="d-flex align-items-lg-center">
                 <% if item.variant.images.length == 0 %>
                   <%= link_to product_image(item.variant.product), item.variant.product %>
@@ -33,7 +33,7 @@
                 <% end %>
                 <div class="d-flex flex-column mt-2 mt-lg-0">
                   <div><%= item.name %></div>
-                  <ul class="order-show-line-items-line-item-name-options text-uppercase d-none d-lg-block list-unstyled">
+                  <ul class="checkout-confirm-order-details-line-items-line-item-name-options text-uppercase list-unstyled mb-0">
                     <% item.variant.option_values.sort { |ov| ov.option_type.position }.each do |ov| %>
                       <li><%= "#{ov.option_type.presentation}: #{ov.name.titleize}" %></li>
                     <% end %>
@@ -41,20 +41,20 @@
                   <div class="d-lg-none">
                     <div class="font-weight-bold"><%= item.single_money.to_html %></div>
                   </div>
-                  <div class="d-lg-none mt-sm-auto">
+                  <div class="d-lg-none">
                     <span>Quantity:</span>
                     <span class="font-weight-bold"><%= item.quantity %></span>
                   </div>
                 </div>
               </div>
             </div>
-            <div class="order-show-line-items-line-item-price d-none d-lg-table-cell align-middle py-4">
+            <div class="checkout-confirm-order-details-line-items-line-item-price d-none d-lg-table-cell align-middle py-4">
               <div><%= item.single_money.to_html %></div>
             </div>
-            <div class="order-show-line-items-line-item-quantity d-none d-lg-table-cell align-middle py-4">
-              <span class="order-show-line-items-line-item-quantity-val d-lg-block"><%= item.quantity %></span>
+            <div class="checkout-confirm-order-details-line-items-line-item-quantity d-none d-lg-table-cell align-middle py-4">
+              <span class="checkout-confirm-order-details-line-items-line-item-quantity-val d-lg-block"><%= item.quantity %></span>
             </div>
-            <div class="order-show-line-items-line-item-total d-none d-lg-table-cell align-middle py-4">
+            <div class="checkout-confirm-order-details-line-items-line-item-total d-none d-lg-table-cell align-middle py-4">
               <div><%= item.display_total.to_s %></div>
             </div>
           </div>
@@ -67,21 +67,21 @@
       </div>
       <dl>
         <div>
-          <dt>
+          <dt class="text-uppercase">
             <%= Spree.t(:shipping_address) %>
             <%= checkout_edit_link %>
           </dt>
           <dd><%= sanitize @order.ship_address.to_s, tags: %w[br] %></dd>
         </div>
         <div>
-          <dt>
+          <dt class="text-uppercase">
             <%= Spree.t(:billing_address) %>
             <%= checkout_edit_link %>
           </dt>
           <dd><%= sanitize @order.bill_address.to_s, tags: %w[br] %></dd>
         </div>
         <div>
-          <dt>
+          <dt class="text-uppercase">
             <%= Spree.t(:shipping) %>
             <%= checkout_edit_link('delivery') %>
           </dt>

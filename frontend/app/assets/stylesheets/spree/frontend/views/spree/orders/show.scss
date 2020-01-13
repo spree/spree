@@ -21,6 +21,7 @@
 
   dd {
     font-size: font-px-to-rem(14px);
+    margin-bottom: 30px;
     @include media-breakpoint-up(sm) {
       padding-bottom: 0px;
       margin-bottom: 60px;
@@ -33,6 +34,7 @@
 
   dt {
     font-weight: 500;
+    margin-bottom: 18px;
     @include media-breakpoint-up(sm) {
       padding: 0;
       margin-bottom: 32px;
@@ -44,6 +46,8 @@
   }
 
   &-number {
+    margin-top: 100px;
+    margin-bottom: 38px;
     @include media-breakpoint-up(sm) {
       margin-top: 80px;
       margin-bottom: 60px;
@@ -71,8 +75,38 @@
     }
 
     &-line-item {
-      $self: &;
+      &:not(:last-child) {
+        margin-bottom: 26px;
+      }
 
+      @include media-breakpoint-up(sm) {
+        border-bottom: 1px solid $global-border-style;
+        padding-top: 40px;
+        padding-bottom: 40px;
+
+        &:first-child {
+          border-top: 1px solid $global-border-style;
+        }
+
+        &:not(:last-child) {
+          margin-bottom: 0;
+        }
+      }
+
+      @include media-breakpoint-up(lg) {
+        border-bottom: none;
+        padding-top: 0;
+        padding-bottom: 60px;
+
+        &:first-child {
+          border-top: none;
+        }
+
+        &:last-child {
+          padding-bottom: 0;
+        }
+      }
+      
       a {
         max-width: 50%;
         margin-right: 20px;
@@ -83,120 +117,157 @@
       }
 
       img {
-        width: 90px;
+        width: 73px;
         height: auto;
 
         @include media-breakpoint-up(sm) {
-          width: 206px;
+          width: 205px;
         }
 
         @include media-breakpoint-up(lg) {
-          width: 255px;
+          width: 162px;
         }
       }
 
-      &-name {
-        font-size: font-px-to-rem(14px);
-        border-top: 1px solid theme-color('borders');
+      &-desc {
+        display: grid;
+        justify-content: space-between;
+        grid-template:
+              'n' fit-content(20px)
+              's' fit-content(20px)
+              'p' fit-content(20px)
+              'q' fit-content(20px)
+              't' fit-content(20px);
 
         @include media-breakpoint-up(sm) {
-          font-size: font-px-to-rem(27px);
+          font-size: font-px-to-rem(26px);
         }
-
         @include media-breakpoint-up(lg) {
-          font-size: font-px-to-rem(22px);
-          width: 55%;
+          grid-template: fit-content(40px) fit-content(22px) 1fr fit-content(60px) / repeat(3, 1fr);
+          grid-template-areas: 'n n n'
+                               's s s'
+                               '. . .'
+                               'p q t';
         }
 
-        &-options {
-          font-size: font-px-to-rem(12px);
-        }
-      }
-
-      &-subtitle {
-        @include media-breakpoint-up(sm) {
+        &-name {
+          grid-area: n;
           font-size: font-px-to-rem(14px);
-        }
-        @include media-breakpoint-up(lg) {
-          font-size: font-px-to-rem(18px);
-        }
-      }
-
-      &-price {
-        font-size: font-px-to-rem(14px);
-        border-top: 1px solid theme-color('borders');
-
-        @include media-breakpoint-up(sm) {
-          font-size: font-px-to-rem(27px);
-          margin-bottom: auto;
-        }
-        @include media-breakpoint-up(lg) {
-          font-size: font-px-to-rem(22px);
-          & > div {
-            margin-bottom: 70px;
+          @include media-breakpoint-up(sm) {
+            font-size: font-px-to-rem(27px);
+          }
+          @include media-breakpoint-up(lg) {
+            font-size: font-px-to-rem(32px);
           }
         }
-        div:last-child {
-          @include media-breakpoint-up(lg) {
+
+        &-subtitle {
+          grid-area: s;
+          font-size: font-px-to-rem(12px);
+          ul {
+            li {
+              display: inline;
+              &:not(:last-child):after {
+                content: ', ';
+              }
+            }
+          }
+          @include media-breakpoint-up(sm) {
             font-size: font-px-to-rem(22px);
           }
-        }
-      }
-
-      &-quantity {
-        font-size: font-px-to-rem(14px);
-        border-top: 1px solid theme-color('borders');
-
-        @include media-breakpoint-up(sm) {
-          font-size: font-px-to-rem(27px);
-        }
-        @include media-breakpoint-up(lg) {
-          font-size: font-px-to-rem(20px);
-        }
-
-        span {
           @include media-breakpoint-up(lg) {
-            font-size: font-px-to-rem(22px);
-            margin-left: 30px;
-            margin-bottom: 70px;
+            font-size: font-px-to-rem(16px);
           }
         }
-      }
-
-      &-total {
-        border-top: 1px solid theme-color('borders');
-        @include media-breakpoint-up(lg) {
-          font-size: font-px-to-rem(20px);
-          & > div {
-            margin-bottom: 70px;
+        &-price {
+          grid-area: p;
+          font-size: font-px-to-rem(12px);
+          @include media-breakpoint-up(sm) {
+            font-size: font-px-to-rem(26px);
           }
-        }
-        div:last-child {
           @include media-breakpoint-up(lg) {
-            font-size: font-px-to-rem(22px);
+            font-size: font-px-to-rem(20px);
+          }
+          div:last-child {
+            @include media-breakpoint-up(lg) {
+              font-size: font-px-to-rem(22px);
+            }
+          }
+          &-attr-name {
+            @include media-breakpoint-down(lg) {
+              span:after {
+                content: ':';
+              }
+            }
           }
         }
-      }
-
-      &-check-mark {
-        padding-bottom: 25px;
-      }
-
-      &:last-child {
-        #{$self}-name, #{$self}-price, #{$self}-quantity, #{$self}-total {
-          border-bottom: 1px solid theme-color('borders');
+        &-quantity {
+          grid-area: q;
+          font-size: font-px-to-rem(12px);
+          @include media-breakpoint-up(sm) {
+            font-size: font-px-to-rem(27px);
+          }
+          @include media-breakpoint-up(lg) {
+            font-size: font-px-to-rem(20px);
+          }
+          span {
+            @include media-breakpoint-up(lg) {
+              font-size: font-px-to-rem(22px);
+            }
+          }
+        }
+        &-total {
+          grid-area: t;
+          font-size: font-px-to-rem(12px);
+          @include media-breakpoint-up(sm) {
+            font-size: font-px-to-rem(27px);
+          }
+          @include media-breakpoint-up(lg) {
+            font-size: font-px-to-rem(20px);
+          }
+          div:last-child {
+            @include media-breakpoint-up(lg) {
+              font-size: font-px-to-rem(22px);
+            }
+          }
+          &-attr-name {
+            @include media-breakpoint-down(lg) {
+              span:after {
+                content: ':';
+              }
+            }
+          }
+        }
+        &-quantity {
+          &-val {
+            @include media-breakpoint-up(lg) {
+              font-weight: bold;
+            }
+          }
+          &-attr-name {
+            @include media-breakpoint-down(lg) {
+              span:after {
+                content: ':';
+              }
+            }
+          }
+        }
+        &-check-mark {
+          padding-bottom: 25px;
         }
       }
     }
   }
   #checkout-summary {
-    margin-top: 20px;
+    margin-top: 30px;
     @include media-breakpoint-up(sm) {
-      margin-top: 70px;
+      margin-top: 75px;
     }
     @include media-breakpoint-up(lg) {
       flex: 0 0 40%;
       align-self: flex-start;
+      max-width: 380px;
+      margin-top: 0px;
     }
   }
 }

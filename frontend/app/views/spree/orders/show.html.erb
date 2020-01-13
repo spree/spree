@@ -32,6 +32,7 @@
       </dd>
     </div>
   </dl>
+  <hr class="w-100 mt-0 mb-4 d-sm-none" />
   <div class="order-show-line-items d-flex flex-column align-items-center">
     <% @order.line_items.each do |item| %>
       <div class="order-show-line-items-line-item d-flex w-100">
@@ -44,34 +45,36 @@
           <span class="order-show-line-items-line-item-desc-name">
             <%= item.name %>
           </span>
-          <span class="order-show-line-items-line-item-desc-subtitle d-none d-lg-block text-break">
-            <ul class="list-unstyled">
+          <span class="order-show-line-items-line-item-desc-subtitle text-break text-uppercase">
+            <ul class="list-unstyled mb-0">
               <% item.variant.option_values.sort { |ov| ov.option_type.position }.each do |ov| %>
                 <li><%= "#{ov.option_type.presentation}: #{ov.name.titleize}" %></li>
               <% end %>
             </ul>
           </span>
           <div class="order-show-line-items-line-item-desc-price">
-            <div class="order-show-line-items-line-item-desc-attr-name d-none d-lg-block">Price</div>
-            <div class="font-weight-bold"><%= item.single_money.to_html %></div>
+            <div class="order-show-line-items-line-item-desc-price-attr-name d-inline d-lg-block">
+              <span><%= Spree.t(:price) %></span>
+            </div>
+            <span class="font-weight-bold"><%= item.single_money.to_html %></span>
           </div>
           <div class="order-show-line-items-line-item-desc-quantity">
-            <div class="order-show-line-items-line-item-desc-attr-name d-none d-lg-block">
-              <%= Spree.t(:quantity) %>
-            </div>
-            <div class="order-show-line-items-line-item-desc-attr-name d-inline d-lg-none">
-              <%= Spree.t(:quantity) %>:
+            <div class="order-show-line-items-line-item-desc-quantity-attr-name d-inline d-lg-block">
+              <span><%= Spree.t(:quantity) %></span>
             </div>
             <span class="order-show-line-items-line-item-desc-quantity-val d-lg-block"><%= item.quantity %></span>
           </div>
-          <div class="order-show-line-items-line-item-desc-total d-none d-lg-block">
-            <div><%= Spree.t(:total) %></div>
-            <div class="font-weight-bold"><%= item.display_total.to_s %></div>
+          <div class="order-show-line-items-line-item-desc-total">
+            <div class="order-show-line-items-line-item-desc-total-attr-name d-inline d-lg-block">
+              <span><%= Spree.t(:total) %></span>
+            </div>
+            <span class="font-weight-bold d-lg-block"><%= item.display_total.to_s %></span>
           </div>
         </div>
       </div>
     <% end %>
   </div>
+  <hr class="w-100 mt-4 mb-0 d-sm-none" />
   <div id="checkout-summary" class="w-100" data-hook="checkout_summary_box">
     <%= render partial: 'spree/checkout/summary', locals: { order: @order } %>
   </div>
