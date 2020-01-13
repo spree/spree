@@ -6,6 +6,7 @@ module Spree
     def index
       @bestsellers_products = load_taxon_products('Bestsellers')
       @trending_products = load_taxon_products('Trending')
+      @ld_products_updated_at = products_updated_at.map(&:to_i).join('-')
 
       fresh_when etag: etag, last_modified: last_modified, public: true
     end

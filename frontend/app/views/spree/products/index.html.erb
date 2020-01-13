@@ -83,4 +83,6 @@
 
 <%= render 'spree/products/filters_mobile', permitted_params: permitted_params %>
 
-<%= products_structured_data(@products) %>
+<% cache cache_key_for_products(@products, 'json-ld') do %>
+  <%= products_structured_data(@products) %>
+<% end %>
