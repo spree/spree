@@ -54,6 +54,9 @@ module Spree
         Disallow: /account
         Disallow: /api
         Disallow: /password
+        Disallow: /api_tokens
+        Disallow: /cart_link
+        Disallow: /account_link
       ROBOTS
     end
 

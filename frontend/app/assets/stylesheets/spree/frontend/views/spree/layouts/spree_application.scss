@@ -1,3 +1,9 @@
+body {
+  background: $primary-background;
+}
+.modal-content {
+  background: $primary-background;
+}
 .overlay {
   position: fixed;
   visibility: hidden;
@@ -18,8 +24,12 @@
   }
 }
 
-.dropdown-item {
-  &:hover, &:focus {
-    background: $secondary-background;
+
+.dropdown-menu {
+  background: $primary-background;
+  .dropdown-item {
+    &:hover, &:focus {
+      background: $secondary-background;
+    }
   }
 }

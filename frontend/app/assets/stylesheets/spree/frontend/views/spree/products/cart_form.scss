@@ -24,6 +24,9 @@
       }
     }
   }
+  .quantity-select-value {
+    background: $primary-background;
+  }
   @include media-breakpoint-up(md) {
     &-price {
       font-size: font-px-to-rem(28px);

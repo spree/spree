@@ -13,15 +13,17 @@
         </p>
       </div>
     </div>
+
     <% if Spree::Frontend::Config[:remember_me_enabled] %>
-      <div class="spree-checkbox-container mt-4 mt-sm-5 mt-md-4 spree-mb-medium">
+      <div class="spree-checkbox-container mt-4 mt-sm-5 mt-lg-4 spree-mb-medium">
         <div class="spree-checkbox">
           <%= f.check_box :remember_me, tabindex: 3 %>
           <%= f.label :remember_me, '' %>
         </div>
 
-        <%= f.label :remember_me, Spree.t(:remember_me), class: 'spree-checkbox-label' %>
-      </div>
+          <%= f.label :remember_me, Spree.t(:remember_me), class: 'spree-checkbox-label' %>
+        </div>
+      <% end %>
     <% end %>
 
     <%= f.submit Spree.t(:log_in), class: 'btn btn-primary btn-block spree-btn mt-2', tabindex: 4 %>

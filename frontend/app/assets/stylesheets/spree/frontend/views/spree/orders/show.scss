@@ -78,7 +78,7 @@
       width: 80%;
 
       @include media-breakpoint-up(lg) {
-        width: auto;
+        width: 100%;
       }
 
       a {

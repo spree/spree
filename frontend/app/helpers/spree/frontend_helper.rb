@@ -1,5 +1,7 @@
 module Spree
   module FrontendHelper
+    include InlineSvg::ActionView::Helpers
+
     def body_class
       @body_class ||= content_for?(:sidebar) ? 'two-col' : 'one-col'
       @body_class
@@ -44,7 +46,7 @@ module Spree
 
         if state_index < current_index
           css_classes << 'completed'
-          link_content = image_tag('full_circle.svg', class: 'checkout-progress-steps-image')
+          link_content = inline_svg_tag 'full_circle.svg', class: 'checkout-progress-steps-image'
           link_content << text
           text = link_to(link_content, spree.checkout_state_path(state), class: 'd-flex flex-column align-items-center', method: :get)
         end
@@ -59,9 +61,9 @@ module Spree
           content_tag('li', text, class: css_classes.join(' '))
         else
           link_content = if state == @order.state
-                           image_tag('full_circle.svg', class: 'checkout-progress-steps-image')
+                           inline_svg_tag 'full_circle.svg', class: 'checkout-progress-steps-image'
                          else
-                           image_tag('circle.svg', class: 'checkout-progress-steps-image')
+                           inline_svg_tag 'circle.svg', class: 'checkout-progress-steps-image'
                          end
           link_content << text
           content_tag('li', content_tag('a', link_content, class: "d-flex flex-column align-items-center #{'active' if state == @order.state}"), class: css_classes.join(' '))
@@ -145,7 +147,7 @@ module Spree
     end
 
     def permitted_product_params
-      product_filters = Rails.cache.fetch('spree/product-filters', expires_in: 5.minutes) { Spree::OptionType.pluck(:name) }
+      product_filters = available_option_types.map(&:name)
       params.permit(product_filters << :sort_by)
     end
 
@@ -212,7 +214,14 @@ module Spree
     def filtering_params
       static_filters = %w(keywords price sort_by)
 
-      @option_types.map(&:filter_param).concat(static_filters)
+      available_option_types.map(&:filter_param).concat(static_filters)
+    end
+
+    def available_option_types
+      @available_option_types ||= Rails.cache.fetch('available-option-types', expires_in: 3.minutes) do
+        Spree::OptionType.includes(:option_values).to_a
+      end
+      @available_option_types
     end
 
     private

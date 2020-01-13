@@ -1,5 +1,7 @@
 module Spree
   module ProductsHelper
+    include BaseHelper
+
     # returns the formatted price for the specified variant as a full price or a difference depending on configuration
     def variant_price(variant)
       if Spree::Config[:show_variant_full_price]
@@ -55,10 +57,10 @@ module Spree
       end
     end
 
-    def cache_key_for_products
-      count = @products.count
-      max_updated_at = (@products.maximum(:updated_at) || Date.today).to_s(:number)
-      products_cache_keys = "spree/products/all-#{params[:page]}-#{max_updated_at}-#{count}"
+    def cache_key_for_products(products = @products)
+      count = products.count
+      max_updated_at = (products.maximum(:updated_at) || Date.today).to_s(:number)
+      products_cache_keys = "spree/products/all-#{params[:page]}-#{max_updated_at}-#{count}-#{@taxon&.id}"
       (common_product_cache_keys + [products_cache_keys]).compact.join('/')
     end
 
@@ -120,15 +122,14 @@ module Spree
                                  images: { attachment_attachment: :blob }
                                ]
                              ).
-                             limit(Spree::Config[:products_per_page]).
-                             to_a
+                             limit(Spree::Config[:products_per_page])
+    end
+
+    def common_product_cache_keys
+      base_cache_key + price_options_cache_key
     end
 
     private
-
-    def common_product_cache_keys
-      [I18n.locale, current_currency] + price_options_cache_key
-    end
 
     def price_options_cache_key
       current_price_options.sort.map(&:last).map do |value|

@@ -214,7 +214,7 @@ THIS IS THE BEST PRODUCT EVER!
           allow(@products).to receive(:maximum).with(:updated_at) { updated_at }
         end
 
-        it { is_expected.to eq('en/USD/spree/zones/new/spree/products/all-10-20111213-5') }
+        it { is_expected.to eq('en/USD/spree/zones/new/spree/products/all-10-20111213-5-') }
       end
 
       context 'when there is no considered maximum updated date' do
@@ -226,7 +226,19 @@ THIS IS THE BEST PRODUCT EVER!
           allow(Date).to receive(:today) { today }
         end
 
-        it { is_expected.to eq('en/USD/spree/zones/new/spree/products/all-10-20131211-1234567') }
+        it { is_expected.to eq('en/USD/spree/zones/new/spree/products/all-10-20131211-1234567-') }
+      end
+
+      context 'with Taxon ID present' do
+        let(:updated_at) { Date.new(2011, 12, 13) }
+
+        before do
+          @taxon = create(:taxon)
+          allow(@products).to receive(:count).and_return(5)
+          allow(@products).to receive(:maximum).with(:updated_at) { updated_at }
+        end
+
+        it { is_expected.to eq("en/USD/spree/zones/new/spree/products/all-10-20111213-5-#{@taxon.id}") }
       end
     end
 

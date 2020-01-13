@@ -246,7 +246,7 @@ label {
     left: 0;
     width: 18px;
     height: 18px;
-    background-image: image-url('circle.svg');
+    background-image: image-url('circle-radio.svg');
     background-size: contain;
     @include media-breakpoint-up(sm) {
       width: 32px;
@@ -258,7 +258,7 @@ label {
     }
   }
   input:checked ~ &-custom-input {
-    background-image: image-url('full_circle.svg');
+    background-image: image-url('full_circle-radio.svg');
     background-size: contain;
   }
 }

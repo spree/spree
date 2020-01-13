@@ -42,7 +42,8 @@
 
       form {
         input#keywords{
-          color: theme-color("dark-text");
+          background: transparent;
+          color: $meganav-font-color;
           font-size: font-px-to-rem(14px);
           width: calc(100% - 40px);
           &:focus {

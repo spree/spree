@@ -1,11 +1,11 @@
 <%= render partial: 'spree/shared/error_messages', locals: { target: @user } %>
 <div class="checkout-registration container">
-  <div class="row col-xs-12 col-md-12 col-lg-11 mx-auto">
-    <div class="col-xs-12 col-md-6">
+  <div class="row col-xs-12 col-lg-11 mx-auto">
+    <div class="col-xs-12 col-lg-6">
       <%= render partial: 'spree/shared/login' %>
     </div>
-    <div class="col-xs-12 col-md-6">
-      <div class="col-lg-11 mx-auto pt-md-2">
+    <div class="col-xs-12 col-lg-6">
+      <div class="col-lg-11 mx-auto pt-lg-2">
         <h3 class="spree-header header-sm spree-mt-large mb-3 mb-sm-4 mb-xl-4"><%= Spree.t('dont_have_account') %></h3>
         <%= link_to Spree.t(:sign_up), spree.signup_path, class: 'btn btn-block btn-outline-primary spree-btn' %>
         <div class="checkout-registration-styled-or">
