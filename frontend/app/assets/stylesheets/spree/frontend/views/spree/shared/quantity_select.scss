@@ -14,14 +14,14 @@
     font-size: font-px-to-rem(20px);
     font-weight: 500;
     background-color: theme-color("light-background");
-    border: 1px solid theme-color("borders");
+    border: $input-border;
     @include media-breakpoint-up(sm) {
       font-size: font-px-to-rem(30px);
-      border: 2px solid theme-color("borders");
+      border-width: 2px;
     }
     @include media-breakpoint-up(md) {
       font-size: font-px-to-rem(20px);
-      border: 1px solid theme-color("borders");
+      border: $input-border;
     }
   }
   &-value {
@@ -29,16 +29,16 @@
     font-size: font-px-to-rem(20px);
     font-weight: 500;
     border-radius: 0;
-    border: 1px solid theme-color('borders');
+    border: $input-border;
     height: auto;
     z-index: 1;
     @include media-breakpoint-up(sm) {
       font-size: font-px-to-rem(28px);
-      border: 2px solid theme-color("borders");
+      border-width: 2px;
     }
     @include media-breakpoint-up(md) {
       font-size: font-px-to-rem(20px);
-      border: 1px solid theme-color("borders");
+      border: $input-border;
     }
     &::-webkit-inner-spin-button {
       -webkit-appearance: none;

@@ -195,7 +195,7 @@
         width: 40px;
         height: 25px;
         font-size: font-px-to-rem(14px);
-        border-color: theme-color("borders");
+        border: $input-border;
         @include media-breakpoint-up(sm) {
           width: 60px;
           height: 51.4px;
@@ -219,8 +219,8 @@
       button {
         font-size: font-px-to-rem(14px);
         height: 25px;
-        background-color: theme-color("light-background");
-        border-color: theme-color("borders");
+        background-color: $input-background;
+        border: $input-border;
         @include media-breakpoint-up(sm) {
           height: 51.4px;
           font-size: font-px-to-rem(24px);
@@ -271,7 +271,7 @@
     }
     .form-control {
       font-size: font-px-to-rem(14px);
-      border: 1px solid theme-color("borders");
+      border: $input-border;
       @include media-breakpoint-up(sm) {
         font-size: font-px-to-rem(26px);
         height: 71.1px;
@@ -297,7 +297,7 @@
     button {
       font-size: font-px-to-rem(20px);
       line-height: 13px;
-      border: 1px solid theme-color("borders");
+      border: $input-border;
       @include media-breakpoint-up(sm) {
         font-size: font-px-to-rem(36px);
       }

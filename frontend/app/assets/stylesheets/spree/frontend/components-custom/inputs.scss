@@ -4,8 +4,7 @@
   padding: 15px;
   width: 100%;
   height: auto;
-  border-width: 1px;
-  border-color: theme-color('dark-text');
+  border: $input-border;
   border-radius: 0;
   outline: none;
   font-size: font-px-to-rem(12px);
@@ -19,7 +18,7 @@
     font-size: font-px-to-rem(14px);
   }
   &:focus {
-    border-color: theme-color('primary');
+    border-color: $primary-color;
   }
   &::placeholder {
     text-transform: uppercase;
