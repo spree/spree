@@ -18,7 +18,7 @@ $theme-colors: (
 $enable-rounded: false;
 $enable-shadows: false;
 $enable-gradients: false;
-$font-family-sans-serif: 'Montserrat', sans-serif;
+$font-family-sans-serif: $font-family;
 $font-weight-medium: 500;
 .font-weight-medium {
   font-weight: $font-weight-medium;
