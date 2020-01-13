@@ -24,8 +24,8 @@
       }
     }
   }
-  .quantity-select-value {
-    background: $primary-background;
+  .quantity-select button {
+    background: $input-background;
   }
   @include media-breakpoint-up(md) {
     &-price {

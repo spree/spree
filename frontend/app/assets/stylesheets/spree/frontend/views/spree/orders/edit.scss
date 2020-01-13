@@ -190,7 +190,6 @@
         float: none;
       }
       input {
-        background: $primary-background;
         padding: 0;
         width: 40px;
         height: 25px;
@@ -219,7 +218,7 @@
       button {
         font-size: font-px-to-rem(14px);
         height: 25px;
-        background-color: theme-color("light-background");
+        background-color: $input-background;
         border-color: theme-color("borders");
         @include media-breakpoint-up(sm) {
           height: 51.4px;
@@ -295,6 +294,7 @@
       }
     }
     button {
+      background: $input-background;
       font-size: font-px-to-rem(20px);
       line-height: 13px;
       border: 1px solid theme-color("borders");
