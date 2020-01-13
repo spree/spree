@@ -130,8 +130,8 @@
         <div class="pt-2">
           <% if try_spree_current_user && spree.respond_to?(:account_path) %>
             <%= link_to Spree.t('nav_bar.my_orders'), spree.account_path(anchor: "account-my-orders") %>
-          <% elsif spree.respond_to?(:login_path) %>
-            <%= link_to Spree.t('nav_bar.log_in'), spree.login_path %>
+          <% elsif defined?(spree_login_path) %>
+            <%= link_to Spree.t('nav_bar.log_in'), spree_login_path %>
           <% end %>
         </div>
       </div>
