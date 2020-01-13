@@ -35,6 +35,9 @@
       font-size: font-px-to-rem(14px);
     }
   }
+  hr {
+    border-color: $global-border-style;
+  }
 }
 
 .product-variants {

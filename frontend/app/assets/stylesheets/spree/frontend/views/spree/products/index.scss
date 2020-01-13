@@ -59,11 +59,11 @@
     &-horizontal-border {
       border-width: 1px 0px;
       border-style: solid;
-      border-color: theme-color("dark-borders");
+      border-color: $global-border-style;
     }
 
     &-vertical-border {
-      border-right: 1px solid theme-color("dark-borders");
+      border-right: 1px solid $global-border-style;
     }
 
     &-buttons {
@@ -104,6 +104,7 @@
       }
       &-header {
         background-color: theme-color("light-background");
+        border-color: $global-border-style;
         cursor: pointer;
         font-size: font-px-to-rem(17px);
         font-weight: bold;
@@ -185,6 +186,7 @@
     }
     a {
       color: theme-color('dark-text');
+      border-color: $global-border-style !important;
       padding: 5px 13px;
       min-width: 37px;
       height: 37px;
@@ -223,7 +225,7 @@
       font-size: font-px-to-rem(18px);
 
       &-border {
-        border-top: 1px solid theme-color("dark-borders");
+        border-top: 1px solid $global-border-style;
       }
     }
 
@@ -259,7 +261,7 @@
 
     &-card {
       border: none;
-      border-top: solid 1px theme-color("borders");
+      border-top: solid 1px $global-border-style;
       &-header.collapsed {
         .arrow {
           transform: rotate(90deg);
@@ -284,7 +286,7 @@
         }
       }
       &:last-of-type {
-        border-bottom: solid 1px theme-color("borders");
+        border-bottom: solid 1px $global-border-style;
       }
       a:hover {
         text-decoration: none;

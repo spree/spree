@@ -72,7 +72,7 @@
       color: theme-color("secondary");
       .d-table-cell {
         border-top: none;
-        border-bottom: 1px solid theme-color("borders");
+        border-bottom: 1px solid $global-border-style;
         padding: 7px 0;
       }
     }
@@ -96,7 +96,7 @@
           }
         }
         border-top: none;
-        border-bottom: 1px solid theme-color("borders");
+        border-bottom: 1px solid $global-border-style;
         padding: 22px 0;
         vertical-align: top;
         @include media-breakpoint-up(lg) {
@@ -437,7 +437,7 @@
       width: 100%;
       &:before,
       &:after {
-        border-top: 1px solid $secondary-background;
+        border-top: 1px solid $global-border-style;
         content: "";
         display: table-cell;
         position: absolute;
