@@ -242,12 +242,12 @@ label {
     width: 0;
   }
   &-custom-input {
+    @include colored-circle-radio($secondary-color);
     position: absolute;
     top: 2px;
     left: 0;
     width: 18px;
     height: 18px;
-    background-image: image-url('circle-radio.svg');
     background-size: contain;
     @include media-breakpoint-up(sm) {
       width: 32px;
@@ -259,7 +259,7 @@ label {
     }
   }
   input:checked ~ &-custom-input {
-    background-image: image-url('full_circle-radio.svg');
+    @include colored-full-circle-radio($secondary-color);
     background-size: contain;
   }
 }
