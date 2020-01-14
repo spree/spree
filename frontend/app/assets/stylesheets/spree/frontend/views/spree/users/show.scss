@@ -65,6 +65,7 @@
 
       .delete-address-img {
         @include svg-sizes;
+        color: $primary-color;
       }
 
       margin-top: 20px;
