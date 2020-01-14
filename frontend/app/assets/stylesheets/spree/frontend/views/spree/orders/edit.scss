@@ -16,6 +16,7 @@
   }
   &-empty {
     &-image {
+      color: $primary-color;
       margin-top: 64px;
       margin-bottom: 25px;
       @include media-breakpoint-up(sm) {
