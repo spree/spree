@@ -15,6 +15,7 @@
   }
 
   &-not-found-image {
+    color: $primary-color;
     margin-top: 3rem;
     @include media-breakpoint-up(sm) {
       width: 177.5px;
