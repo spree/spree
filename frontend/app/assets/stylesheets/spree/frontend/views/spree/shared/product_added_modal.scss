@@ -1,5 +1,8 @@
 .product-added-modal {
   $self: &;
+  &-check-mark {
+    color: $secondary-color;
+  }
   &-message {
     font-size: font-px-to-rem(20px);
     @include media-breakpoint-up(md) {
