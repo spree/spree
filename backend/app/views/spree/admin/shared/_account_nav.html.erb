@@ -30,9 +30,9 @@
             </li>
           <% end %>
 
-          <% if spree.respond_to? :admin_logout_path %>
+          <% if defined?(spree_logout_path) %>
             <li class="dropdown-item p-0">
-              <%= link_to spree.admin_logout_path, class: 'd-block text-dark py-2 px-4' do %>
+              <%= link_to spree_logout_path, class: 'd-block text-dark py-2 px-4' do %>
                 <i class="glyphicon glyphicon-log-out"></i>
                 &nbsp;
                 <%= Spree.t(:logout) %>
