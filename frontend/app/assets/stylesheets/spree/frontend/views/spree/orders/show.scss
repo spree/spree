@@ -4,10 +4,9 @@
   font-weight: 500;
 
   & > .order-show-check-mark {
-    width: 56px;
+    color: $secondary-color;
     margin-bottom: 25px;
     @include media-breakpoint-up(sm) {
-      width: 102px;
       margin-bottom: 42px;
     }
   }
