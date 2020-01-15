@@ -2,10 +2,16 @@
 $(function () {
   $('[data-hook=general_settings_clear_cache] #clear_cache').click(function () {
     if (confirm(Spree.translations.are_you_sure)) {
-      $.post(Spree.routes.clear_cache)
-        .done(function () {
-          show_flash('success', 'Cache was flushed.')
-        })
+      $.ajax({
+        type: 'POST',
+        url: Spree.routes.clear_cache,
+        data: {
+          authenticity_token: AUTH_TOKEN
+        },
+        dataType: 'json'
+      }).done(function () {
+        show_flash('success', 'Cache was flushed.')
+      })
         .fail(function (message) {
           if (message.responseJSON['error']) {
             show_flash('error', message.responseJSON['error'])
