@@ -22,9 +22,9 @@ Spree.ready(function($) {
     var borderElement = $(this).find('.color-select-border')
 
     allOptionsBorders.each(function() {
-      $(this).attr('stroke', '#e4e5e6')
+      $(this).removeClass('color-select-border--selected')
     })
-    borderElement.attr('stroke', '#000000')
+    borderElement.addClass('color-select-border--selected')
   })
 
   $('.plp-overlay-ul-li').click(function() {

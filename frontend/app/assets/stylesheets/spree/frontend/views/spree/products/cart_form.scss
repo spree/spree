@@ -231,7 +231,7 @@
   }
 
   input:checked + & {
-    border-color: theme-color('dark-text');
+    border-color: theme-color('secondary');
   }
 }
 
