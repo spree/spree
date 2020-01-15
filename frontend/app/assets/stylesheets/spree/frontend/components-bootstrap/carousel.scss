@@ -36,11 +36,7 @@
   &-icon {
     &-control {
       @mixin arrow {
-        top: calc(50% - 44px);
         z-index: 1;
-        @include media-breakpoint-up(md) {
-          top: calc(50% - 56px);
-        }
       }
       &-rounded {
         $size: 44px;
@@ -58,6 +54,17 @@
         right: 15px;
         @include arrow;
       }
+    }
+  }
+  &-items-container {
+    margin-left: 54px;
+    margin-right: 54px;
+  }
+
+  &-inner-width {
+    @media (min-width: 1307px) {
+      max-width: 1307px;
+      margin: auto;
     }
   }
 }
