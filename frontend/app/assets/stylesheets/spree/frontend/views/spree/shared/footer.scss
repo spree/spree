@@ -31,12 +31,11 @@
       @include media-breakpoint-up(xl) {
         font-size: font-px-to-rem(14px);
       }
-
-      &-logo-spark {
-        height: 14px;
-        @include media-breakpoint-up(md) {
-          height: 21px;
-        }
+    }
+    &-logo-spark {
+      height: 14px;
+      @include media-breakpoint-up(md) {
+        height: 21px;
       }
     }
   }
