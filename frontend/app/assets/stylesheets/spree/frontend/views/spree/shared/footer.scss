@@ -21,22 +21,19 @@
   }
   &-copyright {
     border-color: $global-border-style !important;
-    &-content{
-      font-size: font-px-to-rem(9px);
-      a {
-        color: $footer-font-color;
-        text-decoration: underline;
-      }
+    font-size: font-px-to-rem(9px);
+    a {
+      color: $footer-font-color;
+      text-decoration: underline;
+    }
 
-      @include media-breakpoint-up(xl) {
-        font-size: font-px-to-rem(14px);
-      }
-
-      &-logo-spark {
-        height: 14px;
-        @include media-breakpoint-up(md) {
-          height: 21px;
-        }
+    @include media-breakpoint-up(md) {
+      font-size: font-px-to-rem(14px);
+    }
+    &-logo-spark {
+      height: 14px;
+      @include media-breakpoint-up(md) {
+        height: 21px;
       }
     }
   }
