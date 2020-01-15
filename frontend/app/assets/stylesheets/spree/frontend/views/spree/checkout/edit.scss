@@ -99,6 +99,9 @@
           height: 36px;
           margin-bottom: 13px;
         }
+        &--full {
+          @include colored-full-circle($primary-background, $secondary-color);
+        }
       }
       &-line {
         display: flex;
@@ -117,18 +120,18 @@
         }
         &.state-delivery {
           hr:first-child {
-            border-color: theme-color('dark-text');
+            border-color: $secondary-color;
           }
         }
         &.state-payment {
           hr:first-child,
           hr:nth-child(2) {
-            border-color: theme-color('dark-text');
+            border-color: $secondary-color;
           }
         }
         &.state-confirm {
           hr {
-            border-color: theme-color('dark-text');
+            border-color: $secondary-color;
           }
         }
         hr {
