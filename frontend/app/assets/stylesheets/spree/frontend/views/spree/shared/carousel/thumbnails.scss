@@ -27,7 +27,7 @@
         object-fit: contain;
         border: 1px solid transparent;
         &.selected {
-          border-color: #232323;
+          border-color: $secondary-color;
         }
       }
       &--empty {
