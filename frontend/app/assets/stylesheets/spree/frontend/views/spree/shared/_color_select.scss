@@ -1,19 +1,27 @@
-.color-select-label {
-  cursor: pointer;
-  @include media-breakpoint-up(sm) {
-    svg {
-      width: 49px;
-      height: 49px;
+.color-select {
+  &-border {
+    stroke: $second-global-border;
+    &--selected {
+      stroke: $secondary-color;
     }
   }
-  @include media-breakpoint-up(md) {
-    svg {
-      width: auto;
-      height: auto;
+  &-label {
+    cursor: pointer;
+    @include media-breakpoint-up(sm) {
+      svg {
+        width: 49px;
+        height: 49px;
+      }
+    }
+    @include media-breakpoint-up(md) {
+      svg {
+        width: auto;
+        height: auto;
+      }
     }
   }
 }
 
 input:checked + label svg .color-select-border {
-  stroke: black !important;
+  stroke: $secondary-color !important;
 }

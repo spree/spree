@@ -124,12 +124,12 @@
         }
       }
       &-item {
-        border: solid 1px theme-color("borders");
+        border: solid 1px $second-global-border;
         color: theme-color("dark-text");
         font-size: font-px-to-rem(16px);
         font-weight: 500;
         &--selected {
-          border: solid 2px theme-color("dark-text");
+          border: solid 2px $secondary-color;
         }
       }
     }
@@ -279,11 +279,11 @@
       }
 
       &-item {
-        border: solid 1px theme-color("borders");
+        border: solid 1px $second-global-border;
         color: theme-color("dark-text");
         font-size: font-px-to-rem(13px);
         &--selected {
-          border: solid 2px theme-color("dark-text");
+          border: solid 2px $secondary-color;
         }
       }
       &:last-of-type {
