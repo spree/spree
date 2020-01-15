@@ -5,6 +5,7 @@ Rails.application.config.assets.precompile += %w(
   homepage/*
   noimage/*
   logo@3x.png
+  spark-logo@3x.png
   arrow.svg
   check-mark-circle.svg
   error.svg
