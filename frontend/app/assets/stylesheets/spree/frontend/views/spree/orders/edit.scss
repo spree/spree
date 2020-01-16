@@ -222,6 +222,7 @@
         height: 25px;
         background-color: $input-background;
         border-color: theme-color("borders");
+        color: color-yiq($input-background);
         @include media-breakpoint-up(sm) {
           height: 51.4px;
           font-size: font-px-to-rem(24px);
@@ -300,6 +301,7 @@
       font-size: font-px-to-rem(20px);
       line-height: 13px;
       border: 1px solid theme-color("borders");
+      color: color-yiq($input-background);
       @include media-breakpoint-up(sm) {
         font-size: font-px-to-rem(36px);
       }

@@ -27,6 +27,7 @@ body {
 
 .dropdown-menu {
   background: $primary-background;
+  border-color: $global-border-style;
   .dropdown-item {
     &:hover, &:focus {
       background: $secondary-background;
@@ -39,4 +40,5 @@ body {
 .form-control:focus,
 .spree-flat-input {
   background: $input-background;
+  color: color-yiq($input-background);
 }

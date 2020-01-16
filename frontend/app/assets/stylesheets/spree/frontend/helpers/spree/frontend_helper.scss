@@ -6,7 +6,7 @@
   padding: 0.5rem 0;
   margin: 0;
   li {
-    color: theme-color('dark-text');
+    color: $font-color;
     font-size: font-px-to-rem(11px);
     @include media-breakpoint-up(sm) {
       font-size: font-px-to-rem(16px);
