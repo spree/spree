@@ -71,9 +71,12 @@ module Spree
 
       meta = {}
       image = default_image_for_product_or_variant(object)
-      return if image.nil?
 
-      ActiveStorage::Blob.service.path_for(image.attachment.key)
+      if image
+        ActiveStorage::Blob.service.path_for(image.attachment.key)
+      else
+        image_tag(Spree::Config[:logo])[10..image_tag(Spree::Config[:logo]).length - 5]
+      end
     end
 
     def meta_image_data_tag
