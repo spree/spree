@@ -128,7 +128,7 @@ module Spree
     end
 
     def main_nav_image(category, type)
-      image_path = "#{type}_#{category}.jpg"
+      image_path = "homepage/#{type}_#{category}.jpg"
       image_url = asset_path(asset_exists?(image_path) ? image_path : 'noimage/plp.png')
 
       lazy_image(
