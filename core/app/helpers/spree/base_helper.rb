@@ -69,7 +69,6 @@ module Spree
       object = instance_variable_get('@' + controller_name.singularize)
       return unless object.is_a?(Spree::Product)
 
-      meta = {}
       image = default_image_for_product_or_variant(object)
 
       if image
