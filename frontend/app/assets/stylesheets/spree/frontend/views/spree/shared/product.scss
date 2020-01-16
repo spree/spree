@@ -3,7 +3,7 @@
     $font-size: font-px-to-rem(12px);
 
     font-weight: 500;
-    color: theme-color('dark');
+    color: $font-color;
     font-size: $font-size;
     line-height: $font-size;
     margin-top: calc-spacer(2);
@@ -23,7 +23,7 @@
   &-price {
     $font-size: font-px-to-rem(14px);
 
-    color: theme-color('dark');
+    color: $font-color;
     font-weight: 600;
     font-size: $font-size;
     line-height: $font-size;

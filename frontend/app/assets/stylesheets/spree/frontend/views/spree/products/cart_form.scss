@@ -1,7 +1,7 @@
 .add-to-cart-form {
   &-price {
     font-size: font-px-to-rem(24px);
-    color: theme-color("dark");
+    color: $font-color;
     font-weight: 500;
     @include media-breakpoint-up(sm) {
       font-size: font-px-to-rem(36px);
@@ -9,7 +9,7 @@
   }
   &-general-availability {
     font-size: font-px-to-rem(12px);
-    color: theme-color("dark");
+    color: $font-color;
     font-weight: 500;
     @include media-breakpoint-up(sm) {
       font-size: font-px-to-rem(20px);
@@ -26,6 +26,7 @@
   }
   .quantity-select button {
     background: $input-background;
+    color: color-yiq($input-background);
   }
   @include media-breakpoint-up(md) {
     &-price {
