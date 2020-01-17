@@ -5,7 +5,7 @@
         <div class="carousel-item <%= 'active' if index == 0 %>">
           <div class="container">
             <div class="carousel-items-container">
-              <div class="row">
+              <div class="row carousel-items-container">
                 <% sliced_items.each_with_index do |item, idx| %>
                   <div class="col-6">
                     <%= render 'spree/shared/product', product: item, image_class: 'w-100' %>
@@ -19,7 +19,7 @@
 
     </div>
     <a
-      class="d-flex h-100 position-absolute justify-content-center align-items-center carousel-icon-control carousel-icon-control--previous"
+      class="d-flex position-absolute justify-content-center align-items-center carousel-icon-control carousel-icon-control--previous"
       href="#<%= id %>-mobile"
       role="button"
       data-slide="prev"
@@ -34,7 +34,7 @@
     </a>
 
     <a
-      class="d-flex h-100 position-absolute justify-content-center align-items-center carousel-icon-control carousel-icon-control--next"
+      class="d-flex position-absolute justify-content-center align-items-center carousel-icon-control carousel-icon-control--next"
       href="#<%= id %>-mobile"
       role="button"
       data-slide="next"
@@ -55,7 +55,7 @@
         <div class="carousel-item <%= 'active' if index == 0 %>">
           <div class="container position-relative">
             <a
-              class="d-flex h-100 position-absolute justify-content-center align-items-center carousel-icon-control carousel-icon-control--previous"
+              class="d-flex position-absolute justify-content-center align-items-center carousel-icon-control carousel-icon-control--previous"
               href="#<%= id %>-desktop"
               role="button"
               data-slide="prev"
@@ -70,7 +70,7 @@
               <span class="sr-only"><%= Spree.t(:previous) %></span>
             </a>
 
-            <div class="row">
+            <div class="row carousel-items-container">
               <% sliced_items.each do |item| %>
                 <div class="col-3">
                   <%= render 'spree/shared/product', product: item, image_class: 'w-100' %>
@@ -79,7 +79,7 @@
             </div>
 
             <a
-              class="d-md-flex h-100 position-absolute justify-content-center align-items-center carousel-icon-control carousel-icon-control--next"
+              class="d-md-flex position-absolute justify-content-center align-items-center carousel-icon-control carousel-icon-control--next"
               href="#<%= id %>-desktop"
               role="button"
               data-slide="next"
