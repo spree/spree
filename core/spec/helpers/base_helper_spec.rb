@@ -282,7 +282,7 @@ describe Spree::BaseHelper, type: :helper do
       end
 
       context 'and has image attached' do
-        let!(:image_1) { create :image, viewable: product.master }
+        let!(:image) { create :image, viewable: product.master }
 
         it 'returns main image url' do
           expect(image_url_path).to eq asset_path(main_app.url_for(image.attachment))
