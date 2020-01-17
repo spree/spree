@@ -1,5 +1,5 @@
 module Spree
-  class Spree::ReturnItem::EligibilityValidator::BaseValidator
+  class ReturnItem::EligibilityValidator::BaseValidator
     attr_reader :errors
 
     def initialize(return_item)
