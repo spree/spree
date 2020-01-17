@@ -70,12 +70,7 @@ module Spree
       return unless object.is_a?(Spree::Product)
 
       image = default_image_for_product_or_variant(object)
-
-      if image
-        ActiveStorage::Blob.service.path_for(image.attachment.key)
-      else
-        image_tag(Spree::Config[:logo])[10..image_tag(Spree::Config[:logo]).length - 5]
-      end
+      image.nil? ? asset_path(Spree::Config[:logo]) : main_app.url_for(image.url(image))
     end
 
     def meta_image_data_tag
