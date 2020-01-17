@@ -20,13 +20,11 @@
       -webkit-transform: translate3d(0, 0, 0);
       transform: translate3d(0, 0, 0);
     }
-
     .carousel-item-next,
     .active.carousel-item-right {
       -webkit-transform: translate3d(0, 100%, 0);
       transform: translate3d(0, 100%, 0);
     }
-
     .carousel-item-prev,
     .active.carousel-item-left {
       -webkit-transform: translate3d(0, -100%, 0);
@@ -36,7 +34,11 @@
   &-icon {
     &-control {
       @mixin arrow {
+        top: calc(-30px);
         z-index: 1;
+        @media (max-width: 767px) {
+          top: calc(-20px);
+        }
       }
       &-rounded {
         $size: 44px;
