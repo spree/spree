@@ -243,7 +243,7 @@ describe Spree::BaseHelper, type: :helper do
   describe '#meta_image_data_tag' do
     context 'when image_url_path is present' do
       it 'returns meta tag' do
-        allow_any_instance_of(Spree::BaseHelper).to receive(:image_url_path).and return('image_url')
+        allow_any_instance_of(Spree::BaseHelper).to receive(:image_url_path).and_return('image_url')
 
         expect(meta_image_data_tag).to eq "<meta property=\"og:image\" content=\"image_url\" />"
       end
@@ -251,7 +251,7 @@ describe Spree::BaseHelper, type: :helper do
 
     context 'when image_url_path is absent' do
       it 'returns meta tag' do
-        allow_any_instance_of(Spree::BaseHelper).to receive(:image_url_path).and return(nil)
+        allow_any_instance_of(Spree::BaseHelper).to receive(:image_url_path).and_return(nil)
 
         expect(meta_image_data_tag).to eq nil
       end
@@ -263,7 +263,7 @@ describe Spree::BaseHelper, type: :helper do
       let!(:taxon) { build :taxon }
 
       it 'returns false' do
-        allow_any_instance_of(Spree::BaseHelper).to receive(:instance_variable_get).and return(taxon)
+        allow_any_instance_of(Spree::BaseHelper).to receive(:instance_variable_get).and_return(taxon)
 
         expect(image_url_path).to eq nil
       end
@@ -272,7 +272,7 @@ describe Spree::BaseHelper, type: :helper do
     context 'when object is product' do
       let!(:product) { build :product }
       before do
-        allow_any_instance_of(Spree::BaseHelper).to receive(:instance_variable_get).and return(product)
+        allow_any_instance_of(Spree::BaseHelper).to receive(:instance_variable_get).and_return(product)
       end
 
       context 'and has no images attached' do
