@@ -70,7 +70,7 @@ module Spree
       return unless object.is_a?(Spree::Product)
 
       image = default_image_for_product_or_variant(object)
-      image&.attachment.present? ? main_app.url_for(image.attachment) :  asset_path(Spree::Config[:logo])
+      image&.attachment.present? ? main_app.url_for(image.attachment) : asset_path(Spree::Config[:logo])
     end
 
     def meta_image_data_tag
