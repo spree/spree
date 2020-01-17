@@ -65,6 +65,18 @@ module Spree
       meta
     end
 
+    def image_url_path
+      object = instance_variable_get('@' + controller_name.singularize)
+      return unless object.is_a?(Spree::Product)
+
+      image = default_image_for_product_or_variant(object)
+      image&.attachment.present? ? main_app.url_for(image.attachment) : asset_path(Spree::Config[:logo])
+    end
+
+    def meta_image_data_tag
+      tag('meta', property: 'og:image', content: image_url_path) if image_url_path
+    end
+
     def meta_data_tags
       meta_data.map do |name, content|
         tag('meta', name: name, content: content) unless name.nil? || content.nil?
