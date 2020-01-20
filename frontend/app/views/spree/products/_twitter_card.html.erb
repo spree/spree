@@ -1,0 +1,6 @@
+<% content_for :head do %>
+  <meta name="twitter:card" content="summary" />
+  <meta property="og:title" content="<%= @product.name %>" />
+  <meta property="og:description" content="<%= og_description(@product) %>" />
+  <meta property="og:image" content="<%= og_image_pdp(@product) %>" />
+<% end %>
