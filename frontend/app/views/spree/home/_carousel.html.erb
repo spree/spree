@@ -4,14 +4,12 @@
       <% products.each_slice(2).with_index do |sliced_items, index| %>
         <div class="carousel-item <%= 'active' if index == 0 %>">
           <div class="container">
-            <div class="carousel-items-container">
-              <div class="row carousel-items-container">
-                <% sliced_items.each_with_index do |item, idx| %>
-                  <div class="col-6">
-                    <%= render 'spree/shared/product', product: item, image_class: 'w-100' %>
-                  </div>
-                <% end %>
-              </div>
+            <div class="row carousel-items-container">
+              <% sliced_items.each_with_index do |item, idx| %>
+                <div class="col-6">
+                  <%= render 'spree/shared/product', product: item, image_class: 'w-100' %>
+                </div>
+              <% end %>
             </div>
           </div>
         </div>

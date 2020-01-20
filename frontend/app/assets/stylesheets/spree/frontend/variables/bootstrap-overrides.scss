@@ -1,7 +1,7 @@
 $grid-gutter-width: 19px;
 $theme-colors: (
   // standard bootstrap colors
-  "primary": $primary-color,
+    "primary": $primary-color,
   "secondary": $secondary-color,
   "tertiary": green,
   "danger": #f53737,
@@ -13,7 +13,7 @@ $theme-colors: (
   "light-background": $primary-background,
   "dark-text": #232323,
   "overlay": rgba(76, 76, 76, 0.5),
-  "shadow": rgba(0, 0, 0, .16)
+  "shadow": rgba(0, 0, 0, 0.16)
 );
 $enable-rounded: false;
 $enable-shadows: false;
