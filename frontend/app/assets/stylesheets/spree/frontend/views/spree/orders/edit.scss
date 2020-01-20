@@ -332,6 +332,11 @@
       flex-basis: 100%;
       margin-bottom: 0;
 
+      svg {
+        width: 1rem;
+        height: 1rem;
+      }
+
       @include media-breakpoint-up(sm) {
         font-size: font-px-to-rem(19px);
       }
