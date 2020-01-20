@@ -1,4 +1,5 @@
 $grid-gutter-width: 19px;
+$body-color: $font-color;
 $theme-colors: (
   // standard bootstrap colors
     "primary": $primary-color,
@@ -9,7 +10,7 @@ $theme-colors: (
   "borders": $second-global-border,
   "dark-borders": $global-border-style,
   "light-background": $primary-background,
-  "dark-text": #232323,
+  "dark-text": $font-color,
   "overlay": rgba(76, 76, 76, 0.5),
   "shadow": rgba(0, 0, 0, 0.16)
 );

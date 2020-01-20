@@ -493,7 +493,8 @@
 
       @include media-breakpoint-up(lg) {
         padding: 0;
-        min-width: 380px;
+        max-width: 380px;
+        align-self: flex-end;
       }
     }
 

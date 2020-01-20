@@ -30,7 +30,7 @@
             <% end %>
 
             <% unless current_store.twitter.blank? %>
-              <%= link_to "https://twitter.com/#{current_store.facebook}", target: "_blank", rel: 'nofollow noopener', 'aria-label': Spree.t('go_to_twitter') do %>
+              <%= link_to "https://twitter.com/#{current_store.twitter}", target: "_blank", rel: 'nofollow noopener', 'aria-label': Spree.t('go_to_twitter') do %>
                 <figure id="twitter" class="px-2" data-hook>
                 <%= icon(name: 'twitter',
                         width: 22,
@@ -40,7 +40,7 @@
             <% end %>
 
             <% unless current_store.instagram.blank? %>
-              <%= link_to "https://www.instagram.com/#{current_store.facebook}", target: "_blank", rel: 'nofollow noopener', 'aria-label': Spree.t('go_to_instagram') do %>
+              <%= link_to "https://www.instagram.com/#{current_store.instagram}", target: "_blank", rel: 'nofollow noopener', 'aria-label': Spree.t('go_to_instagram') do %>
                 <figure id="instagram" class="px-2" data-hook>
                 <%= icon(name: 'instagram',
                         width: 22,

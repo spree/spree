@@ -1,14 +1,14 @@
 .product-details {
   &-title {
     font-size: font-px-to-rem(22px);
-    color: theme-color("dark");
+    color: $font-color;
     @include media-breakpoint-up(sm) {
       font-size: font-px-to-rem(34px);
     }
   }
   &-subtitle {
     font-size: font-px-to-rem(14px);
-    color: theme-color("dark");
+    color: $font-color;
     @include media-breakpoint-up(sm) {
       font-size: font-px-to-rem(22px);
     }

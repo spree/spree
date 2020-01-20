@@ -35,7 +35,7 @@
       font-weight: 500;
       line-height: 1.27;
       letter-spacing: 0.55px;
-      color: theme-color('dark');
+      color: $font-color;
       width: 116px;
 
       @include media-breakpoint-up(md) {
@@ -108,7 +108,7 @@
     &-text {
       width: 100%;
       text-transform: uppercase;
-      color: theme-color('dark');
+      color: $font-color;
       position: absolute;
       left: 0;
       bottom: 21px;
@@ -160,7 +160,7 @@
       line-height: 1.22;
       letter-spacing: 0.45px;
       text-align: center;
-      color: theme-color('dark');
+      color: $font-color;
       font-size: font-px-to-rem(18px);
 
       @include media-breakpoint-up(md) {
@@ -175,7 +175,7 @@
       font-weight: 500;
       line-height: 1.67;
       letter-spacing: 0.3px;
-      color: theme-color('dark');
+      color: $font-color;
       margin: auto;
       font-size: font-px-to-rem(12px);
       width: 283px;
@@ -258,7 +258,7 @@
         line-height: 1.2;
         letter-spacing: 0.38px;
         text-align: center;
-        color: theme-color('dark');
+        color: $font-color;
         font-size: font-px-to-rem(15px);
 
         @include media-breakpoint-up(md) {
