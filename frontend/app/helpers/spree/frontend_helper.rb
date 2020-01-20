@@ -184,11 +184,11 @@ module Spree
     def og_image_pdp(product)
       image = default_image_for_product_or_variant(product)
 
-      return main_app.url_for(image.url('large'))
+      main_app.url_for(image.url('large'))
     end
 
     def og_description(product)
-      return sanitize product_description(product).truncate(200)
+      sanitize product_description(product).truncate(200)
     end
 
     def taxons_tree(root_taxon, current_taxon, max_level = 1)
