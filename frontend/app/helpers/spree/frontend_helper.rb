@@ -183,8 +183,9 @@ module Spree
 
     def og_image_pdp(product)
       image = default_image_for_product_or_variant(product)
+      image_url = image&.url('large') || asset_path('noimage/large.png')
 
-      main_app.url_for(image.url('large'))
+      main_app.url_for(image_url)
     end
 
     def og_description(product)
