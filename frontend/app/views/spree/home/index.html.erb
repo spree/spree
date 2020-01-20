@@ -69,7 +69,7 @@
   <div class="my-3">
     <p class="font-weight-bold text-center homepage-carousel-text"><%= Spree.t('homepage.bestsellers') %></p>
 
-    <%= render 'carousel', id: 'bestsellers-carousel', products: @bestsellers_products %>
+    <%= render 'spree/shared/carousel_4_products', id: 'bestsellers-carousel', products: @bestsellers_products %>
   </div>
 <% end %>
 
@@ -88,7 +88,7 @@
   <div class="mb-3">
     <p class="font-weight-bold text-center homepage-carousel-text"><%= Spree.t('homepage.trending') %></p>
 
-    <%= render 'carousel', id: 'trending-carousel', products: @trending_products %>
+    <%= render 'spree/shared/carousel_4_products', id: 'trending-carousel', products: @trending_products %>
   </div>
 <% end %>
 
