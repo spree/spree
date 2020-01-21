@@ -14,8 +14,7 @@ module Spree
                           placeholder: label,
                           aria: {
                             label: label
-                          }
-                         )
+                          })
         end
       end
     end
