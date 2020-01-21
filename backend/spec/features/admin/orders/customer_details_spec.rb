@@ -145,15 +145,15 @@ describe 'Customer Details', type: :feature, js: true do
   end
 
   def fill_in_address(kind = 'bill')
-    fill_in 'First Name',              with: 'John 99'
-    fill_in 'Last Name',               with: 'Doe'
+    fill_in 'First Name *',            with: 'John 99'
+    fill_in 'Last Name *',             with: 'Doe'
     fill_in 'Company',                 with: 'Company'
-    fill_in 'Street Address',          with: '100 first lane'
+    fill_in 'Street Address * ',       with: '100 first lane'
     fill_in "Street Address (cont'd)", with: '#101'
     select2 country.name,              from: 'Country'
-    fill_in 'City',                    with: 'Bethesda'
-    fill_in 'Zip',                     with: '20170'
+    fill_in 'City *',                  with: 'Bethesda'
+    fill_in 'Zip *',                   with: '20170'
     select2 state.name,                from: 'State'
-    fill_in 'Phone',                   with: '123-456-7890'
+    fill_in 'Phone *',                 with: '123-456-7890'
   end
 end
