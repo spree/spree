@@ -10,7 +10,7 @@ module Spree
     class_option :migrate, type: :boolean, default: true, banner: 'Run Spree migrations'
     class_option :seed, type: :boolean, default: true, banner: 'load seed data (migrations must be run)'
     class_option :sample, type: :boolean, default: true, banner: 'load sample data (migrations must be run)'
-    class_option :copy_storefront, type: :boolean, default: true, banner: 'copy storefront from spree to your application for easy customization'
+    class_option :copy_storefront, type: :boolean, default: true, banner: 'copy storefront from spree frontend to your application for easy customization'
     class_option :auto_accept, type: :boolean
     class_option :user_class, type: :string
     class_option :admin_email, type: :string
