@@ -15,7 +15,7 @@ module Spree
                           aria: {
                             label: label
                           }
-                        )
+                         )
         end
       end
     end
