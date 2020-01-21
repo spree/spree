@@ -7,8 +7,8 @@ module Spree
         [
           File.expand_path('../../../../../app', __dir__),
           File.expand_path('../../../../../app/assets/images', __dir__),
-          File.expand_path('../../../../../app/helpers/spree',  __dir__),
-          File.expand_path('../../../../../app/assets/stylesheets/spree/frontend',  __dir__)
+          File.expand_path('../../../../../app/helpers/spree', __dir__),
+          File.expand_path('../../../../../app/assets/stylesheets/spree/frontend', __dir__)
         ]
       end
 
