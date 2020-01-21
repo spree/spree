@@ -8,7 +8,7 @@ module Spree
           File.expand_path('../../../../../app', __dir__),
           File.expand_path('../../../../../app/assets/images', __dir__),
           File.expand_path('../../../../../app/helpers/spree', __dir__),
-          File.expand_path('../../../../../app/assets/stylesheets/spree/frontend', __dir__)
+          File.expand_path('../../../../../app/assets/stylesheets/spree/frontend/variables', __dir__)
         ]
       end
 
@@ -17,7 +17,7 @@ module Spree
         directory 'noimage', './app/assets/images/noimage'
         directory 'homepage', './app/assets/images/homepage'
         template 'navigation_helper.rb', './app/helpers/spree/navigation_helper.rb'
-        template '_variables.scss', './app/assets/stylesheets/spree/frontend/_variables.scss'
+        template 'variables.scss', './app/assets/stylesheets/spree/frontend/variables/variables.scss'
       end
     end
   end
