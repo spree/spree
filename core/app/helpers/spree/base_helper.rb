@@ -57,6 +57,9 @@ module Spree
         if object && object[:name].present?
           meta.reverse_merge!(keywords: [object.name, current_store.meta_keywords].reject(&:blank?).join(', '),
                               description: [object.name, current_store.meta_description].reject(&:blank?).join(', '))
+        elsif current_page?(controller: 'home', action: 'index')
+          meta.reverse_merge!(keywords: (current_store.meta_keywords || current_store.seo_title),
+                              description: (current_store.meta_description || current_store.seo_title))
         else
           meta.reverse_merge!(keywords: current_store.meta_keywords,
                               description: current_store.meta_description)
@@ -69,10 +72,6 @@ module Spree
       meta_data.map do |name, content|
         tag('meta', name: name, content: content) unless name.nil? || content.nil?
       end.join("\n")
-    end
-
-    def current_path_homepage?
-      controller_name.singularize == 'home'
     end
 
     def method_missing(method_name, *args, &block)

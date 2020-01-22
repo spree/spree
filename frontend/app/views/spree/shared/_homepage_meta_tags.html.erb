@@ -1,6 +1,0 @@
-<% if current_store.meta_keywords.present? || current_store.seo_title.present? %>
-  <meta name="keywords" content="<%= current_store.meta_keywords || current_store.seo_title %>" />
-<% end %>
-<% if current_store.meta_description.present? || current_store.seo_title.present? %>
-  <meta name="description" content="<%= current_store.meta_description || current_store.seo_title %>" />
-<% end %>
