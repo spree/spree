@@ -241,31 +241,31 @@ describe Spree::BaseHelper, type: :helper do
   end
 
   describe '#meta_image_data_tag' do
-    context 'when image_url_path is present' do
+    context 'when meta_image_url_path is present' do
       it 'returns meta tag' do
-        allow_any_instance_of(Spree::BaseHelper).to receive(:image_url_path).and_return('image_url')
+        allow_any_instance_of(Spree::BaseHelper).to receive(:meta_image_url_path).and_return('image_url')
 
         expect(meta_image_data_tag).to eq "<meta property=\"og:image\" content=\"image_url\" />"
       end
     end
 
-    context 'when image_url_path is absent' do
+    context 'when meta_image_url_path is absent' do
       it 'returns meta tag' do
-        allow_any_instance_of(Spree::BaseHelper).to receive(:image_url_path).and_return(nil)
+        allow_any_instance_of(Spree::BaseHelper).to receive(:meta_image_url_path).and_return(nil)
 
         expect(meta_image_data_tag).to eq nil
       end
     end
   end
 
-  describe '#image_url_path' do
+  describe '#meta_image_url_path' do
     context 'when object is not a product' do
       let!(:taxon) { build :taxon }
 
       it 'returns false' do
         allow_any_instance_of(Spree::BaseHelper).to receive(:instance_variable_get).and_return(taxon)
 
-        expect(image_url_path).to eq nil
+        expect(meta_image_url_path).to eq nil
       end
     end
 
@@ -277,7 +277,7 @@ describe Spree::BaseHelper, type: :helper do
 
       context 'and has no images attached' do
         it 'returns spree logo url' do
-          expect(image_url_path).to eq asset_path(Spree::Config[:logo])
+          expect(meta_image_url_path).to eq asset_path(Spree::Config[:logo])
         end
       end
 
@@ -285,7 +285,7 @@ describe Spree::BaseHelper, type: :helper do
         let!(:image) { create :image, viewable: product.master }
 
         it 'returns main image url' do
-          expect(image_url_path).to eq asset_path(main_app.url_for(image.attachment))
+          expect(meta_image_url_path).to eq asset_path(main_app.url_for(image.attachment))
         end
       end
     end

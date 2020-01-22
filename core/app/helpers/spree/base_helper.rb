@@ -58,14 +58,14 @@ module Spree
           meta.reverse_merge!(keywords: [object.name, current_store.meta_keywords].reject(&:blank?).join(', '),
                               description: [object.name, current_store.meta_description].reject(&:blank?).join(', '))
         else
-          meta.reverse_merge!(keywords: current_store.meta_keywords,
-                              description: current_store.meta_description)
+          meta.reverse_merge!(keywords: (current_store.meta_keywords || current_store.seo_title),
+                              description: (current_store.meta_description || current_store.seo_title))
         end
       end
       meta
     end
 
-    def image_url_path
+    def meta_image_url_path
       object = instance_variable_get('@' + controller_name.singularize)
       return unless object.is_a?(Spree::Product)
 
@@ -74,7 +74,7 @@ module Spree
     end
 
     def meta_image_data_tag
-      tag('meta', property: 'og:image', content: image_url_path) if image_url_path
+      tag('meta', property: 'og:image', content: meta_image_url_path) if meta_image_url_path
     end
 
     def meta_data_tags
