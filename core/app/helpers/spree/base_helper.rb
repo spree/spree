@@ -57,18 +57,15 @@ module Spree
         if object && object[:name].present?
           meta.reverse_merge!(keywords: [object.name, current_store.meta_keywords].reject(&:blank?).join(', '),
                               description: [object.name, current_store.meta_description].reject(&:blank?).join(', '))
-        elsif current_page?(controller: 'home', action: 'index')
+        else
           meta.reverse_merge!(keywords: (current_store.meta_keywords || current_store.seo_title),
                               description: (current_store.meta_description || current_store.seo_title))
-        else
-          meta.reverse_merge!(keywords: current_store.meta_keywords,
-                              description: current_store.meta_description)
         end
       end
       meta
     end
 
-    def image_url_path
+    def meta_image_url_path
       object = instance_variable_get('@' + controller_name.singularize)
       return unless object.is_a?(Spree::Product)
 
