@@ -74,7 +74,7 @@ module Spree
     end
 
     def meta_image_data_tag
-      tag('meta', property: 'og:image', content: image_url_path) if image_url_path
+      tag('meta', property: 'og:image', content: meta_image_url_path) if meta_image_url_path
     end
 
     def meta_data_tags
