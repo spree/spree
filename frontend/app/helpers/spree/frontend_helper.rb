@@ -212,6 +212,16 @@ module Spree
       @available_option_types
     end
 
+    def spree_social_link(service)
+      return '' if current_store.send(service).blank?
+
+      link_to "https://#{service}.com/#{current_store.send(service)}", target: :blank, rel: 'nofollow noopener' do
+        content_tag :gigure, id: service, class: 'px-2' do
+          icon(name: service, width: 22, height: 22)
+        end
+      end
+    end
+
     private
 
     def formatted_price(value)

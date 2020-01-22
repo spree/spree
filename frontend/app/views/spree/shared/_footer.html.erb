@@ -19,35 +19,9 @@
         <% end %>
         <div class="d-flex d-xl-block justify-content-center mx-auto">
           <div class="d-flex">
-            <% unless current_store.facebook.blank? %>
-              <%= link_to "https://www.facebook.com/#{current_store.facebook}", target: "_blank", rel: 'nofollow noopener', 'aria-label': Spree.t('go_to_facebook') do %>
-                <figure id="facebook" class="px-2">
-                <%= icon(name: 'facebook',
-                        width: 22,
-                        height: 22)  %>
-                </figure>
-              <% end %>
-            <% end %>
-
-            <% unless current_store.twitter.blank? %>
-              <%= link_to "https://twitter.com/#{current_store.twitter}", target: "_blank", rel: 'nofollow noopener', 'aria-label': Spree.t('go_to_twitter') do %>
-                <figure id="twitter" class="px-2">
-                <%= icon(name: 'twitter',
-                        width: 22,
-                        height: 22)  %>
-                </figure>
-              <% end %>
-            <% end %>
-
-            <% unless current_store.instagram.blank? %>
-              <%= link_to "https://www.instagram.com/#{current_store.instagram}", target: "_blank", rel: 'nofollow noopener', 'aria-label': Spree.t('go_to_instagram') do %>
-                <figure id="instagram" class="px-2">
-                <%= icon(name: 'instagram',
-                        width: 22,
-                        height: 22)  %>
-                </figure>
-              <% end %>
-            <% end %>
+            <%= spree_social_link('facebook') %>
+            <%= spree_social_link('twitter') %>
+            <%= spree_social_link('instagram') %>
           </div>
         </div>
       </div>
