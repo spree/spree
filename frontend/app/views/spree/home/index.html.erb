@@ -1,7 +1,7 @@
 <div class="homepage-hero-image mb-3 position-relative">
   <img class="lazyload hero-image position-absolute"
-    data-src="<%= asset_path('homepage/summer_collection.jpg') %>"
-    data-srcset="<%= image_source_set('homepage/summer_collection') %>"
+    data-src="<%= asset_path('homepage/main_banner.jpg') %>"
+    data-srcset="<%= image_source_set('homepage/main_banner') %>"
     alt="<%= Spree.t('homepage.summer_collection')%>" />
 
   <div class="hero-content">
@@ -21,8 +21,8 @@
       <div class="homepage-taxon-box mb-3">
         <%= link_to spree.nested_taxons_path('men') do %>
           <img class="w-100 lazyload"
-            data-src="<%= asset_path('homepage/men.jpg') %>"
-            data-srcset="<%= image_source_set('homepage/men') %>"
+            data-src="<%= asset_path('homepage/category_banner_upper.jpg') %>"
+            data-srcset="<%= image_source_set('homepage/category_banner_upper') %>"
             alt="<%= Spree.t('homepage.men')%>" />
 
           <div class="homepage-taxon-box-text">
@@ -34,8 +34,8 @@
       <div class="homepage-taxon-box">
         <%= link_to spree.nested_taxons_path('sportswear') do %>
           <img class="w-100 lazyload"
-            data-src="<%= asset_path('homepage/sportswear.jpg') %>"
-            data-srcset="<%= image_source_set('homepage/sportswear') %>"
+            data-src="<%= asset_path('homepage/category_banner_lower.jpg') %>"
+            data-srcset="<%= image_source_set('homepage/category_banner_lower') %>"
             alt="<%= Spree.t('homepage.sportswear')%>" />
 
           <div class="homepage-taxon-box-text" role="img" aria-label="<%= Spree.t('homepage.sportswear') %>">
@@ -51,8 +51,8 @@
       <div class="homepage-taxon-box flex-grow-1">
         <%= link_to spree.nested_taxons_path('women') do %>
           <img class="w-100 lazyload"
-            data-src="<%= asset_path('homepage/women.jpg') %>"
-            data-srcset="<%= image_source_set('homepage/women') %>"
+            data-src="<%= asset_path('homepage/big_category_banner.jpg') %>"
+            data-srcset="<%= image_source_set('homepage/big_category_banner') %>"
             alt="<%= Spree.t('homepage.women')%>" />
 
           <div class="homepage-taxon-box-text">
@@ -98,8 +98,8 @@
       <%= link_to spree.nested_taxons_path('streetstyle') do %>
         <div class="homepage-bottom-box text-center mb-3">
           <img class="w-100 lazyload"
-            data-src="<%= asset_path('homepage/streetstyle.jpg') %>"
-            data-srcset="<%= image_source_set('homepage/streetstyle') %>"
+            data-src="<%= asset_path('homepage/promo_banner_left.jpg') %>"
+            data-srcset="<%= image_source_set('homepage/promo_banner_left') %>"
             alt="<%= Spree.t('homepage.new_collection')%>" />
 
           <div class="homepage-bottom-box-inner" role="img" aria-label="<%= Spree.t('homepage.new_collection') %>">
@@ -118,8 +118,8 @@
       <%= link_to spree.nested_taxons_path('summer-sale') do %>
         <div class="homepage-bottom-box text-center mb-3">
           <img class="w-100 lazyload"
-            data-src="<%= asset_path('homepage/summersale.jpg') %>"
-            data-srcset="<%= image_source_set('homepage/summersale') %>"
+            data-src="<%= asset_path('homepage/promo_banner_right.jpg') %>"
+            data-srcset="<%= image_source_set('homepage/promo_banner_right') %>"
             alt="<%= Spree.t('homepage.summer_sale')%>" />
 
           <div class="homepage-bottom-box-inner">
