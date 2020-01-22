@@ -34,6 +34,17 @@ module Spree
           ]
         }
       ]
+
+    def main_nav_image(category, type)
+      image_path = "homepage/#{type}_#{category}.jpg"
+      image_url = asset_path(asset_exists?(image_path) ? image_path : 'noimage/plp.png')
+
+      lazy_image(
+        src: image_url,
+        alt: category,
+        width: 350,
+        height: 234
+      )
     end
   end
 end
