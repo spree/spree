@@ -1,8 +1,8 @@
-<footer id="footer" class="pt-2 mx-auto border-top footer-spree" data-hook>
+<footer id="footer" class="pt-2 mx-auto border-top footer-spree" data-turbolinks-permanent>
   <div class="container">
     <div class="row d-xl-flex justify-content-xl-around pb-xl-5">
       <div class="d-flex d-xl-block flex-xl-grow-0 col-xl-4">
-        <figure class="logo mx-auto mx-xl-0 pt-xl-2 pb-xl-1" data-hook>
+        <figure class="logo mx-auto mx-xl-0 pt-xl-2 pb-xl-1">
           <%= logo %>
         </figure>
         <% if current_store.meta_description %>
@@ -21,7 +21,7 @@
           <div class="d-flex">
             <% unless current_store.facebook.blank? %>
               <%= link_to "https://www.facebook.com/#{current_store.facebook}", target: "_blank", rel: 'nofollow noopener', 'aria-label': Spree.t('go_to_facebook') do %>
-                <figure id="facebook" class="px-2" data-hook>
+                <figure id="facebook" class="px-2">
                 <%= icon(name: 'facebook',
                         width: 22,
                         height: 22)  %>
@@ -31,7 +31,7 @@
 
             <% unless current_store.twitter.blank? %>
               <%= link_to "https://twitter.com/#{current_store.twitter}", target: "_blank", rel: 'nofollow noopener', 'aria-label': Spree.t('go_to_twitter') do %>
-                <figure id="twitter" class="px-2" data-hook>
+                <figure id="twitter" class="px-2">
                 <%= icon(name: 'twitter',
                         width: 22,
                         height: 22)  %>
@@ -41,7 +41,7 @@
 
             <% unless current_store.instagram.blank? %>
               <%= link_to "https://www.instagram.com/#{current_store.instagram}", target: "_blank", rel: 'nofollow noopener', 'aria-label': Spree.t('go_to_instagram') do %>
-                <figure id="instagram" class="px-2" data-hook>
+                <figure id="instagram" class="px-2">
                 <%= icon(name: 'instagram',
                         width: 22,
                         height: 22)  %>
