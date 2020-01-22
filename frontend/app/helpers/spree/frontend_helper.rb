@@ -127,18 +127,6 @@ module Spree
       )
     end
 
-    def main_nav_image(category, type)
-      image_path = "homepage/#{type}_#{category}.jpg"
-      image_url = asset_path(asset_exists?(image_path) ? image_path : 'noimage/plp.png')
-
-      lazy_image(
-        src: image_url,
-        alt: category,
-        width: 350,
-        height: 234
-      )
-    end
-
     def lazy_image(src:, alt:, width:, height:, srcset: '', **options)
       # We need placeholder image with the correct size to prevent page from jumping
       placeholder = "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20#{width}%20#{height}'%3E%3C/svg%3E"
@@ -222,6 +210,16 @@ module Spree
         Spree::OptionType.includes(:option_values).to_a
       end
       @available_option_types
+    end
+
+    def spree_social_link(service)
+      return '' if current_store.send(service).blank?
+
+      link_to "https://#{service}.com/#{current_store.send(service)}", target: :blank, rel: 'nofollow noopener' do
+        content_tag :gigure, id: service, class: 'px-2' do
+          icon(name: service, width: 22, height: 22)
+        end
+      end
     end
 
     private

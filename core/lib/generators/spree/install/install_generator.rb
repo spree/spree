@@ -40,6 +40,11 @@ module Spree
 
     def add_files
       template 'config/initializers/spree.rb', 'config/initializers/spree.rb'
+
+      if Spree::Core::Engine.frontend_available? || Rails.env.test?
+        template 'config/initializers/spree_storefront.rb', 'config/initializers/spree_storefront.rb'
+        template 'config/spree_storefront.yml', 'config/spree_storefront.yml'
+      end
     end
 
     def additional_tweaks

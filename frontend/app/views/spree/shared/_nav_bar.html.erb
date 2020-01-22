@@ -1,5 +1,5 @@
-<ul id="nav-bar" class="nav align-items-center d-flex justify-content-end navbar-right" data-hook>
-  <li data-hook>
+<ul id="nav-bar" class="nav align-items-center d-flex justify-content-end navbar-right">
+  <li>
     <div class="navbar-right-search-menu">
       <button type="button" class="navbar-right-dropdown-toggle search-icons" aria-label="<%= Spree.t('nav_bar.show_search')%>">
         <%= icon(name: 'magnifying-glass',
@@ -19,7 +19,7 @@
     </div>
   </li>
   <% if defined?(spree.account_link_path) %>
-    <li data-hook>
+    <li>
       <div class="dropdown navbar-right-dropdown">
         <button type="button" data-toggle="dropdown" class="navbar-right-dropdown-toggle" aria-label="<%= Spree.t('nav_bar.show_user_menu')%>">
           <%= icon(name: 'person',
@@ -38,7 +38,7 @@
       </div>
     </li>
   <% end %>
-  <li id="link-to-cart" data-turbolinks-permanent>
+  <li id="link-to-cart">
     <span class="d-none d-xl-inline-block cart-icon--xl">
       <%= icon(name: 'bag',
                width: 41.8,
