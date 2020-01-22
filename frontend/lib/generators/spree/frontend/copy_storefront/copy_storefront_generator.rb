@@ -16,7 +16,6 @@ module Spree
         directory 'views', './app/views'
         directory 'noimage', './app/assets/images/noimage'
         directory 'homepage', './app/assets/images/homepage'
-        template 'navigation_helper.rb', './app/helpers/spree/navigation_helper.rb'
         template 'variables.scss', './app/assets/stylesheets/spree/frontend/variables/variables.scss'
       end
     end
