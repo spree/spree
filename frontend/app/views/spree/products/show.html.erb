@@ -2,8 +2,6 @@
 
 <% @body_id = 'product-details' %>
 
-<%= render 'spree/products/twitter_card' %>
-
 <% cache cache_key_for_product do %>
   <div class="container">
     <%= spree_breadcrumbs(@taxon, '', @product) %>
