@@ -16,6 +16,7 @@ module Spree
         directory 'views', './app/views'
         directory 'noimage', './app/assets/images/noimage'
         directory 'homepage', './app/assets/images/homepage'
+        directory 'meganav', './app/assets/images/meganav'
         template 'variables.scss', './app/assets/stylesheets/spree/frontend/variables/variables.scss'
       end
     end

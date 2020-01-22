@@ -21,12 +21,12 @@ navigation:
         subtitle: New collection
         title: Summer 2019
         url: /t/summer-collection
-        image: 'homepage/summer_collection_women.jpg'
+        image: 'meganav/promo_banner_left-first-category.jpg'
       -
         subtitle: Special Offers
         title: Get up to 30% off
         url: /t/special-offers
-        image: 'homepage/special_offers_women.jpg'
+        image: 'meganav/promo_banner_right-first-category.jpg'
   -
     title: Men
     subtitle: Categories
@@ -45,12 +45,12 @@ navigation:
         subtitle: New collection
         title: Summer 2019
         url: /t/summer-collection
-        image: 'homepage/summer_collection_women.jpg'
+        image: 'meganav/promo_banner_left-second-category.jpg'
       -
         subtitle: Special Offers
         title: Get up to 30% off
         url: /t/special-offers
-        image: 'homepage/special_offers_women.jpg'
+        image: 'meganav/promo_banner_right-second-category.jpg'
   -
     title: Sportswear
     subtitle: Categories
@@ -67,9 +67,9 @@ navigation:
         subtitle: New collection
         title: Summer 2019
         url: /t/summer-collection
-        image: 'homepage/summer_collection_women.jpg'
+        image: 'meganav/promo_banner_left-third-category.jpg'
       -
         subtitle: Special Offers
         title: Get up to 30% off
         url: /t/special-offers
-        image: 'homepage/special_offers_women.jpg'
+        image: 'meganav/promo_banner_right-third-category.jpg'
