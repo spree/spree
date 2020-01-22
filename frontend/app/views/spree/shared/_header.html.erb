@@ -1,6 +1,6 @@
 <%# leaving #spree-header div for legacy support  %>
-<div id="spree-header">
-  <header id="header" class="d-flex align-items-center header-spree border-bottom" data-hook>
+<div id="spree-header" data-turbolinks-permanent>
+  <header id="header" class="d-flex align-items-center header-spree border-bottom">
     <div class="container-fluid h-100 header-spree-fluid">
       <div class="d-flex flex-nowrap align-items-center h-100">
         <div class="d-xl-none flex-grow-1 header-spree-fluid-mobile-menu-toggler">
@@ -10,16 +10,16 @@
                      height: 16)  %>
           </button>
         </div>
-        <figure class="logo flex-grow-0 flex-xl-grow-1 order-xl-0 header-spree-fluid-logo" data-hook>
+        <figure class="logo flex-grow-0 flex-xl-grow-1 order-xl-0 header-spree-fluid-logo">
           <%= logo %>
         </figure>
-        <div id="main-nav-bar" class="flex-grow-0 d-none d-xl-block h-100 header-spree-fluid-primary-navigation" data-hook>
+        <div id="main-nav-bar" class="flex-grow-0 d-none d-xl-block h-100 header-spree-fluid-primary-navigation">
           <%= render partial: 'spree/shared/main_nav_bar' %>
         </div>
-        <div id="top-nav-bar" class="flex-grow-1 header-spree-fluid-secondary-navigation" data-hook>
+        <div id="top-nav-bar" class="flex-grow-1 header-spree-fluid-secondary-navigation">
           <%= render partial: 'spree/shared/nav_bar' %>
         </div>
-        <%= render partial: 'spree/shared/mobile_navigation' %>
+        <%#= render partial: 'spree/shared/mobile_navigation' %>
       </div>
     </div>
   </header>
