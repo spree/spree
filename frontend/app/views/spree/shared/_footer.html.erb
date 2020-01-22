@@ -43,60 +43,18 @@
       </div>
     </div>
     <div class="row d-none d-xl-flex border-top py-5 text-uppercase footer-spree-menu-links">
-      <div class="col-3">
-        <div class="footer-spree-label">
-          <%= I18n.t('navigation.categories.women') %>
-        </div>
-        <div class="pt-2">
-          <%= link_to I18n.t('navigation.subcategories.dresses'), spree.nested_taxons_path('women/dresses') %>
-        </div>
-        <div class="pt-2">
-          <%= link_to I18n.t('navigation.subcategories.shirts_and_blouses'), spree.nested_taxons_path('women/shirts-and-blouses') %>
-        </div>
-        <div class="pt-2">
-          <%= link_to I18n.t('navigation.subcategories.t_shirts_and_tops'), spree.nested_taxons_path('women/tops-and-t-shirts') %>
-        </div>
-        <div class="pt-2">
-          <%= link_to I18n.t('navigation.subcategories.sweaters'), spree.nested_taxons_path('women/sweaters') %>
-        </div>
-        <div class="pt-2">
-          <%= link_to I18n.t('navigation.subcategories.skirts'), spree.nested_taxons_path('women/skirts') %>
-        </div>
-        <div class="pt-2">
-          <%= link_to I18n.t('navigation.subcategories.jackets_and_coats'), spree.nested_taxons_path('women/jackets-and-coats') %>
-        </div>
-      </div>
-      <div class="col-3">
-        <div class="footer-spree-label">
-          <%= I18n.t('navigation.categories.men') %>
-        </div>
-        <div class="pt-2">
-          <%= link_to I18n.t('navigation.subcategories.shirts'), spree.nested_taxons_path('men/shirts') %>
-        </div>
-        <div class="pt-2">
-          <%= link_to I18n.t('navigation.subcategories.t_shirts'), spree.nested_taxons_path('men/t-shirts') %>
-        </div>
-        <div class="pt-2">
-          <%= link_to I18n.t('navigation.subcategories.sweaters'), spree.nested_taxons_path('men/sweaters') %>
-        </div>
-        <div class="pt-2">
-          <%= link_to I18n.t('navigation.subcategories.jackets_and_coats'), spree.nested_taxons_path('men/jackets-and-coats') %>
-        </div>
-      </div>
-      <div class="col-3">
-        <div class="footer-spree-label">
-          <%= I18n.t('navigation.categories.sportswear') %>
-        </div>
-        <div class="pt-2">
-          <%= link_to I18n.t('navigation.subcategories.tops'), spree.nested_taxons_path('sportswear/tops') %>
-        </div>
-        <div class="pt-2">
-          <%= link_to I18n.t('navigation.subcategories.pants'), spree.nested_taxons_path('sportswear/pants') %>
-        </div>
-        <div class="pt-2">
-          <%= link_to I18n.t('navigation.subcategories.sweatshirts'), spree.nested_taxons_path('sportswear/sweatshirts') %>
-        </div>
-      </div>
+      <% if spree_navigation_data.any? %>
+        <% spree_navigation_data.first(3).each do |root| %>
+          <div class="col-3">
+            <div class="footer-spree-label">
+              <%= link_to root[:title], root[:url] %>
+            </div>
+            <% root[:items].each do |item| %>
+              <div class="pt-2"><%= link_to item[:title], item[:url] %></div>
+            <% end %>
+          </div>
+        <% end %>
+      <% end %>
       <div class="col-3">
         <div class="footer-spree-label">
           <%= Spree.t('nav_bar.my_account') %>
