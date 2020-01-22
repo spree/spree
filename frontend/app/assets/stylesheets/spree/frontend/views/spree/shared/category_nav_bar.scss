@@ -34,7 +34,7 @@
 
     a:hover {
       text-decoration: none;
-      color: theme-color('dark');
+      color: $font-color;
     }
   }
 
@@ -75,7 +75,7 @@
 
     &-big-text {
       font-weight: 600;
-      color: theme-color('dark');
+      color: $font-color;
       font-size: font-px-to-rem(16px);
       font-weight: 600;
       line-height: 1.38;

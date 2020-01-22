@@ -22,13 +22,13 @@ For example, to override product details page, create the file `app/views/spree/
 
 ## Storefront (Frontend)
 
-### Import storefront views into your application
+### Import storefront customizable elements into your application
 
-You can import all views from spree frontend into your application
+You can import all customizable elements from spree frontend into your application
 using this command (in your application root directory):
 
 ```bash
-rails g spree:frontend:copy_views
+rails g spree:frontend:copy_storefront
 ```
 
 All of those views will be added to your `app/views` directory under `spree` folder. You can modify them as you wish.

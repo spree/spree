@@ -32,10 +32,10 @@ module Spree
       end
     end
 
-    def logo(image_path = Spree::Config[:logo])
+    def logo(image_path = Spree::Config[:logo], options = {})
       path = spree.respond_to?(:root_path) ? spree.root_path : main_app.root_path
 
-      link_to path, 'aria-label': current_store.name do
+      link_to path, 'aria-label': current_store.name, method: options[:method] do
         image_tag image_path, alt: current_store.name, title: current_store.name
       end
     end
@@ -66,6 +66,18 @@ module Spree
         end
       end
       meta
+    end
+
+    def image_url_path
+      object = instance_variable_get('@' + controller_name.singularize)
+      return unless object.is_a?(Spree::Product)
+
+      image = default_image_for_product_or_variant(object)
+      image&.attachment.present? ? main_app.url_for(image.attachment) : asset_path(Spree::Config[:logo])
+    end
+
+    def meta_image_data_tag
+      tag('meta', property: 'og:image', content: image_url_path) if image_url_path
     end
 
     def meta_data_tags
