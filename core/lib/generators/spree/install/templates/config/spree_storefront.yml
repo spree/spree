@@ -1,19 +1,20 @@
 navigation:
   -
-    name: Women
+    title: Women
+    subtitle: Categories
     url: /t/women
     items:
-      - :name: Skirts
+      - :title: Skirts
         :url: /t/women/skirts
-      - :name: Dresses
+      - :title: Dresses
         :url: /t/women/dresses
-      - :name: Shirts and Blouses
+      - :title: Shirts and Blouses
         :url: /t/women/shirts-and-blouses
-      - :name: Sweaters
+      - :title: Sweaters
         :url: /t/women/sweaters
-      - :name: Tops and T-shirts
+      - :title: Tops and T-shirts
         :url: /t/women/tops-and-t-shirts
-      - :name: Jackets and Coats
+      - :title: Jackets and Coats
         :url: /t/women/jackets-and-coats
     promo_banners:
       -
@@ -27,16 +28,17 @@ navigation:
         url: /t/special-offers
         image: 'homepage/special_offers_women.jpg'
   -
-    name: Men
+    title: Men
+    subtitle: Categories
     url: /t/men
     items:
-      - :name: Shirts
+      - :title: Shirts
         :url: men/shirts
-      - :name: T-shirts
+      - :title: T-shirts
         :url: men/t-shirts
-      - :name: Sweaters
+      - :title: Sweaters
         :url: men/sweaters
-      - :name: Jackets and Coats
+      - :title: Jackets and Coats
         :url: men/jackets-and-coats
     promo_banners:
       -
@@ -50,14 +52,15 @@ navigation:
         url: /t/special-offers
         image: 'homepage/special_offers_women.jpg'
   -
-    name: Sportswear
+    title: Sportswear
+    subtitle: Categories
     url: /t/sportswear
     items:
-    - :name: Tops
+    - :title: Tops
       :url: sportswear/tops
-    - :name: Sweatshirts
+    - :title: Sweatshirts
       :url: sportswear/sweatshirts
-    - :name: Pants
+    - :title: Pants
       :url: sportswear/pants
     promo_banners:
       -
