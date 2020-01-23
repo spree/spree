@@ -240,53 +240,296 @@ describe Spree::BaseHelper, type: :helper do
     end
   end
 
+<<<<<<< HEAD
   describe '#meta_image_data_tag' do
     context 'when meta_image_url_path is present' do
       it 'returns meta tag' do
         allow_any_instance_of(Spree::BaseHelper).to receive(:meta_image_url_path).and_return('image_url')
+=======
+  describe '#meta_image_url_path' do
+    let!(:product) { build :product }
+    before { allow_any_instance_of(Spree::BaseHelper).to receive(:object).and_return(product) }
+>>>>>>> Adds extra product meta tags
 
-        expect(meta_image_data_tag).to eq "<meta property=\"og:image\" content=\"image_url\" />"
+    context 'when product has no images attached' do
+      it 'returns spree logo url' do
+        expect(meta_image_url_path).to eq asset_path(Spree::Config[:logo])
       end
     end
 
+<<<<<<< HEAD
     context 'when meta_image_url_path is absent' do
       it 'returns meta tag' do
         allow_any_instance_of(Spree::BaseHelper).to receive(:meta_image_url_path).and_return(nil)
+=======
+    context 'when product has an image attached' do
+      let!(:image) { create :image, viewable: product.master }
+>>>>>>> Adds extra product meta tags
 
-        expect(meta_image_data_tag).to eq nil
+      it 'returns main image url path' do
+        expect(meta_image_url_path).to eq asset_path(main_app.url_for(image.attachment))
       end
     end
   end
 
+<<<<<<< HEAD
   describe '#meta_image_url_path' do
     context 'when object is not a product' do
       let!(:taxon) { build :taxon }
+=======
+  describe '#meta_product_image_data_tag' do
+    context 'when image url path is present' do
+      it 'returns meta product image tag' do
+        allow_any_instance_of(Spree::BaseHelper).to receive(:meta_image_url_path).and_return('image_url')
 
-      it 'returns false' do
-        allow_any_instance_of(Spree::BaseHelper).to receive(:instance_variable_get).and_return(taxon)
+        expect(meta_product_image_data_tag).to eq "<meta property=\"og:image\" content=\"image_url\" />"
+      end
+    end
+>>>>>>> Adds extra product meta tags
 
+    context 'when image url path is absent' do
+      it 'returns nil' do
+        allow_any_instance_of(Spree::BaseHelper).to receive(:meta_image_url_path).and_return(nil)
+
+<<<<<<< HEAD
         expect(meta_image_url_path).to eq nil
+=======
+        expect(meta_product_data_tags).to eq nil
+>>>>>>> Adds extra product meta tags
+      end
+    end
+  end
+
+  describe '#meta_product_url_path' do
+    context 'when current_store url and object slug are present' do
+      let!(:current_store) { build(:store, url: 'example.com') }
+      let!(:product)       { build(:product, slug: 'shirt') }
+
+      it 'returns full product url' do
+        allow_any_instance_of(Spree::BaseHelper).to receive(:object).and_return(product)
+
+        expect(meta_product_url_path).to eq "https://#{current_store.url}/products/#{product.slug}"
       end
     end
 
-    context 'when object is product' do
-      let!(:product) { build :product }
-      before do
-        allow_any_instance_of(Spree::BaseHelper).to receive(:instance_variable_get).and_return(product)
+    context 'when current_store url and object slug are absent' do
+      it 'returns partial of product url' do
+        allow_any_instance_of(Spree::BaseHelper).to receive(:object).and_return(nil)
+
+        expect(meta_product_url_path).to eq nil
+      end
+    end
+  end
+
+  describe '#meta_product_url_tag' do
+    context 'when current_store url and object slug are present' do
+      it 'returns product url tag' do
+        allow_any_instance_of(Spree::BaseHelper).to receive(:meta_product_url_path).and_return("https://example.com/products/shirt")
+
+        expect(meta_product_url_tag).to eq(
+          "<meta property=\"og:url\" content=\"https://example.com/products/shirt\" />"
+        )
+      end
+    end
+
+    context 'when current_store url and object slug are absent' do
+      it 'returns nil' do
+        allow_any_instance_of(Spree::BaseHelper).to receive(:object).and_return(nil)
+
+        expect(meta_product_url_tag).to eq nil
+      end
+    end
+  end
+
+  describe '#meta_types' do
+    context 'when product is present' do
+      context 'that has no taxons' do
+        let!(:product) { build(:product) }
+
+        it 'returns an empty string' do
+          allow_any_instance_of(Spree::BaseHelper).to receive(:object).and_return(product)
+
+          expect(meta_types).to eq ''
+        end
       end
 
+      context 'that has taxons' do
+        let!(:taxon_1)       { build(:taxon, name: 'taxon_1') }
+        let!(:taxon_2)       { build(:taxon, name: 'taxon_2') }
+        let!(:product)       { build(:product, taxons: [taxon_1, taxon_2]) }
+
+        it 'returns string of taxons names' do
+          allow_any_instance_of(Spree::BaseHelper).to receive(:object).and_return(product)
+
+          expect(meta_types).to eq 'taxon_1 taxon_2'
+        end
+      end
+
+    end
+
+    context 'when product is absent' do
+      it 'returns an empty string' do
+        allow_any_instance_of(Spree::BaseHelper).to receive(:object).and_return(nil)
+
+        expect(meta_types).to eq nil
+      end
+    end
+  end
+
+  describe '#meta_product_types_tag' do
+    context 'when meta type is present' do
+      it 'returns meta product types tag' do
+        allow_any_instance_of(Spree::BaseHelper).to receive(:meta_types).and_return('taxon')
+
+        expect(meta_product_types_tag).to eq "<meta property=\"og:type\" content=\"taxon\" />"
+      end
+    end
+
+    context 'when meta type is absent' do
+      it 'returns nil' do
+        allow_any_instance_of(Spree::BaseHelper).to receive(:meta_types).and_return(nil)
+
+        expect(meta_product_types_tag).to eq nil
+      end
+    end
+  end
+
+  describe '#meta_product_title_tag' do
+    context 'when product name is present' do
+      let!(:product) { build(:product, name: 'Spree Bag') }
+
+      it 'returns meta product title tag' do
+        allow_any_instance_of(Spree::BaseHelper).to receive(:object).and_return(product)
+
+        expect(meta_product_title_tag).to eq "<meta property=\"og:title\" content=\"#{product.name}\" />"
+      end
+    end
+
+    context 'when product name is absent' do
+      it 'returns nil' do
+        allow_any_instance_of(Spree::BaseHelper).to receive(:object).and_return(nil)
+
+        expect(meta_product_title_tag).to eq nil
+      end
+    end
+  end
+
+  describe '#meta_product_description' do
+    context 'when product is present' do
+      context 'with description' do
+        let!(:product) { build(:product, description: 'Description') }
+
+        it 'returns product description' do
+          allow_any_instance_of(Spree::BaseHelper).to receive(:object).and_return(product)
+
+          expect(meta_product_description).to eq product.description
+        end
+      end
+
+<<<<<<< HEAD
       context 'and has no images attached' do
         it 'returns spree logo url' do
           expect(meta_image_url_path).to eq asset_path(Spree::Config[:logo])
+=======
+      context 'with meta description' do
+        let!(:product) { build(:product, description: nil, meta_description: 'Meta Description') }
+
+        it 'returns product meta description' do
+          allow_any_instance_of(Spree::BaseHelper).to receive(:object).and_return(product)
+
+          expect(meta_product_description).to eq product.meta_description
+>>>>>>> Adds extra product meta tags
         end
       end
 
-      context 'and has image attached' do
-        let!(:image) { create :image, viewable: product.master }
+      context 'without meta description and description' do
+        let!(:product) { build(:product, description: nil) }
 
+<<<<<<< HEAD
         it 'returns main image url' do
           expect(meta_image_url_path).to eq asset_path(main_app.url_for(image.attachment))
+=======
+        it 'returns nil' do
+          allow_any_instance_of(Spree::BaseHelper).to receive(:object).and_return(product)
+
+          expect(meta_product_description).to eq nil
+>>>>>>> Adds extra product meta tags
         end
+      end
+    end
+
+    context 'when product is absent' do
+      it 'returns nil' do
+        allow_any_instance_of(Spree::BaseHelper).to receive(:object).and_return(nil)
+
+        expect(meta_product_description).to eq nil
+      end
+    end
+  end
+
+  describe '#meta_product_description_tag' do
+    context 'when meta product description is present' do
+      it 'returns meta product title tag' do
+        allow_any_instance_of(Spree::BaseHelper).to receive(:meta_product_description).and_return('description')
+
+        expect(meta_product_description_tag).to eq "<meta property=\"og:description\" content=\"description\" />"
+      end
+    end
+
+    context 'when meta product description is absent' do
+      it 'returns nil' do
+        allow_any_instance_of(Spree::BaseHelper).to receive(:meta_product_description).and_return(nil)
+
+        expect(meta_product_description_tag).to eq nil
+      end
+    end
+  end
+
+  describe '#meta_product_app_id_tag' do
+    context 'when fb app id is present' do
+      it 'returns meta product app id tag' do
+        Spree::Config[:fb_app_id] = 'app_id'
+        expect(meta_product_app_id_tag).to eq "<meta property=\"fb:app_id\" content=\"app_id\" />"
+      end
+    end
+
+    context 'when fb app id is absent' do
+      it 'returns nil' do
+        expect(meta_product_app_id_tag).to eq nil
+      end
+    end
+  end
+
+  describe '#meta_product_data_tags' do
+    context 'when object is not a product' do
+      it 'returns nil' do
+        allow_any_instance_of(Spree::BaseHelper).to receive(:object).and_return(nil)
+
+        expect(meta_product_data_tags).to eq nil
+      end
+    end
+
+    context 'when object is a product' do
+      let!(:product)         { build(:product) }
+      let!(:image_tag)       { "<meta property=\"og:image\" content=\"image_url\" />" }
+      let!(:url_tag)         { "<meta property=\"og:url\" content=\"https://example.com/products/spree-bag\" />" }
+      let!(:type_tag)        { "<meta property=\"og:type\" content=\"taxon\" />" }
+      let!(:title_tag)       { "<meta property=\"og:title\" content=\"Spree Bag\" />" }
+      let!(:description_tag) { "<meta property=\"og:description\" content=\"description\" />" }
+      let!(:fb_app_id_tag)   { "<meta property=\"fb:app_id\" content=\"app_id\" />" }
+
+      it 'returns string of meta product data tags' do
+        allow_any_instance_of(Spree::BaseHelper).to receive(:object).and_return(product)
+        allow_any_instance_of(Spree::BaseHelper).to receive(:meta_product_image_data_tag).and_return(image_tag)
+        allow_any_instance_of(Spree::BaseHelper).to receive(:meta_product_url_tag).and_return(url_tag)
+        allow_any_instance_of(Spree::BaseHelper).to receive(:meta_product_types_tag).and_return(type_tag)
+        allow_any_instance_of(Spree::BaseHelper).to receive(:meta_product_title_tag).and_return(title_tag)
+        allow_any_instance_of(Spree::BaseHelper).to receive(:meta_product_description_tag).and_return(description_tag)
+        allow_any_instance_of(Spree::BaseHelper).to receive(:meta_product_app_id_tag).and_return(fb_app_id_tag)
+
+        expect(meta_product_data_tags).to eq(
+          [image_tag, url_tag, type_tag, title_tag, description_tag, fb_app_id_tag].join("\n")
+        )
       end
     end
   end

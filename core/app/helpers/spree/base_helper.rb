@@ -40,8 +40,11 @@ module Spree
       end
     end
 
+    def object
+      instance_variable_get('@' + controller_name.singularize)
+    end
+
     def meta_data
-      object = instance_variable_get('@' + controller_name.singularize)
       meta = {}
 
       if object.is_a? ApplicationRecord
@@ -65,18 +68,6 @@ module Spree
       meta
     end
 
-    def meta_image_url_path
-      object = instance_variable_get('@' + controller_name.singularize)
-      return unless object.is_a?(Spree::Product)
-
-      image = default_image_for_product_or_variant(object)
-      image&.attachment.present? ? main_app.url_for(image.attachment) : asset_path(Spree::Config[:logo])
-    end
-
-    def meta_image_data_tag
-      tag('meta', property: 'og:image', content: meta_image_url_path) if meta_image_url_path
-    end
-
     def meta_data_tags
       meta_data.map do |name, content|
         tag('meta', name: name, content: content) unless name.nil? || content.nil?
@@ -90,6 +81,62 @@ module Spree
       else
         super
       end
+    end
+
+    def meta_image_url_path
+      image = default_image_for_product_or_variant(object)
+      image&.attachment.present? ? main_app.url_for(image.attachment) : asset_path(Spree::Config[:logo])
+    end
+
+    def meta_product_image_data_tag
+      tag('meta', property: 'og:image', content: meta_image_url_path) if meta_image_url_path
+    end
+
+    def meta_product_url_path
+      ('https://' + current_store&.url + '/products/' + object&.slug) if current_store&.url && object&.slug
+    end
+
+    def meta_product_url_tag
+      tag('meta', property: 'og:url', content: meta_product_url_path) if meta_product_url_path
+    end
+
+    def meta_types
+      object&.taxons&.map do |taxon|
+        taxon&.name
+      end&.join(' ')
+    end
+    
+    def meta_product_types_tag
+      tag('meta', property: 'og:type', content: meta_types) if meta_types
+    end
+
+    def meta_product_title_tag
+      tag('meta', property: 'og:title', content: object&.name) if object&.name
+    end
+
+    def meta_product_description
+      object&.description || object&.meta_description
+    end
+
+    def meta_product_description_tag
+      tag('meta', property: 'og:description', content: meta_product_description) if meta_product_description
+    end
+
+    def meta_product_app_id_tag
+      tag('meta', property: 'fb:app_id', content: Spree::Config[:fb_app_id]) if Spree::Config[:fb_app_id]
+    end
+
+    def meta_product_data_tags
+      return unless object.is_a?(Spree::Product)
+
+      [
+        meta_product_image_data_tag,
+        meta_product_url_tag,
+        meta_product_types_tag,
+        meta_product_title_tag,
+        meta_product_description_tag,
+        meta_product_app_id_tag
+      ].join("\n")
     end
 
     def pretty_time(time)
