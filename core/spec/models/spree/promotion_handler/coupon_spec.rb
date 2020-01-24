@@ -48,14 +48,14 @@ module Spree
       end
 
       context 'coupon code promotion doesnt exist' do
-        before { Promotion.create name: 'promo', code: nil }
+        before { create(:promotion, name: 'promo', code: nil) }
 
         it 'doesnt fetch any promotion' do
           expect(subject.promotion).to be_blank
         end
 
         context 'with no actions defined' do
-          before { Promotion.create name: 'promo', code: '10off' }
+          before { create(:promotion, name: 'promo', code:'10off') }
 
           it 'populates error message' do
             subject.apply
@@ -65,9 +65,7 @@ module Spree
       end
 
       context 'existing coupon code promotion' do
-        let!(:promotion) { Promotion.create name: 'promo', code: '10off' }
-        let!(:action) { Promotion::Actions::CreateItemAdjustments.create(promotion: promotion, calculator: calculator) }
-        let(:calculator) { Calculator::FlatRate.new(preferred_amount: 10) }
+        let!(:promotion) { create(:promotion, :with_line_item_adjustment, adjustment_rate: 10, code: '10off') }
 
         it 'fetches with given code' do
           expect(subject.promotion).to eq promotion
@@ -117,7 +115,7 @@ module Spree
           end
 
           context 'coexists with a non coupon code promo' do
-            let!(:order) { Order.create }
+            let!(:order) { create(:order) }
 
             before do
               allow(order).to receive_messages coupon_code: '10off'
@@ -196,9 +194,8 @@ module Spree
 
             it 'coupon code hit max usage' do
               promotion.update_column(:usage_limit, 1)
-              coupon = Coupon.new(order)
-              coupon.apply
-              expect(coupon.successful?).to be true
+              subject.apply
+              expect(subject.successful?).to be true
 
               order_2 = create(:order)
               allow(order_2).to receive_messages coupon_code: '10off'
@@ -209,9 +206,7 @@ module Spree
             end
 
             context 'when the a new coupon is less good' do
-              let!(:action_5) { Promotion::Actions::CreateAdjustment.create(promotion: promotion_5, calculator: calculator_5) }
-              let(:calculator_5) { Calculator::FlatRate.new(preferred_amount: 5) }
-              let!(:promotion_5) { Promotion.create name: 'promo', code: '5off'  }
+              let!(:promotion_5) { create(:promotion, :with_order_adjustment, weighted_order_adjustment_amount: 5, name: 'promo', code: '5off') }
 
               it 'notifies of better deal' do
                 subject.apply
@@ -224,86 +219,62 @@ module Spree
         end
 
         context 'for an order with taxable line items' do
-          before do
-            @country = create(:country)
-            @zone = create(:zone, name: 'Country Zone', default_tax: true, zone_members: [])
-            @zone.zone_members.create(zoneable: @country)
-            @category = Spree::TaxCategory.create name: 'Taxable Foo'
-            @rate1 = Spree::TaxRate.create(
-              amount: 0.10,
-              calculator: Spree::Calculator::DefaultTax.create,
-              tax_category: @category,
-              zone: @zone
-            )
+          let!(:order)         { create(:order, line_items_price: 0.0) }
+          let!(:zone)          { create(:zone_with_country, default_tax: true) }
+          let!(:tax_category)  { create(:tax_category, name: 'Taxable Foo') }
+          let!(:rate)          { create(:tax_rate, amount: 0.10, tax_category: tax_category, zone: zone) }
 
-            @order = Spree::Order.create!
-            allow(@order).to receive_messages coupon_code: '10off'
-          end
+          before { allow(order).to receive(:coupon_code).and_return '10off' }
 
           context 'and the product price is less than promo discount' do
-            before do
-              3.times do |_i|
-                taxable = create(:product, tax_category: @category, price: 9.0)
-                Spree::Cart::AddItem.call(order: @order, variant: taxable.master)
-              end
-            end
+            let(:product_list) { create_list(:product, 3, tax_category: tax_category, price: 9.0) }
+
+            before { product_list.each { |item| Spree::Cart::AddItem.call(order: order, variant: item.master) } }
 
             it 'successfully applies the promo' do
               # 3 * (9 + 0.9)
-              expect(@order.total).to eq(29.7)
-              coupon = Coupon.new(@order)
-              coupon.apply
-              expect(coupon.success).to be_present
+              expect(order.total).to eq(29.7)
+              subject.apply
+              expect(subject.success).to be_present
               # 3 * ((9 - [9,10].min) + 0)
-              expect(@order.reload.total).to eq(0)
-              expect(@order.additional_tax_total).to eq(0)
+              expect(order.reload.total).to eq(0)
+              expect(order.additional_tax_total).to eq(0)
             end
           end
 
           context 'and the product price is greater than promo discount' do
-            before do
-              3.times do |_i|
-                taxable = create(:product, tax_category: @category, price: 11.0)
-                Spree::Cart::AddItem.call(order: @order, variant: taxable.master, quantity: 2)
-              end
-            end
+            let(:product_list) { create_list(:product, 3, tax_category: tax_category, price: 11.0) }
+
+            before { product_list.each { |item| Spree::Cart::AddItem.call(order: order, variant: item.master, quantity: 2) } }
 
             it 'successfully applies the promo' do
               # 3 * (22 + 2.2)
-              expect(@order.total.to_f).to eq(72.6)
-              coupon = Coupon.new(@order)
-              coupon.apply
-              expect(coupon.success).to be_present
+              expect(order.total.to_f).to eq(72.6)
+              subject.apply
+              expect(subject.success).to be_present
               # 3 * ( (22 - 10) + 1.2)
-              expect(@order.reload.total).to eq(39.6)
-              expect(@order.additional_tax_total).to eq(3.6)
+              expect(order.reload.total).to eq(39.6)
+              expect(order.additional_tax_total).to eq(3.6)
             end
           end
 
           context 'and multiple quantity per line item' do
-            before do
-              twnty_off = Promotion.create name: 'promo', code: '20off'
-              twnty_off_calc = Calculator::FlatRate.new(preferred_amount: 20)
-              Promotion::Actions::CreateItemAdjustments.create(promotion: twnty_off,
-                                                               calculator: twnty_off_calc)
+            let(:promotion)    { create(:promotion, :with_line_item_adjustment, adjustment_rate: 20, code: '20off') }
+            let(:product_list) { create_list(:product, 3, tax_category: tax_category, price: 10.0) }
 
-              allow(@order).to receive(:coupon_code).and_call_original
-              allow(@order).to receive_messages coupon_code: '20off'
-              3.times do |_i|
-                taxable = create(:product, tax_category: @category, price: 10.0)
-                Spree::Cart::AddItem.call(order: @order, variant: taxable.master, quantity: 2)
-              end
+            before do
+              allow(order).to receive(:coupon_code).and_return '20off'
+              product_list.each { |item| Spree::Cart::AddItem.call(order: order, variant: item.master, quantity: 2) }
             end
 
             it 'successfully applies the promo' do
               # 3 * ((2 * 10) + 2.0)
-              expect(@order.total.to_f).to eq(66)
-              coupon = Coupon.new(@order)
-              coupon.apply
-              expect(coupon.success).to be_present
+              expect(order.total.to_f).to eq(66)
+              subject.apply
+              expect(subject.success).to be_present
               # 0
-              expect(@order.reload.total).to eq(0)
-              expect(@order.additional_tax_total).to eq(0)
+              expect(order.reload.total).to eq(0)
+              expect(order.additional_tax_total).to eq(0)
             end
           end
         end
