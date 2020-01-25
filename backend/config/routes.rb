@@ -28,6 +28,7 @@ Spree::Core::Engine.add_routes do
       resources :product_properties do
         collection do
           post :update_positions
+          get :get_properties
         end
       end
       resources :images do

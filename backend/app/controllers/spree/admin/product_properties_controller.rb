@@ -2,14 +2,16 @@ module Spree
   module Admin
     class ProductPropertiesController < ResourceController
       belongs_to 'spree/product', find_by: :slug
-      before_action :find_properties
       before_action :setup_property, only: :index
 
-      private
-
-      def find_properties
-        @properties = Spree::Property.pluck(:name)
+      def get_properties
+        properties = Spree::Property.where("lower(name) LIKE lower(?)", "%#{params[:term]}%")
+                                    .page(params[:page])
+                                    .per(Spree::Config[:admin_properties_per_page]).pluck(:name)
+        render :json => properties
       end
+
+      private
 
       def setup_property
         @product.product_properties.build
