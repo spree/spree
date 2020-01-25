@@ -40,7 +40,7 @@
 <% end %>
 
 <%= javascript_tag do %>
-  var source = '<%= spree.get_properties_admin_product_product_properties_path(@product.id) %>';
+  var source = '<%= spree.fetch_properties_admin_product_product_properties_path(@product.id) %>';
   $('#product_properties').on('keydown', 'input.autocomplete', function() {
     already_auto_completed = $(this).is('ac_input');
     if (!already_auto_completed) {

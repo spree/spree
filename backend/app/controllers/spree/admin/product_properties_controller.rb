@@ -4,11 +4,11 @@ module Spree
       belongs_to 'spree/product', find_by: :slug
       before_action :setup_property, only: :index
 
-      def get_properties
-        properties = Spree::Property.where("lower(name) LIKE lower(?)", "%#{params[:term]}%")
-                                    .page(params[:page])
-                                    .per(Spree::Config[:admin_properties_per_page]).pluck(:name)
-        render :json => properties
+      def fetch_properties
+        properties = Spree::Property.where('lower(name) LIKE lower(?)', "%#{params[:term]}%").
+                     page(params[:page]).
+                     per(Spree::Config[:admin_properties_per_page]).pluck(:name)
+        render json: properties
       end
 
       private
