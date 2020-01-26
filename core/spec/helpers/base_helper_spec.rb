@@ -191,4 +191,103 @@ describe Spree::BaseHelper, type: :helper do
       end
     end
   end
+
+  describe '#default_image_for_product_or_variant' do
+    let(:product) { build :product }
+    let(:variant) { build :variant, product: product }
+
+    subject(:default_image) { default_image_for_product_or_variant(product_or_variant) }
+
+    context 'when Product passed' do
+      let(:product_or_variant) { product }
+
+      it { is_expected.to eq(nil) }
+
+      context 'and Variant has images' do
+        let!(:image_1) { create :image, viewable: variant }
+        let!(:image_2) { create :image, viewable: variant }
+
+        it { is_expected.to eq(image_1) }
+      end
+
+      context 'and master Variant has images' do
+        let!(:image_1) { create :image, viewable: product.master }
+        let!(:image_2) { create :image, viewable: product.master }
+
+        it { is_expected.to eq(image_1) }
+      end
+    end
+
+    context 'when Variant passed' do
+      let(:product_or_variant) { variant }
+
+      it { is_expected.to eq(nil) }
+
+      context 'and Variant has images' do
+        let!(:image_1) { create :image, viewable: variant }
+        let!(:image_2) { create :image, viewable: variant }
+
+        it { is_expected.to eq(image_1) }
+      end
+
+      context 'and another Variant of the Product has images' do
+        let(:variant_2) { build :variant, product: product }
+        let!(:image_1) { create :image, viewable: variant_2 }
+        let!(:image_2) { create :image, viewable: variant_2 }
+
+        it { is_expected.to eq(image_1) }
+      end
+    end
+  end
+
+  describe '#meta_image_data_tag' do
+    context 'when meta_image_url_path is present' do
+      it 'returns meta tag' do
+        allow_any_instance_of(Spree::BaseHelper).to receive(:meta_image_url_path).and_return('image_url')
+
+        expect(meta_image_data_tag).to eq "<meta property=\"og:image\" content=\"image_url\" />"
+      end
+    end
+
+    context 'when meta_image_url_path is absent' do
+      it 'returns meta tag' do
+        allow_any_instance_of(Spree::BaseHelper).to receive(:meta_image_url_path).and_return(nil)
+
+        expect(meta_image_data_tag).to eq nil
+      end
+    end
+  end
+
+  describe '#meta_image_url_path' do
+    context 'when object is not a product' do
+      let!(:taxon) { build :taxon }
+
+      it 'returns false' do
+        allow_any_instance_of(Spree::BaseHelper).to receive(:instance_variable_get).and_return(taxon)
+
+        expect(meta_image_url_path).to eq nil
+      end
+    end
+
+    context 'when object is product' do
+      let!(:product) { build :product }
+      before do
+        allow_any_instance_of(Spree::BaseHelper).to receive(:instance_variable_get).and_return(product)
+      end
+
+      context 'and has no images attached' do
+        it 'returns spree logo url' do
+          expect(meta_image_url_path).to eq asset_path(Spree::Config[:logo])
+        end
+      end
+
+      context 'and has image attached' do
+        let!(:image) { create :image, viewable: product.master }
+
+        it 'returns main image url' do
+          expect(meta_image_url_path).to eq asset_path(main_app.url_for(image.attachment))
+        end
+      end
+    end
+  end
 end

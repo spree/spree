@@ -1,0 +1,11 @@
+@mixin make-container-padding-x($padding-x) {
+  padding-right: $padding-x;
+  padding-left: $padding-x;
+}
+
+.container, .container-fluid {
+  // Workaround for https://stackoverflow.com/questions/57098758/why-cant-i-override-the-container-padding-variable-in-bootstrapvue.
+  // As long as horizontal padding is larger than $grid-gutter-width / 2 it should work fine.
+  // TODO: Remove this overwrite and use $container-padding-x after upgrading to Bootstrap 5.
+  @include make-container-padding-x($container-padding);
+}

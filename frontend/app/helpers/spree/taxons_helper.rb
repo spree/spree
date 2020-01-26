@@ -4,6 +4,10 @@ module Spree
     # that we can use configurations as well as make it easier for end users to override this determination.  One idea is
     # to show the most popular products for a particular taxon (that is an exercise left to the developer.)
     def taxon_preview(taxon, max = 4)
+      ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
+        TaxonsHelper is deprecated and will be removed in Spree 4.2.
+        Please remove any `helper 'spree/taxons'` from your controllers.
+      DEPRECATION
       products = taxon.active_products.distinct.select('spree_products.*, spree_products_taxons.position').limit(max)
       if products.size < max
         products_arel = Spree::Product.arel_table

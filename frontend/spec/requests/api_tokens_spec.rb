@@ -20,7 +20,7 @@ describe 'API Tokens Spec', type: :request do
       let(:order) { create(:order, user: nil, email: 'dummy@example.com') }
 
       before do
-        allow_any_instance_of(Spree::StoreController).to receive_messages(current_order: order)
+        allow_any_instance_of(Spree::StoreController).to receive_messages(simple_current_order: order)
         get '/api_tokens'
       end
 
@@ -59,7 +59,7 @@ describe 'API Tokens Spec', type: :request do
       let(:order) { create(:order, user: user) }
 
       before do
-        allow_any_instance_of(Spree::StoreController).to receive_messages(current_order: order)
+        allow_any_instance_of(Spree::StoreController).to receive_messages(simple_current_order: order)
         get '/api_tokens'
       end
 

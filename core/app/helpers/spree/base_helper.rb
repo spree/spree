@@ -32,11 +32,11 @@ module Spree
       end
     end
 
-    def logo(image_path = Spree::Config[:logo])
+    def logo(image_path = Spree::Config[:logo], options = {})
       path = spree.respond_to?(:root_path) ? spree.root_path : main_app.root_path
 
-      link_to path, 'aria-label': Spree.t('go_to_homepage') do
-        image_tag image_path, alt: current_store.name
+      link_to path, 'aria-label': current_store.name, method: options[:method] do
+        image_tag image_path, alt: current_store.name, title: current_store.name
       end
     end
 
@@ -54,10 +54,27 @@ module Spree
       end
 
       if meta[:keywords].blank? || meta[:description].blank?
-        meta.reverse_merge!(keywords: current_store.meta_keywords,
-                            description: current_store.meta_description)
+        if object && object[:name].present?
+          meta.reverse_merge!(keywords: [object.name, current_store.meta_keywords].reject(&:blank?).join(', '),
+                              description: [object.name, current_store.meta_description].reject(&:blank?).join(', '))
+        else
+          meta.reverse_merge!(keywords: (current_store.meta_keywords || current_store.seo_title),
+                              description: (current_store.meta_description || current_store.seo_title))
+        end
       end
       meta
+    end
+
+    def meta_image_url_path
+      object = instance_variable_get('@' + controller_name.singularize)
+      return unless object.is_a?(Spree::Product)
+
+      image = default_image_for_product_or_variant(object)
+      image&.attachment.present? ? main_app.url_for(image.attachment) : asset_path(Spree::Config[:logo])
+    end
+
+    def meta_image_data_tag
+      tag('meta', property: 'og:image', content: meta_image_url_path) if meta_image_url_path
     end
 
     def meta_data_tags
@@ -87,6 +104,22 @@ module Spree
       Spree::Core::Engine.frontend_available?
     end
 
+    def default_image_for_product_or_variant(product_or_variant)
+      if product_or_variant.images.empty?
+        if product_or_variant.is_a?(Spree::Product) && product_or_variant.variant_images.any?
+          product_or_variant.variant_images.first
+        elsif product_or_variant.is_a?(Spree::Variant) && product_or_variant.product.variant_images.any?
+          product_or_variant.product.variant_images.first
+        end
+      else
+        product_or_variant.images.first
+      end
+    end
+
+    def base_cache_key
+      [I18n.locale, current_currency]
+    end
+
     private
 
     def create_product_image_tag(image, product, options, style)
@@ -98,16 +131,11 @@ module Spree
       self.class.send :define_method, "#{style}_image" do |product, *options|
         options = options.first || {}
         options[:alt] ||= product.name
-        if product.images.empty?
-          if !product.is_a?(Spree::Variant) && !product.variant_images.empty?
-            create_product_image_tag(product.variant_images.first, product, options, style)
-          elsif product.is_a?(Spree::Variant) && !product.product.variant_images.empty?
-            create_product_image_tag(product.product.variant_images.first, product, options, style)
-          else
-            image_tag "noimage/#{style}.png", options
-          end
+        image_path = default_image_for_product_or_variant(product)
+        if image_path.present?
+          create_product_image_tag image_path, product, options, style
         else
-          create_product_image_tag(product.images.first, product, options, style)
+          image_tag "noimage/#{style}.png", options
         end
       end
     end

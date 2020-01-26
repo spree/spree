@@ -3,6 +3,7 @@ require 'spec_helper'
 describe 'Free shipping promotions', type: :feature, js: true do
   let!(:country) { create(:country, name: 'United States of America', states_required: true) }
   let!(:state) { create(:state, name: 'Alabama', country: country) }
+  let!(:mug) { create(:product, name: 'RoR Mug', price: 20) }
 
   before do
     create(:zone)
@@ -11,7 +12,6 @@ describe 'Free shipping promotions', type: :feature, js: true do
     sm.calculator.save
 
     create(:check_payment_method)
-    create(:product, name: 'RoR Mug', price: 20)
 
     promotion = Spree::Promotion.create!(name: 'Free Shipping',
                                          starts_at: 1.day.ago,
@@ -30,8 +30,8 @@ describe 'Free shipping promotions', type: :feature, js: true do
     # Regression test for #4428
     it 'applies the free shipping promotion' do
       within('#checkout-summary') do
-        expect(page).to have_content('Shipping total: $10.00')
-        expect(page).to have_content('Promotion (Free Shipping): -$10.00')
+        page.has_text? 'SHIPPING: $10.00'
+        page.has_text? 'Promotion (Free Shipping): -$10.00'
       end
     end
   end

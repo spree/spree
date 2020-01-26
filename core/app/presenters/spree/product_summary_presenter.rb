@@ -9,7 +9,6 @@ module Spree
     def call
       {
         name: @product.name,
-        display_price: @product.display_price.to_s,
         images: images
       }
     end
@@ -19,7 +18,7 @@ module Spree
     def images
       @product.images.map do |image|
         {
-          url_product: url_for(image.url(:product))
+          url_product: rails_representation_url(image.url(:product), only_path: true)
         }
       end
     end

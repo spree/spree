@@ -1,0 +1,47 @@
+#no-taxon-banner {
+  img {
+    object-fit: cover;
+  }
+}
+.taxon {
+  &-icon {
+    img {
+      object-fit: cover;
+    }
+  }
+  &-title {
+    font-size: font-px-to-rem(20px);
+    font-weight: 500;
+    margin-bottom: 10px;
+    @include media-breakpoint-up(md) {
+      font-size: font-px-to-rem(32px);
+    }
+  }
+  &-description {
+    font-size: font-px-to-rem(14px);
+    font-weight: 500;
+  }
+  &-subcategories {
+    overflow-x: auto;
+    white-space: nowrap;
+    font-weight: bold;
+    &-wrapper{
+      position: sticky;
+      top: $spree-header-mobile-height;
+      z-index: 2;
+      background: $primary-background;
+      @include media-breakpoint-up(sm) {
+        top: $spree-header-tablet-height;
+      }
+      @include media-breakpoint-up(lg) {
+        top: $spree-header-desktop-height;
+      }
+    }
+    > a, &-selected {
+      color: theme-color("dark-text");
+    }
+    &-selected {
+      border-bottom: 5px solid theme-color('dark-text');
+    }
+  }
+}

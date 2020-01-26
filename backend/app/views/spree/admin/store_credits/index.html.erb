@@ -5,6 +5,10 @@
   <%= Spree.t(:"admin.user.store_credits") %>
 <% end %>
 
+<% content_for :title do %>
+  <%= "Spree #{Spree.t('administration')}: #{Spree.t(:"admin.user.store_credits")}" %>
+<% end %>
+
 <% content_for :page_actions do %>
   <%= button_link_to Spree.t(:add_store_credit), spree.new_admin_user_store_credit_path(@user), class: "btn-success", icon: 'add' if can?(:create, Spree::StoreCredit) %>
 <% end %>

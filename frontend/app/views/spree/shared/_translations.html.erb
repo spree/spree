@@ -1,7 +1,11 @@
 <script>
-  Spree.translations = <%==
-  {
-    coupon_code_applied: Spree.t(:coupon_code_applied)
-  }.to_json
-%>
+  window.addEventListener('turbolinks:load', function() {
+      Spree.translations = <%==
+    {
+      coupon_code_applied: Spree.t(:coupon_code_applied),
+      coupon_code_removed: Spree.t(:coupon_code_removed),
+      coupon_code_error_icon: image_path('error.svg')
+    }.to_json
+  %>
+  });
 </script>

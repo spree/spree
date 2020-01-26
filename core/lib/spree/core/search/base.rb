@@ -13,7 +13,7 @@ module Spree
         end
 
         def retrieve_products
-          @products = get_base_scope
+          @products = extended_base_scope&.available
           curr_page = page || 1
 
           unless Spree::Config.show_products_without_price
@@ -33,10 +33,21 @@ module Spree
 
         protected
 
-        def get_base_scope
+        def extended_base_scope
           base_scope = Spree::Product.spree_base_scopes.active
-          base_scope = base_scope.in_taxon(taxon) unless taxon.blank?
           base_scope = get_products_conditions_for(base_scope, keywords)
+          base_scope = Spree::Products::Find.new(
+            scope: base_scope,
+            params: {
+              filter: {
+                price: price,
+                option_value_ids: option_value_ids,
+                taxons: taxon&.id
+              },
+              sort_by: sort_by
+            },
+            current_currency: current_currency
+          ).execute
           base_scope = add_search_scopes(base_scope)
           base_scope = add_eagerload_scopes(base_scope)
           base_scope
@@ -58,9 +69,7 @@ module Spree
           # separate queries most of the time but opt for a join as soon as any
           # `where` constraints affecting joined tables are added to the search;
           # which is the case as soon as a taxon is added to the base scope.
-          scope = scope.preload(:tax_category)
-          scope = scope.preload(master: :prices)
-          scope = scope.preload(master: :images) if include_images
+          scope = scope.preload(master: { images: { attachment_attachment: :blob } }) if include_images
           scope
         end
 
@@ -68,6 +77,7 @@ module Spree
           if search.is_a?(ActionController::Parameters)
             search.each do |name, scope_attribute|
               scope_name = name.to_sym
+
               base_scope = if base_scope.respond_to?(:search_scopes) && base_scope.search_scopes.include?(scope_name.to_sym)
                              base_scope.send(scope_name, *scope_attribute)
                            else
@@ -81,15 +91,48 @@ module Spree
         # method should return new scope based on base_scope
         def get_products_conditions_for(base_scope, query)
           unless query.blank?
-            base_scope = base_scope.like_any([:name, :description], query.split)
+            base_scope = base_scope.like_any([:name, :description], [query])
           end
           base_scope
+        end
+
+        def get_products_option_values_conditions(base_scope, option_value_ids)
+          unless option_value_ids.blank?
+            base_scope = base_scope.joins(variants: :option_values).where(spree_option_values: { id: option_value_ids })
+          end
+          base_scope
+        end
+
+        def get_price_range(price_param)
+          return if price_param.blank?
+
+          less_than_string = I18n.t('activerecord.attributes.spree/product.less_than')
+
+          if price_param.include? less_than_string
+            low_price = 0
+            high_price = Monetize.parse(price_param.remove("#{less_than_string} ")).to_i
+          else
+            low_price, high_price = Monetize.parse_collection(price_param).map(&:to_i)
+          end
+
+          "#{low_price},#{high_price}"
+        end
+
+        def build_option_value_ids(params)
+          filter_params = Spree::OptionType.all.map(&:filter_param)
+
+          filter_params.reduce([]) do |acc, filter_param|
+            acc + params[filter_param].to_s.split(',')
+          end
         end
 
         def prepare(params)
           @properties[:taxon] = params[:taxon].blank? ? nil : Spree::Taxon.find(params[:taxon])
           @properties[:keywords] = params[:keywords]
+          @properties[:option_value_ids] = build_option_value_ids(params)
+          @properties[:price] = get_price_range(params[:price])
           @properties[:search] = params[:search]
+          @properties[:sort_by] = params[:sort_by] || 'default'
           @properties[:include_images] = params[:include_images]
 
           per_page = params[:per_page].to_i

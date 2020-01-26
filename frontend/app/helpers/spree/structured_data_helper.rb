@@ -13,7 +13,7 @@ module Spree
     private
 
     def structured_product_hash(product)
-      Rails.cache.fetch("spree/structured-data/#{product.cache_key}") do
+      Rails.cache.fetch(common_product_cache_keys + ["spree/structured-data/#{product.cache_key_with_version}"]) do
         {
           '@context': 'https://schema.org/',
           '@type': 'Product',
@@ -36,7 +36,7 @@ module Spree
     end
 
     def structured_images(product)
-      image = product.variant_images.first
+      image = product.default_variant.images.first
 
       return '' unless image
 

@@ -36,7 +36,10 @@ module Spree
               'mail_from_address' => 'spree@example.org',
               'default_currency' => 'USD',
               'code' => store.code,
-              'default' => true
+              'default' => true,
+              'facebook' => 'spreecommerce',
+              'twitter' => 'spreecommerce',
+              'instagram' => 'spreecommerce'
             },
             {
               'id' => non_default_store.id,
@@ -48,7 +51,10 @@ module Spree
               'mail_from_address' => 'spree@example.org',
               'default_currency' => 'USD',
               'code' => non_default_store.code,
-              'default' => false
+              'default' => false,
+              'facebook' => 'spreecommerce',
+              'twitter' => 'spreecommerce',
+              'instagram' => 'spreecommerce'
             }
           ]
         )
@@ -66,7 +72,10 @@ module Spree
           'mail_from_address' => 'spree@example.org',
           'default_currency' => 'USD',
           'code' => store.code,
-          'default' => true
+          'default' => true,
+          'facebook' => 'spreecommerce',
+          'twitter' => 'spreecommerce',
+          'instagram' => 'spreecommerce'
         )
       end
 

@@ -8,7 +8,7 @@ function ShippingTotalManager (input1) {
     symbol: this.shipmentTotal.data('currency'),
     decimal: this.shipmentTotal.attr('decimal-mark'),
     thousand: this.shipmentTotal.attr('thousands-separator'),
-    precision: 2
+    precision: this.shipmentTotal.attr('precision')
   }
 }
 

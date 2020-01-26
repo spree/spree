@@ -16,6 +16,7 @@ en:
         address1: Address
         address2: Address (contd.)
         city: City
+        company: Company
         country: Country
         firstname: First Name
         lastname: Last Name
@@ -97,6 +98,7 @@ en:
         on_hand: On Hand
         shipping_category: Shipping Category
         tax_category: Tax Category
+        less_than: Less than
       spree/promotion:
         advertise: Advertise
         code: Code
@@ -468,6 +470,7 @@ en:
     activate: Activate
     active: Active
     add: Add
+    add_new_credit_card: Add a new card
     add_action_of_type: Add action of type
     add_country: Add Country
     add_coupon_code: Add Coupon Code
@@ -485,7 +488,7 @@ en:
     add_variant: Add Variant
     add_store: New Store
     add_store_credit: Add Store Credit
-    added_to_cart: 'Added to bag successfully!'
+    added_to_cart: Added to bag successfully!
     additional_item: Additional Item
     address: Address
     address1: Address
@@ -704,6 +707,7 @@ en:
     coupon_code_max_usage: Coupon code usage limit exceeded
     coupon_code_not_eligible: This coupon code is not eligible for this order
     coupon_code_not_found: The coupon code you entered doesn't exist. Please try again.
+    coupon_code_removed: The coupon code was successfully removed from your order.
     coupon_code_unknown_error: This coupon code could not be applied to the cart at this time.
     create: Create
     create_a_new_account: Create a new account
@@ -728,6 +732,7 @@ en:
     customer_returns: Customer Returns
     customer_search: Customer Search
     cut: Cut
+    cvv: CVV
     cvv_response: CVV Response
     date: Date
     date_completed: Date Completed
@@ -763,7 +768,7 @@ en:
     edit: Edit
     editing_resource: 'Editing %{resource}'
     editing_rma_reason: Editing RMA Reason
-    editing_user: Editing User
+    editing_user: Edit Your account
     eligibility_errors:
       messages:
         has_excluded_product: Your cart contains a product that prevents this coupon code from being applied.
@@ -819,6 +824,7 @@ en:
     expedited_exchanges_warning: "Any specified exchanges will ship to the customer immediately upon saving. The customer will be charged the full amount of the item if they do not return the original item within %{days_window} days."
     excl: excl.
     expiration: Expiration
+    expiration_date: Expiration Date
     extension: Extension
     extensions_directory: Extensions Directory
     existing_shipments: Existing shipments
@@ -891,6 +897,7 @@ en:
     images: Images
     implement_eligible_for_return: "Must implement #eligible_for_return? for your EligibilityValidator."
     implement_requires_manual_intervention: "Must implement #requires_manual_intervention? for your EligibilityValidator."
+    in_stock: In Stock
     inactive: Inactive
     incl: incl.
     included_in_price: Included in Price
@@ -960,6 +967,7 @@ en:
     look_for_similar_items: Look for similar items
     make_refund: Make refund
     make_sure_the_above_reimbursement_amount_is_correct: Make sure the above reimbursement amount is correct
+    mail_from_address: Mail from address
     manage_promotion_categories: Manage Promotion Categories
     manual_intervention_required: Manual intervention required
     manage_variants: Manage Variants
@@ -1409,6 +1417,7 @@ en:
     selected_quantity_not_available: ! 'selected of %{item} is not available.'
     send_copy_of_all_mails_to: Send Copy of All Mails To
     send_mails_as: Send Mails As
+    seo_title: SEO title
     server: Server
     server_error: The server returned an error
     settings: Settings
@@ -1530,6 +1539,11 @@ en:
     stock_transfers: Stock Transfers
     stop: Stop
     store: Store
+    store_errors:
+      unable_to_create: Unable to create store.
+      unable_to_update: Unable to update store.
+      unable_to_delete: Unable to delete store.
+    store_set_default_button: Set as default
     stores: Stores
     store_credit_name: Store Credit
     store_credit:
@@ -1537,12 +1551,12 @@ en:
       authorized: "Authorized"
       captured: "Used"
       allocated: "Added"
-      apply: Apply Store Credit
-      remove: Remove Store Credit
-      applicable_amount: "%{amount} in store credit will be applied to this order."
-      available_amount: "You have %{amount} in Store Credit available!"
-      remaining_amount: "You have %{amount} remaining in your account's Store Credit."
-      additional_payment_needed: Select another payment method for the remaining %{amount}.
+      apply: Apply
+      remove: Remove
+      applicable_amount: "<strong>%{amount}</strong> in store credit will be applied to this order."
+      available_amount: "You have <strong>%{amount}</strong> in Store Credit available!"
+      remaining_amount: "You have <strong>%{amount}</strong> remaining in your account's Store Credit."
+      additional_payment_needed: Select another payment method for the remaining <strong>%{amount}</strong>.
       errors:
         cannot_change_used_store_credit: You cannot change a store credit that has already been used
         unable_to_create: Unable to create store credit

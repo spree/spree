@@ -26,9 +26,13 @@ class CreateStoreFromPreferences < ActiveRecord::Migration[4.2]
           'spree@example.com'
         end
 
-        s.meta_description = preference_store.get('spree/app_configuration/default_meta_description') {}
+        s.meta_description = preference_store.get('spree/app_configuration/default_meta_description') do
+          'Spree Commerce is an open source Ecommerce framework decision makers want, developers enjoy.'
+        end
         s.meta_keywords    = preference_store.get('spree/app_configuration/default_meta_keywords') {}
-        s.seo_title        = preference_store.get('spree/app_configuration/default_seo_title') {}
+        s.seo_title        = preference_store.get('spree/app_configuration/default_seo_title') do
+          'Spree Commerce Demo Shop'
+        end
         s.default_currency = preference_store.get('spree/app_configuration/currency') { 'USD' }
         s.code             = 'spree'
       end.save!

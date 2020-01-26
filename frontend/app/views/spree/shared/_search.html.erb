@@ -1,22 +1,19 @@
-<% @taxons = @taxon && @taxon.parent ? @taxon.parent.children : Spree::Taxon.roots %>
-<%= form_tag spree.products_path, method: :get,
-  class: "ml-2 form-inline" do %>
-
-  <% cache [I18n.locale, @taxons] do %>
-    <%= select_tag :taxon,
-      options_for_select(
-        [[Spree.t(:all_departments), '']] +
-        @taxons.map {|t| [t.name, t.id]},
-        @taxon ? @taxon.id : params[:taxon]
-      ),
-      aria: { label: 'Taxon' },
-      class: "form-control mr-2 mb-2 mb-md-0" %>
-  <% end %>
-
+<%= form_tag spree.products_path, method: :get, class: "py-md-1 d-flex align-items-center" do %>
   <%= search_field_tag :keywords,
-    params[:keywords],
-    placeholder: Spree.t(:search),
-    class: "form-control mr-2 mb-2 mb-md-0" %>
-
-  <%= submit_tag Spree.t(:search), name: nil, class: "btn btn-success" %>
+                       params[:keywords],
+                       placeholder: Spree.t(:search),
+                       autofocus: true,
+                       class: " border-0 p-3"
+  %>
+  <label class="m-0">
+    <input type="submit">
+    <%= icon(name: 'search',
+             classes: 'd-md-none',
+             width: 20,
+             height: 20) %>
+    <%= icon(name: 'search',
+             classes: 'd-none d-md-inline',
+             width: 27,
+             height: 27) %>
+  </label>
 <% end %>

@@ -53,7 +53,7 @@ describe Spree::Store, type: :model do
       context 'when store is not saved' do
         before do
           store.default = true
-          store.code = nil
+          store.name = nil
           store.save
         end
 

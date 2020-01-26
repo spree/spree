@@ -29,7 +29,7 @@ Orders have the following attributes:
 * `shipment_state`: The current shipment state of the order. For possible states, please see the [Shipments guide](/developer/core/shipments.html).
 * `payment_state`: The current payment state of the order. For possible states, please see the [Payments guide](/developer/core/payments.html).
 * `special_instructions`: Any special instructions for the store to do with this order. Will only appear if `Spree::Config[:shipping_instructions]` is set to `true`.
-* `currency`: The currency for this order. Determined by the `Spree::Config[:currency]` value that was set at the time of order.
+* `currency`: The currency for this order. Determined by the `Store` currency in which this order was created
 * `last_ip_address`: The last IP address used to update this order in the frontend.
 * `channel`: The channel specified when importing orders from other stores. e.g. amazon.
 * `item_count`: The total value of line items' quantity.

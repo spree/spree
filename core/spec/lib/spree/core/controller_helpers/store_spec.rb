@@ -4,6 +4,8 @@ class FakesController < ApplicationController
   include Spree::Core::ControllerHelpers::Auth
   include Spree::Core::ControllerHelpers::Order
   include Spree::Core::ControllerHelpers::Store
+
+  before_action :set_current_order
 end
 
 describe Spree::Core::ControllerHelpers::Store, type: :controller do
@@ -14,6 +16,14 @@ describe Spree::Core::ControllerHelpers::Store, type: :controller do
 
     it 'returns current store' do
       expect(controller.current_store).to eq store
+    end
+  end
+
+  describe '#current_currency' do
+    let!(:store) { create :store, default: true, default_currency: 'GBP' }
+
+    it 'returns current store default currency' do
+      expect(controller.current_currency).to eq('GBP')
     end
   end
 
@@ -40,6 +50,7 @@ describe Spree::Core::ControllerHelpers::Store, type: :controller do
         before do
           allow(current_order).to receive(:tax_zone).and_return(other_zone)
           allow(controller).to receive(:current_order).and_return(current_order)
+          controller.instance_variable_set(:@current_order, current_order)
         end
 
         it { is_expected.to include(tax_zone: other_zone) }
@@ -64,6 +75,7 @@ describe Spree::Core::ControllerHelpers::Store, type: :controller do
         before do
           allow(current_order).to receive(:tax_zone).and_return(other_zone)
           allow(controller).to receive(:current_order).and_return(current_order)
+          controller.instance_variable_set(:@current_order, current_order)
         end
 
         it { is_expected.to include(tax_zone: other_zone) }

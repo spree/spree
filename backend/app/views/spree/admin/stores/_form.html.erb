@@ -1,42 +1,115 @@
 <div data-hook="admin_store_form_fields">
-  <%= f.field_container :name, class: ['form-group'] do %>
-    <%= f.label :name, Spree.t(:name) %>
-    <%= f.text_field :name, class: 'form-control', required: true %>
-    <%= f.error_message_on :name %>
-  <% end %>
-  <%= f.field_container :url, class: ['form-group'] do %>
-    <%= f.label :url, Spree.t(:url)  %>
-    <%= f.text_field :url, class: 'form-control', required: true %>
-    <%= f.error_message_on :url %>
-  <% end %>
-  <%= f.field_container :meta_description, class: ['form-group'] do %>
-    <%= f.label :meta_description, Spree.t(:meta_description)  %>
-    <%= f.text_field :meta_description, class: 'form-control' %>
-    <%= f.error_message_on :meta_description %>
-  <% end %>
-  <%= f.field_container :meta_keywords, class: ['form-group'] do %>
-    <%= f.label :meta_keywords, Spree.t(:meta_keywords)  %>
-    <%= f.text_field :meta_keywords, class: 'form-control' %>
-    <%= f.error_message_on :meta_keywords %>
-  <% end %>
-  <%= f.field_container :seo_title, class: ['form-group'] do %>
-    <%= f.label :seo_title, Spree.t(:seo_title)  %>
-    <%= f.text_field :seo_title, class: 'form-control' %>
-    <%= f.error_message_on :seo_title %>
-  <% end %>
-  <%= f.field_container :mail_from_address, class: ['form-group'] do %>
-    <%= f.label :mail_from_address, Spree.t(:mail_from_address)  %>
-    <%= f.text_field :mail_from_address, class: 'form-control', required: true %>
-    <%= f.error_message_on :mail_from_address %>
-  <% end %>
-  <%= f.field_container :default_currency, class: ['form-group'] do %>
-    <%= f.label :default_currency, Spree.t(:default_currency) %>
-    <%= f.text_field :default_currency, class: 'form-control' %>
-    <%= f.error_message_on :default_currency %>
-  <% end %>
-  <%= f.field_container :code, class: ['form-group'] do %>
-    <%= f.label :code, Spree.t(:code)  %>
-    <%= f.text_field :code, class: 'form-control', required: true %>
-    <%= f.error_message_on :code %>
-  <% end %>
+
+  <div class="card">
+    <div class="card-header">
+      <h1 class="card-title mb-0 h5">
+        Basic Information
+      </h1>
+    </div>
+    <div class="card-body">
+      <%= f.field_container :name, class: ['form-group'] do %>
+        <%= f.label :name, raw(Spree.t(:name) + required_span_tag) %>
+        <%= f.text_field :name, class: 'form-control', required: true %>
+        <%= f.error_message_on :name %>
+      <% end %>
+      <%= f.field_container :url, class: ['form-group'] do %>
+        <%= f.label :url, Spree.t(:url)  %>
+        <%= f.text_field :url, class: 'form-control', required: true %>
+        <%= f.error_message_on :url %>
+      <% end %>
+    </div>
+  </div>
+
+  <br />
+
+  <div class="card">
+    <div class="card-header">
+      <h1 class="card-title mb-0 h5">
+        SEO
+      </h1>
+    </div>
+    <div class="card-body">
+      <%= f.field_container :seo_title, class: ['form-group'] do %>
+        <%= f.label :seo_title, Spree.t(:seo_title)  %>
+        <%= f.text_field :seo_title, class: 'form-control' %>
+        <%= f.error_message_on :seo_title %>
+      <% end %>
+      <%= f.field_container :meta_description, class: ['form-group'] do %>
+        <%= f.label :meta_description, Spree.t(:meta_description)  %>
+        <%= f.text_area :meta_description, class: 'form-control' %>
+        <%= f.error_message_on :meta_description %>
+      <% end %>
+      <%= f.field_container :meta_keywords, class: ['form-group'] do %>
+        <%= f.label :meta_keywords, Spree.t(:meta_keywords)  %>
+        <%= f.text_field :meta_keywords, class: 'form-control' %>
+        <%= f.error_message_on :meta_keywords %>
+      <% end %>
+    </div>
+  </div>
+
+  <br />
+
+  <div class="card">
+    <div class="card-header">
+      <h1 class="card-title mb-0 h5">
+        Emails
+      </h1>
+    </div>
+    <div class="card-body">
+      <%= f.field_container :mail_from_address, class: ['form-group'] do %>
+        <%= f.label :mail_from_address, Spree.t(:mail_from_address)  %>
+        <%= f.text_field :mail_from_address, class: 'form-control', required: true %>
+        <%= f.error_message_on :mail_from_address %>
+      <% end %>
+    </div>
+  </div>
+
+  <br />
+
+<div class="card">
+  <div class="card-header">
+    <h1 class="card-title mb-0 h5">
+      Internationalization
+    </h1>
+  </div>
+  <div class="card-body">
+    <%= f.field_container :default_currency, class: ['form-group'] do %>
+      <%= f.label :default_currency, Spree.t(:currency) %>
+      <%= f.select :default_currency, currency_options(@store.default_currency) %>
+      <%= f.error_message_on :default_currency %>
+    <% end %>
+  </div>
 </div>
+
+  <br />
+
+<div class="card">
+  <div class="card-header">
+    <h1 class="card-title mb-0 h5">
+      Social
+    </h1>
+  </div>
+  <div class="card-body">
+    <%= f.field_container :facebook, class: ['form-group'] do %>
+      <%= f.label :facebook, Spree.t(:facebook)  %>
+      <%= f.text_field :facebook, class: 'form-control' %>
+      <%= f.error_message_on :facebook %>
+    <% end %>
+    <%= f.field_container :twitter, class: ['form-group'] do %>
+      <%= f.label :twitter, Spree.t(:twitter)  %>
+      <%= f.text_field :twitter, class: 'form-control' %>
+      <%= f.error_message_on :twitter %>
+    <% end %>
+    <%= f.field_container :instagram, class: ['form-group'] do %>
+      <%= f.label :instagram, Spree.t(:instagram)  %>
+      <%= f.text_field :instagram, class: 'form-control' %>
+      <%= f.error_message_on :instagram %>
+    <% end %>
+  </div>
+</div>
+
+<br />
+
+<script>
+  $('#store_default_currency').select2();
+</script>

@@ -11,7 +11,7 @@ module Spree
         end
 
         def current_currency
-          Spree::Config[:currency]
+          current_store.default_currency
         end
 
         def current_store
@@ -43,7 +43,7 @@ module Spree
         private
 
         def current_tax_zone
-          @current_tax_zone ||= current_order.try(:tax_zone) || Spree::Zone.default_tax
+          @current_tax_zone ||= @current_order&.tax_zone || Spree::Zone.default_tax
         end
       end
     end

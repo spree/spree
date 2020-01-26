@@ -23,7 +23,7 @@
 
     <div data-hook="card_number" class="form-group">
       <%= hidden_field_tag "#{param_prefix}[cc_type]", '', {class: 'ccType'} %>
-      <%= label_tag "card_number#{payment_method.id}", raw(Spree.t(:card_number) + content_tag(:span, ' *', class: 'required')) %>
+      <%= label_tag "card_number#{payment_method.id}", raw(Spree.t(:card_number) + required_span_tag) %>
       <%= text_field_tag "#{param_prefix}[number]", '', class: 'required form-control cardNumber', id: "card_number#{payment_method.id}", maxlength: 19 %>
       <span id="card_type" style="display:none;">
         ( <span id="looks_like" ><%= Spree.t(:card_type_is) %> <span id="type"></span></span>
@@ -33,17 +33,17 @@
     </div>
 
     <div data-hook="card_name" class="form-group">
-      <%= label_tag "card_name#{payment_method.id}", raw(Spree.t(:name) + content_tag(:span, ' *', class: 'required')) %>
+      <%= label_tag "card_name#{payment_method.id}", raw(Spree.t(:name) + required_span_tag) %>
       <%= text_field_tag "#{param_prefix}[name]", '', id: "card_name#{payment_method.id}", class: 'required form-control', maxlength: 19 %>
     </div>
 
     <div data-hook="card_expiration" class="form-group">
-      <%= label_tag "card_expiry#{payment_method.id}", raw(Spree.t(:expiration) + content_tag(:span, ' *', class: 'required')) %><br>
+      <%= label_tag "card_expiry#{payment_method.id}", raw(Spree.t(:expiration) + required_span_tag) %><br>
       <%= text_field_tag "#{param_prefix}[expiry]", '', id: "card_expiry#{payment_method.id}", class: "required cardExpiry form-control", placeholder: "MM / YY" %>
     </div>
 
     <div data-hook="card_code" class="form-group">
-      <%= label_tag "card_code#{payment_method.id}", raw(Spree.t(:card_code) + content_tag(:span, ' *', class: "required")) %>
+      <%= label_tag "card_code#{payment_method.id}", raw(Spree.t(:card_code) + required_span_tag) %>
       <%= text_field_tag "#{param_prefix}[verification_value]", '', id: "card_code#{payment_method.id}", class: 'required form-control cardCode', size: 5 %>
       <a href="/content/cvv" class="info cvvLink" target="_blank">
         (<%= Spree.t(:what_is_this) %>)

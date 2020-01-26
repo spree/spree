@@ -11,7 +11,7 @@ module Spree
 
             order_params = {
               user: spree_current_user,
-              store: spree_current_store,
+              store: current_store,
               currency: current_currency
             }
 

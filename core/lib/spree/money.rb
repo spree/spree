@@ -29,7 +29,7 @@ module Spree
     end
 
     def to_s
-      money.format(options)
+      money&.format(options)
     end
 
     # 1) prevent blank, breaking spaces

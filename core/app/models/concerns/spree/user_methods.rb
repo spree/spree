@@ -47,9 +47,9 @@ module Spree
       spree_roles.any? { |role| role.name == role_in_question.to_s }
     end
 
-    def last_incomplete_spree_order(store)
+    def last_incomplete_spree_order(store, options = {})
       orders.where(store: store).incomplete.
-        includes(line_items: [variant: [:images, :option_values, :product]]).
+        includes(options[:includes]).
         order('created_at DESC').
         first
     end
