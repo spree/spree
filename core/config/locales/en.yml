@@ -587,6 +587,7 @@ en:
     authorization_failure: Authorization Failure
     authorized: Authorized
     auto_capture: Auto Capture
+    availability: availability
     available_on: Available On
     available: Available
     average_order_value: Average Order Value
