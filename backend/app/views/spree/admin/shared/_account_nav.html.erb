@@ -32,16 +32,14 @@
         </button>
       <% end %>
 
-          <% if defined?(spree_logout_path) %>
-            <li class="dropdown-item p-0">
-              <%= link_to spree_logout_path, class: 'd-block text-dark py-2 px-4' do %>
-                <i class="icon icon-exit"></i>
-                &nbsp;
-                <%= Spree.t(:logout) %>
-              <% end %>
-            </li>
+      <% if defined?(spree_logout_path) %>
+        <li class="dropdown-item p-0">
+          <%= link_to spree_logout_path, class: 'd-block text-dark py-2 px-4' do %>
+            <i class="icon icon-exit"></i>
+            &nbsp;
+            <%= Spree.t(:logout) %>
           <% end %>
-        </button>
+        </li>
       <% end %>
 
       <div class="dropdown-divider m-0"></div>
