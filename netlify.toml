@@ -86,6 +86,10 @@ ID = "49ded9cc-27d3-4e02-b186-4fd7fd334ed8"
   from = "/developer/seo.html"
   to = "/developer/tutorials/seo.html"
 
+[[redirects]]
+  from = "/developer/security.html"
+  to = "/developer/tutorials/security.html"
+
 # core
 [[redirects]]
   from = "/developer/addresses.html"
@@ -161,7 +165,129 @@ ID = "49ded9cc-27d3-4e02-b186-4fd7fd334ed8"
   from = "/developer/checkout.html"
   to = "/developer/customization/checkout.html"
 
-# other
+# user
+
+[[redirects]]
+  from = "/user/configuring_taxes.html"
+  to = "/user/configuration/configuring_taxes.html"
+
+[[redirects]]
+  from = "/user/configuring_inventory.html"
+  to = "/user/configuration/configuring_inventory.html"
+
+[[redirects]]
+  from = "/user/configuring_geography.html"
+  to = "/user/configuration/configuring_geography.html"
+
+[[redirects]]
+  from = "/user/configuring_analytics.html"
+  to = "/user/configuration/configuring_analytics.html"
+
+[[redirects]]
+  from = "/user/configuring_mail_methods.html"
+  to = "/user/configuration/configuring_mail_methods.html"
+
+[[redirects]]
+  from = "/user/configuring_reimbursement_types.html"
+  to = "/user/configuration/configuring_reimbursement_types.html"
+
+[[redirects]]
+  from = "/user/configuring_return_authorization_reasons.html"
+  to = "/user/configuration/configuring_return_authorization_reasons.html"
+
+[[redirects]]
+  from = "/user/configuring_roles.html"
+  to = "/user/configuration/configuring_roles.html"
+
+[[redirects]]
+  from = "/user/configuring_store_credit_categories.html"
+  to = "/user/configuration/configuring_store_credit_categories.html"
+
+[[redirects]]
+  from = "/user/processing_orders.html"
+  to = "/user/orders/processing_orders.html"
+
+[[redirects]]
+  from = "/user/editing_orders.html"
+  to = "/user/orders/editing_orders.html"
+
+[[redirects]]
+  from = "/user/entering_orders.html"
+  to = "/user/orders/entering_orders.html"
+
+[[redirects]]
+  from = "/user/order_states.html"
+  to = "/user/orders/order_states.html"
+
+[[redirects]]
+  from = "/user/returning_orders.html"
+  to = "/user/orders/returning_orders.html"
+
+[[redirects]]
+  from = "/user/searching_orders.html"
+  to = "/user/orders/searching_orders.html"
+
+[[redirects]]
+  from = "/user/payment_methods.html"
+  to = "/user/payments/payment_methods.html"
+
+[[redirects]]
+  from = "/user/payment_states.html"
+  to = "/user/payments/payment_states.html"
+
+[[redirects]]
+  from = "/user/cloning_products.html"
+  to = "/user/products/cloning_products.html"
+
+[[redirects]]
+  from = "/user/creating_products.html"
+  to = "/user/products/creating_products.html"
+
+[[redirects]]
+  from = "/user/deleting_products.html"
+  to = "/user/products/deleting_products.html"
+
+[[redirects]]
+  from = "/user/editing_products.html"
+  to = "/user/products/editing_products.html"
+
+[[redirects]]
+  from = "/user/product_options.html"
+  to = "/user/products/product_options.html"
+
+[[redirects]]
+  from = "/user/product_properties.html"
+  to = "/user/products/product_properties.html"
+
+[[redirects]]
+  from = "/user/product_prototypes.html"
+  to = "/user/products/product_prototypes.html"
+
+[[redirects]]
+  from = "/user/searching_products.html"
+  to = "/user/products/searching_products.html"
+
 [[redirects]]
   from = "/user/configuring_taxonomies.html"
   to = "/user/products/taxonomies_and_taxons.html"
+
+[[redirects]]
+  from = "/user/configuring_shipping.html"
+  to = "/user/shipments/"
+
+[[redirects]]
+  from = "/user/calculators.html"
+  to = "/user/shipments/calculators.html"
+
+[[redirects]]
+  from = "/user/shipping_categories.html"
+  to = "/user/shipments/shipping_categories.html"
+
+[[redirects]]
+  from = "/user/shipping_methods.html"
+  to = "/user/shipments/shipping_methods.html"
+
+[[redirects]]
+  from = "/user/zones.html"
+  to = "/user/shipments/zones.html"
+
