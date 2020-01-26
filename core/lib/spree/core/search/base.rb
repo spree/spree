@@ -54,22 +54,18 @@ module Spree
         end
 
         def add_eagerload_scopes(scope)
-          # TL;DR Switch from `preload` to `includes` as soon as Rails starts honoring
-          # `order` clauses on `has_many` associations when a `where` constraint
-          # affecting a joined table is present (see
-          # https://github.com/rails/rails/issues/6769).
-          #
-          # Ideally this would use `includes` instead of `preload` calls, leaving it
-          # up to Rails whether associated objects should be fetched in one big join
-          # or multiple independent queries. However as of Rails 4.1.8 any `order`
-          # defined on `has_many` associations are ignored when Rails builds a join
-          # query.
-          #
-          # Would we use `includes` in this particular case, Rails would do
-          # separate queries most of the time but opt for a join as soon as any
-          # `where` constraints affecting joined tables are added to the search;
-          # which is the case as soon as a taxon is added to the base scope.
-          scope = scope.preload(master: { images: { attachment_attachment: :blob } }) if include_images
+          scope = scope.includes(
+            :tax_category,
+            :variant_images,
+            variants: [
+              { images: { attachment_attachment: :blob } }
+            ],
+            master: [
+              :default_price,
+              :prices,
+              { images: { attachment_attachment: :blob } }
+            ]
+          )
           scope
         end
 
