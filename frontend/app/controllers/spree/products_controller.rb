@@ -57,9 +57,9 @@ module Spree
                   active(current_currency).
                   includes(
                     :default_price,
-                      option_values: :option_type,
-                      images: { attachment_attachment: :blob }
-                    )
+                    option_values: [:option_value_variants, :option_type],
+                     images: { attachment_attachment: :blob }
+                  )
     end
 
     def redirect_if_legacy_path
