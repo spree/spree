@@ -34,7 +34,8 @@
       </div>
     <% end %>
 
-    <div class="text-center text-md-left add-to-cart-form-general-availability">AVAILABILITY:
+    <div class="text-center text-md-left add-to-cart-form-general-availability text-uppercase">
+      <%= Spree.t(:availability) %>:
       <% if !is_product_available_in_currency %>
         <%= render 'cart_form_availability_templates', type: 'not-available-in-currency' %>
       <% elsif default_variant.in_stock? %>

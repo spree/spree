@@ -17,13 +17,18 @@ module Spree
       Spree::Product.joins(:taxons).
         where(spree_taxons: { name: taxon_name }).
         includes(
-          :variants_including_master,
-                      master: [
-                        :default_price,
-                        { images: { attachment_attachment: :blob } }
-                      ]
-                    ).
-        available.
+          :tax_category,
+          :variant_images,
+          variants: [
+            { images: { attachment_attachment: :blob } }
+          ],
+          master: [
+            :default_price,
+            :prices,
+            { images: { attachment_attachment: :blob } }
+          ]
+        ).
+        active(current_currency).
         order('spree_products_taxons.position').
         limit(12)
     end
