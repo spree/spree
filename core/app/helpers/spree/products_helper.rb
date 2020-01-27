@@ -117,9 +117,12 @@ module Spree
       @_related_products ||= @product.
                              related_products.
                              includes(
+                               :tax_category,
+                               :variant_images,
                                master: [
                                  :default_price,
-                                 images: { attachment_attachment: :blob }
+                                 :prices,
+                                 images: { attachment_attachment: :blob },
                                ]
                              ).
                              limit(Spree::Config[:products_per_page])
