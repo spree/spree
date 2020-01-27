@@ -28,7 +28,7 @@ module Spree
       @related_products = related_products
 
       if @related_products.any?
-        render html: "spree/products/related"
+        render html: 'spree/products/related'
       end
     end
 
