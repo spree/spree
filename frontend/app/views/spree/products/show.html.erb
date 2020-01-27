@@ -102,8 +102,8 @@
 
 <% if @product.respond_to?(:has_related_products?) %>
   <script>
-    window.onload = function() {
+    document.addEventListener("turbolinks:render", function() {
       Spree.fetchRelatedProductcs('<%= @product.slug %>')
-    };
+    });
   </script>
 <% end %>
