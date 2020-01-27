@@ -24,6 +24,16 @@ module Spree
       end
     end
 
+    def related
+      slug = params[:slug][9..(params[:slug].length)]
+      @product = Spree::Product.find_by(slug: slug)
+      @related_products = related_products
+
+      if @related_products.any?
+        render html: "spree/products/related"
+      end
+    end
+
     private
 
     def accurate_title
