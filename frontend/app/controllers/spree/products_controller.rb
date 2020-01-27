@@ -28,7 +28,9 @@ module Spree
       @related_products = related_products
 
       if @related_products.any?
-        render template: 'spree/products/related'
+        render template: 'spree/products/related', layout: false
+      else
+        head :no_content
       end
     end
 

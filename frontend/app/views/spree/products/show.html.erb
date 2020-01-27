@@ -96,14 +96,14 @@
       <%= render partial: 'spree/shared/no_product_available' %>
     </div>
   </div>
-<% end %>
 
-<%= products_structured_data([@product]) %>
+  <div id="related-products" />
 
-<% if @product.respond_to?(:has_related_products?) %>
-  <script>
-    document.addEventListener("turbolinks:render", function() {
-      Spree.fetchRelatedProductcs('<%= @product.slug %>')
-    });
-  </script>
+  <%= products_structured_data([@product]) %>
+
+  <div
+    data-related-products
+    data-related-products-id="<%= @product.slug %>"
+    data-related-products-enabled="<%= @product.respond_to?(:has_related_products?) %>"
+  />
 <% end %>
