@@ -97,13 +97,13 @@
     </div>
   </div>
 
-  <% if related_products.any? %>
-    <div class="product-details-related">
-      <p class="font-weight-bold text-center text-uppercase product-details-carousel-text"><%= Spree.t('pdp.you_may_also_like') %></p>
+  <div id="related-products" />
 
-      <%= render 'spree/shared/carousel_4_products', id: 'related-products-carousel', products: related_products %>
-    </div>
-  <% end %>
+  <%= products_structured_data([@product]) %>
+
+  <div
+    data-related-products
+    data-related-products-id="<%= @product.slug %>"
+    data-related-products-enabled="<%= @product.respond_to?(:has_related_products?) %>"
+  />
 <% end %>
-
-<%= products_structured_data([@product]) %>

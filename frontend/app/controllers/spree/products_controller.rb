@@ -2,7 +2,7 @@ module Spree
   class ProductsController < Spree::StoreController
     include Spree::ProductsHelper
 
-    before_action :load_product, only: :show
+    before_action :load_product, only: [:show, :related]
     before_action :load_taxon, only: :index
 
     respond_to :html
@@ -21,6 +21,16 @@ module Spree
         @product_summary = Spree::ProductSummaryPresenter.new(@product).call
         @product_properties = @product.product_properties.includes(:property)
         load_variants
+      end
+    end
+
+    def related
+      @related_products = related_products
+
+      if @related_products.any?
+        render template: 'spree/products/related', layout: false
+      else
+        head :no_content
       end
     end
 
