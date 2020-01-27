@@ -2,7 +2,7 @@ module Spree
   class ProductsController < Spree::StoreController
     include Spree::ProductsHelper
 
-    before_action :load_product, only: :show
+    before_action :load_product, only: [:show, :related]
     before_action :load_taxon, only: :index
 
     respond_to :html
@@ -25,8 +25,6 @@ module Spree
     end
 
     def related
-      slug = params[:slug][9..(params[:slug].length)]
-      @product = Spree::Product.find_by(slug: slug)
       @related_products = related_products
 
       if @related_products.any?

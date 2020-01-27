@@ -33,4 +33,6 @@ Spree::Core::Engine.add_routes do
 
   get '/api_tokens', to: 'store#api_tokens'
   post '/ensure_cart', to: 'store#ensure_cart'
+  get "/*slug/related", to: 'products#related'
+  get '/products/:id/related', to: 'products#related'
 end
