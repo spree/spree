@@ -68,7 +68,6 @@ module Spree
                   active(current_currency).
                   includes(
                     :default_price,
-                    :prices,
                     option_values: [:option_value_variants],
                     images: { attachment_attachment: :blob }
                   )
