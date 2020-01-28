@@ -1,8 +1,6 @@
-<% images = product_images(@product, @variants) %>
-
 <div
   id="<%= id %>"
-  class="carousel slide product-carousel<%= ' product-carousel--empty' unless @product.images.length > 0 || @product.variant_images.length > 0 %>"
+  class="carousel slide product-carousel<%= ' product-carousel--empty' if images.length.zero? %>"
   data-product-carousel-group-identifier="<%= group_id %>"
   data-variant-change-trigger-identifier="<%= trigger_id %>"
   data-interval="false"

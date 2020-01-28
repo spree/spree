@@ -16,9 +16,10 @@
               <span aria-hidden="true">&#x2715;</span>
             </button>
             <div class="d-flex justify-content-center align-items-center product-details-images h-100">
-              <% if @product.variant_images.size > 1 %>
+              <% if @product_images.size > 1 %>
                 <div class="d-none d-sm-block product-details-thumbnails">
                   <%= render 'spree/shared/carousel/thumbnails',
+                             images: @product_images,
                              group_id: 'main-product-modal-carousel',
                              id: 'productModalThumbnailsCarousel',
                              trigger_id: 'productCarousel',
@@ -28,6 +29,7 @@
               <% end %>
               <div class="product-details-single">
                 <%= render 'spree/shared/carousel/single',
+                           images: @product_images,
                            group_id: 'main-product-modal-carousel',
                            id: 'productModalCarousel',
                            trigger_id: 'productCarousel',
@@ -46,9 +48,10 @@
           class="w-100 d-flex align-self-start justify-content-between product-details-images"
           data-hook="product_left_part_wrap"
         >
-          <% if @product.variant_images.size > 1 %>
+          <% if @product_images.size > 1 %>
             <div class="d-none d-md-block product-details-thumbnails" data-hook="product_thumbnails">
               <%= render 'spree/shared/carousel/thumbnails',
+                        images: @product_images,
                         group_id: 'main-product-carousel',
                         id: 'productThumbnailsCarousel',
                         trigger_id: 'productCarousel',
@@ -57,10 +60,11 @@
             </div>
           <% end %>
           <div class="product-details-single" data-hook="product_images">
-            <% if @product.variant_images.size == 1 %>
+            <% if @product_images.size == 1 %>
               <%= plp_and_carousel_image(@product) %>
             <% else %>
               <%= render 'spree/shared/carousel/single',
+                        images: @product_images,
                         group_id: 'main-product-carousel',
                         id: 'productCarousel',
                         trigger_id: 'productCarousel',
