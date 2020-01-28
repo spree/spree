@@ -1,5 +1,3 @@
-<%= render 'spree/shared/product_added_modal' %>
-
 <% @body_id = 'product-details' %>
 
 <% cache cache_key_for_product do %>
@@ -8,40 +6,6 @@
   </div>
 
   <div class="container pt-4 product-details">
-    <div class="modal fade" id="picturesModal" tabindex="-1" role="dialog" >
-      <div class="modal-dialog--zoom modal-dialog mw-100 vh-100 mt-0 mb-0" role="document">
-        <div class="modal-content h-100">
-          <div class="modal-body">
-            <button class="modal-close" type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&#x2715;</span>
-            </button>
-            <div class="d-flex justify-content-center align-items-center product-details-images h-100">
-              <% if @product_images.size > 1 %>
-                <div class="d-none d-sm-block product-details-thumbnails">
-                  <%= render 'spree/shared/carousel/thumbnails',
-                             images: @product_images,
-                             group_id: 'main-product-modal-carousel',
-                             id: 'productModalThumbnailsCarousel',
-                             trigger_id: 'productCarousel',
-                             per_page: 4
-                  %>
-                </div>
-              <% end %>
-              <div class="product-details-single">
-                <%= render 'spree/shared/carousel/single',
-                           images: @product_images,
-                           group_id: 'main-product-modal-carousel',
-                           id: 'productModalCarousel',
-                           trigger_id: 'productCarousel',
-                           zoomed: true
-                %>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <div class="row" data-hook="product_show">
       <div class="col-12 col-md-7 col-lg-7" data-hook="product_left_part">
         <div
@@ -99,6 +63,40 @@
     <div id="no-product-available" class="no-product-available-dropdown">
       <%= render partial: 'spree/shared/no_product_available' %>
     </div>
+
+    <div class="modal fade" id="picturesModal" tabindex="-1" role="dialog" >
+      <div class="modal-dialog--zoom modal-dialog mw-100 vh-100 mt-0 mb-0" role="document">
+        <div class="modal-content h-100">
+          <div class="modal-body">
+            <button class="modal-close" type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&#x2715;</span>
+            </button>
+            <div class="d-flex justify-content-center align-items-center product-details-images h-100">
+              <% if @product_images.size > 1 %>
+                <div class="d-none d-sm-block product-details-thumbnails">
+                  <%= render 'spree/shared/carousel/thumbnails',
+                             images: @product_images,
+                             group_id: 'main-product-modal-carousel',
+                             id: 'productModalThumbnailsCarousel',
+                             trigger_id: 'productCarousel',
+                             per_page: 4
+                  %>
+                </div>
+              <% end %>
+              <div class="product-details-single">
+                <%= render 'spree/shared/carousel/single',
+                           images: @product_images,
+                           group_id: 'main-product-modal-carousel',
+                           id: 'productModalCarousel',
+                           trigger_id: 'productCarousel',
+                           zoomed: true
+                %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div id="related-products" />
@@ -111,3 +109,5 @@
     data-related-products-enabled="<%= @product.respond_to?(:has_related_products?) %>"
   />
 <% end %>
+
+<%= render 'spree/shared/product_added_modal' %>
