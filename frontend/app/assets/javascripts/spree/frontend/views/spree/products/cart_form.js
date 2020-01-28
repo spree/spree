@@ -1,3 +1,5 @@
+//= require spree/api/storefront/cart
+//= require ../shared/product_added_modal
 var ADD_TO_CART_FORM_SELECTOR = '.add-to-cart-form'
 var VARIANT_ID_SELECTOR = '[name="variant_id"]'
 var OPTION_VALUE_SELECTOR = '.product-variants-variant-values-radio'
@@ -254,16 +256,10 @@ Spree.ready(function($) {
         // https://github.com/spree/spree/blob/master/api/docs/v2/storefront/index.yaml#L42
         function(response) {
           $addToCart.prop('disabled', false)
-          $cartForm.trigger({
-            type: 'product_add_to_cart',
-            product: JSON.parse(
-              $cartForm.attr('data-product-summary')
-            ),
-            variant: Spree.variantById($cartForm, variantId),
-            quantity_increment: quantity,
-            cart: response.attributes
-          })
           Spree.fetchCart()
+          Spree.showProductAddedModal(JSON.parse(
+            $cartForm.attr('data-product-summary')
+          ), Spree.variantById($cartForm, variantId))
         },
         function(_error) {
           document.getElementById('overlay').classList.add('shown')
