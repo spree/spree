@@ -1,5 +1,6 @@
 //= require spree/api/storefront/cart
 //= require ../shared/product_added_modal
+
 var ADD_TO_CART_FORM_SELECTOR = '.add-to-cart-form'
 var VARIANT_ID_SELECTOR = '[name="variant_id"]'
 var OPTION_VALUE_SELECTOR = '.product-variants-variant-values-radio'
@@ -237,7 +238,7 @@ Spree.ready(function($) {
     )
   }
 
-  $('body').on('submit', ADD_TO_CART_FORM_SELECTOR, function(event) {
+  $('#product-details').on('submit', ADD_TO_CART_FORM_SELECTOR, function(event) {
     var variantId
     var quantity
     var $cartForm = $(event.currentTarget)
