@@ -2,6 +2,11 @@
   display: flex;
   flex-direction: column;
 
+  div:first-child {
+    -webkit-flex: 0;
+    flex-shrink: 0;
+  }
+
   &-order-details {
     padding-bottom: 40px;
     font-weight: 500;
