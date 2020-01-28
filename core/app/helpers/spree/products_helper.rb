@@ -71,10 +71,6 @@ module Spree
         product.possible_promotions
       ]
 
-      if product.respond_to?(:relations)
-        cache_key_elements << "relations-#{product.relations.maximum(:updated_at)&.to_i}"
-      end
-
       cache_key_elements.compact.join('/')
     end
 

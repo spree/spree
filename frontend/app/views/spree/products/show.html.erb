@@ -1,10 +1,10 @@
 <% @body_id = 'product-details' %>
 
-<% cache cache_key_for_product do %>
-  <div class="container">
-    <%= spree_breadcrumbs(@taxon, '', @product) %>
-  </div>
+<div class="container">
+  <%= spree_breadcrumbs(@taxon, '', @product) %>
+</div>
 
+<% cache cache_key_for_product do %>
   <div class="container pt-4 product-details">
     <div class="row" data-hook="product_show">
       <div class="col-12 col-md-7 col-lg-7" data-hook="product_left_part">
@@ -103,11 +103,11 @@
 
   <%= products_structured_data([@product]) %>
 
-  <div
-    data-related-products
-    data-related-products-id="<%= @product.slug %>"
-    data-related-products-enabled="<%= @product.respond_to?(:has_related_products?) %>"
-  />
+  <%= render 'spree/shared/product_added_modal' %>
 <% end %>
 
-<%= render 'spree/shared/product_added_modal' %>
+<div
+  data-related-products
+  data-related-products-id="<%= @product.slug %>"
+  data-related-products-enabled="<%= @product.respond_to?(:has_related_products?) %>"
+/>
