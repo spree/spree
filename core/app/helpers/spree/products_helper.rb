@@ -123,9 +123,7 @@ module Spree
                              related_products.
                              includes(
                                :tax_category,
-                               :variant_images,
                                master: [
-                                 :default_price,
                                  :prices,
                                  images: { attachment_attachment: :blob },
                                ]

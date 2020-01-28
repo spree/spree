@@ -18,12 +18,10 @@ module Spree
         where(spree_taxons: { name: taxon_name }).
         includes(
           :tax_category,
-          :variant_images,
           variants: [
             { images: { attachment_attachment: :blob } }
           ],
           master: [
-            :default_price,
             :prices,
             { images: { attachment_attachment: :blob } }
           ]
