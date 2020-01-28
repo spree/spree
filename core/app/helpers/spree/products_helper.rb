@@ -107,8 +107,13 @@ module Spree
       variants.map(&:images).flatten
     end
 
-    def product_variants_matrix
-      Spree::VariantPresenter.new(@variants).call.to_json
+    def product_variants_matrix(is_product_available_in_currency)
+      Spree::VariantPresenter.new(
+        variants: @variants,
+        is_product_available_in_currency: is_product_available_in_currency,
+        current_currency: current_currency,
+        current_price_options: current_price_options
+      ).call.to_json
     end
 
     def related_products
@@ -126,6 +131,10 @@ module Spree
                                ]
                              ).
                              limit(Spree::Config[:products_per_page])
+    end
+
+    def product_available_in_currency?(product)
+      !(product.price_in(current_currency).amount.nil? || product.price_in(current_currency).amount.zero?)
     end
 
     def common_product_cache_keys
