@@ -43,11 +43,6 @@ describe 'JSON-LD hashes', type: :feature, inaccessible: true do
     visit spree.root_path
   end
 
-  context 'home page' do
-    it_behaves_like 'it contains products in JSON-LD hash',
-                    Spree::Product.joins(:taxons).where(spree_taxons: { name: 'Trending' })
-  end
-
   context 'products page' do
     before { visit spree.products_path }
 
