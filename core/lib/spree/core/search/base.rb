@@ -56,12 +56,10 @@ module Spree
         def add_eagerload_scopes(scope)
           scope = scope.includes(
             :tax_category,
-            :variant_images,
             variants: [
               { images: { attachment_attachment: :blob } }
             ],
             master: [
-              :default_price,
               :prices,
               { images: { attachment_attachment: :blob } }
             ]

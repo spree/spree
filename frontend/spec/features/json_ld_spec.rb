@@ -25,7 +25,7 @@ describe 'JSON-LD hashes', type: :feature, inaccessible: true do
 
         offer = serialized_product['offers']
         expect(offer['@type']).to eq 'Offer'
-        expect(offer['price']).to eq product.price.to_s
+        expect(offer['price']).to eq product.price_in('USD').amount.to_s
         expect(offer['priceCurrency']).to eq 'USD'
         expect(offer['url']).to eq "http://www.example.com/products/#{product.slug}"
       end
