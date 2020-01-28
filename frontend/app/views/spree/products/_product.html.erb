@@ -1,7 +1,7 @@
 <% url = spree.product_path(product, taxon_id: taxon.try(:id)) %>
 <div id="product_<%= product.id %>" class="d-flex w-100 col-12 col-sm-6 col-lg-4 col-xl-3 product-list-item mb-4" data-hook="products_list_item">
   <div class="card w-100">
-    <% cache(taxon.present? ? [I18n.locale, current_currency, taxon, product] : cache_key_for_product(product)) do %>
+    <% cache(taxon.present? ? [I18n.locale, current_currency, taxon&.id, product] : cache_key_for_product(product)) do %>
       <div class="card-body text-center product-body">
         <%= link_to url, class: 'd-block text-center' do %>
           <%= small_image(product, class: "d-block mx-auto") %>
