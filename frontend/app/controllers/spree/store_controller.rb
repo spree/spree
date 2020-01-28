@@ -2,7 +2,6 @@ module Spree
   class StoreController < Spree::BaseController
     include Spree::Core::ControllerHelpers::Order
 
-    before_action :set_current_order, only: :cart_link
     skip_before_action :verify_authenticity_token, only: :ensure_cart, raise: false
 
     def forbidden
