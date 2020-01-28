@@ -21,6 +21,7 @@ module Spree
         @product_summary = Spree::ProductSummaryPresenter.new(@product).call
         @product_properties = @product.product_properties.includes(:property)
         load_variants
+        @product_images = product_images(@product, @variants)
       end
     end
 
@@ -67,7 +68,6 @@ module Spree
                   active(current_currency).
                   includes(
                     :default_price,
-                    :prices,
                     option_values: [:option_value_variants],
                     images: { attachment_attachment: :blob }
                   )
