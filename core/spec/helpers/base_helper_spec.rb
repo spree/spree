@@ -240,16 +240,9 @@ describe Spree::BaseHelper, type: :helper do
     end
   end
 
-<<<<<<< HEAD
-  describe '#meta_image_data_tag' do
-    context 'when meta_image_url_path is present' do
-      it 'returns meta tag' do
-        allow_any_instance_of(Spree::BaseHelper).to receive(:meta_image_url_path).and_return('image_url')
-=======
   describe '#meta_image_url_path' do
     let!(:product) { build :product }
     before { allow_any_instance_of(Spree::BaseHelper).to receive(:object).and_return(product) }
->>>>>>> Adds extra product meta tags
 
     context 'when product has no images attached' do
       it 'returns spree logo url' do
@@ -257,14 +250,8 @@ describe Spree::BaseHelper, type: :helper do
       end
     end
 
-<<<<<<< HEAD
-    context 'when meta_image_url_path is absent' do
-      it 'returns meta tag' do
-        allow_any_instance_of(Spree::BaseHelper).to receive(:meta_image_url_path).and_return(nil)
-=======
     context 'when product has an image attached' do
       let!(:image) { create :image, viewable: product.master }
->>>>>>> Adds extra product meta tags
 
       it 'returns main image url path' do
         expect(meta_image_url_path).to eq asset_path(main_app.url_for(image.attachment))
@@ -272,11 +259,6 @@ describe Spree::BaseHelper, type: :helper do
     end
   end
 
-<<<<<<< HEAD
-  describe '#meta_image_url_path' do
-    context 'when object is not a product' do
-      let!(:taxon) { build :taxon }
-=======
   describe '#meta_product_image_data_tag' do
     context 'when image url path is present' do
       it 'returns meta product image tag' do
@@ -285,17 +267,12 @@ describe Spree::BaseHelper, type: :helper do
         expect(meta_product_image_data_tag).to eq "<meta property=\"og:image\" content=\"image_url\" />"
       end
     end
->>>>>>> Adds extra product meta tags
 
     context 'when image url path is absent' do
       it 'returns nil' do
         allow_any_instance_of(Spree::BaseHelper).to receive(:meta_image_url_path).and_return(nil)
 
-<<<<<<< HEAD
-        expect(meta_image_url_path).to eq nil
-=======
         expect(meta_product_data_tags).to eq nil
->>>>>>> Adds extra product meta tags
       end
     end
   end
@@ -426,11 +403,6 @@ describe Spree::BaseHelper, type: :helper do
         end
       end
 
-<<<<<<< HEAD
-      context 'and has no images attached' do
-        it 'returns spree logo url' do
-          expect(meta_image_url_path).to eq asset_path(Spree::Config[:logo])
-=======
       context 'with meta description' do
         let!(:product) { build(:product, description: nil, meta_description: 'Meta Description') }
 
@@ -438,22 +410,16 @@ describe Spree::BaseHelper, type: :helper do
           allow_any_instance_of(Spree::BaseHelper).to receive(:object).and_return(product)
 
           expect(meta_product_description).to eq product.meta_description
->>>>>>> Adds extra product meta tags
         end
       end
 
       context 'without meta description and description' do
         let!(:product) { build(:product, description: nil) }
 
-<<<<<<< HEAD
-        it 'returns main image url' do
-          expect(meta_image_url_path).to eq asset_path(main_app.url_for(image.attachment))
-=======
         it 'returns nil' do
           allow_any_instance_of(Spree::BaseHelper).to receive(:object).and_return(product)
 
           expect(meta_product_description).to eq nil
->>>>>>> Adds extra product meta tags
         end
       end
     end
