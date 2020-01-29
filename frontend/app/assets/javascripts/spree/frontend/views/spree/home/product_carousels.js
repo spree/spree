@@ -19,7 +19,7 @@ document.addEventListener('turbolinks:load', function () {
         var productCarousel = $(this)
         var carouselLoaded = productCarousel.attr('data-product-carousel-loaded')
 
-        if (container.isInViewport() && !carouselLoaded) {
+        if (container.length && !carouselLoaded && container.isInViewport()) {
           var taxonId = productCarousel.attr('data-product-carousel-taxon-id')
           productCarousel.attr('data-product-carousel-loaded', 'true')
 

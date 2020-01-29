@@ -1,11 +1,11 @@
 //= require spree/frontend/viewport
 
-Spree.fetchRelatedProductcs = function (id) {
+Spree.fetchRelatedProductcs = function (id, htmlContainer) {
   return $.ajax({
     url: Spree.routes.product_related(id)
   }).done(function (data) {
-    $('#related-products').html(data)
-    $('.carousel').carouselBootstrap4()
+    htmlContainer.html(data)
+    htmlContainer.find('.carousel').carouselBootstrap4()
   })
 }
 
@@ -16,11 +16,12 @@ document.addEventListener('turbolinks:load', function () {
     var productId = $('div[data-related-products]').attr('data-related-products-id')
     var relatedProductsEnabled = $('div[data-related-products]').attr('data-related-products-enabled')
     var relatedProductsFetched = false
+    var relatedProductsContainer = $('#related-products')
 
-    if (relatedProductsEnabled && relatedProductsEnabled === 'true' && productId !== '') {
+    if (!relatedProductsFetched && relatedProductsContainer.length && relatedProductsEnabled && relatedProductsEnabled === 'true' && productId !== '') {
       $(window).on('resize scroll', function () {
-        if ($('#related-products').isInViewport() && !relatedProductsFetched) {
-          Spree.fetchRelatedProductcs(productId)
+        if (!relatedProductsFetched && relatedProductsContainer.isInViewport()) {
+          Spree.fetchRelatedProductcs(productId, relatedProductsContainer)
           relatedProductsFetched = true
         }
       })
