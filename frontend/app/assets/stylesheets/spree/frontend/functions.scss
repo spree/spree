@@ -18,13 +18,13 @@ $font-size-base-px: 16px; //assuming 16px is 1rem ($font-size-base: 1rem in Boot
   $solution: false;
 
   @for $i from 1 through 10 {
-    @if abs(2 * $x0) < 0,00000000000001 { // Don't want to divide by a number smaller than this
+    @if abs(2 * $x0) < (0,00000000000001) { // Don't want to divide by a number smaller than this
       $solution: false;
     }
 
     $x1: $x0 - ($x0 * $x0 - abs($r)) / (2 * $x0) !global;
 
-    @if ( abs($x1 - $x0) / abs($x1)) < 0,0000001 { // 7 digit accuracy is desired
+    @if ( abs($x1 - $x0) / abs($x1)) < (0,0000001) { // 7 digit accuracy is desired
       $solution: true;
     }
 
