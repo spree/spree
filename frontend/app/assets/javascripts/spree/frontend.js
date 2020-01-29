@@ -17,3 +17,4 @@ Spree.routes.api_v2_storefront_cart_apply_coupon_code = Spree.pathFor('api/v2/st
 Spree.routes.api_v2_storefront_cart_remove_coupon_code = Spree.pathFor('api/v2/storefront/cart/remove_coupon_code')
 Spree.routes.product = function(id) { return Spree.pathFor('products/' + id) }
 Spree.routes.product_related = function(id) { return Spree.routes.product(id) + '/related' }
+Spree.routes.product_carousel = function (taxonId) { return Spree.pathFor('product_carousel/' + taxonId) }
