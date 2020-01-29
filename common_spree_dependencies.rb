@@ -29,7 +29,7 @@ group :test do
   gem 'rspec-retry'
   gem 'rspec_junit_formatter'
   gem 'jsonapi-rspec'
-  gem 'simplecov'
+  gem 'simplecov', '0.17.1'
   gem 'webmock', '~> 3.7'
   gem 'timecop'
   gem 'rails-controller-testing'
