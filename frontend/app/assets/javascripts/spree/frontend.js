@@ -7,6 +7,7 @@
 //= require polyfill.min
 //= require fetch.umd
 //= require spree/api/main
+//= require ./lazysizes.config
 //= require lazysizes.min
 //= require turbolinks
 //= require_tree ./frontend
