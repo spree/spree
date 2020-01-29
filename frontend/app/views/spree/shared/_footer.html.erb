@@ -56,18 +56,16 @@
             </div>
           <% end %>
         <% end %>
-        <div class="col-3">
-          <div class="footer-spree-label">
-            <%= Spree.t('nav_bar.my_account') %>
-          </div>
-          <div class="pt-2">
-            <% if try_spree_current_user && spree.respond_to?(:account_path) %>
+        <% if spree.respond_to?(:account_path) %>
+          <div class="col-3">
+            <div class="footer-spree-label">
+              <%= Spree.t('nav_bar.my_account') %>
+            </div>
+            <div class="pt-2">
               <%= link_to Spree.t('nav_bar.my_orders'), spree.account_path(anchor: "account-my-orders") %>
-            <% elsif defined?(spree_login_path) %>
-              <%= link_to Spree.t('nav_bar.log_in'), spree_login_path %>
-            <% end %>
+            </div>
           </div>
-        </div>
+        <% end %>
       </div>
     </div>
     <%= render 'spree/shared/copyright' %>
