@@ -105,7 +105,7 @@ module Spree
         taxon&.name
       end&.join(' ')
     end
-    
+
     def meta_product_types_tag
       tag('meta', property: 'og:type', content: meta_types) if meta_types
     end
