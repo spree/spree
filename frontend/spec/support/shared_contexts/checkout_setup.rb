@@ -25,8 +25,21 @@ shared_context 'checkout setup' do
   def fill_in_credit_card_info(invalid: false)
     fill_in 'name_on_card', with: 'Spree Commerce'
     fill_in 'card_number', with: invalid ? '123' : '4111 1111 1111 1111'
+    check_if_cart_number_valid unless invalid
     fill_in 'card_expiry', with: '12 / 24'
     fill_in 'card_code', with: '123'
+  end
+
+  def check_if_cart_number_valid
+    card_number = find_field('card_number').value
+    valid_card_number = '4111 1111 1111 1111'
+
+    return if card_number == valid_card_number
+
+    fill_in "card_number", with: "" if card_number.length > 0
+    find('#card_number').send_keys '4111 1111 1111 1111'
+
+    check_if_cart_number_valid
   end
 
   def add_mug_to_cart
