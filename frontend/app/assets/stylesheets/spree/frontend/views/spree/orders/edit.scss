@@ -190,6 +190,11 @@
       @include media-breakpoint-up(lg) {
         float: none;
       }
+      input[type=text] {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+      }
       input {
         padding: 0;
         width: 40px;
@@ -353,6 +358,11 @@
           width: 16px;
         }
       }
+    }
+    input[type=text] {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
     }
   }
   &-total {
