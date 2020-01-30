@@ -12,7 +12,7 @@
           class="w-100 d-flex align-self-start justify-content-between product-details-images"
           data-hook="product_left_part_wrap"
         >
-          <div class="d-none d-md-block product-details-thumbnails" data-hook="product_thumbnails">
+          <div class="d-none d-md-block product-details-thumbnails" id="desktop-thumbnails" data-hook="product_thumbnails">
             <%= render 'spree/shared/carousel/thumbnails',
                       images: @product_images,
                       group_id: 'main-product-carousel',
@@ -70,7 +70,7 @@
               <span aria-hidden="true">&#x2715;</span>
             </button>
             <div class="d-flex justify-content-center align-items-center product-details-images h-100">
-              <div class="d-none d-sm-block product-details-thumbnails">
+              <div class="d-none d-sm-block product-details-thumbnails" id="mobile-thumbnails">
                 <%= render 'spree/shared/carousel/thumbnails',
                             images: @product_images,
                             group_id: 'main-product-modal-carousel',

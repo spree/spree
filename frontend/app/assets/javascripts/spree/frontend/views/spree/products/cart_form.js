@@ -169,6 +169,7 @@ function CartForm($, $cartForm) {
     if (imagesCount <= 1) {
       document.getElementById('desktop-thumbnails').classList.remove('d-md-block')
       document.getElementById('mobile-thumbnails').classList.remove('d-sm-block')
+      document.getElementById('mobile-single-list').classList.add('d-none')
       $('.product-carousel-control--previous').each(function(i, e) {
         e.classList.remove('d-md-flex')
       });
@@ -178,6 +179,7 @@ function CartForm($, $cartForm) {
     } else {
       document.getElementById('desktop-thumbnails').classList.add('d-md-block')
       document.getElementById('mobile-thumbnails').classList.add('d-sm-block')
+      document.getElementById('mobile-single-list').classList.remove('d-none')
       $('.product-carousel-control--previous').each(function(i, e) {
         e.classList.add('d-md-flex')
       });
