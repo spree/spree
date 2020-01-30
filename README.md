@@ -82,6 +82,13 @@ gem 'spree_gateway', '~> 3.4'
 
 ### Run `bundle install`
 
+
+**Note**: if you run into `Bundler could not find compatible versions for gem "sprockets":` error message, please run 
+
+```bash
+bundle update
+```
+
 ### Use the install generators to set up Spree
 
 ```shell
