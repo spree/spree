@@ -1,5 +1,5 @@
 # Possibly already created by a migration.
-unless Spree::Store.default.present?
+unless Spree::Store.default.persisted?
   Spree::Store.new do |s|
     s.name              = 'Spree Demo Site'
     s.code              = 'spree'
