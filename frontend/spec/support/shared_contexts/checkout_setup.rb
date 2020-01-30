@@ -36,7 +36,7 @@ shared_context 'checkout setup' do
 
     return if card_number == valid_card_number
 
-    fill_in "card_number", with: "" if card_number.length > 0
+    fill_in 'card_number', with: '' if card_number.length > 0
     find('#card_number').send_keys '4111 1111 1111 1111'
 
     check_if_cart_number_valid
