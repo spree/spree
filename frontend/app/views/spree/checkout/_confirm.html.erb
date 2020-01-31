@@ -105,9 +105,6 @@
     </div>
     <div id="checkout-summary" class="w-100 order-2" data-hook="checkout_summary_box">
       <%= render partial: 'spree/checkout/summary', locals: { order: @order } %>
-      <% if Spree::Frontend::Config[:coupon_codes_enabled] %>
-        <%= render 'spree/orders/coupon_code', promotion: @order.promotions.coupons.first, order_form: form, classes: '' %>
-      <% end %>
       <div data-hook="buttons">
         <% submit_label_key = @order.confirm? ? :place_order : :save_and_continue %>
         <%= submit_tag Spree.t(submit_label_key), class: 'btn btn-primary text-uppercase font-weight-bold w-100 checkout-content-save-continue-button' %>
