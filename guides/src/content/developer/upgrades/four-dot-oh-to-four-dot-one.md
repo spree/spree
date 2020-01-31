@@ -42,7 +42,7 @@ rails db:migrate
 
 ## Migrate to the new Storefront UI (optional)
 
-Spree 4.1 comes with a completely new mobile-first ultra fast Storefront powered by Turbolinks.
+Spree 4.1 comes with a completely new mobile-first ultra-fast Storefront powered by Turbolinks.
 
 To replace your current frontend with the new Spree UI follow these steps:
 
@@ -52,7 +52,7 @@ To replace your current frontend with the new Spree UI follow these steps:
     gem 'spree_auth_devise', '~> 4.1.0.rc1'
     ```
 
-2. In your project root directoy run:
+2. In your project root directory run:
 
     ```bash
     rails g spree:frontend:copy_storefront
