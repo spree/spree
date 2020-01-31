@@ -42,7 +42,7 @@ rails db:migrate
 
 ## Migrate to the new Storefront UI (optional)
 
-Spree 4.1 comes with a completely new mobile-first ultra fast Storefront.
+Spree 4.1 comes with a completely new mobile-first ultra fast Storefront powered by Turbolinks.
 
 To replace your current frontend with the new Spree UI follow these steps:
 
@@ -58,14 +58,14 @@ To replace your current frontend with the new Spree UI follow these steps:
     rails g spree:frontend:copy_storefront
     ```
 
-    **WARNING** this will overwrite your current project templates, it's required for the new UI, so if you'll be asked by the generator what to do please choose **A** to comply with this
+    **WARNING** this will overwrite your current project templates, it's required for the new UI, so if you'll be asked by the generator what to do please choose **A** to proceed
 
 3. Next, you  will need to copy over two files:
 
    * [spree_storefront.rb](https://raw.githubusercontent.com/spree/spree/master/core/lib/generators/spree/install/templates/config/initializers/spree_storefront.rb) to `config/initializers/spree_storefront.rb`
    * [spree_storefront.yml](https://raw.githubusercontent.com/spree/spree/master/core/lib/generators/spree/install/templates/config/spree_storefront.yml) to `config/spree_storefront.yml`
   
-4. If you overwrote any `spree_frontend` [controllers](https://github.com/spree/spree/tree/master/frontend/app/controllers) you will need to either remove your local copies or create [decorators](https://guides.spreecommerce.org/developer/customization/logic.html#extending-controllers)
+4. If you overwrote any `spree_frontend` [controllers](https://github.com/spree/spree/tree/master/frontend/app/controllers) you will need to either remove your local copies or move your custom logic to [decorators](https://guides.spreecommerce.org/developer/customization/logic.html#extending-controllers)
 
 5. Same goes for [helpers](https://github.com/spree/spree/tree/master/frontend/app/helpers/spree)
 
