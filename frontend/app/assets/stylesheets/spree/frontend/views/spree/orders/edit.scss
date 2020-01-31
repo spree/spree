@@ -190,11 +190,6 @@
       @include media-breakpoint-up(lg) {
         float: none;
       }
-      input[type=text] {
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-      }
       input {
         padding: 0;
         width: 40px;
@@ -220,7 +215,9 @@
         margin: 0;
       }
       input[type="number"] {
+        -webkit-appearance: none;
         -moz-appearance: textfield;
+        appearance: none;
       }
       button {
         font-size: font-px-to-rem(14px);
