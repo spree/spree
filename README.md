@@ -1,4 +1,4 @@
-<a href="https://spreecommerce.org/contact/" target="_blank" rel="nofollow"><img src="https://spreecommerce.org/wp-content/uploads/2019/10/spree_commerce_new_ux_template.jpg" /></a>
+<a href="https://guides.spreecommerce.org/release_notes/4_1_0.html"><img src="https://spreecommerce.org/wp-content/uploads/2020/01/Spree-4-1-new-ux-demo.png" /></a>
 
 * Join our Slack at [slack.spreecommerce.org](http://slack.spreecommerce.org/)
 * [Start a new project or get tech support](https://spreecommerce.org/contact/)
@@ -51,9 +51,9 @@ Getting Started
 #### Rails 6.0
 
 ```ruby
-gem 'spree', '~> 4.0'
-gem 'spree_auth_devise', '~> 4.0'
-gem 'spree_gateway', '~> 3.6'
+gem 'spree', '~> 4.1.0.rc1'
+gem 'spree_auth_devise', '~> 4.1.0.rc1'
+gem 'spree_gateway', '~> 3.7'
 ```
 
 #### Rails 5.2
