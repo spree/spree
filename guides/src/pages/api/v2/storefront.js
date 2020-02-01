@@ -24,7 +24,11 @@ const crumbs = [
  */
 
 const IndexPage = () => (
-  <Layout activeRootSection="api">
+  <Layout
+    activeRootSection="api"
+    title="Storefront API v2"
+    description="Modern REST API based on the JSON API spec which provides you with necessary endpoints to build amazing user intefaces either in JavaScript frameworks or native mobile libraries."
+  >
     <Breadcrumbs crumbs={crumbs} />
     <RedocStandalone
       specUrl="https://raw.githubusercontent.com/spree/spree/master/api/docs/v2/storefront/index.yaml"

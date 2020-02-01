@@ -9,7 +9,7 @@ const IndexPage = () => (
     pathname="/"
     title="Spree API"
     activeRootSection="api"
-    description="Spree Commerce REST API v2, REST API v1 & GrapQL documentation"
+    description="Spree Commerce REST API v2, REST API v1 & GrapQL documentation. Postman collections, examples, swagger and Open API docs"
   >
     <div className="center mw9 ph4">
       <h3 className="f3 tc mv5">Choose API version</h3>
