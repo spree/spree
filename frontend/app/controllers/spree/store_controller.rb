@@ -46,5 +46,9 @@ module Spree
         config_locale
       ]
     end
+
+    def store_last_modified
+      (current_store.updated_at || Time.current).utc
+    end
   end
 end
