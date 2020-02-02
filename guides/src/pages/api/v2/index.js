@@ -16,7 +16,13 @@ import P from '../../../components/base/P'
  */
 
 const IndexPage = () => (
-  <Layout activeSection="API V2" nav={openApiNav} activeRootSection="api">
+  <Layout
+    activeSection="API V2"
+    nav={openApiNav}
+    activeRootSection="api"
+    title="Spree API V2"
+    description="Modern lightweight REST API based on JSON API schema built on top of Netflix fast_json_api gem and oAuth authentication via doorkeeper"
+  >
     <H1>REST API v2</H1>
     <P>
       Modern lightweight REST API based on &nbsp;

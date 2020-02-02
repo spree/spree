@@ -1,7 +1,8 @@
-<a href="https://spreecommerce.org/contact/" target="_blank" rel="nofollow"><img src="https://spreecommerce.org/wp-content/uploads/2019/10/spree_commerce_new_ux_template.jpg" /></a>
+<a href="https://guides.spreecommerce.org/release_notes/4_1_0.html"><img src="https://spreecommerce.org/wp-content/uploads/2020/01/Spree-4-1-new-ux-demo.png" /></a>
 
 * Join our Slack at [slack.spreecommerce.org](http://slack.spreecommerce.org/)
-* [Start a new project or get tech support](https://spreecommerce.org/contact/)
+* [Contact us](https://spreecommerce.org/contact/) to start a new project or get tech support
+* [DEMO](https://demo.spreecommerce.org/) of the new Spree UX introduced in Spree 4.1.0
 * [Success Stories](https://spreecommerce.org/stories/)
 * [Integrations](https://spreecommerce.org/integrations/)
 * [Extensions](https://github.com/spree/spree#extensions)
@@ -33,7 +34,7 @@ You don't need to install all of the components. Only the **Core** is mandatory.
 Demo
 ----
 
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/spree/spree/tree/4-0-stable)
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/spree/spree/tree/master)
 
 If you want to run the demo on your local machine, you can use our docker image. It will download and run sample Spree application on http://localhost:3000
 ```shell
@@ -51,9 +52,9 @@ Getting Started
 #### Rails 6.0
 
 ```ruby
-gem 'spree', '~> 4.0'
-gem 'spree_auth_devise', '~> 4.0'
-gem 'spree_gateway', '~> 3.6'
+gem 'spree', '~> 4.1.0.rc1'
+gem 'spree_auth_devise', '~> 4.1.0.rc1'
+gem 'spree_gateway', '~> 3.7'
 ```
 
 #### Rails 5.2
@@ -81,6 +82,13 @@ gem 'spree_gateway', '~> 3.4'
 ```
 
 ### Run `bundle install`
+
+
+**Note**: if you run into `Bundler could not find compatible versions for gem "sprockets":` error message, please run 
+
+```bash
+bundle update
+```
 
 ### Use the install generators to set up Spree
 

@@ -1,5 +1,3 @@
-<% images = product_images(@product, @variants) %>
-
 <div
   id="<%= id %>"
   class="h-100 carousel slide d-flex flex-column carousel-vertically-animated product-thumbnails-carousel"
@@ -20,7 +18,7 @@
               <div
                 class="product-thumbnails-carousel-item-single product-thumbnails-carousel-item-single--visible"
                 data-product-carousel-to-slide="<%= image_index %>"
-                data-variant-is-master="<%= image.viewable_id == @product.master.id %>"
+                data-variant-is-master="<%= image.viewable_id == @product.master_id %>"
                 data-variant-id="<%= image.viewable_id %>"
               >
                 <%= lazy_image(

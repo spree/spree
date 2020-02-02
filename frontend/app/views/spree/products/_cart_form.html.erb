@@ -14,17 +14,17 @@
   <%= render 'cart_form_availability_templates', type: 'out-of-stock' %>
 </template>
 
+<% is_product_available_in_currency = product_available_in_currency?(@product) %>
+<% default_variant = default_variant(@variants) %>
+
 <%= form_for :order, html: {
     id: 'add-to-cart-form',
     class: 'add-to-cart-form',
     'data-product-summary': @product_summary.to_json,
-    'data-variants': product_variants_matrix,
+    'data-variants': product_variants_matrix(is_product_available_in_currency),
     'data-variant-change-trigger-identifier': variant_change_identifier
   } do |f| %>
   <div id="inside-product-cart-form" data-hook="inside_product_cart_form">
-    <% is_product_available_in_currency = !(@product.price_in(current_currency).amount.nil? || @product.price_in(current_currency).amount.zero?) %>
-    <% default_variant = default_variant(@variants) %>
-
     <% if is_product_available_in_currency %>
       <div id="product-price" class="mb-2 text-center text-md-left add-to-cart-form-price" data-hook="product_price">
         <span class="price selling" content="<%= @product.price_in(current_currency).amount.to_d %>">
@@ -34,7 +34,8 @@
       </div>
     <% end %>
 
-    <div class="text-center text-md-left add-to-cart-form-general-availability">AVAILABILITY:
+    <div class="text-center text-md-left add-to-cart-form-general-availability text-uppercase">
+      <%= Spree.t(:availability) %>:
       <% if !is_product_available_in_currency %>
         <%= render 'cart_form_availability_templates', type: 'not-available-in-currency' %>
       <% elsif default_variant.in_stock? %>

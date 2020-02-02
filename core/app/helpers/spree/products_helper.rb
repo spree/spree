@@ -60,7 +60,7 @@ module Spree
     def cache_key_for_products(products = @products, additional_cache_key = nil)
       count = products.count
       max_updated_at = (products.maximum(:updated_at) || Date.today).to_s(:number)
-      products_cache_keys = "spree/products/all-#{params[:page]}-#{max_updated_at}-#{count}-#{@taxon&.id}"
+      products_cache_keys = "spree/products/all-#{params[:page]}-#{params[:sort_by]}-#{max_updated_at}-#{count}-#{@taxon&.id}"
       (common_product_cache_keys + [products_cache_keys] + [additional_cache_key]).compact.join('/')
     end
 
@@ -70,10 +70,6 @@ module Spree
         product.cache_key_with_version,
         product.possible_promotions
       ]
-
-      if product.respond_to?(:relations)
-        cache_key_elements << "relations-#{product.relations.maximum(:updated_at)&.to_i}"
-      end
 
       cache_key_elements.compact.join('/')
     end
@@ -107,8 +103,13 @@ module Spree
       variants.map(&:images).flatten
     end
 
-    def product_variants_matrix
-      Spree::VariantPresenter.new(@variants).call.to_json
+    def product_variants_matrix(is_product_available_in_currency)
+      Spree::VariantPresenter.new(
+        variants: @variants,
+        is_product_available_in_currency: is_product_available_in_currency,
+        current_currency: current_currency,
+        current_price_options: current_price_options
+      ).call.to_json
     end
 
     def related_products
@@ -117,12 +118,17 @@ module Spree
       @_related_products ||= @product.
                              related_products.
                              includes(
+                               :tax_category,
                                master: [
-                                 :default_price,
-                                 images: { attachment_attachment: :blob }
+                                 :prices,
+                                 images: { attachment_attachment: :blob },
                                ]
                              ).
                              limit(Spree::Config[:products_per_page])
+    end
+
+    def product_available_in_currency?(product)
+      !(product.price_in(current_currency).amount.nil? || product.price_in(current_currency).amount.zero?)
     end
 
     def common_product_cache_keys

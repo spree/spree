@@ -1,8 +1,6 @@
-<% images = product_images(@product, @variants) %>
-
 <div
   id="<%= id %>"
-  class="carousel slide product-carousel<%= ' product-carousel--empty' unless @product.images.length > 0 || @product.variant_images.length > 0 %>"
+  class="carousel slide product-carousel<%= ' product-carousel--empty' if images.length.zero? %>"
   data-product-carousel-group-identifier="<%= group_id %>"
   data-variant-change-trigger-identifier="<%= trigger_id %>"
   data-interval="false"
@@ -48,7 +46,7 @@
     <% images.each_with_index do |image, imageIndex| %>
       <div
         class="carousel-item product-carousel-item<%= ' active' if imageIndex == 0 %>"
-        data-variant-is-master="<%= image.viewable_id == @product.master.id %>"
+        data-variant-is-master="<%= image.viewable_id == @product.master_id %>"
         data-variant-id="<%= image.viewable_id %>"
       >
         <div class="product-carousel-item-squared <%= 'product-carousel-item-squared-only' if images.length == 1 %>">

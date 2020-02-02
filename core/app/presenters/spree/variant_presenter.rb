@@ -3,21 +3,23 @@ module Spree
     include Rails.application.routes.url_helpers
     include Spree::BaseHelper
 
-    def initialize(variants)
-      @variants = variants
+    attr_reader :current_currency, :current_price_options
+
+    def initialize(opts = {})
+      @variants = opts[:variants]
+      @is_product_available_in_currency = opts[:is_product_available_in_currency]
+      @current_currency = opts[:current_currency]
+      @current_price_options = opts[:current_price_options]
     end
 
     def call
       @variants.map do |variant|
-        is_product_available_in_currency = variant.product.price_in(variant.cost_currency) && !variant.product.price.nil?
         {
-          display_price: variant.display_price.to_s,
-          is_product_available_in_currency: is_product_available_in_currency,
+          display_price: display_price(variant),
+          is_product_available_in_currency: @is_product_available_in_currency,
           backorderable: backorderable?(variant),
           images: images(variant),
           option_values: option_values(variant),
-          category: variant.product.category&.name,
-          brand: variant.product.brand&.name,
         }.merge(
           variant_attributes(variant)
         )
@@ -27,17 +29,7 @@ module Spree
     def images(variant)
       variant.images.map do |image|
         {
-          viewable_type: image.viewable_type,
-          viewable_id: image.viewable_id,
-          attachment_width: image.attachment_width,
-          attachment_height: image.attachment_height,
-          attachment_file_size: image.attachment_file_size,
-          position: image.position,
-          attachment_content_type: image.attachment_content_type,
-          attachment_file_name: image.attachment_file_name,
-          type: image.type,
           alt: image.alt,
-          url_mini: rails_representation_url(image.url(:mini), only_path: true),
           url_product: rails_representation_url(image.url(:product), only_path: true)
         }
       end
@@ -47,15 +39,8 @@ module Spree
       variant.option_values.map do |option_value|
         {
           id: option_value.id,
-          position: option_value.position,
           name: option_value.name,
           presentation: option_value.presentation,
-          option_type: {
-            id: option_value.option_type.id,
-            position: option_value.option_type.position,
-            name: option_value.option_type.name,
-            presentation: option_value.option_type.presentation
-          }
         }
       end
     end
@@ -75,21 +60,9 @@ module Spree
       {
         id: variant.id,
         sku: variant.sku,
-        weight: variant.weight,
-        height: variant.height,
-        width: variant.width,
-        depth: variant.depth,
-        is_master: variant.is_master,
-        product_id: variant.product_id,
         price: variant.price,
         in_stock: variant.in_stock?,
-        purchasable: variant.purchasable?,
-        position: variant.position,
-        cost_currency: variant.cost_currency,
-        track_inventory: variant.track_inventory,
-        tax_category_id: variant.tax_category_id,
-        options_text: variant.options_text,
-        name: variant.name
+        purchasable: variant.purchasable?
       }
     end
   end

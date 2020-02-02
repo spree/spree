@@ -1,3 +1,5 @@
+require 'digest'
+
 module Spree
   module NavigationHelper
     def spree_navigation_data
@@ -6,6 +8,10 @@ module Spree
     # or spree.yml file present
     rescue
       []
+    end
+
+    def spree_nav_cache_key(section = 'header')
+      base_cache_key + [current_store, spree_navigation_data_cache_key, Spree::Config[:logo], section]
     end
 
     def main_nav_image(image_path, title = '')
@@ -17,6 +23,12 @@ module Spree
         width: 350,
         height: 234
       )
+    end
+
+    private
+
+    def spree_navigation_data_cache_key
+      @spree_navigation_data_cache_key ||= Digest::MD5.hexdigest(spree_navigation_data.to_s)
     end
   end
 end

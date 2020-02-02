@@ -24,6 +24,7 @@ Spree::Core::Engine.add_routes do
 
   # route globbing for pretty nested taxon and product paths
   get '/t/*id', to: 'taxons#show', as: :nested_taxons
+  get '/product_carousel/:id', to: 'taxons#product_carousel'
 
   get '/unauthorized', to: 'home#unauthorized', as: :unauthorized
   get '/content/cvv', to: 'content#cvv', as: :cvv
@@ -33,4 +34,5 @@ Spree::Core::Engine.add_routes do
 
   get '/api_tokens', to: 'store#api_tokens'
   post '/ensure_cart', to: 'store#ensure_cart'
+  get '/products/:id/related', to: 'products#related'
 end

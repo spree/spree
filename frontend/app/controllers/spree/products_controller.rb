@@ -2,7 +2,7 @@ module Spree
   class ProductsController < Spree::StoreController
     include Spree::ProductsHelper
 
-    before_action :load_product, only: :show
+    before_action :load_product, only: [:show, :related]
     before_action :load_taxon, only: :index
 
     respond_to :html
@@ -10,7 +10,6 @@ module Spree
     def index
       @searcher = build_searcher(params.merge(include_images: true))
       @products = @searcher.retrieve_products
-      @products = @products.includes(:possible_promotions) if @products.respond_to?(:includes)
     end
 
     def show
@@ -22,6 +21,17 @@ module Spree
         @product_summary = Spree::ProductSummaryPresenter.new(@product).call
         @product_properties = @product.product_properties.includes(:property)
         load_variants
+        @product_images = product_images(@product, @variants)
+      end
+    end
+
+    def related
+      @related_products = related_products
+
+      if @related_products.any?
+        render template: 'spree/products/related', layout: false
+      else
+        head :no_content
       end
     end
 
@@ -58,9 +68,9 @@ module Spree
                   active(current_currency).
                   includes(
                     :default_price,
-                      option_values: :option_type,
-                      images: { attachment_attachment: :blob }
-                    )
+                    option_values: [:option_value_variants],
+                    images: { attachment_attachment: :blob }
+                  )
     end
 
     def redirect_if_legacy_path

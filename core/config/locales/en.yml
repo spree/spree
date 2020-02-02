@@ -572,6 +572,7 @@ en:
     all_adjustments_opened: All adjustments successfully opened!
     all_departments: All departments
     all_items_have_been_returned: All items have been returned
+    all_rights_reserved: All rights reserved
     already_have_account: Already have an account?
     alt_text: Alternative Text
     alternative_phone: Alternative Phone
@@ -587,6 +588,7 @@ en:
     authorization_failure: Authorization Failure
     authorized: Authorized
     auto_capture: Auto Capture
+    availability: availability
     available_on: Available On
     available: Available
     average_order_value: Average Order Value
@@ -678,6 +680,7 @@ en:
     confirm: Confirm
     confirm_delete: Confirm Deletion
     confirm_password: Password Confirmation
+    contact_us: Contact us
     continue: Continue
     continue_as_guest: Continue as a guest
     continue_shopping: Continue shopping
@@ -842,6 +845,7 @@ en:
     flat_percent: Flat Percent
     flat_rate_per_order: Flat Rate
     flexible_rate: Flexible Rate
+    follow_us: Follow us
     forgot_password: Forgot password?
     free_shipping: Free Shipping
     free_shipping_amount: "-"

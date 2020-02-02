@@ -1,3 +1,5 @@
+<% @body_id = 'home' %>
+
 <div class="homepage-hero-image mb-3 position-relative">
   <img class="lazyload hero-image position-absolute"
     data-src="<%= asset_path('homepage/main_banner.jpg') %>"
@@ -65,13 +67,7 @@
   </div>
 </div>
 
-<% if @bestsellers_products.any? %>
-  <div class="my-3">
-    <p class="font-weight-bold text-center homepage-carousel-text"><%= Spree.t('homepage.bestsellers') %></p>
-
-    <%= render 'spree/shared/carousel_4_products', id: 'bestsellers-carousel', products: @bestsellers_products %>
-  </div>
-<% end %>
+<div data-product-carousel data-product-carousel-taxon-id='bestsellers' class="my-3"></div>
 
 <div class="homepage-fashion-trends-box mb-3">
   <div class="text-center">
@@ -84,13 +80,8 @@
   </div>
 </div>
 
-<% if @trending_products.any? %>
-  <div class="mb-3">
-    <p class="font-weight-bold text-center homepage-carousel-text"><%= Spree.t('homepage.trending') %></p>
 
-    <%= render 'spree/shared/carousel_4_products', id: 'trending-carousel', products: @trending_products %>
-  </div>
-<% end %>
+<div data-product-carousel data-product-carousel-taxon-id='trending' class="mb-3"></div>
 
 <div class="container">
   <div class="row">
@@ -135,7 +126,3 @@
     </div>
   </div>
 </div>
-
-<% cache "spree/home/ld/#{@ld_products_updated_at}" do %>
-  <%= products_structured_data((@bestsellers_products.to_a + @trending_products.to_a).uniq.compact) %>
-<% end %>

@@ -46,89 +46,92 @@ function ThumbnailsCarousel($, $carousel) {
 Spree.ready(function($) {
   // Adjust thumbnails carousel based on picked variant.
 
-  var variantIdAttributeName = 'data-variant-id'
-  var carouselItemSelector = '[data-variant-id]'
-  var isMasterVariantAttributeName = 'data-variant-is-master'
-  var enabledCarouselItemClass = 'carousel-item'
-  var activeCarouselItemClass = 'active'
-  var getCarouselsWithVariantChangeTriggerSelector = function(triggerId) {
-    return (
-      '.product-thumbnails-carousel[data-variant-change-trigger-identifier="' +
-      triggerId +
-      '"]'
-    )
-  }
+  if ($('#product-details').length) {
 
-  Spree.showThumbnailsCarouselVariantImages = function($carousel, variantId) {
-    var carouselSlideSelector = '.product-thumbnails-carousel-item'
-    var carouselSlideContainerSelector =
-      '.product-thumbnails-carousel-item-content'
-    var enabledCarouselSingleClass =
-      'product-thumbnails-carousel-item-single--visible'
-    var carouselToSlideAttributeName = 'data-product-carousel-to-slide'
-    var carouselPerPageAttributeName = 'data-product-carousel-per-page'
-    var carouselEmptyClass = 'product-thumbnails-carousel--empty'
+    var variantIdAttributeName = 'data-variant-id'
+    var carouselItemSelector = '[data-variant-id]'
+    var isMasterVariantAttributeName = 'data-variant-is-master'
+    var enabledCarouselItemClass = 'carousel-item'
+    var activeCarouselItemClass = 'active'
+    var getCarouselsWithVariantChangeTriggerSelector = function(triggerId) {
+      return (
+        '.product-thumbnails-carousel[data-variant-change-trigger-identifier="' +
+        triggerId +
+        '"]'
+      )
+    }
 
-    $carousel.carouselBootstrap4('dispose')
-    var qualifiedSlides = 0
-    var perPage = parseInt($carousel.attr(carouselPerPageAttributeName)) || 1
-    var $slides = $carousel.find(carouselSlideSelector)
+    Spree.showThumbnailsCarouselVariantImages = function($carousel, variantId) {
+      var carouselSlideSelector = '.product-thumbnails-carousel-item'
+      var carouselSlideContainerSelector =
+        '.product-thumbnails-carousel-item-content'
+      var enabledCarouselSingleClass =
+        'product-thumbnails-carousel-item-single--visible'
+      var carouselToSlideAttributeName = 'data-product-carousel-to-slide'
+      var carouselPerPageAttributeName = 'data-product-carousel-per-page'
+      var carouselEmptyClass = 'product-thumbnails-carousel--empty'
 
-    $carousel
-      .find(carouselItemSelector)
-      .each(function(_itemIndex, slideElement) {
-        // Switch item visibility in the carousel based on picked variant.
+      $carousel.carouselBootstrap4('dispose')
+      var qualifiedSlides = 0
+      var perPage = parseInt($carousel.attr(carouselPerPageAttributeName)) || 1
+      var $slides = $carousel.find(carouselSlideSelector)
 
-        var targetSlideIndex
-        var $slide = $(slideElement)
-        var qualifies =
-          $slide.attr(variantIdAttributeName) === variantId ||
-          $slide.attr(isMasterVariantAttributeName) === 'true'
+      $carousel
+        .find(carouselItemSelector)
+        .each(function(_itemIndex, slideElement) {
+          // Switch item visibility in the carousel based on picked variant.
 
-        if (qualifies) {
-          qualifiedSlides += 1
-          $slide.attr(carouselToSlideAttributeName, qualifiedSlides - 1)
-        }
+          var targetSlideIndex
+          var $slide = $(slideElement)
+          var qualifies =
+            $slide.attr(variantIdAttributeName) === variantId ||
+            $slide.attr(isMasterVariantAttributeName) === 'true'
 
-        targetSlideIndex = Math.max(0, Math.ceil(qualifiedSlides / perPage) - 1)
-        $slide.detach()
-        $slides
-          .eq(targetSlideIndex)
-          .find(carouselSlideContainerSelector)
-          .append($slide)
-        $slide.toggleClass(enabledCarouselSingleClass, qualifies)
+          if (qualifies) {
+            qualifiedSlides += 1
+            $slide.attr(carouselToSlideAttributeName, qualifiedSlides - 1)
+          }
+
+          targetSlideIndex = Math.max(0, Math.ceil(qualifiedSlides / perPage) - 1)
+          $slide.detach()
+          $slides
+            .eq(targetSlideIndex)
+            .find(carouselSlideContainerSelector)
+            .append($slide)
+          $slide.toggleClass(enabledCarouselSingleClass, qualifies)
+        })
+      var enabledSlidesCount = Math.ceil(qualifiedSlides / perPage)
+      $carousel
+        .find(carouselSlideSelector)
+        .each(function(slideIndex, slideElement) {
+          var $slide = $(slideElement)
+          $slide.toggleClass(
+            enabledCarouselItemClass,
+            slideIndex < enabledSlidesCount
+          )
+          $slide.toggleClass(activeCarouselItemClass, slideIndex === 0)
+        })
+
+      // If there are no images to show after picking a variant, disable the carousel.
+      $carousel.toggleClass(carouselEmptyClass, enabledSlidesCount === 0)
+
+      $carousel.carouselBootstrap4()
+      $carousel.trigger('thumbnails:ready')
+    }
+
+    $('#product-details').on('variant_id_change', function(options) {
+      var triggerId = options.triggerId
+      var variantId = options.variantId
+      $(getCarouselsWithVariantChangeTriggerSelector(triggerId)).each(function(
+        _carouselElementIndex,
+        carouselElement
+      ) {
+        Spree.showThumbnailsCarouselVariantImages($(carouselElement), variantId)
       })
-    var enabledSlidesCount = Math.ceil(qualifiedSlides / perPage)
-    $carousel
-      .find(carouselSlideSelector)
-      .each(function(slideIndex, slideElement) {
-        var $slide = $(slideElement)
-        $slide.toggleClass(
-          enabledCarouselItemClass,
-          slideIndex < enabledSlidesCount
-        )
-        $slide.toggleClass(activeCarouselItemClass, slideIndex === 0)
-      })
-
-    // If there are no images to show after picking a variant, disable the carousel.
-    $carousel.toggleClass(carouselEmptyClass, enabledSlidesCount === 0)
-
-    $carousel.carouselBootstrap4()
-    $carousel.trigger('thumbnails:ready')
-  }
-
-  $('body').on('variant_id_change', function(options) {
-    var triggerId = options.triggerId
-    var variantId = options.variantId
-    $(getCarouselsWithVariantChangeTriggerSelector(triggerId)).each(function(
-      _carouselElementIndex,
-      carouselElement
-    ) {
-      Spree.showThumbnailsCarouselVariantImages($(carouselElement), variantId)
     })
-  })
 
-  var $carousel = $('#productThumbnailsCarousel')
+    var $carousel = $('#productThumbnailsCarousel')
 
-  ThumbnailsCarousel($, $carousel)
+    ThumbnailsCarousel($, $carousel)
+  }
 })

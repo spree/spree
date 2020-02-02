@@ -25,7 +25,7 @@ module Spree
           sku: product.sku,
           offers: {
             '@type': 'Offer',
-            price: product.price,
+            price: product.price_in(current_currency).amount,
             priceCurrency: current_currency,
             availability: product.in_stock? ? 'InStock' : 'OutOfStock',
             url: spree.product_url(product),

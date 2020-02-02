@@ -91,6 +91,8 @@ RSpec.configure do |config|
     reset_spree_preferences
 
     create(:store, default: true)
+    create(:taxon, permalink: 'trending')
+    create(:taxon, permalink: 'bestsellers')
   end
 
   config.after(:each, type: :feature) do |example|
