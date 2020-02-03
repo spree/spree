@@ -51,7 +51,7 @@ module Spree
       go_to_state :payment, if: ->(order) { order.payment? || order.payment_required? }
       go_to_state :confirm, if: ->(order) { order.confirmation_required? }
       go_to_state :complete
-      remove_transition from: :delivery, to: :confirm
+      remove_transition from: :delivery, to: :confirm, unless: ->(order) { order.confirmation_required? }
     end
 
     self.whitelisted_ransackable_associations = %w[shipments user promotions bill_address ship_address line_items store]
