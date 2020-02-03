@@ -13,7 +13,6 @@ module Spree
       end
 
       def included(host)
-        generator_method   = method(:generate_permalink)
         generator_instance = self
 
         host.class_eval do
