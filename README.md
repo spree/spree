@@ -1,4 +1,4 @@
-<a href="https://guides.spreecommerce.org/release_notes/4_1_0.html"><img src="https://spreecommerce.org/wp-content/uploads/2020/01/Spree-4-1-new-ux-demo.png" /></a>
+<a href="https://guides.spreecommerce.org/release_notes/4_1_0.html"><img src="https://spreecommerce.org/wp-content/uploads/2020/02/Spree-4-1-new-ux-relase-notes.png" /></a>
 
 * Join our Slack at [slack.spreecommerce.org](http://slack.spreecommerce.org/)
 * [Contact us](https://spreecommerce.org/contact/) to start a new project or get tech support
