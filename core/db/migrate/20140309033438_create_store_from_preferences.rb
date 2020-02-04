@@ -12,6 +12,7 @@ class CreateStoreFromPreferences < ActiveRecord::Migration[4.2]
       store.meta_description = preference_store.get('spree/app_configuration/default_meta_description') {}
       store.meta_keywords    = preference_store.get('spree/app_configuration/default_meta_keywords') {}
       store.seo_title        = preference_store.get('spree/app_configuration/default_seo_title') {}
+      store.default_currency = preference_store.get('spree/app_configuration/currency') { 'USD' }
       store.save!
     else
       # we set defaults for the things we now require
