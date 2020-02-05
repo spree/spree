@@ -2,12 +2,16 @@ function ThumbnailsCarousel($, $carousel) {
   var VISIBLE_IMAGE_SELECTOR = '.product-thumbnails-carousel-item-single--visible img'
   var SELECTED_IMAGE_CLASS = 'selected'
   var self = this
+  var $modalCarouselId = 'productModalThumbnailsCarousel'
+  var $modalCarousel = $('#productModalThumbnailsCarousel')
+  var $zoomClickObject = $('.product-carousel-overlay-modal-opener')
 
   this.constructor = function() {
     this.bindEventHandlers()
   }
 
   this.bindEventHandlers = function() {
+    $zoomClickObject.on('click', this.handleZoomClick)
     $carousel.on('click', 'img', this.handleImageClick)
     $carousel.on('thumbnails:ready', this.handleThumbnailsReady)
 
@@ -15,29 +19,61 @@ function ThumbnailsCarousel($, $carousel) {
   }
 
   this.handleImageClick = function(event) {
-    self.selectImage($(event.target))
+    self.selectImage($(event.target), $(event.target))
   }
 
   this.handleThumbnailsReady = function(_event) {
     var $image = $carousel.find(VISIBLE_IMAGE_SELECTOR).eq(0)
 
-    self.selectImage($image)
+    self.selectImage(_event.target, $image)
   }
 
   this.handleSingleCarouselSlide = function(_event, imageIndex) {
-    var $image = $carousel.find('[data-product-carousel-to-slide=' + imageIndex + '] img')
-
-    self.selectImage($image)
-  }
-
-  this.selectImage = function($image) {
-    this.unselectImages()
+    if (_event.target.id === 'productModalCarousel') {
+      var $image = $modalCarousel.find('[data-product-carousel-to-slide=' + imageIndex + '] img')
+      self.unselectModalImages()
+    } else {
+      var $image = $carousel.find('[data-product-carousel-to-slide=' + imageIndex + '] img')
+      self.unselectThumbanilsImages()
+    }
 
     $image.addClass(SELECTED_IMAGE_CLASS)
   }
 
-  this.unselectImages = function() {
+  this.selectImage = function(_event, $image) {
+    if (_event.id === $modalCarouselId || $($($($($($(_event).parent()).parent()).parent()).parent()).parent()).parent()[0].id === $modalCarouselId) {
+      this.unselectModalImages()
+    } else {
+      this.unselectThumbanilsImages()
+    }
+
+    $image.addClass(SELECTED_IMAGE_CLASS)
+  }
+
+  this.unselectThumbanilsImages = function() {
     $carousel.find('img').removeClass(SELECTED_IMAGE_CLASS)
+  }
+
+  this.unselectModalImages = function() {
+    $modalCarousel.find('img').removeClass(SELECTED_IMAGE_CLASS)
+  }
+
+  this.handleZoomClick = function(_event) {
+    var $selectedImageId = self.getSelectedImageId()
+    var $image = $modalCarousel.find(VISIBLE_IMAGE_SELECTOR).eq($selectedImageId)
+    self.unselectModalImages()
+
+    $image.addClass(SELECTED_IMAGE_CLASS)
+  }
+
+  this.getSelectedImageId = function() {
+    var $selectedImages = $('#productThumbnailsCarousel').find('img.d-block.w-100.lazyloaded.selected')
+
+    if ($selectedImages.length > 1) {
+      return $($selectedImages[1]).parent()[0].dataset.productCarouselToSlide
+    } else {
+      return '0'
+    }
   }
 
   this.constructor()
