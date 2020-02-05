@@ -15,7 +15,8 @@
                     rate.id,
                     data: {
                       behavior: 'shipping-method-selector',
-                      cost: rate.display_cost
+                      cost: rate.display_cost,
+                      tax: rate.display_tax_amount
                     } %>
                   <span class="spree-radio-label-custom-input"></span>
                   <span class="rate-name"><%= rate.name %></span>
