@@ -286,7 +286,6 @@
         font-weight: 500;
         line-height: 1.08;
         letter-spacing: 0.3px;
-
         @include media-breakpoint-up(lg) {
           &:last-child {
             font-size: font-px-to-rem(11px);
