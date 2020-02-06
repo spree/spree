@@ -215,7 +215,9 @@
         margin: 0;
       }
       input[type="number"] {
+        -webkit-appearance: none;
         -moz-appearance: textfield;
+        appearance: none;
       }
       button {
         font-size: font-px-to-rem(14px);
@@ -353,6 +355,11 @@
           width: 16px;
         }
       }
+    }
+    input[type=text] {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
     }
   }
   &-total {
