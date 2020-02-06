@@ -36,7 +36,15 @@ Spree.ready(function ($) {
   var navBarCategoryLinks = document.getElementsByClassName('main-nav-bar-category-links')
   var navBarCategoryButtons = document.getElementsByClassName('main-nav-bar-category-button')
   var navBarCategoryImages = document.getElementsByClassName('category-image')
-  var navbarLinks = [navBarCategoryLinks, navBarCategoryButtons, navBarCategoryImages]
+  var navBarAccountIcon = [document.getElementById('account-button')]
+  var navBarCartIcon = [document.getElementById('link-to-cart')]
+  var navbarLinks = [
+    navBarCategoryLinks,
+    navBarCategoryButtons,
+    navBarCategoryImages,
+    navBarAccountIcon,
+    navBarCartIcon
+  ]
 
   $.each(navbarLinks, function(index, navbarElements) {
     $.each(navbarElements, function(index, navBarCategoryLink) {
