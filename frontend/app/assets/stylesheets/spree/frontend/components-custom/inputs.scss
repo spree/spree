@@ -11,6 +11,9 @@
   outline: none;
   font-size: font-px-to-rem(12px);
   line-height: inherit;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
   @include media-breakpoint-up(sm) {
     padding: 25px;
     font-size: font-px-to-rem(23px);
