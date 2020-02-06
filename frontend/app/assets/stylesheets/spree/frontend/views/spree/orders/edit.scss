@@ -224,6 +224,8 @@
         height: 25px;
         background-color: $input-background;
         border-color: theme-color("borders");
+        border-width: 1px !important;
+        border-style: solid;
         color: color-yiq($input-background);
         @include media-breakpoint-up(sm) {
           height: 51.4px;
