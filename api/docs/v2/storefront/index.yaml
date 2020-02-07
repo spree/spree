@@ -457,6 +457,7 @@ paths:
         <pre>
           order: {
             email: 'john@snow.org',
+            special_instructions: 'Please leave at door',
             bill_address_attributes: {
               firstname: 'John',
               lastname: 'Snow',
@@ -583,6 +584,9 @@ paths:
                     email:
                       type: string
                       example: 'john@snow.org'
+                    special_instructions:
+                      type: string
+                      example: 'Please leave at door'
                     bill_address_attributes:
                       $ref: '#/components/schemas/AddressPayload'
                     ship_address_attributes:
