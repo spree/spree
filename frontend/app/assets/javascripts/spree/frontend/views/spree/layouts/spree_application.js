@@ -57,5 +57,5 @@ Spree.ready(function ($) {
         });
       });
     });
-  }
+  };
 });
