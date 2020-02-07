@@ -20,6 +20,7 @@ module Spree
       if stale?(etag: product_etag, last_modified: @product.updated_at.utc, public: true)
         @product_summary = Spree::ProductSummaryPresenter.new(@product).call
         @product_properties = @product.product_properties.includes(:property)
+        @product_price = @product.price_in(current_currency).amount
         load_variants
         @product_images = product_images(@product, @variants)
       end

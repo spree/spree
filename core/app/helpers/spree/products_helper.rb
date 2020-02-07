@@ -127,8 +127,8 @@ module Spree
                              limit(Spree::Config[:products_per_page])
     end
 
-    def product_available_in_currency?(product)
-      !(product.price_in(current_currency).amount.nil? || product.price_in(current_currency).amount.zero?)
+    def product_available_in_currency?
+      !(@product_price.nil? || @product_price.zero?)
     end
 
     def common_product_cache_keys
