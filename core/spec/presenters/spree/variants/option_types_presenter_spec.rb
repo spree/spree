@@ -5,9 +5,13 @@ describe Spree::Variants::OptionTypesPresenter do
   let(:option_type_2) { create :option_type, position: 1 }
 
   let(:product) { create :product, option_types: [option_type_1, option_type_2] }
+  let(:product_2) { create :product, option_types: [option_type_1, option_type_2] }
 
   let!(:variant_1) { create :variant, product: product, option_values: [option_value_1_1, option_value_2_2] }
   let!(:variant_2) { create :variant, product: product, option_values: [option_value_1_2, option_value_2_1] }
+  let!(:variant_3) { create :variant, product: product_2, option_values: [option_value_1_2, option_value_2_1] }
+
+  let(:variants) { product.variants }
 
   let!(:option_value_1_1) { create :option_value, option_type: option_type_1, position: 2 }
   let!(:option_value_1_2) { create :option_value, option_type: option_type_1, position: 1 }
@@ -16,12 +20,12 @@ describe Spree::Variants::OptionTypesPresenter do
 
   let(:option_types) do
     Spree::OptionType.
-      eager_load(option_values: :variants).
+      eager_load(:option_values).
       reorder('spree_option_types.position ASC, spree_option_values.position ASC')
   end
 
   describe '#default_variant' do
-    subject(:default_variant) { described_class.new(option_types).default_variant }
+    subject(:default_variant) { described_class.new(option_types, variants).default_variant }
 
     it 'returns first Variant of first Option Value of first Option Type' do
       expect(default_variant).to eq(variant_1)
@@ -56,7 +60,7 @@ describe Spree::Variants::OptionTypesPresenter do
   end
 
   describe '#options' do
-    subject(:options) { described_class.new(option_types).options }
+    subject(:options) { described_class.new(option_types, variants).options }
 
     it 'returns serialized options for Option Types and Option Values' do
       expect(options).to eq(
