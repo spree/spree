@@ -39,12 +39,16 @@ Spree.ready(function ($) {
   var navBarCategoryImages = document.getElementsByClassName('category-image')
   var navBarAccountIcon = [document.getElementById('account-button')]
   var navBarCartIcon = [document.getElementById('link-to-cart')]
+  var spreeLogoImage = document.getElementsByClassName('header-spree-fluid-logo')
+  var spreeMobileNavs = document.getElementsByClassName('mobile-navigation-list-item')
   var navbarLinks = [
     navBarCategoryLinks,
     navBarCategoryButtons,
     navBarCategoryImages,
     navBarAccountIcon,
-    navBarCartIcon
+    navBarCartIcon,
+    spreeLogoImage,
+    spreeMobileNavs
   ]
 
   if (searchDropdown !== null) {
