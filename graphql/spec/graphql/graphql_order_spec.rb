@@ -13,7 +13,7 @@ context Spree::Graphql::GraphqlController, type: :controller do
       before { request.headers['X-Spree-JWT-Token'] = bearer }
 
       it do
-        api_post :create, query: query
+        post :create, params: { query: query }
         expect(response.status).to eq(200)
         expect(json_response.dig(:data, :orders)).to eq(exected)
         expect(assigns(:spree_current_user)).to eq user
@@ -31,7 +31,7 @@ context Spree::Graphql::GraphqlController, type: :controller do
       before { request.headers['X-Spree-JWT-Token'] = bearer }
 
       it do
-        api_post :create, query: query
+        post :create, params: { query: query }
         expect(response.status).to eq(200)
         expect(json_response.dig(:data, :orders)).to eq([exected])
         expect(assigns(:spree_current_user)).to eq user
@@ -51,7 +51,7 @@ context Spree::Graphql::GraphqlController, type: :controller do
       before { request.headers['X-Spree-JWT-Token'] = bearer }
 
       it do
-        api_post :create, query: query
+        post :create, params: { query: query }
         expect(response.status).to eq(200)
         expect(json_response.dig(:data, :orders)).to eq([exected])
         expect(assigns(:spree_current_user)).to eq user
@@ -68,7 +68,7 @@ context Spree::Graphql::GraphqlController, type: :controller do
       before { request.headers['X-Spree-JWT-Order-Token'] = order_token }
 
       it do
-        api_post :create, query: query
+        post :create, params: { query: query }
         expect(response.status).to eq(200)
         expect(json_response.dig(:data, :currentOrder)).to eq(exected)
       end
@@ -82,7 +82,7 @@ context Spree::Graphql::GraphqlController, type: :controller do
       let(:exected) { { 'id' => "#{order.id}", 'number' => order.number }}
 
       it do
-        api_post :create, query: query
+        post :create, params: { query: query }
         expect(response.status).to eq(200)
         expect(json_response.dig(:data, :cart)).to eq(exected)
       end

@@ -11,7 +11,7 @@ describe Spree::Graphql::GraphqlController, type: :controller do
       end
 
       it do
-        api_post :login, email: user.email, password: user.password
+        post :login, params: { email: user.email, password: user.password }
         expect(json_response['token']).to be_present
         expect(json_response['exp']).to be_present
         expect(json_response['login']).to be_present
@@ -26,7 +26,7 @@ describe Spree::Graphql::GraphqlController, type: :controller do
       before { request.headers['X-Spree-JWT-Token'] = bearer }
 
       it do
-        api_post :create
+        post :create
         expect(response.status).to eq(200)
         expect(assigns(:spree_current_user)).to eq user
       end

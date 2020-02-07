@@ -9,7 +9,7 @@ context Spree::Graphql::GraphqlController, type: :controller do
 
 
       it do
-        api_post :create, query: query
+        post :create, params: { query: query  }
         expect(response.status).to eq(200)
         expect(json_response.dig(:data, :products)).to eq([exected])
       end

@@ -28,8 +28,6 @@ module Spree
       @graphql_completed_order_finder = Spree::Dependencies.completed_order_finder
 
       @graphql_products_finder = Spree::Dependencies.products_finder
-
-
     end
   end
 end

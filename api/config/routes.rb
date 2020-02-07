@@ -188,9 +188,4 @@ Spree::Core::Engine.add_routes do
       end
     }, via: [:get, :post, :put, :patch, :delete]
   end
-
-  namespace :graphql do
-    post :graphql, to: 'graphql#create'
-    post '/auth/login', to: 'graphql#login'
-  end
 end
