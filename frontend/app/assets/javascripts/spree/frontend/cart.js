@@ -4,8 +4,17 @@ Spree.ready(function ($) {
   var formUpdateCart = $('form#update-cart')
 
   if (formUpdateCart.length) {
+    var clearInvalidCouponField = function() {
+      var couponCodeField = $('#order_coupon_code');
+      var couponStatus = $('#coupon_status');
+      if (!!couponCodeField.val() && couponStatus.hasClass('alert-error')) {
+        couponCodeField.val('')
+      }
+    }
+
     $('form#update-cart a.delete').show().one('click', function () {
       $(this).parents('.shopping-cart-item').first().find('input.shopping-cart-item-quantity-input').val(0)
+      clearInvalidCouponField()
       $(this).parents('form').first().submit()
       return false
     })
@@ -17,6 +26,7 @@ Spree.ready(function ($) {
       $(targetInputs).val(newValue)
     })
     $('form#update-cart input.shopping-cart-item-quantity-input').on('change', function(e) {
+      clearInvalidCouponField()
       formUpdateCart.submit()
     })
     $('form#update-cart button.shopping-cart-item-quantity-decrease-btn').off('click').on('click', function() {
@@ -26,6 +36,7 @@ Spree.ready(function ($) {
 
       if (inputValue > 1) {
         $(input).val(inputValue - 1)
+        clearInvalidCouponField()
         formUpdateCart.submit()
       }
     })
@@ -35,6 +46,7 @@ Spree.ready(function ($) {
       var inputValue = parseInt($(input).val(), 10)
 
       $(input).val(inputValue + 1)
+      clearInvalidCouponField()
       formUpdateCart.submit()
     })
     $('form#update-cart button#shopping-cart-coupon-code-button').off('click').on('click', function(event) {
