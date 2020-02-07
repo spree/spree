@@ -1,8 +1,9 @@
 module Spree
   module Variants
     class OptionTypesPresenter
-      def initialize(option_types)
+      def initialize(option_types, variants)
         @option_types = option_types
+        @variant_ids = variants.map(&:id)
       end
 
       def default_variant
@@ -43,7 +44,7 @@ module Spree
 
       def find_variant_data(&block)
         option_types.first.option_values.each do |option_value|
-          variant = option_value.variants.find(&block)
+          variant = option_value.variants.where(id: @variant_ids).find(&block)
 
           return { variant: variant, option_value: option_value } if variant
         end
@@ -53,7 +54,7 @@ module Spree
 
       def find_first_variant_data
         option_value = option_types.first.option_values.first
-        variant = option_value.variants.first
+        variant = option_value.variants.where(id: @variant_ids).first
 
         { variant: variant, option_value: option_value }
       end
@@ -64,7 +65,7 @@ module Spree
             id: option_value.id,
             position: option_value.position,
             presentation: option_value.presentation,
-            variant_id: option_value.variants.first.id,
+            variant_id: option_value.variants.where(id: @variant_ids).first.id,
             is_default: option_value == default_variant_data[:option_value]
           }
         end
