@@ -2,7 +2,7 @@
   <ul class="nav h-100 main-nav-bar">
     <% spree_navigation_data.each do |root| %>
       <li class="navbar main-nav-bar-dropdown main-nav-bar-category">
-        <%= link_to root[:title], root[:url], class: 'p-2 main-nav-bar-item main-nav-bar-category-button' %>
+        <%= link_to root[:title], root[:url], class: "p-2 main-nav-bar-item main-nav-bar-category-button" %>
         <% if root[:items].present? || root[:promo_banners].present? %>
           <div class="w-100 shadow main-nav-bar-category-dropdown">
             <div class="container p-0 d-flex justify-content-xl-around mx-auto">
@@ -17,7 +17,7 @@
                     <ul class="pl-0">
                       <% root[:items].each do |item| %>
                         <li>
-                          <%= link_to item[:title], item[:url], class: 'text-uppercase' %>
+                          <%= link_to item[:title], item[:url], class: "text-uppercase main-nav-bar-category-links" %>
                         </li>
                       <% end %>
                     </ul>
@@ -26,7 +26,7 @@
                 <% if root[:promo_banners].present? %>
                   <% root[:promo_banners].each do |promo_banner| %>
                     <%= link_to promo_banner[:url] do %>
-                      <div class="category-image category-image text-center mx-3">
+                      <div class="category-image text-center mx-3">
                         <%= main_nav_image(promo_banner[:image], promo_banner[:title]) %>
                         <div class="category-box">
                           <div class="category-box-small-text">

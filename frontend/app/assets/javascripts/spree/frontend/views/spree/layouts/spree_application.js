@@ -32,4 +32,27 @@ Spree.ready(function ($) {
       }
     }
   };
+
+  var navBarCategoryLinks = document.getElementsByClassName('main-nav-bar-category-links')
+  var navBarCategoryButtons = document.getElementsByClassName('main-nav-bar-category-button')
+  var navBarCategoryImages = document.getElementsByClassName('category-image')
+  var navBarAccountIcon = [document.getElementById('account-button')]
+  var navBarCartIcon = [document.getElementById('link-to-cart')]
+  var navbarLinks = [
+    navBarCategoryLinks,
+    navBarCategoryButtons,
+    navBarCategoryImages,
+    navBarAccountIcon,
+    navBarCartIcon
+  ]
+
+  $.each(navbarLinks, function(index, navbarElements) {
+    $.each(navbarElements, function(index, navBarCategoryLink) {
+      navBarCategoryLink.addEventListener('click', function () {
+        document.getElementById('overlay').classList.remove('shown');
+        document.getElementById('search-dropdown').classList.remove('shown');
+        document.querySelector('.header-spree').classList.remove('above-overlay')
+      });
+    });
+  });
 });
