@@ -7,6 +7,7 @@ SimpleCov.start do
   add_group 'Mailers', 'app/mailers'
   add_group 'Models', 'app/models'
   add_group 'Views', 'app/views'
+  add_group 'Services', 'app/services'
   add_group 'Libraries', 'lib/spree'
 end
 
@@ -28,7 +29,15 @@ require 'spree/testing_support/authorization_helpers'
 require 'spree/testing_support/capybara_ext'
 require 'spree/testing_support/controller_requests'
 require 'spree/testing_support/factories'
+require 'spree/testing_support/preferences'
+require 'spree/testing_support/flash'
 require 'spree/testing_support/url_helpers'
+require 'spree/testing_support/order_walkthrough'
+require 'spree/testing_support/caching'
+
+# API v2 helpers
+require 'spree/api/testing_support/v2/base'
+require 'spree/api/testing_support/v2/current_order'
 
 RSpec.configure do |config|
   # Infer an example group's spec type from the file location.
@@ -63,4 +72,28 @@ RSpec.configure do |config|
 
   config.fail_fast = ENV['FAIL_FAST'] || false
   config.order = 'random'
+
+  config.before :each do
+    Rails.cache.clear
+    reset_spree_preferences do |config|
+      # config.my_custom_preference = 10
+    end
+  end
+
+  config.before(:each, type: :controller) do
+    @request.env['devise.mapping'] = Devise.mappings[:spree_user]
+  end
+
+  config.include Spree::TestingSupport::Preferences
+  config.include Spree::TestingSupport::ControllerRequests, type: :controller
+  config.include Spree::TestingSupport::Flash
+
+  config.include Devise::TestHelpers, type: :controller if defined?(Devise)
+
+  if defined?(Warden)
+    config.include Warden::Test::Helpers
+    config.before :suite do
+      Warden.test_mode!
+    end
+  end
 end
