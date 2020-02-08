@@ -1,7 +1,7 @@
 <% cache base_cache_key + [available_option_types, permitted_params, @taxon] do %>
   <div id="plp-filters-accordion" class="d-none d-lg-block col-lg-3 pr-5 position-sticky h-100 plp-filters" data-hook="taxon_sidebar_navigation">
     <% @available_option_types.each do |option_type| %>
-      <div class="w-100 py-2 card plp-filters-card">
+      <div class="w-100 card plp-filters-card">
         <% ot_downcase_name = option_type.filter_param %>
         <% option_type_name = ot_downcase_name.titleize %>
 
@@ -29,7 +29,7 @@
       </div>
     <% end %>
 
-    <div class="w-100 py-2 card plp-filters-card">
+    <div class="w-100 card plp-filters-card">
       <div class="card-header <%= 'collapsed' if params[:price].blank? %> px-1 plp-filters-card-header" id="filtersPrice" data-toggle="collapse" data-target="#collapseFilterPrice" aria-expanded="false" aria-controls="collapseFilterPrice" role="heading" aria-level="2">
         <%= Spree.t('plp.price') %>
         <%= icon(name: 'plus',
