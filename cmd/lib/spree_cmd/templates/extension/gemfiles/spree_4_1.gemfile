@@ -3,8 +3,7 @@
 source 'https://rubygems.org'
 
 gem 'rails-controller-testing'
-gem 'spree_core', '~> 4.1.0.rc2'
-gem 'spree_backend', '~> 4.1.0.rc2'
+gem 'spree', '~> 4.1.0.rc2'
 gem 'spree_auth_devise', '~> 4.1.0.rc1'
 
 gemspec path: '../'
