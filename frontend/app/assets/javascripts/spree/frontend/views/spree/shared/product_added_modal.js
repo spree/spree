@@ -12,7 +12,7 @@ Spree.showProductAddedModal = function(product, variant) {
   var $modal = $(modalSelector)
 
   $modal.find(nameSelector).text(name)
-  $modal.find(priceSelector).text(price)
+  $modal.find(priceSelector).html(price)
 
   if (leadImage !== null) {
     $modal

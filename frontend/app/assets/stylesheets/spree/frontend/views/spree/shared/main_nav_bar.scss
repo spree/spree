@@ -67,6 +67,7 @@
       display: none;
       background: $meganav-background;
       background-clip: padding-box;
+      border-top: 1px solid $global-border-style;
 
       form {
         input#keywords {
@@ -92,7 +93,7 @@
       }
 
       @include media-breakpoint-up(xl) {
-        top: $spree-header-desktop-height;
+        top: $spree-header-desktop-height - 1px;
       }
     }
   }

@@ -635,7 +635,7 @@ en:
     cart_page:
       add_promo_code: ADD PROMO CODE
       checkout: checkout
-      empty_info: 'Your cart is empty.<br />There are no items in your cart.'
+      empty_info: 'Your cart is empty.'
       header: Your shopping bag
       product: product
       quantity: quantity
