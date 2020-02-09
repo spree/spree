@@ -15,10 +15,6 @@
       display: none;
       overflow: hidden;
 
-      .modal-dialog--zoom & {
-        padding-bottom: $thumbnails-carousel-single-height-zoom;
-      }
-
       img {
         border: 2px solid transparent;
         &.selected {
