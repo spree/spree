@@ -20,6 +20,11 @@ describe 'viewing products', type: :feature, inaccessible: true do
     expect(page).to have_content('Superman T-Shirt')
   end
 
+  it 'can visit root taxon' do
+    visit '/t/category'
+    expect(page).to have_content('Category')
+  end
+
   it 'does not show nested taxons with a search' do
     visit '/products?keywords=shirt'
 
