@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe Spree::Graphql::GraphqlController, type: :controller do
-  #TODO Add specs for failed token and access denied
+  # TODO: [SGQL-1] Add specs for failed token and access denied
   context 'JWT token access' do
     context 'login' do
       let!(:user) { create :user }
@@ -32,6 +32,4 @@ describe Spree::Graphql::GraphqlController, type: :controller do
       end
     end
   end
-
-
 end
