@@ -206,7 +206,7 @@ module Spree
     end
 
     def available_option_types
-      @available_option_types ||= Rails.cache.fetch('available-option-types', expires_in: 3.minutes) do
+      @available_option_types ||= Rails.cache.fetch("available-option-types/#{Spree::OptionType.maximum(:updated_at)&.utc&.to_i}") do
         Spree::OptionType.includes(:option_values).to_a
       end
       @available_option_types
