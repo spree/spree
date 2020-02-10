@@ -11,7 +11,7 @@ module Spree
       return '' if current_page?('/') || taxon.nil?
 
       separator = raw(separator)
-      crumbs = [content_tag(:li, content_tag(:span, link_to(content_tag(:span, Spree.t(:home), itemprop: 'name'), spree.root_path, itemprop: 'url') + separator, itemprop: 'item'), itemscope: 'itemscope', itemtype: 'https://schema.org/ListItem', itemprop: 'itemListElement', itemid: spree.root_path,  class: 'breadcrumb-item', position: 0)]
+      crumbs = [content_tag(:li, content_tag(:span, link_to(content_tag(:span, Spree.t(:home), itemprop: 'name'), spree.root_path, itemprop: 'url') + separator, itemprop: 'item'), itemscope: 'itemscope', itemtype: 'https://schema.org/ListItem', itemprop: 'itemListElement', itemid: spree.root_path, class: 'breadcrumb-item', position: 0)]
       if taxon
         ancestors = taxon.ancestors.where.not(parent_id: nil)
         crumbs << ancestors.each_with_index.map { |ancestor, index| content_tag(:li, content_tag(:span, link_to(content_tag(:span, ancestor.name, itemprop: 'name'), seo_url(ancestor, params: permitted_product_params), itemprop: 'url') + separator, itemprop: 'item'), itemscope: 'itemscope', itemtype: 'https://schema.org/ListItem', itemprop: 'itemListElement', itemid: seo_url(ancestor, params: permitted_product_params), class: 'breadcrumb-item', position: index + 1) }
