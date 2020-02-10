@@ -12,7 +12,7 @@ describe 'User editing saved address during checkout', type: :feature, js: true 
     end
     expect(page).to have_current_path spree.edit_address_path(address)
     new_street = FFaker::Address.street_address
-    fill_in I18n.t('activerecord.attributes.spree/address.address1'), with: new_street
+    fill_in "#{I18n.t('activerecord.attributes.spree/address.address1')} #{Spree.t(:required)}", with: new_street
     click_button 'Update'
     user.reload
     refresh
@@ -30,7 +30,7 @@ describe 'User editing saved address during checkout', type: :feature, js: true 
     end
     expect(page).to have_current_path spree.edit_address_path(address)
     new_street = FFaker::Address.street_address
-    fill_in I18n.t('activerecord.attributes.spree/address.address1'), with: new_street
+    fill_in "#{I18n.t('activerecord.attributes.spree/address.address1')} #{Spree.t(:required)}", with: new_street
     click_button 'Update'
     user.reload
     refresh

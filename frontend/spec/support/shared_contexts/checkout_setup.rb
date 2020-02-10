@@ -40,14 +40,14 @@ shared_context 'proceed to payment step' do
       click_link 'Checkout'
     end
     fill_in 'order_email', with: 'spree@example.com'
-    fill_in 'First Name', with: 'John'
-    fill_in 'Last Name', with: 'Smith'
-    fill_in 'Address', with: '1 John Street'
-    fill_in 'City', with: 'City of John'
-    fill_in 'Zip Code', with: '01337'
+    fill_in 'First Name *', with: 'John'
+    fill_in 'Last Name *', with: 'Smith'
+    fill_in 'Address *', with: '1 John Street'
+    fill_in 'City *', with: 'City of John'
+    fill_in 'Zip Code *', with: '01337'
     select country.name, from: 'order[bill_address_attributes][country_id]'
     select state.name, from: 'order[bill_address_attributes][state_id]'
-    fill_in 'Phone', with: '555-555-5555'
+    fill_in 'Phone *', with: '555-555-5555'
 
     # To shipping method screen
     click_button 'Save and Continue'
