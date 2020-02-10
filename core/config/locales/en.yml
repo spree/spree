@@ -1350,6 +1350,7 @@ en:
     rename: Rename
     report: Report
     reports: Reports
+    required: '*'
     required_fields: required fields
     resellable: Resellable
     resend: Resend

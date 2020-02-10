@@ -25,13 +25,13 @@ shared_context 'checkout address book' do
   private
 
   def should_have_address_fields
-    expect(page).to have_field('First Name')
-    expect(page).to have_field('Last Name')
-    expect(page).to have_field(I18n.t('activerecord.attributes.spree/address.address1'))
-    expect(page).to have_field('City')
+    expect(page).to have_field('First Name *')
+    expect(page).to have_field('Last Name *')
+    expect(page).to have_field("#{I18n.t('activerecord.attributes.spree/address.address1')} #{Spree.t(:required)}")
+    expect(page).to have_field('City *')
     expect(page).to have_field(id: /order_(bill|ship)_address_attributes_country_id/)
-    expect(page).to have_field(I18n.t('activerecord.attributes.spree/address.zipcode'))
-    expect(page).to have_field(I18n.t('activerecord.attributes.spree/address.phone'))
+    expect(page).to have_field("#{I18n.t('activerecord.attributes.spree/address.zipcode')} #{Spree.t(:required)}")
+    expect(page).to have_field("#{I18n.t('activerecord.attributes.spree/address.phone')} #{Spree.t(:required)}")
   end
 
   def complete_checkout(address)
@@ -43,15 +43,15 @@ shared_context 'checkout address book' do
   end
 
   def fill_in_address(address, type = :bill)
-    fill_in 'First Name', with: address.firstname
-    fill_in 'Last Name', with: address.lastname
+    fill_in 'First Name *', with: address.firstname
+    fill_in 'Last Name *', with: address.lastname
     fill_in 'Company', with: address.company if Spree::Config[:company]
-    fill_in I18n.t('activerecord.attributes.spree/address.address1'), with: address.address1
+    fill_in "#{I18n.t('activerecord.attributes.spree/address.address1')} #{Spree.t(:required)}", with: address.address1
     fill_in I18n.t('activerecord.attributes.spree/address.address2'), with: address.address2
     select address.state.name, from: "order_#{type}_address_attributes_state_id"
-    fill_in 'City', with: address.city
-    fill_in I18n.t('activerecord.attributes.spree/address.zipcode'), with: address.zipcode
-    fill_in I18n.t('activerecord.attributes.spree/address.phone'), with: address.phone
+    fill_in 'City *', with: address.city
+    fill_in "#{I18n.t('activerecord.attributes.spree/address.zipcode')} #{Spree.t(:required)}", with: address.zipcode
+    fill_in "#{I18n.t('activerecord.attributes.spree/address.phone')} #{Spree.t(:required)}", with: address.phone
   end
 
   def fill_in_credit_card_info(address)
