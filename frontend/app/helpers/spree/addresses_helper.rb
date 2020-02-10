@@ -12,7 +12,7 @@ module Spree
           form.text_field(method,
                           class: [is_required ? 'required' : nil, 'spree-flat-input'].compact,
                           required: is_required,
-                          placeholder: (is_required ? "#{method_name} #{required}" : method_name))
+                          placeholder: is_required ? "#{method_name} #{required}" : method_name)
         end
       end
     end
