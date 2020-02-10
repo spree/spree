@@ -1,4 +1,4 @@
-Spree.ready(function() {
+$(document).ready(function() {
   var searchIcons = document.querySelectorAll('#nav-bar .search-icons')[0]
   var searchDropdown = document.getElementById('search-dropdown')
 
