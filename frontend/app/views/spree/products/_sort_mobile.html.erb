@@ -7,8 +7,8 @@
   </div>
   <div class="plp-overlay-header-border"></div>
   <ul class="pt-1 plp-overlay-ul">
-    <li class="p-3 plp-overlay-ul-li<%= '--active' if params[:sort_by] == 'default' || params[:sort_by].blank? %>">
-      <a href="<%= url_for(permitted_params.merge(sort_by: 'default')) %>" >
+    <li class="p-3 plp-overlay-ul-li<%= '--active' if params[:sort_by].blank? %>">
+      <a href="<%= url_for(permitted_params.merge(sort_by: nil)) %>" >
         <div class="plp-empty-dot">
           <div class="filled-dot"></div>
         </div>
