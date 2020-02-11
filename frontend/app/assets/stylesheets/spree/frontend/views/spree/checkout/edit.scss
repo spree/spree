@@ -1,4 +1,7 @@
 .checkout {
+  &-summary-button {
+    top: 356px;
+  }
   &-header {
     margin: 0;
     &-link {
@@ -369,6 +372,9 @@
       }
       @include media-breakpoint-up(lg) {
         padding: 35px 40px;
+      }
+      &-top {
+        top: 100px;
       }
       &-header {
         font-size: font-px-to-rem(16px);

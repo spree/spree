@@ -20,9 +20,9 @@
       </div>
 
       <% unless @order.confirm? %>
-        <div id="checkout-summary" class="col-md-12 col-lg-auto" data-hook="checkout_summary_box">
-          <%= render partial: 'summary', locals: { order: @order } %>
-          <div data-hook="buttons">
+        <div id="checkout-summary" class="col-md-12 col-lg-auto position-sticky h-100" data-hook="checkout_summary_box">
+          <%= render partial: 'summary', locals: { order: @order, classes: 'position-sticky checkout-content-summary-top' } %>
+          <div data-hook="buttons" class="position-sticky checkout-summary-button">
             <% submit_label_key = @order.confirm? ? :place_order : :save_and_continue %>
             <%= submit_tag Spree.t(submit_label_key), class: 'btn btn-primary text-uppercase font-weight-bold w-100 checkout-content-save-continue-button' %>
           </div>
