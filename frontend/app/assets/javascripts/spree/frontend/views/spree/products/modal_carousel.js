@@ -10,10 +10,17 @@ Spree.ready(function($) {
   }
 
   var selectModalThumbnail = function(imgIndex) {
-    var $modalThumbnails = $('#productModalThumbnailsCarousel > div > div.carousel-item.product-thumbnails-carousel-item.active > div > div')
-    var $modalThumbnailsChildren = $modalThumbnails.children('[data-variant-id]')
+    var carouselPerPage = $('#productModalThumbnailsCarousel').data('product-carousel-per-page')
+    var carouselItems = $('#productModalThumbnailsCarousel > div > div.carousel-item.product-thumbnails-carousel-item')
+    var carouselItem = carouselItems[Math.floor(imgIndex / carouselPerPage)]
+
+    carouselItems.removeClass('active')
+    $(carouselItems).find('img').removeClass('selected')
+    $(carouselItem).addClass('active')
+
+    var $modalThumbnailsChildren = $(carouselItem).find('> div > div').children('[data-variant-id]')
     if ($modalThumbnailsChildren.length > 0) {
-      $($modalThumbnailsChildren.get(imgIndex).getElementsByTagName('img')[0]).addClass('selected')
+      $($modalThumbnailsChildren.get(imgIndex % carouselPerPage).getElementsByTagName('img')[0]).addClass('selected')
     }
   }
 
