@@ -32,7 +32,7 @@ module Spree
                                          Time.zone.now.beginning_of_month
                                        else
                                          begin
-                                           Time.zone.parse(params[:q][:completed_at_gt]).beginning_of_day
+                                           Time.zone.strptime(params[:q][:completed_at_gt], Spree.t('date_picker.format')).beginning_of_day
                                          rescue StandardError
                                            Time.zone.now.beginning_of_month
                                          end
@@ -40,7 +40,7 @@ module Spree
 
         if params[:q] && !params[:q][:completed_at_lt].blank?
           params[:q][:completed_at_lt] = begin
-                                           Time.zone.parse(params[:q][:completed_at_lt]).end_of_day
+                                           Time.zone.strptime(params[:q][:completed_at_lt], Spree.t('date_picker.format')).end_of_day
                                          rescue StandardError
                                            ''
                                          end
