@@ -10,13 +10,14 @@ module Spree
     end
 
     def product_carousel
-      if @products.any?
-        render template: 'spree/taxons/product_carousel', layout: false
-      else
-        head :no_content
+      if stale?(etag: carousel_etag, last_modified: last_modified, public: true)
+        load_products
+        if @products.any?
+          render template: 'spree/taxons/product_carousel', layout: false
+        else
+          head :no_content
+        end
       end
-
-      fresh_when etag: "product-carousel/#{@taxon.cache_key_with_version}", last_modified: @taxon.updated_at.utc, public: true
     end
 
     private
@@ -32,6 +33,17 @@ module Spree
     def load_products
       @searcher = build_searcher(params.merge(taxon: @taxon.id, include_images: true))
       @products = @searcher.retrieve_products
+    end
+
+    def carousel_etag
+      [
+        store_etag,
+        @taxon
+      ]
+    end
+
+    def last_modified
+      @taxon.updated_at&.utc
     end
   end
 end
