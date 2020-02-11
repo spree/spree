@@ -164,6 +164,10 @@ describe Spree::InventoryUnit, type: :model do
       it "returns it's associated return_item" do
         expect(subject).to eq return_item
       end
+
+      it 'connects return_authorizations' do
+        expect(inventory_unit.return_authorizations).to eq [return_item.return_authorization]
+      end 
     end
 
     context 'no associated return item' do
