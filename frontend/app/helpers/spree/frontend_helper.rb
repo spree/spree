@@ -206,8 +206,16 @@ module Spree
       available_option_types.map(&:filter_param).concat(static_filters)
     end
 
+    def filtering_params_cache_key
+      params.permit(*filtering_params)&.reject { |_, v| v.blank? }&.to_s
+    end
+
+    def available_option_types_cache_key
+      @available_option_types_cache_key ||= Spree::OptionType.maximum(:updated_at)&.utc&.to_i
+    end
+
     def available_option_types
-      @available_option_types ||= Rails.cache.fetch("available-option-types/#{Spree::OptionType.maximum(:updated_at)&.utc&.to_i}") do
+      @available_option_types ||= Rails.cache.fetch("available-option-types/#{available_option_types_cache_key}") do
         Spree::OptionType.includes(:option_values).to_a
       end
       @available_option_types

@@ -43,8 +43,8 @@ module Spree
       [
         store_etag,
         @taxon,
-        available_option_types.map(&:updated_at)&.max&.utc&.to_i,
-        params.permit(*filtering_params)&.reject{|_, v| v.blank? }&.to_s
+        available_option_types_cache_key,
+        filtering_params_cache_key
       ]
     end
 

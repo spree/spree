@@ -1,6 +1,7 @@
 module Spree
   class ProductsController < Spree::StoreController
     include Spree::ProductsHelper
+    include Spree::FrontendHelper
 
     before_action :load_product, only: [:show, :related]
     before_action :load_taxon, only: :index
@@ -10,6 +11,17 @@ module Spree
     def index
       @searcher = build_searcher(params.merge(include_images: true))
       @products = @searcher.retrieve_products
+
+      last_modified = @products.maximum(:updated_at)&.utc if @products.respond_to?(:maximum)
+
+      etag = [
+        store_etag,
+        last_modified&.to_i,
+        available_option_types_cache_key,
+        filtering_params_cache_key
+      ]
+
+      fresh_when etag: etag, last_modified: last_modified, public: true
     end
 
     def show
