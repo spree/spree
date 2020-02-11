@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-context Spree::Graphql::GraphqlController, type: :controller do
+context Spree::GraphqlController, type: :controller do
   context 'queries' do
     context 'fetch for non-admin' do
       let(:user) { create :user }

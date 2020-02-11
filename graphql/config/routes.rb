@@ -1,6 +1,4 @@
 Spree::Core::Engine.add_routes do
-  namespace :graphql do
-    post :graphql, to: 'graphql#create'
-    post '/auth/login', to: 'graphql#login'
-  end
+  resource :graphql, only: :create, controller: :graphql
+  resource :jwt, only: :create, controller: :jwt
 end

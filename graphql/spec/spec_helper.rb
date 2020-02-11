@@ -34,6 +34,7 @@ Dir[File.dirname(__FILE__) + '/support/**/*.rb'].each { |f| require f }
 require 'spree/testing_support/factories'
 require 'spree/testing_support/preferences'
 require 'spree/testing_support/image_helpers'
+require 'spree/testing_support/url_helpers'
 
 RSpec.configure do |config|
   config.backtrace_exclusion_patterns = [/gems\/activesupport/, /gems\/actionpack/, /gems\/rspec/]
@@ -47,6 +48,7 @@ RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
   config.include Spree::TestingSupport::Preferences, type: :controller
   config.include Spree::TestingSupport::ImageHelpers
+  config.include Spree::TestingSupport::UrlHelpers
 
   config.order = :random
   Kernel.srand config.seed
