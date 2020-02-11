@@ -1,22 +1,27 @@
 module Spree
   class TaxonsController < Spree::StoreController
+    include Spree::FrontendHelper
     helper 'spree/products'
 
-    before_action :load_taxon, :load_products
+    before_action :load_taxon
 
     respond_to :html
 
     def show
+      if stale?(etag: etag, last_modified: last_modified, public: true)
+        load_products
+      end
     end
 
     def product_carousel
-      if @products.any?
-        render template: 'spree/taxons/product_carousel', layout: false
-      else
-        head :no_content
+      if stale?(etag: carousel_etag, last_modified: last_modified, public: true)
+        load_products
+        if @products.any?
+          render template: 'spree/taxons/product_carousel', layout: false
+        else
+          head :no_content
+        end
       end
-
-      fresh_when etag: "product-carousel/#{@taxon.cache_key_with_version}", last_modified: @taxon.updated_at.utc, public: true
     end
 
     private
@@ -32,6 +37,26 @@ module Spree
     def load_products
       @searcher = build_searcher(params.merge(taxon: @taxon.id, include_images: true))
       @products = @searcher.retrieve_products
+    end
+
+    def etag
+      [
+        store_etag,
+        @taxon,
+        available_option_types.map(&:updated_at)&.max&.utc&.to_i,
+        params.permit(*filtering_params)&.reject{|_, v| v.blank? }&.to_s
+      ]
+    end
+
+    def carousel_etag
+      [
+        store_etag,
+        @taxon
+      ]
+    end
+
+    def last_modified
+      @taxon.updated_at&.utc
     end
   end
 end
