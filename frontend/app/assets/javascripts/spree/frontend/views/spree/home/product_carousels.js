@@ -1,5 +1,27 @@
 //= require spree/frontend/viewport
 
+Spree.fetchProductCarousel = function (taxonId, htmlContainer) {
+  return $.ajax({
+    url: Spree.routes.product_carousel(taxonId)
+  }).done(function (data) {
+    htmlContainer.html(data);
+    htmlContainer.find('.carousel').carouselBootstrap4()
+  })
+}
+
+Spree.loadCarousel = function (element, div) {
+  var container = $(element)
+  var productCarousel = $(div)
+  var carouselLoaded = productCarousel.attr('data-product-carousel-loaded')
+
+  if (container.length && !carouselLoaded && container.isInViewport()) {
+    var taxonId = productCarousel.attr('data-product-carousel-taxon-id')
+    productCarousel.attr('data-product-carousel-loaded', 'true')
+
+    Spree.fetchProductCarousel(taxonId, container)
+  }
+}
+
 document.addEventListener('turbolinks:load', function () {
   var homePage = $('body#home')
 
@@ -14,25 +36,3 @@ document.addEventListener('turbolinks:load', function () {
     })
   }
 })
-
-Spree.loadCarousel = function (element, div) {
-  var container = $(element)
-  var productCarousel = $(div)
-  var carouselLoaded = productCarousel.attr('data-product-carousel-loaded')
-  debugger
-  if (container.length && !carouselLoaded && container.isInViewport()) {
-    var taxonId = productCarousel.attr('data-product-carousel-taxon-id')
-    productCarousel.attr('data-product-carousel-loaded', 'true')
-
-    Spree.fetchProductCarousel(taxonId, container)
-  }
-}
-
-Spree.fetchProductCarousel = function (taxonId, htmlContainer) {
-  return $.ajax({
-    url: Spree.routes.product_carousel(taxonId)
-  }).done(function (data) {
-    htmlContainer.html(data);
-    htmlContainer.find('.carousel').carouselBootstrap4()
-  })
-}
