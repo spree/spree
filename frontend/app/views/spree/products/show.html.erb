@@ -1,6 +1,10 @@
 <% @body_id = 'product-details' %>
 
-<div class="container">
+<div class="container d-none d-xl-block">
+  <%= spree_breadcrumbs(@taxon, '', @product, true) %>
+</div>
+
+<div class="container d-xl-none">
   <%= spree_breadcrumbs(@taxon, '', @product) %>
 </div>
 
