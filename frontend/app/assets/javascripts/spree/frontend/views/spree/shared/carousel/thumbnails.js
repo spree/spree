@@ -22,15 +22,15 @@ function ThumbnailsCarousel($, carousel) {
     self.selectImage(event, $(event.target))
   }
 
-  this.handleThumbnailsReady = function(_event) {
+  this.handleThumbnailsReady = function(event) {
     var image = carousel.find(VISIBLE_IMAGE_SELECTOR).eq(0)
 
-    self.selectImage(_event, image)
+    self.selectImage(event, image)
   }
 
-  this.handleSingleCarouselSlide = function(_event, imageIndex) {
+  this.handleSingleCarouselSlide = function(event, imageIndex) {
     var image;
-    if (_event.target.id === 'productModalCarousel') {
+    if (event.target.id === 'productModalCarousel') {
       image = modalCarousel.find('[data-product-carousel-to-slide=' + imageIndex + '] img')
       self.unselectModalImages()
     } else {
@@ -41,8 +41,8 @@ function ThumbnailsCarousel($, carousel) {
     image.addClass(SELECTED_IMAGE_CLASS)
   }
 
-  this.selectImage = function(_event, image) {
-    var clickedElement = _event.target
+  this.selectImage = function(event, image) {
+    var clickedElement = event.target
     var productModalThumbnailClicked = $(clickedElement).closest('.product-thumbnails-carousel').is(`#${modalCarouselId}`)
 
     if (clickedElement.id === modalCarouselId || productModalThumbnailClicked) {
@@ -62,7 +62,7 @@ function ThumbnailsCarousel($, carousel) {
     modalCarousel.find('img').removeClass(SELECTED_IMAGE_CLASS)
   }
 
-  this.handleZoomClick = function(_event) {
+  this.handleZoomClick = function(event) {
     var selectedImageId = self.getSelectedImageId()
     var image = modalCarousel.find(VISIBLE_IMAGE_SELECTOR).eq(selectedImageId)
     self.unselectModalImages()
