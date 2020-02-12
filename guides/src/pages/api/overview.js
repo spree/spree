@@ -33,7 +33,7 @@ const IndexPage = () => (
           </Section>
         </div>
 
-        <Section path="/api/" title="Legacy REST API v1" className="mt2-ns tc">
+        <Section path="/api/" title="REST API v1" className="mt2-ns tc">
           Older REST API that requires API key authentication for access.
         </Section>
       </div>
