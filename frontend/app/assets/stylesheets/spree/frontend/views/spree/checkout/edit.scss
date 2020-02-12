@@ -485,7 +485,11 @@
         color: $primary-color;
       }
     }
-
+    #checkout-summary-sticky {
+      @include media-breakpoint-up(lg) {
+        top: $spree-header-desktop-height + 15px;
+      }
+    }
     #checkout-summary {
       @include media-breakpoint-up(sm) {
         border: none;
