@@ -864,6 +864,7 @@ en:
     guest_user_account: Checkout as a Guest
     has_no_shipped_units: has no shipped units
     height: Height
+    hide_from_subcategories_nav: Hide from subcategories navigation
     home: Home
     homepage:
       bestsellers: BESTSELLERS
