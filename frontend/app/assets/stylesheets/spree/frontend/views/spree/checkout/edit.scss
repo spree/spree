@@ -1,6 +1,17 @@
 .checkout {
-  &-summary-button {
-    top: 356px;
+  &-summary {
+    &-button {
+      @include media-breakpoint-up(lg) {
+        top: 356px;
+        position: sticky;
+      }
+    }
+    &-container {
+      @include media-breakpoint-up(lg) {
+        position: sticky;
+        height: 100%;
+      }
+    }
   }
   &-header {
     margin: 0;
@@ -372,9 +383,11 @@
       }
       @include media-breakpoint-up(lg) {
         padding: 35px 40px;
-      }
-      &-top {
-        top: 100px;
+
+        &-position {
+            position: sticky;
+            top: 100px;
+        }
       }
       &-header {
         font-size: font-px-to-rem(16px);
