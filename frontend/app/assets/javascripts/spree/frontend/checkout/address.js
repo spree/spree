@@ -129,13 +129,15 @@ Spree.ready(function ($) {
 })
 
 $(document).ready(function() {
-  window.addEventListener('scroll', function() {
-    var summaryContent = document.getElementsByClassName('checkout-content-summary-position')[0]
+  var summaryContent = document.getElementsByClassName('checkout-content-summary-position')[0]
 
-    if (window.scrollY > 500) {
-      summaryContent.classList.add('checkout-content-summary-extra-margin')
-    } else {
-      summaryContent.classList.remove('checkout-content-summary-extra-margin')
-    }
-  })
+  if (summaryContent !== undefined) {
+    window.addEventListener('scroll', function() {
+      if (window.scrollY > 500) {
+        summaryContent.classList.add('checkout-content-summary-extra-margin')
+      } else {
+        summaryContent.classList.remove('checkout-content-summary-extra-margin')
+      }
+    })
+  }
 })
