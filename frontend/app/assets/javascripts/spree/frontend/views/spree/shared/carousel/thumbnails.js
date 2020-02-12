@@ -3,7 +3,7 @@ function ThumbnailsCarousel($, carousel) {
   var SELECTED_IMAGE_CLASS = 'selected'
   var self = this
   var modalCarouselId = 'productModalThumbnailsCarousel'
-  var modalCarousel = $(`#${modalCarouselId}`)
+  var modalCarousel = $('#' + modalCarouselId)
   var zoomClickObject = $('.product-carousel-overlay-modal-opener')
 
   this.constructor = function() {
@@ -43,7 +43,7 @@ function ThumbnailsCarousel($, carousel) {
 
   this.selectImage = function(event, image) {
     var clickedElement = event.target
-    var productModalThumbnailClicked = $(clickedElement).closest('.product-thumbnails-carousel').is(`#${modalCarouselId}`)
+    var productModalThumbnailClicked = $(clickedElement).closest('.product-thumbnails-carousel').is('#' + modalCarouselId)
 
     if (clickedElement.id === modalCarouselId || productModalThumbnailClicked) {
       this.unselectModalImages()
