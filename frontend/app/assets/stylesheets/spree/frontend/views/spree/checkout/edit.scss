@@ -388,6 +388,9 @@
             position: sticky;
             top: 100px;
         }
+        &-extra-margin {
+          margin-bottom: 195px;
+        }
       }
       &-header {
         font-size: font-px-to-rem(16px);
