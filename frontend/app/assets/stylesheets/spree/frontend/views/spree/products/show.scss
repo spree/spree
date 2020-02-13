@@ -165,7 +165,8 @@
 }
 
 .breadcrumb-item:last-of-type {
-  @include media-breakpoint-down(md) {
-    display: none;
+  display: none;
+  @include media-breakpoint-up(md) {
+    display: block;
   }
 }
