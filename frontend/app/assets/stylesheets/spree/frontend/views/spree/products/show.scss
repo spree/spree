@@ -163,3 +163,9 @@
     line-height: font-px-to-rem(26px);
   }
 }
+
+.breadcrumb-item:last-of-type {
+  @include media-breakpoint-down(md) {
+    display: none;
+  }
+}

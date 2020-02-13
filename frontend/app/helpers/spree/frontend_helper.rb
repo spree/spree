@@ -7,7 +7,7 @@ module Spree
       @body_class
     end
 
-    def spree_breadcrumbs(taxon, separator = '', product = nil, display_in_desktop = false)
+    def spree_breadcrumbs(taxon, separator = '', product = nil)
       return '' if current_page?('/') || taxon.nil?
 
       separator = raw(separator)
@@ -16,7 +16,7 @@ module Spree
         ancestors = taxon.ancestors.where.not(parent_id: nil)
         crumbs << ancestors.each_with_index.map { |ancestor, index| content_tag(:li, content_tag(:span, link_to(content_tag(:span, ancestor.name, itemprop: 'name'), seo_url(ancestor, params: permitted_product_params), itemprop: 'url', itemid: seo_url(ancestor, params: permitted_product_params), position: index + 1) + separator, itemprop: 'item'), itemscope: 'itemscope', itemtype: 'https://schema.org/ListItem', itemprop: 'itemListElement', itemid: seo_url(ancestor, params: permitted_product_params), class: 'breadcrumb-item', position: index + 1) }
         crumbs << content_tag(:li, content_tag(:span, link_to(content_tag(:span, taxon.name, itemprop: 'name'), seo_url(taxon, params: permitted_product_params), itemprop: 'url', itemid: seo_url(taxon, params: permitted_product_params), position: ancestors.size + 1) + separator, itemprop: 'item'), class: 'breadcrumb-item', itemscope: 'itemscope', itemtype: 'https://schema.org/ListItem', itemprop: 'itemListElement', itemid: seo_url(taxon, params: permitted_product_params), position: ancestors.size + 1)
-        content_tag(:li, content_tag(:span, content_tag(:span, product.name) + separator, itemid: spree.product_path(product, taxon_id: taxon.try(:id)), position: ancestors.size + 2), class: 'breadcrumb-item', itemid: spree.product_path(product, taxon_id: taxon.try(:id)), position: ancestors.size + 2) if product && display_in_desktop
+        crumbs << content_tag(:li, content_tag(:span, content_tag(:span, product.name) + separator, itemid: spree.product_path(product, taxon_id: taxon.try(:id)), position: ancestors.size + 2), class: 'breadcrumb-item', itemid: spree.product_path(product, taxon_id: taxon.try(:id)), position: ancestors.size + 2) if product
       else
         crumbs << content_tag(:li, content_tag(:span, Spree.t(:products), itemprop: 'item'), class: 'active', itemscope: 'itemscope', itemtype: 'https://schema.org/ListItem', itemprop: 'itemListElement', position: 1)
       end
