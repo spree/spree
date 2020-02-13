@@ -36,7 +36,7 @@ module Spree
         def extended_base_scope
           base_scope = Spree::Product.spree_base_scopes.active
           base_scope = get_products_conditions_for(base_scope, keywords)
-          base_scope = Spree::Products::Find.new(
+          base_scope = Spree::Dependencies.products_finder.constantize.new(
             scope: base_scope,
             params: {
               filter: {
