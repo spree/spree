@@ -22,17 +22,20 @@ Spree.loadCarousel = function (element, div) {
   }
 }
 
+Spree.loadsCarouselElements = function () {
+  $('div[data-product-carousel').each(function (_index, element) { Spree.loadCarousel(element, this) })
+}
+
 document.addEventListener('turbolinks:load', function () {
   var homePage = $('body#home')
 
   if (homePage.length) {
-    var carousels = $('div[data-product-carousel')
     // load Carousels straight away if they are in the viewport
-    carousels.each(function (_index, element) { Spree.loadCarousel(element, this) })
+    Spree.loadsCarouselElements()
 
     // load additional Carousels when scrolling down
     $(window).on('resize scroll', function () {
-      carousels.each(function (_index, element) { Spree.loadCarousel(element, this) })
+      Spree.loadsCarouselElements()
     })
   }
 })
