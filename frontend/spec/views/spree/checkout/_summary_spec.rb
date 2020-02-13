@@ -5,7 +5,7 @@ describe 'spree/checkout/_summary.html.erb', type: :view do
   it 'does not use the @order instance variable' do
     order = build(:order)
     expect do
-      render partial: 'spree/checkout/summary', locals: { order: order, classes: '' }
+      render partial: 'spree/checkout/summary', locals: { order: order }
     end.not_to raise_error
   end
 end
