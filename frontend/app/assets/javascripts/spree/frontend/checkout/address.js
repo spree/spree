@@ -127,17 +127,3 @@ Spree.ready(function ($) {
   }
   Spree.onAddress()
 })
-
-$(document).ready(function() {
-  var summaryContent = document.getElementsByClassName('checkout-content-summary-position')[0]
-
-  if (summaryContent !== undefined) {
-    window.addEventListener('scroll', function() {
-      if (window.scrollY > 500) {
-        summaryContent.classList.add('checkout-content-summary-extra-margin')
-      } else {
-        summaryContent.classList.remove('checkout-content-summary-extra-margin')
-      }
-    })
-  }
-})

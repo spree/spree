@@ -1,15 +1,10 @@
 .checkout {
   &-summary {
-    &-button {
-      @include media-breakpoint-up(lg) {
-        top: 356px;
-        position: sticky;
-      }
-    }
     &-container {
       @include media-breakpoint-up(lg) {
-        position: sticky;
-        height: 100%;
+        top: 100px;
+        position: sticky !important;
+        position: -webkit-sticky !important;
       }
     }
   }
@@ -383,14 +378,6 @@
       }
       @include media-breakpoint-up(lg) {
         padding: 35px 40px;
-
-        &-position {
-            position: sticky;
-            top: 100px;
-        }
-        &-extra-margin {
-          margin-bottom: 195px;
-        }
       }
       &-header {
         font-size: font-px-to-rem(16px);
