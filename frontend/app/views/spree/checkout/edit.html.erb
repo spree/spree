@@ -21,7 +21,7 @@
 
       <% unless @order.confirm? %>
         <div id="checkout-summary" class="col-md-12 col-lg-auto h-100" data-hook="checkout_summary_box">
-          <div class="checkout-summary-container">
+          <div class="checkout-summary-container position-sticky">
             <%= render partial: 'summary', locals: { order: @order } %>
             <div data-hook="buttons">
               <% submit_label_key = @order.confirm? ? :place_order : :save_and_continue %>

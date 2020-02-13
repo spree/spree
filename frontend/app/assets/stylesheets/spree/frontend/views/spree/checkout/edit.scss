@@ -2,9 +2,7 @@
   &-summary {
     &-container {
       @include media-breakpoint-up(lg) {
-        top: 100px;
-        position: sticky !important;
-        position: -webkit-sticky !important;
+        top: $spree-header-desktop-height + 25px;
       }
     }
   }
