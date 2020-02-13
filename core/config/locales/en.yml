@@ -767,7 +767,7 @@ en:
     dismiss_banner: No. Thanks! I'm not interested, do not display this message again
     display: Display
     doesnt_track_inventory: It doesn't track inventory
-    dont_have_account: Don't have an account yet?
+    dont_have_account: No account?
     edit: Edit
     editing_resource: 'Editing %{resource}'
     editing_rma_reason: Editing RMA Reason

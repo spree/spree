@@ -5,7 +5,7 @@
       <%= render partial: 'spree/shared/login' if defined?(spree_login_path) %>
     </div>
     <div class="col-xs-12 col-lg-6">
-      <div class="col-lg-11 mx-auto pt-lg-2">
+      <div class="col-lg-11 mx-auto">
         <% if defined?(spree_signup_path) %>
           <%= render partial: 'spree/shared/registration', locals: { registration_button: '' } %>
           <div class="checkout-registration-styled-or">
