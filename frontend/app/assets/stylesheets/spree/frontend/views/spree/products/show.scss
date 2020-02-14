@@ -164,7 +164,7 @@
   }
 }
 
-.breadcrumb-item:last-of-type {
+#breadcrumb-item:last-of-type {
   display: none;
   @include media-breakpoint-up(md) {
     display: block;
