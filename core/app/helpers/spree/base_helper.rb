@@ -58,8 +58,8 @@ module Spree
           meta.reverse_merge!(keywords: [object.name, current_store.meta_keywords].reject(&:blank?).join(', '),
                               description: [object.name, current_store.meta_description].reject(&:blank?).join(', '))
         elsif current_store.meta_keywords.present? && current_store.meta_description.present? || current_store.seo_title.present?
-            meta.reverse_merge!(keywords: select_current_store_meta_keywords,
-                                description: select_current_store_meta_description)
+          meta.reverse_merge!(keywords: select_current_store_meta_keywords,
+                              description: select_current_store_meta_description)
         end
       end
       meta
