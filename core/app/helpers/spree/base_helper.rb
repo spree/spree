@@ -57,12 +57,20 @@ module Spree
         if object && object[:name].present?
           meta.reverse_merge!(keywords: [object.name, current_store.meta_keywords].reject(&:blank?).join(', '),
                               description: [object.name, current_store.meta_description].reject(&:blank?).join(', '))
-        else
-          meta.reverse_merge!(keywords: (current_store.meta_keywords || current_store.seo_title),
-                              description: (current_store.meta_description || current_store.seo_title))
+        elsif current_store.meta_keywords.present? && current_store.meta_description.present? || current_store.seo_title.present?
+            meta.reverse_merge!(keywords: (select_current_store_meta_keywords),
+                                description: (select_current_store_meta_description))
         end
       end
       meta
+    end
+
+    def select_current_store_meta_keywords
+      current_store.meta_keywords.present? ? current_store.meta_keywords : current_store.seo_title
+    end
+
+    def select_current_store_meta_description
+      current_store.meta_description.present? ? current_store.meta_description : current_store.seo_title
     end
 
     def meta_image_url_path

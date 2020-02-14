@@ -240,6 +240,58 @@ describe Spree::BaseHelper, type: :helper do
     end
   end
 
+  describe '#select_current_store_meta_keywords' do
+    context 'when current store is present' do
+      context 'with meta_keywords' do
+        it 'returns current store meta_keywords' do
+          current_store.update(meta_keywords: 'Keywords', seo_title: 'Title')
+
+          expect(select_current_store_meta_keywords).to eq current_store.meta_keywords
+        end
+      end
+
+      context 'without meta_keywords' do
+        it 'returns current store seo_title' do
+          current_store.update(meta_keywords: '', seo_title: 'Title')
+
+          expect(select_current_store_meta_keywords).to eq current_store.seo_title
+        end
+      end
+
+      context 'without meta_keywords and seo_title' do
+        it 'returns nil' do
+          expect(select_current_store_meta_description).to eq nil
+        end
+      end
+    end
+  end
+
+  describe '#select_current_store_meta_description' do
+    context 'when current store is present' do
+      context 'with meta_description' do
+        it 'returns current store meta_description' do
+          current_store.update(meta_description: 'Description', seo_title: 'Title')
+
+          expect(select_current_store_meta_description).to eq current_store.meta_description
+        end
+      end
+
+      context 'without meta_description' do
+        it 'returns current store seo_title' do
+          current_store.update(meta_description: '', seo_title: 'Title')
+
+          expect(select_current_store_meta_description).to eq current_store.seo_title
+        end
+      end
+
+      context 'without meta_description and seo_title' do
+        it 'returns nil' do
+          expect(select_current_store_meta_description).to eq nil
+        end
+      end
+    end
+  end
+
   describe '#meta_image_data_tag' do
     context 'when meta_image_url_path is present' do
       it 'returns meta tag' do
