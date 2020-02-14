@@ -27,6 +27,7 @@
   .quantity-select button {
     background: $input-background;
     color: color-yiq($input-background);
+    touch-action: manipulation;
   }
   @include media-breakpoint-up(md) {
     &-price {
@@ -62,8 +63,8 @@
       list-style: none;
       padding: 0;
       margin: 0;
-      margin-left: - calc-spacer(1);
-      margin-right: - calc-spacer(1);
+      margin-left: -calc-spacer(1);
+      margin-right: -calc-spacer(1);
       &-label {
         font-size: font-px-to-rem(11px);
         border: 2px solid theme-color-level("light", 1);
@@ -80,12 +81,12 @@
         opacity: 0;
         position: fixed;
         &:checked {
-          &+#{$self}-variant-values-label {
+          & + #{$self}-variant-values-label {
             border-color: theme-color("dark-text");
           }
         }
         &--bad-combination {
-          &+#{$self2}-label {
+          & + #{$self2}-label {
             position: relative;
             color: theme-color-level("light", 1);
             &:hover {
@@ -96,7 +97,7 @@
               display: block;
               width: 2px;
               height: 100% * sqrt(2);
-              content: '';
+              content: "";
               background: theme-color-level("light", 1);
               transition: background 200ms;
               transform: rotate(-45deg);
@@ -112,7 +113,8 @@
           cursor: not-allowed;
           opacity: 0.5;
 
-          &:active, &:focus {
+          &:active,
+          &:focus {
             outline: theme-color("dark-text") dotted thin;
           }
         }
@@ -133,7 +135,7 @@
             line-height: $size - $size-border * 2;
             &:before {
               $inner-circle-size: $size - ($size-border - 1px) * 2; // Cover outer border by 1px to avoid color bleed.
-              content: '';
+              content: "";
               margin: -1px;
               display: block;
               border: 2px solid theme-color("light");
@@ -145,7 +147,7 @@
           }
           &-radio {
             &--bad-combination {
-              &+#{$self}-variant-values-label {
+              & + #{$self}-variant-values-label {
                 &:after {
                   height: 100%;
                   top: 0;
@@ -154,7 +156,7 @@
             }
             &:checked {
               &--bad-combination {
-                &+#{$self}-variant-values-label {
+                & + #{$self}-variant-values-label {
                   &:after {
                     background: theme-color("dark-text");
                   }
@@ -177,7 +179,7 @@
           }
           &-radio {
             &--bad-combination {
-              &+#{$self}-variant-values-label {
+              & + #{$self}-variant-values-label {
                 &:hover {
                   &:after {
                     background: theme-color-level("light", 1);
@@ -190,7 +192,7 @@
       }
     }
   }
-  &>li+li{
+  & > li + li {
     margin-top: calc-spacer(4);
   }
   @include media-breakpoint-up(md) {
@@ -210,21 +212,21 @@
 .select-label {
   cursor: pointer;
   padding: 4px 7px;
-  border: 2px solid theme-color('borders');
+  border: 2px solid theme-color("borders");
   min-width: 32px;
   max-height: 32px;
   text-align: center;
   font-size: font-px-to-rem(14px);
   font-weight: 500;
   @include media-breakpoint-up(sm) {
-    border: 3px solid theme-color('borders');
+    border: 3px solid theme-color("borders");
     padding: 7px 7px;
     min-width: 49px;
     max-height: 49px;
     font-size: font-px-to-rem(20px);
   }
   @include media-breakpoint-up(md) {
-    border: 2px solid theme-color('borders');
+    border: 2px solid theme-color("borders");
     padding: 4px 7px;
     min-width: 32px;
     max-height: 32px;
@@ -232,7 +234,7 @@
   }
 
   input:checked + & {
-    border-color: theme-color('secondary');
+    border-color: theme-color("secondary");
   }
 }
 
