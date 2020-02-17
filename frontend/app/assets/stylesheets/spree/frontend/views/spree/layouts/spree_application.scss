@@ -12,7 +12,7 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: theme-color('overlay');
+  background-color: theme-color("overlay");
   opacity: 0;
   z-index: 5;
   cursor: pointer;
@@ -24,12 +24,12 @@ body {
   }
 }
 
-
 .dropdown-menu {
   background: $primary-background;
   border-color: $global-border-style;
   .dropdown-item {
-    &:hover, &:focus {
+    &:hover,
+    &:focus {
       background: $secondary-background;
       color: $secondary-font-color;
     }
@@ -41,4 +41,18 @@ body {
 .spree-flat-input {
   background: $input-background;
   color: color-yiq($input-background);
+}
+
+@include media-breakpoint-down(md) {
+  input[type="email"],
+  input[type="number"],
+  input[type="password"],
+  input[type="search"],
+  input[type="tel"],
+  input[type="text"],
+  input[type="url"],
+  select:focus,
+  textarea {
+    font-size: 16px !important;
+  }
 }
