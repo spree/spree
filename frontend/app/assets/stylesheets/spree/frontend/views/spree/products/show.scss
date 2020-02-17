@@ -164,9 +164,11 @@
   }
 }
 
-.breadcrumb-item:last-of-type {
-  display: none;
-  @include media-breakpoint-up(md) {
-    display: block;
+#product-details {
+  .breadcrumb-item:last-of-type {
+    display: none;
+    @include media-breakpoint-up(md) {
+      display: block;
+    }
   }
 }
