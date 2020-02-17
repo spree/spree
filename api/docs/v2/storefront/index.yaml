@@ -774,7 +774,7 @@ paths:
       description: >-
         Returns a list of available Shipping Rates for Checkout.
         Shipping Rates are grouped against Shipments.
-        Each checkout cna have multiple Shipments eg. some products are available
+        Each checkout can have multiple Shipments eg. some products are available
         in stock and will be send out instantly and some needs to be backordered.
       tags:
         - Checkout
