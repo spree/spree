@@ -16,7 +16,7 @@
                       </span>
       <% else %>
         <div class="d-inline-block py-1 px-2 m-1 plp-overlay-card-item <%= 'plp-overlay-card-item--selected' if selected_option_values.include?(id) %>">
-          <%= name %>
+          <%= name.upcase %>
         </div>
       <% end %>
     <% end %>
