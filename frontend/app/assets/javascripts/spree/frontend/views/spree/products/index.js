@@ -17,15 +17,34 @@ Spree.ready(function($) {
     $(this).toggleClass('plp-overlay-card-item--selected')
   })
 
-  $('.color-select').click(function() {
-    var allOptionsBorders = $('.color-select-border')
-    var borderElement = $(this).find('.color-select-border')
+  var allOptionsBorders = $('.color-select-border')
+  var addToCartButton = document.getElementById('add-to-cart-button')
 
+  function removeSelectedBorders() {
     allOptionsBorders.each(function() {
       $(this).removeClass('color-select-border--selected')
     })
+  }
+
+  $('.color-select').click(function() {
+    var borderElement = $(this).find('.color-select-border')
+
+    removeSelectedBorders()
     borderElement.addClass('color-select-border--selected')
   })
+
+  if (allOptionsBorders !== undefined && addToCartButton !== null) {
+    var colorsClassList = []
+
+    allOptionsBorders.each(function(optionBorder) {
+      colorsClassList.push(optionBorder.classList)
+    })
+
+    if (!colorsClassList.includes('color-select-border--selected')) {
+      removeSelectedBorders()
+      allOptionsBorders[0].classList.add('color-select-border--selected')
+    }
+  }
 
   $('.plp-overlay-ul-li').click(function() {
     $('.plp-overlay-ul-li--active').removeClass('plp-overlay-ul-li--active')
