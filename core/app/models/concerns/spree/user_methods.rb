@@ -58,6 +58,22 @@ module Spree
       store_credits.reload.to_a.sum(&:amount_remaining)
     end
 
+    def first_name
+      bill_address.first_name
+    end
+
+    def last_name
+      bill_address.last_name
+    end
+
+    def full_name
+      [first_name, last_name].compact.join(' ')
+    end
+
+    def phone
+      bill_address.phone
+    end
+
     private
 
     def check_completed_orders
