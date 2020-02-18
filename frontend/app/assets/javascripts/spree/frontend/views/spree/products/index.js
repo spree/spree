@@ -18,7 +18,7 @@ Spree.ready(function($) {
   })
 
   var allOptionsBorders = $('.color-select-border')
-  var addToCartButton = document.getElementById('add-to-cart-button')
+  var addToCartButton = $('#add-to-cart-button')
 
   function removeSelectedBorders() {
     allOptionsBorders.each(function() {
@@ -33,10 +33,10 @@ Spree.ready(function($) {
     borderElement.addClass('color-select-border--selected')
   })
 
-  if (allOptionsBorders !== undefined && addToCartButton !== null) {
+  if (allOptionsBorders.length && addToCartButton !== null) {
     var colorsClassList = []
 
-    allOptionsBorders.each(function(optionBorder) {
+    allOptionsBorders.each(function(index, optionBorder) {
       colorsClassList.push(optionBorder.classList)
     })
 
