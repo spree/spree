@@ -80,6 +80,8 @@
       &-radio {
         opacity: 0;
         position: fixed;
+        height: 0;
+        width: 0;
         &:checked {
           & + #{$self}-variant-values-label {
             border-color: theme-color("dark-text");

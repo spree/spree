@@ -22,6 +22,11 @@
   }
 }
 
-input:checked + label svg .color-select-border {
-  stroke: $secondary-color !important;
+input:checked,
+input:focus,
+input:active,
+input:focus-within {
+  & + .color-select-label .color-select-border {
+    stroke: $secondary-color;
+  }
 }
