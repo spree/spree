@@ -99,7 +99,7 @@ Spree::Core::Engine.add_routes do
       resources :adjustments
       resources :return_authorizations do
         member do
-          put :fire
+          put :cancel
         end
       end
       resources :payments do

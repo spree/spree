@@ -1367,6 +1367,7 @@ en:
       authorized: Authorized
       canceled: Canceled
     return_authorization_updated: Return authorization updated
+    return_authorization_canceled: Return authorization canceled
     return_authorizations: Return Authorizations
     return_item_inventory_unit_ineligible: Return item's inventory unit must be shipped
     return_item_inventory_unit_reimbursed: Return item's inventory unit is already reimbursed
