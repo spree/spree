@@ -25,15 +25,6 @@
         <%= tax_total.to_html %>
       </div>
     <% end %>
-    <% if order.all_adjustments.nonzero.tax.eligible.empty? %>
-      <div class="d-table-cell"><%= Spree::TaxRate.first&.name || Spree.t(:tax) %></div>
-      <div class="d-table-cell text-right"
-           data-hook='tax-total'
-           data-non-shipment-tax='0'
-      >
-        <%= Spree::Money.new(0, currency: order.currency) %>
-      </div>
-    <% end %>
 
     <% if order.passed_checkout_step?("address") && order.shipments.any? %>
       <div class="d-table-cell"><%= Spree.t(:shipping) %>:</div>
