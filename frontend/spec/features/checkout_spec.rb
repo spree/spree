@@ -579,6 +579,15 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
   end
 
   context 'user has store credits', js: true do
+
+    shared_examples 'could not use store credit' do
+      it 'page has no data for Store Credits' do
+        expect(page).not_to have_selector('[data-hook="checkout_payment_store_credit_available"]')
+        expect(page).not_to have_selector('button[name="apply_store_credit"]')
+      end
+    end
+
+
     let(:bogus) { create(:credit_card_payment_method) }
     let(:store_credit_payment_method) { create(:store_credit_payment_method) }
     let(:user) { create(:user) }
@@ -649,10 +658,27 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
         prepare_checkout!
       end
 
-      it 'page has no data for Store Credits when all Store Credits are used' do
-        expect(page).not_to have_selector('[data-hook="checkout_payment_store_credit_available"]')
-        expect(page).not_to have_selector('button[name="apply_store_credit"]')
+      it_behaves_like 'could not use store credit'
+    end
+
+    context 'when Store Credit Payment is not active' do
+      before do
+        create(:store_credit) { create(:store_credit, user: user) }
+        store_credit_payment_method.update_attribute(:active, false)
+        prepare_checkout!
       end
+
+      it_behaves_like 'could not use store credit'
+    end
+
+    context 'when Store Credit Payment is not exist' do
+      before do
+        create(:store_credit) { create(:store_credit, user: user) }
+        store_credit_payment_method.destroy
+        prepare_checkout!
+      end
+
+      it_behaves_like 'could not use store credit'
     end
   end
 end
