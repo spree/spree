@@ -1213,7 +1213,7 @@ en:
       not_found_filters2: Please try another choose.
       not_found_text1: We couldn’t find products for '%{keywords}'.
       not_found_text2: Please try another search.
-      price: Price
+      price: price
       price_high_to_low: PRICE (HIGH - LOW)
       price_low_to_high: PRICE (LOW - HIGH)
       result: RESULT

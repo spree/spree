@@ -30,7 +30,7 @@
     <% end %>
 
     <div class="w-100 card plp-filters-card">
-      <div class="card-header <%= 'collapsed' if params[:price].blank? %> px-1 plp-filters-card-header" id="filtersPrice" data-toggle="collapse" data-target="#collapseFilterPrice" aria-expanded="false" aria-controls="collapseFilterPrice" role="heading" aria-level="2">
+      <div class="card-header text-capitalize <%= 'collapsed' if params[:price].blank? %> px-1 plp-filters-card-header" id="filtersPrice" data-toggle="collapse" data-target="#collapseFilterPrice" aria-expanded="false" aria-controls="collapseFilterPrice" role="heading" aria-level="2">
         <%= Spree.t('plp.price') %>
         <%= icon(name: 'plus',
                 classes: 'mt-1 float-right arrow plp-filters-card-header-arrow--plus',
