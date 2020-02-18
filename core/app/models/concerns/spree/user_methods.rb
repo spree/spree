@@ -6,6 +6,11 @@ module Spree
     include Spree::UserReporting
     include Spree::RansackableAttributes
 
+    delegate :first_name, to: :first_name
+    delegate :last_name, to: :last_name
+    delegate :name, :full_name, to: :full_name
+    delegate :phone, to: :phone
+
     included do
       # we need to have this callback before any dependent: :destroy associations
       # https://github.com/rails/rails/issues/3458
@@ -59,11 +64,11 @@ module Spree
     end
 
     def first_name
-      bill_address.first_name
+      bill_address&.first_name
     end
 
     def last_name
-      bill_address.last_name
+      bill_address&.last_name
     end
 
     def full_name
@@ -71,7 +76,7 @@ module Spree
     end
 
     def phone
-      bill_address.phone
+      bill_address&.phone
     end
 
     private

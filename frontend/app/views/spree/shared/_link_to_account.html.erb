@@ -8,26 +8,6 @@
 
 <% if try_spree_current_user %>
   <% cache [try_spree_current_user, 'segment-identify'] do %>
-    <%= address = try_spree_current_user.bill_address %>
-    <script>
-      analytics.identify("<%= try_spree_current_user.id %>", {
-        firstName: "<%= try_spree_current_user.first_name %>",
-        lastName: "<%= try_spree_current_user.last_name %>",
-        name: "<%= try_spree_current_user.full_name %>",
-        email: "<%= try_spree_current_user.email %>",
-        phone: "<%= try_spree_current_user.phone %>",
-        createdAt: "<%= try_spree_current_user.created_at %>", // see https://apidock.com/ruby/DateTime/iso8601
-        logins: "<%= try_spree_current_user.sign_in_count %>",
-        <% if address.present? %>
-          address: {
-            street: "<%= [address.address1, address.address2].compact.join(' ') %>",
-            city: "<%= address.city %>",
-            state: "<%= address.state_abbr %>",
-            country: "<%= address.country_iso3 %>",
-            postalCode: "<%= address.zipcode %>"
-          }
-        <% end %>
-      });
-    </script>
+    <% identyfy_user %>
   <% end %>
 <% end %>
