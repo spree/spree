@@ -11,6 +11,7 @@ module Spree
         attribute :purchasable,   &:purchasable?
         attribute :in_stock,      &:in_stock?
         attribute :backorderable, &:backorderable?
+        attribute :available,     &:available?
 
         has_many :variants
         has_many :option_types
