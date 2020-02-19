@@ -23,7 +23,7 @@ Spree.loadCarousel = function (element, div) {
 }
 
 Spree.loadsCarouselElements = function () {
-  $('div[data-product-carousel').each(function (_index, element) { Spree.loadCarousel(element, this) })
+  $('div[data-product-carousel]').each(function (_index, element) { Spree.loadCarousel(element, this) })
 }
 
 document.addEventListener('turbolinks:load', function () {
