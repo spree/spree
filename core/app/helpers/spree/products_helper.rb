@@ -94,10 +94,12 @@ module Spree
     end
 
     def product_images(product, variants)
-      variants = if product.variants_and_option_values(current_currency).any?
-                   variants.reject(&:is_master)
-                 else
-                   variants
+      if product.variants_and_option_values(current_currency).any?
+        variants_without_master_images = variants.reject(&:is_master).map(&:images).flatten
+
+        if variants_without_master_images.any?
+          return variants_without_master_images
+        end
       end
 
       variants.map(&:images).flatten
