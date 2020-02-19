@@ -36,7 +36,7 @@ module Spree
     end
 
     def structured_images(product)
-      image = product.default_variant.images.first
+      image = default_image_for_product_or_variant(product)
 
       return '' unless image
 
