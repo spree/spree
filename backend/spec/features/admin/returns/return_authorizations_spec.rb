@@ -79,7 +79,7 @@ describe 'Return Authorizations', type: :feature do
 
       within('#table-filter') do
         fill_in 'q_number_cont', with: 'RX001-01'
-        select 'Authorized', from: 'q_state_eq'
+        select2 'Authorized', from: 'Status'
       end
 
       click_on 'Search'

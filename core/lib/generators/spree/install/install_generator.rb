@@ -10,7 +10,7 @@ module Spree
     class_option :migrate, type: :boolean, default: true, banner: 'Run Spree migrations'
     class_option :seed, type: :boolean, default: true, banner: 'load seed data (migrations must be run)'
     class_option :sample, type: :boolean, default: true, banner: 'load sample data (migrations must be run)'
-    class_option :copy_views, type: :boolean, default: true, banner: 'copy frontend views from spree to your application for easy customization'
+    class_option :copy_storefront, type: :boolean, default: true, banner: 'copy storefront from spree frontend to your application for easy customization'
     class_option :auto_accept, type: :boolean
     class_option :user_class, type: :string
     class_option :admin_email, type: :string
@@ -30,7 +30,7 @@ module Spree
       @run_migrations = options[:migrate]
       @load_seed_data = options[:seed]
       @load_sample_data = options[:sample]
-      @copy_views = options[:copy_views]
+      @copy_storefront = options[:copy_storefront]
 
       unless @run_migrations
         @load_seed_data = false
@@ -40,6 +40,11 @@ module Spree
 
     def add_files
       template 'config/initializers/spree.rb', 'config/initializers/spree.rb'
+
+      if Spree::Core::Engine.frontend_available? || Rails.env.test?
+        template 'config/initializers/spree_storefront.rb', 'config/initializers/spree_storefront.rb'
+        template 'config/spree_storefront.yml', 'config/spree_storefront.yml'
+      end
     end
 
     def additional_tweaks
@@ -54,6 +59,9 @@ module Spree
         Disallow: /account
         Disallow: /api
         Disallow: /password
+        Disallow: /api_tokens
+        Disallow: /cart_link
+        Disallow: /account_link
       ROBOTS
     end
 
@@ -83,9 +91,9 @@ module Spree
       empty_directory 'app/overrides'
     end
 
-    def copy_views
-      if @copy_views && Spree::Core::Engine.frontend_available?
-        generate 'spree:frontend:copy_views'
+    def copy_storefront
+      if @copy_storefront && Spree::Core::Engine.frontend_available?
+        generate 'spree:frontend:copy_storefront'
       end
     end
 

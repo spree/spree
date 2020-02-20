@@ -29,6 +29,17 @@ module Spree
 
       self.whitelisted_ransackable_associations = %w[bill_address ship_address]
       self.whitelisted_ransackable_attributes = %w[id email]
+
+      def self.with_address(query, address = :ship_address)
+        left_outer_joins(address).
+          where("#{Spree::Address.table_name}.firstname like ?", "%#{query}%").
+          or(left_outer_joins(address).where("#{Spree::Address.table_name}.lastname like ?", "%#{query}%"))
+      end
+
+      def self.with_email_or_addresses_ids(query, addresses_ids = [])
+        where('email LIKE ?', "%#{query}%").
+          or(where(id: addresses_ids))
+      end
     end
 
     # has_spree_role? simply needs to return true or false whether a user has a role or not.
@@ -36,9 +47,9 @@ module Spree
       spree_roles.any? { |role| role.name == role_in_question.to_s }
     end
 
-    def last_incomplete_spree_order(store)
+    def last_incomplete_spree_order(store, options = {})
       orders.where(store: store).incomplete.
-        includes(line_items: [variant: [:images, :option_values, :product]]).
+        includes(options[:includes]).
         order('created_at DESC').
         first
     end

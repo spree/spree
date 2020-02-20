@@ -11,8 +11,6 @@ What if you don't need to track inventory? We have come up with a design that ba
 
 New products created in the system can be given a starting "on hand" inventory level. You can subsequently set new inventory levels and the correct things will happen, e.g. adding new on-hand inventory to an out-of-stock product that has some backorders will first fill the backorders then update the product with the remaining inventory count.
 
-As of Spree 2.0, there is a new Stock Management system in place that allows for fine-grained control over inventory for products and variants.
-
 ## Stock Management
 
 ### Stock Locations
@@ -25,13 +23,13 @@ Stock Locations are created in the admin interface (Configuration → Stock Loca
 
 Stock Items represent the inventory at a stock location for a specific variant. Stock item count on hand can be increased or decreased by creating stock movements.
 
-***
-Note: Stock items are created automatically for each stock location you have. You don't need to manage these manually.
-***
+<alert kind="note">
+Stock items are created automatically for each stock location you have. You don't need to manage these manually.
+</alert>
 
 ### Stock Movements
 
-![image](../images/developer/core/stock_movements.png)
+![Stock Movements](../../../images/developer/core/stock_movements.png)
 
 Stock movements allow you to manage the inventory of a stock item for a stock location. Stock movements are created in the admin interface by first navigating to the product you want to manage. Then, follow the "Stock Management" link in the sidebar.
 
@@ -39,11 +37,11 @@ As shown in the image above, you can increase or decrease the count on hand avai
 
 ### Stock Transfers
 
-![image](../images/developer/core/stock_transfers.png)
+![Stock Transfers](../../../images/developer/core/stock_transfers.png)
 
 Stock transfers allow you to move inventory in bulk from one stock location to another stock location. Transfers are created in the admin interface by first navigating to the Configuration page. Then, follow the "Stock Transfers" link.
 
-![image](../images/developer/core/new_stock_transfer.png)
+![New Stock Transfer](../../../images/developer/core/new_stock_transfer.png)
 
 As shown in the image above, you can move stock from one location to a different location. This is done by selecting a source location, a destination location, and one or more variants. You are also able to set the quantity for each variant individually.
 

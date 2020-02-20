@@ -2,14 +2,17 @@
 module Spree
   module AddressesHelper
     def address_field(form, method, address_id = 'b', &handler)
-      content_tag :div, id: [address_id, method].join, class: 'form-group' do
+      content_tag :p, id: [address_id, method].join, class: 'form-group checkout-content-inner-field' do
         if handler
           yield
         else
           is_required = Spree::Address.required_fields.include?(method)
-          separator = is_required ? '<span class="required">*</span><br />' : '<br />'
-          form.label(method) + separator.html_safe +
-            form.text_field(method, class: [is_required ? 'required' : nil, 'form-control'].compact, required: is_required)
+          method_name = I18n.t("activerecord.attributes.spree/address.#{method}")
+          required = Spree.t(:required)
+          form.text_field(method,
+                          class: [is_required ? 'required' : nil, 'spree-flat-input'].compact,
+                          required: is_required,
+                          placeholder: is_required ? "#{method_name} #{required}" : method_name)
         end
       end
     end
@@ -20,17 +23,15 @@ module Spree
       state_elements = [
         form.collection_select(:state_id, country.states.order(:name),
                               :id, :name,
-                              { include_blank: true },
-                               class: have_states ? 'form-control' : 'hidden',
+                               { prompt: Spree.t(:state).upcase },
+                               class: have_states ? 'required form-control spree-flat-select' : 'hidden',
                                disabled: !have_states) +
-          form.text_field(:state_name,
-                          class: !have_states ? 'form-control' : 'hidden',
-                          disabled: have_states)
+          form.text_field(:state_name, class: !have_states ? 'required' : 'hidden', disabled: have_states) +
+          image_tag('arrow.svg', class: 'position-absolute spree-flat-select-arrow')
       ].join.tr('"', "'").delete("\n")
 
-      form.label(:state, Spree.t(:state)) + '<span class="req">*</span><br />'.html_safe +
-        content_tag(:noscript, form.text_field(:state_name, class: 'required form-control')) +
-        javascript_tag("document.write(\"#{state_elements.html_safe}\");")
+      content_tag(:noscript, form.text_field(:state_name, class: 'required')) +
+        javascript_tag("document.write(\"<span class='d-block position-relative'>#{state_elements.html_safe}</span>\");")
     end
   end
 end

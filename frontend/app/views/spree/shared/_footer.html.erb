@@ -1,0 +1,75 @@
+<% cache spree_nav_cache_key('footer') do %>
+  <footer id="footer" class="pt-2 mx-auto border-top footer-spree" data-turbolinks-permanent>
+    <div class="container">
+      <div class="row d-xl-flex justify-content-xl-around pb-xl-5">
+        <div class="d-flex d-xl-block flex-xl-grow-0 col-xl-4">
+          <figure class="logo mx-auto mx-xl-0 pt-xl-2 pb-xl-1">
+            <%= logo %>
+          </figure>
+          <% if current_store.meta_description %>
+            <div class="d-none d-xl-block pt-xl-2 footer-spree-info">
+              <%= current_store.meta_description %>
+            </div>
+          <% end %>
+        </div>
+        <div class="d-block flex-nowrap py-2 order-xl-last col-xl-3 offset-xl-1">
+          <% unless current_store.facebook.blank? && current_store.twitter.blank? && current_store.instagram.blank? %>
+            <div class="d-none d-xl-block pt-4 pb-3 pl-2 footer-spree-label">
+              <%= Spree.t(:follow_us) %>
+            </div>
+          <% end %>
+          <div class="d-flex d-xl-block justify-content-center mx-auto">
+            <div class="d-flex">
+              <%= spree_social_link('facebook') %>
+              <%= spree_social_link('twitter') %>
+              <%= spree_social_link('instagram') %>
+            </div>
+          </div>
+        </div>
+        <div class="py-xl-2 col-xl-3 offset-xl-1">
+          <div class="d-none d-xl-block pt-4 pb-3 footer-spree-label">
+            <%= Spree.t(:contact_us) %>
+          </div>
+          <div class="d-flex flex-column align-items-center align-items-xl-start pb-3 flex-grow-2 footer-spree-contact-note">
+            <div>
+              <%= current_store.name %>,
+              2382 Locust Ave<br/>
+              Long Beach, CA 90806, USA
+            </div>
+            <div>Call us now: 760-673-8590</div>
+            <% if current_store.mail_from_address %>
+              <div><%= Spree.t(:email) %>: <%= current_store.mail_from_address %></div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+      <div class="row d-none d-xl-flex border-top py-5 text-uppercase footer-spree-menu-links">
+        <% if spree_navigation_data.any? %>
+          <% spree_navigation_data.first(3).each do |root| %>
+            <div class="col-3">
+              <div class="footer-spree-label">
+                <%= link_to root[:title], root[:url] %>
+              </div>
+              <% if  root[:items].present? %>
+                <% root[:items].each do |item| %>
+                  <div class="pt-2"><%= link_to item[:title], item[:url] %></div>
+                <% end %>
+              <% end %>
+            </div>
+          <% end %>
+        <% end %>
+        <% if spree.respond_to?(:account_path) %>
+          <div class="col-3">
+            <div class="footer-spree-label">
+              <%= Spree.t('nav_bar.my_account') %>
+            </div>
+            <div class="pt-2">
+              <%= link_to Spree.t('nav_bar.my_orders'), spree.account_path(anchor: "account-my-orders") %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+    <%= render 'spree/shared/copyright' %>
+  </footer>
+<% end %>

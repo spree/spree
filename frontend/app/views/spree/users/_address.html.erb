@@ -1,0 +1,25 @@
+<div class="row">
+  <address class="mb-0 col-10">
+    <span class="account-page-user-full-name">
+      <%= address.full_name %>
+    </span>
+
+    <div><%= "#{address.address1} #{address.address2}" %>,</div>
+    <div><%= "#{address.city}, #{address.state&.abbr} #{address.zipcode}" %>,</div>
+    <div><%= address.country.name %></div>
+  </address>
+  <div class="col-2">
+    <div class="row">
+      <div class="col-5 offset-md-2 order-1">
+        <%= link_to spree.edit_address_path(address), method: :get, class: 'address-button', data: { hook: 'edit_address' } do %>
+          <%= inline_svg_tag 'edit.svg', class: "delete-address-img" %>
+        <% end %>
+      </div>
+      <div class="col-5 offset-2 offset-md-0 order-0">
+        <div class="bg-transparent border-0 p-0 m-0 address-button delete-button js-delete-address-link" data-address="<%= spree.address_path(address) %>">
+          <%= inline_svg_tag 'garbage_2.svg', class: "delete-address-img" %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,73 @@
+<% if spree_navigation_data.any? %>
+  <div class="position-fixed text-uppercase d-xl-none mobile-navigation">
+    <div class="d-flex align-items-center header-spree" data-hook>
+      <div class="container-fluid header-spree-fluid">
+        <div class="d-flex flex-nowrap align-items-center">
+          <div class="d-xl-none flex-grow-1">
+            <button id="mobile-navigation-back-button" aria-label="<%= Spree.t('nav_bar.go_to_previous_menu') %>">
+              <%= icon(name: 'arrow-right',
+                      classes: 'd-sm-none spree-icon-arrow spree-icon-arrow-left',
+                      width: 18,
+                      height: 18) %>
+              <%= icon(name: 'arrow-right',
+                      classes: 'd-none d-sm-inline spree-icon-arrow spree-icon-arrow-left',
+                      width: 17,
+                      height: 28) %>
+            </button>
+          </div>
+          <figure class="logo flex-grow-0 flex-xl-grow-1 order-xl-0 header-spree-fluid-logo" data-hook>
+            <%= logo %>
+          </figure>
+          <div id="top-nav-bar-mobile" class="text-right flex-grow-1 header-spree-fluid-secondary-navigation" data-hook>
+            <button id="mobile-navigation-close-button" aria-label="<%= Spree.t('nav_bar.close_menu') %>">
+              <%= icon(name: 'close',
+                      classes: 'd-sm-none',
+                      width: 17,
+                      height: 17) %>
+              <%= icon(name: 'close',
+                      classes: 'd-none d-sm-inline',
+                      width: 26,
+                      height: 26) %>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <ul class="list-unstyled position-relative h-100 mobile-navigation-list">
+      <% spree_navigation_data.each do |root| %>
+        <li class="d-flex justify-content-between align-items-center mobile-navigation-list-item">
+          <%= link_to root[:title], root[:url], class: 'w-75' %>
+
+          <a class="w-25 text-right mobile-navigation-category-link" data-category="<%= root[:title].parameterize %>" href="#" aria-label="<%= Spree.t('go_to_category')%>">
+            <%= icon(name: 'arrow-right',
+                    classes: 'd-sm-none spree-icon-arrow spree-icon-arrow-right',
+                    width: 16,
+                    height: 16) %>
+            <%= icon(name: 'arrow-right',
+                    classes: 'd-none d-sm-inline spree-icon-arrow spree-icon-arrow-right',
+                    width: 14,
+                    height: 27) %>
+          </a>
+
+          <ul class="list-unstyled position-absolute mobile-navigation-sublist" data-category="<%= root[:title].parameterize %>">
+            <% if root[:items].present? %>
+              <li class="text-center font-weight-bold mobile-navigation-sublist-header">
+                <%= root[:title] %>
+              </li>
+              <% root[:items].each do |item| %>
+                <li class="d-flex justify-content-between align-items-center mobile-navigation-list-item">
+                  <%= link_to item[:title], item[:url], class: 'w-75' %>
+                </li>
+              <% end %>
+            <% else %>
+              <li class="d-flex justify-content-between align-items-center mobile-navigation-list-item">
+                <%= link_to root[:title], root[:url], class: 'w-75' %>
+              </li>
+            <% end %>
+          </ul>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>

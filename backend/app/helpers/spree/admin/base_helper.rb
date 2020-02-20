@@ -152,6 +152,10 @@ module Spree
       def order_time(time)
         [I18n.l(time.to_date), time.strftime('%l:%M %p').strip].join(' ')
       end
+
+      def required_span_tag
+        content_tag(:span, ' *', class: 'required')
+      end
     end
   end
 end

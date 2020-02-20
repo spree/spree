@@ -1,8 +1,9 @@
+<!-- FIXME: Should be removed if it is not used anywhere? -->
 <div class="row steps-data">
   <% if order.has_step?("address") %>
     <div class="col-md-3 col-6 mb-3" data-hook="order-bill-address">
       <h4 class="h5">
-        <%= Spree.t(:billing_address) %> <%= link_to "(#{Spree.t(:edit)})", checkout_state_path(:address) unless order.completed? %>
+        <%= Spree.t(:billing_address) %> <%= link_to "(#{Spree.t(:edit)})", spree.checkout_state_path(:address) unless order.completed? %>
       </h4>
       <%= render 'spree/shared/address', address: order.bill_address %>
     </div>
@@ -10,14 +11,14 @@
     <% if order.has_step?("delivery") %>
       <div class="col-md-3 col-6 mb-3" data-hook="order-ship-address">
         <h4 class="h5">
-          <%= Spree.t(:shipping_address) %> <%= link_to "(#{Spree.t(:edit)})", checkout_state_path(:address) unless order.completed? %>
+          <%= Spree.t(:shipping_address) %> <%= link_to "(#{Spree.t(:edit)})", spree.checkout_state_path(:address) unless order.completed? %>
         </h4>
         <%= render 'spree/shared/address', address: order.ship_address %>
       </div>
 
       <div class="col-md-3 col-6 mb-3" data-hook="order-shipment">
         <h4 class="h5">
-          <%= Spree.t(:shipments) %> <%= link_to "(#{Spree.t(:edit)})", checkout_state_path(:delivery) unless order.completed? %>
+          <%= Spree.t(:shipments) %> <%= link_to "(#{Spree.t(:edit)})", spree.checkout_state_path(:delivery) unless order.completed? %>
         </h4>
         <div class="delivery">
           <% order.shipments.each do |shipment| %>
@@ -34,7 +35,7 @@
   <% if order.has_step?("payment") %>
     <div class="col-md-3 col-6 mb-3" data-hook="order-payment">
       <h4 class="h5">
-        <%= Spree.t(:payment_information) %> <%= link_to "(#{Spree.t(:edit)})", checkout_state_path(:payment) unless order.completed? %>
+        <%= Spree.t(:payment_information) %> <%= link_to "(#{Spree.t(:edit)})", spree.checkout_state_path(:payment) unless order.completed? %>
       </h4>
       <div class="payment-info">
         <%= render collection: order.payments.valid, partial: 'spree/shared/payment' %>

@@ -5,6 +5,7 @@ import { cx } from 'emotion'
 
 // --- Components
 import Header from 'components/Header'
+import Footer from 'components/Footer'
 import Sidebar from 'components/Sidebar'
 import SiteMetadata from 'components/SiteMetadata'
 
@@ -52,7 +53,8 @@ export default class Layout extends React.Component {
 
           <main
             className={cx(
-              this.props.nav && 'bg-white nested-links lh-copy pa4 ph5-l pt3'
+              this.props.nav &&
+                'bg-white lh-copy pa4 ph5-l pt3 flex flex-column'
             )}
             css={{
               '@media (min-width: 60rem)': {
@@ -62,6 +64,7 @@ export default class Layout extends React.Component {
           >
             {this.props.children}
           </main>
+          <Footer hasSidebar={this.props.nav !== undefined} />
         </div>
       </React.Fragment>
     )

@@ -8,7 +8,7 @@ const JS_NPM_URLS = [
 export default class HTML extends React.Component {
   render() {
     return (
-      <html lang="en" {...this.props.htmlAttributes}>
+      <html lang="en" {...this.props.htmlAttributes} className="h-100">
         <head>
           <link
             href="https://fonts.googleapis.com/css?family=Roboto+Mono:400,400i,500,500i|Source+Sans+Pro:400,400i,600,600i"
@@ -30,8 +30,9 @@ export default class HTML extends React.Component {
           <link rel="icon" href="/favicon.ico" />
           {this.props.headComponents}
         </head>
-        <body {...this.props.bodyAttributes} className="bg-white f5">
+        <body {...this.props.bodyAttributes} className="bg-white f5 h-100">
           <div
+            className="h-100"
             id="___gatsby"
             dangerouslySetInnerHTML={{ __html: this.props.body }}
           />

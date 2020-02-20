@@ -39,7 +39,7 @@ module Spree
     ]
 
     @@checkout_attributes = [
-      :coupon_code, :email, :shipping_method_id, :special_instructions, :use_billing, 
+      :coupon_code, :email, :shipping_method_id, :special_instructions, :use_billing,
       :user_id, :bill_address_id, :ship_address_id
     ]
 
@@ -97,15 +97,16 @@ module Spree
     ]
 
     @@store_attributes = [:name, :url, :seo_title, :code, :meta_keywords,
-                          :meta_description, :default_currency, :mail_from_address]
+                          :meta_description, :default_currency, :mail_from_address,
+                          :facebook, :twitter, :instagram]
 
     @@store_credit_attributes = %i[amount currency category_id memo]
 
     @@taxonomy_attributes = [:name]
 
     @@taxon_attributes = [
-      :name, :parent_id, :position, :icon, :description, :permalink, :taxonomy_id,
-      :meta_description, :meta_keywords, :meta_title, :child_index
+      :name, :parent_id, :position, :icon, :description, :permalink, :hide_from_nav,
+      :taxonomy_id, :meta_description, :meta_keywords, :meta_title, :child_index
     ]
 
     # TODO: Should probably use something like Spree.user_class.attributes

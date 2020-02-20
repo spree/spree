@@ -4,11 +4,11 @@ module Spree
       belongs_to :variant, class_name: 'Spree::Variant'
       belongs_to :order, class_name: 'Spree::Order'
       belongs_to :shipment, class_name: 'Spree::Shipment', touch: true, optional: true
-      belongs_to :return_authorization, class_name: 'Spree::ReturnAuthorization'
+      has_many :return_items
+      has_many :return_authorizations, class_name: 'Spree::ReturnAuthorization', through: :return_items
       belongs_to :line_item, class_name: 'Spree::LineItem'
     end
 
-    has_many :return_items, inverse_of: :inventory_unit
     belongs_to :original_return_item, class_name: 'Spree::ReturnItem'
 
     scope :backordered, -> { where state: 'backordered' }

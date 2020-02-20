@@ -20,6 +20,7 @@ end
 group :test do
   gem 'capybara', '~> 3.24'
   gem 'capybara-screenshot', '~> 1.0'
+  gem 'capybara-select-2'
   gem 'database_cleaner', '~> 1.3'
   gem 'email_spec'
   gem 'factory_bot_rails', '~> 5.0'
@@ -28,7 +29,7 @@ group :test do
   gem 'rspec-retry'
   gem 'rspec_junit_formatter'
   gem 'jsonapi-rspec'
-  gem 'simplecov'
+  gem 'simplecov', '0.17.1'
   gem 'webmock', '~> 3.7'
   gem 'timecop'
   gem 'rails-controller-testing'

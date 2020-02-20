@@ -5,16 +5,16 @@ module Spree
     load_and_authorize_resource class: Spree::Address
 
     def index
-      @addresses = spree_current_user.addresses
+      @addresses = try_spree_current_user.addresses
     end
 
     def create
-      @address = spree_current_user.addresses.build(address_params)
+      @address = try_spree_current_user.addresses.build(address_params)
       if @address.save
-        flash[:notice] = Spree.t(:successfully_created, scope: :address_book)
-        redirect_to :index
+        flash[:notice] = I18n.t(:successfully_created, scope: :address_book)
+        redirect_to spree.account_path
       else
-        render :new
+        render action: 'new'
       end
     end
 

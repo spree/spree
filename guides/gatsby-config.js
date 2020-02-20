@@ -11,14 +11,7 @@ module.exports = {
     'gatsby-plugin-sitemap',
     'gatsby-plugin-react-helmet',
     'gatsby-transformer-remark',
-    {
-      resolve: 'gatsby-plugin-robots-txt',
-      options: {
-        host: 'https://guides.spreecommerce.org',
-        sitemap: 'https://guides.spreecommerce.org/sitemap.xml',
-        policy: [{ userAgent: '*', disallow: ['/'] }]
-      }
-    },
+    'gatsby-plugin-robots-txt',
     {
       resolve: `gatsby-plugin-google-gtag`,
       options: {
@@ -64,7 +57,8 @@ module.exports = {
           {
             resolve: `gatsby-remark-images`,
             options: {
-              showCaptions: true
+              quality: 100,
+              maxWidth: 1200
             }
           },
           {

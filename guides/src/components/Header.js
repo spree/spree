@@ -75,7 +75,7 @@ export default class Header extends React.PureComponent {
 
           <DocSearch isOpen={this.state.searchIsOpen} />
 
-          <nav className="w-100 tr dn flex-l items-center justify-end">
+          <nav className="h-100 w-100 tr dn flex-l items-center justify-end">
             <NavItem
               text="API"
               isActive={this.isApiSectionActive()}
@@ -96,9 +96,7 @@ export default class Header extends React.PureComponent {
               isActive={this.isActive('release_notes')}
               url="/release_notes/"
             />
-            <NavItem url="https://heroku.com/deploy?template=https://github.com/spree/spree/tree/4-0-stable">
-              Demo
-            </NavItem>
+            <NavItem url="https://demo.spreecommerce.org/">Demo</NavItem>
 
             <NavItem url="https://spreecommerce.org/contact/">
               Contact Us
@@ -123,7 +121,7 @@ export default class Header extends React.PureComponent {
               />
             ) : (
               <IconSearch
-                className="pointer dib dn-l mv2 mv0-l mr0 pv2 ph1 gray"
+                className="pointer dib dn-l mv2 mv0-l mr0 ph1 pv2 gray"
                 onClick={this._toggleSearch}
               />
             )}

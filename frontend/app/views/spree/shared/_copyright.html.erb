@@ -1,0 +1,18 @@
+<div class="border-top footer-spree-copyright">
+  <div class="container">
+    <div class="d-flex flex-column flex-lg-row align-items-center justify-content-center py-3 footer-spree-copyright-content">
+      <div>Designed and developed by</div>
+      <div class="mb-1 mb-lg-0">
+        <%= link_to 'https://sparksolutions.co/', target: :blank, 'aria-label': 'Go to Spark Solutions', rel: :follow do %>
+          <%= image_tag 'spark-logo@3x.png', class: 'footer-spree-copyright-logo-spark mx-2', alt: 'Spree Commerce & Ruby on Rails developers', title: 'Spree Commerce & Ruby on Rails developers' %>
+        <% end %>
+      </div>
+      <div class="d-none d-lg-inline-block mr-2">|</div>
+      <div>
+        © <%= Time.current.year %>
+        <%= link_to current_store.name, "https://#{current_store.url}" %>.
+        <%= Spree.t(:all_rights_reserved) %>.
+      </div>
+    </div>
+  </div>
+</div>

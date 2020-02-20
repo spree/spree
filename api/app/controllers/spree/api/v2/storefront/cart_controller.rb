@@ -5,13 +5,14 @@ module Spree
         class CartController < ::Spree::Api::V2::BaseController
           include Spree::Api::V2::Storefront::OrderConcern
           before_action :ensure_order, except: :create
+          before_action :load_variant, only: :add_item
 
           def create
             spree_authorize! :create, Spree::Order
 
             order_params = {
               user: spree_current_user,
-              store: spree_current_store,
+              store: current_store,
               currency: current_currency
             }
 
@@ -22,14 +23,12 @@ module Spree
           end
 
           def add_item
-            variant = Spree::Variant.find(params[:variant_id])
-
             spree_authorize! :update, spree_current_order, order_token
-            spree_authorize! :show, variant
+            spree_authorize! :show, @variant
 
             result = add_item_service.call(
               order: spree_current_order,
-              variant: variant,
+              variant: @variant,
               quantity: params[:quantity],
               options: params[:options]
             )
@@ -147,6 +146,10 @@ module Spree
 
           def line_item
             @line_item ||= spree_current_order.line_items.find(params[:line_item_id])
+          end
+
+          def load_variant
+            @variant = Spree::Variant.find(params[:variant_id])
           end
 
           def render_error_item_quantity

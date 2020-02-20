@@ -1,0 +1,13 @@
+<%= render 'spree/products/filter_and_sort_mobile_buttons' %>
+<%= render 'spree/products/sort_desktop', permitted_params: permitted_params %>
+<div class="container d-md-flex">
+  <%= render 'spree/products/filters_desktop', permitted_params: permitted_params %>
+  <div class="text-lg-center col-md-12 col-lg-9">
+    <h6 class="plp-not-found-header pt-md-3 mb-3"><%= Spree.t('plp.no_results') %></h6>
+    <p class="plp-not-found-text pt-md-4">
+      <%= Spree.t('plp.not_found_filters1') %>
+      <br class="d-inline d-md-none d-lg-inline">
+      <%= Spree.t('plp.not_found_filters2') %>
+    </p>
+  </div>
+</div>

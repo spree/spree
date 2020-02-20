@@ -1,0 +1,7 @@
+.modal-backdrop {
+  background: adjust-color(theme-color-level('dark', -5), $alpha: -0.4);
+}
+
+.modal {
+  padding: 0 !important
+}

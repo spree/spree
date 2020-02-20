@@ -1,47 +1,27 @@
-<div class="card mt-4 w-100">
-  <div class="card-body">
-    <%= image_tag 'credit_cards/credit_card.gif',
-      id: 'credit-card-image',
-      width: '170',
-      height: '28',
-      class: 'position-absolute',
-      style: 'right: 1rem' %>
+<div class="payment-gateway">
 
-    <% param_prefix = "payment_source[#{payment_method.id}]" %>
+  <% param_prefix = "payment_source[#{payment_method.id}]" %>
 
-    <p class="field">
-      <%= label_tag "name_on_card_#{payment_method.id}" do %>
-        <%= Spree.t(:name_on_card) %><abbr class="required" title="required">*</abbr>
-      <% end %>
-      <%= text_field_tag "#{param_prefix}[name]", "#{@order.bill_address_firstname} #{@order.bill_address_lastname}", { id: "name_on_card_#{payment_method.id}", class: 'form-control required'} %>
-    </p>
+  <div class="payment-gateway-fields">
+    <div class="mb-4 payment-gateway-field checkout-content-inner-field">
+      <%= text_field_tag "#{param_prefix}[name]", "#{@order.bill_address_firstname} #{@order.bill_address_lastname}", { id: "name_on_card", class: 'spree-flat-input', placeholder: Spree.t(:name_on_card)} %>
+    </div>
 
-    <p class="field" data-hook="card_number">
-      <%= label_tag "card_number" do %>
-        <%= Spree.t(:card_number) %><abbr class="required" title="required">*</abbr>
-      <% end %>
+    <div class="mb-4 payment-gateway-field checkout-content-inner-field" data-hook="card_number">
       <% options_hash = Rails.env.production? ? {autocomplete: 'off'} : {} %>
-      <%= text_field_tag "#{param_prefix}[number]", '', options_hash.merge(id: 'card_number', class: 'form-control required cardNumber', size: 19, maxlength: 19, autocomplete: "off") %>
-      &nbsp;
+      <%= text_field_tag "#{param_prefix}[number]", '', options_hash.merge(id: 'card_number', class: 'spree-flat-input cardNumber', size: 19, maxlength: 19, autocomplete: "off", placeholder: Spree.t(:card_number)) %>
       <span id="card_type" style="display:none;">
         ( <span id="looks_like" ><%= Spree.t(:card_type_is) %> <span id="type"></span></span>
           <span id="unrecognized"><%= Spree.t(:unrecognized_card_type) %></span>
         )
       </span>
-    </p>
-    <div class="row">
-      <div class="col-md-8 field" data-hook="card_expiration">
-        <%= label_tag "card_expiry" do %>
-          <%= Spree.t(:expiration) %><abbr class="required" title="required">*</abbr>
-        <% end %>
-        <%= text_field_tag "#{param_prefix}[expiry]", '', id: 'card_expiry', class: "form-control required cardExpiry", placeholder: "MM / YY" %>
+    </div>
+    <div class="payment-gateway-half-fields d-flex justify-content-between">
+      <div class="payment-gateway-field checkout-content-inner-field" data-hook="card_expiration">
+        <%= text_field_tag "#{param_prefix}[expiry]", '', id: 'card_expiry', class: 'spree-flat-input cardExpiry', placeholder: "MM / YY" %>
       </div>
-      <div class="col-md-4 field" data-hook="card_code">
-        <%= label_tag "card_code" do %>
-          <%= Spree.t(:card_code) %><abbr class="required" title="required">*</abbr>
-        <% end %>
-        <%= text_field_tag "#{param_prefix}[verification_value]", '', options_hash.merge(id: 'card_code', class: 'form-control required cardCode', size: 5) %>
-        <%= link_to Spree.t(:what_is_this), spree.cvv_path, target: :blank, "data-hook" => "cvv_link", id: "cvv_link" %>
+      <div class="payment-gateway-field checkout-content-inner-field" data-hook="card_code">
+        <%= text_field_tag "#{param_prefix}[verification_value]", '', options_hash.merge(id: 'card_code', class: 'spree-flat-input cardCode', size: 5, placeholder: Spree.t(:cvv)) %>
       </div>
     </div>
 

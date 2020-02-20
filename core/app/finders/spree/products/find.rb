@@ -120,7 +120,22 @@ module Spree
       def by_option_value_ids(products)
         return products unless option_value_ids?
 
-        products.joins(variants: :option_values).distinct.where(spree_option_values: { id: option_value_ids })
+        product_ids = Spree::Product.
+                      joins(variants: :option_values).
+                      where(spree_option_values: { id: option_value_ids }).
+                      group("#{Spree::Product.table_name}.id, #{Spree::Variant.table_name}.id").
+                      having('COUNT(spree_option_values.option_type_id) = ?', option_types_count(option_value_ids)).
+                      distinct.
+                      ids
+
+        products.where(id: product_ids)
+      end
+
+      def option_types_count(option_value_ids)
+        Spree::OptionValue.
+          where(id: option_value_ids).
+          distinct.
+          count(:option_type_id)
       end
 
       def ordered(products)
@@ -143,7 +158,7 @@ module Spree
       end
 
       def include_discontinued(products)
-        discontinued ? products : products.not_discontinued
+        discontinued ? products : products.available
       end
     end
   end

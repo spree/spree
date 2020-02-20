@@ -61,7 +61,7 @@ the class that represents users in Spree. Run the new migration by
 running this:
 
 ```bash
-bundle exec rake db:migrate
+bundle exec rails db:migrate
 ```
 
 Next you will need to define some methods to tell Spree where to find
@@ -217,6 +217,10 @@ which will generate and clear the Spree API key respectively.
 
 ## Login link
 
+<alert kind="warning">
+  This is only applicable for Spree 4.0 and older. Spree 4.1 handles this out of the box.
+</alert>
+
 To make the login link appear on Spree pages, you will need to modify
 `spree/shared/_nav_bar.html.erb` file which you can copy over from Spree codebase
 to your project (detailed in [View Customization section](/developer/customization/view.html)).
@@ -224,7 +228,7 @@ to your project (detailed in [View Customization section](/developer/customizati
 You will need to add this code:
 
 ```erb
-<%% if spree_current_user %>
+<%% if try_spree_current_user %>
   <li>
     <%%= link_to Spree.t(:logout), spree_logout_path, method: :delete %>
   </li>

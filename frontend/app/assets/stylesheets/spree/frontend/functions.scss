@@ -1,0 +1,104 @@
+$font-size-base-px: 16px; //assuming 16px is 1rem ($font-size-base: 1rem in Bootstrap 4)
+
+@function font-px-to-rem($target-font-size-px: $font-size-base-px) {
+  @return $font-size-base * ( $target-font-size-px / $font-size-base-px );
+}
+
+@function calc-spacer($size: 1) {
+  @return map-get($spacers, $size);
+}
+
+@function basic-transition($prop: all) {
+  @return $prop .35s ease;
+}
+
+@function sqrt($r) {
+  // Source: https://www.antimath.info/css/sass-sqrt-function/
+  $x0: 1; // initial value
+  $solution: false;
+
+  @for $i from 1 through 10 {
+    @if abs(2 * $x0) < 0.00000000000001 { // Don't want to divide by a number smaller than this
+      $solution: false;
+    }
+
+    $x1: $x0 - ($x0 * $x0 - abs($r)) / (2 * $x0) !global;
+
+    @if ( abs($x1 - $x0) / abs($x1)) < 0.0000001 { // 7 digit accuracy is desired
+      $solution: true;
+    }
+
+    $x0: $x1;
+  }
+
+  @if $solution == true {
+    // If $r is negative, then the output will be multiplied with <a href="http://en.wikipedia.org/wiki/Imaginary_number">i = √-1</a>
+    // (√xy = √x√y) => √-$r = √-1√$r
+    @if $r < 0 {
+      @return $x1 #{i};
+    }
+    @else {
+      @return $x1;
+    }
+  }
+  @else {
+    @return "No solution";
+  }
+}
+
+@function thubnails-carousel-content-min-height($per-page, $single-gap, $single-height: $thumbnails-carousel-single-height){
+  @return $per-page * $single-height + ($per-page - 1) * $single-gap;
+}
+
+// Replace letters
+@function str-replace($string, $search, $replace: '') {
+  $index: str-index($string, $search);
+
+  @if $index {
+    @return str-slice($string, 1, $index - 1) + $replace + str-replace(str-slice($string, $index + str-length($search)), $search, $replace);
+  }
+
+  @return $string;
+}
+
+// Encode symbols
+@function url-encode($string) {
+  $map: (
+          "%": "%25",
+          "<": "%3C",
+          ">": "%3E",
+          " ": "%20",
+          "!": "%21",
+          "*": "%2A",
+          "'": "%27",
+          '"': "%22",
+          "(": "%28",
+          ")": "%29",
+          ";": "%3B",
+          ":": "%3A",
+          "@": "%40",
+          "&": "%26",
+          "=": "%3D",
+          "+": "%2B",
+          "$": "%24",
+          ",": "%2C",
+          "/": "%2F",
+          "?": "%3F",
+          "#": "%23",
+          "[": "%5B",
+          "]": "%5D"
+  );
+
+  $new: $string;
+
+  @each $search, $replace in $map {
+    $new: str-replace($new, $search, $replace);
+  }
+
+  @return $new;
+}
+
+// Format the SVG as a URL
+@function inline-svg($string) {
+  @return url('data:image/svg+xml,#{url-encode($string)}');
+}

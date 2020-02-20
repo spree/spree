@@ -12,19 +12,19 @@
       <th><%= Spree.t(:name) %></th>
       <th><%= Spree.t(:url) %></th>
       <th><%= Spree.t(:currency) %></th>
+      <th><%= Spree.t(:default) %>?</th>
       <th data-hook="admin_stores_index_header_actions" class="actions"></th>
     <thead>
     <tbody>
       <% @stores.each do |store| %>
         <tr>
           <td><%= store.name %></td>
-          <td><%= store.url %></td>
+          <td><%= link_to store.url, 'https://' + store.url, target: :blank %></td>
           <td><%= store.default_currency %></td>
-          <td class="actions actions-2 text-center" data-hook="admin_stores_index_row_actions">
-            <% if store.default %>
-              <%= button_link_to(Spree.t(:store_default), '#', class: 'btn-success btn-sm') %>
-            <% else %>
-              <%= button_link_to(Spree.t(:store_set_default_button), spree.set_default_admin_store_path(store), method: :post, class: 'btn-outline-secondary btn-sm') if can?(:edit, store) %>
+          <td><%= store.default ? "<strong>#{Spree.t(:say_yes)}</strong>".html_safe : Spree.t(:say_no) %>
+          <td class="actions actions-2 text-right" data-hook="admin_stores_index_row_actions">
+            <% if can?(:edit, store) && !store.default %>
+              <%= link_to_with_icon('ok', Spree.t(:store_set_default_button), spree.set_default_admin_store_path(store), no_text: true, method: :put, class: 'btn btn-warning btn-sm with-tip') %>
             <% end %>
             <%= link_to_edit_url spree.edit_admin_store_path(store), no_text: true if can?(:edit, store) %>
             <%= link_to_delete store, no_text: true, url: spree.admin_store_path(store) if can?(:destroy, store) %>

@@ -1,0 +1,43 @@
+<div id="sort-by-overlay" class="plp-overlay" style="display: none;">
+  <div class="container">
+    <div class="plp-overlay-header">
+      <%= Spree.t('plp.sort_by') %>
+      <%= inline_svg_tag 'close.svg', id: 'sort-by-overlay-hide-button' %>
+    </div>
+  </div>
+  <div class="plp-overlay-header-border"></div>
+  <ul class="pt-1 plp-overlay-ul">
+    <li class="p-3 plp-overlay-ul-li<%= '--active' if params[:sort_by].blank? %>">
+      <a href="<%= url_for(permitted_params.merge(sort_by: nil)) %>" >
+        <div class="plp-empty-dot">
+          <div class="filled-dot"></div>
+        </div>
+        <%= Spree.t('plp.default') %>
+      </a>
+    </li>
+    <li class="p-3 plp-overlay-ul-li<%= '--active' if params[:sort_by] == 'newest-first' %>">
+      <a href="<%= url_for(permitted_params.merge(sort_by: 'newest-first')) %>" >
+        <div class="plp-empty-dot">
+          <div class="filled-dot"></div>
+        </div>
+        <%= Spree.t('plp.newest_first') %>
+      </a>
+    </li>
+    <li class="p-3 plp-overlay-ul-li<%= '--active' if params[:sort_by] == 'price-high-to-low' %>">
+      <a href="<%= url_for(permitted_params.merge(sort_by: 'price-high-to-low')) %>" >
+        <div class="plp-empty-dot">
+          <div class="filled-dot"></div>
+        </div>
+        <%= Spree.t('plp.price_high_to_low') %>
+      </a>
+    </li>
+    <li class="p-3 plp-overlay-ul-li<%= '--active' if params[:sort_by] == 'price-low-to-high' %>">
+      <a href="<%= url_for(permitted_params.merge(sort_by: 'price-low-to-high')) %>" >
+        <div class="plp-empty-dot">
+          <div class="filled-dot"></div>
+        </div>
+        <%= Spree.t('plp.price_low_to_high') %>
+      </a>
+    </li>
+  </ul>
+</div>

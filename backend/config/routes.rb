@@ -14,7 +14,7 @@ Spree::Core::Engine.add_routes do
 
     resources :stores do
       member do
-        post :set_default
+        put :set_default
       end
     end
 
@@ -99,7 +99,7 @@ Spree::Core::Engine.add_routes do
       resources :adjustments
       resources :return_authorizations do
         member do
-          put :fire
+          put :cancel
         end
       end
       resources :payments do

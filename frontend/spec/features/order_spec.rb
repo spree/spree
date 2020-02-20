@@ -6,7 +6,6 @@ describe 'orders', type: :feature do
 
   before do
     order.update_attribute(:user_id, user.id)
-    order.shipments.destroy_all
     allow_any_instance_of(Spree::OrdersController).to receive_messages(try_spree_current_user: user)
   end
 
@@ -24,8 +23,7 @@ describe 'orders', type: :feature do
 
     visit spree.order_path(order)
 
-    # Tests view spree/shared/_order_details
-    within 'td.price' do
+    within '.order-show-line-items-line-item-desc-price' do
       expect(page).to have_content '19.00'
     end
   end
@@ -33,7 +31,8 @@ describe 'orders', type: :feature do
   it 'has credit card info if paid with credit card' do
     create(:payment, order: order)
     visit spree.order_path(order)
-    within '.payment-info' do
+
+    within '#order_summary' do
       expect(page).to have_content 'Ending in 1111'
     end
   end
@@ -41,7 +40,8 @@ describe 'orders', type: :feature do
   it 'has payment method name visible if not paid with credit card' do
     create(:check_payment, order: order)
     visit spree.order_path(order)
-    within '.payment-info' do
+
+    within '#order_summary' do
       expect(page).to have_content 'Check'
     end
   end
@@ -58,8 +58,9 @@ describe 'orders', type: :feature do
 
     specify do
       visit spree.order_path(order)
-      within '.payment-info' do
-        expect(page).not_to have_selector('img')
+
+      within '#order_summary' do
+        expect(page).to have_content 'Ending in 1111'
       end
     end
   end
@@ -82,7 +83,7 @@ describe 'orders', type: :feature do
       it 'shows state text' do
         visit spree.order_path(order)
 
-        within '#order' do
+        within '#order_summary' do
           expect(page).to have_content(order.bill_address.state_text)
           expect(page).to have_content(order.ship_address.state_text)
         end
@@ -97,7 +98,7 @@ describe 'orders', type: :feature do
       it 'does not show state text' do
         visit spree.order_path(order)
 
-        within '#order' do
+        within '#order_summary' do
           expect(page).not_to have_content(order.bill_address.state_text)
           expect(page).not_to have_content(order.ship_address.state_text)
         end

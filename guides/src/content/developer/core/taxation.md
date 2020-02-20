@@ -13,17 +13,17 @@ A `tax_category` can have many `tax_rates`, which indicate the rate at which the
 
 The standard sales tax policies commonly found in the USA can be modeled as well as Value Added Tax (VAT) which is commonly used in Europe. These are not the only types of tax rules that you can model in Spree. Once you obtain a sufficient understanding of the basic concepts you should be able to model the tax rules of your country or jurisdiction.
 
-***
-Taxation within the United States can get exceptionally complex, with different states, counties and even cities having different taxation rates. If you are shipping interstate within the United States, we would strongly advise you to use the [Spree Tax Cloud](https://github.com/spree-contrib/spree_tax_cloud) extension so that you get correct tax rates.
-***
+<alert kind="note">
+Taxation within the United States can get exceptionally complex, with different states, counties and even cities having different taxation rates. If you are shipping interstate within the United States, we would strongly advise you to use the [Spree Avatax](https://github.com/spree-contrib/spree_avatax_official) extension so that you get correct tax rates.
+</alert>
 
 ## Tax Categories
 
 The Spree default is to treat everything as exempt from tax. In order for a product to be considered taxable, it must belong to a tax category. The tax category is a special concept that is specific to taxation. The tax category is normally never seen by the user so you could call it something generic like "Taxable Goods." If you wish to tax certain products at different rates, however, then you will want to choose something more descriptive (ex. "Clothing.").
 
-***
+<alert kind="note">
 It can be somewhat tedious to set the tax category for every product. We're currently exploring ways to make this simpler. If you are importing inventory from another source you will likely be writing your own custom Ruby program that automates this process.
-***
+</alert>
 
 ## Tax Rates
 
@@ -41,9 +41,9 @@ Let's say you need to charge 5% tax for all items that ship to New York and 6% o
 
 Here's another hypothetical scenario. You would like to charge 10% tax on all electronic items and 5% tax on everything else. This tax should apply to all countries in the European Union (EU). In this case you would construct just a single zone consisting of all the countries in the EU. The fact that you want to charge two different rates depending on the type of good does not mean you need two zones.
 
-***
+<alert kind="note">
 Please see the [Addresses guide](/developer/core/addresses.html) for more information on constructing a zone.
-***
+</alert>
 
 ## Default Tax Zone
 
@@ -59,25 +59,25 @@ Most tax jurisdictions base the tax on the shipping address of where the order i
 
 To determine tax based on billing address instead of shipping address you will need to set the `Spree::Config[:tax_using_ship_address]` preference to `false`.
 
-***
+<alert kind="note">
 `Zone.match` is a method used to determine the most applicable zone for taxation. In the case of multiple matches, the closer match will be used, with State zone matches having priority over Country zone matches.
-***
+</alert>
 
 ## Calculators
 
 In order to charge tax in Spree you also need a `Spree::Calculator`. In most cases you should be able to use Spree's `DefaultTax` calculator. It is suitable for both sales tax and price-inclusive tax scenarios. For more information, please read the [Calculators guide](/developer/core/calculators.html).
 
-***
+<alert kind="note">
 The `DefaultTax` calculator uses the item total (exclusive of shipping) when computing sales tax.
-***
+</alert>
 
 ## Tax Types
 
 There are two basic types of tax that a store owner might need to contend with. In the United States (and some other countries) store owners sometimes need to charge what is known as "sales tax." In the European Union (EU) and other countries stores owners need to deal with "tax inclusive" pricing which is often called Value Added Tax (VAT).
 
-***
+<alert kind="note">
 Most taxes can be considered one of these two types. For instance, in Australia customers pay a Goods and Services Tax (GST). This is basically equivalent to VAT in Europe.
-***
+</alert>
 
 In some cases you may need to charge one type of tax for orders falling within one zone and another type of tax for orders falling within a different zone. There are even some rare situations where you may need to charge both types of tax in the same zone. Spree supports all of these scenarios.
 
@@ -91,9 +91,9 @@ If the customer purchases a single clothing item for $17.99 and they live in the
 
 The sales tax calculation is $17.99 x 5% for a total tax of $0.8995, which is rounded up to two decimal places, to $0.90. This tax amount is then applied to the order as an adjustment.
 
-***
+<alert kind="note">
 See the [Adjustments Guide](/developer/core/adjustments.html) if you need more information on adjustments.
-***
+</alert>
 
 If the quantity of the item is changed to 2, then the tax amount doubles: ($17.99 x 2) x 0.05 is $1.799, which is again rounded up to two decimal places, applying a tax adjustment of $1.80.
 
@@ -109,9 +109,9 @@ In the case of tax inclusive pricing the store owner can enter all prices inclus
 
 If the current order's tax zone is outside the default zone, prices will be shown and used with only the included taxes for that zone applied. If there is no VAT for that zone (for example when the current order's shipping address is outside the EU), the net price will be shown and used.
 
-***
+<alert kind="note">
 Keep in mind that each order records the price a customer paid (including the tax) as part of the line item record. This means you don't have to worry about changing prices or tax rates affecting older orders.
-***
+</alert>
 
 When tax is included in the price there is no order adjustment needed (unlike the sales tax case). Stores are, however, typically interested in showing the amount of tax the user paid. These totals are for informational purposes only and do not affect the order total.
 
@@ -128,7 +128,6 @@ Now let's assume an additional tax rate of 10% on a "Consumer Electronics" tax c
 Finally, if the order's address is changed to being outside this tax zone, then there will be two negative adjustments applied to remove these tax rates from the order.
 
 ### Additional Examples
-
 
 #### Differing VATs for different product categories depending on the customer's zone
 
@@ -148,6 +147,6 @@ As of January 1st, 2015, digital products sold within the EU must have the VAT o
 
 If you change the tax zone of the current order (by changing the relevant address), prices will now be shown and used including the correct VAT for the current order.
 
-!!!
+<alert kind="warning">
 All of the examples in this guide are meant to be used for illustrative purposes. They are not meant to be used as definitive interpretations of tax law. You should consult your accountant or attorney for guidance on how much tax to collect and under what circumstances.
-!!!
+</alert>

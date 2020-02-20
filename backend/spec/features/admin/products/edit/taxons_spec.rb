@@ -20,13 +20,13 @@ describe 'Product Taxons', type: :feature, js: true do
       expect(page).to have_css('.select2-search-choice', exact_text: "#{taxon_1.parent.name} -> #{taxon_1.name}")
       expect(selected_taxons).to match_array([taxon_1.id])
 
-      select2_search 'Clothing', from: 'Taxons'
+      select2 'Clothing', from: 'Taxons'
       wait_for { !page.has_button?('Update') }
       click_button 'Update'
       expect(selected_taxons).to match_array([taxon_1.id, taxon_2.id])
 
-      expect(page).to have_css('.select2-search-choice', text: taxon_1.name)
-                  .and have_css('.select2-search-choice', text: taxon_2.name)
+      expect(page).to have_css('.select2-search-choice', text: taxon_1.name).
+                  and have_css('.select2-search-choice', text: taxon_2.name)
     end
   end
 end

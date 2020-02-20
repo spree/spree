@@ -1,0 +1,19 @@
+<% cache [base_cache_key, taxon, 'header'] do %>
+  <div class="py-md-3 text-uppercase taxon-title">
+    <%= @taxon.name %>
+  </div>
+  <% unless @taxon.description.blank? %>
+    <div class="py-3 py-md-0 taxon-description"><%= @taxon.description %></div>
+  <% end %>
+  <% if @taxon.icon&.attachment %>
+    <div class="d-none d-md-block pt-4 taxon-icon">
+      <%= lazy_image(
+        src: main_app.url_for(@taxon.icon.attachment),
+        alt: @taxon.description || Spree.t('taxon_missing_alt'),
+        width: 1110,
+        height: 300,
+        class: 'w-100'
+      ) %>
+    </div>
+  <% end %>
+<% end %>

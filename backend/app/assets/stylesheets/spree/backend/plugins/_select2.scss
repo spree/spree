@@ -130,3 +130,12 @@
     }
   }
 }
+
+// Bugfix for required elements
+select.select2[required="required"] {
+  display: inline-block !important;
+  width: 0;
+  overflow: hidden;
+  opacity:0;
+  filter:alpha(opacity=0);
+}

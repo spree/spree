@@ -1,0 +1,98 @@
+.payment-option {
+  font-size: font-px-to-rem(14px);
+  font-weight: 500;
+  height: 18px;
+  line-height: 23px;
+  margin-bottom: 10px;
+
+  @include media-breakpoint-up(sm) {
+    font-size: font-px-to-rem(27px);
+    line-height: 35px;
+    margin-bottom: 37px;
+  }
+
+  @include media-breakpoint-up(lg) {
+    font-size: font-px-to-rem(20px);
+    height: 27px;
+    line-height: 32px;
+    margin-bottom: 23px;
+  }
+}
+
+.payment-sources {
+  box-shadow: 0 3px 6px 0 theme-color('shadow');
+  margin: 0 0 125px;
+  padding: 28px 18px 0;
+
+  @include media-breakpoint-up(sm) {
+    padding: 40px 40px 0;
+  }
+
+  @include media-breakpoint-up(lg) {
+    padding: 50px 50px 0;
+  }
+
+  .form-group {
+    margin-bottom: 0;
+  }
+
+  &-list {
+    font-size: font-px-to-rem(14px);
+    font-weight: 500;
+
+    @include media-breakpoint-up(sm) {
+      font-size: font-px-to-rem(27px);
+    }
+
+    @include media-breakpoint-up(lg) {
+      font-size: font-px-to-rem(20px);
+    }
+
+    > div:not(:last-child) {
+      margin-bottom: 5px;
+
+      @include media-breakpoint-up(sm) {
+        margin-bottom: 36px;
+      }
+
+      @include media-breakpoint-up(lg) {
+        margin-bottom: 20px;
+      }
+    }
+
+    &-item {
+      @include media-breakpoint-between(sm, lg) {
+        align-items: flex-end;
+        line-height: 38px;
+      }
+
+      &-image {
+        height: 22px;
+        margin-right: 10px;
+
+        @include media-breakpoint-up(sm) {
+          height: auto;
+          width: 50px;
+        }
+
+        @include media-breakpoint-up(lg) {
+          height: auto;
+          margin-right: 17px;
+          width: 50px;
+        }
+      }
+    }
+  }
+
+  &-add-form, &-existing-cards {
+    padding-bottom: 28px;
+
+    @include media-breakpoint-up(sm) {
+      padding-bottom: 40px;
+    }
+
+    @include media-breakpoint-up(lg) {
+      padding-bottom: 50px;
+    }
+  }
+}

@@ -4,24 +4,28 @@
   <% end %>
 <% end %>
 
-<div data-hook="products_search_results_heading">
-  <% if products.empty? %>
-    <div data-hook="products_search_results_heading_no_results_found">
-      <%= Spree.t(:no_products_found) %>
-    </div>
-  <% elsif params.key?(:keywords) %>
-    <div data-hook="products_search_results_heading_results_found">
-      <h6 class="search-results-title"><%= Spree.t(:search_results, keywords: h(params[:keywords])) %></h6>
+<div class="col-md-12 col-lg-9" data-hook="homepage_products">
+  <div class="row">
+    <% cache cache_key_for_products(products) do %>
+      <% products.each_with_index do |product, index| %>
+        <div id="product_<%= product.id %>" class="col-sm-4 col-6 mb-3 mb-md-4 pr-sm-0 pr-md-0 pl-md-4 pl-sm-4 <%= index&1 == 0 ? 'pl-0 pr-2' : 'pr-0 pl-2' %>">
+          <%= render 'spree/shared/product', product: product, image_class: 'product-component-plp-image' %>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+
+  <% if products.respond_to?(:total_pages) %>
+    <div class="row pl-md-4 pl-sm-4">
+      <div class="col-12">
+        <div class="plp-pagination d-none d-lg-flex">
+          <%= paginate products, window: 2, theme: 'twitter-bootstrap-4' %>
+        </div>
+
+        <div class="plp-pagination d-lg-none">
+          <%= paginate products, window: 1, theme: 'twitter-bootstrap-4' %>
+        </div>
+      </div>
     </div>
   <% end %>
 </div>
-
-<% if products.any? %>
-  <div id="products" class="row d-flex" data-hook>
-    <%= render partial: 'spree/products/product', collection: products, locals: { taxon: @taxon } %>
-  </div>
-<% end %>
-
-<% if products.respond_to?(:total_pages) %>
-  <%= paginate products, theme: 'twitter-bootstrap-4' %>
-<% end %>

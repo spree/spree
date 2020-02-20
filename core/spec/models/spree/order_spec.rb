@@ -773,7 +773,7 @@ describe Spree::Order, type: :model do
                            create(:line_item, price: 1.0, quantity: 1)]
     end
 
-    it 'returns the correct lum sum of items' do
+    it 'returns the correct sum of items' do
       expect(@order.amount).to eq(3.0)
     end
   end

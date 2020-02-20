@@ -1,6 +1,8 @@
 module Spree
   class OrdersController < Spree::StoreController
+    before_action :set_current_order
     before_action :check_authorization
+
     helper 'spree/products', 'spree/orders'
 
     respond_to :html
@@ -32,7 +34,7 @@ module Spree
     # Shows the current incomplete order from the session
     def edit
       @order = current_order || Order.incomplete.
-               includes(line_items: [variant: [:images, :option_values, :product]]).
+               includes(line_items: [variant: [:images, :product, option_values: :option_type]]).
                find_or_initialize_by(token: cookies.signed[:token])
       associate_user
     end

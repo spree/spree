@@ -7,9 +7,9 @@ module Spree
       create.fails  :load_form_data
       update.fails  :load_form_data
 
-      def fire
-        @return_authorization.send("#{params[:e]}!")
-        flash[:success] = Spree.t(:return_authorization_updated)
+      def cancel
+        @return_authorization.cancel!
+        flash[:success] = Spree.t(:return_authorization_canceled)
         redirect_back fallback_location: spree.edit_admin_order_return_authorization_path(@order, @return_authorization)
       end
 

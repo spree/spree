@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="21.167" height="21.12" viewBox="0 0 21.167 21.12">
+  <defs>
+    <style>
+      .cls-1, .cls-2 {
+        fill: #232323;
+      }
+
+      .cls-1 {
+        stroke: #232323;
+        stroke-width: 0.4px;
+      }
+    </style>
+  </defs>
+  <g data-name="Group 599" transform="translate(-687.083 -196.854)">
+    <g data-name="Group 597" transform="translate(6.703 -11.947)">
+      <g data-name="Group 595" transform="translate(680.58 209.002)">
+        <g data-name="Group 593" transform="translate(0 0)">
+          <g data-name="Group 519" transform="translate(0 0)">
+            <g id="magnifying-glass">
+              <path data-name="Path 6" class="cls-1" d="M20.586,19.663l-5.035-5.035a8.842,8.842,0,1,0-.873.873l5.035,5.035a.624.624,0,0,0,.436.184.605.605,0,0,0,.436-.184A.621.621,0,0,0,20.586,19.663ZM1.286,8.835a7.594,7.594,0,1,1,7.594,7.6A7.6,7.6,0,0,1,1.286,8.835Z" transform="translate(-0.05 0)"/>
+            </g>
+          </g>
+        </g>
+      </g>
+    </g>
+    <g data-name="Group 598" transform="translate(-1 -1)">
+      <rect data-name="Rectangle 165" class="cls-2" width="2" height="8" transform="translate(696 203)"/>
+      <rect data-name="Rectangle 166" class="cls-2" width="2" height="8" transform="translate(693 208) rotate(-90)"/>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,11 @@
+<div class="col-lg-6 offset-lg-3 mb-5">
+  <h3 class="spree-mb-large spree-mt-large spree-header"><%= Spree.t(:editing_user) %></h3>
+  <%= render partial: 'spree/shared/error_messages', locals: { target: @user } %>
+
+  <%= form_for Spree.user_class.new, as: @user, url: spree.user_path(@user), method: :put do |f| %>
+    <%= render partial: 'spree/shared/user_form', locals: { f: f, remember_me_field: false } %>
+    <div>
+      <%= f.submit Spree.t(:update), class: 'btn btn-lg btn-block btn-primary text-uppercase font-weight-bold' %>
+    </div>
+  <% end %>
+</div>

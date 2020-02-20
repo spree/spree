@@ -77,6 +77,10 @@ li > code:hover {
   border-color: #99cc00;
 }
 
+.hover-spree-green:hover {
+  color: #779e01;
+}
+
 .spree-green-2 {
   color: #66a80f;
 }
@@ -169,4 +173,9 @@ td[kind='field'] {
   p {
     word-break: break-word;
   }
+}
+
+/* Height fix */
+#gatsby-focus-wrapper {
+  height: 100%;
 }

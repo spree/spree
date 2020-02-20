@@ -1,22 +1,11 @@
 <% unless @product_properties.blank? %>
-  <h3 class="product-section-title h4 mt-4">
-    <%= Spree.t('properties')%>
-  </h3>
-
-  <table id="product-properties" class="table table-striped" data-hook>
-    <tbody>
-      <% @product_properties.each do |product_property| %>
-        <% css_class = cycle('even', 'odd', name: "properties") %>
-        <tr class="<%= css_class %>">
-          <td>
-            <strong>
-              <%= product_property.property.presentation %>
-            </strong>
-          </td>
-          <td><%= product_property.value %></td>
-        </tr>
-      <% end %>
-      <% reset_cycle('properties') %>
-    </tbody>
-  </table>
+  <h3 class="pt-4 font-weight-bold text-uppercase product-details-subtitle"><%= Spree.t(:details) %></h3>
+  <ul id="product-properties" class="m-0 list-unstyled product-properies" data-hook>
+    <% @product_properties.each do |product_property| %>
+      <li>
+        <span class="font-weight-bold text-break"><%= product_property.property.presentation %>:</span>
+        <span class="text-break"><%= product_property.value %></span>
+      </li>
+    <% end %>
+  </ul>
 <% end %>

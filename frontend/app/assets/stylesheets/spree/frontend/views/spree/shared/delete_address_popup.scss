@@ -1,0 +1,118 @@
+.delete-address-popup {
+  width: 100%;
+  height: 277px;
+  border: solid 1px $global-border-style;
+  background-color: $primary-background;
+  align-items: center;
+  position: static;
+  margin: auto;
+  padding: 0;
+
+  @include media-breakpoint-up(sm) {
+    height: auto;
+    padding-bottom: 79.1px;
+  }
+
+  @include media-breakpoint-up(lg) {
+    width: 686px;
+    height: 378px;
+    padding-bottom: 0;
+  }
+
+  &-dropdown {
+    visibility: hidden;
+    opacity: 0;
+    z-index: 5;
+    left: 0;
+    right: 0;
+    position: fixed;
+    top: $spree-header-mobile-height;
+    margin: auto;
+
+    @include media-breakpoint-up(sm) {
+      left: 50%;
+      transform: translateX(-50%);
+      top: 129.2px;
+      width: 80%;
+    }
+
+    &.shown {
+      visibility: visible;
+      opacity: 1;
+      transition: opacity 0.5s;
+    }
+  }
+  &-header {
+    font-size: font-px-to-rem(22px);
+    font-weight: 600;
+    line-height: 0.91;
+    letter-spacing: 0.55px;
+    text-align: center;
+    color: $font-color;
+    margin-bottom: 23px;
+
+    @include media-breakpoint-up(lg) {
+      font-size: font-px-to-rem(24px);
+      margin-bottom: 27px;
+      line-height: 1.06;
+      letter-spacing: 0.8px;
+    }
+  }
+  &-text {
+    width: 234px;
+    font-size: font-px-to-rem(16px);
+    font-weight: 500;
+    line-height: 1.38;
+    letter-spacing: 0.4px;
+    text-align: center;
+    color: $font-color;
+    margin: auto;
+
+    @include media-breakpoint-up(sm) {
+      width: 462px;
+      font-size: font-px-to-rem(24px);
+      line-height: 1.42;
+      letter-spacing: 0.6px;
+    }
+  }
+  &-buttons {
+    margin-top: 48px;
+    justify-content: space-evenly;
+    @supports (-ms-ime-align: auto) {
+      justify-content: space-around;
+    }
+  }
+  &-button {
+    width: 198px;
+    height: 29px;
+    font-size: font-px-to-rem(12px);
+    line-height: 1.4;
+    letter-spacing: 0.3px;
+    text-align: center;
+
+    @include media-breakpoint-up(sm) {
+      height: 53px;
+      font-size: font-px-to-rem(20px);
+      line-height: 37px;
+      letter-spacing: 0.5px;
+    }
+
+    @include media-breakpoint-down(xs) {
+      width: 145px;
+    }
+  }
+  &-icon {
+    width: 16.8px;
+    height: 16.8px;
+    margin: 17px 18px 20px auto;
+
+    @include media-breakpoint-up(sm) {
+      width: 29.7px;
+      height: 29.7px;
+      margin: 34px 32px 20px auto;
+    }
+  }
+  &-icon:hover {
+    cursor: pointer;
+  }
+}

@@ -31,6 +31,7 @@ require 'rspec/rails'
 # in ./support/ and its subdirectories.
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
 
+require 'capybara-select-2'
 require 'database_cleaner'
 require 'ffaker'
 require 'rspec/retry'
@@ -95,6 +96,7 @@ RSpec.configure do |config|
     DatabaseCleaner.clean
   end
 
+  config.include CapybaraSelect2
   config.include FactoryBot::Syntax::Methods
 
   config.include Spree::TestingSupport::Preferences

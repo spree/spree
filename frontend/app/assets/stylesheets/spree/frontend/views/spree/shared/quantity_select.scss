@@ -1,0 +1,57 @@
+.quantity-select {
+  width: 136px;
+  height: 45px;
+  @include media-breakpoint-up(sm) {
+    width: 174px;
+    height: 58px;
+  }
+  @include media-breakpoint-up(md) {
+    width: 136px;
+    height: 45px;
+  }
+  &-decrease, &-increase {
+    border-radius: 0;
+    font-size: font-px-to-rem(20px);
+    font-weight: 500;
+    background-color: theme-color("light-background");
+    border: 1px solid theme-color("borders");
+    @include media-breakpoint-up(sm) {
+      font-size: font-px-to-rem(30px);
+      border: 2px solid theme-color("borders");
+    }
+    @include media-breakpoint-up(md) {
+      font-size: font-px-to-rem(20px);
+      border: 1px solid theme-color("borders");
+    }
+  }
+  &-value {
+    width: 100%;
+    font-size: font-px-to-rem(20px);
+    font-weight: 500;
+    border-radius: 0;
+    border: 1px solid theme-color('borders');
+    height: auto;
+    z-index: 1;
+    @include media-breakpoint-up(sm) {
+      font-size: font-px-to-rem(28px);
+      border: 2px solid theme-color("borders");
+    }
+    @include media-breakpoint-up(md) {
+      font-size: font-px-to-rem(20px);
+      border: 1px solid theme-color("borders");
+    }
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+    }
+  }
+  input[type=number]::-webkit-outer-spin-button,
+  input[type=number]::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+  }
+  input[type=number] {
+    -webkit-appearance: none;
+    -moz-appearance:textfield;
+    appearance: none;
+  }
+}

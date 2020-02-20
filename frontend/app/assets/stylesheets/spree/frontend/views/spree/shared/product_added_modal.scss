@@ -1,0 +1,61 @@
+.product-added-modal {
+  $self: &;
+  &-check-mark {
+    color: $secondary-color;
+  }
+  &-message {
+    font-size: font-px-to-rem(20px);
+    @include media-breakpoint-up(md) {
+      padding-left: 0;
+    }
+    @include media-breakpoint-up(lg) {
+      font-size: font-px-to-rem(30px);
+    }
+  }
+  &-product {
+    &-image-container {
+      position: relative;
+      &:before {
+        content: '';
+        display: block;
+        padding-bottom: $thumbnails-carousel-single-height;
+      }
+      &-image {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        object-fit: contain;
+      }
+    }
+    &-details {
+      &-name {
+        font-size: font-px-to-rem(14px);
+        @include media-breakpoint-up(lg) {
+          font-size: font-px-to-rem(24px);
+        }
+      }
+      &-price {
+        font-size: font-px-to-rem(14px);
+        font-weight: 600;
+        @include media-breakpoint-up(lg) {
+          font-size: font-px-to-rem(24px);
+        }
+      }
+    }
+  }
+  &-button {
+    font-size: font-px-to-rem(12px);
+    @include media-breakpoint-up(lg) {
+      font-size: font-px-to-rem(20px);
+    }
+  }
+  &--no-image {
+    #{$self}-product {
+      &-image-container {
+        display: none;
+      }
+    }
+  }
+}

@@ -3,8 +3,10 @@ Spree::Sample.load_sample('orders')
 first_order = Spree::Order.find_by!(number: 'R123456789')
 last_order = Spree::Order.find_by!(number: 'R987654321')
 
+tax_rate = Spree::TaxRate.find_by!(name: 'California')
+
 first_order.adjustments.where(
-  source: Spree::TaxRate.find_by!(name: 'North America'),
+  source: tax_rate,
   order: first_order,
   label: 'Tax',
   state: 'open',
@@ -14,7 +16,7 @@ first_order.adjustments.where(
 end
 
 last_order.adjustments.where(
-  source: Spree::TaxRate.find_by!(name: 'North America'),
+  source: tax_rate,
   order: last_order,
   label: 'Tax',
   state: 'open',

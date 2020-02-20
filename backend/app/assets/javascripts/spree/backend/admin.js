@@ -308,7 +308,7 @@ $(document).ready(function(){
         update: function(event, ui) {
           var tbody = this
           $('#progress').show()
-          positions = {}
+          var positions = { authenticity_token: AUTH_TOKEN }
           $.each($('tr', tbody), function(position, obj) {
             reg = /spree_(\w+_?)+_(\d+)/
             parts = reg.exec($(obj).prop('id'))

@@ -1,0 +1,56 @@
+.footer-spree {
+  background: $footer-background;
+  color: $footer-font-color;
+  border-color: $global-border-style !important;
+  .logo img {
+    height: 27px;
+    width: 62px;
+    @include media-breakpoint-up(xl) {
+      height: 52px;
+      width: 122px;
+    }
+  }
+  .spree-icon path {
+    fill: $footer-font-color;
+  }
+  &-contact-note {
+    font-size: font-px-to-rem(12px);
+    @include media-breakpoint-up(xl) {
+      font-size: font-px-to-rem(14px);
+    }
+  }
+  &-copyright {
+    border-color: $global-border-style !important;
+    font-size: font-px-to-rem(9px);
+    a {
+      color: $footer-font-color;
+      text-decoration: underline;
+    }
+
+    @include media-breakpoint-up(md) {
+      font-size: font-px-to-rem(14px);
+    }
+    &-logo-spark {
+      height: 14px;
+      @include media-breakpoint-up(md) {
+        height: 21px;
+      }
+    }
+  }
+  &-label {
+    @include media-breakpoint-up(xl) {
+      font-size: font-px-to-rem(16px);
+      font-weight: 500;
+    }
+  }
+  &-info {
+    font-size: font-px-to-rem(14px);
+  }
+  &-menu-links {
+    border-color: $global-border-style !important;
+    a {
+      color: $footer-font-color;
+      font-size: font-px-to-rem(14px);
+    }
+  }
+}

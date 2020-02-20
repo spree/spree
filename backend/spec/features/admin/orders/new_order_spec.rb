@@ -23,7 +23,7 @@ describe 'New Order', type: :feature do
   end
 
   it 'completes new order successfully without using the cart', js: true do
-    select2_search product.name, from: Spree.t(:name_or_sku)
+    select2 product.name, from: Spree.t(:name_or_sku), search: true
 
     click_icon :add
     expect(page).to have_css('.card', text: 'Order Line Items')
@@ -49,7 +49,7 @@ describe 'New Order', type: :feature do
 
   context 'adding new item to the order', js: true do
     it 'inventory items show up just fine and are also registered as shipments' do
-      select2_search product.name, from: Spree.t(:name_or_sku)
+      select2 product.name, from: Spree.t(:name_or_sku), search: true
 
       within('table.stock-levels') do
         fill_in 'variant_quantity', with: 2
@@ -78,7 +78,7 @@ describe 'New Order', type: :feature do
   context "adding new item to the order which isn't available", js: true do
     before do
       product.update(available_on: nil)
-      select2_search product.name, from: Spree.t(:name_or_sku)
+      select2 product.name, from: Spree.t(:name_or_sku), search: true
     end
 
     it 'inventory items is displayed' do
@@ -107,7 +107,7 @@ describe 'New Order', type: :feature do
     end
 
     it 'can still see line items' do
-      select2_search product.name, from: Spree.t(:name_or_sku)
+      select2 product.name, from: Spree.t(:name_or_sku), search: true
       click_icon :add
       within('.line-items') do
         within('.line-item-name') do
@@ -134,7 +134,7 @@ describe 'New Order', type: :feature do
       click_on 'Update'
 
       click_on 'Shipments'
-      select2_search product.name, from: Spree.t(:name_or_sku)
+      select2 product.name, from: Spree.t(:name_or_sku), search: true
       click_icon :add
       expect(page).not_to have_content('Your order is empty')
 
@@ -153,7 +153,7 @@ describe 'New Order', type: :feature do
     end
 
     it 'transitions to delivery not to complete' do
-      select2_search product.name, from: Spree.t(:name_or_sku)
+      select2 product.name, from: Spree.t(:name_or_sku), search: true
 
       within('table.stock-levels') do
         fill_in 'variant_quantity', with: 1
@@ -176,13 +176,13 @@ describe 'New Order', type: :feature do
     fill_in "Street Address (cont'd)",   with: '#101'
     fill_in 'City',                      with: 'Bethesda'
     fill_in 'Zip',                       with: '20170'
-    targetted_select2_search state.name, from: "#s2id_order_#{kind}_address_attributes_state_id"
+    select2 state.name,                   css: '#bstate'
     fill_in 'Phone',                     with: '123-456-7890'
   end
 
   def select_customer
     within 'div#select-customer' do
-      targetted_select2_search user.email, from: '#s2id_customer_search'
+      select2 user.email, css: '#customer-search-field', search: true
     end
   end
 end
