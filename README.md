@@ -52,8 +52,8 @@ Getting Started
 #### Rails 6.0
 
 ```ruby
-gem 'spree', '~> 4.1.0.rc1'
-gem 'spree_auth_devise', '~> 4.1.0.rc1'
+gem 'spree', '~> 4.1.0.rc3'
+gem 'spree_auth_devise', '~> 4.1'
 gem 'spree_gateway', '~> 3.7'
 ```
 
