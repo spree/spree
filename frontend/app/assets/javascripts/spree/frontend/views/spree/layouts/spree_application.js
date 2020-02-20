@@ -61,5 +61,9 @@ Spree.ready(function ($) {
         });
       });
     });
-  };
+  }
+
+  $(document).on('turbolinks:render', function() {
+    $('html, body').animate({ scrollTop: 0 }, 'fast');
+  })
 });
