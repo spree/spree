@@ -62,6 +62,10 @@
         img {
           position: static;
         }
+
+        .modal-dialog--zoom & {
+          padding-bottom: 0;
+        }
       }
     }
     &:not(.carousel-item) {

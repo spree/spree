@@ -635,7 +635,7 @@ en:
     cart_page:
       add_promo_code: ADD PROMO CODE
       checkout: checkout
-      empty_info: 'Your cart is empty.<br />There are no items in your cart.'
+      empty_info: 'Your cart is empty.'
       header: Your shopping bag
       product: product
       quantity: quantity
@@ -767,7 +767,7 @@ en:
     dismiss_banner: No. Thanks! I'm not interested, do not display this message again
     display: Display
     doesnt_track_inventory: It doesn't track inventory
-    dont_have_account: Don't have an account yet?
+    dont_have_account: No account?
     edit: Edit
     editing_resource: 'Editing %{resource}'
     editing_rma_reason: Editing RMA Reason
@@ -864,6 +864,7 @@ en:
     guest_user_account: Checkout as a Guest
     has_no_shipped_units: has no shipped units
     height: Height
+    hide_from_subcategories_nav: Hide from subcategories navigation
     home: Home
     homepage:
       bestsellers: BESTSELLERS
@@ -1212,7 +1213,7 @@ en:
       not_found_filters2: Please try another choose.
       not_found_text1: We couldn’t find products for '%{keywords}'.
       not_found_text2: Please try another search.
-      price: PRICE
+      price: price
       price_high_to_low: PRICE (HIGH - LOW)
       price_low_to_high: PRICE (LOW - HIGH)
       result: RESULT
@@ -1350,6 +1351,7 @@ en:
     rename: Rename
     report: Report
     reports: Reports
+    required: '*'
     required_fields: required fields
     resellable: Resellable
     resend: Resend
@@ -1365,6 +1367,7 @@ en:
       authorized: Authorized
       canceled: Canceled
     return_authorization_updated: Return authorization updated
+    return_authorization_canceled: Return authorization canceled
     return_authorizations: Return Authorizations
     return_item_inventory_unit_ineligible: Return item's inventory unit must be shipped
     return_item_inventory_unit_reimbursed: Return item's inventory unit is already reimbursed

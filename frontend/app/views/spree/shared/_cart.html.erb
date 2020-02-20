@@ -1,5 +1,3 @@
-<% item_count = simple_current_order&.item_count || 0 %>
-
 <%= link_to spree.cart_path,
   class: "cart-icon #{'cart-icon--visible-count' if item_count > 0} #{local_assigns[:class]}",
   'aria-label': Spree.t(:cart) do %>

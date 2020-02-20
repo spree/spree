@@ -11,13 +11,14 @@ module Spree
       return '' if current_page?('/') || taxon.nil?
 
       separator = raw(separator)
-      crumbs = [content_tag(:li, content_tag(:span, link_to(content_tag(:span, Spree.t(:home), itemprop: 'name'), spree.root_path, itemprop: 'url') + separator, itemprop: 'item'), itemscope: 'itemscope', itemtype: 'https://schema.org/ListItem', itemprop: 'itemListElement', class: 'breadcrumb-item')]
+      crumbs = [content_tag(:li, content_tag(:span, link_to(content_tag(:span, Spree.t(:home), itemprop: 'name'), spree.root_path, itemprop: 'url') + separator, itemprop: 'item', itemid: spree.root_path, position: 0), itemscope: 'itemscope', itemtype: 'https://schema.org/ListItem', itemprop: 'itemListElement', itemid: spree.root_path, class: 'breadcrumb-item', position: 0)]
       if taxon
-        crumbs << taxon.ancestors.where.not(parent_id: nil).map { |ancestor| content_tag(:li, content_tag(:span, link_to(content_tag(:span, ancestor.name, itemprop: 'name'), seo_url(ancestor, params: permitted_product_params), itemprop: 'url') + separator, itemprop: 'item'), itemscope: 'itemscope', itemtype: 'https://schema.org/ListItem', itemprop: 'itemListElement', class: 'breadcrumb-item') } unless taxon.ancestors.empty?
-        crumbs << content_tag(:li, content_tag(:span, link_to(content_tag(:span, taxon.name, itemprop: 'name'), seo_url(taxon, params: permitted_product_params), itemprop: 'url') + separator, itemprop: 'item'), class: 'breadcrumb-item', itemscope: 'itemscope', itemtype: 'https://schema.org/ListItem', itemprop: 'itemListElement')
-        crumbs << content_tag(:li, content_tag(:span, content_tag(:span, product.name) + separator), class: 'breadcrumb-item') if product
+        ancestors = taxon.ancestors.where.not(parent_id: nil)
+        crumbs << ancestors.each_with_index.map { |ancestor, index| content_tag(:li, content_tag(:span, link_to(content_tag(:span, ancestor.name, itemprop: 'name'), seo_url(ancestor, params: permitted_product_params), itemprop: 'url') + separator, itemprop: 'item', itemid: seo_url(ancestor, params: permitted_product_params), position: index + 1), itemscope: 'itemscope', itemtype: 'https://schema.org/ListItem', itemprop: 'itemListElement', itemid: seo_url(ancestor, params: permitted_product_params), class: 'breadcrumb-item', position: index + 1) }
+        crumbs << content_tag(:li, content_tag(:span, link_to(content_tag(:span, taxon.name, itemprop: 'name'), seo_url(taxon, params: permitted_product_params), itemprop: 'url') + separator, itemprop: 'item', itemid: seo_url(taxon, params: permitted_product_params), position: ancestors.size + 1), class: 'breadcrumb-item', itemscope: 'itemscope', itemtype: 'https://schema.org/ListItem', itemprop: 'itemListElement', itemid: seo_url(taxon, params: permitted_product_params), position: ancestors.size + 1)
+        crumbs << content_tag(:li, content_tag(:span, content_tag(:span, product.name) + separator, class: 'breadcrumb-product-name', itemid: spree.product_path(product, taxon_id: taxon.try(:id)), position: ancestors.size + 2), class: 'breadcrumb-item', itemid: spree.product_path(product, taxon_id: taxon.try(:id)), position: ancestors.size + 2) if product
       else
-        crumbs << content_tag(:li, content_tag(:span, Spree.t(:products), itemprop: 'item'), class: 'active', itemscope: 'itemscope', itemtype: 'https://schema.org/ListItem', itemprop: 'itemListElement')
+        crumbs << content_tag(:li, content_tag(:span, Spree.t(:products), itemprop: 'item'), class: 'active', itemscope: 'itemscope', itemtype: 'https://schema.org/ListItem', itemprop: 'itemListElement', position: 1)
       end
       crumb_list = content_tag(:ol, raw(crumbs.flatten.map(&:mb_chars).join), class: 'breadcrumb', itemscope: 'itemscope', itemtype: 'https://schema.org/BreadcrumbList')
       content_tag(:nav, crumb_list, id: 'breadcrumbs', class: 'col-12 mt-1 mt-sm-3 mt-lg-4', aria: { label: 'breadcrumb' })
@@ -205,8 +206,16 @@ module Spree
       available_option_types.map(&:filter_param).concat(static_filters)
     end
 
+    def filtering_params_cache_key
+      params.permit(*filtering_params)&.reject { |_, v| v.blank? }&.to_s
+    end
+
+    def available_option_types_cache_key
+      @available_option_types_cache_key ||= Spree::OptionType.maximum(:updated_at)&.utc&.to_i
+    end
+
     def available_option_types
-      @available_option_types ||= Rails.cache.fetch('available-option-types', expires_in: 3.minutes) do
+      @available_option_types ||= Rails.cache.fetch("available-option-types/#{available_option_types_cache_key}") do
         Spree::OptionType.includes(:option_values).to_a
       end
       @available_option_types

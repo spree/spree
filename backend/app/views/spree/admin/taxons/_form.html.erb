@@ -15,6 +15,15 @@
         </small>
       <% end %>
 
+      <%= f.field_container :hide_from_nav, class: ['form-group'] do %>
+        <%= f.label :hide_from_nav do %>
+          <%= Spree.t(:hide_from_subcategories_nav) %>
+          <br>
+          <%= f.check_box :hide_from_nav, { checked: @taxon.hide_from_nav } %>
+          <small><%= Spree.t(:say_yes) %></small>
+        <% end %>
+      <% end %>
+
       <%= f.field_container :icon, class: ['form-group'] do %>
         <%= f.label :icon, Spree.t(:icon) %>
         <%= image_tag main_app.url_for(@taxon.icon.try(:attachment)) if @taxon.icon %>

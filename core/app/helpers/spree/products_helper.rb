@@ -94,10 +94,12 @@ module Spree
     end
 
     def product_images(product, variants)
-      variants = if product.variants_and_option_values(current_currency).any?
-                   variants.reject(&:is_master)
-                 else
-                   variants
+      if product.variants_and_option_values(current_currency).any?
+        variants_without_master_images = variants.reject(&:is_master).map(&:images).flatten
+
+        if variants_without_master_images.any?
+          return variants_without_master_images
+        end
       end
 
       variants.map(&:images).flatten
@@ -127,8 +129,8 @@ module Spree
                              limit(Spree::Config[:products_per_page])
     end
 
-    def product_available_in_currency?(product)
-      !(product.price_in(current_currency).amount.nil? || product.price_in(current_currency).amount.zero?)
+    def product_available_in_currency?
+      !(@product_price.nil? || @product_price.zero?)
     end
 
     def common_product_cache_keys
@@ -147,7 +149,7 @@ module Spree
       @_variants_option_types_presenter ||= begin
         option_types = Spree::Variants::OptionTypesFinder.new(variant_ids: variants.map(&:id)).execute
 
-        Spree::Variants::OptionTypesPresenter.new(option_types)
+        Spree::Variants::OptionTypesPresenter.new(option_types, variants)
       end
     end
   end

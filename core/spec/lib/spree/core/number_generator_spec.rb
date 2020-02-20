@@ -134,4 +134,25 @@ describe Spree::Core::NumberGenerator do
       end
     end
   end
+
+  describe 'generator method redefinition' do
+    let(:model) do
+      mod = number_generator
+
+      Class.new(ApplicationRecord) do
+        self.table_name = 'spree_orders'
+        include mod
+
+        def generate_permalink(_host)
+          '42'
+        end
+      end
+    end
+
+    let(:resource) { model.new }
+
+    it 'allows to override generator method' do
+      expect { resource.validate }.to change { resource.number }.from(nil).to('42')
+    end
+  end
 end

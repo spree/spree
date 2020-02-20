@@ -13,8 +13,8 @@
 
   <div class="dropdown-menu text-right plp-sort-dropdown">
     <ul class="pt-1 plp-sort-dropdown-ul">
-      <li class="p-3 plp-sort-dropdown-ul-li<%= '--active' if params[:sort_by] == 'default' || params[:sort_by].blank? %>">
-        <%= link_to Spree.t('plp.default'), url_for(permitted_params.merge(sort_by: 'default')) %>
+      <li class="p-3 plp-sort-dropdown-ul-li<%= '--active' if params[:sort_by].blank? %>">
+        <%= link_to Spree.t('plp.default'), url_for(permitted_params.merge(sort_by: nil)) %>
       </li>
       <li class="p-3 plp-sort-dropdown-ul-li<%= '--active' if params[:sort_by] == 'newest-first' %>">
         <%= link_to Spree.t('plp.newest_first'), url_for(permitted_params.merge(sort_by: 'newest-first')) %>

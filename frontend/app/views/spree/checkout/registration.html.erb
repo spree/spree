@@ -5,14 +5,14 @@
       <%= render partial: 'spree/shared/login' if defined?(spree_login_path) %>
     </div>
     <div class="col-xs-12 col-lg-6">
-      <div class="col-lg-11 mx-auto pt-lg-2">
+      <div class="col-lg-11 mx-auto">
         <% if defined?(spree_signup_path) %>
           <%= render partial: 'spree/shared/registration', locals: { registration_button: '' } %>
+        <% end %>
+        <% if Spree::Config[:allow_guest_checkout] %>
           <div class="checkout-registration-styled-or">
             <%= Spree.t(:or) %>
           </div>
-        <% end %>
-        <% if Spree::Config[:allow_guest_checkout] %>
           <% path = spree.respond_to?(:update_checkout_registration_path) ? spree.update_checkout_registration_path : spree_signup_path %>
 
           <%= form_for @order, url: path, method: :put, html: { id: 'checkout_form_registration' } do |f| %>

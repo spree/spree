@@ -41,12 +41,12 @@ describe 'Products filtering', :js, :caching do
 
     click_on_filter 'Size', value: 'm'
     expect(page).to have_content 'No results'
-    expect(page).to have_selected_filter_with(value: 'm')
+    expect(page).to have_selected_filter_with(value: 'M')
 
     click_on_filter 'Size', value: 's'
     expect(page).to have_content 'First shirt'
-    expect(page).to have_selected_filter_with(value: 'm')
-    expect(page).to have_selected_filter_with(value: 's')
+    expect(page).to have_selected_filter_with(value: 'M')
+    expect(page).to have_selected_filter_with(value: 'S')
     expect(current_path).to eq spree.products_path
   end
 end

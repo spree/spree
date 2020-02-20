@@ -52,7 +52,7 @@ describe Spree::BaseHelper, type: :helper do
 
   # Regression test for #1436
   context 'defining custom image helpers' do
-    let(:product) { mock_model(Spree::Product, images: [], variant_images: []) }
+    let(:product) { build(:product) }
 
     before do
       Spree::Image.class_eval do

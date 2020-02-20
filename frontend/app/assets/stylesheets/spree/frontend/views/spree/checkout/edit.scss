@@ -1,4 +1,11 @@
 .checkout {
+  &-summary {
+    &-container {
+      @include media-breakpoint-up(lg) {
+        top: $spree-header-desktop-height + 25px;
+      }
+    }
+  }
   &-header {
     margin: 0;
     &-link {

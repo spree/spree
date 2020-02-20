@@ -50,8 +50,10 @@
               <div class="footer-spree-label">
                 <%= link_to root[:title], root[:url] %>
               </div>
-              <% root[:items].each do |item| %>
-                <div class="pt-2"><%= link_to item[:title], item[:url] %></div>
+              <% if  root[:items].present? %>
+                <% root[:items].each do |item| %>
+                  <div class="pt-2"><%= link_to item[:title], item[:url] %></div>
+                <% end %>
               <% end %>
             </div>
           <% end %>

@@ -92,7 +92,7 @@
     top: $spree-plp-filter-desktop-position;
     left: 0;
     &-card {
-      background: $primary-background;
+      background-color: theme-color("light-background");
       border: none;
       a:hover {
         text-decoration: none;
@@ -186,7 +186,7 @@
       }
     }
     a {
-      color: theme-color('dark-text');
+      color: theme-color("dark-text");
       border-color: $global-border-style !important;
       padding: 5px 13px;
       min-width: 37px;
@@ -263,6 +263,7 @@
     &-card {
       border: none;
       border-top: solid 1px $global-border-style;
+      background-color: theme-color("light-background");
       &-header.collapsed {
         .arrow {
           transform: rotate(90deg);
@@ -295,7 +296,6 @@
     }
     &-buttons {
       bottom: 30px;
-      background-color: white;
     }
   }
 

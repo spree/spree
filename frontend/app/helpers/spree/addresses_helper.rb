@@ -7,10 +7,12 @@ module Spree
           yield
         else
           is_required = Spree::Address.required_fields.include?(method)
+          method_name = I18n.t("activerecord.attributes.spree/address.#{method}")
+          required = Spree.t(:required)
           form.text_field(method,
                           class: [is_required ? 'required' : nil, 'spree-flat-input'].compact,
                           required: is_required,
-                          placeholder: I18n.t("activerecord.attributes.spree/address.#{method}"))
+                          placeholder: is_required ? "#{method_name} #{required}" : method_name)
         end
       end
     end

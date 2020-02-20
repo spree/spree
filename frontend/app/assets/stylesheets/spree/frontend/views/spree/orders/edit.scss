@@ -215,13 +215,17 @@
         margin: 0;
       }
       input[type="number"] {
+        -webkit-appearance: none;
         -moz-appearance: textfield;
+        appearance: none;
       }
       button {
         font-size: font-px-to-rem(14px);
         height: 25px;
         background-color: $input-background;
         border-color: theme-color("borders");
+        border-width: 1px !important;
+        border-style: solid;
         color: color-yiq($input-background);
         @include media-breakpoint-up(sm) {
           height: 51.4px;
@@ -353,6 +357,11 @@
           width: 16px;
         }
       }
+    }
+    input[type=text] {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
     }
   }
   &-total {

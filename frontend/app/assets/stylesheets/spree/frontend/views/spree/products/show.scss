@@ -76,6 +76,7 @@
   .modal-dialog {
     &--zoom {
       &.modal-dialog .modal-content {
+        border: 0;
         padding: 0;
         .modal-close {
           top: 5px;
@@ -161,5 +162,14 @@
   @include media-breakpoint-up(md) {
     font-size: font-px-to-rem(14px);
     line-height: font-px-to-rem(26px);
+  }
+}
+
+#product-details {
+  .breadcrumb-item:last-of-type {
+    display: none;
+    @include media-breakpoint-up(md) {
+      display: block;
+    }
   }
 }

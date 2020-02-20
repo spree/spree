@@ -105,14 +105,16 @@ module Spree
     end
 
     def default_image_for_product_or_variant(product_or_variant)
-      if product_or_variant.images.empty?
-        if product_or_variant.is_a?(Spree::Product) && product_or_variant.variant_images.any?
-          product_or_variant.variant_images.first
-        elsif product_or_variant.is_a?(Spree::Variant) && product_or_variant.product.variant_images.any?
-          product_or_variant.product.variant_images.first
+      Rails.cache.fetch("spree/default-image/#{product_or_variant.cache_key_with_version}") do
+        if product_or_variant.images.empty?
+          if product_or_variant.is_a?(Spree::Product) && product_or_variant.variant_images.any?
+            product_or_variant.variant_images.first
+          elsif product_or_variant.is_a?(Spree::Variant) && product_or_variant.product.variant_images.any?
+            product_or_variant.product.variant_images.first
+          end
+        else
+          product_or_variant.images.first
         end
-      else
-        product_or_variant.images.first
       end
     end
 

@@ -262,7 +262,10 @@ Spree.ready(function($) {
             $cartForm.attr('data-product-summary')
           ), Spree.variantById($cartForm, variantId))
         },
-        function(_error) {
+        function(error) {
+          if (typeof error === 'string' && error !== '') {
+            document.querySelector('#no-product-available .no-product-available-text').innerText = error
+          }
           document.getElementById('overlay').classList.add('shown')
           document.getElementById('no-product-available').classList.add('shown')
           window.scrollTo(0, 0)

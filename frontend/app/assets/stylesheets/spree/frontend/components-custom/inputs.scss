@@ -1,5 +1,5 @@
 .spree-flat-input {
-  color: theme-color('secondary');
+  color: theme-color("secondary");
   transition: basic-transition(border-color);
   padding: 15px;
   width: 100%;
@@ -11,6 +11,9 @@
   outline: none;
   font-size: font-px-to-rem(12px);
   line-height: inherit;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
   @include media-breakpoint-up(sm) {
     padding: 25px;
     font-size: font-px-to-rem(23px);
@@ -20,7 +23,7 @@
     font-size: font-px-to-rem(14px);
   }
   &:focus {
-    border-color: theme-color('secondary');
+    border-color: theme-color("secondary");
   }
   &::placeholder {
     text-transform: uppercase;
@@ -45,12 +48,8 @@
   }
 }
 
-label {
-  color: theme-color('secondary');
-}
-
 .spree-flat-label {
-  color: theme-color('secondary');
+  color: theme-color("secondary");
   text-transform: uppercase;
   font-size: font-px-to-rem(12px);
 
@@ -83,7 +82,7 @@ label {
     height: 22px;
   }
 
-  input[type='checkbox'] {
+  input[type="checkbox"] {
     display: none;
   }
 
@@ -94,8 +93,9 @@ label {
     height: 22px;
     font-size: 0;
     border-radius: 0;
-    border: 2px solid theme-color('secondary');
+    border: 2px solid theme-color("secondary");
     background-color: $input-background;
+    cursor: pointer;
 
     @include media-breakpoint-up(sm) {
       width: 32px;
@@ -111,7 +111,7 @@ label {
   label:after {
     transition: basic-transition(opacity);
     opacity: 0;
-    content: '';
+    content: "";
     position: absolute;
     width: 12px;
     height: 8px;
@@ -138,8 +138,8 @@ label {
     }
   }
 
-  input[type='checkbox']:checked + label {
-    background-color: theme-color('secondary');
+  input[type="checkbox"]:checked + label {
+    background-color: theme-color("secondary");
 
     &:after {
       opacity: 1;
@@ -165,7 +165,7 @@ label {
 }
 
 .spree-checkbox-label {
-  color: theme-color('info');
+  color: theme-color("info");
   font-size: font-px-to-rem(12px);
   margin: 0;
   // Autoprefixer don't seem to catch this
@@ -174,6 +174,7 @@ label {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+  cursor: pointer;
 
   @include media-breakpoint-up(sm) {
     font-size: font-px-to-rem(21px);
