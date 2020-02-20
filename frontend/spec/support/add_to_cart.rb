@@ -10,6 +10,6 @@ def add_to_cart(product)
     yield
   else
     click_link 'View cart'
-    expect(page).to have_content 'YOUR SHOPPING BAG'
+    expect(page).to have_content 'YOUR SHOPPING CART'
   end
 end
