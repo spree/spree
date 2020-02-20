@@ -76,6 +76,7 @@
   .modal-dialog {
     &--zoom {
       &.modal-dialog .modal-content {
+        border: 0;
         padding: 0;
         .modal-close {
           top: 5px;
