@@ -12,29 +12,42 @@ module Spree
 
       separator = raw(separator)
 
+      # breadcrumbs for root
       crumbs = [content_tag(:li, content_tag(
-        :span, link_to(
-          content_tag(
-            :span, Spree.t(:home), itemprop: 'name'
-          ) << content_tag(:meta, nil, itemprop: 'position', content: '0'), spree.root_path, itemprop: 'url'
-        ) + separator, itemprop: 'item', itemid: spree.root_path
-      ), itemscope: 'itemscope', itemtype: 'https://schema.org/ListItem', itemprop: 'itemListElement', itemid: spree.root_path, class: 'breadcrumb-item')]
+        :a, content_tag(
+          :span, 'Home', itemprop: 'name'
+        ) << content_tag(:meta, nil, itemprop: 'position', content: '0'), itemprop: 'url', href: spree.root_path
+      ) << content_tag(:span, nil, itemprop: 'item', itemscope: 'itemscope', itemtype: 'https://schema.org/Thing', itemid: spree.root_path), itemscope: 'itemscope', itemtype: 'https://schema.org/ListItem', itemprop: 'itemListElement', class: 'breadcrumb-item')]
 
       if taxon
         ancestors = taxon.ancestors.where.not(parent_id: nil)
 
-        crumbs << ancestors.each_with_index.map { |ancestor, index| content_tag(
-          :li, content_tag(:span, link_to(content_tag(
-            :span, ancestor.name, itemprop: 'name'
-          ), seo_url(ancestor, params: permitted_product_params), itemprop: 'url') + separator, itemprop: 'item', itemid: seo_url(ancestor, params: permitted_product_params)), itemscope: 'itemscope', itemtype: 'https://schema.org/ListItem', itemprop: 'itemListElement', itemid: seo_url(ancestor, params: permitted_product_params), class: 'breadcrumb-item'
-        ) }
+        # breadcrumbs for ancestor taxons
+        crumbs << ancestors.each_with_index.map do |ancestor, index|
+          content_tag(:li, content_tag(
+            :a, content_tag(
+              :span, ancestor.name, itemprop: 'name'
+            ) << content_tag(:meta, nil, itemprop: 'position', content: index + 1), itemprop: 'url', href: seo_url(ancestor, params: permitted_product_params)
+          ) << content_tag(:span, nil, itemprop: 'item', itemscope: 'itemscope', itemtype: 'https://schema.org/Thing', itemid: seo_url(ancestor, params: permitted_product_params)), itemscope: 'itemscope', itemtype: 'https://schema.org/ListItem', itemprop: 'itemListElement', class: 'breadcrumb-item')
+        end
 
+        # breadcrumbs for current taxon
         crumbs << content_tag(:li, content_tag(
-          :span, link_to(content_tag(:span, taxon.name, itemprop: 'name'), seo_url(taxon, params: permitted_product_params), itemprop: 'url') + separator, itemprop: 'item', itemid: seo_url(taxon, params: permitted_product_params)
-        ) << content_tag(:meta, nil, itemprop: 'position', content: '1'), class: 'breadcrumb-item', itemscope: 'itemscope', itemtype: 'https://schema.org/ListItem', itemprop: 'itemListElement', itemid: seo_url(taxon, params: permitted_product_params))
+          :a, content_tag(
+            :span, taxon.name, itemprop: 'name'
+          ) << content_tag(:meta, nil, itemprop: 'position', content: ancestors.size + 1), itemprop: 'url', href: seo_url(taxon, params: permitted_product_params)
+        ) << content_tag(:span, nil, itemprop: 'item', itemscope: 'itemscope', itemtype: 'https://schema.org/Thing', itemid: seo_url(taxon, params: permitted_product_params)), itemscope: 'itemscope', itemtype: 'https://schema.org/ListItem', itemprop: 'itemListElement', class: 'breadcrumb-item')
 
-        crumbs << content_tag(:li, content_tag(:span, content_tag(:span, product.name) + separator, class: 'breadcrumb-product-name', itemid: spree.product_path(product, taxon_id: taxon.try(:id))), class: 'breadcrumb-item', itemid: spree.product_path(product, taxon_id: taxon.try(:id))) if product
+        # breadcrumbs for product
+        if product
+          crumbs << content_tag(:li, content_tag(
+            :span, content_tag(
+              :span, product.name, itemprop: 'name'
+            ) << content_tag(:meta, nil, itemprop: 'position', content: ancestors.size + 2), itemprop: 'url', href: spree.product_path(product, taxon_id: taxon&.id)
+          ) << content_tag(:span, nil, itemprop: 'item', itemscope: 'itemscope', itemtype: 'https://schema.org/Thing', itemid: spree.product_path(product, taxon_id: taxon&.id)), itemscope: 'itemscope', itemtype: 'https://schema.org/ListItem', itemprop: 'itemListElement', class: 'breadcrumb-item')
+        end
       else
+        # breadcrumbs for product on PDP
         crumbs << content_tag(:li, content_tag(
           :span, Spree.t(:products), itemprop: 'item'
         ) << content_tag(:meta, nil, itemprop: 'position', content: '1'), class: 'active', itemscope: 'itemscope', itemtype: 'https://schema.org/ListItem', itemprop: 'itemListElement')
