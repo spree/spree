@@ -203,7 +203,11 @@ function CartForm($, $cartForm) {
   this.updateVariantAvailability = function() {
     var variant = this.selectedVariant()
 
-    if (!variant) return
+    if (!variant) {
+      return $cartForm
+        .find('.add-to-cart-form-general-availability .add-to-cart-form-general-availability-value')
+        .html('')
+    }
 
     return $cartForm
       .find('.add-to-cart-form-general-availability .add-to-cart-form-general-availability-value')
