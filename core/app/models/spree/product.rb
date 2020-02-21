@@ -75,6 +75,7 @@ module Spree
     has_many :orders, through: :line_items
 
     has_many :variant_images, -> { order(:position) }, source: :images, through: :variants_including_master
+    has_many :variant_images_without_master, -> { order(:position) }, source: :images, through: :variants
 
     after_create :add_associations_from_prototype
     after_create :build_variants_from_option_values_hash, if: :option_values_hash
