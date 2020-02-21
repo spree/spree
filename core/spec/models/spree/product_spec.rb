@@ -625,17 +625,60 @@ describe Spree::Product, type: :model do
   context '#default_variant' do
     let(:product) { create(:product) }
 
-    context 'product has variants' do
-      let!(:variant) { create(:variant, product: product) }
+    context 'track inventory levels' do
+      context 'product has variants' do
+        let!(:variant_1) { create(:variant, product: product, position: 1) }
+        let!(:variant_2) { create(:variant, product: product, position: 2) }
 
-      it 'returns first non-master variant' do
-        expect(product.default_variant).to eq(variant)
+        before do
+          variant_1.stock_items.first.update(backorderable: false, count_on_hand: 0)
+          variant_2.stock_items.first.update(backorderable: false, count_on_hand: 0)
+        end
+
+        context 'in stock' do
+          before { variant_2.stock_items.first.adjust_count_on_hand(1) }
+
+          it 'returns first non-master in stock variant' do
+            expect(product.default_variant).to eq(variant_2)
+          end
+        end
+
+        context 'backorderable' do
+          before { variant_2.stock_items.first.update(backorderable: true) }
+
+          it 'returns first non-master backorderable variant' do
+            expect(product.default_variant).to eq(variant_2)
+          end
+        end
+
+        context 'product without variants in stock or backorerable' do
+          it 'returns first non-master variant' do
+            expect(product.default_variant).to eq(variant_1)
+          end
+        end
       end
-    end
 
-    context 'product without variants' do
-      it 'returns master variant' do
-        expect(product.default_variant).to eq(product.master)
+      context 'without tracking inventory levels' do
+        let!(:variant_1) { create(:variant, product: product, position: 1) }
+        let!(:variant_2) { create(:variant, product: product, position: 2) }
+
+        before do
+          Spree::Config[:track_inventory_levels] = false
+          variant_1.stock_items.first.update(backorderable: false, count_on_hand: 0)
+          variant_2.stock_items.first.update(backorderable: false, count_on_hand: 0)
+        end
+
+        after { Spree::Config[:track_inventory_levels] = true }
+
+        it 'returns first non-master variant' do
+          expect(product.default_variant).to eq(variant_1)
+        end
+      end
+
+      context 'product without variants' do
+        it 'returns master variant' do
+          expect(product.default_variant).to eq(product.master)
+        end
       end
     end
   end
