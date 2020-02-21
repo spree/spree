@@ -488,7 +488,7 @@ en:
     add_variant: Add Variant
     add_store: New Store
     add_store_credit: Add Store Credit
-    added_to_cart: Added to bag successfully!
+    added_to_cart: Added to cart successfully!
     additional_item: Additional Item
     address: Address
     address1: Address
@@ -636,7 +636,7 @@ en:
       add_promo_code: ADD PROMO CODE
       checkout: checkout
       empty_info: 'Your cart is empty.'
-      header: Your shopping bag
+      header: Your shopping cart
       product: product
       quantity: quantity
       title: Shopping Cart
