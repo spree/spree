@@ -58,7 +58,8 @@ describe Spree::Variants::OptionTypesPresenter do
 
     context 'with in-stock Variant' do
       before do
-        variant_0.stock_items.first.update(backorderable: false)
+        variant_0.stock_items.first.update(backorderable: false, count_on_hand: 0)
+        variant_1.stock_items.first.update(backorderable: false, count_on_hand: 0)
         variant_2.stock_items.first.adjust_count_on_hand(1)
       end
 

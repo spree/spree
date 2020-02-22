@@ -55,7 +55,7 @@ module Spree
 
       def try_default_variant
         option_types.first.option_values.each do |option_value|
-          variant = option_value.variants.where(id: @product.default_variant_id).in_stock_or_backorderable.first
+          variant = option_value.variants.where(id: @product.default_variant_id).first
 
           return { variant: variant, option_value: option_value } if variant
         end
