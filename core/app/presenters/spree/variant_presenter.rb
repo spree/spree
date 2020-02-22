@@ -18,6 +18,7 @@ module Spree
           display_price: display_price(variant),
           is_product_available_in_currency: @is_product_available_in_currency,
           backorderable: backorderable?(variant),
+          in_stock: in_stock?(variant),
           images: images(variant),
           option_values: option_values(variant),
         }.merge(
@@ -52,16 +53,21 @@ module Spree
     end
 
     def backorderable_variant_ids
-      @backorderable_variant_ids ||= Spree::Variant.joins(:stock_items).where(id: @variants.map(&:id)).
-        where(spree_stock_items: { backorderable: true }).merge(Spree::StockItem.with_active_stock_location).distinct.ids
+      @backorderable_variant_ids ||= Spree::Variant.where(id: @variants.map(&:id)).backorderable.ids
+    end
+
+    def in_stock?(variant)
+      in_stock_variant_ids.include?(variant.id)
+    end
+
+    def in_stock_variant_ids
+      @in_stock_variant_ids ||= Spree::Variant.where(id: @variants.map(&:id)).in_stock.ids
     end
 
     def variant_attributes(variant)
       {
         id: variant.id,
         sku: variant.sku,
-        price: variant.price,
-        in_stock: variant.in_stock?,
         purchasable: variant.purchasable?
       }
     end
