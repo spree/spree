@@ -77,7 +77,7 @@ You need to set a preference in `config/initializers/spree.rb` file, eg.
 
 ```ruby
 Spree.config do |config|
-  config.admin_show_version = 'my_new_admin_logo.png'
+  config.admin_show_version = false
 end
 ```
 
