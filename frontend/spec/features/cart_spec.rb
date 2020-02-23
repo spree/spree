@@ -9,6 +9,11 @@ describe 'Cart', type: :feature, inaccessible: true, js: true do
   let!(:product) { variant.product }
   let(:order) { Spree::Order.incomplete.last }
 
+  def apply_coupon(code)
+    fill_in 'order_coupon_code', with: code
+    click_button 'shopping-cart-coupon-code-button'
+  end
+
   it 'shows cart icon on non-cart pages' do
     visit spree.root_path
     expect(page).to have_selector('li#link-to-cart a', visible: true)
@@ -55,11 +60,6 @@ describe 'Cart', type: :feature, inaccessible: true, js: true do
       add_to_cart(product)
     end
 
-    def apply_coupon(code)
-      fill_in 'order_coupon_code', with: code
-      click_button 'shopping-cart-coupon-code-button'
-    end
-
     context 'valid coupon' do
       before { apply_coupon(promotion.code) }
 
@@ -98,6 +98,24 @@ describe 'Cart', type: :feature, inaccessible: true, js: true do
         expect(page).to have_content('PROMOTION')
         expect(page).to have_content(order.display_cart_promo_total)
       end
+    end
+  end
+
+  describe 'subtotal' do
+    let!(:promotion) { Spree::Promotion.create!(name: 'Huhuhu', code: 'huhu') }
+    let!(:calculator) { Spree::Calculator::FlatPercentItemTotal.create!(preferred_flat_percent: '10') }
+    let!(:action) { Spree::Promotion::Actions::CreateAdjustment.create!(calculator: calculator) }
+
+    before do
+      promotion.actions << action
+      add_to_cart(product)
+      apply_coupon(promotion.code)
+    end
+
+    it 'renders proper amount' do
+      expect(page).to have_content('SUBTOTAL')
+      expect(page).to have_content(order.item_total)
+      expect(page).not_to have_content(order.total)
     end
   end
 end

@@ -33,8 +33,12 @@
             </div>
 
             <div class="text-right shopping-cart-total d-none d-lg-block">
-              <div class="text-uppercase d-lg-inline-block shopping-cart-total-text"><%= Spree.t(:total) %></div>
-              <div class="d-lg-inline-block shopping-cart-total-amount"><%= order_form.object.display_total %></div>
+              <div class="text-uppercase d-lg-inline-block shopping-cart-total-text">
+                <%= Spree.t(:subtotal) %>
+              </div>
+              <div class="d-lg-inline-block shopping-cart-total-amount">
+                <%= order_form.object.display_item_total %>
+              </div>
 
               <% if !order_form.object.cart_promo_total.zero? %>
                 <div class="text-uppercase d-lg-inline-block shopping-cart-total-text">
@@ -55,8 +59,12 @@
             <% end %>
 
             <div class="text-right shopping-cart-total d-lg-none">
-              <div class="text-uppercase shopping-cart-total-text"><%= Spree.t(:total) %></div>
-              <div class="shopping-cart-total-amount"><%= order_form.object.display_total %></div>
+              <div class="text-uppercase shopping-cart-total-text">
+                <%= Spree.t(:subtotal) %>
+              </div>
+              <div class="shopping-cart-total-amount">
+                <%= order_form.object.display_item_total %>
+              </div>
               <% if !order_form.object.cart_promo_total.zero? %>
                 <div class="text-uppercase shopping-cart-total-text">
                   <%= Spree.t(:promotion) %>
