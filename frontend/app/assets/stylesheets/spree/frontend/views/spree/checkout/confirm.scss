@@ -62,11 +62,11 @@
           height: auto;
 
           @include media-breakpoint-up(sm) {
-            width: 206px;
+            width: 120px;
           }
 
           @include media-breakpoint-up(lg) {
-            width: 255px;
+            width: 190px;
           }
         }
 
