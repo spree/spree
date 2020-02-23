@@ -22,12 +22,13 @@ Spree consists of several different gems, each of which are maintained
 in a single repository and documented in a single set of
 [online documentation](http://guides.spreecommerce.org/).
 
-* **spree_api** (new [REST API v2](https://guides.spreecommerce.org/api/v2) and legacy [REST API v1](https://guides.spreecommerce.org/api/), [GraphQL support](https://github.com/spree/spree/issues/9176) coming soon) - we also have an official [API v2 JavaScript / TypeScript SDK](https://github.com/spree/spree-storefront-api-v2-js-sdk)
-* **spree_frontend** (default Rails customer frontend)
-* **spree_backend** (Admin Panel)
-* **spree_cmd** (Command-line tools)
-* **spree_core** (Models, Services & Mailers, the basic components of Spree that it can't run without)
-* **spree_sample** (Sample data)
+* **spree_api** ([REST API v2](https://guides.spreecommerce.org/api/v2) with [JavaScript / TypeScript SDK](https://github.com/spree/spree-storefront-api-v2-js-sdk) and [REST API v1](https://guides.spreecommerce.org/api/))
+* **spree_graphql** (GraphQL API - [coming soon](https://github.com/spree/spree/issues/9176))
+* **spree_frontend** (modern mobile-first, blazging fast customizable storefront powered by [Turbolinks](https://github.com/turbolinks/turbolinks))
+* **spree_backend** (feature rich Admin Panel)
+* **spree_cmd** (command-line tools for developers)
+* **spree_core** (models, services & mailers, the basic components of Spree)
+* **spree_sample** (sample data for demo purposes)
 
 You don't need to install all of the components. Only the **Core** is mandatory. 
 
