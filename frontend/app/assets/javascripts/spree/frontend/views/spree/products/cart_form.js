@@ -49,7 +49,7 @@ function CartForm($, $cartForm) {
     this.applyCheckedOptionValue($(event.currentTarget))
   }.bind(this)
 
-  this.applyCheckedOptionValue = function($optionValue, initialUpdate = false) {
+  this.applyCheckedOptionValue = function($optionValue, initialUpdate) {
     this.saveCheckedOptionValue($optionValue)
     this.showAvailableVariants()
     this.updateAddToCart()
