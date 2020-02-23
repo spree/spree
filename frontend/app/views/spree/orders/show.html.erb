@@ -30,7 +30,12 @@
     </div>
     <div>
       <dt class="text-uppercase text-center text-lg-left"><%= Spree.t(:shipping) %></dt>
-      <dd class="text-center text-lg-left"><%= @order.shipments.first.shipping_method.name %></dd>
+      <% @order.shipments.valid.each do |shipment| %>
+        <dd class="text-center text-lg-left">
+          <%= shipment.shipping_method.name %>
+          <%= link_to_tracking(shipment) if shipment.shipped? %>
+        </dd>
+      <% end %>
     </div>
     <div>
       <dt class="text-uppercase text-center text-lg-left"><%= Spree.t(:payment) %></dt>
