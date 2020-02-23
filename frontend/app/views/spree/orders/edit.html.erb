@@ -35,6 +35,15 @@
             <div class="text-right shopping-cart-total d-none d-lg-block">
               <div class="text-uppercase d-lg-inline-block shopping-cart-total-text"><%= Spree.t(:total) %></div>
               <div class="d-lg-inline-block shopping-cart-total-amount"><%= order_form.object.display_total %></div>
+
+              <% if !order_form.object.cart_promo_total.zero? %>
+                <div class="text-uppercase d-lg-inline-block shopping-cart-total-text">
+                  <%= Spree.t(:promotion) %>
+                </div>
+                <div class="d-lg-inline-block shopping-cart-total-amount">
+                  <%= order_form.object.display_cart_promo_total %>
+                </div>
+              <% end %>
             </div>
 
             <% if Spree::Frontend::Config[:coupon_codes_enabled] %>
@@ -48,6 +57,14 @@
             <div class="text-right shopping-cart-total d-lg-none">
               <div class="text-uppercase shopping-cart-total-text"><%= Spree.t(:total) %></div>
               <div class="shopping-cart-total-amount"><%= order_form.object.display_total %></div>
+              <% if !order_form.object.cart_promo_total.zero? %>
+                <div class="text-uppercase shopping-cart-total-text">
+                  <%= Spree.t(:promotion) %>
+                </div>
+                <div class="shopping-cart-total-amount">
+                  <%= order_form.object.display_cart_promo_total %>
+                </div>
+              <% end %>
             </div>
 
             <div class="d-flex flex-column text-center shopping-cart-buttons" data-hook="cart_buttons">

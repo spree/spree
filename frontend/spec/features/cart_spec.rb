@@ -7,10 +7,7 @@ describe 'Cart', type: :feature, inaccessible: true, js: true do
 
   let!(:variant) { create(:variant) }
   let!(:product) { variant.product }
-
-  def add_mug_to_cart
-    add_to_cart(product)
-  end
+  let(:order) { Spree::Order.incomplete.last }
 
   it 'shows cart icon on non-cart pages' do
     visit spree.root_path
@@ -18,7 +15,7 @@ describe 'Cart', type: :feature, inaccessible: true, js: true do
   end
 
   it 'allows you to remove an item from the cart' do
-    add_mug_to_cart
+    add_to_cart(product)
     line_item = Spree::LineItem.first!
     within('#line_items') do
       click_link "delete_line_item_#{line_item.id}"
@@ -38,7 +35,7 @@ describe 'Cart', type: :feature, inaccessible: true, js: true do
     it 'still adds product to cart' do
       visit spree.product_path(product)
 
-      add_mug_to_cart
+      add_to_cart(product)
       expect(page).to have_content(product.name)
     end
   end
@@ -55,7 +52,7 @@ describe 'Cart', type: :feature, inaccessible: true, js: true do
 
     before do
       promotion.actions << action
-      add_mug_to_cart
+      add_to_cart(product)
     end
 
     def apply_coupon(code)
@@ -78,6 +75,11 @@ describe 'Cart', type: :feature, inaccessible: true, js: true do
           expect(page).to_not have_field('order_coupon_code')
         end
       end
+
+      it 'renders cart promo total' do
+        expect(page).to have_content('PROMOTION')
+        expect(page).to have_content(order.display_cart_promo_total)
+      end
     end
 
     context 'invalid coupon' do
@@ -93,6 +95,8 @@ describe 'Cart', type: :feature, inaccessible: true, js: true do
       it 'successfully applies the promocode' do
         apply_coupon(promotion.code)
         expect(page).to have_field('order_applied_coupon_code', with: 'Promotion (Huhuhu)')
+        expect(page).to have_content('PROMOTION')
+        expect(page).to have_content(order.display_cart_promo_total)
       end
     end
   end
