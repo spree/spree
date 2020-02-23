@@ -12,7 +12,7 @@
     <div class="d-table-cell cart-item-delete-header"></div>
   </div>
   <div id="line_items" class="shopping-cart-table-line-items" data-hook>
-    <%= render partial: 'spree/orders/line_item', collection: order_form.object.line_items, locals: { order_form: order_form } %>
+    <%= render partial: 'spree/orders/line_item', collection: order_form.object.line_items, locals: { order_form: order_form }, cached: true %>
   </div>
 </div>
 

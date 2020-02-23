@@ -1212,4 +1212,85 @@ describe Spree::Order, type: :model do
       end
     end
   end
+
+  describe '#cart_promo_total' do
+    let!(:order) { create(:order_with_line_items, line_items_count: 10) }
+
+    subject { order.reload.cart_promo_total }
+
+    context 'without promotions' do
+      it 'returns 0' do
+        expect(subject).to eq(BigDecimal('0.00'))
+      end
+    end
+
+    context 'with promotions' do
+      let(:free_shipping_promotion) { create(:free_shipping_promotion, code: 'freeship') }
+      let(:line_item_promotion) { create(:promotion_with_item_adjustment, code: 'li_discount', adjustment_rate: 10) }
+      let(:order_promotion) { create(:promotion_with_order_adjustment, code: 'discount', weighted_order_adjustment_amount: 10) }
+
+      context 'free shipping' do
+        before do
+          order.coupon_code = free_shipping_promotion.code
+          Spree::PromotionHandler::Coupon.new(order).apply
+        end
+
+        it 'includes free shipping prromo' do
+          expect(order.promotions).to include(free_shipping_promotion)
+        end
+
+        it 'returns 0' do
+          expect(subject).to eq(BigDecimal('0.00'))
+        end
+      end
+
+      context 'line item discount' do
+        before do
+          order.coupon_code = line_item_promotion.code
+          Spree::PromotionHandler::Coupon.new(order).apply
+        end
+
+        it 'includes line item promo' do
+          expect(order.promotions).to include(line_item_promotion)
+        end
+
+        it 'reeturns -100.0' do
+          # 10 items x -10 discount
+          expect(subject).to eq(BigDecimal('-100.00'))
+        end
+      end
+
+      context 'order discount' do
+        before do
+          order.coupon_code = order_promotion.code
+          Spree::PromotionHandler::Coupon.new(order).apply
+        end
+
+        it 'includes order promo' do
+          expect(order.promotions).to include(order_promotion)
+        end
+
+        it 'reeturns -10.0' do
+          expect(subject).to eq(BigDecimal('-10.00'))
+        end
+      end
+
+      context 'multiple promotions' do
+        before do
+          free_shipping_promotion.activate(order: order)
+          line_item_promotion.activate(order: order)
+          order_promotion.activate(order: order)
+          order.update_with_updater!
+        end
+
+        it 'includes all promotions' do
+          expect(order.promotions).to include(free_shipping_promotion, line_item_promotion, order_promotion)
+        end
+
+        it 'returns -110.00' do
+          expect(subject).to eq(BigDecimal('-110.00'))
+        end
+      end
+    end
+  end
 end

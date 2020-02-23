@@ -21,7 +21,8 @@ module Spree
     extend Spree::DisplayMoney
     money_methods :outstanding_balance, :item_total,           :adjustment_total,
                   :included_tax_total,  :additional_tax_total, :tax_total,
-                  :shipment_total,      :promo_total,          :total
+                  :shipment_total,      :promo_total,          :total,
+                  :cart_promo_total
 
     alias display_ship_total display_shipment_total
     alias_attribute :ship_total, :shipment_total
@@ -629,6 +630,15 @@ module Spree
       promotions.
         where(id: valid_promotion_ids).
         coupons
+    end
+
+    # Returns item and whole order discount amount for Order
+    # without Shipment disccounts (eg. Free Shipping)
+    # @return [BigDecimal]
+    def cart_promo_total
+      all_adjustments.eligible.nonzero.promotion.
+        where.not(adjustable_type: 'Spree::Shipment').
+        sum(:amount)
     end
 
     private
