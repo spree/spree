@@ -203,14 +203,16 @@ describe Spree::BaseHelper, type: :helper do
 
       it { is_expected.to eq(nil) }
 
-      context 'and Variant has images' do
-        let!(:image_1) { create :image, viewable: variant }
-        let!(:image_2) { create :image, viewable: variant }
+      context 'with variants' do
+        let!(:image_1) { create :image, viewable: product.master }
+        let!(:image_2) { create :image, viewable: product.master }
+        let!(:image_3) { create :image, viewable: variant }
+        let!(:image_4) { create :image, viewable: variant }
 
-        it { is_expected.to eq(image_1) }
+        it { is_expected.to eq(image_3) }
       end
 
-      context 'and master Variant has images' do
+      context 'only with master' do
         let!(:image_1) { create :image, viewable: product.master }
         let!(:image_2) { create :image, viewable: product.master }
 

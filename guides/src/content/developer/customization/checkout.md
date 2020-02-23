@@ -139,7 +139,7 @@ add a new state, you will need to create a new partial for this state.
 
 The `update` action performs the following:
 
-* Updates the `current_order` with the paramaters passed in from the current
+* Updates the `current_order` with the parameters passed in from the current
   step.
 * Transitions the order state machine using the `next` event after successfully
   updating the order.

@@ -25,6 +25,8 @@ module Spree
     def link_to_tracking(shipment, options = {})
       return unless shipment.tracking && shipment.shipping_method
 
+      options[:target] ||= :blank
+
       if shipment.tracking_url
         link_to(shipment.tracking, shipment.tracking_url, options)
       else
@@ -104,16 +106,26 @@ module Spree
       Spree::Core::Engine.frontend_available?
     end
 
+    # we should always try to render image of the default variant
+    # same as it's done on PDP
+    def default_image_for_product(product)
+      if product.default_variant.images.any?
+        product.default_variant.images.first
+      elsif product.variant_images.any?
+        product.variant_images.first
+      end
+    end
+
     def default_image_for_product_or_variant(product_or_variant)
       Rails.cache.fetch("spree/default-image/#{product_or_variant.cache_key_with_version}") do
-        if product_or_variant.images.empty?
-          if product_or_variant.is_a?(Spree::Product) && product_or_variant.variant_images.any?
-            product_or_variant.variant_images.first
-          elsif product_or_variant.is_a?(Spree::Variant) && product_or_variant.product.variant_images.any?
-            product_or_variant.product.variant_images.first
+        if product_or_variant.is_a?(Spree::Product)
+          default_image_for_product(product_or_variant)
+        elsif product_or_variant.is_a?(Spree::Variant)
+          if product_or_variant.images.any?
+            product_or_variant.images.first
+          else
+            default_image_for_product(product_or_variant.product)
           end
-        else
-          product_or_variant.images.first
         end
       end
     end

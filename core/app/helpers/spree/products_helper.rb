@@ -31,12 +31,12 @@ module Spree
       end
     end
 
-    def default_variant(variants)
-      variants_option_types_presenter(variants).default_variant || variants.find(&:is_master)
+    def default_variant(variants, product)
+      variants_option_types_presenter(variants, product).default_variant || product.default_variant
     end
 
-    def used_variants_options(variants)
-      variants_option_types_presenter(variants).options
+    def used_variants_options(variants, product)
+      variants_option_types_presenter(variants, product).options
     end
 
     # converts line breaks in product description into <p> tags (for html display purposes)
@@ -145,11 +145,11 @@ module Spree
       end
     end
 
-    def variants_option_types_presenter(variants)
+    def variants_option_types_presenter(variants, product)
       @_variants_option_types_presenter ||= begin
         option_types = Spree::Variants::OptionTypesFinder.new(variant_ids: variants.map(&:id)).execute
 
-        Spree::Variants::OptionTypesPresenter.new(option_types, variants)
+        Spree::Variants::OptionTypesPresenter.new(option_types, variants, product)
       end
     end
   end

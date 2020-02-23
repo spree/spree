@@ -15,7 +15,7 @@
 </template>
 
 <% is_product_available_in_currency = product_available_in_currency? %>
-<% default_variant = default_variant(@variants) %>
+<% default_variant = default_variant(@variants, @product) %>
 
 <%= form_for :order, html: {
     id: 'add-to-cart-form',
@@ -50,7 +50,7 @@
     <% if @product.variants_and_option_values(current_currency).any? %>
       <hr>
       <ul id="product-variants" class="product-variants">
-        <% used_variants_options(@variants).each_with_index do |option_type, index| %>
+        <% used_variants_options(@variants, @product).each_with_index do |option_type, index| %>
           <li>
             <% if option_type[:name] == "color" %>
               <%= render "color_option_type", option_type: option_type, index: index %>

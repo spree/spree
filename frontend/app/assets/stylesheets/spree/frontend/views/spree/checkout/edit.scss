@@ -25,10 +25,16 @@
       }
       a {
         color: $header-font-color;
-        padding-left: 15px;
         letter-spacing: 0.5px;
+        text-decoration: none;
         @include media-breakpoint-down(sm) {
           padding-left: 0px;
+        }
+      }
+      &-text {
+        padding-left: 15px;
+        &:hover {
+          text-decoration: underline;
         }
       }
     }
