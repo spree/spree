@@ -34,7 +34,7 @@ function CartForm($, $cartForm) {
   this.initializeForm = function() {
     if (this.withOptionValues) {
       var $optionValue = this.firstCheckedOptionValue()
-      this.applyCheckedOptionValue($optionValue)
+      this.applyCheckedOptionValue($optionValue, true)
     } else {
       this.updateAddToCart()
       this.triggerVariantImages()
@@ -49,11 +49,12 @@ function CartForm($, $cartForm) {
     this.applyCheckedOptionValue($(event.currentTarget))
   }.bind(this)
 
-  this.applyCheckedOptionValue = function($optionValue) {
+  this.applyCheckedOptionValue = function($optionValue, initialUpdate = false) {
     this.saveCheckedOptionValue($optionValue)
     this.showAvailableVariants()
     this.updateAddToCart()
-    this.updateVariantAvailability()
+    // we don't want to remove availability status on initial page load
+    if (!initialUpdate) this.updateVariantAvailability()
     this.updateVariantPrice()
     this.updateVariantId()
 
@@ -203,7 +204,11 @@ function CartForm($, $cartForm) {
   this.updateVariantAvailability = function() {
     var variant = this.selectedVariant()
 
-    if (!variant) return
+    if (!variant) {
+      return $cartForm
+        .find('.add-to-cart-form-general-availability .add-to-cart-form-general-availability-value')
+        .html('')
+    }
 
     return $cartForm
       .find('.add-to-cart-form-general-availability .add-to-cart-form-general-availability-value')
