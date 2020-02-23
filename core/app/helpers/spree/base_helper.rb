@@ -25,6 +25,8 @@ module Spree
     def link_to_tracking(shipment, options = {})
       return unless shipment.tracking && shipment.shipping_method
 
+      options[:target] ||= :blank
+
       if shipment.tracking_url
         link_to(shipment.tracking, shipment.tracking_url, options)
       else

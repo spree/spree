@@ -22,43 +22,7 @@
             <%= Spree.t(:total) %>
           </p>
         </div>
-        <% @order.line_items.each do |item| %>
-          <div class="checkout-confirm-order-details-line-items-line-item w-100 d-table-row">
-            <div class="checkout-confirm-order-details-line-items-line-item-name d-table-cell align-middle py-3 py-sm-4">
-              <div class="d-flex align-items-lg-center">
-                <% if item.variant.images.length == 0 %>
-                  <%= link_to product_image(item.variant.product), item.variant.product %>
-                <% else %>
-                  <%= link_to image_tag(main_app.url_for(item.variant.images.first.url(:plp_and_carousel))), item.variant.product %>
-                <% end %>
-                <div class="d-flex flex-column mt-2 mt-lg-0">
-                  <div><%= item.name %></div>
-                  <ul class="checkout-confirm-order-details-line-items-line-item-name-options text-uppercase list-unstyled mb-0">
-                    <% item.variant.option_values.sort { |ov| ov.option_type.position }.each do |ov| %>
-                      <li><%= "#{ov.option_type.presentation}: #{ov.name.titleize}" %></li>
-                    <% end %>
-                  </ul>
-                  <div class="d-lg-none">
-                    <div class="font-weight-bold"><%= item.single_money.to_html %></div>
-                  </div>
-                  <div class="d-lg-none">
-                    <span>Quantity:</span>
-                    <span class="font-weight-bold"><%= item.quantity %></span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="checkout-confirm-order-details-line-items-line-item-price d-none d-lg-table-cell align-middle py-4">
-              <div><%= item.single_money.to_html %></div>
-            </div>
-            <div class="checkout-confirm-order-details-line-items-line-item-quantity d-none d-lg-table-cell align-middle py-4">
-              <span class="checkout-confirm-order-details-line-items-line-item-quantity-val d-lg-block"><%= item.quantity %></span>
-            </div>
-            <div class="checkout-confirm-order-details-line-items-line-item-total d-none d-lg-table-cell align-middle py-4">
-              <div><%= item.display_total.to_s %></div>
-            </div>
-          </div>
-        <% end %>
+        <%= render partial: 'spree/shared/line_item', collection: @order.line_items, cached: true %>
       </div>
     </div>
     <div class="checkout-confirm-delivery-informations text-left mt-3 order-1 order-lg-0">
@@ -85,7 +49,9 @@
             <%= Spree.t(:shipping) %>
             <%= checkout_edit_link('delivery') %>
           </dt>
-          <dd><%= @order.shipments.first.shipping_method&.name if @order.shipments.any? %></dd>
+          <% @order.shipments.pending.each do |shipment| %>
+            <dd><%= shipment.shipping_method&.name %> </dd>
+          <% end %>
         </div>
         <div>
           <dt class="text-uppercase">
