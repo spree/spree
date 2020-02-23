@@ -49,7 +49,9 @@
             <%= Spree.t(:shipping) %>
             <%= checkout_edit_link('delivery') %>
           </dt>
-          <dd><%= @order.shipments.first.shipping_method&.name if @order.shipments.any? %></dd>
+          <% @order.shipments.pending.each do |shipment| %>
+            <dd><%= shipment.shipping_method&.name %> </dd>
+          <% end %>
         </div>
         <div>
           <dt class="text-uppercase">
