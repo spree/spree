@@ -5,8 +5,10 @@
   & > .order-show-check-mark {
     color: $secondary-color;
     margin-bottom: 25px;
+    margin-top: 27px;
     @include media-breakpoint-up(sm) {
       margin-bottom: 42px;
+      margin-top: 84px;
     }
   }
 
