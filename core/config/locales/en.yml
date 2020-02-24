@@ -1000,6 +1000,7 @@ en:
     name_on_card: Name on card
     name_or_sku: Name or SKU (enter at least first 3 characters of product name)
     nav_bar:
+      admin_panel: ADMIN PANEL
       close_menu: Close menu
       go_to_previous_menu: Go to previous menu
       log_in: LOG IN
