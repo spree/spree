@@ -82,7 +82,8 @@
       .d-table-cell,
       .d-lg-table-cell {
         &:first-child {
-          padding: 22px 16px 22px 0;
+          padding: 22px 0 22px 0;
+          text-align: left;
           vertical-align: top;
           @include media-breakpoint-up(sm) {
             padding-right: 29.9px;
@@ -93,15 +94,16 @@
         }
         &:last-child {
           @include media-breakpoint-up(lg) {
-            padding: 40px 0 22px 16px;
+            padding: 0;
+            text-align: center;
           }
         }
         border-top: none;
         border-bottom: 1px solid $global-border-style;
-        padding: 22px 0;
+        padding: 22px;
         vertical-align: top;
         @include media-breakpoint-up(lg) {
-          padding: 22px 50px 0 0;
+          padding: 0;
           vertical-align: middle;
         }
       }
@@ -176,7 +178,6 @@
       @include media-breakpoint-up(sm) {
         font-size: font-px-to-rem(24px);
         letter-spacing: 0.6px;
-        margin-bottom: 74px;
       }
       @include media-breakpoint-up(lg) {
         font-size: font-px-to-rem(26px);

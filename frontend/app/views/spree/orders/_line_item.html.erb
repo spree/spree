@@ -2,21 +2,22 @@
 
 <%= order_form.fields_for :line_items, line_item do |item_form| %>
   <div class="d-table-row shopping-cart-item">
-    <div class="d-table-cell shopping-cart-item-image" data-hook="cart_item_image">
+    <div class="d-table-cell shopping-cart-item-image align-middle" data-hook="cart_item_image">
       <% if variant.images.length == 0 %>
         <%= link_to product_image(variant.product), variant.product %>
       <% else %>
         <%= link_to image_tag(main_app.url_for(variant.images.first.url(:product))), variant.product %>
       <% end %>
     </div>
-    <div class="d-table-cell shopping-cart-item-description" data-hook="cart_item_description">
-      <h4 class="item-title"><%= link_to line_item.name, spree.product_path(variant.product) %></h4>
+    <div class="d-table-cell shopping-cart-item-description align-middle" data-hook="cart_item_description">
+      <h4 class="item-title m-0"><%= link_to line_item.name, spree.product_path(variant.product) %></h4>
       <% if line_item.insufficient_stock? %>
         <span class="out-of-stock">
           <%= Spree.t(:out_of_stock) %>&nbsp;&nbsp;<br />
         </span>
       <% end %>
-      <ul class="item-details-list" data-hook="line_item_description">
+      <% if variant.option_values.present? %>
+      <ul class="item-details-list mb-0" data-hook="line_item_description">
         <% variant.option_values.sort { |ov| ov.option_type.position }.each do |ov| %>
           <li class="item-details">
             <% # TODO: rework option values so options_text method can be used here %>
@@ -24,6 +25,7 @@
           </li>
         <% end %>
       </ul>
+      <% end %>
       <%= render 'line_item_data', view: 'mobile', line_item: line_item, item_form: item_form %>
     </div>
     <%= render 'line_item_data', view: 'desktop', line_item: line_item, item_form: item_form %>
