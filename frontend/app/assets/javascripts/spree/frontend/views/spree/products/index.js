@@ -25,6 +25,10 @@ Spree.ready(function($) {
     $(this).toggleClass('plp-overlay-card-item--selected');
   });
 
+  $('.color-select').click(function() {
+    $(this).find('.plp-overlay-color-item').toggleClass('color-select-border--selected')
+  });
+
   $('.plp-overlay-ul-li').click(function() {
     $('.plp-overlay-ul-li--active')
       .removeClass('plp-overlay-ul-li--active')
