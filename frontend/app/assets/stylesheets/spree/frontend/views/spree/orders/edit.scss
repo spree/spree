@@ -156,16 +156,15 @@
 
       .item-details {
         text-transform: uppercase;
-        font-size: font-px-to-rem(12px);
+        font-size: 8px;
         font-weight: 500;
         line-height: 1.4;
         @include media-breakpoint-up(sm) {
-          font-size: font-px-to-rem(14px);
+          font-size: font-px-to-rem(16px);
           margin-top: 3px;
           margin-bottom: 3px;
         }
         @include media-breakpoint-up(lg) {
-          font-size: font-px-to-rem(12px);
           margin: 0;
         }
       }
@@ -249,6 +248,7 @@
     }
     &-delete {
       float: right;
+      padding: 0;
       @include media-breakpoint-up(sm) {
         margin-top: 5px;
       }
