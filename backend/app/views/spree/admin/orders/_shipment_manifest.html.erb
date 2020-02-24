@@ -1,11 +1,11 @@
 <% shipment.manifest.each do |item| %>
   <tr class="stock-item" data-item-quantity="<%= item.quantity %>">
     <td class="item-image image text-center">
-      <%= mini_image(item.variant) %>
+      <%= link_to mini_image(item.variant), edit_admin_product_path(item.variant.product) %>
     </td>
 
     <td class="item-name">
-      <%= item.variant.product.name %>
+      <%= link_to item.variant.product.name, edit_admin_product_path(item.variant.product) %>
       <br />
       <%= "(#{item.variant.options_text})" if item.variant.options_text.present? %>
       <% if item.variant.sku.present? %>
