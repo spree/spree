@@ -3,8 +3,17 @@
     <div class="modal-dialog--zoom modal-dialog mw-100 vh-100 mt-0 mb-0" role="document">
       <div class="modal-content h-100">
         <div class="modal-body h-100">
-          <button class="modal-close" type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&#x2715;</span>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">
+              <%= icon(name: 'close',
+                       classes: 'd-block d-lg-none',
+                       width: 16,
+                       height: 16) %>
+              <%= icon(name: 'close',
+                       classes: 'd-none d-lg-block',
+                       width: 30,
+                       height: 30) %>
+            </span>
           </button>
           <div class="d-flex justify-content-center align-items-center product-details-images h-100">
             <% if @product_images.size > 1 %>
