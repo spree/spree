@@ -7,10 +7,8 @@ module Spree
       @body_class
     end
 
-    def spree_breadcrumbs(taxon, separator = '', product = nil)
+    def spree_breadcrumbs(taxon, _separator = '', product = nil)
       return '' if current_page?('/') || taxon.nil?
-
-      separator = raw(separator)
 
       # breadcrumbs for root
       crumbs = [content_tag(:li, content_tag(
