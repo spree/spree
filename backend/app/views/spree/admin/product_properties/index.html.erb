@@ -12,9 +12,15 @@
     { icon: 'add', :'data-target' => "tbody#product_properties", class: 'btn-success spree_add_fields' }) %>
 
   <span class="js-new-ptype-link">
-    <%= button_link_to Spree.t(:select_from_prototype),
-      available_admin_prototypes_url,
-      { icon: 'properties', remote: true, 'data-update' => 'prototypes', class: 'btn-outline-secondary mt-lg-1' } %>
+    <% if frontend_available? %>
+      <%= button_link_to Spree.t(:select_from_prototype),
+        available_admin_prototypes_url,
+        { icon: 'properties', remote: true, 'data-update' => 'prototypes', class: 'btn-outline-secondary mt-lg-1' } %>
+    <% else %>
+      <%= button_link_to Spree.t(:select_from_prototype),
+        available_admin_prototypes_url,
+        { icon: 'properties', remote: true, 'data-update' => 'prototypes', class: 'btn-outline-secondary' } %>
+    <% end %>
   </span>
 <% end if can? :create, Spree::ProductProperty %>
 
