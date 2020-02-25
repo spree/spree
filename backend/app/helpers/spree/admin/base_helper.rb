@@ -158,13 +158,13 @@ module Spree
       end
 
       def product_preview_link(product)
-        if frontend_available?
-          button_link_to(
-            Spree.t(:preview_product),
-            spree.product_url(@product),
-            { class: "btn-outline-secondary", icon: 'eye-open', id: 'admin_preview_product', target: :blank }
-          )
-        end
+        return unless frontend_available?
+
+        button_link_to(
+          Spree.t(:preview_product),
+          spree.product_url(product),
+          { class: "btn-outline-secondary", icon: 'eye-open', id: 'admin_preview_product', target: :blank }
+        )
       end
     end
   end
