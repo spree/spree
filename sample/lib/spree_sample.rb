@@ -29,7 +29,6 @@ module SpreeSample
       Spree::Sample.load_sample('orders')
       Spree::Sample.load_sample('adjustments')
       Spree::Sample.load_sample('payments')
-      Spree::Sample.load_sample('store_credit_categories')
       Spree::Sample.load_sample('return_authorization_reasons')
     end
   end
