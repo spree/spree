@@ -211,6 +211,10 @@
   }
 }
 
+.color-select-label:focus {
+  outline: none;
+}
+
 .select-label {
   cursor: pointer;
   padding: 4px 7px;
@@ -233,6 +237,10 @@
     min-width: 32px;
     max-height: 32px;
     font-size: font-px-to-rem(14px);
+  }
+
+  &:focus {
+    outline: none;
   }
 
   input:checked + & {
