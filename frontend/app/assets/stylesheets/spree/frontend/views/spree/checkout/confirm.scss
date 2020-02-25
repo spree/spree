@@ -185,6 +185,11 @@
   }
 
   &-delivery-informations {
+    div:first-child {
+      flex-shrink: unset;
+      -webkit-flex: unset;
+    }
+
     border-bottom: 1px solid $global-border-style;
     font-weight: 500;
 
