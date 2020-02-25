@@ -7,7 +7,7 @@ unless Spree::Store.default.persisted?
     s.mail_from_address = 'spree@example.com'
     s.default_currency  = 'USD'
     s.seo_title         = 'Spree Commerce Demo Shop'
-    s.meta_description  = 'Spree Commerce is an open source Ecommerce framework decision makers want, developers enjoy.'
+    s.meta_description  = 'This is the new Spree UX DEMO | OVERVIEW: http://bit.ly/new-spree-ux | DOCS: http://bit.ly/spree-ux-customization-docs | CONTACT: https://spreecommerce.org/contact/'
     s.facebook          = 'spreecommerce'
     s.twitter           = 'spreecommerce'
     s.instagram         = 'spreecommerce'
