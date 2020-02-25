@@ -20,7 +20,7 @@
       </div>
 
       <% unless @order.confirm? %>
-        <div id="checkout-summary" class="col-md-12 col-lg-auto h-100" data-hook="checkout_summary_box">
+        <div id="checkout-summary" class="col-md-12 col-lg-auto" data-hook="checkout_summary_box">
           <div class="checkout-summary-container position-sticky">
             <%= render partial: 'summary', locals: { order: @order } %>
             <div data-hook="buttons">
