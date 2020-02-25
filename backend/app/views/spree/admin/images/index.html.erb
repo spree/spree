@@ -4,9 +4,7 @@
   <div class="page-actions col-6 pr-0" data-hook="toolbar">
     <%= yield :page_actions %>
   </div>
-  <% if frontend_available? %>
-    <%= button_link_to Spree.t(:preview_product), product_url(@product), { class: "btn-outline-secondary", icon: 'eye-open', id: 'admin_preview_product', target: :_blank } %>
-  <% end %>
+  <%= product_preview_link(@product) %>
   <%= button_link_to(Spree.t(:new_image), spree.new_admin_product_image_url(@product), { class: "btn-success", icon: 'add', id: 'new_image_link' }) if can? :create, Spree::Image %>
 <% end %>
 
