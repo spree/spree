@@ -3,6 +3,11 @@
     <%= Spree.t(:add_stock) %>
   </h1>
 </div>
+<% content_for :page_actions do %>
+  <% if frontend_available? %>
+    <%= button_link_to Spree.t(:preview_product), product_url(@product), { class: "btn-outline-secondary", icon: 'eye-open', id: 'admin_preview_product', target: :_blank } %>
+  <% end %>
+<% end %>
 <div class="card-body">
   <%= form_for [:admin, Spree::StockMovement.new], url: admin_stock_items_path do |f| %>
     <div data-hook="admin_stock_movements_form_fields" class="row">

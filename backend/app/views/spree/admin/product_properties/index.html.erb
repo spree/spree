@@ -2,6 +2,10 @@
 <%= render 'spree/admin/shared/error_messages', target: @product %>
 
 <% content_for :page_actions do %>
+  <% if frontend_available? %>
+    <%= button_link_to Spree.t(:preview_product), product_url(@product), { class: "btn-outline-secondary", icon: 'eye-open', id: 'admin_preview_product', target: :_blank } %>
+  <% end %>
+
   <%= button_link_to(
     Spree.t(:add_product_properties),
     "javascript:;",
@@ -10,7 +14,7 @@
   <span class="js-new-ptype-link">
     <%= button_link_to Spree.t(:select_from_prototype),
       available_admin_prototypes_url,
-      { icon: 'properties', remote: true, 'data-update' => 'prototypes', class: 'btn-outline-secondary' } %>
+      { icon: 'properties', remote: true, 'data-update' => 'prototypes', class: 'btn-outline-secondary mt-lg-1' } %>
   </span>
 <% end if can? :create, Spree::ProductProperty %>
 
