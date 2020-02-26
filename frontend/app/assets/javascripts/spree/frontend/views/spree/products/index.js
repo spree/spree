@@ -25,7 +25,7 @@ Spree.ready(function($) {
     $(this).toggleClass('plp-overlay-card-item--selected');
   });
 
-  $('.color-select').click(function() {
+  $('#filters-accordion .color-select, #plp-filters-accordion .color-select').click(function() {
     $(this).find('.plp-overlay-color-item').toggleClass('color-select-border--selected')
   });
 
