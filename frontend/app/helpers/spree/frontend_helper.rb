@@ -13,7 +13,7 @@ module Spree
       # breadcrumbs for root
       crumbs = [content_tag(:li, content_tag(
         :a, content_tag(
-          :span, 'Home', itemprop: 'name'
+          :span, Spree.t(:home), itemprop: 'name'
         ) << content_tag(:meta, nil, itemprop: 'position', content: '0'), itemprop: 'url', href: spree.root_path
       ) << content_tag(:span, nil, itemprop: 'item', itemscope: 'itemscope', itemtype: 'https://schema.org/Thing', itemid: spree.root_path), itemscope: 'itemscope', itemtype: 'https://schema.org/ListItem', itemprop: 'itemListElement', class: 'breadcrumb-item')]
 
