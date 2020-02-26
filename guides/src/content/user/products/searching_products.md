@@ -2,7 +2,7 @@
 title: Searching Products
 ---
 
-# Searching Products
+## Searching Products
 
 When you click the **Products** tab, you will see dropdown with the **Products settings** on the Admin Interface. In the next step click **Products** tab in the **Products settings**. Now you are presented with a summary of all actual products in the shop.
 
