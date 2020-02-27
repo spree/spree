@@ -48,11 +48,7 @@
   <div class="order-show-line-items d-flex flex-column align-items-center">
     <% @order.line_items.each do |item| %>
       <div class="order-show-line-items-line-item d-flex w-100">
-        <% if item.variant.images.length == 0 %>
-          <%= link_to product_image(item.product), item.product %>
-        <% else %>
-          <%= link_to image_tag(main_app.url_for(item.variant.images.first.url(:product))), item.product %>
-        <% end %>
+        <%= link_to product_image(item.variant), item.product %>
         <div class="order-show-line-items-line-item-desc w-100">
           <span class="order-show-line-items-line-item-desc-name">
             <%= item.name %>
