@@ -48,13 +48,13 @@ end
 
 Before we continue development of our extension, let's add it to the Spree application we created in the [last tutorial](/developer/getting_started_tutorial.html). This will allow us to see how the extension works with an actual Spree store while we develop it.
 
-Within the `mystore` application directory, add the following line to the bottom of our `Gemfile`:
+Within the `my_store` application directory, add the following line to the bottom of our `Gemfile`:
 
 ```ruby
 gem 'spree_simple_sales', path: '../spree_simple_sales'
 ```
 
-You may have to adjust the path somewhat depending on where you created the extension. You want this to be the path relative to the location of the `mystore` application.
+You may have to adjust the path somewhat depending on where you created the extension. You want this to be the path relative to the location of the `my_store` application.
 
 Once you have added the gem, it's time to bundle:
 

@@ -1,3 +1,5 @@
+# Spree Commerce
+
 <a href="https://guides.spreecommerce.org/release_notes/4_1_0.html"><img src="https://spreecommerce.org/wp-content/uploads/2020/02/Spree-4-1-new-ux-relase-notes.png" /></a>
 
 * Join our Slack at [slack.spreecommerce.org](http://slack.spreecommerce.org/)
@@ -16,37 +18,45 @@
 [![Slack Status](http://slack.spreecommerce.org/badge.svg)](http://slack.spreecommerce.org)
 
 **Spree** is a complete open source e-commerce solution built with Ruby on Rails. It
-was originally developed by Sean Schofield and is now maintained by [Spark Solutions](http://sparksolutions.co). We're open to [contributions](#contributing) and accepting new [Core Team](https://github.com/spree/spree/wiki/Core-Team) members.
+was started by Sean Schofield and is now developed by [Spark Solutions](http://sparksolutions.co). We're open to [contributions](#contributing).
 
-Spree consists of several different gems, each of which are maintained
+Spree consists of several different gems (modules), each of which are maintained
 in a single repository and documented in a single set of
 [online documentation](http://guides.spreecommerce.org/).
 
 * **spree_api** ([REST API v2](https://guides.spreecommerce.org/api/v2) with [JavaScript / TypeScript SDK](https://github.com/spree/spree-storefront-api-v2-js-sdk) and [REST API v1](https://guides.spreecommerce.org/api/))
 * **spree_graphql** (GraphQL API - [coming soon](https://github.com/spree/spree/issues/9176))
-* **spree_frontend** (modern mobile-first, blazging fast customizable storefront powered by [Turbolinks](https://github.com/turbolinks/turbolinks))
+* **spree_frontend** (mobile-first, blazing fast and customizable storefront)
 * **spree_backend** (feature rich Admin Panel)
 * **spree_cmd** (command-line tools for developers)
 * **spree_core** (models, services & mailers, the basic components of Spree)
 * **spree_sample** (sample data for demo purposes)
 
-You don't need to install all of the components. Only the **Core** is mandatory. 
+## Demo
 
-Demo
-----
+Go to: https://demo.spreecommerce.org/
+
+Or fire your own demo on Heroku:
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/spree/spree/tree/master)
 
-If you want to run the demo on your local machine, you can use our docker image. It will download and run sample Spree application on http://localhost:3000
-```shell
-docker run --rm -it -p 3000:3000 spreecommerce/spree:3.6.4
+Admin Panel credentials (Heroku demo):
+
+* login: `spree@example.com`
+* password: `spree123`
+
+## Installation
+
+### Create new Rails app (optional)
+
+If you're starting a new application from scrach run:
+
+```bash
+rails new my_store
+cd my_store
 ```
 
-Admin Panel credentials - login: `spree@example.com` / password: `spree123`
-
-
-Getting Started
-----------------------
+You can **add Spree to your existing Rails application** as well.
 
 ### Add Spree gems to your `Gemfile`
 
@@ -66,26 +76,21 @@ gem 'spree_auth_devise', '~> 3.5'
 gem 'spree_gateway', '~> 3.4'
 ```
 
-#### Rails 5.1
+To see what rails version are you using run this command:
 
-```ruby
-gem 'spree', '~> 3.5.0'
-gem 'spree_auth_devise', '~> 3.5'
-gem 'spree_gateway', '~> 3.4'
+```bash
+rails -v
 ```
 
-#### Rails 5.0
+Older rails versions are also supported: [Rails 5.1](https://guides.spreecommerce.org/release_notes/3_5_0.html), [Rails 5.0](https://guides.spreecommerce.org/release_notes/3_2_0.html), [Rails 4.2](https://guides.spreecommerce.org/release_notes/3_1_0.html)
 
-```ruby
-gem 'spree', '~> 3.2.7'
-gem 'spree_auth_devise', '~> 3.5'
-gem 'spree_gateway', '~> 3.4'
+### Install gems
+
+```bash
+bundle install
 ```
 
-### Run `bundle install`
-
-
-**Note**: if you run into `Bundler could not find compatible versions for gem "sprockets":` error message, please run 
+**Note**: if you run into `Bundler could not find compatible versions for gem "sprockets":` error message, please run
 
 ```bash
 bundle update
@@ -99,24 +104,11 @@ rails g spree:auth:install
 rails g spree_gateway:install
 ```
 
-Installation options
-----------------------
-
-Alternatively, if you want to use the bleeding edge version of Spree, add this to your Gemfile:
-
-```ruby
-gem 'spree', github: 'spree/spree'
-gem 'spree_auth_devise', github: 'spree/spree_auth_devise'
-gem 'spree_gateway', github: 'spree/spree_gateway'
-```
-
-**Note: The master branch is not guaranteed to ever be in a fully functioning
-state. It is unwise to use this branch in a production system you care deeply
-about.**
+## Installation options
 
 By default, the installation generator (`rails g spree:install`) will run
-migrations as well as adding seed and sample data and will copy frontend views
-for easy customization (if spree_frontend available). This can be disabled using
+migrations as well as adding seed and sample data and will copy storefront data
+for easy customization (if `spree_frontend` available). This can be disabled using
 
 ```shell
 rails g spree:install --migrate=false --sample=false --seed=false --copy_storefront=false
@@ -126,32 +118,37 @@ You can always perform any of these steps later by using these commands.
 
 ```shell
 bundle exec rake railties:install:migrations
-bundle exec rake db:migrate
-bundle exec rake db:seed
+bundle exec rails db:migrate
+bundle exec rails db:seed
 bundle exec rake spree_sample:load
+bundle exec rails g spree:frontend:copy_storefront
 ```
 
-Browse Store
-----------------------
+### Headless installation
 
-http://localhost:3000
+To use Spree in [API-only mode](https://guides.spreecommerce.org/api/overview/) you need to replace `spree` with `spree_api` in your project Gemfile. This will skip Storefront and Admin Panel. If you would want to include the Admin Panel please add `spree_backend` to your Gemfile.
 
-Browse Admin Interface
-----------------------
+## Run rails sever
 
-http://localhost:3000/admin
+```bash
+rails s
+```
 
-If you have `spree_auth_devise` installed, you can generate a new admin user by running `rake spree_auth:admin:create`.
+## Browse Storefront
 
-Extensions
-----------------------
+Go to http://localhost:3000
+
+## Browse Admin Panel
+
+Go to http://localhost:3000/admin
+
+## Extensions
 
 Spree Extensions provide additional features not present in the Core system.
 
-
 | Extension | Spree 3.2+ support | Description |
 | --- | --- | --- |
-| [spree_gateway](https://github.com/spree/spree_gateway) | [![Build Status](https://travis-ci.org/spree/spree_gateway.svg?branch=master)](https://travis-ci.org/spree/spree_gateway) | Community supported Spree Payment Method Gateways
+| [spree_gateway](https://github.com/spree/spree_gateway) | [![Build Status](https://travis-ci.org/spree/spree_gateway.svg?branch=master)](https://travis-ci.org/spree/spree_gateway) | Payment Gateways (Stripe, Apple Pay, Braintree, Authorize.net and many others)
 | [spree_auth_devise](https://github.com/spree/spree_auth_devise) | [![Build Status](https://travis-ci.org/spree/spree_auth_devise.svg?branch=master)](https://travis-ci.org/spree/spree_auth_devise) | Provides authentication services for Spree, using the Devise gem.
 | [spree_i18n](https://github.com/spree-contrib/spree_i18n) | [![Build Status](https://travis-ci.org/spree-contrib/spree_i18n.svg?branch=master)](https://travis-ci.org/spree-contrib/spree_i18n) | I18n translation files for Spree Commerce
 | [spree-multi-domain](https://github.com/spree-contrib/spree-multi-domain) | [![Build Status](https://travis-ci.org/spree-contrib/spree-multi-domain.svg?branch=master)](https://travis-ci.org/spree-contrib/spree-multi-domain) | Multiple Spree stores on different domains - single unified backed for processing orders
@@ -175,8 +172,7 @@ Spree Extensions provide additional features not present in the Core system.
 | [spree_avatax_official](https://github.com/spree-contrib/spree_avatax_official) | [![Build Status](https://travis-ci.org/spree-contrib/spree_avatax_official.svg?branch=master)](https://travis-ci.org/spree-contrib/spree_avatax_official) | Improve your Spree store's sales tax decision automation with Avalara AvaTax
 | [spree_analytics_trackers](https://github.com/spree-contrib/spree_analytics_trackers) | [![Build Status](https://travis-ci.org/spree-contrib/spree_analytics_trackers.svg?branch=master)](https://travis-ci.org/spree-contrib/spree_analytics_trackers) | Adds support for Analytics Trackers (Google Analytics & Segment)
 
-Performance
-----------------------
+## Performance
 
 You may notice that your Spree store runs slowly in development environment. This can be because in development each asset (css and javascript) is loaded separately. You can disable it by adding the following line to `config/environments/development.rb`.
 
@@ -184,13 +180,18 @@ You may notice that your Spree store runs slowly in development environment. Thi
 config.assets.debug = false
 ```
 
+Also in development caching is disabled by defualt. To turn on caching run:
 
-Developing Spree
-----------------------
+```bash
+rails dev:cache
+```
+
+You will need to restart rails server after this.
+
+## Developing Spree
 
 Spree is meant to be run within the context of Rails application and the source code is essentially a collection of gems. You can easily create a sandbox
 application inside of your cloned source directory for testing purposes.
-
 
 Clone the Git repo
 
@@ -226,11 +227,10 @@ We use [CircleCI](https://circleci.com/) to run the tests for Spree.
 
 You can see the build statuses at [https://circleci.com/gh/spree/spree](https://circleci.com/gh/spree/spree).
 
----
-
 Each gem contains its own series of tests, and for each directory, you need to
 do a quick one-time creation of a test application and then you can use it to run
 the tests.  For example, to run the tests for the core project.
+
 ```shell
 cd core
 BUNDLE_GEMFILE=../Gemfile bundle exec rake test_app
@@ -239,26 +239,31 @@ bundle exec rspec spec
 
 If you would like to run specs against a particular database you may specify the
 dummy app's database, which defaults to sqlite3.
+
 ```shell
 DB=postgres bundle exec rake test_app
 ```
 
 If you want to run specs for only a single spec file
+
 ```shell
 bundle exec rspec spec/models/spree/state_spec.rb
 ```
 
 If you want to run a particular line of spec
+
 ```shell
 bundle exec rspec spec/models/spree/state_spec.rb:7
 ```
 
 You can also enable fail fast in order to stop tests at the first failure
+
 ```shell
 FAIL_FAST=true bundle exec rspec spec/models/state_spec.rb
 ```
 
 If you want to run the simplecov code coverage report
+
 ```shell
 COVERAGE=true bundle exec rspec spec
 ```
@@ -277,13 +282,12 @@ Please follow this
 To execute all the tests, you may want to run this command at the
 root of the Spree project to generate test applications and run
 specs for all the facets:
+
 ```shell
 bash build.sh
 ```
 
-
-Contributing
-----------------------
+## Contributing
 
 Spree is an open source project and we encourage contributions. Please review the
 [contributing guidelines](https://github.com/spree/spree/blob/master/.github/CONTRIBUTING.md)
@@ -303,14 +307,12 @@ Here are some ways **you** can contribute:
 * by reviewing [pull requests](https://github.com/spree/spree/pulls)
 * by verifying [issues](https://github.com/spree/spree/labels/unverified)
 
-License
-----------------------
+## License
 
 Spree is released under the [New BSD License](https://github.com/spree/spree/blob/master/license.md).
 
+## About Spark Solutions
 
-About Spark Solutions
-----------------------
 [![Spark Solutions](http://sparksolutions.co/wp-content/uploads/2015/01/logo-ss-tr-221x100.png)][spark]
 
 Spree is maintained by [Spark Solutions Sp. z o.o.][spark].
