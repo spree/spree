@@ -40,7 +40,14 @@ rails spree:install:migrations
 rails db:migrate
 ```
 
-## Migrate to the new Storefront UI (optional)
+## Decide what to do next
+
+Now you have two options:
+
+  1. Migrate to the new Storefront UI
+  1. Stay at the current UI
+
+## Migrate to the new Storefront UI
 
 Spree 4.1 comes with a completely new mobile-first ultra-fast Storefront powered by Turbolinks.
 
@@ -76,6 +83,36 @@ To replace your current frontend with the new Spree UI follow these steps:
     ```
 
     from `vendor/assets/javascripts/spree/frontend.all.js` file
+
+## Stay at the current UI
+
+If you wish to not move to the new Storefront UI it's still an option. Just proceed with the steps described below.
+
+1. Keep Spree Auth Devise at the version you're currently using
+
+    If you're using Spree Auth Devise gem you need to lock it at 4.0.0 in your `Gemfile`: 
+
+    ```ruby
+    gem 'spree_auth_devise', '~> 4.0.0'
+    ```
+
+2. Copy over all views from Spree 4.0
+
+    Copy over views from: https://github.com/spree/spree/tree/4-0-stable/frontend/app/views to your application views directory: `app/views`
+
+    **WARNING** remember to now overwrite your custom changes!
+
+3. Copy over all Stylesheets from Spree 4.0
+
+    Copy over stylesheets from: https://github.com/spree/spree/tree/4-0-stable/frontend/app/assets/stylesheets to `app/stylesheets`
+
+    **WARNING** remember to now overwrite your custom changes!
+
+4. Copy over all JavaScript from Spree 4.0
+
+    Copy over stylesheets from: https://github.com/spree/spree/tree/4-0-stable/frontend/app/assets/javascripts to `app/javascripts`
+
+    **WARNING** remember to now overwrite your custom changes!  
 
 ## Read the release notes
 
