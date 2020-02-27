@@ -22,7 +22,7 @@ This is the safest and recommended method.
 ## Update Gemfile
 
 ```ruby
-gem 'spree', '~> 4.1.0.rc1'
+gem 'spree', '~> 4.1'
 gem 'spree_gateway', '~> 3.7'
 ```
 
@@ -49,7 +49,7 @@ To replace your current frontend with the new Spree UI follow these steps:
 1. Update Spree Auth Devise to 4.1 in your `Gemfile`
 
     ```ruby
-    gem 'spree_auth_devise', '~> 4.1.0.rc1'
+    gem 'spree_auth_devise', '~> 4.1'
     ```
 
 2. In your project root directory run:
