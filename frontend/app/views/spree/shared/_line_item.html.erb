@@ -1,11 +1,7 @@
 <div class="checkout-confirm-order-details-line-items-line-item w-100 d-table-row">
   <div class="checkout-confirm-order-details-line-items-line-item-name d-table-cell align-middle py-3 py-sm-4">
     <div class="d-flex align-items-lg-center">
-      <% if line_item.variant.images.length == 0 %>
-        <%= link_to product_image(line_item.product), line_item.product %>
-      <% else %>
-        <%= link_to image_tag(main_app.url_for(line_item.variant.images.first.url(:product))), line_item.product %>
-      <% end %>
+      <%= link_to product_image(line_item.variant), line_item.product %>
       <div class="d-flex flex-column mt-2 mt-lg-0">
         <div><%= link_to line_item.name, line_item.product %></div>
         <ul class="checkout-confirm-order-details-line-items-line-item-name-options text-uppercase list-unstyled mb-0">

@@ -22,7 +22,7 @@
 <% end %>
 
 <div class="shopping-cart-item-delete <%= additional_classes %>" data-hook="cart_item_delete">
-  <%= link_to '#', class: 'delete', id: "delete_#{dom_id(line_item)}" do %>
+  <%= link_to '#', class: 'delete', id: "delete_#{dom_id(line_item)}", data: { turbolinks: false } do %>
     <%= icon(name: 'garbage',
              classes: 'shopping-cart-item-delete-icon',
              width: 18.9,
