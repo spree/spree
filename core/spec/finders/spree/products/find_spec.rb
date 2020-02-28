@@ -89,7 +89,7 @@ module Spree
       end
     end
 
-    describe 'filter by option values' do
+    describe 'filter by option values ids' do
       subject(:products) do
         described_class.new(
           scope: Spree::Product.all,
@@ -136,6 +136,80 @@ module Spree
 
         it 'returns products that have both options' do
           expect(products).to match_array([product_3])
+        end
+      end
+    end
+
+    describe 'filter by options' do
+      subject(:products) do
+        described_class.new(
+          scope: Spree::Product.all,
+          params: ActionController::Parameters.new(params),
+          current_currency: 'USD'
+        ).execute
+      end
+
+      let(:option_type_1) { create :option_type, name: 'size', presentation: 'Size' }
+      let(:option_type_2) { create :option_type, name: 'color', presentation: 'Color' }
+
+      let(:option_value_1_1) { create :option_value, option_type: option_type_1, name: 's', presentation: 'S' }
+      let(:option_value_1_2) { create :option_value, option_type: option_type_1, name: 'm', presentation: 'M' }
+      let(:option_value_2_1) { create :option_value, option_type: option_type_2, name: 'red', presentation: '#FF0000' }
+      let(:option_value_2_2) { create :option_value, option_type: option_type_2, name: 'white', presentation: '#FFFFFF' }
+      let(:option_value_2_3) { create :option_value, option_type: option_type_2, name: 'black', presentation: '#000000' }
+
+      let(:product_1) { create :product, option_types: [option_type_1, option_type_2] }
+      let(:product_2) { create :product, option_types: [option_type_1, option_type_2] }
+      let(:product_3) { create :product, option_types: [option_type_1, option_type_2] }
+
+      let!(:variant_1) { create :variant, product: product_1, option_values: [option_value_1_1, option_value_2_1] }
+      let!(:variant_2) { create :variant, product: product_2, option_values: [option_value_1_2, option_value_2_2] }
+      let!(:variant_3) { create :variant, product: product_3, option_values: [option_value_1_1, option_value_2_2] }
+
+      let(:options) { [] }
+      let(:params) do
+        {
+          filter: {
+            options: options
+          }
+        }
+      end
+
+      context 'filtering by single option' do
+        context 'that is assigned' do
+          let(:options) {{ option_type_1.name => option_value_1_1.name }}
+
+          it 'returns products that have single option' do
+            expect(products).to match_array([product_1, product_3])
+          end
+        end
+
+        context 'that is not assigned' do
+          let(:options) {{ option_type_2.name => option_value_2_3.name }}
+
+          it 'returns an empty array' do
+            expect(products).to match_array([])
+          end
+        end
+      end
+
+      context 'filtering by several options' do
+        context 'when containing all options' do
+          let(:options) {{ option_type_1.name => option_value_1_1.name, option_type_2.name => option_value_2_2.name }}
+
+          it 'returns products that have both options' do
+            expect(products).to match_array([product_3])
+          end
+        end
+
+        context 'when does not contain all options' do
+          let(:product_3)  { create :product, option_types: [option_type_1, option_type_2] }
+          let!(:variant_3) { create :variant, product: product_3, option_values: [option_value_1_1, option_value_2_3] }
+          let(:options)    {{ option_type_1.name => option_value_1_2.name, option_type_2.name => option_value_2_3.name }}
+
+          it 'returns no products' do
+            expect(products).to match_array([])
+          end
         end
       end
     end
