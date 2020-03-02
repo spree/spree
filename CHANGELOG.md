@@ -1,47 +1,47 @@
-### Please leave CHANGELOG entries in the appropriate release notes guide. ##
+## 4.2.0 (unreleased)
 
-https://github.com/spree/spree/tree/master/guides/src/content/release_notes
+https://guides.spreecommerce.org/release_notes/4_2_0.html
 
-#### 4.1.x (Unreleased)
+## 4.1.0 (2020-02-28)
 
-https://github.com/spree/spree/blob/master/guides/src/content/release_notes/4_1_0.md
+https://guides.spreecommerce.org/release_notes/4_1_0.html
 
-#### 4.0.x
+## 4.0.0 (2019-10-09)
 
-https://github.com/spree/spree/blob/master/guides/src/content/release_notes/4_0_0.md
+https://guides.spreecommerce.org/release_notes/4_0_0.html
 
-#### 3.7.x
+## 3.7.0 (2019-02-04)
 
-https://github.com/spree/spree/blob/master/guides/src/content/release_notes/3_7_0.md
+https://guides.spreecommerce.org/release_notes/3_7_0.html
 
-#### 3.6.x
+## 3.6.0 (2018-06-12)
 
-https://github.com/spree/spree/blob/master/guides/src/content/release_notes/3_6_0.md
+https://guides.spreecommerce.org/release_notes/3_6_0.html
 
-#### 3.5.x
+## 3.5.0 (2018-06-12)
 
-https://github.com/spree/spree/blob/master/guides/src/content/release_notes/3_5_0.md
+https://guides.spreecommerce.org/release_notes/3_5_0.html
 
-#### 3.4.x
+## 3.4.0 (2017-10-12)
 
-https://github.com/spree/spree/blob/master/guides/src/content/release_notes/3_4_0.md
+https://guides.spreecommerce.org/release_notes/3_4_0.html
 
-#### 3.3.x
+## 3.3.0 (2017-08-22)
 
-https://github.com/spree/spree/blob/master/guides/src/content/release_notes/3_3_0.md
+https://guides.spreecommerce.org/release_notes/3_3_0.html
 
-#### 3.2.x
+## 3.2.0 (2017-03-17)
 
-https://github.com/spree/spree/blob/master/guides/src/content/release_notes/3_2_0.md
+https://guides.spreecommerce.org/release_notes/3_2_0.html
 
-#### 3.1.x
+## 3.1.0 (2016-06-15)
 
-https://github.com/spree/spree/blob/master/guides/src/content/release_notes/3_1_0.md
+https://guides.spreecommerce.org/release_notes/3_1_0.html
 
-#### 3.0.x
+## 3.0.0 (2015-03-10)
 
-https://github.com/spree/spree/blob/master/guides/src/content/release_notes/3_0_0.md
+https://guides.spreecommerce.org/release_notes/3_0_0.html
 
-#### 2.4.x
+## 2.4.0 (2014-11-07)
 
-https://github.com/spree/spree/blob/master/guides/src/content/release_notes/2_4_0.md
+https://guides.spreecommerce.org/release_notes/2_4_0.html

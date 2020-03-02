@@ -23,6 +23,7 @@ Gem::Specification.new do |s|
 
   spree_version = '>= 3.2.0', '< 5.0'
   s.add_dependency 'spree_core', spree_version
+  s.add_dependency 'spree_api', spree_version
   s.add_dependency 'spree_backend', spree_version
   s.add_dependency 'spree_extension'
 
@@ -32,7 +33,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'capybara-screenshot'
   s.add_development_dependency 'coffee-rails'
   s.add_development_dependency 'database_cleaner'
-  s.add_development_dependency 'factory_bot', '~> 4.7'
+  s.add_development_dependency 'factory_bot'
   s.add_development_dependency 'ffaker'
   s.add_development_dependency 'mysql2'
   s.add_development_dependency 'pg'
@@ -41,5 +42,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'sass-rails'
   s.add_development_dependency 'simplecov'
   s.add_development_dependency 'sqlite3'
-  s.add_development_dependency 'webdrivers', '~> 4.0.0'
+  s.add_development_dependency 'webdrivers'
 end

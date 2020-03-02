@@ -8,7 +8,7 @@ order: 0
 
 Before starting this tutorial, make sure you have Ruby and RubyGems installed on your system. This is fairly straightforward, but differs depending on which operating system you use.
 
-By following this tutorial, you will create a simple Spree project called `mystore`. Before you can start building the application, you need to make sure that you have Rails itself installed.
+By following this tutorial, you will create a simple Spree project called `my_store`. Before you can start building the application, you need to make sure that you have Rails itself installed.
 
 To run Spree 4.0 you need the latest Rails version, 6.0.0.
 
@@ -54,7 +54,7 @@ The distribution of Spree as a Rubygem allows it to be used in a new Rails proje
 Let's start by creating a standard Rails application using the following command:
 
 ```bash
-rails _6.0.0_ new mystore
+rails new my_store
 ```
 
 ### Adding Spree to Your Rails Application
@@ -64,18 +64,24 @@ Now that we have a basic Rails application we can add Spree to it. This approach
 After you create the store application, switch to its folder to continue work directly in that application:
 
 ```bash
-cd mystore
+cd my_store
 ```
 
 Add Spree gems to your Gemfile:
 
 ```ruby
-gem 'spree', '~> 4.0'
-gem 'spree_auth_devise', '~> 4.0'
-gem 'spree_gateway', '~> 3.6'
+gem 'spree', '~> 4.1'
+gem 'spree_auth_devise', '~> 4.1'
+gem 'spree_gateway', '~> 3.7'
 ```
 
 Run `bundle install`
+
+**Note**: if you run into `Bundler could not find compatible versions for gem "sprockets":` error message, please run
+
+```bash
+bundle update
+```
 
 Use the install generators to set up Spree:
 
@@ -90,7 +96,7 @@ rails g spree_gateway:install
 You now have a functional Spree application after running only a few commands! To see it, you need to start a web server on your development machine. You can do this by running another command:
 
 ```bash
-bundle exec rails server
+bundle exec rails s
 ```
 
 To see your application in action, open a browser window and navigate to [http://localhost:3000](http://localhost:3000). You should see the Spree default home page:

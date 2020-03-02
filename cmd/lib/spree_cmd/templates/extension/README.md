@@ -5,19 +5,22 @@ Introduction goes here.
 ## Installation
 
 1. Add this extension to your Gemfile with this line:
-  ```ruby
-  gem '<%= file_name %>', github: '[your-github-handle]/<%= file_name %>'
-  ```
 
-2. Install the gem using Bundler:
-  ```ruby
-  bundle install
-  ```
+    ```ruby
+    gem '<%= file_name %>', github: '[your-github-handle]/<%= file_name %>'
+    ```
+
+2. Install the gem using Bundler
+
+    ```ruby
+    bundle install
+    ```
 
 3. Copy & run migrations
-  ```ruby
-  bundle exec rails g <%= file_name %>:install
-  ```
+
+    ```ruby
+    bundle exec rails g <%= file_name %>:install
+    ```
 
 4. Restart your server
 
@@ -38,7 +41,6 @@ Simply add this require statement to your spec_helper:
 ```ruby
 require '<%= file_name %>/factories'
 ```
-
 
 ## Contributing
 
