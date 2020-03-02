@@ -172,22 +172,6 @@ Spree Extensions provide additional features not present in the Core system.
 | [spree_avatax_official](https://github.com/spree-contrib/spree_avatax_official) | [![Build Status](https://travis-ci.org/spree-contrib/spree_avatax_official.svg?branch=master)](https://travis-ci.org/spree-contrib/spree_avatax_official) | Improve your Spree store's sales tax decision automation with Avalara AvaTax
 | [spree_analytics_trackers](https://github.com/spree-contrib/spree_analytics_trackers) | [![Build Status](https://travis-ci.org/spree-contrib/spree_analytics_trackers.svg?branch=master)](https://travis-ci.org/spree-contrib/spree_analytics_trackers) | Adds support for Analytics Trackers (Google Analytics & Segment)
 
-## Performance
-
-You may notice that your Spree store runs slowly in development environment. This can be because in development each asset (css and javascript) is loaded separately. You can disable it by adding the following line to `config/environments/development.rb`.
-
-```ruby
-config.assets.debug = false
-```
-
-Also in development caching is disabled by defualt. To turn on caching run:
-
-```bash
-rails dev:cache
-```
-
-You will need to restart rails server after this.
-
 ## Developing Spree
 
 Spree is meant to be run within the context of Rails application and the source code is essentially a collection of gems. You can easily create a sandbox
@@ -220,6 +204,22 @@ Start the server
 cd sandbox
 rails server
 ```
+
+### Performance in development mode
+
+You may notice that your Spree store runs slower in development environment. This can be because in development each asset (css and javascript) is loaded separately. You can disable it by adding the following line to `config/environments/development.rb`.
+
+```ruby
+config.assets.debug = false
+```
+
+Also in development caching is disabled by defualt. To turn on caching run:
+
+```bash
+rails dev:cache
+```
+
+You will need to restart rails server after this.
 
 ### Running Tests
 
@@ -254,37 +254,6 @@ If you want to run a particular line of spec
 
 ```shell
 bundle exec rspec spec/models/spree/state_spec.rb:7
-```
-
-You can also enable fail fast in order to stop tests at the first failure
-
-```shell
-FAIL_FAST=true bundle exec rspec spec/models/state_spec.rb
-```
-
-If you want to run the simplecov code coverage report
-
-```shell
-COVERAGE=true bundle exec rspec spec
-```
-
-If you're working on multiple facets of Spree to test,
-please ensure that you have a postgres user:
-
-```shell
-createuser -s -r postgres
-```
-
-And also ensure that you have [ChromeDriver](http://chromedriver.chromium.org) installed as well.
-Please follow this
-[instruction](https://github.com/SeleniumHQ/selenium/wiki/ChromeDriver) to install it.
-
-To execute all the tests, you may want to run this command at the
-root of the Spree project to generate test applications and run
-specs for all the facets:
-
-```shell
-bash build.sh
 ```
 
 ## Contributing
