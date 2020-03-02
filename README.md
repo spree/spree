@@ -5,6 +5,7 @@
 * Join our Slack at [slack.spreecommerce.org](http://slack.spreecommerce.org/)
 * [Contact us](https://spreecommerce.org/contact/) to start a new project or get tech support
 * [DEMO](https://demo.spreecommerce.org/) of the new Spree UX introduced in Spree 4.1.0
+* [9 good reasons to upgrade to Spree 4.1](https://spreecommerce.org/spree-commerce-4-1-is-now-available-9-reasons-to-upgrade-or-use-it-for-a-new-e-commerce-project/) or use it for a new project
 * [Success Stories](https://spreecommerce.org/stories/)
 * [Integrations](https://spreecommerce.org/integrations/)
 * [Extensions](https://github.com/spree/spree#extensions)
