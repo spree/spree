@@ -315,7 +315,7 @@ Spree is released under the [New BSD License](https://github.com/spree/spree/blo
 
 [![Spark Solutions](http://sparksolutions.co/wp-content/uploads/2015/01/logo-ss-tr-221x100.png)][spark]
 
-Spree is maintained by [Spark Solutions Sp. z o.o.][spark].
+[Spark Solutions][spark] is a software development agency specialized in Ruby on Rails, Spree Commerce and Javascript development. We’ve been leading Spree open-source efforts since 2016 as its core team. We also do client work. Our project teams consist of UX and UI designers, Software Engineers, Testers and Project Managers practicing agile project delivery. We’ll integrate our team with yours to jointly architect, deliver, maintain and scale the software products you need. You drive the project with requirements and acceptance testing and we help you deliver faster using industry-standard project management and comms best practices.
 
 We are passionate about open source software.
 We are [available for hire][spark].
