@@ -189,4 +189,4 @@ workflows:
       - update_staging_repository:
           filters:
             branches:
-              only: master
+              only: 4-1-stable
