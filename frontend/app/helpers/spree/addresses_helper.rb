@@ -34,9 +34,10 @@ module Spree
         javascript_tag("document.write(\"<span class='d-block position-relative'>#{state_elements.html_safe}</span>\");")
     end
 
-    def select_user_available_addresses(user)
-      available_countries_ids = available_countries.pluck(:id)
-      user.addresses.where(country_id: available_countries_ids)
+    def user_available_addresses
+      return unless try_spree_current_user
+
+      try_spree_current_user.addresses.where(country: available_countries)
     end
   end
 end
