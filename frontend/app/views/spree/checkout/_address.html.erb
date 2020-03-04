@@ -1,4 +1,4 @@
-<% @addresses = try_spree_current_user ? try_spree_current_user.addresses : [] %>
+<% @addresses = try_spree_current_user ? select_user_available_addresses(try_spree_current_user) : [] %>
 
 <% if !try_spree_current_user || try_spree_current_user.email.blank? %>
   <div class="row">
