@@ -95,6 +95,8 @@ module Spree
     end
 
     def pretty_time(time)
+      return '' if time.blank?
+
       [I18n.l(time.to_date, format: :long), time.strftime('%l:%M %p')].join(' ')
     end
 
