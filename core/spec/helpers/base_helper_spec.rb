@@ -127,6 +127,10 @@ describe Spree::BaseHelper, type: :helper do
     it 'prints in a format' do
       expect(pretty_time(Time.new(2012, 5, 6, 13, 33))).to eq 'May 06, 2012  1:33 PM'
     end
+
+    it 'return empty stirng when nil is supplied' do
+      expect(pretty_time(nil)).to eq ''
+    end
   end
 
   describe '#display_price' do

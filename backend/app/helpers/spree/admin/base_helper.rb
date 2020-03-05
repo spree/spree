@@ -150,6 +150,8 @@ module Spree
       end
 
       def order_time(time)
+        return '' if time.blank?
+
         [I18n.l(time.to_date), time.strftime('%l:%M %p').strip].join(' ')
       end
 
