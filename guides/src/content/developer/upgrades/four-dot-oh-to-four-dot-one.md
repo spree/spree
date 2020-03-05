@@ -99,19 +99,19 @@ If you wish to not move to the new Storefront UI it's still an option. Just proc
 
     Copy over views from: https://github.com/spree/spree/tree/4-0-stable/frontend/app/views to your application views directory: `app/views`
 
-    **WARNING** remember to now overwrite your custom changes!
+    **WARNING** remember to not overwrite your custom changes!
 
 3. Copy over all Stylesheets from Spree 4.0
 
     Copy over stylesheets from: https://github.com/spree/spree/tree/4-0-stable/frontend/app/assets/stylesheets to `app/stylesheets`
 
-    **WARNING** remember to now overwrite your custom changes!
+    **WARNING** remember to not overwrite your custom changes!
 
 4. Copy over all JavaScript from Spree 4.0
 
     Copy over stylesheets from: https://github.com/spree/spree/tree/4-0-stable/frontend/app/assets/javascripts to `app/javascripts`
 
-    **WARNING** remember to now overwrite your custom changes!  
+    **WARNING** remember to not overwrite your custom changes!  
 
 ## Read the release notes
 
