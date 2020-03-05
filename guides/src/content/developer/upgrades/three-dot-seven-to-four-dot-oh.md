@@ -1,7 +1,7 @@
 ---
 title: Upgrading Spree 3.7 to 4.0
 section: upgrades
-order: 0
+order: 1
 ---
 
 This guide covers upgrading a **3.7 Spree application** to **Spree 4.0**. 

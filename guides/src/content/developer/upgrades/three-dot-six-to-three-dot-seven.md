@@ -1,7 +1,7 @@
 ---
 title: Upgrading Spree from 3.6 to 3.7
 section: upgrades
-order: 0
+order: 2
 ---
 
 This guide covers upgrading a 3.6 Spree application, to version 3.7.
