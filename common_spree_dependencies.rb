@@ -41,3 +41,5 @@ group :test, :development do
   gem 'pry-byebug'
   gem 'webdrivers', '~> 4.1'
 end
+
+gem 'solargraph', group: :development
