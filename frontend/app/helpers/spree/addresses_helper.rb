@@ -33,5 +33,11 @@ module Spree
       content_tag(:noscript, form.text_field(:state_name, class: 'required')) +
         javascript_tag("document.write(\"<span class='d-block position-relative'>#{state_elements.html_safe}</span>\");")
     end
+
+    def user_available_addresses
+      return unless try_spree_current_user
+
+      try_spree_current_user.addresses.where(country: available_countries)
+    end
   end
 end

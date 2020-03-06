@@ -220,7 +220,7 @@ function CartForm($, $cartForm) {
 
     if (!variant) return
 
-    this.$price.text(variant.display_price)
+    this.$price.html(variant.display_price)
   }
 
   this.updateVariantId = function() {
