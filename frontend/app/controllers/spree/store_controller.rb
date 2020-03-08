@@ -43,7 +43,7 @@ module Spree
       [
         current_store,
         current_currency,
-        config_locale
+        I18n.locale
       ]
     end
 
