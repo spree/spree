@@ -14,7 +14,6 @@ Spree.ready(function($) {
 
       this.onResize = this.onResize.bind(this);
       this.onCategoryClick = this.onCategoryClick.bind(this);
-      this.onTouchMove = this.onTouchMove.bind(this);
       this.onBurgerClick = this.onBurgerClick.bind(this);
       this.onCloseClick = this.onCloseClick.bind(this);
       this.onBackClick = this.onBackClick.bind(this);
@@ -23,7 +22,6 @@ Spree.ready(function($) {
       window.addEventListener('resize', this.onResize);
       window.addEventListener('turbolinks:request-start', this.onCloseClick);
 
-      this.mobileNavigation.addEventListener('touchmove', this.onTouchMove, false);
       this.burgerButton.addEventListener('click', this.onBurgerClick, false);
       this.closeButton.addEventListener('click', this.onCloseClick, false);
       this.backButton.addEventListener('click', this.onBackClick, false);
@@ -44,10 +42,6 @@ Spree.ready(function($) {
     e.preventDefault();
     this.openCategory(category);
   }
-
-  MobileNavigationManager.prototype.onTouchMove = function(e) {
-    e.preventDefault();
-  };
 
   MobileNavigationManager.prototype.onBurgerClick = function() {
     if (this.navigationOpen) {
