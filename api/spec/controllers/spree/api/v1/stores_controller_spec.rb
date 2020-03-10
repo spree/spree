@@ -33,7 +33,8 @@ module Spree
               'meta_description' => nil,
               'meta_keywords' => nil,
               'seo_title' => nil,
-              'mail_from_address' => 'spree@example.org',
+              'mail_from_address' => 'no-reply@example.com',
+              'customer_support_email' => 'support@example.com',
               'default_currency' => 'USD',
               'code' => store.code,
               'default' => true,
@@ -48,7 +49,8 @@ module Spree
               'meta_description' => nil,
               'meta_keywords' => nil,
               'seo_title' => nil,
-              'mail_from_address' => 'spree@example.org',
+              'mail_from_address' => 'no-reply@example.com',
+              'customer_support_email' => 'support@example.com',
               'default_currency' => 'USD',
               'code' => non_default_store.code,
               'default' => false,
@@ -69,7 +71,8 @@ module Spree
           'meta_description' => nil,
           'meta_keywords' => nil,
           'seo_title' => nil,
-          'mail_from_address' => 'spree@example.org',
+          'mail_from_address' => 'no-reply@example.com',
+          'customer_support_email' => 'support@example.com',
           'default_currency' => 'USD',
           'code' => store.code,
           'default' => true,
@@ -85,6 +88,7 @@ module Spree
           name: 'Hack0rz',
           url: 'spree123.example.com',
           mail_from_address: 'me@example.com',
+          customer_support_email: 'sales@example.com',
           default_currency: 'USD'
         }
         api_post :create, store: store_hash
@@ -94,12 +98,14 @@ module Spree
       it 'I can update an existing store' do
         store_hash = {
           url: 'spree123.example.com',
-          mail_from_address: 'me@example.com'
+          mail_from_address: 'me@example.com',
+          customer_support_email: 'sales@example.com',
         }
         api_put :update, id: store.id, store: store_hash
         expect(response.status).to eq(200)
         expect(store.reload.url).to eql 'spree123.example.com'
         expect(store.reload.mail_from_address).to eql 'me@example.com'
+        expect(store.reload.customer_support_email).to eql 'sales@example.com'
       end
 
       context 'deleting a store' do

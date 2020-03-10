@@ -607,6 +607,7 @@ en:
     balance_due: Balance Due
     base_amount: Base Amount
     base_percent: Base Percent
+    basic_information: Basic Information
     bill_address: Bill Address
     billing: Billing
     billing_address: Billing Address
@@ -734,6 +735,7 @@ en:
     customer_return: Customer Return
     customer_returns: Customer Returns
     customer_search: Customer Search
+    customer_support_email: Customer Support Email
     cut: Cut
     cvv: CVV
     cvv_response: CVV Response
@@ -831,6 +833,7 @@ en:
     extension: Extension
     extensions_directory: Extensions Directory
     existing_shipments: Existing shipments
+    facebook: Facebook
     failed_payment_attempts: Failed Payment Attempts
     filename: Filename
     fill_in_customer_info: Please fill in customer info
@@ -912,6 +915,7 @@ en:
     info_number_of_skus_not_shown:
       one: "and one other"
       other: "and %{count} others"
+    instagram: Instagram
     instructions_to_reset_password: Please enter your email on the form below
     insufficient_stock: Insufficient stock available, only %{on_hand} remaining
     insufficient_stock_item_quantity: Insufficient stock quantity available
@@ -919,6 +923,7 @@ en:
     intercept_email_address: Intercept Email Address
     intercept_email_instructions: Override email recipient and replace with this address.
     internal_name: Internal Name
+    internationalization: Internationalization
     invalid_credit_card: Invalid credit card.
     invalid_exchange_variant: Invalid exchange variant.
     invalid_payment_provider: Invalid payment provider.
@@ -1422,6 +1427,7 @@ en:
     select_a_store_credit_reason: Select a reason for the store credit
     select_stock: Select stock
     selected_quantity_not_available: ! 'selected of %{item} is not available.'
+    seo: SEO
     send_copy_of_all_mails_to: Send Copy of All Mails To
     send_mails_as: Send Mails As
     seo_title: SEO title
@@ -1486,6 +1492,7 @@ en:
     skus: SKUs
     slug: Slug
     source: Source
+    social: Social
     special_instructions: Special Instructions
     split: Split
     spree_gateway_error_flash_for_checkout: There was a problem with your payment information. Please check your information and try again.
@@ -1657,6 +1664,7 @@ en:
     tree: Tree
     type: Type
     type_to_search: Type to search
+    twitter: Twitter
     unable_to_connect_to_gateway: Unable to connect to gateway.
     unable_to_create_reimbursements: Unable to create reimbursements because there are items pending manual intervention.
     under_price: Under %{price}
