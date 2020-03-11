@@ -64,14 +64,14 @@ Spree.ready(function($) {
 
   MobileNavigationManager.prototype.open = function() {
     this.navigationOpen = true;
-    addMobileNavigationClasses(['shown', 'mobile-navigation-overflow'])
+    this.addMobileNavigationClasses(['shown', 'mobile-navigation-overflow'])
     document.body.style.overflow = "hidden";
     this.overlay.classList.add('shown');
   }
 
   MobileNavigationManager.prototype.close = function() {
     this.navigationOpen = false;
-    removeMobileNavigationClasses(['shown', 'mobile-navigation-overflow'])
+    this.removeMobileNavigationClasses(['shown', 'mobile-navigation-overflow'])
     document.body.style.overflow = "";
     this.overlay.classList.remove('shown');
   }
@@ -81,7 +81,7 @@ Spree.ready(function($) {
     var subList = document.querySelector('ul[data-category=' + category + ']');
     if (subList) {
       subList.classList.add('shown');
-      removeMobileNavigationClasses(['mobile-navigation-overflow'])
+      this.removeMobileNavigationClasses(['mobile-navigation-overflow'])
       this.backButton.classList.add('shown');
     }
     return false;
@@ -92,11 +92,11 @@ Spree.ready(function($) {
     var subList = document.querySelector('ul[data-category=' + category + ']');
     if (subList) {
       subList.classList.remove('shown');
-      addMobileNavigationClasses(['mobile-navigation-overflow'])
+      this.addMobileNavigationClasses(['mobile-navigation-overflow'])
     }
     if (this.openedCategories[this.openedCategories.length - 1] === 'main') {
       this.backButton.classList.remove('shown');
-      addMobileNavigationClasses(['mobile-navigation-overflow'])
+      this.addMobileNavigationClasses(['mobile-navigation-overflow'])
     }
     return false;
   }
@@ -105,7 +105,7 @@ Spree.ready(function($) {
     var subList = document.querySelector('ul[data-category=' + category + ']');
     subList.style.transition = 'none';
     subList.classList.remove('shown');
-    addMobileNavigationClasses(['mobile-navigation-overflow'])
+    this.addMobileNavigationClasses(['mobile-navigation-overflow'])
     setTimeout(function(){ subList.style.transition = ''; }, 500);
   }
 
