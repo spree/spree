@@ -158,6 +158,16 @@ module Spree
       def required_span_tag
         content_tag(:span, ' *', class: 'required')
       end
+
+      def product_preview_link(product)
+        return unless frontend_available?
+
+        button_link_to(
+          Spree.t(:preview_product),
+          spree.product_url(product),
+          class: 'btn-outline-secondary', icon: 'eye-open', id: 'admin_preview_product', target: :blank
+        )
+      end
     end
   end
 end

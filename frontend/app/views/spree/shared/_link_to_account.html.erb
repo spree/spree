@@ -1,5 +1,6 @@
 <% if try_spree_current_user %>
   <%= link_to Spree.t('nav_bar.my_account'), spree.account_path, class: 'dropdown-item' if spree.respond_to?(:account_path) %>
+  <%= link_to Spree.t('nav_bar.admin_panel'), spree.admin_orders_path, class: 'dropdown-item text-uppercase' if try_spree_current_user.has_spree_role?(:admin) %>
   <%= link_to Spree.t('nav_bar.log_out'), spree_logout_path, class: 'dropdown-item', method: :get if defined?(spree_logout_path) %>
 <% else %>
   <%= link_to Spree.t('nav_bar.log_in'), spree_login_path, class: 'dropdown-item' if defined?(spree_login_path) %>
