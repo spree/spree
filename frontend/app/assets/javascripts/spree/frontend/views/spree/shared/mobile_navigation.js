@@ -62,17 +62,16 @@ Spree.ready(function($) {
 
   MobileNavigationManager.prototype.open = function() {
     this.navigationOpen = true;
-    this.mobileNavigation.classList.add('shown', 'mobile-navigation-overflow');
+    addMobileNavigationClasses(['shown', 'mobile-navigation-overflow'])
     document.body.style.overflow = "hidden";
     this.overlay.classList.add('shown');
   }
 
   MobileNavigationManager.prototype.close = function() {
     this.navigationOpen = false;
-    this.mobileNavigation.classList.remove('shown', 'mobile-navigation-overflow');
+    removeMobileNavigationClasses(['shown', 'mobile-navigation-overflow'])
     document.body.style.overflow = "";
     this.overlay.classList.remove('shown');
-
   }
 
   MobileNavigationManager.prototype.openCategory = function(category) {
@@ -80,7 +79,7 @@ Spree.ready(function($) {
     var subList = document.querySelector('ul[data-category=' + category + ']');
     if (subList) {
       subList.classList.add('shown');
-      this.mobileNavigation.classList.remove('mobile-navigation-overflow');
+      removeMobileNavigationClasses(['mobile-navigation-overflow'])
       this.backButton.classList.add('shown');
     }
     return false;
@@ -91,11 +90,11 @@ Spree.ready(function($) {
     var subList = document.querySelector('ul[data-category=' + category + ']');
     if (subList) {
       subList.classList.remove('shown');
-      this.mobileNavigation.classList.add('mobile-navigation-overflow');
+      addMobileNavigationClasses(['mobile-navigation-overflow'])
     }
     if (this.openedCategories[this.openedCategories.length - 1] === 'main') {
       this.backButton.classList.remove('shown');
-      this.mobileNavigation.classList.add('mobile-navigation-overflow');
+      addMobileNavigationClasses(['mobile-navigation-overflow'])
     }
     return false;
   }
@@ -104,7 +103,7 @@ Spree.ready(function($) {
     var subList = document.querySelector('ul[data-category=' + category + ']');
     subList.style.transition = 'none';
     subList.classList.remove('shown');
-    this.mobileNavigation.classList.add('mobile-navigation-overflow');
+    addMobileNavigationClasses(['mobile-navigation-overflow'])
     setTimeout(function(){ subList.style.transition = ''; }, 500);
   }
 
@@ -116,6 +115,18 @@ Spree.ready(function($) {
       this.closeCategory(category);
     }
     this.backButton.classList.remove('shown');
+  }
+
+  MobileNavigationManager.prototype.addMobileNavigationClasses = function(classList) {
+    $.each(classList, function(index, className) {
+      this.mobileNavigation.classList.add(className);
+    })
+  }
+
+  MobileNavigationManager.prototype.removeMobileNavigationclasses = function(category) {
+    $.each(classList, function(index, className) {
+      this.mobileNavigation.classList.remove(className);
+    })
   }
 
   new MobileNavigationManager();
