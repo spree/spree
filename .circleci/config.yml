@@ -9,7 +9,7 @@ defaults: &defaults
     BUNDLE_PATH: ~/spree/vendor/bundle
   working_directory: ~/spree
   docker:
-    - image: &image circleci/ruby:2.5-node-browsers
+    - image: &image circleci/ruby:2.7-node-browsers
 
 run_tests: &run_tests
   <<: *defaults
@@ -18,8 +18,8 @@ run_tests: &run_tests
     - checkout
     - restore_cache:
         keys:
-          - spree-bundle-v4-{{ checksum ".ruby-version" }}-{{ .Branch }}
-          - spree-bundle-v4-{{ checksum ".ruby-version" }}
+          - spree-bundle-v5-{{ checksum ".ruby-version" }}-{{ .Branch }}
+          - spree-bundle-v5-{{ checksum ".ruby-version" }}
     - run:
         name: Ensure Bundle Install
         command: |
@@ -44,15 +44,15 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - spree-bundle-v4-{{ checksum ".ruby-version" }}-{{ .Branch }}
-            - spree-bundle-v4-{{ checksum ".ruby-version" }}
+            - spree-bundle-v5-{{ checksum ".ruby-version" }}-{{ .Branch }}
+            - spree-bundle-v5-{{ checksum ".ruby-version" }}
       - run:
           name: Bundle Install
           command: |
             bundle install --path=~/spree/vendor/bundle
             ./build-ci.rb install
       - save_cache:
-          key: spree-bundle-v4-{{ checksum ".ruby-version" }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+          key: spree-bundle-v5-{{ checksum ".ruby-version" }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
           paths:
             - ~/spree/vendor/bundle
 
@@ -86,8 +86,8 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - spree-bundle-v4-{{ checksum ".ruby-version" }}-{{ .Branch }}
-            - spree-bundle-v4-{{ checksum ".ruby-version" }}
+            - spree-bundle-v5-{{ checksum ".ruby-version" }}-{{ .Branch }}
+            - spree-bundle-v5-{{ checksum ".ruby-version" }}
       - run:
           name: Ensure Bundle Install
           command: |
