@@ -163,7 +163,7 @@ module Spree
         button_link_to(
           Spree.t(:preview_product),
           spree.product_url(product),
-          { class: 'btn-outline-secondary', icon: 'eye-open', id: 'admin_preview_product', target: :blank }
+          class: 'btn-outline-secondary', icon: 'eye-open', id: 'admin_preview_product', target: :blank
         )
       end
     end
