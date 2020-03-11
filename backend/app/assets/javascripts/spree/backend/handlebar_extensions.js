@@ -10,7 +10,7 @@ Handlebars.registerHelper('edit_product_url', function (productId) {
 })
 Handlebars.registerHelper('name_or_presentation', function (optionTypePresentation, optionValue) {
   if (optionTypePresentation === 'Color') {
-    return optionValue.name.toUpperCase()
+    return optionValue.name
   } else {
     return optionValue.presentation
   }
