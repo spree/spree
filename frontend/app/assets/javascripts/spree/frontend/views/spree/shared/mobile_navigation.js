@@ -18,6 +18,8 @@ Spree.ready(function($) {
       this.onCloseClick = this.onCloseClick.bind(this);
       this.onBackClick = this.onBackClick.bind(this);
       this.closeAllCategories = this.closeAllCategories.bind(this);
+      this.addMobileNavigationClasses = this.addMobileNavigationClasses.bind(this);
+      this.removeMobileNavigationclasses = this.removeMobileNavigationclasses.bind(this);
 
       window.addEventListener('resize', this.onResize);
       window.addEventListener('turbolinks:request-start', this.onCloseClick);
