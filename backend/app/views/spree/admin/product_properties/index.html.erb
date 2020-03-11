@@ -2,6 +2,8 @@
 <%= render 'spree/admin/shared/error_messages', target: @product %>
 
 <% content_for :page_actions do %>
+  <%= product_preview_link(@product) %>
+
   <%= button_link_to(
     Spree.t(:add_product_properties),
     "javascript:;",
