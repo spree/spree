@@ -4,7 +4,7 @@
       <% @product.option_types.each do |option_type| %>
         <div class="form-group" data-hook="presentation">
           <%= label :new_variant, option_type.presentation %>
-          <% if option_type.presentation == 'Color' %>
+          <% if option_type.name == 'color' %>
             <%= f.collection_select 'option_value_ids', option_type.option_values, :id, :name,
               { include_blank: true }, { name: 'variant[option_value_ids][]', class: 'select2' } %>
           <% else %>

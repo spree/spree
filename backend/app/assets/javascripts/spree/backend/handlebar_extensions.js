@@ -8,8 +8,8 @@ Handlebars.registerHelper('t', function (key) {
 Handlebars.registerHelper('edit_product_url', function (productId) {
   return Spree.routes.edit_product(productId)
 })
-Handlebars.registerHelper('name_or_presentation', function (optionTypePresentation, optionValue) {
-  if (optionTypePresentation === 'Color') {
+Handlebars.registerHelper('name_or_presentation', function (optionValue) {
+  if (optionValue.name === 'color') {
     return optionValue.name
   } else {
     return optionValue.presentation
