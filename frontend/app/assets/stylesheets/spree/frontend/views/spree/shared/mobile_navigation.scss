@@ -34,6 +34,10 @@
     }
   }
 
+  &-overflow {
+    overflow: auto;
+  }
+
   &-list {
     padding-top: $spree-header-mobile-height;
     @include media-breakpoint-up(sm) {
