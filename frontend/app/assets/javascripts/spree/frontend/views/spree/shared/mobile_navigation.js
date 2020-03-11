@@ -62,7 +62,7 @@ Spree.ready(function($) {
 
   MobileNavigationManager.prototype.open = function() {
     this.navigationOpen = true;
-    this.mobileNavigation.classList.add('shown','mobile-navigation-overflow');
+    this.mobileNavigation.classList.add('shown', 'mobile-navigation-overflow');
     document.body.style.overflow = "hidden";
     this.overlay.classList.add('shown');
   }
@@ -79,8 +79,8 @@ Spree.ready(function($) {
     var subList = document.querySelector('ul[data-category=' + category + ']');
     if (subList) {
       subList.classList.add('shown');
-      this.mobileNavigation.classList.remove('mobile-navigation-overflow');
       this.backButton.classList.add('shown');
+      this.mobileNavigation.classList.remove('mobile-navigation-overflow');
     }
     return false;
   }
