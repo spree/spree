@@ -10,7 +10,7 @@ $.fn.userAutocomplete = function () {
     multiple: true,
     initSelection: function (element, callback) {
       $.get(Spree.routes.users_api, {
-        ids: element.val(),
+        ids: element.val().split(','),
         token: Spree.api_key
       }, function (data) {
         callback(data.users)
