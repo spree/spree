@@ -41,6 +41,9 @@
     @include media-breakpoint-up(sm) {
       padding-top: $spree-header-tablet-height;
     }
+    &-subcategory-shown {
+      overflow-y: hidden;
+    }
   }
 
   &-sublist {
