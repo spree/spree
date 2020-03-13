@@ -17,6 +17,8 @@
   }
   &-list, &-sublist {
     margin: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
     padding: 0 19px;
     &-item {
       padding: 16px 0;
@@ -39,10 +41,12 @@
     @include media-breakpoint-up(sm) {
       padding-top: $spree-header-tablet-height;
     }
+    &-subcategory-shown {
+      overflow-y: hidden;
+    }
   }
 
   &-sublist {
-    overflow: auto;
     top: 0;
     bottom: 0;
     left: 0;
