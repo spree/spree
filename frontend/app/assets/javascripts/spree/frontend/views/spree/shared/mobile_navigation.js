@@ -6,6 +6,7 @@ Spree.ready(function($) {
     if (this.mobileNavigation !== null) {
       this.burgerButton = document.querySelector('.navbar-toggler');
       this.closeButton = document.querySelector('#mobile-navigation-close-button');
+      this.mobileNavigationList = document.querySelector('.mobile-navigation-list');
       this.categoryLinks = document.querySelectorAll('.mobile-navigation-category-link');
       this.backButton = document.querySelector('#mobile-navigation-back-button');
       this.overlay = document.querySelector('#overlay');
@@ -78,6 +79,8 @@ Spree.ready(function($) {
     this.openedCategories.push(category);
     var subList = document.querySelector('ul[data-category=' + category + ']');
     if (subList) {
+      this.mobileNavigationList.classList.add('mobile-navigation-list-subcategory-shown');
+      this.mobileNavigationList.scrollTop = 0
       subList.classList.add('shown');
       this.backButton.classList.add('shown');
     }
@@ -93,6 +96,7 @@ Spree.ready(function($) {
     if (this.openedCategories[this.openedCategories.length - 1] === 'main') {
       this.backButton.classList.remove('shown');
     }
+    this.mobileNavigationList.classList.remove('mobile-navigation-list-subcategory-shown')
     return false;
   }
 
@@ -110,6 +114,7 @@ Spree.ready(function($) {
       var category = openedCategories.pop();
       this.closeCategory(category);
     }
+    this.mobileNavigationList.classList.remove('mobile-navigation-list-subcategory-shown')
     this.backButton.classList.remove('shown');
   }
 
