@@ -47,7 +47,7 @@ describe 'setting locale', type: :feature do
     end
 
     after do
-      store.update(default_locale: nil)
+      store.update(default_locale: 'en')
     end
 
     it_behaves_like 'translates cart page'
