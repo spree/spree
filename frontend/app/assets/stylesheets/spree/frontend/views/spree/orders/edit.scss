@@ -227,6 +227,7 @@
         border-width: 1px !important;
         border-style: solid;
         color: color-yiq($input-background);
+        touch-action: manipulation;
         @include media-breakpoint-up(sm) {
           height: 51.4px;
           font-size: font-px-to-rem(24px);
