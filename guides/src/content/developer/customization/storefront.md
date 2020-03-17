@@ -18,61 +18,61 @@ Spree 4.x uses [Bootstrap 4 with built-in Sass variables](https://www.example.co
 
 All the Sass variables needed for customizing the new Spree UX are in the variables.scss file. Color variables listed there could be assigned any CSS color value:
 
-- **HEX** - example: **#007bff**
-- **RGB-A** - example: **0 123 255 1**
-- **HSL-A** - example: **211 100% 50% 1**
-- **Color name** - example: **Blue**
+- HEX - example: #007bff
+- RGB-A - example: 0 123 255 1
+- HSL-A - example: 211 100% 50% 1
+- Color name - example: Blue
 
 ``To make those changes live you need to update [app/assets/stylesheets/spree/frontend/variables/variables.scss](https://github.com/spree/spree/blob/master/frontend/app/assets/stylesheets/spree/frontend/variables/variables.scss) in your project directory with your values and then commit those changes to your project code repository.``
 
 ### Header
 
-*$header-background* - header background color variable with 2 examples: white and blue one. By default set with $primary-background value but feel to replace it with any other value in the variables.scss file.
+__*$header-background*__ - header background color variable with 2 examples: white and blue one. By default set with __*$primary-background*__ value but feel to replace it with any other value in the variables.scss file.
 
-**White**
+White
 
 ![](../../../images/developer/storefront/3.png)
 
-**Blue**
+Blue
 
 ![](../../../images/developer/storefront/4.png)
 
-*$header-font-color* - Header font color. By default set with $font-color value but feel to replace it with any other value in the variables.scss file.
+__*$header-font-color*__- Header font color. By default set with __*$font-color*__ value but feel to replace it with any other value in the variables.scss file.
 
-**Dark Grey**
+Dark Grey
 
 ![](../../../images/developer/storefront/5.png)
 
-**Blue**
+Blue
 
 ![](../../../images/developer/storefront/6.png)
 
-**White**
+White
 
 ![](../../../images/developer/storefront/7.png)
 
 ### Footer
-**$footer-background** - variable that overrides $primary-background and allows you to change footer color. See a white and a blue example below.
+__*$footer-background*__ - variable that overrides $primary-background and allows you to change footer color. See a white and a blue example below.
 
 
 ![](../../../images/developer/storefront/8.png)
 
 
 
-**$footer-font-color** - variable that overrides $font-color and allows you to change footer font color. See black and blue font examples below.
+__*$footer-font-color*__ - variable that overrides __*$font-color*__ and allows you to change footer font color. See black and blue font examples below.
 
 ![](../../../images/developer/storefront/9.png)
 
 ![](../../../images/developer/storefront/10.png)
 
 ### Meganav menu
-**$meganav-background** - variable that allows you to change the mega nav menu background color. By default meganav menu is set to $primary-background value but feel to replace it with any other value in the variables.scss file.
+__*$meganav-background*__ - variable that allows you to change the mega nav menu background color. By default meganav menu is set to __*$primary-background*__ value but feel to replace it with any other value in the variables.scss file.
 
 ![](../../../images/developer/storefront/11.png)
 
 ![](../../../images/developer/storefront/12.png)
 
-**$meganav-font-color** - font color variable in the mega nav menu. By default mega nav font color is set to $font-color value but feel to replace it with any other value in the variables.scss file.
+__*$meganav-font-color*__ - font color variable in the mega nav menu. By default mega nav font color is set to $font-color value but feel to replace it with any other value in the variables.scss file.
 
 ![](../../../images/developer/storefront/13.png)
 
@@ -80,13 +80,13 @@ All the Sass variables needed for customizing the new Spree UX are in the variab
 
 ### Background
 
-**$primary-background** - main background color across the whole site. Two examples below - a white one and a black one. Please note that you can also use an image as a background.
+__*$primary-background*__ - main background color across the whole site. Two examples below - a white one and a black one. Please note that you can also use an image as a background.
 
 ![](../../../images/developer/storefront/15.png)
 
 ![](../../../images/developer/storefront/16.png)
 
-**$secondary-background** - second background color present across the whole site with two examples attached below.
+__*$secondary-background*__ - second background color present across the whole site with two examples attached below.
 
 ![](../../../images/developer/storefront/17.png)
 
@@ -94,20 +94,20 @@ All the Sass variables needed for customizing the new Spree UX are in the variab
 
 ![](../../../images/developer/storefront/19.png)
 
-**$font-color** - this variable affects all fonts on $primary-background. Please see two examples below.
+__*$font-color*__ - this variable affects all fonts on $primary-background. Please see two examples below.
 
 ![](../../../images/developer/storefront/20.png)
 
 ![](../../../images/developer/storefront/21.png)
 
-**$secondary-font-color** - affects all fonts on $secondary-background. By default set with $font-color value but feel to replace it with any other value in the variables.scss file.
+__*$secondary-font-color*__ - affects all fonts on $secondary-background. By default set with $font-color value but feel to replace it with any other value in the variables.scss file.
 
 ![](../../../images/developer/storefront/22.png)
 
 ![](../../../images/developer/storefront/23.png)
 
 ### Border color
-**$global-border-style** - affects border and separator color throughout the whole site
+__*$global-border-style*__ - affects border and separator color throughout the whole site
 
 ![](../../../images/developer/storefront/24.png)
 
@@ -131,11 +131,11 @@ All the Sass variables needed for customizing the new Spree UX are in the variab
 
 ### Fonts
 
-*$font-family* - sets the font family used across your site. By default it is Sans Serif but feel to replace it with any other value in the variables.scss file. Check out these font families you could use.
+__*$font-family*__ - sets the font family used across your site. By default it is Sans Serif but feel to replace it with any other value in the variables.scss file. Check out these font families you could use.
 
 ### Input fields
 
-*$input-background* - allows you to set a color for all input field backgrounds across the site. See two examples below - a white one and a yellow one.
+__*$input-background*__ - allows you to set a color for all input field backgrounds across the site. See two examples below - a white one and a yellow one.
 
 ![](../../../images/developer/storefront/34.png)
 
@@ -149,7 +149,7 @@ All the Sass variables needed for customizing the new Spree UX are in the variab
 
 ![](../../../images/developer/storefront/39.png)
 
-*$second-global-border* - allows you to set a color for all input field borders across the whole site. See an example below with red input field borders.
+__*$second-global-border*__ - allows you to set a color for all input field borders across the whole site. See an example below with red input field borders.
 
 
 ![](../../../images/developer/storefront/40.png)
@@ -160,162 +160,165 @@ All the Sass variables needed for customizing the new Spree UX are in the variab
 
 ### Primary color
 Home Page
- 1. **Primary color** variable changes
+__*$primary-color*__ variable changes
 
-    a. The color of **SHOP NOW** button on the main hero image
-
-![](../../../images/developer/storefront/43.png)
-
-    b. The color of **Summer 2019** and **READ MORE** button
-
-![](../../../images/developer/storefront/44.png)
-
-    c. The color of **NEW COLLECTION & SUMMER SALE** headers inside the categories section
++ The color of __SHOP NOW__ button on the main hero image
 
 ![](../../../images/developer/storefront/45.png)
 
-Search Results
-
-1. **Primary color** variable changes
-
-      a. The color of **No Results** icon
++ The color of __Summer 2019__ and __READ MORE__ button
 
 ![](../../../images/developer/storefront/46.png)
 
-Mega Menu
-
-1. **Primary Color** variable changes
-
-   a. The color of **NEW COLLECTION & SUMMER SALE** headers inside the banners
++ The color of __NEW COLLECTION & SUMMER SALE__ headers inside the categories section
 
 ![](../../../images/developer/storefront/47.png)
+
+Search Results
+
+__*$primary-color*__ variable changes
+
++ The color of __No Results__ icon
+
+![](../../../images/developer/storefront/49.png)
+
+Mega Menu
+
+__*$primary-color*__ variable changes
+
++ The color of __NEW COLLECTION & SUMMER SALE__ headers inside the banners
+
+![](../../../images/developer/storefront/50.png)
 
 
    PDP
 
-1. **Primary color** variable changes
+__*$primary-color*__ variable changes
 
-  a. The color of **IN STOCK** text
-
-![](../../../images/developer/storefront/48.png)
-
-  b. The color of **ADD TO CART** button
-
-![](../../../images/developer/storefront/49.png)
-
-Cart Page
-
-1. **Primary color** variable changes
-
- a. The color of **Trash** delete icon
-
-![](../../../images/developer/storefront/50.png)
-
-  b. The color of **CHECKOUT** button
-
-![](../../../images/developer/storefront/51.png)
-
- Cart pop-up
- 1. **Primary color** variable changes
-
-   a. The color of **CONTINUE SHOPPING** button
++ The color of IN STOCK text
 
 ![](../../../images/developer/storefront/52.png)
 
-Cart - empty
-1. **Primary color** variable changes
-
-   a. The color of **CONTINUE SHOPPING** button
++ The color of ADD TO CART button
 
 ![](../../../images/developer/storefront/53.png)
 
-   b. The color of **Empty Cart** icon
+Cart Page
+
+__*$primary-color*__ variable changes
+
++ The color of Trash delete icon
+
+![](../../../images/developer/storefront/54.png)
+
++ The color of CHECKOUT button
+
+![](../../../images/developer/storefront/55.png)
+
+ Cart pop-up
+
+__*$primary-color*__ variable changes
++ The color of __CHECKOUT__ and __VIEW CART__ buttons
+
+![](../../../images/developer/storefront/56.png)
+
+Cart - empty
+
+__*$primary-color*__ variable changes
+
++ The color of __CONTINUE SHOPPING__ button
+
+![](../../../images/developer/storefront/57.png)
+
++ The color of __Empty Cart__ icon
+
+![](../../../images/developer/storefront/58.png)
 
 Checkout
 
 Registration Step
 
- 1. **Primary color** variable changes
+__*$primary-color*__ variable changes
 
-   a. The color of **LOG IN, SIGN UP** and **CONTINUE AS A GUEST** buttons
-
-![](../../../images/developer/storefront/54.png)
-
-![](../../../images/developer/storefront/55.png)
-
-![](../../../images/developer/storefront/56.png)
-
-Address Step
-
-1. **Primary color** variable changes
-
-  a. The color of **SAVE AND CONTINUE** button (this element remains the same across the whole checkout process)
-
-![](../../../images/developer/storefront/57.png)
-
-    b. The color of **EDIT** icon
-
-![](../../../images/developer/storefront/58.png)
-
-Payment step
-
-  1. **Primary color** variable changes
-
-     a. The color of **APPLY** button
++ The color of __LOG IN, SIGN UP and CONTINUE AS A GUEST__ buttons
 
 ![](../../../images/developer/storefront/59.png)
 
-Confirm Step
-
-     1. **Primary color** variable changes
-
-        a. The color of **PLACE ORDER** buttons
-
 ![](../../../images/developer/storefront/60.png)
-
-Sign In Page
-
-1. **Primary color** variable changes
-
-  a. The color of **LOG IN** and **SIGN UP** buttons
 
 ![](../../../images/developer/storefront/61.png)
 
+Address Step
+
+__*$primary-color*__ variable changes
+
++ The color of __SAVE AND CONTINUE__ button (this element remains the same across the whole checkout process)
+
 ![](../../../images/developer/storefront/62.png)
 
-Sign Up Page
-
-  1. **Primary color** variable changes
-
-    a. The color of **SIGN UP** and **LOG IN** buttons
++ The color of __EDIT__ icon
 
 ![](../../../images/developer/storefront/63.png)
 
+Payment step
+
+__*$primary-color*__ variable changes
+
++ The color of __APPLY__ button
+
 ![](../../../images/developer/storefront/64.png)
 
-My Account Page
+Confirm Step
 
-  1. **Primary color** variable changes
+__*$primary-color*__ variable changes
 
-    a. The color of **Edit** and **Trash** icons
++ The color of __PLACE ORDER__ buttons
 
 ![](../../../images/developer/storefront/65.png)
 
-Edit Account Page
+Sign In Page
 
-  1. **Primary color** variable changes
+__*$primary-color*__ variable changes
 
-     a. The color of **UPDATE** button
+The color of __LOG IN__ and __SIGN UP__ buttons
 
 ![](../../../images/developer/storefront/66.png)
 
+![](../../../images/developer/storefront/67.png)
+
+Sign Up Page
+
+__*$primary-color*__ variable changes
+
++ The color of __SIGN UP__ and __LOG IN__ buttons
+
+![](../../../images/developer/storefront/68.png)
+
+![](../../../images/developer/storefront/69.png)
+
+My Account Page
+
+__*$primary-color*__ variable changes
+
++ The color of __Edit__ and __Trash__ icons
+
+![](../../../images/developer/storefront/70.png)
+
+Edit Account Page
+
+__*$primary-color*__ variable changes
+
++ The color of __UPDATE__ button
+
+![](../../../images/developer/storefront/71.png)
+
   Pop-ups
 
-   1. **Primary Color** variable changes
+__*$primary-color*__ variable changes
 
-      a. The color of buttons
++ The color of __CANCEL__ and __OK__ buttons
 
-![](../../../images/developer/storefront/67.png)
+![](../../../images/developer/storefront/72.png)
 
   ### Secondary color
 
@@ -323,103 +326,104 @@ PLP
 
 Filter
 
-  1. **Secondary color** variable changes
-     a. The color of chosen **color** border variant
-
-![](../../../images/developer/storefront/68.png)
-
-     b. The color of chosen **size** border variant
-
-![](../../../images/developer/storefront/69.png)
-
-     c. The color of chosen **length** border variant
-
-![](../../../images/developer/storefront/70.png)
-
-     d. The color of chosen **price** border variant
-
-![](../../../images/developer/storefront/71.png)
-
-PDP
-  1. **Secondary color** variable changes
-
-     a. The color of chosen **color** border variant
-
-![](../../../images/developer/storefront/72.png)
-
-     b. The color of chosen **size** border variant
+__*$secondary-color*__ variable changes
++ The color of chosen __color__ border variant
 
 ![](../../../images/developer/storefront/73.png)
 
-     c. The color of chosen **length** border variant
++ The color of chosen __size__ border variant
 
 ![](../../../images/developer/storefront/74.png)
 
-     d. The color of chosen **image** border
++ The color of chosen __length__ border variant
 
 ![](../../../images/developer/storefront/75.png)
 
-Pop-ups
-   1. **Secondary color** variable changes
-
-       a. The color of **Add to bag successfully** icon
++ The color of chosen __price__ border variant
 
 ![](../../../images/developer/storefront/76.png)
 
-Log-in and Sign-in page
+PDP
+__*$secondary-color*__ variable changes
 
-    1. **Secondary color** variable changes
-
-        a. The color of **Remember me** checkbox
++ The color of chosen __color__ border variant
 
 ![](../../../images/developer/storefront/77.png)
 
-        b, The color of **input: focus**
++ The color of chosen __size__ border variant
 
 ![](../../../images/developer/storefront/78.png)
 
-Checkout
-
-  1. **Secondary Color** variable changes
-      a. The color of **individual steps** (box, name step and guide line) - this element remain the same across whole checkout process
++ The color of chosen __length__ border variant
 
 ![](../../../images/developer/storefront/79.png)
 
-Address Step
-
-     1. **Secondary color** variable changes
-
-        a. The color of **Use shipping address** checkbox
++ The color of chosen __image__ border
 
 ![](../../../images/developer/storefront/80.png)
 
-Delivery Step
+Pop-ups
+__*$secondary-color*__ variable changes
 
-    1. **Secondary color** variable changes
-
-       a. The color of delivery type radio buttons
++ The color of Add to bag successfully icon
 
 ![](../../../images/developer/storefront/81.png)
 
-Payment Step
+Log-in and Sign-in page
 
-   1. **Secondary color** variable changes
+__*$secondary-color*__ variable changes
 
-     a. The color of payment type radio buttons
++ The color of __Remember me__ checkbox
 
 ![](../../../images/developer/storefront/82.png)
 
-     b. The color of payment card radio buttons
++ The color of __input: focus__
 
 ![](../../../images/developer/storefront/83.png)
 
-Order confirmation page
+Checkout
 
-   1. **Secondary color** variable changes
+__*$secondary-color*__ variable changes
 
-        a. The color of **successful checkmark** icon
++ The color of __individual steps__ (box, name step and guide line) - this element remain the same across whole checkout process
 
 ![](../../../images/developer/storefront/84.png)
+
+Address Step
+
+__*$secondary-color*__ variable changes
+
++ The color of Use shipping address checkbox
+
+![](../../../images/developer/storefront/85.png)
+
+Delivery Step
+
+__*$secondary-color*__ variable changes
+
++ The color of delivery type radio buttons
+
+![](../../../images/developer/storefront/86.png)
+
+Payment Step
+
+__*$secondary-color*__ variable changes
+ + The color of payment type radio buttons
+
+![](../../../images/developer/storefront/87.png)
+
++ The color of payment card radio buttons
+
+![](../../../images/developer/storefront/88.png)
+
+Order confirmation page
+
+__*$secondary-color*__ variable changes
+
+  + The color of __successful checkmark__ icon
+
+
+![](../../../images/developer/storefront/89.png)
 
   Grid breakpoints
 -----------
@@ -429,26 +433,30 @@ Order confirmation page
 Rounding for components
 -----------
 
-__$enable-rounded__ - Enable roading for components.
-Possible values: true or __false__
-![](../../../images/developer/storefront/image67.jpg)
+__*$enable-rounded*__ - Enable rounding for components.
 
-Shadows for components
------------
-__$enable-shadows__ - Enable shadow for components
-Possible values: __true__ or __false__
-
-Gradient for components
------------
-__$enable-gradients__ - Enable gradient for components
 Possible values: __true__ or __false__
 
 __“True” example__
 
-![]((../../../images/developer/storefront/image72.jpg)
+![](../../../images/developer/storefront/98.png)
 
 __“False” example__
-![]((../../../images/developer/storefront/image87.jpg)
+
+![](../../../images/developer/storefront/99.png)
+
+
+Shadows for components
+-----------
+__*$enable-shadows*__ - Enable shadow for components
+
+Possible values: __true__ or __false__
+
+Gradient for components
+-----------
+__*$enable-gradients*__ - Enable gradient for components
+
+Possible values: __true__ or __false__
 
 Header and footer customization
 ======
@@ -472,7 +480,7 @@ Social media icons in the footer
 -----------
 Replace social media URLs with yours in the Spree admin panel by going to Configuration > Stores and editing (pencil icon) your store settings in the Social section.
 
-![](../../../images/developer/storefront/image09.jpg)
+![](../../../images/developer/storefront/100.png)
 
 Make sure to place the part of the URL trailing after .com/, for example:
 SCREEN
@@ -487,7 +495,7 @@ Contact us in the footer
 -----------
 
 
-The footer contains a “Contact us” section with your store contact information. You can change the contents of this section in the ___[footer.html.erb](https://github.com/spree/spree/blob/master/frontend/app/views/spree/shared/_footer.html.erb#L30)__ [file in lines 30 to 38. The file is automatically copied to shared/_footer.html.erb in your application directory.
+The footer contains a “Contact us” section with your store contact information. You can change the contents of this section in the ___footer.html.erb__ file in lines 30 to 38. The file is automatically copied to shared/_footer.html.erb in your application directory.
 
 
 Product categories in the footer
@@ -503,8 +511,8 @@ You will need to replace promo banner placeholder images as well as some text (b
 
 
 + on the homepage
-   + multiple promo banners described below (each in 4 sizes listed on the following pages for various devices)
-   +text on the main promo banner (“Summer Collection” and “SHOP NOW” button), descriptions on all three category banners, slider title
+  + multiple promo banners described below (each in 4 sizes listed on the following pages for various devices)
+  + text on the main promo banner (“Summer Collection” and “SHOP NOW” button), descriptions on all three category banners, slider title
 (“BESTSELLERS”, “TRENDING”), mid-page promo block (“FASHION TRENDS”), bottom promo banners (“STREETSTYLE”, “UP TO 60%”)
 + product listing page - one category promo banner
 + meganav menu - two promo banners for each main category
@@ -513,9 +521,6 @@ You will need to replace promo banner placeholder images as well as some text (b
 Homepage placeholder slots
 -----------
 In the screenshot below you’ll find homepage promo banner slots with the default image placeholders indicating desktop placeholder sizes in pixels. Please note that each of these placeholders requires 4 images for various devices listed below. This is just a desktop example.
-
-
-![]((../../../images/developer/storefront/image53.jpg)
 
 
 Homepage text values may be replaced in your project repository in the /app/views/spree/home/index.html.erb. Please note that this file will be automatically copied to your project directory after running Spree installer.
@@ -530,7 +535,6 @@ Main banner
 + Main banner tablet portrait __768 x 320__ (this is a tablet portrait file)
 
 Big category banner
-
 + Big category banner __540 x 800__ (this is a desktop file)
 + Big category banner mobile __262 x 388__ (this is a mobile file)
 + Big category banner tablet landscape __470 x 696__ (this is a tablet landscape file)
@@ -554,34 +558,45 @@ Please find all the [placeholder images and their size variations in this Google
 In order to replace those placeholder images you will probably want to perform two operations:
 + change the file names in the /app/views/spree/home/index.html.erb in your project repository,
 + upload those images to your Spree project code repo into this /app/assets/images/homepage folder. The files are automatically copied to your application folder after running Spree installer, preserving the file name structure and just changing “big_category_banner” to your file name:
-
- + __big_category_banner.jpg__
- +__big_category_banner_mobile.jpg__
- +__big_category_banner_tablet_landscape.jpg__
- +__big_category_banner_tablet_portrait.jpg__
+  + __big_category_banner.jpg__
+  + __big_category_banner_mobile.jpg__
+  + __big_category_banner_tablet_landscape.jpg__
+  + __big_category_banner_tablet_portrait.jpg__
 
 Those file names will be used in the srcset attribute which specified the URL of the image to use for various screen sizes and orientations.
 
 If you’d like to change the file names in the /app/views/spree/home/index.html.erb please find below line number where to place new image files names.
 
 __Main banner code lines__
+
  Line 3: data-src="<%= asset_path('homepage/main_banner.jpg') %>"
+
  Line 4: data-srcset="<%= image_source_set('homepage/main_banner') %>"
 
 __Big category banner code lines__
+
 Line 54: data-src="<%= asset_path('homepage/big_category_banner.jpg') %>"
+
 Line 55: data-srcset="<%= image_source_set('homepage/big_category_banner') %>"
 
 __Both category banners code lines__
+
 Line 24: data-src="<%= asset_path('homepage/category_banner_upper.jpg') %>"
+
 Line 25: data-srcset="<%= image_source_set('homepage/category_banner_upper) %>"
+
 Line 37: data-src="<%= asset_path('homepage/category_banner_lower.jpg') %>"
+
 Line 38: data-srcset="<%= image_source_set('homepage/category_banner_lower) %>"
 
 __Both promo banners code lines__
+
 Line 101: data-src="<%= asset_path('homepage/promo_banner_left.jpg') %>"
+
 Line 102: data-srcset="<%= image_source_set('homepage/promo_banner_left.jpg) %>"
+
 Line 121: data-src="<%= asset_path('homepage/promo_banner_right.jpg') %>"
+
 Line 122: data-srcset="<%= image_source_set('homepage/promo_banner_right') %>"
 
 Category banner on PLP
@@ -605,25 +620,25 @@ Sitemap
 -----------
 We highly recommend adding a sitemap to your site. It might affect how Google bot crawls your store pages. There is + an official extension [Spree Sitemap](https://github.com/spree-contrib/spree_sitemap) for that exact purpose.
 
-+ vper region, language or currency)
-+ click the Edit button (indicated with a pencil icon) for the right store,
-+ enter title, keywords and description values for that store homepage
-+ click the Update button at the bottom of the page
+1. vper region, language or currency)
+2. click the Edit button (indicated with a pencil icon) for the right store,
+3. enter title, keywords and description values for that store homepage
+4. click the Update button at the bottom of the page
 
-![](../../../images/developer/storefront/image64.jpg)
+![](../../../images/developer/storefront/101.png)
 
 To set title, meta keywords and description for each store category page (PLP), in the admin panel:
 1. go to Products > Taxonomies
 2. go into a Categories list by pressing the Edit button (pencil icon)
 3. pick the category you’d like to edit by right-clicking (control + click on a Mac) a child in the tree to access the menu for adding, deleting or sorting a child.
 
-![](https://github.com/spree/spree/tree/master/guides/src/images/user/storefront/image74.jpg)
+![](../../../images/developer/storefront/102.png)
 
 4. click the Edit link for that category
 5. replace the default values for title, meta keywords and description with your own
 6. click the Update button at the bottom of the page
 
-![](../../../images/developer/storefront/image11.jpg)
+![](../../../images/developer/storefront/103.png)
 
 You’ll have to edit every category and subcategory to your liking in a similar fashion.
 
@@ -633,7 +648,7 @@ To set title, meta keywords and description for each __product page (PDP)__, in 
 9. while in the Details tab, scroll down and place your values for title, meta keywords and description
 10. click the Update button at the bottom of the page
 
-![](../../../images/developer/storefront/image41.jpg)
+![](../../../images/developer/storefront/104.png)
 
 Social sharing and search preview
 ======
