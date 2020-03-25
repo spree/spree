@@ -127,6 +127,13 @@ module.exports = {
         background_color: '#663399',
         theme_color: '#663399'
       }
+    },
+    {
+      resolve: 'gatsby-plugin-canonical-urls',
+      options: {
+        siteUrl: 'https://guides.spreecommerce.org',
+        stripQueryString: true
+      }
     }
     // this (optional) plugin enables Progressive Web App + Offline functionality
     // To learn more, visit: https://gatsby.app/offline
