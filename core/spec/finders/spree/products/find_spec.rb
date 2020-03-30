@@ -164,9 +164,9 @@ module Spree
           scope: Spree::Product.all,
           params: params,
           current_currency: 'USD'
-        ).execute.ids
+        ).execute.map(&:id)
 
-        expect(product_ids).to match_array Spree::Product.available.order(available_on: :desc).ids
+        expect(product_ids).to match_array Spree::Product.available.order(available_on: :desc).map(&:id)
       end
 
       it 'returns products in price-high-to-low order' do
@@ -174,13 +174,13 @@ module Spree
           sort_by: 'price-high-to-low'
         }
 
-        product_ids = described_class.new(
+        products = described_class.new(
           scope: Spree::Product.all,
           params: params,
           current_currency: 'USD'
-        ).execute.ids
+        ).execute.to_a
 
-        expect(product_ids).to match_array [product_2.id, product_3.id, product.id]
+        expect(products).to match_array [product_2, product_3, product]
       end
 
       it 'returns products in price-low-to-high order' do
@@ -188,13 +188,13 @@ module Spree
           sort_by: 'price-low-to-high'
         }
 
-        product_ids = described_class.new(
+        products = described_class.new(
           scope: Spree::Product.all,
           params: params,
           current_currency: 'USD'
-        ).execute.ids
+        ).execute
 
-        expect(product_ids).to match_array [product.id, product_3.id, product_2.id]
+        expect(products).to match_array [product, product_3, product_2]
       end
     end
   end
