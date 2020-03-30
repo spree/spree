@@ -812,8 +812,8 @@ paths:
           name: filter[taxons]
           schema:
             type: string
-          example: 1,2,3,4,5,6,7,8,9,10,11
-          description: Filter Prodcuts based on taxons (IDs of categories, brands, etc)
+          example: 1,2,3,4,5,men,men/tshirts,women,women/tshirts
+          description: Filter Prodcuts based on taxons (IDs or Permalinks of categories, brands, etc)
         - in: query
           name: filter[name]
           schema:
@@ -973,7 +973,7 @@ paths:
     get:
       description: >-
         To view the details for a single Country, make a request using that
-        Country's iso code:<br /> <code>GET /api/v2/storefront/countries/gb</code>
+        Country's iso code:<br /> <code>GET /api/v2/stor/mefront/countries/gb</code>
         <br /><br />You may also query by the Country's iso3 code:<br /><code>GET
         /api/v2/storefront/coutries/gbr </code> <br /><br />Note that the API will attempt a
         iso lookup before an iso3 lookup.

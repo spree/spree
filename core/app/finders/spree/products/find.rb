@@ -99,7 +99,11 @@ module Spree
       def by_taxons(products)
         return products unless taxons?
 
-        products.joins(:taxons).where(spree_taxons: { id: taxons })
+        ids = taxons.select { |t| t =~ /^\d+$/ }
+        permalinks = taxons + ids - (taxons & ids)
+
+        products.joins(:taxons).where(spree_taxons: { id: ids }) if ids.count > 0
+        products.joins(:taxons).where(spree_taxons: { permalink: permalinks }) if permalinks.count > 0
       end
 
       def by_name(products)
