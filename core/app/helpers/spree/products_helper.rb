@@ -58,13 +58,8 @@ module Spree
     end
 
     def cache_key_for_products(products = @products, additional_cache_key = nil)
-      ids = if products.is_a?(Array)
-              products.map(&:id)
-            else
-              products.ids
-            end.join('-')
       max_updated_at = (products.maximum(:updated_at) || Date.today).to_s(:number)
-      products_cache_keys = "spree/products/#{ids}-#{params[:page]}-#{params[:sort_by]}-#{max_updated_at}-#{@taxon&.id}"
+      products_cache_keys = "spree/products/#{products.map(&:id).join('-')}-#{params[:page]}-#{params[:sort_by]}-#{max_updated_at}-#{@taxon&.id}"
       (common_product_cache_keys + [products_cache_keys] + [additional_cache_key]).compact.join('/')
     end
 

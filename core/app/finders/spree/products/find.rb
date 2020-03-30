@@ -29,7 +29,7 @@ module Spree
         products = include_discontinued(products)
         products = ordered(products)
 
-        products
+        products.distinct
       end
 
       private
@@ -81,14 +81,13 @@ module Spree
       def by_skus(products)
         return products unless skus?
 
-        products.joins(:variants_including_master).distinct.where(spree_variants: { sku: skus })
+        products.joins(:variants_including_master).where(spree_variants: { sku: skus })
       end
 
       def by_price(products)
         return products unless price?
 
         products.joins(master: :default_price).
-          distinct.
           where(
             spree_prices: {
               amount: price.min..price.max,
@@ -100,7 +99,7 @@ module Spree
       def by_taxons(products)
         return products unless taxons?
 
-        products.joins(:taxons).distinct.where(spree_taxons: { id: taxons })
+        products.joins(:taxons).where(spree_taxons: { id: taxons })
       end
 
       def by_name(products)
