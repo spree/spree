@@ -34,7 +34,7 @@ const SiteMetadata = ({
       <Helmet defaultTitle={title} titleTemplate={`%s | ${title}`}>
         <html lang="en" />
         {pageTitle && <title>{pageTitle}</title>}
-        <link rel="canonical" href={`${siteUrl}${pathname}`} />
+        {pathname && <link rel="canonical" href={`${siteUrl}${pathname}`} />}
         <meta name="description" content={pageDescription || description} />
         <meta name="docsearch:version" content="2.0" />
         <meta
