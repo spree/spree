@@ -973,7 +973,7 @@ paths:
     get:
       description: >-
         To view the details for a single Country, make a request using that
-        Country's iso code:<br /> <code>GET /api/v2/storfront/countries/gb</code>
+        Country's iso code:<br /> <code>GET /api/v2/storefront/countries/gb</code>
         <br /><br />You may also query by the Country's iso3 code:<br /><code>GET
         /api/v2/storefront/coutries/gbr </code> <br /><br />Note that the API will attempt a
         iso lookup before an iso3 lookup.
