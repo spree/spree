@@ -104,10 +104,10 @@ module Spree
 
         c = Spree::Taxon.connection
 
-        clause = ""
-        clause += Spree::Taxon.sanitize_sql_for_conditions(["#{c.quote_table_name("spree_taxons")}.#{c.quote_column_name("id")} IN (?)", ids]) if ids.any?
-        clause += " OR " if ids.any? and permalinks.any?
-        clause += Spree::Taxon.sanitize_sql_for_conditions(["#{c.quote_table_name("spree_taxons")}.#{c.quote_column_name("permalink")} IN (?)", permalinks]) if permalinks.any?
+        clause = ''
+        clause += Spree::Taxon.sanitize_sql_for_conditions(["#{c.quote_table_name('spree_taxons')}.#{c.quote_column_name('id')} IN (?)", ids]) if ids.any?
+        clause += ' OR ' if ids.any? && permalinks.any?
+        clause += Spree::Taxon.sanitize_sql_for_conditions(["#{c.quote_table_name('spree_taxons')}.#{c.quote_column_name('permalink')} IN (?)", permalinks]) if permalinks.any?
 
         products.joins(:taxons).where(clause)
       end
