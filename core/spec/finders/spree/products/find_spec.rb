@@ -140,6 +140,63 @@ module Spree
       end
     end
 
+    describe 'filter by taxons' do
+      subject(:result) do
+        described_class.new(
+          scope: Spree::Product.all,
+          params: params,
+          current_currency: 'USD'
+        ).execute
+      end
+
+      let!(:taxonomy) { create :taxonomy, name: 'Root' }
+
+      let!(:taxon_1) { create :taxon, taxonomy: taxonomy, name: 'Parent' }
+      let!(:taxon_2) { create :taxon, taxonomy: taxonomy, parent: taxon_1, name: 'Child 1' }
+      let!(:taxon_3) { create :taxon, taxonomy: taxonomy, name: 'Parent 2' }
+
+      let(:product_1) { create :product, taxons: [taxon_1] }
+      let(:product_2) { create :product, taxons: [taxon_1, taxon_2] }
+      let(:product_3) { create :product, taxons: [taxon_3] }
+
+      let!(:variant_1) { create :variant, product: product_1 }
+      let!(:variant_2) { create :variant, product: product_2 }
+      let!(:variant_3) { create :variant, product: product_3 }
+
+      let(:filter_taxons) { [] }
+      let(:params) do
+        {
+          filter: {
+            taxons: filter_taxons
+          }
+        }
+      end
+
+      context 'filtering by taxon ID\'s' do
+        let(:filter_taxons) { "#{taxon_1.id},#{taxon_3.id}" }
+
+        it 'returns products that match ID\'s' do
+          expect(result).to match_array([product_1, product_2, product_3])
+        end
+      end
+
+      context 'filtering by taxon permalinks' do
+        let(:filter_taxons) { "#{taxon_2.permalink}" }
+
+        it 'returns products that match permalinks' do
+          expect(result).to match_array([product_2])
+        end
+      end
+
+      context 'filtering by taxon ID\'s and permalinks mixed' do
+        let(:filter_taxons) { "#{taxon_2.id},#{taxon_3.permalink}" }
+
+        it 'returns products that match ID\'s and permalinks' do
+          expect(result).to match_array([product_2, product_3])
+        end
+      end
+    end
+
     context 'ordered' do
       it 'returns products in default order' do
         params = {

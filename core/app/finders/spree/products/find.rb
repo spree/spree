@@ -102,8 +102,12 @@ module Spree
         ids = taxons.select { |t| t =~ /^\d+$/ }
         permalinks = taxons + ids - (taxons & ids)
 
-        products.joins(:taxons).where(spree_taxons: { id: ids }) if ids.count > 0
-        products.joins(:taxons).where(spree_taxons: { permalink: permalinks }) if permalinks.count > 0
+        clause = ""
+        clause += Taxon.sanitize_sql_for_conditions(["\"spree_taxons\".\"id\" IN (?)", ids]) if ids.any?
+        clause += " OR " if ids.any? and permalinks.any?
+        clause += Taxon.sanitize_sql_for_conditions(["\"spree_taxons\".\"permalink\" IN (?)", permalinks]) if permalinks.any?
+
+        products.joins(:taxons).where(clause)
       end
 
       def by_name(products)
