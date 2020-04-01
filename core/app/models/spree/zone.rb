@@ -71,8 +71,8 @@ module Spree
     end
 
     def kind
-      if kind?
-        super
+      if self[:kind].present?
+        self[:kind]
       else
         not_nil_scope = members.where.not(zoneable_type: nil)
         zone_type = not_nil_scope.order('created_at ASC').pluck(:zoneable_type).last
