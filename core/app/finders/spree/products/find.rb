@@ -99,7 +99,17 @@ module Spree
       def by_taxons(products)
         return products unless taxons?
 
-        products.joins(:taxons).where(spree_taxons: { id: taxons })
+        ids = taxons.select { |t| t =~ /^\d+$/ }
+        permalinks = taxons + ids - (taxons & ids)
+
+        c = Spree::Taxon.connection
+
+        clause = ''
+        clause += Spree::Taxon.sanitize_sql_for_conditions(["#{c.quote_table_name('spree_taxons')}.#{c.quote_column_name('id')} IN (?)", ids]) if ids.any?
+        clause += ' OR ' if ids.any? && permalinks.any?
+        clause += Spree::Taxon.sanitize_sql_for_conditions(["#{c.quote_table_name('spree_taxons')}.#{c.quote_column_name('permalink')} IN (?)", permalinks]) if permalinks.any?
+
+        products.joins(:taxons).where(clause)
       end
 
       def by_name(products)
