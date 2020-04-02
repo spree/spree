@@ -11,7 +11,6 @@ import Section from 'components/Section'
 
 const IndexPage = () => (
   <Layout
-    pathname="/"
     title="Guides"
     description="Spree Commerce API, documentation, guides & tutorials"
   >
