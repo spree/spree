@@ -8,7 +8,7 @@ module Spree
         @skus             = String(params.dig(:filter, :skus)).split(',')
         @price            = String(params.dig(:filter, :price)).split(',').map(&:to_f)
         @currency         = params[:currency] || current_currency
-        @taxons           = String(params.dig(:filter, :taxons)).split(',')
+        @taxons           = taxon_ids(params.dig(:filter, :taxons))
         @name             = params.dig(:filter, :name)
         @options          = params.dig(:filter, :options).try(:to_unsafe_hash)
         @option_value_ids = params.dig(:filter, :option_value_ids)
@@ -158,6 +158,12 @@ module Spree
 
       def include_discontinued(products)
         discontinued ? products : products.available
+      end
+
+      def taxon_ids(taxon_id)
+        return unless (taxon = Spree::Taxon.find_by(id: taxon_id))
+
+        taxon.self_and_descendants.ids.map(&:to_s)
       end
     end
   end

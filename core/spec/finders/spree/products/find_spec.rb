@@ -9,7 +9,7 @@ module Spree
     let!(:deleted_product)      { create(:product, deleted_at: Time.current - 1.day) }
     let!(:discontinued_product) { create(:product, discontinue_on: Time.current - 1.day) }
 
-    context 'include deleted' do
+    context 'include discontinued' do
       it 'returns products with discontinued' do
         params = {
           filter: {
@@ -137,6 +137,38 @@ module Spree
         it 'returns products that have both options' do
           expect(products).to match_array([product_3])
         end
+      end
+    end
+
+    describe 'filter by taxons' do
+      subject(:products) do
+        described_class.new(
+            scope: Spree::Product.all,
+            params: params,
+            current_currency: 'USD'
+        ).execute
+      end
+
+      let(:params) { { filter: { taxons: parent_taxon.id } } }
+
+      let(:parent_taxon) { child_taxon.parent }
+      let(:child_taxon) { create(:taxon) }
+
+      shared_examples 'returns distinct products associated both to self and descendants' do
+        it { expect(products).to match_array [product, product_2] }
+      end
+
+      before do
+        parent_taxon.products << product
+        child_taxon.products << product_2
+      end
+
+      it_behaves_like 'returns distinct products associated both to self and descendants'
+
+      context 'when product is already related to both taxons' do
+        before { parent_taxon.products << product_2 }
+
+        it_behaves_like 'returns distinct products associated both to self and descendants'
       end
     end
 
