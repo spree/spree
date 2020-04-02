@@ -74,6 +74,18 @@ end
 ::Spree::Order.prepend(MyStore::Spree::OrderDecorator)
 ```
 
+When migrating class method to the new [autoloader](https://medium.com/@fxn/zeitwerk-a-new-code-loader-for-ruby-ae7895977e73) things are a little different because you will have to prepend to the Singleton class as shown in this example: 
+
+```ruby
+module Spree::BaseDecorator
+  def spree_base_scopes
+    # custom implementation
+  end
+end
+
+Spree::Base.singleton_class.send :prepend, Spree::BaseDecorator
+```
+
 Please also consider other options for [Logic Customization](/developer/customization/logic.html).
 
 We recommend also reading through [Ruby modules: Include vs Prepend vs Extend](https://medium.com/@leo_hetsch/ruby-modules-include-vs-prepend-vs-extend-f09837a5b073)
