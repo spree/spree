@@ -17,7 +17,10 @@ module Spree
     before_validation :copy_tax_category
 
     validates :variant, :order, presence: true
-    validates :quantity, numericality: { only_integer: true, message: Spree.t('validation.must_be_int') }
+
+    # numericality: :less_than_or_equal_to validation is due to the restriction at the database level
+    #   https://github.com/spree/spree/issues/2695#issuecomment-143314161
+    validates :quantity, numericality: { less_than_or_equal_to: DatabaseTypeUtilities.maximum_value_for(:integer), only_integer: true, message: Spree.t('validation.must_be_int') }
     validates :price, numericality: true
 
     validates_with Spree::Stock::AvailabilityValidator
