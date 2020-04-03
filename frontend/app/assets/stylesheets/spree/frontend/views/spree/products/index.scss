@@ -1,6 +1,6 @@
 .plp {
   &-not-found-header {
-    color: theme-color("dark-text");
+    color: $font-color;
     font-size: font-px-to-rem(18px);
     font-weight: 500;
     letter-spacing: 0.45px;
@@ -30,7 +30,7 @@
   }
 
   &-not-found-text {
-    color: theme-color("dark-text");
+    color: $font-color;
     margin-bottom: 350px;
     font-size: font-px-to-rem(14px);
     font-weight: 500;
@@ -50,7 +50,7 @@
     height: 60px;
     display: flex;
     align-items: center;
-    color: theme-color("dark-text");
+    color: $font-color;
     @include media-breakpoint-up("md") {
       font-size: font-px-to-rem(32px);
     }
@@ -68,7 +68,7 @@
     }
 
     &-buttons {
-      color: theme-color("dark-text");
+      color: $font-color;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -92,7 +92,7 @@
     top: $spree-plp-filter-desktop-position;
     left: 0;
     &-card {
-      background-color: theme-color("light-background");
+      background-color: $primary-background;
       border: none;
       a:hover {
         text-decoration: none;
@@ -104,7 +104,7 @@
         }
       }
       &-header {
-        background-color: theme-color("light-background");
+        background-color: $primary-background;
         border-color: $global-border-style;
         cursor: pointer;
         font-size: font-px-to-rem(17px);
@@ -125,7 +125,7 @@
       }
       &-item {
         border: solid 1px $second-global-border;
-        color: theme-color("dark-text");
+        color: $font-color;
         font-size: font-px-to-rem(16px);
         font-weight: 500;
         &--selected {
@@ -154,7 +154,7 @@
         &-li--active {
           list-style: none;
           a {
-            color: theme-color("dark-text");
+            color: $font-color;
           }
         }
         &-li--active {
@@ -186,7 +186,7 @@
       }
     }
     a {
-      color: theme-color("dark-text");
+      color: $font-color;
       border-color: $global-border-style !important;
       padding: 5px 13px;
       min-width: 37px;
@@ -207,7 +207,7 @@
   }
 
   &-overlay {
-    color: theme-color("dark-text");
+    color: $font-color;
     position: fixed;
     width: 100%;
     height: 100%;
@@ -216,7 +216,7 @@
     right: 0;
     bottom: 0;
     z-index: 999;
-    background-color: theme-color("light-background");
+    background-color: $primary-background;
 
     &-header {
       height: 60px;
@@ -243,13 +243,13 @@
             height: 12px;
             margin-top: 2px;
             margin-left: 2px;
-            background-color: theme-color("secondary");
-            border: solid 1px theme-color("secondary");
+            background-color: $secondary-color;
+            border: solid 1px $secondary-color;
             border-radius: 50%;
           }
         }
         a {
-          color: theme-color("dark-text");
+          color: $font-color;
           &:hover {
             text-decoration: none;
           }
@@ -263,25 +263,25 @@
     &-card {
       border: none;
       border-top: solid 1px $global-border-style;
-      background-color: theme-color("light-background");
+      background-color: $primary-background;
       &-header.collapsed {
         .arrow {
           transform: rotate(90deg);
         }
       }
       &-header {
-        background-color: theme-color("light-background");
+        background-color: $primary-background;
         border-bottom: none;
         cursor: pointer;
         &-arrow {
-          color: theme-color("dark-test");
+          color: $font-color;
           transform: rotate(-90deg);
         }
       }
 
       &-item {
         border: solid 1px $second-global-border;
-        color: theme-color("dark-text");
+        color: $font-color;
         font-size: font-px-to-rem(13px);
         &--selected {
           border: solid 2px $secondary-color;
@@ -311,8 +311,8 @@
   }
 
   &-empty-dot {
-    background-color: theme-color("light-background");
-    border: solid 1px theme-color("secondary");
+    background-color: $primary-background;
+    border: solid 1px $secondary-color;
     border-radius: 50%;
     display: inline-block;
     margin-right: 16px;
