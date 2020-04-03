@@ -295,14 +295,19 @@
       }
     }
     &-buttons {
-      bottom: 30px;
+      background-color: $primary-background;
+      padding-bottom: 30px;
+      bottom: 0px;
     }
   }
 
   &-scroll {
     max-height: 100%;
     overflow-y: auto;
-    padding-bottom: 140px;
+    padding-bottom: 150px;
+    @include media-breakpoint-up('sm') {
+      padding-bottom: 220px;
+    }
   }
 
   &-empty-dot {
