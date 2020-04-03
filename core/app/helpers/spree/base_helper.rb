@@ -136,6 +136,10 @@ module Spree
       [I18n.locale, current_currency]
     end
 
+    def maximum_quantity
+      Spree::DatabaseTypeUtilities.maximum_value_for(:integer)
+    end
+
     private
 
     def create_product_image_tag(image, product, options, style)
