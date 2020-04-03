@@ -93,6 +93,7 @@ require 'spree/money'
 require 'spree/permitted_attributes'
 require 'spree/service_module'
 require 'spree/dependencies_helper'
+require 'spree/database_type_utilities'
 
 require 'spree/core/importer'
 require 'spree/core/query_filters'
