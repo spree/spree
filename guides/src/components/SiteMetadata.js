@@ -9,7 +9,6 @@ import { graphql, StaticQuery } from 'gatsby'
  */
 
 const SiteMetadata = ({
-  pathname,
   description: pageDescription,
   title: pageTitle
 }) => (
@@ -34,7 +33,6 @@ const SiteMetadata = ({
       <Helmet defaultTitle={title} titleTemplate={`%s | ${title}`}>
         <html lang="en" />
         {pageTitle && <title>{pageTitle}</title>}
-        <link rel="canonical" href={`${siteUrl}${pathname}`} />
         <meta name="description" content={pageDescription || description} />
         <meta name="docsearch:version" content="2.0" />
         <meta
@@ -61,7 +59,6 @@ const SiteMetadata = ({
 )
 
 SiteMetadata.propTypes = {
-  pathname: PropTypes.string,
   description: PropTypes.string,
   title: PropTypes.string
 }
