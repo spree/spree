@@ -168,6 +168,16 @@ module Spree
           class: 'btn-outline-secondary', icon: 'eye-open', id: 'admin_preview_product', target: :blank
         )
       end
+
+      def taxon_preview_link(taxon)
+        return unless frontend_available?
+
+        button_link_to(
+          Spree.t(:preview_taxon),
+          seo_url(taxon),
+          class: 'btn-outline-secondary', icon: 'eye-open', id: 'admin_preview_taxon', target: :blank
+        )
+      end
     end
   end
 end

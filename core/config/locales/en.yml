@@ -866,6 +866,7 @@ en:
     guest_checkout: Guest Checkout
     guest_user_account: Checkout as a Guest
     has_no_shipped_units: has no shipped units
+    header_banner: Header banner
     height: Height
     hide_from_subcategories_nav: Hide from subcategories navigation
     home: Home
@@ -1236,6 +1237,7 @@ en:
     preferred_reimbursement_type: Preferred Reimbursement Type
     presentation: Presentation
     preview_product: Preview Product
+    preview_taxon: Preview Taxon
     previous: Previous
     previous_state_missing: "n/a"
     price: Price
