@@ -92,6 +92,11 @@ export default class Header extends React.PureComponent {
               url="/user/"
             />
             <NavItem
+              text="FAQ"
+              isActive={this.isActive('faq')}
+              url="/faq/"
+            />
+            <NavItem
               text="Release Notes"
               isActive={this.isActive('release_notes')}
               url="/release_notes/"
@@ -178,6 +183,15 @@ export default class Header extends React.PureComponent {
                 url="/user/"
               >
                 {this.isActive('user') && (
+                  <Sidebar nav={this.props.nav} isMobile />
+                )}
+              </NavItem>
+              <NavItem
+                text="FAQ"
+                isActive={this.isActive('faq')}
+                url="/faq/"
+              >
+                {this.isActive('faq') && (
                   <Sidebar nav={this.props.nav} isMobile />
                 )}
               </NavItem>

@@ -50,6 +50,10 @@ const IndexPage = () => (
             know to configure and manage your Spree store can be found here.
           </Section>
 
+          <Section path="/faq" title="FAQ" className="w-50-ns">
+            The most common questions asked.
+          </Section>
+
           <Section
             path="/release_notes"
             title="Release Notes"
