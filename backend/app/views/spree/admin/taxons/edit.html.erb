@@ -4,6 +4,10 @@
   <%= @taxon.name %>
 <% end %>
 
+<% content_for :page_actions do %>
+  <%= taxon_preview_link(@taxon) %>
+<% end %>
+
 <%# Because otherwise the form would attempt to use to_param of @taxon %>
 <% form_url = admin_taxonomy_taxon_path(@taxonomy.id, @taxon.id) %>
 
