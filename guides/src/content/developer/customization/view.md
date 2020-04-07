@@ -7,7 +7,7 @@ order: 0
 ## Overview
 
 View customization allows you to extend or replace any view within a
-Spree application bot for the Customer Storefront (Frontend) and Admin Panel (Backend).
+Spree application both for the Customer Storefront (Frontend) and Admin Panel (Backend).
 
 ## Template replacement
 
