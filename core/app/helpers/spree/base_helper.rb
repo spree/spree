@@ -111,7 +111,9 @@ module Spree
     # we should always try to render image of the default variant
     # same as it's done on PDP
     def default_image_for_product(product)
-      if product.default_variant.images.any?
+      if product.images.any?
+        product.images.first
+      elsif product.default_variant.images.any?
         product.default_variant.images.first
       elsif product.variant_images.any?
         product.variant_images.first
