@@ -72,7 +72,7 @@ export default function Template({ data }) {
       activeRootSection={guide.fields.rootSection}
     >
       {guide.headings.length > 0 && <Toc headings={guide.headings} />}
-      <article className="mt2 nested-links">
+      <article className="nested-links">
         <H1>{guide.frontmatter.title}</H1>
         {renderAst(guide.htmlAst)}
         <MarkdownPageFooter
