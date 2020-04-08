@@ -159,7 +159,8 @@ __*$second-global-border*__ - allows you to set a color for all input field bord
 ![](../../../images/developer/storefront/42.png)
 
 ### Primary color
-Home Page
+
+#### Home Page
 __*$primary-color*__ variable changes
 
 + The color of __SHOP NOW__ button on the main hero image
@@ -174,7 +175,7 @@ __*$primary-color*__ variable changes
 
 ![](../../../images/developer/storefront/47.png)
 
-Search Results
+#### Search Results
 
 __*$primary-color*__ variable changes
 
@@ -182,7 +183,7 @@ __*$primary-color*__ variable changes
 
 ![](../../../images/developer/storefront/49.png)
 
-Mega Menu
+#### Mega Menu
 
 __*$primary-color*__ variable changes
 
@@ -191,7 +192,7 @@ __*$primary-color*__ variable changes
 ![](../../../images/developer/storefront/50.png)
 
 
-   PDP
+#### PDP
 
 __*$primary-color*__ variable changes
 
@@ -203,7 +204,7 @@ __*$primary-color*__ variable changes
 
 ![](../../../images/developer/storefront/53.png)
 
-Cart Page
+#### Cart Page
 
 __*$primary-color*__ variable changes
 
@@ -215,14 +216,14 @@ __*$primary-color*__ variable changes
 
 ![](../../../images/developer/storefront/55.png)
 
- Cart pop-up
+#### Cart pop-up
 
 __*$primary-color*__ variable changes
 + The color of __CHECKOUT__ and __VIEW CART__ buttons
 
 ![](../../../images/developer/storefront/56.png)
 
-Cart - empty
+#### Cart - empty
 
 __*$primary-color*__ variable changes
 
@@ -234,9 +235,7 @@ __*$primary-color*__ variable changes
 
 ![](../../../images/developer/storefront/58.png)
 
-Checkout
-
-Registration Step
+#### Checkout - Registration Step
 
 __*$primary-color*__ variable changes
 
@@ -248,7 +247,7 @@ __*$primary-color*__ variable changes
 
 ![](../../../images/developer/storefront/61.png)
 
-Address Step
+#### Checkout - Address Step
 
 __*$primary-color*__ variable changes
 
@@ -260,7 +259,7 @@ __*$primary-color*__ variable changes
 
 ![](../../../images/developer/storefront/63.png)
 
-Payment step
+#### Checkout - Payment step
 
 __*$primary-color*__ variable changes
 
@@ -268,7 +267,7 @@ __*$primary-color*__ variable changes
 
 ![](../../../images/developer/storefront/64.png)
 
-Confirm Step
+#### Checkout - Confirm Step
 
 __*$primary-color*__ variable changes
 
@@ -276,7 +275,7 @@ __*$primary-color*__ variable changes
 
 ![](../../../images/developer/storefront/65.png)
 
-Sign In Page
+#### Sign In Page
 
 __*$primary-color*__ variable changes
 
@@ -286,7 +285,7 @@ The color of __LOG IN__ and __SIGN UP__ buttons
 
 ![](../../../images/developer/storefront/67.png)
 
-Sign Up Page
+#### Sign Up Page
 
 __*$primary-color*__ variable changes
 
@@ -296,7 +295,7 @@ __*$primary-color*__ variable changes
 
 ![](../../../images/developer/storefront/69.png)
 
-My Account Page
+#### My Account Page
 
 __*$primary-color*__ variable changes
 
@@ -304,7 +303,7 @@ __*$primary-color*__ variable changes
 
 ![](../../../images/developer/storefront/70.png)
 
-Edit Account Page
+#### Edit Account Page
 
 __*$primary-color*__ variable changes
 
@@ -312,7 +311,7 @@ __*$primary-color*__ variable changes
 
 ![](../../../images/developer/storefront/71.png)
 
-  Pop-ups
+#### Pop-ups
 
 __*$primary-color*__ variable changes
 
@@ -320,11 +319,9 @@ __*$primary-color*__ variable changes
 
 ![](../../../images/developer/storefront/72.png)
 
-  ### Secondary color
+### Secondary color
 
-PLP
-
-Filter
+#### PLP
 
 __*$secondary-color*__ variable changes
 + The color of chosen __color__ border variant
@@ -343,7 +340,7 @@ __*$secondary-color*__ variable changes
 
 ![](../../../images/developer/storefront/76.png)
 
-PDP
+#### PDP
 __*$secondary-color*__ variable changes
 
 + The color of chosen __color__ border variant
@@ -362,7 +359,7 @@ __*$secondary-color*__ variable changes
 
 ![](../../../images/developer/storefront/80.png)
 
-Pop-ups
+#### Pop-ups
 __*$secondary-color*__ variable changes
 
 + The color of Add to bag successfully icon
@@ -381,7 +378,7 @@ __*$secondary-color*__ variable changes
 
 ![](../../../images/developer/storefront/83.png)
 
-Checkout
+#### Checkout
 
 __*$secondary-color*__ variable changes
 
@@ -389,7 +386,7 @@ __*$secondary-color*__ variable changes
 
 ![](../../../images/developer/storefront/84.png)
 
-Address Step
+#### Checkout - Address Step
 
 __*$secondary-color*__ variable changes
 
@@ -397,7 +394,7 @@ __*$secondary-color*__ variable changes
 
 ![](../../../images/developer/storefront/85.png)
 
-Delivery Step
+#### Checkout - Delivery Step
 
 __*$secondary-color*__ variable changes
 
@@ -405,7 +402,7 @@ __*$secondary-color*__ variable changes
 
 ![](../../../images/developer/storefront/86.png)
 
-Payment Step
+#### Checkout - Payment Step
 
 __*$secondary-color*__ variable changes
  + The color of payment type radio buttons
@@ -416,7 +413,7 @@ __*$secondary-color*__ variable changes
 
 ![](../../../images/developer/storefront/88.png)
 
-Order confirmation page
+#### Order confirmation page
 
 __*$secondary-color*__ variable changes
 
@@ -425,13 +422,11 @@ __*$secondary-color*__ variable changes
 
 ![](../../../images/developer/storefront/89.png)
 
-  Grid breakpoints
------------
+### Grid breakpoints
+
 [Grid breakpoint variable](https://github.com/spree/spree/blob/master/frontend/app/assets/stylesheets/spree/frontend/variables/bootstrap-overrides.scss) allow you to slightly change element sizes on various devices - mostly images and their scale ratio. Feel free to learn more from the [Bootstrap manual](https://getbootstrap.com/docs/4.0/layout/grid/). We don’t recommend changing these values unless you really need to.
 
-
-Rounding for components
------------
+### Rounding for components
 
 __*$enable-rounded*__ - Enable rounding for components.
 
@@ -445,39 +440,34 @@ __“False” example__
 
 ![](../../../images/developer/storefront/99.png)
 
+### Shadows for components
 
-Shadows for components
------------
 __*$enable-shadows*__ - Enable shadow for components
 
 Possible values: __true__ or __false__
 
-Gradient for components
------------
+### Gradient for components
+
 __*$enable-gradients*__ - Enable gradient for components
 
 Possible values: __true__ or __false__
 
-Header and footer customization
-======
+## Header and footer customization
+
 Feel free to customize header and footer elements as outlined below.
 
+### Logo replacement
 
-Logo replacement
------------
 In order to replace the default Spree logo with yours [please follow these steps](https://guides.spreecommerce.org/developer/customization/view.html#switch-storefront-logo) in the Spree guides. We do recommend using 127x52 dimensions for your logo in the SVG, PNG or JPEG formats, however, if you would like to use a higher resolution it will scale down automatically.
 
+### Mega menu categories
 
-Mega-menu categories
------------
-Categories visible in the Megamenu are defined in the spree_storefront.yml. The file is automatically copied to config/spree_storefront.yml in your application directory.
-
+Categories visible in the Megamenu are defined in the `spree_storefront.yml`. The file is automatically copied to `config/spree_storefront.yml` in your application directory.
 
 Make sure that these categories are also defined in the Admin panel on your site. You will find them in the Products > Taxonomies menu. Learn more about [categories (taxonomies and taxons)](https://guides.spreecommerce.org/user/products/taxonomies_and_taxons.html) in the Spree guides.
 
+### Social media icons in the footer
 
-Social media icons in the footer
------------
 Replace social media URLs with yours in the Spree admin panel by going to Configuration > Stores and editing (pencil icon) your store settings in the Social section.
 
 ![](../../../images/developer/storefront/100.png)
@@ -490,25 +480,17 @@ If you leave any of the Social fields empty the corresponding social media icon 
 
 If you would like to replace the default social media icons you could replace images in this path: frontend/app/assets/images/facebook.svg <- default facebook icon. Make sure to use SVG files.
 
-
-Contact us in the footer
------------
-
+### Contact us in the footer
 
 The footer contains a “Contact us” section with your store contact information. You can change the contents of this section in the ___footer.html.erb__ file in lines 30 to 38. The file is automatically copied to shared/_footer.html.erb in your application directory.
 
-
-Product categories in the footer
------------
-
+### Product categories in the footer
 
 The footer by default contains a list of product categories in your store. Feel free to change the contents of this section in the __config/spree_storefront.yml__. The file is automatically copied to your application after running Spree installer.
 
-Replacing placeholders with your images and copy
-======
+## Replacing placeholders with your images and copy
 
 You will need to replace promo banner placeholder images as well as some text (buttons, promo banners) with your own:
-
 
 + on the homepage
   + multiple promo banners described below (each in 4 sizes listed on the following pages for various devices)
@@ -517,55 +499,51 @@ You will need to replace promo banner placeholder images as well as some text (b
 + product listing page - one category promo banner
 + meganav menu - two promo banners for each main category
 
+### Homepage placeholder slots
 
-Homepage placeholder slots
------------
 In the screenshot below you’ll find homepage promo banner slots with the default image placeholders indicating desktop placeholder sizes in pixels. Please note that each of these placeholders requires 4 images for various devices listed below. This is just a desktop example.
-
 
 Homepage text values may be replaced in your project repository in the /app/views/spree/home/index.html.erb. Please note that this file will be automatically copied to your project directory after running Spree installer.
 
-
 You’ll need to upload 4 sizes for each of these promo banners:
 
-Main banner
+#### Main banner
 + Main banner __1440 x 600__ (this is a desktop file)
 + Main banner mobile __575 x 240__ (this is a mobile file)
 + Main banner tablet landscape __992 x 413__ (this is a tablet landscape file)
 + Main banner tablet portrait __768 x 320__ (this is a tablet portrait file)
 
-Big category banner
+#### Big category banner
 + Big category banner __540 x 800__ (this is a desktop file)
 + Big category banner mobile __262 x 388__ (this is a mobile file)
 + Big category banner tablet landscape __470 x 696__ (this is a tablet landscape file)
 + Big category banner tablet portrait __358 x 530__ (this is a tablet portrait file)
 
-Upper and lower category banner
+#### Upper and lower category banner
 + Category banner __540 x 388__  (this is a desktop file)
 + Category banner mobile __262 x 188__ (this is a mobile file)
 + Category banner tablet landscape __470 x 338__ (this is a tablet landscape file)
 + Category banner tablet portrait __358 x 257__ (this is a tablet portrait file)
 
-Left and right promotion banners
+#### Left and right promotion banners
 + Promo banner __540 x 350__  (this is a desktop file)
 + Promo banner mobile __542 x 351__ (this is a mobile file)
 + Promo banner tablet landscape __470 x 305__ (this is a tablet landscape file)
 + Promo banner tablet portrait __734 x 476__ (this is a tablet portrait file)
 
-
 Please find all the [placeholder images and their size variations in this Google Drive folder](https://drive.google.com/drive/folders/1lbUMNFB2jcwpx4Jpr9uVLd_lUGw9GpVJ) for your reference.
 
 In order to replace those placeholder images you will probably want to perform two operations:
-+ change the file names in the /app/views/spree/home/index.html.erb in your project repository,
-+ upload those images to your Spree project code repo into this /app/assets/images/homepage folder. The files are automatically copied to your application folder after running Spree installer, preserving the file name structure and just changing “big_category_banner” to your file name:
-  + __big_category_banner.jpg__
-  + __big_category_banner_mobile.jpg__
-  + __big_category_banner_tablet_landscape.jpg__
-  + __big_category_banner_tablet_portrait.jpg__
++ change the file names in the `app/views/spree/home/index.html.erb` in your project repository
++ upload those images to your Spree project code repo into this `app/assets/images` homepage folder. The files are automatically copied to your application folder after running Spree installer, preserving the file name structure and just changing `big_category_banner` to your file name:
++  `big_category_banner.jpg`
++  `big_category_banner_mobile.jpg`
++ `big_category_banner_tablet_landscape.jpg`
++ `big_category_banner_tablet_portrait.jpg`
 
 Those file names will be used in the srcset attribute which specified the URL of the image to use for various screen sizes and orientations.
 
-If you’d like to change the file names in the /app/views/spree/home/index.html.erb please find below line number where to place new image files names.
+If you’d like to change the file names in the `app/views/spree/home/index.html.erb` please find below line number where to place new image files names.
 
 __Main banner code lines__
 
@@ -599,25 +577,23 @@ Line 121: data-src="<%= asset_path('homepage/promo_banner_right.jpg') %>"
 
 Line 122: data-srcset="<%= image_source_set('homepage/promo_banner_right') %>"
 
-Category banner on PLP
------------
+### Category banner on PLP
+
 Category product listing page (PLP) banner is displayed on the top of each product category. You need to upload just one such promo banner sized 1110 x 300 px through the admin panel. To do that in the Spree admin panel go to Products > Taxonomies and edit the category for which you’d like to replace an image.
 
+### Product images
 
-Product images
------------
 Add a product image for each product in just one resolution (650 x 870) using the admin panel. Here’s a full explanation of how [to edit your products](/user/products/creating_products.html#images) in the Spree guides.
 
 That single product image will be automatically resized into multiple files and its variations appropriate for the user’s device will be used in the homepage carousels, on the product listing page (PLP), product detail page (PDP), cart pop-up, in the cart and order confirmation page.
 
-Mega menu
+### Mega menu
 In order to modify category promo banners in the Mega nav menu (by default New Collection and Special Offers) you have to modify __spree_storefront.yml__. The file is automatically copied to your application after running Spree installer.
 
-SEO recommendations
-======
+## SEO recommendations
 
-Sitemap
------------
+### Sitemap
+
 We highly recommend adding a sitemap to your site. It might affect how Google bot crawls your store pages. There is + an official extension [Spree Sitemap](https://github.com/spree-contrib/spree_sitemap) for that exact purpose.
 
 1. vper region, language or currency)
@@ -650,8 +626,8 @@ To set title, meta keywords and description for each __product page (PDP)__, in 
 
 ![](../../../images/developer/storefront/104.png)
 
-Social sharing and search preview
-======
+### Social sharing and search preview
+
 The new Spree UX has the following social sharing features implemented:
 + Facebook sharing with [Open Graph tags](https://ogp.me/) to enable a nice page preview
 + Google visibility with structured data using [Schema.org](http://schema.org/) with [JSON-DL](https://json-ld.org/)
