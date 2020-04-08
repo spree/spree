@@ -24,8 +24,7 @@ All the Sass variables needed for customizing the new Spree UX are in the variab
 - Color name - example: Blue
 
 To make those changes live you need to update
-`[app/assets/stylesheets/spree/frontend/variables/variables.scss]`
-(https://github.com/spree/spree/blob/master/frontend/app/assets/stylesheets/spree/frontend/variables/variables.scss) 
+[app/assets/stylesheets/spree/frontend/variables/variables.scss](https://github.com/spree/spree/blob/master/frontend/app/assets/stylesheets/spree/frontend/variables/variables.scss) 
 in your project directory with your values and then commit those changes to your project code repository.
 
 ### Header
