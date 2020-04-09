@@ -54,7 +54,7 @@ module MyStore
   end
 end
 
-::Spree::ProductsController.prepend MyStore::Spree::ProductsControllerDecorator if ::Spree::ProductController.included_modules.exclude?(MyStore::Spree::ProductControllerDecorator)
+::Spree::ProductsController.prepend MyStore::Spree::ProductsControllerDecorator if ::Spree::ProductsController.included_modules.exclude?(MyStore::Spree::ProductsControllerDecorator)
 ```
 
 The exact same format can be used to redefine an existing method.
@@ -80,7 +80,7 @@ module MyStore
   end
 end
 
-::Spree::ProductsController.prepend MyStore::Spree::ProductsControllerDecorator if ::Spree::ProductController.included_modules.exclude?(MyStore::Spree::ProductControllerDecorator)
+::Spree::ProductsController.prepend MyStore::Spree::ProductsControllerDecorator if ::Spree::ProductsController.included_modules.exclude?(MyStore::Spree::ProductsControllerDecorator)
 ```
 
 `:load_data` will use `params[:id]` to lookup the product by its permalink.
