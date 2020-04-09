@@ -1,8 +1,12 @@
 <tr>
-  <td class="six sub-columns">
-    <%= raw(adjustment.label) %>:
+  <td class="purchase_footer" valign="middle">
+    <p class="f-fallback purchase_total purchase_total--label">
+      <%= raw(adjustment.label) %>:
+    </p>
   </td>
-  <td class="six sub-columns last right">
-    <%= adjustment.display_amount %>
+  <td class="purchase_footer" valign="middle">
+    <p class="f-fallback purchase_total">
+      <%= adjustment.display_amount %>
+    </p>
   </td>
 </tr>
