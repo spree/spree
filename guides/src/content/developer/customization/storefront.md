@@ -537,7 +537,7 @@ Please find all the [placeholder images and their size variations in this Google
 
 In order to replace those placeholder images you will probably want to perform two operations:
 + change the file names in the `app/views/spree/home/index.html.erb` in your project repository
-+ upload those images to your Spree project code repo into this `app/assets/images` homepage folder. The files are automatically copied to your application folder after running Spree installer, preserving the file name structure and just changing `big_category_banner` to your file name:
++ upload those images to your Spree project code repo into `app/assets/images/homepage` folder. The files are automatically copied to your application folder after running Spree installer, preserving the file name structure and just changing `big_category_banner` to your file name:
 +  `big_category_banner.jpg`
 +  `big_category_banner_mobile.jpg`
 + `big_category_banner_tablet_landscape.jpg`
