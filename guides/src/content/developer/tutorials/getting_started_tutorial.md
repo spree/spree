@@ -101,7 +101,7 @@ bundle exec rails s
 
 To see your application in action, open a browser window and navigate to [http://localhost:3000](http://localhost:3000). You should see the Spree default home page:
 
-![Spree Application Home Page](../../../images/developer/spree_welcome.png)
+![Spree Application Home Page](../../../images/developer/storefront/1.png)
 
 To stop the web server, hit Ctrl-C in the terminal window where it's running. In development mode, Spree does not generally require you to stop the server; changes you make in files will be automatically picked up by the server.
 
