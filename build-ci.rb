@@ -8,7 +8,12 @@ class Project
   NODE_TOTAL = Integer(ENV.fetch('CIRCLE_NODE_TOTAL', 1))
   NODE_INDEX = Integer(ENV.fetch('CIRCLE_NODE_INDEX', 0))
 
-  ROOT       = Pathname.pwd.freeze
+  ROOT          = Pathname.pwd.freeze
+  VENDOR_BUNDLE = ROOT.join('vendor', 'bundle').freeze
+  ROOT_GEMFILE  = ROOT.join('Gemfile').freeze
+
+  BUNDLER_JOBS    = 4
+  BUNDLER_RETRIES = 3
 
   DEFAULT_MODE = 'test'.freeze
 
@@ -71,7 +76,7 @@ class Project
   #
   # @return [Boolean]
   def bundle_check
-    system(%w[bundle check])
+    system("bundle check --path=#{VENDOR_BUNDLE}")
   end
 
   # Install the current bundle
@@ -79,14 +84,14 @@ class Project
   # @return [Boolean]
   #   the success of the installation
   def bundle_install
-    system(%w[bundle install])
+    system("bundle install --path=#{VENDOR_BUNDLE} --jobs=#{BUNDLER_JOBS} --retry=#{BUNDLER_RETRIES}")
   end
 
   # Setup the test app
   #
   # @return [undefined]
   def setup_test_app
-    system(%w[bundle exec rake test_app]) || raise('Failed to setup the test app')
+    system("bundle exec --gemfile=#{ROOT_GEMFILE} rake test_app") || raise('Failed to setup the test app')
   end
 
   # Run tests for subproject
@@ -94,7 +99,7 @@ class Project
   # @return [Boolean]
   #   the success of the tests
   def run_tests
-    system(%w[bundle exec rspec] + rspec_arguments)
+    system("bundle exec rspec #{rspec_arguments.join(' ')}")
   end
 
   def rspec_arguments(custom_name = name)
@@ -104,16 +109,6 @@ class Project
       args += %W[-r rspec_junit_formatter --format RspecJunitFormatter -o #{report_dir}/rspec/#{custom_name}.xml]
     end
     args
-  end
-
-  # Execute system command via execve
-  #
-  # No shell interpolation gets done this way. No escapes needed.
-  #
-  # @return [Boolean]
-  #   the success of the system command
-  def system(arguments)
-    Kernel.system(*arguments)
   end
 
   # Change to subproject directory and execute block
