@@ -84,7 +84,7 @@ module Spree
 
           allow(subject).to receive(:shipping_methods).and_return(shipping_methods)
 
-          expect(subject.shipping_rates(package).map(&:cost)).to eq %w[3.00 4.00 5.00].map(&BigDecimal.method(:new))
+          expect(subject.shipping_rates(package).map(&:cost)).to eq [3.00, 4.00, 5.00]
         end
 
         context 'general shipping methods' do

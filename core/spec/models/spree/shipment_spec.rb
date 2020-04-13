@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'benchmark'
 
 describe Spree::Shipment, type: :model do
   let(:order) do
