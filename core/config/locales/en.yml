@@ -1122,7 +1122,7 @@ en:
         order_summary_canceled: Order %{number} Summary [CANCELED]
         subject: Cancellation of Order
       confirm_email:
-        dear_customer: Dear Customer,
+        dear_customer: Dear %{name},
         instructions: Please review and retain the following order information for your records.
         order_summary: Order %{number} Summary
         subject: Order Confirmation
@@ -1445,7 +1445,7 @@ en:
     shipment_details: "From %{stock_location} via %{shipping_method}"
     shipment_mailer:
       shipped_email:
-        dear_customer: Dear Customer,
+        dear_customer: Dear %{name},
         instructions: Your order %{number} has been shipped
         shipment_summary: Shipment Summary for order
         shipping_method: "Shipping method: %{shipping_method}"

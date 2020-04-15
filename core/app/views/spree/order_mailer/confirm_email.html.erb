@@ -1,5 +1,5 @@
 <h1>
-  <%= Spree.t('order_mailer.confirm_email.dear_customer') %>
+  <%= Spree.t('order_mailer.confirm_email.dear_customer', name: @order.name || Spree.t('customer')) %>
 </h1>
 <p>
   <%= Spree.t('order_mailer.confirm_email.instructions') %>
@@ -12,66 +12,7 @@
   </tr>
   <tr>
     <td colspan="2">
-      <table class="purchase_content">
-        <%= render collection: @order.line_items, partial: 'spree/shared/postmark_mailer_line_item', as: :line_item %>
-        <%= render 'spree/order_mailer/subtotal', order: @order %>
-        <% if @order.line_item_adjustments.exists? %>
-          <% if @order.all_adjustments.promotion.eligible.exists? %>
-            <% @order.all_adjustments.promotion.eligible.group_by(&:label).each do |label, adjustments| %>
-              <tr>
-                <td></td>
-                <td>
-                  <p class="f-fallback purchase_total purchase_total--label">
-                    <%= Spree.t(:promotion) %> <%= label %>:
-                  </p>
-                </td>
-                <td>
-                  <p class="f-fallback purchase_total">
-                    <%= Spree::Money.new(adjustments.sum(&:amount), currency: @order.currency) %>
-                  </p>
-                </td>
-              </tr>
-            <% end %>
-          <% end %>
-        <% end %>
-        <% @order.shipments.group_by { |s| s.selected_shipping_rate.try(:name) }.each do |name, shipments| %>
-          <tr>
-            <td></td>
-            <td>
-              <p class="f-fallback purchase_total purchase_total--label">
-                <%= Spree.t(:shipping) %><%= name %>:
-              </p>
-            </td>
-            <td>
-              <p class="f-fallback purchase_total">
-                <%= Spree::Money.new(shipments.sum(&:discounted_cost), currency: @order.currency) %>
-              </p>
-            </td>
-          </tr>
-        <% end %>
-        <% if @order.all_adjustments.eligible.tax.exists? %>
-          <% @order.all_adjustments.eligible.tax.group_by(&:label).each do |label, adjustments| %>
-            <tr>
-              <td></td>
-              <td>
-                <p class="f-fallback purchase_total purchase_total--label">
-                  <%= Spree.t(:tax) %> <%= label %>:
-                </p>
-              </td>
-              <td>
-                <p class="f-fallback purchase_total">
-                  <%= Spree::Money.new(adjustments.sum(&:amount), currency: @order.currency) %>
-                </p>
-              </td>
-            </tr>
-          <% end %>
-        <% end %>
-        <% @order.adjustments.eligible.each do |adjustment| %>
-          <% next if (adjustment.source_type == 'Spree::TaxRate') || (adjustment.amount == 0) %>
-          <%= render 'spree/order_mailer/adjustment', adjustment: adjustment %>
-        <% end %>
-        <%= render 'spree/order_mailer/total', order: @order %>
-      </table>
+      <%= render 'spree/shared/purchased_items_table', line_items: @order.line_items, order: @order %>
     </td>
   </tr>
 </table>
