@@ -1117,7 +1117,7 @@ en:
       subtotal: ! 'Subtotal:'
       total: ! 'Order Total:'
       cancel_email:
-        dear_customer: Dear Customer,
+        dear_customer: Dear %{name},
         instructions: Your order has been CANCELED.  Please retain this cancellation information for your records.
         order_summary_canceled: Order %{number} Summary [CANCELED]
         subject: Cancellation of Order
