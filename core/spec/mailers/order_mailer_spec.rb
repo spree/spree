@@ -44,6 +44,30 @@ describe Spree::OrderMailer, type: :mailer do
     end.not_to raise_error
   end
 
+  specify 'shows Dear Customer in confirm_email body' do
+    confirmation_email = described_class.confirm_email(order)
+    expect(confirmation_email).to have_body_text('Dear Customer')
+  end
+
+  specify 'shows Dear Customer in cancel_email body' do
+    confirmation_email = described_class.cancel_email(order)
+    expect(confirmation_email).to have_body_text('Dear Customer')
+  end
+
+  context 'when order has customer\'s name' do
+    before { allow(order).to receive(:name).and_return('Test User') }
+
+    specify 'shows order\'s user name in confirm_email body' do
+      confirmation_email = described_class.confirm_email(order)
+      expect(confirmation_email).to have_body_text('Dear Test User')
+    end
+
+    specify 'shows order\'s user name in cancel_email body' do
+      confirmation_email = described_class.cancel_email(order)
+      expect(confirmation_email).to have_body_text('Dear Test User')
+    end
+  end
+
   context 'only shows eligible adjustments in emails' do
     before do
       create(:adjustment, order: order, eligible: true, label: 'Eligible Adjustment')

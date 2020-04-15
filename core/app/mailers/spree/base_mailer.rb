@@ -1,5 +1,7 @@
 module Spree
   class BaseMailer < ActionMailer::Base
+    add_template_helper(MailHelper)
+
     def from_address
       Spree::Store.current.mail_from_address
     end

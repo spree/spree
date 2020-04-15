@@ -1387,7 +1387,7 @@ en:
     reimbursement_mailer:
       reimbursement_email:
         days_to_send: ! 'You have %{days} days to send back any items awaiting exchange.'
-        dear_customer: Dear Customer,
+        dear_customer: Dear %{name},
         exchange_summary: Exchange Summary
         for: for
         instructions: Your reimbursement has been processed.

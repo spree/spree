@@ -1,10 +1,9 @@
 <tr>
   <td class="purchase_image">
-    <% image = line_item.variant.images.first %>
-    <% if image %>
-      <%= link_to(image_tag(main_app.url_for(image.url(:small))), spree.product_url(line_item.variant.product)) %>
+    <% if frontend_available? %>
+      <%= link_to(image_tag(variant_image_url(line_item.variant)), spree.product_url(line_item.variant.product)) %>
     <% else %>
-      <%= link_to(image_tag('noimage/small.png'), spree.product_url(line_item.variant.product)) %>
+      <%= image_tag(variant_image_url(line_item.variant)) %>
     <% end %>
   </td>
   <td class="purchase_item">
