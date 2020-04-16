@@ -214,7 +214,7 @@ You may notice that your Spree store runs slower in development environment. Thi
 config.assets.debug = false
 ```
 
-Also in development caching is disabled by defualt. To turn on caching run:
+Also in development caching is disabled by default. To turn on caching run:
 
 ```bash
 rails dev:cache
