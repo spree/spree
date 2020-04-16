@@ -26,3 +26,10 @@ Spree.showProductAddedModal = function(product, variant) {
 
   $modal.modal()
 }
+
+Spree.hideProductAddedModal = function() {
+  var modalSelector = '.product-added-modal'
+  var $modal = $(modalSelector)
+
+  $modal.modal('hide')
+}
