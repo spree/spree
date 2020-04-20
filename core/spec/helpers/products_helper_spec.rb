@@ -345,5 +345,47 @@ THIS IS THE BEST PRODUCT EVER!
         end
       end
     end
+
+    context '#available_status' do
+      subject(:status) { helper.available_status(product) }
+
+      let(:product) { create(:product) }
+
+      context 'product is available' do
+        it 'has available status' do
+          expect(status).to eq(Spree.t(:available))
+        end
+      end
+
+      context 'product was deleted' do
+        before do
+          product.delete
+        end
+
+        it 'has deleted status' do
+          expect(status).to eq(Spree.t(:deleted))
+        end
+      end
+
+      context 'product is discontinued' do
+        before do
+          product.discontinue!
+        end
+
+        it 'has discontinued status' do
+          expect(status).to eq(Spree.t(:discontinued))
+        end
+      end
+
+      context 'product will be available soon' do
+        before do
+          product.available_on = 1.month.from_now
+        end
+
+        it 'has pending sale status' do
+          expect(status).to eq(Spree.t(:pending_sale))
+        end
+      end
+    end
   end
 end
