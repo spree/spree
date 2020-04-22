@@ -1,4 +1,4 @@
 Spree::Sample.load_sample('orders')
 
-order = Spree::Order.first
+order = Spree::Order.complete.first
 Spree::Reimbursement.create(order: order)

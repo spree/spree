@@ -3,7 +3,7 @@ module Spree
     include BaseHelper
 
     def variant_image_url(variant)
-      image = variant.images.first
+      image = default_image_for_product_or_variant(variant)
       image ? main_app.url_for(image.url(:small)) : 'noimage/small.png'
     end
 

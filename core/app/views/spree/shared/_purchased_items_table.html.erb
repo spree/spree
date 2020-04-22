@@ -20,7 +20,7 @@
       <% end %>
     <% end %>
   <% end %>
-  <% order.shipments.group_by { |s| s.selected_shipping_rate.try(:name) }.each do |name, shipments| %>
+  <% order.shipments.group_by { |s| s.selected_shipping_rate&.name }.each do |name, shipments| %>
     <tr>
       <td></td>
       <td>

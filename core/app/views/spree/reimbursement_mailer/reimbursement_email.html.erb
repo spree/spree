@@ -18,17 +18,26 @@
   <table class="purchase_content">
     <% @reimbursement.return_items.exchange_requested.each do |return_item| %>
       <tr>
+        <td class="purchase_image">
+          <% if frontend_available? %>
+            <%= link_to(image_tag(variant_image_url(return_item.variant)), spree.product_url(return_item.variant.product)) %>
+          <% else %>
+            <%= image_tag(variant_image_url(return_item.variant)) %>
+          <% end %>
+        </td>
         <td class="purchase_item">
-          <%= return_item.variant.sku %>
+          <strong>
+            <span class="f-fallback">
+              <% if frontend_available? %>
+                <%= link_to raw(return_item.variant.name), spree.product_url(return_item.variant.product) %>
+              <% else %>
+                <%= raw(return_item.variant.name) %>
+              <% end %>
+            </span>
+          </strong>
           <p class="purchase_item--additional">
             <%= "(#{raw(return_item.exchange_variant.options_text)})" if return_item.exchange_variant.options_text.present? -%>
           </p>
-        </td>
-        <td class="align-right">
-          <%= link_to raw(return_item.variant.product.name),
-                      spree.product_url(return_item.variant.product) %>
-        </td>
-        <td>
         </td>
       </tr>
     <% end %>

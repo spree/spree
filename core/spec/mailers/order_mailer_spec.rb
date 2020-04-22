@@ -13,6 +13,7 @@ describe Spree::OrderMailer, type: :mailer do
     variant = stub_model(Spree::Variant, product: product)
     price = stub_model(Spree::Price, variant: variant, amount: 5.00)
     line_item = stub_model(Spree::LineItem, variant: variant, order: order, quantity: 1, price: 4.99)
+    allow(product).to receive_messages(default_variant: variant)
     allow(variant).to receive_messages(default_price: price)
     allow(order).to receive_messages(line_items: [line_item])
     order
