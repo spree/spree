@@ -2003,10 +2003,6 @@ components:
     VariantAttributes:
       type: object
       properties:
-        name:
-          type: string
-          example: 'Example product'
-          description: 'Product name'
         sku:
           type: string
           example: 'SKU-1001'
@@ -2038,14 +2034,6 @@ components:
         options_text:
           type: string
           example: 'Size: small, Color: red'
-        slug:
-          type: string
-          example: 'example-product'
-          description: 'Product slug'
-        description:
-          type: string
-          example: 'Example description'
-          description: 'Product description'
         purchasable:
           type: boolean
           example: true
