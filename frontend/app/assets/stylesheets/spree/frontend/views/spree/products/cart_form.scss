@@ -6,6 +6,11 @@
     @include media-breakpoint-up(sm) {
       font-size: font-px-to-rem(36px);
     }
+
+    .compare-at-price {
+      color: theme-color("info");
+      text-decoration: line-through;
+    }
   }
   &-general-availability {
     font-size: font-px-to-rem(12px);
