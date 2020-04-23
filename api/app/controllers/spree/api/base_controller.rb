@@ -2,9 +2,7 @@ require_dependency 'spree/api/controller_setup'
 
 module Spree
   module Api
-    class BaseController < ActionController::Base
-      protect_from_forgery unless: -> { request.format.json? || request.format.xml? }
-
+    class BaseController < ActionController::API
       include Spree::Api::ControllerSetup
       include Spree::Core::ControllerHelpers::Store
       include Spree::Core::ControllerHelpers::StrongParameters
