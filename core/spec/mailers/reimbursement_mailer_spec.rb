@@ -22,6 +22,24 @@ describe Spree::ReimbursementMailer, type: :mailer do
     end.not_to raise_error
   end
 
+  context 'when order has no customer\'s name' do
+    before { allow(reimbursement.order).to receive(:name).and_return(nil) }
+
+    specify 'shows Dear Customer in email body' do
+      reimbursement_email = described_class.reimbursement_email(reimbursement)
+      expect(reimbursement_email).to have_body_text('Dear Customer')
+    end
+  end
+
+  context 'when order has customer\'s name' do
+    before { allow(reimbursement.order).to receive(:name).and_return('Test User') }
+
+    specify 'shows order\'s user name in email body' do
+      reimbursement_email = described_class.reimbursement_email(reimbursement)
+      expect(reimbursement_email).to have_body_text('Dear Test User')
+    end
+  end
+
   context 'emails must be translatable' do
     context 'reimbursement_email' do
       context 'pt-BR locale' do

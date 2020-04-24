@@ -13,6 +13,7 @@ describe Spree::OrderMailer, type: :mailer do
     variant = stub_model(Spree::Variant, product: product)
     price = stub_model(Spree::Price, variant: variant, amount: 5.00)
     line_item = stub_model(Spree::LineItem, variant: variant, order: order, quantity: 1, price: 4.99)
+    allow(product).to receive_messages(default_variant: variant)
     allow(variant).to receive_messages(default_price: price)
     allow(order).to receive_messages(line_items: [line_item])
     order
@@ -42,6 +43,30 @@ describe Spree::OrderMailer, type: :mailer do
     expect do
       Spree::OrderMailer.cancel_email(order.id).body
     end.not_to raise_error
+  end
+
+  specify 'shows Dear Customer in confirm_email body' do
+    confirmation_email = described_class.confirm_email(order)
+    expect(confirmation_email).to have_body_text('Dear Customer')
+  end
+
+  specify 'shows Dear Customer in cancel_email body' do
+    confirmation_email = described_class.cancel_email(order)
+    expect(confirmation_email).to have_body_text('Dear Customer')
+  end
+
+  context 'when order has customer\'s name' do
+    before { allow(order).to receive(:name).and_return('Test User') }
+
+    specify 'shows order\'s user name in confirm_email body' do
+      confirmation_email = described_class.confirm_email(order)
+      expect(confirmation_email).to have_body_text('Dear Test User')
+    end
+
+    specify 'shows order\'s user name in cancel_email body' do
+      confirmation_email = described_class.cancel_email(order)
+      expect(confirmation_email).to have_body_text('Dear Test User')
+    end
   end
 
   context 'only shows eligible adjustments in emails' do

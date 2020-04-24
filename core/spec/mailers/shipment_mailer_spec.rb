@@ -77,5 +77,17 @@ describe Spree::ShipmentMailer, type: :mailer do
     specify do
       expect(shipped_email).to have_body_text("href=\"#{shipment.tracking_url}\"")
     end
+
+    specify do
+      expect(shipped_email).to have_body_text('Dear Customer')
+    end
+
+    context 'when order has customer\'s name' do
+      before { allow(order).to receive(:name).and_return('Test User') }
+
+      specify 'shows order\'s user name in email body' do
+        expect(shipped_email).to have_body_text('Dear Test User')
+      end
+    end
   end
 end
