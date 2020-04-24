@@ -187,6 +187,25 @@ describe Spree::Shipment, type: :model do
     end
   end
 
+  context '#store' do
+    let(:store) { create(:store) }
+    let!(:order) { create(:order, store: store) }
+    let!(:shipment) { create(:shipment, cost: 10, order: order) }
+
+    it 'return order store' do
+      expect(shipment.store).to eq(store)
+    end
+  end
+
+  context '#currency' do
+    let!(:order) { create(:order, currency: 'EUR') }
+    let!(:shipment) { create(:shipment, cost: 10, order: order) }
+
+    it 'return order currency' do
+      expect(shipment.currency).to eq('EUR')
+    end
+  end
+
   context 'manifest' do
     let(:order) { Spree::Order.create }
     let(:variant) { create(:variant) }
