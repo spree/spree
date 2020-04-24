@@ -4,6 +4,6 @@ class OrderPreview < ActionMailer::Preview
   end
 
   def cancel_email
-    Spree::OrderMailer.cancel_email(Spree::Order.canceled.first || Spree::Order.complete.first)
+    Spree::OrderMailer.cancel_email(Spree::Order.complete.first)
   end
 end
