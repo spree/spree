@@ -3,7 +3,9 @@ module Spree
     respond_to :html
 
     def index
-      fresh_when etag: store_etag, last_modified: store_last_modified, public: true
+      if Spree::Frontend::Config[:http_cache_enabled]
+        fresh_when etag: store_etag, last_modified: store_last_modified, public: true
+      end
     end
   end
 end

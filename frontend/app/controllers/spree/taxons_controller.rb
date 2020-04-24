@@ -8,13 +8,13 @@ module Spree
     respond_to :html
 
     def show
-      if stale?(etag: etag, last_modified: last_modified, public: true)
+      if !Spree::Frontend::Config[:http_cache_enabled] || stale?(etag: etag, last_modified: last_modified, public: true)
         load_products
       end
     end
 
     def product_carousel
-      if stale?(etag: carousel_etag, last_modified: last_modified, public: true)
+      if !Spree::Frontend::Config[:http_cache_enabled] || stale?(etag: carousel_etag, last_modified: last_modified, public: true)
         load_products
         if @products.any?
           render template: 'spree/taxons/product_carousel', layout: false

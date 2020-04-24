@@ -14,14 +14,16 @@ module Spree
 
       last_modified = @products.maximum(:updated_at)&.utc if @products.respond_to?(:maximum)
 
-      etag = [
-        store_etag,
-        last_modified&.to_i,
-        available_option_types_cache_key,
-        filtering_params_cache_key
-      ]
+      if Spree::Frontend::Config[:http_cache_enabled]
+        etag = [
+          store_etag,
+          last_modified&.to_i,
+          available_option_types_cache_key,
+          filtering_params_cache_key
+        ]
 
-      fresh_when etag: etag, last_modified: last_modified, public: true
+        fresh_when etag: etag, last_modified: last_modified, public: true
+      end
     end
 
     def show
@@ -29,7 +31,7 @@ module Spree
 
       @taxon = params[:taxon_id].present? ? Spree::Taxon.find(params[:taxon_id]) : @product.taxons.first
 
-      if stale?(etag: product_etag, last_modified: @product.updated_at.utc, public: true)
+      if !Spree::Frontend::Config[:http_cache_enabled] || stale?(etag: product_etag, last_modified: @product.updated_at.utc, public: true)
         @product_summary = Spree::ProductSummaryPresenter.new(@product).call
         @product_properties = @product.product_properties.includes(:property)
         @product_price = @product.price_in(current_currency).amount
