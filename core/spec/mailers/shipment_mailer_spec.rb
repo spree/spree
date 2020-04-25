@@ -5,9 +5,9 @@ describe Spree::ShipmentMailer, type: :mailer do
   include EmailSpec::Helpers
   include EmailSpec::Matchers
 
-  before { create(:store) }
+  let!(:store) { create(:store) }
 
-  let(:order) { stub_model(Spree::Order, number: 'R12345') }
+  let(:order) { stub_model(Spree::Order, number: 'R12345', store: store) }
   let(:shipping_method) { stub_model(Spree::ShippingMethod, name: 'USPS') }
   let(:product) { stub_model(Spree::Product, name: %{The "BEST" product}, sku: 'SKU0001') }
   let(:variant) { stub_model(Spree::Variant, product: product) }

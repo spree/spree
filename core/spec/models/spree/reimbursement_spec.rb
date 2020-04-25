@@ -18,6 +18,20 @@ describe Spree::Reimbursement, type: :model do
     end
   end
 
+  describe '#store' do
+    subject { reimbursement.store }
+
+    let(:total)         { 100.50 }
+    let(:currency)      { 'USD' }
+    let(:store)         { create(:store) }
+    let(:order)         { Spree::Order.new(currency: currency, store: store) }
+    let(:reimbursement) { Spree::Reimbursement.new(total: total, order: order) }
+
+    it 'returns order store' do
+      expect(subject).to eq(store)
+    end
+  end
+
   describe '#perform!' do
     subject { reimbursement.perform! }
 
