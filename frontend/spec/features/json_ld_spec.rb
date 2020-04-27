@@ -21,7 +21,7 @@ describe 'JSON-LD hashes', type: :feature, inaccessible: true do
         expect(serialized_product['url']).to eq "http://www.example.com/products/#{product.slug}"
         expect(serialized_product['image']).to eq ''
         expect(serialized_product['description']).to eq product.description
-        expect(serialized_product['brand']).to eq 'Generic'
+        expect(serialized_product['brand']).to eq ''
         expect(serialized_product['sku']).to eq product.sku
         expect(serialized_product['gtin13']).to eq product.barcode
 

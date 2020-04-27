@@ -49,7 +49,7 @@ module Spree
       if product.property('brand').present?
         return product.property('brand')
       else
-        return 'Generic'
+        return ''
       end
     end
 
