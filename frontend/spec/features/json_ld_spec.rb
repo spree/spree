@@ -22,6 +22,7 @@ describe 'JSON-LD hashes', type: :feature, inaccessible: true do
         expect(serialized_product['image']).to eq ''
         expect(serialized_product['description']).to eq product.description
         expect(serialized_product['sku']).to eq product.sku
+        expect(serialized_product['gtin']).to eq product.barcode
 
         offer = serialized_product['offers']
         expect(offer['@type']).to eq 'Offer'

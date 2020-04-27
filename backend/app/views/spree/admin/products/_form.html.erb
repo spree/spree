@@ -84,6 +84,13 @@
         <% end %>
       </div>
 
+      <div data-hook="admin_product_form_barcode">
+        <%= f.field_container :barcode, class: ['form-group'] do %>
+          <%= f.label :barcode, Spree.t(:barcode) %>
+          <%= f.text_field :barcode, size: 16, class: 'form-control' %>
+        <% end %>
+      </div>
+
       <% if @product.has_variants? %>
         <div data-hook="admin_product_form_multiple_variants" class="card bg-light mb-3">
           <div class="card-body">

@@ -14,11 +14,6 @@
         </div>
       <% end %>
 
-      <div class="form-group" data-hook="sku">
-        <%= f.label :sku, Spree.t(:sku) %>
-        <%= f.text_field :sku, class: 'form-control' %>
-      </div>
-
       <div class="form-group" data-hook="price">
         <%= f.label :price, Spree.t(:price) %>
         <%= f.text_field :price, value: number_to_currency(@variant.price, unit: ''), class: 'form-control' %>
@@ -50,5 +45,15 @@
         <%= f.text_field field, value: value, class: 'form-control' %>
       </div>
     <% end %>
+
+    <div class="form-group" data-hook="sku">
+      <%= f.label :sku, Spree.t(:sku) %>
+      <%= f.text_field :sku, class: 'form-control' %>
+    </div>
+
+    <div class="form-group" data-hook="barcode">
+      <%= f.label :barcode, Spree.t(:barcode) %>
+      <%= f.text_field :barcode, class: 'form-control' %>
+    </div>
   </div>
 </div>

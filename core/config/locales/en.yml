@@ -605,6 +605,7 @@ en:
     backorderable_default: Backorderable default
     backorders_allowed: backorders allowed
     balance_due: Balance Due
+    barcode: Barcode (ISBN, UPC, GTIN, etc.)
     base_amount: Base Amount
     base_percent: Base Percent
     basic_information: Basic Information

@@ -22,10 +22,13 @@ module Spree
           name: product.name,
           image: structured_images(product),
           description: product.description,
-          sku: product.sku,
+          brand: structured_brand(product),
+          sku: structured_sku(product),
+          gtin: structured_barcode(product),
           offers: {
             '@type': 'Offer',
-            price: product.price_in(current_currency).amount,
+            price: product.default_variant.price_in(current_currency).amount,
+            priceValidUntil: product.discontinue_on ? product.discontinue_on.strftime('%F') : '',
             priceCurrency: current_currency,
             availability: product.in_stock? ? 'InStock' : 'OutOfStock',
             url: spree.product_url(product),
@@ -33,6 +36,22 @@ module Spree
           }
         }
       end
+    end
+
+    def structured_sku(product)
+      product.default_variant.sku? ? product.default_variant.sku : product.sku
+    end
+
+    def structured_brand(product)
+      if product.property('brand').present?
+        return product.property('brand')
+      else
+        return ''
+      end
+    end
+
+    def structured_barcode(product)
+      product.default_variant.barcode? ? product.default_variant.barcode : product.barcode
     end
 
     def structured_images(product)
