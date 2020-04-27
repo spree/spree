@@ -24,7 +24,7 @@ module Spree
           description: product.description,
           brand: structured_brand(product),
           sku: structured_sku(product),
-          gtin: structured_barcode(product),
+          gtin13: structured_barcode(product),
           offers: {
             '@type': 'Offer',
             price: product.default_variant.price_in(current_currency).amount,
