@@ -46,11 +46,9 @@ module Spree
     end
 
     def structured_brand(product)
-      if product.property('brand').present?
-        return product.property('brand')
-      else
-        return ''
-      end
+      return '' unless product.property('brand').present?
+      
+      product.property('brand')
     end
 
     def structured_images(product)
