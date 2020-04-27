@@ -26,7 +26,6 @@ module Spree
           offers: {
             '@type': 'Offer',
             price: product.default_variant.price,
-            priceValidUntil: product.discontinue_on ? product.discontinue_on.strftime('%F') : '',
             priceCurrency: current_currency,
             availability: product.in_stock? ? 'InStock' : 'OutOfStock',
             url: spree.product_url(product),
