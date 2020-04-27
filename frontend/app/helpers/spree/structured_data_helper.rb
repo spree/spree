@@ -23,7 +23,6 @@ module Spree
           image: structured_images(product),
           description: product.description,
           sku: structured_sku(product),
-          mpn: structured_sku(product),
           offers: {
             '@type': 'Offer',
             price: product.default_variant.price,
