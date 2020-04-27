@@ -17,15 +17,16 @@ module Spree
         {
           '@context': 'https://schema.org/',
           '@type': 'Product',
-          '@id': "#{spree.root_url}product_#{product.id}",
           url: spree.product_url(product),
           name: product.name,
           image: structured_images(product),
           description: product.description,
-          sku: product.sku,
+          sku: structured_sku(product),
+          mpn: structured_sku(product),
           offers: {
             '@type': 'Offer',
-            price: product.price_in(current_currency).amount,
+            price: product.default_variant.price,
+            priceValidUntil: product.discontinue_on ? product.discontinue_on.strftime('%F') : '',
             priceCurrency: current_currency,
             availability: product.in_stock? ? 'InStock' : 'OutOfStock',
             url: spree.product_url(product),
@@ -33,6 +34,10 @@ module Spree
           }
         }
       end
+    end
+
+    def structured_sku(product)
+      product.default_variant.sku? ? product.default_variant.sku : product.sku
     end
 
     def structured_images(product)
