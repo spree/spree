@@ -45,6 +45,7 @@ describe 'Product Variants', type: :feature, js: true do
 
       select2 'black', from: 'Colors'
       fill_in 'variant_sku', with: 'A100'
+      fill_in 'variant_barcode', with: '5260364685171'
       click_button 'Create'
       expect(page).to have_content('successfully created!')
 

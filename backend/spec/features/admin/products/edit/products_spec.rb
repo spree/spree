@@ -5,7 +5,7 @@ describe 'Product Details', type: :feature, js: true do
 
   context 'editing a product' do
     before do
-      create(:product, name: 'Bún thịt nướng', sku: 'A100',
+      create(:product, name: 'Bún thịt nướng', sku: 'A100', barcode: '5260364685169',
                        description: 'lorem ipsum', available_on: '2013-08-14 01:02:03')
 
       visit spree.admin_products_path
@@ -23,6 +23,7 @@ describe 'Product Details', type: :feature, js: true do
       expect(page).to have_field(id: 'product_cost_price', with: '17.00')
       expect(page).to have_field(id: 'product_available_on', with: '2013/08/14')
       expect(page).to have_field(id: 'product_sku', with: 'A100')
+      expect(page).to have_field(id: 'product_barcode', with: '5260364685169')
     end
 
     it 'handles slug changes' do
