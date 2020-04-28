@@ -7,6 +7,10 @@ module Spree
       @body_class
     end
 
+    def store_country
+      current_store.default_country.iso.downcase
+    end
+
     def spree_breadcrumbs(taxon, _separator = '', product = nil)
       return '' if current_page?('/') || taxon.nil?
 
