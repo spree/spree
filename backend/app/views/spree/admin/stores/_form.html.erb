@@ -88,6 +88,11 @@
       <%= f.select :default_locale, options_from_collection_for_select(all_locales_options, :last, :first, @store.default_locale) %>
       <%= f.error_message_on :default_locale %>
     <% end %>
+    <%= f.field_container :default_country_id, class: ['form-group'] do %>
+      <%= f.label :default_country_id, Spree.t('i18n.country') %>
+      <%= f.select :default_country_id, options_from_collection_for_select(Spree::Country.all, :id, :name, @store.default_country_id) %>
+      <%= f.error_message_on :default_country_id %>
+    <% end %>
   </div>
 </div>
 
@@ -150,4 +155,5 @@
   $('#store_default_currency').select2();
   $('#store_supported_currencies').select2();
   $('#store_default_locale').select2();
+  $('#store_default_country_id').select2();
 </script>
