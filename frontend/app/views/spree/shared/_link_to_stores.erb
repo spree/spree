@@ -1,0 +1,6 @@
+<% stores.each do |store| %>
+  <div class="pl-3 d-flex justify-content-between align-items-center">
+    <span class="flag-icon flag-icon-<%= store.default_country.iso.downcase %>"></span>
+    <%= link_to store.default_country.name, store.url, class: 'dropdown-item text-uppercase' %>
+  </div>
+<% end %>
