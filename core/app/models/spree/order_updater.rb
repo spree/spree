@@ -79,7 +79,7 @@ module Spree
 
     def update_adjustment_total
       recalculate_adjustments
-      order.adjustment_total = line_items.sum(:adjustment_total) +
+      order.adjustment_total = line_items.sum(:adjustment_total) * prorata_corrected_tax_amount +
         shipments.sum(:adjustment_total) +
         adjustments.eligible.sum(:amount)
       order.included_tax_total = line_items.sum(:included_tax_total) * prorata_corrected_tax_amount + shipments.sum(:included_tax_total)
@@ -93,10 +93,11 @@ module Spree
     end
 
     def prorata_corrected_tax_amount
-      return 1 unless line_items.sum(:included_tax_total) + line_items.sum(:additional_tax_total) > 0
+      return 1 unless line_items.sum(:included_tax_total) + line_items.sum(:additional_tax_total) > 0 && adjustments.eligible.sum(:amount) > 0
 
       prorata_adjustments = line_items.sum do |item|
-        tax_rate = (item.final_amount / item.pre_tax_amount - 1).round(2)
+        item_tax = item.additional_tax_total + item.included_tax_total
+        tax_rate = (item_tax / (item.final_amount - item_tax)).round(2)
         item_prorata_discount = item.final_amount * adjustments.eligible.sum(:amount) * -1 / line_items.sum(&:final_amount)
         (item.final_amount - item_prorata_discount) * tax_rate / (1 + tax_rate)
       end
