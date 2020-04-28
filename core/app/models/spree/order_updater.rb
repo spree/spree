@@ -94,7 +94,7 @@ module Spree
 
     def prorata_corrected_tax_amount
       return 1 unless line_items.sum(:included_tax_total) + line_items.sum(:additional_tax_total) > 0
-      
+
       prorata_adjustments = line_items.sum do |item|
         tax_rate = (item.final_amount / item.pre_tax_amount - 1).round(2)
         item_prorata_discount = item.final_amount * adjustments.eligible.sum(:amount) * -1 / line_items.sum(&:final_amount)
