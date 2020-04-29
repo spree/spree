@@ -230,9 +230,11 @@ module Spree
       ]
     end
 
-    def filtering_params
-      static_filters = %w(keywords price sort_by)
+    def static_filters
+      Spree::Frontend::Config[:products_filters]
+    end
 
+    def filtering_params
       available_option_types.map(&:filter_param).concat(static_filters)
     end
 
