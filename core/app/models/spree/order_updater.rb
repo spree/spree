@@ -83,7 +83,7 @@ module Spree
         shipments.sum(:adjustment_total) +
         adjustments.eligible.sum(:amount)
       order.included_tax_total = line_items.sum(:included_tax_total) * prorata_corrected_tax_amount + shipments.sum(:included_tax_total)
-      order.additional_tax_total = line_items.sum(:additional_tax_total) * prorata_corrected_tax_amount + shipments.sum(:additional_tax_total)
+      order.additional_tax_total = line_items.sum(:additional_tax_total) + shipments.sum(:additional_tax_total)
 
       order.promo_total = line_items.sum(:promo_total) +
         shipments.sum(:promo_total) +
@@ -93,15 +93,14 @@ module Spree
     end
 
     def prorata_corrected_tax_amount
-      return 1 unless line_items.sum(:included_tax_total) + line_items.sum(:additional_tax_total) > 0 && adjustments.eligible.sum(:amount) != 0
+      return 1 unless line_items.sum(:included_tax_total) > 0 && adjustments.eligible.sum(:amount) != 0
 
       prorata_adjustments = line_items.sum do |item|
-        item_tax = item.additional_tax_total + item.included_tax_total
-        tax_rate = (item_tax / (item.final_amount - item_tax)).round(2)
+        tax_rate = (item.included_tax_total / (item.final_amount - item.included_tax_total)).round(2)
         item_prorata_discount = item.final_amount * adjustments.eligible.sum(:amount) * -1 / line_items.sum(&:final_amount)
         (item.final_amount - item_prorata_discount) * tax_rate / (1 + tax_rate)
       end
-      prorata_adjustments / (line_items.sum(:included_tax_total) + line_items.sum(:additional_tax_total))
+      prorata_adjustments / line_items.sum(:included_tax_total)
     end
 
     def update_item_count
