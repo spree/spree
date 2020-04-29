@@ -93,7 +93,7 @@ module Spree
     end
 
     def prorata_corrected_tax_amount
-      return 1 unless line_items.sum(:included_tax_total) + line_items.sum(:additional_tax_total) > 0 && adjustments.eligible.sum(:amount) > 0
+      return 1 unless line_items.sum(:included_tax_total) + line_items.sum(:additional_tax_total) > 0 && adjustments.eligible.sum(:amount) != 0
 
       prorata_adjustments = line_items.sum do |item|
         item_tax = item.additional_tax_total + item.included_tax_total
