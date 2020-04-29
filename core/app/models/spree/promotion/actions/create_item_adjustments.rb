@@ -23,7 +23,7 @@ module Spree
           order   = line_item.order
 
           # Prevent negative order totals
-          amounts << order.amount - order.adjustments.sum(:amount).abs if order.adjustments.any?
+          amounts << order.amount - order.adjustments.eligible.sum(:amount).abs if order.adjustments.eligible.any?
 
           amounts.min * -1
         end
