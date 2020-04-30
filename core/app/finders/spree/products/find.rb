@@ -99,7 +99,7 @@ module Spree
       def by_taxons(products)
         return products unless taxons?
 
-        products.joins(:taxons).where(spree_taxons: { id: taxons })
+        products.joins(:classifications).where(Classification.table_name => { taxon_id: taxons })
       end
 
       def by_name(products)
