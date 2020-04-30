@@ -93,4 +93,8 @@ describe Spree::Taxon, type: :model do
   context 'ransackable_associations' do
     it { expect(described_class.whitelisted_ransackable_associations).to include('taxonomy') }
   end
+
+  describe '#cached_self_and_descendants_ids' do
+    it { expect(taxon.cached_self_and_descendants_ids).to eq(taxon.self_and_descendants.ids) }
+  end
 end
