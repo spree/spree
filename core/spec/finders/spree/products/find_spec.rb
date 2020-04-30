@@ -173,18 +173,42 @@ module Spree
     end
 
     context 'ordered' do
-      it 'returns products in default order' do
-        params = {
-          sort_by: 'default'
-        }
+      context 'default' do
+        subject(:products) do
+          described_class.new(
+            scope: Spree::Product.all,
+            params: params,
+            current_currency: 'USD'
+          ).execute
+        end
 
-        product_ids = described_class.new(
-          scope: Spree::Product.all,
-          params: params,
-          current_currency: 'USD'
-        ).execute.ids
+        context 'when not filtering by taxons' do
+          let(:params) { { sort_by: 'default' } }
 
-        expect(product_ids).to match_array Spree::Product.available.ids
+          it 'returns products in default order' do
+            expect(products.ids).to match_array Spree::Product.available.ids
+          end
+        end
+
+        context 'when filtering by taxons' do
+          let(:taxonomy) { create(:taxonomy) }
+          let(:child_taxon) { create(:taxon, taxonomy: taxonomy) }
+
+          before do
+            product.taxons << child_taxon
+            product_2.taxons << child_taxon
+
+            # swap products positions
+            product.classifications.find_by(taxon: child_taxon).update(position: 2)
+            product_2.classifications.find_by(taxon: child_taxon).update(position: 1)
+          end
+
+          let(:params) { { sort_by: 'default', filter: { taxons: taxonomy.root.id } } }
+
+          it 'returns products ordered by associated taxon position' do
+            expect(products).to match_array [product_2, product]
+          end
+        end
       end
 
       it 'returns products in newest-first order' do
