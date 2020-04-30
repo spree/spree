@@ -74,6 +74,12 @@ module Spree
       ancestor_chain + name.to_s
     end
 
+    def cached_self_and_descendants_ids
+      Rails.cache.fetch("#{cache_key_with_version}/descendant-ids") do
+        self_and_descendants.ids
+      end
+    end
+
     # awesome_nested_set sorts by :lft and :rgt. This call re-inserts the child
     # node so that its resulting position matches the observable 0-indexed position.
     # ** Note ** no :position column needed - a_n_s doesn't handle the reordering if
