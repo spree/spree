@@ -81,7 +81,7 @@ module Spree
       #   SELECT COUNT(*) ...
       add_search_scope :in_taxon do |taxon|
         includes(:classifications).
-          where('spree_products_taxons.taxon_id' => taxon.self_and_descendants.pluck(:id)).
+          where('spree_products_taxons.taxon_id' => taxon.cached_self_and_descendants_ids).
           order('spree_products_taxons.position ASC')
       end
 
@@ -221,7 +221,7 @@ module Spree
 
       # specifically avoid having an order for taxon search (conflicts with main order)
       def self.prepare_taxon_conditions(taxons)
-        ids = taxons.map { |taxon| taxon.self_and_descendants.pluck(:id) }.flatten.uniq
+        ids = taxons.map(&:cached_self_and_descendants_ids).flatten.uniq
         joins(:classifications).where(Classification.table_name => { taxon_id: ids })
       end
       private_class_method :prepare_taxon_conditions
