@@ -142,13 +142,25 @@ module Spree
 
         case sort_by
         when 'default'
-          products
+          if taxons?
+            products.
+              select("#{Product.table_name}.*, #{Classification.table_name}.position").
+              order("#{Classification.table_name}.position" => :asc)
+          else
+            products
+          end
         when 'newest-first'
           products.order(available_on: :desc)
         when 'price-high-to-low'
-          products.select('spree_products.*, spree_prices.amount').reorder('').send(:descend_by_master_price)
+          products.
+            select("#{Product.table_name}.*, #{Spree::Price.table_name}.amount").
+            reorder('').
+            send(:descend_by_master_price)
         when 'price-low-to-high'
-          products.select('spree_products.*, spree_prices.amount').reorder('').send(:ascend_by_master_price)
+          products.
+            select("#{Product.table_name}.*, #{Spree::Price.table_name}.amount").
+            reorder('').
+            send(:ascend_by_master_price)
         end
       end
 
