@@ -316,6 +316,18 @@ THIS IS THE BEST PRODUCT EVER!
           expect(cache_key).to eq('en/USD/true/spree/zones/new/spree/products/new/')
         end
       end
+
+      context 'given possible promotions' do
+        let(:zone) { nil }
+        let(:promotion) { create :promotion }
+        let(:promotion_2) { create :promotion }
+
+        before do
+          allow(product).to receive(:possible_promotions).and_return([promotion, promotion_2])
+        end
+
+        it { is_expected.to eq("en/USD/spree/products/new/#{promotion.cache_key}/#{promotion_2.cache_key}") }
+      end
     end
 
     context '#product_images' do
