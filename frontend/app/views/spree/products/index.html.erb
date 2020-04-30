@@ -1,7 +1,8 @@
 <% permitted_params = params.permit(*filtering_params) %>
+<% products_empty = @products.empty? %>
 
 <div data-hook="search_results">
-  <% if @products.empty? %>
+  <% if products_empty %>
     <% if permitted_params[:keywords].present? && permitted_params.to_h.one? %>
       <%= render 'spree/products/no_results' %>
     <% else %>
@@ -40,6 +41,8 @@
 <%= render 'spree/products/filters_mobile', permitted_params: permitted_params %>
 <%= render 'spree/products/sort_mobile', permitted_params: permitted_params %>
 
-<% cache cache_key_for_products(@products, 'json-ld') do %>
-  <%= products_structured_data(@products) %>
+<% unless products_empty %>
+  <% cache cache_key_for_products(@products, 'json-ld') do %>
+    <%= products_structured_data(@products) %>
+  <% end %>
 <% end %>
