@@ -163,7 +163,7 @@ module Spree
       def taxon_ids(taxon_id)
         return unless (taxon = Spree::Taxon.find_by(id: taxon_id))
 
-        taxon.self_and_descendants.ids.map(&:to_s)
+        taxon.cached_self_and_descendants_ids.map(&:to_s)
       end
     end
   end
