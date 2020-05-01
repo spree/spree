@@ -239,7 +239,7 @@ module Spree
     end
 
     def filtering_params_cache_key
-      @filtering_params_cache_key ||= params.permit(*filtering_params)&.reject { |_, v| v.blank? }&.to_s
+      @filtering_params_cache_key ||= params.permit(*filtering_params)&.reject { |_, v| v.blank? }&.to_param
     end
 
     def available_option_types_cache_key
