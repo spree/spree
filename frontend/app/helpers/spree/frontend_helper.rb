@@ -231,15 +231,15 @@ module Spree
     end
 
     def static_filters
-      Spree::Frontend::Config[:products_filters]
+      @static_filters ||= Spree::Frontend::Config[:products_filters]
     end
 
     def filtering_params
-      available_option_types.map(&:filter_param).concat(static_filters)
+      @filtering_params ||= available_option_types.map(&:filter_param).concat(static_filters)
     end
 
     def filtering_params_cache_key
-      params.permit(*filtering_params)&.reject { |_, v| v.blank? }&.to_s
+      @filtering_params_cache_key ||= params.permit(*filtering_params)&.reject { |_, v| v.blank? }&.to_s
     end
 
     def available_option_types_cache_key
