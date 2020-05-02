@@ -4,7 +4,7 @@
 
 * Join our Slack at [slack.spreecommerce.org](http://slack.spreecommerce.org/)
 * [Contact us](https://spreecommerce.org/contact/) to start a new project or get tech support
-* [DEMO](https://demo.spreecommerce.org/) of the new Spree UX introduced in Spree 4.1.0
+* [DEMO](https://spreecommerce.org/spree-commerce-demo-explainer/) of the new Spree UX introduced in Spree 4.1
 * [9 good reasons to upgrade to Spree 4.1](https://spreecommerce.org/spree-commerce-4-1-is-now-available-9-reasons-to-upgrade-or-use-it-for-a-new-e-commerce-project/) or use it for a new project
 * [Success Stories](https://spreecommerce.org/stories/)
 * [Integrations](https://spreecommerce.org/integrations/)
@@ -36,12 +36,13 @@ in a single repository and documented in a single set of
 ## Demo
 
 Go to: https://demo.spreecommerce.org/
+Explore demo features: https://spreecommerce.org/spree-commerce-demo-explainer/
 
-Or fire your own demo on Heroku:
+Or fire up your own demo on Heroku:
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/spree/spree/tree/4-1-stable)
 
-Admin Panel credentials (Heroku demo):
+Admin panel credentials for your own Heroku demo:
 
 * login: `spree@example.com`
 * password: `spree123`
