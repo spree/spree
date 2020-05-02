@@ -1623,9 +1623,8 @@ en:
     successfully_removed: ! '%{resource} has been successfully removed!'
     successfully_updated: ! '%{resource} has been successfully updated!'
     summary: Summary
-    supported_currencies:
-      short: Supported Currencies
-      long: A comma separated list of supported currencies
+    supported_currencies: Supported Currencies
+    supported_currencies_long: A comma separated list of supported currencies
     tax: Tax
     tax_included: "Tax (incl.)"
     tax_categories: Tax Categories

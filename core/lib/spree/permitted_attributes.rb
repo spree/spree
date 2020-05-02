@@ -99,7 +99,7 @@ module Spree
     @@store_attributes = [:name, :url, :seo_title, :code, :meta_keywords,
                           :meta_description, :default_currency, :mail_from_address,
                           :customer_support_email, :facebook, :twitter, :instagram,
-                          :description, :address, :contact_email, :contact_phone],
+                          :description, :address, :contact_email, :contact_phone,
                           :default_locale, :supported_currencies]
 
     @@store_credit_attributes = %i[amount currency category_id memo]
