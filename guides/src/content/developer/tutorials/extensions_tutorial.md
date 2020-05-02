@@ -150,7 +150,7 @@ Next, create the file `app/views/spree/home/sale.html.erb` and add the following
 
 ```erb
 <div data-hook="homepage_products">
-  <%%= render 'spree/shared/products', products: @products %>
+  <%= render 'spree/shared/products', products: @products %>
 </div>
 ```
 
