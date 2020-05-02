@@ -149,26 +149,41 @@ module Spree
         ).execute
       end
 
-      let(:params) { { filter: { taxons: parent_taxon.id } } }
-
       let(:parent_taxon) { child_taxon.parent }
       let(:child_taxon) { create(:taxon) }
 
-      shared_examples 'returns distinct products associated both to self and descendants' do
-        it { expect(products).to match_array [product, product_2] }
-      end
+      context 'one taxon is requested in params' do
+        let(:params) { { filter: { taxons: parent_taxon.id } } }
 
-      before do
-        parent_taxon.products << product
-        child_taxon.products << product_2
-      end
+        shared_examples 'returns distinct products associated both to self and descendants' do
+          it { expect(products).to match_array [product, product_2] }
+        end
 
-      it_behaves_like 'returns distinct products associated both to self and descendants'
-
-      context 'when product is already related to both taxons' do
-        before { parent_taxon.products << product_2 }
+        before do
+          parent_taxon.products << product
+          child_taxon.products << product_2
+        end
 
         it_behaves_like 'returns distinct products associated both to self and descendants'
+
+        context 'when product is already related to both taxons' do
+          before { parent_taxon.products << product_2 }
+
+          it_behaves_like 'returns distinct products associated both to self and descendants'
+        end
+      end
+
+      context 'multiple taxons are requested' do
+        let(:params) { { filter: { taxons: "#{taxon.id},#{taxon_2.id}" } } }
+        let(:taxon) { create(:taxon) }
+        let(:taxon_2) { create(:taxon) }
+
+        before do
+          taxon.products << product
+          taxon_2.products << product_2
+        end
+
+        it { expect(products).to match_array [product, product_2] }
       end
     end
 
