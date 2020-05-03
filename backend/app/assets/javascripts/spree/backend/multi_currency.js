@@ -16,18 +16,8 @@ $(document).ready(function () {
       .change(function () {
         var filter = $(this).val()
         if (filter) {
-          $(list)
-            .find('.panel-title:not(:Contains(' + filter + '))')
-            .parent()
-            .parent()
-            .parent()
-            .hide()
-          $(list)
-            .find('.panel-title:Contains(' + filter + ')')
-            .parent()
-            .parent()
-            .parent()
-            .show()
+          $(list).find('.panel-title:not(:Contains(' + filter + '))').parent().hide()
+          $(list).find('.panel-title:Contains(' + filter + ')').parent().show()
         } else {
           $(list)
             .find('.panel')

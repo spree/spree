@@ -1,28 +1,38 @@
-<% panel_class ||= 'panel-default' %>
-
-<div class="col-md-6">
-	<div class="panel <%= panel_class %>">
-	  <div class="panel-heading">
-	  	<h3 class="panel-title">
-	  		<span class="sku"><%= variant.sku %></span>
-
-	  		<span class="text-muted pull-right">
-	  			<%= variant.is_master? ? Spree.t(:master) : variant.options_text.blank? ? Spree.t(:variant) : variant.options_text %>
-	  		</span>
-	  	</h3>
-	  </div>
-
-	  <div class="panel-body no-padding-bottom">
-		  <% supported_currencies.each do |currency| %>
-		    <% code  = currency.iso_code %>
-		    <% price = variant.price_in(code) %>
-		    <div class="form-group">
-		      <%= label_tag "vp[#{variant.id}][#{code}]", code, class: 'control-label col-md-2' %>
-		      <div class="col-md-10">
-			      <%= text_field_tag "vp[#{variant.id}][#{code}]", (price && price.price ? price.display_amount.money : ''), class: 'form-control' %>
-			     </div>
-		    </div>
-		  <% end %>
-	  </div>
+<div class="panel-body no-padding-bottom panel-default">
+	<div id="variant_prices-table-wrapper">
+		<table class="table sortable">
+			<colgroup>
+				<col style="width: 25%" />
+				<col style="width: 40%" />
+				<col style="width: 15%" />
+				<col style="width: 20%" />
+			</colgroup>
+			<thead>
+				<tr data-hook="variant_prices_header">
+					<th><%= Spree.t(:options) %></th>
+					<th><%= Spree.t(:sku) %></th>
+					<th><%= Spree.t(:currency) %></th>
+					<th><%= Spree.t(:price) %></th>
+				</tr>
+			</thead>
+			<tbody id="variant-prices" data-hook="variant_prices_body">
+				<% supported_currencies_for_all_stores.each do |currency| %>
+					<% code  = currency.iso_code %>
+					<% price = variant.price_in(code) %>
+					<% @product.variants_including_master.each do |variant| %>
+						<tr id="variant_prices_row" data-hook="variant_prices_row">
+							<td class="panel">
+								<%= variant.is_master? ? Spree.t(:master) : variant.options_text.blank? ? Spree.t(:variant) : variant.options_text %>
+							</td>
+							<td class="panel-title"><%= variant.sku %></td>
+							<td><%= label_tag "vp[#{variant.id}][#{code}]", code %></td>
+							<td>
+								<%= text_field_tag "vp[#{variant.id}][#{code}]", (price && price.price ? price.display_amount.money : ''), class: 'form-control' %>
+							</td>
+						</tr>
+					<% end %>
+				<% end %>
+			</tbody>
+		</table>
 	</div>
 </div>

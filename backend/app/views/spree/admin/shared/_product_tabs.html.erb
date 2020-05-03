@@ -46,11 +46,11 @@
     <% end if can?(:admin, Spree::StockItem) && !@product.deleted? %>
 
     <%= content_tag :li do %>
-      <%= link_to_with_icon 'money', 
+      <%= link_to_with_icon 'money',
         Spree.t(:prices),
         admin_product_prices_path(@product),
-        class: "nav-link #{'active' if current == Spree.t(:prices)}" %>
+        class: "nav-link #{'active' if current == :prices}" %>
 
-    <% end if Spree::Config.allow_currency_change == true %>
+    <% end if can?(:admin, Spree::Price) && !@product.deleted? %>
   </ul>
 <% end %>
