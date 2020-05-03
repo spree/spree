@@ -35,7 +35,7 @@ module Spree
           end
 
           def supported_currencies
-            spree_current_store.supported_currencies_list
+            current_store.supported_currencies_list
           end
 
           def serialize_order(order)

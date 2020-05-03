@@ -12,8 +12,10 @@ module Spree
         end
 
         def current_currency
-          if session.key?(:currency) && supported_currencies.map(&:iso_code).include?(session[:currency])
+          if defined?(session) && session.key?(:currency) && supported_currencies.map(&:iso_code).include?(session[:currency])
             session[:currency]
+          elsif params[:currency].present? && supported_currencies.map(&:iso_code).include?(params[:currency])
+            params[:currency]
           else
             current_store.default_currency
           end
