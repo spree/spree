@@ -172,10 +172,11 @@ module Spree
         discontinued ? products : products.available
       end
 
-      def taxon_ids(taxon_id)
-        return unless (taxon = Spree::Taxon.find_by(id: taxon_id))
+      def taxon_ids(taxons_ids)
+        return if taxons_ids.nil? || taxons_ids.to_s.blank?
 
-        taxon.cached_self_and_descendants_ids.map(&:to_s)
+        taxons = Spree::Taxon.where(id: taxons_ids.to_s.split(','))
+        taxons.map(&:cached_self_and_descendants_ids).flatten.compact.uniq.map(&:to_s)
       end
     end
   end
