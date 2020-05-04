@@ -14,15 +14,15 @@ default:
           :url: /t/women/jeans
         - :title: Accessories
           :url: /t/women/accessories
-        - :title: Perfumes
-          :url: /t/women/perfumes
+        - :title: Perfume
+          :url: /t/women/perfume
       promo_banners:
         - subtitle: New Collection
           title: Summer 2020
           url: /t/new-collection/summer-2020
           image: 'meganav/promo_banner_left-first-category.jpg'
         - subtitle: Special Offers
-          title: Get up to 50% off
+          title: 50% off
           url: /t/special-offers/50-off
           image: 'meganav/promo_banner_right-first-category.jpg'
     - title: Men
@@ -43,25 +43,25 @@ default:
           url: /t/new-collection/summer-2020
           image: 'meganav/promo_banner_left-second-category.jpg'
         - subtitle: Special Offers
-          title: Get up to 50% off
+          title: 50% off
           url: /t/special-offers/50-off
           image: 'meganav/promo_banner_right-second-category.jpg'
-    - title: Pre-Owned
+    - title: Pre-Owned Clothes
       subtitle: Categories
       url: /t/pre-owned
       items:
         - :title: Shirts
-          :url: /t/sportswear/shirts
+          :url: /t/pre-owned/shirts
         - :title: Jeans
-          :url: /t/sportswear/jeans
+          :url: /t/pre-owned/jeans
         - :title: Shoes
-          :url: /t/sportswear/shoes
+          :url: /t/pre-owned/shoes
       promo_banners:
         - subtitle: New Arrivals
           title: Summer 2020
           url: /t/new-collection/summer-2020
           image: 'meganav/promo_banner_left-third-category.jpg'
         - subtitle: Special Offers
-          title: Get up to 50% off
+          title: 50% off
           url: /t/special-offers/50-off
           image: 'meganav/promo_banner_right-third-category.jpg'
