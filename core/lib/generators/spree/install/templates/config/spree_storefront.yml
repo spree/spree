@@ -4,26 +4,26 @@ default:
       subtitle: Categories
       url: /t/women
       items:
-        - :title: Skirts
-          :url: /t/women/skirts
-        - :title: Dresses
-          :url: /t/women/dresses
-        - :title: Shirts and Blouses
-          :url: /t/women/shirts-and-blouses
-        - :title: Sweaters
-          :url: /t/women/sweaters
+        - :title: Handbags
+          :url: /t/women/handbags
+        - :title: Shoes
+          :url: /t/women/shoes
         - :title: Tops and T-shirts
           :url: /t/women/tops-and-t-shirts
-        - :title: Jackets and Coats
-          :url: /t/women/jackets-and-coats
+        - :title: Jeans
+          :url: /t/women/jeans
+        - :title: Accessories
+          :url: /t/women/accessories
+        - :title: Perfumes
+          :url: /t/women/perfumes
       promo_banners:
-        - subtitle: New collection
-          title: Summer 2019
-          url: /t/new-collection/summer-2019
+        - subtitle: New Collection
+          title: Summer 2020
+          url: /t/new-collection/summer-2020
           image: 'meganav/promo_banner_left-first-category.jpg'
         - subtitle: Special Offers
-          title: Get up to 30% off
-          url: /t/special-offers/30-off
+          title: Get up to 50% off
+          url: /t/special-offers/50-off
           image: 'meganav/promo_banner_right-first-category.jpg'
     - title: Men
       subtitle: Categories
@@ -33,35 +33,35 @@ default:
           :url: /t/men/shirts
         - :title: T-shirts
           :url: /t/men/t-shirts
-        - :title: Sweaters
-          :url: /t/men/sweaters
-        - :title: Jackets and Coats
-          :url: /t/men/jackets-and-coats
+        - :title: Jeans
+          :url: /t/men/jeans
+        - :title: Accessories
+          :url: /t/men/accessories
       promo_banners:
-        - subtitle: New collection
-          title: Summer 2019
-          url: /t/new-collection/summer-2019
+        - subtitle: New Collection
+          title: Summer 2020
+          url: /t/new-collection/summer-2020
           image: 'meganav/promo_banner_left-second-category.jpg'
         - subtitle: Special Offers
-          title: Get up to 30% off
-          url: /t/special-offers/30-off
+          title: Get up to 50% off
+          url: /t/special-offers/50-off
           image: 'meganav/promo_banner_right-second-category.jpg'
-    - title: Sportswear
+    - title: Pre-Owned
       subtitle: Categories
-      url: /t/sportswear
+      url: /t/pre-owned
       items:
-        - :title: Tops
-          :url: /t/sportswear/tops
-        - :title: Sweatshirts
-          :url: /t/sportswear/sweatshirts
-        - :title: Pants
-          :url: /t/sportswear/pants
+        - :title: Shirts
+          :url: /t/sportswear/shirts
+        - :title: Jeans
+          :url: /t/sportswear/jeans
+        - :title: Shoes
+          :url: /t/sportswear/shoes
       promo_banners:
-        - subtitle: New collection
-          title: Summer 2019
-          url: /t/new-collection/summer-2019
+        - subtitle: New Arrivals
+          title: Summer 2020
+          url: /t/new-collection/summer-2020
           image: 'meganav/promo_banner_left-third-category.jpg'
         - subtitle: Special Offers
-          title: Get up to 30% off
-          url: /t/special-offers/30-off
+          title: Get up to 50% off
+          url: /t/special-offers/50-off
           image: 'meganav/promo_banner_right-third-category.jpg'
