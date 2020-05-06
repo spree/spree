@@ -135,7 +135,7 @@
     }
     &-scroller {
       @include media-breakpoint-up('lg') {
-        height: calc(100vh - #{$spree-plp-filter-desktop-position});
+        max-height: calc(100vh - #{$spree-plp-filter-desktop-position});
         overflow: auto;
       }
     }
