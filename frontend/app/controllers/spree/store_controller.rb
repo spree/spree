@@ -22,10 +22,6 @@ module Spree
       fresh_when(simple_current_order)
     end
 
-    def stores_link
-      render partial: 'spree/shared/link_to_stores'
-    end
-
     def api_tokens
       render json: {
         order_token: simple_current_order&.token,
@@ -58,11 +54,5 @@ module Spree
     def store_last_modified
       (current_store.updated_at || Time.current).utc
     end
-
-    def stores
-      @_stores ||= Spree::Store.all.eager_load(:default_country)
-    end
-
-    helper_method :stores
   end
 end

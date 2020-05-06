@@ -42,19 +42,5 @@
     <%= render 'spree/shared/cart', class: 'd-none d-xl-inline-block cart-icon--xl', size: 36, item_count: 0 %>
     <%= render 'spree/shared/cart', class: 'd-xl-none', size: 24, item_count: 0 %>
   </li>
-  <% if defined?(spree.stores_link_path) %>
-    <li>
-      <div class="dropdown navbar-right-dropdown">
-        <button id="stores-button" type="button" data-toggle="dropdown" class="navbar-right-dropdown-toggle" aria-label="<%= Spree.t('nav_bar.change_country')%>">
-          <span class="d-none d-xl-inline-block flag-icon flag-icon-<%= store_country %>"></span>
-          <%= icon(name: 'arrow',
-                  classes: 'd-none d-xl-inline-block',
-                  width: 20,
-                  height: 20)  %>
-        </button>
-
-        <div id="link-to-stores" class="dropdown-menu dropdown-menu-right text-right">
-      </div>
-    </li>
-  <% end %>
+  <%= render partial: 'spree/shared/change_store' %>
 </ul>

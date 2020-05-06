@@ -7,8 +7,16 @@ module Spree
       @body_class
     end
 
-    def store_country
-      current_store.default_country.iso.downcase
+    def store_country_iso(store)
+      store ||= current_store
+      return unless store
+      return unless store.default_country
+
+      store.default_country.iso.downcase
+    end
+
+    def stores
+      @stores ||= Spree::Store.all.eager_load(:default_country)
     end
 
     def spree_breadcrumbs(taxon, _separator = '', product = nil)
