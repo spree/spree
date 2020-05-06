@@ -41,11 +41,8 @@ function CartForm($, $cartForm) {
       this.applyCheckedOptionValue($optionValue, true)
     } else {
       this.updateAddToCart()
-      this.triggerVariantImages()
     }
   }
-
-
 
 
 // URL Query String Code Below ---- WIP ----
@@ -55,13 +52,12 @@ var queryString = window.location.search;
 var urlParams = new URLSearchParams(queryString);
 var qs_variant_id = urlParams.get('variant')
 
-
   this.setSpecificVariant = function() {
     this.getVariantOptionsById(qs_variant_id)
     this.$variantIdInput.val(qs_variant_id)
     this.updateAddToCart()
-// TODO Set correct variant image based on first option selected.
-// TODO Grey out none selectable variants depending on variant options that are selcted.
+    this.selectVariantImg()
+    // TODO Grey out none selectable variants depending on variant options that are selcted.
 
   }
 
@@ -83,17 +79,34 @@ var qs_variant_id = urlParams.get('variant')
     }
 
 // Set check true on each input that maches the requirements.
-    this.checkRequestedParams = function(ov_id, ov_prez) {
-      for (const t of target) {
-        if ( t.value == ov_id && t.dataset.presentation.toLowerCase() == ov_prez.toLowerCase() ) {
-            // No two options will have the same id and presentation values,
-            // so we target both the option.id and option.presentation
-            // values must match to ensure we are hitting the correct option.
-
-            t.checked = true
-        }
+  this.checkRequestedParams = function(ov_id, ov_prez) {
+    for (const t of target) {
+      if ( t.value == ov_id && t.dataset.presentation.toLowerCase() == ov_prez.toLowerCase() ) {
+          t.checked = true
       }
     }
+  }
+
+  this.selectVariantImg = function() {
+    for (const t of target) {
+      var index = t.dataset.optionTypeIndex
+      if (index == 0 && t.checked) {
+        var img_id = t.dataset.variantId
+        this.triggerVariantImageFromURL(img_id)
+      }
+    }
+  }
+
+this.triggerVariantImageFromURL = function(img_id) {
+  setTimeout(function() {
+    $cartForm.trigger({
+      type: 'variant_id_change',
+      triggerId: $cartForm.attr('data-variant-change-trigger-identifier'),
+      variantId: img_id + ''
+    })
+  })
+}
+
 // URL Query String Code Above ---- WIP ----
 
 
@@ -120,6 +133,7 @@ var qs_variant_id = urlParams.get('variant')
     this.updateVariantId()
 
     if (this.shouldTriggerVariantImage($optionValue)) {
+
       this.triggerVariantImages()
     }
   }
@@ -180,6 +194,8 @@ var qs_variant_id = urlParams.get('variant')
   this.firstCheckedOptionValue = function() {
     return $cartForm.find(OPTION_VALUE_SELECTOR + '[data-option-type-index=0]' + ':checked')
   }
+  // console.log($cartForm.find(OPTION_VALUE_SELECTOR + '[data-option-type-index=0]' + ':checked'));
+
 
   this.shouldTriggerVariantImage = function($optionValue) {
     return $optionValue.data('is-color') || !this.firstCheckedOptionValue().data('is-color')
