@@ -156,6 +156,9 @@ jobs:
           command: bundle update spree
           working_directory: ~/project/spree-designs
       - run:
+          command: bundle exec rails spree:install:migrations
+          working_directory: ~/project/spree-designs
+      - run:
           command: |
             git config user.name 'AutoDeploy'
             git config user.email 'autodeploy@sparksolutions.co'
