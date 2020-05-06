@@ -13,7 +13,7 @@
             class: "product-variants-variant-values-radio",
             data: {
               "option-type-index" => index,
-              "presentation" => option_value[:presentation],
+              "presentation" => option_value[:presentation].downcase,
               "variant-id" => option_value[:variant_id]
             }
           %>

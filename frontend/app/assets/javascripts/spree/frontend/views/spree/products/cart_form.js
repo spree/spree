@@ -28,7 +28,11 @@ function CartForm($, $cartForm) {
     this.$price = $cartForm.find('.price.selling')
     this.$variantIdInput = $cartForm.find(VARIANT_ID_SELECTOR)
 
-    this.initializeForm()
+    if (urlParams.has('variant')) {
+      this.setSpecificVariant()
+    } else {
+      this.initializeForm()
+    }
   }
 
   this.initializeForm = function() {
@@ -40,6 +44,63 @@ function CartForm($, $cartForm) {
       this.triggerVariantImages()
     }
   }
+
+
+
+
+// URL Query String Code Below ---- WIP ----
+var container = document.querySelector("ul#product-variants");
+var target = container.querySelectorAll("input.product-variants-variant-values-radio");
+var queryString = window.location.search;
+var urlParams = new URLSearchParams(queryString);
+var qs_variant_id = urlParams.get('variant')
+
+
+  this.setSpecificVariant = function() {
+    this.getVariantOptionsById(qs_variant_id)
+    this.$variantIdInput.val(qs_variant_id)
+    this.updateAddToCart()
+// TODO Set correct variant image based on first option selected.
+// TODO Grey out none selectable variants depending on variant options that are selcted.
+
+  }
+
+// loop through product variants and match the ID with that in the URL query string
+    this.getVariantOptionsById = function(qs_variant_id) {
+      for (const v of variants) {
+        if (v.id == qs_variant_id) {
+          sortOptionValues(v.option_values);
+          this.$price.html(v.display_price);
+        }
+      }
+    }
+
+// Retrieve the presentation value of each option in that variant.
+    this.sortOptionValues = function(option_vals) {
+        for (const ov of option_vals) {
+          checkRequestedParams(ov.id, ov.presentation);
+        }
+    }
+
+// Set check true on each input that maches the requirements.
+    this.checkRequestedParams = function(ov_id, ov_prez) {
+      for (const t of target) {
+        if ( t.value == ov_id && t.dataset.presentation.toLowerCase() == ov_prez.toLowerCase() ) {
+            // No two options will have the same id and presentation values,
+            // so we target both the option.id and option.presentation
+            // values must match to ensure we are hitting the correct option.
+
+            t.checked = true
+        }
+      }
+    }
+// URL Query String Code Above ---- WIP ----
+
+
+
+
+
+
 
   this.bindEventHandlers = function() {
     $cartForm.on('click', OPTION_VALUE_SELECTOR, this.handleOptionValueClick)
