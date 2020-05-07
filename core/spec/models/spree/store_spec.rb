@@ -83,5 +83,28 @@ describe Spree::Store, type: :model do
         expect(store.contact_email).to eq('user@example.com')
       end
     end
+
+    describe '.supported_currencies_list' do
+      context 'with supported currencies set' do
+        let(:currencies) { 'USD, EUR, dummy' }
+        let!(:store) { create(:store, default_currency: 'USD', supported_currencies: currencies) }
+
+        it 'returns supported currencies list' do
+          expect(store.supported_currencies_list).to contain_exactly(
+            ::Money::Currency.find('USD'), ::Money::Currency.find('EUR')
+          )
+        end
+      end
+
+      context 'without supported currencies set' do
+        let!(:store) { create(:store, default_currency: 'EUR', supported_currencies: nil) }
+
+        it 'returns supported currencies list' do
+          expect(store.supported_currencies_list).to contain_exactly(
+            ::Money::Currency.find('EUR')
+          )
+        end
+      end
+    end
   end
 end
