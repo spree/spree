@@ -112,9 +112,11 @@ module Spree
       def by_options(products)
         return products unless options?
 
-        options.map do |key, value|
-          products.with_option_value(key, value)
-        end.inject(:&)
+        products.where(
+          id: options.map do |key, value|
+            products.with_option_value(key, value).pluck(:id)
+          end.flatten
+        )
       end
 
       def by_option_value_ids(products)
