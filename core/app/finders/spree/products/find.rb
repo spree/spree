@@ -115,7 +115,7 @@ module Spree
         products.where(
           id: options.map do |key, value|
             products.with_option_value(key, value).ids
-          end.flatten
+          end.flatten.compact.uniq
         )
       end
 
