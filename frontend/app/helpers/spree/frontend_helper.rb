@@ -19,6 +19,10 @@ module Spree
       @stores ||= Spree::Store.all.eager_load(:default_country)
     end
 
+    def store_currency_symbol(currency)
+      ::Money::Currency.find(currency).symbol
+    end
+
     def spree_breadcrumbs(taxon, _separator = '', product = nil)
       return '' if current_page?('/') || taxon.nil?
 
