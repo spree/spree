@@ -76,15 +76,8 @@ function CartForm($, $cartForm) {
     for (const t of target) {
       if ( (index = t.dataset.optionTypeIndex) && (t.value == option_value_id) && (t.dataset.presentation == option_value_presentation) ) {
         t.click()
-
         var $t = $(t);
         this.handleOptionValueFromUrlQueryClicks($t)
-
-        // Bug with form: if you have more than 2 sets of variants
-        // and only some variants have the second row of options available
-        // you have to click the available option in thas last row twice to trigger the css black border?
-
-        // This is the same for
         t.click()
       }
     }
