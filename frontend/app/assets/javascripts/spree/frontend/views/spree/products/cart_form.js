@@ -1,6 +1,7 @@
 //= require spree/api/storefront/cart
 //= require ../shared/product_added_modal
 
+var OPTIONS_CONTAINER = 'ul#product-variants'
 var ADD_TO_CART_FORM_SELECTOR = '.add-to-cart-form'
 var VARIANT_ID_SELECTOR = '[name="variant_id"]'
 var OPTION_VALUE_SELECTOR = '.product-variants-variant-values-radio'
@@ -12,6 +13,13 @@ var AVAILABILITY_TEMPLATES = {
   backorderable: '.availability-template-backorderable',
   outOfStock: '.availability-template-out-of-stock'
 }
+
+let getQueryString = window.location.search;
+let urlParams = new URLSearchParams(getQueryString);
+let variantIdFromUrl = urlParams.get('variant')
+
+const container = document.querySelector(OPTIONS_CONTAINER);
+const target = container.querySelectorAll(OPTION_VALUE_SELECTOR);
 
 function CartForm($, $cartForm) {
   this.constructor = function() {
@@ -26,13 +34,14 @@ function CartForm($, $cartForm) {
 
     this.$addToCart = $cartForm.find(ADD_TO_CART_SELECTOR)
     this.$price = $cartForm.find('.price.selling')
+    this.$compareAtPrice = $cartForm.find('.compare-at-price')
     this.$variantIdInput = $cartForm.find(VARIANT_ID_SELECTOR)
 
-    if (urlParams.has('variant')) {
-      this.setSpecificVariant()
-    } else {
-      this.initializeForm()
-    }
+    this.setSpecificVariant()
+  }
+
+  this.setSpecificVariant = function() {
+      this.getVariantOptionsById(variantIdFromUrl)
   }
 
   this.initializeForm = function() {
@@ -41,83 +50,53 @@ function CartForm($, $cartForm) {
       this.applyCheckedOptionValue($optionValue, true)
     } else {
       this.updateAddToCart()
+      this.triggerVariantImages()
+    }
+
+    if (urlParams.has('variant')) {
+      this.getVariantOptionsById(variantIdFromUrl)
     }
   }
 
-
-// URL Query String Code Below ---- WIP ----
-var container = document.querySelector("ul#product-variants");
-var target = container.querySelectorAll("input.product-variants-variant-values-radio");
-var queryString = window.location.search;
-var urlParams = new URLSearchParams(queryString);
-var qs_variant_id = urlParams.get('variant')
-
-  this.setSpecificVariant = function() {
-    this.getVariantOptionsById(qs_variant_id)
-    this.$variantIdInput.val(qs_variant_id)
-    this.updateAddToCart()
-    this.selectVariantImg()
-    // TODO Grey out none selectable variants depending on variant options that are selcted.
-
-  }
-
-// loop through product variants and match the ID with that in the URL query string
-    this.getVariantOptionsById = function(qs_variant_id) {
-      for (const v of variants) {
-        if (v.id == qs_variant_id) {
-          sortOptionValues(v.option_values);
-          this.$price.html(v.display_price);
-        }
+  this.getVariantOptionsById = function(variantIdFromUrl) {
+    for (const v of variants) {
+      if (v.id == variantIdFromUrl) {
+        sortOptionValues(v.option_values);
       }
     }
+  }
 
-// Retrieve the presentation value of each option in that variant.
-    this.sortOptionValues = function(option_vals) {
-        for (const ov of option_vals) {
-          checkRequestedParams(ov.id, ov.presentation);
-        }
+  this.sortOptionValues = function(option_vals) {
+    for (const [index, ov] of option_vals.entries()) {
+      checkRequestedParams(index, ov.id, ov.presentation);
     }
+  }
 
-// Set check true on each input that maches the requirements.
-  this.checkRequestedParams = function(ov_id, ov_prez) {
+  this.checkRequestedParams = function(index, option_value_id, option_value_presentation) {
     for (const t of target) {
-      if ( t.value == ov_id && t.dataset.presentation.toLowerCase() == ov_prez.toLowerCase() ) {
-          t.checked = true
+      if ( (index = t.dataset.optionTypeIndex) && (t.value == option_value_id) && (t.dataset.presentation == option_value_presentation) ) {
+        t.click()
+
+        var $t = $(t);
+        this.handleOptionValueFromUrlQueryClicks($t)
+
+        // Bug with form: if you have more than 2 sets of variants
+        // and only some variants have the second row of options available
+        // you have to click the available option in thas last row twice to trigger the css black border?
+
+        // This is the same for
+        t.click()
       }
     }
   }
-
-  this.selectVariantImg = function() {
-    for (const t of target) {
-      var index = t.dataset.optionTypeIndex
-      if (index == 0 && t.checked) {
-        var img_id = t.dataset.variantId
-        this.triggerVariantImageFromURL(img_id)
-      }
-    }
-  }
-
-this.triggerVariantImageFromURL = function(img_id) {
-  setTimeout(function() {
-    $cartForm.trigger({
-      type: 'variant_id_change',
-      triggerId: $cartForm.attr('data-variant-change-trigger-identifier'),
-      variantId: img_id + ''
-    })
-  })
-}
-
-// URL Query String Code Above ---- WIP ----
-
-
-
-
-
-
 
   this.bindEventHandlers = function() {
     $cartForm.on('click', OPTION_VALUE_SELECTOR, this.handleOptionValueClick)
   }
+
+  this.handleOptionValueFromUrlQueryClicks = function($event) {
+    this.applyCheckedOptionValue($event)
+  }.bind(this)
 
   this.handleOptionValueClick = function(event) {
     this.applyCheckedOptionValue($(event.currentTarget))
@@ -133,7 +112,6 @@ this.triggerVariantImageFromURL = function(img_id) {
     this.updateVariantId()
 
     if (this.shouldTriggerVariantImage($optionValue)) {
-
       this.triggerVariantImages()
     }
   }
@@ -194,8 +172,6 @@ this.triggerVariantImageFromURL = function(img_id) {
   this.firstCheckedOptionValue = function() {
     return $cartForm.find(OPTION_VALUE_SELECTOR + '[data-option-type-index=0]' + ':checked')
   }
-  // console.log($cartForm.find(OPTION_VALUE_SELECTOR + '[data-option-type-index=0]' + ':checked'));
-
 
   this.shouldTriggerVariantImage = function($optionValue) {
     return $optionValue.data('is-color') || !this.firstCheckedOptionValue().data('is-color')
@@ -297,7 +273,12 @@ this.triggerVariantImageFromURL = function(img_id) {
 
     if (!variant) return
 
+    var shouldDisplayCompareAtPrice = variant.should_display_compare_at_price
+
     this.$price.html(variant.display_price)
+
+    var compareAtPriceContent = shouldDisplayCompareAtPrice ? '<span class="mr-3">' + variant.display_compare_at_price + '</span>' : ''
+    this.$compareAtPrice.html(compareAtPriceContent)
   }
 
   this.updateVariantId = function() {
