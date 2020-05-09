@@ -230,14 +230,16 @@ module Spree
       ]
     end
 
-    def filtering_params
-      static_filters = %w(keywords price sort_by)
+    def static_filters
+      @static_filters ||= Spree::Frontend::Config[:products_filters]
+    end
 
-      available_option_types.map(&:filter_param).concat(static_filters)
+    def filtering_params
+      @filtering_params ||= available_option_types.map(&:filter_param).concat(static_filters)
     end
 
     def filtering_params_cache_key
-      params.permit(*filtering_params)&.reject { |_, v| v.blank? }&.to_s
+      @filtering_params_cache_key ||= params.permit(*filtering_params)&.reject { |_, v| v.blank? }&.to_param
     end
 
     def available_option_types_cache_key

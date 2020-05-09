@@ -111,13 +111,13 @@ module Spree
 
     alias options product_option_types
 
-    self.whitelisted_ransackable_associations = %w[stores variants_including_master master variants]
+    self.whitelisted_ransackable_associations = %w[taxons stores variants_including_master master variants]
     self.whitelisted_ransackable_attributes = %w[description name slug discontinue_on]
     self.whitelisted_ransackable_scopes = %w[not_discontinued]
 
     [
       :sku, :price, :currency, :weight, :height, :width, :depth, :is_master,
-      :cost_currency, :price_in, :amount_in, :cost_price
+      :cost_currency, :price_in, :amount_in, :cost_price, :compare_at_price
     ].each do |method_name|
       delegate method_name, :"#{method_name}=", to: :find_or_build_master
     end
@@ -341,7 +341,7 @@ module Spree
           price: master.price
         )
       end
-      throw(:abort) unless save
+      save
     end
 
     def ensure_master

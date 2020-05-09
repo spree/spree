@@ -316,33 +316,17 @@ THIS IS THE BEST PRODUCT EVER!
           expect(cache_key).to eq('en/USD/true/spree/zones/new/spree/products/new/')
         end
       end
-    end
 
-    context '#product_images' do
-      subject(:images) { helper.product_images(product, product.variants) }
+      context 'given possible promotions' do
+        let(:zone) { nil }
+        let(:promotion) { create :promotion }
+        let(:promotion_2) { create :promotion }
 
-      let(:product) { build :product }
-      let(:variant) { build :variant, product: product }
-
-      context 'when product images exist' do
-        let!(:image_1) { create :image, viewable: product.master }
-        let!(:image_2) { create :image, viewable: product.master }
-        let!(:image_3) { create :image, viewable: variant }
-        let!(:image_4) { create :image, viewable: variant }
-
-        it 'sets product images as default' do
-          expect(images).to include(image_1, image_2)
-          expect(images).not_to include(image_3, image_4)
+        before do
+          allow(product).to receive(:possible_promotions).and_return([promotion, promotion_2])
         end
-      end
 
-      context 'when there is no product images' do
-        let!(:image_1) { create :image, viewable: variant }
-        let!(:image_2) { create :image, viewable: variant }
-
-        it 'sets variants images as default' do
-          expect(images).to include(image_1, image_2)
-        end
+        it { is_expected.to eq("en/USD/spree/products/new/#{promotion.cache_key}/#{promotion_2.cache_key}") }
       end
     end
 

@@ -99,7 +99,7 @@ module Spree
       def by_taxons(products)
         return products unless taxons?
 
-        products.joins(:taxons).where(spree_taxons: { id: taxons })
+        products.joins(:classifications).where(Classification.table_name => { taxon_id: taxons })
       end
 
       def by_name(products)
@@ -142,13 +142,25 @@ module Spree
 
         case sort_by
         when 'default'
-          products
+          if taxons?
+            products.
+              select("#{Product.table_name}.*, #{Classification.table_name}.position").
+              order("#{Classification.table_name}.position" => :asc)
+          else
+            products
+          end
         when 'newest-first'
           products.order(available_on: :desc)
         when 'price-high-to-low'
-          products.select('spree_products.*, spree_prices.amount').reorder('').send(:descend_by_master_price)
+          products.
+            select("#{Product.table_name}.*, #{Spree::Price.table_name}.amount").
+            reorder('').
+            send(:descend_by_master_price)
         when 'price-low-to-high'
-          products.select('spree_products.*, spree_prices.amount').reorder('').send(:ascend_by_master_price)
+          products.
+            select("#{Product.table_name}.*, #{Spree::Price.table_name}.amount").
+            reorder('').
+            send(:ascend_by_master_price)
         end
       end
 
@@ -160,10 +172,11 @@ module Spree
         discontinued ? products : products.available
       end
 
-      def taxon_ids(taxon_id)
-        return unless (taxon = Spree::Taxon.find_by(id: taxon_id))
+      def taxon_ids(taxons_ids)
+        return if taxons_ids.nil? || taxons_ids.to_s.blank?
 
-        taxon.self_and_descendants.ids.map(&:to_s)
+        taxons = Spree::Taxon.where(id: taxons_ids.to_s.split(','))
+        taxons.map(&:cached_self_and_descendants_ids).flatten.compact.uniq.map(&:to_s)
       end
     end
   end

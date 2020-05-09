@@ -91,7 +91,7 @@ module SpreeSimpleSales
   module Spree
     module HomeControllerDecorator
       def sale
-        @products = Spree::Product.joins(:variants_including_master).where('spree_variants.sale_price is not null').distinct
+        @products = ::Spree::Product.joins(:variants_including_master).where('spree_variants.sale_price is not null').distinct
       end
     end
   end
@@ -150,7 +150,7 @@ Next, create the file `app/views/spree/home/sale.html.erb` and add the following
 
 ```erb
 <div data-hook="homepage_products">
-  <%%= render 'spree/shared/products', products: @products %>
+  <%= render 'spree/shared/products', products: @products %>
 </div>
 ```
 
