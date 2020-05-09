@@ -18,9 +18,6 @@ let getQueryString = window.location.search;
 let urlParams = new URLSearchParams(getQueryString);
 let variantIdFromUrl = urlParams.get('variant')
 
-const container = document.querySelector(OPTIONS_CONTAINER);
-const target = container.querySelectorAll(OPTION_VALUE_SELECTOR);
-
 function CartForm($, $cartForm) {
   this.constructor = function() {
     this.initialize()
@@ -54,6 +51,8 @@ function CartForm($, $cartForm) {
     }
 
     if (urlParams.has('variant')) {
+      const container = document.querySelector(OPTIONS_CONTAINER);
+      const target = container.querySelectorAll(OPTION_VALUE_SELECTOR);
       this.getVariantOptionsById(variantIdFromUrl)
     }
   }
@@ -74,7 +73,7 @@ function CartForm($, $cartForm) {
 
   this.checkRequestedParams = function(index, option_value_id, option_value_presentation) {
     for (const t of target) {
-      if ( (index = t.dataset.optionTypeIndex) && (t.value == option_value_id) && (t.dataset.presentation == option_value_presentation) ) {
+      if ((index == t.dataset.optionTypeIndex) && (t.value == option_value_id) && (t.dataset.presentation == option_value_presentation)) {
         t.click()
         var $t = $(t);
         this.handleOptionValueFromUrlQueryClicks($t)
@@ -280,7 +279,6 @@ function CartForm($, $cartForm) {
 
     this.$variantIdInput.val(variantId)
   }
-
   this.constructor()
 }
 
@@ -309,8 +307,7 @@ Spree.ready(function($) {
         variantId,
         quantity,
         {}, // options hash - you can pass additional parameters here, your backend
-        // needs to be aware of those, see API docs:
-        // https://github.com/spree/spree/blob/master/api/docs/v2/storefront/index.yaml#L42
+// needs to be aware of those, see API docs: https://github.com/spree/spree/blob/master/api/docs/v2/storefront/index.yaml#L42
         function(response) {
           $addToCart.prop('disabled', false)
           Spree.fetchCart()
