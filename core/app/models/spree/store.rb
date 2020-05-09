@@ -26,6 +26,12 @@ module Spree
       end
     end
 
+    def supported_currencies_list
+      (read_attribute(:supported_currencies).to_s.split(',') << default_currency).map(&:to_s).map do |code|
+        ::Money::Currency.find(code.strip)
+      end.uniq.compact
+    end
+
     private
 
     def ensure_default_exists_and_is_unique

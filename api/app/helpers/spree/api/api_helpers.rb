@@ -162,7 +162,8 @@ module Spree
       @@store_attributes = [
         :id, :name, :url, :meta_description, :meta_keywords, :seo_title,
         :mail_from_address, :customer_support_email, :default_currency,
-        :code, :default, :facebook, :twitter, :instagram
+        :code, :default, :facebook, :twitter, :instagram,
+        :supported_currencies
       ]
 
       @@tag_attributes = [:id, :name]
