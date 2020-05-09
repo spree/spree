@@ -179,7 +179,7 @@ module SpreeSimpleSales
     end
   end
 end
-  
+
 Spree::Variant.prepend SpreeSimpleSales::Spree::VariantDecorator
 ```
 
