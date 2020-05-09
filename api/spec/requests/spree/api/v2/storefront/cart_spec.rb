@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe 'API V2 Storefront Cart Spec', type: :request do
   let(:default_currency) { 'USD' }
-  let(:store) { create(:store, default_currency: default_currency) }
+  let!(:store) { create(:store, default_currency: default_currency) }
   let(:currency) { store.default_currency }
   let(:user)  { create(:user) }
   let(:order) { create(:order, user: user, store: store, currency: currency) }
@@ -28,7 +28,8 @@ describe 'API V2 Storefront Cart Spec', type: :request do
 
   describe 'cart#create' do
     let(:order) { Spree::Order.last }
-    let(:execute) { post '/api/v2/storefront/cart', headers: headers }
+    let(:params) { {} }
+    let(:execute) { post '/api/v2/storefront/cart', headers: headers, params: params }
 
     shared_examples 'creates an order' do
       before { execute }
@@ -38,17 +39,32 @@ describe 'API V2 Storefront Cart Spec', type: :request do
     end
 
     shared_examples 'creates an order with different currency' do
-      before do
-        store.default_currency = 'EUR'
-        store.save!
-        execute
+      context 'store default' do
+        before do
+          store.default_currency = 'EUR'
+          store.save!
+          execute
+        end
+
+        it_behaves_like 'returns valid cart JSON'
+        it_behaves_like 'returns 201 HTTP status'
+
+        it 'sets requested currency' do
+          expect(json_response['data']).to have_attribute(:currency).with_value('EUR')
+        end
       end
 
-      it_behaves_like 'returns valid cart JSON'
-      it_behaves_like 'returns 201 HTTP status'
+      context 'currency passed as a param' do
+        let(:params) { { currency: 'EUR' } }
 
-      it 'sets proper currency' do
-        expect(json_response['data']).to have_attribute(:currency).with_value('EUR')
+        before { execute }
+
+        it_behaves_like 'returns valid cart JSON'
+        it_behaves_like 'returns 201 HTTP status'
+
+        it 'sets requested currency' do
+          expect(json_response['data']).to have_attribute(:currency).with_value('EUR')
+        end
       end
     end
 
@@ -305,9 +321,11 @@ describe 'API V2 Storefront Cart Spec', type: :request do
   end
 
   describe 'cart#show' do
+    let(:params) { {} }
+
     shared_examples 'showing the cart' do
       before do
-        get '/api/v2/storefront/cart', headers: headers
+        get '/api/v2/storefront/cart', headers: headers, params: params
       end
 
       it_behaves_like 'returns 200 HTTP status'
@@ -341,17 +359,31 @@ describe 'API V2 Storefront Cart Spec', type: :request do
     end
 
     context 'for specified currency' do
-      before do
-        store.update!(default_currency: 'EUR')
-      end
+      context 'store default' do
+        before do
+          store.update!(default_currency: 'EUR')
+        end
 
-      context 'with matching currency' do
         include_context 'creates guest order with guest token'
 
         it_behaves_like 'showing the cart'
 
         it 'includes the same currency' do
           get '/api/v2/storefront/cart', headers: headers
+          expect(json_response['data']).to have_attribute(:currency).with_value('EUR')
+        end
+      end
+
+      context 'passed as a param' do
+        let(:currency) { 'EUR' }
+        let(:params) { { currency: currency } }
+
+        include_context 'creates guest order with guest token'
+
+        it_behaves_like 'showing the cart'
+
+        it 'includes the requested currency' do
+          get '/api/v2/storefront/cart', headers: headers, params: params
           expect(json_response['data']).to have_attribute(:currency).with_value('EUR')
         end
       end
@@ -516,9 +548,9 @@ describe 'API V2 Storefront Cart Spec', type: :request do
 
         context 'tries to remove an empty string' do
           let!(:coupon_code) { '' }
-  
+
           before { execute }
-  
+
           it 'changes the adjustment total to 0.0' do
             expect(json_response['data']).to have_attribute(:adjustment_total).with_value(0.0.to_s)
           end
@@ -527,12 +559,12 @@ describe 'API V2 Storefront Cart Spec', type: :request do
             expect(json_response['included']).not_to include(have_type('promotion'))
           end
         end
-  
+
         context 'tries to remove nil' do
           let(:coupon_code) { nil }
-  
+
           before { execute }
-  
+
           it 'changes the adjustment total to 0.0' do
             expect(json_response['data']).to have_attribute(:adjustment_total).with_value(0.0.to_s)
           end
@@ -589,7 +621,7 @@ describe 'API V2 Storefront Cart Spec', type: :request do
         context 'tries to remove an empty string' do
           let!(:coupon_code) { '' }
           before { execute }
-  
+
           it 'changes the adjustment total to 0.0' do
             expect(json_response['data']).to have_attribute(:adjustment_total).with_value(0.0.to_s)
           end
@@ -598,11 +630,11 @@ describe 'API V2 Storefront Cart Spec', type: :request do
             expect(json_response['included']).not_to include(have_type('promotion'))
           end
         end
-  
+
         context 'tries to remove nil' do
           let(:coupon_code) { nil }
           before { execute }
-  
+
           it 'changes the adjustment total to 0.0' do
             expect(json_response['data']).to have_attribute(:adjustment_total).with_value(0.0.to_s)
           end

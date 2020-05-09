@@ -1,3 +1,4 @@
+# coding: utf-8
 require 'spec_helper'
 
 describe 'Products', type: :feature do
@@ -435,6 +436,20 @@ describe 'Products', type: :feature do
           expect(page).to have_content('Name: Backpack')
           expect(page).to have_content('SKU: BAG-00001')
         end
+      end
+    end
+
+    context 'editing product compare at price', js: true do
+      let!(:product) { create(:product) }
+
+      it 'lets admin edit compare at price for product' do
+        visit spree.admin_products_path
+        within_row(1) { click_icon :edit }
+
+        fill_in 'product_compare_at_price', with: '99.99'
+        click_button 'Update'
+
+        expect(page).to have_content 'successfully updated!'
       end
     end
   end

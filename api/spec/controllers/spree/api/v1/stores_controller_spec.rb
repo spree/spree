@@ -36,6 +36,7 @@ module Spree
               'mail_from_address' => 'no-reply@example.com',
               'customer_support_email' => 'support@example.com',
               'default_currency' => 'USD',
+              'supported_currencies' => 'USD,EUR,GBP',
               'code' => store.code,
               'default' => true,
               'facebook' => 'spreecommerce',
@@ -52,6 +53,7 @@ module Spree
               'mail_from_address' => 'no-reply@example.com',
               'customer_support_email' => 'support@example.com',
               'default_currency' => 'USD',
+              'supported_currencies' => 'USD,EUR,GBP',
               'code' => non_default_store.code,
               'default' => false,
               'facebook' => 'spreecommerce',
@@ -74,6 +76,7 @@ module Spree
           'mail_from_address' => 'no-reply@example.com',
           'customer_support_email' => 'support@example.com',
           'default_currency' => 'USD',
+          'supported_currencies' => 'USD,EUR,GBP',
           'code' => store.code,
           'default' => true,
           'facebook' => 'spreecommerce',
@@ -89,7 +92,8 @@ module Spree
           url: 'spree123.example.com',
           mail_from_address: 'me@example.com',
           customer_support_email: 'sales@example.com',
-          default_currency: 'USD'
+          default_currency: 'USD',
+          supported_currencies: 'USD'
         }
         api_post :create, store: store_hash
         expect(response.status).to eq(201)

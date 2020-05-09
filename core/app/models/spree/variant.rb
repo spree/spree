@@ -217,6 +217,10 @@ module Spree
       end.sum
     end
 
+    def compare_at_price
+      price_in(cost_currency).try(:compare_at_amount)
+    end
+
     def name_and_sku
       "#{name} - #{sku}"
     end

@@ -64,7 +64,7 @@ module Spree
       :meta_keywords, :price, :sku, :deleted_at, :prototype_id,
       :option_values_hash, :weight, :height, :width, :depth,
       :shipping_category_id, :tax_category_id,
-      :cost_currency, :cost_price,
+      :cost_currency, :cost_price, :compare_at_price,
       option_type_ids: [], taxon_ids: []
     ]
 
@@ -98,7 +98,9 @@ module Spree
 
     @@store_attributes = [:name, :url, :seo_title, :code, :meta_keywords,
                           :meta_description, :default_currency, :mail_from_address,
-                          :customer_support_email, :facebook, :twitter, :instagram, :default_locale]
+                          :customer_support_email, :facebook, :twitter, :instagram,
+                          :description, :address, :contact_email, :contact_phone,
+                          :default_locale, :supported_currencies]
 
     @@store_credit_attributes = %i[amount currency category_id memo]
 
@@ -115,7 +117,7 @@ module Spree
     @@variant_attributes = [
       :name, :presentation, :cost_price, :discontinue_on, :lock_version,
       :position, :track_inventory,
-      :product_id, :product, :option_values_attributes, :price,
+      :product_id, :product, :option_values_attributes, :price, :compare_at_price,
       :weight, :height, :width, :depth, :sku, :cost_currency,
       options: [:name, :value], option_value_ids: []
     ]

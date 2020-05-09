@@ -142,7 +142,7 @@ jobs:
 
   update_staging_repository:
     docker:
-      - image: circleci/ruby:2.6.3
+      - image: circleci/ruby:2.7
     steps:
       - add_ssh_keys:
           fingerprints:
@@ -152,9 +152,11 @@ jobs:
       - run: ssh-add -D
       - run: ssh-add ~/.ssh/id_rsa_54505e4e806d2e2643c699bd39b271dc
       - run: git clone -b master git@github.com:spark-solutions/spree-designs.git
-      - run: gem install bundler -v 1.17.3
       - run:
           command: bundle update spree
+          working_directory: ~/project/spree-designs
+      - run:
+          command: bundle exec rails spree:install:migrations
           working_directory: ~/project/spree-designs
       - run:
           command: |
@@ -190,4 +192,4 @@ workflows:
           filters:
             branches:
               only:
-                - 4-1-stable
+                - master

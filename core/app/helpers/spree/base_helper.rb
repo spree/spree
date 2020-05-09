@@ -22,6 +22,13 @@ module Spree
         to_html
     end
 
+    def display_compare_at_price(product_or_variant)
+      product_or_variant.
+        price_in(current_currency).
+        display_compare_at_price_including_vat_for(current_price_options).
+        to_html
+    end
+
     def link_to_tracking(shipment, options = {})
       return unless shipment.tracking && shipment.shipping_method
 
@@ -111,9 +118,7 @@ module Spree
     # we should always try to render image of the default variant
     # same as it's done on PDP
     def default_image_for_product(product)
-      if product.images.any?
-        product.images.first
-      elsif product.default_variant.images.any?
+      if product.default_variant.images.any?
         product.default_variant.images.first
       elsif product.variant_images.any?
         product.variant_images.first
