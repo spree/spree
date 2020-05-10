@@ -41,9 +41,8 @@ function CartForm($, $cartForm) {
   this.initializeForm = function() {
     if (urlParams.has('variant')) {
       this.getVariantOptionsById(variantIdFromUrl)
-      list = this.selectedOptions
-      list.sort((a, b) => (a.dataset.optionTypeIndex > b.dataset.optionTypeIndex) ? 1 : -1)
-      this.clickListOptions(list)
+      this.selectedOptions.sort((a, b) => (a.dataset.optionTypeIndex > b.dataset.optionTypeIndex) ? 1 : -1)
+      this.clickListOptions(this.selectedOptions)
     } else {
       if (this.withOptionValues) {
         var $optionValue = this.firstCheckedOptionValue()
@@ -56,21 +55,21 @@ function CartForm($, $cartForm) {
   }
 
   this.getVariantOptionsById = function(variantIdFromUrl) {
-    for (const v of variants) {
+    for (const v of this.variants) {
       if (parseInt(v.id) === parseInt(variantIdFromUrl)) {
         this.sortOptionValues(v.option_values);
       }
     }
   }
 
-  this.sortOptionValues = function(option_vals) {
+  this.sortOptionValues = function(optVals) {
     const container = document.querySelector(OPTIONS_CONTAINER);
     const target = container.querySelectorAll(OPTION_VALUE_SELECTOR);
-    option_vals.forEach(buidArray)
+    optVals.forEach(buidArray)
 
     function buidArray(item, index) {
       for (const t of target) {
-        if (parseInt(t.value) === item.id && t.dataset.presentation === item.presentation){
+        if (parseInt(t.value) === item.id && t.dataset.presentation === item.presentation) {
           this.selectedOptions.push(t)
         }
       }
@@ -80,10 +79,10 @@ function CartForm($, $cartForm) {
   this.clickListOptions = function(list) {
     list.forEach(myFunction)
     function myFunction(item, index) {
-        item.click()
-        var $t = $(item)
-        this.applyCheckedOptionValue($t)
-        item.click()
+      item.click()
+      var $t = $(item)
+      this.applyCheckedOptionValue($t)
+      item.click()
     }
   }
 
