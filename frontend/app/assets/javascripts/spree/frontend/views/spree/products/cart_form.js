@@ -25,6 +25,7 @@ function CartForm($, $cartForm) {
   }
 
   this.initialize = function() {
+    this.selectedOptions = []
     this.selectedOptionValueIds = []
     this.variants = JSON.parse($cartForm.attr('data-variants'))
     this.withOptionValues = Boolean($cartForm.find(OPTION_VALUE_SELECTOR).length)
@@ -34,32 +35,29 @@ function CartForm($, $cartForm) {
     this.$compareAtPrice = $cartForm.find('.compare-at-price')
     this.$variantIdInput = $cartForm.find(VARIANT_ID_SELECTOR)
 
-    this.setSpecificVariant()
-  }
-
-  this.setSpecificVariant = function() {
-      this.getVariantOptionsById(variantIdFromUrl)
+    this.initializeForm()
   }
 
   this.initializeForm = function() {
-    if (this.withOptionValues) {
-      var $optionValue = this.firstCheckedOptionValue()
-      this.applyCheckedOptionValue($optionValue, true)
-    } else {
-      this.updateAddToCart()
-      this.triggerVariantImages()
-    }
-
     if (urlParams.has('variant')) {
-      const container = document.querySelector(OPTIONS_CONTAINER);
-      const target = container.querySelectorAll(OPTION_VALUE_SELECTOR);
       this.getVariantOptionsById(variantIdFromUrl)
+      list = this.selectedOptions
+      list.sort((a, b) => (a.dataset.optionTypeIndex > b.dataset.optionTypeIndex) ? 1 : -1)
+      this.clickListOptions(list)
+    } else {
+      if (this.withOptionValues) {
+        var $optionValue = this.firstCheckedOptionValue()
+        this.applyCheckedOptionValue($optionValue, true)
+      } else {
+        this.updateAddToCart()
+        this.triggerVariantImages()
+      }
     }
   }
 
   this.getVariantOptionsById = function(variantIdFromUrl) {
     for (const v of variants) {
-      if (v.id == variantIdFromUrl) {
+      if (parseInt(v.id) === parseInt(variantIdFromUrl)) {
         sortOptionValues(v.option_values);
       }
     }
@@ -67,18 +65,27 @@ function CartForm($, $cartForm) {
 
   this.sortOptionValues = function(option_vals) {
     for (const [index, ov] of option_vals.entries()) {
-      checkRequestedParams(index, ov.id, ov.presentation);
+      checkRequestedParams(ov.id, ov.presentation);
     }
   }
 
-  this.checkRequestedParams = function(index, option_value_id, option_value_presentation) {
-    for (const t of target) {
-      if ((index == t.dataset.optionTypeIndex) && (t.value == option_value_id) && (t.dataset.presentation == option_value_presentation)) {
-        t.click()
-        var $t = $(t);
-        this.handleOptionValueFromUrlQueryClicks($t)
-        t.click()
+  this.checkRequestedParams = function(option_value_id, option_value_presentation) {
+    const container = document.querySelector(OPTIONS_CONTAINER);
+    const target = container.querySelectorAll(OPTION_VALUE_SELECTOR);
+      for (const t of target) {
+        if (parseInt(t.value) === option_value_id && t.dataset.presentation === option_value_presentation){
+          this.selectedOptions.push(t)
+        }
       }
+  }
+
+  this.clickListOptions = function(list) {
+    list.forEach(myFunction)
+    function myFunction(item, index) {
+        item.click()
+        var $t = $(item);
+        this.handleOptionValueFromUrlQueryClicks($t)
+        item.click()
     }
   }
 
@@ -279,6 +286,7 @@ function CartForm($, $cartForm) {
 
     this.$variantIdInput.val(variantId)
   }
+
   this.constructor()
 }
 
@@ -307,7 +315,8 @@ Spree.ready(function($) {
         variantId,
         quantity,
         {}, // options hash - you can pass additional parameters here, your backend
-// needs to be aware of those, see API docs: https://github.com/spree/spree/blob/master/api/docs/v2/storefront/index.yaml#L42
+        // needs to be aware of those, see API docs:
+        // https://github.com/spree/spree/blob/master/api/docs/v2/storefront/index.yaml#L42
         function(response) {
           $addToCart.prop('disabled', false)
           Spree.fetchCart()
