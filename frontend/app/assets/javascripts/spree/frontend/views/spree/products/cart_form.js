@@ -29,7 +29,6 @@ function CartForm($, $cartForm) {
     this.selectedOptionValueIds = []
     this.variants = JSON.parse($cartForm.attr('data-variants'))
     this.withOptionValues = Boolean($cartForm.find(OPTION_VALUE_SELECTOR).length)
-
     this.$addToCart = $cartForm.find(ADD_TO_CART_SELECTOR)
     this.$price = $cartForm.find('.price.selling')
     this.$compareAtPrice = $cartForm.find('.compare-at-price')
@@ -43,6 +42,7 @@ function CartForm($, $cartForm) {
       this.getVariantOptionsById(variantIdFromUrl)
       this.selectedOptions.sort((a, b) => (a.dataset.optionTypeIndex > b.dataset.optionTypeIndex) ? 1 : -1)
       this.clickListOptions(this.selectedOptions)
+      this.updateStructuredData()
     } else {
       if (this.withOptionValues) {
         var $optionValue = this.firstCheckedOptionValue()
@@ -84,6 +84,22 @@ function CartForm($, $cartForm) {
       this.applyCheckedOptionValue($t)
       item.click()
     }
+  }
+
+  this.updateStructuredData = function() {
+    const variant = this.selectedVariant()
+    const host = window.location.host;
+    const script = document.getElementById("productJsonId");
+    const obj = JSON.parse(script.firstChild.nodeValue);
+    const firstLayer = obj[0]
+    const offers = obj[0].offers
+
+    firstLayer.sku = variant.sku
+    firstLayer.image = host + variant.images[0].url_product
+    firstLayer.url = window.location.href
+    offers.url = window.location.href
+    offers.price = variant.display_price
+    script.firstChild.nodeValue = JSON.stringify(obj);
   }
 
   this.bindEventHandlers = function() {
@@ -268,7 +284,6 @@ function CartForm($, $cartForm) {
     var shouldDisplayCompareAtPrice = variant.should_display_compare_at_price
 
     this.$price.html(variant.display_price)
-
     var compareAtPriceContent = shouldDisplayCompareAtPrice ? '<span class="mr-3">' + variant.display_compare_at_price + '</span>' : ''
     this.$compareAtPrice.html(compareAtPriceContent)
   }
@@ -276,7 +291,6 @@ function CartForm($, $cartForm) {
   this.updateVariantId = function() {
     var variant = this.selectedVariant()
     var variantId = (variant && variant.id) || ''
-
     this.$variantIdInput.val(variantId)
   }
   this.constructor()
