@@ -78,8 +78,9 @@ function CartForm($, $cartForm) {
   }
 
   this.clickListOptions = function(list) {
-    list.forEach(myFunction)
-    function myFunction(item, index) {
+    list.forEach(selectOpts)
+
+    function selectOpts(item, index) {
       item.click()
       var $t = $(item)
       this.applyCheckedOptionValue($t)
