@@ -58,33 +58,31 @@ function CartForm($, $cartForm) {
   this.getVariantOptionsById = function(variantIdFromUrl) {
     for (const v of variants) {
       if (parseInt(v.id) === parseInt(variantIdFromUrl)) {
-        sortOptionValues(v.option_values);
+        this.sortOptionValues(v.option_values);
       }
     }
   }
 
   this.sortOptionValues = function(option_vals) {
-    for (const [index, ov] of option_vals.entries()) {
-      checkRequestedParams(ov.id, ov.presentation);
-    }
-  }
-
-  this.checkRequestedParams = function(option_value_id, option_value_presentation) {
     const container = document.querySelector(OPTIONS_CONTAINER);
     const target = container.querySelectorAll(OPTION_VALUE_SELECTOR);
+    option_vals.forEach(buidArray)
+
+    function buidArray(item, index) {
       for (const t of target) {
-        if (parseInt(t.value) === option_value_id && t.dataset.presentation === option_value_presentation){
+        if (parseInt(t.value) === item.id && t.dataset.presentation === item.presentation){
           this.selectedOptions.push(t)
         }
       }
+    }
   }
 
   this.clickListOptions = function(list) {
     list.forEach(myFunction)
     function myFunction(item, index) {
         item.click()
-        var $t = $(item);
-        this.handleOptionValueFromUrlQueryClicks($t)
+        var $t = $(item)
+        this.applyCheckedOptionValue($t)
         item.click()
     }
   }
@@ -92,10 +90,6 @@ function CartForm($, $cartForm) {
   this.bindEventHandlers = function() {
     $cartForm.on('click', OPTION_VALUE_SELECTOR, this.handleOptionValueClick)
   }
-
-  this.handleOptionValueFromUrlQueryClicks = function($event) {
-    this.applyCheckedOptionValue($event)
-  }.bind(this)
 
   this.handleOptionValueClick = function(event) {
     this.applyCheckedOptionValue($(event.currentTarget))
@@ -286,7 +280,6 @@ function CartForm($, $cartForm) {
 
     this.$variantIdInput.val(variantId)
   }
-
   this.constructor()
 }
 
