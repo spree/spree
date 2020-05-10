@@ -29,6 +29,7 @@ function CartForm($, $cartForm) {
     this.selectedOptionValueIds = []
     this.variants = JSON.parse($cartForm.attr('data-variants'))
     this.withOptionValues = Boolean($cartForm.find(OPTION_VALUE_SELECTOR).length)
+    
     this.$addToCart = $cartForm.find(ADD_TO_CART_SELECTOR)
     this.$price = $cartForm.find('.price.selling')
     this.$compareAtPrice = $cartForm.find('.compare-at-price')
@@ -82,7 +83,6 @@ function CartForm($, $cartForm) {
       item.click()
       var $t = $(item)
       this.applyCheckedOptionValue($t)
-      item.click()
     }
   }
 
@@ -297,6 +297,7 @@ function CartForm($, $cartForm) {
     var shouldDisplayCompareAtPrice = variant.should_display_compare_at_price
 
     this.$price.html(variant.display_price)
+
     var compareAtPriceContent = shouldDisplayCompareAtPrice ? '<span class="mr-3">' + variant.display_compare_at_price + '</span>' : ''
     this.$compareAtPrice.html(compareAtPriceContent)
   }
@@ -304,8 +305,10 @@ function CartForm($, $cartForm) {
   this.updateVariantId = function() {
     var variant = this.selectedVariant()
     var variantId = (variant && variant.id) || ''
+
     this.$variantIdInput.val(variantId)
   }
+
   this.constructor()
 }
 
