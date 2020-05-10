@@ -90,7 +90,7 @@ function CartForm($, $cartForm) {
     const variant = this.selectedVariant()
     console.log(variant);
     const host = window.location.host;
-    const script = document.getElementById('productJsonId');
+    const script = document.getElementById('productStructuredData');
     const obj = JSON.parse(script.firstChild.nodeValue);
     const firstLayer = obj[0]
     const offers = obj[0].offers
