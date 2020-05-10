@@ -89,7 +89,7 @@ function CartForm($, $cartForm) {
   this.updateStructuredData = function() {
     const variant = this.selectedVariant()
     const host = window.location.host;
-    const script = document.getElementById("productJsonId");
+    const script = document.getElementById('productJsonId');
     const obj = JSON.parse(script.firstChild.nodeValue);
     const firstLayer = obj[0]
     const offers = obj[0].offers
