@@ -88,7 +88,6 @@ function CartForm($, $cartForm) {
 
   this.updateStructuredData = function() {
     const variant = this.selectedVariant()
-    console.log(variant);
     const host = window.location.host;
     const script = document.getElementById('productStructuredData');
     const obj = JSON.parse(script.firstChild.nodeValue);
@@ -102,14 +101,14 @@ function CartForm($, $cartForm) {
     }
 
     if (variant.sku.length) {
-      firstLayer.sku = variant.skus
+      firstLayer.sku = variant.sku
     }
 
     firstLayer.url = window.location.href
-    offers.url = 'window.location.href'
+    offers.url = window.location.href
     offers.price = variant.display_price
 
-    if (Array.isArray(variant.images && !variant.images.length)) {
+    if (Array.isArray(variant.images) && (variant.images.length)) {
       firstLayer.image = host + variant.images[0].url_product
     }
 
