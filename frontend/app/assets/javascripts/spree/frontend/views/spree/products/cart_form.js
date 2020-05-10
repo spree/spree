@@ -88,17 +88,31 @@ function CartForm($, $cartForm) {
 
   this.updateStructuredData = function() {
     const variant = this.selectedVariant()
+    console.log(variant);
     const host = window.location.host;
     const script = document.getElementById('productJsonId');
     const obj = JSON.parse(script.firstChild.nodeValue);
     const firstLayer = obj[0]
     const offers = obj[0].offers
 
-    firstLayer.sku = variant.sku
-    firstLayer.image = host + variant.images[0].url_product
+    if (variant.purchasable) {
+      offers.availability = 'InStock'
+    } else {
+      offers.availability = 'OutOfStock'
+    }
+
+    if (variant.sku.length) {
+      firstLayer.sku = variant.skus
+    }
+
     firstLayer.url = window.location.href
-    offers.url = window.location.href
+    offers.url = 'window.location.href'
     offers.price = variant.display_price
+
+    if (Array.isArray(variant.images && !variant.images.length)) {
+      firstLayer.image = host + variant.images[0].url_product
+    }
+
     script.firstChild.nodeValue = JSON.stringify(obj);
   }
 
