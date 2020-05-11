@@ -17,7 +17,6 @@ module Spree
         {
           '@context': 'https://schema.org/',
           '@type': 'Product',
-          '@id': "product_id_#{product.default_variant.id}",
           url: spree.product_url(product),
           name: product.name,
           image: structured_images(product),

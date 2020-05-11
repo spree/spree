@@ -95,7 +95,7 @@ function CartForm($, $cartForm) {
     const firstLayer = obj[0]
     const offers = obj[0].offers
 
-    firstLayer['@id'] = 'product_id_' + variant.id
+    // firstLayer['@id'] = 'product_id_' + variant.id
 
     if (variant.purchasable) {
       offers.availability = 'InStock'
