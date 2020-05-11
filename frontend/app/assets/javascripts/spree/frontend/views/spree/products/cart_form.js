@@ -33,15 +33,15 @@ function CartForm($, $cartForm) {
     this.$variantIdInput = $cartForm.find(VARIANT_ID_SELECTOR)
 
     if (urlParams.has('variant')) {
-        for (const varinat of this.variants) {
-          if (parseInt(varinat.id) === parseInt(variantIdFromUrl)) {
-            this.setSelectedVariantFromUrl()
-          } else {
-            this.initializeForm()
-          }
+      for (const varinat of this.variants) {
+        if (parseInt(varinat.id) === parseInt(variantIdFromUrl)) {
+          this.setSelectedVariantFromUrl()
+        } else {
+          this.initializeForm()
         }
-      } else {
-        this.initializeForm()
+      }
+    } else {
+      this.initializeForm()
     }
   }
 
