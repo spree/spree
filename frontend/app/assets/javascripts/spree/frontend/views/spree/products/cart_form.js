@@ -2,7 +2,7 @@
 //= require ../shared/product_added_modal
 //= require ../shared/variant_select
 
-/* global urlParams */
+/* global urlParams variantIdFromUrl */
 
 var ADD_TO_CART_FORM_SELECTOR = '.add-to-cart-form'
 var VARIANT_ID_SELECTOR = '[name="variant_id"]'
@@ -33,9 +33,15 @@ function CartForm($, $cartForm) {
     this.$variantIdInput = $cartForm.find(VARIANT_ID_SELECTOR)
 
     if (urlParams.has('variant')) {
-      this.setSelectedVariantFromUrl()
-    } else {
-      this.initializeForm()
+        for (const varinat of this.variants) {
+          if (parseInt(varinat.id) === parseInt(variantIdFromUrl)) {
+            this.setSelectedVariantFromUrl()
+          } else {
+            this.initializeForm()
+          }
+        }
+      } else {
+        this.initializeForm()
     }
   }
 
