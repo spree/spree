@@ -19,16 +19,16 @@ this.getVariantOptionsById = function(variantIdFromUrl) {
 }
 
 this.sortOptionValues = function(optVals) {
+  optVals.forEach(buidArray)
+}
+
+function buidArray(item) {
   const container = document.querySelector('ul#product-variants')
   const target = container.querySelectorAll('.product-variants-variant-values-radio')
 
-  optVals.forEach(buidArray)
-
-  function buidArray(item) {
-    for (const inputTag of target) {
-      if (parseInt(inputTag.value) === item.id && inputTag.dataset.presentation === item.presentation) {
-        this.selectedOptions.push(inputTag)
-      }
+  for (const inputTag of target) {
+    if (parseInt(inputTag.value) === item.id && inputTag.dataset.presentation === item.presentation) {
+      this.selectedOptions.push(inputTag)
     }
   }
 }
