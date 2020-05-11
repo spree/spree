@@ -39,7 +39,7 @@ function CartForm($, $cartForm) {
       }
     }
 
-    if (urlParams.has('variant') && queryMatched == true) {
+    if (urlParams.has('variant') && queryMatched === true) {
       this.setSelectedVariantFromUrl()
     } else {
       this.initializeForm()
