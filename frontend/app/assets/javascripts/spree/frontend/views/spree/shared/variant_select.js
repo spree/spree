@@ -2,8 +2,8 @@
 
 var OPTIONS_CONTAINER = 'ul#product-variants'
 
-let getQueryString = window.location.search;
-let urlParams = new URLSearchParams(getQueryString);
+let getQueryString = window.location.search
+let urlParams = new URLSearchParams(getQueryString)
 let variantIdFromUrl = urlParams.get('variant')
 
 this.setSelectedVariantFromUrl = function () {
@@ -17,14 +17,15 @@ this.setSelectedVariantFromUrl = function () {
 this.getVariantOptionsById = function(variantIdFromUrl) {
   for (const v of this.variants) {
     if (parseInt(v.id) === parseInt(variantIdFromUrl)) {
-      this.sortOptionValues(v.option_values);
+      this.sortOptionValues(v.option_values)
     }
   }
 }
 
 this.sortOptionValues = function(optVals) {
-  const container = document.querySelector(OPTIONS_CONTAINER);
-  const target = container.querySelectorAll(OPTION_VALUE_SELECTOR);
+
+  const container = document.querySelector(OPTIONS_CONTAINER)
+  const target = container.querySelectorAll(OPTION_VALUE_SELECTOR)
 
   optVals.forEach(buidArray)
 
@@ -49,9 +50,9 @@ this.clickListOptions = function(list) {
 
 this.updateStructuredData = function() {
   const variant = this.selectedVariant()
-  const host = window.location.host;
-  const script = document.getElementById('productStructuredData');
-  const obj = JSON.parse(script.firstChild.nodeValue);
+  const host = window.location.host
+  const script = document.getElementById('productStructuredData')
+  const obj = JSON.parse(script.firstChild.nodeValue)
   const firstLayer = obj[0]
   const offers = obj[0].offers
 
@@ -73,5 +74,5 @@ this.updateStructuredData = function() {
     firstLayer.image = host + variant.images[0].url_product
   }
 
-  script.firstChild.nodeValue = JSON.stringify(obj);
+  script.firstChild.nodeValue = JSON.stringify(obj)
 }
