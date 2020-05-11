@@ -6,6 +6,14 @@ let getQueryString = window.location.search;
 let urlParams = new URLSearchParams(getQueryString);
 let variantIdFromUrl = urlParams.get('variant')
 
+this.setSelectedVariantFromUrl = function () {
+  this.selectedOptions = []
+  this.getVariantOptionsById(variantIdFromUrl)
+  this.selectedOptions.sort((a, b) => (a.dataset.optionTypeIndex > b.dataset.optionTypeIndex) ? 1 : -1)
+  this.clickListOptions(this.selectedOptions)
+  this.updateStructuredData()
+}
+
 this.getVariantOptionsById = function(variantIdFromUrl) {
   for (const v of this.variants) {
     if (parseInt(v.id) === parseInt(variantIdFromUrl)) {
@@ -14,22 +22,16 @@ this.getVariantOptionsById = function(variantIdFromUrl) {
   }
 }
 
-this.setSelectedVariantFromUrl = function () {
-  this.getVariantOptionsById(variantIdFromUrl)
-  this.selectedOptions.sort((a, b) => (a.dataset.optionTypeIndex > b.dataset.optionTypeIndex) ? 1 : -1)
-  this.clickListOptions(this.selectedOptions)
-  this.updateStructuredData()
-}
-
 this.sortOptionValues = function(optVals) {
   const container = document.querySelector(OPTIONS_CONTAINER);
   const target = container.querySelectorAll(OPTION_VALUE_SELECTOR);
+
   optVals.forEach(buidArray)
 
-  function buidArray(item, index) {
-    for (const t of target) {
-      if (parseInt(t.value) === item.id && t.dataset.presentation === item.presentation) {
-        this.selectedOptions.push(t)
+  function buidArray(item) {
+    for (const inputTag of target) {
+      if (parseInt(inputTag.value) === item.id && inputTag.dataset.presentation === item.presentation) {
+        this.selectedOptions.push(inputTag)
       }
     }
   }

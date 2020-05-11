@@ -23,7 +23,6 @@ function CartForm($, $cartForm) {
   }
 
   this.initialize = function() {
-    this.selectedOptions = []
     this.selectedOptionValueIds = []
     this.variants = JSON.parse($cartForm.attr('data-variants'))
     this.withOptionValues = Boolean($cartForm.find(OPTION_VALUE_SELECTOR).length)
