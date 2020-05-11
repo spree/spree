@@ -4,7 +4,7 @@ module Spree
       class TaxonSerializer < BaseSerializer
         set_type   :taxon
 
-        attributes :name, :pretty_name, :permalink, :seo_title, :meta_title, :meta_description,
+        attributes :name, :pretty_name, :permalink, :seo_title, :description, :meta_title, :meta_description,
                    :meta_keywords, :left, :right, :position, :depth, :updated_at
 
         attribute :is_root,  &:root?
