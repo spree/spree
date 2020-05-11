@@ -31,15 +31,16 @@ function CartForm($, $cartForm) {
     this.$price = $cartForm.find('.price.selling')
     this.$compareAtPrice = $cartForm.find('.compare-at-price')
     this.$variantIdInput = $cartForm.find(VARIANT_ID_SELECTOR)
+    let queryMatched = false
 
-    if (urlParams.has('variant')) {
-      for (const varinat of this.variants) {
-        if (parseInt(varinat.id) === parseInt(variantIdFromUrl)) {
-          this.setSelectedVariantFromUrl()
-        } else {
-          this.initializeForm()
-        }
+    for (const variant of this.variants) {
+      if (parseInt(variant.id) === parseInt(variantIdFromUrl)) {
+        queryMatched = true
       }
+    }
+
+    if (urlParams.has('variant') && queryMatched == true) {
+      this.setSelectedVariantFromUrl()
     } else {
       this.initializeForm()
     }
