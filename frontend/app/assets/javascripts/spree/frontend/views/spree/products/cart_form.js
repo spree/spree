@@ -2,8 +2,6 @@
 //= require ../shared/product_added_modal
 //= require ../shared/variant_select
 
-/* global queryMatchFound */
-
 var ADD_TO_CART_FORM_SELECTOR = '.add-to-cart-form'
 var VARIANT_ID_SELECTOR = '[name="variant_id"]'
 var OPTION_VALUE_SELECTOR = '.product-variants-variant-values-radio'
@@ -23,6 +21,7 @@ function CartForm($, $cartForm) {
   }
 
   this.initialize = function() {
+    this.urlQueryMatchFound = false
     this.selectedOptionValueIds = []
     this.variants = JSON.parse($cartForm.attr('data-variants'))
     this.withOptionValues = Boolean($cartForm.find(OPTION_VALUE_SELECTOR).length)
@@ -33,7 +32,7 @@ function CartForm($, $cartForm) {
 
     this.initializeQueryParamsCheck()
 
-    if (queryMatchFound) {
+    if (this.urlQueryMatchFound) {
       this.setSelectedVariantFromUrl()
     } else {
       this.initializeForm()
