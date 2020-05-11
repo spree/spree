@@ -32,12 +32,12 @@ module Spree
         products = ordered(products)
 
         products.distinct
-
       end
 
       private
 
-      attr_reader :ids, :skus, :price, :currency, :taxons, :concat_taxons, :name, :options, :option_value_ids, :scope, :sort_by, :deleted, :discontinued
+      attr_reader :ids, :skus, :price, :currency, :taxons, :concat_taxons, :name, :options,
+                  :option_value_ids, :scope, :sort_by, :deleted, :discontinued
 
       def ids?
         ids.present?
