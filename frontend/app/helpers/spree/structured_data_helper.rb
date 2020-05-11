@@ -1,7 +1,7 @@
 module Spree
   module StructuredDataHelper
     def products_structured_data(products)
-      content_tag :script, type: 'application/ld+json' do
+      content_tag :script, id: 'productStructuredData', type: 'application/ld+json' do
         raw(
           products.map do |product|
             structured_product_hash(product)
