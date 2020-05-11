@@ -1,3 +1,5 @@
+/* global OPTION_VALUE_SELECTOR */
+
 var OPTIONS_CONTAINER = 'ul#product-variants'
 
 let getQueryString = window.location.search;
