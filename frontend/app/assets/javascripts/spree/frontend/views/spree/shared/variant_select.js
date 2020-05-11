@@ -1,3 +1,5 @@
+var OPTIONS_CONTAINER = 'ul#product-variants'
+
 let getQueryString = window.location.search;
 let urlParams = new URLSearchParams(getQueryString);
 let variantIdFromUrl = urlParams.get('variant')

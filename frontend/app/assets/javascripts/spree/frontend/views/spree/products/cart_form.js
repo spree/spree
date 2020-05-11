@@ -2,7 +2,6 @@
 //= require ../shared/product_added_modal
 //= require ../shared/variant_select
 
-var OPTIONS_CONTAINER = 'ul#product-variants'
 var ADD_TO_CART_FORM_SELECTOR = '.add-to-cart-form'
 var VARIANT_ID_SELECTOR = '[name="variant_id"]'
 var OPTION_VALUE_SELECTOR = '.product-variants-variant-values-radio'
@@ -37,7 +36,6 @@ function CartForm($, $cartForm) {
     } else {
       this.initializeForm()
     }
-
   }
 
   this.initializeForm = function() {
