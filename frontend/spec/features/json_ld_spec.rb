@@ -17,7 +17,6 @@ describe 'JSON-LD hashes', type: :feature, inaccessible: true do
       pairs.each do |product, serialized_product|
         expect(serialized_product['@context']).to eq 'https://schema.org/'
         expect(serialized_product['@type']).to eq 'Product'
-        expect(serialized_product['@id']).to eq "http://www.example.com/product_#{product.id}"
         expect(serialized_product['url']).to eq "http://www.example.com/products/#{product.slug}"
         expect(serialized_product['image']).to eq ''
         expect(serialized_product['description']).to eq product.description
