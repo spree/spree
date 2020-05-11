@@ -1,6 +1,17 @@
 let getQueryString = window.location.search
 let urlParams = new URLSearchParams(getQueryString)
 let variantIdFromUrl = urlParams.get('variant')
+let queryMatchFound = false
+
+this.initializeQueryParamsCheck = function () {
+  if (urlParams.has('variant')) {
+    for (const variant of this.variants) {
+      if (parseInt(variant.id) === parseInt(variantIdFromUrl)) {
+        queryMatchFound = true
+      }
+    }
+  }
+}
 
 this.setSelectedVariantFromUrl = function () {
   this.selectedOptions = []
