@@ -2,7 +2,7 @@
 //= require ../shared/product_added_modal
 //= require ../shared/variant_select
 
-/* global urlParams variantIdFromUrl */
+/* global queryMatchFound */
 
 var ADD_TO_CART_FORM_SELECTOR = '.add-to-cart-form'
 var VARIANT_ID_SELECTOR = '[name="variant_id"]'
