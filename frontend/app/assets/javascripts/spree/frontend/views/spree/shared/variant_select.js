@@ -1,5 +1,3 @@
-/* global OPTION_VALUE_SELECTOR */
-
 var OPTIONS_CONTAINER = 'ul#product-variants'
 
 let getQueryString = window.location.search
@@ -23,9 +21,8 @@ this.getVariantOptionsById = function(variantIdFromUrl) {
 }
 
 this.sortOptionValues = function(optVals) {
-
   const container = document.querySelector(OPTIONS_CONTAINER)
-  const target = container.querySelectorAll(OPTION_VALUE_SELECTOR)
+  const target = container.querySelectorAll('.product-variants-variant-values-radio')
 
   optVals.forEach(buidArray)
 
