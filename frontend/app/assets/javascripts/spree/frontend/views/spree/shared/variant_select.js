@@ -1,4 +1,4 @@
-/* exported queryMatchFound */
+/* global queryMatchFound */
 
 let getQueryString = window.location.search
 let urlParams = new URLSearchParams(getQueryString)
