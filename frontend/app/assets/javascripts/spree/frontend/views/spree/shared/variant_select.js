@@ -43,7 +43,9 @@ function buildArray(item) {
 }
 
 this.sortArrayByOptionTypeIndex = function (arrayOfOptions) {
-  arrayOfOptions.sort((a, b) => (a.dataset.optionTypeIndex > b.dataset.optionTypeIndex) ? 1 : -1)
+  arrayOfOptions.sort(function (a, b) {
+    return a.dataset.optionTypeIndex > b.dataset.optionTypeIndex ? 1 : -1;
+  })
 }
 
 this.clickListOptions = function(list) {
