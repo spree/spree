@@ -1,35 +1,30 @@
-let getQueryString = window.location.search
-let urlParams = new URLSearchParams(getQueryString)
-let variantIdFromUrl = urlParams.get('variant')
+var getQueryString = window.location.search
+var urlParams = new URLSearchParams(getQueryString)
+var variantIdFromUrl = urlParams.get('variant')
 
 this.initializeQueryParamsCheck = function () {
-  if (urlParams.has('variant')) {
-    this.variants.forEach(verifyVariantID)
-  }
+  if (urlParams.has('variant')) verifyVariantIdMatch()
 }
 
-function verifyVariantID() {
-  for (const variant of this.variants) {
-    if (parseInt(variant.id) === parseInt(variantIdFromUrl)) {
-      this.urlQueryMatchFound = true
-    }
-  }
+function verifyVariantIdMatch() {
+  this.variants.forEach(function(variant){
+    if (parseInt(variant.id) === parseInt(variantIdFromUrl)) this.urlQueryMatchFound = true
+  })
 }
 
 this.setSelectedVariantFromUrl = function () {
   this.selectedOptions = []
+
   this.getVariantOptionsById(variantIdFromUrl)
-  this.selectedOptions.sort((a, b) => (a.dataset.optionTypeIndex > b.dataset.optionTypeIndex) ? 1 : -1)
+  this.sortArrayByOptionTypeIndex(this.selectedOptions)
   this.clickListOptions(this.selectedOptions)
   this.updateStructuredData()
 }
 
 this.getVariantOptionsById = function(variantIdFromUrl) {
-  for (const v of this.variants) {
-    if (parseInt(v.id) === parseInt(variantIdFromUrl)) {
-      this.sortOptionValues(v.option_values)
-    }
-  }
+  this.variants.forEach(function(variant){
+    if (parseInt(variant.id) === parseInt(variantIdFromUrl)) this.sortOptionValues(variant.option_values)
+  })
 }
 
 this.sortOptionValues = function(optVals) {
@@ -37,33 +32,35 @@ this.sortOptionValues = function(optVals) {
 }
 
 function buildArray(item) {
-  const container = document.querySelector('ul#product-variants')
-  const target = container.querySelectorAll('.product-variants-variant-values-radio')
+  var container = document.querySelector('ul#product-variants')
+  var target = container.querySelectorAll('.product-variants-variant-values-radio')
 
-  for (const inputTag of target) {
+  target.forEach(function(inputTag){
     if (parseInt(inputTag.value) === item.id && inputTag.dataset.presentation === item.presentation) {
       this.selectedOptions.push(inputTag)
     }
-  }
+  })
+}
+
+this.sortArrayByOptionTypeIndex = function (arrayOfOptions) {
+  arrayOfOptions.sort((a, b) => (a.dataset.optionTypeIndex > b.dataset.optionTypeIndex) ? 1 : -1)
 }
 
 this.clickListOptions = function(list) {
-  list.forEach(selectOpts)
-
-  function selectOpts(item, index) {
+  list.forEach(function (item) {
     item.click()
     var $optionListItem = $(item)
     this.applyCheckedOptionValue($optionListItem)
-  }
+  })
 }
 
 this.updateStructuredData = function() {
-  const variant = this.selectedVariant()
-  const host = window.location.host
-  const script = document.getElementById('productStructuredData')
-  const obj = JSON.parse(script.firstChild.nodeValue)
-  const firstLayer = obj[0]
-  const offers = obj[0].offers
+  var variant = this.selectedVariant()
+  var host = window.location.host
+  var script = document.getElementById('productStructuredData')
+  var obj = JSON.parse(script.firstChild.nodeValue)
+  var firstLayer = obj[0]
+  var offers = obj[0].offers
 
   if (variant.purchasable) {
     offers.availability = 'InStock'
