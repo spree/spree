@@ -50,7 +50,7 @@ this.sortArrayByOptionTypeIndex = function (arrayOfOptions) {
 
 this.clickListOptions = function(list) {
   list.forEach(function (item) {
-    item.click()
+    item.checked = true
     var $optionListItem = $(item)
     this.applyCheckedOptionValue($optionListItem)
   })
