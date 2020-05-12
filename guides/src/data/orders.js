@@ -1,4 +1,4 @@
-import ORDER from './orders'
+import ORDER from './order'
 
 export default {
   orders: [ORDER],
