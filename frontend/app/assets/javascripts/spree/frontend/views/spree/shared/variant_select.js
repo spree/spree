@@ -4,11 +4,11 @@ let variantIdFromUrl = urlParams.get('variant')
 
 this.initializeQueryParamsCheck = function () {
   if (urlParams.has('variant')) {
-    this.variants.forEach(varifyVariantID)
+    this.variants.forEach(verifyVariantID)
   }
 }
 
-function varifyVariantID() {
+function verifyVariantID() {
   for (const variant of this.variants) {
     if (parseInt(variant.id) === parseInt(variantIdFromUrl)) {
       this.urlQueryMatchFound = true
@@ -33,10 +33,10 @@ this.getVariantOptionsById = function(variantIdFromUrl) {
 }
 
 this.sortOptionValues = function(optVals) {
-  optVals.forEach(buidArray)
+  optVals.forEach(buildArray)
 }
 
-function buidArray(item) {
+function buildArray(item) {
   const container = document.querySelector('ul#product-variants')
   const target = container.querySelectorAll('.product-variants-variant-values-radio')
 
@@ -52,8 +52,8 @@ this.clickListOptions = function(list) {
 
   function selectOpts(item, index) {
     item.click()
-    var $t = $(item)
-    this.applyCheckedOptionValue($t)
+    var $optionListItem = $(item)
+    this.applyCheckedOptionValue($optionListItem)
   }
 }
 
