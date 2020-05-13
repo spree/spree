@@ -29,7 +29,7 @@ module Spree
       def supported_currencies_for_all_stores
         @supported_currencies_for_all_stores = begin
           (
-            Spree::Store.pluck(:supported_currencies).map { |c| c.split(',') }.flatten + Spree::Store.pluck(:default_currency)
+            Spree::Store.pluck(:supported_currencies).map { |c| c&.split(',') }.flatten + Spree::Store.pluck(:default_currency)
           ).
             compact.uniq.map { |code| ::Money::Currency.find(code.strip) }
         end
