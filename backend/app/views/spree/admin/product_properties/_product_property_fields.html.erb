@@ -11,6 +11,9 @@
   <td class='value'>
     <%= f.text_field :value, class: 'form-control' %>
   </td>
+  <td class="show_property">
+    <%= f.check_box :show_property, class: 'form-control' %>
+  </td>
   <td class="actions actions-1">
     <% if f.object.persisted? && can?(:destroy, f.object) %>
       <%= link_to_delete f.object, no_text: true %>
