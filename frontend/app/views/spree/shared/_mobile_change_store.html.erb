@@ -19,7 +19,7 @@
       <% stores.each do |store| %>
         <li class="d-flex justify-content-between align-items-center mobile-navigation-list-item">
           <span class="flag-icon flag-icon-<%= store_country_iso(store) %>"></span>
-          <%= link_to store.url, class: 'dropdown-item text-uppercase d-flex' do %>
+          <%= link_to "//#{store.url}", class: 'dropdown-item text-uppercase d-flex' do %>
             <span><%= store.default_country&.name %></span>
             <span class="text-right w-100"><%= store_currency_symbol(store.default_currency) %></span>
           <% end %>
