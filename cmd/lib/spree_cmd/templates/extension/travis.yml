@@ -1,15 +1,26 @@
-sudo: required
-dist: trusty
+os: linux
+dist: bionic
+
+addons:
+  apt:
+    sources:
+      - google-chrome
+    packages:
+      - google-chrome-stable
+
+services:
+  - mysql
+  - postgresql
 
 language: ruby
 
-env:
-  - DB=postgres
-  - DB=mysql
+rvm:
+  - 2.5
+  - 2.6
 
-addons:
-  chrome: stable
-  postgresql: 9.4
+env:
+  - DB=mysql
+  - DB=postgres
 
 gemfile:
   - gemfiles/spree_3_7.gemfile
@@ -17,22 +28,22 @@ gemfile:
   - gemfiles/spree_4_1.gemfile
   - gemfiles/spree_master.gemfile
 
-script:
-  - bundle exec rake test_app
-  - bundle exec rake spec
-
-rvm:
-  - 2.5.1
-
-matrix:
+jobs:
   allow_failures:
     - gemfile: gemfiles/spree_master.gemfile
+  exclude:
+    - rvm: 2.6
+      gemfile: gemfiles/spree_3_7.gemfile
 
 before_install:
   - mysql -u root -e "GRANT ALL ON *.* TO 'travis'@'%';"
-  - wget -N https://chromedriver.storage.googleapis.com/2.35/chromedriver_linux64.zip -P ~/
-  - unzip ~/chromedriver_linux64.zip -d ~/
-  - rm ~/chromedriver_linux64.zip
-  - sudo mv -f ~/chromedriver /usr/local/share/
-  - sudo chmod +x /usr/local/share/chromedriver
-  - sudo ln -s /usr/local/share/chromedriver /usr/local/bin/chromedriver
+
+before_script:
+  - CHROME_MAIN_VERSION=`google-chrome-stable --version | sed -E 's/(^Google Chrome |\.[0-9]+ )//g'`
+  - CHROMEDRIVER_VERSION=`curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_MAIN_VERSION"`
+  - curl "https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_VERSION}/chromedriver_linux64.zip" -O
+  - unzip chromedriver_linux64.zip -d ~/bin
+
+script:
+  - bundle exec rake test_app
+  - bundle exec rake spec
