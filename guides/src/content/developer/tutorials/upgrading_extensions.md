@@ -16,7 +16,7 @@ Eg.
 old decorator
 
 `app/models/spree/order_decorator.rb`
-```bash
+```ruby
 Spree::Order.class_eval do
   has_many :new_custom_model
 
