@@ -70,8 +70,7 @@ Also - **remember to add deface gem to gemspec** as deface itself was removed as
 ### Migrate to Spree Dev Tools
 Replace all development dependencies with:
 
-`s.add_development_dependency 'spree_dev_tools'`
-
+s.add_development_dependency 'spree_dev_tools'
 
 Replace spec_helper.rb with:
 
