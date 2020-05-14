@@ -63,7 +63,7 @@ Eg. If your extension adds a link to the Admin Panel menu you can do it this way
 If you're stuck on Deface please remember to prepare versioned overrides for both Spree 3.x and 4.x, eg.
 https://github.com/spree-contrib/spree_static_content/commit/e4b9e4900024235158d0ec1a48a100b4732348ef
 
-Spree 4.0 uses Bootstrap 4 and many partials and HTML structure changed compared to Spree 3.x
+Spree 4 uses Bootstrap 4 and many partials and HTML structure changed compared to Spree 3.x.
 
 Also - **remember to add deface gem to gemspec** as deface itself was removed as a dependency of Spree. eg. https://github.com/spree/spree_auth_devise/commit/d729689ca87d8586e541ffcc865ef1e0a5a79fe4
 
