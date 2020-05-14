@@ -86,4 +86,5 @@ Example migrations:
 ### Fixing deprecations
 Please fix any Rails 6.1 deprecations eg.
 
-**DEPRECATION WARNING: update_attributes! is deprecated and will be removed from Rails 6.1 (please, use update! instead)**
+```ruby
+DEPRECATION WARNING: update_attributes! is deprecated and will be removed from Rails 6.1 (please, use update! instead)
