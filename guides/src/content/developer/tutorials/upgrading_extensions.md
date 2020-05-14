@@ -7,7 +7,7 @@ section: advanced
 
 Zeitwerk is a new default code autoloader in Rails 6. See https://weblog.rubyonrails.org/2019/2/22/zeitwerk-integration-in-rails-6-beta-2/
 
-This doesn't work well with the old approach to decorators (files that name ends with decorator.rb, eg. app/models/spree/order_decorator.rb) in Spree using class_eval (btw we should always use Module.prepend).
+This doesn't work well with the old approach to decorators (files that name ends with decorator.rb, eg. `app/models/spree/order_decorator.rb`) in Spree using `class_eval` (we should always use `Module.prepend`, [more on this](https://medium.com/@leo_hetsch/ruby-modules-include-vs-prepend-vs-extend-f09837a5b073)).
 
 To fix this we need to convert all class_eval decorators to Module.prepend and name them properly according to Zeitwerk rules: https://github.com/fxn/zeitwerk#file-structure
 
