@@ -29,7 +29,7 @@ end
 new one:
 
 `app/models/your_extension_name/order_decorator.rb`
-```bash
+```ruby
 module YourExtensionName::OrderDecorator
   def self.prepended(base)
     base.has_many :new_custom_model
