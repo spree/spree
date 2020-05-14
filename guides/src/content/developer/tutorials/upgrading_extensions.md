@@ -74,7 +74,7 @@ Replace all development dependencies with:
 s.add_development_dependency 'spree_dev_tools'
 ``
 
-Replace spec_helper.rb with:
+Replace `spec_helper.rb` contents with:
 
 https://github.com/spree/spree/blob/777a284b4c70e69d32a05ffa61bbe3905d8f1297/cmd/lib/spree_cmd/templates/extension/spec/spec_helper.rb
 
