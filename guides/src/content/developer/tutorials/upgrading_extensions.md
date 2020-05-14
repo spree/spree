@@ -54,7 +54,8 @@ For the rationale of the changes please look at the blame view: https://github.c
 
 After each change please remember to re-generate gemfiles by running:
 
-`bundle exec appraisal generate --travis`
+```bash
+bundle exec appraisal generate --travis
 
 ### Fixing Deface Overrides
 Some Extensions still use Deface overrides to add some UI features, mainly in the admin panel. Deface isn't recommended. If you can use other methods.
