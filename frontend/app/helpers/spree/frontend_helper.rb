@@ -16,10 +16,12 @@ module Spree
     end
 
     def stores
-      @stores ||= Spree::Store.all.eager_load(:default_country)
+      @stores ||= Spree::Store.includes(:default_country)
     end
 
     def store_currency_symbol(currency)
+      return if currency&.blank?
+
       ::Money::Currency.find(currency).symbol
     end
 

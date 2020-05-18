@@ -90,7 +90,7 @@
     <% end %>
     <%= f.field_container :default_country_id, class: ['form-group'] do %>
       <%= f.label :default_country_id, Spree.t('i18n.country') %>
-      <%= f.select :default_country_id, options_from_collection_for_select(Spree::Country.all, :id, :name, @store.default_country_id) %>
+      <%= f.select :default_country_id, options_from_collection_for_select(@countries, :id, :name, @store.default_country_id) %>
       <%= f.error_message_on :default_country_id %>
     <% end %>
   </div>

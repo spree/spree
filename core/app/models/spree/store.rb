@@ -5,8 +5,7 @@ module Spree
     belongs_to :default_country, class_name: 'Spree::Country'
 
     with_options presence: true do
-      validates :name, :url, :mail_from_address
-      validates :default_currency
+      validates :name, :url, :mail_from_address, :default_currency
     end
 
     before_save :ensure_default_exists_and_is_unique
