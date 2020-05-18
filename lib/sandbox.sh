@@ -62,6 +62,9 @@ group :test, :development do
   gem 'awesome_print'
 end
 
+# ExecJS runtime
+gem 'mini_racer'
+
 gem 'rack-cache'
 RUBY
 
