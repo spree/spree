@@ -76,7 +76,7 @@ this.updateStructuredData = function() {
 
   firstLayer.url = window.location.href
   offers.url = window.location.href
-  offers.price = variant.price
+  offers.price = variant.price.amount
 
   if (Array.isArray(variant.images) && (variant.images.length)) {
     firstLayer.image = host + variant.images[0].url_product
