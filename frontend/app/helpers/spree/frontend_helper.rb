@@ -19,10 +19,12 @@ module Spree
       @stores ||= Spree::Store.includes(:default_country)
     end
 
-    def store_currency_symbol(currency)
-      return if currency&.blank?
+    def store_currency_symbol(store)
+      store ||= current_store
+      return unless store
+      return unless store.default_currency
 
-      ::Money::Currency.find(currency).symbol
+      ::Money::Currency.find(store.default_currency).symbol
     end
 
     def spree_breadcrumbs(taxon, _separator = '', product = nil)
