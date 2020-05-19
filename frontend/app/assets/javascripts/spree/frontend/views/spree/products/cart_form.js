@@ -25,7 +25,7 @@ function CartForm($, $cartForm) {
     this.selectedOptionValueIds = []
     this.variants = JSON.parse($cartForm.attr('data-variants'))
     this.withOptionValues = Boolean($cartForm.find(OPTION_VALUE_SELECTOR).length)
-    
+
     this.$addToCart = $cartForm.find(ADD_TO_CART_SELECTOR)
     this.$price = $cartForm.find('.price.selling')
     this.$compareAtPrice = $cartForm.find('.compare-at-price')
