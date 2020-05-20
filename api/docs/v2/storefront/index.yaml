@@ -49,6 +49,31 @@ paths:
           $ref: '#/components/responses/403Forbidden'
       security:
         - bearerAuth: []
+    post:
+      description: >-
+        Creates new account
+      tags:
+        - Account
+      operationId: 'Account Creation'
+      parameters:
+        - $ref: '#/components/parameters/UserEmail'
+        - $ref: '#/components/parameters/UserPassword'
+        - $ref: '#/components/parameters/UserPasswordConfirmation'
+      responses:
+        '200':
+          description: ok
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        '422':
+          description: Validation errors
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - bearerAuth: []
 
   '/account/credit_cards':
     get:
@@ -2431,6 +2456,24 @@ components:
         name: 'John Doe'
 
   parameters:
+    UserEmail:
+      in: query
+      name: email
+      schema:
+        type: string
+      description: User email
+    UserPassword:
+      in: query
+      name: password
+      schema:
+        type: string
+      description: User password
+    UserPasswordConfirmation:
+      in: query
+      name: password_confirmation
+      schema:
+        type: string
+      description: User password
     CreditCardIncludeParam:
       name: include
       in: query
