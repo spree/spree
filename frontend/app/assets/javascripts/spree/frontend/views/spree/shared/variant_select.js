@@ -59,8 +59,8 @@ this.clickListOptions = function(list) {
 this.updateStructuredData = function() {
   var variant = this.selectedVariant()
   var host = window.location.host
-  var script = document.getElementById('productStructuredData')
-  var obj = JSON.parse(script.firstChild.nodeValue)
+  var schemaData = document.body.querySelector("script[type='application/ld+json']")
+  var obj = JSON.parse(schemaData.firstChild.nodeValue)
   var firstLayer = obj[0]
   var offers = obj[0].offers
 
@@ -82,5 +82,5 @@ this.updateStructuredData = function() {
     firstLayer.image = host + variant.images[0].url_product
   }
 
-  script.firstChild.nodeValue = JSON.stringify(obj)
+  schemaData.firstChild.nodeValue = JSON.stringify(obj)
 }
