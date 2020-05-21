@@ -75,7 +75,11 @@ module Spree
         def taxonomy
           if params[:taxonomy_id].present?
             @taxonomy ||=
-              Spree::Taxonomy.includes(:translations, taxons: [:translations]).accessible_by(current_ability, :show).find(params[:taxonomy_id])
+              if defined?(SpreeGlobalize)
+                Spree::Taxonomy.includes(:translations, taxons: [:translations]).accessible_by(current_ability, :show).find(params[:taxonomy_id])
+              else
+                Spree::Taxonomy.accessible_by(current_ability, :show).find(params[:taxonomy_id])
+              end
           end
         end
 
