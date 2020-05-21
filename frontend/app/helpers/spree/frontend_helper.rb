@@ -101,7 +101,8 @@ module Spree
         end
       end
       content = content_tag('ul', raw(items.join("\n")), class: 'nav justify-content-between checkout-progress-steps', id: "checkout-step-#{@order.state}")
-      content << content_tag('div', raw('<hr /><hr /><hr />'), class: "checkout-progress-steps-line state-#{@order.state}")
+      hrs = '<hr />' * (states.length - 1)
+      content << content_tag('div', raw(hrs), class: "checkout-progress-steps-line state-#{@order.state}")
     end
 
     def flash_messages(opts = {})
