@@ -23,7 +23,27 @@ class AddFieldsToSpreeProducts < ActiveRecord::Migration[6.0]
 end
 ```
 
-This file extends your actual Product Serializer to make the attributes available in your app.
+This file extends your actual Product Serializer to make the attributes available in your *APP*.
+
+```ruby
+module RailsappName
+  module Spree
+    module ProductDecorator
+      def self.prepended(base)
+        base.attributes :short_description
+      end
+    end
+  end
+end
+
+Spree::V2::Storefront::Product.prepend RailsappName::Spree::ProductDecorator if Spree::V2::Storefront::Product.included_modules.exclude?(RailsappName::Spree::ProductDecorator)
+```
+
+File Location: `app/models/railsapp_name/spree/product_serializer_decorator.rb` (Does not exist by default)
+
+### Make it available in your API
+
+This file extends your actual Product Serializer to make the attributes available in your *API*.
 
 ```ruby
 module RailsappName
