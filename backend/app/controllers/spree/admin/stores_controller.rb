@@ -5,6 +5,8 @@ module Spree
       before_action :set_default_currency, only: :new
       before_action :set_default_locale, only: :new
       before_action :normalize_supported_currencies, only: [:create, :update]
+      before_action :set_default_country_id, only: :new
+      before_action :load_all_countries, only: [:new, :edit]
 
       if defined?(SpreeI18n)
         include SpreeI18n::LocaleHelper
@@ -84,6 +86,10 @@ module Spree
         @store = Spree::Store.find_by(id: params[:id]) || Spree::Store.new
       end
 
+      def load_all_countries
+        @countries = Spree::Country.all
+      end
+
       def set_default_currency
         @store.default_currency = Spree::Config[:currency]
       end
@@ -96,6 +102,10 @@ module Spree
         if params[:store][:supported_currencies]&.is_a?(Array)
           params[:store][:supported_currencies] = params[:store][:supported_currencies].compact.uniq.reject(&:blank?).join(',')
         end
+      end
+
+      def set_default_country_id
+        @store.default_country_id = Spree::Config[:default_country_id]
       end
 
       # this method is overriten by spree_i18n to add support for more locales
