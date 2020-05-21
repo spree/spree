@@ -51,7 +51,9 @@ paths:
         - bearerAuth: []
     post:
       description: >-
-        Creates new account
+        Creates a new account
+        
+        This endpoint requires [Spree Auth Devise](https://github.com/spree/spree_auth_devise) gem installed
       tags:
         - Account
       operationId: 'Account Creation'
@@ -87,9 +89,11 @@ paths:
             application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/Error'
-    put:
+    patch:
       description: >-
         Updates user account
+        
+        This endpoint requires [Spree Auth Devise](https://github.com/spree/spree_auth_devise) gem installed
       tags:
         - Account
       operationId: 'Account Updates'
