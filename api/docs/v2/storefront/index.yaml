@@ -87,6 +87,46 @@ paths:
             application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/Error'
+    put:
+      description: >-
+        Updates user account
+      tags:
+        - Account
+      operationId: 'Account Updates'
+      requestBody:
+        required: true
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                      example: 'john@snow.org'
+                    password:
+                      type: string
+                      example: 'spree123'
+                    password_confirmation:
+                      type: string
+                      example: 'spree123'
+      responses:
+        '200':
+          description: ok
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        '422':
+          description: Validation errors
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - bearerAuth: []
   '/account/credit_cards':
     get:
       description: >-
