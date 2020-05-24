@@ -453,7 +453,7 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
         expect(page).to have_content(variant3.price.to_s)
       end
 
-      it 'shows backordered in the HTML when product is backorderable' do
+      it 'shows back-ordered in the HTML when product is on backorder' do
         visit spree.product_path(product) + '?variant=' + variant2.id.to_s
         expect(page).to have_content('BACKORDERED')
       end
@@ -469,7 +469,7 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
         expect(page).to have_content('BACKORDERED')
       end
 
-      it 'sets JSON in the Schema.org sku, url, price and availabily' do
+      it 'sets JSON in the Schema.org SKU, URL, price and availability' do
         visit spree.product_path(product) + '?variant=' + variant3.id.to_s
 
         jsonld = page.find('script[type="application/ld+json"]', visible: false).text(:all)
