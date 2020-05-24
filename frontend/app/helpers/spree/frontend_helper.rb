@@ -7,6 +7,26 @@ module Spree
       @body_class
     end
 
+    def store_country_iso(store)
+      store ||= current_store
+      return unless store
+      return unless store.default_country
+
+      store.default_country.iso.downcase
+    end
+
+    def stores
+      @stores ||= Spree::Store.includes(:default_country)
+    end
+
+    def store_currency_symbol(store)
+      store ||= current_store
+      return unless store
+      return unless store.default_currency
+
+      ::Money::Currency.find(store.default_currency).symbol
+    end
+
     def spree_breadcrumbs(taxon, _separator = '', product = nil)
       return '' if current_page?('/') || taxon.nil?
 
@@ -101,7 +121,8 @@ module Spree
         end
       end
       content = content_tag('ul', raw(items.join("\n")), class: 'nav justify-content-between checkout-progress-steps', id: "checkout-step-#{@order.state}")
-      content << content_tag('div', raw('<hr /><hr /><hr />'), class: "checkout-progress-steps-line state-#{@order.state}")
+      hrs = '<hr />' * (states.length - 1)
+      content << content_tag('div', raw(hrs), class: "checkout-progress-steps-line state-#{@order.state}")
     end
 
     def flash_messages(opts = {})

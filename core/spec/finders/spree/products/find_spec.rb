@@ -18,6 +18,7 @@ module Spree
             price: '',
             currency: false,
             taxons: '',
+            concat_taxons: '',
             name: false,
             options: false,
             show_deleted: false,
@@ -46,6 +47,7 @@ module Spree
             price: '',
             currency: false,
             taxons: '',
+            concat_taxons: '',
             name: false,
             options: false,
             show_deleted: true,
@@ -72,6 +74,7 @@ module Spree
             price: '',
             currency: false,
             taxons: '',
+            concat_taxons: '',
             name: false,
             options: false,
             show_deleted: false,
@@ -184,6 +187,54 @@ module Spree
         end
 
         it { expect(products).to match_array [product, product_2] }
+      end
+
+      context 'multiple taxons + 1 concat_taxons are requested' do
+        let(:params) { { filter: { taxons: "#{taxon.id},#{taxon_2.id}", concat_taxons: "#{taxon_3.id}" } } }
+        let(:taxon) { create(:taxon) }
+        let(:taxon_2) { create(:taxon) }
+        let(:taxon_3) { create(:taxon) }
+
+        before do
+          taxon.products << product
+          taxon_2.products << product_2
+          taxon_3.products << product_2
+          taxon_3.products << product_3
+        end
+
+        it { expect(products).to match_array [product_2] }
+      end
+
+      context 'only multiple concat_taxons are requested' do
+        let(:params) { { filter: {concat_taxons: "#{taxon_2.id},#{taxon_3.id}" } } }
+        let(:taxon) { create(:taxon) }
+        let(:taxon_2) { create(:taxon) }
+        let(:taxon_3) { create(:taxon) }
+
+        before do
+          taxon.products << product
+          taxon_2.products << product_2
+          taxon_3.products << product_2
+          taxon_3.products << product_3
+        end
+
+        it { expect(products).to match_array [product_2] }
+      end
+
+      context 'only one concat_taxons is requested' do
+        let(:params) { { filter: {concat_taxons: "#{taxon_3.id}" } } }
+        let(:taxon) { create(:taxon) }
+        let(:taxon_2) { create(:taxon) }
+        let(:taxon_3) { create(:taxon) }
+
+        before do
+          taxon.products << product
+          taxon_2.products << product_2
+          taxon_3.products << product_2
+          taxon_3.products << product_3
+        end
+
+        it { expect(products).to match_array [product_2,product_3] }
       end
     end
 

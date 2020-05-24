@@ -169,7 +169,7 @@ jobs:
             git commit -m "Auto-commit v#${CIRCLE_BUILD_NUM}"
           working_directory: ~/project/spree-designs
       - run:
-          command: git push origin master
+          command: git push -f origin master
           working_directory: ~/project/spree-designs
 
 workflows:

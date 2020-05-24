@@ -15,7 +15,8 @@ module Spree
 
           supported_currencies_for_all_stores.each do |currency|
             price = variant.price_in(currency.iso_code)
-            price.price = (prices[currency.iso_code].blank? ? nil : prices[currency.iso_code])
+            price.price = (prices[currency.iso_code]['price'].blank? ? nil : prices[currency.iso_code]['price'])
+            price.compare_at_price = (prices[currency.iso_code]['compare_at_price'].blank? ? nil : prices[currency.iso_code]['compare_at_price'])
             price.save! if price.new_record? && price.price || !price.new_record? && price.changed?
           end
         end
@@ -28,7 +29,7 @@ module Spree
       def supported_currencies_for_all_stores
         @supported_currencies_for_all_stores = begin
           (
-            Spree::Store.pluck(:supported_currencies).map { |c| c.split(',') }.flatten + Spree::Store.pluck(:default_currency)
+            Spree::Store.pluck(:supported_currencies).map { |c| c&.split(',') }.flatten + Spree::Store.pluck(:default_currency)
           ).
             compact.uniq.map { |code| ::Money::Currency.find(code.strip) }
         end
