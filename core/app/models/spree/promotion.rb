@@ -120,12 +120,11 @@ module Spree
     def eligible?(promotable)
       return false if expired? || usage_limit_exceeded?(promotable) || blacklisted?(promotable)
 
-      case promotable
-      when Spree::LineItem
-        !!eligible_rules(promotable, {}) && !!eligible_rules(promotable.order, {})
-      else
-        !!eligible_rules(promotable, {})
+      if promotable.is_a? Spree::LineItem
+        return false unless eligible_rules(promotable.order, {})
       end
+
+      !!eligible_rules(promotable, {})
     end
 
     # eligible_rules returns an array of promotion rules where eligible? is true for the promotable
