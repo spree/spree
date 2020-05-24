@@ -426,4 +426,32 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
       expect(page).not_to have_content('$79.99')
     end
   end
+
+  context 'a product with properties set will' do
+    let(:property) { create(:property) }
+    let(:prop1) { create(:property, name: 'Amazon Data Catalog', presentation: 'amazon_dataset_catagory') }
+    let(:prop2) { create(:property, name: 'Product Brand', presentation: 'Presentation Brand') }
+
+    let(:product) do
+      FactoryBot.create(:base_product, properties: [prop1, prop2], description: 'Testing Product Properties', name: 'Sample Product')
+    end
+
+    before do
+      product.tap(&:save)
+      product.product_properties.first.update(value: '9377-AMZ-1837', show_property: false)
+      product.product_properties.last.update(value: 'Funky Seagull')
+
+      visit spree.product_path(product)
+    end
+
+    it "show the property by default" do
+      expect(page).to have_content('Presentation Brand')
+      expect(page).to have_content('Funky Seagull')
+    end
+
+    it "not show the propery if show_property is unchecked" do
+      expect(page).not_to have_content('amazon_dataset_catagory')
+      expect(page).not_to have_content('9377-AMZ-1837')
+    end
+  end
 end
