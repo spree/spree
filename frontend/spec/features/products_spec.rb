@@ -440,12 +440,6 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
     let(:variant2) { create(:variant, product: product, option_values: [option_value2], price: '69.99', sku: 'VAR-2') }
     let(:variant3) { create(:variant, product: product, option_values: [option_value3], price: '89.99', sku: 'VAR-3') }
 
-    let(:serialized_products) do
-      JSON.parse(
-
-      )
-    end
-
     before do
       product.option_types << option_type
       product.variants << [variant1, variant2, variant3]
