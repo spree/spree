@@ -427,7 +427,7 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
     end
   end
 
-  describe 'When Requesting A Product By Variant Using URL Query String', type: :feature, inaccessible: true do
+  describe 'When Requesting A Product By Variant Using URL Query String' do
     let(:product) do
       FactoryBot.create(:base_product, description: 'Testing sample', name: 'Sample', price: '19.99')
     end
@@ -475,7 +475,7 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
         jsonld = page.find('script[type="application/ld+json"]', visible: false).text(:all)
         jsonstring = Capybara.string(jsonld)
 
-        expect(jsonstring).to have_text('?variant=' + variant3.id.to_s )
+        expect(jsonstring).to have_text('?variant=' + variant3.id.to_s)
         expect(jsonstring).to have_text('"availability":"OutOfStock"')
         expect(jsonstring).to have_text('"sku":"VAR-3"')
         expect(jsonstring).to have_text('"price":"89.99"')
