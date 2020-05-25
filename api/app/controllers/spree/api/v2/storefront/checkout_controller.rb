@@ -65,7 +65,11 @@ module Spree
           def shipping_rates
             result = shipping_rates_service.call(order: spree_current_order)
 
-            render_serialized_payload { serialize_shipping_rates(result.value) }
+            if result.success?
+              render_serialized_payload { serialize_shipping_rates(result.value) }
+            else
+              render_error_payload(result.error)
+            end
           end
 
           def payment_methods
