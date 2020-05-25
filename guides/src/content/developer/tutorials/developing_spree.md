@@ -99,3 +99,11 @@ If you want to run a particular line of spec
 cd core
 bundle exec rspec spec/models/spree/state_spec.rb:7
 ```
+
+### Running integration tests on MacOS
+
+We use chromedriver to run integration tests. To install it please use this command:
+
+```bash
+brew cask install chromedriver
+```
