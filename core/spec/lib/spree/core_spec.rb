@@ -1,6 +1,13 @@
 require 'spec_helper'
 
 describe Spree do
+
+  describe 'forbiden route', type: :routing do
+    it 'serves by errors controller' do
+      expect(:get => "/forbidden").to route_to("spree/errors#forbidden")
+    end
+  end
+
   describe '.admin_path' do
     it { expect(described_class.admin_path).to eq(Spree::Config[:admin_path]) }
   end
