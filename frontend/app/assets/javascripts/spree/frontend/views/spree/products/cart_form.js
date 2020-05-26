@@ -1,5 +1,6 @@
 //= require spree/api/storefront/cart
 //= require ../shared/product_added_modal
+//= require ../shared/variant_select
 
 var ADD_TO_CART_FORM_SELECTOR = '.add-to-cart-form'
 var VARIANT_ID_SELECTOR = '[name="variant_id"]'
@@ -20,6 +21,7 @@ function CartForm($, $cartForm) {
   }
 
   this.initialize = function() {
+    this.urlQueryMatchFound = false
     this.selectedOptionValueIds = []
     this.variants = JSON.parse($cartForm.attr('data-variants'))
     this.withOptionValues = Boolean($cartForm.find(OPTION_VALUE_SELECTOR).length)
@@ -29,7 +31,13 @@ function CartForm($, $cartForm) {
     this.$compareAtPrice = $cartForm.find('.compare-at-price')
     this.$variantIdInput = $cartForm.find(VARIANT_ID_SELECTOR)
 
-    this.initializeForm()
+    this.initializeQueryParamsCheck()
+
+    if (this.urlQueryMatchFound) {
+      this.setSelectedVariantFromUrl()
+    } else {
+      this.initializeForm()
+    }
   }
 
   this.initializeForm = function() {
