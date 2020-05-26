@@ -1,12 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="8.636" height="13.937" viewBox="0 0 13.636 13.937">
-  <defs>
-    <clipPath id="clip-path">
-      <rect width="8.636" height="13.937" fill="none"/>
-    </clipPath>
-  </defs>
-  <g id="Group_426" data-name="Group 426" transform="translate(0)">
-    <g id="left-arrow" transform="translate(11.636 13.937) rotate(180)" clip-path="url(#clip-path)">
-      <path id="Path_8" data-name="Path 8" d="M39.273,18.731a.436.436,0,0,0,.617,0,.438.438,0,0,0,0-.618l-5.426-5.434,5.426-5.434a.437.437,0,0,0-.617-.618L33.528,12.37a.438.438,0,0,0,0,.618Z" transform="translate(-32.4 -5.922)" fill="#232323" stroke="#232323" stroke-width="0.5"/>
-    </g>
+<svg xmlns="http://www.w3.org/2000/svg" width="8.636" height="13.937" viewBox="0 0 13.636 13.937">
+  <g transform="rotate(180 5.818 6.968)" clip-path="url(#clip-path)">
+    <path d="M6.873 12.809a.436.436 0 00.617 0 .438.438 0 000-.618L2.064 6.757 7.49 1.323a.437.437 0 00-.617-.618L1.128 6.448a.438.438 0 000 .618z" fill="#232323" stroke="#232323" stroke-width=".5"/>
   </g>
 </svg>
