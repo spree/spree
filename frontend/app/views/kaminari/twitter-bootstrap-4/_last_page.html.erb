@@ -8,6 +8,6 @@
 -%>
 <% unless current_page.last? %>
   <li class="last next page-item"><%# "next" class present for border styling in twitter bootstrap %>
-    <%= link_to_unless current_page.last?, inline_svg_tag('pagination-double-arrow-right.svg', size: '13px*16px'), url, remote: remote, class: 'page-link' %>
+    <%= link_to_unless current_page.last?, inline_svg_tag('pagination-double-arrow-right.svg', size: '13px*16px'), url, remote: remote, class: 'page-link', 'aria-label': 'Last page' %>
   </li>
 <% end %>
