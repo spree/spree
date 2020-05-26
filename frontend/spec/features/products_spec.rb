@@ -119,7 +119,7 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
 
   it 'is able to search for a product' do
     fill_in 'keywords', with: 'shirt'
-    first('input[type=submit]').click
+    first('button[type=submit]').click
 
     expect(page).to have_css('.product-component-name').once
   end
