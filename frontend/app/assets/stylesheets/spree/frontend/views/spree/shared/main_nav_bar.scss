@@ -18,7 +18,7 @@
     display: flex;
     position: static;
 
-    &.show {
+    &:hover, &.show {
       #{$self}-button {
         color: $header-font-color;
         text-decoration: none;
@@ -50,10 +50,9 @@
         display: block;
         width: calc(100% - 2rem);
         position: absolute;
-        bottom: 0.75rem;
-        padding-left: 1rem;
-        padding-right: 1rem;
         left: 1rem;
+        bottom: 0.75rem;
+        padding: 0;
         margin: 0;
         border: 0;
         border-bottom: 3px solid transparent;
