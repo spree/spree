@@ -17,7 +17,7 @@ Spree.ready(function () {
     } else if (event.type === 'mouseleave') {
       var isDropdownHovered = $dropdown.filter(':hover').length
       var isNavLinkHovered = $navLink.filter(':hover').length
-      if(isDropdownHovered || isNavLinkHovered) {
+      if (isDropdownHovered || isNavLinkHovered) {
         return
       }
       $navLink.attr(DATA_TOGGLE_ATTR, DATA_TOGGLE_VALUE)
@@ -28,9 +28,9 @@ Spree.ready(function () {
 
   function handleOutDropdown() {
     var $dropdown = $(this)
-    var isDropdownHovered= $dropdown.filter(':hover').length
+    var isDropdownHovered = $dropdown.filter(':hover').length
     var isNavLinkHovered = $dropdown.prev().filter(':hover').length
-    if(isDropdownHovered || isNavLinkHovered) {
+    if (isDropdownHovered || isNavLinkHovered) {
       return
     }
     $dropdown.parent().removeClass(SHOW_CLASS)
