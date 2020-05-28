@@ -91,10 +91,6 @@
     left: 0;
   }
 
-  input[type="checkbox"]:focus + label {
-    border-color: $primary-color;
-  }
-
   label {
     transition: basic-transition(background-color);
     position: absolute;
@@ -145,6 +141,10 @@
       top: 4px;
       left: 3px;
     }
+  }
+
+  input[type="checkbox"]:focus + label {
+    border-color: $primary-color;
   }
 
   input[type="checkbox"]:checked + label {
