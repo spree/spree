@@ -105,7 +105,9 @@
       }
       &-header {
         background-color: $primary-background;
-        border-color: $global-border-style;
+        border: 0;
+        border-bottom: 1px solid $global-border-style;
+        text-align: left;
         cursor: pointer;
         font-size: font-px-to-rem(17px);
         font-weight: bold;
