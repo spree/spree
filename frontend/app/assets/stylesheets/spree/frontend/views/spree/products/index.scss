@@ -144,7 +144,13 @@
   &-sort {
     font-size: font-px-to-rem(17px);
     &-header {
+      color: $font-color;
       cursor: pointer;
+      &:hover,
+      &:focus {
+        text-decoration: none;
+        color: $font-color;
+      }
       &-arrow {
         &--up {
           display: none;
@@ -165,6 +171,16 @@
         }
         &-li--active {
           font-weight: bold;
+        }
+      }
+      .dropdown-item {
+        padding: 0;
+        color: inherit;
+        font-weight: inherit;
+        background-color: transparent;
+        &:hover,
+        &:focus {
+          background-color: transparent;
         }
       }
     }
