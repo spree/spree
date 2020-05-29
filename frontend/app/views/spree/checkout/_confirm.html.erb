@@ -3,9 +3,7 @@
     <%= Spree.t(:summary).upcase %>
   </p>
   <div class='checkout-confirm-order-details d-flex flex-column flex-lg-wrap' id="order_summary" data-hook>
-    <div class="d-none d-lg-block">
-      <%= render partial: 'spree/checkout/delivery_informations' %>
-    </div>
+    <%= render partial: 'spree/checkout/delivery_informations', locals: { className: 'd-none d-lg-block' } %>
     <div class="checkout-confirm-order-details-line-items d-flex flex-column align-items-center w-100">
       <div class="checkout-confirm-order-details-line-items-header d-none d-sm-block d-lg-none align-self-start mb-3">
         <%= Spree.t(:products) %>
@@ -28,9 +26,7 @@
         <%= render partial: 'spree/shared/line_item', collection: @order.line_items, cached: true %>
       </div>
     </div>
-    <div class="d-lg-none">
-      <%= render partial: 'spree/checkout/delivery_informations' %>
-    </div>
+    <%= render partial: 'spree/checkout/delivery_informations', locals: { className: 'd-lg-none' } %>
     <div id="checkout-summary" class="w-100" data-hook="checkout_summary_box">
       <%= render partial: 'spree/checkout/summary', locals: { order: @order } %>
       <div data-hook="buttons">
