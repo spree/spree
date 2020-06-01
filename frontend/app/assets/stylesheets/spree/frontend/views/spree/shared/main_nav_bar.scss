@@ -1,12 +1,10 @@
 .main-nav-bar {
-  @mixin active-category-button {
-    border-bottom-color: $header-font-color;
-  }
-
   &-item {
     text-transform: uppercase;
     font-size: 20px;
     font-weight: $font-weight-medium;
+    padding: 0 1.5rem;
+    height: 100%;
     a {
       color: theme-color('dark-text');
 
@@ -15,41 +13,49 @@
       }
     }
   }
-  &-dropdown {
-    &-toggle {
-      background: none;
-      border: none;
-      padding: 0;
-      margin: 0;
-      &:focus {
-        outline: none;
-      }
-    }
-  }
   &-category {
     $self: &;
-
+    display: flex;
     position: static;
 
-    &:hover {
-      #{$self}-dropdown {
-        display: block;
-      }
+    &:hover, &.show {
       #{$self}-button {
         color: $header-font-color;
         text-decoration: none;
-        @include active-category-button;
+        &:after {
+          border-bottom-color: $header-font-color;
+        }
+      }
+    }
+
+    .dropdown-item {
+      width: auto;
+      padding: 0;
+      background-color: transparent;
+      &:hover, &:focus {
+        background-color: transparent;
       }
     }
 
     &-button {
       background: none;
       border: none;
-      border-bottom: 3px solid transparent;
       color: $header-font-color;
       margin: 0;
-      &:focus {
-        outline: none;
+      display: flex;
+      align-items: center;
+      position: relative;
+      &:after {
+        content: '';
+        display: block;
+        width: calc(100% - 2rem);
+        position: absolute;
+        left: 1rem;
+        bottom: 0.75rem;
+        padding: 0;
+        margin: 0;
+        border: 0;
+        border-bottom: 3px solid transparent;
       }
     }
 
@@ -64,7 +70,6 @@
       margin: 0;
       border: none;
       z-index: 1000;
-      display: none;
       background: $meganav-background;
       background-clip: padding-box;
       border-top: 1px solid $global-border-style;
