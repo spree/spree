@@ -83,7 +83,12 @@
   }
 
   input[type="checkbox"] {
-    display: none;
+    opacity: 0;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
   }
 
   label {
@@ -136,6 +141,10 @@
       top: 4px;
       left: 3px;
     }
+  }
+
+  input[type="checkbox"]:focus + label {
+    border-color: $primary-color;
   }
 
   input[type="checkbox"]:checked + label {
