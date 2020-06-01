@@ -12,7 +12,8 @@ module Spree
           form.text_field(method,
                           class: [is_required ? 'required' : nil, 'spree-flat-input'].compact,
                           required: is_required,
-                          placeholder: is_required ? "#{method_name} #{required}" : method_name)
+                          placeholder: is_required ? "#{method_name} #{required}" : method_name,
+                          aria: { label: method_name })
         end
       end
     end
@@ -25,6 +26,7 @@ module Spree
                               :id, :name,
                                { prompt: Spree.t(:state).upcase },
                                class: have_states ? 'required form-control spree-flat-select' : 'hidden',
+                               aria: { label: Spree.t(:state) },
                                disabled: !have_states) +
           form.text_field(:state_name, class: !have_states ? 'required' : 'hidden', disabled: have_states) +
           image_tag('arrow.svg', class: 'position-absolute spree-flat-select-arrow')

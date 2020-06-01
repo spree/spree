@@ -6,7 +6,8 @@
       <span id="<%= "#{address_id}country-selection" %>" class="d-block position-relative">
         <%= address_form.collection_select :country_id, available_countries, :id, :name,
                                            { prompt: Spree.t(:country).upcase },
-                                           { class: 'required form-control spree-flat-select'} %>
+                                           { class: 'required form-control spree-flat-select',
+                                             aria: { label: Spree.t(:country) } } %>
         <%= image_tag 'arrow.svg', class: 'position-absolute spree-flat-select-arrow' %>
       </span>
     </p>
