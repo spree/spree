@@ -69,9 +69,7 @@ function CartForm($, $cartForm) {
       this.triggerVariantImages()
     }
 
-    if (initialUpdate) {
-      $optionValue.prop('checked', true)
-    }
+    if (initialUpdate) $optionValue.prop('checked', true)
   }
 
   this.saveCheckedOptionValue = function($optionValue) {
@@ -133,8 +131,7 @@ function CartForm($, $cartForm) {
 
   this.getSingleOptionValuesFromEachOptionType = function() {
     var singleOptionValues = []
-    var $optionTypes = this.optionTypes()
-    $optionTypes.each(function(_, optionType) {
+    this.optionTypes().each(function(_, optionType) {
       var $optionValues = $(optionType).find(OPTION_VALUE_SELECTOR)
       if ($optionValues.length === 1) {
         singleOptionValues.push($optionValues.first())
