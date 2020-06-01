@@ -26,7 +26,7 @@
         <%= render partial: 'spree/shared/line_item', collection: @order.line_items, cached: true %>
       </div>
     </div>
-    <%= render partial: 'spree/checkout/delivery_informations', locals: { className: 'd-lg-none' } %>
+    <%= render partial: 'spree/checkout/delivery_informations', locals: { class_name: 'd-lg-none' } %>
     <div id="checkout-summary" class="w-100" data-hook="checkout_summary_box">
       <%= render partial: 'spree/checkout/summary', locals: { order: @order } %>
       <div data-hook="buttons">
