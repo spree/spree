@@ -105,7 +105,9 @@
       }
       &-header {
         background-color: $primary-background;
-        border-color: $global-border-style;
+        border: 0;
+        border-bottom: 1px solid $global-border-style;
+        text-align: left;
         cursor: pointer;
         font-size: font-px-to-rem(17px);
         font-weight: bold;
@@ -144,7 +146,13 @@
   &-sort {
     font-size: font-px-to-rem(17px);
     &-header {
+      color: $font-color;
       cursor: pointer;
+      &:hover,
+      &:focus {
+        text-decoration: none;
+        color: $font-color;
+      }
       &-arrow {
         &--up {
           display: none;
@@ -165,6 +173,16 @@
         }
         &-li--active {
           font-weight: bold;
+        }
+      }
+      .dropdown-item {
+        padding: 0;
+        color: inherit;
+        font-weight: inherit;
+        background-color: transparent;
+        &:hover,
+        &:focus {
+          background-color: transparent;
         }
       }
     }
