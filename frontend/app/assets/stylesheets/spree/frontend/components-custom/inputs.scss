@@ -250,6 +250,10 @@
     opacity: 0;
     height: 0;
     width: 0;
+    &:focus + span {
+      border-radius: 50%;
+      border: 2px solid $primary-color;
+    }
   }
   &-custom-input {
     @include colored-circle-radio($secondary-color);
