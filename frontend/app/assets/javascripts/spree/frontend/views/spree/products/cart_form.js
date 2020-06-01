@@ -36,6 +36,12 @@ function CartForm($, $cartForm) {
     if (this.withOptionValues) {
       var $optionValue = this.firstCheckedOptionValue()
       this.applyCheckedOptionValue($optionValue, true)
+      var singleOptionValues = this.getSingleOptionValuesFromEachOptionType()
+      if (singleOptionValues.length) {
+        singleOptionValues.forEach(function($value) {
+          this.applyCheckedOptionValue($value, true)
+        })
+      }
     } else {
       this.updateAddToCart()
       this.triggerVariantImages()
@@ -61,6 +67,10 @@ function CartForm($, $cartForm) {
 
     if (this.shouldTriggerVariantImage($optionValue)) {
       this.triggerVariantImages()
+    }
+
+    if (initialUpdate) {
+      $optionValue.prop('checked', true)
     }
   }
 
@@ -119,6 +129,18 @@ function CartForm($, $cartForm) {
 
   this.firstCheckedOptionValue = function() {
     return $cartForm.find(OPTION_VALUE_SELECTOR + '[data-option-type-index=0]' + ':checked')
+  }
+
+  this.getSingleOptionValuesFromEachOptionType = function() {
+    var singleOptionValues = []
+    var $optionTypes = this.optionTypes()
+    $optionTypes.each(function(_, optionType) {
+      var $optionValues = $(optionType).find(OPTION_VALUE_SELECTOR)
+      if ($optionValues.length === 1) {
+        singleOptionValues.push($optionValues.first())
+      }
+    })
+    return singleOptionValues
   }
 
   this.shouldTriggerVariantImage = function($optionValue) {
