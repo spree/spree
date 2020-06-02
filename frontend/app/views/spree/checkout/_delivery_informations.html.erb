@@ -1,0 +1,44 @@
+<div class="checkout-confirm-delivery-informations text-left mt-3 <%= class_name %>">
+  <div class="d-lg-none checkout-confirm-delivery-informations-header">
+    <%= Spree.t(:delivery_information) %>
+  </div>
+  <dl>
+    <div>
+      <dt class="text-uppercase">
+        <%= Spree.t(:shipping_address) %>
+        <%= checkout_edit_link %>
+      </dt>
+      <dd><%= sanitize @order.ship_address.to_s, tags: %w[br] %></dd>
+    </div>
+    <div>
+      <dt class="text-uppercase">
+        <%= Spree.t(:billing_address) %>
+        <%= checkout_edit_link %>
+      </dt>
+      <dd><%= sanitize @order.bill_address.to_s, tags: %w[br] %></dd>
+    </div>
+    <div>
+      <dt class="text-uppercase">
+        <%= Spree.t(:shipping) %>
+        <%= checkout_edit_link('delivery') %>
+      </dt>
+      <% @order.shipments.pending.each do |shipment| %>
+        <dd><%= shipment.shipping_method&.name %> </dd>
+      <% end %>
+    </div>
+    <div>
+      <dt class="text-uppercase">
+        <%= Spree.t(:payment) %>
+        <%= checkout_edit_link('payment') %>
+      </dt>
+      <dd>
+        <%= render collection: @order.payments.valid, partial: 'spree/shared/payment' %>
+      </dd>
+      <dd>
+        <% if @order.using_store_credit? %>
+          <%= button_tag Spree.t('store_credit.remove'), name: 'remove_store_credit', class: 'continue btn' %>
+        <% end %>
+      </dd>
+    </div>
+  </dl>
+</div>
