@@ -36,7 +36,7 @@ module RailsappName
   end
 end
 
-Spree::V2::Storefront::Product.prepend RailsappName::Spree::ProductDecorator if Spree::V2::Storefront::Product.included_modules.exclude?(RailsappName::Spree::ProductDecorator)
+::Spree::V2::Storefront::Product.prepend RailsappName::Spree::ProductDecorator if ::Spree::V2::Storefront::Product.included_modules.exclude?(RailsappName::Spree::ProductDecorator)
 ```
 
 File Location: `app/models/railsapp_name/spree/product_serializer_decorator.rb` (Does not exist by default)
@@ -56,7 +56,7 @@ module RailsappName
   end
 end
 
-Spree::V2::Storefront::ProductSerializer.prepend RailsappName::Spree::ProductSerializerDecorator if Spree::V2::Storefront::ProductSerializer.included_modules.exclude?(RailsappName::Spree::ProductSerializerDecorator)
+::Spree::V2::Storefront::ProductSerializer.prepend RailsappName::Spree::ProductSerializerDecorator if ::Spree::V2::Storefront::ProductSerializer.included_modules.exclude?(RailsappName::Spree::ProductSerializerDecorator)
 ```
 
 File Location: `app/serializers/railsapp_name/spree/product_serializer_decorator.rb` (Does not exist by default)
