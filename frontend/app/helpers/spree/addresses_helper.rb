@@ -26,15 +26,15 @@ module Spree
         form.collection_select(:state_id, country.states.order(:name),
                               :id, :name,
                                { prompt: Spree.t(:state).upcase },
-                               class: have_states ? 'required form-control spree-flat-select' : 'hidden',
+                               class: have_states ? 'required form-control spree-flat-select' : 'hidden form-control spree-flat-select',
                                aria: { label: Spree.t(:state) },
                                disabled: !have_states) +
           form.text_field(:state_name,
                           class: !have_states ? 'required spree-flat-input' : 'hidden spree-flat-input',
                           disabled: have_states,
-                          placeholder: Spree.t(:state)) +
+                          placeholder: Spree.t(:state) + ' *') +
           form.label(Spree.t(:state).downcase,
-                     Spree.t(:state).upcase,
+                     raw(Spree.t(:state) + content_tag(:abbr, " *")),
                      class: !have_states ? 'text-uppercase' : 'state-select-label text-uppercase') +
           image_tag('arrow.svg',
                     class: !have_states ? 'hidden position-absolute spree-flat-select-arrow' : 'position-absolute spree-flat-select-arrow')

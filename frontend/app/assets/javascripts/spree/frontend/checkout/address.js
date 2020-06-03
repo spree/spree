@@ -77,7 +77,7 @@ Spree.ready(function ($) {
           stateSelect.removeClass('required')
 
           if (statesRequired) {
-            stateSelect.addClass('required form-control spree-flat-select')
+            stateSelect.addClass('required')
             stateSlectImg.show()
             stateSpanRequired.show()
             stateSelect.prop('required', true)
