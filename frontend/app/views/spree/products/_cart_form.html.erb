@@ -58,7 +58,7 @@
       <ul id="product-variants" class="product-variants">
         <% used_variants_options(@variants, @product).each_with_index do |option_type, index| %>
           <li>
-            <% if option_type[:name] == "color" %>
+            <% if Spree::OptionType.color&.name == option_type[:name] %>
               <%= render "color_option_type", option_type: option_type, index: index %>
             <% else %>
               <%= render "option_type", option_type: option_type, index: index %>

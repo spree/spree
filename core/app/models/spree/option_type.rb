@@ -27,6 +27,10 @@ module Spree
       presentation.titleize.delete(' ').downcase
     end
 
+    def self.color
+      find_by(name: 'color')
+    end
+
     private
 
     def touch_all_products
