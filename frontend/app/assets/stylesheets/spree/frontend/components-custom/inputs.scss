@@ -295,6 +295,10 @@
     padding: 0 4px;
     transition: all .2s;
     @content;
+    &.state-select-label{
+      opacity: 1 !important;
+      left:1em !important;
+    }
   }
 }
 

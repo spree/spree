@@ -35,7 +35,7 @@ module Spree
                           placeholder: Spree.t(:state)) +
           form.label(Spree.t(:state).downcase,
                      Spree.t(:state).upcase,
-                     class: !have_states ? 'text-field-label text-uppercase' : 'select-label hidden') +
+                     class: !have_states ? 'text-uppercase' : 'state-select-label text-uppercase') +
           image_tag('arrow.svg',
                     class: !have_states ? 'hidden position-absolute spree-flat-select-arrow' : 'position-absolute spree-flat-select-arrow')
       ].join.tr('"', "'").delete("\n")
