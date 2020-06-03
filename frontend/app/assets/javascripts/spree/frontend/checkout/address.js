@@ -55,7 +55,7 @@ Spree.ready(function ($) {
         var stateSelect = statePara.find('select')
         var stateInput = statePara.find('input')
         var stateLabel = statePara.find('label')
-        var stateSlectImg = statePara.find('img')
+        var stateSelectImg = statePara.find('img')
         var stateSpanRequired = statePara.find('abbr')
 
         if (states.length > 0) {
@@ -78,7 +78,7 @@ Spree.ready(function ($) {
 
           if (statesRequired) {
             stateSelect.addClass('required')
-            stateSlectImg.show()
+            stateSelectImg.show()
             stateSpanRequired.show()
             stateSelect.prop('required', true)
           }
@@ -87,7 +87,7 @@ Spree.ready(function ($) {
         } else {
           stateSelect.hide().prop('disabled', true)
           stateLabel.removeClass('state-select-label')
-          stateSlectImg.hide()
+          stateSelectImg.hide()
           stateInput.show()
           if (statesRequired) {
             stateSpanRequired.show()
