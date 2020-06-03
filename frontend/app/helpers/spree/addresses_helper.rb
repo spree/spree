@@ -7,14 +7,14 @@ module Spree
           yield
         else
           is_required = Spree::Address.required_fields.include?(method)
-          method_name = I18n.t("activerecord.attributes.spree/address.#{method}")
+          method_name = I18n.t("activerecord.attributes.spree/address.#{method}").to_s
           required = Spree.t(:required)
           form.text_field(method,
                           class: [is_required ? 'required' : nil, 'spree-flat-input'].compact,
                           required: is_required,
                           placeholder: is_required ? "#{method_name} #{required}" : method_name,
                           aria: { label: method_name }) +
-          form.label(is_required ? method_name + required : method_name, class:'text-uppercase')
+          form.label(method_name, is_required ? "#{method_name} #{required}" : method_name, class:'text-uppercase')
         end
       end
     end
@@ -23,21 +23,23 @@ module Spree
       country ||= Spree::Country.find(Spree::Config[:default_country_id])
       have_states = country.states.any?
       state_elements = [
-
-        form.label(Spree.t(:state).upcase, class:'text-uppercase') +
         form.collection_select(:state_id, country.states.order(:name),
                               :id, :name,
                                { prompt: Spree.t(:state).upcase },
                                class: have_states ? 'required form-control spree-flat-select' : 'hidden',
                                aria: { label: Spree.t(:state) },
                                disabled: !have_states) +
-        form.text_field(:state_name, class: !have_states ? 'required' : 'hidden', disabled: have_states) +
-        image_tag('arrow.svg', class: 'position-absolute spree-flat-select-arrow')
+        form.label(Spree.t(:state).downcase, Spree.t(:state).upcase, class: have_states ? 'select-only-label text-uppercase' : 'select-only-label hidden') +
+        form.text_field(:state_name,
+                          class: !have_states ? 'required spree-flat-input' : 'hidden spree-flat-input',
+                          disabled: have_states,
+                          placeholder: Spree.t(:state)) +
+        form.label(Spree.t(:state).downcase, Spree.t(:state).upcase, class: !have_states ? 'text-field-only-label text-uppercase' : 'text-field-only-label hidden') +
+        image_tag('arrow.svg', class: !have_states ? 'hidden position-absolute spree-flat-select-arrow' : 'position-absolute spree-flat-select-arrow')
       ].join.tr('"', "'").delete("\n")
 
         content_tag(:noscript, form.text_field(:state_name, class: 'required')) +
         javascript_tag("document.write(\"<span class='d-block position-relative'>#{state_elements.html_safe}</span>\");")
-
     end
 
     def user_available_addresses

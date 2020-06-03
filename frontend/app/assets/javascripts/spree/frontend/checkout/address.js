@@ -54,7 +54,11 @@ Spree.ready(function ($) {
         var statePara = $('#' + region + 'state')
         var stateSelect = statePara.find('select')
         var stateInput = statePara.find('input')
+        var stateTextLabel = statePara.find('label.text-field-only-label')
+        var stateSelectLabel = statePara.find('label.select-only-label')
+        var stateSlectImg = statePara.find('img')
         var stateSpanRequired = statePara.find('abbr')
+        console.log(stateSelectLabel);
 
         if (states.length > 0) {
           selected = parseInt(stateSelect.val())
@@ -68,13 +72,16 @@ Spree.ready(function ($) {
           })
           stateSelect.prop('required', false)
           stateSelect.prop('disabled', false).show()
+          stateSelectLabel.show()
           stateInput.hide().prop('disabled', true)
+          stateTextLabel.hide()
           statePara.show()
           stateSpanRequired.hide()
           stateSelect.removeClass('required')
 
           if (statesRequired) {
             stateSelect.addClass('required form-control spree-flat-select')
+            stateSlectImg.show()
             stateSpanRequired.show()
             stateSelect.prop('required', true)
           }
@@ -82,9 +89,12 @@ Spree.ready(function ($) {
           stateInput.removeClass('required')
         } else {
           stateSelect.hide().prop('disabled', true)
+          stateSelectLabel.hide()
+          stateSlectImg.hide()
           stateInput.show()
           if (statesRequired) {
             stateSpanRequired.show()
+            stateTextLabel.show()
             stateInput.addClass('required form-control')
           } else {
             stateInput.val('')
