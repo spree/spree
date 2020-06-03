@@ -61,11 +61,3 @@ Here, you can see all of your existing tax rates and how they are configured. To
 * **Included in Price** - Check this box if you have already added the cost of tax into the price of the items.
 * **Show Rate in Label** - When this box is checked, order summaries will include the tax rate, not just the tax amount.
 * **Calculator** - By default, Spree uses the Default Tax calculator (a simple tax rate times item price adjusted for any promotions) calculation to determine tax. If you need something more specific or customized than this, it can be done - you'll just need to work with your development team to make it happen.
-
-## Tax Settings
-
-Finally, European stores will benefit from the Tax Settings page.
-
-![Tax Settings](../../../images/user/config/tax_settings.jpg)
-
-When this option is checked, your Spree site will take it as a default [tax category](#tax-categories), find the corresponding [tax rate](#tax-rates), and multiply it times the shipping rate for each available [shipping method](/user/shipments/shipping_methods.html) offered to a customer during checkout.
