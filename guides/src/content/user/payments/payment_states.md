@@ -49,6 +49,8 @@ To void a payment, go to the Admin Interface. click on the "Orders" tab. Find th
 
 ![Void a Payment](../../../images/user/payments/payment_void.jpg)
 
+**WARNING: Please note, already captured payment can be voided.**
+
 ## Payment's amount edit
 
 Additionally, before accepting or voiding the payment you can edit the amount by clicking "Edit" button.
