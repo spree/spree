@@ -53,6 +53,7 @@ Spree.ready(function ($) {
         var states = data.states
         var statePara = $('#' + region + 'state')
         var stateSelect = statePara.find('select')
+        var stateSelectImg = statePara.find('img')
         var stateInput = statePara.find('input')
         var stateSpanRequired = statePara.find('abbr')
 
@@ -70,11 +71,12 @@ Spree.ready(function ($) {
           stateSelect.prop('disabled', false).show()
           stateInput.hide().prop('disabled', true)
           statePara.show()
+          stateSelectImg.show()
           stateSpanRequired.hide()
           stateSelect.removeClass('required')
 
           if (statesRequired) {
-            stateSelect.addClass('required form-control spree-flat-select')
+            stateSelect.addClass('required')
             stateSpanRequired.show()
             stateSelect.prop('required', true)
           }
@@ -82,6 +84,7 @@ Spree.ready(function ($) {
           stateInput.removeClass('required')
         } else {
           stateSelect.hide().prop('disabled', true)
+          stateSelectImg.hide()
           stateInput.show()
           if (statesRequired) {
             stateSpanRequired.show()
