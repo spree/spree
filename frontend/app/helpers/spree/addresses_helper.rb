@@ -41,7 +41,8 @@ module Spree
                          class: !have_states ? 'text-field-only-label text-uppercase' : 'text-field-only-label hidden') +
         image_tag('arrow.svg', class: !have_states ? 'hidden position-absolute spree-flat-select-arrow' : 'position-absolute spree-flat-select-arrow')
       ].join.tr('"', "'").delete("\n")
-          content_tag(:noscript, form.text_field(:state_name, class: 'required')) +
+      
+        content_tag(:noscript, form.text_field(:state_name, class: 'required')) +
           javascript_tag("document.write(\"<span class='d-block position-relative'>#{state_elements.html_safe}</span>\");")
     end
 
