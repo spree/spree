@@ -34,7 +34,7 @@ module Spree
                           disabled: have_states,
                           placeholder: Spree.t(:state) + ' *') +
           form.label(Spree.t(:state).downcase,
-                     raw(Spree.t(:state) + content_tag(:abbr, " *")),
+                     raw(Spree.t(:state) + content_tag(:abbr, ' *')),
                      class: !have_states ? 'text-uppercase' : 'state-select-label text-uppercase') +
           image_tag('arrow.svg',
                     class: !have_states ? 'hidden position-absolute spree-flat-select-arrow' : 'position-absolute spree-flat-select-arrow')
