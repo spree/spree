@@ -4,7 +4,7 @@ title: Store Credit Categories
 
 ## Introduction
 
-In order to assign Store Credits to the User's account you have to create **Store Credit Categories**, category defines reason for which the User received Store Credits to spent in your's store.
+In order to assign Store Credits to the User's account you have to create **Store Credit Categories**, category defines reason for which the User received Store Credits to spend in your store.
 
 To find **Store Credit Categories** click on **Configuration** dropdown and look for Store Credit Categories option.
 
