@@ -2,7 +2,7 @@
 module Spree
   module AddressesHelper
     def address_field(form, method, address_id = 'b', &handler)
-      content_tag :p, id: [address_id, method].join, class: 'form-group checkout-content-inner-field' do
+      content_tag :div, id: [address_id, method].join, class: 'form-group checkout-content-inner-field' do
         if handler
           yield
         else
