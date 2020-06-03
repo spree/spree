@@ -32,16 +32,16 @@ module Spree
           form.label(Spree.t(:state).downcase,
                      Spree.t(:state).upcase,
                      class: have_states ? 'select-only-label text-uppercase' : 'select-only-label hidden') +
-            form.text_field(:state_name,
-                            class: !have_states ? 'required spree-flat-input' : 'hidden spree-flat-input',
-                            disabled: have_states,
-                            placeholder: Spree.t(:state)) +
-              form.label(Spree.t(:state).downcase,
-                         Spree.t(:state).upcase,
-                         class: !have_states ? 'text-field-only-label text-uppercase' : 'text-field-only-label hidden') +
-        image_tag('arrow.svg', class: !have_states ? 'hidden position-absolute spree-flat-select-arrow' : 'position-absolute spree-flat-select-arrow')
+          form.text_field(:state_name,
+                          class: !have_states ? 'required spree-flat-input' : 'hidden spree-flat-input',
+                          disabled: have_states,
+                          placeholder: Spree.t(:state)) +
+          form.label(Spree.t(:state).downcase,
+                     Spree.t(:state).upcase,
+                     class: !have_states ? 'text-field-only-label text-uppercase' : 'text-field-only-label hidden') +
+          image_tag('arrow.svg', class: !have_states ? 'hidden position-absolute spree-flat-select-arrow' : 'position-absolute spree-flat-select-arrow')
       ].join.tr('"', "'").delete("\n")
-      
+
         content_tag(:noscript, form.text_field(:state_name, class: 'required')) +
           javascript_tag("document.write(\"<span class='d-block position-relative'>#{state_elements.html_safe}</span>\");")
     end
