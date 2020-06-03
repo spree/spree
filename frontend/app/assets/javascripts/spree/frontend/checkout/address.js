@@ -58,7 +58,6 @@ Spree.ready(function ($) {
         var stateSelectLabel = statePara.find('label.select-only-label')
         var stateSlectImg = statePara.find('img')
         var stateSpanRequired = statePara.find('abbr')
-        console.log(stateSelectLabel);
 
         if (states.length > 0) {
           selected = parseInt(stateSelect.val())

@@ -14,7 +14,7 @@ module Spree
                           required: is_required,
                           placeholder: is_required ? "#{method_name} #{required}" : method_name,
                           aria: { label: method_name }) +
-          form.label(method_name, is_required ? "#{method_name} #{required}" : method_name, class:'text-uppercase')
+            form.label(method_name, is_required ? "#{method_name} #{required}" : method_name, class:'text-uppercase')
         end
       end
     end
@@ -29,17 +29,20 @@ module Spree
                                class: have_states ? 'required form-control spree-flat-select' : 'hidden',
                                aria: { label: Spree.t(:state) },
                                disabled: !have_states) +
-        form.label(Spree.t(:state).downcase, Spree.t(:state).upcase, class: have_states ? 'select-only-label text-uppercase' : 'select-only-label hidden') +
-        form.text_field(:state_name,
+
+          form.label(Spree.t(:state).downcase, Spree.t(:state).upcase, class: have_states ? 'select-only-label text-uppercase' : 'select-only-label hidden') +
+          form.text_field(:state_name,
                           class: !have_states ? 'required spree-flat-input' : 'hidden spree-flat-input',
                           disabled: have_states,
                           placeholder: Spree.t(:state)) +
-        form.label(Spree.t(:state).downcase, Spree.t(:state).upcase, class: !have_states ? 'text-field-only-label text-uppercase' : 'text-field-only-label hidden') +
+          form.label(Spree.t(:state).downcase,
+                     Spree.t(:state).upcase,
+                     class: !have_states ? 'text-field-only-label text-uppercase' : 'text-field-only-label hidden') +
         image_tag('arrow.svg', class: !have_states ? 'hidden position-absolute spree-flat-select-arrow' : 'position-absolute spree-flat-select-arrow')
       ].join.tr('"', "'").delete("\n")
 
-        content_tag(:noscript, form.text_field(:state_name, class: 'required')) +
-        javascript_tag("document.write(\"<span class='d-block position-relative'>#{state_elements.html_safe}</span>\");")
+          content_tag(:noscript, form.text_field(:state_name, class: 'required')) +
+          javascript_tag("document.write(\"<span class='d-block position-relative'>#{state_elements.html_safe}</span>\");")
     end
 
     def user_available_addresses
