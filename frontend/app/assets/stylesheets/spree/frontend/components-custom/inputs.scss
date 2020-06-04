@@ -291,7 +291,7 @@
     top: -0.5em;
     cursor: text;
     opacity: 1;
-    background: white;
+    background: $input-background;
     padding: 0 4px;
     transition: all .2s;
     @content;
@@ -329,5 +329,8 @@
       opacity: 0;
       left: 0em;
     }
+  }
+  .form-control:focus {
+    box-shadow: none;
   }
 }
