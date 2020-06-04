@@ -28,22 +28,25 @@ Spree.ready(function ($) {
       }
 
       Spree.toggleZipcode = function (data, region) {
+        var translatableElementsPara = $('#js-translatables')
+        var zipcodeLabelText = translatableElementsPara.find('span#zipcode_translation').text()
+        var requiredIndicator = translatableElementsPara.find('span#required_marker').text()
         var zipcodeRequired = data.zipcode_required
         var zipcodePara = $('#' + region + 'zipcode')
         var zipcodeInput = zipcodePara.find('input')
         var zipcodeLabel = zipcodePara.find('label')
-        var zipcodeLabelText = $(zipcodeLabel).text().replace('*', '')
-        var labelText = $.trim(zipcodeLabelText)
 
         if (zipcodeRequired) {
-          zipcodeInput.prop('required', true).attr('placeholder', labelText + ' *')
+          var zipText = zipcodeLabelText + ' ' + requiredIndicator
+          zipcodeInput.prop('required', true).attr('placeholder', zipText)
           zipcodeLabel.text('')
-          zipcodeLabel.text(labelText + ' *')
+          zipcodeLabel.text(zipText)
         } else {
+          var zipText = zipcodeLabelText
           zipcodeInput.val('')
-          zipcodeInput.prop('required', false).attr('placeholder', labelText)
+          zipcodeInput.prop('required', false).attr('placeholder', zipText)
           zipcodeLabel.text('')
-          zipcodeLabel.text(labelText)
+          zipcodeLabel.text(zipText)
         }
       }
 

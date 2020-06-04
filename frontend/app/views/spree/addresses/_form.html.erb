@@ -17,15 +17,17 @@
       <%= address_field(address_form, :state, address_id) { address_state(address_form, address.country, address_id) } if Spree::Config[:address_requires_state] %>
     </div>
   <% elsif field == "zipcode" %>
-    <div class="form-group mb-4">
+    <div id="js-translatables" class="form-group mb-4">
       <%= address_field(address_form, :zipcode, address_id) { address_zipcode(address_form, address.country, address_id) } %>
+      <span class="hidden" id="zipcode_translation"><%= Spree.t(:zipcode).upcase %></span>
+      <span class="hidden" id="required_marker"><%= Spree.t(:required) %></span>
     </div>
   <% else %>
     <% next if field == "company" && !Spree::Config[:company] %>
     <% next if field == "alternative_#{address_id}_phone" && !Spree::Config["alternative_#{address_id}_phone"] %>
     <div class="form-group mb-4">
       <%= address_field(address_form, field.to_sym, address_id) %>
-    </div>  <% end %>
+    </div>
+  <% end %>
 <% end %>
-
 <p class="text-right text-uppercase mb-5 checkout-content-inner-field">*<%= Spree.t(:required_fields) %></p>
