@@ -33,6 +33,8 @@
 .spree-flat-select {
   @extend .spree-flat-input;
   appearance: none;
+  padding-top:22px;
+  padding-bottom:21px;
   -webkit-appearance: none;
   -moz-appearance: none;
   &-arrow {
