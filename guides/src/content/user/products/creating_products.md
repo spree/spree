@@ -22,13 +22,16 @@ After you click the "Create" button, the Spree application brings you to a more 
 ![Product Edit Form](../../../images/user/products/product_edit_form.jpg)
 
 * **Name** - This field will either be blank, or the same as what you entered on the initial page. You can change this field whenever you like.
-* **Permalink** - The permalink is automatically created by the application for you when the product is first saved, and is based on the product's name. This is what is appended to the end of a URL when someone visits the page for a particular product. You can change the permalink, but should exercise extreme caution in doing so to avoid naming collisions with other products in your database.
+* **Slug/Permalink** - The permalink is automatically created by the application for you when the product is first saved, and is based on the product's name. This is what is appended to the end of a URL when someone visits the page for a particular product. You can change the permalink, but should exercise extreme caution in doing so to avoid naming collisions with other products in your database.
 * **Description** - This is where you will provide a detailed description of the product and its features. The application gives you plenty of room to be thorough.
 * **Master Price** - For now, just think about the Master Price as the price you charge someone to buy the item. Later in this guide, you will learn more about variants and how they impact a product's actual price.
+* **Compare at Price** - Allows to set up visible discount on the product detail page - it will be visible as a strikethrough price
 * **Cost Price** - What the item costs you, the seller, to purchase or produce.
 * **Cost Currency** - It may be that the currency used when you purchased the product is not the same as that you use in your store. Spree makes these conversions for you - just enter the code for the currency used in acquiring your inventory.
 * **Available On** - This field will either be blank, or the same as what you entered on the initial page. You can change this field whenever you like.
-* **SKU** - This field will either be blank, or the same as what you entered on the initial page. You can change this field whenever you like.
+* **Discontinue on** - This option allows to set a date when the product will not be available to purchase anymore, however, you can always change the date and make the product available again.
+* **Promotable checkbox** - This checkbox gives the possibility to turn on and off the product from any discounts
+* **Master SKU** - This field will either be blank, or the same as what you entered on the initial page. You can change this field whenever you like.
 * **Weight** - The product's weight in ounces. May be used to calculate shipping cost.
 * **Height** - The product's height in inches. May be used to calculate shipping cost.
 * **Width** - The product's width in inches. May be used to calculate shipping cost.
@@ -37,6 +40,7 @@ After you click the "Create" button, the Spree application brings you to a more 
 * **Tax Category** - You will learn about setting up Tax Categories in the [Taxes Guide](/user/configuration/configuring_taxes.html).
 * **Taxons** - Taxons are basically like categories. You will learn more about them in the [Taxonomies Guide](/user/products/taxonomies_and_taxons.html).
 * **Option Types** - You can select any number of Options to associate your new product with. You'll learn more about Options in the [Options Guide](/user/products/product_options.html).
+* **Meta Title** - It is the name of the product site that is visible in the browser navigation bar. Highly recommended to fill out Meta Title/Keywords/Description for each product since it does improve SEO and will index the site name in Google Search.
 * **Meta Keywords** - These words are appended to the website's keywords you established in the [Site Settings](configuring_general_settings) and can help improve your site's search engine ratings, bringing you more web traffic. They should be words that are key to your new product.
 * **Meta Description** - The summary that someone sees when your product's page is returned in a web search. It should be descriptive but not overly verbose.
 
