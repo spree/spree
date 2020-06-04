@@ -42,11 +42,10 @@ Spree.ready(function ($) {
           zipcodeLabel.text('')
           zipcodeLabel.text(zipText)
         } else {
-          var zipText = zipcodeLabelText
           zipcodeInput.val('')
-          zipcodeInput.prop('required', false).attr('placeholder', zipText)
+          zipcodeInput.prop('required', false).attr('placeholder', zipcodeLabelText)
           zipcodeLabel.text('')
-          zipcodeLabel.text(zipText)
+          zipcodeLabel.text(zipcodeLabelText)
         }
       }
 

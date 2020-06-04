@@ -305,10 +305,11 @@
 @mixin float-label-input {
   &::placeholder {
     opacity: 0;
+    color: $secondary-font-color;
     transition: all .2s;
   }
   &:placeholder-shown:not(:focus)::placeholder {
-      opacity: 1;
+      opacity: 0.3;
       transition: all .2s;
   }
 }
