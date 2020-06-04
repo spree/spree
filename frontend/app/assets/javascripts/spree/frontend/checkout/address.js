@@ -31,19 +31,19 @@ Spree.ready(function ($) {
         var zipcodeRequired = data.zipcode_required
         var zipcodePara = $('#' + region + 'zipcode')
         var zipcodeInput = zipcodePara.find('input')
-        var zipcodeSpanRequired = zipcodePara.find('abbr')
+        var zipcodeLabel = zipcodePara.find('label')
+        var zipcodeLabelText = $(zipcodeLabel).text().replace('*', '')
+        var labelText = $.trim(zipcodeLabelText)
 
         if (zipcodeRequired) {
-          zipcodeInput.prop('required', true)
-          zipcodeSpanRequired.show()
-          // zipcodeInput.prop('disabled', false)
-          // zipcodePara.show()
+          zipcodeInput.prop('required', true).attr('placeholder', labelText + ' *')
+          zipcodeLabel.text('')
+          zipcodeLabel.text(labelText + ' *')
         } else {
           zipcodeInput.val('')
-          zipcodeInput.prop('required', false)
-          zipcodeSpanRequired.hide()
-          // zipcodeInput.prop('disabled', true)
-          // zipcodePara.hide()
+          zipcodeInput.prop('required', false).attr('placeholder', labelText)
+          zipcodeLabel.text('')
+          zipcodeLabel.text(labelText)
         }
       }
 

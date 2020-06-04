@@ -26,9 +26,9 @@ module Spree
         form.text_field(:zipcode,
                         class: [is_required ? 'required' : nil, 'spree-flat-input'].compact,
                         required: is_required,
-                        placeholder: is_required ? "#{Spree.t(:zipcode).upcase} #{required}" : "#{Spree.t(:zipcode).upcase}",
+                        placeholder: is_required ? "#{Spree.t(:zipcode).upcase} #{Spree.t(:required)}" : "#{Spree.t(:zipcode).upcase}",
                         aria: { label: :zipcode }) +
-          form.label(:zipcode, is_required ? "#{Spree.t(:zipcode).upcase} #{required}" : "#{Spree.t(:zipcode).upcase}", class: 'text-uppercase')
+          form.label(:zipcode, is_required ? "#{Spree.t(:zipcode).upcase} #{Spree.t(:required)}" : "#{Spree.t(:zipcode).upcase}", class: 'text-uppercase')
     end
 
     def address_state(form, country, _address_id = 'b')
@@ -44,9 +44,9 @@ module Spree
           form.text_field(:state_name,
                           class: !have_states ? 'required spree-flat-input' : 'hidden spree-flat-input',
                           disabled: have_states,
-                          placeholder: Spree.t(:state) + ' *') +
+                          placeholder: Spree.t(:state) + " #{Spree.t(:required)}") +
           form.label(Spree.t(:state).downcase,
-                     raw(Spree.t(:state) + content_tag(:abbr, ' *')),
+                     raw(Spree.t(:state) + content_tag(:abbr, " #{Spree.t(:required)}")),
                      class: !have_states ? 'text-uppercase' : 'state-select-label text-uppercase') +
           image_tag('arrow.svg',
                     class: !have_states ? 'hidden position-absolute spree-flat-select-arrow' : 'position-absolute spree-flat-select-arrow')
