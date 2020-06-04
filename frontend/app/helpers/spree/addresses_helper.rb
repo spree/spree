@@ -22,7 +22,7 @@ module Spree
     end
 
     def address_zipcode(form, country, _address_id = 'b')
-      country ||= Spree::Country.find(Spree::Config[:default_country_id])
+      country ||= Spree::Country.default
       is_required = country.zipcode_required?
       method_name = Spree.t(:zipcode)
       required = Spree.t(:required)
