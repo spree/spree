@@ -14,7 +14,9 @@ module Spree
                           required: is_required,
                           placeholder: is_required ? "#{method_name} #{required}" : method_name,
                           aria: { label: method_name }) +
-            form.label(method_name, is_required ? "#{method_name} #{required}" : method_name, class: 'text-uppercase')
+            form.label(method_name,
+                       is_required ? "#{method_name} #{required}" : method_name,
+                       class: 'text-uppercase')
         end
       end
     end
@@ -28,7 +30,7 @@ module Spree
                       class: [is_required ? 'required' : nil, 'spree-flat-input'].compact,
                       required: is_required,
                       placeholder: is_required ? "#{method_name} #{required}" : method_name,
-                      aria: { label: :zipcode }) +
+                      aria: { label: Spree.t(:zipcode) }) +
         form.label(:zipcode,
                    is_required ? "#{method_name} #{required}" : method_name,
                    class: 'text-uppercase')
@@ -40,19 +42,20 @@ module Spree
       state_elements = [
         form.collection_select(:state_id, country.states.order(:name),
                               :id, :name,
-                               { prompt: Spree.t(:state).upcase },
-                               class: have_states ? 'required form-control spree-flat-select' : 'hidden form-control spree-flat-select',
+                               { prompt: Spree.t(:state) },
+                               class: [have_states ? 'required' : 'hidden', 'spree-flat-select'].compact,
                                aria: { label: Spree.t(:state) },
                                disabled: !have_states) +
           form.text_field(:state_name,
-                          class: !have_states ? 'required spree-flat-input' : 'hidden spree-flat-input',
+                          class: [!have_states ? 'required' : 'hidden', 'spree-flat-input'].compact,
+                          aria: { label: Spree.t(:state) },
                           disabled: have_states,
                           placeholder: Spree.t(:state) + " #{Spree.t(:required)}") +
           form.label(Spree.t(:state).downcase,
                      raw(Spree.t(:state) + content_tag(:abbr, " #{Spree.t(:required)}")),
-                     class: !have_states ? 'text-uppercase' : 'state-select-label text-uppercase') +
+                     class: [have_states ? 'state-select-label' : nil, ' text-uppercase'].compact) +
           image_tag('arrow.svg',
-                    class: !have_states ? 'hidden position-absolute spree-flat-select-arrow' : 'position-absolute spree-flat-select-arrow')
+                    class: [!have_states ? 'hidden' : nil, 'position-absolute spree-flat-select-arrow'].compact)
       ].join.tr('"', "'").delete("\n")
 
       content_tag(:noscript, form.text_field(:state_name, class: 'required')) +

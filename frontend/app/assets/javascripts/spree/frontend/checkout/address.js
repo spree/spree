@@ -41,11 +41,13 @@ Spree.ready(function ($) {
           zipcodeInput.prop('required', true).attr('placeholder', zipText)
           zipcodeLabel.text('')
           zipcodeLabel.text(zipText)
+          zipcodeInput.addClass('required')
         } else {
           zipcodeInput.val('')
           zipcodeInput.prop('required', false).attr('placeholder', zipcodeLabelText)
           zipcodeLabel.text('')
           zipcodeLabel.text(zipcodeLabelText)
+          zipcodeInput.removeClass('required')
         }
       }
 
