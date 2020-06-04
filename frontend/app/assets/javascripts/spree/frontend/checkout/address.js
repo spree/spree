@@ -29,7 +29,6 @@ Spree.ready(function ($) {
 
       Spree.toggleZipcode = function (data, region) {
         var requiredIndicator = $('span#required_marker').first().text()
-        var translatableElementsPara = $('#js-translatables')
         var zipcodeRequired = data.zipcode_required
         var zipcodePara = $('#' + region + 'zipcode')
         var zipcodeInput = zipcodePara.find('input')
