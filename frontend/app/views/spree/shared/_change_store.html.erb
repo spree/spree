@@ -2,11 +2,14 @@
   <li>
     <div class="dropdown navbar-right-dropdown">
       <button id="stores-button" type="button" data-toggle="dropdown" class="navbar-right-dropdown-toggle" aria-label="<%= Spree.t('nav_bar.change_country')%>">
-        <span class="d-none d-xl-inline-block flag-icon flag-icon-<%= store_country_iso(current_store) %>"></span>
-        <%= icon(name: 'arrow',
+        <%= icon(name: 'global',
                 classes: 'd-none d-xl-inline-block',
-                width: 20,
-                height: 20)  %>
+                width: 41,
+                height: 36)  %>
+        <%= icon(name: 'arrow-down',
+                classes: 'd-none d-xl-inline-block',
+                width: 15,
+                height: 15)  %>
       </button>
 
       <div class="dropdown-menu dropdown-menu-right text-right">
