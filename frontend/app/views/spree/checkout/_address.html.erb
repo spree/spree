@@ -3,12 +3,10 @@
 <% if !try_spree_current_user || try_spree_current_user.email.blank? %>
   <div class="row">
     <div class="col-12 mb-4">
-      <p class="form-group checkout-content-inner-field">
-        <%= form.label :email, class: 'text-uppercase' %>
-        <span class="required">*</span>
-        <br />
-        <%= form.email_field :email, class: 'required spree-flat-input', required: true %>
-      </p>
+      <div class="form-group checkout-content-inner-field has-float-label">
+        <%= form.email_field :email, class: 'required spree-flat-input', required: true, placeholder: Spree.t(:email) %>
+        <%= form.label :email, class: 'text-uppercase'%>
+      </div>
     </div>
   </div>
 <% end %>
