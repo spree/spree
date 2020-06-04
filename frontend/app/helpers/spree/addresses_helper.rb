@@ -22,13 +22,16 @@ module Spree
     def address_zipcode(form, country, _address_id = 'b')
       country ||= Spree::Country.find(Spree::Config[:default_country_id])
       is_required = country.zipcode_required?
+      method_name = Spree.t(:zipcode)
+      required = Spree.t(:required)
       form.text_field(:zipcode,
                       class: [is_required ? 'required' : nil, 'spree-flat-input'].compact,
                       required: is_required,
-                      placeholder: is_required ? "#{Spree.t(:zipcode).upcase} #{Spree.t(:required)}" : "#{Spree.t(:zipcode).upcase}",
+                      placeholder: is_required ? "#{method_name} #{required}" : method_name,
                       aria: { label: :zipcode }) +
         form.label(:zipcode,
-                   is_required ? "#{Spree.t(:zipcode).upcase} #{Spree.t(:required)}" : "#{Spree.t(:zipcode).upcase}", class: 'text-uppercase')
+                   is_required ? "#{method_name} #{required}" : method_name,
+                   class: 'text-uppercase')
     end
 
     def address_state(form, country, _address_id = 'b')
