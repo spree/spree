@@ -6,7 +6,7 @@
 
     <% option_value_param = (selected_option_values.include?(id) ? selected_option_values - [id] : selected_option_values + [id]).join(',') %>
     <%= link_to permitted_params.merge(ot_downcase_name => option_value_param, menu_open: 1) do %>
-      <% if ot_downcase_name == 'color' %>
+      <% if Spree::OptionType.color&.name&.downcase == ot_downcase_name %>
 
         <span class="d-inline-block mb-1">
                         <%= render partial: 'spree/shared/color_select', locals: {
