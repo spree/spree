@@ -28,13 +28,13 @@ Spree.ready(function ($) {
       }
 
       Spree.toggleZipcode = function (data, region) {
+        var requiredIndicator = $('span#required_marker').first().text()
         var translatableElementsPara = $('#js-translatables')
-        var zipcodeLabelText = translatableElementsPara.find('span#zipcode_translation').text()
-        var requiredIndicator = translatableElementsPara.find('span#required_marker').text()
         var zipcodeRequired = data.zipcode_required
         var zipcodePara = $('#' + region + 'zipcode')
         var zipcodeInput = zipcodePara.find('input')
         var zipcodeLabel = zipcodePara.find('label')
+        var zipcodeLabelText = zipcodeInput.attr('aria-label')
 
         if (zipcodeRequired) {
           var zipText = zipcodeLabelText + ' ' + requiredIndicator
