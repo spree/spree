@@ -30,7 +30,7 @@ Metrics/ClassLength:
 
 Metrics/ModuleLength:
   CountComments: false
-  Max: 250
+  Max: 300
   Exclude:
     - '**/spec/**/*'
 

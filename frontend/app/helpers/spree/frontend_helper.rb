@@ -204,21 +204,30 @@ module Spree
       set.join(', ')
     end
 
-    def image_source_set(name)
-      widths = {
-        desktop: '1200',
-        tablet_landscape: '992',
-        tablet_portrait: '768',
-        mobile: '576'
-      }
+    def image_source_set(name, type = 'jpg')
       set = []
-      widths.each do |key, value|
+      image_widths.each do |key, value|
         filename = key == :desktop ? name : "#{name}_#{key}"
-        file = asset_path("#{filename}.jpg")
+        file = asset_path("#{filename}.#{type}")
 
         set << "#{file} #{value}w"
       end
       set.join(', ')
+    end
+
+    def responsive_image(name, class_name = '', alt = '', type = 'jpg')
+      set = []
+      image_widths.each do |key, value|
+        filename = key == :desktop ? name : "#{name}_#{key}"
+        srcset = []
+        ['1x', '2x', '3x'].each do |resolution|
+          srcset << resolution_asset_path(filename, type, resolution)
+        end
+        set << image_tag_source(key, value, srcset.join(', '), type)
+      end
+
+      set << image_tag("#{name}.#{type}", srcset: image_source_set(name, type), class: class_name, alt: alt)
+      content_tag(:picture, raw(set.flatten.map(&:mb_chars).join))
     end
 
     def taxons_tree(root_taxon, current_taxon, max_level = 1)
@@ -306,6 +315,23 @@ module Spree
       link_to spree.checkout_state_path(step), class: classes, method: :get do
         inline_svg_tag 'edit.svg'
       end
+    end
+
+    def resolution_asset_path(filename, type, resolution)
+      asset_path("#{filename}#{'@' + resolution unless resolution == '1x'}.#{type}") + ' ' + resolution
+    end
+
+    def image_widths
+      {
+        desktop: '1200',
+        tablet_landscape: '992',
+        tablet_portrait: '768',
+        mobile: '576'
+      }
+    end
+
+    def image_tag_source(key, value, srcset, type)
+      tag.source(nil, type: "image/#{type}", srcset: srcset, media: key == :mobile ? nil : "(min-width: #{value}px)")
     end
   end
 end
