@@ -30,12 +30,7 @@ Spree.ready(function($) {
   });
 
   $('.plp-overlay-ul-li').click(function() {
-    $('.plp-overlay-ul-li--active')
-      .removeClass('plp-overlay-ul-li--active')
-      .addClass('plp-overlay-ul-li');
-
-    $(this)
-      .removeClass('plp-overlay-ul-li')
-      .addClass('plp-overlay-ul-li--active');
+    $('.plp-overlay-ul-li').removeClass('plp-overlay-ul-li--active')
+    $(this).addClass('plp-overlay-ul-li--active');
   });
 });
