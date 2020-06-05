@@ -37,32 +37,34 @@
       <% end %>
     <% end %>
   </div>
-  <a
-    class="d-none d-sm-flex order-0 justify-content-center w-100 product-thumbnails-carousel-previous"
-    href="#<%= id %>"
-    role="button"
-    data-slide="prev"
-  >
-    <span aria-hidden="true">
-      <%= icon(name: 'arrow-right',
-               classes: 'spree-icon-arrow spree-icon-arrow-up',
-               width: 16,
-               height: 16) %>
-    </span>
-    <span class="sr-only"><%= Spree.t(:previous) %></span>
-  </a>
-  <a
-    class="d-none d-sm-flex order-2 justify-content-center w-100 product-thumbnails-carousel-next"
-    href="#<%= id %>"
-    role="button"
-    data-slide="next"
-  >
-    <span aria-hidden="true">
-      <%= icon(name: 'arrow-right',
-               classes: 'spree-icon-arrow spree-icon-arrow-down',
-               width: 16,
-               height: 16) %>
-    </span>
-    <span class="sr-only"><%= Spree.t(:next) %></span>
-  </a>
+  <% if images.length > per_page %>
+    <a
+      class="d-none d-sm-flex order-0 justify-content-center w-100 product-thumbnails-carousel-previous"
+      href="#<%= id %>"
+      role="button"
+      data-slide="prev"
+    >
+      <span aria-hidden="true">
+        <%= icon(name: 'arrow-right',
+                classes: 'spree-icon-arrow spree-icon-arrow-up',
+                width: 16,
+                height: 16) %>
+      </span>
+      <span class="sr-only"><%= Spree.t(:previous) %></span>
+    </a>
+    <a
+      class="d-none d-sm-flex order-2 justify-content-center w-100 product-thumbnails-carousel-next"
+      href="#<%= id %>"
+      role="button"
+      data-slide="next"
+    >
+      <span aria-hidden="true">
+        <%= icon(name: 'arrow-right',
+                classes: 'spree-icon-arrow spree-icon-arrow-down',
+                width: 16,
+                height: 16) %>
+      </span>
+      <span class="sr-only"><%= Spree.t(:next) %></span>
+    </a>
+  <% end %>
 </div>
