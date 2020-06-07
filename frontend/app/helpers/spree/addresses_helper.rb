@@ -34,7 +34,7 @@ module Spree
         form.label(:zipcode,
                    is_required ? "#{method_name} #{required}" : method_name,
                    class: 'text-uppercase',
-                   id: 'zipcode_label')
+                   id: _address_id + '_zipcode_label')
     end
 
     def address_state(form, country, _address_id = 'b')
@@ -55,7 +55,7 @@ module Spree
           form.label(Spree.t(:state).downcase,
                      raw(Spree.t(:state) + content_tag(:abbr, " #{Spree.t(:required)}")),
                      class: [have_states ? 'state-select-label' : nil, ' text-uppercase'].compact,
-                     id: 'state_label') +
+                     id: _address_id + '_state_label') +
           image_tag('arrow.svg',
                     class: [!have_states ? 'hidden' : nil, 'position-absolute spree-flat-select-arrow'].compact)
       ].join.tr('"', "'").delete("\n")
