@@ -74,7 +74,6 @@ describe 'Address', type: :feature, inaccessible: true do
       it 'clears the state name' do
         select canada.name, from: @country_css
         page.find(@state_name_css).set('Toscana')
-
         select france.name, from: @country_css
         expect(page).to have_css(@state_name_css, filter_set: :field, disabled: true, with: '', visible: :hidden, class: ['!hidden', '!required'])
         expect(page).to have_css(@state_select_css, visible: :hidden, class: ['!required'])
@@ -113,7 +112,6 @@ describe 'Address', type: :feature, inaccessible: true do
     end
 
     it 'loads the page with the zipcode field showing required in the label and placeholder' do
-      expect(page).to have_css("input#{@zipcode_css}")
       expect(page).to have_css("label#zipcode_label", text: Spree.t(:required), visible: false)
       find("input[placeholder='#{Spree.t(:zipcode)} #{Spree.t(:required)}']").set "98378"
       expect(page).to have_css("label#zipcode_label", text: Spree.t(:required))
@@ -122,10 +120,8 @@ describe 'Address', type: :feature, inaccessible: true do
     context 'When the country is changed to one that does not require a zip code' do
       it 'the JS removes the required markers in the label and placeholder text' do
         select ug.name, from: @country_css
-
-        expect(page).to have_css("input#{@zipcode_css}")
-        find("input[placeholder='Zip Code']").set "98378"
-        expect(page).to have_css("label#zipcode_label", text: 'ZIP CODE')
+        find("input[placeholder='#{Spree.t(:zipcode)}']").set "98378"
+        expect(page).to have_css("label#zipcode_label", text: Spree.t(:zipcode).upcase)
       end
     end
   end
@@ -143,16 +139,13 @@ describe 'Address', type: :feature, inaccessible: true do
     end
 
     it 'loads the page without the zipcode field showing required in the label and placeholder' do
-      expect(page).to have_css("input#{@zipcode_css}")
       find("input[placeholder='#{Spree.t(:zipcode)}']").set "98378"
-      expect(page).to have_css("label#zipcode_label", text: 'ZIP CODE')
+      expect(page).to have_css("label#zipcode_label", text: Spree.t(:zipcode).upcase)
     end
 
     context 'When the country is changed to one that does require a zip code' do
       it 'the JS adds the required markers in the label and placeholder text' do
         select canada.name, from: @country_css
-
-        expect(page).to have_css("input#{@zipcode_css}")
         expect(page).to have_css("label#zipcode_label", text: Spree.t(:required), visible: false)
         find("input[placeholder='#{Spree.t(:zipcode)} #{Spree.t(:required)}']").set "98378"
         expect(page).to have_css("label#zipcode_label", text: Spree.t(:required))
