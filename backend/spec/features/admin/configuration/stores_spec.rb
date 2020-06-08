@@ -69,6 +69,20 @@ describe 'Stores admin', type: :feature, js: true do
       expect(store.name).to eq updated_name
       expect(store.default_currency).to eq new_currency
     end
+
+    it 'lets me enable new order notifications by setting a notification email address' do
+      store_owner_email = 'new-order-notifications@example.com'
+      visit spree.admin_stores_path
+
+      within_row(1) do
+        click_icon :edit
+      end
+      page.fill_in 'store_new_order_notifications_email', with: store_owner_email
+      click_button 'Update'
+
+      store.reload
+      expect(store.new_order_notifications_email).to eq(store_owner_email)
+    end
   end
 
   describe 'deleting store' do
