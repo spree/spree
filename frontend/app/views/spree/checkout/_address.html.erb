@@ -29,23 +29,26 @@
           </div>
         <% end %>
         <% if @addresses.present? %>
-        <div class="select_address">
-          <div class="form-group">
+        <div class="select_address mb-5">
+          <div class="form-group col">
             <% @addresses.each_with_index do |address, idx| %>
-            <span class="d-block mb-2" id="<%= [address_type, dom_id(address)].join('_') %>">
-              <label class="form-check-label spree-radio-label">
+            <span class="row mb-2" id="<%= [address_type, dom_id(address)].join('_') %>">
+              <label class="form-check-label spree-radio-label col-8">
                 <%= form.radio_button "#{address_name}_id", address.id, checked: (address.id == try_spree_current_user["#{address_name}_id"] || idx == 0) %>
                 <span class="spree-radio-label-custom-input"></span>
                 <span class="d-inline-block align-top">
                   <%= render "spree/users/address", address: address %>
                 </span>
               </label>
+              <%= render "spree/users/address_controls", address: address %>
             </span>
             <% end %>
-            <label class="form-check-label spree-radio-label">
-              <%= form.radio_button "#{address_name}_id", 0, class: 'form-check-input' %> <%= Spree.t('address_book.other_address') %>
-              <span class="spree-radio-label-custom-input"></span>
-            </label>
+            <span class="row mb-2">
+              <label class="form-check-label spree-radio-label col">
+                <%= form.radio_button "#{address_name}_id", 0, class: 'form-check-input' %> <h4><%= Spree.t('address_book.other_address') %></h4>
+                <span class="spree-radio-label-custom-input"></span>
+              </label>
+            </span>
           </div>
         </div>
         <% end %>

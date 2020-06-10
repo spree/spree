@@ -1,0 +1,11 @@
+<div class="col">
+  <span class="mr-2">
+    <%= link_to spree.edit_address_path(address), method: :get, class: 'address-button', data: { hook: 'edit_address' } do %>
+    <%= inline_svg_tag 'edit.svg', class: "delete-address-img", width: 27.6, height: 24 %>
+    <% end %>
+  </span>
+
+  <span class="bg-transparent border-0 p-0 m-0 address-button delete-button js-delete-address-link" data-address="<%= spree.address_path(address) %>">
+    <%= inline_svg_tag 'garbage_2.svg', class: "delete-address-img", width: 27.6, height: 24 %>
+  </span>
+</div>

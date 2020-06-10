@@ -517,3 +517,10 @@
     }
   }
 }
+.js-delete-address-link{
+  cursor:pointer;
+  color: $primary-color;
+  &:hover{
+    color: #004676;
+  }
+}

@@ -49,7 +49,14 @@
     }
   }
 }
-
+.field_with_errors {
+  input{
+    border-color: #ff8181;
+  }
+  label{
+    color: #7f1d1d;
+  }
+}
 .spree-flat-label {
   color: theme-color("secondary");
   text-transform: uppercase;
