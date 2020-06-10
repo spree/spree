@@ -11,7 +11,7 @@
       </div>
       <div id="filters-accordion">
         <% available_option_types.each do |option_type| %>
-          <% option_type_name = option_type.presentation.titleize.gsub(' ', '') %>
+          <% option_type_name = option_type.filter_param %>
           <% ot_downcase_name = option_type_name.downcase %>
 
           <div class="card plp-overlay-card">
