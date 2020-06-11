@@ -48,6 +48,8 @@ describe Spree::OrderMailer, type: :mailer do
   end
 
   context 'store_owner_notification_email' do
+    let(:notification_email) { described_class.store_owner_notification_email(order) }
+
     it 'accepts an order id as an alternative to an Order object' do
       expect(Spree::Order).to receive(:find).with(order.id).and_return(order)
       expect do
@@ -56,23 +58,19 @@ describe Spree::OrderMailer, type: :mailer do
     end
 
     it 'has correct email recipient' do
-      confirmation_email = described_class.store_owner_notification_email(order)
-      expect(confirmation_email.to).to include('store-owner@example.com')
+      expect(notification_email.to).to include('store-owner@example.com')
     end
 
     it 'has correct subject line' do
-      confirmation_email = described_class.store_owner_notification_email(order)
-      expect(confirmation_email.subject).to eq('Spree Test Store received a new order')
+      expect(notification_email.subject).to eq('Spree Test Store received a new order')
     end
 
     it 'shows the correct heading in email body' do
-      confirmation_email = described_class.store_owner_notification_email(order)
-      expect(confirmation_email).to have_body_text('New Order Received')
+      expect(notification_email).to have_body_text('New Order Received')
     end
 
     it 'shows order details in email body' do
-      confirmation_email = described_class.store_owner_notification_email(order)
-      expect(confirmation_email).to have_body_text('4.99')
+      expect(notification_email).to have_body_text('4.99')
     end
   end
 
