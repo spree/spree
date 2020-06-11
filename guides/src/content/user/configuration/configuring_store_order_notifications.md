@@ -16,8 +16,8 @@ Scroll down to the **Emails** category, and add your desired email address to th
 
 ![Admin: Store Emails Group](../../../images/user/config/admin_stores_form_emails_group.png)
 
-Click the **Update** button at the button of the page and you're all set!
+Click the **Update** button at the bottom of the page and you're all set!
 
 ## Disabling Order Notifications
 
-To disable order notifications, simply remove the email address from the field labeled **New Order Notifications Email**, and click the **Update** button at the button of the page.
+To disable order notifications, simply remove the email address from the field labeled **New Order Notifications Email**, and click the **Update** button at the bottom of the page.
