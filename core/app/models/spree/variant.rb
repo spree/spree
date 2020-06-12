@@ -102,10 +102,18 @@ module Spree
 
     self.whitelisted_ransackable_associations = %w[option_values product prices default_price]
     self.whitelisted_ransackable_attributes = %w[weight sku]
-    self.whitelisted_ransackable_scopes = %i(product_name_or_sku_cont)
+    self.whitelisted_ransackable_scopes = %i(product_name_or_sku_cont search_by_product_name_or_sku)
 
     def self.product_name_or_sku_cont(query)
       joins(:product).where("#{Product.table_name}.name LIKE :query OR sku LIKE :query", query: "%#{query}%")
+    end
+
+    def self.search_by_product_name_or_sku(query)
+      if defined?(SpreeGlobalize)
+        joins(product: :translations).where("#{Product::Translation.table_name}.name LIKE :query OR sku LIKE :query", query: "%#{query}%")
+      else
+        product_name_or_sku_cont(query)
+      end
     end
 
     def available?
