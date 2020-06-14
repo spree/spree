@@ -340,6 +340,17 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
             expect(order.payments.last.source.last_digits).to eq('1111')
           end
         end
+
+        context 'when the gateway rejects the payment source' do
+          let(:params) { payment_params }
+
+          before do
+            allow_any_instance_of(Spree::Order).to receive(:update_from_params).and_raise(Spree::Core::GatewayError.new('Card declined'))
+            execute
+          end
+
+          it_behaves_like 'returns 422 HTTP status'
+        end
       end
 
       context 'special instructions' do
