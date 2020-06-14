@@ -6,6 +6,7 @@ module Spree
         include Spree::Core::ControllerHelpers::StrongParameters
         rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
         rescue_from CanCan::AccessDenied, with: :access_denied
+        rescue_from Spree::Core::GatewayError, with: :gateway_error
 
         def content_type
           Spree::Api::Config[:api_v2_content_type]
@@ -119,6 +120,10 @@ module Spree
 
         def access_denied(exception)
           render_error_payload(exception.message, 403)
+        end
+
+        def gateway_error(exception)
+          render_error_payload(exception.message)
         end
       end
     end
