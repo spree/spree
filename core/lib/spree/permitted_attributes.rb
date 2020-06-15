@@ -33,7 +33,7 @@ module Spree
       :id, :firstname, :lastname, :first_name, :last_name,
       :address1, :address2, :city, :country_iso, :country_id, :state_id,
       :zipcode, :phone, :state_name, :alternative_phone, :company,
-      :user_id, :deleted_at, :location_name,
+      :user_id, :deleted_at, :label,
       country: [:iso, :name, :iso3, :iso_name],
       state: [:name, :abbr]
     ]

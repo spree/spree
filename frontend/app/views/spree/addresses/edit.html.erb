@@ -3,9 +3,10 @@
   <h3 class="spree-header spree-mb-large spree-mt-large"><%= Spree.t(:edit_address, scope: :address_book) %></h3>
   <%= form_for @address, html: { id: 'checkout_form_address' } do |f| %>
   <div class="form-group checkout-content-inner-field mb-5 has-float-label">
-    <%= f.text_field :location_name, class: 'spree-flat-input', placeholder: Spree.t(:location_name_placeholder, scope: :address_book) %>
-    <%= f.label :location_name, Spree.t(:location_name, scope: :address_book) %>
+    <%= f.text_field :label, class: 'spree-flat-input', placeholder: Spree.t(:address_name_placeholder, scope: :address_book) %>
+    <%= f.label :address_name, Spree.t(:label, scope: :address_book) %>
   </div>
+
   <%= render 'spree/addresses/form',
     address_name: 'address',
     address_form: f,

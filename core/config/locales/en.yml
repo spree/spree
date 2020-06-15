@@ -13,7 +13,7 @@ en:
   activerecord:
     attributes:
       spree/address:
-        location_name: Address name
+        label: Address name
         address1: Address
         address2: Address (contd.)
         city: City
@@ -503,9 +503,9 @@ en:
     address_book:
       other_address: "Other address"
       add_new_shipping_address: "Add new address"
-      location_name: Address Name
-      location_name_label: Address Name
-      location_name_placeholder: Give this address a unique name (Work, Home, etc.)
+      label: Address Name
+      address_name_label: Address Name
+      address_name_placeholder: Give this address a unique name (Work, Home, etc.)
       new_address: "New Address"
       edit_address: "Edit Address"
       no_shipping_addresses_on_file: "No addresses on file"

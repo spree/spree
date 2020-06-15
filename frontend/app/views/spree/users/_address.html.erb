@@ -1,6 +1,6 @@
 <address>
-  <% if address.location_name? %>
-    <h4 class="m-0"><%= address.location_name %></h4>
+  <% if address.label? %>
+    <h4 class="m-0"><%= address.label %></h4>
     <span class="text-muted small mb-4"><%= address.address1 %> - <%= address.country_iso %></span>
   <% else %>
     <span class="account-page-user-full-name">
