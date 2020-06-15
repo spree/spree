@@ -1,11 +1,5 @@
 //= require spree/frontend/coupon_manager
 Spree.ready(function ($) {
-  function enableSubmitButton() {
-    var $submitBtn = $('#checkout-summary input[type="submit"]')
-    if ($submitBtn.prop('disabled')) {
-      $submitBtn.prop('disabled', false)
-    }
-  }
   Spree.onPayment = function () {
     if ($('#checkout_form_payment').length) {
       if ($('#existing_cards').length) {
@@ -15,7 +9,6 @@ Spree.ready(function ($) {
           $('#existing_cards').show()
           $('.payment-sources').show()
           $('.existing-cc-radio').first().prop('checked', true)
-          enableSubmitButton()
         })
         $("#payment-method-fields label:not([data-type='card'])").click(function() {
           $('#existing_cards').hide()
@@ -23,20 +16,19 @@ Spree.ready(function ($) {
           $('.payment-sources').hide()
           $('.existing-cc-radio').prop('checked', false)
           $('#use_existing_card_no').prop('checked', false)
-          enableSubmitButton()
         })
         $('.existing-cc-radio').click(function () {
           $(this).prop('checked', true)
           $('#use_existing_card_no').prop('checked', false)
           $('#use_existing_card_yes').prop('checked', true)
           $('#payment-methods').hide()
-          enableSubmitButton()
+          Spree.enableSave()
         })
         $('#use_existing_card_no').click(function () {
           $('#payment-methods').show()
           $('.existing-cc-radio').prop('checked', false)
           $('#use_existing_card_yes').prop('checked', false)
-          enableSubmitButton()
+          Spree.enableSave()
         })
       }
       $('.cardNumber').payment('formatCardNumber')
@@ -46,6 +38,7 @@ Spree.ready(function ($) {
         $(this).parent().siblings('.ccType').val($.payment.cardType(this.value))
       })
       $('input[type="radio"][name="order[payments_attributes][][payment_method_id]"]').click(function () {
+        Spree.enableSave()
         if ($('#payment_method_' + this.value).find('fieldset').children().length == 0) {
           $('.payment-sources').hide()
         } else {

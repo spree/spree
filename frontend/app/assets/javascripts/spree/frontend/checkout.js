@@ -12,7 +12,7 @@ Spree.disableSaveOnClick = function () {
 }
 
 Spree.enableSave = function () {
-  $('form.edit_order').data('submitted', false).find(':submit, :image').attr('disabled', false).addClass('primary').removeClass('disabled')
+  $('#checkout form').data('submitted', false).find(':submit, :image').attr('disabled', false).addClass('primary').removeClass('disabled')
 }
 
 Spree.ready(function () {
