@@ -32,10 +32,10 @@ module Spree
     validate :state_validate, :postal_code_validate
 
     validates :label, uniqueness: { conditions: -> { where(deleted_at: nil) },
-                              scope: :user_id,
-                              case_sensitive: false,
-                              allow_blank: true,
-                              allow_nil: true }
+                      scope: :user_id,
+                      case_sensitive: false,
+                      allow_blank: true,
+                      allow_nil: true }
 
 
     delegate :name, :iso3, :iso, :iso_name, to: :country, prefix: true
