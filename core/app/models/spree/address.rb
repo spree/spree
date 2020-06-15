@@ -13,7 +13,7 @@ module Spree
     # we're not freezing this on purpose so developers can extend and manage
     # those attributes depending of the logic of their applications
     ADDRESS_FIELDS = %w(firstname lastname company address1 address2 city state zipcode country phone)
-    EXCLUDED_KEYS_FOR_COMPARISION = %w(id updated_at created_at deleted_at location_name)
+    EXCLUDED_KEYS_FOR_COMPARISION = %w(id updated_at created_at deleted_at label)
 
     belongs_to :country, class_name: 'Spree::Country'
     belongs_to :state, class_name: 'Spree::State', optional: true
@@ -30,11 +30,13 @@ module Spree
     end
 
     validate :state_validate, :postal_code_validate
-    validates_uniqueness_of :location_name,
-                            scope: :user_id,
-                            conditions: -> { where(deleted_at: nil) },
-                            allow_nil: true,
-                            allow_blank: true
+
+    validates :label, uniqueness: { conditions: -> { where(deleted_at: nil) },
+                              scope: :user_id,
+                              case_sensitive: false,
+                              allow_blank: true,
+                              allow_nil: true }
+
 
     delegate :name, :iso3, :iso, :iso_name, to: :country, prefix: true
     delegate :abbr, to: :state, prefix: true, allow_nil: true
