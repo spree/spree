@@ -34,7 +34,6 @@ describe Spree::Address, type: :model do
       expect(cloned.state_id).to eq(original.state_id)
       expect(cloned.state_name).to eq(original.state_name)
       expect(cloned.zipcode).to eq(original.zipcode)
-      expect(cloned.user_id).to eq(original.user_id)
 
       expect(cloned.id).not_to eq(original.id)
       expect(cloned.created_at).not_to eq(original.created_at)
