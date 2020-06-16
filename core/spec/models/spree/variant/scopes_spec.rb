@@ -46,4 +46,42 @@ describe 'Variant scopes', type: :model do
       expect(variants.count).to eq(0)
     end
   end
+
+  describe '#search_by_product_name_or_sku' do
+    it 'returns variants based on products name' do
+      expect(Spree::Variant.search_by_product_name_or_sku('Second')).to include(variant_2)
+    end
+
+    it 'returns variants based on variant sku' do
+      expect(Spree::Variant.search_by_product_name_or_sku('blue')).to include(variant_3)
+    end
+
+    it 'does not return variants of products that do not match name' do
+      expect(Spree::Variant.search_by_product_name_or_sku('First')).not_to include(variant_2, variant_3)
+    end
+
+    it 'does not return variants with not matching skus' do
+      expect(Spree::Variant.search_by_product_name_or_sku('green')).not_to include(variant_1, variant_3)
+    end
+
+    it 'returns multiple variants based on products name' do
+      expect(Spree::Variant.search_by_product_name_or_sku('product')).to include(variant_1, variant_2, variant_3)
+    end
+
+    it 'return multiple variants based on variants sku' do
+      expect(Spree::Variant.search_by_product_name_or_sku('variant')).to include(variant_1, variant_2, variant_3)
+    end
+
+    it 'returns no variants when products name does not match any' do
+      variants = Spree::Variant.search_by_product_name_or_sku('White dress')
+      expect(variants).not_to include(variant_1, variant_2, variant_3)
+      expect(variants.count).to eq(0)
+    end
+
+    it 'returns no variants when variants sku does not match any' do
+      variants = Spree::Variant.search_by_product_name_or_sku('variant_white')
+      expect(variants).not_to include(variant_1, variant_2, variant_3)
+      expect(variants.count).to eq(0)
+    end
+  end
 end
