@@ -1,0 +1,6 @@
+#shipToLocation {
+  font-size: font-px-to-rem(10px);
+  @include media-breakpoint-up(md) {
+    font-size: font-px-to-rem(14px);
+  }
+}

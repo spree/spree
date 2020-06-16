@@ -11,7 +11,7 @@
       </div>
       <div id="filters-accordion">
         <% available_option_types.each do |option_type| %>
-          <% option_type_name = option_type.presentation.titleize.gsub(' ', '') %>
+          <% option_type_name = option_type.filter_param %>
           <% ot_downcase_name = option_type_name.downcase %>
 
           <div class="card plp-overlay-card">
@@ -42,7 +42,7 @@
             <div class="card-body pt-1">
               <% price_filter_values.each do |name| %>
                 <% price_param = params[:price] == name ? '' : name %>
-                <%= link_to permitted_params.merge(price: price_param, menu_open: 1) do %>
+                <%= link_to permitted_params.merge(price: price_param, menu_open: 1), data: { params: permitted_params.merge(price: price_param, menu_open: 1), filter_name: 'price' } do %>
                   <div class="d-inline-block py-1 px-2 m-1 text-uppercase plp-overlay-card-item <%= 'plp-overlay-card-item--selected' if params[:price] == name %>">
                     <%= name %>
                   </div>
@@ -56,7 +56,7 @@
   <% end %>
 
   <div class="container position-absolute text-center plp-overlay-buttons pt-3">
-    <%= link_to Spree.t('plp.clear_all'), permitted_params.select { |key, value| key == "sort_by"}, class: 'btn spree-btn btn-outline-primary w-100 mb-4' %>
-    <%= link_to Spree.t('plp.done'), permitted_params, class: 'btn btn-primary spree-btn w-100' %>
+    <%= link_to Spree.t('plp.clear_all'), permitted_params.select { |key, value| key == "sort_by"}, class: 'btn spree-btn btn-outline-primary w-100 mb-4', data: { params: permitted_params.select { |key, value| key == "sort_by"} } %>
+    <%= link_to Spree.t('plp.done'), permitted_params, class: 'btn btn-primary spree-btn w-100 done-btn', data: { params: permitted_params } %>
   </div>
 </div>
