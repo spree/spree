@@ -8,7 +8,9 @@ module Spree
       validates :name, :url, :mail_from_address, :default_currency
     end
 
-    validates :new_order_notifications_email, email: { allow_blank: true }
+    connection.column_exists?(:spree_stores, :new_order_notifications_email) do
+      validates :new_order_notifications_email, email: { allow_blank: true }
+    end
 
     before_save :ensure_default_exists_and_is_unique
     before_destroy :validate_not_default
