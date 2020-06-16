@@ -494,9 +494,6 @@
           font-size: font-px-to-rem(16px);
         }
       }
-      .delete-address-img {
-        color: $primary-color;
-      }
     }
 
     #checkout-summary {
@@ -517,10 +514,11 @@
     }
   }
 }
-.js-delete-address-link{
-  cursor:pointer;
+
+.js-delete-address-img {
   color: $primary-color;
-  &:hover{
-    color: #004676;
+  cursor: pointer;
+  &:hover {
+    color: darken($primary-color, 10);
   }
 }
