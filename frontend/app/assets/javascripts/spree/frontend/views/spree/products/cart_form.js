@@ -248,11 +248,11 @@ Spree.ready(function($) {
   }
 
   $('#product-details').on('submit', ADD_TO_CART_FORM_SELECTOR, function(event) {
-    let $cartForm = $(event.currentTarget);
-    let $addToCart = $cartForm.find(ADD_TO_CART_SELECTOR);
-    let variantId = $cartForm.find(VARIANT_ID_SELECTOR).val();
-    let quantity = parseInt($cartForm.find('[name="quantity"]').val());
-    let options = Spree.addToCartFormSubmissionOptions();
+    var $cartForm = $(event.currentTarget);
+    var $addToCart = $cartForm.find(ADD_TO_CART_SELECTOR);
+    var variantId = $cartForm.find(VARIANT_ID_SELECTOR).val();
+    var quantity = parseInt($cartForm.find('[name="quantity"]').val());
+    var options = Spree.addToCartFormSubmissionOptions();
 
     event.preventDefault()
     $addToCart.prop('disabled', true);
