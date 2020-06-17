@@ -1074,6 +1074,7 @@ en:
     no_actions_added: No actions added
     no_address_given: No address given
     no_available_date_set: No available date set
+    no_country: No country set
     no_payment_found: No payment found
     no_pending_payments: No pending payments
     no_product_available:
