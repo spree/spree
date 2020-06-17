@@ -14,11 +14,13 @@ describe Spree::OptionType, type: :model do
 
   context '#filter_param' do
     let!(:option_type) { create(:option_type, name: 'color', presentation: 'Color') }
-    let!(:other_option_type) { create(:option_type, name: 'secondary_color', presentation: 'Secondary Color') }
+    let!(:other_option_type) { create(:option_type, name: 'secondary color', presentation: 'Secondary Color') }
+    let!(:some_option_type) { create(:option_type, name: 'option type', presentation: 'Some Option Type') }
 
-    it 'returns filtered presentation param' do
+    it 'returns filtered name param' do
       expect(option_type.filter_param).to eq('color')
       expect(other_option_type.filter_param).to eq('secondarycolor')
+      expect(some_option_type.filter_param).to eq('optiontype')
     end
   end
 

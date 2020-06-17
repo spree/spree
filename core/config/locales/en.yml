@@ -1452,6 +1452,7 @@ en:
     server_error: The server returned an error
     settings: Settings
     ship: Ship
+    ship_to: "Shipping to:"
     ship_address: Ship Address
     ship_total: Ship Total
     shipment: Shipment

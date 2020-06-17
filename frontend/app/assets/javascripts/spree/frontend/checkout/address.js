@@ -42,7 +42,6 @@ Spree.ready(function ($) {
           zipcodeLabel.text(zipText)
           zipcodeInput.addClass('required')
         } else {
-          zipcodeInput.val('')
           zipcodeInput.prop('required', false).attr('placeholder', zipcodeLabelText)
           zipcodeLabel.text('')
           zipcodeLabel.text(zipcodeLabelText)

@@ -3,9 +3,15 @@
     <div id="methods">
       <%= form.fields_for :shipments do |ship_form| %>
         <div class="shipment">
-          <h4 class="text-uppercase checkout-content-header checkout-content-shipping-methods-header">
+          <h4 class="text-uppercase checkout-content-header checkout-content-shipping-methods-header mb-1">
             <%= Spree.t('checkout_page.delivery_method') %>
           </h4>
+          <div id="shipToLocation" class="mb-4 text-uppercase">
+            <%= Spree.t(:ship_to) %>
+            <span class="text-muted"><%= @order.shipping_address.address1 %></span> -
+              <% if @order.shipping_address.zipcode.present? %> <span class="text-muted"><%= @order.shipping_address.zipcode %></span> - <% end %>
+            <span class="text-muted"><%= @order.shipping_address.country_iso %></span>
+          </div>
 
           <ul class="checkout-content-shipping-methods-list">
             <% ship_form.object.shipping_rates.each do |rate| %>
@@ -28,13 +34,14 @@
         </div>
       <% end %>
     </div>
+
     <% if Spree::Config[:shipping_instructions] %>
-      <p id="minstrs" data-hook>
+      <div id="minstrs" data-hook>
         <h4 class="h5">
           <%= Spree.t(:shipping_instructions) %>
         </h4>
         <%= form.text_area :special_instructions, cols: 40, rows: 4, class: "form-control" %>
-      </p>
+      </div>
     <% end %>
   </div>
 </div>
