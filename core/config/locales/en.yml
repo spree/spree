@@ -854,6 +854,7 @@ en:
     finalized: Finalized
     first_item: First Item
     first_name: First Name
+    firstname: First Name
     first_name_begins_with: First Name Begins With
     flat_percent: Flat Percent
     flat_rate_per_order: Flat Rate
@@ -963,6 +964,7 @@ en:
     items_reimbursed: Items reimbursed
     join_slack: Join Slack
     last_name: Last Name
+    lastname: Last Name
     last_name_begins_with: Last Name Begins With
     learn_more: Learn More
     lifetime_stats: Lifetime Stats
@@ -1073,6 +1075,7 @@ en:
     no_actions_added: No actions added
     no_address_given: No address given
     no_available_date_set: No available date set
+    no_country: No country set
     no_payment_found: No payment found
     no_pending_payments: No pending payments
     no_product_available:
