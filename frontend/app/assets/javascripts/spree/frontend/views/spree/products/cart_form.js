@@ -276,21 +276,24 @@ Spree.ready(function($) {
     )
   }
 
+  Spree.addToCartFormSubmissionOptions = function() {
+    return {};
+  }
+
   $('#product-details').on('submit', ADD_TO_CART_FORM_SELECTOR, function(event) {
-    var variantId
-    var quantity
-    var $cartForm = $(event.currentTarget)
-    var $addToCart = $cartForm.find(ADD_TO_CART_SELECTOR)
+    var $cartForm = $(event.currentTarget);
+    var $addToCart = $cartForm.find(ADD_TO_CART_SELECTOR);
+    var variantId = $cartForm.find(VARIANT_ID_SELECTOR).val();
+    var quantity = parseInt($cartForm.find('[name="quantity"]').val());
+    var options = Spree.addToCartFormSubmissionOptions();
 
     event.preventDefault()
-    $addToCart.prop('disabled', true)
-    variantId = $cartForm.find(VARIANT_ID_SELECTOR).val()
-    quantity = parseInt($cartForm.find('[name="quantity"]').val())
+    $addToCart.prop('disabled', true);
     Spree.ensureCart(function() {
       SpreeAPI.Storefront.addToCart(
         variantId,
         quantity,
-        {}, // options hash - you can pass additional parameters here, your backend
+        options, // options hash - you can pass additional parameters here, your backend
         // needs to be aware of those, see API docs:
         // https://github.com/spree/spree/blob/master/api/docs/v2/storefront/index.yaml#L42
         function(response) {
