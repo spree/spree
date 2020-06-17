@@ -745,6 +745,7 @@ en:
     customer_returns: Customer Returns
     customer_search: Customer Search
     customer_support_email: Customer Support Email
+    new_order_notifications_email: New Order Notifications Email
     cut: Cut
     cvv: CVV
     cvv_response: CVV Response
@@ -1140,6 +1141,11 @@ en:
         order_summary: Order %{number} Summary
         subject: Order Confirmation
         thanks: Thank you for your business.
+      store_owner_notification_email:
+        heading: New Order Received
+        instructions: You have received a new order.
+        order_summary: Order %{number} Summary
+        subject: '%{store_name} received a new order'
     order_not_found: We couldn't find your order. Please try that action again.
     order_number: Order %{number}
     order_processed_successfully: Your order has been processed successfully

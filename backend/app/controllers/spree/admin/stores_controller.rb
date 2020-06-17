@@ -6,7 +6,7 @@ module Spree
       before_action :set_default_locale, only: :new
       before_action :normalize_supported_currencies, only: [:create, :update]
       before_action :set_default_country_id, only: :new
-      before_action :load_all_countries, only: [:new, :edit]
+      before_action :load_all_countries, only: [:new, :edit, :update]
 
       if defined?(SpreeI18n)
         include SpreeI18n::LocaleHelper
