@@ -40,7 +40,7 @@ Each product in your store will need a tax category assigned to it to accurately
 
 ## Zones
 
-In addition to a product's tax category, the zone an order is being shipped to will play a role in determining the tax amount. You can read more about how zones work in the [Zones guide](#zones).
+In addition to a product's tax category, the zone an order is being shipped to will play a role in determining the tax amount. You can read more about how zones work in the [Zones guide](https://guides.spreecommerce.org/user/shipments/zones.html).
 
 ## Tax Rates
 
