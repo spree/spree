@@ -5,8 +5,10 @@
   & > .order-show-check-mark {
     color: $secondary-color;
     margin-bottom: 25px;
+    margin-top: 27px;
     @include media-breakpoint-up(sm) {
       margin-bottom: 42px;
+      margin-top: 84px;
     }
   }
 
@@ -45,7 +47,7 @@
   }
 
   &-number {
-    margin-top: 100px;
+    margin-top: 38px;
     margin-bottom: 38px;
     @include media-breakpoint-up(sm) {
       margin-top: 80px;
@@ -105,7 +107,7 @@
           padding-bottom: 0;
         }
       }
-      
+
       a {
         max-width: 50%;
         margin-right: 20px;
@@ -270,4 +272,3 @@
     }
   }
 }
-

@@ -1,7 +1,7 @@
 ---
 title: Upgrading Spree from 2.3.x to 2.4.x
 section: upgrades
-order: 7
+order: 9
 ---
 
 This guide covers upgrading a 2.3.x Spree store, to a 2.4.x store. This

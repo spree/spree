@@ -31,12 +31,12 @@ module Spree
       end
     end
 
-    def default_variant(variants)
-      variants_option_types_presenter(variants).default_variant || variants.find(&:is_master)
+    def default_variant(variants, product)
+      variants_option_types_presenter(variants, product).default_variant || product.default_variant
     end
 
-    def used_variants_options(variants)
-      variants_option_types_presenter(variants).options
+    def used_variants_options(variants, product)
+      variants_option_types_presenter(variants, product).options
     end
 
     # converts line breaks in product description into <p> tags (for html display purposes)
@@ -58,9 +58,8 @@ module Spree
     end
 
     def cache_key_for_products(products = @products, additional_cache_key = nil)
-      count = products.count
       max_updated_at = (products.maximum(:updated_at) || Date.today).to_s(:number)
-      products_cache_keys = "spree/products/all-#{params[:page]}-#{params[:sort_by]}-#{max_updated_at}-#{count}-#{@taxon&.id}"
+      products_cache_keys = "spree/products/#{products.map(&:id).join('-')}-#{params[:page]}-#{params[:sort_by]}-#{max_updated_at}-#{@taxon&.id}"
       (common_product_cache_keys + [products_cache_keys] + [additional_cache_key]).compact.join('/')
     end
 
@@ -68,7 +67,7 @@ module Spree
       cache_key_elements = common_product_cache_keys
       cache_key_elements += [
         product.cache_key_with_version,
-        product.possible_promotions
+        product.possible_promotions.map(&:cache_key)
       ]
 
       cache_key_elements.compact.join('/')
@@ -80,8 +79,9 @@ module Spree
       string.slice(0..449) + '...'
     end
 
-    def available_status(product) # will return a human readable string
-      return Spree.t(:discontinued)  if product.discontinued?
+    # will return a human readable string
+    def available_status(product)
+      return Spree.t(:discontinued) if product.discontinued?
       return Spree.t(:deleted) if product.deleted?
 
       if product.available?
@@ -117,16 +117,16 @@ module Spree
     def related_products
       return [] unless @product.respond_to?(:has_related_products?) && @product.has_related_products?(:related_products)
 
-      @_related_products ||= @product.
-                             related_products.
-                             includes(
-                               :tax_category,
-                               master: [
-                                 :prices,
-                                 images: { attachment_attachment: :blob },
-                               ]
-                             ).
-                             limit(Spree::Config[:products_per_page])
+      @related_products ||= @product.
+                            related_products.
+                            includes(
+                              :tax_category,
+                              master: [
+                                :prices,
+                                images: { attachment_attachment: :blob },
+                              ]
+                            ).
+                            limit(Spree::Config[:products_per_page])
     end
 
     def product_available_in_currency?
@@ -145,11 +145,11 @@ module Spree
       end
     end
 
-    def variants_option_types_presenter(variants)
-      @_variants_option_types_presenter ||= begin
+    def variants_option_types_presenter(variants, product)
+      @variants_option_types_presenter ||= begin
         option_types = Spree::Variants::OptionTypesFinder.new(variant_ids: variants.map(&:id)).execute
 
-        Spree::Variants::OptionTypesPresenter.new(option_types, variants)
+        Spree::Variants::OptionTypesPresenter.new(option_types, variants, product)
       end
     end
   end

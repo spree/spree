@@ -34,6 +34,10 @@ module Spree
             )
           end
 
+          def supported_currencies
+            current_store.supported_currencies_list
+          end
+
           def serialize_order(order)
             resource_serializer.new(order.reload, include: resource_includes, fields: sparse_fields).serializable_hash
           end

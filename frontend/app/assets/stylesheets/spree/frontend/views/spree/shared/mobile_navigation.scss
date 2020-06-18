@@ -17,6 +17,8 @@
   }
   &-list, &-sublist {
     margin: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
     padding: 0 19px;
     &-item {
       padding: 16px 0;
@@ -38,6 +40,9 @@
     padding-top: $spree-header-mobile-height;
     @include media-breakpoint-up(sm) {
       padding-top: $spree-header-tablet-height;
+    }
+    &-subcategory-shown {
+      overflow-y: hidden;
     }
   }
 

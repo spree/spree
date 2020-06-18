@@ -1,12 +1,12 @@
-<% cache base_cache_key + [ot_downcase_name, params_ot_downcase_name, permitted_params, @taxon&.id] do %>
+<% cache base_cache_key + [ot_downcase_name, params_ot_downcase_name, filtering_params_cache_key, @taxon&.id] do %>
   <% selected_option_values = params_ot_downcase_name&.split(',')&.map(&:to_i) || [] %>
   <% option_type.option_values.each do |option_value| %>
     <% id = option_value.id %>
     <% name = option_value.name %>
 
     <% option_value_param = (selected_option_values.include?(id) ? selected_option_values - [id] : selected_option_values + [id]).join(',') %>
-    <%= link_to permitted_params.merge(ot_downcase_name => option_value_param, menu_open: 1) do %>
-      <% if ot_downcase_name == 'color' %>
+    <%= link_to permitted_params.merge(ot_downcase_name => option_value_param, menu_open: 1), data: { params: permitted_params.merge(ot_downcase_name => option_value_param, menu_open: 1), id: id, filter_name: ot_downcase_name, multiselect: true } do %>
+      <% if Spree::OptionType.color&.name&.downcase == ot_downcase_name %>
 
         <span class="d-inline-block mb-1">
                         <%= render partial: 'spree/shared/color_select', locals: {

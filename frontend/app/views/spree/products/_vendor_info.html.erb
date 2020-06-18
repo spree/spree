@@ -1,0 +1,13 @@
+<% if @product.vendor %>
+  <div id="product-vendor-info">
+    <%= link_to vendor_path(@product.vendor), class: "vendor-link d-inline-block" do %>
+      <% if @product.vendor.image %>
+        <%= image_tag main_app.url_for(@product.vendor.image.url(:small)), class: 'product-details-vendor-img d-block' %>
+      <% end %>
+      <h4 class="product-details-vendor-name d-flex align-items-center mt-3 mb-4">
+        <%= @product.vendor.name %>
+        <%= icon(name: 'arrow-right', classes: "vendor-icon ml-2", width: 18, height: 20) %>
+      </h4>
+    <% end %>
+  </div>
+<% end %>

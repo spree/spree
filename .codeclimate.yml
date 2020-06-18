@@ -2,9 +2,20 @@ version: "2"
 plugins:
   rubocop:
     enabled: true
+    checks:
+      Rubocop/Naming/RescuedExceptionsVariableName:
+        enabled: false
+      Rubocop/Layout/AlignArguments:
+        enabled: false
+      Rubocop/Style/MultilineWhenThen:
+        enabled: false
+      Rubocop/Layout/SpaceAroundOperators:
+        enabled: false
+      Rubocop/Style/FormatStringToken:
+        enabled: false
     config:
       file: .rubocop.yml
-    channel: "rubocop-0-60" # need to keep this value the same as rubocop version
+    channel: "rubocop-0-80" # need to keep this value the same as rubocop version
                             # https://docs.codeclimate.com/v1.0/docs/rubocop#section-using-rubocop-s-newer-versions
   eslint:
     enabled: true

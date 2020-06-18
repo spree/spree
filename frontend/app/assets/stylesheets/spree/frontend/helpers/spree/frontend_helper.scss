@@ -14,10 +14,8 @@
     @include media-breakpoint-up(lg) {
       font-size: font-px-to-rem(12px);
     }
-    span {
-      a {
-        color: inherit;
-      }
+    a {
+      color: inherit;
     }
   }
 }

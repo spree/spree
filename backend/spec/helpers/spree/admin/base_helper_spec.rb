@@ -26,5 +26,9 @@ describe Spree::Admin::BaseHelper, type: :helper do
     it 'prints in a format' do
       expect(order_time(Time.new(2016, 5, 6, 13, 33))).to eq '2016-05-06 1:33 PM'
     end
+
+    it 'return empty stirng when nil is supplied' do
+      expect(order_time(nil)).to eq ''
+    end
   end
 end

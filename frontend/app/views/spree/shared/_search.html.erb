@@ -2,18 +2,19 @@
   <%= search_field_tag :keywords,
                        params[:keywords],
                        placeholder: Spree.t(:search),
+                       title: Spree.t(:search),
                        autofocus: true,
+                       'aria-label': Spree.t(:search),
                        class: " border-0 p-3"
   %>
-  <label class="m-0">
-    <input type="submit">
+  <button type="submit" class="btn border-0 p-0" aria-label="Submit">
     <%= icon(name: 'search',
-             classes: 'd-md-none',
-             width: 20,
-             height: 20) %>
+            classes: 'd-md-none',
+            width: 20,
+            height: 20) %>
     <%= icon(name: 'search',
-             classes: 'd-none d-md-inline',
-             width: 27,
-             height: 27) %>
-  </label>
+            classes: 'd-none d-md-inline',
+            width: 27,
+            height: 27) %>
+  </button>
 <% end %>

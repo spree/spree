@@ -644,7 +644,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
         end
 
         it 'remove store credits button should remove store_credits' do
-          click_button 'Remove'
+          click_button 'Remove', match: :first
           expect(page).to have_current_path(spree.checkout_state_path(:payment))
           expect(page).to have_content(Spree.t('store_credit.available_amount', amount: order.display_total_available_store_credit).strip_html_tags)
           expect(page).to have_selector('button[name="apply_store_credit"]')

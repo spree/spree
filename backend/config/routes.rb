@@ -45,6 +45,7 @@ Spree::Core::Engine.add_routes do
         end
       end
       resources :variants_including_master, only: [:update]
+      resources :prices, only: [:index, :create]
     end
 
     resources :option_types do

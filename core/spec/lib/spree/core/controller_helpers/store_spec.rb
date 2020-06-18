@@ -27,6 +27,15 @@ describe Spree::Core::ControllerHelpers::Store, type: :controller do
     end
   end
 
+  describe '#supported_currencies' do
+    let(:currency) { 'EUR' }
+    let!(:store) { create :store, default: true, supported_currencies: currency }
+
+    it 'returns supported currencies' do
+      expect(controller.supported_currencies).to include(::Money::Currency.find(currency))
+    end
+  end
+
   describe '#current_price_options' do
     subject(:current_price_options) { controller.current_price_options }
 

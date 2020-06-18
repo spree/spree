@@ -3,7 +3,7 @@
   <%= render partial: "spree/admin/variants/split", formats: :js %>
 
   <div class="card-header stock-location no-borderb" data-hook="stock-location">
-    <h1 class="d-flex flex-wrap align-items-center card-title mb-0 h5">
+    <h1 class="flex-wrap align-items-center card-title mb-0 h5">
       <span class="shipment-number"><%= shipment.number %></span>
       -
       <span class="shipment-state"><%= Spree.t("shipment_states.#{shipment.state}") %></span>

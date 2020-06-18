@@ -4,7 +4,8 @@ title: Roles
 
 ## Introduction
 
-Roles are used to define user's permissions on your website. This option gives you ability to control users rights. By default Spree offers two kinds of Roles **Admin** and **User**. If you would like to make more roles with specific features than Admin and User role, our company offers making those by backed-end work. To open **Roles** tab extend **Configuration** dropdown and find **Roles**.
+Roles are used to define user’s permissions on your website. This option gives you the ability to control users rights. By default Spree offers two kinds of Roles - **Admin** and **User**. If you would like to make more roles with specific features than Admin and User role, our company offers making those by backend work.
+You can extend Roles with additional development for specific features other than Admin and User roles. To open the **Roles** tab extend **Configuration** dropdown and find **Roles**.
 
 ## Creating new Role
 
@@ -26,4 +27,8 @@ Or Delete it by pressing **Delete** button.
 
 ## Assigning Role to the User
 
-To assign new Role, you need to open edition for the certain User. To find out more [click here](/user/users/editing_users.html).
+To assign a new Role, you need to open edition for the certain User.
+
+![Assign Role](../../../images/user/config/assign_role.jpg)
+
+To find out more [click here](/user/users/editing_users.html).

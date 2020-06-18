@@ -10,6 +10,13 @@ module.exports = {
   plugins: [
     'gatsby-plugin-sitemap',
     'gatsby-plugin-react-helmet',
+    {
+      resolve: 'gatsby-plugin-react-helmet-canonical-urls',
+      options: {
+        siteUrl: 'https://guides.spreecommerce.org',
+        noQueryString: true
+      },
+    },
     'gatsby-transformer-remark',
     'gatsby-plugin-robots-txt',
     {

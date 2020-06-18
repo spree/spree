@@ -33,7 +33,7 @@ describe 'Product Details', type: :feature, js: true do
 
     it 'has a link to preview a product' do
       allow(Spree::Core::Engine).to receive(:frontend_available?).and_return(true)
-      allow_any_instance_of(Spree::BaseHelper).to receive(:product_url).and_return('http://example.com/products/product-slug')
+      allow_any_instance_of(ActionDispatch::Routing::RoutesProxy).to receive(:product_url).and_return('http://example.com/products/product-slug')
       click_link 'Details'
       expect(page).to have_css('#admin_preview_product')
       expect(page).to have_link Spree.t(:preview_product), href: 'http://example.com/products/product-slug'

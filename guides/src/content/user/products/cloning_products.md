@@ -9,7 +9,7 @@ To clone a product in your store, go into the Admin Interface and click the "Pro
 
 ![Cloning a Product](../../../images/user/products/clone_product.jpg)
 
-This will create a copy of the product and it will now appear in your product inventory list as "COPY OF" with the product name appended afterward. A new permalink and SKU will also be created for the product.
+This operation will redirect you to a created copy of the product, it will also now appear in your product listing feed in the admin panel as “COPY OF” with the product name appended afterward. A new permalink and SKU will also be created for the product.
 
 ![Cloned Product Example](../../../images/user/products/example_cloned_product.jpg)
 

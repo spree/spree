@@ -62,11 +62,11 @@
           height: auto;
 
           @include media-breakpoint-up(sm) {
-            width: 206px;
+            width: 120px;
           }
 
           @include media-breakpoint-up(lg) {
-            width: 255px;
+            width: 190px;
           }
         }
 
@@ -185,6 +185,11 @@
   }
 
   &-delivery-informations {
+    div:first-child {
+      flex-shrink: unset;
+      -webkit-flex: unset;
+    }
+
     border-bottom: 1px solid $global-border-style;
     font-weight: 500;
 

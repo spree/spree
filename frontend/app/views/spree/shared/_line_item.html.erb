@@ -1,0 +1,34 @@
+<div class="checkout-confirm-order-details-line-items-line-item w-100 d-table-row">
+  <div class="checkout-confirm-order-details-line-items-line-item-name d-table-cell align-middle py-3 py-sm-4">
+    <div class="d-flex align-items-lg-center">
+      <%= link_to product_image(line_item.variant), line_item.product %>
+      <div class="d-flex flex-column mt-2 mt-lg-0">
+        <div><%= link_to line_item.name, line_item.product %></div>
+        <ul class="checkout-confirm-order-details-line-items-line-item-name-options text-uppercase list-unstyled mb-0">
+          <% line_item.variant.option_values.sort { |ov| ov.option_type.position }.each do |ov| %>
+          <li>
+            <% # TODO: rework option values so options_text method can be used here %>
+            <%= "#{ov.option_type.presentation}: #{ov.name.titleize}" %>
+          </li>
+        <% end %>
+        </ul>
+        <div class="d-lg-none">
+          <div class="font-weight-bold"><%= line_item.single_money.to_html %></div>
+        </div>
+        <div class="d-lg-none">
+          <span><%= Spree.t(:quantity) %>:</span>
+          <span class="font-weight-bold"><%= line_item.quantity %></span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="checkout-confirm-order-details-line-items-line-item-price d-none d-lg-table-cell align-middle py-4">
+    <div><%= line_item.single_money.to_html %></div>
+  </div>
+  <div class="checkout-confirm-order-details-line-items-line-item-quantity d-none d-lg-table-cell align-middle py-4">
+    <span class="checkout-confirm-order-details-line-items-line-item-quantity-val d-lg-block"><%= line_item.quantity %></span>
+  </div>
+  <div class="checkout-confirm-order-details-line-items-line-item-total d-none d-lg-table-cell align-middle py-4">
+    <div><%= line_item.display_total.to_s %></div>
+  </div>
+</div>

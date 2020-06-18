@@ -9,7 +9,7 @@ defaults: &defaults
     BUNDLE_PATH: ~/spree/vendor/bundle
   working_directory: ~/spree
   docker:
-    - image: &image circleci/ruby:2.5-node-browsers
+    - image: &image circleci/ruby:2.7-node-browsers
 
 run_tests: &run_tests
   <<: *defaults
@@ -18,8 +18,8 @@ run_tests: &run_tests
     - checkout
     - restore_cache:
         keys:
-          - spree-bundle-v4-{{ checksum ".ruby-version" }}-{{ .Branch }}
-          - spree-bundle-v4-{{ checksum ".ruby-version" }}
+          - spree-bundle-v5-{{ checksum ".ruby-version" }}-{{ .Branch }}
+          - spree-bundle-v5-{{ checksum ".ruby-version" }}
     - run:
         name: Ensure Bundle Install
         command: |
@@ -44,15 +44,15 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - spree-bundle-v4-{{ checksum ".ruby-version" }}-{{ .Branch }}
-            - spree-bundle-v4-{{ checksum ".ruby-version" }}
+            - spree-bundle-v5-{{ checksum ".ruby-version" }}-{{ .Branch }}
+            - spree-bundle-v5-{{ checksum ".ruby-version" }}
       - run:
           name: Bundle Install
           command: |
             bundle install --path=~/spree/vendor/bundle
             ./build-ci.rb install
       - save_cache:
-          key: spree-bundle-v4-{{ checksum ".ruby-version" }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+          key: spree-bundle-v5-{{ checksum ".ruby-version" }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
           paths:
             - ~/spree/vendor/bundle
 
@@ -86,8 +86,8 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - spree-bundle-v4-{{ checksum ".ruby-version" }}-{{ .Branch }}
-            - spree-bundle-v4-{{ checksum ".ruby-version" }}
+            - spree-bundle-v5-{{ checksum ".ruby-version" }}-{{ .Branch }}
+            - spree-bundle-v5-{{ checksum ".ruby-version" }}
       - run:
           name: Ensure Bundle Install
           command: |
@@ -142,7 +142,7 @@ jobs:
 
   update_staging_repository:
     docker:
-      - image: circleci/ruby:2.6.3
+      - image: circleci/ruby:2.7
     steps:
       - add_ssh_keys:
           fingerprints:
@@ -152,9 +152,11 @@ jobs:
       - run: ssh-add -D
       - run: ssh-add ~/.ssh/id_rsa_54505e4e806d2e2643c699bd39b271dc
       - run: git clone -b master git@github.com:spark-solutions/spree-designs.git
-      - run: gem install bundler -v 1.17.3
       - run:
           command: bundle update spree
+          working_directory: ~/project/spree-designs
+      - run:
+          command: bundle exec rails spree:install:migrations
           working_directory: ~/project/spree-designs
       - run:
           command: |
@@ -167,7 +169,7 @@ jobs:
             git commit -m "Auto-commit v#${CIRCLE_BUILD_NUM}"
           working_directory: ~/project/spree-designs
       - run:
-          command: git push origin master
+          command: git push -f origin master
           working_directory: ~/project/spree-designs
 
 workflows:
@@ -189,4 +191,5 @@ workflows:
       - update_staging_repository:
           filters:
             branches:
-              only: master
+              only:
+                - master

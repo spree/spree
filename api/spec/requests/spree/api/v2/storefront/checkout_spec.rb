@@ -340,6 +340,17 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
             expect(order.payments.last.source.last_digits).to eq('1111')
           end
         end
+
+        context 'when the gateway rejects the payment source' do
+          let(:params) { payment_params }
+
+          before do
+            allow_any_instance_of(Spree::Order).to receive(:update_from_params).and_raise(Spree::Core::GatewayError.new('Card declined'))
+            execute
+          end
+
+          it_behaves_like 'returns 422 HTTP status'
+        end
       end
 
       context 'special instructions' do
@@ -654,7 +665,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
       {
         order: {
           shipments_attributes: {
-            '0' => { selected_shipping_rate_id: new_selected_shipping_rate_id, id: shipment_id }
+            '0' => { selected_shipping_rate_id: shipping_rate_id, id: shipment_id }
           }
         }
       }
@@ -664,8 +675,6 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
       json_response['data'].first['relationships']['shipping_rates']['data'].first['id']
     end
     let(:shipment_id) { json_response['data'].first['id'] }
-    let!(:new_selected_shipping_method) { create(:shipping_method, name: 'Fedex') }
-    let(:new_selected_shipping_rate_id) { new_selected_shipping_method.shipping_rates.last.id }
 
     shared_examples 'transitions through checkout from start to finish' do
       before do
@@ -700,7 +709,6 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
         expect(response.status).to eq(200)
         expect(order.reload.completed_at).not_to be_nil
         expect(order.state).to eq('complete')
-        expect(order.shipments.first.shipping_method).to eq(new_selected_shipping_method)
         expect(order.payments.valid.first.payment_method).to eq(payment_method)
       end
     end

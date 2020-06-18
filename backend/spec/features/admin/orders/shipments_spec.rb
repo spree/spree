@@ -30,7 +30,7 @@ describe 'Shipments', type: :feature do
     it 'can ship a completed order' do
       click_on 'Ship'
 
-      expect(page).to have_content("shipped\npackage")
+      expect(page).to have_content("shipped package")
       expect(order.reload.shipment_state).to eq('shipped')
     end
   end

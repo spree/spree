@@ -1,5 +1,5 @@
 <% if spree_navigation_data.any? %>
-  <div class="position-fixed text-uppercase d-xl-none mobile-navigation">
+  <div class="position-fixed text-uppercase d-xl-none mobile-navigation" role="navigation">
     <div class="d-flex align-items-center header-spree" data-hook>
       <div class="container-fluid header-spree-fluid">
         <div class="d-flex flex-nowrap align-items-center">
@@ -68,6 +68,7 @@
           </ul>
         </li>
       <% end %>
+      <%= render partial: 'spree/shared/mobile_change_store' %>
     </ul>
   </div>
 <% end %>

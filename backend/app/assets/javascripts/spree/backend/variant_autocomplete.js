@@ -36,7 +36,7 @@ $.fn.variantAutocomplete = function () {
       data: function (term) {
         return {
           q: {
-            product_name_or_sku_cont: term
+            search_by_product_name_or_sku: term
           },
           token: Spree.api_key
         }

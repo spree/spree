@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'benchmark'
 
 describe Spree::Shipment, type: :model do
   let(:order) do
@@ -185,6 +184,25 @@ describe Spree::Shipment, type: :model do
       Spree::PromotionHandler::Coupon.new(order).apply
       expect(order.promotions).to include(free_shipping_promotion)
       expect(shipment.free?).to eq(true)
+    end
+  end
+
+  context '#store' do
+    let(:store) { create(:store) }
+    let!(:order) { create(:order, store: store) }
+    let!(:shipment) { create(:shipment, cost: 10, order: order) }
+
+    it 'return order store' do
+      expect(shipment.store).to eq(store)
+    end
+  end
+
+  context '#currency' do
+    let!(:order) { create(:order, currency: 'EUR') }
+    let!(:shipment) { create(:shipment, cost: 10, order: order) }
+
+    it 'return order currency' do
+      expect(shipment.currency).to eq('EUR')
     end
   end
 

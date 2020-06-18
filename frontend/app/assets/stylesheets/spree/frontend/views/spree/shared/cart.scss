@@ -19,8 +19,8 @@
     position: absolute;
     height: $size;
     min-width: $size;
-    right: 0;
-    bottom: -15%;
+    right: -5%;
+    bottom: 35%;
     text-align: center;
     line-height: $size - $border-width * 2;
     padding: 0 2px;
@@ -35,8 +35,6 @@
       border-width: $border-width;
       height: $size;
       min-width: $size;
-      right: 0;
-      bottom: -15%;
       line-height: $size - $border-width * 2;
       font-size: font-px-to-rem(15px);
     }

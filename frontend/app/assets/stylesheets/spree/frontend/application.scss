@@ -8,6 +8,7 @@
 @import "spree/frontend/mixins";
 @import "spree/frontend/functions";
 @import "spree/frontend/margins";
+@import "spree/frontend/flags/flag-icon";
 
 @import "spree/frontend/components-bootstrap/carousel";
 @import "spree/frontend/components-bootstrap/button";
@@ -37,6 +38,7 @@
 @import "spree/frontend/components-custom/headers";
 @import "spree/frontend/components-custom/inputs";
 @import "spree/frontend/views/spree/checkout/registration";
+@import "spree/frontend/views/spree/checkout/delivery";
 @import "spree/frontend/views/spree/checkout/confirm";
 @import "spree/frontend/views/spree/checkout/payment";
 @import "spree/frontend/views/spree/orders/edit";

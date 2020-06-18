@@ -13,6 +13,7 @@ globals:
   SpreePaths: true
   CouponManager: true
   ThumbnailsCarousel: true
+  Turbolinks: true
 
 env:
   browser: true

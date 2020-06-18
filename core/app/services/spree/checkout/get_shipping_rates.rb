@@ -7,9 +7,7 @@ module Spree
         run :reload_order
         run :ensure_shipping_address
         run :ensure_line_items_present
-        run :move_order_to_delivery_state
-        run :generate_shipping_rates
-        run :return_shipments
+        run :generate_or_return_shipping_rates
       end
 
       private
@@ -31,6 +29,11 @@ module Spree
         success(order: order)
       end
 
+      def generate_or_return_shipping_rates(order:)
+        generate_shipping_rates(order: order) if order.shipments.empty?
+        return_shipments(order: order)
+      end
+
       def generate_shipping_rates(order:)
         ApplicationRecord.transaction do
           order.create_proposed_shipments
@@ -42,13 +45,7 @@ module Spree
       end
 
       def return_shipments(order:)
-        success(order.shipments.includes([shipping_rates: :shipping_method]))
-      end
-
-      def move_order_to_delivery_state(order:)
-        Spree::Dependencies.checkout_next_service.constantize.call(order: order) until order.state == 'delivery'
-
-        success(order: order)
+        success(order.reload.shipments.includes([shipping_rates: :shipping_method]))
       end
     end
   end

@@ -8,7 +8,8 @@ module Spree
         @skus             = String(params.dig(:filter, :skus)).split(',')
         @price            = String(params.dig(:filter, :price)).split(',').map(&:to_f)
         @currency         = params[:currency] || current_currency
-        @taxons           = String(params.dig(:filter, :taxons)).split(',')
+        @taxons           = taxon_ids(params.dig(:filter, :taxons))
+        @concat_taxons    = taxon_ids(params.dig(:filter, :concat_taxons))
         @name             = params.dig(:filter, :name)
         @options          = params.dig(:filter, :options).try(:to_unsafe_hash)
         @option_value_ids = params.dig(:filter, :option_value_ids)
@@ -22,6 +23,7 @@ module Spree
         products = by_skus(products)
         products = by_price(products)
         products = by_taxons(products)
+        products = by_concat_taxons(products)
         products = by_name(products)
         products = by_options(products)
         products = by_option_value_ids(products)
@@ -29,12 +31,13 @@ module Spree
         products = include_discontinued(products)
         products = ordered(products)
 
-        products
+        products.distinct
       end
 
       private
 
-      attr_reader :ids, :skus, :price, :currency, :taxons, :name, :options, :option_value_ids, :scope, :sort_by, :deleted, :discontinued
+      attr_reader :ids, :skus, :price, :currency, :taxons, :concat_taxons, :name, :options,
+                  :option_value_ids, :scope, :sort_by, :deleted, :discontinued
 
       def ids?
         ids.present?
@@ -50,6 +53,10 @@ module Spree
 
       def taxons?
         taxons.present?
+      end
+
+      def concat_taxons?
+        concat_taxons.present?
       end
 
       def name?
@@ -81,14 +88,13 @@ module Spree
       def by_skus(products)
         return products unless skus?
 
-        products.joins(:variants_including_master).distinct.where(spree_variants: { sku: skus })
+        products.joins(:variants_including_master).where(spree_variants: { sku: skus })
       end
 
       def by_price(products)
         return products unless price?
 
         products.joins(master: :default_price).
-          distinct.
           where(
             spree_prices: {
               amount: price.min..price.max,
@@ -100,7 +106,20 @@ module Spree
       def by_taxons(products)
         return products unless taxons?
 
-        products.joins(:taxons).distinct.where(spree_taxons: { id: taxons })
+        products.joins(:classifications).where(Classification.table_name => { taxon_id: taxons })
+      end
+
+      def by_concat_taxons(products)
+        return products unless concat_taxons?
+
+        product_ids = Spree::Product.
+                      joins(:classifications).
+                      where(Classification.table_name => { taxon_id: concat_taxons }).
+                      group("#{Spree::Product.table_name}.id").
+                      having("COUNT(#{Spree::Product.table_name}.id) = ?", concat_taxons.length).
+                      ids
+
+        products.where(id: product_ids)
       end
 
       def by_name(products)
@@ -112,9 +131,11 @@ module Spree
       def by_options(products)
         return products unless options?
 
-        options.map do |key, value|
-          products.with_option_value(key, value)
-        end.inject(:&)
+        products.where(
+          id: options.map do |key, value|
+            products.with_option_value(key, value).ids
+          end.flatten.compact.uniq
+        )
       end
 
       def by_option_value_ids(products)
@@ -143,13 +164,25 @@ module Spree
 
         case sort_by
         when 'default'
-          products
+          if taxons?
+            products.
+              select("#{Product.table_name}.*, #{Classification.table_name}.position").
+              order("#{Classification.table_name}.position" => :asc)
+          else
+            products
+          end
         when 'newest-first'
           products.order(available_on: :desc)
         when 'price-high-to-low'
-          products.select('spree_products.*, spree_prices.amount').reorder('').send(:descend_by_master_price)
+          products.
+            select("#{Product.table_name}.*, #{Spree::Price.table_name}.amount").
+            reorder('').
+            send(:descend_by_master_price)
         when 'price-low-to-high'
-          products.select('spree_products.*, spree_prices.amount').reorder('').send(:ascend_by_master_price)
+          products.
+            select("#{Product.table_name}.*, #{Spree::Price.table_name}.amount").
+            reorder('').
+            send(:ascend_by_master_price)
         end
       end
 
@@ -159,6 +192,13 @@ module Spree
 
       def include_discontinued(products)
         discontinued ? products : products.available
+      end
+
+      def taxon_ids(taxons_ids)
+        return if taxons_ids.nil? || taxons_ids.to_s.blank?
+
+        taxons = Spree::Taxon.where(id: taxons_ids.to_s.split(','))
+        taxons.map(&:cached_self_and_descendants_ids).flatten.compact.uniq.map(&:to_s)
       end
     end
   end

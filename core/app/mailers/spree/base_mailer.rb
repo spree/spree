@@ -1,10 +1,18 @@
 module Spree
   class BaseMailer < ActionMailer::Base
+    add_template_helper(MailHelper)
+
+    def current_store
+      @current_store ||= Spree::Store.current
+    end
+    helper_method :current_store
+
     def from_address
-      Spree::Store.current.mail_from_address
+      current_store.mail_from_address
     end
 
-    def money(amount, currency = Spree::Config[:currency])
+    def money(amount, currency = nil)
+      currency ||= current_store.default_currency
       Spree::Money.new(amount, currency: currency).to_s
     end
     helper_method :money
@@ -26,7 +34,7 @@ module Spree
     # http://guides.rubyonrails.org/action_mailer_basics.html#generating-urls-in-action-mailer-views
     def ensure_default_action_mailer_url_host
       ActionMailer::Base.default_url_options ||= {}
-      ActionMailer::Base.default_url_options[:host] ||= Spree::Store.current.url
+      ActionMailer::Base.default_url_options[:host] ||= current_store.url
     end
   end
 end

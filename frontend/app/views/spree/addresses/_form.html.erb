@@ -2,22 +2,31 @@
 
 <% Spree::Address::ADDRESS_FIELDS.each do |field| %>
   <% if field == "country" %>
-    <p class="form-group checkout-content-inner-field" id="<%= "#{address_id}country" %>">
-      <span id="<%= "#{address_id}country-selection" %>" class="d-block position-relative">
+    <div class="form-group checkout-content-inner-field" id="<%= "#{address_id}country" %>">
+      <div id="<%= "#{address_id}country-selection" %>" class="d-block position-relative has-float-label">
         <%= address_form.collection_select :country_id, available_countries, :id, :name,
                                            { prompt: Spree.t(:country).upcase },
-                                           { class: 'required form-control spree-flat-select'} %>
+                                           { class: 'required form-control spree-flat-select',
+                                             aria: { label: Spree.t(:country) } } %>
         <%= image_tag 'arrow.svg', class: 'position-absolute spree-flat-select-arrow' %>
-      </span>
-    </p>
+        <%= address_form.label(Spree.t(:country), Spree.t(:country).upcase, class:'text-uppercase') %>
+      </div>
+    </div>
   <% elsif field == "state" %>
     <div class="form-group mb-4">
       <%= address_field(address_form, :state, address_id) { address_state(address_form, address.country, address_id) } if Spree::Config[:address_requires_state] %>
+    </div>
+  <% elsif field == "zipcode" %>
+    <div class="form-group mb-4">
+      <%= address_field(address_form, :zipcode, address_id) { address_zipcode(address_form, address.country, address_id) } %>
     </div>
   <% else %>
     <% next if field == "company" && !Spree::Config[:company] %>
     <% next if field == "alternative_#{address_id}_phone" && !Spree::Config["alternative_#{address_id}_phone"] %>
     <div class="form-group mb-4">
       <%= address_field(address_form, field.to_sym, address_id) %>
-    </div>  <% end %>
+    </div>
+  <% end %>
 <% end %>
+
+<p class="text-right text-uppercase mb-5 checkout-content-inner-field"><span id="required_marker"><%= Spree.t(:required) %></span> <%= Spree.t(:required_fields) %></p>

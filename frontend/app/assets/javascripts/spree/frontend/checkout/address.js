@@ -28,22 +28,24 @@ Spree.ready(function ($) {
       }
 
       Spree.toggleZipcode = function (data, region) {
+        var requiredIndicator = $('span#required_marker').first().text()
         var zipcodeRequired = data.zipcode_required
         var zipcodePara = $('#' + region + 'zipcode')
         var zipcodeInput = zipcodePara.find('input')
-        var zipcodeSpanRequired = zipcodePara.find('abbr')
+        var zipcodeLabel = zipcodePara.find('label')
+        var zipcodeLabelText = zipcodeInput.attr('aria-label')
 
         if (zipcodeRequired) {
-          zipcodeInput.prop('required', true)
-          zipcodeSpanRequired.show()
-          // zipcodeInput.prop('disabled', false)
-          // zipcodePara.show()
+          var zipText = zipcodeLabelText + ' ' + requiredIndicator
+          zipcodeInput.prop('required', true).attr('placeholder', zipText)
+          zipcodeLabel.text('')
+          zipcodeLabel.text(zipText)
+          zipcodeInput.addClass('required')
         } else {
-          zipcodeInput.val('')
-          zipcodeInput.prop('required', false)
-          zipcodeSpanRequired.hide()
-          // zipcodeInput.prop('disabled', true)
-          // zipcodePara.hide()
+          zipcodeInput.prop('required', false).attr('placeholder', zipcodeLabelText)
+          zipcodeLabel.text('')
+          zipcodeLabel.text(zipcodeLabelText)
+          zipcodeInput.removeClass('required')
         }
       }
 
@@ -54,6 +56,8 @@ Spree.ready(function ($) {
         var statePara = $('#' + region + 'state')
         var stateSelect = statePara.find('select')
         var stateInput = statePara.find('input')
+        var stateLabel = statePara.find('label')
+        var stateSelectImg = statePara.find('img')
         var stateSpanRequired = statePara.find('abbr')
 
         if (states.length > 0) {
@@ -68,6 +72,7 @@ Spree.ready(function ($) {
           })
           stateSelect.prop('required', false)
           stateSelect.prop('disabled', false).show()
+          stateLabel.addClass('state-select-label')
           stateInput.hide().prop('disabled', true)
           statePara.show()
           stateSpanRequired.hide()
@@ -75,6 +80,7 @@ Spree.ready(function ($) {
 
           if (statesRequired) {
             stateSelect.addClass('required')
+            stateSelectImg.show()
             stateSpanRequired.show()
             stateSelect.prop('required', true)
           }
@@ -82,9 +88,12 @@ Spree.ready(function ($) {
           stateInput.removeClass('required')
         } else {
           stateSelect.hide().prop('disabled', true)
+          stateLabel.removeClass('state-select-label')
+          stateSelectImg.hide()
           stateInput.show()
           if (statesRequired) {
             stateSpanRequired.show()
+            stateLabel.removeClass('state-select-label')
             stateInput.addClass('required form-control')
           } else {
             stateInput.val('')

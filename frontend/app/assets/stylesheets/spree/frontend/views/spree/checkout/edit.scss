@@ -25,10 +25,16 @@
       }
       a {
         color: $header-font-color;
-        padding-left: 15px;
         letter-spacing: 0.5px;
+        text-decoration: none;
         @include media-breakpoint-down(sm) {
           padding-left: 0px;
+        }
+      }
+      &-text {
+        padding-left: 15px;
+        &:hover {
+          text-decoration: underline;
         }
       }
     }
@@ -143,7 +149,7 @@
         }
         hr {
           margin: 0;
-          width: 33%;
+          flex: 1;
           border: 1px solid theme-color('info');
         }
       }
@@ -499,6 +505,7 @@
       }
 
       @include media-breakpoint-up(lg) {
+        height: 100%;
         padding: 0;
         max-width: 380px;
         align-self: flex-end;

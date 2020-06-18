@@ -1,7 +1,7 @@
 ---
 title: Upgrading Spree 3.7 to 4.0
 section: upgrades
-order: 0
+order: 1
 ---
 
 This guide covers upgrading a **3.7 Spree application** to **Spree 4.0**. 
@@ -72,6 +72,18 @@ module MyStore
 end
 
 ::Spree::Order.prepend(MyStore::Spree::OrderDecorator)
+```
+
+When migrating class method to the new [autoloader](https://medium.com/@fxn/zeitwerk-a-new-code-loader-for-ruby-ae7895977e73) things are a little different because you will have to prepend to the Singleton class as shown in this example: 
+
+```ruby
+module Spree::BaseDecorator
+  def spree_base_scopes
+    # custom implementation
+  end
+end
+
+Spree::Base.singleton_class.send :prepend, Spree::BaseDecorator
 ```
 
 Please also consider other options for [Logic Customization](/developer/customization/logic.html).

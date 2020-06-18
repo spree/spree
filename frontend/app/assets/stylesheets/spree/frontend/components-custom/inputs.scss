@@ -33,6 +33,8 @@
 .spree-flat-select {
   @extend .spree-flat-input;
   appearance: none;
+  padding-top:22px;
+  padding-bottom:21px;
   -webkit-appearance: none;
   -moz-appearance: none;
   &-arrow {
@@ -83,7 +85,12 @@
   }
 
   input[type="checkbox"] {
-    display: none;
+    opacity: 0;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
   }
 
   label {
@@ -136,6 +143,10 @@
       top: 4px;
       left: 3px;
     }
+  }
+
+  input[type="checkbox"]:focus + label {
+    border-color: $primary-color;
   }
 
   input[type="checkbox"]:checked + label {
@@ -241,6 +252,10 @@
     opacity: 0;
     height: 0;
     width: 0;
+    &:focus + span {
+      border-radius: 50%;
+      border: 2px solid $primary-color;
+    }
   }
   &-custom-input {
     @include colored-circle-radio($secondary-color);
@@ -262,5 +277,63 @@
   input:checked ~ &-custom-input {
     @include colored-full-circle-radio($secondary-color);
     background-size: contain;
+  }
+}
+
+//Slide in labels
+@mixin float-label-container {
+  display: block;
+  position: relative;
+}
+
+@mixin float-label {
+  label {
+    position: absolute;
+    left: 1em;
+    top: -0.5em;
+    cursor: text;
+    opacity: 1;
+    background: $input-background;
+    padding: 0 4px;
+    transition: all .2s;
+    @content;
+    &.state-select-label{
+      opacity: 1 !important;
+      left:1em !important;
+    }
+  }
+}
+
+@mixin float-label-input {
+  &::placeholder {
+    opacity: 0;
+    color: $secondary-font-color;
+    transition: all .2s;
+  }
+  &:placeholder-shown:not(:focus)::placeholder {
+      opacity: 0.3;
+      transition: all .2s;
+  }
+}
+
+@mixin float-label-scaled {
+  &:placeholder-shown:not(:focus) + * {
+      @content;
+  }
+}
+
+.has-float-label {
+  @include float-label-container;
+  @include float-label;
+
+  input, textarea {
+    @include float-label-input;
+    @include float-label-scaled {
+      opacity: 0;
+      left: 0em;
+    }
+  }
+  .form-control:focus {
+    box-shadow: none;
   }
 }

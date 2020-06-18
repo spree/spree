@@ -1,7 +1,7 @@
 <div class="checkout-content-summary">
   <h3 class="text-uppercase text-center checkout-content-summary-header"><%= Spree.t(:order_summary) %></h3>
   <div class="w-100 text-uppercase checkout-content-summary-table" data-hook="order_summary">
-    <div class="d-table-cell"><%= Spree.t(:item_total) %>:</div>
+    <div class="d-table-cell"><%= Spree.t(:subtotal) %>:</div>
     <div class="d-table-cell text-right"><%= order.display_item_total.to_html %></div>
 
     <% if order.line_item_adjustments.nonzero.exists? %>
@@ -42,29 +42,39 @@
       <% if order.shipment_adjustments.nonzero.exists? %>
         <% order.shipment_adjustments.nonzero.promotion.eligible.group_by(&:label).each do |label, adjustments| %>
           <div class="d-table-cell"><%= label %>:</div>
-          <div class="d-table-cell text-right"><%= Spree::Money.new(adjustments.sum(&:amount), currency: order.currency).to_html %></div>
+          <div class="d-table-cell text-right">
+            <%= Spree::Money.new(adjustments.sum(&:amount), currency: order.currency).to_html %>
+          </div>
         <% end %>
       <% end %>
     <% end %>
 
     <% if order.adjustments.nonzero.eligible.exists? %>
       <% order.adjustments.nonzero.eligible.each do |adjustment| %>
-        <% next if (adjustment.source_type == 'Spree::TaxRate') and (adjustment.amount == 0) %>
+        <% next if (adjustment.source_type == 'Spree::TaxRate') and (adjustment.amount.zero?) %>
         <div class="d-table-cell total"><%= adjustment.label %>:</div>
-        <div class="d-table-cell total text-right"><%= adjustment.display_amount.to_html %></div>
+        <div class="d-table-cell total text-right">
+          <%= adjustment.display_amount.to_html %>
+        </div>
       <% end %>
     <% end %>
 
     <div class="checkout-content-summary-table-order-total">
-      <div class="d-table-cell"><%= Spree.t(:order_total) %>:</div>
+      <div class="d-table-cell"><%= Spree.t(:total) %>:</div>
       <div class="d-table-cell text-right">
-        <span id='summary-order-total' data-currency="<%= Money::Currency.find(order.currency).symbol %>"><%= order.display_total.to_html %></span>
+        <span id='summary-order-total' data-currency="<%= Money::Currency.find(order.currency).symbol %>">
+          <%= order.display_total.to_html %>
+        </span>
       </div>
     </div>
 
     <% if order.using_store_credit? %>
       <div class="d-table-cell"><%= Spree.t(:store_credit_name) %>:</div>
-      <div class="d-table-cell text-right"><span id='summary-store-credit'><%= order.display_total_applied_store_credit.to_html %></span></div>
+      <div class="d-table-cell text-right">
+        <span id='summary-store-credit'>
+          <%= order.display_total_applied_store_credit.to_html %>
+        </span>
+      </div>
     <% end %>
   </div>
 </div>
