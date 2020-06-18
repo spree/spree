@@ -26,6 +26,10 @@ pre,
   font-size: 0.88rem !important;
 }
 
+h1 {
+  margin-top: 0;
+}
+
 main p,
 main li {
   line-height: 1.9;

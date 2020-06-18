@@ -1,7 +1,7 @@
 <%= link_to spree.cart_path,
-  class: "cart-icon #{'cart-icon--visible-count' if item_count > 0} #{local_assigns[:class]}",
+  class: "cart-icon cart-icon--visible-count #{local_assigns[:class]}",
   'aria-label': Spree.t(:cart) do %>
-  <%= icon(name: 'bag',
+  <%= icon(name: 'cart',
            width: size,
            height: size) %>
 

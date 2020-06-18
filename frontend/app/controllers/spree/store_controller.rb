@@ -39,11 +39,15 @@ module Spree
       Spree::Frontend::Config[:locale]
     end
 
+    def store_locale
+      current_store.default_locale
+    end
+
     def store_etag
       [
         current_store,
         current_currency,
-        config_locale
+        I18n.locale
       ]
     end
 

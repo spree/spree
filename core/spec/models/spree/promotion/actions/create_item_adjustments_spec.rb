@@ -91,6 +91,31 @@ module Spree
                 expect(action.compute_amount(line_item)).to be(-100)
               end
             end
+
+            context 'given other promotions with order adjustment' do
+              let!(:line_item) { create :line_item, order: order, price: 15 }
+
+              before do
+                order.update_with_updater!
+
+                2.times { create :promotion_with_order_adjustment }
+                Spree::PromotionHandler::Cart.new(order).activate
+
+                allow(action.calculator).to receive(:compute).and_return(3)
+              end
+
+              it 'should not consider not eligible adjustments' do
+                expect(action.compute_amount(line_item)).to eq -3
+              end
+
+              context 'when adjustments total is greater than item total' do
+                let!(:line_item) { create :line_item, order: order, price: 12 }
+
+                it 'does not exceed it' do
+                  expect(action.compute_amount(line_item)).to eq -2
+                end
+              end
+            end
           end
 
           context 'when the adjustable is not actionable' do

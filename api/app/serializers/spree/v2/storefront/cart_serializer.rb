@@ -20,12 +20,14 @@ module Spree
 
         belongs_to :user
         belongs_to :billing_address,
-          id_method_name: :bill_address_id,
-          serializer: :address
+                   id_method_name: :bill_address_id,
+                   serializer: :address,
+                   record_type: :address
 
         belongs_to :shipping_address,
-          id_method_name: :ship_address_id,
-          serializer: :address
+                   id_method_name: :ship_address_id,
+                   serializer: :address,
+                   record_type: :address
       end
     end
   end

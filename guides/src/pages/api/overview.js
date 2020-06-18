@@ -6,7 +6,6 @@ import ExternalLink from 'components/ExternalLink'
 
 const IndexPage = () => (
   <Layout
-    pathname="/"
     title="Spree API"
     activeRootSection="api"
     description="Spree Commerce REST API v2, REST API v1 & GrapQL documentation. Postman collections, examples, swagger and Open API docs"

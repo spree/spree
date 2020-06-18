@@ -77,7 +77,11 @@ module Spree
       end
 
       def load_taxonomy
-        @taxonomy = Taxonomy.find(params[:taxonomy_id])
+        @taxonomy = if defined?(SpreeGlobalize)
+                      Taxonomy.includes(:translations, taxons: [:translations]).find(params[:taxonomy_id])
+                    else
+                      Taxonomy.find(params[:taxonomy_id])
+                    end
       end
 
       def set_position

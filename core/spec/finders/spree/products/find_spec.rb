@@ -9,7 +9,7 @@ module Spree
     let!(:deleted_product)      { create(:product, deleted_at: Time.current - 1.day) }
     let!(:discontinued_product) { create(:product, discontinue_on: Time.current - 1.day) }
 
-    context 'include deleted' do
+    context 'include discontinued' do
       it 'returns products with discontinued' do
         params = {
           filter: {
@@ -18,6 +18,7 @@ module Spree
             price: '',
             currency: false,
             taxons: '',
+            concat_taxons: '',
             name: false,
             options: false,
             show_deleted: false,
@@ -46,6 +47,7 @@ module Spree
             price: '',
             currency: false,
             taxons: '',
+            concat_taxons: '',
             name: false,
             options: false,
             show_deleted: true,
@@ -72,6 +74,7 @@ module Spree
             price: '',
             currency: false,
             taxons: '',
+            concat_taxons: '',
             name: false,
             options: false,
             show_deleted: false,
@@ -140,19 +143,138 @@ module Spree
       end
     end
 
+    describe 'filter by taxons' do
+      subject(:products) do
+        described_class.new(
+            scope: Spree::Product.all,
+            params: params,
+            current_currency: 'USD'
+        ).execute
+      end
+
+      let(:parent_taxon) { child_taxon.parent }
+      let(:child_taxon) { create(:taxon) }
+
+      context 'one taxon is requested in params' do
+        let(:params) { { filter: { taxons: parent_taxon.id } } }
+
+        shared_examples 'returns distinct products associated both to self and descendants' do
+          it { expect(products).to match_array [product, product_2] }
+        end
+
+        before do
+          parent_taxon.products << product
+          child_taxon.products << product_2
+        end
+
+        it_behaves_like 'returns distinct products associated both to self and descendants'
+
+        context 'when product is already related to both taxons' do
+          before { parent_taxon.products << product_2 }
+
+          it_behaves_like 'returns distinct products associated both to self and descendants'
+        end
+      end
+
+      context 'multiple taxons are requested' do
+        let(:params) { { filter: { taxons: "#{taxon.id},#{taxon_2.id}" } } }
+        let(:taxon) { create(:taxon) }
+        let(:taxon_2) { create(:taxon) }
+
+        before do
+          taxon.products << product
+          taxon_2.products << product_2
+        end
+
+        it { expect(products).to match_array [product, product_2] }
+      end
+
+      context 'multiple taxons + 1 concat_taxons are requested' do
+        let(:params) { { filter: { taxons: "#{taxon.id},#{taxon_2.id}", concat_taxons: "#{taxon_3.id}" } } }
+        let(:taxon) { create(:taxon) }
+        let(:taxon_2) { create(:taxon) }
+        let(:taxon_3) { create(:taxon) }
+
+        before do
+          taxon.products << product
+          taxon_2.products << product_2
+          taxon_3.products << product_2
+          taxon_3.products << product_3
+        end
+
+        it { expect(products).to match_array [product_2] }
+      end
+
+      context 'only multiple concat_taxons are requested' do
+        let(:params) { { filter: {concat_taxons: "#{taxon_2.id},#{taxon_3.id}" } } }
+        let(:taxon) { create(:taxon) }
+        let(:taxon_2) { create(:taxon) }
+        let(:taxon_3) { create(:taxon) }
+
+        before do
+          taxon.products << product
+          taxon_2.products << product_2
+          taxon_3.products << product_2
+          taxon_3.products << product_3
+        end
+
+        it { expect(products).to match_array [product_2] }
+      end
+
+      context 'only one concat_taxons is requested' do
+        let(:params) { { filter: {concat_taxons: "#{taxon_3.id}" } } }
+        let(:taxon) { create(:taxon) }
+        let(:taxon_2) { create(:taxon) }
+        let(:taxon_3) { create(:taxon) }
+
+        before do
+          taxon.products << product
+          taxon_2.products << product_2
+          taxon_3.products << product_2
+          taxon_3.products << product_3
+        end
+
+        it { expect(products).to match_array [product_2,product_3] }
+      end
+    end
+
     context 'ordered' do
-      it 'returns products in default order' do
-        params = {
-          sort_by: 'default'
-        }
+      context 'default' do
+        subject(:products) do
+          described_class.new(
+            scope: Spree::Product.all,
+            params: params,
+            current_currency: 'USD'
+          ).execute
+        end
 
-        product_ids = described_class.new(
-          scope: Spree::Product.all,
-          params: params,
-          current_currency: 'USD'
-        ).execute.ids
+        context 'when not filtering by taxons' do
+          let(:params) { { sort_by: 'default' } }
 
-        expect(product_ids).to match_array Spree::Product.available.ids
+          it 'returns products in default order' do
+            expect(products.ids).to match_array Spree::Product.available.ids
+          end
+        end
+
+        context 'when filtering by taxons' do
+          let(:taxonomy) { create(:taxonomy) }
+          let(:child_taxon) { create(:taxon, taxonomy: taxonomy) }
+
+          before do
+            product.taxons << child_taxon
+            product_2.taxons << child_taxon
+
+            # swap products positions
+            product.classifications.find_by(taxon: child_taxon).update(position: 2)
+            product_2.classifications.find_by(taxon: child_taxon).update(position: 1)
+          end
+
+          let(:params) { { sort_by: 'default', filter: { taxons: taxonomy.root.id } } }
+
+          it 'returns products ordered by associated taxon position' do
+            expect(products).to match_array [product_2, product]
+          end
+        end
       end
 
       it 'returns products in newest-first order' do
@@ -164,9 +286,9 @@ module Spree
           scope: Spree::Product.all,
           params: params,
           current_currency: 'USD'
-        ).execute.ids
+        ).execute.map(&:id)
 
-        expect(product_ids).to match_array Spree::Product.available.order(available_on: :desc).ids
+        expect(product_ids).to match_array Spree::Product.available.order(available_on: :desc).map(&:id)
       end
 
       it 'returns products in price-high-to-low order' do
@@ -174,13 +296,13 @@ module Spree
           sort_by: 'price-high-to-low'
         }
 
-        product_ids = described_class.new(
+        products = described_class.new(
           scope: Spree::Product.all,
           params: params,
           current_currency: 'USD'
-        ).execute.ids
+        ).execute.to_a
 
-        expect(product_ids).to match_array [product_2.id, product_3.id, product.id]
+        expect(products).to match_array [product_2, product_3, product]
       end
 
       it 'returns products in price-low-to-high order' do
@@ -188,13 +310,13 @@ module Spree
           sort_by: 'price-low-to-high'
         }
 
-        product_ids = described_class.new(
+        products = described_class.new(
           scope: Spree::Product.all,
           params: params,
           current_currency: 'USD'
-        ).execute.ids
+        ).execute
 
-        expect(product_ids).to match_array [product.id, product_3.id, product_2.id]
+        expect(products).to match_array [product, product_3, product_2]
       end
     end
   end

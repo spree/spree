@@ -8,6 +8,6 @@
 -%>
 <% unless current_page.first? %>
   <li class="first page-item">
-    <%= link_to_unless current_page.first?, inline_svg_tag('pagination-double-arrow-right.svg', size: '13px*16px', class: 'spree-icon-arrow-left'), url, remote: remote, class: 'page-link' %>
+    <%= link_to_unless current_page.first?, inline_svg_tag('pagination-double-arrow-right.svg', size: '13px*16px', class: 'spree-icon-arrow-left'), url, remote: remote, class: 'page-link', 'aria-label': 'First page' %>
   </li>
 <% end %>

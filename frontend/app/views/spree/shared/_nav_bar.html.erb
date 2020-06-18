@@ -39,15 +39,8 @@
     </li>
   <% end %>
   <li id="link-to-cart">
-    <span class="d-none d-xl-inline-block cart-icon--xl">
-      <%= icon(name: 'bag',
-               width: 41.8,
-               height: 36)  %>
-    </span>
-    <span class="d-xl-none">
-      <%= icon(name: 'bag',
-               width: 27.8,
-               height: 24)  %>
-    </span>
+    <%= render 'spree/shared/cart', class: 'd-none d-xl-inline-block cart-icon--xl', size: 36, item_count: 0 %>
+    <%= render 'spree/shared/cart', class: 'd-xl-none', size: 24, item_count: 0 %>
   </li>
+  <%= render partial: 'spree/shared/change_store' %>
 </ul>

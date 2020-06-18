@@ -21,7 +21,8 @@ module Spree
     extend Spree::DisplayMoney
     money_methods :outstanding_balance, :item_total,           :adjustment_total,
                   :included_tax_total,  :additional_tax_total, :tax_total,
-                  :shipment_total,      :promo_total,          :total
+                  :shipment_total,      :promo_total,          :total,
+                  :cart_promo_total
 
     alias display_ship_total display_shipment_total
     alias_attribute :ship_total, :shipment_total
@@ -350,6 +351,8 @@ module Spree
 
       deliver_order_confirmation_email unless confirmation_delivered?
 
+      deliver_store_owner_order_notification_email if deliver_store_owner_order_notification_email?
+
       consider_risk
     end
 
@@ -631,6 +634,15 @@ module Spree
         coupons
     end
 
+    # Returns item and whole order discount amount for Order
+    # without Shipment disccounts (eg. Free Shipping)
+    # @return [BigDecimal]
+    def cart_promo_total
+      all_adjustments.eligible.nonzero.promotion.
+        where.not(adjustable_type: 'Spree::Shipment').
+        sum(:amount)
+    end
+
     private
 
     def link_by_email
@@ -695,6 +707,18 @@ module Spree
 
     def credit_card_nil_payment?(attributes)
       payments.store_credits.present? && attributes[:amount].to_f.zero?
+    end
+
+    # Returns true if:
+    #   1. an email address is set for new order notifications AND
+    #   2. no notification for this order has been sent yet.
+    def deliver_store_owner_order_notification_email?
+      store.new_order_notifications_email.present? && !store_owner_notification_delivered?
+    end
+
+    def deliver_store_owner_order_notification_email
+      OrderMailer.store_owner_notification_email(id).deliver_later
+      update_column(:store_owner_notification_delivered, true)
     end
   end
 end

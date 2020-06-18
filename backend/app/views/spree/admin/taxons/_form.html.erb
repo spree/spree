@@ -25,8 +25,8 @@
       <% end %>
 
       <%= f.field_container :icon, class: ['form-group'] do %>
-        <%= f.label :icon, Spree.t(:icon) %>
-        <%= image_tag main_app.url_for(@taxon.icon.try(:attachment)) if @taxon.icon %>
+        <%= f.label :icon, Spree.t(:header_banner) %>
+        <%= image_tag(main_app.url_for(@taxon.icon.try(:attachment)), class: 'w-100') if @taxon.icon %>
         <%= f.file_field :icon %>
       <% end %>
     </div>
@@ -46,7 +46,7 @@
 
   <%= f.field_container :meta_description, class: ['form-group'] do %>
     <%= f.label :meta_description, Spree.t(:meta_description) %>
-    <%= f.text_field :meta_description, class: 'form-control', rows: 6 %>
+    <%= f.text_area :meta_description, class: 'form-control', rows: 6 %>
   <% end %>
 
   <%= f.field_container :meta_keywords, class: ['form-group'] do %>

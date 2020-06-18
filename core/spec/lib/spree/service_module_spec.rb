@@ -210,7 +210,7 @@ describe Spree::ServiceModule do
         success(first_value: 'asd', second_value: 'qwe')
       end
 
-      def second_method(first_value:)
+      def second_method(first_value: 'asd')
         success(first_value + ' Second Method Success!')
       end
     end

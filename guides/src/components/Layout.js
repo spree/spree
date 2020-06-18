@@ -26,7 +26,6 @@ export default class Layout extends React.Component {
     nav: PropTypes.array,
     activeSection: PropTypes.string,
     activeRootSection: PropTypes.string,
-    pathname: PropTypes.string,
     description: PropTypes.string,
     title: PropTypes.string
   }
@@ -35,7 +34,6 @@ export default class Layout extends React.Component {
     return (
       <React.Fragment>
         <SiteMetadata
-          pathname={this.props.pathname}
           title={this.props.title}
           description={this.props.description}
         />

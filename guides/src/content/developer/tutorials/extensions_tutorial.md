@@ -48,13 +48,13 @@ end
 
 Before we continue development of our extension, let's add it to the Spree application we created in the [last tutorial](/developer/getting_started_tutorial.html). This will allow us to see how the extension works with an actual Spree store while we develop it.
 
-Within the `mystore` application directory, add the following line to the bottom of our `Gemfile`:
+Within the `my_store` application directory, add the following line to the bottom of our `Gemfile`:
 
 ```ruby
 gem 'spree_simple_sales', path: '../spree_simple_sales'
 ```
 
-You may have to adjust the path somewhat depending on where you created the extension. You want this to be the path relative to the location of the `mystore` application.
+You may have to adjust the path somewhat depending on where you created the extension. You want this to be the path relative to the location of the `my_store` application.
 
 Once you have added the gem, it's time to bundle:
 
@@ -91,7 +91,7 @@ module SpreeSimpleSales
   module Spree
     module HomeControllerDecorator
       def sale
-        @products = Spree::Product.joins(:variants_including_master).where('spree_variants.sale_price is not null').distinct
+        @products = ::Spree::Product.joins(:variants_including_master).where('spree_variants.sale_price is not null').distinct
       end
     end
   end
@@ -150,7 +150,7 @@ Next, create the file `app/views/spree/home/sale.html.erb` and add the following
 
 ```erb
 <div data-hook="homepage_products">
-  <%%= render 'spree/shared/products', products: @products %>
+  <%= render 'spree/shared/products', products: @products %>
 </div>
 ```
 
@@ -172,15 +172,9 @@ Next, create the file `app/models/spree_simple_sales/spree/variant_decorator.rb`
 module SpreeSimpleSales
   module Spree
     module VariantDecorator
-      def self.included base
-        base.class_eval do
-          alias_method :orig_price_in, :price_in
-        end
-      end
-
       def price_in(currency)
-        return orig_price_in(currency) unless sale_price.present?
-        Spree::Price.new(variant_id: self.id, amount: self.sale_price, currency: currency)
+        return super unless sale_price.present?
+        ::Spree::Price.new(variant_id: self.id, amount: self.sale_price, currency: currency)
       end
     end
   end
@@ -189,7 +183,7 @@ end
 Spree::Variant.prepend SpreeSimpleSales::Spree::VariantDecorator
 ```
 
-Here we alias the original method `price_in` to `orig_price_in` and override it. If there is a `sale_price` present on the product's master variant, we return that price. Otherwise, we call the original implementation of `price_in`.
+If there is a `sale_price` present on the product's master variant, we return that price. Otherwise, we call the original implementation of `price_in` (using `return super`).
 
 ## Testing Our Decorator
 

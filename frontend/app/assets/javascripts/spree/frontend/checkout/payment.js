@@ -22,11 +22,13 @@ Spree.ready(function ($) {
           $('#use_existing_card_no').prop('checked', false)
           $('#use_existing_card_yes').prop('checked', true)
           $('#payment-methods').hide()
+          Spree.enableSave()
         })
         $('#use_existing_card_no').click(function () {
           $('#payment-methods').show()
           $('.existing-cc-radio').prop('checked', false)
           $('#use_existing_card_yes').prop('checked', false)
+          Spree.enableSave()
         })
       }
       $('.cardNumber').payment('formatCardNumber')
@@ -36,6 +38,7 @@ Spree.ready(function ($) {
         $(this).parent().siblings('.ccType').val($.payment.cardType(this.value))
       })
       $('input[type="radio"][name="order[payments_attributes][][payment_method_id]"]').click(function () {
+        Spree.enableSave()
         if ($('#payment_method_' + this.value).find('fieldset').children().length == 0) {
           $('.payment-sources').hide()
         } else {

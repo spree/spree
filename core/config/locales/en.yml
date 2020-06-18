@@ -453,6 +453,7 @@ en:
     acceptance_errors: Acceptance errors
     accepted: Accepted
     account: Account
+    account_info: Account info
     account_updated: Account updated
     action: Action
     actions:
@@ -488,7 +489,7 @@ en:
     add_variant: Add Variant
     add_store: New Store
     add_store_credit: Add Store Credit
-    added_to_cart: Added to bag successfully!
+    added_to_cart: Added to cart successfully!
     additional_item: Additional Item
     address: Address
     address1: Address
@@ -568,6 +569,9 @@ en:
     agree_to_privacy_policy: Agree to Privacy Policy
     agree_to_terms_of_service: Agree to Terms of Service
     all: All
+    allow_currency_change:
+      short: Allow Currency Change
+      long: Allow users to change their currency via the currency picker.
     all_adjustments_closed: All adjustments successfully closed!
     all_adjustments_opened: All adjustments successfully opened!
     all_departments: All departments
@@ -607,6 +611,7 @@ en:
     balance_due: Balance Due
     base_amount: Base Amount
     base_percent: Base Percent
+    basic_information: Basic Information
     bill_address: Bill Address
     billing: Billing
     billing_address: Billing Address
@@ -614,6 +619,7 @@ en:
     calculated_reimbursements: Calculated Reimbursements
     calculator: Calculator
     calculator_settings_warning: If you are changing the calculator type, you must save first before you can edit the calculator settings
+    call_us_now: 'Call us now: '
     cancel: cancel
     canceled: Canceled
     canceler: Canceler
@@ -636,7 +642,7 @@ en:
       add_promo_code: ADD PROMO CODE
       checkout: checkout
       empty_info: 'Your cart is empty.'
-      header: Your shopping bag
+      header: Your shopping cart
       product: product
       quantity: quantity
       title: Shopping Cart
@@ -674,12 +680,15 @@ en:
     close_all_adjustments: Close All Adjustments
     code: Code
     company: Company
+    compare_at_price: Compare at price
     complete: complete
     configuration: Configuration
     configurations: Configurations
     confirm: Confirm
     confirm_delete: Confirm Deletion
     confirm_password: Password Confirmation
+    contact_email: Contact email
+    contact_phone: Contact phone
     contact_us: Contact us
     continue: Continue
     continue_as_guest: Continue as a guest
@@ -725,6 +734,7 @@ en:
     credited: Credited
     credits: Credits
     currency: Currency
+    currencies: Currencies
     currency_settings: Currency Settings
     current: Current
     current_promotion_usage: ! 'Current Usage: %{count}'
@@ -734,6 +744,8 @@ en:
     customer_return: Customer Return
     customer_returns: Customer Returns
     customer_search: Customer Search
+    customer_support_email: Customer Support Email
+    new_order_notifications_email: New Order Notifications Email
     cut: Cut
     cvv: CVV
     cvv_response: CVV Response
@@ -831,6 +843,7 @@ en:
     extension: Extension
     extensions_directory: Extensions Directory
     existing_shipments: Existing shipments
+    facebook: Facebook
     failed_payment_attempts: Failed Payment Attempts
     filename: Filename
     fill_in_customer_info: Please fill in customer info
@@ -841,11 +854,13 @@ en:
     finalized: Finalized
     first_item: First Item
     first_name: First Name
+    firstname: First Name
     first_name_begins_with: First Name Begins With
     flat_percent: Flat Percent
     flat_rate_per_order: Flat Rate
     flexible_rate: Flexible Rate
     follow_us: Follow us
+    footer_info: Footer info
     forgot_password: Forgot password?
     free_shipping: Free Shipping
     free_shipping_amount: "-"
@@ -863,13 +878,14 @@ en:
     guest_checkout: Guest Checkout
     guest_user_account: Checkout as a Guest
     has_no_shipped_units: has no shipped units
+    header_banner: Header banner
     height: Height
     hide_from_subcategories_nav: Hide from subcategories navigation
     home: Home
     homepage:
       bestsellers: BESTSELLERS
       fashion_trends: FASHION TRENDS
-      fashion_trends_note: Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam.
+      fashion_trends_note: Want to rock this season’s hottest trend in style? These are the top fashion from Summer 2020 Fashion Weeks that are coming our way this season.
       men: MEN
       new: NEW
       new_collection: NEW COLLECTION
@@ -878,7 +894,7 @@ en:
       shop_now: SHOP NOW
       sportswear: SPORTSWEAR
       streetstyle: STREETSTYLE
-      summer_2019: Summer 2019
+      summer_2020: Summer 2020
       summer_collection:  Summer Collection
       summer_sale: SUMMER SALE
       trending: TRENDING
@@ -912,6 +928,7 @@ en:
     info_number_of_skus_not_shown:
       one: "and one other"
       other: "and %{count} others"
+    instagram: Instagram
     instructions_to_reset_password: Please enter your email on the form below
     insufficient_stock: Insufficient stock available, only %{on_hand} remaining
     insufficient_stock_item_quantity: Insufficient stock quantity available
@@ -919,6 +936,7 @@ en:
     intercept_email_address: Intercept Email Address
     intercept_email_instructions: Override email recipient and replace with this address.
     internal_name: Internal Name
+    internationalization: Internationalization
     invalid_credit_card: Invalid credit card.
     invalid_exchange_variant: Invalid exchange variant.
     invalid_payment_provider: Invalid payment provider.
@@ -946,6 +964,7 @@ en:
     items_reimbursed: Items reimbursed
     join_slack: Join Slack
     last_name: Last Name
+    lastname: Last Name
     last_name_begins_with: Last Name Begins With
     learn_more: Learn More
     lifetime_stats: Lifetime Stats
@@ -976,6 +995,7 @@ en:
     manage_promotion_categories: Manage Promotion Categories
     manual_intervention_required: Manual intervention required
     manage_variants: Manage Variants
+    master: Master
     master_price: Master Price
     master_sku: Master SKU
     match_choices:
@@ -1000,6 +1020,8 @@ en:
     name_on_card: Name on card
     name_or_sku: Name or SKU (enter at least first 3 characters of product name)
     nav_bar:
+      admin_panel: Admin Panel
+      change_country: Change country
       close_menu: Close menu
       go_to_previous_menu: Go to previous menu
       log_in: LOG IN
@@ -1053,6 +1075,7 @@ en:
     no_actions_added: No actions added
     no_address_given: No address given
     no_available_date_set: No available date set
+    no_country: No country set
     no_payment_found: No payment found
     no_pending_payments: No pending payments
     no_product_available:
@@ -1076,6 +1099,7 @@ en:
     not_found: ! '%{resource} is not found'
     note: Note
     notice_messages:
+      prices_saved: Prices successfully saved
       product_cloned: Product has been cloned
       product_deleted: Product has been deleted
       product_not_cloned: "Product could not be cloned. Reason: %{error}"
@@ -1110,16 +1134,21 @@ en:
       subtotal: ! 'Subtotal:'
       total: ! 'Order Total:'
       cancel_email:
-        dear_customer: Dear Customer,
+        dear_customer: Dear %{name},
         instructions: Your order has been CANCELED.  Please retain this cancellation information for your records.
         order_summary_canceled: Order %{number} Summary [CANCELED]
         subject: Cancellation of Order
       confirm_email:
-        dear_customer: Dear Customer,
+        dear_customer: Dear %{name},
         instructions: Please review and retain the following order information for your records.
         order_summary: Order %{number} Summary
         subject: Order Confirmation
         thanks: Thank you for your business.
+      store_owner_notification_email:
+        heading: New Order Received
+        instructions: You have received a new order.
+        order_summary: Order %{number} Summary
+        subject: '%{store_name} received a new order'
     order_not_found: We couldn't find your order. Please try that action again.
     order_number: Order %{number}
     order_processed_successfully: Your order has been processed successfully
@@ -1230,9 +1259,11 @@ en:
     preferred_reimbursement_type: Preferred Reimbursement Type
     presentation: Presentation
     preview_product: Preview Product
+    preview_taxon: Preview Taxon
     previous: Previous
     previous_state_missing: "n/a"
     price: Price
+    prices: Prices
     price_range: Price Range
     price_sack: Price Sack
     process: Process
@@ -1379,7 +1410,7 @@ en:
     reimbursement_mailer:
       reimbursement_email:
         days_to_send: ! 'You have %{days} days to send back any items awaiting exchange.'
-        dear_customer: Dear Customer,
+        dear_customer: Dear %{name},
         exchange_summary: Exchange Summary
         for: for
         instructions: Your reimbursement has been processed.
@@ -1422,6 +1453,7 @@ en:
     select_a_store_credit_reason: Select a reason for the store credit
     select_stock: Select stock
     selected_quantity_not_available: ! 'selected of %{item} is not available.'
+    seo: SEO
     send_copy_of_all_mails_to: Send Copy of All Mails To
     send_mails_as: Send Mails As
     seo_title: SEO title
@@ -1429,6 +1461,7 @@ en:
     server_error: The server returned an error
     settings: Settings
     ship: Ship
+    ship_to: "Shipping to:"
     ship_address: Ship Address
     ship_total: Ship Total
     shipment: Shipment
@@ -1436,7 +1469,7 @@ en:
     shipment_details: "From %{stock_location} via %{shipping_method}"
     shipment_mailer:
       shipped_email:
-        dear_customer: Dear Customer,
+        dear_customer: Dear %{name},
         instructions: Your order %{number} has been shipped
         shipment_summary: Shipment Summary for order
         shipping_method: "Shipping method: %{shipping_method}"
@@ -1476,16 +1509,21 @@ en:
     shopping_cart: Shopping Cart
     show: Show
     show_active: Show Active
+    show_currency_selector:
+      short: Show Currency Selector
+      long_html: Display the currency picker in the main nav bar. This will only display if there are multiple supported currencies, and <strong>Allow currency change</strong> option is enabled.
     show_deleted: Show Deleted
     show_discontinued: Show Discontinued
     show_only_complete_orders: Only show complete orders
     show_only_considered_risky: Only show risky orders
+    show_property: Show Property
     show_rate_in_label: Show rate in label
     sign_up: Sign Up
     sku: SKU
     skus: SKUs
     slug: Slug
     source: Source
+    social: Social
     special_instructions: Special Instructions
     split: Split
     spree_gateway_error_flash_for_checkout: There was a problem with your payment information. Please check your information and try again.
@@ -1597,6 +1635,8 @@ en:
     successfully_removed: ! '%{resource} has been successfully removed!'
     successfully_updated: ! '%{resource} has been successfully updated!'
     summary: Summary
+    supported_currencies: Supported Currencies
+    supported_currencies_long: A comma separated list of supported currencies
     tax: Tax
     tax_included: "Tax (incl.)"
     tax_categories: Tax Categories
@@ -1657,6 +1697,7 @@ en:
     tree: Tree
     type: Type
     type_to_search: Type to search
+    twitter: Twitter
     unable_to_connect_to_gateway: Unable to connect to gateway.
     unable_to_create_reimbursements: Unable to create reimbursements because there are items pending manual intervention.
     under_price: Under %{price}
@@ -1689,6 +1730,7 @@ en:
     value: Value
     variant: Variant
     variant_placeholder: Choose a variant
+    variant_prices_search_placeholder: Search for SKU or variant name...
     variants: Variants
     version: Version
     void: Void

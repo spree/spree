@@ -6,6 +6,7 @@ Spree.ready(function($) {
     if (this.mobileNavigation !== null) {
       this.burgerButton = document.querySelector('.navbar-toggler');
       this.closeButton = document.querySelector('#mobile-navigation-close-button');
+      this.mobileNavigationList = document.querySelector('.mobile-navigation-list');
       this.categoryLinks = document.querySelectorAll('.mobile-navigation-category-link');
       this.backButton = document.querySelector('#mobile-navigation-back-button');
       this.overlay = document.querySelector('#overlay');
@@ -14,7 +15,6 @@ Spree.ready(function($) {
 
       this.onResize = this.onResize.bind(this);
       this.onCategoryClick = this.onCategoryClick.bind(this);
-      this.onTouchMove = this.onTouchMove.bind(this);
       this.onBurgerClick = this.onBurgerClick.bind(this);
       this.onCloseClick = this.onCloseClick.bind(this);
       this.onBackClick = this.onBackClick.bind(this);
@@ -23,7 +23,6 @@ Spree.ready(function($) {
       window.addEventListener('resize', this.onResize);
       window.addEventListener('turbolinks:request-start', this.onCloseClick);
 
-      this.mobileNavigation.addEventListener('touchmove', this.onTouchMove, false);
       this.burgerButton.addEventListener('click', this.onBurgerClick, false);
       this.closeButton.addEventListener('click', this.onCloseClick, false);
       this.backButton.addEventListener('click', this.onBackClick, false);
@@ -44,10 +43,6 @@ Spree.ready(function($) {
     e.preventDefault();
     this.openCategory(category);
   }
-
-  MobileNavigationManager.prototype.onTouchMove = function(e) {
-    e.preventDefault();
-  };
 
   MobileNavigationManager.prototype.onBurgerClick = function() {
     if (this.navigationOpen) {
@@ -84,6 +79,8 @@ Spree.ready(function($) {
     this.openedCategories.push(category);
     var subList = document.querySelector('ul[data-category=' + category + ']');
     if (subList) {
+      this.mobileNavigationList.classList.add('mobile-navigation-list-subcategory-shown');
+      this.mobileNavigationList.scrollTop = 0
       subList.classList.add('shown');
       this.backButton.classList.add('shown');
     }
@@ -99,6 +96,7 @@ Spree.ready(function($) {
     if (this.openedCategories[this.openedCategories.length - 1] === 'main') {
       this.backButton.classList.remove('shown');
     }
+    this.mobileNavigationList.classList.remove('mobile-navigation-list-subcategory-shown')
     return false;
   }
 
@@ -116,6 +114,7 @@ Spree.ready(function($) {
       var category = openedCategories.pop();
       this.closeCategory(category);
     }
+    this.mobileNavigationList.classList.remove('mobile-navigation-list-subcategory-shown')
     this.backButton.classList.remove('shown');
   }
 

@@ -60,6 +60,8 @@ module Spree
     class_attribute :reimbursement_failure_hooks
     self.reimbursement_failure_hooks = []
 
+    delegate :store, :currency, to: :order
+
     state_machine :reimbursement_status, initial: :pending do
       event :errored do
         transition to: :errored, from: :pending

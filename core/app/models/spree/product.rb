@@ -75,6 +75,7 @@ module Spree
     has_many :orders, through: :line_items
 
     has_many :variant_images, -> { order(:position) }, source: :images, through: :variants_including_master
+    has_many :variant_images_without_master, -> { order(:position) }, source: :images, through: :variants
 
     after_create :add_associations_from_prototype
     after_create :build_variants_from_option_values_hash, if: :option_values_hash
@@ -110,13 +111,13 @@ module Spree
 
     alias options product_option_types
 
-    self.whitelisted_ransackable_associations = %w[stores variants_including_master master variants]
+    self.whitelisted_ransackable_associations = %w[taxons stores variants_including_master master variants]
     self.whitelisted_ransackable_attributes = %w[description name slug discontinue_on]
     self.whitelisted_ransackable_scopes = %w[not_discontinued]
 
     [
       :sku, :price, :currency, :weight, :height, :width, :depth, :is_master,
-      :cost_currency, :price_in, :amount_in, :cost_price
+      :cost_currency, :price_in, :amount_in, :cost_price, :compare_at_price
     ].each do |method_name|
       delegate method_name, :"#{method_name}=", to: :find_or_build_master
     end
@@ -150,10 +151,28 @@ module Spree
       variants.any?
     end
 
+    # Returns default Variant for Product
+    # If `track_inventory_levels` is enabled it will try to find the first Variant
+    # in stock or backorderable, if there's none it will return first Variant sorted
+    # by `position` attribute
+    # If `track_inventory_levels` is disabled it will return first Variant sorted
+    # by `position` attribute
+    #
+    # @return [Spree::Variant]
     def default_variant
-      has_variants? ? variants.first : master
+      track_inventory = Spree::Config[:track_inventory_levels]
+
+      Rails.cache.fetch("spree/default-variant/#{cache_key_with_version}/#{track_inventory}") do
+        if track_inventory && variants.in_stock_or_backorderable.any?
+          variants.in_stock_or_backorderable.first
+        else
+          has_variants? ? variants.first : master
+        end
+      end
     end
 
+    # Returns default Variant ID for Product
+    # @return [Integer]
     def default_variant_id
       default_variant.id
     end
@@ -322,7 +341,7 @@ module Spree
           price: master.price
         )
       end
-      throw(:abort) unless save
+      save
     end
 
     def ensure_master

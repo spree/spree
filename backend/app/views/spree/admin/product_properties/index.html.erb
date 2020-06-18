@@ -2,6 +2,8 @@
 <%= render 'spree/admin/shared/error_messages', target: @product %>
 
 <% content_for :page_actions do %>
+  <%= product_preview_link(@product) %>
+
   <%= button_link_to(
     Spree.t(:add_product_properties),
     "javascript:;",
@@ -23,6 +25,7 @@
         <tr data-hook="product_properties_header">
           <th colspan="2"><%= Spree.t(:property) %></th>
           <th><%= Spree.t(:value) %></th>
+          <th><%= Spree.t(:show_property) %></th>
           <th class="actions"></th>
         </tr>
       </thead>

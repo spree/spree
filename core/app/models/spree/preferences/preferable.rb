@@ -100,7 +100,7 @@ module Spree::Preferences::Preferable
       if value.is_a?(FalseClass) ||
           value.nil? ||
           value == 0 ||
-          value =~ /^(f|false|0)$/i ||
+          value&.to_s =~ /^(f|false|0)$/i ||
           (value.respond_to?(:empty?) && value.empty?)
         false
       else

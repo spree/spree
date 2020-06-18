@@ -6,6 +6,11 @@
     @include media-breakpoint-up(sm) {
       font-size: font-px-to-rem(36px);
     }
+
+    .compare-at-price {
+      color: theme-color("info");
+      text-decoration: line-through;
+    }
   }
   &-general-availability {
     font-size: font-px-to-rem(12px);
@@ -86,6 +91,9 @@
           & + #{$self}-variant-values-label {
             border-color: theme-color("dark-text");
           }
+        }
+        &:focus + label {
+          outline: theme-color("dark-text") dotted 2px;
         }
         &--bad-combination {
           & + #{$self2}-label {
@@ -211,6 +219,10 @@
   }
 }
 
+.color-select-label:focus {
+  outline: none;
+}
+
 .select-label {
   cursor: pointer;
   padding: 4px 7px;
@@ -233,6 +245,10 @@
     min-width: 32px;
     max-height: 32px;
     font-size: font-px-to-rem(14px);
+  }
+
+  &:focus {
+    outline: none;
   }
 
   input:checked + & {

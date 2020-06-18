@@ -150,11 +150,33 @@ module Spree
       end
 
       def order_time(time)
+        return '' if time.blank?
+
         [I18n.l(time.to_date), time.strftime('%l:%M %p').strip].join(' ')
       end
 
       def required_span_tag
         content_tag(:span, ' *', class: 'required')
+      end
+
+      def product_preview_link(product)
+        return unless frontend_available?
+
+        button_link_to(
+          Spree.t(:preview_product),
+          spree.product_url(product),
+          class: 'btn-outline-secondary', icon: 'eye-open', id: 'admin_preview_product', target: :blank
+        )
+      end
+
+      def taxon_preview_link(taxon)
+        return unless frontend_available?
+
+        button_link_to(
+          Spree.t(:preview_taxon),
+          seo_url(taxon),
+          class: 'btn-outline-secondary', icon: 'eye-open', id: 'admin_preview_taxon', target: :blank
+        )
       end
     end
   end

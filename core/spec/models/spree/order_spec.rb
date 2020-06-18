@@ -169,7 +169,7 @@ describe Spree::Order, type: :model do
       order.finalize!
     end
 
-    it 'sends an order confirmation email' do
+    it 'sends an order confirmation email to customer' do
       mail_message = double 'Mail::Message'
       expect(Spree::OrderMailer).to receive(:confirm_email).with(order.id).and_return mail_message
       expect(mail_message).to receive :deliver_later
@@ -186,6 +186,25 @@ describe Spree::Order, type: :model do
       allow(order).to receive_messages(confirmation_delivered?: true)
       expect(Spree::OrderMailer).not_to receive(:confirm_email)
       order.finalize!
+    end
+
+    context 'new order notifications' do
+      it 'sends a new order notification email to store owner when notification email address is set' do
+        # NOTE: 'store' factory has new_order_notifications_email set by default
+        mail_message = double 'Mail::Message'
+        expect(Spree::OrderMailer).to receive(:store_owner_notification_email).with(order.id).and_return mail_message
+        expect(mail_message).to receive :deliver_later
+        order.finalize!
+      end
+
+      it 'does not send a new order notification email to store owner when notification email address is blank' do
+        store = order.store
+        store.update(new_order_notifications_email: '')
+
+        mail_message = double 'Mail::Message'
+        expect(Spree::OrderMailer).to_not receive(:store_owner_notification_email)
+        order.finalize!
+      end
     end
 
     it 'freezes all adjustments' do
@@ -1209,6 +1228,87 @@ describe Spree::Order, type: :model do
 
       it 'expect return valid order promotions' do
         expect(order.valid_promotions).to eq(order.order_promotions.where(promotion_id: [2, 3]))
+      end
+    end
+  end
+
+  describe '#cart_promo_total' do
+    let!(:order) { create(:order_with_line_items, line_items_count: 10) }
+
+    subject { order.reload.cart_promo_total }
+
+    context 'without promotions' do
+      it 'returns 0' do
+        expect(subject).to eq(BigDecimal('0.00'))
+      end
+    end
+
+    context 'with promotions' do
+      let(:free_shipping_promotion) { create(:free_shipping_promotion, code: 'freeship') }
+      let(:line_item_promotion) { create(:promotion_with_item_adjustment, code: 'li_discount', adjustment_rate: 10) }
+      let(:order_promotion) { create(:promotion_with_order_adjustment, code: 'discount', weighted_order_adjustment_amount: 10) }
+
+      context 'free shipping' do
+        before do
+          order.coupon_code = free_shipping_promotion.code
+          Spree::PromotionHandler::Coupon.new(order).apply
+        end
+
+        it 'includes free shipping prromo' do
+          expect(order.promotions).to include(free_shipping_promotion)
+        end
+
+        it 'returns 0' do
+          expect(subject).to eq(BigDecimal('0.00'))
+        end
+      end
+
+      context 'line item discount' do
+        before do
+          order.coupon_code = line_item_promotion.code
+          Spree::PromotionHandler::Coupon.new(order).apply
+        end
+
+        it 'includes line item promo' do
+          expect(order.promotions).to include(line_item_promotion)
+        end
+
+        it 'reeturns -100.0' do
+          # 10 items x -10 discount
+          expect(subject).to eq(BigDecimal('-100.00'))
+        end
+      end
+
+      context 'order discount' do
+        before do
+          order.coupon_code = order_promotion.code
+          Spree::PromotionHandler::Coupon.new(order).apply
+        end
+
+        it 'includes order promo' do
+          expect(order.promotions).to include(order_promotion)
+        end
+
+        it 'reeturns -10.0' do
+          expect(subject).to eq(BigDecimal('-10.00'))
+        end
+      end
+
+      context 'multiple promotions' do
+        before do
+          free_shipping_promotion.activate(order: order)
+          line_item_promotion.activate(order: order)
+          order_promotion.activate(order: order)
+          order.update_with_updater!
+        end
+
+        it 'includes all promotions' do
+          expect(order.promotions).to include(free_shipping_promotion, line_item_promotion, order_promotion)
+        end
+
+        it 'returns -110.00' do
+          expect(subject).to eq(BigDecimal('-110.00'))
+        end
       end
     end
   end

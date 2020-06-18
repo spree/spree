@@ -21,32 +21,32 @@ AllCops:
 Layout/MultilineOperationIndentation:
   EnforcedStyle: indented
 
-AlignParameters:
+Layout/ParameterAlignment:
   Enabled: false
 
-ClassLength:
+Metrics/ClassLength:
   CountComments: false
   Max: 150
 
-ModuleLength:
+Metrics/ModuleLength:
   CountComments: false
   Max: 250
   Exclude:
     - '**/spec/**/*'
 
-Documentation:
+Style/Documentation:
   Enabled: false
 
-Metrics/LineLength:
+Layout/LineLength:
   Max: 150
   Exclude:
     - '**/spec/**/*'
 
-MethodLength:
+Metrics/MethodLength:
   CountComments: false
   Max: 50
 
-BlockLength:
+Metrics/BlockLength:
   CountComments: false
   Max: 50
   Exclude:
@@ -101,9 +101,6 @@ Style/IfUnlessModifier:
 Naming/VariableNumber:
   Enabled: false
 
-Performance/RegexpMatch:
-  Enabled: false
-
 Style/RedundantPercentQ:
   Enabled: false
 
@@ -125,6 +122,15 @@ Style/ClassAndModuleChildren:
 Style/AndOr:
   Exclude:
     - '**/*controller.rb'
+
+Style/HashEachMethods:
+  Enabled: false
+
+Style/HashTransformKeys:
+  Enabled: false
+
+Style/HashTransformValues:
+  Enabled: false
 
 RSpec/NestedGroups:
   Max: 7

@@ -49,7 +49,88 @@ paths:
           $ref: '#/components/responses/403Forbidden'
       security:
         - bearerAuth: []
-
+    post:
+      description: >-
+        Creates a new account
+        
+        This endpoint requires [Spree Auth Devise](https://github.com/spree/spree_auth_devise) gem installed
+      tags:
+        - Account
+      operationId: 'Account Creation'
+      requestBody:
+        required: true
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                      example: 'john@snow.org'
+                    password:
+                      type: string
+                      example: 'spree123'
+                    password_confirmation:
+                      type: string
+                      example: 'spree123'
+      responses:
+        '200':
+          description: ok
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        '422':
+          description: Validation errors
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    patch:
+      description: >-
+        Updates user account
+        
+        This endpoint requires [Spree Auth Devise](https://github.com/spree/spree_auth_devise) gem installed
+      tags:
+        - Account
+      operationId: 'Account Updates'
+      requestBody:
+        required: true
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+              properties:
+                user:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                      example: 'john@snow.org'
+                    password:
+                      type: string
+                      example: 'spree123'
+                    password_confirmation:
+                      type: string
+                      example: 'spree123'
+      responses:
+        '200':
+          description: ok
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        '422':
+          description: Validation errors
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Error'
+      security:
+        - bearerAuth: []
   '/account/credit_cards':
     get:
       description: >-
@@ -774,7 +855,7 @@ paths:
       description: >-
         Returns a list of available Shipping Rates for Checkout.
         Shipping Rates are grouped against Shipments.
-        Each checkout cna have multiple Shipments eg. some products are available
+        Each checkout can have multiple Shipments eg. some products are available
         in stock and will be send out instantly and some needs to be backordered.
       tags:
         - Checkout
@@ -2003,10 +2084,6 @@ components:
     VariantAttributes:
       type: object
       properties:
-        name:
-          type: string
-          example: 'Example product'
-          description: 'Product name'
         sku:
           type: string
           example: 'SKU-1001'
@@ -2038,14 +2115,6 @@ components:
         options_text:
           type: string
           example: 'Size: small, Color: red'
-        slug:
-          type: string
-          example: 'example-product'
-          description: 'Product slug'
-        description:
-          type: string
-          example: 'Example description'
-          description: 'Product description'
         purchasable:
           type: boolean
           example: true

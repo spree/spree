@@ -7,7 +7,7 @@ order: 0
 ## Overview
 
 View customization allows you to extend or replace any view within a
-Spree application bot for the Customer Storefront (Frontend) and Admin Panel (Backend).
+Spree application both for the Customer Storefront (Frontend) and Admin Panel (Backend).
 
 ## Template replacement
 
@@ -77,7 +77,7 @@ You need to set a preference in `config/initializers/spree.rb` file, eg.
 
 ```ruby
 Spree.config do |config|
-  config.admin_show_version = 'my_new_admin_logo.png'
+  config.admin_show_version = false
 end
 ```
 

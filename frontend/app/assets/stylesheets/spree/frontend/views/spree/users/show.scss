@@ -16,7 +16,7 @@
 .account-page {
   font-weight: 500;
   h3 {
-    color: theme-color('dark-text');
+    color: $font-color;
     margin: 33px 0;
     font-size: font-px-to-rem(32px);
 
@@ -36,11 +36,11 @@
   }
 
   thead {
-    border-bottom: 1px solid theme-color('borders');
+    border-bottom: 1px solid $global-border-style;
   }
 
   th {
-    color: theme-color('secondary');
+    color: theme-color("secondary");
     padding: 7.5px 0;
   }
 
@@ -50,7 +50,7 @@
   }
 
   &-user-info {
-    border-bottom: 1px solid theme-color('borders');
+    border-bottom: 1px solid $global-border-style;
 
     &-item {
       address {
@@ -77,7 +77,7 @@
       }
       &-title {
         @include item-title-font-size;
-        color: theme-color('dark-text');
+        color: $font-color;
         margin-top: 25px;
         font-weight: 500;
 
@@ -220,7 +220,7 @@
     order: 3;
     font-size: font-px-to-rem(16px);
     a {
-      color: theme-color('dark-text');
+      color: $font-color;
     }
     @include media-breakpoint-up(md) {
       font-size: font-px-to-rem(29px);
@@ -312,7 +312,7 @@
     }
 
     &-text-primary {
-      color: theme-color('primary');
+      color: theme-color("primary");
     }
 
     &-lead {
