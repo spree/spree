@@ -23,7 +23,7 @@
         <tr id="<%= spree_dom_id method %>" data-hook="admin_payment_methods_index_rows">
           <td class="move-handle text-center">
             <% if can?(:edit, method) %>
-              <span class="icon icon-sort handle icon-md"></span>
+              <%= svg_icon name: "sort", width: '18', height: '18' %>
             <% end %>
           </td>
           <td><%= method.name %></td>
