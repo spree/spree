@@ -53,14 +53,8 @@
       </button>
 
       <button class="dropdown-item px-0" type="button">
-<<<<<<< HEAD
         <%= link_to 'http://slack.spreecommerce.org', target: :blank, class: 'd-block text-dark py-2 px-4' do %>
         <i class="icon icon-slack"></i>
-=======
-        <%= link_to spree.edit_admin_user_path(try_spree_current_user), class: 'd-block text-dark py-2 px-4' do %>
-          <i class="glyphicon glyphicon-user"></i>
-<<<<<<< HEAD
->>>>>>> master
           &nbsp;
           <%= Spree.t(:join_slack) %>
         <% end %>
@@ -76,87 +70,5 @@
 
     </div>
   </div>
-<<<<<<< HEAD
-=======
-</div>
-
-
-
-
-
-
-
-
-
-
-
-=======
-          <span>
-            <%= try_spree_current_user.email %> <i class="caret"></i>
-          </span>
-        </button>
-
-        <ul class="dropdown-menu position-absolute mt-0 rounded-0 border-top-0">
-          <% if spree.respond_to? :root_path %>
-            <li class="dropdown-item p-0">
-              <%= link_to spree.root_path, target: :blank, class: 'd-block text-dark py-2 px-4' do %>
-                <i class="glyphicon glyphicon-new-window"></i>
-                &nbsp;
-                <%= Spree.t(:back_to_store) %>
-              <% end %>
-            </li>
-          <% end %>
-
-          <% if can?(:manage, try_spree_current_user) %>
-            <li class="dropdown-item p-0">
-              <%= link_to spree.edit_admin_user_path(try_spree_current_user), class: 'd-block text-dark py-2 px-4' do %>
-                <i class="glyphicon glyphicon-user"></i>
-                &nbsp;
-                <%= Spree.t(:account) %>
-              <% end %>
-            </li>
-          <% end %>
-
-          <% if defined?(spree_logout_path) %>
-            <li class="dropdown-item p-0">
-              <%= link_to spree_logout_path, class: 'd-block text-dark py-2 px-4' do %>
-                <i class="glyphicon glyphicon-log-out"></i>
-                &nbsp;
-                <%= Spree.t(:logout) %>
-              <% end %>
-            </li>
-          <% end %>
-
-          <div class="dropdown-divider"></div>
-
-          <li class="dropdown-item p-0">
-            <%= link_to 'http://guides.spreecommerce.org', target: :blank, class: 'd-block text-dark py-2 px-4' do %>
-              <i class="glyphicon glyphicon-info-sign"></i>
-              &nbsp;
-              <%= Spree.t(:help_center) %>
-            <% end %>
-          </li>
-
-          <li class="dropdown-item p-0">
-            <%= link_to 'http://slack.spreecommerce.org', target: :blank, class: 'd-block text-dark py-2 px-4' do %>
-              <i class="glyphicon glyphicon-comment"></i>
-              &nbsp;
-              <%= Spree.t(:join_slack) %>
-            <% end %>
-          </li>
-
-          <li class="dropdown-item p-0">
-            <%= link_to 'https://github.com/spree-contrib', target: :blank, class: 'd-block text-dark py-2 px-4' do %>
-              <i class="glyphicon glyphicon-download"></i>
-              &nbsp;
-              <%= Spree.t(:extensions_directory) %>
-            <% end %>
-          </li>
-        </ul>
-      </div>
-
-    </li>
-  </ul>
->>>>>>> e3e4fd8ae230a110c20ebecb168726cdb92ed4ba
 >>>>>>> master
 <% end %>
