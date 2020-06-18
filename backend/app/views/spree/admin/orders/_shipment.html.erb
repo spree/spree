@@ -44,7 +44,7 @@
             <td class="actions text-center">
               <% if can? :update, shipment %>
                 <%= link_to_with_icon 'close', Spree.t('actions.cancel'), "#", class: 'cancel-method btn btn-outline-secondary btn-sm', data: {action: 'cancel'}, title: Spree.t('actions.cancel'), no_text: true %>
-                <%= link_to_with_icon 'save', Spree.t('actions.save'), "#", class: 'save-method btn btn-success btn-sm', data: {'shipment-number' => shipment.number, action: 'save'}, title: Spree.t('actions.save'), no_text: true %>
+                <%= link_to_with_icon 'tick', Spree.t('actions.save'), "#", class: 'save-method btn btn-success btn-sm', data: {'shipment-number' => shipment.number, action: 'save'}, title: Spree.t('actions.save'), no_text: true %>
               <% end %>
             </td>
           </tr>
