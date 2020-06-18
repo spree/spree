@@ -8,7 +8,7 @@ module Spree
       validates :name, :url, :mail_from_address, :default_currency
     end
 
-    connection.column_exists?(:spree_stores, :new_order_notifications_email) do
+    if !ENV['SPREE_DISABLE_DB_CONNECTION'] && table_exists? && connection.column_exists?(:spree_stores, :new_order_notifications_email) do
       validates :new_order_notifications_email, email: { allow_blank: true }
     end
 
