@@ -51,7 +51,7 @@
   vertical-align: middle !important;
   background-repeat: no-repeat !important;
   background-size: 1rem !important;
-  background-position: 99% !important;
+  background-position: 95% !important;
 }
 
 .select2-drop {
@@ -127,6 +127,7 @@
         position: absolute;
         left: 7px;
         top: 7px;
+        background-repeat: no-repeat;
       }
 
       div {
@@ -147,7 +148,7 @@
 .select2-search-choice-close,
 .select2-container .select2-choice abbr,
 .select2-container .select2-choice .select2-arrow b {
-    background-size: 0.8rem !important;
+    background-size: 0.7rem !important;
 }
 
 .select2-container.select2-allowclear .select2-choice abbr{
@@ -164,7 +165,7 @@
   @extend .icon-white ;
   background-position: 50% !important;
 }
-  
+
 // Bugfix for required elements
 select.select2[required="required"] {
   display: inline-block !important;

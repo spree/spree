@@ -40,25 +40,25 @@
 .icon-save,
 .icon-refresh,
 .icon-ok,
-.icon-capture       { background: url(asset-path("tick.svg")); }
+.icon-capture       { background-image: url(asset-path("tick.svg")) !important; }
 
 .icon-plus,
-.icon-add           { background: url(asset-path("add.svg")); }
+.icon-add           { background-image: url(asset-path("add.svg")) !important; }
 
 .icon-close,
 .icon-cancel,
-.icon-void          { background: url(asset-path("close.svg")); }
+.icon-void          { background-image: url(asset-path("close.svg")) !important ; }
 
-.icon-search        { background: url(asset-path("search.svg")); }
-.icon-settings      { background: url(asset-path("settings.svg")); }
-.icon-delete        { background: url(asset-path("delete.svg")); }
-.icon-edit          { background: url(asset-path("edit.svg")); }
-.icon-filter        { background: url(asset-path("filter.svg")); }
-.icon-chevron-down  { background: url(asset-path("chevron-down.svg")); }
-.icon-chevron-left  { background: url(asset-path("chevron-left.svg")); }
-.icon-chevron-right { background: url(asset-path("chevron-right.svg")); }
-.icon-chevron-up    { background: url(asset-path("chevron-up.svg")); }
-.icon-folder        { background: url(asset-path("folder.svg")); }
+.icon-search        { background-image: url(asset-path("search.svg")) !important; }
+.icon-settings      { background-image: url(asset-path("settings.svg")) !important; }
+.icon-delete        { background-image: url(asset-path("delete.svg")) !important; }
+.icon-edit          { background-image: url(asset-path("edit.svg")) !important; }
+.icon-filter        { background-image: url(asset-path("filter.svg")) !important; }
+.icon-chevron-down  { background-image: url(asset-path("chevron-down.svg")) !important; }
+.icon-chevron-left  { background-image: url(asset-path("chevron-left.svg")) !important; }
+.icon-chevron-right { background-image: url(asset-path("chevron-right.svg")) !important; }
+.icon-chevron-up    { background-image: url(asset-path("chevron-up.svg")) !important; }
+.icon-folder        { background-image: url(asset-path("folder.svg")) !important; }
 
 .icon-white   { filter: invert(100%); }
 .icon-grey-90 { filter: invert(90%); }
