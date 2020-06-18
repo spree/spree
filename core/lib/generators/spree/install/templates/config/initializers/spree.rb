@@ -26,5 +26,6 @@ Spree.dependencies do |dependencies|
   # dependencies.cart_add_item_service = 'MyNewAwesomeService'
 end
 
+# Spree::Api::Dependencies.storefront_cart_serializer = 'MyRailsApp::CartSerializer'
 
 Spree.user_class = <%= (options[:user_class].blank? ? 'Spree::LegacyUser' : options[:user_class]).inspect %>
