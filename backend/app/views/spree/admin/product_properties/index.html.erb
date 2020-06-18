@@ -12,7 +12,7 @@
   <span class="js-new-ptype-link">
     <%= button_link_to Spree.t(:select_from_prototype),
       available_admin_prototypes_url,
-      { icon: 'properties', remote: true, 'data-update' => 'prototypes', class: 'btn-outline-secondary' } %>
+      { icon: 'list', remote: true, 'data-update' => 'prototypes', class: 'btn-outline-secondary' } %>
   </span>
 <% end if can? :create, Spree::ProductProperty %>
 

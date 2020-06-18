@@ -17,7 +17,7 @@
         class: "nav-link #{'active' if current == :address}" %>
     </li>
     <li>
-      <%= link_to_with_icon 'orders-list',
+      <%= link_to_with_icon 'list',
         Spree.t(:"admin.user.orders"),
         spree.orders_admin_user_path(@user),
         class: "nav-link #{'active' if current == :orders}" %>

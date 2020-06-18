@@ -37,6 +37,10 @@ module Spree
         end
       end
 
+      def svg_icon(name:, classes: '', width:, height:)
+        inline_svg_tag "#{name}.svg", class: "spree-icon #{classes}", size: "#{width}px*#{height}px"
+      end
+
       def datepicker_field_value(date)
         unless date.blank?
           l(date, format: Spree.t('date_picker.format', default: '%Y/%m/%d'))
@@ -165,7 +169,7 @@ module Spree
         button_link_to(
           Spree.t(:preview_product),
           spree.product_url(product),
-          class: 'btn-outline-secondary', icon: 'eye-open', id: 'admin_preview_product', target: :blank
+          class: 'btn-outline-secondary', icon: 'view', id: 'admin_preview_product', target: :blank
         )
       end
 
@@ -175,7 +179,7 @@ module Spree
         button_link_to(
           Spree.t(:preview_taxon),
           seo_url(taxon),
-          class: 'btn-outline-secondary', icon: 'eye-open', id: 'admin_preview_taxon', target: :blank
+          class: 'btn-outline-secondary', icon: 'view', id: 'admin_preview_taxon', target: :blank
         )
       end
     end

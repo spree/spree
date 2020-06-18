@@ -15,6 +15,9 @@ module Spree
       # Example:
       #   # Link to /admin/orders, also highlight tab for ProductsController and ShipmentsController
       #   tab :orders, :products, :shipments
+
+      IconSize = 16
+
       def tab(*args)
         options = { label: args.first.to_s }
 
@@ -61,9 +64,9 @@ module Spree
       # Single main menu item
       def main_menu_item(text, url: nil, icon: nil)
         link_to url, 'data-toggle': 'collapse', class: 'd-flex w-100 p-3 position-relative align-items-center' do
-          content_tag(:span, nil, class: "icon icon-#{icon} mr-2") +
+            svg_icon(name: icon, classes: "mr-2", width:IconSize, height:IconSize) +
             content_tag(:span, " #{text}", class: 'text') +
-            content_tag(:span, nil, class: 'icon icon-chevron-left icon-sm position-absolute')
+            svg_icon(name: 'chevron-left', classes: "drop-menu-indicator position-absolute", width:(IconSize - 4), height:(IconSize - 4))
         end
       end
 
@@ -162,20 +165,20 @@ module Spree
         text = options[:no_text] ? '' : content_tag(:span, text, class: 'text')
         options.delete(:no_text)
         if icon_name
-          icon = content_tag(:span, '', class: "#{'mr-2' unless text.empty?} icon icon-#{icon_name}")
+          icon = svg_icon(name: icon_name, classes: "#{'mr-2' unless text.empty?}", width:IconSize, height:IconSize)
           text = "#{icon} #{text}"
         end
         link_to(text.html_safe, url, options)
       end
 
       def spree_icon(icon_name)
-        icon_name ? content_tag(:i, '', class: icon_name) : ''
+        icon_name ? (svg_icon(name: icon_name, classes: icon_name, width:IconSize, height:IconSize)) : ''
       end
 
       # Override: Add disable_with option to prevent multiple request on consecutive clicks
       def button(text, icon_name = nil, button_type = 'submit', options = {})
         if icon_name
-          icon = content_tag(:span, '', class: "icon icon-#{icon_name}")
+          icon = svg_icon(name: icon_name, classes: "#{'mr-2' unless text.empty?}", width:IconSize, height:IconSize)
           text = "#{icon} #{text}"
         end
         button_tag(
@@ -206,7 +209,7 @@ module Spree
           html_options[:class] = html_options[:class] ? "btn #{html_options[:class]}" : 'btn btn-outline-secondary'
 
           if html_options[:icon]
-            icon = content_tag(:span, '', class: "icon icon-#{html_options[:icon]}")
+            icon = svg_icon(name: html_options[:icon], width:IconSize, height:IconSize)
             text = "#{icon} #{text}"
           end
 

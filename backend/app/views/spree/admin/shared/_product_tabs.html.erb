@@ -22,7 +22,7 @@
     <% end if can?(:admin, Spree::Image) && !@product.deleted? %>
 
     <%= content_tag :li do %>
-      <%= link_to_with_icon 'adjustments-y',
+      <%= link_to_with_icon 'adjust',
         Spree.t(:variants),
         spree.admin_product_variants_url(@product),
         class: "nav-link #{'active' if current == :variants}" %>
@@ -30,7 +30,7 @@
     <% end if can?(:admin, Spree::Variant) && !@product.deleted? %>
 
     <%= content_tag :li do %>
-      <%= link_to_with_icon 'orders-list',
+      <%= link_to_with_icon 'list',
         Spree.t(:properties),
         spree.admin_product_product_properties_url(@product),
         class: "nav-link #{'active' if current == :properties}" %>

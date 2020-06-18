@@ -26,7 +26,7 @@ a.sidebar-submenu-item:hover {
 
 ul.active-option {
   background-color: $gray-200;
-  .icon-chevron-left {
+  .drop-menu-indicator {
     transform: rotate(-90deg);
   }
 }
@@ -41,21 +41,19 @@ ul.nav-sidebar {
         text-decoration: none;
       }
 
-      .icon-chevron-left {
-        font-size: .7rem;
-        line-height: 1rem;
+      .drop-menu-indicator {
         right: 1rem;
       }
 
       &[aria-expanded="true"] {
-        .icon-chevron-left {
+        .drop-menu-indicator {
           transform: rotate(-90deg);
           transition: .3s ease-in-out;
         }
       }
 
       &[aria-expanded="false"] {
-        .icon-chevron-left {
+        .drop-menu-indicator {
           transform: rotate(0deg);
           transition: .3s ease-in-out;
         }
