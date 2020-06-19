@@ -21,27 +21,27 @@
 
 .btn-secondary .icon,
 .btn-outline-secondary .icon {
-  @extend .icon-grey-40 ;
+  // @extend .icon-grey-40 ;
 }
 
 .btn.action-void {
-  @extend .btn-danger;
+//   @extend .btn-danger;
 }
 
 .btn.action-capture {
-  @extend .btn-success;
+//  @extend .btn-success;
 }
 
 .btn.payment-action-edit {
-  @extend .btn-primary;
-  @extend .icon-white ;
+//  @extend .btn-primary !optional;
+//  @extend .icon-white !optional;
 }
 
 .btn-success .icon,
 .btn-primary .icon,
 .btn-danger .icon,
 a.payment-action-save .icon {
-  @extend .icon-white ;
+  // @extend .icon-white !optional;
 }
 
 .payment-action-save,
@@ -50,6 +50,6 @@ a.payment-action-save .icon {
   &:hover .icon,
   &:focus .icon,
   &:active .icon, {
-    @extend .icon-white ;
+    // @extend .icon-white ;
   }
 }

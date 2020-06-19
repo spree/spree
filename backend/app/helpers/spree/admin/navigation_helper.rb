@@ -165,7 +165,7 @@ module Spree
         text = options[:no_text] ? '' : content_tag(:span, text, class: 'text')
         options.delete(:no_text)
         if icon_name
-          icon = svg_icon(name: icon_name, classes: "#{'mr-2' unless text.empty?}", width:IconSize, height:IconSize)
+          icon = svg_icon(name: icon_name, classes: "#{'mr-2' unless text.empty?} icon icon-#{icon_name}", width:IconSize, height:IconSize)
           text = "#{icon} #{text}"
         end
         link_to(text.html_safe, url, options)
@@ -178,7 +178,7 @@ module Spree
       # Override: Add disable_with option to prevent multiple request on consecutive clicks
       def button(text, icon_name = nil, button_type = 'submit', options = {})
         if icon_name
-          icon = svg_icon(name: icon_name, classes: "#{'mr-2' unless text.empty?}", width:IconSize, height:IconSize)
+          icon = svg_icon(name: icon_name, classes: "icon icon-#{icon_name}", width:IconSize, height:IconSize)
           text = "#{icon} #{text}"
         end
         button_tag(
@@ -209,7 +209,7 @@ module Spree
           html_options[:class] = html_options[:class] ? "btn #{html_options[:class]}" : 'btn btn-outline-secondary'
 
           if html_options[:icon]
-            icon = svg_icon(name: html_options[:icon], width:IconSize, height:IconSize)
+            icon = svg_icon(name: html_options[:icon], classes: "icon icon-#{html_options[:icon]}", width:IconSize, height:IconSize)
             text = "#{icon} #{text}"
           end
 

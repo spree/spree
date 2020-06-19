@@ -20,16 +20,8 @@ body.modal-open #multi-backdrop {
   height: 100vh;
 }
 
-.nav-link.active .icon {
-    filter: invert(100%);
-}
-
 .sort-handle {
   cursor: grab;
-}
-
-.no-filter {
-  filter:none !important;
 }
 
 .no-wrap {

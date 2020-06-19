@@ -31,7 +31,7 @@ table.table {
         vertical-align: middle;
         .filterable {
           margin-left: .2em;
-          @extend .icon-white ;
+          // @extend .icon-white ;
           cursor: pointer;
           width: 0.9rem;
           height:0.9rem;
@@ -39,7 +39,7 @@ table.table {
       }
 
       &:hover td .filterable {
-        @extend .icon-grey-30 ;
+      //  @extend .icon-grey-30 ;
       }
     }
   }

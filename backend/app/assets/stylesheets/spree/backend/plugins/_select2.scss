@@ -21,8 +21,9 @@
       border-left-color: $input-border-color;
       width: 24px;
 
+
       b {
-        @extend .icon-chevron-down ;
+        background-image: url(asset-path("chevron-down.svg")) !important;
         overflow: hidden !important;
         vertical-align: middle !important;
         background-repeat: no-repeat !important;
@@ -46,7 +47,7 @@
 .select2-search input {
   border-color: $input-border-color;
   border-radius: $border-radius;
-  @extend .icon-search ;
+  background-image: url(asset-path("search.svg")) !important;
   overflow: hidden !important;
   vertical-align: middle !important;
   background-repeat: no-repeat !important;
@@ -123,7 +124,7 @@
       padding: 7px;
 
       .select2-search-choice-close {
-        @extend .icon-close ;
+        background-image: url(asset-path("close.svg")) !important ;
         position: absolute;
         left: 7px;
         top: 7px;
@@ -152,7 +153,7 @@
 }
 
 .select2-container.select2-allowclear .select2-choice abbr{
-  @extend .icon-close ;
+  background-image: url(asset-path("close.svg")) !important ;
   overflow: hidden !important;
   vertical-align: middle !important;
   background-repeat: no-repeat !important;
@@ -162,7 +163,7 @@
 }
 
 .select2-container-multi .select2-choices .select2-search-choice .select2-search-choice-close:hover {
-  @extend .icon-white ;
+  // @extend .icon-white ;
   background-position: 50% !important;
 }
 

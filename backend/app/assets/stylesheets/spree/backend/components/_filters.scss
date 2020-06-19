@@ -9,13 +9,13 @@
   transform: rotate(0);
   transition: .3s ease-in-out;
   margin-bottom: 0;
-  @extend .icon-sm ;
+  // @extend .icon-sm ;
 }
 
 .collapsed .icon-chevron-right {
   transform: rotate(90deg);
   transition: .3s ease-in-out;
-  @extend .icon-sm ;
+  // @extend .icon-sm ;
 }
 
 .index-filter-button {
