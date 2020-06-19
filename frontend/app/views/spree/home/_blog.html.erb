@@ -1,0 +1,45 @@
+<%
+  posts = [
+    {
+      link: 'https://medium.com/@deanbaddah/suiting-up-how-to-don-the-right-formal-attire-fe27fa5298fb'
+    },
+    {
+      link: 'https://medium.com/swlh/fibers-affordable-fashion-for-people-with-disabilities-6ff8989de6c3'
+    },
+    {
+      link: 'https://medium.com/the-innovation/costumes-fashion-and-women-in-film-eea75d47e4b4'
+    },
+    {
+      category: 'Inspirations',
+      link: 'https://www.hellofashionblog.com/2020/05/memorial-day-sales-worth-shopping.html'
+    },
+     {
+      image: 'homepage/blog/blog_post_05.jpg',
+      title: 'Casual & Smart, the way to go!',
+      category: 'Inspirations',
+      description: 'Discover top men outfits from our style advisors.'
+    },
+    {
+      image: 'homepage/blog/blog_post_06.jpg',
+      title: 'Must-have hand bags for this summer!',
+      category: 'Accessories',
+      description: 'Summer trends are in the air, explore what you should get before summer kicks in...'
+    }
+  ]
+%>
+
+<div class="container homepage-blog mb-4">
+  <h3 class="text-center homepage-blog-title"><%= Spree.t('homepage.blog.title') %></h3>
+  <div class="row">
+    <% posts.each do |post| %>
+      <% object = link_thumbnailer_generator(post[:link]) %>
+      <%= link_to post[:link], class: 'col-12 col-lg-4 mt-4 text-center text-lg-left text-decoration-none', rel: "noopener noreferrer", target: "_blank", title: "#{object ? object.title : post[:title]} - hyperlink" do %>
+        <img class="post-image lazyload w-100 mw-100" data-src="<%= object ? object.images.first.src.to_s : asset_path(post[:image]) %>" />
+        <span class="post-category d-block text-primary"><%= post[:category] %></span>
+        <h4 class="post-title"><%= object ? object.title : post[:title] %></h4>
+        <p class="post-description"><%= object ? object.description : post[:description] %></p>
+        <span class="post-link"><%= Spree.t(:read_more) %></span>
+      <% end %>
+    <% end %>
+  </div>
+</div>

@@ -1,5 +1,7 @@
 module Spree
   module BaseHelper
+    require 'link_thumbnailer'
+
     def available_countries
       checkout_zone = Spree::Zone.find_by(name: Spree::Config[:checkout_zone])
 
@@ -147,6 +149,12 @@ module Spree
 
     def maximum_quantity
       Spree::DatabaseTypeUtilities.maximum_value_for(:integer)
+    end
+
+    def link_thumbnailer_generator(link)
+      LinkThumbnailer.generate(link)
+    rescue LinkThumbnailer::Exceptions => e
+      # do something
     end
 
     private

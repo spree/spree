@@ -1,0 +1,44 @@
+.homepage-blog {
+  font-size: font-px-to-rem(12px);
+  &-title {
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: 1.2px;
+    font-size: font-px-to-rem(18px);
+    @include media-breakpoint-up(lg) {
+      font-size: font-px-to-rem(24px);
+    }
+  }
+  .post-image {
+    height: 201px;
+    object-fit: cover;
+  }
+  .post-category {
+    font-weight: 600;
+    margin: 14px 0 5px;
+    font-size: font-px-to-rem(15px);
+  }
+  .post-title {
+    font-weight: 500;
+    line-height: 1.3;
+    letter-spacing: 0.5px;
+    margin-bottom: 5px;
+    font-size: font-px-to-rem(18px);
+    color: $font-color;
+    @include media-breakpoint-up(lg) {
+      font-size: font-px-to-rem(20px);
+      margin-bottom: 8px;
+    }
+  }
+  .post-description {
+    margin-bottom: 7px;
+    font-size: font-px-to-rem(12px);
+    color: $font-color;
+  }
+  .post-link {
+    text-decoration: underline;
+    letter-spacing: 0.3px;
+    font-weight: 600;
+    font-size: font-px-to-rem(12px);
+  }
+}
