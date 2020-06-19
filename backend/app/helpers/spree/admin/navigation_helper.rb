@@ -16,7 +16,7 @@ module Spree
       #   # Link to /admin/orders, also highlight tab for ProductsController and ShipmentsController
       #   tab :orders, :products, :shipments
 
-      IconSize = 16
+      ICON_SIZE = 16
 
       def tab(*args)
         options = { label: args.first.to_s }
@@ -64,9 +64,9 @@ module Spree
       # Single main menu item
       def main_menu_item(text, url: nil, icon: nil)
         link_to url, 'data-toggle': 'collapse', class: 'd-flex w-100 p-3 position-relative align-items-center' do
-            svg_icon(name: icon, classes: "mr-2", width:IconSize, height:IconSize) +
+          svg_icon(name: icon, classes: "mr-2", width: ICON_SIZE, height: ICON_SIZE) +
             content_tag(:span, " #{text}", class: 'text') +
-            svg_icon(name: 'chevron-left', classes: "drop-menu-indicator position-absolute", width:(IconSize - 4), height:(IconSize - 4))
+              svg_icon(name: 'chevron-left', classes: "drop-menu-indicator position-absolute", width: (ICON_SIZE - 4), height: (ICON_SIZE - 4))
         end
       end
 
@@ -99,7 +99,7 @@ module Spree
                    class: "form-control pull-right js-per-page-select per-page-selected-#{selected_option}")
       end
 
-      # helper method to create proper url to apply per page filtering
+      # helper method to create proper url to apply per page ing
       # fixes https://github.com/spree/spree/issues/6888
       def per_page_dropdown_params(args = nil)
         args = params.permit!.to_h.clone
@@ -165,20 +165,20 @@ module Spree
         text = options[:no_text] ? '' : content_tag(:span, text, class: 'text')
         options.delete(:no_text)
         if icon_name
-          icon = svg_icon(name: icon_name, classes: "#{'mr-2' unless text.empty?} icon icon-#{icon_name}", width:IconSize, height:IconSize)
+          icon = svg_icon(name: icon_name, classes: "#{'mr-2' unless text.empty?} icon icon-#{icon_name}", width: ICON_SIZE, height: ICON_SIZE)
           text = "#{icon} #{text}"
         end
         link_to(text.html_safe, url, options)
       end
 
       def spree_icon(icon_name)
-        icon_name ? (svg_icon(name: icon_name, classes: icon_name, width:IconSize, height:IconSize)) : ''
+        icon_name ? (svg_icon(name: icon_name, classes: icon_name, width: ICON_SIZE, height: ICON_SIZE)) : ''
       end
 
       # Override: Add disable_with option to prevent multiple request on consecutive clicks
       def button(text, icon_name = nil, button_type = 'submit', options = {})
         if icon_name
-          icon = svg_icon(name: icon_name, classes: "icon icon-#{icon_name}", width:IconSize, height:IconSize)
+          icon = svg_icon(name: icon_name, classes: "icon icon-#{icon_name}", width: ICON_SIZE, height: ICON_SIZE)
           text = "#{icon} #{text}"
         end
         button_tag(
@@ -209,7 +209,7 @@ module Spree
           html_options[:class] = html_options[:class] ? "btn #{html_options[:class]}" : 'btn btn-outline-secondary'
 
           if html_options[:icon]
-            icon = svg_icon(name: html_options[:icon], classes: "icon icon-#{html_options[:icon]}", width:IconSize, height:IconSize)
+            icon = svg_icon(name: html_options[:icon], classes: "icon icon-#{html_options[:icon]}", width: ICON_SIZE, height: ICON_SIZE)
             text = "#{icon} #{text}"
           end
 
@@ -232,25 +232,25 @@ module Spree
       def main_part_classes
         # DEPRECIATE IN SPREE 5.0
         if cookies['sidebar-minimized'] == 'true'
-           'col-12 sidebar-collapsed'
-         else
-           'col-9 offset-3 col-md-10 offset-md-2'
-         end
-       end
+         'col-12 sidebar-collapsed'
+        else
+         'col-9 offset-3 col-md-10 offset-md-2'
+        end
+      end
 
-       def main_sidebar_classes
-         # DEPRECIATE IN SPREE 5.0
-         if cookies['sidebar-minimized'] == 'true'
-           'col-3 col-md-2 sidebar'
-         else
-           'p-0 col-3 col-md-2 sidebar'
-         end
-       end
+      def main_sidebar_classes
+        # DEPRECIATE IN SPREE 5.0
+        if cookies['sidebar-minimized'] == 'true'
+          'col-3 col-md-2 sidebar'
+        else
+          'p-0 col-3 col-md-2 sidebar'
+        end
+      end
 
-       def wrapper_classes
-         # DEPRECIATE IN SPREE 5.0
-         'sidebar-minimized' if cookies['sidebar-minimized'] == 'true'
-       end
+      def wrapper_classes
+        # DEPRECIATE IN SPREE 5.0
+        'sidebar-minimized' if cookies['sidebar-minimized'] == 'true'
+      end
     end
   end
 end
