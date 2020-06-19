@@ -6,7 +6,7 @@ root.taxon_tree_menu = function (obj, context) {
   editUrl.setPath(editUrl.path() + '/' + obj.attr('id') + '/edit')
   return {
     create: {
-      label: '<span class="icon icon-plus"></span>' + Spree.translations.add,
+      label: '<span class="icon icon-add"></span>' + Spree.translations.add,
       action: function (obj) {
         return context.create(obj)
       }

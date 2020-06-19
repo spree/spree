@@ -24,7 +24,7 @@
           <td><%= store.default ? "<strong>#{Spree.t(:say_yes)}</strong>".html_safe : Spree.t(:say_no) %>
           <td class="actions actions-2 text-right" data-hook="admin_stores_index_row_actions">
             <% if can?(:edit, store) && !store.default %>
-              <%= link_to_with_icon('ok', Spree.t(:store_set_default_button), spree.set_default_admin_store_path(store), no_text: true, method: :put, class: 'btn btn-warning btn-sm with-tip') %>
+              <%= link_to_with_icon('save', Spree.t(:store_set_default_button), spree.set_default_admin_store_path(store), no_text: true, method: :put, class: 'btn btn-warning btn-sm with-tip') %>
             <% end %>
             <%= link_to_edit_url spree.edit_admin_store_path(store), no_text: true if can?(:edit, store) %>
             <%= link_to_delete store, no_text: true, url: spree.admin_store_path(store) if can?(:destroy, store) %>

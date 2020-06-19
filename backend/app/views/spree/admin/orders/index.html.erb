@@ -216,7 +216,7 @@
         <td class="no-wrap">
           <span class="badge badge-<%= order.state.downcase %>"><%= Spree.t("order_state.#{order.state.downcase}") %></span>
           <span class="filterable js-add-filter" data-ransack-field="q_state_eq" data-ransack-value="<%= order.state %>">
-            <%= svg_icon name: "filter", width: '18', height: '18' %>
+            <%= svg_icon name: "filter", width: '14', height: '14' %>
           </span>
         </td>
         <td class="no-wrap">
@@ -226,10 +226,10 @@
               admin_order_payments_path(order),
               class: "badge badge-#{order.payment_state}" %>
 
-            <span class="icon icon-filter filterable js-add-filter"
+            <span class="filterable js-add-filter"
               data-ransack-field="q_payment_state_eq"
               data-ransack-value="<%= order.payment_state %>">
-              <%= svg_icon name: "filter", width: '18', height: '18' %>
+              <%= svg_icon name: "filter", width: '14', height: '14' %>
             </span>
           <% end %>
         </td>
@@ -237,8 +237,8 @@
           <td class="no-wrap">
             <% if order.shipment_state %>
               <span class="badge badge-<%= order.shipment_state %>"><%= Spree.t("shipment_states.#{order.shipment_state}") %></span>
-              <span class="icon icon-filter filterable js-add-filter" data-ransack-field="q_shipment_state_eq" data-ransack-value="<%= order.shipment_state %>">
-                <%= svg_icon name: "filter", width: '18', height: '18' %>
+              <span class="filterable js-add-filter" data-ransack-field="q_shipment_state_eq" data-ransack-value="<%= order.shipment_state %>">
+                <%= svg_icon name: "filter", width: '14', height: '14' %>
               </span>
             <% end %>
           </td>
@@ -250,8 +250,8 @@
             <%= mail_to order.email %>
           <% end %>
           <% if order.user || order.email %>
-            <span class="icon icon-filter filterable js-add-filter" data-ransack-field="q_email_cont" data-ransack-value="<%= order.email %>">
-              <%= svg_icon name: "filter", width: '18', height: '18' %>
+            <span class="filterable js-add-filter" data-ransack-field="q_email_cont" data-ransack-value="<%= order.email %>">
+              <%= svg_icon name: "filter", width: '14', height: '14' %>
             </span>
           <% end %>
         </td>
