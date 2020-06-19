@@ -1,1 +1,60 @@
+// Requireed for javascript loaded icons.
+// Spree Icon Default
+.icon {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  overflow: hidden;
+  vertical-align: middle;
+  background-repeat: no-repeat;
+  background-size: 100%;
+  background-position: center;
+}
 
+// Spree Icon Sizing
+.icon-xs {
+  width: 0.6rem !important;
+  height: 0.6rem !important;
+}
+.icon-sm {
+  width: 0.8rem !important;
+  height: 0.8rem !important;
+}
+.icon-md {
+  width: 1.2rem !important;
+  height: 1.2rem !important;
+}
+.icon-lg {
+  width: 1.4rem !important;
+  height: 1.4rem !important;
+}
+.icon-xl {
+  width: 1.6rem !important;
+  height: 1.6rem !important;
+}
+
+// Spree Icons ################
+.icon-tick,
+.icon-approve,
+.icon-save,
+.icon-refresh,
+.icon-ok,
+.icon-capture       { background-image: url(asset-path("tick.svg")) !important; }
+
+.icon-plus,
+.icon-add           { background-image: url(asset-path("add.svg")) !important; }
+
+.icon-close,
+.icon-cancel,
+.icon-void          { background-image: url(asset-path("close.svg")) !important ; }
+
+.icon-search        { background-image: url(asset-path("search.svg")) !important; }
+.icon-settings      { background-image: url(asset-path("settings.svg")) !important; }
+.icon-delete        { background-image: url(asset-path("delete.svg")) !important; }
+.icon-edit          { background-image: url(asset-path("edit.svg")) !important; }
+.icon-filter        { background-image: url(asset-path("filter.svg")) !important; }
+.icon-chevron-down  { background-image: url(asset-path("chevron-down.svg")) !important; }
+.icon-chevron-left  { background-image: url(asset-path("chevron-left.svg")) !important; }
+.icon-chevron-right { background-image: url(asset-path("chevron-right.svg")) !important; }
+.icon-chevron-up    { background-image: url(asset-path("chevron-up.svg")) !important; }
+.icon-folder        { background-image: url(asset-path("folder.svg")) !important; }
