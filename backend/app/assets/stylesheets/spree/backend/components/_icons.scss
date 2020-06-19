@@ -1,4 +1,6 @@
-// Requireed for javascript loaded icons.
+// The icons listed in this file are used by javascript generated content
+// that can not accept a ruby generated inline_svg.
+
 // Spree Icon Default
 .icon {
   display: inline-block;
@@ -11,50 +13,33 @@
   background-position: center;
 }
 
-// Spree Icon Sizing
-.icon-xs {
-  width: 0.6rem !important;
-  height: 0.6rem !important;
-}
-.icon-sm {
-  width: 0.8rem !important;
-  height: 0.8rem !important;
-}
-.icon-md {
-  width: 1.2rem !important;
-  height: 1.2rem !important;
-}
-.icon-lg {
-  width: 1.4rem !important;
-  height: 1.4rem !important;
-}
-.icon-xl {
-  width: 1.6rem !important;
-  height: 1.6rem !important;
-}
-
 // Spree Icons ################
-.icon-tick,
-.icon-approve,
-.icon-save,
-.icon-refresh,
-.icon-ok,
-.icon-capture       { background-image: url(asset-path("tick.svg")) !important; }
+// To do: Due to changing font packs over the years,
+// the naming conventions have been mixed up, this
+// then got baked into the spec tests looking for
+// 'icon-ok' or 'icon-tick' basicly the same icon. This needs sorting.
 
-.icon-plus,
-.icon-add           { background-image: url(asset-path("add.svg")) !important; }
+span.icon-tick,
+span.icon-approve,
+span.icon-save,
+span.icon-refresh,
+span.icon-ok,
+span.icon-capture       { background-image: url(asset-path("tick.svg")); }
 
-.icon-close,
-.icon-cancel,
-.icon-void          { background-image: url(asset-path("close.svg")) !important ; }
+span.icon-plus,
+span.icon-add           { background-image: url(asset-path("add.svg")); }
 
-.icon-search        { background-image: url(asset-path("search.svg")) !important; }
-.icon-settings      { background-image: url(asset-path("settings.svg")) !important; }
-.icon-delete        { background-image: url(asset-path("delete.svg")) !important; }
-.icon-edit          { background-image: url(asset-path("edit.svg")) !important; }
-.icon-filter        { background-image: url(asset-path("filter.svg")) !important; }
-.icon-chevron-down  { background-image: url(asset-path("chevron-down.svg")) !important; }
-.icon-chevron-left  { background-image: url(asset-path("chevron-left.svg")) !important; }
-.icon-chevron-right { background-image: url(asset-path("chevron-right.svg")) !important; }
-.icon-chevron-up    { background-image: url(asset-path("chevron-up.svg")) !important; }
-.icon-folder        { background-image: url(asset-path("folder.svg")) !important; }
+span.icon-close,
+span.icon-cancel,
+span.icon-void          { background-image: url(asset-path("close.svg")); }
+
+span.icon-search        { background-image: url(asset-path("search.svg")); }
+span.icon-settings      { background-image: url(asset-path("settings.svg")); }
+span.icon-delete        { background-image: url(asset-path("delete.svg")); }
+span.icon-edit          { background-image: url(asset-path("edit.svg")); }
+span.icon-filter        { background-image: url(asset-path("filter.svg")); }
+span.icon-chevron-down  { background-image: url(asset-path("chevron-down.svg")); }
+span.icon-chevron-left  { background-image: url(asset-path("chevron-left.svg")); }
+span.icon-chevron-right { background-image: url(asset-path("chevron-right.svg")); }
+span.icon-chevron-up    { background-image: url(asset-path("chevron-up.svg")); }
+span.icon-folder        { background-image: url(asset-path("folder.svg")); }
