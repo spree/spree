@@ -64,9 +64,9 @@ module Spree
       # Single main menu item
       def main_menu_item(text, url: nil, icon: nil)
         link_to url, 'data-toggle': 'collapse', class: 'd-flex w-100 p-3 position-relative align-items-center' do
-          svg_icon(name: icon, classes: "mr-2", width: ICON_SIZE, height: ICON_SIZE) +
+          svg_icon(name: icon, classes: 'mr-2', width: ICON_SIZE, height: ICON_SIZE) +
             content_tag(:span, " #{text}", class: 'text') +
-              svg_icon(name: 'chevron-left', classes: "drop-menu-indicator position-absolute", width: (ICON_SIZE - 4), height: (ICON_SIZE - 4))
+            svg_icon(name: 'chevron-left', classes: 'drop-menu-indicator position-absolute', width: (ICON_SIZE - 4), height: (ICON_SIZE - 4))
         end
       end
 
@@ -172,7 +172,7 @@ module Spree
       end
 
       def spree_icon(icon_name)
-        icon_name ? (svg_icon(name: icon_name, classes: icon_name, width: ICON_SIZE, height: ICON_SIZE)) : ''
+        icon_name ? svg_icon(name: icon_name, classes: icon_name, width: ICON_SIZE, height: ICON_SIZE) : ''
       end
 
       # Override: Add disable_with option to prevent multiple request on consecutive clicks
@@ -232,9 +232,9 @@ module Spree
       def main_part_classes
         # DEPRECIATE IN SPREE 5.0
         if cookies['sidebar-minimized'] == 'true'
-         'col-12 sidebar-collapsed'
+          'col-12 sidebar-collapsed'
         else
-         'col-9 offset-3 col-md-10 offset-md-2'
+          'col-9 offset-3 col-md-10 offset-md-2'
         end
       end
 
