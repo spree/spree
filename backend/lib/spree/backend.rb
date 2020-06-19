@@ -3,6 +3,7 @@ require 'jquery-rails'
 require 'jquery-ui-rails'
 require 'select2-rails'
 require 'bootstrap'
+require 'glyphicons'
 require 'popper_js'
 require 'inline_svg'
 
