@@ -114,7 +114,4 @@ describe 'Variant cache', type: :request, caching: true do
       end
     end
   end
-
-
-
 end
