@@ -6,6 +6,10 @@ attributes *product_attributes
 node(:display_price) { |p| p.display_price.to_s }
 node(:has_variants, &:has_variants?)
 node(:taxon_ids, &:taxon_ids)
+node(:display_current_currency_price) do |product|
+  price = product.price_in(current_currency)
+  Spree::Money.new(price.amount, currency: current_currency).to_s
+end
 
 child master: :master do
   extends 'spree/api/v1/variants/small'
