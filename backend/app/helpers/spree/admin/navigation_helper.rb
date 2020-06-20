@@ -250,7 +250,9 @@ module Spree
       end
 
       def wrapper_classes
-        # DEPRECIATE IN SPREE 5.0
+        ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
+          Admin::NavigationsHelper#wrapper_classes is deprecated and will be removed in Spree 5.0.
+        DEPRECATION
         'sidebar-minimized' if cookies['sidebar-minimized'] == 'true'
       end
     end
