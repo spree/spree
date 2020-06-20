@@ -16,3 +16,9 @@
     color: #fff;
   }
 }
+
+.custom-control-input:checked ~ .custom-control-label::before {
+  color: $white;
+  border-color: $green;
+  background-color: $green;
+}

@@ -78,10 +78,10 @@
       </div>
 
       <div data-hook="admin_product_form_promotionable">
-        <%= f.field_container :promotionable, class: ['form-group'] do %>
-          <%= f.label :promotionable, Spree.t(:promotionable) %>
+        <%= f.field_container :promotionable, class: ['custom-control custom-switch'] do %>
+          <%= f.check_box :promotionable, class: 'custom-control-input' %>
+          <%= f.label :promotionable, Spree.t(:promotionable), class:'custom-control-label' %>
           <%= f.error_message_on :promotionable %>
-          <%= f.check_box :promotionable, class: 'form-control' %>
         <% end %>
       </div>
 
