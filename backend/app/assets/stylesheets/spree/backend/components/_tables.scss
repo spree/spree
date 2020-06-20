@@ -5,8 +5,16 @@ table.table {
     cursor: grab;
   }
 
-  th.handel-head {
-    width: 50px;
+  th {
+    padding: 0.5rem;
+
+    &.handel-head {
+      width: 50px;
+    }
+  }
+  
+  td {
+    padding: 0.5rem;
   }
 
   .badge {
@@ -17,6 +25,7 @@ table.table {
     th {
       text-transform: uppercase;
       font-size: $small-font-size;
+      padding: 0.5rem;
       padding-top: 14px;
       padding-bottom: 14px;
       vertical-align: top;
