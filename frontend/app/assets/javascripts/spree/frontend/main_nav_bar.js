@@ -5,16 +5,17 @@ Spree.ready(function () {
   var DATA_TOGGLE_ATTR = 'data-toggle'
   var DATA_TOGGLE_VALUE = 'dropdown'
 
-  function handleInOutNavLinks(event) {
+  function handleMouseInOutNavLinks(event) {
     var $navLink = $(this)
     var $parent = $navLink.parent()
     var $dropdown = $navLink.next()
+    const eventType = event.type
 
-    if (event.type === 'mouseenter') {
+    if (eventType === 'mouseenter') {
       $navLink.removeAttr(DATA_TOGGLE_ATTR)
       $parent.addClass(SHOW_CLASS)
       $dropdown.addClass(SHOW_CLASS)
-    } else if (event.type === 'mouseleave') {
+    } else if (eventType === 'mouseleave') {
       var isDropdownHovered = $dropdown.filter(':hover').length
       var isNavLinkHovered = $navLink.filter(':hover').length
       if (isDropdownHovered || isNavLinkHovered) {
@@ -26,7 +27,33 @@ Spree.ready(function () {
     }
   }
 
-  function handleOutDropdown() {
+  function handleFocusinNavLink() {
+    var $navLink = $(this)
+    var $parent = $navLink.parent()
+    var $dropdown = $navLink.next()
+
+    $parent.addClass(SHOW_CLASS)
+    $dropdownMenu.removeClass(SHOW_CLASS)
+    $dropdown.addClass(SHOW_CLASS)
+  }
+
+  function handleFocusoutNavLink() {
+    var $navLink = $(this)
+    var $parent = $navLink.parent()
+    var $dropdown = $navLink.next()
+
+    setTimeout(function() {
+      var dropdownHasActiveElement = $.contains($dropdown[0], document.activeElement)
+
+      if (!dropdownHasActiveElement) {
+        $parent.removeClass(SHOW_CLASS)
+        $dropdown.removeClass(SHOW_CLASS)
+      }
+    }, 0)
+
+  }
+
+  function handleMouseleaveDropdown() {
     var $dropdown = $(this)
     var isDropdownHovered = $dropdown.filter(':hover').length
     var isNavLinkHovered = $dropdown.prev().filter(':hover').length
@@ -37,6 +64,23 @@ Spree.ready(function () {
     $dropdown.removeClass(SHOW_CLASS)
   }
 
-  $navLinks.on('mouseenter mouseleave', handleInOutNavLinks);
-  $dropdownMenu.on('mouseleave', handleOutDropdown)
+  function handleFocusoutDropdownItems() {
+    var $dropdownLink = $(this)
+    setTimeout(function() {
+      var $parentDropdown = $dropdownLink.parents('.dropdown-menu')
+      var $navLink = $parentDropdown.parent()
+      var parentHasActiveElement = $.contains($parentDropdown[0], document.activeElement)
+
+      if (!parentHasActiveElement) {
+        $navLink.removeClass(SHOW_CLASS)
+        $parentDropdown.removeClass(SHOW_CLASS)
+      }
+    }, 0)
+  }
+
+  $navLinks.on('mouseenter mouseleave', handleMouseInOutNavLinks);
+  $navLinks.on('focusin', handleFocusinNavLink)
+  $navLinks.on('focusout', handleFocusoutNavLink)
+  $dropdownMenu.on('mouseleave', handleMouseleaveDropdown)
+  $dropdownMenu.on('focusout', '.dropdown-item', handleFocusoutDropdownItems)
 })
