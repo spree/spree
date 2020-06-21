@@ -2,7 +2,7 @@
 // that can not accept a ruby generated inline_svg.
 
 // Spree Icon Default
-.icon {
+span.icon {
   display: inline-block;
   width: 1rem;
   height: 1rem;
@@ -11,6 +11,7 @@
   background-repeat: no-repeat;
   background-size: 100%;
   background-position: center;
+  margin-bottom: 2px;
 }
 
 // Spree Icons ################
@@ -21,7 +22,7 @@
 span.icon-close,
 span.icon-cancel,
 span.icon-delete,
-span.icon-void          { background-image: url(asset-path("close.svg")); }
+span.icon-void          { background-image: url(asset-path("cancel.svg")); }
 span.icon-save          { background-image: url(asset-path("save.svg")); }
 span.icon-add           { background-image: url(asset-path("add.svg")); }
 span.icon-search        { background-image: url(asset-path("search.svg")); }
