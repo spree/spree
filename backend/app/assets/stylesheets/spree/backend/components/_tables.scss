@@ -12,7 +12,7 @@ table.table {
       width: 50px;
     }
   }
-  
+
   td {
     padding: 0.5rem;
   }
@@ -43,6 +43,10 @@ table.table {
           cursor: pointer;
           width: 0.9rem;
           height:0.9rem;
+          opacity: 0.25;
+          &:hover {
+            opacity: 1;
+          }
         }
       }
     }
