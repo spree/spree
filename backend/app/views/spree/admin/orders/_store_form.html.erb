@@ -11,7 +11,7 @@
     <div class="form-actions" data-hook="buttons">
       <%= button Spree.t('actions.update'), 'recycle', 'submit', {class: 'btn-success', data: { disable_with: "#{ Spree.t(:saving) }..." }} %>
       <span class="or"><%= Spree.t(:or) %></span>
-      <%= button_link_to Spree.t('actions.cancel'), edit_admin_order_url(order), icon: 'close' %>
+      <%= button_link_to Spree.t('actions.cancel'), edit_admin_order_url(order), icon: 'cancel' %>
     </div>
     <fieldset>
   <% end %>

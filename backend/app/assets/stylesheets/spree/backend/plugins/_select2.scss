@@ -124,11 +124,11 @@
       padding: 7px;
 
       .select2-search-choice-close {
-        background-image: url(asset-path("close.svg")) !important ;
+        background-image: url(asset-path("cancel.svg")) !important ;
         position: absolute;
         left: 7px;
         top: 7px;
-        background-repeat: no-repeat;
+        background-position: 50% !important;
       }
 
       div {
@@ -153,7 +153,7 @@
 }
 
 .select2-container.select2-allowclear .select2-choice abbr{
-  background-image: url(asset-path("close.svg")) !important ;
+  background-image: url(asset-path("cancel.svg")) !important ;
   overflow: hidden !important;
   vertical-align: middle !important;
   background-repeat: no-repeat !important;
