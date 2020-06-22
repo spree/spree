@@ -6,26 +6,26 @@ root.taxon_tree_menu = function (obj, context) {
   editUrl.setPath(editUrl.path() + '/' + obj.attr('id') + '/edit')
   return {
     create: {
-      label: '<span class="icon icon-add"></span>' + Spree.translations.add,
+      label: '<span class="js-icon js-icon-add"></span>' + Spree.translations.add,
       action: function (obj) {
         return context.create(obj)
       }
     },
     rename: {
-      label: '<span class="icon icon-edit"></span> ' + Spree.translations.rename,
+      label: '<span class="js-icon js-icon-edit"></span> ' + Spree.translations.rename,
       action: function (obj) {
         return context.rename(obj)
       }
     },
     remove: {
-      label: '<span class="icon icon-delete"></span> ' + Spree.translations.remove,
+      label: '<span class="js-icon js-icon-delete"></span> ' + Spree.translations.remove,
       action: function (obj) {
         return context.remove(obj)
       }
     },
     edit: {
       separator_before: true,
-      label: '<span class="icon icon-settings"></span> ' + Spree.translations.edit,
+      label: '<span class="js-icon js-icon-settings"></span> ' + Spree.translations.edit,
       action: function () {
         window.location = editUrl.toString()
         return window.location

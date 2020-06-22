@@ -64,9 +64,15 @@ module Spree
       # Single main menu item
       def main_menu_item(text, url: nil, icon: nil)
         link_to url, 'data-toggle': 'collapse', class: 'd-flex w-100 p-3 position-relative align-items-center' do
+          if icon.ends_with?('.svg')
           svg_icon(name: icon, classes: 'mr-2', width: ICON_SIZE, height: ICON_SIZE) +
             content_tag(:span, " #{text}", class: 'text') +
-            svg_icon(name: 'chevron-left', classes: 'drop-menu-indicator position-absolute', width: (ICON_SIZE - 4), height: (ICON_SIZE - 4))
+            svg_icon(name: 'chevron-left.svg', classes: 'drop-menu-indicator position-absolute', width: (ICON_SIZE - 4), height: (ICON_SIZE - 4))
+          else
+            content_tag(:span, nil, class: "icon icon-#{icon} mr-2") +
+              content_tag(:span, " #{text}", class: 'text') +
+              svg_icon(name: 'chevron-left.svg', classes: 'drop-menu-indicator position-absolute', width: (ICON_SIZE - 4), height: (ICON_SIZE - 4))
+          end
         end
       end
 

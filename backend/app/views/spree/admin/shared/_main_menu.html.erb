@@ -18,13 +18,13 @@
 
   <% if can?(:admin, Spree::ReturnAuthorization) || can?(:admin, Spree::CustomerReturn) %>
     <ul class="nav nav-sidebar border-bottom" id="sidebarReturn">
-      <%= main_menu_tree Spree.t(:returns), icon: "returns", sub_menu: "returns", url: "#sidebar-returns" %>
+      <%= main_menu_tree Spree.t(:returns), icon: "returns.svg", sub_menu: "returns", url: "#sidebar-returns" %>
     </ul>
   <% end %>
 
   <% if can? :admin, Spree::Product %>
     <ul class="nav nav-sidebar border-bottom" id="sidebarProduct">
-      <%= main_menu_tree Spree.t(:products), icon: "products", sub_menu: "product", url: "#sidebar-product" %>
+      <%= main_menu_tree Spree.t(:products), icon: "products.svg", sub_menu: "product", url: "#sidebar-product" %>
     </ul>
   <% end %>
 
@@ -36,7 +36,7 @@
 
   <% if can? :admin, Spree::Promotion %>
     <ul class="nav nav-sidebar border-bottom" id="sidebarPromotion">
-      <%= main_menu_tree Spree.t(:promotions), icon: "promotion", sub_menu: "promotion", url: "#sidebar-promotions" %>
+      <%= main_menu_tree Spree.t(:promotions), icon: "promotion.svg", sub_menu: "promotion", url: "#sidebar-promotions" %>
     </ul>
   <% end %>
 
@@ -48,7 +48,7 @@
 
   <% if can? :admin, current_store %>
     <ul class="nav nav-sidebar border-bottom" id="sidebarConfiguration">
-      <%= main_menu_tree Spree.t(:configurations), icon: "settings", sub_menu: "configuration", url: "#sidebar-configuration" %>
+      <%= main_menu_tree Spree.t(:configurations), icon: "settings.svg", sub_menu: "configuration", url: "#sidebar-configuration" %>
     </ul>
   <% end %>
 </nav>

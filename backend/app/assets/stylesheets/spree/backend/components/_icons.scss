@@ -255,6 +255,43 @@ $alias_icons: (plus add)
   }
 }
 
+// Give svg icons a little bump up
 svg {
   margin-bottom: 3px;
 }
+
+// The icons listed in this file are used by javascript generated content
+// that can not accept a ruby generated inline_svg.
+
+// Spree Icon Default
+.js-icon {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  overflow: hidden;
+  vertical-align: middle;
+  background-repeat: no-repeat;
+  background-size: 100%;
+  background-position: center;
+  margin-bottom: 2px;
+}
+
+// Spree Icons ################
+// To do: Due to changing font packs over the years,
+// the naming conventions have been mixed up, this
+// then got baked into the spec tests looking for
+// 'icon-ok' or 'icon-tick' basicly the same icon. This needs sorting.
+.js-icon-close,
+.js-icon-cancel,
+.js-icon-delete,
+.js-icon-void          { background-image: url(asset-path("cancel.svg")); }
+.js-icon-save          { background-image: url(asset-path("save.svg")); }
+.js-icon-add           { background-image: url(asset-path("add.svg")); }
+.js-icon-search        { background-image: url(asset-path("search.svg")); }
+.js-icon-settings      { background-image: url(asset-path("settings.svg")); }
+.js-icon-delete        { background-image: url(asset-path("delete.svg")); }
+.js-icon-edit          { background-image: url(asset-path("edit.svg")); }
+.js-icon-chevron-down  { background-image: url(asset-path("chevron-down.svg")); }
+.js-icon-chevron-left  { background-image: url(asset-path("chevron-left.svg")); }
+.js-icon-chevron-right { background-image: url(asset-path("chevron-right.svg")); }
+.js-icon-chevron-up    { background-image: url(asset-path("chevron-up.svg")); }

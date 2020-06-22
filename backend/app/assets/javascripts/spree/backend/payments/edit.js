@@ -95,7 +95,7 @@ jQuery(function ($) {
     }
 
     PaymentView.prototype.$new_button = function (action) {
-      return $('<a><span class="icon icon-' + action + '"></span></a>').attr({
+      return $('<a><span class="js-icon js-icon-' + action + '"></span></a>').attr({
         'class': 'payment-action-' + action + ' btn btn-outline-secondary btn-sm no-filter',
         title: Spree.translations[action]
       }).data({
