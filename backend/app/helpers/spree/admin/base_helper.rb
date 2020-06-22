@@ -38,12 +38,12 @@ module Spree
       end
 
       def svg_icon(name:, classes: '', width:, height:)
-        if name.ends_with?(".svg")
-          css_formatting = name.split(".svg").compact
+        if name.ends_with?('.svg')
+          css_formatting = name.split('.svg').compact
           css_class = css_formatting[0].strip
-          inline_svg_tag "#{css_class}", class: "icon-#{css_class} #{classes}", size: "#{width}px*#{height}px"
+          inline_svg_tag css_class, class: "icon-#{css_class} #{classes}", size: "#{width}px*#{height}px"
         else
-          inline_svg_tag "#{name}", class: "icon-#{name} #{classes}", size: "#{width}px*#{height}px"
+          inline_svg_tag name, class: "icon-#{name} #{classes}", size: "#{width}px*#{height}px"
         end
       end
 
@@ -140,7 +140,7 @@ module Spree
       # renders hidden field and link to remove record using nested_attributes
       def link_to_icon_remove_fields(form)
         url = form.object.persisted? ? [:admin, form.object] : '#'
-        link_to_with_icon('delete', '', url,
+        link_to_with_icon('delete.svg', '', url,
                           class: 'spree_remove_fields btn btn-sm btn-danger',
                           data: {
                             action: 'remove'
@@ -175,7 +175,7 @@ module Spree
         button_link_to(
           Spree.t(:preview_product),
           spree.product_url(product),
-          class: 'btn-outline-secondary', icon: 'view', id: 'admin_preview_product', target: :blank
+          class: 'btn-outline-secondary', icon: 'view.svg', id: 'admin_preview_product', target: :blank
         )
       end
 
@@ -185,7 +185,7 @@ module Spree
         button_link_to(
           Spree.t(:preview_taxon),
           seo_url(taxon),
-          class: 'btn-outline-secondary', icon: 'view', id: 'admin_preview_taxon', target: :blank
+          class: 'btn-outline-secondary', icon: 'view.svg', id: 'admin_preview_taxon', target: :blank
         )
       end
     end

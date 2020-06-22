@@ -254,3 +254,7 @@ $alias_icons: (plus add)
     &.icon-#{$alias} { @extend .glyphicon-#{$icon}; }
   }
 }
+
+svg {
+  margin-bottom: 3px;
+}
