@@ -39,11 +39,10 @@ module Spree
 
       def svg_icon(name:, classes: '', width:, height:)
         if name.ends_with?('.svg')
-          css_formatting = name.split('.svg').compact
-          css_class = css_formatting[0].strip
-          inline_svg_tag css_class, class: "icon-#{css_class} #{classes}", size: "#{width}px*#{height}px"
+          icon_name =  File.basename(name, File.extname(name))
+          inline_svg_tag "backend-#{icon_name}.svg", class: "icon-#{icon_name} #{classes}", size: "#{width}px*#{height}px"
         else
-          inline_svg_tag name, class: "icon-#{name} #{classes}", size: "#{width}px*#{height}px"
+          inline_svg_tag "backend-#{name}.svg", class: "icon-#{name} #{classes}", size: "#{width}px*#{height}px"
         end
       end
 

@@ -57,10 +57,10 @@ jQuery(function ($) {
 
     if (sortLinkText.indexOf('▼') >= 0) {
       $(this).text(sortLinkText.replace('▼', ''))
-      $(this).append('<span class="ml-2 js-icon js-icon-chevron-down"></span>')
+      $(this).append('<i class="ml-2 icon icon-chevron-down"></i>')
     } else if (sortLinkText.indexOf('▲') >= 0) {
       $(this).text(sortLinkText.replace('▲', ''))
-      $(this).append('<span class="ml-2 js-icon js-icon-chevron-up"></span>')
+      $(this).append('<i class="ml-2 icon icon-chevron-up"></i>')
     }
   })
 
@@ -107,7 +107,7 @@ jQuery(function ($) {
 
       label = ransackField(label.text()) + ': ' + ransackValue
 
-      filter = '<span class="js-filter badge badge-secondary" data-ransack-field="' + ransackFieldId + '">' + label + '<span class="js-icon js-icon-cancel ml-2 js-delete-filter"></span></span>'
+      filter = '<span class="js-filter badge badge-secondary" data-ransack-field="' + ransackFieldId + '">' + label + '<i class="icon icon-cancel ml-2 js-delete-filter"></i></span>'
       $(".js-filters").append(filter).show()
     }
   })

@@ -23,7 +23,7 @@
 
 
       b {
-        background-image: url(asset-path("chevron-down.svg")) !important;
+        background-image: url(asset-path("backend-chevron-down.svg")) !important;
         overflow: hidden !important;
         vertical-align: middle !important;
         background-repeat: no-repeat !important;
@@ -47,7 +47,7 @@
 .select2-search input {
   border-color: $input-border-color;
   border-radius: $border-radius;
-  background-image: url(asset-path("search.svg")) !important;
+  background-image: url(asset-path("backend-search.svg")) !important;
   overflow: hidden !important;
   vertical-align: middle !important;
   background-repeat: no-repeat !important;
@@ -124,11 +124,12 @@
       padding: 7px;
 
       .select2-search-choice-close {
-        background-image: url(asset-path("cancel.svg")) !important ;
+        background-image: url(asset-path("backend-cancel.svg")) !important ;
         position: absolute;
         left: 7px;
         top: 7px;
         background-position: 50% !important;
+
       }
 
       div {
@@ -153,13 +154,14 @@
 }
 
 .select2-container.select2-allowclear .select2-choice abbr{
-  background-image: url(asset-path("cancel.svg")) !important ;
+  background-image: url(asset-path("backend-cancel.svg")) !important ;
   overflow: hidden !important;
   vertical-align: middle !important;
   background-repeat: no-repeat !important;
   background-size: 1rem !important;
   background-position: 50% !important;
   right:30px;
+  background-size: 0.7rem !important;
 }
 
 .select2-container-multi .select2-choices .select2-search-choice .select2-search-choice-close:hover {

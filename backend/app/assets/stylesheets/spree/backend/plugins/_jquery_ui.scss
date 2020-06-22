@@ -34,13 +34,13 @@
     &.ui-icon-circle-triangle-w {
       color: transparent;
       // @extend .icon ;
-      background-image: url(asset-path("chevron-left.svg")) !important;
+      background-image: url(asset-path("backend-chevron-left.svg")) !important;
     }
 
     &.ui-icon-circle-triangle-e {
       color: transparent;
       // @extend .icon ;
-      background-image: url(asset-path("chevron-right.svg")) !important;
+      background-image: url(asset-path("backend-chevron-right.svg")) !important;
     }
   }
 

@@ -239,7 +239,7 @@ $alias_icons: (plus add)
               (globe translate)
               (ok approve);
 
-.icon {
+span.icon {
   @extend .glyphicon;
 
   // Map defaults.
@@ -260,11 +260,8 @@ svg {
   margin-bottom: 3px;
 }
 
-// The icons listed in this file are used by javascript generated content
-// that can not accept a ruby generated inline_svg.
-
-// Spree Icon Default
-.js-icon {
+// Spree SVG Icon Defaults
+i.icon {
   display: inline-block;
   width: 1rem;
   height: 1rem;
@@ -276,22 +273,25 @@ svg {
   margin-bottom: 2px;
 }
 
-// Spree Icons ################
-// To do: Due to changing font packs over the years,
-// the naming conventions have been mixed up, this
-// then got baked into the spec tests looking for
-// 'icon-ok' or 'icon-tick' basicly the same icon. This needs sorting.
-.js-icon-close,
-.js-icon-cancel,
-.js-icon-delete,
-.js-icon-void          { background-image: url(asset-path("cancel.svg")); }
-.js-icon-save          { background-image: url(asset-path("save.svg")); }
-.js-icon-add           { background-image: url(asset-path("add.svg")); }
-.js-icon-search        { background-image: url(asset-path("search.svg")); }
-.js-icon-settings      { background-image: url(asset-path("settings.svg")); }
-.js-icon-delete        { background-image: url(asset-path("delete.svg")); }
-.js-icon-edit          { background-image: url(asset-path("edit.svg")); }
-.js-icon-chevron-down  { background-image: url(asset-path("chevron-down.svg")); }
-.js-icon-chevron-left  { background-image: url(asset-path("chevron-left.svg")); }
-.js-icon-chevron-right { background-image: url(asset-path("chevron-right.svg")); }
-.js-icon-chevron-up    { background-image: url(asset-path("chevron-up.svg")); }
+
+// Spree SVG Icons in JS
+
+// The icons listed below are used by javascript generated content
+// If you wish to use an existing SVG icon in javascript generated content
+// use <i> tags like this -> <i class="icon icon-close"></i>
+// Using <span> tags will fall back to legacy glyphicon font based icons
+
+i.icon-close,
+i.icon-cancel,
+i.icon-delete,
+i.icon-void          { background-image: url(asset-path("backend-cancel.svg")); }
+i.icon-save          { background-image: url(asset-path("backend-save.svg")); }
+i.icon-add           { background-image: url(asset-path("backend-add.svg")); }
+i.icon-search        { background-image: url(asset-path("backend-search.svg")); }
+i.icon-settings      { background-image: url(asset-path("backend-settings.svg")); }
+i.icon-delete        { background-image: url(asset-path("backend-delete.svg")); }
+i.icon-edit          { background-image: url(asset-path("backend-edit.svg")); }
+i.icon-chevron-down  { background-image: url(asset-path("backend-chevron-down.svg")); }
+i.icon-chevron-left  { background-image: url(asset-path("backend-chevron-left.svg")); }
+i.icon-chevron-right { background-image: url(asset-path("backend-chevron-right.svg")); }
+i.icon-chevron-up    { background-image: url(asset-path("backend-chevron-up.svg")); }

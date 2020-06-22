@@ -58,6 +58,9 @@ ul.nav-sidebar {
           transition: .3s ease-in-out;
         }
       }
+      > svg {
+        margin-bottom: 0;
+      }
     }
   }
 }

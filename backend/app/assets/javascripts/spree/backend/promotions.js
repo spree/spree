@@ -147,7 +147,7 @@ function initProductActions () {
       var quantity = $container.find('input[name="add_quantity"]').val()
       if (variant_id) {
         // Add to the table
-        var newRow = '<tr><td>' + product_name + '</td><td>' + quantity + '</td><td><span class="js-icon js-icon-cancel"></span></td></tr>'
+        var newRow = '<tr><td>' + product_name + '</td><td>' + quantity + '</td><td><i class="icon icon-cancel"></i></td></tr>'
         $container.find('table').append(newRow)
         // Add to serialized string in hidden text field
         var $hiddenField = $container.find('.line_items_string')
