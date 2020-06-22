@@ -12,7 +12,7 @@
 
   <% if can? :admin, Spree::Order %>
     <ul class="nav nav-sidebar border-bottom" id="sidebarOrder">
-      <%= tab *Spree::BackendConfiguration::ORDER_TABS, icon: 'list' %>
+      <%= tab *Spree::BackendConfiguration::ORDER_TABS, icon: 'list.svg' %>
     </ul>
   <% end %>
 
@@ -30,7 +30,7 @@
 
   <% if can? :admin, Spree::Admin::ReportsController %>
     <ul class="nav nav-sidebar border-bottom" id="sidebarReport">
-      <%= tab *Spree::BackendConfiguration::REPORT_TABS, icon: 'report'  %>
+      <%= tab *Spree::BackendConfiguration::REPORT_TABS, icon: 'report.svg'  %>
     </ul>
   <% end %>
 
@@ -42,7 +42,7 @@
 
   <% if Spree.user_class && can?(:admin, Spree.user_class) %>
     <ul class="nav nav-sidebar border-bottom" id="sidebarUser">
-      <%= tab *Spree::BackendConfiguration::USER_TABS, url: spree.admin_users_path, icon: 'users' %>
+      <%= tab *Spree::BackendConfiguration::USER_TABS, url: spree.admin_users_path, icon: 'users.svg' %>
     </ul>
   <% end %>
 

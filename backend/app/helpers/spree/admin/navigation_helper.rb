@@ -126,7 +126,7 @@ module Spree
         options[:data] = { action: 'clone', 'original-title': Spree.t(:clone) }
         options[:class] = 'btn btn-primary btn-sm with-tip'
         options[:method] = :post
-        options[:icon] = :clone
+        options[:icon] = 'clone.svg'
         button_link_to '', clone_object_url(resource), options
       end
 
@@ -134,7 +134,7 @@ module Spree
         options[:data] = { action: 'clone', 'original-title': Spree.t(:clone) }
         options[:class] = 'btn btn-warning btn-sm with-tip'
         options[:method] = :post
-        options[:icon] = :clone
+        options[:icon] = 'clone.svg'
         button_link_to '', clone_admin_promotion_path(promotion), options
       end
 
@@ -142,13 +142,13 @@ module Spree
         url = options[:url] || edit_object_url(resource)
         options[:data] = { action: 'edit' }
         options[:class] = 'btn btn-primary btn-sm'
-        link_to_with_icon('edit', Spree.t(:edit), url, options)
+        link_to_with_icon('edit.svg', Spree.t(:edit), url, options)
       end
 
       def link_to_edit_url(url, options = {})
         options[:data] = { action: 'edit' }
         options[:class] = 'btn btn-primary btn-sm'
-        link_to_with_icon('edit', Spree.t(:edit), url, options)
+        link_to_with_icon('edit.svg', Spree.t(:edit), url, options)
       end
 
       def link_to_delete(resource, options = {})
@@ -156,7 +156,7 @@ module Spree
         name = options[:name] || Spree.t(:delete)
         options[:class] = 'btn btn-danger btn-sm delete-resource'
         options[:data] = { confirm: Spree.t(:are_you_sure), action: 'remove' }
-        link_to_with_icon 'delete', name, url, options
+        link_to_with_icon 'delete.svg', name, url, options
       end
 
       def link_to_with_icon(icon_name, text, url, options = {})
@@ -165,21 +165,35 @@ module Spree
         text = options[:no_text] ? '' : content_tag(:span, text, class: 'text')
         options.delete(:no_text)
         if icon_name
-          icon = svg_icon(name: icon_name, classes: "#{'mr-2' unless text.empty?} icon icon-#{icon_name}", width: ICON_SIZE, height: ICON_SIZE)
-          text = "#{icon} #{text}"
+          if icon_name.ends_with?(".svg")
+            icon = svg_icon(name: icon_name, classes: "#{'mr-2' unless text.empty?} icon icon-#{icon_name}", width: ICON_SIZE, height: ICON_SIZE)
+            text = "#{icon} #{text}"
+          else
+            icon = content_tag(:span, '', class: "#{'mr-2' unless text.empty?} icon icon-#{icon_name}")
+            text = "#{icon} #{text}"
+          end
         end
         link_to(text.html_safe, url, options)
       end
 
       def spree_icon(icon_name)
-        icon_name ? svg_icon(name: icon_name, classes: icon_name, width: ICON_SIZE, height: ICON_SIZE) : ''
+        if icon_name.ends_with?(".svg")
+          icon_name ? svg_icon(name: icon_name, classes: icon_name, width: ICON_SIZE, height: ICON_SIZE) : ''
+        else
+          icon_name ? content_tag(:span, '', class: icon_name) : ''
+        end
       end
 
       # Override: Add disable_with option to prevent multiple request on consecutive clicks
       def button(text, icon_name = nil, button_type = 'submit', options = {})
         if icon_name
-          icon = svg_icon(name: icon_name, classes: "icon icon-#{icon_name}", width: ICON_SIZE, height: ICON_SIZE)
-          text = "#{icon} #{text}"
+          if icon_name.ends_with?(".svg")
+            icon = svg_icon(name: icon_name, classes: "icon icon-#{icon_name}", width: ICON_SIZE, height: ICON_SIZE)
+            text = "#{icon} #{text}"
+          else
+            icon = content_tag(:span, '', class: "icon icon-#{icon_name}")
+            text = "#{icon} #{text}"
+          end
         end
         button_tag(
           text.html_safe,
@@ -209,8 +223,13 @@ module Spree
           html_options[:class] = html_options[:class] ? "btn #{html_options[:class]}" : 'btn btn-outline-secondary'
 
           if html_options[:icon]
-            icon = svg_icon(name: html_options[:icon], classes: "icon icon-#{html_options[:icon]}", width: ICON_SIZE, height: ICON_SIZE)
-            text = "#{icon} #{text}"
+            if html_options[:icon].ends_with?(".svg")
+              icon = svg_icon(name: html_options[:icon], classes: "icon icon-#{html_options[:icon]}", width: ICON_SIZE, height: ICON_SIZE)
+              text = "#{icon} #{text}"
+            else
+              icon = content_tag(:span, '', class: "icon icon-#{html_options[:icon]}")
+              text = "#{icon} #{text}"
+            end
           end
 
           link_to(text.html_safe, url, html_options)
