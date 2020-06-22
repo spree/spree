@@ -195,7 +195,7 @@ module Spree
           icon = if icon_name.ends_with?('.svg')
                    svg_icon(name: icon_name, classes: "icon icon-#{icon_name}", width: ICON_SIZE, height: ICON_SIZE)
                  else
-                    content_tag(:span, '', class: "icon icon-#{icon_name}")
+                   content_tag(:span, '', class: "icon icon-#{icon_name}")
                  end
           text = "#{icon} #{text}"
         end
