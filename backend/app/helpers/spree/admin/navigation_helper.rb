@@ -171,10 +171,10 @@ module Spree
         text = options[:no_text] ? '' : content_tag(:span, text, class: 'text')
         options.delete(:no_text)
         if icon_name
-          if icon_name.ends_with?('.svg')
-            icon = svg_icon(name: icon_name, classes: "#{'mr-2' unless text.empty?} icon icon-#{icon_name}", width: ICON_SIZE, height: ICON_SIZE)
+          icon = if icon_name.ends_with?('.svg')
+            svg_icon(name: icon_name, classes: "#{'mr-2' unless text.empty?} icon icon-#{icon_name}", width: ICON_SIZE, height: ICON_SIZE)
           else
-            icon = content_tag(:span, '', class: "#{'mr-2' unless text.empty?} icon icon-#{icon_name}")
+            content_tag(:span, '', class: "#{'mr-2' unless text.empty?} icon icon-#{icon_name}")
           end
           text = "#{icon} #{text}"
         end
@@ -192,10 +192,10 @@ module Spree
       # Override: Add disable_with option to prevent multiple request on consecutive clicks
       def button(text, icon_name = nil, button_type = 'submit', options = {})
         if icon_name
-          if icon_name.ends_with?('.svg')
-            icon = svg_icon(name: icon_name, classes: "icon icon-#{icon_name}", width: ICON_SIZE, height: ICON_SIZE)
+          icon =  if icon_name.ends_with?('.svg')
+            svg_icon(name: icon_name, classes: "icon icon-#{icon_name}", width: ICON_SIZE, height: ICON_SIZE)
           else
-            icon = content_tag(:span, '', class: "icon icon-#{icon_name}")
+            content_tag(:span, '', class: "icon icon-#{icon_name}")
           end
           text = "#{icon} #{text}"
         end
@@ -227,10 +227,10 @@ module Spree
           html_options[:class] = html_options[:class] ? "btn #{html_options[:class]}" : 'btn btn-outline-secondary'
 
           if html_options[:icon]
-            if html_options[:icon].ends_with?('.svg')
-              icon = svg_icon(name: html_options[:icon], classes: "icon icon-#{html_options[:icon]}", width: ICON_SIZE, height: ICON_SIZE)
+            icon = if html_options[:icon].ends_with?('.svg')
+              svg_icon(name: html_options[:icon], classes: "icon icon-#{html_options[:icon]}", width: ICON_SIZE, height: ICON_SIZE)
             else
-              icon = content_tag(:span, '', class: "icon icon-#{html_options[:icon]}")
+              content_tag(:span, '', class: "icon icon-#{html_options[:icon]}")
             end
             text = "#{icon} #{text}"
           end

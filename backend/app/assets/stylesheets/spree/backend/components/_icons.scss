@@ -241,6 +241,7 @@ $alias_icons: (plus add)
 
 span.icon {
   @extend .glyphicon;
+  top:2px;
 
   // Map defaults.
   @each $icon in $default_icons {
