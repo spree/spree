@@ -38,7 +38,7 @@ module Spree
       end
 
       def svg_icon(name:, classes: '', width:, height:)
-        inline_svg_tag "#{name}.svg", class: "icon-#{name} #{classes}", size: "#{width}px*#{height}px"
+          inline_svg_tag "#{name}.svg", class: "icon-#{name} #{classes}", size: "#{width}px*#{height}px"
       end
 
       def datepicker_field_value(date)
