@@ -173,11 +173,10 @@ module Spree
         if icon_name
           if icon_name.ends_with?('.svg')
             icon = svg_icon(name: icon_name, classes: "#{'mr-2' unless text.empty?} icon icon-#{icon_name}", width: ICON_SIZE, height: ICON_SIZE)
-            text = icon + text
           else
             icon = content_tag(:span, '', class: "#{'mr-2' unless text.empty?} icon icon-#{icon_name}")
-            text = icon + text
           end
+          text = "#{icon} #{text}"
         end
         link_to(text.html_safe, url, options)
       end
@@ -195,11 +194,10 @@ module Spree
         if icon_name
           if icon_name.ends_with?('.svg')
             icon = svg_icon(name: icon_name, classes: "icon icon-#{icon_name}", width: ICON_SIZE, height: ICON_SIZE)
-            text = icon + text
           else
             icon = content_tag(:span, '', class: "icon icon-#{icon_name}")
-            text = icon + text
           end
+          text = "#{icon} #{text}"
         end
         button_tag(
           text.html_safe,
@@ -231,11 +229,10 @@ module Spree
           if html_options[:icon]
             if html_options[:icon].ends_with?('.svg')
               icon = svg_icon(name: html_options[:icon], classes: "icon icon-#{html_options[:icon]}", width: ICON_SIZE, height: ICON_SIZE)
-              text = icon + text
             else
               icon = content_tag(:span, '', class: "icon icon-#{html_options[:icon]}")
-              text = icon + text
             end
+            text = "#{icon} #{text}"
           end
 
           link_to(text.html_safe, url, html_options)
