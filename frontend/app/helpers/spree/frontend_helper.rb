@@ -255,6 +255,10 @@ module Spree
       @static_filters ||= Spree::Frontend::Config[:products_filters]
     end
 
+    def additional_filters_partials
+      @additional_filters_partials ||= Spree::Frontend::Config[:additional_filters_partials]
+    end
+
     def filtering_params
       @filtering_params ||= available_option_types.map(&:filter_param).concat(static_filters)
     end
