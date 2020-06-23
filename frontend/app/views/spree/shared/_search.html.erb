@@ -1,4 +1,4 @@
-<%= form_tag spree.products_path, method: :get, class: "py-md-1 d-flex align-items-center" do %>
+<%= form_tag spree.products_path, method: :get, class: "py-md-1 d-flex align-items-center search-form" do %>
   <%= search_field_tag :keywords,
                        params[:keywords],
                        placeholder: Spree.t(:search),
@@ -9,11 +9,7 @@
   %>
   <button type="submit" class="btn border-0 p-0" aria-label="Submit">
     <%= icon(name: 'search',
-            classes: 'd-md-none',
-            width: 20,
-            height: 20) %>
-    <%= icon(name: 'search',
-            classes: 'd-none d-md-inline',
+            classes: 'd-inline',
             width: 27,
             height: 27) %>
   </button>
