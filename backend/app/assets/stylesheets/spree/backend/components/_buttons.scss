@@ -1,3 +1,7 @@
+.payment-action-save {
+  @include button-variant($success, $success, $success );
+}
+
 .btn,
 .nav-pills > li > a {
   vertical-align: middle;
@@ -6,20 +10,15 @@
 
 .btn {
   text-align: center;
+  margin:2.5px;
 
-  .glyphicon {
-    padding-right: 3px;
+  .ship {
+    color: #fff;
   }
 
-  .ship { color: #fff; }
 }
-
-.btn-sm .glyphicon { padding: 0; }
-
-.btn.action-void { @extend .btn-danger; }
-.btn.action-capture { @extend .btn-success; }
-.btn.payment-action-edit {
-  @extend .btn-primary;
-
-  color: $white !important;
+.custom-control-input:checked ~ .custom-control-label::before {
+  color: $white;
+  border-color: $green;
+  background-color: $green;
 }

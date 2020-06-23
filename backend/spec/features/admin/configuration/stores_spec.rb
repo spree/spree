@@ -106,7 +106,7 @@ describe 'Stores admin', type: :feature, js: true do
     it 'sets a store as default' do
       visit spree.admin_stores_path
       within_row(2) do
-        click_icon :ok
+        click_icon :save
       end
 
       expect(store.reload.default).to eq false

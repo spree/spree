@@ -47,7 +47,7 @@
                 <%= Spree.t(:clear_cache_warning) %>
               </div>
               <div data-hook="general_settings_clear_cache">
-                <%= button Spree.t(:clear_cache), 'ok', 'button', id: "clear_cache" %>
+                <%= button Spree.t(:clear_cache), 'recycle.svg', 'button', id: "clear_cache" %>
               </div>
             </div>
           </div>
@@ -77,9 +77,9 @@
       </div>
 
       <div class="form-actions" data-hook="buttons">
-        <%= button Spree.t('actions.update'), 'save' %>
+        <%= button Spree.t('actions.update'), 'save.svg' %>
         <span class="or"><%= Spree.t(:or) %></span>
-        <%= button_link_to Spree.t('actions.cancel'), edit_admin_general_settings_url, icon: 'delete' %>
+        <%= button_link_to Spree.t('actions.cancel'), edit_admin_general_settings_url, icon: 'cancel.svg' %>
       </div>
 
     </fieldset>

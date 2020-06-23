@@ -10,7 +10,7 @@
       <tr id="row_<%= prototype.id %>" data-hook="available_row">
         <td><%= prototype.name %></td>
         <td class="actions actions-1">
-          <%= link_to_with_icon 'save',
+          <%= link_to_with_icon 'save.svg',
             Spree.t(:select),
             select_admin_prototype_url(prototype),
             class: 'btn btn-success btn-sm ajax select_properties_from_prototype',

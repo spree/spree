@@ -1,7 +1,7 @@
 <tr class="product_property fields" id="spree_<%= dom_id(f.object) %>" data-hook="product_property">
   <td class="move-handle">
     <% if f.object.persisted? && can?(:edit, f.object) %>
-      <span class="icon icon-move handle"></span>
+      <%= svg_icon name: "sort", width: '18', height: '18' %>
       <%= f.hidden_field :id %>
     <% end %>
   </td>

@@ -12,7 +12,7 @@ module Spree
             label.capitalize,
             [event, :admin, order],
             method: :put,
-            icon: event.to_s,
+            icon: event.to_s + '.svg',
             data: { confirm: Spree.t(:order_sure_want_to, event: label) }
           )
         end

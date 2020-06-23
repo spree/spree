@@ -5,11 +5,19 @@
   margin-top: 20px;
 }
 
+.index-filter-button .icon-chevron-right {
+  transform: rotate(0);
+  transition: .3s ease-in-out;
+  margin-bottom: 0;
+}
+
+.collapsed .icon-chevron-right {
+  transform: rotate(90deg);
+  transition: .3s ease-in-out;
+}
+
 .index-filter-button {
   font-size: $font-size-sm;
-  .glyphicon {
-    color: $gray-800;
-  }
 
   button {
     height: 100%;
@@ -32,5 +40,14 @@
     font-size: $font-size-sm;
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
+  }
+}
+
+.sort_link {
+  .icon {
+    margin-left: 5px;
+    width: 0.9rem;
+    height: 0.9rem;
+
   }
 }

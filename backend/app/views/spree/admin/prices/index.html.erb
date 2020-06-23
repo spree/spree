@@ -16,8 +16,8 @@
     <%= render 'variant_prices', variant: @product.master %>
   </div>
   <div class="form-actions" data-hook="buttons">
-    <%= button Spree.t('actions.update'), 'update' %>
+    <%= button Spree.t('actions.update'), 'update.svg' %>
     <span class="or"><%= Spree.t(:or) %></span>
-    <%= button_link_to Spree.t('actions.cancel'), admin_product_path(@product), icon: 'delete' %>
+    <%= button_link_to Spree.t('actions.cancel'), admin_product_path(@product), icon: 'delete.svg' %>
   </div>
 <% end %>

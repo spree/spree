@@ -32,13 +32,15 @@
     color: $primary;
 
     &.ui-icon-circle-triangle-w {
-      @extend .glyphicon;
-      @extend .glyphicon-chevron-left;
+      color: transparent;
+      // @extend .icon ;
+      background-image: url(asset-path("backend-chevron-left.svg")) !important;
     }
 
     &.ui-icon-circle-triangle-e {
-      @extend .glyphicon;
-      @extend .glyphicon-chevron-right;
+      color: transparent;
+      // @extend .icon ;
+      background-image: url(asset-path("backend-chevron-right.svg")) !important;
     }
   }
 

@@ -6,7 +6,7 @@
   <%= button_link_to Spree.t(:new_order),
     new_admin_order_url,
     class: "btn-success",
-      icon: 'add',
+      icon: 'add.svg',
       id: 'admin_new_order' %>
 <% end if can? :create, Spree::Order %>
 
@@ -27,7 +27,7 @@
                       placeholder: Spree.t(:start) %>
                   <div class="input-group-append">
                     <span class="input-group-text">
-                      <i class="icon icon-calendar"></i>
+                       <%= svg_icon name: "calendar.svg", width: '18', height: '18' %>
                     </span>
                   </div>
                 </div>
@@ -41,7 +41,7 @@
                       placeholder: Spree.t(:stop) %>
                   <div class="input-group-append">
                     <span class="input-group-text">
-                      <i class="icon icon-calendar"></i>
+                      <%= svg_icon name: "calendar.svg", width: '18', height: '18' %>
                     </span>
                   </div>
                 </div>
@@ -167,7 +167,7 @@
       </div>
 
       <div data-hook="admin_orders_index_search_buttons" class="form-actions">
-        <%= button Spree.t(:filter_results), 'search' %>
+        <%= button Spree.t(:filter_results), 'search.svg' %>
       </div>
 
     <% end %>
@@ -176,9 +176,9 @@
 
 <% end %>
 
-<%= render 'spree/admin/shared/index_table_options', collection: @orders %>
-
 <% if @orders.any? %>
+<div class="table-responsive">
+
   <table class="table" id="listing_orders" data-hook>
     <thead>
       <tr data-hook="admin_orders_index_headers">
@@ -211,38 +211,46 @@
             <%= order.considered_risky ? Spree.t("risky") : Spree.t("safe") %>
           </span>
         </td>
-        <td>
+        <td class="no-wrap">
           <span class="badge badge-<%= order.state.downcase %>"><%= Spree.t("order_state.#{order.state.downcase}") %></span>
-          <span class="icon icon-filter filterable js-add-filter" data-ransack-field="q_state_eq" data-ransack-value="<%= order.state %>"></span>
+          <span class="filterable js-add-filter" data-ransack-field="q_state_eq" data-ransack-value="<%= order.state %>">
+            <%= svg_icon name: "filter.svg", width: '14', height: '14' %>
+          </span>
         </td>
-        <td>
+        <td class="no-wrap">
           <% if order.payment_state %>
 
             <%= link_to Spree.t("payment_states.#{order.payment_state}"),
               admin_order_payments_path(order),
               class: "badge badge-#{order.payment_state}" %>
 
-            <span class="icon icon-filter filterable js-add-filter"
+            <span class="filterable js-add-filter"
               data-ransack-field="q_payment_state_eq"
-              data-ransack-value="<%= order.payment_state %>"></span>
+              data-ransack-value="<%= order.payment_state %>">
+              <%= svg_icon name: "filter.svg", width: '14', height: '14' %>
+            </span>
           <% end %>
         </td>
         <% if Spree::Order.checkout_step_names.include?(:delivery) %>
-          <td>
+          <td class="no-wrap">
             <% if order.shipment_state %>
               <span class="badge badge-<%= order.shipment_state %>"><%= Spree.t("shipment_states.#{order.shipment_state}") %></span>
-              <span class="icon icon-filter filterable js-add-filter" data-ransack-field="q_shipment_state_eq" data-ransack-value="<%= order.shipment_state %>"></span>
+              <span class="filterable js-add-filter" data-ransack-field="q_shipment_state_eq" data-ransack-value="<%= order.shipment_state %>">
+                <%= svg_icon name: "filter.svg", width: '14', height: '14' %>
+              </span>
             <% end %>
           </td>
         <% end %>
-        <td>
+        <td class="no-wrap">
           <% if order.user %>
             <%= link_to order.email, edit_admin_user_path(order.user) %>
           <% else %>
             <%= mail_to order.email %>
           <% end %>
           <% if order.user || order.email %>
-            <span class="icon icon-filter filterable js-add-filter" data-ransack-field="q_email_cont" data-ransack-value="<%= order.email %>"></span>
+            <span class="filterable js-add-filter" data-ransack-field="q_email_cont" data-ransack-value="<%= order.email %>">
+              <%= svg_icon name: "filter.svg", width: '14', height: '14' %>
+            </span>
           <% end %>
         </td>
         <td><%= order.display_total.to_html %></td>
@@ -253,6 +261,8 @@
     <% end %>
     </tbody>
   </table>
+
+</div>
 <% else %>
   <div class="alert alert-info no-objects-found">
     <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::Order)) %>,
