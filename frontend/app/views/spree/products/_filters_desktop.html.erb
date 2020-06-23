@@ -53,6 +53,10 @@
           <% end %>
         </div>
       </div>
+
+      <% additional_filters_partials.each do |partial| %>
+        <%= render "spree/products/filters/#{partial}", permitted_params: permitted_params %>
+      <% end %>
     </div>
   </div>
 <% end %>
