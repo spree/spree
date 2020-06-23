@@ -6,11 +6,7 @@
           <div class="d-xl-none flex-grow-1">
             <button id="mobile-navigation-back-button" aria-label="<%= Spree.t('nav_bar.go_to_previous_menu') %>">
               <%= icon(name: 'arrow-right',
-                      classes: 'd-sm-none spree-icon-arrow spree-icon-arrow-left',
-                      width: 18,
-                      height: 18) %>
-              <%= icon(name: 'arrow-right',
-                      classes: 'd-none d-sm-inline spree-icon-arrow spree-icon-arrow-left',
+                      classes: 'd-inline spree-icon-arrow spree-icon-arrow-left',
                       width: 17,
                       height: 28) %>
             </button>
@@ -21,11 +17,7 @@
           <div id="top-nav-bar-mobile" class="text-right flex-grow-1 header-spree-fluid-secondary-navigation" data-hook>
             <button id="mobile-navigation-close-button" aria-label="<%= Spree.t('nav_bar.close_menu') %>">
               <%= icon(name: 'close',
-                      classes: 'd-sm-none',
-                      width: 17,
-                      height: 17) %>
-              <%= icon(name: 'close',
-                      classes: 'd-none d-sm-inline',
+                      classes: 'd-inline',
                       width: 26,
                       height: 26) %>
             </button>
@@ -41,11 +33,7 @@
 
           <a class="w-25 text-right mobile-navigation-category-link" data-category="<%= root[:title].parameterize %>" href="#" aria-label="<%= Spree.t('go_to_category')%>">
             <%= icon(name: 'arrow-right',
-                    classes: 'd-sm-none spree-icon-arrow spree-icon-arrow-right',
-                    width: 16,
-                    height: 16) %>
-            <%= icon(name: 'arrow-right',
-                    classes: 'd-none d-sm-inline spree-icon-arrow spree-icon-arrow-right',
+                    classes: 'd-inline spree-icon-arrow spree-icon-arrow-right',
                     width: 14,
                     height: 27) %>
           </a>

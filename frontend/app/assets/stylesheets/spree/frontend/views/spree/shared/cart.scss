@@ -3,7 +3,14 @@
   position: relative;
   display: inline-block;
   padding-right: 7%;
-
+  svg {
+    width: 24px;
+    height: 24px;
+    @include media-breakpoint-up(xl) {
+      width: 36px;
+      height: 36px;
+    }
+  }
   &,
   &:hover {
     color: $header-font-color;
@@ -26,9 +33,7 @@
     padding: 0 2px;
     font-size: font-px-to-rem(12px);
     display: none;
-  }
-  &--xl {
-    #{$self}-count {
+    @include media-breakpoint-up(xl) {
       $size: 26px;
       $border-width: 2px;
       border-radius: $size / 2;
