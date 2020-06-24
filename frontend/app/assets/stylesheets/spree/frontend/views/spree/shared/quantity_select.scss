@@ -1,42 +1,39 @@
 .quantity-select {
-  width: 136px;
-  height: 45px;
-  @include media-breakpoint-up(sm) {
-    width: 174px;
-    height: 58px;
-  }
-  @include media-breakpoint-up(md) {
-    width: 136px;
-    height: 45px;
-  }
   &-decrease, &-increase {
+    width: 45px;
     border-radius: 0;
     font-size: font-px-to-rem(20px);
     font-weight: 500;
     background-color: theme-color("light-background");
     border: 1px solid theme-color("borders");
     @include media-breakpoint-up(sm) {
+      width: 58px;
       font-size: font-px-to-rem(30px);
       border: 2px solid theme-color("borders");
     }
     @include media-breakpoint-up(md) {
+      width: 45px;
       font-size: font-px-to-rem(20px);
       border: 1px solid theme-color("borders");
     }
   }
   &-value {
-    width: 100%;
+    width: 46px;
+    height: 45px;
     font-size: font-px-to-rem(20px);
     font-weight: 500;
     border-radius: 0;
     border: 1px solid theme-color('borders');
-    height: auto;
     z-index: 1;
     @include media-breakpoint-up(sm) {
+      width: 58px;
+      height: 58px;
       font-size: font-px-to-rem(28px);
       border: 2px solid theme-color("borders");
     }
     @include media-breakpoint-up(md) {
+      width: 46px;
+      height: 45px;
       font-size: font-px-to-rem(20px);
       border: 1px solid theme-color("borders");
     }
