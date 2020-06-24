@@ -1,5 +1,5 @@
 <% if spree_navigation_data.any? %>
-  <ul class="nav h-100 main-nav-bar" role="navigation">
+  <ul class="nav h-100 main-nav-bar" role="navigation" aria-label="Desktop navigation">
     <% spree_navigation_data.each do |root| %>
       <li class="p-0 nav-item main-nav-bar-category">
         <% has_dropdown = root[:items].present? || root[:promo_banners].present? %>
