@@ -1,3 +1,10 @@
+
+<% if content_for?(:page_actions) %>
+  <div class="page-actions d-lg-none col-12 px-0 pb-3 text-center" data-hook="toolbar">
+    <%= yield :page_actions %>
+  </div>
+<% end %>
+
 <% if content_for?(:sidebar) %>
   <aside id="sidebar" class="main-right-sidebar" data-hook>
     <%= yield :sidebar %>

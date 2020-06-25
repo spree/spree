@@ -22,6 +22,13 @@ jQuery(function ($) {
   var activeItem     = $('#main-sidebar').find('.selected')
   var modalBackdrop  = $('#multi-backdrop')
 
+  function closeAllMenus() {
+    $(body).removeClass()
+    body.addClass('admin')
+    modalBackdrop.removeClass('show')
+  }
+  modalBackdrop.click(closeAllMenus)
+
   activeItem.closest('.nav-sidebar').addClass('active-option')
   activeItem.closest('.nav-pills').addClass('in show')
 
@@ -37,7 +44,22 @@ jQuery(function ($) {
 
   sidebarOpen.click(openMenu)
   sidebarClose.click(closeMenu)
-  modalBackdrop.click(closeMenu)
+
+
+  // Contextual Sidebar Menu Functionality
+  var contextualSidebarMenuToggle    = $('#contextual-menu-open')
+  
+  function openContextualToggle() {
+    if (document.body.classList.contains('contextualSideMenu-open')) {
+      body.removeClass('contextualSideMenu-open modal-open')
+      modalBackdrop.removeClass('show')
+    } else {
+      body.addClass('contextualSideMenu-open modal-open')
+      modalBackdrop.addClass('show')
+    }
+  }
+
+  contextualSidebarMenuToggle.click(openContextualToggle)
 
   // TODO: remove this js temp behaviour and fix this decent
   // Temp quick search
