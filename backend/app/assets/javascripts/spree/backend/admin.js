@@ -33,6 +33,7 @@ jQuery(function ($) {
   activeItem.closest('.nav-pills').addClass('in show')
 
   function openMenu() {
+    closeAllMenus()
     body.addClass('sidebar-open modal-open')
     modalBackdrop.addClass('show')
   }
@@ -46,13 +47,14 @@ jQuery(function ($) {
   sidebarClose.click(closeMenu)
 
   // Contextual Sidebar Menu Functionality
-  var contextualSidebarMenuToggle    = $('#contextual-menu-open')
+  var contextualSidebarMenuToggle    = $('#contextual-menu-toggle')
 
   function openContextualToggle() {
     if (document.body.classList.contains('contextualSideMenu-open')) {
       body.removeClass('contextualSideMenu-open modal-open')
       modalBackdrop.removeClass('show')
     } else {
+      closeAllMenus()
       body.addClass('contextualSideMenu-open modal-open')
       modalBackdrop.addClass('show')
     }

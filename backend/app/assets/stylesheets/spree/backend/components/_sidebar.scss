@@ -17,6 +17,9 @@ body.sidebar-open {
     left:0;
     transition: 0.3s ease;
   }
+  .disable-when-main-menu-is-open {
+    z-index: 1040 !important;
+  }
 }
 
 a.sidebar-submenu-item:hover {
@@ -73,15 +76,14 @@ ul.nav-sidebar {
   position: fixed;
   left:0;
   top: -100%;
-  z-index: 2000;
+  z-index: 1041;
   transition: .3s ease-in-out;
 }
 
-#contextual-menu-open {
+#contextual-menu-toggle {
   position: fixed;
   bottom: 15px;
   right:15px;
-  z-index: 2000;
   border: none;
   box-shadow: 0px 5px 5px -3px rgba(0, 0, 0, 0.2),
               0px 8px 10px 1px rgba(0, 0, 0, 0.14),
@@ -97,10 +99,16 @@ body.contextualSideMenu-open #contextualSideMenu {
     top: 0;
     transition: .3s ease-in-out;
 }
-body.contextualSideMenu-open #contextual-menu-open svg {
-    transform:rotate(180deg);
-    transition: .3s ease-in-out;
+
+body.contextualSideMenu-open #contextual-menu-toggle {
+  z-index: 1041;
+  svg {
+      transform:rotate(180deg);
+      transition: .3s ease-in-out;
+  }
 }
+
+
 
 
 @include media-breakpoint-up(sm) {
