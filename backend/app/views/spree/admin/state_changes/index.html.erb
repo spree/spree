@@ -5,6 +5,7 @@
 <% end %>
 
 <% if @state_changes.any? %>
+<div class="table-responsive">
   <table class="table" id="listing_order_state_changes" data-hook>
     <thead>
       <tr data-hook="admin_orders_state_changes_headers">
@@ -38,6 +39,7 @@
       <% end %>
     </tbody>
   </table>
+</div>
 <% else %>
   <div class="alert alert-info no-objects-found">
     <%= Spree.t(:no_state_changes) %>
