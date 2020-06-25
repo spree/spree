@@ -616,6 +616,7 @@ en:
     billing: Billing
     billing_address: Billing Address
     both: Both
+    breadcrumbs: Breadcrumbs
     calculated_reimbursements: Calculated Reimbursements
     calculator: Calculator
     calculator_settings_warning: If you are changing the calculator type, you must save first before you can edit the calculator settings
@@ -640,11 +641,13 @@ en:
     cart: Cart
     cart_page:
       add_promo_code: ADD PROMO CODE
+      change_quantity: Change quantity
       checkout: checkout
       empty_info: 'Your cart is empty.'
       header: Your shopping cart
       product: product
       quantity: quantity
+      remove_from_cart: Remove from cart
       title: Shopping Cart
     cart_subtotal:
       one: 'Subtotal (1 item)'
@@ -1032,6 +1035,8 @@ en:
       show_search: Show search
       show_user_menu: Show user menu
       sign_up: SIGN UP
+      desktop: Desktop navigation
+      mobile: Mobile navigation
     new: New
     new_adjustment: New Adjustment
     new_customer: Create new account
