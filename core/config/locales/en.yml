@@ -616,6 +616,7 @@ en:
     billing: Billing
     billing_address: Billing Address
     both: Both
+    breadcrumbs: Breadcrumbs
     calculated_reimbursements: Calculated Reimbursements
     calculator: Calculator
     calculator_settings_warning: If you are changing the calculator type, you must save first before you can edit the calculator settings
