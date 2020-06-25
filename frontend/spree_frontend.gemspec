@@ -5,15 +5,21 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = 'spree_frontend'
   s.version     = Spree.version
-  s.summary     = 'Frontend e-commerce functionality for the Spree project.'
-  s.description = s.summary
-
-  s.required_ruby_version = '>= 2.5.0'
-
   s.author      = 'Sean Schofield'
   s.email       = 'sean@spreecommerce.com'
+  s.summary     = 'Frontend e-commerce functionality for the Spree project.'
+  s.description = s.summary
   s.homepage    = 'http://spreecommerce.org'
   s.license     = 'BSD-3-Clause'
+
+  s.metadata = {
+    "bug_tracker_uri"   => "https://github.com/spree/spree/issues",
+    "changelog_uri"     => "https://github.com/spree/spree/releases/tag/v#{s.version}",
+    "documentation_uri" => "https://guides.spreecommerce.org/",
+    "source_code_uri"   => "https://github.com/spree/spree/tree/v#{s.version}",
+  }
+
+  s.required_ruby_version = '>= 2.5.0'
 
   s.files        = `git ls-files`.split("\n").reject { |f| f.match(/^spec/) && !f.match(/^spec\/fixtures/) }
   s.require_path = 'lib'
