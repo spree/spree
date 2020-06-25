@@ -45,10 +45,9 @@ jQuery(function ($) {
   sidebarOpen.click(openMenu)
   sidebarClose.click(closeMenu)
 
-
   // Contextual Sidebar Menu Functionality
   var contextualSidebarMenuToggle    = $('#contextual-menu-open')
-  
+
   function openContextualToggle() {
     if (document.body.classList.contains('contextualSideMenu-open')) {
       body.removeClass('contextualSideMenu-open modal-open')
