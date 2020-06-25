@@ -102,7 +102,7 @@ module Spree
 
         select_tag(:per_page,
                    options_for_select(per_page_options, selected_option),
-                   class: "form-control pull-right js-per-page-select per-page-selected-#{selected_option} custom-select")
+                   class: "w-auto form-control js-per-page-select per-page-selected-#{selected_option} custom-select")
       end
 
       # helper method to create proper url to apply per page ing

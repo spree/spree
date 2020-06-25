@@ -10,7 +10,9 @@ describe 'Tax Rates', type: :feature do
     visit spree.admin_path
     click_link 'Configuration'
     click_link 'Tax Rates'
-    click_link 'New Tax Rate'
+    within find('#contentHeader') do
+      click_link 'New Tax Rate'
+    end
     fill_in 'Rate', with: '0.05'
     click_button 'Create'
     expect(page).to have_content('Tax Rate has been successfully created!')
