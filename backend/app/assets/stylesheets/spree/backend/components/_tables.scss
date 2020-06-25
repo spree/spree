@@ -105,6 +105,10 @@ table.table {
 	}
 }
 
+div.table-responsive table.table-bordered {
+  border-top: 1px solid $input-border-color !important;
+}
+
 .sortable-drag-v {
   border: 1px solid $info;
   border-radius: 5px;
