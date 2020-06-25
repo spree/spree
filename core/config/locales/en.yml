@@ -640,11 +640,13 @@ en:
     cart: Cart
     cart_page:
       add_promo_code: ADD PROMO CODE
+      change_quantity: Change quantity
       checkout: checkout
       empty_info: 'Your cart is empty.'
       header: Your shopping cart
       product: product
       quantity: quantity
+      remove_from_cart: Remove from cart
       title: Shopping Cart
     cart_subtotal:
       one: 'Subtotal (1 item)'
