@@ -109,7 +109,7 @@
               <% end %>
             <div class="info-actions">
               <% if can?(:admin, Spree::Variant) %>
-                <%= link_to_with_icon 'adjust', Spree.t(:manage_variants), spree.admin_product_variants_url(@product), class: "btn btn-outline-secondary" %>
+                <%= link_to_with_icon 'adjust.svg', Spree.t(:manage_variants), spree.admin_product_variants_url(@product), class: "btn btn-outline-secondary" %>
               <% end %>
             </div>
           </div>

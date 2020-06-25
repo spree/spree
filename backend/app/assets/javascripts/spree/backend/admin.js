@@ -47,7 +47,7 @@ jQuery(function ($) {
   sidebarClose.click(closeAllMenus)
 
   // Contextual Sidebar Menu
-  var contextualSidebarMenuToggle    = $('#contextual-menu-toggle')
+  var contextualSidebarMenuToggle = $('#contextual-menu-toggle')
 
   function toggleContextualMenu() {
     if (document.body.classList.contains('contextualSideMenu-open')) {
