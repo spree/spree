@@ -73,8 +73,9 @@ describe 'Payments', type: :feature, js: true do
         expect(column_text(4)).to eq('Credit Card')
         expect(column_text(6)).to eq('void')
       end
-
-      click_on 'New Payment'
+      within find('#contentHeader') do
+        click_on 'New Payment'
+      end
       expect(page).to have_content('New Payment')
       click_button 'Update'
       expect(page).to have_content('successfully created!')
@@ -89,8 +90,10 @@ describe 'Payments', type: :feature, js: true do
     it 'cannot create a payment for an order with no payment methods', js: false do
       Spree::PaymentMethod.delete_all
       order.payments.delete_all
-
-      click_on 'New Payment'
+      within find('#contentHeader') do
+        click_on 'New Payment'
+      end
+      
       expect(page).to have_content('You cannot create a payment for an order without any payment methods defined.')
       expect(page).to have_content('Please define some payment methods first.')
     end
