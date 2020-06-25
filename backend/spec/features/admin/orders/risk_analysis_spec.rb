@@ -29,7 +29,10 @@ describe 'Order Risk Analysis', type: :feature do
     end
 
     it 'can be approved' do
-      click_button('Approve')
+      within find('#contentHeader') do
+        click_button('Approve')
+      end
+      
       expect(page).to have_content 'Approver'
       expect(page).to have_content 'Approved at'
       expect(page).to have_content 'Status: complete'

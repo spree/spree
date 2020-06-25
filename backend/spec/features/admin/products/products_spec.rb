@@ -141,7 +141,9 @@ describe 'Products', type: :feature do
         @property_prototype = create(:prototype, name: 'Random')
         @shipping_category = create(:shipping_category)
         visit spree.admin_products_path
-        click_link 'admin_new_product'
+        within find('#contentHeader') do
+          click_link 'admin_new_product'
+        end
         within('#new_product') do
           expect(page).to have_content('SKU')
         end
@@ -208,7 +210,10 @@ describe 'Products', type: :feature do
       before do
         @shipping_category = create(:shipping_category)
         visit spree.admin_products_path
-        click_link 'admin_new_product'
+        within find('#contentHeader') do
+          click_link 'admin_new_product'
+        end
+
         within('#new_product') do
           expect(page).to have_content('SKU')
         end

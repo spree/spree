@@ -25,7 +25,9 @@ describe 'Tax Categories', type: :feature do
   context 'admin creating new tax category' do
     before do
       click_link 'Tax Categories'
-      click_link 'admin_new_tax_categories_link'
+      within find('#contentHeader') do
+        click_link 'admin_new_tax_categories_link'
+      end
     end
 
     it 'is able to create new tax category' do

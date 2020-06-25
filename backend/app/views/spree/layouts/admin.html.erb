@@ -59,7 +59,7 @@
               <%#-------------------------------------------------%>
               <%# Main content                                    %>
               <%#-------------------------------------------------%>
-              <div class="<%= content_for?(:sidebar) ? 'with-sidebar col-8 col-md-9' : 'col-12'  %>" id="content" data-hook>
+              <div class="<%= content_for?(:sidebar) ? 'with-sidebar col-12 col-lg-9' : 'col-12'  %>" id="content" data-hook>
                 <%= render partial: 'spree/admin/shared/table_filter' if content_for?(:table_filter)%>
                 <%= yield %>
               </div>
@@ -67,18 +67,24 @@
               <%#-------------------------------------------------%>
               <%# Inner aside                                     %>
               <%#-------------------------------------------------%>
-              <% if content_for?(:sidebar) %>
-                <div class="col-4 col-md-3">
+              <% if content_for?(:sidebar) || content_for?(:page_actions) %>
+                <div class="col-12 col-lg-3 m-0 py-4" id="contextualSideMenu">
                   <%= render partial: 'spree/admin/shared/sidebar' %>
                 </div>
               <% end %>
             </div>
-            
+
           </div>
         </main>
       </div>
     </div>
-
+    <% if content_for?(:sidebar) || content_for?(:page_actions) %>
+      <button id="contextual-menu-toggle"
+              type="button"
+              class="btn btn-primary btn-circle d-lg-none">
+              <%= svg_icon name: "chevron-down.svg", width: '22', height: '22' %>
+      </button>
+    <% end %>
     <%#-------------------------------------------------%>
     <%# Insert footer scripts here                      %>
     <%#-------------------------------------------------%>

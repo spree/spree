@@ -15,29 +15,50 @@ jQuery(function ($) {
     $(this).parents('.filter-wrap').toggleClass('collapsed')
   })
 
-  // Off Canvas Sidebar Functionality
+  // Responsive Menus
+  var body  = $('body')
+  var modalBackdrop  = $('#multi-backdrop')
+
+  // Fail safe on resize
+  document.getElementsByTagName("BODY")[0].onresize = function() { closeAllMenus() }
+
+  function closeAllMenus() {
+    body.removeClass()
+    body.addClass('admin')
+    modalBackdrop.removeClass('show')
+  }
+
+  modalBackdrop.click(closeAllMenus)
+
+  // Main Menu Functionality
   var sidebarOpen    = $('#sidebar-open')
   var sidebarClose   = $('#sidebar-close')
-  var body            = $('body')
   var activeItem     = $('#main-sidebar').find('.selected')
-  var modalBackdrop  = $('#multi-backdrop')
 
   activeItem.closest('.nav-sidebar').addClass('active-option')
   activeItem.closest('.nav-pills').addClass('in show')
 
   function openMenu() {
+    closeAllMenus()
     body.addClass('sidebar-open modal-open')
     modalBackdrop.addClass('show')
   }
-
-  function closeMenu() {
-    body.removeClass('sidebar-open modal-open')
-    modalBackdrop.removeClass('show')
-  }
-
   sidebarOpen.click(openMenu)
-  sidebarClose.click(closeMenu)
-  modalBackdrop.click(closeMenu)
+  sidebarClose.click(closeAllMenus)
+
+  // Contextual Sidebar Menu
+  var contextualSidebarMenuToggle = $('#contextual-menu-toggle')
+
+  function toggleContextualMenu() {
+    if (document.body.classList.contains('contextualSideMenu-open')) {
+      closeAllMenus()
+    } else {
+      closeAllMenus()
+      body.addClass('contextualSideMenu-open modal-open')
+      modalBackdrop.addClass('show')
+    }
+  }
+  contextualSidebarMenuToggle.click(toggleContextualMenu)
 
   // TODO: remove this js temp behaviour and fix this decent
   // Temp quick search

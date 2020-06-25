@@ -28,7 +28,9 @@ describe 'Zones', type: :feature do
   context 'create' do
     it 'allows an admin to create a new zone' do
       click_link 'Zones'
-      click_link 'admin_new_zone_link'
+      within find('#contentHeader') do
+        click_link 'admin_new_zone_link'
+      end
       expect(page).to have_content('New Zone')
       fill_in 'zone_name', with: 'japan'
       fill_in 'zone_description', with: 'japanese time zone'

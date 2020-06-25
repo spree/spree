@@ -5,11 +5,11 @@
 <% end %>
 
 <div class="row index-pagination-row mt-4">
-  <div class="col-6 text-left">
+  <div class="col-12 col-sm-9 text-center text-sm-left">
     <%= paginate collection, theme: 'admin-twitter-bootstrap-4' %>
   </div>
-  <div class="col-6">
-    <%= form_tag(per_page_dropdown_params(args), { method: :get, class: 'js-per-page-form form-inline justify-content-end' }) do %>
+  <div class="col-12 col-sm-3 text-center text-sm-left">
+    <%= form_tag(per_page_dropdown_params(args), { method: :get, class: 'js-per-page-form form-inline justify-content-center sm-justify-content-end' }) do %>
         <%= per_page_dropdown %>
       <% end %>
   </div>

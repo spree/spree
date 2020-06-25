@@ -22,7 +22,10 @@ describe 'Roles', type: :feature do
 
   context 'create' do
     it 'is able to create a new role' do
-      click_link 'admin_new_role_link'
+      within find('#contentHeader') do
+        click_link 'admin_new_role_link'
+      end
+      
       expect(page).to have_content('New Role')
       fill_in 'role_name', with: 'blogger'
       click_button 'Create'
