@@ -6,7 +6,7 @@
       <%= link_to product_image(variant), variant.product %>
     </div>
     <div class="d-table-cell shopping-cart-item-description" data-hook="cart_item_description">
-      <h4 class="item-title"><%= link_to line_item.name, spree.product_path(variant.product) %></h4>
+      <h2 class="item-title"><%= link_to line_item.name, spree.product_path(variant.product) %></h2>
       <% if line_item.insufficient_stock? %>
         <span class="out-of-stock">
           <%= Spree.t(:out_of_stock) %>&nbsp;&nbsp;<br />
