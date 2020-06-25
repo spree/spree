@@ -23,7 +23,7 @@ jQuery(function ($) {
   document.getElementsByTagName("BODY")[0].onresize = function() { closeAllMenus() }
 
   function closeAllMenus() {
-    $(body).removeClass()
+    body.removeClass()
     body.addClass('admin')
     modalBackdrop.removeClass('show')
   }

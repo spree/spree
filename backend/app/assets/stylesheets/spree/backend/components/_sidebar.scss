@@ -108,7 +108,9 @@ body.contextualSideMenu-open #contextual-menu-toggle {
   }
 }
 
-
+.contextual-title {
+  font-size:1.25rem;
+}
 
 
 @include media-breakpoint-up(sm) {
@@ -143,5 +145,9 @@ body.contextualSideMenu-open #contextual-menu-toggle {
           transition: 0;
         }
       }
+  }
+
+  .contextual-title {
+    font-size:1.5rem;
   }
 }
