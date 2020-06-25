@@ -9,7 +9,7 @@ Spree.ready(function () {
     var $navLink = $(this)
     var $parent = $navLink.parent()
     var $dropdown = $navLink.next()
-    const eventType = event.type
+    var eventType = event.type
 
     if (eventType === 'mouseenter') {
       $navLink.removeAttr(DATA_TOGGLE_ATTR)
