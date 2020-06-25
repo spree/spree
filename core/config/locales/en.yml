@@ -1035,6 +1035,8 @@ en:
       show_search: Show search
       show_user_menu: Show user menu
       sign_up: SIGN UP
+      desktop: Desktop navigation
+      mobile: Mobile navigation
     new: New
     new_adjustment: New Adjustment
     new_customer: Create new account
