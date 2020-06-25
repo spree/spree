@@ -78,13 +78,13 @@
         </main>
       </div>
     </div>
-
-    <button id="contextual-menu-toggle"
-            type="button"
-            class="btn btn-primary btn-circle d-lg-none">
-            <%= svg_icon name: "chevron-down.svg", width: '22', height: '22' %>
-    </button>
-
+    <% if content_for?(:sidebar) %>
+      <button id="contextual-menu-toggle"
+              type="button"
+              class="btn btn-primary btn-circle d-lg-none">
+              <%= svg_icon name: "chevron-down.svg", width: '22', height: '22' %>
+      </button>
+    <% end %>
     <%#-------------------------------------------------%>
     <%# Insert footer scripts here                      %>
     <%#-------------------------------------------------%>

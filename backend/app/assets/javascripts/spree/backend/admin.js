@@ -20,13 +20,14 @@ jQuery(function ($) {
   var modalBackdrop  = $('#multi-backdrop')
 
   // Fail safe on resize
-  document.getElementsByTagName("BODY")[0].onresize = function() {closeAllMenus()};
+  document.getElementsByTagName("BODY")[0].onresize = function() { closeAllMenus() }
 
   function closeAllMenus() {
     $(body).removeClass()
     body.addClass('admin')
     modalBackdrop.removeClass('show')
   }
+
   modalBackdrop.click(closeAllMenus)
 
   // Main Menu Functionality
@@ -42,30 +43,22 @@ jQuery(function ($) {
     body.addClass('sidebar-open modal-open')
     modalBackdrop.addClass('show')
   }
-
-  function closeMenu() {
-    body.removeClass('sidebar-open modal-open')
-    modalBackdrop.removeClass('show')
-  }
-
   sidebarOpen.click(openMenu)
-  sidebarClose.click(closeMenu)
+  sidebarClose.click(closeAllMenus)
 
   // Contextual Sidebar Menu
   var contextualSidebarMenuToggle    = $('#contextual-menu-toggle')
 
-  function openContextualToggle() {
+  function toggleContextualMenu() {
     if (document.body.classList.contains('contextualSideMenu-open')) {
-      body.removeClass('contextualSideMenu-open modal-open')
-      modalBackdrop.removeClass('show')
+      closeAllMenus()
     } else {
       closeAllMenus()
       body.addClass('contextualSideMenu-open modal-open')
       modalBackdrop.addClass('show')
     }
   }
-
-  contextualSidebarMenuToggle.click(openContextualToggle)
+  contextualSidebarMenuToggle.click(toggleContextualMenu)
 
   // TODO: remove this js temp behaviour and fix this decent
   // Temp quick search
