@@ -15,12 +15,12 @@ jQuery(function ($) {
     $(this).parents('.filter-wrap').toggleClass('collapsed')
   })
 
-  // Off Canvas Sidebar Functionality
-  var sidebarOpen    = $('#sidebar-open')
-  var sidebarClose   = $('#sidebar-close')
-  var body            = $('body')
-  var activeItem     = $('#main-sidebar').find('.selected')
+  // Responsive Menus
+  var body  = $('body')
   var modalBackdrop  = $('#multi-backdrop')
+
+  // Fail safe on resize
+  document.getElementsByTagName("BODY")[0].onresize = function() {closeAllMenus()};
 
   function closeAllMenus() {
     $(body).removeClass()
@@ -28,6 +28,11 @@ jQuery(function ($) {
     modalBackdrop.removeClass('show')
   }
   modalBackdrop.click(closeAllMenus)
+
+  // Main Menu Functionality
+  var sidebarOpen    = $('#sidebar-open')
+  var sidebarClose   = $('#sidebar-close')
+  var activeItem     = $('#main-sidebar').find('.selected')
 
   activeItem.closest('.nav-sidebar').addClass('active-option')
   activeItem.closest('.nav-pills').addClass('in show')
@@ -46,7 +51,7 @@ jQuery(function ($) {
   sidebarOpen.click(openMenu)
   sidebarClose.click(closeMenu)
 
-  // Contextual Sidebar Menu Functionality
+  // Contextual Sidebar Menu
   var contextualSidebarMenuToggle    = $('#contextual-menu-toggle')
 
   function openContextualToggle() {
