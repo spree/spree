@@ -21,7 +21,7 @@ describe 'Payment Methods', type: :feature do
       end
 
       within('table#listing_payment_methods') do
-        expect(page).to have_content('Spree::PaymentMethod::Check')
+        expect(page).to have_content('Check')
       end
     end
   end
@@ -31,7 +31,7 @@ describe 'Payment Methods', type: :feature do
       within find('#contentHeader') do
         click_link 'admin_new_payment_methods_link'
       end
-      
+
       expect(page).to have_content('New Payment Method')
       fill_in 'payment_method_name', with: 'check90'
       fill_in 'payment_method_description', with: 'check90 desc'

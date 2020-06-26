@@ -19,8 +19,7 @@
 <% end %>
 
 <% if @payments.any? %>
-
-  <div data-hook="payment_list" class="mb-3">
+  <div data-hook="payment_list" class="mb-3 table-responsive">
     <%= render partial: 'list', locals: { payments: @payments } %>
   </div>
 
