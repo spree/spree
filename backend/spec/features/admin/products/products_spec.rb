@@ -92,7 +92,7 @@ describe 'Products', type: :feature do
         create(:product, name: 'zomg shirt')
 
         visit spree.admin_products_path
-        fill_in 'q_name_cont', with: 'ap'
+        fill_in 'q_search_by_name', with: 'ap'
         click_on 'Search'
 
         expect(page).to have_content('apache baseball cap')
@@ -432,7 +432,7 @@ describe 'Products', type: :feature do
         click_on 'Filter'
 
         within('#table-filter') do
-          fill_in 'q_name_cont', with: 'Backpack'
+          fill_in 'q_search_by_name', with: 'Backpack'
           fill_in 'q_variants_including_master_sku_cont', with: 'BAG-00001'
         end
 
