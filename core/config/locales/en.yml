@@ -1568,6 +1568,7 @@ en:
       reimbursed: Reimbursed
       resumed: Resumed
       returned: Returned
+      shipment: Shipment
       shipped: Shipped
       void: Void
     states_required: States Required
