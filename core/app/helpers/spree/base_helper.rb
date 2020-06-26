@@ -107,6 +107,12 @@ module Spree
       [I18n.l(time.to_date, format: :long), time.strftime('%l:%M %p')].join(' ')
     end
 
+    def pretty_date(date)
+      return '' if date.blank?
+
+      [I18n.l(date.to_date, format: :long)].join(' ')
+    end
+
     def seo_url(taxon, options = nil)
       spree.nested_taxons_path(taxon.permalink, options)
     end

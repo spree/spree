@@ -133,6 +133,16 @@ describe Spree::BaseHelper, type: :helper do
     end
   end
 
+  context 'pretty_date' do
+    it 'prints in a format' do
+      expect(pretty_date(Time.new(2012, 5, 6, 13, 33))).to eq 'May 06, 2012'
+    end
+
+    it 'return empty stirng when nil is supplied' do
+      expect(pretty_date(nil)).to eq ''
+    end
+  end
+
   describe '#display_price' do
     let!(:product) { create(:product) }
     let(:current_currency) { 'USD' }
