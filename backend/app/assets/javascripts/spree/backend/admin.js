@@ -71,22 +71,6 @@ jQuery(function ($) {
     return false
   })
 
-  // START - IS DEPRECIATED IN NEW ADMIN: KEEP or DELETE?
-  // Replace ▼ and ▲ in sort_link with nicer icons
-  $('.sort_link').each(function () {
-    // Remove the &nbsp in the text
-    var sortLinkText = $(this).text().replace('\xA0', '')
-
-    if (sortLinkText.indexOf('▼') >= 0) {
-      $(this).text(sortLinkText.replace('▼', ''))
-      $(this).append('<i class="ml-2 icon icon-chevron-down"></i>')
-    } else if (sortLinkText.indexOf('▲') >= 0) {
-      $(this).text(sortLinkText.replace('▲', ''))
-      $(this).append('<i class="ml-2 icon icon-chevron-up"></i>')
-    }
-  })
-  // END - IS DEPRECIATED IN NEW ADMIN: KEEP or DELETE?
-
   // Clickable ransack filters
   $('.js-add-filter').click(function () {
     var ransackField = $(this).data('ransack-field')
