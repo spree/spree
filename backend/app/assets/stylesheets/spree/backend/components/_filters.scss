@@ -16,6 +16,10 @@
   transition: .3s ease-in-out;
 }
 
+.default-filter-icon {
+  opacity: 0.1;
+}
+
 .index-filter-button {
   font-size: $font-size-sm;
 
@@ -44,10 +48,14 @@
 }
 
 .sort_link {
-  .icon {
+  .icon, svg {
     margin-left: 5px;
-    width: 0.9rem;
-    height: 0.9rem;
+    margin-bottom: 2px;
+    width: 0.8rem;
+    height: 0.8rem;
 
+  }
+  svg.default-filter-arrow{
+    opacity: 0;
   }
 }
