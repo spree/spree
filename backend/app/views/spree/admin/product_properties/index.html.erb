@@ -18,7 +18,10 @@
 
 <%= form_for @product, url: spree.admin_product_url(@product), method: :put do |f| %>
   <fieldset>
+<<<<<<< HEAD
     <div id="prototypes" data-hook></div>
+=======
+>>>>>>> ee31cb3c6279eeaa4447a2eb0c2da4529c03764d
     <table id="product_properties" class="table sortable" data-hook data-sortable-link="<%= update_positions_admin_product_product_properties_url %>">
       <thead>
         <tr data-hook="product_properties_header">
@@ -36,7 +39,6 @@
     </table>
 
     <%= render('spree/admin/shared/edit_resource_links') if can? :update, Spree::ProductProperty %>
-
     <%= hidden_field_tag 'clear_product_properties', 'true' %>
   </fieldset>
 <% end %>
