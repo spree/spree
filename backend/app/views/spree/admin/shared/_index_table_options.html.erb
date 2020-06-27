@@ -9,7 +9,7 @@
     <%= paginate collection, theme: 'admin-twitter-bootstrap-4' %>
   </div>
   <div class="col-12 col-sm-3 text-center text-sm-left">
-    <%= form_tag(per_page_dropdown_params(args), { method: :get, class: 'js-per-page-form form-inline justify-content-center sm-justify-content-end' }) do %>
+    <%= form_tag(per_page_dropdown_params(args), { method: :get, class: 'js-per-page-form form-inline justify-content-center justify-content-sm-end' }) do %>
         <%= per_page_dropdown %>
       <% end %>
   </div>

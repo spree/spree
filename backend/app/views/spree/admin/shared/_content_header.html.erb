@@ -3,7 +3,7 @@
     <div id="contentHeader" class="content-header col <%= "with-page-tabs" if content_for?(:page_tabs) %> page-header">
       <div class="row align-items-center  <%= if content_for?(:page_tabs) then "pb-0" else "border-bottom" end %>">
         <% if content_for?(:page_title) %>
-          <h1 class="contextual-title pl-0 mb-0 col-12 col-lg-<%= content_for?(:page_actions) ? '7' : '12'  %>">
+          <h1 class="contextual-title pr-0 pl-0 mb-0 col-12 col-lg-<%= content_for?(:page_actions) ? '6' : '12'  %>">
             <%= yield :page_title %>
             <% if content_for?(:page_title_small) %>
               <small><%= yield :page_title_small %></small>
@@ -12,7 +12,7 @@
         <% end %>
 
         <% if content_for?(:page_actions) %>
-          <div class="page-actions col-5 pr-0 d-none d-lg-block" data-hook="toolbar">
+          <div class="page-actions pl-0 col-6 pr-0 d-none d-lg-block" data-hook="toolbar">
             <%= yield :page_actions %>
           </div>
         <% end %>
