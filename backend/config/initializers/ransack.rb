@@ -1,6 +1,6 @@
 Ransack.configure do |config|
   config.custom_arrows = {
-    up_arrow: '<svg width="100%" height="100%" viewBox="0 0 2134 2134" version="1.1" xmlns="http://www.w3.org/2000/svg"
+    down_arrow: '<svg width="100%" height="100%" viewBox="0 0 2134 2134" version="1.1" xmlns="http://www.w3.org/2000/svg"
                     xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/"
                     style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
                     <path fill="currentColor"
@@ -10,7 +10,7 @@ Ransack.configure do |config|
                     -43.509l-923.077,-923.077c-24.038,-24.039 -62.98,-24.039 -87.019,
                     0Z" style="fill-rule:nonzero;stroke:currentColor;stroke-width:75px;"/></svg>',
 
-    down_arrow: '<svg width="100%" height="100%" viewBox="0 0 2134 2134" version="1.1"
+    up_arrow: '<svg width="100%" height="100%" viewBox="0 0 2134 2134" version="1.1"
                       xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
                       xml:space="preserve" xmlns:serif="http://www.serif.com/"
                       style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
