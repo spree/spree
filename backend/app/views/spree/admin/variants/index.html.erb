@@ -4,6 +4,7 @@
 <div id="new_variant" data-hook></div>
 
 <% if @variants.any? %>
+<div class="table-responsive">
   <table class="table sortable" data-sortable-link="<%= update_positions_admin_product_variants_path(@product) %>">
     <thead data-hook="variants_header">
       <tr>
@@ -37,6 +38,7 @@
       <% end %>
     </tbody>
   </table>
+</div>
 <% else %>
   <div class="no-objects-found alert alert-info">
     <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::Variant)) %>
