@@ -29,7 +29,7 @@ describe 'Orders Listing', type: :feature do
   describe 'listing orders' do
     it 'lists existing orders' do
       within_row(1) do
-        expect(column_text(2)).to eq 'R100'
+        expect(column_text(1)).to eq 'R100'
         expect(find('td:nth-child(3)')).to have_css '.badge-considered_risky'
         expect(column_text(4)).to eq 'cart'
       end

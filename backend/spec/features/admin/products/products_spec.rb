@@ -418,7 +418,9 @@ describe 'Products', type: :feature do
         # This will show our deleted product
         check 'Show Deleted'
         click_on 'Search'
-        click_link product.name
+        within_column(2) do
+          click_link product.name
+        end
         expect(page).to have_field(id: 'product_price') do |field|
           field.value.to_f == product.price.to_f
         end
