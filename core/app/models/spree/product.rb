@@ -113,7 +113,7 @@ module Spree
 
     self.whitelisted_ransackable_associations = %w[taxons stores variants_including_master master variants]
     self.whitelisted_ransackable_attributes = %w[description name slug discontinue_on]
-    self.whitelisted_ransackable_scopes = %w[not_discontinued]
+    self.whitelisted_ransackable_scopes = %w[not_discontinued search_by_name]
 
     [
       :sku, :price, :currency, :weight, :height, :width, :depth, :is_master,
@@ -250,6 +250,14 @@ module Spree
         arel_table[field].matches("%#{value}%")
       end
       where conditions.inject(:or)
+    end
+
+    def self.search_by_name(query)
+      if defined?(SpreeGlobalize)
+        joins(:translations).order(:name).where("LOWER(#{Product::Translation.table_name}.name) LIKE LOWER(:query)", query: "%#{query}%").distinct
+      else
+        where("LOWER(#{Product.table_name}.name) LIKE LOWER(:query)", query: "%#{query}%")
+      end
     end
 
     # Suitable for displaying only variants that has at least one option value.

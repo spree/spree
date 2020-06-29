@@ -1,4 +1,4 @@
-<% cache [common_product_cache_keys, products&.maximum(:updated_at)&.to_i, id] do %>
+<% cache [common_product_cache_keys, products&.maximum(:updated_at)&.to_i, id, products&.ids&.join(',')] do %>
   <div id="<%= id %>-mobile" class="carousel slide d-md-none homepage-carousel" data-interval="false">
     <div class="carousel-inner">
       <% products.each_slice(2).with_index do |sliced_items, index| %>

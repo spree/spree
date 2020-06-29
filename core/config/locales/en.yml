@@ -873,6 +873,7 @@ en:
     general: General
     general_settings: General Settings
     generate_code: Generate coupon code
+    get_back_to_the: Get back to the
     go_to_category: Go to category
     go_to_facebook: Go to facebook
     go_to_homepage: Go to Home Page
@@ -885,6 +886,7 @@ en:
     height: Height
     hide_from_subcategories_nav: Hide from subcategories navigation
     home: Home
+    home_page: homepage
     homepage:
       bestsellers: BESTSELLERS
       fashion_trends: FASHION TRENDS
@@ -1182,6 +1184,7 @@ en:
     backordered_confirm_info: Selected item is backordered so expect delays. Are you sure you want to order it?
     overview: Overview
     package_from: package from
+    page_not_found: Sorry! Page you are looking can’t be found.
     pagination:
       next_page: next page &raquo;
       previous_page: ! '&laquo; previous page'
@@ -1239,7 +1242,6 @@ en:
       done: DONE
       default: DEFAULT
       filter_by: FILTER BY
-      home: Home
       newest_first: NEWEST FIRST
       no_results: No results
       no_results_found: No results found
@@ -1568,6 +1570,7 @@ en:
       reimbursed: Reimbursed
       resumed: Resumed
       returned: Returned
+      shipment: Shipment
       shipped: Shipped
       void: Void
     states_required: States Required

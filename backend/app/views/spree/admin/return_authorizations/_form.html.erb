@@ -1,7 +1,8 @@
 <% allow_return_item_changes = !@return_authorization.customer_returned_items? %>
 
 <div data-hook="admin_return_authorization_form_fields">
-  <table class="table table-condensed table-bordered index return-items-table">
+<div class="table-responsive">
+  <table class="table table-condensed table-bordered return-items-table">
     <thead>
       <tr data-hook="rma_header">
         <th>
@@ -74,7 +75,7 @@
       <% end %>
     </tbody>
   </table>
-
+</div>
   <%= f.field_container :amount, class: ['alert alert-info'] do %>
     <%= Spree.t(:total_pre_tax_refund) %>: <span id="total_pre_tax_refund">0.00</span>
   <% end %>
