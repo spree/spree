@@ -21,6 +21,7 @@
 <% end %>
 
 <% if @collection.any? %>
+<div class="table-responsive">
   <table class="table">
     <thead>
       <tr data-hook="rate_header">
@@ -53,6 +54,7 @@
       <% end %>
     </tbody>
   </table>
+</div>
 <% else %>
   <div class="alert alert-info no-objects-found">
     <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::CustomerReturn)) %>.  </div>

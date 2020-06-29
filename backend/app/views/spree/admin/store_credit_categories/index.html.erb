@@ -7,6 +7,7 @@
 <% end if can? :create, Spree::StoreCreditCategory %>
 
 <% if @store_credit_categories.any? %>
+<div class="table-responsive">
   <table class="table">
     <thead>
       <tr data-hook="admin_store_credit_categories_index_headers">
@@ -26,6 +27,7 @@
       <% end %>
     </tbody>
   </table>
+</div>
 <% else %>
   <div class="alert alert-warning">
     <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::StoreCreditCategory)) %>,

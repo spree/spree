@@ -14,6 +14,7 @@
 <% end %>
 
 <% if @store_credits.any? %>
+<div class="table-responsive">
   <table class="table">
     <thead>
       <th><%= Spree.t(:credited) %></th>
@@ -41,6 +42,7 @@
       <% end %>
     </tbody>
   </table>
+</div>
 <% else %>
   <div class="alert alert-info no-objects-found">
     <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::StoreCredit)) %>

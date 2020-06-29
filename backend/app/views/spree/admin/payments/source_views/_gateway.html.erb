@@ -1,21 +1,23 @@
 <fieldset data-hook="credit_card">
   <legend><%= Spree.t(:credit_card) %></legend>
-  <table class="table table-condensed table-bordered">
-    <tr>
-      <th width="20%"><%= Spree.t(:name_on_card) %>:</th>
-      <td><%= payment.source.name %></td>
-    </tr>
-    <tr>
-      <th><%= Spree.t(:card_type) %>:</th>
-      <td><%= payment.source.cc_type %></td>
-    </tr>
-    <tr>
-      <th><%= Spree.t(:card_number) %>:</th>
-      <td><%= payment.source.display_number %></td>
-    </tr>
-    <tr>
-      <th><%= Spree.t(:expiration) %>:</th>
-      <td><%= payment.source.month %>/<%= payment.source.year %></td>
-    </tr>
-  </table>
+  <div class="table-responsive">
+    <table class="table table-condensed table-bordered">
+      <tr>
+        <th width="20%"><%= Spree.t(:name_on_card) %>:</th>
+        <td><%= payment.source.name %></td>
+      </tr>
+      <tr>
+        <th><%= Spree.t(:card_type) %>:</th>
+        <td><%= payment.source.cc_type %></td>
+      </tr>
+      <tr>
+        <th><%= Spree.t(:card_number) %>:</th>
+        <td><%= payment.source.display_number %></td>
+      </tr>
+      <tr>
+        <th><%= Spree.t(:expiration) %>:</th>
+        <td><%= payment.source.month %>/<%= payment.source.year %></td>
+      </tr>
+    </table>
+  </div>
 </fieldset>
