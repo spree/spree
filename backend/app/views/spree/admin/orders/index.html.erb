@@ -181,12 +181,12 @@
   <table class="table" id="listing_orders" data-hook>
     <thead>
       <tr data-hook="admin_orders_index_headers">
+        <th><%= sort_link @search, :number,           I18n.t(:number, scope: 'activerecord.attributes.spree/order') %></th>
         <% if @show_only_completed %>
           <th><%= sort_link @search, :completed_at,   I18n.t(:completed_at, scope: 'activerecord.attributes.spree/order') %></th>
         <% else %>
           <th><%= sort_link @search, :created_at,     I18n.t(:created_at, scope: 'activerecord.attributes.spree/order') %></th>
         <% end %>
-        <th><%= sort_link @search, :number,           I18n.t(:number, scope: 'activerecord.attributes.spree/order') %></th>
         <th><%= sort_link @search, :considered_risky, I18n.t(:considered_risky, scope: 'activerecord.attributes.spree/order') %></th>
         <th><%= sort_link @search, :state,            I18n.t(:state, scope: 'activerecord.attributes.spree/order') %></th>
         <th><%= sort_link @search, :payment_state,    I18n.t(:payment_state, scope: 'activerecord.attributes.spree/order') %></th>
@@ -201,10 +201,10 @@
     <tbody>
     <% @orders.each do |order| %>
       <tr data-hook="admin_orders_index_rows" class="state-<%= order.state.downcase %> <%= cycle('odd', 'even') %>">
+        <td><%= link_to order.number, edit_admin_order_path(order) %></td>
         <td>
           <%= order_time(@show_only_completed ? order.completed_at : order.created_at) %>
         </td>
-        <td><%= link_to order.number, edit_admin_order_path(order) %></td>
         <td>
           <span class="badge badge-<%= order.considered_risky ? 'considered_risky' : 'considered_safe' %>">
             <%= order.considered_risky ? Spree.t("risky") : Spree.t("safe") %>

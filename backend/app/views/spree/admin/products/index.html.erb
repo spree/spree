@@ -53,10 +53,9 @@
   <table class="table" id="listing_products">
     <thead>
       <tr data-hook="admin_products_index_headers">
+          <th colspan="2"><%= sort_link @search,:name, Spree.t(:name), { default_order: "desc" }, {title: 'admin_products_listing_name_title'} %></th>
         <th><%= Spree.t(:sku) %></th>
         <th><%= Spree.t(:status) %></th>
-
-        <th colspan="2"><%= sort_link @search,:name, Spree.t(:name), { default_order: "desc" }, {title: 'admin_products_listing_name_title'} %></th>
         <th class="text-center">
           <%= sort_link @search, :master_default_price_amount, Spree.t(:master_price), {}, {title: 'admin_products_listing_price_title'} %>
         </th>
@@ -66,10 +65,14 @@
     <tbody>
       <% @collection.each do |product| %>
           <tr <%== "style='color: red;'" if product.deleted? %> id="<%= spree_dom_id product %>" data-hook="admin_products_index_rows" class="<%= cycle('odd', 'even') %>">
+            <td class="image">
+              <%= link_to edit_admin_product_path(product) do %>
+                <%= mini_image product %>
+              <% end %>
+            </td>
+            <td><%= link_to product.try(:name), edit_admin_product_path(product) %></td>
             <td class="sku"><%= product.sku rescue '' %></td>
             <td class="status"><%= available_status(product) %> </td>
-            <td class="image"><%= mini_image product %></td>
-            <td><%= link_to product.try(:name), edit_admin_product_path(product) %></td>
             <td class="text-center"><%= display_price(product) %></td>
             <td class="actions actions-3 text-right" data-hook="admin_products_index_row_actions">
               <%= link_to_edit product, no_text: true, class: 'edit' if can?(:edit, product) && !product.deleted? %>
