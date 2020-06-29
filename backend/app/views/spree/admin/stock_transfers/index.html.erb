@@ -50,6 +50,7 @@
 </div>
 
 <% if @stock_transfers.any? %>
+<div class="table-responsive">
   <table class="table" id='listing_stock_transfers' data-hook>
     <thead>
       <tr data-hook='stock_transfers_header'>
@@ -74,6 +75,7 @@
       <% end %>
     </tbody>
   </table>
+</div>
 <% else %>
   <div class="alert alert-info no-objects-found">
     <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::StockTransfer)) %>,

@@ -37,6 +37,7 @@
 <% end %>
 
 <% if @properties.any? %>
+<div class="table-responsive">
   <table class="table" id='listing_properties' data-hook>
     <thead>
       <tr data-hook="listing_properties_header">
@@ -58,6 +59,7 @@
       <% end %>
     </tbody>
   </table>
+</div>
 <% else %>
   <div class="alert alert-info no-objects-found">
     <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::Property)) %>,

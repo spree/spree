@@ -7,6 +7,7 @@
 <% end if can? :create, Spree::Zone %>
 
 <% if @zones.any? %>
+<div class="table-responsive">
   <table class="table" id='listing_zones' data-hook>
     <thead>
       <tr data-hook="zones_header">
@@ -32,6 +33,7 @@
       <% end %>
     </tbody>
   </table>
+</div>
 <% else %>
   <div class="alert alert-info no-objects-found">
     <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::Zone)) %>,

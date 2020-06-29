@@ -10,7 +10,7 @@
 <% content_for :page_actions do %>
   <%= button_link_to Spree.t(:logs), spree.admin_order_payment_log_entries_url(@order, @payment), icon: 'file.svg' %>
 <% end %>
-
+<div class="table-responsive">
 <table class="table" id='listing_log_entries'>
   <% @log_entries.each do |entry| %>
       <thead>
@@ -31,3 +31,4 @@
       </tbody>
   <% end %>
 </table>
+</div>

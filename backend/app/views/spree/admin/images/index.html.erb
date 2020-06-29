@@ -15,6 +15,7 @@
     <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::Image)) %>.
   </div>
 <% else %>
+<div class="table-responsive">
   <table class="table sortable" data-hook="images_table" data-sortable-link="<%= update_positions_admin_product_images_url(@product) %>">
     <thead>
       <tr data-hook="images_header">
@@ -56,4 +57,5 @@
       <% end %>
     </tbody>
   </table>
+</div>
 <% end %>
