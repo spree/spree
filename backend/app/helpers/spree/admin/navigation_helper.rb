@@ -51,7 +51,7 @@ module Spree
                  link_to(
                    titleized_label,
                    destination_url,
-                   class: "sidebar-submenu-item w-100 py-1 pl-3 d-block #{'text-success' if selected}"
+                   class: "sidebar-submenu-item w-100 py-2 py-md-1 pl-3 d-block #{'text-success' if selected}"
                  )
                end
 
