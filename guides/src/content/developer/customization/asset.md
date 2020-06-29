@@ -80,9 +80,6 @@ relevant all.css or all.js in the host Spree application. For example,
 `vendor/assets/javascripts/spree/backend/all.js` includes:
 
 ```js
-//= require jquery
-//= require jquery_ujs
-
 //= require spree/backend
 
 //= require_tree .
