@@ -1,39 +1,35 @@
-<!-- Contextual Buttons Modal -->
+<!-- Contextual Actions Modal -->
 <% if content_for?(:page_actions) %>
   <div class="modal fade" id="actionsModal" tabindex="-1" role="dialog" aria-labelledby="actionsModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
           <div class="modal-header">
            <h5 class="modal-title" id="exampleModalLabel"><%= Spree.t('contextual_actions') %></h5>
-           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-             <span aria-hidden="true">&times;</span>
+           <button type="button" class="close btn shadow-none" data-dismiss="modal" aria-label="Close">
+             <%= svg_icon name: "close.svg", width: '18', height: '18' %>
            </button>
          </div>
           <div class="modal-body">
-            <aside id="sidebar" class="main-right-sidebar" data-hook>
-              <%= yield :page_actions %>
-            </aside>
+            <%= yield :page_actions %>
           </div>
       </div>
     </div>
   </div>
 <% end %>
 
-<!-- Contextual Sidebar Modal -->
+<!-- Contextual Options Modal -->
 <% if content_for?(:sidebar) %>
   <div class="modal fade" id="optionsModal" tabindex="-1" role="dialog" aria-labelledby="optionsModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
           <div class="modal-header">
            <h5 class="modal-title" id="exampleModalLabel"><%= Spree.t('options') %></h5>
-           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-             <span aria-hidden="true">&times;</span>
+           <button type="button" class="close btn shadow-none" data-dismiss="modal" aria-label="Close">
+             <%= svg_icon name: "close.svg", width: '18', height: '18' %>
            </button>
          </div>
           <div class="modal-body">
-            <aside id="sidebar" class="main-right-sidebar" data-hook>
-              <%= yield :sidebar %>
-            </aside>
+            <%= yield :sidebar %>
           </div>
       </div>
     </div>

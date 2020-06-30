@@ -18,7 +18,7 @@ describe 'Product Properties', type: :feature, js: true do
       click_button 'Update'
 
       within('#sidebar') { click_link 'Properties' }
-      expect(page).to have_content('Add Product Properties')
+      expect(page).to have_content('Add Properties')
       expect(page).to have_content('SHOW PROPERTY')
       expect(page).to have_selector("input[value='Material']")
       expect(page).to have_selector("input[value='Leather']")

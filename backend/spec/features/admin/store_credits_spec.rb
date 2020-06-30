@@ -18,7 +18,7 @@ describe 'Store credits admin', type: :feature do
 
     it 'is on the store credits page' do
       click_link store_credit.user.email
-      click_link 'Store Credits'
+      within('#sidebar') { click_on 'Store Credits' }
       expect(page).to have_current_path(spree.admin_user_store_credits_path(store_credit.user))
 
       store_credit_table = page.find('table', match: :first)
@@ -35,7 +35,7 @@ describe 'Store credits admin', type: :feature do
       visit spree.admin_path
       click_link 'Users'
       click_link store_credit.user.email
-      click_link 'Store Credits'
+      within('#sidebar') { click_on 'Store Credits' }
       allow_any_instance_of(Spree::Admin::StoreCreditsController).to receive(:try_spree_current_user).and_return(admin_user)
     end
 
@@ -62,7 +62,7 @@ describe 'Store credits admin', type: :feature do
         within find('#contentHeader') do
           click_link 'Add Store Credit'
         end
-        
+
         page.fill_in 'store_credit_amount', with: '100.00'
         select 'EUR', from: 'store_credit_currency'
         select 'Exchange', from: 'store_credit_category_id'
@@ -86,7 +86,7 @@ describe 'Store credits admin', type: :feature do
       visit spree.admin_path
       click_link 'Users'
       click_link store_credit.user.email
-      click_link 'Store Credits'
+      within('#sidebar') { click_on 'Store Credits' }
       allow_any_instance_of(Spree::Admin::StoreCreditsController).to receive(:try_spree_current_user).and_return(admin_user)
     end
 
@@ -107,7 +107,7 @@ describe 'Store credits admin', type: :feature do
       visit spree.admin_path
       click_link 'Users'
       click_link store_credit.user.email
-      click_link 'Store Credits'
+      within('#sidebar') { click_on 'Store Credits' }
       allow_any_instance_of(Spree::Admin::StoreCreditsController).to receive(:try_spree_current_user).and_return(admin_user)
     end
 
@@ -126,7 +126,7 @@ describe 'Store credits admin', type: :feature do
       click_link store_credit.user.email
       store_credit.user.destroy
       allow(Spree.user_class).to receive(:find_by).and_return(nil)
-      click_link 'Store Credits'
+      within('#sidebar') { click_on 'Store Credits' }
       allow_any_instance_of(Spree::Admin::StoreCreditsController).to receive(:try_spree_current_user).and_return(admin_user)
     end
 

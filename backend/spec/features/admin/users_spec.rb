@@ -157,7 +157,7 @@ describe 'Users', type: :feature do
     end
 
     it 'can edit user shipping address' do
-      click_link 'Addresses'
+      within('#sidebar') { click_link 'Addresses' }
 
       within('#admin_user_edit_addresses') do
         fill_in 'user_ship_address_attributes_address1', with: '1313 Mockingbird Ln'
@@ -169,7 +169,7 @@ describe 'Users', type: :feature do
     end
 
     it 'can edit user billing address' do
-      click_link 'Addresses'
+      within('#sidebar') { click_link 'Addresses' }
 
       within('#admin_user_edit_addresses') do
         fill_in 'user_bill_address_attributes_address1', with: '1313 Mockingbird Ln'
@@ -181,8 +181,8 @@ describe 'Users', type: :feature do
     end
 
     it 'can set shipping address to be the same as billing address' do
-      click_link 'Addresses'
-
+      within('#sidebar') { click_link 'Addresses' }
+      
       within('#admin_user_edit_addresses') do
         find('#user_use_billing').click
         click_button 'Update'

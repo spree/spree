@@ -17,7 +17,7 @@ describe 'New Order', type: :feature do
   end
 
   it 'does check if you have a billing address before letting you add shipments' do
-    click_on 'Shipments'
+    within('#sidebar') { click_on 'Shipments' }
     expect(page).to have_content 'Please fill in customer info'
     expect(page).to have_current_path(spree.edit_admin_order_customer_path(Spree::Order.last))
   end
@@ -40,8 +40,8 @@ describe 'New Order', type: :feature do
 
     expect(page).to have_current_path(spree.admin_order_payments_path(Spree::Order.last))
     click_icon 'capture'
+    within('#sidebar') { click_on 'Shipments' }
 
-    click_on 'Shipments'
     click_on 'Ship'
 
     expect(page).to have_content('shipped')
@@ -67,7 +67,7 @@ describe 'New Order', type: :feature do
       fill_in_address
       click_on 'Update'
 
-      click_on 'Shipments'
+      within('#sidebar') { click_on 'Shipments' }
 
       within('.stock-contents') do
         expect(page).to have_content(product.name)
@@ -133,7 +133,7 @@ describe 'New Order', type: :feature do
       fill_in_address
       click_on 'Update'
 
-      click_on 'Shipments'
+      within('#sidebar') { click_on 'Shipments' }
       select2 product.name, from: Spree.t(:name_or_sku), search: true
       click_icon :add
       expect(page).not_to have_content('Your order is empty')

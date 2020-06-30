@@ -17,7 +17,7 @@ describe 'Payments', type: :feature, js: true do
 
     before do
       visit spree.edit_admin_order_path(order)
-      click_link 'Payments'
+      within('#sidebar') { click_on 'Payments' }
     end
 
     # Regression tests for #1453
@@ -93,7 +93,7 @@ describe 'Payments', type: :feature, js: true do
       within find('#contentHeader') do
         click_on 'New Payment'
       end
-      
+
       expect(page).to have_content('You cannot create a payment for an order without any payment methods defined.')
       expect(page).to have_content('Please define some payment methods first.')
     end
