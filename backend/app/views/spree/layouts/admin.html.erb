@@ -77,17 +77,16 @@
               <% end %>
             </div>
 
+            <%#-------------------------------------------------%>
+            <%# Modals for content on smaller screen sizes      %>
+            <%#-------------------------------------------------%>
+            <%= render partial: 'spree/admin/shared/modals' %>
+
           </div>
         </main>
       </div>
     </div>
-    <% if content_for?(:sidebar) || content_for?(:page_actions) %>
-      <button id="contextual-menu-toggle"
-              type="button"
-              class="btn btn-primary btn-circle d-lg-none">
-              <%= svg_icon name: "chevron-down.svg", width: '22', height: '22' %>
-      </button>
-    <% end %>
+
     <%#-------------------------------------------------%>
     <%# Insert footer scripts here                      %>
     <%#-------------------------------------------------%>
