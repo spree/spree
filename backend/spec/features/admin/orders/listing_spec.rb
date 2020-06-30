@@ -35,7 +35,7 @@ describe 'Orders Listing', type: :feature do
       end
 
       within_row(2) do
-        expect(column_text(2)).to eq 'R200'
+        expect(column_text(1)).to eq 'R200'
         expect(find('td:nth-child(3)')).to have_css '.badge-considered_safe'
       end
     end
