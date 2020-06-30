@@ -36,7 +36,7 @@ shared_context 'checkout address book' do
 
   def complete_checkout(address)
     click_button Spree.t(:save_and_continue)
-    find('label > span', text: 'UPS Ground').click
+    first('.spree-radio-label').click
     click_button Spree.t(:save_and_continue)
     fill_in_credit_card_info(address)
     click_button Spree.t(:save_and_continue)

@@ -38,7 +38,6 @@ module Spree
     end
 
     def address_state(form, country, address_id = 'b')
-      country ||= Spree::Country.find(Spree::Config[:default_country_id])
       have_states = country.states.any?
       state_elements = [
         form.collection_select(:state_id, country.states.order(:name),

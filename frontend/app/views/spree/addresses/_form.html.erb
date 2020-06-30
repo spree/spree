@@ -5,7 +5,8 @@
     <div class="form-group checkout-content-inner-field" id="<%= "#{address_id}country" %>">
       <div id="<%= "#{address_id}country-selection" %>" class="d-block position-relative has-float-label">
         <%= address_form.collection_select :country_id, available_countries, :id, :name,
-                                           { prompt: Spree.t(:country).upcase },
+                                           { prompt: Spree.t(:country).upcase,
+                                             selected: current_store.default_country_id },
                                            { class: 'required form-control spree-flat-select',
                                              aria: { label: Spree.t(:country) } } %>
         <%= image_tag 'arrow.svg', class: 'position-absolute spree-flat-select-arrow' %>
