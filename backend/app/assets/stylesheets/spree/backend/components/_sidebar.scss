@@ -69,44 +69,14 @@ ul.nav-sidebar {
   }
 }
 
-#contextualSideMenu {
-  max-height: 85vh;
-  overflow-x: scroll;
-  background-color: white;
-  position: fixed;
-  left:0;
-  top: -100%;
-  z-index: 1041;
-  transition: .3s ease-in-out;
-}
-
-#contextual-menu-toggle {
-  & svg {
-    transform:rotate(0deg);
-    transition: .3s ease-in-out;
-  }
-}
-
-body.contextualSideMenu-open #contextualSideMenu {
-    top: 0;
-    transition: .3s ease-in-out;
-}
-
-body.contextualSideMenu-open #contextual-menu-toggle {
-  svg {
-      transform:rotate(180deg);
-      transition: .3s ease-in-out;
-  }
-}
-
 .contextual-title {
-  font-size:1rem;
+  font-size: 1.1rem;
 }
 
 
 @include media-breakpoint-up(sm) {
   .contextual-title {
-    font-size: 1.25rem;
+    font-size: 1.2rem;
   }
 
   aside#main-sidebar {
@@ -116,7 +86,7 @@ body.contextualSideMenu-open #contextual-menu-toggle {
 
 @include media-breakpoint-up(md) {
   .contextual-title {
-    font-size: 1.35rem;
+    font-size: 1.3rem;
   }
   aside#main-sidebar {
     width: 30%;
@@ -125,12 +95,6 @@ body.contextualSideMenu-open #contextual-menu-toggle {
 
 @include media-breakpoint-up(lg) {
 
-  #contextualSideMenu{
-    position: relative;
-    border: none;
-    height: auto;
-    z-index: 1000;
-  }
     aside#main-sidebar {
       left: 0;
       z-index: 999;
@@ -146,6 +110,6 @@ body.contextualSideMenu-open #contextual-menu-toggle {
   }
 
   .contextual-title {
-    font-size:1.5rem;
+    font-size:1.4rem;
   }
 }

@@ -701,6 +701,7 @@ en:
     could_not_create_customer_return: Could not create customer return
     could_not_create_stock_movement: There was a problem saving this stock movement. Please try again.
     count_on_hand: Count On Hand
+    contextual_actions: Actions
     countries: Countries
     country: Country
     country_based: Country Based

@@ -46,20 +46,6 @@ jQuery(function ($) {
   sidebarOpen.click(openMenu)
   sidebarClose.click(closeAllMenus)
 
-  // Contextual Sidebar Menu
-  var contextualSidebarMenuToggle = $('#contextual-menu-toggle')
-
-  function toggleContextualMenu() {
-    if (document.body.classList.contains('contextualSideMenu-open')) {
-      closeAllMenus()
-    } else {
-      closeAllMenus()
-      body.addClass('contextualSideMenu-open modal-open')
-      modalBackdrop.addClass('show')
-    }
-  }
-  contextualSidebarMenuToggle.click(toggleContextualMenu)
-
   // TODO: remove this js temp behaviour and fix this decent
   // Temp quick search
   // When there was a search term, copy it

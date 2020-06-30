@@ -10,7 +10,7 @@
 
 .btn {
   text-align: center;
-  margin:2.5px;
+  margin:2px;
 
   .ship {
     color: #fff;
@@ -26,10 +26,6 @@
   background-color: $green;
 }
 
-.btn-circle {
-  width: 50px;
-  height: 50px;
-  padding: 14px 10px;
-  border-radius: 25px;
-  text-align: center;
+.btn-group > .btn:not(:first-child), .btn-group > .btn-group:not(:first-child) {
+  margin-left: -3px;
 }

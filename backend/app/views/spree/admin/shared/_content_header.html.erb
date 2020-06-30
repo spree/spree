@@ -12,12 +12,9 @@
         <% end %>
 
         <% if content_for?(:page_actions) %>
-          <div class="page-actions pl-0 pr-0 d-none d-lg-flex" data-hook="toolbar">
-              <%= yield :page_actions %>
-          </div>
-        <% end %>
-
-        <% if content_for?(:page_actions) %>
+        <div class="page-actions pl-0 pr-0 d-none d-lg-flex" data-hook="toolbar">
+            <%= yield :page_actions %>
+        </div>
         <div class="d-flex d-lg-none justify-content-end m-0 p-0">
           <div class="btn-group" role="group" aria-label="Basic example">
             <% if content_for?(:page_actions) %>
@@ -27,7 +24,7 @@
                     class="btn btn-outline-secondary">
                     <%= svg_icon name: "items.svg", width: '16', height: '16' %>
                     <span class="d-none d-sm-inline">
-                      <%= Spree.t('action') %>
+                      <%= Spree.t('contextual_actions') %>
                     </span>
             </button>
             <% end %>
@@ -36,8 +33,7 @@
                     data-target="#optionsModal"
                     data-toggle="modal"
                     type="button"
-                    name="button"
-                    style="margin-left:-4px;">
+                    name="button">
                     <span class="d-none d-sm-inline"><%= Spree.t('options') %> </span>
                     <%= svg_icon name: "list.svg", width: '16', height: '16' %>
             </button>

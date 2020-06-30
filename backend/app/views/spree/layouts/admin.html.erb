@@ -70,8 +70,8 @@
               <%#-------------------------------------------------%>
               <%# Inner aside                                     %>
               <%#-------------------------------------------------%>
-              <% if content_for?(:sidebar) || content_for?(:page_actions) %>
-                <div class="col-12 col-lg-3 m-0 py-4 py-lg-0" id="contextualSideMenu">
+              <% if content_for?(:sidebar) %>
+                <div class="d-none d-lg-block col-lg-3 m-0 py-0">
                   <%= render partial: 'spree/admin/shared/sidebar' %>
                 </div>
               <% end %>
