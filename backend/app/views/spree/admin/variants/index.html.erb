@@ -23,7 +23,7 @@
           <% end %>
         </td>
         <td><%= variant.options_text %></td>
-        <td><%= variant.display_price.to_html %></td>
+        <td><%= display_price(variant) %></td>
         <td><%= variant.sku %></td>
         <td class="actions actions-2 text-right">
           <%= link_to_edit(variant, no_text: true) if can?(:edit, variant) && !variant.deleted? %>
