@@ -1,6 +1,6 @@
 
 <% if content_for?(:page_actions) %>
-  <div class="page-actions d-lg-none col-12 py-4 px-0 <% if content_for?(:sidebar) %>pb-3<% end %> text-center" data-hook="toolbar">
+  <div class="page-actions d-lg-none col-12 px-0 <% if content_for?(:sidebar) %>pb-3<% end %> text-center" data-hook="toolbar">
     <%= yield :page_actions %>
   </div>
 <% end %>
