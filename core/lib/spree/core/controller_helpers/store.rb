@@ -9,6 +9,7 @@ module Spree
           helper_method :current_currency
           helper_method :current_store
           helper_method :current_price_options
+          before_action :set_user_current_store, if: -> { defined?(Spree::Auth) }
         end
 
         def current_currency
@@ -26,7 +27,14 @@ module Spree
         end
 
         def current_store
-          @current_store ||= Spree::Store.current(request.env['SERVER_NAME'])
+          @current_store ||= Spree::Store.current(request.host_with_port)
+        end
+
+        def set_user_current_store
+          return if try_spree_current_user.nil?
+
+          try_spree_current_user.current_store = current_store
+          try_spree_current_user.save
         end
 
         # Return a Hash of things that influence the prices displayed in your shop.
