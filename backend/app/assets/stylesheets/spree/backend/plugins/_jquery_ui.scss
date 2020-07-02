@@ -33,14 +33,26 @@
 
     &.ui-icon-circle-triangle-w {
       color: transparent;
-      // @extend .icon ;
-      background-image: url(asset-path("backend-chevron-left.svg")) !important;
+      &:before {
+        content: "";
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        background-image: url(asset-path("backend-chevron-left.svg")) !important;
+        background-repeat: no-repeat;
+      }
     }
 
     &.ui-icon-circle-triangle-e {
       color: transparent;
-      // @extend .icon ;
-      background-image: url(asset-path("backend-chevron-right.svg")) !important;
+      &:before {
+        content: "";
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        background-image: url(asset-path("backend-chevron-right.svg")) !important;
+        background-repeat: no-repeat;
+      }
     }
   }
 
