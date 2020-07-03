@@ -20,3 +20,12 @@
   }
 
 }
+
+input#image_attachment input:matches([type="button"],
+                                     [type="submit"],
+                                     [type="reset"]),
+                                     input[type="file"]::-webkit-file-upload-button,
+                                     button {
+  @extend .btn ;
+  @extend .btn-outline-secondary ;
+}
