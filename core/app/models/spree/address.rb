@@ -81,7 +81,7 @@ module Spree
     end
 
     def clone
-      self.class.new(value_attributes)
+      self.class.new(clone_value_attributes)
     end
 
     def ==(other)
@@ -92,6 +92,10 @@ module Spree
 
     def value_attributes
       attributes.except(*EXCLUDED_KEYS_FOR_COMPARISION)
+    end
+
+    def clone_value_attributes
+      attributes.except(*(Spree::Address::EXCLUDED_KEYS_FOR_COMPARISION - ['user_id']))
     end
 
     def empty?
