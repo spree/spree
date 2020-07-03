@@ -65,7 +65,9 @@ ul.nav-sidebar {
     }
   }
 }
-
+#sidebar a svg {
+  margin-bottom: 3px;
+}
 #contextualSideMenu {
   max-height: 85vh;
   overflow-x: scroll;
