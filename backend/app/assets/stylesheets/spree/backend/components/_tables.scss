@@ -57,6 +57,18 @@ table.table {
   display: none;
   margin: -.5em 0 .9em;
 
+  .js-filter {
+    .icon {
+      cursor: pointer;
+    }
+  }
+
+  .badge-secondary {
+    .icon {
+      filter: invert(1);
+    }
+  }
+
   .badge {
     display: inline-block;
     margin-right: .5em;
