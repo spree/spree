@@ -83,19 +83,19 @@ ul.nav-sidebar {
 #contextual-menu-toggle {
   & svg {
     transform:rotate(0deg);
-    transition: .3s ease-in-out;
+    transition: transform .3s ease-in-out;
   }
 }
 
 body.contextualSideMenu-open #contextualSideMenu {
-    top: 0;
-    transition: .3s ease-in-out;
+  top: 0;
+  transition: .3s ease-in-out;
 }
 
 body.contextualSideMenu-open #contextual-menu-toggle {
   svg {
-      transform:rotate(180deg);
-      transition: .3s ease-in-out;
+    transform:rotate(180deg);
+    transition: transform .3s ease-in-out;
   }
 }
 
