@@ -8,7 +8,11 @@ Hopefully, this will evolve into a propper class.
 
 jQuery(function ($) {
   // Add some tips
-  $('.with-tip').tooltip()
+  $('.with-tip').each(function() {
+    $(this).tooltip({
+      container: $(this)
+    })
+  })
 
   $('.js-show-index-filters').click(function () {
     $('.filter-well').slideToggle()
