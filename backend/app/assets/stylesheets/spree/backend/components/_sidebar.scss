@@ -129,11 +129,11 @@ body.contextualSideMenu-open #contextual-menu-toggle {
     z-index: 999;
     margin-top: 50px;
     height: calc(100% - 50px);
-    transition: 0;
+    transition: none;
     body.sidebar-open {
       aside#main-sidebar {
         left:0;
-        transition: 0;
+        transition: none;
       }
     }
   }
