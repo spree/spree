@@ -2,7 +2,7 @@
   <div class="form-group date-range-filter">
     <%= label_tag nil, Spree.t(:date_range) %>
     <div class="date-range-filter row">
-      <div class="col-6 pr-1 pr-md-3">
+      <div class="col-12 col-md-6 mb-3 mb-md-0">
         <div class="input-group">
           <%= s.text_field :completed_at_gt, class: 'datepicker datepicker-from form-control', value: datepicker_field_value(params[:q][:completed_at_gt]) %>
           <div class="input-group-append">
@@ -12,7 +12,7 @@
           </div>
         </div>
       </div>
-      <div class="col-6 pl-1 pl-md-3">
+      <div class="col-12 col-md-6 mt-3 mt-md-0">
         <div class="input-group">
         <%= s.text_field :completed_at_lt, class: 'datepicker datepicker-to form-control', value: datepicker_field_value(params[:q][:completed_at_lt]) %>
         <div class="input-group-append">
