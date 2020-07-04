@@ -65,7 +65,14 @@
         <%= f.field_container :available_on, class: ['form-group'] do %>
           <%= f.label :available_on, Spree.t(:available_on) %>
           <%= f.error_message_on :available_on %>
+          <div class="input-group">
           <%= f.text_field :available_on, value: datepicker_field_value(@product.available_on), class: 'datepicker form-control' %>
+          <div class="input-group-append">
+            <span class="input-group-text">
+              <%= svg_icon name: "calendar.svg", width: '18', height: '18' %>
+            </span>
+          </div>
+        </div>
         <% end %>
       </div>
 
@@ -73,7 +80,14 @@
         <%= f.field_container :discontinue_on, class: ['form-group'] do %>
           <%= f.label :discontinue_on, Spree.t(:discontinue_on) %>
           <%= f.error_message_on :discontinue_on %>
+          <div class="input-group">
           <%= f.text_field :discontinue_on, value: datepicker_field_value(@product.discontinue_on), class: 'datepicker form-control' %>
+          <div class="input-group-append">
+            <span class="input-group-text">
+              <%= svg_icon name: "calendar.svg", width: '18', height: '18' %>
+            </span>
+          </div>
+        </div>
         <% end %>
       </div>
 

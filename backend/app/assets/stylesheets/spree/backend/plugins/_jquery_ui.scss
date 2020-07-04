@@ -11,6 +11,7 @@
   border-color: $input-border-color;
   width: auto;
   padding: 20px;
+  z-index: 1041 !important;
 
   &.ui-corner-all {
     border-radius: $border-radius;
