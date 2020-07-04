@@ -65,9 +65,7 @@ ul.nav-sidebar {
     }
   }
 }
-#sidebar a svg {
-  margin-bottom: 3px;
-}
+
 #contextualSideMenu {
   max-height: 85vh;
   overflow-x: scroll;
@@ -96,6 +94,10 @@ body.contextualSideMenu-open #contextual-menu-toggle {
     transform:rotate(180deg);
     transition: transform .3s ease-in-out;
   }
+}
+
+#sidebar a svg {
+  margin-bottom: 3px;
 }
 
 .contextual-title {
