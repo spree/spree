@@ -100,12 +100,9 @@ body.contextualSideMenu-open #contextual-menu-toggle {
   }
 }
 
-
-
 .contextual-title {
   font-size:1.25rem;
 }
-
 
 @include media-breakpoint-up(sm) {
   aside#main-sidebar {
