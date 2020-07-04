@@ -84,6 +84,10 @@ ul.nav-sidebar {
   }
 }
 
+#sidebar a svg {
+  margin-bottom: 3px;
+}
+
 body.contextualSideMenu-open #contextualSideMenu {
   top: 0;
   transition: .3s ease-in-out;
@@ -96,9 +100,7 @@ body.contextualSideMenu-open #contextual-menu-toggle {
   }
 }
 
-#sidebar a svg {
-  margin-bottom: 3px;
-}
+
 
 .contextual-title {
   font-size:1.25rem;
