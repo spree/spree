@@ -53,5 +53,11 @@
 }
 
 input.flatpickr-input {
+  /* Remove First */
+-webkit-appearance: none;
+-moz-appearance: none;
+appearance: none;
+
   background-color: white !important;
+
 }

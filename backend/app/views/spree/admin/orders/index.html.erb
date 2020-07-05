@@ -25,7 +25,9 @@
                   <div class="input-group">
                     <input type="text" placeholder="Select a date range" class="form-control shadow-none text-center" data-input>
                     <div class="input-group-append">
-                      <button class="btn btn-outline-secondary" type="button" data-clear> <span class="d-none d-md-inline"><%= Spree.t(:clear) %></span>  <%= svg_icon name: "close.svg", width: '16', height: '16' %></button>
+                      <span class="input-group-text" data-clear>
+                          <%= svg_icon name: "close.svg", width: '16', height: '16' %>
+                      </span>
                     </div>
                   </div>
                 </div>
