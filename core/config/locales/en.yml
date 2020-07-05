@@ -1457,6 +1457,8 @@ en:
     security_settings: Security Settings
     select: Select
     select_from_prototype: Select From Prototype
+    select_a_date: Select a date
+    select_a_date_range: Select a date range
     select_a_return_authorization_reason: Select a reason for the return authorization
     select_a_stock_location: Select a stock location
     select_a_store_credit_reason: Select a reason for the store credit

@@ -2,12 +2,19 @@
   <div class="col">
     <div class="datepickrRange">
       <div class="input-group">
-        <input type="text" placeholder="Select a date range" class="form-control shadow-none text-center" data-input>
-        <div class="input-group-append">
-          <span class="input-group-text" data-clear>
-              <%= svg_icon name: "close.svg", width: '16', height: '16' %>
+        <input type="text" placeholder="<%= Spree.t(:select_a_date_range) %>" class="form-control shadow-none text-center" data-input>
+
+        <div class="input-group-append append_over">
+          <span class="input-group-text force-round" data-clear>
+            <%= svg_icon name: "close.svg", width: '16', height: '16' %>
           </span>
         </div>
+        <div class="input-group-append append_under">
+          <span class="input-group-text" data-clear>
+            <%= svg_icon name: "calendar.svg", width: '16', height: '16' %>
+          </span>
+        </div>
+
       </div>
     </div>
   </div>

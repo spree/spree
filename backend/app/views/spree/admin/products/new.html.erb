@@ -45,12 +45,19 @@
           <%= f.error_message_on :available_on %>
 
           <div class="input-group datepickr">
-            <%= f.text_field :available_on, value: datepicker_field_value(@product.available_on), class: 'form-control shadow-none', 'data-input':'' %>
-            <div class="input-group-append">
-              <span class="input-group-text" data-clear>
+            <%= f.text_field :available_on, value: datepicker_field_value(@product.available_on), placeholder: Spree.t(:select_a_date), class: 'form-control shadow-none', 'data-input':'' %>
+
+            <div class="input-group-append append_over">
+              <span class="input-group-text force-round" data-clear>
                 <%= svg_icon name: "close.svg", width: '16', height: '16' %>
               </span>
             </div>
+            <div class="input-group-append append_under">
+              <span class="input-group-text" data-clear>
+                <%= svg_icon name: "calendar.svg", width: '16', height: '16' %>
+              </span>
+            </div>
+            
           </div>
         <% end %>
       </div>

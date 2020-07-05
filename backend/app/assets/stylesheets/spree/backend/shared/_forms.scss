@@ -24,3 +24,36 @@ span.or {
     }
   }
 }
+
+
+// Adaptive icon from calendar to close.
+@mixin swith-appended-icon {
+  &:placeholder-shown:not(:focus) + * {
+      @content;
+  }
+}
+
+.datepickr,
+.datepickrRange {
+  input, textarea {
+    @include swith-appended-icon  {
+      opacity: 0;
+    }
+  }
+}
+
+.input-group >
+.input-group-append:not(:last-child) >
+.force-round {
+  z-index: 5;
+  border-top-right-radius: 2px !important;
+  border-bottom-right-radius: 2px !important;
+}
+
+.append_under {
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 0;
+  height: 100%;
+}
