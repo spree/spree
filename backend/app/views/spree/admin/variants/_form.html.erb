@@ -43,7 +43,14 @@
 
           <%= f.label :discontinue_on, Spree.t(:discontinue_on) %>
           <%= f.error_message_on :discontinue_on %>
-          <%= f.text_field :discontinue_on, value: datepicker_field_value(@variant.discontinue_on), class: 'datepickr form-control' %>
+          <div class="input-group datepickr">
+            <%= f.text_field :discontinue_on, value: datepicker_field_value(@variant.discontinue_on), class: 'form-control shadow-none', 'data-input':'' %>
+            <div class="input-group-append">
+              <span class="input-group-text" data-clear>
+                  <%= svg_icon name: "close.svg", width: '16', height: '16' %>
+              </span>
+            </div>
+          </div>
       </div>
     </div>
   </div>

@@ -213,7 +213,7 @@ module Spree
         if html_options[:method] &&
             !html_options[:method].to_s.casecmp('get').zero? &&
             !html_options[:remote]
-          form_tag(url, method: html_options.delete(:method), class: 'd-inline') do
+          form_tag(url, method: html_options.delete(:method)) do
             button(text, html_options.delete(:icon), nil, html_options)
           end
         else

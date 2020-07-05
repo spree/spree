@@ -181,6 +181,8 @@ $.fn.radioControlsVisibilityOfElement = function (dependentElementSelector) {
 document.addEventListener("DOMContentLoaded", function(){
 
   flatpickr('.datepickr',{
+    wrap: true,
+    disableMobile: true,
     locale: Spree.translations.flatpickr_local,
     dateFormat: Spree.translations.date_picker,
     monthSelectorType: 'static',
