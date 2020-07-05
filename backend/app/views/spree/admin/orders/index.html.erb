@@ -19,10 +19,21 @@
           <div class="form-group">
             <%= label_tag :q_created_at_gt, Spree.t(:date_range) %>
             <div class="row pb-0">
-              <div class="col-12 col-lg-6">
-                <div class="input-group">
+              <div class="col-12">
+
+                <div class="datepickrRange">
+                  <div class="input-group">
+                    <input type="text" placeholder="Select a date range" class="form-control shadow-none text-center" data-input>
+                    <div class="input-group-append">
+                      <button class="btn btn-outline-secondary" type="button" data-clear> <span class="d-none d-md-inline"><%= Spree.t(:clear) %></span>  <%= svg_icon name: "close.svg", width: '16', height: '16' %></button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="input-group d-none">
                   <%= f.text_field :created_at_gt,
-                    class: 'datepicker datepicker-from form-control js-filterable',
+                    id:'ID_START',
+                    class: 'form-control js-filterable',
                       value: params[:q][:created_at_gt],
                       placeholder: Spree.t(:start) %>
                   <div class="input-group-append">
@@ -33,10 +44,11 @@
                 </div>
 
               </div>
-              <div class="col-12 col-lg-6">
+              <div class="col-12 col-lg-6 d-none">
                 <div class="input-group">
                   <%= f.text_field :created_at_lt,
-                    class: 'datepicker datepicker-to form-control js-filterable',
+                    id:'ID_END',
+                    class: 'form-control js-filterable',
                       value: params[:q][:created_at_lt],
                       placeholder: Spree.t(:stop) %>
                   <div class="input-group-append">

@@ -757,7 +757,9 @@ en:
     date_picker:
       first_day: 0
       format: ! '%Y/%m/%d'
-      js_format: yy/mm/dd
+      js_format: Y-m-d
+    flatpickr_local: en
+    flatpickr_local_file: default # See file names -> https://github.com/flatpickr/flatpickr/tree/master/src/l10n
     date_range: Date Range
     default: Default
     default_country_cannot_be_deleted: Default country cannot be deleted

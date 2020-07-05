@@ -177,31 +177,33 @@ $.fn.radioControlsVisibilityOfElement = function (dependentElementSelector) {
     if (this.checked) { this.click() }
   })
 }
-// eslint-disable-next-line camelcase
-function handle_date_picker_fields () {
-  $('.datepicker').datepicker({
+
+document.addEventListener("DOMContentLoaded", function(){
+
+  flatpickr('.datepickr',{
+    locale: Spree.translations.flatpickr_local,
     dateFormat: Spree.translations.date_picker,
-    dayNames: Spree.translations.abbr_day_names,
-    dayNamesMin: Spree.translations.abbr_day_names,
-    firstDay: Spree.translations.first_day,
-    monthNames: Spree.translations.month_names,
-    prevText: Spree.translations.previous,
-    nextText: Spree.translations.next,
-    showOn: 'focus',
-    showAnim: ''
+    monthSelectorType: 'static',
+    ariaDateFormat: Spree.translations.date_picker,
   })
 
-  // Correctly display range dates
-  $('.date-range-filter .datepicker-from').datepicker('option', 'onSelect', function (selectedDate) {
-    $('.date-range-filter .datepicker-to').datepicker('option', 'minDate', selectedDate)
+  flatpickr('.datepickrRange', {
+    mode:'range',
+    wrap: true,
+    dateFormat: Spree.translations.date_picker,
+    monthSelectorType: 'static',
+		ariaDateFormat: Spree.translations.date_picker,
+		onChange:function(selectedDates){
+			var _this=this;
+			var dateArr=selectedDates.map(function(date){return _this.formatDate(date,Spree.translations.date_picker);});
+			$('#ID_START').val(dateArr[0]);
+			$('#ID_END').val(dateArr[1]);
+		},
   })
-  $('.date-range-filter .datepicker-to').datepicker('option', 'onSelect', function (selectedDate) {
-    $('.date-range-filter .datepicker-from').datepicker('option', 'maxDate', selectedDate)
-  })
-}
+})
+
 
 $(document).ready(function() {
-  handle_date_picker_fields()
   $('.observe_field').on('change', function() {
     target = $(this).data('update')
     $(target).hide()

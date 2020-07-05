@@ -10,7 +10,6 @@
 
 .btn {
   text-align: center;
-  margin:2.5px;
 
   .ship {
     color: #fff;
@@ -18,8 +17,8 @@
   svg {
     margin-bottom: 3px;
   }
-
 }
+
 .custom-control-input:checked ~ .custom-control-label::before {
   color: $white;
   border-color: $green;
@@ -32,4 +31,27 @@
   padding: 14px 10px;
   border-radius: 25px;
   text-align: center;
+}
+
+.datepickrRange {
+  .form-control {
+    background: white;
+  }
+  .btn-outline-secondary {
+    background-color: white;
+    border-color:$input-border-color;
+    &:hover {
+      border-color: $secondary;
+      background-color: $secondary;
+    }
+  }
+}
+
+.actions .btn,
+.page-actions .btn {
+  margin: 2px;
+}
+
+input.flatpickr-input {
+  background-color: white !important;
 }

@@ -32,6 +32,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'carmen', '>= 1.0', '< 1.2'
   s.add_dependency 'cancancan', '~> 3.0'
   s.add_dependency 'ffaker', '~> 2.9'
+  s.add_dependency 'flatpickr', '~> 4.6.0'
   s.add_dependency 'friendly_id', '>= 5.2.1', '< 5.4.0'
   s.add_dependency 'highline', '~> 2.0.0' # Necessary for the install generator
   s.add_dependency 'kaminari', '~> 1.2.1'

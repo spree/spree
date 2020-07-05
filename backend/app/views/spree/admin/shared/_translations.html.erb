@@ -11,6 +11,7 @@
     currency_separator:       I18n.t('number.currency.format.separator'),
     cut:                      Spree.t(:cut),
     date_picker:              Spree.t(:js_format, scope: 'date_picker', default: 'yy/mm/dd'),
+    flatpickr_local:          Spree.t(:flatpickr_local, default: 'en'),
     destroy:                  Spree.t(:destroy, scope: :actions),
     edit:                     Spree.t(:edit,    scope: :actions),
     first_day:                Spree.t(:first_day, scope: 'date_picker', default: 0).to_i,
@@ -46,4 +47,5 @@
 
 <% if I18n.locale != :en %>
   <%= javascript_include_tag "select2_locale_#{I18n.locale}" %>
+  <%= javascript_include_tag "flatpickr/l10n/#{Spree.t(:flatpickr_local_file)}" %>
 <% end %>

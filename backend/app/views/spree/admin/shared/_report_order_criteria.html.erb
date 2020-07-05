@@ -1,17 +1,30 @@
-<%= search_form_for @search, url: spree.sales_total_admin_reports_path  do |s| %>
-  <div class="form-group date-range-filter">
-    <%= label_tag nil, Spree.t(:date_range) %>
-    <div class="date-range-filter row">
-      <div class="col-md-6">
-        <%= s.text_field :completed_at_gt, class: 'datepicker datepicker-from form-control', value: datepicker_field_value(params[:q][:completed_at_gt]) %>
+<div class="row">
+  <div class="col">
+    <div class="datepickrRange">
+      <div class="input-group">
+        <input type="text" placeholder="Select a date range" class="form-control shadow-none text-center" data-input>
+        <div class="input-group-append">
+          <button class="btn btn-outline-secondary" type="button" data-clear> <span class="d-none d-md-inline"><%= Spree.t(:clear) %></span>  <%= svg_icon name: "close.svg", width: '16', height: '16' %></button>
+        </div>
       </div>
-      <div class="col-md-6">
-        <%= s.text_field :completed_at_lt, class: 'datepicker datepicker-to form-control', value: datepicker_field_value(params[:q][:completed_at_lt]) %>
-    </div>
     </div>
   </div>
+</div>
 
-  <div class="form-actions">
-    <%= button Spree.t(:search), 'search.svg' %>
+<%= search_form_for @search, url: spree.sales_total_admin_reports_path  do |s| %>
+<div class="form-group date-range-filter d-none">
+  <%= label_tag nil, Spree.t(:date_range) %>
+  <div class="date-range-filter row">
+    <div class="col-md-6">
+      <%= s.text_field :completed_at_gt, id:'ID_START', class: 'form-control', value: datepicker_field_value(params[:q][:completed_at_gt]) %>
+    </div>
+    <div class="col-md-6">
+      <%= s.text_field :completed_at_lt, id:'ID_END', class: 'form-control', value: datepicker_field_value(params[:q][:completed_at_lt]) %>
+    </div>
   </div>
+</div>
+
+<div class="form-actions">
+  <%= button Spree.t(:search), 'search.svg' %>
+</div>
 <% end %>

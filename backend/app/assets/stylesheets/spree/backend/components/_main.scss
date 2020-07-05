@@ -27,3 +27,21 @@ body.modal-open #multi-backdrop {
 .no-wrap {
   white-space: nowrap;
 }
+
+.card-body {
+  padding: 0.75rem;
+}
+
+@include media-breakpoint-up(sm) {
+  .card-body {
+    padding: 1.25rem;
+  }
+}
+
+@include media-breakpoint-up(md) {
+
+}
+
+@include media-breakpoint-up(lg) {
+
+}
