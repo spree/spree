@@ -189,7 +189,7 @@ document.addEventListener('DOMContentLoaded', function() {
     dateFormat: Spree.translations.date_picker
   })
 
-  dateTo = flatpickr('.datepickrTo',  {
+  dateTo = flatpickr('.datepickrTo', {
     wrap: true,
     disableMobile: true,
     dateFormat: Spree.translations.date_picker,
@@ -197,21 +197,20 @@ document.addEventListener('DOMContentLoaded', function() {
     ariaDateFormat: Spree.translations.date_picker
   })
 
-  dateFrom = flatpickr('.datepickrFrom', {
+  flatpickr('.datepickrFrom', {
     wrap: true,
     disableMobile: true,
     monthSelectorType: 'static',
     dateFormat: Spree.translations.date_picker,
     ariaDateFormat: Spree.translations.date_picker,
-    onReady:function(selectedDates) {
+    onReady: function(selectedDates) {
       dateTo.set('minDate', selectedDates[0])
     },
-    onChange:function(selectedDates) {
+    onChange: function(selectedDates) {
       dateTo.set('minDate', selectedDates[0])
     }
   })
 })
-
 
 $(document).ready(function() {
   $('.observe_field').on('change', function() {
