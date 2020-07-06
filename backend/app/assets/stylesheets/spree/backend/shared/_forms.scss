@@ -12,20 +12,6 @@ span.or {
   padding: 0 10px;
 }
 
-.form-group {
-  &.withError {
-    label, .formError, .required {
-      color: $danger;
-    }
-
-    input,
-    .select2-choice {
-      border-color: $danger;
-    }
-  }
-}
-
-
 // Adaptive icon from calendar to close.
 @mixin swith-appended-icon {
   &:placeholder-shown:not(:focus) + * {
@@ -41,6 +27,19 @@ span.or {
 
     @include swith-appended-icon  {
       opacity: 0;
+    }
+  }
+}
+
+.form-group {
+  &.withError {
+    label, .formError, .required {
+      color: $danger;
+    }
+
+    input,
+    .select2-choice {
+      border-color: $danger;
     }
   }
 }
