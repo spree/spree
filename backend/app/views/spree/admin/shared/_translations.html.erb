@@ -47,5 +47,5 @@
 
 <% if I18n.locale != :en %>
   <%= javascript_include_tag "select2_locale_#{I18n.locale}" %>
-  <%= javascript_include_tag "flatpickr/l10n/#{Spree.t(:flatpickr_local_file)}" %>
+  <%= javascript_include_tag "flatpickr/l10n/#{I18n.locale.downcase}" %>
 <% end %>

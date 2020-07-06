@@ -56,12 +56,39 @@
 
     <div id="starts_at_field" class="form-group">
       <%= f.label :starts_at %>
-      <%= f.datetime_field :starts_at, class: 'form-control' %>
+
+      <div class="input-group datepickr">
+        <%= f.datetime_field :starts_at, class: 'form-control shadow-none', 'data-input':'' %>
+        <div class="input-group-append append_over">
+          <span class="input-group-text force-round" data-clear>
+            <%= svg_icon name: "close.svg", width: '16', height: '16' %>
+          </span>
+        </div>
+        <div class="input-group-append append_under">
+          <span class="input-group-text" data-clear>
+            <%= svg_icon name: "calendar.svg", width: '16', height: '16' %>
+          </span>
+        </div>
+      </div>
+
     </div>
 
     <div id="expires_at_field" class="form-group">
       <%= f.label :expires_at %>
-      <%= f.datetime_field :expires_at, class: 'form-control' %>
+      <div class="input-group datepickr">
+        <%= f.datetime_field :expires_at, class: 'form-control shadow-none', 'data-input':'' %>
+        <div class="input-group-append append_over">
+          <span class="input-group-text force-round" data-clear>
+            <%= svg_icon name: "close.svg", width: '16', height: '16' %>
+          </span>
+        </div>
+        <div class="input-group-append append_under">
+          <span class="input-group-text" data-clear>
+            <%= svg_icon name: "calendar.svg", width: '16', height: '16' %>
+          </span>
+        </div>
+      </div>
     </div>
+
   </div>
 </div>
