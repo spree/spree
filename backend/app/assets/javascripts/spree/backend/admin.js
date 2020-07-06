@@ -4,7 +4,7 @@ under the spree namespace that do stuff we find helpful.
 Hopefully, this will evolve into a propper class.
 **/
 
-/* global AUTH_TOKEN, order_number, Sortable */
+/* global AUTH_TOKEN, order_number, Sortable, flatpickr, dateTo */
 
 //= require spree/backend/flatpickr_locals
 
@@ -180,21 +180,21 @@ $.fn.radioControlsVisibilityOfElement = function (dependentElementSelector) {
   })
 }
 
-document.addEventListener("DOMContentLoaded", function(){
-  flatpickr('.datepickr',{
+document.addEventListener('DOMContentLoaded', function() {
+  flatpickr('.datepickr', {
     wrap: true,
-    disableMobile: true,
-    dateFormat: Spree.translations.date_picker,
     monthSelectorType: 'static',
     ariaDateFormat: Spree.translations.date_picker,
+    disableMobile: true,
+    dateFormat: Spree.translations.date_picker
   })
 
-  dateTo = flatpickr('.datepickrTo',{
+  dateTo = flatpickr('.datepickrTo',  {
     wrap: true,
     disableMobile: true,
     dateFormat: Spree.translations.date_picker,
     monthSelectorType: 'static',
-    ariaDateFormat: Spree.translations.date_picker,
+    ariaDateFormat: Spree.translations.date_picker
   })
 
   dateFrom = flatpickr('.datepickrFrom', {
@@ -203,12 +203,12 @@ document.addEventListener("DOMContentLoaded", function(){
     monthSelectorType: 'static',
     dateFormat: Spree.translations.date_picker,
     ariaDateFormat: Spree.translations.date_picker,
-    onReady:function(selectedDates){
-			 dateTo.set('minDate', selectedDates[0])
-		},
-    onChange:function(selectedDates){
-			 dateTo.set('minDate', selectedDates[0])
-		},
+    onReady:function(selectedDates) {
+      dateTo.set('minDate', selectedDates[0])
+    },
+    onChange:function(selectedDates) {
+      dateTo.set('minDate', selectedDates[0])
+    }
   })
 })
 

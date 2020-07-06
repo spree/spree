@@ -1,4 +1,5 @@
-document.addEventListener("DOMContentLoaded", function(){
+/* global flatpickr */
+document.addEventListener('DOMContentLoaded', function() {
   flatpickr.l10ns.default.firstDayOfWeek = Spree.translations.firstDayOfWeek,
   flatpickr.l10ns.default.rangeSeparator = Spree.translations.rangeSeparator,
   flatpickr.l10ns.default.weekAbbreviation = Spree.translations.weekAbbreviation,
@@ -16,32 +17,9 @@ document.addEventListener("DOMContentLoaded", function(){
           Spree.translations.wed,
           Spree.translations.thu,
           Spree.translations.fri,
-          Spree.translations.sat],
-      longhand: [
-          Spree.translations.lh_sun,
-          Spree.translations.lh_mon,
-          Spree.translations.lh_tue,
-          Spree.translations.lh_wed,
-          Spree.translations.lh_thu,
-          Spree.translations.lh_fri,
-          Spree.translations.lh_sat
-      ]
-  },
+          Spree.translations.sat]
+        },
   flatpickr.l10ns.default.months = {
-          shorthand: [
-              Spree.translations.jan,
-              Spree.translations.feb,
-              Spree.translations.mar,
-              Spree.translations.apr,
-              Spree.translations.may,
-              Spree.translations.jun,
-              Spree.translations.jul,
-              Spree.translations.aug,
-              Spree.translations.sep,
-              Spree.translations.oct,
-              Spree.translations.nov,
-              Spree.translations.dec,
-          ],
           longhand: [
               Spree.translations.lh_jan,
               Spree.translations.lh_feb,
@@ -54,7 +32,7 @@ document.addEventListener("DOMContentLoaded", function(){
               Spree.translations.lh_sep,
               Spree.translations.lh_oct,
               Spree.translations.lh_nov,
-              Spree.translations.lh_dec,
+              Spree.translations.lh_dec
           ]
-}
+        }
 })
