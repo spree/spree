@@ -4,7 +4,7 @@ under the spree namespace that do stuff we find helpful.
 Hopefully, this will evolve into a propper class.
 **/
 
-/* global AUTH_TOKEN, order_number, Sortable, flatpickr, dateTo */
+/* global AUTH_TOKEN, order_number, Sortable, flatpickr */
 
 //= require spree/backend/flatpickr_locals
 
