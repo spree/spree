@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
       Spree.translations.thu,
       Spree.translations.fri,
       Spree.translations.sat]
-  },
+  }
   flatpickr.l10ns.default.months = {
     longhand: [
       Spree.translations.lh_jan,

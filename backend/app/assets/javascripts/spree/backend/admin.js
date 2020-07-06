@@ -189,7 +189,7 @@ document.addEventListener('DOMContentLoaded', function() {
     dateFormat: Spree.translations.date_picker
   })
 
-  dateTo = flatpickr('.datepickrTo', {
+  var dateTo = flatpickr('.datepickrTo', {
     wrap: true,
     disableMobile: true,
     dateFormat: Spree.translations.date_picker,
