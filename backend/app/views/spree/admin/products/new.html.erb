@@ -43,7 +43,14 @@
         <%= f.field_container :available_on, class: ['form-group'] do %>
           <%= f.label :available_on, Spree.t(:available_on) %>
           <%= f.error_message_on :available_on %>
+          <div class="input-group">
           <%= f.text_field :available_on, class: 'datepicker form-control' %>
+          <div class="input-group-append">
+            <span class="input-group-text">
+              <%= svg_icon name: "calendar.svg", width: '18', height: '18' %>
+            </span>
+          </div>
+        </div>
         <% end %>
       </div>
 
