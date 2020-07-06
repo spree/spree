@@ -99,8 +99,9 @@
 
 #mobile-navigation-back-button {
   opacity: 0;
-  padding-left: 0;
-  padding-right: 0;
+  padding-left: 17px;
+  padding-right: 17px;
+  margin-left: -17px;
   transition: basic-transition(opacity);
   appearance: none;
   border: none;
