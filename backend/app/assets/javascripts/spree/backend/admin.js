@@ -213,20 +213,6 @@ document.addEventListener("DOMContentLoaded", function(){
 		},
   })
 
-  flatpickr('.datepickrRange', {
-    mode:'range',
-    wrap: true,
-    dateFormat: Spree.translations.date_picker,
-    monthSelectorType: 'static',
-		ariaDateFormat: Spree.translations.date_picker,
-		onChange:function(selectedDates){
-			var _this=this;
-			var dateArr=selectedDates.map(function(date){return _this.formatDate(date,Spree.translations.date_picker);});
-			$('#ID_START').val(dateArr[0]);
-			$('#ID_END').val(dateArr[1]);
-		},
-  })
-
 })
 
 
