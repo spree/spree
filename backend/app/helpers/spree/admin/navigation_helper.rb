@@ -247,7 +247,7 @@ module Spree
         options[:class] = 'sidebar-menu-item d-block w-100'
         options[:class] << ' selected' if is_selected
         content_tag(:li, options) do
-          link_to(link_text, url, class: "#{'text-success' if is_selected} py-1 px-3 d-block sidebar-submenu-item")
+          link_to(link_text, url, class: "#{'text-success' if is_selected} sidebar-submenu-item w-100 py-2 py-md-1 pl-3 d-block")
         end
       end
 
