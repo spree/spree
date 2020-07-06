@@ -25,7 +25,7 @@ module Spree
     preference :admin_interface_logo, :string, default: 'admin/logo.png'
     preference :admin_path, :string, default: '/admin'
     preference :admin_products_per_page, :integer, default: Kaminari.config.default_per_page
-    preference :admin_orders_per_page, :integer, default: 15
+    preference :admin_orders_per_page, :integer, default: Kaminari.config.default_per_page
     preference :admin_properties_per_page, :integer, default: Kaminari.config.default_per_page
     preference :admin_promotions_per_page, :integer, default: Kaminari.config.default_per_page
     preference :admin_customer_returns_per_page, :integer, default: Kaminari.config.default_per_page
