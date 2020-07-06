@@ -248,8 +248,9 @@ describe 'Orders Listing', type: :feature do
           select2 'Spree Test Store', from: 'Store', match: :first
           fill_in 'q_bill_address_lastname_start', with: 'Smith'
           select2 'spree', from: 'Channel'
-          fill_in 'q_created_at_gt', with: '2018/01/01'
-          fill_in 'q_created_at_lt', with: '2018/06/30'
+          fill_in_date_with_js('Starts at', with: '2018/01/01')
+          fill_in_date_with_js('Ending at', with: '2018/06/30')
+
         end
 
         click_on 'Filter Results'
@@ -270,6 +271,15 @@ describe 'Orders Listing', type: :feature do
           expect(page).to have_content('Channel: spree')
         end
       end
+
+      # Flatpickr helper
+      def fill_in_date_with_js(label_text, with:)
+        date_field = find("input[placeholder='#{label_text}']")
+        script = "document.querySelector('##{date_field[:id]}').flatpickr().setDate('#{with}');"
+
+        page.execute_script(script)
+      end
+
     end
   end
 end

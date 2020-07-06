@@ -22,23 +22,13 @@
 
               <div class="col-12 col-md-6 mb-3 mb-md-0">
                 <div class="input-group datepickrFrom">
-                <%= f.text_field :created_at_gt,
-                  class: 'form-control js-filterable shadow-none',
-                    value: params[:q][:created_at_gt],
-                    placeholder: Spree.t(:starting_from),
-                    'data-input':'' %>
-
-                    <div class="input-group-append append_over">
-                      <span class="input-group-text force-round" data-clear>
-                        <%= svg_icon name: "close.svg", width: '16', height: '16' %>
-                      </span>
-                    </div>
-                    <div class="input-group-append append_under">
-                      <span class="input-group-text" data-clear>
-                        <%= svg_icon name: "calendar.svg", width: '16', height: '16' %>
-                      </span>
-                    </div>
-                  </div>
+                  <%= f.text_field :created_at_gt,
+                    class: 'form-control js-filterable shadow-none',
+                      value: params[:q][:created_at_gt],
+                      placeholder: Spree.t(:starting_from),
+                      'data-input':'' %>
+                  <%= render partial: 'spree/admin/shared/cal_close' %>
+                </div>
               </div>
 
               <div class="col-12 col-md-6 mt-3 mt-md-0">
@@ -48,19 +38,9 @@
                       value: params[:q][:created_at_lt],
                       placeholder: Spree.t(:ending_at),
                       'data-input':'' %>
-
-                      <div class="input-group-append append_over">
-                        <span class="input-group-text force-round" data-clear>
-                          <%= svg_icon name: "close.svg", width: '16', height: '16' %>
-                        </span>
-                      </div>
-                      <div class="input-group-append append_under">
-                        <span class="input-group-text" data-clear>
-                          <%= svg_icon name: "calendar.svg", width: '16', height: '16' %>
-                        </span>
-                      </div>
-                    </div>
-                </div>
+                  <%= render partial: 'spree/admin/shared/cal_close' %>
+                  </div>
+              </div>
 
               </div>
             </div>
