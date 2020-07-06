@@ -58,7 +58,7 @@
       <%= f.label :starts_at %>
 
       <div class="input-group datepickr">
-        <%= f.datetime_field :starts_at, class: 'form-control shadow-none', 'data-input':'' %>
+        <%= f.datetime_field :starts_at, class: 'form-control shadow-none', placeholder: Spree.t('starting_from'), 'data-input':'' %>
         <div class="input-group-append append_over">
           <span class="input-group-text force-round" data-clear>
             <%= svg_icon name: "close.svg", width: '16', height: '16' %>
@@ -76,7 +76,7 @@
     <div id="expires_at_field" class="form-group">
       <%= f.label :expires_at %>
       <div class="input-group datepickr">
-        <%= f.datetime_field :expires_at, class: 'form-control shadow-none', 'data-input':'' %>
+        <%= f.datetime_field :expires_at, placeholder:Spree.t('ends_at'), class: 'form-control shadow-none', 'data-input':'' %>
         <div class="input-group-append append_over">
           <span class="input-group-text force-round" data-clear>
             <%= svg_icon name: "close.svg", width: '16', height: '16' %>

@@ -809,6 +809,7 @@ en:
     empty_cart: Empty Cart
     enable_mail_delivery: Enable Mail Delivery
     end: End
+    ends_at: Ends at
     ending_at: Ending at
     ending_in: Ending in
     error: error
@@ -1542,7 +1543,7 @@ en:
     ssl:
       change_protocol: "Please switch to using HTTP (rather than HTTPS) and retry this request."
     start: Start
-    starting_from: Starting from
+    starting_from: Starts at
     state: State
     state_based: State Based
     states: States
