@@ -20,7 +20,7 @@
             <%= label_tag :q_created_at_gt, Spree.t(:date_range) %>
             <div class="row pb-0">
 
-              <div class="col-12 col-lg-6">
+              <div class="col-12 col-md-6 mb-3 mb-md-0">
                 <div class="input-group datepickrFrom">
                 <%= f.text_field :created_at_gt,
                   class: 'form-control js-filterable shadow-none',
@@ -41,7 +41,7 @@
                   </div>
               </div>
 
-              <div class="col-12 col-lg-6">
+              <div class="col-12 col-md-6 mt-3 mt-md-0">
                 <div class="input-group datepickrTo">
                   <%= f.text_field :created_at_lt,
                     class: 'form-control js-filterable shadow-none',
