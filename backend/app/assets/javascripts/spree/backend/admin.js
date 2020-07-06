@@ -189,18 +189,6 @@ document.addEventListener("DOMContentLoaded", function(){
     ariaDateFormat: Spree.translations.date_picker,
   })
 
-  dateFrom = flatpickr('.datepickrFrom', {
-    wrap: true,
-    disableMobile: true,
-    monthSelectorType: 'static',
-    locale: Spree.translations.flatpickr_local,
-    dateFormat: Spree.translations.date_picker,
-    ariaDateFormat: Spree.translations.date_picker,
-    onChange:function(selectedDates){
-			 dateTo.set('minDate', selectedDates[0])
-		},
-  })
-
   dateTo = flatpickr('.datepickrTo',{
     wrap: true,
     disableMobile: true,
@@ -210,6 +198,20 @@ document.addEventListener("DOMContentLoaded", function(){
     ariaDateFormat: Spree.translations.date_picker,
   })
 
+  dateFrom = flatpickr('.datepickrFrom', {
+    wrap: true,
+    disableMobile: true,
+    monthSelectorType: 'static',
+    locale: Spree.translations.flatpickr_local,
+    dateFormat: Spree.translations.date_picker,
+    ariaDateFormat: Spree.translations.date_picker,
+    onReady:function(selectedDates){
+			 dateTo.set('minDate', selectedDates[0])
+		},
+    onChange:function(selectedDates){
+			 dateTo.set('minDate', selectedDates[0])
+		},
+  })
 
   flatpickr('.datepickrRange', {
     mode:'range',
@@ -224,6 +226,7 @@ document.addEventListener("DOMContentLoaded", function(){
 			$('#ID_END').val(dateArr[1]);
 		},
   })
+
 })
 
 
