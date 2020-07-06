@@ -19,11 +19,14 @@
           <div class="form-group">
             <%= label_tag :q_created_at_gt, Spree.t(:date_range) %>
             <div class="row pb-0">
-              <div class="col-12">
 
-                <div class="datepickrRange">
-                  <div class="input-group">
-                    <input type="text" placeholder="<%= Spree.t(:select_a_date_range) %>" class="form-control shadow-none text-center" data-input>
+              <div class="col-12 col-lg-6">
+                <div class="input-group datepickrFrom">
+                <%= f.text_field :created_at_gt,
+                  class: 'form-control js-filterable shadow-none',
+                    value: params[:q][:created_at_gt],
+                    placeholder: Spree.t(:starting_from),
+                    'data-input':'' %>
 
                     <div class="input-group-append append_over">
                       <span class="input-group-text force-round" data-clear>
@@ -35,50 +38,40 @@
                         <%= svg_icon name: "calendar.svg", width: '16', height: '16' %>
                       </span>
                     </div>
-
                   </div>
-                </div>
-
-                <div class="input-group d-none">
-                  <%= f.text_field :created_at_gt,
-                    id:'ID_START',
-                    class: 'form-control js-filterable',
-                      value: params[:q][:created_at_gt],
-                      placeholder: Spree.t(:start) %>
-                  <div class="input-group-append">
-                    <span class="input-group-text">
-                       <%= svg_icon name: "calendar.svg", width: '18', height: '18' %>
-                    </span>
-                  </div>
-                </div>
-
               </div>
-              <div class="col-12 col-lg-6 d-none">
-                <div class="input-group">
+
+              <div class="col-12 col-lg-6">
+                <div class="input-group datepickrTo">
                   <%= f.text_field :created_at_lt,
-                    id:'ID_END',
-                    class: 'form-control js-filterable',
+                    class: 'form-control js-filterable shadow-none',
                       value: params[:q][:created_at_lt],
-                      placeholder: Spree.t(:stop) %>
-                  <div class="input-group-append">
-                    <span class="input-group-text">
-                      <%= svg_icon name: "calendar.svg", width: '18', height: '18' %>
-                    </span>
-                  </div>
+                      placeholder: Spree.t(:ending_at),
+                      'data-input':'' %>
+
+                      <div class="input-group-append append_over">
+                        <span class="input-group-text force-round" data-clear>
+                          <%= svg_icon name: "close.svg", width: '16', height: '16' %>
+                        </span>
+                      </div>
+                      <div class="input-group-append append_under">
+                        <span class="input-group-text" data-clear>
+                          <%= svg_icon name: "calendar.svg", width: '16', height: '16' %>
+                        </span>
+                      </div>
+                    </div>
                 </div>
+
               </div>
             </div>
           </div>
-        </div>
-
-        <div class="col-12 col-lg-4">
-          <div class="form-group">
-            <%= label_tag :q_number_cont, Spree.t(:order_number, number: '') %>
-            <%= f.text_field :number_cont, class: 'form-control js-quick-search-target js-filterable' %>
+          <div class="col-12 col-lg-4">
+            <div class="form-group">
+              <%= label_tag :q_number_cont, Spree.t(:order_number, number: '') %>
+              <%= f.text_field :number_cont, class: 'form-control js-quick-search-target js-filterable' %>
+            </div>
           </div>
         </div>
-
-      </div>
 
       <div class="row">
 
