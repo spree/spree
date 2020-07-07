@@ -106,7 +106,9 @@
 
 .select2-container-multi {
   .select2-choices {
-    line-height: 1.8;
+    min-height: 38px;
+    border-radius: $border-radius;
+    line-height: 1;
     border-color: $input-border-color;
     background-image: none;
     background-color: $input-bg;

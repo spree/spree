@@ -2,10 +2,11 @@
   <%= link_to Spree.t(:promotions), admin_promotions_url %> /
   <%= Spree.t(:new_promotion) %>
 <% end %>
-
-<%= form_for :promotion, url: collection_url do |f| %>
-  <%= render partial: 'form', locals: { f: f } %>
-  <div class="text-center">
-    <%= render partial: 'spree/admin/shared/new_resource_links' %>
+<div class="card">
+  <div class="card-body">
+    <%= form_for :promotion, url: collection_url do |f| %>
+      <%= render partial: 'form', locals: { f: f } %>
+      <%= render partial: 'spree/admin/shared/new_resource_links' %>
+    <% end %>
   </div>
-<% end %>
+</div>
