@@ -186,7 +186,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var targetDate = target.getElementsByTagName('input')[0].value
   }
 
-  flatpickr('.datepicker-single',{
+  flatpickr('.datepicker-single', {
     wrap: true,
     monthSelectorType: 'static',
     ariaDateFormat: Spree.translations.date_picker,
@@ -221,7 +221,7 @@ document.addEventListener('DOMContentLoaded', function() {
   })
 
   // For backwards compatability in extensions
-  flatpickr('.datepicker',{
+  flatpickr('.datepicker', {
     monthSelectorType: 'static',
     ariaDateFormat: Spree.translations.date_picker,
     disableMobile: true,
