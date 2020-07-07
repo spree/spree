@@ -19,12 +19,10 @@ span.or {
   }
 }
 
-.datepickr,
-.datepickrRange,
-.datepickrFrom,
-.datepickrTo {
+.datepicker,
+.datepicker-from,
+.datepicker-to {
   input, textarea {
-
     @include swith-appended-icon  {
       opacity: 0;
     }

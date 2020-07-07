@@ -181,33 +181,28 @@ $.fn.radioControlsVisibilityOfElement = function (dependentElementSelector) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-  flatpickr('.datepickr', {
-    wrap: true,
-    monthSelectorType: 'static',
-    ariaDateFormat: Spree.translations.date_picker,
-    disableMobile: true,
-    dateFormat: Spree.translations.date_picker
-  })
 
-  var dateTo = flatpickr('.datepickrTo', {
-    wrap: true,
-    disableMobile: true,
-    dateFormat: Spree.translations.date_picker,
-    monthSelectorType: 'static',
-    ariaDateFormat: Spree.translations.date_picker
-  })
+  var target = document.querySelector('.datepicker-from');
+  
+  if (target) {
+    var min_date = target.getElementsByTagName('input')[0].value
+  }
 
-  flatpickr('.datepickrFrom', {
-    wrap: true,
-    disableMobile: true,
-    monthSelectorType: 'static',
-    dateFormat: Spree.translations.date_picker,
-    ariaDateFormat: Spree.translations.date_picker,
-    onReady: function(selectedDates) {
-      dateTo.set('minDate', selectedDates[0])
-    },
+  flatpickr('.datepicker', { })
+
+  var dateFrom = flatpickr('.datepicker-from', {
     onChange: function(selectedDates) {
       dateTo.set('minDate', selectedDates[0])
+    }
+  })
+
+  var dateTo = flatpickr('.datepicker-to', {
+    minDate: min_date,
+    onReady: function(selectedDates) {
+      dateFrom.set('maxDate', selectedDates[0])
+    },
+    onChange: function(selectedDates) {
+      dateFrom.set('maxDate', selectedDates[0])
     }
   })
 })

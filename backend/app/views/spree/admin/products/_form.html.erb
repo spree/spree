@@ -66,7 +66,7 @@
           <%= f.label :available_on, Spree.t(:available_on) %>
           <%= f.error_message_on :available_on %>
 
-          <div class="input-group datepickr">
+          <div class="input-group datepicker-from">
             <%= f.text_field :available_on, value: datepicker_field_value(@product.available_on), placeholder: Spree.t(:select_a_date), class: 'form-control shadow-none', 'data-input':'' %>
             <%= render partial: 'spree/admin/shared/cal_close' %>
           </div>
@@ -79,7 +79,7 @@
           <%= f.label :discontinue_on, Spree.t(:discontinue_on) %>
           <%= f.error_message_on :discontinue_on %>
 
-          <div class="input-group datepickr">
+          <div class="input-group datepicker-to">
             <%= f.text_field :discontinue_on, value: datepicker_field_value(@product.discontinue_on), placeholder: Spree.t(:select_a_date), class: 'form-control shadow-none', 'data-input':'' %>
             <%= render partial: 'spree/admin/shared/cal_close' %>
           </div>

@@ -34,20 +34,6 @@ input[type="file"]::-webkit-file-upload-button {
   }
 }
 
-.datepickrRange {
-  .form-control {
-    background: white;
-  }
-  .btn-outline-secondary {
-    background-color: white;
-    border-color:$input-border-color;
-    &:hover {
-      border-color: $secondary;
-      background-color: $secondary;
-    }
-  }
-}
-
 .actions .btn,
 .page-actions .btn {
   margin: 2px;

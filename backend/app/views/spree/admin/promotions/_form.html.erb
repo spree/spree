@@ -56,7 +56,7 @@
 
     <div id="starts_at_field" class="form-group">
       <%= f.label :starts_at %>
-      <div class="input-group datepickr">
+      <div class="input-group datepicker-from">
         <%= f.datetime_field :starts_at, class: 'form-control shadow-none', placeholder: Spree.t('starting_from'), 'data-input':'' %>
         <%= render partial: 'spree/admin/shared/cal_close' %>
       </div>
@@ -64,7 +64,7 @@
 
     <div id="expires_at_field" class="form-group">
       <%= f.label :expires_at %>
-      <div class="input-group datepickr">
+      <div class="input-group datepicker-to">
         <%= f.datetime_field :expires_at, placeholder:Spree.t('ends_at'), class: 'form-control shadow-none', 'data-input':'' %>
         <%= render partial: 'spree/admin/shared/cal_close' %>
       </div>

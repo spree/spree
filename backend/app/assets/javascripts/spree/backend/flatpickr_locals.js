@@ -1,5 +1,13 @@
 /* global flatpickr */
 document.addEventListener('DOMContentLoaded', function() {
+  // Default Config Options
+  flatpickr.defaultConfig.wrap = true
+  flatpickr.defaultConfig.disableMobile = true
+  flatpickr.defaultConfig.dateFormat = Spree.translations.date_picker
+  flatpickr.defaultConfig.monthSelectorType = 'static'
+  flatpickr.defaultConfig.ariaDateFormat = Spree.translations.date_picker
+
+  // Default Language Settings
   flatpickr.l10ns.default.firstDayOfWeek = Spree.translations.firstDay
   flatpickr.l10ns.default.rangeSeparator = Spree.translations.rangeSep
   flatpickr.l10ns.default.weekAbbreviation = Spree.translations.weekAbbr
