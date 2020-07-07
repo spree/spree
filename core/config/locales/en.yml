@@ -755,9 +755,37 @@ en:
     date: Date
     date_completed: Date Completed
     date_picker:
+      am: 'AM'
       first_day: 0
       format: ! '%Y/%m/%d'
-      js_format: yy/mm/dd
+      hourAriaLabel: 'Hour'
+      js_format: Y/m/d
+      minuteAriaLabel: 'Minute'
+      pm: 'PM'
+      rangeSeparator: ' to '
+      scrollTitle: 'Scroll to increment'
+      toggleTitle: 'Click to toggle'
+      weekAbbreviation: 'Wk'
+      yearAriaLabel: 'Year'
+      sun: 'Sun'
+      mon: 'Mon'
+      tue: 'Tue'
+      wed: 'Wed'
+      thu: 'Thu'
+      fri: 'Fri'
+      sat: 'Sat'
+      lh_jan: 'January'
+      lh_feb: 'February'
+      lh_mar: 'March'
+      lh_apr: 'April'
+      lh_may: 'May'
+      lh_jun: 'June'
+      lh_jul: 'July'
+      lh_aug: 'August'
+      lh_sep: 'September'
+      lh_oct: 'October'
+      lh_nov: 'November'
+      lh_dec: 'December'
     date_range: Date Range
     default: Default
     default_country_cannot_be_deleted: Default country cannot be deleted
@@ -807,6 +835,8 @@ en:
     empty_cart: Empty Cart
     enable_mail_delivery: Enable Mail Delivery
     end: End
+    ends_at: Ends at
+    ending_at: Ending at
     ending_in: Ending in
     error: error
     errors:
@@ -1455,6 +1485,8 @@ en:
     security_settings: Security Settings
     select: Select
     select_from_prototype: Select From Prototype
+    select_a_date: Select a date
+    select_a_date_range: Select a date range
     select_a_return_authorization_reason: Select a reason for the return authorization
     select_a_stock_location: Select a stock location
     select_a_store_credit_reason: Select a reason for the store credit
@@ -1537,6 +1569,7 @@ en:
     ssl:
       change_protocol: "Please switch to using HTTP (rather than HTTPS) and retry this request."
     start: Start
+    starting_from: Starts at
     state: State
     state_based: State Based
     states: States

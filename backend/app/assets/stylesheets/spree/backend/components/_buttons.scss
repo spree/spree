@@ -10,7 +10,7 @@
 
 .btn {
   text-align: center;
-  margin: 2px;
+
   .ship {
     color: #fff;
   }
@@ -32,4 +32,19 @@ input[type="file"]::-webkit-file-upload-button {
     color: white;
     background-color: $secondary;
   }
+}
+
+.actions .btn,
+.page-actions .btn {
+  margin: 2px;
+}
+
+input.flatpickr-input {
+  /* Remove First */
+-webkit-appearance: none;
+-moz-appearance: none;
+appearance: none;
+
+  background-color: white !important;
+
 }

@@ -4,7 +4,9 @@ under the spree namespace that do stuff we find helpful.
 Hopefully, this will evolve into a propper class.
 **/
 
-/* global AUTH_TOKEN, order_number, Sortable */
+/* global AUTH_TOKEN, order_number, Sortable, flatpickr */
+
+//= require spree/backend/flatpickr_locals
 
 jQuery(function ($) {
   // Add some tips
@@ -177,31 +179,57 @@ $.fn.radioControlsVisibilityOfElement = function (dependentElementSelector) {
     if (this.checked) { this.click() }
   })
 }
-// eslint-disable-next-line camelcase
-function handle_date_picker_fields () {
-  $('.datepicker').datepicker({
-    dateFormat: Spree.translations.date_picker,
-    dayNames: Spree.translations.abbr_day_names,
-    dayNamesMin: Spree.translations.abbr_day_names,
-    firstDay: Spree.translations.first_day,
-    monthNames: Spree.translations.month_names,
-    prevText: Spree.translations.previous,
-    nextText: Spree.translations.next,
-    showOn: 'focus',
-    showAnim: ''
+
+document.addEventListener('DOMContentLoaded', function() {
+  var target = document.querySelector('.datepickerFrom');
+  if (target) {
+    var targetDate = target.getElementsByTagName('input')[0].value
+  }
+
+  flatpickr('.datepicker-single', {
+    wrap: true,
+    monthSelectorType: 'static',
+    ariaDateFormat: Spree.translations.date_picker,
+    disableMobile: true,
+    dateFormat: Spree.translations.date_picker
   })
 
-  // Correctly display range dates
-  $('.date-range-filter .datepicker-from').datepicker('option', 'onSelect', function (selectedDate) {
-    $('.date-range-filter .datepicker-to').datepicker('option', 'minDate', selectedDate)
+  var dateFrom = flatpickr('.datepickerFrom', {
+    wrap: true,
+    monthSelectorType: 'static',
+    ariaDateFormat: Spree.translations.date_picker,
+    disableMobile: true,
+    dateFormat: Spree.translations.date_picker,
+    onChange: function(selectedDates) {
+      dateTo.set('minDate', selectedDates[0])
+    }
   })
-  $('.date-range-filter .datepicker-to').datepicker('option', 'onSelect', function (selectedDate) {
-    $('.date-range-filter .datepicker-from').datepicker('option', 'maxDate', selectedDate)
+
+  var dateTo = flatpickr('.datepickerTo', {
+    wrap: true,
+    monthSelectorType: 'static',
+    ariaDateFormat: Spree.translations.date_picker,
+    disableMobile: true,
+    dateFormat: Spree.translations.date_picker,
+    minDate: targetDate,
+    onReady: function(selectedDates) {
+      dateFrom.set('maxDate', selectedDates[0])
+    },
+    onChange: function(selectedDates) {
+      dateFrom.set('maxDate', selectedDates[0])
+    }
   })
-}
+
+  // For backwards compatability in extensions
+  flatpickr('.datepicker', {
+    monthSelectorType: 'static',
+    ariaDateFormat: Spree.translations.date_picker,
+    disableMobile: true,
+    dateFormat: Spree.translations.date_picker
+  })
+})
 
 $(document).ready(function() {
-  handle_date_picker_fields()
   $('.observe_field').on('change', function() {
     target = $(this).data('update')
     $(target).hide()
