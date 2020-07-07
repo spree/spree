@@ -181,11 +181,9 @@ $.fn.radioControlsVisibilityOfElement = function (dependentElementSelector) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-
   var target = document.querySelector('.datepicker-from');
-  
   if (target) {
-    var min_date = target.getElementsByTagName('input')[0].value
+    var targetDate = target.getElementsByTagName('input')[0].value
   }
 
   flatpickr('.datepicker', { })
@@ -197,7 +195,7 @@ document.addEventListener('DOMContentLoaded', function() {
   })
 
   var dateTo = flatpickr('.datepicker-to', {
-    minDate: min_date,
+    minDate: targetDate,
     onReady: function(selectedDates) {
       dateFrom.set('maxDate', selectedDates[0])
     },
