@@ -195,14 +195,14 @@ describe 'Orders Listing', type: :feature do
     context 'per page dropdown', js: true do
       before do
         within('div.index-pagination-row', match: :first) do
-          select '45', from: 'per_page'
+          select '50', from: 'per_page'
         end
-        expect(page).to have_select('per_page', selected: '45')
-        expect(page).to have_selector(:css, 'select.per-page-selected-45')
+        expect(page).to have_select('per_page', selected: '50')
+        expect(page).to have_selector(:css, 'select.per-page-selected-50')
       end
 
       it 'adds per_page parameter to url' do
-        expect(page).to have_current_path(/per_page\=45/)
+        expect(page).to have_current_path(/per_page\=50/)
       end
 
       it 'can be used with search filtering' do
@@ -211,14 +211,14 @@ describe 'Orders Listing', type: :feature do
         click_on 'Filter Results'
         expect(page).not_to have_content('R100')
         within_row(1) { expect(page).to have_content('R200') }
-        expect(page).to have_current_path(/per_page\=45/)
-        expect(page).to have_select('per_page', selected: '45')
+        expect(page).to have_current_path(/per_page\=50/)
+        expect(page).to have_select('per_page', selected: '50')
         within('div.index-pagination-row', match: :first) do
-          select '60', from: 'per_page'
+          select '75', from: 'per_page'
         end
-        expect(page).to have_current_path(/per_page\=60/)
-        expect(page).to have_select('per_page', selected: '60')
-        expect(page).to have_selector(:css, 'select.per-page-selected-60')
+        expect(page).to have_current_path(/per_page\=75/)
+        expect(page).to have_select('per_page', selected: '75')
+        expect(page).to have_selector(:css, 'select.per-page-selected-75')
         expect(page).not_to have_content('R100')
         within_row(1) { expect(page).to have_content('R200') }
       end
