@@ -186,7 +186,7 @@ document.addEventListener('DOMContentLoaded', function() {
     var targetDate = target.getElementsByTagName('input')[0].value
   }
 
-  flatpickr('.datepicker', { })
+  flatpickr('.datepicker')
 
   var dateFrom = flatpickr('.datepicker-from', {
     onChange: function(selectedDates) {
