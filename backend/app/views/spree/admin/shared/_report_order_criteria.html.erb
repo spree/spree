@@ -3,7 +3,7 @@
   <%= label_tag nil, Spree.t(:date_range) %>
   <div class="date-range-filter row">
     <div class="col-12 col-md-6 mb-3 mb-md-0">
-      <div class="input-group datepicker-from">
+      <div class="input-group datepickerFrom">
         <%= s.text_field :completed_at_gt,
                          class: 'form-control shadow-none',
                          placeholder: Spree.t(:starting_from),
@@ -14,7 +14,7 @@
     </div>
 
     <div class="col-12 col-md-6 mt-3 mt-md-0">
-      <div class="input-group datepicker-to">
+      <div class="input-group datepickerTo">
         <%= s.text_field :completed_at_lt,
                          class: 'form-control shadow-none',
                          placeholder: Spree.t(:ending_at),

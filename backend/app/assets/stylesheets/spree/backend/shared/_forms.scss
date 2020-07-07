@@ -20,8 +20,9 @@ span.or {
 }
 
 .datepicker,
-.datepicker-from,
-.datepicker-to {
+.datepicker-single,
+.datepickerFrom,
+.datepickerTo {
   input, textarea {
     @include swith-appended-icon  {
       opacity: 0;

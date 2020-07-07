@@ -256,8 +256,8 @@ describe 'Orders Listing', type: :feature do
         click_on 'Filter Results'
 
         within('.table-active-filters') do
-          expect(page).to have_content('Start: 2018-01-01')
-          expect(page).to have_content('Stop: 2018-06-30')
+          expect(page).to have_content('Start: 2018/01/01')
+          expect(page).to have_content('Stop: 2018/06/30')
           expect(page).to have_content('Order: R100')
           expect(page).to have_content('Status: cart')
           expect(page).to have_content('Payment State: paid')

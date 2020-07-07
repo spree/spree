@@ -181,20 +181,36 @@ $.fn.radioControlsVisibilityOfElement = function (dependentElementSelector) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-  var target = document.querySelector('.datepicker-from');
+  var target = document.querySelector('.datepickerFrom');
   if (target) {
     var targetDate = target.getElementsByTagName('input')[0].value
   }
 
-  flatpickr('.datepicker')
+  flatpickr('.datepicker-single',{
+    wrap: true,
+    monthSelectorType: 'static',
+    ariaDateFormat: Spree.translations.date_picker,
+    disableMobile: true,
+    dateFormat: Spree.translations.date_picker
+  })
 
-  var dateFrom = flatpickr('.datepicker-from', {
+  var dateFrom = flatpickr('.datepickerFrom', {
+    wrap: true,
+    monthSelectorType: 'static',
+    ariaDateFormat: Spree.translations.date_picker,
+    disableMobile: true,
+    dateFormat: Spree.translations.date_picker,
     onChange: function(selectedDates) {
       dateTo.set('minDate', selectedDates[0])
     }
   })
 
-  var dateTo = flatpickr('.datepicker-to', {
+  var dateTo = flatpickr('.datepickerTo', {
+    wrap: true,
+    monthSelectorType: 'static',
+    ariaDateFormat: Spree.translations.date_picker,
+    disableMobile: true,
+    dateFormat: Spree.translations.date_picker,
     minDate: targetDate,
     onReady: function(selectedDates) {
       dateFrom.set('maxDate', selectedDates[0])
@@ -202,6 +218,14 @@ document.addEventListener('DOMContentLoaded', function() {
     onChange: function(selectedDates) {
       dateFrom.set('maxDate', selectedDates[0])
     }
+  })
+
+  // For backwards compatability in extensions
+  flatpickr('.datepicker',{
+    monthSelectorType: 'static',
+    ariaDateFormat: Spree.translations.date_picker,
+    disableMobile: true,
+    dateFormat: Spree.translations.date_picker
   })
 })
 
