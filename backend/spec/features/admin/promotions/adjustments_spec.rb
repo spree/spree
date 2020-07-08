@@ -50,7 +50,7 @@ describe 'Promotion Adjustments', type: :feature, js: true do
 
     it 'allows an admin to create a single user coupon promo with flat rate discount' do
       fill_in 'Name', with: 'Promotion'
-      fill_in 'Usage Limit', with: '1'
+      fill_in 'Limit usage to', with: '1'
       fill_in 'Code', with: 'single_use'
       click_button 'Create'
       promotion = Spree::Promotion.find_by(name: 'Promotion')

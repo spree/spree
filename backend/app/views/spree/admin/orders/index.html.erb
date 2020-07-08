@@ -21,7 +21,7 @@
             <div class="row pb-0">
 
               <div class="col-12 col-md-6 mb-3 mb-md-0">
-                <div class="input-group datepickerFrom">
+                <div class="input-group datePickerFrom">
                   <%= f.text_field :created_at_gt,
                     class: 'form-control js-filterable shadow-none',
                       value: params[:q][:created_at_gt],
@@ -32,7 +32,7 @@
               </div>
 
               <div class="col-12 col-md-6 mt-3 mt-md-0">
-                <div class="input-group datepickerTo">
+                <div class="input-group datePickerTo">
                   <%= f.text_field :created_at_lt,
                     class: 'form-control js-filterable shadow-none',
                       value: params[:q][:created_at_lt],
