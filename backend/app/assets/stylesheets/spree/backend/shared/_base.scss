@@ -15,3 +15,10 @@
 .alert-error {
   @extend .alert-danger;
 }
+
+.js-remove-promo-rule-option-value {
+  color: $primary !important;
+  &:hover {
+    color: darken($primary, 10) !important;
+  }
+}
