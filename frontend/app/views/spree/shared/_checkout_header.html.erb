@@ -1,6 +1,6 @@
 <div id="spree-header">
   <header id="header" class="d-flex align-items-center header-spree border-bottom">
-    <div class="container position-relative">
+    <div class="container position-relative" role="navigation" aria-label="<%= Spree.t('checkout_page.main_navigation') %>">
       <div class="position-absolute checkout-header-link">
         <%= link_to spree.cart_path, class: "d-none d-sm-inline text-uppercase", method: :get do %>
           <%= icon(name: 'arrow-right',
