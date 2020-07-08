@@ -190,9 +190,9 @@ document.addEventListener('DOMContentLoaded', function() {
   if (target) {
     var targetDate = target.getElementsByTagName('input')[0].value
   }
-  
+
   if (targetTime) {
-    var targetDate = targetTime.getElementsByTagName('input')[0].value
+    var targetDateTime = targetTime.getElementsByTagName('input')[0].value
   }
 
   flatpickr('.datePickerSingle', {
@@ -229,13 +229,13 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   })
 
-  var dateTimeSingle = flatpickr('.dateTimePickerSingle', {
+  flatpickr('.dateTimePickerSingle', {
     wrap: true,
     enableTime: true,
     dateFormat: Spree.translations.date_picker + " H:i",
     time_24hr: true,
     monthSelectorType: 'static',
-    disableMobile: true,
+    disableMobile: true
   })
 
   var dateTimeFrom = flatpickr('.dateTimePickerFrom', {
@@ -257,7 +257,7 @@ document.addEventListener('DOMContentLoaded', function() {
     time_24hr: true,
     disableMobile: true,
     dateFormat: Spree.translations.date_picker + " - H:i",
-    minDate: targetDate,
+    minDate: targetDateTime,
     onReady: function(selectedDates) {
       dateTimeFrom.set('maxDate', selectedDates[0])
     },
