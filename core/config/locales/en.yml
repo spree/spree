@@ -665,7 +665,7 @@ en:
     checkout: Checkout
     checkout_page:
       main_navigation: Main navigation
-      checkout_navigation: Secondary navigation
+      checkout_navigation: Checkout navigation
       back_to_cart: back to the cart
       delivery_method: delivery method
       header: Checkout
