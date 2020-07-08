@@ -21,7 +21,8 @@
 
           <%= label_tag "variant_option_value_id_#{option_type[:id]}_#{option_value[:id]}",
             class: "m-1 m-sm-2 m-md-1 color-select-label",
-            "aria-label" => option_value[:presentation] do %>
+            title: option_value[:name],
+            "aria-label" => option_value[:name] do %>
 
             <%= render partial: "spree/shared/color_select", locals: {
               color: option_value[:presentation],
