@@ -19,11 +19,8 @@ span.or {
   }
 }
 
-.datepicker,
-.datepicker-single,
-.datepickerFrom,
-.datepickerTo {
-  input, textarea {
+.input-group {
+  input.flatpickr-input{
     @include swith-appended-icon  {
       opacity: 0;
     }
@@ -43,7 +40,9 @@ span.or {
   }
 }
 
-input.flatpickr-input[readonly] {
+// Fix Flatpickr bug where things jusy highlight for no reason.
+input.flatpickr-input[readonly],
+.numInputWrapper > * {
   -webkit-touch-callout: none; /* iOS Safari */
     -webkit-user-select: none; /* Safari */
      -khtml-user-select: none; /* Konqueror HTML */
@@ -51,6 +50,19 @@ input.flatpickr-input[readonly] {
         -ms-user-select: none; /* Internet Explorer/Edge */
             user-select: none; /* Non-prefixed version, currently
                                   supported by Chrome, Edge, Opera and Firefox */
+}
+
+// Hide number toggler
+/* Chrome, Safari, Edge, Opera */
+input.hide-number-toggle::-webkit-outer-spin-button,
+input.hide-number-toggle::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number].hide-number-toggle {
+  -moz-appearance: textfield;
 }
 
 .input-group >

@@ -742,7 +742,7 @@ en:
     currencies: Currencies
     currency_settings: Currency Settings
     current: Current
-    current_promotion_usage: ! 'Current Usage: %{count}'
+    current_promotion_usage: ! 'current usage: %{count}'
     customer: Customer
     customer_details: Customer Details
     customer_details_updated: Customer Details Updated
@@ -1005,6 +1005,7 @@ en:
     last_name_begins_with: Last Name Begins With
     learn_more: Learn More
     lifetime_stats: Lifetime Stats
+    limit_usage_to: Limit usage to
     line_item_adjustments: "Line item adjustments"
     list: List
     loading: Loading
