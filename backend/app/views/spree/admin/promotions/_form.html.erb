@@ -60,16 +60,28 @@
 
     <div id="starts_at_field" class="form-group">
       <%= f.label :starts_at %>
-      <div class="input-group dateTimePickerFrom">
-        <%= f.datetime_field :starts_at, class: 'form-control shadow-none', placeholder: Spree.t('starting_from'), 'data-input':'' %>
+      <div class="input-group">
+        <%= f.datetime_field :starts_at,
+                              class: 'form-control shadow-none datePickerFrom',
+                              placeholder: Spree.t('starting_from'),
+                              'data-enable-time': 'true',
+                              'data-date-format': Spree.t('js_date_time', scope: 'date_picker'),
+                              'data-max-date': @promotion.expires_at %>
+
         <%= render partial: 'spree/admin/shared/cal_close' %>
       </div>
     </div>
 
     <div id="expires_at_field" class="form-group">
       <%= f.label :expires_at %>
-      <div class="input-group dateTimePickerTo">
-        <%= f.datetime_field :expires_at, placeholder:Spree.t('ends_at'), class: 'form-control shadow-none', 'data-input':'' %>
+      <div class="input-group">
+        <%= f.datetime_field :expires_at,
+                              placeholder:Spree.t('ends_at'),
+                              class: 'form-control shadow-none datePickerTo',
+                              'data-enable-time': 'true',
+                              'data-date-format': Spree.t('js_date_time', scope: 'date_picker'),
+                              'data-min-date': @promotion.starts_at %>
+
         <%= render partial: 'spree/admin/shared/cal_close' %>
       </div>
     </div>

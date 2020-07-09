@@ -44,8 +44,12 @@
           <%= f.label :available_on, Spree.t(:available_on) %>
           <%= f.error_message_on :available_on %>
 
-          <div class="input-group datePickerSingle">
-            <%= f.text_field :available_on, value: datepicker_field_value(@product.available_on), placeholder: Spree.t(:select_a_date), class: 'form-control shadow-none', 'data-input':'' %>
+          <div class="input-group">
+            <%= f.text_field :available_on,
+                             value: datepicker_field_value(@product.available_on),
+                             placeholder: Spree.t(:select_a_date),
+                             class: 'form-control shadow-none datepicker' %>
+                             
             <%= render partial: 'spree/admin/shared/cal_close' %>
           </div>
         <% end %>

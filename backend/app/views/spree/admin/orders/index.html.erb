@@ -21,23 +21,25 @@
             <div class="row pb-0">
 
               <div class="col-12 col-md-6 mb-3 mb-md-0">
-                <div class="input-group datePickerFrom">
+                <div class="input-group">
                   <%= f.text_field :created_at_gt,
-                    class: 'form-control js-filterable shadow-none',
+                    class: 'form-control js-filterable shadow-none datePickerFrom',
                       value: params[:q][:created_at_gt],
                       placeholder: Spree.t(:starting_from),
-                      'data-input':'' %>
+                      'data-max-date': params[:q][:created_at_lt] %>
+
                   <%= render partial: 'spree/admin/shared/cal_close' %>
                 </div>
               </div>
 
               <div class="col-12 col-md-6 mt-3 mt-md-0">
-                <div class="input-group datePickerTo">
+                <div class="input-group">
                   <%= f.text_field :created_at_lt,
-                    class: 'form-control js-filterable shadow-none',
+                    class: 'form-control js-filterable shadow-none datePickerTo',
                       value: params[:q][:created_at_lt],
                       placeholder: Spree.t(:ending_at),
-                      'data-input':'' %>
+                      'data-min-date': params[:q][:created_at_gt] %>
+
                   <%= render partial: 'spree/admin/shared/cal_close' %>
                   </div>
               </div>
