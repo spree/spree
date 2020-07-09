@@ -103,6 +103,7 @@ describe Spree::Variants::OptionTypesPresenter do
                 is_default: false,
                 position: option_value_2_2.position,
                 presentation: option_value_2_2.presentation,
+                name: option_value_2_2.name,
                 variant_id: variant_1.id
               },
               {
@@ -110,6 +111,7 @@ describe Spree::Variants::OptionTypesPresenter do
                 is_default: false,
                 position: option_value_2_1.position,
                 presentation: option_value_2_1.presentation,
+                name: option_value_2_1.name,
                 variant_id: variant_2.id
               },
               {
@@ -117,6 +119,7 @@ describe Spree::Variants::OptionTypesPresenter do
                 is_default: true,
                 position: option_value_2_0.position,
                 presentation: option_value_2_0.presentation,
+                name: option_value_2_0.name,
                 variant_id: variant_0.id
               }
             ]
@@ -132,6 +135,7 @@ describe Spree::Variants::OptionTypesPresenter do
                 is_default: false,
                 position: option_value_1_2.position,
                 presentation: option_value_1_2.presentation,
+                name: option_value_1_2.name,
                 variant_id: variant_2.id
               },
               {
@@ -139,6 +143,7 @@ describe Spree::Variants::OptionTypesPresenter do
                 is_default: false,
                 position: option_value_1_0.position,
                 presentation: option_value_1_0.presentation,
+                name: option_value_1_0.name,
                 variant_id: variant_0.id
               },
               {
@@ -146,6 +151,7 @@ describe Spree::Variants::OptionTypesPresenter do
                 is_default: false,
                 position: option_value_1_1.position,
                 presentation: option_value_1_1.presentation,
+                name: option_value_1_1.name,
                 variant_id: variant_1.id
               }
             ]
