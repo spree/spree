@@ -12,21 +12,6 @@ span.or {
   padding: 0 10px;
 }
 
-// Adaptive icon from calendar to close.
-@mixin swith-appended-icon {
-  &:placeholder-shown:not(:focus) + * {
-      @content;
-  }
-}
-
-.input-group {
-  input.flatpickr-input{
-    @include swith-appended-icon  {
-      opacity: 0;
-    }
-  }
-}
-
 .form-group {
   &.withError {
     label, .formError, .required {
@@ -38,18 +23,6 @@ span.or {
       border-color: $danger;
     }
   }
-}
-
-// Fix Flatpickr bug where things jusy highlight for no reason.
-input.flatpickr-input[readonly],
-.numInputWrapper > * {
-  -webkit-touch-callout: none; /* iOS Safari */
-    -webkit-user-select: none; /* Safari */
-     -khtml-user-select: none; /* Konqueror HTML */
-       -moz-user-select: none; /* Old versions of Firefox */
-        -ms-user-select: none; /* Internet Explorer/Edge */
-            user-select: none; /* Non-prefixed version, currently
-                                  supported by Chrome, Edge, Opera and Firefox */
 }
 
 // Hide number toggler
@@ -71,12 +44,4 @@ input[type=number].hide-number-toggle {
   z-index: 5;
   border-top-right-radius: 2px !important;
   border-bottom-right-radius: 2px !important;
-}
-
-.append_under {
-  position: absolute;
-  right: 0;
-  top: 0;
-  z-index: 0;
-  height: 100%;
 }

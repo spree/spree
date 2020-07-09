@@ -181,96 +181,27 @@ $.fn.radioControlsVisibilityOfElement = function (dependentElementSelector) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-  // This javascript needs re-writing to target paris of input fields
-  // within a div allowing you to have multiple instances of From To cals
-  // on a single page, and only the relevent cal is updated.
-  var target = document.querySelector('.datePickerFrom')
-  var targetTime = document.querySelector('.dateTimePickerFrom')
-
-  if (target) {
-    var targetDate = target.getElementsByTagName('input')[0].value
-  }
-
-  if (targetTime) {
-    var targetDateTime = targetTime.getElementsByTagName('input')[0].value
-  }
-
-  flatpickr('.datePickerSingle', {
-    wrap: true,
-    monthSelectorType: 'static',
-    ariaDateFormat: Spree.translations.date_picker,
-    disableMobile: true,
-    dateFormat: Spree.translations.date_picker
-  })
-
   var dateFrom = flatpickr('.datePickerFrom', {
-    wrap: true,
-    monthSelectorType: 'static',
-    ariaDateFormat: Spree.translations.date_picker,
-    disableMobile: true,
+    time_24hr: true,
     dateFormat: Spree.translations.date_picker,
+    monthSelectorType: 'static',
     onChange: function(selectedDates) {
       dateTo.set('minDate', selectedDates[0])
     }
   })
 
   var dateTo = flatpickr('.datePickerTo', {
-    wrap: true,
     monthSelectorType: 'static',
-    ariaDateFormat: Spree.translations.date_picker,
-    disableMobile: true,
+    time_24hr: true,
     dateFormat: Spree.translations.date_picker,
-    minDate: targetDate,
-    onReady: function(selectedDates) {
-      dateFrom.set('maxDate', selectedDates[0])
-    },
     onChange: function(selectedDates) {
       dateFrom.set('maxDate', selectedDates[0])
     }
   })
 
-  flatpickr('.dateTimePickerSingle', {
-    wrap: true,
-    enableTime: true,
-    dateFormat: Spree.translations.date_picker + " H:i",
-    time_24hr: true,
-    monthSelectorType: 'static',
-    disableMobile: true
-  })
-
-  var dateTimeFrom = flatpickr('.dateTimePickerFrom', {
-    wrap: true,
-    enableTime: true,
-    dateFormat: Spree.translations.date_picker + " - H:i",
-    time_24hr: true,
-    monthSelectorType: 'static',
-    disableMobile: true,
-    onChange: function(selectedDates) {
-      dateTimeTo.set('minDate', selectedDates[0])
-    }
-  })
-
-  var dateTimeTo = flatpickr('.dateTimePickerTo', {
-    wrap: true,
-    enableTime: true,
-    monthSelectorType: 'static',
-    time_24hr: true,
-    disableMobile: true,
-    dateFormat: Spree.translations.date_picker + " - H:i",
-    minDate: targetDateTime,
-    onReady: function(selectedDates) {
-      dateTimeFrom.set('maxDate', selectedDates[0])
-    },
-    onChange: function(selectedDates) {
-      dateTimeFrom.set('maxDate', selectedDates[0])
-    }
-  })
-
-  // For backwards compatability in extensions
   flatpickr('.datepicker', {
     monthSelectorType: 'static',
-    ariaDateFormat: Spree.translations.date_picker,
-    disableMobile: true,
+    time_24hr: true,
     dateFormat: Spree.translations.date_picker
   })
 })
