@@ -320,7 +320,10 @@ $(document).ready(function() {
           _method: 'delete',
           authenticity_token: AUTH_TOKEN
         },
-        dataType: 'script'
+        dataType: 'script',
+        complete: function() {
+          el.blur()
+        }
       }).done(function () {
         var $flash_element = $('.alert-success')
         if ($flash_element.length) {
