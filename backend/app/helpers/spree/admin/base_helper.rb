@@ -7,8 +7,9 @@ module Spree
           flash_class = 'danger' if flash[:error]
           flash_class = 'info' if flash[:notice]
           flash_class = 'success' if flash[:success]
-          flash_div = content_tag(:div, (message), class: "alert alert-#{flash_class} alert-auto-disappear")
-          content_tag(:div, flash_div, class: 'd-flex justify-content-center position-fixed flash-alert animate__animated animate__bounceInUp animate__fast')
+          flash_div = content_tag(:div, message, class: "alert alert-#{flash_class} alert-auto-disappear")
+          content_tag(:div, flash_div,
+                      class: 'd-flex justify-content-center position-fixed flash-alert animate__animated animate__bounceInUp animate__fast')
         end
       end
 
