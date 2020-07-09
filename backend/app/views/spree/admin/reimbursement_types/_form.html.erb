@@ -16,15 +16,15 @@
     </div>
   <% end %>
   <div class="col-12 col-md-5">
-    <%= f.field_container :active, class: ['form-inline'] do %>
-      <%= f.check_box :active, class: 'form-control mr-1' %>
+    <%= f.field_container :active, class: ['form-inline flex-row p-1'] do %>
+      <%= f.check_box :active, class: 'form-control w-auto h-auto mr-1' %>
       <%= f.label :active, Spree.t(:active) %>
       <%= f.error_message_on :active %>
     <% end %>
   </div>
   <div class="col-12 col-md-5">
-    <%= f.field_container :mutable, class: ['form-inline'] do %>
-      <%= f.check_box :mutable, class: 'form-control mr-1' %>
+    <%= f.field_container :mutable, class: ['form-inline flex-row p-1'] do %>
+      <%= f.check_box :mutable, class: 'form-control w-auto h-auto mr-1' %>
       <%= f.label :mutable, Spree.t(:mutable) %>
       <%= f.error_message_on :mutable %>
     <% end %>
