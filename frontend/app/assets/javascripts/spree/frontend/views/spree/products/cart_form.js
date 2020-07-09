@@ -32,6 +32,7 @@ function CartForm($, $cartForm) {
     this.$variantIdInput = $cartForm.find(VARIANT_ID_SELECTOR)
 
     this.initializeQueryParamsCheck()
+    this.initializeColorVarianTooltip()
 
     if (this.urlQueryMatchFound) {
       this.setSelectedVariantFromUrl()

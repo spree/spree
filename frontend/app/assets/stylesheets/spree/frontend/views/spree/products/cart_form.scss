@@ -92,7 +92,7 @@
             border-color: theme-color("dark-text");
           }
         }
-        &:focus + label {
+        &:focus + label, &:focus + svg {
           outline: theme-color("dark-text") dotted 2px;
         }
         &--bad-combination {
