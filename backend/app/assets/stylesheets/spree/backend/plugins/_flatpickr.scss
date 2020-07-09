@@ -23,7 +23,7 @@
 
 
 .flatpickr-day {
-  border-radius: 10px;
+  border-radius: 7px;
 }
 
 // Fix Flatpickr bug where things jusy highlight for no reason.
@@ -39,5 +39,5 @@ input.flatpickr-input[readonly] {
 
 .flatpickr-months .flatpickr-prev-month:hover svg,
 .flatpickr-months .flatpickr-next-month:hover svg {
-  fill: $success;
+  fill: $primary;
 }
