@@ -182,6 +182,7 @@ $.fn.radioControlsVisibilityOfElement = function (dependentElementSelector) {
 
 document.addEventListener('DOMContentLoaded', function() {
   var dateFrom = flatpickr('.datePickerFrom', {
+    wrap: true,
     monthSelectorType: 'static',
     time_24hr: true,
     dateFormat: Spree.translations.date_picker,
@@ -191,6 +192,7 @@ document.addEventListener('DOMContentLoaded', function() {
   })
 
   var dateTo = flatpickr('.datePickerTo', {
+    wrap: true,
     monthSelectorType: 'static',
     time_24hr: true,
     dateFormat: Spree.translations.date_picker,
@@ -200,36 +202,11 @@ document.addEventListener('DOMContentLoaded', function() {
   })
 
   var fp = flatpickr('.datepicker', {
-    wrap: true,
     monthSelectorType: 'static',
     time_24hr: true,
     dateFormat: Spree.translations.date_picker,
   })
-
-  $(".data-clear").click(function() {
-    var input = this.previousElementSibling
-
-    if (input.classList.contains('datePickerFrom') ) {
-      dateFrom.clear()
-    } else if (input.classList.contains('datePickerTo')) {
-      dateTo.clear()
-    } else {
-      fp.clear()
-    }
-  })
-
-  $(".data-clear").click(function() {
-    var input = this.previousElementSibling
-
-    if (input.classList.contains('datePickerFrom') ) {
-      dateFrom.clear()
-    } else if (input.classList.contains('datePickerTo')) {
-      dateTo.clear()
-    } else {
-      fp.clear()
-    }
-  })
-
+  
 })
 
 $(document).ready(function() {
