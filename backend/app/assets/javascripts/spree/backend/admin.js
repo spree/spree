@@ -182,7 +182,6 @@ $.fn.radioControlsVisibilityOfElement = function (dependentElementSelector) {
 
 document.addEventListener('DOMContentLoaded', function() {
   var dateFrom = flatpickr('.datePickerFrom', {
-    wrap: true,
     monthSelectorType: 'static',
     time_24hr: true,
     dateFormat: Spree.translations.date_picker,
@@ -192,7 +191,6 @@ document.addEventListener('DOMContentLoaded', function() {
   })
 
   var dateTo = flatpickr('.datePickerTo', {
-    wrap: true,
     monthSelectorType: 'static',
     time_24hr: true,
     dateFormat: Spree.translations.date_picker,
@@ -206,7 +204,6 @@ document.addEventListener('DOMContentLoaded', function() {
     time_24hr: true,
     dateFormat: Spree.translations.date_picker,
   })
-  
 })
 
 $(document).ready(function() {

@@ -22,6 +22,7 @@
           <div class="row pb-0">
             <div class="col-12 col-md-6 mb-3 mb-md-0">
               <div class="input-group datePickerFrom"
+                   data-wrap="true"
                    data-max-date="<%= params[:q][:created_at_lt] %>">
                 <%= f.text_field :created_at_gt,
                   class: 'form-control js-filterable shadow-none',
@@ -34,6 +35,7 @@
             </div>
             <div class="col-12 col-md-6 mt-3 mt-md-0">
               <div class="input-group datePickerTo"
+                   data-wrap="true"
                    data-min-date="<%= params[:q][:created_at_gt] %>">
 
                 <%= f.text_field :created_at_lt,

@@ -61,6 +61,7 @@
     <div id="starts_at_field" class="form-group">
       <%= f.label :starts_at %>
       <div class="input-group datePickerFrom"
+           data-wrap="true"
            data-enable-time="true"
            data-date-format="<%= Spree.t('js_date_time', scope: 'date_picker') %>"
            data-max-date="<%= @promotion.expires_at %>" >
@@ -76,6 +77,7 @@
     <div id="expires_at_field" class="form-group">
       <%= f.label :expires_at %>
       <div class="input-group datePickerTo"
+           data-wrap="true"
            data-enable-time= 'true'
            data-date-format= "<%= Spree.t('js_date_time', scope: 'date_picker') %>"
            data-min-date="<%= @promotion.starts_at %>" >

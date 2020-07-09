@@ -67,6 +67,7 @@
           <%= f.error_message_on :available_on %>
 
           <div class="input-group datePickerFrom"
+               data-wrap="true"
                data-max-date="<%= @product.discontinue_on %>" >
 
             <%= f.text_field :available_on,
@@ -87,6 +88,7 @@
           <%= f.error_message_on :discontinue_on %>
 
           <div class="input-group datePickerTo"
+               data-wrap="true"
                data-min-date="<%= @product.available_on %>" >
 
             <%= f.text_field :discontinue_on,
