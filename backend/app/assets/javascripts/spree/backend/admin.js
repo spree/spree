@@ -151,8 +151,14 @@ jQuery(function ($) {
     }
   })
 
-  // Make flash messages disappear
-  setTimeout(function () { $('.alert-auto-disappear').slideUp() }, 5000)
+  var element = document.querySelector('.flash-alert')
+
+  if (element) {
+    element.addEventListener('animationend', function () {
+      element.classList.remove('animate__bounceInUp')
+      element.classList.add('animate__fadeOutDown', 'animate__delay-3s');
+    })
+  }
 })
 
 $.fn.visible = function (cond) { this[ cond ? 'show' : 'hide' ]() }
