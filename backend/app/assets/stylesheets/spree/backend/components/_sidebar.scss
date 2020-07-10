@@ -121,9 +121,14 @@ body.contextualSideMenu-open #contextual-menu-toggle {
   #contextualSideMenu {
     position: relative;
     border: none;
-    height: auto;
+    height: max-content;
     z-index: 1000;
+    position: -webkit-sticky;
+    position: sticky;
+    top: 75px;
+    transition: none;
   }
+
   aside#main-sidebar {
     left: 0;
     z-index: 999;
@@ -141,4 +146,5 @@ body.contextualSideMenu-open #contextual-menu-toggle {
   .contextual-title {
     font-size:1.5rem;
   }
+  
 }
