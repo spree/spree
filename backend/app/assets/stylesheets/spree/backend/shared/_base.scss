@@ -28,11 +28,10 @@
   bottom: 30px;
   left:0;
   right:0;
-  .alert-success{
+  .alert {
     z-index: 500;
     opacity: 0.98;
     border-width: 3px;
-    border-color: theme-color("success");
     margin-bottom: 0;
   }
 }
