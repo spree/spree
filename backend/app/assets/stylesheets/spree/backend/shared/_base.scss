@@ -32,7 +32,7 @@
     z-index: 500;
     opacity: 0.98;
     border-width: 3px;
-    border-color: rgba(0, 0, 0, 0.35);
+    border-color: theme-color("success");
     margin-bottom: 0;
   }
 }
