@@ -156,7 +156,7 @@ jQuery(function ($) {
   if (element) {
     element.addEventListener('animationend', function () {
       element.classList.remove('animate__bounceInUp')
-      element.classList.add('animate__fadeOutDownBig', 'animate__delay-3s');
+      element.classList.add('animate__fadeOutDown', 'animate__delay-3s');
     })
   }
 })
