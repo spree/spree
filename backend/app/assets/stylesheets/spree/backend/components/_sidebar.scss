@@ -119,7 +119,6 @@ body.contextualSideMenu-open #contextual-menu-toggle {
 @include media-breakpoint-up(lg) {
 
   #contextualSideMenu {
-    position: relative;
     border: none;
     height: max-content;
     z-index: 1000;
