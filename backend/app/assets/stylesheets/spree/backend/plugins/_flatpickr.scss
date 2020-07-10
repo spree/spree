@@ -1,0 +1,43 @@
+// Adaptive icon from calendar to close.
+@mixin swith-appended-icon {
+  &:placeholder-shown:not(:focus) + * {
+      @content;
+  }
+}
+
+.input-group {
+  input.flatpickr-input{
+    @include swith-appended-icon  {
+      opacity: 0;
+    }
+  }
+}
+
+.append_under {
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 0;
+  height: 100%;
+}
+
+
+.flatpickr-day {
+  border-radius: 7px;
+}
+
+// Fix Flatpickr bug where things jusy highlight for no reason.
+input.flatpickr-input[readonly] {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+}
+
+.flatpickr-months .flatpickr-prev-month:hover svg,
+.flatpickr-months .flatpickr-next-month:hover svg {
+  fill: $primary;
+}

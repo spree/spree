@@ -762,6 +762,7 @@ en:
       format: ! '%Y/%m/%d'
       hourAriaLabel: 'Hour'
       js_format: Y/m/d
+      js_date_time: Y/m/d - H:i
       minuteAriaLabel: 'Minute'
       pm: 'PM'
       rangeSeparator: ' to '
