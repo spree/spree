@@ -115,67 +115,49 @@ describe Spree::Adjustable::Adjuster::Promotion, type: :model do
       promo_sequences = [[0, 1], [1, 0]]
 
       promo_sequences.each do |promo_sequence|
-        it 'picks the best order-level promo according to current eligibility' do
-          # apply both promos to the order, even though only promo1 is eligible
-          order_promos[promo_sequence[0]].activate order: order
-          order_promos[promo_sequence[1]].activate order: order
+        context "with promo_sequence #{promo_sequence}" do
+          it 'picks the best order-level promo according to current eligibility' do
+            # apply both promos to the order, even though only promo1 is eligible
+            order_promos[promo_sequence[0]].activate order: order
+            order_promos[promo_sequence[1]].activate order: order
 
-          order.reload
-          msg = "Expected two adjustments (using sequence #{promo_sequence})"
-          expect(order.all_adjustments.count).to eq(2), msg
+            order.reload
+            expect(order.all_adjustments.count).to eq(2)
+            expect(order.all_adjustments.eligible.count).to eq(1)
+            expect(order.all_adjustments.eligible.first.source.promotion).to eq(order_promo1)
 
-          msg = "Expected one elegible adjustment (using sequence #{promo_sequence})"
-          expect(order.all_adjustments.eligible.count).to eq(1), msg
+            Spree::Cart::AddItem.call(order: order, variant: create(:variant, price: 10))
+            order.save
 
-          msg = "Expected promo1 to be used (using sequence #{promo_sequence})"
-          expect(order.all_adjustments.eligible.first.source.promotion).to eq(order_promo1), msg
+            order.reload
+            expect(order.all_adjustments.count).to eq(2)
+            expect(order.all_adjustments.eligible.count).to eq(1)
+            expect(order.all_adjustments.eligible.first.source.promotion).to eq(order_promo2)
+          end
 
-          Spree::Cart::AddItem.call(order: order, variant: create(:variant, price: 10))
-          order.save
+          it "picks the best line-item-level promo according to current eligibility" do
+            # apply both promos to the order, even though only promo1 is eligible
+            line_item_promos[promo_sequence[0]].activate order: order
+            line_item_promos[promo_sequence[1]].activate order: order
 
-          order.reload
-          msg = "Expected two adjustments (using sequence #{promo_sequence})"
-          expect(order.all_adjustments.count).to eq(2), msg
+            order.reload
+            expect(order.all_adjustments.count).to eq(1)
+            expect(order.all_adjustments.eligible.count).to eq(1)
 
-          msg = "Expected one elegible adjustment (using sequence #{promo_sequence})"
-          expect(order.all_adjustments.eligible.count).to eq(1), msg
+            # line_item_promo1 is the only one that has thus far met the order total threshold,
+            # it is the only promo which should be applied.
+            expect(order.all_adjustments.first.source.promotion).to eq(line_item_promo1)
 
-          msg = "Expected promo2 to be used (using sequence #{promo_sequence})"
-          expect(order.all_adjustments.eligible.first.source.promotion).to eq(order_promo2), msg
-        end
-      end
+            Spree::Cart::AddItem.call(order: order, variant: create(:variant, price: 10))
+            order.save
 
-      promo_sequences.each do |promo_sequence|
-        it 'picks the best line-item-level promo according to current eligibility' do
-          # apply both promos to the order, even though only promo1 is eligible
-          line_item_promos[promo_sequence[0]].activate order: order
-          line_item_promos[promo_sequence[1]].activate order: order
+            order.reload
+            expect(order.all_adjustments.count).to eq(4)
+            expect(order.all_adjustments.eligible.count).to eq(2)
 
-          order.reload
-          msg = "Expected one adjustment (using sequence #{promo_sequence})"
-          expect(order.all_adjustments.count).to eq(1), msg
-
-          msg = "Expected one elegible adjustment (using sequence #{promo_sequence})"
-          expect(order.all_adjustments.eligible.count).to eq(1), msg
-
-          # line_item_promo1 is the only one that has thus far met the order total threshold,
-          # it is the only promo which should be applied.
-          msg = "Expected line_item_promo1 to be used (using sequence #{promo_sequence})"
-          expect(order.all_adjustments.first.source.promotion).to eq(line_item_promo1), msg
-
-          Spree::Cart::AddItem.call(order: order, variant: create(:variant, price: 10))
-          order.save
-
-          order.reload
-          msg = "Expected four adjustments (using sequence #{promo_sequence})"
-          expect(order.all_adjustments.count).to eq(4), msg
-
-          msg = "Expected two elegible adjustments (using sequence #{promo_sequence})"
-          expect(order.all_adjustments.eligible.count).to eq(2), msg
-
-          order.all_adjustments.eligible.each do |adjustment|
-            msg = "Expected line_item_promo2 to be used (using sequence #{promo_sequence})"
-            expect(adjustment.source.promotion).to eq(line_item_promo2), msg
+            order.all_adjustments.eligible.each do |adjustment|
+              expect(adjustment.source.promotion).to eq(line_item_promo2)
+            end
           end
         end
       end
