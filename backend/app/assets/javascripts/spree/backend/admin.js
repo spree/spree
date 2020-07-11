@@ -154,12 +154,12 @@ jQuery(function ($) {
   // Make flash messages disappear
   var element = document.querySelector('.flash-alert')
 
-   if (element) {
-     element.addEventListener('animationend', function () {
-       element.classList.remove('animate__bounceInUp')
-       element.classList.add('animate__fadeOutDownBig', 'animate__delay-3s');
-     })
-   }
+  if (element) {
+    element.addEventListener('animationend', function () {
+      element.classList.remove('animate__bounceInUp')
+      element.classList.add('animate__fadeOutDownBig', 'animate__delay-3s');
+    })
+  }
 })
 
 $.fn.visible = function (cond) { this[ cond ? 'show' : 'hide' ]() }
