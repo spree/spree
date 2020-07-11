@@ -152,7 +152,7 @@ describe Spree::Adjustable::Adjuster::Promotion, type: :model do
             order.save
 
             order.reload
-            expect(order.all_adjustments.count).to eq(4)
+            expect(order.all_adjustments.count).to eq(2)
             expect(order.all_adjustments.eligible.count).to eq(2)
 
             order.all_adjustments.eligible.each do |adjustment|
