@@ -62,6 +62,11 @@
 }
 
 .select2-container-active {
+  .select2-choice,
+  .select2-choices {
+    border-color: lighten($success, 20);
+    border-bottom: 1px solid lighten($success, 20);
+  }
   &, & a {
     box-shadow: none !important;
   }
@@ -86,14 +91,6 @@
   border-radius: $border-radius $border-radius 0 0;
 }
 
-.select2-container-active {
-  .select2-choice,
-  .select2-choices {
-    border-color: lighten($success, 20);
-    border-bottom: 1px solid lighten($success, 20);
-  }
-}
-
 div.select2-container-active.select2-drop-above {
   .select2-choice {
     border-color: lighten($success, 20);
@@ -104,11 +101,6 @@ div.select2-container-active.select2-drop-above {
 .select2-container.select2-drop-above .select2-choice {
   border-radius: $border-radius;
 }
-
-.select2-container-multi.select2-container-active .select2-choices {
-  border-color: lighten($success, 20);
-}
-
 .select2-result-label {
   color: $gray-900;
 }
@@ -160,6 +152,7 @@ div.select2-container-active.select2-drop-above {
   &.select2-container-active {
     .select2-choices {
       box-shadow: none;
+      border-color: lighten($success, 20);
     }
   }
 }
