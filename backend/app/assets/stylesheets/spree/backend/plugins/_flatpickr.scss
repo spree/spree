@@ -21,9 +21,15 @@
   height: 100%;
 }
 
-
 .flatpickr-day {
   border-radius: 7px;
+}
+
+input.flatpickr-input {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-color: white !important;
 }
 
 // Fix Flatpickr bug where things jusy highlight for no reason.

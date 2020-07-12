@@ -38,13 +38,3 @@ input[type="file"]::-webkit-file-upload-button {
 .page-actions .btn {
   margin: 2px;
 }
-
-input.flatpickr-input {
-  /* Remove First */
--webkit-appearance: none;
--moz-appearance: none;
-appearance: none;
-
-  background-color: white !important;
-
-}
