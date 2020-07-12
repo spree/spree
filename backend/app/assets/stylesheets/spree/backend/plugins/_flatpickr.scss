@@ -41,3 +41,12 @@ input.flatpickr-input[readonly] {
 .flatpickr-months .flatpickr-next-month:hover svg {
   fill: $primary;
 }
+
+// Force rounded corner for the toggle cal and close icons.
+.input-group >
+.input-group-append:not(:last-child) >
+.force-round {
+  z-index: 5;
+  border-top-right-radius: $border-radius !important;
+  border-bottom-right-radius: $border-radius !important;
+}
