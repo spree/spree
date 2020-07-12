@@ -150,15 +150,26 @@ jQuery(function ($) {
       $('#table-filter form').append(perPageInput)
     }
   })
+})
 
-  // Make flash messages disappear
+function handleAlert (element) {
+  element.classList.add('animate__animated', 'animate__bounceInUp')
+
+  element.addEventListener('animationend', function () {
+    element.classList.remove('animate__bounceInUp')
+    element.classList.add('animate__fadeOutDownBig', 'animate__delay-3s')
+
+    element.addEventListener('animationend', function () {
+      element.remove()
+    })
+  })
+}
+
+$(document).ready(function () {
   var element = document.querySelector('.flash-alert')
 
   if (element) {
-    element.addEventListener('animationend', function () {
-      element.classList.remove('animate__bounceInUp')
-      element.classList.add('animate__fadeOutDownBig', 'animate__delay-3s');
-    })
+    handleAlert (element)
   }
 })
 
@@ -167,12 +178,15 @@ $.fn.visible = function (cond) { this[ cond ? 'show' : 'hide' ]() }
 function show_flash (type, message) {
   var flashDiv = $('.alert-' + type)
   if (flashDiv.length === 0) {
-    flashDiv = $('<div class="alert alert-' + type + '" />')
-    $('#content').prepend(flashDiv)
-  }
-  flashDiv.html(message).show().delay(10000).slideUp()
-}
+    flashDiv = $('<div class="d-flex justify-content-center position-fixed flash-alert">' +
+                 '<div class="alert alert-' + type + '">' + message + '</div></div>')
 
+    $('body').append(flashDiv)
+
+    var ajaxFlashNotfication = document.querySelector('.flash-alert')
+    handleAlert(ajaxFlashNotfication)
+  }
+}
 // Apply to individual radio button that makes another element visible when checked
 $.fn.radioControlsVisibilityOfElement = function (dependentElementSelector) {
   if (!this.get(0)) { return }
