@@ -9,7 +9,7 @@ module Spree
           flash_class = 'success' if flash[:success]
           flash_div = content_tag(:div, message, class: "alert alert-#{flash_class} mx-4")
           content_tag(:div, flash_div,
-                      class: 'd-flex justify-content-center position-fixed flash-alert animate__animated animate__bounceInUp')
+                      class: 'd-flex justify-content-center position-fixed flash-alert ')
         end
       end
 
