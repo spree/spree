@@ -1,6 +1,6 @@
-<div class="row mb-3">
+<div id="contentHeader" class="row mb-3">
   <% if content_for?(:page_title) || content_for?(:page_actions) %>
-    <div id="contentHeader" class="content-header col <%= "with-page-tabs" if content_for?(:page_tabs) %> page-header">
+    <div class="content-header col <%= "with-page-tabs" if content_for?(:page_tabs) %> page-header">
       <div class="row align-items-center  <%= if content_for?(:page_tabs) then "pb-0" else "border-bottom" end %>">
 
         <% if content_for?(:page_title) %>
