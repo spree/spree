@@ -4,7 +4,7 @@ under the spree namespace that do stuff we find helpful.
 Hopefully, this will evolve into a propper class.
 **/
 
-/* global AUTH_TOKEN, order_number, Sortable, flatpickr */
+/* global AUTH_TOKEN, order_number, Sortable, flatpickr, DOMPurify */
 
 //= require spree/backend/flatpickr_locals
 
@@ -159,12 +159,13 @@ jQuery(function ($) {
 $.fn.visible = function (cond) { this[ cond ? 'show' : 'hide' ]() }
 // eslint-disable-next-line camelcase
 function show_flash (type, message) {
+  var cleanMessage = DOMPurify.sanitize(message)
   var flashDiv = $('.alert-' + type)
   if (flashDiv.length === 0) {
     flashDiv = $('<div class="alert alert-' + type + '" />')
     $('#content').prepend(flashDiv)
   }
-  flashDiv.html(message).show().delay(10000).slideUp()
+  flashDiv.html(cleanMessage).show().delay(10000).slideUp()
 }
 
 // Apply to individual radio button that makes another element visible when checked
