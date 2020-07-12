@@ -154,17 +154,13 @@ jQuery(function ($) {
 
 function handleAlert (element) {
   element.classList.add('animate__animated', 'animate__bounceInUp')
-
   element.addEventListener('animationend', function () {
     element.classList.remove('animate__bounceInUp')
     element.classList.add('animate__fadeOutDownBig', 'animate__delay-3s')
-
-    element.addEventListener('animationend', function () {
-      element.remove()
-    })
   })
 }
 
+// Triggers alerts if triggered on document ready.
 $(document).ready(function () {
   var element = document.querySelector('.flash-alert')
 
@@ -174,8 +170,15 @@ $(document).ready(function () {
 })
 
 $.fn.visible = function (cond) { this[ cond ? 'show' : 'hide' ]() }
+// Triggers alerts if requested by javascript.
 // eslint-disable-next-line camelcase
 function show_flash (type, message) {
+  var existingAlert = document.querySelector('.flash-alert')
+
+  if (existingAlert) {
+    existingAlert.remove()
+  }
+
   var flashDiv = $('.alert-' + type)
   if (flashDiv.length === 0) {
     flashDiv = $('<div class="d-flex justify-content-center position-fixed flash-alert">' +
@@ -187,6 +190,7 @@ function show_flash (type, message) {
     handleAlert(ajaxFlashNotfication)
   }
 }
+
 // Apply to individual radio button that makes another element visible when checked
 $.fn.radioControlsVisibilityOfElement = function (dependentElementSelector) {
   if (!this.get(0)) { return }
