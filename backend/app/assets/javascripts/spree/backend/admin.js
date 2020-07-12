@@ -169,7 +169,7 @@ $(document).ready(function () {
   var element = document.querySelector('.flash-alert')
 
   if (element) {
-    handleAlert (element)
+    handleAlert(element)
   }
 })
 
