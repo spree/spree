@@ -5,6 +5,13 @@
   }
 }
 
+input.flatpickr-input {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-color: white !important;
+}
+
 .input-group {
   input.flatpickr-input{
     @include swith-appended-icon  {
@@ -20,7 +27,6 @@
   z-index: 0;
   height: 100%;
 }
-
 
 .flatpickr-day {
   border-radius: 7px;
@@ -40,4 +46,13 @@ input.flatpickr-input[readonly] {
 .flatpickr-months .flatpickr-prev-month:hover svg,
 .flatpickr-months .flatpickr-next-month:hover svg {
   fill: $primary;
+}
+
+// Force rounded corner for the toggle cal and close icons.
+.input-group >
+.input-group-append:not(:last-child) >
+.force-round {
+  z-index: 5;
+  border-top-right-radius: $border-radius !important;
+  border-bottom-right-radius: $border-radius !important;
 }
