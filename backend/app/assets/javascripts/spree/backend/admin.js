@@ -160,7 +160,7 @@ function handleAlert (element) {
   })
 }
 
-// Triggers alerts if triggered on document ready.
+// Triggers alert if required on document ready.
 $(document).ready(function () {
   var element = document.querySelector('.flash-alert')
 
@@ -170,7 +170,7 @@ $(document).ready(function () {
 })
 
 $.fn.visible = function (cond) { this[ cond ? 'show' : 'hide' ]() }
-// Triggers alerts if requested by javascript.
+// Triggers alerts when requested by javascript.
 // eslint-disable-next-line camelcase
 function show_flash (type, message) {
   var existingAlert = document.querySelector('.flash-alert')
