@@ -53,19 +53,19 @@
   <table class="table" id="listing_products">
     <thead>
       <tr data-hook="admin_products_index_headers">
-          <th colspan="2"><%= sort_link @search,:name, Spree.t(:name), { default_order: "desc" }, {title: 'admin_products_listing_name_title'} %></th>
-        <th><%= Spree.t(:sku) %></th>
-        <th><%= Spree.t(:status) %></th>
-        <th class="text-center">
+        <th scope="col" colspan="2"><%= sort_link @search,:name, Spree.t(:name), { default_order: "desc" }, {title: 'admin_products_listing_name_title'} %></th>
+        <th scope="col"><%= Spree.t(:sku) %></th>
+        <th scope="col"><%= Spree.t(:status) %></th>
+        <th scope="col" class="text-center">
           <%= sort_link @search, :master_default_price_amount, Spree.t(:master_price), {}, {title: 'admin_products_listing_price_title'} %>
         </th>
-        <th data-hook="admin_products_index_header_actions" class="actions"></th>
+        <th scope="col" data-hook="admin_products_index_header_actions" class="actions"></th>
       </tr>
     </thead>
     <tbody>
       <% @collection.each do |product| %>
           <tr <%== "style='color: red;'" if product.deleted? %> id="<%= spree_dom_id product %>" data-hook="admin_products_index_rows" class="<%= cycle('odd', 'even') %>">
-            <td class="image">
+            <td scope="row" class="image">
               <%= link_to edit_admin_product_path(product) do %>
                 <%= mini_image product %>
               <% end %>
@@ -74,10 +74,12 @@
             <td class="sku"><%= product.sku rescue '' %></td>
             <td class="status"><%= available_status(product) %> </td>
             <td class="text-center"><%= display_price(product) %></td>
-            <td class="actions actions-3 text-right" data-hook="admin_products_index_row_actions">
-              <%= link_to_edit product, no_text: true, class: 'edit' if can?(:edit, product) && !product.deleted? %>
-              <%= link_to_clone product, no_text: true, class: 'clone' if can?(:clone, product) %>
-              <%= link_to_delete product, no_text: true if can?(:delete, product) && !product.deleted? %>
+            <td class="actions " data-hook="admin_products_index_row_actions">
+              <span class="d-flex">
+                <%= link_to_edit product, no_text: true, class: 'edit' if can?(:edit, product) && !product.deleted? %>
+                <%= link_to_clone product, no_text: true, class: 'clone' if can?(:clone, product) %>
+                <%= link_to_delete product, no_text: true if can?(:delete, product) && !product.deleted? %>
+              </span>
             </td>
           </tr>
       <% end %>
