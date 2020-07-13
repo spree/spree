@@ -16,6 +16,12 @@ jQuery(function ($) {
     })
   })
 
+  $('.with-tip').on('show.bs.tooltip', function(event) {
+    if (('ontouchstart' in window)) {
+      event.preventDefault()
+    }
+  })
+
   $('.js-show-index-filters').click(function () {
     $('.filter-well').slideToggle()
     $(this).parents('.filter-wrap').toggleClass('collapsed')
@@ -265,6 +271,8 @@ $(document).ready(function() {
       }).fail(function (response) {
         show_flash('error', response.responseText)
       })
+    } else {
+      el.blur()
     }
     return false
   })
