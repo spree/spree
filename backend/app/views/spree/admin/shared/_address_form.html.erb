@@ -1,38 +1,38 @@
 <% s_or_b = type.chars.first %>
 <div id="<%= type %>" data-hook="address_fields">
-<% Spree::Address::ADDRESS_FIELDS.each do |field| %>
-  <% if field == "country" %>
-    <div id="<%= type + '_' + field %>" class="form-group <%= "#{type}-row" %>">
-      <%= f.label :country_id, Spree.t(:country) %>
-      <span id="<%= s_or_b %>country">
-        <%= f.collection_select :country_id, available_countries, :id, :name, {}, { class: 'select2' } %>
-      </span>
-    </div>
-  <% elsif field == "state" %>
-    <%= field_container (type + '_' + field), :state, class: ["form-group", "#{type}-row"] do %>
-      <%= f.label :state_id, Spree.t(:state) %>
-      <span id="<%= s_or_b %>state">
-        <% if f.object.country.try(:states) %>
-          <%= f.text_field :state_name,
-                           style: "display: #{f.object.country.try(:states) && f.object.country.states.empty? ? 'block' : 'none' };",
-                           disabled: !(f.object.country.try(:states) && f.object.country.states.empty?), class: 'form-control state_name' %>
-          <%= f.collection_select :state_id, f.object.country.states.sort, :id, :name, { include_blank: true }, { class: 'select2', style: "display: #{ f.object.country.states.empty? ? 'none' : 'block' };", disabled: f.object.country.states.empty? } %>
-        <% else %>
-          <div>
-            <em><%= Spree.t(:no_country) %></em>
-          </div>
-        <% end %>
-      </span>
-      <%= error_message_on f.object, :state_id %>
-    <% end %>
-  <% else %>
-    <%= field_container (type + '_' + field), field, class: ["form-group", "#{type}-row"] do %>
-      <%= f.label field, Spree.t(field) %>
-      <%= f.text_field field, class: 'form-control' %>
-      <%= error_message_on f.object, field %>
+  <% Spree::Address::ADDRESS_FIELDS.each do |field| %>
+    <% if field == "country" %>
+      <%= field_container (s_or_b + '_' + field), nil, class: ["form-group", "#{type}-row"] do %>
+        <%= f.label :country_id, Spree.t(:country) %>
+        <span id="<%= s_or_b %>country">
+          <%= f.collection_select :country_id, available_countries, :id, :name, {}, { class: 'select2' } %>
+        </span>
+      <% end %>
+    <% elsif field == "state" %>
+      <%= field_container (s_or_b + '_' + field), :state, class: ["form-group", "#{type}-row"] do %>
+        <%= f.label :state_id, Spree.t(:state) %>
+        <span id="<%= s_or_b %>state">
+          <% if f.object.country.try(:states) %>
+            <%= f.text_field :state_name,
+                             style: "display: #{f.object.country.try(:states) && f.object.country.states.empty? ? 'block' : 'none' };",
+                             disabled: !(f.object.country.try(:states) && f.object.country.states.empty?), class: 'form-control state_name' %>
+            <%= f.collection_select :state_id, f.object.country.states.sort, :id, :name, { include_blank: true }, { class: 'select2', style: "display: #{ f.object.country.states.empty? ? 'none' : 'block' };", disabled: f.object.country.states.empty? } %>
+          <% else %>
+            <div>
+              <em><%= Spree.t(:no_country) %></em>
+            </div>
+          <% end %>
+        </span>
+        <%= error_message_on f.object, :state_id %>
+      <% end %>
+    <% else %>
+      <%= field_container (s_or_b + '_' + field), nil, class: ["form-group", "#{type}-row"] do %>
+        <%= f.label field, Spree.t(field) %>
+        <%= f.text_field field, class: 'form-control' %>
+        <%= error_message_on f.object, field %>
+      <% end %>
     <% end %>
   <% end %>
-<% end %>
 </div>
 
 <% content_for :head do %>
