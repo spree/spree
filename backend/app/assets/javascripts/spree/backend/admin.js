@@ -190,7 +190,7 @@ function show_flash (type, message) {
   var flashDiv = $('.alert-' + type)
   if (flashDiv.length === 0) {
     flashDiv = $('<div class="d-flex justify-content-center position-fixed flash-alert">' +
-                 '<div class="alert alert-' + type + '">' + cleanMessage + '</div></div>')
+                 '<div class="alert alert-' + type + ' mx-2">' + cleanMessage + '</div></div>')
 
     $('body').append(flashDiv)
 
