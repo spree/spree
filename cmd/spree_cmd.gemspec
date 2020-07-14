@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.email       = ['chris@spreecommerce.com']
   s.summary     = 'Spree Commerce command line utility'
   s.description = 'tools to create new Spree stores and extensions'
-  s.homepage    = 'http://spreecommerce.org'
+  s.homepage    = 'https://spreecommerce.org'
   s.license     = 'BSD-3-Clause'
 
   s.metadata = {
