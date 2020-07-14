@@ -26,22 +26,30 @@ span.or {
 }
 
 // Hide number toggler
-/* Chrome, Safari, Edge, Opera */
+  // Chrome, Safari, Edge, Opera
 input.hide-number-toggle::-webkit-outer-spin-button,
 input.hide-number-toggle::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
-
-/* Firefox */
+  // Firefox
 input[type=number].hide-number-toggle {
   -moz-appearance: textfield;
 }
 
-.input-group >
-.input-group-append:not(:last-child) >
-.force-round {
-  z-index: 5;
-  border-top-right-radius: 2px !important;
-  border-bottom-right-radius: 2px !important;
+
+// Remove the default 5px outlines and box-shadows
+// from all inputs on focus.
+.form-control:focus {
+  box-shadow: none !important;
+}
+
+*:focus {
+    outline: none;
+}
+
+:-webkit-direct-focus {
+  outline-color: transparent;
+  outline-style: auto;
+  outline-width: 0;
 }

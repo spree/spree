@@ -68,7 +68,7 @@ ul.nav-sidebar {
 
 #contextualSideMenu {
   max-height: 85vh;
-  overflow-x: scroll;
+  overflow-x: auto;
   background-color: white;
   position: fixed;
   left:0;
@@ -119,10 +119,12 @@ body.contextualSideMenu-open #contextual-menu-toggle {
 @include media-breakpoint-up(lg) {
 
   #contextualSideMenu {
-    position: relative;
     border: none;
-    height: auto;
+    height: max-content;
     z-index: 1000;
+    position: sticky;
+    top: 75px;
+    transition: none;
   }
   aside#main-sidebar {
     left: 0;

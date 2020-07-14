@@ -11,8 +11,8 @@
           <% if has_dropdown %>
             <div class="dropdown-menu w-100 shadow main-nav-bar-category-dropdown">
               <div class="container p-0 d-flex justify-content-xl-around mx-auto">
-                <% if root[:items].present? %>
-                  <div class="row">
+                <div class="row">
+                  <% if root[:items].present? %>
                     <div class="category-links">
                       <% if root[:subtitle].present? %>
                         <div class="category-links-header text-uppercase">

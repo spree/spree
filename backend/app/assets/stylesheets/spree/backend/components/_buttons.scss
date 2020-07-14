@@ -14,8 +14,9 @@
   .ship {
     color: #fff;
   }
-  svg {
-    margin-bottom: 3px;
+  svg,
+  i.icon {
+   margin-bottom: 3px;
   }
 }
 
@@ -37,14 +38,4 @@ input[type="file"]::-webkit-file-upload-button {
 .actions .btn,
 .page-actions .btn {
   margin: 2px;
-}
-
-input.flatpickr-input {
-  /* Remove First */
--webkit-appearance: none;
--moz-appearance: none;
-appearance: none;
-
-  background-color: white !important;
-
 }
