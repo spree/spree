@@ -4,7 +4,7 @@ under the spree namespace that do stuff we find helpful.
 Hopefully, this will evolve into a propper class.
 **/
 
-/* global AUTH_TOKEN, order_number, Sortable, flatpickr */
+/* global AUTH_TOKEN, order_number, Sortable, flatpickr, DOMPurify */
 
 //= require spree/backend/flatpickr_locals
 
@@ -125,8 +125,9 @@ jQuery(function ($) {
       }
 
       label = ransackField(label.text()) + ': ' + ransackValue
+      var cleanLabel = DOMPurify.sanitize(label)
 
-      filter = '<span class="js-filter badge badge-secondary" data-ransack-field="' + ransackFieldId + '">' + label + '<i class="icon icon-cancel ml-2 js-delete-filter"></i></span>'
+      filter = '<span class="js-filter badge badge-secondary" data-ransack-field="' + ransackFieldId + '">' + cleanLabel + '<i class="icon icon-cancel ml-2 js-delete-filter"></i></span>'
       $(".js-filters").append(filter).show()
     }
   })
@@ -164,12 +165,13 @@ jQuery(function ($) {
 $.fn.visible = function (cond) { this[ cond ? 'show' : 'hide' ]() }
 // eslint-disable-next-line camelcase
 function show_flash (type, message) {
+  var cleanMessage = DOMPurify.sanitize(message)
   var flashDiv = $('.alert-' + type)
   if (flashDiv.length === 0) {
     flashDiv = $('<div class="alert alert-' + type + '" />')
     $('#content').prepend(flashDiv)
   }
-  flashDiv.html(message).show().delay(10000).slideUp()
+  flashDiv.html(cleanMessage).show().delay(10000).slideUp()
 }
 
 // Apply to individual radio button that makes another element visible when checked
