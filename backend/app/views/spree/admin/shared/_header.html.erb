@@ -1,6 +1,6 @@
 <header class="header logged-in">
 
-  <nav class="navbar fixed-top navbar-dark align-items-middle" role="navigation">
+  <nav class="navbar fixed-top navbar-dark align-items-middle">
     <div class="col-3 col-sm-4 p-0 d-lg-none">
       <button
         id="sidebar-open"
@@ -13,7 +13,7 @@
     </div>
     <div class="col text-center text-lg-left">
       <%= link_to(
-        image_tag(Spree::Config[:admin_interface_logo], id: 'logo'),
+        image_tag(Spree::Config[:admin_interface_logo], id: 'logo', alt: current_store.name),
         spree.admin_path,
         class: "logo navbar-brand"
       ) %>

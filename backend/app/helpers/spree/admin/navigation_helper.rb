@@ -235,7 +235,7 @@ module Spree
             text = "#{icon} #{text}"
           end
 
-          link_to(text.html_safe, url, html_options)
+          link_to(text.html_safe, url, html_options.except(:icon))
         end
       end
 
