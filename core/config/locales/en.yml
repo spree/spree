@@ -1706,7 +1706,7 @@ en:
     taxonomy_categories_name: Categories
     taxonomy_edit: Edit taxonomy
     taxonomy_tree_error: The requested change has not been accepted and the tree has been returned to its previous state, please try again.
-    taxonomy_tree_instruction: ! '* Right click a child in the tree to access the menu for adding, deleting or sorting a child.'
+    taxonomy_tree_instruction: ! '* Right click (or double tap on iOS device) a child in the tree to access the menu for adding, deleting or sorting a child.'
     taxons: Taxons
     test: Test
     test_mailer:
