@@ -83,28 +83,18 @@
 
 
 .select2-drop.select2-drop-active {
-  border-color: $input-focus-border-color;
-  border-top: 0;
-  border-radius: 0 0  $border-radius $border-radius;
-  margin-top: -6px;
+  border-color: $input-focus-border-color !important;
+  border-top: 1px solid $input-focus-border-color;
+  border-bottom: 1px solid $input-focus-border-color;
+  margin-top: 2px;
 }
 
 .select2-drop.select2-drop-above.select2-drop-active {
-  border-color: $input-focus-border-color;
-  border-top: 1px solid $input-focus-border-color;
-
-  border-radius: $border-radius $border-radius 0 0;
-  margin-top: 6px;
-}
-
-div.select2-container-active.select2-drop-above {
-  .select2-choice {
-    border-color: $input-focus-border-color;
-    border-top: 1px solid $input-focus-border-color;
-  }
+  margin-top: -2px;
 }
 
 .select2-container.select2-drop-above .select2-choice {
+  border-color: $input-focus-border-color !important;
   border-radius: $border-radius;
 }
 .select2-result-label {
