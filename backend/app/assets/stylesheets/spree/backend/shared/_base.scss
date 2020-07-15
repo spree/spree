@@ -10,6 +10,10 @@
   display: none;
 }
 
+.tooltip{
+  z-index: $zindex-dropdown;
+}
+
 // No-margin and no-padding helper classes
 @each $side in top bottom left right {
   .no-margin-#{$side}  { margin-#{side}: 0; }
