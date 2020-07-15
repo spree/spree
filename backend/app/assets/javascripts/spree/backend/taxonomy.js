@@ -160,7 +160,7 @@ root.setup_taxonomy_tree = function (taxonomyId) {
     })
 
     $taxonomyTree.on('dblclick', 'a', function () {
-      var iOS = /iPad|iPhone|iPod/.test(navigator.platform || "")
+      var iOS = /iPad|iPhone|iPod/.test(navigator.platform || '')
       if (iOS) {
         $taxonomyTree.jstree('show_contextmenu', this)
       } else {
