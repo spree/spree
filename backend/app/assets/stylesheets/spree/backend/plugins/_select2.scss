@@ -59,7 +59,6 @@
 }
 
 .select2-drop {
-  z-index: $zindex-dropdown;
   &, &.select2-drop-above {
     border-radius: $border-radius;
     box-shadow: none;
