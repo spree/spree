@@ -93,7 +93,6 @@ describe 'Payments', type: :feature, js: true do
       within find('#contentHeader') do
         click_on 'New Payment'
       end
-      
       expect(page).to have_content('You cannot create a payment for an order without any payment methods defined.')
       expect(page).to have_content('Please define some payment methods first.')
     end
