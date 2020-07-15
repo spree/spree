@@ -157,21 +157,46 @@ jQuery(function ($) {
       $('#table-filter form').append(perPageInput)
     }
   })
+})
 
-  // Make flash messages disappear
-  setTimeout(function () { $('.alert-auto-disappear').slideUp() }, 5000)
+function handleAlert (element) {
+  element.classList.add('animate__animated', 'animate__bounceInUp')
+  element.addEventListener('animationend', function () {
+    element.classList.remove('animate__bounceInUp')
+    element.classList.add('animate__fadeOutDownBig', 'animate__delay-3s')
+  })
+}
+
+// Triggers alert if required on document ready.
+$(document).ready(function () {
+  var element = document.querySelector('.flash-alert')
+
+  if (element) {
+    handleAlert(element)
+  }
 })
 
 $.fn.visible = function (cond) { this[ cond ? 'show' : 'hide' ]() }
+// Triggers alerts when requested by javascript.
 // eslint-disable-next-line camelcase
 function show_flash (type, message) {
   var cleanMessage = DOMPurify.sanitize(message)
+  var existingAlert = document.querySelector('.flash-alert')
+
+  if (existingAlert) {
+    existingAlert.remove()
+  }
+
   var flashDiv = $('.alert-' + type)
   if (flashDiv.length === 0) {
-    flashDiv = $('<div class="alert alert-' + type + '" />')
-    $('#content').prepend(flashDiv)
+    flashDiv = $('<div class="d-flex justify-content-center position-fixed flash-alert">' +
+                 '<div class="alert alert-' + type + ' mx-2">' + cleanMessage + '</div></div>')
+
+    $('body').append(flashDiv)
+
+    var ajaxFlashNotfication = document.querySelector('.flash-alert')
+    handleAlert(ajaxFlashNotfication)
   }
-  flashDiv.html(cleanMessage).show().delay(10000).slideUp()
 }
 
 // Apply to individual radio button that makes another element visible when checked

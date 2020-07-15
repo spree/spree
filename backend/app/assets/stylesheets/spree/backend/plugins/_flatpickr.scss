@@ -56,3 +56,7 @@ input.flatpickr-input[readonly] {
   border-top-right-radius: $border-radius !important;
   border-bottom-right-radius: $border-radius !important;
 }
+
+div.flatpickr-calendar.open {
+  z-index: $zindex-dropdown;
+}
