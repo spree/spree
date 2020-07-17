@@ -2,7 +2,7 @@
 //= require jquery_ujs
 //= require popper
 //= require bootstrap
-//= require jquery.payment
+//= require cleave
 //= require spree
 //= require polyfill.min
 //= require fetch.umd
