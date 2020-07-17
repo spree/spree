@@ -1,12 +1,21 @@
 //= require jquery.payment
 $(document).ready(function () {
   if ($('#new_payment').length) {
-    $('.cardNumber').payment('formatCardNumber')
-    $('.cardExpiry').payment('formatCardExpiry')
-    $('.cardCode').payment('formatCardCVC')
 
-    $('.cardNumber').change(function () {
-      $('.ccType').val($.payment.cardType(this.value))
+    var cleave = new Cleave('.cardNumber', {
+      creditCard: true,
+      onCreditCardTypeChanged: function (type) {
+          $('.ccType').val(type)
+      }
+    })
+
+    var cleaveDate = new Cleave('.cardExpiry', {
+      date: true,
+      datePattern: ['m', 'Y']
+    })
+
+    var cleaveCCV = new Cleave('.cardCode', {
+      blocks: [3]
     })
 
     $('.payment_methods_radios').click(
@@ -36,15 +45,10 @@ $(document).ready(function () {
       }
     )
 
-    $('.cvvLink').click(function (event) {
-      var windowName = 'cvv_info'
-      var windowOptions = 'left=20,top=20,width=500,height=500,toolbar=0,resizable=0,scrollbars=1'
-      window.open($(this).prop('href'), windowName, windowOptions)
-      event.preventDefault()
-    })
-
     $('select.jump_menu').change(function () {
       window.location = this.options[this.selectedIndex].value
+      console.log(this.options[this.selectedIndex].value);
     })
+
   }
 })
