@@ -1,20 +1,20 @@
-//= require jquery.payment
+/* global Cleave */
+
 $(document).ready(function () {
   if ($('#new_payment').length) {
-
-    var cleave = new Cleave('.cardNumber', {
+    new Cleave('.cardNumber', {
       creditCard: true,
       onCreditCardTypeChanged: function (type) {
-          $('.ccType').val(type)
+        $('.ccType').val(type)
       }
     })
 
-    var cleaveDate = new Cleave('.cardExpiry', {
+    new Cleave('.cardExpiry', {
       date: true,
       datePattern: ['m', 'Y']
     })
 
-    var cleaveCCV = new Cleave('.cardCode', {
+    new Cleave('.cardCode', {
       blocks: [3]
     })
 
@@ -49,6 +49,5 @@ $(document).ready(function () {
       window.location = this.options[this.selectedIndex].value
       console.log(this.options[this.selectedIndex].value);
     })
-
   }
 })
