@@ -1,29 +1,29 @@
 <fieldset data-id="credit-card">
-<div class="card my-3">
-  <div class="card-header">
-    <h1 class="card-title mb-0 h5"><%= Spree.t(:previously_used_card) %></h1>
-  </div>
-    <div class="form-group previous_cards card-body mb-0" data-hook="previous_cards">
-      <ul class="m-0 p-0">
-        <% if previous_cards.any? %>
-          <% previous_cards.each do |card| %>
+<% if previous_cards.any? %>
+  <div class="card my-3">
+    <div class="card-header">
+      <h1 class="card-title mb-0 h5"><%= Spree.t(:previously_used_card) %></h1>
+    </div>
+      <div class="form-group previous_cards card-body mb-0" data-hook="previous_cards">
+        <ul class="m-0 p-0">
+
+            <% previous_cards.each do |card| %>
+              <li>
+                <label>
+                  <%= radio_button_tag :card, card.id, card == previous_cards.first %> <%= card.brand.upcase + ' - ' + card.display_number %>
+                </label>
+              </li>
+            <% end %>
             <li>
+              <hr>
               <label>
-                <%= radio_button_tag :card, card.id, card == previous_cards.first %> <%= card.brand.upcase + ' - ' + card.display_number %>
+                <%= radio_button_tag :card, 'new', false, { id: "card_new#{payment_method.id}" } %> <%= Spree.t(:use_new_cc) %>
               </label>
             </li>
-          <% end %>
-          <li>
-            <hr>
-            <label>
-              <%= radio_button_tag :card, 'new', false, { id: "card_new#{payment_method.id}" } %> <%= Spree.t(:use_new_cc) %>
-            </label>
-          </li>
-        <% end %>
-      </ul>
-    </div>
-</div>
-
+        </ul>
+      </div>
+  </div>
+<% end %>
   <div id="card_form<%= payment_method.id %>" class="margint row" data-hook>
     <% param_prefix = "payment_source[#{payment_method.id}]" %>
 
