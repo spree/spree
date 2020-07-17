@@ -31,11 +31,21 @@ Spree.ready(function ($) {
           Spree.enableSave()
         })
       }
-      $('.cardNumber').payment('formatCardNumber')
-      $('.cardExpiry').payment('formatCardExpiry')
-      $('.cardCode').payment('formatCardCVC')
-      $('.cardNumber').change(function () {
-        $(this).parent().siblings('.ccType').val($.payment.cardType(this.value))
+      /* eslint-disable no-new */
+      new Cleave('.cardNumber', {
+        creditCard: true,
+        onCreditCardTypeChanged: function (type) {
+          $('.ccType').val(type)
+        }
+      })
+      /* eslint-disable no-new */
+      new Cleave('.cardExpiry', {
+        date: true,
+        datePattern: ['m', 'Y']
+      })
+      /* eslint-disable no-new */
+      new Cleave('.cardCode', {
+        blocks: [3]
       })
       $('input[type="radio"][name="order[payments_attributes][][payment_method_id]"]').click(function () {
         Spree.enableSave()
