@@ -634,7 +634,7 @@ en:
     cannot_set_shipping_method_without_address: Cannot set shipping method until customer details are provided.
     capture: Capture
     capture_events: Capture events
-    card_code: Card Code
+    card_code: Card Varification Code (CVC)
     card_number: Card Number
     card_type: Brand
     card_type_is: Card type is
@@ -1303,6 +1303,7 @@ en:
     preview_taxon: Preview Taxon
     previous: Previous
     previous_state_missing: "n/a"
+    previously_used_card: Previously Used Cards
     price: Price
     prices: Prices
     price_range: Price Range

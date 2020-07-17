@@ -46,9 +46,5 @@ $(document).ready(function () {
         }
       }
     )
-
-    $('select.jump_menu').change(function () {
-      window.location = this.options[this.selectedIndex].value
-    })
   }
 })
