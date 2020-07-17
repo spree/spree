@@ -39,7 +39,7 @@
 
     <div data-hook="card_expiration" class="form-group">
       <%= label_tag "card_expiry#{payment_method.id}", raw(Spree.t(:expiration) + required_span_tag) %><br>
-      <%= text_field_tag "#{param_prefix}[expiry]", '', id: "card_expiry#{payment_method.id}", class: "required cardExpiry form-control", placeholder: "MM / YY" %>
+      <%= text_field_tag "#{param_prefix}[expiry]", '', id: "card_expiry#{payment_method.id}", class: "required cardExpiry form-control", placeholder: "MM/YYYY" %>
     </div>
 
     <div data-hook="card_code" class="form-group">
