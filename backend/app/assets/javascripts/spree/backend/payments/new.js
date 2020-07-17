@@ -2,18 +2,19 @@
 
 $(document).ready(function () {
   if ($('#new_payment').length) {
+    /* eslint-disable no-new */
     new Cleave('.cardNumber', {
       creditCard: true,
       onCreditCardTypeChanged: function (type) {
         $('.ccType').val(type)
       }
     })
-
+    /* eslint-disable no-new */
     new Cleave('.cardExpiry', {
       date: true,
       datePattern: ['m', 'Y']
     })
-
+    /* eslint-disable no-new */
     new Cleave('.cardCode', {
       blocks: [3]
     })
@@ -47,7 +48,6 @@ $(document).ready(function () {
 
     $('select.jump_menu').change(function () {
       window.location = this.options[this.selectedIndex].value
-      console.log(this.options[this.selectedIndex].value);
     })
   }
 })
