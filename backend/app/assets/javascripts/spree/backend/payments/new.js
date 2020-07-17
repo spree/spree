@@ -16,6 +16,7 @@ $(document).ready(function () {
     })
     /* eslint-disable no-new */
     new Cleave('.cardCode', {
+      numericOnly: true,
       blocks: [3]
     })
 

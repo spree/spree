@@ -1,3 +1,5 @@
+/* global Cleave */
+
 //= require spree/frontend/coupon_manager
 Spree.ready(function ($) {
   Spree.onPayment = function () {
@@ -45,6 +47,7 @@ Spree.ready(function ($) {
       })
       /* eslint-disable no-new */
       new Cleave('.cardCode', {
+        numericOnly: true,
         blocks: [3]
       })
       $('input[type="radio"][name="order[payments_attributes][][payment_method_id]"]').click(function () {
