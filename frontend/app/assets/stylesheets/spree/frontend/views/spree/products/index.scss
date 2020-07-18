@@ -259,6 +259,9 @@
       padding: 0;
       margin: 0;
       &-li {
+        .filled-dot {
+          display: none;
+        }
         &--active {
           .filled-dot {
             z-index: 1px;
@@ -277,9 +280,6 @@
           &:hover {
             text-decoration: none;
           }
-        }
-        .filled-dot {
-          display: none;
         }
       }
     }
