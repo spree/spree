@@ -275,6 +275,29 @@ module Spree
             expect(products).to match_array [product_2, product]
           end
         end
+
+        context 'when filtering by taxons and some products have multiple taxons in that taxonomy' do
+          let(:taxonomy) { create(:taxonomy) }
+          let(:child_taxon) { create(:taxon, taxonomy: taxonomy) }
+          let(:child_taxon_2) { create(:taxon, taxonomy: taxonomy) }
+
+          before do
+            product.taxons << child_taxon
+            product_2.taxons << child_taxon
+            product_2.taxons << child_taxon_2
+
+            # Fix products positions
+            product.classifications.find_by(taxon: child_taxon).update(position: 3)
+            product_2.classifications.find_by(taxon: child_taxon).update(position: 1)
+            product_2.classifications.find_by(taxon: child_taxon_2).update(position: 2)
+          end
+
+          let(:params) { { sort_by: 'default', filter: { taxons: taxonomy.root.id } } }
+
+          it 'returns products ordered by associated taxon position without duplicates' do
+            expect(products).to match_array [product_2, product]
+          end
+        end
       end
 
       it 'returns products in newest-first order' do
