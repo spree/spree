@@ -21,6 +21,8 @@ As you can see, there is already one site setup, default one that you're current
 In the right upper corner press *New Store* button present on the Screenshot above.
 
 ![New store](../../../images/user/config/new_store.jpg)
+![New store](../../../images/user/config/new_store_2.jpg)
+![New store](../../../images/user/config/new_store_3.jpg)
 
 * **Name** - value for you to recognize it
 * **URL** - a line separated list of fully qualified domain names used to associate a customers session with a particular store (you can use localhost and/or IP addresses too).
@@ -31,6 +33,8 @@ In the right upper corner press *New Store* button present on the Screenshot abo
 * **CODE** - which is a abbreviated version of the store's name (used as the layout directory name, and also helpful for separating partials by store).
 
 Then just press the Create. That's it, multi store is setup and ready to go.
+
+![Multi stores](../../../images/user/config/spree_multi_stores.jpg)
 
 ### Edit Store
 
