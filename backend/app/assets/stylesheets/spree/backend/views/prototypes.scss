@@ -5,7 +5,7 @@ $color_size: 26px;
     li {
       display: flex;
       align-items: center;
-      padding: 0 0.25rem;
+      margin: 0.25rem;
       input {
         margin-right: 0.5rem;
       }
@@ -14,6 +14,7 @@ $color_size: 26px;
       display: flex;
       flex-wrap: wrap;
       align-items: center;
+      max-width: 350px;
       input {
         display: none;
       }
