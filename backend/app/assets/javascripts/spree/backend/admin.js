@@ -32,7 +32,15 @@ jQuery(function ($) {
   var modalBackdrop  = $('#multi-backdrop')
 
   // Fail safe on resize
-  document.getElementsByTagName("BODY")[0].onresize = function() { closeAllMenus() }
+  var resizeTimer;
+  window.addEventListener('resize', function () {
+    document.body.classList.remove('modal-open', 'sidebar-open', 'contextualSideMenu-open');
+    document.body.classList.add('resize-animation-stopper');
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function () {
+      document.body.classList.remove('resize-animation-stopper');
+    }, 400);
+  });
 
   function closeAllMenus() {
     body.removeClass()
