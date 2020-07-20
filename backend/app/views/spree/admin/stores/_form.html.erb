@@ -81,22 +81,22 @@
   <div class="card-body">
     <%= f.field_container :default_currency, class: ['form-group'] do %>
       <%= f.label :default_currency, Spree.t(:currency) %>
-      <%= f.select :default_currency, currency_options(@store.default_currency) %>
+      <%= f.select :default_currency, currency_options(@store.default_currency), {}, { class: 'select2' } %>
       <%= f.error_message_on :default_currency %>
     <% end %>
     <%= f.field_container :supported_currencies, class: ['form-group'] do %>
       <%= f.label :supported_currencies, Spree.t(:supported_currencies) %>
-      <%= f.select :supported_currencies, currency_options(@store.supported_currencies&.split(',')), { prompt: false }, { multiple: true } %>
+      <%= f.select :supported_currencies, currency_options(@store.supported_currencies&.split(',')), { prompt: false }, { multiple: true, class: 'select2' } %>
       <%= f.error_message_on :supported_currencies %>
     <% end %>
     <%= f.field_container :default_locale, class: ['form-group'] do %>
       <%= f.label :default_locale, Spree.t('i18n.language') %>
-      <%= f.select :default_locale, options_from_collection_for_select(all_locales_options, :last, :first, @store.default_locale) %>
+      <%= f.select :default_locale, options_from_collection_for_select(all_locales_options, :last, :first, @store.default_locale), {}, { class: 'select2' } %>
       <%= f.error_message_on :default_locale %>
     <% end %>
     <%= f.field_container :default_country_id, class: ['form-group'] do %>
       <%= f.label :default_country_id, Spree.t('i18n.country') %>
-      <%= f.select :default_country_id, options_from_collection_for_select(@countries, :id, :name, @store.default_country_id) %>
+      <%= f.select :default_country_id, options_from_collection_for_select(@countries, :id, :name, @store.default_country_id), {}, { class: 'select2' } %>
       <%= f.error_message_on :default_country_id %>
     <% end %>
   </div>
@@ -156,10 +156,3 @@
     <% end %>
   </div>
 </div>
-
-<script>
-  $('#store_default_currency').select2();
-  $('#store_supported_currencies').select2();
-  $('#store_default_locale').select2();
-  $('#store_default_country_id').select2();
-</script>
