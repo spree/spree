@@ -2,14 +2,6 @@ $color_size: 26px;
 
 .product-prototype-options {
   .option-type-values {
-    li {
-      display: flex;
-      align-items: center;
-      margin: 0.25rem;
-      input {
-        margin-right: 0.5rem;
-      }
-    }
     &__color {
       display: flex;
       flex-wrap: wrap;
@@ -17,6 +9,14 @@ $color_size: 26px;
       max-width: 350px;
       input {
         display: none;
+      }
+    }
+    li {
+      display: flex;
+      align-items: center;
+      margin: 0.25rem;
+      input {
+        margin-right: 0.5rem;
       }
     }
   }
