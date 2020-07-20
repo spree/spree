@@ -1,3 +1,7 @@
+div.select2-drop-mask {
+  position: absolute;
+  display: none !important;
+}
 .select2-container {
   display: block;
 
@@ -59,6 +63,7 @@
 }
 
 .select2-drop {
+  z-index: $zindex-dropdown;
   &, &.select2-drop-above {
     border-radius: $border-radius;
     box-shadow: none;
