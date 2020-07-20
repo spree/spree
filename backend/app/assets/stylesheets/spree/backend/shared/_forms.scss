@@ -55,7 +55,7 @@ input[type=number].hide-number-toggle {
 }
 
 .custom-select {
-  background: #fff url(asset-path("backend-chevron-down.svg")) no-repeat right 0.5rem center/8px 10px;
+  background: $input-bg url(asset-path("backend-chevron-down.svg")) no-repeat right 0.5rem center/8px 10px;
   background-size: 0.7em;
   &:focus{
     outline: none;
