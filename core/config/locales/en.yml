@@ -943,6 +943,7 @@ en:
       available_locales: Available Locales
       fields: Fields
       language: Language
+      country: Country
       localization_settings: Localization Settings
       only_incomplete: Only incomplete
       only_complete: Only complete
@@ -1025,6 +1026,7 @@ en:
     login_as_existing: Login as Existing Customer
     login_failed: Login authentication failed.
     login_name: Login
+    logo: Logo
     logo_alt: Brand logo
     logout: Logout
     look_for_similar_items: Look for similar items

@@ -5,7 +5,7 @@ module Spree
     belongs_to :default_country, class_name: 'Spree::Country'
 
     with_options presence: true do
-      validates :name, :url, :mail_from_address, :default_currency
+      validates :name, :url, :mail_from_address, :default_currency, :code
     end
 
     connection.column_exists?(:spree_stores, :new_order_notifications_email) do
