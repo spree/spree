@@ -5,16 +5,13 @@ document.addEventListener('DOMContentLoaded', function() {
   // The overlay mask stops you lowering the z-index of the opend Select2 instance
   // This is not needed if upgraded to Select2 v4.x
   window.addEventListener('click', function(e) {
-    var select2Mask = document.getElementById('select2-drop-mask')
     var select2Drop = document.getElementById('select2-drop')
 
     if (select2Drop) {
       if (select2Drop.contains(e.target)) {
         // Click in the Select2 dropdown and do nothing...
       } else {
-        if (select2Mask) {
-          $(select2Mask).click()
-        }
+        $('*').select2('close')
       }
     }
   })
