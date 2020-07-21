@@ -12,6 +12,8 @@ module Spree
       validates :new_order_notifications_email, email: { allow_blank: true }
     end
 
+    has_one_attached :logo
+
     before_save :ensure_default_exists_and_is_unique
     before_destroy :validate_not_default
 

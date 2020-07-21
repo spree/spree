@@ -10,5 +10,13 @@ module Spree
     def name_for(order)
       order.name || Spree.t('customer')
     end
+
+    def logo_path
+      if current_store.present? && current_store.logo.attached?
+        main_app.url_for(current_store.logo.variant(resize: '244x104>'))
+      else
+        Spree::Config.mailer_logo || Spree::Config.logo
+      end
+    end
   end
 end

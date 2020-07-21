@@ -41,7 +41,13 @@ module Spree
       end
     end
 
-    def logo(image_path = Spree::Config[:logo], options = {})
+    def logo(image_path = nil, options = {})
+      image_path ||= if current_store.logo.attached?
+                       main_app.url_for(current_store.logo.variant(resize: '244x104>'))
+                     else
+                       Spree::Config[:logo]
+                     end
+
       path = spree.respond_to?(:root_path) ? spree.root_path : main_app.root_path
 
       link_to path, 'aria-label': current_store.name, method: options[:method] do
