@@ -76,11 +76,11 @@ input.flatpickr-input[readonly] {
 }
 
 div.flatpickr-calendar.open {
-  overflow: hidden;
   z-index: $zindex-dropdown;
 }
 
 .flatpickr-time {
+  border-radius: 0 0 5px 5px;
   &:after {
     display: none;
   }
