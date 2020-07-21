@@ -60,6 +60,7 @@ jQuery(function ($) {
 
   // Contextual Sidebar Menu
   var contextualSidebarMenuToggle = $('#contextual-menu-toggle')
+  var contextualSidebarMenuClose = $('#contextual-menu-close')
 
   function toggleContextualMenu() {
     if (document.body.classList.contains('contextualSideMenu-open')) {
@@ -71,6 +72,7 @@ jQuery(function ($) {
     }
   }
   contextualSidebarMenuToggle.click(toggleContextualMenu)
+  contextualSidebarMenuClose.click(toggleContextualMenu)
 
   // TODO: remove this js temp behaviour and fix this decent
   // Temp quick search
