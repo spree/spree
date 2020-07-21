@@ -11,6 +11,10 @@ table.table {
     &.handel-head {
       width: 50px;
     }
+    a.sort_link {
+      display: inline-block;
+      width: max-content;
+    }
   }
 
   td {
