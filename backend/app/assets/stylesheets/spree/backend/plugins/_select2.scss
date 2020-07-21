@@ -21,10 +21,8 @@ div.select2-drop-mask {
     .select2-arrow {
       background-image: none;
       background-color: $input-bg;
-      border-top-left-radius: 0;
-      border-bottom-left-radius: 0;
-      border-left-color: $input-border-color;
-      width: 24px;
+      border:none;
+      width: 30px;
 
       b {
         background-image: url(asset-path("backend-chevron-down.svg")) !important;
@@ -32,7 +30,7 @@ div.select2-drop-mask {
         vertical-align: middle !important;
         background-repeat: no-repeat !important;
         background-size: 1rem !important;
-        background-position: 54% !important;
+        background-position: 48% !important;
       }
     }
 
@@ -166,7 +164,7 @@ div.select2-drop-mask {
 .select2-search-choice-close,
 .select2-container .select2-choice abbr,
 .select2-container .select2-choice .select2-arrow b {
-    background-size: 0.7rem !important;
+    background-size: $select2-icon-size !important;
 }
 
 .select2-container.select2-allowclear .select2-choice abbr{
@@ -176,7 +174,7 @@ div.select2-drop-mask {
   background-repeat: no-repeat !important;
   background-position: 50% !important;
   right:30px;
-  background-size: 0.8rem !important;
+  background-size: $select2-icon-size !important;
 }
 
 .select2-container-multi .select2-choices .select2-search-choice .select2-search-choice-close:hover {
@@ -190,10 +188,4 @@ select.select2[required="required"] {
   overflow: hidden;
   opacity:0;
   filter:alpha(opacity=0);
-}
-
-i.js-delete-filter {
-  width: 0.8rem;
-  height: 0.8rem;
-  margin-bottom: 0;
 }
