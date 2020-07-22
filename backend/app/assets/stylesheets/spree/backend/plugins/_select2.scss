@@ -1,6 +1,5 @@
 div.select2-drop-mask {
-  position: absolute;
-  display: none !important;
+  z-index: 999;
 }
 .select2-container {
   display: block;
