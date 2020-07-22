@@ -303,6 +303,12 @@ Spree.ready(function($) {
           Spree.showProductAddedModal(JSON.parse(
             $cartForm.attr('data-product-summary')
           ), Spree.variantById($cartForm, variantId))
+          $cartForm.trigger({
+            type: 'product_add_to_cart',
+            variant: Spree.variantById($cartForm, variantId),
+            quantity_increment: quantity,
+            cart: response.attributes
+          })
         },
         function(error) {
           if (typeof error === 'string' && error !== '') {
