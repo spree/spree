@@ -96,7 +96,7 @@ module Spree
       :quantity, :stock_item, :stock_item_id, :originator, :action
     ]
 
-    @@store_attributes = [:name, :url, :seo_title, :code, :meta_keywords,
+    @@store_attributes = [:name, :url, :seo_title, :code, :meta_keywords, :logo,
                           :meta_description, :default_currency, :mail_from_address,
                           :customer_support_email, :facebook, :twitter, :instagram,
                           :description, :address, :contact_email, :contact_phone,

@@ -7,10 +7,25 @@
     </h1>
   </div>
   <div class="card-body">
+    <%= f.field_container :logo, class: ['form-group'] do %>
+      <% if @store.logo.attached? %>
+        <%= image_tag main_app.url_for(@store.logo.variant(resize: '244x104>')) %>
+      <% end %>
+      <%= f.field_container :logo, class: ['form-group'] do %>
+        <%= f.label :logo, Spree.t(:logo) %><br />
+        <%= f.file_field :logo %>
+        <%= f.error_message_on :logo %>
+      <% end %>
+    <% end %>
     <%= f.field_container :name, class: ['form-group'] do %>
       <%= f.label :name, raw(Spree.t(:name) + required_span_tag) %>
       <%= f.text_field :name, class: 'form-control', required: true %>
       <%= f.error_message_on :name %>
+    <% end %>
+    <%= f.field_container :code, class: ['form-group'] do %>
+      <%= f.label :code, raw(Spree.t(:code) + required_span_tag) %>
+      <%= f.text_field :code, class: 'form-control', required: true %>
+      <%= f.error_message_on :code %>
     <% end %>
     <%= f.field_container :url, class: ['form-group'] do %>
       <%= f.label :url, raw(Spree.t(:url) + required_span_tag)  %>
