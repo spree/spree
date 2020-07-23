@@ -41,7 +41,7 @@ After you click the "Create" button, the Spree application brings you to a more 
 * **Taxons** - Taxons are basically like categories. You will learn more about them in the [Taxonomies Guide](/user/products/taxonomies_and_taxons.html).
 * **Option Types** - You can select any number of Options to associate your new product with. You'll learn more about Options in the [Options Guide](/user/products/product_options.html).
 * **Meta Title** - It is the name of the product site that is visible in the browser navigation bar. Highly recommended to fill out Meta Title/Keywords/Description for each product since it does improve SEO and will index the site name in Google Search.
-* **Meta Keywords** - These words are appended to the website's keywords you established in the site settings and can help improve your site's search engine ratings, bringing you more web traffic. They should be words that are key to your new product.
+* **Meta Keywords** - These words are appended to the website's keywords you established in the [Store Settings](/user/configuration/configuring_multi_stores.html#edit-store) and can help improve your site's search engine ratings, bringing you more web traffic. They should be words that are key to your new product.
 * **Meta Description** - The summary that someone sees when your product's page is returned in a web search. It should be descriptive but not overly verbose.
 
 ## Images
