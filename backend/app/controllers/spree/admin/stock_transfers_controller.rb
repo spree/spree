@@ -20,7 +20,7 @@ module Spree
 
       def create
         if params[:variant].nil?
-          flash[:error] = Spree.t('stock_transfer.errors.must_have_variant')
+          flash.now[:error] = Spree.t('stock_transfer.errors.must_have_variant')
           render :new
         else
           variants = Hash.new(0)
