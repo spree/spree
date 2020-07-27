@@ -40,7 +40,7 @@
             <% if current_store.contact_phone&.present? %>
               <div><%= Spree.t(:call_us_now) %><%= current_store.contact_phone %></div>
             <% end %>
-            <% if current_store.contact_email? %>
+            <% if current_store.contact_email&.present? %>
               <div><%= Spree.t(:email) %>: <%= current_store.contact_email %></div>
             <% end %>
           </div>
