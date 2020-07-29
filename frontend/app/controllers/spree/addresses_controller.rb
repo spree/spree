@@ -20,10 +20,12 @@ module Spree
 
     def edit
       session['spree_user_return_to'] = request.env['HTTP_REFERER']
+      @title = Spree.t('address_book.edit_shipping_address')
     end
 
     def new
       @address = Spree::Address.default
+      @title = Spree.t('address_book.new_shipping_address')
     end
 
     def update
