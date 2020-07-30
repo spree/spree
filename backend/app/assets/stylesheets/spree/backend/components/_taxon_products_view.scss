@@ -14,7 +14,7 @@
   }
 }
 
-ul#taxon_products, tbody#sortVert {
+ul#taxon_products {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -30,6 +30,6 @@ ul#taxon_products, tbody#sortVert {
   }
 
   li.moving-this div.card {
-    border-color: #48B0F7;
+    border-color: $info;
   }
 }

@@ -5,7 +5,7 @@ $(function () {
   var taxonId = $('#taxon_id')
 
   var el = document.getElementById('taxon_products')
-  if (el !== null && el !== '') {
+  if (el) {
     Sortable.create(el, {
       handle: '.sort-handle',
       ghostClass: 'moving-this',
