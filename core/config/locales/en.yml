@@ -986,8 +986,8 @@ en:
     inventory_error_flash_for_insufficient_quantity: An item in your cart has become unavailable.
     inventory_state: Inventory State
     is_not_available_to_shipment_address: is not available to shipment address
-    iso: ISO Alpha-2 Code
-    iso3: ISO Alpha-3 Code
+    iso: ISO Alpha-2
+    iso3: ISO Alpha-3
     iso_name: ISO Name
     issued_on: Issued On
     item: Item
