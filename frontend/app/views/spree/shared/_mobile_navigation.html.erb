@@ -30,16 +30,14 @@
       <% spree_navigation_data.each do |root| %>
         <li class="d-flex justify-content-between align-items-center mobile-navigation-list-item">
           <%= link_to root[:title], root[:url], class: 'w-75' %>
-
-          <a class="w-25 text-right mobile-navigation-category-link" data-category="<%= root[:title].parameterize %>" href="#" aria-label="<%= Spree.t('go_to_category')%>">
-            <%= icon(name: 'arrow-right',
-                    classes: 'd-inline spree-icon-arrow spree-icon-arrow-right',
-                    width: 14,
-                    height: 27) %>
-          </a>
-
-          <ul class="list-unstyled position-absolute mobile-navigation-sublist" data-category="<%= root[:title].parameterize %>">
-            <% if root[:items].present? %>
+          <% if root[:items].present? %>
+            <a class="w-25 text-right mobile-navigation-category-link" data-category="<%= root[:title].parameterize %>" href="#" aria-label="<%= Spree.t('go_to_category')%>">
+              <%= icon(name: 'arrow-right',
+                       classes: 'd-inline spree-icon-arrow spree-icon-arrow-right',
+                       width: 14,
+                       height: 27) %>
+            </a>
+            <ul class="list-unstyled position-absolute mobile-navigation-sublist" data-category="<%= root[:title].parameterize %>">
               <li class="text-center font-weight-bold mobile-navigation-sublist-header">
                 <%= root[:title] %>
               </li>
@@ -48,12 +46,8 @@
                   <%= link_to item[:title], item[:url], class: 'w-75' %>
                 </li>
               <% end %>
-            <% else %>
-              <li class="d-flex justify-content-between align-items-center mobile-navigation-list-item">
-                <%= link_to root[:title], root[:url], class: 'w-75' %>
-              </li>
-            <% end %>
-          </ul>
+            </ul>
+          <% end %>
         </li>
       <% end %>
       <%= render partial: 'spree/shared/mobile_change_store' %>
