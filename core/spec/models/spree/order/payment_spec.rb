@@ -178,11 +178,13 @@ module Spree
         order.total = 30.30
         expect(order.outstanding_balance).to eq(10.10)
       end
+
       it 'returns negative amount when payment_total is greater than total' do
         order.total = 8.20
         order.payment_total = 10.20
         expect(order.outstanding_balance).to be_within(0.001).of(-2.00)
       end
+
       it 'incorporates refund reimbursements' do
         # Creates an order w/total 10
         reimbursement = create :reimbursement
@@ -200,7 +202,7 @@ module Spree
         expect(order.outstanding_balance).to eq 0
       end
 
-      it 'incorporates refunds' do
+      it 'does not incorporate refunds without a reimbursement' do
         order = create(:completed_order_with_totals)
         calculator = order.shipments.first.shipping_method.calculator
 
@@ -211,8 +213,9 @@ module Spree
 
         create(:refund, amount: 10, payment: order.payments.first)
         order.update_with_updater!
-
-        expect(order.outstanding_balance).to eq 0
+        # Order Total - (Payment Total + Reimbursed)
+        # 10 - (0 + 0) = 0
+        expect(order.outstanding_balance).to eq 10
       end
     end
 
