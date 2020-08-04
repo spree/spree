@@ -27,5 +27,3 @@ To make additional Edit in RMA Reason just simply click *Edit* button. Now you c
 ![RMA Reason Edit Inside](../../../images/user/config/rma_reason_edit_inside.jpg)
 
 To delete RMA Reason just press *Delete* button next to *Edit*.
-
-![RMA Reason Delete icon](../../../images/user/config/rma_reason_delete_icon.jpg)
