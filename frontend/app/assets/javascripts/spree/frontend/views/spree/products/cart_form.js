@@ -62,7 +62,9 @@ function CartForm($, $cartForm) {
   }
 
   this.handleOptionValueClick = function(event) {
-    this.applyCheckedOptionValue($(event.currentTarget))
+    var currentTarget = $(event.currentTarget)
+    this.applyCheckedOptionValue(currentTarget)
+    currentTarget.blur()
   }.bind(this)
 
   this.applyCheckedOptionValue = function($optionValue, initialUpdate) {
