@@ -1630,7 +1630,7 @@ en:
     stock_transfer_name: Stock Transfer
     stock_transfer:
       errors:
-        must_have_variant: You must add atleast one variant.
+        must_have_variant: You must add at least one variant.
     stock_transfers: Stock Transfers
     stop: Stop
     store: Store
