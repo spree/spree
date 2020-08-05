@@ -38,6 +38,7 @@
 //= require spree/frontend/views/spree/shared/quantity_select
 //= require spree/frontend/turbolinks_scroll_fix
 //= require spree/frontend/main_nav_bar
+//= require spree/frontend/login
 
 Spree.routes.api_tokens = Spree.pathFor('api_tokens')
 Spree.routes.ensure_cart = Spree.pathFor('ensure_cart')
