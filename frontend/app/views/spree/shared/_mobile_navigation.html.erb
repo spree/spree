@@ -1,7 +1,7 @@
 <% if spree_navigation_data.any? %>
   <div class="position-fixed text-uppercase d-xl-none mobile-navigation" role="navigation" aria-label="<%= Spree.t('nav_bar.mobile') %>">
-    <div class="d-flex align-items-center justify-content-between header-spree" data-hook>
-      <button class="ml-2" id="mobile-navigation-back-button" aria-label="<%= Spree.t('nav_bar.go_to_previous_menu') %>">
+    <div class="container d-flex align-items-center justify-content-between header-spree" data-hook>
+      <button class="m-0 p-0" id="mobile-navigation-back-button" aria-label="<%= Spree.t('nav_bar.go_to_previous_menu') %>">
         <%= icon(name: 'arrow-right',
                 classes: 'd-inline spree-icon-arrow spree-icon-arrow-left',
                 width: 26,
@@ -10,7 +10,7 @@
       <figure class="logo header-spree-fluid-logo" data-hook>
         <%= logo %>
       </figure>
-      <div id="top-nav-bar-mobile" class="mr-3 header-spree-fluid-secondary-navigation" data-hook>
+      <div id="top-nav-bar-mobile" class="m-0 p-0 header-spree-fluid-secondary-navigation" data-hook>
         <button id="mobile-navigation-close-button" aria-label="<%= Spree.t('nav_bar.close_menu') %>">
           <%= icon(name: 'close',
                   classes: 'd-inline',
