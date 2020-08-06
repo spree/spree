@@ -28,11 +28,12 @@ Gem::Specification.new do |s|
   s.add_dependency 'spree_api', s.version
   s.add_dependency 'spree_core', s.version
 
-  s.add_dependency 'bootstrap',       '>= 4.3.1', '< 4.6.0'
-  s.add_dependency 'glyphicons',      '~> 1.0.2'
-  s.add_dependency 'flatpickr',       '~> 4.6.0'
-  s.add_dependency 'inline_svg',      '~> 1.5'
-  s.add_dependency 'jquery-rails',    '~> 4.3'
-  s.add_dependency 'jquery-ui-rails', '~> 6.0.1'
-  s.add_dependency 'select2-rails',   '~> 3.5.0'
+  s.add_dependency 'active_storage_validations', '~> 0.8.0'
+  s.add_dependency 'bootstrap',                  '>= 4.3.1', '< 4.6.0'
+  s.add_dependency 'glyphicons',                 '~> 1.0.2'
+  s.add_dependency 'flatpickr',                  '~> 4.6.0'
+  s.add_dependency 'inline_svg',                 '~> 1.5'
+  s.add_dependency 'jquery-rails',               '~> 4.3'
+  s.add_dependency 'jquery-ui-rails',            '~> 6.0.1'
+  s.add_dependency 'select2-rails',              '~> 3.5.0'
 end

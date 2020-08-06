@@ -9,7 +9,7 @@
   <div class="card-body">
     <%= f.field_container :logo, class: ['form-group'] do %>
       <% if @store.logo.attached? %>
-        <%= image_tag main_app.url_for(@store.logo.variant(resize: '244x104>')) %>
+        <%= image_tag main_app.url_for(@store.logo) %>
       <% end %>
       <%= f.field_container :logo, class: ['form-group'] do %>
         <%= f.label :logo, Spree.t(:logo) %><br />
