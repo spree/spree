@@ -25,4 +25,7 @@
 @import 'shared/base';
 @import 'shared/forms';
 
-@import 'views/*';
+@import 'views/order_payments';
+@import 'views/product_properties';
+@import 'views/product_prototypes';
+@import 'views/configurations_stores';
