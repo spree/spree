@@ -17,7 +17,9 @@ module Spree
 
     has_one_attached :logo
 
-    validates :logo, content_type: [:png, :jpg, :jpeg, :gif]
+    validates :logo, content_type: [:png, :jpg, :jpeg, :gif],
+                     dimension: { width: { min: 10, max: 750 },
+                                  height: { min: 10, max: 200 }, message: 'Image size is too large' }
 
     before_save :ensure_default_exists_and_is_unique
     before_destroy :validate_not_default
