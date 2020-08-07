@@ -158,9 +158,16 @@ root.setup_taxonomy_tree = function (taxonomyId) {
         return $(this).jstree('core').toggle_node($('.jstree-icon').first())
       })
     })
+
     $taxonomyTree.on('dblclick', 'a', function () {
-      $taxonomyTree.jstree('rename', this)
+      var iOS = /iPad|iPhone|iPod/.test(navigator.platform || '')
+      if (iOS) {
+        $taxonomyTree.jstree('show_contextmenu', this)
+      } else {
+        $taxonomyTree.jstree('rename', this)
+      }
     })
+
     // suppress form submit on enter/return
     $(document).keypress(function (event) {
       if (event.keyCode === 13) {
