@@ -18,8 +18,9 @@ module Spree
     has_one_attached :logo
 
     validates :logo, content_type: [:png, :jpg, :jpeg, :gif],
-                     dimension: { width: { min: 1, max: 488 },
-                                  height: { min: 1, max: 208 } }
+                     size: { less_than: 250.kilobytes },
+                     dimension: { width: { min: 1, max: 976 },
+                                  height: { min: 1, max: 416 } }
 
     before_save :ensure_default_exists_and_is_unique
     before_destroy :validate_not_default
