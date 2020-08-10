@@ -12,8 +12,10 @@ module Spree
     end
 
     def logo_path
-      if current_store.present? && current_store.logo.attached?
+      if current_store.present? && current_store.logo.attached? && current_store.logo.variable?
         main_app.url_for(current_store.logo.variant(resize: '244x104>'))
+      elsif current_store.logo.image?
+        main_app.url_for(current_store.logo)
       else
         Spree::Config.mailer_logo || Spree::Config.logo
       end
