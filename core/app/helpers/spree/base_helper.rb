@@ -44,7 +44,7 @@ module Spree
     def logo(image_path = nil, options = {})
       image_path ||= if current_store.logo.attached? && current_store.logo.variable?
                        main_app.url_for(current_store.logo.variant(resize: '244x104>'))
-                     elsif current_store.logo.image?
+                     elsif current_store.logo.attached? && current_store.logo.image?
                        main_app.url_for(current_store.logo)
                      else
                        Spree::Config[:logo]

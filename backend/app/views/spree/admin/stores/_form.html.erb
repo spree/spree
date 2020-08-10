@@ -10,7 +10,7 @@
     <%= f.field_container :logo, class: ['form-group'] do %>
       <% if @store.logo.attached? && current_store.logo.variable? %>
         <%= image_tag main_app.url_for(@store.logo.variant(resize: '244x104>')) %>
-      <% elsif current_store.logo.image? %>
+      <% elsif @store.logo.attached? && current_store.logo.image? %>
         <%= image_tag main_app.url_for(current_store.logo) %>
       <% end %>
       <%= f.field_container :logo, class: ['form-group'] do %>
