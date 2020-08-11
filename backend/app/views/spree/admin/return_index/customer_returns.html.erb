@@ -36,7 +36,7 @@
     <tbody>
       <% @collection.each do |customer_return| %>
         <tr id="<%= spree_dom_id customer_return %>" data-hook="customer_return_row">
-          <td><%= customer_return.created_at.to_date %></td>
+          <td><%= customer_return.created_at.strftime('%F %T %Z') %></td>
           <td><%= link_to customer_return.number, spree.edit_admin_order_customer_return_path(customer_return.order, customer_return) %></td>
           <td><%= link_to customer_return.order.number, spree.edit_admin_order_path(customer_return.order) %></td>
           <td>
