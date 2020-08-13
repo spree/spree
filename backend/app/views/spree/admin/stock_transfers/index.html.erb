@@ -64,7 +64,7 @@
     <tbody>
       <% @stock_transfers.each do |stock_transfer| %>
         <tr id="<%= spree_dom_id stock_transfer %>" data-hook="stock_transfer_row">
-          <td><%= link_to stock_transfer.created_at, admin_stock_transfer_path(stock_transfer) %></td>
+          <td><%= link_to stock_transfer.created_at.strftime('%F %T %Z'), admin_stock_transfer_path(stock_transfer) %></td>
           <td><%= stock_transfer.reference %></td>
           <td><%= stock_transfer.source_location.try(:name) %></td>
           <td><%= stock_transfer.destination_location.try(:name) %></td>

@@ -8,6 +8,8 @@ module Spree
       validates :name, :url, :mail_from_address, :default_currency, :code
     end
 
+    validates :code, uniqueness: true
+
     if !ENV['SPREE_DISABLE_DB_CONNECTION'] &&
         connected? &&
         table_exists? &&
