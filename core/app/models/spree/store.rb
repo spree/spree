@@ -19,7 +19,7 @@ module Spree
 
     has_one_attached :logo
 
-    validates :logo, content_type: [:png, :jpg, :jpeg, :gif]
+    validates :logo, content_type: [:png, :jpg, :jpeg, :gif, :svg]
 
     before_save :ensure_default_exists_and_is_unique
     before_destroy :validate_not_default
