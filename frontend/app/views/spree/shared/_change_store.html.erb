@@ -1,5 +1,5 @@
 <% if stores.size > 1 %>
-  <li>
+  <li class="change-store">
     <div class="dropdown navbar-right-dropdown">
       <button id="stores-button" type="button" data-toggle="dropdown" class="navbar-right-dropdown-toggle" aria-label="<%= Spree.t('nav_bar.change_country')%>">
         <%= icon(name: 'global',
@@ -14,12 +14,10 @@
 
       <div class="dropdown-menu dropdown-menu-right text-right">
         <% stores.each do |store| %>
-          <% if store.id != current_store.id %>
-            <div class="pl-3 d-flex justify-content-between align-items-center">
-              <span class="flag-icon flag-icon-<%= store_country_iso(store) %>"></span>
-              <%= link_to "#{store.default_country&.name} (#{store_currency_symbol(store)})", "//#{store.url}", class: 'dropdown-item text-uppercase' %>
-            </div>
-          <% end %>
+          <div class="pl-3 d-flex justify-content-between align-items-center <%= 'active' if store.id == current_store.id %>">
+            <span class="flag-icon flag-icon-<%= store_country_iso(store) %>"></span>
+            <%= link_to "#{store.default_country&.name} (#{store_currency_symbol(store)})", "//#{store.url}", class: 'dropdown-item text-uppercase' %>
+          </div>
         <% end %>
       </div>
     </div>
