@@ -123,7 +123,7 @@ module Spree
     end
 
     delegate :display_amount, :display_price, :has_default_price?,
-             :images, to: :find_or_build_master
+             :display_compare_at_price, :images, to: :find_or_build_master
 
     alias master_images images
 
