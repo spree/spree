@@ -701,3 +701,24 @@ describe Spree::Product, type: :model do
     end
   end
 end
+
+describe '#default_variant_cache_key' do
+  let(:product) { create(:product) }
+  let(:key) { product.send(:default_variant_cache_key) }
+
+  context 'with inventory tracking' do
+    before { Spree::Config[:track_inventory_levels] = true }
+
+    it 'returns proper key' do
+      expect(key).to eq("spree/default-variant/#{product.cache_key_with_version}/true")
+    end
+  end
+
+  context 'without invenrtory tracking' do
+    before { Spree::Config[:track_inventory_levels] = false }
+
+    it 'returns proper key' do
+      expect(key).to eq("spree/default-variant/#{product.cache_key_with_version}/false")
+    end
+  end
+end
