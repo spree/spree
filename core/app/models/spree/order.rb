@@ -643,6 +643,13 @@ module Spree
         sum(:amount)
     end
 
+    def has_free_shipping?
+      promotions.
+        joins(:promotion_actions).
+        where(spree_promotion_actions: { type: 'Spree::Promotion::Actions::FreeShipping' }).
+        exists?
+    end
+
     private
 
     def link_by_email
