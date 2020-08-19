@@ -13,7 +13,7 @@
   <table class="table table-bordered">
     <tr>
       <td width="30%"><strong><%= Spree.t(:created_at) %></strong></td>
-      <td><%= @stock_transfer.created_at %></td>
+      <td><%= pretty_time(@stock_transfer.created_at) %></td>
     </tr>
     <% if @stock_transfer.reference.present? %>
       <tr>
