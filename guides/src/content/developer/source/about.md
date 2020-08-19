@@ -111,16 +111,16 @@ There are many excellent online resources for learning Ruby on Rails,
 including:
 
 -   [Rails Guides](http://guides.rubyonrails.org)
--   [Railscasts (Free Screencasts)](http://railscasts.com/)
+-   [GoRails](https://gorails.com)
+-   [Schneems](https://www.schneems.com/)
 
 There are also some good free resources on the internet for learning
 Ruby, including:
 
--   [Mr. Neighborly's Humble Little Ruby
-    Book](http://www.humblelittlerubybook.com)
+-   [Ruby Guides](http://www.rubyguides.com)
 -   [Programming Ruby](http://www.ruby-doc.org/docs/ProgrammingRuby/)
--   [Why's (Poignant) Guide to
-    Ruby](http://mislav.uniqpath.com/poignant-guide/)
+-   [Refactoring Guru](http://refactoring.guru/design-patterns/ruby)
+-   [Ruby LibHunt](https://ruby.libhunt.com)
 
 ## Open Source License
 
