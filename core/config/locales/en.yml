@@ -1632,6 +1632,7 @@ en:
     stock_transfer:
       errors:
         must_have_variant: You must add at least one variant.
+        variants_unavailable: "Some variants are not available on %{stock}" 
     stock_transfers: Stock Transfers
     stop: Stop
     store: Store
