@@ -5,11 +5,11 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = 'spree_sample'
   s.version     = Spree.version
-  s.author      = 'Sean Schofield'
-  s.email       = 'sean@spreecommerce.com'
+  s.authors     = ['Sean Schofield', 'Spark Solutions']
+  s.email       = 'hello@spreecommerce.org'
   s.summary     = 'Sample data (including images) for use with Spree.'
   s.description = 'Required dependency for Spree'
-  s.homepage    = 'http://spreecommerce.org'
+  s.homepage    = 'https://spreecommerce.org'
   s.license     = 'BSD-3-Clause'
 
   s.metadata = {

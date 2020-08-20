@@ -18,6 +18,12 @@
   opacity: 0.1;
 }
 
+i.js-delete-filter {
+  width: $select2-icon-size;
+  height: $select2-icon-size;
+  margin-bottom: 0;
+}
+
 .index-filter-button {
   font-size: $font-size-sm;
 
@@ -53,7 +59,8 @@
     height: 0.8rem;
 
   }
-  svg.default-filter-arrow{
+  
+  svg.default-filter-arrow {
     opacity: 0.1;
   }
 }

@@ -62,7 +62,9 @@ function CartForm($, $cartForm) {
   }
 
   this.handleOptionValueClick = function(event) {
-    this.applyCheckedOptionValue($(event.currentTarget))
+    var currentTarget = $(event.currentTarget)
+    this.applyCheckedOptionValue(currentTarget)
+    currentTarget.blur()
   }.bind(this)
 
   this.applyCheckedOptionValue = function($optionValue, initialUpdate) {
@@ -303,6 +305,12 @@ Spree.ready(function($) {
           Spree.showProductAddedModal(JSON.parse(
             $cartForm.attr('data-product-summary')
           ), Spree.variantById($cartForm, variantId))
+          $cartForm.trigger({
+            type: 'product_add_to_cart',
+            variant: Spree.variantById($cartForm, variantId),
+            quantity_increment: quantity,
+            cart: response.attributes
+          })
         },
         function(error) {
           if (typeof error === 'string' && error !== '') {

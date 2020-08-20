@@ -11,6 +11,9 @@ table.table {
     &.handel-head {
       width: 50px;
     }
+    a.sort_link {
+      white-space: nowrap;
+    }
   }
 
   td {

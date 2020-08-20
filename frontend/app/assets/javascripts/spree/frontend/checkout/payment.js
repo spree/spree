@@ -1,4 +1,7 @@
 /* global Cleave */
+var CARD_NUMBER_SELECTOR = '.cardNumber'
+var CARD_EXPIRATION_SELECTOR = '.cardExpiry'
+var CARD_CODE_SELECTOR = '.cardCode'
 
 //= require spree/frontend/coupon_manager
 Spree.ready(function ($) {
@@ -33,23 +36,29 @@ Spree.ready(function ($) {
           Spree.enableSave()
         })
       }
-      /* eslint-disable no-new */
-      new Cleave('.cardNumber', {
-        creditCard: true,
-        onCreditCardTypeChanged: function (type) {
-          $('.ccType').val(type)
-        }
-      })
-      /* eslint-disable no-new */
-      new Cleave('.cardExpiry', {
-        date: true,
-        datePattern: ['m', 'Y']
-      })
-      /* eslint-disable no-new */
-      new Cleave('.cardCode', {
-        numericOnly: true,
-        blocks: [3]
-      })
+
+      if ($(CARD_NUMBER_SELECTOR).length > 0 &&
+          $(CARD_EXPIRATION_SELECTOR).length > 0 &&
+          $(CARD_CODE_SELECTOR).length > 0) {
+        /* eslint-disable no-new */
+        new Cleave(CARD_NUMBER_SELECTOR, {
+          creditCard: true,
+          onCreditCardTypeChanged: function (type) {
+            $('.ccType').val(type)
+          }
+        })
+        /* eslint-disable no-new */
+        new Cleave(CARD_EXPIRATION_SELECTOR, {
+          date: true,
+          datePattern: ['m', 'Y']
+        })
+        /* eslint-disable no-new */
+        new Cleave(CARD_CODE_SELECTOR, {
+          numericOnly: true,
+          blocks: [3]
+        })
+      }
+
       $('input[type="radio"][name="order[payments_attributes][][payment_method_id]"]').click(function () {
         Spree.enableSave()
         if ($('#payment_method_' + this.value).find('fieldset').children().length == 0) {

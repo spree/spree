@@ -123,7 +123,7 @@ module Spree
     end
 
     delegate :display_amount, :display_price, :has_default_price?,
-             :images, to: :find_or_build_master
+             :display_compare_at_price, :images, to: :find_or_build_master
 
     alias master_images images
 
@@ -160,10 +160,8 @@ module Spree
     #
     # @return [Spree::Variant]
     def default_variant
-      track_inventory = Spree::Config[:track_inventory_levels]
-
-      Rails.cache.fetch("spree/default-variant/#{cache_key_with_version}/#{track_inventory}") do
-        if track_inventory && variants.in_stock_or_backorderable.any?
+      Rails.cache.fetch(default_variant_cache_key) do
+        if Spree::Config[:track_inventory_levels] && variants.in_stock_or_backorderable.any?
           variants.in_stock_or_backorderable.first
         else
           has_variants? ? variants.first : master
@@ -350,6 +348,10 @@ module Spree
         )
       end
       save
+    end
+
+    def default_variant_cache_key
+      "spree/default-variant/#{cache_key_with_version}/#{Spree::Config[:track_inventory_levels]}"
     end
 
     def ensure_master

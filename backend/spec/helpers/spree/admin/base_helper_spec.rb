@@ -24,7 +24,8 @@ describe Spree::Admin::BaseHelper, type: :helper do
 
   context '#order_time' do
     it 'prints in a format' do
-      expect(order_time(Time.new(2016, 5, 6, 13, 33))).to eq '2016-05-06 1:33 PM'
+      time = Time.new(2016, 5, 6, 13, 33)
+      expect(order_time(time)).to eq "2016-05-06 1:33 PM #{time.zone}"
     end
 
     it 'return empty stirng when nil is supplied' do

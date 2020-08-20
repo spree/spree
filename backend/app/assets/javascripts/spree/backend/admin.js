@@ -32,7 +32,15 @@ jQuery(function ($) {
   var modalBackdrop  = $('#multi-backdrop')
 
   // Fail safe on resize
-  document.getElementsByTagName("BODY")[0].onresize = function() { closeAllMenus() }
+  var resizeTimer;
+  window.addEventListener('resize', function () {
+    document.body.classList.remove('modal-open', 'sidebar-open', 'contextualSideMenu-open');
+    document.body.classList.add('resize-animation-stopper');
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function () {
+      document.body.classList.remove('resize-animation-stopper');
+    }, 400);
+  });
 
   function closeAllMenus() {
     body.removeClass()
@@ -60,6 +68,7 @@ jQuery(function ($) {
 
   // Contextual Sidebar Menu
   var contextualSidebarMenuToggle = $('#contextual-menu-toggle')
+  var contextualSidebarMenuClose = $('#contextual-menu-close')
 
   function toggleContextualMenu() {
     if (document.body.classList.contains('contextualSideMenu-open')) {
@@ -71,6 +80,7 @@ jQuery(function ($) {
     }
   }
   contextualSidebarMenuToggle.click(toggleContextualMenu)
+  contextualSidebarMenuClose.click(toggleContextualMenu)
 
   // TODO: remove this js temp behaviour and fix this decent
   // Temp quick search
@@ -344,8 +354,12 @@ $(document).ready(function() {
   })
 
   // Sortable List Up-Down
-  var element = document.getElementById('sortVert')
-  if (element !== null && element !== '') {
+  var parentEl = document.getElementsByClassName("sortable")[0];
+  if (parentEl) {
+    var element = parentEl.querySelector('tbody')
+  }
+
+  if (element) {
     Sortable.create(element, {
       handle: '.move-handle',
       animation: 550,

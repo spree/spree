@@ -297,13 +297,13 @@ module Spree
     def outstanding_balance
       if canceled?
         -1 * payment_total
-      elsif refunds.exists?
-        # If refund has happened add it back to total to prevent balance_due payment state
-        # See: https://github.com/spree/spree/issues/6229 & https://github.com/spree/spree/issues/8136
-        total - (payment_total + refunds.sum(:amount))
       else
-        total - payment_total
+        total - (payment_total + reimbursement_paid_total)
       end
+    end
+
+    def reimbursement_paid_total
+      reimbursements.sum(&:paid_amount)
     end
 
     def outstanding_balance?
@@ -641,6 +641,13 @@ module Spree
       all_adjustments.eligible.nonzero.promotion.
         where.not(adjustable_type: 'Spree::Shipment').
         sum(:amount)
+    end
+
+    def has_free_shipping?
+      promotions.
+        joins(:promotion_actions).
+        where(spree_promotion_actions: { type: 'Spree::Promotion::Actions::FreeShipping' }).
+        exists?
     end
 
     private

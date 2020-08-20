@@ -5,12 +5,19 @@ module Spree
     belongs_to :default_country, class_name: 'Spree::Country'
 
     with_options presence: true do
-      validates :name, :url, :mail_from_address, :default_currency
+      validates :name, :url, :mail_from_address, :default_currency, :code
     end
 
-    connection.column_exists?(:spree_stores, :new_order_notifications_email) do
+    validates :code, uniqueness: true
+
+    if !ENV['SPREE_DISABLE_DB_CONNECTION'] &&
+        connected? &&
+        table_exists? &&
+        connection.column_exists?(:spree_stores, :new_order_notifications_email)
       validates :new_order_notifications_email, email: { allow_blank: true }
     end
+
+    has_one_attached :logo
 
     before_save :ensure_default_exists_and_is_unique
     before_destroy :validate_not_default

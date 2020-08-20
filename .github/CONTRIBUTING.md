@@ -27,7 +27,7 @@ Here's a quick guide:
 refactoring and documentation changes require no new tests. If you are adding
 functionality or fixing a bug, we need tests!
 
-7. Run the tests. [See instructions](https://github.com/spree/spree#running-tests)
+7. Run the tests. [See instructions](https://guides.spreecommerce.org/developer/tutorials/developing_spree.html#running-tests)
 
 8. Push to your fork and submit a pull request. If the changes will apply cleanly
 to the master branch, you will only need to submit one pull request.

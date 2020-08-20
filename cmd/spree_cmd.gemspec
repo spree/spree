@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.email       = ['chris@spreecommerce.com']
   s.summary     = 'Spree Commerce command line utility'
   s.description = 'tools to create new Spree stores and extensions'
-  s.homepage    = 'http://spreecommerce.org'
+  s.homepage    = 'https://spreecommerce.org'
   s.license     = 'BSD-3-Clause'
 
   s.metadata = {
@@ -26,5 +26,5 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency 'rspec'
   # Temporary hack until https://github.com/wycats/thor/issues/234 is fixed
-  s.add_dependency 'thor', '>= 0.14', '< 2.0'
+  s.add_dependency 'thor', '~> 0.20.3'
 end

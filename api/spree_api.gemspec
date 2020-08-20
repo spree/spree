@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.email         = ["ryan@spreecommerce.com"]
   s.summary       = %q{Spree's API}
   s.description   = %q{Spree's API}
-  s.homepage      = 'http://spreecommerce.org'
+  s.homepage      = 'https://spreecommerce.org'
   s.license       = 'BSD-3-Clause'
 
   s.metadata = {

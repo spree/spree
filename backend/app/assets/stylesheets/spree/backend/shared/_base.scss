@@ -11,6 +11,7 @@
 }
 
 .tooltip{
+  pointer-events: none;
   z-index: $zindex-dropdown;
 }
 
@@ -49,4 +50,8 @@
 .flash-alert.animate__animated {
   opacity: 1;
   bottom: 30px;
+}
+
+.resize-animation-stopper * {
+  transition: none !important;
 }

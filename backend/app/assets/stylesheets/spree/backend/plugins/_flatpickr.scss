@@ -12,6 +12,23 @@ input.flatpickr-input {
   background-color: white !important;
 }
 
+.flatpickr-current-month .numInputWrapper {
+  margin-left: 3px;
+  border-radius: $border-radius;
+  overflow: hidden;
+}
+.flatpickr-current-month span.cur-month:hover {
+  background: transparent;
+}
+.numInputWrapper span.arrowUp {
+  border-color: transparent;
+  border-radius: 0;
+}
+.numInputWrapper span.arrowDown {
+  border-color: transparent;
+  border-radius: 0;
+}
+
 .input-group {
   input.flatpickr-input{
     @include swith-appended-icon  {
@@ -29,7 +46,8 @@ input.flatpickr-input {
 }
 
 .flatpickr-day {
-  border-radius: 7px;
+  margin: 2px 0;
+  border-radius: $border-radius ;
 }
 
 // Fix Flatpickr bug where things jusy highlight for no reason.
@@ -59,4 +77,19 @@ input.flatpickr-input[readonly] {
 
 div.flatpickr-calendar.open {
   z-index: $zindex-dropdown;
+}
+
+.flatpickr-time {
+  border-radius: 0 0 5px 5px;
+  &:after {
+    display: none;
+  }
+  .numInputWrapper {
+      span {
+        border-color: transparent;
+        border-radius: 0;
+
+      }
+
+  }
 }

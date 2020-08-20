@@ -159,7 +159,7 @@ module Spree
       def order_time(time)
         return '' if time.blank?
 
-        [I18n.l(time.to_date), time.strftime('%l:%M %p').strip].join(' ')
+        [I18n.l(time.to_date), time.strftime('%l:%M %p %Z').strip].join(' ')
       end
 
       def required_span_tag

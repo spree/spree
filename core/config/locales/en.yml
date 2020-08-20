@@ -634,7 +634,7 @@ en:
     cannot_set_shipping_method_without_address: Cannot set shipping method until customer details are provided.
     capture: Capture
     capture_events: Capture events
-    card_code: Card Code
+    card_code: Card Varification Code (CVC)
     card_number: Card Number
     card_type: Brand
     card_type_is: Card type is
@@ -898,6 +898,7 @@ en:
     follow_us: Follow us
     footer_info: Footer info
     forgot_password: Forgot password?
+    free: Free
     free_shipping: Free Shipping
     free_shipping_amount: "-"
     front_end: Front End
@@ -943,6 +944,7 @@ en:
       available_locales: Available Locales
       fields: Fields
       language: Language
+      country: Country
       localization_settings: Localization Settings
       only_incomplete: Only incomplete
       only_complete: Only complete
@@ -985,7 +987,9 @@ en:
     inventory_error_flash_for_insufficient_quantity: An item in your cart has become unavailable.
     inventory_state: Inventory State
     is_not_available_to_shipment_address: is not available to shipment address
-    iso_name: Iso Name
+    iso: ISO Alpha-2
+    iso3: ISO Alpha-3
+    iso_name: ISO Name
     issued_on: Issued On
     item: Item
     item_description: Item Description
@@ -1025,6 +1029,7 @@ en:
     login_as_existing: Login as Existing Customer
     login_failed: Login authentication failed.
     login_name: Login
+    logo: Logo
     logo_alt: Brand logo
     logout: Logout
     look_for_similar_items: Look for similar items
@@ -1303,6 +1308,7 @@ en:
     preview_taxon: Preview Taxon
     previous: Previous
     previous_state_missing: "n/a"
+    previously_used_card: Previously Used Cards
     price: Price
     prices: Prices
     price_range: Price Range
@@ -1625,7 +1631,7 @@ en:
     stock_transfer_name: Stock Transfer
     stock_transfer:
       errors:
-        must_have_variant: You must add atleast one variant.
+        must_have_variant: You must add at least one variant.
         variants_unavailable: "Some variants are not available on %{stock}" 
     stock_transfers: Stock Transfers
     stop: Stop
@@ -1707,7 +1713,7 @@ en:
     taxonomy_categories_name: Categories
     taxonomy_edit: Edit taxonomy
     taxonomy_tree_error: The requested change has not been accepted and the tree has been returned to its previous state, please try again.
-    taxonomy_tree_instruction: ! '* Right click a child in the tree to access the menu for adding, deleting or sorting a child.'
+    taxonomy_tree_instruction: ! '* Right click (or double tap on iOS device) a child in the tree to access the menu for adding, deleting or sorting a child.'
     taxons: Taxons
     test: Test
     test_mailer:
@@ -1790,5 +1796,6 @@ en:
     your_order_is_empty_add_product: Your order is empty, please search for and add a product above
     zip: Zip
     zipcode: Zip Code
+    zipcode_required: Zip Code Required
     zone: Zone
     zones: Zones

@@ -75,6 +75,9 @@ ul.nav-sidebar {
   top: -100%;
   z-index: 1041;
   transition: .3s ease-in-out;
+  .page-actions__close {
+    margin: -1.5rem -1.5rem 1.5rem;
+  }
 }
 
 #contextual-menu-toggle {
