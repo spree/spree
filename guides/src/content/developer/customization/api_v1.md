@@ -14,7 +14,7 @@ In this tutorial we are going to learn how we can customize the **[REST API](../
 
 ## Adding Custom Endpoints
 
-Similarly to [Adding a Controller Action](extensions_tutorial.html#adding-a-controller-action-to-homecontroller) of [Extensions tutorial](/developer/tutorials/extensions_tutorial.html), you can create a new controller class with an action that emits a json response from a [Rabl](https://github.com/nesquena/rabl) view.
+Similarly to adding a controller action of [Extensions tutorial](/developer/tutorials/extensions_tutorial.html), you can create a new controller class with an action that   emits a json response from a [Rabl](https://github.com/nesquena/rabl) view.
 
 
 ### Creating the controller and action
@@ -57,8 +57,7 @@ The difference from `Spree::HomeController.home` action is the 3 last extra line
 
 - `expires_in`: Define the time that the endpoint expires
 - `headers[]`: In addition to `expires_in`, returns a header to client with that time expiration
-- `respond_with`: Normalize the response before parser to json. See [`ActionController::Base.respond_with`](../../../../core/lib/spree/core/controller_helpers/respond_with.rb)
-
+- `respond_with`: Normalize the response before parser to json.
 
 We also need to add a route to this endpoint/action in our `config/routes.rb` file. Let's do this now. Update the routes file to contain the following:
 

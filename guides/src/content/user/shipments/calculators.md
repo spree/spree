@@ -73,4 +73,4 @@ You can define your own calculator if you have more complex needs. In that case,
 
 ## Next Step
 
-If you have followed this guide series [from the beginning](shipments), your store is now stocked with [shipping categories](shipping_categories), [geographical shipping zones](zones), and calculators. The final step is to pull it all together into [shipping methods](shipping_methods), from which your customers can choose at checkout.
+If you have followed this guide series from the beginning, your store is now stocked with [shipping categories](shipping_categories), [geographical shipping zones](zones), and calculators. The final step is to pull it all together into [shipping methods](shipping_methods), from which your customers can choose at checkout.
