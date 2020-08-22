@@ -1179,11 +1179,13 @@ en:
     order_mailer:
       subtotal: ! 'Subtotal:'
       total: ! 'Order Total:'
+      store_team: '%{store_name} Team'
       cancel_email:
         dear_customer: Dear %{name},
         instructions: Your order has been CANCELED.  Please retain this cancellation information for your records.
         order_summary_canceled: Order %{number} Summary [CANCELED]
         subject: Cancellation of Order
+        thanks: Thank you for your business.
       confirm_email:
         dear_customer: Dear %{name},
         instructions: Please review and retain the following order information for your records.
@@ -1195,6 +1197,7 @@ en:
         instructions: You have received a new order.
         order_summary: Order %{number} Summary
         subject: '%{store_name} received a new order'
+        thanks: Thank you for your business.
     order_not_found: We couldn't find your order. Please try that action again.
     order_number: Order %{number}
     order_processed_successfully: Your order has been processed successfully
@@ -1456,6 +1459,7 @@ en:
     return_items_cannot_be_associated_with_multiple_orders: Return items cannot be associated with multiple orders.
     reimbursement_mailer:
       reimbursement_email:
+        store_team: '%{store_name} Team'
         days_to_send: ! 'You have %{days} days to send back any items awaiting exchange.'
         dear_customer: Dear %{name},
         exchange_summary: Exchange Summary
@@ -1518,6 +1522,7 @@ en:
     shipment_details: "From %{stock_location} via %{shipping_method}"
     shipment_mailer:
       shipped_email:
+        store_team: '%{store_name} Team'
         dear_customer: Dear %{name},
         instructions: Your order %{number} has been shipped
         shipment_summary: Shipment Summary for order

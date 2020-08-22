@@ -34,3 +34,5 @@
 <% end %>
 ============================================================
 <%= Spree.t('order_mailer.total') %> <%= @order.display_total %>
+<%= Spree.t('order_mailer.cancel_email.thanks') %>
+<%= Spree.t('order_mailer.store_team', store_name: current_store.name) %>
