@@ -288,6 +288,10 @@ module Spree
       end
     end
 
+    def checkout_available_payment_methods
+      @order.available_payment_methods(current_store)
+    end
+
     private
 
     def formatted_price(value)
