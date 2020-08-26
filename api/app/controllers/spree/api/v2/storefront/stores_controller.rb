@@ -9,8 +9,12 @@ module Spree
 
           private
 
+          def scope
+            Spree::Store.accessible_by(current_ability, :show)
+          end
+
           def resource
-            Spree::Store.find_by(params[:id])
+            scope.find_by!(code: params[:code])
           end
 
           def resource_serializer
