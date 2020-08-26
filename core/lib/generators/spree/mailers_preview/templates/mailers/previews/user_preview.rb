@@ -1,6 +1,6 @@
 class UserPreview < ActionMailer::Preview
   def reset_password_instructions
-    Spree::UserMailer.reset_password_instructions(Spree.user_class.first, 'your_token', { current_store_id: Spree::Store.first.id })
+    Spree::UserMailer.reset_password_instructions(Spree.user_class.first, 'your_token', { current_store_id: Spree::Store.default.id })
   end
 
   if Spree::Auth::Config[:confirmable]
