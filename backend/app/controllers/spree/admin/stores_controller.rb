@@ -38,7 +38,7 @@ module Spree
                     Spree::Store.joins(:translations).where("LOWER(#{Store::Translation.table_name}.name) LIKE LOWER(:query)",
                                                             query: "%#{params[:q]}%")
                   else
-                    Spree::Store.where('LOWER(name) LIKE LOWER(:query)', query: params[:q].to_s)
+                    Spree::Store.where('LOWER(name) LIKE LOWER(:query)', query: "%#{params[:q]}%")
                   end
       end
 
