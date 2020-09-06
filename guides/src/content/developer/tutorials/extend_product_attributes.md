@@ -39,7 +39,7 @@ end
 ::Spree::V2::Storefront::Product.prepend RailsappName::Spree::ProductDecorator if ::Spree::V2::Storefront::Product.included_modules.exclude?(RailsappName::Spree::ProductDecorator)
 ```
 
-File Location: `app/models/railsapp_name/spree/product_serializer_decorator.rb` (Does not exist by default)
+File Location: `app/models/railsapp_name/spree/product_decorator.rb` (Does not exist by default)
 
 ### Make it available in your API
 
