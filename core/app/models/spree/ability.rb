@@ -59,7 +59,6 @@ module Spree
         can :read, Taxonomy
         can :read, Variant
         can :read, Zone
-        can :read, Store
       end
 
       # Include any abilities registered by extensions, etc.
