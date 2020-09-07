@@ -10,7 +10,7 @@ module Spree
           private
 
           def scope
-            Spree::Store.accessible_by(current_ability, :show)
+            Spree::Store
           end
 
           def resource
