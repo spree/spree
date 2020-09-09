@@ -4,8 +4,11 @@ module Spree
       prepend Spree::ServiceModule::Base
 
       def call(order:, params:, permitted_attributes:, request_env:)
-        params = replace_country_iso_with_id(params, 'ship') if address_with_country_iso_present?(params, 'ship')
-        params = replace_country_iso_with_id(params, 'bill') if address_with_country_iso_present?(params, 'bill')
+        ship_changed = address_with_country_iso_present?(params, 'ship')
+        bill_changed = address_with_country_iso_present?(params, 'bill')
+        params = replace_country_iso_with_id(params, 'ship') if ship_changed
+        params = replace_country_iso_with_id(params, 'bill') if bill_changed
+        order.state = 'address' if (ship_changed || bill_changed) && order.checkout_steps.include?('address')
         return success(order) if order.update_from_params(params, permitted_attributes, request_env)
 
         failure(order)
