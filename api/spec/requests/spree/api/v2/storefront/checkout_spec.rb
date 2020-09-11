@@ -276,9 +276,9 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
         let(:params) do
           {
             order: {
-              shipments_attributes: {
-                '0' => { selected_shipping_rate_id: new_selected_shipping_rate_id, id: shipment.id }
-              }
+              shipments_attributes: [
+                { selected_shipping_rate_id: new_selected_shipping_rate_id, id: shipment.id }
+              ]
             }
           }
         end
@@ -664,9 +664,9 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
     let(:shipment_params) do
       {
         order: {
-          shipments_attributes: {
-            '0' => { selected_shipping_rate_id: shipping_rate_id, id: shipment_id }
-          }
+          shipments_attributes: [
+            { selected_shipping_rate_id: shipping_rate_id, id: shipment_id }
+          ]
         }
       }
     end
