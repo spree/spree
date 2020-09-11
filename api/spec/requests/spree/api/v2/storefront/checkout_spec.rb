@@ -607,7 +607,7 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
         expect(json_response['data'][0]).to have_type('shipment')
         expect(json_response['data'][0]).to have_relationships(:shipping_rates)
         expect(json_response['included']).to be_present
-        expect(json_response['included'].size).to eq(shipment.shipping_rates.count)
+        expect(json_response['included'].size).to eq(shipment.shipping_rates.count + 1)
         shipment.shipping_rates.each do |shipping_rate|
           expect(json_response['included']).to include(have_type('shipping_rate').and have_id(shipping_rate.id.to_s))
         end
@@ -623,6 +623,9 @@ describe 'API V2 Storefront Checkout Spec', type: :request do
         expect(json_response['included'][0]).to have_attribute(:shipping_method_id).with_value(shipping_method.id)
         expect(json_response['included'][0]).to have_attribute(:selected).with_value(shipping_rate.selected)
         expect(json_response['included'][0]).to have_attribute(:free).with_value(shipping_rate.free?)
+
+        expect(json_response['included']).to include(have_type('stock_location').and have_id(shipment.stock_location_id.to_s))
+        expect(json_response['included']).to include(have_type('stock_location').and have_attribute(:name).with_value(shipment.stock_location.name))
       end
     end
 
