@@ -8,7 +8,7 @@ module Spree
     helper_method :current_store
 
     def from_address
-      current_store.mail_from_address
+      @order&.store&.mail_from_address || current_store.mail_from_address
     end
 
     def money(amount, currency = nil)
