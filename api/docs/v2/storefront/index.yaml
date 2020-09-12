@@ -52,7 +52,7 @@ paths:
     post:
       description: >-
         Creates a new account
-        
+
         This endpoint requires [Spree Auth Devise](https://github.com/spree/spree_auth_devise) gem installed
       tags:
         - Account
@@ -92,7 +92,7 @@ paths:
     patch:
       description: >-
         Updates user account
-        
+
         This endpoint requires [Spree Auth Devise](https://github.com/spree/spree_auth_devise) gem installed
       tags:
         - Account
@@ -2287,6 +2287,11 @@ components:
           $ref: '#/components/schemas/ShipmentAttributes'
         relationships:
           properties:
+            stock_location:
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/Relation'
             shipping_rates:
               properties:
                 data:
@@ -2342,6 +2347,7 @@ components:
           items:
             oneOf:
               - $ref: '#/components/schemas/ShippingRate'
+              - $ref: '#/components/schemas/StockLocation'
     EstimateShippingRatesList:
       required:
         - data
@@ -2396,6 +2402,20 @@ components:
               type: integer
               example: 1
               description: 'ID of a Shipping Method. You will need this for the Checkout Update action'
+    StockLocation:
+      properties:
+        id:
+          type: string
+          example: '1'
+        type:
+          type: string
+          default: 'stock_location'
+        attributes:
+          type: object
+          properties:
+            name:
+              type: string
+              example: 'Main Warehouse'
     Account:
       required:
         - data

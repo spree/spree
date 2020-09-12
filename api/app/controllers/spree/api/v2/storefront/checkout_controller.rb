@@ -125,7 +125,7 @@ module Spree
           def serialize_shipping_rates(shipments)
             shipping_rates_serializer.new(
               shipments,
-              include: [:shipping_rates],
+              include: [:shipping_rates, :stock_location],
               params: { show_rates: true }
             ).serializable_hash
           end
