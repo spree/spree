@@ -1123,6 +1123,14 @@ components:
             company:
               type: string
               example: 'Google Inc.'
+    AddressList:
+      required:
+        - data
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Address'
     Cart:
       required:
         - data
