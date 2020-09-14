@@ -152,6 +152,7 @@ Spree::Core::Engine.add_routes do
         resource :account, controller: :account, only: %i[show]
 
         namespace :account do
+          resources :addresses, controller: :addresses, only: %i[index create update]
           resources :credit_cards, controller: :credit_cards, only: %i[index show]
           resources :orders, controller: :orders, only: %i[index show]
         end

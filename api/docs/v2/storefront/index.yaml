@@ -131,6 +131,85 @@ paths:
                 $ref: '#/components/schemas/Error'
       security:
         - bearerAuth: []
+  '/account/addresses':
+    get:
+      description: >-
+        Returns a list of Addresses for the signed in User
+      tags:
+        - Account
+      operationId: 'Addresses list'
+      responses:
+        '200':
+          description: Listing user addresses.
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/AddressList'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+      security:
+        - bearerAuth: []
+    post:
+      description: >-
+        Create a new Address for the signed in User
+      tags:
+        - Account
+      operationId: 'Create Address'
+      requestBody:
+        required: true
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+              properties:
+                address:
+                  $ref: '#/components/schemas/AddressPayload'
+      responses:
+        '200':
+          description: Created Address.
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/AddressList'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+      security:
+        - bearerAuth: []
+  '/account/addresses/{id}':
+    patch:
+      description: >-
+        Update selected Address for the signed in User
+      tags:
+        - Account
+      operationId: 'Update Address'
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Selected Address for update
+          schema:
+            type: string
+          example: '1'
+      requestBody:
+        required: true
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+              properties:
+                address:
+                  $ref: '#/components/schemas/AddressPayload'
+      responses:
+        '200':
+          description: Updated Address.
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/AddressList'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+      security:
+        - bearerAuth: []
   '/account/credit_cards':
     get:
       description: >-
@@ -1206,6 +1285,14 @@ components:
             company:
               type: string
               example: 'Google Inc.'
+    AddressList:
+      required:
+        - data
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Address'
     Cart:
       required:
         - data
