@@ -11,20 +11,13 @@ module Spree
             end
 
             def create
-              resource = collection.new(address_params)
-              if resource.save
-                render_serialized_payload { serialize_resource(resource) }
-              else
-                render_error_payload(Spree::ServiceModule::ResultError.new(resource.errors))
-              end
+              result = create_service.call(user: spree_current_user, address_params: address_params)
+              render_result(result)
             end
 
             def update
-              if resource.update(address_params)
-                render_serialized_payload { serialize_resource(resource) }
-              else
-                render_error_payload(Spree::ServiceModule::ResultError.new(resource.errors))
-              end
+              result = update_service.call(address: resource, address_params: address_params)
+              render_result(result)
             end
 
             private
@@ -49,18 +42,24 @@ module Spree
               collection_serializer.new(collection).serializable_hash
             end
 
-            def address_params
-              replace_country_iso_with_id(params).require(:address).permit(permitted_address_attributes)
+            def create_service
+              Spree::Api::Dependencies.storefront_account_create_address_service.constantize
             end
 
-            def replace_country_iso_with_id(params)
-              iso = params.dig(:address, :country_iso)
-              return params unless iso.present?
+            def update_service
+              Spree::Api::Dependencies.storefront_account_update_address_service.constantize
+            end
 
-              replaced_params = params
-              replaced_params[:address]['country_id'] = Spree::Country.find_by(iso: iso)&.id
-              replaced_params[:address].delete(:country_iso)
-              replaced_params
+            def address_params
+              params.require(:address).permit(permitted_address_attributes)
+            end
+
+            def render_result(result)
+              if result.success?
+                render_serialized_payload { serialize_resource(result.value) }
+              else
+                render_error_payload(result.error)
+              end
             end
           end
         end

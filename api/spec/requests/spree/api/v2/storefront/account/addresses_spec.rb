@@ -5,6 +5,7 @@ describe 'Storefront API v2 Addresses spec', type: :request do
   let!(:params) { { user_id: user.id } }
   let!(:addresses) { create_list(:address, 3, user_id: user.id) }
   let!(:country) { create(:country, iso: 'GBR') }
+  let!(:state) { create(:state, country: country) }
 
   shared_examples 'returns valid user addresses resource JSON' do
     it 'returns a valid user addresses resource JSON response' do
@@ -125,8 +126,8 @@ describe 'Storefront API v2 Addresses spec', type: :request do
           city: 'London',
           phone: '079 4721 9458',
           zipcode: 'SE25 3FZ',
-          state_name: 'EAW',
-          country_iso: 'GBR'
+          state_name: state.name,
+          country_iso: country.iso
         }
       end
       let(:params) { { address: new_attributes } }
