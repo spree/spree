@@ -11,7 +11,7 @@ module Spree
     end
 
     def parsed_details
-      @details ||= YAML.load(details)
+      @details ||= YAML.safe_load(details)
     end
   end
 end
