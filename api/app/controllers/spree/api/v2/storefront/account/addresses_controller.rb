@@ -23,11 +23,19 @@ module Spree
             private
 
             def collection
-              spree_current_user.addresses
+              collection_finder.new(scope: scope, params: params).execute
             end
 
             def resource
-              @resource ||= collection.find(params[:id])
+              @resource ||= scope.find(params[:id])
+            end
+
+            def scope
+              spree_current_user.addresses
+            end
+
+            def collection_finder
+              Spree::Api::Dependencies.storefront_address_finder.constantize
             end
 
             def collection_serializer
