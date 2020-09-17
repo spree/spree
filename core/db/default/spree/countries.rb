@@ -1,6 +1,11 @@
 require 'carmen'
 
+EXCLUDED_COUNTRIES = ['AQ', 'AX', 'GS', 'UM', 'HM', 'IO', 'EH', 'BV', 'TF'].freeze
+
 Carmen::Country.all.each do |country|
+  # Skip the creation of some territories, uninhabited islands and the Antarctic.
+  next if EXCLUDED_COUNTRIES.include?(country.alpha_2_code)
+
   Spree::Country.where(
     name: country.name,
     iso3: country.alpha_3_code,

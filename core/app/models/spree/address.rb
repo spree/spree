@@ -10,10 +10,10 @@ module Spree
       'TO', 'TV', 'UG', 'AE', 'VU', 'YE', 'ZW'
     ].freeze
 
-    # The Information for this matches that used by PayPal, Stripe, and Shopify.
+    # The required states listed below match those used by PayPal and Shopify.
     STATES_REQUIRED = [
-      'AU', 'AE', 'BR', 'CA', 'CN', 'ES', 'HK', 'IE', 'IN', 'IT', 'MY', 'MX', 'NZ', 'PT', 'RO',
-      'TH', 'US', 'ZA'
+      'AU', 'AE', 'BR', 'CA', 'CN', 'ES', 'HK', 'IE', 'IN',
+      'IT', 'MY', 'MX', 'NZ', 'PT', 'RO', 'TH', 'US', 'ZA'
     ].freeze
 
     # we're not freezing this on purpose so developers can extend and manage
