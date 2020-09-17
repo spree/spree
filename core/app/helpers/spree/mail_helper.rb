@@ -12,7 +12,7 @@ module Spree
     end
 
     def store_logo
-      @order&.store&.logo || current_store.logo
+      @order&.store&.mailer_logo || @order&.store&.logo || current_store.mailer_logo || current_store.logo
     end
 
     def default_logo

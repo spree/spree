@@ -101,7 +101,7 @@ module Spree
                           :customer_support_email, :facebook, :twitter, :instagram,
                           :description, :address, :contact_email, :contact_phone,
                           :default_locale, :default_country_id, :supported_currencies,
-                          :new_order_notifications_email]
+                          :new_order_notifications_email, :mailer_logo]
 
     @@store_credit_attributes = %i[amount currency category_id memo]
 
