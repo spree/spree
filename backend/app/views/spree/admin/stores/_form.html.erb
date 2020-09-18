@@ -20,7 +20,7 @@
       <% end %>
     <% end %>
     <%= f.field_container :mailer_logo, class: ['form-group'] do %>
-      <% if @store.mailer_logo.attached? %>
+      <% if @store.mailer_logo.attached? && @store.mailer_logo.variable? %>
         <%= image_tag main_app.url_for(@store.mailer_logo.variant(resize: '244x104>')) %>
       <% end %>
       <%= f.field_container :mailer_logo, class: ['form-group'] do %>
