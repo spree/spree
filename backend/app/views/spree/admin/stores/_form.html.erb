@@ -19,6 +19,16 @@
         <%= f.error_message_on :logo %>
       <% end %>
     <% end %>
+    <%= f.field_container :mailer_logo, class: ['form-group'] do %>
+      <% if @store.mailer_logo.attached? && @store.mailer_logo.variable? %>
+        <%= image_tag main_app.url_for(@store.mailer_logo.variant(resize: '244x104>')) %>
+      <% end %>
+      <%= f.field_container :mailer_logo, class: ['form-group'] do %>
+        <%= f.label :mailer_logo, Spree.t(:mailer_logo) %><br />
+        <%= f.file_field :mailer_logo, accept: 'image/png, image/jpeg' %>
+        <%= f.error_message_on :mailer_logo %>
+      <% end %>
+    <% end %>
     <%= f.field_container :name, class: ['form-group'] do %>
       <%= f.label :name, raw(Spree.t(:name) + required_span_tag) %>
       <%= f.text_field :name, class: 'form-control', required: true %>

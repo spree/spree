@@ -16,7 +16,7 @@ end
   middle_east.zone_members.where(zoneable: Spree::Country.find_by!(iso: name)).first_or_create!
 end
 
-%w(AF AM AZ BH BD BT BN KH CN CX CC IO GE HK IN ID IR IQ IL JP JO KZ KW KG LA LB MO MY MV MN MM NP
+%w(AF AM AZ BH BD BT BN KH CN CX CC GE HK IN ID IR IQ IL JP JO KZ KW KG LA LB MO MY MV MN MM NP
   KP OM PK PS PH QA SA SG KR LK SY TW TJ TH TR TM AE UZ VN YE).each do |name|
   asia.zone_members.where(zoneable: Spree::Country.find_by!(iso: name)).first_or_create!
 end
