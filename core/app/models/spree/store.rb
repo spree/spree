@@ -20,6 +20,8 @@ module Spree
     has_one_attached :logo
     has_one_attached :mailer_logo
 
+    validates :mailer_logo, content_type: ['image/png', 'image/jpg', 'image/jpeg']
+
     before_save :ensure_default_exists_and_is_unique
     before_destroy :validate_not_default
 
