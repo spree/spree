@@ -36,7 +36,7 @@ module Spree
         end
 
         def unprocessed_payments
-          payments.checkout
+          payments.select(&:checkout?)
         end
 
         private
