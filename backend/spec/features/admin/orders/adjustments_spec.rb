@@ -51,7 +51,9 @@ describe 'Adjustments', type: :feature do
 
   context 'admin creating a new adjustment' do
     before do
-      click_link 'New Adjustment'
+      within find('#contentHeader') do
+        click_link 'New Adjustment'
+      end
     end
 
     context 'successfully' do

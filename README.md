@@ -66,7 +66,7 @@ You can **add Spree to your existing Rails application** as well.
 
 ```ruby
 gem 'spree', '~> 4.1'
-gem 'spree_auth_devise', '~> 4.1'
+gem 'spree_auth_devise', '~> 4.2'
 gem 'spree_gateway', '~> 3.7'
 ```
 
@@ -101,9 +101,9 @@ bundle update
 ### Use the install generators to set up Spree
 
 ```shell
-rails g spree:install --user_class=Spree::User
-rails g spree:auth:install
-rails g spree_gateway:install
+bundle exec rails g spree:install --user_class=Spree::User
+bundle exec rails g spree:auth:install
+bundle exec rails g spree_gateway:install
 ```
 
 ## Installation options

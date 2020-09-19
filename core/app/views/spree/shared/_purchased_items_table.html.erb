@@ -25,7 +25,7 @@
       <td></td>
       <td>
         <p class="f-fallback purchase_total purchase_total--label">
-          <%= Spree.t(:shipping) %><%= name %>:
+          <%= Spree.t(:shipping) %> <%= name %>:
         </p>
       </td>
       <td>
@@ -54,7 +54,7 @@
   <% end %>
   <% order.adjustments.eligible.each do |adjustment| %>
     <% next if (adjustment.source_type == 'Spree::TaxRate') || (adjustment.amount == 0) %>
-    <%= render 'spree/shared/purchased_items_table/adjustment', adjustment: adjustment %>
+    <%= render 'spree/shared/purchased_items_table/adjustment', adjustment: adjustment, order: order %>
   <% end %>
   <%= render 'spree/shared/purchased_items_table/total', order: order %>
 </table>

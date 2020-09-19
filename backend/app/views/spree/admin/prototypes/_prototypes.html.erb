@@ -1,29 +1,31 @@
-<table class="table table-condensed table-bordered">
-  <thead>
-    <tr data-hook="available_header">
-      <th><%= Spree.t(:name) %></th>
-      <th class="actions"></th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @prototypes.each do |prototype| %>
-      <tr id="row_<%= prototype.id %>" data-hook="available_row">
-        <td><%= prototype.name %></td>
-        <td class="actions actions-1">
-          <%= link_to_with_icon 'save',
-            Spree.t(:select),
-            select_admin_prototype_url(prototype),
-            class: 'btn btn-success btn-sm ajax select_properties_from_prototype',
-            no_text: true %>
-        </td>
+<div class="table-responsive">
+  <table class="table table-condensed table-bordered">
+    <thead>
+      <tr data-hook="available_header">
+        <th><%= Spree.t(:name) %></th>
+        <th class="actions"></th>
       </tr>
-    <% end %>
-    <% if @prototypes.empty? %>
-      <tr data-hook="available_none">
-        <td colspan="2">
-          <% Spree.t(:none) %>.
-        </td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      <% @prototypes.each do |prototype| %>
+        <tr id="row_<%= prototype.id %>" data-hook="available_row">
+          <td><%= prototype.name %></td>
+          <td class="actions actions-1">
+            <%= link_to_with_icon 'save.svg',
+              Spree.t(:select),
+              select_admin_prototype_url(prototype),
+              class: 'btn btn-success btn-sm ajax select_properties_from_prototype',
+              no_text: true %>
+          </td>
+        </tr>
+      <% end %>
+      <% if @prototypes.empty? %>
+        <tr data-hook="available_none">
+          <td colspan="2">
+            <% Spree.t(:none) %>.
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

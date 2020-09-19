@@ -76,6 +76,7 @@ module Spree
             id: option_value.id,
             position: option_value.position,
             presentation: option_value.presentation,
+            name: option_value.name,
             variant_id: option_value.variants.where(id: @variant_ids).order(:position).first.id,
             is_default: option_value == default_variant_data[:option_value]
           }

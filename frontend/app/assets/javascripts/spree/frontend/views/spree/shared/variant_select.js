@@ -84,3 +84,10 @@ this.updateStructuredData = function() {
 
   schemaData.firstChild.nodeValue = JSON.stringify(obj)
 }
+
+this.initializeColorVarianTooltip = function() {
+  var colorVariants = $('.color-select-label[data-toggle="tooltip"]')
+  colorVariants.tooltip({
+    placement: 'bottom'
+  })
+}

@@ -1,10 +1,10 @@
 <% if content_for?(:table_filter) %>
-  <div class="filter-wrap row">
+  <div class="filter-wrap row mb-4">
     <div class="col-12">
       <div class="input-group index-filter-button">
         <span class="input-group-btn">
-          <button class="btn js-show-index-filters" type="button">
-            <span class="icon icon-chevron-right"></span>
+          <button class="btn js-show-index-filters m-0" type="button">
+              <%= svg_icon name: "chevron-right.svg", width: '12', height: '12' %>
             <%= Spree.t(:filter) %>
           </button>
         </span>

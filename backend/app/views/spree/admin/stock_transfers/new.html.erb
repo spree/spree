@@ -77,7 +77,7 @@
             <div class="input-group">
               <%= number_field_tag :transfer_variant_quantity, 1, class: 'form-control', min: 1 %>
               <span class="input-group-btn">
-                <%= button Spree.t(:add), 'plus', 'submit', class: "transfer_add_variant" %>
+                <%= button Spree.t(:add), 'add.svg', 'submit', class: "transfer_add_variant" %>
               </span>
             </div>
           </div>
@@ -90,7 +90,7 @@
     <%= Spree.t(:no_resource_found, resource: I18n.t(:other, scope: 'activerecord.models.spree/variant')) %>.
   </div>
 
-  <div id="transfer-variants-table" style="display:none">
+  <div id="transfer-variants-table" style="display:none" class="table-responsive">
     <table class="table table-bordered sortable">
       <thead data-hook="transfer_variants_header">
         <th><%= Spree.t(:name) %></th>
@@ -104,6 +104,6 @@
   </div>
 
   <div class="form-actions" data-hook="buttons">
-    <%= button Spree.t(:transfer_stock), 'plus transfer_transfer' %>
+    <%= button Spree.t(:transfer_stock), 'add.svg', class: 'transfer_transfer' %>
   </div>
 <% end %>

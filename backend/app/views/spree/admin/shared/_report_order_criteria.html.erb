@@ -2,16 +2,37 @@
   <div class="form-group date-range-filter">
     <%= label_tag nil, Spree.t(:date_range) %>
     <div class="date-range-filter row">
-      <div class="col-md-6">
-        <%= s.text_field :completed_at_gt, class: 'datepicker datepicker-from form-control', value: datepicker_field_value(params[:q][:completed_at_gt]) %>
+      <div class="col-12 col-md-6 mb-3 mb-md-0">
+        <div class="input-group datePickerFrom"
+             data-wrap="true"
+             data-max-date="<%= params[:q][:completed_at_lt] %>" >
+          <%= s.text_field :completed_at_gt,
+                           class: 'form-control shadow-none',
+                           placeholder: Spree.t(:starting_from),
+                           value: datepicker_field_value(params[:q][:completed_at_gt]),
+                           'data-input':'' %>
+
+          <%= render partial: 'spree/admin/shared/cal_close' %>
+        </div>
       </div>
-      <div class="col-md-6">
-        <%= s.text_field :completed_at_lt, class: 'datepicker datepicker-to form-control', value: datepicker_field_value(params[:q][:completed_at_lt]) %>
-    </div>
+
+      <div class="col-12 col-md-6 mt-3 mt-md-0">
+        <div class="input-group datePickerTo"
+             data-wrap="true"
+             data-min-date="<%= params[:q][:completed_at_gt] %>" >
+
+          <%= s.text_field :completed_at_lt,
+                           class: 'form-control shadow-none',
+                           placeholder: Spree.t(:ending_at),
+                           value: datepicker_field_value(params[:q][:completed_at_lt]),
+                           'data-input':'' %>
+          <%= render partial: 'spree/admin/shared/cal_close' %>
+        </div>
+      </div>
     </div>
   </div>
 
   <div class="form-actions">
-    <%= button Spree.t(:search), 'search' %>
+    <%= button Spree.t(:search), 'search.svg' %>
   </div>
 <% end %>

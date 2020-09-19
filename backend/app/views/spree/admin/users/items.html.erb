@@ -7,10 +7,10 @@
 <% end %>
 
 <fieldset data-hook="admin_user_items_purchased">
-  <%= paginate @orders, theme: 'twitter-bootstrap-4' %>
 
   <% if @orders.any? %>
     <%# TODO add search interface %>
+    <div class="table-responsive">
     <table class="table table-condensed table-bordered stock-contents" id="listing_items" data-hook="stock-contents">
       <thead>
         <th><%= sort_link @search, :completed_at, I18n.t(:completed_at, scope: 'activerecord.attributes.spree/order'), {}, {title: 'orders_completed_at_title'} %></th>
@@ -54,13 +54,14 @@
           <% end %>
         <% end %>
     </table>
+    </div>
   <% else %>
     <div class="alert alert-info no-objects-found">
       <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::Order)) %>,
       <%= link_to Spree.t(:add_one), spree.new_admin_order_path %>!
     </div>
   <% end %>
-  <%= paginate @orders, theme: 'twitter-bootstrap-4' %>
+  <%= paginate @orders, theme: 'admin-twitter-bootstrap-4' %>
 </fieldset>
 
 <%= render 'spree/admin/users/lifetime_stats' %>

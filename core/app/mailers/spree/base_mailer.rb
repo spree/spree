@@ -8,7 +8,7 @@ module Spree
     helper_method :current_store
 
     def from_address
-      current_store.mail_from_address
+      @order&.store&.mail_from_address || current_store.mail_from_address
     end
 
     def money(amount, currency = nil)
@@ -24,6 +24,7 @@ module Spree
 
     def mail(headers = {}, &block)
       ensure_default_action_mailer_url_host
+      set_email_locale
       super if Spree::Config[:send_core_emails]
     end
 
@@ -35,6 +36,11 @@ module Spree
     def ensure_default_action_mailer_url_host
       ActionMailer::Base.default_url_options ||= {}
       ActionMailer::Base.default_url_options[:host] ||= current_store.url
+    end
+
+    def set_email_locale
+      locale = @order&.store&.default_locale || current_store&.default_locale
+      I18n.locale = locale if locale.present?
     end
   end
 end

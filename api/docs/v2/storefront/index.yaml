@@ -52,7 +52,7 @@ paths:
     post:
       description: >-
         Creates a new account
-        
+
         This endpoint requires [Spree Auth Devise](https://github.com/spree/spree_auth_devise) gem installed
       tags:
         - Account
@@ -92,7 +92,7 @@ paths:
     patch:
       description: >-
         Updates user account
-        
+
         This endpoint requires [Spree Auth Devise](https://github.com/spree/spree_auth_devise) gem installed
       tags:
         - Account
@@ -129,6 +129,85 @@ paths:
             application/vnd.api+json:
               schema:
                 $ref: '#/components/schemas/Error'
+      security:
+        - bearerAuth: []
+  '/account/addresses':
+    get:
+      description: >-
+        Returns a list of Addresses for the signed in User
+      tags:
+        - Account
+      operationId: 'Addresses list'
+      responses:
+        '200':
+          description: Listing user addresses.
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/AddressList'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+      security:
+        - bearerAuth: []
+    post:
+      description: >-
+        Create a new Address for the signed in User
+      tags:
+        - Account
+      operationId: 'Create Address'
+      requestBody:
+        required: true
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+              properties:
+                address:
+                  $ref: '#/components/schemas/AddressPayload'
+      responses:
+        '200':
+          description: Created Address.
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/AddressList'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+      security:
+        - bearerAuth: []
+  '/account/addresses/{id}':
+    patch:
+      description: >-
+        Update selected Address for the signed in User
+      tags:
+        - Account
+      operationId: 'Update Address'
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Selected Address for update
+          schema:
+            type: string
+          example: '1'
+      requestBody:
+        required: true
+        content:
+          application/vnd.api+json:
+            schema:
+              type: object
+              properties:
+                address:
+                  $ref: '#/components/schemas/AddressPayload'
+      responses:
+        '200':
+          description: Updated Address.
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/AddressList'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
       security:
         - bearerAuth: []
   '/account/credit_cards':
@@ -1206,6 +1285,14 @@ components:
             company:
               type: string
               example: 'Google Inc.'
+    AddressList:
+      required:
+        - data
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Address'
     Cart:
       required:
         - data
@@ -2287,6 +2374,11 @@ components:
           $ref: '#/components/schemas/ShipmentAttributes'
         relationships:
           properties:
+            stock_location:
+              type: object
+              properties:
+                data:
+                  $ref: '#/components/schemas/Relation'
             shipping_rates:
               properties:
                 data:
@@ -2342,6 +2434,7 @@ components:
           items:
             oneOf:
               - $ref: '#/components/schemas/ShippingRate'
+              - $ref: '#/components/schemas/StockLocation'
     EstimateShippingRatesList:
       required:
         - data
@@ -2396,6 +2489,20 @@ components:
               type: integer
               example: 1
               description: 'ID of a Shipping Method. You will need this for the Checkout Update action'
+    StockLocation:
+      properties:
+        id:
+          type: string
+          example: '1'
+        type:
+          type: string
+          default: 'stock_location'
+        attributes:
+          type: object
+          properties:
+            name:
+              type: string
+              example: 'Main Warehouse'
     Account:
       required:
         - data

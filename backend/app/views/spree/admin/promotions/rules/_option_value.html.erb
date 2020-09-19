@@ -1,9 +1,8 @@
 <div class="card-body">
   <div class="promo-rule-option-values">
     <div class="js-promo-rule-option-values"></div>
-
     <button class="btn btn-primary btn-success js-add-promo-rule-option-value">
-      <span class="icon icon-add"></span>
+      <%= svg_icon name: "add.svg", width: '16', height: '16' %>
       <%= Spree.t(:add) %>
     </button>
   </div>
@@ -17,20 +16,14 @@
 </script>
 
 <script type="text/x-handlebars-template" id="promo-rule-option-value-template">
-  <div class="promo-rule-option-value panel  ">
-    <div class="card-header">
+  <div class="promo-rule-option-value panel card mb-3">
+    <div class="card-header d-flex justify-content-between">
+      <label><%= Spree.t(:product) %> <%= Spree.t(:option_values) %></label>
       <a class="js-remove-promo-rule-option-value delete pull-right">
-        <span class="icon icon-delete"></span>
+        <%= svg_icon name: "delete.svg", width: '16', height: '16' %>
       </a>
-      <div class="col-12 col-md-6">
-        <label><%= Spree.t(:product) %></label>
-      </div>
-      <div class="col-12 col-md-5">
-        <label><%= Spree.t(:option_values) %></label>
-      </div>
-      <div class="clearfix"></div>
     </div>
-    <div class="card-body row">
+    <div class="card-body row p-3">
       <div class="col-12 col-md-6">
         <input class="js-promo-rule-option-value-product-select fullwidth" type="hidden" value="{{ productSelect.value }}">
       </div>

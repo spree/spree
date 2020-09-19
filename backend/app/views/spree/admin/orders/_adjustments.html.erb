@@ -5,32 +5,32 @@
         <%= title %>
       </h1>
     </div>
-
-    <table class="table table-bordered">
-      <thead>
-        <tr>
-          <th><%= Spree.t('name')%></th>
-          <th><%= Spree.t('amount')%></th>
-        </tr>
-      </thead>
-      <tbody id="order-charges" data-hook="order_details_adjustments">
-        <% adjustments.eligible.group_by(&:label).each do |label, adjustments| %>
-          <tr class="total">
-            <td>
-              <strong><%= label %>:</strong>
-            </td>
-            <td class="total">
-              <span>
-                <%= Spree::Money.new(
-                  adjustments.sum(&:amount),
-                  currency: adjustments.first.order.try(:currency)
-                ) %>
-              </span>
-            </td>
+    <div class="table-responsive">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th><%= Spree.t('name')%></th>
+            <th><%= Spree.t('amount')%></th>
           </tr>
-        <% end %>
-      </tbody>
-    </table>
-
+        </thead>
+        <tbody id="order-charges" data-hook="order_details_adjustments">
+          <% adjustments.eligible.group_by(&:label).each do |label, adjustments| %>
+            <tr class="total">
+              <td>
+                <strong><%= label %>:</strong>
+              </td>
+              <td class="total">
+                <span>
+                  <%= Spree::Money.new(
+                    adjustments.sum(&:amount),
+                    currency: adjustments.first.order.try(:currency)
+                  ) %>
+                </span>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
   </div>
 <% end %>

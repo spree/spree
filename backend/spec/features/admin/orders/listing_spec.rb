@@ -29,13 +29,13 @@ describe 'Orders Listing', type: :feature do
   describe 'listing orders' do
     it 'lists existing orders' do
       within_row(1) do
-        expect(column_text(2)).to eq 'R100'
+        expect(column_text(1)).to eq 'R100'
         expect(find('td:nth-child(3)')).to have_css '.badge-considered_risky'
         expect(column_text(4)).to eq 'cart'
       end
 
       within_row(2) do
-        expect(column_text(2)).to eq 'R200'
+        expect(column_text(1)).to eq 'R200'
         expect(find('td:nth-child(3)')).to have_css '.badge-considered_safe'
       end
     end
@@ -195,14 +195,14 @@ describe 'Orders Listing', type: :feature do
     context 'per page dropdown', js: true do
       before do
         within('div.index-pagination-row', match: :first) do
-          select '45', from: 'per_page'
+          select '50', from: 'per_page'
         end
-        expect(page).to have_select('per_page', selected: '45')
-        expect(page).to have_selector(:css, 'select.per-page-selected-45')
+        expect(page).to have_select('per_page', selected: '50')
+        expect(page).to have_selector(:css, 'select.per-page-selected-50')
       end
 
       it 'adds per_page parameter to url' do
-        expect(page).to have_current_path(/per_page\=45/)
+        expect(page).to have_current_path(/per_page\=50/)
       end
 
       it 'can be used with search filtering' do
@@ -211,14 +211,14 @@ describe 'Orders Listing', type: :feature do
         click_on 'Filter Results'
         expect(page).not_to have_content('R100')
         within_row(1) { expect(page).to have_content('R200') }
-        expect(page).to have_current_path(/per_page\=45/)
-        expect(page).to have_select('per_page', selected: '45')
+        expect(page).to have_current_path(/per_page\=50/)
+        expect(page).to have_select('per_page', selected: '50')
         within('div.index-pagination-row', match: :first) do
-          select '60', from: 'per_page'
+          select '75', from: 'per_page'
         end
-        expect(page).to have_current_path(/per_page\=60/)
-        expect(page).to have_select('per_page', selected: '60')
-        expect(page).to have_selector(:css, 'select.per-page-selected-60')
+        expect(page).to have_current_path(/per_page\=75/)
+        expect(page).to have_select('per_page', selected: '75')
+        expect(page).to have_selector(:css, 'select.per-page-selected-75')
         expect(page).not_to have_content('R100')
         within_row(1) { expect(page).to have_content('R200') }
       end
@@ -248,8 +248,9 @@ describe 'Orders Listing', type: :feature do
           select2 'Spree Test Store', from: 'Store', match: :first
           fill_in 'q_bill_address_lastname_start', with: 'Smith'
           select2 'spree', from: 'Channel'
-          fill_in 'q_created_at_gt', with: '2018/01/01'
-          fill_in 'q_created_at_lt', with: '2018/06/30'
+          fill_in_date_with_js('Starts at', with: '2018/01/01')
+          fill_in_date_with_js('Ending at', with: '2018/06/30')
+
         end
 
         click_on 'Filter Results'
@@ -270,6 +271,15 @@ describe 'Orders Listing', type: :feature do
           expect(page).to have_content('Channel: spree')
         end
       end
+
+      # Flatpickr helper
+      def fill_in_date_with_js(label_text, with:)
+        date_field = find("input[placeholder='#{label_text}']")
+        script = "document.querySelector('##{date_field[:id]}').flatpickr().setDate('#{with}');"
+
+        page.execute_script(script)
+      end
+
     end
   end
 end

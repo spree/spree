@@ -125,11 +125,22 @@ describe Spree::BaseHelper, type: :helper do
 
   context 'pretty_time' do
     it 'prints in a format' do
-      expect(pretty_time(Time.new(2012, 5, 6, 13, 33))).to eq 'May 06, 2012  1:33 PM'
+      time = Time.new(2012, 5, 6, 13, 33)
+      expect(pretty_time(time)).to eq "May 06, 2012  1:33 PM #{time.zone}"
     end
 
     it 'return empty stirng when nil is supplied' do
       expect(pretty_time(nil)).to eq ''
+    end
+  end
+
+  context 'pretty_date' do
+    it 'prints in a format' do
+      expect(pretty_date(Time.new(2012, 5, 6, 13, 33))).to eq 'May 06, 2012'
+    end
+
+    it 'return empty stirng when nil is supplied' do
+      expect(pretty_date(nil)).to eq ''
     end
   end
 

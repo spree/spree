@@ -5,24 +5,25 @@
 <% end %>
 
 <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @customer_return } %>
-
-<table class="table">
-  <thead data-hook="customer_return_header">
-    <tr>
-      <th><%= Spree.t(:id) %></th>
-      <th><%= Spree.t(:total) %></th>
-      <th><%= Spree.t(:status) %></th>
-      <th><%= "#{Spree.t('date')}/#{Spree.t('time')}" %></th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @reimbursements.each do |reimbursement| %>
-      <tr id="<%= spree_dom_id(reimbursement) %>" data-hook="reimbursement_row">
-        <td><%= reimbursement.id %></td>
-        <td><%= reimbursement.total %></td>
-        <td><%= reimbursement.reimbursement_status %></td>
-        <td><%= pretty_time(reimbursement.created_at) %></td>
+<div class="table-responsive">
+  <table class="table">
+    <thead data-hook="customer_return_header">
+      <tr>
+        <th><%= Spree.t(:id) %></th>
+        <th><%= Spree.t(:total) %></th>
+        <th><%= Spree.t(:status) %></th>
+        <th><%= "#{Spree.t('date')}/#{Spree.t('time')}" %></th>
       </tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      <% @reimbursements.each do |reimbursement| %>
+        <tr id="<%= spree_dom_id(reimbursement) %>" data-hook="reimbursement_row">
+          <td><%= reimbursement.id %></td>
+          <td><%= reimbursement.total %></td>
+          <td><%= reimbursement.reimbursement_status %></td>
+          <td><%= pretty_time(reimbursement.created_at) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

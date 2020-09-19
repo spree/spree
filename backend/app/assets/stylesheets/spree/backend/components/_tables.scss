@@ -1,38 +1,56 @@
 table.table {
   font-size: $font-size-sm;
 
+  .move-handle {
+    cursor: grab;
+  }
+
+  th {
+    padding: 0.5rem;
+
+    &.handel-head {
+      width: 50px;
+    }
+    a.sort_link {
+      white-space: nowrap;
+    }
+  }
+
+  td {
+    padding: 0.5rem;
+  }
+
+  .badge {
+    font-size: 0.85em;
+  }
+
   thead {
     th {
       text-transform: uppercase;
       font-size: $small-font-size;
+      padding: 0.5rem;
       padding-top: 14px;
       padding-bottom: 14px;
       vertical-align: top;
       border-top: 0;
-
-      a {
-        .glyphicon {
-          padding-left: 5px;
-        }
-      }
     }
   }
 
   tbody {
     tr {
+      background: white;
       td {
         vertical-align: middle;
-
         .filterable {
-          font-size: .8em;
           margin-left: .2em;
-          color: white; // hidden, but space is reserved for the icon
           cursor: pointer;
+          width: 0.9rem;
+          height:0.9rem;
+          opacity: 0.25;
+          &:hover {
+            opacity: 1;
+          }
         }
-      }
-
-      &:hover td .filterable {
-        color: #666;
       }
     }
   }
@@ -42,6 +60,18 @@ table.table {
   display: none;
   margin: -.5em 0 .9em;
 
+  .js-filter {
+    .icon {
+      cursor: pointer;
+    }
+  }
+
+  .badge-secondary {
+    .icon {
+      filter: invert(1);
+    }
+  }
+
   .badge {
     display: inline-block;
     margin-right: .5em;
@@ -49,12 +79,6 @@ table.table {
 
     &:hover {
       opacity: .8;
-    }
-
-    span.icon {
-      margin: .3em 0 0 .6em;
-      font-size: 80%;
-      cursor: pointer;
     }
   }
 }
@@ -94,4 +118,23 @@ table.table {
   .card-header + .table-responsive > .table {
     border-top: 0;
 	}
+}
+
+div.table-responsive table.table-bordered {
+  border-top: 1px solid $input-border-color !important;
+}
+
+.sortable-drag-v {
+  border: 1px solid $info;
+  border-radius: 5px;
+  width:100%;
+  text-align: right;
+  opacity: 0;
+  td {
+    border-top: none;
+    opacity:0;
+    &:first-child {
+    opacity: 1;
+    }
+  }
 }

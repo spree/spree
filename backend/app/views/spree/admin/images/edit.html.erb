@@ -20,9 +20,9 @@
         </div>
 
         <div class="form-actions" data-hook="buttons">
-          <%= button Spree.t('actions.update'), 'save' %>
+          <%= button Spree.t('actions.update'), 'save.svg' %>
           <span class="or"><%= Spree.t(:or) %></span>
-          <%= button_link_to Spree.t('actions.cancel'), spree.admin_product_images_url(@product), id: 'cancel_link', icon: 'delete' %>
+          <%= button_link_to Spree.t('actions.cancel'), spree.admin_product_images_url(@product), id: 'cancel_link', icon: 'cancel.svg' %>
         </div>
       </div>
     </div>

@@ -1,24 +1,26 @@
 <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @promotion } %>
 
 <div class="row" id="general_fields" >
-  <div class="col-6 col-md-3">
+  <div class="col-12 col-md-3">
     <%= f.field_container :name, class: ['form-group'] do %>
       <%= f.label :name %>
       <%= f.text_field :name, class: 'form-control' %>
       <%= f.error_message_on :name %>
     <% end %>
 
-    <%= f.field_container :code, class: ['form-group'] do %>
-      <%= f.label :code %>
-      <%= f.text_field :code, class: 'form-control' %>
-    <% end %>
-
-    <%= f.field_container :generate_code, class: ['checkbox'] do %>
-      <%= f.label :generate_code do %>
-        <%= f.check_box :generate_code %>
-        <%= Spree.t(:generate_code) %>
+    <div class="form-group">
+      <%= f.field_container :code do %>
+        <%= f.label :code %>
+        <%= f.text_field :code, class: 'form-control' %>
       <% end %>
-    <% end %>
+
+      <%= f.field_container :generate_code, class: ['checkbox'] do %>
+        <%= f.label :generate_code do %>
+          <%= f.check_box :generate_code %>
+          <%= Spree.t(:generate_code) %>
+        <% end %>
+      <% end %>
+    </div>
 
     <%= f.field_container :path, class: ['form-group'] do %>
       <%= f.label :path %>
@@ -45,23 +47,48 @@
     <% end %>
   </div>
 
-  <div id="expiry_fields" class="col-6 col-md-3">
-    <%= f.field_container :usage_limit do %>
-      <%= f.label :usage_limit %>
-      <%= f.number_field :usage_limit, min: 0, class: 'form-control' %>
+  <div id="expiry_fields" class="col-12 col-md-3">
+    <div class="form-group">
+      <%= f.field_container :usage_limit do %>
+        <%= f.label :usage_limit, Spree.t('limit_usage_to') %>
+        <%= f.number_field :usage_limit, min: 0, class: 'form-control hide-number-toggle' %>
+      <% end %>
       <small class="form-text text-muted">
         <%= Spree.t(:current_promotion_usage, count: @promotion.credits_count) %>
       </small>
-    <% end %>
+    </div>
 
     <div id="starts_at_field" class="form-group">
       <%= f.label :starts_at %>
-      <%= f.datetime_field :starts_at, class: 'form-control' %>
+      <div class="input-group datePickerFrom"
+           data-wrap="true"
+           data-enable-time="true"
+           data-date-format="<%= Spree.t('js_date_time', scope: 'date_picker') %>"
+           data-max-date="<%= @promotion.expires_at %>" >
+        <%= f.datetime_field :starts_at,
+                             class: 'form-control shadow-none',
+                             placeholder: Spree.t('starting_from'),
+                             'data-input':'' %>
+
+        <%= render partial: 'spree/admin/shared/cal_close' %>
+      </div>
     </div>
 
     <div id="expires_at_field" class="form-group">
       <%= f.label :expires_at %>
-      <%= f.datetime_field :expires_at, class: 'form-control' %>
+      <div class="input-group datePickerTo"
+           data-wrap="true"
+           data-enable-time= 'true'
+           data-date-format= "<%= Spree.t('js_date_time', scope: 'date_picker') %>"
+           data-min-date="<%= @promotion.starts_at %>" >
+        <%= f.datetime_field :expires_at,
+                              placeholder:Spree.t('ends_at'),
+                              class: 'form-control shadow-none',
+                              'data-input':'' %>
+
+        <%= render partial: 'spree/admin/shared/cal_close' %>
+      </div>
     </div>
+
   </div>
 </div>

@@ -1,26 +1,45 @@
-<% if content_for?(:page_title) || content_for?(:page_actions) %>
-  <div class="content-header <%= "with-page-tabs" if content_for?(:page_tabs) %> page-header">
-    <div class="row align-items-center  <%= if content_for?(:page_tabs) then "pb-0" else "border-bottom" end %> mb-4">
-      <% if content_for?(:page_title) %>
-        <h1 class="h4 pl-0 mb-0 col-<%= content_for?(:page_actions) ? '5' : '12'  %>">
-          <%= yield :page_title %>
-          <% if content_for?(:page_title_small) %>
-            <small><%= yield :page_title_small %></small>
-          <% end %>
-        </h1>
-      <% end %>
+<div id="contentHeader" class="row mb-3">
+  <% if content_for?(:page_title) || content_for?(:page_actions) %>
+    <div class="content-header col <%= "with-page-tabs" if content_for?(:page_tabs) %> page-header">
+      <div class="row align-items-center  <%= if content_for?(:page_tabs) then "pb-0" else "border-bottom" end %>">
 
-      <% if content_for?(:page_actions) %>
-        <div class="page-actions col-7 pr-0" data-hook="toolbar">
-          <%= yield :page_actions %>
+        <% if content_for?(:page_title) %>
+          <h1 class="contextual-title px-0 mb-0 col">
+            <%= yield :page_title %>
+            <% if content_for?(:page_title_small) %>
+              <small><%= yield :page_title_small %></small>
+            <% end %>
+          </h1>
+        <% end %>
+
+        <% if content_for?(:page_actions) %>
+          <div class="page-actions pl-0 pr-0 d-none d-lg-flex" data-hook="toolbar">
+            <%= yield :page_actions %>
+          </div>
+        <% end %>
+
+        <% if content_for?(:page_actions) || content_for?(:sidebar) %>
+          <div class="d-flex d-lg-none justify-content-end m-0 p-0">
+            <button type="button"
+                    id="contextual-menu-toggle"
+                    class="btn btn-outline-secondary shadow-none">
+                    <span class="d-none d-sm-inline">
+                      <%= Spree.t('more') %>
+                    </span>
+                    <%= svg_icon name: "chevron-down.svg", width: '16', height: '16' %>
+            </button>
+          </div>
+        <% end %>
+      </div>
+
+      <% if content_for?(:page_tabs) %>
+        <div class="row">
+          <ul class="nav nav-tabs w-100 mt-4 px-0">
+            <%= yield :page_tabs %>
+          </ul>
         </div>
       <% end %>
 
-      <% if content_for?(:page_tabs) %>
-        <ul class="nav nav-tabs w-100 mt-4">
-          <%= yield :page_tabs %>
-        </ul>
-      <% end %>
     </div>
-  </div>
-<% end %>
+  <% end %>
+</div>

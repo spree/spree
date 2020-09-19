@@ -1,32 +1,34 @@
-<table class="table table-condensed table-bordered" id='refunds' data-order-id='<%= @order.number %>'>
-  <thead>
-    <tr data-hook="refunds_header">
-      <th><%= "#{Spree.t('date')}/#{Spree.t('time')}" %></th>
-      <th><%= Spree.t(:payment_identifier) %></th>
-      <th><%= Spree.t(:amount) %></th>
-      <th><%= Spree.t(:payment_method) %></th>
-      <th><%= Spree.t(:transaction_id) %></th>
-      <th><%= Spree.t(:reason) %></th>
-      <% if show_actions %>
-        <th></th>
-      <% end %>
-    </tr>
-  </thead>
-  <tbody>
-    <% refunds.each do |refund| %>
-      <tr id="<%= dom_id(refund) %>" data-hook="refunds_row" class="<%= cycle('odd', 'even', name: 'refund_table_cycle')%>">
-        <td><%= pretty_time(refund.created_at) %></td>
-        <td><%= refund.payment.number %></td>
-        <td class="amount"><%= refund.display_amount %></td>
-        <td><%= payment_method_name(refund.payment) %></td>
-        <td><%= refund.transaction_id %></td>
-        <td><%= truncate(refund.reason.name, length: 100) %></td>
+<div class="table-responsive">
+  <table class="table table-condensed table-bordered" id='refunds' data-order-id='<%= @order.number %>'>
+    <thead>
+      <tr data-hook="refunds_header">
+        <th><%= "#{Spree.t('date')}/#{Spree.t('time')}" %></th>
+        <th><%= Spree.t(:payment_identifier) %></th>
+        <th><%= Spree.t(:amount) %></th>
+        <th><%= Spree.t(:payment_method) %></th>
+        <th><%= Spree.t(:transaction_id) %></th>
+        <th><%= Spree.t(:reason) %></th>
         <% if show_actions %>
-          <td class="actions actions-1">
-            <%= link_to_with_icon('edit', Spree.t(:edit), edit_admin_order_payment_refund_path(refund.payment.order, refund.payment, refund), no_text: true, class: "btn btn-outline-secondary btn-sm") if can?(:edit, refund) %>
-          </td>
+          <th></th>
         <% end %>
       </tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      <% refunds.each do |refund| %>
+        <tr id="<%= dom_id(refund) %>" data-hook="refunds_row" class="<%= cycle('odd', 'even', name: 'refund_table_cycle')%>">
+          <td><%= pretty_time(refund.created_at) %></td>
+          <td><%= refund.payment.number %></td>
+          <td class="amount"><%= refund.display_amount %></td>
+          <td><%= payment_method_name(refund.payment) %></td>
+          <td><%= refund.transaction_id %></td>
+          <td><%= truncate(refund.reason.name, length: 100) %></td>
+          <% if show_actions %>
+            <td class="actions actions-1">
+              <%= link_to_with_icon('edit.svg', Spree.t(:edit), edit_admin_order_payment_refund_path(refund.payment.order, refund.payment, refund), no_text: true, class: "btn btn-outline-secondary btn-sm") if can?(:edit, refund) %>
+            </td>
+          <% end %>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

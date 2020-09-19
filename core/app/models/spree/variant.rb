@@ -48,7 +48,8 @@ module Spree
       validates :cost_price
       validates :price
     end
-    validates :sku, uniqueness: { conditions: -> { where(deleted_at: nil) }, case_sensitive: false }, allow_blank: true
+    validates :sku, uniqueness: { conditions: -> { where(deleted_at: nil) }, case_sensitive: false },
+                    allow_blank: true, unless: :disable_sku_validation?
 
     after_create :create_stock_items
     after_create :set_master_out_of_stock, unless: :is_master?
@@ -244,7 +245,11 @@ module Spree
     end
 
     def in_stock?
-      Rails.cache.fetch(in_stock_cache_key) do
+      # Issue 10280
+      # Check if model responds to cache version and fall back to updated_at for older rails versions
+      # This makes sure a version is supplied when recyclable cache keys are disabled.
+      version = respond_to?(:cache_version) ? cache_version : updated_at.to_i
+      Rails.cache.fetch(in_stock_cache_key, version: version) do
         total_on_hand > 0
       end
     end
@@ -336,6 +341,10 @@ module Spree
 
     def clear_in_stock_cache
       Rails.cache.delete(in_stock_cache_key)
+    end
+
+    def disable_sku_validation?
+      Spree::Config[:disable_sku_validation]
     end
   end
 end

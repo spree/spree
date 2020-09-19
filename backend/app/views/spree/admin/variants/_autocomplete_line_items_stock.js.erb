@@ -23,7 +23,7 @@
             </td>
             <td class="actions actions-1 text-center">
               <button class="btn btn-sm btn-success add_variant with-tip" data-variant-id="{{variant.id}}" title="<%= Spree.t(:add) %>" data-action="add">
-                <span class="icon icon-add"></span>
+                 <%= svg_icon name: "add.svg", width: '16', height: '16' %>
               </button>
             </td>
           {{else}}
@@ -37,7 +37,7 @@
               </td>
               <td class="actions actions-1 text-center">
                 <button class="btn btn-sm btn-success add_variant with-tip" data-variant-id="{{variant.id}}" title="<%= Spree.t(:add) %>" data-action="add">
-                  <span class="icon icon-add"></span>
+                   <%= svg_icon name: "add.svg", width: '16', height: '16' %>
                 </button>
               </td>
             {{else}}
@@ -53,7 +53,7 @@
           </td>
           <td class="actions actions-1 text-center">
             <button class="btn btn-sm btn-success add_variant with-tip" data-variant-id="{{variant.id}}" title="<%= Spree.t(:add) %>" data-action="add">
-              <span class="icon icon-add"></span>
+              <%= svg_icon name: "add.svg", width: '16', height: '16' %>
             </button>
           </td>
         {{/if}}

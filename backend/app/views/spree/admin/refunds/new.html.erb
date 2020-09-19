@@ -31,9 +31,9 @@
     </div>
 
     <div class="form-actions" data-hook="buttons">
-      <%= button Spree.t(:refund), 'save' %>
+      <%= button Spree.t(:refund), 'save.svg' %>
       <span class="or"><%= Spree.t(:or) %></span>
-      <%= button_link_to Spree.t('actions.cancel'), spree.admin_order_payments_url(@refund.payment.order), icon: "delete" %>
+      <%= button_link_to Spree.t('actions.cancel'), spree.admin_order_payments_url(@refund.payment.order), icon: "cancel.svg" %>
     </div>
   </fieldset>
 <% end %>

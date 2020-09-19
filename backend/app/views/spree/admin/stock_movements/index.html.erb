@@ -4,35 +4,37 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= button_link_to Spree.t(:new_stock_movement), new_admin_stock_location_stock_movement_path(@stock_location), icon: 'add', class: 'btn-success', id: 'admin_new_stock_movement_link' %>
+  <%= button_link_to Spree.t(:new_stock_movement), new_admin_stock_location_stock_movement_path(@stock_location), icon: 'add.svg', class: 'btn-success', id: 'admin_new_stock_movement_link' %>
 <% end %>
 
 <% if @stock_movements.any? %>
-<table class="table" id='listing_stock_movements'>
-  <colgroup>
-    <col style="width: 35%">
-    <col style="width: 20%">
-    <col style="width: 45%">
-  </colgroup>
-  <thead>
-    <tr data-hook="admin_stock_movements_index_headers">
-      <th><%= Spree.t(:stock_item) %>
-      <th><%= Spree.t(:quantity) %></th>
-      <th><%= Spree.t(:action) %></th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @stock_movements.each do |stock_movement|%>
-      <tr id="<%= spree_dom_id stock_movement %>" data-hook="admin_stock_movements_index_rows">
-        <td>
-          <%= display_variant(stock_movement) %>
-        </td>
-        <td><%= stock_movement.quantity %></td>
-        <td><%= pretty_originator(stock_movement) %></td>
+<div class="table-responsive">
+  <table class="table" id='listing_stock_movements'>
+    <colgroup>
+      <col style="width: 35%">
+      <col style="width: 20%">
+      <col style="width: 45%">
+    </colgroup>
+    <thead>
+      <tr data-hook="admin_stock_movements_index_headers">
+        <th><%= Spree.t(:stock_item) %>
+        <th><%= Spree.t(:quantity) %></th>
+        <th><%= Spree.t(:action) %></th>
       </tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      <% @stock_movements.each do |stock_movement|%>
+        <tr id="<%= spree_dom_id stock_movement %>" data-hook="admin_stock_movements_index_rows">
+          <td>
+            <%= display_variant(stock_movement) %>
+          </td>
+          <td><%= stock_movement.quantity %></td>
+          <td><%= pretty_originator(stock_movement) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
 <% else %>
   <div class="alert alert-info no-objects-found">
     <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::StockMovement)) %>,
@@ -40,4 +42,4 @@
   </div>
 <% end %>
 
-<%= paginate @stock_movements, theme: 'twitter-bootstrap-4' %>
+<%= paginate @stock_movements, theme: 'admin-twitter-bootstrap-4' %>

@@ -9,52 +9,54 @@
 <%= form_for [:admin, @order, @reimbursement] do |f| %>
   <fieldset class='no-border-bottom'>
     <legend><%= Spree.t(:items_to_be_reimbursed) %></legend>
-    <table class="table table-condensed table-bordered reimbursement-return-items-table">
-      <thead>
-        <tr>
-          <th><%= Spree.t(:product) %></th>
-          <th><%= Spree.t(:preferred_reimbursement_type) %></th>
-          <th><%= Spree.t(:reimbursement_type_override) %></th>
-          <th><%= Spree.t(:pre_tax_refund_amount) %></th>
-          <th><%= Spree.t(:total) %></th>
-          <th><%= Spree.t(:exchange_for) %></th>
-        </tr>
-      </thead>
-      <tbody>
-        <%= f.fields_for :return_items, @reimbursement.return_items.sort_by(&:id) do |item_fields| %>
-          <% return_item = item_fields.object %>
+    <div class="table-responsive">
+      <table class="table table-condensed table-bordered reimbursement-return-items-table">
+        <thead>
           <tr>
-            <td>
-              <div class="variant-name"><%= return_item.inventory_unit.variant.name %></div>
-              <div class="variant-options"><%= return_item.inventory_unit.variant.options_text %></div>
-            </td>
-            <td>
-              <%= reimbursement_type_name(return_item.preferred_reimbursement_type) %>
-            </td>
-            <td>
-              <%= item_fields.select(:override_reimbursement_type_id,
-                reimbursement_types.collect { |r| [r.name.humanize, r.id] },
-                {include_blank: true},
-                {class: 'select2'}
-              ) %>
-            </td>
-            <td>
-              <%= item_fields.text_field :pre_tax_amount, { class: 'refund-amount-input form-control' } %>
-            </td>
-            <td>
-              <%= return_item.display_total %>
-            </td>
-            <td>
-              <% if return_item.exchange_processed? %>
-                <%= return_item.exchange_variant.exchange_name %>
-              <% else %>
-                <%= item_fields.collection_select :exchange_variant_id, return_item.eligible_exchange_variants, :id, :exchange_name, { include_blank: true }, { class: "select2 return-item-exchange-selection" } %>
-              <% end %>
-            </td>
+            <th><%= Spree.t(:product) %></th>
+            <th><%= Spree.t(:preferred_reimbursement_type) %></th>
+            <th><%= Spree.t(:reimbursement_type_override) %></th>
+            <th><%= Spree.t(:pre_tax_refund_amount) %></th>
+            <th><%= Spree.t(:total) %></th>
+            <th><%= Spree.t(:exchange_for) %></th>
           </tr>
-        <% end %>
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          <%= f.fields_for :return_items, @reimbursement.return_items.sort_by(&:id) do |item_fields| %>
+            <% return_item = item_fields.object %>
+            <tr>
+              <td>
+                <div class="variant-name"><%= return_item.inventory_unit.variant.name %></div>
+                <div class="variant-options"><%= return_item.inventory_unit.variant.options_text %></div>
+              </td>
+              <td>
+                <%= reimbursement_type_name(return_item.preferred_reimbursement_type) %>
+              </td>
+              <td>
+                <%= item_fields.select(:override_reimbursement_type_id,
+                  reimbursement_types.collect { |r| [r.name.humanize, r.id] },
+                  {include_blank: true},
+                  {class: 'select2'}
+                ) %>
+              </td>
+              <td>
+                <%= item_fields.text_field :pre_tax_amount, { class: 'refund-amount-input form-control' } %>
+              </td>
+              <td>
+                <%= return_item.display_total %>
+              </td>
+              <td>
+                <% if return_item.exchange_processed? %>
+                  <%= return_item.exchange_variant.exchange_name %>
+                <% else %>
+                  <%= item_fields.collection_select :exchange_variant_id, return_item.eligible_exchange_variants, :id, :exchange_name, { include_blank: true }, { class: "select2 return-item-exchange-selection" } %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
   </fieldset>
 
   <div class="form-actions filter-actions actions" data-hook="buttons">
@@ -64,25 +66,26 @@
 
 <fieldset class="margint">
   <legend><%= Spree.t(:calculated_reimbursements) %></legend>
-  <table class="table table-condensed table-bordered">
-    <thead data-hook="customer_return_header">
-      <tr>
-        <th><%= Spree.t(:reimbursement_type) %></th>
-        <th><%= Spree.t(:description) %></th>
-        <th><%= Spree.t(:amount) %></th>
-      </tr>
-    </thead>
-    <tbody>
-      <% @reimbursement_objects.each do |reimbursement_object| %>
-        <tr data-hook="reimbursement_reimbursement_object_row">
-          <td><%= reimbursement_object.class.name.demodulize %></td>
-          <td><%= reimbursement_object.description %></td>
-          <td><%= reimbursement_object.display_amount %></td>
+  <div class="table-responsive">
+    <table class="table table-condensed table-bordered">
+      <thead data-hook="customer_return_header">
+        <tr>
+          <th><%= Spree.t(:reimbursement_type) %></th>
+          <th><%= Spree.t(:description) %></th>
+          <th><%= Spree.t(:amount) %></th>
         </tr>
-      <% end %>
-    </tbody>
-  </table>
-
+      </thead>
+      <tbody>
+        <% @reimbursement_objects.each do |reimbursement_object| %>
+          <tr data-hook="reimbursement_reimbursement_object_row">
+            <td><%= reimbursement_object.class.name.demodulize %></td>
+            <td><%= reimbursement_object.description %></td>
+            <td><%= reimbursement_object.display_amount %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
   <% if @order.has_non_reimbursement_related_refunds? %>
     <div class="alert alert-danger">
       <%= "#{Spree.t('note')}: #{Spree.t('this_order_has_already_received_a_refund')}. #{Spree.t('make_sure_the_above_reimbursement_amount_is_correct')}." %>
@@ -96,7 +99,7 @@
         <%= Spree.t(:reimburse) %>
       <% end %>
       <span class="or"><%= Spree.t(:or) %></span>
-      <%= button_link_to Spree.t('actions.cancel'), url_for([:edit, :admin, @order, @reimbursement.customer_return]), icon: 'remove-sign' %>
+      <%= button_link_to Spree.t('actions.cancel'), url_for([:edit, :admin, @order, @reimbursement.customer_return]), icon: 'cancel' %>
     <% end %>
   </div>
 </fieldset>

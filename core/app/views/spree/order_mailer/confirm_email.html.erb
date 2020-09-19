@@ -18,4 +18,6 @@
 </table>
 <p>
   <%= Spree.t('order_mailer.confirm_email.thanks') %>
+  <br />
+  <%= Spree.t('order_mailer.store_team', store_name: current_store.name) %>
 </p>

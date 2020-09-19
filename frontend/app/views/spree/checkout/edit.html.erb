@@ -27,7 +27,7 @@ end
     <div class="text-uppercase checkout-header-title">
       <h1 data-hook="checkout_title"><%= Spree.t('checkout_page.header') %></h1>
     </div>
-    <div class="checkout-progress" data-hook="checkout_progress">
+    <div class="checkout-progress" data-hook="checkout_progress" role="navigation" aria-label="<%= Spree.t('checkout_page.checkout_navigation') %>">
       <%= checkout_progress %>
     </div>
   </div>

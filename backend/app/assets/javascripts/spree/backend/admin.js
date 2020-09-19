@@ -4,74 +4,83 @@ under the spree namespace that do stuff we find helpful.
 Hopefully, this will evolve into a propper class.
 **/
 
-/* global Cookies, AUTH_TOKEN, order_number */
+/* global AUTH_TOKEN, order_number, Sortable, flatpickr, DOMPurify */
+
+//= require spree/backend/flatpickr_locals
 
 jQuery(function ($) {
   // Add some tips
-  $('.with-tip').tooltip()
+  $('.with-tip').each(function() {
+    $(this).tooltip({
+      container: $(this)
+    })
+  })
+
+  $('.with-tip').on('show.bs.tooltip', function(event) {
+    if (('ontouchstart' in window)) {
+      event.preventDefault()
+    }
+  })
 
   $('.js-show-index-filters').click(function () {
     $('.filter-well').slideToggle()
     $(this).parents('.filter-wrap').toggleClass('collapsed')
-    $('span.icon', $(this)).toggleClass('icon-chevron-down')
   })
 
-  $('#main-sidebar').find('[data-toggle="collapse"]').on('click', function () {
-    if ($(this).find('.icon-chevron-left').length === 1) {
-      $(this).find('.icon-chevron-left').removeClass('icon-chevron-left').addClass('icon-chevron-down')
+  // Responsive Menus
+  var body  = $('body')
+  var modalBackdrop  = $('#multi-backdrop')
+
+  // Fail safe on resize
+  var resizeTimer;
+  window.addEventListener('resize', function () {
+    document.body.classList.remove('modal-open', 'sidebar-open', 'contextualSideMenu-open');
+    document.body.classList.add('resize-animation-stopper');
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function () {
+      document.body.classList.remove('resize-animation-stopper');
+    }, 400);
+  });
+
+  function closeAllMenus() {
+    body.removeClass()
+    body.addClass('admin')
+    modalBackdrop.removeClass('show')
+  }
+
+  modalBackdrop.click(closeAllMenus)
+
+  // Main Menu Functionality
+  var sidebarOpen    = $('#sidebar-open')
+  var sidebarClose   = $('#sidebar-close')
+  var activeItem     = $('#main-sidebar').find('.selected')
+
+  activeItem.closest('.nav-sidebar').addClass('active-option')
+  activeItem.closest('.nav-pills').addClass('in show')
+
+  function openMenu() {
+    closeAllMenus()
+    body.addClass('sidebar-open modal-open')
+    modalBackdrop.addClass('show')
+  }
+  sidebarOpen.click(openMenu)
+  sidebarClose.click(closeAllMenus)
+
+  // Contextual Sidebar Menu
+  var contextualSidebarMenuToggle = $('#contextual-menu-toggle')
+  var contextualSidebarMenuClose = $('#contextual-menu-close')
+
+  function toggleContextualMenu() {
+    if (document.body.classList.contains('contextualSideMenu-open')) {
+      closeAllMenus()
     } else {
-      $(this).find('.icon-chevron-down').removeClass('icon-chevron-down').addClass('icon-chevron-left')
+      closeAllMenus()
+      body.addClass('contextualSideMenu-open modal-open')
+      modalBackdrop.addClass('show')
     }
-  })
-
-  // Sidebar nav toggle functionality
-  var sidebar_toggle = $('#sidebar-toggle')
-
-  sidebar_toggle.on('click', function() {
-    var wrapper = $('#wrapper')
-    var main    = $('#main-part')
-    var sidebar = $('#main-sidebar')
-    var version = $('.spree-version')
-    var collapsed = sidebar.find('[aria-expanded="true"]')
-    var collapsedIcons = sidebar.find('.icon-chevron-down')
-
-    wrapper.toggleClass('sidebar-minimized')
-
-    collapsed
-      .attr('aria-expanded', 'false')
-      .next()
-      .removeClass('show')
-
-    collapsedIcons
-      .removeClass('icon-chevron-down')
-      .addClass('icon-chevron-left')
-
-    // these should match `spree/backend/app/helpers/spree/admin/navigation_helper.rb#main_part_classes`
-    main
-      .toggleClass('col-12 sidebar-collapsed')
-      .toggleClass('col-9 offset-3 col-md-10 offset-md-2')
-
-    if (wrapper.hasClass('sidebar-minimized')) {
-      Cookies.set('sidebar-minimized', 'true', { path: '/admin' })
-      version.removeClass('d-md-block')
-    } else {
-      Cookies.set('sidebar-minimized', 'false', { path: '/admin' })
-      version.addClass('d-md-block')
-    }
-  })
-
-  $('.sidebar-menu-item').mouseover(function () {
-    if ($('#wrapper').hasClass('sidebar-minimized')) {
-      $(this).addClass('menu-active')
-      $(this).find('ul.nav').addClass('submenu-active')
-    }
-  })
-  $('.sidebar-menu-item').mouseout(function () {
-    if ($('#wrapper').hasClass('sidebar-minimized')) {
-      $(this).removeClass('menu-active')
-      $(this).find('ul.nav').removeClass('submenu-active')
-    }
-  })
+  }
+  contextualSidebarMenuToggle.click(toggleContextualMenu)
+  contextualSidebarMenuClose.click(toggleContextualMenu)
 
   // TODO: remove this js temp behaviour and fix this decent
   // Temp quick search
@@ -82,28 +91,6 @@ jQuery(function ($) {
     $('.js-quick-search-target').val($('.js-quick-search').val())
     $('#table-filter form').submit()
     return false
-  })
-
-  // Main menu active item submenu show
-  var active_item = $('#main-sidebar').find('.selected')
-  active_item.closest('.nav-pills').addClass('in show')
-  active_item.closest('.nav-sidebar')
-    .find('.icon-chevron-left')
-    .removeClass('icon-chevron-left')
-    .addClass('icon-chevron-down')
-
-  // Replace ▼ and ▲ in sort_link with nicer icons
-  $('.sort_link').each(function () {
-    // Remove the &nbsp in the text
-    var sortLinkText = $(this).text().replace('\xA0', '')
-
-    if (sortLinkText.indexOf('▼') >= 0) {
-      $(this).text(sortLinkText.replace('▼', ''))
-      $(this).append('<span class="icon icon-chevron-down"></span>')
-    } else if (sortLinkText.indexOf('▲') >= 0) {
-      $(this).text(sortLinkText.replace('▲', ''))
-      $(this).append('<span class="icon icon-chevron-up"></span>')
-    }
   })
 
   // Clickable ransack filters
@@ -148,8 +135,9 @@ jQuery(function ($) {
       }
 
       label = ransackField(label.text()) + ': ' + ransackValue
+      var cleanLabel = DOMPurify.sanitize(label)
 
-      filter = '<span class="js-filter badge badge-secondary" data-ransack-field="' + ransackFieldId + '">' + label + '<span class="icon icon-delete js-delete-filter"></span></span>'
+      filter = '<span class="js-filter badge badge-secondary" data-ransack-field="' + ransackFieldId + '">' + cleanLabel + '<i class="icon icon-cancel ml-2 js-delete-filter"></i></span>'
       $(".js-filters").append(filter).show()
     }
   })
@@ -179,20 +167,46 @@ jQuery(function ($) {
       $('#table-filter form').append(perPageInput)
     }
   })
+})
 
-  // Make flash messages disappear
-  setTimeout(function () { $('.alert-auto-disappear').slideUp() }, 5000)
+function handleAlert (element) {
+  element.classList.add('animate__animated', 'animate__bounceInUp')
+  element.addEventListener('animationend', function () {
+    element.classList.remove('animate__bounceInUp')
+    element.classList.add('animate__fadeOutDownBig', 'animate__delay-3s')
+  })
+}
+
+// Triggers alert if required on document ready.
+$(document).ready(function () {
+  var element = document.querySelector('.flash-alert')
+
+  if (element) {
+    handleAlert(element)
+  }
 })
 
 $.fn.visible = function (cond) { this[ cond ? 'show' : 'hide' ]() }
+// Triggers alerts when requested by javascript.
 // eslint-disable-next-line camelcase
 function show_flash (type, message) {
+  var cleanMessage = DOMPurify.sanitize(message)
+  var existingAlert = document.querySelector('.flash-alert')
+
+  if (existingAlert) {
+    existingAlert.remove()
+  }
+
   var flashDiv = $('.alert-' + type)
   if (flashDiv.length === 0) {
-    flashDiv = $('<div class="alert alert-' + type + '" />')
-    $('#content').prepend(flashDiv)
+    flashDiv = $('<div class="d-flex justify-content-center position-fixed flash-alert">' +
+                 '<div class="alert alert-' + type + ' mx-2">' + cleanMessage + '</div></div>')
+
+    $('body').append(flashDiv)
+
+    var ajaxFlashNotfication = document.querySelector('.flash-alert')
+    handleAlert(ajaxFlashNotfication)
   }
-  flashDiv.html(message).show().delay(10000).slideUp()
 }
 
 // Apply to individual radio button that makes another element visible when checked
@@ -208,31 +222,34 @@ $.fn.radioControlsVisibilityOfElement = function (dependentElementSelector) {
     if (this.checked) { this.click() }
   })
 }
-// eslint-disable-next-line camelcase
-function handle_date_picker_fields () {
-  $('.datepicker').datepicker({
+
+document.addEventListener('DOMContentLoaded', function() {
+  var dateFrom = flatpickr('.datePickerFrom', {
+    time_24hr: true,
     dateFormat: Spree.translations.date_picker,
-    dayNames: Spree.translations.abbr_day_names,
-    dayNamesMin: Spree.translations.abbr_day_names,
-    firstDay: Spree.translations.first_day,
-    monthNames: Spree.translations.month_names,
-    prevText: Spree.translations.previous,
-    nextText: Spree.translations.next,
-    showOn: 'focus',
-    showAnim: ''
+    monthSelectorType: 'static',
+    onChange: function(selectedDates) {
+      dateTo.set('minDate', selectedDates[0])
+    }
   })
 
-  // Correctly display range dates
-  $('.date-range-filter .datepicker-from').datepicker('option', 'onSelect', function (selectedDate) {
-    $('.date-range-filter .datepicker-to').datepicker('option', 'minDate', selectedDate)
+  var dateTo = flatpickr('.datePickerTo', {
+    monthSelectorType: 'static',
+    time_24hr: true,
+    dateFormat: Spree.translations.date_picker,
+    onChange: function(selectedDates) {
+      dateFrom.set('maxDate', selectedDates[0])
+    }
   })
-  $('.date-range-filter .datepicker-to').datepicker('option', 'onSelect', function (selectedDate) {
-    $('.date-range-filter .datepicker-from').datepicker('option', 'maxDate', selectedDate)
+
+  flatpickr('.datepicker', {
+    monthSelectorType: 'static',
+    time_24hr: true,
+    dateFormat: Spree.translations.date_picker
   })
-}
+})
 
 $(document).ready(function() {
-  handle_date_picker_fields()
   $('.observe_field').on('change', function() {
     target = $(this).data('update')
     $(target).hide()
@@ -277,7 +294,10 @@ $(document).ready(function() {
           _method: 'delete',
           authenticity_token: AUTH_TOKEN
         },
-        dataType: 'script'
+        dataType: 'script',
+        complete: function() {
+          el.blur()
+        }
       }).done(function () {
         var $flash_element = $('.alert-success')
         if ($flash_element.length) {
@@ -288,6 +308,8 @@ $(document).ready(function() {
       }).fail(function (response) {
         show_flash('error', response.responseText)
       })
+    } else {
+      el.blur()
     }
     return false
   })
@@ -317,7 +339,7 @@ $(document).ready(function() {
     return false
   })
 
-  $('body').on('click', '.select_properties_from_prototype', function(){
+  $('body').on('click', '.select_properties_from_prototype', function() {
     $('#busy_indicator').show()
     var clicked_link = $(this)
     $.ajax({
@@ -331,60 +353,47 @@ $(document).ready(function() {
     return false
   })
 
-  // Fix sortable helper
-  var fixHelper = function (e, ui) {
-    ui.children().each(function () {
-      $(this).width($(this).width())
-    })
-    return ui
+  // Sortable List Up-Down
+  var parentEl = document.getElementsByClassName("sortable")[0];
+  if (parentEl) {
+    var element = parentEl.querySelector('tbody')
   }
 
-  $('table.sortable').ready(function () {
-    var tdCount = $(this).find('tbody tr:first-child td').length
-    $('table.sortable tbody').sortable(
-      {
-        handle: '.handle',
-        helper: fixHelper,
-        placeholder: 'ui-sortable-placeholder',
-        update: function(event, ui) {
-          var tbody = this
-          $('#progress').show()
-          var positions = { authenticity_token: AUTH_TOKEN }
-          $.each($('tr', tbody), function(position, obj) {
-            reg = /spree_(\w+_?)+_(\d+)/
-            parts = reg.exec($(obj).prop('id'))
-            if (parts) {
-              positions['positions[' + parts[2] + ']'] = position + 1
-            }
-          })
-          $.ajax({
-            type: 'POST',
-            dataType: 'script',
-            url: $(ui.item).closest('table.sortable').data('sortable-link'),
-            data: positions
-          }).done(function () {
-            $('#progress').hide()
-          })
-        },
-        start: function (event, ui) {
-          // Set correct height for placehoder (from dragged tr)
-          ui.placeholder.height(ui.item.height())
-          // Fix placeholder content to make it correct width
-          ui.placeholder.html("<td colspan='" + (tdCount - 1) + "'></td><td class='actions'></td>")
-        },
-        stop: function (event, ui) {
-          // Fix odd/even classes after reorder
-          $('table.sortable tr:even').removeClass('odd even').addClass('even')
-          $('table.sortable tr:odd').removeClass('odd even').addClass('odd')
-        }
+  if (element) {
+    Sortable.create(element, {
+      handle: '.move-handle',
+      animation: 550,
+      ghostClass: 'bg-light',
+      dragClass: "sortable-drag-v",
+      easing: 'cubic-bezier(1, 0, 0, 1)',
+      swapThreshold: 0.9,
+      forceFallback: true,
+      onEnd: function (evt) {
+        var itemEl = evt.item
+        var positions = { authenticity_token: AUTH_TOKEN }
+        $.each($('tr', element), function(position, obj) {
+          reg = /spree_(\w+_?)+_(\d+)/
+          parts = reg.exec($(obj).prop('id'))
+          if (parts) {
+            positions['positions[' + parts[2] + ']'] = position + 1
+          }
+        })
+        $.ajax({
+          type: 'POST',
+          dataType: 'json',
+          url: $(itemEl).closest('table.sortable').data('sortable-link'),
+          data: positions
+        })
+      }
+    })
+  }
 
-      })
-  })
-
+  // Close notifications
   $('a.dismiss').click(function () {
     $(this).parent().fadeOut()
   })
 
+  // Utility
   window.Spree.advanceOrder = function() {
     $.ajax({
       type: 'PUT',

@@ -1,13 +1,39 @@
 #main-part {
-  padding: $spacer ($spacer * 2) 0 ($spacer * 2);
+  padding: $spacer ($spacer * 0.5) 0 ($spacer * 0.5);
   margin-top: 50px;
-}
-
-.sidebar-minimized #main-part {
-  padding: $spacer ($spacer * 2) 0 ($spacer * 5);
 }
 
 #logo {
   width: auto;
-  height: 40px;
+  height: 36px;
+}
+
+#multi-backdrop {
+  z-index: 0;
+  height: 0;
+  width: 0;
+}
+
+body.modal-open #multi-backdrop {
+  z-index: 1040;
+  width: 100vw;
+  height: 100vh;
+}
+
+.sort-handle {
+  cursor: grab;
+}
+
+.no-wrap {
+  white-space: nowrap;
+}
+
+.card-body {
+  padding: 0.75rem;
+}
+
+@include media-breakpoint-up(sm) {
+  .card-body {
+    padding: 1.25rem;
+  }
 }

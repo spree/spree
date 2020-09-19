@@ -3,7 +3,7 @@
 <% content_for :page_actions do %>
   <% if @order.outstanding_balance? && can?(:create, Spree::Payment) %>
     <span id="new_payment_section">
-      <%= button_link_to Spree.t(:new_payment), new_admin_order_payment_url(@order), class: "btn-success", icon: 'add' %>
+      <%= button_link_to Spree.t(:new_payment), new_admin_order_payment_url(@order), class: "btn-success", icon: 'add.svg' %>
     </span>
   <% end %>
 <% end %>
@@ -19,8 +19,7 @@
 <% end %>
 
 <% if @payments.any? %>
-
-  <div data-hook="payment_list" class="mb-3">
+  <div data-hook="payment_list" class="mb-3 table-responsive">
     <%= render partial: 'list', locals: { payments: @payments } %>
   </div>
 

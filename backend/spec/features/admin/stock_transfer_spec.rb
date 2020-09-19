@@ -43,6 +43,25 @@ describe 'Stock Transfers', type: :feature, js: true do
     expect(transfer.stock_movements.size).to eq 2
   end
 
+  it 'does not transfer if variant is not available on hand' do
+    create(:stock_location_with_items, name: 'NY') # source_location
+    create(:stock_location, name: 'SF') # destination_location
+
+    product = create(:product)
+    Spree::StockLocation.first.stock_items.where(variant_id: product.master.id).first.adjust_count_on_hand(0)
+
+    visit spree.admin_stock_transfers_path
+    click_on 'New Stock Transfer'
+    fill_in 'reference', with: 'PO 666'
+
+    select2 product.master.name, from: 'Variant', search: true
+
+    click_button 'Add'
+    click_button 'Transfer Stock'
+
+    expect(page).to have_content('Some variants are not available')
+  end
+
   describe 'received stock transfer' do
     def it_is_received_stock_transfer(page)
       expect(page).to have_content('Reference PO 666')

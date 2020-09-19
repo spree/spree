@@ -6,7 +6,7 @@ module Spree
       before_action :set_default_locale, only: :new
       before_action :normalize_supported_currencies, only: [:create, :update]
       before_action :set_default_country_id, only: :new
-      before_action :load_all_countries, only: [:new, :edit, :update]
+      before_action :load_all_countries, only: [:new, :edit, :update, :create]
 
       if defined?(SpreeI18n)
         include SpreeI18n::LocaleHelper
@@ -15,7 +15,31 @@ module Spree
       helper_method :all_locales_options
 
       def index
-        @stores = Spree::Store.all
+        if params[:ids]
+          load_stores_by_ids
+        elsif params[:q]
+          load_stores_by_query
+        else
+          @stores = Spree::Store.all
+        end
+
+        respond_with(@stores) do |format|
+          format.json { render layout: false }
+        end
+      end
+
+      def load_stores_by_ids
+        ids = params[:ids].split(',')
+        @stores = Spree::Store.where(id: ids)
+      end
+
+      def load_stores_by_query
+        @stores = if defined?(SpreeGlobalize)
+                    Spree::Store.joins(:translations).where("LOWER(#{Store::Translation.table_name}.name) LIKE LOWER(:query)",
+                                                            query: "%#{params[:q]}%")
+                  else
+                    Spree::Store.where('LOWER(name) LIKE LOWER(:query)', query: "%#{params[:q]}%")
+                  end
       end
 
       def create
