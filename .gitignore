@@ -56,6 +56,7 @@ test_app
 vendor/bundle
 */vendor/bundle
 .ignore
+TODO
 
 # new guides
 guides/output

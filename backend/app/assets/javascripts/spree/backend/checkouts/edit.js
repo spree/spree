@@ -59,6 +59,7 @@ $(document).ready(function () {
         if (billAddress) {
           $('#order_bill_address_attributes_firstname').val(billAddress.firstname)
           $('#order_bill_address_attributes_lastname').val(billAddress.lastname)
+          $('#order_bill_address_attributes_company').val(billAddress.company)
           $('#order_bill_address_attributes_address1').val(billAddress.address1)
           $('#order_bill_address_attributes_address2').val(billAddress.address2)
           $('#order_bill_address_attributes_city').val(billAddress.city)

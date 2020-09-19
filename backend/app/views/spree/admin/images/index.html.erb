@@ -1,11 +1,9 @@
 <%= render partial: 'spree/admin/shared/product_tabs', locals: { current: :images } %>
 
 <% content_for :page_actions do %>
-  <div class="page-actions col-6 pr-0" data-hook="toolbar">
-    <%= yield :page_actions %>
-  </div>
+  <%= yield :page_actions %>
   <%= product_preview_link(@product) %>
-  <%= button_link_to(Spree.t(:new_image), spree.new_admin_product_image_url(@product), { class: "btn-success", icon: 'add', id: 'new_image_link' }) if can? :create, Spree::Image %>
+  <%= button_link_to(Spree.t(:new_image), spree.new_admin_product_image_url(@product), { class: "btn-success", icon: 'add.svg', id: 'new_image_link' }) if can? :create, Spree::Image %>
 <% end %>
 
 <% has_variants = @product.has_variants? %>
@@ -15,6 +13,7 @@
     <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::Image)) %>.
   </div>
 <% else %>
+<div class="table-responsive">
   <table class="table sortable" data-hook="images_table" data-sortable-link="<%= update_positions_admin_product_images_url(@product) %>">
     <thead>
       <tr data-hook="images_header">
@@ -33,12 +32,12 @@
       </tr>
     </thead>
 
-    <tbody>
+    <tbody id="sortVert">
       <% (@product.variant_images).each do |image| %>
         <tr id="<%= spree_dom_id image %>" data-hook="images_row">
           <td class="move-handle text-center">
             <% if can? :edit, image %>
-              <span class="icon icon-move handle"></span>
+              <%= svg_icon name: "sort.svg", width: '18', height: '18' %>
             <% end %>
           </td>
           <td class="image">
@@ -49,11 +48,12 @@
           <% end %>
           <td><%= image.alt %></td>
           <td class="actions actions-2 text-right">
-            <%= link_to_with_icon('edit', Spree.t(:edit), spree.edit_admin_product_image_url(@product, image), class: 'btn btn-primary btn-sm', no_text: true, data: { action: 'edit' }) if can? :edit, image %>
+            <%= link_to_with_icon('edit.svg', Spree.t(:edit), spree.edit_admin_product_image_url(@product, image), class: 'btn btn-primary btn-sm', no_text: true, data: { action: 'edit' }) if can? :edit, image %>
             <%= link_to_delete(image, { url: spree.admin_product_image_url(@product, image), no_text: true }) if can? :destroy, image %>
           </td>
         </tr>
       <% end %>
     </tbody>
   </table>
+</div>
 <% end %>

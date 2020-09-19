@@ -2,7 +2,7 @@
 
 <% content_for :page_actions do %>
   <% if @order.shipments.any?(&:shipped?) && can?(:create, Spree::CustomerReturn) %>
-    <%= button_link_to Spree.t(:new_customer_return), spree.new_admin_order_customer_return_path(@order), icon: 'add', class: 'btn-success' %>
+    <%= button_link_to Spree.t(:new_customer_return), spree.new_admin_order_customer_return_path(@order), icon: 'add.svg', class: 'btn-success' %>
   <% end %>
 <% end %>
 
@@ -13,6 +13,7 @@
 <% if @order.shipments.any?(&:shipped?) %>
 
   <% if @customer_returns.any? %>
+  <div class="table-responsive">
     <table class="table">
       <thead data-hook="customer_return_header">
         <tr>
@@ -43,6 +44,7 @@
         <% end %>
       </tbody>
     </table>
+  </div>
   <% else %>
     <div class="alert alert-info no-objects-found">
       <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::CustomerReturn)) %>,

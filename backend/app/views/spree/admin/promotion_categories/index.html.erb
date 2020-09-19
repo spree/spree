@@ -3,10 +3,12 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= button_link_to Spree.t(:new_promotion_category), new_object_url, icon: 'add', class: 'btn-success' %>
+  <%= button_link_to Spree.t(:new_promotion_category), new_object_url, icon: 'add.svg', class: 'btn-success' %>
 <% end if can?(:create, Spree::PromotionCategory) %>
 
 <% if @promotion_categories.any? %>
+
+<div class="table-responsive">
   <table class="table">
     <thead>
       <th><%= Spree::PromotionCategory.human_attribute_name :name %></th>
@@ -26,6 +28,7 @@
       <% end %>
     </tbody>
   </table>
+</div>
 <% else %>
   <div class="alert alert-info no-objects-found">
     <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::PromotionCategory)) %>,

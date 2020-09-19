@@ -3,10 +3,11 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= button_link_to Spree.t(:new_payment_method), new_object_url, class: "btn-success", icon: 'add', id: 'admin_new_payment_methods_link' %>
+  <%= button_link_to Spree.t(:new_payment_method), new_object_url, class: "btn-success", icon: 'add.svg', id: 'admin_new_payment_methods_link' %>
 <% end if can? :create, Spree::PaymentMethod %>
 
 <% if @payment_methods.any? %>
+<div class="table-responsive">
   <table class="table sortable" id='listing_payment_methods' data-hook data-sortable-link="<%= update_positions_admin_payment_methods_url %>">
     <thead>
       <tr data-hook="admin_payment_methods_index_headers">
@@ -18,16 +19,16 @@
         <th data-hook="admin_payment_methods_index_header_actions" class="actions"></th>
       </tr>
     </thead>
-    <tbody>
+    <tbody id="sortVert">
       <% @payment_methods.each do |method|%>
         <tr id="<%= spree_dom_id method %>" data-hook="admin_payment_methods_index_rows">
           <td class="move-handle text-center">
             <% if can?(:edit, method) %>
-              <span class="icon icon-move handle"></span>
+              <%= svg_icon name: "sort.svg", width: '18', height: '18' %>
             <% end %>
           </td>
           <td><%= method.name %></td>
-          <td><%= method.type %></td>
+          <td><%= method.type.split('::', 3).last %></td>
           <td class="text-center"><%= Spree.t(method.display_on) %></td>
           <td class="text-center"><%= method.active ? Spree.t(:say_yes) : Spree.t(:say_no) %></td>
           <td data-hook="admin_payment_methods_index_row_actions" class="actions actions-2 text-right">
@@ -38,6 +39,7 @@
       <% end %>
     </tbody>
   </table>
+  </div>
 <% else %>
   <div class="alert alert-info no-objects-found">
     <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::PaymentMethod)) %>,

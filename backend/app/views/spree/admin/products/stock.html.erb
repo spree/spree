@@ -7,8 +7,8 @@
   </div>
 <% end %>
 
-<div class="card mb-3">
-  <table class="table table-bordered" id="listing_product_stock">
+<div class="card mb-3 table-responsive">
+  <table class="table" id="listing_product_stock">
     <thead>
       <tr data-hook="admin_product_stock_management_index_headers">
         <th colspan="2"><%= Spree.t(:variant) %></th>
@@ -63,7 +63,7 @@
                         <% end if can? :update, item %>
                       </td>
                       <td class="actions actions-1 text-center">
-                        <%= link_to_with_icon('delete', Spree.t(:remove), [:admin, item], method: :delete, remote: true, class: 'icon_link btn btn-danger btn-sm', data: { action: :remove, confirm: Spree.t(:are_you_sure) }, no_text: true) if can? :destroy, item %>
+                        <%= link_to_with_icon('delete.svg', Spree.t(:remove), [:admin, item], method: :delete, remote: true, class: 'icon_link btn btn-danger btn-sm', data: { action: :remove, confirm: Spree.t(:are_you_sure) }, no_text: true) if can? :destroy, item %>
                       </td>
                     </tr>
                   <% end %>

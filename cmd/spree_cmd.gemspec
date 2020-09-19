@@ -7,10 +7,17 @@ Gem::Specification.new do |s|
   s.version     = Spree.version
   s.authors     = ['Chris Mar']
   s.email       = ['chris@spreecommerce.com']
-  s.homepage    = 'http://spreecommerce.org'
-  s.license     = 'BSD-3-Clause'
   s.summary     = 'Spree Commerce command line utility'
   s.description = 'tools to create new Spree stores and extensions'
+  s.homepage    = 'https://spreecommerce.org'
+  s.license     = 'BSD-3-Clause'
+
+  s.metadata = {
+    "bug_tracker_uri"   => "https://github.com/spree/spree/issues",
+    "changelog_uri"     => "https://github.com/spree/spree/releases/tag/v#{s.version}",
+    "documentation_uri" => "https://guides.spreecommerce.org/",
+    "source_code_uri"   => "https://github.com/spree/spree/tree/v#{s.version}",
+  }
 
   s.files         = `git ls-files`.split("\n").reject { |f| f.match(/^spec/) && !f.match(/^spec\/fixtures/) }
   s.bindir        = 'bin'
@@ -19,5 +26,5 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency 'rspec'
   # Temporary hack until https://github.com/wycats/thor/issues/234 is fixed
-  s.add_dependency 'thor', '>= 0.14', '< 2.0'
+  s.add_dependency 'thor', '~> 0.20.3'
 end

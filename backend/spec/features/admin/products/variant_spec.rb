@@ -1,3 +1,4 @@
+# coding: utf-8
 require 'spec_helper'
 
 describe 'Variants', type: :feature do
@@ -30,6 +31,7 @@ describe 'Variants', type: :feature do
       context 'using Russian Rubles' do
         before do
           Spree::Config[:currency] = 'RUB'
+          create(:store, default: true, default_currency: 'RUB')
           create(:variant, product: product, price: 19.99)
         end
 

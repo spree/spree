@@ -2,7 +2,7 @@
 
 <% content_for :page_actions do %>
   <% if @order.shipments.any?(&:shipped?) && can?(:create, Spree::ReturnAuthorization) %>
-    <%= button_link_to Spree.t(:new_return_authorization), new_admin_order_return_authorization_url(@order), class: "btn-success", icon: 'add' %>
+    <%= button_link_to Spree.t(:new_return_authorization), new_admin_order_return_authorization_url(@order), class: "btn-success", icon: 'add.svg' %>
   <% end %>
 <% end %>
 
@@ -11,6 +11,7 @@
 <% end %>
 
 <% if @order.shipments.any?(&:shipped?) && @order.return_authorizations.any? %>
+<div class="table-responsive">
   <table class="table">
     <thead data-hook="rma_header">
       <tr>
@@ -42,6 +43,7 @@
       <% end %>
     </tbody>
   </table>
+</div>
 <% elsif @order.shipments.any?(&:shipped?) %>
   <div class="alert alert-info no-objects-found">
     <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::ReturnAuthorization)) %>

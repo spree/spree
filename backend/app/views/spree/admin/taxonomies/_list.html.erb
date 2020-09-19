@@ -1,23 +1,25 @@
-<table class="table sortable" id='listing_taxonomies' data-hook data-sortable-link="<%= update_positions_admin_taxonomies_url %>">
-  <thead>
-    <tr data-hook="taxonomies_header">
-      <th class="no-border"></th>
-      <th><%= Spree.t(:name) %></th>
-      <th class="actions"></th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @taxonomies.each do |taxonomy| %>
-      <tr id="<%= spree_dom_id taxonomy %>" data-hook="taxonomies_row">
-        <td class="move-handle">
-          <span class="icon icon-sort handle"></span>
-        </td>
-        <td><%= taxonomy.name %></td>
-        <td class="actions actions-2 text-right">
-          <%= link_to_edit taxonomy.id, no_text: true if can?(:edit, taxonomy) %>
-          <%= link_to_delete taxonomy, no_text: true if can?(:delete, taxonomy) %>
-        </td>
+<div class="table-responsive">
+  <table class="table sortable" id='listing_taxonomies' data-hook data-sortable-link="<%= update_positions_admin_taxonomies_url %>">
+    <thead>
+      <tr data-hook="taxonomies_header">
+        <th class="no-border handel-head"></th>
+        <th><%= Spree.t(:name) %></th>
+        <th class="actions"></th>
       </tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
+    <tbody id="sortVert">
+      <% @taxonomies.each do |taxonomy| %>
+        <tr id="<%= spree_dom_id taxonomy %>" data-hook="taxonomies_row" >
+          <td class="move-handle">
+            <%= svg_icon name: "sort.svg", width: '18', height: '18' %>
+          </td>
+          <td><%= taxonomy.name %></td>
+          <td class="actions actions-2 text-right">
+            <%= link_to_edit taxonomy.id, no_text: true if can?(:edit, taxonomy) %>
+            <%= link_to_delete taxonomy, no_text: true if can?(:delete, taxonomy) %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

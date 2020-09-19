@@ -41,7 +41,15 @@ module Spree
       end
     end
 
-    def logo(image_path = Spree::Config[:logo], options = {})
+    def logo(image_path = nil, options = {})
+      image_path ||= if current_store.logo.attached? && current_store.logo.variable?
+                       main_app.url_for(current_store.logo.variant(resize: '244x104>'))
+                     elsif current_store.logo.attached? && current_store.logo.image?
+                       main_app.url_for(current_store.logo)
+                     else
+                       Spree::Config[:logo]
+                     end
+
       path = spree.respond_to?(:root_path) ? spree.root_path : main_app.root_path
 
       link_to path, 'aria-label': current_store.name, method: options[:method] do
@@ -104,7 +112,13 @@ module Spree
     def pretty_time(time)
       return '' if time.blank?
 
-      [I18n.l(time.to_date, format: :long), time.strftime('%l:%M %p')].join(' ')
+      [I18n.l(time.to_date, format: :long), time.strftime('%l:%M %p %Z')].join(' ')
+    end
+
+    def pretty_date(date)
+      return '' if date.blank?
+
+      [I18n.l(date.to_date, format: :long)].join(' ')
     end
 
     def seo_url(taxon, options = nil)

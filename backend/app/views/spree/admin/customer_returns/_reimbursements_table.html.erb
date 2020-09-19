@@ -1,36 +1,38 @@
-<table class="table table-condensed table-bordered">
-  <thead data-hook="customer_return_header">
-    <tr>
-      <th><%= Spree.t(:number) %></th>
-      <th><%= Spree.t(:total) %></th>
-      <th><%= Spree.t(:status) %></th>
-      <th><%= "#{Spree.t('date')}/#{Spree.t('time')}" %></th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    <% reimbursements.each do |reimbursement| %>
-      <tr id="<%= spree_dom_id(reimbursement) %>" data-hook="reimbursement_row">
-        <td>
-          <% if reimbursement.reimbursed? %>
-            <%= link_to reimbursement.number, url_for([:admin, @order, reimbursement]) %>
-          <% else %>
-            <%= reimbursement.number %>
-          <% end %>
-        </td>
-        <td><%= reimbursement.display_total %></td>
-        <td>
-          <span class="state <%= reimbursement_status_color(reimbursement) %>">
-            <%= reimbursement.reimbursement_status %>
-          </span>
-        </td>
-        <td><%= pretty_time(reimbursement.created_at) %></td>
-        <td class="actions actions-1">
-          <% if !reimbursement.reimbursed? %>
-            <%= link_to_edit_url(url_for([:edit, :admin, @order, reimbursement]), title: "admin_edit_#{dom_id(reimbursement)}", no_text: true) if can?(:edit, reimbursement) %>
-          <% end %>
-        </td>
+<div class="table-responsive">
+  <table class="table table-condensed table-bordered">
+    <thead data-hook="customer_return_header">
+      <tr>
+        <th><%= Spree.t(:number) %></th>
+        <th><%= Spree.t(:total) %></th>
+        <th><%= Spree.t(:status) %></th>
+        <th><%= "#{Spree.t('date')}/#{Spree.t('time')}" %></th>
+        <th></th>
       </tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      <% reimbursements.each do |reimbursement| %>
+        <tr id="<%= spree_dom_id(reimbursement) %>" data-hook="reimbursement_row">
+          <td>
+            <% if reimbursement.reimbursed? %>
+              <%= link_to reimbursement.number, url_for([:admin, @order, reimbursement]) %>
+            <% else %>
+              <%= reimbursement.number %>
+            <% end %>
+          </td>
+          <td><%= reimbursement.display_total %></td>
+          <td>
+            <span class="state <%= reimbursement_status_color(reimbursement) %>">
+              <%= reimbursement.reimbursement_status %>
+            </span>
+          </td>
+          <td><%= pretty_time(reimbursement.created_at) %></td>
+          <td class="actions actions-1">
+            <% if !reimbursement.reimbursed? %>
+              <%= link_to_edit_url(url_for([:edit, :admin, @order, reimbursement]), title: "admin_edit_#{dom_id(reimbursement)}", no_text: true) if can?(:edit, reimbursement) %>
+            <% end %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

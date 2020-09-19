@@ -14,6 +14,7 @@ describe 'Stores', type: :feature, js: true do
 
     it 'has required fields' do
       expect(page).to have_field(id: 'store_name')
+      expect(page).to have_field(id: 'store_code')
       expect(page).to have_field(id: 'store_url')
       expect(page).to have_field(id: 'store_mail_from_address')
     end
@@ -27,6 +28,7 @@ describe 'Stores', type: :feature, js: true do
 
     it 'creates a new store' do
       fill_in 'Name', with: 'Store name'
+      fill_in 'Code', with: 'example_store'
       fill_in 'URL', with: 'store.example.com'
       fill_in 'Mail from address', with: 'store@example.com'
 
@@ -37,6 +39,7 @@ describe 'Stores', type: :feature, js: true do
 
     it 'creates a new store with footer info' do
       fill_in 'Name', with: 'Store name'
+      fill_in 'Code', with: 'example_store'
       fill_in 'URL', with: 'store.example.com'
       fill_in 'Mail from address', with: 'store@example.com'
       fill_in 'Description', with: 'New store description'

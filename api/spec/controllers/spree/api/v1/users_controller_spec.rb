@@ -121,6 +121,8 @@ module Spree
         let!(:second_user) { create(:user, bill_address: second_bill_address, email: 'singer@example.com') }
 
         before do
+          first_user.addresses << first_bill_address
+          second_user.addresses << second_bill_address
           allow(Spree::LegacyUser).to receive(:find_by).with(hash_including(:spree_api_key)) { current_api_user }
         end
 

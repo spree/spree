@@ -26,11 +26,13 @@
 @import "spree/frontend/views/spree/shared/header";
 @import "spree/frontend/views/spree/shared/login";
 @import "spree/frontend/views/spree/shared/nav_bar";
+@import "spree/frontend/views/spree/shared/search_form";
 @import "spree/frontend/views/spree/shared/order_details";
 @import "spree/frontend/views/spree/shared/main_nav_bar";
 @import "spree/frontend/views/spree/errors/not_found";
 @import "spree/frontend/views/spree/shared/carousel/thumbnails";
 @import "spree/frontend/views/spree/shared/carousel/single";
+@import "spree/frontend/views/spree/shared/change_store";
 @import "spree/frontend/views/spree/home/index";
 @import "spree/frontend/views/spree/user_passwords/user_passwords";
 @import "spree/frontend/views/spree/user_sessions/new";
@@ -49,6 +51,7 @@
 @import "spree/frontend/views/spree/shared/product";
 @import "spree/frontend/views/spree/products/show";
 @import "spree/frontend/views/spree/products/cart_form";
+@import "spree/frontend/views/spree/products/gallery_modal";
 @import "spree/frontend/views/spree/shared/product_added_modal";
 @import "spree/frontend/views/spree/shared/mobile_navigation";
 @import "spree/frontend/views/spree/shared/no_product_available";

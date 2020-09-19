@@ -1,26 +1,25 @@
-<address>
-  <% if address.label? %>
-    <h4 class="m-0"><%= address.label %></h4>
-    <span class="text-muted small mb-4"><%= address.address1 %> - <%= address.country_iso %></span>
-  <% else %>
-    <span class="account-page-user-full-name">
-      <%= address.full_name %>
-    </span>
-    <div><%= address.address1 %></div>
-    <% if address.address2.present? %>
-      <div><%= address.address2 %></div>
+<div class="d-flex align-items-start justify-content-between">
+  <div class="row">
+    <address class="mb-0 col-12">
+      <% if address.label&.present? %>
+        <h4 class="m-0"><%= address.label %></h4>
+      <% end %>
+      
+      <span class="account-page-user-full-name">
+        <%= address.full_name %>
+      </span>
+
+      <div><%= "#{address.address1} #{address.address2}" %>,</div>
+      <div><%= "#{address.city}, #{address.state&.abbr} #{address.zipcode}" %>,</div>
+      <div><%= address.country.name %></div>
+    </address>
+  </div>
+  <div class="d-flex ml-2">
+    <div role="button" class="bg-transparent border-0 px-1 mr-1 address-button delete-button js-delete-address-link" data-address="<%= spree.address_path(address) %>">
+      <%= inline_svg_tag 'garbage_2.svg', class: "delete-address-img" %>
+    </div>
+    <%= link_to spree.edit_address_path(address), method: :get, class: 'address-button px-1', role: 'button', data: { hook: 'edit_address' } do %>
+      <%= inline_svg_tag 'edit.svg', class: "delete-address-img" %>
     <% end %>
-    <div>
-      <%= address.city %>
-      <% if address.state.present? %>
-      , <%= address.state&.abbr %>
-      <% end %>
-      <% if address.zipcode.present? %>
-      , <%= address.zipcode %>
-      <% end %>
-    </div>
-    <div>
-      <%= address.country.name %>
-    </div>
-  <% end %>
-</address>
+  </div>
+</div>

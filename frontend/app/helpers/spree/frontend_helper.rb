@@ -71,7 +71,7 @@ module Spree
         ) << content_tag(:meta, nil, itemprop: 'position', content: '1'), class: 'active', itemscope: 'itemscope', itemtype: 'https://schema.org/ListItem', itemprop: 'itemListElement')
       end
       crumb_list = content_tag(:ol, raw(crumbs.flatten.map(&:mb_chars).join), class: 'breadcrumb', itemscope: 'itemscope', itemtype: 'https://schema.org/BreadcrumbList')
-      content_tag(:nav, crumb_list, id: 'breadcrumbs', class: 'col-12 mt-1 mt-sm-3 mt-lg-4', aria: { label: 'breadcrumb' })
+      content_tag(:nav, crumb_list, id: 'breadcrumbs', class: 'col-12 mt-1 mt-sm-3 mt-lg-4', aria: { label: Spree.t(:breadcrumbs) })
     end
 
     def class_for(flash_type)
@@ -166,7 +166,13 @@ module Spree
 
     def plp_and_carousel_image(product, image_class = '')
       image = default_image_for_product_or_variant(product)
-      image_url = image&.plp_url || asset_path('noimage/plp.png')
+
+      image_url = if image.present?
+                    main_app.url_for(image.url('plp'))
+                  else
+                    asset_path('noimage/plp.png')
+                  end
+
       image_style = image&.style(:plp)
 
       lazy_image(
@@ -255,6 +261,10 @@ module Spree
       @static_filters ||= Spree::Frontend::Config[:products_filters]
     end
 
+    def additional_filters_partials
+      @additional_filters_partials ||= Spree::Frontend::Config[:additional_filters_partials]
+    end
+
     def filtering_params
       @filtering_params ||= available_option_types.map(&:filter_param).concat(static_filters)
     end
@@ -282,6 +292,10 @@ module Spree
           icon(name: service, width: 22, height: 22)
         end
       end
+    end
+
+    def checkout_available_payment_methods
+      @order.available_payment_methods(current_store)
     end
 
     private

@@ -13,7 +13,7 @@
   <% end %>
 
   <p class="order-show-number text-uppercase w-100 text-center">
-    <%= accurate_title %> / <%= @order.completed_at.to_date.to_s(:long) %>
+    <%= accurate_title %> / <%= pretty_date(@order.completed_at) %>
   </p>
   <dl class="w-100 d-lg-flex justify-content-lg-between">
     <div>

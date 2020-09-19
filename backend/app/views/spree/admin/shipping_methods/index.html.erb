@@ -3,10 +3,11 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= button_link_to Spree.t(:new_shipping_method), new_object_url,  class: "btn-success", icon: 'add', id: 'admin_new_shipping_method_link' %>
+  <%= button_link_to Spree.t(:new_shipping_method), new_object_url,  class: "btn-success", icon: 'add.svg', id: 'admin_new_shipping_method_link' %>
 <% end if can? :create, Spree::ShippingMethod %>
 
 <% if @shipping_methods.any? %>
+<div class="table-responsive">
   <table class="table" id='listing_shipping_methods'>
     <thead>
       <tr data-hook="admin_shipping_methods_index_headers">
@@ -32,6 +33,7 @@
       <% end %>
     </tbody>
   </table>
+</div>  
 <% else %>
   <div class="alert alert-info no-objects-found">
     <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::ShippingMethod)) %>,

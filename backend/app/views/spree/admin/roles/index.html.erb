@@ -3,29 +3,31 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= button_link_to Spree.t(:new_role), new_object_url, class: "btn-success", icon: 'add', id: 'admin_new_role_link' %>
+  <%= button_link_to Spree.t(:new_role), new_object_url, class: "btn-success", icon: 'add.svg', id: 'admin_new_role_link' %>
 <% end if can? :create, Spree::Role %>
 
 <% if @roles.any? %>
-  <table class="table">
-    <thead>
-      <tr data-hook="admin_roles_index_headers">
-        <th><%= Spree.t(:role_id) %></th>
-        <th class="actions"></th>
-      </tr>
-    </thead>
-    <tbody>
-      <% @roles.each do |role|%>
-        <tr id="<%= spree_dom_id role %>" data-hook="admin_roles_index_rows">
-          <td><%= role.name %></td>
-          <td class="actions text-right">
-            <%= link_to_edit(role, no_text: true) if can? :edit, role %>
-            <%= link_to_delete(role, no_text: true) if can? :destroy, role %>
-          </td>
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+        <tr data-hook="admin_roles_index_headers">
+          <th><%= Spree.t(:role_id) %></th>
+          <th class="actions"></th>
         </tr>
-      <% end %>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        <% @roles.each do |role|%>
+          <tr id="<%= spree_dom_id role %>" data-hook="admin_roles_index_rows">
+            <td><%= role.name %></td>
+            <td class="actions text-right">
+              <%= link_to_edit(role, no_text: true) if can? :edit, role %>
+              <%= link_to_delete(role, no_text: true) if can? :destroy, role %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
 <% else %>
   <div class="alert alert-warning">
     <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::Role)) %>,

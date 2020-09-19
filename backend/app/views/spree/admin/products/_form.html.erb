@@ -65,23 +65,48 @@
         <%= f.field_container :available_on, class: ['form-group'] do %>
           <%= f.label :available_on, Spree.t(:available_on) %>
           <%= f.error_message_on :available_on %>
-          <%= f.text_field :available_on, value: datepicker_field_value(@product.available_on), class: 'datepicker form-control' %>
+
+          <div class="input-group datePickerFrom"
+               data-wrap="true"
+               data-max-date="<%= @product.discontinue_on %>" >
+
+            <%= f.text_field :available_on,
+                             value: datepicker_field_value(@product.available_on),
+                             placeholder: Spree.t(:select_a_date),
+                             class: 'form-control shadow-none ',
+                             'data-input':'' %>
+
+            <%= render partial: 'spree/admin/shared/cal_close' %>
+          </div>
         <% end %>
       </div>
+
 
       <div data-hook="admin_product_form_discontinue_on">
         <%= f.field_container :discontinue_on, class: ['form-group'] do %>
           <%= f.label :discontinue_on, Spree.t(:discontinue_on) %>
           <%= f.error_message_on :discontinue_on %>
-          <%= f.text_field :discontinue_on, value: datepicker_field_value(@product.discontinue_on), class: 'datepicker form-control' %>
+
+          <div class="input-group datePickerTo"
+               data-wrap="true"
+               data-min-date="<%= @product.available_on %>" >
+
+            <%= f.text_field :discontinue_on,
+                              value: datepicker_field_value(@product.discontinue_on),
+                              placeholder: Spree.t(:select_a_date),
+                              class: 'form-control shadow-none ',
+                              'data-input':'' %>
+
+            <%= render partial: 'spree/admin/shared/cal_close' %>
+          </div>
         <% end %>
       </div>
 
       <div data-hook="admin_product_form_promotionable">
         <%= f.field_container :promotionable, class: ['form-group'] do %>
+          <%= f.check_box :promotionable %>
           <%= f.label :promotionable, Spree.t(:promotionable) %>
           <%= f.error_message_on :promotionable %>
-          <%= f.check_box :promotionable, class: 'form-control' %>
         <% end %>
       </div>
 
@@ -95,10 +120,9 @@
       <% if @product.has_variants? %>
         <div data-hook="admin_product_form_multiple_variants" class="card bg-light mb-3">
           <div class="card-body">
-            <%= f.label :skus, Spree.t(:sku).pluralize %>
-            <div class="info marginb">
-              <%= Spree.t(:info_product_has_multiple_skus, count: @product.variants.size) %>
-              <ul class="text_list">
+          <h5 class="card-title"><%= f.label :skus, Spree.t(:sku).pluralize %></h5>
+              <h6 class="card-subtitle mb-2 text-muted"><%= Spree.t(:info_product_has_multiple_skus, count: @product.variants.size) %> </h6>
+              <ul class="list-unstyled">
                 <% @product.variants.first(5).each do |variant| %>
                   <li><%= variant.sku %></li>
                 <% end %>
@@ -108,10 +132,9 @@
                   <%= Spree.t(:info_number_of_skus_not_shown, count: @product.variants.size - 5) %>
                 </em>
               <% end %>
-            </div>
             <div class="info-actions">
               <% if can?(:admin, Spree::Variant) %>
-                <%= link_to_with_icon 'variants', Spree.t(:manage_variants), spree.admin_product_variants_url(@product), class: "btn btn-outline-secondary" %>
+                <%= link_to_with_icon 'adjust.svg', Spree.t(:manage_variants), spree.admin_product_variants_url(@product), class: "btn btn-outline-secondary" %>
               <% end %>
             </div>
           </div>

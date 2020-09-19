@@ -3,29 +3,32 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= button_link_to Spree.t(:new_country), new_object_url, { class: "btn-success", icon: 'add', id: 'admin_new_country' } %>
+  <%= button_link_to Spree.t(:new_country), new_object_url, { class: "btn-success", icon: 'add.svg', id: 'admin_new_country' } %>
 <% end if can? :create, Spree::Country %>
-
-<table class="table" id='listing_countries' data-hook>
-  <thead>
-    <tr data-hook="tax_header">
-      <th><%= Spree.t(:country_name) %></th>
-      <th><%= Spree.t(:iso_name) %></th>
-      <th><%= Spree.t(:states_required) %></th>
-      <th class="actions"></th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @countries.each do |country| %>
-      <tr id="<%= spree_dom_id country %>" data-hook="country_row">
-        <td><%= country.name %></td>
-        <td><%= country.iso_name %></td>
-        <td class="text-center"><%= country.states_required? ? Spree.t(:say_yes) : Spree.t(:say_no) %></td>
-        <td class="actions actions-2 text-right">
-          <%= link_to_edit(country, no_text: true) if can? :edit, country %>
-          <%= link_to_delete(country, no_text: true) if can? :delete, country %>
-        </td>
+<div class="table-responsive">
+  <table class="table" id='listing_countries' data-hook>
+    <thead>
+      <tr data-hook="tax_header">
+        <th><%= Spree.t(:country_name) %></th>
+        <th><%= Spree.t(:iso3) %></th>
+        <th><%= Spree.t(:states_required) %></th>
+        <th><%= Spree.t(:zipcode_required) %></th>
+        <th class="actions"></th>
       </tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      <% @countries.each do |country| %>
+        <tr id="<%= spree_dom_id country %>" data-hook="country_row">
+          <td><%= country.name %></td>
+          <td><%= country.iso3 %></td>
+          <td class="text-center"><%= country.states_required? ? Spree.t(:say_yes) : Spree.t(:say_no) %></td>
+          <td class="text-center"><%= country.zipcode_required? ? Spree.t(:say_yes) : Spree.t(:say_no) %></td>
+          <td class="actions actions-2 text-right">
+            <%= link_to_edit(country, no_text: true) if can? :edit, country %>
+            <%= link_to_delete(country, no_text: true) if can? :delete, country %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

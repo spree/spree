@@ -1,29 +1,31 @@
 <fieldset data-hook="store_credit">
   <legend><%= Spree.t(:store_credit_name) %></legend>
-  <table class="table table-condensed table-bordered">
-    <tr>
-      <th width="20%"><%= Spree.t(:used) %>:</th>
-      <td><%= payment.source.display_amount_used %></td>
-    </tr>
-    <tr>
-      <th><%= Spree.t(:amount) %>:</th>
-      <td><%= payment.source.display_amount %></td>
-    </tr>
-    <tr>
-      <th><%= Spree.t(:memo) %>:</th>
-      <td><%= payment.source.memo %></td>
-    </tr>
-    <tr>
-      <th><%= Spree.t(:type) %>:</th>
-      <td><%= payment.source.category_name %></td>
-    </tr>
-    <tr>
-      <th><%= Spree.t(:created_by) %>:</th>
-      <td><%= payment.source.created_by_email %></td>
-    </tr>
-    <tr>
-      <th><%= Spree.t(:issued_on) %>:</th>
-      <td><%= pretty_time(payment.source.created_at) %></td>
-    </tr>
-  </table>
+  <div class="table-responsive">
+    <table class="table table-condensed table-bordered">
+      <tr>
+        <th width="20%"><%= Spree.t(:used) %>:</th>
+        <td><%= payment.source.display_amount_used %></td>
+      </tr>
+      <tr>
+        <th><%= Spree.t(:amount) %>:</th>
+        <td><%= payment.source.display_amount %></td>
+      </tr>
+      <tr>
+        <th><%= Spree.t(:memo) %>:</th>
+        <td><%= payment.source.memo %></td>
+      </tr>
+      <tr>
+        <th><%= Spree.t(:type) %>:</th>
+        <td><%= payment.source.category_name %></td>
+      </tr>
+      <tr>
+        <th><%= Spree.t(:created_by) %>:</th>
+        <td><%= payment.source.created_by_email %></td>
+      </tr>
+      <tr>
+        <th><%= Spree.t(:issued_on) %>:</th>
+        <td><%= pretty_time(payment.source.created_at) %></td>
+      </tr>
+    </table>
+  </div>
 </fieldset>

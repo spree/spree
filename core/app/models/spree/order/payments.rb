@@ -32,7 +32,7 @@ module Spree
         end
 
         def pending_payments
-          payments.select(&:pending?)
+          payments.pending
         end
 
         def unprocessed_payments

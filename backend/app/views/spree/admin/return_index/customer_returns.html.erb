@@ -14,15 +14,14 @@
         </div>
       </div>
       <div data-hook="admin_return_authorisations_index_filters_buttons" class="form-actions">
-        <%= button Spree.t(:search), 'search' %>
+        <%= button Spree.t(:search), 'search.svg' %>
       </div>
     <% end %>
   </div>
 <% end %>
 
-<%= render partial: 'spree/admin/shared/index_table_options', locals: { collection: @collection, per_page_action: :customer_returns } %>
-
 <% if @collection.any? %>
+<div class="table-responsive">
   <table class="table">
     <thead>
       <tr data-hook="rate_header">
@@ -37,7 +36,7 @@
     <tbody>
       <% @collection.each do |customer_return| %>
         <tr id="<%= spree_dom_id customer_return %>" data-hook="customer_return_row">
-          <td><%= customer_return.created_at.to_date %></td>
+          <td><%= customer_return.created_at.strftime('%F %T %Z') %></td>
           <td><%= link_to customer_return.number, spree.edit_admin_order_customer_return_path(customer_return.order, customer_return) %></td>
           <td><%= link_to customer_return.order.number, spree.edit_admin_order_path(customer_return.order) %></td>
           <td>
@@ -55,6 +54,7 @@
       <% end %>
     </tbody>
   </table>
+</div>
 <% else %>
   <div class="alert alert-info no-objects-found">
     <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::CustomerReturn)) %>.  </div>

@@ -1,0 +1,11 @@
+table#product_properties {
+  .show_property {
+    text-align: center;
+  }
+  .property_name input {
+    min-width: 140px;
+  }
+  .value input {
+    min-width: 180px;
+  }
+}

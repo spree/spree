@@ -1,26 +1,35 @@
-/* global productTemplate */
+/* global productTemplate, Sortable */
 $(function () {
   window.productTemplate = Handlebars.compile($('#product_template').text())
   var taxonProducts = $('#taxon_products')
   var taxonId = $('#taxon_id')
 
-  taxonProducts.sortable({
-    handle: '.js-sort-handle'
-  })
-
-  taxonProducts.on('sortstop', function (event, ui) {
-    return $.ajax({
-      url: Spree.routes.classifications_api,
-      method: 'PUT',
-      dataType: 'json',
-      data: {
-        token: Spree.api_key,
-        product_id: ui.item.data('product-id'),
-        taxon_id: $('#taxon_id').val(),
-        position: ui.item.index()
+  var el = document.getElementById('taxon_products')
+  if (el) {
+    Sortable.create(el, {
+      handle: '.sort-handle',
+      ghostClass: 'moving-this',
+      animation: 550,
+      easing: 'cubic-bezier(1, 0, 0, 1)',
+      swapThreshold: 0.9,
+      forceFallback: true,
+      onEnd: function (evt) {
+        var itemEl = evt.item.getAttribute('data-product-id')
+        var newin = evt.newIndex
+        return $.ajax({
+          url: Spree.routes.classifications_api,
+          method: 'PUT',
+          dataType: 'json',
+          data: {
+            token: Spree.api_key,
+            product_id: itemEl,
+            taxon_id: $('#taxon_id').val(),
+            position: newin
+          }
+        })
       }
     })
-  })
+  }
 
   if (taxonId.length > 0) {
     taxonId.select2({

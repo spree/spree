@@ -1,0 +1,8 @@
+<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" fill-rule="evenodd" clip-rule="evenodd" stroke-linejoin="round" stroke-miterlimit="2">
+  <path fill="currentColor" d="M256 192c0 35.328-28.672 64-64 64 0 35.328 28.672 64 64 64s64-28.672 64-64-28.672-64-64-64zm0-128C124.736 64 0 212.736 0 256c0 43.264 124.736 192 256 192s256-148.736 256-192c0-43.264-124.736-192-256-192zm0 320c-70.688 0-128-57.312-128-128s57.312-128 128-128 128 57.312 128 128-57.312 128-128 128z" fill-rule="nonzero"/>
+</svg>
+
+
+<!-- To give Spree backwards compatability this file is duplicated in the following SVG files -->
+  <!-- VIEW EYE-OPEN -->
+<!-- If you update this file, be sure to make the same changes in all of the files above -->

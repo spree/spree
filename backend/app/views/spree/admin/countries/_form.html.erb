@@ -24,9 +24,14 @@
   <% end %>
 
   <div data-hook="states_required" class="form-group checkbox">
-    <label>
-      <%= f.check_box :states_required %>
-      <%= Spree.t(:states_required) %>
-    </label>
+    <%= f.check_box :states_required %>
+    <%= f.label :states_required, Spree.t(:states_required) %>
+    <%= f.error_message_on :states_required %>
+  </div>
+
+  <div data-hook="zipcode_required" class="form-group checkbox">
+    <%= f.check_box :zipcode_required %>
+    <%= f.label :zipcode_required, Spree.t(:zipcode_required) %>
+    <%= f.error_message_on :zipcode_required %>
   </div>
 </div>

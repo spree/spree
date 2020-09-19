@@ -169,7 +169,7 @@ describe Spree::Order, type: :model do
       order.finalize!
     end
 
-    it 'sends an order confirmation email' do
+    it 'sends an order confirmation email to customer' do
       mail_message = double 'Mail::Message'
       expect(Spree::OrderMailer).to receive(:confirm_email).with(order.id).and_return mail_message
       expect(mail_message).to receive :deliver_later
@@ -186,6 +186,25 @@ describe Spree::Order, type: :model do
       allow(order).to receive_messages(confirmation_delivered?: true)
       expect(Spree::OrderMailer).not_to receive(:confirm_email)
       order.finalize!
+    end
+
+    context 'new order notifications' do
+      it 'sends a new order notification email to store owner when notification email address is set' do
+        # NOTE: 'store' factory has new_order_notifications_email set by default
+        mail_message = double 'Mail::Message'
+        expect(Spree::OrderMailer).to receive(:store_owner_notification_email).with(order.id).and_return mail_message
+        expect(mail_message).to receive :deliver_later
+        order.finalize!
+      end
+
+      it 'does not send a new order notification email to store owner when notification email address is blank' do
+        store = order.store
+        store.update(new_order_notifications_email: '')
+
+        mail_message = double 'Mail::Message'
+        expect(Spree::OrderMailer).to_not receive(:store_owner_notification_email)
+        order.finalize!
+      end
     end
 
     it 'freezes all adjustments' do

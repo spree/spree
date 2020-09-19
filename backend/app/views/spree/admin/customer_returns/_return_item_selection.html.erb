@@ -1,45 +1,47 @@
-<table class="table table-condensed table-bordered">
-  <thead>
-    <tr>
-      <th>
-        <%= check_box_tag 'select-all' %>
-      </th>
-      <th><%= Spree.t(:product) %></th>
-      <th><%= Spree.t(:sku) %></th>
-      <th><%= Spree.t(:pre_tax_amount) %></th>
-      <th><%= Spree.t(:exchange_for) %></th>
-      <th><%= Spree.t(:resellable) %></th>
-    </tr>
-  </thead>
-  <tbody>
-    <%= f.fields_for :return_items, return_items do |item_fields| %>
-      <% return_item = item_fields.object %>
+<div class="table-responsive">
+  <table class="table table-condensed table-bordered">
+    <thead>
       <tr>
-        <td class="align-center" class="inventory-unit-checkbox">
-          <div style="display:none">
-            <%= item_fields.hidden_field :inventory_unit_id %>
-            <%= item_fields.hidden_field :return_authorization_id %>
-            <%= item_fields.hidden_field :pre_tax_amount %>
-          </div>
-          <%= item_fields.check_box :returned, {checked: false, class: 'add-item', "data-price" => return_item.pre_tax_amount}, '1', '0' %>
-        </td>
-        <td>
-          <div class="variant-name"><%= return_item.inventory_unit.variant.name %></div>
-          <div class="variant-options"><%= return_item.inventory_unit.variant.options_text %></div>
-        </td>
-        <td>
-          <%= return_item.inventory_unit.variant.sku %>
-        </td>
-        <td class="align-center">
-          <%= return_item.display_pre_tax_amount %>
-        </td>
-        <td class="align-center">
-          <%= return_item.exchange_variant.try(:exchange_name) %>
-        </td>
-        <td class="align-center">
-          <%= item_fields.check_box :resellable, { checked: return_item.resellable } %>
-        </td>
+        <th>
+          <%= check_box_tag 'select-all' %>
+        </th>
+        <th><%= Spree.t(:product) %></th>
+        <th><%= Spree.t(:sku) %></th>
+        <th><%= Spree.t(:pre_tax_amount) %></th>
+        <th><%= Spree.t(:exchange_for) %></th>
+        <th><%= Spree.t(:resellable) %></th>
       </tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      <%= f.fields_for :return_items, return_items do |item_fields| %>
+        <% return_item = item_fields.object %>
+        <tr>
+          <td class="align-center" class="inventory-unit-checkbox">
+            <div style="display:none">
+              <%= item_fields.hidden_field :inventory_unit_id %>
+              <%= item_fields.hidden_field :return_authorization_id %>
+              <%= item_fields.hidden_field :pre_tax_amount %>
+            </div>
+            <%= item_fields.check_box :returned, {checked: false, class: 'add-item', "data-price" => return_item.pre_tax_amount}, '1', '0' %>
+          </td>
+          <td>
+            <div class="variant-name"><%= return_item.inventory_unit.variant.name %></div>
+            <div class="variant-options"><%= return_item.inventory_unit.variant.options_text %></div>
+          </td>
+          <td>
+            <%= return_item.inventory_unit.variant.sku %>
+          </td>
+          <td class="align-center">
+            <%= return_item.display_pre_tax_amount %>
+          </td>
+          <td class="align-center">
+            <%= return_item.exchange_variant.try(:exchange_name) %>
+          </td>
+          <td class="align-center">
+            <%= item_fields.check_box :resellable, { checked: return_item.resellable } %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

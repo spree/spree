@@ -1,5 +1,4 @@
 <% item_count = simple_current_order&.item_count || 0 %>
 <% cache [base_cache_key, 'cart-indicator', item_count] do %>
-  <%= render 'spree/shared/cart', class: 'd-none d-xl-inline-block cart-icon--xl', size: 36, item_count: item_count %>
-  <%= render 'spree/shared/cart', class: 'd-xl-none', size: 24, item_count: item_count %>
+  <%= render 'spree/shared/cart', class: 'd-inline-block cart-icon', size: 36, item_count: item_count %>
 <% end %>

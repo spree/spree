@@ -69,8 +69,8 @@ A customer whose order subtotal equals $35 would be offered a shipping cost of $
 
 ### Custom Calculators
 
-You can define your own calculator if you have more complex needs. In that case, check out the [Calculators Guide](../developer/calculators.html).
+You can define your own calculator if you have more complex needs. In that case, check out the [Calculators Guide](/developer/core/calculators.html).
 
 ## Next Step
 
-If you have followed this guide series [from the beginning](shipments), your store is now stocked with [shipping categories](shipping_categories), [geographical shipping zones](zones), and calculators. The final step is to pull it all together into [shipping methods](shipping_methods), from which your customers can choose at checkout.
+If you have followed this guide series from the beginning, your store is now stocked with [shipping categories](shipping_categories), [geographical shipping zones](zones), and calculators. The final step is to pull it all together into [shipping methods](shipping_methods), from which your customers can choose at checkout.

@@ -1,5 +1,4 @@
-// TODO: Switch everything to use glyphicons
-.icon, .glyphicon {
+span.icon, span.glyphicon {
   vertical-align: text-top;
 }
 
@@ -240,8 +239,9 @@ $alias_icons: (plus add)
               (globe translate)
               (ok approve);
 
-.icon {
+span.icon {
   @extend .glyphicon;
+  top:2px;
 
   // Map defaults.
   @each $icon in $default_icons {
@@ -255,3 +255,38 @@ $alias_icons: (plus add)
     &.icon-#{$alias} { @extend .glyphicon-#{$icon}; }
   }
 }
+
+// Spree SVG Icon Defaults
+i.icon {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  overflow: hidden;
+  vertical-align: middle;
+  background-repeat: no-repeat;
+  background-size: 100%;
+  background-position: center;
+}
+
+
+// Spree SVG Icons in JS
+
+// The icons listed below are used by javascript generated content
+// If you wish to use an existing SVG icon in javascript generated content
+// use <i> tags like this -> <i class="icon icon-close"></i>
+// Using <span> tags will fall back to legacy glyphicon font based icons
+
+i.icon-close,
+i.icon-cancel,
+i.icon-delete,
+i.icon-void          { background-image: url(asset-path("backend-cancel.svg")); }
+i.icon-save          { background-image: url(asset-path("backend-save.svg")); }
+i.icon-add           { background-image: url(asset-path("backend-add.svg")); }
+i.icon-search        { background-image: url(asset-path("backend-search.svg")); }
+i.icon-settings      { background-image: url(asset-path("backend-settings.svg")); }
+i.icon-delete        { background-image: url(asset-path("backend-delete.svg")); }
+i.icon-edit          { background-image: url(asset-path("backend-edit.svg")); }
+i.icon-chevron-down  { background-image: url(asset-path("backend-chevron-down.svg")); }
+i.icon-chevron-left  { background-image: url(asset-path("backend-chevron-left.svg")); }
+i.icon-chevron-right { background-image: url(asset-path("backend-chevron-right.svg")); }
+i.icon-chevron-up    { background-image: url(asset-path("backend-chevron-up.svg")); }

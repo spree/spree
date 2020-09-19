@@ -49,6 +49,7 @@ describe 'Products', type: :feature do
         context 'using Russian Rubles' do
           before do
             Spree::Config[:currency] = 'RUB'
+            create(:store, default: true, default_currency: 'RUB')
             create(:product, name: 'Just a product', price: 19.99)
           end
 
@@ -91,7 +92,7 @@ describe 'Products', type: :feature do
         create(:product, name: 'zomg shirt')
 
         visit spree.admin_products_path
-        fill_in 'q_name_cont', with: 'ap'
+        fill_in 'q_search_by_name', with: 'ap'
         click_on 'Search'
 
         expect(page).to have_content('apache baseball cap')
@@ -140,7 +141,9 @@ describe 'Products', type: :feature do
         @property_prototype = create(:prototype, name: 'Random')
         @shipping_category = create(:shipping_category)
         visit spree.admin_products_path
-        click_link 'admin_new_product'
+        within find('#contentHeader') do
+          click_link 'admin_new_product'
+        end
         within('#new_product') do
           expect(page).to have_content('SKU')
         end
@@ -207,7 +210,10 @@ describe 'Products', type: :feature do
       before do
         @shipping_category = create(:shipping_category)
         visit spree.admin_products_path
-        click_link 'admin_new_product'
+        within find('#contentHeader') do
+          click_link 'admin_new_product'
+        end
+
         within('#new_product') do
           expect(page).to have_content('SKU')
         end
@@ -412,7 +418,7 @@ describe 'Products', type: :feature do
         # This will show our deleted product
         check 'Show Deleted'
         click_on 'Search'
-        click_link product.name
+        click_link(product.name, match: :first)
         expect(page).to have_field(id: 'product_price') do |field|
           field.value.to_f == product.price.to_f
         end
@@ -426,7 +432,7 @@ describe 'Products', type: :feature do
         click_on 'Filter'
 
         within('#table-filter') do
-          fill_in 'q_name_cont', with: 'Backpack'
+          fill_in 'q_search_by_name', with: 'Backpack'
           fill_in 'q_variants_including_master_sku_cont', with: 'BAG-00001'
         end
 

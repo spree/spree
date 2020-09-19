@@ -71,9 +71,13 @@ You will see **Store Credit** panel. Like in every other tab in the User's accou
 
 ![Store Credit panel](../../../images/user/users/store_credit_user.jpg)
 
-To add Store Credits press **Add Store Credit**. At this point, you can choose value that the User will receive, set Category and describe something important within **Memo** field. Memo field is visible to all other admins that will edit Store Credits added by you. Then just press **Create** button to accept your changes or simply press **Cancel** to exit without saving the changes.
+To add Store Credits press **Add Store Credit**.
 
 ![Store Credit inside](../../../images/user/users/store_credit_user_new.jpg)
+
+At this point, you can choose value that the User will receive, set Category and describe something important within **Memo** field. Memo field is visible to all other admins that will edit Store Credits added by you. Then just press **Create** button to accept your changes or simply press **Cancel** to exit without saving the changes.
+
+![Store Credit added to the User account](../../../images/user/users/store_credit_user_added.jpg)
 
 Now you can see how the Store Credits are assigned to the user. New options are visible here:
 
@@ -82,8 +86,6 @@ Now you can see how the Store Credits are assigned to the user. New options are 
 * **Category** - Category that Store Credits were assigned to.
 * **Created By** - The Admin's email that added Store Credits to the certain User.
 * **Issued On** - Date of granting Store Credits.
-
-![Store Credit added to the User account](../../../images/user/users/store_credit_user_added.jpg)
 
 As an Admin you are able to edit or delete Store Credits previously assigned to the User.
 

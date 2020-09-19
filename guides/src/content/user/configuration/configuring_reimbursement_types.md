@@ -8,7 +8,7 @@ To make it easier for you when you make a reimbursement, there are reimbursement
 
 ## Creating Reimbursement Type
 
-You simply open **Configuration** tab and press **Reimbursement Types**. 
+You simply open **Configuration** tab and press **Reimbursement Types**.
 Now you can see all previously set up types, with possibility to add new one.
 
 ![Reimbursement types](../../../images/user/config/reimbursement_types.jpg)
@@ -17,7 +17,7 @@ To add New Reimbursement Type press button placed in the right upper corner **Ad
 
 ![Add Reimbursement Types](../../../images/user/config/add_reimbursement_types.jpg)
 
-Now you just have to add name and choose type that you would like to have in your store. 
+Now you just have to add name and choose type that you would like to have in your store.
 
 ![Add Reimbursement Types inside](../../../images/user/config/add_reimbursement_types_inside.jpg)
 

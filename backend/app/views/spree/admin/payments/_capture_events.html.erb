@@ -1,19 +1,21 @@
 <% if @payment.capture_events.exists? %>
   <h3><%= Spree.t(:capture_events) %></h3>
-  <table class="table table-condensed table-bordered" id="capture_events">
-    <thead>
-      <tr data-hook="payments_header">
-        <th><%= "#{Spree.t('date')}/#{Spree.t('time')}" %></th>
-        <th><%= Spree.t(:amount) %></th>
-      </tr>
-    </thead>
-    <tbody>
-      <% @payment.capture_events.each do |capture_event| %>
-        <tr id="<%= dom_id(capture_event) %>" data-hook="capture_events_row">
-          <td><%= pretty_time(capture_event.created_at) %></td>
-          <td><%= capture_event.display_amount %></td>
+  <div class="table-responsive">
+    <table class="table table-condensed table-bordered" id="capture_events">
+      <thead>
+        <tr data-hook="payments_header">
+          <th><%= "#{Spree.t('date')}/#{Spree.t('time')}" %></th>
+          <th><%= Spree.t(:amount) %></th>
         </tr>
-      <% end %>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        <% @payment.capture_events.each do |capture_event| %>
+          <tr id="<%= dom_id(capture_event) %>" data-hook="capture_events_row">
+            <td><%= pretty_time(capture_event.created_at) %></td>
+            <td><%= capture_event.display_amount %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
 <% end %>
