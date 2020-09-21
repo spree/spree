@@ -51,7 +51,7 @@
 }
 .field_with_errors {
   input{
-    border-color: #ff8181;
+    border-color: $danger;
   }
 }
 .spree-flat-label {
