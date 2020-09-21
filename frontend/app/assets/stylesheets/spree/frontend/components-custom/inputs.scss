@@ -49,11 +49,13 @@
     }
   }
 }
+
 .field_with_errors {
   input{
     border-color: $danger;
   }
 }
+
 .spree-flat-label {
   color: theme-color("secondary");
   text-transform: uppercase;
