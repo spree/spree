@@ -6,7 +6,7 @@
       <dt class="text-uppercase account-page-user-info-item-title">
         <%= Spree.t(:account_info) %>
           <%= link_to spree.edit_user_path(@user), class: "account-page-user-info-item-title-edit" do %>
-          <%= inline_svg_tag 'edit.svg', class: "delete-address-img", width: 27.6, height: 24 %>
+          <%= inline_svg_tag('edit.svg', width: 27.6, height: 24) %>
         <% end %>
       </dt>
       <dd class="account-page-user-info-item-definition"><%= @user.email %></dd>
