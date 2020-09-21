@@ -515,10 +515,3 @@
   }
 }
 
-.js-delete-address-img {
-  color: $primary-color;
-  cursor: pointer;
-  &:hover {
-    color: darken($primary-color, 10);
-  }
-}

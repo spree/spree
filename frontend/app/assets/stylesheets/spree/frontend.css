@@ -1,6 +1,4 @@
 /*
 * This is a manifest file that includes stylesheets for spree_frontend
- *= require spree/frontend/address_book
  *= require spree/frontend/application
- *= require_self
 */
