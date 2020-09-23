@@ -39,7 +39,7 @@ module Spree
     scope :default, -> { where(default: true) }
     scope :up_to_date, -> {
       where('CAST(spree_credit_cards.year AS INT) > ?', DateTime.now.year).
-        or(where('CAST(spree_credit_cards.year AS INT) == ?', DateTime.now.year).
+        or(where('CAST(spree_credit_cards.year AS INT) = ?', DateTime.now.year).
            where('CAST(spree_credit_cards.month AS INT) >= ?', DateTime.now.month))
     }
 
