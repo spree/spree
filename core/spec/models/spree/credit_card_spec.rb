@@ -340,7 +340,7 @@ describe Spree::CreditCard, type: :model do
   end
 
   describe 'scopes' do
-    describe '#up_to_date' do
+    describe '#not_expired' do
       let(:previous_year) { DateTime.now.year - 1 }
       let(:current_year) { DateTime.now.year }
       let(:next_year) { DateTime.now.year + 1 }
@@ -352,19 +352,19 @@ describe Spree::CreditCard, type: :model do
       let!(:outdated_credit_card_two) { create(:credit_card, year: previous_year, month: current_month) }
       let!(:outdated_credit_card_three) { create(:credit_card, year: previous_year, month: future_month) }
       let!(:outdated_credit_card_four) { create(:credit_card, year: current_year, month: past_month) }
-      let!(:up_to_date_credit_card_one) { create(:credit_card, year: current_year, month: current_month) }
-      let!(:up_to_date_credit_card_two) { create(:credit_card, year: current_year, month: future_month) }
-      let!(:up_to_date_credit_card_three) { create(:credit_card, year: next_year, month: past_month) }
-      let!(:up_to_date_credit_card_four) { create(:credit_card, year: next_year, month: current_month) }
-      let!(:up_to_date_credit_card_five) { create(:credit_card, year: next_year, month: future_month) }
+      let!(:not_expired_credit_card_one) { create(:credit_card, year: current_year, month: current_month) }
+      let!(:not_expired_credit_card_two) { create(:credit_card, year: current_year, month: future_month) }
+      let!(:not_expired_credit_card_three) { create(:credit_card, year: next_year, month: past_month) }
+      let!(:not_expired_credit_card_four) { create(:credit_card, year: next_year, month: current_month) }
+      let!(:not_expired_credit_card_five) { create(:credit_card, year: next_year, month: future_month) }
 
-      it 'includes only up-to-date credit cards' do
-        expect(described_class.up_to_date).to include(up_to_date_credit_card_one, up_to_date_credit_card_two, up_to_date_credit_card_three,
-                                                      up_to_date_credit_card_four, up_to_date_credit_card_five)
+      it 'includes only not expired credit cards' do
+        expect(described_class.not_expired).to include(not_expired_credit_card_one, not_expired_credit_card_two, not_expired_credit_card_three,
+                                                      not_expired_credit_card_four, not_expired_credit_card_five)
       end
 
       it 'does not include outdated credit cards' do
-        expect(described_class.up_to_date).not_to include(outdated_credit_card_one, outdated_credit_card_two, outdated_credit_card_three,
+        expect(described_class.not_expired).not_to include(outdated_credit_card_one, outdated_credit_card_two, outdated_credit_card_three,
                                                           outdated_credit_card_four)
       end
     end

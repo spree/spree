@@ -91,7 +91,7 @@ describe Spree::UserMethods do
     let!(:blank_payment_profile_credit_card) { create(:credit_card, user: test_user, gateway_customer_profile_id: nil, year: next_year) }
     let!(:outdated_credit_card) { create(:credit_card, user: test_user, gateway_customer_profile_id: gateway_customer_profile_id, year: previous_year) }
 
-    it 'includes only up-to-date credit cards with payment profile that belong to subject user' do
+    it 'includes only not expired credit cards with payment profile that belong to subject user' do
       expect(subject).to include(valid_credit_card)
     end
 
