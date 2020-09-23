@@ -102,4 +102,34 @@ describe Spree::Checkout::Update, type: :service do
       expect(order.ship_address.state.id).to eq state.id
     end
   end
+
+  describe 'update selected shipping rate' do
+    let(:update_service) { described_class.new }
+    let(:order) { create(:order_with_line_items) }
+    let(:order_params) do
+      ActionController::Parameters.new(
+        order: {
+          shipments_attributes: [
+            {
+              id: order.shipments.first.id,
+              selected_shipping_rate_id: order.shipments.first.shipping_rates.first.id
+            }
+          ]
+        }
+      )
+    end
+    let(:permitted_attributes) do
+      Spree::PermittedAttributes.checkout_attributes + [
+        shipments_attributes: Spree::PermittedAttributes.shipment_attributes
+      ]
+    end
+
+    it 'should set order back to delivery state' do
+      expect(order.state).not_to eq 'delivery'
+
+      update_service.send(:call, order: order, params: order_params, permitted_attributes: permitted_attributes, request_env: nil)
+
+      expect(order.state).to eq 'delivery'
+    end
+  end
 end

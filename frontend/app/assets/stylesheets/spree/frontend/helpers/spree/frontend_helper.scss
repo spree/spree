@@ -1,6 +1,7 @@
 #breadcrumbs {
   padding: 0;
 }
+
 .breadcrumb {
   background: none;
   padding: 0.5rem 0;
@@ -22,4 +23,10 @@
 
 .breadcrumb-product-name {
   padding-right: 9.5px;
+}
+
+.truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
