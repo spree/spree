@@ -38,9 +38,9 @@ module Spree
     scope :with_payment_profile, -> { where.not(gateway_customer_profile_id: nil) }
     scope :default, -> { where(default: true) }
     scope :not_expired, -> {
-      where('CAST(spree_credit_cards.year AS INT) > ?', Time.current.year).
-        or(where('CAST(spree_credit_cards.year AS INT) = ?', Time.current.year).
-           where('CAST(spree_credit_cards.month AS INT) >= ?', Time.current.month))
+      where('CAST(spree_credit_cards.year AS DECIMAL) > ?', Time.current.year).
+        or(where('CAST(spree_credit_cards.year AS DECIMAL) = ?', Time.current.year).
+           where('CAST(spree_credit_cards.month AS DECIMAL) >= ?', Time.current.month))
     }
 
     # needed for some of the ActiveMerchant gateways (eg. SagePay)
