@@ -35,7 +35,7 @@ module Spree
           render :edit
         end
       else
-        new_address = @address.clone
+        new_address = @address.clone(['user_id'])
         new_address.attributes = address_params
         @address.update_attribute(:deleted_at, Time.current)
         if new_address.save

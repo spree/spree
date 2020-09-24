@@ -19,7 +19,7 @@ module Spree
     # we're not freezing this on purpose so developers can extend and manage
     # those attributes depending of the logic of their applications
     ADDRESS_FIELDS = %w(firstname lastname company address1 address2 city state zipcode country phone)
-    EXCLUDED_KEYS_FOR_COMPARISION = %w(id updated_at created_at deleted_at label user_id)
+    EXCLUDED_KEYS_FOR_COMPARISON = %w(id updated_at created_at deleted_at label user_id)
 
     belongs_to :country, class_name: 'Spree::Country'
     belongs_to :state, class_name: 'Spree::State', optional: true
@@ -92,8 +92,16 @@ module Spree
       ].reject(&:blank?).map { |attribute| ERB::Util.html_escape(attribute) }.join('<br/>')
     end
 
-    def clone
-      self.class.new(value_attributes)
+    # Pass in an array of keys that you would like to remove from the EXCLUDED_KEYS_FOR_COMPARISON
+    # if no arguments are passed the clone will work as default.
+    def clone(options = [])
+      excluded_keys = EXCLUDED_KEYS_FOR_COMPARISON
+
+      options.each do |opts|
+        excluded_keys.delete(opts)
+      end
+
+      self.class.new(attributes.except(*excluded_keys))
     end
 
     def ==(other)
@@ -103,7 +111,7 @@ module Spree
     end
 
     def value_attributes
-      attributes.except(*EXCLUDED_KEYS_FOR_COMPARISION)
+      attributes.except(*EXCLUDED_KEYS_FOR_COMPARISON)
     end
 
     def empty?
