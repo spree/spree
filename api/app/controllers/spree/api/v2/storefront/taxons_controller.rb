@@ -51,7 +51,7 @@ module Spree
               children: node_includes,
               taxonomy: [root: node_includes],
               products: [],
-              icon: []
+              icon: [attachment_attachment: :blob]
             }
           end
         end
