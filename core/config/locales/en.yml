@@ -508,6 +508,7 @@ en:
       address_name_placeholder: Give this address a unique name (Work, Home, etc.)
       new_address: "New Address"
       edit_address: "Edit Address"
+      remove_address: Remove Address
       no_shipping_addresses_on_file: "No addresses on file"
       addresses: "Addresses"
       successfully_created: "Address has been successfully created."
@@ -1642,7 +1643,7 @@ en:
     stock_transfer:
       errors:
         must_have_variant: You must add at least one variant.
-        variants_unavailable: "Some variants are not available on %{stock}" 
+        variants_unavailable: "Some variants are not available on %{stock}"
     stock_transfers: Stock Transfers
     stop: Stop
     store: Store
