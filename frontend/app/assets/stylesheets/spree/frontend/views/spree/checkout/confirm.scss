@@ -257,9 +257,5 @@
     @include media-breakpoint-up(sm) {
       margin-top: 70px;
     }
-    @include media-breakpoint-up(lg) {
-      flex: 0 0 40%;
-      align-self: flex-start;
-    }
   }
 }
