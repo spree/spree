@@ -2,6 +2,10 @@
   <%= inline_svg_tag('edit.svg', width: 24, height: 24) %>
 <% end %>
 
-<span class="js-delete-address-link ml-3" data-address="<%= spree.address_path(address) %>">
-  <%= inline_svg_tag('garbage_2.svg', width: 24, height: 24) %>
-</span>
+<%= link_to '#', class: 'js-delete-address-link ml-3', data: { turbolinks: false, hook: 'remove_address', address: spree.address_path(address) }, aria: { label: Spree.t('address_book.remove_address') } do %>
+    <%= icon(name: 'garbage_2',
+             classes: '',
+             width: 24,
+             height: 24)
+    %>
+<% end %>
