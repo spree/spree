@@ -3,13 +3,14 @@ module Spree
     include Rails.application.routes.url_helpers
     include Spree::BaseHelper
 
-    attr_reader :current_currency, :current_price_options
+    attr_reader :current_currency, :current_price_options, :current_store
 
     def initialize(opts = {})
       @variants = opts[:variants]
       @is_product_available_in_currency = opts[:is_product_available_in_currency]
       @current_currency = opts[:current_currency]
       @current_price_options = opts[:current_price_options]
+      @current_store = opts[:current_store]
     end
 
     def call
