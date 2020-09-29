@@ -9,7 +9,7 @@ module Spree
 
         attribute :free, &:free?
 
-        has_many :shipping_rates, if: proc { |_record, params| params&.dig(:show_rates) }
+        has_many :shipping_rates
 
         belongs_to :stock_location
       end
