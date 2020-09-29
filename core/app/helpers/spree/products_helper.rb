@@ -110,7 +110,8 @@ module Spree
         variants: @variants,
         is_product_available_in_currency: is_product_available_in_currency,
         current_currency: current_currency,
-        current_price_options: current_price_options
+        current_price_options: current_price_options,
+        current_store: current_store
       ).call.to_json
     end
 
