@@ -10,7 +10,7 @@ Depending on the nature of your store and the products you sell, you may want to
 
 ### Adding a Product Property
 
-Follow these steps to add a product Property. In this example, we are going to add a Property called "Country of Origin" with a value of "USA".
+Follow these steps to add a Product Property. In this example, we are going to add a Property called "Country of Origin" with a value of "USA".
 
 1. Click the "Products" tab in your Admin Interface.
 2. Click "Properties".
@@ -31,4 +31,4 @@ Now, when you navigate to the product's page in your store, you will see the new
 You can add as many "Product Properties" to an individual "Product" as you like - just use the "Add Product Properties" button on the Product Properties page for an individual product.
 ***
 
-You can also add "Product Properties" on the fly as you're editing a "Product" - you don't have to specify them ahead of time. Just be cautious of defining too many similar properties ("Origin", "Country Origin", "Country of Origin"). It's best to re-use existing properties wherever you can.
+You can also add "Product Properties" on the fly as you're editing a "Product" - you don't have to specify them ahead of time. Just be careful not to define too many similar properties ("Origin", "Country Origin", "Country of Origin"). It's best to re-use existing properties wherever you can.
