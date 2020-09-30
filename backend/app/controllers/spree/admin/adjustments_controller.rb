@@ -11,6 +11,8 @@ module Spree
 
       before_action :find_adjustment, only: [:destroy, :edit, :update]
 
+      after_action :delete_promotion_from_order, only: [:destroy], if: -> { @adjustment.destroyed? }
+
       def index
         @adjustments = @order.all_adjustments.eligible.order(created_at: :asc)
       end
@@ -30,6 +32,10 @@ module Spree
       # associate adjustment with order
       def build_resource
         parent.adjustments.build(order: parent)
+      end
+
+      def delete_promotion_from_order
+        @adjustment.order.promotions.delete(@adjustment.source.promotion)
       end
     end
   end

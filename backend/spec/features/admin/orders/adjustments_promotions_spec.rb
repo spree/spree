@@ -50,4 +50,14 @@ describe 'Adjustments Promotions', type: :feature do
       end
     end
   end
+
+  # SD-875
+  context 'admin adding, deleting and adding again same promotion' do
+    it 'allows to add previously deleted promotion', js: true do
+      fill_in 'coupon_code', with: '10_off'
+      click_button 'Add Coupon Code'
+      expect(page).to have_content('$10 off')
+      expect(page).to have_content('-$10.00')
+    end
+  end
 end
