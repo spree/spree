@@ -62,7 +62,7 @@ module Spree
             order.process_payments!
             updater.update_payment_state
             expect(payment).to be_completed
-            expect(store_credit_payment.pending?).to be_truthy
+            expect(store_credit_payment).to be_pending
           end
 
           context 'order payment state should be balance due' do

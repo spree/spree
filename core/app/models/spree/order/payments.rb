@@ -66,7 +66,7 @@ module Spree
         # may be added twice to `self.payment_total` causing wrong `order.outstanding_balance`
         # calculations and thus an incorrect payment state.
         def total_without_pending_store_credits
-          total - payments.map{ _1.amount if _1.source.is_a?(Spree::StoreCredit) && _1.pending? }.sum(&:to_f)
+          total - payments.map { _1.amount if _1.source.is_a?(Spree::StoreCredit) && _1.pending? }.sum(&:to_f)
         end
       end
     end
