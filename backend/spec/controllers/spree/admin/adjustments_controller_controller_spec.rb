@@ -30,22 +30,6 @@ module Spree
           expect(assigns(:adjustments)).to match_array([adjustment_1])
         end
       end
-
-      describe '#destroy' do
-        subject do
-          delete :destroy, params: { order_id: order.to_param, id: adjustment.id }
-        end
-
-        let!(:order) { create(:order) }
-        let!(:adjustment) { create(:adjustment, order: order) }
-
-        context 'when adjustment is destroyed' do
-        end
-
-        context 'when adjustment is not destroyed' do
-
-        end
-      end
     end
   end
 end
