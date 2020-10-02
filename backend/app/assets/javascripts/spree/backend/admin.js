@@ -123,13 +123,13 @@ jQuery(function ($) {
   $('.js-filterable').each(function () {
     var $this = $(this)
 
-    if ($this.val()) {
+    if ($this.val() !== null && $this.val() !== '' && $this.val().length !== 0) {
       var ransackValue, filter
       var ransackFieldId = $this.attr('id')
       var label = $('label[for="' + ransackFieldId + '"]')
 
       if ($this.is('select')) {
-        ransackValue = $this.find('option:selected').text()
+        ransackValue = $this.find('option:selected').toArray().map(option => option.text).join(', ')
       } else {
         ransackValue = $this.val()
       }
