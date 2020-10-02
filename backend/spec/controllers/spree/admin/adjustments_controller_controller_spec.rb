@@ -40,10 +40,10 @@ module Spree
           let!(:order) { create(:order) }
           let!(:promotion) { create(:promotion, orders: [order]) }
           let!(:source) { Spree::Promotion::Actions::CreateAdjustment.create(promotion_id: promotion.id) }
-          let!(:adjustment) { create(:adjustment, order: order, source_type: "Spree::PromotionAction", source: source ) }
+          let!(:adjustment) { create(:adjustment, order: order, source_type: 'Spree::PromotionAction', source: source) }
 
           it 'destroys one adjustment' do
-            expect{ destroy }.to change{ Spree::Adjustment.count }.by(-1)
+            expect { destroy }.to change { Spree::Adjustment.count }.by(-1)
           end
 
           it 'SD-875 removes associated promotion from order' do
@@ -69,7 +69,7 @@ module Spree
           it 'returns success flash response' do
             destroy
 
-            expect(flash[:success]).to eq(Spree.t(:successfully_removed, resource: "Adjustment"))
+            expect(flash[:success]).to eq(Spree.t(:successfully_removed, resource: 'Adjustment'))
           end
 
           it 'leaves error flash empty' do
