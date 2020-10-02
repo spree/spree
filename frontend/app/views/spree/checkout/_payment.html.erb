@@ -21,7 +21,7 @@
       <% end %>
     </ul>
 
-    <div class="payment-sources">
+    <div class="payment-sources" style="display:none;">
       <% if @payment_sources.present? %>
         <div id="existing_cards" class="payment-sources-existing-cards">
           <%= radio_button_tag 'use_existing_card', 'yes', true, class: 'd-none' %>
