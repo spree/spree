@@ -11,7 +11,7 @@ module Spree
 
       before_action :find_adjustment, only: [:destroy, :edit, :update]
 
-      after_action :delete_promotion_from_order, only: [:destroy], if: -> { @adjustment.destroyed? }
+      after_action :delete_promotion_from_order, only: [:destroy], if: -> { @adjustment.destroyed? && @adjustment.source }
 
       def index
         @adjustments = @order.all_adjustments.eligible.order(created_at: :asc)
