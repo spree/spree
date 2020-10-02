@@ -36,16 +36,42 @@ module Spree
           delete :destroy, params: { order_id: order.to_param, id: adjustment.id, format: :js }
         end
 
+        shared_examples 'adjustment destroyed' do
+          it 'destroys one adjustment' do
+            expect { destroy }.to change { Spree::Adjustment.count }.by(-1)
+          end
+
+          it 'assigns adjustment object to instance variable' do
+            destroy
+
+            expect(assigns(:adjustment)).to eq(adjustment)
+          end
+
+          it 'returns 200 status' do
+            destroy
+
+            expect(response).to have_http_status(:ok)
+          end
+
+          it 'returns success flash response' do
+            destroy
+
+            expect(flash[:success]).to eq(Spree.t(:successfully_removed, resource: 'Adjustment'))
+          end
+
+          it 'leaves error flash empty' do
+            destroy
+
+            expect(flash[:error]).to be_nil
+          end
+        end
+
         context 'when adjustment is from coupon code' do
           context 'when is destroyed' do
             let!(:order) { create(:order) }
             let!(:promotion) { create(:promotion, orders: [order]) }
             let!(:source) { Spree::Promotion::Actions::CreateAdjustment.create(promotion_id: promotion.id) }
             let!(:adjustment) { create(:adjustment, order: order, source_type: 'Spree::PromotionAction', source: source) }
-
-            it 'destroys one adjustment' do
-              expect { destroy }.to change { Spree::Adjustment.count }.by(-1)
-            end
 
             it 'SD-875 removes associated promotion from order' do
               expect(adjustment.order.promotions).to include promotion
@@ -55,29 +81,16 @@ module Spree
               expect(adjustment.order.promotions).not_to include promotion
             end
 
-            it 'assigns adjustment object to instance variable' do
-              destroy
+            it_behaves_like 'adjustment destroyed'
+          end
+        end
 
-              expect(assigns(:adjustment)).to eq(adjustment)
-            end
+        context 'when adjustment is created directly' do
+          context 'when is destroyed' do
+            let!(:order) { create(:order) }
+            let!(:adjustment) { create(:adjustment, order: order, source_type: nil, source: nil) }
 
-            it 'returns 200 status' do
-              destroy
-
-              expect(response).to have_http_status(:ok)
-            end
-
-            it 'returns success flash response' do
-              destroy
-
-              expect(flash[:success]).to eq(Spree.t(:successfully_removed, resource: 'Adjustment'))
-            end
-
-            it 'leaves error flash empty' do
-              destroy
-
-              expect(flash[:error]).to be_nil
-            end
+            it_behaves_like 'adjustment destroyed'
           end
         end
       end
