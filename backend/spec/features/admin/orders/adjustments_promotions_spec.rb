@@ -51,7 +51,7 @@ describe 'Adjustments Promotions', type: :feature do
     end
   end
 
-  context 'SD-875: admin is able to add promotion code after removing one before' do
+  context 'admin is able to add promotion code after removing one before' do
     it 'allows to add previously deleted promotion', js: true do
       fill_in 'coupon_code', with: '10_off'
       click_button 'Add Coupon Code'
