@@ -1303,6 +1303,12 @@ components:
         display_pre_tax_item_amount:
           type: string
           example: '$17.00'
+        pre_tax_total:
+          type: string
+          example: '20.00'
+        display_pre_tax_total:
+          type: string
+          example: '$20.00'
         item_count:
           type: number
           example: 2
