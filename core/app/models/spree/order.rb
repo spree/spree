@@ -21,7 +21,8 @@ module Spree
     extend Spree::DisplayMoney
     money_methods :outstanding_balance, :item_total,           :adjustment_total,
                   :included_tax_total,  :additional_tax_total, :tax_total,
-                  :shipment_total,      :promo_total,          :total
+                  :shipment_total,      :promo_total,          :total,
+                  :cart_promo_total,    :pre_tax_item_amount
 
     alias display_ship_total display_shipment_total
     alias_attribute :ship_total, :shipment_total
@@ -173,7 +174,7 @@ module Spree
 
     # Sum of all line item amounts pre-tax
     def pre_tax_item_amount
-      line_items.to_a.sum(&:pre_tax_amount)
+      line_items.sum(:pre_tax_amount)
     end
 
     def shipping_discount
