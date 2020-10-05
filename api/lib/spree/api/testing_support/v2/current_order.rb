@@ -48,6 +48,10 @@ shared_examples 'returns valid cart JSON' do
     expect(json_response['data']).to have_attribute(:promo_total).with_value(order.promo_total.to_s)
     expect(json_response['data']).to have_attribute(:display_promo_total).with_value(order.display_promo_total.to_s)
     expect(json_response['data']).to have_attribute(:display_total).with_value(order.display_total.to_s)
+    expect(json_response['data']).to have_attribute(:pre_tax_item_amount).with_value(order.pre_tax_item_amount.to_s)
+    expect(json_response['data']).to have_attribute(:display_pre_tax_item_amount).with_value(order.display_pre_tax_item_amount.to_s)
+    expect(json_response['data']).to have_attribute(:pre_tax_total).with_value(order.pre_tax_total.to_s)
+    expect(json_response['data']).to have_attribute(:display_pre_tax_total).with_value(order.display_pre_tax_total.to_s)
     expect(json_response['data']).to have_relationships(:user, :line_items, :variants, :billing_address, :shipping_address, :payments, :shipments, :promotions)
   end
 end
