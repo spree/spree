@@ -1,5 +1,5 @@
 module Spree
-  class ReturnItem::EligibilityValidator::RMARequired < Spree::ReturnItem::EligibilityValidator::BaseValidator
+  class ReturnItem::EligibilityValidator::ReturnMerchandiseAuthorizationRequired < Spree::ReturnItem::EligibilityValidator::BaseValidator
     def eligible_for_return?
       if @return_item.return_authorization.present?
         true
