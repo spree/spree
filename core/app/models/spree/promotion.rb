@@ -28,6 +28,8 @@ module Spree
 
     before_save :normalize_blank_values
 
+    before_validation :normalize_code
+
     scope :coupons, -> { where.not(code: nil) }
     scope :advertised, -> { where(advertise: true) }
     scope :applied, lambda {
@@ -225,6 +227,10 @@ module Spree
       [:code, :path].each do |column|
         self[column] = nil if self[column].blank?
       end
+    end
+
+    def normalize_code
+      self.code = code.strip if code.present?
     end
 
     def match_all?
