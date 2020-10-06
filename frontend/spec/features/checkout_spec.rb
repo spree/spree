@@ -269,7 +269,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
       end
 
       expect(page).to have_css("#payment_method_#{bogus.id}", visible: :hidden)
-      expect(page).to have_css("#existing_cards", visible: :hidden)
+      expect(page).to have_css('#existing_cards', visible: :hidden)
 
       # Choose 'Credit Card' and see if credit card fields with existing card option are visible again.
       within('#payment-method-fields') do
