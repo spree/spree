@@ -122,8 +122,8 @@
       <%= f.error_message_on :default_locale %>
     <% end %>
     <%= f.field_container :default_country_id, class: ['form-group'] do %>
-      <%= f.label :default_country_id, Spree.t('i18n.country') %>
-      <%= f.select :default_country_id, options_from_collection_for_select(@countries, :id, :name, @store.default_country_id), {}, { class: 'select2' } %>
+      <%= f.label :default_country_id, Spree.t('i18n.default_country') %>
+      <%= f.select :default_country_id, options_from_collection_for_select(@countries, :id, :name, @store.default_country_id || Spree::Config[:default_country_id]), {}, { class: 'select2' } %>
       <%= f.error_message_on :default_country_id %>
     <% end %>
   </div>

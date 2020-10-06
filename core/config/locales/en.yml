@@ -950,6 +950,7 @@ en:
       fields: Fields
       language: Language
       country: Country
+      default_country: Default Country
       localization_settings: Localization Settings
       only_incomplete: Only incomplete
       only_complete: Only complete
