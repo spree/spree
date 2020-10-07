@@ -42,6 +42,7 @@ module Spree
         or(where('CAST(spree_credit_cards.year AS DECIMAL) = ?', Time.current.year).
            where('CAST(spree_credit_cards.month AS DECIMAL) >= ?', Time.current.month))
     }
+    scope :not_removed, -> { where(deleted_at: nil) }
 
     # needed for some of the ActiveMerchant gateways (eg. SagePay)
     alias_attribute :brand, :cc_type

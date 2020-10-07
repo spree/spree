@@ -153,7 +153,9 @@ Spree::Core::Engine.add_routes do
 
         namespace :account do
           resources :addresses, controller: :addresses, only: %i[index create update]
-          resources :credit_cards, controller: :credit_cards, only: %i[index show]
+          resources :credit_cards, controller: :credit_cards, only: %i[index show] do
+            delete 'remove_credit_card', to: 'credit_cards#destroy', as: :remove_credit_card
+          end
           resources :orders, controller: :orders, only: %i[index show]
         end
 
