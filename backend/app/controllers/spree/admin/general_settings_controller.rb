@@ -27,7 +27,7 @@ module Spree
       end
 
       def render(*args)
-        @preferences_currency |= [:allow_currency_change, :show_currency_selector]
+        @preferences_currency |= [:allow_currency_change]
         super
       end
 
