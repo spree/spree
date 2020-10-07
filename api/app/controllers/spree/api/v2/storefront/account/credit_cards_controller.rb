@@ -14,6 +14,19 @@ module Spree
               render_serialized_payload { serialize_resource(resource) }
             end
 
+            def destroy
+              card = spree_current_user.credit_cards.find(params[:credit_card_id])
+
+              ActiveRecord::Base.transaction do
+                card.payments.
+                  valid.
+                  joins(:order).
+                  merge(Spree::Order.incomplete).
+                  each(&:invalidate!)
+                card.destroy
+              end
+            end
+
             private
 
             def resource
