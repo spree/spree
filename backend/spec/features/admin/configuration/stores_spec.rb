@@ -3,7 +3,9 @@ require 'spec_helper'
 describe 'Stores admin', type: :feature, js: true do
   stub_authorization!
 
-  let!(:store) { create(:store) }
+  let!(:store) { create(:store, checkout_zone_id: zone.id) }
+  let!(:zone) { create(:zone, name: 'EU_VAT') }
+  let!(:no_limits) { create(:zone, name: 'No Limits') }
 
   describe 'visiting the stores page' do
     it 'is on the stores page' do
@@ -19,6 +21,40 @@ describe 'Stores admin', type: :feature, js: true do
   end
 
   describe 'creating store' do
+    context 'with checkout_zone set as preference in spree config file' do
+      let!(:zone) { create(:zone, name: 'Asia') }
+
+      before do
+        store.update(checkout_zone_id: nil)
+        Spree::Config[:checkout_zone] = 'Asia'
+      end
+
+      it 'sets default zone' do
+        visit spree.admin_stores_path
+
+        click_link 'New Store'
+
+        expect(page).to have_current_path(spree.new_admin_store_path)
+        expect(page).to have_selector(:id, 's2id_store_checkout_zone_id', text: 'Asia')
+      end
+    end
+
+    context 'without checkout_zone set as preference in spree config file' do
+      before do
+        store.update(checkout_zone_id: nil)
+        Spree::Config.preference_default(:checkout_zone)
+      end
+
+      it 'sets default zone' do
+        visit spree.admin_stores_path
+
+        click_link 'New Store'
+
+        expect(page).to have_current_path(spree.new_admin_store_path)
+        expect(page).to have_selector(:id, 's2id_store_checkout_zone_id', text: 'No Limits')
+      end
+    end
+
     it 'sets default currency value' do
       visit spree.admin_stores_path
 

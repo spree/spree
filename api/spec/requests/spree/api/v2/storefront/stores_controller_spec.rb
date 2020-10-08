@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'Storefront API v2 Stores spec', type: :request do
-  let!(:store) { create(:store) }
+  let!(:store) { create(:store, default_country: create(:country)) }
 
   describe 'stores#show' do
     context 'with code param' do
@@ -20,12 +20,13 @@ describe 'Storefront API v2 Stores spec', type: :request do
         expect(json_response['data']).to have_attribute(:twitter).with_value(store.twitter)
         expect(json_response['data']).to have_attribute(:instagram).with_value(store.instagram)
         expect(json_response['data']).to have_attribute(:default_locale).with_value(store.default_locale)
-        expect(json_response['data']).to have_attribute(:customer_support_email).with_value(store.customer_support_email)
-        expect(json_response['data']).to have_attribute(:default_country_id).with_value(store.default_country_id)
         expect(json_response['data']).to have_attribute(:description).with_value(store.description)
         expect(json_response['data']).to have_attribute(:address).with_value(store.address)
         expect(json_response['data']).to have_attribute(:contact_phone).with_value(store.contact_phone)
         expect(json_response['data']).to have_attribute(:contact_email).with_value(store.contact_email)
+
+        expect(json_response['data']).to have_relationship(:default_country)
+        expect(json_response['data']).to have_relationship(:default_country).with_data('id' => store.default_country_id.to_s, 'type' => 'country')
       end
     end
 
