@@ -43,6 +43,7 @@ describe Spree::FulfilmentChanger do
     let(:quantity) { 1 }
 
     it 'adds the desired inventory units to the desired shipment' do
+      # TODO: Check inventory_unit quantity, not length.
       expect { subject }.to change { desired_shipment.inventory_units.length }.by(quantity)
     end
 

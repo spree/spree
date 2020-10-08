@@ -9,6 +9,8 @@ module Spree
     validate  :enough_stock_at_desired_location, if: :handle_stock_counts?
 
     def initialize(params = {})
+      # TODO: check if stocks' count_on_hand is correct after split (admin/products/checked-shirt/stock)
+      # TODO: Is there a case when shipment has more than one on_hand inventory unit?
       @current_stock_location = params[:current_stock_location]
       @desired_stock_location = params[:desired_stock_location]
       @current_shipment       = params[:current_shipment]
@@ -36,7 +38,7 @@ module Spree
     private
 
     attr_reader :variant, :quantity, :current_stock_location, :desired_stock_location,
-      :current_shipment, :desired_shipment, :available_quantity
+                :current_shipment, :desired_shipment, :available_quantity
 
     def handle_stock
       ActiveRecord::Base.transaction do
@@ -45,13 +47,52 @@ module Spree
           desired_stock_location.unstock(variant, unstock_quantity, desired_shipment)
         end
 
-        update_current_shipment_inventory_units(new_on_hand_quantity, :on_hand)
-        update_current_shipment_inventory_units(quantity - new_on_hand_quantity, :backordered)
+        move_inventory_units_between_shipments
+      end
+    end
+
+    def move_inventory_units_between_shipments
+      update_desired_shipment_inventory_units
+      update_current_shipment_inventory_units
+    end
+
+    def current_shipment_units
+      current_shipment.inventory_units.where(variant_id: variant.id)
+    end
+
+    def update_desired_shipment_inventory_units
+      on_hand_unit = get_desired_shipment_inventory_unit(:on_hand)
+      on_hand_unit.update(quantity: on_hand_unit.quantity + new_on_hand_quantity)
+
+      if new_backorder_quantity.present?
+        backordered_unit = get_desired_shipment_inventory_unit(:backordered)
+        backordered_unit.update(quantity: backordered_unit.quantity + new_backorder_quantity)
+      end
+    end
+
+    def update_current_shipment_inventory_units
+      on_hand_quantity = quantity
+      backordered_units = current_shipment_units.find_by(state: :backordered)
+
+      if backordered_units.present? && backordered_units.quantity > 0
+        backordered_units.update(quantity: 0)
+        on_hand_quantity -= backordered_units.quantity
+      end
+      current_shipment_units.find_by(state: :on_hand).decrement!(:quantity, on_hand_quantity) if on_hand_quantity > 0
+    end
+
+    def get_desired_shipment_inventory_unit(state)
+      desired_shipment.inventory_units.find_or_create_by(state: state) do |unit|
+        current_shipment_unit = current_shipment.inventory_units.first
+        unit.variant_id = current_shipment_unit.variant_id
+        unit.order_id = current_shipment_unit.order_id
+        unit.line_item_id = current_shipment_unit.line_item_id
+        unit.quantity = 0
       end
     end
 
     def after_process_shipments
-      if current_shipment.inventory_units.length.zero?
+      if current_shipment.inventory_units.sum(:quantity).zero?
         current_shipment.destroy!
       else
         current_shipment.refresh_rates
@@ -67,21 +108,16 @@ module Spree
       [available_quantity, quantity].min
     end
 
+    def new_backorder_quantity
+      quantity - new_on_hand_quantity
+    end
+
     def unstock_quantity
       desired_stock_location.backorderable?(variant) ? quantity : new_on_hand_quantity
     end
 
     def current_on_hand_quantity
       [current_shipment.inventory_units.on_hand_or_backordered.size, quantity].min
-    end
-
-    def update_current_shipment_inventory_units(quantity, state)
-      current_shipment.
-        inventory_units.
-        where(variant: variant).
-        order(state: :asc).
-        limit(quantity).
-        update_all(shipment_id: desired_shipment.id, state: state)
     end
 
     def reload_shipment_inventory_units
@@ -105,7 +141,7 @@ module Spree
     def enough_stock_at_desired_location
       return if Spree::Stock::Quantifier.new(variant, desired_stock_location).can_supply?(quantity)
 
-      errors.add(:desired_shipment, :not_enough_stock_at_desired_location)
+      errors.add(:desired_shipment, :has_not_enough_stock_at_desired_location)
     end
 
     def desired_shipment_different_from_current
