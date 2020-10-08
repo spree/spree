@@ -1,4 +1,4 @@
-<% if stores.size > 1 %>
+<% if Spree::Config.allow_currency_change && stores.size > 1 %>
   <li class="change-store">
     <div class="dropdown navbar-right-dropdown">
       <button id="stores-button" type="button" data-toggle="dropdown" class="navbar-right-dropdown-toggle" aria-label="<%= Spree.t('nav_bar.change_country')%>">
@@ -12,7 +12,7 @@
                 height: 15)  %>
       </button>
 
-      <div class="dropdown-menu dropdown-menu-right text-right">
+      <div id="stores_list" class="dropdown-menu dropdown-menu-right text-right">
         <% stores.each do |store| %>
           <div class="pl-3 d-flex justify-content-between align-items-center <%= 'active' if store.id == current_store.id %>">
             <span class="flag-icon flag-icon-<%= store_country_iso(store) %>"></span>
