@@ -3,6 +3,7 @@ module Spree
     has_many :orders, class_name: 'Spree::Order'
     has_many :payment_methods, class_name: 'Spree::PaymentMethod'
     belongs_to :default_country, class_name: 'Spree::Country'
+    belongs_to :zone, class_name: 'Spree::Zone', foreign_key: 'checkout_zone_id'
 
     with_options presence: true do
       validates :name, :url, :mail_from_address, :default_currency, :code
