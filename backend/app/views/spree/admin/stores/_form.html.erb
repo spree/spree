@@ -116,6 +116,12 @@
       <%= f.select :supported_currencies, currency_options(@store.supported_currencies&.split(',')), { prompt: false }, { multiple: true, class: 'select2' } %>
       <%= f.error_message_on :supported_currencies %>
     <% end %>
+    <%= f.field_container :checkout_zone_id, class: ['form-group'] do %>
+      <%= f.label :checkout_zone_id, Spree.t('zone') %>
+      <%= f.select :checkout_zone_id, options_from_collection_for_select(@zones, :id, :name, selected_checkout_zone(@store)), {}, { class: 'select2' } %>
+      <%= f.label :checkout_zone_id, Spree.t('i18n.checkout_zone_warning_html'), class: 'alert alert-warning col-12' %>
+      <%= f.error_message_on :checkout_zone_id %>
+    <% end %>
     <%= f.field_container :default_locale, class: ['form-group'] do %>
       <%= f.label :default_locale, Spree.t('i18n.language') %>
       <%= f.select :default_locale, options_from_collection_for_select(all_locales_options, :last, :first, @store.default_locale), {}, { class: 'select2' } %>
