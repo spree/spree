@@ -12,9 +12,24 @@ describe Spree::BaseHelper, type: :helper do
       create_list(:country, 3)
     end
 
+    context 'with checkout zone assigned to the store' do
+      before do
+        Spree::Config[:checkout_zone] = nil
+        @zone = create(:zone, name: 'No Limits')
+        @zone.members.create(zoneable: country)
+        current_store.update(checkout_zone_id: @zone.id)
+      end
+
+      it 'return only the countries defined by the checkout_zone_id' do
+        expect(available_countries).to eq([country])
+        expect(current_store.checkout_zone_id).to eq @zone.id
+      end
+    end
+
     context 'with no checkout zone defined' do
       before do
         Spree::Config[:checkout_zone] = nil
+        current_store.update(checkout_zone_id: nil)
       end
 
       it 'return complete list of countries' do
