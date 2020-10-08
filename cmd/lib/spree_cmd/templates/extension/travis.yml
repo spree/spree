@@ -15,7 +15,6 @@ services:
 language: ruby
 
 rvm:
-  - 2.5
   - 2.6
 
 env:
@@ -23,7 +22,6 @@ env:
   - DB=postgres
 
 gemfile:
-  - gemfiles/spree_3_7.gemfile
   - gemfiles/spree_4_0.gemfile
   - gemfiles/spree_4_1.gemfile
   - gemfiles/spree_master.gemfile
@@ -31,9 +29,6 @@ gemfile:
 jobs:
   allow_failures:
     - gemfile: gemfiles/spree_master.gemfile
-  exclude:
-    - rvm: 2.6
-      gemfile: gemfiles/spree_3_7.gemfile
 
 before_install:
   - mysql -u root -e "GRANT ALL ON *.* TO 'travis'@'%';"
@@ -43,6 +38,7 @@ before_script:
   - CHROMEDRIVER_VERSION=`curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_MAIN_VERSION"`
   - curl "https://chromedriver.storage.googleapis.com/${CHROMEDRIVER_VERSION}/chromedriver_linux64.zip" -O
   - unzip chromedriver_linux64.zip -d ~/bin
+  - nvm install 14
 
 script:
   - bundle exec rake test_app
