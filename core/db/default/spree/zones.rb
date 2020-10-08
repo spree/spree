@@ -3,6 +3,9 @@ north_america = Spree::Zone.where(name: 'North America', description: 'USA + Can
 south_america = Spree::Zone.where(name: 'South America', description: 'South America', kind: 'country').first_or_create!
 middle_east = Spree::Zone.where(name: 'Middle East', description: 'Middle East', kind: 'country').first_or_create!
 asia = Spree::Zone.where(name: 'Asia', description: 'Asia', kind: 'country').first_or_create!
+no_limits = Spree::Zone.where(name: 'No Limits', description: 'Includes all the countries of the world!', kind: 'country').first_or_create!
+
+Spree::Country.pluck(:iso).each { |iso| no_limits.zone_members.where(zoneable: Spree::Country.find_by!(iso: iso)).first_or_create! }
 
 %w(PL FI PT RO DE FR SK HU SI IE AT ES IT BE SE LV BG GB LT CY LU MT DK NL EE HR CZ GR).each do |name|
   eu_vat.zone_members.where(zoneable: Spree::Country.find_by!(iso: name)).first_or_create!
