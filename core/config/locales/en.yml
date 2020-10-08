@@ -574,9 +574,6 @@ en:
     agree_to_privacy_policy: Agree to Privacy Policy
     agree_to_terms_of_service: Agree to Terms of Service
     all: All
-    allow_currency_change:
-      short: Allow Currency Change
-      long: Display the currency picker in the main nav bar and allow users to change their currency via it. In addition, multiple stores must be supported.
     all_adjustments_closed: All adjustments successfully closed!
     all_adjustments_opened: All adjustments successfully opened!
     all_departments: All departments
@@ -1576,6 +1573,9 @@ en:
     show_only_considered_risky: Only show risky orders
     show_property: Show Property
     show_rate_in_label: Show rate in label
+    show_store_selector:
+      short: Allow Currency Change
+      long: Display the currency picker in the main nav bar and allow users to change their currency via it. In addition, multiple stores must be supported.
     sign_up: Sign Up
     sku: SKU
     skus: SKUs
