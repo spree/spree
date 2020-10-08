@@ -1,14 +1,11 @@
 // --- Dependencies
 import * as React from 'react'
-
 // --- Components
 import Layout from 'components/Layout'
 import Section from 'components/Section'
-
 /**
  * Component
  */
-
 const IndexPage = () => (
   <Layout
     title="Guides"
@@ -22,7 +19,6 @@ const IndexPage = () => (
         &nbsp;is a complete, modular, API-driven open source e-commerce solution
         &nbsp;built with Ruby on Rails
       </p>
-
       <div className="mw8 center">
         <div className="flex flex-column flex-wrap flex-row-ns mv4 w-100">
           <Section path="/api/overview" title="API Guides" className="w-50-ns">
@@ -32,23 +28,20 @@ const IndexPage = () => (
             applications (JavaScript/Mobile/other technologies) that can talk to
             your Spree store.
           </Section>
-
           <Section
             path="/developer"
             title="Developer Guides"
             className="w-50-ns"
           >
-            This part of Spree’s documentation covers the technical aspects of
+            This part of Spree's documentation covers the technical aspects of
             Spree. If you are working with Rails and are building a Spree store,
             this is the documentation for you.
           </Section>
-
           <Section path="/user" title="User Guides" className="w-50-ns">
             This documentation is intended for business owners and site
             administrators of Spree e-commerce sites. Everything you need to
             know to configure and manage your Spree store can be found here.
           </Section>
-
           <Section
             path="/release_notes"
             title="Release Notes"
@@ -58,10 +51,23 @@ const IndexPage = () => (
             notes. The purpose of these notes is to provide a high level
             overview of what has changed since the previous version of Spree.
           </Section>
+          <div
+            className="w-25-ns"
+          ></div>
+          <Section
+            path="/faq"
+            title="FAQ"
+            className="w-50-ns"
+          >
+            Everything you need to know and more! All frequently asked questions
+            can be found in this section.
+          </Section>
+          <div
+            className="w-25-ns"
+          ></div>
         </div>
       </div>
     </div>
   </Layout>
 )
-
 export default IndexPage
