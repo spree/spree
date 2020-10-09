@@ -362,7 +362,7 @@ module Spree
         desired_shipment: shipment_to_transfer_to,
         variant: variant,
         quantity: quantity
-      ).run!
+      )
     end
 
     private

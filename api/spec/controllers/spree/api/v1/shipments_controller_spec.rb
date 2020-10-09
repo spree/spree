@@ -81,7 +81,7 @@ describe Spree::Api::V1::ShipmentsController, type: :controller do
 
         it 'displays wrong target and negative quantity errors' do
           api_post :transfer_to_shipment, params
-          expect(json_response['exception']).to eq("#{Spree.t(:shipment_transfer_errors_occured, scope: 'api')} \n#{Spree.t(:negative_quantity, scope: 'api')}, \n#{Spree.t(:wrong_shipment_target, scope: 'api')}")
+          expect(json_response['exception']).to eq("#{Spree.t(:shipment_transfer_errors_occurred, scope: 'api')} \n#{Spree.t(:negative_quantity, scope: 'api')}, \n#{Spree.t(:wrong_shipment_target, scope: 'api')}")
         end
       end
 
@@ -92,7 +92,7 @@ describe Spree::Api::V1::ShipmentsController, type: :controller do
 
         it 'displays negative quantity error' do
           api_post :transfer_to_shipment, params
-          expect(json_response['exception']).to eq("#{Spree.t(:shipment_transfer_errors_occured, scope: 'api')} \n#{Spree.t(:negative_quantity, scope: 'api')}")
+          expect(json_response['exception']).to eq("#{Spree.t(:shipment_transfer_errors_occurred, scope: 'api')} \n#{Spree.t(:negative_quantity, scope: 'api')}")
         end
       end
 
@@ -103,7 +103,7 @@ describe Spree::Api::V1::ShipmentsController, type: :controller do
 
         it 'displays wrong target error' do
           api_post :transfer_to_shipment, params
-          expect(json_response['exception']).to eq("#{Spree.t(:shipment_transfer_errors_occured, scope: 'api')} \n#{Spree.t(:wrong_shipment_target, scope: 'api')}")
+          expect(json_response['exception']).to eq("#{Spree.t(:shipment_transfer_errors_occurred, scope: 'api')} \n#{Spree.t(:wrong_shipment_target, scope: 'api')}")
         end
       end
     end
