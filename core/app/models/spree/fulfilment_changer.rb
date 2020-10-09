@@ -72,11 +72,15 @@ module Spree
 
     def update_current_shipment_inventory_units
       on_hand_quantity = quantity
-      backordered_units = current_shipment_units.find_by(state: :backordered)
-
-      if backordered_units.present? && backordered_units.quantity > 0
-        backordered_units.update(quantity: 0)
-        on_hand_quantity -= backordered_units.quantity
+      backordered_unit = current_shipment_units.find_by(state: :backordered)
+      if backordered_unit.present?
+        if backordered_unit.quantity > on_hand_quantity
+          backordered_unit.decrease!(:quantity, on_hand_quantity)
+          on_hand_quantity = 0
+        else
+          on_hand_quantity -= backordered_unit.quantity
+          backordered_unit.update(quantity: 0)
+        end
       end
       current_shipment_units.find_by(state: :on_hand).decrement!(:quantity, on_hand_quantity) if on_hand_quantity > 0
     end
