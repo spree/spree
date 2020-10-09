@@ -9,7 +9,7 @@ module Spree
     validate  :enough_stock_at_desired_location, if: :handle_stock_counts?
 
     def initialize(params = {})
-      # TODO: check if stocks' count_on_hand is correct after split (admin/products/checked-shirt/stock)
+      # TODO: Check if stocks' count_on_hand is correct after split (admin/products/checked-shirt/stock)
       # TODO: Is there a case when shipment has more than one on_hand inventory unit?
       @current_stock_location = params[:current_stock_location]
       @desired_stock_location = params[:desired_stock_location]
@@ -64,25 +64,35 @@ module Spree
       on_hand_unit = get_desired_shipment_inventory_unit(:on_hand)
       on_hand_unit.update(quantity: on_hand_unit.quantity + new_on_hand_quantity)
 
-      if new_backorder_quantity.present?
+      new_backorder_quantity = quantity - new_on_hand_quantity
+      if new_backorder_quantity > 0
         backordered_unit = get_desired_shipment_inventory_unit(:backordered)
         backordered_unit.update(quantity: backordered_unit.quantity + new_backorder_quantity)
       end
     end
 
     def update_current_shipment_inventory_units
+      # TODO: Use all on_hand and backorderd units when decreasing quantity.
       on_hand_quantity = quantity
       backordered_unit = current_shipment_units.find_by(state: :backordered)
       if backordered_unit.present?
         if backordered_unit.quantity > on_hand_quantity
-          backordered_unit.decrease!(:quantity, on_hand_quantity)
+          backordered_unit.update(quantity: backordered_unit.quantity - on_hand_quantity)
           on_hand_quantity = 0
         else
           on_hand_quantity -= backordered_unit.quantity
-          backordered_unit.update(quantity: 0)
+          backordered_unit.destroy!
         end
       end
-      current_shipment_units.find_by(state: :on_hand).decrement!(:quantity, on_hand_quantity) if on_hand_quantity > 0
+
+      if on_hand_quantity > 0
+        on_hand_unit = current_shipment_units.find_by(state: :on_hand)
+        if on_hand_unit.quantity == on_hand_quantity
+          on_hand_unit.destroy!
+        else
+          on_hand_unit.update(quantity: on_hand_unit.quantity - on_hand_quantity)
+        end
+      end
     end
 
     def get_desired_shipment_inventory_unit(state)
@@ -112,16 +122,12 @@ module Spree
       [available_quantity, quantity].min
     end
 
-    def new_backorder_quantity
-      quantity - new_on_hand_quantity
-    end
-
     def unstock_quantity
       desired_stock_location.backorderable?(variant) ? quantity : new_on_hand_quantity
     end
 
     def current_on_hand_quantity
-      [current_shipment.inventory_units.on_hand_or_backordered.size, quantity].min
+      [current_shipment.inventory_units.on_hand_or_backordered.sum(:quantity), quantity].min
     end
 
     def reload_shipment_inventory_units
