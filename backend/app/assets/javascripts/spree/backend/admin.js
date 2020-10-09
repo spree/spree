@@ -129,7 +129,9 @@ jQuery(function ($) {
       var label = $('label[for="' + ransackFieldId + '"]')
 
       if ($this.is('select')) {
-        ransackValue = $this.find('option:selected').toArray().map(option => option.text).join(', ')
+        ransackValue = $this.find('option:selected').toArray().map(function (option) {
+          return option.text;
+        }).join(', ')
       } else {
         ransackValue = $this.val()
       }
