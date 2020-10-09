@@ -4,7 +4,7 @@ title: Prototypes
 
 ## Introduction
 
-A Prototype is like a Product blueprint, useful for helping you add a group of similar new products to your store more quickly. The general procedure is that you create a Prototype which is associated with certain [Option Types](/user/products/product_options.html) and [Properties](/user/products/product_properties.html); then you create products based on that Prototype, and only need to fill in the values for those Option Types and Properties.
+A Prototype is like a Product blueprint; it's useful for helping you add a group of similar new products to your store more quickly. The general procedure is that you create a Prototype which is associated with certain [Option Types](/user/products/product_options.html) and [Properties](/user/products/product_properties.html); you then create products based on that Prototype, and only need to fill in the values for those Option Types and Properties.
 
 Imagine that you've just received a new shipment of picture frames from your supplier. Your new stock encompasses a variety of brands, sizes, colors, and materials, but they are all basically the same type of product. This is a prime use case for prototypes.
 
@@ -34,7 +34,7 @@ To create a new product based on the new prototype, click "Products" from the Ad
 
 When you do so, the Spree system shows you values for both of the Option Types you entered, so that it can automatically create [Product Variants](/user/products/creating_products.html#understanding-variants) for you for each of them.
 
-Let's create the Product and all Variants for the fictional "Hinkledink Picture Frame" product. Input the product's Name, SKU, a Master Price (remember, you can change this for each variant), and make sure to set the Available On date to today, so it will show up in your store. Check the boxes for the options this particular product has, and click "Create".
+Let's create the Product and all Variants for the fictional "Hinkledink Picture Frame" product. Input the product's Name, SKU, and Master Price (remember, you can change this for each variant). Make sure to set the Available On date to today so it will show up in your store. Check the boxes for the options this particular product has and click "Create".
 
 ***
 Clicking the box next to an Option Type title will automatically check all of its Option Values for you.
@@ -44,4 +44,4 @@ Clicking the box next to an Option Type title will automatically check all of it
 
 Proceed with [creating the product](/user/products/creating_products.html) as you would normally, adding any missing fields not supplied by the prototype.
 
-Be sure to update each of the Variants with corresponding images, SKUs, and - if applicable - correct pricing.
+Be sure to update each of the Variants with corresponding images, SKUs, and correct pricing, if applicable.
