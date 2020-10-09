@@ -57,8 +57,33 @@ module Spree
       end
     end
 
+    def object
+      instance_variable_get('@' + controller_name.singularize)
+    end
+
+    def og_meta_data
+      og_meta = {}
+
+      if object.is_a? Spree::Product
+        image                             = default_image_for_product_or_variant(object)
+        og_meta['og:image']               = main_app.url_for(image.attachment) if image&.attachment
+
+        og_meta['og:url']                 = spree.url_for(object) if frontend_available? # url_for product needed
+        og_meta['og:type']                = object.class.name.demodulize.downcase
+        og_meta['og:title']               = object.name
+        og_meta['og:description']         = object.description
+
+        price = object.price_in(current_currency)
+        if price
+          og_meta['product:price:amount']   = price.amount
+          og_meta['product:price:currency'] = current_currency
+        end
+      end
+
+      og_meta
+    end
+
     def meta_data
-      object = instance_variable_get('@' + controller_name.singularize)
       meta = {}
 
       if object.is_a? ApplicationRecord
@@ -82,16 +107,10 @@ module Spree
       meta
     end
 
-    def meta_image_url_path
-      object = instance_variable_get('@' + controller_name.singularize)
-      return unless object.is_a?(Spree::Product)
-
-      image = default_image_for_product_or_variant(object)
-      image&.attachment.present? ? main_app.url_for(image.attachment) : asset_path(Spree::Config[:logo])
-    end
-
-    def meta_image_data_tag
-      tag('meta', property: 'og:image', content: meta_image_url_path) if meta_image_url_path
+    def og_meta_data_tags
+      og_meta_data.map do |property, content|
+        tag('meta', property: property, content: content) unless property.nil? || content.nil?
+      end.join("\n")
     end
 
     def meta_data_tags
