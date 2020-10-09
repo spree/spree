@@ -1574,8 +1574,8 @@ en:
     show_property: Show Property
     show_rate_in_label: Show rate in label
     show_store_selector:
-      short: Allow Currency Change
-      long: Display the currency picker in the main nav bar and allow users to change their currency via it. In addition, multiple stores must be supported.
+      short: Show Store selector
+      long: Display the Store selector in the main nav bar of Storefront and allow users to change Store and Currency
     sign_up: Sign Up
     sku: SKU
     skus: SKUs
