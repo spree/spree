@@ -60,4 +60,76 @@ describe Spree::Checkout::Update, type: :service do
       end
     end
   end
+
+  describe 'update address' do
+    let(:order) { create(:order_with_line_items) }
+    let(:state) { create(:state) }
+    let(:country) { state.country }
+    let(:update_service) { described_class.new }
+    let(:address) do
+      {
+        firstname: 'John',
+        lastname: 'Doe',
+        address1: '7735 Old Georgetown Road',
+        city: 'Bethesda',
+        phone: '3014445002',
+        zipcode: '20814',
+        state_id: state.id,
+        country_iso: country.iso
+      }
+    end
+    let(:order_params) do
+      ActionController::Parameters.new(
+        order: {
+          ship_address_attributes: address
+        }
+      )
+    end
+    let(:permitted_attributes) do
+      Spree::PermittedAttributes.checkout_attributes + [
+        bill_address_attributes: Spree::PermittedAttributes.address_attributes,
+        ship_address_attributes: Spree::PermittedAttributes.address_attributes
+      ]
+    end
+
+    it 'should set order back to address state' do
+      expect(order.state).not_to eq 'address'
+      expect(order.ship_address.state.id).not_to eq state.id
+
+      update_service.send(:call, order: order, params: order_params, permitted_attributes: permitted_attributes, request_env: nil)
+
+      expect(order.state).to eq 'address'
+      expect(order.ship_address.state.id).to eq state.id
+    end
+  end
+
+  describe 'update selected shipping rate' do
+    let(:update_service) { described_class.new }
+    let(:order) { create(:order_with_line_items) }
+    let(:order_params) do
+      ActionController::Parameters.new(
+        order: {
+          shipments_attributes: [
+            {
+              id: order.shipments.first.id,
+              selected_shipping_rate_id: order.shipments.first.shipping_rates.first.id
+            }
+          ]
+        }
+      )
+    end
+    let(:permitted_attributes) do
+      Spree::PermittedAttributes.checkout_attributes + [
+        shipments_attributes: Spree::PermittedAttributes.shipment_attributes
+      ]
+    end
+
+    it 'should set order back to delivery state' do
+      expect(order.state).not_to eq 'delivery'
+
+      update_service.send(:call, order: order, params: order_params, permitted_attributes: permitted_attributes, request_env: nil)
+
+      expect(order.state).to eq 'delivery'
+    end
+  end
 end

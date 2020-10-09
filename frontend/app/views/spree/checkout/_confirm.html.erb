@@ -2,7 +2,7 @@
   <p class="checkout-content-header">
     <%= Spree.t(:summary).upcase %>
   </p>
-  <div class='checkout-confirm-order-details d-flex flex-column flex-lg-wrap' id="order_summary" data-hook>
+  <div class='checkout-confirm-order-details' id="order_summary" data-hook>
     <%= render partial: 'spree/checkout/delivery_informations', locals: { class_name: 'd-none d-lg-block' } %>
     <div class="checkout-confirm-order-details-line-items d-flex flex-column align-items-center w-100">
       <div class="checkout-confirm-order-details-line-items-header d-none d-sm-block d-lg-none align-self-start mb-3">

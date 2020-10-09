@@ -200,7 +200,7 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
     end
 
     it 'only returns supported payment method of current store' do
-      expect(page).to have_css("#payment_method_#{unsupported_payment.id}", visible: :hidden)
+      expect(page).not_to have_css("#payment_method_#{unsupported_payment.id}", visible: :hidden)
     end
   end
 

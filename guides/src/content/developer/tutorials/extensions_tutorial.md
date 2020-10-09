@@ -163,7 +163,7 @@ Let's fix our extension so that it uses the `sale_price` when it is present.
 First, create the required directory structure for our new decorator:
 
 ```bash
-mkdir -p app/models/spree
+mkdir -p app/models/spree_simple_sales/spree
 ```
 
 Next, create the file `app/models/spree_simple_sales/spree/variant_decorator.rb` and add the following content to it:

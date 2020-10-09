@@ -2,21 +2,23 @@ require 'spec_helper'
 
 describe Spree::Address, type: :model do
   describe 'clone' do
-    it 'creates a copy of the address with the exception of the id, updated_at and created_at attributes' do
+    it 'creates a copy of the address with the exception of the id, label, user_id, updated_at and created_at attributes' do
       state = create(:state)
       original = create(:address,
-                        address1: 'address1',
-                        address2: 'address2',
-                        alternative_phone: 'alternative_phone',
-                        city: 'city',
+                        label: 'Home',
+                        user_id: 976,
+                        address1: FFaker::Address.street_address,
+                        address2: FFaker::Address.secondary_address,
+                        alternative_phone: FFaker::PhoneNumberAU.mobile_phone_number,
+                        city: FFaker::AddressUS.city,
                         country: Spree::Country.first,
-                        firstname: 'firstname',
-                        lastname: 'lastname',
-                        company: 'company',
-                        phone: 'phone',
+                        firstname: FFaker::Name.first_name,
+                        lastname: FFaker::Name.last_name,
+                        company: FFaker::Company.name,
+                        phone: FFaker::PhoneNumber.short_phone_number,
                         state_id: state.id,
                         state_name: state.name,
-                        zipcode: '10001')
+                        zipcode: FFaker::AddressUS.zip_code)
 
       cloned = original.clone
 
@@ -32,6 +34,9 @@ describe Spree::Address, type: :model do
       expect(cloned.state_id).to eq(original.state_id)
       expect(cloned.state_name).to eq(original.state_name)
       expect(cloned.zipcode).to eq(original.zipcode)
+
+      expect(cloned.user_id).to be_nil
+      expect(cloned.label).to be_nil
 
       expect(cloned.id).not_to eq(original.id)
       expect(cloned.created_at).not_to eq(original.created_at)

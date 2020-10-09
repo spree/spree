@@ -13,6 +13,7 @@ en:
   activerecord:
     attributes:
       spree/address:
+        label: Address name
         address1: Address
         address2: Address (contd.)
         city: City
@@ -502,10 +503,14 @@ en:
     address_book:
       other_address: "Other address"
       add_new_shipping_address: "Add new address"
-      new_shipping_address: "New Address"
-      edit_shipping_address: "Edit Address"
+      label: Address Name
+      address_name_label: Address Name
+      address_name_placeholder: Give this address a unique name (Work, Home, etc.)
+      new_address: "New Address"
+      edit_address: "Edit Address"
+      remove_address: Remove Address
       no_shipping_addresses_on_file: "No addresses on file"
-      shipping_addresses: "Addresses"
+      addresses: "Addresses"
       successfully_created: "Address has been successfully created."
       successfully_removed: "Address has been successfully removed."
       successfully_saved: "Saved successfully"
@@ -945,6 +950,7 @@ en:
       fields: Fields
       language: Language
       country: Country
+      default_country: Default Country
       localization_settings: Localization Settings
       only_incomplete: Only incomplete
       only_complete: Only complete
@@ -1036,6 +1042,7 @@ en:
     make_refund: Make refund
     make_sure_the_above_reimbursement_amount_is_correct: Make sure the above reimbursement amount is correct
     mail_from_address: Mail from address
+    mailer_logo: Mailer logo (JPG or PNG images only)
     manage_promotion_categories: Manage Promotion Categories
     manual_intervention_required: Manual intervention required
     manage_variants: Manage Variants
@@ -1179,11 +1186,13 @@ en:
     order_mailer:
       subtotal: ! 'Subtotal:'
       total: ! 'Order Total:'
+      store_team: '%{store_name} Team'
       cancel_email:
         dear_customer: Dear %{name},
         instructions: Your order has been CANCELED.  Please retain this cancellation information for your records.
         order_summary_canceled: Order %{number} Summary [CANCELED]
         subject: Cancellation of Order
+        thanks: Thank you for your business.
       confirm_email:
         dear_customer: Dear %{name},
         instructions: Please review and retain the following order information for your records.
@@ -1195,6 +1204,7 @@ en:
         instructions: You have received a new order.
         order_summary: Order %{number} Summary
         subject: '%{store_name} received a new order'
+        thanks: Thank you for your business.
     order_not_found: We couldn't find your order. Please try that action again.
     order_number: Order %{number}
     order_processed_successfully: Your order has been processed successfully
@@ -1456,6 +1466,7 @@ en:
     return_items_cannot_be_associated_with_multiple_orders: Return items cannot be associated with multiple orders.
     reimbursement_mailer:
       reimbursement_email:
+        store_team: '%{store_name} Team'
         days_to_send: ! 'You have %{days} days to send back any items awaiting exchange.'
         dear_customer: Dear %{name},
         exchange_summary: Exchange Summary
@@ -1518,6 +1529,7 @@ en:
     shipment_details: "From %{stock_location} via %{shipping_method}"
     shipment_mailer:
       shipped_email:
+        store_team: '%{store_name} Team'
         dear_customer: Dear %{name},
         instructions: Your order %{number} has been shipped
         shipment_summary: Shipment Summary for order
@@ -1632,7 +1644,7 @@ en:
     stock_transfer:
       errors:
         must_have_variant: You must add at least one variant.
-        variants_unavailable: "Some variants are not available on %{stock}" 
+        variants_unavailable: "Some variants are not available on %{stock}"
     stock_transfers: Stock Transfers
     stop: Stop
     store: Store

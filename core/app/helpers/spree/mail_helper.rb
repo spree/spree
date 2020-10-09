@@ -11,14 +11,19 @@ module Spree
       order.name || Spree.t('customer')
     end
 
+    def store_logo
+      @order&.store&.mailer_logo || @order&.store&.logo || current_store.mailer_logo || current_store.logo
+    end
+
+    def default_logo
+      Spree::Config.mailer_logo || Spree::Config.logo
+    end
+
     def logo_path
-      if current_store.present? && current_store.logo.attached? && current_store.logo.variable?
-        main_app.url_for(current_store.logo.variant(resize: '244x104>'))
-      elsif current_store.present? && current_store.logo.attached? && current_store.logo.image?
-        main_app.url_for(current_store.logo)
-      else
-        Spree::Config.mailer_logo || Spree::Config.logo
-      end
+      return default_logo unless store_logo.attached?
+      return main_app.url_for(store_logo.variant(resize: '244x104>')) if store_logo.variable?
+
+      return main_app.url_for(store_logo) if store_logo.image?
     end
   end
 end

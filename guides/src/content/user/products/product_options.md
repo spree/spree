@@ -4,9 +4,9 @@ title: Product Options
 
 ## Option Types and Option Values
 
-Option Types are a way to help distinguish products in your store from one another. They are particularly useful when you have many products that are basically of the same general category (Tshirts or mugs, for example), but with characteristics that can vary, such as color, size, or logo.
+Option Types are a way to help distinguish products in your store from one another. They are particularly useful when you have many products that are basically of the same general category (t-shirts or mugs, for example) but with varying characteristics, such as color, size or logo.
 
-For each Option Type, you will need to create one or more corresponding Option Values. If you create a "Size" Option Type, then you would need Option Values for it like "Small", "Medium", and "Large".
+For each Option Type, you will need to create one or more corresponding Option Values. If you create a "Size" Option Type, then you would need Option Values like "Small", "Medium", and "Large".
 
 ### Creating Option Types and Option Values
 
@@ -14,7 +14,7 @@ Option Types and Option Values are created at the store level, not the product l
 
 ![New Option Type](../../../images/user/products/new_option_type.jpg)
 
-You are required to fill in two fields: "Name" and "Presentation". You will see this same pattern several places in the Admin Interface. "Name" generally is the short term (usually one or two words) for the option you want to store. "Presentation" is the wordier, more descriptive term that gives your site's visitors a little more detail.
+You are required to fill in two fields: "Name" and "Presentation". You will see this same pattern in several places on the Admin Interface. "Name" is generally the short term (usually one or two words) for the option you want to store. "Presentation" is the wordier, more descriptive term that gives your site's visitors a little more detail.
 
 ***
 NOTE: Sometimes the term "Display" is used instead of "Presentation" to indicate what is shown to the user on the Product Variant's page.
@@ -22,13 +22,13 @@ NOTE: Sometimes the term "Display" is used instead of "Presentation" to indicate
 
 For our first Option Type - Size - enter "Size" for the Name and "Size of the Tumbler" as the Presentation. Click "Update".
 
-When the screen refreshes, you see that Spree has helpfully provided you with a blank row in which you can enter your first Option Value for the new Option Type.
+When the screen refreshes, you can see that Spree has helpfully provided you with a blank row in which you can enter your first Option Value for the new Option Type.
 
 ![New Option Value](../../../images/user/products/new_option_value.jpg)
 
-We're going to need two Option Values (Large and Small) for the Size Option Value, so go ahead and click the "Add Option Value" button. This gives you two blank rows to work with.
+We're going to need two Option Values (Large and Small) for the Size Option Value. Click the "Add Option Value" button which will give you two blank rows to work with.
 
-"Name" is easy - "Large" for the first, and "Small" for the second. Let's input "24-ounce cup" in the "Display" field for the Large Option Value and "16-ounce cup" for the Small Option Value.
+"Name" is easy; write "Large" for the first and "Small" for the second. Let's input "24-ounce cup" in the "Display" field for the Large Option Value and "16-ounce cup" for the Small Option Value.
 
 ![Completed Option Values](../../../images/user/products/large_small_option_values.jpg)
 

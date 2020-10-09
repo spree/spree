@@ -32,7 +32,7 @@ module Spree
         end
 
         def pending_payments
-          payments.select(&:pending?)
+          payments.pending
         end
 
         def unprocessed_payments
@@ -52,13 +52,21 @@ module Spree
 
             payment.public_send(method)
 
-            if payment.completed? && payment_total != total
+            if payment.completed? && payment_total != total_without_pending_store_credits
               self.payment_total += payment.amount
             end
           end
         rescue Core::GatewayError => e
           result = !!Spree::Config[:allow_checkout_on_gateway_error]
           errors.add(:base, e.message) && (return result)
+        end
+
+        # Pending store credits are not added to `self.payment_total`.
+        # It can cause a situation where the amount of the credit card payment reduced with store credits
+        # may be added twice to `self.payment_total` causing wrong `order.outstanding_balance`
+        # calculations and thus an incorrect payment state.
+        def total_without_pending_store_credits
+          total - payments.map { |p| p.amount if p.source.is_a?(Spree::StoreCredit) && p.pending? }.sum(&:to_f)
         end
       end
     end
