@@ -1,13 +1,15 @@
 //= require modernizr
+//= require purify
+//= require sortable
+//= require flatpickr
 //= require jquery3
 //= require popper
 //= require bootstrap-sprockets
 //= require handlebars
+//= require cleave
 //= require js.cookie
 //= require jquery.jstree/jquery.jstree
 //= require jquery_ujs
-//= require jquery-ui/widgets/datepicker
-//= require jquery-ui/widgets/sortable
 //= require jquery-ui/widgets/autocomplete
 //= require select2
 //= require underscore-min.js

@@ -2,8 +2,17 @@
   padding: 0 0 15px 0;
 }
 
+.card {
+  overflow: hidden;
+}
+
 .is-hidden {
   display: none;
+}
+
+.tooltip{
+  pointer-events: none;
+  z-index: $zindex-dropdown;
 }
 
 // No-margin and no-padding helper classes
@@ -14,4 +23,35 @@
 
 .alert-error {
   @extend .alert-danger;
+}
+
+.js-remove-promo-rule-option-value {
+  color: $primary !important;
+  &:hover {
+    color: darken($primary, 10) !important;
+  }
+}
+
+.flash-alert {
+  z-index: 0;
+  opacity: 0;
+  bottom: -50px;
+  left:0;
+  right:0;
+
+  .alert {
+    z-index: 500;
+    opacity: 0.98;
+    border-width: 3px;
+    margin-bottom: 0;
+  }
+}
+
+.flash-alert.animate__animated {
+  opacity: 1;
+  bottom: 30px;
+}
+
+.resize-animation-stopper * {
+  transition: none !important;
 }

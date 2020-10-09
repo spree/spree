@@ -38,15 +38,14 @@
         </div>
       </div>
       <div data-hook="admin_return_authorisations_index_filters_buttons" class="form-actions">
-        <%= button Spree.t(:search), 'search' %>
+        <%= button Spree.t(:search), 'search.svg' %>
       </div>
     <% end %>
   </div>
 <% end %>
 
-<%= render partial: 'spree/admin/shared/index_table_options', locals: { collection: @collection, per_page_action: :return_authorizations } %>
-
 <% if @collection.any? %>
+<div class="table-responsive">
   <table class="table">
     <thead>
       <tr data-hook="rate_header">
@@ -60,7 +59,7 @@
     <tbody>
       <% @collection.each do |return_authorization| %>
         <tr id="<%= spree_dom_id return_authorization %>" data-hook="return_authorization_row">
-          <td><%= return_authorization.created_at.to_date %></td>
+          <td><%= return_authorization.created_at.strftime('%F %T %Z') %></td>
           <td><%= link_to return_authorization.number, spree.edit_admin_order_return_authorization_path(return_authorization.order, return_authorization) %></td>
           <td><%= link_to return_authorization.order.number, spree.edit_admin_order_path(return_authorization.order) %></td>
           <td>
@@ -73,6 +72,7 @@
       <% end %>
     </tbody>
   </table>
+  </div>
 <% else %>
   <div class="alert alert-info no-objects-found">
     <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::ReturnAuthorization)) %>.

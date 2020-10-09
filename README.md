@@ -66,7 +66,7 @@ You can **add Spree to your existing Rails application** as well.
 
 ```ruby
 gem 'spree', '~> 4.1'
-gem 'spree_auth_devise', '~> 4.1'
+gem 'spree_auth_devise', '~> 4.2'
 gem 'spree_gateway', '~> 3.7'
 ```
 
@@ -101,9 +101,9 @@ bundle update
 ### Use the install generators to set up Spree
 
 ```shell
-rails g spree:install --user_class=Spree::User
-rails g spree:auth:install
-rails g spree_gateway:install
+bundle exec rails g spree:install --user_class=Spree::User
+bundle exec rails g spree:auth:install
+bundle exec rails g spree_gateway:install
 ```
 
 ## Installation options
@@ -170,6 +170,7 @@ Spree Extensions provide additional features not present in the Core system.
 | [spree_related_products](https://github.com/spree-contrib/spree_related_products) | [![Build Status](https://travis-ci.org/spree-contrib/spree_related_products.svg?branch=master)](https://travis-ci.org/spree-contrib/spree_related_products) | Related products extension for Spree
 | [spree_social](https://github.com/spree-contrib/spree_social) |[![Build Status](https://travis-ci.org/spree-contrib/spree_social.svg?branch=master)](https://travis-ci.org/spree-contrib/spree_social)  | Building block for spree social networking features (provides authentication and account linkage) |
 | [spree_sitemap](https://github.com/spree-contrib/spree_sitemap) | [![Build Status](https://travis-ci.org/spree-contrib/spree_sitemap.svg?branch=master)](https://travis-ci.org/spree-contrib/spree_sitemap) | Sitemap Generator for Spree  |
+| [spree_shared](https://github.com/spree-contrib/spree_shared) | [![Build Status](https://travis-ci.org/spree-contrib/spree_shared.svg?branch=master)](https://travis-ci.org/spree-contrib/spree_shared) | Multi-tenancy for Spree using Apartment (per tenant databases)  |
 | [spree_static_content](https://github.com/spree-contrib/spree_static_content) | [![Build Status](https://travis-ci.org/spree-contrib/spree_static_content.svg?branch=master)](https://travis-ci.org/spree-contrib/spree_static_content) | Manage static pages for Spree |
 | [spree_volume_pricing](https://github.com/spree-contrib/spree_volume_pricing) | [![Build Status](https://travis-ci.org/spree-contrib/spree_volume_pricing.svg?branch=master)](https://travis-ci.org/spree-contrib/spree_volume_pricing) | It determines the price for a particular product variant with predefined ranges of quantities
 | [spree_wishlist](https://github.com/spree-contrib/spree_wishlist) | [![Build Status](https://travis-ci.org/spree-contrib/spree_wishlist.svg?branch=master)](https://travis-ci.org/spree-contrib/spree_wishlist) | Wishlist extension for Spree |

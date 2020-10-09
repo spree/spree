@@ -13,15 +13,15 @@ The list shows you the following information about each order:
 * **Number** - The Spree-generated order number.
 * **State** - The current state of the order. You can learn more about [order states in another guide](/user/orders/order_states.html).
 * **Payment State** - Spree tracks the state of an order's payment separately from the state of the order itself. As payment is received, the state of the order progresses.
-* **Shipment State** - Having the Shipment State pictured separately lets you quickly see which orders are paid and need to be packed and shipped, improving your store's workflow.
-* **Customer Email**
+* **Shipment State** - Having the Shipment State outlined separately lets you quickly see which orders are paid and need to be packed and shipped, improving your store's workflow.
+* **Customer Email** - As supplied by the customer.
 * **Total** - This amount includes item totals, tax, shipping, and any promotions or adjustments made to the order.
 
 Next to each row is an "Edit" icon. Clicking this icon allows you to [make changes to an order](/user/orders/editing_orders.html).
 
 # Filtering Results
 
-You may not always want to see all of the most recent orders - the Spree default. You may want to view only those orders that you need to pack and ship, or only those from a particular customer. Spree gives you the flexibility to quickly find only those orders you need.
+You may not always want to see all of the most recent orders, as is the Spree default. You might want to view only those orders that you need to pack and ship, or only those from a particular customer. Spree gives you the flexibility to quickly find the specific orders you need.
 
 ![Order Filter Options](../../../images/user/orders/filter_options.jpg)
 
@@ -33,7 +33,7 @@ You can input a **Start** and/or **Stop** date. If you enter both, the results s
 
 If you input only a **Start** date, you will get all orders placed on or after that date.
 
-If you input only a **Stop** date, the results will include all orders placed up to and on that date.
+If you input only a **Stop** date, the results will include all orders placed on or before that date.
 
 ## Status
 
@@ -56,11 +56,11 @@ Spree generates a unique order number for each order when the first item is adde
 
 ## Email
 
-At this time, the filter does not allow you to search for only part of an email address. If you want to find all orders from `jane_doe@example.com`, you will have to use the full address. Inputting only "jane_doe" will result in a pop-up alert to enter a valid email address.
+At this time, the filter does not allow you to search for only part of an email address. If you want to find all orders from `jane_doe@example.com`, you will have to use the full address. Inputting only "jane_doe" will result in a pop-up alert regarding the entry of a valid email address.
 
 ## Name
 
-The **First Name Begins With** and **Last Name Begins With** fields will let you filter order results based on the *billing address*, not on the shipping address. You can use any number of letters, from just an initial to the full first and/or last name.
+The **First Name Begins With** and **Last Name Begins With** fields let you filter order results by name, based on the *billing address* not on the shipping address. You can use any number of letters, from just an initial to the full first and/or last name.
 
 ## Complete
 

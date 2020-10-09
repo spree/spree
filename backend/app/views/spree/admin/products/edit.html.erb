@@ -1,7 +1,7 @@
 <% content_for :page_actions do %>
   <%= product_preview_link(@product) %>
   <% if can?(:create, Spree::Product) %>
-    <%= button_link_to Spree.t(:new_product), new_object_url, { class: "btn-success", icon: 'add', id: 'admin_new_product' } %>
+    <%= button_link_to Spree.t(:new_product), new_object_url, { class: "btn-success", icon: 'add.svg', id: 'admin_new_product' } %>
   <% end %>
 <% end %>
 

@@ -169,7 +169,7 @@ describe Spree::Order, type: :model do
       order.finalize!
     end
 
-    it 'sends an order confirmation email' do
+    it 'sends an order confirmation email to customer' do
       mail_message = double 'Mail::Message'
       expect(Spree::OrderMailer).to receive(:confirm_email).with(order.id).and_return mail_message
       expect(mail_message).to receive :deliver_later
@@ -186,6 +186,25 @@ describe Spree::Order, type: :model do
       allow(order).to receive_messages(confirmation_delivered?: true)
       expect(Spree::OrderMailer).not_to receive(:confirm_email)
       order.finalize!
+    end
+
+    context 'new order notifications' do
+      it 'sends a new order notification email to store owner when notification email address is set' do
+        # NOTE: 'store' factory has new_order_notifications_email set by default
+        mail_message = double 'Mail::Message'
+        expect(Spree::OrderMailer).to receive(:store_owner_notification_email).with(order.id).and_return mail_message
+        expect(mail_message).to receive :deliver_later
+        order.finalize!
+      end
+
+      it 'does not send a new order notification email to store owner when notification email address is blank' do
+        store = order.store
+        store.update(new_order_notifications_email: '')
+
+        mail_message = double 'Mail::Message'
+        expect(Spree::OrderMailer).to_not receive(:store_owner_notification_email)
+        order.finalize!
+      end
     end
 
     it 'freezes all adjustments' do
@@ -820,13 +839,48 @@ describe Spree::Order, type: :model do
   end
 
   describe '#pre_tax_item_amount' do
-    it "sums all of the line items' pre tax amounts" do
-      subject.line_items = [
-        Spree::LineItem.new(price: 10, quantity: 2, pre_tax_amount: 5.0),
-        Spree::LineItem.new(price: 30, quantity: 1, pre_tax_amount: 14.0)
-      ]
+    let(:order) { create(:order) }
 
-      expect(subject.pre_tax_item_amount).to eq 19.0
+    before do
+      line_item = create(:line_item, order: order, price: 10, quantity: 2)
+      line_item_2 = create(:line_item, order: order, price: 30, quantity: 1)
+
+      line_item.update(pre_tax_amount: 5.0)
+      line_item_2.update(pre_tax_amount: 14.0)
+    end
+
+    it "sums all of the line items' pre tax amounts" do
+      expect(order.pre_tax_item_amount).to eq BigDecimal(19)
+    end
+  end
+
+  describe '#display_pre_tax_item_amount' do
+    it 'returns the value as a spree money' do
+      allow(order).to receive(:pre_tax_item_amount).and_return(10.55)
+      expect(order.display_pre_tax_item_amount).to eq(Spree::Money.new(10.55))
+    end
+  end
+
+  describe '#pre_tax_total' do
+    let(:order) { create(:order) }
+
+    before do
+      line_item = create(:line_item, order: order, price: 10, quantity: 2)
+      shipment = create(:shipment, order: order, cost: 5)
+
+      line_item.update(pre_tax_amount: 8.0)
+      shipment.update(pre_tax_amount: 4.0)
+    end
+
+    it "sums all of the line items' and shipments pre tax amounts" do
+      expect(order.pre_tax_total).to eq BigDecimal(12)
+    end
+  end
+
+  describe '#display_pre_tax_total' do
+    it 'returns the value as a spree money' do
+      allow(order).to receive(:pre_tax_total).and_return(10.55)
+      expect(order.display_pre_tax_total).to eq(Spree::Money.new(10.55))
     end
   end
 

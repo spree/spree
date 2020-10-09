@@ -6,7 +6,7 @@
   <%= button_link_to Spree.t(:new_order),
     new_admin_order_url,
     class: "btn-success",
-      icon: 'add',
+      icon: 'add.svg',
       id: 'admin_new_order' %>
 <% end if can? :create, Spree::Order %>
 
@@ -14,161 +14,161 @@
   <div data-hook="admin_orders_index_search">
 
     <%= search_form_for [:admin, @search] do |f| %>
-      <div class="row">
-        <div class="date-range-filter col-12 col-lg-8">
-          <div class="form-group">
-            <%= label_tag :q_created_at_gt, Spree.t(:date_range) %>
-            <div class="row pb-0">
-              <div class="col-12 col-lg-6">
-                <div class="input-group">
-                  <%= f.text_field :created_at_gt,
-                    class: 'datepicker datepicker-from form-control js-filterable',
-                      value: params[:q][:created_at_gt],
-                      placeholder: Spree.t(:start) %>
-                  <div class="input-group-append">
-                    <span class="input-group-text">
-                      <i class="icon icon-calendar"></i>
-                    </span>
-                  </div>
-                </div>
+    <div class="row">
 
-              </div>
-              <div class="col-12 col-lg-6">
-                <div class="input-group">
-                  <%= f.text_field :created_at_lt,
-                    class: 'datepicker datepicker-to form-control js-filterable',
-                      value: params[:q][:created_at_lt],
-                      placeholder: Spree.t(:stop) %>
-                  <div class="input-group-append">
-                    <span class="input-group-text">
-                      <i class="icon icon-calendar"></i>
-                    </span>
-                  </div>
-                </div>
+      <div class="date-range-filter col-12 col-lg-8">
+        <div class="form-group">
+          <%= label_tag :q_created_at_gt, Spree.t(:date_range) %>
+          <div class="row pb-0">
+            <div class="col-12 col-md-6 mb-3 mb-md-0">
+              <div class="input-group datePickerFrom"
+                   data-wrap="true"
+                   data-max-date="<%= params[:q][:created_at_lt] %>">
+                <%= f.text_field :created_at_gt,
+                  class: 'form-control js-filterable shadow-none',
+                    value: params[:q][:created_at_gt],
+                    placeholder: Spree.t(:starting_from),
+                    'data-input':'' %>
+
+                <%= render partial: 'spree/admin/shared/cal_close' %>
               </div>
             </div>
-          </div>
-        </div>
+            <div class="col-12 col-md-6 mt-3 mt-md-0">
+              <div class="input-group datePickerTo"
+                   data-wrap="true"
+                   data-min-date="<%= params[:q][:created_at_gt] %>">
 
-        <div class="col-12 col-lg-4">
-          <div class="form-group">
-            <%= label_tag :q_number_cont, Spree.t(:order_number, number: '') %>
-            <%= f.text_field :number_cont, class: 'form-control js-quick-search-target js-filterable' %>
-          </div>
-        </div>
+                <%= f.text_field :created_at_lt,
+                  class: 'form-control js-filterable shadow-none',
+                    value: params[:q][:created_at_lt],
+                    placeholder: Spree.t(:ending_at),
+                    'data-input':'' %>
 
-      </div>
-
-      <div class="row">
-
-        <div class="col-12 col-lg-4">
-          <div class="form-group">
-            <%= label_tag :q_state_eq, Spree.t(:status) %>
-            <%= f.select :state_eq,
-              Spree::Order.state_machines[:state].states.map {|s| [Spree.t("order_state.#{s.name}"), s.value]},
-              { include_blank: true },
-              class: 'select2 js-filterable' %>
-          </div>
-        </div>
-
-        <div class="col-12 col-lg-4">
-          <div class="form-group">
-            <%= label_tag :q_payment_state_eq, Spree.t(:payment_state) %>
-            <%= f.select :payment_state_eq, Spree::Order::PAYMENT_STATES.map {|s| [Spree.t("payment_states.#{s}"), s]}, { include_blank: true }, class: 'select2 js-filterable' %>
-          </div>
-        </div>
-
-        <div class="col-12 col-lg-4">
-          <div class="form-group">
-            <%= label_tag :q_shipment_state_eq, Spree.t(:shipment_state) %>
-            <%= f.select :shipment_state_eq, Spree::Order::SHIPMENT_STATES.map {|s| [Spree.t("shipment_states.#{s}"), s]}, { include_blank: true }, class: 'select2 js-filterable' %>
-          </div>
-        </div>
-
-      </div>
-
-      <div class="row">
-
-        <div class="col-12 col-lg-4">
-          <div class="form-group">
-            <%= label_tag :q_bill_address_firstname_start, Spree.t(:first_name_begins_with) %>
-            <%= f.text_field :bill_address_firstname_start, class: 'form-control js-filterable' %>
-          </div>
-        </div>
-
-        <div class="col-12 col-lg-4">
-          <div class="form-group">
-            <%= label_tag :q_bill_address_lastname_start, Spree.t(:last_name_begins_with) %>
-            <%= f.text_field :bill_address_lastname_start, class: 'form-control js-filterable' %>
-          </div>
-        </div>
-
-        <div class="col-12 col-lg-4">
-          <div class="form-group">
-            <%= label_tag :q_email_cont, Spree.t(:email) %>
-            <%= f.text_field :email_cont, class: 'form-control js-filterable' %>
-          </div>
-        </div>
-
-      </div>
-
-      <div class="row">
-
-        <div class="col-12 col-lg-4">
-          <div class="form-group">
-            <%= label_tag :q_line_items_variant_sku_eq, Spree.t(:sku) %>
-            <%= f.text_field :line_items_variant_sku_eq, class: 'form-control js-filterable' %>
-          </div>
-        </div>
-
-        <div class="col-12 col-lg-4">
-          <div class="form-group">
-            <%= label_tag :q_promotions_id_in, Spree.t(:promotion) %>
-            <%= f.select :promotions_id_in, Spree::Promotion.applied.pluck(:name, :id), { include_blank: true }, class: 'select2 js-filterable' %>
-          </div>
-        </div>
-
-        <div class="col-12 col-lg-4">
-          <div class="form-group">
-            <%= label_tag :q_store_id_in, Spree.t(:store) %>
-            <%= f.select :store_id_in, Spree::Store.order(:name).pluck(:name, :id), { include_blank: true }, class: 'select2 js-filterable' %>
-          </div>
-        </div>
-
-        <div class="col-12 col-lg-4">
-          <div class="form-group">
-            <%= label_tag :q_channel_eq, Spree.t(:channel) %>
-            <%= f.select :channel_eq, Spree::Order.distinct.pluck(:channel), { include_blank: true }, class: 'select2 js-filterable' %>
-          </div>
-        </div>
-
-        <div class="col-12 col-lg-4">
-
-          <div class="form-group">
-
-            <div class="checkbox mt-2">
-              <%= label_tag 'q_completed_at_not_null' do %>
-                <%= f.check_box :completed_at_not_null, {checked: @show_only_completed}, '1', '0' %>
-                <%= Spree.t(:show_only_complete_orders) %>
-              <% end %>
+                <%= render partial: 'spree/admin/shared/cal_close' %>
+                </div>
             </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-lg-4">
+        <div class="form-group">
+          <%= label_tag :q_number_cont, Spree.t(:order_number, number: '') %>
+          <%= f.text_field :number_cont, class: 'form-control js-quick-search-target js-filterable' %>
+        </div>
+      </div>
 
-            <div class="checkbox mt-2">
-              <%= label_tag 'q_considered_risky_eq' do %>
-                <%= f.check_box :considered_risky_eq, {checked: (params[:q][:considered_risky_eq] == '1')}, '1', '' %>
-                <%= Spree.t(:show_only_considered_risky) %>
-              <% end %>
-            </div>
+    </div>
 
+    <div class="row">
+
+      <div class="col-12 col-lg-4">
+        <div class="form-group">
+          <%= label_tag :q_state_eq, Spree.t(:status) %>
+          <%= f.select :state_eq,
+            Spree::Order.state_machines[:state].states.map {|s| [Spree.t("order_state.#{s.name}"), s.value]},
+            { include_blank: true },
+            class: 'select2 js-filterable' %>
+        </div>
+      </div>
+
+      <div class="col-12 col-lg-4">
+        <div class="form-group">
+          <%= label_tag :q_payment_state_eq, Spree.t(:payment_state) %>
+          <%= f.select :payment_state_eq, Spree::Order::PAYMENT_STATES.map {|s| [Spree.t("payment_states.#{s}"), s]}, { include_blank: true }, class: 'select2 js-filterable' %>
+        </div>
+      </div>
+
+      <div class="col-12 col-lg-4">
+        <div class="form-group">
+          <%= label_tag :q_shipment_state_eq, Spree.t(:shipment_state) %>
+          <%= f.select :shipment_state_eq, Spree::Order::SHIPMENT_STATES.map {|s| [Spree.t("shipment_states.#{s}"), s]}, { include_blank: true }, class: 'select2 js-filterable' %>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="row">
+
+      <div class="col-12 col-lg-4">
+        <div class="form-group">
+          <%= label_tag :q_bill_address_firstname_start, Spree.t(:first_name_begins_with) %>
+          <%= f.text_field :bill_address_firstname_start, class: 'form-control js-filterable' %>
+        </div>
+      </div>
+
+      <div class="col-12 col-lg-4">
+        <div class="form-group">
+          <%= label_tag :q_bill_address_lastname_start, Spree.t(:last_name_begins_with) %>
+          <%= f.text_field :bill_address_lastname_start, class: 'form-control js-filterable' %>
+        </div>
+      </div>
+
+      <div class="col-12 col-lg-4">
+        <div class="form-group">
+          <%= label_tag :q_email_cont, Spree.t(:email) %>
+          <%= f.text_field :email_cont, class: 'form-control js-filterable' %>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="row">
+
+      <div class="col-12 col-lg-4">
+        <div class="form-group">
+          <%= label_tag :q_line_items_variant_sku_eq, Spree.t(:sku) %>
+          <%= f.text_field :line_items_variant_sku_eq, class: 'form-control js-filterable' %>
+        </div>
+      </div>
+
+      <div class="col-12 col-lg-4">
+        <div class="form-group">
+          <%= label_tag :q_promotions_id_in, Spree.t(:promotion) %>
+          <%= f.select :promotions_id_in, Spree::Promotion.applied.pluck(:name, :id), { include_blank: true }, class: 'select2 js-filterable' %>
+        </div>
+      </div>
+
+      <div class="col-12 col-lg-4">
+        <div class="form-group">
+          <%= label_tag :q_store_id_in, Spree.t(:store) %>
+          <%= f.select :store_id_in, Spree::Store.order(:name).pluck(:name, :id), { include_blank: true }, class: 'select2 js-filterable' %>
+        </div>
+      </div>
+
+      <div class="col-12 col-lg-4">
+        <div class="form-group">
+          <%= label_tag :q_channel_eq, Spree.t(:channel) %>
+          <%= f.select :channel_eq, Spree::Order.distinct.pluck(:channel), { include_blank: true }, class: 'select2 js-filterable' %>
+        </div>
+      </div>
+
+      <div class="col-12 col-lg-4">
+
+        <div class="form-group">
+
+          <div class="checkbox mt-2">
+            <%= label_tag 'q_completed_at_not_null' do %>
+              <%= f.check_box :completed_at_not_null, {checked: @show_only_completed}, '1', '0' %>
+              <%= Spree.t(:show_only_complete_orders) %>
+            <% end %>
+          </div>
+
+          <div class="checkbox mt-2">
+            <%= label_tag 'q_considered_risky_eq' do %>
+              <%= f.check_box :considered_risky_eq, {checked: (params[:q][:considered_risky_eq] == '1')}, '1', '' %>
+              <%= Spree.t(:show_only_considered_risky) %>
+            <% end %>
           </div>
 
         </div>
 
       </div>
 
-      <div data-hook="admin_orders_index_search_buttons" class="form-actions">
-        <%= button Spree.t(:filter_results), 'search' %>
-      </div>
+    </div>
+
+    <div data-hook="admin_orders_index_search_buttons" class="form-actions">
+      <%= button Spree.t(:filter_results), 'search.svg' %>
+    </div>
 
     <% end %>
 
@@ -176,18 +176,17 @@
 
 <% end %>
 
-<%= render 'spree/admin/shared/index_table_options', collection: @orders %>
-
 <% if @orders.any? %>
+<div class="table-responsive">
   <table class="table" id="listing_orders" data-hook>
     <thead>
       <tr data-hook="admin_orders_index_headers">
+        <th><%= sort_link @search, :number,           I18n.t(:number, scope: 'activerecord.attributes.spree/order') %></th>
         <% if @show_only_completed %>
           <th><%= sort_link @search, :completed_at,   I18n.t(:completed_at, scope: 'activerecord.attributes.spree/order') %></th>
         <% else %>
           <th><%= sort_link @search, :created_at,     I18n.t(:created_at, scope: 'activerecord.attributes.spree/order') %></th>
         <% end %>
-        <th><%= sort_link @search, :number,           I18n.t(:number, scope: 'activerecord.attributes.spree/order') %></th>
         <th><%= sort_link @search, :considered_risky, I18n.t(:considered_risky, scope: 'activerecord.attributes.spree/order') %></th>
         <th><%= sort_link @search, :state,            I18n.t(:state, scope: 'activerecord.attributes.spree/order') %></th>
         <th><%= sort_link @search, :payment_state,    I18n.t(:payment_state, scope: 'activerecord.attributes.spree/order') %></th>
@@ -202,47 +201,55 @@
     <tbody>
     <% @orders.each do |order| %>
       <tr data-hook="admin_orders_index_rows" class="state-<%= order.state.downcase %> <%= cycle('odd', 'even') %>">
+        <td><%= link_to order.number, edit_admin_order_path(order) %></td>
         <td>
           <%= order_time(@show_only_completed ? order.completed_at : order.created_at) %>
         </td>
-        <td><%= link_to order.number, edit_admin_order_path(order) %></td>
         <td>
           <span class="badge badge-<%= order.considered_risky ? 'considered_risky' : 'considered_safe' %>">
             <%= order.considered_risky ? Spree.t("risky") : Spree.t("safe") %>
           </span>
         </td>
-        <td>
+        <td class="no-wrap">
           <span class="badge badge-<%= order.state.downcase %>"><%= Spree.t("order_state.#{order.state.downcase}") %></span>
-          <span class="icon icon-filter filterable js-add-filter" data-ransack-field="q_state_eq" data-ransack-value="<%= order.state %>"></span>
+          <span class="filterable js-add-filter" data-ransack-field="q_state_eq" data-ransack-value="<%= order.state %>">
+            <%= svg_icon name: "filter.svg", width: '14', height: '14' %>
+          </span>
         </td>
-        <td>
+        <td class="no-wrap">
           <% if order.payment_state %>
 
             <%= link_to Spree.t("payment_states.#{order.payment_state}"),
               admin_order_payments_path(order),
               class: "badge badge-#{order.payment_state}" %>
 
-            <span class="icon icon-filter filterable js-add-filter"
+            <span class="filterable js-add-filter"
               data-ransack-field="q_payment_state_eq"
-              data-ransack-value="<%= order.payment_state %>"></span>
+              data-ransack-value="<%= order.payment_state %>">
+              <%= svg_icon name: "filter.svg", width: '14', height: '14' %>
+            </span>
           <% end %>
         </td>
         <% if Spree::Order.checkout_step_names.include?(:delivery) %>
-          <td>
+          <td class="no-wrap">
             <% if order.shipment_state %>
               <span class="badge badge-<%= order.shipment_state %>"><%= Spree.t("shipment_states.#{order.shipment_state}") %></span>
-              <span class="icon icon-filter filterable js-add-filter" data-ransack-field="q_shipment_state_eq" data-ransack-value="<%= order.shipment_state %>"></span>
+              <span class="filterable js-add-filter" data-ransack-field="q_shipment_state_eq" data-ransack-value="<%= order.shipment_state %>">
+                <%= svg_icon name: "filter.svg", width: '14', height: '14' %>
+              </span>
             <% end %>
           </td>
         <% end %>
-        <td>
+        <td class="no-wrap">
           <% if order.user %>
             <%= link_to order.email, edit_admin_user_path(order.user) %>
           <% else %>
             <%= mail_to order.email %>
           <% end %>
           <% if order.user || order.email %>
-            <span class="icon icon-filter filterable js-add-filter" data-ransack-field="q_email_cont" data-ransack-value="<%= order.email %>"></span>
+            <span class="filterable js-add-filter" data-ransack-field="q_email_cont" data-ransack-value="<%= order.email %>">
+              <%= svg_icon name: "filter.svg", width: '14', height: '14' %>
+            </span>
           <% end %>
         </td>
         <td><%= order.display_total.to_html %></td>
@@ -253,6 +260,7 @@
     <% end %>
     </tbody>
   </table>
+</div>
 <% else %>
   <div class="alert alert-info no-objects-found">
     <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::Order)) %>,

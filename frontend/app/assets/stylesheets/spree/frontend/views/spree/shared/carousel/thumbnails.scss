@@ -1,5 +1,6 @@
 .product-thumbnails-carousel {
   &-item {
+    will-change: transform;
     $single-gap: 5%;
     &-content {
       height: 0;

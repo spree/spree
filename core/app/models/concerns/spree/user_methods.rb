@@ -30,15 +30,20 @@ module Spree
       self.whitelisted_ransackable_associations = %w[bill_address ship_address]
       self.whitelisted_ransackable_attributes = %w[id email]
 
+      def self.with_email(query)
+        where('email LIKE ?', "%#{query}%")
+      end
+
       def self.with_address(query, address = :ship_address)
         left_outer_joins(address).
           where("#{Spree::Address.table_name}.firstname like ?", "%#{query}%").
           or(left_outer_joins(address).where("#{Spree::Address.table_name}.lastname like ?", "%#{query}%"))
       end
 
-      def self.with_email_or_addresses_ids(query, addresses_ids = [])
-        where('email LIKE ?', "%#{query}%").
-          or(where(id: addresses_ids))
+      def self.with_email_or_address(email, address)
+        left_outer_joins(:addresses).
+          where("#{Spree::Address.table_name}.firstname LIKE ? or #{Spree::Address.table_name}.lastname LIKE ? or email LIKE ?",
+                "%#{address}%", "%#{address}%", "%#{email}%")
       end
     end
 
@@ -54,8 +59,9 @@ module Spree
         first
     end
 
-    def total_available_store_credit
-      store_credits.reload.to_a.sum(&:amount_remaining)
+    def total_available_store_credit(currency = nil)
+      currency ||= Spree::Config[:currency]
+      store_credits.where(currency: currency).reload.to_a.sum(&:amount_remaining)
     end
 
     private

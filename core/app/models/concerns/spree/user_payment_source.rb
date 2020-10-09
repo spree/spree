@@ -9,7 +9,7 @@ module Spree
       end
 
       def payment_sources
-        credit_cards.with_payment_profile
+        credit_cards.with_payment_profile.not_expired
       end
 
       def drop_payment_source(source)

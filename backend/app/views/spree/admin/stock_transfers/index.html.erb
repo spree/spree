@@ -3,7 +3,7 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= button_link_to Spree.t(:new_stock_transfer), new_admin_stock_transfer_path, { icon: 'add', class: 'btn-success' } %>
+  <%= button_link_to Spree.t(:new_stock_transfer), new_admin_stock_transfer_path, { icon: 'add.svg', class: 'btn-success' } %>
 <% end if can? :create, Spree::StockTransfer %>
 
 <div data-hook="admin_orders_index_search" class="card bg-light mb-3">
@@ -41,7 +41,7 @@
 
         <div class="form-actions">
           <div data-hook="admin_stock_transfers_index_search_buttons">
-            <%= button Spree.t(:filter_results), 'search' %>
+            <%= button Spree.t(:filter_results), 'search.svg' %>
           </div>
         </div>
       <% end %>
@@ -50,6 +50,7 @@
 </div>
 
 <% if @stock_transfers.any? %>
+<div class="table-responsive">
   <table class="table" id='listing_stock_transfers' data-hook>
     <thead>
       <tr data-hook='stock_transfers_header'>
@@ -63,7 +64,7 @@
     <tbody>
       <% @stock_transfers.each do |stock_transfer| %>
         <tr id="<%= spree_dom_id stock_transfer %>" data-hook="stock_transfer_row">
-          <td><%= link_to stock_transfer.created_at, admin_stock_transfer_path(stock_transfer) %></td>
+          <td><%= link_to stock_transfer.created_at.strftime('%F %T %Z'), admin_stock_transfer_path(stock_transfer) %></td>
           <td><%= stock_transfer.reference %></td>
           <td><%= stock_transfer.source_location.try(:name) %></td>
           <td><%= stock_transfer.destination_location.try(:name) %></td>
@@ -74,6 +75,7 @@
       <% end %>
     </tbody>
   </table>
+</div>
 <% else %>
   <div class="alert alert-info no-objects-found">
     <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::StockTransfer)) %>,
@@ -81,4 +83,4 @@
   </div>
 <% end %>
 
-<%= paginate @stock_transfers, theme: 'twitter-bootstrap-4' %>
+<%= paginate @stock_transfers, theme: 'admin-twitter-bootstrap-4' %>

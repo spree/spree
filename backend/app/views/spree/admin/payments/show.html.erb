@@ -12,7 +12,7 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= button_link_to Spree.t(:logs), spree.admin_order_payment_log_entries_url(@order, @payment), icon: 'file' %>
+  <%= button_link_to Spree.t(:logs), spree.admin_order_payment_log_entries_url(@order, @payment), icon: 'file.svg' %>
 <% end %>
 
 <%= render partial: "spree/admin/payments/source_views/#{@payment.payment_method.method_type}",

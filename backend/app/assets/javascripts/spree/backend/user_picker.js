@@ -22,7 +22,7 @@ $.fn.userAutocomplete = function () {
       data: function (term) {
         return {
           q: {
-            email_cont: term
+            email_start: term
           },
           token: Spree.api_key
         }

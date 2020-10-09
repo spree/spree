@@ -55,8 +55,8 @@ describe Spree::Admin::PromotionsController, type: :controller do
         subject
         new_promo = Spree::Promotion.last
         expect(new_promo.name).to eq 'New name1'
-        expect(new_promo.code).to eq 'code1_new'
-        expect(new_promo.path).to eq 'path1_new'
+        expect(new_promo.code).to match(/code1_[a-zA-Z]{4}/)
+        expect(new_promo.path).to match(/path1_[a-zA-Z]{4}/)
       end
     end
 
@@ -68,7 +68,11 @@ describe Spree::Admin::PromotionsController, type: :controller do
       let!(:promotion3) { create(:promotion, name: 'Name3', code: 'code3', path: '') }
 
       before do
-        create(:promotion, name: 'Name4', code: 'code4', path: '_new') # promotion 4
+        promotion_duplicator_mock = Spree::PromotionHandler::PromotionDuplicator.new(promotion3, random_string: "ABCD")
+        allow(Spree::PromotionHandler::PromotionDuplicator).to receive(:new).
+          with(promotion3).and_return(promotion_duplicator_mock)
+
+        create(:promotion, name: 'Name4', code: 'code4', path: '_ABCD') # promotion 4
       end
 
       it 'doesnt create a copy of promotion' do

@@ -1,22 +1,24 @@
 <div id="source-movements-table" class="twelve columns alpha">
-  <table class="table sortable">
-    <thead data-hook="bulk_variants_header">
-      <tr>
-        <th><%= Spree.t('variant') %></th>
-        <th><%= Spree.t('sku') %></th>
-        <th><%= Spree.t('quantity') %></th>
-        <th><%= Spree.t('count_on_hand') %></th>
-      </tr>
-    </thead>
-    <tbody id="bulk_variants_tbody">
-      <% stock_movements.each do |movement| %>
+  <div class="table-responsive">
+    <table class="table sortable">
+      <thead data-hook="bulk_variants_header">
         <tr>
-          <td><%= movement.stock_item.variant.name %></td>
-          <td><%= movement.stock_item.variant.sku %></td>
-          <td><%= movement.quantity %></td>
-          <td><%= movement.stock_item.count_on_hand %></td>
+          <th><%= Spree.t('variant') %></th>
+          <th><%= Spree.t('sku') %></th>
+          <th><%= Spree.t('quantity') %></th>
+          <th><%= Spree.t('count_on_hand') %></th>
         </tr>
-      <% end %>
-    </tbody>
-  </table>
+      </thead>
+      <tbody id="bulk_variants_tbody">
+        <% stock_movements.each do |movement| %>
+          <tr>
+            <td><%= movement.stock_item.variant.name %></td>
+            <td><%= movement.stock_item.variant.sku %></td>
+            <td><%= movement.quantity %></td>
+            <td><%= movement.stock_item.count_on_hand %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
 </div>

@@ -19,7 +19,7 @@
             </td>
             <td class="actions actions-1">
               <button class="btn btn-sm btn-success add_variant with-tip" data-stock-location-id="{{this.stock_location_id}}" title="<%= Spree.t(:add) %>" data-action="add">
-                <span class="icon icon-add"></span>
+                <%= svg_icon name: "add", width: '16', height: '16' %>
               </button>
             </td>
           {{else}}
@@ -33,7 +33,7 @@
               </td>
               <td class="actions actions-1">
                 <button class="btn btn-sm btn-success add_variant with-tip" data-stock-location-id="{{this.stock_location_id}}" title="<%= Spree.t(:add) %>" data-action="add">
-                  <span class="icon icon-add"></span>
+                  <%= svg_icon name: "add", width: '16', height: '16' %>
                 </button>
               </td>
             {{else}}

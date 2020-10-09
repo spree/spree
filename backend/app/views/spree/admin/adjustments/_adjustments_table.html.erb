@@ -1,22 +1,22 @@
 <div class="card-header">
   <h3 class="card-title mb-0 h5"><%= Spree.t(:order_adjustments) %></h3>
 </div>
-
-<table class="table table-bordered adjustments" data-hook="adjustments">
-  <thead data-hook="adjustmment_head">
-    <tr>
-      <th><%= Spree.t(:adjustable) %></th>
-      <th><%= Spree.t(:description) %></th>
-      <th class="text-center"><%= Spree.t(:amount) %></th>
-      <th class="text-center"><%= Spree.t(:status) %></th>
-      <th class="actions"></th>
-    </tr>
-  </thead>
-  <tbody>
-    <%= render partial: "adjustment", collection: @adjustments %>
-  </tbody>
-</table>
-
+<div class="table-responsive">
+  <table class="table table-bordered adjustments" data-hook="adjustments">
+    <thead data-hook="adjustmment_head">
+      <tr>
+        <th><%= Spree.t(:adjustable) %></th>
+        <th><%= Spree.t(:description) %></th>
+        <th class="text-center"><%= Spree.t(:amount) %></th>
+        <th class="text-center"><%= Spree.t(:status) %></th>
+        <th class="actions"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <%= render partial: "adjustment", collection: @adjustments %>
+    </tbody>
+  </table>
+</div>
 <% if can?(:edit, Spree::Adjustment) %>
   <div class="card-footer">
     <div class="row text-center pb-0">

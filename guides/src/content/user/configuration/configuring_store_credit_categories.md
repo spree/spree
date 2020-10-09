@@ -4,29 +4,29 @@ title: Store Credit Categories
 
 ## Introduction
 
-In order to assign Store Credits to the User's account you have to create **Store Credit Categories**, category defines reason for which the User received Store Credits to spent in your's store.
+In order to assign Store Credits to the user's account you have to create **Store Credit Categories**. The category defines the reason the user received Store Credits to spend in your store.
 
-To find **Store Credit Categories** click on **Configuration** dropdown and look for Store Credit Categories option.
+To find **Store Credit Categories**, click on the **Configuration** dropdown and look for the **Store Credit Categories** option.
 
 ![Store Credit Categories](../../../images/user/config/store_credit_categories.jpg)
 
-## Creating New Store Credit Category
+## Creating a New Store Credit Category
 
-Now, it is simple way to create new Store Credit Category, find **New Store Credit Category** button in the right upper corner and press it.
+There's now a simple way to create a new Store Credit Category. You can do it by pressing the **New Store Credit Category** button in the upper right corner.
 
 ![New SC Category](../../../images/user/config/new_sc_category.jpg)
 
-There is only one input box that tells what kind of category you will create. Simply input name and press **Create** button.
+There is only one input box that tells what kind of category you will create. Simply input the name and press the **Create** button.
 
 ![New SC Category Name](../../../images/user/config/new_sc_category_name.jpg)
 
 ## Editing and Deleting Store Credit Categories
 
-Previously created Category is visible on Store Credit Categories settings. Now, you can create more of them or make additional changes to existing ones.
-Simple as that, in every other section in Spree you can see **Edit** and **Delete** buttons next to the name of category.
+The previously created Category is visible in the Store Credit Categories settings. You can now create more of them or make additional changes to existing ones.
+In every other section in Spree you can see **Edit** and **Delete** buttons next to the name of category.
 
 ![Category Edit](../../../images/user/config/category_edit_icon.jpg)
 
 ![Category Delete](../../../images/user/config/category_delete_icon.jpg)
 
-Now you can assign Store Credit to the User's accounts. You can learn more about it [here](/user/users/editing_users.html)
+You can now assign Store Credit to the User's accounts. You can learn more about it [here](/user/users/editing_users.html)

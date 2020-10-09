@@ -22,7 +22,7 @@ module Spree
     money_methods :outstanding_balance, :item_total,           :adjustment_total,
                   :included_tax_total,  :additional_tax_total, :tax_total,
                   :shipment_total,      :promo_total,          :total,
-                  :cart_promo_total
+                  :cart_promo_total,    :pre_tax_item_amount,  :pre_tax_total
 
     alias display_ship_total display_shipment_total
     alias_attribute :ship_total, :shipment_total
@@ -174,7 +174,12 @@ module Spree
 
     # Sum of all line item amounts pre-tax
     def pre_tax_item_amount
-      line_items.to_a.sum(&:pre_tax_amount)
+      line_items.sum(:pre_tax_amount)
+    end
+
+    # Sum of all line item and shipment pre-tax
+    def pre_tax_total
+      pre_tax_item_amount + shipments.sum(:pre_tax_amount)
     end
 
     def shipping_discount
@@ -297,13 +302,13 @@ module Spree
     def outstanding_balance
       if canceled?
         -1 * payment_total
-      elsif refunds.exists?
-        # If refund has happened add it back to total to prevent balance_due payment state
-        # See: https://github.com/spree/spree/issues/6229 & https://github.com/spree/spree/issues/8136
-        total - (payment_total + refunds.sum(:amount))
       else
-        total - payment_total
+        total - (payment_total + reimbursement_paid_total)
       end
+    end
+
+    def reimbursement_paid_total
+      reimbursements.sum(&:paid_amount)
     end
 
     def outstanding_balance?
@@ -350,6 +355,8 @@ module Spree
       touch :completed_at
 
       deliver_order_confirmation_email unless confirmation_delivered?
+
+      deliver_store_owner_order_notification_email if deliver_store_owner_order_notification_email?
 
       consider_risk
     end
@@ -641,6 +648,13 @@ module Spree
         sum(:amount)
     end
 
+    def has_free_shipping?
+      promotions.
+        joins(:promotion_actions).
+        where(spree_promotion_actions: { type: 'Spree::Promotion::Actions::FreeShipping' }).
+        exists?
+    end
+
     private
 
     def link_by_email
@@ -705,6 +719,18 @@ module Spree
 
     def credit_card_nil_payment?(attributes)
       payments.store_credits.present? && attributes[:amount].to_f.zero?
+    end
+
+    # Returns true if:
+    #   1. an email address is set for new order notifications AND
+    #   2. no notification for this order has been sent yet.
+    def deliver_store_owner_order_notification_email?
+      store.new_order_notifications_email.present? && !store_owner_notification_delivered?
+    end
+
+    def deliver_store_owner_order_notification_email
+      OrderMailer.store_owner_notification_email(id).deliver_later
+      update_column(:store_owner_notification_delivered, true)
     end
   end
 end

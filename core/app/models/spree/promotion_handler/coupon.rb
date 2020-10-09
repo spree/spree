@@ -28,7 +28,7 @@ module Spree
 
         if promotion.present?
           # Order promotion has to be destroyed before line item removing
-          order.order_promotions.find_by!(promotion_id: promotion.id).destroy
+          order.order_promotions.where(promotion_id: promotion.id).destroy_all
 
           remove_promotion_adjustments(promotion)
           remove_promotion_line_items(promotion)

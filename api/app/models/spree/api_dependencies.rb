@@ -13,7 +13,9 @@ module Spree
       :storefront_country_serializer, :storefront_current_order_finder, :storefront_completed_order_finder, :storefront_order_sorter,
       :storefront_collection_paginator, :storefront_user_serializer, :storefront_products_sorter, :storefront_products_finder,
       :storefront_product_serializer, :storefront_taxon_serializer, :storefront_taxon_finder, :storefront_find_by_variant_finder,
-      :storefront_cart_update_service, :storefront_cart_estimate_shipping_rates_service, :storefront_estimated_shipment_serializer
+      :storefront_cart_update_service, :storefront_cart_estimate_shipping_rates_service, :storefront_estimated_shipment_serializer,
+      :storefront_store_serializer, :storefront_address_serializer,
+      :storefront_account_create_address_service, :storefront_account_update_address_service, :storefront_address_finder
     ].freeze
 
     attr_accessor *INJECTION_POINTS
@@ -48,7 +50,12 @@ module Spree
       @storefront_checkout_remove_store_credit_service = Spree::Dependencies.checkout_remove_store_credit_service
       @storefront_checkout_get_shipping_rates_service = Spree::Dependencies.checkout_get_shipping_rates_service
 
+      # account services
+      @storefront_account_create_address_service = Spree::Dependencies.account_create_address_service
+      @storefront_account_update_address_service = Spree::Dependencies.account_update_address_service
+
       # serializers
+      @storefront_address_serializer = 'Spree::V2::Storefront::AddressSerializer'
       @storefront_cart_serializer = 'Spree::V2::Storefront::CartSerializer'
       @storefront_credit_card_serializer = 'Spree::V2::Storefront::CreditCardSerializer'
       @storefront_country_serializer = 'Spree::V2::Storefront::CountrySerializer'
@@ -58,6 +65,7 @@ module Spree
       @storefront_payment_method_serializer = 'Spree::V2::Storefront::PaymentMethodSerializer'
       @storefront_product_serializer = 'Spree::V2::Storefront::ProductSerializer'
       @storefront_estimated_shipment_serializer = 'Spree::V2::Storefront::EstimatedShippingRateSerializer'
+      @storefront_store_serializer = 'Spree::V2::Storefront::StoreSerializer'
 
       # sorters
       @storefront_order_sorter = Spree::Dependencies.order_sorter
@@ -67,6 +75,7 @@ module Spree
       @storefront_collection_paginator = Spree::Dependencies.collection_paginator
 
       # finders
+      @storefront_address_finder = Spree::Dependencies.address_finder
       @storefront_country_finder = Spree::Dependencies.country_finder
       @storefront_current_order_finder = Spree::Dependencies.current_order_finder
       @storefront_completed_order_finder = Spree::Dependencies.completed_order_finder

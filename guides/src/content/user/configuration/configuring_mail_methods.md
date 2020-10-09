@@ -6,15 +6,15 @@ title: Mail Methods
 
 ## Introduction
 
-As this has been extracted, please be sure to add [spree_mail_settings](https://github.com/spree-contrib/spree_mail_settings) to your Gemfile before proceeding if you desire this behavior.
+As this has been extracted, please be sure to add [spree_mail_settings](https://github.com/spree-contrib/spree_mail_settings) to your Gemfile before proceeding if you require this behavior.
 
-The configurable components of your Spree site are managed in the Mail Method Settings panel. You can reach this by going first to the Admin Interface, clicking "Configuration" and then "Mail Method Settings".
+The configurable components of your Spree site are managed in the Mail Method Settings panel. You can reach this by going to the Admin Interface and clicking "Configuration" followed by "Mail Method Settings".
 
 ![Mail Method Settings](../../../images/user/config/mail_method_settings.jpg)
 
 ### Enable Mail Delivery
 
-Checking the "Enable Mail Delivery" option will cause all of the confirmation and notification emails the Spree shopping cart system generates to be sent. You may want to disable this option if you want to test other functionality of the store without sending bogus emails.
+Checking the "Enable Mail Delivery" option means all of the confirmation and notification emails the Spree shopping cart system generates are sent. You may want to disable this option if you want to test functionalities of the store without sending bogus emails.
 
 ### Send Mails As
 
@@ -22,11 +22,11 @@ Set this to the email address you want to use as the "From" line on emails that 
 
 ### Send Copy of All Mails To
 
-You may want to keep track of the emails your store sends, especially if you are newly launching your e-commerce business. If so, you can configure the system to send a copy of all confirmation and notification emails to the email address you input for this setting.
+You may want to keep track of the emails your store sends, especially if you are newly launching your e-commerce business. If so, you can configure the system to send a copy of all confirmation and notification emails to the email address you input in this field.
 
 ### Intercept Email Address
 
-Setting this option causes any notification emails to be re-routed to the email address you declare.
+Setting this option causes any notification emails to be re-routed to a designated email address.
 
 ### SMTP Settings
 

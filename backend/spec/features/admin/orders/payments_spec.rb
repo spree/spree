@@ -73,8 +73,9 @@ describe 'Payments', type: :feature, js: true do
         expect(column_text(4)).to eq('Credit Card')
         expect(column_text(6)).to eq('void')
       end
-
-      click_on 'New Payment'
+      within find('#contentHeader') do
+        click_on 'New Payment'
+      end
       expect(page).to have_content('New Payment')
       click_button 'Update'
       expect(page).to have_content('successfully created!')
@@ -89,8 +90,10 @@ describe 'Payments', type: :feature, js: true do
     it 'cannot create a payment for an order with no payment methods', js: false do
       Spree::PaymentMethod.delete_all
       order.payments.delete_all
+      within find('#contentHeader') do
+        click_on 'New Payment'
+      end
 
-      click_on 'New Payment'
       expect(page).to have_content('You cannot create a payment for an order without any payment methods defined.')
       expect(page).to have_content('Please define some payment methods first.')
     end
@@ -170,7 +173,7 @@ describe 'Payments', type: :feature, js: true do
         fill_in 'Card Number', with: '4111 1111 1111 1111'
         fill_in 'Name', with: 'Test User'
         fill_in 'Expiration', with: "09 / #{Time.current.year + 1}"
-        fill_in 'Card Code', with: '007'
+        fill_in 'Card Varification Code (CVC)', with: '007'
         # Regression test for #4277
         expect(page).to have_field(class: 'ccType', type: :hidden, with: 'visa')
         click_button 'Continue'

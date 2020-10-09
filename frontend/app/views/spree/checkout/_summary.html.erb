@@ -27,24 +27,29 @@
     <% end %>
 
     <% if order.passed_checkout_step?("address") && order.shipments.any? %>
-      <div class="d-table-cell"><%= Spree.t(:shipping) %>:</div>
-      <% shipping_total = Spree::Money.new(order.shipments.to_a.sum(&:cost), currency: order.currency) %>
-      <div class="d-table-cell text-right"
-           data-hook='shipping-total'
-           data-currency='<%= Money::Currency.find(order.currency).symbol %>'
-           thousands-separator='<%= shipping_total.thousands_separator %>'
-           decimal-mark='<%= shipping_total.decimal_mark %>'
-           precision='<%= Money::Currency.find(order.currency).exponent %>'
-      >
-        <%= shipping_total.to_html %>
-      </div>
+      <% if order.has_free_shipping? %>
+        <div class="d-table-cell"><%= Spree.t(:shipping) %>:</div>
+        <div class="d-table-cell text-right"><%= Spree.t(:free) %></div>
+      <% else %>
+        <div class="d-table-cell"><%= Spree.t(:shipping) %>:</div>
+        <% shipping_total = Spree::Money.new(order.shipments.to_a.sum(&:cost), currency: order.currency) %>
+        <div class="d-table-cell text-right"
+            data-hook='shipping-total'
+            data-currency='<%= Money::Currency.find(order.currency).symbol %>'
+            thousands-separator='<%= shipping_total.thousands_separator %>'
+            decimal-mark='<%= shipping_total.decimal_mark %>'
+            precision='<%= Money::Currency.find(order.currency).exponent %>'
+        >
+          <%= shipping_total.to_html %>
+        </div>
 
-      <% if order.shipment_adjustments.nonzero.exists? %>
-        <% order.shipment_adjustments.nonzero.promotion.eligible.group_by(&:label).each do |label, adjustments| %>
-          <div class="d-table-cell"><%= label %>:</div>
-          <div class="d-table-cell text-right">
-            <%= Spree::Money.new(adjustments.sum(&:amount), currency: order.currency).to_html %>
-          </div>
+        <% if order.shipment_adjustments.nonzero.exists? %>
+          <% order.shipment_adjustments.nonzero.promotion.eligible.group_by(&:label).each do |label, adjustments| %>
+            <div class="d-table-cell"><%= label %>:</div>
+            <div class="d-table-cell text-right">
+              <%= Spree::Money.new(adjustments.sum(&:amount), currency: order.currency).to_html %>
+            </div>
+          <% end %>
         <% end %>
       <% end %>
     <% end %>

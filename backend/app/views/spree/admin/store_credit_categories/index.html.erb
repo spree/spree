@@ -3,10 +3,11 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= button_link_to Spree.t(:new_store_credit_category), new_object_url, class: "btn-success", icon: 'add', id: 'admin_new_store_credit_category_link' %>
+  <%= button_link_to Spree.t(:new_store_credit_category), new_object_url, class: "btn-success", icon: 'add.svg', id: 'admin_new_store_credit_category_link' %>
 <% end if can? :create, Spree::StoreCreditCategory %>
 
 <% if @store_credit_categories.any? %>
+<div class="table-responsive">
   <table class="table">
     <thead>
       <tr data-hook="admin_store_credit_categories_index_headers">
@@ -26,6 +27,7 @@
       <% end %>
     </tbody>
   </table>
+</div>
 <% else %>
   <div class="alert alert-warning">
     <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::StoreCreditCategory)) %>,

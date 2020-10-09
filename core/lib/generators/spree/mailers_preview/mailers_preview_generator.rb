@@ -17,6 +17,7 @@ module Spree
       template 'mailers/previews/order_preview.rb', "#{preview_path}/order_preview.rb"
       template 'mailers/previews/shipment_preview.rb', "#{preview_path}/shipment_preview.rb"
       template 'mailers/previews/reimbursement_preview.rb', "#{preview_path}/reimbursement_preview.rb"
+      template 'mailers/previews/user_preview.rb', "#{preview_path}/user_preview.rb"
     end
   end
 end

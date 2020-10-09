@@ -1,3 +1,7 @@
+.payment-action-save {
+  @include button-variant($success, $success, $success );
+}
+
 .btn,
 .nav-pills > li > a {
   vertical-align: middle;
@@ -7,19 +11,31 @@
 .btn {
   text-align: center;
 
-  .glyphicon {
-    padding-right: 3px;
+  .ship {
+    color: #fff;
   }
-
-  .ship { color: #fff; }
+  svg,
+  i.icon {
+   margin-bottom: 3px;
+  }
 }
 
-.btn-sm .glyphicon { padding: 0; }
+input#image_attachment >
+input[type="button"],
+input[type="file"]::-webkit-file-upload-button {
+  @include border-radius();
+  border: 1px solid;
+  background-color: white;
+  color: $secondary;
+  border-color: $secondary;
+  padding: 0.375rem 0.75rem;
+  &:hover {
+    color: white;
+    background-color: $secondary;
+  }
+}
 
-.btn.action-void { @extend .btn-danger; }
-.btn.action-capture { @extend .btn-success; }
-.btn.payment-action-edit {
-  @extend .btn-primary;
-
-  color: $white !important;
+.actions .btn,
+.page-actions .btn {
+  margin: 2px;
 }

@@ -7,22 +7,23 @@
     <ol class="d-flex flex-wrap product-variants-variant-values">
       <% option_type[:option_values].each do |option_value| %>
         <li>
-          <%= radio_button_tag "variant_option_value_id_#{option_type[:id]}",
-            option_value[:id],
-            option_value[:is_default] && index == 0,
-            class: "product-variants-variant-values-radio",
-            data: {
-              "option-type-index" => index,
-              "presentation" => option_value[:presentation],
-              "variant-id" => option_value[:variant_id],
-              "is-color" => true
-            }
-          %>
-
           <%= label_tag "variant_option_value_id_#{option_type[:id]}_#{option_value[:id]}",
             class: "m-1 m-sm-2 m-md-1 color-select-label",
-            tabindex: 0,
-            "aria-label" => option_value[:presentation] do %>
+            title: option_value[:name],
+            data: { toggle: "tooltip", placement: "bottom" } do %>
+
+            <%= radio_button_tag "variant_option_value_id_#{option_type[:id]}",
+              option_value[:id],
+              option_value[:is_default] && index == 0,
+              class: "product-variants-variant-values-radio",
+              aria: { label: option_value[:name] },
+              data: {
+                "option-type-index" => index,
+                "presentation" => option_value[:presentation],
+                "variant-id" => option_value[:variant_id],
+                "is-color" => true
+              }
+            %>
 
             <%= render partial: "spree/shared/color_select", locals: {
               color: option_value[:presentation],

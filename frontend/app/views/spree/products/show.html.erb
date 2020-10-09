@@ -9,6 +9,9 @@
     <div class="row" data-hook="product_show">
       <%= render partial: 'gallery' %>
       <div class="col-12 col-md-5" data-hook="product_right_part">
+        <% if @product.respond_to?(:vendor) %>
+          <%= render partial: 'vendor_info' %>
+        <% end %>
         <div id="product-description" data-hook="product_right_part_wrap">
           <h1 class="mt-3 mt-md-0 text-center text-md-left product-details-title">
             <%= @product.name %>
@@ -38,7 +41,7 @@
 
     <%= render partial: 'gallery_modal' %>
   </div>
-  <div id="related-products" />
+  <div id="related-products"></div>
 
   <%= products_structured_data([@product]) %>
 

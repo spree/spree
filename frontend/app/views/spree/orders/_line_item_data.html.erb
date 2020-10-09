@@ -10,7 +10,7 @@
 <div class="shopping-cart-item-quantity <%= additional_classes %>" data-hook="cart_item_quantity">
   <div class="d-flex align-items-center">
     <%= button_tag '-', type: 'button', class: "border-right-0 shopping-cart-item-quantity-decrease-btn", data: { id: dom_id(line_item) } %>
-    <%= item_form.number_field :quantity, min: 0, class: "form-control text-center border-left-0 border-right-0 shopping-cart-item-quantity-input", size: 5, data: { id: dom_id(line_item) } %>
+    <%= item_form.number_field :quantity, min: 0, class: "form-control text-center border-left-0 border-right-0 shopping-cart-item-quantity-input", size: 5, data: { id: dom_id(line_item) }, aria: { label: Spree.t('cart_page.change_quantity') } %>
     <%= button_tag '+', type: 'button', class: "border-left-0 shopping-cart-item-quantity-increase-btn", data: { id: dom_id(line_item) } %>
   </div>
 </div>
@@ -22,7 +22,7 @@
 <% end %>
 
 <div class="shopping-cart-item-delete <%= additional_classes %>" data-hook="cart_item_delete">
-  <%= link_to '#', class: 'delete', id: "delete_#{dom_id(line_item)}", data: { turbolinks: false } do %>
+  <%= link_to '#', class: 'delete', id: "delete_#{dom_id(line_item)}", data: { turbolinks: false }, aria: { label: Spree.t('cart_page.remove_from_cart') } do %>
     <%= icon(name: 'garbage',
              classes: 'shopping-cart-item-delete-icon',
              width: 18.9,

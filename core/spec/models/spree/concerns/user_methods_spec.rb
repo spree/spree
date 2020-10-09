@@ -77,4 +77,34 @@ describe Spree::UserMethods do
       test_user.destroy
     end
   end
+
+  describe '#payment_sources' do
+    subject { test_user.payment_sources }
+
+    let(:next_year) { DateTime.now.year + 1 }
+    let(:previous_year) { DateTime.now.year - 1 }
+    let(:gateway_customer_profile_id) { 'SDS-4231' }
+    let(:other_user) { create :user }
+
+    let!(:valid_credit_card) { create(:credit_card, user: test_user, gateway_customer_profile_id: gateway_customer_profile_id, year: next_year) }
+    let!(:other_user_credit_card) { create(:credit_card, user: other_user, gateway_customer_profile_id: gateway_customer_profile_id, year: next_year) }
+    let!(:blank_payment_profile_credit_card) { create(:credit_card, user: test_user, gateway_customer_profile_id: nil, year: next_year) }
+    let!(:outdated_credit_card) { create(:credit_card, user: test_user, gateway_customer_profile_id: gateway_customer_profile_id, year: previous_year) }
+
+    it 'includes only not expired credit cards with payment profile that belong to subject user' do
+      expect(subject).to include(valid_credit_card)
+    end
+
+    it 'does not include credit cards that belong to other user' do
+      expect(subject).not_to include(other_user_credit_card)
+    end
+
+    it 'does not include credit cards without payment profile' do
+      expect(subject).not_to include(blank_payment_profile_credit_card)
+    end
+
+    it 'does not include outdated credit cards' do
+      expect(subject).not_to include(outdated_credit_card)
+    end
+  end
 end

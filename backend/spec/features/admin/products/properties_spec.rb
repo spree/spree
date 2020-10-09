@@ -104,8 +104,8 @@ describe 'Properties', type: :feature, js: true do
     it 'successfully create and then remove product property' do
       fill_in_property
 
-      expect(page).to have_css('tbody#product_properties tr:nth-child(2)')
-      expect(page).to have_css('tbody#product_properties tr').twice
+      expect(page).to have_css('tbody#sortVert tr:nth-child(2)')
+      expect(page).to have_css('tbody#sortVert tr').twice
 
       delete_product_property
 
@@ -153,7 +153,7 @@ describe 'Properties', type: :feature, js: true do
       within('#sidebar') do
         click_link 'Properties'
       end
-      expect(page).to have_css('tbody#product_properties tr', count: expected_row_count)
+      expect(page).to have_css('tbody#sortVert tr', count: expected_row_count)
     end
   end
 end

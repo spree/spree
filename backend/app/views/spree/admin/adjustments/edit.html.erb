@@ -11,9 +11,9 @@
     <%= render partial: 'form', locals: { f: f } %>
 
     <div class="form-actions" data-hook="buttons">
-      <%= button Spree.t(:continue), 'save' %>
+      <%= button Spree.t(:continue), 'save.svg' %>
       <span class="or"><%= Spree.t(:or) %></span>
-      <%= button_link_to Spree.t('actions.cancel'), spree.admin_order_adjustments_url(@order), icon: 'delete' %>
+      <%= button_link_to Spree.t('actions.cancel'), spree.admin_order_adjustments_url(@order), icon: 'cancel.svg' %>
     </div>
   </fieldset>
 <% end %>

@@ -24,7 +24,11 @@ module Spree
     after_touch :touch_all_products
 
     def filter_param
-      presentation.titleize.delete(' ').downcase
+      name.titleize.delete(' ').downcase
+    end
+
+    def self.color
+      find_by(name: 'color')
     end
 
     private

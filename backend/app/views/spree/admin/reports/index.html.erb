@@ -1,20 +1,21 @@
 <% content_for :page_title do %>
   <%= Spree.t(:reports) %>
 <% end %>
-
-<table class="table">
-  <thead>
-    <tr data-hook="reports_header">
-      <th><%= Spree.t(:name) %></th>
-      <th><%= Spree.t(:description) %></th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @reports.each do |key, value| %>
-    <tr data-hook="reports_row">
-      <td><%= link_to value[:name], send("#{key}_admin_reports_url".to_sym) %></td>
-      <td><%= value[:description] %></td>
-    </tr>
-    <% end %>
-  </tbody>
-</table>
+<div class="table-responsive">
+  <table class="table">
+    <thead>
+      <tr data-hook="reports_header">
+        <th><%= Spree.t(:name) %></th>
+        <th><%= Spree.t(:description) %></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @reports.each do |key, value| %>
+      <tr data-hook="reports_row">
+        <td><%= link_to value[:name], send("#{key}_admin_reports_url".to_sym) %></td>
+        <td><%= value[:description] %></td>
+      </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

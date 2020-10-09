@@ -13,6 +13,7 @@ en:
   activerecord:
     attributes:
       spree/address:
+        label: Address name
         address1: Address
         address2: Address (contd.)
         city: City
@@ -502,10 +503,14 @@ en:
     address_book:
       other_address: "Other address"
       add_new_shipping_address: "Add new address"
-      new_shipping_address: "New Address"
-      edit_shipping_address: "Edit Address"
+      label: Address Name
+      address_name_label: Address Name
+      address_name_placeholder: Give this address a unique name (Work, Home, etc.)
+      new_address: "New Address"
+      edit_address: "Edit Address"
+      remove_address: Remove Address
       no_shipping_addresses_on_file: "No addresses on file"
-      shipping_addresses: "Addresses"
+      addresses: "Addresses"
       successfully_created: "Address has been successfully created."
       successfully_removed: "Address has been successfully removed."
       successfully_saved: "Saved successfully"
@@ -616,6 +621,7 @@ en:
     billing: Billing
     billing_address: Billing Address
     both: Both
+    breadcrumbs: Breadcrumbs
     calculated_reimbursements: Calculated Reimbursements
     calculator: Calculator
     calculator_settings_warning: If you are changing the calculator type, you must save first before you can edit the calculator settings
@@ -633,18 +639,20 @@ en:
     cannot_set_shipping_method_without_address: Cannot set shipping method until customer details are provided.
     capture: Capture
     capture_events: Capture events
-    card_code: Card Code
+    card_code: Card Varification Code (CVC)
     card_number: Card Number
     card_type: Brand
     card_type_is: Card type is
     cart: Cart
     cart_page:
       add_promo_code: ADD PROMO CODE
+      change_quantity: Change quantity
       checkout: checkout
       empty_info: 'Your cart is empty.'
       header: Your shopping cart
       product: product
       quantity: quantity
+      remove_from_cart: Remove from cart
       title: Shopping Cart
     cart_subtotal:
       one: 'Subtotal (1 item)'
@@ -661,6 +669,8 @@ en:
     charged: Charged
     checkout: Checkout
     checkout_page:
+      main_navigation: Main navigation
+      checkout_navigation: Checkout navigation
       back_to_cart: back to the cart
       delivery_method: delivery method
       header: Checkout
@@ -737,7 +747,7 @@ en:
     currencies: Currencies
     currency_settings: Currency Settings
     current: Current
-    current_promotion_usage: ! 'Current Usage: %{count}'
+    current_promotion_usage: ! 'current usage: %{count}'
     customer: Customer
     customer_details: Customer Details
     customer_details_updated: Customer Details Updated
@@ -745,15 +755,45 @@ en:
     customer_returns: Customer Returns
     customer_search: Customer Search
     customer_support_email: Customer Support Email
+    new_order_notifications_email: New Order Notifications Email
     cut: Cut
     cvv: CVV
     cvv_response: CVV Response
     date: Date
     date_completed: Date Completed
     date_picker:
+      am: 'AM'
       first_day: 0
       format: ! '%Y/%m/%d'
-      js_format: yy/mm/dd
+      hourAriaLabel: 'Hour'
+      js_format: Y/m/d
+      js_date_time: Y/m/d - H:i
+      minuteAriaLabel: 'Minute'
+      pm: 'PM'
+      rangeSeparator: ' to '
+      scrollTitle: 'Scroll to increment'
+      toggleTitle: 'Click to toggle'
+      weekAbbreviation: 'Wk'
+      yearAriaLabel: 'Year'
+      sun: 'Sun'
+      mon: 'Mon'
+      tue: 'Tue'
+      wed: 'Wed'
+      thu: 'Thu'
+      fri: 'Fri'
+      sat: 'Sat'
+      lh_jan: 'January'
+      lh_feb: 'February'
+      lh_mar: 'March'
+      lh_apr: 'April'
+      lh_may: 'May'
+      lh_jun: 'June'
+      lh_jul: 'July'
+      lh_aug: 'August'
+      lh_sep: 'September'
+      lh_oct: 'October'
+      lh_nov: 'November'
+      lh_dec: 'December'
     date_range: Date Range
     default: Default
     default_country_cannot_be_deleted: Default country cannot be deleted
@@ -803,6 +843,8 @@ en:
     empty_cart: Empty Cart
     enable_mail_delivery: Enable Mail Delivery
     end: End
+    ends_at: Ends at
+    ending_at: Ending at
     ending_in: Ending in
     error: error
     errors:
@@ -853,6 +895,7 @@ en:
     finalized: Finalized
     first_item: First Item
     first_name: First Name
+    firstname: First Name
     first_name_begins_with: First Name Begins With
     flat_percent: Flat Percent
     flat_rate_per_order: Flat Rate
@@ -860,6 +903,7 @@ en:
     follow_us: Follow us
     footer_info: Footer info
     forgot_password: Forgot password?
+    free: Free
     free_shipping: Free Shipping
     free_shipping_amount: "-"
     front_end: Front End
@@ -868,6 +912,7 @@ en:
     general: General
     general_settings: General Settings
     generate_code: Generate coupon code
+    get_back_to_the: Get back to the
     go_to_category: Go to category
     go_to_facebook: Go to facebook
     go_to_homepage: Go to Home Page
@@ -880,6 +925,7 @@ en:
     height: Height
     hide_from_subcategories_nav: Hide from subcategories navigation
     home: Home
+    home_page: homepage
     homepage:
       bestsellers: BESTSELLERS
       fashion_trends: FASHION TRENDS
@@ -903,6 +949,8 @@ en:
       available_locales: Available Locales
       fields: Fields
       language: Language
+      country: Country
+      default_country: Default Country
       localization_settings: Localization Settings
       only_incomplete: Only incomplete
       only_complete: Only complete
@@ -945,7 +993,9 @@ en:
     inventory_error_flash_for_insufficient_quantity: An item in your cart has become unavailable.
     inventory_state: Inventory State
     is_not_available_to_shipment_address: is not available to shipment address
-    iso_name: Iso Name
+    iso: ISO Alpha-2
+    iso3: ISO Alpha-3
+    iso_name: ISO Name
     issued_on: Issued On
     item: Item
     item_description: Item Description
@@ -962,9 +1012,11 @@ en:
     items_reimbursed: Items reimbursed
     join_slack: Join Slack
     last_name: Last Name
+    lastname: Last Name
     last_name_begins_with: Last Name Begins With
     learn_more: Learn More
     lifetime_stats: Lifetime Stats
+    limit_usage_to: Limit usage to
     line_item_adjustments: "Line item adjustments"
     list: List
     loading: Loading
@@ -983,12 +1035,14 @@ en:
     login_as_existing: Login as Existing Customer
     login_failed: Login authentication failed.
     login_name: Login
+    logo: Logo
     logo_alt: Brand logo
     logout: Logout
     look_for_similar_items: Look for similar items
     make_refund: Make refund
     make_sure_the_above_reimbursement_amount_is_correct: Make sure the above reimbursement amount is correct
     mail_from_address: Mail from address
+    mailer_logo: Mailer logo (JPG or PNG images only)
     manage_promotion_categories: Manage Promotion Categories
     manual_intervention_required: Manual intervention required
     manage_variants: Manage Variants
@@ -1029,6 +1083,8 @@ en:
       show_search: Show search
       show_user_menu: Show user menu
       sign_up: SIGN UP
+      desktop: Desktop navigation
+      mobile: Mobile navigation
     new: New
     new_adjustment: New Adjustment
     new_customer: Create new account
@@ -1072,6 +1128,7 @@ en:
     no_actions_added: No actions added
     no_address_given: No address given
     no_available_date_set: No available date set
+    no_country: No country set
     no_payment_found: No payment found
     no_pending_payments: No pending payments
     no_product_available:
@@ -1129,16 +1186,24 @@ en:
     order_mailer:
       subtotal: ! 'Subtotal:'
       total: ! 'Order Total:'
+      store_team: '%{store_name} Team'
       cancel_email:
         dear_customer: Dear %{name},
         instructions: Your order has been CANCELED.  Please retain this cancellation information for your records.
         order_summary_canceled: Order %{number} Summary [CANCELED]
         subject: Cancellation of Order
+        thanks: Thank you for your business.
       confirm_email:
         dear_customer: Dear %{name},
         instructions: Please review and retain the following order information for your records.
         order_summary: Order %{number} Summary
         subject: Order Confirmation
+        thanks: Thank you for your business.
+      store_owner_notification_email:
+        heading: New Order Received
+        instructions: You have received a new order.
+        order_summary: Order %{number} Summary
+        subject: '%{store_name} received a new order'
         thanks: Thank you for your business.
     order_not_found: We couldn't find your order. Please try that action again.
     order_number: Order %{number}
@@ -1168,6 +1233,7 @@ en:
     backordered_confirm_info: Selected item is backordered so expect delays. Are you sure you want to order it?
     overview: Overview
     package_from: package from
+    page_not_found: Sorry! Page you are looking can’t be found.
     pagination:
       next_page: next page &raquo;
       previous_page: ! '&laquo; previous page'
@@ -1225,7 +1291,6 @@ en:
       done: DONE
       default: DEFAULT
       filter_by: FILTER BY
-      home: Home
       newest_first: NEWEST FIRST
       no_results: No results
       no_results_found: No results found
@@ -1253,6 +1318,7 @@ en:
     preview_taxon: Preview Taxon
     previous: Previous
     previous_state_missing: "n/a"
+    previously_used_card: Previously Used Cards
     price: Price
     prices: Prices
     price_range: Price Range
@@ -1400,6 +1466,7 @@ en:
     return_items_cannot_be_associated_with_multiple_orders: Return items cannot be associated with multiple orders.
     reimbursement_mailer:
       reimbursement_email:
+        store_team: '%{store_name} Team'
         days_to_send: ! 'You have %{days} days to send back any items awaiting exchange.'
         dear_customer: Dear %{name},
         exchange_summary: Exchange Summary
@@ -1439,6 +1506,8 @@ en:
     security_settings: Security Settings
     select: Select
     select_from_prototype: Select From Prototype
+    select_a_date: Select a date
+    select_a_date_range: Select a date range
     select_a_return_authorization_reason: Select a reason for the return authorization
     select_a_stock_location: Select a stock location
     select_a_store_credit_reason: Select a reason for the store credit
@@ -1452,6 +1521,7 @@ en:
     server_error: The server returned an error
     settings: Settings
     ship: Ship
+    ship_to: "Shipping to:"
     ship_address: Ship Address
     ship_total: Ship Total
     shipment: Shipment
@@ -1459,6 +1529,7 @@ en:
     shipment_details: "From %{stock_location} via %{shipping_method}"
     shipment_mailer:
       shipped_email:
+        store_team: '%{store_name} Team'
         dear_customer: Dear %{name},
         instructions: Your order %{number} has been shipped
         shipment_summary: Shipment Summary for order
@@ -1520,6 +1591,7 @@ en:
     ssl:
       change_protocol: "Please switch to using HTTP (rather than HTTPS) and retry this request."
     start: Start
+    starting_from: Starts at
     state: State
     state_based: State Based
     states: States
@@ -1553,6 +1625,7 @@ en:
       reimbursed: Reimbursed
       resumed: Resumed
       returned: Returned
+      shipment: Shipment
       shipped: Shipped
       void: Void
     states_required: States Required
@@ -1570,7 +1643,8 @@ en:
     stock_transfer_name: Stock Transfer
     stock_transfer:
       errors:
-        must_have_variant: You must add atleast one variant.
+        must_have_variant: You must add at least one variant.
+        variants_unavailable: "Some variants are not available on %{stock}"
     stock_transfers: Stock Transfers
     stop: Stop
     store: Store
@@ -1651,7 +1725,7 @@ en:
     taxonomy_categories_name: Categories
     taxonomy_edit: Edit taxonomy
     taxonomy_tree_error: The requested change has not been accepted and the tree has been returned to its previous state, please try again.
-    taxonomy_tree_instruction: ! '* Right click a child in the tree to access the menu for adding, deleting or sorting a child.'
+    taxonomy_tree_instruction: ! '* Right click (or double tap on iOS device) a child in the tree to access the menu for adding, deleting or sorting a child.'
     taxons: Taxons
     test: Test
     test_mailer:
@@ -1734,5 +1808,6 @@ en:
     your_order_is_empty_add_product: Your order is empty, please search for and add a product above
     zip: Zip
     zipcode: Zip Code
+    zipcode_required: Zip Code Required
     zone: Zone
     zones: Zones

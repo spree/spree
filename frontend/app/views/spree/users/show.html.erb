@@ -5,31 +5,34 @@
     <div class="col-xs-12 col-lg-4">
       <dt class="text-uppercase account-page-user-info-item-title">
         <%= Spree.t(:account_info) %>
-        <%= link_to spree.edit_user_path(@user), class: "account-page-user-info-item-title-edit" do %>
-          <%= inline_svg_tag 'edit.svg', class: "account-page-user-info-item-title-edit-img" %>
+          <%= link_to spree.edit_user_path(@user), class: "account-page-user-info-item-title-edit" do %>
+          <%= inline_svg_tag('edit.svg', width: 27.6, height: 24) %>
         <% end %>
       </dt>
       <dd class="account-page-user-info-item-definition"><%= @user.email %></dd>
 
       <div class="d-lg-inline-block account-page-user-info-item-store-credits">
         <p class="my-0 text-uppercase text-center">
-          <%= Spree.t(:store_credit_name) %>: <b class="account-page-user-info-item-store-credits-amount"><%= Spree::Money.new(@user.total_available_store_credit).to_s.gsub('.00', '') %></b>
+          <%= Spree.t(:store_credit_name) %>: <b class="account-page-user-info-item-store-credits-amount"><%= Spree::Money.new(@user.total_available_store_credit(current_currency), currency: current_currency).to_s.gsub('.00', '') %></b>
         </p>
       </div>
     </div>
     <div class="col-xs-12 col-lg-8 mt-sm-5 mt-lg-0">
-      <%= link_to Spree.t(:add_new_address), spree.new_address_path, class: 'account-page-new-address-link', method: :get %>
-
+      <h4 class="mb-3"><%= link_to Spree.t(:add_new_address), spree.new_address_path, method: :get %></h4>
       <div class="row">
         <% @user.addresses.each_with_index do |address, index| %>
-          <div class="col-xs-12 col-lg-6">
+          <div class="col-12 col-sm-6 mb-3">
             <% index += 1 %>
             <% if index % 3 == 0 %>
-              <div class="account-page-user-info-item">
-              </div>
+              <div class="account-page-user-info-item my-4"></div>
             <% end %>
-            <div class="account-page-user-info-item">
-              <%= render "spree/users/address", address: address %>
+            <div class="row">
+              <div class="col-8 col-lg-6">
+                <%= render "spree/users/address", address: address %>
+              </div>
+              <div class="col">
+                <%= render "spree/users/address_controls", address: address %>
+              </div>
             </div>
           </div>
         <% end %>
@@ -38,7 +41,6 @@
   </div>
 
   <div data-hook="account_my_orders" class="account-page-orders" id="account-my-orders">
-
     <h3 class="text-uppercase spree-mb-medium spree-mt-medium spree-header" ><%= Spree.t(:my_orders) %></h3>
     <% if @orders.present? %>
       <table>

@@ -3,7 +3,7 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= button_link_to Spree.t(:new_promotion), new_object_url, class: "btn-success", icon: 'add' %>
+  <%= button_link_to Spree.t(:new_promotion), new_object_url, class: "btn-success", icon: 'add.svg' %>
 <% end if can?(:create, Spree::Promotion) %>
 
 <% content_for :table_filter do %>
@@ -36,15 +36,16 @@
       </div>
 
       <div data-hook="admin_promotions_index_search_buttons" class="form-actions">
-        <%= button Spree.t(:filter_results), 'search' %>
+        <%= button Spree.t(:filter_results), 'search.svg' %>
       </div>
     <% end %>
   </div>
 <% end %>
 
-<%= paginate @promotions, theme: 'twitter-bootstrap-4' %>
+<%= paginate @promotions, theme: 'admin-twitter-bootstrap-4' %>
 
 <% if @promotions.any? %>
+<div class="table-responsive">
   <table class="table">
     <thead>
       <tr>
@@ -75,6 +76,7 @@
       <% end %>
     </tbody>
   </table>
+  </div>
 <% else %>
   <div class="alert alert-info no-objects-found">
     <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::Promotion)) %>,

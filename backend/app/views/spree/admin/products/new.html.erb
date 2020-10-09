@@ -43,14 +43,23 @@
         <%= f.field_container :available_on, class: ['form-group'] do %>
           <%= f.label :available_on, Spree.t(:available_on) %>
           <%= f.error_message_on :available_on %>
-          <%= f.text_field :available_on, class: 'datepicker form-control' %>
+
+          <div class="input-group datepicker" data-wrap="true">
+            <%= f.text_field :available_on,
+                             value: datepicker_field_value(@product.available_on),
+                             placeholder: Spree.t(:select_a_date),
+                             class: 'form-control shadow-none',
+                             'data-input':'' %>
+
+            <%= render partial: 'spree/admin/shared/cal_close' %>
+          </div>
         <% end %>
       </div>
 
       <div data-hook="new_product_shipping_category" class="col-12 col-md-4">
         <%= f.field_container :shipping_category, class: ['form-group'] do %>
           <%= f.label :shipping_category_id, Spree.t(:shipping_categories) %><span class="required">*</span>
-          <%= f.collection_select(:shipping_category_id, @shipping_categories, :id, :name, { include_blank: Spree.t('match_choices.none') }, { class: 'select2', required: :required }) %>
+          <%= f.collection_select(:shipping_category_id, @shipping_categories, :id, :name, { include_blank: Spree.t('match_choices.none') }, { class: 'select2' }) %>
           <%= f.error_message_on :shipping_category_id %>
         <% end %>
       </div>

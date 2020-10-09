@@ -1,5 +1,23 @@
+<div class="d-lg-none page-actions__close border-bottom text-right">
+  <button
+    id="contextual-menu-close"
+    class="btn btn-link"
+    type="button"
+    aria-expanded="false"
+    aria-label="Toggle page actions">
+    <%= svg_icon name: "cancel.svg", width: '20', height: '20' %>
+  </button>
+</div>
+<% if content_for?(:page_actions) %>
+  <div class="page-actions d-lg-none col-12 px-0 <% if content_for?(:sidebar) %>pb-3<% end %> text-center" data-hook="toolbar">
+    <div class="d-flex justify-content-center flex-wrap">
+      <%= yield :page_actions %>
+    </div>
+  </div>
+<% end %>
+
 <% if content_for?(:sidebar) %>
-  <aside id="sidebar" class="main-right-sidebar" data-hook>
+  <aside id="sidebar" class="main-right-sidebar px-2" data-hook>
     <%= yield :sidebar %>
   </aside>
 <% end %>

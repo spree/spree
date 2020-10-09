@@ -41,7 +41,15 @@ module Spree
       end
     end
 
-    def logo(image_path = Spree::Config[:logo], options = {})
+    def logo(image_path = nil, options = {})
+      image_path ||= if current_store.logo.attached? && current_store.logo.variable?
+                       main_app.url_for(current_store.logo.variant(resize: '244x104>'))
+                     elsif current_store.logo.attached? && current_store.logo.image?
+                       main_app.url_for(current_store.logo)
+                     else
+                       Spree::Config[:logo]
+                     end
+
       path = spree.respond_to?(:root_path) ? spree.root_path : main_app.root_path
 
       link_to path, 'aria-label': current_store.name, method: options[:method] do
@@ -49,8 +57,33 @@ module Spree
       end
     end
 
+    def object
+      instance_variable_get('@' + controller_name.singularize)
+    end
+
+    def og_meta_data
+      og_meta = {}
+
+      if object.is_a? Spree::Product
+        image                             = default_image_for_product_or_variant(object)
+        og_meta['og:image']               = main_app.url_for(image.attachment) if image&.attachment
+
+        og_meta['og:url']                 = spree.url_for(object) if frontend_available? # url_for product needed
+        og_meta['og:type']                = object.class.name.demodulize.downcase
+        og_meta['og:title']               = object.name
+        og_meta['og:description']         = object.description
+
+        price = object.price_in(current_currency)
+        if price
+          og_meta['product:price:amount']   = price.amount
+          og_meta['product:price:currency'] = current_currency
+        end
+      end
+
+      og_meta
+    end
+
     def meta_data
-      object = instance_variable_get('@' + controller_name.singularize)
       meta = {}
 
       if object.is_a? ApplicationRecord
@@ -74,16 +107,10 @@ module Spree
       meta
     end
 
-    def meta_image_url_path
-      object = instance_variable_get('@' + controller_name.singularize)
-      return unless object.is_a?(Spree::Product)
-
-      image = default_image_for_product_or_variant(object)
-      image&.attachment.present? ? main_app.url_for(image.attachment) : asset_path(Spree::Config[:logo])
-    end
-
-    def meta_image_data_tag
-      tag('meta', property: 'og:image', content: meta_image_url_path) if meta_image_url_path
+    def og_meta_data_tags
+      og_meta_data.map do |property, content|
+        tag('meta', property: property, content: content) unless property.nil? || content.nil?
+      end.join("\n")
     end
 
     def meta_data_tags
@@ -104,7 +131,13 @@ module Spree
     def pretty_time(time)
       return '' if time.blank?
 
-      [I18n.l(time.to_date, format: :long), time.strftime('%l:%M %p')].join(' ')
+      [I18n.l(time.to_date, format: :long), time.strftime('%l:%M %p %Z')].join(' ')
+    end
+
+    def pretty_date(date)
+      return '' if date.blank?
+
+      [I18n.l(date.to_date, format: :long)].join(' ')
     end
 
     def seo_url(taxon, options = nil)
@@ -118,7 +151,9 @@ module Spree
     # we should always try to render image of the default variant
     # same as it's done on PDP
     def default_image_for_product(product)
-      if product.default_variant.images.any?
+      if product.images.any?
+        product.images.first
+      elsif product.default_variant.images.any?
         product.default_variant.images.first
       elsif product.variant_images.any?
         product.variant_images.first

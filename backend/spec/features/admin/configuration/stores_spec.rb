@@ -34,6 +34,7 @@ describe 'Stores admin', type: :feature, js: true do
       click_link 'New Store'
       page.fill_in 'store_name', with: 'Spree Example Test'
       page.fill_in 'store_url', with: 'test.localhost'
+      page.fill_in 'store_code', with: 'spree'
       page.fill_in 'store_mail_from_address', with: 'no-reply@example.com'
       page.fill_in 'store_customer_support_email', with: 'support@example.com'
       select2 'EUR', from: 'Currency'
@@ -69,6 +70,20 @@ describe 'Stores admin', type: :feature, js: true do
       expect(store.name).to eq updated_name
       expect(store.default_currency).to eq new_currency
     end
+
+    it 'lets me enable new order notifications by setting a notification email address' do
+      store_owner_email = 'new-order-notifications@example.com'
+      visit spree.admin_stores_path
+
+      within_row(1) do
+        click_icon :edit
+      end
+      page.fill_in 'store_new_order_notifications_email', with: store_owner_email
+      click_button 'Update'
+
+      store.reload
+      expect(store.new_order_notifications_email).to eq(store_owner_email)
+    end
   end
 
   describe 'deleting store' do
@@ -92,7 +107,7 @@ describe 'Stores admin', type: :feature, js: true do
     it 'sets a store as default' do
       visit spree.admin_stores_path
       within_row(2) do
-        click_icon :ok
+        click_icon :save
       end
 
       expect(store.reload.default).to eq false

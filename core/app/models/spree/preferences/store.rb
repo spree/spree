@@ -6,7 +6,7 @@
 
 require 'singleton'
 
-DB_EXCEPTIONS = if defined? PG
+DB_EXCEPTIONS ||= if defined? PG
                   [PG::ConnectionBad, ActiveRecord::NoDatabaseError]
                 elsif defined? Mysql2
                   [Mysql2::Error::ConnectionError, ActiveRecord::NoDatabaseError]

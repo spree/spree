@@ -1,0 +1,95 @@
+// Adaptive icon from calendar to close.
+@mixin swith-appended-icon {
+  &:placeholder-shown:not(:focus) + * {
+      @content;
+  }
+}
+
+input.flatpickr-input {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-color: white !important;
+}
+
+.flatpickr-current-month .numInputWrapper {
+  margin-left: 3px;
+  border-radius: $border-radius;
+  overflow: hidden;
+}
+.flatpickr-current-month span.cur-month:hover {
+  background: transparent;
+}
+.numInputWrapper span.arrowUp {
+  border-color: transparent;
+  border-radius: 0;
+}
+.numInputWrapper span.arrowDown {
+  border-color: transparent;
+  border-radius: 0;
+}
+
+.input-group {
+  input.flatpickr-input{
+    @include swith-appended-icon  {
+      opacity: 0;
+    }
+  }
+}
+
+.append_under {
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 0;
+  height: 100%;
+}
+
+.flatpickr-day {
+  margin: 2px 0;
+  border-radius: $border-radius ;
+}
+
+// Fix Flatpickr bug where things jusy highlight for no reason.
+input.flatpickr-input[readonly] {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+}
+
+.flatpickr-months .flatpickr-prev-month:hover svg,
+.flatpickr-months .flatpickr-next-month:hover svg {
+  fill: $primary;
+}
+
+// Force rounded corner for the toggle cal and close icons.
+.input-group >
+.input-group-append:not(:last-child) >
+.force-round {
+  z-index: 5;
+  border-top-right-radius: $border-radius !important;
+  border-bottom-right-radius: $border-radius !important;
+}
+
+div.flatpickr-calendar.open {
+  z-index: $zindex-dropdown;
+}
+
+.flatpickr-time {
+  border-radius: 0 0 5px 5px;
+  &:after {
+    display: none;
+  }
+  .numInputWrapper {
+      span {
+        border-color: transparent;
+        border-radius: 0;
+
+      }
+
+  }
+}
