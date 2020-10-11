@@ -21,7 +21,7 @@
     </ul>
 
     <div class="payment-sources">
-      <%= render partial: 'payment_sources' %>
+      <%= render partial: 'payment_sources' if @payment_sources.present? %>
 
       <ul id="payment-methods" class="list-unstyled position-relative mb-0 payment-sources-add-form" data-hook>
         <% checkout_available_payment_methods.each do |method| %>
