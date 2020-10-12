@@ -7,6 +7,9 @@ describe 'Products filtering', :js, :caching do
   let!(:option_value_1_1) { create :option_value, option_type: option_type_1, name: 's', presentation: 'S' }
   let!(:option_value_1_2) { create :option_value, option_type: option_type_1, name: 'm', presentation: 'M' }
 
+  let!(:option_type_2) { create :option_type, name: 'color', presentation: 'Color' }
+  let!(:option_value_2_1) { create :option_value, option_type: option_type_2, name: 'green', presentation: 'Green' }
+
   let!(:product_1) { create :product, name: 'First shirt', option_types: [option_type_1] }
   let!(:variant_1_1) { create :variant, product: product_1, option_values: [option_value_1_1] }
 
@@ -33,6 +36,10 @@ describe 'Products filtering', :js, :caching do
     have_css '.plp-overlay-card-item--selected', text: value
   end
 
+  def filters
+    find('#plp-filters-accordion')
+  end
+
   it 'correctly filters Products' do
     visit spree.nested_taxons_path(taxon)
 
@@ -48,5 +55,22 @@ describe 'Products filtering', :js, :caching do
     expect(page).to have_selected_filter_with(value: 'M')
     expect(page).to have_selected_filter_with(value: 'S')
     expect(current_path).to eq spree.products_path
+  end
+
+  context 'option type filters' do
+    it 'displays filterable option types' do
+      visit spree.nested_taxons_path(taxon)
+
+      %w[Size Color].each do |option_type_name|
+        expect(filters).to have_content(option_type_name)
+      end
+    end
+
+    it 'does not display unfilterable option types' do
+      option_type_2.update!(filterable: false)
+      visit spree.nested_taxons_path(taxon)
+
+      expect(filters).not_to have_content('Color')
+    end
   end
 end
