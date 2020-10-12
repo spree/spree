@@ -113,23 +113,25 @@ describe Spree::CheckoutController, type: :controller do
           expect(response).to redirect_to spree.checkout_state_path('delivery')
         end
       end
-
+      # tutaj
+      # zrob testy kiedy adres jest editable
+      # adres sie usuwa kiedy front linijka 44
+      # make tests to add addresses as guest, difference is that address is not associate to user
+      # zrob testy kiedy nie ma delivery i ship address
       context 'with the order in the address state' do
-        before do
-          order.update_columns(ship_address_id: create(:address).id, state: 'address')
-          allow(order).to receive_messages user: user
-        end
+        let(:order) { create(:order_with_totals, ship_address: ship_address, state: 'address', user: user) }
 
-        context 'with a billing and shipping address' do
-          let(:bill_address_params) do
-            order.bill_address.attributes.except('created_at', 'updated_at')
+        context 'with a billing and shipping address (with delivery step)' do
+          subject 'update' do
+            post :update, params: update_params
+            order.reload
           end
-          let(:ship_address_params) do
-            order.ship_address.attributes.except('created_at', 'updated_at')
-          end
+
+          let(:ship_address) { create(:address) }
           let(:update_params) do
             {
               state: 'address',
+              save_user_address: true,
               order: {
                 bill_address_attributes: bill_address_params,
                 ship_address_attributes: ship_address_params,
@@ -138,19 +140,104 @@ describe Spree::CheckoutController, type: :controller do
             }
           end
 
-          before do
-            @expected_bill_address_id = order.bill_address.id
-            @expected_ship_address_id = order.ship_address.id
+          context 'when addresses attributes are nil' do
+            let(:bill_address_params) { nil }
+            let(:ship_address_params) { nil }
+            let(:expected_bill_address_id) { order.bill_address.id }
+            let(:expected_ship_address_id) { order.ship_address.id }
 
-            post :update, params: update_params
-            order.reload
+            it 'assigns addresses to existing ones' do
+              update
+
+              expect(order.bill_address_id).to eq(expected_bill_address_id)
+              expect(order.ship_address_id).to eq(expected_ship_address_id)
+            end
+
+            it 'does not create new address' do
+              expect{ update }.to change{ Spree::Address.count }.by(0)
+            end
           end
 
-          it 'updates the same billing and shipping address' do
-            expect(order.bill_address.id).to eq(@expected_bill_address_id)
-            expect(order.ship_address.id).to eq(@expected_ship_address_id)
+          context 'when addresses are found in user address book' do
+            let(:bill_address_params) { order.bill_address.attributes.except('created_at', 'updated_at') }
+            let(:ship_address_params) { order.ship_address.attributes.except('created_at', 'updated_at') }
+            let(:expected_bill_address_id) { order.bill_address_id }
+            let(:expected_ship_address_id) { order.ship_address_id }
+
+            it 'assigns addresses to existing ones' do
+              update
+
+              expect(order.bill_address_id).to eq(expected_bill_address_id)
+              expect(order.ship_address_id).to eq(expected_ship_address_id)
+            end
+
+            it 'does not create new address' do
+              expect{ update }.to change{ Spree::Address.count }.by(0)
+            end
+          end
+
+          context 'when addresses are not found in user address book' do
+            let!(:old_bill_address) { order.bill_address }
+            let!(:old_ship_address) { order.ship_address }
+            let(:bill_address_params) { build(:address, city: "Chicago").attributes.except('created_at', 'updated_at') }
+            let(:ship_address_params) { build(:address, city: "Washington").attributes.except('created_at', 'updated_at') }
+            let(:expected_bill_address_id) { Spree::Address.find_by(city: "Chicago").id }
+            let(:expected_ship_address_id) { Spree::Address.find_by(city: "Washington").id }
+
+            context 'when default address is editable' do
+              # Jak sie nie uda to nie rob allow tylko realnie zrob zeby nie byl editable
+              # Daj tutaj jeden ten sam adres do ship i bill
+              before(:each) do
+                allow(old_bill_address).to receive(:editable?).and_return(true)
+                allow(old_ship_address).to receive(:editable?).and_return(true)
+              end
+
+              # it 'assigns addresses to existing ones' do
+              #   update
+              #
+              #   expect(order.bill_address_id).to eq(expected_bill_address_id)
+              #   expect(order.ship_address_id).to eq(expected_ship_address_id)
+              # end
+
+              it 'does not create new address' do
+                expect{ update }.to change{ Spree::Address.count }.by(0)
+              end
+            end
+
+            context 'when default address is not editable' do
+              it 'assigns addresses to created ones' do
+                update
+
+                expect(order.bill_address_id).to eq(expected_bill_address_id)
+                expect(order.ship_address_id).to eq(expected_ship_address_id)
+              end
+
+              it 'creates new addresses' do
+                expect{ update }.to change{ Spree::Address.count }.by(2)
+              end
+
+              it 'assigns created addresses to user' do
+                update
+
+                expect(Spree::Address.last(2).pluck(:user_id).uniq[0]).to eq user.id
+              end
+            end
           end
         end
+
+        # context 'with a billing address and without shipping address (without delivery step)' do
+        #   before do
+        #     allow(order).to receive_messages(checkout_steps: ['cart', 'address', 'payment'])
+        #     allow(order).to receive_messages state: 'address'
+        #     allow(order).to receive_messages user: user
+        #     allow(controller).to receive_messages check_authorization: true
+        #   end
+        #
+        #   it "doesn't set shipping address" do
+        #     expect(order).not_to receive(:ship_address=)
+        #     post :update, params: { state: order.state }
+        #   end
+        # end
       end
 
       context 'when in the confirm state' do
@@ -379,7 +466,7 @@ describe Spree::CheckoutController, type: :controller do
       end
     end
   end
-
+  # tutaj
   context "order doesn't have a delivery step" do
     before do
       allow(order).to receive_messages(checkout_steps: ['cart', 'address', 'payment'])
@@ -517,7 +604,7 @@ describe Spree::CheckoutController, type: :controller do
       end
     end
   end
-
+  # tutaj
   context 'Address Book' do
     let!(:user) { create(:user) }
     let!(:variant) { create(:product, sku: 'Demo-SKU').master }
