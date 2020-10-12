@@ -9,8 +9,6 @@ module Spree
     validate  :enough_stock_at_desired_location, if: :handle_stock_counts?
 
     def initialize(params = {})
-      # TODO: Check if stocks' count_on_hand is correct after split (admin/products/checked-shirt/stock)
-      # TODO: Is there a case when shipment has more than one on_hand inventory unit?
       @current_stock_location = params[:current_stock_location]
       @desired_stock_location = params[:desired_stock_location]
       @current_shipment       = params[:current_shipment]
@@ -57,7 +55,7 @@ module Spree
     end
 
     def current_shipment_units
-      current_shipment.inventory_units.where(variant_id: variant.id)
+      current_shipment.inventory_units.on_hand_or_backordered.where(variant_id: variant.id)
     end
 
     def update_desired_shipment_inventory_units
