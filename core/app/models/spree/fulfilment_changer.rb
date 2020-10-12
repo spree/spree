@@ -72,27 +72,25 @@ module Spree
     end
 
     def update_current_shipment_inventory_units
-      # TODO: Use all on_hand and backorderd units when decreasing quantity.
-      on_hand_quantity = quantity
-      backordered_unit = current_shipment_units.find_by(state: :backordered)
-      if backordered_unit.present?
-        if backordered_unit.quantity > on_hand_quantity
-          backordered_unit.update(quantity: backordered_unit.quantity - on_hand_quantity)
-          on_hand_quantity = 0
-        else
-          on_hand_quantity -= backordered_unit.quantity
-          backordered_unit.destroy!
-        end
-      end
+      reduced_quantity = quantity
 
-      if on_hand_quantity > 0
-        on_hand_unit = current_shipment_units.find_by(state: :on_hand)
-        if on_hand_unit.quantity == on_hand_quantity
-          on_hand_unit.destroy!
-        else
-          on_hand_unit.update(quantity: on_hand_unit.quantity - on_hand_quantity)
-        end
+      # Reduce quantities from all backordered units in case there is more than one.
+      backorder_units = current_shipment_units.backordered
+      reduced_quantity = reduce_units_quantities(reduced_quantity, backorder_units) if backorder_units.any?
+
+      # Reduce quantities from all on_hand units in case there is more than one.
+      if reduced_quantity > 0
+        on_hand_units = current_shipment_units.on_hand
+        reduce_units_quantities(reduced_quantity, on_hand_units) if on_hand_units.any?
       end
+    end
+
+    def reduce_units_quantities(reduced_quantity, units)
+      units.each do |unit|
+        unit.quantity > reduced_quantity ? unit.update(quantity: unit.quantity - reduced_quantity) : unit.destroy!
+        reduced_quantity -= unit.quantity
+      end
+      reduced_quantity
     end
 
     def get_desired_shipment_inventory_unit(state)
