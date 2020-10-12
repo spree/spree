@@ -1575,7 +1575,7 @@ en:
     show_rate_in_label: Show rate in label
     show_store_selector:
       short: Show Store selector
-      long: Display the Store selector in the main nav bar of Storefront and allow users to change Store and Currency.
+      long: Display the Store selector in the main nav bar of Storefront and allow users to change Store and Currency
     sign_up: Sign Up
     sku: SKU
     skus: SKUs
