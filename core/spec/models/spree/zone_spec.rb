@@ -465,4 +465,12 @@ describe Spree::Zone, type: :model do
       end
     end
   end
+
+  context '.default' do
+    let!(:default_zone) { create(:zone, name: 'No Limits') }
+
+    it 'return name of default zone' do
+      expect(Spree::Zone.new.default).to eq('No Limits')
+    end
+  end
 end

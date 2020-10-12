@@ -1,5 +1,7 @@
 module Spree
   class Zone < Spree::Base
+    attribute :default, :string, default: Spree.t(:default_zone)
+
     with_options dependent: :destroy, inverse_of: :zone do
       has_many :zone_members, class_name: 'Spree::ZoneMember'
       has_many :tax_rates
