@@ -147,7 +147,7 @@ describe Spree::FulfilmentChanger do
 
         context 'when the original shipment has on hand and backordered units' do
           before do
-            expect_any_instance_of(Spree::FulfilmentChanger).to receive(:handle_stock_counts?).at_least(:once).and_return(false)
+            expect_any_instance_of(described_class).to receive(:handle_stock_counts?).at_least(:once).and_return(false)
             backordered_unit = current_shipment.inventory_units.on_hand.first.dup
             backordered_unit.update(state: :backordered, quantity: 5)
           end
