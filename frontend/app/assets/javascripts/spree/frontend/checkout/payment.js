@@ -8,20 +8,7 @@ Spree.ready(function ($) {
   Spree.onPayment = function () {
     if ($('#checkout_form_payment').length) {
       if ($('#existing_cards').length) {
-        $('#existing_cards').hide()
         $('#payment-methods').hide()
-        $("#payment-method-fields label[data-type='card']").click(function() {
-          $('#existing_cards').show()
-          $('.payment-sources').show()
-          $('.existing-cc-radio').first().prop('checked', true)
-        })
-        $("#payment-method-fields label:not([data-type='card'])").click(function() {
-          $('#existing_cards').hide()
-          $('#payment-methods').hide()
-          $('.payment-sources').hide()
-          $('.existing-cc-radio').prop('checked', false)
-          $('#use_existing_card_no').prop('checked', false)
-        })
         $('.existing-cc-radio').click(function () {
           $(this).prop('checked', true)
           $('#use_existing_card_no').prop('checked', false)
@@ -60,11 +47,26 @@ Spree.ready(function ($) {
       }
 
       $('input[type="radio"][name="order[payments_attributes][][payment_method_id]"]').click(function () {
+        $('#payment-methods').hide()
+        $('.payment-sources').hide()
         Spree.enableSave()
-        if ($('#payment_method_' + this.value).find('fieldset').children().length == 0) {
-          $('.payment-sources').hide()
-        } else {
-          $('.payment-sources').show()
+        if ($('#payment_method_' + this.value).find('fieldset').children().length !== 0) {
+          if (this.closest('label').dataset.type === 'card') {
+            if ($('#existing_cards').length) {
+              $('.existing-cc-radio').first().prop('checked', true);
+              $('#use_existing_card_no').prop('checked', false)
+              $('#use_existing_card_yes').prop('checked', true)
+              $('#existing_cards').show();
+              $('#payment-methods').hide();
+              $('.payment-sources').show()
+            }
+          } else {
+            $('.existing-cc-radio').prop('checked', false);
+            $('#use_existing_card_no').prop('checked', false);
+            $('#existing_cards').hide();
+            $('#payment-methods').show();
+            $('.payment-sources').show()
+          }
         }
         $('#payment-methods li').hide()
         if (this.checked) {

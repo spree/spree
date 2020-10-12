@@ -202,17 +202,35 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
     it 'only returns supported payment method of current store' do
       expect(page).not_to have_css("#payment_method_#{unsupported_payment.id}", visible: :hidden)
     end
+
+    it 'shows proper fields when changing payment method' do
+      expect(page).to have_css("#payment_method_#{credit_card_payment.id}")
+      expect(page).to have_css("#payment_method_#{check_payment.id}", visible: :hidden)
+
+      within('#payment-method-fields') do
+        find('label', text: 'Check').click
+      end
+      expect(page).not_to have_css("#payment_method_#{check_payment.id}")
+      expect(page).to have_css("#payment_method_#{credit_card_payment.id}", visible: :hidden)
+
+      within('#payment-method-fields') do
+        find('label', text: 'Credit Card').click
+      end
+      expect(page).to have_css("#payment_method_#{credit_card_payment.id}")
+      expect(page).to have_css("#payment_method_#{check_payment.id}", visible: :hidden)
+    end
   end
 
   context 'user has payment sources', js: true do
     let(:bogus) { create(:credit_card_payment_method) }
+    let(:check) { create(:check_payment_method) }
     let(:user) { create(:user) }
 
     before do
       create(:credit_card, user_id: user.id, payment_method: bogus, gateway_customer_profile_id: 'BGS-WEFWF')
 
       order = OrderWalkthrough.up_to(:payment)
-      allow(order).to receive_messages(available_payment_methods: [bogus])
+      allow(order).to receive_messages(available_payment_methods: [bogus, check])
 
       allow_any_instance_of(Spree::CheckoutController).to receive_messages(current_order: order)
       allow_any_instance_of(Spree::CheckoutController).to receive_messages(try_spree_current_user: user)
@@ -232,6 +250,40 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
 
       expect(page).to have_content(Spree.t(:order_success).gsub(/[[:space:]]+/, ' '))
       expect(page).to have_current_path(spree.order_path(Spree::Order.last))
+    end
+
+    it 'shows proper fields when changing payment method' do
+      # Check if credit card fields with existing card option are visible.
+      within('#existing_cards') do
+        expect(page).to have_content('****1111,  Spree Commerce')
+        expect(page).to have_content('Add a new card')
+      end
+
+      expect(page).to have_css("#payment_method_#{bogus.id}", visible: :hidden)
+      find('span', text: 'Add a new card').click
+      expect(page).to have_css("#payment_method_#{bogus.id}")
+
+      # Choose 'Check' and see if credit card fields are hidden.
+      within('#payment-method-fields') do
+        find('label', text: 'Check').click
+      end
+
+      expect(page).to have_css("#payment_method_#{bogus.id}", visible: :hidden)
+      expect(page).to have_css('#existing_cards', visible: :hidden)
+
+      # Choose 'Credit Card' and see if credit card fields with existing card option are visible again.
+      within('#payment-method-fields') do
+        find('label', text: 'Credit Card').click
+      end
+
+      within('#existing_cards') do
+        expect(page).to have_content('****1111,  Spree Commerce')
+        expect(page).to have_content('Add a new card')
+      end
+
+      expect(page).to have_css("#payment_method_#{bogus.id}", visible: :hidden)
+      find('span', text: 'Add a new card').click
+      expect(page).to have_css("#payment_method_#{bogus.id}")
     end
   end
 
