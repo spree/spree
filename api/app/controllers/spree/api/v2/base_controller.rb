@@ -53,7 +53,12 @@ module Spree
         end
 
         def spree_current_user
-          @spree_current_user ||= Spree.user_class.find_by(id: doorkeeper_token.resource_owner_id) if doorkeeper_token
+          return nil unless doorkeeper_token
+          return @spree_current_user if @spree_current_user
+
+          doorkeeper_authorize!
+
+          @spree_current_user ||= Spree.user_class.find_by(id: doorkeeper_token.resource_owner_id)
         end
 
         def spree_authorize!(action, subject, *args)
