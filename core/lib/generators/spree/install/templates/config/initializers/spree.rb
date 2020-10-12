@@ -28,4 +28,8 @@ end
 
 # Spree::Api::Dependencies.storefront_cart_serializer = 'MyRailsApp::CartSerializer'
 
+Rails.application.config.after_initialize do
+  Spree::Config = Spree::AppConfiguration.new
+ends
+
 Spree.user_class = <%= (options[:user_class].blank? ? 'Spree::LegacyUser' : options[:user_class]).inspect %>
