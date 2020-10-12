@@ -290,42 +290,32 @@ function completeItemSplit(event) {
   // eslint-disable-next-line eqeqeq
   if (stockLocationId != 'new_shipment') {
     if (newShipment !== undefined) {
-      // TRANSFER TO A NEW LOCATION
-      $.ajax({
-        type: 'POST',
-        async: false,
-        url: Spree.url(Spree.routes.shipments_api + '/transfer_to_location'),
-        data: {
-          original_shipment_number: originalShipmentNumber,
-          variant_id: variantId,
-          quantity: quantity,
-          stock_location_id: stockLocationId,
-          token: Spree.api_key
-        }
-      }).fail(function (msg) {
-        alert(msg.responseJSON.message || msg.responseJSON.exception)
-      }).done(function (msg) {
-        window.location.reload()
-      })
+      // transfer to a new location data
+      var url = Spree.url(Spree.routes.shipments_api + '/transfer_to_location')
+      var additional_data = { stock_location_id: stockLocationId }
     } else {
-      // TRANSFER TO AN EXISTING SHIPMENT
-      $.ajax({
-        type: 'POST',
-        async: false,
-        url: Spree.url(Spree.routes.shipments_api + '/transfer_to_shipment'),
-        data: {
-          original_shipment_number: originalShipmentNumber,
-          target_shipment_number: targetShipmentNumber,
-          variant_id: variantId,
-          quantity: quantity,
-          token: Spree.api_key
-        }
-      }).fail(function (msg) {
-        alert(msg.responseJSON.message || msg.responseJSON.exception)
-      }).done(function (msg) {
-        window.location.reload()
-      })
+      // transfer to an existing shipment data
+      var url = Spree.url(Spree.routes.shipments_api + '/transfer_to_shipment')
+      var additional_data = { target_shipment_number: targetShipmentNumber }
     }
+
+    data = {
+      original_shipment_number: originalShipmentNumber,
+      variant_id: variantId,
+      quantity: quantity,
+      token: Spree.api_key
+    }
+
+    $.ajax({
+      type: 'POST',
+      async: false,
+      url: url,
+      data: $.extend(data, additional_data)
+    }).fail(function (msg) {
+      alert(msg.responseJSON.message || msg.responseJSON.exception)
+    }).done(function (msg) {
+      window.location.reload()
+    })
   }
 }
 
