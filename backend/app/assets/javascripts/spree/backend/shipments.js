@@ -289,14 +289,14 @@ function completeItemSplit(event) {
   var newShipment = selectedShipment.data('new-shipment')
   // eslint-disable-next-line eqeqeq
   if (stockLocationId != 'new_shipment') {
-    var url, additionalData
+    var path, additionalData
     if (newShipment !== undefined) {
       // transfer to a new location data
-      url = Spree.url(Spree.routes.shipments_api + '/transfer_to_location')
+      path = '/transfer_to_location'
       additionalData = { stock_location_id: stockLocationId }
     } else {
       // transfer to an existing shipment data
-      url = Spree.url(Spree.routes.shipments_api + '/transfer_to_shipment')
+      path = '/transfer_to_shipment'
       additionalData = { target_shipment_number: targetShipmentNumber }
     }
 
@@ -310,7 +310,7 @@ function completeItemSplit(event) {
     $.ajax({
       type: 'POST',
       async: false,
-      url: url,
+      url: Spree.url(Spree.routes.shipments_api + path),
       data: $.extend(data, additionalData)
     }).fail(function (msg) {
       alert(msg.responseJSON.message || msg.responseJSON.exception)
