@@ -289,17 +289,18 @@ function completeItemSplit(event) {
   var newShipment = selectedShipment.data('new-shipment')
   // eslint-disable-next-line eqeqeq
   if (stockLocationId != 'new_shipment') {
+    var url, additionalData
     if (newShipment !== undefined) {
       // transfer to a new location data
-      var url = Spree.url(Spree.routes.shipments_api + '/transfer_to_location')
-      var additional_data = { stock_location_id: stockLocationId }
+      url = Spree.url(Spree.routes.shipments_api + '/transfer_to_location')
+      additionalData = { stock_location_id: stockLocationId }
     } else {
       // transfer to an existing shipment data
-      var url = Spree.url(Spree.routes.shipments_api + '/transfer_to_shipment')
-      var additional_data = { target_shipment_number: targetShipmentNumber }
+      url = Spree.url(Spree.routes.shipments_api + '/transfer_to_shipment')
+      additionalData = { target_shipment_number: targetShipmentNumber }
     }
 
-    data = {
+    var data = {
       original_shipment_number: originalShipmentNumber,
       variant_id: variantId,
       quantity: quantity,
@@ -310,7 +311,7 @@ function completeItemSplit(event) {
       type: 'POST',
       async: false,
       url: url,
-      data: $.extend(data, additional_data)
+      data: $.extend(data, additionalData)
     }).fail(function (msg) {
       alert(msg.responseJSON.message || msg.responseJSON.exception)
     }).done(function (msg) {
