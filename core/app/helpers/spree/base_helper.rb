@@ -208,11 +208,11 @@ module Spree
         style if style.in? Spree::Image.styles.with_indifferent_access
       end
     end
-  end
 
-  def meta_robots(store)
-    return unless store.seo_robots.present?
+    def meta_robots
+      return unless current_store.respond_to?(:seo_robots)
 
-    tag('meta', name: 'robots', content: store.seo_robots)
+      tag('meta', name: 'robots', content: current_store.seo_robots)
+    end
   end
 end
