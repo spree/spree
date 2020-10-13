@@ -209,4 +209,10 @@ module Spree
       end
     end
   end
+
+  def meta_robots(store)
+    return unless store.seo_robots.present?
+
+    tag('meta', name: 'robots', content: store.seo_robots)
+  end
 end
