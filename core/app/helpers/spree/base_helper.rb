@@ -211,7 +211,7 @@ module Spree
 
     def meta_robots
       return unless current_store.respond_to?(:seo_robots)
-
+      return if current_store.seo_robots.blank?
       tag('meta', name: 'robots', content: current_store.seo_robots)
     end
   end
