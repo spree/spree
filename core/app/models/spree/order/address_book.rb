@@ -57,7 +57,7 @@ module Spree
 
         attributes.transform_values! { |v| v == '' ? nil : v }
 
-        if attributes[:id].present?
+        if attributes[:id]
           default_address = ::Spree::Address.find(attributes[:id])
 
           if default_address&.editable?
