@@ -204,8 +204,8 @@ describe Spree::CheckoutController, type: :controller do
             let(:use_billing) { false }
             let!(:default_bill_address) { order.bill_address }
             let!(:default_ship_address) { order.ship_address }
-            let(:bill_address_params) { build(:address, firstname: nil, city: "Chicago").attributes.merge(id: default_bill_address.id).except('created_at', 'updated_at') }
-            let(:ship_address_params) { build(:address, firstname: nil, city: "Washington").attributes.merge(id: default_ship_address.id).except('created_at', 'updated_at') }
+            let(:bill_address_params) { build(:address, firstname: nil, city: 'Chicago').attributes.merge(id: default_bill_address.id).except('created_at', 'updated_at') }
+            let(:ship_address_params) { build(:address, firstname: nil, city: 'Washington').attributes.merge(id: default_ship_address.id).except('created_at', 'updated_at') }
             let(:bill_address_error) { { "bill_address.firstname": ["can't be blank"] } }
             let(:ship_address_error) { { "ship_address.firstname": ["can't be blank"] } }
 
@@ -408,7 +408,7 @@ describe Spree::CheckoutController, type: :controller do
           context 'when some attributes are invalid' do
             let(:use_billing) { false }
             let!(:default_bill_address) { order.bill_address }
-            let(:bill_address_params) { build(:address, firstname: nil, city: "Chicago").attributes.merge(id: default_bill_address.id).except('created_at', 'updated_at') }
+            let(:bill_address_params) { build(:address, firstname: nil, city: 'Chicago').attributes.merge(id: default_bill_address.id).except('created_at', 'updated_at') }
             let(:bill_address_error) { { "bill_address.firstname": ["can't be blank"] } }
 
             it 'returns address with errors' do
