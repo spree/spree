@@ -183,7 +183,7 @@ describe Spree::CheckoutController, type: :controller do
         context 'with a billing and shipping address (with delivery step)' do
           let(:ship_address) { create(:address, user: user) }
 
-          context 'when addresses attributes are nil' do
+          context 'when all addresses attributes are nil' do
             let(:use_billing) { false }
             let(:bill_address_params) { nil }
             let(:ship_address_params) { nil }
@@ -195,6 +195,25 @@ describe Spree::CheckoutController, type: :controller do
 
               expect(order.bill_address_id).to eq(expected_bill_address_id)
               expect(order.ship_address_id).to eq(expected_ship_address_id)
+            end
+
+            it_behaves_like 'address not created'
+          end
+
+          context 'when some attributes are invalid' do
+            let(:use_billing) { false }
+            let!(:default_bill_address) { order.bill_address }
+            let!(:default_ship_address) { order.ship_address }
+            let(:bill_address_params) { build(:address, firstname: nil, city: "Chicago").attributes.merge(id: default_bill_address.id).except('created_at', 'updated_at') }
+            let(:ship_address_params) { build(:address, firstname: nil, city: "Washington").attributes.merge(id: default_ship_address.id).except('created_at', 'updated_at') }
+            let(:bill_address_error) { { "bill_address.firstname": ["can't be blank"] } }
+            let(:ship_address_error) { { "ship_address.firstname": ["can't be blank"] } }
+
+            it 'returns address with errors' do
+              update
+
+              expect(order.errors.to_hash).to include(bill_address_error)
+              expect(order.errors.to_hash).to include(ship_address_error)
             end
 
             it_behaves_like 'address not created'
@@ -306,7 +325,7 @@ describe Spree::CheckoutController, type: :controller do
             context 'when submitted addresses already exist' do
               let!(:bill_address) { create(:address, city: 'Chicago', user: nil) }
               let!(:ship_address) { create(:address, city: 'Washington', user: nil) }
-              let(:order) { create(:order_with_totals, bill_address: nil, ship_address: nil, state: 'address', user: nil, email: 'kacper@email.com') }
+              let(:order) { create(:order_with_totals, bill_address: nil, ship_address: nil, state: 'address', user: nil, email: 'example@email.com') }
               let(:bill_address_params) { bill_address.attributes.except('id', 'created_at', 'updated_at') }
               let(:ship_address_params) { ship_address.attributes.except('id', 'created_at', 'updated_at') }
 
@@ -321,7 +340,7 @@ describe Spree::CheckoutController, type: :controller do
             end
 
             context 'when submitted addresses does not exist' do
-              let(:order) { create(:order_with_totals, bill_address: nil, ship_address: nil, state: 'address', user: nil, email: 'kacper@email.com') }
+              let(:order) { create(:order_with_totals, bill_address: nil, ship_address: nil, state: 'address', user: nil, email: 'example@email.com') }
               let(:bill_address_params) { build(:address, city: 'Chicago', user: nil).attributes.except(:created_at, :updated_at) }
               let(:ship_address_params) { build(:address, city: 'Washington', user: nil).attributes.except(:created_at, :updated_at) }
 
@@ -335,6 +354,23 @@ describe Spree::CheckoutController, type: :controller do
               it 'creates new addresses' do
                 expect { update }.to change { Spree::Address.count }.by(2)
               end
+            end
+
+            context 'when attributes are invalid' do
+              let(:order) { create(:order_with_totals, bill_address: nil, ship_address: nil, state: 'address', user: nil, email: 'example@email.com') }
+              let(:bill_address_params) { build(:address, firstname: nil, city: 'Chicago', user: nil).attributes.except(:created_at, :updated_at) }
+              let(:ship_address_params) { build(:address, firstname: nil, city: 'Washington', user: nil).attributes.except(:created_at, :updated_at) }
+              let(:bill_address_error) { { "bill_address.firstname": ["can't be blank"] } }
+              let(:ship_address_error) { { "ship_address.firstname": ["can't be blank"] } }
+
+              it 'returns address with errors' do
+                update
+
+                expect(order.errors.to_hash).to include(bill_address_error)
+                expect(order.errors.to_hash).to include(ship_address_error)
+              end
+
+              it_behaves_like 'address not created'
             end
           end
         end
@@ -356,7 +392,7 @@ describe Spree::CheckoutController, type: :controller do
             update
           end
 
-          context 'when address attributes are nil' do
+          context 'when all address attributes are nil' do
             let(:bill_address_params) { nil }
             let(:expected_bill_address_id) { order.bill_address_id }
 
@@ -364,6 +400,21 @@ describe Spree::CheckoutController, type: :controller do
               update
 
               expect(order.bill_address_id).to eq(expected_bill_address_id)
+            end
+
+            it_behaves_like 'address not created'
+          end
+
+          context 'when some attributes are invalid' do
+            let(:use_billing) { false }
+            let!(:default_bill_address) { order.bill_address }
+            let(:bill_address_params) { build(:address, firstname: nil, city: "Chicago").attributes.merge(id: default_bill_address.id).except('created_at', 'updated_at') }
+            let(:bill_address_error) { { "bill_address.firstname": ["can't be blank"] } }
+
+            it 'returns address with errors' do
+              update
+
+              expect(order.errors.to_hash).to include(bill_address_error)
             end
 
             it_behaves_like 'address not created'
@@ -440,7 +491,7 @@ describe Spree::CheckoutController, type: :controller do
 
             context 'when submitted bill address already exists' do
               let!(:bill_address) { create(:address, city: 'Chicago', user: nil) }
-              let(:order) { create(:order_with_totals, bill_address: nil, ship_address: nil, state: 'address', user: nil, email: 'kacper@email.com') }
+              let(:order) { create(:order_with_totals, bill_address: nil, ship_address: nil, state: 'address', user: nil, email: 'exaple@email.com') }
               let(:bill_address_params) { bill_address.attributes.except('id', 'created_at', 'updated_at') }
 
               it 'keeps address unassigned' do
@@ -453,7 +504,7 @@ describe Spree::CheckoutController, type: :controller do
             end
 
             context 'when submitted bill address does not exits' do
-              let(:order) { create(:order_with_totals, bill_address: nil, ship_address: nil, state: 'address', user: nil, email: 'kacper@email.com') }
+              let(:order) { create(:order_with_totals, bill_address: nil, ship_address: nil, state: 'address', user: nil, email: 'example@email.com') }
               let(:bill_address_params) { build(:address, city: 'Chicago', user: nil).attributes.except(:created_at, :updated_at) }
 
               it 'keeps created address unassigned' do
@@ -463,6 +514,20 @@ describe Spree::CheckoutController, type: :controller do
               end
 
               it_behaves_like 'new address created'
+            end
+
+            context 'when attributes are invalid' do
+              let(:order) { create(:order_with_totals, bill_address: nil, ship_address: nil, state: 'address', user: nil, email: 'example@email.com') }
+              let(:bill_address_params) { build(:address, firstname: nil, city: 'Chicago', user: nil).attributes.except(:created_at, :updated_at) }
+              let(:bill_address_error) { { "bill_address.firstname": ["can't be blank"] } }
+
+              it 'returns address with errors' do
+                update
+
+                expect(order.errors.to_hash).to include(bill_address_error)
+              end
+
+              it_behaves_like 'address not created'
             end
           end
         end

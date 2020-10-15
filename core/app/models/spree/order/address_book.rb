@@ -55,9 +55,9 @@ module Spree
       def update_or_create_address(attributes = {})
         return if attributes.blank?
 
-        attributes = attributes.select { |_k, v| v.present? }
+        attributes.transform_values! { |v| v == '' ? nil : v }
 
-        if attributes[:id]
+        if attributes[:id].present?
           default_address = ::Spree::Address.find(attributes[:id])
 
           if default_address&.editable?
