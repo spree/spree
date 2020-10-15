@@ -57,59 +57,17 @@ module Spree
 
         attributes = attributes.select { |_k, v| v.present? }
 
-        ############
-
-        if user
-          address = user.addresses.build(attributes.except(:id)).check
-          return address if address.id
-        end
-
         if attributes[:id]
-          address = Spree::Address.find(attributes[:id])
-          attributes.delete(:id)
+          default_address = ::Spree::Address.find(attributes[:id])
 
-          if address&.editable?
-            address.update(attributes)
-            return address
-          else
-            attributes.delete(:id)
+          if default_address&.editable?
+            default_address.update(attributes.merge(user: user))
+
+            return default_address
           end
         end
 
-        unless attributes[:id]
-          address = Spree::Address.new(attributes)
-          address.save
-        end
-
-        address
-
-        ########### NEW
-
-        # if attributes[:id]
-        #   address = ::Spree::Address.find(attributes[:id])
-        #   attributes.delete(:id)
-        #
-        #   if address&.editable?
-        #     address.update(attributes)
-        #     return address
-        #   end
-        # end
-        #
-        # unless attributes[:id]
-        #   address = ::Spree::Address.new(attributes)
-        #   if user
-        #     address.user = user
-        #     address = address.check
-        #
-        #     return address if address.id
-        #   end
-        #   # Niech tu sprawdza czy istnieje taki adres mimo ze nie ma uzytkownika, po co duplikaty
-        #   # Testy
-        #   # Zrefaktoruj, na pewno może być lepiej
-        #   address.save
-        # end
-        #
-        # address
+        ::Spree::Address.find_or_create_by(attributes.except(:id, :updated_at, :created_at).merge(user: user))
       end
     end
   end
