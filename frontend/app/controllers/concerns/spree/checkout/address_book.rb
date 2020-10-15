@@ -42,11 +42,7 @@ module Spree
         if @order.bill_address_id != @order.ship_address_id && bill_address == ship_address
           @order.update_column(:bill_address_id, ship_address.id)
           bill_address.destroy
-        elsif params[:save_user_address]
-          # bill_address.update_attribute(:user_id, try_spree_current_user&.id)
         end
-
-        # ship_address.update_attribute(:user_id, try_spree_current_user&.id) if params[:save_user_address]
       end
     end
   end
