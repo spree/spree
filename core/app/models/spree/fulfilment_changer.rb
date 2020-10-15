@@ -62,7 +62,7 @@ module Spree
       on_hand_unit = get_desired_shipment_inventory_unit(:on_hand)
       on_hand_unit.update(quantity: on_hand_unit.quantity + new_on_hand_quantity)
 
-      new_backorder_quantity = quantity - new_on_hand_quantity
+      new_backorder_quantity = current_on_hand_quantity - new_on_hand_quantity
       if new_backorder_quantity > 0
         backordered_unit = get_desired_shipment_inventory_unit(:backordered)
         backordered_unit.update(quantity: backordered_unit.quantity + new_backorder_quantity)
@@ -70,9 +70,9 @@ module Spree
     end
 
     def update_current_shipment_inventory_units
-      reduced_quantity = quantity
+      reduced_quantity = current_on_hand_quantity
 
-      # Reduce quantities from all backordered units in case there is more than one.
+      # Reduce quantities from all backordered units first in case there is more than one.
       backorder_units = current_shipment_units.backordered
       reduced_quantity = reduce_units_quantities(reduced_quantity, backorder_units) if backorder_units.any?
 
@@ -115,7 +115,7 @@ module Spree
     end
 
     def new_on_hand_quantity
-      [available_quantity, quantity].min
+      [available_quantity, current_on_hand_quantity].min
     end
 
     def unstock_quantity

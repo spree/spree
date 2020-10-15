@@ -362,7 +362,9 @@ describe 'Order Details', type: :feature, js: true do
               fill_in 'item_quantity', with: 2
 
               click_icon :save
-              expect(page).not_to have_css('tr.stock-item-split')
+              alert_text = page.driver.browser.switch_to.alert.text
+              expect(alert_text).to eq('Desired shipment has not enough stock in desired stock location')
+              accept_alert { order.reload }
 
               expect(order.shipments.count).to eq(1)
               expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq(2)
@@ -514,8 +516,9 @@ describe 'Order Details', type: :feature, js: true do
             fill_in 'item_quantity', with: 200
 
             click_icon :save
-            expect(page).not_to have_css('tr.stock-item-split')
-            order.reload
+            alert_text = page.driver.browser.switch_to.alert.text
+            expect(alert_text).to eq('Desired shipment has not enough stock in desired stock location')
+            accept_alert { order.reload }
 
             expect(order.shipments.count).to eq(2)
             expect(order.shipments.first.inventory_units_for(product.master).sum(&:quantity)).to eq(1)

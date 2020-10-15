@@ -298,6 +298,19 @@ describe Spree::FulfilmentChanger do
     end
   end
 
+  context 'when the current shipment has not enough inventory units' do
+    let(:current_shipment_inventory_unit_count) { 3 }
+    let(:quantity) { 5 }
+
+    it 'adds the desired inventory units to the desired shipment' do
+      expect { subject }.to change { desired_shipment.inventory_units.sum(:quantity) }.by(current_shipment_inventory_unit_count)
+    end
+
+    it 'removes the desired inventory units from the current shipment' do
+      expect { subject }.to change { current_shipment.inventory_units.sum(:quantity) }.by(-current_shipment_inventory_unit_count)
+    end
+  end
+
   context 'when the current shipment is emptied out by the transfer' do
     let(:current_shipment_inventory_unit_count) { 30 }
     let(:quantity) { 30 }
