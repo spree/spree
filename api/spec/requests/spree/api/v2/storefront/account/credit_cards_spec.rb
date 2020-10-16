@@ -72,4 +72,19 @@ describe 'Storefront API v2 CreditCards spec', type: :request do
       it_behaves_like 'returns 403 HTTP status'
     end
   end
+
+  describe 'credit_cards#destroy' do
+    it 'deletes a credit card' do
+      card_to_delete = Spree::CreditCard.first
+
+      expect(Spree::CreditCard.count).to eq(3)
+      expect(Spree::CreditCard.where(id: card_to_delete.id)).to exist
+
+      delete "/api/v2/storefront/account/credit_cards/#{card_to_delete.id}/remove_credit_card", headers: headers_bearer
+
+      expect(response.status).to eq(204)
+      expect(Spree::CreditCard.count).to eq(2)
+      expect(Spree::CreditCard.where(id: card_to_delete.id)).not_to exist
+    end
+  end
 end
