@@ -3,6 +3,21 @@
 Spree.ready(function ($) {
   var formUpdateCart = $('form#update-cart')
 
+  function buildEventTriggerObject(dataset, quantity) {
+    if (!dataset || !quantity) return false
+
+    var triggerObject = {
+      type: 'product_remove_from_cart',
+      variant_sku: dataset.variantSku,
+      variant_name: dataset.variantName,
+      variant_price: dataset.variantPrice,
+      variant_options: dataset.variantOptions,
+      variant_quantity: quantity
+    }
+
+    return triggerObject
+  }
+
   if (formUpdateCart.length) {
     var clearInvalidCouponField = function() {
       var couponCodeField = $('#order_coupon_code');
@@ -12,9 +27,16 @@ Spree.ready(function ($) {
       }
     }
 
-    formUpdateCart.find('a.delete').show().one('click', function () {
+    formUpdateCart.find('a.delete').show().one('click', function (event) {
+      var itemId = $(this).attr('data-id')
+      var link = $(event.currentTarget);
+      var quantityInputs = $("form#update-cart input.shopping-cart-item-quantity-input[data-id='" + itemId + "']")
+      var quantity = $(quantityInputs).val()
       $(this).parents('.shopping-cart-item').first().find('input.shopping-cart-item-quantity-input').val(0)
       clearInvalidCouponField()
+      if (link[0] && link[0].dataset && quantity) {
+        link.trigger(buildEventTriggerObject(link[0].dataset, quantity))
+      }
       formUpdateCart.submit()
       return false
     })
