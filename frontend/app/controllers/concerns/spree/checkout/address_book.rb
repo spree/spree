@@ -42,7 +42,7 @@ module Spree
         ship_address = @order.ship_address
 
         if params[:save_user_address].present?
-          [bill_address, ship_address].each { address&.update_attribute(:user_id, try_spree_current_user&.id) }
+          [bill_address, ship_address].each { |address| address&.update_attribute(:user_id, try_spree_current_user&.id) }
         end
 
         if @order.bill_address_id != @order.ship_address_id && bill_address == ship_address
