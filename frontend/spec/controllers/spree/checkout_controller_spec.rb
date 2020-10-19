@@ -204,8 +204,8 @@ describe Spree::CheckoutController, type: :controller do
             let(:use_billing) { false }
             let!(:default_bill_address) { order.bill_address }
             let!(:default_ship_address) { order.ship_address }
-            let(:bill_address_params) { build(:address, firstname: nil, city: 'Chicago').attributes.merge(id: default_bill_address.id).except('created_at', 'updated_at') }
-            let(:ship_address_params) { build(:address, firstname: nil, city: 'Washington').attributes.merge(id: default_ship_address.id).except('created_at', 'updated_at') }
+            let(:bill_address_params) { build(:address, firstname: nil, city: 'Chicago').attributes.merge(id: default_bill_address.id).except(:user_id, :created_at, :updated_at) }
+            let(:ship_address_params) { build(:address, firstname: nil, city: 'Washington').attributes.merge(id: default_ship_address.id).except(:user_id, :created_at, :updated_at) }
             let(:bill_address_error) { { "bill_address.firstname": ["can't be blank"] } }
             let(:ship_address_error) { { "ship_address.firstname": ["can't be blank"] } }
 
@@ -221,8 +221,8 @@ describe Spree::CheckoutController, type: :controller do
 
           context 'when addresses attributes are not changed' do
             let(:use_billing) { false }
-            let(:bill_address_params) { order.bill_address.attributes.except('created_at', 'updated_at') }
-            let(:ship_address_params) { order.ship_address.attributes.except('created_at', 'updated_at') }
+            let(:bill_address_params) { order.bill_address.attributes.except(:user_id, :created_at, :updated_at) }
+            let(:ship_address_params) { order.ship_address.attributes.except(:user_id, :created_at, :updated_at) }
             let(:expected_bill_address_id) { order.bill_address_id }
             let(:expected_ship_address_id) { order.ship_address_id }
 
@@ -242,8 +242,8 @@ describe Spree::CheckoutController, type: :controller do
 
             context 'when default address is editable' do
               let(:use_billing) { false }
-              let(:bill_address_params) { build(:address, city: 'Chicago').attributes.merge(id: default_bill_address.id).except('created_at', 'updated_at') }
-              let(:ship_address_params) { build(:address, city: 'Washington').attributes.merge(id: default_ship_address.id).except('created_at', 'updated_at') }
+              let(:bill_address_params) { build(:address, city: 'Chicago').attributes.merge(id: default_bill_address.id).except(:user_id, :created_at, :updated_at) }
+              let(:ship_address_params) { build(:address, city: 'Washington').attributes.merge(id: default_ship_address.id).except(:user_id, :created_at, :updated_at) }
 
               it 'updates current addresses' do
                 expect(default_bill_address.city).to eq 'Herndon'
@@ -257,19 +257,13 @@ describe Spree::CheckoutController, type: :controller do
 
               it_behaves_like 'address not created'
               it_behaves_like 'same user assigned'
-
-              context 'when using API, with save_user_addresss set to nil' do
-                let(:save_user_address) { nil }
-
-                it_behaves_like 'same user assigned'
-              end
             end
 
             context 'when default address is not editable' do
               let(:use_billing) { true }
               let!(:shipment) { create(:shipment, address: default_bill_address) }
-              let(:bill_address_params) { build(:address, city: 'Chicago').attributes.merge(id: default_bill_address.id).except('created_at', 'updated_at') }
-              let(:ship_address_params) { build(:address, city: 'Washington').attributes.merge(id: default_ship_address.id).except('created_at', 'updated_at') }
+              let(:bill_address_params) { build(:address, city: 'Chicago').attributes.merge(id: default_bill_address.id).except(:user_id, :created_at, :updated_at) }
+              let(:ship_address_params) { build(:address, city: 'Washington').attributes.merge(id: default_ship_address.id).except(:user_id, :created_at, :updated_at) }
               let(:created_address_id) { Spree::Address.find_by(city: 'Chicago').id }
 
               it_behaves_like 'default address not changed'
@@ -284,17 +278,22 @@ describe Spree::CheckoutController, type: :controller do
 
               it_behaves_like 'created address assigned to current user'
 
-              context 'when using API, with save_user_addresss set to nil' do
+              context 'when save_user_addresss is falsy' do
                 let(:save_user_address) { nil }
 
-                it_behaves_like 'created address assigned to current user'
+                it 'does not assign created address to current user' do
+                  update
+
+                  expect(order.bill_address.reload.user).to be_nil
+                  expect(order.ship_address.reload.user).to be_nil
+                end
               end
             end
 
             context 'when addresses are the same but have different ids' do
               let(:use_billing) { false }
-              let(:bill_address_params) { default_bill_address.attributes.except('created_at', 'updated_at') }
-              let(:ship_address_params) { default_ship_address.attributes.except('created_at', 'updated_at') }
+              let(:bill_address_params) { default_bill_address.attributes.except(:user_id, :created_at, :updated_at) }
+              let(:ship_address_params) { default_ship_address.attributes.except(:user_id, :created_at, :updated_at) }
 
               before { order.ship_address.update(state_id: order.bill_address.state_id) }
 
@@ -326,8 +325,8 @@ describe Spree::CheckoutController, type: :controller do
               let!(:bill_address) { create(:address, city: 'Chicago', user: nil) }
               let!(:ship_address) { create(:address, city: 'Washington', user: nil) }
               let(:order) { create(:order_with_totals, bill_address: nil, ship_address: nil, state: 'address', user: nil, email: 'example@email.com') }
-              let(:bill_address_params) { bill_address.attributes.except('id', 'created_at', 'updated_at') }
-              let(:ship_address_params) { ship_address.attributes.except('id', 'created_at', 'updated_at') }
+              let(:bill_address_params) { bill_address.attributes.except(:id, :user_id, :created_at, :updated_at) }
+              let(:ship_address_params) { ship_address.attributes.except(:id, :user_id, :created_at, :updated_at) }
 
               it 'keeps addresses unassigned' do
                 update
@@ -341,8 +340,8 @@ describe Spree::CheckoutController, type: :controller do
 
             context 'when submitted addresses does not exist' do
               let(:order) { create(:order_with_totals, bill_address: nil, ship_address: nil, state: 'address', user: nil, email: 'example@email.com') }
-              let(:bill_address_params) { build(:address, city: 'Chicago', user: nil).attributes.except(:created_at, :updated_at) }
-              let(:ship_address_params) { build(:address, city: 'Washington', user: nil).attributes.except(:created_at, :updated_at) }
+              let(:bill_address_params) { build(:address, city: 'Chicago', user: nil).attributes.except(:user_id, :created_at, :updated_at) }
+              let(:ship_address_params) { build(:address, city: 'Washington', user: nil).attributes.except(:user_id, :created_at, :updated_at) }
 
               it 'keeps created addresses unassigned' do
                 update
@@ -358,8 +357,8 @@ describe Spree::CheckoutController, type: :controller do
 
             context 'when attributes are invalid' do
               let(:order) { create(:order_with_totals, bill_address: nil, ship_address: nil, state: 'address', user: nil, email: 'example@email.com') }
-              let(:bill_address_params) { build(:address, firstname: nil, city: 'Chicago', user: nil).attributes.except(:created_at, :updated_at) }
-              let(:ship_address_params) { build(:address, firstname: nil, city: 'Washington', user: nil).attributes.except(:created_at, :updated_at) }
+              let(:bill_address_params) { build(:address, firstname: nil, city: 'Chicago', user: nil).attributes.except(:user_id, :created_at, :updated_at) }
+              let(:ship_address_params) { build(:address, firstname: nil, city: 'Washington', user: nil).attributes.except(:user_id, :created_at, :updated_at) }
               let(:bill_address_error) { { "bill_address.firstname": ["can't be blank"] } }
               let(:ship_address_error) { { "ship_address.firstname": ["can't be blank"] } }
 
@@ -408,7 +407,7 @@ describe Spree::CheckoutController, type: :controller do
           context 'when some attributes are invalid' do
             let(:use_billing) { false }
             let!(:default_bill_address) { order.bill_address }
-            let(:bill_address_params) { build(:address, firstname: nil, city: 'Chicago').attributes.merge(id: default_bill_address.id).except('created_at', 'updated_at') }
+            let(:bill_address_params) { build(:address, firstname: nil, city: 'Chicago').attributes.merge(id: default_bill_address.id).except(:user_id, :created_at, :updated_at) }
             let(:bill_address_error) { { "bill_address.firstname": ["can't be blank"] } }
 
             it 'returns address with errors' do
@@ -421,7 +420,7 @@ describe Spree::CheckoutController, type: :controller do
           end
 
           context 'when bill address attributes are not changed' do
-            let(:bill_address_params) { order.bill_address.attributes.except('created_at', 'updated_at') }
+            let(:bill_address_params) { order.bill_address.attributes.except(:user_id, :created_at, :updated_at) }
             let(:expected_bill_address_id) { order.bill_address_id }
 
             it 'takes same default bill address' do
@@ -437,7 +436,7 @@ describe Spree::CheckoutController, type: :controller do
             let!(:default_bill_address) { order.bill_address }
 
             context 'when default address is editable' do
-              let(:bill_address_params) { build(:address, city: 'Chicago').attributes.merge(id: default_bill_address.id).except('created_at', 'updated_at') }
+              let(:bill_address_params) { build(:address, city: 'Chicago').attributes.merge(id: default_bill_address.id).except(:user_id, :created_at, :updated_at) }
 
               it 'updates current address' do
                 expect(default_bill_address.city).to eq 'Herndon'
@@ -450,8 +449,8 @@ describe Spree::CheckoutController, type: :controller do
               it_behaves_like 'address not created'
               it_behaves_like 'address user not changed'
 
-              context 'when using API, with save_user_addresss set to nil' do
-                let(:save_user_address) { nil }
+              context 'when using API, with save_user_addresss set to true' do
+                let(:save_user_address) { true }
 
                 it_behaves_like 'address user not changed'
               end
@@ -459,7 +458,7 @@ describe Spree::CheckoutController, type: :controller do
 
             context 'when default address is not editable' do
               let!(:shipment) { create(:shipment, address: default_bill_address) }
-              let(:bill_address_params) { build(:address, city: 'Chicago').attributes.merge(id: default_bill_address.id).except('created_at', 'updated_at') }
+              let(:bill_address_params) { build(:address, city: 'Chicago').attributes.merge(id: default_bill_address.id).except(:user_id, :created_at, :updated_at) }
               let(:created_address_id) { Spree::Address.find_by(city: 'Chicago').id }
 
               it_behaves_like 'default address not changed'
@@ -473,10 +472,14 @@ describe Spree::CheckoutController, type: :controller do
 
               it_behaves_like 'created address assigned to current user'
 
-              context 'when using API, with save_user_addresss set to nil' do
+              context 'when save_user_addresss is falsy' do
                 let(:save_user_address) { nil }
 
-                it_behaves_like 'created address assigned to current user'
+                it 'does not assign created address to current user' do
+                  update
+
+                  expect(order.bill_address.reload.user).to be_nil
+                end
               end
             end
           end
@@ -492,7 +495,7 @@ describe Spree::CheckoutController, type: :controller do
             context 'when submitted bill address already exists' do
               let!(:bill_address) { create(:address, city: 'Chicago', user: nil) }
               let(:order) { create(:order_with_totals, bill_address: nil, ship_address: nil, state: 'address', user: nil, email: 'exaple@email.com') }
-              let(:bill_address_params) { bill_address.attributes.except('id', 'created_at', 'updated_at') }
+              let(:bill_address_params) { bill_address.attributes.except(:id, :user_id, :created_at, :updated_at) }
 
               it 'keeps address unassigned' do
                 update
@@ -505,7 +508,7 @@ describe Spree::CheckoutController, type: :controller do
 
             context 'when submitted bill address does not exits' do
               let(:order) { create(:order_with_totals, bill_address: nil, ship_address: nil, state: 'address', user: nil, email: 'example@email.com') }
-              let(:bill_address_params) { build(:address, city: 'Chicago', user: nil).attributes.except(:created_at, :updated_at) }
+              let(:bill_address_params) { build(:address, city: 'Chicago', user: nil).attributes.except(:user_id, :created_at, :updated_at) }
 
               it 'keeps created address unassigned' do
                 update
@@ -518,7 +521,7 @@ describe Spree::CheckoutController, type: :controller do
 
             context 'when attributes are invalid' do
               let(:order) { create(:order_with_totals, bill_address: nil, ship_address: nil, state: 'address', user: nil, email: 'example@email.com') }
-              let(:bill_address_params) { build(:address, firstname: nil, city: 'Chicago', user: nil).attributes.except(:created_at, :updated_at) }
+              let(:bill_address_params) { build(:address, firstname: nil, city: 'Chicago', user: nil).attributes.except(:user_id, :created_at, :updated_at) }
               let(:bill_address_error) { { "bill_address.firstname": ["can't be blank"] } }
 
               it 'returns address with errors' do

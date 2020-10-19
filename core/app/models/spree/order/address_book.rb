@@ -61,13 +61,13 @@ module Spree
           default_address = ::Spree::Address.find(attributes[:id])
 
           if default_address&.editable?
-            default_address.update(attributes.merge(user: user))
+            default_address.update(attributes)
 
             return default_address
           end
         end
 
-        ::Spree::Address.find_or_create_by(attributes.except(:id, :updated_at, :created_at).merge(user: user))
+        ::Spree::Address.find_or_create_by(attributes.except(:id, :updated_at, :created_at))
       end
     end
   end
