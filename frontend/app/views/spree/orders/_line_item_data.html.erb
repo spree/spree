@@ -22,7 +22,7 @@
 <% end %>
 
 <div class="shopping-cart-item-delete <%= additional_classes %>" data-hook="cart_item_delete">
-  <%= link_to '#', class: 'delete', id: "delete_#{dom_id(line_item)}", data: { turbolinks: false }, aria: { label: Spree.t('cart_page.remove_from_cart') } do %>
+  <%= link_to '#', class: 'delete', id: "delete_#{dom_id(line_item)}", data: { turbolinks: false, id: dom_id(line_item), variant_sku: line_item.sku, variant_name: line_item.name, variant_price: line_item.price, variant_options: line_item.options_text }, aria: { label: Spree.t('cart_page.remove_from_cart') } do %>
     <%= icon(name: 'garbage',
              classes: 'shopping-cart-item-delete-icon',
              width: 18.9,
