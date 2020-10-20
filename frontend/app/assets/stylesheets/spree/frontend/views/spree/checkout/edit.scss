@@ -160,6 +160,8 @@
       .nav-item {
         color: theme-color('info');
         font-weight: 600;
+        max-width: 100px;
+        text-align: center;
         @include media-breakpoint-up(sm) {
           font-weight: 500;
         }
