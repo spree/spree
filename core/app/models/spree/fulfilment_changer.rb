@@ -55,7 +55,7 @@ module Spree
     end
 
     def current_shipment_units
-      current_shipment.inventory_units.on_hand_or_backordered.where(variant_id: variant.id)
+      @current_shipment_units ||= current_shipment.inventory_units.on_hand_or_backordered.where(variant_id: variant.id)
     end
 
     def update_desired_shipment_inventory_units
