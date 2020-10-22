@@ -22,7 +22,7 @@ This is the safest and recommended method.
 
 ```ruby
 gem 'spree', '~> 4.1'
-gem 'spree_gateway', '~> 3.7'
+gem 'spree_gateway', '~> 3.9'
 ```
 
 ## Run `bundle update`
