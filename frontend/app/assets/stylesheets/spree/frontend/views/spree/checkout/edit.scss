@@ -160,10 +160,11 @@
       .nav-item {
         color: theme-color('info');
         font-weight: 600;
-        max-width: 100px;
+        max-width: 70px;
         text-align: center;
         @include media-breakpoint-up(sm) {
           font-weight: 500;
+          max-width: 100px;
         }
         a {
           color: inherit;
