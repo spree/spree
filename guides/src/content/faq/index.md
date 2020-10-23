@@ -11,6 +11,10 @@ If you can't find an answer to your question, feel free to ask us [here](http://
 A: Yes, you need to implement Stripe Elements in your custom frontend and use API endpoints. Get a Stripe Elements Spree payment gateway ID from [here](https://stoplight.io/p/docs/gh/spree/spree/api/docs/v2/storefront/index.yaml/paths/~1api~1v2~1storefront~1checkout~1payment_methods/get?srn=gh/spree/spree/api/docs/v2/storefront/index.yaml/paths/~1api~1v2~1storefront~1checkout~1payment_methods/get&group=master).
 You'll also have to [update checkout](https://stoplight.io/p/docs/gh/spree/spree/api/docs/v2/storefront/index.yaml/paths/~1api~1v2~1storefront~1checkout/patch?srn=gh/spree/spree/api/docs/v2/storefront/index.yaml/paths/~1api~1v2~1storefront~1checkout/patch&group=master#add-payment-sources) with the proper ID.
 
+**Q: I would like to know how ActiveMerchant works on Spree. Is there any document for this purpose?**
+
+A: Yes, feel free to take a look at [this link](https://guides.spreecommerce.org/developer/core/payments.html). Also, as a reference, please check the [Stripe gateway source code](https://github.com/spree/spree_gateway/blob/master/app/models/spree/gateway/stripe_gateway.rb#L31).
+
 **Q: Is there any open source extension to implement subscriptions?**
 
 A: Unfortunately not. We've found out that every single subscription project was different. We also wanted to stay provider agnostic.
@@ -62,6 +66,14 @@ A: "Check" payment method will be sufficient for this case.
 
 ## Marketplaces
 
+**Q: In a multi-vendor scenario, does Spree support a Single Detail Page with a single Buy Box algo?**
+
+A: That's currently not possible out of the box; this would require some customizations.
+
+**Q: Is Spree a good solution to create a mobile marketplace C2C?**
+
+A: Yes, but with some custom development. Take a look at [this article](https://spreecommerce.org/building-a-p2p-marketplace-on-spree-commerce-for-the-sharing-renting-swapping-economy/).
+
 **Q: I want to use Spree as a drop shipping platform. Do you know any tutorials or advice to make the system fit this purpose?**
 
 A: Yes, feel free to take a look at [this repository](https://github.com/spree-contrib/spree_multi_vendor).
@@ -70,11 +82,23 @@ A: Yes, feel free to take a look at [this repository](https://github.com/spree-c
 
 A: Yes, it does. Multi-vendor has been integrated into the core Spree.
 
-## Configuration
+## Customization
+
+**Q: If using Rails 6, what conventions of using the JavaScript directory should we use? Inside the assets folder as it was or outside as is now Rails 6 convention?**
+
+A: Spree creo assets are still being kept in the *app/assets/javascripts*. For all the custom project specific assets, we usually use webpacker and JavaScript packs. You can easily combine both.
+
+**Q: Where can I find Spree 4 themes?**
+
+A: You can customize it. Everything (examples, customization, tutorial, docs) can be found [here](https://spreecommerce.org/spree-commerce-demo-explainer).
 
 **Q: Where should fonts be installed?**
 
 A: Feel free to take a look at [this link](https://coderwall.com/p/v5c8kq/web-fonts-and-rails-asset-pipeline).
+
+**Q: Is there a documentation on how to customize assets?**
+
+A: Yes, please refer to [this document](https://guides.spreecommerce.org/developer/customization/storefront.html) and [this example](https://bit.ly/new-spree-ux).
 
 **Q: What kind of system requirement is recommended to run Spree?**
 
@@ -97,6 +121,10 @@ A: Yes, more than one promotion can be applied; e.g. Free Shipping based on Cart
 A: You can find the solution [here](https://guides.spreecommerce.org/developer/customization/view.html#switch-storefront-logo).
 
 ## API & Headless
+
+**Q: How to avoid the "The resource you were looking for could not be found" error when trying to send an API request to /cart?**
+
+A: The cart needs to be created first before any API requests.
 
 **Q: Is there any mobile app to handle the Spree backend?**
 
@@ -152,6 +180,10 @@ A: Please look into [this guide](https://guides.spreecommerce.org/developer/core
 
 ## Hosting
 
+**Q: Is 8GB RAM enough for running Spree efficiently?**
+
+A: 8GB is definitely enough; however, the results may vary depending on the number of SKU's and the size of the database.
+
 **Q: Is there any good guide on how to deploy the application to production on Elastic Beanstalk apart from Heroku?**
 
 A: Yes, feel free to take a look at: [Code with Jason](https://www.codewithjason.com/deploy-ruby-rails-application-aws-elastic-beanstalk/).
@@ -159,6 +191,10 @@ A: Yes, feel free to take a look at: [Code with Jason](https://www.codewithjason
 **Q: Heroku is not what I am looking for to deploy Spree to a VPS. Are there any alternatives?**
 
 A: Yes, take a look at [Capistrano](https://capistranorb.com/).
+
+**Q: How to optimize Active Storage?**
+
+A: See [this article](https://https://tech.kartenmacherei.de/scaling-activestorage-21e962f708d7). Also adding S3, cache store and lazy loading (out of the box in Spree 4.1) to your rails application greatly helps with serving images via Active Storage.
 
 ## Other
 
@@ -171,21 +207,9 @@ Also, you can use spree_auth_devise gem without spree_frontend since v3.5. Pleas
 
 A: Yes, feel free to look at [New Spree UX](https://bit.ly/new-spree-ux) and, as an example [this article](https://sparksolutions.co/covid-19-response-well-delivered-online-store-for-employees-only/).
 
-**Q: Is Spree a good solution to create a mobile marketplace C2C?**
-
-A: Yes, but with some custom development. Take a look at [this article](https://spreecommerce.org/building-a-p2p-marketplace-on-spree-commerce-for-the-sharing-renting-swapping-economy/).
-
-**Q: If using Rails 6, what conventions of using the JavaScript directory should we use? Inside the assets folder as it was or outside as is now Rails 6 convention?**
-
-A: Spree creo assets are still being kept in the *app/assets/javascripts*. For all the custom project specific assets, we usually use webpacker and JavaScript packs. You can easily combine both.
-
 **Q: Is there a document on how to integrate spree_analytics_trackers with Facebook pixel?**
 
 A: Yes, feel free to look at this [document](https://segment.com/docs/connections/destinations/catalog/facebook-pixel/).
-
-**Q: I would like to know how ActiveMerchant works on Spree. Is there any document for this purpose?**
-
-A: Yes, feel free to take a look at [this link](https://guides.spreecommerce.org/developer/core/payments.html). Also, as a reference, please check the [Stripe gateway source code](https://github.com/spree/spree_gateway/blob/master/app/models/spree/gateway/stripe_gateway.rb#L31).
 
 **Q: Since active_shipping no longer supports the UPS API, is there any good library that integrates well with Spree and uses the UPS API?**
 
@@ -226,30 +250,6 @@ A: The process has to be started again: create another cart by posting to /cart 
 **Q: Is there a guide about managing application logic?**
 
 A: Yes, please refer to [this guide](https://upsidelab.io/blog/rails-spree-command-pattern/).
-
-**Q: Is there a documentation on how to customize assets?**
-
-A: Yes, please refer to [this document](https://guides.spreecommerce.org/developer/customization/storefront.html) and [this example](https://bit.ly/new-spree-ux).
-
-**Q: Where can I find Spree 4 themes?**
-
-A: You can customize it. Everything (examples, customization, tutorial, docs) can be found [here](https://spreecommerce.org/spree-commerce-demo-explainer).
-
-**Q: In a multi-vendor scenario, does Spree support a Single Detail Page with a single Buy Box algo?**
-
-A: That's currently not possible out of the box; this would require some customizations.
-
-**Q: How to optimize Active Storage?**
-
-A: See [this article](https://https://tech.kartenmacherei.de/scaling-activestorage-21e962f708d7). Also adding S3, cache store and lazy loading (out of the box in Spree 4.1) to your rails application greatly helps with serving images via Active Storage.
-
-**Q: How to avoid the "The resource you were looking for could not be found" error when trying to send an API request to /cart?**
-
-A: The cart needs to be created first before any API requests.
-
-**Q: Is 8GB RAM enough for running Spree efficiently?**
-
-A: 8GB is definitely enough; however, the results may vary depending on the number of SKU's and the size of the database.
 
 **Q: Is Ruby 2.7 supported?**
 
