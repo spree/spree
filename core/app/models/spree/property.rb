@@ -9,10 +9,15 @@ module Spree
     validates :name, :presentation, presence: true
 
     scope :sorted, -> { order(:name) }
+    scope :filterable, -> { where(filterable: true) }
 
     after_touch :touch_all_products
 
     self.whitelisted_ransackable_attributes = ['presentation']
+
+    def uniq_values
+      product_properties.pluck(:value).compact.uniq
+    end
 
     private
 

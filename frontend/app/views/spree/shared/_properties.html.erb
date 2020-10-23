@@ -1,0 +1,12 @@
+<% cache base_cache_key + [filtering_params_cache_key, @taxon&.id] do %>
+  <% selected_properties = params[property_name]&.split(',') || [] %>
+  <% property.uniq_values.each do |value| %>
+    <% value_slug = CGI.escape(value) %>
+    <% property_value_param = (selected_properties.include?(value_slug) ? selected_properties - [value_slug] : selected_properties + [value_slug]).join(',') %>
+    <%= link_to permitted_params.merge(property.name => property_value_param, menu_open: 1), data: { params: permitted_params.merge(property.name => property_value_param, menu_open: 1), id: value_slug, filter_name: property.name, multiselect: true } do %>
+      <div class="d-inline-block text-uppercase py-1 px-2 m-1 plp-overlay-card-item <%= 'plp-overlay-card-item--selected' if selected_properties.include?(value_slug) %>">
+        <%= value %>
+      </div>
+    <% end %>
+  <% end %>
+<% end %>

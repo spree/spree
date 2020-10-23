@@ -246,7 +246,9 @@ module Spree
     end
 
     def filtering_params
-      @filtering_params ||= available_option_types.map(&:filter_param).concat(static_filters)
+      @filtering_params ||= available_option_types.map(&:filter_param).
+                            concat(available_properties.map { |property| property.name.split.join('-') }).
+                            concat(static_filters)
     end
 
     def filtering_params_cache_key
@@ -262,6 +264,17 @@ module Spree
         Spree::OptionType.includes(:option_values).filterable.to_a
       end
       @available_option_types
+    end
+
+    def available_properties_cache_key
+      @available_properties_cache_key ||= Spree::Property.filterable.maximum(:updated_at)&.utc&.to_i
+    end
+
+    def available_properties
+      @available_properties ||= Rails.cache.fetch("available-properties/#{available_properties_cache_key}") do
+        Spree::Property.includes(:product_properties).filterable.to_a
+      end
+      @available_properties
     end
 
     def spree_social_link(service)

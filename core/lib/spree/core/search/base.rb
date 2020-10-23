@@ -44,7 +44,8 @@ module Spree
                 option_value_ids: option_value_ids,
                 taxons: taxon&.id
               },
-              sort_by: sort_by
+              sort_by: sort_by,
+              product_properties: product_properties
             },
             current_currency: current_currency
           ).execute
@@ -120,6 +121,10 @@ module Spree
           end
         end
 
+        def build_product_properties(params)
+          params.slice(*Spree::Property.pluck(:name))
+        end
+
         def prepare(params)
           @properties[:taxon] = params[:taxon].blank? ? nil : Spree::Taxon.find(params[:taxon])
           @properties[:keywords] = params[:keywords]
@@ -136,6 +141,7 @@ module Spree
                                else
                                  1
                                end
+          @properties[:product_properties] = build_product_properties(params)
         end
       end
     end

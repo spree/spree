@@ -16,6 +16,7 @@ module Spree
         @sort_by          = params.dig(:sort_by)
         @deleted          = params.dig(:filter, :show_deleted)
         @discontinued     = params.dig(:filter, :show_discontinued)
+        @properties       = params.dig(:product_properties)
       end
 
       def execute
@@ -28,6 +29,7 @@ module Spree
         products = by_name(products)
         products = by_options(products)
         products = by_option_value_ids(products)
+        products = by_properties(products)
         products = include_deleted(products)
         products = include_discontinued(products)
         products = ordered(products)
@@ -38,7 +40,7 @@ module Spree
       private
 
       attr_reader :ids, :skus, :price, :currency, :taxons, :concat_taxons, :name, :options,
-                  :option_value_ids, :scope, :sort_by, :deleted, :discontinued
+                  :option_value_ids, :scope, :sort_by, :deleted, :discontinued, :properties
 
       def ids?
         ids.present?
@@ -78,6 +80,10 @@ module Spree
 
       def sort_by?
         sort_by.present?
+      end
+
+      def properties?
+        properties.present?
       end
 
       def name_matcher
@@ -161,6 +167,15 @@ module Spree
                       ids
 
         products.where(id: product_ids)
+      end
+
+      def by_properties(products)
+        return products unless properties?
+
+        products.
+          joins(:product_properties).
+          where(spree_product_properties: { value: properties.values }).
+          distinct
       end
 
       def option_types_count(option_value_ids)
