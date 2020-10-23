@@ -70,6 +70,10 @@ A: "Check" payment method will be sufficient for this case.
 
 A: That's currently not possible out of the box; this would require some customizations.
 
+**Q: Is there some themes/templates for a marketplace, so I don't have to do the design work from scratch?**
+
+A: Yes, feel free to look at [New Spree UX](https://bit.ly/new-spree-ux) and, as an example [this article](https://sparksolutions.co/covid-19-response-well-delivered-online-store-for-employees-only/).
+
 **Q: Is Spree a good solution to create a mobile marketplace C2C?**
 
 A: Yes, but with some custom development. Take a look at [this article](https://spreecommerce.org/building-a-p2p-marketplace-on-spree-commerce-for-the-sharing-renting-swapping-economy/).
@@ -152,6 +156,10 @@ A: You can use the Check payment method and rename it Cash on Delivery.
 
 A: Yes, please go to [spreecommerce website](https://spreecommerce.org), choose the integrations section, and pick "Shipping".
 
+**Q: Since active_shipping no longer supports the UPS API, is there any good library that integrates well with Spree and uses the UPS API?**
+
+A: Yes, feel free to take a look at [this repository](https://github.com/ShopFelixGray/spree_easy_post).
+
 ## Products
 
 **Q: Does Spree 4.1 include digital products?**
@@ -203,17 +211,9 @@ A: See [this article](https://https://tech.kartenmacherei.de/scaling-activestora
 A: Yes, take a look at [this link](https://guides.spreecommerce.org/developer/customization/authentication.html).
 Also, you can use spree_auth_devise gem without spree_frontend since v3.5. Please refer to [this link](https://github.com/spree/spree_auth_devise/releases/tag/v3.5.0).
 
-**Q: Is there some themes/templates for a marketplace, so I don't have to do the design work from scratch?**
-
-A: Yes, feel free to look at [New Spree UX](https://bit.ly/new-spree-ux) and, as an example [this article](https://sparksolutions.co/covid-19-response-well-delivered-online-store-for-employees-only/).
-
 **Q: Is there a document on how to integrate spree_analytics_trackers with Facebook pixel?**
 
 A: Yes, feel free to look at this [document](https://segment.com/docs/connections/destinations/catalog/facebook-pixel/).
-
-**Q: Since active_shipping no longer supports the UPS API, is there any good library that integrates well with Spree and uses the UPS API?**
-
-A: Yes, feel free to take a look at [this repository](https://github.com/ShopFelixGray/spree_easy_post).
 
 **Q: Is there a gem on the spree frontend that can be used for marketing conversion?**
 
