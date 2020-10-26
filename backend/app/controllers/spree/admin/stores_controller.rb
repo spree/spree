@@ -116,7 +116,7 @@ module Spree
       end
 
       def load_all_zones
-        @zones = Spree::Zone.all
+        @zones = Spree::Zone.pluck(:name, :id)
       end
 
       def set_default_currency

@@ -466,11 +466,25 @@ describe Spree::Zone, type: :model do
     end
   end
 
-  context '.default' do
+  describe '#default_checkout_zone' do
+    let!(:country) { create(:country) }
+    let!(:zone) { create(:zone, name: 'Asia') }
     let!(:default_zone) { create(:zone, name: 'No Limits') }
 
-    it 'return name of default zone' do
-      expect(Spree::Zone.new.default).to eq('No Limits')
+    context 'when checkout_zone is set by config file' do
+      before { Spree::Config[:checkout_zone] = zone.name }
+
+      it 'return default checkout zone object' do
+        expect(Spree::Zone.default_checkout_zone).to eq zone
+      end
+    end
+
+    context 'when checkout_zone is not set in config file' do
+      before { Spree::Config[:checkout_zone] = nil }
+
+      it 'return default checkout zone object' do
+        expect(Spree::Zone.default_checkout_zone).to eq default_zone
+      end
     end
   end
 end

@@ -14,7 +14,7 @@ describe Spree::Admin::StoresHelper, type: :helper do
       end
 
       it 'return countries' do
-        expect(selected_checkout_zone(store)).to eq Spree::Zone.find_by(name: Spree::Config[:checkout_zone]).id
+        expect(selected_checkout_zone(store)).to eq Spree::Zone.find_by(name: Spree::Config[:checkout_zone])
       end
     end
 
@@ -26,7 +26,7 @@ describe Spree::Admin::StoresHelper, type: :helper do
       end
 
       it 'return countries' do
-        expect(selected_checkout_zone(store)).to eq country_zone.id
+        expect(selected_checkout_zone(store)).to eq country_zone
       end
     end
 
@@ -39,7 +39,7 @@ describe Spree::Admin::StoresHelper, type: :helper do
       end
 
       it 'return countries' do
-        expect(selected_checkout_zone(store)).to eq country_zone.id
+        expect(selected_checkout_zone(store)).to eq country_zone
       end
     end
   end
