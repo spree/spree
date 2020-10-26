@@ -57,7 +57,7 @@ module Spree
     end
 
     def update_price
-      if Spree::Config.show_store_selector == true
+      if Spree::Config.show_store_currency_selector == true
         currency_price = Spree::Price.where(
           currency: order.currency,
           variant_id: variant_id

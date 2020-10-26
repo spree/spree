@@ -187,7 +187,7 @@ describe Spree::LineItem, type: :model do
       expect(price).to receive(:price_including_vat_for).and_return(12)
 
       reset_spree_preferences do |config|
-        config.show_store_selector = true
+        config.show_store_currency_selector = true
       end
     end
 
