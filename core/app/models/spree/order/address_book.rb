@@ -57,14 +57,12 @@ module Spree
 
         attributes.transform_values! { |v| v == '' ? nil : v }
 
-        if attributes[:id]
-          default_address = ::Spree::Address.find(attributes[:id])
+        default_address = ::Spree::Address.find_by(id: attributes[:id])
 
-          if default_address&.editable?
-            default_address.update(attributes)
+        if default_address&.editable?
+          default_address.update(attributes)
 
-            return default_address
-          end
+          return default_address
         end
 
         ::Spree::Address.find_or_create_by(attributes.except(:id, :updated_at, :created_at))
