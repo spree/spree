@@ -672,6 +672,17 @@ describe Spree::Promotion, type: :model do
       context 'when the order is complete' do
         it { is_expected.to be true }
 
+        context 'when the promotion is not eligible' do
+          let(:adjustment) { order.adjustments.first }
+
+          before do
+            adjustment.eligible = false
+            adjustment.save!
+          end
+
+          it { is_expected.to be false }
+        end
+
         context 'when the only matching order is the excluded order' do
           let(:excluded_order) { order }
 
