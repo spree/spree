@@ -32,10 +32,10 @@ module Spree
       end
 
       def normalize_addresses
-        return unless params[:state] == 'address' && @order.bill_address_id && @order.bill_address
+        return unless params[:state] == 'address' && @order.bill_address
 
         if @order.checkout_steps.include?('delivery')
-          return unless @order.ship_address_id && @order.ship_address
+          return unless @order.ship_address
         end
 
         bill_address = @order.bill_address
