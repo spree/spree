@@ -35,11 +35,11 @@ module Spree
             end
 
             def collection_serializer
-              Spree::Api::Dependencies.storefront_cart_serializer.constantize
+              Spree::Api::Dependencies.storefront_order_serializer.constantize
             end
 
             def resource_serializer
-              Spree::Api::Dependencies.storefront_cart_serializer.constantize
+              Spree::Api::Dependencies.storefront_order_serializer.constantize
             end
 
             def collection_finder
