@@ -27,7 +27,8 @@ module Spree
 
     rescue_from Spree::Core::GatewayError, with: :rescue_from_spree_gateway_error
 
-    layout 'spree/layouts/checkout'
+    # We want to use the original layout for checkout so I commented this out:
+    # layout 'spree/layouts/checkout'
 
     # Updates the order and advances to the next state (when possible.)
     def update
