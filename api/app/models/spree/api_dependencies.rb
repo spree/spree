@@ -14,7 +14,7 @@ module Spree
       :storefront_collection_paginator, :storefront_user_serializer, :storefront_products_sorter, :storefront_products_finder,
       :storefront_product_serializer, :storefront_taxon_serializer, :storefront_taxon_finder, :storefront_find_by_variant_finder,
       :storefront_cart_update_service, :storefront_cart_estimate_shipping_rates_service, :storefront_estimated_shipment_serializer,
-      :storefront_store_serializer, :storefront_address_serializer,
+      :storefront_store_serializer, :storefront_address_serializer, :storefront_order_serializer,
       :storefront_account_create_address_service, :storefront_account_update_address_service, :storefront_address_finder
     ].freeze
 
@@ -66,6 +66,7 @@ module Spree
       @storefront_product_serializer = 'Spree::V2::Storefront::ProductSerializer'
       @storefront_estimated_shipment_serializer = 'Spree::V2::Storefront::EstimatedShippingRateSerializer'
       @storefront_store_serializer = 'Spree::V2::Storefront::StoreSerializer'
+      @storefront_order_serializer = 'Spree::V2::Storefront::CartSerializer'
 
       # sorters
       @storefront_order_sorter = Spree::Dependencies.order_sorter
