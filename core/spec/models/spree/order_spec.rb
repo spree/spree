@@ -1348,8 +1348,8 @@ describe Spree::Order, type: :model do
     end
   end
 
-  describe '#free_shipping?' do
-    subject { order.free_shipping? }
+  describe '#has_free_shipping?' do
+    subject { order.has_free_shipping? }
 
     let(:order) { create(:order_with_line_items, line_items_count: line_items_count) }
     let(:line_items_count) { 10 }

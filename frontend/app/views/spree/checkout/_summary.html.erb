@@ -27,7 +27,7 @@
     <% end %>
 
     <% if order.passed_checkout_step?("address") && order.shipments.any? %>
-      <% if order.free_shipping? %>
+      <% if order.has_free_shipping? %>
         <div class="d-table-cell"><%= Spree.t(:shipping) %>:</div>
         <div class="d-table-cell text-right"><%= Spree.t(:free) %></div>
       <% else %>
