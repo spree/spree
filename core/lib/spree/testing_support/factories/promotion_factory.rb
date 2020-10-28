@@ -1,4 +1,21 @@
 FactoryBot.define do
+  trait :with_item_total_rule do
+    transient do
+      item_total_threshold_amount { 10 }
+    end
+
+    after(:create) do |promotion, evaluator|
+      rule = Spree::Promotion::Rules::ItemTotal.create!(
+        preferred_operator_min: 'gte',
+        preferred_operator_max: 'lte',
+        preferred_amount_min: evaluator.item_total_threshold_amount,
+        preferred_amount_max: evaluator.item_total_threshold_amount + 100
+      )
+      promotion.rules << rule
+      promotion.save!
+    end
+  end
+
   factory :promotion, class: Spree::Promotion do
     name { 'Promo' }
 
@@ -57,5 +74,7 @@ FactoryBot.define do
       action.promotion = promotion
       action.save
     end
+
+    factory :free_shipping_promotion_with_item_total_rule, traits: [:with_item_total_rule]
   end
 end

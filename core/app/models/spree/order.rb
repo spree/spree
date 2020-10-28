@@ -648,11 +648,11 @@ module Spree
         sum(:amount)
     end
 
-    def has_free_shipping?
-      promotions.
-        joins(:promotion_actions).
-        where(spree_promotion_actions: { type: 'Spree::Promotion::Actions::FreeShipping' }).
-        exists?
+    def free_shipping?
+      shipment_adjustments.
+        joins('LEFT OUTER JOIN spree_promotion_actions ON spree_promotion_actions.id = spree_adjustments.source_id').
+        where(spree_adjustments: { eligible: true, source_type: 'Spree::PromotionAction' },
+              spree_promotion_actions: { type: 'Spree::Promotion::Actions::FreeShipping' }).exists?
     end
 
     private
