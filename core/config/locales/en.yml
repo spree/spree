@@ -52,6 +52,7 @@ en:
       spree/option_type:
         name: Name
         presentation: Presentation
+        filterable: Filterable
       spree/order:
         checkout_complete: Checkout Complete
         completed_at: Completed At
@@ -889,6 +890,7 @@ en:
     filename: Filename
     fill_in_customer_info: Please fill in customer info
     filter: Filter
+    filterable: Filterable
     filter_results: Filter Results
     finalize: Finalize
     find_a_taxon: Find a Taxon
