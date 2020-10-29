@@ -13,7 +13,16 @@ FactoryBot.define do
         Spree::Promotion::Actions::CreateItemAdjustments.create!(calculator: calculator, promotion: promotion)
       end
     end
+
+    trait :with_one_use_per_user_rule do
+      after(:create) do |promotion|
+        rule = Spree::Promotion::Rules::OneUsePerUser.create!
+        promotion.rules << rule
+      end
+    end
+
     factory :promotion_with_item_adjustment, traits: [:with_line_item_adjustment]
+    factory :promotion_with_one_use_per_user_rule, traits: [:with_line_item_adjustment, :with_one_use_per_user_rule]
 
     trait :with_order_adjustment do
       transient do
