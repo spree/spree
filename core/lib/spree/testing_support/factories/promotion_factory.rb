@@ -18,7 +18,6 @@ FactoryBot.define do
       after(:create) do |promotion|
         rule = Spree::Promotion::Rules::OneUsePerUser.create!
         promotion.rules << rule
-        promotion.save!
       end
     end
 

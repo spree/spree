@@ -765,7 +765,7 @@ module Spree
             create(:order_with_line_items, coupon_code: coupon_code, user: current_api_user).tap do |order|
               Spree::PromotionHandler::Coupon.new(order).apply
               order.update_column(:completed_at, Time.current)
-              order.update_column(:state, 'completed')
+              order.update_column(:state, 'complete')
             end
           end
 
