@@ -42,6 +42,63 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
       end
     end
 
+    context 'store checkout_zone' do
+      let!(:north_america_zone) do
+        usa = Spree::Country.find_by(name: 'United States of America')
+        create(:zone, name: 'North America', kind: 'country', default_tax: true).tap do |zone|
+          zone.members << create(:zone_member, zoneable: usa)
+        end
+      end
+
+      let!(:eu_vat_zone) do
+        denmark = create(:country, name: 'Denmark')
+        create(:zone, name: 'EU_VAT', kind: 'country', default_tax: true).tap do |zone|
+          zone.members << create(:zone_member, zoneable: denmark)
+        end
+      end
+
+      context 'when store have checkout_zone_id attribute' do
+        before do
+          store.update!(checkout_zone_id: north_america_zone.id)
+
+          add_mug_to_cart
+          click_link 'checkout'
+        end
+
+        it 'address form contain selected zone' do
+          expect(page.find('#order_bill_address_attributes_country_id').text).to eq 'United States of America'
+        end
+      end
+
+      context 'when checkout_zone is set by preference' do
+        before do
+          store.update(checkout_zone_id: nil)
+          Spree::Config[:checkout_zone] = eu_vat_zone.name
+
+          add_mug_to_cart
+          click_link 'checkout'
+        end
+
+        it 'address form contain selected zone' do
+          expect(page.find('#order_bill_address_attributes_country_id').text).to eq 'Denmark'
+        end
+      end
+
+      context 'when checkout_zone is not set in store or via preference' do
+        before do
+          store.update(checkout_zone_id: nil)
+          Spree::Config.preference_default(:checkout_zone)
+
+          add_mug_to_cart
+          click_link 'checkout'
+        end
+
+        it 'return all countries' do
+          expect(page.find('#order_bill_address_attributes_country_id').text.split("\n").sort).to eq Spree::Country.pluck(:name).sort
+        end
+      end
+    end
+
     # Regression test for #1596
     context 'full checkout' do
       before do
