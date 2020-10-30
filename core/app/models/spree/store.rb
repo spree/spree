@@ -46,7 +46,7 @@ module Spree
       end.uniq.compact
     end
 
-    def unique_store_name
+    def unique_name
       "#{name} (#{code})"
     end
 
