@@ -129,9 +129,8 @@ describe 'Stores', type: :feature, js: true do
     end
   end
 
-  context 'without checkout_zone_id attribute  and checkout_zone preference' do
+  context 'without checkout_zone_id attribute and checkout_zone preference' do
     let!(:store) { create(:store, name: 'Some existing store', checkout_zone_id: nil) }
-    let!(:zone) { create(:zone, name: 'No Limits') }
 
     before do
       Spree::Config.preference_default(:checkout_zone)

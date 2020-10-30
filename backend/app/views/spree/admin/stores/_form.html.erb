@@ -118,7 +118,7 @@
     <% end %>
     <%= f.field_container :checkout_zone_id, class: ['form-group'] do %>
       <%= f.label :checkout_zone_id, Spree.t(:zone) %>
-      <%= f.select :checkout_zone_id, options_for_select(@zones, selected_checkout_zone(@store).id), {}, { class: 'select2' } %>
+      <%= f.select :checkout_zone_id, options_for_select(@zones, selected_checkout_zone(@store)&.id), { include_blank: Spree.t(:no_limits_zone) }, { class: 'select2' } %>
       <%= f.label :checkout_zone_id, Spree.t('i18n.checkout_zone_warning_html'), class: 'alert alert-warning col-12' %>
       <%= f.error_message_on :checkout_zone_id %>
     <% end %>

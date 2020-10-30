@@ -483,7 +483,7 @@ describe Spree::Zone, type: :model do
       before { Spree::Config[:checkout_zone] = nil }
 
       it 'return default checkout zone object' do
-        expect(Spree::Zone.default_checkout_zone).to eq default_zone
+        expect(Spree::Zone.default_checkout_zone).to eq nil
       end
     end
   end

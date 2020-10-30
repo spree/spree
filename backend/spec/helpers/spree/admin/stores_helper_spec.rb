@@ -30,16 +30,14 @@ describe Spree::Admin::StoresHelper, type: :helper do
       end
     end
 
-    context 'return No Limits zone' do
+    context 'checkout_zone is not set via preference or store' do
       before do
         Spree::Config.preference_default(:checkout_zone)
         store.update(checkout_zone_id: nil)
-        country_zone.update(name: 'No Limits')
-        country_zone.members.create(zoneable: country)
       end
 
-      it 'return countries' do
-        expect(selected_checkout_zone(store)).to eq country_zone
+      it 'return nil' do
+        expect(selected_checkout_zone(store)).to eq nil
       end
     end
   end

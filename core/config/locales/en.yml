@@ -1812,4 +1812,4 @@ en:
     zipcode_required: Zip Code Required
     zone: Zone
     zones: Zones
-    default_zone: No Limits
+    no_limits_zone: No Limits

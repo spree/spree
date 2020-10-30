@@ -71,7 +71,7 @@ module Spree
     end
 
     def self.default_checkout_zone
-      find_by(name: Spree::Config[:checkout_zone]) || find_by(name: Spree.t(:default_zone))
+      find_by(name: Spree::Config[:checkout_zone])
     end
 
     def kind

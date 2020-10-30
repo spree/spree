@@ -1,7 +1,7 @@
 module Spree
   module BaseHelper
     def available_countries
-      checkout_zone = current_store.zone || Spree::Zone.default_checkout_zone
+      checkout_zone = current_store.checkout_zone || Spree::Zone.default_checkout_zone
 
       countries = if checkout_zone && checkout_zone.kind == 'country'
                     checkout_zone.country_list
@@ -212,7 +212,7 @@ module Spree
     def meta_robots
       return unless current_store.respond_to?(:seo_robots)
       return if current_store.seo_robots.blank?
-      
+
       tag('meta', name: 'robots', content: current_store.seo_robots)
     end
   end
