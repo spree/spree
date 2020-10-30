@@ -46,6 +46,10 @@ module Spree
       end.uniq.compact
     end
 
+    def unique_store_name
+      "#{name} (#{code})"
+    end
+
     private
 
     def ensure_default_exists_and_is_unique
