@@ -958,6 +958,8 @@ en:
       supported_locales: Supported Locales
       this_file_language: English (US)
       translations: Translations
+      checkout_zone_warning_html: "Selecting a Zone will limit customers on Checkout to Addresses in Countries in that Zone. <br />
+      Please see documentation: <a href='https://guides.spreecommerce.org/user/configuration/configuring_geography.html#zones' target='_blank' class='alert-link'>https://guides.spreecommerce.org/user/configuration/configuring_geography.html#zones</a>"
     icon: Icon
     image: Image
     images: Images
@@ -1810,3 +1812,4 @@ en:
     zipcode_required: Zip Code Required
     zone: Zone
     zones: Zones
+    no_limits_zone: No Limits
