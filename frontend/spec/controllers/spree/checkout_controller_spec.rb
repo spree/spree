@@ -121,7 +121,13 @@ describe Spree::CheckoutController, type: :controller do
         end
 
         let(:user) { create(:user) }
-        let(:order) { create(:order_with_totals, ship_address: ship_address, state: 'address', user: user) }
+        let(:order) do
+          create(:order_with_totals,
+                 bill_address: bill_address,
+                 ship_address: ship_address,
+                 state: 'address',
+                 user: user)
+        end
         let(:save_user_address) { true }
         let(:update_params) do
           {
@@ -181,6 +187,7 @@ describe Spree::CheckoutController, type: :controller do
         end
 
         context 'with a billing and shipping address (with delivery step)' do
+          let(:bill_address) { create(:address, user: user) }
           let(:ship_address) { create(:address, user: user) }
 
           context 'when all addresses attributes are nil' do
@@ -312,6 +319,7 @@ describe Spree::CheckoutController, type: :controller do
           end
 
           context 'when user is a guest' do
+            let(:user) { nil }
             let(:use_billing) { false }
 
             before do
@@ -375,6 +383,7 @@ describe Spree::CheckoutController, type: :controller do
         end
 
         context 'with a billing address and without shipping address (without delivery step)' do
+          let(:bill_address) { create(:address, user: user) }
           let(:ship_address) { nil }
           let(:bill_address_params) { nil }
           let(:ship_address_params) { nil }
@@ -485,6 +494,8 @@ describe Spree::CheckoutController, type: :controller do
           end
 
           context 'when user is a guest' do
+            let(:user) { nil }
+
             before do
               allow(controller).to receive_messages try_spree_current_user: nil
               allow(controller).to receive_messages spree_current_user: nil

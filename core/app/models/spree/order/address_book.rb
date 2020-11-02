@@ -57,7 +57,8 @@ module Spree
 
         attributes.transform_values! { |v| v == '' ? nil : v }
 
-        default_address = ::Spree::Address.find_by(id: attributes[:id])
+        default_address_scope = user ? user.addresses : ::Spree::Address
+        default_address = default_address_scope.find_by(id: attributes[:id])
 
         if default_address&.editable?
           default_address.update(attributes)
