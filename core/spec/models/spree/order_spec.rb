@@ -1347,4 +1347,45 @@ describe Spree::Order, type: :model do
       end
     end
   end
+
+  describe '#has_free_shipping?' do
+    subject { order.has_free_shipping? }
+
+    let(:order) { create(:order_with_line_items, line_items_count: line_items_count) }
+    let(:line_items_count) { 10 }
+
+    context 'when promotion is applied' do
+      let(:free_shipping_promotion) { create(:free_shipping_promotion, code: 'freeship') }
+
+      before do
+        order.coupon_code = free_shipping_promotion.code
+        Spree::PromotionHandler::Coupon.new(order).apply
+      end
+
+      it { is_expected.to be true }
+
+      context 'when free shipping promotion has item total rule' do
+        let(:free_shipping_promotion) do
+          create(:free_shipping_promotion_with_item_total_rule,
+                 code: 'freeship',
+                 starts_at: 1.day.ago,
+                 expires_at: 1.day.from_now)
+        end
+
+        context 'when order total is in defined range' do
+          it { is_expected.to be true }
+        end
+
+        context 'when order total is not in defined range' do
+          let(:line_items_count) { 15 }
+
+          it { is_expected.to be false }
+        end
+      end
+    end
+
+    context 'when promotion is not applied' do
+      it { is_expected.to be false }
+    end
+  end
 end
