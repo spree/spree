@@ -19,7 +19,7 @@
     <tbody>
       <% @stores.each do |store| %>
         <tr>
-          <td><%= store.name %></td>
+          <td><%= store.unique_name %></td>
           <td><%= link_to store.url, 'https://' + store.url, target: :blank %></td>
           <td><%= store.default_currency %></td>
           <td><%= store.default ? "<strong>#{Spree.t(:say_yes)}</strong>".html_safe : Spree.t(:say_no) %>
