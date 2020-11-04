@@ -84,6 +84,14 @@ describe Spree::Store, type: :model do
       end
     end
 
+    context '.unique_name' do
+      let!(:store) { create(:store) }
+
+      it 'returns the Store Name followed by the Store Code in parentheses' do
+        expect(store.unique_name).to eq("#{store.name} (#{store.code})")
+      end
+    end
+
     describe '.supported_currencies_list' do
       context 'with supported currencies set' do
         let(:currencies) { 'USD, EUR, dummy' }
