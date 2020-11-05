@@ -37,6 +37,7 @@ module Spree
       else
         new_address = @address.clone
         new_address.attributes = address_params
+        new_address.user_id = @address.user_id
         @address.update_attribute(:deleted_at, Time.current)
         if new_address.save
           flash[:notice] = Spree.t(:successfully_updated, scope: :address_book)
