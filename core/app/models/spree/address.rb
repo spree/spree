@@ -19,7 +19,7 @@ module Spree
     # we're not freezing this on purpose so developers can extend and manage
     # those attributes depending of the logic of their applications
     ADDRESS_FIELDS = %w(firstname lastname company address1 address2 city state zipcode country phone)
-    EXCLUDED_KEYS_FOR_COMPARISION = %w(id updated_at created_at deleted_at label user_id)
+    EXCLUDED_KEYS_FOR_COMPARISON = %w(id updated_at created_at deleted_at label user_id)
 
     belongs_to :country, class_name: 'Spree::Country'
     belongs_to :state, class_name: 'Spree::State', optional: true
@@ -103,7 +103,7 @@ module Spree
     end
 
     def value_attributes
-      attributes.except(*EXCLUDED_KEYS_FOR_COMPARISION)
+      attributes.except(*EXCLUDED_KEYS_FOR_COMPARISON)
     end
 
     def empty?
