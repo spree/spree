@@ -3,7 +3,7 @@ require 'spec_helper'
 describe 'Address', type: :feature, inaccessible: true do
   stub_authorization!
 
-  let(:mug) { create(:product, name: 'RoR Mug') }
+  let!(:mug) { create(:product, name: 'RoR Mug') }
 
   before do
     create(:order_with_totals, state: 'cart')
@@ -14,6 +14,98 @@ describe 'Address', type: :feature, inaccessible: true do
     @state_name_css = "##{address}_state_name"
     @state_label_css = '#b_state_label'
     @zipcode_label_css = '#b_zipcode_label'
+  end
+
+
+  context 'store checkout_zone', js: true do
+    let!(:store) { create(:store, default: true) }
+    let!(:asia_zone) do
+      hk = create(:country, name: 'Hong Kong', iso_name: 'HK')
+      create(:zone, name: 'Asia', kind: 'country', default_tax: true).tap do |zone|
+        zone.members << create(:zone_member, zoneable: hk)
+      end
+    end
+
+    let!(:eu_vat_zone) do
+      denmark = create(:country, name: 'Denmark', iso_name: 'DNK')
+      create(:zone, name: 'EU_VAT', kind: 'country', default_tax: true).tap do |zone|
+        zone.members << create(:zone_member, zoneable: denmark)
+      end
+    end
+
+    context 'when store have checkout_zone_id attribute' do
+      before do
+        store.update!(checkout_zone_id: asia_zone.id)
+
+        add_to_cart(mug) do
+          click_link 'Checkout'
+        end
+      end
+
+      it 'address form contain selected zone' do
+        expect(page.find('#order_bill_address_attributes_country_id').text).to eq 'Hong Kong'
+      end
+    end
+
+    context 'user account', js: true do
+      context 'address form in user account' do
+        context 'with checkout_zone' do
+          before do
+            store.update!(checkout_zone_id: asia_zone.id)
+          end
+
+          it 'address form contain selected zone' do
+            visit spree.new_address_path
+
+            expect(page.find('#address_country_id').text).to eq 'Hong Kong'
+          end
+        end
+
+        context 'without checkout_zone' do
+          before do
+            store.update(checkout_zone_id: nil)
+            Spree::Config.preference_default(:checkout_zone)
+          end
+
+          it 'address form contain selected zone' do
+            visit spree.new_address_path
+
+            expect(page.find('#address_country_id').text.split("\n").sort).to eq Spree::Country.pluck(:name).sort
+          end
+        end
+      end
+    end
+
+
+    context 'when checkout_zone is set by preference' do
+      before do
+        store.update(checkout_zone_id: nil)
+        Spree::Config[:checkout_zone] = eu_vat_zone.name
+
+        add_to_cart(mug) do
+          click_link 'Checkout'
+        end
+      end
+
+      it 'address form contain selected zone' do
+        expect(page.find('#order_bill_address_attributes_country_id').text).to eq 'Denmark'
+      end
+    end
+
+    context 'when checkout_zone is not set in store or via preference' do
+      before do
+        store.update(checkout_zone_id: nil)
+        Spree::Config.preference_default(:checkout_zone)
+
+        add_to_cart(mug) do
+          click_link 'Checkout'
+        end
+      end
+
+      it 'return all countries' do
+        expect(page.find('#order_bill_address_attributes_country_id').text.split("\n").sort).to eq Spree::Country.pluck(:name).sort
+      end
+    end
   end
 
   context 'country requires state', js: true do

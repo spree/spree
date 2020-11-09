@@ -1,6 +1,6 @@
 //= require spree/frontend/viewport
 
-Spree.fetchRelatedProductcs = function (id, htmlContainer) {
+Spree.fetchRelatedProducts = function (id, htmlContainer) {
   return $.ajax({
     url: Spree.routes.product_related(id)
   }).done(function (data) {
@@ -21,7 +21,7 @@ document.addEventListener('turbolinks:load', function () {
     if (!relatedProductsFetched && relatedProductsContainer.length && relatedProductsEnabled && relatedProductsEnabled === 'true' && productId !== '') {
       $(window).on('resize scroll', function () {
         if (!relatedProductsFetched && relatedProductsContainer.isInViewport()) {
-          Spree.fetchRelatedProductcs(productId, relatedProductsContainer)
+          Spree.fetchRelatedProducts(productId, relatedProductsContainer)
           relatedProductsFetched = true
         }
       })

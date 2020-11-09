@@ -672,7 +672,7 @@ describe Spree::Promotion, type: :model do
       context 'when the order is complete' do
         it { is_expected.to be true }
 
-        context 'when the promotion was not eligible' do
+        context 'when the promotion is not eligible' do
           let(:adjustment) { order.adjustments.first }
 
           before do

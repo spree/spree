@@ -1,6 +1,6 @@
 FactoryBot.define do
   factory :global_zone, class: Spree::Zone do
-    name        { 'GlobalZone' }
+    sequence(:name) { |n| "GlobalZone_#{n}" }
     description { generate(:random_string) }
     zone_members do |proxy|
       zone = proxy.instance_eval { @instance }

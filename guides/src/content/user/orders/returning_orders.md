@@ -16,19 +16,22 @@ To create an RMA for a shipped order, click the order's "Return Authorizations" 
 
 ![RMA Form](../../../images/user/orders/rma_form.jpg)
 
-To use it, just select each line item to be returned, either a reimbursement type or exchange item. Select Quantity of the items(s), its set to "1" by default. For example, customer wants to return a damaged item. Selecting the "Original" reimbursement type will refund a user back to their original payment method when the items are returned and approved.  Selecting an exchange item will create a new shipment to ship the exchange item to the customer.  The form will automatically calculate the RMA value based on the sale price of the item(s), but you will have to confirm the amount when the reimbursement is issued. This gives you a chance to adjust for handling fees, restocking fees, damages, etc.
+To use it, just select each line item to be returned, either a reimbursement type or exchange item. Firstly, select the quantity of the item(s) to be returned. This is set to "1" by default but can be adjusted if the customer is returning a number of goods.
+Next, choose if you are returning the customer's money or shipping a replacement item.
+If reimbursing money, selecting the "Original" reimbursement type will refund a user via their original payment method when the items are returned and approved.
+Selecting an exchange item will create a new shipment of a replacement item for the customer. The form will automatically calculate the RMA value based on the sale price of the item(s), but you will have to confirm the amount when the reimbursement is issued. This gives you a chance to adjust for handling fees, restocking fees, damages, etc.
 
 Input the reason and any memo notes for the return, and select the [Stock Location](/user/configuration/configuring_inventory.html) the item is coming back to. Click the "Create" button.
 
 Now, you just need to wait for the package to be received at your location.
 
-Even created Return Authorization can be edited or deleted. When the user changes his mind. As an Admin in your shop, you can still make additional changes to Return action.
+Even a created Return Authorization can be edited or deleted, most commonly when the user changes his or her mind. As an Admin in your shop, you can still make additional changes to the Return action.
 
 ![Return Edition](../../../images/user/orders/return_autho_edit.jpg)
 
 ![Return Delete](../../../images/user/orders/return_autho_delete.jpg)
 
-Inside of the Return Authorization Edit, its the same layout as creating one. Just simply make changes and press **Update** button.
+Inside of the Return Authorization Edit, you'll find the same layout as for creating one. Just make your changes and press the **Update** button.
 
 ![Return Edition Inside](../../../images/user/orders/return_autho_inside.jpg)
 
@@ -38,7 +41,7 @@ Once you receive a return package, you need to create a "Customer Return". To do
 
 ![Receive RMA Button](../../../images/user/orders/customer_return_link.jpg)
 
-Select which of the authorized return items were received or mark all of them by simply clicking next to product on the left side checkbox, and to which [Stock Location](/user/products/creating_products.html). You can also set if the item that has been returned by the User is still **Resellable** or not. Once you are done, click the "Create" button.
+Select which of the authorized return items were received or mark all of them by simply clicking next to the product on the left side checkbox, and to which [Stock Location](/user/products/creating_products.html). You can also set if the item that has been returned by the User is still **Resellable** or not. Once you are done, click the "Create" button.
 
 ![Receive RMA Button](../../../images/user/orders/customer_return_form.jpg)
 
@@ -46,10 +49,10 @@ The return items are marked as accepted, and now you can create a reimbursement 
 
 ![RMA Received](../../../images/user/orders/create_reimbursement_button.jpg)
 
-The reimbursement form will be populated according to your original reimbursement or exchange selections chosen during the return authorization form.  You may override the selected reimbursement type or exchange item now if you want to, otherwise click the "Reimburse" button to create the refund.
+The reimbursement form will be populated according to your original reimbursement or exchange selections chosen during the return authorization form.  You may override the selected reimbursement type or exchange item now if you want. If not, click the "Reimburse" button to create the refund.
 
 ![Issue a Reimbursement](../../../images/user/orders/reimbursement_form.jpg)
 
-Your return-processing is complete! As you can see, there is $24.14 refund issued to the original credit card or Store credits to the user's account.
+Your return-processing is complete! As you can see, there is $24.14 refund issued to the original credit card or store credits to the user's account.
 
 ![Reimbursement Complete](../../../images/user/orders/reimbursement_complete.jpg)

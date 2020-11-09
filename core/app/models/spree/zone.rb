@@ -70,6 +70,10 @@ module Spree
       matches.first
     end
 
+    def self.default_checkout_zone
+      find_by(name: Spree::Config[:checkout_zone])
+    end
+
     def kind
       if self[:kind].present?
         self[:kind]

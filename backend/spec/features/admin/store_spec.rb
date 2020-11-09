@@ -5,6 +5,8 @@ describe 'Stores', type: :feature, js: true do
 
   context 'creating new store' do
     before do
+      create(:zone, name: 'No Limits')
+
       visit spree.admin_path
 
       click_link 'Configurations'
@@ -54,8 +56,11 @@ describe 'Stores', type: :feature, js: true do
   end
 
   context 'editing existing store' do
+    let!(:updated_zone) { create(:zone, name: 'EU_VAT') }
+
     before do
-      create(:store, name: 'Some existing store')
+      @zone = create(:zone, name: 'No Limits')
+      create(:store, name: 'Some existing store', checkout_zone_id: @zone.id)
 
       visit spree.admin_path
 
@@ -74,6 +79,71 @@ describe 'Stores', type: :feature, js: true do
     it 'edits existing stores footer info' do
       within_row(1) { click_icon :edit }
       fill_in 'Description', with: 'Some edited description'
+      click_button 'Update'
+
+      expect(page).to have_content('successfully updated!')
+    end
+  end
+
+  context 'with checkout_zone preference set in spree config file' do
+    let!(:store) { create(:store, name: 'Some existing store') }
+    let!(:zone) { create(:zone, name: 'Asia') }
+
+    before do
+      Spree::Config[:checkout_zone] = 'Asia'
+
+      visit spree.admin_path
+
+      click_link 'Configurations'
+      click_link 'Stores'
+    end
+
+    it 'edits existing store' do
+      within_row(1) { click_icon :edit }
+      fill_in 'Mail from address', with: 'new_email@example.com'
+      click_button 'Update'
+
+      expect(page).to have_content('successfully updated!')
+    end
+  end
+
+  context 'with checkout_zone_id attribute set for store' do
+    let!(:store) { create(:store, name: 'Some existing store', checkout_zone_id: zone.id) }
+    let!(:zone) { create(:zone, name: 'Asia') }
+
+    before do
+      Spree::Config.preference_default(:checkout_zone)
+
+      visit spree.admin_path
+
+      click_link 'Configurations'
+      click_link 'Stores'
+    end
+
+    it 'edits existing store' do
+      within_row(1) { click_icon :edit }
+      fill_in 'Mail from address', with: 'some_email@example.com'
+      click_button 'Update'
+
+      expect(page).to have_content('successfully updated!')
+    end
+  end
+
+  context 'without checkout_zone_id attribute and checkout_zone preference' do
+    let!(:store) { create(:store, name: 'Some existing store', checkout_zone_id: nil) }
+
+    before do
+      Spree::Config.preference_default(:checkout_zone)
+
+      visit spree.admin_path
+
+      click_link 'Configurations'
+      click_link 'Stores'
+    end
+
+    it 'edits existing store' do
+      within_row(1) { click_icon :edit }
+      fill_in 'Mail from address', with: 'some_email@example.com'
       click_button 'Update'
 
       expect(page).to have_content('successfully updated!')

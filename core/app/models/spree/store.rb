@@ -3,6 +3,7 @@ module Spree
     has_many :orders, class_name: 'Spree::Order'
     has_many :payment_methods, class_name: 'Spree::PaymentMethod'
     belongs_to :default_country, class_name: 'Spree::Country'
+    belongs_to :checkout_zone, class_name: 'Spree::Zone'
 
     with_options presence: true do
       validates :name, :url, :mail_from_address, :default_currency, :code
@@ -44,6 +45,10 @@ module Spree
       (read_attribute(:supported_currencies).to_s.split(',') << default_currency).map(&:to_s).map do |code|
         ::Money::Currency.find(code.strip)
       end.uniq.compact
+    end
+
+    def unique_name
+      "#{name} (#{code})"
     end
 
     private

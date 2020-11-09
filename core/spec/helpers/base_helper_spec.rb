@@ -12,9 +12,24 @@ describe Spree::BaseHelper, type: :helper do
       create_list(:country, 3)
     end
 
+    context 'with checkout zone assigned to the store' do
+      before do
+        Spree::Config[:checkout_zone] = nil
+        @zone = create(:zone, name: 'No Limits')
+        @zone.members.create(zoneable: country)
+        current_store.update(checkout_zone_id: @zone.id)
+      end
+
+      it 'return only the countries defined by the checkout_zone_id' do
+        expect(available_countries).to eq([country])
+        expect(current_store.checkout_zone_id).to eq @zone.id
+      end
+    end
+
     context 'with no checkout zone defined' do
       before do
         Spree::Config[:checkout_zone] = nil
+        current_store.update(checkout_zone_id: nil)
       end
 
       it 'return complete list of countries' do
@@ -118,6 +133,39 @@ describe Spree::BaseHelper, type: :helper do
       tags = Nokogiri::HTML.parse(meta_data_tags)
       content = tags.css('meta[name=description]').first['content']
       assert content.length <= 160, 'content length is not truncated to 160 characters'
+    end
+  end
+
+  context 'og_meta_data_tags' do
+    let(:current_currency) { 'USD' }
+    let(:image) { create(:image, position: 1) }
+    let(:product) do
+      create(:product).tap { |product| product.master.images << image }
+    end
+
+    it 'renders open graph meta data tags for PDP' do
+      # Because the controller_name method returns "test"
+      # controller_name is used by this method to infer what it is supposed
+      # to be generating og_meta_data_tags for
+      @test               = product
+      tags                = Nokogiri::HTML.parse(og_meta_data_tags)
+
+      meta_image          = tags.css('meta[property="og:image"]').first['content']
+      meta_type           = tags.css('meta[property="og:type"]').first['content']
+      meta_title          = tags.css('meta[property="og:title"]').first['content']
+      meta_description    = tags.css('meta[property="og:description"]').first['content']
+      meta_price_amount   = tags.css('meta[property="product:price:amount"]').first['content']
+      meta_price_currency = tags.css('meta[property="product:price:currency"]').first['content']
+
+      expect(meta_image).to be_present
+
+      expect(meta_type).to eq('product')
+      expect(meta_title).to eq(product.name)
+      expect(meta_description).to eq(product.description)
+
+      default_price = product.master.default_price
+      expect(meta_price_amount).to eq(default_price.amount.to_s)
+      expect(meta_price_currency).to eq(default_price.currency)
     end
   end
 
@@ -269,57 +317,6 @@ describe Spree::BaseHelper, type: :helper do
         let!(:image_2) { create :image, viewable: variant_2 }
 
         it { is_expected.to eq(image_1) }
-      end
-    end
-  end
-
-  describe '#meta_image_data_tag' do
-    context 'when meta_image_url_path is present' do
-      it 'returns meta tag' do
-        allow_any_instance_of(Spree::BaseHelper).to receive(:meta_image_url_path).and_return('image_url')
-
-        expect(meta_image_data_tag).to eq "<meta property=\"og:image\" content=\"image_url\" />"
-      end
-    end
-
-    context 'when meta_image_url_path is absent' do
-      it 'returns meta tag' do
-        allow_any_instance_of(Spree::BaseHelper).to receive(:meta_image_url_path).and_return(nil)
-
-        expect(meta_image_data_tag).to eq nil
-      end
-    end
-  end
-
-  describe '#meta_image_url_path' do
-    context 'when object is not a product' do
-      let!(:taxon) { build :taxon }
-
-      it 'returns false' do
-        allow_any_instance_of(Spree::BaseHelper).to receive(:instance_variable_get).and_return(taxon)
-
-        expect(meta_image_url_path).to eq nil
-      end
-    end
-
-    context 'when object is product' do
-      let!(:product) { build :product }
-      before do
-        allow_any_instance_of(Spree::BaseHelper).to receive(:instance_variable_get).and_return(product)
-      end
-
-      context 'and has no images attached' do
-        it 'returns spree logo url' do
-          expect(meta_image_url_path).to eq asset_path(Spree::Config[:logo])
-        end
-      end
-
-      context 'and has image attached' do
-        let!(:image) { create :image, viewable: product.master }
-
-        it 'returns main image url' do
-          expect(meta_image_url_path).to eq asset_path(main_app.url_for(image.attachment))
-        end
       end
     end
   end

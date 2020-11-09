@@ -649,10 +649,10 @@ module Spree
     end
 
     def has_free_shipping?
-      promotions.
-        joins(:promotion_actions).
-        where(spree_promotion_actions: { type: 'Spree::Promotion::Actions::FreeShipping' }).
-        exists?
+      shipment_adjustments.
+        joins(:promotion_action).
+        where(spree_adjustments: { eligible: true, source_type: 'Spree::PromotionAction' },
+              spree_promotion_actions: { type: 'Spree::Promotion::Actions::FreeShipping' }).exists?
     end
 
     private

@@ -52,10 +52,15 @@ module Spree
         end
 
         def set_current_order
-          if try_spree_current_user && current_order
-            try_spree_current_user.orders.incomplete.where('id != ?', current_order.id).each do |order|
-              current_order.merge!(order, try_spree_current_user)
-            end
+          return unless try_spree_current_user && current_order
+
+          orders_scope = try_spree_current_user.orders.
+                         incomplete.
+                         where.not(id: current_order.id).
+                         where(store_id: current_store.id)
+
+          orders_scope.each do |order|
+            current_order.merge!(order, try_spree_current_user)
           end
         end
 

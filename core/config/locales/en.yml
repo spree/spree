@@ -52,6 +52,7 @@ en:
       spree/option_type:
         name: Name
         presentation: Presentation
+        filterable: Filterable
       spree/order:
         checkout_complete: Checkout Complete
         completed_at: Completed At
@@ -574,9 +575,6 @@ en:
     agree_to_privacy_policy: Agree to Privacy Policy
     agree_to_terms_of_service: Agree to Terms of Service
     all: All
-    allow_currency_change:
-      short: Allow Currency Change
-      long: Allow users to change their currency via the currency picker.
     all_adjustments_closed: All adjustments successfully closed!
     all_adjustments_opened: All adjustments successfully opened!
     all_departments: All departments
@@ -889,6 +887,7 @@ en:
     filename: Filename
     fill_in_customer_info: Please fill in customer info
     filter: Filter
+    filterable: Filterable
     filter_results: Filter Results
     finalize: Finalize
     find_a_taxon: Find a Taxon
@@ -950,6 +949,7 @@ en:
       fields: Fields
       language: Language
       country: Country
+      default_country: Default Country
       localization_settings: Localization Settings
       only_incomplete: Only incomplete
       only_complete: Only complete
@@ -958,6 +958,8 @@ en:
       supported_locales: Supported Locales
       this_file_language: English (US)
       translations: Translations
+      checkout_zone_warning_html: "Selecting a Zone will limit customers on Checkout to Addresses in Countries in that Zone. <br />
+      Please see documentation: <a href='https://guides.spreecommerce.org/user/configuration/configuring_geography.html#zones' target='_blank' class='alert-link'>https://guides.spreecommerce.org/user/configuration/configuring_geography.html#zones</a>"
     icon: Icon
     image: Image
     images: Images
@@ -1569,15 +1571,15 @@ en:
     shopping_cart: Shopping Cart
     show: Show
     show_active: Show Active
-    show_currency_selector:
-      short: Show Currency Selector
-      long_html: Display the currency picker in the main nav bar. This will only display if there are multiple supported currencies, and <strong>Allow currency change</strong> option is enabled.
     show_deleted: Show Deleted
     show_discontinued: Show Discontinued
     show_only_complete_orders: Only show complete orders
     show_only_considered_risky: Only show risky orders
     show_property: Show Property
     show_rate_in_label: Show rate in label
+    show_store_currency_selector:
+      short: Show Store selector
+      long: Display the Store selector in the main nav bar of Storefront and allow users to change Store and Currency
     sign_up: Sign Up
     sku: SKU
     skus: SKUs
@@ -1810,3 +1812,4 @@ en:
     zipcode_required: Zip Code Required
     zone: Zone
     zones: Zones
+    no_limits_zone: No Limits

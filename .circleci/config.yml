@@ -142,7 +142,7 @@ jobs:
 
   update_staging_repository:
     docker:
-      - image: circleci/ruby:2.7
+      - image: circleci/ruby:2.7.2
     steps:
       - add_ssh_keys:
           fingerprints:
