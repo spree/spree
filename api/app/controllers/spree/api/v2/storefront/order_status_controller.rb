@@ -29,7 +29,7 @@ module Spree
           end
 
           def ensure_order_token
-            raise ActiveRecord::RecordNotFound unless order_token
+            raise ActiveRecord::RecordNotFound unless order_token.present?
           end
         end
       end
