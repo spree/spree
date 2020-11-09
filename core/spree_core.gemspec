@@ -48,7 +48,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'twitter_cldr', '>= 4.3', '< 7.0'
   s.add_dependency 'sprockets', '~> 3.7'
   s.add_dependency 'sprockets-rails'
-  s.add_dependency 'mini_magick', '>= 4.9.4', '< 4.11.0'
+  s.add_dependency 'mini_magick', '>= 4.9.4', '< 4.12.0'
   s.add_dependency 'image_processing', '~> 1.2'
 
   s.add_development_dependency 'email_spec', '~> 2.2'
