@@ -32,21 +32,23 @@ module Spree
       end
 
       def normalize_addresses
-        return unless params[:state] == 'address' && @order.bill_address_id && @order.ship_address_id
+        return unless params[:state] == 'address' && @order.bill_address_id
 
-        # ensure that there is no validation errors and addresses were saved
-        return unless @order.bill_address && @order.ship_address
+        if @order.checkout_steps.include?('delivery')
+          return unless @order.ship_address_id
+        end
 
         bill_address = @order.bill_address
         ship_address = @order.ship_address
+
+        if params[:save_user_address].present? && try_spree_current_user.present?
+          [bill_address, ship_address].each { |address| address&.update_attribute(:user_id, try_spree_current_user&.id) }
+        end
+
         if @order.bill_address_id != @order.ship_address_id && bill_address == ship_address
           @order.update_column(:bill_address_id, ship_address.id)
           bill_address.destroy
-        elsif params[:save_user_address]
-          bill_address.update_attribute(:user_id, try_spree_current_user&.id)
         end
-
-        ship_address.update_attribute(:user_id, try_spree_current_user&.id) if params[:save_user_address]
       end
     end
   end
