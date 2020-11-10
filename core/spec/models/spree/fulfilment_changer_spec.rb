@@ -39,15 +39,15 @@ describe Spree::FulfilmentChanger do
   end
 
   context 'when the current shipment has enough inventory units' do
-    let(:current_shipment_inventory_unit_count) { 2 }
+    let(:current_shipment_inventory_unit_count) { 3 }
     let(:quantity) { 1 }
 
     it 'adds the desired inventory units to the desired shipment' do
-      expect { subject }.to change { desired_shipment.inventory_units.length }.by(quantity)
+      expect { subject }.to change { desired_shipment.inventory_units.sum(:quantity) }.by(quantity)
     end
 
     it 'removes the desired inventory units from the current shipment' do
-      expect { subject }.to change { current_shipment.inventory_units.length }.by(-quantity)
+      expect { subject }.to change { current_shipment.inventory_units.sum(:quantity) }.by(-quantity)
     end
 
     it 'recalculates shipping costs for the current shipment' do
@@ -123,8 +123,8 @@ describe Spree::FulfilmentChanger do
 
         it 'creates a shipment with the correct number of on hand and backordered units' do
           subject
-          expect(desired_shipment.inventory_units.on_hand.count).to eq(5)
-          expect(desired_shipment.inventory_units.backordered.count).to eq(2)
+          expect(desired_shipment.inventory_units.on_hand.sum(:quantity)).to eq(5)
+          expect(desired_shipment.inventory_units.backordered.sum(:quantity)).to eq(2)
         end
 
         context 'when the desired stock location already has a backordered units' do
@@ -140,20 +140,58 @@ describe Spree::FulfilmentChanger do
 
           it 'creates a shipment with the correct number of on hand and backordered units' do
             subject
-            expect(desired_shipment.inventory_units.on_hand.count).to eq(0)
-            expect(desired_shipment.inventory_units.backordered.count).to eq(7)
+            expect(desired_shipment.inventory_units.on_hand.sum(:quantity)).to eq(0)
+            expect(desired_shipment.inventory_units.backordered.sum(:quantity)).to eq(7)
           end
         end
 
         context 'when the original shipment has on hand and backordered units' do
           before do
-            current_shipment.inventory_units.limit(6).update_all(state: :backordered)
+            expect_any_instance_of(described_class).to receive(:handle_stock_counts?).at_least(:once).and_return(false)
+            backordered_unit = current_shipment.inventory_units.on_hand.first.dup
+            backordered_unit.update(state: :backordered, quantity: 5)
           end
 
-          it 'removes the backordered items first' do
+          it 'removes the backordered item first' do
+            expect(current_shipment.inventory_units.backordered.sum(:quantity)).to eq(5)
             subject
-            expect(current_shipment.inventory_units.backordered.count).to eq(0)
-            expect(current_shipment.inventory_units.on_hand.count).to eq(3)
+            expect(current_shipment.inventory_units.backordered).not_to be_present
+            expect(current_shipment.inventory_units.on_hand.sum(:quantity)).to eq(8)
+          end
+
+          context 'more than one backordered unit' do
+            before do
+              current_shipment.inventory_units.on_hand.first.update!(quantity: 1)
+              new_unit = current_shipment.inventory_units.on_hand.first.dup
+              new_unit.update!(quantity: 5)
+            end
+
+            it 'reduces the backordered items first' do
+              expect(current_shipment.inventory_units.on_hand.count).to eq(2)
+              expect(current_shipment.inventory_units.on_hand.sum(:quantity)).to eq(6)
+              expect(current_shipment.inventory_units.backordered.count).to eq(1)
+              expect(current_shipment.inventory_units.backordered.sum(:quantity)).to eq(5)
+              subject
+              expect(current_shipment.inventory_units.backordered).not_to be_present
+              expect(current_shipment.inventory_units.on_hand.count).to eq(1)
+              expect(current_shipment.inventory_units.on_hand.sum(:quantity)).to eq(4)
+            end
+          end
+
+          context 'more than one on_hand unit' do
+            before do
+              backordered_unit = current_shipment.inventory_units.backordered.first.dup
+              backordered_unit.update!(quantity: 4)
+            end
+
+            it 'reduces the backordered items first' do
+              expect(current_shipment.inventory_units.backordered.count).to eq(2)
+              expect(current_shipment.inventory_units.backordered.sum(:quantity)).to eq(9)
+              subject
+              expect(current_shipment.inventory_units.backordered.count).to eq(1)
+              expect(current_shipment.inventory_units.backordered.sum(:quantity)).to eq(2)
+              expect(current_shipment.inventory_units.on_hand.sum(:quantity)).to eq(10)
+            end
           end
         end
 
@@ -177,8 +215,8 @@ describe Spree::FulfilmentChanger do
 
           it 'creates a shipment with the correct number of on hand and backordered units' do
             subject
-            expect(desired_shipment.inventory_units.on_hand.count).to eq(5)
-            expect(desired_shipment.inventory_units.backordered.count).to eq(2)
+            expect(desired_shipment.inventory_units.on_hand.sum(:quantity)).to eq(5)
+            expect(desired_shipment.inventory_units.backordered.sum(:quantity)).to eq(2)
           end
         end
       end
@@ -192,7 +230,7 @@ describe Spree::FulfilmentChanger do
 
         it 'has an activemodel error hash' do
           subject
-          expect(shipment_splitter.errors.messages).to eq(desired_shipment: ['not enough stock in desired stock location'])
+          expect(shipment_splitter.errors.messages).to eq(desired_shipment: ['has not enough stock in desired stock location'])
         end
       end
     end
@@ -260,12 +298,25 @@ describe Spree::FulfilmentChanger do
     end
   end
 
+  context 'when the current shipment has not enough inventory units' do
+    let(:current_shipment_inventory_unit_count) { 3 }
+    let(:quantity) { 5 }
+
+    it 'adds the desired inventory units to the desired shipment' do
+      expect { subject }.to change { desired_shipment.inventory_units.sum(:quantity) }.by(current_shipment_inventory_unit_count)
+    end
+
+    it 'removes the desired inventory units from the current shipment' do
+      expect { subject }.to change { current_shipment.inventory_units.sum(:quantity) }.by(-current_shipment_inventory_unit_count)
+    end
+  end
+
   context 'when the current shipment is emptied out by the transfer' do
     let(:current_shipment_inventory_unit_count) { 30 }
     let(:quantity) { 30 }
 
     it 'adds the desired inventory units to the desired shipment' do
-      expect { subject }.to change { desired_shipment.inventory_units.length }.by(quantity)
+      expect { subject }.to change { desired_shipment.inventory_units.sum(:quantity) }.by(quantity)
     end
 
     it 'removes the current shipment' do
