@@ -1,4 +1,4 @@
-require_relative 'rma_required'
+require_relative 'r_m_a_required'
 
 module Spree
   class ReturnItem::EligibilityValidator::Default < Spree::ReturnItem::EligibilityValidator::BaseValidator
