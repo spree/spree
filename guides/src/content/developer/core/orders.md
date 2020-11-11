@@ -26,16 +26,16 @@ Orders have the following attributes:
 * `ship_address_id`: The ID for the related `Address` object with shipping address information.
 * `shipping_method_id`: The ID for the related `ShippingMethod` object.
 * `created_by_id`: The ID of object that created this order.
-* `shipment_state`: The current shipment state of the order. For possible states, please see the [Shipments guide](/developer/core/shipments.html).
-* `payment_state`: The current payment state of the order. For possible states, please see the [Payments guide](/developer/core/payments.html).
+* `shipment_state`: The current shipment state of the order. It takes into account all shipments. Described below in [Order Shipment states section](#order-shipment-states).
+* `payment_state`: The current payment state of the order. It takes into account all payments. Described below in [Order Payment states section](#order-payment-states).
 * `special_instructions`: Any special instructions for the store to do with this order. Will only appear if `Spree::Config[:shipping_instructions]` is set to `true`.
-* `currency`: The currency for this order. Determined by the `Store` currency in which this order was created
+* `currency`: The currency for this order. Determined by the `Store#default_currency` currency in which this order was created
 * `last_ip_address`: The last IP address used to update this order in the frontend.
 * `channel`: The channel specified when importing orders from other stores. e.g. amazon.
 * `item_count`: The total value of line items' quantity.
 * `approver_id`: The ID of user that approved this order.
 * `confirmation_delivered`: Boolean value indicating that confirmation email was delivered.
-* `token`: The token stored corresponding to token stored in cookies.
+* `token`: The token stored corresponding to token stored in cookies. In older Spree versions this attribute was called `guest_token`
 * `canceler_id`: The ID of user that canceled this order.
 * `store_id`: The ID of `Store` in which this order was created.
 
@@ -53,12 +53,12 @@ Orders flow through a state machine, beginning at a `cart` state and ending up a
 
 The default states are as follows:
 
-* `cart`
-* `address`
-* `delivery`
-* `payment`
-* `confirm`
-* `complete`
+* `cart` - initial state
+* `address` - Cart moved to Checkout
+* `delivery` - buyer has added Shipping and Billing addresses
+* `payment` - buyer selected delivery option
+* `confirm` - buyer added payment option (if required)
+* `complete` - order was placed
 
 The `payment` state will only be triggered if `payment_required?` returns `true`.
 
@@ -70,6 +70,32 @@ The `complete` state can only be reached in one of two ways:
 2. Payment is required on the order, and at least the order total has been received as payment.
 
 Assuming that an order meets the criteria for the next state, you will be able to transition it to the next state by calling `next` on that object. If this returns `false`, then the order does *not* meet the criteria. To work out why it cannot transition, check the result of an `errors` method call.
+
+### Order Shipment states
+
+Alongside the global Order state there's also `shipment_state` column which indicates the state of all shipments. Order can have multiple shipments.
+
+* `shipped` - all Shipments are in the `shipped` state
+* `partial` - at least one Shipment has a state of `shipped` and there is another Shipment with a state other than `shipped` or there are [InventoryUnits](/developer/core/inventory.html) associated with the order that have a state of `sold` but are not associated with a Shipment
+* `ready` - all Shipments are in the `ready` state
+* `backorder` - there is backordered inventory associated with an order
+* `pending` - all Shipments are in the `pending` state
+
+For more on this please go to [Shipment States page](developer/core/shipments.html#overview).
+
+### Order Payment states
+
+Alongside the global Order state there's also `payment_state` column which indicates the state of all payments. Order can have multiple payments.
+
+* `paid` - `payment_total` is equal to `total`
+* `balance_due` - `payment_total` is less than `total`
+* `credit_owed` - `payment_total` is greater than `total`
+* `failed` - most recent payment is in the `failed` state
+* `void` - order is canceled and `payment_total` isequal to `zero`
+
+For more on this please go to [Payment States page](/developer/core/payments.html#overview).
+
+### Order Shipment states
 
 ## Line Items
 

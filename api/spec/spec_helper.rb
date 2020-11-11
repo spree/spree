@@ -21,7 +21,7 @@ ENV['RAILS_ENV'] ||= 'test'
 begin
   require File.expand_path('../dummy/config/environment', __FILE__)
 rescue LoadError
-  puts 'Could not load dummy application. Please ensure you have run `bundle exec rake test_app`'
+  puts 'Could not load dummy application. Please ensure you have run `BUNDLE_GEMFILE=../Gemfile bundle exec rake test_app`'
   exit
 end
 
