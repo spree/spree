@@ -1484,14 +1484,45 @@ components:
           example: 'USD'
         state:
           type: string
-          example: 'address'
-          description: 'State of the Cart in the Checkout flow'
+          example: 'cart'
+          enum: ['cart', 'address', 'delivery', 'payment', 'confirm', 'complete']
+          description: >-
+            State of the Cart in the Checkout flow, please see
+            <a href="https://guides.spreecommerce.org/developer/core/orders.html#the-order-state-machine">
+              The Order State machine
+            </a>
+            for a full list with description.
+        payment_state:
+          type: string
+          example: 'balance_due'
+          enum: [balance_due, credit_owed, failed, paid, void]
+          description: >-
+            Overall state of the Payments, please see
+            <a href="https://guides.spreecommerce.org/developer/core/orders.html#order-payment-states">
+              Order Payments states
+            </a>
+            for a full list with description.
+        shipment_state:
+          type: string
+          example: 'pending'
+          enum: [backorder, canceled, partial, pending, ready, shipped]
+          description: >-
+            Overall state of the Shipments, please see
+            <a href="https://guides.spreecommerce.org/developer/core/orders.html#order-shipment-states">
+              Order Shipments states
+            </a>
+            for a full list with description.
+
         token:
           type: string
           example: abcdef123456
           description: >-
-            Used for authorizing any action for an order within Spree’s
-            API
+            Used for authorizing any action for an Order within Spree’s API.
+            Please see
+            <a href="https://guides.spreecommerce.org/api/v2/storefront#section/Authentication/orderToken">
+              Order Token Authentication
+            </a>
+            for more information.
     CreditCardList:
       required:
         - included
@@ -2428,6 +2459,7 @@ components:
         state:
           type: string
           example: 'shipped'
+          enum: [pending, ready, shipped, canceled]
           description: >-
             Status of the Shipment. For list of all available statuses please refer:
             <a href="https://guides.spreecommerce.org/developer/shipments.html#overview" target="_blank" rel="noopener">
