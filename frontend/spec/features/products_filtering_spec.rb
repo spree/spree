@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'Products filtering', :js, :caching do
+describe 'Products filtering', :js do
   let!(:taxon) { create :taxon }
 
   let!(:option_type_1) { create :option_type, name: 'size', presentation: 'Size' }
@@ -15,11 +15,14 @@ describe 'Products filtering', :js, :caching do
 
   let!(:property_2) { create :property, name: 'brand', presentation: 'Brand', filterable: true }
   let!(:product_property_2) { create :product_property, value: 'Zeta', property: property_2 }
+  let!(:product_property_3) { create :product_property, value: 'Alpha', property: property_2 }
 
   let!(:property_3) { create :property, name: 'collection', presentation: 'Collection', filterable: true }
 
   let!(:product_1) { create :product, name: 'First shirt', option_types: [option_type_1] }
   let!(:variant_1_1) { create :variant, product: product_1, option_values: [option_value_1_1] }
+
+  let!(:product_2) { create :product, name: 'Second shirt', option_types: [option_type_1], product_properties: [product_property_3] }
 
   def search_by(text)
     find('.search-icons').click
@@ -102,6 +105,15 @@ describe 'Products filtering', :js, :caching do
       visit spree.nested_taxons_path(taxon)
 
       expect(filters).not_to have_content('Collection')
+    end
+
+    it 'shows products that match property filter' do
+      visit spree.products_path
+
+      click_on_filter 'Brand', value: 'Alpha'
+
+      expect(page).not_to have_content('First shirt')
+      expect(page).to have_content('Second shirt')
     end
   end
 end
