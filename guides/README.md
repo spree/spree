@@ -40,12 +40,7 @@ You may stumble onto an issue with file watchers when running `yarn develop`. To
 
 ## Dependencies Notes
 
-`ReDoc` dependency should be hardcoded to `2.0.0-rc.12` for now. It tried to use latest `core-js@3` import, but `Gatsby` hardcode `core-js` to `v2` now.
-For more information follow this [issue](https://github.com/gatsbyjs/gatsby/issues/17136)
-
 `gatsby-remark-component` is forked to remove annoying `console.log` messages.
-
-`MobX` is locked because of `ReDoc`
 
 [1]: https://github.com/guard/listen/wiki/Increasing-the-amount-of-inotify-watchers
 [2]: https://wilsonmar.github.io/maximum-limits/
