@@ -36,7 +36,7 @@ group :test do
 end
 
 group :test, :development do
-  gem 'rubocop', '~> 0.80.0', require: false # bumped
+  gem 'rubocop', '~> 1.0.0', require: false # bumped
   gem 'rubocop-rspec', require: false
   gem 'pry-byebug'
   gem 'webdrivers', '~> 4.1'
