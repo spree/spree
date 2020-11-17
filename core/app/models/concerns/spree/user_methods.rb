@@ -31,7 +31,7 @@ module Spree
       self.whitelisted_ransackable_attributes = %w[id email]
 
       def self.with_email(query)
-        where('email LIKE ?', "%#{query}%")
+        where("#{table_name}.email LIKE ?", "%#{query}%")
       end
 
       def self.with_address(query, address = :ship_address)
@@ -42,7 +42,7 @@ module Spree
 
       def self.with_email_or_address(email, address)
         left_outer_joins(:addresses).
-          where("#{Spree::Address.table_name}.firstname LIKE ? or #{Spree::Address.table_name}.lastname LIKE ? or email LIKE ?",
+          where("#{Spree::Address.table_name}.firstname LIKE ? or #{Spree::Address.table_name}.lastname LIKE ? or #{table_name}.email LIKE ?",
                 "%#{address}%", "%#{address}%", "%#{email}%")
       end
     end
