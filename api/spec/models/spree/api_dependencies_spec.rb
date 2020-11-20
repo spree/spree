@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 class MyNewSerializer
-  include FastJsonapi::ObjectSerializer
+  include JSONAPI::Serializer
 
   attributes :total
 end
