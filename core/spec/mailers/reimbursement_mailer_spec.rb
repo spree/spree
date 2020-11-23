@@ -67,4 +67,18 @@ describe Spree::ReimbursementMailer, type: :mailer do
       end
     end
   end
+
+  context 'emails contain only urls of the store where the order was made' do
+    before do
+      default_host = ActionMailer::Base.default_url_options[:host]
+      allow(Spree::Core::Engine).to receive(:frontend_available?).and_return(true)
+      allow_any_instance_of(ActionDispatch::Routing::RoutesProxy).to receive(:product_url).and_return("http://#{default_host}/products/product-slug")
+      allow_any_instance_of(ActionDispatch::Routing::RoutesProxy).to receive(:root_url).and_return("http://#{default_host}")
+    end
+
+    it 'shows proper host url in email content' do
+      reimbursement_email = described_class.reimbursement_email(reimbursement)
+      expect(reimbursement_email[:store_url].value).to eq(reimbursement.order.store.url)
+    end
+  end
 end
