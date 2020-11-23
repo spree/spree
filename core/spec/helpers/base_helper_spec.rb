@@ -51,15 +51,17 @@ describe Spree::BaseHelper, type: :helper do
       end
 
       context 'checkout zone is of type state' do
+        let(:state) { create(:state, country: country) }
+
         before do
           state_zone = create(:zone, name: 'StateZone')
-          state = create(:state, country: country)
           state_zone.members.create(zoneable: state)
+
           Spree::Config[:checkout_zone] = state_zone.name
         end
 
-        it 'return complete list of countries' do
-          expect(available_countries.count).to eq(Spree::Country.count)
+        it 'returns list of countries associated with states' do
+          expect(available_countries).to contain_exactly state.country
         end
       end
     end

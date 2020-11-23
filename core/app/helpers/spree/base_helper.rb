@@ -3,11 +3,7 @@ module Spree
     def available_countries
       checkout_zone = current_store.checkout_zone || Spree::Zone.default_checkout_zone
 
-      countries = if checkout_zone && checkout_zone.kind == 'country'
-                    checkout_zone.country_list
-                  else
-                    Spree::Country.all
-                  end
+      countries = checkout_zone ? checkout_zone.country_list : Spree::Country.all
 
       countries.collect do |country|
         country.name = Spree.t(country.iso, scope: 'country_names', default: country.name)
