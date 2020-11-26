@@ -15,7 +15,8 @@ module Spree
       :storefront_product_serializer, :storefront_taxon_serializer, :storefront_taxon_finder, :storefront_find_by_variant_finder,
       :storefront_cart_update_service, :storefront_cart_estimate_shipping_rates_service, :storefront_estimated_shipment_serializer,
       :storefront_store_serializer, :storefront_address_serializer, :storefront_order_serializer,
-      :storefront_account_create_address_service, :storefront_account_update_address_service, :storefront_address_finder
+      :storefront_account_create_address_service, :storefront_account_update_address_service, :storefront_address_finder,
+      :storefront_credit_cards_destroy_service
     ].freeze
 
     attr_accessor *INJECTION_POINTS
@@ -53,6 +54,9 @@ module Spree
       # account services
       @storefront_account_create_address_service = Spree::Dependencies.account_create_address_service
       @storefront_account_update_address_service = Spree::Dependencies.account_update_address_service
+
+      # credit cards
+      @storefront_credit_cards_destroy_service = Spree::Dependencies.credit_cards_destroy_service
 
       # serializers
       @storefront_address_serializer = 'Spree::V2::Storefront::AddressSerializer'

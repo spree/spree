@@ -15,16 +15,7 @@ module Spree
             end
 
             def destroy
-              card = spree_current_user.credit_cards.find(params[:credit_card_id])
-
-              ActiveRecord::Base.transaction do
-                card.payments.
-                  valid.
-                  joins(:order).
-                  merge(Spree::Order.incomplete).
-                  each(&:invalidate!)
-                card.destroy
-              end
+              Spree::Api::Dependencies.storefront_credit_cards_destroy_service.constantize.call(card: resource)
             end
 
             private
