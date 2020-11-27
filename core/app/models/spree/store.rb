@@ -51,6 +51,18 @@ module Spree
       "#{name} (#{code})"
     end
 
+    def countries_available_for_checkout
+      checkout_zone_or_default.try(:country_list) || Spree::Country.all
+    end
+
+    def states_available_for_checkout(country)
+      checkout_zone_or_default.try(:state_list_for, country) || country.states
+    end
+
+    def checkout_zone_or_default
+      checkout_zone || Spree::Zone.default_checkout_zone
+    end
+
     private
 
     def ensure_default_exists_and_is_unique

@@ -24,8 +24,15 @@ module Spree
               resource,
               include: resource_includes,
               fields: sparse_fields,
-              params: { include_states: true }
+              params: resource_serializer_params
             ).serializable_hash
+          end
+
+          def resource_serializer_params
+            default_params = { include_states: true }
+            default_params.merge!(current_store: current_store) if params[:include_checkout_zone_applicable_states]
+
+            default_params
           end
 
           def collection

@@ -6,11 +6,11 @@ Spree.ready(function ($) {
         if (countryId != null) {
           if (Spree.Checkout[countryId] == null) {
             $.ajax({
-              async: false, method: 'GET', url: Spree.pathFor('/api/v2/storefront/countries/' + countryId + '?include=states'), dataType: 'json'
+              async: false, method: 'GET', url: Spree.pathFor('/api/v2/storefront/countries/' + countryId + '?include=states&include_checkout_zone_applicable_states=true'), dataType: 'json'
             }).done(function (data) {
-              var json = data.included; var xStates = []
+              var json = data.data.attributes.checkout_zone_applicable_states; var xStates = [];
               for (var i = 0; i < json.length; i++) {
-                var obj = json[i]; xStates.push({ 'id': obj.id, 'name': obj.attributes.name })
+                var obj = json[i]; xStates.push({ 'id': obj.id, 'name': obj.name })
               }
               Spree.Checkout[countryId] = {
                 states: xStates,
