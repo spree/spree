@@ -13,7 +13,7 @@ module Spree
 
         has_many :states, if: proc { |_record, params| params && params[:include_states] }
 
-        attribute :checkout_zone_applicable_states, if: proc { |_record, params| params && params[:current_store] } do |object, params|
+        attribute :checkout_zone_applicable_states, if: proc { |_record, params| params && params[:current_store].present? } do |object, params|
           current_store = params[:current_store]
 
           current_store.states_available_for_checkout(object)
