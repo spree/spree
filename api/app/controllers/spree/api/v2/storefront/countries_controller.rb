@@ -29,10 +29,10 @@ module Spree
           end
 
           def resource_serializer_params
-            default_params = { include_states: true }
-            default_params.merge!(current_store: current_store) if params[:include_checkout_zone_applicable_states]
-
-            default_params
+            {
+              include_states: true,
+              current_store: current_store
+            }
           end
 
           def collection
