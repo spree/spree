@@ -11,7 +11,7 @@ describe Spree::OrderMailer, type: :mailer do
   let(:second_store) { create(:store, name: 'Second Store', url: 'other.example.com') }
 
   let(:order) do
-    order = stub_model(Spree::Order)
+    order = stub_model(Spree::Order, email: 'test@example.com')
     product = stub_model(Spree::Product, name: %{The "BEST" product})
     variant = stub_model(Spree::Variant, product: product)
     price = stub_model(Spree::Price, variant: variant, amount: 5.00)
@@ -25,7 +25,7 @@ describe Spree::OrderMailer, type: :mailer do
   end
 
   let(:second_order) do
-    order = stub_model(Spree::Order)
+    order = stub_model(Spree::Order, email: 'test2@example.com')
     product = stub_model(Spree::Product, name: %{The "BESTEST" product})
     variant = stub_model(Spree::Variant, product: product)
     price = stub_model(Spree::Price, variant: variant, amount: 15.00)
@@ -206,21 +206,16 @@ describe Spree::OrderMailer, type: :mailer do
   end
 
   context 'emails contain only urls of the store where the order was made' do
-    before do
-      default_host = ActionMailer::Base.default_url_options[:host]
-      allow(Spree::Core::Engine).to receive(:frontend_available?).and_return(true)
-      allow_any_instance_of(ActionDispatch::Routing::RoutesProxy).to receive(:product_url).and_return("http://#{default_host}/products/product-slug")
-      allow_any_instance_of(ActionDispatch::Routing::RoutesProxy).to receive(:root_url).and_return("http://#{default_host}")
-    end
-
     it 'shows proper host url in email content' do
-      confirmation_email = described_class.confirm_email(order)
-      expect(confirmation_email[:store_url].value).to eq(order.store.url)
+      ActionMailer::Base.default_url_options[:host] = order.store.url
+      described_class.confirm_email(order).deliver_now
+      expect(ActionMailer::Base.default_url_options[:host]).to eq(order.store.url)
     end
 
     it 'shows proper host url in email content #2' do
-      confirmation_email = described_class.confirm_email(second_order)
-      expect(confirmation_email[:store_url].value).to eq(second_order.store.url)
+      ActionMailer::Base.default_url_options[:host] = second_order.store.url
+      described_class.confirm_email(second_order).deliver_now
+      expect(ActionMailer::Base.default_url_options[:host]).to eq(second_order.store.url)
     end
   end
 end
