@@ -21,13 +21,15 @@ describe 'Storefront API v2 CreditCards spec', type: :request do
   include_context 'API v2 tokens'
 
   describe 'credit_cards#index' do
+    let(:payment_method_id) { credit_cards.first.payment_method_id }
+
     context 'with filter options' do
-      before { get "/api/v2/storefront/account/credit_cards?filter[payment_method_id]=#{credit_cards.first.payment_method_id}&include=payment_method", headers: headers_bearer }
+      before { get "/api/v2/storefront/account/credit_cards?filter[payment_method_id]=#{payment_method_id}&include=payment_method", headers: headers_bearer }
 
       it_behaves_like 'returns valid user credit cards resource JSON'
 
       it 'returns all user credit_cards' do
-        expect(json_response['data'].size).to eq(1)
+        expect(json_response['data'].count).to eq user.credit_cards.where(payment_method_id: payment_method_id).count
       end
     end
 
@@ -50,9 +52,10 @@ describe 'Storefront API v2 CreditCards spec', type: :request do
   end
 
   describe 'credit_cards#show' do
-    context 'by "default"' do
-      let!(:default_credit_card) { create(:credit_card, user_id: user.id, default: true) }
+    let!(:default_credit_card) { create(:credit_card, user_id: user.id, default: true) }
+    let!(:credit_card) { create(:credit_card, user_id: user.id, default: false) }
 
+    context 'by "default"' do
       before { get '/api/v2/storefront/account/credit_cards/default', headers: headers_bearer }
 
       it 'returns user default credit_card' do
@@ -62,7 +65,19 @@ describe 'Storefront API v2 CreditCards spec', type: :request do
         expect(json_response['data']).to have_attribute(:name).with_value(default_credit_card.name)
         expect(json_response['data']).to have_attribute(:month).with_value(default_credit_card.month)
         expect(json_response['data']).to have_attribute(:year).with_value(default_credit_card.year)
-        expect(json_response.size).to eq(1)
+      end
+    end
+
+    context 'by ID' do
+      before { get "/api/v2/storefront/account/credit_cards/#{credit_card.id}", headers: headers_bearer }
+
+      it 'returns proper credit_card' do
+        expect(json_response['data']).to have_id(credit_card.id.to_s)
+        expect(json_response['data']).to have_attribute(:cc_type).with_value(credit_card.cc_type)
+        expect(json_response['data']).to have_attribute(:last_digits).with_value(credit_card.last_digits)
+        expect(json_response['data']).to have_attribute(:name).with_value(credit_card.name)
+        expect(json_response['data']).to have_attribute(:month).with_value(credit_card.month)
+        expect(json_response['data']).to have_attribute(:year).with_value(credit_card.year)
       end
     end
 
@@ -74,17 +89,12 @@ describe 'Storefront API v2 CreditCards spec', type: :request do
   end
 
   describe 'credit_cards#destroy' do
+    let!(:credit_card) { create(:credit_card, user_id: user.id) }
+
     it 'deletes a credit card' do
-      card_to_delete = Spree::CreditCard.first
-
-      expect(Spree::CreditCard.count).to eq(3)
-      expect(Spree::CreditCard.where(id: card_to_delete.id)).to exist
-
-      delete "/api/v2/storefront/account/credit_cards/#{card_to_delete.id}/remove_credit_card", headers: headers_bearer
+      delete "/api/v2/storefront/account/credit_cards/#{credit_card.id}", headers: headers_bearer
 
       expect(response.status).to eq(204)
-      expect(Spree::CreditCard.count).to eq(2)
-      expect(Spree::CreditCard.where(id: card_to_delete.id)).not_to exist
     end
   end
 end
