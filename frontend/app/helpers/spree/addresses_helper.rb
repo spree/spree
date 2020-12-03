@@ -41,7 +41,7 @@ module Spree
       country ||= Spree::Country.find(Spree::Config[:default_country_id])
       have_states = country.states.any?
       state_elements = [
-        form.collection_select(:state_id, country.states.order(:name),
+        form.collection_select(:state_id, checkout_zone_applicable_states_for(country).sort_by(&:name),
                               :id, :name,
                                { prompt: Spree.t(:state) },
                                class: [have_states ? 'required' : 'hidden', 'spree-flat-select'].compact,
@@ -68,6 +68,10 @@ module Spree
       return unless try_spree_current_user
 
       try_spree_current_user.addresses.where(country: available_countries)
+    end
+
+    def checkout_zone_applicable_states_for(country)
+      current_store.states_available_for_checkout(country)
     end
   end
 end

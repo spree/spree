@@ -15,7 +15,7 @@ describe Spree::BaseHelper, type: :helper do
     context 'with checkout zone assigned to the store' do
       before do
         Spree::Config[:checkout_zone] = nil
-        @zone = create(:zone, name: 'No Limits')
+        @zone = create(:zone, name: 'No Limits', kind: 'country')
         @zone.members.create(zoneable: country)
         current_store.update(checkout_zone_id: @zone.id)
       end
@@ -40,7 +40,7 @@ describe Spree::BaseHelper, type: :helper do
     context 'with a checkout zone defined' do
       context 'checkout zone is of type country' do
         before do
-          @country_zone = create(:zone, name: 'CountryZone')
+          @country_zone = create(:zone, name: 'CountryZone', kind: 'country')
           @country_zone.members.create(zoneable: country)
           Spree::Config[:checkout_zone] = @country_zone.name
         end

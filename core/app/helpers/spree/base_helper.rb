@@ -1,9 +1,7 @@
 module Spree
   module BaseHelper
     def available_countries
-      checkout_zone = current_store.checkout_zone || Spree::Zone.default_checkout_zone
-
-      countries = checkout_zone ? checkout_zone.country_list : Spree::Country.all
+      countries = current_store.countries_available_for_checkout
 
       countries.collect do |country|
         country.name = Spree.t(country.iso, scope: 'country_names', default: country.name)

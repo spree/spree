@@ -24,8 +24,15 @@ module Spree
               resource,
               include: resource_includes,
               fields: sparse_fields,
-              params: { include_states: true }
+              params: resource_serializer_params
             ).serializable_hash
+          end
+
+          def resource_serializer_params
+            {
+              include_states: true,
+              current_store: current_store
+            }
           end
 
           def collection
