@@ -30,7 +30,7 @@ module Spree
       end
 
       def destroy(card:)
-        if card.destroy!
+        if card.destroy
           success(card: card)
         else
           failure(card.errors.full_messages.to_sentance)
