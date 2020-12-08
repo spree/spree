@@ -25,11 +25,11 @@ export default function MarkdownPageFooter({ group, isIndex, section, title }) {
   return (
     <a
       href={url}
-      className="dib mv2 mv0-l link mr0 f5 nowrap pv2 ph2 bg-light-gray fw6 br2"
+      className="dib mt4 mb0 mr0 f5 nowrap fw6 br2"
       target="_blank"
     >
       <IconEdit className="pointer dark-gray v-btm mr2 w1" />
-      <span className="dark-gray">Edit this page on GitHub</span>
+      <span className="dark-gray">Propose changes to this page</span>
     </a>
   )
 }
