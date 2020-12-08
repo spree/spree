@@ -47,9 +47,6 @@ export default class Header extends React.PureComponent {
     this.setState({ searchIsOpen: !this.state.searchIsOpen })
   }
 
-  isApiSectionActive = () =>
-    this.isActive('api')
-
   render() {
     return (
       <header
@@ -74,11 +71,9 @@ export default class Header extends React.PureComponent {
           <DocSearch isOpen={this.state.searchIsOpen} />
 
           <nav className="h-100 w-100 tr dn flex-l items-center justify-end">
-            <NavItem
-              text="API"
-              isActive={this.isApiSectionActive()}
-              url="https://api.spreecommerce.org/"
-            />
+            <NavItem url="https://api.spreecommerce.org/">
+              API
+            </NavItem>
             <NavItem
               text="Developer"
               isActive={this.isActive('developer')}
@@ -152,14 +147,8 @@ export default class Header extends React.PureComponent {
             }}
           >
             <nav className="flex flex-column overflow-auto mr4 mr0-l">
-              <NavItem
-                text="API"
-                isActive={this.isApiSectionActive()}
-                url="https://api.spreecommerce.org/"
-              >
-                {this.isApiSectionActive() && (
-                  <Sidebar nav={this.props.nav} isMobile />
-                )}
+              <NavItem url="https://api.spreecommerce.org/">
+                API
               </NavItem>
               <NavItem
                 text="Developer"
