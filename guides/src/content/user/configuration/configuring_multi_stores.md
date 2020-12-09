@@ -1,5 +1,6 @@
 ---
-title: Multiple Stores
+title: Stores
+order: 0
 ---
 
 <alert kind="warning">
