@@ -70,40 +70,64 @@ Spree.ready(function ($) {
             }
             stateSelect.append(opt)
           })
-          stateSelect.prop('required', false)
-          stateSelect.prop('disabled', false).show()
-          stateLabel.addClass('state-select-label')
-          stateInput.hide().prop('disabled', true)
+          // If states are listed for the country selected but not required
+          // Show State select dropdown.
           statePara.show()
+          stateSelect.prop('required', false)
+                     .prop('disabled', false)
+                     .show()
+                     .removeClass('required')
+          stateSelectImg.show()
+          stateLabel.addClass('state-select-label')
+
+          // Hide the require field marker, hide the State input field, disable and clear any existing content.
           stateSpanRequired.hide()
-          stateSelect.removeClass('required')
+          stateInput.hide()
+                    .prop('disabled', true)
+                    .val('')
 
           if (statesRequired) {
+          // If States are listed and required for the country selected
+
+            // Add required property and class to the select dropdown & Show the required field marker
+            stateSpanRequired.show()
             stateSelect.addClass('required')
-            stateSelectImg.show()
-            stateSpanRequired.show()
-            stateSelect.prop('required', true)
+                       .prop('required', true)
           }
-          stateSelect.removeClass('hidden')
-          stateInput.removeClass('required')
+
         } else {
-          stateSelect.hide().prop('disabled', true)
-          stateLabel.removeClass('state-select-label')
+        // If no States are listed in the database for the country selected
+        // and a State is not required => (United Kingdom).
+
+          // Hide the state selector, set property to disabled, remove all options
+          // and required is set to false.
+          stateSelect.hide()
+                     .prop('disabled', true)
+                     .prop('required', false)
+                     .find('option').remove()
+
           stateSelectImg.hide()
-          stateInput.show()
-          if (statesRequired) {
-            stateSpanRequired.show()
-            stateLabel.removeClass('state-select-label')
-            stateInput.addClass('required form-control')
-          } else {
-            stateInput.val('')
-            stateSpanRequired.hide()
-            stateInput.removeClass('required')
-          }
+
+          // Disable input and make sure no lingering value.
+          stateInput.prop('disabled', true)
+                    .prop('required', false)
+                    .hide()
+
+          // Toggle visability of States parent element (div) based on State required or not.
           statePara.toggle(!!statesRequired)
-          stateInput.prop('disabled', !statesRequired)
-          stateInput.removeClass('hidden')
-          stateSelect.removeClass('required')
+
+          if (statesRequired) {
+            // If a State is required but none are listed in the database
+            // for the country selected => (Hong Kong)
+
+            // Show the State input field, set it to required,
+            // add class required & show the label span for the input field.
+            stateInput.show()
+                      .prop('disabled', false)
+                      .prop('required', true)
+                      .addClass('required form-control')
+            stateSpanRequired.show()
+          }
         }
       }
       $('#bcountry select').change(function () {
