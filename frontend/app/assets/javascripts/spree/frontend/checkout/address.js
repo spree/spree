@@ -16,8 +16,8 @@ Spree.ready(function($) {
               for (var i = 0; i < json.length; i++) {
                 var obj = json[i];
                 xStates.push({
-                  'id': obj.id,
-                  'name': obj.attributes.name
+                  id: obj.id,
+                  name: obj.attributes.name
                 })
               }
               Spree.Checkout[countryId] = {
@@ -78,8 +78,7 @@ Spree.ready(function($) {
             }
             stateSelect.append(opt)
           })
-          // If States are listed for the Country selected but not required
-          // kill the input field, it has no use in this scanario
+          // If States are listed for the Country selected kill the input field
           stateInput.hide()
             .prop('disabled', true)
             .prop('required', false)
@@ -92,13 +91,11 @@ Spree.ready(function($) {
             .show()
           stateSelectImg.show()
           stateLabel.addClass('state-select-label')
-
-          // Show/Hide the require field marker based on State riquire true/falses
           stateSpanRequired.toggle(statesRequired)
         } else {
           // If no States are listed in the database for the country selected
           // and a State is not required => (United Kingdom).
-          // Kill the State selector, it has no place in this scenario, and disable the input field.
+          // Kill the State selector and input field.
           stateSelectImg.hide()
           stateSelect.hide()
             .prop('disabled', true)
@@ -109,18 +106,18 @@ Spree.ready(function($) {
             .prop('required', false)
             .hide()
 
-          // Toggle visability of States parent element (div) based on State required or not.
+          // Toggle visibility of States parent element based on State required.
           statePara.toggle(statesRequired)
 
           if (statesRequired) {
-            // If a State is required but none are listed in the database
+            // If a State is required, but none are listed in the database
             // for the country selected => (Hong Kong)
-            // Enable the State input field, set it to required,
+            // Enable the State input field, set it to required.
             stateInput.show()
               .prop('disabled', false)
               .prop('required', true)
             stateSpanRequired.show()
-            stateLabel.removeClass('state-select-label') // required for floating label in form
+            stateLabel.removeClass('state-select-label') // required for floating label
           }
         }
       }
