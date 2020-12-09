@@ -142,7 +142,8 @@ en:
         url: Site URL
         meta_description: Meta Description
         meta_keywords: Meta Keywords
-        seo_title: Seo Title
+        seo_robots: SEO Robots
+        seo_title: SEO Title
         name: Site Name
         mail_from_address: Mail From Address
       spree/store_credit:
@@ -1514,10 +1515,11 @@ en:
     select_a_store_credit_reason: Select a reason for the store credit
     select_stock: Select stock
     selected_quantity_not_available: ! 'selected of %{item} is not available.'
-    seo: SEO
     send_copy_of_all_mails_to: Send Copy of All Mails To
     send_mails_as: Send Mails As
-    seo_title: SEO title
+    seo: SEO
+    seo_robots: SEO Robots
+    seo_title: SEO Title
     server: Server
     server_error: The server returned an error
     settings: Settings
