@@ -72,14 +72,14 @@ Spree.ready(function($) {
           selected = parseInt(stateSelect.val())
           stateSelect.html('')
           $.each(states, function(idx, state) {
-              var opt = $(document.createElement('option')).attr('value', state.id).html(state.name)
-              if (selected.toString(10) === state.id.toString(10)) {
-                opt.prop('selected', true)
-              }
-              stateSelect.append(opt)
-            })
-            // If States are listed for the Country selected but not required
-            // kill the input field, it has no use in this scanario
+            var opt = $(document.createElement('option')).attr('value', state.id).html(state.name)
+            if (selected.toString(10) === state.id.toString(10)) {
+              opt.prop('selected', true)
+            }
+            stateSelect.append(opt)
+          })
+          // If States are listed for the Country selected but not required
+          // kill the input field, it has no use in this scanario
           stateInput.hide()
             .prop('disabled', true)
             .prop('required', false)
