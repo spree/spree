@@ -1,16 +1,24 @@
-Spree.ready(function ($) {
-  Spree.onAddress = function () {
+Spree.ready(function($) {
+  Spree.onAddress = function() {
     if ($('#checkout_form_address').length) {
-      Spree.updateState = function (region) {
+      Spree.updateState = function(region) {
         var countryId = getCountryId(region)
         if (countryId != null) {
           if (Spree.Checkout[countryId] == null) {
             $.ajax({
-              async: false, method: 'GET', url: Spree.pathFor('/api/v2/storefront/countries/' + countryId + '?include=checkout_zone_applicable_states'), dataType: 'json'
-            }).done(function (data) {
-              var json = data.included; var xStates = [];
+              async: false,
+              method: 'GET',
+              url: Spree.pathFor('/api/v2/storefront/countries/' + countryId + '?include=checkout_zone_applicable_states'),
+              dataType: 'json'
+            }).done(function(data) {
+              var json = data.included;
+              var xStates = [];
               for (var i = 0; i < json.length; i++) {
-                var obj = json[i]; xStates.push({ 'id': obj.id, 'name': obj.attributes.name })
+                var obj = json[i];
+                xStates.push({
+                  'id': obj.id,
+                  'name': obj.attributes.name
+                })
               }
               Spree.Checkout[countryId] = {
                 states: xStates,
@@ -27,7 +35,7 @@ Spree.ready(function ($) {
         }
       }
 
-      Spree.toggleZipcode = function (data, region) {
+      Spree.toggleZipcode = function(data, region) {
         var requiredIndicator = $('span#required_marker').first().text()
         var zipcodeRequired = data.zipcode_required
         var zipcodePara = $('#' + region + 'zipcode')
@@ -49,7 +57,7 @@ Spree.ready(function ($) {
         }
       }
 
-      Spree.fillStates = function (data, region) {
+      Spree.fillStates = function(data, region) {
         var selected
         var statesRequired = data.states_required
         var states = data.states
@@ -63,45 +71,43 @@ Spree.ready(function ($) {
         if (states.length > 0) {
           selected = parseInt(stateSelect.val())
           stateSelect.html('')
-          $.each(states, function (idx, state) {
-            var opt = $(document.createElement('option')).attr('value', state.id).html(state.name)
-            if (selected.toString(10) === state.id.toString(10)) {
-              opt.prop('selected', true)
-            }
-            stateSelect.append(opt)
-          })
-          // If States are listed for the Country selected but not required
-          // kill the input field, it has no use in this scanario
+          $.each(states, function(idx, state) {
+              var opt = $(document.createElement('option')).attr('value', state.id).html(state.name)
+              if (selected.toString(10) === state.id.toString(10)) {
+                opt.prop('selected', true)
+              }
+              stateSelect.append(opt)
+            })
+            // If States are listed for the Country selected but not required
+            // kill the input field, it has no use in this scanario
           stateInput.hide()
-                    .prop('disabled', true)
-                    .prop('required', false)
-                    .val('')
+            .prop('disabled', true)
+            .prop('required', false)
+            .val('')
 
           // Activate the State select dropdown.
           statePara.show()
           stateSelect.prop('required', statesRequired)
-                     .prop('disabled', false)
-                     .show()
+            .prop('disabled', false)
+            .show()
           stateSelectImg.show()
           stateLabel.addClass('state-select-label')
 
           // Show/Hide the require field marker based on State riquire true/falses
           stateSpanRequired.toggle(statesRequired)
-
         } else {
-
           // If no States are listed in the database for the country selected
           // and a State is not required => (United Kingdom).
           // Kill the State selector, it has no place in this scenario, and disable the input field.
           stateSelectImg.hide()
           stateSelect.hide()
-                     .prop('disabled', true)
-                     .prop('required', false)
-                     .find('option').remove()
+            .prop('disabled', true)
+            .prop('required', false)
+            .find('option').remove()
 
           stateInput.prop('disabled', true)
-                    .prop('required', false)
-                    .hide()
+            .prop('required', false)
+            .hide()
 
           // Toggle visability of States parent element (div) based on State required or not.
           statePara.toggle(statesRequired)
@@ -111,28 +117,29 @@ Spree.ready(function ($) {
             // for the country selected => (Hong Kong)
             // Enable the State input field, set it to required,
             stateInput.show()
-                      .prop('disabled', false)
-                      .prop('required', true)
+              .prop('disabled', false)
+              .prop('required', true)
             stateSpanRequired.show()
             stateLabel.removeClass('state-select-label') // required for floating label in form
           }
         }
       }
-      $('#bcountry select').change(function () {
+      $('#bcountry select').change(function() {
         Spree.updateState('b')
       })
-      $('#scountry select').change(function () {
+      $('#scountry select').change(function() {
         Spree.updateState('s')
       })
       Spree.updateState('b')
 
       var orderUseBilling = $('input#order_use_billing')
-      orderUseBilling.change(function () {
+      orderUseBilling.change(function() {
         updateShippingFormState(orderUseBilling)
       })
       updateShippingFormState(orderUseBilling)
     }
-    function updateShippingFormState (orderUseBilling) {
+
+    function updateShippingFormState(orderUseBilling) {
       if (orderUseBilling.is(':checked')) {
         $('#shipping .inner').hide()
         $('#shipping .inner input, #shipping .inner select').prop('disabled', true)
@@ -142,7 +149,8 @@ Spree.ready(function ($) {
         Spree.updateState('s')
       }
     }
-    function getCountryId (region) {
+
+    function getCountryId(region) {
       return $('#' + region + 'country select').val()
     }
   }
