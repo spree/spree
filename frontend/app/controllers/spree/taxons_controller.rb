@@ -16,7 +16,7 @@ module Spree
     def product_carousel
       if stale?(etag: carousel_etag, last_modified: last_modified, public: true)
         load_products
-        if @products.any?
+        if @products.reload.any?
           render template: 'spree/taxons/product_carousel', layout: false
         else
           head :no_content
