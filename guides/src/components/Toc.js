@@ -35,7 +35,7 @@ const getMarginDepth = depth => ([1, 2].includes(depth) ? 0 : depth)
 
 const Toc = ({ headings }) => (
   <aside className="ml3 mw5 fixed dn db-l overflow-auto right-1" css={styleToc}>
-    <h4 className="ttu mt0 mb3">Table Of Contents</h4>
+    <h3 className="mt0 mb3">Table Of Contents</h3>
 
     <nav>
       {headings.map(heading => {
