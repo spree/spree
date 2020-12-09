@@ -8,10 +8,6 @@ order: 0
   This section is only applicable to [Spree 4.1](/release_notes/4_1_0.html) or newer
 </alert>
 
-## Overview
-
-The new Spree UX is here. Feel free to customize it to your needs, including:  the overall styling, header, footer, placeholder images and text, and SEO settings.
-
 ![](../../../images/developer/storefront/1.png)
 
 ## Styling with SASS variables
