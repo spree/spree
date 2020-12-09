@@ -4,17 +4,13 @@ section: customization
 order: 8
 ---
 
-## Overview
-
 This guide covers using a custom authentication setup with Spree, such
 as one provided by your own application. This is ideal in situations
 where you want to handle the sign-in or sign-up flow of your application
 uniquely, outside the realms of what would be possible with Spree. After
-reading this guide, you will be familiar with:
+reading this guide, you will be familiar with **setting up Spree to work with your custom authentication**.
 
--   Setting up Spree to work with your custom authentication
-
-### The User Model
+## The User Model
 
 This guide assumes that you have a pre-existing model inside your
 application that represents the users of your application already. This
@@ -28,7 +24,7 @@ of this guide the model we will be referring to **will** be called
 `User`. If your model is called something else, do some mental
 substitution wherever you see `User`.
 
-#### Initial Setup
+### Initial Setup
 
 To begin using your custom `User` class, you must first edit Spree's
 initializer located at `config/initializers/spree.rb` by changing this
@@ -67,7 +63,7 @@ bundle exec rails db:migrate
 Next you will need to define some methods to tell Spree where to find
 your application's authentication routes.
 
-### Authentication Helpers
+## Authentication Helpers
 
 There are some authentication helpers of Spree's that you will need to
 possibly override. The file at `lib/spree/authentication_helpers.rb`

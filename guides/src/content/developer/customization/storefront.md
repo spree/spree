@@ -4,13 +4,15 @@ section: customization
 order: 0
 ---
 
+<alert kind="warning">
+  This section is only applicable to [Spree 4.1](/release_notes/4_1_0.html) or newer
+</alert>
+
 ## Overview
 
 The new Spree UX is here. Feel free to customize it to your needs, including:  the overall styling, header, footer, placeholder images and text, and SEO settings.
 
 ![](../../../images/developer/storefront/1.png)
-
-![](../../../images/developer/storefront/2.png)
 
 ## Styling with SASS variables
 
@@ -696,6 +698,6 @@ To set the title, meta keywords and description for each **product page (PDP)**,
 The new Spree UX has the following social sharing features implemented:
 
 - Facebook sharing with [Open Graph tags](https://ogp.me/) to enable an attractive page preview
-- Google visibility with structured data using [Schema.org](http://schema.org/) with [JSON-DL](https://json-ld.org/)
+- Google visibility with structured data using [Schema.org](http://schema.org/) with [JSON-LD](https://json-ld.org/)
 
 Feel free to [test the Open Graph tags implementation](https://developers.facebook.com/tools/debug/) and the also [test the Schema.org implementation](https://search.google.com/structured-data/testing-tool/u/0/) for your store.

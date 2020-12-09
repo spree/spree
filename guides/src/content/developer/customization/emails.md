@@ -4,6 +4,10 @@ section: customization
 order: 10
 ---
 
+<alert kind="warning">
+  This section is only applicable to [Spree 4.2](/release_notes/4_2_0.html) or newer
+</alert>
+
 ## Overview
 
 Spree uses [postmark templates](https://github.com/wildbit/postmark-templates), as a base for all transactional emails.

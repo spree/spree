@@ -2,17 +2,15 @@
 title: Shipping Methods
 ---
 
-## Shipping Methods
-
 Now that you have set up all of the elements you need, it's time to put them together into the shipping options that the customer sees when they reach the checkout. These options are called Shipping Methods; they are the carriers and services used to send your products.
 
-### Adding a Shipping Method
+## Adding a Shipping Method
 
 To add a new shipping method to your store, go to the Admin Interface and click "Configuration", then "Shipping Methods". Click the "New Shipping Method" button to open the New Shipping Method form.
 
 ![New Shipping Method](../../../images/user/shipments/new_shipping_method.jpg)
 
-### Name
+## Name
 
 Enter a name for the shipping method. This is the exact wording that the customer will see at the checkout. This should include both the carrier (USPS, UPS, FedEx, DHL, etc.) as well as the service type (First Class Mail, Overnight, Ground, etc.) It is very common to need several shipping methods for your store, for example:
 
@@ -26,7 +24,7 @@ Enter a name for the shipping method. This is the exact wording that the custome
 
 Remember that you will need to associate one or more [zones](#zones) with each shipping method in order for it to appear as an option at checkout.
 
-### Display
+## Display
 
 From the "Display" drop-down box, choose whether you want to have the option display only on the backend, the frontend, or both.
 
@@ -38,17 +36,13 @@ If a shipping method is available only on backend, then only your store's admini
 * You want to provide personal delivery of goods only to your best local customers.
 * Your photography studio usually sells prints that are physically delivered; however, some clients are willing to receive electronic media that they can print themselves.
 
-### Tracking URL
+## Tracking URL
 
 You can optionally input a tracking URL for your new shipping method. This allows customers to track the progress of their package from your [Stock Location](/user/configuration/configuring_inventory.html) to the order's shipping address. The string ":tracking" will be replaced with the tracking number you input once you actually process the order.
 
 You may need to check with the shipping carrier to see if they have a Shipping Confirmation URL that customers can use for this service. Some [commonly-used tracking URLs](http://verysimple.com/2011/07/06/ups-tracking-url/) are available online.
 
-!!!
-Please note that Spree Commerce, Inc. makes no claims of warranty or accuracy for the information presented on third-party websites. We strongly urge you to verify the information independently before you put it into production on your store.
-!!!
-
-### Categories
+## Categories
 
 Some shipping methods may only apply to certain types of products in your store, regardless of where those items are being shipped. You may only want to send over-sized items via UPS Ground, for example, and not via USPS Priority. The options shown in the "Categories" section correspond to the [Shipping Categories](/user/shipments/shipping_categories.html) you set up in an earlier section of this guide series.
 
@@ -56,7 +50,7 @@ Some shipping methods may only apply to certain types of products in your store,
 
 Check the boxes next to the categories you want served by your new shipping method.
 
-### Zones
+## Zones
 
 In [a previous step to this guide](/user/shipments/zones.html) you learned how to set up geographical zones for your store. Within the "Zones" section of the form, you need to specify which zones are served by this shipping method. The "EU_VAT" (European Value-Added Tax) zone could be served by USPS First Class International, but could _not_ be served by USPS Priority Mail.
 
@@ -64,7 +58,7 @@ In [a previous step to this guide](/user/shipments/zones.html) you learned how t
 
 Check the boxes next to any zones you want served by this shipping method.
 
-### Calculator
+## Calculator
 
 Each shipping method is associated with one [Calculator](/user/shipments/calculators.html). You can choose one of the built-in Spree calculators or one you have made yourself.
 
@@ -76,7 +70,7 @@ Once you've made your calculator selection, click the "Create" button to finaliz
 
 If necessary, you can re-read the [Calculators](/user/shipments/calculators.html) portion of this guide series to better understand the options. Click the "Update" button, and your shipping method is now complete!
 
-### Editing a Shipping Method
+## Editing a Shipping Method
 
 To edit an existing method, go to the Admin Interface and click "Configuration", then "Shipping Methods". Click the "Edit" icon next to any of the shipping methods in the list.
 
@@ -84,7 +78,7 @@ To edit an existing method, go to the Admin Interface and click "Configuration",
 
 The form and all options that come up are the same as those you used in creating your shipping methods.
 
-### Deleting a Shipping Method
+## Deleting a Shipping Method
 
 To delete a shipping method, go to the Admin Interface and click "Configuration", then "Shipping Methods". Click the "Delete" icon next to any of the shipping methods in the list.
 

@@ -4,13 +4,13 @@ section: customization
 order: 3
 ---
 
+<alert kind="warning">
+  This section is only applicable to [Spree 3.7](/release_notes/3_7_0.html) or newer
+</alert>
+
 ## Overview
 
 Dependency is a a new way to customize Spree. With Dependencies you can easily replace parts of Spree internals with your custom classes. You can replace [Services](https://github.com/spree/spree/tree/master/core/app/services/spree), Abilities and [Serializers](https://github.com/spree/spree/tree/master/api/app/serializers/spree/v2). More will come in the future.
-
-<alert kind="warning">
-  Dependencies are available in [Spree 3.7](/release_notes/3_7_0.html) and later.
-</alert>
 
 ## Controller level customization
 
