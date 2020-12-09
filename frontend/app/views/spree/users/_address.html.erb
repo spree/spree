@@ -9,11 +9,7 @@
     <%= "#{address.address1} #{address.address2}" %>,
   </div>
   <div>
-    <% if address.state_name.present? %>
-      <%= "#{address.city}, #{address.state_name} #{address.zipcode}" %>,
-    <% else %>
-      <%= "#{address.city}, #{address.state&.abbr} #{address.zipcode}" %>,
-    <% end %>
+    <%= "#{address.city}, #{address.state_text} #{address.zipcode}" %>,
   </div>
   <div>
     <%= address.country.name %>
