@@ -2,6 +2,10 @@
 title: Store Order Notifications
 ---
 
+<alert kind="warning">
+  This section is only applicable to [Spree 4.2](/release_notes/4_2_0.html) or newer
+</alert>
+
 ## Introduction
 
 As a store owner, you may wish to receive an email notification each time your store receives a new order. Let's set that up now.
