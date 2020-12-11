@@ -10,7 +10,7 @@ module Spree
           method_name = I18n.t("activerecord.attributes.spree/address.#{method}")
           required = Spree.t(:required)
           form.text_field(method,
-                          class: [is_required ? 'required' : nil, 'spree-flat-input'].compact,
+                          class: ['spree-flat-input'].compact,
                           required: is_required,
                           placeholder: is_required ? "#{method_name} #{required}" : method_name,
                           aria: { label: method_name }) +
@@ -27,7 +27,7 @@ module Spree
       method_name = Spree.t(:zipcode)
       required = Spree.t(:required)
       form.text_field(:zipcode,
-                      class: [is_required ? 'required' : nil, 'spree-flat-input'].compact,
+                      class: ['spree-flat-input'].compact,
                       required: is_required,
                       placeholder: is_required ? "#{method_name} #{required}" : method_name,
                       aria: { label: Spree.t(:zipcode) }) +
@@ -44,11 +44,11 @@ module Spree
         form.collection_select(:state_id, checkout_zone_applicable_states_for(country).sort_by(&:name),
                               :id, :name,
                                { prompt: Spree.t(:state) },
-                               class: [have_states ? 'required' : 'hidden', 'spree-flat-select'].compact,
+                               class: ['spree-flat-select'].compact,
                                aria: { label: Spree.t(:state) },
                                disabled: !have_states) +
           form.text_field(:state_name,
-                          class: [!have_states ? 'required' : 'hidden', 'spree-flat-input'].compact,
+                          class: ['spree-flat-input'].compact,
                           aria: { label: Spree.t(:state) },
                           disabled: have_states,
                           placeholder: Spree.t(:state) + " #{Spree.t(:required)}") +
@@ -60,7 +60,7 @@ module Spree
                     class: [!have_states ? 'hidden' : nil, 'position-absolute spree-flat-select-arrow'].compact)
       ].join.tr('"', "'").delete("\n")
 
-      content_tag(:noscript, form.text_field(:state_name, class: 'required')) +
+      content_tag(:noscript, form.text_field(:state_name)) +
         javascript_tag("document.write(\"<span class='d-block position-relative'>#{state_elements.html_safe}</span>\");")
     end
 
