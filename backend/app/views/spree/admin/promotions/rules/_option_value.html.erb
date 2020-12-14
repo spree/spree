@@ -25,10 +25,10 @@
     </div>
     <div class="card-body row p-3">
       <div class="col-12 col-md-6">
-        <input class="js-promo-rule-option-value-product-select fullwidth" type="hidden" value="{{ productSelect.value }}">
+        <%= select_tag 'product', nil, class: 'js-promo-rule-option-value-product-select d-block w-100' %> <!-- check this -->
       </div>
       <div class="col-12 col-md-6">
-        <input class="js-promo-rule-option-value-option-values-select fullwidth" name="<%= param_prefix %>[preferred_eligible_values][{{ productSelect.value }}]" type="hidden" value={{optionValuesSelect.value}}>
+        <%= select_tag "#{param_prefix}[preferred_eligible_values][{{ productSelect.value }}]", nil, class: 'js-promo-rule-option-value-option-values-select d-block w-100' %>
       </div>
     </div>
   </div>

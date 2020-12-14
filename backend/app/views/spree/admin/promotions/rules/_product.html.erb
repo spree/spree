@@ -1,7 +1,7 @@
 <div class="card-body">
   <div class="form-group products_rule_products">
     <%= label_tag "#{param_prefix}_product_ids_string", Spree.t('product_rule.choose_products') %>
-    <%= hidden_field_tag "#{param_prefix}[product_ids_string]", promotion_rule.product_ids.join(","), class: "product_picker" %>
+    <%= select_tag "#{param_prefix}[product_ids_string]", options_from_collection_for_select(promotion_rule.products, :id, :name, promotion_rule.products.pluck(:id)), multiple: true, class: 'product_picker d-block w-100' %>
   </div>
   <div class="form-group mb-0">
     <%= label_tag Spree.t('product_rule.label') %>

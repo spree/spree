@@ -6,39 +6,43 @@ $.fn.optionValueAutocomplete = function (options) {
   var multiple = typeof (options.multiple) !== 'undefined' ? options.multiple : true
   var productSelect = options.productSelect
 
+  function formatOptionValueList(values) {
+    var formatted_data = $.map(values, function (obj) {
+      var item = { id: obj.id, text: obj.name }
+
+      return item
+    });
+
+    return formatted_data
+  }
+
   this.select2({
-    minimumInputLength: 3,
     multiple: multiple,
-    initSelection: function (element, callback) {
-      $.get(Spree.routes.option_values_api, {
-        ids: element.val().split(','),
-        token: Spree.api_key
-      }, function (data) {
-        callback(multiple ? data : data[0])
-      })
-    },
+    minimumInputLength: 2,
+    allowClear: true,
     ajax: {
       url: Spree.routes.option_values_api,
-      datatype: 'json',
-      data: function (term) {
+      dataType: 'json',
+      data: function (params) {
         var productId = typeof (productSelect) !== 'undefined' ? $(productSelect).select2('val') : null
-        return {
+
+        var query = {
           q: {
-            name_cont: term,
+            name_cont: params.term,
             variants_product_id_eq: productId
           },
           token: Spree.api_key
         }
+
+        return query;
       },
-      results: function (data) {
-        return { results: data }
+      processResults: function(data) {
+        var results = formatOptionValueList(data)
+
+        return {
+          results: results
+        }
       }
-    },
-    formatResult: function (optionValue) {
-      return optionValue.name
-    },
-    formatSelection: function (optionValue) {
-      return optionValue.name
     }
   })
 }

@@ -9,40 +9,46 @@ $.fn.productAutocomplete = function (options) {
     return Select2.util.escapeMarkup(product.name)
   }
 
+  function formatProductList(products) {
+    var formatted_data = $.map(products, function (obj) {
+      var item = { id: obj.id, text: obj.name }
+      return item
+    });
+
+    return formatted_data
+  }
+
   this.select2({
+    multiple: true,
     minimumInputLength: 3,
-    multiple: multiple,
-    initSelection: function (element, callback) {
-      $.get(Spree.routes.products_api, {
-        ids: element.val().split(','),
-        token: Spree.api_key
-      }, function (data) {
-        callback(multiple ? data.products : data.products[0])
-      })
-    },
     ajax: {
       url: Spree.routes.products_api,
-      datatype: 'json',
-      cache: true,
-      data: function (term, page) {
-        return {
+      dataType: 'json',
+      data: function (params) {
+        var query = {
           q: {
-            name_or_master_sku_cont: term
+            name_or_master_sku_cont: params.term
           },
           m: 'OR',
           token: Spree.api_key
         }
+
+        return query;
       },
-      results: function (data, page) {
+      processResults: function(data) {
         var products = data.products ? data.products : []
+        var results = formatProductList(products)
+
         return {
-          results: products
+          results: results
         }
       }
     },
-    formatResult: formatProduct,
-    formatSelection: formatProduct
+    templateSelection: function(data, container) {
+      return data.text
+    }
   })
+
 }
 
 $(document).ready(function () {

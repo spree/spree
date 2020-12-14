@@ -14,41 +14,47 @@ $(document).ready(function () {
     window.customerTemplate = Handlebars.compile($('#customer_autocomplete_template').text())
   }
 
-  var formatCustomerResult = function (customer) {
-    return customerTemplate({
+  function formatCustomerResult (customer) {
+    if (customer.loading) {
+      return customer.text
+    }
+
+    return $(customerTemplate({
       customer: customer,
       bill_address: customer.bill_address,
       ship_address: customer.ship_address
-    })
+    }))
   }
 
   if ($('#customer_search').length > 0) {
     $('#customer_search').select2({
       placeholder: Spree.translations.choose_a_customer,
+      dropdownCssClass: 'customer_search',
       ajax: {
         url: Spree.routes.users_api,
         datatype: 'json',
         cache: true,
-        data: function (term, page) {
-          return {
+        data: function (params) {
+          var query = {
             q: {
               'm': 'or',
-              'email_start': term,
-              'ship_address_firstname_start': term,
-              'ship_address_lastname_start': term,
-              'bill_address_firstname_start': term,
-              'bill_address_lastname_start': term
+              'email_start': params.term,
+              'ship_address_firstname_start': params.term,
+              'ship_address_lastname_start': params.term,
+              'bill_address_firstname_start': params.term,
+              'bill_address_lastname_start': params.term
             },
             token: Spree.api_key
           }
+
+          return query
         },
-        results: function (data, page) {
+        processResults: function (data, page) {
           return { results: data.users }
         }
       },
-      dropdownCssClass: 'customer_search',
-      formatResult: formatCustomerResult,
-      formatSelection: function (customer) {
+      templateResult: formatCustomerResult,
+      templateSelection: function (customer) {
         $('#order_email').val(customer.email)
         $('#order_user_id').val(customer.id)
         $('#guest_checkout_true').prop('checked', false)
@@ -66,15 +72,15 @@ $(document).ready(function () {
           $('#order_bill_address_attributes_zipcode').val(billAddress.zipcode)
           $('#order_bill_address_attributes_phone').val(billAddress.phone)
 
-          $('#order_bill_address_attributes_country_id').select2('val', billAddress.country_id).promise().done(function () {
+          $('#order_bill_address_attributes_country_id').val(billAddress.country_id).trigger('change').promise().done(function () {
             update_state('b', function () {
-              $('#order_bill_address_attributes_state_id').select2('val', billAddress.state_id)
+              $('#order_bill_address_attributes_state_id').val(billAddress.state_id).trigger('change')
             })
           })
         } else {
           clear_address_fields()
         }
-        return Select2.util.escapeMarkup(customer.email)
+        return customer.email
       }
     })
   }

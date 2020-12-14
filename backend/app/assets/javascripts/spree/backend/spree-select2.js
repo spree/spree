@@ -1,7 +1,12 @@
 document.addEventListener('DOMContentLoaded', function() {
   // Inititate Select2 on any select element with the class .select2
   $('select.select2').select2({
-    allowClear: true
+    // change that
+    allowClear: false,
+    placeholder: {
+      id: '-1', // the value of the option
+      text: 'Select an option'
+    }
   })
 
   // BELOW: z-index fix for Select2 v3.x to lower the z-index of an opened Select2.

@@ -11,7 +11,7 @@
 //= require jquery.jstree/jquery.jstree
 //= require jquery_ujs
 //= require jquery-ui/widgets/autocomplete
-//= require select2
+//= require select2-full
 //= require underscore-min.js
 
 //= require spree

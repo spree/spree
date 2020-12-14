@@ -1,48 +1,45 @@
 'use strict'
 // eslint-disable-next-line camelcase
 function set_taxon_select (selector) {
-  function formatTaxon (taxon) {
-    return Select2.util.escapeMarkup(taxon.pretty_name)
+  function formatTaxonList(values) {
+    var formatted_data = $.map(values, function (obj) {
+      var item = { id: obj.id, text: obj.pretty_name }
+
+      return item
+    });
+
+    return formatted_data
   }
 
   if ($(selector).length > 0) {
+
+    // deal with initSelection
     $(selector).select2({
-      placeholder: Spree.translations.taxon_placeholder,
       multiple: true,
-      initSelection: function (element, callback) {
-        var url = Spree.url(Spree.routes.taxons_api, {
-          ids: element.val(),
-          without_children: true,
-          token: Spree.api_key
-        })
-        return $.getJSON(url, null, function (data) {
-          return callback(data['taxons'])
-        })
-      },
+      placeholder: Spree.translations.taxon_placeholder,
+      minimumInputLength: 2,
+      allowClear: true,
       ajax: {
         url: Spree.routes.taxons_api,
-        datatype: 'json',
-        data: function (term, page) {
-          return {
-            per_page: 50,
-            page: page,
-            without_children: true,
+        dataType: 'json',
+        data: function (params) {
+          var query = {
             q: {
-              name_cont: term
+              name_cont: params.term,
             },
             token: Spree.api_key
           }
+
+          return query;
         },
-        results: function (data, page) {
-          var more = page < data.pages
+        processResults: function(data) {
+          var results = formatTaxonList(data.taxons)
+
           return {
-            results: data['taxons'],
-            more: more
+            results: results
           }
         }
-      },
-      formatResult: formatTaxon,
-      formatSelection: formatTaxon
+      }
     })
   }
 }

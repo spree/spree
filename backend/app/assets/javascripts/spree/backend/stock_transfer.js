@@ -1,8 +1,9 @@
 $(function () {
   function TransferVariant (variant1) {
+    // refactor variant1
     this.variant = variant1
-    this.id = this.variant.id
-    this.name = this.variant.name + ' - ' + this.variant.sku
+    this.id = this.variant[0].variant.id
+    this.name = this.variant[0].variant.name + ' - ' + this.variant[0].variant.sku
     this.quantity = 0
   }
   TransferVariant.prototype.add = function (quantity) {
@@ -126,40 +127,58 @@ $(function () {
     }
   }
 
+  function formattedVariantList(obj) {
+   var item = { id: obj.id, text: obj.variant.name, name: obj.variant.name, sku: obj.variant.sku, options_text: obj.variant.options_text, variant: obj.variant }
+   return item
+  }
+
   TransferVariants.prototype.build_select = function (url, query) {
     return $('#transfer_variant').select2({
       minimumInputLength: 3,
       ajax: {
         url: url,
         datatype: 'json',
-        data: function (term) {
+        data: function (params) {
           var q = {}
-          q[query] = term
-          return {
+          q[query] = params.term
+          var search = {
             q: q,
             token: Spree.api_key
           }
+
+          return search
+
         },
-        results: function (data) {
+        processResults: function (data) {
           var result = data['variants'] || data['stock_items']
           if (data['stock_items'] != null) {
             result = _(result).map(function (variant) {
-              return variant.variant
+              return formattedVariantList(variant)
             })
           }
-          window.variants = result
+
           return {
             results: result
           }
         }
       },
-      formatResult: this.format_variant_result,
-      formatSelection: function (variant) {
+      templateResult: function(variant) {
+        if (variant.loading) {
+          return variant.text;
+        }
+
+        if (!!variant.options_text) {
+          return variant.variant.name + ' - ' + variant.variant.sku + ' (' + variant.variant.options_text + ')'
+        } else {
+          return variant.variant.name + ' - ' + variant.variant.sku
+        }
+      },
+      templateSelection: function (variant) {
         // eslint-disable-next-line no-extra-boolean-cast
         if (!!variant.options_text) {
-          return variant.name + (' (' + variant.options_text + ')') + (' - ' + variant.sku)
+          return variant.variant.name + (' (' + variant.variant.options_text + ')') + (' - ' + variant.variant.sku)
         } else {
-          return variant.name + (' - ' + variant.sku)
+          return variant.variant.name + (' - ' + variant.variant.sku)
         }
       }
     })

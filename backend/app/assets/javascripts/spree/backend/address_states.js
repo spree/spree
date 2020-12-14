@@ -2,7 +2,7 @@
 function update_state (region, done) {
   'use strict'
 
-  var country = $('span#' + region + 'country .select2').select2('val')
+  var country = $('span#' + region + 'country .select2').val()
   var stateSelect = $('span#' + region + 'state select.select2')
   var stateInput = $('span#' + region + 'state input.state_name')
 
@@ -18,14 +18,15 @@ function update_state (region, done) {
         var opt = $(document.createElement('option'))
           .prop('value', state.id)
           .html(state.name)
-        stateSelect.append(opt)
+        stateSelect.append(opt).trigger('change')
       })
       stateSelect.prop('disabled', false).show()
       stateSelect.select2()
       stateInput.hide().prop('disabled', true)
     } else {
       stateInput.prop('disabled', false).show()
-      stateSelect.select2('destroy').hide()
+      var select = stateSelect.select2()
+      select.select2('destroy').hide()
     }
 
     if (done) done()
