@@ -25,15 +25,13 @@ $.fn.productAutocomplete = function (options) {
       url: Spree.routes.products_api,
       dataType: 'json',
       data: function (params) {
-        var query = {
+        return {
           q: {
             name_or_master_sku_cont: params.term
           },
           m: 'OR',
           token: Spree.api_key
         }
-
-        return query;
       },
       processResults: function(data) {
         var products = data.products ? data.products : []
@@ -47,8 +45,13 @@ $.fn.productAutocomplete = function (options) {
     templateSelection: function(data, container) {
       return data.text
     }
+  }).on("select2:unselect", function (e) {
+    if($(this).select2('data').length == 0) {
+      $('<input>').attr({ type: 'hidden', name: this.name, value: '', id: this.id }).appendTo('form.edit_promotion')
+    }
+  }).on('select2:select', function(e) {
+    $('input#'+this.id).remove()
   })
-
 }
 
 $(document).ready(function () {
