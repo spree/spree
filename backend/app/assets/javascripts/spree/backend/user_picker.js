@@ -22,14 +22,12 @@ $.fn.userAutocomplete = function () {
       url: Spree.routes.users_api,
       dataType: 'json',
       data: function (params) {
-        var query = {
+        return {
           q: {
             email_start: params.term
           },
           token: Spree.api_key
         }
-
-        return query;
       },
       processResults: function(data) {
         var results = formatUserList(data.users)

@@ -6,7 +6,6 @@ $(document).ready(function () {
   // handle variant selection, show stock level.
   $('#add_variant_id').change(function () {
     var variantId = parseInt($(this).val())
-
     var variant = _.find(window.variants, function (variant) {
       return variant.id === variantId
     })
@@ -284,9 +283,10 @@ function completeItemSplit(event) {
   var stockLocationId = stockItemRow.find('#item_stock_location').val()
   var originalShipmentNumber = link.closest('tbody').data('shipment-number')
 
-  var selectedShipment = stockItemRow.find($('#item_stock_location').select2('data').element)
-  var targetShipmentNumber = selectedShipment.data('shipment-number')
-  var newShipment = selectedShipment.data('new-shipment')
+  var selectedShipment = stockItemRow.find($('#item_stock_location'))
+  var targetShipmentNumber = selectedShipment.select2().data('shipment-number')
+  var newShipment = selectedShipment
+
   // eslint-disable-next-line eqeqeq
   if (stockLocationId != 'new_shipment') {
     var path, additionalData
@@ -335,7 +335,7 @@ function addVariantFromStockLocation(event) {
 
   $('#stock_details').hide()
 
-  var variantId = $('input.variant_autocomplete').val()
+  var variantId = $('select.variant_autocomplete').val()
   var stockLocationId = $(this).data('stock-location-id')
   var quantity = $("input.quantity[data-stock-location-id='" + stockLocationId + "']").val()
 

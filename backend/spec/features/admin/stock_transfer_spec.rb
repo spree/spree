@@ -13,7 +13,9 @@ describe 'Stock Transfers', type: :feature, js: true do
     visit spree.admin_stock_transfers_path
     click_on 'New Stock Transfer'
 
-    select2 variant.sku, from: 'Variant', search: true, match: :first
+    select2_open label: 'Variant'
+    select2_search variant.sku, from: 'Variant'
+    select2_select variant.name, from: 'Variant', match: :first
 
     content = "#{variant.name} (#{variant.options_text}) - #{variant.sku}"
     expect(page).to have_content(content)
@@ -29,7 +31,9 @@ describe 'Stock Transfers', type: :feature, js: true do
     click_on 'New Stock Transfer'
     fill_in 'reference', with: 'PO 666'
 
-    select2 variant.name, from: 'Variant', search: true
+    select2_open label: 'Variant'
+    select2_search variant.name, from: 'Variant'
+    select2_select variant.name, from: 'Variant', match: :first
 
     click_button 'Add'
     click_button 'Transfer Stock'
@@ -54,7 +58,9 @@ describe 'Stock Transfers', type: :feature, js: true do
     click_on 'New Stock Transfer'
     fill_in 'reference', with: 'PO 666'
 
-    select2 product.master.name, from: 'Variant', search: true
+    select2_open label: 'Variant'
+    select2_search product.master.name, from: 'Variant'
+    select2_select product.master.name, from: 'Variant', match: :first
 
     click_button 'Add'
     click_button 'Transfer Stock'
@@ -85,7 +91,9 @@ describe 'Stock Transfers', type: :feature, js: true do
       check 'transfer_receive_stock'
       select2 'NY', from: 'Destination'
 
-      select2 variant.name, from: 'Variant', search: true
+      select2_open label: 'Variant'
+      select2_search variant.name, from: 'Variant'
+      select2_select variant.name, from: 'Variant', match: :first
 
       click_button 'Add'
       click_button 'Transfer Stock'
@@ -102,7 +110,10 @@ describe 'Stock Transfers', type: :feature, js: true do
       fill_in 'reference', with: 'PO 666'
 
       select2 'NY', from: 'Destination'
-      select2 variant.name, from: 'Variant', search: true
+
+      select2_open label: 'Variant'
+      select2_search variant.name, from: 'Variant'
+      select2_select variant.name, from: 'Variant', match: :first
 
       click_button 'Add'
       click_button 'Transfer Stock'

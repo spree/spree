@@ -27,7 +27,6 @@ $.fn.variantAutocomplete = function () {
   // deal with initSelection
   return this.select2({
     placeholder: Spree.translations.variant_placeholder,
-    debug: true,
     minimumInputLength: 3,
     quietMillis: 200,
     ajax: {
@@ -44,6 +43,7 @@ $.fn.variantAutocomplete = function () {
         return query;
       },
       processResults: function(data) {
+        window.variants = data['variants']
         return {
           results: data.variants
         }

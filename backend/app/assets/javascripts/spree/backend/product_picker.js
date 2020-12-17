@@ -19,7 +19,7 @@ $.fn.productAutocomplete = function (options) {
   }
 
   this.select2({
-    multiple: true,
+    multiple: multiple,
     minimumInputLength: 3,
     ajax: {
       url: Spree.routes.products_api,
@@ -45,12 +45,6 @@ $.fn.productAutocomplete = function (options) {
     templateSelection: function(data, container) {
       return data.text
     }
-  }).on("select2:unselect", function (e) {
-    if($(this).select2('data').length == 0) {
-      $('<input>').attr({ type: 'hidden', name: this.name, value: '', id: this.id }).appendTo('form.edit_promotion')
-    }
-  }).on('select2:select', function(e) {
-    $('input#'+this.id).remove()
   })
 }
 

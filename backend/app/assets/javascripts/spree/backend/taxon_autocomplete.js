@@ -3,17 +3,16 @@
 function set_taxon_select (selector) {
   function formatTaxonList(values) {
     var formatted_data = $.map(values, function (obj) {
-      var item = { id: obj.id, text: obj.pretty_name }
-
-      return item
+      return {
+        id: obj.id,
+        text: obj.pretty_name
+      }
     });
 
     return formatted_data
   }
 
   if ($(selector).length > 0) {
-
-    // deal with initSelection
     $(selector).select2({
       multiple: true,
       placeholder: Spree.translations.taxon_placeholder,

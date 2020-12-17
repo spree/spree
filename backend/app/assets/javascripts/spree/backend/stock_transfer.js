@@ -128,8 +128,11 @@ $(function () {
   }
 
   function formattedVariantList(obj) {
-   var item = { id: obj.id, text: obj.variant.name, name: obj.variant.name, sku: obj.variant.sku, options_text: obj.variant.options_text, variant: obj.variant }
-   return item
+   return { id: obj.id, text: obj.name, name: obj.name, sku: obj.sku, options_text: obj.options_text, variant: obj }
+  }
+
+  function formattedStockItemsList(obj) {
+    return { id: obj.variant.id, text: obj.variant.name, name: obj.variant.name, sku: obj.variant.sku, options_text: obj.variant.options_text, variant: obj.variant }
   }
 
   TransferVariants.prototype.build_select = function (url, query) {
@@ -141,44 +144,44 @@ $(function () {
         data: function (params) {
           var q = {}
           q[query] = params.term
-          var search = {
+          return {
             q: q,
             token: Spree.api_key
           }
-
-          return search
-
         },
         processResults: function (data) {
-          var result = data['variants'] || data['stock_items']
-          if (data['stock_items'] != null) {
-            result = _(result).map(function (variant) {
+          var result = data.variants || data.stock_items
+          console.log('Process Results', result)
+          if (data.variants != null) {
+            var res = (result).map(function (variant) {
               return formattedVariantList(variant)
             })
+            console.log('when variants present')
+          } else {
+            var res = (result).map(function (variant) {
+              return formattedStockItemsList(variant)
+            })
+            console.log('when stock items present')
           }
 
           return {
-            results: result
+            results: res
           }
         }
       },
       templateResult: function(variant) {
-        if (variant.loading) {
-          return variant.text;
-        }
-
-        if (!!variant.options_text) {
-          return variant.variant.name + ' - ' + variant.variant.sku + ' (' + variant.variant.options_text + ')'
+        if (variant.options_text !== "") {
+          return variant.name + ' - ' + variant.sku + ' (' + variant.options_text + ')'
         } else {
-          return variant.variant.name + ' - ' + variant.variant.sku
+          return variant.name + ' - ' + variant.sku
         }
       },
       templateSelection: function (variant) {
         // eslint-disable-next-line no-extra-boolean-cast
         if (!!variant.options_text) {
-          return variant.variant.name + (' (' + variant.variant.options_text + ')') + (' - ' + variant.variant.sku)
+          return variant.name + (' (' + variant.options_text + ')') + (' - ' + variant.sku)
         } else {
-          return variant.variant.name + (' - ' + variant.variant.sku)
+          return variant.name + (' - ' + variant.sku)
         }
       }
     })

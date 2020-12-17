@@ -24,7 +24,7 @@ $.fn.optionValueAutocomplete = function (options) {
       url: Spree.routes.option_values_api,
       dataType: 'json',
       data: function (params) {
-        var productId = typeof (productSelect) !== 'undefined' ? $(productSelect).select2('val') : null
+        var productId = typeof (productSelect) !== 'undefined' ? $(productSelect).select2('data').id : null
 
         var query = {
           q: {
@@ -37,11 +37,15 @@ $.fn.optionValueAutocomplete = function (options) {
         return query;
       },
       processResults: function(data) {
+        console.log('process results', data)
         var results = formatOptionValueList(data)
 
         return {
           results: results
         }
+      },
+      templateSelection: function(option_value) {
+        console.log('template selection', option_value)
       }
     }
   })

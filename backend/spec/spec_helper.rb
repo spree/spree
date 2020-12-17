@@ -97,6 +97,7 @@ RSpec.configure do |config|
   end
 
   config.include CapybaraSelect2
+  config.include CapybaraSelect2::Helpers
   config.include FactoryBot::Syntax::Methods
 
   config.include Spree::TestingSupport::Preferences

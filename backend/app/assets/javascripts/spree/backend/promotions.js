@@ -46,7 +46,7 @@ function initProductActions () {
         optionValuesSelect: { value: values }
       }))
       var optionValue = $('.js-promo-rule-option-values .promo-rule-option-value').last()
-      optionValue.find('.js-promo-rule-option-value-product-select').productAutocomplete({ multiple: false, allowClear: true })
+      optionValue.find('.js-promo-rule-option-value-product-select').productAutocomplete({ multiple: false })
       optionValue.find('.js-promo-rule-option-value-option-values-select').optionValueAutocomplete({
         productSelect: '.js-promo-rule-option-value-product-select'
       })

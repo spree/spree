@@ -1,43 +1,40 @@
-$(document).ready(function () {
   'use strict'
+  function set_option_type_select(selector) {
+    function formatOptionTypeResult (optionType) {
+      return optionType.name
+    }
 
-  function formatOptionType (optionType) {
-    return Select2.util.escapeMarkup(optionType.presentation + ' (' + optionType.name + ')')
-  }
+    if ($(selector).length > 0) {
+      $(selector).select2({
+        minimumInputLength: 3,
+        multiple: true,
+        ajax: {
+          url: Spree.routes.option_types_api,
+          datatype: 'json',
+          data: function (params) {
+            var query = {
+              q: {
+                name_cont: params.term
+              },
+              token: Spree.api_key
+            }
 
-  if ($('#product_option_type_ids').length > 0) {
-    $('#product_option_type_ids').select2({
-      placeholder: Spree.translations.option_type_placeholder,
-      multiple: true,
-      initSelection: function (element, callback) {
-        var url = Spree.url(Spree.routes.option_types_api, {
-          ids: element.val(),
-          token: Spree.api_key
-        })
-        return $.getJSON(url, null, function (data) {
-          return callback(data)
-        })
-      },
-      ajax: {
-        url: Spree.routes.option_types_api,
-        quietMillis: 200,
-        datatype: 'json',
-        data: function (term) {
-          return {
-            q: {
-              name_cont: term
-            },
-            token: Spree.api_key
+            return query
+          },
+          processResults: function (data) {
+            return {
+              results: data
+            }
           }
         },
-        results: function (data) {
-          return {
-            results: data
-          }
+        templateResult: formatOptionTypeResult,
+        templateSelection: function (optionType) {
+          return optionType.text
         }
-      },
-      formatResult: formatOptionType,
-      formatSelection: formatOptionType
-    })
+      })
+    }
   }
-})
+
+  $(document).ready(function () {
+    set_option_type_select('#product_option_type_ids')
+  })

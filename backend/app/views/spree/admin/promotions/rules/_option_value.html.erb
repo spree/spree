@@ -1,6 +1,6 @@
 <div class="card-body">
   <div class="promo-rule-option-values">
-    <div class="js-promo-rule-option-values"></div>
+    <div class="js-promo-rule-option-values"></div> <!-- display div for option value select -->
     <button class="btn btn-primary btn-success js-add-promo-rule-option-value">
       <%= svg_icon name: "add.svg", width: '16', height: '16' %>
       <%= Spree.t(:add) %>
@@ -25,11 +25,15 @@
     </div>
     <div class="card-body row p-3">
       <div class="col-12 col-md-6">
-        <%= select_tag 'product', nil, class: 'js-promo-rule-option-value-product-select d-block w-100' %> <!-- check this -->
+        <!-- TODO -->
+        <%= select_tag "product", nil, class: 'js-promo-rule-option-value-product-select d-block w-100' %>
       </div>
       <div class="col-12 col-md-6">
-        <%= select_tag "#{param_prefix}[preferred_eligible_values][{{ productSelect.value }}]", nil, class: 'js-promo-rule-option-value-option-values-select d-block w-100' %>
+        <%#= select_tag "#{param_prefix}[preferred_eligible_values][{{ productSelect.value }}]", nil, class: 'js-promo-rule-option-value-option-values-select d-block w-100' %>
+        <%= select "#{param_prefix}","[preferred_eligible_values][]", {}, { include_hidden: true }, class: 'js-promo-rule-option-value-option-values-select d-block w-100' %>
       </div>
     </div>
   </div>
 </script>
+
+
