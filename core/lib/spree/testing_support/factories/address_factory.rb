@@ -16,7 +16,7 @@ FactoryBot.define do
       if address.state
         address.state.country
       else
-        address.association(:country)
+        address.association(:country, iso: country_iso_code)
       end
     end
   end
