@@ -1,9 +1,18 @@
+# frozen_string_literal: true
+
+require 'carmen'
+
 FactoryBot.define do
-  factory :country, class: Spree::Country do
-    sequence(:iso_name) { |n| "ISO_NAME_#{n}" }
-    sequence(:name)     { |n| "NAME_#{n}" }
-    sequence(:iso)      { |n| "I#{n}" }
-    sequence(:iso3)     { |n| "IS#{n}" }
-    numcode             { 840 }
+  factory :country, class: 'Spree::Country' do
+    iso { 'US' }
+
+    transient do
+      carmen_country { Carmen::Country.coded(iso) || fail("Unknown country iso code: #{iso.inspect}") }
+    end
+
+    iso_name { carmen_country.name.upcase }
+    name { carmen_country.name }
+    iso3 { carmen_country.alpha_3_code }
+    numcode { carmen_country.numeric_code }
   end
 end

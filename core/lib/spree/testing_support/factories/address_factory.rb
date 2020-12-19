@@ -1,5 +1,11 @@
 FactoryBot.define do
   factory :address, aliases: [:bill_address, :ship_address], class: Spree::Address do
+
+    transient do
+      country_iso_code { 'US' }
+      state_code { 'AL' }
+    end
+
     firstname         { 'John' }
     lastname          { 'Doe' }
     company           { 'Company' }
