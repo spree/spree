@@ -1,6 +1,8 @@
 module <%= class_name %>
   class Configuration
-    # Add you extension configs below, as per the example commented out:
+    # Add your extensions configurations here.
+
+    # Example
     # attr_accessor :example_one, :example_two
   end
 end

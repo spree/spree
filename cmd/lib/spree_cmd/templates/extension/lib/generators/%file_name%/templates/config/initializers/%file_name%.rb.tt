@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 <%= class_name %>.configure do |config|
-  # Examples below:
+
+  # Examples:
   # config.example_one = true
-  # config.example_two = false
+  # config.example_two = 'grams'
 end
