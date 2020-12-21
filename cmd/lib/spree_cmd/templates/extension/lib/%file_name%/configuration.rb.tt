@@ -6,7 +6,7 @@ module <%= class_name %>
 
    # preference :visible, :boolean
    # preference :dark_chocolate, :boolean, default: true
-   # preference :color, :string, default: "English"
+   # preference :color, :string, default: 'English'
    # preference :favorite_number, :integer
    # preference :supported_locales, :array, default: [:en]
   end
