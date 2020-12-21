@@ -12,13 +12,13 @@ Introduction goes here.
 
 2. Install the gem using Bundler
 
-    ```ruby
+    ```shell
     bundle install
     ```
 
 3. Copy & run migrations
 
-    ```ruby
+    ```shell
     bundle exec rails g <%= file_name %>:install
     ```
 
