@@ -50,6 +50,7 @@ module Spree
         can :create, Spree.user_class
         can [:show, :update, :destroy], Spree.user_class, id: user.id
         can :read, State
+        can :read, Store
         can :read, Taxon
         can :read, Taxonomy
         can :read, Variant
