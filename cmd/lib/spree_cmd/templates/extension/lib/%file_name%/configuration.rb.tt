@@ -1,8 +1,13 @@
 module <%= class_name %>
-  class Configuration
-    # Add your extensions configurations here.
+  class Configuration < Spree::Preferences::Configuration
 
-    # Example
-    # attr_accessor :example_one, :example_two
+   # Example preferences are shown below, for more information visit:
+   # https://guides.spreecommerce.org/developer/core/preferences.html
+
+   # preference :visible, :boolean
+   # preference :dark_chocolate, :boolean, default: true
+   # preference :color, :string, default: "English"
+   # preference :favorite_number, :integer
+   # preference :supported_locales, :array, default: [:en]
   end
 end

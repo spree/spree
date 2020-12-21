@@ -7,10 +7,6 @@ module <%= class_name %>
         run 'bundle exec rake railties:install:migrations FROM=<%= file_name %>'
       end
 
-      def generate_<%= file_name %>_config_file
-        copy_file "config/initializers/<%= file_name %>.rb", "config/initializers/<%= file_name %>.rb", skip: true
-      end
-
       def run_migrations
         run_migrations = options[:auto_run_migrations] || ['', 'y', 'Y'].include?(ask('Would you like to run the migrations now? [Y/n]'))
         if run_migrations

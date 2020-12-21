@@ -2,17 +2,3 @@ require 'spree_core'
 require 'spree_extension'
 require '<%=file_name%>/engine'
 require '<%=file_name%>/version'
-require '<%=file_name%>/configuration'
-
-
-module <%= class_name %>
-  class << self
-    def configuration
-      @configuration ||= Configuration.new
-    end
-
-    def configure
-      yield configuration
-    end
-  end
-end
