@@ -24,11 +24,11 @@
       </a>
     </div>
     <div class="card-body row p-3">
-      <div class="col-12 col-md-6">
+      <div class="col-12 col-md-6 product-select">
         <!-- TODO -->
         <%= select_tag "product", nil, class: 'js-promo-rule-option-value-product-select d-block w-100' %>
       </div>
-      <div class="col-12 col-md-6">
+      <div class="col-12 col-md-6 option-value-select">
         <%#= select_tag "#{param_prefix}[preferred_eligible_values][{{ productSelect.value }}]", nil, class: 'js-promo-rule-option-value-option-values-select d-block w-100' %>
         <%= select "#{param_prefix}","[preferred_eligible_values][]", {}, { include_hidden: true }, class: 'js-promo-rule-option-value-option-values-select d-block w-100' %>
       </div>

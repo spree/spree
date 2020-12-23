@@ -25,8 +25,8 @@ describe 'Promotion with option value rule', type: :feature do
     end
 
     within('.promo-rule-option-value') do
-      select2 product.name,       css: '.js-promo-rule-option-value-product-select', search: true
-      select2 option_value.name,  css: '.js-promo-rule-option-value-option-values-select', search: true
+      select2 product.name,       css: '.product-select', search: true
+      select2 option_value.name,  css: '.option-value-select', search: true
     end
 
     wait_for { !page.has_button?('Update') }
