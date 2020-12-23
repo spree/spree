@@ -283,9 +283,9 @@ function completeItemSplit(event) {
   var stockLocationId = stockItemRow.find('#item_stock_location').val()
   var originalShipmentNumber = link.closest('tbody').data('shipment-number')
 
-  var selectedShipment = stockItemRow.find($('#item_stock_location'))
-  var targetShipmentNumber = selectedShipment.select2().data('shipment-number')
-  var newShipment = selectedShipment
+  var selectedShipment = stockItemRow.find('#item_stock_location option:selected')
+  var targetShipmentNumber = selectedShipment.data('shipment-number')
+  var newShipment = selectedShipment.data('new-shipment')
 
   // eslint-disable-next-line eqeqeq
   if (stockLocationId != 'new_shipment') {
