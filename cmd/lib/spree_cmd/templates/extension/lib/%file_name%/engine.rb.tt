@@ -9,6 +9,10 @@ module <%= class_name %>
       g.test_framework :rspec
     end
 
+    initializer '<%= file_name %>.environment', before: :load_config_initializers do |_app|
+      <%= class_name %>::Config = <%= class_name %>::Configuration.new
+    end
+
     def self.activate
       Dir.glob(File.join(File.dirname(__FILE__), '../../app/**/*_decorator*.rb')) do |c|
         Rails.configuration.cache_classes ? require(c) : load(c)
