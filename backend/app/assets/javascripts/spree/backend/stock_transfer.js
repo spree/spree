@@ -151,17 +151,14 @@ $(function () {
         },
         processResults: function (data) {
           var result = data.variants || data.stock_items
-          console.log('Process Results', result)
           if (data.variants != null) {
             var res = (result).map(function (variant) {
               return formattedVariantList(variant)
             })
-            console.log('when variants present')
           } else {
             var res = (result).map(function (variant) {
               return formattedStockItemsList(variant)
             })
-            console.log('when stock items present')
           }
 
           return {
