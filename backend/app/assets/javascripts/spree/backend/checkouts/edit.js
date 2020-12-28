@@ -60,17 +60,14 @@ function formatCustomerSelection(customer) {
   return customer.email
 }
 
-// Select2-AJAX
-// Searches for Users
-// Used in Order -> Customer
-function set_customer_search_select (selector) {
-  $(selector).select2({
+$.fn.customerAutocomplete = function() {
+  this.select2({
     minimumInputLength: 3,
     placeholder: Spree.translations.choose_a_customer,
     ajax: {
       url: Spree.routes.users_api,
       datatype: 'json',
-      data: function (params, page) {
+      data: function (params) {
         return {
           q: {
             'm': 'or',
@@ -83,22 +80,19 @@ function set_customer_search_select (selector) {
           token: Spree.api_key
         }
       },
-      processResults: function (data, _page) {
-        return { results: data['users'] }
+      processResults: function (data) {
+        return { results: data.users }
       }
     },
     templateResult: formatCustomerResult
   }).on('select2:select', function (e) {
     var data = e.params.data;
     formatCustomerSelection(data)
-  });
+  })
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-  // Set up Select 2 on page ready
-  if ($('#customer_search').length > 0) {
-    set_customer_search_select('#customer_search')
-  }
+  $('#customer_search').customerAutocomplete()
 
   if ($('#customer_autocomplete_template').length > 0) {
     window.customerTemplate = Handlebars.compile($('#customer_autocomplete_template').text())
