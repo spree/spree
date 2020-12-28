@@ -1,30 +1,13 @@
-//= require_self
-/* global customerTemplate, update_state */
-// eslint-disable-next-line camelcase
-
-function clear_billing_address_fields () {
-  var fields = ['firstname', 'lastname', 'company', 'address1', 'address2',
-    'city', 'zipcode', 'state_id', 'country_id', 'phone']
-  $.each(fields, function (i, field) {
-    $('#order_bill_address_attributes_' + field).val('')
+function clearAddressFields(kinds = ['ship', 'bill']) {
+  kinds.forEach(function(kind) {
+    ADDRESS_FIELDS.forEach(function(field) {
+      $('#order_' + kind + '_address_attributes_' + field).val('')
+    })
   })
 }
 
-function clear_shipping_address_fields () {
-  var fields = ['firstname', 'lastname', 'company', 'address1', 'address2',
-    'city', 'zipcode', 'state_id', 'country_id', 'phone']
-  $.each(fields, function (i, field) {
-    $('#order_ship_address_attributes_' + field).val('')
-  })
-}
-
-function clear_address_fields () {
-  clear_billing_address_fields ()
-  clear_shipping_address_fields ()
-}
-
-function formatCustomerResult (customer) {
-  var escapedResult =  customerTemplate({
+function formatCustomerResult(customer) {
+  var escapedResult = window.customerTemplate({
     customer: customer,
     bill_address: customer.bill_address,
     ship_address: customer.ship_address
@@ -32,7 +15,27 @@ function formatCustomerResult (customer) {
   return $(escapedResult)
 }
 
-function formatCustomerSelection (customer) {
+function formatCustomerAddress(address, kind) {
+  $('#order_' + kind + '_address_attributes_firstname').val(address.firstname)
+  $('#order_' + kind + '_address_attributes_lastname').val(address.lastname)
+  $('#order_' + kind + '_address_attributes_address1').val(address.address1)
+  $('#order_' + kind + '_address_attributes_company').val(address.company)
+  $('#order_' + kind + '_address_attributes_address2').val(address.address2)
+  $('#order_' + kind + '_address_attributes_city').val(address.city)
+  $('#order_' + kind + '_address_attributes_zipcode').val(address.zipcode)
+  $('#order_' + kind + '_address_attributes_phone').val(address.phone)
+  $('#order_' + kind + '_address_attributes_phone').val(address.phone)
+  $('#order_' + kind + '_address_attributes_country_id').val(address.country_id)
+  $('#order_' + kind + '_address_attributes_country_id').trigger('change')
+
+  var stateSelect = $('#order_' + kind + '_address_attributes_state_id')
+
+  update_state(kind.charAt(0), function() {
+    stateSelect.val(address.state_id).trigger('change')
+  })
+}
+
+function formatCustomerSelection(customer) {
   $('#order_email').val(customer.email)
   $('#order_user_id').val(customer.id)
   $('#guest_checkout_true').prop('checked', false)
@@ -43,47 +46,15 @@ function formatCustomerSelection (customer) {
   var shipAddress = customer.ship_address
 
   if (billAddress) {
-    $('#order_bill_address_attributes_firstname').val(billAddress.firstname)
-    $('#order_bill_address_attributes_lastname').val(billAddress.lastname)
-    $('#order_bill_address_attributes_address1').val(billAddress.address1)
-    $('#order_bill_address_attributes_company').val(billAddress.company)
-    $('#order_bill_address_attributes_address2').val(billAddress.address2)
-    $('#order_bill_address_attributes_city').val(billAddress.city)
-    $('#order_bill_address_attributes_zipcode').val(billAddress.zipcode)
-    $('#order_bill_address_attributes_phone').val(billAddress.phone)
-    $('#order_bill_address_attributes_phone').val(billAddress.phone)
-    $('#order_bill_address_attributes_country_id').select2().val(billAddress.country_id)
-    $('#order_bill_address_attributes_country_id').select2().trigger('change.select2').promise().done(function () {
-      update_state('b', function () {
-        if ($('span#bstate select.select2').find("option[value='" + billAddress.state_id + "']").length) {
-          $('span#bstate select.select2').val(billAddress.state_id).trigger('change.select2')
-        }
-      })
-    })
+    formatCustomerAddress(billAddress, 'bill')
   } else {
-    clear_billing_address_fields ()
+    clearAddressFields(['bill'])
   }
 
   if (shipAddress) {
-    $('#order_ship_address_attributes_firstname').val(shipAddress.firstname)
-    $('#order_ship_address_attributes_lastname').val(shipAddress.lastname)
-    $('#order_ship_address_attributes_address1').val(shipAddress.address1)
-    $('#order_ship_address_attributes_company').val(shipAddress.company)
-    $('#order_ship_address_attributes_address2').val(shipAddress.address2)
-    $('#order_ship_address_attributes_city').val(shipAddress.city)
-    $('#order_ship_address_attributes_zipcode').val(shipAddress.zipcode)
-    $('#order_ship_address_attributes_phone').val(shipAddress.phone)
-    $('#order_ship_address_attributes_phone').val(shipAddress.phone)
-    $('#order_ship_address_attributes_country_id').select2().val(shipAddress.country_id)
-    $('#order_ship_address_attributes_country_id').select2().trigger('change.select2').promise().done(function () {
-      update_state('s', function () {
-        if ($('span#sstate select.select2').find("option[value='" + shipAddress.state_id + "']").length) {
-          $('span#sstate select.select2').val(shipAddress.state_id).trigger('change.select2')
-        }
-      })
-    })
+    formatCustomerAddress(shipAddress, 'ship')
   } else {
-    clear_shipping_address_fields ()
+    clearAddressFields(['ship'])
   }
 
   return customer.email
@@ -112,7 +83,7 @@ function set_customer_search_select (selector) {
           token: Spree.api_key
         }
       },
-      processResults: function (data, page) {
+      processResults: function (data, _page) {
         return { results: data['users'] }
       }
     },
@@ -155,6 +126,6 @@ document.addEventListener('DOMContentLoaded', function() {
     $('#customer_search').val('')
     $('#order_user_id').val('')
     $('#order_email').val('')
-    clear_address_fields()
+    clearAddressFields()
   })
 })
