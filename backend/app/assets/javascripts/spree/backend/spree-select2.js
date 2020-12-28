@@ -47,3 +47,5 @@ $.fn.addSelect2Options = function (data) {
     }
   })
 }
+
+$.fn.select2.defaults.set('theme', 'bootstrap4')
