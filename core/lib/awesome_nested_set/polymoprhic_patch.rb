@@ -9,6 +9,8 @@ module PolymorphicBelongsTo
   end
 end
 
-ActiveSupport.on_load :active_record do
-  ActiveRecord::Associations::Builder::BelongsTo.extend PolymorphicBelongsTo
+if Rails::VERSION::STRING >= '6.1'
+  ActiveSupport.on_load :active_record do
+    ActiveRecord::Associations::Builder::BelongsTo.extend PolymorphicBelongsTo
+  end
 end
