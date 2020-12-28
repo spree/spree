@@ -135,13 +135,11 @@ $(function () {
   }
 
   function formatTaxonList(values) {
-    var formatted_data = $.map(values, function (obj) {
+    return values.map(function (obj) {
       return {
         id: obj.id,
         pretty_name: obj.pretty_name
       }
-    });
-
-    return formatted_data
+    })
   }
 })

@@ -1,18 +1,13 @@
 $.fn.userAutocomplete = function () {
   'use strict'
 
-  function formatUser (user) {
-    return Select2.util.escapeMarkup(user.email)
-  }
-
-  function formatUserList(users) {
-    var formatted_data = $.map(users, function (obj) {
-      var item = { id: obj.id, text: obj.email }
-
-      return item
-    });
-
-    return formatted_data
+  function formatUserList(values) {
+    return values.map(function (obj) {
+      return {
+        id: obj.id,
+        text: obj.email
+      }
+    })
   }
 
   this.select2({
@@ -30,10 +25,8 @@ $.fn.userAutocomplete = function () {
         }
       },
       processResults: function(data) {
-        var results = formatUserList(data.users)
-
         return {
-          results: results
+          results: formatUserList(data.users)
         }
       }
     },
