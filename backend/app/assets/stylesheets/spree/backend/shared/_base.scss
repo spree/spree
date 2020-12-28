@@ -15,11 +15,6 @@
   z-index: $zindex-dropdown;
 }
 
-// style display:none on html attribute dosen't work, find more proper place for that style class
-.select2-container--disabled {
-  display: none;
-}
-
 // No-margin and no-padding helper classes
 @each $side in top bottom left right {
   .no-margin-#{$side}  { margin-#{side}: 0; }
