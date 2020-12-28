@@ -218,9 +218,9 @@ describe 'Promotion Adjustments', type: :feature, js: true do
 
       within('#action_fields') { click_button 'Add' }
 
-      page.find('.create_line_items .select2-choice').click
-      page.find('.select2-input').set('RoR Mug')
-      page.find('.select2-highlighted').click
+      select2_open label: 'Variant'
+      select2_search 'RoR Mug', label: 'Variant'
+      select2_select 'RoR Mug', from: 'Variant', match: :first
 
       wait_for { !page.has_button?('Update') }
       within('#actions_container') { click_button 'Update' }

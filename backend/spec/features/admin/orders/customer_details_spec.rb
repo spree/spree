@@ -71,7 +71,7 @@ describe 'Customer Details', type: :feature, js: true do
     end
 
     context 'selected country has no state' do
-      before { create(:country, iso: 'BRA', name: 'Brazil') }
+      before { create(:country, iso: 'BRA', name: 'Brazil', states_required: true) }
 
       it 'changes state field to text input' do
         click_link 'Customer'

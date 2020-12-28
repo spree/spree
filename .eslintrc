@@ -14,6 +14,9 @@ globals:
   CouponManager: true
   ThumbnailsCarousel: true
   Turbolinks: true
+  ADDRESS_FIELDS: true
+  AUTH_TOKEN: true
+  update_state: true
 
 env:
   browser: true

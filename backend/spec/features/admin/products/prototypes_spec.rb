@@ -80,8 +80,8 @@ describe 'Prototypes', type: :feature, js: true do
 
       click_icon :edit
 
-      first('a[class="select2-search-choice-close"]').click
-      find('a[class="select2-search-choice-close"]').click
+      first('span[class="select2-selection__choice__remove"]').click
+      find('span[class="select2-selection__choice__remove"]').click
 
       click_button 'Update'
 

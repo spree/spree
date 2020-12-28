@@ -35,7 +35,7 @@ describe 'Stores admin', type: :feature, js: true do
         click_link 'New Store'
 
         expect(page).to have_current_path(spree.new_admin_store_path)
-        expect(page).to have_selector(:id, 's2id_store_checkout_zone_id', text: 'Asia')
+        expect(page).to have_selector(:id, 'select2-store_checkout_zone_id-container', text: 'Asia')
       end
     end
 
@@ -51,7 +51,7 @@ describe 'Stores admin', type: :feature, js: true do
         click_link 'New Store'
 
         expect(page).to have_current_path(spree.new_admin_store_path)
-        expect(page).to have_selector(:id, 's2id_store_checkout_zone_id', text: 'No Limits')
+        expect(page).to have_selector(:id, 'select2-store_checkout_zone_id-container', text: 'No Limits')
       end
     end
 
@@ -61,7 +61,7 @@ describe 'Stores admin', type: :feature, js: true do
       click_link 'New Store'
 
       expect(page).to have_current_path(spree.new_admin_store_path)
-      expect(page).to have_selector(:id, 's2id_store_default_currency', text: 'United States Dollar (USD)')
+      expect(page).to have_selector(:id, 'select2-store_default_currency-container', text: 'United States Dollar (USD)')
     end
 
     it 'saving store' do

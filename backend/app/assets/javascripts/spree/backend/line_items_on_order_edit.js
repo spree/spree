@@ -19,7 +19,7 @@ $(document).ready(function () {
 
 function addVariant () {
   $('#stock_details').hide()
-  var variantId = $('input.variant_autocomplete').val()
+  var variantId = $('select.variant_autocomplete').val()
   var quantity = $('input#variant_quantity').val()
 
   adjustLineItems(order_number, variantId, quantity)

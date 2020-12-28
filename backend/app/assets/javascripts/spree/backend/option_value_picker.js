@@ -5,40 +5,68 @@ $.fn.optionValueAutocomplete = function (options) {
   options = options || {}
   var multiple = typeof (options.multiple) !== 'undefined' ? options.multiple : true
   var productSelect = options.productSelect
+  var productId = options.productId
+  var values = options.values
+  var clearSelection = options.clearSelection
+
+  function formatOptionValueList(values) {
+    return values.map(function(obj) {
+      return { id: obj.id, text: obj.name }
+    })
+  }
+
+  function addOptions(select, productId, values) {
+    $.ajax({
+      type: 'GET',
+      url: Spree.routes.option_values_api,
+      dataType: 'json',
+      data: {
+        token: Spree.api_key,
+        q: {
+          id_in: values,
+          variants_product_id_eq: productId
+        }
+      }
+    }).then(function (data) {
+      select.addSelect2Options(data)
+    })
+  }
 
   this.select2({
-    minimumInputLength: 3,
     multiple: multiple,
-    initSelection: function (element, callback) {
-      $.get(Spree.routes.option_values_api, {
-        ids: element.val().split(','),
-        token: Spree.api_key
-      }, function (data) {
-        callback(multiple ? data : data[0])
-      })
-    },
+    minimumInputLength: 1,
+    allowClear: true,
     ajax: {
       url: Spree.routes.option_values_api,
-      datatype: 'json',
-      data: function (term) {
-        var productId = typeof (productSelect) !== 'undefined' ? $(productSelect).select2('val') : null
-        return {
+      dataType: 'json',
+      data: function (params) {
+        var selectedProductId = typeof (productSelect) !== 'undefined' ? productSelect.val() : null
+
+        var query = {
           q: {
-            name_cont: term,
-            variants_product_id_eq: productId
+            name_cont: params.term,
+            variants_product_id_eq: selectedProductId
           },
           token: Spree.api_key
         }
+
+        return query;
       },
-      results: function (data) {
-        return { results: data }
+      processResults: function(data) {
+        var results = formatOptionValueList(data)
+
+        return {
+          results: results
+        }
       }
-    },
-    formatResult: function (optionValue) {
-      return optionValue.name
-    },
-    formatSelection: function (optionValue) {
-      return optionValue.name
     }
   })
+
+  if (values && productId && !clearSelection) {
+    addOptions(this, productId, values)
+  }
+
+  if (clearSelection) {
+    this.val(null).trigger('change')
+  }
 }
