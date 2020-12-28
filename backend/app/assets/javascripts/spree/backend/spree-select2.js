@@ -33,6 +33,6 @@ $.fn.addSelect2Options = function (data) {
   })
 }
 
-$.fn.select2.defaults.set("width", "style")
-$.fn.select2.defaults.set("dropdownAutoWidth", false)
+$.fn.select2.defaults.set('width', 'style')
+$.fn.select2.defaults.set('dropdownAutoWidth', false)
 $.fn.select2.defaults.set('theme', 'bootstrap4')
