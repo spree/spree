@@ -4,18 +4,27 @@ $.fn.productAutocomplete = function (options) {
   // Default options
   options = options || {}
   var multiple = typeof (options.multiple) !== 'undefined' ? options.multiple : true
-
-  function formatProduct (product) {
-    return Select2.util.escapeMarkup(product.name)
-  }
+  var values = typeof (options.values) !== 'undefined' ? options.values : null
 
   function formatProductList(products) {
-    var formatted_data = $.map(products, function (obj) {
-      var item = { id: obj.id, text: obj.name }
-      return item
-    });
+    return products.map(function(obj) {
+      return { id: obj.id, text: obj.name }
+    })
+  }
 
-    return formatted_data
+  function addOptions(select, values) {
+    $.ajax({
+      url: Spree.routes.products_api,
+      dataType: 'json',
+      data: {
+        q: {
+          id_in: values
+        },
+        token: Spree.api_key
+      }
+    }).then(function (data) {
+      select.addSelect2Options(data.products)
+    })
   }
 
   this.select2({
@@ -42,10 +51,14 @@ $.fn.productAutocomplete = function (options) {
         }
       }
     },
-    templateSelection: function(data, container) {
+    templateSelection: function(data, _container) {
       return data.text
     }
   })
+
+  if (values) {
+    addOptions(this, values)
+  }
 }
 
 $(document).ready(function () {

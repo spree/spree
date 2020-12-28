@@ -5,31 +5,47 @@ $.fn.optionValueAutocomplete = function (options) {
   options = options || {}
   var multiple = typeof (options.multiple) !== 'undefined' ? options.multiple : true
   var productSelect = options.productSelect
+  var productId = options.productId
+  var values = options.values
+  var clearSelection = options.clearSelection
 
   function formatOptionValueList(values) {
-    var formatted_data = $.map(values, function (obj) {
-      var item = { id: obj.id, text: obj.name }
+    return values.map(function(obj) {
+      return { id: obj.id, text: obj.name }
+    })
+  }
 
-      return item
-    });
-
-    return formatted_data
+  function addOptions(select, productId, values) {
+    $.ajax({
+      type: 'GET',
+      url: Spree.routes.option_values_api,
+      dataType: 'json',
+      data: {
+        token: Spree.api_key,
+        q: {
+          id_in: values,
+          variants_product_id_eq: productId
+        }
+      }
+    }).then(function (data) {
+      select.addSelect2Options(data)
+    })
   }
 
   this.select2({
     multiple: multiple,
-    minimumInputLength: 2,
+    minimumInputLength: 1,
     allowClear: true,
     ajax: {
       url: Spree.routes.option_values_api,
       dataType: 'json',
       data: function (params) {
-        var productId = typeof (productSelect) !== 'undefined' ? $(productSelect).select2('data').id : null
+        var selectedProductId = typeof (productSelect) !== 'undefined' ? productSelect.val() : null
 
         var query = {
           q: {
             name_cont: params.term,
-            variants_product_id_eq: productId
+            variants_product_id_eq: selectedProductId
           },
           token: Spree.api_key
         }
@@ -37,16 +53,20 @@ $.fn.optionValueAutocomplete = function (options) {
         return query;
       },
       processResults: function(data) {
-        console.log('process results', data)
         var results = formatOptionValueList(data)
 
         return {
           results: results
         }
-      },
-      templateSelection: function(option_value) {
-        console.log('template selection', option_value)
       }
     }
   })
+
+  if (values && productId && !clearSelection) {
+    addOptions(this, productId, values)
+  }
+
+  if (clearSelection) {
+    this.val(null).trigger('change')
+  }
 }
