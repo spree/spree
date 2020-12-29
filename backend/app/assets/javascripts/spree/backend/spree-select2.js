@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function() {
   // Inititate Select2 on any select element with the class .select2
   $('select.select2').select2({
     allowClear: true,
-    placeholder: 'Select an option'
+    placeholder: Spree.translations.select_an_option
   })
 })
 

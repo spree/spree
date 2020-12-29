@@ -1513,6 +1513,7 @@ en:
     select_a_return_authorization_reason: Select a reason for the return authorization
     select_a_stock_location: Select a stock location
     select_a_store_credit_reason: Select a reason for the store credit
+    select_an_option: Select an option
     select_stock: Select stock
     selected_quantity_not_available: ! 'selected of %{item} is not available.'
     send_copy_of_all_mails_to: Send Copy of All Mails To
