@@ -1,9 +1,13 @@
 require 'spec_helper'
 
 describe Spree::BaseHelper, type: :helper do
-  include Spree::BaseHelper
+  include described_class
 
   let(:current_store) { create :store }
+
+  before do
+    allow(controller).to receive(:controller_name).and_return('test')
+  end
 
   context 'available_countries' do
     let(:country) { create(:country) }

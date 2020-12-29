@@ -5,6 +5,8 @@ describe Spree::Admin::NavigationHelper, type: :helper do
     # `spree` route helper is not accessible in `type: :helper` hence extending it explicitly
     # https://github.com/rspec/rspec-rails/issues/1626
     helper.extend Spree::TestingSupport::UrlHelpers
+
+    allow(controller).to receive(:controller_name).and_return('test')
   end
 
   describe '#tab' do

@@ -7,6 +7,8 @@ gem 'sass-rails'
 gem 'sqlite3', '~> 1.4.0', platforms: [:ruby, :mingw, :mswin, :x64_mingw]
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw]
 
+gem 'rails', ENV.fetch('RAILS_VERSION', '~> 6.1.0'), require: false
+
 platforms :jruby do
   gem 'jruby-openssl'
   gem 'activerecord-jdbcsqlite3-adapter'

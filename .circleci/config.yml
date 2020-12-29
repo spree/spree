@@ -18,8 +18,8 @@ run_tests: &run_tests
     - checkout
     - restore_cache:
         keys:
-          - spree-bundle-v5-{{ checksum ".ruby-version" }}-{{ .Branch }}
-          - spree-bundle-v5-{{ checksum ".ruby-version" }}
+          - spree-bundle-v6-{{ checksum ".ruby-version" }}-{{ .Branch }}
+          - spree-bundle-v6-{{ checksum ".ruby-version" }}
     - run:
         name: Ensure Bundle Install
         command: |
@@ -44,15 +44,15 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - spree-bundle-v5-{{ checksum ".ruby-version" }}-{{ .Branch }}
-            - spree-bundle-v5-{{ checksum ".ruby-version" }}
+            - spree-bundle-v6-{{ checksum ".ruby-version" }}-{{ .Branch }}
+            - spree-bundle-v6-{{ checksum ".ruby-version" }}
       - run:
           name: Bundle Install
           command: |
             bundle install --path=~/spree/vendor/bundle
             ./build-ci.rb install
       - save_cache:
-          key: spree-bundle-v5-{{ checksum ".ruby-version" }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+          key: spree-bundle-v6-{{ checksum ".ruby-version" }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
           paths:
             - ~/spree/vendor/bundle
 
@@ -65,13 +65,19 @@ jobs:
       DB_USERNAME: postgres
     docker:
       - image: *image
-      - image: circleci/postgres:10-alpine
+      - image: circleci/postgres:12-alpine
         environment:
           POSTGRES_USER: postgres
 
-  run_tests_mysql:
-    <<: *run_tests
+  run_tests_postgres_60:
+    <<: *run_tests_postgres
     environment:
+      <<: *postgres_environment
+      RAILS_VERSION: '~> 6.0.0'
+
+  run_tests_mysql: &run_tests_mysql
+    <<: *run_tests
+    environment: &mysql_environment
       <<: *environment
       DB: mysql
       DB_HOST: 127.0.0.1
@@ -82,12 +88,18 @@ jobs:
       - image: *image
       - image: circleci/mysql:8-ram
         command: [--default-authentication-plugin=mysql_native_password]
+
+  run_tests_mysql_60:
+    <<: *run_tests_mysql
+    environment:
+      <<: *mysql_environment
+      RAILS_VERSION: '~> 6.0.0'
     steps:
       - checkout
       - restore_cache:
           keys:
-            - spree-bundle-v5-{{ checksum ".ruby-version" }}-{{ .Branch }}
-            - spree-bundle-v5-{{ checksum ".ruby-version" }}
+            - spree-bundle-v6-{{ checksum ".ruby-version" }}-{{ .Branch }}
+            - spree-bundle-v6-{{ checksum ".ruby-version" }}
       - run:
           name: Ensure Bundle Install
           command: |
@@ -180,12 +192,18 @@ workflows:
       - run_tests_postgres:
           requires:
             - bundle_install
+      - run_tests_postgres_60:
+          requires:
+            - bundle_install
       - run_tests_mysql:
+          requires:
+            - bundle_install
+      - run_tests_mysql_60:
           requires:
             - bundle_install
       - send_test_coverage:
           requires:
-            - run_tests_mysql
+            - run_tests_mysql_60
   update_staging_repository:
     jobs:
       - update_staging_repository:
