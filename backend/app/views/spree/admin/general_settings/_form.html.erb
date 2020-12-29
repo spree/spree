@@ -1,0 +1,17 @@
+<div class="panel panel-default currencies">
+  <div class="panel-heading">
+    <%= Spree.t(:currencies) %>
+  </div>
+
+  <div class="panel-body">
+    <div class="form-group">
+      <div class="checkbox">
+        <label>
+          <%= check_box('', :show_store_currency_selector, { checked: Spree::Config.show_store_currency_selector }) %>
+          <%= Spree.t('show_store_currency_selector.short') %>
+        </label>
+        <p class="help-block"><%= Spree.t('show_store_currency_selector.long') %></p>
+      </div>
+    </div>
+  </div>
+</div>

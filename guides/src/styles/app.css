@@ -1,0 +1,185 @@
+body {
+  font-family: 'Source Sans Pro', sans-serif;
+  color: #495057;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+:target {
+  display: block;
+  position: relative;
+  margin-top: -110px;
+  padding-top: 110px;
+}
+
+code,
+pre,
+.code,
+.redoc-json {
+  font-family: 'Roboto Mono', monospace !important;
+  font-size: 0.9rem !important;
+  line-height: 1.3;
+}
+
+.redoc-json {
+  font-size: 0.88rem !important;
+}
+
+h1 {
+  margin-top: 0;
+}
+
+main p,
+main li {
+  line-height: 1.9;
+}
+
+p > code,
+li > code {
+  padding: 0.15rem 0.5rem 0.2rem !important;
+  overflow: auto;
+  max-width: 100%;
+
+  background-color: #f9f9f9;
+  border-radius: 3px;
+  border: 1px solid #ededed;
+  font-size: 0.9rem !important;
+  transition: box-shadow 0.3s ease-in-out;
+  word-break: break-word;
+}
+
+p > code:hover,
+li > code:hover {
+  box-shadow: 0 0 1.5rem 0 rgba(34, 139, 230, 0.1);
+}
+
+.gatsby-highlight {
+  position: relative;
+  z-index: 1;
+}
+
+/* Colors */
+
+.spree-blue {
+  color: #0066cc;
+}
+.bg-spree-blue {
+  background-color: #0066cc;
+}
+.b--spree-blue {
+  border-color: #0066cc;
+}
+
+.spree-green {
+  color: #779e01;
+}
+.bg-spree-green {
+  background-color: #779e01;
+}
+.b--spree-green {
+  border-color: #99cc00;
+}
+
+.hover-spree-green:hover {
+  color: #779e01;
+}
+
+.spree-green-2 {
+  color: #66a80f;
+}
+
+/* ReDoc Overrides */
+
+label[role='menuitem'] {
+  display: flex;
+  align-items: center;
+}
+
+label[role='menuitem'].active {
+  background-color: transparent;
+}
+
+label[role='menuitem'].active > span {
+  color: #779e01;
+  font-weight: 600;
+}
+
+label[role='menuitem'] svg {
+  margin-left: 0.825rem;
+}
+
+label[role='menuitem'] svg polygon {
+  fill: #ccc !important;
+}
+
+.menu-content {
+  border-right: 1px solid #eee;
+  padding-top: 1.5rem;
+}
+
+.menu-content a[target='_blank'] {
+  display: none;
+}
+
+.menu-content li > label {
+  padding: 0.5rem 0 0.5rem 2rem;
+}
+
+.menu-content li > label > span {
+  font-size: 16px;
+  padding-left: 2.5rem;
+  color: #0066cc;
+  font-weight: 500;
+  font-size: 1.15rem;
+}
+
+.menu-content li > label > svg {
+  position: absolute;
+  left: 1.5rem;
+}
+
+.menu-content li > label > span[type] {
+  color: #fff;
+  font-weight: 600;
+  min-width: 3.5rem;
+  font-size: 13px;
+  width: auto;
+  height: auto;
+  padding: 0.25rem 0.5rem;
+  font-family: 'Roboto Mono', monospace !important;
+}
+
+.menu-content li > ul > li > label > span {
+  font-size: 1rem;
+  color: #777;
+  padding-left: 0.25rem;
+  padding-right: 0.5rem;
+  line-height: 1.3;
+}
+
+.react-tabs__tab--selected {
+  font-weight: 500 !important;
+  font-size: 1rem !important;
+  text-transform: uppercase;
+}
+
+.tab-success.react-tabs__tab--selected {
+  background-color: #99cc00 !important;
+  color: white !important;
+}
+
+td[kind='field'] {
+  font-family: 'Roboto Mono', monospace;
+}
+
+@media (max-width: 460px) {
+  p {
+    word-break: break-word;
+  }
+}
+
+/* Height fix */
+#gatsby-focus-wrapper {
+  height: 100%;
+}

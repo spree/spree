@@ -1,6 +1,6 @@
 <div data-hook="admin_shipping_method_form_fields">
   <div class="row">
-    <div data-hook="admin_shipping_method_form_name_field" class="col-xs-12 col-md-6">
+    <div data-hook="admin_shipping_method_form_name_field" class="col-12 col-lg-6">
       <%= f.field_container :name, class: ['form-group'] do %>
         <%= f.label :name, Spree.t(:name) %>
         <%= f.text_field :name, class: 'form-control' %>
@@ -8,7 +8,7 @@
       <% end %>
     </div>
 
-    <div data-hook="admin_shipping_method_form_display_field" class="col-xs-12 col-md-6">
+    <div data-hook="admin_shipping_method_form_display_field" class="col-12 col-lg-6">
       <%= f.field_container :display_on, class: ['form-group'] do %>
         <%= f.label :display_on, Spree.t(:display) %>
         <%= select(:shipping_method, :display_on, Spree::ShippingMethod::DISPLAY.collect { |display| [Spree.t(display), display.to_s] }, { include_blank: true }, { class: 'select2' }) %>
@@ -18,7 +18,7 @@
   </div>
 
   <div class="row">
-    <div data-hook="admin_shipping_method_form_internal_name_field" class="col-xs-12 col-md-4">
+    <div data-hook="admin_shipping_method_form_internal_name_field" class="col-12 col-lg-4">
       <%= f.field_container :admin_name, class: ['form-group'] do %>
         <%= f.label :admin_name, Spree.t(:internal_name) %>
         <%= f.text_field :admin_name, class: 'form-control', label: false %>
@@ -26,7 +26,7 @@
       <% end %>
     </div>
 
-    <div data-hook="admin_shipping_method_form_code" class="col-xs-12 col-md-4">
+    <div data-hook="admin_shipping_method_form_code" class="col-12 col-lg-4">
       <%= f.field_container :code, class: ['form-group'] do %>
         <%= f.label :code, Spree.t(:code) %>
         <%= f.text_field :code, class: 'form-control', label: false %>
@@ -34,7 +34,7 @@
       <% end %>
     </div>
 
-    <div data-hook="admin_shipping_method_form_tracking_url_field" class="col-xs-12 col-md-4">
+    <div data-hook="admin_shipping_method_form_tracking_url_field" class="col-12 col-lg-4">
       <%= f.field_container :tracking_url, class: ['form-group'] do %>
         <%= f.label :tracking_url, Spree.t(:tracking_url) %>
         <%= f.text_field :tracking_url, class: 'form-control', placeholder: Spree.t(:tracking_url_placeholder) %>
@@ -45,15 +45,15 @@
 </div>
 
 <div class="row">
-  <div data-hook="admin_shipping_method_form_availability_fields" class="col-xs-12 col-md-6">
-    <div class="panel panel-default categories">
-      <div class="panel-heading">
-        <h1 class="panel-title">
+  <div data-hook="admin_shipping_method_form_availability_fields" class="col-12 col-lg-6">
+    <div class="card mb-3 categories">
+      <div class="card-header">
+        <h1 class="card-title mb-0 h5">
           <%= Spree.t(:shipping_categories) %>
         </h1>
       </div>
 
-      <div class="panel-body">
+      <div class="card-body">
         <%= f.field_container :categories, class: ['form-group'] do %>
           <% Spree::ShippingCategory.all.each do |category| %>
             <div class="checkbox">
@@ -69,15 +69,15 @@
     </div>
   </div>
 
-  <div class="col-xs-12 col-md-6">
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <h1 class="panel-title">
+  <div class="col-12 col-lg-6">
+    <div class="card mb-3">
+      <div class="card-header">
+        <h1 class="card-title mb-0 h5">
           <%= Spree.t(:zones) %>
         </h1>
       </div>
 
-      <div class="panel-body">
+      <div class="card-body">
         <%= f.field_container :zones, class: ['form-group'] do %>
           <% shipping_method_zones = @shipping_method.zones.to_a %>
           <% Spree::Zone.all.each do |zone| %>
@@ -96,19 +96,19 @@
 </div>
 
 <div class="row">
-  <div data-hook="admin_shipping_method_form_calculator_fields" class="col-xs-12 col-md-6">
+  <div data-hook="admin_shipping_method_form_calculator_fields" class="col-12 col-lg-6">
     <%= render partial: 'spree/admin/shared/calculator_fields', locals: { f: f } %>
   </div>
 
-  <div class="col-xs-12 col-md-6">
-    <div class="panel panel-default tax_categories">
-      <div class="panel-heading">
-        <h1 class="panel-title">
+  <div class="col-12 col-lg-6">
+    <div class="card mb-3 tax_categories">
+      <div class="card-header">
+        <h1 class="card-title mb-0 h5">
           <%= Spree.t(:tax_category) %>
         </h1>
       </div>
 
-      <div class="panel-body">
+      <div class="card-body">
         <%= f.field_container :categories, class: ['form-group'] do %>
           <%= f.select :tax_category_id, @tax_categories.map { |tc| [tc.name, tc.id] }, { include_blank: true }, class: "select2" %>
           <%= f.error_message_on :tax_category_id %>

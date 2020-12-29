@@ -19,7 +19,7 @@ module Spree
     end
 
     def set_root_taxon_name
-      root.update_attributes(name: name)
+      root.update(name: name)
     end
   end
 end

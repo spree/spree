@@ -8,11 +8,14 @@ describe Spree::Calculator::TieredFlatRate, type: :model do
 
     context 'when tiers is not a hash' do
       before { calculator.preferred_tiers = ['nope', 0] }
+
       it { is_expected.to be false }
     end
+
     context 'when tiers is a hash' do
       context 'and one of the keys is not a positive number' do
         before { calculator.preferred_tiers = { 'nope' => 20 } }
+
         it { is_expected.to be false }
       end
     end
@@ -36,6 +39,7 @@ describe Spree::Calculator::TieredFlatRate, type: :model do
 
       it { is_expected.to eq 10 }
     end
+
     context 'when amount falls within the second tier' do
       let(:amount) { 150 }
 

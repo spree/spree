@@ -8,68 +8,50 @@
 
 <fieldset class='no-border-bottom'>
   <legend><%= Spree.t(:items_reimbursed) %></legend>
-  <table class="table table-condensed table-bordered reimbursement-reimbursement-items-table">
-    <thead>
-      <tr>
-        <th><%= Spree.t(:product) %></th>
-        <th><%= Spree.t(:preferred_reimbursement_type) %></th>
-        <th><%= Spree.t(:reimbursement_type_override) %></th>
-        <th><%= Spree.t(:exchange_for) %></th>
-        <th><%= Spree.t(:pre_tax_amount) %></th>
-        <th><%= Spree.t(:total) %></th>
-      </tr>
-    </thead>
-    <tbody>
-      <% @reimbursement.return_items.each do |return_item| %>
+  <div class="table-responsive">
+    <table class="table table-condensed table-bordered reimbursement-reimbursement-items-table">
+      <thead>
         <tr>
-          <td>
-            <div class="variant-name"><%= return_item.inventory_unit.variant.name %></div>
-            <div class="variant-options"><%= return_item.inventory_unit.variant.options_text %></div>
-          </td>
-          <td>
-            <%= reimbursement_type_name(return_item.preferred_reimbursement_type) %>
-          </td>
-          <td>
-            <%= reimbursement_type_name(return_item.override_reimbursement_type) %>
-          </td>
-          <td>
-            <%= return_item.exchange_variant.try(:exchange_name) %>
-          </td>
-          <td>
-            <%= return_item.display_pre_tax_amount %>
-          </td>
-          <td>
-            <%= return_item.display_total %>
-          </td>
+          <th><%= Spree.t(:product) %></th>
+          <th><%= Spree.t(:preferred_reimbursement_type) %></th>
+          <th><%= Spree.t(:reimbursement_type_override) %></th>
+          <th><%= Spree.t(:exchange_for) %></th>
+          <th><%= Spree.t(:pre_tax_amount) %></th>
+          <th><%= Spree.t(:total) %></th>
         </tr>
-      <% end %>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        <% @reimbursement.return_items.each do |return_item| %>
+          <tr>
+            <td>
+              <div class="variant-name"><%= return_item.inventory_unit.variant.name %></div>
+              <div class="variant-options"><%= return_item.inventory_unit.variant.options_text %></div>
+            </td>
+            <td>
+              <%= reimbursement_type_name(return_item.preferred_reimbursement_type) %>
+            </td>
+            <td>
+              <%= reimbursement_type_name(return_item.override_reimbursement_type) %>
+            </td>
+            <td>
+              <%= return_item.exchange_variant.try(:exchange_name) %>
+            </td>
+            <td>
+              <%= return_item.display_pre_tax_amount %>
+            </td>
+            <td>
+              <%= return_item.display_total %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
 </fieldset>
 
 <fieldset>
   <legend><%= Spree.t(:refunds) %></legend>
-  <table class="table table-condensed table-bordered">
-    <thead data-hook="customer_return_header">
-      <tr>
-        <th><%= Spree.t(:description) %></th>
-        <th><%= Spree.t(:amount) %></th>
-      </tr>
-    </thead>
-    <tbody>
-      <% @reimbursement.refunds.each do |refund| %>
-        <tr id="<%= spree_dom_id(refund) %>" data-hook="reimbursement_refund_row">
-          <td><%= refund.description %></td>
-          <td><%= refund.display_amount %></td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
-</fieldset>
-
-<% if @reimbursement.credits.any? %>
-  <fieldset>
-    <legend><%= Spree.t(:credits) %></legend>
+  <div class="table-responsive">
     <table class="table table-condensed table-bordered">
       <thead data-hook="customer_return_header">
         <tr>
@@ -78,13 +60,37 @@
         </tr>
       </thead>
       <tbody>
-        <% @reimbursement.credits.each do |credit| %>
-          <tr id="<%= spree_dom_id(credit) %>" data-hook="reimbursement_refund_row">
-            <td><%= credit.description %></td>
-            <td><%= credit.display_amount %></td>
+        <% @reimbursement.refunds.each do |refund| %>
+          <tr id="<%= spree_dom_id(refund) %>" data-hook="reimbursement_refund_row">
+            <td><%= refund.description %></td>
+            <td><%= refund.display_amount %></td>
           </tr>
         <% end %>
       </tbody>
     </table>
+  </div>
+</fieldset>
+
+<% if @reimbursement.credits.any? %>
+  <fieldset>
+    <legend><%= Spree.t(:credits) %></legend>
+    <div class="table-responsive">
+      <table class="table table-condensed table-bordered">
+        <thead data-hook="customer_return_header">
+          <tr>
+            <th><%= Spree.t(:description) %></th>
+            <th><%= Spree.t(:amount) %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @reimbursement.credits.each do |credit| %>
+            <tr id="<%= spree_dom_id(credit) %>" data-hook="reimbursement_refund_row">
+              <td><%= credit.description %></td>
+              <td><%= credit.display_amount %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
   </fieldset>
 <% end %>

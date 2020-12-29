@@ -25,7 +25,7 @@ module Spree
           params[:user].delete(:password_confirmation)
         end
 
-        if @user.update_attributes(user_params)
+        if @user.update(user_params)
           flash[:success] = Spree.t(:account_updated)
           redirect_to edit_admin_user_path(@user)
         else
@@ -35,7 +35,7 @@ module Spree
 
       def addresses
         if request.put?
-          if @user.update_attributes(user_params)
+          if @user.update(user_params)
             flash.now[:success] = Spree.t(:account_updated)
           end
 
@@ -54,7 +54,8 @@ module Spree
         @search = Spree::Order.includes(
           line_items: {
             variant: [:product, { option_values: :option_type }]
-          }).ransack(params[:q].merge(user_id_eq: @user.id))
+          }
+        ).ransack(params[:q].merge(user_id_eq: @user.id))
         @orders = @search.result.page(params[:page])
       end
 
@@ -80,6 +81,7 @@ module Spree
 
       def collection
         return @collection if @collection.present?
+
         @collection = super
         @search = @collection.ransack(params[:q])
         @collection = @search.result.page(params[:page]).per(Spree::Config[:admin_users_per_page])

@@ -19,15 +19,16 @@ module Spree
 
     def create_profile(payment)
       return if payment.source.has_payment_profile?
+
       # simulate the storage of credit card profile using remote service
       if success = VALID_CCS.include?(payment.source.number)
-        payment.source.update_attributes(gateway_customer_profile_id: generate_profile_id(success))
+        payment.source.update(gateway_customer_profile_id: generate_profile_id(success))
       end
     end
 
     def authorize(_money, credit_card, _options = {})
       profile_id = credit_card.gateway_customer_profile_id
-      if VALID_CCS.include?(credit_card.number) || (profile_id && profile_id.starts_with?('BGS-'))
+      if VALID_CCS.include?(credit_card.number) || (profile_id&.starts_with?('BGS-'))
         ActiveMerchant::Billing::Response.new(true, 'Bogus Gateway: Forced success', {}, test: true, authorization: '12345', avs_result: { code: 'D' })
       else
         ActiveMerchant::Billing::Response.new(false, 'Bogus Gateway: Forced failure', { message: 'Bogus Gateway: Forced failure' }, test: true)
@@ -36,7 +37,7 @@ module Spree
 
     def purchase(_money, credit_card, _options = {})
       profile_id = credit_card.gateway_customer_profile_id
-      if VALID_CCS.include?(credit_card.number) || (profile_id && profile_id.starts_with?('BGS-'))
+      if VALID_CCS.include?(credit_card.number) || (profile_id&.starts_with?('BGS-'))
         ActiveMerchant::Billing::Response.new(true, 'Bogus Gateway: Forced success', {}, test: true, authorization: '12345', avs_result: { code: 'M' })
       else
         ActiveMerchant::Billing::Response.new(false, 'Bogus Gateway: Forced failure', message: 'Bogus Gateway: Forced failure', test: true)

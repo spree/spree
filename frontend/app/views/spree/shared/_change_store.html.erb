@@ -1,0 +1,25 @@
+<% if Spree::Config.show_store_currency_selector && stores.size > 1 %>
+  <li class="change-store">
+    <div class="dropdown navbar-right-dropdown">
+      <button id="stores-button" type="button" data-toggle="dropdown" class="navbar-right-dropdown-toggle" aria-label="<%= Spree.t('nav_bar.change_country')%>">
+        <%= icon(name: 'global',
+                classes: 'd-none d-xl-inline-block',
+                width: 41,
+                height: 36)  %>
+        <%= icon(name: 'arrow-down',
+                classes: 'd-inline-block d-xl-none',
+                width: 15,
+                height: 15)  %>
+      </button>
+
+      <div id="stores_list" class="dropdown-menu dropdown-menu-right text-right">
+        <% stores.each do |store| %>
+          <div class="pl-3 d-flex justify-content-between align-items-center <%= 'active' if store.id == current_store.id %>">
+            <span class="flag-icon flag-icon-<%= store_country_iso(store) %>"></span>
+            <%= link_to "#{store.default_country&.name} (#{store_currency_symbol(store)})", "//#{store.url}", class: 'dropdown-item text-uppercase' %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </li>
+<% end %>

@@ -1,5 +1,5 @@
 module Spree
-  class PaymentMethod::StoreCredit < PaymentMethod
+  class PaymentMethod::StoreCredit < ::Spree::PaymentMethod
     def payment_source_class
       ::Spree::StoreCredit
     end

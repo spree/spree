@@ -133,7 +133,7 @@ describe 'StoreCredit' do
       context 'the authorized amount is defined' do
         let(:authorized_amount) { 15.00 }
 
-        before { store_credit.update_attributes(amount_authorized: authorized_amount) }
+        before { store_credit.update(amount_authorized: authorized_amount) }
 
         it 'subtracts the authorized amount from the credited amount' do
           expect(store_credit.amount_remaining).to eq (store_credit.amount - authorized_amount)
@@ -144,7 +144,7 @@ describe 'StoreCredit' do
     context 'the amount_used is defined' do
       let(:amount_used) { 10.0 }
 
-      before { store_credit.update_attributes(amount_used: amount_used) }
+      before { store_credit.update(amount_used: amount_used) }
 
       context 'the authorized amount is not defined' do
         it 'subtracts the amount used from the credited amount' do
@@ -155,7 +155,7 @@ describe 'StoreCredit' do
       context 'the authorized amount is defined' do
         let(:authorized_amount) { 15.00 }
 
-        before { store_credit.update_attributes(amount_authorized: authorized_amount) }
+        before { store_credit.update(amount_authorized: authorized_amount) }
 
         it 'subtracts the amount used and the authorized amount from the credited amount' do
           expect(store_credit.amount_remaining).to eq (store_credit.amount - amount_used - authorized_amount)
@@ -171,7 +171,7 @@ describe 'StoreCredit' do
       let(:originator) { nil }
 
       context 'amount has not been authorized yet' do
-        before { store_credit.update_attributes(amount_authorized: authorization_amount) }
+        before { store_credit.update(amount_authorized: authorization_amount) }
 
         it 'returns true' do
           expect(store_credit.authorize(store_credit.amount - authorization_amount, store_credit.currency)).to be_truthy
@@ -200,7 +200,7 @@ describe 'StoreCredit' do
       context 'authorization has already happened' do
         let!(:auth_event) { create(:store_credit_auth_event, store_credit: store_credit) }
 
-        before { store_credit.update_attributes(amount_authorized: store_credit.amount) }
+        before { store_credit.update(amount_authorized: store_credit.amount) }
 
         it 'returns true' do
           expect(store_credit.authorize(store_credit.amount, store_credit.currency,
@@ -270,7 +270,7 @@ describe 'StoreCredit' do
     let(:auth_code) { '23-SC-20140602164814476128' }
 
     before do
-      store_credit.update_attributes(amount_authorized: authorized_amount, amount_used: 0.0)
+      store_credit.update(amount_authorized: authorized_amount, amount_used: 0.0)
       allow(store_credit).to receive_messages(authorize: true)
     end
 

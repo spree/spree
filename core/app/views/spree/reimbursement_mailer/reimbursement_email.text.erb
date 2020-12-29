@@ -1,4 +1,4 @@
-<%= Spree.t('reimbursement_mailer.reimbursement_email.dear_customer') %>
+<%= Spree.t('reimbursement_mailer.reimbursement_email.dear_customer', name: name_for(@reimbursement.order)) %>
 
 <%= Spree.t('reimbursement_mailer.reimbursement_email.instructions') %>
 
@@ -20,3 +20,5 @@
 <%= Spree.t('reimbursement_mailer.reimbursement_email.days_to_send', days: Spree::Config[:expedited_exchanges_days_window]) %>
 <% end %>
 <% end %>
+<%= Spree.t('reimbursement_mailer.reimbursement_email.thanks') %>
+<%= Spree.t('reimbursement_mailer.reimbursement_email.store_team', store_name: current_store.name) %>

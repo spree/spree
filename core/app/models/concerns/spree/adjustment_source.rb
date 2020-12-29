@@ -16,10 +16,10 @@ module Spree
 
       adjustments.new(
         adjustable: adjustable,
-        amount:     amount,
-        included:   included,
-        label:      label,
-        order:      order
+        amount: amount,
+        included: included,
+        label: label,
+        order: order
       ).save
     end
 

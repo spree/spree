@@ -20,9 +20,8 @@ shared_examples_for 'default_price' do
   end
 
   describe '#default_price' do
-    subject { instance.default_price }
+    it { expect(instance.default_price.class).to eql Spree::Price }
 
-    its(:class) { is_expected.to eql Spree::Price }
     it 'delegates price' do
       expect(instance.default_price).to receive(:price)
       instance.price
@@ -34,5 +33,5 @@ shared_examples_for 'default_price' do
     end
   end
 
-  its(:has_default_price?) { is_expected.to be_truthy }
+  it { expect(instance.has_default_price?).to be_truthy }
 end

@@ -1,6 +1,0 @@
-@function linear-gradient($gradients...) {
-  $type: linear;
-  $type-gradient: append($type, $gradients, comma);
-
-  @return $type-gradient;
-}

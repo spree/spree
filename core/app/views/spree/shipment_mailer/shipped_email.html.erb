@@ -1,41 +1,36 @@
-<table class="row header">
+<h1>
+  <%= Spree.t('shipment_mailer.shipped_email.dear_customer', name: name_for(@shipment.order)) %>
+</h1>
+<p>
+  <%= Spree.t('shipment_mailer.shipped_email.instructions', number: @shipment.order.number) %>
+</p>
+<table class="purchase" role="presentation">
   <tr>
     <td>
-      <p class="lede">
-        <%= Spree.t('shipment_mailer.shipped_email.dear_customer') %>
-      </p>
-      <p>
-        <%= Spree.t('shipment_mailer.shipped_email.instructions', number: @shipment.order.number) %>
-      </p>
-      <p>
-        <%= Spree.t('shipment_mailer.shipped_email.shipment_summary') %>
-      </p>
-      <table class="container">
-        <tr>
-          <td class="wrapper last">
-            <table class="twelve columns">
-              <%= render collection: @shipment.manifest.map(&:line_item), partial: 'spree/shared/mailer_line_item', as: :line_item %>
-            </table>
-          </td>
-        </tr>
-      </table>
-      <p>
-        <%= Spree.t('shipment_mailer.shipped_email.shipping_method', shipping_method: @shipment.shipping_method.name) %>
-      </p>
-      <% if @shipment.tracking %>
-        <p>
-          <%= Spree.t('shipment_mailer.shipped_email.track_information', tracking: @shipment.tracking) %>
-        </p>
-      <% end %>
-      <% if @shipment.tracking_url %>
-        <p>
-          <%= Spree.t('shipment_mailer.shipped_email.track_link', url: link_to(@shipment.tracking_url, @shipment.tracking_url)).html_safe %>
-        </p>
-      <% end %>
-      <p>
-        <%= Spree.t('shipment_mailer.shipped_email.thanks') %>
-      </p>
+      <h3><%= Spree.t('shipment_mailer.shipped_email.shipment_summary') %></h3>
     </td>
-    <td class="expander"></td>
+  </tr>
+  <tr>
+    <td colspan="2">
+      <%= render 'spree/shared/purchased_items_table', line_items: @shipment.manifest.map(&:line_item), order: @shipment.order %>
+    </td>
   </tr>
 </table>
+<p>
+  <%= Spree.t('shipment_mailer.shipped_email.shipping_method', shipping_method: @shipment.shipping_method.name) %>
+</p>
+<% if @shipment.tracking %>
+  <p>
+    <%= Spree.t('shipment_mailer.shipped_email.track_information', tracking: @shipment.tracking) %>
+  </p>
+<% end %>
+<% if @shipment.tracking_url %>
+  <p>
+    <%= Spree.t('shipment_mailer.shipped_email.track_link', url: link_to(@shipment.tracking_url, @shipment.tracking_url)).html_safe %>
+  </p>
+<% end %>
+<p>
+  <%= Spree.t('shipment_mailer.shipped_email.thanks') %>
+  <br />
+  <%= Spree.t('shipment_mailer.shipped_email.store_team', store_name: current_store.name) %>
+</p>

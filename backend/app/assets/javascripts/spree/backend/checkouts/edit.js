@@ -1,103 +1,125 @@
-//= require_self
-
-var clear_address_fields = function() {
-  var fields = ['firstname', 'lastname', 'company', 'address1', 'address2',
-            'city', 'zipcode', 'state_id', 'country_id', 'phone'];
-  $.each(fields, function(i, field) {
-    $('#order_bill_address_attributes_' + field).val('');
-    $('#order_ship_address_attributes_' + field).val('');
-  });
-};
-
-$(document).ready(function() {
-  if ($('#customer_autocomplete_template').length > 0) {
-    window.customerTemplate = Handlebars.compile($('#customer_autocomplete_template').text());
-  }
-
-  formatCustomerResult = function(customer) {
-    return customerTemplate({
-      customer: customer,
-      bill_address: customer.bill_address,
-      ship_address: customer.ship_address
+function clearAddressFields(kinds = ['ship', 'bill']) {
+  kinds.forEach(function(kind) {
+    ADDRESS_FIELDS.forEach(function(field) {
+      $('#order_' + kind + '_address_attributes_' + field).val('')
     })
+  })
+}
+
+function formatCustomerResult(customer) {
+  var escapedResult = window.customerTemplate({
+    customer: customer,
+    bill_address: customer.bill_address,
+    ship_address: customer.ship_address
+  })
+  return $(escapedResult)
+}
+
+function formatCustomerAddress(address, kind) {
+  $('#order_' + kind + '_address_attributes_firstname').val(address.firstname)
+  $('#order_' + kind + '_address_attributes_lastname').val(address.lastname)
+  $('#order_' + kind + '_address_attributes_address1').val(address.address1)
+  $('#order_' + kind + '_address_attributes_company').val(address.company)
+  $('#order_' + kind + '_address_attributes_address2').val(address.address2)
+  $('#order_' + kind + '_address_attributes_city').val(address.city)
+  $('#order_' + kind + '_address_attributes_zipcode').val(address.zipcode)
+  $('#order_' + kind + '_address_attributes_phone').val(address.phone)
+  $('#order_' + kind + '_address_attributes_phone').val(address.phone)
+  $('#order_' + kind + '_address_attributes_country_id').val(address.country_id)
+  $('#order_' + kind + '_address_attributes_country_id').trigger('change')
+
+  var stateSelect = $('#order_' + kind + '_address_attributes_state_id')
+
+  update_state(kind.charAt(0), function() {
+    stateSelect.val(address.state_id).trigger('change')
+  })
+}
+
+function formatCustomerSelection(customer) {
+  $('#order_email').val(customer.email)
+  $('#order_user_id').val(customer.id)
+  $('#guest_checkout_true').prop('checked', false)
+  $('#guest_checkout_false').prop('checked', true)
+  $('#guest_checkout_false').prop('disabled', false)
+
+  var billAddress = customer.bill_address
+  var shipAddress = customer.ship_address
+
+  if (billAddress) {
+    formatCustomerAddress(billAddress, 'bill')
+  } else {
+    clearAddressFields(['bill'])
   }
 
-  if ($('#customer_search').length > 0) {
-    $('#customer_search').select2({
-      placeholder: Spree.translations.choose_a_customer,
-      ajax: {
-        url: Spree.routes.users_api,
-        datatype: 'json',
-        cache: true,
-        data: function(term, page) {
-          return {
-            q: {
-              'm': 'or',
-              'email_start': term,
-              'ship_address_firstname_start': term,
-              'ship_address_lastname_start': term,
-              'bill_address_firstname_start': term,
-              'bill_address_lastname_start': term
-            },
-            token: Spree.api_key
-          }
-        },
-        results: function(data, page) {
-          return { results: data.users }
+  if (shipAddress) {
+    formatCustomerAddress(shipAddress, 'ship')
+  } else {
+    clearAddressFields(['ship'])
+  }
+
+  return customer.email
+}
+
+$.fn.customerAutocomplete = function() {
+  this.select2({
+    minimumInputLength: 3,
+    placeholder: Spree.translations.choose_a_customer,
+    ajax: {
+      url: Spree.routes.users_api,
+      datatype: 'json',
+      data: function (params) {
+        return {
+          q: {
+            'm': 'or',
+            email_start: params.term,
+            ship_address_firstname_start: params.term,
+            ship_address_lastname_start: params.term,
+            bill_address_firstname_start: params.term,
+            bill_address_lastname_start: params.term
+          },
+          token: Spree.api_key
         }
       },
-      dropdownCssClass: 'customer_search',
-      formatResult: formatCustomerResult,
-      formatSelection: function (customer) {
-        $('#order_email').val(customer.email);
-        $('#order_user_id').val(customer.id);
-        $('#guest_checkout_true').prop('checked', false);
-        $('#guest_checkout_false').prop('checked', true);
-        $('#guest_checkout_false').prop('disabled', false);
-
-        var billAddress = customer.bill_address;
-        if(billAddress) {
-          $('#order_bill_address_attributes_firstname').val(billAddress.firstname);
-          $('#order_bill_address_attributes_lastname').val(billAddress.lastname);
-          $('#order_bill_address_attributes_address1').val(billAddress.address1);
-          $('#order_bill_address_attributes_address2').val(billAddress.address2);
-          $('#order_bill_address_attributes_city').val(billAddress.city);
-          $('#order_bill_address_attributes_zipcode').val(billAddress.zipcode);
-          $('#order_bill_address_attributes_phone').val(billAddress.phone);
-
-          $('#order_bill_address_attributes_country_id').select2('val', billAddress.country_id).promise().done(function () {
-            update_state('b', function () {
-              $('#order_bill_address_attributes_state_id').select2('val', billAddress.state_id);
-            });
-          });
-        } else {
-          clear_address_fields();
-        }
-        return Select2.util.escapeMarkup(customer.email);
+      processResults: function (data) {
+        return { results: data.users }
       }
-    })
+    },
+    templateResult: formatCustomerResult
+  }).on('select2:select', function (e) {
+    var data = e.params.data;
+    formatCustomerSelection(data)
+  })
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  $('#customer_search').customerAutocomplete()
+
+  if ($('#customer_autocomplete_template').length > 0) {
+    window.customerTemplate = Handlebars.compile($('#customer_autocomplete_template').text())
   }
 
-  var order_use_billing_input = $('input#order_use_billing');
+  // Handle Billing Shipping Address
+  var orderUseBillingInput = $('input#order_use_billing')
 
-  var order_use_billing = function () {
-    if (!order_use_billing_input.is(':checked')) {
-      $('#shipping').show();
+  var orderUseBilling = function () {
+    if (!orderUseBillingInput.is(':checked')) {
+      $('#shipping').show()
     } else {
-      $('#shipping').hide();
+      $('#shipping').hide()
     }
-  };
+  }
 
-  order_use_billing_input.click(function() {
-    order_use_billing();
-  });
+  // On page load hide shipping address from
+  orderUseBilling()
 
-  order_use_billing();
+  // On click togggle shipping address from
+  orderUseBillingInput.click(orderUseBilling)
 
-  $('#guest_checkout_true').change(function() {
-    $('#customer_search').val('');
-    $('#order_user_id').val('');
-    $('#order_email').val('');
-    clear_address_fields();
-  });
-});
+  // If guest checkout clear fields
+  $('#guest_checkout_true').change(function () {
+    $('#customer_search').val('')
+    $('#order_user_id').val('')
+    $('#order_email').val('')
+    clearAddressFields()
+  })
+})

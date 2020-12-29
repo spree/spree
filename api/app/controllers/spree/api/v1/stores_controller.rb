@@ -5,8 +5,8 @@ module Spree
         before_action :get_store, except: [:index, :create]
 
         def index
-          authorize! :read, Store
-          @stores = Store.accessible_by(current_ability, :read).all
+          authorize! :index, Store
+          @stores = Store.accessible_by(current_ability).all
           respond_with(@stores)
         end
 
@@ -23,7 +23,7 @@ module Spree
 
         def update
           authorize! :update, @store
-          if @store.update_attributes(store_params)
+          if @store.update(store_params)
             respond_with(@store, status: 200, default_template: :show)
           else
             invalid_resource!(@store)
@@ -31,7 +31,7 @@ module Spree
         end
 
         def show
-          authorize! :read, @store
+          authorize! :show, @store
           respond_with(@store)
         end
 

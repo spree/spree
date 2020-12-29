@@ -116,7 +116,7 @@ module Spree
       @@address_attributes = [
         :id, :firstname, :lastname, :full_name, :address1, :address2, :city,
         :zipcode, :phone, :company, :alternative_phone, :country_id, :state_id,
-        :state_name, :state_text
+        :label, :state_name, :state_text
       ]
 
       @@country_attributes = [:id, :iso_name, :iso, :iso3, :name, :numcode]
@@ -161,7 +161,9 @@ module Spree
 
       @@store_attributes = [
         :id, :name, :url, :meta_description, :meta_keywords, :seo_title,
-        :mail_from_address, :default_currency, :code, :default
+        :mail_from_address, :customer_support_email, :default_currency,
+        :code, :default, :facebook, :twitter, :instagram,
+        :supported_currencies
       ]
 
       @@tag_attributes = [:id, :name]
@@ -177,7 +179,7 @@ module Spree
       ]
 
       def variant_attributes
-        if @current_user_roles && @current_user_roles.include?('admin')
+        if @current_user_roles&.include?('admin')
           @@variant_attributes + [:cost_price]
         else
           @@variant_attributes

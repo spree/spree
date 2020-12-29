@@ -44,7 +44,7 @@ module Spree
       end
 
       def adjustable_still_exists?
-        @adjustable && @adjustable.class.exists?(@adjustable.id)
+        @adjustable&.class&.exists?(@adjustable.id)
       end
     end
   end

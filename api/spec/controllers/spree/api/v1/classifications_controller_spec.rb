@@ -37,7 +37,7 @@ module Spree
       end
 
       it 'touches the taxon' do
-        taxon.update_attributes(updated_at: Time.current - 10.seconds)
+        taxon.update(updated_at: Time.current - 10.seconds)
         taxon_last_updated_at = taxon.updated_at
         api_put :update, taxon_id: taxon.id, product_id: last_product.id, position: 0
         taxon.reload

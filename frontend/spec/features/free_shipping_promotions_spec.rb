@@ -11,11 +11,6 @@ describe 'Free shipping promotions', type: :feature, js: true do
     sm.calculator.save
 
     create(:check_payment_method)
-    create(:product, name: 'RoR Mug', price: 20)
-
-    promotion = Spree::Promotion.create!(name: 'Free Shipping',
-                                         starts_at: 1.day.ago,
-                                         expires_at: 1.day.from_now)
 
     action = Spree::Promotion::Actions::FreeShipping.new
     action.promotion = promotion
@@ -25,32 +20,49 @@ describe 'Free shipping promotions', type: :feature, js: true do
   end
 
   context 'free shipping promotion automatically applied' do
-    before do
-      visit spree.root_path
-      click_link 'RoR Mug'
-      click_button 'add-to-cart-button'
-      click_button 'Checkout'
-      fill_in 'order_email', with: 'spree@example.com'
-      fill_in 'First Name', with: 'John'
-      fill_in 'Last Name', with: 'Smith'
-      fill_in 'Street Address', with: '1 John Street'
-      fill_in 'City', with: 'City of John'
-      fill_in 'Zip', with: '01337'
-      select country.name, from: 'Country'
-      select state.name, from: 'order[bill_address_attributes][state_id]'
-      fill_in 'Phone', with: '555-555-5555'
-
-      # To shipping method screen
-      click_button 'Save and Continue'
-      # To payment screen
-      click_button 'Save and Continue'
+    let!(:mug) { create(:product, name: 'RoR Mug', price: 20) }
+    let(:promotion) do
+      create(:promotion,
+             name: 'Free Shipping',
+             starts_at: 1.day.ago,
+             expires_at: 1.day.from_now)
     end
+
+    include_context 'proceed to payment step'
 
     # Regression test for #4428
     it 'applies the free shipping promotion' do
       within('#checkout-summary') do
-        expect(page).to have_content('Shipping total:  $10.00')
-        expect(page).to have_content('Promotion (Free Shipping): -$10.00')
+        page.has_text? 'SHIPPING: $10.00'
+        page.has_text? 'Promotion (Free Shipping): -$10.00'
+      end
+    end
+  end
+
+  context 'when free shipping promotion applies for order total in defined range' do
+    let(:promotion) do
+      create(:free_shipping_promotion_with_item_total_rule,
+             name: 'Free Shipping',
+             starts_at: 1.day.ago,
+             expires_at: 1.day.from_now)
+    end
+
+    include_context 'proceed to payment step'
+
+    context 'when order total is less than defined range' do
+      let!(:mug) { create(:product, name: 'RoR Mug', price: 5) }
+
+      it 'does not apply the free shipping promotion' do
+        page.has_text? 'SHIPPING: $10.00'
+        page.has_text? 'Promotion (Free Shipping): -$10.00'
+      end
+    end
+
+    context 'when order total is greater than defined range' do
+      let!(:mug) { create(:product, name: 'RoR Mug', price: 60) }
+
+      it 'applies the free shipping promotion' do
+        page.has_text? 'SHIPPING: FREE'
       end
     end
   end

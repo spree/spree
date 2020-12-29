@@ -3,7 +3,7 @@ require 'spec_helper'
 module Spree
   module Core
     describe Importer::Order do
-      let!(:country) { create(:country) }
+      let!(:country) { create(:country, iso: 'US', iso3: 'USA') }
       let!(:state) { country.states.first || create(:state, country: country) }
       let!(:stock_location) { create(:stock_location, admin_name: 'Admin Name') }
 
@@ -85,6 +85,7 @@ module Spree
 
         context 'as a user' do
           before { allow(user).to receive_messages has_spree_role?: false }
+
           it 'does not assign the order to the other user' do
             params = { user_id: other_user.id }
             order = Importer::Order.import(user, params)

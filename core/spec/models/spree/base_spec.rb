@@ -39,7 +39,7 @@ describe Spree::Base do
   it 'does not disable non-spree, Rails 5 models to validate their associated belongs_to model' do
     model_instance = Test::Child.new
 
-    expect(model_instance.save).to eq(false)
+    expect(model_instance.validate).to eq(false)
     expect(model_instance.errors.messages).to include(:parent)
     expect(model_instance.errors.messages[:parent]).to include('must exist')
   end

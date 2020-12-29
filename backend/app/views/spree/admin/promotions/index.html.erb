@@ -3,14 +3,14 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= button_link_to Spree.t(:new_promotion), new_object_url, class: "btn-success", icon: 'add' %>
+  <%= button_link_to Spree.t(:new_promotion), new_object_url, class: "btn-success", icon: 'add.svg' %>
 <% end if can?(:create, Spree::Promotion) %>
 
 <% content_for :table_filter do %>
   <div data-hook="admin_promotions_index_search">
     <%= search_form_for [:admin, @search] do |f| %>
       <div class="row">
-        <div class="col-xs-12 col-md-6">
+        <div class="col-12 col-lg-6">
           <div class="form-group">
             <%= label_tag :q_name_cont, Spree.t(:name) %>
             <%= f.text_field :name_cont, tabindex: 1, class: "form-control js-quick-search-target js-filterable" %>
@@ -22,7 +22,7 @@
           </div>
         </div>
 
-        <div class="col-xs-12 col-md-6">
+        <div class="col-12 col-lg-6">
           <div class="form-group">
             <%= label_tag :q_path_cont, Spree.t(:path) %>
             <%= f.text_field :path_cont, tabindex: 1, class: "form-control js-filterable" %>
@@ -36,15 +36,16 @@
       </div>
 
       <div data-hook="admin_promotions_index_search_buttons" class="form-actions">
-        <%= button Spree.t(:filter_results), 'search' %>
+        <%= button Spree.t(:filter_results), 'search.svg' %>
       </div>
     <% end %>
   </div>
 <% end %>
 
-<%= paginate @promotions %>
+<%= paginate @promotions, theme: 'admin-twitter-bootstrap-4' %>
 
 <% if @promotions.any? %>
+<div class="table-responsive">
   <table class="table">
     <thead>
       <tr>
@@ -75,6 +76,7 @@
       <% end %>
     </tbody>
   </table>
+  </div>
 <% else %>
   <div class="alert alert-info no-objects-found">
     <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::Promotion)) %>,

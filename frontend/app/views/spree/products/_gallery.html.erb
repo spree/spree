@@ -1,0 +1,27 @@
+<div class="col-12 col-md-7 col-lg-7" data-hook="product_left_part">
+  <% if @product_images.size > 0 %>
+    <div
+      class="w-100 d-flex align-self-start justify-content-between product-details-images"
+      data-hook="product_left_part_wrap"
+    >
+      <div class="d-none d-md-block product-details-thumbnails" data-hook="product_thumbnails">
+        <%= render 'spree/shared/carousel/thumbnails',
+                  images: @product_images,
+                  group_id: 'main-product-carousel',
+                  id: 'productThumbnailsCarousel',
+                  trigger_id: 'productCarousel',
+                  per_page: 5
+        %>
+      </div>
+      <div class="product-details-single" data-hook="product_images">
+        <%= render 'spree/shared/carousel/single',
+                  images: @product_images,
+                  group_id: 'main-product-carousel',
+                  id: 'productCarousel',
+                  trigger_id: 'productCarousel',
+                  zoomed: false
+        %>
+      </div>
+    </div>
+  <% end %>
+</div>

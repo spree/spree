@@ -9,11 +9,11 @@
 
 <fieldset>
   <legend><%= Spree.t(:stock_transfer_name) %></legend>
-
+<div class="table-responsive">
   <table class="table table-bordered">
     <tr>
       <td width="30%"><strong><%= Spree.t(:created_at) %></strong></td>
-      <td><%= @stock_transfer.created_at %></td>
+      <td><%= pretty_time(@stock_transfer.created_at) %></td>
     </tr>
     <% if @stock_transfer.reference.present? %>
       <tr>
@@ -22,7 +22,7 @@
       </tr>
     <% end %>
   </table>
-
+</div>
   <% if @stock_transfer.source_movements.present? %>
     <fieldset>
       <legend id="stock-location-source">

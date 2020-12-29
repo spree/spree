@@ -19,7 +19,7 @@ module Spree
         end
 
         def index
-          @zones = Zone.accessible_by(current_ability, :read).order('name ASC').ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
+          @zones = Zone.accessible_by(current_ability).order('name ASC').ransack(params[:q]).result.page(params[:page]).per(params[:per_page])
           respond_with(@zones)
         end
 
@@ -29,7 +29,7 @@ module Spree
 
         def update
           authorize! :update, zone
-          if zone.update_attributes(zone_params)
+          if zone.update(zone_params)
             respond_with(zone, status: 200, default_template: :show)
           else
             invalid_resource!(zone)
@@ -47,7 +47,7 @@ module Spree
         end
 
         def zone
-          @zone ||= Spree::Zone.accessible_by(current_ability, :read).find(params[:id])
+          @zone ||= Spree::Zone.accessible_by(current_ability, :show).find(params[:id])
         end
       end
     end

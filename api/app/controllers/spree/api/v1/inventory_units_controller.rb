@@ -13,7 +13,7 @@ module Spree
           authorize! :update, inventory_unit.order
 
           inventory_unit.transaction do
-            if inventory_unit.update_attributes(inventory_unit_params)
+            if inventory_unit.update(inventory_unit_params)
               fire
               render :show, status: 200
             else
@@ -25,7 +25,7 @@ module Spree
         private
 
         def inventory_unit
-          @inventory_unit ||= InventoryUnit.accessible_by(current_ability, :read).find(params[:id])
+          @inventory_unit ||= InventoryUnit.accessible_by(current_ability, :show).find(params[:id])
         end
 
         def prepare_event

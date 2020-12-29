@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :return_item, class: Spree::ReturnItem do
-    association(:inventory_unit, factory: :inventory_unit, state: :shipped)
-    association(:return_authorization, factory: :return_authorization)
+    association(:inventory_unit, factory: :inventory_unit, state: :shipped, strategy: :create)
+    association(:return_authorization, factory: :return_authorization, strategy: :create)
 
     factory :exchange_return_item do
       after(:build) do |return_item|

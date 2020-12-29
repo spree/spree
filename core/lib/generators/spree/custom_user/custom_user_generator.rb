@@ -7,17 +7,15 @@ module Spree
 
     def self.source_paths
       paths = superclass.source_paths
-      paths << File.expand_path('../templates', __FILE__)
+      paths << File.expand_path('templates', __dir__)
       paths.flatten
     end
 
     def check_for_constant
-
       klass
     rescue NameError
       @shell.say "Couldn't find #{class_name}. Are you sure that this class exists within your application and is loaded?", :red
       exit(1)
-
     end
 
     def generate

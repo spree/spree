@@ -21,7 +21,8 @@
 module Spree
   class Product < Spree::Base
     extend FriendlyId
-    include ActsAsTaggable
+    include Spree::ProductScopes
+
     friendly_id :slug_candidates, use: :history
 
     acts_as_paranoid
@@ -74,6 +75,7 @@ module Spree
     has_many :orders, through: :line_items
 
     has_many :variant_images, -> { order(:position) }, source: :images, through: :variants_including_master
+    has_many :variant_images_without_master, -> { order(:position) }, source: :images, through: :variants
 
     after_create :add_associations_from_prototype
     after_create :build_variants_from_option_values_hash, if: :option_values_hash
@@ -100,7 +102,7 @@ module Spree
       validates :price, if: proc { Spree::Config[:require_master_price] }
     end
 
-    validates :slug, presence: true, uniqueness: { allow_blank: true }
+    validates :slug, presence: true, uniqueness: { allow_blank: true, case_sensitive: false }
     validate :discontinue_on_must_be_later_than_available_on, if: -> { available_on && discontinue_on }
 
     attr_accessor :option_values_hash
@@ -109,35 +111,35 @@ module Spree
 
     alias options product_option_types
 
-    self.whitelisted_ransackable_associations = %w[stores variants_including_master master variants]
+    self.whitelisted_ransackable_associations = %w[taxons stores variants_including_master master variants]
     self.whitelisted_ransackable_attributes = %w[description name slug discontinue_on]
-    self.whitelisted_ransackable_scopes = %w[not_discontinued]
+    self.whitelisted_ransackable_scopes = %w[not_discontinued search_by_name]
 
     [
       :sku, :price, :currency, :weight, :height, :width, :depth, :is_master,
-      :cost_currency, :price_in, :amount_in, :cost_price
+      :cost_currency, :price_in, :amount_in, :cost_price, :compare_at_price
     ].each do |method_name|
       delegate method_name, :"#{method_name}=", to: :find_or_build_master
     end
 
     delegate :display_amount, :display_price, :has_default_price?,
-             :images, to: :find_or_build_master
+             :display_compare_at_price, :images, to: :find_or_build_master
 
     alias master_images images
 
     # Cant use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
     def purchasable?
-      variants_including_master.any? { |variant| variant.purchasable? }
+      variants_including_master.any?(&:purchasable?)
     end
 
     # Cant use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
     def in_stock?
-      variants_including_master.any? { |variant| variant.in_stock? }
+      variants_including_master.any?(&:in_stock?)
     end
 
     # Cant use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
     def backorderable?
-      variants_including_master.any? { |variant| variant.backorderable? }
+      variants_including_master.any?(&:backorderable?)
     end
 
     def find_or_build_master
@@ -147,6 +149,30 @@ module Spree
     # the master variant is not a member of the variants array
     def has_variants?
       variants.any?
+    end
+
+    # Returns default Variant for Product
+    # If `track_inventory_levels` is enabled it will try to find the first Variant
+    # in stock or backorderable, if there's none it will return first Variant sorted
+    # by `position` attribute
+    # If `track_inventory_levels` is disabled it will return first Variant sorted
+    # by `position` attribute
+    #
+    # @return [Spree::Variant]
+    def default_variant
+      Rails.cache.fetch(default_variant_cache_key) do
+        if Spree::Config[:track_inventory_levels] && variants.in_stock_or_backorderable.any?
+          variants.in_stock_or_backorderable.first
+        else
+          has_variants? ? variants.first : master
+        end
+      end
+    end
+
+    # Returns default Variant ID for Product
+    # @return [Integer]
+    def default_variant_id
+      default_variant.id
     end
 
     def tax_category
@@ -162,6 +188,7 @@ module Spree
     # Ensures option_types and product_option_types exist for keys in option_values_hash
     def ensure_option_types_exist_for_values_hash
       return if option_values_hash.nil?
+
       required_option_type_ids = option_values_hash.keys.map(&:to_i)
       missing_option_type_ids = required_option_type_ids - option_type_ids
       missing_option_type_ids.each do |id|
@@ -203,10 +230,16 @@ module Spree
       variants_including_master.any?(&:can_supply?)
     end
 
+    # determine if any variant (including master) is out of stock and backorderable
+    def backordered?
+      variants_including_master.any?(&:backordered?)
+    end
+
     # split variants list into hash which shows mapping of opt value onto matching variants
     # eg categorise_variants_from_option(color) => {"red" -> [...], "blue" -> [...]}
     def categorise_variants_from_option(opt_type)
       return {} unless option_types.include?(opt_type)
+
       variants.active.group_by { |v| v.option_values.detect { |o| o.option_type == opt_type } }
     end
 
@@ -217,15 +250,21 @@ module Spree
       where conditions.inject(:or)
     end
 
+    def self.search_by_name(query)
+      if defined?(SpreeGlobalize)
+        joins(:translations).order(:name).where("LOWER(#{Product::Translation.table_name}.name) LIKE LOWER(:query)", query: "%#{query}%").distinct
+      else
+        where("LOWER(#{Product.table_name}.name) LIKE LOWER(:query)", query: "%#{query}%")
+      end
+    end
+
     # Suitable for displaying only variants that has at least one option value.
     # There may be scenarios where an option type is removed and along with it
     # all option values. At that point all variants associated with only those
     # values should not be displayed to frontend users. Otherwise it breaks the
     # idea of having variants
     def variants_and_option_values(current_currency = nil)
-      variants.includes(:option_values).active(current_currency).select do |variant|
-        variant.option_values.any?
-      end
+      variants.active(current_currency).joins(:option_value_variants)
     end
 
     def empty_option_values?
@@ -268,7 +307,10 @@ module Spree
     end
 
     def category
-      taxons.joins(:taxonomy).find_by(spree_taxonomies: { name: Spree.t(:taxonomy_categories_name) })
+      taxons.joins(:taxonomy).
+        where(spree_taxonomies: { name: Spree.t(:taxonomy_categories_name) }).
+        order(depth: :desc).
+        first
     end
 
     private
@@ -285,6 +327,7 @@ module Spree
 
     def any_variants_not_track_inventory?
       return true unless Spree::Config.track_inventory_levels
+
       if variants_including_master.loaded?
         variants_including_master.any? { |v| !v.track_inventory? }
       else
@@ -304,11 +347,16 @@ module Spree
           price: master.price
         )
       end
-      throw(:abort) unless save
+      save
+    end
+
+    def default_variant_cache_key
+      "spree/default-variant/#{cache_key_with_version}/#{Spree::Config[:track_inventory_levels]}"
     end
 
     def ensure_master
       return unless new_record?
+
       self.master ||= build_master
     end
 
@@ -415,5 +463,3 @@ module Spree
     end
   end
 end
-
-require_dependency 'spree/product/scopes'

@@ -27,7 +27,9 @@ bundle exec rails new sandbox --database="$RAILSDB" \
   --skip-rc \
   --skip-spring \
   --skip-test \
-  --skip-yarn
+  --skip-coffee \
+  --skip-javascript \
+  --skip-bootsnap
 
 if [ ! -d "sandbox" ]; then
   echo 'sandbox rails application failed'
@@ -57,12 +59,19 @@ group :test, :development do
   gem 'bullet'
   gem 'pry-byebug'
   gem 'rack-mini-profiler'
+  gem 'awesome_print'
 end
+
+# ExecJS runtime
+gem 'mini_racer'
+
+gem 'rack-cache'
 RUBY
 
 bundle install --gemfile Gemfile
 bundle exec rails db:drop || true
 bundle exec rails db:create
-bundle exec rails g spree:install --auto-accept --user_class=Spree::User --enforce_available_locales=true --copy_views=false
+bundle exec rails g spree:install --auto-accept --user_class=Spree::User --enforce_available_locales=true --copy_storefront=false
+bundle exec rails g spree:mailers_preview
 bundle exec rails g spree:auth:install
 bundle exec rails g spree_gateway:install

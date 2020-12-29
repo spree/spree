@@ -1,0 +1,37 @@
+.order-details-delivery-informations {
+  .steps-data {
+    display: flex;
+    flex-direction: column;
+  }
+  dt {
+    color: theme-color('dark-text');
+    margin-top: 25px;
+    font-weight: normal;
+    text-transform: uppercase;
+
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+
+  dd {
+    margin-top: 10px;
+
+    &:first-child {
+      margin-top: 0;
+    }
+
+    a {
+      position: relative;
+      float: right;
+      margin-top: -4px;
+    }
+  }
+  div {
+    a {
+      position: relative;
+      float: right;
+      margin-top: -4px;
+    }
+  }
+}

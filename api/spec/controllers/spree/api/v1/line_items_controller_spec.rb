@@ -119,7 +119,7 @@ module Spree
       end
 
       context 'order contents changed after shipments were created' do
-        let!(:order) { Order.create }
+        let!(:order) { create(:order) }
         let!(:line_item) { Spree::Cart::AddItem.call(order: order, variant: product.master).value }
 
         before { order.create_proposed_shipments }

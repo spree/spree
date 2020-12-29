@@ -1,0 +1,8 @@
+.btn {
+  &-primary {
+    &:disabled {
+      background-color: theme-color-level('light', 2);
+      border-color: theme-color-level('light', 2);
+    }
+  }
+}

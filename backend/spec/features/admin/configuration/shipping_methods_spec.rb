@@ -5,12 +5,7 @@ describe 'Shipping Methods', type: :feature do
   let!(:zone) { create(:global_zone) }
   let!(:shipping_method) { create(:shipping_method, zones: [zone]) }
 
-  after do
-    Capybara.ignore_hidden_elements = true
-  end
-
   before do
-    Capybara.ignore_hidden_elements = false
     # HACK: To work around no email prompting on check out
     allow_any_instance_of(Spree::Order).to receive_messages(require_email: false)
     create(:check_payment_method)
@@ -31,11 +26,14 @@ describe 'Shipping Methods', type: :feature do
 
   context 'create' do
     it 'is able to create a new shipping method' do
-      click_link 'New Shipping Method'
+      within find('#contentHeader') do
+        click_link 'New Shipping Method'
+      end
 
       fill_in 'shipping_method_name', with: 'bullock cart'
+      select 'Both', from: 'Display'
 
-      within('#shipping_method_categories_field') do
+      within('#shipping_method_categories_field', match: :first) do
         check first("input[type='checkbox']")['name']
       end
 
@@ -51,9 +49,9 @@ describe 'Shipping Methods', type: :feature do
         click_icon :edit
       end
 
-      expect(find(:css, '.calculator-settings-warning')).not_to be_visible
-      select2_search('Flexible Rate', from: 'Calculator')
-      expect(find(:css, '.calculator-settings-warning')).to be_visible
+      expect(page).to have_css('.calculator-settings-warning', visible: :hidden)
+      select2 'Flexible Rate', from: 'Calculator'
+      expect(page).to have_css('.calculator-settings-warning')
 
       click_button 'Update'
       expect(page).not_to have_content('Shipping method is not found')

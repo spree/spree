@@ -3,81 +3,61 @@ module Spree
     module V2
       module Storefront
         class ProductsController < ::Spree::Api::V2::BaseController
+          include Spree::Api::V2::CollectionOptionsHelpers
+
           def index
-            render_serialized_payload serialize_collection(collection), 200
+            render_serialized_payload { serialize_collection(paginated_collection) }
           end
 
           def show
-            render_serialized_payload serialize_resource(resource), 200
+            render_serialized_payload { serialize_resource(resource) }
           end
 
           private
 
-          def serialize_collection(collection)
-            dependencies[:collection_serializer].new(
-              sorted_collection(collection),
-              include: collection_includes
-            ).serializable_hash
-          end
-
-          def serialize_resource(resource)
-            dependencies[:resource_serializer].new(
-              resource,
-              include: resource_includes
-            ).serializable_hash
-          end
-
-          def sorted_collection(collection)
-            dependencies[:collection_sorter].new(collection, params, current_currency).call
+          def sorted_collection
+            collection_sorter.new(collection, params, current_currency).call
           end
 
           def collection
-            dependencies[:collection_finder].new(scope, params, current_currency).call
+            collection_finder.new(scope: scope, params: params, current_currency: current_currency).execute
           end
 
           def resource
             scope.find_by(slug: params[:id]) || scope.find(params[:id])
           end
 
-          def dependencies
-            {
-              collection_sorter:     Spree::Products::Sort,
-              collection_finder:     Spree::Products::Find,
-              collection_serializer: Spree::V2::Storefront::ProductSerializer,
-              resource_serializer:   Spree::V2::Storefront::ProductSerializer
-            }
+          def collection_sorter
+            Spree::Api::Dependencies.storefront_products_sorter.constantize
+          end
+
+          def collection_finder
+            Spree::Api::Dependencies.storefront_products_finder.constantize
+          end
+
+          def collection_serializer
+            Spree::Api::Dependencies.storefront_product_serializer.constantize
+          end
+
+          def resource_serializer
+            Spree::Api::Dependencies.storefront_product_serializer.constantize
           end
 
           def scope
-            Spree::Product.includes(scope_includes)
-          end
-
-          def resource_includes
-            request_includes || default_resource_includes
-          end
-
-          def default_resource_includes
-            %i[
-              variants
-              variants.images
-              default_variant
-              default_variant.images
-              option_types
-              option_types.option_values
-              product_properties
-            ]
+            Spree::Product.accessible_by(current_ability, :show).includes(scope_includes)
           end
 
           def scope_includes
             {
-              classifications:    :taxon,
+              master: :default_price,
+              variants: [],
+              variant_images: [],
+              taxons: [],
               product_properties: :property,
-              option_types:       :option_values,
-              variants:           %i[default_price option_values]
+              option_types: :option_values,
+              variants_including_master: %i[default_price option_values]
             }
           end
-
-          alias_method :collection_includes, :resource_includes
         end
       end
     end

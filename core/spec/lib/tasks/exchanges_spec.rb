@@ -120,6 +120,7 @@ describe 'exchanges:charge_unreturned_items' do
 
       context 'the exchange inventory unit is not shipped' do
         before { return_item_2.reload.exchange_inventory_units.update_all(state: 'on hand') }
+
         it 'does not create a new order' do
           expect { subject.invoke }.not_to change { Spree::Order.count }
         end
@@ -127,6 +128,7 @@ describe 'exchanges:charge_unreturned_items' do
 
       context 'the exchange inventory unit has been returned' do
         before { return_item_2.reload.exchange_inventory_units.update_all(state: 'returned') }
+
         it 'does not create a new order' do
           expect { subject.invoke }.not_to change { Spree::Order.count }
         end

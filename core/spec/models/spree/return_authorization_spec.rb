@@ -90,6 +90,7 @@ describe Spree::ReturnAuthorization, type: :model do
 
   context '#currency' do
     before { allow(order).to receive(:currency).and_return('ABC') }
+
     it 'returns the order currency' do
       expect(return_authorization.currency).to eq('ABC')
     end
@@ -148,11 +149,11 @@ describe Spree::ReturnAuthorization, type: :model do
   end
 
   describe '#customer_returned_items?' do
+    subject { return_authorization.customer_returned_items? }
+
     before do
       allow_any_instance_of(Spree::Order).to receive_messages(return!: true)
     end
-
-    subject { return_authorization.customer_returned_items? }
 
     context 'has associated customer returns' do
       let(:customer_return) { create(:customer_return) }

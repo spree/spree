@@ -28,6 +28,8 @@ module Spree
 
     before_save :normalize_blank_values
 
+    before_validation :normalize_code
+
     scope :coupons, -> { where.not(code: nil) }
     scope :advertised, -> { where(advertise: true) }
     scope :applied, lambda {
@@ -119,6 +121,7 @@ module Spree
     # called anytime order.update_with_updater! happens
     def eligible?(promotable)
       return false if expired? || usage_limit_exceeded?(promotable) || blacklisted?(promotable)
+
       !!eligible_rules(promotable, {})
     end
 
@@ -128,6 +131,7 @@ module Spree
     def eligible_rules(promotable, options = {})
       # Promotions without rules are eligible by default.
       return [] if rules.none?
+
       specific_rules = rules.select { |rule| rule.applicable?(promotable) }
       return [] if specific_rules.none?
 
@@ -190,21 +194,10 @@ module Spree
     end
 
     def used_by?(user, excluded_orders = [])
-      [
-        :adjustments,
-        :line_item_adjustments,
-        :shipment_adjustments
-      ].any? do |adjustment_type|
-        user.orders.complete.joins(adjustment_type).where(
-          spree_adjustments: {
-            source_type: 'Spree::PromotionAction',
-            source_id: actions.map(&:id),
-            eligible: true
-          }
-        ).where.not(
-          id: excluded_orders.map(&:id)
-        ).any?
-      end
+      user.orders.complete.joins(:promotions).joins(:all_adjustments).
+        where.not(spree_orders: { id: excluded_orders.map(&:id) }).
+        where(spree_promotions: { id: id }).
+        where(spree_adjustments: { source_type: 'Spree::PromotionAction', eligible: true }).any?
     end
 
     private
@@ -223,6 +216,10 @@ module Spree
       [:code, :path].each do |column|
         self[column] = nil if self[column].blank?
       end
+    end
+
+    def normalize_code
+      self.code = code.strip if code.present?
     end
 
     def match_all?

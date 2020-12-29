@@ -1,13 +1,15 @@
 if ENV['COVERAGE']
   # Run Coverage report
   require 'simplecov'
-  SimpleCov.start do
-    add_group 'Controllers', 'app/controllers'
-    add_group 'Helpers', 'app/helpers'
-    add_group 'Mailers', 'app/mailers'
-    add_group 'Models', 'app/models'
-    add_group 'Views', 'app/views'
-    add_group 'Libraries', 'lib'
+  SimpleCov.start 'rails' do
+    add_group 'Libraries', 'lib/spree'
+
+    add_filter '/bin/'
+    add_filter '/db/'
+    add_filter '/script/'
+    add_filter '/spec/'
+
+    coverage_dir "#{ENV['COVERAGE_DIR']}/frontend" if ENV['COVERAGE_DIR']
   end
 end
 
@@ -18,19 +20,14 @@ ENV['RAILS_ENV'] ||= 'test'
 begin
   require File.expand_path('../dummy/config/environment', __FILE__)
 rescue LoadError
-  puts 'Could not load dummy application. Please ensure you have run `bundle exec rake test_app`'
+  puts 'Could not load dummy application. Please ensure you have run `BUNDLE_GEMFILE=../Gemfile bundle exec rake test_app`'
   exit
 end
 
 require 'rspec/rails'
 require 'ffaker'
 
-# Requires supporting files with custom matchers and macros, etc,
-# in ./support/ and its subdirectories.
-Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
-
 require 'database_cleaner'
-require 'rspec/retry'
 
 require 'spree/testing_support/i18n' if ENV['CHECK_TRANSLATIONS']
 
@@ -43,32 +40,19 @@ require 'spree/testing_support/flash'
 require 'spree/testing_support/url_helpers'
 require 'spree/testing_support/order_walkthrough'
 require 'spree/testing_support/caching'
+require 'spree/testing_support/capybara_config'
+require 'spree/testing_support/image_helpers'
+require 'webdrivers'
 
-require 'capybara-screenshot/rspec'
+# Requires supporting files with custom matchers and macros, etc,
+# in ./support/ and its subdirectories.
+Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
 
-Capybara.save_path = ENV['CIRCLE_ARTIFACTS'] if ENV['CIRCLE_ARTIFACTS']
-
-if ENV['WEBDRIVER'] == 'accessible'
-  require 'capybara/accessible'
-  Capybara.javascript_driver = :accessible
-else
-  Capybara.register_driver :chrome do |app|
-    Capybara::Selenium::Driver.new app,
-      browser: :chrome,
-      options: Selenium::WebDriver::Chrome::Options.new(args: %w[headless disable-gpu window-size=1920,1080])
-  end
-  Capybara.javascript_driver = :chrome
-
-  Capybara::Screenshot.register_driver(:chrome) do |driver, path|
-    driver.browser.save_screenshot(path)
-  end
-end
-Capybara.configure do |config|
-  config.default_max_wait_time = 20
-end
+Rails.application.routes.default_url_options[:host] = 'example.com'
 
 RSpec.configure do |config|
   config.color = true
+  config.default_formatter = 'doc'
   config.fail_fast = ENV['FAIL_FAST'] || false
   config.fixture_path = File.join(__dir__, 'fixtures')
   config.infer_spec_type_from_file_location!
@@ -79,14 +63,6 @@ RSpec.configure do |config|
   # examples within a transaction, comment the following line or assign false
   # instead of true.
   config.use_transactional_fixtures = false
-
-  # Config for running specs while have transition period from Paperclip to ActiveStorage
-  if Rails.application.config.use_paperclip
-    config.filter_run_excluding :active_storage
-  else
-    config.filter_run_including :active_storage
-    config.run_all_when_everything_filtered = true
-  end
 
   if ENV['WEBDRIVER'] == 'accessible'
     config.around(:each, inaccessible: true) do |example|
@@ -113,10 +89,10 @@ RSpec.configure do |config|
     ApplicationRecord.connection.increment_open_transactions if ApplicationRecord.connection.open_transactions < 0
     DatabaseCleaner.start
     reset_spree_preferences
-  end
 
-  config.after do
-    DatabaseCleaner.clean
+    create(:store, default: true)
+    create(:taxon, permalink: 'trending')
+    create(:taxon, permalink: 'bestsellers')
   end
 
   config.after(:each, type: :feature) do |example|
@@ -127,20 +103,23 @@ RSpec.configure do |config|
     end
   end
 
+  config.append_after do
+    DatabaseCleaner.clean
+  end
+
   config.include FactoryBot::Syntax::Methods
 
   config.include Spree::TestingSupport::Preferences
   config.include Spree::TestingSupport::UrlHelpers
   config.include Spree::TestingSupport::ControllerRequests, type: :controller
   config.include Spree::TestingSupport::Flash
+  config.include Spree::TestingSupport::ImageHelpers
 
   config.order = :random
   Kernel.srand config.seed
 
-  config.verbose_retry = true
   config.display_try_failure_messages = true
 
-  config.around :each, type: :feature do |ex|
-    ex.run_with_retry retry: 3
-  end
+  config.filter_run_including focus: true unless ENV['CI']
+  config.run_all_when_everything_filtered = true
 end

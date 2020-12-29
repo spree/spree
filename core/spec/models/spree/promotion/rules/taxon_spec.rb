@@ -41,6 +41,7 @@ describe Spree::Promotion::Rules::Taxon, type: :model do
 
       context 'when order does not have any prefered taxon' do
         before { rule.taxons << taxon2 }
+
         it { expect(rule).not_to be_eligible(order) }
         it 'sets an error message' do
           rule.eligible?(order)
@@ -76,6 +77,7 @@ describe Spree::Promotion::Rules::Taxon, type: :model do
 
       context 'when order does not have all prefered taxons' do
         before { rule.taxons << taxon }
+
         it { expect(rule).not_to be_eligible(order) }
         it 'sets an error message' do
           rule.eligible?(order)

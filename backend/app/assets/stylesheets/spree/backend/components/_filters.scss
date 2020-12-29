@@ -1,26 +1,66 @@
 #table-filter {
   display: none;
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
   margin-top: 20px;
 }
 
+.index-filter-button .icon-chevron-right {
+  transform: rotate(0);
+  transition: .3s ease-in-out;
+  margin-bottom: 0;
+}
+
+.collapsed .icon-chevron-right {
+  transform: rotate(90deg);
+  transition: .3s ease-in-out;
+}
+
+.default-filter-icon {
+  opacity: 0.1;
+}
+
+i.js-delete-filter {
+  width: $select2-icon-size;
+  height: $select2-icon-size;
+  margin-bottom: 0;
+}
+
 .index-filter-button {
-  .glyphicon {
-    color: $gray-light;
-  }
+  font-size: $font-size-sm;
 
   button {
+    height: 100%;
     text-transform: uppercase;
     letter-spacing: 2px;
     font-weight: bold;
-    font-size: $font-size-base - 3;
-    padding: ($padding-base-vertical + 3) $padding-base-horizontal ($padding-base-vertical + 2);
+    font-size: $small-font-size;
+    border-color: $input-border-color;
     border-right: none;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    background-color: $white;
 
-    &:focus {
-      background-color: $gray-lighter;
-      border-color: $input-border;
+    &:hover, &:focus {
+      background-color: $gray-100;
     }
+  }
+
+  .js-quick-search {
+    font-size: $font-size-sm;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+}
+
+.sort_link {
+  .icon, svg {
+    margin-left: 5px;
+    margin-bottom: 2px;
+    width: 0.8rem;
+    height: 0.8rem;
+
+  }
+  
+  svg.default-filter-arrow {
+    opacity: 0.1;
   }
 }

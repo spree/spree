@@ -117,6 +117,22 @@ describe Spree::Payment, type: :model do
   end
 
   context 'validations' do
+    context 'when payment source is not required' do
+      it 'do not validate source presence' do
+        allow_any_instance_of(Spree::PaymentMethod).to receive(:source_required?).and_return(false)
+
+        payment.source = nil
+        expect(payment).to be_valid
+      end
+    end
+
+    context 'with payment source required' do
+      it 'validate source presence' do
+        payment.source = nil
+        expect(payment).not_to be_valid
+      end
+    end
+
     it 'returns useful error messages when source is invalid' do
       payment.source = Spree::CreditCard.new
       expect(payment).not_to be_valid
@@ -518,7 +534,8 @@ describe Spree::Payment, type: :model do
       end
 
       it 'requires a payment method' do
-        expect(Spree::Payment.create(amount: 100, order: order)).to have(1).error_on(:payment_method)
+        expect(Spree::Payment.create(amount: 100, order: order).errors).not_to be_empty
+        expect(Spree::Payment.create(amount: 100, order: order).errors.messages[:payment_method]).to be_present
       end
     end
 
@@ -543,7 +560,7 @@ describe Spree::Payment, type: :model do
       it 'updates payment_state and shipments' do
         expect(order.updater).to receive(:update_payment_state)
         expect(order.updater).to receive(:update_shipment_state)
-        Spree::Payment.create(amount: 100, order: order, payment_method: gateway)
+        Spree::Payment.create(amount: 100, order: order, payment_method: gateway, source: card)
       end
     end
 
@@ -653,8 +670,9 @@ describe Spree::Payment, type: :model do
       payment = Spree::Payment.new(params)
       expect(payment).not_to be_valid
       expect(payment.source).not_to be_nil
-      expect(payment.source.error_on(:number).size).to eq(1)
-      expect(payment.source.error_on(:verification_value).size).to eq(1)
+      expect(payment.source.errors.messages[:name]).to be_present
+      expect(payment.source.errors).not_to be_empty
+      expect(payment.source.errors.messages[:verification_value]).to be_present
     end
 
     it 'does not build a new source when duplicating the model with source_attributes set' do
@@ -666,6 +684,7 @@ describe Spree::Payment, type: :model do
 
   describe '#currency' do
     before { allow(order).to receive(:currency).and_return('ABC') }
+
     it 'returns the order currency' do
       expect(payment.currency).to eq('ABC')
     end
@@ -689,7 +708,7 @@ describe Spree::Payment, type: :model do
       # Sets the payment's order to a different Ruby object entirely
       payment.order = Spree::Order.find(payment.order_id)
       email = 'foo@example.com'
-      order.update_attributes(email: email)
+      order.update(email: email)
       expect(payment.gateway_options[:email]).to eq(email)
     end
   end
@@ -870,29 +889,25 @@ describe Spree::Payment, type: :model do
   end
 
   describe '#editable?' do
-    subject { payment }
-
-    before do
-      subject.state = state
-    end
+    before { payment.state = state }
 
     context "when the state is 'checkout'" do
       let(:state) { 'checkout' }
 
-      its(:editable?) { is_expected.to be(true) }
+      it { expect(payment.editable?).to eq(true) }
     end
 
     context "when the state is 'pending'" do
       let(:state) { 'pending' }
 
-      its(:editable?) { is_expected.to be(true) }
+      it { expect(payment.editable?).to eq(true) }
     end
 
     %w[processing completed failed void invalid].each do |state|
       context "when the state is '#{state}'" do
         let(:state) { state }
 
-        its(:editable?) { is_expected.to be(false) }
+        it { expect(payment.editable?).to eq(false) }
       end
     end
   end

@@ -21,12 +21,12 @@
     <td>
       <input class="quantity form-control" id="item_quantity" type="number" min="1" value="1" max="{{max_quantity}}">
     </td>
-    <td class='actions'>
-      <a href='#' class='cancel-split with-tip btn btn-sm btn-default' title='Cancel'>
-        <span class="icon icon-arrow-left"></span>
+    <td class='actions text-center'>
+      <a href='#' class='cancel-split with-tip btn btn-sm btn-outline-secondary' title='Cancel'>
+        <%= svg_icon name: "cancel", classes: 'icon-cancel', width: '16', height: '16' %>
       </a>
-      <a href='#' class='save-split with-tip btn btn-sm btn-success' title='Save'>
-        <span class="icon icon-save"></span>
+      <a href='#' class='icon-save-split save-split with-tip btn btn-sm btn-success' title='Save'>
+        <%= svg_icon name: "split", classes: 'icon-save', width: '16', height: '16' %>
       </a>
     </td>
   </tr>

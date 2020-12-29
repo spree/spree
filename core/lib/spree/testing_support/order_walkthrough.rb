@@ -1,7 +1,7 @@
 class OrderWalkthrough
   def self.up_to(state)
     # A default store must exist to provide store settings
-    FactoryBot.create(:store) unless Spree::Store.exists?
+    store = Spree::Store.default || FactoryBot.create(:store, default: true)
 
     # A payment method must exist for an order to proceed through the Address state
     unless Spree::PaymentMethod.exists?
@@ -18,7 +18,7 @@ class OrderWalkthrough
     unless Spree::ShippingMethod.exists?
       FactoryBot.create(:shipping_method).tap do |sm|
         sm.calculator.preferred_amount = 10
-        sm.calculator.preferred_currency = Spree::Config[:currency]
+        sm.calculator.preferred_currency = store.default_currency
         sm.calculator.save
       end
     end
@@ -53,7 +53,11 @@ class OrderWalkthrough
   end
 
   def self.payment(order)
-    order.payments.create!(payment_method: Spree::PaymentMethod.first, amount: order.total)
+    FactoryBot.create :payment,
+      order: order,
+      payment_method: Spree::PaymentMethod.first,
+      amount: order.total
+
     # TODO: maybe look at some way of making this payment_state change automatic
     order.payment_state = 'paid'
     order.next!

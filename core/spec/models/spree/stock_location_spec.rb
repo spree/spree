@@ -49,11 +49,13 @@ module Spree
           context 'passes backorderable default config' do
             context 'true' do
               before { subject.backorderable_default = true }
+
               it { expect(stock_item.backorderable).to be true }
             end
 
             context 'false' do
               before { subject.backorderable_default = false }
+
               it { expect(stock_item.backorderable).to be false }
             end
           end
@@ -66,7 +68,7 @@ module Spree
             before { subject.propagate_all_variants = true }
 
             specify do
-              expect(subject).to receive(:propagate_variant).at_least(:once)
+              expect(subject).to receive(:create_stock_items)
               subject.save!
             end
           end
@@ -94,7 +96,8 @@ module Spree
     end
 
     it 'returns nil when stock_item is not found for variant' do
-      stock_item = subject.stock_item(100)
+      variant_id = variant.id + 1000
+      stock_item = subject.stock_item(variant_id)
       expect(stock_item).to be_nil
     end
 

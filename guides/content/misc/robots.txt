@@ -1,7 +1,0 @@
-User-agent: *
-
-<% if ENV['EDGE_GUIDES'] == 'true' %>
-Disallow: /
-<% else %>
-Disallow: /legacy
-<% end %>

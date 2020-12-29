@@ -37,6 +37,7 @@ module Spree
         return valid_preferred_reimbursement_type?(return_item) ? return_item.preferred_reimbursement_type.class : nil
       end
       return expired_reimbursement_type if past_reimbursable_time_period?(return_item)
+
       default_reimbursement_type
     end
   end

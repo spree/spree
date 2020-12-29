@@ -1,16 +1,8 @@
-.form-control {
-  box-shadow: none;
-}
-
 label {
-  text-transform: uppercase;
-  font-size: $font-size-base - 3;
-  letter-spacing: 1px;
-  color: $gray;
-  font-weight: 500;
+  font-size: $font-size-sm;
 
-  input[type="radio"], input[type="checkbox"] {
-    margin-top: 2px;
+  &:hover {
+    cursor: pointer;
   }
 }
 
@@ -20,40 +12,53 @@ span.or {
   padding: 0 10px;
 }
 
-input.form-control {
-  &:active, &:focus {
-    border-color: lighten($brand-success, 20);
-    box-shadow: none;
-  }
-}
-
 .form-group {
   &.withError {
     label, .formError, .required {
-      color: $brand-danger;
+      color: $danger;
     }
 
     input,
     .select2-choice {
-      border-color: $brand-danger;
+      border-color: $danger;
     }
   }
 }
 
-.fullwidth-input {
-  display: block;
-  width: 100%;
+// Hide number toggler
+  // Chrome, Safari, Edge, Opera
+input.hide-number-toggle::-webkit-outer-spin-button,
+input.hide-number-toggle::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+  // Firefox
+input[type=number].hide-number-toggle {
+  -moz-appearance: textfield;
 }
 
-.help-block {
-  color: lighten($gray-light, 20);
-  font-weight: 300;
+
+// Remove the default 5px outlines and box-shadows
+// from all inputs on focus.
+.form-control:focus {
+  box-shadow: none !important;
 }
 
-.checkbox > .help-block {
-  margin-top: 0;
+*:focus {
+    outline: none;
 }
 
-.display-inline {
-  display: inline;
+:-webkit-direct-focus {
+  outline-color: transparent;
+  outline-style: auto;
+  outline-width: 0;
+}
+
+.custom-select {
+  background: $input-bg url(asset-path("backend-chevron-down.svg")) no-repeat right 0.5rem center/8px 10px;
+  background-size: 0.7em;
+  &:focus{
+    outline: none;
+    box-shadow: none;
+  }
 }

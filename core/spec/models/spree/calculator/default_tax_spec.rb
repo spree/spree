@@ -87,6 +87,7 @@ describe Spree::Calculator::DefaultTax, type: :model do
             expect(calculator.compute(line_item)).to eq(1.38)
           end
         end
+
         it "is equal to the item's full price * rate" do
           Spree::TaxRate.store_pre_tax_amount(line_item, [rate])
           expect(calculator.compute(line_item)).to eq(1.43)
@@ -140,7 +141,7 @@ describe Spree::Calculator::DefaultTax, type: :model do
 
       context 'with a 40$ promo' do
         before do
-          allow(line_item).to receive(:taxable_adjustment_total).and_return(BigDecimal.new('-40'))
+          allow(line_item).to receive(:taxable_adjustment_total).and_return(BigDecimal('-40'))
           Spree::TaxRate.store_pre_tax_amount(line_item, [rate])
         end
 

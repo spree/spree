@@ -22,6 +22,54 @@ describe Spree::Variant, type: :model do
       variant.price = 0
       expect(variant).to be_valid
     end
+
+    context 'SKU' do
+      context 'default behaviour' do
+        context 'invalid' do
+          let(:variant_2) { build(:variant, sku: variant.sku) }
+
+          it 'with the same SKU' do
+            expect(variant_2.valid?).to eq(false)
+          end
+        end
+
+        context 'valid' do
+          let(:variant_2) { build(:variant, sku: 'OTHER-SKU') }
+
+          it 'with different SKU' do
+            expect(variant_2.valid?).to eq(true)
+          end
+
+          it 'without SKU' do
+            variant_2.sku = ''
+            expect(variant_2.valid?).to eq(true)
+          end
+        end
+      end
+
+      context 'disabled validation' do
+        before do
+          Spree::Config[:disable_sku_validation] = true
+        end
+
+        after do
+          Spree::Config[:disable_sku_validation] = false
+        end
+
+        context 'valid' do
+          let(:variant_2) { build(:variant, sku: 'OTHER-SKU') }
+
+          it 'with the same SKU' do
+            expect(variant_2.valid?).to eq(true)
+          end
+
+          it 'without SKU' do
+            variant_2.sku = ''
+            expect(variant_2.valid?).to eq(true)
+          end
+        end
+      end
+    end
   end
 
   context 'after create' do
@@ -45,6 +93,7 @@ describe Spree::Variant, type: :model do
       before do
         product.master.stock_items.first.set_count_on_hand(5)
       end
+
       context 'when product is created without variants but with stock' do
         it { expect(product.master).to be_in_stock }
       end
@@ -297,6 +346,7 @@ describe Spree::Variant, type: :model do
   context '#cost_currency' do
     context 'when cost currency is nil' do
       before { variant.cost_currency = nil }
+
       it 'populates cost currency with the default value on save' do
         variant.save!
         expect(variant.cost_currency).to eql 'USD'
@@ -305,10 +355,11 @@ describe Spree::Variant, type: :model do
   end
 
   describe '.price_in' do
+    subject { variant.price_in(currency).display_amount }
+
     before do
       variant.prices << create(:price, variant: variant, currency: 'EUR', amount: 33.33)
     end
-    subject { variant.price_in(currency).display_amount }
 
     context 'when currency is not specified' do
       let(:currency) { nil }
@@ -336,11 +387,11 @@ describe Spree::Variant, type: :model do
   end
 
   describe '.amount_in' do
+    subject { variant.amount_in(currency) }
+
     before do
       variant.prices << create(:price, variant: variant, currency: 'EUR', amount: 33.33)
     end
-
-    subject { variant.amount_in(currency) }
 
     context 'when currency is not specified' do
       let(:currency) { nil }
@@ -367,20 +418,20 @@ describe Spree::Variant, type: :model do
     end
   end
 
-  # Regression test for #2432
-  describe 'options_text' do
-    let!(:variant) { build(:variant, option_values: []) }
-    let!(:master) { create(:master_variant) }
+  describe '#options_text' do
+    let(:variant) { build :variant }
+    let(:fake_presenter) { double :fake_presenter }
+
+    subject(:options_text) { variant.options_text }
 
     before do
-      # Order bar than foo
-      variant.option_values << create(:option_value, name: 'Foo', presentation: 'Foo', option_type: create(:option_type, position: 2, name: 'Foo Type', presentation: 'Foo Type'))
-      variant.option_values << create(:option_value, name: 'Bar', presentation: 'Bar', option_type: create(:option_type, position: 1, name: 'Bar Type', presentation: 'Bar Type'))
-      variant.save
+      allow(Spree::Variants::OptionsPresenter).to receive(:new).with(variant).and_return(fake_presenter)
     end
 
-    it 'orders by bar than foo' do
-      expect(variant.options_text).to eql 'Bar Type: Bar, Foo Type: Foo'
+    it 'calls Spree::Variants::OptionsPresenter' do
+      expect(fake_presenter).to receive(:to_sentence)
+
+      options_text
     end
   end
 
@@ -657,6 +708,7 @@ describe Spree::Variant, type: :model do
 
   describe 'deleted_at scope' do
     before { variant.destroy && variant.reload }
+
     it 'has a price if deleted' do
       variant.price = 10
       expect(variant.price).to eq(10)
@@ -716,7 +768,7 @@ describe Spree::Variant, type: :model do
 
     it 'changes updated_at' do
       Timecop.scale(1000) do
-        expect { variant.discontinue! }.to change(variant, :updated_at)
+        expect { variant.discontinue! }.to change(variant.reload, :updated_at)
       end
     end
   end
@@ -828,10 +880,12 @@ describe Spree::Variant, type: :model do
       context 'product and master_variant present and equal' do
         context 'price nil and currency present' do
           before { variant.price = nil }
+
           it { expect(variant.send(:check_price)).to be(nil) }
 
           context 'check variant price' do
             before { variant.send(:check_price) }
+
             it { expect(variant.price).to eq(variant.product.master.price) }
           end
         end
@@ -882,6 +936,24 @@ describe Spree::Variant, type: :model do
   describe '#updated_at' do
     it 'creates variant with updated_at timestamp' do
       expect(variant.updated_at).not_to be_nil
+    end
+  end
+
+  context '#backordered?' do
+    let!(:variant) { create(:variant) }
+
+    it 'returns true when out of stock and backorderable' do
+      expect(variant.backordered?).to eq(true)
+    end
+
+    it 'returns false when out of stock and not backorderable' do
+      variant.stock_items.first.update(backorderable: false)
+      expect(variant.backordered?).to eq(false)
+    end
+
+    it 'returns false when there is available item in stock' do
+      variant.stock_items.first.update(count_on_hand: 10)
+      expect(variant.backordered?).to eq(false)
     end
   end
 

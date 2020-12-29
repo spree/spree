@@ -17,8 +17,8 @@ describe 'Tiered Calculator Promotions' do
     within('#actions_container') { click_button 'Update' }
 
     within('#actions_container .settings') do
-      expect(page.body).to have_content('Base Percent')
-      expect(page.body).to have_content('Tiers')
+      expect(page).to have_content('Base Percent')
+      expect(page).to have_content('Tiers')
 
       click_button 'Add'
     end
@@ -26,10 +26,8 @@ describe 'Tiered Calculator Promotions' do
     fill_in 'Base Percent', with: 5
 
     within('.tier') do
-      find('.js-base-input').set(100)
-      page.execute_script("$('.js-base-input').change();")
-      find('.js-value-input').set(10)
-      page.execute_script("$('.js-value-input').change();")
+      fill_in(class: 'js-base-input', with: '100')
+      fill_in(class: 'js-value-input', with: '10')
     end
     within('#actions_container') { click_button 'Update' }
 

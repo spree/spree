@@ -48,7 +48,8 @@ module Spree
       validates :cost_price
       validates :price
     end
-    validates :sku, uniqueness: { conditions: -> { where(deleted_at: nil) } }, allow_blank: true
+    validates :sku, uniqueness: { conditions: -> { where(deleted_at: nil) }, case_sensitive: false },
+                    allow_blank: true, unless: :disable_sku_validation?
 
     after_create :create_stock_items
     after_create :set_master_out_of_stock, unless: :is_master?
@@ -56,6 +57,8 @@ module Spree
     after_touch :clear_in_stock_cache
 
     scope :in_stock, -> { joins(:stock_items).where('count_on_hand > ? OR track_inventory = ?', 0, false) }
+    scope :backorderable, -> { joins(:stock_items).where(spree_stock_items: { backorderable: true }) }
+    scope :in_stock_or_backorderable, -> { in_stock.or(backorderable) }
 
     scope :eligible, -> {
       where(is_master: false).or(
@@ -79,7 +82,7 @@ module Spree
       )
     end
 
-    scope :not_deleted, -> { where("#{Variant.quoted_table_name}.deleted_at IS NULL") }
+    scope :not_deleted, -> { where("#{Spree::Variant.quoted_table_name}.deleted_at IS NULL") }
 
     scope :for_currency_and_available_price_amount, ->(currency = nil) do
       currency ||= Spree::Config[:currency]
@@ -90,7 +93,6 @@ module Spree
       not_discontinued.not_deleted.
         for_currency_and_available_price_amount(currency)
     end
-
     LOCALIZED_NUMBERS = %w(cost_price weight depth width height)
 
     LOCALIZED_NUMBERS.each do |m|
@@ -101,6 +103,20 @@ module Spree
 
     self.whitelisted_ransackable_associations = %w[option_values product prices default_price]
     self.whitelisted_ransackable_attributes = %w[weight sku]
+    self.whitelisted_ransackable_scopes = %i(product_name_or_sku_cont search_by_product_name_or_sku)
+
+    def self.product_name_or_sku_cont(query)
+      joins(:product).where("LOWER(#{Product.table_name}.name) LIKE LOWER(:query) OR LOWER(sku) LIKE LOWER(:query)", query: "%#{query}%")
+    end
+
+    def self.search_by_product_name_or_sku(query)
+      if defined?(SpreeGlobalize)
+        joins(product: :translations).where("LOWER(#{Product::Translation.table_name}.name) LIKE LOWER(:query) OR LOWER(sku) LIKE LOWER(:query)",
+                                            query: "%#{query}%")
+      else
+        product_name_or_sku_cont(query)
+      end
+    end
 
     def available?
       !discontinued? && product.available?
@@ -110,20 +126,12 @@ module Spree
       if self[:tax_category_id].nil?
         product.tax_category
       else
-        TaxCategory.find(self[:tax_category_id])
+        Spree::TaxCategory.find(self[:tax_category_id])
       end
     end
 
     def options_text
-      values = option_values.sort do |a, b|
-        a.option_type.position <=> b.option_type.position
-      end
-
-      values.to_a.map! do |ov|
-        "#{ov.option_type.presentation}: #{ov.presentation}"
-      end
-
-      values.to_sentence(words_connector: ', ', two_words_connector: ', ')
+      Spree::Variants::OptionsPresenter.new(self).to_sentence
     end
 
     # Default to master name
@@ -173,6 +181,7 @@ module Spree
         end
       else
         return if current_value.name == opt_value
+
         option_values.delete(current_value)
       end
 
@@ -223,6 +232,10 @@ module Spree
       end.sum
     end
 
+    def compare_at_price
+      price_in(cost_currency).try(:compare_at_amount)
+    end
+
     def name_and_sku
       "#{name} - #{sku}"
     end
@@ -232,7 +245,11 @@ module Spree
     end
 
     def in_stock?
-      Rails.cache.fetch(in_stock_cache_key) do
+      # Issue 10280
+      # Check if model responds to cache version and fall back to updated_at for older rails versions
+      # This makes sure a version is supplied when recyclable cache keys are disabled.
+      version = respond_to?(:cache_version) ? cache_version : updated_at.to_i
+      Rails.cache.fetch(in_stock_cache_key, version: version) do
         total_on_hand > 0
       end
     end
@@ -271,6 +288,10 @@ module Spree
       !!discontinue_on && discontinue_on <= Time.current
     end
 
+    def backordered?
+      total_on_hand <= 0 && stock_items.exists?(backorderable: true)
+    end
+
     private
 
     def ensure_no_line_items
@@ -285,7 +306,7 @@ module Spree
     end
 
     def set_master_out_of_stock
-      if product.master && product.master.in_stock?
+      if product.master&.in_stock?
         product.master.stock_items.update_all(backorderable: false)
         product.master.stock_items.each(&:reduce_count_on_hand_to_zero)
       end
@@ -294,8 +315,9 @@ module Spree
     # Ensures a new variant takes the product master price when price is not supplied
     def check_price
       if price.nil? && Spree::Config[:require_master_price]
-        return errors.add(:base, :no_master_variant_found_to_infer_price)  unless product && product.master
+        return errors.add(:base, :no_master_variant_found_to_infer_price)  unless product&.master
         return errors.add(:base, :must_supply_price_for_variant_or_master) if self == product.master
+
         self.price = product.master.price
       end
       if price.present? && currency.nil?
@@ -319,6 +341,10 @@ module Spree
 
     def clear_in_stock_cache
       Rails.cache.delete(in_stock_cache_key)
+    end
+
+    def disable_sku_validation?
+      Spree::Config[:disable_sku_validation]
     end
   end
 end

@@ -1,6 +1,6 @@
 <div data-hook="admin_stock_locations_form_fields">
   <div class="row">
-    <div class="col-xs-12 col-md-9" data-hook="stock_location_names">
+    <div class="col-12 col-md-9" data-hook="stock_location_names">
       <div data-hook="stock_location_name">
         <%= f.field_container :name, class: ['form-group']  do %>
           <%= f.label :name, Spree.t(:name) %> <span class="required">*</span><br />
@@ -16,27 +16,27 @@
       </div>
     </div>
 
-    <div class="col-xs-12 col-md-3" data-hook="stock_location_status">
+    <div class="col-12 col-md-3" data-hook="stock_location_status">
       <strong><%= Spree.t(:status) %></strong>
-      <div class="checkbox" data-hook="stock_location_active">
+      <div class="checkbox my-2" data-hook="stock_location_active">
         <%= label_tag :active do %>
           <%= f.check_box :active %>
           <%= Spree.t(:active) %>
         <% end %>
       </div>
-      <div class="checkbox" data-hook="stock_location_default">
+      <div class="checkbox my-2" data-hook="stock_location_default">
         <%= label_tag :default do %>
           <%= f.check_box :default %>
           <%= Spree.t(:default) %>
         <% end %>
       </div>
-      <div class="checkbox" data-hook="stock_location_backorderable_default">
+      <div class="checkbox my-2" data-hook="stock_location_backorderable_default">
         <%= label_tag :backorderable_default do %>
           <%= f.check_box :backorderable_default %>
           <%= Spree.t(:backorderable_default) %>
         <% end %>
       </div>
-      <div class="checkbox" data-hook="stock_location_propagate_all_variants">
+      <div class="checkbox my-2" data-hook="stock_location_propagate_all_variants">
         <%= label_tag :propagate_all_variants do %>
           <%= f.check_box :propagate_all_variants %>
           <%= Spree.t(:propagate_all_variants) %>

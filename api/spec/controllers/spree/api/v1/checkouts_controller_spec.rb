@@ -10,11 +10,11 @@ module Spree
       end
 
       it 'invokes load_order_with_lock' do
-        expect(controller).to receive(:load_order_with_lock).exactly(1).times
+        expect(controller).to receive(:load_order_with_lock).once
       end
 
       it 'invokes load_order' do
-        expect(controller).to receive(:load_order).with(true).exactly(1).times.and_return(true)
+        expect(controller).to receive(:load_order).with(true).once.and_return(true)
       end
 
       context 'ensure no double_render_error' do
@@ -56,6 +56,7 @@ module Spree
         order = create(:order_with_line_items)
         # Order should be in a pristine state
         # Without doing this, the order may transition from 'cart' straight to 'delivery'
+        Spree::ShippingRate.where(shipment_id: order.shipment_ids).delete_all
         order.shipments.delete_all
         order
       end
@@ -113,13 +114,13 @@ module Spree
 
         let(:address) do
           {
-            firstname:  'John',
-            lastname:   'Doe',
-            address1:   '7735 Old Georgetown Road',
-            city:       'Bethesda',
-            phone:      '3014445002',
-            zipcode:    '20814',
-            state_id:   @state.id,
+            firstname: 'John',
+            lastname: 'Doe',
+            address1: '7735 Old Georgetown Road',
+            city: 'Bethesda',
+            phone: '3014445002',
+            zipcode: '20814',
+            state_id: @state.id,
             country_id: @country.id
           }
         end
@@ -184,6 +185,7 @@ module Spree
       end
 
       it 'can update payment method and transition from payment to confirm' do
+        allow_any_instance_of(Spree::PaymentMethod).to receive(:source_required?).and_return(false)
         order.update_column(:state, 'payment')
         api_put :update, id: order.to_param, order_token: order.token,
                          order: { payments_attributes: [{ payment_method_id: @payment_method.id }] }
@@ -204,8 +206,7 @@ module Spree
         }
 
         api_put :update, id: order.to_param, order_token: order.token,
-                         order: { payments_attributes: [{ payment_method_id: @payment_method.id.to_s }],
-                                  payment_source: { @payment_method.id.to_s => source_attributes } }
+                         order: { payments_attributes: [{ payment_method_id: @payment_method.id.to_s, source_attributes: source_attributes }] }
         expect(json_response['payments'][0]['payment_method']['name']).to eq(@payment_method.name)
         expect(json_response['payments'][0]['amount']).to eq(order.total.to_s)
         expect(response.status).to eq(200)

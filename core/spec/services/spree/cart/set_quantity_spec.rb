@@ -28,7 +28,8 @@ module Spree
           result = subject.call(order: order, line_item: line_item, quantity: 10)
 
           expect(result.success).to eq(false)
-          expect(result.value).to eq('Insufficient stock quantity available')
+          expect(result.value).to be_a LineItem
+          expect(result.error.to_s).to eq("Quantity selected of \"#{line_item.name}\" is not available.")
         end
       end
     end

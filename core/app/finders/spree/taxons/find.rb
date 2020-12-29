@@ -1,17 +1,16 @@
 module Spree
   module Taxons
     class Find
-      def initialize(scope, params)
+      def initialize(scope:, params:)
         @scope = scope
-
-        @ids      = String(params[:ids]).split(',')
-        @parent   = params[:parent_id]
-        @taxonomy = params[:taxonomy_id]
-        @name     = params[:name]
-        @roots    = params[:roots]
+        @ids      = String(params.dig(:filter, :ids)).split(',')
+        @parent   = params.dig(:filter, :parent_id)
+        @taxonomy = params.dig(:filter, :taxonomy_id)
+        @name     = params.dig(:filter, :name)
+        @roots    = params.dig(:filter, :roots)
       end
 
-      def call
+      def execute
         taxons = by_ids(scope)
         taxons = by_parent(taxons)
         taxons = by_taxonomy(taxons)
@@ -45,6 +44,10 @@ module Spree
         name.present?
       end
 
+      def name_matcher
+        Spree::Taxon.arel_table[:name].matches("%#{name}%")
+      end
+
       def by_ids(taxons)
         return taxons unless ids?
 
@@ -72,7 +75,7 @@ module Spree
       def by_name(taxons)
         return taxons unless name?
 
-        taxons.where(name: name)
+        taxons.where(name_matcher)
       end
     end
   end

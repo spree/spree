@@ -1,5 +1,5 @@
 <div class="form-actions" data-hook="buttons">
-  <%= button Spree.t('actions.create'), 'ok', 'submit', {class: 'btn-success', data: { disable_with: "#{ Spree.t(:saving) }..." }} %>
+  <%= button Spree.t('actions.create'), 'save.svg', 'submit', {class: 'btn-success', data: { disable_with: "#{ Spree.t(:saving) }..." }} %>
   <span class="or"><%= Spree.t(:or) %></span>
-  <%= button_link_to Spree.t('actions.cancel'), collection_url, icon: 'remove' %>
+  <%= button_link_to Spree.t('actions.cancel'), collection_url, icon: 'cancel.svg' %>
 </div>

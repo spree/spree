@@ -11,7 +11,7 @@ describe Spree::ReturnItem::EligibilityValidator::TimeSincePurchase, type: :mode
     context 'it is within the return timeframe' do
       it 'returns true' do
         completed_at = return_item.inventory_unit.order.completed_at - (Spree::Config[:return_eligibility_number_of_days].days / 2)
-        return_item.inventory_unit.order.update_attributes(completed_at: completed_at)
+        return_item.inventory_unit.order.update(completed_at: completed_at)
         expect(subject).to be true
       end
     end
@@ -19,7 +19,7 @@ describe Spree::ReturnItem::EligibilityValidator::TimeSincePurchase, type: :mode
     context 'it is past the return timeframe' do
       before do
         completed_at = return_item.inventory_unit.order.completed_at - Spree::Config[:return_eligibility_number_of_days].days - 1.day
-        return_item.inventory_unit.order.update_attributes(completed_at: completed_at)
+        return_item.inventory_unit.order.update(completed_at: completed_at)
       end
 
       it 'returns false' do

@@ -62,7 +62,7 @@ describe Spree::Promotion::Rules::ItemTotal, type: :model do
       it 'set an error message' do
         rule.eligible?(order)
         expect(rule.eligibility_errors.full_messages.first).
-          to eq "This coupon code can't be applied to orders higher than $60.00."
+          to eq "This coupon code can't be applied to orders higher than or equal to $60.00."
       end
     end
 
@@ -76,7 +76,7 @@ describe Spree::Promotion::Rules::ItemTotal, type: :model do
       it 'set an error message' do
         rule.eligible?(order)
         expect(rule.eligibility_errors.full_messages.first).
-          to eq "This coupon code can't be applied to orders higher than $60.00."
+          to eq "This coupon code can't be applied to orders higher than or equal to $60.00."
       end
     end
   end
@@ -194,7 +194,7 @@ describe Spree::Promotion::Rules::ItemTotal, type: :model do
       it 'set an error message' do
         rule.eligible?(order)
         expect(rule.eligibility_errors.full_messages.first).
-          to eq "This coupon code can't be applied to orders higher than $60.00."
+          to eq "This coupon code can't be applied to orders higher than or equal to $60.00."
       end
     end
 
@@ -208,7 +208,7 @@ describe Spree::Promotion::Rules::ItemTotal, type: :model do
       it 'set an error message' do
         rule.eligible?(order)
         expect(rule.eligibility_errors.full_messages.first).
-          to eq "This coupon code can't be applied to orders higher than $60.00."
+          to eq "This coupon code can't be applied to orders higher than or equal to $60.00."
       end
     end
   end

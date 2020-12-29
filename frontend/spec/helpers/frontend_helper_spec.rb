@@ -4,31 +4,28 @@ module Spree
   describe FrontendHelper, type: :helper do
     # Regression test for #2034
     context 'flash_message' do
-      let(:flash) { { 'notice' => 'ok', 'foo' => 'foo', 'bar' => 'bar' } }
+      let(:flash) { { 'notice' => 'ok', 'error' => 'foo', 'warning' => 'bar' } }
 
       it 'outputs all flash content' do
-        flash_messages
-        html = Nokogiri::HTML(helper.output_buffer)
-        expect(html.css('.alert-notice').text).to eq('ok')
-        expect(html.css('.alert-foo').text).to eq('foo')
-        expect(html.css('.alert-bar').text).to eq('bar')
+        messages = flash_messages
+        expect(messages).to have_css ".alert-#{class_for('notice')}", text: 'ok'
+        expect(messages).to have_css ".alert-#{class_for('error')}", text: 'foo'
+        expect(messages).to have_css ".alert-#{class_for('warning')}", text: 'bar'
       end
 
       it 'outputs flash content except one key' do
-        flash_messages(ignore_types: :bar)
-        html = Nokogiri::HTML(helper.output_buffer)
-        expect(html.css('.alert-notice').text).to eq('ok')
-        expect(html.css('.alert-foo').text).to eq('foo')
-        expect(html.css('.alert-bar').text).to be_empty
+        messages = flash_messages(excluded_types: [:warning])
+        expect(messages).to have_css ".alert-#{class_for('notice')}", text: 'ok'
+        expect(messages).to have_css ".alert-#{class_for('error')}", text: 'foo'
+        expect(messages).not_to have_css ".alert-#{class_for('warning')}", text: 'bar'
       end
 
       it 'outputs flash content except some keys' do
-        flash_messages(ignore_types: [:foo, :bar])
-        html = Nokogiri::HTML(helper.output_buffer)
-        expect(html.css('.alert-notice').text).to eq('ok')
-        expect(html.css('.alert-foo').text).to be_empty
-        expect(html.css('.alert-bar').text).to be_empty
-        expect(helper.output_buffer).to eq('<div class="alert alert-notice">ok</div>')
+        messages = flash_messages(excluded_types: [:error, :warning])
+        expect(messages).to have_css ".alert-#{class_for('notice')}", text: 'ok'
+        expect(messages).not_to have_css ".alert-#{class_for('error')}", text: 'foo'
+        expect(messages).not_to have_css ".alert-#{class_for('warning')}", text: 'bar'
+        expect(messages).to eq('<div class="alert alert-success mb-0"><button class="close" data-dismiss="alert" data-hidden="true">&times;</button><span>ok</span></div>')
       end
     end
 
@@ -45,12 +42,12 @@ module Spree
 
       it 'does not include numbers by default' do
         output = checkout_progress
-        expect(output).not_to include('1.')
+        expect(output).not_to include('1. Address')
       end
 
       it 'has option to include numbers' do
         output = checkout_progress(numbers: true)
-        expect(output).to include('1.')
+        expect(output).to include('1. Address')
       end
     end
   end

@@ -6,7 +6,7 @@ describe 'States', type: :feature do
   let!(:country) { create(:country) }
 
   before do
-    @hungary = Spree::Country.create!(name: 'Hungary', iso_name: 'Hungary')
+    @hungary = Spree::Country.create!(name: 'Hungary', iso_name: 'Hungary', iso: 'HU', iso3: 'HUN')
   end
 
   def go_to_states_page
@@ -27,7 +27,7 @@ describe 'States', type: :feature do
   context 'creating and editing states' do
     it 'allows an admin to edit existing states', js: true do
       go_to_states_page
-      set_select2_field('country', country.id)
+      choose_country(country.name)
 
       click_link 'new_state_link'
       fill_in 'state_name', with: 'Calgary'
@@ -39,10 +39,7 @@ describe 'States', type: :feature do
 
     it 'allows an admin to create states for non default countries', js: true do
       go_to_states_page
-      set_select2_field '#country', @hungary.id
-      # Just so the change event actually gets triggered in this spec
-      # It is definitely triggered in the "real world"
-      page.execute_script("$('#country').change();")
+      choose_country(@hungary.name)
 
       click_link 'new_state_link'
       fill_in 'state_name', with: 'Pest megye'
@@ -50,12 +47,12 @@ describe 'States', type: :feature do
       click_button 'Create'
       expect(page).to have_content('successfully created!')
       expect(page).to have_content('Pest megye')
-      expect(find('#s2id_country span').text).to eq('Hungary')
+      expect(page).to have_css('.form-group[data-hook="country"]', text: 'Hungary')
     end
 
     it 'shows validation errors', js: true do
       go_to_states_page
-      set_select2_field('country', country.id)
+      choose_country(country.name)
 
       click_link 'new_state_link'
 
@@ -63,6 +60,10 @@ describe 'States', type: :feature do
       fill_in 'Abbreviation', with: ''
       click_button 'Create'
       expect(page).to have_content("Name can't be blank")
+    end
+
+    def choose_country(country)
+      select2 country, css: '.form-group[data-hook="country"]'
     end
   end
 end

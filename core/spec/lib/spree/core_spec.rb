@@ -13,15 +13,19 @@ describe Spree do
       described_class.admin_path = new_admin_path
     end
 
-    it { expect(described_class.admin_path).to eq(new_admin_path) }
-    it { expect(Spree::Config[:admin_path]).to eq(new_admin_path) }
-
     after do
       described_class.admin_path = original_admin_path
     end
+
+    it { expect(described_class.admin_path).to eq(new_admin_path) }
+    it { expect(Spree::Config[:admin_path]).to eq(new_admin_path) }
   end
 
   describe '.user_class' do
+    after do
+      described_class.user_class = 'Spree::LegacyUser'
+    end
+
     context 'when user_class is a Class instance' do
       it 'raises an error' do
         described_class.user_class = Spree::LegacyUser
@@ -52,10 +56,6 @@ describe Spree do
 
         expect(described_class.user_class(constantize: false)).to eq('Spree::LegacyUser')
       end
-    end
-
-    after do
-      described_class.user_class = 'Spree::LegacyUser'
     end
   end
 end

@@ -10,7 +10,7 @@ module Spree
 
         it 'destroy stock item via js' do
           expect do
-            spree_delete :destroy, format: :js, id: stock_item
+            delete :destroy, params: { format: :js, id: stock_item }
           end.to change(StockItem, :count).by(-1)
         end
       end

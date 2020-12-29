@@ -1,5 +1,4 @@
 require 'rails/engine'
-require 'versioncake'
 
 module Spree
   module Api
@@ -17,30 +16,24 @@ module Spree
         config.json_engine = ActiveSupport::JSON
       end
 
-      initializer 'spree.api.versioncake' do |_app|
-        VersionCake.setup do |config|
-          config.resources do |r|
-            r.resource %r{.*}, [], [], [1, 2]
-          end
-
-          config.missing_version = 1
-          config.extraction_strategy = :http_header
-        end
+      # sets the manifests / assets to be precompiled, even when initialize_on_precompile is false
+      initializer 'spree.assets.precompile', group: :all do |app|
+        app.config.assets.precompile += %w[
+          spree/api/all*
+        ]
       end
 
       initializer 'spree.api.environment', before: :load_config_initializers do |_app|
         Spree::Api::Config = Spree::ApiConfiguration.new
+        Spree::Api::Dependencies = Spree::ApiDependencies.new
       end
 
-      def self.activate
-        Dir.glob(File.join(File.dirname(__FILE__), '../../../app/**/*_decorator*.rb')) do |c|
-          Rails.configuration.cache_classes ? require(c) : load(c)
-        end
+      initializer 'spree.api.checking_migrations' do
+        Migrations.new(config, engine_name).check
       end
-      config.to_prepare &method(:activate).to_proc
 
       def self.root
-        @root ||= Pathname.new(File.expand_path('../../../../', __FILE__))
+        @root ||= Pathname.new(File.expand_path('../../..', __dir__))
       end
     end
   end

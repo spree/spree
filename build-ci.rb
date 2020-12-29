@@ -8,7 +8,12 @@ class Project
   NODE_TOTAL = Integer(ENV.fetch('CIRCLE_NODE_TOTAL', 1))
   NODE_INDEX = Integer(ENV.fetch('CIRCLE_NODE_INDEX', 0))
 
-  ROOT       = Pathname.pwd.freeze
+  ROOT          = Pathname.pwd.freeze
+  VENDOR_BUNDLE = ROOT.join('vendor', 'bundle').freeze
+  ROOT_GEMFILE  = ROOT.join('Gemfile').freeze
+
+  BUNDLER_JOBS    = 4
+  BUNDLER_RETRIES = 3
 
   DEFAULT_MODE = 'test'.freeze
 
@@ -43,13 +48,35 @@ class Project
     end
   end
 
+  # Process CLI arguments
+  #
+  # @param [Array<String>] arguments
+  #
+  # @return [Boolean]
+  #   the success of the CLI run
+  def self.run_cli(arguments)
+    raise ArgumentError if arguments.length > 1
+
+    mode = arguments.fetch(0, DEFAULT_MODE)
+
+    case mode
+    when 'install'
+      install
+      true
+    when 'test'
+      test
+    else
+      raise "Unknown mode: #{mode.inspect}"
+    end
+  end
+
   private
 
   # Check if current bundle is already usable
   #
   # @return [Boolean]
   def bundle_check
-    system(%w[bundle check])
+    system("bundle check --path=#{VENDOR_BUNDLE}")
   end
 
   # Install the current bundle
@@ -57,14 +84,14 @@ class Project
   # @return [Boolean]
   #   the success of the installation
   def bundle_install
-    system(%w[bundle install])
+    system("bundle install --path=#{VENDOR_BUNDLE} --jobs=#{BUNDLER_JOBS} --retry=#{BUNDLER_RETRIES}")
   end
 
   # Setup the test app
   #
   # @return [undefined]
   def setup_test_app
-    system(%w[bundle exec rake test_app]) || raise('Failed to setup the test app')
+    system("bundle exec --gemfile=#{ROOT_GEMFILE} rake test_app") || raise('Failed to setup the test app')
   end
 
   # Run tests for subproject
@@ -72,36 +99,16 @@ class Project
   # @return [Boolean]
   #   the success of the tests
   def run_tests
-    # HACK: supporting test coverage as for Paperclip, as for ActiveStorage
-    # remove after, Paperclip going to be deprecated
-    # system(%w[bundle exec rspec] + rspec_arguments)
-    if name == 'core'
-      paperclip_test = system(%w[bundle exec rspec] + rspec_arguments)
-      ENV['SPREE_USE_PAPERCLIP'] = nil
-      active_storage_test = system(%w[bundle exec rspec] + rspec_arguments)
-      paperclip_test && active_storage_test
-    else
-      system(%w[bundle exec rspec] + rspec_arguments)
-    end
+    system("bundle exec rspec #{rspec_arguments.join(' ')}")
   end
 
-  def rspec_arguments
+  def rspec_arguments(custom_name = name)
     args = []
-    args += %w[--order random]
+    args += %w[--order random --format documentation --profile 10]
     if report_dir = ENV['CIRCLE_TEST_REPORTS']
-      args += %W[-r rspec_junit_formatter --format RspecJunitFormatter -o #{report_dir}/rspec/#{name}.xml]
+      args += %W[-r rspec_junit_formatter --format RspecJunitFormatter -o #{report_dir}/rspec/#{custom_name}.xml]
     end
     args
-  end
-
-  # Execute system command via execve
-  #
-  # No shell interpolation gets done this way. No escapes needed.
-  #
-  # @return [Boolean]
-  #   the success of the system command
-  def system(arguments)
-    Kernel.system(*arguments)
   end
 
   # Change to subproject directory and execute block
@@ -164,30 +171,9 @@ class Project
   #
   # @return [undefined]
   def self.log(message)
-    $stderr.puts(message)
+    warn(message)
   end
   private_class_method :log
-
-  # Process CLI arguments
-  #
-  # @param [Array<String>] arguments
-  #
-  # @return [Boolean]
-  #   the success of the CLI run
-  def self.run_cli(arguments)
-    raise ArgumentError if arguments.length > 1
-    mode = arguments.fetch(0, DEFAULT_MODE)
-
-    case mode
-    when 'install'
-      install
-      true
-    when 'test'
-      test
-    else
-      raise "Unknown mode: #{mode.inspect}"
-    end
-  end
-end # Project
+end
 
 exit Project.run_cli(ARGV)

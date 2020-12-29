@@ -1,0 +1,25 @@
+.checkout-registration {
+  padding-bottom: 64px;
+
+  &-styled-or {
+    font-size: 12px;
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    margin: 30px 0;
+
+    &:before,
+    &:after {
+      content: '';
+      border-top: 2px solid theme-color('borders');
+      margin: 0 20px 0 0;
+      flex: 1 0 20px;
+    }
+
+    &:after {
+      margin: 0 0 0 20px;
+    }
+  }
+}

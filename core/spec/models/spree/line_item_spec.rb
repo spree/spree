@@ -172,8 +172,26 @@ describe Spree::LineItem, type: :model do
 
   # test for copying prices when the vat changes
   context '#update_price' do
+    let(:price)     { double "price" }
+    let(:order)     { create :order, currency: "EUR" }
+    let(:line_item) { create :line_item, order_id: order.id, currency: "EUR" }
+
+    before do
+      expect(line_item).to receive(:variant_id).and_return(1001)
+
+      expect(Spree::Price).to receive(:where).with(
+        currency: "EUR",
+        variant_id: 1001
+      ).and_return([price])
+
+      expect(price).to receive(:price_including_vat_for).and_return(12)
+
+      reset_spree_preferences do |config|
+        config.show_store_currency_selector = true
+      end
+    end
+
     it 'copies over a variants differing price for another vat zone' do
-      expect(line_item.variant).to receive(:price_including_vat_for).and_return(12)
       line_item.price = 10
       line_item.update_price
       expect(line_item.price).to eq(12)
@@ -251,7 +269,7 @@ describe Spree::LineItem, type: :model do
         line_item.target_shipment = order.shipments.first
         line_item.valid?
 
-        expect(line_item.errors_on(:quantity).size).to eq(0)
+        expect(line_item.errors).to be_empty
       end
 
       it 'doesnt allow to increase item quantity' do
@@ -260,7 +278,8 @@ describe Spree::LineItem, type: :model do
         line_item.target_shipment = order.shipments.first
         line_item.valid?
 
-        expect(line_item.errors_on(:quantity).size).to eq(1)
+        expect(line_item.errors).not_to be_empty
+        expect(line_item.errors.messages[:quantity]).to be_present
       end
     end
 
@@ -279,7 +298,7 @@ describe Spree::LineItem, type: :model do
         line_item.target_shipment = order.shipments.first
         line_item.valid?
 
-        expect(line_item.errors_on(:quantity).size).to eq(0)
+        expect(line_item.errors).to be_empty
       end
 
       it 'doesnt allow to increase quantity over stock availability' do
@@ -288,7 +307,8 @@ describe Spree::LineItem, type: :model do
         line_item.target_shipment = order.shipments.first
         line_item.valid?
 
-        expect(line_item.errors_on(:quantity).size).to eq(1)
+        expect(line_item.errors).not_to be_empty
+        expect(line_item.errors.messages[:quantity]).to be_present
       end
     end
   end
@@ -299,7 +319,7 @@ describe Spree::LineItem, type: :model do
       line_item.currency = order.currency
       line_item.valid?
 
-      expect(line_item.error_on(:currency).size).to eq(0)
+      expect(line_item.errors).to be_empty
     end
   end
 
@@ -309,7 +329,8 @@ describe Spree::LineItem, type: :model do
       line_item.currency = 'no currency'
       line_item.valid?
 
-      expect(line_item.error_on(:currency).size).to eq(1)
+      expect(line_item.errors).not_to be_empty
+      expect(line_item.errors.messages[:currency]).to be_present
     end
   end
 

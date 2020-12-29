@@ -1,0 +1,46 @@
+// Green
+.badge-completed,
+.badge-complete,
+.badge-resumed,
+.badge-considered_safe,
+.badge-paid,
+.badge-shipped,
+.badge-ready,
+.badge-active,
+.badge-success,
+.badge-sold,
+.badge-open,
+.badge-authorized {
+  @include badge-variant($success);
+}
+
+// Red
+.badge-failed,
+.badge-considered_risky,
+.badge-error,
+.badge-invalid,
+.badge-closed {
+  @include badge-variant($danger);
+}
+
+// Orange
+.badge-processing,
+.badge-pending,
+.badge-awaiting_return,
+.badge-returned,
+.badge-credit_owed,
+.badge-balance_due,
+.badge-backorder,
+.badge-checkout,
+.badge-cart,
+.badge-address,
+.badge-delivery,
+.badge-payment,
+.badge-confirm,
+.badge-canceled,
+.badge-void,
+.badge-inactive,
+.badge-notice,
+.badge-partial {
+  @include badge-variant($warning);
+}

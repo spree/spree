@@ -1,0 +1,28 @@
+<!doctype html>
+<!--[if lt IE 7 ]> <html class="ie ie6" lang="<%= I18n.locale %>"> <![endif]-->
+<!--[if IE 7 ]>    <html class="ie ie7" lang="<%= I18n.locale %>"> <![endif]-->
+<!--[if IE 8 ]>    <html class="ie ie8" lang="<%= I18n.locale %>"> <![endif]-->
+<!--[if IE 9 ]>    <html class="ie ie9" lang="<%= I18n.locale %>"> <![endif]-->
+<!--[if gt IE 9]><!--><html lang="<%= I18n.locale %>"><!--<![endif]-->
+  <head data-hook="inside_head">
+    <%= render partial: 'spree/shared/head' %>
+  </head>
+  <body class="<%= body_class %>" id="<%= @body_id || 'default' %>" data-hook="body">
+    <%= render partial: 'spree/shared/checkout_header' %>
+    <div id="overlay" class="overlay"></div>
+
+    <div data-hook>
+      <main id="content" data-hook>
+        <%= flash_messages %>
+        <%= yield %>
+      </main>
+
+      <%= yield :templates %>
+    </div>
+
+    <footer>
+      <%= render 'spree/shared/copyright' %>
+    </footer>
+    <%= render 'spree/shared/translations' %>
+  </body>
+</html>

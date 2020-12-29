@@ -18,27 +18,27 @@ describe 'Homepage', type: :feature do
       end
 
       it 'has a link to orders' do
-        page.find_link('Orders')['/admin/orders']
+        expect(page).to have_link('Orders', href: '/admin/orders')
       end
 
       it 'has a link to products' do
-        page.find_link('Products')['/admin/products']
+        expect(page).to have_link('Products', href: '/admin/products')
       end
 
       it 'has a link to reports' do
-        page.find_link('Reports')['/admin/reports']
+        expect(page).to have_link('Reports', href: '/admin/reports')
       end
 
       it 'has a link to configuration' do
-        page.find_link('Configuration')['/admin/configurations']
+        expect(page).to have_link('Configuration', href: '#sidebar-configuration')
       end
 
       it 'has a link to return authorizations' do
-        within('.sidebar') { page.find_link('Return Authorizations')['/admin/return_authorizations'] }
+        within('.sidebar') { expect(page).to have_link('Return Authorizations', href: '/admin/return_authorizations') }
       end
 
       it 'has a link to customer returns' do
-        within('.sidebar') { page.find_link('Customer Returns')['/admin/customer_returns'] }
+        within('.sidebar') { expect(page).to have_link('Customer Returns', href: '/admin/customer_returns') }
       end
 
       context 'version number' do
@@ -63,19 +63,19 @@ describe 'Homepage', type: :feature do
       end
 
       it 'has a link to products' do
-        within('.sidebar') { page.find_link('Products')['/admin/products'] }
+        within('.sidebar') { expect(page).to have_link('Products', href: '/admin/products') }
       end
 
       it 'has a link to option types' do
-        within('.sidebar') { page.find_link('Option Types')['/admin/option_types'] }
+        within('.sidebar') { expect(page).to have_link('Option Types', href: '/admin/option_types') }
       end
 
       it 'has a link to properties' do
-        within('.sidebar') { page.find_link('Properties')['/admin/properties'] }
+        within('.sidebar') { expect(page).to have_link('Properties', href: '/admin/properties') }
       end
 
       it 'has a link to prototypes' do
-        within('.sidebar') { page.find_link('Prototypes')['/admin/prototypes'] }
+        within('.sidebar') { expect(page).to have_link('Prototypes', href: '/admin/prototypes') }
       end
     end
   end

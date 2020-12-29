@@ -19,8 +19,9 @@ module Spree
     has_many :promotion_rule_taxons, class_name: 'Spree::PromotionRuleTaxon', dependent: :destroy
     has_many :promotion_rules, through: :promotion_rule_taxons, class_name: 'Spree::PromotionRule'
 
-    validates :name, presence: true, uniqueness: { scope: [:parent_id, :taxonomy_id], allow_blank: true }
+    validates :name, presence: true, uniqueness: { scope: [:parent_id, :taxonomy_id], allow_blank: true, case_sensitive: false }
     validates :permalink, uniqueness: { case_sensitive: false }
+    validates :hide_from_nav, inclusion: { in: [true, false] }
     validates_associated :icon
     validate :check_for_root, on: :create
     with_options length: { maximum: 255 }, allow_blank: true do
@@ -48,13 +49,9 @@ module Spree
       fs
     end
 
-    # Return meta_title if set otherwise generates from root name and/or taxon name
+    # Return meta_title if set otherwise generates from taxon name
     def seo_title
-      if meta_title.blank?
-        root? ? name : "#{root.name} - #{name}"
-      else
-        meta_title
-      end
+      meta_title.blank? ? name : meta_title
     end
 
     # Creates permalink base for friendly_id
@@ -77,6 +74,12 @@ module Spree
       ancestor_chain + name.to_s
     end
 
+    def cached_self_and_descendants_ids
+      Rails.cache.fetch("#{cache_key_with_version}/descendant-ids") do
+        self_and_descendants.ids
+      end
+    end
+
     # awesome_nested_set sorts by :lft and :rgt. This call re-inserts the child
     # node so that its resulting position matches the observable 0-indexed position.
     # ** Note ** no :position column needed - a_n_s doesn't handle the reordering if
@@ -97,7 +100,7 @@ module Spree
     end
 
     def check_for_root
-      if taxonomy.try(:root).present? && parent_id == nil
+      if taxonomy.try(:root).present? && parent_id.nil?
         errors.add(:root_conflict, 'this taxonomy already has a root taxon')
       end
     end

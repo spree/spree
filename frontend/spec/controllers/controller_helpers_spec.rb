@@ -37,7 +37,7 @@ describe Spree::ProductsController, type: :controller do
         end
 
         it 'sets the I18n default locale' do
-          spree_get :index
+          get :index
           expect(I18n.locale).to eq(I18n.default_locale)
         end
       end
@@ -49,7 +49,7 @@ describe Spree::ProductsController, type: :controller do
           end
 
           it 'sets the I18n default locale' do
-            spree_get :index
+            get :index
             expect(I18n.locale).to eq(I18n.default_locale)
           end
         end
@@ -61,7 +61,7 @@ describe Spree::ProductsController, type: :controller do
 
           it 'sets the rails app locale' do
             expect(I18n.locale).to eq(:en)
-            spree_get :index
+            get :index
             expect(I18n.locale).to eq(available_locale)
           end
         end
@@ -75,7 +75,7 @@ describe Spree::ProductsController, type: :controller do
         end
 
         it 'sets the I18n default locale' do
-          spree_get :index
+          get :index
           expect(I18n.locale).to eq(I18n.default_locale)
         end
       end
@@ -87,7 +87,7 @@ describe Spree::ProductsController, type: :controller do
 
         it 'sets the default locale based on Spree::Frontend::Config[:locale]' do
           expect(I18n.locale).to eq(:en)
-          spree_get :index
+          get :index
           expect(I18n.locale).to eq(available_locale)
         end
       end
@@ -101,7 +101,7 @@ describe Spree::ProductsController, type: :controller do
       end
 
       it 'sets the I18n default locale' do
-        spree_get :index
+        get :index
         expect(I18n.locale).to eq(I18n.default_locale)
       end
     end
@@ -113,7 +113,7 @@ describe Spree::ProductsController, type: :controller do
 
       it 'sets the session locale' do
         expect(I18n.locale).to eq(:en)
-        spree_get :index
+        get :index
         expect(I18n.locale).to eq(available_locale)
       end
     end

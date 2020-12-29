@@ -4,10 +4,10 @@
 
 <div class="taxon-products-view">
   <div class="form-group">
-    <%= text_field_tag :taxon_id %>
+    <%= select_tag :taxon_id, nil, class: 'd-block w-100' %>
   </div>
 
-  <ul id="taxon_products" class="taxon"></ul>
+  <ul id="taxon_products" class="taxon row"></ul>
 
   <%= render partial: "spree/admin/products/autocomplete", formats: :js %>
 </div>

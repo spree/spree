@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 512 512" style="clip-rule:evenodd;fill-rule:evenodd;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:10;version:1">
+<style>
+  .store-svg{
+    fill:none;
+    stroke-width:35px;
+    stroke:currentColor;
+  }
+</style>
+    <path d="M256.7 177.1c4.5 10.2 28.3 29.3 51.9 29.3 27.1 0 48.6-18 56.8-28.7 7.6 11.5 30.6 28.2 59 28.2 28.4 0 57.1-17.9 57.1-42.7 0-6.2-1.3-10.7-3.5-16.7l-22.2-67.2 -187.1 0" class="store-svg"/>
+    <path d="M268.6 79.3l-14.5 0 -199.2 0 -22.2 67.2c-2.3 6-3.5 10.2-3.5 16.4 0 24.8 28.8 42.9 57.2 42.9 28.4 0 51.5-16.6 59.2-28 8.2 10.7 30.1 29 57.1 29 23.5 0 49.4-19.5 53.9-29.7" class="store-svg"/>
+    <path d="M452.8 209.2l0 194.8c0 16.7-15.5 31.7-32.2 31.7l-327.2 0c-16.7 0-33.2-15-33.2-31.7l0-200.9" class="store-svg"/>
+    <path d="M313.9 420.6l0-121.2c0-14.6 12.6-26.8 27.2-26.8l31 0c14.6 0 26.4 12.2 26.4 26.8l0 121.2" class="store-svg"/>
+    <path d="M247.5 369.3c0 6.7-5.4 12.1-12.1 12.1l-108.7 0c-6.7 0-12.1-5.4-12.1-12.1l0-84.6c0-6.7 5.4-12.1 12.1-12.1l108.7 0c6.7 0 12.1 5.4 12.1 12.1l0 84.6 0 0Z" class="store-svg"/>
+</svg>

@@ -1,0 +1,118 @@
+.mobile-navigation {
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 16;
+  background-color: theme-color("light-background");
+  font-size: font-px-to-rem(18px);
+  font-weight: 600;
+  transform: translate(-100%);
+  transition: basic-transition(transform);
+  @include media-breakpoint-up(sm) {
+    font-size: font-px-to-rem(24px);
+  }
+  &.shown {
+    transform: translate(0);
+  }
+  &-list,
+  &-sublist {
+    margin: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 0 19px;
+    &-item {
+      padding: 16px 0;
+      border-bottom: 1px solid $global-border-style;
+      @include media-breakpoint-up(sm) {
+        padding: 32px 0;
+      }
+      a {
+        color: $header-font-color;
+        text-decoration: none;
+        img {
+          width: 8px;
+        }
+      }
+    }
+  }
+
+  &-list {
+    padding-top: $spree-header-mobile-height;
+    @include media-breakpoint-up(sm) {
+      padding-top: $spree-header-tablet-height;
+    }
+    &-subcategory-shown {
+      overflow-y: hidden;
+    }
+  }
+
+  &-sublist {
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: theme-color("light-background");
+    font-weight: 500;
+    transform: translate(200%);
+    transition: basic-transition(transform);
+    &.shown {
+      transform: translate(0);
+    }
+    &-header {
+      padding: 16px 0;
+      border-bottom: 1px solid $global-border-style;
+    }
+  }
+
+  &-category-link {
+    svg {
+      width: 16px;
+      height: 16px;
+      @include media-breakpoint-up(sm) {
+        width: 14px;
+        height: 27px;
+      }
+    }
+  }
+}
+
+#mobile-navigation-close-button {
+  padding-left: 0;
+  padding-right: 0;
+  appearance: none;
+  border: none;
+  background-color: transparent;
+  color: $header-font-color;
+  .cls-3 {
+    fill: theme-color("light-background");
+  }
+  svg {
+    width: 17px;
+    height: 17px;
+    @include media-breakpoint-up(sm) {
+      width: 26px;
+      height: 26px;
+    }
+  }
+}
+
+#mobile-navigation-back-button {
+  opacity: 0;
+  transition: basic-transition(opacity);
+  appearance: none;
+  border: none;
+  background-color: transparent;
+  color: $header-font-color;
+  &.shown {
+    opacity: 1;
+  }
+  svg {
+    width: 18px;
+    height: 18px;
+    @include media-breakpoint-up(sm) {
+      width: 17px;
+      height: 28px;
+    }
+  }
+}

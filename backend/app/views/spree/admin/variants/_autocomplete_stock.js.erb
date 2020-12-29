@@ -1,7 +1,7 @@
 <script type='text/template' id='variant_autocomplete_stock_template'>
 
   <label><%= Spree.t(:select_stock) %></label>
-  <table class="table table-condensed table-bordered stock-levels no-marginb" data-hook="stock-levels">
+  <table class="table table-condensed table-bordered stock-levels mb-0" data-hook="stock-levels">
     <thead>
       <th><%= Spree.t(:location) %></th>
       <th><%= Spree.t(:count_on_hand) %></th>
@@ -19,7 +19,7 @@
             </td>
             <td class="actions actions-1">
               <button class="btn btn-sm btn-success add_variant with-tip" data-stock-location-id="{{this.stock_location_id}}" title="<%= Spree.t(:add) %>" data-action="add">
-                <span class="icon icon-add"></span>
+                <%= svg_icon name: "add", width: '16', height: '16' %>
               </button>
             </td>
           {{else}}
@@ -33,7 +33,7 @@
               </td>
               <td class="actions actions-1">
                 <button class="btn btn-sm btn-success add_variant with-tip" data-stock-location-id="{{this.stock_location_id}}" title="<%= Spree.t(:add) %>" data-action="add">
-                  <span class="icon icon-add"></span>
+                  <%= svg_icon name: "add", width: '16', height: '16' %>
                 </button>
               </td>
             {{else}}

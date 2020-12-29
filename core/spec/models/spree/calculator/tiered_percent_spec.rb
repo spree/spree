@@ -8,23 +8,32 @@ describe Spree::Calculator::TieredPercent, type: :model do
 
     context 'when base percent is less than zero' do
       before { calculator.preferred_base_percent = -1 }
+
       it { is_expected.to be false }
     end
+
     context 'when base percent is greater than 100' do
       before { calculator.preferred_base_percent = 110 }
+
       it { is_expected.to be false }
     end
+
     context 'when tiers is not a hash' do
       before { calculator.preferred_tiers = ['nope', 0] }
+
       it { is_expected.to be false }
     end
+
     context 'when tiers is a hash' do
       context 'and one of the keys is not a positive number' do
         before { calculator.preferred_tiers = { 'nope' => 20 } }
+
         it { is_expected.to be false }
       end
+
       context 'and one of the values is not a percent' do
         before { calculator.preferred_tiers = { 10 => 110 } }
+
         it { is_expected.to be false }
       end
     end
@@ -48,6 +57,7 @@ describe Spree::Calculator::TieredPercent, type: :model do
 
       it { is_expected.to eq 5 }
     end
+
     context 'when amount falls within the second tier' do
       let(:amount) { 150 }
 

@@ -7,14 +7,34 @@ describe Spree::OrderMailer, type: :mailer do
 
   before { create(:store) }
 
+  let(:first_store) { create(:store, name: 'First Store') }
+  let(:second_store) { create(:store, name: 'Second Store') }
+
   let(:order) do
     order = stub_model(Spree::Order)
     product = stub_model(Spree::Product, name: %{The "BEST" product})
     variant = stub_model(Spree::Variant, product: product)
     price = stub_model(Spree::Price, variant: variant, amount: 5.00)
+    store = first_store
     line_item = stub_model(Spree::LineItem, variant: variant, order: order, quantity: 1, price: 4.99)
+    allow(product).to receive_messages(default_variant: variant)
     allow(variant).to receive_messages(default_price: price)
     allow(order).to receive_messages(line_items: [line_item])
+    allow(order).to receive_messages(store: store)
+    order
+  end
+
+  let(:second_order) do
+    order = stub_model(Spree::Order)
+    product = stub_model(Spree::Product, name: %{The "BESTEST" product})
+    variant = stub_model(Spree::Variant, product: product)
+    price = stub_model(Spree::Price, variant: variant, amount: 15.00)
+    store = second_store
+    line_item = stub_model(Spree::LineItem, variant: variant, order: order, quantity: 1, price: 4.99)
+    allow(product).to receive_messages(default_variant: variant)
+    allow(variant).to receive_messages(default_price: price)
+    allow(order).to receive_messages(line_items: [line_item])
+    allow(order).to receive_messages(store: store)
     order
   end
 
@@ -42,6 +62,57 @@ describe Spree::OrderMailer, type: :mailer do
     expect do
       Spree::OrderMailer.cancel_email(order.id).body
     end.not_to raise_error
+  end
+
+  context 'store_owner_notification_email' do
+    let(:notification_email) { described_class.store_owner_notification_email(order) }
+
+    it 'accepts an order id as an alternative to an Order object' do
+      expect(Spree::Order).to receive(:find).with(order.id).and_return(order)
+      expect do
+        Spree::OrderMailer.store_owner_notification_email(order.id).body
+      end.not_to raise_error
+    end
+
+    it 'has correct email recipient' do
+      expect(notification_email.to).to include('store-owner@example.com')
+    end
+
+    it 'has correct subject line' do
+      expect(notification_email.subject).to eq('First Store received a new order')
+    end
+
+    it 'shows the correct heading in email body' do
+      expect(notification_email).to have_body_text('New Order Received')
+    end
+
+    it 'shows order details in email body' do
+      expect(notification_email).to have_body_text('4.99')
+    end
+  end
+
+  specify 'shows Dear Customer in confirm_email body' do
+    confirmation_email = described_class.confirm_email(order)
+    expect(confirmation_email).to have_body_text('Dear Customer')
+  end
+
+  specify 'shows Dear Customer in cancel_email body' do
+    confirmation_email = described_class.cancel_email(order)
+    expect(confirmation_email).to have_body_text('Dear Customer')
+  end
+
+  context 'when order has customer\'s name' do
+    before { allow(order).to receive(:name).and_return('Test User') }
+
+    specify 'shows order\'s user name in confirm_email body' do
+      confirmation_email = described_class.confirm_email(order)
+      expect(confirmation_email).to have_body_text('Dear Test User')
+    end
+
+    specify 'shows order\'s user name in cancel_email body' do
+      confirmation_email = described_class.cancel_email(order)
+      expect(confirmation_email).to have_body_text('Dear Test User')
+    end
   end
 
   context 'only shows eligible adjustments in emails' do
@@ -117,6 +188,20 @@ describe Spree::OrderMailer, type: :mailer do
       Spree::Config.set(:send_core_emails, false)
       message = Spree::OrderMailer.confirm_email(order)
       expect(message.body).to be_blank
+    end
+  end
+
+  context 'confirm_email comes with data of the store where order was made' do
+    it 'shows order store data' do
+      confirmation_email = Spree::OrderMailer.confirm_email(order)
+      expect(confirmation_email.from).to include(first_store.mail_from_address)
+      expect(confirmation_email.subject).to include(first_store.name)
+    end
+
+    it 'shows order store data #2' do
+      confirmation_email = Spree::OrderMailer.confirm_email(second_order)
+      expect(confirmation_email.from).to include(second_store.mail_from_address)
+      expect(confirmation_email.subject).to include(second_store.name)
     end
   end
 end

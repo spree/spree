@@ -2,7 +2,7 @@
 
 <% content_for :page_title do %>
   <%= link_to @user.email, spree.edit_admin_user_url(@user) %> /
-  <%= link_to Spree.t(:store_credits), spree.admin_user_store_credits_path(@user) %> /
+  <%= link_to Spree.t(:'admin.user.store_credits'), spree.admin_user_store_credits_path(@user) %> /
   <%= Spree.t(:editing_resource, resource: Spree::StoreCredit.model_name.human) %>
 <% end %>
 

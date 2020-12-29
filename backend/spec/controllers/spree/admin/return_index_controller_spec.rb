@@ -7,7 +7,7 @@ module Spree
 
       describe '#return_authorizations' do
         subject do
-          spree_get :return_authorizations
+          get :return_authorizations
         end
 
         let(:return_authorization) { create(:return_authorization) }
@@ -21,7 +21,7 @@ module Spree
 
       describe '#customer_returns' do
         subject do
-          spree_get :customer_returns
+          get :customer_returns
         end
 
         let(:customer_return) { create(:customer_return) }

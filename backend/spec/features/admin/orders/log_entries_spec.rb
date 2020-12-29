@@ -21,8 +21,11 @@ describe 'Log entries', type: :feature do
 
     it 'shows a successful attempt' do
       visit spree.admin_order_payments_path(payment.order)
-      find("#payment_#{payment.id} a").click
-      click_link 'Logs'
+      find("#payment_#{payment.id} a", text: payment.number).click
+      within find('#contentHeader') do
+        click_link 'Logs'
+      end
+
       within('#listing_log_entries') do
         expect(page).to have_content('Transaction successful')
       end
@@ -45,8 +48,11 @@ describe 'Log entries', type: :feature do
 
     it 'shows a failed attempt' do
       visit spree.admin_order_payments_path(payment.order)
-      find("#payment_#{payment.id} a").click
-      click_link 'Logs'
+      find("#payment_#{payment.id} a", text: payment.number).click
+      within find('#contentHeader') do
+        click_link 'Logs'
+      end
+      
       within('#listing_log_entries') do
         expect(page).to have_content('Transaction failed')
       end

@@ -5,7 +5,7 @@ class CreateSpreeShippingRates < ActiveRecord::Migration[4.2]
       t.belongs_to :shipping_method
       t.boolean :selected, default: false
       t.decimal :cost, precision: 8, scale: 2
-      t.timestamps null: false
+      t.timestamps null: false, precision: 6
     end
     add_index(:spree_shipping_rates, [:shipment_id, :shipping_method_id],
               name: 'spree_shipping_rates_join_index',

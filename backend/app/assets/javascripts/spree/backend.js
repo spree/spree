@@ -1,14 +1,17 @@
 //= require modernizr
+//= require purify
+//= require sortable
+//= require flatpickr
+//= require jquery3
+//= require popper
 //= require bootstrap-sprockets
 //= require handlebars
-//= require jquery
+//= require cleave
 //= require js.cookie
 //= require jquery.jstree/jquery.jstree
 //= require jquery_ujs
-//= require jquery-ui/widgets/datepicker
-//= require jquery-ui/widgets/sortable
 //= require jquery-ui/widgets/autocomplete
-//= require select2
+//= require select2-full
 //= require underscore-min.js
 
 //= require spree
@@ -23,6 +26,7 @@
 //= require spree/backend/handlebar_extensions
 //= require spree/backend/line_items
 //= require spree/backend/line_items_on_order_edit
+//= require spree/backend/multi_currency
 //= require spree/backend/option_type_autocomplete
 //= require spree/backend/option_value_picker
 //= require spree/backend/orders/edit
@@ -67,14 +71,14 @@ Spree.routes.users_api = Spree.pathFor('api/v1/users')
 Spree.routes.tags_api = Spree.pathFor('api/v1/tags')
 Spree.routes.variants_api = Spree.pathFor('api/v1/variants')
 
-Spree.routes.edit_product = function(product_id) {
-  return Spree.adminPathFor('products/' + product_id + '/edit')
+Spree.routes.edit_product = function (productId) {
+  return Spree.adminPathFor('products/' + productId + '/edit')
 }
 
-Spree.routes.payments_api = function(order_id) {
-  return Spree.pathFor('api/v1/orders/' + order_id + '/payments')
+Spree.routes.payments_api = function (orderId) {
+  return Spree.pathFor('api/v1/orders/' + orderId + '/payments')
 }
 
-Spree.routes.stock_items_api = function(stock_location_id) {
-  return Spree.pathFor('api/v1/stock_locations/' + stock_location_id + '/stock_items')
+Spree.routes.stock_items_api = function (stockLocationId) {
+  return Spree.pathFor('api/v1/stock_locations/' + stockLocationId + '/stock_items')
 }

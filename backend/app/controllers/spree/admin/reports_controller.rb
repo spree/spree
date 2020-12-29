@@ -32,16 +32,16 @@ module Spree
                                          Time.zone.now.beginning_of_month
                                        else
                                          begin
-                                            Time.zone.parse(params[:q][:completed_at_gt]).beginning_of_day
-                                         rescue
-                                            Time.zone.now.beginning_of_month
+                                           Time.zone.parse(params[:q][:completed_at_gt]).beginning_of_day
+                                         rescue StandardError
+                                           Time.zone.now.beginning_of_month
                                          end
                                        end
 
         if params[:q] && !params[:q][:completed_at_lt].blank?
           params[:q][:completed_at_lt] = begin
                                            Time.zone.parse(params[:q][:completed_at_lt]).end_of_day
-                                         rescue
+                                         rescue StandardError
                                            ''
                                          end
         end

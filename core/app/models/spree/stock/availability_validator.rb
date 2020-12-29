@@ -23,7 +23,7 @@ module Spree
       private
 
       def item_available?(line_item, quantity)
-        Stock::Quantifier.new(line_item.variant).can_supply?(quantity)
+        Spree::Stock::Quantifier.new(line_item.variant).can_supply?(quantity)
       end
     end
   end

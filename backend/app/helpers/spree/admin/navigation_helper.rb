@@ -15,6 +15,9 @@ module Spree
       # Example:
       #   # Link to /admin/orders, also highlight tab for ProductsController and ShipmentsController
       #   tab :orders, :products, :shipments
+
+      ICON_SIZE = 16
+
       def tab(*args)
         options = { label: args.first.to_s }
 
@@ -27,13 +30,7 @@ module Spree
         destination_url = options[:url] || spree.send("#{options[:route]}_path")
         titleized_label = Spree.t(options[:label], default: options[:label], scope: [:admin, :tab]).titleize
 
-        css_classes = ['sidebar-menu-item']
-
-        link = if options[:icon]
-                 link_to_with_icon(options[:icon], titleized_label, destination_url)
-               else
-                 link_to(titleized_label, destination_url)
-               end
+        css_classes = ['sidebar-menu-item d-block w-100 position-relative']
 
         selected = if options[:match_path].is_a? Regexp
                      request.fullpath =~ options[:match_path]
@@ -42,6 +39,22 @@ module Spree
                    else
                      args.include?(controller.controller_name.to_sym)
                    end
+
+        link = if options[:icon]
+                 link_to_with_icon(
+                   options[:icon],
+                   titleized_label,
+                   destination_url,
+                   class: 'w-100 p-3 d-flex align-items-center'
+                 )
+               else
+                 link_to(
+                   titleized_label,
+                   destination_url,
+                   class: "sidebar-submenu-item w-100 py-2 py-md-1 pl-3 d-block #{'text-success' if selected}"
+                 )
+               end
+
         css_classes << 'selected' if selected
 
         css_classes << options[:css_class] if options[:css_class]
@@ -50,16 +63,22 @@ module Spree
 
       # Single main menu item
       def main_menu_item(text, url: nil, icon: nil)
-        link_to url, 'data-toggle': 'collapse', 'data-parent': '#sidebar' do
-          content_tag(:span, nil, class: "icon icon-#{icon}") +
-            content_tag(:span, " #{text}", class: 'text') +
-            content_tag(:span, nil, class: 'icon icon-chevron-left pull-right')
+        link_to url, 'data-toggle': 'collapse', class: 'd-flex w-100 p-3 position-relative align-items-center' do
+          if icon.ends_with?('.svg')
+            svg_icon(name: icon, classes: 'mr-2', width: ICON_SIZE, height: ICON_SIZE) +
+              content_tag(:span, " #{text}", class: 'text') +
+              svg_icon(name: 'chevron-left.svg', classes: 'drop-menu-indicator position-absolute', width: (ICON_SIZE - 4), height: (ICON_SIZE - 4))
+          else
+            content_tag(:span, nil, class: "icon icon-#{icon} mr-2") +
+              content_tag(:span, " #{text}", class: 'text') +
+              svg_icon(name: 'chevron-left.svg', classes: 'drop-menu-indicator position-absolute', width: (ICON_SIZE - 4), height: (ICON_SIZE - 4))
+          end
         end
       end
 
       # Main menu tree menu
       def main_menu_tree(text, icon: nil, sub_menu: nil, url: '#')
-        content_tag :li, class: 'sidebar-menu-item' do
+        content_tag :li, class: 'sidebar-menu-item d-block w-100' do
           main_menu_item(text, url: url, icon: icon) +
             render(partial: "spree/admin/shared/sub_menu/#{sub_menu}")
         end
@@ -76,17 +95,17 @@ module Spree
           end
         else
           per_page_default = Spree::Config.admin_orders_per_page
-          per_page_options = %w{15 30 45 60}
+          per_page_options = %w{25 50 75}
         end
 
         selected_option = params[:per_page].try(:to_i) || per_page_default
 
         select_tag(:per_page,
                    options_for_select(per_page_options, selected_option),
-                   class: "form-control pull-right js-per-page-select per-page-selected-#{selected_option}")
+                   class: "w-auto form-control js-per-page-select per-page-selected-#{selected_option} custom-select")
       end
 
-      # helper method to create proper url to apply per page filtering
+      # helper method to create proper url to apply per page ing
       # fixes https://github.com/spree/spree/issues/6888
       def per_page_dropdown_params(args = nil)
         args = params.permit!.to_h.clone
@@ -113,7 +132,7 @@ module Spree
         options[:data] = { action: 'clone', 'original-title': Spree.t(:clone) }
         options[:class] = 'btn btn-primary btn-sm with-tip'
         options[:method] = :post
-        options[:icon] = :clone
+        options[:icon] = 'clone.svg'
         button_link_to '', clone_object_url(resource), options
       end
 
@@ -121,7 +140,7 @@ module Spree
         options[:data] = { action: 'clone', 'original-title': Spree.t(:clone) }
         options[:class] = 'btn btn-warning btn-sm with-tip'
         options[:method] = :post
-        options[:icon] = :clone
+        options[:icon] = 'clone.svg'
         button_link_to '', clone_admin_promotion_path(promotion), options
       end
 
@@ -129,13 +148,13 @@ module Spree
         url = options[:url] || edit_object_url(resource)
         options[:data] = { action: 'edit' }
         options[:class] = 'btn btn-primary btn-sm'
-        link_to_with_icon('edit', Spree.t(:edit), url, options)
+        link_to_with_icon('edit.svg', Spree.t(:edit), url, options)
       end
 
       def link_to_edit_url(url, options = {})
         options[:data] = { action: 'edit' }
         options[:class] = 'btn btn-primary btn-sm'
-        link_to_with_icon('edit', Spree.t(:edit), url, options)
+        link_to_with_icon('edit.svg', Spree.t(:edit), url, options)
       end
 
       def link_to_delete(resource, options = {})
@@ -143,48 +162,58 @@ module Spree
         name = options[:name] || Spree.t(:delete)
         options[:class] = 'btn btn-danger btn-sm delete-resource'
         options[:data] = { confirm: Spree.t(:are_you_sure), action: 'remove' }
-        link_to_with_icon 'delete', name, url, options
+        link_to_with_icon 'delete.svg', name, url, options
       end
 
       def link_to_with_icon(icon_name, text, url, options = {})
         options[:class] = (options[:class].to_s + " icon-link with-tip action-#{icon_name}").strip
-        options[:class] += ' no-text' if options[:no_text]
         options[:title] = text if options[:no_text]
         text = options[:no_text] ? '' : content_tag(:span, text, class: 'text')
         options.delete(:no_text)
         if icon_name
-          icon = content_tag(:span, '', class: "icon icon-#{icon_name}")
-          text.insert(0, icon + ' ')
+          icon = if icon_name.ends_with?('.svg')
+                   svg_icon(name: icon_name, classes: "#{'mr-2' unless text.empty?} icon icon-#{icon_name}", width: ICON_SIZE, height: ICON_SIZE)
+                 else
+                   content_tag(:span, '', class: "#{'mr-2' unless text.empty?} icon icon-#{icon_name}")
+                 end
+          text = "#{icon} #{text}"
         end
         link_to(text.html_safe, url, options)
       end
 
       def spree_icon(icon_name)
-        icon_name ? content_tag(:i, '', class: icon_name) : ''
-      end
-
-      def icon(icon_name)
-        ActiveSupport::Deprecation.warn(<<-EOS, caller)
-         Admin::NavigationHelper#icon was renamed to Admin::NavigationHelper#spree_icon
-         and will be removed in Spree 3.6. Please update your code to avoid problems after update
-        EOS
-        spree_icon(icon_name)
+        if icon_name.ends_with?('.svg')
+          icon_name ? svg_icon(name: icon_name, classes: icon_name, width: ICON_SIZE, height: ICON_SIZE) : ''
+        else
+          icon_name ? content_tag(:span, '', class: icon_name) : ''
+        end
       end
 
       # Override: Add disable_with option to prevent multiple request on consecutive clicks
       def button(text, icon_name = nil, button_type = 'submit', options = {})
         if icon_name
-          icon = content_tag(:span, '', class: "icon icon-#{icon_name}")
-          text.insert(0, icon + ' ')
+          icon = if icon_name.ends_with?('.svg')
+                   svg_icon(name: icon_name, classes: "icon icon-#{icon_name}", width: ICON_SIZE, height: ICON_SIZE)
+                 else
+                   content_tag(:span, '', class: "icon icon-#{icon_name}")
+                 end
+          text = "#{icon} #{text}"
         end
-        button_tag(text.html_safe, options.merge(type: button_type, class: "btn btn-primary #{options[:class]}", 'data-disable-with' => "#{Spree.t(:saving)}..."))
+        button_tag(
+          text.html_safe,
+          options.merge(
+            type: button_type,
+            class: "btn btn-primary #{options[:class]}",
+            'data-disable-with' => "#{Spree.t(:saving)}..."
+          )
+        )
       end
 
       def button_link_to(text, url, html_options = {})
         if html_options[:method] &&
             !html_options[:method].to_s.casecmp('get').zero? &&
             !html_options[:remote]
-          form_tag(url, method: html_options.delete(:method), class: 'display-inline') do
+          form_tag(url, method: html_options.delete(:method)) do
             button(text, html_options.delete(:icon), nil, html_options)
           end
         else
@@ -195,14 +224,18 @@ module Spree
 
           html_options.delete('data-update') unless html_options['data-update']
 
-          html_options[:class] = html_options[:class] ? "btn #{html_options[:class]}" : 'btn btn-default'
+          html_options[:class] = html_options[:class] ? "btn #{html_options[:class]}" : 'btn btn-outline-secondary'
 
           if html_options[:icon]
-            icon = content_tag(:span, '', class: "icon icon-#{html_options[:icon]}")
-            text.insert(0, icon + ' ')
+            icon = if html_options[:icon].ends_with?('.svg')
+                     svg_icon(name: html_options[:icon], classes: "icon icon-#{html_options[:icon]}", width: ICON_SIZE, height: ICON_SIZE)
+                   else
+                     content_tag(:span, '', class: "icon icon-#{html_options[:icon]}")
+                   end
+            text = "#{icon} #{text}"
           end
 
-          link_to(text.html_safe, url, html_options)
+          link_to(text.html_safe, url, html_options.except(:icon))
         end
       end
 
@@ -211,30 +244,36 @@ module Spree
           url.ends_with?("#{controller.controller_name}/edit") ||
           url.ends_with?("#{controller.controller_name.singularize}/edit")
 
-        options[:class] = 'sidebar-menu-item'
+        options[:class] = 'sidebar-menu-item d-block w-100'
         options[:class] << ' selected' if is_selected
         content_tag(:li, options) do
-          link_to(link_text, url)
+          link_to(link_text, url, class: "#{'text-success' if is_selected} sidebar-submenu-item w-100 py-2 py-md-1 pl-3 d-block")
         end
       end
 
       def main_part_classes
         if cookies['sidebar-minimized'] == 'true'
-          'col-xs-12 sidebar-collapsed'
+          'col-12 sidebar-collapsed'
         else
-          'col-xs-9 col-xs-offset-3 col-md-10 col-md-offset-2'
+          'col-9 offset-3 col-md-10 offset-md-2'
         end
       end
 
       def main_sidebar_classes
+        ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
+          Admin::NavigationsHelper#main_sidebar_classes is deprecated and will be removed in Spree 5.0.
+        DEPRECATION
         if cookies['sidebar-minimized'] == 'true'
-          'col-xs-3 col-md-2 hidden-xs sidebar'
+          'col-3 col-md-2 sidebar'
         else
-          'col-xs-3 col-md-2 sidebar'
+          'p-0 col-3 col-md-2 sidebar'
         end
       end
 
       def wrapper_classes
+        ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
+          Admin::NavigationsHelper#wrapper_classes is deprecated and will be removed in Spree 5.0.
+        DEPRECATION
         'sidebar-minimized' if cookies['sidebar-minimized'] == 'true'
       end
     end

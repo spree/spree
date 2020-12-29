@@ -23,15 +23,8 @@ module Spree
     end
 
     def initialize(user)
-      clear_aliased_actions
-
-      # override cancan default aliasing (we don't want to differentiate between read and index)
+      # add cancancan aliasing
       alias_action :delete, to: :destroy
-      alias_action :edit, to: :update
-      alias_action :new, to: :create
-      alias_action :new_action, to: :create
-      alias_action :show, to: :read
-      alias_action :index, :read, to: :display
       alias_action :create, :update, :destroy, to: :modify
 
       user ||= Spree.user_class.new
@@ -39,27 +32,33 @@ module Spree
       if user.respond_to?(:has_spree_role?) && user.has_spree_role?('admin')
         can :manage, :all
       else
-        can :display, Country
-        can :display, OptionType
-        can :display, OptionValue
+        can :read, Country
+        can :read, OptionType
+        can :read, OptionValue
         can :create, Order
-        can :read, Order do |order, token|
+        can :show, Order do |order, token|
           order.user == user || order.token && token == order.token
         end
         can :update, Order do |order, token|
           !order.completed? && (order.user == user || order.token && token == order.token)
         end
-        can :display, CreditCard, user_id: user.id
-        can :display, Product
-        can :display, ProductProperty
-        can :display, Property
+        can :manage, Spree::Address do |address|
+          address.user == user
+        end
+        can :create, Spree::Address do |_address|
+          user.id.present?
+        end
+        can :read, CreditCard, user_id: user.id
+        can :read, Product
+        can :read, ProductProperty
+        can :read, Property
         can :create, Spree.user_class
-        can [:read, :update, :destroy], Spree.user_class, id: user.id
-        can :display, State
-        can :display, Taxon
-        can :display, Taxonomy
-        can :display, Variant
-        can :display, Zone
+        can [:show, :update, :destroy], Spree.user_class, id: user.id
+        can :read, State
+        can :read, Taxon
+        can :read, Taxonomy
+        can :read, Variant
+        can :read, Zone
       end
 
       # Include any abilities registered by extensions, etc.

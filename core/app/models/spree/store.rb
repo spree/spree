@@ -1,11 +1,27 @@
 module Spree
   class Store < Spree::Base
     has_many :orders, class_name: 'Spree::Order'
+    has_many :payment_methods, class_name: 'Spree::PaymentMethod'
+    belongs_to :default_country, class_name: 'Spree::Country'
+    belongs_to :checkout_zone, class_name: 'Spree::Zone'
 
     with_options presence: true do
-      validates :code, uniqueness: { case_sensitive: false, allow_blank: true }
-      validates :name, :url, :mail_from_address
+      validates :name, :url, :mail_from_address, :default_currency, :code
     end
+
+    validates :code, uniqueness: true
+
+    if !ENV['SPREE_DISABLE_DB_CONNECTION'] &&
+        connected? &&
+        table_exists? &&
+        connection.column_exists?(:spree_stores, :new_order_notifications_email)
+      validates :new_order_notifications_email, email: { allow_blank: true }
+    end
+
+    has_one_attached :logo
+    has_one_attached :mailer_logo
+
+    validates :mailer_logo, content_type: ['image/png', 'image/jpg', 'image/jpeg']
 
     before_save :ensure_default_exists_and_is_unique
     before_destroy :validate_not_default
@@ -23,6 +39,28 @@ module Spree
       Rails.cache.fetch('default_store') do
         where(default: true).first_or_initialize
       end
+    end
+
+    def supported_currencies_list
+      (read_attribute(:supported_currencies).to_s.split(',') << default_currency).map(&:to_s).map do |code|
+        ::Money::Currency.find(code.strip)
+      end.uniq.compact
+    end
+
+    def unique_name
+      "#{name} (#{code})"
+    end
+
+    def countries_available_for_checkout
+      checkout_zone_or_default.try(:country_list) || Spree::Country.all
+    end
+
+    def states_available_for_checkout(country)
+      checkout_zone_or_default.try(:state_list_for, country) || country.states
+    end
+
+    def checkout_zone_or_default
+      checkout_zone || Spree::Zone.default_checkout_zone
     end
 
     private

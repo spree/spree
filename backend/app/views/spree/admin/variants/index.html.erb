@@ -4,6 +4,7 @@
 <div id="new_variant" data-hook></div>
 
 <% if @variants.any? %>
+<div class="table-responsive">
   <table class="table sortable" data-sortable-link="<%= update_positions_admin_product_variants_path(@product) %>">
     <thead data-hook="variants_header">
       <tr>
@@ -13,16 +14,16 @@
         <th class="actions"></th>
       </tr>
     </thead>
-    <tbody>
+    <tbody id="sortVert">
     <% @variants.each do |variant| %>
       <tr id="<%= spree_dom_id variant %>" <%= 'style="color:red;"' if variant.deleted? %> data-hook="variants_row">
         <td class="move-handle">
           <% if can? :edit, variant %>
-            <span class="icon icon-move handle"></span>
+            <%= svg_icon name: "sort.svg", width: '18', height: '18' %>
           <% end %>
         </td>
         <td><%= variant.options_text %></td>
-        <td><%= variant.display_price.to_html %></td>
+        <td><%= display_price(variant) %></td>
         <td><%= variant.sku %></td>
         <td class="actions actions-2 text-right">
           <%= link_to_edit(variant, no_text: true) if can?(:edit, variant) && !variant.deleted? %>
@@ -37,12 +38,13 @@
       <% end %>
     </tbody>
   </table>
+</div>
 <% else %>
   <div class="no-objects-found alert alert-info">
     <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::Variant)) %>
     <% if can?(:create, Spree::Variant) && !@product.empty_option_values? %>
-       - <%= link_to(Spree.t(:add_one), spree.new_admin_product_variant_path(@product)) %>
-    <% end %>!
+      - <%= link_to(Spree.t(:add_one), spree.new_admin_product_variant_path(@product)) %>!
+    <% end %>
   </div>
 <% end %>
 
@@ -51,7 +53,7 @@
     <p class='first_add_option_types no-objects-found' data-hook="first_add_option_types">
       <%= Spree.t(:to_add_variants_you_must_first_define) %>
       <%= link_to(Spree.t(:option_types), spree.admin_product_url(@product)) %>
-      <% if can?(:display, Spree::OptionType) && can?([:create, :display], Spree::OptionValue) %>
+      <% if can?(:read, Spree::OptionType) && can?([:create, :read], Spree::OptionValue) %>
         <%= Spree.t(:and) %>
         <%= link_to Spree.t(:option_values), spree.admin_option_types_url %>
       <% end %>
@@ -59,7 +61,8 @@
   <% end %>
 <% else %>
   <% content_for :page_actions do %>
-    <%= button_link_to(Spree.t(:new_variant), spree.new_admin_product_variant_url(@product), { remote: :true, icon: 'add', :'data-update' => 'new_variant', class: 'btn-success', id: 'new_var_link' }) if can? :create, Spree::Variant %>
-    <%= button_link_to (@deleted.blank? ? Spree.t(:show_deleted) : Spree.t(:show_active)), spree.admin_product_variants_url(@product, deleted: @deleted.blank? ? "on" : "off"), { class: 'btn-default', icon: 'filter' } %>
+    <%= product_preview_link(@product) %>
+    <%= button_link_to(Spree.t(:new_variant), spree.new_admin_product_variant_url(@product), { icon: 'add.svg', :'data-update' => 'new_variant', class: 'btn-success', id: 'new_var_link' }) if can? :create, Spree::Variant %>
+    <%= button_link_to (@deleted.blank? ? Spree.t(:show_deleted) : Spree.t(:show_active)), spree.admin_product_variants_url(@product, deleted: @deleted.blank? ? "on" : "off"), { class: 'btn-outline-secondary', icon: 'filter.svg' } %>
   <% end %>
 <% end %>

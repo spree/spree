@@ -69,7 +69,7 @@ end
 
 describe Spree.user_class, type: :model do
   context 'reporting' do
-    let(:order_value) { BigDecimal.new('80.94') }
+    let(:order_value) { BigDecimal('80.94') }
     let(:order_count) { 4 }
     let(:orders) { Array.new(order_count, double(total: order_value)) }
 
@@ -85,10 +85,12 @@ describe Spree.user_class, type: :model do
     describe '#lifetime_value' do
       context 'with orders' do
         before { load_orders }
+
         it 'returns the total of completed orders for the user' do
           expect(subject.lifetime_value).to eq (order_count * order_value)
         end
       end
+
       context 'without orders' do
         it 'returns 0.00' do
           expect(subject.lifetime_value).to eq BigDecimal('0.00')
@@ -106,6 +108,7 @@ describe Spree.user_class, type: :model do
 
     describe '#order_count' do
       before { load_orders }
+
       it 'returns the count of completed orders for the user' do
         expect(subject.order_count).to eq order_count
       end
@@ -114,10 +117,12 @@ describe Spree.user_class, type: :model do
     describe '#average_order_value' do
       context 'with orders' do
         before { load_orders }
+
         it 'returns the average completed order price for the user' do
           expect(subject.average_order_value).to eq order_value
         end
       end
+
       context 'without orders' do
         it 'returns 0.00' do
           expect(subject.average_order_value).to eq BigDecimal('0.00')
@@ -127,6 +132,7 @@ describe Spree.user_class, type: :model do
 
     describe '#display_average_order_value' do
       before { load_orders }
+
       it 'returns a Spree::Money version of average_order_value' do
         value = BigDecimal('500.05')
         allow(subject).to receive(:average_order_value).and_return(value)
@@ -156,12 +162,12 @@ describe Spree.user_class, type: :model do
       context 'part of the store credit has been used' do
         let(:amount_used) { 35.00 }
 
-        before { store_credit.update_attributes(amount_used: amount_used) }
+        before { store_credit.update(amount_used: amount_used) }
 
         context 'part of the store credit has been authorized' do
           let(:authorized_amount) { 10 }
 
-          before { additional_store_credit.update_attributes(amount_authorized: authorized_amount) }
+          before { additional_store_credit.update(amount_authorized: authorized_amount) }
 
           it 'returns sum of amounts minus used amount and authorized amount' do
             available_store_credit = amount + additional_amount - amount_used - authorized_amount
@@ -180,7 +186,7 @@ describe Spree.user_class, type: :model do
         context 'part of the store credit has been authorized' do
           let(:authorized_amount) { 10 }
 
-          before { additional_store_credit.update_attributes(amount_authorized: authorized_amount) }
+          before { additional_store_credit.update(amount_authorized: authorized_amount) }
 
           it 'returns sum of amounts minus authorized amount' do
             expect(subject.total_available_store_credit.to_f).to eq (amount + additional_amount - authorized_amount)
@@ -199,6 +205,23 @@ describe Spree.user_class, type: :model do
           expect(subject.total_available_store_credit.to_f).to eq (amount + additional_amount)
         end
       end
+    end
+  end
+
+  context 'address book' do
+    let(:address) { create(:address) }
+    let(:address2) { create(:address) }
+
+    before do
+      address.user = subject
+      address.save
+      address2.user = subject
+      address2.save
+    end
+
+    it 'has many addresses' do
+      expect(subject).to respond_to(:addresses)
+      expect(subject.addresses).to eq [address2, address]
     end
   end
 end

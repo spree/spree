@@ -13,7 +13,8 @@ describe Spree::Order, type: :model do
       it "o'brien@gmail.com is a valid email address" do
         order.state = 'address'
         order.email = "o'brien@gmail.com"
-        expect(order.error_on(:email).size).to eq(0)
+        order.valid?
+        expect(order.errors).to be_empty
       end
     end
   end
@@ -37,7 +38,8 @@ describe Spree::Order, type: :model do
     it 'does not validate email address' do
       order.state = 'cart'
       order.email = nil
-      expect(order.error_on(:email).size).to eq(0)
+      order.valid?
+      expect(order.errors).to be_empty
     end
   end
 end

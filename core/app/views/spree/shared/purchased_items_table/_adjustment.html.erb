@@ -1,0 +1,13 @@
+<tr>
+  <td></td>
+  <td>
+    <p class="f-fallback purchase_total purchase_total--label">
+      <%= raw(adjustment.label) %>:
+    </p>
+  </td>
+  <td>
+    <p class="f-fallback purchase_total">
+      <%= Spree::Money.new(adjustment.amount, currency: order.currency) %>
+    </p>
+  </td>
+</tr>

@@ -7,7 +7,7 @@
     type: calculator.preference_type(:base_amount)) %>
 </div>
 
-<div class="form-group no-marginb">
+<div class="form-group mb-0">
   <%= label_tag nil, Spree.t(:tiers) %>
   <%= content_tag :div, nil, class: "hidden js-original-tiers",
     data: { :'original-tiers' => Hash[calculator.preferred_tiers.sort] } %>
@@ -21,22 +21,26 @@
 </script>
 
 <script type="text/x-handlebars-template" id="tier-fields-template">
-  <div class="tier panel panel-default">
-    <div class="panel-body">
+  <div class="tier card mb-3">
+    <div class="card-body p-3">
       <div class="form-group">
         <div class="input-group">
-          <span class="input-group-addon">$</span>
+          <div class="input-group-prepend">
+            <div class="input-group-text">$</div>
+          </div>
           <input class="js-base-input form-control" type="text" value={{baseField.value}}>
         </div>
       </div>
       <div class="form-group">
         <div class="input-group">
-          <span class="input-group-addon">$</span>
+          <div class="input-group-prepend">
+            <div class="input-group-text">$</div>
+          </div>
           <input class="js-value-input form-control"
             name="{{valueField.name}}" type="text" value={{valueField.value}}>
         </div>
       </div>
-      <a class="js-remove-tier btn btn-default btn-sm"><span class="icon icon-delete"></span></a>
+      <a class="js-remove-tier btn btn-outline-secondary btn-sm"><span class="icon icon-delete"></span></a>
     </div>
   </div>
 </script>

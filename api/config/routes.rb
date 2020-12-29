@@ -1,3 +1,9 @@
+spree_path = Rails.application.routes.url_helpers.try(:spree_path, trailing_slash: true) || '/'
+
+Rails.application.routes.draw do
+  use_doorkeeper scope: "#{spree_path}/spree_oauth"
+end
+
 Spree::Core::Engine.add_routes do
   namespace :api, defaults: { format: 'json' } do
     namespace :v1 do
@@ -116,44 +122,72 @@ Spree::Core::Engine.add_routes do
       resources :stock_items, only: [:index, :update, :destroy]
       resources :stores
 
-      resources :tags, only: :index
-
       put '/classifications', to: 'classifications#update', as: :classifications
       get '/taxons/products', to: 'taxons#products', as: :taxon_products
     end
 
     namespace :v2 do
-      if Rails.env.development? || ENV['EXPOSE_SWAGGER']
-        get 'storefront.yml', to: 'swagger#storefront', as: 'swagger_storefront', format: 'yml'
-      end
-
       namespace :storefront do
         resource :cart, controller: :cart, only: %i[show create] do
           post   :add_item
-          post   :empty
-          delete :remove_line_item
-          patch :set_quantity
+          patch  :empty
+          delete 'remove_line_item/:line_item_id', to: 'cart#remove_line_item', as: :cart_remove_line_item
+          patch  :set_quantity
+          patch  :apply_coupon_code
+          delete 'remove_coupon_code/:coupon_code', to: 'cart#remove_coupon_code', as: :cart_remove_coupon_code
+          delete 'remove_coupon_code', to: 'cart#remove_coupon_code', as: :cart_remove_coupon_code_without_code
+          get :estimate_shipping_rates
         end
 
+        resource :checkout, controller: :checkout, only: %i[update] do
+          patch :next
+          patch :advance
+          patch :complete
+          post :add_store_credit
+          post :remove_store_credit
+          get :payment_methods
+          get :shipping_rates
+        end
+
+        resource :account, controller: :account, only: %i[show]
+
+        namespace :account do
+          resources :addresses, controller: :addresses, only: %i[index create update]
+          resources :credit_cards, controller: :credit_cards, only: %i[index show]
+          resources :orders, controller: :orders, only: %i[index show]
+        end
+
+        resources :countries, only: %i[index]
+        get '/countries/:iso', to: 'countries#show', as: :country
+        get '/order_status/:number', to: 'order_status#show', as: :order_status
         resources :products, only: %i[index show]
-        resources :taxons,   only: %i[index show]
+        resources :taxons,   only: %i[index show], id: /.+/
+        get '/stores/:code', to: 'stores#show', as: :store
       end
     end
 
-    spree_path = Rails.application.routes.url_helpers.try(:spree_path, trailing_slash: true) || '/'
+    get '/404', to: 'errors#render_404'
 
     match 'v:api/*path', to: redirect { |params, request|
       format = ".#{params[:format]}" unless params[:format].blank?
       query  = "?#{request.query_string}" unless request.query_string.blank?
 
-      "#{spree_path}api/v1/#{params[:path]}#{format}#{query}"
+      if request.path == "#{spree_path}api/v1/#{params[:path]}#{format}#{query}"
+        "#{spree_path}api/404"
+      else
+        "#{spree_path}api/v1/#{params[:path]}#{format}#{query}"
+      end
     }, via: [:get, :post, :put, :patch, :delete]
 
     match '*path', to: redirect { |params, request|
       format = ".#{params[:format]}" unless params[:format].blank?
       query  = "?#{request.query_string}" unless request.query_string.blank?
 
-      "#{spree_path}api/v1/#{params[:path]}#{format}#{query}"
+      if request.path == "#{spree_path}api/v1/#{params[:path]}#{format}#{query}"
+        "#{spree_path}api/404"
+      else
+        "#{spree_path}api/v1/#{params[:path]}#{format}#{query}"
+      end
     }, via: [:get, :post, :put, :patch, :delete]
   end
 end

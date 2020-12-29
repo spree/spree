@@ -14,31 +14,31 @@ describe 'Stock Management', type: :feature, js: true do
     end
 
     context "toggle backorderable for a variant's stock item" do
-      let(:backorderable) { find '.stock_item_backorderable' }
+      let(:backorderable) { find_field(class: 'stock_item_backorderable') }
 
       before do
         expect(backorderable).to be_checked
-        backorderable.set(false)
+        backorderable.uncheck
         wait_for_ajax
       end
 
       it 'persists the value when page reload' do
-        visit current_path
+        refresh
         expect(backorderable).not_to be_checked
       end
     end
 
     context "toggle track inventory for a variant's stock item" do
-      let(:track_inventory) { find '.track_inventory_checkbox' }
+      let(:track_inventory) { find_field(class: 'track_inventory_checkbox') }
 
       before do
         expect(track_inventory).to be_checked
-        track_inventory.set(false)
+        track_inventory.uncheck
         wait_for_ajax
       end
 
       it 'persists the value when page reloaded' do
-        visit current_path
+        refresh
         expect(track_inventory).not_to be_checked
       end
     end
@@ -49,18 +49,17 @@ describe 'Stock Management', type: :feature, js: true do
     # assert that the redirect is *not* happening.
     it 'can toggle backorderable for the second variant stock item' do
       new_location = create(:stock_location, name: 'Another Location')
-      visit current_url
+      refresh
 
-      new_location_backorderable = find "#stock_item_backorderable_#{new_location.id}"
-      new_location_backorderable.set(false)
+      new_location_backorderable = find_field(id: "stock_item_backorderable_#{new_location.id}", checked: true)
+      new_location_backorderable.uncheck
       wait_for_ajax
 
-      expect(page.current_url).to include('/admin/products')
+      expect(page).to have_current_path(%r{/admin/products})
     end
 
     it 'can create a new stock movement' do
       fill_in 'stock_movement_quantity', with: 5
-      select2 'default', from: 'Stock Location'
       click_button 'Add Stock'
 
       expect(page).to have_content('successfully created')
@@ -72,7 +71,6 @@ describe 'Stock Management', type: :feature, js: true do
 
     it 'can create a new negative stock movement' do
       fill_in 'stock_movement_quantity', with: -5
-      select2 'default', from: 'Stock Location'
       click_button 'Add Stock'
 
       expect(page).to have_content('successfully created')
@@ -87,7 +85,7 @@ describe 'Stock Management', type: :feature, js: true do
 
       before do
         variant.stock_items.first.update_column(:count_on_hand, 30)
-        visit current_url
+        refresh
       end
 
       it 'can create a new stock movement for the specified variant' do
@@ -118,7 +116,7 @@ describe 'Stock Management', type: :feature, js: true do
 
       it 'redirects to stock locations page', js: false do
         expect(page).to have_content(Spree.t(:stock_management_requires_a_stock_location))
-        expect(page.current_url).to include('admin/stock_locations')
+        expect(page).to have_current_path(%r{admin/stock_locations})
       end
     end
   end

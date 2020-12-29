@@ -2,16 +2,6 @@ require 'spec_helper'
 
 describe Spree::ServiceModule do
   context 'noncallable thing passed to run' do
-    class ServiceObjectWithoutCall
-      prepend ::Spree::ServiceModule::Base
-    end
-
-    it 'raises NonCallablePassedToRun' do
-      expect { ServiceObjectWithoutCall.new.call }.to raise_error(Spree::ServiceModule::CallMethodNotImplemented)
-    end
-  end
-
-  context 'noncallable thing passed to run' do
     class ServiceObjectWithUncallableThing
       prepend ::Spree::ServiceModule::Base
 
@@ -220,7 +210,7 @@ describe Spree::ServiceModule do
         success(first_value: 'asd', second_value: 'qwe')
       end
 
-      def second_method(first_value:)
+      def second_method(first_value: 'asd')
         success(first_value + ' Second Method Success!')
       end
     end

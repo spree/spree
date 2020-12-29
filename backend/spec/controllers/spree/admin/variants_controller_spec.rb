@@ -12,7 +12,7 @@ module Spree
 
         context 'deleted is not requested' do
           it 'assigns the variants for a requested product' do
-            spree_get :index, product_id: product.slug
+            get :index, params: { product_id: product.slug }
             expect(assigns(:collection)).to include variant_1
             expect(assigns(:collection)).to include variant_2
           end
@@ -22,7 +22,7 @@ module Spree
           before { variant_2.destroy }
 
           it 'assigns only deleted variants for a requested product' do
-            spree_get :index, product_id: product.slug, deleted: 'on'
+            get :index, params: { product_id: product.slug, deleted: 'on' }
             expect(assigns(:collection)).not_to include variant_1
             expect(assigns(:collection)).to include variant_2
           end
@@ -31,7 +31,7 @@ module Spree
 
       describe '#destroy' do
         subject(:send_request) do
-          spree_delete :destroy, product_id: product, id: variant, format: :js
+          delete :destroy, params: { product_id: product, id: variant, format: :js }
         end
 
         let(:variant) { mock_model(Spree::Variant) }

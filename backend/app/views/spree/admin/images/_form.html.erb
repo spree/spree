@@ -1,5 +1,5 @@
 <div data-hook="admin_image_form_fields" class="row">
-  <div class="col-xs-12 col-md-6">
+  <div class="col-12 col-md-6">
     <div data-hook="file" class="form-group">
       <%= f.label :attachment, Spree.t(:filename) %>
       <%= f.file_field :attachment %>
@@ -9,7 +9,7 @@
       <%= f.select :viewable_id, @variants, {}, {class: 'select2'} %>
     </div>
   </div>
-  <div data-hook="alt_text" class="col-xs-12 col-md-6">
+  <div data-hook="alt_text" class="col-12 col-md-6">
     <div class="form-group">
       <%= f.label :alt, Spree.t(:alt_text) %>
       <%= f.text_area :alt, rows: 4, class: 'form-control' %>

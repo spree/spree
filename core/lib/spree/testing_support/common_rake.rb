@@ -15,7 +15,7 @@ namespace :common do
     Rails.env = 'test'
 
     Spree::DummyGenerator.start ["--lib_name=#{ENV['LIB_NAME']}", '--quiet']
-    Spree::InstallGenerator.start ["--lib_name=#{ENV['LIB_NAME']}", '--auto-accept', '--migrate=false', '--seed=false', '--sample=false', '--quiet', '--copy_views=false', "--user_class=#{args[:user_class]}"]
+    Spree::InstallGenerator.start ["--lib_name=#{ENV['LIB_NAME']}", '--auto-accept', '--migrate=false', '--seed=false', '--sample=false', '--quiet', '--copy_storefront=false', "--user_class=#{args[:user_class]}"]
 
     puts 'Setting up dummy database...'
     system("bundle exec rake db:drop db:create > #{File::NULL}")

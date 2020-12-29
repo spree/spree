@@ -9,7 +9,7 @@ module Spree
 
     after_create :process_return!
 
-    validates :number, uniqueness: true
+    validates :number, uniqueness: { case_sensitive: true }
     validates :return_items, :stock_location, presence: true
     validate :must_have_return_authorization, on: :create
     validate :return_items_belong_to_same_order
@@ -34,6 +34,7 @@ module Spree
     # Temporarily tie a customer_return to one order
     def order
       return nil if return_items.blank?
+
       return_items.first.inventory_unit.order
     end
 

@@ -3,15 +3,13 @@ module Spree
     module BaseHelper
       def flash_alert(flash)
         if flash.present?
-          close_button = button_tag(class: 'close', 'data-dismiss' => 'alert', 'aria-label' => Spree.t(:close)) do
-            content_tag('span', '&times;'.html_safe, 'aria-hidden' => true)
-          end
           message = flash[:error] || flash[:notice] || flash[:success]
           flash_class = 'danger' if flash[:error]
           flash_class = 'info' if flash[:notice]
           flash_class = 'success' if flash[:success]
-          flash_div = content_tag(:div, (close_button + message), class: "alert alert-#{flash_class} alert-auto-disappear")
-          content_tag(:div, flash_div, class: 'col-xs-12')
+          flash_div = content_tag(:div, message, class: "alert alert-#{flash_class} mx-2")
+          content_tag(:div, flash_div,
+                      class: 'd-flex justify-content-center position-fixed flash-alert ')
         end
       end
 
@@ -34,6 +32,15 @@ module Spree
           content_tag(:span, errors, class: 'formError')
         else
           ''
+        end
+      end
+
+      def svg_icon(name:, classes: '', width:, height:)
+        if name.ends_with?('.svg')
+          icon_name = File.basename(name, File.extname(name))
+          inline_svg_tag "backend-#{icon_name}.svg", class: "icon-#{icon_name} #{classes}", size: "#{width}px*#{height}px"
+        else
+          inline_svg_tag "backend-#{name}.svg", class: "icon-#{name} #{classes}", size: "#{width}px*#{height}px"
         end
       end
 
@@ -108,15 +115,16 @@ module Spree
                             size: 10,
                             class: 'input_string form-control'
                           }
-        end
+                        end
 
         field_options.merge!(readonly: options[:readonly],
                              disabled: options[:disabled],
-                             size:     options[:size])
+                             size: options[:size])
       end
 
       def preference_fields(object, form)
         return unless object.respond_to?(:preferences)
+
         fields = object.preferences.keys.map do |key|
           if object.has_preference?(key)
             form.label("preferred_#{key}", Spree.t(key) + ': ') +
@@ -127,9 +135,16 @@ module Spree
       end
 
       # renders hidden field and link to remove record using nested_attributes
-      def link_to_icon_remove_fields(f)
-        url = f.object.persisted? ? [:admin, f.object] : '#'
-        link_to_with_icon('delete', '', url, class: 'spree_remove_fields btn btn-sm btn-danger', data: { action: 'remove' }, title: Spree.t(:remove)) + f.hidden_field(:_destroy)
+      def link_to_icon_remove_fields(form)
+        url = form.object.persisted? ? [:admin, form.object] : '#'
+        link_to_with_icon('delete.svg', '', url,
+                          class: 'spree_remove_fields btn btn-sm btn-danger',
+                          data: {
+                            action: 'remove'
+                          },
+                          title: Spree.t(:remove),
+                          no_text: true
+                         ) + form.hidden_field(:_destroy)
       end
 
       def spree_dom_id(record)
@@ -142,7 +157,33 @@ module Spree
       end
 
       def order_time(time)
-        [I18n.l(time.to_date), time.strftime('%l:%M %p').strip].join(' ')
+        return '' if time.blank?
+
+        [I18n.l(time.to_date), time.strftime('%l:%M %p %Z').strip].join(' ')
+      end
+
+      def required_span_tag
+        content_tag(:span, ' *', class: 'required')
+      end
+
+      def product_preview_link(product)
+        return unless frontend_available?
+
+        button_link_to(
+          Spree.t(:preview_product),
+          spree.product_url(product),
+          class: 'btn-outline-secondary', icon: 'view.svg', id: 'admin_preview_product', target: :blank
+        )
+      end
+
+      def taxon_preview_link(taxon)
+        return unless frontend_available?
+
+        button_link_to(
+          Spree.t(:preview_taxon),
+          seo_url(taxon),
+          class: 'btn-outline-secondary', icon: 'view.svg', id: 'admin_preview_taxon', target: :blank
+        )
       end
     end
   end

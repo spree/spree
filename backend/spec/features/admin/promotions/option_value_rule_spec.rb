@@ -20,18 +20,16 @@ describe 'Promotion with option value rule', type: :feature do
     within('#rules .promotion-block') do
       click_button 'Add'
 
-      expect(page.body).to have_content('Product')
-      expect(page.body).to have_content('Option Values')
+      expect(page).to have_content('Product')
+      expect(page).to have_content('Option Values')
     end
 
     within('.promo-rule-option-value') do
-      targetted_select2_search product.name, from: '.js-promo-rule-option-value-product-select'
-      targetted_select2_search(
-        option_value.name,
-        from: '.js-promo-rule-option-value-option-values-select'
-      )
+      select2 product.name,       css: '.product-select', search: true
+      select2 option_value.name,  css: '.option-value-select', search: true
     end
 
+    wait_for { !page.has_button?('Update') }
     within('#rules_container') { click_button 'Update' }
 
     first_rule = promotion.rules.reload.first
@@ -60,6 +58,7 @@ describe 'Promotion with option value rule', type: :feature do
         find('.delete').click
       end
 
+      wait_for { !page.has_button?('Update') }
       within('#rule_fields') { click_button 'Update' }
 
       first_rule = promotion.rules.reload.first

@@ -27,7 +27,8 @@ module Spree
 
         begin
           if @payment_method.store_credit?
-            payments = @order.add_store_credit_payments
+            Spree::Dependencies.checkout_add_store_credit_service.constantize.call(order: @order)
+            payments = @order.payments.store_credits.valid
           else
             @payment ||= @order.payments.build(object_params)
             if @payment.payment_method.source_required? && params[:card].present? && params[:card] != 'new'
@@ -90,7 +91,7 @@ module Spree
       def load_data
         @amount = params[:amount] || load_order.total
         @payment_methods = @order.collect_backend_payment_methods
-        if @payment and @payment.payment_method
+        if @payment&.payment_method
           @payment_method = @payment.payment_method
         else
           @payment_method = @payment_methods.find { |payment_method| payment_method.id == params[:payment][:payment_method_id].to_i } if params[:payment]

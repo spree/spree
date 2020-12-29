@@ -2,21 +2,23 @@ require 'spec_helper'
 
 describe Spree::Address, type: :model do
   describe 'clone' do
-    it 'creates a copy of the address with the exception of the id, updated_at and created_at attributes' do
+    it 'creates a copy of the address with the exception of the id, label, user_id, updated_at and created_at attributes' do
       state = create(:state)
       original = create(:address,
-                        address1: 'address1',
-                        address2: 'address2',
-                        alternative_phone: 'alternative_phone',
-                        city: 'city',
+                        label: 'Home',
+                        user_id: 976,
+                        address1: FFaker::Address.street_address,
+                        address2: FFaker::Address.secondary_address,
+                        alternative_phone: FFaker::PhoneNumberAU.mobile_phone_number,
+                        city: FFaker::AddressUS.city,
                         country: Spree::Country.first,
-                        firstname: 'firstname',
-                        lastname: 'lastname',
-                        company: 'company',
-                        phone: 'phone',
+                        firstname: FFaker::Name.first_name,
+                        lastname: FFaker::Name.last_name,
+                        company: FFaker::Company.name,
+                        phone: FFaker::PhoneNumber.short_phone_number,
                         state_id: state.id,
                         state_name: state.name,
-                        zipcode: '10001')
+                        zipcode: FFaker::AddressUS.zip_code)
 
       cloned = original.clone
 
@@ -33,9 +35,43 @@ describe Spree::Address, type: :model do
       expect(cloned.state_name).to eq(original.state_name)
       expect(cloned.zipcode).to eq(original.zipcode)
 
+      expect(cloned.user_id).to be_nil
+      expect(cloned.label).to be_nil
+
       expect(cloned.id).not_to eq(original.id)
       expect(cloned.created_at).not_to eq(original.created_at)
       expect(cloned.updated_at).not_to eq(original.updated_at)
+    end
+  end
+
+  describe 'delegated method' do
+    context 'Country' do
+      let(:country) { create(:country, name: 'United States', iso_name: 'UNITED STATES', iso: 'US', iso3: 'USA') }
+      let(:address) { create(:address, country: country) }
+
+      context '#country_name' do
+        it 'return proper country_iso_name' do
+          expect(address.country_name).to eq 'United States'
+        end
+      end
+
+      context '#country_iso_name' do
+        it 'return proper country_iso_name' do
+          expect(address.country_iso_name).to eq 'UNITED STATES'
+        end
+      end
+
+      context '#country_iso' do
+        it 'return proper country_iso_name' do
+          expect(address.country_iso).to eq 'US'
+        end
+      end
+
+      context '#country_iso3' do
+        it 'return proper country_iso_name' do
+          expect(address.country_iso3).to eq 'USA'
+        end
+      end
     end
   end
 
@@ -291,6 +327,28 @@ describe Spree::Address, type: :model do
     end
   end
 
+  context '#state_name_text' do
+    context 'state_name is blank' do
+      let(:state) { create(:state, name: 'virginia', abbr: nil) }
+      let(:address) { create(:address, state: state, state_name: nil) }
+
+      specify { expect(address.state_name_text).to eq('virginia') }
+    end
+
+    context 'state is blank' do
+      let(:address) { create(:address, state: nil, state_name: 'virginia') }
+
+      specify { expect(address.state_name_text).to eq('virginia') }
+    end
+
+    context 'state and state_name are present' do
+      let(:state) { create(:state, name: 'virginia', abbr: nil) }
+      let(:address) { create(:address, state: state, state_name: 'virginia') }
+
+      specify { expect(address.state_name_text).to eq('virginia') }
+    end
+  end
+
   context 'defines require_phone? helper method' do
     let(:address) { stub_model(Spree::Address) }
 
@@ -350,6 +408,7 @@ describe Spree::Address, type: :model do
 
       context 'state belongs to the same country associated with address' do
         before { clear_state_entities }
+
         it { expect(address.state).to eq(state) }
         it { expect(address.state_name).to be_nil }
       end
@@ -404,6 +463,7 @@ describe Spree::Address, type: :model do
 
     context 'different addresses' do
       before { address2.first_name = 'Someone Else' }
+
       it { expect(address == address2).to eq(false) }
     end
   end
@@ -412,5 +472,64 @@ describe Spree::Address, type: :model do
     let(:_address) { described_class.build_default }
 
     it { expect(_address.country).to eq(Spree::Country.default) }
+  end
+
+  context 'editable & destroy' do
+    let(:address) { create(:address) }
+    let(:address2) { create(:address) }
+    let(:order) { create(:completed_order_with_totals) }
+    let(:user) { create(:user) }
+
+    before { order.update_attribute(:bill_address, address2) }
+
+    it 'has required attributes' do
+      expect(Spree::Address.required_fields).to eq([:firstname, :lastname, :address1, :city, :country, :zipcode, :phone])
+    end
+
+    it 'is editable' do
+      expect(address).to be_editable
+    end
+
+    it 'can be deleted' do
+      expect(address).to be_can_be_deleted
+    end
+
+    it "isn't editable when there is an associated order" do
+      expect(address2).to_not be_editable
+    end
+
+    it "can't be deleted when there is an associated order" do
+      expect(address2).to_not be_can_be_deleted
+    end
+
+    it 'is destroyed without saving used' do
+      address.destroy
+      expect(Spree::Address.where(['id = (?)', address.id])).to be_empty
+    end
+
+    it 'is destroyed deleted timestamp' do
+      address2.destroy
+      expect(Spree::Address.where(['id = (?)', address2.id])).to_not be_empty
+    end
+  end
+
+  describe '#to_s' do
+    let(:address) { create(:address) }
+
+    it 'is displayed as string' do
+      a = address
+      expect(address.to_s).to eq("#{a.full_name}<br/>#{a.company}<br/>#{a.address1}<br/>#{a.address2}<br/>#{a.city}, #{a.state_text} #{a.zipcode}<br/>#{a.country}")
+      address.company = nil
+      expect(address.to_s).to eq("#{a.full_name}<br/>#{a.address1}<br/>#{a.address2}<br/>#{a.city}, #{a.state_text} #{a.zipcode}<br/>#{a.country}")
+    end
+
+    context 'address contains HTML' do
+      it 'properly escapes HTML' do
+        dangerous_string = '<script>alert("BOOM!")</script>'
+        address = create(:address, first_name: dangerous_string)
+
+        expect(address.to_s).not_to include(dangerous_string)
+      end
+    end
   end
 end

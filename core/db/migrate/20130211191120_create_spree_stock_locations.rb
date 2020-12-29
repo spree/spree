@@ -4,7 +4,7 @@ class CreateSpreeStockLocations < ActiveRecord::Migration[4.2]
       t.string :name
       t.belongs_to :address
 
-      t.timestamps null: false
+      t.timestamps null: false, precision: 6
     end
     add_index :spree_stock_locations, :address_id
   end

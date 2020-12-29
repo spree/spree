@@ -10,7 +10,7 @@ describe 'Adjustments Promotions', type: :feature do
            code: '10_off',
            starts_at: 1.day.ago,
            expires_at: 1.day.from_now,
-           adjustment_rate:  10)
+           adjustment_rate: 10)
 
     order = create(:order_with_totals)
     line_item = order.line_items.first
@@ -48,6 +48,28 @@ describe 'Adjustments Promotions', type: :feature do
         click_button 'Add Coupon Code'
         expect(page).to have_content('already been applied')
       end
+    end
+  end
+
+  context 'admin is able to add promotion code after removing one before' do
+    it 'allows to add previously deleted promotion', js: true do
+      fill_in 'coupon_code', with: '10_off'
+      click_button 'Add Coupon Code'
+      expect(page).to have_content('$10 off')
+      expect(page).to have_content('-$10.00')
+
+      accept_confirm do
+        within_row(1) do
+          click_icon(:delete)
+        end
+      end
+      expect(page).not_to have_content('$10 off')
+      expect(page).not_to have_content('-$10.00')
+
+      fill_in 'coupon_code', with: '10_off'
+      click_button 'Add Coupon Code'
+      expect(page).to have_content('$10 off')
+      expect(page).to have_content('-$10.00')
     end
   end
 end

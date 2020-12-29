@@ -58,17 +58,17 @@ module Spree
                    payment.payment_method.credit(credit_cents, payment.source, payment.transaction_id, originator: self)
                  else
                    payment.payment_method.credit(credit_cents, payment.transaction_id, originator: self)
-      end
+                 end
 
       unless response.success?
-        logger.error(Spree.t(:gateway_error) + "  #{response.to_yaml}")
+        Rails.logger.error(Spree.t(:gateway_error) + "  #{response.to_yaml}")
         text = response.params['message'] || response.params['response_reason_text'] || response.message
         raise Core::GatewayError, text
       end
 
       response
     rescue ActiveMerchant::ConnectionError => e
-      logger.error(Spree.t(:gateway_error) + "  #{e.inspect}")
+      Rails.logger.error(Spree.t(:gateway_error) + "  #{e.inspect}")
       raise Core::GatewayError, Spree.t(:unable_to_connect_to_gateway)
     end
 

@@ -52,6 +52,7 @@ describe Spree::StockMovement, type: :model do
           stock_movement.save
           stock_item.reload
         end
+
         it 'does not update count on hand' do
           expect(stock_item.count_on_hand).to eq(10)
         end
@@ -64,6 +65,7 @@ describe Spree::StockMovement, type: :model do
           stock_movement.save
           stock_item.reload
         end
+
         it 'does not update count on hand' do
           expect(stock_item.count_on_hand).to eq(10)
         end
@@ -75,6 +77,7 @@ describe Spree::StockMovement, type: :model do
           stock_movement.save
           stock_item.reload
         end
+
         it 'decrements the stock item count on hand' do
           expect(stock_item.count_on_hand).to eq(9)
         end
@@ -86,6 +89,7 @@ describe Spree::StockMovement, type: :model do
           stock_movement.save
           stock_item.reload
         end
+
         it 'increments the stock item count on hand' do
           expect(stock_item.count_on_hand).to eq(11)
         end

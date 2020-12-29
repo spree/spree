@@ -31,7 +31,7 @@ describe Spree::Admin::DummyModelsController, type: :controller do
 
   describe '#new' do
     subject do
-      spree_get :new
+      get :new
     end
 
     it 'succeeds' do
@@ -42,7 +42,7 @@ describe Spree::Admin::DummyModelsController, type: :controller do
 
   describe '#edit' do
     subject do
-      spree_get :edit, id: dummy_model.to_param
+      get :edit, params: { id: dummy_model.to_param }
     end
 
     let(:dummy_model) { Spree::DummyModel.create!(name: 'a dummy_model') }
@@ -54,7 +54,7 @@ describe Spree::Admin::DummyModelsController, type: :controller do
   end
 
   describe '#create' do
-    subject { spree_post :create, params }
+    subject { post :create, params: params }
 
     let(:params) do
       { dummy_model: { name: 'a dummy_model' } }
@@ -78,7 +78,7 @@ describe Spree::Admin::DummyModelsController, type: :controller do
   end
 
   describe '#update' do
-    subject { spree_put :update, params }
+    subject { put :update, params: params }
 
     let(:dummy_model) { Spree::DummyModel.create!(name: 'a dummy_model') }
 
@@ -96,7 +96,7 @@ describe Spree::Admin::DummyModelsController, type: :controller do
 
   describe '#destroy' do
     subject do
-      spree_delete :destroy, params
+      delete :destroy, params: params
     end
 
     let!(:dummy_model) { Spree::DummyModel.create!(name: 'a dummy_model') }
@@ -109,8 +109,10 @@ describe Spree::Admin::DummyModelsController, type: :controller do
 
   describe '#update_positions' do
     subject do
-      spree_post :update_positions, id: dummy_model_1.to_param,
-                                    positions: { dummy_model_1.id => '2', dummy_model_2.id => '1' }, format: 'js'
+      post :update_positions, params: {
+        id: dummy_model_1.to_param,
+        positions: { dummy_model_1.id => '2', dummy_model_2.id => '1' }, format: 'js'
+      }
     end
 
     let(:dummy_model_1) { Spree::DummyModel.create!(name: 'dummy_model 1', position: 1) }

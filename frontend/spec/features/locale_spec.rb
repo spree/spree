@@ -1,30 +1,18 @@
 require 'spec_helper'
 
 describe 'setting locale', type: :feature do
-  def with_locale(locale)
-    I18n.locale = locale
-    Spree::Frontend::Config[:locale] = locale
-    yield
-    I18n.locale = 'en'
-    Spree::Frontend::Config[:locale] = 'en'
-  end
+  let(:store) { Spree::Store.default }
+  let(:locale) { :fr }
 
-  context 'shopping cart link and page' do
-    before do
-      I18n.backend.store_translations(:fr,
-                                      spree: {
-                                        cart: 'Panier',
-                                        shopping_cart: 'Panier'
-                                      })
-    end
-
-    it 'is in french' do
-      with_locale('fr') do
-        visit spree.root_path
-        click_link 'Panier'
-        expect(page).to have_content('Panier')
-      end
-    end
+  before do
+    I18n.backend.store_translations(:fr,
+                                    spree: {
+                                      added_to_cart: 'Ajouté au panier avec succès!',
+                                      cart_page: {
+                                        header: 'Votre panier',
+                                        empty_info: 'Votre panier est vide'
+                                      }
+                                    })
   end
 
   context 'checkout form validation messages' do
@@ -40,8 +28,43 @@ describe 'setting locale', type: :feature do
 
     def check_error_text(text)
       %w(firstname lastname address1 city).each do |attr|
-        expect(find("#b#{attr} label.error").text).to eq(text)
+        expect(page).to have_css("#b#{attr} label.error", exact_text: text)
       end
     end
+  end
+
+  shared_examples 'translates cart page' do
+    it 'is in french' do
+      visit spree.cart_path
+      expect(page).to have_content('Votre panier')
+      expect(page).to have_content('Votre panier est vide')
+    end
+  end
+
+  context 'with store locale set' do
+    before do
+      store.update(default_locale: locale)
+    end
+
+    after do
+      store.update(default_locale: nil)
+      I18n.locale = 'en'
+    end
+
+    it_behaves_like 'translates cart page'
+  end
+
+  context 'without store locale set' do
+    before do
+      I18n.locale = locale
+      Spree::Frontend::Config[:locale] = locale
+    end
+
+    after do
+      I18n.locale = 'en'
+      Spree::Frontend::Config[:locale] = 'en'
+    end
+
+    it_behaves_like 'translates cart page'
   end
 end

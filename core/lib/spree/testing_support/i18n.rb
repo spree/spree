@@ -32,14 +32,12 @@ module Spree
       root = translations
       processed_keys = []
       translation_keys.each do |key|
-        begin
-          root = root.fetch(key.to_sym)
-          processed_keys << key.to_sym
-        rescue KeyError
-          error = "#{(processed_keys << key).join('.')} (#{I18n.locale})"
-          unless Spree.missing_translation_messages.include?(error)
-            Spree.missing_translation_messages << error
-          end
+        root = root.fetch(key.to_sym)
+        processed_keys << key.to_sym
+      rescue KeyError
+        error = "#{(processed_keys << key).join('.')} (#{I18n.locale})"
+        unless Spree.missing_translation_messages.include?(error)
+          Spree.missing_translation_messages << error
         end
       end
     end
@@ -86,7 +84,7 @@ RSpec.configure do |config|
       end
 
       Spree.check_unused_translations
-      if false && Spree.unused_translation_messages.any?
+      if Spree.unused_translation_messages.any?
         puts "\nThere are unused translations within Spree:"
         puts Spree.unused_translation_messages.sort
         exit(1)

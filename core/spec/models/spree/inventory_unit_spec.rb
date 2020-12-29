@@ -149,9 +149,9 @@ describe Spree::InventoryUnit, type: :model do
   end
 
   describe '#current_or_new_return_item' do
-    before { allow(inventory_unit).to receive_messages(pre_tax_amount: 100.0) }
-
     subject { inventory_unit.current_or_new_return_item }
+
+    before { allow(inventory_unit).to receive_messages(pre_tax_amount: 100.0) }
 
     context 'associated with a return item' do
       let(:return_item) { create(:return_item) }
@@ -164,6 +164,10 @@ describe Spree::InventoryUnit, type: :model do
       it "returns it's associated return_item" do
         expect(subject).to eq return_item
       end
+
+      it 'connects return_authorizations' do
+        expect(inventory_unit.return_authorizations).to eq [return_item.return_authorization]
+      end 
     end
 
     context 'no associated return item' do

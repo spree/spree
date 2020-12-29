@@ -83,7 +83,8 @@ describe Spree::CreditCard, type: :model do
 
     it 'validates name presence' do
       credit_card.valid?
-      expect(credit_card.error_on(:name).size).to eq(1)
+      expect(credit_card.errors).not_to be_empty
+      expect(credit_card.errors.messages[:name]).to be_present
     end
 
     it 'only validates on create' do
@@ -140,6 +141,28 @@ describe Spree::CreditCard, type: :model do
     it 'does not raise an exception on non-string input' do
       credit_card.number = ({})
       expect(credit_card.number).to be_nil
+    end
+  end
+
+  describe "#verification_value=" do
+    it "accepts a valid 3-digit value" do
+      credit_card.verification_value = "123"
+      expect(credit_card.verification_value).to eq("123")
+    end
+
+    it "accepts a valid 4-digit value" do
+      credit_card.verification_value = "1234"
+      expect(credit_card.verification_value).to eq("1234")
+    end
+
+    it "stringifies an integer" do
+      credit_card.verification_value = 123
+      expect(credit_card.verification_value).to eq("123")
+    end
+
+    it "strips any whitespace" do
+      credit_card.verification_value = ' 1 2  3 '
+      expect(credit_card.verification_value).to eq('123')
     end
   end
 
@@ -280,7 +303,7 @@ describe Spree::CreditCard, type: :model do
       expect(am_card.month).to eq(Time.current.month)
       expect(am_card.first_name).to eq('Ludwig')
       expect(am_card.last_name).to eq('van Beethoven')
-      expect(am_card.verification_value).to eq(123)
+      expect(am_card.verification_value).to eq('123')
     end
   end
 
@@ -313,6 +336,37 @@ describe Spree::CreditCard, type: :model do
     second = FactoryBot.create(:credit_card, user: user, default: false)
     first.update_columns(year: Time.current.year, month: 1.month.ago.month)
 
-    expect { second.update_attributes!(default: true) }.not_to raise_error
+    expect { second.update!(default: true) }.not_to raise_error
+  end
+
+  describe 'scopes' do
+    describe '#not_expired' do
+      let(:previous_year) { DateTime.now.year - 1 }
+      let(:current_year) { DateTime.now.year }
+      let(:next_year) { DateTime.now.year + 1 }
+      let(:past_month) { DateTime.now.month - 1 }
+      let(:current_month) { DateTime.now.month }
+      let(:future_month) { DateTime.now.month + 1 }
+
+      let!(:outdated_credit_card_one) { create(:credit_card, year: previous_year, month: past_month) }
+      let!(:outdated_credit_card_two) { create(:credit_card, year: previous_year, month: current_month) }
+      let!(:outdated_credit_card_three) { create(:credit_card, year: previous_year, month: future_month) }
+      let!(:outdated_credit_card_four) { create(:credit_card, year: current_year, month: past_month) }
+      let!(:not_expired_credit_card_one) { create(:credit_card, year: current_year, month: current_month) }
+      let!(:not_expired_credit_card_two) { create(:credit_card, year: current_year, month: future_month) }
+      let!(:not_expired_credit_card_three) { create(:credit_card, year: next_year, month: past_month) }
+      let!(:not_expired_credit_card_four) { create(:credit_card, year: next_year, month: current_month) }
+      let!(:not_expired_credit_card_five) { create(:credit_card, year: next_year, month: future_month) }
+
+      it 'includes only not expired credit cards' do
+        expect(described_class.not_expired).to include(not_expired_credit_card_one, not_expired_credit_card_two, not_expired_credit_card_three,
+                                                      not_expired_credit_card_four, not_expired_credit_card_five)
+      end
+
+      it 'does not include outdated credit cards' do
+        expect(described_class.not_expired).not_to include(outdated_credit_card_one, outdated_credit_card_two, outdated_credit_card_three,
+                                                          outdated_credit_card_four)
+      end
+    end
   end
 end

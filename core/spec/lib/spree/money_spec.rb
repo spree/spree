@@ -24,7 +24,7 @@ describe Spree::Money do
 
   context 'with currency' do
     it 'passed in option' do
-      money = described_class.new(10, with_currency: true, html: false)
+      money = described_class.new(10, with_currency: true, html_wrap: false)
       expect(money.to_s).to eq('$10.00 USD')
     end
   end
@@ -44,22 +44,22 @@ describe Spree::Money do
   context 'currency parameter' do
     context 'when currency is specified in Canadian Dollars' do
       it 'uses the currency param over the global configuration' do
-        money = described_class.new(10, currency: 'CAD', with_currency: true, html: false)
+        money = described_class.new(10, currency: 'CAD', with_currency: true, html_wrap: false)
         expect(money.to_s).to eq('$10.00 CAD')
       end
     end
 
     context 'when currency is specified in Japanese Yen' do
       it 'uses the currency param over the global configuration' do
-        money = described_class.new(100, currency: 'JPY', html: false)
+        money = described_class.new(100, currency: 'JPY', html_wrap: false)
         expect(money.to_s).to eq('¥100')
       end
     end
   end
 
-  context 'symbol positioning' do
+  context 'format' do
     it 'passed in option' do
-      money = described_class.new(10, symbol_position: :after, html: false)
+      money = described_class.new(10, format: '%n %u', html_wrap: false)
       expect(money.to_s).to eq('10.00 $')
     end
   end
@@ -84,7 +84,7 @@ describe Spree::Money do
     end
 
     it 'formats correctly' do
-      money = described_class.new(1000, html: false)
+      money = described_class.new(1000, html_wrap: false)
       expect(money.to_s).to eq('¥1,000')
     end
   end
@@ -98,21 +98,21 @@ describe Spree::Money do
 
     # Regression test for #2634
     it 'formats as plain by default' do
-      money = described_class.new(10, symbol_position: :after)
+      money = described_class.new(10, format: '%n %u')
       expect(money.to_s).to eq('10.00 €')
     end
 
     # rubocop:disable Style/AsciiComments
     it 'formats as HTML if asked (nicely) to' do
-      money = described_class.new(10, symbol_position: :after)
+      money = described_class.new(10, format: '%n %u')
       # The HTML'ified version of "10.00 €"
       expect(money.to_html).to eq('10.00&nbsp;&#x20AC;')
     end
 
     it 'formats as HTML with currency' do
-      money = described_class.new(10, symbol_position: :after, with_currency: true)
+      money = described_class.new(10, format: '%n %u', with_currency: true)
       # The HTML'ified version of "10.00 €"
-      expect(money.to_html).to eq('10.00&nbsp;&#x20AC; <span class="currency">EUR</span>')
+      expect(money.to_html).to eq('10.00&nbsp;&#x20AC; EUR')
     end
     # rubocop:enable Style/AsciiComments
   end

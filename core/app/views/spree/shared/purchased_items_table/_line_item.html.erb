@@ -1,0 +1,27 @@
+<tr>
+  <td class="purchase_image">
+    <% if frontend_available? %>
+      <%= link_to(image_tag(variant_image_url(line_item.variant)), spree.product_url(line_item.product)) %>
+    <% else %>
+      <%= image_tag(variant_image_url(line_item.variant)) %>
+    <% end %>
+  </td>
+  <td class="purchase_item">
+    <strong>
+      <span class="f-fallback">
+        <% if frontend_available? %>
+          <%= link_to raw(line_item.name), spree.product_url(line_item.product) %>
+        <% else %>
+          <%= raw(line_item.name) %>
+        <% end %>
+      </span>
+    </strong>
+    <p class="purchase_item--additional"><%= raw(line_item.variant.options_text) -%></p>
+  </td>
+  <td class="align-right">
+    <span class="f-fallback purchase_item_price">
+      <%= line_item.quantity %> x <%= line_item.single_money %>
+      <%= line_item.display_amount %>
+    </span>
+  </td>
+</tr>

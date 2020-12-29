@@ -79,17 +79,14 @@ describe 'Prototypes', type: :feature, js: true do
       click_link 'Prototypes'
 
       click_icon :edit
-      property_ids = find_field('prototype_property_ids').value.map(&:to_i)
-      expect(property_ids).to match_array [model_property.id, brand_property.id]
 
-      unselect 'Brand', from: 'prototype_property_ids'
-      unselect 'Model', from: 'prototype_property_ids'
+      first('span[class="select2-selection__choice__remove"]').click
+      find('span[class="select2-selection__choice__remove"]').click
 
       click_button 'Update'
 
       click_icon :edit
-
-      expect(find_field('prototype_property_ids').value).to be_empty
+      expect(page).to have_no_css('.select2-search-choice')
     end
   end
 
@@ -101,13 +98,11 @@ describe 'Prototypes', type: :feature, js: true do
     click_link 'Products'
     click_link 'Prototypes'
 
-    spree_accept_alert do
+    accept_confirm do
       within("#spree_prototype_#{shirt_prototype.id}") do
         page.find('.delete-resource').click
       end
-      wait_for_ajax
-
-      expect(page).to have_content("Prototype \"#{shirt_prototype.name}\" has been successfully removed!")
     end
+    expect(page).to have_content("Prototype \"#{shirt_prototype.name}\" has been successfully removed!")
   end
 end

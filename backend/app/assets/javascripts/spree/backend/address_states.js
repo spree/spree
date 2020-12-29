@@ -1,33 +1,44 @@
-var update_state = function (region, done) {
-  'use strict';
+// eslint-disable-next-line camelcase, no-unused-vars
+function update_state(region, done) {
+  'use strict'
 
-  var country = $('span#' + region + 'country .select2').select2('val');
-  var state_select = $('span#' + region + 'state select.select2');
-  var state_input = $('span#' + region + 'state input.state_name');
+  var countryId = $('#' + region + 'country select').val()
+  var stateContainer = $('#' + region + 'state').parent()
+  var stateSelect = $('#' + region + 'state select')
+  var stateInput = $('#' + region + 'state input.state_name')
 
-  $.get(Spree.routes.states_search + '?country_id=' + country, function (data) {
-    var states = data.states;
+  $.get(Spree.routes.states_search + '?country_id=' + countryId, function (data) {
+    var states = data.states
+    var statesRequired = data.states_required
     if (states.length > 0) {
-      state_select.html('');
-      var states_with_blank = [{
+      stateSelect.html('')
+      var statesWithBlank = [{
         name: '',
         id: ''
-      }].concat(states);
-      $.each(states_with_blank, function (pos, state) {
+      }].concat(states)
+      $.each(statesWithBlank, function (_pos, state) {
         var opt = $(document.createElement('option'))
           .prop('value', state.id)
-          .html(state.name);
-        state_select.append(opt);
-      });
-      state_select.prop('disabled', false).show();
-      state_select.select2();
-      state_input.hide().prop('disabled', true);
-
+          .html(state.name)
+        stateSelect.append(opt).trigger('change')
+      })
+      stateSelect.prop('disabled', false).show()
+      stateSelect.select2()
+      stateInput.hide().prop('disabled', true)
+      stateContainer.show()
     } else {
-      state_input.prop('disabled', false).show();
-      state_select.select2('destroy').hide();
+      stateSelect.val(null).trigger('change')
+      if (stateSelect.data('select2')) {
+        stateSelect.select2('destroy')
+      }
+      stateSelect.hide()
+      if (statesRequired) {
+        stateInput.prop('disabled', false).show()
+      } else {
+        stateContainer.hide()
+      }
     }
 
-    if(done) done();
-  });
+    if (done) done()
+  })
 };

@@ -1,3 +1,4 @@
+# coding: utf-8
 require 'spec_helper'
 
 describe 'Variants', type: :feature do
@@ -15,13 +16,13 @@ describe 'Variants', type: :feature do
       within_row(1) { click_icon :edit }
       click_link 'Variants'
       click_on 'Add One'
-      expect(find('input#variant_price').value).to eq('1.99')
-      expect(find('input#variant_cost_price').value).to eq('1.00')
-      expect(find('input#variant_weight').value).to eq('2.50')
-      expect(find('input#variant_height').value).to eq('3.00')
-      expect(find('input#variant_width').value).to eq('1.00')
-      expect(find('input#variant_depth').value).to eq('1.50')
-      expect(page).to have_select('variant[tax_category_id]')
+      expect(page).to have_field(id: 'variant_price', with: '1.99')
+      expect(page).to have_field(id: 'variant_cost_price', with: '1.00')
+      expect(page).to have_field(id: 'variant_weight', with: '2.50')
+      expect(page).to have_field(id: 'variant_height', with: '3.00')
+      expect(page).to have_field(id: 'variant_width', with: '1.00')
+      expect(page).to have_field(id: 'variant_depth', with: '1.50')
+      expect(page).to have_css('.form-group[data-hook="tax_category"]', text: 'None')
     end
   end
 
@@ -30,6 +31,7 @@ describe 'Variants', type: :feature do
       context 'using Russian Rubles' do
         before do
           Spree::Config[:currency] = 'RUB'
+          create(:store, default: true, default_currency: 'RUB')
           create(:variant, product: product, price: 19.99)
         end
 

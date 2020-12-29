@@ -1,8 +1,8 @@
 $.fn.tagAutocomplete = function () {
-  'use strict';
+  'use strict'
 
-  function formatTag(tag) {
-    return Select2.util.escapeMarkup(tag.name);
+  function formatTag (tag) {
+    return Select2.util.escapeMarkup(tag.name)
   }
 
   this.select2({
@@ -12,10 +12,10 @@ $.fn.tagAutocomplete = function () {
     multiple: true,
     tags: true,
     initSelection: function (element, callback) {
-      var data = $(element.val().split(',')).map(function() {
-        return { name: this, id: this };
-      });
-      callback(data);
+      var data = $(element.val().split(',')).map(function () {
+        return { name: this, id: this }
+      })
+      callback(data)
     },
     ajax: {
       url: Spree.routes.tags_api,
@@ -25,28 +25,28 @@ $.fn.tagAutocomplete = function () {
         return {
           q: term,
           token: Spree.api_key
-        };
+        }
       },
       results: function (data) {
         return {
-          results: data.tags.map(function(tag) {
-            return { name: tag.name, id: tag.name };
+          results: data.tags.map(function (tag) {
+            return { name: tag.name, id: tag.name }
           })
-        };
+        }
       }
     },
-    createSearchChoice: function(term, data) {
-      if ($(data).filter(function() {
-        return this.name.localeCompare(term)===0;
-      }).length===0) {
-        return { id: term, name: term };
+    createSearchChoice: function (term, data) {
+      if ($(data).filter(function () {
+        return this.name.localeCompare(term) === 0
+      }).length === 0) {
+        return { id: term, name: term }
       }
     },
-    formatResult:    formatTag,
+    formatResult: formatTag,
     formatSelection: formatTag
-  });
-};
+  })
+}
 
 $(document).ready(function () {
-  $('.tag_picker').tagAutocomplete();
-});
+  $('.tag_picker').tagAutocomplete()
+})

@@ -10,7 +10,7 @@ describe Spree::TaxCategory, type: :model do
     end
 
     it 'undefaults the previous default tax category' do
-      new_tax_category.update_attributes(is_default: true)
+      new_tax_category.update(is_default: true)
       expect(new_tax_category.is_default).to be true
 
       tax_category.reload

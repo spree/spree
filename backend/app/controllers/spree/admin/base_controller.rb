@@ -2,7 +2,7 @@ module Spree
   module Admin
     class BaseController < Spree::BaseController
       helper 'spree/admin/navigation'
-      layout '/spree/layouts/admin'
+      layout 'spree/layouts/admin'
 
       before_action :authorize_admin
       before_action :generate_admin_api_key

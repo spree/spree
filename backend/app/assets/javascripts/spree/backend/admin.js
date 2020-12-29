@@ -4,390 +4,408 @@ under the spree namespace that do stuff we find helpful.
 Hopefully, this will evolve into a propper class.
 **/
 
-jQuery(function($) {
+/* global AUTH_TOKEN, order_number, Sortable, flatpickr, DOMPurify */
 
+//= require spree/backend/flatpickr_locals
+
+jQuery(function ($) {
   // Add some tips
-  $('.with-tip').tooltip();
+  $('.with-tip').each(function() {
+    $(this).tooltip({
+      container: $(this)
+    })
+  })
 
-  $('.js-show-index-filters').click(function(){
-    $(".filter-well").slideToggle();
-    $(this).parents(".filter-wrap").toggleClass("collapsed");
-    $("span.icon", $(this)).toggleClass("icon-chevron-down");
+  $('.with-tip').on('show.bs.tooltip', function(event) {
+    if (('ontouchstart' in window)) {
+      event.preventDefault()
+    }
+  })
+
+  $('.js-show-index-filters').click(function () {
+    $('.filter-well').slideToggle()
+    $(this).parents('.filter-wrap').toggleClass('collapsed')
+  })
+
+  // Responsive Menus
+  var body  = $('body')
+  var modalBackdrop  = $('#multi-backdrop')
+
+  // Fail safe on resize
+  var resizeTimer;
+  window.addEventListener('resize', function () {
+    document.body.classList.remove('modal-open', 'sidebar-open', 'contextualSideMenu-open');
+    document.body.classList.add('resize-animation-stopper');
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function () {
+      document.body.classList.remove('resize-animation-stopper');
+    }, 400);
   });
 
-  $('#main-sidebar').find('[data-toggle="collapse"]').on('click', function()
-    {
-      if($(this).find('.icon-chevron-left').length == 1){
-        $(this).find('.icon-chevron-left').removeClass('icon-chevron-left').addClass('icon-chevron-down');
-      }
-      else {
-        $(this).find('.icon-chevron-down').removeClass('icon-chevron-down').addClass('icon-chevron-left');
-      }
-    }
-  )
+  function closeAllMenus() {
+    body.removeClass()
+    body.addClass('admin')
+    modalBackdrop.removeClass('show')
+  }
 
-  // Sidebar nav toggle functionality
-  var sidebar_toggle = $('#sidebar-toggle');
-  sidebar_toggle.on('click', function() {
-    var wrapper = $('#wrapper');
-    var main    = $('#main-part');
-    var sidebar = $('#main-sidebar');
+  modalBackdrop.click(closeAllMenus)
 
-    // these should match `spree/backend/app/helpers/spree/admin/navigation_helper.rb#main_part_classes`
-    var mainWrapperCollapsedClasses = 'col-xs-12 sidebar-collapsed';
-    var mainWrapperExpandedClasses = 'col-xs-9 col-xs-offset-3 col-md-10 col-md-offset-2';
+  // Main Menu Functionality
+  var sidebarOpen    = $('#sidebar-open')
+  var sidebarClose   = $('#sidebar-close')
+  var activeItem     = $('#main-sidebar').find('.selected')
 
-    wrapper.toggleClass('sidebar-minimized');
-    sidebar.toggleClass('hidden-xs');
-    main
-      .toggleClass(mainWrapperCollapsedClasses)
-      .toggleClass(mainWrapperExpandedClasses);
+  activeItem.closest('.nav-sidebar').addClass('active-option')
+  activeItem.closest('.nav-pills').addClass('in show')
 
-    if (wrapper.hasClass('sidebar-minimized')) {
-      Cookies.set('sidebar-minimized', 'true', { path: '/admin' });
+  function openMenu() {
+    closeAllMenus()
+    body.addClass('sidebar-open modal-open')
+    modalBackdrop.addClass('show')
+  }
+  sidebarOpen.click(openMenu)
+  sidebarClose.click(closeAllMenus)
+
+  // Contextual Sidebar Menu
+  var contextualSidebarMenuToggle = $('#contextual-menu-toggle')
+  var contextualSidebarMenuClose = $('#contextual-menu-close')
+
+  function toggleContextualMenu() {
+    if (document.body.classList.contains('contextualSideMenu-open')) {
+      closeAllMenus()
     } else {
-      Cookies.set('sidebar-minimized', 'false', { path: '/admin' });
+      closeAllMenus()
+      body.addClass('contextualSideMenu-open modal-open')
+      modalBackdrop.addClass('show')
     }
-  });
-
-  $('.sidebar-menu-item').mouseover(function(){
-    if($('#wrapper').hasClass('sidebar-minimized')){
-      $(this).addClass('menu-active');
-      $(this).find('ul.nav').addClass('submenu-active');
-    }
-  });
-  $('.sidebar-menu-item').mouseout(function(){
-    if($('#wrapper').hasClass('sidebar-minimized')){
-      $(this).removeClass('menu-active');
-      $(this).find('ul.nav').removeClass('submenu-active');
-    }
-  });
+  }
+  contextualSidebarMenuToggle.click(toggleContextualMenu)
+  contextualSidebarMenuClose.click(toggleContextualMenu)
 
   // TODO: remove this js temp behaviour and fix this decent
   // Temp quick search
   // When there was a search term, copy it
-  $(".js-quick-search").val($(".js-quick-search-target").val());
+  $('.js-quick-search').val($('.js-quick-search-target').val())
   // Catch the quick search form submit and submit the real form
-  $("#quick-search").submit(function(){
-    $(".js-quick-search-target").val($(".js-quick-search").val());
-    $("#table-filter form").submit();
-    return false;
-  });
-
-  // Main menu active item submenu show
-  var active_item = $('#main-sidebar').find('.selected');
-  active_item.closest('.nav-pills').addClass('in');
-  active_item.closest('.nav-sidebar')
-    .find('.icon-chevron-left')
-    .removeClass('icon-chevron-left')
-    .addClass('icon-chevron-down');
-
-  // Replace ▼ and ▲ in sort_link with nicer icons
-  $(".sort_link").each(function(){
-    // Remove the &nbsp; in the text
-    var sort_link_text = $(this).text().replace('\xA0', '');
-
-    if(sort_link_text.indexOf("▼") >= 0){
-      $(this).text(sort_link_text.replace("▼",""));
-      $(this).append('<span class="icon icon-chevron-down"></span>');
-    } else if(sort_link_text.indexOf("▲") >= 0){
-      $(this).text(sort_link_text.replace("▲",""));
-      $(this).append('<span class="icon icon-chevron-up"></span>');
-    }
-  });
+  $('#quick-search').submit(function () {
+    $('.js-quick-search-target').val($('.js-quick-search').val())
+    $('#table-filter form').submit()
+    return false
+  })
 
   // Clickable ransack filters
-  $(".js-add-filter").click(function() {
-    var ransack_field = $(this).data("ransack-field");
-    var ransack_value = $(this).data("ransack-value");
+  $('.js-add-filter').click(function () {
+    var ransackField = $(this).data('ransack-field')
+    var ransackValue = $(this).data('ransack-value')
 
-    $("#" + ransack_field).val(ransack_value);
-    $("#table-filter form").submit();
-  });
+    $('#' + ransackField).val(ransackValue)
+    $('#table-filter form').submit()
+  })
 
-  $(document).on("click", ".js-delete-filter", function() {
-    var ransack_field = $(this).parents(".js-filter").data("ransack-field");
+  $(document).on('click', '.js-delete-filter', function () {
+    var ransackField = $(this).parents('.js-filter').data('ransack-field')
 
-    $("#" + ransack_field).val('');
-    $("#table-filter form").submit();
-  });
+    $('#' + ransackField).val('')
+    $('#table-filter form').submit()
+  })
 
-  $(".js-filterable").each(function() {
-    var $this = $(this);
-
-    if ($this.val()) {
-      var ransack_value, filter;
-      var ransack_field = $this.attr("id");
-      var label = $('label[for="' + ransack_field + '"]');
-
-      if ($this.is("select")) {
-        ransack_value = $this.find('option:selected').text();
-      } else {
-        ransack_value = $this.val();
-      }
-
-      function ransackField(value) {
-        switch (value) {
-          case 'Date Range':
-            return 'Start';
-          case '':
-            return 'Stop';
-          default:
-            return value.trim();
-        }
-      }
-
-      label = ransackField(label.text()) + ': ' + ransack_value;
-
-      filter = '<span class="js-filter label label-default" data-ransack-field="' + ransack_field + '">' + label + '<span class="icon icon-delete js-delete-filter"></span></span>';
-      $(".js-filters").append(filter).show();
+  function ransackField (value) {
+    switch (value) {
+      case 'Date Range':
+        return 'Start'
+      case '':
+        return 'Stop'
+      default:
+        return value.trim()
     }
-  });
+  }
+
+  $('.js-filterable').each(function () {
+    var $this = $(this)
+
+    if ($this.val() !== null && $this.val() !== '' && $this.val().length !== 0) {
+      var ransackValue, filter
+      var ransackFieldId = $this.attr('id')
+      var label = $('label[for="' + ransackFieldId + '"]')
+
+      if ($this.is('select')) {
+        ransackValue = $this.find('option:selected').toArray().map(function (option) {
+          return option.text;
+        }).join(', ')
+      } else {
+        ransackValue = $this.val()
+      }
+
+      label = ransackField(label.text()) + ': ' + ransackValue
+      var cleanLabel = DOMPurify.sanitize(label)
+
+      filter = '<span class="js-filter badge badge-secondary" data-ransack-field="' + ransackFieldId + '">' + cleanLabel + '<i class="icon icon-cancel ml-2 js-delete-filter"></i></span>'
+      $(".js-filters").append(filter).show()
+    }
+  })
 
   // per page dropdown
   // preserves all selected filters / queries supplied by user
   // changes only per_page value
-  $(".js-per-page-select").change(function() {
-    var form  = $(this).closest(".js-per-page-form");
-    var url   = form.attr('action');
-    var value = $(this).val().toString();
+  $('.js-per-page-select').change(function () {
+    var form = $(this).closest('.js-per-page-form')
+    var url = form.attr('action')
+    var value = $(this).val().toString()
     if (url.match(/\?/)) {
-      url += "&per_page=" + value;
+      url += '&per_page=' + value
     } else {
-      url += "?per_page=" + value;
+      url += '?per_page=' + value
     }
-    window.location = url;
-  });
+    window.location = url
+  })
 
   // injects per_page settings to all available search forms
   // so when user changes some filters / queries per_page is preserved
-  $(document).ready(function() {
-    var perPageDropdown = $(".js-per-page-select:first");
+  $(document).ready(function () {
+    var perPageDropdown = $('.js-per-page-select:first')
     if (perPageDropdown.length) {
-      var perPageValue = perPageDropdown.val().toString();
-      var perPageInput = '<input type="hidden" name="per_page" value=' + perPageValue + ' />';
-      $("#table-filter form").append(perPageInput);
+      var perPageValue = perPageDropdown.val().toString()
+      var perPageInput = '<input type="hidden" name="per_page" value=' + perPageValue + ' />'
+      $('#table-filter form').append(perPageInput)
     }
-  });
+  })
+})
 
-  // Make flash messages disappear
-  setTimeout('$(".alert-auto-disappear").slideUp()', 5000);
-
-});
-
-
-$.fn.visible = function(cond) { this[cond ? 'show' : 'hide' ]() };
-
-show_flash = function(type, message) {
-  var flash_div = $('.alert-' + type);
-  if (flash_div.length == 0) {
-    flash_div = $('<div class="alert alert-' + type + '" />');
-    $('#content').prepend(flash_div);
-  }
-  flash_div.html(message).show().delay(10000).slideUp();
+function handleAlert (element) {
+  element.classList.add('animate__animated', 'animate__bounceInUp')
+  element.addEventListener('animationend', function () {
+    element.classList.remove('animate__bounceInUp')
+    element.classList.add('animate__fadeOutDownBig', 'animate__delay-3s')
+  })
 }
 
+// Triggers alert if required on document ready.
+$(document).ready(function () {
+  var element = document.querySelector('.flash-alert')
+
+  if (element) {
+    handleAlert(element)
+  }
+})
+
+$.fn.visible = function (cond) { this[ cond ? 'show' : 'hide' ]() }
+// Triggers alerts when requested by javascript.
+// eslint-disable-next-line camelcase
+function show_flash (type, message) {
+  var cleanMessage = DOMPurify.sanitize(message)
+  var existingAlert = document.querySelector('.flash-alert')
+
+  if (existingAlert) {
+    existingAlert.remove()
+  }
+
+  var flashDiv = $('.alert-' + type)
+  if (flashDiv.length === 0) {
+    flashDiv = $('<div class="d-flex justify-content-center position-fixed flash-alert">' +
+                 '<div class="alert alert-' + type + ' mx-2">' + cleanMessage + '</div></div>')
+
+    $('body').append(flashDiv)
+
+    var ajaxFlashNotfication = document.querySelector('.flash-alert')
+    handleAlert(ajaxFlashNotfication)
+  }
+}
 
 // Apply to individual radio button that makes another element visible when checked
-$.fn.radioControlsVisibilityOfElement = function(dependentElementSelector){
-  if(!this.get(0)){ return  }
-  showValue = this.get(0).value;
-  radioGroup = $("input[name='" + this.get(0).name + "']");
-  radioGroup.each(function(){
-    $(this).click(function(){
+$.fn.radioControlsVisibilityOfElement = function (dependentElementSelector) {
+  if (!this.get(0)) { return }
+  var showValue = this.get(0).value
+  var radioGroup = $("input[name='" + this.get(0).name + "']")
+  radioGroup.each(function () {
+    $(this).click(function () {
+      // eslint-disable-next-line eqeqeq
       $(dependentElementSelector).visible(this.checked && this.value == showValue)
-    });
-    if(this.checked){ this.click() }
-  });
+    })
+    if (this.checked) { this.click() }
+  })
 }
 
-handle_date_picker_fields = function(){
-  $('.datepicker').datepicker({
+document.addEventListener('DOMContentLoaded', function() {
+  var dateFrom = flatpickr('.datePickerFrom', {
+    time_24hr: true,
     dateFormat: Spree.translations.date_picker,
-    dayNames: Spree.translations.abbr_day_names,
-    dayNamesMin: Spree.translations.abbr_day_names,
-    firstDay: Spree.translations.first_day,
-    monthNames: Spree.translations.month_names,
-    prevText: Spree.translations.previous,
-    nextText: Spree.translations.next,
-    showOn: "focus"
-  });
+    monthSelectorType: 'static',
+    onChange: function(selectedDates) {
+      dateTo.set('minDate', selectedDates[0])
+    }
+  })
 
-  // Correctly display range dates
-  $('.date-range-filter .datepicker-from').datepicker('option', 'onSelect', function(selectedDate) {
-    $(".date-range-filter .datepicker-to" ).datepicker( "option", "minDate", selectedDate );
-  });
-  $('.date-range-filter .datepicker-to').datepicker('option', 'onSelect', function(selectedDate) {
-    $(".date-range-filter .datepicker-from" ).datepicker( "option", "maxDate", selectedDate );
-  });
-}
+  var dateTo = flatpickr('.datePickerTo', {
+    monthSelectorType: 'static',
+    time_24hr: true,
+    dateFormat: Spree.translations.date_picker,
+    onChange: function(selectedDates) {
+      dateFrom.set('maxDate', selectedDates[0])
+    }
+  })
 
-$(document).ready(function(){
-  handle_date_picker_fields();
-  $(".observe_field").on('change', function() {
-    target = $(this).data("update");
-    $(target).hide();
-    $.ajax({ dataType: 'html',
-             url: $(this).data("base-url")+encodeURIComponent($(this).val()),
-             type: 'get',
-             success: function(data){
-               $(target).html(data);
-               $(target).show();
-             }
-    });
-  });
+  flatpickr('.datepicker', {
+    monthSelectorType: 'static',
+    time_24hr: true,
+    dateFormat: Spree.translations.date_picker
+  })
+})
 
-  var uniqueId = 1;
-  $('.spree_add_fields').click(function() {
-    var target = $(this).data("target");
-    var new_table_row = $(target + ' tr:visible:last').clone();
-    var new_id = new Date().getTime() + (uniqueId++);
-    new_table_row.find("input, select").each(function () {
-      var el = $(this);
-      el.val("");
-      el.prop("id", el.prop("id").replace(/\d+/, new_id))
-      el.prop("name", el.prop("name").replace(/\d+/, new_id))
+$(document).ready(function() {
+  $('.observe_field').on('change', function() {
+    target = $(this).data('update')
+    $(target).hide()
+    $.ajax({
+      dataType: 'html',
+      url: $(this).data('base-url') + encodeURIComponent($(this).val()),
+      type: 'GET'
+    }).done(function (data) {
+      $(target).html(data)
+      $(target).show()
+    })
+  })
+
+  var uniqueId = 1
+  $('.spree_add_fields').click(function () {
+    var target = $(this).data('target')
+    var newTableRow = $(target + ' tr:visible:last').clone()
+    var newId = new Date().getTime() + (uniqueId++)
+    newTableRow.find('input, select').each(function () {
+      var el = $(this)
+      el.val('')
+      el.prop('id', el.prop('id').replace(/\d+/, newId))
+      el.prop('name', el.prop('name').replace(/\d+/, newId))
     })
     // When cloning a new row, set the href of all icons to be an empty "#"
     // This is so that clicking on them does not perform the actions for the
     // duplicated row
-    new_table_row.find("a").each(function () {
-      var el = $(this);
-      el.prop('href', '#');
+    newTableRow.find('a').each(function () {
+      var el = $(this)
+      el.prop('href', '#')
     })
-    $(target).prepend(new_table_row);
+    $(target).prepend(newTableRow)
   })
 
-  $('body').on('click', '.delete-resource', function() {
-    var el = $(this);
-    if (confirm(el.data("confirm"))) {
+  $('body').on('click', '.delete-resource', function () {
+    var el = $(this)
+    if (confirm(el.data('confirm'))) {
       $.ajax({
         type: 'POST',
-        url: $(this).prop("href"),
+        url: $(this).prop('href'),
         data: {
           _method: 'delete',
           authenticity_token: AUTH_TOKEN
         },
         dataType: 'script',
-        success: function(response) {
-          var $flash_element = $('.alert-success');
-          if ($flash_element.length) {
-            el.parents("tr").fadeOut('hide', function() {
-              $(this).remove();
-            });
-          }
-        },
-        error: function(response, textStatus, errorThrown) {
-          show_flash('error', response.responseText);
+        complete: function() {
+          el.blur()
         }
-      });
+      }).done(function () {
+        var $flash_element = $('.alert-success')
+        if ($flash_element.length) {
+          el.parents('tr').fadeOut('hide', function () {
+            $(this).remove()
+          })
+        }
+      }).fail(function (response) {
+        show_flash('error', response.responseText)
+      })
+    } else {
+      el.blur()
     }
-    return false;
-  });
+    return false
+  })
 
-  $('body').on('click', 'a.spree_remove_fields', function() {
-    el = $(this);
-    el.prev("input[type=hidden]").val("1");
-    el.closest(".fields").hide();
-    if (el.prop("href").substr(-1) == '#') {
-      el.parents("tr").fadeOut('hide');
-    }else if (el.prop("href")) {
+  $('body').on('click', 'a.spree_remove_fields', function () {
+    el = $(this)
+    el.prev('input[type=hidden]').val('1')
+    el.closest('.fields').hide()
+    if (el.prop('href').substr(-1) === '#') {
+      el.parents('tr').fadeOut('hide')
+    } else if (el.prop('href')) {
       $.ajax({
         type: 'POST',
-        url: el.prop("href"),
+        url: el.prop('href'),
         data: {
           _method: 'delete',
           authenticity_token: AUTH_TOKEN
-        },
-        success: function(response) {
-          el.parents("tr").fadeOut('hide', function() {
-            $(this).remove();
-          });
-        },
-        error: function(response, textStatus, errorThrown) {
-          show_flash('error', response.responseText);
         }
-
+      }).done(function () {
+        el.parents('tr').fadeOut('hide', function () {
+          $(this).remove()
+        })
+      }).fail(function (response) {
+        show_flash('error', response.responseText)
       })
     }
-    return false;
-  });
+    return false
+  })
 
-  $('body').on('click', '.select_properties_from_prototype', function(){
-    $("#busy_indicator").show();
-    var clicked_link = $(this);
-    $.ajax({ dataType: 'script', url: clicked_link.prop("href"), type: 'get',
-        success: function(data){
-          clicked_link.parent("td").parent("tr").hide();
-          $("#busy_indicator").hide();
-        }
-    });
-    return false;
-  });
+  $('body').on('click', '.select_properties_from_prototype', function() {
+    $('#busy_indicator').show()
+    var clicked_link = $(this)
+    $.ajax({
+      dataType: 'script',
+      url: clicked_link.prop('href'),
+      type: 'GET'
+    }).done(function () {
+      clicked_link.parent('td').parent('tr').hide()
+      $('#busy_indicator').hide()
+    })
+    return false
+  })
 
-  // Fix sortable helper
-  var fixHelper = function(e, ui) {
-      ui.children().each(function() {
-          $(this).width($(this).width());
-      });
-      return ui;
-  };
-
-  $('table.sortable').ready(function(){
-    var td_count = $(this).find('tbody tr:first-child td').length
-    $('table.sortable tbody').sortable(
-      {
-        handle: '.handle',
-        helper: fixHelper,
-        placeholder: 'ui-sortable-placeholder',
-        update: function(event, ui) {
-          var tbody = this;
-          $("#progress").show();
-          positions = {};
-          $.each($('tr', tbody), function(position, obj){
-            reg = /spree_(\w+_?)+_(\d+)/;
-            parts = reg.exec($(obj).prop('id'));
-            if (parts) {
-              positions['positions['+parts[2]+']'] = position+1;
-            }
-          });
-          $.ajax({
-            type: 'POST',
-            dataType: 'script',
-            url: $(ui.item).closest("table.sortable").data("sortable-link"),
-            data: positions,
-            success: function(data){ $("#progress").hide(); }
-          });
-        },
-        start: function (event, ui) {
-          // Set correct height for placehoder (from dragged tr)
-          ui.placeholder.height(ui.item.height())
-          // Fix placeholder content to make it correct width
-          ui.placeholder.html("<td colspan='"+(td_count-1)+"'></td><td class='actions'></td>")
-        },
-        stop: function (event, ui) {
-          // Fix odd/even classes after reorder
-          $("table.sortable tr:even").removeClass("odd even").addClass("even");
-          $("table.sortable tr:odd").removeClass("odd even").addClass("odd");
-        }
-
-      });
-  });
-
-  $('a.dismiss').click(function() {
-    $(this).parent().fadeOut();
-  });
-
-  window.Spree.advanceOrder = function() {
-      $.ajax({
-          type: "PUT",
-          async: false,
-          data: {
-            token: Spree.api_key
-          },
-          url: Spree.url(Spree.routes.checkouts_api + "/" + order_number + "/advance")
-      }).done(function() {
-          window.location.reload();
-      });
+  // Sortable List Up-Down
+  var parentEl = document.getElementsByClassName("sortable")[0];
+  if (parentEl) {
+    var element = parentEl.querySelector('tbody')
   }
-});
+
+  if (element) {
+    Sortable.create(element, {
+      handle: '.move-handle',
+      animation: 550,
+      ghostClass: 'bg-light',
+      dragClass: "sortable-drag-v",
+      easing: 'cubic-bezier(1, 0, 0, 1)',
+      swapThreshold: 0.9,
+      forceFallback: true,
+      onEnd: function (evt) {
+        var itemEl = evt.item
+        var positions = { authenticity_token: AUTH_TOKEN }
+        $.each($('tr', element), function(position, obj) {
+          reg = /spree_(\w+_?)+_(\d+)/
+          parts = reg.exec($(obj).prop('id'))
+          if (parts) {
+            positions['positions[' + parts[2] + ']'] = position + 1
+          }
+        })
+        $.ajax({
+          type: 'POST',
+          dataType: 'json',
+          url: $(itemEl).closest('table.sortable').data('sortable-link'),
+          data: positions
+        })
+      }
+    })
+  }
+
+  // Close notifications
+  $('a.dismiss').click(function () {
+    $(this).parent().fadeOut()
+  })
+
+  // Utility
+  window.Spree.advanceOrder = function() {
+    $.ajax({
+      type: 'PUT',
+      async: false,
+      data: {
+        token: Spree.api_key
+      },
+      url: Spree.url(Spree.routes.checkouts_api + '/' + order_number + '/advance')
+    }).done(function() {
+      window.location.reload()
+    })
+  }
+})

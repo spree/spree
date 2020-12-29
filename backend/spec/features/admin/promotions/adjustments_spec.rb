@@ -19,16 +19,19 @@ describe 'Promotion Adjustments', type: :feature, js: true do
       select2 'Item total', from: 'Add rule of type'
       within('#rule_fields') { click_button 'Add' }
 
-      eventually_fill_in "promotion_promotion_rules_attributes_#{Spree::Promotion.count}_preferred_amount_min", with: 30
-      eventually_fill_in "promotion_promotion_rules_attributes_#{Spree::Promotion.count}_preferred_amount_max", with: 60
+      fill_in id: "promotion_promotion_rules_attributes_#{Spree::Promotion.count}_preferred_amount_min", with: 30
+      fill_in id: "promotion_promotion_rules_attributes_#{Spree::Promotion.count}_preferred_amount_max", with: 60
+      wait_for { !page.has_button?('Update') }
       within('#rule_fields') { click_button 'Update' }
 
       select2 'Create whole-order adjustment', from: 'Add action of type'
       within('#action_fields') { click_button 'Add' }
-      select2 'Flat Rate', from: 'Calculator'
+      select2 'Flat Rate', from: 'Calculator', search: true, match: :first
+      wait_for { !page.has_button?('Update') }
       within('#actions_container') { click_button 'Update' }
 
       within('.calculator-fields') { fill_in 'Amount', with: 5 }
+      wait_for { !page.has_button?('Update') }
       within('#actions_container') { click_button 'Update' }
 
       expect(promotion.code).to eq('order')
@@ -47,7 +50,7 @@ describe 'Promotion Adjustments', type: :feature, js: true do
 
     it 'allows an admin to create a single user coupon promo with flat rate discount' do
       fill_in 'Name', with: 'Promotion'
-      fill_in 'Usage Limit', with: '1'
+      fill_in 'Limit usage to', with: '1'
       fill_in 'Code', with: 'single_use'
       click_button 'Create'
       promotion = Spree::Promotion.find_by(name: 'Promotion')
@@ -55,9 +58,11 @@ describe 'Promotion Adjustments', type: :feature, js: true do
 
       select2 'Create whole-order adjustment', from: 'Add action of type'
       within('#action_fields') { click_button 'Add' }
-      select2 'Flat Rate', from: 'Calculator'
+      select2 'Flat Rate', from: 'Calculator', search: true, match: :first
+      wait_for { !page.has_button?('Update') }
       within('#actions_container') { click_button 'Update' }
       within('#action_fields') { fill_in 'Amount', with: '5' }
+      wait_for { !page.has_button?('Update') }
       within('#actions_container') { click_button 'Update' }
 
       expect(promotion.usage_limit).to eq(1)
@@ -80,15 +85,18 @@ describe 'Promotion Adjustments', type: :feature, js: true do
       select2 'Item total', from: 'Add rule of type'
       within('#rule_fields') { click_button 'Add' }
 
-      eventually_fill_in 'promotion_promotion_rules_attributes_1_preferred_amount_min', with: 30
-      eventually_fill_in 'promotion_promotion_rules_attributes_1_preferred_amount_max', with: 60
+      fill_in id: 'promotion_promotion_rules_attributes_1_preferred_amount_min', with: 30
+      fill_in id: 'promotion_promotion_rules_attributes_1_preferred_amount_max', with: 60
+      wait_for { !page.has_button?('Update') }
       within('#rule_fields') { click_button 'Update' }
 
       select2 'Create whole-order adjustment', from: 'Add action of type'
       within('#action_fields') { click_button 'Add' }
       select2 'Flat Percent', from: 'Calculator'
+      wait_for { !page.has_button?('Update') }
       within('#actions_container') { click_button 'Update' }
       within('.calculator-fields') { fill_in 'Flat Percent', with: '10' }
+      wait_for { !page.has_button?('Update') }
       within('#actions_container') { click_button 'Update' }
 
       expect(promotion.code).to be_blank
@@ -116,14 +124,17 @@ describe 'Promotion Adjustments', type: :feature, js: true do
 
       select2 'Product(s)', from: 'Add rule of type'
       within('#rule_fields') { click_button 'Add' }
-      select2_search 'RoR Mug', from: 'Choose products'
+      select2 'RoR Mug', from: 'Choose products', search: true
+      wait_for { !page.has_button?('Update') }
       within('#rule_fields') { click_button 'Update' }
 
       select2 'Create per-line-item adjustment', from: 'Add action of type'
       within('#action_fields') { click_button 'Add' }
       select2 'Percent Per Item', from: 'Calculator'
+      wait_for { !page.has_button?('Update') }
       within('#actions_container') { click_button 'Update' }
       within('.calculator-fields') { fill_in 'Percent', with: '10' }
+      wait_for { !page.has_button?('Update') }
       within('#actions_container') { click_button 'Update' }
 
       expect(promotion.code).to be_blank
@@ -148,8 +159,9 @@ describe 'Promotion Adjustments', type: :feature, js: true do
 
       select2 'Item total', from: 'Add rule of type'
       within('#rule_fields') { click_button 'Add' }
-      eventually_fill_in 'promotion_promotion_rules_attributes_1_preferred_amount_min', with: '50'
-      eventually_fill_in 'promotion_promotion_rules_attributes_1_preferred_amount_max', with: '150'
+      fill_in id: 'promotion_promotion_rules_attributes_1_preferred_amount_min', with: '50'
+      fill_in id: 'promotion_promotion_rules_attributes_1_preferred_amount_max', with: '150'
+      wait_for { !page.has_button?('Update') }
       within('#rule_fields') { click_button 'Update' }
 
       select2 'Free shipping', from: 'Add action of type'
@@ -175,9 +187,11 @@ describe 'Promotion Adjustments', type: :feature, js: true do
 
       select2 'Create whole-order adjustment', from: 'Add action of type'
       within('#action_fields') { click_button 'Add' }
-      select2 'Flat Rate', from: 'Calculator'
+      select2 'Flat Rate', from: 'Calculator', search: true, match: :first
+      wait_for { !page.has_button?('Update') }
       within('#actions_container') { click_button 'Update' }
       within('.calculator-fields') { fill_in 'Amount', with: '4' }
+      wait_for { !page.has_button?('Update') }
       within('#actions_container') { click_button 'Update' }
 
       expect(promotion.path).to eq('content/cvv')
@@ -204,17 +218,20 @@ describe 'Promotion Adjustments', type: :feature, js: true do
 
       within('#action_fields') { click_button 'Add' }
 
-      page.find('.create_line_items .select2-choice').click
-      page.find('.select2-input').set('RoR Mug')
-      page.find('.select2-highlighted').click
+      select2_open label: 'Variant'
+      select2_search 'RoR Mug', label: 'Variant'
+      select2_select 'RoR Mug', from: 'Variant', match: :first
 
+      wait_for { !page.has_button?('Update') }
       within('#actions_container') { click_button 'Update' }
 
       select2 'Create whole-order adjustment', from: 'Add action of type'
       within('#new_promotion_action_form') { click_button 'Add' }
-      select2 'Flat Rate', from: 'Calculator'
+      select2 'Flat Rate', from: 'Calculator', search: true, match: :first
+      wait_for { !page.has_button?('Update') }
       within('#actions_container') { click_button 'Update' }
       within('.create_adjustment .calculator-fields') { fill_in 'Amount', with: '40.00' }
+      wait_for { !page.has_button?('Update') }
       within('#actions_container') { click_button 'Update' }
 
       expect(promotion.code).to eq('complex')
@@ -233,15 +250,18 @@ describe 'Promotion Adjustments', type: :feature, js: true do
 
       select2 'Item total', from: 'Add rule of type'
       within('#rule_fields') { click_button 'Add' }
-      eventually_fill_in 'promotion_promotion_rules_attributes_1_preferred_amount_min', with: '50'
-      eventually_fill_in 'promotion_promotion_rules_attributes_1_preferred_amount_max', with: '150'
+      fill_in id: 'promotion_promotion_rules_attributes_1_preferred_amount_min', with: '50'
+      fill_in id: 'promotion_promotion_rules_attributes_1_preferred_amount_max', with: '150'
+      wait_for { !page.has_button?('Update') }
       within('#rule_fields') { click_button 'Update' }
 
       select2 'Create whole-order adjustment', from: 'Add action of type'
       within('#action_fields') { click_button 'Add' }
-      select2 'Flat Rate', from: 'Calculator'
+      select2 'Flat Rate', from: 'Calculator', search: true, match: :first
+      wait_for { !page.has_button?('Update') }
       within('#actions_container') { click_button 'Update' }
       within('.calculator-fields') { fill_in 'Amount', with: '5' }
+      wait_for { !page.has_button?('Update') }
       within('#actions_container') { click_button 'Update' }
 
       first_rule = promotion.rules.first
@@ -268,7 +288,7 @@ describe 'Promotion Adjustments', type: :feature, js: true do
         fill_in 'q_name_cont', with: 'welcome'
         fill_in 'q_code_cont', with: 'rx01welcome'
         fill_in 'q_path_cont', with: 'path_promo'
-        select 'Welcome Category', from: 'q_promotion_category_id_eq'
+        select2 'Welcome Category', from: 'Promotion Category'
       end
 
       click_on 'Filter Results'

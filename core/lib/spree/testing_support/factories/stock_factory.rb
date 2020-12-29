@@ -3,7 +3,7 @@ FactoryBot.define do
   factory :stock_packer, class: Spree::Stock::Packer do
     transient do
       stock_location { build(:stock_location) }
-      contents []
+      contents       { [] }
     end
 
     initialize_with { new(stock_location, contents) }
@@ -11,8 +11,8 @@ FactoryBot.define do
 
   factory :stock_package, class: Spree::Stock::Package do
     transient do
-      stock_location { build(:stock_location) }
-      contents       { [] }
+      stock_location    { build(:stock_location) }
+      contents          { [] }
       variants_contents { {} }
     end
 

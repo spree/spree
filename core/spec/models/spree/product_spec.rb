@@ -353,11 +353,13 @@ describe Spree::Product, type: :model do
 
       describe 'is not used' do
         before { product.set_property(name, 'bar') }
+
         it { is_expected.to eq name }
       end
 
       describe 'is used' do
         before { product.set_property(name, 'bar', presentation) }
+
         it { is_expected.to eq presentation }
       end
     end
@@ -467,13 +469,20 @@ describe Spree::Product, type: :model do
 
   context '#images' do
     let(:product) { create(:product) }
-    let(:image) { File.open(File.expand_path('../../../fixtures/thinking-cat.jpg', __FILE__)) }
-    let(:params) { { viewable_id: product.master.id, viewable_type: 'Spree::Variant', attachment: image, alt: 'position 2', position: 2 } }
+    let(:file) { File.open(File.expand_path('../../fixtures/thinking-cat.jpg', __dir__)) }
+    let(:params) { { viewable_id: product.master.id, viewable_type: 'Spree::Variant', attachment: file, alt: 'position 2', position: 2 } }
 
     before do
-      Spree::Image.create(params)
-      Spree::Image.create(params.merge(alt: 'position 1', position: 1))
-      Spree::Image.create(params.merge(viewable_type: 'ThirdParty::Extension', alt: 'position 1', position: 2))
+      images = [
+        Spree::Image.new(params),
+        Spree::Image.new(params.merge(alt: 'position 1', position: 1)),
+        Spree::Image.new(params.merge(viewable_type: 'ThirdParty::Extension', alt: 'position 1', position: 2))
+      ]
+      images.each_with_index do |image, index|
+        image.attachment.attach(io: file, filename: "thinking-cat-#{index + 1}.jpg", content_type: 'image/jpeg')
+        image.save!
+        file.rewind # we need to do this to avoid `ActiveStorage::IntegrityError`
+      end
     end
 
     it 'only looks for variant images' do
@@ -567,20 +576,6 @@ describe Spree::Product, type: :model do
     end
   end
 
-  context 'acts_as_taggable' do
-    let(:product) { create(:product) }
-
-    it 'adds tags' do
-      product.tag_list.add('awesome')
-      expect(product.tag_list).to include('awesome')
-    end
-
-    it 'removes tags' do
-      product.tag_list.remove('awesome')
-      expect(product.tag_list).not_to include('awesome')
-    end
-  end
-
   context '#brand' do
     let(:taxonomy) { create(:taxonomy, name: I18n.t('spree.taxonomy_brands_name')) }
     let(:product) { create(:product, taxons: [taxonomy.taxons.first]) }
@@ -599,6 +594,24 @@ describe Spree::Product, type: :model do
     end
   end
 
+  context '#backordered?' do
+    let!(:product) { create(:product) }
+
+    it 'returns true when out of stock and backorderable' do
+      expect(product.backordered?).to eq(true)
+    end
+
+    it 'returns false when out of stock and not backorderable' do
+      product.stock_items.first.update(backorderable: false)
+      expect(product.backordered?).to eq(false)
+    end
+
+    it 'returns false when there is available item in stock' do
+      product.stock_items.first.update(count_on_hand: 10)
+      expect(product.backordered?).to eq(false)
+    end
+  end
+
   describe '#ensure_no_line_items' do
     let(:product) { create(:product) }
     let!(:line_item) { create(:line_item, variant: product.master) }
@@ -606,6 +619,106 @@ describe Spree::Product, type: :model do
     it 'adds error on product destroy' do
       expect(product.destroy).to eq false
       expect(product.errors[:base]).to include I18n.t('activerecord.errors.models.spree/product.attributes.base.cannot_destroy_if_attached_to_line_items')
+    end
+  end
+
+  context '#default_variant' do
+    let(:product) { create(:product) }
+
+    context 'track inventory levels' do
+      context 'product has variants' do
+        let!(:variant_1) { create(:variant, product: product, position: 1) }
+        let!(:variant_2) { create(:variant, product: product, position: 2) }
+
+        before do
+          variant_1.stock_items.first.update(backorderable: false, count_on_hand: 0)
+          variant_2.stock_items.first.update(backorderable: false, count_on_hand: 0)
+        end
+
+        context 'in stock' do
+          before { variant_2.stock_items.first.adjust_count_on_hand(1) }
+
+          it 'returns first non-master in stock variant' do
+            expect(product.default_variant).to eq(variant_2)
+          end
+        end
+
+        context 'backorderable' do
+          before { variant_2.stock_items.first.update(backorderable: true) }
+
+          it 'returns first non-master backorderable variant' do
+            expect(product.default_variant).to eq(variant_2)
+          end
+        end
+
+        context 'product without variants in stock or backorerable' do
+          it 'returns first non-master variant' do
+            expect(product.default_variant).to eq(variant_1)
+          end
+        end
+      end
+
+      context 'without tracking inventory levels' do
+        let!(:variant_1) { create(:variant, product: product, position: 1) }
+        let!(:variant_2) { create(:variant, product: product, position: 2) }
+
+        before do
+          Spree::Config[:track_inventory_levels] = false
+          variant_1.stock_items.first.update(backorderable: false, count_on_hand: 0)
+          variant_2.stock_items.first.update(backorderable: false, count_on_hand: 0)
+        end
+
+        after { Spree::Config[:track_inventory_levels] = true }
+
+        it 'returns first non-master variant' do
+          expect(product.default_variant).to eq(variant_1)
+        end
+      end
+
+      context 'product without variants' do
+        it 'returns master variant' do
+          expect(product.default_variant).to eq(product.master)
+        end
+      end
+    end
+  end
+
+  context '#default_variant_id' do
+    let(:product) { create(:product) }
+
+    context 'product has variants' do
+      let!(:variant) { create(:variant, product: product) }
+
+      it 'returns first non-master variant ID' do
+        expect(product.default_variant_id).to eq(variant.id)
+      end
+    end
+
+    context 'product without variants' do
+      it 'returns master variant ID' do
+        expect(product.default_variant_id).to eq(product.master.id)
+      end
+    end
+  end
+end
+
+describe '#default_variant_cache_key' do
+  let(:product) { create(:product) }
+  let(:key) { product.send(:default_variant_cache_key) }
+
+  context 'with inventory tracking' do
+    before { Spree::Config[:track_inventory_levels] = true }
+
+    it 'returns proper key' do
+      expect(key).to eq("spree/default-variant/#{product.cache_key_with_version}/true")
+    end
+  end
+
+  context 'without invenrtory tracking' do
+    before { Spree::Config[:track_inventory_levels] = false }
+
+    it 'returns proper key' do
+      expect(key).to eq("spree/default-variant/#{product.cache_key_with_version}/false")
     end
   end
 end

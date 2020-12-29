@@ -1,5 +1,7 @@
 FactoryBot.define do
   factory :image, class: Spree::Image do
-    attachment { File.new(Spree::Core::Engine.root + 'spec/fixtures' + 'thinking-cat.jpg') }
+    before(:create) do |image|
+      image.attachment.attach(io: File.new(Spree::Core::Engine.root + 'spec/fixtures' + 'thinking-cat.jpg'), filename: 'thinking-cat.jpg')
+    end
   end
 end

@@ -20,15 +20,15 @@ module Spree
 
         def create
           @order = Spree::Order.find_by!(number: params.fetch(:shipment).fetch(:order_id))
-          authorize! :read, @order
+          authorize! :show, @order
           authorize! :create, Shipment
           quantity = params[:quantity].to_i
           @shipment = @order.shipments.create(stock_location_id: params.fetch(:stock_location_id))
 
-          @line_item = Spree::Cart::AddItem.call(order: @order,
-                                                 variant: variant,
-                                                 quantity: quantity,
-                                                 options: { shipment: @shipment }).value
+          @line_item = Spree::Dependencies.cart_add_item_service.constantize.call(order: @order,
+                                                                                  variant: variant,
+                                                                                  quantity: quantity,
+                                                                                  options: { shipment: @shipment }).value
 
           respond_with(@shipment.reload, default_template: :show)
         end
@@ -59,10 +59,10 @@ module Spree
         def add
           quantity = params[:quantity].to_i
 
-          Spree::Cart::AddItem.call(order: @shipment.order,
-                                    variant: variant,
-                                    quantity: quantity,
-                                    options: { shipment: @shipment })
+          Spree::Dependencies.cart_add_item_service.constantize.call(order: @shipment.order,
+                                                                     variant: variant,
+                                                                     quantity: quantity,
+                                                                     options: { shipment: @shipment })
 
           respond_with(@shipment, default_template: :show)
         end
@@ -74,7 +74,10 @@ module Spree
                        @shipment.inventory_units_for(variant).sum(:quantity)
                      end
 
-          Spree::Cart::RemoveItem.call(order: @shipment.order, variant: variant, quantity: quantity, options: { shipment: @shipment })
+          Spree::Dependencies.cart_remove_item_service.constantize.call(order: @shipment.order,
+                                                                        variant: variant,
+                                                                        quantity: quantity,
+                                                                        options: { shipment: @shipment })
 
           if @shipment.inventory_units.any?
             @shipment.reload
@@ -89,12 +92,17 @@ module Spree
           @stock_location = Spree::StockLocation.find(params[:stock_location_id])
 
           unless @quantity > 0
-            unprocessable_entity("#{Spree.t(:shipment_transfer_errors_occured, scope: 'api')} \n #{Spree.t(:negative_quantity, scope: 'api')}")
+            unprocessable_entity("#{Spree.t(:shipment_transfer_errors_occurred, scope: 'api')} \n #{Spree.t(:negative_quantity, scope: 'api')}")
             return
           end
 
-          @original_shipment.transfer_to_location(@variant, @quantity, @stock_location)
-          render json: { success: true, message: Spree.t(:shipment_transfer_success) }, status: 201
+          transfer = @original_shipment.transfer_to_location(@variant, @quantity, @stock_location)
+          if transfer.valid?
+            transfer.run!
+            render json: { message: Spree.t(:shipment_transfer_success) }, status: 201
+          else
+            render json: { message: transfer.errors.full_messages.to_sentence }, status: 422
+          end
         end
 
         def transfer_to_shipment
@@ -110,10 +118,15 @@ module Spree
             end
 
           if error
-            unprocessable_entity("#{Spree.t(:shipment_transfer_errors_occured, scope: 'api')} \n#{error}")
+            unprocessable_entity("#{Spree.t(:shipment_transfer_errors_occurred, scope: 'api')} \n#{error}")
           else
-            @original_shipment.transfer_to_shipment(@variant, @quantity, @target_shipment)
-            render json: { success: true, message: Spree.t(:shipment_transfer_success) }, status: 201
+            transfer = @original_shipment.transfer_to_shipment(@variant, @quantity, @target_shipment)
+            if transfer.valid?
+              transfer.run!
+              render json: { message: Spree.t(:shipment_transfer_success) }, status: 201
+            else
+              render json: { message: transfer.errors.full_messages }, status: 422
+            end
           end
         end
 
@@ -123,13 +136,13 @@ module Spree
           @original_shipment         = Spree::Shipment.find_by!(number: params[:original_shipment_number])
           @variant                   = Spree::Variant.find(params[:variant_id])
           @quantity                  = params[:quantity].to_i
-          authorize! :read, @original_shipment
+          authorize! :show, @original_shipment
           authorize! :create, Shipment
         end
 
         def find_and_update_shipment
           @shipment = Spree::Shipment.accessible_by(current_ability, :update).readonly(false).find_by!(number: params[:id])
-          @shipment.update_attributes(shipment_params)
+          @shipment.update(shipment_params)
           @shipment.reload
         end
 

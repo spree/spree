@@ -1,0 +1,60 @@
+<table class="purchase_content">
+  <%= render collection: line_items, partial: 'spree/shared/purchased_items_table/line_item', as: :line_item %>
+  <%= render 'spree/shared/purchased_items_table/subtotal', order: order %>
+  <% if order.line_item_adjustments.exists? %>
+    <% if order.all_adjustments.promotion.eligible.exists? %>
+      <% order.all_adjustments.promotion.eligible.group_by(&:label).each do |label, adjustments| %>
+        <tr>
+          <td></td>
+          <td>
+            <p class="f-fallback purchase_total purchase_total--label">
+              <%= Spree.t(:promotion) %> <%= label %>:
+            </p>
+          </td>
+          <td>
+            <p class="f-fallback purchase_total">
+              <%= Spree::Money.new(adjustments.sum(&:amount), currency: order.currency) %>
+            </p>
+          </td>
+        </tr>
+      <% end %>
+    <% end %>
+  <% end %>
+  <% order.shipments.group_by { |s| s.selected_shipping_rate&.name }.each do |name, shipments| %>
+    <tr>
+      <td></td>
+      <td>
+        <p class="f-fallback purchase_total purchase_total--label">
+          <%= Spree.t(:shipping) %> <%= name %>:
+        </p>
+      </td>
+      <td>
+        <p class="f-fallback purchase_total">
+          <%= Spree::Money.new(shipments.sum(&:discounted_cost), currency: order.currency) %>
+        </p>
+      </td>
+    </tr>
+  <% end %>
+  <% if order.all_adjustments.eligible.tax.exists? %>
+    <% order.all_adjustments.eligible.tax.group_by(&:label).each do |label, adjustments| %>
+      <tr>
+        <td></td>
+        <td>
+          <p class="f-fallback purchase_total purchase_total--label">
+            <%= Spree.t(:tax) %> <%= label %>:
+          </p>
+        </td>
+        <td>
+          <p class="f-fallback purchase_total">
+            <%= Spree::Money.new(adjustments.sum(&:amount), currency: order.currency) %>
+          </p>
+        </td>
+      </tr>
+    <% end %>
+  <% end %>
+  <% order.adjustments.eligible.each do |adjustment| %>
+    <% next if (adjustment.source_type == 'Spree::TaxRate') || (adjustment.amount == 0) %>
+    <%= render 'spree/shared/purchased_items_table/adjustment', adjustment: adjustment, order: order %>
+  <% end %>
+  <%= render 'spree/shared/purchased_items_table/total', order: order %>
+</table>
