@@ -1,10 +1,11 @@
 require 'i18n'
 require 'active_support/core_ext/array/extract_options'
 require 'spree/i18n/base'
+require 'action_view'
 
 module Spree
-  extend ActionView::Helpers::TranslationHelper
-  extend ActionView::Helpers::TagHelper
+  extend ::ActionView::Helpers::TranslationHelper
+  extend ::ActionView::Helpers::TagHelper
 
   class << self
     # Add spree namespace and delegate to Rails TranslationHelper for some nice
