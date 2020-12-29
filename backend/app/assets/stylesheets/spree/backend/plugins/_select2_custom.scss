@@ -9,8 +9,7 @@
   z-index: 1028;
 }
 
-// Hides strange empty <li> tag highligted in open select2-dropdown
-// Comment out below and see orders/filter Shipment State
+// Hides the empty <li> tag highligted in open select2-dropdown.
 ul.select2-results__options {
   li:empty  {
     display: none;
