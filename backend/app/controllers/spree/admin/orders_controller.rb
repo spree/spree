@@ -148,7 +148,7 @@ module Spree
       end
 
       def set_channel
-        if @order.update_attributes(channel: params[:order][:channel])
+        if @order.update(order_params)
           flash[:success] = flash_message_for(@order, :successfully_updated)
         else
           flash[:error] = @order.errors.full_messages.join(', ')
@@ -161,7 +161,7 @@ module Spree
 
       def order_params
         params[:created_by_id] = try_spree_current_user.try(:id)
-        params.permit(:created_by_id, :user_id, :store_id)
+        params.permit(:created_by_id, :user_id, :store_id, :channel)
       end
 
       def load_order
