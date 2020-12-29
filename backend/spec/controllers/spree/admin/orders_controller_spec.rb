@@ -51,6 +51,18 @@ describe Spree::Admin::OrdersController, type: :controller do
       end
     end
 
+    describe '#channel' do
+      subject do
+        get :channel, params: { id: cart_order.number }
+      end
+
+      let(:cart_order) { create(:order_with_line_items) }
+
+      it 'displays a page with channel input' do
+        expect(subject).to render_template :channel
+      end
+    end
+
     context '#resume' do
       it 'resumes an order' do
         expect(order).to receive(:resume!)
