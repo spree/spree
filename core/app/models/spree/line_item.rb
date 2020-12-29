@@ -4,7 +4,7 @@ module Spree
 
     with_options inverse_of: :line_items do
       belongs_to :order, class_name: 'Spree::Order', touch: true
-      belongs_to :variant, class_name: 'Spree::Variant'
+      belongs_to :variant, -> { with_deleted }, class_name: 'Spree::Variant'
     end
     belongs_to :tax_category, class_name: 'Spree::TaxCategory'
 
@@ -118,11 +118,6 @@ module Spree
 
       update_price_from_modifier(currency, opts)
       assign_attributes opts
-    end
-
-    # Remove variant default_scope `deleted_at: nil`
-    def variant
-      Spree::Variant.unscoped { super }
     end
 
     private
