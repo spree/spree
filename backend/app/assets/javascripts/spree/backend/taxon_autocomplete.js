@@ -14,7 +14,6 @@ $.fn.taxonAutocomplete = function() {
     multiple: true,
     placeholder: Spree.translations.taxon_placeholder,
     minimumInputLength: 2,
-    allowClear: true,
     ajax: {
       url: Spree.routes.taxons_api,
       dataType: 'json',
