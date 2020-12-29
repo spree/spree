@@ -14,7 +14,7 @@ module Spree
       @virtual_path = virtual_path
 
       options = args.extract_options!
-      options[:scope] = [*options[:scope]].unshift(:spree)
+      options[:scope] = [*options[:scope]].unshift(:spree).uniq
       args << options
       super(*args)
     end
