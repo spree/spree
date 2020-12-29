@@ -4,7 +4,6 @@ $.fn.optionTypeAutocomplete = function () {
   this.select2({
     minimumInputLength: 2,
     multiple: true,
-    allowClear: true,
     ajax: {
       url: Spree.routes.option_types_api,
       datatype: 'json',
