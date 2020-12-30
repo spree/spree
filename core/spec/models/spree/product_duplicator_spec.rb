@@ -10,7 +10,6 @@ module Spree
       {
         viewable_id: product.master.id,
         viewable_type: 'Spree::Variant',
-        attachment: file,
         alt: 'position 1',
         position: 1
       }

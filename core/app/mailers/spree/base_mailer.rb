@@ -1,6 +1,6 @@
 module Spree
   class BaseMailer < ActionMailer::Base
-    add_template_helper(MailHelper)
+    helper Spree::MailHelper
 
     def current_store
       @current_store ||= Spree::Store.current

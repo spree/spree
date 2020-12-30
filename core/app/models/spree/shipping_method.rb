@@ -19,7 +19,7 @@ module Spree
                                      foreign_key: 'shipping_method_id'
     has_many :zones, through: :shipping_method_zones, class_name: 'Spree::Zone'
 
-    belongs_to :tax_category, class_name: 'Spree::TaxCategory', optional: true
+    belongs_to :tax_category, -> { with_deleted }, class_name: 'Spree::TaxCategory', optional: true
 
     validates :name, :display_on, presence: true
 
@@ -42,10 +42,6 @@ module Spree
     def self.calculators
       spree_calculators.send(model_name_without_spree_namespace).
         select { |c| c.to_s.constantize < Spree::ShippingCalculator }
-    end
-
-    def tax_category
-      Spree::TaxCategory.unscoped { super }
     end
 
     def available_to_display?(display_filter)

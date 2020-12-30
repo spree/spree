@@ -39,7 +39,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'monetize', '~> 1.9'
   s.add_dependency 'paranoia', '~> 2.4.2'
   s.add_dependency 'premailer-rails'
-  s.add_dependency 'rails', '~> 6.0.0'
+  s.add_dependency 'rails', '>= 6.0', '< 6.2'
   s.add_dependency 'ransack', '>= 2.3', '< 2.5'
   s.add_dependency 'responders'
   s.add_dependency 'state_machines-activerecord', '~> 0.6'
