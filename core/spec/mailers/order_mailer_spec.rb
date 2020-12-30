@@ -8,10 +8,10 @@ describe Spree::OrderMailer, type: :mailer do
   before { create(:store) }
 
   let(:first_store) { create(:store, name: 'First Store') }
-  let(:second_store) { create(:store, name: 'Second Store') }
+  let(:second_store) { create(:store, name: 'Second Store', url: 'other.example.com') }
 
   let(:order) do
-    order = stub_model(Spree::Order)
+    order = stub_model(Spree::Order, email: 'test@example.com')
     product = stub_model(Spree::Product, name: %{The "BEST" product})
     variant = stub_model(Spree::Variant, product: product)
     price = stub_model(Spree::Price, variant: variant, amount: 5.00)
@@ -25,7 +25,7 @@ describe Spree::OrderMailer, type: :mailer do
   end
 
   let(:second_order) do
-    order = stub_model(Spree::Order)
+    order = stub_model(Spree::Order, email: 'test2@example.com')
     product = stub_model(Spree::Product, name: %{The "BESTEST" product})
     variant = stub_model(Spree::Variant, product: product)
     price = stub_model(Spree::Price, variant: variant, amount: 15.00)
@@ -202,6 +202,20 @@ describe Spree::OrderMailer, type: :mailer do
       confirmation_email = Spree::OrderMailer.confirm_email(second_order)
       expect(confirmation_email.from).to include(second_store.mail_from_address)
       expect(confirmation_email.subject).to include(second_store.name)
+    end
+  end
+
+  context 'emails contain only urls of the store where the order was made' do
+    it 'shows proper host url in email content' do
+      ActionMailer::Base.default_url_options[:host] = order.store.url
+      described_class.confirm_email(order).deliver_now
+      expect(ActionMailer::Base.default_url_options[:host]).to eq(order.store.url)
+    end
+
+    it 'shows proper host url in email content #2' do
+      ActionMailer::Base.default_url_options[:host] = second_order.store.url
+      described_class.confirm_email(second_order).deliver_now
+      expect(ActionMailer::Base.default_url_options[:host]).to eq(second_order.store.url)
     end
   end
 end
