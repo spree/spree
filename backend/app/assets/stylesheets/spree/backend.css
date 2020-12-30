@@ -5,7 +5,6 @@
 
  *= require jquery-ui/autocomplete
  *= require select2
- *= require select2-bootstrap4
  *= require animate
  *= require flatpickr
  *= require spree/backend/spree_admin
