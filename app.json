@@ -7,7 +7,7 @@
     "spree"
   ],
   "buildpacks": [
-    {"url": "https://github.com/spark-solutions/heroku-buildpack-spree.git"}
+    {"url": "https://github.com/spree/heroku-buildpack-spree.git"}
   ],
   "addons": [
     "heroku-postgresql:hobby-dev",
