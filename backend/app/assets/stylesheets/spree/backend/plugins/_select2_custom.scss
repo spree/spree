@@ -1,9 +1,3 @@
-// style display:none on html attribute dosen't work,
-// find more proper place for that style class
-.select2-container--disabled {
-  display: none;
-}
-
 // Stop an open select2-dropdown from appearing over fixed nav bar.
 .select2-dropdown {
   z-index: 1028;
