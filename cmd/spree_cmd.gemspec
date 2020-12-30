@@ -25,6 +25,5 @@ Gem::Specification.new do |s|
   s.require_paths = ['lib']
 
   s.add_development_dependency 'rspec'
-  # Temporary hack until https://github.com/wycats/thor/issues/234 is fixed
   s.add_dependency 'thor', '~> 1.0'
 end
