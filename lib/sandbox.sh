@@ -65,6 +65,8 @@ end
 gem 'mini_racer'
 
 gem 'rack-cache'
+
+gem 'awesome_nested_set', github: 'collectiveidea/awesome_nested_set', branch: 'master'
 RUBY
 
 bundle install --gemfile Gemfile
