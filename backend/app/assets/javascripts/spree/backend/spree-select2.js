@@ -1,12 +1,8 @@
 document.addEventListener('DOMContentLoaded', function() {
   // Inititate Select2 on any select element with the class .select2
   $('select.select2').select2({
-    // change that
-    allowClear: false,
-    placeholder: {
-      id: '-1', // the value of the option
-      text: 'Select an option'
-    }
+    allowClear: true,
+    placeholder: Spree.translations.select_an_option
   })
 })
 

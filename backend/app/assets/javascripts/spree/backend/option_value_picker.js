@@ -35,7 +35,6 @@ $.fn.optionValueAutocomplete = function (options) {
   this.select2({
     multiple: multiple,
     minimumInputLength: 1,
-    allowClear: true,
     ajax: {
       url: Spree.routes.option_values_api,
       dataType: 'json',
