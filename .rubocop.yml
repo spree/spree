@@ -77,6 +77,10 @@ Style/WordArray:
 Style/SymbolArray:
   Enabled: false
 
+Style/SymbolProc:
+  Exclude:
+    - '**/app/serializers/**/*'
+
 Style/GuardClause:
   Enabled: false
 

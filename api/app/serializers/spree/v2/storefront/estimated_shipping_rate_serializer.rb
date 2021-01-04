@@ -6,7 +6,9 @@ module Spree
 
         attributes :name, :selected, :cost, :tax_amount, :shipping_method_id
 
-        attribute :final_price, &:cost
+        attribute :final_price do |shipping_rate|
+          shipping_rate.cost
+        end
 
         attributes :display_cost, :display_final_price do |object, params|
           Spree::Money.new(object.cost, currency: params[:currency])

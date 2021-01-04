@@ -7,9 +7,17 @@ module Spree
         attributes :name, :pretty_name, :permalink, :seo_title, :description, :meta_title, :meta_description,
                    :meta_keywords, :left, :right, :position, :depth, :updated_at
 
-        attribute :is_root,  &:root?
-        attribute :is_child, &:child?
-        attribute :is_leaf,  &:leaf?
+        attribute :is_root do |taxon|
+          taxon.root?
+        end
+
+        attribute :is_child do |taxon|
+          taxon.child?
+        end
+
+        attribute :is_leaf do |taxon|
+          taxon.leaf?
+        end
 
         belongs_to :parent,   record_type: :taxon, serializer: :taxon
         belongs_to :taxonomy, record_type: :taxonomy
