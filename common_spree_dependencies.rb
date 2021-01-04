@@ -9,8 +9,6 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw]
 
 gem 'rails', ENV.fetch('RAILS_VERSION', '~> 6.1.0'), require: false
 
-gem 'awesome_nested_set', github: 'collectiveidea/awesome_nested_set', branch: 'master'
-
 platforms :jruby do
   gem 'jruby-openssl'
   gem 'activerecord-jdbcsqlite3-adapter'
