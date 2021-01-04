@@ -35,6 +35,7 @@ group :test do
   gem 'webmock', '~> 3.7'
   gem 'timecop'
   gem 'rails-controller-testing'
+  gem 'webrick'
 end
 
 group :test, :development do
