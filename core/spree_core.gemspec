@@ -28,7 +28,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'activemerchant', '~> 1.67'
   s.add_dependency 'acts_as_list', '~> 0.8'
-  s.add_dependency 'awesome_nested_set', '>= 3.1.4', '< 3.3.0'
+  s.add_dependency 'awesome_nested_set', '>= 3.3.1', '< 4.0'
   s.add_dependency 'carmen', '>= 1.0', '< 1.2'
   s.add_dependency 'cancancan', '~> 3.0'
   s.add_dependency 'ffaker', '~> 2.9'
