@@ -1,9 +1,7 @@
 module Spree
   module Account
     module Addresses
-      class Base
-        prepend Spree::ServiceModule::Base
-
+      module Helper
         private
 
         attr_accessor :country
