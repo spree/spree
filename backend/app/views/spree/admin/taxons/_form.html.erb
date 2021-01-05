@@ -28,6 +28,12 @@
         <%= f.label :icon, Spree.t(:header_banner) %>
         <%= image_tag(main_app.url_for(@taxon.icon.try(:attachment)), class: 'w-100') if @taxon.icon %>
         <%= f.file_field :icon %>
+        <% if @taxon.icon.present? %>
+          <%= link_to Spree.t(:remove_icon),
+            remove_icon_admin_taxonomy_taxon_url(@taxonomy.id, @taxon.id),
+            method: :delete
+          %>
+        <% end %>
       <% end %>
     </div>
 

@@ -1,8 +1,8 @@
 module Spree
   module Admin
     class TaxonsController < Spree::Admin::BaseController
-      before_action :load_taxonomy, only: [:create, :edit, :update]
-      before_action :load_taxon, only: [:edit, :update]
+      before_action :load_taxonomy, only: [:create, :edit, :update, :remove_icon]
+      before_action :load_taxon, only: [:edit, :update, :remove_icon]
       before_action :set_permalink_part, only: [:edit, :update]
       respond_to :html, :js
 
@@ -59,6 +59,16 @@ module Spree
             format.html { render :edit }
             format.json { render json: @taxon.errors.full_messages.to_sentence, status: 422 }
           end
+        end
+      end
+
+      def remove_icon
+        if @taxon.icon.destroy
+          flash[:success] = Spree.t('notice_messages.icon_removed')
+          redirect_to edit_admin_taxonomy_taxon_url(@taxonomy.id, @taxon.id)
+        else
+          flash[:error] = Spree.t('errors.messages.cannot_remove_icon')
+          render :edit
         end
       end
 
