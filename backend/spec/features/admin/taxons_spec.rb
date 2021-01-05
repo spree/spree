@@ -1,9 +1,10 @@
 require 'spec_helper'
 
-describe 'Taxonomies and taxons', type: :feature do
+describe 'Taxonomies and taxons', type: :feature, js: true do
   stub_authorization!
 
   let(:taxonomy) { create(:taxonomy, name: 'Hello') }
+  let(:file_path) { Rails.root + '../../spec/support/ror_ringer.jpeg' }
 
   it 'admin should be able to edit taxon' do
     visit spree.edit_admin_taxonomy_taxon_path(taxonomy, taxonomy.root.id)
@@ -48,7 +49,36 @@ describe 'Taxonomies and taxons', type: :feature do
     expect(page).to have_content('No results')
   end
 
+  it 'admin should be able to add taxon icon' do
+    visit spree.edit_admin_taxonomy_taxon_path(taxonomy, taxonomy.root.id)
+
+    attach_file('taxon_icon', file_path)
+    click_button 'Update'
+
+    expect(page).to have_content('successfully updated!')
+
+    visit spree.edit_admin_taxonomy_taxon_path(taxonomy, taxonomy.root.id)
+
+    expect(page).to have_css('#taxon_icon_field img')
+  end
+
+  it 'admin should be able to remove taxon icon' do
+    add_icon_to_root_taxon
+
+    visit spree.edit_admin_taxonomy_taxon_path(taxonomy, taxonomy.root.id)
+
+    click_link 'Remove Icon'
+
+    expect(page).to have_content('Icon has been successfully removed')
+  end
+
   def select_clothing_from_select2
     select2 'Clothing', css: '.taxon-products-view', search: true
+  end
+
+  def add_icon_to_root_taxon
+    visit spree.edit_admin_taxonomy_taxon_path(taxonomy, taxonomy.root.id)
+    attach_file('taxon_icon', file_path)
+    click_button 'Update'
   end
 end
