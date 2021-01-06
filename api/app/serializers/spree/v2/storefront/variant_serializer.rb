@@ -7,9 +7,17 @@ module Spree
         attributes :sku, :price, :currency, :display_price, :weight, :height,
                    :width, :depth, :is_master, :options_text
 
-        attribute :purchasable,   &:purchasable?
-        attribute :in_stock,      &:in_stock?
-        attribute :backorderable, &:backorderable?
+        attribute :purchasable do |variant|
+          variant.purchasable?
+        end
+
+        attribute :in_stock do |variant|
+          variant.in_stock?
+        end
+
+        attribute :backorderable do |variant|
+          variant.backorderable?
+        end
 
         belongs_to :product
         has_many :images

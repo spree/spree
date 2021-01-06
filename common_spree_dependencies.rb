@@ -42,6 +42,7 @@ group :test, :development do
   gem 'rubocop-rspec', require: false
   gem 'pry-byebug'
   gem 'webdrivers', '~> 4.1'
+  gem 'webrick'
 end
 
 gem 'solargraph', group: :development
