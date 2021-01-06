@@ -15,7 +15,8 @@ module Spree
       :storefront_product_serializer, :storefront_taxon_serializer, :storefront_taxon_finder, :storefront_find_by_variant_finder,
       :storefront_cart_update_service, :storefront_cart_estimate_shipping_rates_service, :storefront_estimated_shipment_serializer,
       :storefront_store_serializer, :storefront_address_serializer, :storefront_order_serializer,
-      :storefront_account_create_address_service, :storefront_account_update_address_service, :storefront_address_finder
+      :storefront_account_create_address_service, :storefront_account_update_address_service, :storefront_address_finder,
+      :storefront_collection_sorter
     ].freeze
 
     attr_accessor *INJECTION_POINTS
@@ -69,7 +70,8 @@ module Spree
       @storefront_order_serializer = 'Spree::V2::Storefront::CartSerializer'
 
       # sorters
-      @storefront_order_sorter = Spree::Dependencies.order_sorter
+      @storefront_collection_sorter = Spree::Dependencies.collection_sorter
+      @storefront_order_sorter = Spree::Dependencies.collection_sorter
       @storefront_products_sorter = Spree::Dependencies.products_sorter
 
       # paginators

@@ -111,7 +111,7 @@ describe 'Storefront API v2 Orders spec', type: :request do
 
           it 'returns orders sorted by completed_at' do
             expect(json_response['data'].count).to eq Spree::Order.count
-            expect(json_response['data'].pluck(:id)).to eq Spree::Order.select('*').order(completed_at: :desc).pluck(:id).map(&:to_s)
+            expect(json_response['data'].pluck(:id)).to eq Spree::Order.select('*').order(completed_at: :asc).pluck(:id).map(&:to_s)
           end
         end
 
@@ -122,7 +122,7 @@ describe 'Storefront API v2 Orders spec', type: :request do
 
           it 'returns orders sorted by completed_at' do
             expect(json_response['data'].count).to eq Spree::Order.count
-            expect(json_response['data'].pluck(:id)).to eq Spree::Order.select('*').order(completed_at: :asc).pluck(:id).map(&:to_s)
+            expect(json_response['data'].pluck(:id)).to eq Spree::Order.select('*').order(completed_at: :desc).pluck(:id).map(&:to_s)
           end
         end
       end
