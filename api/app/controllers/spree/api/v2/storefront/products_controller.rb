@@ -2,21 +2,11 @@ module Spree
   module Api
     module V2
       module Storefront
-        class ProductsController < ::Spree::Api::V2::BaseController
-          include Spree::Api::V2::CollectionOptionsHelpers
-
-          def index
-            render_serialized_payload { serialize_collection(paginated_collection) }
-          end
-
-          def show
-            render_serialized_payload { serialize_resource(resource) }
-          end
-
+        class ProductsController < ::Spree::Api::V2::ResourceController
           private
 
           def sorted_collection
-            collection_sorter.new(collection, params, current_currency).call
+            collection_sorter.new(collection, current_currency, params, allowed_sort_attributes).call
           end
 
           def collection
@@ -43,8 +33,8 @@ module Spree
             Spree::Api::Dependencies.storefront_product_serializer.constantize
           end
 
-          def scope
-            Spree::Product.accessible_by(current_ability, :show).includes(scope_includes)
+          def model_class
+            Spree::Product
           end
 
           def scope_includes
