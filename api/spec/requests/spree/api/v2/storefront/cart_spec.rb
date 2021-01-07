@@ -80,6 +80,59 @@ describe 'API V2 Storefront Cart Spec', type: :request do
         it 'associates order with user' do
           expect(json_response['data']).to have_relationship(:user).with_data('id' => user.id.to_s, 'type' => 'user')
         end
+
+        context 'with canceled order' do
+          let(:order) { create(:order, user: user, store: store, currency: currency, state: 'canceled') }
+
+          before { execute }
+
+          it_behaves_like 'returns 201 HTTP status'
+
+          it 'returns a valid cart JSON response with new order' do
+            new_order = Spree::Order.find(json_response['data']['id'])
+            expect(json_response['data']).to be_present
+            expect(json_response['data']).to have_id(new_order.id.to_s)
+            expect(json_response['data']).to have_type('cart')
+            expect(json_response['data']).to have_attribute(:number).with_value(new_order.number)
+            expect(json_response['data']).to have_attribute(:state).with_value(new_order.state)
+            expect(json_response['data']).to have_attribute(:payment_state).with_value(new_order.payment_state)
+            expect(json_response['data']).to have_attribute(:shipment_state).with_value(new_order.shipment_state)
+            expect(json_response['data']).to have_attribute(:token).with_value(new_order.token)
+            expect(json_response['data']).to have_attribute(:total).with_value(new_order.total.to_s)
+            expect(json_response['data']).to have_attribute(:item_total).with_value(new_order.item_total.to_s)
+            expect(json_response['data']).to have_attribute(:ship_total).with_value(new_order.ship_total.to_s)
+            expect(json_response['data']).to have_attribute(:adjustment_total).with_value(new_order.adjustment_total.to_s)
+            expect(json_response['data']).to have_attribute(:included_tax_total).with_value(new_order.included_tax_total.to_s)
+            expect(json_response['data']).to have_attribute(:additional_tax_total).with_value(new_order.additional_tax_total.to_s)
+            expect(json_response['data']).to have_attribute(:display_additional_tax_total).with_value(new_order.display_additional_tax_total.to_s)
+            expect(json_response['data']).to have_attribute(:display_included_tax_total).with_value(new_order.display_included_tax_total.to_s)
+            expect(json_response['data']).to have_attribute(:tax_total).with_value(new_order.tax_total.to_s)
+            expect(json_response['data']).to have_attribute(:currency).with_value(new_order.currency.to_s)
+            expect(json_response['data']).to have_attribute(:email).with_value(new_order.email)
+            expect(json_response['data']).to have_attribute(:display_item_total).with_value(new_order.display_item_total.to_s)
+            expect(json_response['data']).to have_attribute(:display_ship_total).with_value(new_order.display_ship_total.to_s)
+            expect(json_response['data']).to have_attribute(:display_adjustment_total).with_value(new_order.display_adjustment_total.to_s)
+            expect(json_response['data']).to have_attribute(:display_tax_total).with_value(new_order.display_tax_total.to_s)
+            expect(json_response['data']).to have_attribute(:item_count).with_value(new_order.item_count)
+            expect(json_response['data']).to have_attribute(:special_instructions).with_value(new_order.special_instructions)
+            expect(json_response['data']).to have_attribute(:promo_total).with_value(new_order.promo_total.to_s)
+            expect(json_response['data']).to have_attribute(:display_promo_total).with_value(new_order.display_promo_total.to_s)
+            expect(json_response['data']).to have_attribute(:display_total).with_value(new_order.display_total.to_s)
+            expect(json_response['data']).to have_attribute(:pre_tax_item_amount).with_value(new_order.pre_tax_item_amount.to_s)
+            expect(json_response['data']).to have_attribute(:display_pre_tax_item_amount).with_value(new_order.display_pre_tax_item_amount.to_s)
+            expect(json_response['data']).to have_attribute(:pre_tax_total).with_value(new_order.pre_tax_total.to_s)
+            expect(json_response['data']).to have_attribute(:display_pre_tax_total).with_value(new_order.display_pre_tax_total.to_s)
+            expect(json_response['data']).to have_relationships(:user, :line_items, :variants, :billing_address, :shipping_address, :payments, :shipments, :promotions)
+          end
+
+          it 'does not return canceled order' do
+            expect(json_response['data']).to have_attribute(:state).with_value('cart')
+          end
+
+          it 'creates the new order without line items' do
+            expect(Spree::Order.find(json_response['data']['id']).line_items.count).to eq(0)
+          end
+        end
       end
     end
 
