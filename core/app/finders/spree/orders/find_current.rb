@@ -15,7 +15,7 @@ module Spree
       private
 
       def incomplete_orders
-        Spree::Order.incomplete.includes(scope_includes)
+        Spree::Order.incomplete.not_cancelled.includes(scope_includes)
       end
 
       def scope_includes
