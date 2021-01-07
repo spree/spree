@@ -129,14 +129,14 @@ module Spree
     end
 
     context 'as an user' do
-      it 'I cannot list all the stores' do
+      it 'I can list all the stores' do
         api_get :index
-        expect(response.status).to eq(401)
+        expect(response.status).to eq(200)
       end
 
-      it 'I cannot get the store details' do
+      it 'I can get the store details' do
         api_get :show, id: store.id
-        expect(response.status).to eq(401)
+        expect(response.status).to eq(200)
       end
 
       it 'I cannot create a new store' do

@@ -2,14 +2,10 @@ module Spree
   module Api
     module V2
       module Storefront
-        class OrderStatusController < ::Spree::Api::V2::BaseController
+        class OrderStatusController < ::Spree::Api::V2::ResourceController
           include Spree::Api::V2::Storefront::OrderConcern
 
           before_action :ensure_order_token
-
-          def show
-            render_serialized_payload { serialize_resource(resource) }
-          end
 
           private
 

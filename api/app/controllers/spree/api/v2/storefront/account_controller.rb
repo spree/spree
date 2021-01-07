@@ -2,12 +2,8 @@ module Spree
   module Api
     module V2
       module Storefront
-        class AccountController < ::Spree::Api::V2::BaseController
+        class AccountController < ::Spree::Api::V2::ResourceController
           before_action :require_spree_current_user
-
-          def show
-            render_serialized_payload { serialize_resource(resource) }
-          end
 
           private
 
