@@ -6,13 +6,13 @@ title: Analytics Tracker
 
 Understanding your site's visitor traffic patterns are important for planning your company's marketing and growth strategies.
 
-### Google Analytics Enhanced Ecommerce and Segment Ecommerce
+## Google Analytics Enhanced Ecommerce and Segment Ecommerce
 
-In order to enable Spree Analytics Tracker, the following extension is required, which we have extracted from the Spree core: https://github.com/spree-contrib/spree_analytics_trackers.
+To continue please install [Spree Analytics Trackers extension](https://github.com/spree-contrib/spree_analytics_trackers).
 
 Spree's Admin Interface makes it easy for you to add the robust Google Analytics and Segment toolset to your site.
 
-Both Google Analytics and Segment support detailed information of your site. Spree allows to integrate both in order to show live detailed events; for example, you can see on which step of the checkout process the user stopped or how long it took to complete the checkout.
+Both Google Analytics and Segment can capture detailed information about your site, like visitors, transactions, best selling products, traffic sources and much more. Spree allows to integrate both in order to show live detailed events; for example, you can see on which step of the checkout process the user stopped or how long it took to complete the checkout.
 
 Segment.com also allows you to plug-in a lot of additional vendors and services like:
 
