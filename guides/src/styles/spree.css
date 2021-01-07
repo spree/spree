@@ -1,21 +1,11 @@
 pre[class*='language-'] {
-  font-size: 1em;
-  line-height: 1.5em;
-  letter-spacing: 0.3px;
   word-spacing: 1px;
   color: #495057;
-  padding: 2rem;
   background-color: #f8f9fa;
-  border-radius: 3px;
-  border: 1px solid #ededed;
+  border-radius: 6px;
   overflow: auto;
-  transition: box-shadow 0.3s ease-in-out;
   position: relative;
   z-index: 3;
-}
-
-pre[class*='language-']:hover {
-  box-shadow: 0 0 1.5rem 0 rgba(34, 139, 230, 0.1);
 }
 
 code[class*='language-'],
@@ -63,7 +53,7 @@ code[class*='language-'] ::selection {
 /* Code blocks */
 pre[class*='language-'] {
   padding: 1em;
-  margin: 0.5em 0 1em 0;
+  margin: 0.8em 0 1em 0;
   overflow: auto;
 }
 
@@ -192,4 +182,8 @@ pre > code.highlight {
     rgba(45, 32, 6, 0.2) 70%,
     rgba(45, 32, 6, 0)
   );
+}
+
+.nested-links a {
+  text-decoration: none;
 }
