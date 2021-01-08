@@ -12,7 +12,7 @@
       <tbody id="bulk_variants_tbody">
         <% stock_movements.each do |movement| %>
           <tr>
-            <td><%= movement.stock_item.variant.name %></td>
+            <td><%= link_to movement.stock_item.variant.name, spree.edit_admin_product_path(movement.stock_item.variant.product) %></td>
             <td><%= movement.stock_item.variant.sku %></td>
             <td><%= movement.quantity %></td>
             <td><%= movement.stock_item.count_on_hand %></td>
