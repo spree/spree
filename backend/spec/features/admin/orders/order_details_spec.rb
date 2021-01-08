@@ -588,7 +588,7 @@ describe 'Order Details', type: :feature, js: true do
         end
       end
 
-      context 'display order summary' do
+      context 'display order summary', js: false do
         before do
           visit spree.cart_admin_order_path(order)
         end

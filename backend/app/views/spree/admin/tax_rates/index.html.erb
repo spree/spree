@@ -28,8 +28,8 @@
         <td><%=tax_rate.name %></td>
         <td><%=tax_rate.tax_category.try(:name) || Spree.t(:not_available) %></td>
         <td><%=tax_rate.amount %></td>
-        <td><%=tax_rate.included_in_price? ? Spree.t(:say_yes) : Spree.t(:say_no) %></td>
-        <td><%=tax_rate.show_rate_in_label? ? Spree.t(:say_yes) : Spree.t(:say_no) %></td>
+        <td><%= active_badge(tax_rate.included_in_price?) %></td>
+        <td><%= active_badge(tax_rate.show_rate_in_label?) %></td>
         <td><%=tax_rate.calculator.to_s %></td>
         <td class="actions actions-2 text-right">
           <%= link_to_edit(tax_rate, no_text: true) if can? :edit, tax_rate %>
