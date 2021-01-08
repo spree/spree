@@ -851,7 +851,7 @@ en:
         blank: can't be blank
         could_not_create_taxon: Could not create taxon
         no_shipping_methods_available: No shipping methods available for selected location, please change your address and try again.
-        cannot_remove_icon: Cannot remove icon
+        cannot_remove_icon: Cannot remove image
       services:
         get_shipping_rates:
           no_shipping_address: To generate Shipping Rates Order needs to have a Shipping Address
@@ -1155,7 +1155,7 @@ en:
     not_found: ! '%{resource} is not found'
     note: Note
     notice_messages:
-      icon_removed: Icon has been successfully removed
+      icon_removed: Image has been successfully removed
       prices_saved: Prices successfully saved
       product_cloned: Product has been cloned
       product_deleted: Product has been deleted
@@ -1440,6 +1440,7 @@ en:
     rejected: Rejected
     remember_me: Remember me
     remove: Remove
+    remove_image: Remove Image
     rename: Rename
     report: Report
     reports: Reports

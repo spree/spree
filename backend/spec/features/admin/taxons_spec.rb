@@ -67,9 +67,9 @@ describe 'Taxonomies and taxons', type: :feature, js: true do
 
     visit spree.edit_admin_taxonomy_taxon_path(taxonomy, taxonomy.root.id)
 
-    click_link 'Remove Icon'
+    click_link 'Remove Image'
 
-    expect(page).to have_content('Icon has been successfully removed')
+    expect(page).to have_content('Image has been successfully removed')
   end
 
   def select_clothing_from_select2
