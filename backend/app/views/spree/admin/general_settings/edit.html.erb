@@ -66,11 +66,34 @@
             </div>
 
             <div class="card-body">
+              <div class="alert alert-warning col-12">
+                This can be overriden by individual Store settings
+              </div>
               <div class="form-group">
-                <%= label_tag :currency, Spree.t(:choose_currency) %>
+                <%= label_tag :currency, Spree.t(:default_currency) %>
                 <%= select_tag :currency, currency_options %>
               </div>
-              <%= render partial: 'form' %>
+            </div>
+          </div>
+
+          <div class="card mb-3" id="general-settings-stores" data-hook="general_settings_stores">
+            <div class="card-header">
+              <h1 class="card-title mb-0 h5">
+                <%= Spree.t(:multiple_stores)%>
+              </h1>
+            </div>
+            <div class="card-body">
+              <div class="alert alert-warning col-12">
+                <%= Spree.t('show_store_currency_selector.long') %>
+              </div>
+              <div class="form-group">
+                <div class="checkbox">
+                  <label>
+                    <%= check_box('', :show_store_currency_selector, { checked: Spree::Config.show_store_currency_selector }) %>
+                    <%= Spree.t('show_store_currency_selector.short') %>
+                  </label>
+                </div>
+              </div>
             </div>
           </div>
         </div>
