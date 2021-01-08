@@ -130,7 +130,7 @@ module Spree
 
       def link_to_clone(resource, options = {})
         options[:data] = { action: 'clone', 'original-title': Spree.t(:clone) }
-        options[:class] = 'btn btn-primary btn-sm with-tip'
+        options[:class] = 'btn btn-warning btn-sm with-tip'
         options[:method] = :post
         options[:icon] = 'clone.svg'
         button_link_to '', clone_object_url(resource), options
