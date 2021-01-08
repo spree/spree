@@ -1,7 +1,10 @@
-function clearAddressFields(kinds = ['ship', 'bill']) {
-  kinds.forEach(function(kind) {
+function clearAddressFields(addressKinds) {
+  if (addressKinds === undefined) {
+    addressKinds = ['ship', 'bill']
+  }
+  addressKinds.forEach(function(addressKind) {
     ADDRESS_FIELDS.forEach(function(field) {
-      $('#order_' + kind + '_address_attributes_' + field).val('')
+      $('#order_' + addressKind + '_address_attributes_' + field).val('')
     })
   })
 }
