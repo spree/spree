@@ -127,8 +127,14 @@ module Spree
 
         fields = object.preferences.keys.map do |key|
           if object.has_preference?(key)
-            form.label("preferred_#{key}", Spree.t(key) + ': ') +
-              preference_field_for(form, "preferred_#{key}", type: object.preference_type(key))
+            case key
+            when :currency
+              form.label("preferred_#{key}", Spree.t(key) + ': ') +
+                (form.select "preferred_#{key}", currency_options(current_store.default_currency), {}, { class: 'form-control select2' })
+            else
+              form.label("preferred_#{key}", Spree.t(key) + ': ') +
+                preference_field_for(form, "preferred_#{key}", type: object.preference_type(key))
+            end
           end
         end
         safe_join(fields, '<br />'.html_safe)
