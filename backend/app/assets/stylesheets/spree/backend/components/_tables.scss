@@ -126,7 +126,7 @@ div.table-responsive table.table-bordered {
 
 .sortable-drag-v {
   border: 1px solid $info;
-  border-radius: 5px;
+  border-radius: $border-radius;
   width:100%;
   text-align: right;
   opacity: 0;
