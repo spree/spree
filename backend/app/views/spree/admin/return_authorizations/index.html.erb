@@ -27,9 +27,9 @@
         <tr id="<%= spree_dom_id(return_authorization) %>" data-hook="rma_row">
           <td><%= return_authorization.number %></td>
           <td>
-            <span class="badge badge-<%= return_authorization.state %>">
+            <strong class="badge badge-<%= return_authorization.state %> text-uppercase">
               <%= Spree.t("return_authorization_states.#{return_authorization.state}") %>
-            </span>
+            </strong>
           </td>
           <td><%= return_authorization.display_pre_tax_total.to_html %></td>
           <td><%= pretty_time(return_authorization.created_at) %></td>

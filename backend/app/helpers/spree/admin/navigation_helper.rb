@@ -251,6 +251,16 @@ module Spree
         end
       end
 
+      def active_badge(condition, options = {})
+        label = options[:label]
+        label ||= condition ? Spree.t(:say_yes) : Spree.t(:say_no)
+        css_class = condition ? 'badge-active' : 'badge-inactive'
+
+        content_tag(:strong, class: "badge #{css_class} text-uppercase") do
+          label
+        end
+      end
+
       def main_part_classes
         if cookies['sidebar-minimized'] == 'true'
           'col-12 sidebar-collapsed'

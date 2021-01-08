@@ -63,7 +63,7 @@
           <td><%= link_to return_authorization.number, spree.edit_admin_order_return_authorization_path(return_authorization.order, return_authorization) %></td>
           <td><%= link_to return_authorization.order.number, spree.edit_admin_order_path(return_authorization.order) %></td>
           <td>
-            <span class="badge badge-<%= return_authorization.state %>"><%= Spree.t("return_authorization_states.#{return_authorization.state}") %></span>
+            <span class="badge badge-<%= return_authorization.state %> text-uppercase"><%= Spree.t("return_authorization_states.#{return_authorization.state}") %></span>
           </td>
           <td class="actions actions-1 text-right">
             <%= link_to_edit return_authorization, url: spree.edit_admin_order_return_authorization_path(return_authorization.order, return_authorization), no_text: true if can?(:edit, return_authorization) %>

@@ -81,16 +81,24 @@ module Spree
 
     # will return a human readable string
     def available_status(product)
-      return Spree.t(:discontinued) if product.discontinued?
-      return Spree.t(:deleted) if product.deleted?
-
-      if product.available?
-        Spree.t(:available)
+      if product.discontinued?
+        label = Spree.t(:discontinued)
+        available = false
+      elsif product.deleted?
+        label = Spree.t(:deleted)
+        available = false
+      elsif product.available?
+        label = Spree.t(:available)
+        available = true
       elsif product.available_on&.future?
-        Spree.t(:pending_sale)
+        label = Spree.t(:pending_sale)
+        available = false
       else
-        Spree.t(:no_available_date_set)
+        label = Spree.t(:no_available_date_set)
+        available = false
       end
+
+      active_badge(available, label: label)
     end
 
     def product_images(product, variants)
