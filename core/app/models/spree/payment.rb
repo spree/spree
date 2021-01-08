@@ -14,7 +14,7 @@ module Spree
 
     with_options inverse_of: :payments do
       belongs_to :order, class_name: 'Spree::Order', touch: true
-      belongs_to :payment_method, class_name: 'Spree::PaymentMethod'
+      belongs_to :payment_method, -> { with_deleted }, class_name: 'Spree::PaymentMethod'
     end
     belongs_to :source, polymorphic: true
 
