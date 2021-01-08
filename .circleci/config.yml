@@ -19,6 +19,7 @@ defaults_3_0: &defaults_3_0
 run_tests: &run_tests
   <<: *defaults
   parallelism: 4
+  resource_class: large
   steps:
     - checkout
     - restore_cache:
@@ -45,6 +46,7 @@ run_tests: &run_tests
 run_tests_3_0: &run_tests_3_0
   <<: *defaults_3_0
   parallelism: 4
+  resource_class: large
   steps:
     - checkout
     - restore_cache:
