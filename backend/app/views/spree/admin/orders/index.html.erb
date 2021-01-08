@@ -206,22 +206,21 @@
           <%= order_time(@show_only_completed ? order.completed_at : order.created_at) %>
         </td>
         <td>
-          <span class="badge badge-<%= order.considered_risky ? 'considered_risky' : 'considered_safe' %>">
+          <span class="badge badge-<%= order.considered_risky ? 'considered_risky' : 'considered_safe' %> text-uppercase">
             <%= order.considered_risky ? Spree.t("risky") : Spree.t("safe") %>
           </span>
         </td>
         <td class="no-wrap">
-          <span class="badge badge-<%= order.state.downcase %>"><%= Spree.t("order_state.#{order.state.downcase}") %></span>
+          <span class="badge badge-<%= order.state.downcase %> text-uppercase"><%= Spree.t("order_state.#{order.state}") %></span>
           <span class="filterable js-add-filter" data-ransack-field="q_state_eq" data-ransack-value="<%= order.state %>">
             <%= svg_icon name: "filter.svg", width: '14', height: '14' %>
           </span>
         </td>
         <td class="no-wrap">
           <% if order.payment_state %>
-
             <%= link_to Spree.t("payment_states.#{order.payment_state}"),
               admin_order_payments_path(order),
-              class: "badge badge-#{order.payment_state}" %>
+              class: "badge badge-#{order.payment_state} text-uppercase" %>
 
             <span class="filterable js-add-filter"
               data-ransack-field="q_payment_state_eq"
@@ -233,7 +232,7 @@
         <% if Spree::Order.checkout_step_names.include?(:delivery) %>
           <td class="no-wrap">
             <% if order.shipment_state %>
-              <span class="badge badge-<%= order.shipment_state %>"><%= Spree.t("shipment_states.#{order.shipment_state}") %></span>
+              <span class="badge badge-<%= order.shipment_state %> text-uppercase"><%= Spree.t("shipment_states.#{order.shipment_state}") %></span>
               <span class="filterable js-add-filter" data-ransack-field="q_shipment_state_eq" data-ransack-value="<%= order.shipment_state %>">
                 <%= svg_icon name: "filter.svg", width: '14', height: '14' %>
               </span>
