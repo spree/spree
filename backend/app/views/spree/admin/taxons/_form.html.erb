@@ -9,7 +9,9 @@
     <%= label_tag :permalink_part, raw(Spree.t(:permalink) + required_span_tag) %>
     <div class="input-group mb-3">
       <div class="input-group-prepend">
-        <span class="input-group-text" id="basic-addon3">https://<%= current_store.url %>/t/</span>
+        <span class="input-group-text" id="basic-addon3">
+          <%= [current_store.formatted_url, 't', @parent_permalink].join('/') %>
+        </span>
       </div>
       <%= text_field_tag :permalink_part, @permalink_part, class: 'form-control', required: true %>
     </div>
