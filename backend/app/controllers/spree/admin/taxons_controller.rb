@@ -76,6 +76,8 @@ module Spree
 
       def set_permalink_part
         @permalink_part = @taxon.permalink.split('/').last
+        @parent_permalink = @taxon.permalink.split('/')[0...-1].join('/')
+        @parent_permalink += '/' unless @parent_permalink.blank?
       end
 
       def taxon_params
@@ -105,9 +107,7 @@ module Spree
 
       def set_permalink_params
         if params.key? 'permalink_part'
-          parent_permalink = @taxon.permalink.split('/')[0...-1].join('/')
-          parent_permalink += '/' unless parent_permalink.blank?
-          params[:taxon][:permalink] = parent_permalink + params[:permalink_part]
+          params[:taxon][:permalink] = @parent_permalink + params[:permalink_part]
         end
       end
 

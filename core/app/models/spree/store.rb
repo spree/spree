@@ -51,6 +51,14 @@ module Spree
       "#{name} (#{code})"
     end
 
+    def formatted_url
+      if url.match(/http\:\/\/|https\:\/\//)
+        url
+      else
+        "https://#{url}"
+      end
+    end
+
     def countries_available_for_checkout
       checkout_zone_or_default.try(:country_list) || Spree::Country.all
     end

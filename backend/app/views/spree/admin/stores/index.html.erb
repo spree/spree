@@ -20,7 +20,7 @@
       <% @stores.each do |store| %>
         <tr>
           <td><%= store.unique_name %></td>
-          <td><%= link_to store.url, 'https://' + store.url, target: :blank %></td>
+          <td><%= link_to store.url, store.formatted_url, target: :blank %></td>
           <td><%= store.default_currency %></td>
           <td><%= active_badge(store.default) %></td>
           <td class="actions actions-2 text-right" data-hook="admin_stores_index_row_actions">
@@ -39,7 +39,7 @@
       <% end %>
     </tbody>
   </table>
-</div>  
+</div>
 <% else %>
   <div class="alert alert-info no-objects-found">
     <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::StoreCredit)) %>
