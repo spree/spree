@@ -16,12 +16,10 @@ module Spree
         end
       end
 
+      protected
+
       def permitted_resource_params
-        if params[resource.object_name].present?
-          params.require(resource.object_name).permit([:name, :display_on, :admin_name, :code, :tracking_url, :calculator_type, :tax_category_id])
-        else
-          ActionController::Parameters.new
-        end
+        params.require(resource.object_name).permit(permitted_shipping_method_attributes)
       end
 
       private
