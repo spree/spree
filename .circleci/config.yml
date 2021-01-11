@@ -26,11 +26,6 @@ run_tests: &run_tests
           - spree-bundle-v7-{{ checksum ".ruby-version" }}-{{ .Branch }}
           - spree-bundle-v7-{{ checksum ".ruby-version" }}
     - run:
-        name: Ensure Bundle Install
-        command: |
-          bundle install --path=~/spree/vendor/bundle
-          ./build-ci.rb install
-    - run:
         name: Run rspec in parallel
         command: BUNDLE_GEMFILE=../Gemfile ./build-ci.rb test
     - store_artifacts:
@@ -51,11 +46,6 @@ run_tests_3_0: &run_tests_3_0
         keys:
           - spree-bundle-v7-ruby-3-0-{{ .Branch }}
           - spree-bundle-v7-ruby-3-0
-    - run:
-        name: Ensure Bundle Install
-        command: |
-          bundle install --path=~/spree/vendor/bundle
-          ./build-ci.rb install
     - run:
         name: Run rspec in parallel
         command: BUNDLE_GEMFILE=../Gemfile ./build-ci.rb test
@@ -80,7 +70,7 @@ jobs:
       - run:
           name: Bundle Install
           command: |
-            bundle install --path=~/spree/vendor/bundle
+            bundle check || bundle install
             ./build-ci.rb install
       - save_cache:
           key: spree-bundle-v7-{{ checksum ".ruby-version" }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
@@ -98,7 +88,7 @@ jobs:
       - run:
           name: Bundle Install
           command: |
-            bundle install --path=~/spree/vendor/bundle
+            bundle check || bundle install
             ./build-ci.rb install
       - save_cache:
           key: spree-bundle-v7-ruby-3-0-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
@@ -131,6 +121,28 @@ jobs:
     environment:
       <<: *postgres_environment
       RAILS_VERSION: '~> 6.0.0'
+    steps:
+    - checkout
+    - restore_cache:
+        keys:
+          - spree-bundle-v7-{{ checksum ".ruby-version" }}-{{ .Branch }}
+          - spree-bundle-v7-{{ checksum ".ruby-version" }}
+    - run:
+        name: Ensure Bundle Install
+        command: |
+          bundle install
+          ./build-ci.rb install
+    - run:
+        name: Run rspec in parallel
+        command: BUNDLE_GEMFILE=../Gemfile ./build-ci.rb test
+    - store_artifacts:
+        path: /tmp/test-artifacts
+        destination: test-artifacts
+    - store_artifacts:
+        path: /tmp/test-results
+        destination: raw-test-output
+    - store_test_results:
+        path: /tmp/test-results
 
   tests_mysql: &tests_mysql
     <<: *run_tests
@@ -144,7 +156,6 @@ jobs:
     docker:
       - image: *ruby_image
       - image: &mysql_image circleci/mysql:8-ram
-        command: [--default-authentication-plugin=mysql_native_password]
 
   tests_mysql_ruby_3_0:
     <<: *run_tests_3_0
@@ -154,23 +165,12 @@ jobs:
       - image: *ruby_3_0_image
       - image: *mysql_image
         command: [--default-authentication-plugin=mysql_native_password]
-
-  tests_mysql_rails_6_0:
-    <<: *tests_mysql
-    environment:
-      <<: *mysql_environment
-      RAILS_VERSION: '~> 6.0.0'
     steps:
       - checkout
       - restore_cache:
           keys:
-            - spree-bundle-v7-{{ checksum ".ruby-version" }}-{{ .Branch }}
-            - spree-bundle-v7-{{ checksum ".ruby-version" }}
-      - run:
-          name: Ensure Bundle Install
-          command: |
-            bundle install --path=~/spree/vendor/bundle
-            ./build-ci.rb install
+            - spree-bundle-v7-ruby-3-0-{{ .Branch }}
+            - spree-bundle-v7-ruby-3-0
       - run:
           name: Run rspec in parallel
           command: BUNDLE_GEMFILE=../Gemfile ./build-ci.rb test
@@ -265,18 +265,12 @@ workflows:
       - tests_postgres_rails_6_0:
           requires:
             - bundle
-      - tests_mysql:
-          requires:
-            - bundle
-      - tests_mysql_rails_6_0:
-          requires:
-            - bundle
       - tests_mysql_ruby_3_0:
           requires:
             - bundle_ruby_3_0
       - send_test_coverage:
           requires:
-            - tests_mysql_rails_6_0
+            - tests_mysql_ruby_3_0
   update_staging_repository:
     jobs:
       - update_staging_repository:
