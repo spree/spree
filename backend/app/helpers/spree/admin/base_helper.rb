@@ -130,7 +130,7 @@ module Spree
             case key
             when :currency
               form.label("preferred_#{key}", Spree.t(key) + ': ') +
-                (form.select "preferred_#{key}", currency_options(current_store.default_currency), {}, { class: 'form-control select2' })
+                (form.select "preferred_#{key}", currency_options(object.preferences[key]), {}, { class: 'form-control select2' })
             else
               form.label("preferred_#{key}", Spree.t(key) + ': ') +
                 preference_field_for(form, "preferred_#{key}", type: object.preference_type(key))
