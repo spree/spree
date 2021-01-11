@@ -136,7 +136,11 @@ Spree::Core::Engine.add_routes do
       collection do
         post :update_positions
       end
-      resources :taxons
+      resources :taxons do
+        member do
+          delete :remove_icon
+        end
+      end
     end
 
     resources :taxons, only: [:index, :show]
