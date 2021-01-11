@@ -56,7 +56,7 @@
       <div data-hook="admin_product_form_cost_currency" class="omega two columns">
         <%= f.field_container :cost_currency, class: ['form-group'] do %>
           <%= f.label :cost_currency, Spree.t(:cost_currency) %>
-          <%= f.text_field :cost_currency, class: 'form-control' %>
+          <%= f.select :cost_currency, currency_options(@product.cost_currency), {}, { class: 'select2' } %>
           <%= f.error_message_on :cost_currency %>
         <% end %>
       </div>
