@@ -1,15 +1,6 @@
 function initProductActions () {
   'use strict'
 
-  // Add classes on promotion items for design
-  $(document).on('mouseover mouseout', 'a.delete', function (event) {
-    if (event.type === 'mouseover') {
-      $(this).parent().addClass('action-remove')
-    } else {
-      $(this).parent().removeClass('action-remove')
-    }
-  })
-
   $('#promotion-filters').find('.variant_autocomplete').variantAutocomplete()
 
   $('.calculator-fields').each(function () {
@@ -171,5 +162,9 @@ function initProductActions () {
 }
 
 $(document).ready(function () {
-  initProductActions()
+  var promotion_form = $('form.edit_promotion')
+
+  if (promotion_form.length) {
+    initProductActions()
+  }
 })
