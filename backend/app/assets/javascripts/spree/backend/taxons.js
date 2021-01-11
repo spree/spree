@@ -33,7 +33,6 @@ $(function () {
 
   if (taxonId.length > 0) {
     taxonId.select2({
-      dropdownCssClass: 'taxon_select_box',
       placeholder: Spree.translations.find_a_taxon,
       minimumInputLength: 3,
       multiple: false,
