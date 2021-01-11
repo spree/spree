@@ -16,6 +16,14 @@ module Spree
         end
       end
 
+      def permitted_resource_params
+        if params[resource.object_name].present?
+          params.require(resource.object_name).permit([:name, :display_on, :admin_name, :code, :tracking_url, :calculator_type, :tax_category_id])
+        else
+          ActionController::Parameters.new
+        end
+      end
+
       private
 
       def set_shipping_category
