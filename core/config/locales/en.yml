@@ -959,8 +959,6 @@ en:
       supported_locales: Supported Locales
       this_file_language: English (US)
       translations: Translations
-      checkout_zone_warning_html: "Selecting a Zone will limit customers on Checkout to Addresses in Countries in that Zone. <br />
-      Please see documentation: <a href='https://guides.spreecommerce.org/user/configuration/configuring_geography.html#zones' target='_blank' class='alert-link'>https://guides.spreecommerce.org/user/configuration/configuring_geography.html#zones</a>"
     icon: Icon
     image: Image
     images: Images
@@ -1656,6 +1654,10 @@ en:
       unable_to_create: Unable to create store.
       unable_to_update: Unable to update store.
       unable_to_delete: Unable to delete store.
+    store_form:
+      code_help: "Store unique identifier, which is an abbreviated version of the store’s name (used as the layout directory name, and also helpful for separating templates by store)"
+      checkout_zone_help: "Selecting a Zone will limit customers on Checkout to Addresses in Countries or States in that Zone. 
+        For more information <a href='https://guides.spreecommerce.org/user/configuration/configuring_geography.html#zones' target='_blank' class='alert-link'>please see documentation</a>"
     store_set_default_button: Set as default
     stores: Stores
     store_credit_name: Store Credit
