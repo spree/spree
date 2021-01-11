@@ -5,8 +5,7 @@ describe 'Promotion Adjustments', type: :feature, js: true do
 
   context 'coupon promotions' do
     before do
-      visit spree.admin_promotions_path
-      click_on 'New Promotion'
+      visit spree.new_admin_promotion_path
     end
 
     it 'allows an admin to create a flat rate discount coupon promo' do
@@ -19,8 +18,8 @@ describe 'Promotion Adjustments', type: :feature, js: true do
       select2 'Item total', from: 'Add rule of type'
       within('#rule_fields') { click_button 'Add' }
 
-      fill_in id: "promotion_promotion_rules_attributes_#{Spree::Promotion.count}_preferred_amount_min", with: 30
-      fill_in id: "promotion_promotion_rules_attributes_#{Spree::Promotion.count}_preferred_amount_max", with: 60
+      fill_in id: 'promotion_promotion_rules_attributes_1_preferred_amount_min', with: 30
+      fill_in id: 'promotion_promotion_rules_attributes_1_preferred_amount_max', with: 60
       wait_for { !page.has_button?('Update') }
       within('#rule_fields') { click_button 'Update' }
 
@@ -82,14 +81,6 @@ describe 'Promotion Adjustments', type: :feature, js: true do
 
       expect(page).to have_content(promotion.name)
 
-      select2 'Item total', from: 'Add rule of type'
-      within('#rule_fields') { click_button 'Add' }
-
-      fill_in id: 'promotion_promotion_rules_attributes_1_preferred_amount_min', with: 30
-      fill_in id: 'promotion_promotion_rules_attributes_1_preferred_amount_max', with: 60
-      wait_for { !page.has_button?('Update') }
-      within('#rule_fields') { click_button 'Update' }
-
       select2 'Create whole-order adjustment', from: 'Add action of type'
       within('#action_fields') { click_button 'Add' }
       select2 'Flat Percent', from: 'Calculator'
@@ -100,11 +91,6 @@ describe 'Promotion Adjustments', type: :feature, js: true do
       within('#actions_container') { click_button 'Update' }
 
       expect(promotion.code).to be_blank
-
-      first_rule = promotion.rules.first
-      expect(first_rule.class).to eq(Spree::Promotion::Rules::ItemTotal)
-      expect(first_rule.preferred_amount_min).to eq(30)
-      expect(first_rule.preferred_amount_max).to eq(60)
 
       first_action = promotion.actions.first
       expect(first_action.class).to eq(Spree::Promotion::Actions::CreateAdjustment)
@@ -157,21 +143,11 @@ describe 'Promotion Adjustments', type: :feature, js: true do
       promotion = Spree::Promotion.find_by(name: 'Promotion')
       expect(page).to have_content(promotion.name)
 
-      select2 'Item total', from: 'Add rule of type'
-      within('#rule_fields') { click_button 'Add' }
-      fill_in id: 'promotion_promotion_rules_attributes_1_preferred_amount_min', with: '50'
-      fill_in id: 'promotion_promotion_rules_attributes_1_preferred_amount_max', with: '150'
-      wait_for { !page.has_button?('Update') }
-      within('#rule_fields') { click_button 'Update' }
-
       select2 'Free shipping', from: 'Add action of type'
       within('#action_fields') { click_button 'Add' }
       expect(page).to have_content('Makes all shipments for the order free')
 
       expect(promotion.code).to be_blank
-
-      first_rule = promotion.rules.first
-      expect(first_rule.class).to eq(Spree::Promotion::Rules::ItemTotal)
 
       first_action = promotion.actions.first
       expect(first_action.class).to eq(Spree::Promotion::Actions::FreeShipping)

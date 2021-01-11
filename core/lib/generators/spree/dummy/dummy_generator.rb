@@ -37,11 +37,8 @@ module Spree
       opts[:skip_rc] = true
       opts[:skip_spring] = true
       opts[:skip_test] = true
-      #FIXME: https://github.com/rails/rails/issues/40795
-      if Rails::VERSION::STRING < '6.1'
-        opts[:skip_yarn] = true
-        opts[:skip_javascript] = true
-      end
+      opts[:skip_yarn] = true
+      opts[:skip_javascript] = true
       opts[:skip_bootsnap] = true
 
       puts 'Generating dummy Rails application...'
