@@ -1,5 +1,5 @@
 <% if Spree::Config.show_store_currency_selector && stores.size > 1 %>
-  <li class="change-store">
+  <li class="d-none d-xl-block change-store">
     <div class="dropdown navbar-right-dropdown">
       <button id="stores-button" type="button" data-toggle="dropdown" class="navbar-right-dropdown-toggle" aria-label="<%= Spree.t('nav_bar.change_country')%>">
         <%= icon(name: 'global',
