@@ -24,9 +24,7 @@ module Spree
       :taxon_attributes,
       :taxonomy_attributes,
       :user_attributes,
-      :variant_attributes,
-      :shipping_method_attributes,
-      :calculator_attributes
+      :variant_attributes
     ]
 
     mattr_reader *ATTRIBUTES
@@ -124,9 +122,5 @@ module Spree
       :weight, :height, :width, :depth, :sku, :cost_currency,
       options: [:name, :value], option_value_ids: []
     ]
-
-    @@shipping_method_attributes = [:name, :display_on, :admin_name, :code, :tracking_url, :calculator_type, :tax_category_id]
-
-    @@calculator_attributes = [:preferred_amount, :preferred_currency]
   end
 end
