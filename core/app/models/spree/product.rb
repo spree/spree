@@ -411,8 +411,10 @@ module Spree
       # We call master.default_price here to ensure price is initialized.
       # Required to avoid Variant#check_price validation failing on create.
       unless master.default_price && master.valid?
-        master.errors.each do |att, error|
-          errors.add(att, error)
+        master.errors.map { |error| { field: error&.attribute, message: error&.message } }.each do |err|
+          next if err[:field].blank? || err[:message].blank?
+
+          errors.add(err[:field], err[:message])
         end
       end
     end
