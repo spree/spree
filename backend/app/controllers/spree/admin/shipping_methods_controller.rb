@@ -5,6 +5,26 @@ module Spree
       before_action :set_shipping_category, only: [:create, :update]
       before_action :set_zones, only: [:create, :update]
 
+      def update
+        invoke_callbacks(:update, :before)
+        if update_calculator_attributes && @object.update(permitted_shipping_method_params)
+          invoke_callbacks(:update, :after)
+          respond_with(@object) do |format|
+            format.html do
+              flash[:success] = flash_message_for(@object, :successfully_updated)
+              redirect_to location_after_save
+            end
+            format.js { render layout: false }
+          end
+        else
+          invoke_callbacks(:update, :fails)
+          respond_with(@object) do |format|
+            format.html { render action: :edit }
+            format.js { render layout: false }
+          end
+        end
+      end
+
       def destroy
         @object.destroy
 
@@ -14,6 +34,16 @@ module Spree
           format.html { redirect_to collection_url }
           format.js { render_js_for_destroy }
         end
+      end
+
+      protected
+
+      def permitted_shipping_method_params
+        params.require(resource.object_name).permit(permitted_shipping_method_attributes)
+      end
+
+      def permitted_calculator_params
+        params.require(resource.object_name).require('calculator_attributes').permit(permitted_calculator_attributes)
       end
 
       private
@@ -42,6 +72,10 @@ module Spree
         @available_zones = Zone.order(:name)
         @tax_categories = Spree::TaxCategory.order(:name)
         @calculators = ShippingMethod.calculators.sort_by(&:name)
+      end
+
+      def update_calculator_attributes
+        @object.calculator.type == permitted_shipping_method_params[:calculator_type] ? @object.calculator.update(permitted_calculator_params) : true
       end
     end
   end
