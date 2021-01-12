@@ -99,7 +99,7 @@ module Spree
     @@store_attributes = [:name, :url, :seo_title, :code, :meta_keywords, :logo,
                           :meta_description, :default_currency, :mail_from_address,
                           :customer_support_email, :facebook, :twitter, :instagram,
-                          :description, :address, :contact_email, :contact_phone,
+                          :description, :address, :contact_phone,
                           :default_locale, :default_country_id, :supported_currencies,
                           :new_order_notifications_email, :mailer_logo, :checkout_zone_id, :seo_robots]
 

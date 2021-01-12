@@ -30,6 +30,8 @@ module Spree
 
     after_commit :clear_cache
 
+    alias_attribute :contact_email, :customer_support_email
+
     def self.current(domain = nil)
       current_store = domain ? Store.by_url(domain).first : nil
       current_store || Store.default

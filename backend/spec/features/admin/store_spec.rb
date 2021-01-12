@@ -25,7 +25,6 @@ describe 'Stores', type: :feature, js: true do
       expect(page).to have_field(id: 'store_description')
       expect(page).to have_field(id: 'store_address')
       expect(page).to have_field(id: 'store_contact_phone')
-      expect(page).to have_field(id: 'store_contact_email')
     end
 
     it 'has seo fields' do
@@ -54,7 +53,7 @@ describe 'Stores', type: :feature, js: true do
       fill_in 'Description', with: 'New store description'
       fill_in 'Address', with: 'New store address 123, City 123'
       fill_in 'Contact phone', with: '123123123'
-      fill_in 'Contact email', with: 'contact@example.com'
+      fill_in 'Customer Support Email', with: 'contact@example.com'
       fill_in 'SEO Title', with: 'Spree Store meta title'
       fill_in 'Meta Description', with: 'Spree Store meta description'
       fill_in 'Meta Keywords', with: 'Spree, Store'
