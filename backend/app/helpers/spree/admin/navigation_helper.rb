@@ -130,7 +130,7 @@ module Spree
 
       def link_to_clone(resource, options = {})
         options[:data] = { action: 'clone', 'original-title': Spree.t(:clone) }
-        options[:class] = 'btn btn-primary btn-sm with-tip'
+        options[:class] = 'btn btn-warning btn-sm with-tip'
         options[:method] = :post
         options[:icon] = 'clone.svg'
         button_link_to '', clone_object_url(resource), options
@@ -248,6 +248,16 @@ module Spree
         options[:class] << ' selected' if is_selected
         content_tag(:li, options) do
           link_to(link_text, url, class: "#{'text-success' if is_selected} sidebar-submenu-item w-100 py-2 py-md-1 pl-3 d-block")
+        end
+      end
+
+      def active_badge(condition, options = {})
+        label = options[:label]
+        label ||= condition ? Spree.t(:say_yes) : Spree.t(:say_no)
+        css_class = condition ? 'badge-active' : 'badge-inactive'
+
+        content_tag(:strong, class: "badge #{css_class} text-uppercase") do
+          label
         end
       end
 

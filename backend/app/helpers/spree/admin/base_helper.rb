@@ -169,7 +169,7 @@ module Spree
       end
 
       def required_span_tag
-        content_tag(:span, ' *', class: 'required')
+        content_tag(:span, ' *', class: 'required font-weight-bold text-danger')
       end
 
       def product_preview_link(product)

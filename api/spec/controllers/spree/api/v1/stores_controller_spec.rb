@@ -91,7 +91,6 @@ module Spree
           name: 'Hack0rz',
           url: 'spree123.example.com',
           mail_from_address: 'me@example.com',
-          customer_support_email: 'sales@example.com',
           default_currency: 'USD',
           supported_currencies: 'USD'
         }

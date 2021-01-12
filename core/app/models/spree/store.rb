@@ -30,6 +30,8 @@ module Spree
 
     after_commit :clear_cache
 
+    alias_attribute :contact_email, :customer_support_email
+
     def self.current(domain = nil)
       current_store = domain ? Store.by_url(domain).first : nil
       current_store || Store.default
@@ -49,6 +51,16 @@ module Spree
 
     def unique_name
       "#{name} (#{code})"
+    end
+
+    def formatted_url
+      return if url.blank?
+
+      if url.match(/http:\/\/|https:\/\//)
+        url
+      else
+        "https://#{url}"
+      end
     end
 
     def countries_available_for_checkout

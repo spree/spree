@@ -23,7 +23,6 @@ describe 'Storefront API v2 Stores spec', type: :request do
         expect(json_response['data']).to have_attribute(:description).with_value(store.description)
         expect(json_response['data']).to have_attribute(:address).with_value(store.address)
         expect(json_response['data']).to have_attribute(:contact_phone).with_value(store.contact_phone)
-        expect(json_response['data']).to have_attribute(:contact_email).with_value(store.contact_email)
 
         expect(json_response['data']).to have_relationship(:default_country)
         expect(json_response['data']).to have_relationship(:default_country).with_data('id' => store.default_country_id.to_s, 'type' => 'country')

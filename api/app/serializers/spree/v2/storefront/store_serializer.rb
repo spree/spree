@@ -6,7 +6,7 @@ module Spree
 
         attributes :name, :url, :meta_description, :meta_keywords, :seo_title, :default_currency, :default, :supported_currencies, :facebook,
                    :twitter, :instagram, :default_locale, :customer_support_email, :default_country_id, :description,
-                   :address, :contact_phone, :contact_email
+                   :address, :contact_phone
 
         has_one :default_country, serializer: :country, record_type: :country, id_method_name: :default_country_id
       end

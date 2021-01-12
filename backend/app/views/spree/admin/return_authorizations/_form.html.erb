@@ -33,7 +33,9 @@
             <% end %>
           </td>
           <td>
-            <div class="variant-name"><%= inventory_unit.variant.name %></div>
+            <div class="variant-name">
+              <%= link_to return_item.inventory_unit.variant.name, spree.edit_admin_product_path(return_item.inventory_unit.variant.product) %>
+            </div>
             <div class="variant-options"><%= inventory_unit.variant.options_text %></div>
           </td>
           <td><%= inventory_unit.state.humanize %></td>

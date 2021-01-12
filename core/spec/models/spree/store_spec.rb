@@ -80,7 +80,6 @@ describe Spree::Store, type: :model do
         expect(store.description).to eq('Some description')
         expect(store.address).to eq('Address street 123, City 17')
         expect(store.contact_phone).to eq('123123123')
-        expect(store.contact_email).to eq('user@example.com')
       end
     end
 

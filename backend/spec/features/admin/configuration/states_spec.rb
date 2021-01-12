@@ -3,10 +3,10 @@ require 'spec_helper'
 describe 'States', type: :feature do
   stub_authorization!
 
-  let!(:country) { create(:country) }
+  let!(:country) { create(:country, states_required: true) }
 
   before do
-    @hungary = Spree::Country.create!(name: 'Hungary', iso_name: 'Hungary', iso: 'HU', iso3: 'HUN')
+    @hungary = Spree::Country.create!(name: 'Hungary', iso_name: 'Hungary', iso: 'HU', iso3: 'HUN', states_required: true)
   end
 
   def go_to_states_page
@@ -24,8 +24,8 @@ describe 'States', type: :feature do
     end
   end
 
-  context 'creating and editing states' do
-    it 'allows an admin to edit existing states', js: true do
+  context 'creating and editing states', js: true do
+    it 'allows an admin to edit existing states' do
       go_to_states_page
       choose_country(country.name)
 
@@ -37,7 +37,7 @@ describe 'States', type: :feature do
       expect(page).to have_content('Calgary')
     end
 
-    it 'allows an admin to create states for non default countries', js: true do
+    it 'allows an admin to create states for non default countries' do
       go_to_states_page
       choose_country(@hungary.name)
 
@@ -50,7 +50,7 @@ describe 'States', type: :feature do
       expect(page).to have_css('.form-group[data-hook="country"]', text: 'Hungary')
     end
 
-    it 'shows validation errors', js: true do
+    it 'shows validation errors' do
       go_to_states_page
       choose_country(country.name)
 

@@ -20,21 +20,26 @@
       <% @stores.each do |store| %>
         <tr>
           <td><%= store.unique_name %></td>
-          <td><%= link_to store.url, 'https://' + store.url, target: :blank %></td>
+          <td><%= link_to store.url, store.formatted_url, target: :blank %></td>
           <td><%= store.default_currency %></td>
-          <td><%= store.default ? "<strong>#{Spree.t(:say_yes)}</strong>".html_safe : Spree.t(:say_no) %>
+          <td><%= active_badge(store.default) %></td>
           <td class="actions actions-2 text-right" data-hook="admin_stores_index_row_actions">
-            <% if can?(:edit, store) && !store.default %>
-              <%= link_to_with_icon('save.svg', Spree.t(:store_set_default_button), spree.set_default_admin_store_path(store), no_text: true, method: :put, class: 'btn btn-warning btn-sm with-tip') %>
-            <% end %>
             <%= link_to_edit_url spree.edit_admin_store_path(store), no_text: true if can?(:edit, store) %>
+
+            <% if can?(:edit, store) %>
+              <% btn_url = store.default? ? '#' : spree.set_default_admin_store_path(store) %>
+              <% btn_class = store.default? ? 'inactive' : 'warning' %>
+              <% btn_label = store.default? ? nil : Spree.t(:store_set_default_button) %>
+              <%= link_to_with_icon('save.svg', btn_label, btn_url, no_text: true, method: (store.default? ? nil : :put), class: "btn btn-#{btn_class} btn-sm with-tip") %>
+            <% end %>
+
             <%= link_to_delete store, no_text: true, url: spree.admin_store_path(store) if can?(:destroy, store) %>
           </td>
         </tr>
       <% end %>
     </tbody>
   </table>
-</div>  
+</div>
 <% else %>
   <div class="alert alert-info no-objects-found">
     <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::StoreCredit)) %>
