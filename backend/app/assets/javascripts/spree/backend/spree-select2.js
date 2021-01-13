@@ -11,13 +11,6 @@ document.addEventListener('DOMContentLoaded', function() {
     placeholder: Spree.translations.select_an_option,
     allowClear: true
   })
-
-  // Inititate a Select2 with the multiple set to true, on any select element with the class .select2-multiple
-  // Set include_blank: false in your ERB.
-  // Manually add a placeholder in the html or ERB as needed.
-  $('select.select2-multiple').select2({
-    multiple: true
-  })
 })
 
 $.fn.addSelect2Options = function (data) {
