@@ -1130,6 +1130,7 @@ en:
     no_available_date_set: No available date set
     no_country: No country set
     no_payment_found: No payment found
+    no_payment_provider_settings_message: This payment provider has no custom settings available
     no_pending_payments: No pending payments
     no_product_available:
       for_this_quantity: Sorry, it looks like some products are not available in selected quantity.
@@ -1253,6 +1254,7 @@ en:
     payment_processing_failed: Payment could not be processed, please check the details you entered
     payment_processor_choose_banner_text: If you need help choosing a payment processor, please visit
     payment_processor_choose_link: our payments page
+    payment_provider_settings: Payment Provider Settings
     payment_state: Payment State
     payment_states:
       balance_due: balance due
