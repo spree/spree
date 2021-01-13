@@ -131,16 +131,16 @@ module Spree
             when :currency
               content_tag(:div, form.label("preferred_#{key}", Spree.t(key) + ': ') +
                 (form.select "preferred_#{key}", currency_options(object.preferences[key]), {}, { class: 'form-control select2' }),
-                class: 'form-group')
+                          class: 'form-group')
             else
               if object.preference_type(key) == :boolean
                 content_tag(:div, preference_field_for(form, "preferred_#{key}", type: object.preference_type(key)) +
                   form.label("preferred_#{key}", Spree.t(key) + ': ', class: 'form-check-label'),
-                  class: 'form-group form-check')
+                            class: 'form-group form-check')
               else
                 content_tag(:div, form.label("preferred_#{key}", Spree.t(key) + ': ') +
                   preference_field_for(form, "preferred_#{key}", type: object.preference_type(key), class: 'form-control'),
-                  class: 'form-group')
+                            class: 'form-group')
               end
             end
           end
