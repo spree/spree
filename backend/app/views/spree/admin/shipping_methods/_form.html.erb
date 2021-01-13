@@ -11,7 +11,7 @@
     <div data-hook="admin_shipping_method_form_display_field" class="col-12 col-lg-6">
       <%= f.field_container :display_on, class: ['form-group'] do %>
         <%= f.label :display_on, Spree.t(:display) %>
-        <%= select(:shipping_method, :display_on, Spree::ShippingMethod::DISPLAY.collect { |display| [Spree.t(display), display.to_s] }, { include_blank: true }, { class: 'select2' }) %>
+        <%= select(:shipping_method, :display_on, Spree::ShippingMethod::DISPLAY.collect { |display| [Spree.t(display), display.to_s] }, { include_blank: true }, { class: 'select2-clear' }) %>
         <%= f.error_message_on :display_on %>
       <% end %>
     </div>
@@ -110,7 +110,7 @@
 
       <div class="card-body">
         <%= f.field_container :categories, class: ['form-group'] do %>
-          <%= f.select :tax_category_id, @tax_categories.map { |tc| [tc.name, tc.id] }, { include_blank: true }, class: "select2" %>
+          <%= f.select :tax_category_id, @tax_categories.map { |tc| [tc.name, tc.id] }, { include_blank: true }, class: "select2-clear" %>
           <%= f.error_message_on :tax_category_id %>
         <% end %>
       </div>

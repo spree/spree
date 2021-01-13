@@ -51,7 +51,7 @@
                 <% if return_item.exchange_processed? %>
                   <%= return_item.exchange_variant.exchange_name %>
                 <% else %>
-                  <%= item_fields.collection_select :exchange_variant_id, return_item.eligible_exchange_variants, :id, :exchange_name, { include_blank: true }, { class: "select2 return-item-exchange-selection" } %>
+                  <%= item_fields.collection_select :exchange_variant_id, return_item.eligible_exchange_variants, :id, :exchange_name, { include_blank: true }, { class: "select2-clear return-item-exchange-selection" } %>
                 <% end %>
               </td>
             </tr>

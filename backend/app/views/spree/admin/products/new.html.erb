@@ -27,7 +27,7 @@
       <div data-hook="new_product_prototype" class="col-12 col-md-4">
         <%= f.field_container :prototype, class: ['form-group'] do %>
           <%= f.label :prototype_id, Spree.t(:prototype) %>
-          <%= f.collection_select :prototype_id, Spree::Prototype.all, :id, :name, { include_blank: true }, { class: 'select2 w-100' } %>
+          <%= f.collection_select :prototype_id, Spree::Prototype.all, :id, :name, { include_blank: true }, { class: 'select2-clear w-100' } %>
         <% end %>
       </div>
 

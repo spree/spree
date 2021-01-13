@@ -33,7 +33,7 @@
         <div class="col-12 col-lg-6">
           <div class="form-group">
             <%= label_tag :q_state_eq, Spree.t(:status) %>
-            <%= f.select :state_eq, Spree::ReturnAuthorization.state_machines[:state].states.collect {|s| [Spree.t("return_authorization_states.#{s.name}"), s.value]}, {include_blank: true}, class: 'select2 js-filterable' %>
+            <%= f.select :state_eq, Spree::ReturnAuthorization.state_machines[:state].states.collect {|s| [Spree.t("return_authorization_states.#{s.name}"), s.value]}, {include_blank: true}, class: 'select2-clear js-filterable' %>
           </div>
         </div>
       </div>

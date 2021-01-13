@@ -23,7 +23,7 @@
             <%= f.label :source_location, Spree.t(:source) %>
             <%= f.select :source_location_id_eq,
                 options_from_collection_for_select(@stock_locations, :id, :name, @q.source_location_id_eq),
-                { include_blank: true }, class: 'select2 js-filterable' %>
+                { include_blank: true }, class: 'select2-clear js-filterable' %>
           </div>
         </div>
 
@@ -32,7 +32,7 @@
             <%= f.label :destination_location, Spree.t(:destination) %>
             <%= f.select :destination_location_id_eq,
                 options_from_collection_for_select(@stock_locations, :id, :name, @q.destination_location_id_eq),
-                { include_blank: true }, class: 'select2 js-filterable' %>
+                { include_blank: true }, class: 'select2-clear js-filterable' %>
           </div>
         </div>
       </div>
