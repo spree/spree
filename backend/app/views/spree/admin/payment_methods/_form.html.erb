@@ -26,8 +26,10 @@
 
           <div data-hook="store" class="form-group">
             <%= label_tag :payment_method_store, Spree.t(:store) %>
-            <%= collection_select(:payment_method, :store_id, @stores, :id, :unique_name, { include_blank: true }, {id: 'store_id', class: 'select2'}) %>
+            <%= collection_select(:payment_method, :store_id, @stores, :id, :unique_name, { include_blank: true }, {id: 'store_id', class: 'select2-clear'}) %>
+            <small id="emailHelp" class="form-text text-muted"><%= Spree.t(:leave_blank_to_show_in_all_stores) %></small>
           </div>
+
           <div data-hook="display" class="form-group">
             <%= label_tag :payment_method_display_on, Spree.t(:display) %>
             <%= select(:payment_method, :display_on, Spree::PaymentMethod::DISPLAY.collect { |display| [Spree.t(display), display.to_s] }, {}, {class: 'select2'}) %>

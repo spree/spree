@@ -1015,6 +1015,7 @@ en:
     lastname: Last Name
     last_name_begins_with: Last Name Begins With
     learn_more: Learn More
+    leave_blank_to_show_in_all_stores: Leave this option blank to show this payment method in all stores.
     lifetime_stats: Lifetime Stats
     limit_usage_to: Limit usage to
     line_item_adjustments: "Line item adjustments"
