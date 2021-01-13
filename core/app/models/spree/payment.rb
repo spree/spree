@@ -199,19 +199,22 @@ module Spree
           source.errors.map { |error| { field: error.attribute, message: error&.message } }.each do |err|
             next if err[:field].blank? || err[:message].blank?
 
-            field_name = I18n.t("activerecord.attributes.#{source.class.to_s.underscore}.#{err[:field]}")
-            errors.add(Spree.t(source.class.to_s.demodulize.underscore), "#{field_name} #{err[:message]}")
+            add_source_error(err[:field], err[:message])
           end
         else
           source.errors.messages.each do |field, error|
             next if field.blank? || error.empty?
 
-            field_name = I18n.t("activerecord.attributes.#{source.class.to_s.underscore}.#{field}")
-            errors.add(Spree.t(source.class.to_s.demodulize.underscore), "#{field_name} #{error.first}")
+            add_source_error(field, error.first)
           end
         end
       end
       !errors.present?
+    end
+
+    def add_source_error(field, message)
+      field_name = I18n.t("activerecord.attributes.#{source.class.to_s.underscore}.#{field}")
+      errors.add(Spree.t(source.class.to_s.demodulize.underscore), "#{field_name} #{message}")
     end
 
     def profiles_supported?
