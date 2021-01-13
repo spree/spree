@@ -412,7 +412,7 @@ module Spree
       # Required to avoid Variant#check_price validation failing on create.
       unless master.default_price && master.valid?
         if Rails::VERSION::STRING >= '6.1'
-          master.errors.map { |error| { field: error&.attribute, message: error&.message } }.each do |err|
+          master.errors.map { |error| { field: error.attribute, message: error&.message } }.each do |err|
             next if err[:field].blank? || err[:message].blank?
 
             errors.add(err[:field], err[:message])

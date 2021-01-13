@@ -196,7 +196,7 @@ module Spree
     def validate_source
       if source && !source.valid?
         if Rails::VERSION::STRING >= '6.1'
-          source.errors.map { |error| { field: error&.attribute, message: error&.message } }.each do |err|
+          source.errors.map { |error| { field: error.attribute, message: error&.message } }.each do |err|
             next if err[:field].blank? || err[:message].blank?
 
             field_name = I18n.t("activerecord.attributes.#{source.class.to_s.underscore}.#{err[:field]}")
