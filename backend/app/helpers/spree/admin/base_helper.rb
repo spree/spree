@@ -93,7 +93,9 @@ module Spree
                             class: 'input_integer form-control'
                           }
                         when :boolean
-                          {}
+                          {
+                            class: 'form-check-input'
+                          }
                         when :string
                           {
                             size: 10,
@@ -139,7 +141,7 @@ module Spree
                             class: 'form-group form-check')
               else
                 content_tag(:div, form.label("preferred_#{key}", Spree.t(key) + ': ') +
-                  preference_field_for(form, "preferred_#{key}", type: object.preference_type(key), class: 'form-control'),
+                  preference_field_for(form, "preferred_#{key}", type: object.preference_type(key)),
                             class: 'form-group')
               end
             end
