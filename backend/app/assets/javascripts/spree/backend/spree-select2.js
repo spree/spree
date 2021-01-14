@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
   // Initiate a standard Select2 on any select element with the class .select2
   // Remember to add a place holder in the HTML as needed.
-  $('select.select2').select2()
+  $('select.select2').select2({})
 
   // Initiate a Select2 with the option to clear, on any select element with the class .select2-clear
   // Set: include_blank: true in the ERB.
