@@ -1,8 +1,14 @@
 document.addEventListener('DOMContentLoaded', function() {
-  // Inititate Select2 on any select element with the class .select2
-  $('select.select2').select2({
-    allowClear: true,
-    placeholder: Spree.translations.select_an_option
+  // Initiate a standard Select2 on any select element with the class .select2
+  // Remember to add a place holder in the HTML as needed.
+  $('select.select2').select2()
+
+  // Initiate a Select2 with the option to clear, on any select element with the class .select2-clear
+  // Set: include_blank: true in the ERB.
+  // A placeholder is auto-added here as it is required to clear the Select2.
+  $('select.select2-clear').select2({
+    placeholder: Spree.translations.select_an_option,
+    allowClear: true
   })
 })
 

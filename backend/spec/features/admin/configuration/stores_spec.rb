@@ -51,7 +51,7 @@ describe 'Stores admin', type: :feature, js: true do
         click_link 'New Store'
 
         expect(page).to have_current_path(spree.new_admin_store_path)
-        expect(page).to have_selector(:id, 'select2-store_checkout_zone_id-container', text: 'Select an option')
+        expect(page).to have_selector(:id, 'select2-store_checkout_zone_id-container', text: 'No Limits')
       end
     end
 
