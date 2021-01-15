@@ -79,9 +79,7 @@ module Spree
     end
 
     def available_for_store?(store)
-      return true if store.blank? || store_id.blank?
-
-      store_id == store.id
+      return true if store_ids.empty? || store_ids.include?(store.id)
     end
   end
 end
