@@ -1,5 +1,5 @@
 ---
-title: "Upgrade Guides"
+title: "All Upgrade Guides"
 section: upgrades
 ---
 
@@ -9,6 +9,7 @@ We strongly advise upgrading Spree incrementally, rather than in one big go. For
 
 If there are any issues with these guides, please let us know by [filing an issue](https://github.com/spree/spree/issues/new).
 
+* [4.1 to 4.2](/developer/upgrades/four-dot-one-to-four-dot-two.html)
 * [4.0 to 4.1](/developer/upgrades/four-dot-oh-to-four-dot-one.html)
 * [3.7 to 4.0](/developer/upgrades/three-dot-seven-to-four-dot-oh.html)
 * [3.6 to 3.7](/developer/upgrades/three-dot-six-to-three-dot-seven.html)
