@@ -1249,8 +1249,6 @@ en:
     payment_identifier: Payment Identifier
     payment_information: Payment Information
     payment_method: Payment Method
-    payment_method_form:
-      stores_help: Leave blank to show this payment method in all stores.
     payment_methods: Payment Methods
     payment_method_not_supported: That payment method is unsupported. Please choose another one.
     payment_processing_failed: Payment could not be processed, please check the details you entered
