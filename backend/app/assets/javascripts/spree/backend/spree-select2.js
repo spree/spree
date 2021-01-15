@@ -3,10 +3,6 @@ document.addEventListener('DOMContentLoaded', function() {
   // Remember to add a place holder in the HTML as needed.
   $('select.select2').select2({})
 
-  $('select.select2-multiple').select2({
-    multiple: true
-  })
-
   // Initiate a Select2 with the option to clear, on any select element with the class .select2-clear
   // Set: include_blank: true in the ERB.
   // A placeholder is auto-added here as it is required to clear the Select2.
