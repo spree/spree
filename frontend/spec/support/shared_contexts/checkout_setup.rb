@@ -6,7 +6,7 @@ shared_context 'checkout setup' do
   let!(:mug) { create(:product, name: 'RoR Mug') }
   let!(:credit_card_payment) { create(:credit_card_payment_method) }
   let!(:check_payment) { create(:check_payment_method) }
-  let!(:unsupported_payment) { create(:check_payment_method, store: create(:store)) }
+  let!(:unsupported_payment) { create(:check_payment_method, stores: [create(:store)]) }
   let!(:zone) { create(:zone) }
   let!(:store) { create(:store) }
 

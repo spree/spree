@@ -7,8 +7,8 @@ shared_context 'checkout address book' do
     @tax_category = Spree::TaxCategory.first || create(:tax_category)
     @shipping = Spree::ShippingMethod.find_by_name('UPS Ground') || create(:shipping_method, tax_category: @tax_category)
 
-    create(:credit_card_payment_method)
-    create(:check_payment_method)
+    create(:credit_card_payment_method, stores: [@store] )
+    create(:check_payment_method, stores: [@store])
 
     reset_spree_preferences do |config|
       config.company = true

@@ -5,7 +5,7 @@ class OrderWalkthrough
 
     # A payment method must exist for an order to proceed through the Address state
     unless Spree::PaymentMethod.exists?
-      FactoryBot.create(:check_payment_method)
+      FactoryBot.create(:check_payment_method, stores: [store])
     end
 
     # Need to create a valid zone too...
