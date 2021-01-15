@@ -3,10 +3,10 @@ class RemoveStoreIdFromSpreePaymentMethods < ActiveRecord::Migration[6.0]
     Spree::PaymentMethod.all.each do |payment_method|
       next if payment_method.store_ids.any?
 
-      payment_method.store_ids = if payment_method[:store_id].present?
-        payment_method[:store_id]
+      if payment_method[:store_id].present?
+        payment_method.store_ids = payment_method[:store_id]
       else
-        Spree::Store.ids
+        payment_method.store_ids = Spree::Store.ids
       end
 
       payment_method.save
