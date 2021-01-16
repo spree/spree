@@ -1,9 +1,10 @@
 class OrderWalkthrough
   def self.up_to(state)
     store = if Spree::Store.exists?
-              # Ensure default store is used
+              # Ensure the default store is used
               Spree::Store.default || FactoryBot.create(:store, default: true)
             else
+              # Create a default store
               FactoryBot.create(:store, default: true)
             end
 
@@ -63,7 +64,7 @@ class OrderWalkthrough
       amount: order.total
 
     # TODO: maybe look at some way of making this payment_state change automatic
-    order.payment_state = "paid"
+    order.payment_state = 'paid'
     order.next!
   end
 
