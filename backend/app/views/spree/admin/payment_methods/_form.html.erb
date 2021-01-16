@@ -25,8 +25,8 @@
           <% end %>
 
           <div data-hook="store" class="form-group">
-            <%= label_tag :payment_method_store, Spree.t(:stores) %>
-            <%= collection_select(:payment_method, :store_ids, @stores, :id, :unique_name, {}, { multiple: true,  id: 'store_id', class: 'select2' }) %>
+            <%= label_tag :payment_method_stores, Spree.t(:stores) %>
+            <%= collection_select(:payment_method, :store_ids, @stores, :id, :unique_name, {}, { multiple: true, class: 'select2' }) %>
           </div>
 
           <div data-hook="display" class="form-group">
