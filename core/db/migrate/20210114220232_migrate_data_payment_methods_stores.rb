@@ -1,4 +1,4 @@
-class RemoveStoreIdFromSpreePaymentMethods < ActiveRecord::Migration[6.0]
+class MigrateDataPaymentMethodsStores < ActiveRecord::Migration[6.0]
   def up
     Spree::PaymentMethod.all.each do |payment_method|
       next if payment_method.store_ids.any?
@@ -11,9 +11,5 @@ class RemoveStoreIdFromSpreePaymentMethods < ActiveRecord::Migration[6.0]
 
       payment_method.save
     end
-  end
-
-  def change
-    remove_column :spree_payment_methods, :store_id
   end
 end
