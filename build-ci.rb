@@ -3,7 +3,7 @@
 require 'pathname'
 
 class Project
-  attr_reader :name
+  attr_reader :name, :rspec_opts
 
   NODE_TOTAL = Integer(ENV.fetch('CIRCLE_NODE_TOTAL', 1))
   NODE_INDEX = Integer(ENV.fetch('CIRCLE_NODE_INDEX', 0))
@@ -17,11 +17,18 @@ class Project
 
   DEFAULT_MODE = 'test'.freeze
 
-  def initialize(name)
+  def initialize(name, rspec_opts = nil)
     @name = name
+    @rspec_opts = rspec_opts
   end
 
-  ALL = %w[api backend core frontend sample].map(&method(:new)).freeze
+  ALL = [
+    new('api'),
+    new('backend', ['spec/features']),
+    new('backend', ['spec/controllers', 'spec/helpers', 'spec/models', 'spec/routing']),
+    new('core'),
+    new('sample')
+  ].freeze
 
   # Install subproject
   #
@@ -103,7 +110,8 @@ class Project
   end
 
   def rspec_arguments(custom_name = name)
-    args = []
+    args = rspec_opts
+    args ||= []
     args += %w[--order random --format documentation --profile 10]
     if report_dir = ENV['CIRCLE_TEST_REPORTS']
       args += %W[-r rspec_junit_formatter --format RspecJunitFormatter -o #{report_dir}/rspec/#{custom_name}.xml]
