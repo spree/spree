@@ -24,10 +24,13 @@ class Project
 
   ALL = [
     new('api'),
-    new('backend', ['spec/features']),
+    new('backend', ['spec/features --tag js']),
+    new('backend', ['spec/features --tag ~js']),
     new('backend', ['spec/controllers', 'spec/helpers', 'spec/models', 'spec/routing']),
-    new('core'),
-    new('frontend'),
+    new('core', ['spec/finders', 'spec/helpers', 'spec/lib', 'spec/mailers', 'spec/presenters', 'spec/services', 'spec/validators']),
+    new('core', ['spec/models']),
+    new('frontend', ['spec/features']),
+    new('frontend', ['spec/controllers', 'spec/helpers', 'spec/requests', 'spec/views']),
     new('sample')
   ].freeze
 
