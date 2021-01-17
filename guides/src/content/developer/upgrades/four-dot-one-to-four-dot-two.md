@@ -47,6 +47,7 @@ class AddStockLocationToRMA < ActiveRecord::Migration[4.2]
 
 ```bash
 rails spree:install:migrations
+rails active_storage:update
 ```
 
 ## Run migrations
