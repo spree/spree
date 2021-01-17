@@ -25,9 +25,8 @@
           <% end %>
 
           <div data-hook="store" class="form-group">
-            <%= label_tag :payment_method_store, Spree.t(:store) %>
-            <%= collection_select(:payment_method, :store_id, @stores, :id, :unique_name, { include_blank: true }, {id: 'store_id', class: 'select2-clear'}) %>
-            <small class="form-text text-muted"><%= Spree.t('payment_method_form.stores_help') %></small>
+            <%= label_tag :payment_method_stores, Spree.t(:stores) %>
+            <%= collection_select(:payment_method, :store_ids, @stores, :id, :unique_name, {}, { multiple: true, class: 'select2' }) %>
           </div>
 
           <div data-hook="display" class="form-group">
