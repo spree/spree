@@ -23,7 +23,25 @@ gem 'spree_auth_devise', '~> 4.3'
 gem 'spree_gateway', '~> 3.9'
 ```
 
-## Run `bundle update`
+## Update gems
+
+```
+bundle update
+```
+
+## Fix RMA migration
+
+Please find a `add_stock_location_to_rma` migration in your `db/migrate` directory and change:
+
+```ruby
+class AddStockLocationToRma < ActiveRecord::Migration[4.2]
+```
+
+to
+
+```ruby
+class AddStockLocationToRMA < ActiveRecord::Migration[4.2]
+```
 
 ## Install missing migrations
 
