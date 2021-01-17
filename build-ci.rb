@@ -27,6 +27,7 @@ class Project
     new('backend', ['spec/features']),
     new('backend', ['spec/controllers', 'spec/helpers', 'spec/models', 'spec/routing']),
     new('core'),
+    new('frontend'),
     new('sample')
   ].freeze
 
