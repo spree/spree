@@ -572,6 +572,7 @@ en:
         no_store_credit: User has no Store Credit available.
         available_store_credit: User has %{amount} in Store Credit available.
     administration: Administration
+    admin_appearance: Admin Appearance
     advertise: Advertise
     agree_to_privacy_policy: Agree to Privacy Policy
     agree_to_terms_of_service: Agree to Terms of Service
@@ -581,6 +582,9 @@ en:
     all_departments: All departments
     all_items_have_been_returned: All items have been returned
     all_rights_reserved: All rights reserved
+    allow_dark_mode:
+      short: Use Adaptive Dark Mode (experimental)
+      long: Adaptive Dark Mode matches your system dark or light appearance settings.
     already_have_account: Already have an account?
     alt_text: Alternative Text
     alternative_phone: Alternative Phone

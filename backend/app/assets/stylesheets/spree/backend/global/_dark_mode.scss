@@ -1,17 +1,59 @@
 :root {
 
+  // Base Colors
   --primary-text-color: #c9d1d9;
   --primary-link-color: #58a6ff;
   --primary-link-hover-color: #c9d1d9;
   --primary-background: #06090F;
   --secondary-background: #0d1117;
   --border-color: #21262d ;
+
+  --color-state-hover-secondary-bg: #161b22;
+
+
+  // Buttons
+  // Standard Buttons
+  --color-btn-bg: #21262d;
+  --color-btn-text: #c9d1d9;
+  --color-btn-border: #30363d;
+    // Standard ButtonsHover
+    --color-btn-hover-bg: #30363d;
+    --color-btn-hover-border: #8b949e;
+
+  // Danger Buttons
+  --color-btn-danger-text: #f85149;
+    // Hover
+    --color-btn-danger-hover-text: #fff;
+    --color-btn-danger-hover-bg: #da3633;
+    --color-btn-danger-hover-border: #f85149;
+    --color-btn-danger-hover-shadow: 0 0 transparent;
+    --color-btn-danger-hover-inset-shadow: 0 0 transparent;
+
+
+  // Flash alerts
+  --color-alert-warn-border: rgba(187,128,9,0.4);
+
+  --color-alert-success-border: rgba(17, 187, 9, 0.4);
 }
 
 @media (prefers-color-scheme: dark) {
-  body {
+  body.dark-mode-allowed {
     color: var(--primary-text-color);
     background-color: var(--primary-background);
+
+    .pagination {
+
+      li a{
+        color: var(--primary-link-color);
+        background-color: var(--primary-background);
+        border: 1px solid var(--border-color);
+      }
+
+      li.active a {
+        border-color: var(--border-color);
+        background-color: var(--color-state-hover-secondary-bg);
+      }
+    }
 
     #logo {
       filter: invert(0.4);
@@ -19,19 +61,105 @@
 
     aside#main-sidebar {
       border-color: var(--border-color) !important;
-      background-color: var(--primary-background);
+      background-color: var(--secondary-background);
 
-      ul.nav-sidebar > li > a{
+      .nav-stacked {
+        border-color: var(--border-color) !important;
+
+        li.selected {
+          background-color: var(--color-state-hover-secondary-bg);
+          a {
+            color: var(--primary-text-color) !important;
+          }
+        }
+      }
+
+      ul.nav-sidebar > li > a {
         color: var(--primary-text-color);
+
+        &:hover {
+          background-color: var(--color-state-hover-secondary-bg);
+        }
+
       }
 
       ul.active-option {
-        background-color: var(--primary-background);
+        background-color: var(--secondary-background);
+      }
+
+      a.sidebar-submenu-item:hover {
+        background-color: var(--color-state-hover-secondary-bg);
       }
     }
 
+
+    // Buttons
+
+    .btn {
+      color: var(--color-btn-text);
+      background-color: var(--color-btn-bg);
+      border-color: var(--color-btn-border);
+
+      &:hover {
+        background-color: var(--color-btn-hover-bg);
+        border-color: var(--color-btn-hover-border);
+      }
+    }
+
+    .btn-danger {
+      color: var(--color-btn-danger-text);
+
+      &:hover {
+        color: var(--color-btn-danger-hover-text);
+        background-color: var(--color-btn-danger-hover-bg);
+        border-color: var(--color-btn-danger-hover-border);
+        box-shadow: var(--color-btn-danger-hover-shadow),var(--color-btn-danger-hover-inset-shadow);
+      }
+    }
+
+    .btn-link {
+      background-color: transparent;
+      border-color: transparent;
+
+      &:hover {
+        color: var(--primary-link-color);
+        background-color: transparent;
+        border-color: transparent;
+      }
+    }
+
+
+    // Backgrouds
     .bg-light {
+      background-color: var(--secondary-background) !important;
+    }
+
+    .bg-white {
       background-color: var(--primary-background) !important;
+    }
+
+
+    // Cards
+    .card {
+      background-color: var(--secondary-background);
+      border-color: var(--border-color) !important;
+
+    }
+
+
+    // Flash Alerts
+    .flash-warn,
+    .alert-warning {
+      background-image: linear-gradient(rgba(187, 128, 9, 0.1), rgba(187, 128, 9, 0.1));
+      background-color: transparent;
+      border-color:var(--color-alert-warn-border);
+    }
+
+    .flash-warn,
+    .alert-success {
+      background-image: linear-gradient(rgba(9, 187, 33, 0.1), rgba(9, 187, 33, 0.1));
+      background-color: transparent;
+      border-color:var(--color-alert-success-border);
     }
 
     .border-bottom {
@@ -43,14 +171,35 @@
       }
 
     .header .navbar {
-      background-color: var(--primary-background);
+      background-color: var(--secondary-background);
       border-color: var(--border-color) !important;
       border-bottom:1px solid;
     }
 
+    #contextualSideMenu {
+      background-color: var(--primary-background);
+    }
+
+
+    // Form Fields
+    textarea,
     input {
       background-color: var(--primary-background) !important;
       border-color: var(--border-color) !important;
+      color: var(--color-btn-tex);
+
+      &.flatpickr-input {
+        background-color: var(--primary-background) !important;
+        border-color: var(--border-color) !important;
+        color: var(--color-btn-tex);
+      }
+    }
+
+    .input-group-prepend span,
+    .input-group-text {
+      color: var(--primary-text-color);
+      border-color: var(--border-color) !important;
+      background-color: var(--secondary-background) !important;
     }
 
     .select2-container--bootstrap4 .select2-selection {
@@ -58,19 +207,26 @@
       border-color: var(--border-color);
     }
 
+
+    // Tabels
     #table-filter {
       border-color: var(--border-color);
     }
 
     .index-filter-button button {
       color: var(--primary-text-color);
-      background-color: var(--primary-background);
+      background-color: var(--secondary-background);
       border-color: var(--border-color);
+
+      &:hover {
+        color: var(--primary-text-color);
+        background-color: var(--primary-background);
+      }
     }
 
     .custom-select {
       color: var(--primary-text-color);
-      background-color: var(--primary-background);
+      background-color: var(--secondary-background);
       border-color: var(--border-color);
     }
 
@@ -84,7 +240,7 @@
     }
 
     table.table tbody tr {
-      background-color: var(--primary-background);
+      background-color: var(--secondary-background);
     }
 
   }

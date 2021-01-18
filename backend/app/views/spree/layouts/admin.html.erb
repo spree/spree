@@ -4,7 +4,7 @@
     <%= render partial: 'spree/admin/shared/head' %>
   </head>
 
-  <body class="admin">
+  <body class="admin <% if Spree::Config[:allow_dark_mode] %>dark-mode-allowed<% end %>">
 
     <%#-------------------------------------------------%>
     <%# Loading progress bars                           %>

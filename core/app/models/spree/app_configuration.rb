@@ -32,6 +32,7 @@ module Spree
     preference :admin_users_per_page, :integer, default: Kaminari.config.default_per_page
     preference :admin_show_version, :boolean, default: true
     preference :allow_checkout_on_gateway_error, :boolean, default: false
+    preference :allow_dark_mode, :boolean, default: false
     preference :allow_guest_checkout, :boolean, default: true
     preference :alternative_shipping_phone, :boolean, default: false # Request extra phone for ship addr
     preference :always_include_confirm_step, :boolean, default: false # Ensures confirmation step is always in checkout_progress bar, but does not force a confirm step if your payment methods do not support it.
