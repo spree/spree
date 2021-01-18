@@ -1,6 +1,7 @@
 ---
 title: Developing Spree
 section: tutorial
+order: 2
 ---
 
 ## Overview
@@ -29,7 +30,7 @@ If `bundle install` fails that means you're missing some required system librari
 Firstly, please [install homebew](https://brew.sh/). With homebrew installed you will need to install some packages needed to run Spree and Rails applications in general:
 
 ```bash
-brew install openssl mysql postgresql sqlite
+brew install openssl mysql postgresql sqlite imagemagick
 ```
 
 ## Sandbox
