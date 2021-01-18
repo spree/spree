@@ -47,11 +47,11 @@ Admin panel credentials for your own Heroku demo:
 * login: `spree@example.com`
 * password: `spree123`
 
-## Installation
+## Local Installation
 
 ### Option A - use Spree Starter
 
-1. Download [Spree Starter](https://github.com/spree/spree_starter/archive/master.zip)
+1. Download [Spree Starter](https://github.com/spree/spree_starter/archive/main.zip)
 2. Unzip it
 3. Run `bin/setup` in `spree_starter` directory
 
