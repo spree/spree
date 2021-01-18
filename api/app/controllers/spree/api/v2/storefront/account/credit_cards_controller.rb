@@ -50,10 +50,6 @@ module Spree
               Spree::Api::Dependencies.storefront_credit_card_serializer.constantize
             end
 
-            def collection_finder
-              Spree::Api::Dependencies.storefront_credit_card_finder.constantize
-            end
-
             def scope
               spree_current_user.credit_cards.accessible_by(current_ability, :show)
             end

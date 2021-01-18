@@ -14,19 +14,15 @@ module Spree
       protected
 
       def invalidate_payments(card:)
-        if payment_scope(card).checkout.each(&:invalidate!)
-          success(card: card)
-        else
-          failure('invalidating payments failure')
-        end
+        payment_scope(card).checkout.each(&:invalidate!)
+
+        success(card: card)
       end
 
       def void_payments(card:)
-        if payment_scope(card).where.not(state: :checkout).each(&:void!)
-          success(card: card)
-        else
-          failure('voiding payments failure')
-        end
+        payment_scope(card).where.not(state: :checkout).each(&:void!)
+
+        success(card: card)
       end
 
       def destroy(card:)
