@@ -8,13 +8,16 @@ order: 0
 
 Before starting this tutorial, make sure you have [Docker](https://docs.docker.com/get-docker/) installed on your system. This is fairly straightforward, but differs depending on which operating system you use.
 
+If you would like to add Spree to your existing Ruby on Rails application, please [follow this guide instead](/developer/tutorials/existing_app_tutorial.html).
+
 ## Installation
 
-1. Download [Spree Starter](https://github.com/spree/spree_starter/archive/master.zip)
+1. Download [Spree Starter](https://github.com/spree/spree_starter/archive/main.zip)
 2. Unzip it
-3. Run `bin/setup` in `spree_starter` directory
+3. Rename `spree_starter-main` directory as you please
+4. Run `bin/setup` in said directory
 
-## Hello, Spree!
+## Hello, Spree Commerce
 
 You now have a functional Spree application after running only a few commands!
 
@@ -37,10 +40,12 @@ Upon successful authentication, you should see the admin screen:
 
 Feel free to explore some of the Admin Panel features that Spree has to offer and to verify that your installation is working properly.
 
-## Wrapping Up
+## Next steps
 
 If you've followed the steps described in this tutorial, you should now have a fully functional Spree application up and running.
 
-We recommend you should continue to [Customization section](/developer/customization/storefront.html) to learn how to modify and extend your Spree application.
+For starting/stopping/restarting application please refer to [Spree Starter README](https://github.com/spree/spree_starter#running-the-project).
+
+We recommend you should also continue to [Customization section](/developer/customization/storefront.html) to learn how to modify and extend your Spree application.
 
 To learn more about Spree internals please refer [Core section](/developer/core/orders.html).

@@ -51,89 +51,14 @@ Admin panel credentials for your own Heroku demo:
 
 ### Option A - use Spree Starter
 
-1. Download [Spree Starter](https://github.com/spree/spree_starter/archive/main.zip)
-2. Unzip it
-3. Run `bin/setup` in `spree_starter` directory
+1. [Install Docker](https://docs.docker.com/get-docker/)
+2. Download [Spree Starter](https://github.com/spree/spree_starter/archive/main.zip)
+3. Unzip it
+4. Run `bin/setup` in `spree_starter-main` directory
 
 ### Option B - add Spree to an existing application
 
-1. Add Spree gems to your `Gemfile`
-
-    ##### Rails 6.0 and 6.1
-
-    ```ruby
-    gem 'spree', '~> 4.2.0.rc3'
-    gem 'spree_auth_devise', '~> 4.3'
-    gem 'spree_gateway', '~> 3.9'
-    ```
-
-    ##### Rails 5.2
-
-    ```ruby
-    gem 'spree', '~> 3.7.0'
-    gem 'spree_auth_devise', '~> 3.5'
-    gem 'spree_gateway', '~> 3.4'
-    ```
-
-    To see what rails version are you using run this command:
-
-    ```bash
-    rails -v
-    ```
-
-    Older rails versions are also supported: [Rails 5.1](https://guides.spreecommerce.org/release_notes/3_5_0.html), [Rails 5.0](https://guides.spreecommerce.org/release_notes/3_2_0.html), [Rails 4.2](https://guides.spreecommerce.org/release_notes/3_1_0.html)
-
-2. Install gems
-
-    ```bash
-    bundle install
-    ```
-
-    **Note**: if you run into `Bundler could not find compatible versions for gem "sprockets":` error message, please run
-
-    ```bash
-    bundle update
-    ```
-
-3. Use the install generators to set up Spree
-
-    ```shell
-    bundle exec rails g spree:install --user_class=Spree::User
-    bundle exec rails g spree:auth:install
-    bundle exec rails g spree_gateway:install
-    ```
-
-#### Installation options
-
-By default, the installation generator (`rails g spree:install`) will run
-migrations as well as adding seed and sample data and will copy storefront data
-for easy customization (if `spree_frontend` available). This can be disabled using
-
-```shell
-rails g spree:install --migrate=false --sample=false --seed=false --copy_storefront=false
-```
-
-You can always perform any of these steps later by using these commands.
-
-```shell
-bundle exec rake railties:install:migrations
-bundle exec rails db:migrate
-bundle exec rails db:seed
-bundle exec rake spree_sample:load
-bundle exec rails g spree:frontend:copy_storefront
-```
-
-#### Headless installation
-
-To use Spree in [API-only mode](https://guides.spreecommerce.org/api/overview/) you need to replace `spree` with `spree_api` in your project Gemfile. This will skip Storefront and Admin Panel. If you would want to include the Admin Panel please add `spree_backend` to your Gemfile.
-
-## Browse Storefront
-
-Go to http://localhost:3000
-
-## Browse Admin Panel
-
-Go to http://localhost:3000/admin
+1. [Please follow Add Spree to an existing Ruby on Rails application tutorial](https://guides.spreecommerce.org/developer/tutorials/getting_started_tutorial.html)
 
 ## Extensions
 
