@@ -49,7 +49,7 @@ Admin panel credentials for your own Heroku demo:
 
 ## Local Installation
 
-### Option A - use Spree Starter
+### Option A - use Spree Starter with Docker
 
 1. [Install Docker](https://docs.docker.com/get-docker/)
 2. Download [Spree Starter](https://github.com/spree/spree_starter/archive/main.zip)
