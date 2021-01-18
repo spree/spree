@@ -58,7 +58,7 @@ Admin panel credentials for your own Heroku demo:
 
 ### Option B - add Spree to an existing application
 
-1. [Please follow Add Spree to an existing Ruby on Rails application tutorial](https://guides.spreecommerce.org/developer/tutorials/getting_started_tutorial.html)
+1. [Please follow Add Spree to an existing Ruby on Rails application tutorial](https://guides.spreecommerce.org/developer/tutorials/existing_app_tutorial.html)
 
 ## Extensions
 
