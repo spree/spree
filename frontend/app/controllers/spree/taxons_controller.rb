@@ -1,6 +1,7 @@
 module Spree
   class TaxonsController < Spree::StoreController
     include Spree::FrontendHelper
+    include Spree::CacheHelper
     helper 'spree/products'
 
     before_action :load_taxon
