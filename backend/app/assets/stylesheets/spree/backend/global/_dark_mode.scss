@@ -1,0 +1,92 @@
+:root {
+
+  --primary-text-color: #c9d1d9;
+  --primary-link-color: #58a6ff;
+  --primary-link-hover-color: #c9d1d9;
+  --primary-background: #06090F;
+  --secondary-background: #0d1117;
+  --border-color: #21262d ;
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    color: var(--primary-text-color);
+    background-color: var(--primary-background);
+
+    #logo {
+      filter: invert(0.4);
+    }
+
+    aside#main-sidebar {
+      border-color: var(--border-color) !important;
+      background-color: var(--primary-background);
+
+      ul.nav-sidebar > li > a{
+        color: var(--primary-text-color);
+      }
+
+      ul.active-option {
+        background-color: var(--primary-background);
+      }
+    }
+
+    .bg-light {
+      background-color: var(--primary-background) !important;
+    }
+
+    .border-bottom {
+      border-color: var(--border-color) !important;
+    }
+
+    a {
+        color: var(--primary-link-color);
+      }
+
+    .header .navbar {
+      background-color: var(--primary-background);
+      border-color: var(--border-color) !important;
+      border-bottom:1px solid;
+    }
+
+    input {
+      background-color: var(--primary-background) !important;
+      border-color: var(--border-color) !important;
+    }
+
+    .select2-container--bootstrap4 .select2-selection {
+      background-color: var(--primary-background);
+      border-color: var(--border-color);
+    }
+
+    #table-filter {
+      border-color: var(--border-color);
+    }
+
+    .index-filter-button button {
+      color: var(--primary-text-color);
+      background-color: var(--primary-background);
+      border-color: var(--border-color);
+    }
+
+    .custom-select {
+      color: var(--primary-text-color);
+      background-color: var(--primary-background);
+      border-color: var(--border-color);
+    }
+
+
+    table.table {
+      color: var(--primary-text-color);
+    }
+
+    .table th, .table td {
+      border-color: var(--border-color);
+    }
+
+    table.table tbody tr {
+      background-color: var(--primary-background);
+    }
+
+  }
+
+}
