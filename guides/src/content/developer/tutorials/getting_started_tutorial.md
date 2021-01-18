@@ -57,8 +57,8 @@ cd my_store
 Add Spree gems to your Gemfile:
 
 ```ruby
-gem 'spree', '~> 4.1'
-gem 'spree_auth_devise', '~> 4.2'
+gem 'spree', '~> 4.2.0.rc3'
+gem 'spree_auth_devise', '~> 4.3'
 gem 'spree_gateway', '~> 3.9'
 ```
 
