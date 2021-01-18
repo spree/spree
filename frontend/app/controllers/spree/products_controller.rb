@@ -13,17 +13,8 @@ module Spree
       @searcher = build_searcher(params.merge(include_images: true, current_store_id: current_store.id))
       @products = @searcher.retrieve_products
 
-      last_modified = @products.maximum(:updated_at)&.utc if @products.respond_to?(:maximum)
-
       if http_cache_enabled?
-        etag = [
-          store_etag,
-          last_modified&.to_i,
-          available_option_types_cache_key,
-          filtering_params_cache_key
-        ]
-
-        fresh_when etag: etag, last_modified: last_modified, public: true
+        fresh_when etag: etag_index, last_modified: last_modified_index, public: true
       end
     end
 
