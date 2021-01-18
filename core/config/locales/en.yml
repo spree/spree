@@ -6,13 +6,14 @@ en:
           attributes:
             desired_shipment:
               can_not_transfer_within_same_shipment: can not be same as current shipment
-              not_enough_stock_at_desired_location: not enough stock in desired stock location
+              has_not_enough_stock_at_desired_location: has not enough stock in desired stock location
             current_shipment:
               has_already_been_shipped: has already been shipped
               can_not_have_backordered_inventory_units: has backordered inventory units
   activerecord:
     attributes:
       spree/address:
+        label: Address name
         address1: Address
         address2: Address (contd.)
         city: City
@@ -51,6 +52,7 @@ en:
       spree/option_type:
         name: Name
         presentation: Presentation
+        filterable: Filterable
       spree/order:
         checkout_complete: Checkout Complete
         completed_at: Completed At
@@ -140,7 +142,8 @@ en:
         url: Site URL
         meta_description: Meta Description
         meta_keywords: Meta Keywords
-        seo_title: Seo Title
+        seo_robots: SEO Robots
+        seo_title: SEO Title
         name: Site Name
         mail_from_address: Mail From Address
       spree/store_credit:
@@ -502,10 +505,14 @@ en:
     address_book:
       other_address: "Other address"
       add_new_shipping_address: "Add new address"
-      new_shipping_address: "New Address"
-      edit_shipping_address: "Edit Address"
+      label: Address Name
+      address_name_label: Address Name
+      address_name_placeholder: Give this address a unique name (Work, Home, etc.)
+      new_address: "New Address"
+      edit_address: "Edit Address"
+      remove_address: Remove Address
       no_shipping_addresses_on_file: "No addresses on file"
-      shipping_addresses: "Addresses"
+      addresses: "Addresses"
       successfully_created: "Address has been successfully created."
       successfully_removed: "Address has been successfully removed."
       successfully_saved: "Saved successfully"
@@ -569,9 +576,6 @@ en:
     agree_to_privacy_policy: Agree to Privacy Policy
     agree_to_terms_of_service: Agree to Terms of Service
     all: All
-    allow_currency_change:
-      short: Allow Currency Change
-      long: Allow users to change their currency via the currency picker.
     all_adjustments_closed: All adjustments successfully closed!
     all_adjustments_opened: All adjustments successfully opened!
     all_departments: All departments
@@ -692,7 +696,6 @@ en:
     confirm: Confirm
     confirm_delete: Confirm Deletion
     confirm_password: Password Confirmation
-    contact_email: Contact email
     contact_phone: Contact phone
     contact_us: Contact us
     continue: Continue
@@ -847,6 +850,7 @@ en:
         blank: can't be blank
         could_not_create_taxon: Could not create taxon
         no_shipping_methods_available: No shipping methods available for selected location, please change your address and try again.
+        cannot_remove_icon: Cannot remove image
       services:
         get_shipping_rates:
           no_shipping_address: To generate Shipping Rates Order needs to have a Shipping Address
@@ -884,6 +888,7 @@ en:
     filename: Filename
     fill_in_customer_info: Please fill in customer info
     filter: Filter
+    filterable: Filterable
     filter_results: Filter Results
     finalize: Finalize
     find_a_taxon: Find a Taxon
@@ -896,7 +901,7 @@ en:
     flat_rate_per_order: Flat Rate
     flexible_rate: Flexible Rate
     follow_us: Follow us
-    footer_info: Footer info
+    footer: Footer
     forgot_password: Forgot password?
     free: Free
     free_shipping: Free Shipping
@@ -945,6 +950,7 @@ en:
       fields: Fields
       language: Language
       country: Country
+      default_country: Default Country
       localization_settings: Localization Settings
       only_incomplete: Only incomplete
       only_complete: Only complete
@@ -1124,6 +1130,7 @@ en:
     no_available_date_set: No available date set
     no_country: No country set
     no_payment_found: No payment found
+    no_payment_provider_settings_message: This payment provider has no custom settings available
     no_pending_payments: No pending payments
     no_product_available:
       for_this_quantity: Sorry, it looks like some products are not available in selected quantity.
@@ -1146,6 +1153,7 @@ en:
     not_found: ! '%{resource} is not found'
     note: Note
     notice_messages:
+      icon_removed: Image has been successfully removed
       prices_saved: Prices successfully saved
       product_cloned: Product has been cloned
       product_deleted: Product has been deleted
@@ -1246,6 +1254,7 @@ en:
     payment_processing_failed: Payment could not be processed, please check the details you entered
     payment_processor_choose_banner_text: If you need help choosing a payment processor, please visit
     payment_processor_choose_link: our payments page
+    payment_provider_settings: Payment Provider Settings
     payment_state: Payment State
     payment_states:
       balance_due: balance due
@@ -1430,6 +1439,7 @@ en:
     rejected: Rejected
     remember_me: Remember me
     remove: Remove
+    remove_image: Remove Image
     rename: Rename
     report: Report
     reports: Reports
@@ -1505,12 +1515,14 @@ en:
     select_a_return_authorization_reason: Select a reason for the return authorization
     select_a_stock_location: Select a stock location
     select_a_store_credit_reason: Select a reason for the store credit
+    select_an_option: Select an option
     select_stock: Select stock
     selected_quantity_not_available: ! 'selected of %{item} is not available.'
-    seo: SEO
     send_copy_of_all_mails_to: Send Copy of All Mails To
     send_mails_as: Send Mails As
-    seo_title: SEO title
+    seo: SEO
+    seo_robots: SEO Robots
+    seo_title: SEO Title
     server: Server
     server_error: The server returned an error
     settings: Settings
@@ -1564,15 +1576,15 @@ en:
     shopping_cart: Shopping Cart
     show: Show
     show_active: Show Active
-    show_currency_selector:
-      short: Show Currency Selector
-      long_html: Display the currency picker in the main nav bar. This will only display if there are multiple supported currencies, and <strong>Allow currency change</strong> option is enabled.
     show_deleted: Show Deleted
     show_discontinued: Show Discontinued
     show_only_complete_orders: Only show complete orders
     show_only_considered_risky: Only show risky orders
     show_property: Show Property
     show_rate_in_label: Show rate in label
+    show_store_currency_selector:
+      short: Show Store selector
+      long: Display the Store selector in the main nav bar of Storefront and allow users to change Store and Currency
     sign_up: Sign Up
     sku: SKU
     skus: SKUs
@@ -1638,7 +1650,7 @@ en:
     stock_transfer:
       errors:
         must_have_variant: You must add at least one variant.
-        variants_unavailable: "Some variants are not available on %{stock}" 
+        variants_unavailable: "Some variants are not available on %{stock}"
     stock_transfers: Stock Transfers
     stop: Stop
     store: Store
@@ -1646,6 +1658,18 @@ en:
       unable_to_create: Unable to create store.
       unable_to_update: Unable to update store.
       unable_to_delete: Unable to delete store.
+    store_form:
+      code_help: "Store unique identifier, which is an abbreviated version of the store’s name (used as the layout directory name, and also helpful for separating templates by store)"
+      checkout_zone_help: "Selecting a Zone will limit customers on Checkout to Addresses in Countries or States in that Zone.
+        For more information <a href='https://guides.spreecommerce.org/user/configuration/configuring_geography.html#zones' target='_blank' class='alert-link'>please see documentation</a>"
+      languages_help: "Install <a href='https://github.com/spree-contrib/spree_i18n target='_blank' class='alert-link'>Spree I18n extension</a> to add more languages"
+      social_help: "If you want to link to your social accounts in the footer part of your website please fill below fields"
+      default_country_help: "This is the Country that will be pre-selected on the Checkout Address form"
+      footer_help: "This content is visible in the footer section of your Store"
+      mail_from_address_help: "This is the email which will be the sender of all your Store emails (Order Confirmation, Shipment notification etc)"
+      customer_support_email_help: "This email is visible to your Store visitors in the Footer section"
+      new_order_notifications_email_help: "If you want to receive an email notification every time someone places an Order please provide an email address for that notification to be sent to"
+      seo_robots: "Please check <a href='https://developers.google.com/search/reference/robots_meta_tag' target='_blank'>this page for more help</a>"
     store_set_default_button: Set as default
     stores: Stores
     store_credit_name: Store Credit
@@ -1805,3 +1829,4 @@ en:
     zipcode_required: Zip Code Required
     zone: Zone
     zones: Zones
+    no_limits_zone: No Limits

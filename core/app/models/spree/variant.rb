@@ -3,7 +3,7 @@ module Spree
     acts_as_paranoid
     acts_as_list scope: :product
 
-    belongs_to :product, touch: true, class_name: 'Spree::Product', inverse_of: :variants
+    belongs_to :product, -> { with_deleted }, touch: true, class_name: 'Spree::Product', inverse_of: :variants
     belongs_to :tax_category, class_name: 'Spree::TaxCategory', optional: true
 
     delegate :name, :name=, :description, :slug, :available_on, :shipping_category_id,
@@ -148,13 +148,6 @@ module Spree
     # their own definition.
     def deleted?
       !!deleted_at
-    end
-
-    # Product may be created with deleted_at already set,
-    # which would make AR's default finder return nil.
-    # This is a stopgap for that little problem.
-    def product
-      Spree::Product.unscoped { super }
     end
 
     def options=(options = {})

@@ -3,12 +3,8 @@ module Spree
     module V2
       module Storefront
         module Account
-          class AddressesController < ::Spree::Api::V2::BaseController
+          class AddressesController < ::Spree::Api::V2::ResourceController
             before_action :require_spree_current_user
-
-            def index
-              render_serialized_payload { serialize_collection(collection) }
-            end
 
             def create
               result = create_service.call(user: spree_current_user, address_params: address_params)
@@ -26,12 +22,8 @@ module Spree
               collection_finder.new(scope: scope, params: params).execute
             end
 
-            def resource
-              @resource ||= scope.find(params[:id])
-            end
-
-            def scope
-              spree_current_user.addresses
+            def model_class
+              Spree::Address
             end
 
             def collection_finder

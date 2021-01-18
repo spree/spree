@@ -22,7 +22,11 @@
       <% @shipping_methods.includes(:zones, :calculator).each do |shipping_method|%>
         <tr id="<%= spree_dom_id shipping_method %>" data-hook="admin_shipping_methods_index_rows">
           <td><%= shipping_method.admin_name + ' / ' if shipping_method.admin_name.present? %><%= shipping_method.name %></td>
-          <td><%= shipping_method.zones.collect(&:name).join(", ") if shipping_method.zones %></td>
+          <td>
+            <% shipping_method.zones.each do |zone| %>
+              <%= link_to zone.name, spree.edit_admin_zone_path(zone) %>
+            <% end %>
+          </td>
           <td><%= shipping_method.calculator.description %></td>
           <td class="text-center"><%= shipping_method.display_on.blank? ? Spree.t(:none) : Spree.t(shipping_method.display_on) %></td>
           <td data-hook="admin_shipping_methods_index_row_actions" class="actions actions-2 text-right">

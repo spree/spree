@@ -93,7 +93,9 @@ module Spree
                             class: 'input_integer form-control'
                           }
                         when :boolean
-                          {}
+                          {
+                            class: 'form-check-input'
+                          }
                         when :string
                           {
                             size: 10,
@@ -127,11 +129,25 @@ module Spree
 
         fields = object.preferences.keys.map do |key|
           if object.has_preference?(key)
-            form.label("preferred_#{key}", Spree.t(key) + ': ') +
-              preference_field_for(form, "preferred_#{key}", type: object.preference_type(key))
+            case key
+            when :currency
+              content_tag(:div, form.label("preferred_#{key}", Spree.t(key)) +
+                (form.select "preferred_#{key}", currency_options(object.preferences[key]), {}, { class: 'form-control select2' }),
+                          class: 'form-group', id: [object.class.to_s.parameterize, 'preference', key].join('-'))
+            else
+              if object.preference_type(key) == :boolean
+                content_tag(:div, preference_field_for(form, "preferred_#{key}", type: object.preference_type(key)) +
+                  form.label("preferred_#{key}", Spree.t(key), class: 'form-check-label'),
+                            class: 'form-group form-check', id: [object.class.to_s.parameterize, 'preference', key].join('-'))
+              else
+                content_tag(:div, form.label("preferred_#{key}", Spree.t(key)) +
+                  preference_field_for(form, "preferred_#{key}", type: object.preference_type(key)),
+                            class: 'form-group', id: [object.class.to_s.parameterize, 'preference', key].join('-'))
+              end
+            end
           end
         end
-        safe_join(fields, '<br />'.html_safe)
+        safe_join(fields)
       end
 
       # renders hidden field and link to remove record using nested_attributes
@@ -163,7 +179,7 @@ module Spree
       end
 
       def required_span_tag
-        content_tag(:span, ' *', class: 'required')
+        content_tag(:span, ' *', class: 'required font-weight-bold text-danger')
       end
 
       def product_preview_link(product)

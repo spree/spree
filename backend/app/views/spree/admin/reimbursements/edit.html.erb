@@ -26,7 +26,9 @@
             <% return_item = item_fields.object %>
             <tr>
               <td>
-                <div class="variant-name"><%= return_item.inventory_unit.variant.name %></div>
+                <div class="variant-name">
+                  <%= link_to return_item.inventory_unit.variant.name, spree.edit_admin_product_path(return_item.inventory_unit.variant.product) %>
+                </div>
                 <div class="variant-options"><%= return_item.inventory_unit.variant.options_text %></div>
               </td>
               <td>
@@ -49,7 +51,7 @@
                 <% if return_item.exchange_processed? %>
                   <%= return_item.exchange_variant.exchange_name %>
                 <% else %>
-                  <%= item_fields.collection_select :exchange_variant_id, return_item.eligible_exchange_variants, :id, :exchange_name, { include_blank: true }, { class: "select2 return-item-exchange-selection" } %>
+                  <%= item_fields.collection_select :exchange_variant_id, return_item.eligible_exchange_variants, :id, :exchange_name, { include_blank: true }, { class: "select2-clear return-item-exchange-selection" } %>
                 <% end %>
               </td>
             </tr>

@@ -23,6 +23,15 @@
       </li>
     <% end %>
 
+    <% if can? :update, @order %>
+      <li data-hook='admin_order_tabs_channel_details'>
+        <%= link_to_with_icon 'split.svg',
+          Spree.t(:channel),
+          channel_admin_order_url(@order),
+          class: "#{'active' if current == :channel} nav-link" %>
+      </li>
+    <% end %>
+
     <% if can?(:update, @order) && @order.checkout_steps.include?("address") %>
       <li data-hook='admin_order_tabs_customer_details'>
         <%= link_to_with_icon 'user.svg',

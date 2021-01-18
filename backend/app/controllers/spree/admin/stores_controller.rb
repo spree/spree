@@ -7,6 +7,7 @@ module Spree
       before_action :normalize_supported_currencies, only: [:create, :update]
       before_action :set_default_country_id, only: :new
       before_action :load_all_countries, only: [:new, :edit, :update, :create]
+      before_action :load_all_zones, only: %i[new edit]
 
       if defined?(SpreeI18n)
         include SpreeI18n::LocaleHelper
@@ -112,6 +113,10 @@ module Spree
 
       def load_all_countries
         @countries = Spree::Country.all
+      end
+
+      def load_all_zones
+        @zones = Spree::Zone.pluck(:name, :id)
       end
 
       def set_default_currency

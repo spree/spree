@@ -6,7 +6,7 @@ module Spree
       current_store = @shipment.store
       subject = (resend ? "[#{Spree.t(:resend).upcase}] " : '')
       subject += "#{current_store.name} #{Spree.t('shipment_mailer.shipped_email.subject')} ##{@order.number}"
-      mail(to: @order.email, from: from_address, subject: subject)
+      mail(to: @order.email, from: from_address, subject: subject, store_url: current_store.url)
     end
   end
 end

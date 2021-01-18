@@ -1,8 +1,9 @@
 $(function () {
   function TransferVariant (variant1) {
+    // refactor variant1
     this.variant = variant1
-    this.id = this.variant.id
-    this.name = this.variant.name + ' - ' + this.variant.sku
+    this.id = this.variant[0].variant.id
+    this.name = this.variant[0].variant.name + ' - ' + this.variant[0].variant.sku
     this.quantity = 0
   }
   TransferVariant.prototype.add = function (quantity) {
@@ -126,35 +127,53 @@ $(function () {
     }
   }
 
+  function formattedVariantList(obj) {
+   return { id: obj.id, text: obj.name, name: obj.name, sku: obj.sku, options_text: obj.options_text, variant: obj }
+  }
+
+  function formattedStockItemsList(obj) {
+    return { id: obj.variant.id, text: obj.variant.name, name: obj.variant.name, sku: obj.variant.sku, options_text: obj.variant.options_text, variant: obj.variant }
+  }
+
   TransferVariants.prototype.build_select = function (url, query) {
     return $('#transfer_variant').select2({
       minimumInputLength: 3,
       ajax: {
         url: url,
         datatype: 'json',
-        data: function (term) {
+        data: function (params) {
           var q = {}
-          q[query] = term
+          q[query] = params.term
           return {
             q: q,
             token: Spree.api_key
           }
         },
-        results: function (data) {
-          var result = data['variants'] || data['stock_items']
-          if (data['stock_items'] != null) {
-            result = _(result).map(function (variant) {
-              return variant.variant
+        processResults: function (data) {
+          var result = data.variants || data.stock_items
+          if (data.variants != null) {
+            var res = (result).map(function (variant) {
+              return formattedVariantList(variant)
+            })
+          } else {
+            var res = (result).map(function (variant) {
+              return formattedStockItemsList(variant)
             })
           }
-          window.variants = result
+
           return {
-            results: result
+            results: res
           }
         }
       },
-      formatResult: this.format_variant_result,
-      formatSelection: function (variant) {
+      templateResult: function(variant) {
+        if (variant.options_text !== "") {
+          return variant.name + ' - ' + variant.sku + ' (' + variant.options_text + ')'
+        } else {
+          return variant.name + ' - ' + variant.sku
+        }
+      },
+      templateSelection: function (variant) {
         // eslint-disable-next-line no-extra-boolean-cast
         if (!!variant.options_text) {
           return variant.name + (' (' + variant.options_text + ')') + (' - ' + variant.sku)

@@ -1,6 +1,6 @@
 module Spree
   class BaseMailer < ActionMailer::Base
-    add_template_helper(MailHelper)
+    helper Spree::MailHelper
 
     def current_store
       @current_store ||= Spree::Store.current
@@ -23,7 +23,7 @@ module Spree
     helper_method :frontend_available?
 
     def mail(headers = {}, &block)
-      ensure_default_action_mailer_url_host
+      ensure_default_action_mailer_url_host(headers[:store_url])
       set_email_locale
       super if Spree::Config[:send_core_emails]
     end
@@ -33,9 +33,9 @@ module Spree
     # this ensures that ActionMailer::Base.default_url_options[:host] is always set
     # this is only a fail-safe solution if developer didn't set this in environment files
     # http://guides.rubyonrails.org/action_mailer_basics.html#generating-urls-in-action-mailer-views
-    def ensure_default_action_mailer_url_host
+    def ensure_default_action_mailer_url_host(store_url = nil)
       ActionMailer::Base.default_url_options ||= {}
-      ActionMailer::Base.default_url_options[:host] ||= current_store.url
+      ActionMailer::Base.default_url_options[:host] ||= store_url || current_store.url
     end
 
     def set_email_locale

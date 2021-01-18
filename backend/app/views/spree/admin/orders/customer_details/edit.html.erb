@@ -12,7 +12,7 @@
       </h1>
     </div>
     <div class="card-body" id="customer-search-field">
-      <%= hidden_field_tag :customer_search,  nil, class: 'error-message' %>
+      <%= select_tag :customer_search, nil, class: 'd-block w-100' %>
       <%= render partial: "spree/admin/orders/customer_details/autocomplete", formats: :js %>
     </div>
   </div>

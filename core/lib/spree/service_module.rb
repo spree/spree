@@ -47,7 +47,11 @@ module Spree
       def call(input = nil)
         input ||= {}
         @_passed_input = Result.new(true, input)
-        result = super
+        result = if input.is_a?(Hash)
+                   super(**input)
+                 else
+                   super(input)
+                 end
         @_passed_input = result if result.is_a? Result
         enforce_data_format
         @_passed_input
@@ -71,7 +75,7 @@ module Spree
         end
 
         begin
-          @_passed_input = callable.call(@_passed_input.value)
+          @_passed_input = callable.call(**@_passed_input.value)
         rescue ArgumentError => e
           if e.message.include? 'missing'
             raise IncompatibleParamsPassed, "You didn't pass #{e.message} to callable '#{callable.name}'"

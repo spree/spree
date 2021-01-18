@@ -15,7 +15,7 @@
         <% line_item_prefix = "#{param_prefix}[promotion_action_line_items_attributes][#{index}]" %>
         <div class="form-group">
           <%= label_tag "#{line_item_prefix}_variant_id", Spree.t(:variant) %>
-          <%= hidden_field_tag "#{line_item_prefix}[variant_id]", line_item.variant_id, class: "variant_autocomplete" %>
+          <%= select_tag "#{line_item_prefix}[variant_id]", line_item.variant_id, class: 'variant_autocomplete d-block w-100' %>
         </div>
         <div class="form-group mb-0">
           <%= label_tag "#{line_item_prefix}_quantity", Spree.t(:quantity) %>

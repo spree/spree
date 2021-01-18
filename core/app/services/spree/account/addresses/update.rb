@@ -1,7 +1,12 @@
 module Spree
   module Account
     module Addresses
-      class Update < ::Spree::Account::Addresses::Base
+      class Update
+        prepend Spree::ServiceModule::Base
+        include Spree::Account::Addresses::Helper
+
+        attr_accessor :country
+
         def call(address:, address_params:)
           address_params[:country_id] ||= address.country_id
           fill_country_and_state_ids(address_params)

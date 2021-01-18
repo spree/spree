@@ -67,4 +67,12 @@ describe Spree::ReimbursementMailer, type: :mailer do
       end
     end
   end
+
+  context 'emails contain only urls of the store where the order was made' do
+    it 'shows proper host url in email content' do
+      ActionMailer::Base.default_url_options[:host] = reimbursement.order.store.url
+      described_class.reimbursement_email(reimbursement).deliver_now
+      expect(ActionMailer::Base.default_url_options[:host]).to eq(reimbursement.order.store.url)
+    end
+  end
 end

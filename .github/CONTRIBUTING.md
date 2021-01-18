@@ -55,7 +55,7 @@ Syntax:
 * `a = b` and not `a=b`.
 * `a_method { |block| ... }` and not `a_method { | block | ... }`
 * Follow the conventions you see used in the source already.
-* -> symbol over lambda
+* Use -> symbol for **inline** lambdas and lambda method for **multiline** lambdas
 * Ruby 1.9 hash syntax `{ key: value }` over Ruby 1.8 hash syntax `{ :key => value }`
 * Alphabetize the class methods to keep them organized
 

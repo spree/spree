@@ -21,19 +21,19 @@ Now you need to process the payment on the order. You know best how your store p
 
 ![Order to Process](../../../images/user/orders/order_to_process.jpg)
 
-Pictured above is an order that is ripe for processing. The current order State is "Complete", meaning that all of the information the customer needs to provide is present. The Payment State is "Balance Due", meaning that there is an unpaid balance on the order. The Shipment State is "Pending", because you can't ship an order before you collect payment on it.
+Pictured above is an order that is ripe for processing. The current order State is "Complete", meaning that all of the information the customer needs to provide is present. The Payment State is "Balance Due", meaning that there is an unpaid balance on the order. The Shipment State is "Pending" because you can't ship an order before you collect payment on it.
 
 If you click either the Order Number or the "Edit" icon, you will open the order in Edit mode. Instead, click the "Balance Due" payment state to open the order's payment info page.
 
 ![Payment to Process](../../../images/user/orders/payment_to_process.jpg)
 
-As you can see above, we have only a single payment to process, for the full amount ($22.59). Processing this payment is literally a click away - just click on the "Capture" icon next to the payment.
+As you can see above, we have only a single payment to process, for the full amount ($22.59). Processing this payment is literally a click away; just click on the "Capture" icon next to the payment.
 
 If the payment is processed successfully, the page will re-load, showing you that the payment state has progressed from "Pending" to "Completed".
 
 ![Completed Payment](../../../images/user/orders/completed_payment.jpg)
 
-That's it! Now you can prepare your packages for shipment, then update the order with the shipment information.
+That's all! Now you can prepare your packages for shipment, then update the order with the shipment information.
 
 ## Processing Shipments
 

@@ -22,7 +22,7 @@ module Spree
     money_methods :outstanding_balance, :item_total,           :adjustment_total,
                   :included_tax_total,  :additional_tax_total, :tax_total,
                   :shipment_total,      :promo_total,          :total,
-                  :cart_promo_total
+                  :cart_promo_total,    :pre_tax_item_amount,  :pre_tax_total
 
     alias display_ship_total display_shipment_total
     alias_attribute :ship_total, :shipment_total
@@ -157,6 +157,7 @@ module Spree
     scope :completed_between, ->(start_date, end_date) { where(completed_at: start_date..end_date) }
     scope :complete, -> { where.not(completed_at: nil) }
     scope :incomplete, -> { where(completed_at: nil) }
+    scope :not_canceled, -> { where.not(state: 'canceled') }
 
     # shows completed orders first, by their completed_at date, then uncompleted orders by their created_at
     scope :reverse_chronological, -> { order(Arel.sql('spree_orders.completed_at IS NULL'), completed_at: :desc, created_at: :desc) }
@@ -174,7 +175,12 @@ module Spree
 
     # Sum of all line item amounts pre-tax
     def pre_tax_item_amount
-      line_items.to_a.sum(&:pre_tax_amount)
+      line_items.sum(:pre_tax_amount)
+    end
+
+    # Sum of all line item and shipment pre-tax
+    def pre_tax_total
+      pre_tax_item_amount + shipments.sum(:pre_tax_amount)
     end
 
     def shipping_discount
@@ -644,10 +650,10 @@ module Spree
     end
 
     def has_free_shipping?
-      promotions.
-        joins(:promotion_actions).
-        where(spree_promotion_actions: { type: 'Spree::Promotion::Actions::FreeShipping' }).
-        exists?
+      shipment_adjustments.
+        joins(:promotion_action).
+        where(spree_adjustments: { eligible: true, source_type: 'Spree::PromotionAction' },
+              spree_promotion_actions: { type: 'Spree::Promotion::Actions::FreeShipping' }).exists?
     end
 
     private

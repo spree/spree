@@ -3,6 +3,7 @@ module Spree
     has_many :orders, class_name: 'Spree::Order'
     has_many :payment_methods, class_name: 'Spree::PaymentMethod'
     belongs_to :default_country, class_name: 'Spree::Country'
+    belongs_to :checkout_zone, class_name: 'Spree::Zone'
 
     with_options presence: true do
       validates :name, :url, :mail_from_address, :default_currency, :code
@@ -29,6 +30,8 @@ module Spree
 
     after_commit :clear_cache
 
+    alias_attribute :contact_email, :customer_support_email
+
     def self.current(domain = nil)
       current_store = domain ? Store.by_url(domain).first : nil
       current_store || Store.default
@@ -44,6 +47,32 @@ module Spree
       (read_attribute(:supported_currencies).to_s.split(',') << default_currency).map(&:to_s).map do |code|
         ::Money::Currency.find(code.strip)
       end.uniq.compact
+    end
+
+    def unique_name
+      "#{name} (#{code})"
+    end
+
+    def formatted_url
+      return if url.blank?
+
+      if url.match(/http:\/\/|https:\/\//)
+        url
+      else
+        "https://#{url}"
+      end
+    end
+
+    def countries_available_for_checkout
+      checkout_zone_or_default.try(:country_list) || Spree::Country.all
+    end
+
+    def states_available_for_checkout(country)
+      checkout_zone_or_default.try(:state_list_for, country) || country.states
+    end
+
+    def checkout_zone_or_default
+      checkout_zone || Spree::Zone.default_checkout_zone
     end
 
     private

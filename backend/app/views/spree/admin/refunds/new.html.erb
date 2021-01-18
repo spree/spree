@@ -25,7 +25,7 @@
       <% end %>
       <%= f.field_container :reason, class: ['form-group'] do %>
         <%= f.label :refund_reason_id, Spree.t(:reason) %>
-        <%= f.collection_select(:refund_reason_id, refund_reasons, :id, :name, {include_blank: true}, {class: 'select2'}) %>
+        <%= f.collection_select(:refund_reason_id, refund_reasons, :id, :name, {include_blank: true}, {class: 'select2-clear'}) %>
         <%= f.error_message_on :reason %>
       <% end %>
     </div>

@@ -90,15 +90,35 @@ describe Spree::Core::ControllerHelpers::Order, type: :controller do
   end
 
   describe '#set_current_order' do
-    let(:incomplete_order) { create(:order, user: user) }
-
     before { allow(controller).to receive_messages(try_spree_current_user: user) }
 
-    context 'when current order not equal to users incomplete orders' do
-      before { allow(controller).to receive_messages(current_order: order, last_incomplete_order: incomplete_order, cookies: double(signed: { token: 'token' })) }
+    context 'user has some incomplete orders other than current one' do
+      before do
+        allow(controller).to receive_messages(current_order: order, last_incomplete_order: incomplete_order, cookies: double(signed: { token: 'token' }))
+      end
 
-      it 'calls Spree::Order#merge! method' do
-        expect(order).to receive(:merge!).with(incomplete_order, user)
+      context 'within the same store' do
+        let!(:incomplete_order) { create(:order, user: user, store: order.store) }
+
+        it 'calls Spree::Order#merge!' do
+          expect(order).to receive(:merge!).with(incomplete_order, user)
+          controller.set_current_order
+        end
+      end
+
+      context 'within different store' do
+        let!(:incomplete_order) { create(:order, user: user, store: create(:store)) }
+
+        it 'does not call Spree::Order#merge!' do
+          expect(order).not_to receive(:merge!)
+          controller.set_current_order
+        end
+      end
+    end
+
+    context 'user has no incomplete orders other than current one' do
+      it 'does not call Spree::Order#merge!' do
+        expect(order).not_to receive(:merge!)
         controller.set_current_order
       end
     end

@@ -21,7 +21,7 @@ table.table {
   }
 
   .badge {
-    font-size: 0.85em;
+    text-transform: uppercase;
   }
 
   thead {
@@ -126,7 +126,7 @@ div.table-responsive table.table-bordered {
 
 .sortable-drag-v {
   border: 1px solid $info;
-  border-radius: 5px;
+  border-radius: $border-radius;
   width:100%;
   text-align: right;
   opacity: 0;

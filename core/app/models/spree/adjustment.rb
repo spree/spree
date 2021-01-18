@@ -27,6 +27,7 @@ module Spree
       belongs_to :source
     end
     belongs_to :order, class_name: 'Spree::Order', inverse_of: :all_adjustments
+    belongs_to :promotion_action, class_name: 'Spree::PromotionAction', foreign_key: :source_id, optional: true # created only for has_free_shipping?
 
     validates :adjustable, :order, :label, presence: true
     validates :amount, numericality: true

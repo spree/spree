@@ -4,7 +4,7 @@ module Spree
 
     with_options inverse_of: :line_items do
       belongs_to :order, class_name: 'Spree::Order', touch: true
-      belongs_to :variant, class_name: 'Spree::Variant'
+      belongs_to :variant, -> { with_deleted }, class_name: 'Spree::Variant'
     end
     belongs_to :tax_category, class_name: 'Spree::TaxCategory'
 
@@ -57,7 +57,7 @@ module Spree
     end
 
     def update_price
-      if Spree::Config.allow_currency_change == true
+      if Spree::Config.show_store_currency_selector == true
         currency_price = Spree::Price.where(
           currency: order.currency,
           variant_id: variant_id
@@ -75,7 +75,8 @@ module Spree
 
     extend DisplayMoney
     money_methods :amount, :subtotal, :discounted_amount, :final_amount, :total, :price,
-                  :adjustment_total, :additional_tax_total, :promo_total, :included_tax_total
+                  :adjustment_total, :additional_tax_total, :promo_total, :included_tax_total,
+                  :pre_tax_amount
 
     alias single_money display_price
     alias single_display_amount display_price
@@ -117,11 +118,6 @@ module Spree
 
       update_price_from_modifier(currency, opts)
       assign_attributes opts
-    end
-
-    # Remove variant default_scope `deleted_at: nil`
-    def variant
-      Spree::Variant.unscoped { super }
     end
 
     private

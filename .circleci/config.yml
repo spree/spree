@@ -9,7 +9,12 @@ defaults: &defaults
     BUNDLE_PATH: ~/spree/vendor/bundle
   working_directory: ~/spree
   docker:
-    - image: &image circleci/ruby:2.7-node-browsers
+    - image: &ruby_image circleci/ruby:2.7-node-browsers
+
+defaults_3_0: &defaults_3_0
+  <<: *defaults
+  docker:
+    - image: &ruby_3_0_image circleci/ruby:3.0-node-browsers
 
 run_tests: &run_tests
   <<: *defaults
@@ -18,13 +23,29 @@ run_tests: &run_tests
     - checkout
     - restore_cache:
         keys:
-          - spree-bundle-v5-{{ checksum ".ruby-version" }}-{{ .Branch }}
-          - spree-bundle-v5-{{ checksum ".ruby-version" }}
+          - spree-bundle-v7-{{ checksum ".ruby-version" }}-{{ .Branch }}
+          - spree-bundle-v7-{{ checksum ".ruby-version" }}
     - run:
-        name: Ensure Bundle Install
-        command: |
-          bundle install --path=~/spree/vendor/bundle
-          ./build-ci.rb install
+        name: Run rspec in parallel
+        command: BUNDLE_GEMFILE=../Gemfile ./build-ci.rb test
+    - store_artifacts:
+        path: /tmp/test-artifacts
+        destination: test-artifacts
+    - store_artifacts:
+        path: /tmp/test-results
+        destination: raw-test-output
+    - store_test_results:
+        path: /tmp/test-results
+
+run_tests_3_0: &run_tests_3_0
+  <<: *defaults_3_0
+  parallelism: 4
+  steps:
+    - checkout
+    - restore_cache:
+        keys:
+          - spree-bundle-v7-ruby-3-0-{{ .Branch }}
+          - spree-bundle-v7-ruby-3-0
     - run:
         name: Run rspec in parallel
         command: BUNDLE_GEMFILE=../Gemfile ./build-ci.rb test
@@ -38,25 +59,43 @@ run_tests: &run_tests
         path: /tmp/test-results
 
 jobs:
-  bundle_install:
+  bundle:
     <<: *defaults
     steps:
       - checkout
       - restore_cache:
           keys:
-            - spree-bundle-v5-{{ checksum ".ruby-version" }}-{{ .Branch }}
-            - spree-bundle-v5-{{ checksum ".ruby-version" }}
+            - spree-bundle-v7-{{ checksum ".ruby-version" }}-{{ .Branch }}
+            - spree-bundle-v7-{{ checksum ".ruby-version" }}
       - run:
           name: Bundle Install
           command: |
-            bundle install --path=~/spree/vendor/bundle
+            bundle check || bundle install
             ./build-ci.rb install
       - save_cache:
-          key: spree-bundle-v5-{{ checksum ".ruby-version" }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+          key: spree-bundle-v7-{{ checksum ".ruby-version" }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
           paths:
             - ~/spree/vendor/bundle
 
-  run_tests_postgres: &run_tests_postgres
+  bundle_ruby_3_0:
+    <<: *defaults_3_0
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - spree-bundle-v7-ruby-3-0-{{ .Branch }}
+            - spree-bundle-v7-ruby-3-0
+      - run:
+          name: Bundle Install
+          command: |
+            bundle check || bundle install
+            ./build-ci.rb install
+      - save_cache:
+          key: spree-bundle-v7-ruby-3-0-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+          paths:
+            - ~/spree/vendor/bundle
+
+  tests_postgres: &tests_postgres
     <<: *run_tests
     environment: &postgres_environment
       <<: *environment
@@ -64,14 +103,50 @@ jobs:
       DB_HOST: localhost
       DB_USERNAME: postgres
     docker:
-      - image: *image
-      - image: circleci/postgres:10-alpine
+      - image: *ruby_image
+      - image: &postgres_image circleci/postgres:12-alpine
         environment:
           POSTGRES_USER: postgres
 
-  run_tests_mysql:
-    <<: *run_tests
+  tests_postgres_ruby_3_0: &tests_postgres_ruby_3_0
+    <<: *run_tests_3_0
     environment:
+      <<: *postgres_environment
+    docker:
+      - image: *ruby_3_0_image
+      - image: *postgres_image
+
+  tests_postgres_rails_6_0:
+    <<: *tests_postgres
+    environment:
+      <<: *postgres_environment
+      RAILS_VERSION: '~> 6.0.0'
+    steps:
+    - checkout
+    - restore_cache:
+        keys:
+          - spree-bundle-v7-{{ checksum ".ruby-version" }}-{{ .Branch }}
+          - spree-bundle-v7-{{ checksum ".ruby-version" }}
+    - run:
+        name: Ensure Bundle Install
+        command: |
+          bundle install
+          ./build-ci.rb install
+    - run:
+        name: Run rspec in parallel
+        command: BUNDLE_GEMFILE=../Gemfile ./build-ci.rb test
+    - store_artifacts:
+        path: /tmp/test-artifacts
+        destination: test-artifacts
+    - store_artifacts:
+        path: /tmp/test-results
+        destination: raw-test-output
+    - store_test_results:
+        path: /tmp/test-results
+
+  tests_mysql: &tests_mysql
+    <<: *run_tests
+    environment: &mysql_environment
       <<: *environment
       DB: mysql
       DB_HOST: 127.0.0.1
@@ -79,20 +154,23 @@ jobs:
       COVERAGE: true
       COVERAGE_DIR: /tmp/workspace/simplecov
     docker:
-      - image: *image
-      - image: circleci/mysql:8-ram
+      - image: *ruby_image
+      - image: &mysql_image circleci/mysql:8-ram
+
+  tests_mysql_ruby_3_0:
+    <<: *run_tests_3_0
+    environment:
+      <<: *mysql_environment
+    docker:
+      - image: *ruby_3_0_image
+      - image: *mysql_image
         command: [--default-authentication-plugin=mysql_native_password]
     steps:
       - checkout
       - restore_cache:
           keys:
-            - spree-bundle-v5-{{ checksum ".ruby-version" }}-{{ .Branch }}
-            - spree-bundle-v5-{{ checksum ".ruby-version" }}
-      - run:
-          name: Ensure Bundle Install
-          command: |
-            bundle install --path=~/spree/vendor/bundle
-            ./build-ci.rb install
+            - spree-bundle-v7-ruby-3-0-{{ .Branch }}
+            - spree-bundle-v7-ruby-3-0
       - run:
           name: Run rspec in parallel
           command: BUNDLE_GEMFILE=../Gemfile ./build-ci.rb test
@@ -142,7 +220,7 @@ jobs:
 
   update_staging_repository:
     docker:
-      - image: circleci/ruby:2.7
+      - image: circleci/ruby:2.7.2
     steps:
       - add_ssh_keys:
           fingerprints:
@@ -176,16 +254,23 @@ workflows:
   version: 2
   main:
     jobs:
-      - bundle_install
-      - run_tests_postgres:
+      - bundle
+      - bundle_ruby_3_0
+      - tests_postgres:
           requires:
-            - bundle_install
-      - run_tests_mysql:
+            - bundle
+      - tests_postgres_ruby_3_0:
           requires:
-            - bundle_install
+            - bundle_ruby_3_0
+      - tests_postgres_rails_6_0:
+          requires:
+            - bundle
+      - tests_mysql_ruby_3_0:
+          requires:
+            - bundle_ruby_3_0
       - send_test_coverage:
           requires:
-            - run_tests_mysql
+            - tests_mysql_ruby_3_0
   update_staging_repository:
     jobs:
       - update_staging_repository:

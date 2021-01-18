@@ -197,8 +197,10 @@ There are a few distinct scenarios that we'll cover here.
 
 ### Adding Logic Before or After a Particular Step
 
-The state_machine gem allows you to implement callbacks before or after
-transitioning to a particular step. These callbacks work similarly to [Active Record Callbacks](http://guides.rubyonrails.org/active_record_callbacks.html)
+The [state_machines](https://github.com/state-machines/state_machines) 
+gem allows you to implement callbacks before or after
+transitioning to a particular step. These callbacks work similarly to 
+[Active Record Callbacks](http://guides.rubyonrails.org/active_record_callbacks.html)
 in that you can specify a method or block of code to be executed prior to or
 after a transition. If the method executed in a before_transition returns false,
 then the transition will not execute.

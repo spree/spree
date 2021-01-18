@@ -68,7 +68,7 @@ module Spree
     end
 
     def validate_authorization(amount, order_currency)
-      if amount_remaining.to_d < amount.to_d
+      if BigDecimal(amount_remaining, 3) < BigDecimal(amount, 3)
         errors.add(:base, Spree.t('store_credit_payment_method.insufficient_funds'))
       elsif currency != order_currency
         errors.add(:base, Spree.t('store_credit_payment_method.currency_mismatch'))

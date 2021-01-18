@@ -2,14 +2,10 @@ module Spree
   module Api
     module V2
       module Storefront
-        class StoresController < ::Spree::Api::V2::BaseController
-          def show
-            render_serialized_payload { serialize_resource(resource) }
-          end
-
+        class StoresController < ::Spree::Api::V2::ResourceController
           private
 
-          def scope
+          def model_class
             Spree::Store
           end
 

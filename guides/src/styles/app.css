@@ -30,28 +30,20 @@ h1 {
   margin-top: 0;
 }
 
-main p,
 main li {
   line-height: 1.9;
 }
 
 p > code,
 li > code {
-  padding: 0.15rem 0.5rem 0.2rem !important;
+  padding: .2em .4em !important;
   overflow: auto;
   max-width: 100%;
 
-  background-color: #f9f9f9;
-  border-radius: 3px;
-  border: 1px solid #ededed;
-  font-size: 0.9rem !important;
-  transition: box-shadow 0.3s ease-in-out;
+  background-color: #eee;
+  border-radius: 6px;
+  font-size: 85% !important;
   word-break: break-word;
-}
-
-p > code:hover,
-li > code:hover {
-  box-shadow: 0 0 1.5rem 0 rgba(34, 139, 230, 0.1);
 }
 
 .gatsby-highlight {

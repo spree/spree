@@ -594,12 +594,11 @@ describe Spree::Order, type: :model do
       it 'matches line item when options match' do
         allow(order).to receive(:foos_match).and_return(true)
         expect(Spree::Dependencies.cart_compare_line_items_service.constantize.new.call(order: order, line_item: @line_items.first, options: { foos: { bar: :zoo } }).value).to be true
-
       end
 
       it 'does not match line item without options' do
         allow(order).to receive(:foos_match).and_return(false)
-        expect(Spree::Dependencies.cart_compare_line_items_service.constantize.new.call(order: order, line_item: @line_items.first, options: {}).value).to be false
+        expect(Spree::Dependencies.cart_compare_line_items_service.constantize.new.call(order: order, line_item: @line_items.first).value).to be false
       end
     end
   end
@@ -839,13 +838,48 @@ describe Spree::Order, type: :model do
   end
 
   describe '#pre_tax_item_amount' do
-    it "sums all of the line items' pre tax amounts" do
-      subject.line_items = [
-        Spree::LineItem.new(price: 10, quantity: 2, pre_tax_amount: 5.0),
-        Spree::LineItem.new(price: 30, quantity: 1, pre_tax_amount: 14.0)
-      ]
+    let(:order) { create(:order) }
 
-      expect(subject.pre_tax_item_amount).to eq 19.0
+    before do
+      line_item = create(:line_item, order: order, price: 10, quantity: 2)
+      line_item_2 = create(:line_item, order: order, price: 30, quantity: 1)
+
+      line_item.update(pre_tax_amount: 5.0)
+      line_item_2.update(pre_tax_amount: 14.0)
+    end
+
+    it "sums all of the line items' pre tax amounts" do
+      expect(order.pre_tax_item_amount).to eq BigDecimal(19)
+    end
+  end
+
+  describe '#display_pre_tax_item_amount' do
+    it 'returns the value as a spree money' do
+      allow(order).to receive(:pre_tax_item_amount).and_return(10.55)
+      expect(order.display_pre_tax_item_amount).to eq(Spree::Money.new(10.55))
+    end
+  end
+
+  describe '#pre_tax_total' do
+    let(:order) { create(:order) }
+
+    before do
+      line_item = create(:line_item, order: order, price: 10, quantity: 2)
+      shipment = create(:shipment, order: order, cost: 5)
+
+      line_item.update(pre_tax_amount: 8.0)
+      shipment.update(pre_tax_amount: 4.0)
+    end
+
+    it "sums all of the line items' and shipments pre tax amounts" do
+      expect(order.pre_tax_total).to eq BigDecimal(12)
+    end
+  end
+
+  describe '#display_pre_tax_total' do
+    it 'returns the value as a spree money' do
+      allow(order).to receive(:pre_tax_total).and_return(10.55)
+      expect(order.display_pre_tax_total).to eq(Spree::Money.new(10.55))
     end
   end
 
@@ -1310,6 +1344,47 @@ describe Spree::Order, type: :model do
           expect(subject).to eq(BigDecimal('-110.00'))
         end
       end
+    end
+  end
+
+  describe '#has_free_shipping?' do
+    subject { order.has_free_shipping? }
+
+    let(:order) { create(:order_with_line_items, line_items_count: line_items_count) }
+    let(:line_items_count) { 10 }
+
+    context 'when promotion is applied' do
+      let(:free_shipping_promotion) { create(:free_shipping_promotion, code: 'freeship') }
+
+      before do
+        order.coupon_code = free_shipping_promotion.code
+        Spree::PromotionHandler::Coupon.new(order).apply
+      end
+
+      it { is_expected.to be true }
+
+      context 'when free shipping promotion has item total rule' do
+        let(:free_shipping_promotion) do
+          create(:free_shipping_promotion_with_item_total_rule,
+                 code: 'freeship',
+                 starts_at: 1.day.ago,
+                 expires_at: 1.day.from_now)
+        end
+
+        context 'when order total is in defined range' do
+          it { is_expected.to be true }
+        end
+
+        context 'when order total is not in defined range' do
+          let(:line_items_count) { 15 }
+
+          it { is_expected.to be false }
+        end
+      end
+    end
+
+    context 'when promotion is not applied' do
+      it { is_expected.to be false }
     end
   end
 end

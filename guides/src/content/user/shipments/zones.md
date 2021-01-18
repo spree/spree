@@ -8,7 +8,7 @@ Zones serve as a way to define shipping rules for a particular geographic area. 
 
 Each shipping method can be assigned to only one zone. For example, if one of the shipping methods for your store is UPS Ground (a US-only shipping carrier), then the zone for that shipping method should be defined as the United States.
 
-When the customer enters their shipping address during checkout, Spree uses that information to determine which zone the order is being delivered to, and only presents the shipping methods to the customer that are defined for that zone.
+When the customer enters their shipping address during checkout, Spree uses that information to determine which zone to which the order is being delivered; it only presents the shipping methods to the customer that are defined for that zone.
 
 ### Creating a Zone
 

@@ -99,4 +99,25 @@ describe Spree::PaymentMethod, type: :model do
       end
     end
   end
+
+  describe '#available_for_store?' do
+    let!(:store) { create(:store) }
+    let!(:store_1) { create(:store) }
+    let!(:pm) { create(:credit_card_payment_method, stores: [store]) }
+
+    it 'returns true when passed a nil value' do
+      eligible = pm.available_for_store?(nil)
+      expect(eligible).to be true
+    end
+
+    it 'returns false if currenct store id is not included' do
+      ineligible = pm.available_for_store?(store_1)
+      expect(ineligible).to be false
+    end
+
+    it 'returns true if currenct store id is included' do
+      eligible = pm.available_for_store?(store)
+      expect(eligible).to be true
+    end
+  end
 end

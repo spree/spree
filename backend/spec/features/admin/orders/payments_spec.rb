@@ -61,17 +61,17 @@ describe 'Payments', type: :feature, js: true do
       within_row(1) do
         expect(column_text(3)).to eq('$150.00')
         expect(column_text(4)).to eq('Credit Card')
-        expect(column_text(6)).to eq('checkout')
+        expect(column_text(6)).to eq('CHECKOUT')
       end
 
       click_icon :void
-      expect(page).to have_css('#payment_status', exact_text: 'balance due')
+      expect(page).to have_css('#payment_status', exact_text: 'BALANCE DUE')
       expect(page).to have_content('Payment Updated')
 
       within_row(1) do
         expect(column_text(3)).to eq('$150.00')
         expect(column_text(4)).to eq('Credit Card')
-        expect(column_text(6)).to eq('void')
+        expect(column_text(6)).to eq('VOID')
       end
       within find('#contentHeader') do
         click_on 'New Payment'
@@ -82,7 +82,7 @@ describe 'Payments', type: :feature, js: true do
 
       click_icon(:capture)
 
-      expect(page).to have_css('#payment_status', exact_text: 'paid')
+      expect(page).to have_css('#payment_status', exact_text: 'PAID')
       expect(page).not_to have_selector('#new_payment_section')
     end
 

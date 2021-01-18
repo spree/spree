@@ -55,31 +55,18 @@ module Spree
       def update_or_create_address(attributes = {})
         return if attributes.blank?
 
-        attributes = attributes.select { |_k, v| v.present? }
+        attributes.transform_values! { |v| v == '' ? nil : v }
 
-        if user
-          address = user.addresses.build(attributes.except(:id)).check
-          return address if address.id
+        default_address_scope = user ? user.addresses : ::Spree::Address
+        default_address = default_address_scope.find_by(id: attributes[:id])
+
+        if default_address&.editable?
+          default_address.update(attributes)
+
+          return default_address
         end
 
-        if attributes[:id]
-          address = Spree::Address.find(attributes[:id])
-          attributes.delete(:id)
-
-          if address&.editable?
-            address.update(attributes)
-            return address
-          else
-            attributes.delete(:id)
-          end
-        end
-
-        unless attributes[:id]
-          address = Spree::Address.new(attributes)
-          address.save
-        end
-
-        address
+        ::Spree::Address.find_or_create_by(attributes.except(:id, :updated_at, :created_at))
       end
     end
   end

@@ -255,7 +255,7 @@ function CartForm($, $cartForm) {
 
     this.$price.html(variant.display_price)
 
-    var compareAtPriceContent = shouldDisplayCompareAtPrice ? '<span class="mr-3">' + variant.display_compare_at_price + '</span>' : ''
+    var compareAtPriceContent = shouldDisplayCompareAtPrice ? variant.display_compare_at_price : ''
     this.$compareAtPrice.html(compareAtPriceContent)
   }
 

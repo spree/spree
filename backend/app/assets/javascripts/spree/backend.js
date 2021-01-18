@@ -50,7 +50,6 @@
 //= require spree/backend/taxons
 //= require spree/backend/users/edit
 //= require spree/backend/user_picker
-//= require spree/backend/tag_picker
 //= require spree/backend/variant_autocomplete
 //= require spree/backend/variant_management
 //= require spree/backend/zone

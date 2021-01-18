@@ -470,7 +470,7 @@ describe Spree::Product, type: :model do
   context '#images' do
     let(:product) { create(:product) }
     let(:file) { File.open(File.expand_path('../../fixtures/thinking-cat.jpg', __dir__)) }
-    let(:params) { { viewable_id: product.master.id, viewable_type: 'Spree::Variant', attachment: file, alt: 'position 2', position: 2 } }
+    let(:params) { { viewable_id: product.master.id, viewable_type: 'Spree::Variant', alt: 'position 2', position: 2 } }
 
     before do
       images = [

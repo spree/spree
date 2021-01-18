@@ -1,7 +1,12 @@
 module Spree
   module Account
     module Addresses
-      class Create < ::Spree::Account::Addresses::Base
+      class Create
+        prepend Spree::ServiceModule::Base
+        include Spree::Account::Addresses::Helper
+
+        attr_accessor :country
+
         def call(user:, address_params:)
           fill_country_and_state_ids(address_params)
 

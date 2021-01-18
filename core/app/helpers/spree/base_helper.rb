@@ -1,13 +1,7 @@
 module Spree
   module BaseHelper
     def available_countries
-      checkout_zone = Spree::Zone.find_by(name: Spree::Config[:checkout_zone])
-
-      countries = if checkout_zone && checkout_zone.kind == 'country'
-                    checkout_zone.country_list
-                  else
-                    Spree::Country.all
-                  end
+      countries = current_store.countries_available_for_checkout
 
       countries.collect do |country|
         country.name = Spree.t(country.iso, scope: 'country_names', default: country.name)
@@ -57,8 +51,33 @@ module Spree
       end
     end
 
+    def object
+      instance_variable_get('@' + controller_name.singularize)
+    end
+
+    def og_meta_data
+      og_meta = {}
+
+      if object.is_a? Spree::Product
+        image                             = default_image_for_product_or_variant(object)
+        og_meta['og:image']               = main_app.url_for(image.attachment) if image&.attachment
+
+        og_meta['og:url']                 = spree.url_for(object) if frontend_available? # url_for product needed
+        og_meta['og:type']                = object.class.name.demodulize.downcase
+        og_meta['og:title']               = object.name
+        og_meta['og:description']         = object.description
+
+        price = object.price_in(current_currency)
+        if price
+          og_meta['product:price:amount']   = price.amount
+          og_meta['product:price:currency'] = current_currency
+        end
+      end
+
+      og_meta
+    end
+
     def meta_data
-      object = instance_variable_get('@' + controller_name.singularize)
       meta = {}
 
       if object.is_a? ApplicationRecord
@@ -82,16 +101,10 @@ module Spree
       meta
     end
 
-    def meta_image_url_path
-      object = instance_variable_get('@' + controller_name.singularize)
-      return unless object.is_a?(Spree::Product)
-
-      image = default_image_for_product_or_variant(object)
-      image&.attachment.present? ? main_app.url_for(image.attachment) : asset_path(Spree::Config[:logo])
-    end
-
-    def meta_image_data_tag
-      tag('meta', property: 'og:image', content: meta_image_url_path) if meta_image_url_path
+    def og_meta_data_tags
+      og_meta_data.map do |property, content|
+        tag('meta', property: property, content: content) unless property.nil? || content.nil?
+      end.join("\n")
     end
 
     def meta_data_tags
@@ -188,6 +201,13 @@ module Spree
       if method_name.to_s.match(/_image$/) && style = method_name.to_s.sub(/_image$/, '')
         style if style.in? Spree::Image.styles.with_indifferent_access
       end
+    end
+
+    def meta_robots
+      return unless current_store.respond_to?(:seo_robots)
+      return if current_store.seo_robots.blank?
+
+      tag('meta', name: 'robots', content: current_store.seo_robots)
     end
   end
 end

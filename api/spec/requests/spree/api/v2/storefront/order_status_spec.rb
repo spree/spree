@@ -13,6 +13,14 @@ describe 'Storefront API v2 OrderStatus spec', type: :request do
         it_behaves_like 'returns 404 HTTP status'
       end
 
+      context 'as a guest user with blank token' do
+        let(:headers_order_token) { { 'X-Spree-Order-Token' => '' } }
+
+        before { get "/api/v2/storefront/order_status/#{order.number}", headers: headers_order_token }
+
+        it_behaves_like 'returns 404 HTTP status'
+      end
+
       context 'as a guest user with invalid token' do
         let(:headers_order_token) { { 'X-Spree-Order-Token' => 'WRONG' } }
 

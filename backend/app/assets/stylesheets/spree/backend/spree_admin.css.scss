@@ -18,9 +18,10 @@
 @import 'components/progress';
 @import 'components/spinner';
 
-@import 'plugins/select2';
 @import 'plugins/jquery_ui';
 @import 'plugins/flatpickr';
+@import 'plugins/select2_bootstrap4';
+@import 'plugins/select2_custom';
 
 @import 'shared/base';
 @import 'shared/forms';
