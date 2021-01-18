@@ -40,7 +40,7 @@ Explore demo features: https://spreecommerce.org/spree-commerce-demo-explainer/
 
 Or fire up your own demo on Heroku:
 
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/spree/spree/tree/4-1-stable)
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/spree/spree_starter)
 
 Admin panel credentials for your own Heroku demo:
 
@@ -49,64 +49,61 @@ Admin panel credentials for your own Heroku demo:
 
 ## Installation
 
-### Create new Rails app (optional)
+### Option A - use Spree Starter
 
-If you're starting a new application from scrach run:
+1. Download [Spree Starter](https://github.com/spree/spree_starter/archive/master.zip)
+2. Unzip it
+3. Run `bin/setup` in `spree_starter` directory
 
-```bash
-rails new my_store
-cd my_store
-```
+### Option B - add Spree to an existing application
 
-You can **add Spree to your existing Rails application** as well.
+1. Add Spree gems to your `Gemfile`
 
-### Add Spree gems to your `Gemfile`
+    ##### Rails 6.0 and 6.1
 
-#### Rails 6.0 and 6.1
+    ```ruby
+    gem 'spree', '~> 4.2.0.rc3'
+    gem 'spree_auth_devise', '~> 4.3'
+    gem 'spree_gateway', '~> 3.9'
+    ```
 
-```ruby
-gem 'spree', '~> 4.2.0.rc3'
-gem 'spree_auth_devise', '~> 4.3'
-gem 'spree_gateway', '~> 3.9'
-```
+    ##### Rails 5.2
 
-#### Rails 5.2
+    ```ruby
+    gem 'spree', '~> 3.7.0'
+    gem 'spree_auth_devise', '~> 3.5'
+    gem 'spree_gateway', '~> 3.4'
+    ```
 
-```ruby
-gem 'spree', '~> 3.7.0'
-gem 'spree_auth_devise', '~> 3.5'
-gem 'spree_gateway', '~> 3.4'
-```
+    To see what rails version are you using run this command:
 
-To see what rails version are you using run this command:
+    ```bash
+    rails -v
+    ```
 
-```bash
-rails -v
-```
+    Older rails versions are also supported: [Rails 5.1](https://guides.spreecommerce.org/release_notes/3_5_0.html), [Rails 5.0](https://guides.spreecommerce.org/release_notes/3_2_0.html), [Rails 4.2](https://guides.spreecommerce.org/release_notes/3_1_0.html)
 
-Older rails versions are also supported: [Rails 5.1](https://guides.spreecommerce.org/release_notes/3_5_0.html), [Rails 5.0](https://guides.spreecommerce.org/release_notes/3_2_0.html), [Rails 4.2](https://guides.spreecommerce.org/release_notes/3_1_0.html)
+2. Install gems
 
-### Install gems
+    ```bash
+    bundle install
+    ```
 
-```bash
-bundle install
-```
+    **Note**: if you run into `Bundler could not find compatible versions for gem "sprockets":` error message, please run
 
-**Note**: if you run into `Bundler could not find compatible versions for gem "sprockets":` error message, please run
+    ```bash
+    bundle update
+    ```
 
-```bash
-bundle update
-```
+3. Use the install generators to set up Spree
 
-### Use the install generators to set up Spree
+    ```shell
+    bundle exec rails g spree:install --user_class=Spree::User
+    bundle exec rails g spree:auth:install
+    bundle exec rails g spree_gateway:install
+    ```
 
-```shell
-bundle exec rails g spree:install --user_class=Spree::User
-bundle exec rails g spree:auth:install
-bundle exec rails g spree_gateway:install
-```
-
-## Installation options
+#### Installation options
 
 By default, the installation generator (`rails g spree:install`) will run
 migrations as well as adding seed and sample data and will copy storefront data
@@ -126,15 +123,9 @@ bundle exec rake spree_sample:load
 bundle exec rails g spree:frontend:copy_storefront
 ```
 
-### Headless installation
+#### Headless installation
 
 To use Spree in [API-only mode](https://guides.spreecommerce.org/api/overview/) you need to replace `spree` with `spree_api` in your project Gemfile. This will skip Storefront and Admin Panel. If you would want to include the Admin Panel please add `spree_backend` to your Gemfile.
-
-## Run rails sever
-
-```bash
-rails s
-```
 
 ## Browse Storefront
 
