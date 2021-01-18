@@ -11,7 +11,7 @@ module Spree
     def index
       @searcher = build_searcher(params.merge(include_images: true, current_store_id: current_store.id))
       @products = @searcher.retrieve_products
-      
+
       last_modified = @products.maximum(:updated_at)&.utc if @products.respond_to?(:maximum)
 
       if Spree::Frontend::Config[:http_cache_enabled]
