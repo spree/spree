@@ -23,4 +23,13 @@ uk_store.checkout_zone = Spree::Zone.find_by(name: 'UK_VAT')
 uk_store.default_country = Spree::Country.find_by(iso: 'GB')
 uk_store.save!
 
+currencies = %w[EUR GBP]
+Spree::Price.where(currency: 'USD').each do |price|
+  currencies.each do |currency|
+    new_price = Spree::Price.find_or_initialize_by(currency: currency, variant: price.variant)
+    new_price.amount = price.amount
+    new_price.save
+  end
+end
+
 Spree::Config[:show_store_selector] = true
