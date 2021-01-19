@@ -12,12 +12,12 @@ describe 'Main navigation bar', type: :feature do
       end
     end
 
-    context 'when show_store_currency_selector preference is set to true' do
+    context 'when show_store_selector preference is set to true' do
       let!(:stores) { create_list(:store, stores_number, default_country: create(:country)) }
 
       before do
         reset_spree_preferences do |config|
-          config.show_store_currency_selector = true
+          config.show_store_selector = true
         end
 
         visit spree.root_path
@@ -51,12 +51,12 @@ describe 'Main navigation bar', type: :feature do
       end
     end
 
-    context 'when show_store_currency_selector preference is set to false' do
+    context 'when show_store_selector preference is set to false' do
       let!(:stores) { create_list(:store, stores_number) }
 
       before do
         reset_spree_preferences do |config|
-          config.show_store_currency_selector = false
+          config.show_store_selector = false
         end
 
         visit spree.root_path
