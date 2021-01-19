@@ -72,6 +72,10 @@ gem 'rack-cache'
 gem 'sassc', github: 'sass/sassc-ruby', branch: 'master'
 RUBY
 
+cat <<RUBY >> config/environments/development.rb
+Rails.application.config.hosts << /.*\.lvh\.me/
+RUBY
+
 bundle install --gemfile Gemfile
 bundle exec rails db:drop || true
 bundle exec rails db:create
