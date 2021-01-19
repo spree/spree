@@ -12,12 +12,12 @@ describe 'Main navigation bar', type: :feature do
       end
     end
 
-    context 'when show_store_currency_selector preference is set to true' do
+    context 'when show_store_selector preference is set to true' do
       let!(:stores) { create_list(:store, stores_number, default_country: create(:country)) }
 
       before do
         reset_spree_preferences do |config|
-          config.show_store_currency_selector = true
+          config.show_store_selector = true
         end
 
         visit spree.root_path
@@ -33,12 +33,12 @@ describe 'Main navigation bar', type: :feature do
         let(:stores_number) { 2 }
         let(:first_store) { stores.first }
         let(:first_store_currency_symbol) { ::Money::Currency.find(first_store.default_currency).symbol }
-        let(:first_link_name) { "#{first_store.default_country&.name} (#{first_store_currency_symbol})" }
-        let(:first_url) { "//#{first_store.url}" }
+        let(:first_link_name) { "#{first_store.name} (#{first_store_currency_symbol})" }
+        let(:first_url) { first_store.formatted_url }
         let(:second_store) { stores.second }
         let(:second_store_currency_symbol) { ::Money::Currency.find(second_store.default_currency).symbol }
-        let(:second_link_name) { "#{second_store.default_country&.name} (#{first_store_currency_symbol})" }
-        let(:second_url) { "//#{second_store.url}" }
+        let(:second_link_name) { "#{second_store.name} (#{first_store_currency_symbol})" }
+        let(:second_url) { second_store.formatted_url }
 
         it 'shows currency selector button' do
           within('.change-store') { expect(page).to have_button(id: 'stores-button') }
@@ -51,12 +51,12 @@ describe 'Main navigation bar', type: :feature do
       end
     end
 
-    context 'when show_store_currency_selector preference is set to false' do
+    context 'when show_store_selector preference is set to false' do
       let!(:stores) { create_list(:store, stores_number) }
 
       before do
         reset_spree_preferences do |config|
-          config.show_store_currency_selector = false
+          config.show_store_selector = false
         end
 
         visit spree.root_path
