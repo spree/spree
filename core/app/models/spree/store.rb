@@ -59,7 +59,7 @@ module Spree
       if url.match(/http:\/\/|https:\/\//)
         url
       else
-        "https://#{url}"
+        Rails.env.development? ? "http://#{url}" : "https://#{url}"
       end
     end
 
