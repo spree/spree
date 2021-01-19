@@ -22,3 +22,5 @@ uk_store.default_locale = 'en'
 uk_store.checkout_zone = Spree::Zone.find_by(name: 'UK_VAT')
 uk_store.default_country = Spree::Country.find_by(iso: 'GB')
 uk_store.save!
+
+Spree::Config[:show_store_selector] = true
