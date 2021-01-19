@@ -29,6 +29,10 @@ module Spree
           @current_store ||= Spree::Store.current(request.env['SERVER_NAME'])
         end
 
+        def store_locale
+          current_store.default_locale
+        end
+
         # Return a Hash of things that influence the prices displayed in your shop.
         #
         # By default, the only thing that influences prices that is the current order's +tax_zone+
