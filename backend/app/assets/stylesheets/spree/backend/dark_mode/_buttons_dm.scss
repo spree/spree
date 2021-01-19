@@ -1,16 +1,15 @@
 // Buttons
 .btn {
   color: $main-text-color_dm !important;
-  @include button-variant($main-border-color_dm, $color-btn-border, $color-btn-border, $color-btn-hover-border, $main-border-color_dm, $color-btn-hover-border);
+  @include button-variant($main-border-color_dm, $color-btn-border_dm, $color-btn-border_dm, $color-btn-hover-border_dm, $main-border-color_dm, $color-btn-hover-border_dm);
 }
 
 .btn-danger {
   color: $danger_dm !important;
   &:hover {
-    color: $color-btn-danger-hover-text !important;
-    background-color: $color-btn-danger-hover-bg !important;
-    border-color: $color-btn-danger-hover-border !important;
-    box-shadow: $color-btn-danger-hover-shadow,$color-btn-danger-hover-inset-shadow !important;
+    color: $white !important;
+    background-color: darken($danger_dm, 10) !important;
+    border-color: $danger_dm !important;
   }
 }
 
@@ -18,7 +17,7 @@
   background-color: transparent;
   border-color: transparent;
   &:hover {
-    color: $main-link-color_dm;
+    color: $info_dm;
     background-color: transparent;
     border-color: transparent;
   }

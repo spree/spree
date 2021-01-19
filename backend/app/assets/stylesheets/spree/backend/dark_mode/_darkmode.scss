@@ -5,7 +5,7 @@ body.dark-mode-allowed {
   background-color: $main-bg-color_dm;
 
   a {
-    color: $main-link-color_dm;
+    color: $info_dm;
   }
 
   @import 'base_dm';
@@ -18,4 +18,3 @@ body.dark-mode-allowed {
   @import 'badges_alerts_dm';
   @import 'select2_dm';
 }
-
