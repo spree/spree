@@ -54,6 +54,7 @@ cat <<RUBY >> Gemfile
 gem 'spree', path: '..'
 $SPREE_AUTH_DEVISE_GEM
 $SPREE_GATEWAY_GEM
+gem 'spree_i18n', github: 'spree-contrib/spree_i18n', branch: 'master'
 
 group :test, :development do
   gem 'bullet'
