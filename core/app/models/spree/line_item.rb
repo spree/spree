@@ -57,16 +57,13 @@ module Spree
     end
 
     def update_price
-      if Spree::Config.show_store_currency_selector == true
-        currency_price = Spree::Price.where(
-          currency: order.currency,
-          variant_id: variant_id
-        ).first
+      currency_price = variant.price_in(order.currency)
 
-        self.price = currency_price.price_including_vat_for(tax_zone: tax_zone)
-      else
-        self.price = variant.price_including_vat_for(tax_zone: tax_zone)
-      end
+      self.price = if currency_price.amount.present?
+                     currency_price.price_including_vat_for(tax_zone: tax_zone)
+                   else
+                     0
+                   end
     end
 
     def copy_tax_category
