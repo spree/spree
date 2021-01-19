@@ -57,7 +57,7 @@
             width: zoomed ? 650 : 475,
             height: zoomed ? 870 : 594
           } %>
-          <%= imageIndex.zero? ? image_tag(image_attrs.delete(:src), image_attrs) : lazy_image(image_attrs) %>
+          <%= imageIndex.zero? ? image_tag(image_attrs.delete(:src), image_attrs) : lazy_image(**image_attrs) %>
         </div>
       </div>
     <% end %>
