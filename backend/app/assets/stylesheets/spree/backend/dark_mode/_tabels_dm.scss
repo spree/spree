@@ -1,0 +1,35 @@
+// Tabels
+#table-filter {
+  border-color: $main-border-color_dm;
+}
+
+.index-filter-button button {
+  color: $main-text-color_dm;
+  background-color: $secondary-bg-color_dm;
+  border-color: $main-border-color_dm;
+
+  &:hover {
+    color: $main-text-color_dm;
+    background-color: $main-bg-color_dm;
+  }
+}
+
+.custom-select {
+  color: $main-text-color_dm;
+  background-color: $secondary-bg-color_dm;
+  border-color: $main-border-color_dm;
+}
+
+
+table.table {
+  margin-bottom: 0;
+  color: $main-text-color_dm;
+}
+
+.table th, .table td {
+  border-color: $main-border-color_dm;
+}
+
+table.table tbody tr {
+  background-color: $secondary-bg-color_dm;
+}

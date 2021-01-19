@@ -1,0 +1,21 @@
+@import 'variables_dm';
+
+body.dark-mode-allowed {
+  color: $main-text-color_dm;
+  background-color: $main-bg-color_dm;
+
+  a {
+    color: $main-link-color_dm;
+  }
+
+  @import 'base_dm';
+  @import 'bs4_dm';
+  @import 'buttons_dm';
+  @import 'tabels_dm';
+  @import 'nav_dm';
+  @import 'sidebar_dm';
+  @import 'forms_dm';
+  @import 'badges_alerts_dm';
+  @import 'select2_dm';
+}
+

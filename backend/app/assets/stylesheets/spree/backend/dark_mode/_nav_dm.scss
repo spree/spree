@@ -1,0 +1,36 @@
+#logo {
+  filter: invert(0.3);
+}
+
+
+
+
+// TABS
+.table-responsive {
+  border-radius: $border-radius;
+  border-color: $main-border-color_dm !important;
+  border: 1px solid;
+}
+
+.nav-tabs {
+  border-color: $main-border-color_dm !important;
+}
+
+.nav-tabs .nav-link:hover, .nav-tabs .nav-link:focus,
+.nav-tabs .nav-link.active,
+.nav-tabs .nav-item.show .nav-link {
+  color: $main-text-color_dm;
+  background-color: $secondary-bg-hover-color_dm;
+  border-color: $main-border-color_dm !important;
+}
+
+.header .navbar {
+  background-color: $secondary-bg-color_dm;
+  border-color: $main-border-color_dm !important;
+  border-bottom:1px solid;
+}
+
+.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+  @include alert-variant(rgba(darken($info_dm, 20), 0.1), $info_dm, $info_dm);
+  border:1px solid;
+}

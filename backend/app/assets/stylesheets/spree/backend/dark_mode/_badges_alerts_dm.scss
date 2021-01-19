@@ -1,0 +1,58 @@
+// Badges & Alerts
+.alert-info {
+  @include alert-variant(rgba(darken($info_dm, 20), 0.1), $info_dm, $info_dm);
+  border: 1px solid;
+}
+
+// Red
+.alert-danger,
+.badge-failed,
+.badge-considered_risky,
+.badge-error,
+.badge-invalid,
+.badge-closed {
+  @include alert-variant(rgba(darken($danger_dm, 20), 0.1), $danger_dm, $danger_dm);
+  border: 1px solid;
+}
+
+// Green
+.alert-success ,
+.badge-completed,
+.badge-complete,
+.badge-resumed,
+.badge-considered_safe,
+.badge-paid,
+.badge-shipped,
+.badge-ready,
+.badge-active,
+.badge-success,
+.badge-sold,
+.badge-open,
+.badge-authorized {
+  @include alert-variant(rgba(darken($success_dm, 20), 0.1), $success_dm, $success_dm);
+  border: 1px solid;
+}
+
+// Orange
+.alert-warning,
+.badge-processing,
+.badge-pending,
+.badge-awaiting_return,
+.badge-returned,
+.badge-credit_owed,
+.badge-balance_due,
+.badge-backorder,
+.badge-checkout,
+.badge-cart,
+.badge-address,
+.badge-delivery,
+.badge-payment,
+.badge-confirm,
+.badge-canceled,
+.badge-void,
+.badge-inactive,
+.badge-notice,
+.badge-partial {
+  @include alert-variant(rgba(darken($warning_dm, 20), 0.1), $warning_dm, $warning_dm);
+  border: 1px solid;
+}

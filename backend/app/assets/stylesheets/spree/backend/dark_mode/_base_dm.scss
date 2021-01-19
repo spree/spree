@@ -1,0 +1,14 @@
+
+.pagination {
+
+  li a {
+    color: $main-link-color_dm;
+    background-color: $main-bg-color_dm;
+    border: 1px solid $main-border-color_dm;
+  }
+
+  li.active a {
+    border-color: $main-border-color_dm;
+    background-color: $secondary-bg-hover-color_dm;
+  }
+}

@@ -1,0 +1,24 @@
+// Form Fields
+textarea,
+input {
+  background-color: $main-bg-color_dm !important;
+  border-color: $main-border-color_dm !important;
+  color: $main-text-color_dm;
+
+  &.flatpickr-input {
+    background-color: $main-bg-color_dm !important;
+    border-color: $main-border-color_dm !important;
+    color: $main-text-color_dm;
+  }
+
+  &:focus {
+    color: $main-text-color_dm;
+  }
+}
+
+.input-group-prepend span,
+.input-group-text {
+  color: $main-text-color_dm;
+  border-color: $main-border-color_dm !important;
+  background-color: $secondary-bg-color_dm !important;
+}

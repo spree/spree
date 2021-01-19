@@ -1,0 +1,50 @@
+// Backgrouds
+.bg-light {
+  background-color: $secondary-bg-color_dm !important;
+}
+
+.bg-white {
+  background-color: $main-bg-color_dm !important;
+}
+
+.dropdown-menu {
+  border-color: $main-border-color_dm !important;
+  color: $main-text-color_dm;
+  background-color: $secondary-bg-color_dm !important;
+
+  a {
+    color: $main-text-color_dm !important;
+
+    &:hover {
+      color: $main-text-color_dm !important;
+      background-color: $secondary-bg-hover-color_dm;
+    }
+  }
+
+
+
+}
+
+
+// Borders
+.dropdown-divider,
+.border-bottom,
+.border-top,
+.border-right,
+.border-left {
+  border-color: $main-border-color_dm !important;
+  }
+
+
+// Cards
+.card {
+  background-color: $secondary-bg-color_dm;
+  border-color: $main-border-color_dm !important;
+
+  .card-header{
+    background-color: $main-bg-color_dm;
+    border-color: $main-border-color_dm !important;
+  }
+}
+
+

@@ -1,0 +1,41 @@
+// Main Menu
+aside#main-sidebar {
+  border-color: $main-border-color_dm !important;
+  background-color: $secondary-bg-color_dm;
+
+  ul.active-option {
+    background-color: $secondary-bg-color_dm;
+  }
+
+  .nav-stacked {
+    border-color: $main-border-color_dm !important;
+    li.selected {
+      background-color: $secondary-bg-hover-color_dm;
+      a {
+        color: $main-text-color_dm !important;
+      }
+    }
+
+    ul.active-option {
+      background-color: $secondary-bg-color_dm;
+    }
+  }
+
+  ul.nav-sidebar > li > a { /* stylelint-disable-line no-descending-specificity */
+    color: $main-text-color_dm !important;
+
+    &:hover {
+      background-color: $secondary-bg-hover-color_dm;
+    }
+  }
+
+  a.sidebar-submenu-item:hover {
+    background-color: $secondary-bg-hover-color_dm;
+  }
+}
+
+
+// Contextual Sidebar Menu
+#contextualSideMenu {
+  background-color: $main-bg-color_dm;
+}

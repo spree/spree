@@ -1,0 +1,31 @@
+// Buttons
+.btn {
+  color: $main-text-color_dm !important;
+  @include button-variant($main-border-color_dm, $color-btn-border, $color-btn-border, $color-btn-hover-border, $main-border-color_dm, $color-btn-hover-border);
+}
+
+.btn-danger {
+  color: $danger_dm !important;
+  &:hover {
+    color: $color-btn-danger-hover-text !important;
+    background-color: $color-btn-danger-hover-bg !important;
+    border-color: $color-btn-danger-hover-border !important;
+    box-shadow: $color-btn-danger-hover-shadow,$color-btn-danger-hover-inset-shadow !important;
+  }
+}
+
+.btn-link {
+  background-color: transparent;
+  border-color: transparent;
+  &:hover {
+    color: $main-link-color_dm;
+    background-color: transparent;
+    border-color: transparent;
+  }
+}
+
+button#accountNav,
+button#accountNav:hover {
+  background-color: transparent !important;
+  border-color: transparent !important;
+}

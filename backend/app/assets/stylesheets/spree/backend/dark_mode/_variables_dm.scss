@@ -1,0 +1,37 @@
+
+$success_dm:       #56d364;
+$info_dm:          #58a6ff;
+$warning_dm:       #e3b341;
+$danger_dm:        #f85149;
+
+
+// Base Colors
+$main-text-color_dm: #c9d1d9;
+$main-link-color_dm: #58a6ff;
+$main-bg-color_dm: #06090F;
+
+$secondary-bg-color_dm: #0d1117;
+$secondary-bg-hover-color_dm: #161b22;
+
+$main-border-color_dm: #21262d ;
+
+// Buttons
+// Standard Buttons
+$color-btn-bg: $main-border-color_dm;
+$color-btn-text: $main-text-color_dm;
+
+$color-btn-border: #30363d;
+// Standard ButtonsHover
+$color-btn-hover-border: #8b949e;
+
+// Danger Buttons
+$color-btn-danger-text: #f85149;
+// Hover
+$color-btn-danger-hover-text: #fff;
+$color-btn-danger-hover-bg: #da3633;
+
+$color-btn-danger-hover-border: $color-btn-danger-text;
+$color-btn-danger-hover-shadow: 0 0 transparent;
+$color-btn-danger-hover-inset-shadow: 0 0 transparent;
+
+
