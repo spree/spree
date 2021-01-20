@@ -572,7 +572,7 @@ en:
         no_store_credit: User has no Store Credit available.
         available_store_credit: User has %{amount} in Store Credit available.
     administration: Administration
-    admin_appearance: Admin Appearance
+    admin_ui: Admin UI
     advertise: Advertise
     agree_to_privacy_policy: Agree to Privacy Policy
     agree_to_terms_of_service: Agree to Terms of Service
@@ -1795,6 +1795,7 @@ en:
     url: URL
     usage_limit: Usage Limit
     use_app_default: Use App Default
+    dark_mode: Dark Mode
     use_billing_address: Use Billing Address
     use_existing_cc: Use an existing card on file
     use_new_cc: Use a new card

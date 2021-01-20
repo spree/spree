@@ -33,7 +33,9 @@
       <%= f.error_message_on :password_confirmation %>
     <% end %>
 
-    <div data-hook="default" class="form-group checkbox">
+    <strong><%= Spree.t(:admin_ui) %></strong>
+    <div data-hook="dark-mode" class="form-group checkbox">
+
       <%= label_tag "Dark Mode" do %>
         <%= f.check_box :dark_mode %>
         <%= Spree.t(:dark_mode) %>
