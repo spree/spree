@@ -55,7 +55,7 @@ module Spree
     end
 
     def theme_name_parameterized
-      admin_theme.to_s.parameterize
+      admin_theme_name.to_s.parameterize
     end
 
     def last_incomplete_spree_order(store, options = {})

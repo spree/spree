@@ -34,8 +34,8 @@
 
     <strong><%= Spree.t(:admin_ui) %></strong>
     <div class="form-group">
-      <%= f.label :type, Spree.t(:admin_theme) %>
-      <%= f.select(:admin_theme, Spree::User::ADMIN_THEME_NAMES, {}, { class: 'select2' }) %>
+      <%= f.label :type, Spree.t(:admin_theme_name) %>
+      <%= f.select(:admin_theme_name, Spree::User::ADMIN_THEME_NAMES, {}, { class: 'select2' }) %>
     </div>
   </div>
 </div>

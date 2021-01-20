@@ -92,7 +92,7 @@ module Spree
       def user_params
         params.require(:user).permit(permitted_user_attributes |
                                      [:use_billing,
-                                      :admin_theme,
+                                      :admin_theme_name,
                                       spree_role_ids: [],
                                       ship_address_attributes: permitted_address_attributes,
                                       bill_address_attributes: permitted_address_attributes])
