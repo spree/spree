@@ -37,7 +37,7 @@ module Spree
 
       def theme_class
         if try_spree_current_user
-          spree_current_user.theme_name_parameterized
+          try_spree_current_user.theme_name_parameterized
         else
           'default-theme'
         end

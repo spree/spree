@@ -32,9 +32,11 @@
       <%= f.error_message_on :password_confirmation %>
     <% end %>
 
-    <div class="form-group">
-      <%= f.label :type, Spree.t(:admin_theme_name) %>
-      <%= f.select(:admin_theme_name, Spree::User::ADMIN_THEME_NAMES, {}, { class: 'select2' }) %>
-    </div>
+    <% if try_spree_current_user %>
+      <div class="form-group">
+        <%= f.label :type, Spree.t(:admin_theme) %>
+        <%= f.select(:admin_theme_name, Spree::User::ADMIN_THEME_NAMES, {include_blank: true}, { class: 'select2-clear' }) %>
+      </div>
+    <% end %>
   </div>
 </div>
