@@ -18,7 +18,7 @@ This is the safest and recommended method.
 ## Update Gemfile
 
 ```ruby
-gem 'spree', '~> 4.2.0.rc3'
+gem 'spree', '~> 4.2.0.rc4'
 gem 'spree_auth_devise', '~> 4.3'
 gem 'spree_gateway', '~> 3.9'
 ```
