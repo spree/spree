@@ -55,7 +55,11 @@ module Spree
     end
 
     def theme_name_parameterized
-      admin_theme_name.to_s.parameterize
+      if admin_theme_name.is_a? String
+        admin_theme_name.parameterize
+      else
+        'default-theme'
+      end
     end
 
     def last_incomplete_spree_order(store, options = {})
