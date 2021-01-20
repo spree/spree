@@ -1,4 +1,13 @@
 // Badges & Alerts
+
+// White
+.badge-white {
+  color: $main-text-color_dm;
+  @include alert-variant(rgba($main-text-color_dm, 0.1), $main-text-color_dm, $main-text-color_dm);
+  border: 1px solid;
+}
+
+// Blue
 .alert-info {
   @include alert-variant(rgba(darken($info_dm, 20), 0.1), $info_dm, $info_dm);
   border: 1px solid;
@@ -16,6 +25,7 @@
 }
 
 // Green
+.badge-secondary,
 .alert-success ,
 .badge-completed,
 .badge-complete,
@@ -33,7 +43,7 @@
   border: 1px solid;
 }
 
-// Orange
+// Orange,
 .alert-warning,
 .badge-processing,
 .badge-pending,
@@ -56,3 +66,5 @@
   @include alert-variant(rgba(darken($warning_dm, 20), 0.1), $warning_dm, $warning_dm);
   border: 1px solid;
 }
+
+

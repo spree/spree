@@ -1,6 +1,6 @@
 @import 'variables_dm';
 
-body.dark-mode-allowed {
+body.darkmode {
   color: $main-text-color_dm;
   background-color: $main-bg-color_dm;
 
@@ -17,4 +17,5 @@ body.dark-mode-allowed {
   @import 'forms_dm';
   @import 'badges_alerts_dm';
   @import 'select2_dm';
+  @import 'flatpickr';
 }

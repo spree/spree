@@ -22,3 +22,7 @@ input {
   border-color: $main-border-color_dm !important;
   background-color: $secondary-bg-color_dm !important;
 }
+
+input#quick_search {
+  border-left: none;
+}

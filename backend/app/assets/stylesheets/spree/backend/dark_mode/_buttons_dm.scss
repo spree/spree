@@ -23,6 +23,12 @@
   }
 }
 
+.index-filter-button button {
+  border-right: 1px solid $main-border-color_dm;
+  @include button-variant($main-border-color_dm, $color-btn-border_dm, $color-btn-border_dm, $color-btn-hover-border_dm, $main-border-color_dm, $color-btn-hover-border_dm);
+
+}
+
 button#accountNav,
 button#accountNav:hover {
   background-color: transparent !important;

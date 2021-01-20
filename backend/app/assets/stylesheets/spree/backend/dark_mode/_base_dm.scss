@@ -1,10 +1,13 @@
-
 .pagination {
-
   li a {
     color: $info_dm;
     background-color: $main-bg-color_dm;
     border: 1px solid $main-border-color_dm;
+
+    &:hover {
+      border-color: $main-border-color_dm;
+      background-color: $secondary-bg-hover-color_dm;
+    }
   }
 
   li.active a {

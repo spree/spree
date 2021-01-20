@@ -3,23 +3,16 @@
   border-color: $main-border-color_dm;
 }
 
-.index-filter-button button {
-  color: $main-text-color_dm;
-  background-color: $secondary-bg-color_dm;
-  border-color: $main-border-color_dm;
-
-  &:hover {
-    color: $main-text-color_dm;
-    background-color: $main-bg-color_dm;
-  }
-}
-
 .custom-select {
   color: $main-text-color_dm;
   background-color: $secondary-bg-color_dm;
   border-color: $main-border-color_dm;
 }
 
+
+td.move-handle {
+  color: $info_dm;
+}
 
 table.table {
   margin-bottom: 0;
@@ -32,4 +25,15 @@ table.table {
 
 table.table tbody tr {
   background-color: $secondary-bg-color_dm;
+  &:hover {
+    background-color: $secondary-bg-hover-color_dm;
+  }
+
+ .table-bordered {
+  border-color: $main-border-color_dm !important;
+ }
+}
+
+thead {
+  background-color: $main-bg-color_dm;
 }

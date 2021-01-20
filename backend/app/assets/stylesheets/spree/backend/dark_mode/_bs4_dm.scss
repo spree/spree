@@ -7,6 +7,10 @@
   background-color: $main-bg-color_dm !important;
 }
 
+.text-dark {
+  color: $main-text-color_dm !important;
+}
+
 .dropdown-menu {
   border-color: $main-border-color_dm !important;
   color: $main-text-color_dm;
@@ -20,9 +24,6 @@
       background-color: $secondary-bg-hover-color_dm;
     }
   }
-
-
-
 }
 
 

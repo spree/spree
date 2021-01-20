@@ -4,8 +4,7 @@
     <%= render partial: 'spree/admin/shared/head' %>
   </head>
 
-  <body class="admin <% if Spree::Config[:allow_dark_mode] %>dark-mode-allowed<% end %>">
-
+  <body class="admin <% if try_spree_current_user.dark_mode? %>darkmode<% end %>">
     <%#-------------------------------------------------%>
     <%# Loading progress bars                           %>
     <%#-------------------------------------------------%>
@@ -30,6 +29,8 @@
                             <% end %>">
       <div class="row">
 
+
+
         <%#-------------------------------------------------%>
         <%# Sidebar                                         %>
         <%#-------------------------------------------------%>
@@ -47,7 +48,6 @@
         <%#-------------------------------------------------%>
         <main class="col-12 col-lg-9 col-xl-10 offset-lg-3 offset-xl-2 main" id="main-part">
           <div class="container">
-
             <%#-------------------------------------------------%>
             <%# Content header (page title/actions)             %>
             <%#-------------------------------------------------%>
