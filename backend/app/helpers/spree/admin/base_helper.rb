@@ -35,6 +35,14 @@ module Spree
         end
       end
 
+      def theme_class
+        if Spree.user_class == 'User'
+          try_spree_current_user.theme_name_parameterized
+        else
+          'default-theme'
+        end
+      end
+
       def svg_icon(name:, classes: '', width:, height:)
         if name.ends_with?('.svg')
           icon_name = File.basename(name, File.extname(name))

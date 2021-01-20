@@ -9,13 +9,14 @@
   border: 1px solid;
 }
 
+.nav-pills .nav-link {
+  color: $main-text-color_dm;
+}
+
 .nav-pills .nav-link.active, .nav-pills .show > .nav-link {
   @include alert-variant(rgba(darken($info_dm, 20), 0.1), $info_dm, $info_dm);
   border:1px solid;
 
-}
-.nav-pills .nav-link {
-  color: $main-text-color_dm;
 }
 
 .nav-tabs {
