@@ -151,7 +151,7 @@
     <% end %>
     <%= f.field_container :default_locale, class: ['form-group'] do %>
       <%= f.label :default_locale, Spree.t('i18n.language') %>
-      <%= f.select :default_locale, options_from_collection_for_select(all_locales_options, :last, :first, @store.default_locale), {}, { class: 'select2' } %>
+      <%= f.select :default_locale, options_from_collection_for_select(all_locales_options, :last, :first, @store.default_locale || I18n.locale), {}, { class: 'select2' } %>
       <%= f.error_message_on :default_locale %>
       <% unless defined?(SpreeI18n) %>
         <small class="form-text text-muted">
