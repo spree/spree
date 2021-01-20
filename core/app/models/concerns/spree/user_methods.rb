@@ -47,7 +47,7 @@ module Spree
       end
     end
 
-    ADMIN_THEME_NAMES = ['Default', 'Dark Mode']
+    ADMIN_THEME_NAMES = ['Default', 'Dark Mode'] # Not frozen allowing people to add custom admin themes.
 
     # has_spree_role? simply needs to return true or false whether a user has a role or not.
     def has_spree_role?(role_in_question)
