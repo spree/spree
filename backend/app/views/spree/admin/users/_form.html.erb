@@ -17,7 +17,6 @@
         </div>
       <% end %>
     </div>
-
   </div>
 
   <div data-hook="admin_user_form_password_fields" class="col-12 col-md-6">
@@ -34,12 +33,9 @@
     <% end %>
 
     <strong><%= Spree.t(:admin_ui) %></strong>
-    <div data-hook="dark-mode" class="form-group checkbox">
-
-      <%= label_tag "Dark Mode" do %>
-        <%= f.check_box :dark_mode %>
-        <%= Spree.t(:dark_mode) %>
-      <% end %>
+    <div class="form-group">
+      <%= f.label :type, Spree.t(:admin_theme) %>
+      <%= f.select(:admin_theme, Spree::User::ADMIN_THEME_NAMES, {}, { class: 'select2' }) %>
     </div>
   </div>
 </div>

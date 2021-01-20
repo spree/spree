@@ -1,6 +1,6 @@
 .flatpickr-calendar {
-  background-color: $secondary-bg-color_dm;
-  box-shadow: 1px 0 0 $main-border-color_dm, -1px 0 0 $main-border-color_dm, 0 1px 0 $main-border-color_dm, 0 -1px 0 $main-border-color_dm, 0 3px 13px rgba(0,0,0,0.08);
+  background-color: $secondary-bg-hover-color_dm;
+  box-shadow: 1px 0 0 $color-btn-hover-border_dm, -1px 0 0 $color-btn-hover-border_dm, 0 1px 0 $color-btn-hover-border_dm, 0 -1px 0 $color-btn-hover-border_dm, 0 3px 13px rgba(0,0,0,0.08);
   .flatpickr-day {
     color: $main-text-color_dm;
   }
@@ -11,11 +11,11 @@
 }
 
 .flatpickr-calendar.arrowTop:before {
-  border-bottom-color: $main-border-color_dm;
+  border-bottom-color: $info_dm !important;
 }
 
 .flatpickr-calendar.arrowBottom:before {
-  border-top-color: $main-border-color_dm;
+  border-top-color: $main-border-color_dm !important;
 }
 
 .flatpickr-calendar:before, .flatpickr-calendar:after {

@@ -4,7 +4,7 @@
     <%= render partial: 'spree/admin/shared/head' %>
   </head>
 
-  <body class="admin <% if try_spree_current_user.dark_mode? %>darkmode<% end %>">
+  <body class="admin <%= try_spree_current_user.theme_name_parameterized %>">
     <%#-------------------------------------------------%>
     <%# Loading progress bars                           %>
     <%#-------------------------------------------------%>
@@ -28,8 +28,6 @@
                              mb-4 mb-lg-0
                             <% end %>">
       <div class="row">
-
-
 
         <%#-------------------------------------------------%>
         <%# Sidebar                                         %>
