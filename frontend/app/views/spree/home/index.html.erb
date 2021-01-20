@@ -65,7 +65,7 @@
 
 <div class="homepage-fashion-trends-box mb-3">
   <div class="text-center">
-    <div class="homepage-fashion-trends-box-summer-text mb-1"><%= Spree.t('homepage.summer_2020') %></div>
+    <div class="homepage-fashion-trends-box-summer-text mb-1"><%= Spree.t('homepage.summer_year', year: Date.current.year) %></div>
     <div class="homepage-fashion-trends-box-fashion-trends-text mb-2"><%= Spree.t('homepage.fashion_trends') %></div>
     <div class="homepage-fashion-trends-box-description-text text-center mb-3">
       <%= Spree.t('homepage.fashion_trends_note') %>

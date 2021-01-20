@@ -18,12 +18,12 @@ default:
           :url: /t/women/jackets-and-coats
       promo_banners:
         - subtitle: New collection
-          title: Summer 2019
-          url: /t/new-collection/summer-2019
+          title: Summer 2021
+          url: /t/new-collection/summer-2021
           image: 'meganav/promo_banner_left-first-category.jpg'
         - subtitle: Special Offers
           title: Get up to 30% off
-          url: /t/special-offers/30-off
+          url: /t/special-offers/30-percent-off
           image: 'meganav/promo_banner_right-first-category.jpg'
     - title: Men
       subtitle: Categories
@@ -39,12 +39,12 @@ default:
           :url: /t/men/jackets-and-coats
       promo_banners:
         - subtitle: New collection
-          title: Summer 2019
-          url: /t/new-collection/summer-2019
+          title: Summer 2021
+          url: /t/new-collection/summer-2021
           image: 'meganav/promo_banner_left-second-category.jpg'
         - subtitle: Special Offers
           title: Get up to 30% off
-          url: /t/special-offers/30-off
+          url: /t/special-offers/30-percent-off
           image: 'meganav/promo_banner_right-second-category.jpg'
     - title: Sportswear
       subtitle: Categories
@@ -58,10 +58,10 @@ default:
           :url: /t/sportswear/pants
       promo_banners:
         - subtitle: New collection
-          title: Summer 2019
-          url: /t/new-collection/summer-2019
+          title: Summer 2021
+          url: /t/new-collection/summer-2021
           image: 'meganav/promo_banner_left-third-category.jpg'
         - subtitle: Special Offers
           title: Get up to 30% off
-          url: /t/special-offers/30-off
+          url: /t/special-offers/30-percent-off
           image: 'meganav/promo_banner_right-third-category.jpg'

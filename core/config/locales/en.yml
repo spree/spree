@@ -663,7 +663,6 @@ en:
       jackets_and_coats: JACKET & COASTS
       new_collection: NEW COLLECTION
       special_offers: SPECIAL OFFERS
-      summer_2019: SUMMER 2019
     channel: Channel
     charged: Charged
     checkout: Checkout
@@ -938,7 +937,7 @@ en:
       shop_now: SHOP NOW
       sportswear: SPORTSWEAR
       streetstyle: STREETSTYLE
-      summer_2020: Summer 2020
+      summer_year: "Summer %{year}"
       summer_collection:  Summer Collection
       summer_sale: SUMMER SALE
       trending: TRENDING
