@@ -314,7 +314,9 @@ module Spree
       end
     end
 
-    def checkout_edit_link(step = 'address')
+    def checkout_edit_link(step = 'address', order = @order)
+      return if order.complete?
+
       classes = 'align-text-bottom checkout-confirm-delivery-informations-link'
 
       link_to spree.checkout_state_path(step), class: classes, method: :get do
