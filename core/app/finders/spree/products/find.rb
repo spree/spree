@@ -174,8 +174,12 @@ module Spree
 
         products.
           joins(:product_properties).
-          where(spree_product_properties: { value: properties.values }).
+          where(spree_product_properties: { value: product_properties_values, property_id: properties.keys }).
           distinct
+      end
+
+      def product_properties_values
+        Spree::ProductProperty.where(id: properties.values.join(',').split(',')).pluck(:value)
       end
 
       def option_types_count(option_value_ids)

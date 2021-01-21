@@ -1,10 +1,11 @@
 <% cache base_cache_key + [filtering_params_cache_key, @taxon&.id] do %>
-  <% selected_properties = params[property_name]&.split(',') || [] %>
+  <% selected_properties = params.dig(:properties, "#{property.id}")&.split(',')&.map(&:to_i) || [] %>
+  <% param_key = "properties[#{property.id}]" %>
   <% property.uniq_values.each do |value| %>
-    <% value_slug = CGI.escape(value) %>
-    <% property_value_param = (selected_properties.include?(value_slug) ? selected_properties - [value_slug] : selected_properties + [value_slug]).join(',') %>
-    <%= link_to permitted_params.merge(property.name => property_value_param, menu_open: 1), data: { params: permitted_params.merge(property.name => property_value_param, menu_open: 1), id: value_slug, filter_name: property.name, multiselect: true } do %>
-      <div class="d-inline-block text-uppercase py-1 px-2 m-1 plp-overlay-card-item <%= 'plp-overlay-card-item--selected' if selected_properties.include?(value_slug) %>">
+    <% value_id = property.first_with_value(value).id %>
+    <% property_values = (selected_properties.include?(value_id) ? selected_properties - [value_id] : selected_properties + [value_id]) %>
+    <%= link_to permitted_params.merge(properties: { property.id => property_values }, menu_open: 1), data: { params: permitted_params.merge(param_key => property_values, menu_open: 1), id: value_id, filter_name: param_key, multiselect: true } do %>
+      <div class="d-inline-block text-uppercase py-1 px-2 m-1 plp-overlay-card-item <%= 'plp-overlay-card-item--selected' if selected_properties.include?(value_id) %>">
         <%= value %>
       </div>
     <% end %>

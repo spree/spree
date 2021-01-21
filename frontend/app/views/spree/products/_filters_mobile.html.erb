@@ -30,6 +30,32 @@
           </div>
         <% end %>
 
+        <% available_properties.each do |property| %>
+          <% if property.uniq_values.present? %>
+            <% property_name = property.name %>
+            <% collapsed = params.dig(:product_properties, property.id.to_s).blank? %>
+            <div class="card plp-overlay-card">
+              <div class="card-header text-uppercase <%= 'collapsed' if collapsed %> plp-overlay-card-header" data-toggle="collapse" id="filtersMobile<%= property_name %>" data-target="#collapseFilterMobile<%= property_name %>" aria-expanded="true" aria-controls="collapseFilterMobile<%= property_name %>" role="heading" aria-level="3">
+                <%= property_name %>
+                <%= icon(name: 'arrow-right',
+                         classes: 'spree-icon-arrow spree-icon-arrow-right mt-1 float-right arrow plp-overlay-card-header-arrow',
+                         width: 16,
+                         height: 16) %>
+              </div>
+              <div id="collapseFilterMobile<%= property_name %>" class="collapse <%= 'show' unless collapsed %>" aria-labelledby="filtersMobile<%= property_name %>" data-parent="#filters-accordion">
+                <div class="card-body pt-1">
+                  <%= render 'spree/shared/properties',
+                             params_property_name: params[property_name],
+                             property: property,
+                             permitted_params: permitted_params,
+                             property_name: property_name
+                  %>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        <% end %>
+
         <div class="card plp-overlay-card">
           <div class="card-header text-uppercase <%= 'collapsed' if params[:price].blank? %> plp-overlay-card-header" id="headingFour" data-toggle="collapse" data-target="#collapseFour" aria-expanded="true" aria-controls="collapseFour" role="heading" aria-level="3">
             <%= Spree.t('plp.price') %>

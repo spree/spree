@@ -121,10 +121,6 @@ module Spree
           end
         end
 
-        def build_product_properties(params)
-          params.slice(*Spree::Property.pluck(:name))
-        end
-
         def prepare(params)
           @properties[:taxon] = params[:taxon].blank? ? nil : Spree::Taxon.find(params[:taxon])
           @properties[:keywords] = params[:keywords]
@@ -141,7 +137,7 @@ module Spree
                                else
                                  1
                                end
-          @properties[:product_properties] = build_product_properties(params)
+          @properties[:product_properties] = params[:properties]
         end
       end
     end

@@ -29,12 +29,12 @@
           </div>
         </div>
       <% end %>
+
       <% available_properties.each do |property| %>
         <% if property.uniq_values.present? %>
           <div class="w-100 card plp-filters-card">
             <% property_name = property.name %>
-            <% collapsed = params[property_name].blank? %>
-
+            <% collapsed = params.dig(:properties, property.id.to_s).blank? %>
             <button class="card-header <%= 'collapsed' if collapsed %> px-1 plp-filters-card-header" id="filters<%= property_name %>" data-toggle="collapse" data-target="#collapseFilter<%= property_name %>" aria-expanded="<%= !collapsed %>" aria-controls="collapseFilter<%= property_name %>" role="heading" aria-level="2">
               <%= property.presentation.titleize %>
               <%= icon(name: 'plus',
@@ -59,6 +59,7 @@
           </div>
         <% end %>
       <% end %>
+
       <% price_collapsed = params[:price].blank? %>
       <div class="w-100 card plp-filters-card">
         <button class="card-header text-capitalize <%= 'collapsed' if price_collapsed %> px-1 plp-filters-card-header" id="filtersPrice" data-toggle="collapse" data-target="#collapseFilterPrice" aria-expanded="<% !price_collapsed %>" aria-controls="collapseFilterPrice" role="heading" aria-level="2">
