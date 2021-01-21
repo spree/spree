@@ -1,5 +1,56 @@
 <div class='checkout-confirm-order-details w-100 d-flex flex-wrap' data-hook>
-  <%= render partial: 'spree/checkout/delivery_informations', locals: { order: @order, class_name: 'd-none d-lg-block' } %>
+  <div class="checkout-confirm-delivery-informations text-left mt-3">
+    <div class="d-lg-none checkout-confirm-delivery-informations-header">
+      <%= Spree.t(:delivery_information) %>
+    </div>
+    <dl>
+      <% if order.has_step?("address") %>
+        <div data-hook="order-ship-address">
+          <dt class="text-uppercase">
+            <%= Spree.t(:shipping_address) %>
+            <%= checkout_edit_link %>
+          </dt>
+          <%= render 'spree/shared/address', address: order.ship_address %>
+        </div>
+        <div data-hook="order-bill-address">
+          <dt class="text-uppercase">
+            <%= Spree.t(:billing_address) %>
+            <%= checkout_edit_link %>
+          </dt>
+          <%= render 'spree/shared/address', address: order.bill_address %>
+        </div>
+      <% end %>
+      <% if order.has_step?("delivery") %>
+        <div data-hook="order-shipment">
+          <dt class="text-uppercase">
+            <%= Spree.t(:shipping) %>
+            <%= checkout_edit_link('delivery') %>
+          </dt>
+          <% @order.shipments.valid.each do |shipment| %>
+            <dd><%= shipment.shipping_method&.name %> </dd>
+          <% end %>
+          <%= render 'spree/shared/shipment_tracking', order: order if order.shipped? %>
+        </div>
+      <% end %>
+      <% if order.has_step?("payment") %>
+        <div data-hook="order-payment">
+          <dt class="text-uppercase">
+            <%= Spree.t(:payment) %>
+            <%= checkout_edit_link('payment') %>
+          </dt>
+          <dd>
+            <%= render collection: @order.payments.valid, partial: 'spree/shared/payment' %>
+          </dd>
+          <dd>
+            <% if !@order.complete? && @order.using_store_credit? %>
+              <%= button_tag Spree.t('store_credit.remove'), name: 'remove_store_credit', class: 'continue btn' %>
+            <% end %>
+          </dd>
+        </div>
+      <% end %>
+    </dl>
+  </div>
+
   <div class="checkout-confirm-order-details-line-items d-flex flex-column mt-5 mr-4">
     <div class="checkout-confirm-order-details-line-items-header d-none d-sm-block d-lg-none align-self-start mb-3">
       <%= Spree.t(:products) %>
@@ -59,8 +110,6 @@
       <% end %>
     </div>
   </div>
-
-  <%= render partial: 'spree/checkout/delivery_informations', locals: { order: @order, class_name: 'd-lg-none' } %>
 
   <div class="mt-5" id="checkout-summary" data-hook="checkout_summary_box">
     <%= render partial: 'spree/checkout/summary', locals: { order: @order } %>
