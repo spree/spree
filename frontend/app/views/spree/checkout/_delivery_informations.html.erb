@@ -9,14 +9,14 @@
           <%= Spree.t(:shipping_address) %>
           <%= checkout_edit_link %>
         </dt>
-        <dd><%= sanitize @order.ship_address.to_s, tags: %w[br] %></dd>
+        <%= render 'spree/shared/address', address: order.ship_address %>
       </div>
       <div data-hook="order-bill-address">
         <dt class="text-uppercase">
           <%= Spree.t(:billing_address) %>
           <%= checkout_edit_link %>
         </dt>
-        <dd><%= sanitize @order.bill_address.to_s, tags: %w[br] %></dd>
+        <%= render 'spree/shared/address', address: order.bill_address %>
       </div>
     <% end %>
     <% if order.has_step?("delivery") %>
