@@ -79,14 +79,16 @@
               </div>
               <div class="d-flex flex-column mt-2 mt-lg-0" data-hook="order_item_description">
                 <div><%= link_to line_item.name, line_item.product %></div>
-                <ul class="checkout-confirm-order-details-line-items-line-item-name-options text-uppercase list-unstyled mb-0">
-                  <% line_item.variant.option_values.sort { |ov| ov.option_type.position }.each do |ov| %>
-                  <li>
-                    <% # TODO: rework option values so options_text method can be used here %>
-                    <%= "#{ov.option_type.presentation}: #{ov.name.titleize}" %>
-                  </li>
+                <% unless line_item.variant.is_master? %>
+                  <ul class="checkout-confirm-order-details-line-items-line-item-name-options text-uppercase list-unstyled mb-0">
+                    <% line_item.variant.option_values.sort { |ov| ov.option_type.position }.each do |ov| %>
+                    <li>
+                      <% # TODO: rework option values so options_text method can be used here %>
+                      <%= "#{ov.option_type.presentation}: #{ov.name.titleize}" %>
+                    </li>
+                  <% end %>
+                  </ul>
                 <% end %>
-                </ul>
                 <div class="d-lg-none" data-hook="order_item_price">
                   <div class="font-weight-bold"><%= line_item.single_money.to_html %></div>
                 </div>
