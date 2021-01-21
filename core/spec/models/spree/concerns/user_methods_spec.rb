@@ -78,6 +78,14 @@ describe Spree::UserMethods do
     end
   end
 
+  describe '#theme_name_formatted' do
+    subject { test_user.theme_name_formatted }
+
+    it 'returns the Default name parameterize' do
+      expect(subject).to eq('spree-admin-theme-default')
+    end
+  end
+
   describe '#payment_sources' do
     subject { test_user.payment_sources }
 
