@@ -47,15 +47,6 @@
       &-line-item {
         $self: &;
 
-        a {
-          max-width: 50%;
-          margin-right: 20px;
-
-          @include media-breakpoint-up(lg) {
-            margin-right: 40px;
-          }
-        }
-
         img {
           width: 90px;
           height: auto;
@@ -72,14 +63,24 @@
         &-name {
           font-size: font-px-to-rem(14px);
           border-top: 1px solid $global-border-style;
+          margin-right: 20px;
 
-          @include media-breakpoint-up(sm) {
-            font-size: font-px-to-rem(27px);
-          }
+          &-link {
+            max-width: 50%;
 
-          @include media-breakpoint-up(lg) {
-            font-size: font-px-to-rem(22px);
-            width: 55%;
+            @include media-breakpoint-up(lg) {
+              margin-right: 40px;
+            }
+
+
+            @include media-breakpoint-up(sm) {
+              font-size: font-px-to-rem(27px);
+            }
+
+            @include media-breakpoint-up(lg) {
+              font-size: font-px-to-rem(22px);
+              width: 55%;
+            }
           }
 
           &-options {
