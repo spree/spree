@@ -3,8 +3,7 @@
   flex-direction: column;
 
   div:first-child {
-    -webkit-flex: 0;
-    flex-shrink: 0;
+    flex-basis: 100%;
   }
 
   &-order-details {
@@ -185,6 +184,8 @@
   }
 
   &-delivery-informations {
+    flex-basis: 100%;
+
     div:first-child {
       flex-shrink: unset;
       -webkit-flex: unset;
@@ -253,9 +254,9 @@
   }
 
   #checkout-summary {
-    margin-top: 20px;
-    @include media-breakpoint-up(sm) {
-      margin-top: 70px;
+    flex: 1 1 0;
+    @include media-breakpoint-down(sm) {
+      margin-top: 20px;
     }
   }
 }
