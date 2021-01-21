@@ -54,12 +54,10 @@ module Spree
       spree_roles.any? { |role| role.name == role_in_question.to_s }
     end
 
-    def theme_name_parameterized
-      if admin_theme_name.blank?
-        ''
-      else
-        admin_theme_name.parameterize
-      end
+    def theme_name_formatted
+      prefix = 'spree-admin-theme'
+
+      (prefix + ' ' + admin_theme_name).parameterize
     end
 
     def last_incomplete_spree_order(store, options = {})
