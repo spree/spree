@@ -36,9 +36,7 @@ module Spree
       end
 
       def theme_class
-        if try_spree_current_user
-          try_spree_current_user.theme_name_formatted
-        end
+        try_spree_current_user&.theme_name_formatted
       end
 
       def svg_icon(name:, classes: '', width:, height:)
