@@ -13,13 +13,17 @@ td.move-handle {
   color: $info_dm;
 }
 
+
+
 table.table {
   margin-bottom: 0;
   color: $main-text-color_dm;
 }
 
-.table th, .table td {
-  border-color: $main-border-color_dm;
+table.table-bordered,
+.table thead th,
+.table td {
+  border-color: $main-border-color_dm !important;
 }
 
 table.table tbody tr {
@@ -27,12 +31,21 @@ table.table tbody tr {
   &:hover {
     background-color: $secondary-bg-hover-color_dm;
   }
-
- .table-bordered {
-  border-color: $main-border-color_dm !important;
- }
 }
 
 thead {
   background-color: $main-bg-color_dm;
+}
+
+.table-responsive {
+  border-radius: $border-radius;
+  border-color: $main-border-color_dm !important;
+  border: 1px solid;
+}
+.card  {
+  .table-responsive {
+    border-radius: 0;
+    border-color: $main-border-color_dm !important;
+    border: 1px solid;
+  }
 }
