@@ -170,16 +170,15 @@ module Spree
       end
 
       def by_properties(products)
-        return products unless properties?
+        return products unless properties? && properties.values.reject(&:empty?).present?
 
-        products.
-          joins(:product_properties).
-          where(spree_product_properties: { value: product_properties_values, property_id: properties.keys }).
-          distinct
-      end
-
-      def product_properties_values
-        Spree::ProductProperty.where(id: properties.values.join(',').split(',')).pluck(:value)
+        products.where(
+          id: properties.map do |property_id, product_properties_ids|
+            products.
+              joins(:product_properties).
+              where(spree_product_properties: { property_id: property_id, id: product_properties_ids.split(',') }).ids
+          end.flatten.compact.uniq
+        )
       end
 
       def option_types_count(option_value_ids)

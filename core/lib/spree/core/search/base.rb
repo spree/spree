@@ -137,7 +137,7 @@ module Spree
                                else
                                  1
                                end
-          @properties[:product_properties] = params[:properties]
+          @properties[:product_properties] = params[:properties].try(:to_unsafe_hash)
         end
       end
     end

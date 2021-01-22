@@ -267,7 +267,7 @@ module Spree
     end
 
     def available_properties_cache_key
-      @available_properties_cache_key ||= Spree::Property.filterable.maximum(:updated_at).utc.to_i
+      @available_properties_cache_key ||= Spree::Property.filterable.maximum(:updated_at)&.utc&.to_i
     end
 
     def available_properties
