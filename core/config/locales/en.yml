@@ -925,24 +925,6 @@ en:
     hide_from_subcategories_nav: Hide from subcategories navigation
     home: Home
     home_page: homepage
-    homepage:
-      bestsellers: BESTSELLERS
-      fashion_trends: FASHION TRENDS
-      fashion_trends_note: Want to rock this season’s hottest trend in style? These are the top fashion from Summer 2020 Fashion Weeks that are coming our way this season.
-      men: MEN
-      new: NEW
-      new_collection: NEW COLLECTION
-      read_more: READ MORE
-      shoes: SHOES
-      shop_now: SHOP NOW
-      sportswear: SPORTSWEAR
-      streetstyle: STREETSTYLE
-      summer_year: "Summer %{year}"
-      summer_collection:  Summer Collection
-      summer_sale: SUMMER SALE
-      trending: TRENDING
-      up_to_60: UP TO 60%
-      women: WOMEN
     help_center: Help Center
     i18n:
       available_locales: Available Locales
