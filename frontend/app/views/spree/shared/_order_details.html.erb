@@ -51,7 +51,7 @@
     </dl>
   </div>
 
-  <div class="checkout-confirm-order-details-line-items d-flex flex-column mt-5 mr-4">
+  <div class="checkout-confirm-order-details-line-items d-flex flex-column mt-5 mr-md-4">
     <div class="checkout-confirm-order-details-line-items-header d-none d-sm-block d-lg-none align-self-start mb-3">
       <%= Spree.t(:products) %>
     </div>
@@ -74,7 +74,7 @@
         <div class="checkout-confirm-order-details-line-items-line-item w-100 d-table-row" data-hook="order_details_line_item_row">
           <div class="checkout-confirm-order-details-line-items-line-item-name d-table-cell align-middle py-3 py-sm-4">
             <div class="d-flex align-items-lg-center">
-              <div data-hook="order_item_image">
+              <div class="checkout-confirm-order-details-line-items-line-item-name-image" data-hook="order_item_image">
                 <%= link_to product_image(item.variant), item.product %>
               </div>
               <div class="d-flex flex-column mt-2 mt-lg-0" data-hook="order_item_description">
