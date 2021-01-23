@@ -115,19 +115,39 @@ module Spree
       ).call.to_json
     end
 
-    def related_products
-      return [] unless @product.respond_to?(:has_related_products?) && @product.has_related_products?(:related_products)
+    def product_relation_types
+      @product_relation_types ||= @product.respond_to?(:relation_types) ? @product.relation_types : []
+    end
 
-      @related_products ||= @product.
-                            related_products.
-                            includes(
-                              :tax_category,
-                              master: [
-                                :prices,
-                                images: { attachment_attachment: :blob },
-                              ]
-                            ).
-                            limit(Spree::Config[:products_per_page])
+    def product_relations_by_type(relation_type)
+      return [] if product_relation_types.none? || !@product.respond_to?(:relations)
+
+      product_ids = @product.relations.where(relation_type: relation_type).pluck(:related_to_id).uniq
+
+      return [] if product_ids.empty?
+
+      Spree::Product.
+        available.not_discontinued.distinct.
+        where(id: product_ids).
+        includes(
+          :tax_category,
+          master: [
+            :prices,
+            { images: { attachment_attachment: :blob } },
+          ]
+        ).
+        limit(Spree::Config[:products_per_page])
+    end
+
+    def related_products
+      ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
+        ProductsHelper#related_products is deprecated and will be removed in Spree 5.0.
+        Please use ProductsHelper#relations from now on.
+      DEPRECATION
+
+      return [] unless @product.respond_to?(:has_related_products?)
+
+      @related_products ||= relations_by_type('related_products')
     end
 
     def product_available_in_currency?

@@ -26,7 +26,7 @@ gem 'spree_i18n', '~> 5.0', github: 'spree-contrib/spree_i18n', branch: 'master'
 
 ## Update gems
 
-```
+```bash
 bundle update
 ```
 
@@ -55,6 +55,14 @@ rails active_storage:update
 
 ```bash
 rails db:migrate
+```
+
+## Upgrade all of your Spree extensions to the newest versions
+
+To avoid errors and compatibility issues, please update all of your Spree extension gems to the newest versions which usually includes fixes for the new Spree release, eg.
+
+```bash
+bundle update spree_related_products
 ```
 
 ## Other things to remember
