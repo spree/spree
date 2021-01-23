@@ -33,9 +33,7 @@ module Spree
     end
 
     def related
-      @related_products = related_products
-
-      if @related_products.any?
+      if product_relation_types.any?
         render template: 'spree/products/related', layout: false
       else
         head :no_content
