@@ -12,17 +12,19 @@ module Spree
         end
 
         def current_currency
-          if defined?(session) && session.key?(:currency) && supported_currency?(session[:currency])
-            session[:currency]
-          elsif params[:currency].present? && supported_currency?(params[:currency])
-            params[:currency]
-          else
-            current_store.default_currency
-          end
+          # session support was previously in SpreeMultiCurrency so we would like
+          # to keep it for now
+          @current_currency ||= if defined?(session) && session.key?(:currency) && supported_currency?(session[:currency])
+                                  session[:currency]
+                                elsif params[:currency].present? && supported_currency?(params[:currency])
+                                  params[:currency]
+                                else
+                                  current_store.default_currency
+                                end
         end
 
         def supported_currencies
-          current_store.supported_currencies_list
+          @supported_currencies ||= current_store.supported_currencies_list
         end
 
         def supported_currencies_for_all_stores
