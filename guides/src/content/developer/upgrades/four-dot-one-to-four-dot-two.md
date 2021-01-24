@@ -24,6 +24,19 @@ gem 'spree_gateway', '~> 3.9'
 gem 'spree_i18n', '~> 5.0', github: 'spree-contrib/spree_i18n', branch: 'master'
 ```
 
+## Remove SpreeMultiCurrency (optional)
+
+If you used that gem in the past you need to remove. Multi Currency is now incorporated into Spree core and you cannot use that gem anymore.
+
+1. Remove `spree_multi_currency` from your `Gemfile`
+2. Remove these preferences from your Spree initializer (`config/initializers/spree.rb`):
+
+      * `allow_currency_change`
+      * `show_currency_selector`
+      * `supported_currencies`
+3. Remove `//= require spree/frontend/spree_multi_currency` from `vendor/assets/javascripts/spree/frontend/all.js`
+4. Remove `//= require spree/backend/spree_multi_currency` from `vendor/assets/javascripts/spree/backend/all.js`
+
 ## Update gems
 
 ```bash
