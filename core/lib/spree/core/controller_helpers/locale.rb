@@ -21,10 +21,10 @@ module Spree
           # session support was previously in SpreeI18n so we would like to keep it for now
           # for easer upgrade
           @current_locale ||= if defined?(session) && session.key?(:locale) && supported_locale?(session[:locale])
-                                session[:currency]
+                                session[:locale]
                               elsif params[:locale].present? && supported_locale?(params[:locale])
                                 params[:locale]
-                              elsif respond_to?(:config_locale, true)
+                              elsif respond_to?(:config_locale, true) && config_locale.present?
                                 config_locale
                               else
                                 current_store.default_locale || Rails.application.config.i18n.default_locale || I18n.default_locale
@@ -36,7 +36,7 @@ module Spree
         end
 
         def supported_locale?(locale_code)
-          supported_locales.include?(locale_code)
+          supported_locales.include?(locale_code&.to_s)
         end
 
         def supported_locales_for_all_stores

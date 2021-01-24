@@ -7,6 +7,12 @@ class FakesController < ApplicationController
   include Spree::Core::ControllerHelpers::Locale
 end
 
+class FakesControllerWithLocale < FakesController
+  def config_locale
+    'en'
+  end
+end
+
 describe Spree::Core::ControllerHelpers::Locale, type: :controller do
   controller(FakesController) {}
 
@@ -16,6 +22,16 @@ describe Spree::Core::ControllerHelpers::Locale, type: :controller do
 
       it 'returns current store default locale' do
         expect(controller.current_locale.to_s).to eq('fr')
+      end
+    end
+
+    context 'config_locale present' do
+      controller(FakesControllerWithLocale) {}
+
+      let!(:store) { create :store, default: true, default_locale: 'fr' }
+
+      it 'returns config_locale if present' do
+        expect(controller.current_locale.to_s).to eq('en')
       end
     end
 
@@ -30,7 +46,8 @@ describe Spree::Core::ControllerHelpers::Locale, type: :controller do
 
       context 'with I18n.default_locale set' do
         before { I18n.default_locale = :de }
-        after { I18n.default_locale = nil }
+
+        after { I18n.default_locale = :en }
 
         it 'fallbacks to the default application locale' do
           expect(controller.current_locale.to_s).to eq('de')
