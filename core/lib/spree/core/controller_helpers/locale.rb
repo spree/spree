@@ -40,11 +40,11 @@ module Spree
         end
 
         def supported_locales_for_all_stores
-          if defined?(SpreeI18n)
-            (SpreeI18n::Locale.all << :en).map(&:to_s)
-          else
-            [Rails.application.config.i18n.default_locale, I18n.locale, :en].uniq.compact
-          end
+          @supported_locales_for_all_stores ||= (if defined?(SpreeI18n)
+                                                   (SpreeI18n::Locale.all << :en).map(&:to_s)
+                                                 else
+                                                   [Rails.application.config.i18n.default_locale, I18n.locale, :en]
+                                                 end).uniq.compact
         end
       end
     end
