@@ -49,6 +49,11 @@ module Spree
       end.uniq.compact
     end
 
+    def supported_locales_list
+      # TODO: add support of multiple supported languages to a single Store
+      [default_locale].compact.uniq
+    end
+
     def unique_name
       "#{name} (#{code})"
     end

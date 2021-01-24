@@ -83,7 +83,7 @@ describe Spree::Store, type: :model do
       end
     end
 
-    context '.unique_name' do
+    describe '#unique_name' do
       let!(:store) { create(:store) }
 
       it 'returns the Store Name followed by the Store Code in parentheses' do
@@ -91,7 +91,7 @@ describe Spree::Store, type: :model do
       end
     end
 
-    describe '.supported_currencies_list' do
+    describe '#supported_currencies_list' do
       context 'with supported currencies set' do
         let(:currencies) { 'USD, EUR, dummy' }
         let!(:store) { create(:store, default_currency: 'USD', supported_currencies: currencies) }
@@ -110,6 +110,26 @@ describe Spree::Store, type: :model do
           expect(store.supported_currencies_list).to contain_exactly(
             ::Money::Currency.find('EUR')
           )
+        end
+      end
+    end
+
+    describe '#supported_locales_list' do
+      context 'with supported locale set' do
+        let(:store) { create(:store, default_locale: 'fr') }
+
+        it 'returns supported currencies list' do
+          expect(store.supported_locales_list).to be_an_instance_of(Array)
+          expect(store.supported_locales_list).to contain_exactly('fr')
+        end
+      end
+
+      context 'without supported currencies set' do
+        let(:store) { create(:store) }
+
+        it 'returns supported currencies list' do
+          expect(store.supported_locales_list).to be_an_instance_of(Array)
+          expect(store.supported_locales_list).to be_empty
         end
       end
     end
