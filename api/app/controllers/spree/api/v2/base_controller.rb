@@ -5,6 +5,7 @@ module Spree
         include CanCan::ControllerAdditions
         include Spree::Core::ControllerHelpers::StrongParameters
         include Spree::Core::ControllerHelpers::Store
+        include Spree::Core::ControllerHelpers::Currency
         rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
         rescue_from CanCan::AccessDenied, with: :access_denied
         rescue_from Spree::Core::GatewayError, with: :gateway_error
