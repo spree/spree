@@ -2,6 +2,7 @@ module Spree
   module Admin
     class BaseController < Spree::BaseController
       helper 'spree/admin/navigation'
+      helper 'spree/locale'
       layout 'spree/layouts/admin'
 
       before_action :authorize_admin

@@ -5,12 +5,11 @@ module Spree
         include CanCan::ControllerAdditions
         include Spree::Core::ControllerHelpers::StrongParameters
         include Spree::Core::ControllerHelpers::Store
+        include Spree::Core::ControllerHelpers::Locale
         include Spree::Core::ControllerHelpers::Currency
         rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
         rescue_from CanCan::AccessDenied, with: :access_denied
         rescue_from Spree::Core::GatewayError, with: :gateway_error
-
-        before_action :set_user_language
 
         def content_type
           Spree::Api::Config[:api_v2_content_type]
@@ -95,10 +94,6 @@ module Spree
 
         def gateway_error(exception)
           render_error_payload(exception.message)
-        end
-
-        def set_user_language
-          I18n.locale = current_store.default_locale
         end
       end
     end
