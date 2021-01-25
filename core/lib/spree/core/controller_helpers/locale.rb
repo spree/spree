@@ -11,6 +11,7 @@ module Spree
           helper_method :supported_locales_for_all_stores
           helper_method :current_locale
           helper_method :supported_locale?
+          helper_method :available_locales
         end
 
         def set_locale
@@ -45,6 +46,10 @@ module Spree
                                                  else
                                                    [Rails.application.config.i18n.default_locale, I18n.locale, :en]
                                                  end).uniq.compact
+        end
+
+        def available_locales
+          Spree::Store.available_locales
         end
       end
     end
