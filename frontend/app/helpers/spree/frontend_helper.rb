@@ -295,7 +295,7 @@ module Spree
     end
 
     def checkout_available_payment_methods
-      @order.available_payment_methods(current_store)
+      @checkout_available_payment_methods ||= @order.available_payment_methods(current_store)
     end
 
     private

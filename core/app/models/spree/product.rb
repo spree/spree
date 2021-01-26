@@ -160,7 +160,7 @@ module Spree
     #
     # @return [Spree::Variant]
     def default_variant
-      Rails.cache.fetch(default_variant_cache_key) do
+      @default_variant ||= Rails.cache.fetch(default_variant_cache_key) do
         if Spree::Config[:track_inventory_levels] && variants.in_stock_or_backorderable.any?
           variants.in_stock_or_backorderable.first
         else
@@ -172,11 +172,11 @@ module Spree
     # Returns default Variant ID for Product
     # @return [Integer]
     def default_variant_id
-      default_variant.id
+      @default_variant_id ||= default_variant.id
     end
 
     def tax_category
-      super || TaxCategory.find_by(is_default: true)
+      @tax_category ||= super || TaxCategory.find_by(is_default: true)
     end
 
     # Adding properties and option types on creation based on a chosen prototype
@@ -288,11 +288,11 @@ module Spree
     end
 
     def total_on_hand
-      if any_variants_not_track_inventory?
-        Float::INFINITY
-      else
-        stock_items.sum(:count_on_hand)
-      end
+      @total_on_hand ||= if any_variants_not_track_inventory?
+                           Float::INFINITY
+                         else
+                           stock_items.sum(:count_on_hand)
+                         end
     end
 
     # Master variant may be deleted (i.e. when the product is deleted)
@@ -303,14 +303,11 @@ module Spree
     end
 
     def brand
-      taxons.joins(:taxonomy).find_by(spree_taxonomies: { name: Spree.t(:taxonomy_brands_name) })
+      @brand ||= taxons.joins(:taxonomy).find_by(spree_taxonomies: { name: Spree.t(:taxonomy_brands_name) })
     end
 
     def category
-      taxons.joins(:taxonomy).
-        where(spree_taxonomies: { name: Spree.t(:taxonomy_categories_name) }).
-        order(depth: :desc).
-        first
+      @category ||= taxons.joins(:taxonomy).order(depth: :desc).find_by(spree_taxonomies: { name: Spree.t(:taxonomy_categories_name) })
     end
 
     private
@@ -440,12 +437,12 @@ module Spree
     end
 
     def taxon_and_ancestors
-      taxons.map(&:self_and_ancestors).flatten.uniq
+      @taxon_and_ancestors ||= taxons.map(&:self_and_ancestors).flatten.uniq
     end
 
     # Get the taxonomy ids of all taxons assigned to this product and their ancestors.
     def taxonomy_ids
-      taxon_and_ancestors.map(&:taxonomy_id).flatten.uniq
+      @taxonomy_ids ||= taxon_and_ancestors.map(&:taxonomy_id).flatten.uniq
     end
 
     # Iterate through this products taxons and taxonomies and touch their timestamps in a batch
