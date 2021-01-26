@@ -43,7 +43,7 @@ ADDITIONAL_TAXONS.each do |taxon_name|
 end
 
 SPECIAL_TAXONS.each do |parent_name, taxon_name|
-  parent = categories_taxon.children.where(name: parent_name).first_or_create!
+  parent = categories_taxon.children.where(name: parent_name.to_s).first_or_create!
   parent.permalink = parent.permalink.gsub('categories/', '')
   parent.taxonomy = categories
   parent.save!
