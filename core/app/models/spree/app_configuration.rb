@@ -69,7 +69,7 @@ module Spree
     preference :credit_to_new_allocation, :boolean, default: false
 
     # Multi store configurations
-    preference :show_store_selector, :boolean, default: false
+    preference :show_store_selector, :boolean, default: true
 
     # searcher_class allows spree extension writers to provide their own Search class
     def searcher_class
