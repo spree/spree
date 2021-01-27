@@ -33,4 +33,6 @@ Spree::Price.where(currency: 'USD').each do |price|
   end
 end
 
-Spree::Config[:show_store_selector] = true
+Spree::PaymentMethod.all.each do |payment_method|
+  payment_method.stores = Spree::Store.all
+end
