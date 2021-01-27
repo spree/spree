@@ -85,11 +85,18 @@ describe Spree::UserMethods do
     let(:previous_year) { DateTime.now.year - 1 }
     let(:gateway_customer_profile_id) { 'SDS-4231' }
     let(:other_user) { create :user }
+    let(:active_payment_method) { create(:credit_card_payment_method, active: true) }
+    let(:inactive_payment_method) { create(:credit_card_payment_method, active: false) }
 
-    let!(:valid_credit_card) { create(:credit_card, user: test_user, gateway_customer_profile_id: gateway_customer_profile_id, year: next_year) }
+    let!(:valid_credit_card) do
+      create(:credit_card, user: test_user, gateway_customer_profile_id: gateway_customer_profile_id, year: next_year, payment_method: active_payment_method)
+    end
     let!(:other_user_credit_card) { create(:credit_card, user: other_user, gateway_customer_profile_id: gateway_customer_profile_id, year: next_year) }
     let!(:blank_payment_profile_credit_card) { create(:credit_card, user: test_user, gateway_customer_profile_id: nil, year: next_year) }
     let!(:outdated_credit_card) { create(:credit_card, user: test_user, gateway_customer_profile_id: gateway_customer_profile_id, year: previous_year) }
+    let!(:credit_card_with_inactive_payment_method) do
+      create(:credit_card, user: test_user, gateway_customer_profile_id: gateway_customer_profile_id, year: next_year, payment_method: inactive_payment_method)
+    end
 
     it 'includes only not expired credit cards with payment profile that belong to subject user' do
       expect(subject).to include(valid_credit_card)
@@ -105,6 +112,10 @@ describe Spree::UserMethods do
 
     it 'does not include outdated credit cards' do
       expect(subject).not_to include(outdated_credit_card)
+    end
+
+    it 'does not include credit cards with inactive payment method' do
+      expect(subject).not_to include(credit_card_with_inactive_payment_method)
     end
   end
 end
