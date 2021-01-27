@@ -54,7 +54,11 @@ cat <<RUBY >> Gemfile
 gem 'spree', path: '..'
 $SPREE_AUTH_DEVISE_GEM
 $SPREE_GATEWAY_GEM
+
 gem 'spree_i18n', github: 'spree-contrib/spree_i18n', branch: 'master'
+gem 'spree_static_content', github: 'spree-contrib/spree_static_content', branch: 'master'
+gem 'spree_related_products', github: 'spree-contrib/spree_related_products', branch: 'master'
+gem 'spree_multi_domain', github: 'spree-contrib/spree-multi-domain', branch: 'master'
 
 group :test, :development do
   gem 'bullet'
@@ -84,3 +88,6 @@ bundle exec rails g spree:install --auto-accept --user_class=Spree::User --enfor
 bundle exec rails g spree:mailers_preview
 bundle exec rails g spree:auth:install
 bundle exec rails g spree_gateway:install
+bundle exec rails g spree_related_products:install
+bundle exec rails g spree_static_content:install
+bundle exec rails g spree_multi_domain:install
