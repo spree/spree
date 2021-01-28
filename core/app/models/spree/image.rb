@@ -15,13 +15,13 @@ module Spree
         width, height = size.chop.split('x')
 
         {
-          url: polymorphic_path(attachment.variant(combine_options: {
-                                                     gravity: 'center',
-                                                     resize: size,
-                                                     extent: size,
-                                                     background: 'snow2',
-                                                     quality: 80
-                                                   }), only_path: true),
+          url: polymorphic_path(attachment.variant(
+                                  gravity: 'center',
+                                  resize: size,
+                                  extent: size,
+                                  background: 'snow2',
+                                  quality: 80
+                                ), only_path: true),
           width: width,
           height: height
         }
@@ -35,13 +35,13 @@ module Spree
       width, height = size.chop.split('x')
 
       {
-        url: polymorphic_path(attachment.variant(combine_options: {
-                                                   gravity: 'center',
-                                                   resize: size,
-                                                   extent: size,
-                                                   background: 'snow2',
-                                                   quality: 80
-                                                 }), only_path: true),
+        url: polymorphic_path(attachment.variant(
+                                gravity: 'center',
+                                resize: size,
+                                extent: size,
+                                background: 'snow2',
+                                quality: 80
+                              ), only_path: true),
         size: size,
         width: width,
         height: height
