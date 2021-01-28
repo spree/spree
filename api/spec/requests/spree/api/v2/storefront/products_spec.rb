@@ -233,9 +233,52 @@ describe 'API V2 Storefront Products Spec', type: :request do
         end
       end
     end
+
+    context 'fetch products by curency param' do
+      let!(:store) { create(:store, default: true, supported_currencies: 'USD,EUR,GBP', default_currency: 'USD' ) }
+
+      context 'with supported currency' do
+        before { get '/api/v2/storefront/products?currency=USD' }
+
+        it 'return products' do
+          expect(json_response['data']).not_to eq []
+          expect(json_response['data'][0]['attributes']['currency']).to eq 'USD'
+        end
+      end
+
+      context 'without supported currency' do
+        before { get '/api/v2/storefront/products?currency=PLN' }
+
+        it 'return empty result' do
+          expect(json_response['data']).to eq []
+        end
+      end
+
+    end
   end
 
   describe 'products#show' do
+    context 'with supported currency param' do
+      before { get "/api/v2/storefront/products/#{product.slug}?currency=USD" }
+
+      it_behaves_like 'returns 200 HTTP status'
+
+      it 'return product with supported currency' do
+        expect(json_response['data']).not_to be []
+        expect(json_response['data']['attributes']['slug']).to eq product.slug
+      end
+    end
+
+    context 'without supported currency param' do
+      before { get "/api/v2/storefront/products/#{product.slug}?currency=PLN" }
+
+      it 'return product with supported currency' do
+        expect(json_response['data']).not_to be []
+        expect(json_response['data']['attributes']['slug']).to eq product.slug
+        expect(json_response['data']['attributes']['currency']).to eq store.default_currency
+      end
+    end
+
     context 'with non-existing product' do
       before { get '/api/v2/storefront/products/example' }
 
