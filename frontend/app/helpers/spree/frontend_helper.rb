@@ -298,6 +298,10 @@ module Spree
       @checkout_available_payment_methods ||= @order.available_payment_methods(current_store)
     end
 
+    def color_option_type_name
+      @color_option_type_name ||= Spree::OptionType.color&.name
+    end
+
     private
 
     def formatted_price(value)
