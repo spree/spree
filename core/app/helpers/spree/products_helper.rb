@@ -35,6 +35,11 @@ module Spree
       variants_option_types_presenter(variants, product).default_variant || product.default_variant
     end
 
+    def should_display_compare_at_price?(default_variant)
+      default_variant_price = default_variant.price_in(current_currency)
+      default_variant_price.compare_at_amount.present? && (default_variant_price.compare_at_amount > default_variant_price.amount)
+    end
+
     def used_variants_options(variants, product)
       variants_option_types_presenter(variants, product).options
     end
