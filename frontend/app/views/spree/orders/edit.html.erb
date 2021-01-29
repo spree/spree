@@ -12,7 +12,7 @@
           <%= icon(name: 'empty-cart',
                    classes: 'shopping-cart-empty-image',
                    width: 83,
-                   height: 83)  %>
+                   height: 83) %>
 
           <p class="text-center shopping-cart-empty-info"><%= Spree.t('cart_page.empty_info').html_safe %></p>
         </div>
@@ -57,8 +57,7 @@
               <%= render 'coupon_code',
                 promotion: @order.valid_coupon_promotions.first,
                 order_form: order_form,
-                classes: ''
-              %>
+                classes: '' %>
             <% end %>
 
             <div class="text-right shopping-cart-total d-lg-none">

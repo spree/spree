@@ -12,11 +12,10 @@
     <div class="input-group">
       <%= order_form.text_field :applied_coupon_code, name: '', size: '30', class: 'form-control border-right-0 disabled',
         value: Spree.t(:promotion_label, name: promotion.name),
-        data: { code: promotion.code }
-      %>
+        data: { code: promotion.code } %>
       <div class="input-group-append">
         <%= button_tag name: '', id: 'shopping-cart-remove-coupon-code-button', class: 'btn border-left-0 remove' do %>
-          <%= icon(name: 'close', width: 15, height: 14)  %>
+          <%= icon(name: 'close', width: 15, height: 14) %>
         <% end %>
       </div>
     </div>

@@ -20,8 +20,7 @@
            data-non-shipment-tax='<%= adjustments.reject{ |adj| adj.adjustable_type== 'Spree::Shipment'}.sum(&:amount) %>'
            thousands-separator='<%= tax_total.thousands_separator %>'
            decimal-mark='<%= tax_total.decimal_mark %>'
-           precision='<%= Money::Currency.find(order.currency).exponent %>'
-      >
+           precision='<%= Money::Currency.find(order.currency).exponent %>'>
         <%= tax_total.to_html %>
       </div>
     <% end %>
@@ -38,8 +37,7 @@
             data-currency='<%= Money::Currency.find(order.currency).symbol %>'
             thousands-separator='<%= shipping_total.thousands_separator %>'
             decimal-mark='<%= shipping_total.decimal_mark %>'
-            precision='<%= Money::Currency.find(order.currency).exponent %>'
-        >
+            precision='<%= Money::Currency.find(order.currency).exponent %>'>
           <%= shipping_total.to_html %>
         </div>
 
