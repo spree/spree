@@ -248,7 +248,7 @@ module Spree
     end
 
     def price_filter_values
-      [
+      @price_filter_values ||= [
         "#{I18n.t('activerecord.attributes.spree/product.less_than')} #{formatted_price(50)}",
         "#{formatted_price(50)} - #{formatted_price(100)}",
         "#{formatted_price(101)} - #{formatted_price(150)}",
