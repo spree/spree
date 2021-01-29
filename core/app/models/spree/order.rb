@@ -170,21 +170,21 @@ module Spree
 
     # For compatiblity with Calculator::PriceSack
     def amount
-      line_items.inject(0.0) { |sum, li| sum + li.amount }
+      @amount ||= line_items.inject(0.0) { |sum, li| sum + li.amount }
     end
 
     # Sum of all line item amounts pre-tax
     def pre_tax_item_amount
-      line_items.sum(:pre_tax_amount)
+      @pre_tax_item_amount ||= line_items.sum(:pre_tax_amount)
     end
 
     # Sum of all line item and shipment pre-tax
     def pre_tax_total
-      pre_tax_item_amount + shipments.sum(:pre_tax_amount)
+      @pre_tax_total ||= pre_tax_item_amount + shipments.sum(:pre_tax_amount)
     end
 
     def shipping_discount
-      shipment_adjustments.non_tax.eligible.sum(:amount) * - 1
+      @shipping_discount ||= shipment_adjustments.non_tax.eligible.sum(:amount) * - 1
     end
 
     def completed?
@@ -196,7 +196,7 @@ module Spree
     # least one LineItem in the Order.  Feel free to override this logic in your
     # own application if you require additional steps before allowing a checkout.
     def checkout_allowed?
-      line_items.exists?
+      @checkout_allowed ||= line_items.exists?
     end
 
     # Is this a free order in which case the payment step should be skipped
@@ -215,7 +215,7 @@ module Spree
     end
 
     def backordered?
-      shipments.any?(&:backordered?)
+      @backordered ||= shipments.any?(&:backordered?)
     end
 
     # Returns the relevant zone (if any) to be used for taxation purposes.
@@ -226,7 +226,7 @@ module Spree
 
     # Returns the address for taxation based on configuration
     def tax_address
-      Spree::Config[:tax_using_ship_address] ? ship_address : bill_address
+      @tax_address ||= Spree::Config[:tax_using_ship_address] ? ship_address : bill_address
     end
 
     def updater
@@ -252,7 +252,7 @@ module Spree
     end
 
     def all_inventory_units_returned?
-      inventory_units.all?(&:returned?)
+      @all_inventory_units_returned ||= inventory_units.all?(&:returned?)
     end
 
     # Associates the specified user with the order.
@@ -309,7 +309,7 @@ module Spree
     end
 
     def reimbursement_paid_total
-      reimbursements.sum(&:paid_amount)
+      @reimbursement_paid_total ||= reimbursements.sum(&:paid_amount)
     end
 
     def outstanding_balance?
@@ -317,9 +317,7 @@ module Spree
     end
 
     def name
-      if (address = bill_address || ship_address)
-        address.full_name
-      end
+      @name ||= (bill_address || ship_address)&.full_name
     end
 
     def can_ship?
@@ -327,13 +325,11 @@ module Spree
     end
 
     def credit_cards
-      credit_card_ids = payments.from_credit_card.pluck(:source_id).uniq
-      CreditCard.where(id: credit_card_ids)
+      @credit_cards ||= CreditCard.where(id: payments.from_credit_card.pluck(:source_id).uniq)
     end
 
     def valid_credit_cards
-      credit_card_ids = payments.from_credit_card.valid.pluck(:source_id).uniq
-      CreditCard.where(id: credit_card_ids)
+      @valid_credit_cards ||= CreditCard.where(id: payments.from_credit_card.valid.pluck(:source_id).uniq)
     end
 
     # Finalizes an in progress order after checkout is complete.
@@ -383,7 +379,7 @@ module Spree
     end
 
     def insufficient_stock_lines
-      line_items.select(&:insufficient_stock?)
+      @insufficient_stock_lines ||= line_items.select(&:insufficient_stock?)
     end
 
     ##
@@ -584,7 +580,7 @@ module Spree
     end
 
     def quantity
-      line_items.sum(:quantity)
+      @quantity ||= line_items.sum(:quantity)
     end
 
     def has_non_reimbursement_related_refunds?
@@ -602,12 +598,12 @@ module Spree
     # - true if inventory amount is the exact negative of inventory related adjustments
     # - false otherwise
     def fully_discounted?
-      adjustment_total + line_items.map(&:final_amount).sum == 0.0
+      @fully_discounted ||= adjustment_total + line_items.map(&:final_amount).sum == 0.0
     end
     alias fully_discounted fully_discounted?
 
     def promo_code
-      promotions.pluck(:code).compact.first
+      @promo_code ||= promotions.pluck(:code).compact.first
     end
 
     def payments_attributes=(attributes)
@@ -627,33 +623,33 @@ module Spree
     end
 
     def valid_promotions
-      order_promotions.where(promotion_id: valid_promotion_ids).uniq(&:promotion_id)
+      @valid_promotions ||= order_promotions.where(promotion_id: valid_promotion_ids).uniq(&:promotion_id)
     end
 
     def valid_promotion_ids
-      all_adjustments.eligible.nonzero.promotion.map { |a| a.source.promotion_id }.uniq
+      @valid_promotion_ids ||= all_adjustments.eligible.nonzero.promotion.map { |a| a.source.promotion_id }.uniq
     end
 
     def valid_coupon_promotions
-      promotions.
-        where(id: valid_promotion_ids).
-        coupons
+      @valid_coupon_promotions ||= promotions.where(id: valid_promotion_ids).coupons
     end
 
     # Returns item and whole order discount amount for Order
     # without Shipment disccounts (eg. Free Shipping)
     # @return [BigDecimal]
     def cart_promo_total
-      all_adjustments.eligible.nonzero.promotion.
-        where.not(adjustable_type: 'Spree::Shipment').
-        sum(:amount)
+      @cart_promo_total ||= all_adjustments.
+                            eligible.nonzero.promotion.
+                            where.not(adjustable_type: 'Spree::Shipment').
+                            sum(:amount)
     end
 
     def has_free_shipping?
-      shipment_adjustments.
-        joins(:promotion_action).
-        where(spree_adjustments: { eligible: true, source_type: 'Spree::PromotionAction' },
-              spree_promotion_actions: { type: 'Spree::Promotion::Actions::FreeShipping' }).exists?
+      @has_free_shipping ||= shipment_adjustments.
+                             joins(:promotion_action).
+                             where(spree_adjustments: { eligible: true, source_type: 'Spree::PromotionAction' },
+                                   spree_promotion_actions: { type: 'Spree::Promotion::Actions::FreeShipping' }).
+                             exists?
     end
 
     private

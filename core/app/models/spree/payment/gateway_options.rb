@@ -6,51 +6,51 @@ module Spree
       end
 
       def email
-        order.email
+        @email ||= order.email
       end
 
       def customer
-        order.email
+        @customer ||= order.email
       end
 
       def customer_id
-        order.user_id
+        @customer_id ||= order.user_id
       end
 
       def ip
-        order.last_ip_address
+        @ip ||= order.last_ip_address
       end
 
       def order_id
-        "#{order.number}-#{@payment.number}"
+        @order_id ||= "#{order.number}-#{@payment.number}"
       end
 
       def shipping
-        order.ship_total * exchange_multiplier
+        @shipping ||= order.ship_total * exchange_multiplier
       end
 
       def tax
-        order.additional_tax_total * exchange_multiplier
+        @tax ||= order.additional_tax_total * exchange_multiplier
       end
 
       def subtotal
-        order.item_total * exchange_multiplier
+        @subtotal ||= order.item_total * exchange_multiplier
       end
 
       def discount
-        order.promo_total * exchange_multiplier
+        @discount ||= order.promo_total * exchange_multiplier
       end
 
       def currency
-        @payment.currency
+        @currency ||= @payment.currency
       end
 
       def billing_address
-        order.bill_address.try(:active_merchant_hash)
+        @billing_address ||= order.bill_address.try(:active_merchant_hash)
       end
 
       def shipping_address
-        order.ship_address.try(:active_merchant_hash)
+        @shipping_address ||= order.ship_address.try(:active_merchant_hash)
       end
 
       def hash_methods
@@ -79,11 +79,11 @@ module Spree
       private
 
       def order
-        @payment.order
+        @order ||= @payment.order
       end
 
       def exchange_multiplier
-        @payment.payment_method.try(:exchange_multiplier) || 1.0
+        @exchange_multiplier ||= @payment.payment_method.try(:exchange_multiplier) || 1.0
       end
     end
   end

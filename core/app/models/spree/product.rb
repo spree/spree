@@ -148,7 +148,7 @@ module Spree
 
     # the master variant is not a member of the variants array
     def has_variants?
-      variants.any?
+      @has_variants ||= variants.any?
     end
 
     # Returns default Variant for Product

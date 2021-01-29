@@ -89,11 +89,11 @@ module Spree
     end
 
     def additional_tax_total
-      line_item.additional_tax_total * percentage_of_line_item
+      @additional_tax_total ||= line_item.additional_tax_total * percentage_of_line_item
     end
 
     def included_tax_total
-      line_item.included_tax_total * percentage_of_line_item
+      @included_tax_total ||= line_item.included_tax_total * percentage_of_line_item
     end
 
     def required_quantity
@@ -122,7 +122,7 @@ module Spree
     end
 
     def percentage_of_line_item
-      quantity / BigDecimal(line_item.quantity)
+      @percentage_of_line_item ||= quantity / BigDecimal(line_item.quantity)
     end
 
     def current_return_item

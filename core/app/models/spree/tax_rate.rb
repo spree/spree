@@ -101,10 +101,10 @@ module Spree
     private
 
     def label
-      Spree.t included_in_price? ? :including_tax : :excluding_tax,
-              scope: 'adjustment_labels.tax_rates',
-              name: name.presence || tax_category.name,
-              amount: amount_for_label
+      @label ||= Spree.t included_in_price? ? :including_tax : :excluding_tax,
+                         scope: 'adjustment_labels.tax_rates',
+                         name: name.presence || tax_category.name,
+                         amount: amount_for_label
     end
 
     def amount_for_label

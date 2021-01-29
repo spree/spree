@@ -40,23 +40,23 @@ module Spree
     self.whitelisted_ransackable_attributes = ['memo', 'number', 'state']
 
     def pre_tax_total
-      return_items.sum(:pre_tax_amount)
+      @pre_tax_total ||= return_items.sum(:pre_tax_amount)
     end
 
     def currency
-      order.nil? ? Spree::Config[:currency] : order.currency
+      @currency ||= order.nil? ? Spree::Config[:currency] : order.currency
     end
 
     def refundable_amount
-      order.pre_tax_item_amount + order.promo_total
+      @refundable_amount ||= order.pre_tax_item_amount + order.promo_total
     end
 
     def customer_returned_items?
-      customer_returns.exists?
+      @customer_returned_items ||= customer_returns.exists?
     end
 
     def can_cancel_return_items?
-      return_items.any?(&:can_cancel?) || return_items.blank?
+      @can_cancel_return_items ||= return_items.any?(&:can_cancel?) || return_items.blank?
     end
 
     private
@@ -68,7 +68,7 @@ module Spree
     end
 
     def cancel_return_items
-      return_items.each { |item| item.cancel! if item.can_cancel? }
+      @cancel_return_items ||= return_items.each { |item| item.cancel! if item.can_cancel? }
     end
 
     def generate_expedited_exchange_reimbursements

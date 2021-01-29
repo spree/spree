@@ -20,7 +20,7 @@ module Spree
     def verify(shipment = nil, is_updated: false)
       return unless order.completed? || shipment.present?
 
-      units_count = inventory_units.reload.sum(&:quantity)
+      units_count = inventory_units.reload.sum(:quantity)
       line_item_changed = is_updated ? !line_item.saved_changes? : !line_item.changed?
 
       if units_count < line_item.quantity

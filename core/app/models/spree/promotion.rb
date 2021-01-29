@@ -158,7 +158,7 @@ module Spree
     end
 
     def products
-      rules.where(type: 'Spree::Promotion::Rules::Product').map(&:products).flatten.uniq
+      @products ||= rules.where(type: 'Spree::Promotion::Rules::Product').map(&:products).flatten.uniq
     end
 
     def usage_limit_exceeded?(promotable)
@@ -171,7 +171,7 @@ module Spree
     end
 
     def credits
-      Adjustment.eligible.promotion.where(source_id: actions.map(&:id))
+      @credits ||= Adjustment.eligible.promotion.where(source_id: actions.map(&:id))
     end
 
     def credits_count

@@ -128,11 +128,11 @@ module Spree
     end
 
     def offsets_total
-      offsets.sum(:amount)
+      @offsets_total ||= offsets.sum(:amount)
     end
 
     def credit_allowed
-      amount - (offsets_total.abs + refunds.sum(:amount))
+      @credit_allowed ||= amount - (offsets_total.abs + refunds.sum(:amount))
     end
 
     def can_credit?
@@ -151,9 +151,7 @@ module Spree
     end
 
     def actions
-      return [] unless payment_source&.respond_to?(:actions)
-
-      payment_source.actions.select { |action| !payment_source.respond_to?("can_#{action}?") || payment_source.send("can_#{action}?", self) }
+      @actions ||= payment_source&.actions&.select { |action| !payment_source.respond_to?("can_#{action}?") || payment_source.send("can_#{action}?", self) }
     end
 
     def payment_source
@@ -176,11 +174,11 @@ module Spree
     end
 
     def captured_amount
-      capture_events.sum(:amount)
+      @captured_amount ||= capture_events.sum(:amount)
     end
 
     def uncaptured_amount
-      amount - captured_amount
+      @uncaptured_amount ||= amount - captured_amount
     end
 
     def editable?

@@ -242,7 +242,7 @@ module Spree
       # Check if model responds to cache version and fall back to updated_at for older rails versions
       # This makes sure a version is supplied when recyclable cache keys are disabled.
       version = respond_to?(:cache_version) ? cache_version : updated_at.to_i
-      Rails.cache.fetch(in_stock_cache_key, version: version) do
+      @in_stock ||= Rails.cache.fetch(in_stock_cache_key, version: version) do
         total_on_hand > 0
       end
     end

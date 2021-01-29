@@ -79,7 +79,7 @@ module Spree
     end
 
     def currency
-      adjustable ? adjustable.currency : order.currency
+      @currency ||= adjustable ? adjustable.currency : order.currency
     end
 
     def promotion?

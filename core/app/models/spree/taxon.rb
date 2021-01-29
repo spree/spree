@@ -68,10 +68,12 @@ module Spree
     end
 
     def pretty_name
-      ancestor_chain = ancestors.inject('') do |name, ancestor|
-        name += "#{ancestor.name} -> "
+      @pretty_name ||= begin
+        ancestor_chain = ancestors.inject('') do |name, ancestor|
+          name += "#{ancestor.name} -> "
+        end
+        ancestor_chain + name.to_s
       end
-      ancestor_chain + name.to_s
     end
 
     def cached_self_and_descendants_ids

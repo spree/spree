@@ -134,9 +134,7 @@ module Spree
     end
 
     def free?
-      return true if final_price == BigDecimal(0)
-
-      adjustments.promotion.any? { |p| p.source.type == 'Spree::Promotion::Actions::FreeShipping' }
+      @free ||= final_price == BigDecimal(0) || adjustments.promotion.any? { |p| p.source.type == 'Spree::Promotion::Actions::FreeShipping' }
     end
 
     def finalize!
@@ -157,11 +155,11 @@ module Spree
     end
 
     def item_cost
-      manifest.map { |m| (m.line_item.price + (m.line_item.adjustment_total / m.line_item.quantity)) * m.quantity }.sum
+      @item_cost ||= manifest.map { |m| (m.line_item.price + (m.line_item.adjustment_total / m.line_item.quantity)) * m.quantity }.sum
     end
 
     def line_items
-      inventory_units.includes(:line_item).map(&:line_item).uniq
+      @line_items ||= inventory_units.includes(:line_item).map(&:line_item).uniq
     end
 
     ManifestItem = Struct.new(:line_item, :variant, :quantity, :states)
@@ -169,7 +167,7 @@ module Spree
     def manifest
       # Grouping by the ID means that we don't have to call out to the association accessor
       # This makes the grouping by faster because it results in less SQL cache hits.
-      inventory_units.group_by(&:variant_id).map do |_variant_id, units|
+      @manifest ||= inventory_units.group_by(&:variant_id).map do |_variant_id, units|
         units.group_by(&:line_item_id).map do |_line_item_id, units|
           states = {}
           units.group_by(&:state).each { |state, iu| states[state] = iu.sum(&:quantity) }
@@ -239,7 +237,7 @@ module Spree
     end
 
     def selected_shipping_rate_id
-      selected_shipping_rate.try(:id)
+      @selected_shipping_rate_id ||= selected_shipping_rate.try(:id)
     end
 
     def selected_shipping_rate_id=(id)
@@ -267,18 +265,18 @@ module Spree
     end
 
     def shipping_method
-      selected_shipping_rate&.shipping_method || shipping_rates.first&.shipping_method
+      @shipping_method ||= selected_shipping_rate&.shipping_method || shipping_rates.first&.shipping_method
     end
 
     def tax_category
-      selected_shipping_rate.try(:tax_rate).try(:tax_category)
+      @tax_category ||= selected_shipping_rate.try(:tax_rate).try(:tax_category)
     end
 
     # Only one of either included_tax_total or additional_tax_total is set
     # This method returns the total of the two. Saves having to check if
     # tax is included or additional.
     def tax_total
-      included_tax_total + additional_tax_total
+      @tax_total ||= included_tax_total + additional_tax_total
     end
 
     def to_package

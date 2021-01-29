@@ -15,11 +15,11 @@ module Spree
     end
 
     def description
-      creditable.class.name.demodulize
+      @description ||= creditable.class.name.demodulize
     end
 
     def display_amount
-      Spree::Money.new(amount, currency: creditable.try(:currency) || 'USD')
+      @display_amount ||= Spree::Money.new(amount, currency: creditable.try(:currency) || Spree::Config[:currency])
     end
   end
 end

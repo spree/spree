@@ -99,7 +99,7 @@ module Spree
     alias money display_total
 
     def sufficient_stock?
-      Spree::Stock::Quantifier.new(variant).can_supply? quantity
+      @sufficient_stock ||= Spree::Stock::Quantifier.new(variant).can_supply? quantity
     end
 
     def insufficient_stock?

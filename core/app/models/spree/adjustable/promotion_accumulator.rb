@@ -58,7 +58,7 @@ module Spree
       delegate :amount, :ship_total, to: :order
 
       def all_adjustments
-        order.all_adjustments.promotion.includes(source: [:promotion]).where.
+        @all_adjustments ||= order.all_adjustments.promotion.includes(source: [:promotion]).where.
           not('adjustable_id = ? AND adjustable_type = ?', adjustable.id, adjustable.class.to_s)
       end
 
@@ -67,7 +67,7 @@ module Spree
       end
 
       def item_adjustments
-        adjustments.reject { |a| a.adjustable_type == 'Spree::Shipment' }
+        @item_adjustments ||= adjustments.reject { |a| a.adjustable_type == 'Spree::Shipment' }
       end
 
       def where(array, opts = {})

@@ -81,19 +81,17 @@ module Spree
     end
 
     def display_total
-      Spree::Money.new(total, currency: order.currency)
+      @display_total ||= Spree::Money.new(total, currency: order.currency)
     end
 
     def calculated_total
       # rounding every return item individually to handle edge cases for consecutive partial
       # returns where rounding might cause us to try to reimburse more than was originally billed
-      return_items.map { |ri| ri.total.to_d.round(2) }.sum
+      @calculated_total ||= return_items.map { |ri| ri.total.to_d.round(2) }.sum
     end
 
     def paid_amount
-      reimbursement_models.sum do |model|
-        model.total_amount_reimbursed_for(self)
-      end
+      @paid_amount ||= reimbursement_models.sum { |m| m.total_amount_reimbursed_for(self) }
     end
 
     def unpaid_amount

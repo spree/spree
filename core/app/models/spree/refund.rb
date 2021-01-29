@@ -33,7 +33,7 @@ module Spree
     end
 
     def description
-      payment.payment_method.name
+      @description ||= payment.payment_method.name
     end
 
     private

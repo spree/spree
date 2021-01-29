@@ -11,11 +11,11 @@ module Spree
     delegate :currency, to: :store_credit
 
     def display_amount
-      Spree::Money.new(amount, currency: currency)
+      @display_amount ||= Spree::Money.new(amount, currency: currency)
     end
 
     def display_user_total_amount
-      Spree::Money.new(user_total_amount, currency: currency)
+      @display_user_total_amount ||= Spree::Money.new(user_total_amount, currency: currency)
     end
 
     def display_action
@@ -32,7 +32,7 @@ module Spree
     end
 
     def order
-      Spree::Payment.find_by(response_code: authorization_code).try(:order)
+      @order ||= Spree::Payment.find_by(response_code: authorization_code).try(:order)
     end
   end
 end

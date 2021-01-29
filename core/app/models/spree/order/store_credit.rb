@@ -9,9 +9,7 @@ module Spree
       alias covered_by_store_credit covered_by_store_credit?
 
       def total_available_store_credit
-        return 0.0 unless user
-
-        user.total_available_store_credit
+        @total_available_store_credit ||= user&.total_available_store_credit || 0.0
       end
 
       def could_use_store_credit?
@@ -25,15 +23,15 @@ module Spree
       end
 
       def total_applicable_store_credit
-        if payment? || confirm? || complete?
-          total_applied_store_credit
-        else
-          [total, (user.try(:total_available_store_credit) || 0.0)].min
-        end
+        @total_applicable_store_credit ||= if payment? || confirm? || complete?
+                                             total_applied_store_credit
+                                           else
+                                             [total, (user&.total_available_store_credit || 0.0)].min
+                                           end
       end
 
       def total_applied_store_credit
-        payments.store_credits.valid.sum(:amount)
+        @total_applied_store_credit ||= payments.store_credits.valid.sum(:amount)
       end
 
       def using_store_credit?

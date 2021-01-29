@@ -26,7 +26,7 @@ module Spree
     after_touch :touch_all_products
 
     def filter_param
-      name.titleize.delete(' ').downcase
+      @filter_param ||= name.titleize.delete(' ').downcase
     end
 
     def self.color

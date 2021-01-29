@@ -8,13 +8,13 @@ module Spree
     end
 
     def description
-      @reimbursement_objects.map do |reimbursement_object|
+      @description ||= @reimbursement_objects.map do |reimbursement_object|
         "#{reimbursement_object.variant.options_text} => #{reimbursement_object.exchange_variant.options_text}"
       end.join(' | ')
     end
 
     def display_amount
-      Spree::Money.new @reimbursement_objects.sum(&:total)
+      @display_amount ||= Spree::Money.new @reimbursement_objects.sum(&:total)
     end
 
     def perform!

@@ -34,7 +34,7 @@ module Spree
         end
 
         def taxon_ids_string
-          taxons.pluck(:id).join(',')
+          @taxon_ids_string ||= taxons.pluck(:id).join(',')
         end
 
         def taxon_ids_string=(s)
@@ -51,7 +51,7 @@ module Spree
 
         # ids of taxons rules and taxons rules children
         def taxons_including_children_ids
-          taxons.inject([]) { |ids, taxon| ids += taxon.self_and_descendants.ids }
+          @taxons_including_children_ids ||= taxons.inject([]) { |ids, taxon| ids += taxon.self_and_descendants.ids }
         end
 
         # taxons order vs taxons rules and taxons rules children
@@ -64,7 +64,7 @@ module Spree
         end
 
         def taxon_product_ids
-          Spree::Product.joins(:taxons).where(spree_taxons: { id: taxons.pluck(:id) }).pluck(:id).uniq
+          @taxon_product_ids ||= Spree::Product.joins(:taxons).where(spree_taxons: { id: taxons.pluck(:id) }).pluck(:id).uniq
         end
       end
     end

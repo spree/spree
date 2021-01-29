@@ -33,19 +33,17 @@ module Spree
 
     # Temporarily tie a customer_return to one order
     def order
-      return nil if return_items.blank?
-
-      return_items.first.inventory_unit.order
+      @order ||= return_items&.first&.inventory_unit&.order
     end
 
     def pre_tax_total
-      return_items.sum(:pre_tax_amount)
+      @pre_tax_total ||= return_items.sum(:pre_tax_amount)
     end
 
     private
 
     def inventory_units
-      return_items.flat_map(&:inventory_unit)
+      @inventory_units ||= return_items.flat_map(&:inventory_unit)
     end
 
     def must_have_return_authorization

@@ -9,15 +9,15 @@ module Spree
       end
 
       def total_on_hand
-        if variant.should_track_inventory?
-          stock_items.sum(:count_on_hand)
-        else
-          Float::INFINITY
-        end
+        @total_on_hand ||= if variant.should_track_inventory?
+                             stock_items.sum(:count_on_hand)
+                           else
+                             Float::INFINITY
+                           end
       end
 
       def backorderable?
-        stock_items.any?(&:backorderable)
+        @backorderable |= stock_items.any?(&:backorderable)
       end
 
       def can_supply?(required = 1)

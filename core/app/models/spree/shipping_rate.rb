@@ -34,17 +34,13 @@ module Spree
     # returns base price - any available discounts for this Shipment
     # useful when you want to present a list of available shipping rates
     def final_price
-      if free? || cost < -discount_amount
-        BigDecimal(0)
-      else
-        cost + discount_amount
-      end
+      @final_price ||= free? || cost < -discount_amount ? BigDecimal(0) : cost + discount_amount
     end
 
     private
 
     def discount_amount
-      shipment.adjustments.promotion.sum(:amount)
+      @discount_amount ||= shipment.adjustments.promotion.sum(:amount)
     end
   end
 end

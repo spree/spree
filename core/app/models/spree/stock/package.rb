@@ -31,7 +31,7 @@ module Spree
       # Fix regression that removed package.order.
       # Find it dynamically through an inventory_unit.
       def order
-        contents.detect { |item| !!item.try(:inventory_unit).try(:order) }.try(:inventory_unit).try(:order)
+        @order ||= contents.detect { |item| !!item.try(:inventory_unit).try(:order) }.try(:inventory_unit).try(:order)
       end
 
       def weight
@@ -63,16 +63,17 @@ module Spree
       end
 
       def currency
-        order.currency
+        @currency ||= order.currency
       end
 
       def shipping_categories
-        Spree::ShippingCategory.joins(products: :variants_including_master).
-          where(spree_variants: { id: variant_ids }).distinct
+        @shipping_categories ||= Spree::ShippingCategory.
+                                 joins(products: :variants_including_master).
+                                 where(spree_variants: { id: variant_ids }).distinct
       end
 
       def shipping_methods
-        shipping_categories.includes(:shipping_methods).map(&:shipping_methods).reduce(:&).to_a
+        @shipping_methods ||= shipping_categories.includes(:shipping_methods).map(&:shipping_methods).reduce(:&).to_a
       end
 
       def inspect
@@ -95,17 +96,17 @@ module Spree
       end
 
       def volume
-        contents.sum(&:volume)
+        @volume ||= contents.sum(&:volume)
       end
 
       def dimension
-        contents.sum(&:dimension)
+        @dimension ||= contents.sum(&:dimension)
       end
 
       private
 
       def variant_ids
-        contents.map { |item| item.inventory_unit.variant_id }.compact.uniq
+        @variant_ids ||= contents.map { |item| item.inventory_unit.variant_id }.compact.uniq
       end
     end
   end

@@ -32,11 +32,11 @@ module Spree
         end
 
         def pending_payments
-          payments.pending
+          @pending_payments ||= payments.pending
         end
 
         def unprocessed_payments
-          payments.select(&:checkout?)
+          @unprocessed_payments ||= payments.select(&:checkout?)
         end
 
         private
@@ -66,7 +66,7 @@ module Spree
         # may be added twice to `self.payment_total` causing wrong `order.outstanding_balance`
         # calculations and thus an incorrect payment state.
         def total_without_pending_store_credits
-          total - payments.map { |p| p.amount if p.source.is_a?(Spree::StoreCredit) && p.pending? }.sum(&:to_f)
+          @total_without_pending_store_credits ||= total - payments.map { |p| p.amount if p.source.is_a?(Spree::StoreCredit) && p.pending? }.sum(&:to_f)
         end
       end
     end
