@@ -8,7 +8,7 @@
   <div class="plp-overlay-header-border"></div>
   <ul class="pt-1 plp-overlay-ul">
     <li class="plp-overlay-ul-li <%= 'plp-overlay-ul-li--active' if params[:sort_by].blank? %>">
-      <a class="p-3 d-block" href="<%= url_for(permitted_params.merge(sort_by: nil)) %>" >
+      <a class="p-3 d-block" href="<%= url_for(permitted_params.merge(sort_by: nil)) %>">
         <div class="plp-empty-dot">
           <div class="filled-dot"></div>
         </div>
@@ -16,7 +16,7 @@
       </a>
     </li>
     <li class="plp-overlay-ul-li <%= 'plp-overlay-ul-li--active' if params[:sort_by] == 'newest-first' %>">
-      <a class="p-3 d-block" href="<%= url_for(permitted_params.merge(sort_by: 'newest-first')) %>" >
+      <a class="p-3 d-block" href="<%= url_for(permitted_params.merge(sort_by: 'newest-first')) %>">
         <div class="plp-empty-dot">
           <div class="filled-dot"></div>
         </div>
@@ -24,7 +24,7 @@
       </a>
     </li>
     <li class="plp-overlay-ul-li <%= 'plp-overlay-ul-li--active' if params[:sort_by] == 'price-high-to-low' %>">
-      <a class="p-3 d-block" href="<%= url_for(permitted_params.merge(sort_by: 'price-high-to-low')) %>" >
+      <a class="p-3 d-block" href="<%= url_for(permitted_params.merge(sort_by: 'price-high-to-low')) %>">
         <div class="plp-empty-dot">
           <div class="filled-dot"></div>
         </div>
@@ -32,7 +32,7 @@
       </a>
     </li>
     <li class="plp-overlay-ul-li <%= 'plp-overlay-ul-li--active' if params[:sort_by] == 'price-low-to-high' %>">
-      <a class="p-3 d-block" href="<%= url_for(permitted_params.merge(sort_by: 'price-low-to-high')) %>" >
+      <a class="p-3 d-block" href="<%= url_for(permitted_params.merge(sort_by: 'price-low-to-high')) %>">
         <div class="plp-empty-dot">
           <div class="filled-dot"></div>
         </div>

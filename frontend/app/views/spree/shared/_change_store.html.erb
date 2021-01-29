@@ -1,15 +1,15 @@
 <% if Spree::Config.show_store_selector && stores.size > 1 %>
   <li class="d-none d-xl-block change-store">
     <div class="dropdown navbar-right-dropdown">
-      <button id="stores-button" type="button" data-toggle="dropdown" class="navbar-right-dropdown-toggle" aria-label="<%= Spree.t('nav_bar.change_country')%>">
+      <button id="stores-button" type="button" data-toggle="dropdown" class="navbar-right-dropdown-toggle" aria-label="<%= Spree.t('nav_bar.change_country') %>">
         <%= icon(name: 'global',
                 classes: 'd-none d-xl-inline-block',
                 width: 41,
-                height: 36)  %>
+                height: 36) %>
         <%= icon(name: 'arrow-down',
                 classes: 'd-inline-block d-xl-none',
                 width: 15,
-                height: 15)  %>
+                height: 15) %>
       </button>
 
       <div id="stores_list" class="dropdown-menu dropdown-menu-right text-right">
