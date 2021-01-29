@@ -37,7 +37,7 @@ module Spree
             invalid_resource!(@taxon) and return
           end
 
-          @taxon.parent_id = taxonomy.root.id unless params[:taxon][:parent_id]
+          @taxon.parent_id = taxonomy.root_id unless params[:taxon][:parent_id]
 
           if @taxon.save
             respond_with(@taxon, status: 201, default_template: :show)
