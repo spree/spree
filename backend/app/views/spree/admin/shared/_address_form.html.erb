@@ -36,9 +36,9 @@
 </div>
 
 <% content_for :head do %>
-  <%= javascript_tag do %>
+  <script>
     $(document).ready(function(){
       $('#<%= s_or_b %>country select').on('change', function() { update_state('<%= s_or_b %>'); });
     });
-  <% end %>
+  </script>
 <% end %>

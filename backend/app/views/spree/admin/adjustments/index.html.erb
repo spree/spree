@@ -29,8 +29,8 @@
   </div>
 <% end %>
 
-<%= javascript_tag do %>
+<script>
   var order_number = '<%= @order.number %>';
-<% end %>
+</script>
 
 <%= render partial: 'spree/admin/shared/order_summary' %>
