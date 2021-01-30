@@ -20,8 +20,8 @@
     <tbody>
       <% @stock_locations.each do |stock_location|
            @edit_url = spree.edit_admin_stock_location_path(stock_location)
-           @delete_url = spree.admin_stock_location_path(stock_location)
-      %>
+           @delete_url = spree.admin_stock_location_path(stock_location) %>
+
         <tr id="<%= spree_dom_id stock_location %>" data-hook="stock_location_row">
           <td><%= display_name(stock_location) %></td>
           <td><%= link_to Spree.t(:stock_movements), spree.admin_stock_location_stock_movements_path(stock_location.id) %> </td>

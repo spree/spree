@@ -20,7 +20,7 @@
       </tr>
     </thead>
     <tbody id="sortVert">
-      <% @payment_methods.each do |method|%>
+      <% @payment_methods.each do |method| %>
         <tr id="<%= spree_dom_id method %>" data-hook="admin_payment_methods_index_rows">
           <td class="move-handle text-center">
             <% if can?(:edit, method) %>

@@ -64,7 +64,7 @@
           <td><%= link_to promotion.name, edit_admin_promotion_path(promotion) %></td>
           <td><%= promotion.code %></td>
           <td><%= promotion.description %></td>
-          <td><%= promotion.usage_limit.nil? ? "∞" : promotion.usage_limit  %></td>
+          <td><%= promotion.usage_limit.nil? ? "∞" : promotion.usage_limit %></td>
           <td><%= Spree.t(:current_promotion_usage, count: promotion.credits_count) %></td>
           <td><%= promotion.expires_at.to_date.to_s(:short_date) if promotion.expires_at %></td>
           <td class="actions actions-2" data-hook="admin_promotions_index_row_actions">

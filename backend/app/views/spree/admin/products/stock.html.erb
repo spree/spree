@@ -33,8 +33,8 @@
                                       class: 'track_inventory_checkbox', id: "track_inventory_#{ variant.id }" %>
                     <%= Spree.t(:track_inventory) %>
                     <%= hidden_field_tag 'variant[track_inventory]', variant.track_inventory?,
-			class: 'variant_track_inventory',
-			id: "variant_track_inventory_#{variant.id}" %>
+      class: 'variant_track_inventory',
+      id: "variant_track_inventory_#{variant.id}" %>
                   <% end %>
                 </div>
               <% end if can?(:update, @product) && can?(:update, variant) %>
