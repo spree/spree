@@ -18,7 +18,7 @@
   <% end %>
 
   <%= form_for @promotion, url: spree.admin_promotion_path(@promotion), method: :put do |f| %>
-    <div id="actions" class="filter_list margint">
+    <div id="actions" class="filter_list mt-3">
       <% if @promotion.actions.any? %>
         <%= render partial: 'promotion_action',  collection: @promotion.actions %>
       <% else %>
