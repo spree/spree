@@ -26,7 +26,7 @@ module Spree
 
     belongs_to :country, class_name: 'Spree::Country'
     belongs_to :state, class_name: 'Spree::State', optional: true
-    belongs_to :user, class_name: Spree.user_class.name, optional: true
+    belongs_to :user, class_name: Spree.user_class.to_s, optional: true
 
     has_many :shipments, inverse_of: :address
 
