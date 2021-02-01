@@ -104,6 +104,10 @@ module Spree
           Spree::Promotion::Rules::OptionValue,
           Spree::Promotion::Rules::Country
         ]
+
+        if defined?(Spree::Address::ADDRESS_FIELDS)
+          puts '[SPREE DEPRECATION] Address::ADDRES_FIELDS is deprecated. Please use Spree::Config[:address_fields] instead. See: https://guides.spreecommerce.org/developer/customization/checkout.html#address-information'
+        end
       end
 
       initializer 'spree.promo.register.promotions.actions' do |app|
