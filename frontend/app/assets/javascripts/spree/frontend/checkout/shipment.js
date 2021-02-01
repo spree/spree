@@ -3,6 +3,7 @@ function ShippingTotalManager (input1) {
   this.input = input1
   this.shippingMethods = this.input.shippingMethods
   this.shipmentTotal = this.input.shipmentTotal
+  this.isFreeShipping = this.input.isFreeShipping
   this.taxTotal = this.input.taxTotal
   this.nonShipmentTax = $(this.taxTotal).data('non-shipment-tax')
   this.orderTotal = this.input.orderTotal
@@ -35,8 +36,19 @@ ShippingTotalManager.prototype.parseCurrencyToFloat = function (input) {
   return accounting.unformat(input, this.formatOptions.decimal)
 }
 
+ShippingTotalManager.prototype.totalShipmentAmount = function (newShipmentTotal, oldShipmentTotal) {
+  var totalShipmentAmount = 0;
+  if (!this.isFreeShipping.html()) {
+    totalShipmentAmount = newShipmentTotal - oldShipmentTotal
+
+    return totalShipmentAmount
+  } else {
+    return totalShipmentAmount
+  }
+}
+
 ShippingTotalManager.prototype.readjustSummarySection = function (orderTotal, newShipmentTotal, oldShipmentTotal, newTaxTotal, oldTaxTotal) {
-  var newOrderTotal = orderTotal + (newShipmentTotal - oldShipmentTotal) + (newTaxTotal - oldTaxTotal)
+  var newOrderTotal = orderTotal + this.totalShipmentAmount(newShipmentTotal, oldShipmentTotal) + (newTaxTotal - oldTaxTotal)
   this.taxTotal.html(accounting.formatMoney(newTaxTotal, this.formatOptions))
   this.shipmentTotal.html(accounting.formatMoney(newShipmentTotal, this.formatOptions))
   return this.orderTotal.html(accounting.formatMoney(accounting.toFixed(newOrderTotal, 10), this.formatOptions))
@@ -53,7 +65,8 @@ Spree.ready(function ($) {
     orderTotal: $('#summary-order-total'),
     taxTotal: $('[data-hook="tax-total"]'),
     shipmentTotal: $('[data-hook="shipping-total"]'),
-    shippingMethods: $('input[data-behavior="shipping-method-selector"]')
+    shippingMethods: $('input[data-behavior="shipping-method-selector"]'),
+    isFreeShipping: $('[data-hook="is-free-shipping"]')
   }
   return new ShippingTotalManager(input).bindEvent()
 })

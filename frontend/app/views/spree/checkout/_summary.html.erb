@@ -28,7 +28,7 @@
     <% if order.passed_checkout_step?("address") && order.shipments.any? %>
       <% if order.has_free_shipping? %>
         <div class="d-table-cell"><%= Spree.t(:shipping) %>:</div>
-        <div class="d-table-cell text-right"><%= Spree.t(:free) %></div>
+        <div class="d-table-cell text-right" data-hook="is-free-shipping"><%= Spree.t(:free) %></div>
       <% else %>
         <div class="d-table-cell"><%= Spree.t(:shipping) %>:</div>
         <% shipping_total = Spree::Money.new(order.shipments.to_a.sum(&:cost), currency: order.currency) %>
