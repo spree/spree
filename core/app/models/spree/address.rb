@@ -72,6 +72,14 @@ module Spree
       end.flatten
     end
 
+    def self.serializer_attibutes
+      attributes = Spree::Config[:address_fields].map(&:to_sym)
+      attributes.delete(:state)
+      attributes.delete(:country)
+      attributes << [:state_name, :country_name, :country_iso3, :country_iso]
+      attributes.flatten
+    end
+
     def full_name
       "#{firstname} #{lastname}".strip
     end
