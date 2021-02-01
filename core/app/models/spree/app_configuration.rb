@@ -20,6 +20,7 @@ require 'spree/core/search/base'
 module Spree
   class AppConfiguration < Preferences::Configuration
     # Alphabetized to more easily lookup particular preferences
+    preference :address_fields, :array, default: %w(firstname lastname company address1 address2 city state zipcode country phone) # address fields you would like to include in the Address form
     preference :address_requires_state, :boolean, default: true # should state/state_name be required
     preference :address_requires_phone, :boolean, default: true # Determines whether we require phone in address
     preference :admin_interface_logo, :string, default: 'admin/logo.png'

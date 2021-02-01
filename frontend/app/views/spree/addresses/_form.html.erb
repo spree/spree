@@ -1,6 +1,6 @@
 <% address_id = address_type.chars.first %>
 
-<% Spree::Address::ADDRESS_FIELDS.each do |field| %>
+<% address_fields.each do |field| %>
   <% if field == "country" %>
     <div class="form-group checkout-content-inner-field" id="<%= "#{address_id}country" %>">
       <div id="<%= "#{address_id}country-selection" %>" class="d-block position-relative has-float-label">
