@@ -13,7 +13,7 @@ en:
   activerecord:
     attributes:
       spree/address:
-        label: Address name
+        label: Address label (eg. Home, Work)
         address1: Address
         address2: Address (contd.)
         city: City
@@ -22,6 +22,7 @@ en:
         firstname: First Name
         lastname: Last Name
         phone: Phone
+        alternative_phone: Alternative Phone
         state: State
         zipcode: Zip Code
       spree/calculator/tiered_flat_rate:
