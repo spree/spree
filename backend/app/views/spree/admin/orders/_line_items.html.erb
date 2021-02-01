@@ -24,7 +24,7 @@
               </td>
               <td class="line-item-name text-center">
                 <%= link_to item.name, edit_admin_product_path(item.variant.product) %>
-                <br />
+                <br>
                 <%= "(#{item.options_text})" if item.options_text.present? %>
               </td>
               <td class="line-item-price text-center"><%= item.single_money.to_html %></td>

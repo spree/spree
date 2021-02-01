@@ -24,7 +24,7 @@
     </thead>
     <tbody id="sortVert">
       <% @option_types.each do |option_type| %>
-        <tr class="spree_option_type <%= cycle('odd', 'even')%>" id="<%= spree_dom_id option_type %>" data-hook="option_row">
+        <tr class="spree_option_type <%= cycle('odd', 'even') %>" id="<%= spree_dom_id option_type %>" data-hook="option_row">
           <td class="move-handle text-center">
             <%= svg_icon name: "sort.svg", width: '18', height: '18' %>
           </td>

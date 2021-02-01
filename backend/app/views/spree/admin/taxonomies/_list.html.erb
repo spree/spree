@@ -9,7 +9,7 @@
     </thead>
     <tbody id="sortVert">
       <% @taxonomies.each do |taxonomy| %>
-        <tr id="<%= spree_dom_id taxonomy %>" data-hook="taxonomies_row" >
+        <tr id="<%= spree_dom_id taxonomy %>" data-hook="taxonomies_row">
           <td class="move-handle">
             <%= svg_icon name: "sort.svg", width: '18', height: '18' %>
           </td>

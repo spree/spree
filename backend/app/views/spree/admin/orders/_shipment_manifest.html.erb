@@ -6,7 +6,7 @@
 
     <td class="item-name">
       <%= link_to item.variant.product.name, edit_admin_product_path(item.variant.product) %>
-      <br />
+      <br>
       <%= "(#{item.variant.options_text})" if item.variant.options_text.present? %>
       <% if item.variant.sku.present? %>
         <strong><%= Spree.t(:sku) %>:</strong> <%= item.variant.sku %>

@@ -19,13 +19,13 @@
 <%= javascript_include_tag 'spree/backend/all' %>
 <%= render "spree/admin/shared/translations" %>
 
-<%= javascript_tag do %>
+<script>
   <%== "var AUTH_TOKEN = #{form_authenticity_token.inspect};" %>
   <%== "Spree.api_key = '#{try_spree_current_user.spree_api_key}';" if try_spree_current_user %>
   <%== "var ADDRESS_FIELDS = #{Spree::Address::ADDRESS_FIELDS}" %>
   <% if Rails.env.test? %>
   jQuery.fx.off = false
   <% end %>
-<% end %>
+</script>
 
 <%= yield :head %>

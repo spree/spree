@@ -16,7 +16,7 @@
         </tr>
       </thead>
       <tbody>
-        <% @roles.each do |role|%>
+        <% @roles.each do |role| %>
           <tr id="<%= spree_dom_id role %>" data-hook="admin_roles_index_rows">
             <td><%= role.name %></td>
             <td class="actions text-right">
