@@ -11,9 +11,9 @@ Doorkeeper.configure do
     return nil if user.nil?
 
     if defined?(Spree::Auth::Config) && Spree::Auth::Config[:confirmable] == true
-       user if user.active_for_authentication? && user.valid_for_authentication? { user.valid_password?(params[:password]) }
-    else
-       user if user&.valid_for_authentication? { user.valid_password?(params[:password]) }
+      user if user.active_for_authentication? && user.valid_for_authentication? { user.valid_password?(params[:password]) }
+    elsif user&.valid_for_authentication? { user.valid_password?(params[:password]) }
+      user
     end
   end
 

@@ -6,6 +6,21 @@ describe 'Spree OAuth', type: :request do
   describe 'get token' do
     context 'by password' do
       before do
+        module Spree
+          module Auth
+            class Config
+              def self.[](key)
+                {
+                  confirmable: true
+                }[key]
+              end
+
+              def self.[]=(key)
+              end
+            end
+          end
+        end
+
         allow(Spree.user_class).to receive(:find_for_database_authentication).with(hash_including(:email)) { user }
         allow(user).to receive(:valid_for_authentication?).and_return(true)
         allow(user).to receive(:active_for_authentication?).and_return(active_value)
