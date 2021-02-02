@@ -84,6 +84,10 @@ module Spree
           fields.presence
         end
 
+        def serializer_params
+          { currency: current_currency, store: current_store, user: spree_current_user }
+        end
+
         def record_not_found
           render_error_payload(I18n.t(:resource_not_found, scope: 'spree.api'), 404)
         end
