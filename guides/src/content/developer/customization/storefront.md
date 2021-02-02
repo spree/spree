@@ -1,5 +1,5 @@
 ---
-title: 'Storefront Customization'
+title: 'Storefront'
 section: customization
 order: 0
 ---

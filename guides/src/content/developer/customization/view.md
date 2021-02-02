@@ -1,5 +1,5 @@
 ---
-title: 'View Customization'
+title: 'Templates'
 section: customization
 order: 0
 ---
