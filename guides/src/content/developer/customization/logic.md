@@ -1,5 +1,5 @@
 ---
-title: Logic Customization
+title: Business Logic
 section: customization
 order: 4
 ---
