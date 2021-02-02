@@ -2,11 +2,11 @@ module Spree
   module V2
     module Storefront
       class ProductSerializer < BaseSerializer
+        include ::Spree::Api::V2::DisplayMoneyHelper
+
         set_type :product
 
-        attributes :name, :description, :price, :currency, :display_price,
-                   :compare_at_price, :display_compare_at_price, :available_on,
-                   :slug, :meta_description, :meta_keywords, :updated_at
+        attributes :name, :description, :available_on, :slug, :meta_description, :meta_keywords, :updated_at
 
         attribute :purchasable do |product|
           product.purchasable?
@@ -22,6 +22,26 @@ module Spree
 
         attribute :available do |product|
           product.available?
+        end
+
+        attribute :currency do |_product, params|
+          params[:currency]
+        end
+
+        attribute :price do |product, params|
+          price(product, params[:currency])
+        end
+
+        attribute :display_price do |product, params|
+          display_price(product, params[:currency])
+        end
+
+        attribute :compare_at_price do |product, params|
+          compare_at_price(product, params[:currency])
+        end
+
+        attribute :display_compare_at_price do |product, params|
+          display_compare_at_price(product, params[:currency])
         end
 
         has_many :variants

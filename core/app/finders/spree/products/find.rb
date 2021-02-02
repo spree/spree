@@ -22,6 +22,7 @@ module Spree
         products = by_ids(scope)
         products = by_skus(products)
         products = by_price(products)
+        products = by_currency(products)
         products = by_taxons(products)
         products = by_concat_taxons(products)
         products = by_name(products)
@@ -49,6 +50,10 @@ module Spree
 
       def price?
         price.present?
+      end
+
+      def currency?
+        currency.present?
       end
 
       def taxons?
@@ -94,13 +99,19 @@ module Spree
       def by_price(products)
         return products unless price?
 
-        products.joins(master: :default_price).
+        products.joins(master: :prices).
           where(
             spree_prices: {
               amount: price.min..price.max,
               currency: currency
             }
           )
+      end
+
+      def by_currency(products)
+        return products unless currency?
+
+        products.joins(master: :prices).where(spree_prices: { currency: currency })
       end
 
       def by_taxons(products)
