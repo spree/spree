@@ -7,7 +7,8 @@ Doorkeeper.configure do
 
   resource_owner_from_credentials do
     user = Spree.user_class.find_for_database_authentication(email: params[:username])
-    user if user&.valid_for_authentication? { user.valid_password?(params[:password]) }
+
+    user if user&.active_for_authentication? && user&.valid_for_authentication? { user.valid_password?(params[:password]) }
   end
 
   admin_authenticator do |routes|
