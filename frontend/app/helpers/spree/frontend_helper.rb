@@ -16,7 +16,7 @@ module Spree
     end
 
     def stores
-      @stores ||= Spree::Store.includes(:default_country).order('id ASC')
+      @stores ||= Spree::Store.includes(:default_country).order(:id)
     end
 
     def store_currency_symbol(store)
