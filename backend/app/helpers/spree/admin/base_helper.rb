@@ -1,13 +1,13 @@
 module Spree
   module Admin
     module BaseHelper
-      SELECT2_LOCALES = %w[
+      SELECT2_SUPPORTED_LOCALES = %w[
         af ar az bg bn bs ca cs da de dsb el en eo es et eu fa fi fr gl he
         hi hr hsb hu hy id is it ja ka km ko lt lv mk ms nb ne nl pa pl ps
         pt pt-BR ro ru sk sl sq sr sr-Cyrl sv th tk tr uk vi zh-CN zh-TW
       ].freeze
 
-      FLATPICKR_LOCALES = %w[
+      FLATPICKR_SUPPORTED_LOCALES = %w[
         ar at az be bg bn bs cat cs cy da de eo es et fa fi fo fr ga gr he
         hi hr hu id is it ja ka km ko kz lv mk mn ms my nl no pa pl pt ro ru
         si sk sl sq sr-cyr sr sv th tr uk uz uz_latn vn zh-tw zh
@@ -219,7 +219,7 @@ module Spree
 
         if ['zh-CN', 'zh-TW', 'sr-Cyrl', 'pt-BR'].include?(I18n.locale.to_s)
           I18n.locale
-        elsif SELECT2_LOCALES.include? stripped_locale
+        elsif SELECT2_SUPPORTED_LOCALES.include? stripped_locale
           stripped_locale
         else
           'en'
@@ -231,7 +231,7 @@ module Spree
 
         if ['sr-cyr', 'uz_latn', 'zh-tw'].include?(I18n.locale.to_s.parameterize)
           I18n.locale.to_s.parameterize
-        elsif FLATPICKR_LOCALES.include? stripped_locale
+        elsif FLATPICKR_SUPPORTED_LOCALES.include? stripped_locale
           stripped_locale
         else
           'default'
