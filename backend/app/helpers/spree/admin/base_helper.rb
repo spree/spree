@@ -10,7 +10,7 @@ module Spree
       FLATPICKR_SUPPORTED_LOCALES = %w[
         ar at az be bg bn bs cat cs cy da de eo es et fa fi fo fr ga gr he
         hi hr hu id is it ja ka km ko kz lv mk mn ms my nl no pa pl pt ro ru
-        si sk sl sq sr-cyr sr sv th tr uk uz uz_latn vn zh-tw zh
+        si sk sl sq sr sv th tr uk uz vn zh
       ].freeze
 
       def flash_alert(flash)
@@ -229,9 +229,7 @@ module Spree
       def flatpickr_local_fallback
         stripped_locale = I18n.locale.to_s.split('-').first
 
-        if ['sr_cyr', 'uz_latn', 'zh_tw'].include?(I18n.locale.to_s.downcase)
-          I18n.locale.to_s.parameterize
-        elsif FLATPICKR_SUPPORTED_LOCALES.include? stripped_locale
+        if FLATPICKR_SUPPORTED_LOCALES.include? stripped_locale
           stripped_locale
         else
           'default'
