@@ -201,6 +201,14 @@ module Spree
           class: 'btn-outline-secondary', icon: 'view.svg', id: 'admin_preview_taxon', target: :blank
         )
       end
+
+      def admin_logout_link
+        if defined?(admin_logout_path)
+          admin_logout_path
+        elsif defined?(spree_logout_path)
+          spree_logout_path
+        end
+      end
     end
   end
 end
