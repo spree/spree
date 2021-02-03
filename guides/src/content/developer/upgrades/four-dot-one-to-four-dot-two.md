@@ -37,6 +37,16 @@ If you used that gem in the past you need to remove. Multi Currency is now incor
 3. Remove `//= require spree/frontend/spree_multi_currency` from `vendor/assets/javascripts/spree/frontend/all.js`
 4. Remove `//= require spree/backend/spree_multi_currency` from `vendor/assets/javascripts/spree/backend/all.js`
 
+## Add `deface` gem (optional)
+
+If you used [Deface overrides](/developer/tutorials/deface_overrides_tutorial.html) you will need to include `deface` in your `Gemfile` as it was removed from Spree / Spree Auth Devise / Spree Gateway dependencies.
+
+Simply add:
+
+```ruby
+gem 'deface'
+```
+
 ## Update gems
 
 ```bash
