@@ -229,7 +229,11 @@ module Spree
       def flatpickr_local_fallback
         stripped_locale = I18n.locale.to_s.split('-').first
 
-        if FLATPICKR_SUPPORTED_LOCALES.include? stripped_locale
+        if I18n.locale.to_s == 'zh-TW'
+          # Taiwanese is a popular language in Spree,
+          # it has been well translated.
+          'zh-tw'
+        elsif FLATPICKR_SUPPORTED_LOCALES.include? stripped_locale
           stripped_locale
         else
           'default'

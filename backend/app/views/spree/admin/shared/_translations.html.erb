@@ -41,7 +41,10 @@
     tracking:                 Spree.t(:tracking),
     variant_placeholder:      Spree.t(:variant_placeholder),
     value:                    Spree.t(:value),
-    flatpickr_locale:         "#{flatpickr_local_fallback}"
+
+                              # Substitute - for _ converting zh-tw to zh_tw
+                              # Flatpickr not making things easy here.
+    flatpickr_locale:         "#{flatpickr_local_fallback.sub("-", "_")}"
   }.to_json
 %>
 </script>
