@@ -24,7 +24,7 @@ in your project root directory.
     gem 'spree', '~> 4.2.0.rc4'
     gem 'spree_auth_devise', '~> 4.3'
     gem 'spree_gateway', '~> 3.9'
-    gem 'sassc', github: 'sass/sassc-ruby', branch: ‘master’
+    gem 'sassc', github: 'sass/sassc-ruby', branch: 'master'
     ```
 
     **Rails 5.2**
@@ -116,7 +116,7 @@ The different parts of Spree (API, Admin) will be mounted there as well, eg. `ht
 
 ### Use your existing authentication
 
-[Spree Auth Devise](https://github.com/spree/spree_auth_devise) is the default authnetication that comes with Spree but you can swap it for your own, please [follow this guide](/developer/customization/authentication.html)
+[Spree Auth Devise](https://github.com/spree/spree_auth_devise) is the default authentication that comes with Spree but you can swap it for your own, please [follow this guide](/developer/customization/authentication.html)
 
 ## Hello, Spree Commerce
 
