@@ -73,13 +73,7 @@
     tracking:                 Spree.t(:tracking),
     variant_placeholder:      Spree.t(:variant_placeholder),
     value:                    Spree.t(:value)
-  }.to_json
-%>
+  }.to_json %>
 </script>
 
-<% stripped_locale = I18n.locale.to_s.split('-').first %>
-<% if ['zh-CN', 'zh-TW', 'sr-Cyrl', 'pt-BR'].include?(I18n.locale.to_s) %>
-  <%= javascript_include_tag "select2_locale_#{I18n.locale}" %>
-<% else %>
-  <%= javascript_include_tag "select2_locale_#{stripped_locale}" %>
-<% end %>
+<%= javascript_include_tag "select2_locale_#{select2_local_fallback}" %>

@@ -201,6 +201,21 @@ module Spree
           class: 'btn-outline-secondary', icon: 'view.svg', id: 'admin_preview_taxon', target: :blank
         )
       end
+
+      def select2_local_fallback
+        stripped_locale = I18n.locale.to_s.split('-').first
+        all_select_2_locals = %w[af ar az bg bn bs ca cs da de dsb el en eo es et eu fa fi fr gl he
+                                  hi hr hsb hu hy id is it ja ka km ko lt lv mk ms nb ne nl pa pl ps
+                                  pt pt-BR ro ru sk sl sq sr sr-Cyrl sv th tk tr uk vi zh-CN zh-TW]
+
+        if ['zh-CN', 'zh-TW', 'sr-Cyrl', 'pt-BR'].include?(I18n.locale.to_s)
+          I18n.locale
+        elsif all_select_2_locals.include? stripped_locale
+          stripped_locale
+        else
+          'en'
+        end
+      end
     end
   end
 end
