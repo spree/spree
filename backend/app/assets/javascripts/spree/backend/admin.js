@@ -4,7 +4,7 @@ under the spree namespace that do stuff we find helpful.
 Hopefully, this will evolve into a propper class.
 **/
 
-/* global AUTH_TOKEN, order_number, Sortable, DOMPurify */
+/* global AUTH_TOKEN, order_number, Sortable, flatpickr, DOMPurify */
 jQuery(function ($) {
   // Add some tips
   $('.with-tip').each(function() {
@@ -246,7 +246,7 @@ document.addEventListener('DOMContentLoaded', function() {
   flatpickr('.datepicker', {
     locale: Spree.translations.flatpickr_locale,
     monthSelectorType: 'static',
-    time_24hr: true,
+    time_24hr: true
   })
 })
 
