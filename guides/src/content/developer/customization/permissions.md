@@ -1,5 +1,5 @@
 ---
-title: 'Permissions Customization'
+title: 'Permissions'
 section: customization
 order: 5
 ---

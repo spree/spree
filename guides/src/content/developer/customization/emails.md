@@ -1,5 +1,5 @@
 ---
-title: 'Emails Customization'
+title: 'Emails'
 section: customization
 order: 10
 ---
