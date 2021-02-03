@@ -226,7 +226,6 @@ document.addEventListener('DOMContentLoaded', function() {
   var dateFrom = flatpickr('.datePickerFrom', {
     locale: Spree.translations.flatpickr_locale,
     time_24hr: true,
-    // dateFormat: Spree.translations.date_format,
     monthSelectorType: 'static',
     onChange: function(selectedDates) {
       dateTo.set('minDate', selectedDates[0])
@@ -237,7 +236,6 @@ document.addEventListener('DOMContentLoaded', function() {
     locale: Spree.translations.flatpickr_locale,
     monthSelectorType: 'static',
     time_24hr: true,
-    // dateFormat: Spree.translations.date_format,
     onChange: function(selectedDates) {
       dateFrom.set('maxDate', selectedDates[0])
     }
