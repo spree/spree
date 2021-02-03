@@ -8,7 +8,7 @@ module Spree
       ].freeze
 
       FLATPICKR_SUPPORTED_LOCALES = %w[
-        ar at az be bg bn bs cat cs cy da de eo es et fa fi fo fr ga gr he
+        ar at az be bg bn bs cs cy da de eo es et fa fi fo fr ga gr he
         hi hr hu id is it ja ka km ko kz lv mk mn ms my nl no pa pl pt ro ru
         si sk sl sq sr sv th tr uk uz vn zh
       ].freeze
