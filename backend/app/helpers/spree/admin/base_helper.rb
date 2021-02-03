@@ -229,7 +229,7 @@ module Spree
       def flatpickr_local_fallback
         stripped_locale = I18n.locale.to_s.split('-').first
 
-        if ['sr-cyr', 'uz_latn', 'zh-tw'].include?(I18n.locale.to_s.parameterize)
+        if ['sr_cyr', 'uz_latn', 'zh_tw'].include?(I18n.locale.to_s.downcase)
           I18n.locale.to_s.parameterize
         elsif FLATPICKR_SUPPORTED_LOCALES.include? stripped_locale
           stripped_locale
