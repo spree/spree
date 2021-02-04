@@ -5,9 +5,6 @@ Hopefully, this will evolve into a propper class.
 **/
 
 /* global AUTH_TOKEN, order_number, Sortable, flatpickr, DOMPurify */
-
-//= require spree/backend/flatpickr_locals
-
 jQuery(function ($) {
   // Add some tips
   $('.with-tip').each(function() {
@@ -227,8 +224,8 @@ $.fn.radioControlsVisibilityOfElement = function (dependentElementSelector) {
 
 document.addEventListener('DOMContentLoaded', function() {
   var dateFrom = flatpickr('.datePickerFrom', {
+    locale: Spree.translations.flatpickr_locale,
     time_24hr: true,
-    dateFormat: Spree.translations.date_picker,
     monthSelectorType: 'static',
     onChange: function(selectedDates) {
       dateTo.set('minDate', selectedDates[0])
@@ -236,18 +233,18 @@ document.addEventListener('DOMContentLoaded', function() {
   })
 
   var dateTo = flatpickr('.datePickerTo', {
+    locale: Spree.translations.flatpickr_locale,
     monthSelectorType: 'static',
     time_24hr: true,
-    dateFormat: Spree.translations.date_picker,
     onChange: function(selectedDates) {
       dateFrom.set('maxDate', selectedDates[0])
     }
   })
 
   flatpickr('.datepicker', {
+    locale: Spree.translations.flatpickr_locale,
     monthSelectorType: 'static',
-    time_24hr: true,
-    dateFormat: Spree.translations.date_picker
+    time_24hr: true
   })
 })
 

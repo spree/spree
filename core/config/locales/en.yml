@@ -759,38 +759,10 @@ en:
     date: Date
     date_completed: Date Completed
     date_picker:
-      am: 'AM'
       first_day: 0
       format: ! '%Y/%m/%d'
-      hourAriaLabel: 'Hour'
       js_format: Y/m/d
       js_date_time: Y/m/d - H:i
-      minuteAriaLabel: 'Minute'
-      pm: 'PM'
-      rangeSeparator: ' to '
-      scrollTitle: 'Scroll to increment'
-      toggleTitle: 'Click to toggle'
-      weekAbbreviation: 'Wk'
-      yearAriaLabel: 'Year'
-      sun: 'Sun'
-      mon: 'Mon'
-      tue: 'Tue'
-      wed: 'Wed'
-      thu: 'Thu'
-      fri: 'Fri'
-      sat: 'Sat'
-      lh_jan: 'January'
-      lh_feb: 'February'
-      lh_mar: 'March'
-      lh_apr: 'April'
-      lh_may: 'May'
-      lh_jun: 'June'
-      lh_jul: 'July'
-      lh_aug: 'August'
-      lh_sep: 'September'
-      lh_oct: 'October'
-      lh_nov: 'November'
-      lh_dec: 'December'
     date_range: Date Range
     default: Default
     default_country_cannot_be_deleted: Default country cannot be deleted
