@@ -21,7 +21,7 @@ in your project root directory.
     **Rails 6.0 and 6.1**
 
     ```ruby
-    gem 'spree', '~> 4.2.0.rc4'
+    gem 'spree', '~> 4.2.0.rc5'
     gem 'spree_auth_devise', '~> 4.3'
     gem 'spree_gateway', '~> 3.9'
     gem 'sassc', github: 'sass/sassc-ruby', branch: 'master'
