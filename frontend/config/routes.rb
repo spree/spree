@@ -26,7 +26,6 @@ Spree::Core::Engine.add_routes do
   get '/t/*id', to: 'taxons#show', as: :nested_taxons
   get '/product_carousel/:id', to: 'taxons#product_carousel'
 
-  get '/unauthorized', to: 'home#unauthorized', as: :unauthorized
   get '/content/cvv', to: 'content#cvv', as: :cvv
   get '/content/test', to: 'content#test'
   get '/cart_link', to: 'store#cart_link', as: :cart_link
