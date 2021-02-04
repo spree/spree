@@ -214,6 +214,14 @@ module Spree
         )
       end
 
+      def admin_logout_link
+        if defined?(admin_logout_path)
+          admin_logout_path
+        elsif defined?(spree_logout_path)
+          spree_logout_path
+        end
+      end
+
       def select2_local_fallback
         stripped_locale = I18n.locale.to_s.split('-').first
 
