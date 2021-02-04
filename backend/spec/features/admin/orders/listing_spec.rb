@@ -250,7 +250,6 @@ describe 'Orders Listing', type: :feature do
           select2 'spree', from: 'Channel'
           fill_in_date_with_js('Starts at', with: '2018/01/01')
           fill_in_date_with_js('Ending at', with: '2018/06/30')
-
         end
 
         click_on 'Filter Results'
@@ -279,7 +278,6 @@ describe 'Orders Listing', type: :feature do
 
         page.execute_script(script)
       end
-
     end
   end
 end
