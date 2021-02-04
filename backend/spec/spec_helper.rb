@@ -46,6 +46,7 @@ require 'spree/testing_support/capybara_ext'
 require 'spree/testing_support/capybara_config'
 require 'spree/testing_support/rspec_retry_config'
 require 'spree/testing_support/image_helpers'
+require 'spree/testing_support/flatpickr_capybara'
 
 require 'spree/core/controller_helpers/strong_parameters'
 require 'webdrivers'

@@ -10,6 +10,7 @@ input.input {
   -moz-appearance: none;
   appearance: none;
   background-color: white !important;
+  border-radius:10px;
 }
 
 .flatpickr-current-month .numInputWrapper {
@@ -74,6 +75,12 @@ input.input[readonly] {
   z-index: 5;
   border-top-right-radius: $border-radius !important;
   border-bottom-right-radius: $border-radius !important;
+}
+
+.input-group >
+.form-control:not(:first-child), .input-group > .input:not(:first-child) {
+  border-top-left-radius: $border-radius !important;
+  border-bottom-left-radius: $border-radius !important;
 }
 
 div.flatpickr-calendar.open {

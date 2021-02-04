@@ -227,7 +227,6 @@ document.addEventListener('DOMContentLoaded', function() {
     locale: Spree.translations.flatpickr_locale,
     time_24hr: true,
     altInput: true,
-    monthSelectorType: 'static',
     onChange: function(selectedDates) {
       dateTo.set('minDate', selectedDates[0])
     }
@@ -235,7 +234,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
   var dateTo = flatpickr('.datePickerTo', {
     locale: Spree.translations.flatpickr_locale,
-    monthSelectorType: 'static',
     time_24hr: true,
     altInput: true,
     onChange: function(selectedDates) {
@@ -245,7 +243,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
   flatpickr('.datepicker', {
     locale: Spree.translations.flatpickr_locale,
-    monthSelectorType: 'static',
     time_24hr: true,
     altInput: true
   })
