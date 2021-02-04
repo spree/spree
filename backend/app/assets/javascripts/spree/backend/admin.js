@@ -120,7 +120,7 @@ jQuery(function ($) {
   $('.js-filterable').each(function () {
     var $this = $(this)
 
-    if ($this.val() !== null && $this.val() !== '' && $this.val().length !== 0) {
+    if ($this.val() !== null && $this.val() !== '' && $this.val().length !== 0 && $this.prop('readonly') !== true) {
       var ransackValue, filter
       var ransackFieldId = $this.attr('id')
       var label = $('label[for="' + ransackFieldId + '"]')
@@ -226,6 +226,7 @@ document.addEventListener('DOMContentLoaded', function() {
   var dateFrom = flatpickr('.datePickerFrom', {
     locale: Spree.translations.flatpickr_locale,
     time_24hr: true,
+    altInput: true,
     monthSelectorType: 'static',
     onChange: function(selectedDates) {
       dateTo.set('minDate', selectedDates[0])
@@ -236,6 +237,7 @@ document.addEventListener('DOMContentLoaded', function() {
     locale: Spree.translations.flatpickr_locale,
     monthSelectorType: 'static',
     time_24hr: true,
+    altInput: true,
     onChange: function(selectedDates) {
       dateFrom.set('maxDate', selectedDates[0])
     }
@@ -244,7 +246,8 @@ document.addEventListener('DOMContentLoaded', function() {
   flatpickr('.datepicker', {
     locale: Spree.translations.flatpickr_locale,
     monthSelectorType: 'static',
-    time_24hr: true
+    time_24hr: true,
+    altInput: true
   })
 })
 

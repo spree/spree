@@ -57,13 +57,12 @@
         <%= Spree.t(:current_promotion_usage, count: @promotion.credits_count) %>
       </small>
     </div>
-
     <div id="starts_at_field" class="form-group">
       <%= f.label :starts_at %>
       <div class="input-group datePickerFrom"
            data-wrap="true"
            data-enable-time="true"
-           data-date-format="<%= Spree.t(:js_date_time, scope: 'date_picker', default: 'Y/m/d - H:i') %>"
+           data-alt-format="<%= Spree.t(:fpr_human_friendly_date_time_format, scope: 'date_picker', default: 'M j, Y H:i') %>"
            data-max-date="<%= @promotion.expires_at %>">
         <%= f.datetime_field :starts_at,
                              class: 'form-control shadow-none',
@@ -79,7 +78,7 @@
       <div class="input-group datePickerTo"
            data-wrap="true"
            data-enable-time='true'
-           data-date-format="<%= Spree.t(:js_date_time, scope: 'date_picker', default: 'Y/m/d - H:i') %>"
+           data-alt-format="<%= Spree.t(:fpr_human_friendly_date_time_format, scope: 'date_picker', default: 'M j, Y H:i') %>"
            data-min-date="<%= @promotion.starts_at %>">
         <%= f.datetime_field :expires_at,
                               placeholder:Spree.t('ends_at'),

@@ -5,7 +5,7 @@
   }
 }
 
-input.flatpickr-input {
+input.input {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
@@ -51,7 +51,7 @@ input.flatpickr-input {
 }
 
 // Fix Flatpickr bug where things jusy highlight for no reason.
-input.flatpickr-input[readonly] {
+input.input[readonly] {
   -webkit-touch-callout: none; /* iOS Safari */
     -webkit-user-select: none; /* Safari */
      -khtml-user-select: none; /* Konqueror HTML */
@@ -60,6 +60,7 @@ input.flatpickr-input[readonly] {
             user-select: none; /* Non-prefixed version, currently
                                   supported by Chrome, Edge, Opera and Firefox */
 }
+
 
 .flatpickr-months .flatpickr-prev-month:hover svg,
 .flatpickr-months .flatpickr-next-month:hover svg {

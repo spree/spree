@@ -759,10 +759,14 @@ en:
     date: Date
     date_completed: Date Completed
     date_picker:
+      # Legacy formatting pre 4.2 (Flatpickr)
       first_day: 0
       format: ! '%Y/%m/%d'
-      js_format: Y/m/d
-      js_date_time: Y/m/d - H:i
+      js_format: yy/mm/dd
+
+      # FlatPickr human friendly formatting
+      fpr_human_friendly_date_format: M j, Y
+      fpr_human_friendly_date_time_format: M j, Y H:i
     date_range: Date Range
     default: Default
     default_country_cannot_be_deleted: Default country cannot be deleted

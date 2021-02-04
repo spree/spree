@@ -24,8 +24,6 @@
     no_results:               Spree.t(:no_results),
     option_type_placeholder:  Spree.t(:option_type_placeholder),
     paste:                    Spree.t(:paste),
-    date_format:              Spree.t(:js_format, scope: 'date_picker', default: 'Y/m/d'),
-    date_time_format:         Spree.t(:js_date_time, scope: 'date_picker', default: 'Y/m/d - H:i'),
     previous:                 Spree.t(:previous),
     remove:                   Spree.t(:remove),
     rename:                   Spree.t(:rename),
@@ -45,6 +43,7 @@
                               # Substitute - for _ converting zh-tw to zh_tw
                               # Flatpickr not making things easy here.
     flatpickr_locale:         "#{flatpickr_local_fallback.sub("-", "_")}"
+
   }.to_json
 %>
 </script>
