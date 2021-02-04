@@ -49,12 +49,20 @@ const renderAst = new RehypeReact({
  * Component
  */
 
+function capitalize(s) {
+  return s[0].toUpperCase() + s.slice(1)
+}
+
 export default function Template({ data }) {
   const { guide } = data
 
   let pageTitle = guide.frontmatter.title
+
+  if (guide.fields.section) {
+    pageTitle += ` | ${capitalize(guide.fields.section.replace(/_/, ' '))}`
+  }
   if (guide.fields.rootSection) {
-    pageTitle += ` | ${guide.fields.rootSection.replace(/_/, ' ')}`
+    pageTitle += ` | ${capitalize(guide.fields.rootSection.replace(/_/, ' '))}`
   }
 
   let pageDescription = guide.frontmatter.description

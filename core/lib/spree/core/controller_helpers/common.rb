@@ -10,8 +10,6 @@ module Spree
 
           layout :get_layout
 
-          before_action :set_user_language
-
           protected
 
           # can be used in views as well as controllers.
@@ -43,12 +41,12 @@ module Spree
           private
 
           def set_user_language
-            locale = session[:locale]
-            locale = store_locale if respond_to?(:store_locale, true) && locale.blank?
-            locale = config_locale if respond_to?(:config_locale, true) && locale.blank?
-            locale = Rails.application.config.i18n.default_locale if locale.blank?
-            locale = I18n.default_locale unless I18n.available_locales.map(&:to_s).include?(locale.to_s)
-            I18n.locale = locale
+            ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
+              ControllerHelpers::Common#set_user_language is deprecated and will be removed in Spree 5.0.
+              Please use `before_action :set_locale` instead
+            DEPRECATION
+
+            set_locale
           end
 
           # Returns which layout to render.

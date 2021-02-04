@@ -43,28 +43,39 @@ module Spree
       end
     end
 
+    def self.available_locales
+      Rails.cache.fetch('stores_available_locales') do
+        Spree::Store.all.map(&:supported_locales_list).flatten.uniq
+      end
+    end
+
     def supported_currencies_list
-      (read_attribute(:supported_currencies).to_s.split(',') << default_currency).map(&:to_s).map do |code|
+      @supported_currencies_list ||= (read_attribute(:supported_currencies).to_s.split(',') << default_currency).map(&:to_s).map do |code|
         ::Money::Currency.find(code.strip)
       end.uniq.compact
     end
 
+    def supported_locales_list
+      # TODO: add support of multiple supported languages to a single Store
+      @supported_locales_list ||= [default_locale].compact.uniq
+    end
+
     def unique_name
-      "#{name} (#{code})"
+      @unique_name ||= "#{name} (#{code})"
     end
 
     def formatted_url
       return if url.blank?
 
-      if url.match(/http:\/\/|https:\/\//)
-        url
-      else
-        "https://#{url}"
-      end
+      @formatted_url ||= if url.match(/http:\/\/|https:\/\//)
+                           url
+                         else
+                           Rails.env.development? ? "http://#{url}" : "https://#{url}"
+                         end
     end
 
     def countries_available_for_checkout
-      checkout_zone_or_default.try(:country_list) || Spree::Country.all
+      @countries_available_for_checkout ||= checkout_zone_or_default.try(:country_list) || Spree::Country.all
     end
 
     def states_available_for_checkout(country)
@@ -72,7 +83,7 @@ module Spree
     end
 
     def checkout_zone_or_default
-      checkout_zone || Spree::Zone.default_checkout_zone
+      @checkout_zone_or_default ||= checkout_zone || Spree::Zone.default_checkout_zone
     end
 
     private
@@ -94,6 +105,7 @@ module Spree
 
     def clear_cache
       Rails.cache.delete('default_store')
+      Rails.cache.delete('stores_available_locales')
     end
   end
 end

@@ -1,6 +1,6 @@
 <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @promotion } %>
 
-<div class="row" id="general_fields" >
+<div class="row" id="general_fields">
   <div class="col-12 col-md-3">
     <%= f.field_container :name, class: ['form-group'] do %>
       <%= f.label :name %>
@@ -64,7 +64,7 @@
            data-wrap="true"
            data-enable-time="true"
            data-date-format="<%= Spree.t('js_date_time', scope: 'date_picker') %>"
-           data-max-date="<%= @promotion.expires_at %>" >
+           data-max-date="<%= @promotion.expires_at %>">
         <%= f.datetime_field :starts_at,
                              class: 'form-control shadow-none',
                              placeholder: Spree.t('starting_from'),
@@ -78,9 +78,9 @@
       <%= f.label :expires_at %>
       <div class="input-group datePickerTo"
            data-wrap="true"
-           data-enable-time= 'true'
-           data-date-format= "<%= Spree.t('js_date_time', scope: 'date_picker') %>"
-           data-min-date="<%= @promotion.starts_at %>" >
+           data-enable-time='true'
+           data-date-format="<%= Spree.t('js_date_time', scope: 'date_picker') %>"
+           data-min-date="<%= @promotion.starts_at %>">
         <%= f.datetime_field :expires_at,
                               placeholder:Spree.t('ends_at'),
                               class: 'form-control shadow-none',

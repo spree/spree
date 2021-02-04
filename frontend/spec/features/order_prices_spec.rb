@@ -6,7 +6,7 @@ xdescribe 'Order', type: :feature, js: true do
 
   before do
     reset_spree_preferences do |config|
-      config.show_store_currency_selector  = true
+      config.show_store_selector  = true
     end
 
     create(:price, variant: product.master, currency: 'EUR', amount: 16.00)

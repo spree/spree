@@ -9,7 +9,7 @@
       <h2 class="item-title"><%= link_to line_item.name, spree.product_path(variant.product) %></h2>
       <% if line_item.insufficient_stock? %>
         <span class="out-of-stock">
-          <%= Spree.t(:out_of_stock) %>&nbsp;&nbsp;<br />
+          <%= Spree.t(:out_of_stock) %>&nbsp;&nbsp;<br>
         </span>
       <% end %>
       <ul class="item-details-list" data-hook="line_item_description">

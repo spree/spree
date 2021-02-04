@@ -66,7 +66,7 @@
   </div>
 <% end %>
 
-<fieldset class="margint">
+<fieldset class="mt-3">
   <legend><%= Spree.t(:calculated_reimbursements) %></legend>
   <div class="table-responsive">
     <table class="table table-condensed table-bordered">
@@ -93,7 +93,6 @@
       <%= "#{Spree.t('note')}: #{Spree.t('this_order_has_already_received_a_refund')}. #{Spree.t('make_sure_the_above_reimbursement_amount_is_correct')}." %>
     </div>
   <% end %>
-
   <div class="form-actions" data-hook="reimburse-buttons">
     <% if !@reimbursement.reimbursed? %>
       <%= button_to [:perform, :admin, @order, @reimbursement], { class: 'btn btn-primary', method: 'post' } do %>

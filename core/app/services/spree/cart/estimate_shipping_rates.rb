@@ -24,7 +24,7 @@ module Spree
         if country_iso.present?
           ::Spree::Country.by_iso(country_iso)&.id
         else
-          ::Spree::Country.default.id
+          Spree::Config[:default_country_id]
         end
       end
 

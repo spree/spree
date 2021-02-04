@@ -1,5 +1,5 @@
 ---
-title: "Custom Authentication"
+title: "Authentication"
 section: customization
 order: 8
 ---

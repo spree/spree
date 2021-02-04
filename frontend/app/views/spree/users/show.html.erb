@@ -1,5 +1,5 @@
 <div class="container account-page">
-  <h3 class="text-uppercase spree-mb-large spree-mt-large spree-header" ><%= accurate_title %></h3>
+  <h3 class="text-uppercase spree-mb-large spree-mt-large spree-header"><%= accurate_title %></h3>
 
   <div class="row">
     <div class="col-xs-12 col-lg-4">
@@ -41,7 +41,7 @@
   </div>
 
   <div data-hook="account_my_orders" class="account-page-orders" id="account-my-orders">
-    <h3 class="text-uppercase spree-mb-medium spree-mt-medium spree-header" ><%= Spree.t(:my_orders) %></h3>
+    <h3 class="text-uppercase spree-mb-medium spree-mt-medium spree-header"><%= Spree.t(:my_orders) %></h3>
     <% if @orders.present? %>
       <table>
         <thead class="active">
@@ -73,7 +73,7 @@
     <% else %>
       <p class="text-center"><%= Spree.t(:you_have_no_orders_yet) %></p>
     <% end %>
-    <br />
+    <br>
   </div>
   <div id="delete-address-popup" class="delete-address-popup-dropdown hide-on-esc">
     <%= render 'spree/shared/delete_address_popup' %>

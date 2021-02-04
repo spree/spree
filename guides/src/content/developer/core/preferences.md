@@ -426,7 +426,7 @@ Determines if, on the admin listing screen, only completed orders should be show
 
 Determines if the variant's full price or price difference from a product should be displayed on the product's show page. Defaults to `false`.
 
-`show_store_currency_selector`
+`show_store_selector`
 
 Display the Store selector in the main nav bar of Storefront and allow users to change Store and Currency. Defaults to `false`.
 

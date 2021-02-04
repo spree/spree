@@ -1,6 +1,7 @@
 ---
 title: Developing Spree
 section: tutorial
+order: 2
 ---
 
 ## Overview
@@ -29,7 +30,7 @@ If `bundle install` fails that means you're missing some required system librari
 Firstly, please [install homebew](https://brew.sh/). With homebrew installed you will need to install some packages needed to run Spree and Rails applications in general:
 
 ```bash
-brew install openssl mysql postgresql sqlite
+brew install openssl mysql postgresql sqlite imagemagick
 ```
 
 ## Sandbox
@@ -38,6 +39,30 @@ Create a sandbox Rails application for testing purposes which automatically perf
 
 ```shell
 bundle exec rake sandbox
+```
+
+For headless sandbox please run:
+
+```shell
+SPREE_HEADLESS=true bundle exec rake sandbox
+```
+
+By default Sandbox uses SQLite database. But you can switch to PostgreSQL:
+
+```shell
+DB=postgres bundle exec rake sandbox
+```
+
+or MySQL:
+
+```shell
+DB=mysql bundle exec rake sandbox
+```
+
+You can also combine those options:
+
+```shell
+SPREE_HEADLESS=true DB=postgres bundle exec rake sandbox
 ```
 
 Start the server

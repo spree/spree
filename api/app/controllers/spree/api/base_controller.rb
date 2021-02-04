@@ -6,6 +6,8 @@ module Spree
       include Spree::Api::ControllerSetup
       include Spree::Core::ControllerHelpers::Store
       include Spree::Core::ControllerHelpers::StrongParameters
+      include Spree::Core::ControllerHelpers::Locale
+      include Spree::Core::ControllerHelpers::Currency
 
       attr_accessor :current_api_user
 

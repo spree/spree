@@ -23,7 +23,7 @@ describe 'orders', type: :feature do
 
     visit spree.order_path(order)
 
-    within '.order-show-line-items-line-item-desc-price' do
+    within first('[data-hook="order_item_price"]') do
       expect(page).to have_content '19.00'
     end
   end

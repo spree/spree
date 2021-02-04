@@ -25,7 +25,7 @@
         <li class="d-flex justify-content-between align-items-center mobile-navigation-list-item">
           <%= link_to root[:title], root[:url], class: 'w-75' %>
           <% if root[:items].present? %>
-            <a class="w-25 text-right mobile-navigation-category-link" data-category="<%= root[:title].parameterize %>" href="#" aria-label="<%= Spree.t('go_to_category')%>">
+            <a class="w-25 text-right mobile-navigation-category-link" data-category="<%= root[:title].parameterize %>" href="#" aria-label="<%= Spree.t('go_to_category') %>">
               <%= icon(name: 'arrow-right',
                        classes: 'd-inline spree-icon-arrow spree-icon-arrow-right',
                        width: 14,

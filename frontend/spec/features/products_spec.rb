@@ -185,6 +185,24 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
     end
   end
 
+  context 'a product with more than one image', js: true do
+    let!(:product) { create(:base_product, description: 'Testing sample', name: 'Sample', price: '19.99') }
+
+    before do
+      image = File.open(File.expand_path('../fixtures/thinking-cat.jpg', __dir__))
+      5.times { create_image(product, image) }
+    end
+
+    it 'display multiple images' do
+      visit spree.product_path(product)
+
+      expect(product.images.size).to eq 5
+      within('#productThumbnailsCarousel') do
+        expect(page).to have_selector("img[data-src$='thinking-cat.jpg']").exactly(5)
+      end
+    end
+  end
+
   context 'an out of stock product without variants' do
     let(:product) { Spree::Product.find_by(name: 'Ruby on Rails Tote') }
 
@@ -482,7 +500,7 @@ describe 'Visiting Products', type: :feature, inaccessible: true do
       end
     end
   end
-      
+
   context 'a product with properties set will' do
     let(:property) { create(:property) }
     let(:prop1) { create(:property, name: 'Amazon Data Catalog', presentation: 'amazon_dataset_catagory') }

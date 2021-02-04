@@ -1,6 +1,7 @@
 module Spree
   class TaxonsController < Spree::StoreController
     include Spree::FrontendHelper
+    include Spree::CacheHelper
     helper 'spree/products'
 
     before_action :load_taxon
@@ -8,13 +9,13 @@ module Spree
     respond_to :html
 
     def show
-      if stale?(etag: etag, last_modified: last_modified, public: true)
+      if !http_cache_enabled? || stale?(etag: etag, last_modified: last_modified, public: true)
         load_products
       end
     end
 
     def product_carousel
-      if stale?(etag: carousel_etag, last_modified: last_modified, public: true)
+      if !http_cache_enabled? || stale?(etag: carousel_etag, last_modified: last_modified, public: true)
         load_products
         if @products.reload.any?
           render template: 'spree/taxons/product_carousel', layout: false

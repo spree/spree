@@ -5,6 +5,8 @@ module Spree
         include CanCan::ControllerAdditions
         include Spree::Core::ControllerHelpers::StrongParameters
         include Spree::Core::ControllerHelpers::Store
+        include Spree::Core::ControllerHelpers::Locale
+        include Spree::Core::ControllerHelpers::Currency
         rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
         rescue_from CanCan::AccessDenied, with: :access_denied
         rescue_from Spree::Core::GatewayError, with: :gateway_error
@@ -80,6 +82,10 @@ module Spree
             select { |_, v| v.is_a?(String) }.
             each { |type, values| fields[type.intern] = values.split(',').map(&:intern) }
           fields.presence
+        end
+
+        def serializer_params
+          { currency: current_currency, store: current_store, user: spree_current_user }
         end
 
         def record_not_found

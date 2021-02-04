@@ -9,12 +9,6 @@ module Spree
       before_action :load_all_countries, only: [:new, :edit, :update, :create]
       before_action :load_all_zones, only: %i[new edit]
 
-      if defined?(SpreeI18n)
-        include SpreeI18n::LocaleHelper
-      end
-
-      helper_method :all_locales_options
-
       def index
         if params[:ids]
           load_stores_by_ids
@@ -135,14 +129,6 @@ module Spree
 
       def set_default_country_id
         @store.default_country_id = Spree::Config[:default_country_id]
-      end
-
-      # this method is overriten by spree_i18n to add support for more locales
-      # in https://github.com/spree-contrib/spree_i18n/blob/master/app/helpers/spree_i18n/locale_helper.rb#L17
-      unless defined?(SpreeI18n)
-        def all_locales_options
-          [['English (EN)', :en]]
-        end
       end
     end
   end

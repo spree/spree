@@ -17,13 +17,14 @@ module Spree
         def serialize_collection(collection)
           collection_serializer.new(
             collection,
-            collection_options(collection)
+            collection_options(collection).merge(params: serializer_params)
           ).serializable_hash
         end
 
         def serialize_resource(resource)
           resource_serializer.new(
             resource,
+            params: serializer_params,
             include: resource_includes,
             fields: sparse_fields
           ).serializable_hash

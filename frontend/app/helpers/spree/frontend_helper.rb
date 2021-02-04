@@ -16,7 +16,7 @@ module Spree
     end
 
     def stores
-      @stores ||= Spree::Store.includes(:default_country)
+      @stores ||= Spree::Store.includes(:default_country).order(:id)
     end
 
     def store_currency_symbol(store)
@@ -248,7 +248,7 @@ module Spree
     end
 
     def price_filter_values
-      [
+      @price_filter_values ||= [
         "#{I18n.t('activerecord.attributes.spree/product.less_than')} #{formatted_price(50)}",
         "#{formatted_price(50)} - #{formatted_price(100)}",
         "#{formatted_price(101)} - #{formatted_price(150)}",
@@ -295,7 +295,11 @@ module Spree
     end
 
     def checkout_available_payment_methods
-      @order.available_payment_methods(current_store)
+      @checkout_available_payment_methods ||= @order.available_payment_methods(current_store)
+    end
+
+    def color_option_type_name
+      @color_option_type_name ||= Spree::OptionType.color&.name
     end
 
     private
@@ -314,7 +318,9 @@ module Spree
       end
     end
 
-    def checkout_edit_link(step = 'address')
+    def checkout_edit_link(step = 'address', order = @order)
+      return if order.complete?
+
       classes = 'align-text-bottom checkout-confirm-delivery-informations-link'
 
       link_to spree.checkout_state_path(step), class: classes, method: :get do

@@ -6,7 +6,7 @@
       <%= Spree.t(:ending_in) %> <%= source.last_digits %>
     <% end %>
   </span>
-  <br />
+  <br>
   <span class="full-name"><%= source.name %></span>
 <% else %>
   <%= content_tag(:span, payment.payment_method.name) %>
@@ -14,4 +14,4 @@
 
 <span class="payment-amount">(<%= payment.display_amount %>)</span>
 
-<br />
+<br>

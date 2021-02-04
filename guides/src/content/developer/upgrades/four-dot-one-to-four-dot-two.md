@@ -18,14 +18,38 @@ This is the safest and recommended method.
 ## Update Gemfile
 
 ```ruby
-gem 'spree', '~> 4.2.0.rc3'
+gem 'spree', '~> 4.2.0.rc4'
 gem 'spree_auth_devise', '~> 4.3'
 gem 'spree_gateway', '~> 3.9'
+gem 'spree_i18n', '~> 5.0'
+```
+
+## Remove SpreeMultiCurrency (optional)
+
+If you used that gem in the past you need to remove. Multi Currency is now incorporated into Spree core and you cannot use that gem anymore.
+
+1. Remove `spree_multi_currency` from your `Gemfile`
+2. Remove these preferences from your Spree initializer (`config/initializers/spree.rb`):
+
+      * `allow_currency_change`
+      * `show_currency_selector`
+      * `supported_currencies`
+3. Remove `//= require spree/frontend/spree_multi_currency` from `vendor/assets/javascripts/spree/frontend/all.js`
+4. Remove `//= require spree/backend/spree_multi_currency` from `vendor/assets/javascripts/spree/backend/all.js`
+
+## Add `deface` gem (optional)
+
+If you used [Deface overrides](/developer/tutorials/deface_overrides_tutorial.html) you will need to include `deface` in your `Gemfile` as it was removed from Spree / Spree Auth Devise / Spree Gateway dependencies.
+
+Simply add:
+
+```ruby
+gem 'deface'
 ```
 
 ## Update gems
 
-```
+```bash
 bundle update
 ```
 
@@ -54,6 +78,14 @@ rails active_storage:update
 
 ```bash
 rails db:migrate
+```
+
+## Upgrade all of your Spree extensions to the newest versions
+
+To avoid errors and compatibility issues, please update all of your Spree extension gems to the newest versions which usually includes fixes for the new Spree release, eg.
+
+```bash
+bundle update spree_related_products
 ```
 
 ## Other things to remember

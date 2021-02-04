@@ -30,7 +30,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'acts_as_list', '~> 0.8'
   s.add_dependency 'awesome_nested_set', '>= 3.3.1', '< 4.0'
   s.add_dependency 'carmen', '>= 1.0', '< 1.2'
-  s.add_dependency 'cancancan', '~> 3.0'
+  s.add_dependency 'cancancan', '~> 3.2'
   s.add_dependency 'ffaker', '~> 2.9'
   s.add_dependency 'friendly_id', '>= 5.2.1', '< 5.5.0'
   s.add_dependency 'highline', '~> 2.0.0' # Necessary for the install generator

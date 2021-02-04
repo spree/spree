@@ -33,8 +33,7 @@
     <% if @taxon.icon.present? %>
       <%= link_to Spree.t(:remove_image),
         remove_icon_admin_taxonomy_taxon_url(@taxonomy.id, @taxon.id),
-        method: :delete
-      %>
+        method: :delete %>
     <% end %>
   <% end %>
 

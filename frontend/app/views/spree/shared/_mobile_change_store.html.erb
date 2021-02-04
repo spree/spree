@@ -1,7 +1,7 @@
 <% if stores.size > 1 %>
   <li class="d-flex justify-content-between align-items-center mobile-navigation-list-item">
-    <span class="w-75"><%= Spree.t('nav_bar.change_country')%></span>
-    <a class="w-25 text-right mobile-navigation-category-link" data-category="countries" href="#" aria-label="<%= Spree.t('nav_bar.change_country')%>">
+    <span class="w-75"><%= Spree.t('nav_bar.change_country') %></span>
+    <a class="w-25 text-right mobile-navigation-category-link" data-category="countries" href="#" aria-label="<%= Spree.t('nav_bar.change_country') %>">
       <%= icon(name: 'arrow-right',
               classes: 'd-sm-none spree-icon-arrow spree-icon-arrow-right',
               width: 16,
@@ -14,7 +14,7 @@
 
     <ul class="list-unstyled position-absolute mobile-navigation-sublist" data-category="countries">
       <li class="text-center font-weight-bold mobile-navigation-sublist-header">
-        <%= Spree.t('nav_bar.change_country')%>
+        <%= Spree.t('nav_bar.change_country') %>
       </li>
       <% stores.each do |store| %>
         <li class="d-flex justify-content-between align-items-center mobile-navigation-list-item">

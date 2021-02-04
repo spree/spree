@@ -64,13 +64,15 @@
           <td><%= link_to promotion.name, edit_admin_promotion_path(promotion) %></td>
           <td><%= promotion.code %></td>
           <td><%= promotion.description %></td>
-          <td><%= promotion.usage_limit.nil? ? "∞" : promotion.usage_limit  %></td>
+          <td><%= promotion.usage_limit.nil? ? "∞" : promotion.usage_limit %></td>
           <td><%= Spree.t(:current_promotion_usage, count: promotion.credits_count) %></td>
           <td><%= promotion.expires_at.to_date.to_s(:short_date) if promotion.expires_at %></td>
-          <td class="actions actions-2" data-hook="admin_promotions_index_row_actions">
-            <%= link_to_edit promotion, no_text: true if can?(:edit, promotion) %>
-            <%= link_to_clone_promotion promotion, no_text: true if can?(:clone, promotion) %>
-            <%= link_to_delete promotion, no_text: true if can?(:delete, promotion) %>
+          <td class="actions" data-hook="admin_promotions_index_row_actions">
+            <span class="d-flex justify-content-end">
+             <%= link_to_edit promotion, no_text: true if can?(:edit, promotion) %>
+             <%= link_to_clone_promotion promotion, no_text: true if can?(:clone, promotion) %>
+             <%= link_to_delete promotion, no_text: true if can?(:delete, promotion) %>
+            </span>
           </td>
         </tr>
       <% end %>
