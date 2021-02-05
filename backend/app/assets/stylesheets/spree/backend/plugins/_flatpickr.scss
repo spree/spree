@@ -92,11 +92,17 @@ div.flatpickr-calendar.open {
     display: none;
   }
   .numInputWrapper {
-      span {
-        border-color: transparent;
-        border-radius: 0;
-
-      }
-
+    span {
+      border-color: transparent;
+      border-radius: 0;
+    }
   }
+}
+
+.flatpickr-current-month .flatpickr-monthDropdown-months {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  padding: 0.2em;
+  border-radius: $border-radius;
 }
