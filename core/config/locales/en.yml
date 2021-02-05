@@ -759,11 +759,6 @@ en:
     date: Date
     date_completed: Date Completed
     date_picker:
-      # Legacy formatting pre 4.2 (Flatpickr)
-      first_day: 0
-      format: ! '%Y/%m/%d'
-      js_format: yy/mm/dd
-
       # FlatPickr human friendly formatting
       fpr_human_friendly_date_format: M j, Y
       fpr_human_friendly_date_time_format: M j, Y H:i

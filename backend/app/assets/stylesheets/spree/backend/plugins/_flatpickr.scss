@@ -10,7 +10,6 @@ input.input {
   -moz-appearance: none;
   appearance: none;
   background-color: white !important;
-  border-radius:10px;
 }
 
 .flatpickr-current-month .numInputWrapper {
@@ -31,7 +30,7 @@ input.input {
 }
 
 .input-group {
-  input.flatpickr-input{
+  input.input{
     @include swith-appended-icon  {
       opacity: 0;
     }

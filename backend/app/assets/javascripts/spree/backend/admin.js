@@ -224,9 +224,9 @@ $.fn.radioControlsVisibilityOfElement = function (dependentElementSelector) {
 
 document.addEventListener('DOMContentLoaded', function() {
   var dateFrom = flatpickr('.datePickerFrom', {
-    locale: Spree.translations.flatpickr_locale,
-    time_24hr: true,
     altInput: true,
+    time_24hr: true,
+    locale: Spree.translations.flatpickr_locale,
     onChange: function(selectedDates) {
       dateTo.set('minDate', selectedDates[0])
     }
