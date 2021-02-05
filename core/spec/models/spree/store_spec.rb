@@ -262,11 +262,11 @@ describe Spree::Store, type: :model do
 
   describe '#supported_locales_list' do
     context 'with supported locale set' do
-      let(:store) { create(:store, default_locale: 'fr') }
+      let(:store) { create(:store, default_locale: 'fr', supported_locales: 'fr,de') }
 
       it 'returns supported currencies list' do
         expect(store.supported_locales_list).to be_an_instance_of(Array)
-        expect(store.supported_locales_list).to contain_exactly('fr')
+        expect(store.supported_locales_list).to contain_exactly('fr', 'de')
       end
     end
 

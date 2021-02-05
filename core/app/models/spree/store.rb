@@ -57,7 +57,7 @@ module Spree
 
     def supported_locales_list
       # TODO: add support of multiple supported languages to a single Store
-      @supported_locales_list ||= [default_locale].compact.uniq
+      @supported_locales_list ||= (read_attribute(:supported_locales).to_s.split(',') << default_locale).compact.uniq
     end
 
     def unique_name
