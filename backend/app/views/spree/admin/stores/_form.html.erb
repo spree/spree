@@ -132,7 +132,7 @@
   </div>
   <div class="card-body">
     <%= f.field_container :default_currency, class: ['form-group'] do %>
-      <%= f.label :default_currency, Spree.t(:currency) %>
+      <%= f.label :default_currency %>
       <%= f.select :default_currency, currency_options(@store.default_currency), {}, { class: 'select2' } %>
       <%= f.error_message_on :default_currency %>
     <% end %>
@@ -150,14 +150,19 @@
       <%= f.error_message_on :checkout_zone_id %>
     <% end %>
     <%= f.field_container :default_locale, class: ['form-group'] do %>
-      <%= f.label :default_locale, Spree.t('i18n.language') %>
+      <%= f.label :default_locale %>
       <%= f.select :default_locale, options_from_collection_for_select(all_locales_options, :last, :first, @store.default_locale || I18n.locale), {}, { class: 'select2' } %>
       <%= f.error_message_on :default_locale %>
       <% unless defined?(SpreeI18n) %>
         <small class="form-text text-muted">
-          <%= raw(Spree.t('store_form.languages_help')) %>
+          <%= raw(Spree.t('store_form.locales_help')) %>
         </small>
       <% end %>
+    <% end %>
+    <%= f.field_container :supported_locales, class: ['form-group'] do %>
+      <%= f.label :supported_locales, Spree.t(:supported_locales) %>
+      <%= f.select :supported_locales, options_from_collection_for_select(all_locales_options, :last, :first, @store.supported_locales&.split(',')), {}, { multiple: true, class: 'select2' } %>
+      <%= f.error_message_on :supported_locales %>
     <% end %>
     <%= f.field_container :default_country_id, class: ['form-group'] do %>
       <%= f.label :default_country_id, Spree.t('i18n.default_country') %>

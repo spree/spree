@@ -1613,9 +1613,9 @@ en:
       unable_to_delete: Unable to delete store.
     store_form:
       code_help: "Store unique identifier, which is an abbreviated version of the store’s name (used as the layout directory name, and also helpful for separating templates by store)"
-      checkout_zone_help: "Selecting a Zone will limit customers on Checkout to Addresses in Countries or States in that Zone.
+      checkout_zone_help: "Selecting zone will limit to which Countries or States products are shipped.
         For more information <a href='https://guides.spreecommerce.org/user/configuration/configuring_geography.html#zones' target='_blank' class='alert-link'>please see documentation</a>"
-      languages_help: "Install <a href='https://github.com/spree-contrib/spree_i18n target='_blank' class='alert-link'>Spree I18n extension</a> to add more languages"
+      locales_help: "Install <a href='https://github.com/spree-contrib/spree_i18n target='_blank' class='alert-link'>Spree I18n extension</a> to add more locales"
       social_help: "If you want to link to your social accounts in the footer part of your website please fill below fields"
       default_country_help: "This is the Country that will be pre-selected on the Checkout Address form"
       footer_help: "This content is visible in the footer section of your Store"
@@ -1672,6 +1672,7 @@ en:
     summary: Summary
     supported_currencies: Supported Currencies
     supported_currencies_long: A comma separated list of supported currencies
+    supported_locales: Supported Locales
     tax: Tax
     tax_included: "Tax (incl.)"
     tax_categories: Tax Categories
