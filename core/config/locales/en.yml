@@ -761,7 +761,7 @@ en:
     date_picker:
       # FlatPickr human friendly formatting
       fpr_human_friendly_date_format: M j, Y
-      fpr_human_friendly_date_time_format: M j, Y H:i
+      fpr_human_friendly_date_time_format: M j, Y at H:i
     date_range: Date Range
     default: Default
     default_country_cannot_be_deleted: Default country cannot be deleted

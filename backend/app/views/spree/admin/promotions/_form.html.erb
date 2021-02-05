@@ -1,7 +1,7 @@
 <%= render partial: 'spree/admin/shared/error_messages', locals: { target: @promotion } %>
 
 <div class="row" id="general_fields">
-  <div class="col-12 col-md-3">
+  <div class="col-12 col-lg-4">
     <%= f.field_container :name, class: ['form-group'] do %>
       <%= f.label :name %>
       <%= f.text_field :name, class: 'form-control' %>
@@ -35,7 +35,7 @@
     <% end %>
   </div>
 
-  <div class="col-12 col-md-6">
+  <div class="col-12 col-lg-4">
     <%= f.field_container :description, class: ['form-group'] do %>
       <%= f.label :description %>
       <%= f.text_area :description, rows: 7, class: 'form-control' %>
@@ -47,7 +47,7 @@
     <% end %>
   </div>
 
-  <div id="expiry_fields" class="col-12 col-md-3">
+  <div id="expiry_fields" class="col-12 col-lg-4">
     <div class="form-group">
       <%= f.field_container :usage_limit do %>
         <%= f.label :usage_limit, Spree.t('limit_usage_to') %>
