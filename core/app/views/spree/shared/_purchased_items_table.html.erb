@@ -8,10 +8,13 @@
           <td></td>
           <td>
             <p class="f-fallback purchase_total purchase_total--label">
-              <%= Spree.t(:promotion) %> <%= label %>:
+              <%= Spree.t(:promotion) %>:
+            </p>
+            <p class="f-fallback purchase_total--name purchase_total--label">
+              <%= label %>
             </p>
           </td>
-          <td>
+          <td class="purchase_total-col">
             <p class="f-fallback purchase_total">
               <%= Spree::Money.new(adjustments.sum(&:amount), currency: order.currency) %>
             </p>
@@ -25,10 +28,13 @@
       <td></td>
       <td>
         <p class="f-fallback purchase_total purchase_total--label">
-          <%= Spree.t(:shipping) %> <%= name %>:
+          <%= Spree.t(:shipping) %>:
+        </p>
+        <p class="f-fallback purchase_total--name purchase_total--label">
+          <%= name %>
         </p>
       </td>
-      <td>
+      <td class="purchase_total-col">
         <p class="f-fallback purchase_total">
           <%= Spree::Money.new(shipments.sum(&:discounted_cost), currency: order.currency) %>
         </p>
@@ -41,10 +47,13 @@
         <td></td>
         <td>
           <p class="f-fallback purchase_total purchase_total--label">
-            <%= Spree.t(:tax) %> <%= label %>:
+            <%= Spree.t(:tax) %>:
+          </p>
+          <p class="f-fallback purchase_total--name purchase_total--label">
+            <%= label %>
           </p>
         </td>
-        <td>
+        <td class="purchase_total-col">
           <p class="f-fallback purchase_total">
             <%= Spree::Money.new(adjustments.sum(&:amount), currency: order.currency) %>
           </p>
