@@ -16,7 +16,7 @@
         <% stores.each do |store| %>
           <div class="pl-3 d-flex justify-content-between align-items-center <%= 'active' if store.id == current_store.id %>">
             <span class="flag-icon flag-icon-<%= store_country_iso(store) %>"></span>
-            <%= link_to "#{store.name} (#{store_currency_symbol(store)})", store.formatted_url, class: 'dropdown-item text-uppercase' %>
+            <%= link_to "#{store_locale_name(store)} (#{store_currency_symbol(store)})", store.formatted_url, class: 'dropdown-item text-uppercase' %>
           </div>
         <% end %>
       </div>

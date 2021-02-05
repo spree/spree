@@ -7,26 +7,6 @@ module Spree
       @body_class
     end
 
-    def store_country_iso(store)
-      store ||= current_store
-      return unless store
-      return unless store.default_country
-
-      store.default_country.iso.downcase
-    end
-
-    def stores
-      @stores ||= Spree::Store.includes(:default_country).order(:id)
-    end
-
-    def store_currency_symbol(store)
-      store ||= current_store
-      return unless store
-      return unless store.default_currency
-
-      ::Money::Currency.find(store.default_currency).symbol
-    end
-
     def spree_breadcrumbs(taxon, _separator = '', product = nil)
       return '' if current_page?('/') || taxon.nil?
 
