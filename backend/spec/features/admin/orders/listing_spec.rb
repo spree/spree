@@ -249,7 +249,8 @@ describe 'Orders Listing', type: :feature do
           fill_in 'q_bill_address_lastname_start', with: 'Smith'
           select2 'spree', from: 'Channel'
 
-          # Can not test these in the filter dropdown.
+          # Can not test these in the filter dropdown
+          # With current implementation of flatpickr test support.
           #fill_in_date_picker('q_created_at_gt', with: '2018-01-01')
           #fill_in_date_picker('q_created_at_lt', with: '2018-01-01')
         end
