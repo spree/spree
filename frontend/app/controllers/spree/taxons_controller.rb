@@ -1,6 +1,7 @@
 module Spree
   class TaxonsController < Spree::StoreController
     include Spree::FrontendHelper
+    include Spree::ProductFiltersHelper
     include Spree::CacheHelper
     helper 'spree/products'
 

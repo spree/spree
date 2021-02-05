@@ -1,6 +1,7 @@
 module Spree
   class ProductsController < Spree::StoreController
     include Spree::ProductsHelper
+    include Spree::ProductFiltersHelper
     include Spree::FrontendHelper
     include Spree::CacheHelper
 

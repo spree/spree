@@ -28,6 +28,14 @@ module Spree
       )
     end
 
+    def asset_exists?(path)
+      if Rails.env.production?
+        Rails.application.assets_manifest.find_sources(path).present?
+      else
+        Rails.application.assets.find_asset(path).present?
+      end
+    end
+
     private
 
     def spree_navigation_data_cache_key

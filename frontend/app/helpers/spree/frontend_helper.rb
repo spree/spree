@@ -85,46 +85,6 @@ module Spree
       }[flash_type.to_sym]
     end
 
-    def checkout_progress(numbers: false)
-      states = @order.checkout_steps - ['complete']
-      items = states.each_with_index.map do |state, i|
-        text = Spree.t("order_state.#{state}").titleize
-        text.prepend("#{i.succ}. ") if numbers
-
-        css_classes = ['text-uppercase nav-item']
-        current_index = states.index(@order.state)
-        state_index = states.index(state)
-
-        if state_index < current_index
-          css_classes << 'completed'
-          link_content = content_tag :span, nil, class: 'checkout-progress-steps-image checkout-progress-steps-image--full'
-          link_content << text
-          text = link_to(link_content, spree.checkout_state_path(state), class: 'd-flex flex-column align-items-center', method: :get)
-        end
-
-        css_classes << 'next' if state_index == current_index + 1
-        css_classes << 'active' if state == @order.state
-        css_classes << 'first' if state_index == 0
-        css_classes << 'last' if state_index == states.length - 1
-        # No more joined classes. IE6 is not a target browser.
-        # Hack: Stops <a> being wrapped round previous items twice.
-        if state_index < current_index
-          content_tag('li', text, class: css_classes.join(' '))
-        else
-          link_content = if state == @order.state
-                           content_tag :span, nil, class: 'checkout-progress-steps-image checkout-progress-steps-image--full'
-                         else
-                           inline_svg_tag 'circle.svg', class: 'checkout-progress-steps-image'
-                         end
-          link_content << text
-          content_tag('li', content_tag('a', link_content, class: "d-flex flex-column align-items-center #{'active' if state == @order.state}"), class: css_classes.join(' '))
-        end
-      end
-      content = content_tag('ul', raw(items.join("\n")), class: 'nav justify-content-between checkout-progress-steps', id: "checkout-step-#{@order.state}")
-      hrs = '<hr />' * (states.length - 1)
-      content << content_tag('div', raw(hrs), class: "checkout-progress-steps-line state-#{@order.state}")
-    end
-
     def flash_messages(opts = {})
       flashes = ''
       excluded_types = opts[:excluded_types].to_a.map(&:to_s)
@@ -156,132 +116,13 @@ module Spree
       link_to text.html_safe, spree.cart_path, class: "cart-info nav-link #{css_class}"
     end
 
-    def asset_exists?(path)
-      if Rails.env.production?
-        Rails.application.assets_manifest.find_sources(path).present?
-      else
-        Rails.application.assets.find_asset(path).present?
-      end
-    end
-
-    def plp_and_carousel_image(product, image_class = '')
-      image = default_image_for_product_or_variant(product)
-
-      image_url = if image.present?
-                    main_app.url_for(image.url('plp'))
-                  else
-                    asset_path('noimage/plp.png')
-                  end
-
-      image_style = image&.style(:plp)
-
-      lazy_image(
-        src: image_url,
-        srcset: carousel_image_source_set(image),
-        alt: product.name,
-        width: image_style&.dig(:width) || 278,
-        height: image_style&.dig(:height) || 371,
-        class: "product-component-image d-block mw-100 #{image_class}"
-      )
-    end
-
-    def lazy_image(src:, alt:, width:, height:, srcset: '', **options)
-      # We need placeholder image with the correct size to prevent page from jumping
-      placeholder = "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20#{width}%20#{height}'%3E%3C/svg%3E"
-
-      image_tag placeholder, data: { src: src, srcset: srcset }, class: "#{options[:class]} lazyload", alt: alt
-    end
-
     def permitted_product_params
       product_filters = available_option_types.map(&:name)
       params.permit(product_filters << :sort_by)
     end
 
-    def carousel_image_source_set(image)
-      return '' unless image
-
-      widths = { lg: 1200, md: 992, sm: 768, xs: 576 }
-      set = []
-      widths.each do |key, value|
-        file = main_app.url_for(image.url("plp_and_carousel_#{key}"))
-
-        set << "#{file} #{value}w"
-      end
-      set.join(', ')
-    end
-
-    def image_source_set(name)
-      widths = {
-        desktop: '1200',
-        tablet_landscape: '992',
-        tablet_portrait: '768',
-        mobile: '576'
-      }
-      set = []
-      widths.each do |key, value|
-        filename = key == :desktop ? name : "#{name}_#{key}"
-        file = asset_path("#{filename}.jpg")
-
-        set << "#{file} #{value}w"
-      end
-      set.join(', ')
-    end
-
-    def taxons_tree(root_taxon, current_taxon, max_level = 1)
-      return '' if max_level < 1 || root_taxon.leaf?
-
-      content_tag :div, class: 'list-group' do
-        taxons = root_taxon.children.map do |taxon|
-          css_class = current_taxon&.self_and_ancestors&.include?(taxon) ? 'list-group-item list-group-item-action active' : 'list-group-item list-group-item-action'
-          link_to(taxon.name, seo_url(taxon), class: css_class) + taxons_tree(taxon, current_taxon, max_level - 1)
-        end
-        safe_join(taxons, "\n")
-      end
-    end
-
-    def set_image_alt(image)
-      return image.alt if image.alt.present?
-    end
-
     def icon(name:, classes: '', width:, height:)
       inline_svg_tag "#{name}.svg", class: "spree-icon #{classes}", size: "#{width}px*#{height}px"
-    end
-
-    def price_filter_values
-      @price_filter_values ||= [
-        "#{I18n.t('activerecord.attributes.spree/product.less_than')} #{formatted_price(50)}",
-        "#{formatted_price(50)} - #{formatted_price(100)}",
-        "#{formatted_price(101)} - #{formatted_price(150)}",
-        "#{formatted_price(151)} - #{formatted_price(200)}",
-        "#{formatted_price(201)} - #{formatted_price(300)}"
-      ]
-    end
-
-    def static_filters
-      @static_filters ||= Spree::Frontend::Config[:products_filters]
-    end
-
-    def additional_filters_partials
-      @additional_filters_partials ||= Spree::Frontend::Config[:additional_filters_partials]
-    end
-
-    def filtering_params
-      @filtering_params ||= available_option_types.map(&:filter_param).concat(static_filters)
-    end
-
-    def filtering_params_cache_key
-      @filtering_params_cache_key ||= params.permit(*filtering_params)&.reject { |_, v| v.blank? }&.to_param
-    end
-
-    def available_option_types_cache_key
-      @available_option_types_cache_key ||= Spree::OptionType.filterable.maximum(:updated_at)&.utc&.to_i
-    end
-
-    def available_option_types
-      @available_option_types ||= Rails.cache.fetch("available-option-types/#{available_option_types_cache_key}") do
-        Spree::OptionType.includes(:option_values).filterable.to_a
-      end
-      @available_option_types
     end
 
     def spree_social_link(service)
@@ -291,40 +132,6 @@ module Spree
         content_tag :figure, id: service, class: 'px-2' do
           icon(name: service, width: 22, height: 22)
         end
-      end
-    end
-
-    def checkout_available_payment_methods
-      @checkout_available_payment_methods ||= @order.available_payment_methods(current_store)
-    end
-
-    def color_option_type_name
-      @color_option_type_name ||= Spree::OptionType.color&.name
-    end
-
-    private
-
-    def formatted_price(value)
-      Spree::Money.new(value, currency: current_currency, no_cents_if_whole: true).to_s
-    end
-
-    def credit_card_icon(type)
-      available_icons = %w[visa american_express diners_club discover jcb maestro master]
-
-      if available_icons.include?(type)
-        image_tag "credit_cards/icons/#{type}.svg", class: 'payment-sources-list-item-image'
-      else
-        image_tag 'credit_cards/icons/generic.svg', class: 'payment-sources-list-item-image'
-      end
-    end
-
-    def checkout_edit_link(step = 'address', order = @order)
-      return if order.complete?
-
-      classes = 'align-text-bottom checkout-confirm-delivery-informations-link'
-
-      link_to spree.checkout_state_path(step), class: classes, method: :get do
-        inline_svg_tag 'edit.svg'
       end
     end
   end
