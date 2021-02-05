@@ -21,7 +21,7 @@ describe 'Product Details', type: :feature, js: true do
       expect(page).to have_field(id: 'product_description', with: 'lorem ipsum')
       expect(page).to have_field(id: 'product_price', with: '19.99')
       expect(page).to have_field(id: 'product_cost_price', with: '17.00')
-      expect(page).to have_field(id: 'product_available_on', with: '2013/08/14')
+      expect(page).to have_field(id: 'product_available_on', type: :hidden, with: '2013-08-14')
       expect(page).to have_field(id: 'product_sku', with: 'A100')
     end
 

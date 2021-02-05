@@ -153,13 +153,14 @@ describe 'Products', type: :feature do
         fill_in 'product_name', with: 'Baseball Cap'
         fill_in 'product_sku', with: 'B100'
         fill_in 'product_price', with: '100'
-        fill_in 'product_available_on', with: '2012/01/24'
-        find('#product_available_on').send_keys(:tab)
+
+        fill_in_date_picker('product_available_on', with: '2012-01-24')
         select2 'Size', from: 'Prototype'
         check 'Large'
         select2 @shipping_category.name, css: '#product_shipping_category_field'
         click_button 'Create'
         expect(page).to have_content('successfully created!')
+        expect(page).to have_field(id: 'product_available_on', type: :hidden, with: '2012-01-24')
         expect(Spree::Product.last.variants.length).to eq(1)
       end
 

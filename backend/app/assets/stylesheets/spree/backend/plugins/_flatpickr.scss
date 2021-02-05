@@ -5,7 +5,7 @@
   }
 }
 
-input.flatpickr-input {
+input.input {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
@@ -30,7 +30,7 @@ input.flatpickr-input {
 }
 
 .input-group {
-  input.flatpickr-input{
+  input.input{
     @include swith-appended-icon  {
       opacity: 0;
     }
@@ -51,7 +51,7 @@ input.flatpickr-input {
 }
 
 // Fix Flatpickr bug where things jusy highlight for no reason.
-input.flatpickr-input[readonly] {
+input.input[readonly] {
   -webkit-touch-callout: none; /* iOS Safari */
     -webkit-user-select: none; /* Safari */
      -khtml-user-select: none; /* Konqueror HTML */
@@ -60,6 +60,7 @@ input.flatpickr-input[readonly] {
             user-select: none; /* Non-prefixed version, currently
                                   supported by Chrome, Edge, Opera and Firefox */
 }
+
 
 .flatpickr-months .flatpickr-prev-month:hover svg,
 .flatpickr-months .flatpickr-next-month:hover svg {
@@ -75,6 +76,12 @@ input.flatpickr-input[readonly] {
   border-bottom-right-radius: $border-radius !important;
 }
 
+.input-group >
+.form-control:not(:first-child), .input-group > .input:not(:first-child) {
+  border-top-left-radius: $border-radius !important;
+  border-bottom-left-radius: $border-radius !important;
+}
+
 div.flatpickr-calendar.open {
   z-index: $zindex-dropdown;
 }
@@ -85,11 +92,17 @@ div.flatpickr-calendar.open {
     display: none;
   }
   .numInputWrapper {
-      span {
-        border-color: transparent;
-        border-radius: 0;
-
-      }
-
+    span {
+      border-color: transparent;
+      border-radius: 0;
+    }
   }
+}
+
+.flatpickr-current-month .flatpickr-monthDropdown-months {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  padding: 0.2em;
+  border-radius: $border-radius;
 }

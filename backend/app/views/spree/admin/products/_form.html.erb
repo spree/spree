@@ -66,7 +66,7 @@
 
           <div class="input-group datePickerFrom"
                data-wrap="true"
-               data-date-format="<%= Spree.t(:js_format, scope: 'date_picker', default: 'Y/m/d') %>"
+               data-alt-format="<%= Spree.t(:fpr_human_friendly_date_format, scope: 'date_picker', default: 'M j, Y') %>"
                data-max-date="<%= @product.discontinue_on %>">
 
             <%= f.text_field :available_on,
@@ -87,7 +87,7 @@
 
           <div class="input-group datePickerTo"
                data-wrap="true"
-               data-date-format="<%= Spree.t(:js_format, scope: 'date_picker', default: 'Y/m/d') %>"
+               data-alt-format="<%= Spree.t(:fpr_human_friendly_date_format, scope: 'date_picker', default: 'M j, Y') %>"
                data-min-date="<%= @product.available_on %>">
 
             <%= f.text_field :discontinue_on,
