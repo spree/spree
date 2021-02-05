@@ -5,7 +5,7 @@
       <%= raw(adjustment.label) %>:
     </p>
   </td>
-  <td>
+  <td class="purchase_total-col">
     <p class="f-fallback purchase_total">
       <%= Spree::Money.new(adjustment.amount, currency: order.currency) %>
     </p>
