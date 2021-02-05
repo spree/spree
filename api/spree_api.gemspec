@@ -30,4 +30,6 @@ Gem::Specification.new do |s|
   s.add_dependency 'rabl', '~> 0.14.2'
   s.add_dependency 'jsonapi-serializer', '~> 2.1'
   s.add_dependency 'doorkeeper', '~> 5.2', '>= 5.2.1'
+  s.add_dependency 'graphql', '~> 1.9.11'
+  s.add_dependency 'jwt', '~> 2.2.1'
 end
