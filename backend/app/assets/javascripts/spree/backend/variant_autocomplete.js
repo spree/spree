@@ -9,7 +9,7 @@ $(function () {
   }
 })
 
-function formatVariantResult(variant) {
+function formatVariantResult (variant) {
   if (variant.loading) {
     return variant.text
   }
@@ -41,7 +41,7 @@ $.fn.variantAutocomplete = function () {
 
         return query;
       },
-      processResults: function(data) {
+      processResults: function (data) {
         window.variants = data.variants
         return {
           results: data.variants
@@ -49,7 +49,7 @@ $.fn.variantAutocomplete = function () {
       }
     },
     templateResult: formatVariantResult,
-    templateSelection: function(variant) {
+    templateSelection: function (variant) {
       if (variant.options_text) {
         return variant.name + '(' + variant.options_text + ')'
       } else {

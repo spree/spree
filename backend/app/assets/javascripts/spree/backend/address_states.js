@@ -1,5 +1,5 @@
 // eslint-disable-next-line camelcase, no-unused-vars
-function update_state(region, done) {
+function update_state (region, done) {
   'use strict'
 
   var countryId = $('#' + region + 'country select').val()

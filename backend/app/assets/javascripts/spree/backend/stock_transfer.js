@@ -127,11 +127,11 @@ $(function () {
     }
   }
 
-  function formattedVariantList(obj) {
+  function formattedVariantList (obj) {
     return { id: obj.id, text: obj.name, name: obj.name, sku: obj.sku, options_text: obj.options_text, variant: obj }
   }
 
-  function formattedStockItemsList(obj) {
+  function formattedStockItemsList (obj) {
     return { id: obj.variant.id, text: obj.variant.name, name: obj.variant.name, sku: obj.variant.sku, options_text: obj.variant.options_text, variant: obj.variant }
   }
 
@@ -163,7 +163,7 @@ $(function () {
           }
         }
       },
-      templateResult: function(variant) {
+      templateResult: function (variant) {
         if (variant.options_text !== '') {
           return variant.name + ' - ' + variant.sku + ' (' + variant.options_text + ')'
         } else {

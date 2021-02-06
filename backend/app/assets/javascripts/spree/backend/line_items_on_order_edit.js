@@ -26,7 +26,7 @@ function addVariant () {
   return 1
 }
 
-var adjustLineItems = function(orderNumber, variantId, quantity) {
+var adjustLineItems = function (orderNumber, variantId, quantity) {
   var url = Spree.routes.orders_api + '/' + orderNumber + '/line_items'
 
   $.ajax({

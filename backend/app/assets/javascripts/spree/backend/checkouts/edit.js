@@ -1,15 +1,15 @@
-function clearAddressFields(addressKinds) {
+function clearAddressFields (addressKinds) {
   if (addressKinds === undefined) {
     addressKinds = ['ship', 'bill']
   }
-  addressKinds.forEach(function(addressKind) {
-    ADDRESS_FIELDS.forEach(function(field) {
+  addressKinds.forEach(function (addressKind) {
+    ADDRESS_FIELDS.forEach(function (field) {
       $('#order_' + addressKind + '_address_attributes_' + field).val('')
     })
   })
 }
 
-function formatCustomerResult(customer) {
+function formatCustomerResult (customer) {
   var escapedResult = window.customerTemplate({
     customer: customer,
     bill_address: customer.bill_address,
@@ -18,7 +18,7 @@ function formatCustomerResult(customer) {
   return $(escapedResult)
 }
 
-function formatCustomerAddress(address, kind) {
+function formatCustomerAddress (address, kind) {
   $('#order_' + kind + '_address_attributes_firstname').val(address.firstname)
   $('#order_' + kind + '_address_attributes_lastname').val(address.lastname)
   $('#order_' + kind + '_address_attributes_address1').val(address.address1)
@@ -33,12 +33,12 @@ function formatCustomerAddress(address, kind) {
 
   var stateSelect = $('#order_' + kind + '_address_attributes_state_id')
 
-  update_state(kind.charAt(0), function() {
+  update_state(kind.charAt(0), function () {
     stateSelect.val(address.state_id).trigger('change')
   })
 }
 
-function formatCustomerSelection(customer) {
+function formatCustomerSelection (customer) {
   $('#order_email').val(customer.email)
   $('#order_user_id').val(customer.id)
   $('#guest_checkout_true').prop('checked', false)
@@ -63,7 +63,7 @@ function formatCustomerSelection(customer) {
   return customer.email
 }
 
-$.fn.customerAutocomplete = function() {
+$.fn.customerAutocomplete = function () {
   this.select2({
     minimumInputLength: 3,
     placeholder: Spree.translations.choose_a_customer,
@@ -89,12 +89,12 @@ $.fn.customerAutocomplete = function() {
     },
     templateResult: formatCustomerResult
   }).on('select2:select', function (e) {
-    var data = e.params.data;
+    var data = e.params.data
     formatCustomerSelection(data)
   })
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   $('#customer_search').customerAutocomplete()
 
   if ($('#customer_autocomplete_template').length > 0) {

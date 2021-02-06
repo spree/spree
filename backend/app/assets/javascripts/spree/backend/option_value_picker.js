@@ -9,13 +9,13 @@ $.fn.optionValueAutocomplete = function (options) {
   var values = options.values
   var clearSelection = options.clearSelection
 
-  function formatOptionValueList(values) {
-    return values.map(function(obj) {
+  function formatOptionValueList (values) {
+    return values.map(function (obj) {
       return { id: obj.id, text: obj.name }
     })
   }
 
-  function addOptions(select, productId, values) {
+  function addOptions (select, productId, values) {
     $.ajax({
       type: 'GET',
       url: Spree.routes.option_values_api,
@@ -49,9 +49,9 @@ $.fn.optionValueAutocomplete = function (options) {
           token: Spree.api_key
         }
 
-        return query;
+        return query
       },
-      processResults: function(data) {
+      processResults: function (data) {
         var results = formatOptionValueList(data)
 
         return {

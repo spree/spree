@@ -49,7 +49,7 @@ function initProductActions () {
       var valuesSelect = optionValue.find('.js-promo-rule-option-value-option-values-select')
 
       productSelect.productAutocomplete({ multiple: false, values: productId })
-      productSelect.on('select2:select', function(e) {
+      productSelect.on('select2:select', function (e) {
         valuesSelect.attr('disabled', false).removeClass('d-none').addClass('d-block')
         valuesSelect.attr('name', optionValueSelectNameTemplate({ productId: productSelect.val() }).trim())
         valuesSelect.optionValueAutocomplete({
@@ -57,7 +57,7 @@ function initProductActions () {
           productSelect: productSelect,
           multiple: true,
           values: values,
-          clearSelection: productId != productSelect.val()
+          clearSelection: productId !== productSelect.val()
         })
       })
     }

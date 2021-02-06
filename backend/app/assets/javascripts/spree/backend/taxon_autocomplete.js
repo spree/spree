@@ -1,7 +1,7 @@
-$.fn.taxonAutocomplete = function() {
+$.fn.taxonAutocomplete = function () {
   'use strict'
 
-  function formatTaxonList(values) {
+  function formatTaxonList (values) {
     return values.map(function (obj) {
       return {
         id: obj.id,
@@ -25,7 +25,7 @@ $.fn.taxonAutocomplete = function() {
           token: Spree.api_key
         }
       },
-      processResults: function(data) {
+      processResults: function (data) {
         return {
           results: formatTaxonList(data.taxons)
         }

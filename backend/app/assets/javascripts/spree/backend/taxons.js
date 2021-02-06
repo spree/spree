@@ -128,12 +128,12 @@ $(function () {
 
   function formatTaxon (taxon) {
     if (taxon.loading) {
-      return taxon.text;
+      return taxon.text
     }
     return taxon.pretty_name
   }
 
-  function formatTaxonList(values) {
+  function formatTaxonList (values) {
     return values.map(function (obj) {
       return {
         id: obj.id,

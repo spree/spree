@@ -6,13 +6,13 @@ $.fn.productAutocomplete = function (options) {
   var multiple = typeof (options.multiple) !== 'undefined' ? options.multiple : true
   var values = typeof (options.values) !== 'undefined' ? options.values : null
 
-  function formatProductList(products) {
-    return products.map(function(obj) {
+  function formatProductList (products) {
+    return products.map(function (obj) {
       return { id: obj.id, text: obj.name }
     })
   }
 
-  function addOptions(select, values) {
+  function addOptions (select, values) {
     $.ajax({
       url: Spree.routes.products_api,
       dataType: 'json',
@@ -42,7 +42,7 @@ $.fn.productAutocomplete = function (options) {
           token: Spree.api_key
         }
       },
-      processResults: function(data) {
+      processResults: function (data) {
         var products = data.products ? data.products : []
         var results = formatProductList(products)
 
@@ -51,7 +51,7 @@ $.fn.productAutocomplete = function (options) {
         }
       }
     },
-    templateSelection: function(data, _container) {
+    templateSelection: function (data, _container) {
       return data.text
     }
   })

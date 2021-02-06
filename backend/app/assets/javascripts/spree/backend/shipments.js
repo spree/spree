@@ -115,7 +115,7 @@ $(document).ready(function () {
     })
   })
 
-  function toggleTrackingEdit(event) {
+  function toggleTrackingEdit (event) {
     event.preventDefault()
 
     var link = $(this)
@@ -127,7 +127,7 @@ $(document).ready(function () {
   $('a.edit-tracking').click(toggleTrackingEdit)
   $('a.cancel-tracking').click(toggleTrackingEdit)
 
-  function createTrackingValueContent(data) {
+  function createTrackingValueContent (data) {
     var selectedShippingMethod = data.shipping_methods.filter(function (method) {
       return method.id === data.selected_shipping_rate.shipping_method_id
     })[0]
@@ -173,7 +173,7 @@ $(document).ready(function () {
   })
 })
 
-function adjustShipmentItems(shipmentNumber, variantId, quantity) {
+function adjustShipmentItems (shipmentNumber, variantId, quantity) {
   var shipment = _.findWhere(shipments, { number: shipmentNumber + '' })
   var inventoryUnits = _.where(shipment.inventory_units, { variant_id: variantId })
   var url = Spree.routes.shipments_api + '/' + shipmentNumber
@@ -208,7 +208,7 @@ function adjustShipmentItems(shipmentNumber, variantId, quantity) {
   }
 }
 
-function toggleMethodEdit() {
+function toggleMethodEdit () {
   var link = $(this)
   link.parents('tbody').find('tr.edit-method').toggle()
   link.parents('tbody').find('tr.show-method').toggle()
@@ -216,7 +216,7 @@ function toggleMethodEdit() {
   return false
 }
 
-function toggleItemEdit() {
+function toggleItemEdit () {
   var link = $(this)
   var linkParent = link.parent()
   linkParent.find('a.edit-item').toggle()
@@ -230,7 +230,7 @@ function toggleItemEdit() {
   return false
 }
 
-function startItemSplit(event) {
+function startItemSplit (event) {
   event.preventDefault()
   $('.cancel-split').each(function () {
     $(this).click()
@@ -267,7 +267,7 @@ function startItemSplit(event) {
   $('#item_stock_location').select2({ width: 'resolve', placeholder: Spree.translations.item_stock_placeholder })
 }
 
-function completeItemSplit(event) {
+function completeItemSplit (event) {
   event.preventDefault()
 
   if ($('#item_stock_location').val() === '') {
@@ -320,7 +320,7 @@ function completeItemSplit(event) {
   }
 }
 
-function cancelItemSplit(event) {
+function cancelItemSplit (event) {
   event.preventDefault()
   var link = $(this)
   var prevRow = link.closest('tr').prev()
@@ -330,7 +330,7 @@ function cancelItemSplit(event) {
   prevRow.find('a.delete-item').toggle()
 }
 
-function addVariantFromStockLocation(event) {
+function addVariantFromStockLocation (event) {
   event.preventDefault()
 
   $('#stock_details').hide()

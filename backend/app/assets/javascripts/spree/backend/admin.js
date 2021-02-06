@@ -7,13 +7,13 @@ Hopefully, this will evolve into a propper class.
 /* global AUTH_TOKEN, order_number, Sortable, flatpickr, DOMPurify */
 jQuery(function ($) {
   // Add some tips
-  $('.with-tip').each(function() {
+  $('.with-tip').each(function () {
     $(this).tooltip({
       container: $(this)
     })
   })
 
-  $('.with-tip').on('show.bs.tooltip', function(event) {
+  $('.with-tip').on('show.bs.tooltip', function (event) {
     if (('ontouchstart' in window)) {
       event.preventDefault()
     }
@@ -29,17 +29,17 @@ jQuery(function ($) {
   var modalBackdrop = $('#multi-backdrop')
 
   // Fail safe on resize
-  var resizeTimer;
+  var resizeTimer
   window.addEventListener('resize', function () {
-    document.body.classList.remove('modal-open', 'sidebar-open', 'contextualSideMenu-open');
-    document.body.classList.add('resize-animation-stopper');
-    clearTimeout(resizeTimer);
+    document.body.classList.remove('modal-open', 'sidebar-open', 'contextualSideMenu-open')
+    document.body.classList.add('resize-animation-stopper')
+    clearTimeout(resizeTimer)
     resizeTimer = setTimeout(function () {
-      document.body.classList.remove('resize-animation-stopper');
-    }, 400);
-  });
+      document.body.classList.remove('resize-animation-stopper')
+    }, 400)
+  })
 
-  function closeAllMenus() {
+  function closeAllMenus () {
     body.removeClass()
     body.addClass('admin')
     modalBackdrop.removeClass('show')
@@ -55,7 +55,7 @@ jQuery(function ($) {
   activeItem.closest('.nav-sidebar').addClass('active-option')
   activeItem.closest('.nav-pills').addClass('in show')
 
-  function openMenu() {
+  function openMenu () {
     closeAllMenus()
     body.addClass('sidebar-open modal-open')
     modalBackdrop.addClass('show')
@@ -67,7 +67,7 @@ jQuery(function ($) {
   var contextualSidebarMenuToggle = $('#contextual-menu-toggle')
   var contextualSidebarMenuClose = $('#contextual-menu-close')
 
-  function toggleContextualMenu() {
+  function toggleContextualMenu () {
     if (document.body.classList.contains('contextualSideMenu-open')) {
       closeAllMenus()
     } else {
@@ -127,7 +127,7 @@ jQuery(function ($) {
 
       if ($this.is('select')) {
         ransackValue = $this.find('option:selected').toArray().map(function (option) {
-          return option.text;
+          return option.text
         }).join(', ')
       } else {
         ransackValue = $this.val()
@@ -222,7 +222,7 @@ $.fn.radioControlsVisibilityOfElement = function (dependentElementSelector) {
   })
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   flatpickr.setDefaults({
     altInput: true,
     time_24hr: true,
@@ -231,13 +231,13 @@ document.addEventListener('DOMContentLoaded', function() {
   })
 
   var dateFrom = flatpickr('.datePickerFrom', {
-    onChange: function(selectedDates) {
+    onChange: function (selectedDates) {
       dateTo.set('minDate', selectedDates[0])
     }
   })
 
   var dateTo = flatpickr('.datePickerTo', {
-    onChange: function(selectedDates) {
+    onChange: function (selectedDates) {
       dateFrom.set('maxDate', selectedDates[0])
     }
   })
@@ -245,8 +245,8 @@ document.addEventListener('DOMContentLoaded', function() {
   flatpickr('.datepicker', { })
 })
 
-$(document).ready(function() {
-  $('.observe_field').on('change', function() {
+$(document).ready(function () {
+  $('.observe_field').on('change', function () {
     var target = $(this).data('update')
     $(target).hide()
     $.ajax({
@@ -291,7 +291,7 @@ $(document).ready(function() {
           authenticity_token: AUTH_TOKEN
         },
         dataType: 'script',
-        complete: function() {
+        complete: function () {
           el.blur()
         }
       }).done(function () {
@@ -335,7 +335,7 @@ $(document).ready(function() {
     return false
   })
 
-  $('body').on('click', '.select_properties_from_prototype', function() {
+  $('body').on('click', '.select_properties_from_prototype', function () {
     $('#busy_indicator').show()
     var clickedLink = $(this)
     $.ajax({
@@ -350,7 +350,7 @@ $(document).ready(function() {
   })
 
   // Sortable List Up-Down
-  var parentEl = document.getElementsByClassName('sortable')[0];
+  var parentEl = document.getElementsByClassName('sortable')[0]
   if (parentEl) {
     var element = parentEl.querySelector('tbody')
   }
@@ -367,7 +367,7 @@ $(document).ready(function() {
       onEnd: function (evt) {
         var itemEl = evt.item
         var positions = { authenticity_token: AUTH_TOKEN }
-        $.each($('tr', element), function(position, obj) {
+        $.each($('tr', element), function (position, obj) {
           var reg = /spree_(\w+_?)+_(\d+)/
           var parts = reg.exec($(obj).prop('id'))
           if (parts) {
@@ -390,7 +390,7 @@ $(document).ready(function() {
   })
 
   // Utility
-  window.Spree.advanceOrder = function() {
+  window.Spree.advanceOrder = function () {
     $.ajax({
       type: 'PUT',
       async: false,
@@ -398,7 +398,7 @@ $(document).ready(function() {
         token: Spree.api_key
       },
       url: Spree.url(Spree.routes.checkouts_api + '/' + order_number + '/advance')
-    }).done(function() {
+    }).done(function () {
       window.location.reload()
     })
   }

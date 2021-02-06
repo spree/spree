@@ -1,19 +1,19 @@
 $(function () {
   var countryBased = $('#country_based')
   var stateBased = $('#state_based')
-  countryBased.click(show_country)
-  stateBased.click(show_state)
+  countryBased.click(displayCountry)
+  stateBased.click(displayState)
   if (countryBased.is(':checked')) {
-    show_country()
+    displayCountry()
   } else if (stateBased.is(':checked')) {
-    show_state()
+    displayState()
   } else {
-    show_state()
+    displayState()
     stateBased.click()
   }
 })
-// eslint-disable-next-line camelcase
-function show_country () {
+
+function displayCountry () {
   $('#state_members :input').each(function () {
     $(this).prop('disabled', true)
   })
@@ -27,8 +27,8 @@ function show_country () {
   })
   $('#country_members').show()
 }
-// eslint-disable-next-line camelcase
-function show_state () {
+
+function displayState () {
   $('#country_members :input').each(function () {
     $(this).prop('disabled', true)
   })
