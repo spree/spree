@@ -5,7 +5,7 @@
   }
 }
 
-input.input {
+input.flatpickr-alt-input {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
@@ -30,7 +30,7 @@ input.input {
 }
 
 .input-group {
-  input.input{
+  input.flatpickr-alt-input {
     @include swith-appended-icon  {
       opacity: 0;
     }
@@ -51,7 +51,7 @@ input.input {
 }
 
 // Fix Flatpickr bug where things jusy highlight for no reason.
-input.input[readonly] {
+input.flatpickr-alt-input[readonly] {
   -webkit-touch-callout: none; /* iOS Safari */
     -webkit-user-select: none; /* Safari */
      -khtml-user-select: none; /* Konqueror HTML */
@@ -77,7 +77,7 @@ input.input[readonly] {
 }
 
 .input-group >
-.form-control:not(:first-child), .input-group > .input:not(:first-child) {
+.form-control:not(:first-child), .input-group > .flatpickr-alt-input:not(:first-child) {
   border-top-left-radius: $border-radius !important;
   border-bottom-left-radius: $border-radius !important;
 }
