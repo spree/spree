@@ -2,8 +2,8 @@
 
 $(document).ready(function () {
   if ($('#new_payment').length) {
-    /* eslint-disable no-new */
-    new Cleave('.cardNumber', {
+    // eslint-disable-next-line no-unused-vars
+    var cleveCardNumber = new Cleave('.cardNumber', {
       creditCard: true,
       onCreditCardTypeChanged: function (type) {
         $('.ccType').val(type)

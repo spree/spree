@@ -39,7 +39,7 @@ $.fn.variantAutocomplete = function () {
           token: Spree.api_key
         }
 
-        return query;
+        return query
       },
       processResults: function (data) {
         window.variants = data.variants
