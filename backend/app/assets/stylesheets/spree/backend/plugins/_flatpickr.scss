@@ -11,9 +11,10 @@
     }
 
     .flatpickr-monthDropdown-months {
-      -webkit-appearance: none;
-      -moz-appearance: none;
-      appearance: none;
+      @include prefix((
+        appearance: none
+      ), webkit moz ms khtml);
+
       padding: 0.2em;
       border-radius: $border-radius;
     }
@@ -58,7 +59,7 @@
   }
 }
 
-// Mixin Required for calendar toggle icon show/hide.
+// Mixin for calendar toggle icon show/hide.
 @mixin swith-appended-icon {
   &:placeholder-shown:not(:focus) + * {
       @content;
@@ -68,23 +69,18 @@
 .input-group.datePickerFrom,
 .input-group.datePickerTo,
 .input-group.datepicker {
-
   input.flatpickr-alt-input[readonly] {
     // Flatpickr alternate input is read-only,
     // style it as an active input field.
     background-color: white !important;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
 
     // Fix a bug where occasionally the whole screen will highlight
     // if you clicked the Flatpcikr input box while moving the cursor.
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
+    @include prefix((
+      appearance: none,
+      touch-callout: none,
+      user-select: none
+    ), webkit moz ms khtml);
 
     @include swith-appended-icon  {
       opacity: 0;
