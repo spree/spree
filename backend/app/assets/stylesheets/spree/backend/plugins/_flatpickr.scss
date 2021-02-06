@@ -1,108 +1,117 @@
-// Adaptive icon from calendar to close.
+.flatpickr-calendar {
+  // Custom Flatpickr styling for Spree + BS4.
+  .flatpickr-current-month {
+    span.cur-month:hover {
+      background: transparent;
+    }
+      .numInputWrapper {
+      margin-left: 3px;
+      border-radius: $border-radius;
+      overflow: hidden;
+    }
+
+    .flatpickr-monthDropdown-months {
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      padding: 0.2em;
+      border-radius: $border-radius;
+    }
+  }
+
+  .numInputWrapper span.arrowUp {
+    border-color: transparent;
+    border-radius: 0;
+  }
+
+  .numInputWrapper span.arrowDown {
+    border-color: transparent;
+    border-radius: 0;
+  }
+
+  .flatpickr-day {
+    margin: 2px 0;
+    border-radius: $border-radius ;
+  }
+
+  .flatpickr-months .flatpickr-prev-month:hover svg,
+  .flatpickr-months .flatpickr-next-month:hover svg {
+    fill: $primary;
+  }
+
+  .flatpickr-time {
+    border-radius: 0 0 5px 5px;
+    &:after {
+      display: none;
+    }
+    .numInputWrapper {
+      span {
+        border-color: transparent;
+        border-radius: 0;
+      }
+    }
+  }
+
+  // Required to stop an opened cal showing above the nav bar.
+  &.open {
+    z-index: $zindex-dropdown;
+  }
+}
+
+// Mixin Required for calendar toggle icon show/hide.
 @mixin swith-appended-icon {
   &:placeholder-shown:not(:focus) + * {
       @content;
   }
 }
 
-input.flatpickr-alt-input {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  background-color: white !important;
-}
+.input-group.datePickerFrom,
+.input-group.datePickerTo,
+.input-group.datepicker {
 
-.flatpickr-current-month .numInputWrapper {
-  margin-left: 3px;
-  border-radius: $border-radius;
-  overflow: hidden;
-}
-.flatpickr-current-month span.cur-month:hover {
-  background: transparent;
-}
-.numInputWrapper span.arrowUp {
-  border-color: transparent;
-  border-radius: 0;
-}
-.numInputWrapper span.arrowDown {
-  border-color: transparent;
-  border-radius: 0;
-}
+  input.flatpickr-alt-input[readonly] {
+    // Flatpickr alternate input is read-only,
+    // style it as an active input field.
+    background-color: white !important;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
 
-.input-group {
-  input.flatpickr-alt-input {
+    // Fix a bug where occasionally the whole screen will highlight
+    // if you clicked the Flatpcikr input box while moving the cursor.
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
     @include swith-appended-icon  {
       opacity: 0;
     }
   }
-}
 
-.append_under {
-  position: absolute;
-  right: 0;
-  top: 0;
-  z-index: 0;
-  height: 100%;
-}
-
-.flatpickr-day {
-  margin: 2px 0;
-  border-radius: $border-radius ;
-}
-
-// Fix Flatpickr bug where things jusy highlight for no reason.
-input.flatpickr-alt-input[readonly] {
-  -webkit-touch-callout: none; /* iOS Safari */
-    -webkit-user-select: none; /* Safari */
-     -khtml-user-select: none; /* Konqueror HTML */
-       -moz-user-select: none; /* Old versions of Firefox */
-        -ms-user-select: none; /* Internet Explorer/Edge */
-            user-select: none; /* Non-prefixed version, currently
-                                  supported by Chrome, Edge, Opera and Firefox */
-}
-
-
-.flatpickr-months .flatpickr-prev-month:hover svg,
-.flatpickr-months .flatpickr-next-month:hover svg {
-  fill: $primary;
-}
-
-// Force rounded corner for the toggle cal and close icons.
-.input-group >
-.input-group-append:not(:last-child) >
-.force-round {
-  z-index: 5;
-  border-top-right-radius: $border-radius !important;
-  border-bottom-right-radius: $border-radius !important;
-}
-
-.input-group >
-.form-control:not(:first-child), .input-group > .flatpickr-alt-input:not(:first-child) {
-  border-top-left-radius: $border-radius !important;
-  border-bottom-left-radius: $border-radius !important;
-}
-
-div.flatpickr-calendar.open {
-  z-index: $zindex-dropdown;
-}
-
-.flatpickr-time {
-  border-radius: 0 0 5px 5px;
-  &:after {
-    display: none;
+  // Required for calendar toggle icon show/hide.
+  .append_under {
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 0;
+    height: 100%;
   }
-  .numInputWrapper {
-    span {
-      border-color: transparent;
-      border-radius: 0;
-    }
-  }
-}
 
-.flatpickr-current-month .flatpickr-monthDropdown-months {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  padding: 0.2em;
-  border-radius: $border-radius;
+  // Styling for calendar toggle icon toggle
+  .input-group-append:not(:last-child) >
+  .force-round {
+    z-index: 5;
+    border-top-right-radius: $border-radius !important;
+    border-bottom-right-radius: $border-radius !important;
+  }
+
+  // Styling for calendar toggle icon toggle
+  .form-control:not(:first-child),
+  .input-group >.flatpickr-alt-input:not(:first-child) {
+    border-top-left-radius: $border-radius !important;
+    border-bottom-left-radius: $border-radius !important;
+  }
 }
