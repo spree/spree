@@ -17,11 +17,16 @@ describe Spree::Core::ControllerHelpers::Locale, type: :controller do
   controller(FakesController) {}
 
   describe '#current_locale' do
-    context 'store with local set' do
-      let!(:store) { create :store, default: true, default_locale: 'fr' }
+    context 'store with locale set' do
+      let!(:store) { create :store, default: true, default_locale: 'fr', supported_locales: 'fr,de' }
 
       it 'returns current store default locale' do
         expect(controller.current_locale.to_s).to eq('fr')
+      end
+
+      it 'return supported locale when passed as param' do
+        controller.params = { locale: 'de' }
+        expect(controller.current_locale.to_s).to eq('de')
       end
     end
 

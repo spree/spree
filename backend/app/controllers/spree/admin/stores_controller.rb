@@ -5,6 +5,7 @@ module Spree
       before_action :set_default_currency, only: :new
       before_action :set_default_locale, only: :new
       before_action :normalize_supported_currencies, only: [:create, :update]
+      before_action :normalize_supported_locales, only: [:create, :update]
       before_action :set_default_country_id, only: :new
       before_action :load_all_countries, only: [:new, :edit, :update, :create]
       before_action :load_all_zones, only: %i[new edit]
@@ -124,6 +125,12 @@ module Spree
       def normalize_supported_currencies
         if params[:store][:supported_currencies]&.is_a?(Array)
           params[:store][:supported_currencies] = params[:store][:supported_currencies].compact.uniq.reject(&:blank?).join(',')
+        end
+      end
+
+      def normalize_supported_locales
+        if params[:store][:supported_locales]&.is_a?(Array)
+          params[:store][:supported_locales] = params[:store][:supported_locales].compact.uniq.reject(&:blank?).join(',')
         end
       end
 
