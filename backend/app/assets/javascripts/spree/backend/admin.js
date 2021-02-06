@@ -224,10 +224,10 @@ $.fn.radioControlsVisibilityOfElement = function (dependentElementSelector) {
 
 document.addEventListener('DOMContentLoaded', function() {
   flatpickr.setDefaults({
-      altInput: true,
-      time_24hr: true,
-      altInputClass: 'flatpickr-alt-input',
-      locale: Spree.translations.flatpickr_locale
+    altInput: true,
+    time_24hr: true,
+    altInputClass: 'flatpickr-alt-input',
+    locale: Spree.translations.flatpickr_locale
   })
 
   var dateFrom = flatpickr('.datePickerFrom', {
