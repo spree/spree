@@ -49,7 +49,7 @@ module Spree
       def with_open_flatpickr(label_text)
         field_label = find_field(id: label_text, type: :hidden)
 
-        date_field = field_label.sibling('.input')
+        date_field = field_label.sibling('.flatpickr-alt-input')
         date_field.click # Open the widget
 
         yield(date_field)
