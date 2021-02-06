@@ -22,7 +22,7 @@ $.fn.addSelect2Options = function (data) {
 
   if (Array.isArray(data)) {
     data.map(function(row) {
-      appendOption(select, row)
+      return appendOption(select, row)
     })
   } else {
     appendOption(select, data)

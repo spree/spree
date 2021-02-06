@@ -143,12 +143,12 @@ function initProductActions () {
     // Add line item to list
     $('.promotion_action.create_line_items button.add').off('click').click(function () {
       var $container = $(this).parents('.promotion_action')
-      var product_name = $container.find('input[name="add_product_name"]').val()
-      var variant_id = $container.find('input[name="add_variant_id"]').val()
+      var productName = $container.find('input[name="add_product_name"]').val()
+      var variantId = $container.find('input[name="add_variant_id"]').val()
       var quantity = $container.find('input[name="add_quantity"]').val()
-      if (variant_id) {
+      if (variantId) {
         // Add to the table
-        var newRow = '<tr><td>' + product_name + '</td><td>' + quantity + '</td><td><i class="icon icon-cancel"></i></td></tr>'
+        var newRow = '<tr><td>' + productName + '</td><td>' + quantity + '</td><td><i class="icon icon-cancel"></i></td></tr>'
         $container.find('table').append(newRow)
         // Add to serialized string in hidden text field
         var $hiddenField = $container.find('.line_items_string')
@@ -162,9 +162,9 @@ function initProductActions () {
 }
 
 $(document).ready(function () {
-  var promotion_form = $('form.edit_promotion')
+  var promotionForm = $('form.edit_promotion')
 
-  if (promotion_form.length) {
+  if (promotionForm.length) {
     initProductActions()
   }
 })

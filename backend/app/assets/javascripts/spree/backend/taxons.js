@@ -79,13 +79,13 @@ $(function () {
           results = []
           for (i = 0, len = ref.length; i < len; i++) {
             product = ref[i]
-            if (product.master.images[0] !== void 0 && product.master.images[0].small_url !== void 0) {
+            if (product.master.images[0] !== undefined && product.master.images[0].small_url !== undefined) {
               product.image = product.master.images[0].small_url
             } else {
               ref1 = product.variants
               for (j = 0, len1 = ref1.length; j < len1; j++) {
                 variant = ref1[j]
-                if (variant.images[0] !== void 0 && variant.images[0].small_url !== void 0) {
+                if (variant.images[0] !== undefined && variant.images[0].small_url !== undefined) {
                   product.image = variant.images[0].small_url
                   break
                 }

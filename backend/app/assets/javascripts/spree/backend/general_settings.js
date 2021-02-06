@@ -13,8 +13,8 @@ $(function () {
         show_flash('success', 'Cache was flushed.')
       })
         .fail(function (message) {
-          if (message.responseJSON['error']) {
-            show_flash('error', message.responseJSON['error'])
+          if (message.responseJSON.error) {
+            show_flash('error', message.responseJSON.error)
           } else {
             show_flash('error', 'There was a problem while flushing cache.')
           }

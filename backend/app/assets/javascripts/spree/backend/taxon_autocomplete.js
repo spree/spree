@@ -20,7 +20,7 @@ $.fn.taxonAutocomplete = function() {
       data: function (params) {
         return {
           q: {
-            name_cont: params.term,
+            name_cont: params.term
           },
           token: Spree.api_key
         }

@@ -101,7 +101,7 @@ var root = typeof exports !== 'undefined' && exports !== null ? exports : this
 
 root.setup_taxonomy_tree = function (taxonomyId) {
   var $taxonomyTree = $('#taxonomy_tree')
-  if (taxonomyId !== void 0) {
+  if (taxonomyId !== undefined) {
     // this is defined within admin/taxonomies/edit
     root.base_url = Spree.url(Spree.routes.taxonomy_taxons_path)
     $.ajax({

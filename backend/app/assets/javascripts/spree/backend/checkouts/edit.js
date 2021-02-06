@@ -73,7 +73,7 @@ $.fn.customerAutocomplete = function() {
       data: function (params) {
         return {
           q: {
-            'm': 'or',
+            m: 'or',
             email_start: params.term,
             ship_address_firstname_start: params.term,
             ship_address_lastname_start: params.term,

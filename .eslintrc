@@ -25,3 +25,4 @@ env:
 rules:
   space-before-function-paren: off
   semi: off
+  no-var: off

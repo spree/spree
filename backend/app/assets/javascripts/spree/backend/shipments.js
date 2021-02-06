@@ -248,12 +248,12 @@ function startItemSplit(event) {
     url: Spree.url(Spree.routes.variants_api),
     data: {
       q: {
-        'id_eq': variantId
+        id_eq: variantId
       },
       token: Spree.api_key
     }
   }).done(function (data) {
-    variant = data['variants'][0]
+    variant = data.variants[0]
   }).fail(function (msg) {
     alert(msg.responseJSON.message || msg.responseJSON.exception)
   })

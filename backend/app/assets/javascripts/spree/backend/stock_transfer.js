@@ -128,7 +128,7 @@ $(function () {
   }
 
   function formattedVariantList(obj) {
-   return { id: obj.id, text: obj.name, name: obj.name, sku: obj.sku, options_text: obj.options_text, variant: obj }
+    return { id: obj.id, text: obj.name, name: obj.name, sku: obj.sku, options_text: obj.options_text, variant: obj }
   }
 
   function formattedStockItemsList(obj) {
@@ -151,23 +151,20 @@ $(function () {
         },
         processResults: function (data) {
           var result = data.variants || data.stock_items
-          if (data.variants != null) {
-            var res = (result).map(function (variant) {
+          var res = (result).map(function (variant) {
+            if (data.variants != null) {
               return formattedVariantList(variant)
-            })
-          } else {
-            var res = (result).map(function (variant) {
+            } else {
               return formattedStockItemsList(variant)
-            })
-          }
-
+            }
+          })
           return {
             results: res
           }
         }
       },
       templateResult: function(variant) {
-        if (variant.options_text !== "") {
+        if (variant.options_text !== '') {
           return variant.name + ' - ' + variant.sku + ' (' + variant.options_text + ')'
         } else {
           return variant.name + ' - ' + variant.sku

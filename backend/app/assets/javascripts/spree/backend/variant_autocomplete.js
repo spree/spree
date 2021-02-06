@@ -14,7 +14,7 @@ function formatVariantResult(variant) {
     return variant.text
   }
 
-  if (variant['images'][0] !== undefined && variant['images'][0].mini_url !== undefined) {
+  if (variant.images[0] !== undefined && variant.images[0].mini_url !== undefined) {
     variant.image = variant.images[0].mini_url
   }
   return $(variantTemplate({
@@ -23,7 +23,6 @@ function formatVariantResult(variant) {
 }
 
 $.fn.variantAutocomplete = function () {
-
   // deal with initSelection
   return this.select2({
     placeholder: Spree.translations.variant_placeholder,
@@ -43,7 +42,7 @@ $.fn.variantAutocomplete = function () {
         return query;
       },
       processResults: function(data) {
-        window.variants = data['variants']
+        window.variants = data.variants
         return {
           results: data.variants
         }
@@ -51,12 +50,11 @@ $.fn.variantAutocomplete = function () {
     },
     templateResult: formatVariantResult,
     templateSelection: function(variant) {
-      if (!!variant.options_text) {
+      if (variant.options_text) {
         return variant.name + '(' + variant.options_text + ')'
       } else {
         return variant.name
       }
     }
   })
-
 }
