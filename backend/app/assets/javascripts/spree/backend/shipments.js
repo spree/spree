@@ -12,7 +12,6 @@ $(document).ready(function () {
 
     $('#stock_details').html(variantStockTemplate({ variant: variant }))
     $('#stock_details').show()
-
     $('button.add_variant').click(addVariantFromStockLocation)
   })
 

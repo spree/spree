@@ -2,22 +2,39 @@
 
 $(document).ready(function () {
   if ($('#new_payment').length) {
-    // eslint-disable-next-line no-unused-vars
-    var cleveCardNumber = new Cleave('.cardNumber', {
-      creditCard: true,
-      onCreditCardTypeChanged: function (type) {
-        $('.ccType').val(type)
-      }
+    $('.cardNumber').each(function () {
+      var $this = $(this)
+      var cardNumberInputId = '#' + $this.attr('id')
+
+      // eslint-disable-next-line no-new
+      new Cleave(cardNumberInputId, {
+        creditCard: true,
+        onCreditCardTypeChanged: function (type) {
+          $('.ccType').val(type)
+        }
+      })
     })
-    /* eslint-disable no-new */
-    new Cleave('.cardExpiry', {
-      date: true,
-      datePattern: ['m', 'Y']
+
+    $('.cardExpiry').each(function () {
+      var $this = $(this)
+      var cardExpiryInputId = '#' + $this.attr('id')
+
+      /* eslint-disable no-new */
+      new Cleave(cardExpiryInputId, {
+        date: true,
+        datePattern: ['m', 'Y']
+      })
     })
-    /* eslint-disable no-new */
-    new Cleave('.cardCode', {
-      numericOnly: true,
-      blocks: [3]
+
+    $('.cardCode').each(function () {
+      var $this = $(this)
+      var cardCodeInputId = '#' + $this.attr('id')
+
+      /* eslint-disable no-new */
+      new Cleave(cardCodeInputId, {
+        numericOnly: true,
+        blocks: [3]
+      })
     })
 
     $('.payment_methods_radios').click(
