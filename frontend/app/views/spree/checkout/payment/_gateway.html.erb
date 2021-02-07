@@ -3,13 +3,15 @@
   <% param_prefix = "payment_source[#{payment_method.id}]" %>
 
   <div class="payment-gateway-fields">
-    <div class="mb-4 payment-gateway-field checkout-content-inner-field">
+    <div class="mb-4 payment-gateway-field checkout-content-inner-field has-float-label">
       <%= text_field_tag "#{param_prefix}[name]", "#{@order.bill_address_firstname} #{@order.bill_address_lastname}", { id: "name_on_card_#{payment_method.id}", class: 'spree-flat-input', placeholder: Spree.t(:name_on_card)} %>
+      <label><%= Spree.t(:name_on_card) %></label>
     </div>
 
-    <div class="mb-4 payment-gateway-field checkout-content-inner-field" data-hook="card_number">
+    <div class="mb-4 payment-gateway-field checkout-content-inner-field has-float-label" data-hook="card_number">
       <% options_hash = Rails.env.production? ? {autocomplete: 'off'} : {} %>
       <%= text_field_tag "#{param_prefix}[number]", '', options_hash.merge(id: "card_number_#{payment_method.id}", class: 'spree-flat-input cardNumber', size: 19, maxlength: 19, autocomplete: "off", placeholder: Spree.t(:card_number)) %>
+      <label><%= Spree.t(:card_number) %></label>
       <span id="card_type" style="display:none;">
         ( <span id="looks_like"><%= Spree.t(:card_type_is) %> <span id="type"></span></span>
           <span id="unrecognized"><%= Spree.t(:unrecognized_card_type) %></span>
@@ -17,11 +19,13 @@
       </span>
     </div>
     <div class="payment-gateway-half-fields d-flex justify-content-between">
-      <div class="payment-gateway-field checkout-content-inner-field" data-hook="card_expiration">
+      <div class="payment-gateway-field checkout-content-inner-field has-float-label" data-hook="card_expiration">
         <%= text_field_tag "#{param_prefix}[expiry]", '', id: "card_expiry_#{payment_method.id}", class: 'spree-flat-input cardExpiry', placeholder: Spree.t(:card_expire_human_readable) %>
+        <label><%= Spree.t(:card_expire_human_readable) %></label>
       </div>
-      <div class="payment-gateway-field checkout-content-inner-field" data-hook="card_code">
+      <div class="payment-gateway-field checkout-content-inner-field has-float-label" data-hook="card_code">
         <%= text_field_tag "#{param_prefix}[verification_value]", '', options_hash.merge(id: "card_code_#{payment_method.id}", class: 'spree-flat-input cardCode', size: 5, placeholder: Spree.t(:cvv)) %>
+        <label><%= Spree.t(:cvv) %></label>
       </div>
     </div>
 
