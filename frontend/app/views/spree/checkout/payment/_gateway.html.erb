@@ -18,7 +18,7 @@
     </div>
     <div class="payment-gateway-half-fields d-flex justify-content-between">
       <div class="payment-gateway-field checkout-content-inner-field" data-hook="card_expiration">
-        <%= text_field_tag "#{param_prefix}[expiry]", '', id: "card_expiry_#{payment_method.id}", class: 'spree-flat-input cardExpiry', placeholder: "MM/YYYY" %>
+        <%= text_field_tag "#{param_prefix}[expiry]", '', id: "card_expiry_#{payment_method.id}", class: 'spree-flat-input cardExpiry', placeholder: Spree.t(:card_expire_human_readable) %>
       </div>
       <div class="payment-gateway-field checkout-content-inner-field" data-hook="card_code">
         <%= text_field_tag "#{param_prefix}[verification_value]", '', options_hash.merge(id: "card_code_#{payment_method.id}", class: 'spree-flat-input cardCode', size: 5, placeholder: Spree.t(:cvv)) %>

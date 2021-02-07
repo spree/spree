@@ -57,7 +57,7 @@ shared_context 'checkout address book' do
   def fill_in_credit_card_info(address)
     fill_in Spree.t(:name_on_card), with: "#{address.firstname} #{address.lastname}"
     fill_in Spree.t(:card_number), with: '4111 1111 1111 1111'
-    fill_in 'MM/YYYY', with: '12 / 24'
+    fill_in Spree.t(:card_expire_human_readable), with: '12 / 24'
     fill_in Spree.t(:cvv), with: '123'
   end
 
