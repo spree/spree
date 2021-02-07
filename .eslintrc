@@ -23,4 +23,6 @@ env:
   jquery: true
 
 rules:
+  space-before-function-paren: off
+  semi: off
   no-var: off
