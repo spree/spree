@@ -47,7 +47,7 @@ Spree.ready(function ($) {
           /* eslint-disable no-new */
           new Cleave(cardExpiryInputId, {
             date: true,
-            datePattern: ['m', 'Y']
+            datePattern: ['m', 'y']
           })
         })
 
