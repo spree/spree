@@ -55,10 +55,10 @@ shared_context 'checkout address book' do
   end
 
   def fill_in_credit_card_info(address)
-    fill_in 'name_on_card', with: "#{address.firstname} #{address.lastname}"
-    fill_in 'card_number', with: '4111 1111 1111 1111'
-    fill_in 'card_expiry', with: '12 / 24'
-    fill_in 'card_code', with: '123'
+    fill_in Spree.t(:name_on_card), with: "#{address.firstname} #{address.lastname}"
+    fill_in Spree.t(:card_number), with: '4111 1111 1111 1111'
+    fill_in 'MM/YYYY', with: '12 / 24'
+    fill_in Spree.t(:cvv), with: '123'
   end
 
   def expected_address_format(address_title, address)
