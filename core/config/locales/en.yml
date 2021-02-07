@@ -639,7 +639,7 @@ en:
     capture: Capture
     capture_events: Capture events
     card_code: Card Varification Code (CVC)
-    card_expire_year_format: 'Y' # Set y (lower case) for MM/YY
+    card_expire_year_format: 'y' # lower case y for MM/YY | upper case Y for MM/YYYY
     card_number: Card Number
     card_type: Brand
     card_type_is: Card type is
