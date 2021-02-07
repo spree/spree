@@ -25,24 +25,41 @@ Spree.ready(function ($) {
       }
 
       if ($(CARD_NUMBER_SELECTOR).length > 0 &&
-          $(CARD_EXPIRATION_SELECTOR).length > 0 &&
-          $(CARD_CODE_SELECTOR).length > 0) {
-        /* eslint-disable no-new */
-        new Cleave(CARD_NUMBER_SELECTOR, {
-          creditCard: true,
-          onCreditCardTypeChanged: function (type) {
-            $('.ccType').val(type)
-          }
+        $(CARD_EXPIRATION_SELECTOR).length > 0 &&
+        $(CARD_CODE_SELECTOR).length > 0) {
+        $(CARD_NUMBER_SELECTOR).each(function () {
+          var $this = $(this)
+          var cardNumberInputId = '#' + $this.attr('id')
+
+          // eslint-disable-next-line no-new
+          new Cleave(cardNumberInputId, {
+            creditCard: true,
+            onCreditCardTypeChanged: function (type) {
+              $('.ccType').val(type)
+            }
+          })
         })
-        /* eslint-disable no-new */
-        new Cleave(CARD_EXPIRATION_SELECTOR, {
-          date: true,
-          datePattern: ['m', 'Y']
+
+        $(CARD_EXPIRATION_SELECTOR).each(function () {
+          var $this = $(this)
+          var cardExpiryInputId = '#' + $this.attr('id')
+
+          /* eslint-disable no-new */
+          new Cleave(cardExpiryInputId, {
+            date: true,
+            datePattern: ['m', 'Y']
+          })
         })
-        /* eslint-disable no-new */
-        new Cleave(CARD_CODE_SELECTOR, {
-          numericOnly: true,
-          blocks: [3]
+
+        $(CARD_CODE_SELECTOR).each(function () {
+          var $this = $(this)
+          var cardCodeInputId = '#' + $this.attr('id')
+
+          /* eslint-disable no-new */
+          new Cleave(cardCodeInputId, {
+            numericOnly: true,
+            blocks: [3]
+          })
         })
       }
 
@@ -53,18 +70,18 @@ Spree.ready(function ($) {
         if ($('#payment_method_' + this.value).find('fieldset').children().length !== 0) {
           if (this.closest('label').dataset.type === 'card') {
             if ($('#existing_cards').length) {
-              $('.existing-cc-radio').first().prop('checked', true);
+              $('.existing-cc-radio').first().prop('checked', true)
               $('#use_existing_card_no').prop('checked', false)
               $('#use_existing_card_yes').prop('checked', true)
-              $('#existing_cards').show();
-              $('#payment-methods').hide();
+              $('#existing_cards').show()
+              $('#payment-methods').hide()
               $('.payment-sources').show()
             }
           } else {
-            $('.existing-cc-radio').prop('checked', false);
-            $('#use_existing_card_no').prop('checked', false);
-            $('#existing_cards').hide();
-            $('#payment-methods').show();
+            $('.existing-cc-radio').prop('checked', false)
+            $('#use_existing_card_no').prop('checked', false)
+            $('#existing_cards').hide()
+            $('#payment-methods').show()
             $('.payment-sources').show()
           }
         }
