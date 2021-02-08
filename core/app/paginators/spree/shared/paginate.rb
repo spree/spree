@@ -9,6 +9,8 @@ module Spree
 
         if params[:per_page].to_i.between?(1, default_pages)
           @per_page = params[:per_page]
+        elsif params[:per_page] == nil
+          @per_page = params[:per_page]
         else
           @per_page = default_pages.to_i
         end
