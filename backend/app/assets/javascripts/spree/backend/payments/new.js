@@ -21,7 +21,7 @@ $(document).ready(function () {
       })
     })
 
-    $(CARD_EXPIRATION_SELECTOR).each(function () {
+    $(CARD_EXPIRATION_SELECT).each(function () {
       var $this = $(this)
       var cardExpiryInputId = '#' + $this.attr('id')
 
@@ -32,7 +32,7 @@ $(document).ready(function () {
       })
     })
 
-    $(CARD_CODE_SELECTOR).each(function () {
+    $(CARD_CODE_SELECT).each(function () {
       var $this = $(this)
       var cardCodeInputId = '#' + $this.attr('id')
 
