@@ -219,7 +219,7 @@ describe 'API V2 Storefront Products Spec', type: :request do
           before { get '/api/v2/storefront/products?page=1&per_page=10' }
 
           it 'returns the default number of products' do
-            expect(json_response['data'].count).to eq 4
+            expect(json_response['data'].count).to eq 6
           end
         end
 
@@ -227,7 +227,7 @@ describe 'API V2 Storefront Products Spec', type: :request do
           before { get '/api/v2/storefront/products?page=1&per_page=-1' }
 
           it 'returns the default number of products' do
-            expect(json_response['data'].count).to eq 4
+            expect(json_response['data'].count).to eq 6
           end
         end
 
@@ -235,7 +235,7 @@ describe 'API V2 Storefront Products Spec', type: :request do
           before { get '/api/v2/storefront/products?page=1&per_page=0' }
 
           it 'returns the default number of products' do
-            expect(json_response['data'].count).to eq 4
+            expect(json_response['data'].count).to eq 6
           end
         end
       end

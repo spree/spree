@@ -82,7 +82,7 @@ describe 'Storefront API v2 Orders spec', type: :request do
         before { get '/api/v2/storefront/account/orders?page=1&per_page=10', headers: headers_bearer }
 
         it 'returns the default number of orders' do
-          expect(json_response['data'].count).to eq 2
+          expect(json_response['data'].count).to eq 4
         end
       end
 
@@ -90,7 +90,7 @@ describe 'Storefront API v2 Orders spec', type: :request do
         before { get '/api/v2/storefront/account/orders?page=1&per_page=-1', headers: headers_bearer }
 
         it 'returns the default number of orders' do
-          expect(json_response['data'].count).to eq 2
+          expect(json_response['data'].count).to eq 4
         end
       end
 
@@ -98,7 +98,7 @@ describe 'Storefront API v2 Orders spec', type: :request do
         before { get '/api/v2/storefront/account/orders?page=1&per_page=0', headers: headers_bearer }
 
         it 'returns the default number of orders' do
-          expect(json_response['data'].count).to eq 2
+          expect(json_response['data'].count).to eq 4
         end
       end
     end

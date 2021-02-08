@@ -116,7 +116,7 @@ describe 'Taxons Spec', type: :request do
           before { get '/api/v2/storefront/taxons?page=1&per_page=10' }
 
           it 'returns the default number of taxons' do
-            expect(json_response['data'].count).to eq 2
+            expect(json_response['data'].count).to eq 3
           end
         end
 
@@ -124,7 +124,7 @@ describe 'Taxons Spec', type: :request do
           before { get '/api/v2/storefront/taxons?page=1&per_page=-1' }
 
           it 'returns the default number of taxons' do
-            expect(json_response['data'].count).to eq 2
+            expect(json_response['data'].count).to eq 3
           end
         end
 
@@ -132,7 +132,7 @@ describe 'Taxons Spec', type: :request do
           before { get '/api/v2/storefront/taxons?page=1&per_page=0' }
 
           it 'returns the default number of taxons' do
-            expect(json_response['data'].count).to eq 2
+            expect(json_response['data'].count).to eq 3
           end
         end
       end

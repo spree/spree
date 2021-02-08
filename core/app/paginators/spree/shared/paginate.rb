@@ -12,7 +12,7 @@ module Spree
                     elsif params[:per_page].nil?
                       params[:per_page]
                     else
-                      default_pages.to_i
+                      Kaminari.config.default_per_page
                     end
       end
 
