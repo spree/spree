@@ -8,12 +8,12 @@ module Spree
         default_pages = Spree::Api::Config[:api_v2_per_page_limit]
 
         @per_page = if params[:per_page].to_i.between?(1, default_pages)
-          params[:per_page]
-        elsif params[:per_page].nil?
-          params[:per_page]
-        else
-          default_pages.to_i
-        end
+                      params[:per_page]
+                    elsif params[:per_page].nil?
+                      params[:per_page]
+                    else
+                      default_pages.to_i
+                    end
       end
 
       def call
