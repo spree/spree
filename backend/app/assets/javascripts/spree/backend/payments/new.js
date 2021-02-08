@@ -2,12 +2,12 @@
 
 $(document).ready(function () {
   var CARD_NUMBER_SELECTOR = '.cardNumber'
-  var CARD_EXPIRATION_SELECTOR = '.cardExpiry'
   var CARD_CODE_SELECTOR = '.cardCode'
+  var CARD_EXPIRATION_SELECTOR = '.cardExpiry'
 
-  if ($(CARD_NUMBER_SELECTOR).length > 0 &&
-    $(CARD_EXPIRATION_SELECTOR).length > 0 &&
-    $(CARD_CODE_SELECTOR).length > 0) {
+  if ($(CARD_EXPIRATION_SELECTOR).length > 0 &&
+    $(CARD_CODE_SELECTOR).length > 0 &&
+    $(CARD_NUMBER_SELECTOR).length > 0) {
     $(CARD_NUMBER_SELECTOR).each(function () {
       var $this = $(this)
       var cardNumberInputId = '#' + $this.attr('id')
