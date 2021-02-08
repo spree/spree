@@ -5,9 +5,9 @@ module Spree
         @collection = collection
         @page       = params[:page]
 
-        default_pages = Spree::Api::Config[:api_v2_per_page_limit]
+        per_page_limit = Spree::Api::Config[:api_v2_per_page_limit]
 
-        @per_page = if params[:per_page].to_i.between?(1, default_pages)
+        @per_page = if params[:per_page].to_i.between?(1, per_page_limit)
                       params[:per_page]
                     else
                       Kaminari.config.default_per_page
