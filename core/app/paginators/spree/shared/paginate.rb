@@ -9,8 +9,6 @@ module Spree
 
         @per_page = if params[:per_page].to_i.between?(1, default_pages)
                       params[:per_page]
-                    elsif params[:per_page].nil?
-                      params[:per_page]
                     else
                       Kaminari.config.default_per_page
                     end
