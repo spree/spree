@@ -1,43 +1,32 @@
 /* global Cleave */
 
-$(document).ready(function () {
-  var CARD_NUMBER_SELECT = '.cardNumber'
-  var CARD_CODE_SELECT = '.cardCode'
-  var CARD_EXPIRATION_SELECT = '.cardExpiry'
-
-  if ($(CARD_EXPIRATION_SELECT).length > 0 &&
-    $(CARD_CODE_SELECT).length > 0 &&
-    $(CARD_NUMBER_SELECT).length > 0) {
-    $(CARD_NUMBER_SELECT).each(function () {
-      var $this = $(this)
-      var cardNumberInputId = '#' + $this.attr('id')
-
+document.addEventListener('DOMContentLoaded', function () {
+  if (document.querySelector('.cardNumber')) {
+    document.querySelectorAll('.cardNumber').forEach(function (cardNumber) {
       // eslint-disable-next-line no-new
-      new Cleave(cardNumberInputId, {
+      new Cleave(cardNumber, {
         creditCard: true,
         onCreditCardTypeChanged: function (type) {
           $('.ccType').val(type)
         }
       })
     })
+  }
 
-    $(CARD_EXPIRATION_SELECT).each(function () {
-      var $this = $(this)
-      var cardExpiryInputId = '#' + $this.attr('id')
-
-      /* eslint-disable no-new */
-      new Cleave(cardExpiryInputId, {
+  if (document.querySelector('.cardExpiry')) {
+    document.querySelectorAll('.cardExpiry').forEach(function (cardExpiry) {
+      // eslint-disable-next-line no-new
+      new Cleave(cardExpiry, {
         date: true,
         datePattern: ['m', Spree.translations.card_expire_year_format]
       })
     })
+  }
 
-    $(CARD_CODE_SELECT).each(function () {
-      var $this = $(this)
-      var cardCodeInputId = '#' + $this.attr('id')
-
-      /* eslint-disable no-new */
-      new Cleave(cardCodeInputId, {
+  if (document.querySelector('.cardCode')) {
+    document.querySelectorAll('.cardCode').forEach(function (cardCode) {
+      // eslint-disable-next-line no-new
+      new Cleave(cardCode, {
         numericOnly: true,
         blocks: [3]
       })
