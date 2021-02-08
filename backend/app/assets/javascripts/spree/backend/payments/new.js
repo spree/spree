@@ -1,14 +1,14 @@
 /* global Cleave */
 
 $(document).ready(function () {
-  var CARD_NUMBER_SELECTOR = '.cardNumber'
-  var CARD_CODE_SELECTOR = '.cardCode'
-  var CARD_EXPIRATION_SELECTOR = '.cardExpiry'
+  var CARD_NUMBER_SELECT = '.cardNumber'
+  var CARD_CODE_SELECT = '.cardCode'
+  var CARD_EXPIRATION_SELECT = '.cardExpiry'
 
-  if ($(CARD_EXPIRATION_SELECTOR).length > 0 &&
-    $(CARD_CODE_SELECTOR).length > 0 &&
-    $(CARD_NUMBER_SELECTOR).length > 0) {
-    $(CARD_NUMBER_SELECTOR).each(function () {
+  if ($(CARD_EXPIRATION_SELECT).length > 0 &&
+    $(CARD_CODE_SELECT).length > 0 &&
+    $(CARD_NUMBER_SELECT).length > 0) {
+    $(CARD_NUMBER_SELECT).each(function () {
       var $this = $(this)
       var cardNumberInputId = '#' + $this.attr('id')
 

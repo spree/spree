@@ -1,13 +1,14 @@
 document.addEventListener('DOMContentLoaded', function () {
   var typeRadioButtons = "input[name='zone[kind]']"
-  var radioSelected = document.querySelector(typeRadioButtons + ':checked').value
-  var shownZoneMembers = radioSelected + '_members'
-  var zoneMembersContainer = 'div[data-hook=member]'
-  var activeInput = 'zone_' + radioSelected + '_ids_field'
-
-  toggleTypes(activeInput, zoneMembersContainer, shownZoneMembers)
 
   if (document.querySelector(typeRadioButtons)) {
+    var radioSelected = document.querySelector(typeRadioButtons + ':checked').value
+    var shownZoneMembers = radioSelected + '_members'
+    var zoneMembersContainer = 'div[data-hook=member]'
+    var activeInput = 'zone_' + radioSelected + '_ids_field'
+
+    toggleTypes(activeInput, zoneMembersContainer, shownZoneMembers)
+
     document.querySelectorAll(typeRadioButtons).forEach(function (elem) {
       elem.addEventListener('change', function (event) {
         var item = event.target.value
