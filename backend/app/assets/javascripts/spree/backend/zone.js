@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function ( ) {
   var typeRadioButtons = "input[name='zone[kind]']"
   var radioSelected = document.querySelector(typeRadioButtons + ':checked').value
   var shownZoneMembers = radioSelected + '_members'
