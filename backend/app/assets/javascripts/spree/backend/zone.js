@@ -1,44 +1,39 @@
-$(function () {
-  var countryBased = $('#country_based')
-  var stateBased = $('#state_based')
-  countryBased.click(displayCountry)
-  stateBased.click(displayState)
-  if (countryBased.is(':checked')) {
-    displayCountry()
-  } else if (stateBased.is(':checked')) {
-    displayState()
-  } else {
-    displayState()
-    stateBased.click()
+document.addEventListener('DOMContentLoaded', function () {
+  var typeRadioButtons = "input[name='zone[kind]']"
+  var radioSelected = document.querySelector(typeRadioButtons + ':checked').value
+  var shownZoneMembers = radioSelected + '_members'
+  var zoneMembersContainer = 'div[data-hook=member]'
+  var activeInput = 'zone_' + radioSelected + '_ids_field'
+
+  toggleTypes(activeInput, zoneMembersContainer, shownZoneMembers)
+
+  if (document.querySelector(typeRadioButtons)) {
+    document.querySelectorAll(typeRadioButtons).forEach(function (elem) {
+      elem.addEventListener('change', function (event) {
+        var item = event.target.value
+        var toggledTypeMemebers = item + '_members'
+        var toggledaActiveInput = 'zone_' + item + '_ids_field'
+
+        toggleTypes(toggledaActiveInput, zoneMembersContainer, toggledTypeMemebers)
+      })
+    })
+  }
+
+  function toggleTypes (activeInput, membersContainer, shownType) {
+    document.getElementById('typeMembers')
+      .querySelectorAll('select, input').forEach(function (element) {
+        element.disabled = true
+      })
+
+    document.getElementById(activeInput)
+      .querySelectorAll('select, input').forEach(function (element) {
+        element.disabled = false
+      })
+
+    document.querySelectorAll(membersContainer).forEach(function (element) {
+      element.style.display = 'none'
+    })
+
+    document.getElementById(shownType).style.display = 'block'
   }
 })
-
-function displayCountry () {
-  $('#state_members :input').each(function () {
-    $(this).prop('disabled', true)
-  })
-  $('#state_members').hide()
-  $('#zone_members :input').each(function () {
-    $(this).prop('disabled', true)
-  })
-  $('#zone_members').hide()
-  $('#country_members :input').each(function () {
-    $(this).prop('disabled', false)
-  })
-  $('#country_members').show()
-}
-
-function displayState () {
-  $('#country_members :input').each(function () {
-    $(this).prop('disabled', true)
-  })
-  $('#country_members').hide()
-  $('#zone_members :input').each(function () {
-    $(this).prop('disabled', true)
-  })
-  $('#zone_members').hide()
-  $('#state_members :input').each(function () {
-    $(this).prop('disabled', false)
-  })
-  $('#state_members').show()
-}
