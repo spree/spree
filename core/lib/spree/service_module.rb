@@ -47,7 +47,7 @@ module Spree
       def call(input = nil)
         input ||= {}
         @_passed_input = Result.new(true, input)
-        result = if input.is_a?(Hash)
+        result = if input.instance_of?(Hash)
                    super(**input)
                  else
                    super(input)
