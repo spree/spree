@@ -16,6 +16,8 @@ describe 'API V2 Storefront Products Spec', type: :request do
   let!(:discontinued_product)  { create(:product, discontinue_on: Time.current - 1.day) }
   let!(:not_available_product) { create(:product, available_on: nil) }
 
+  before { Spree::Api::Config[:api_v2_per_page_limit] = 4 }
+
   describe 'products#index' do
     context 'with no params' do
       before { get '/api/v2/storefront/products' }
@@ -192,23 +194,49 @@ describe 'API V2 Storefront Products Spec', type: :request do
 
     context 'paginate products' do
       context 'with specified pagination params' do
-        before { get '/api/v2/storefront/products?page=1&per_page=2' }
+        context 'when per_page is between 1 and default value' do
+          before { get '/api/v2/storefront/products?page=1&per_page=2' }
 
-        it_behaves_like 'returns 200 HTTP status'
+          it_behaves_like 'returns 200 HTTP status'
 
-        it 'returns specified amount products' do
-          expect(json_response['data'].count).to eq 2
+          it 'returns the default number of products' do
+            expect(json_response['data'].count).to eq 2
+          end
+
+          it 'returns proper meta data' do
+            expect(json_response['meta']['count']).to       eq 2
+            expect(json_response['meta']['total_count']).to eq Spree::Product.available.count
+          end
+
+          it 'returns proper links data' do
+            expect(json_response['links']['self']).to include('/api/v2/storefront/products?page=1&per_page=2')
+            expect(json_response['links']['next']).to include('/api/v2/storefront/products?page=2&per_page=2')
+            expect(json_response['links']['prev']).to include('/api/v2/storefront/products?page=1&per_page=2')
+          end
         end
 
-        it 'returns proper meta data' do
-          expect(json_response['meta']['count']).to       eq 2
-          expect(json_response['meta']['total_count']).to eq Spree::Product.available.count
+        context 'when per_page is above the default value' do
+          before { get '/api/v2/storefront/products?page=1&per_page=10' }
+
+          it 'returns the default number of products' do
+            expect(json_response['data'].count).to eq 6
+          end
         end
 
-        it 'returns proper links data' do
-          expect(json_response['links']['self']).to include('/api/v2/storefront/products?page=1&per_page=2')
-          expect(json_response['links']['next']).to include('/api/v2/storefront/products?page=2&per_page=2')
-          expect(json_response['links']['prev']).to include('/api/v2/storefront/products?page=1&per_page=2')
+        context 'when per_page is less than 0' do
+          before { get '/api/v2/storefront/products?page=1&per_page=-1' }
+
+          it 'returns the default number of products' do
+            expect(json_response['data'].count).to eq 6
+          end
+        end
+
+        context 'when per_page is equal 0' do
+          before { get '/api/v2/storefront/products?page=1&per_page=0' }
+
+          it 'returns the default number of products' do
+            expect(json_response['data'].count).to eq 6
+          end
         end
       end
 

@@ -4,6 +4,8 @@ describe 'Taxons Spec', type: :request do
   let!(:taxonomy)  { create(:taxonomy) }
   let!(:taxons)    { create_list(:taxon, 2, taxonomy: taxonomy, parent_id: taxonomy.root.id) }
 
+  before { Spree::Api::Config[:api_v2_per_page_limit] = 2 }
+
   shared_examples 'returns valid taxon resource JSON' do
     it 'returns a valid taxon resource JSON response' do
       expect(response.status).to eq(200)
@@ -89,23 +91,49 @@ describe 'Taxons Spec', type: :request do
 
     context 'paginate taxons' do
       context 'with specified pagination params' do
-        before { get '/api/v2/storefront/taxons?page=1&per_page=1' }
+        context 'when per_page is between 1 and default value' do
+          before { get '/api/v2/storefront/taxons?page=1&per_page=1' }
 
-        it_behaves_like 'returns 200 HTTP status'
+          it_behaves_like 'returns 200 HTTP status'
 
-        it 'returns specified amount of taxons' do
-          expect(json_response['data'].count).to eq 1
+          it 'returns specified amount of taxons' do
+            expect(json_response['data'].count).to eq 1
+          end
+
+          it 'returns proper meta data' do
+            expect(json_response['meta']['count']).to       eq 1
+            expect(json_response['meta']['total_count']).to eq Spree::Taxon.count
+          end
+
+          it 'returns proper links data' do
+            expect(json_response['links']['self']).to include('/api/v2/storefront/taxons?page=1&per_page=1')
+            expect(json_response['links']['next']).to include('/api/v2/storefront/taxons?page=2&per_page=1')
+            expect(json_response['links']['prev']).to include('/api/v2/storefront/taxons?page=1&per_page=1')
+          end
         end
 
-        it 'returns proper meta data' do
-          expect(json_response['meta']['count']).to       eq 1
-          expect(json_response['meta']['total_count']).to eq Spree::Taxon.count
+        context 'when per_page is above the default value' do
+          before { get '/api/v2/storefront/taxons?page=1&per_page=10' }
+
+          it 'returns the default number of taxons' do
+            expect(json_response['data'].count).to eq 3
+          end
         end
 
-        it 'returns proper links data' do
-          expect(json_response['links']['self']).to include('/api/v2/storefront/taxons?page=1&per_page=1')
-          expect(json_response['links']['next']).to include('/api/v2/storefront/taxons?page=2&per_page=1')
-          expect(json_response['links']['prev']).to include('/api/v2/storefront/taxons?page=1&per_page=1')
+        context 'when per_page is less than 0' do
+          before { get '/api/v2/storefront/taxons?page=1&per_page=-1' }
+
+          it 'returns the default number of taxons' do
+            expect(json_response['data'].count).to eq 3
+          end
+        end
+
+        context 'when per_page is equal 0' do
+          before { get '/api/v2/storefront/taxons?page=1&per_page=0' }
+
+          it 'returns the default number of taxons' do
+            expect(json_response['data'].count).to eq 3
+          end
         end
       end
 
