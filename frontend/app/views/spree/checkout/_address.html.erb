@@ -1,5 +1,3 @@
-<% @addresses = try_spree_current_user ? user_available_addresses : [] %>
-
 <% if !try_spree_current_user || try_spree_current_user.email.blank? %>
   <div class="row">
     <div class="col-12 mb-4">
@@ -28,10 +26,10 @@
             <%= label_tag :order_use_billing, Spree.t(:use_billing_address), class: 'spree-checkbox-label' %>
           </div>
         <% end %>
-        <% if @addresses.present? %>
+        <% if user_available_addresses.present? %>
         <div class="select_address mb-5">
           <div class="form-group col">
-            <% @addresses.each_with_index do |address, idx| %>
+            <% user_available_addresses.each_with_index do |address, idx| %>
             <div class="row mb-3" id="<%= [address_type, dom_id(address)].join('_') %>">
               <label class="form-check-label spree-radio-label col-8">
                 <%= form.radio_button "#{address_name}_id", address.id, checked: (address.id == try_spree_current_user["#{address_name}_id"] || idx == 0) %>
