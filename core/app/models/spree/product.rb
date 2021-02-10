@@ -90,6 +90,10 @@ module Spree
     after_save :reset_nested_changes
     after_touch :touch_taxons
 
+    # reset cache on save inside trasaction and transaction commit
+    after_save :reset_memoized_data
+    after_commit :reset_memoized_data
+
     before_validation :normalize_slug, on: :update
     before_validation :validate_master
 
@@ -126,6 +130,13 @@ module Spree
              :display_compare_at_price, :images, to: :find_or_build_master
 
     alias master_images images
+
+    def reload
+      %w(total_on_hand taxonomy_ids taxon_and_ancestors category category default_variant_id tax_category default_variant).each do |v|
+        instance_variable_set(:"@#{v}", nil)
+      end
+      super
+    end
 
     # Cant use short form block syntax due to https://github.com/Netflix/fast_jsonapi/issues/259
     def purchasable?
@@ -466,6 +477,12 @@ module Spree
     def discontinue_on_must_be_later_than_available_on
       if discontinue_on < available_on
         errors.add(:discontinue_on, :invalid_date_range)
+      end
+    end
+
+    def reset_memoized_data
+      %w(total_on_hand taxonomy_ids taxon_and_ancestors category default_variant_id tax_category default_variant).each do |v|
+        instance_variable_set(:"@#{v}", nil)
       end
     end
   end

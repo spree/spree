@@ -317,6 +317,29 @@ describe Spree::Product, type: :model do
         expect(latest_slug).not_to be_nil
       end
     end
+
+    context 'memoized data' do
+      let(:corrent_total_on_hand) { 5 }
+      let(:incorrent_total_on_hand) { 15 }
+
+      before do
+        product.stock_items.first.set_count_on_hand corrent_total_on_hand
+        product.instance_variable_set(:@total_on_hand, incorrent_total_on_hand)
+      end
+
+      it 'without action keeps data' do
+        expect(product.total_on_hand).to eq incorrent_total_on_hand
+      end
+
+      it 'resets memoized data after save' do
+        product.save
+        expect(product.total_on_hand).to eq corrent_total_on_hand
+      end
+
+      it 'resets memoized data reload' do
+        expect(product.reload.total_on_hand).to eq corrent_total_on_hand
+      end
+    end
   end
 
   context 'properties' do
