@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'spree/testing_support/order_walkthrough'
 
 describe Spree::Order, type: :model do
-  let(:order) { Spree::Order.new }
+  let(:order) { described_class.new }
 
   before { create(:store) }
 
@@ -25,33 +25,33 @@ describe Spree::Order, type: :model do
 
     it 'has the following transitions' do
       transitions.each do |transition|
-        transition = Spree::Order.find_transition(from: transition.keys.first, to: transition.values.first)
+        transition = described_class.find_transition(from: transition.keys.first, to: transition.values.first)
         expect(transition).not_to be_nil
       end
     end
 
     it 'does not have a transition from delivery to confirm' do
-      transition = Spree::Order.find_transition(from: :delivery, to: :confirm)
+      transition = described_class.find_transition(from: :delivery, to: :confirm)
       expect(transition).to be_nil
     end
 
     it '.find_transition when contract was broken' do
-      expect(Spree::Order.find_transition(foo: :bar, baz: :dog)).to be_falsey
+      expect(described_class.find_transition(foo: :bar, baz: :dog)).to be_falsey
     end
 
     it '.remove_transition' do
       options = { from: transitions.first.keys.first, to: transitions.first.values.first }
-      expect(Spree::Order).to receive_messages(
+      expect(described_class).to receive_messages(
         removed_transitions: [],
         next_event_transitions: transitions.dup
       )
-      expect(Spree::Order.remove_transition(options)).to be_truthy
-      expect(Spree::Order.removed_transitions).to eql([options])
-      expect(Spree::Order.next_event_transitions).not_to include(transitions.first)
+      expect(described_class.remove_transition(options)).to be_truthy
+      expect(described_class.removed_transitions).to eql([options])
+      expect(described_class.next_event_transitions).not_to include(transitions.first)
     end
 
     it '.remove_transition when contract was broken' do
-      expect(Spree::Order.remove_transition(nil)).to be_falsey
+      expect(described_class.remove_transition(nil)).to be_falsey
     end
 
     it 'always return integer on checkout_step_index' do
@@ -69,7 +69,7 @@ describe Spree::Order, type: :model do
       expect(order.passed_checkout_step?('delivery')).to be true
     end
 
-    context '#checkout_steps' do
+    describe '#checkout_steps' do
       context 'when confirmation not required' do
         before do
           allow(order).to receive_messages confirmation_required?: false
@@ -205,9 +205,9 @@ describe Spree::Order, type: :model do
                           amount: 0.05
         allow(Spree::TaxRate).to receive_messages(match: [tax_rate])
         FactoryBot.create :tax_adjustment,
-                           adjustable: line_item,
-                           source: tax_rate,
-                           order: order
+                          adjustable: line_item,
+                          source: tax_rate,
+                          order: order
         order.email = 'user@example.com'
         order.next!
         expect(order.adjustment_total).to eq(0)
@@ -492,8 +492,8 @@ describe Spree::Order, type: :model do
 
   context 're-define checkout flow' do
     before do
-      @old_checkout_flow = Spree::Order.checkout_flow
-      Spree::Order.class_eval do
+      @old_checkout_flow = described_class.checkout_flow
+      described_class.class_eval do
         checkout_flow do
           go_to_state :payment
           go_to_state :complete
@@ -502,15 +502,15 @@ describe Spree::Order, type: :model do
     end
 
     after do
-      Spree::Order.checkout_flow(&@old_checkout_flow)
+      described_class.checkout_flow(&@old_checkout_flow)
     end
 
     it 'does not keep old event transitions when checkout_flow is redefined' do
-      expect(Spree::Order.next_event_transitions).to eq([{ cart: :payment }, { payment: :complete }])
+      expect(described_class.next_event_transitions).to eq([{ cart: :payment }, { payment: :complete }])
     end
 
     it 'does not keep old events when checkout_flow is redefined' do
-      state_machine = Spree::Order.state_machine
+      state_machine = described_class.state_machine
       expect(state_machine.states.any? { |s| s.name == :address }).to be false
       known_states = state_machine.events[:next].branches.map(&:known_states).flatten
       expect(known_states).not_to include(:address)
@@ -522,8 +522,8 @@ describe Spree::Order, type: :model do
   # Regression test for #3665
   context 'with only a complete step' do
     before do
-      @old_checkout_flow = Spree::Order.checkout_flow
-      Spree::Order.class_eval do
+      @old_checkout_flow = described_class.checkout_flow
+      described_class.class_eval do
         checkout_flow do
           go_to_state :complete
         end
@@ -531,7 +531,7 @@ describe Spree::Order, type: :model do
     end
 
     after do
-      Spree::Order.checkout_flow(&@old_checkout_flow)
+      described_class.checkout_flow(&@old_checkout_flow)
     end
 
     it 'does not attempt to process payments' do
@@ -547,30 +547,30 @@ describe Spree::Order, type: :model do
 
   context 'insert checkout step' do
     before do
-      @old_checkout_flow = Spree::Order.checkout_flow
-      Spree::Order.class_eval do
+      @old_checkout_flow = described_class.checkout_flow
+      described_class.class_eval do
         insert_checkout_step :new_step, before: :address
       end
     end
 
     after do
-      Spree::Order.checkout_flow(&@old_checkout_flow)
+      described_class.checkout_flow(&@old_checkout_flow)
     end
 
     it 'maintains removed transitions' do
-      transition = Spree::Order.find_transition(from: :delivery, to: :confirm)
+      transition = described_class.find_transition(from: :delivery, to: :confirm)
       expect(transition).to be_nil
     end
 
     context 'before' do
       before do
-        Spree::Order.class_eval do
+        described_class.class_eval do
           insert_checkout_step :before_address, before: :address
         end
       end
 
       specify do
-        order = Spree::Order.new
+        order = described_class.new
         expect(order.checkout_steps).to eq(%w(new_step before_address address delivery complete))
       end
 
@@ -581,13 +581,13 @@ describe Spree::Order, type: :model do
 
     context 'after' do
       before do
-        Spree::Order.class_eval do
+        described_class.class_eval do
           insert_checkout_step :after_address, after: :address
         end
       end
 
       specify do
-        order = Spree::Order.new
+        order = described_class.new
         expect(order.checkout_steps).to eq(%w(new_step address after_address delivery complete))
       end
 
@@ -599,23 +599,23 @@ describe Spree::Order, type: :model do
 
   context 'remove checkout step' do
     before do
-      @old_checkout_flow = Spree::Order.checkout_flow
-      Spree::Order.class_eval do
+      @old_checkout_flow = described_class.checkout_flow
+      described_class.class_eval do
         remove_checkout_step :address
       end
     end
 
     after do
-      Spree::Order.checkout_flow(&@old_checkout_flow)
+      described_class.checkout_flow(&@old_checkout_flow)
     end
 
     it 'maintains removed transitions' do
-      transition = Spree::Order.find_transition(from: :delivery, to: :confirm)
+      transition = described_class.find_transition(from: :delivery, to: :confirm)
       expect(transition).to be_nil
     end
 
     specify do
-      order = Spree::Order.new
+      order = described_class.new
       expect(order.checkout_steps).to eq(%w(delivery complete))
     end
   end
@@ -634,7 +634,7 @@ describe Spree::Order, type: :model do
       order.update_from_params(params, permitted_params)
     end
 
-    context 'passing a credit card' do
+    context 'when choose different payment method' do
       let(:permitted_params) do
         Spree::PermittedAttributes.checkout_attributes +
           [payments_attributes: Spree::PermittedAttributes.payment_attributes]
@@ -644,7 +644,7 @@ describe Spree::Order, type: :model do
 
       let(:params) do
         ActionController::Parameters.new(
-          order: { payments_attributes: [{ payment_method_id: 1 }], existing_card: credit_card.id },
+          order: { payments_attributes: [{ payment_method_id: payment_method_id }], existing_card: credit_card.id },
           cvc_confirm: '737',
           payment_source: {
             '1' => { name: 'Luis Braga',
@@ -658,33 +658,51 @@ describe Spree::Order, type: :model do
 
       before { order.user_id = 3 }
 
-      it 'sets confirmation value when its available via :cvc_confirm' do
-        allow(Spree::CreditCard).to receive_messages find: credit_card
-        expect(credit_card).to receive(:verification_value=)
-        order.update_from_params(params, permitted_params)
-      end
+      context 'when the user selected the check' do
+        let(:check_payment_method) { create(:check_payment_method) }
+        let(:payment_method_id) { check_payment_method.id }
 
-      it 'sets existing card as source for new payment' do
-        expect do
+        it 'sets check as payment method' do
           order.update_from_params(params, permitted_params)
-        end.to change { Spree::Payment.count }.by(1)
+          last_payment_method = order.payments.last
 
-        expect(Spree::Payment.last.source).to eq credit_card
+          expect(last_payment_method.id).to eq(payment_method_id)
+          expect(Spree::PaymentMethod.find(last_payment_method.id).type).to eq('Spree::PaymentMethod::Check')
+        end
       end
 
-      it 'sets request_env on payment' do
-        request_env = { 'USER_AGENT' => 'Firefox' }
+      context 'passing a credit card' do
+        let(:credit_card_payment_method) { create(:credit_card_payment_method) }
+        let(:payment_method_id) { credit_card_payment_method.id }
 
-        order.update_from_params(params, permitted_params, request_env)
-        expect(order.payments[0].request_env).to eq request_env
-      end
-
-      it 'dont let users mess with others users cards' do
-        credit_card.update_column :user_id, 5
-
-        expect do
+        it 'sets confirmation value when its available via :cvc_confirm' do
+          allow(Spree::CreditCard).to receive_messages find: credit_card
+          expect(credit_card).to receive(:verification_value=)
           order.update_from_params(params, permitted_params)
-        end.to raise_error(Spree.t(:invalid_credit_card))
+        end
+
+        it 'sets existing card as source for new payment' do
+          expect do
+            order.update_from_params(params, permitted_params)
+          end.to change { Spree::Payment.count }.by(1)
+
+          expect(Spree::Payment.last.source).to eq credit_card
+        end
+
+        it 'sets request_env on payment' do
+          request_env = { 'USER_AGENT' => 'Firefox' }
+
+          order.update_from_params(params, permitted_params, request_env)
+          expect(order.payments[0].request_env).to eq request_env
+        end
+
+        it 'dont let users mess with others users cards' do
+          credit_card.update_column :user_id, 5
+
+          expect do
+            order.update_from_params(params, permitted_params)
+          end.to raise_error(Spree.t(:invalid_credit_card))
+        end
       end
     end
 

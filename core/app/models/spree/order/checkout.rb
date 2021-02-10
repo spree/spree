@@ -221,25 +221,35 @@ module Spree
             run_callbacks :updating_from_params do
               # Set existing card after setting permitted parameters because
               # rails would slice parameters containg ruby objects, apparently
-              existing_card_id = @updating_params[:order] ? @updating_params[:order].delete(:existing_card) : nil
+
+              payment_method = if @updating_params[:order] && @updating_params[:order][:payments_attributes]
+                id = @updating_params[:order][:payments_attributes].first[:payment_method_id]
+                Spree::PaymentMethod.find(id)
+              end
 
               attributes = if @updating_params[:order]
-                             @updating_params[:order].permit(permitted_params).delete_if { |_k, v| v.nil? }
-                           else
-                             {}
-                           end
+                @updating_params[:order].permit(permitted_params).delete_if { |_k, v| v.nil? }
+              else
+                {}
+              end
 
-              if existing_card_id.present?
-                credit_card = CreditCard.find existing_card_id
-                if credit_card.user_id != user_id || credit_card.user_id.blank?
-                  raise Core::GatewayError, Spree.t(:invalid_credit_card)
+              # (payment_method.type != "Spree::PaymentMethod::Check" || payment_method.type != "Spree::PaymentMethod::StoreCredit")
+              if payment_method && payment_method.type.include?("Spree::Gateway") 
+
+                existing_card_id = @updating_params[:order] ? @updating_params[:order].delete(:existing_card) : nil
+
+                if existing_card_id.present?
+                  credit_card = CreditCard.find existing_card_id
+                  if credit_card.user_id != user_id || credit_card.user_id.blank?
+                    raise Core::GatewayError, Spree.t(:invalid_credit_card)
+                  end
+
+                  credit_card.verification_value = params[:cvc_confirm] if params[:cvc_confirm].present?
+
+                  attributes[:payments_attributes].first[:source] = credit_card
+                  attributes[:payments_attributes].first[:payment_method_id] = credit_card.payment_method_id
+                  attributes[:payments_attributes].first.delete :source_attributes
                 end
-
-                credit_card.verification_value = params[:cvc_confirm] if params[:cvc_confirm].present?
-
-                attributes[:payments_attributes].first[:source] = credit_card
-                attributes[:payments_attributes].first[:payment_method_id] = credit_card.payment_method_id
-                attributes[:payments_attributes].first.delete :source_attributes
               end
 
               if attributes[:payments_attributes]
