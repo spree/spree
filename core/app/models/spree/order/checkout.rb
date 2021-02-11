@@ -227,8 +227,8 @@ module Spree
                                  Spree::PaymentMethod.find(id)
                                end
 
-              existing_card_id = if payment_method&.type&.include?('Spree::Gateway')
-                                   @updating_params[:order] ? @updating_params[:order].delete(:existing_card) : nil
+              existing_card_id = if payment_method && payment_method.type.include?('Spree::Gateway')
+                                  @updating_params[:order] ? @updating_params[:order].delete(:existing_card) : nil
                                  end
 
               attributes = if @updating_params[:order]

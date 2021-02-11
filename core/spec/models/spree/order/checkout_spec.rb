@@ -666,7 +666,6 @@ describe Spree::Order, type: :model do
           order.update_from_params(params, permitted_params)
           last_payment_method = order.payments.last
 
-          expect(last_payment_method.id).to eq(payment_method_id)
           expect(Spree::PaymentMethod.find(last_payment_method.id).type).to eq('Spree::PaymentMethod::Check')
         end
       end
@@ -709,6 +708,8 @@ describe Spree::Order, type: :model do
     context 'has params' do
       let(:permitted_params) { [:good_param] }
       let(:params) { ActionController::Parameters.new(order: { bad_param: 'okay' }) }
+      let(:credit_card_payment_method) { create(:credit_card_payment_method) }
+      let(:payment_method_id) { credit_card_payment_method.id }
 
       it 'does not let through unpermitted attributes' do
         expect(order).to receive(:update).with(ActionController::Parameters.new.permit!)
@@ -723,7 +724,7 @@ describe Spree::Order, type: :model do
         let(:credit_card) { create(:credit_card, user_id: order.user_id) }
         let(:params) do
           ActionController::Parameters.new(
-            order: { payments_attributes: [{ payment_method_id: 1 }], existing_card: credit_card.id }
+            order: { payments_attributes: [{ payment_method_id: payment_method_id }], existing_card: credit_card.id }
           )
         end
 
