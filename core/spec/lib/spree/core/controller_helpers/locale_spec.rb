@@ -41,7 +41,7 @@ describe Spree::Core::ControllerHelpers::Locale, type: :controller do
     end
 
     context 'store without locale set' do
-      let!(:store) { create :store, default: true }
+      let!(:store) { create :store, default: true, default_locale: nil }
 
       context 'without I18n.default_locale set' do
         it 'fallbacks to english' do

@@ -230,7 +230,7 @@ describe Spree::Store, type: :model do
   end
 
   describe '#unique_name' do
-    let!(:store) { create(:store) }
+    let!(:store) { build(:store) }
 
     it 'returns the Store Name followed by the Store Code in parentheses' do
       expect(store.unique_name).to eq("#{store.name} (#{store.code})")
@@ -240,7 +240,7 @@ describe Spree::Store, type: :model do
   describe '#supported_currencies_list' do
     context 'with supported currencies set' do
       let(:currencies) { 'USD, EUR, dummy' }
-      let!(:store) { create(:store, default_currency: 'USD', supported_currencies: currencies) }
+      let!(:store) { build(:store, default_currency: 'USD', supported_currencies: currencies) }
 
       it 'returns supported currencies list' do
         expect(store.supported_currencies_list).to contain_exactly(
@@ -250,7 +250,7 @@ describe Spree::Store, type: :model do
     end
 
     context 'without supported currencies set' do
-      let!(:store) { create(:store, default_currency: 'EUR', supported_currencies: nil) }
+      let!(:store) { build(:store, default_currency: 'EUR', supported_currencies: nil) }
 
       it 'returns supported currencies list' do
         expect(store.supported_currencies_list).to contain_exactly(
@@ -262,7 +262,7 @@ describe Spree::Store, type: :model do
 
   describe '#supported_locales_list' do
     context 'with supported locale set' do
-      let(:store) { create(:store, default_locale: 'fr', supported_locales: 'fr,de') }
+      let(:store) { build(:store, default_locale: 'fr', supported_locales: 'fr,de') }
 
       it 'returns supported currencies list' do
         expect(store.supported_locales_list).to be_an_instance_of(Array)
@@ -271,12 +271,46 @@ describe Spree::Store, type: :model do
     end
 
     context 'without supported currencies set' do
-      let(:store) { create(:store) }
+      let(:store) { build(:store, default_locale: nil, supported_locales: nil) }
 
       it 'returns supported currencies list' do
         expect(store.supported_locales_list).to be_an_instance_of(Array)
         expect(store.supported_locales_list).to be_empty
       end
+    end
+  end
+
+  describe '#ensure_supported_locales' do
+    context 'store with default_locale' do
+      let(:store) { build(:store, default_locale: 'fr', supported_locales: nil) }
+
+      it { expect { store.save! }.to change(store, :supported_locales).from(nil).to('fr') }
+    end
+
+    context 'store without default locale' do
+      let(:store) { build(:store, default_locale: nil, supported_locales: nil) }
+
+      it { expect { store.save! }.not_to change(store, :supported_locales).from(nil) }
+    end
+
+    context 'store with supported locales' do
+      let(:store) { build(:store, default_locale: 'fr', supported_locales: 'fr,de') }
+
+      it { expect { store.save! }.not_to change(store, :supported_locales) }
+    end
+  end
+
+  describe '#ensure_supported_currencies' do
+    context 'store with default_currency' do
+      let(:store) { build(:store, default_currency: 'EUR', supported_currencies: nil) }
+
+      it { expect { store.save! }.to change(store, :supported_currencies).from(nil).to('EUR') }
+    end
+
+    context 'store with supported currencies' do
+      let(:store) { build(:store, default_currency: 'EUR', supported_currencies: 'EUR,GBP') }
+
+      it { expect { store.save! }.not_to change(store, :supported_currencies) }
     end
   end
 end
