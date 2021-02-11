@@ -65,9 +65,16 @@ module Spree
     end
 
     def user_available_addresses
-      return unless try_spree_current_user
+      @user_available_addresses ||= begin
+        return [] unless try_spree_current_user
 
-      try_spree_current_user.addresses.where(country: available_countries)
+        states = current_store.countries_available_for_checkout.each_with_object([]) do |country, memo|
+          memo << current_store.states_available_for_checkout(country)
+        end.flatten
+
+        try_spree_current_user.addresses.
+          where(id: states.pluck(:country_id).uniq)
+      end
     end
 
     def checkout_zone_applicable_states_for(country)
