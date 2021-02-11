@@ -73,7 +73,7 @@ module Spree
         end.flatten
 
         try_spree_current_user.addresses.
-          where(id: states.pluck(:country_id).uniq)
+          where(country_id: states.pluck(:country_id).uniq)
       end
     end
 
