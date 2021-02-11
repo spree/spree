@@ -222,7 +222,7 @@ module Spree
               # Set existing card after setting permitted parameters because
               # rails would slice parameters containg ruby objects, apparently
 
-              payment_method = if @updating_params[:order] && @updating_params[:order][:payments_attributes]
+              payment_method = if @updating_params.dig(:order, :payments_attributes)
                                  id = @updating_params[:order][:payments_attributes].first[:payment_method_id]
                                  Spree::PaymentMethod.find(id)
                                end
