@@ -13,16 +13,30 @@ describe Spree::AddressesHelper, type: :helper do
 
     let(:new_york) { create(:state, name: 'New York') }
 
+    # countries
     let!(:united_states) do
       create(:country, name: 'United States').tap do |usa|
         usa.states << new_york
       end
     end
+    let!(:china)   { create(:country, name: 'China') }
+    let!(:ukraine) { create(:country, name: 'Ukraine') }
 
-    let!(:address_1) do
+    # addresses
+    let!(:usa_address) do
       create(:address,
              country_id: united_states.id,
              state_id: new_york.id,
+             user: user)
+    end
+    let!(:china_address) do
+      create(:address,
+             country_id: china.id,
+             user: user)
+    end
+    let!(:ukraine_address) do
+      create(:address,
+             country_id: ukraine.id,
              user: user)
     end
 
@@ -58,7 +72,7 @@ describe Spree::AddressesHelper, type: :helper do
         let(:checkout_zone) { create(:global_zone) }
 
         it 'returns that addresses' do
-          expect(subject).to match_array address_1
+          expect(subject).to contain_exactly(usa_address)
         end
       end
     end
