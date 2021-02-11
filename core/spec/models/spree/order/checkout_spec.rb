@@ -663,10 +663,11 @@ describe Spree::Order, type: :model do
         let(:payment_method_id) { check_payment_method.id }
 
         it 'sets check as payment method' do
-          order.update_from_params(params, permitted_params)
-          last_payment_method = order.payments.last
+          expect do
+            order.update_from_params(params, permitted_params)
+          end.to change { Spree::Payment.count }.by(1)
 
-          expect(Spree::PaymentMethod.find(last_payment_method.id).type).to eq('Spree::PaymentMethod::Check')
+          expect(Spree::Payment.last.source).not_to eq credit_card
         end
       end
 
