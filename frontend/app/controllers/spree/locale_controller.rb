@@ -1,14 +1,12 @@
 module Spree
   class LocaleController < Spree::StoreController
+    def index
+      render :index, layout: false
+    end
+
     def set
-      session['user_return_to'] = request.referer if request.referer&.starts_with?('http://' + request.host)
-      if params[:locale] && I18n.available_locales.map(&:to_s).include?(params[:locale])
-        session[:locale] = I18n.locale = params[:locale]
-        flash.notice = Spree.t(:locale_changed)
-      else
-        flash[:error] = Spree.t(:locale_not_changed)
-      end
-      redirect_back_or_default(spree.root_path)
+      session[:locale] = params[:locale]
+      redirect_back_or_default(root_path(locale: current_locale))
     end
   end
 end
