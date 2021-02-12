@@ -21,5 +21,11 @@ module Spree
         locale.to_s == 'en' ? ['English (US)', 'en'] : [locale, locale.to_s]
       end
     end
+
+    def should_render_locale_dropdown?
+      return false if current_store.nil?
+
+      current_store.supported_locales_list.size > 1
+    end
   end
 end

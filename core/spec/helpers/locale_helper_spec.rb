@@ -43,4 +43,18 @@ describe Spree::LocaleHelper, type: :helper do
   describe '#locale_presentation' do
     it { expect(locale_presentation(:fr)).to eq( ['Français (FR)', 'fr']) }
   end
+
+  describe '#should_render_locale_dropdown?' do
+    context 'store with multiple locales' do
+      let(:current_store) { eu_store }
+
+      it { expect(should_render_locale_dropdown?).to be_truthy }
+    end
+
+    context 'store with single locale' do
+      let(:current_store) { create(:store, supported_locales: 'en', default_locale: 'en') }
+
+      it { expect(should_render_locale_dropdown?).to be_falsey }
+    end
+  end
 end
