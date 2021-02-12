@@ -369,4 +369,20 @@ describe Spree::CreditCard, type: :model do
       end
     end
   end
+
+  context '#display_brand' do
+    let(:credit_card) { create(:credit_card, cc_type: cc_type, user_id: @order.user_id) }
+
+    context 'when the cc_type does not exist' do
+      let(:cc_type) { nil }
+
+      it { expect(credit_card.display_brand).to eq('N/A') }
+    end
+
+    context 'when the cc_type exist' do
+      let(:cc_type) { 'visa' }
+
+      it { expect(credit_card.display_brand).to eq(cc_type.upcase) }
+    end
+  end
 end

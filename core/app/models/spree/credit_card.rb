@@ -127,6 +127,10 @@ module Spree
       "XXXX-XXXX-XXXX-#{last_digits}"
     end
 
+    def display_brand
+      brand.present? ? brand.upcase : Spree.t(:no_cc_type)
+    end
+
     def actions
       %w{capture void credit}
     end

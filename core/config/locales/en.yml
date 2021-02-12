@@ -755,6 +755,7 @@ en:
     new_order_notifications_email: New Order Notifications Email
     cut: Cut
     cvv: CVV
+    no_cc_type: N/A
     cvv_response: CVV Response
     date: Date
     date_completed: Date Completed
