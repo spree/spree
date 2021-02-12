@@ -103,13 +103,13 @@ module Spree
           where(
             spree_prices: {
               amount: price.min..price.max,
-              currency: currency.upcase
+              currency: currency&.upcase
             }
           )
       end
 
       def by_currency(products)
-        return products if price?
+        return products unless currency?
 
         products.joins(master: :prices).where(spree_prices: { currency: currency.upcase })
       end

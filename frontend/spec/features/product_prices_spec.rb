@@ -23,7 +23,7 @@ describe 'Product with prices in multiple currencies', type: :feature, js: true 
         visit spree.products_path
         expect(page).to have_text '£23.00'
         find('#header #internationalization-button').click
-        expect(page).to have_select('currency', selected: 'GBP')
+        expect(page).to have_select('switch_to_currency', selected: 'GBP')
       end
     end
   end

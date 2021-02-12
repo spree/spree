@@ -192,7 +192,7 @@ module Spree
     end
 
     def price_in(currency)
-      prices.detect { |price| price.currency == currency.upcase } || prices.build(currency: currency.upcase)
+      prices.detect { |price| price.currency == currency&.upcase } || prices.build(currency: currency&.upcase)
     end
 
     def amount_in(currency)
