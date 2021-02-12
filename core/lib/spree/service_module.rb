@@ -1,8 +1,8 @@
 module Spree
   module ServiceModule
     module Callable
-      def call(*args)
-        new.call(*args).tap do |result|
+      def call(*args, **kwargs)
+        new.call(*args, **kwargs).tap do |result|
           return yield(result) if block_given?
         end
       end
