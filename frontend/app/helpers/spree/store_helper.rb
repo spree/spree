@@ -27,5 +27,9 @@ module Spree
 
       Spree.t('i18n.this_file_language', locale: store.default_locale)
     end
+
+    def should_render_store_chooser?
+      Spree::Config.show_store_selector && stores.size > 1
+    end
   end
 end

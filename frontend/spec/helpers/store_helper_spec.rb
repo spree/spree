@@ -37,5 +37,27 @@ module Spree
       it { expect(store_locale_name(Spree::Store.default)).to eq('English (US)') }
       it { expect(store_locale_name(eu_store)).to eq('Deutsch (DE)') }
     end
+
+    describe '#should_render_store_chooser?' do
+      context 'enabled' do
+        context 'with 1 store' do
+          it { expect(should_render_store_chooser?).to be_falsey }
+        end
+
+        context 'with multiple stores' do
+          before { create_list(:store, 2) }
+
+          it { expect(should_render_store_chooser?).to be_truthy }
+        end
+      end
+
+      context 'disabled' do
+        before { Spree::Config.show_store_selector = false }
+
+        after { Spree::Config.show_store_selector = true }
+
+        it { expect(should_render_store_chooser?).to be_falsey }
+      end
+    end
   end
 end
