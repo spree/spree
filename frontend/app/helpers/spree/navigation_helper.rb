@@ -28,6 +28,11 @@ module Spree
       )
     end
 
+    def should_render_internationalization_dropdown?
+      (defined?(should_render_locale_dropdown?) && should_render_locale_dropdown?) ||
+        (defined?(should_render_currency_dropdown?) && should_render_currency_dropdown?)
+    end
+
     private
 
     def spree_navigation_data_cache_key
