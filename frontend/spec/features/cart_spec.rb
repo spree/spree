@@ -118,4 +118,27 @@ describe 'Cart', type: :feature, inaccessible: true, js: true do
       expect(page).not_to have_content(order.total)
     end
   end
+
+  context 'switching currency' do
+    let!(:product) { create(:product) }
+
+    before do
+      create(:store, default: true, supported_currencies: 'USD,EUR,GBP')
+      create(:price, variant: product.master, currency: 'EUR', amount: 16.00)
+      create(:price, variant: product.master, currency: 'GBP', amount: 23.00)
+      add_to_cart(product)
+    end
+
+    it 'will change order currency and recalulate prices' do
+      expect(page).to have_text '$19.99'
+      find('#header #internationalization-button').click
+      select 'EUR', from: 'switch_to_currency'
+      expect(page).to have_text '€16.00'
+      expect(order.reload.currency).to eq('EUR')
+      find('#header #internationalization-button').click
+      select 'GBP', from: 'switch_to_currency'
+      expect(page).to have_text '£23.00'
+      expect(order.reload.currency).to eq('GBP')
+    end
+  end
 end

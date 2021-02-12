@@ -74,13 +74,12 @@ describe 'setting locale', type: :feature do
   context 'via set_locale endpoint' do
     before do
       store.update(default_locale: 'en', supported_locales: 'en,fr')
+      visit spree.set_locale_path(switch_to_locale: 'fr')
     end
 
     after do
       I18n.locale = 'en'
     end
-
-    before { visit spree.set_locale_path(locale: 'fr') }
 
     it_behaves_like 'translates cart page'
   end
@@ -97,5 +96,16 @@ describe 'setting locale', type: :feature do
       expect(page).to have_text(Spree.t(:'i18n.language'))
       expect(page).to have_select('switch_to_locale', with_options: ['English (US)', 'Français (FR)'])
     end
+  end
+
+  context 'via UI', :js do
+    before do
+      store.update(default_locale: 'en', supported_locales: 'en,fr')
+      visit spree.cart_path
+      find('#header #internationalization-button').click
+      select 'Français (FR)', from: 'Language'
+    end
+
+    it_behaves_like 'translates cart page'
   end
 end

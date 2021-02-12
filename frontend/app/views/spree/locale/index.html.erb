@@ -1,15 +1,1 @@
-<% if current_store.supported_locales_list.size > 1 %>
-  <li id="locale-select" data-hook>
-    <%= form_tag spree.set_locale_path, class: 'navbar-form' do %>
-      <div class="form-group">
-        <label for="switch_to_locale" class="sr-only">
-          <%= Spree.t(:'i18n.language') %>
-        </label>
-        <%= select_tag(:switch_to_locale,
-          options_for_select(supported_locales_options, I18n.locale),
-          class: 'form-control') %>
-        <noscript><%= submit_tag %></noscript>
-      </div>
-    <% end %>
-  </li>
-<% end %>
+<%= render 'spree/shared/locale_dropdown' %>

@@ -5,8 +5,12 @@ module Spree
     end
 
     def set
-      session[:locale] = params[:locale]
-      redirect_back_or_default(root_path(locale: current_locale))
+      new_locale = params[:switch_to_locale] || params[:locale]
+
+      if new_locale.present? && supported_locale?(new_locale)
+        session[:locale] = new_locale
+      end
+      redirect_back_or_default(root_path(locale: new_locale))
     end
   end
 end
