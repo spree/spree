@@ -206,7 +206,7 @@ module Spree
       search_scopes << :available
 
       def self.active(currency = nil)
-        available(nil, currency)
+        available(nil, currency&.upcase)
       end
       search_scopes << :active
 

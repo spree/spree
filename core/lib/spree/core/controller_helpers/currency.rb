@@ -20,7 +20,7 @@ module Spree
                                   params[:currency]
                                 else
                                   current_store.default_currency
-                                end
+                                end.upcase
         end
 
         def supported_currencies
@@ -37,7 +37,7 @@ module Spree
         end
 
         def supported_currency?(currency_iso_code)
-          supported_currencies.map(&:iso_code).include?(currency_iso_code)
+          supported_currencies.map(&:iso_code).include?(currency_iso_code.upcase)
         end
       end
     end
