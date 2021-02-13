@@ -305,9 +305,10 @@ describe 'API V2 Storefront Products Spec', type: :request do
       context 'without supported currency' do
         before { get '/api/v2/storefront/products?currency=PLN' }
 
-        it 'returns empty result' do
-          expect(json_response['data']).to be_empty
-          expect(json_response['data'].count).to be_zero
+        it 'returns results with default currency' do
+          expect(json_response['data']).not_to be_empty
+          expect(json_response['data'][0]['attributes']['currency']).to eq 'USD'
+          expect(json_response['data'][0]['attributes']['display_price']).to match('$')
         end
       end
     end
