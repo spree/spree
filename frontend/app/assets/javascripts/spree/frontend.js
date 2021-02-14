@@ -5,6 +5,7 @@
 //= require jquery.payment
 //= require cleave
 //= require spree
+//= require card_formatting
 //= require polyfill.min
 //= require fetch.umd
 //= require spree/api/main

@@ -1,9 +1,5 @@
-/* global Cleave */
-var CARD_NUMBER_SELECTOR = '.cardNumber'
-var CARD_EXPIRATION_SELECTOR = '.cardExpiry'
-var CARD_CODE_SELECTOR = '.cardCode'
-
 //= require spree/frontend/coupon_manager
+
 Spree.ready(function ($) {
   Spree.onPayment = function () {
     if ($('#checkout_form_payment').length) {
@@ -21,28 +17,6 @@ Spree.ready(function ($) {
           $('.existing-cc-radio').prop('checked', false)
           $('#use_existing_card_yes').prop('checked', false)
           Spree.enableSave()
-        })
-      }
-
-      if ($(CARD_NUMBER_SELECTOR).length > 0 &&
-          $(CARD_EXPIRATION_SELECTOR).length > 0 &&
-          $(CARD_CODE_SELECTOR).length > 0) {
-        /* eslint-disable no-new */
-        new Cleave(CARD_NUMBER_SELECTOR, {
-          creditCard: true,
-          onCreditCardTypeChanged: function (type) {
-            $('.ccType').val(type)
-          }
-        })
-        /* eslint-disable no-new */
-        new Cleave(CARD_EXPIRATION_SELECTOR, {
-          date: true,
-          datePattern: ['m', 'Y']
-        })
-        /* eslint-disable no-new */
-        new Cleave(CARD_CODE_SELECTOR, {
-          numericOnly: true,
-          blocks: [3]
         })
       }
 
@@ -99,4 +73,5 @@ Spree.ready(function ($) {
     }
   }
   Spree.onPayment()
+  validateCardElements()
 })
