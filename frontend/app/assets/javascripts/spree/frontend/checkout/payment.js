@@ -1,4 +1,4 @@
-/* global validateCardElements */
+/* global formattAllCardInputFields */
 //= require spree/frontend/coupon_manager
 
 Spree.ready(function ($) {
@@ -74,5 +74,5 @@ Spree.ready(function ($) {
     }
   }
   Spree.onPayment()
-  validateCardElements()
+  formattAllCardInputFields()
 })

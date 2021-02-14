@@ -1,6 +1,6 @@
-/* global validateCardElements */
+/* global formattAllCardInputFields */
 $(document).ready(function () {
-  validateCardElements()
+  formattAllCardInputFields()
   if ($('#new_payment').length) {
     $('.payment_methods_radios').click(
       function () {
