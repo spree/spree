@@ -1,6 +1,6 @@
 /* global Cleave */
-/* exported validateCardElements */
 
+/* eslint-disable no-unused-vars */
 function validateCardElements () {
   if (document.querySelector('.cardNumber')) {
     document.querySelectorAll('.cardNumber').forEach(function (cardNumber) {
