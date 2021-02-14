@@ -1,3 +1,4 @@
+/* global validateCardElements */
 $(document).ready(function () {
   validateCardElements()
   if ($('#new_payment').length) {

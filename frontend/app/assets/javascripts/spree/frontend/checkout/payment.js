@@ -1,3 +1,4 @@
+/* global validateCardElements */
 //= require spree/frontend/coupon_manager
 
 Spree.ready(function ($) {
