@@ -26,8 +26,6 @@ function formatCardNumber (wrapperElement, cardNumberInput, cardTypeInput) {
         })
       }
     })
-  } else {
-    console.warn('Please identify the container element for the card input fields using the first function argument')
   }
 }
 
@@ -49,8 +47,6 @@ function formatCardExpiry (wrapperElement, cardExpiry) {
         })
       }
     })
-  } else {
-    console.warn('Please identify the container element for the card input fields using the first function argument')
   }
 }
 
@@ -70,7 +66,5 @@ function formatCardCode (wrapperElement, cardCode) {
         blocks: [3]
       })
     })
-  } else {
-    console.warn('Please identify the container element for the card input fields using the first function argument.')
   }
 }
