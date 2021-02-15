@@ -74,5 +74,10 @@ Spree.ready(function ($) {
     }
   }
   Spree.onPayment()
-  formatAllCardInputFields()
+
+  var cardPaymetnContainerEl = '.payment-gateway-fields'
+
+  formatCardNumber(cardPaymetnContainerEl, '.cardNumber', '.ccType')
+  formatCardExpiry (cardPaymetnContainerEl, '.cardExpiry')
+  formatCardCode (cardPaymetnContainerEl, '.cardCode')
 })

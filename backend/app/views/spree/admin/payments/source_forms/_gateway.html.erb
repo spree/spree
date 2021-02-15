@@ -23,7 +23,7 @@
       </div>
   </div>
 <% end %>
-  <div id="card_form<%= payment_method.id %>" class="mt-3 row" data-hook>
+  <div id="card_form<%= payment_method.id %>" class="mt-3 row payment-gateway-fields" data-hook>
     <% param_prefix = "payment_source[#{payment_method.id}]" %>
 
     <div data-hook="card_number" class="form-group col-12">

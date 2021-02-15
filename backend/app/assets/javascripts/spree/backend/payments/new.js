@@ -1,6 +1,11 @@
 /* global formatAllCardInputFields */
-$(document).ready(function () {
-  formatAllCardInputFields()
+document.addEventListener('DOMContentLoaded', function() {
+  var cardPaymetnContainerEl = '.payment-gateway-fields'
+
+  formatCardNumber(cardPaymetnContainerEl, '.cardNumber', '.ccType')
+  formatCardExpiry (cardPaymetnContainerEl, '.cardExpiry')
+  formatCardCode (cardPaymetnContainerEl, '.cardCode')
+
   if ($('#new_payment').length) {
     $('.payment_methods_radios').click(
       function () {
