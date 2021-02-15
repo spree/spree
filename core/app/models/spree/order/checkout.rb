@@ -223,8 +223,8 @@ module Spree
               # rails would slice parameters containg ruby objects, apparently
 
               payment_method = if @updating_params.dig(:order, :payments_attributes)
-                                 id = @updating_params[:order][:payments_attributes].first[:payment_method_id]
-                                 Spree::PaymentMethod.find(id)
+                                 payment_method_id = @updating_params[:order][:payments_attributes].first[:payment_method_id]
+                                 Spree::PaymentMethod.find(payment_method_id)
                                end
 
               existing_card_id = if payment_method&.payment_profiles_supported?
