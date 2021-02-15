@@ -7,11 +7,8 @@
                 width: 26,
                 height: 26) %>
       </button>
-      <figure class="logo header-spree-fluid-logo" data-hook>
-        <%= logo %>
-      </figure>
       <div id="top-nav-bar-mobile" class="m-0 p-0 header-spree-fluid-secondary-navigation" data-hook>
-        <button id="mobile-navigation-close-button" aria-label="<%= Spree.t('nav_bar.close_menu') %>">
+        <button id="mobile-navigation-close-button" aria-label="<%= Spree.t(:close) %>">
           <%= icon(name: 'close',
                   classes: 'd-inline',
                   width: 26,
@@ -44,7 +41,7 @@
           <% end %>
         </li>
       <% end %>
-      <%= render partial: 'spree/shared/mobile_change_store' %>
+      <%= render partial: 'spree/shared/mobile_internationalization_options' %>
     </ul>
   </div>
 <% end %>

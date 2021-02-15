@@ -7,7 +7,7 @@ module Spree
         @ids              = String(params.dig(:filter, :ids)).split(',')
         @skus             = String(params.dig(:filter, :skus)).split(',')
         @price            = String(params.dig(:filter, :price)).split(',').map(&:to_f)
-        @currency         = params[:currency] || current_currency
+        @currency         = current_currency
         @taxons           = taxon_ids(params.dig(:filter, :taxons))
         @concat_taxons    = taxon_ids(params.dig(:filter, :concat_taxons))
         @name             = params.dig(:filter, :name)
@@ -103,7 +103,7 @@ module Spree
           where(
             spree_prices: {
               amount: price.min..price.max,
-              currency: currency
+              currency: currency&.upcase
             }
           )
       end
@@ -111,7 +111,7 @@ module Spree
       def by_currency(products)
         return products unless currency?
 
-        products.joins(master: :prices).where(spree_prices: { currency: currency })
+        products.joins(master: :prices).where(spree_prices: { currency: currency.upcase })
       end
 
       def by_taxons(products)

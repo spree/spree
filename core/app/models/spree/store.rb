@@ -24,6 +24,7 @@ module Spree
     validates :mailer_logo, content_type: ['image/png', 'image/jpg', 'image/jpeg']
 
     before_save :ensure_default_exists_and_is_unique
+    before_save :ensure_supported_currencies, :ensure_supported_locales
     before_destroy :validate_not_default
 
     scope :by_url, ->(url) { where('url like ?', "%#{url}%") }
@@ -50,14 +51,14 @@ module Spree
     end
 
     def supported_currencies_list
-      @supported_currencies_list ||= (read_attribute(:supported_currencies).to_s.split(',') << default_currency).map(&:to_s).map do |code|
+      @supported_currencies_list ||= (read_attribute(:supported_currencies).to_s.split(',') << default_currency).sort.map(&:to_s).map do |code|
         ::Money::Currency.find(code.strip)
       end.uniq.compact
     end
 
     def supported_locales_list
       # TODO: add support of multiple supported languages to a single Store
-      @supported_locales_list ||= [default_locale].compact.uniq
+      @supported_locales_list ||= (read_attribute(:supported_locales).to_s.split(',') << default_locale).compact.uniq.sort
     end
 
     def unique_name
@@ -94,6 +95,22 @@ module Spree
       elsif Store.where(default: true).count.zero?
         self.default = true
       end
+    end
+
+    def ensure_supported_locales
+      return unless attributes.keys.include?('supported_locales')
+      return if supported_locales.present?
+      return if default_locale.blank?
+
+      self.supported_locales = default_locale
+    end
+
+    def ensure_supported_currencies
+      return unless attributes.keys.include?('supported_currencies')
+      return if supported_currencies.present?
+      return if default_currency.blank?
+
+      self.supported_currencies = default_currency
     end
 
     def validate_not_default

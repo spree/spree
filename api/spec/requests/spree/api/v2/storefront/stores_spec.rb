@@ -20,6 +20,7 @@ describe 'Storefront API v2 Stores spec', type: :request do
         expect(json_response['data']).to have_attribute(:twitter).with_value(store.twitter)
         expect(json_response['data']).to have_attribute(:instagram).with_value(store.instagram)
         expect(json_response['data']).to have_attribute(:default_locale).with_value(store.default_locale)
+        expect(json_response['data']).to have_attribute(:supported_locales).with_value(store.supported_locales)
         expect(json_response['data']).to have_attribute(:description).with_value(store.description)
         expect(json_response['data']).to have_attribute(:address).with_value(store.address)
         expect(json_response['data']).to have_attribute(:contact_phone).with_value(store.contact_phone)

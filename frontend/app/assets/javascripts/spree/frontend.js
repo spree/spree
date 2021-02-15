@@ -15,6 +15,8 @@
 //= require spree/frontend/api_tokens
 //= require spree/frontend/carousel-noconflict
 //= require spree/frontend/cart
+//= require spree/frontend/locale
+//= require spree/frontend/currency
 //= require spree/frontend/checkout
 //= require spree/frontend/checkout/address
 //= require spree/frontend/checkout/address_book
@@ -47,3 +49,11 @@ Spree.routes.api_v2_storefront_cart_remove_coupon_code = Spree.pathFor('api/v2/s
 Spree.routes.product = function(id) { return Spree.pathFor('products/' + id) }
 Spree.routes.product_related = function(id) { return Spree.pathFor('products/' + id + '/related') }
 Spree.routes.product_carousel = function (taxonId) { return Spree.pathFor('product_carousel/' + taxonId) }
+Spree.routes.set_locale = function(locale) { return Spree.pathFor('locale/set?switch_to_locale=' + locale) }
+Spree.routes.set_currency = function(currency) { return Spree.pathFor('currency/set?switch_to_currency=' + currency) }
+
+Spree.showProgressBar = function () {
+  if (!Turbolinks.supported) { return }
+  Turbolinks.controller.adapter.progressBar.setValue(0)
+  Turbolinks.controller.adapter.progressBar.show()
+}

@@ -44,6 +44,7 @@ describe Spree::ProductsController, type: :controller do
       context 'when rails application default locale is set' do
         context 'and in available_locales' do
           before do
+            Spree::Store.default.update(default_locale: nil, supported_locales: nil)
             Rails.application.config.i18n.default_locale = available_locale
           end
 

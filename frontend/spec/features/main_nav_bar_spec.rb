@@ -3,12 +3,8 @@ require 'spec_helper'
 describe 'Main navigation bar', type: :feature do
   describe 'change store' do
     shared_examples 'change store not available' do
-      it 'does not show currency selector button' do
-        expect(page).not_to have_button(id: 'stores-button')
-      end
-
       it 'does not render stores list' do
-        expect(page).not_to have_selector('div#stores_list')
+        expect(page).not_to have_selector('div.stores-list')
       end
     end
 
@@ -33,20 +29,20 @@ describe 'Main navigation bar', type: :feature do
         let(:stores_number) { 2 }
         let(:first_store) { stores.first }
         let(:first_store_currency_symbol) { ::Money::Currency.find(first_store.default_currency).symbol }
-        let(:first_link_name) { "#{first_store.name} (#{first_store_currency_symbol})" }
+        let(:first_link_name) { "#{Spree.t('i18n.this_file_language', locale: first_store.default_locale)} (#{first_store_currency_symbol})" }
         let(:first_url) { first_store.formatted_url }
         let(:second_store) { stores.second }
         let(:second_store_currency_symbol) { ::Money::Currency.find(second_store.default_currency).symbol }
-        let(:second_link_name) { "#{second_store.name} (#{first_store_currency_symbol})" }
+        let(:second_link_name) { "#{Spree.t('i18n.this_file_language', locale: second_store.default_locale)} (#{first_store_currency_symbol})" }
         let(:second_url) { second_store.formatted_url }
 
         it 'shows currency selector button' do
-          within('.change-store') { expect(page).to have_button(id: 'stores-button') }
+          within('.internationalization-options') { expect(page).to have_button(id: 'internationalization-button-desktop') }
         end
 
         it 'currency selector button shows a links list to currencies' do
-          within('.change-store') { expect(page).to have_link(first_link_name, href: first_url) }
-          within('.change-store') { expect(page).to have_link(second_link_name, href: second_url) }
+          within('.internationalization-options') { expect(page).to have_link(first_link_name, href: first_url) }
+          within('.internationalization-options') { expect(page).to have_link(second_link_name, href: second_url) }
         end
       end
     end

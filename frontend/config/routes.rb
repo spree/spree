@@ -3,7 +3,9 @@ Spree::Core::Engine.add_routes do
 
   resources :products, only: [:index, :show]
 
-  get '/locale/set', to: 'locale#set'
+  get '/locales', to: 'locale#index', as: :locales
+  get '/locale/set', to: 'locale#set', as: :set_locale
+  get '/currency/set', to: 'currency#set', as: :set_currency
 
   # non-restful checkout stuff
   patch '/checkout/update/:state', to: 'checkout#update', as: :update_checkout
@@ -34,6 +36,4 @@ Spree::Core::Engine.add_routes do
   get '/api_tokens', to: 'store#api_tokens'
   post '/ensure_cart', to: 'store#ensure_cart'
   get '/products/:id/related', to: 'products#related'
-
-  get '/currency/set', to: 'currency#set', defaults: { format: :json }, as: :set_currency
 end

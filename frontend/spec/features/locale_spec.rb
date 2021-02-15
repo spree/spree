@@ -11,6 +11,9 @@ describe 'setting locale', type: :feature do
                                       cart_page: {
                                         header: 'Votre panier',
                                         empty_info: 'Votre panier est vide'
+                                      },
+                                      i18n: {
+                                        this_file_language: 'Français (FR)'
                                       }
                                     })
   end
@@ -63,6 +66,43 @@ describe 'setting locale', type: :feature do
     after do
       I18n.locale = 'en'
       Spree::Frontend::Config[:locale] = 'en'
+    end
+
+    it_behaves_like 'translates cart page'
+  end
+
+  context 'via set_locale endpoint' do
+    before do
+      store.update(default_locale: 'en', supported_locales: 'en,fr')
+      visit spree.set_locale_path(switch_to_locale: 'fr')
+    end
+
+    after do
+      I18n.locale = 'en'
+    end
+
+    it_behaves_like 'translates cart page'
+  end
+
+  context 'locales list endpoint' do
+    before do
+      store.update(default_locale: 'en', supported_locales: 'en,fr')
+      visit spree.locales_path
+    end
+
+    it { expect(page).to have_http_status(:ok) }
+
+    it 'renders the list' do
+      expect(page).to have_text(Spree.t(:'i18n.language'))
+      expect(page).to have_select('switch_to_locale', with_options: ['English (US)', 'Français (FR)'])
+    end
+  end
+
+  context 'via UI', :js do
+    before do
+      store.update(default_locale: 'en', supported_locales: 'en,fr')
+      visit spree.cart_path
+      switch_to_locale('Français (FR)')
     end
 
     it_behaves_like 'translates cart page'
