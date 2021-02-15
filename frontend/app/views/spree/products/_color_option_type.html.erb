@@ -9,7 +9,7 @@
         <li>
           <%= label_tag "variant_option_value_id_#{option_type[:id]}_#{option_value[:id]}",
             class: "m-1 m-sm-2 m-md-1 color-select-label",
-            title: option_value[:name].humanize,
+            title: option_value[:name]&.humanize,
             data: { toggle: "tooltip", placement: "bottom" } do %>
 
             <%= radio_button_tag "variant_option_value_id_#{option_type[:id]}",
