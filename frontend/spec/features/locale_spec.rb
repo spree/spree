@@ -102,8 +102,7 @@ describe 'setting locale', type: :feature do
     before do
       store.update(default_locale: 'en', supported_locales: 'en,fr')
       visit spree.cart_path
-      find('#header #internationalization-button').click
-      select 'Français (FR)', from: 'Language'
+      switch_to_locale('Français (FR)')
     end
 
     it_behaves_like 'translates cart page'

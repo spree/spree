@@ -131,12 +131,10 @@ describe 'Cart', type: :feature, inaccessible: true, js: true do
 
     it 'will change order currency and recalulate prices' do
       expect(page).to have_text '$19.99'
-      find('#header #internationalization-button').click
-      select 'EUR', from: 'switch_to_currency'
+      switch_to_currency('EUR')
       expect(page).to have_text '€16.00'
       expect(order.reload.currency).to eq('EUR')
-      find('#header #internationalization-button').click
-      select 'GBP', from: 'switch_to_currency'
+      switch_to_currency('GBP')
       expect(page).to have_text '£23.00'
       expect(order.reload.currency).to eq('GBP')
     end

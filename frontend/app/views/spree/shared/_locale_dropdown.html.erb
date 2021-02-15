@@ -6,7 +6,7 @@
       </label>
       <%= select_tag(:switch_to_locale,
         options_for_select(supported_locales_options, I18n.locale),
-        class: 'form-control') %>
+        class: 'custom-select w-100') %>
       <noscript><%= submit_tag %></noscript>
     </div>
   <% end %>

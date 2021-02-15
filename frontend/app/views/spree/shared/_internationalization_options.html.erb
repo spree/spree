@@ -1,42 +1,30 @@
-<% globe_icon = icon(name: 'global',
+<% if (defined?(should_render_store_chooser?) && should_render_store_chooser?) || (defined?(should_render_internationalization_dropdown?) && should_render_internationalization_dropdown?) %>
+  <li class="d-none d-xl-block internationalization-options">
+    <div class="dropdown navbar-right-dropdown">
+      <button id="internationalization-button-desktop" type="button" data-toggle="dropdown" class="navbar-right-dropdown-toggle" aria-label="<%= Spree.t(:internationalization) %>">
+        <%= icon(name: 'global',
                 classes: 'd-none d-xl-inline-block',
                 width: 41,
                 height: 36) %>
-<% arrow_icon = icon(name: 'arrow-down',
+        <%= icon(name: 'arrow-down',
                 classes: 'd-inline-block d-xl-none',
                 width: 15,
                 height: 15) %>
-
-<% if defined?(should_render_store_chooser?) && should_render_store_chooser? %>
-  <li class="d-none d-xl-block change-store">
-    <div class="dropdown navbar-right-dropdown">
-      <button id="stores-button" type="button" data-toggle="dropdown" class="navbar-right-dropdown-toggle" aria-label="<%= Spree.t('nav_bar.change_country') %>">
-        <%= globe_icon %>
-        <%= arrow_icon %>
       </button>
 
-      <div id="stores_list" class="dropdown-menu dropdown-menu-right text-right">
-        <% stores.each do |store| %>
-          <div class="pl-3 d-flex justify-content-between align-items-center <%= 'active' if store.id == current_store.id %>">
-            <span class="flag-icon flag-icon-<%= store_country_iso(store) %>"></span>
-            <%= link_to "#{store_locale_name(store)} (#{store_currency_symbol(store)})", store.formatted_url, class: 'dropdown-item text-uppercase' %>
-          </div>
+      <div id="internationalization-options-desktop" class="dropdown-menu dropdown-menu-right text-left">
+        <% if (defined?(should_render_store_chooser?) && should_render_store_chooser?) %>
+          <% stores.each do |store| %>
+            <div class="pl-3 d-flex justify-content-between align-items-center stores-list">
+              <%= country_flag_icon(store_country_iso(store)) %>
+              <%= store_link(store, class: "dropdown-item text-uppercase #{'font-weight-bold' if current_store == store}") %>
+            </div>
+          <% end %>
+        <% else %>
+          <%= render 'spree/shared/locale_dropdown' %>
+          <div class="dropdown-divider"></div>
+          <%= render 'spree/shared/currency_dropdown' %>
         <% end %>
-      </div>
-    </div>
-  </li>
-<% elsif defined?(should_render_internationalization_dropdown?) && should_render_internationalization_dropdown? %>
-  <li class="d-none d-xl-block change-store">
-    <div class="dropdown navbar-right-dropdown">
-      <button id="internationalization-button" type="button" data-toggle="dropdown" class="navbar-right-dropdown-toggle" aria-label="<%= Spree.t(:internationalization) %>">
-        <%= globe_icon %>
-        <%= arrow_icon %>
-      </button>
-
-      <div id="internationalization-options" class="dropdown-menu dropdown-menu-right text-left">
-        <%= render 'spree/shared/locale_dropdown' %>
-        <div class="dropdown-divider"></div>
-        <%= render 'spree/shared/currency_dropdown' %>
       </div>
     </div>
   </li>

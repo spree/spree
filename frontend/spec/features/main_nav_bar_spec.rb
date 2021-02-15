@@ -3,12 +3,8 @@ require 'spec_helper'
 describe 'Main navigation bar', type: :feature do
   describe 'change store' do
     shared_examples 'change store not available' do
-      it 'does not show currency selector button' do
-        expect(page).not_to have_button(id: 'stores-button')
-      end
-
       it 'does not render stores list' do
-        expect(page).not_to have_selector('div#stores_list')
+        expect(page).not_to have_selector('div.stores-list')
       end
     end
 
@@ -41,12 +37,12 @@ describe 'Main navigation bar', type: :feature do
         let(:second_url) { second_store.formatted_url }
 
         it 'shows currency selector button' do
-          within('.change-store') { expect(page).to have_button(id: 'stores-button') }
+          within('.internationalization-options') { expect(page).to have_button(id: 'internationalization-button-desktop') }
         end
 
         it 'currency selector button shows a links list to currencies' do
-          within('.change-store') { expect(page).to have_link(first_link_name, href: first_url) }
-          within('.change-store') { expect(page).to have_link(second_link_name, href: second_url) }
+          within('.internationalization-options') { expect(page).to have_link(first_link_name, href: first_url) }
+          within('.internationalization-options') { expect(page).to have_link(second_link_name, href: second_url) }
         end
       end
     end

@@ -14,15 +14,13 @@ describe 'Product with prices in multiple currencies', type: :feature, js: true 
       it 'can switch by currency', :js do
         visit spree.product_path(product)
         expect(page).to have_text '$19.99'
-        find('#header #internationalization-button').click
-        select 'EUR', from: 'switch_to_currency'
+        switch_to_currency('EUR')
         expect(page).to have_text '€16.00'
-        find('#header #internationalization-button').click
-        select 'GBP', from: 'switch_to_currency'
+        switch_to_currency('GBP')
         expect(page).to have_text '£23.00'
         visit spree.products_path
         expect(page).to have_text '£23.00'
-        find('#header #internationalization-button').click
+        open_i18n_menu
         expect(page).to have_select('switch_to_currency', selected: 'GBP')
       end
     end

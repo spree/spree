@@ -4,9 +4,7 @@ Spree.ready(function ($) {
   if (currencySelect.length) {
     currencySelect.on('change', function () {
       currencySelect.attr('disabled')
-      var selectedCurrency = currencySelect.val()
-
-      window.location = Spree.routes.set_currency(selectedCurrency)
+      window.location = Spree.routes.set_currency(this.value)
     })
   }
 })

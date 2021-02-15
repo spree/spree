@@ -6,7 +6,7 @@
       </label>
       <%= select_tag(:switch_to_currency,
         options_for_select(supported_currency_options, current_currency),
-        class: 'form-control') %>
+        class: 'custom-select w-100') %>
       <noscript><%= submit_tag %></noscript>
     </div>
   <% end %>
