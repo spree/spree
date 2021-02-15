@@ -51,3 +51,9 @@ Spree.routes.product_related = function(id) { return Spree.pathFor('products/' +
 Spree.routes.product_carousel = function (taxonId) { return Spree.pathFor('product_carousel/' + taxonId) }
 Spree.routes.set_locale = function(locale) { return Spree.pathFor('locale/set?switch_to_locale=' + locale) }
 Spree.routes.set_currency = function(currency) { return Spree.pathFor('currency/set?switch_to_currency=' + currency) }
+
+Spree.showProgressBar = function () {
+  if (!Turbolinks.supported) { return }
+  Turbolinks.controller.adapter.progressBar.setValue(0)
+  Turbolinks.controller.adapter.progressBar.show()
+}
