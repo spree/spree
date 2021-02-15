@@ -107,7 +107,7 @@ module Spree
         end
 
         def error_handler
-          Spree::Api::Dependencies.storefront_error_handler.constantize
+          Spree::Api::Dependencies.error_handler.constantize
         end
       end
     end
