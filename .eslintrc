@@ -21,3 +21,7 @@ globals:
 env:
   browser: true
   jquery: true
+
+rules:
+  space-before-function-paren: off
+  semi: off
