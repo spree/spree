@@ -120,7 +120,7 @@ jQuery(function ($) {
   $('.js-filterable').each(function () {
     var $this = $(this)
 
-    if ($this.val() !== null && $this.val() !== '' && $this.val().length !== 0 && $this.prop('readonly') !== true) {
+    if ($this.val() !== null && $this.val() !== '' && $this.val().length !== 0 && !$this.hasClass('flatpickr-alt-input')) {
       var ransackValue, filter
       var ransackFieldId = $this.attr('id')
       var label = $('label[for="' + ransackFieldId + '"]')
@@ -223,29 +223,26 @@ $.fn.radioControlsVisibilityOfElement = function (dependentElementSelector) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-  var dateFrom = flatpickr('.datePickerFrom', {
+  flatpickr.setDefaults({
     altInput: true,
     time_24hr: true,
-    locale: Spree.translations.flatpickr_locale,
+    altInputClass: 'flatpickr-alt-input',
+    locale: Spree.translations.flatpickr_locale
+  })
+
+  var dateFrom = flatpickr('.datePickerFrom', {
     onChange: function(selectedDates) {
       dateTo.set('minDate', selectedDates[0])
     }
   })
 
   var dateTo = flatpickr('.datePickerTo', {
-    locale: Spree.translations.flatpickr_locale,
-    time_24hr: true,
-    altInput: true,
     onChange: function(selectedDates) {
       dateFrom.set('maxDate', selectedDates[0])
     }
   })
 
-  flatpickr('.datepicker', {
-    locale: Spree.translations.flatpickr_locale,
-    time_24hr: true,
-    altInput: true
-  })
+  flatpickr('.datepicker', { })
 })
 
 $(document).ready(function() {
