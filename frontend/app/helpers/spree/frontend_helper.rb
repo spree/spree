@@ -282,6 +282,12 @@ module Spree
       @color_option_type_name ||= Spree::OptionType.color&.name
     end
 
+    def country_flag_icon(country_iso_code = nil)
+      return if country_iso_code.blank?
+
+      content_tag :span, nil, class: "flag-icon flag-icon-#{country_iso_code.downcase}"
+    end
+
     private
 
     def formatted_price(value)

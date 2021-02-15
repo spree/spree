@@ -50,5 +50,10 @@ module Spree
         expect(output).to include('1. Address')
       end
     end
+
+    describe '#country_flag_icon' do
+      it { expect(country_flag_icon('US')).to eq('<span class="flag-icon flag-icon-us"></span>') }
+      it { expect { country_flag_icon(nil) }.not_to raise_error }
+    end
   end
 end
