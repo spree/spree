@@ -3,8 +3,7 @@
 /* eslint-disable no-unused-vars */
 function formatCardNumber (wrapperElement, cardNumberInput, cardTypeInput) {
   if (document.querySelector(wrapperElement)) {
-      document.querySelectorAll(wrapperElement).forEach(function (cardPaymentSet) {
-
+    document.querySelectorAll(wrapperElement).forEach(function (cardPaymentSet) {
       if (cardNumberInput) {
         var targetNumberInput = cardPaymentSet.querySelector(cardNumberInput)
       } else {
@@ -22,7 +21,6 @@ function formatCardNumber (wrapperElement, cardNumberInput, cardTypeInput) {
         new Cleave(targetNumberInput, {
           creditCard: true,
           onCreditCardTypeChanged: function (type) {
-            if (true) {}
             targetCardType.value = type
           }
         })
@@ -36,8 +34,7 @@ function formatCardNumber (wrapperElement, cardNumberInput, cardTypeInput) {
 /* eslint-disable no-unused-vars */
 function formatCardExpiry (wrapperElement, cardExpiry) {
   if (document.querySelector(wrapperElement)) {
-      document.querySelectorAll(wrapperElement).forEach(function (cardPaymentSet) {
-
+    document.querySelectorAll(wrapperElement).forEach(function (cardPaymentSet) {
       if (cardExpiry) {
         var targetCardExpiry = cardPaymentSet.querySelector(cardExpiry)
       } else {
@@ -60,8 +57,7 @@ function formatCardExpiry (wrapperElement, cardExpiry) {
 /* eslint-disable no-unused-vars */
 function formatCardCode (wrapperElement, cardCode) {
   if (document.querySelector(wrapperElement)) {
-      document.querySelectorAll(wrapperElement).forEach(function (cardPaymentSet) {
-
+    document.querySelectorAll(wrapperElement).forEach(function (cardPaymentSet) {
       if (cardCode) {
         var targetCardCode = cardPaymentSet.querySelector(cardCode)
       } else {

@@ -1,4 +1,4 @@
-/* global formatAllCardInputFields */
+/* global formatCardNumber, formatCardExpiry, formatCardCode */
 //= require spree/frontend/coupon_manager
 
 Spree.ready(function ($) {
@@ -78,6 +78,6 @@ Spree.ready(function ($) {
   var cardPaymetnContainerEl = '.payment-gateway-fields'
 
   formatCardNumber(cardPaymetnContainerEl, '.cardNumber', '.ccType')
-  formatCardExpiry (cardPaymetnContainerEl, '.cardExpiry')
-  formatCardCode (cardPaymetnContainerEl, '.cardCode')
+  formatCardExpiry(cardPaymetnContainerEl, '.cardExpiry')
+  formatCardCode(cardPaymetnContainerEl, '.cardCode')
 })
