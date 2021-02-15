@@ -1,7 +1,7 @@
 /* global Cleave */
 
 /* eslint-disable no-unused-vars */
-function formattAllCardInputFields () {
+function formatAllCardInputFields () {
   formatCardnumber()
   formatCardExpiry()
   formatCardCode()
