@@ -23,8 +23,8 @@ run_tests: &run_tests
     - checkout
     - restore_cache:
         keys:
-          - spree-bundle-v7-{{ checksum ".ruby-version" }}-{{ .Branch }}
-          - spree-bundle-v7-{{ checksum ".ruby-version" }}
+          - spree-bundle-v7-ruby-2-7-{{ .Branch }}
+          - spree-bundle-v7-ruby-2-7
     - run:
         name: Run rspec in parallel
         command: BUNDLE_GEMFILE=../Gemfile ./bin/build-ci.rb test
@@ -65,15 +65,15 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-            - spree-bundle-v7-{{ checksum ".ruby-version" }}-{{ .Branch }}
-            - spree-bundle-v7-{{ checksum ".ruby-version" }}
+            - spree-bundle-v7-ruby-2-7-{{ .Branch }}
+            - spree-bundle-v7-ruby-2-7
       - run:
           name: Bundle Install
           command: |
             bundle check || bundle install
             ./bin/build-ci.rb install
       - save_cache:
-          key: spree-bundle-v7-{{ checksum ".ruby-version" }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
+          key: spree-bundle-v7-ruby-2-7-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
           paths:
             - ~/spree/vendor/bundle
 
@@ -125,8 +125,8 @@ jobs:
     - checkout
     - restore_cache:
         keys:
-          - spree-bundle-v7-{{ checksum ".ruby-version" }}-{{ .Branch }}
-          - spree-bundle-v7-{{ checksum ".ruby-version" }}
+          - spree-bundle-v7-ruby-2-7-{{ .Branch }}
+          - spree-bundle-v7-ruby-2-7
     - run:
         name: Ensure Bundle Install
         command: |
