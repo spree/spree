@@ -34,7 +34,7 @@ bundle exec rspec spec
 We also set up a build script that mimics what our build server performs. You can run it from the root of the Spree project like this:
 
 ```bash
-$ bash build.sh
+$ bin/build.sh
 ```
 
 If you wish to run spec for a single file then you can do so like this:

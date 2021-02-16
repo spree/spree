@@ -27,7 +27,7 @@ run_tests: &run_tests
           - spree-bundle-v7-{{ checksum ".ruby-version" }}
     - run:
         name: Run rspec in parallel
-        command: BUNDLE_GEMFILE=../Gemfile ./build-ci.rb test
+        command: BUNDLE_GEMFILE=../Gemfile ./bin/build-ci.rb test
     - store_artifacts:
         path: /tmp/test-artifacts
         destination: test-artifacts
@@ -48,7 +48,7 @@ run_tests_3_0: &run_tests_3_0
           - spree-bundle-v7-ruby-3-0
     - run:
         name: Run rspec in parallel
-        command: BUNDLE_GEMFILE=../Gemfile ./build-ci.rb test
+        command: BUNDLE_GEMFILE=../Gemfile ./bin/build-ci.rb test
     - store_artifacts:
         path: /tmp/test-artifacts
         destination: test-artifacts
@@ -71,7 +71,7 @@ jobs:
           name: Bundle Install
           command: |
             bundle check || bundle install
-            ./build-ci.rb install
+            ./bin/build-ci.rb install
       - save_cache:
           key: spree-bundle-v7-{{ checksum ".ruby-version" }}-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
           paths:
@@ -89,7 +89,7 @@ jobs:
           name: Bundle Install
           command: |
             bundle check || bundle install
-            ./build-ci.rb install
+            ./bin/build-ci.rb install
       - save_cache:
           key: spree-bundle-v7-ruby-3-0-{{ .Branch }}-{{ checksum "Gemfile.lock" }}
           paths:
@@ -131,10 +131,10 @@ jobs:
         name: Ensure Bundle Install
         command: |
           bundle install
-          ./build-ci.rb install
+          ./bin/build-ci.rb install
     - run:
         name: Run rspec in parallel
-        command: BUNDLE_GEMFILE=../Gemfile ./build-ci.rb test
+        command: BUNDLE_GEMFILE=../Gemfile ./bin/build-ci.rb test
     - store_artifacts:
         path: /tmp/test-artifacts
         destination: test-artifacts
@@ -173,7 +173,7 @@ jobs:
             - spree-bundle-v7-ruby-3-0
       - run:
           name: Run rspec in parallel
-          command: BUNDLE_GEMFILE=../Gemfile ./build-ci.rb test
+          command: BUNDLE_GEMFILE=../Gemfile ./bin/build-ci.rb test
       - store_artifacts:
           path: /tmp/test-artifacts
           destination: test-artifacts
