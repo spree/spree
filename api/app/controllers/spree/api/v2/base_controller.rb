@@ -10,6 +10,8 @@ module Spree
         rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
         rescue_from CanCan::AccessDenied, with: :access_denied
         rescue_from Spree::Core::GatewayError, with: :gateway_error
+        rescue_from ActionController::ParameterMissing, with: :error_during_processing
+        rescue_from ArgumentError, with: :error_during_processing
 
         def content_type
           Spree::Api::Config[:api_v2_content_type]
@@ -43,8 +45,6 @@ module Spree
 
         def render_serialized_payload(status = 200)
           render json: yield, status: status, content_type: content_type
-        rescue ArgumentError => exception
-          render_error_payload(exception.message, 400)
         end
 
         def render_error_payload(error, status = 422)
@@ -124,6 +124,16 @@ module Spree
 
         def gateway_error(exception)
           render_error_payload(exception.message)
+        end
+
+        def error_during_processing(exception)
+          result = error_handler.call(exception: exception, opts: { user: spree_current_user })
+
+          render_error_payload(result.value[:message], 400)
+        end
+
+        def error_handler
+          Spree::Api::Dependencies.error_handler.constantize
         end
       end
     end
