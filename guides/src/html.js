@@ -30,7 +30,7 @@ export default class HTML extends React.Component {
           <link rel="icon" href="/favicon.ico" />
           {this.props.headComponents}
         </head>
-        <body {...this.props.bodyAttributes} className="bg-white f5 h-100">
+        <body {...this.props.bodyAttributes} className="bg-near-white f5 h-100">
           <div
             className="h-100"
             id="___gatsby"

@@ -30,10 +30,6 @@ const Footer = ({ hasSidebar }) => (
       }
     }}
     className={cx(
-      {
-        'mw9 center w-100': !hasSidebar,
-        'bt b--light-gray': hasSidebar
-      },
       'tc pv3 flex flex-column flex-row-l items-center justify-center lh-copy'
     )}
   >
@@ -46,7 +42,7 @@ const Footer = ({ hasSidebar }) => (
     >
       <img
         src={LogoSrc}
-        height={21}
+        height={18}
         className="dib mh2"
         alt="Spree Commerce & Ruby on Rails developers"
         title="Spree Commerce & Ruby on Rails developers"
