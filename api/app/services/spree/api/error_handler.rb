@@ -3,7 +3,7 @@ module Spree
     class ErrorHandler
       prepend ::Spree::ServiceModule::Base
 
-      def call(exception:)
+      def call(exception:, opts: {})
         run :format_message
         run :log_error
         run :report_error
@@ -11,24 +11,25 @@ module Spree
 
       protected
 
-      def format_message(exception:)
+      def format_message(exception:, opts:)
         message = if exception.respond_to?(:original_message)
                     exception.original_message
                   else
                     exception.message
                   end
 
-        success(exception: exception, message: message)
+        success(exception: exception, message: message, opts: opts)
       end
 
-      def log_error(exception:, message:)
+      def log_error(exception:, message:, opts:)
         Rails.logger.error message
+        Rails.logger.error "User ID: #{opts[:user]&.id}" if opts[:user]
         Rails.logger.error exception.backtrace.join("\n")
 
-        success(exception: exception, message: message)
+        success(exception: exception, message: message, opts: opts)
       end
 
-      def report_error(exception:, message:)
+      def report_error(exception:, message:, opts:)
         # overwrite this method in your application to support different error handlers
         # eg. Sentry, Rollbar, etc
 

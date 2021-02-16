@@ -101,7 +101,7 @@ module Spree
         end
 
         def error_during_processing(exception)
-          result = error_handler.call(exception: exception)
+          result = error_handler.call(exception: exception, opts: { user: spree_current_user })
 
           render_error_payload(result.value[:message], 400)
         end
