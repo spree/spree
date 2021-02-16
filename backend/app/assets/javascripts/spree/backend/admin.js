@@ -222,7 +222,7 @@ $.fn.radioControlsVisibilityOfElement = function (dependentElementSelector) {
   })
 }
 
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function() {
   flatpickr.setDefaults({
     altInput: true,
     time_24hr: true,
@@ -231,13 +231,13 @@ document.addEventListener('DOMContentLoaded', function () {
   })
 
   var dateFrom = flatpickr('.datePickerFrom', {
-    onChange: function (selectedDates) {
+    onChange: function(selectedDates) {
       dateTo.set('minDate', selectedDates[0])
     }
   })
 
   var dateTo = flatpickr('.datePickerTo', {
-    onChange: function (selectedDates) {
+    onChange: function(selectedDates) {
       dateFrom.set('maxDate', selectedDates[0])
     }
   })

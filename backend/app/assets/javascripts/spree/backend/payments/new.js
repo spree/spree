@@ -1,6 +1,6 @@
 /* global formatCardNumber, formatCardExpiry, formatCardCode */
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   var cardPaymetnContainerEl = '.payment-gateway-fields'
 
   formatCardNumber(cardPaymetnContainerEl, '.cardNumber', '.ccType')
