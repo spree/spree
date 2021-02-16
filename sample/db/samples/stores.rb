@@ -43,3 +43,10 @@ end
 Spree::PaymentMethod.all.each do |payment_method|
   payment_method.stores = Spree::Store.all
 end
+
+if defined?(Spree::StoreProduct) && Spree::Product.method_defined?(:stores)
+  Spree::Product.all.each do |product|
+    product.store_ids = Spree::Store.ids
+    product.save
+  end
+end
