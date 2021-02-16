@@ -11,11 +11,13 @@
       <% options_hash = Rails.env.production? ? {autocomplete: 'off'} : {} %>
       <%= text_field_tag "#{param_prefix}[number]", '', options_hash.merge(id: "card_number_#{payment_method.id}", class: 'spree-flat-input cardNumber', size: 19, maxlength: 19, autocomplete: "off", placeholder: Spree.t(:card_number)) %>
       <label><%= Spree.t(:card_number) %></label>
-      <span id="card_type" style="display:none;">
-        ( <span id="looks_like"><%= Spree.t(:card_type_is) %> <span id="type"></span></span>
-          <span id="unrecognized"><%= Spree.t(:unrecognized_card_type) %></span>
-        )
-      </span>
+
+      <span class="cardIcon icon-amex"><%= icon(name: 'credit_cards/icons/american_express', width: 65, height: 40) %></span>
+      <span class="cardIcon icon-diners"><%= icon(name: 'credit_cards/icons/diners_club', width: 65, height: 40) %></span>
+      <span class="cardIcon icon-mastercard"><%= icon(name: 'credit_cards/icons/master', width: 65, height: 40) %></span>
+      <span class="cardIcon icon-jcb"><%= icon(name: 'credit_cards/icons/jcb', width: 65, height: 40) %></span>
+      <span class="cardIcon icon-visa"><%= icon(name: 'credit_cards/icons/visa', width: 65, height: 40) %></span>
+      <span class="cardIcon icon-discover"><%= icon(name: 'credit_cards/icons/discover', width: 65, height: 40) %></span>
     </div>
 
     <div class="col-6 checkout-content-inner-field has-float-label" data-hook="card_expiration">

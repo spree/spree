@@ -15,9 +15,23 @@ function formatCardNumber (wrapperElement, cardNumberInput, cardTypeInput) {
       creditCard: true,
       onCreditCardTypeChanged: function (type) {
         targetCardType.value = type
+        showCardType(cardPaymentSet, type)
       }
     })
   })
+}
+
+var selectedCardIcon = null
+
+function showCardType (parent, type) {
+  if (!parent) return
+  if (!type) return
+
+  if (selectedCardIcon) selectedCardIcon.classList.remove('active')
+
+  selectedCardIcon = parent.querySelector(`.icon-${type}`)
+
+  if (selectedCardIcon) selectedCardIcon.classList.add('active')
 }
 
 /* eslint-disable no-unused-vars */

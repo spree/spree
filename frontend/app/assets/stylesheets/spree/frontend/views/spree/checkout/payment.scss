@@ -96,3 +96,15 @@
     }
   }
 }
+
+.cardIcon {
+  position: absolute;
+  top: 50%;
+  right: 4%;
+  transform: translate(0%, -50%);
+  display: none;
+}
+
+.cardIcon.active {
+  display: block;
+}
