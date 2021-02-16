@@ -24,10 +24,9 @@ module Spree
     attribute :month, ActiveRecord::Type::Integer.new
     attribute :year,  ActiveRecord::Type::Integer.new
 
-    attr_reader :number
+    attr_reader :number, :verification_value
     attr_accessor :encrypted_data,
                   :imported,
-                  :verification_value,
                   :manual_entry
 
     with_options if: :require_card_numbers?, on: :create do
@@ -101,9 +100,11 @@ module Spree
                        end
     end
 
+    def verification_value=(value)
+      @verification_value = value.to_s.gsub(/\s/, '')
+    end
+
     def set_last_digits
-      number.to_s.gsub!(/\s/, '')
-      verification_value.to_s.gsub!(/\s/, '')
       self.last_digits ||= number.to_s.length <= 4 ? number : number.to_s.slice(-4..-1)
     end
 
