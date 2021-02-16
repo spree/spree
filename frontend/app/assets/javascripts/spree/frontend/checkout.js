@@ -59,3 +59,17 @@ Spree.ready(function () {
 
   return Spree.Checkout
 })
+
+$('.js-remove-credit-card').click(function() {
+  return $.ajax({
+    async: false,
+    method: 'DELETE',
+    url: Spree.routes.remove_credit_card(this.dataset.id),
+    dataType: 'json',
+    headers: {
+      'Authorization': 'Bearer ' + SpreeAPI.oauthToken
+    }
+  }).done(function() {
+    location.reload();
+  })
+})
