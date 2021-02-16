@@ -65,3 +65,35 @@ default:
           title: Get up to 30% off
           url: /t/special-offers/30-percent-off
           image: 'meganav/promo_banner_right-third-category.jpg'
+fr:
+  navigation:
+    - title: Femmes
+      url: /t/women
+      promo_banners:
+        - subtitle: Nouvelle collection
+          title: Été 2021
+          url: /t/new-collection/summer-2021
+          image: 'meganav/promo_banner_left-first-category.jpg'
+        - subtitle: Offres spéciales
+          url: /t/special-offers/30-percent-off
+          image: 'meganav/promo_banner_right-first-category.jpg'
+    - title: Hommes
+      url: /t/men
+      promo_banners:
+        - subtitle: Nouvelle collection
+          title: Été 2021
+          url: /t/new-collection/summer-2021
+          image: 'meganav/promo_banner_left-second-category.jpg'
+        - subtitle: Offres spéciales
+          url: /t/special-offers/30-percent-off
+          image: 'meganav/promo_banner_right-second-category.jpg'
+    - title: Vêtements de sport
+      url: /t/sportswear
+      promo_banners:
+        - subtitle: Nouvelle collection
+          title: Été 2021
+          url: /t/new-collection/summer-2021
+          image: 'meganav/promo_banner_left-third-category.jpg'
+        - subtitle: Offres spéciales
+          url: /t/special-offers/30-percent-off
+          image: 'meganav/promo_banner_right-third-category.jpg'
