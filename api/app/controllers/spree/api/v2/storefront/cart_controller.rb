@@ -19,7 +19,7 @@ module Spree
             order   = spree_current_order if spree_current_order.present?
             order ||= create_service.call(order_params).value
 
-            render_serialized_payload(201) { serialize_order(order) }
+            render_serialized_payload(201) { serialize_resource(order) }
           end
 
           def add_item
