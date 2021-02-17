@@ -34,12 +34,16 @@ module Spree
             )
           end
 
-          def serialize_order(order)
-            resource_serializer.new(order.reload, include: resource_includes, fields: sparse_fields).serializable_hash
+          def serialized_current_order
+            serialize_resource(spree_current_order)
           end
 
-          def serialized_current_order
-            serialize_order(spree_current_order)
+          def serialize_order(order)
+            ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
+              `OrderConcern#serialize_order` is deprecated and will be removed in Spree 5.0.
+              Please use `serializer_resource` method
+            DEPRECATION
+            serialize_resource(order)
           end
         end
       end
