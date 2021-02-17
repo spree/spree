@@ -72,31 +72,26 @@ $(function () {
       }).done(function (data) {
         var i, j, len, len1, product, ref, ref1, results, variant
         el.empty()
-        if (data.products.length === 0) {
-          return $('#taxon_products').html('<div class="alert alert-info">' + Spree.translations.no_results + '</div>')
-        } else {
-          ref = data.products
-          results = []
-          for (i = 0, len = ref.length; i < len; i++) {
-            product = ref[i]
-            if (product.master.images[0] !== undefined && product.master.images[0].small_url !== undefined) {
-              product.image = product.master.images[0].small_url
-            } else {
-              ref1 = product.variants
-              for (j = 0, len1 = ref1.length; j < len1; j++) {
-                variant = ref1[j]
-                if (variant.images[0] !== undefined && variant.images[0].small_url !== undefined) {
-                  product.image = variant.images[0].small_url
-                  break
-                }
+        if (data.products.length === 0) return $('#taxon_products').html('<div class="alert alert-info">' + Spree.translations.no_results + '</div>')
+        ref = data.products
+        results = []
+        for (i = 0, len = ref.length; i < len; i++) {
+          product = ref[i]
+          if (product.master.images[0] !== undefined && product.master.images[0].small_url !== undefined) {
+            product.image = product.master.images[0].small_url
+          } else {
+            ref1 = product.variants
+            for (j = 0, len1 = ref1.length; j < len1; j++) {
+              variant = ref1[j]
+              if (variant.images[0] !== undefined && variant.images[0].small_url !== undefined) {
+                product.image = variant.images[0].small_url
+                break
               }
             }
-            results.push(el.append(productTemplate({
-              product: product
-            })))
           }
-          return results
+          results.push(el.append(productTemplate({ product: product })))
         }
+        return results
       })
     })
   }
