@@ -129,8 +129,8 @@ module Spree
     end
 
     # Provides a route to redirect after order completion
-    def completion_route(custom_params = nil)
-      spree.order_path(@order, custom_params)
+    def completion_route(custom_params = {})
+      spree.order_path(@order, custom_params.merge(locale: locale_param))
     end
 
     def setup_for_current_state

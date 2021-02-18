@@ -17,7 +17,23 @@ Spree.adminPath = function () {
 
 Spree.pathFor = function (path) {
   var locationOrigin = (window.location.protocol + '//' + window.location.hostname) + (window.location.port ? ':' + window.location.port : '')
+
   return this.url('' + locationOrigin + (this.mountedAt()) + path, this.url_params).toString()
+}
+
+Spree.localizedPathFor = function(path) {
+  if (typeof (SPREE_LOCALE) !== 'undefined') {
+    if (path.match(/api\/v/)) {
+      if (path.match(/\?/)) {
+        path = path + '&locale=' + SPREE_LOCALE
+      } else {
+        path = path + '?locale=' + SPREE_LOCALE
+      }
+    } else {
+      path = SPREE_LOCALE + '/' + path
+    }
+  }
+  return Spree.pathFor(path)
 }
 
 Spree.adminPathFor = function (path) {
