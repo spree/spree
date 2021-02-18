@@ -237,7 +237,7 @@ You will need to add this code:
     <%%= link_to Spree.t(:login), spree_login_path %>
   </li>
   <li>
-    <%%= link_to Spree.t(:signup), spree_signup_path %>
+    <%%= link_to Spree.t(:sign_up), spree_signup_path %>
   </li>
 <%% end %>
 ```
