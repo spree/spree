@@ -1,6 +1,8 @@
 module Spree
   class StoreController < Spree::BaseController
     include Spree::Core::ControllerHelpers::Order
+    include Spree::LocaleUrls
+
     helper 'spree/locale'
     helper 'spree/currency'
 
@@ -29,12 +31,6 @@ module Spree
       render json: current_order(create_order_if_necessary: true) # force creation of order if doesn't exists
     end
 
-    def default_url_options
-      return super if locale_param.nil?
-
-      super.merge(locale: locale_param)
-    end
-
     protected
 
     def config_locale
@@ -51,12 +47,6 @@ module Spree
 
     def store_last_modified
       (current_store.updated_at || Time.current).utc
-    end
-
-    def redirect_to_default_locale
-      return if params[:locale].blank? || supported_locale?(params[:locale])
-
-      redirect_to url_for(request.parameters.merge(locale: nil))
     end
   end
 end
