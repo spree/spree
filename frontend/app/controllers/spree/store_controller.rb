@@ -8,12 +8,12 @@ module Spree
 
     def account_link
       render partial: 'spree/shared/link_to_account'
-      fresh_when(try_spree_current_user)
+      fresh_when(etag: [try_spree_current_user, I18n.locale])
     end
 
     def cart_link
       render partial: 'spree/shared/link_to_cart'
-      fresh_when(simple_current_order)
+      fresh_when(etag: [simple_current_order, I18n.locale])
     end
 
     def api_tokens
