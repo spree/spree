@@ -12,6 +12,7 @@ module Spree
           helper_method :current_locale
           helper_method :supported_locale?
           helper_method :available_locales
+          helper_method :locale_param
         end
 
         def set_locale
@@ -19,9 +20,7 @@ module Spree
         end
 
         def current_locale
-          @current_locale ||= if defined?(session) && session.key?(:locale) && supported_locale?(session[:locale])
-                                session[:locale]
-                              elsif params[:locale].present? && supported_locale?(params[:locale])
+          @current_locale ||= if params[:locale].present? && supported_locale?(params[:locale])
                                 params[:locale]
                               elsif respond_to?(:config_locale, true) && config_locale.present?
                                 config_locale
@@ -50,6 +49,12 @@ module Spree
 
         def available_locales
           Spree::Store.available_locales
+        end
+
+        def locale_param
+          return if I18n.locale.to_s == current_store.default_locale || current_store.default_locale.nil?
+
+          I18n.locale.to_s
         end
       end
     end

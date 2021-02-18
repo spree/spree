@@ -68,4 +68,20 @@ describe Spree::Core::ControllerHelpers::Locale, type: :controller do
       expect(controller.supported_locales.to_s).to include('de')
     end
   end
+
+  describe '#locale_param' do
+    let!(:store) { create :store, default: true, default_locale: 'en', supported_locales: 'en,de,fr' }
+
+    context 'same as store default locale' do
+      before { I18n.locale = :en }
+
+      it { expect(controller.locale_param).to eq(nil) }
+    end
+
+    context 'different than store locale' do
+      before { I18n.locale = :de }
+
+      it { expect(controller.locale_param).to eq('de') }
+    end
+  end
 end
