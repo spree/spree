@@ -99,6 +99,52 @@ module Spree
       end
     end
 
+    context 'not supported path' do
+      context 'default store locale' do
+        let(:locale) { 'en' }
+
+        context 'http with port' do
+          let(:url) { 'http://example.com:3000/account?locale=fr' }
+
+          it { expect(result).to eq('http://example.com:3000/account') }
+        end
+
+        context 'https with no trailing slash' do
+          let(:url) { 'https://example.com/login/?locale=fr' }
+
+          it { expect(result).to eq('https://example.com/login') }
+        end
+
+        context 'with parameters and port' do
+          let(:url) { 'https://example.com:3000/login?locale=fr&utm_source=google' }
+
+          it { expect(result).to eq('https://example.com:3000/login?utm_source=google') }
+        end
+      end
+
+      context 'non-default locale' do
+        let(:locale) { 'de' }
+
+        context 'http with port' do
+          let(:url) { 'http://example.com:3000/login/' }
+
+          it { expect(result).to eq('http://example.com:3000/login?locale=de') }
+        end
+
+        context 'https with no trailing slash' do
+          let(:url) { 'https://example.com/account' }
+
+          it { expect(result).to eq('https://example.com/account?locale=de') }
+        end
+
+        context 'with parameters and port' do
+          let(:url) { 'https://example.com:3000/login?locale=fr&utm_source=google' }
+
+          it { expect(result).to eq('https://example.com:3000/login?locale=de&utm_source=google') }
+        end
+      end
+    end
+
     context 'default_locale is nil' do
       let(:default_locale) { nil }
       let(:locale) { 'de' }

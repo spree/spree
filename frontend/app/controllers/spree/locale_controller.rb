@@ -1,5 +1,3 @@
-require 'uri'
-
 module Spree
   class LocaleController < Spree::StoreController
     def index
@@ -10,7 +8,7 @@ module Spree
       new_locale = (params[:switch_to_locale] || params[:locale]).to_s
 
       if new_locale.present? && supported_locale?(new_locale)
-        if request.env['HTTP_REFERER'].present? && request.env['HTTP_REFERER'] != request.env['REQUEST_URI']
+        if should_build_new_url?
           redirect_to BuildLocalizedUrl.call(
             url: request.env['HTTP_REFERER'],
             locale: new_locale,
@@ -22,6 +20,12 @@ module Spree
       else
         redirect_to root_path
       end
+    end
+
+    private
+
+    def should_build_new_url?
+      request.env['HTTP_REFERER'].present? && request.env['HTTP_REFERER'] != request.env['REQUEST_URI']
     end
   end
 end
