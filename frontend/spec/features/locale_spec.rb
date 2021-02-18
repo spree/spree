@@ -186,5 +186,23 @@ describe 'setting locale', type: :feature, js: true do
       it_behaves_like 'translates UI'
       it_behaves_like 'generates proper URLs'
     end
+
+    context 'not supported locale' do
+      context 'home page' do
+        before do
+          visit spree.root_path(locale: 'es')
+        end
+
+        it { expect(page).to have_current_path('/') }
+      end
+
+      context 'product page' do
+        before do
+          visit spree.product_path(product, locale: 'es')
+        end
+
+        it { expect(page).to have_current_path(spree.product_path(product)) }
+      end
+    end
   end
 end

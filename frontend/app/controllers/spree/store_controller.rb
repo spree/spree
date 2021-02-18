@@ -6,6 +6,8 @@ module Spree
 
     skip_before_action :verify_authenticity_token, only: :ensure_cart, raise: false
 
+    before_action :redirect_to_default_locale
+
     def account_link
       render partial: 'spree/shared/link_to_account'
       fresh_when(etag: [try_spree_current_user, I18n.locale])
@@ -49,6 +51,12 @@ module Spree
 
     def store_last_modified
       (current_store.updated_at || Time.current).utc
+    end
+
+    def redirect_to_default_locale
+      return if params[:locale].blank? || supported_locale?(params[:locale])
+
+      redirect_to url_for(request.parameters.merge(locale: nil))
     end
   end
 end
