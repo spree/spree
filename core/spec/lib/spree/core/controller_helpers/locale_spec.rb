@@ -81,6 +81,8 @@ describe Spree::Core::ControllerHelpers::Locale, type: :controller do
     context 'different than store locale' do
       before { I18n.locale = :de }
 
+      after { I18n.locale = :en }
+
       it { expect(controller.locale_param).to eq('de') }
     end
   end
