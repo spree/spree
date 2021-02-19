@@ -50,6 +50,28 @@ module Spree
 
           it { expect(result).to eq('https://example.com:3000/de?utm_source=google') }
         end
+
+        context 'with long locale symbols' do
+          let(:locale) { 'es-MX' }
+
+          context 'http with port' do
+            let(:url) { 'http://example.com:3000/' }
+
+            it { expect(result).to eq('http://example.com:3000/es-MX') }
+          end
+
+          context 'https with no trailing slash' do
+            let(:url) { 'https://example.com' }
+
+            it { expect(result).to eq('https://example.com/es-MX') }
+          end
+
+          context 'with parameters and port' do
+            let(:url) { 'https://example.com:3000/?utm_source=google' }
+
+            it { expect(result).to eq('https://example.com:3000/es-MX?utm_source=google') }
+          end
+        end
       end
     end
 
@@ -74,6 +96,26 @@ module Spree
 
           it { expect(result).to eq('https://example.com:3000/products/some-product?taxon_id=1&utm_source=google') }
         end
+
+        context 'with long locale symbols' do
+          context 'http with port' do
+            let(:url) { 'http://example.com:3000/es-MX/products/some-product' }
+
+            it { expect(result).to eq('http://example.com:3000/products/some-product') }
+          end
+
+          context 'https with no trailing slash' do
+            let(:url) { 'https://example.com/es-MX/products/some-product' }
+
+            it { expect(result).to eq('https://example.com/products/some-product') }
+          end
+
+          context 'with parameters and port' do
+            let(:url) { 'https://example.com:3000/es-MX/products/some-product?taxon_id=1&utm_source=google' }
+
+            it { expect(result).to eq('https://example.com:3000/products/some-product?taxon_id=1&utm_source=google') }
+          end
+        end
       end
 
       context 'non-default locale' do
@@ -95,6 +137,48 @@ module Spree
           let(:url) { 'https://example.com:3000/fr/products/some-product?taxon_id=1&utm_source=google' }
 
           it { expect(result).to eq('https://example.com:3000/de/products/some-product?taxon_id=1&utm_source=google') }
+        end
+
+        context 'with long locale symbols' do
+          context 'http with port' do
+            let(:url) { 'http://example.com:3000/es-MX/products/some-product' }
+
+            it { expect(result).to eq('http://example.com:3000/de/products/some-product') }
+          end
+
+          context 'https with no trailing slash' do
+            let(:url) { 'https://example.com/es-MX/products/some-product' }
+
+            it { expect(result).to eq('https://example.com/de/products/some-product') }
+          end
+
+          context 'with parameters and port' do
+            let(:url) { 'https://example.com:3000/es-MX/products/some-product?taxon_id=1&utm_source=google' }
+
+            it { expect(result).to eq('https://example.com:3000/de/products/some-product?taxon_id=1&utm_source=google') }
+          end
+        end
+      end
+
+      context 'es-MX' do
+        let(:locale) { 'es-MX' }
+
+        context 'http with port' do
+          let(:url) { 'http://example.com:3000/fr/products/some-product' }
+
+          it { expect(result).to eq('http://example.com:3000/es-MX/products/some-product') }
+        end
+
+        context 'https with no trailing slash' do
+          let(:url) { 'https://example.com/fr/products/some-product' }
+
+          it { expect(result).to eq('https://example.com/es-MX/products/some-product') }
+        end
+
+        context 'with parameters and port' do
+          let(:url) { 'https://example.com:3000/fr/products/some-product?taxon_id=1&utm_source=google' }
+
+          it { expect(result).to eq('https://example.com:3000/es-MX/products/some-product?taxon_id=1&utm_source=google') }
         end
       end
     end

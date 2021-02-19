@@ -4,7 +4,7 @@ module Spree
   class BuildLocalizedUrl
     prepend Spree::ServiceModule::Base
 
-    LOCALE_REGEX = /^\/[A-Za-z]{2}\/|^\/[A-Za-z]{2}$/.freeze
+    LOCALE_REGEX = /^\/[A-Za-z]{2}\/|^\/[A-Za-z]{2}-[A-Za-z]{2}\/|^\/[A-Za-z]{2}$|^\/[A-Za-z]{2}-[A-Za-z]{2}$/.freeze
 
     SUPPORTED_PATHS_REGEX = /\/(products|t\/|cart|checkout|addresses|content)/.freeze
 
