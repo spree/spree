@@ -3,7 +3,7 @@ Doorkeeper.configure do
   use_refresh_token
   api_only
 
-  skip_client_authentication_for_password_grant { true }
+  skip_client_authentication_for_password_grant { true } if defined?(skip_client_authentication_for_password_grant)
 
   resource_owner_authenticator { current_spree_user }
 
