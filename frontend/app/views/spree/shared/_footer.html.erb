@@ -68,7 +68,7 @@
               <%= Spree.t('nav_bar.my_account') %>
             </div>
             <div class="pt-2">
-              <%= link_to Spree.t('nav_bar.my_orders'), spree.account_path(anchor: "account-my-orders") %>
+              <%= link_to Spree.t(:my_orders).upcase, spree.account_path(anchor: "account-my-orders") %>
             </div>
           </div>
         <% end %>

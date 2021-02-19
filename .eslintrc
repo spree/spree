@@ -16,6 +16,8 @@ globals:
   Turbolinks: true
   ADDRESS_FIELDS: true
   AUTH_TOKEN: true
+  SPREE_LOCALE: true
+  SPREE_CURRENCY: true
   update_state: true
 
 env:

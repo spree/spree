@@ -1,21 +1,12 @@
 require 'spec_helper'
 
-describe 'setting locale', type: :feature do
+describe 'setting locale', type: :feature, js: true do
   let(:store) { Spree::Store.default }
   let(:locale) { :fr }
 
   before do
-    I18n.backend.store_translations(:fr,
-                                    spree: {
-                                      added_to_cart: 'Ajouté au panier avec succès!',
-                                      cart_page: {
-                                        header: 'Votre panier',
-                                        empty_info: 'Votre panier est vide'
-                                      },
-                                      i18n: {
-                                        this_file_language: 'Français (FR)'
-                                      }
-                                    })
+    store.update(default_locale: 'en', supported_locales: 'en,fr')
+    add_french_locales
   end
 
   context 'checkout form validation messages' do
@@ -38,15 +29,34 @@ describe 'setting locale', type: :feature do
 
   shared_examples 'translates cart page' do
     it 'is in french' do
-      visit spree.cart_path
       expect(page).to have_content('Votre panier')
       expect(page).to have_content('Votre panier est vide')
     end
   end
 
-  context 'with store locale set' do
+  shared_examples 'translates UI' do
+    context 'locale dropdown' do
+      before { open_i18n_menu }
+
+      it { expect(page).to have_select('switch_to_locale', selected: 'Français (FR)') }
+    end
+
+    it { expect(page.evaluate_script('SPREE_LOCALE')).to eq('fr') }
+  end
+
+  shared_examples 'generates proper URLs' do
+    it 'has localized links', retry: 3 do
+      expect(page).to have_link(store.name, href: '/fr')
+      expect(page).to have_link('Femmes', href: '/fr/t/women')
+      wait_for_ajax
+      expect(page).to have_selector('#link-to-cart a[href="/fr/cart"]')
+    end
+  end
+
+  context 'with default store locale set' do
     before do
       store.update(default_locale: locale)
+      visit spree.cart_path
     end
 
     after do
@@ -55,12 +65,14 @@ describe 'setting locale', type: :feature do
     end
 
     it_behaves_like 'translates cart page'
+    it_behaves_like 'translates UI'
   end
 
   context 'without store locale set' do
     before do
       I18n.locale = locale
       Spree::Frontend::Config[:locale] = locale
+      visit spree.cart_path
     end
 
     after do
@@ -73,8 +85,8 @@ describe 'setting locale', type: :feature do
 
   context 'via set_locale endpoint' do
     before do
-      store.update(default_locale: 'en', supported_locales: 'en,fr')
       visit spree.set_locale_path(switch_to_locale: 'fr')
+      first('a.cart-icon').click
     end
 
     after do
@@ -84,9 +96,8 @@ describe 'setting locale', type: :feature do
     it_behaves_like 'translates cart page'
   end
 
-  context 'locales list endpoint' do
+  context 'locales list endpoint', js: false do
     before do
-      store.update(default_locale: 'en', supported_locales: 'en,fr')
       visit spree.locales_path
     end
 
@@ -98,13 +109,101 @@ describe 'setting locale', type: :feature do
     end
   end
 
-  context 'via UI', :js do
+  context 'via UI' do
     before do
-      store.update(default_locale: 'en', supported_locales: 'en,fr')
       visit spree.cart_path
       switch_to_locale('Français (FR)')
     end
 
+    it { expect(page).to have_current_path('/fr/cart') }
+
+    it_behaves_like 'translates UI'
     it_behaves_like 'translates cart page'
+    it_behaves_like 'generates proper URLs'
+  end
+
+  context 'via URL' do
+    let!(:taxon) { create(:taxon) }
+    let!(:product) { create(:product_in_stock, taxons: [taxon]) }
+
+    context 'cart page' do
+      before do
+        visit spree.cart_path(locale: 'fr')
+      end
+
+      it { expect(page).to have_current_path('/fr/cart') }
+
+      it_behaves_like 'translates UI'
+      it_behaves_like 'translates cart page'
+      it_behaves_like 'generates proper URLs'
+    end
+
+    context 'products page' do
+      before do
+        visit spree.products_path(locale: 'fr')
+      end
+
+      it { expect(page).to have_current_path('/fr/products') }
+
+      it_behaves_like 'translates UI'
+      it_behaves_like 'generates proper URLs'
+
+      it { expect(page).to have_link(product.name, href: spree.product_path(product, locale: 'fr')) }
+    end
+
+    context 'taxon page' do
+      before do
+        visit spree.nested_taxons_path(taxon, locale: 'fr')
+      end
+
+      it { expect(page).to have_current_path("/fr/t/#{taxon.permalink}") }
+
+      it_behaves_like 'translates UI'
+      it_behaves_like 'generates proper URLs'
+
+      it { expect(page).to have_link(product.name, href: spree.product_path(product, locale: 'fr', taxon_id: taxon.id)) }
+    end
+
+    context 'product page' do
+      before do
+        visit spree.product_path(product, locale: 'fr')
+      end
+
+      it { expect(page).to have_current_path("/fr/products/#{product.slug}") }
+
+      it_behaves_like 'translates UI'
+      it_behaves_like 'generates proper URLs'
+
+      it { expect(page).to have_link(taxon.name, href: spree.nested_taxons_path(taxon, locale: 'fr')) }
+    end
+
+    context 'home page' do
+      before do
+        visit spree.root_path(locale: 'fr')
+      end
+
+      it { expect(page).to have_current_path('/fr') }
+
+      it_behaves_like 'translates UI'
+      it_behaves_like 'generates proper URLs'
+    end
+
+    context 'not supported locale' do
+      context 'home page' do
+        before do
+          visit spree.root_path(locale: 'es')
+        end
+
+        it { expect(page).to have_current_path('/') }
+      end
+
+      context 'product page' do
+        before do
+          visit spree.product_path(product, locale: 'es')
+        end
+
+        it { expect(page).to have_current_path(spree.product_path(product)) }
+      end
+    end
   end
 end

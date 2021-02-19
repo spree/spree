@@ -57,7 +57,7 @@
         <tbody>
           <% @orders.each do |order| %>
             <tr>
-              <td class="account-page-order-number"><%= link_to order.number, order_url(order), class: "text-primary" %></td>
+              <td class="account-page-order-number"><%= link_to order.number, spree.order_path(order), class: "text-primary" %></td>
               <td class="account-page-order-date"><%= l order.completed_at.to_date %></td>
               <td class="account-page-order-status"><%= Spree.t("order_state.#{order.state}").titleize %></td>
               <td class="account-page-order-payment-state"><%= Spree.t("payment_states.#{order.payment_state}").titleize if order.payment_state %></td>
