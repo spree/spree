@@ -1,19 +1,21 @@
 require 'uri'
 
 module Spree
-  class BuildLocalizedUrl
+  class BuildLocalizedRedirectUrl
     prepend Spree::ServiceModule::Base
 
     LOCALE_REGEX = /^\/[A-Za-z]{2}\/|^\/[A-Za-z]{2}-[A-Za-z]{2}\/|^\/[A-Za-z]{2}$|^\/[A-Za-z]{2}-[A-Za-z]{2}$/.freeze
 
     SUPPORTED_PATHS_REGEX = /\/(products|t\/|cart|checkout|addresses|content)/.freeze
 
+    # rubocop:disable Lint/UnusedMethodArgument
     def call(url:, locale:, default_locale: nil)
       run :initialize_url_object
       run :generate_new_path
       run :append_locale_param
       run :build_url
     end
+    # rubocop:enable Lint/UnusedMethodArgument
 
     protected
 

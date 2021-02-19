@@ -9,7 +9,7 @@ module Spree
 
       if new_locale.present? && supported_locale?(new_locale)
         if should_build_new_url?
-          redirect_to BuildLocalizedUrl.call(
+          redirect_to BuildLocalizedRedirectUrl.call(
             url: request.env['HTTP_REFERER'],
             locale: new_locale,
             default_locale: current_store.default_locale

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 module Spree
-  describe BuildLocalizedUrl do
+  describe BuildLocalizedRedirectUrl do
     subject { described_class.call(url: url, locale: locale, default_locale: default_locale) }
 
     let(:result) { subject.value }
