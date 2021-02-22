@@ -89,6 +89,11 @@ export default class Header extends React.PureComponent {
               isActive={this.isActive('release_notes')}
               url="/release_notes/"
             />
+            <NavItem
+              text="FAQ"
+              isActive={this.isActive('faq')}
+              url="/faq/"
+            />
             <NavItem url="https://demo.spreecommerce.org/">Demo</NavItem>
 
             <NavItem url="https://spreecommerce.org/contact/">
@@ -174,6 +179,15 @@ export default class Header extends React.PureComponent {
                 url="/release_notes/"
               >
                 {this.isActive('release_notes') && (
+                  <Sidebar nav={this.props.nav} isMobile />
+                )}
+              </NavItem>
+              <NavItem
+                text="FAQ"
+                isActive={this.isActive('faq')}
+                url="/faq/"
+              >
+                {this.isActive('faq') && (
                   <Sidebar nav={this.props.nav} isMobile />
                 )}
               </NavItem>
