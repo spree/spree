@@ -57,7 +57,7 @@ It is worth mentioning that [Analytics](/user/configuration/configuring_analytic
 ### Orders
 
 If the user places an order on any of your sites, you can observe which store processed the Order.
-Simply enter the Orders tab (you can learn more about it [here](/user/orders/index.html))and choose any order that you would like to check. Look for the "Store" option on the panel on the right side.
+Simply enter the Orders tab (you can learn more about it [here](/user/orders/))and choose any order that you would like to check. Look for the "Store" option on the panel on the right side.
 
 ![Orders Stores](../../../images/user/config/order_stores.jpg)
 
