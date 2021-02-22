@@ -29,10 +29,21 @@
     line-height: 1;
     height: 38px;
     vertical-align: middle;
-    font-family: 'Glyphicons Halflings';
     color: #555;
+    background-image: url("data:image/svg+xml;charset=utf8,%3C?xml version='1.0' encoding='UTF-8' standalone='no'?%3E%3C!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 1.1//EN' 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'%3E%3Csvg width='100%25' height='100%25' viewBox='0 0 512 512' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' xml:space='preserve' xmlns:serif='http://www.serif.com/' style='fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;'%3E%3Cpath id='icon-chevron-right' d='M377.212,245.558l-221.539,-221.539c-5.769,-5.769 -15.115,-5.769 -20.885,0c-5.769,5.769 -5.769,15.116 0,20.885l211.097,211.096l-211.097,211.096c-5.769,5.769 -5.769,15.116 0,20.885c2.885,2.884 6.654,4.327 10.443,4.327c3.788,0 7.557,-1.443 10.442,-4.327l221.539,-221.539c5.769,-5.769 5.769,-15.115 0,-20.884Z' style='fill-rule:nonzero;stroke:%23000;stroke-width:9.5px;'/%3E%3C/svg%3E");
+
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    overflow: hidden !important;
+    vertical-align: middle !important;
+    background-repeat: no-repeat !important;
+    background-size: 100% !important;
+    background-position: center !important;
 
     &:before {
+
+
       position: absolute;
       top: 12px;
       padding-left: 4px;
@@ -40,9 +51,15 @@
     }
   }
 
-  .jstree-open > ins:before { content: '\e114' }
+  .jstree-open > ins {
+    transform: rotate(90deg);
+    transition: .3s ease-in-out;
+  }
+  .jstree-closed > ins {
+    transform: rotate(0deg);
+    transition: .3s ease-in-out;
 
-  .jstree-closed > ins:before { content: '\e080' }
+  }
 
   .jstree-leaf > ins {
     background-position: -36px 0;
@@ -62,6 +79,7 @@
     -webkit-user-select: none;
     -moz-user-select: none;
     user-select: none;
+    margin-left: 10px;
 
     &.jstree-search {
       color: aqua;
@@ -75,7 +93,6 @@
 
     .jstree-icon {
       vertical-align: middle;
-      font-family: 'Glyphicons Halflings';
       line-height: 20px;
       width: 20px;
       height: 24px;
@@ -83,11 +100,8 @@
       margin-right: 8px;
       pointer-events: none;
 
-      &:before {
-        content: "\e118";
-        top: 1px;
-        padding-left: 0;
-      }
+      background-image: url("data:image/svg+xml;charset=utf8,%3C?xml version='1.0' encoding='UTF-8' standalone='no'?%3E%3C!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 1.1//EN' 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'%3E%3Csvg width='100%25' height='100%25' viewBox='0 0 512 512' version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' xml:space='preserve' xmlns:serif='http://www.serif.com/' style='fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;'%3E%3Cpath d='M64,448c-26.51,0 -48,-21.49 -48,-48l0,-288c0,-26.51 21.49,-48 48,-48l112,0c4.759,-0.008 9.274,2.103 12.32,5.76l48.48,58.24l195.2,0c8.809,0.039 15.929,7.191 15.929,16c0,8.809 -7.12,15.961 -15.929,16l-202.72,0c-4.703,-0.04 -9.15,-2.146 -12.16,-5.76l-48.64,-58.24l-104.48,0c-8.837,0 -16,7.163 -16,16l0,288c0,8.837 7.163,16 16,16c8.809,0.039 15.929,7.191 15.929,16c0,8.809 -7.12,15.961 -15.929,16Z' style='fill-rule:nonzero;stroke:%23000;stroke-width:1px;'/%3E%3Cpath d='M406.08,448l-342.08,0c-4.895,0.109 -9.571,-2.029 -12.691,-5.803c-3.119,-3.775 -4.339,-8.77 -3.309,-13.557l48,-224c1.61,-7.506 8.325,-12.811 16,-12.64l368,0c4.895,-0.109 9.571,2.029 12.691,5.803c3.119,3.775 4.339,8.77 3.309,13.557l-42.88,198.72c-4.76,22.161 -24.373,37.972 -47.04,37.92Zm-322.24,-32l322.24,0c7.675,0.171 14.39,-5.134 16,-12.64l38.08,-179.36l-336,0l-40.32,192Z' style='fill-rule:nonzero;stroke:%23000;stroke-width:1px;'/%3E%3C/svg%3E");
+
     }
   }
 

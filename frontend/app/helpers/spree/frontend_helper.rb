@@ -7,26 +7,6 @@ module Spree
       @body_class
     end
 
-    def store_country_iso(store)
-      store ||= current_store
-      return unless store
-      return unless store.default_country
-
-      store.default_country.iso.downcase
-    end
-
-    def stores
-      @stores ||= Spree::Store.includes(:default_country)
-    end
-
-    def store_currency_symbol(store)
-      store ||= current_store
-      return unless store
-      return unless store.default_currency
-
-      ::Money::Currency.find(store.default_currency).symbol
-    end
-
     def spree_breadcrumbs(taxon, _separator = '', product = nil)
       return '' if current_page?('/') || taxon.nil?
 
@@ -71,7 +51,7 @@ module Spree
         ) << content_tag(:meta, nil, itemprop: 'position', content: '1'), class: 'active', itemscope: 'itemscope', itemtype: 'https://schema.org/ListItem', itemprop: 'itemListElement')
       end
       crumb_list = content_tag(:ol, raw(crumbs.flatten.map(&:mb_chars).join), class: 'breadcrumb', itemscope: 'itemscope', itemtype: 'https://schema.org/BreadcrumbList')
-      content_tag(:nav, crumb_list, id: 'breadcrumbs', class: 'col-12 mt-1 mt-sm-3 mt-lg-4', aria: { label: 'breadcrumb' })
+      content_tag(:nav, crumb_list, id: 'breadcrumbs', class: 'col-12 mt-1 mt-sm-3 mt-lg-4', aria: { label: Spree.t(:breadcrumbs) })
     end
 
     def class_for(flash_type)
@@ -166,7 +146,13 @@ module Spree
 
     def plp_and_carousel_image(product, image_class = '')
       image = default_image_for_product_or_variant(product)
-      image_url = image&.plp_url || asset_path('noimage/plp.png')
+
+      image_url = if image.present?
+                    main_app.url_for(image.url('plp'))
+                  else
+                    asset_path('noimage/plp.png')
+                  end
+
       image_style = image&.style(:plp)
 
       lazy_image(
@@ -242,7 +228,7 @@ module Spree
     end
 
     def price_filter_values
-      [
+      @price_filter_values ||= [
         "#{I18n.t('activerecord.attributes.spree/product.less_than')} #{formatted_price(50)}",
         "#{formatted_price(50)} - #{formatted_price(100)}",
         "#{formatted_price(101)} - #{formatted_price(150)}",
@@ -255,6 +241,10 @@ module Spree
       @static_filters ||= Spree::Frontend::Config[:products_filters]
     end
 
+    def additional_filters_partials
+      @additional_filters_partials ||= Spree::Frontend::Config[:additional_filters_partials]
+    end
+
     def filtering_params
       @filtering_params ||= available_option_types.map(&:filter_param).concat(static_filters)
     end
@@ -264,12 +254,12 @@ module Spree
     end
 
     def available_option_types_cache_key
-      @available_option_types_cache_key ||= Spree::OptionType.maximum(:updated_at)&.utc&.to_i
+      @available_option_types_cache_key ||= Spree::OptionType.filterable.maximum(:updated_at)&.utc&.to_i
     end
 
     def available_option_types
       @available_option_types ||= Rails.cache.fetch("available-option-types/#{available_option_types_cache_key}") do
-        Spree::OptionType.includes(:option_values).to_a
+        Spree::OptionType.includes(:option_values).filterable.to_a
       end
       @available_option_types
     end
@@ -282,6 +272,20 @@ module Spree
           icon(name: service, width: 22, height: 22)
         end
       end
+    end
+
+    def checkout_available_payment_methods
+      @checkout_available_payment_methods ||= @order.available_payment_methods(current_store)
+    end
+
+    def color_option_type_name
+      @color_option_type_name ||= Spree::OptionType.color&.name
+    end
+
+    def country_flag_icon(country_iso_code = nil)
+      return if country_iso_code.blank?
+
+      content_tag :span, nil, class: "flag-icon flag-icon-#{country_iso_code.downcase}"
     end
 
     private
@@ -300,7 +304,9 @@ module Spree
       end
     end
 
-    def checkout_edit_link(step = 'address')
+    def checkout_edit_link(step = 'address', order = @order)
+      return if order.complete?
+
       classes = 'align-text-bottom checkout-confirm-delivery-informations-link'
 
       link_to spree.checkout_state_path(step), class: classes, method: :get do

@@ -5,31 +5,31 @@
 <% content_for :sidebar do %>
   <ul class="nav flex-column nav-pills" data-hook="admin_user_tab_options">
     <li>
-      <%= link_to_with_icon 'user',
+      <%= link_to_with_icon 'user.svg',
         Spree.t(:"admin.user.account"),
         spree.edit_admin_user_path(@user),
         class: "nav-link #{'active' if current == :account}" %>
     </li>
     <li>
-      <%= link_to_with_icon 'user',
+      <%= link_to_with_icon 'location.svg',
         Spree.t(:"admin.user.addresses"),
         spree.addresses_admin_user_path(@user),
         class: "nav-link #{'active' if current == :address}" %>
     </li>
     <li>
-      <%= link_to_with_icon 'shopping-cart',
+      <%= link_to_with_icon 'list.svg',
         Spree.t(:"admin.user.orders"),
         spree.orders_admin_user_path(@user),
         class: "nav-link #{'active' if current == :orders}" %>
     </li>
     <li>
-      <%= link_to_with_icon 'edit',
+      <%= link_to_with_icon 'items.svg',
         Spree.t(:"admin.user.items"),
         spree.items_admin_user_path(@user),
         class: "nav-link #{'active' if current == :items}" %>
     </li>
     <li>
-      <%= link_to_with_icon 'money',
+      <%= link_to_with_icon 'payments.svg',
         Spree.t(:"admin.user.store_credits"),
         spree.admin_user_store_credits_path(@user),
         class: "nav-link #{'active' if current == :store_credits}" %>

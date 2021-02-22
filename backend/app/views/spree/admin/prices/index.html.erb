@@ -1,23 +1,21 @@
 <%= render partial: 'spree/admin/shared/product_tabs', locals: { current: :prices } %>
 
 <% content_for :page_actions do %>
-  <div class="page-actions col-6 pr-0" data-hook="toolbar">
-    <%= yield :page_actions %>
-  </div>
+  <%= yield :page_actions %>
   <%= product_preview_link(@product) %>
 <% end %>
 
 <form>
-  <input class="form-control" placeholder="<%= Spree.t('variant_prices_search_placeholder') %>" type="text" id="variant-price-search"/>
+  <input class="form-control" placeholder="<%= Spree.t('variant_prices_search_placeholder') %>" type="text" id="variant-price-search">
 </form>
 
 <%= form_tag nil, { class: 'form-horizontal' } do %>
-  <div class="mt-3">
+  <div class="my-3">
     <%= render 'variant_prices', variant: @product.master %>
   </div>
   <div class="form-actions" data-hook="buttons">
-    <%= button Spree.t('actions.update'), 'update' %>
+    <%= button Spree.t('actions.update'), 'update.svg' %>
     <span class="or"><%= Spree.t(:or) %></span>
-    <%= button_link_to Spree.t('actions.cancel'), admin_product_path(@product), icon: 'delete' %>
+    <%= button_link_to Spree.t('actions.cancel'), admin_product_path(@product), icon: 'delete.svg' %>
   </div>
 <% end %>

@@ -8,4 +8,4 @@ To delete a user in your store, go into the Admin Interface and click the **User
 
 A message will appear asking you to confirm that you want to delete the user. Click "OK".
 
-<alert kind="warning"> "Please be aware that you cannot delete users that has placed any orders in the past"</alert>
+<alert kind="warning"> "Please be aware that you cannot delete users that have placed any orders in the past"</alert>

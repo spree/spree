@@ -1,25 +1,23 @@
 module Spree
   class StoreController < Spree::BaseController
     include Spree::Core::ControllerHelpers::Order
+    include Spree::LocaleUrls
+
+    helper 'spree/locale'
+    helper 'spree/currency'
 
     skip_before_action :verify_authenticity_token, only: :ensure_cart, raise: false
 
-    def forbidden
-      render 'spree/shared/forbidden', layout: Spree::Config[:layout], status: 403
-    end
-
-    def unauthorized
-      render 'spree/shared/unauthorized', layout: Spree::Config[:layout], status: 401
-    end
+    before_action :redirect_to_default_locale
 
     def account_link
       render partial: 'spree/shared/link_to_account'
-      fresh_when(try_spree_current_user)
+      fresh_when(etag: [try_spree_current_user, I18n.locale])
     end
 
     def cart_link
       render partial: 'spree/shared/link_to_cart'
-      fresh_when(simple_current_order)
+      fresh_when(etag: [simple_current_order, I18n.locale])
     end
 
     def api_tokens
@@ -37,10 +35,6 @@ module Spree
 
     def config_locale
       Spree::Frontend::Config[:locale]
-    end
-
-    def store_locale
-      current_store.default_locale
     end
 
     def store_etag

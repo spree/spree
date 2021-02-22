@@ -1,0 +1,10 @@
+<%= link_to(spree.edit_address_path(address), method: :get, class: 'ml-1 d-inline-block', data: { hook: 'edit_address' }) do %>
+  <%= inline_svg_tag('edit.svg', width: 24, height: 24) %>
+<% end %>
+
+<%= link_to '#', class: 'js-delete-address-link ml-3', data: { turbolinks: false, hook: 'remove_address', address: spree.address_path(address) }, aria: { label: Spree.t('address_book.remove_address') } do %>
+    <%= icon(name: 'garbage_2',
+             classes: '',
+             width: 24,
+             height: 24) %>
+<% end %>

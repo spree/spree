@@ -8,7 +8,6 @@
     <%= render partial: 'spree/shared/base_mailer_stylesheets' %>
   </head>
   <body>
-    <span class="preheader">This is a receipt for your recent purchase on {{ purchase_date }}. No payment is due with this receipt.</span>
     <table class="email-wrapper" width="100%" cellpadding="0" cellspacing="0" role="presentation">
       <tr>
         <td align="center">
@@ -38,6 +37,9 @@
             </tr>
           </table>
         </td>
+      </tr>
+      <tr>
+        <td height="60px">&nbsp;</td>
       </tr>
     </table>
   </body>

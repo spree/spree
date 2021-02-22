@@ -1,13 +1,18 @@
 <%= render 'spree/shared/error_messages', target: @address %>
 <div class="col-lg-6 offset-lg-3">
-  <h3 class="spree-header spree-mb-large spree-mt-large"><%= t(:edit_shipping_address, scope: :address_book) %></h3>
+  <h3 class="spree-header spree-mb-large spree-mt-large"><%= Spree.t(:edit_address, scope: :address_book) %></h3>
   <%= form_for @address, html: { id: 'checkout_form_address' } do |f| %>
-    <%= render 'spree/addresses/form',
-      address_name: 'address',
-      address_form: f,
-      address_type: 'shipping',
-      address: @address
-    %>
-    <%= f.submit Spree.t(:update), class: 'btn btn-primary btn-block spree-btn mb-5' %>
+  <div class="form-group checkout-content-inner-field mb-5 has-float-label">
+    <%= f.text_field :label, class: 'spree-flat-input', placeholder: Spree.t(:address_name_placeholder, scope: :address_book) %>
+    <%= f.label :address_name, Spree.t(:label, scope: :address_book) %>
+  </div>
+
+  <%= render 'spree/addresses/form',
+    address_name: 'address',
+    address_form: f,
+    address_type: 'shipping',
+    address: @address %>
+
+  <%= f.submit Spree.t(:update), class: 'btn btn-primary btn-block spree-btn mb-5' %>
   <% end %>
 </div>

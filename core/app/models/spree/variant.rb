@@ -3,7 +3,7 @@ module Spree
     acts_as_paranoid
     acts_as_list scope: :product
 
-    belongs_to :product, touch: true, class_name: 'Spree::Product', inverse_of: :variants
+    belongs_to :product, -> { with_deleted }, touch: true, class_name: 'Spree::Product', inverse_of: :variants
     belongs_to :tax_category, class_name: 'Spree::TaxCategory', optional: true
 
     delegate :name, :name=, :description, :slug, :available_on, :shipping_category_id,
@@ -48,7 +48,8 @@ module Spree
       validates :cost_price
       validates :price
     end
-    validates :sku, uniqueness: { conditions: -> { where(deleted_at: nil) }, case_sensitive: false }, allow_blank: true
+    validates :sku, uniqueness: { conditions: -> { where(deleted_at: nil) }, case_sensitive: false },
+                    allow_blank: true, unless: :disable_sku_validation?
 
     after_create :create_stock_items
     after_create :set_master_out_of_stock, unless: :is_master?
@@ -102,10 +103,19 @@ module Spree
 
     self.whitelisted_ransackable_associations = %w[option_values product prices default_price]
     self.whitelisted_ransackable_attributes = %w[weight sku]
-    self.whitelisted_ransackable_scopes = %i(product_name_or_sku_cont)
+    self.whitelisted_ransackable_scopes = %i(product_name_or_sku_cont search_by_product_name_or_sku)
 
     def self.product_name_or_sku_cont(query)
-      joins(:product).where("#{Product.table_name}.name LIKE :query OR sku LIKE :query", query: "%#{query}%")
+      joins(:product).where("LOWER(#{Product.table_name}.name) LIKE LOWER(:query) OR LOWER(sku) LIKE LOWER(:query)", query: "%#{query}%")
+    end
+
+    def self.search_by_product_name_or_sku(query)
+      if defined?(SpreeGlobalize)
+        joins(product: :translations).where("LOWER(#{Product::Translation.table_name}.name) LIKE LOWER(:query) OR LOWER(sku) LIKE LOWER(:query)",
+                                            query: "%#{query}%")
+      else
+        product_name_or_sku_cont(query)
+      end
     end
 
     def available?
@@ -113,15 +123,15 @@ module Spree
     end
 
     def tax_category
-      if self[:tax_category_id].nil?
-        product.tax_category
-      else
-        Spree::TaxCategory.find(self[:tax_category_id])
-      end
+      @tax_category ||= if self[:tax_category_id].nil?
+                          product.tax_category
+                        else
+                          Spree::TaxCategory.find(self[:tax_category_id])
+                        end
     end
 
     def options_text
-      Spree::Variants::OptionsPresenter.new(self).to_sentence
+      @options_text ||= Spree::Variants::OptionsPresenter.new(self).to_sentence
     end
 
     # Default to master name
@@ -138,13 +148,6 @@ module Spree
     # their own definition.
     def deleted?
       !!deleted_at
-    end
-
-    # Product may be created with deleted_at already set,
-    # which would make AR's default finder return nil.
-    # This is a stopgap for that little problem.
-    def product
-      Spree::Product.unscoped { super }
     end
 
     def options=(options = {})
@@ -189,7 +192,7 @@ module Spree
     end
 
     def price_in(currency)
-      prices.detect { |price| price.currency == currency } || prices.build(currency: currency)
+      prices.detect { |price| price.currency == currency&.upcase } || prices.build(currency: currency&.upcase)
     end
 
     def amount_in(currency)
@@ -223,7 +226,7 @@ module Spree
     end
 
     def compare_at_price
-      price_in(cost_currency).try(:compare_at_amount)
+      @compare_at_price ||= price_in(cost_currency).try(:compare_at_amount)
     end
 
     def name_and_sku
@@ -235,7 +238,11 @@ module Spree
     end
 
     def in_stock?
-      Rails.cache.fetch(in_stock_cache_key) do
+      # Issue 10280
+      # Check if model responds to cache version and fall back to updated_at for older rails versions
+      # This makes sure a version is supplied when recyclable cache keys are disabled.
+      version = respond_to?(:cache_version) ? cache_version : updated_at.to_i
+      Rails.cache.fetch(in_stock_cache_key, version: version) do
         total_on_hand > 0
       end
     end
@@ -327,6 +334,10 @@ module Spree
 
     def clear_in_stock_cache
       Rails.cache.delete(in_stock_cache_key)
+    end
+
+    def disable_sku_validation?
+      Spree::Config[:disable_sku_validation]
     end
   end
 end

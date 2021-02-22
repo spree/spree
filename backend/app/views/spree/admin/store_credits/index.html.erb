@@ -10,10 +10,11 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= button_link_to Spree.t(:add_store_credit), spree.new_admin_user_store_credit_path(@user), class: "btn-success", icon: 'add' if can?(:create, Spree::StoreCredit) %>
+  <%= button_link_to Spree.t(:add_store_credit), spree.new_admin_user_store_credit_path(@user), class: "btn-success", icon: 'add.svg' if can?(:create, Spree::StoreCredit) %>
 <% end %>
 
 <% if @store_credits.any? %>
+<div class="table-responsive">
   <table class="table">
     <thead>
       <th><%= Spree.t(:credited) %></th>
@@ -41,6 +42,7 @@
       <% end %>
     </tbody>
   </table>
+</div>
 <% else %>
   <div class="alert alert-info no-objects-found">
     <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::StoreCredit)) %>

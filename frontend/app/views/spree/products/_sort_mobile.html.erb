@@ -7,32 +7,32 @@
   </div>
   <div class="plp-overlay-header-border"></div>
   <ul class="pt-1 plp-overlay-ul">
-    <li class="p-3 plp-overlay-ul-li<%= '--active' if params[:sort_by].blank? %>">
-      <a href="<%= url_for(permitted_params.merge(sort_by: nil)) %>" >
+    <li class="plp-overlay-ul-li <%= 'plp-overlay-ul-li--active' if params[:sort_by].blank? %>">
+      <a class="p-3 d-block" href="<%= url_for(permitted_params.merge(sort_by: nil)) %>">
         <div class="plp-empty-dot">
           <div class="filled-dot"></div>
         </div>
         <%= Spree.t('plp.default') %>
       </a>
     </li>
-    <li class="p-3 plp-overlay-ul-li<%= '--active' if params[:sort_by] == 'newest-first' %>">
-      <a href="<%= url_for(permitted_params.merge(sort_by: 'newest-first')) %>" >
+    <li class="plp-overlay-ul-li <%= 'plp-overlay-ul-li--active' if params[:sort_by] == 'newest-first' %>">
+      <a class="p-3 d-block" href="<%= url_for(permitted_params.merge(sort_by: 'newest-first')) %>">
         <div class="plp-empty-dot">
           <div class="filled-dot"></div>
         </div>
         <%= Spree.t('plp.newest_first') %>
       </a>
     </li>
-    <li class="p-3 plp-overlay-ul-li<%= '--active' if params[:sort_by] == 'price-high-to-low' %>">
-      <a href="<%= url_for(permitted_params.merge(sort_by: 'price-high-to-low')) %>" >
+    <li class="plp-overlay-ul-li <%= 'plp-overlay-ul-li--active' if params[:sort_by] == 'price-high-to-low' %>">
+      <a class="p-3 d-block" href="<%= url_for(permitted_params.merge(sort_by: 'price-high-to-low')) %>">
         <div class="plp-empty-dot">
           <div class="filled-dot"></div>
         </div>
         <%= Spree.t('plp.price_high_to_low') %>
       </a>
     </li>
-    <li class="p-3 plp-overlay-ul-li<%= '--active' if params[:sort_by] == 'price-low-to-high' %>">
-      <a href="<%= url_for(permitted_params.merge(sort_by: 'price-low-to-high')) %>" >
+    <li class="plp-overlay-ul-li <%= 'plp-overlay-ul-li--active' if params[:sort_by] == 'price-low-to-high' %>">
+      <a class="p-3 d-block" href="<%= url_for(permitted_params.merge(sort_by: 'price-low-to-high')) %>">
         <div class="plp-empty-dot">
           <div class="filled-dot"></div>
         </div>

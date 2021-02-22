@@ -70,6 +70,10 @@ module Spree
       matches.first
     end
 
+    def self.default_checkout_zone
+      find_by(name: Spree::Config[:checkout_zone])
+    end
+
     def kind
       if self[:kind].present?
         self[:kind]
@@ -97,8 +101,6 @@ module Spree
           zone_member.zoneable_id == address.country_id
         when 'Spree::State'
           zone_member.zoneable_id == address.state_id
-        else
-          false
         end
       end
     end
@@ -110,8 +112,6 @@ module Spree
                        zoneables
                      when 'state' then
                        zoneables.collect(&:country)
-                     else
-                       []
                      end.flatten.compact.uniq
     end
 
@@ -165,6 +165,19 @@ module Spree
         return false if (target.states.pluck(:country_id) - countries.pluck(:id)).present?
       end
       true
+    end
+
+    def state_list
+      case kind
+      when 'country'
+        zoneables.map(&:states)
+      when 'state'
+        zoneables
+      end.flatten.compact.uniq
+    end
+
+    def state_list_for(country)
+      state_list.select { |state| state.country == country }
     end
 
     private

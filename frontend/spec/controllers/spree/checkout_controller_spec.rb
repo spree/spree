@@ -16,7 +16,7 @@ describe Spree::CheckoutController, type: :controller do
     allow(controller).to receive_messages current_order: order
   end
 
-  context '#edit' do
+  describe '#edit' do
     it 'checks if the user is authorized for :edit' do
       expect(controller).to receive(:authorize!).with(:edit, order, token)
       request.cookie_jar.signed[:token] = token
@@ -63,7 +63,7 @@ describe Spree::CheckoutController, type: :controller do
     end
   end
 
-  context '#update' do
+  describe '#update' do
     it 'checks if the user is authorized for :edit' do
       expect(controller).to receive(:authorize!).with(:edit, order, token)
       request.cookie_jar.signed[:token] = token
@@ -73,12 +73,12 @@ describe Spree::CheckoutController, type: :controller do
     context 'save successful' do
       def spree_post_address
         post :update, params: {
-                   state: 'address',
-                   order: {
-                     bill_address_attributes: address_params,
-                     use_billing: true
-                   }
-                 }
+          state: 'address',
+          order: {
+            bill_address_attributes: address_params,
+            use_billing: true
+          }
+        }
       end
 
       before do
@@ -115,40 +115,434 @@ describe Spree::CheckoutController, type: :controller do
       end
 
       context 'with the order in the address state' do
-        before do
-          order.update_columns(ship_address_id: create(:address).id, state: 'address')
-          allow(order).to receive_messages user: user
+        subject :update do
+          patch :update, params: update_params
+          order.reload
         end
 
-        context 'with a billing and shipping address' do
-          let(:bill_address_params) do
-            order.bill_address.attributes.except('created_at', 'updated_at')
-          end
-          let(:ship_address_params) do
-            order.ship_address.attributes.except('created_at', 'updated_at')
-          end
-          let(:update_params) do
-            {
-              state: 'address',
-              order: {
-                bill_address_attributes: bill_address_params,
-                ship_address_attributes: ship_address_params,
-                use_billing: false
-              }
+        let(:user) { create(:user) }
+        let(:order) do
+          create(:order_with_totals,
+                 bill_address: bill_address,
+                 ship_address: ship_address,
+                 state: 'address',
+                 user: user)
+        end
+        let(:save_user_address) { true }
+        let(:update_params) do
+          {
+            state: 'address',
+            save_user_address: save_user_address,
+            order: {
+              bill_address_attributes: bill_address_params,
+              ship_address_attributes: ship_address_params,
+              use_billing: use_billing
             }
+          }
+        end
+
+        shared_examples 'address not created' do
+          it 'does not create new address' do
+            expect { update }.to change { Spree::Address.count }.by(0)
           end
+        end
+
+        shared_examples 'new address created' do
+          it 'creates new address' do
+            expect { update }.to change { Spree::Address.count }.by(1)
+          end
+        end
+
+        shared_examples 'created address assigned to current user' do
+          it 'assigns created address to current user' do
+            update
+
+            expect(Spree::Address.last.user_id).to eq user.id
+          end
+        end
+
+        shared_examples 'default address not changed' do
+          it 'does not change default address' do
+            update
+
+            expect(default_bill_address.reload.city).to eq 'Herndon'
+          end
+        end
+
+        shared_examples 'address user not changed' do
+          it 'keeps address assigned to user' do
+            update
+
+            expect(default_bill_address.reload.user).to eq user
+          end
+        end
+
+        shared_examples 'same user assigned' do
+          it 'keeps addresses assigned to user' do
+            update
+
+            expect(default_bill_address.reload.user).to eq user
+            expect(default_ship_address.reload.user).to eq user
+          end
+        end
+
+        context 'with a billing and shipping address (with delivery step)' do
+          let(:bill_address) { create(:address, user: user) }
+          let(:ship_address) { create(:address, user: user) }
+
+          context 'when all addresses attributes are nil' do
+            let(:use_billing) { false }
+            let(:bill_address_params) { nil }
+            let(:ship_address_params) { nil }
+            let(:expected_bill_address_id) { order.bill_address_id }
+            let(:expected_ship_address_id) { order.ship_address_id }
+
+            it 'takes default bill and ship addresses' do
+              update
+
+              expect(order.bill_address_id).to eq(expected_bill_address_id)
+              expect(order.ship_address_id).to eq(expected_ship_address_id)
+            end
+
+            it_behaves_like 'address not created'
+          end
+
+          context 'when some attributes are invalid' do
+            let(:use_billing) { false }
+            let!(:default_bill_address) { order.bill_address }
+            let!(:default_ship_address) { order.ship_address }
+            let(:bill_address_params) { build(:address, firstname: nil, city: 'Chicago').attributes.merge(id: default_bill_address.id).except(:user_id, :created_at, :updated_at) }
+            let(:ship_address_params) { build(:address, firstname: nil, city: 'Washington').attributes.merge(id: default_ship_address.id).except(:user_id, :created_at, :updated_at) }
+            let(:bill_address_error) { { "bill_address.firstname": ["can't be blank"] } }
+            let(:ship_address_error) { { "ship_address.firstname": ["can't be blank"] } }
+
+            it 'returns address with errors' do
+              update
+
+              expect(order.errors.to_hash).to include(bill_address_error)
+              expect(order.errors.to_hash).to include(ship_address_error)
+            end
+
+            it_behaves_like 'address not created'
+          end
+
+          context 'when addresses attributes are not changed' do
+            let(:use_billing) { false }
+            let(:bill_address_params) { order.bill_address.attributes.except(:user_id, :created_at, :updated_at) }
+            let(:ship_address_params) { order.ship_address.attributes.except(:user_id, :created_at, :updated_at) }
+            let(:expected_bill_address_id) { order.bill_address_id }
+            let(:expected_ship_address_id) { order.ship_address_id }
+
+            it 'takes same default addresses' do
+              update
+
+              expect(order.bill_address_id).to eq(expected_bill_address_id)
+              expect(order.ship_address_id).to eq(expected_ship_address_id)
+            end
+
+            it_behaves_like 'address not created'
+          end
+
+          context 'when addresses attributes are changed' do
+            let!(:default_bill_address) { order.bill_address }
+            let!(:default_ship_address) { order.ship_address }
+
+            context 'when default address is editable' do
+              let(:use_billing) { false }
+              let(:bill_address_params) { build(:address, city: 'Chicago').attributes.merge(id: default_bill_address.id).except(:user_id, :created_at, :updated_at) }
+              let(:ship_address_params) { build(:address, city: 'Washington').attributes.merge(id: default_ship_address.id).except(:user_id, :created_at, :updated_at) }
+
+              it 'updates current addresses' do
+                expect(default_bill_address.city).to eq 'Herndon'
+                expect(default_ship_address.city).to eq 'Herndon'
+
+                update
+
+                expect(default_bill_address.reload.city).to eq 'Chicago'
+                expect(default_ship_address.reload.city).to eq 'Washington'
+              end
+
+              it_behaves_like 'address not created'
+              it_behaves_like 'same user assigned'
+            end
+
+            context 'when default address is not editable' do
+              let(:use_billing) { true }
+              let!(:shipment) { create(:shipment, address: default_bill_address) }
+              let(:bill_address_params) { build(:address, city: 'Chicago').attributes.merge(id: default_bill_address.id).except(:user_id, :created_at, :updated_at) }
+              let(:ship_address_params) { build(:address, city: 'Washington').attributes.merge(id: default_ship_address.id).except(:user_id, :created_at, :updated_at) }
+              let(:created_address_id) { Spree::Address.find_by(city: 'Chicago').id }
+
+              it_behaves_like 'default address not changed'
+              it_behaves_like 'new address created'
+
+              it 'assigns created address to both bill and ship addresses' do
+                update
+
+                expect(order.bill_address_id).to eq created_address_id
+                expect(order.ship_address_id).to eq created_address_id
+              end
+
+              it_behaves_like 'created address assigned to current user'
+
+              context 'when save_user_addresss is falsy' do
+                let(:save_user_address) { nil }
+
+                it 'does not assign created address to current user' do
+                  update
+
+                  expect(order.bill_address.reload.user).to be_nil
+                  expect(order.ship_address.reload.user).to be_nil
+                end
+              end
+            end
+
+            context 'when addresses are the same but have different ids' do
+              let(:use_billing) { false }
+              let(:bill_address_params) { default_bill_address.attributes.except(:user_id, :created_at, :updated_at) }
+              let(:ship_address_params) { default_ship_address.attributes.except(:user_id, :created_at, :updated_at) }
+
+              before { order.ship_address.update(state_id: order.bill_address.state_id) }
+
+              it 'assigns bill address to ship address' do
+                expect(order.bill_address.id).to eq default_bill_address.id
+
+                update
+
+                expect(order.bill_address.id).to eq default_ship_address.id
+              end
+
+              it 'destroys default bill address' do
+                expect { update }.to change { Spree::Address.count }.by(-1)
+              end
+            end
+          end
+
+          context 'when user is a guest' do
+            let(:user) { nil }
+            let(:use_billing) { false }
+
+            before do
+              allow(controller).to receive_messages try_spree_current_user: nil
+              allow(controller).to receive_messages spree_current_user: nil
+
+              expect(controller).to receive(:authorize!).at_least(:once).and_return(true)
+            end
+
+            context 'when submitted addresses already exist' do
+              let!(:bill_address) { create(:address, city: 'Chicago', user: nil) }
+              let!(:ship_address) { create(:address, city: 'Washington', user: nil) }
+              let(:order) { create(:order_with_totals, bill_address: nil, ship_address: nil, state: 'address', user: nil, email: 'example@email.com') }
+              let(:bill_address_params) { bill_address.attributes.except(:id, :user_id, :created_at, :updated_at) }
+              let(:ship_address_params) { ship_address.attributes.except(:id, :user_id, :created_at, :updated_at) }
+
+              it 'keeps addresses unassigned' do
+                update
+
+                expect(bill_address.reload.user).to be_nil
+                expect(ship_address.reload.user).to be_nil
+              end
+
+              it_behaves_like 'address not created'
+            end
+
+            context 'when submitted addresses does not exist' do
+              let(:order) { create(:order_with_totals, bill_address: nil, ship_address: nil, state: 'address', user: nil, email: 'example@email.com') }
+              let(:bill_address_params) { build(:address, city: 'Chicago', user: nil).attributes.except(:user_id, :created_at, :updated_at) }
+              let(:ship_address_params) { build(:address, city: 'Washington', user: nil).attributes.except(:user_id, :created_at, :updated_at) }
+
+              it 'keeps created addresses unassigned' do
+                update
+
+                expect(Spree::Address.find_by(city: 'Chicago').user).to be_nil
+                expect(Spree::Address.find_by(city: 'Washington').user).to be_nil
+              end
+
+              it 'creates new addresses' do
+                expect { update }.to change { Spree::Address.count }.by(2)
+              end
+            end
+
+            context 'when attributes are invalid' do
+              let(:order) { create(:order_with_totals, bill_address: nil, ship_address: nil, state: 'address', user: nil, email: 'example@email.com') }
+              let(:bill_address_params) { build(:address, firstname: nil, city: 'Chicago', user: nil).attributes.except(:user_id, :created_at, :updated_at) }
+              let(:ship_address_params) { build(:address, firstname: nil, city: 'Washington', user: nil).attributes.except(:user_id, :created_at, :updated_at) }
+              let(:bill_address_error) { { "bill_address.firstname": ["can't be blank"] } }
+              let(:ship_address_error) { { "ship_address.firstname": ["can't be blank"] } }
+
+              it 'returns address with errors' do
+                update
+
+                expect(order.errors.to_hash).to include(bill_address_error)
+                expect(order.errors.to_hash).to include(ship_address_error)
+              end
+
+              it_behaves_like 'address not created'
+            end
+          end
+        end
+
+        context 'with a billing address and without shipping address (without delivery step)' do
+          let(:bill_address) { create(:address, user: user) }
+          let(:ship_address) { nil }
+          let(:bill_address_params) { nil }
+          let(:ship_address_params) { nil }
+          let(:use_billing) { nil }
+          let(:expected_bill_address_id) { order.bill_address_id }
 
           before do
-            @expected_bill_address_id = order.bill_address.id
-            @expected_ship_address_id = order.ship_address.id
-
-            post :update, params: update_params
-            order.reload
+            allow(order).to receive_messages(checkout_steps: ['cart', 'address', 'payment'])
           end
 
-          it 'updates the same billing and shipping address' do
-            expect(order.bill_address.id).to eq(@expected_bill_address_id)
-            expect(order.ship_address.id).to eq(@expected_ship_address_id)
+          it "doesn't set shipping address" do
+            expect(order).not_to receive(:ship_address=)
+
+            update
+          end
+
+          context 'when all address attributes are nil' do
+            let(:bill_address_params) { nil }
+            let(:expected_bill_address_id) { order.bill_address_id }
+
+            it 'takes default bill address' do
+              update
+
+              expect(order.bill_address_id).to eq(expected_bill_address_id)
+            end
+
+            it_behaves_like 'address not created'
+          end
+
+          context 'when some attributes are invalid' do
+            let(:use_billing) { false }
+            let!(:default_bill_address) { order.bill_address }
+            let(:bill_address_params) { build(:address, firstname: nil, city: 'Chicago').attributes.merge(id: default_bill_address.id).except(:user_id, :created_at, :updated_at) }
+            let(:bill_address_error) { { "bill_address.firstname": ["can't be blank"] } }
+
+            it 'returns address with errors' do
+              update
+
+              expect(order.errors.to_hash).to include(bill_address_error)
+            end
+
+            it_behaves_like 'address not created'
+          end
+
+          context 'when bill address attributes are not changed' do
+            let(:bill_address_params) { order.bill_address.attributes.except(:user_id, :created_at, :updated_at) }
+            let(:expected_bill_address_id) { order.bill_address_id }
+
+            it 'takes same default bill address' do
+              update
+
+              expect(order.bill_address_id).to eq(expected_bill_address_id)
+            end
+
+            it_behaves_like 'address not created'
+          end
+
+          context 'when addresses attributes are changed' do
+            let!(:default_bill_address) { order.bill_address }
+
+            context 'when default address is editable' do
+              let(:bill_address_params) { build(:address, city: 'Chicago').attributes.merge(id: default_bill_address.id).except(:user_id, :created_at, :updated_at) }
+
+              it 'updates current address' do
+                expect(default_bill_address.city).to eq 'Herndon'
+
+                update
+
+                expect(default_bill_address.reload.city).to eq 'Chicago'
+              end
+
+              it_behaves_like 'address not created'
+              it_behaves_like 'address user not changed'
+
+              context 'when using API, with save_user_addresss set to true' do
+                let(:save_user_address) { true }
+
+                it_behaves_like 'address user not changed'
+              end
+            end
+
+            context 'when default address is not editable' do
+              let!(:shipment) { create(:shipment, address: default_bill_address) }
+              let(:bill_address_params) { build(:address, city: 'Chicago').attributes.merge(id: default_bill_address.id).except(:user_id, :created_at, :updated_at) }
+              let(:created_address_id) { Spree::Address.find_by(city: 'Chicago').id }
+
+              it_behaves_like 'default address not changed'
+              it_behaves_like 'new address created'
+
+              it 'assigns created address to bill address' do
+                update
+
+                expect(order.bill_address_id).to eq created_address_id
+              end
+
+              it_behaves_like 'created address assigned to current user'
+
+              context 'when save_user_addresss is falsy' do
+                let(:save_user_address) { nil }
+
+                it 'does not assign created address to current user' do
+                  update
+
+                  expect(order.bill_address.reload.user).to be_nil
+                end
+              end
+            end
+          end
+
+          context 'when user is a guest' do
+            let(:user) { nil }
+
+            before do
+              allow(controller).to receive_messages try_spree_current_user: nil
+              allow(controller).to receive_messages spree_current_user: nil
+
+              expect(controller).to receive(:authorize!).at_least(:once).and_return(true)
+            end
+
+            context 'when submitted bill address already exists' do
+              let!(:bill_address) { create(:address, city: 'Chicago', user: nil) }
+              let(:order) { create(:order_with_totals, bill_address: nil, ship_address: nil, state: 'address', user: nil, email: 'exaple@email.com') }
+              let(:bill_address_params) { bill_address.attributes.except(:id, :user_id, :created_at, :updated_at) }
+
+              it 'keeps address unassigned' do
+                update
+
+                expect(bill_address.reload.user).to be_nil
+              end
+
+              it_behaves_like 'address not created'
+            end
+
+            context 'when submitted bill address does not exits' do
+              let(:order) { create(:order_with_totals, bill_address: nil, ship_address: nil, state: 'address', user: nil, email: 'example@email.com') }
+              let(:bill_address_params) { build(:address, city: 'Chicago', user: nil).attributes.except(:user_id, :created_at, :updated_at) }
+
+              it 'keeps created address unassigned' do
+                update
+
+                expect(Spree::Address.find_by(city: 'Chicago').user).to be_nil
+              end
+
+              it_behaves_like 'new address created'
+            end
+
+            context 'when attributes are invalid' do
+              let(:order) { create(:order_with_totals, bill_address: nil, ship_address: nil, state: 'address', user: nil, email: 'example@email.com') }
+              let(:bill_address_params) { build(:address, firstname: nil, city: 'Chicago', user: nil).attributes.except(:user_id, :created_at, :updated_at) }
+              let(:bill_address_error) { { "bill_address.firstname": ["can't be blank"] } }
+
+              it 'returns address with errors' do
+                update
+
+                expect(order.errors.to_hash).to include(bill_address_error)
+              end
+
+              it_behaves_like 'address not created'
+            end
           end
         end
       end
@@ -418,13 +812,11 @@ describe Spree::CheckoutController, type: :controller do
 
     it 'does not advance the order extra even when called twice' do
       put :update, params: { state: 'payment',
-                         order: { payments_attributes: [{ payment_method_id: payment_method_id }] }
-                       }
+                             order: { payments_attributes: [{ payment_method_id: payment_method_id }] } }
       order.reload
       expect(order.state).to eq 'confirm'
       put :update, params: { state: 'payment',
-                         order: { payments_attributes: [{ payment_method_id: payment_method_id }] }
-                       }
+                             order: { payments_attributes: [{ payment_method_id: payment_method_id }] } }
       order.reload
       expect(order.state).to eq 'confirm'
     end

@@ -1,12 +1,12 @@
 <div class="container account-page">
-  <h3 class="text-uppercase spree-mb-large spree-mt-large spree-header" ><%= accurate_title %></h3>
+  <h3 class="text-uppercase spree-mb-large spree-mt-large spree-header"><%= accurate_title %></h3>
 
   <div class="row">
     <div class="col-xs-12 col-lg-4">
       <dt class="text-uppercase account-page-user-info-item-title">
         <%= Spree.t(:account_info) %>
-        <%= link_to spree.edit_user_path(@user), class: "account-page-user-info-item-title-edit" do %>
-          <%= inline_svg_tag 'edit.svg', class: "account-page-user-info-item-title-edit-img" %>
+          <%= link_to spree.edit_user_path(@user), class: "account-page-user-info-item-title-edit" do %>
+          <%= inline_svg_tag('edit.svg', width: 27.6, height: 24) %>
         <% end %>
       </dt>
       <dd class="account-page-user-info-item-definition"><%= @user.email %></dd>
@@ -18,18 +18,21 @@
       </div>
     </div>
     <div class="col-xs-12 col-lg-8 mt-sm-5 mt-lg-0">
-      <%= link_to Spree.t(:add_new_address), spree.new_address_path, class: 'account-page-new-address-link', method: :get %>
-
+      <h4 class="mb-3"><%= link_to Spree.t(:add_new_address), spree.new_address_path, method: :get %></h4>
       <div class="row">
         <% @user.addresses.each_with_index do |address, index| %>
-          <div class="col-xs-12 col-lg-6">
+          <div class="col-12 col-sm-6 mb-3">
             <% index += 1 %>
             <% if index % 3 == 0 %>
-              <div class="account-page-user-info-item">
-              </div>
+              <div class="account-page-user-info-item my-4"></div>
             <% end %>
-            <div class="account-page-user-info-item">
-              <%= render "spree/users/address", address: address %>
+            <div class="row">
+              <div class="col-8 col-lg-6">
+                <%= render "spree/users/address", address: address %>
+              </div>
+              <div class="col">
+                <%= render "spree/users/address_controls", address: address %>
+              </div>
             </div>
           </div>
         <% end %>
@@ -38,8 +41,7 @@
   </div>
 
   <div data-hook="account_my_orders" class="account-page-orders" id="account-my-orders">
-
-    <h3 class="text-uppercase spree-mb-medium spree-mt-medium spree-header" ><%= Spree.t(:my_orders) %></h3>
+    <h3 class="text-uppercase spree-mb-medium spree-mt-medium spree-header"><%= Spree.t(:my_orders) %></h3>
     <% if @orders.present? %>
       <table>
         <thead class="active">
@@ -55,7 +57,7 @@
         <tbody>
           <% @orders.each do |order| %>
             <tr>
-              <td class="account-page-order-number"><%= link_to order.number, order_url(order), class: "text-primary" %></td>
+              <td class="account-page-order-number"><%= link_to order.number, spree.order_path(order), class: "text-primary" %></td>
               <td class="account-page-order-date"><%= l order.completed_at.to_date %></td>
               <td class="account-page-order-status"><%= Spree.t("order_state.#{order.state}").titleize %></td>
               <td class="account-page-order-payment-state"><%= Spree.t("payment_states.#{order.payment_state}").titleize if order.payment_state %></td>
@@ -71,7 +73,7 @@
     <% else %>
       <p class="text-center"><%= Spree.t(:you_have_no_orders_yet) %></p>
     <% end %>
-    <br />
+    <br>
   </div>
   <div id="delete-address-popup" class="delete-address-popup-dropdown hide-on-esc">
     <%= render 'spree/shared/delete_address_popup' %>

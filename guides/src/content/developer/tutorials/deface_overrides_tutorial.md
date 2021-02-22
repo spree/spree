@@ -1,7 +1,6 @@
 ---
 title: Deface Overrides
 section: tutorial
-hidden: true
 ---
 
 <alert kind="warning">

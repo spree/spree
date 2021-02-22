@@ -33,7 +33,7 @@ module Spree
       :id, :firstname, :lastname, :first_name, :last_name,
       :address1, :address2, :city, :country_iso, :country_id, :state_id,
       :zipcode, :phone, :state_name, :alternative_phone, :company,
-      :user_id, :deleted_at,
+      :user_id, :deleted_at, :label,
       country: [:iso, :name, :iso3, :iso_name],
       state: [:name, :abbr]
     ]
@@ -96,11 +96,12 @@ module Spree
       :quantity, :stock_item, :stock_item_id, :originator, :action
     ]
 
-    @@store_attributes = [:name, :url, :seo_title, :code, :meta_keywords,
+    @@store_attributes = [:name, :url, :seo_title, :code, :meta_keywords, :logo,
                           :meta_description, :default_currency, :mail_from_address,
                           :customer_support_email, :facebook, :twitter, :instagram,
-                          :description, :address, :contact_email, :contact_phone,
-                          :default_locale, :default_country_id, :supported_currencies]
+                          :description, :address, :contact_phone, :supported_locales,
+                          :default_locale, :default_country_id, :supported_currencies,
+                          :new_order_notifications_email, :mailer_logo, :checkout_zone_id, :seo_robots]
 
     @@store_credit_attributes = %i[amount currency category_id memo]
 

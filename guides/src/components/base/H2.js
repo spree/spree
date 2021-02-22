@@ -7,7 +7,7 @@ import HeaderLink from './HeaderLink'
 const H2 = ({ children }) => (
   <h2
     id={kebabCase(children)}
-    className="mt0 flex w-100 relative overflow-visible items-center hide-child f3 fw4"
+    className="mb2 mt4 flex w-100 relative overflow-visible items-center hide-child f3 b"
   >
     <HeaderLink text={children}>{children}</HeaderLink>
   </h2>

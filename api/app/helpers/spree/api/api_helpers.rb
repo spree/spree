@@ -116,7 +116,7 @@ module Spree
       @@address_attributes = [
         :id, :firstname, :lastname, :full_name, :address1, :address2, :city,
         :zipcode, :phone, :company, :alternative_phone, :country_id, :state_id,
-        :state_name, :state_text
+        :label, :state_name, :state_text
       ]
 
       @@country_attributes = [:id, :iso_name, :iso, :iso3, :name, :numcode]
@@ -163,7 +163,7 @@ module Spree
         :id, :name, :url, :meta_description, :meta_keywords, :seo_title,
         :mail_from_address, :customer_support_email, :default_currency,
         :code, :default, :facebook, :twitter, :instagram,
-        :supported_currencies
+        :supported_currencies, :default_locale, :supported_locales
       ]
 
       @@tag_attributes = [:id, :name]

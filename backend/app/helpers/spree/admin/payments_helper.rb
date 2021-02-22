@@ -2,9 +2,9 @@ module Spree
   module Admin
     module PaymentsHelper
       def payment_method_name(payment)
-        # HACK: to allow us to retrieve the name of a "deleted" payment method
-        id = payment.payment_method_id
-        Spree::PaymentMethod.find_with_destroyed(id).name
+        payment_method = payment.payment_method
+
+        link_to payment_method.name, spree.edit_admin_payment_method_path(payment_method)
       end
     end
   end

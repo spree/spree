@@ -2,20 +2,28 @@
   .navbar {
     background-color: $navbar-inverse-bg;
     padding: 0;
+    height: 50px;
 
     a:hover {
       text-decoration: none;
     }
-  }
-
-  .dropdown-toggle {
-    &[aria-expanded="true"] {
-      background-color: $gray-900;
+    .btn {
+      &:hover,
+      &:focus {
+        text-decoration: none;
+        outline: 0;
+        outline: none;
+        -webkit-box-shadow: none;
+        box-shadow: none;
+      }
     }
 
-    &:hover,
-    &:focus {
-      text-decoration: none;
+    #accountNav {
+      i {
+        font-size: 1.3em;
+        line-height: 1rem;
+      }
     }
+
   }
 }

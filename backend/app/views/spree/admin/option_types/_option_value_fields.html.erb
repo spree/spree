@@ -1,6 +1,6 @@
 <tr class="option_value fields" id="spree_<%= dom_id(f.object) %>" data-hook="option_value">
   <td class="move-handle text-center">
-    <span class="icon icon-move handle"></span>
+    <%= svg_icon name: "sort.svg", width: '18', height: '18' %>
     <%= f.hidden_field :id %>
   </td>
   <td class="name"><%= f.text_field :name, class: "form-control" %></td>

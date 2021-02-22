@@ -3,7 +3,7 @@ require 'spec_helper'
 describe 'Store', type: :feature, js: true do
   context 'stores footer info is shown in footer' do
     before do
-      create(:store, default: true, description: 'This is store description', address: 'Address street 123, City 123', contact_phone: '123123123', contact_email: 'store@example.com')
+      create(:store, default: true, description: 'This is store description', address: 'Address street 123, City 123', contact_phone: '123123123', customer_support_email: 'store@example.com')
 
       visit spree.root_path
     end

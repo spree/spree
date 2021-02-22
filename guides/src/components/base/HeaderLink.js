@@ -12,8 +12,8 @@ import IconLink from 'react-feather/dist/icons/link-2'
 
 const HeaderLink = ({ text, children }) => (
   <a href={`#${kebabCase(text)}`} className="flex items-center link flex nl4">
-    <IconLink className="child pr2" />
-    <span className="blue db">{children}</span>
+    <IconLink className="child pr2 spree-green" />
+    <span className="db spree-green">{children}</span>
   </a>
 )
 

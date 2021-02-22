@@ -1,7 +1,7 @@
 ---
-title: Upgrading Spree from 3.1.x to 3.2.x
+title: Upgrading Spree from 3.1 to 3.2
 section: upgrades
-order: 7
+order: 8
 ---
 
 This guide covers upgrading a 3.1.x Spree store, to a 3.2.x store.

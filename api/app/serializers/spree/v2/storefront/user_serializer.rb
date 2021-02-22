@@ -6,7 +6,9 @@ module Spree
 
         attributes :email
 
-        attribute :store_credits, &:total_available_store_credit
+        attribute :store_credits do |user|
+          user.total_available_store_credit
+        end
 
         attribute :completed_orders do |object|
           object.orders.complete.count

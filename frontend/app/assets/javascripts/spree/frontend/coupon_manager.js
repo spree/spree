@@ -49,7 +49,7 @@ CouponManager.prototype.sendRequest = function () {
   return $.ajax({
     async: false,
     method: 'PATCH',
-    url: Spree.routes.api_v2_storefront_cart_apply_coupon_code,
+    url: Spree.routes.api_v2_storefront_cart_apply_coupon_code + '?locale=' + SPREE_LOCALE,
     dataType: 'json',
     headers: {
       'X-Spree-Order-Token': SpreeAPI.orderToken
@@ -74,7 +74,7 @@ CouponManager.prototype.sendRemoveRequest = function () {
   return $.ajax({
     async: false,
     method: 'DELETE',
-    url: Spree.routes.api_v2_storefront_cart_remove_coupon_code + '/' + this.couponCode,
+    url: Spree.routes.api_v2_storefront_cart_remove_coupon_code + '/' + this.couponCode + '?locale=' + SPREE_LOCALE,
     dataType: 'json',
     headers: {
       'X-Spree-Order-Token': SpreeAPI.orderToken

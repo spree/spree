@@ -9,53 +9,54 @@ $(function () {
   }
 })
 
-function formatVariantResult (variant) {
+function formatVariantResult(variant) {
+  if (variant.loading) {
+    return variant.text
+  }
+
   if (variant['images'][0] !== undefined && variant['images'][0].mini_url !== undefined) {
     variant.image = variant.images[0].mini_url
   }
-  return variantTemplate({
+  return $(variantTemplate({
     variant: variant
-  })
+  }))
 }
 
 $.fn.variantAutocomplete = function () {
+
+  // deal with initSelection
   return this.select2({
     placeholder: Spree.translations.variant_placeholder,
     minimumInputLength: 3,
-    initSelection: function (element, callback) {
-      return $.get(Spree.routes.variants_api + '/' + element.val(), {
-        token: Spree.api_key
-      }).done(function (data) {
-        return callback(data)
-      })
-    },
+    quietMillis: 200,
     ajax: {
       url: Spree.url(Spree.routes.variants_api),
-      quietMillis: 200,
-      datatype: 'json',
-      data: function (term) {
-        return {
+      dataType: 'json',
+      data: function (params) {
+        var query = {
           q: {
-            product_name_or_sku_cont: term
+            search_by_product_name_or_sku: params.term
           },
           token: Spree.api_key
         }
+
+        return query;
       },
-      results: function (data) {
+      processResults: function(data) {
         window.variants = data['variants']
         return {
-          results: data['variants']
+          results: data.variants
         }
       }
     },
-    formatResult: formatVariantResult,
-    formatSelection: function (variant) {
-      // eslint-disable-next-line no-extra-boolean-cast
+    templateResult: formatVariantResult,
+    templateSelection: function(variant) {
       if (!!variant.options_text) {
-        return Select2.util.escapeMarkup(variant.name + '(' + variant.options_text + ')')
+        return variant.name + '(' + variant.options_text + ')'
       } else {
-        return Select2.util.escapeMarkup(variant.name)
+        return variant.name
       }
     }
   })
+
 }

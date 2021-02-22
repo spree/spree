@@ -1,9 +1,9 @@
 <div class="checkout-confirm-order-details-line-items-line-item w-100 d-table-row">
   <div class="checkout-confirm-order-details-line-items-line-item-name d-table-cell align-middle py-3 py-sm-4">
     <div class="d-flex align-items-lg-center">
-      <%= link_to product_image(line_item.variant), line_item.product %>
+      <%= link_to product_image(line_item.variant), spree.product_path(line_item.product) %>
       <div class="d-flex flex-column mt-2 mt-lg-0">
-        <div><%= link_to line_item.name, line_item.product %></div>
+        <div><%= link_to line_item.name, spree.product_path(line_item.product) %></div>
         <ul class="checkout-confirm-order-details-line-items-line-item-name-options text-uppercase list-unstyled mb-0">
           <% line_item.variant.option_values.sort { |ov| ov.option_type.position }.each do |ov| %>
           <li>

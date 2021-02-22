@@ -291,3 +291,18 @@ ID = "49ded9cc-27d3-4e02-b186-4fd7fd334ed8"
   from = "/user/zones.html"
   to = "/user/shipments/zones.html"
 
+[[redirects]]
+  from = "/api/v2"
+  to = "https://api.spreecommerce.org/docs/api-v2/api/docs/v2/storefront/index.yaml"
+
+[[redirects]]
+  from = "/api/v2/storefront"
+  to = "https://api.spreecommerce.org/docs/api-v2/api/docs/v2/storefront/index.yaml"
+
+[[redirects]]
+  from = "/api/v2/authentication"
+  to = "https://api.spreecommerce.org/docs/api-v2/api/docs/oauth/index.yml"
+
+[[redirects]]
+  from = "/api/overview"
+  to = "https://api.spreecommerce.org"

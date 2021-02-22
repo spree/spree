@@ -5,8 +5,10 @@ FactoryBot.define do
     url                    { 'www.example.com' }
     mail_from_address      { 'no-reply@example.com' }
     customer_support_email { 'support@example.com' }
+    new_order_notifications_email { 'store-owner@example.com' }
     default_currency       { 'USD' }
     supported_currencies   { 'USD,EUR,GBP' }
+    default_locale         { 'en' }
     facebook               { 'spreecommerce' }
     twitter                { 'spreecommerce' }
     instagram              { 'spreecommerce' }

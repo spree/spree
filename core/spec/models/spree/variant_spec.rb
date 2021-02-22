@@ -22,6 +22,54 @@ describe Spree::Variant, type: :model do
       variant.price = 0
       expect(variant).to be_valid
     end
+
+    context 'SKU' do
+      context 'default behaviour' do
+        context 'invalid' do
+          let(:variant_2) { build(:variant, sku: variant.sku) }
+
+          it 'with the same SKU' do
+            expect(variant_2.valid?).to eq(false)
+          end
+        end
+
+        context 'valid' do
+          let(:variant_2) { build(:variant, sku: 'OTHER-SKU') }
+
+          it 'with different SKU' do
+            expect(variant_2.valid?).to eq(true)
+          end
+
+          it 'without SKU' do
+            variant_2.sku = ''
+            expect(variant_2.valid?).to eq(true)
+          end
+        end
+      end
+
+      context 'disabled validation' do
+        before do
+          Spree::Config[:disable_sku_validation] = true
+        end
+
+        after do
+          Spree::Config[:disable_sku_validation] = false
+        end
+
+        context 'valid' do
+          let(:variant_2) { build(:variant, sku: 'OTHER-SKU') }
+
+          it 'with the same SKU' do
+            expect(variant_2.valid?).to eq(true)
+          end
+
+          it 'without SKU' do
+            variant_2.sku = ''
+            expect(variant_2.valid?).to eq(true)
+          end
+        end
+      end
+    end
   end
 
   context 'after create' do

@@ -58,7 +58,8 @@ module Spree
         end
 
         def product_ids_string=(s)
-          self.product_ids = s.to_s.split(',').map(&:strip)
+          # check this
+          self.product_ids = s
         end
       end
     end

@@ -4,12 +4,12 @@
     <div id="password-credentials" class="mb-4">
       <div class="form-group mb-4">
         <p class="form-group checkout-content-inner-field">
-          <%= f.email_field :email, class: 'spree-flat-input', placeholder: Spree.t(:email), autofocus: true, value: params.dig(:spree_user, :email) %>
+          <%= f.email_field :email, class: 'spree-flat-input', placeholder: Spree.t(:email), value: params.dig(:spree_user, :email) %>
         </p>
       </div>
       <div class="form-group mb-4">
         <p class="form-group checkout-content-inner-field">
-          <%= f.password_field :password, class: 'spree-flat-input', placeholder: Spree.t(:password), autofocus: true %>
+          <%= f.password_field :password, class: 'spree-flat-input', placeholder: Spree.t(:password) %>
         </p>
       </div>
     </div>
@@ -25,7 +25,7 @@
       </div>
     <% end %>
 
-    <%= f.submit Spree.t(:log_in), class: 'btn btn-primary btn-block spree-btn mt-2' %>
+    <%= f.submit Spree.t(:login), class: 'btn btn-primary btn-block spree-btn mt-2' %>
   <% end %>
 
   <% if spree.respond_to?(:recover_password_path) %>

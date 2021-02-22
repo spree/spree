@@ -1,11 +1,16 @@
 class OrderWalkthrough
   def self.up_to(state)
-    # A default store must exist to provide store settings
-    store = Spree::Store.default || FactoryBot.create(:store, default: true)
+    store = if Spree::Store.exists?
+              # Ensure the default store is used
+              Spree::Store.default || FactoryBot.create(:store, default: true)
+            else
+              # Create a default store
+              FactoryBot.create(:store, default: true)
+            end
 
     # A payment method must exist for an order to proceed through the Address state
     unless Spree::PaymentMethod.exists?
-      FactoryBot.create(:check_payment_method)
+      FactoryBot.create(:check_payment_method, stores: [store])
     end
 
     # Need to create a valid zone too...

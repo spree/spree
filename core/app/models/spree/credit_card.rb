@@ -37,6 +37,11 @@ module Spree
 
     scope :with_payment_profile, -> { where.not(gateway_customer_profile_id: nil) }
     scope :default, -> { where(default: true) }
+    scope :not_expired, lambda {
+      where('CAST(spree_credit_cards.year AS DECIMAL) > ?', Time.current.year).
+        or(where('CAST(spree_credit_cards.year AS DECIMAL) = ?', Time.current.year).
+           where('CAST(spree_credit_cards.month AS DECIMAL) >= ?', Time.current.month))
+    }
 
     # needed for some of the ActiveMerchant gateways (eg. SagePay)
     alias_attribute :brand, :cc_type
@@ -120,6 +125,10 @@ module Spree
     # Show the card number, with all but last 4 numbers replace with "X". (XXXX-XXXX-XXXX-4338)
     def display_number
       "XXXX-XXXX-XXXX-#{last_digits}"
+    end
+
+    def display_brand
+      brand.present? ? brand.upcase : Spree.t(:no_cc_type)
     end
 
     def actions

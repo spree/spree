@@ -14,7 +14,7 @@ A `tax_category` can have many `tax_rates`, which indicate the rate at which the
 The standard sales tax policies commonly found in the USA can be modeled as well as Value Added Tax (VAT) which is commonly used in Europe. These are not the only types of tax rules that you can model in Spree. Once you obtain a sufficient understanding of the basic concepts you should be able to model the tax rules of your country or jurisdiction.
 
 <alert kind="note">
-Taxation within the United States can get exceptionally complex, with different states, counties and even cities having different taxation rates. If you are shipping interstate within the United States, we would strongly advise you to use the [Spree Avatax](https://github.com/spree-contrib/spree_avatax_official) extension so that you get correct tax rates.
+Taxation within the United States can get exceptionally complex, with different states, countries and even cities having different taxation rates. If you are shipping interstate within the United States, we would strongly advise you to use the [Spree Avatax](https://github.com/spree-contrib/spree_avatax_official) extension so that you get correct tax rates.
 </alert>
 
 ## Tax Categories

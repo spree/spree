@@ -1,6 +1,7 @@
 ---
 title: Migrating to Spree
 section: advanced
+hidden: true
 ---
 
 ## Overview
@@ -157,9 +158,7 @@ A related but important topic is the Spree core settings that your app
 will need to function correctly, eg to disable backordering or to
 configure the mail subsystem. You can (mostly) set these from the admin
 interface, but we recommend using initializers for these. See the
-[preferences
-guide](preferences.html#persisting-modifications-to-preferences) for
-more info.
+preferences guide for more info.
 
 ## Catalog creation
 

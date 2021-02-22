@@ -23,4 +23,4 @@ else
   end
 end
 Capybara.default_max_wait_time = 45
-Capybara.server = :webrick
+Capybara.server = :puma

@@ -131,7 +131,7 @@
       }
     }
     &-description {
-      h4 {
+      h2 {
         font-size: font-px-to-rem(14px);
         @include media-breakpoint-up(sm) {
           font-size: font-px-to-rem(22px);
@@ -359,7 +359,7 @@
         }
       }
     }
-    input[type=text] {
+    input[type="text"] {
       -webkit-appearance: none;
       -moz-appearance: none;
       appearance: none;

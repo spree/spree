@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 512 512" style="clip-rule:evenodd;fill-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;version:1">
+<style>
+  .exit-svg {
+    fill:currentColor;
+    stroke-width:10px;
+    stroke:currentColor;
+  }
+</style>
+  <g>
+    <path d="M97.4 485.4l177.7 0 0-32.7 -177.7 0c-10.8 0-19.7-7.4-19.7-16.4l0-360.1c0-9 8.9-16.4 19.7-16.4l177.7 0 0-32.7 -177.7 0c-32.5 0-59.2 22.2-59.2 49.1l0 360.1c0 26.9 26.7 49.1 59.2 49.1Z" class="exit-svg"/>
+    <path d="M162.8 230.6l0 36 262.4 0 -72 72 25.6 26.1 90-90c6.8-6.7 10.6-15.9 10.6-25.5 0-9.5-3.8-18.7-10.6-25.5l-90-90 -25.6 24.8 72 72 -262.4 0Z" class="exit-svg"/>
+  </g>
+</svg>

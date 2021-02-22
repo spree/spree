@@ -6,7 +6,7 @@ The Spree cart's promotions functionality allows you to offer coupons and discou
 
 To reach the Promotions panel, go to your Admin Interface and click the "Promotions" tab.
 
-In the Promotions panel you can do multiple actions decribed there:
+In the Promotions panel you can undertake multiple actions decribed there:
 
 * [Create Promotions](/user/promotions/creating_promotions.html)
 * [Edit Promotions](/user/promotions/editing_promotions.html)

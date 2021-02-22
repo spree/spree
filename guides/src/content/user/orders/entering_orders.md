@@ -6,14 +6,14 @@ title: Manual Order Entry
 
 An order can be created in one of two ways:
 
-1. An order is generated when a customer purchase an item from your store.
+1. An order is generated when a customer purchases an item from your store.
 2. An order can be created manually in your store's Admin panel
 
 This guide covers how to create a manual order in the Admin Panel.
 
 ## Add Products
 
-To create new order manually, go into the Admin Interface, click the "Orders" tab, and click the "New Order" button.
+To create a new order manually, go into the Admin Interface, click the "Orders" tab and then click the "New Order" button.
 
 ![Create New Order](../../../images/user/orders/create_new_order.jpg)
 
@@ -21,7 +21,7 @@ Type the name of the product you would like to add to the order in the search fi
 
 ![Create New Order](../../../images/user/orders/order_product_search.jpg)
 
-The interface will show you you how many of that product/variant you currently have "on hand". Enter the quantity to add to the new order, and click the "Add" icon next to the item.
+The interface will show you how many of that product/variant you currently have "on hand". Enter the quantity to add to the new order, and click the "Add" icon next to the item.
 
 ![Product Added to Order](../../../images/user/orders/order_product_added.jpg)
 
@@ -43,9 +43,9 @@ Click the "Update" button.
 
 ## Shipments
 
-After you input the customer information, you might want to choose a shipping method. When you pressed the "Update" button, the page will reload on "Shipments" tab.
+After you input the customer information, you might want to choose a shipping method. When you press the "Update" button, the page will reload in the "Shipments" tab.
 
-The default shipping method for your store (if you have one) should already be assigned to this order. Depending on the items you added and the location you're shipping to, there could be additional methods available. You may also have shipping methods that are only available for your site's administrator to assign (in-store pickup, for example).
+The default shipping method for your store (if you have one) should already be assigned to this order. Depending on the items you added and the location you're shipping to, there may be additional methods available. You might also have shipping methods that are only available for your site's administrator to assign (in-store pickup, for example).
 
 Click the "Edit" link next to the order's shipping line.
 
@@ -55,11 +55,11 @@ Click the "Shipping Method" drop-down menu, and make your selection.
 
 ![Edit Shipping Options](../../../images/user/orders/edit_shipping_options.jpg)
 
-Click the "Save" icon to confirm your change. Your Spree site will re-calculate the shipping, any relevant adjustments, and total for your order.
+Click the "Save" icon to confirm your change. Your Spree site will re-calculate the shipping, any relevant adjustments, and the total for your order.
 
 ## Adjustments
 
-The Spree shopping cart will automatically add the cost of the Shipping Method to your order as an adjustment - you can change or remove this.
+The Spree shopping cart will automatically add the cost of the Shipping Method to your order as an adjustment. You can change or remove this.
 
 ### Editing Adjustments
 
@@ -77,10 +77,10 @@ Confirm the deletion by clicking "OK".
 
 ### Opening and Closing Adjustments
 
-Some types of adjustments - tax and shipping, for example - may re-calculate as the order changes, new products are added to it, etc. If you want to be sure that the amount of an adjustments will remain the same, you can lock them. This is also known as closing the adjustments.
+Some types of adjustments - such as tax and shipping - may re-calculate as the order changes; for example, as new products are added to it. If you want to be sure that the amount of an adjustments will remain the same, you can lock them. This is also known as closing the adjustments.
 
 ***
-Closed adjustments can be re-opened and changed, up to the moment when the order is shipped. At that point, the adjustment is finalized and cannot be changed.
+Closed adjustments can be re-opened and changed up to the moment when the order is shipped. At that point, the adjustment is finalized and cannot be changed.
 ***
 
 To open or close all of the adjustments in an order, just click the "Open All Adjustments" or "Close All Adjustments" buttons on the Adjustments list.
@@ -111,12 +111,12 @@ Just click the "Payments" link in the right panel section.
 
 This form is pretty self-explanatory; you enter the amount of the payment, the method, and the credit card information (if applicable).
 
-One thing to note is that you can enter multiple payments on the same order. This is useful if, for example, a customer wants to pay part of their order in cash and put the rest on a credit card. In that case, all you have to do is create the first payment for the Cash amount, check the "Cash" payment method (be sure you have it configured in your store first!), and click Update.
+One thing to note is that you can enter multiple payments on the same order. This is useful if, for example, a customer wants to pay part of their order in cash and put the rest on a credit card. In that case, all you have to do is create the first payment for the cash amount, check the "Cash" payment method (be sure you have it configured in your store first!), and click "Update".
 
 Then, click the "New Payment" link to enter the information for the credit card portion of the payment.
 
 ![New Payment Method Link](../../../images/user/orders/new_payment_method_link.jpg)
 
-Don't forget that you will need to [capture the payment](/user/payments/payment_states.html#authorize-vs-capture) on the credit card (unless your store is set up to automatically authorize and capture a paymentś).
+Don't forget that you will need to [capture the payment](/user/payments/payment_states.html#authorize-vs-capture) on the credit card (unless your store is set up to automatically authorize and capture payments).
 
 For more on payments, be sure to read both the [Payment Methods](/user/payments/payment_methods.html) and [Payment States](/user/payments/payment_states.html) guides.

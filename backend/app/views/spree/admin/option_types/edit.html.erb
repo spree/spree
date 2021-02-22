@@ -5,7 +5,7 @@
 
 <% content_for :page_actions do %>
   <span id="new_add_option_value" data-hook>
-    <%= button_link_to Spree.t(:add_option_value), "javascript:;", { icon: 'add', :'data-target' => "tbody#option_values", class: 'btn-success spree_add_fields' } %>
+    <%= button_link_to Spree.t(:add_option_value), "javascript:;", { icon: 'add.svg', :'data-target' => "tbody#sortVert", class: 'btn-success spree_add_fields' } %>
   </span>
 <% end %>
 
@@ -21,27 +21,29 @@
     <div class="card-body">
       <%= render partial: 'form', locals: { f: f } %>
     </div>
-    <table class="table table-condensed table-bordered sortable" data-hook data-sortable-link="<%= update_values_positions_admin_option_types_url %>">
-      <thead data-hook="option_header">
-        <tr>
-          <th colspan="2"><%= Spree.t(:name) %> <span class="required">*</span></th>
-          <th><%= Spree.t(:display) %> <span class="required">*</span></th>
-          <th class="actions"></th>
-        </tr>
-      </thead>
-      <tbody id="option_values">
-        <% if @option_type.option_values.empty? %>
-          <tr id="none" data-hook="option_none">
-            <td colspan="2"><%= Spree.t(:none) %></td>
-            <td class="actions text-center"></td>
+    <div class="table-responsive">
+      <table class="table table-condensed sortable" data-hook data-sortable-link="<%= update_values_positions_admin_option_types_url %>">
+        <thead data-hook="option_header">
+          <tr>
+            <th colspan="2"><%= Spree.t(:name) %> <span class="required">*</span></th>
+            <th><%= Spree.t(:display) %> <span class="required">*</span></th>
+            <th class="actions"></th>
           </tr>
-        <% else %>
-          <%= f.fields_for :option_values do |option_value_form| %>
-            <%= render partial: 'option_value_fields', locals: { f: option_value_form } %>
+        </thead>
+        <tbody id="sortVert">
+          <% if @option_type.option_values.empty? %>
+            <tr id="none" data-hook="option_none">
+              <td colspan="2"><%= Spree.t(:none) %></td>
+              <td class="actions text-center"></td>
+            </tr>
+          <% else %>
+            <%= f.fields_for :option_values do |option_value_form| %>
+              <%= render partial: 'option_value_fields', locals: { f: option_value_form } %>
+            <% end %>
           <% end %>
-        <% end %>
-      </tbody>
-    </table>
+        </tbody>
+      </table>
+    </div>
     <div class="card-footer text-center">
       <%= render partial: 'spree/admin/shared/edit_resource_links' %>
     </div>

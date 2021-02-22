@@ -2,6 +2,7 @@
 title: Upgrading Spree from 2.1.x to 2.2.x
 section: upgrades
 order: 11
+hidden: true
 ---
 
 ## Overview

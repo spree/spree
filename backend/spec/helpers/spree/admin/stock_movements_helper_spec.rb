@@ -18,7 +18,7 @@ describe Spree::Admin::StockMovementsHelper, type: :helper do
       end
 
       it 'returns link to stock transfer' do
-        expect(helper.pretty_originator(@stock_transfer.stock_movements.last)).to eq @stock_transfer.number
+        expect(helper.pretty_originator(@stock_transfer.stock_movements.last)).to match(@stock_transfer.number)
       end
     end
   end

@@ -27,7 +27,7 @@ Here's a quick guide:
 refactoring and documentation changes require no new tests. If you are adding
 functionality or fixing a bug, we need tests!
 
-7. Run the tests. [See instructions](https://github.com/spree/spree#running-tests)
+7. Run the tests. [See instructions](https://guides.spreecommerce.org/developer/tutorials/developing_spree.html#running-tests)
 
 8. Push to your fork and submit a pull request. If the changes will apply cleanly
 to the master branch, you will only need to submit one pull request.
@@ -55,7 +55,7 @@ Syntax:
 * `a = b` and not `a=b`.
 * `a_method { |block| ... }` and not `a_method { | block | ... }`
 * Follow the conventions you see used in the source already.
-* -> symbol over lambda
+* Use -> symbol for **inline** lambdas and lambda method for **multiline** lambdas
 * Ruby 1.9 hash syntax `{ key: value }` over Ruby 1.8 hash syntax `{ :key => value }`
 * Alphabetize the class methods to keep them organized
 

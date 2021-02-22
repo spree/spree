@@ -12,7 +12,7 @@ module Spree
 
     validates :name, presence: true
 
-    belongs_to :store
+    has_and_belongs_to_many :stores
 
     with_options dependent: :restrict_with_error do
       has_many :payments, class_name: 'Spree::Payment', inverse_of: :payment_method
@@ -79,9 +79,9 @@ module Spree
     end
 
     def available_for_store?(store)
-      return true if store.blank? || store_id.blank?
+      return true if store.blank?
 
-      store_id == store.id
+      store_ids.include?(store.id)
     end
   end
 end

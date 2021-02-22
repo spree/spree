@@ -95,8 +95,8 @@ jQuery(function ($) {
     }
 
     PaymentView.prototype.$new_button = function (action) {
-      return $('<a><span class="icon icon-' + action + '"></span></a>').attr({
-        'class': 'payment-action-' + action + ' btn btn-default btn-sm icon-link no-text with-tip',
+      return $('<a><i class="icon icon-' + action + '"></i></a>').attr({
+        'class': 'payment-action-' + action + ' btn btn-outline-secondary btn-sm no-filter',
         title: Spree.translations[action]
       }).data({
         action: action
@@ -203,8 +203,9 @@ jQuery(function ($) {
       var amount = this.constructor.normalize_amount(this.payment.display_amount())
       return $('<input />').prop({
         id: 'amount',
+        class: 'form-control',
         value: amount
-      }).width(width).css({
+      }).width(width * 2).css({
         'text-align': 'right'
       })
     }

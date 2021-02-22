@@ -137,11 +137,11 @@ describe 'Address selection during checkout', type: :feature, js: true do
           fill_in_address(shipping, :ship)
         end
         complete_checkout(billing)
-        within('#order_details > #order_summary > .checkout-confirm-delivery-informations > dl > div:nth-child(1)') do
+        within first('[data-hook="order-ship-address"]') do
           expect(page).to have_content('SHIPPING ADDRESS')
           expect(page).to have_content(expected_address_format('SHIPPING ADDRESS', shipping))
         end
-        within('#order_details > #order_summary > .checkout-confirm-delivery-informations > dl > div:nth-child(2)') do
+        within first('[data-hook="order-bill-address"]') do
           expect(page).to have_content('BILLING ADDRESS')
           expect(page).to have_content(expected_address_format('BILLING ADDRESS', billing))
         end
@@ -180,11 +180,11 @@ describe 'Address selection during checkout', type: :feature, js: true do
           fill_in_address(shipping, :ship)
         end
         complete_checkout(address)
-        within('#order_details > #order_summary > .checkout-confirm-delivery-informations > dl > div:nth-child(1)') do
+        within first('[data-hook="order-ship-address"]') do
           expect(page).to have_content('SHIPPING ADDRESS')
           expect(page).to have_content(expected_address_format('SHIPPING ADDRESS', shipping))
         end
-        within('#order_details > #order_summary > .checkout-confirm-delivery-informations > dl > div:nth-child(2)') do
+        within first('[data-hook="order-bill-address"]') do
           expect(page).to have_content('BILLING ADDRESS')
           expect(page).to have_content(expected_address_format('BILLING ADDRESS', address))
         end
@@ -220,11 +220,11 @@ describe 'Address selection during checkout', type: :feature, js: true do
         end
         find('label', text: 'Use Billing Address').click
         complete_checkout(address)
-        within('#order_details > #order_summary > .checkout-confirm-delivery-informations > dl > div:nth-child(1)') do
+        within first('[data-hook="order-ship-address"]') do
           expect(page).to have_content('SHIPPING ADDRESS')
           expect(page).to have_content(expected_address_format('SHIPPING ADDRESS', address))
         end
-        within('#order_details > #order_summary > .checkout-confirm-delivery-informations > dl > div:nth-child(2)') do
+        within first('[data-hook="order-bill-address"]') do
           expect(page).to have_content('BILLING ADDRESS')
           expect(page).to have_content(expected_address_format('BILLING ADDRESS', address))
         end
@@ -273,11 +273,11 @@ describe 'Address selection during checkout', type: :feature, js: true do
           fill_in_address(billing)
         end
         complete_checkout(address)
-        within('#order_details > #order_summary > .checkout-confirm-delivery-informations > dl > div:nth-child(1)') do
+        within first('[data-hook="order-ship-address"]') do
           expect(page).to have_content('SHIPPING ADDRESS')
           expect(page).to have_content(expected_address_format('SHIPPING ADDRESS', address))
         end
-        within('#order_details > #order_summary > .checkout-confirm-delivery-informations > dl > div:nth-child(2)') do
+        within first('[data-hook="order-bill-address"]') do
           expect(page).to have_content('BILLING ADDRESS')
           expect(page).to have_content(expected_address_format('BILLING ADDRESS', billing))
         end

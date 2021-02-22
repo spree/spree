@@ -5,6 +5,7 @@ describe 'Product Variants', type: :feature, js: true do
 
   before do
     create(:product)
+    create(:store, default: true, default_currency: 'USD')
     visit spree.admin_products_path
   end
 
@@ -35,7 +36,10 @@ describe 'Product Variants', type: :feature, js: true do
       visit spree.admin_products_path
       within_row(1) { click_icon :edit }
 
-      select2 'shirt', from: 'Option Types'
+      select2_open label: 'Option Types'
+      select2_search 'shirt', label: 'Option Types'
+      select2_select 'shirt', from: 'Option Types', match: :first
+
       wait_for { !page.has_button?('Update') }
       click_button 'Update'
       expect(page).to have_content('successfully updated!')
@@ -72,14 +76,19 @@ describe 'Product Variants', type: :feature, js: true do
       visit spree.admin_products_path
       within_row(1) { click_icon :edit }
 
-      select2 'shirt', from: 'Option Types'
+      select2_open label: 'Option Types'
+      select2_search 'shirt', label: 'Option Types'
+      select2_select 'shirt', from: 'Option Types', match: :first
+
       wait_for { !page.has_button?('Update') }
       click_button 'Update'
 
       within('#sidebar') { click_link 'Variants' }
       click_link 'New Variant'
 
-      select2 'black', from: 'Colors'
+      select2_open label: 'Colors'
+      select2_search 'black', label: 'Colors'
+      select2_select 'black', from: 'Colors', match: :first
       fill_in 'variant_sku', with: 'A100'
       click_button 'Create'
 

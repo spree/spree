@@ -13,6 +13,7 @@ require 'premailer/rails'
 require 'ransack'
 require 'responders'
 require 'state_machines-activerecord'
+require 'active_storage_validations'
 
 # This is required because ActiveModel::Validations#invalid? conflicts with the
 # invalid state of a Payment. In the future this should be removed.
@@ -104,4 +105,5 @@ require 'spree/core/controller_helpers/order'
 require 'spree/core/controller_helpers/search'
 require 'spree/core/controller_helpers/store'
 require 'spree/core/controller_helpers/strong_parameters'
-require 'spree/core/controller_helpers/currency_helpers'
+require 'spree/core/controller_helpers/locale'
+require 'spree/core/controller_helpers/currency'

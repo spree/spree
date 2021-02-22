@@ -16,6 +16,13 @@
       font-size: font-px-to-rem(16px);
     }
   }
+  &-vendor-img {
+    max-height: 100px;
+    max-width: 100px;
+  }
+  &-vendor-name {
+    font-size: font-px-to-rem(20px);
+  }
   &-images {
     & > .product-details-thumbnails {
       width: (1 / 7) * 100%;
