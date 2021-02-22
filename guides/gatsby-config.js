@@ -65,8 +65,17 @@ module.exports = {
             resolve: `gatsby-remark-images`,
             options: {
               quality: 100,
-              maxWidth: 700,
-              withWebp: true
+              maxWidth: 1200,
+              linkImagesToOriginal: false,
+              showCaptions: true,
+              markdownCaptions: true,
+              wrapperStyle: "margin-top: 1em;margin-bottom: 1em"
+            }
+          },
+          {
+            resolve: `gatsby-remark-images-medium-zoom`, // Important!
+            options: {
+              margin: 10
             }
           },
           {
