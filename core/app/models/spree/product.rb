@@ -61,6 +61,11 @@ module Spree
              inverse_of: :product,
              class_name: 'Spree::Variant'
 
+    has_many :available_variants,
+             -> { where(is_master: false).not_discontinued.order(:position) },
+             inverse_of: :product,
+             class_name: 'Spree::Variant'
+
     has_many :variants_including_master,
              -> { order(:position) },
              inverse_of: :product,
