@@ -179,7 +179,11 @@ td[kind='field'] {
   height: 100%;
 }
 
-.gatsby-resp-image-wrapper {
-  margin-top: 2rem;
-  margin-bottom: 2rem;
+.gatsby-resp-image-figure {
+  margin: 2em 0;
+}
+
+.gatsby-resp-image-figcaption {
+  color: gray;
+  text-align: center;
 }

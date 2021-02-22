@@ -67,9 +67,7 @@ module.exports = {
               quality: 100,
               maxWidth: 1200,
               linkImagesToOriginal: false,
-              showCaptions: true,
-              markdownCaptions: true,
-              wrapperStyle: "margin-top: 1em;margin-bottom: 1em"
+              showCaptions: true
             }
           },
           {
