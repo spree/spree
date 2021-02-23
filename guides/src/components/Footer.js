@@ -33,7 +33,7 @@ const Footer = ({ hasSidebar }) => (
       'tc pv3 flex flex-column flex-row-l items-center justify-center lh-copy'
     )}
   >
-    <span>Designed and developed by</span>
+    <span>Maintained by</span>
     <a
       className="inline-flex"
       href="https://sparksolutions.co/"
