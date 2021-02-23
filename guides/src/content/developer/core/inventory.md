@@ -1,6 +1,7 @@
 ---
 title: "Inventory"
 section: core
+order: 5
 ---
 
 ## Overview

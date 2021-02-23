@@ -1,6 +1,7 @@
 ---
 title: "Products"
 section: core
+order: 2
 ---
 
 ## Overview

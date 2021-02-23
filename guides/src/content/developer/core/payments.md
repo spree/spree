@@ -1,6 +1,7 @@
 ---
 title: "Payments"
 section: core
+order: 3
 ---
 
 ## Overview

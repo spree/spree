@@ -26,7 +26,7 @@ Addresses can also link to countries and states. An address must always link to 
 
 As of Spree 4.0 `Spree::User` can have multiple addresses and can manage them on the Checkout and Account page. Previously this feature was part of the [Spree Address Book](https://github.com/spree-contrib/spree_address_book) extension. Each `Spree::Address` object has a `user_id` column which links to the User.
 
-Additionaly in the `Spree::User` model you have `ship_address_id` and `bill_address_id` columns which indicates default shipping and billing addresses.
+Additionaly in the `Spree::User` there is `ship_address_id` and `bill_address_id` columns which indicates which addresses are the default ones for this User.
 
 ## Checkout
 

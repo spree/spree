@@ -1,6 +1,7 @@
 ---
 title: "Shipments"
 section: "core"
+order: 4
 ---
 
 ## Overview
