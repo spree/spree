@@ -16,12 +16,17 @@ const IndexPage = () => (
   >
     <div className="center mw9 ph4 mt5">
       <h1 className="lh-copy f3 tc mw7 center mb5">
+      <h1 className="lh-copy f3 tc mw7 center mb3">
         <a href="https://spreecommerce.org" className="spree-blue fw6">
           Spree Commerce
-        </a>
-        &nbsp;is a complete, modular, API-driven open source e-commerce solution
+        </a> &nbsp;is a complete, modular, API-driven open source e-commerce solution
         &nbsp;built with Ruby on Rails
       </h1>
+
+      <p class="tc mb3">
+        <strong>First time?</strong> We recommend you read the&nbsp;
+        <a href="/developer/tutorials/getting_started_tutorial.html">Getting Started</a> tutorial
+      </p>
 
       <div className="mw8 center">
         <div className="flex flex-column flex-wrap flex-row-ns mv4 w-100">
