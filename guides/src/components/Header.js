@@ -71,9 +71,7 @@ export default class Header extends React.PureComponent {
           <DocSearch isOpen={this.state.searchIsOpen} />
 
           <nav className="h-100 w-100 tr dn flex-l items-center justify-end">
-            <NavItem url="https://api.spreecommerce.org/">
-              API
-            </NavItem>
+            <NavItem text="API" url="/api/" isActive={this.isActive('api')} />
             <NavItem
               text="Developer"
               isActive={this.isActive('developer')}

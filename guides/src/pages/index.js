@@ -25,12 +25,18 @@ const IndexPage = () => (
 
       <div className="mw8 center">
         <div className="flex flex-column flex-wrap flex-row-ns mv4 w-100">
-          <Section path="https://api.spreecommerce.org" title="API Guides" className="w-50-ns">
-            The REST API is designed to give developers a convenient way to
-            access data contained within Spree. With a standard read/write
-            interface to store data, it is now very simple to write third party
-            applications (JavaScript/Mobile/other technologies) that can talk to
-            your Spree store.
+          <Section path="/api/" title="API Reference" className="w-50-ns">
+            <p>
+              The REST API is designed to give developers a convenient way to
+              access data contained within Spree. With a standard read/write
+              interface to store data, it is now very simple to write third party
+              applications (JavaScript/Mobile/other technologies) that can talk to
+              your Spree store.
+            </p>
+            <ul className="list">
+              <li className="dib mr2"><a href="/api/v1/summary.html">REST API v1</a></li>
+              <li className="dib mr2"><a href="https://api.spreecommerce.org/docs/api-v2/api/docs/v2/storefront/index.yaml">REST API v2</a></li>
+            </ul>
           </Section>
 
           <Section
