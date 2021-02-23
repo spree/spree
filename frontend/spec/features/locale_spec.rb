@@ -48,8 +48,6 @@ describe 'setting locale', type: :feature, js: true do
     it 'has localized links', retry: 3 do
       expect(page).to have_link(store.name, href: '/fr')
       expect(page).to have_link('Femmes', href: '/fr/t/women')
-      wait_for_ajax
-      expect(page).to have_selector('#link-to-cart a[href="/fr/cart"]')
     end
   end
 
