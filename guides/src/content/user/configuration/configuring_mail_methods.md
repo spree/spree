@@ -6,7 +6,7 @@ title: Mail Methods
 
 ## Introduction
 
-As this has been extracted, please be sure to add [spree_mail_settings](https://github.com/spree-contrib/spree_mail_settings) to your Gemfile before proceeding if you require this behavior.
+As this has been extracted, please be sure to add [Spree Mail Settings](https://github.com/spree-contrib/spree_mail_settings) to your Gemfile before proceeding if you require this behavior.
 
 The configurable components of your Spree site are managed in the Mail Method Settings panel. You can reach this by going to the Admin Interface and clicking "Configuration" followed by "Mail Method Settings".
 
