@@ -1,7 +1,7 @@
 module Spree
   module Frontend
     class CopyStorefrontGenerator < Rails::Generators::Base
-      desc 'Copies storefront views and stylesheets from spree frontend to your application'
+      desc 'Copies all storefront views and stylesheets from spree frontend to your application'
 
       def self.source_paths
         [

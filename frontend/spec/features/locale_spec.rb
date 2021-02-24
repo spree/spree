@@ -81,19 +81,6 @@ describe 'setting locale', type: :feature, js: true do
     it_behaves_like 'translates cart page'
   end
 
-  context 'via set_locale endpoint' do
-    before do
-      visit spree.set_locale_path(switch_to_locale: 'fr')
-      first('a.cart-icon').click
-    end
-
-    after do
-      I18n.locale = 'en'
-    end
-
-    it_behaves_like 'translates cart page'
-  end
-
   context 'locales list endpoint', js: false do
     before do
       visit spree.locales_path
