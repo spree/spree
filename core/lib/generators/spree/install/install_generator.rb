@@ -23,6 +23,11 @@ module Spree
       paths << File.expand_path('../templates', "../../#{__FILE__}")
       paths << File.expand_path('../templates', "../#{__FILE__}")
       paths << File.expand_path('templates', __dir__)
+      if Spree::Core::Engine.frontend_available? || Rails.env.test?
+        paths << File.expand_path('../../../../../frontend/app/views/spree', __dir__)
+        paths << File.expand_path('../../../../../frontend/app/assets/images', __dir__)
+        paths << File.expand_path('../../../../../frontend/app/assets/stylesheets/spree/frontend/variables', __dir__)
+      end
       paths.flatten
     end
 
@@ -41,9 +46,19 @@ module Spree
     def add_files
       template 'config/initializers/spree.rb', 'config/initializers/spree.rb'
 
+      # copy essential storefront files for easy customization / theming
       if Spree::Core::Engine.frontend_available? || Rails.env.test?
+        # main navigation configuration
         template 'config/initializers/spree_storefront.rb', 'config/initializers/spree_storefront.rb'
         template 'config/spree_storefront.yml', 'config/spree_storefront.yml'
+        # static images
+        directory 'noimage', './app/assets/images/noimage'
+        directory 'homepage', './app/assets/images/homepage'
+        directory 'meganav', './app/assets/images/meganav'
+        # SCSS theming
+        template 'variables.scss', './app/assets/stylesheets/spree/frontend/variables/variables.scss'
+        # home page template
+        directory 'home', './app/views/spree/home'
       end
     end
 
