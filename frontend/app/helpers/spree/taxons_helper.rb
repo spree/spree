@@ -5,7 +5,7 @@ module Spree
     # to show the most popular products for a particular taxon (that is an exercise left to the developer.)
     def taxon_preview(taxon, max = 4)
       ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
-        TaxonsHelper is deprecated and will be removed in Spree 4.2.
+        TaxonsHelper is deprecated and will be removed in Spree 5.0.
         Please remove any `helper 'spree/taxons'` from your controllers.
       DEPRECATION
       products = taxon.active_products.distinct.select('spree_products.*, spree_products_taxons.position').limit(max)
