@@ -11,7 +11,6 @@
 .loadpath
 .project
 .vscode
-bin/*
 public/dispatch.cgi
 public/dispatch.fcgi
 public/dispatch.rb

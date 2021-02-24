@@ -1,5 +1,5 @@
 body {
-  font-family: 'Source Sans Pro', sans-serif;
+  font-family: Helvetica, Arial, sans-serif;;
   color: #495057;
 
   -webkit-font-smoothing: antialiased;
@@ -49,6 +49,9 @@ li > code {
 .gatsby-highlight {
   position: relative;
   z-index: 1;
+  border-radius: .75rem;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
 }
 
 /* Colors */
@@ -174,4 +177,13 @@ td[kind='field'] {
 /* Height fix */
 #gatsby-focus-wrapper {
   height: 100%;
+}
+
+.gatsby-resp-image-figure {
+  margin: 2em 0;
+}
+
+.gatsby-resp-image-figcaption {
+  color: gray;
+  text-align: center;
 }

@@ -42,27 +42,30 @@ export default class Layout extends React.Component {
             activeRootSection={this.props.activeRootSection}
             nav={this.props.nav}
           />
-          {this.props.nav && (
-            <Sidebar
-              nav={this.props.nav}
-              activeSection={this.props.activeSection}
-            />
-          )}
 
-          <main
-            className={cx(
-              this.props.nav &&
-                'bg-white lh-copy pa4 ph5-l pt3 flex flex-column'
+          <div className="z-3 relative ph4 items-center mw9 center h-100">
+            {this.props.nav && this.props.activeSection != 'api' && (
+              <Sidebar
+                nav={this.props.nav}
+                activeSection={this.props.activeSection}
+              />
             )}
-            css={{
-              '@media (min-width: 60rem)': {
-                marginLeft: this.props.nav ? styles.sidebar.width : '0'
-              }
-            }}
-          >
-            {this.props.children}
-          </main>
-          <Footer hasSidebar={this.props.nav !== undefined} />
+
+            <main
+              className={cx(
+                this.props.nav &&
+                  'bg-white lh-copy pa4 ph5-l pt3 relative'
+              )}
+              css={{
+                '@media (min-width: 60rem)': {
+                  marginLeft: this.props.nav ? styles.sidebar.width : '0'
+                }
+              }}
+            >
+              {this.props.children}
+            </main>
+            <Footer hasSidebar={this.props.nav !== undefined} />
+          </div>
         </div>
       </React.Fragment>
     )

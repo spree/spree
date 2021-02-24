@@ -1,5 +1,5 @@
 ---
-title: Getting Started
+title: Getting Started with Spree
 section: tutorial
 order: 0
 ---

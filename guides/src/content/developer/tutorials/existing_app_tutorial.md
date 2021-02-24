@@ -21,10 +21,10 @@ in your project root directory.
     **Rails 6.0 and 6.1**
 
     ```ruby
-    gem 'spree', '~> 4.2.0.rc5'
+    gem 'spree', '~> 4.2.0'
     gem 'spree_auth_devise', '~> 4.3'
     gem 'spree_gateway', '~> 3.9'
-    gem 'sassc', github: 'sass/sassc-ruby', branch: 'master'
+    gem 'sassc', github: 'sass/sassc-ruby', branch: 'master' # only needed for MacOS and Ruby 3.0
     ```
 
     **Rails 5.2**
@@ -74,11 +74,10 @@ in your project root directory.
 ### Installation options
 
 By default, the installation generator (`rails g spree:install`) will run
-migrations as well as adding seed and sample data and will copy storefront data
-for easy customization (if `spree_frontend` available). This can be disabled using
+migrations as well as adding seed and sample data. This can be disabled using
 
 ```shell
-rails g spree:install --migrate=false --sample=false --seed=false --copy_storefront=false
+rails g spree:install --migrate=false --sample=false --seed=false
 ```
 
 You can always perform any of these steps later by using these commands.
@@ -88,7 +87,6 @@ bundle exec rake railties:install:migrations
 bundle exec rails db:migrate
 bundle exec rails db:seed
 bundle exec rake spree_sample:load
-bundle exec rails g spree:frontend:copy_storefront
 ```
 
 ### Headless installation (API-mode)

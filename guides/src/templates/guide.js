@@ -3,6 +3,7 @@ import * as React from 'react'
 import PropTypes from 'prop-types'
 import { graphql } from 'gatsby'
 import RehypeReact from 'rehype-react'
+import { css } from '@emotion/core'
 
 // --- Components
 import Layout from '../components/Layout'
@@ -71,6 +72,15 @@ export default function Template({ data }) {
     pageDescription = guide.excerpt.replace(removalRegexp, '').trim()
   }
 
+  let articleStyles = ''
+  if (guide.headings.length > 0) {
+    articleStyles = css`
+      @media screen and (min-width: 60em) {
+        margin-right: 16rem
+      }
+    `
+  }
+
   return (
     <Layout
       title={pageTitle}
@@ -79,8 +89,8 @@ export default function Template({ data }) {
       activeSection={guide.fields.section}
       activeRootSection={guide.fields.rootSection}
     >
-      {guide.headings.length > 0 && <Toc headings={guide.headings} />}
-      <article className="nested-links">
+      <article className="nested-links" css={articleStyles}>
+        {guide.headings.length > 0 && <Toc headings={guide.headings} />}
         <H1>{guide.frontmatter.title}</H1>
         {renderAst(guide.htmlAst)}
         <MarkdownPageFooter
