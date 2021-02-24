@@ -218,7 +218,7 @@ which will generate and clear the Spree API key respectively.
 ## Login link
 
 <alert kind="warning">
-  This is only applicable for Spree 4.0 and older. Spree 4.1 handles this out of the box.
+  This is only applicable for Spree 4.0 and older. Spree 4.1 and newer releases handle this out of the box.
 </alert>
 
 To make the login link appear on Spree pages, you will need to modify

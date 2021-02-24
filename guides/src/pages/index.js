@@ -4,6 +4,7 @@ import * as React from 'react'
 // --- Components
 import Layout from 'components/Layout'
 import Section from 'components/Section'
+import Alert from 'components/helpers/Alert'
 
 /**
  * Component
@@ -15,7 +16,6 @@ const IndexPage = () => (
     description="Spree Commerce API, documentation, guides & tutorials"
   >
     <div className="center mw9 ph4 mt5">
-      <h1 className="lh-copy f3 tc mw7 center mb5">
       <h1 className="lh-copy f3 tc mw7 center mb3">
         <a href="https://spreecommerce.org" className="spree-blue fw6">
           Spree Commerce
@@ -49,9 +49,19 @@ const IndexPage = () => (
             title="Developer Guides"
             className="w-50-ns"
           >
-            This part of Spree’s documentation covers the technical aspects of
-            Spree. If you are working with Rails and are building a Spree store,
-            this is the documentation for you.
+            <p>
+              This part of Spree’s documentation covers the technical aspects of
+              Spree. If you are working with Rails and are building a Spree store,
+              this is the documentation for you.
+            </p>
+            <ul className="list">
+              <li className="dib mr2"><a href="/developer/tutorials/getting_started_tutorial.html">Tutorials</a></li>
+              <li className="dib mr2"><a href="/developer/customization/storefront.html">Customization</a></li>
+              <li className="dib mr2"><a href="/developer/core">Core Internals</a></li>
+              <li className="dib mr2"><a href="/developer/security">Security</a></li>
+              <li className="dib mr2"><a href="/developer/upgrades">Upgrades</a></li>
+            </ul>
+
           </Section>
 
           <Section path="/user" title="User Guides" className="w-50-ns">
@@ -70,6 +80,13 @@ const IndexPage = () => (
             overview of what has changed since the previous version of Spree.
           </Section>
         </div>
+
+        <p class="tc">
+          Didn't found what you're looking for?
+          <br />
+          Go ahead and <a href="http://slack.spreecommerce.org/" target="_blank" rel="nofollow">join our Slack</a> or <a href="https://spreecommerce.org/contact/">contact us</a> directly.
+        </p>
+
       </div>
     </div>
   </Layout>

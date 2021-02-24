@@ -16,6 +16,6 @@ Spree does store the last four digits of the credit card and the expiration mont
 
 ## 3-D Secure and Strong Customer Authenthication support
 
-[Spree Gateway Stripe itnegration](https://github.com/spree/spree_gateway) supports [Strong Customer Authentication (SCA)](https://stripe.com/en-pl/guides/strong-customer-authentication) out of the box. Remember to use `Stripe Elements` gateway with `Payment Intents` option enabled.
+[Spree Gateway Stripe itnegration](https://github.com/spree/spree_gateway) supports [Strong Customer Authentication (SCA)](https://stripe.com/en-pl/guides/strong-customer-authentication) out of the box. Remember to use S**tripe Elements** gateway with **Payment Intents** option enabled.
 
 [Spree Braintree vzero](https://github.com/spree-contrib/spree_braintree_vzero) extension supports [3D Secure 2.0](https://developers.braintreepayments.com/guides/3d-secure/overview).

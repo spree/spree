@@ -22,6 +22,7 @@ const Section = ({ title, path, children, className }) => (
           title
         )}
       </h2>
+      <hr class="bb bw1 b--black-10" />
       <p className="lh-copy">{children}</p>
     </div>
   </div>

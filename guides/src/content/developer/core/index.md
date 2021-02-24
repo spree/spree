@@ -1,5 +1,5 @@
 ---
-title: "Spree Core"
+title: "Core Internals"
 section: core
 ---
 
