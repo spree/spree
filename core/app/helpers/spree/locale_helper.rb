@@ -1,7 +1,8 @@
 module Spree
   module LocaleHelper
     def all_locales_options
-      supported_locales_for_all_stores.map { |locale| locale_presentation(locale) }
+      supported_locales_string_format = supported_locales_for_all_stores.keep_if { |locale| (locale.is_a? String) }
+      supported_locales_string_format.uniq.map { |locale| locale_presentation(locale) }
     end
 
     def available_locales_options
