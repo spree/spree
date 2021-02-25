@@ -67,7 +67,7 @@ Each [Payment Method](/developer/core/payments.html#payment-methods) can be asso
 
 There's no direct association between Stores and Products in Spree Core, however which Products are available in which Store is determined on the selected currency. If Product A has prices in `USD` and `EUR` it will be available for purchase in all Stores that support that currency.
 
-If you would like to have more granual level control of Products availability in Stores you can install [Spree Multi Domain extension](https://github.com/spree-contrib/spree-multi-domain). It lets you choose Stores for Products. That extension will be pulled into Spree Core in Soree 4.3.
+If you would like to have more granual level control of Products availability in Stores you can install [Spree Multi Domain extension](https://github.com/spree-contrib/spree-multi-domain). It lets you choose Stores for Products. That extension will be pulled into Spree Core in Spree 4.3.
 
 ## Store layout
 
