@@ -1,8 +1,11 @@
 module Spree
   module LocaleHelper
     def all_locales_options
-      supported_locales_string_format = supported_locales_for_all_stores.keep_if { |locale| (locale.is_a? String) }
-      supported_locales_string_format.uniq.map { |locale| locale_presentation(locale) }
+      convert_symbols_to_string = supported_locales_for_all_stores.map { |locale| locale.to_s }
+      removed_upcased_duplicates = convert_symbols_to_string.delete_if { |locale| capitalized?(locale) }
+      unique_locale_set = removed_upcased_duplicates.uniq
+
+      unique_locale_set.map { |locale| locale_presentation(locale) }
     end
 
     def available_locales_options
@@ -27,6 +30,12 @@ module Spree
       return false if current_store.nil?
 
       current_store.supported_locales_list.size > 1
+    end
+
+    private
+
+    def capitalized?(str)
+      ('A'..'Z').include?(str[0])
     end
   end
 end
