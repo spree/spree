@@ -4,10 +4,6 @@ section: core
 order: 0
 ---
 
-<alert kind="note">
-  This section only applies to Spree 4.2 or newer. If you're using an older version, [please upgrade](/developer/upgrades)
-</alert>
-
 ## Overview
 
 The `Store` model is the center of the Spree ecosystem. Each Spree installation can have multiple Stores. 
@@ -34,6 +30,10 @@ To get the default store in code you can call `Spree::Store.default`.
 
 ## Localization and Currency
 
+<alert kind="note">
+  This section only applies to Spree 4.2 or newer. If you're using an older version, [please upgrade](/developer/upgrades)
+</alert>
+
 Each Store can have different multiple locales and currencies. This configuration is stored in Store model attributes:
 
 * `default_currency`- this is the default currency this is the default locale/language which will be pre-selected when visiting the store the first time, eg. `USD` 
@@ -42,6 +42,10 @@ Each Store can have different multiple locales and currencies. This configuratio
 * `supported_locales`, if there are more than one supported locale visitor will be able to choose which locale they would like to browse your store, eg `en,fr`. Locales are available upon installing [Spree I18n](https://github.com/spree-contrib/spree_i18n)
 
 ## Checkout configuration
+
+<alert kind="note">
+  This section only applies to Spree 4.2 or newer. If you're using an older version, [please upgrade](/developer/upgrades)
+</alert>
 
 Each Store can be configured to ship to only selected countries. This is achieved via `checkout_zone_id` attribute which holds the ID of the selected [Zone record](/user/configuration/configuring_geography.html).
 
