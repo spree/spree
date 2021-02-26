@@ -910,7 +910,7 @@ en:
       select_locale: Select locale
       show_only: Show only
       supported_locales: Supported Locales
-      this_file_language: English (Default)
+      this_file_language: English (EN)
       translations: Translations
     icon: Icon
     image: Image
