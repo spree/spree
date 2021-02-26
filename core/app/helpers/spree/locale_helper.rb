@@ -5,7 +5,7 @@ module Spree
       removed_upcased_duplicates = convert_symbols_to_string.delete_if { |locale| capitalized?(locale) }
       unique_locale_set = removed_upcased_duplicates.uniq
 
-      unique_locale_set.map { |locale| locale_presentation(locale) }
+      unique_locale_set.sort.map { |locale| locale_presentation(locale) }
     end
 
     def available_locales_options
@@ -19,10 +19,8 @@ module Spree
     end
 
     def locale_presentation(locale)
-      if locale == 'en'
-        [Spree.t('i18n.this_file_language', locale: locale), locale.to_s]
-      elsif I18n.t('spree.i18n.this_file_language', locale: locale) != I18n.t('spree.i18n.this_file_language', locale: 'en')
-        [Spree.t('i18n.this_file_language', locale: locale), locale.to_s]
+      if I18n.exists?('spree.i18n.this_file_language', locale: locale, fallback: false)
+        [Spree.t("i18n.this_file_language", locale: locale) + " (#{locale})", locale.to_s]
       else
         []
       end
