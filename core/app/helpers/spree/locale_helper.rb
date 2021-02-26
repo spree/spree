@@ -21,7 +21,7 @@ module Spree
     def locale_presentation(locale)
       if locale == 'en'
         [Spree.t('i18n.this_file_language', locale: locale), locale.to_s]
-      elsif I18n.t('spree.i18n.this_file_language', locale: locale) != I18n.t('spree.i18n.this_file_language', locale: :default)
+      elsif I18n.t('spree.i18n.this_file_language', locale: locale) != I18n.t('spree.i18n.this_file_language', locale: 'en')
         [Spree.t('i18n.this_file_language', locale: locale), locale.to_s]
       else
         []
