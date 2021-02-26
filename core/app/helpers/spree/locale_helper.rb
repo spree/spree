@@ -20,9 +20,9 @@ module Spree
 
     def locale_presentation(locale)
       if I18n.exists?('spree.i18n.this_file_language', locale: locale, fallback: false)
-        [Spree.t("i18n.this_file_language", locale: locale) + " (#{locale})", locale.to_s]
+        [Spree.t('i18n.this_file_language', locale: locale), locale.to_s]
       else
-        []
+        [locale, locale.to_s]
       end
     end
 
