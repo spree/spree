@@ -21,10 +21,10 @@ module Spree
     def locale_presentation(locale)
       if locale == 'en'
         [Spree.t('i18n.this_file_language', locale: locale), locale.to_s]
-      elsif I18n.t('spree.i18n.this_file_language', locale: locale) != I18n.t('spree.i18n.this_file_language', locale: 'en')
+      elsif I18n.t('spree.i18n.this_file_language', locale: locale) != I18n.t('spree.i18n.this_file_language', locale: :default)
         [Spree.t('i18n.this_file_language', locale: locale), locale.to_s]
       else
-        ["(#{locale.to_s.upcase})", locale.to_s]
+        []
       end
     end
 
