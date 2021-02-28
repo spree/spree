@@ -35,6 +35,7 @@ group :test do
 end
 
 group :test, :development do
+  gem 'gem-release'
   gem 'rubocop', '~> 0.60.0', require: false
   gem 'rubocop-rspec', require: false
   gem 'pry-byebug'
