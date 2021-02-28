@@ -14,6 +14,12 @@ module Spree
     end
 
     def update
+      ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
+        `OrdersController#update` is deprecated and will be removed in Spree 5.0.
+        Please use API v2 Storefront Cart endpoints
+        https://api.spreecommerce.org/docs/api-v2/api/docs/v2/storefront/index.yaml/paths/~1api~1v2~1storefront~1cart~1remove_line_item~1%7Bline_item_id%7D/delete
+      DEPRECATION
+
       @variant = Spree::Variant.find(params[:variant_id]) if params[:variant_id]
       if Cart::Update.call(order: @order, params: order_params).success?
         respond_with(@order) do |format|
@@ -40,6 +46,11 @@ module Spree
     end
 
     def empty
+      ActiveSupport::Deprecation.warn(<<-DEPRECATION, caller)
+        `OrdersController#empty` is deprecated and will be removed in Spree 5.0.
+        Please use API v2 Storefront Cart Empty action
+        https://api.spreecommerce.org/docs/api-v2/api/docs/v2/storefront/index.yaml/paths/~1api~1v2~1storefront~1cart~1empty/patch
+      DEPRECATION
       current_order.try(:empty!)
 
       redirect_to spree.cart_path

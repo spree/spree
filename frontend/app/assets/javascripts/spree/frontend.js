@@ -80,3 +80,8 @@ Spree.setCurrency = function (currency) {
 
   Turbolinks.visit(window.location.pathname + queryString, { action: 'replace' })
 }
+
+Spree.hideProgressBar = function () {
+  if (!Turbolinks.supported) { return }
+  Turbolinks.controller.adapter.progressBar.hide()
+}

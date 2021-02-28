@@ -1,4 +1,5 @@
 //= require spree/frontend/coupon_manager
+//= require spree/api/storefront/cart
 
 Spree.ready(function ($) {
   var formUpdateCart = $('form#update-cart')
@@ -6,6 +7,8 @@ Spree.ready(function ($) {
   function buildEventTriggerObject(dataset, quantity) {
     if (!dataset || !quantity) return false
 
+    // this is part of Spree Analytics Integration to properly track removal of items
+    // https://github.com/spree-contrib/spree_analytics_trackers/blob/master/app/assets/javascripts/spree/frontend/remove_from_cart_analytics.js
     var triggerObject = {
       type: 'product_remove_from_cart',
       variant_sku: dataset.variantSku,
@@ -18,100 +21,138 @@ Spree.ready(function ($) {
     return triggerObject
   }
 
-  if (formUpdateCart.length) {
-    var clearInvalidCouponField = function() {
-      var couponCodeField = $('#order_coupon_code');
-      var couponStatus = $('#coupon_status');
-      if (!!couponCodeField.val() && couponStatus.hasClass('alert-error')) {
-        couponCodeField.val('')
+  function getLineItemId(element) {
+    return $(element).attr('data-id').replace('line_item_', '')
+  }
+
+  function handleCartApiError(error, target) {
+    if (target) target.attr('disabled', false)
+    Spree.hideProgressBar()
+    alert(error)
+  }
+
+  function handleCartApiSuccess() {
+    window.location.reload()
+  }
+
+  function handleSetQuantity(lineItemId, quantity, input, target) {
+    Spree.showProgressBar()
+    target.attr('disabled', 'true')
+    input.val(quantity)
+
+    SpreeAPI.Storefront.setLineItemQuantity(
+      lineItemId,
+      quantity,
+      function(response) { handleCartApiSuccess() },
+      function(error) {
+        handleCartApiError(error, target)
+        input.val(quantity - 1) // revert to previous number
       }
+    )
+  }
+
+  if (formUpdateCart.length) {
+    var COUPON_CODE_ELEMENTS = {
+      appliedCouponCodeField: formUpdateCart.find('#order_applied_coupon_code'),
+      couponCodeField: formUpdateCart.find('#order_coupon_code'),
+      couponStatus: formUpdateCart.find('#coupon_status'),
+      couponButton: formUpdateCart.find('#shopping-cart-coupon-code-button'),
+      removeCouponButton: formUpdateCart.find('#shopping-cart-remove-coupon-code-button')
     }
 
+    // handle remove line item from cart
     formUpdateCart.find('a.delete').show().one('click', function (event) {
-      var itemId = $(this).attr('data-id')
-      var link = $(event.currentTarget);
-      var quantityInputs = $("form#update-cart input.shopping-cart-item-quantity-input[data-id='" + itemId + "']")
+      event.preventDefault()
+
+      var lineItemId = getLineItemId(this)
+      var button = $(event.target)
+      // FIXME: this selector madness need to go away...
+      var quantityInputs = $("form#update-cart input.shopping-cart-item-quantity-input[data-id='line_item" + lineItemId + "']")
       var quantity = $(quantityInputs).val()
-      $(this).parents('.shopping-cart-item').first().find('input.shopping-cart-item-quantity-input').val(0)
-      clearInvalidCouponField()
-      if (link[0] && link[0].dataset && quantity) {
-        link.trigger(buildEventTriggerObject(link[0].dataset, quantity))
+      button.attr('disabled', true)
+
+      Spree.showProgressBar()
+
+      SpreeAPI.Storefront.removeLineItemFromCart(
+        lineItemId,
+        function(response) {
+          handleCartApiSuccess()
+          if (button[0] && button[0].dataset && quantity) {
+            button.trigger(buildEventTriggerObject(button[0].dataset, quantity))
+          }
+        },
+        function(error) { handleCartApiError(error, button) }
+      )
+    })
+
+    // handle quantity change
+    formUpdateCart.find('input.shopping-cart-item-quantity-input').on('change', function(event) {
+      var lineItemId = getLineItemId(this)
+      var input = $(event.target)
+      var newValue = parseInt(input.val(), 10)
+      handleSetQuantity(lineItemId, newValue, input, input)
+    })
+    formUpdateCart.find('button.shopping-cart-item-quantity-decrease-btn').off('click').on('click', function(event) {
+      event.preventDefault()
+
+      var lineItemId = getLineItemId(this)
+      var button = $(event.target)
+      var input = $("input[data-id='line_item_" + lineItemId + "']")
+      var newValue = parseInt(input.val(), 10) - 1
+
+      handleSetQuantity(lineItemId, newValue, input, button)
+    })
+    formUpdateCart.find('button.shopping-cart-item-quantity-increase-btn').off('click').on('click', function(event) {
+      event.preventDefault()
+
+      var lineItemId = getLineItemId(this)
+      var button = $(event.target)
+      var input = $("input[data-id='line_item_" + lineItemId + "']")
+      var newValue = parseInt(input.val(), 10) + 1
+
+      handleSetQuantity(lineItemId, newValue, input, button)
+    })
+
+    // handle coupon code apply
+    COUPON_CODE_ELEMENTS.couponButton.off('click').on('click', function(event) {
+      event.preventDefault()
+
+      if ($.trim(COUPON_CODE_ELEMENTS.couponCodeField.val()).length > 0) {
+        Spree.showProgressBar()
+
+        if (new CouponManager(COUPON_CODE_ELEMENTS).applyCoupon()) {
+          handleCartApiSuccess()
+        } else {
+          Spree.hideProgressBar()
+        }
       }
-      formUpdateCart.submit()
+
       return false
     })
-    formUpdateCart.find('input.shopping-cart-item-quantity-input').on('keyup', function(e) {
-      var itemId = $(this).attr('data-id')
-      var value = $(this).val()
-      var newValue = isNaN(value) || value === '' ? value : parseInt(value, 10)
-      var targetInputs = $("form#update-cart input.shopping-cart-item-quantity-input[data-id='" + itemId + "']")
-      $(targetInputs).val(newValue)
-    })
-    formUpdateCart.find('input.shopping-cart-item-quantity-input').on('change', function(e) {
-      clearInvalidCouponField()
-      formUpdateCart.submit()
-    })
-    formUpdateCart.find('button.shopping-cart-item-quantity-decrease-btn').off('click').on('click', function() {
-      var itemId = $(this).attr('data-id')
-      var input = $("input[data-id='" + itemId + "']")
-      var inputValue = parseInt($(input).val(), 10)
 
-      if (inputValue > 1) {
-        $(input).val(inputValue - 1)
-        clearInvalidCouponField()
-        formUpdateCart.submit()
-      }
-    })
-    formUpdateCart.find('button.shopping-cart-item-quantity-increase-btn').off('click').on('click', function() {
-      var itemId = $(this).attr('data-id')
-      var input = $("input[data-id='" + itemId + "']")
-      var inputValue = parseInt($(input).val(), 10)
+    // handle coupon code removal
+    COUPON_CODE_ELEMENTS.removeCouponButton.off('click').on('click', function(event) {
+      event.preventDefault()
+      Spree.showProgressBar()
 
-      $(input).val(inputValue + 1)
-      clearInvalidCouponField()
-      formUpdateCart.submit()
-    })
-    formUpdateCart.find('button#shopping-cart-coupon-code-button').off('click').on('click', function(event) {
-      var couponCodeField = $('#order_coupon_code');
-
-      if (!$.trim(couponCodeField.val()).length) {
-        event.preventDefault()
-        return false
-      }
-    })
-
-    formUpdateCart.find('button#shopping-cart-remove-coupon-code-button').off('click').on('click', function(event) {
-      var input = {
-        appliedCouponCodeField: $('#order_applied_coupon_code'),
-        couponCodeField: $('#order_coupon_code'),
-        couponStatus: $('#coupon_status'),
-        couponButton: $('#shopping-cart-coupon-code-button'),
-        removeCouponButton: $('#shopping-cart-remove-coupon-code-button')
-      }
-
-      if (new CouponManager(input).removeCoupon()) {
-        return true
+      if (new CouponManager(COUPON_CODE_ELEMENTS).removeCoupon()) {
+        handleCartApiSuccess()
       } else {
-        event.preventDefault()
-        return false
+        Spree.hideProgressBar()
       }
+      return false
     })
   }
+
+  // legacy submit action
+  // will be removed in Spree 5.0
   formUpdateCart.submit(function (event) {
-    var input = {
-      couponCodeField: $('#order_coupon_code'),
-      couponStatus: $('#coupon_status'),
-      couponButton: $('#shopping-cart-coupon-code-button')
-    }
-    var updateButton = formUpdateCart.find('#update-button')
-    updateButton.attr('disabled', true)
-    if ($.trim(input.couponCodeField.val()).length > 0) {
+    if ($.trim(COUPON_CODE_ELEMENTS.couponCodeField.val()).length > 0) {
       // eslint-disable-next-line no-undef
-      if (new CouponManager(input).applyCoupon()) {
+      if (new CouponManager(COUPON_CODE_ELEMENTS).applyCoupon()) {
         this.submit()
         return true
       } else {
-        updateButton.attr('disabled', false)
         event.preventDefault()
         return false
       }

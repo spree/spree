@@ -11,7 +11,11 @@ SpreeAPI.Platform = {}
 // API routes
 Spree.routes.api_v2_storefront_cart_create = Spree.pathFor('api/v2/storefront/cart')
 Spree.routes.api_v2_storefront_cart_add_item = Spree.pathFor('api/v2/storefront/cart/add_item')
+Spree.routes.api_v2_storefront_cart_remove_line_item = function(lineItemId) { return Spree.pathFor('api/v2/storefront/cart/remove_line_item/' + lineItemId.toString()) }
+Spree.routes.api_v2_storefront_cart_set_quantity = Spree.pathFor('api/v2/storefront/cart/set_quantity')
+Spree.routes.api_v2_storefront_cart_empty = Spree.pathFor('api/v2/storefront/cart/empty')
 Spree.routes.api_v2_storefront_cart_apply_coupon_code = Spree.pathFor('api/v2/storefront/cart/apply_coupon_code')
+Spree.routes.api_v2_storefront_cart_remove_coupon_code = Spree.pathFor('api/v2/storefront/cart/remove_coupon_code')
 
 // helpers
 SpreeAPI.handle500error = function () {

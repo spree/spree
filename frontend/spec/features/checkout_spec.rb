@@ -405,7 +405,8 @@ describe 'Checkout', type: :feature, inaccessible: true, js: true do
       before do
         visit spree.cart_path
         within '.shopping-cart-item' do
-          find('.shopping-cart-item-quantity .shopping-cart-item-quantity-input').fill_in with: cart_quantity
+          find('.shopping-cart-item-quantity .shopping-cart-item-quantity-input').fill_in(with: cart_quantity).send_keys(:tab)
+          expect(page).to have_content('$59.97') # price of 3 items
         end
         find('body').click
       end
