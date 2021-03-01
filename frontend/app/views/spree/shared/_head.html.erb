@@ -8,9 +8,6 @@
 <%= stylesheet_link_tag 'spree/frontend/all', media: 'screen', 'data-turbolinks-track': 'reload' %>
 <%= csrf_meta_tags %>
 <%= render 'spree/shared/paths' %>
-<script>
-  var SPREE_LOCALE = '<%= I18n.locale %>'
-  var SPREE_CURRENCY = '<%= current_currency %>'
-</script>
+<%= render 'spree/shared/locale_and_currency' %>
 <%= javascript_include_tag 'spree/frontend/all', defer: true, 'data-turbolinks-track': 'reload' %>
 <%= yield :head %>

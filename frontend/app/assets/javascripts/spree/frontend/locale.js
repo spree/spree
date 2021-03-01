@@ -1,12 +1,13 @@
-Spree.ready(function ($) {
-  var localeSelectForm = $('#locale-select')
-  var localeSelectDropdown = localeSelectForm.find('select#switch_to_locale')
+document.addEventListener('turbolinks:load', function () {
+  var localeSelect = document.querySelectorAll('select[name=switch_to_locale]')
 
-  if (localeSelectForm.length && localeSelectDropdown.length) {
-    localeSelectDropdown.on('change', function () {
-      localeSelectDropdown.attr('disabled')
-      Spree.showProgressBar()
-      localeSelectForm.submit()
+  if (localeSelect.length) {
+    localeSelect.forEach(function (element) {
+      element.addEventListener('change', function () {
+        Spree.clearCache()
+        Spree.showProgressBar()
+        this.form.submit()
+      })
     })
   }
 })
