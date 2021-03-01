@@ -1,12 +1,12 @@
 Spree.ready(function ($) {
-  var localeSelect = $('#locale-select select')
+  var localeSelectForm = $('#locale-select')
+  var localeSelectDropdown = localeSelectForm.find('select#switch_to_locale')
 
-  if (localeSelect.length) {
-    localeSelect.on('change', function () {
-      localeSelect.attr('disabled')
+  if (localeSelectForm.length && localeSelectDropdown.length) {
+    localeSelectDropdown.on('change', function () {
+      localeSelectDropdown.attr('disabled')
       Spree.showProgressBar()
-      Spree.clearCache()
-      window.location = Spree.routes.set_locale(this.value)
+      localeSelectForm.submit()
     })
   }
 })
