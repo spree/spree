@@ -63,3 +63,20 @@ Spree.clearCache = function () {
 
   Turbolinks.clearCache()
 }
+
+Spree.setCurrency = function (currency) {
+  Spree.clearCache()
+
+  var params = (new URL(window.location)).searchParams
+  if (currency === SPREE_DEFAULT_CURRENCY) {
+    params.delete('currency')
+  } else {
+    params.set('currency', currency)
+  }
+  var queryString = params.toString()
+  if (queryString !== '') { queryString = '?' + queryString }
+
+  SPREE_CURRENCY = currency
+
+  Turbolinks.visit(window.location.pathname + queryString, { action: 'replace' })
+}
