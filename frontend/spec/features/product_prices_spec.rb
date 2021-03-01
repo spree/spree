@@ -20,6 +20,7 @@ describe 'Product with prices in multiple currencies', type: :feature, js: true 
         expect(page).to have_text '£23.00'
         visit spree.products_path
         expect(page).to have_text '£23.00'
+        expect(page).to have_link product.name, href: "/products/#{product.slug}?currency=GBP"
         open_i18n_menu
         expect(page).to have_select('switch_to_currency', selected: 'GBP')
       end
