@@ -22,16 +22,20 @@ Spree.pathFor = function (path) {
 }
 
 Spree.localizedPathFor = function(path) {
-  if (typeof (SPREE_LOCALE) !== 'undefined') {
-    if (path.match(/api\/v/)) {
-      if (path.match(/\?/)) {
-        path = path + '&locale=' + SPREE_LOCALE
-      } else {
-        path = path + '?locale=' + SPREE_LOCALE
-      }
+  if (typeof (SPREE_LOCALE) !== 'undefined' && typeof (SPREE_CURRENCY) !== 'undefined') {
+    var fullUrl = new URL(Spree.pathFor(path))
+    var params = fullUrl.searchParams
+    var pathName = fullUrl.pathname
+
+    params.set('currency', SPREE_CURRENCY)
+
+    if (pathName.match(/api\/v/)) {
+      params.set('locale', SPREE_LOCALE)
     } else {
-      path = SPREE_LOCALE + '/' + path
+      pathName = SPREE_LOCALE + '/' + pathName
     }
+
+    path = pathName + '?' + params.toString()
   }
   return Spree.pathFor(path)
 }
