@@ -7,7 +7,7 @@ module Spree
         current_order&.update(currency: new_currency)
         session[:currency] = new_currency
       end
-      redirect_back_or_default(root_path(currency: new_currency))
+      redirect_back fallback_location: spree.root_path(currency: new_currency)
     end
   end
 end
