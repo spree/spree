@@ -57,3 +57,9 @@ Spree.showProgressBar = function () {
   Turbolinks.controller.adapter.progressBar.setValue(0)
   Turbolinks.controller.adapter.progressBar.show()
 }
+
+Spree.clearCache = function () {
+  if (!Turbolinks.supported) { return }
+
+  Turbolinks.clearCache()
+}

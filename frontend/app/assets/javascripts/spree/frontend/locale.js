@@ -5,6 +5,7 @@ Spree.ready(function ($) {
     localeSelect.on('change', function () {
       localeSelect.attr('disabled')
       Spree.showProgressBar()
+      Spree.clearCache()
       window.location = Spree.routes.set_locale(this.value)
     })
   }
