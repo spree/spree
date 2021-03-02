@@ -9,9 +9,7 @@ module Spree
     private
 
     def default_url_options
-      return super if locale_param.nil?
-
-      super.merge(locale: locale_param)
+      super.merge(locale: locale_param, currency: currency_param)
     end
 
     def redirect_to_default_locale

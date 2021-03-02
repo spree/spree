@@ -7,7 +7,11 @@ module Spree
         current_order&.update(currency: new_currency)
         session[:currency] = new_currency
       end
-      redirect_back_or_default(root_path(currency: new_currency))
+
+      respond_to do |format|
+        format.html { redirect_back fallback_location: spree.root_path(currency: new_currency) }
+        format.json { head :ok }
+      end
     end
   end
 end

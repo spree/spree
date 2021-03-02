@@ -9,6 +9,7 @@ module Spree
           helper_method :supported_currencies_for_all_stores
           helper_method :current_currency
           helper_method :supported_currency?
+          helper_method :currency_param
         end
 
         def current_currency
@@ -40,6 +41,12 @@ module Spree
           return false if supported_currencies.nil?
 
           supported_currencies.map(&:iso_code).include?(currency_iso_code.upcase)
+        end
+
+        def currency_param
+          return if current_currency == current_store.default_currency
+
+          current_currency
         end
       end
     end
