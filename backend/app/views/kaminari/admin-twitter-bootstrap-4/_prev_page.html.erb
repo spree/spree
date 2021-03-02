@@ -1,0 +1,13 @@
+<%# Link to the "Previous" page
+  - available local variables
+    url:           url to the previous page
+    current_page:  a page object for the currently displayed page
+    total_pages:   total number of pages
+    per_page:      number of items to fetch per page
+    remote:        data-remote -%>
+
+<% unless current_page.first? %>
+  <li class="prev page-item">
+    <%= link_to_unless current_page.first?, svg_icon(name: "chevron-left.svg", width: '13', height: '16', classes: 'spree-icon-arrow-left mb-0'), url, rel: 'prev', remote: remote, class: 'page-link', 'aria-label': 'Previous page' %>
+  </li>
+<% end %>

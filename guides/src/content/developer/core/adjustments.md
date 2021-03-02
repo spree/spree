@@ -1,6 +1,7 @@
 ---
 title: "Adjustments"
 section: core
+order: 6
 ---
 
 ## Overview

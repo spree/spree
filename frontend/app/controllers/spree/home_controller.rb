@@ -1,13 +1,13 @@
 module Spree
   class HomeController < Spree::StoreController
-    helper 'spree/products'
+    include Spree::CacheHelper
+
     respond_to :html
 
     def index
-      @searcher = build_searcher(params.merge(include_images: true))
-      @products = @searcher.retrieve_products
-      @products = @products.includes(:possible_promotions) if @products.respond_to?(:includes)
-      @taxonomies = Spree::Taxonomy.includes(root: :children)
+      if http_cache_enabled?
+        fresh_when etag: store_etag, last_modified: store_last_modified, public: true
+      end
     end
   end
 end

@@ -1,40 +1,38 @@
 $.fn.userAutocomplete = function () {
   'use strict'
 
-  function formatUser (user) {
-    return Select2.util.escapeMarkup(user.email)
+  function formatUserList(values) {
+    return values.map(function (obj) {
+      return {
+        id: obj.id,
+        text: obj.email
+      }
+    })
   }
 
   this.select2({
-    minimumInputLength: 1,
     multiple: true,
-    initSelection: function (element, callback) {
-      $.get(Spree.routes.users_api, {
-        ids: element.val(),
-        token: Spree.api_key
-      }, function (data) {
-        callback(data.users)
-      })
-    },
+    minimumInputLength: 1,
     ajax: {
       url: Spree.routes.users_api,
-      datatype: 'json',
-      data: function (term) {
+      dataType: 'json',
+      data: function (params) {
         return {
           q: {
-            email_cont: term
+            email_start: params.term
           },
           token: Spree.api_key
         }
       },
-      results: function (data) {
+      processResults: function(data) {
         return {
-          results: data.users
+          results: formatUserList(data.users)
         }
       }
     },
-    formatResult: formatUser,
-    formatSelection: formatUser
+    templateSelection: function (data) {
+      return data.text
+    }
   })
 }
 

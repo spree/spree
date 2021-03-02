@@ -1,0 +1,29 @@
+<% cache([base_cache_key, taxon, 'subcategories', permitted_product_params]) do %>
+  <% subcategories = [taxon] %>
+  <% unless taxon.children.any? %>
+    <% subcategories.unshift(taxon.parent) %>
+  <% end %>
+  <% subcategories.compact.each do |current_taxon| %>
+    <% child_taxons = [current_taxon, *current_taxon.children.where(hide_from_nav: false)] %>
+    <% if current_taxon.level > 0 && child_taxons.size > 1 %>
+      <div class="d-flex justify-content-center position-sticky sticky-top-90px taxon-subcategories-wrapper">
+        <div class="py-1 text-uppercase d-none d-xl-flex overflow-x taxon-subcategories">
+          <% child_taxons.each_with_index.map do |subcategory, index| %>
+            <%=
+              link_to_unless subcategory == taxon,
+                            index.zero? ? Spree.t(:all) : subcategory.name,
+                            spree.nested_taxons_path(subcategory, params: permitted_product_params),
+                            class: "pt-4 pb-2 mb-2 #{index.zero? ? '' : 'pl-4 pt-4 pb-2'}" do
+            %>
+              <div class="pt-4 mb-2 <%= index.zero? ? '' : 'pl-4' %>">
+                <span class="pb-2 taxon-subcategories-selected">
+                  <%= index.zero? ? Spree.t(:all) : subcategory.name %>
+                </span>
+              </div>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+<% end %>

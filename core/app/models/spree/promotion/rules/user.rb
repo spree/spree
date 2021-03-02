@@ -22,7 +22,8 @@ module Spree
         end
 
         def user_ids_string=(s)
-          self.user_ids = s.to_s.split(',').map(&:strip)
+          # check this
+          self.user_ids = s
         end
       end
     end

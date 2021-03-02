@@ -65,15 +65,7 @@ describe Spree::ProductsController, type: :controller do
   end
 
   context 'index products' do
-    it 'calls includes when the retrieved_products object responds to it' do
-      searcher = double('Searcher')
-      allow(controller).to receive_messages build_searcher: searcher
-      expect(searcher).to receive_message_chain('retrieve_products.includes')
-
-      get :index
-    end
-
-    it "does not call includes when it's not available" do
+    it "returns product list via Searcher class" do
       searcher = double('Searcher')
       allow(controller).to receive_messages build_searcher: searcher
       allow(searcher).to receive(:retrieve_products).and_return([])
@@ -81,6 +73,22 @@ describe Spree::ProductsController, type: :controller do
       get :index
 
       expect(assigns(:products)).to eq([])
+    end
+
+    it 'calls fresh_when method' do
+      expect(subject).to receive(:fresh_when)
+
+      get :index
+    end
+
+    context 'when http_cache_enabled is set to false' do
+      before { Spree::Frontend::Config[:http_cache_enabled] = false }
+
+      it 'does not call fresh_when method' do
+        expect(subject).not_to receive(:fresh_when)
+
+        get :index
+      end
     end
   end
 end

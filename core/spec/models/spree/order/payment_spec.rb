@@ -27,6 +27,66 @@ module Spree
         expect(payment_2).to be_completed
       end
 
+      context 'processes all checkout payments along with store credits' do
+        context 'with store credits payment method auto capture turned on' do
+          it 'order should be paid' do
+            store_credit = create(:store_credit_payment, amount: 50)
+            payment = create(:payment, amount: 50)
+
+            expect(order).to receive(:unprocessed_payments).and_return([store_credit, payment]).at_least(:once)
+
+            order.process_payments!
+            updater.update_payment_state
+            expect(order.payment_state).to eq('paid')
+
+            expect(payment).to be_completed
+            expect(store_credit).to be_completed
+          end
+        end
+
+        context 'with store credits payment method auto capture turned off' do
+          let!(:payment) { create(:payment, amount: payment_amount) }
+          let!(:store_credit_payment) do
+            create(
+              :store_credit_payment,
+              amount: store_credit_amount,
+              payment_method: create(:store_credit_payment_method, auto_capture: false)
+            )
+          end
+
+          before do
+            payments = [store_credit_payment, payment]
+            expect(order).to receive(:payments).and_return(payments).at_least(:once)
+            expect(order.payments).to receive(:valid).and_return(payments)
+
+            order.process_payments!
+            updater.update_payment_state
+            expect(payment).to be_completed
+            expect(store_credit_payment).to be_pending
+          end
+
+          context 'order payment state should be balance due' do
+            let!(:payment_amount) { 70.00 }
+            let!(:store_credit_amount) { 30.00 }
+
+            it do
+              expect(order.payment_state).to eq('balance_due')
+              expect(order.outstanding_balance).to eq(30.00)
+            end
+          end
+
+          context 'order payment state should be balance due' do
+            let!(:payment_amount) { 90.00 }
+            let!(:store_credit_amount) { 10.00 }
+
+            it do
+              expect(order.payment_state).to eq('balance_due')
+              expect(order.outstanding_balance).to eq(10.00)
+            end
+          end
+        end
+      end
+
       it 'does not go over total for order' do
         payment_1 = create(:payment, amount: 50)
         payment_2 = create(:payment, amount: 50)
@@ -178,11 +238,13 @@ module Spree
         order.total = 30.30
         expect(order.outstanding_balance).to eq(10.10)
       end
+
       it 'returns negative amount when payment_total is greater than total' do
         order.total = 8.20
         order.payment_total = 10.20
         expect(order.outstanding_balance).to be_within(0.001).of(-2.00)
       end
+
       it 'incorporates refund reimbursements' do
         # Creates an order w/total 10
         reimbursement = create :reimbursement
@@ -200,7 +262,7 @@ module Spree
         expect(order.outstanding_balance).to eq 0
       end
 
-      it 'incorporates refunds' do
+      it 'does not incorporate refunds without a reimbursement' do
         order = create(:completed_order_with_totals)
         calculator = order.shipments.first.shipping_method.calculator
 
@@ -211,8 +273,9 @@ module Spree
 
         create(:refund, amount: 10, payment: order.payments.first)
         order.update_with_updater!
-
-        expect(order.outstanding_balance).to eq 0
+        # Order Total - (Payment Total + Reimbursed)
+        # 10 - (0 + 0) = 0
+        expect(order.outstanding_balance).to eq 10
       end
     end
 

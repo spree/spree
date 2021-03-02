@@ -3,10 +3,11 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= button_link_to new_button_text, new_object_url, { icon: 'add', id: 'admin_new_named_type', class: "btn-success" } %>
+  <%= button_link_to new_button_text, new_object_url, { icon: 'add.svg', id: 'admin_new_named_type', class: "btn-success" } %>
 <% end if can? :create, resource %>
 
 <% if @collection.any? %>
+<div class="table-responsive">
   <table class="table" id='listing_named_types' data-hook>
     <thead>
       <tr data-hook="named_types_header">
@@ -22,7 +23,7 @@
             <%= named_type.name %>
           </td>
           <td class="align-center">
-            <%= Spree.t(named_type.active? ? :active : :inactive) %>
+            <%= active_badge(named_type.active, label: Spree.t(named_type.active? ? :active : :inactive)) %>
           </td>
           <td class="actions actions-1 text-right">
             <% if named_type.mutable? %>
@@ -34,6 +35,7 @@
       <% end %>
     </tbody>
   </table>
+</div>
 <% else %>
   <div class="alert alert-info no-objects-found">
     <%= Spree.t(:no_resource_found, resource: resource_name) %>,

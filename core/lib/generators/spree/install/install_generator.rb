@@ -10,7 +10,8 @@ module Spree
     class_option :migrate, type: :boolean, default: true, banner: 'Run Spree migrations'
     class_option :seed, type: :boolean, default: true, banner: 'load seed data (migrations must be run)'
     class_option :sample, type: :boolean, default: true, banner: 'load sample data (migrations must be run)'
-    class_option :copy_views, type: :boolean, default: true, banner: 'copy frontend views from spree to your application for easy customization'
+    class_option :install_storefront, type: :boolean, default: true, banner: 'installs storefront configuration files'
+    class_option :copy_storefront, type: :boolean, default: false, banner: 'copy all storefront views and stylesheets'
     class_option :auto_accept, type: :boolean
     class_option :user_class, type: :string
     class_option :admin_email, type: :string
@@ -30,7 +31,8 @@ module Spree
       @run_migrations = options[:migrate]
       @load_seed_data = options[:seed]
       @load_sample_data = options[:sample]
-      @copy_views = options[:copy_views]
+      @install_storefront = options[:install_storefront]
+      @copy_storefront = options[:copy_storefront]
 
       unless @run_migrations
         @load_seed_data = false
@@ -54,6 +56,9 @@ module Spree
         Disallow: /account
         Disallow: /api
         Disallow: /password
+        Disallow: /api_tokens
+        Disallow: /cart_link
+        Disallow: /account_link
       ROBOTS
     end
 
@@ -83,9 +88,15 @@ module Spree
       empty_directory 'app/overrides'
     end
 
-    def copy_views
-      if @copy_views && Spree::Core::Engine.frontend_available?
-        generate 'spree:frontend:copy_views'
+    def install_storefront
+      if @install_storefront && Spree::Core::Engine.frontend_available?
+        generate 'spree:frontend:install'
+      end
+    end
+
+    def copy_storefront
+      if @copy_storefront && Spree::Core::Engine.frontend_available?
+        generate 'spree:frontend:copy_storefront'
       end
     end
 

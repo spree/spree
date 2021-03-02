@@ -185,19 +185,6 @@ module Spree
         end
       end
 
-      context 'pass non-existing variant' do
-        let(:variant_2) { create :variant }
-        let(:execute) { subject.call(order: order, variant: variant_2, quantity: 1) }
-
-        before { Spree::Variant.find(variant_2.id).destroy }
-
-        it do
-          expect(execute).to be_failure
-          order.reload
-          expect(order.line_items.count).to eq 0
-        end
-      end
-
       context 'variant have not desired quantity' do
         let(:execute) { subject.call(order: order, variant: variant, quantity: 10) }
 

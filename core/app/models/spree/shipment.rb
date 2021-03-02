@@ -40,6 +40,9 @@ module Spree
     scope :with_state, ->(*s) { where(state: s) }
     # sort by most recent shipped_at, falling back to created_at. add "id desc" to make specs that involve this scope more deterministic.
     scope :reverse_chronological, -> { order(Arel.sql('coalesce(spree_shipments.shipped_at, spree_shipments.created_at) desc'), id: :desc) }
+    scope :valid, -> { where.not(state: :canceled) }
+
+    delegate :store, :currency, to: :order
 
     # shipment state machine (see http://github.com/pluginaweek/state_machine/tree/master for details)
     state_machine initial: :pending, use_transactions: false do
@@ -101,11 +104,6 @@ module Spree
 
     def backordered?
       inventory_units.any?(&:backordered?)
-    end
-
-    # TODO: delegate currency to Order, order.currency is mandatory
-    def currency
-      order ? order.currency : Spree::Config[:currency]
     end
 
     # Determines the appropriate +state+ according to the following logic:
@@ -364,7 +362,7 @@ module Spree
         desired_shipment: shipment_to_transfer_to,
         variant: variant,
         quantity: quantity
-      ).run!
+      )
     end
 
     private

@@ -3,6 +3,7 @@ import * as React from 'react'
 import PropTypes from 'prop-types'
 import { graphql } from 'gatsby'
 import RehypeReact from 'rehype-react'
+import { css } from '@emotion/core'
 
 // --- Components
 import Layout from '../components/Layout'
@@ -19,6 +20,8 @@ import Params from '../components/helpers/Params'
 import Table from '../components/base/Table'
 import Td from '../components/base/Td'
 import Th from '../components/base/Th'
+import Toc from '../components/Toc'
+import MarkdownPageFooter from '../components/MarkdownPageFooter'
 
 /**
  * Helpers
@@ -47,18 +50,35 @@ const renderAst = new RehypeReact({
  * Component
  */
 
+function capitalize(s) {
+  return s[0].toUpperCase() + s.slice(1)
+}
+
 export default function Template({ data }) {
   const { guide } = data
 
   let pageTitle = guide.frontmatter.title
+
+  if (guide.fields.section) {
+    pageTitle += ` | ${capitalize(guide.fields.section.replace(/_/, ' '))}`
+  }
   if (guide.fields.rootSection) {
-    pageTitle += ` | ${guide.fields.rootSection.replace(/_/, ' ')}`
+    pageTitle += ` | ${capitalize(guide.fields.rootSection.replace(/_/, ' '))}`
   }
 
   let pageDescription = guide.frontmatter.description
   if (!pageDescription) {
     const removalRegexp = /Overview|Introduction|Major\/New Features/
     pageDescription = guide.excerpt.replace(removalRegexp, '').trim()
+  }
+
+  let articleStyles = ''
+  if (guide.headings.length > 0) {
+    articleStyles = css`
+      @media screen and (min-width: 60em) {
+        margin-right: 16rem
+      }
+    `
   }
 
   return (
@@ -69,9 +89,16 @@ export default function Template({ data }) {
       activeSection={guide.fields.section}
       activeRootSection={guide.fields.rootSection}
     >
-      <article className="mt2">
+      <article className="nested-links" css={articleStyles}>
+        {guide.headings.length > 0 && <Toc headings={guide.headings} />}
         <H1>{guide.frontmatter.title}</H1>
         {renderAst(guide.htmlAst)}
+        <MarkdownPageFooter
+          section={guide.fields.section}
+          title={guide.frontmatter.title}
+          group={data.sidebarNav.group}
+          isIndex={guide.fields.isIndex}
+        />
       </article>
     </Layout>
   )
@@ -113,6 +140,10 @@ export const pageQuery = graphql`
       }
     }
     guide: markdownRemark(id: { eq: $id }) {
+      headings {
+        depth
+        value
+      }
       fields {
         section
         rootSection

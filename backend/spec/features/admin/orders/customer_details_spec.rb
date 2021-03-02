@@ -32,7 +32,7 @@ describe 'Customer Details', type: :feature, js: true do
     # Regression test for #3335 & #5317
 
     it 'associates a user when not using guest checkout' do
-      select2_search product.name, from: Spree.t(:name_or_sku)
+      select2 product.name, from: Spree.t(:name_or_sku), search: true
 
       within('table.stock-levels') do
         fill_in 'variant_quantity', with: 1
@@ -41,7 +41,7 @@ describe 'Customer Details', type: :feature, js: true do
       expect(page).to have_css('.card', text: 'Order Line Items')
 
       click_link 'Customer'
-      targetted_select2 'foobar@example.com', from: '#s2id_customer_search'
+      select2 'foobar@example.com', css: '#customer-search-field', search: true
       # 5317 - Address prefills using user's default.
       expect_form_value('#order_bill_address_attributes_firstname', user.bill_address.firstname)
       expect_form_value('#order_bill_address_attributes_lastname', user.bill_address.lastname)
@@ -49,8 +49,8 @@ describe 'Customer Details', type: :feature, js: true do
       expect_form_value('#order_bill_address_attributes_address2', user.bill_address.address2)
       expect_form_value('#order_bill_address_attributes_city', user.bill_address.city)
       expect_form_value('#order_bill_address_attributes_zipcode', user.bill_address.zipcode)
-      expect_form_value('#order_bill_address_attributes_country_id', user.bill_address.country_id.to_s)
-      expect_form_value('#order_bill_address_attributes_state_id', user.bill_address.state_id.to_s)
+      expect(page).to have_css('#bcountry', text: user.bill_address.country_name.to_s)
+      expect(page).to have_css('#bstate', text: user.bill_address.state_name.to_s)
       expect_form_value('#order_bill_address_attributes_phone', user.bill_address.phone)
       wait_for { !page.has_button?('Update') }
       click_button 'Update'
@@ -71,13 +71,13 @@ describe 'Customer Details', type: :feature, js: true do
     end
 
     context 'selected country has no state' do
-      before { create(:country, iso: 'BRA', name: 'Brazil') }
+      before { create(:country, iso: 'BRA', name: 'Brazil', states_required: true) }
 
       it 'changes state field to text input' do
         click_link 'Customer'
 
         within('#billing') do
-          targetted_select2 'Brazil', from: '#s2id_order_bill_address_attributes_country_id'
+          select2 'Brazil', from: 'Country'
           fill_in 'order_bill_address_attributes_state_name', with: 'Piaui'
         end
 
@@ -100,7 +100,7 @@ describe 'Customer Details', type: :feature, js: true do
       # Regression test for #2950 + #2433
       # This act should transition the state of the order as far as it will go too
       within('#order_tab_summary') do
-        expect(page).to have_css('.state', text: 'complete')
+        expect(page).to have_css('.state', text: 'COMPLETE')
       end
     end
 
@@ -137,7 +137,7 @@ describe 'Customer Details', type: :feature, js: true do
         fill_in 'order_ship_address_attributes_city',       with: 'Bethesda'
         fill_in 'order_ship_address_attributes_zipcode',    with: '20170'
 
-        page.select('Alabama', from: 'order_ship_address_attributes_state_id')
+        select2 'Alabama', css: '#sstate'
         fill_in 'order_ship_address_attributes_phone', with: '123-456-7890'
         expect { click_button 'Update' }.not_to raise_error
       end
@@ -148,12 +148,12 @@ describe 'Customer Details', type: :feature, js: true do
     fill_in 'First Name',              with: 'John 99'
     fill_in 'Last Name',               with: 'Doe'
     fill_in 'Company',                 with: 'Company'
-    fill_in 'Street Address',          with: '100 first lane'
-    fill_in "Street Address (cont'd)", with: '#101'
+    fill_in 'Address',                 with: '100 first lane'
+    fill_in 'Address (contd.)',        with: '#101'
+    select2 country.name,              from: 'Country'
     fill_in 'City',                    with: 'Bethesda'
-    fill_in 'Zip',                     with: '20170'
-    targetted_select2 country.name,    from: "#s2id_order_#{kind}_address_attributes_country_id"
-    targetted_select2 state.name,      from: "#s2id_order_#{kind}_address_attributes_state_id"
+    fill_in 'Zip Code',                with: '20170'
+    select2 state.name,                from: 'State'
     fill_in 'Phone',                   with: '123-456-7890'
   end
 end

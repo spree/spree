@@ -15,9 +15,8 @@ module Spree
     it 'cannot link the same taxon to the same product more than once' do
       product = create(:product)
       taxon = create(:taxon)
-      add_taxon = -> { product.taxons << taxon }
-      expect(add_taxon).not_to raise_error
-      expect(add_taxon).to raise_error(ActiveRecord::RecordInvalid)
+      expect { product.taxons << taxon }.not_to raise_error
+      expect { product.taxons << taxon }.to raise_error(ActiveRecord::RecordInvalid)
     end
 
     def positions_to_be_valid(taxon)

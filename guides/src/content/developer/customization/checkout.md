@@ -139,7 +139,7 @@ add a new state, you will need to create a new partial for this state.
 
 The `update` action performs the following:
 
-* Updates the `current_order` with the paramaters passed in from the current
+* Updates the `current_order` with the parameters passed in from the current
   step.
 * Transitions the order state machine using the `next` event after successfully
   updating the order.
@@ -197,8 +197,10 @@ There are a few distinct scenarios that we'll cover here.
 
 ### Adding Logic Before or After a Particular Step
 
-The state_machine gem allows you to implement callbacks before or after
-transitioning to a particular step. These callbacks work similarly to [Active Record Callbacks](http://guides.rubyonrails.org/active_record_callbacks.html)
+The [state_machines](https://github.com/state-machines/state_machines) 
+gem allows you to implement callbacks before or after
+transitioning to a particular step. These callbacks work similarly to 
+[Active Record Callbacks](http://guides.rubyonrails.org/active_record_callbacks.html)
 in that you can specify a method or block of code to be executed prior to or
 after a transition. If the method executed in a before_transition returns false,
 then the transition will not execute.

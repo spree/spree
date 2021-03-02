@@ -152,6 +152,7 @@ Spree::Core::Engine.add_routes do
         resource :account, controller: :account, only: %i[show]
 
         namespace :account do
+          resources :addresses, controller: :addresses, only: %i[index create update]
           resources :credit_cards, controller: :credit_cards, only: %i[index show]
           resources :orders, controller: :orders, only: %i[index show]
         end
@@ -160,7 +161,8 @@ Spree::Core::Engine.add_routes do
         get '/countries/:iso', to: 'countries#show', as: :country
         get '/order_status/:number', to: 'order_status#show', as: :order_status
         resources :products, only: %i[index show]
-        resources :taxons,   only: %i[index show]
+        resources :taxons,   only: %i[index show], id: /.+/
+        get '/stores/:code', to: 'stores#show', as: :store
       end
     end
 

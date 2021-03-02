@@ -89,6 +89,8 @@ describe 'Order' do
   end
 
   describe '#could_use_store_credit?' do
+    let!(:store_credit_payment_method) { create(:store_credit_payment_method) }
+
     context 'order does not have an associated user' do
       subject { create(:store_credits_order_without_user) }
 
@@ -112,6 +114,29 @@ describe 'Order' do
         end
 
         it { expect(subject.could_use_store_credit?).to be true }
+      end
+
+      context 'without active Store Credit Payment' do
+        let(:available_store_credit) { 25.0 }
+
+        before do
+          allow(user).to receive(:total_available_store_credit).and_return(available_store_credit)
+          store_credit_payment_method.update_attribute(:active, false)
+        end
+
+        it { expect(subject.could_use_store_credit?).to be false }
+      end
+
+
+      context 'without Store Credit Payment' do
+        let(:available_store_credit) { 25.0 }
+
+        before do
+          allow(user).to receive(:total_available_store_credit).and_return(available_store_credit)
+          store_credit_payment_method.destroy
+        end
+
+        it { expect(subject.could_use_store_credit?).to be false }
       end
     end
   end

@@ -14,7 +14,7 @@ module Spree
 
     with_options inverse_of: :payments do
       belongs_to :order, class_name: 'Spree::Order', touch: true
-      belongs_to :payment_method, class_name: 'Spree::PaymentMethod'
+      belongs_to :payment_method, -> { with_deleted }, class_name: 'Spree::PaymentMethod'
     end
     belongs_to :source, polymorphic: true
 
@@ -195,12 +195,26 @@ module Spree
 
     def validate_source
       if source && !source.valid?
-        source.errors.each do |field, error|
-          field_name = I18n.t("activerecord.attributes.#{source.class.to_s.underscore}.#{field}")
-          errors.add(Spree.t(source.class.to_s.demodulize.underscore), "#{field_name} #{error}")
+        if Rails::VERSION::STRING >= '6.1'
+          source.errors.map { |error| { field: error.attribute, message: error&.message } }.each do |err|
+            next if err[:field].blank? || err[:message].blank?
+
+            add_source_error(err[:field], err[:message])
+          end
+        else
+          source.errors.messages.each do |field, error|
+            next if field.blank? || error.empty?
+
+            add_source_error(field, error.first)
+          end
         end
       end
       !errors.present?
+    end
+
+    def add_source_error(field, message)
+      field_name = I18n.t("activerecord.attributes.#{source.class.to_s.underscore}.#{field}")
+      errors.add(Spree.t(source.class.to_s.demodulize.underscore), "#{field_name} #{message}")
     end
 
     def profiles_supported?

@@ -71,7 +71,7 @@ describe Spree::Order do
       Spree::PromotionHandler::Coupon.new(order).apply
       order.apply_free_shipping_promotions
 
-      shipment_tax_adjustments = order.shipment_adjustments.where(source_type: "Spree::TaxRate")
+      shipment_tax_adjustments = order.shipment_adjustments.where(source_type: 'Spree::TaxRate')
       expect(shipment_tax_adjustments.blank?).to be true
     end
   end

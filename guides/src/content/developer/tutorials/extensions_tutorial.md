@@ -7,6 +7,12 @@ section: tutorial
 
 Let's build a simple [extension](/developer/customization/extensions.html). Suppose we want the ability to mark certain products as being on sale. We'd like to be able to set a sale price on a product and show products that are on sale on a separate products page. This is a great example of how an extension can be used to build on the solid Spree foundation.
 
+Before we start, let's make sure we have spree command installed by running:
+
+```ruby
+gem install spree
+```
+
 So let's start by generating the extension. Run the following command from a directory of your choice outside of our Spree application:
 
 ```bash
@@ -48,13 +54,13 @@ end
 
 Before we continue development of our extension, let's add it to the Spree application we created in the [last tutorial](/developer/getting_started_tutorial.html). This will allow us to see how the extension works with an actual Spree store while we develop it.
 
-Within the `mystore` application directory, add the following line to the bottom of our `Gemfile`:
+Within the `my_store` application directory, add the following line to the bottom of our `Gemfile`:
 
 ```ruby
 gem 'spree_simple_sales', path: '../spree_simple_sales'
 ```
 
-You may have to adjust the path somewhat depending on where you created the extension. You want this to be the path relative to the location of the `mystore` application.
+You may have to adjust the path somewhat depending on where you created the extension. You want this to be the path relative to the location of the `my_store` application.
 
 Once you have added the gem, it's time to bundle:
 
@@ -81,21 +87,23 @@ Now we need to extend `Spree::HomeController` and add an action that selects "on
 Make sure you are in the `spree_simple_sales` root directory and run the following command to create the directory structure for our controller decorator:
 
 ```bash
-mkdir -p app/controllers/spree
+mkdir -p app/controllers/spree_simple_sales/spree
 ```
 
 Next, create a new file in the directory we just created called `home_controller_decorator.rb` and add the following content to it:
 
 ```ruby
 module SpreeSimpleSales
-  module HomeControllerDecorator
-    def sale
-      @products = Spree::Product.joins(:variants_including_master).where('spree_variants.sale_price is not null').distinct
+  module Spree
+    module HomeControllerDecorator
+      def sale
+        @products = ::Spree::Product.joins(:variants_including_master).where('spree_variants.sale_price is not null').distinct
+      end
     end
   end
 end
 
-Spree::HomeController.prepend SpreeSimpleSales::HomeControllerDecorator
+Spree::HomeController.prepend SpreeSimpleSales::Spree::HomeControllerDecorator
 ```
 
 This will select just the products that have a variant with a `sale_price` set.
@@ -148,7 +156,7 @@ Next, create the file `app/views/spree/home/sale.html.erb` and add the following
 
 ```erb
 <div data-hook="homepage_products">
-  <%%= render 'spree/shared/products', products: @products %>
+  <%= render 'spree/shared/products', products: @products %>
 </div>
 ```
 
@@ -161,31 +169,27 @@ Let's fix our extension so that it uses the `sale_price` when it is present.
 First, create the required directory structure for our new decorator:
 
 ```bash
-mkdir -p app/models/spree
+mkdir -p app/models/spree_simple_sales/spree
 ```
 
-Next, create the file `app/models/spree/variant_decorator.rb` and add the following content to it:
+Next, create the file `app/models/spree_simple_sales/spree/variant_decorator.rb` and add the following content to it:
 
 ```ruby
 module SpreeSimpleSales
-  module VariantDecorator
-    def self.included base
-      base.class_eval do
-        alias_method :orig_price_in, :price_in
+  module Spree
+    module VariantDecorator
+      def price_in(currency)
+        return super unless sale_price.present?
+        ::Spree::Price.new(variant_id: self.id, amount: self.sale_price, currency: currency)
       end
-    end
-
-    def price_in(currency)
-      return orig_price_in(currency) unless sale_price.present?
-      Spree::Price.new(variant_id: self.id, amount: self.sale_price, currency: currency)
     end
   end
 end
 
-Spree::Variant.prepend SpreeSimpleSales::VariantDecorator
+Spree::Variant.prepend SpreeSimpleSales::Spree::VariantDecorator
 ```
 
-Here we alias the original method `price_in` to `orig_price_in` and override it. If there is a `sale_price` present on the product's master variant, we return that price. Otherwise, we call the original implementation of `price_in`.
+If there is a `sale_price` present on the product's master variant, we return that price. Otherwise, we call the original implementation of `price_in` (using `return super`).
 
 ## Testing Our Decorator
 

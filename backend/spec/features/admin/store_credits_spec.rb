@@ -41,7 +41,10 @@ describe 'Store credits admin', type: :feature do
 
     describe 'with default currency' do
       it 'creates store credit and associate it with the user' do
-        click_link 'Add Store Credit'
+        within find('#contentHeader') do
+          click_link 'Add Store Credit'
+        end
+
         page.fill_in 'store_credit_amount', with: '102.00'
         select 'Exchange', from: 'store_credit_category_id'
         click_button 'Create'
@@ -56,7 +59,10 @@ describe 'Store credits admin', type: :feature do
 
     describe 'with selected currency' do
       it 'creates store credit and associate it with the user' do
-        click_link 'Add Store Credit'
+        within find('#contentHeader') do
+          click_link 'Add Store Credit'
+        end
+        
         page.fill_in 'store_credit_amount', with: '100.00'
         select 'EUR', from: 'store_credit_currency'
         select 'Exchange', from: 'store_credit_category_id'

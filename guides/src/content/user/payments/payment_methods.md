@@ -4,7 +4,7 @@ title: Payment Methods
 
 ## Introduction
 
-Payment methods represent the different payment options available to customers during the checkout process on an e-commerce store. Spree supports many types of payment methods, including both online and offline options. This guide describes how to add payment methods to your Spree store.
+Payment methods represent the different payment options available to customers during the checkout process in an e-commerce store. Spree supports many types of payment methods, including both online and offline options. This guide describes how to add payment methods to your Spree store.
 
 ## Terminology
 
@@ -12,7 +12,7 @@ Let's begin by explaining the difference between a Payment Gateway and a Merchan
 
 **Payment Gateway** - A payment gateway is a service that authorizes credit card payments, processes them securely, and deposits the funds into your bank account. A payment gateway performs the same functions as a credit card swipe machine at a restaurant or retail store, it just performs these functions for purchases made online instead of in person.
 
-**Merchant Account** - A merchant account is a type of bank account that allows you to accept credit card payments online. If you have a retail business and already accept credit card payments, then more than likely you have a merchant account. When you start to sell products online, you may need to call your bank and ask that they set you up with an _Internet_ merchant account. An Internet merchant account allows you to accept payments online without having the customer's credit card physically in front of you.
+**Merchant Account** - A merchant account is a type of bank account that allows you to accept credit card payments online. If you have a retail business and already accept credit card payments, then you more than likely have a merchant account. When you start to sell products online, you may need to call your bank and ask that they set you up with an _Internet_ merchant account. An Internet merchant account allows you to accept payments online without having the customer's credit card physically in front of you.
 
 ## Evaluating Payment Gateways
 
@@ -26,7 +26,7 @@ When researching payment gateway options, you may find that they offer an all-in
 
 ## Add a Payment Method
 
-Spree enables you to utilize the payment method of choice for your e-commerce store. We have two [preferred payment gateway partners](http://spreecommerce.com/products/payment_processing) and a long [list](https://github.com/Shopify/active_merchant#supported-direct-payment-gateways) of payment gateways that are supported by default in Spree. We also enable you to add a custom payment gateway, as well as offer offline payment options such as checks and purchase orders.
+Spree enables you to utilize the payment method of choice for your e-commerce store. We have two [preferred payment gateway partners](http://spreecommerce.com/products/payment_processing) and a long [list](https://github.com/Shopify/active_merchant#supported-direct-payment-gateways) of payment gateways that are supported by default in Spree. We also enable you to add a custom payment gateway and offer offline payment options such as checks and purchase orders.
 
 ### Add a Supported Gateway
 
@@ -34,11 +34,11 @@ Read through the following explanatory text to add one of the supported payment 
 
 #### Select Provider
 
-To configure one of the supported payment gateways, you must first install the [Spree_Gateway](https://github.com/spree/spree_gateway) extension on your store. More than likely, you will want to ask someone from your technical team to do this. Once this extension has been installed, you can configure one of the supported gateways in the Admin Interface by clicking the "Configuration" tab and then clicking the "New Payment Method" button.
+To configure one of the supported payment gateways, you must first install the [Spree Gateway](https://github.com/spree/spree_gateway) extension on your store. More than likely, you will want to ask someone from your technical team to do this. Once this extension has been installed, you can configure one of the supported gateways in the Admin Interface by clicking the "Configuration" tab and then clicking the "New Payment Method" button.
 
 ![New Payment Method Form](../../../images/user/payments/new_payment_method.jpg)
 
-If you installed the [Spree_Gateway](https://github.com/spree/spree_gateway) extension, you will see a long list of gateways in the "Provider" drop down menu. Select the one that you would like to add.
+If you installed the [Spree Gateway](https://github.com/spree/spree_gateway) extension, you will see a long list of gateways in the "Provider" drop down menu. Select the one that you would like to add.
 
 ![Select Payment Gateway Provider](../../../images/user/payments/add_payment_provider.jpg)
 
@@ -52,7 +52,7 @@ The Backend is the Admin Interface for your store. Site administrators typically
 
 #### Auto Capture
 
-There is a possibility to set Auto Capture feature for your payment methods. Once you set Auto Capture on **Yes** option for a particular payment method, all the payments will be captured automatically. At this point all the payments will be captured without Admin's direct interference. However,  **Use App Default (false)** is default setting for newly created Payment Method.
+There is a possibility to set an Auto Capture feature for your payment methods. Once you set Auto Capture to the **Yes** option for a particular payment method, all the payments will be captured automatically. At this point, all the payments will be captured without Admin's direct interference. However, **Use App Default (false)** is default setting for a newly created Payment Method.
 
 ![Set up Auto Capture Payment Method](../../../images/user/config/auto_capture_payment_method.jpg)
 

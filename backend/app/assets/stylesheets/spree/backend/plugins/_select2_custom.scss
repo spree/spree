@@ -1,0 +1,11 @@
+// Stop an open select2-dropdown from appearing over fixed nav bar.
+.select2-dropdown {
+  z-index: 1028;
+}
+
+// Hides the empty <li> tag highligted in open select2-dropdown.
+ul.select2-results__options {
+  li:empty  {
+    display: none;
+  }
+}

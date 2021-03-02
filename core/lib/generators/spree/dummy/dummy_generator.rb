@@ -57,6 +57,7 @@ module Spree
       template 'rails/test.rb', "#{dummy_path}/config/environments/test.rb", force: true
       template 'rails/script/rails', "#{dummy_path}/spec/dummy/script/rails", force: true
       template 'initializers/devise.rb', "#{dummy_path}/config/initializers/devise.rb", force: true
+      template 'initializers/bullet.rb', "#{dummy_path}/config/initializers/bullet.rb", force: true
     end
 
     def test_dummy_inject_extension_requirements
@@ -137,7 +138,7 @@ end
     end
 
     def gemfile_path
-      core_gems = ['spree/core', 'spree/api', 'spree/backend', 'spree/frontend']
+      core_gems = ['spree/core', 'spree/api', 'spree/backend', 'spree/frontend', 'spree/sample']
 
       if core_gems.include?(lib_name)
         '../../../../../Gemfile'

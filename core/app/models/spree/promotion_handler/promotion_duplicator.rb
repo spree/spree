@@ -1,15 +1,16 @@
 module Spree
   module PromotionHandler
     class PromotionDuplicator
-      def initialize(promotion)
+      def initialize(promotion, random_string: nil)
         @promotion = promotion
+        @random_string = random_string || generate_random_string(4)
       end
 
       def duplicate
         @new_promotion = @promotion.dup
-        @new_promotion.path = "#{@promotion.path}_new"
+        @new_promotion.path = "#{@promotion.path}_#{@random_string}"
         @new_promotion.name = "New #{@promotion.name}"
-        @new_promotion.code = "#{@promotion.code}_new"
+        @new_promotion.code = "#{@promotion.code}_#{@random_string}"
 
         ActiveRecord::Base.transaction do
           @new_promotion.save
@@ -31,6 +32,11 @@ module Spree
           new_rule.taxons = rule.taxons if rule.try(:taxons)
           new_rule.products = rule.products if rule.try(:products)
         end
+      end
+
+      def generate_random_string(number)
+        charset = Array('A'..'Z') + Array('a'..'z')
+        Array.new(number) { charset.sample }.join
       end
 
       def copy_actions

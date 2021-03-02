@@ -21,7 +21,7 @@ import renderHtml from '../../utils/renderHtml'
 
 export default class Alert extends React.Component {
   static propTypes = {
-    type: PropTypes.oneOf(['admin_only', 'not_found']),
+    type: PropTypes.oneOf(['admin_only', 'not_found', 'authorization_failure']),
     kind: PropTypes.oneOf(['danger', 'warning', 'info', 'note']),
     children: PropTypes.array
   }
@@ -93,7 +93,9 @@ export default class Alert extends React.Component {
                 margin: 0
               }
             }}
-            dangerouslySetInnerHTML={{ __html: renderHtml(children[0]) }}
+            dangerouslySetInnerHTML={{
+              __html: renderHtml(children[0])
+            }}
           />
         )}
       </div>

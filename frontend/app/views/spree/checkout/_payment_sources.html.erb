@@ -1,0 +1,17 @@
+<div id="existing_cards" class="payment-sources-existing-cards" style="display:none;">
+  <%= radio_button_tag 'use_existing_card', 'yes', true, class: 'd-none' %>
+  <div class="form-group" data-hook="existing_cards">
+    <div class="d-flex flex-column payment-sources-list">
+      <% @payment_sources.each do |card| %>
+        <%= render partial: 'credit_card', locals: { card: card } %>
+      <% end %>
+      <div>
+        <label class="form-check-label spree-radio-label col-6 mb-2">
+          <%= radio_button_tag 'use_existing_card', 'no' %>
+          <span class="spree-radio-label-custom-input"></span>
+          <span><%= Spree.t(:add_new_credit_card) %></span>
+        </label>
+      </div>
+    </div>
+  </div>
+</div>

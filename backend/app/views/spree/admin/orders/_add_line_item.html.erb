@@ -9,7 +9,7 @@
   <div class="card-body">
     <div data-hook="add_product_name" class="form-group">
       <%= label_tag :add_line_item_variant_id, Spree.t(:name_or_sku) %>
-      <%= hidden_field_tag :add_line_item_variant_id, "", class: "variant_autocomplete d-block w-100" %>
+      <%= select_tag 'add_line_item_variant_id', nil , class: 'variant_autocomplete d-block w-100' %>
     </div>
 
     <div id="stock_details"></div>

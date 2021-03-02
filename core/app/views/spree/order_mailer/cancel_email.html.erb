@@ -1,30 +1,24 @@
-<table class="row header">
+<h1>
+  <%= Spree.t('order_mailer.cancel_email.dear_customer', name: name_for(@order)) %>
+</h1>
+<p>
+  <%= Spree.t('order_mailer.cancel_email.instructions') %>
+</p>
+
+<table class="purchase" role="presentation">
   <tr>
     <td>
-      <p class="lede">
-        <%= Spree.t('order_mailer.cancel_email.dear_customer') %>
-      </p>
-      <p>
-        <%= Spree.t('order_mailer.cancel_email.instructions') %>
-      </p>
-      <p>
-        <%= Spree.t('order_mailer.cancel_email.order_summary_canceled', number: @order.number) %>
-      </p>
-      <table class="container">
-        <tr>
-          <td class="wrapper last">
-            <table class="twelve columns">
-              <%= render collection: @order.line_items, partial: 'spree/shared/mailer_line_item', as: :line_item %>
-              <%= render 'spree/order_mailer/subtotal', order: @order %>
-              <% @order.adjustments.eligible.each do |adjustment| %>
-                <%= render 'spree/order_mailer/adjustment', adjustment: adjustment %>
-              <% end %>
-              <%= render 'spree/order_mailer/total', order: @order %>
-            </table>
-          </td>
-        </tr>
-      </table>
+      <h3> <%= Spree.t('order_mailer.cancel_email.order_summary_canceled', number: @order.number) %></h3>
     </td>
-    <td class="expander"></td>
+  </tr>
+  <tr>
+    <td colspan="2">
+      <%= render 'spree/shared/purchased_items_table', line_items: @order.line_items, order: @order %>
+    </td>
   </tr>
 </table>
+<p>
+  <%= Spree.t('order_mailer.cancel_email.thanks') %>
+  <br />
+  <%= Spree.t('order_mailer.store_team', store_name: current_store.name) %>
+</p>

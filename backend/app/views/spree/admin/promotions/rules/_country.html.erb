@@ -1,6 +1,6 @@
 <div class="card-body">
   <div class="form-group mb-0">
     <%= label_tag Spree.t('country_rule.label') %>
-    <%= select_tag("#{param_prefix}[preferred_country_id]", options_for_select(Spree::Country.pluck(:name, :id), promotion_rule.preferred_country_id), { class: 'select_product form-control' }) %>
+    <%= select_tag("#{param_prefix}[preferred_country_id]", options_for_select(Spree::Country.pluck(:name, :id), promotion_rule.preferred_country_id), { class: 'select_product form-control custom-select' }) %>
   </div>
 </div>

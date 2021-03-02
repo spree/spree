@@ -32,51 +32,6 @@ module CapybaraExt
     end
   end
 
-  def select2_search(value, options)
-    options[:from] = select2_from_label(options[:from])
-    targetted_select2_search(value, options)
-  end
-
-  def targetted_select2_search(value, options)
-    select2_el = find(:css, options[:from])
-    select2_el.click
-    page.document.find('.select2-search input.select2-input,
-                        .select2-search-field input.select2-input.select2-focused').send_keys(value)
-    select_select2_result(value)
-  end
-
-  def select2(value, options)
-    options[:from] = select2_from_label(options[:from])
-    targetted_select2(value, options)
-  end
-
-  def select2_from_label(from)
-    label = find(:label, from, class: '!select2-offscreen')
-    within label.first(:xpath, './/..') do
-      "##{find('.select2-container')['id']}"
-    end
-  end
-
-  def select2_no_label(value, options = {})
-    raise "Must pass a hash containing 'from'" if !options.is_a?(Hash) || !options.key?(:from)
-
-    placeholder = options[:from]
-    click_link placeholder
-
-    select_select2_result(value)
-  end
-
-  def targetted_select2(value, options)
-    # find select2 element and click it
-    find(options[:from]).find('a').click
-    select_select2_result(value)
-  end
-
-  def select_select2_result(value)
-    # results are in a div appended to the end of the document
-    page.document.find('div.select2-result-label', match: :first, text: %r{#{Regexp.escape(value)}}i).click
-  end
-
   # arg delay in seconds
   def wait_for_ajax(delay = Capybara.default_max_wait_time)
     Timeout.timeout(delay) do

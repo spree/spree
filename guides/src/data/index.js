@@ -35,6 +35,8 @@ import SHIPMENT_SMALL from './shipment_small'
 import SHIPMENTS from './shipments'
 import RETURN_AUTHORIZATION from './return_authorization'
 import RETURN_AUTHORIZATIONS from './return_authorizations'
+import CUSTOMER_RETURN from './customer_return'
+import CUSTOMER_RETURNS from './customer_returns'
 import PRODUCT from './product'
 import PRODUCTS from './products'
 import PRODUCT_PROPERTY from './product_property'
@@ -86,6 +88,8 @@ export default {
   shipments: SHIPMENTS,
   return_authorization: RETURN_AUTHORIZATION,
   return_authorizations: RETURN_AUTHORIZATIONS,
+  customer_return: CUSTOMER_RETURN,
+  customer_returns: CUSTOMER_RETURNS,
   product: PRODUCT,
   products: PRODUCTS,
   product_property: PRODUCT_PROPERTY,

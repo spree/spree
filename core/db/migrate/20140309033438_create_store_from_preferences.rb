@@ -6,12 +6,13 @@ class CreateStoreFromPreferences < ActiveRecord::Migration[4.2]
         false
       end
     end
-    
+
     preference_store = Spree::Preferences::Store.instance
     if store = Spree::Store.where(default: true).first
       store.meta_description = preference_store.get('spree/app_configuration/default_meta_description') {}
       store.meta_keywords    = preference_store.get('spree/app_configuration/default_meta_keywords') {}
       store.seo_title        = preference_store.get('spree/app_configuration/default_seo_title') {}
+      store.default_currency = preference_store.get('spree/app_configuration/currency') { 'USD' }
       store.save!
     else
       # we set defaults for the things we now require
@@ -26,10 +27,14 @@ class CreateStoreFromPreferences < ActiveRecord::Migration[4.2]
           'spree@example.com'
         end
 
-        s.meta_description = preference_store.get('spree/app_configuration/default_meta_description') {}
+        s.meta_description = preference_store.get('spree/app_configuration/default_meta_description') do
+          'This is the new Spree UX DEMO | OVERVIEW: http://bit.ly/new-spree-ux | DOCS: http://bit.ly/spree-ux-customization-docs | CONTACT: https://spreecommerce.org/contact/'
+        end
         s.meta_keywords    = preference_store.get('spree/app_configuration/default_meta_keywords') {}
-        s.seo_title        = preference_store.get('spree/app_configuration/default_seo_title') {}
-        s.default_currency = preference_store.get('spree/app_configuration/currency') {}
+        s.seo_title        = preference_store.get('spree/app_configuration/default_seo_title') do
+          'Spree Commerce Demo Shop'
+        end
+        s.default_currency = preference_store.get('spree/app_configuration/currency') { 'USD' }
         s.code             = 'spree'
       end.save!
     end

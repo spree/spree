@@ -1,0 +1,23 @@
+<div class="p-0 justify-content-around mx-auto no-product-available">
+  <div id="no-product-available-close-button" class="d-flex no-product-available-icon">
+    <%= inline_svg_tag "close.svg", class: "w-100 h-100" %>
+  </div>
+
+  <p class="no-product-available-header">
+    <%= Spree.t('no_product_available.opps') %>
+  </p>
+
+  <p class='no-product-available-text'>
+    <% if flash[:error].present? %>
+      <%= flash[:error] %>
+    <% else %>
+      <%= Spree.t('no_product_available.for_this_quantity') %>
+    <% end %>
+  <p>
+
+  <div class="btn btn-primary text-uppercase font-weight-bold d-flex no-product-available-button" id="no-product-available-hide-button">
+    <p class="d-flex m-auto no-product-available-button-text">
+      <%= Spree.t(:ok) %>
+    </p>
+  </div>
+</div>

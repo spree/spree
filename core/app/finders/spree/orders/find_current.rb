@@ -9,13 +9,13 @@ module Spree
         return order unless order.nil?
         return if user.nil?
 
-        incomplete_orders.order(created_at: :desc).find_by(store: store, user: user)
+        incomplete_orders.order(created_at: :desc).find_by(store: store, user: user, currency: params[:currency])
       end
 
       private
 
       def incomplete_orders
-        Spree::Order.incomplete.includes(scope_includes)
+        Spree::Order.incomplete.not_canceled.includes(scope_includes)
       end
 
       def scope_includes

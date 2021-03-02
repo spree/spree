@@ -6,6 +6,7 @@ describe Spree::CheckoutController, type: :controller do
   render_views
   let(:token) { 'some_token' }
   let(:user) { stub_model(Spree::LegacyUser) }
+  let(:store) { Spree::Store.default }
 
   before do
     allow(controller).to receive_messages try_spree_current_user: user
@@ -14,8 +15,7 @@ describe Spree::CheckoutController, type: :controller do
   # Regression test for #3246
   context 'when using GBP' do
     before do
-      Spree::Config[:currency] = 'GBP'
-      FactoryBot.create(:store, default_currency: 'GBP')
+      store.update(default_currency: 'GBP')
     end
 
     context 'when order is in delivery' do

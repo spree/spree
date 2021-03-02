@@ -1,11 +1,10 @@
 ---
 title: Deface Overrides
 section: tutorial
-hidden: true
 ---
 
 <alert kind="warning">
-  Using Deface is not recommended. Please refer to [View Customization section](/developer/customization/view.html) for more information.
+  Using Deface is not recommended. Please refer to [Template Customization section](/developer/customization/view.html) for more information.
 </alert>
 
 ## Introduction
@@ -44,7 +43,7 @@ So we want to override `spree/admin/products/_form.html.erb`. Here is the part o
 ```erb
 <div class="right four columns omega" data-hook="admin_product_form_right">
   <%= f.field_container :price do %>
-    <%= f.label :price, raw(Spree.t(:master_price) + content_tag(:span, ' *', class: 'required')) %>
+    <%= f.label :price, raw(Spree.t(:master_price) + required_span_tag) %>
     <%= f.text_field :price, value: number_to_currency(@product.price, unit: '')%>
     <%= f.error_message_on :price %>
   <% end %>
@@ -109,11 +108,9 @@ Deface currently supports the following actions:
 - <tt>:add_to_attributes</tt> - Appends value to attributes on all elements that match the supplied selector, adds attribute if not present. Expects :attributes option to be passed.
 - <tt>:remove_from_attributes</tt> - Removes value from attributes on all elements that match the supplied selector. Expects :attributes option to be passed.
 
----
-
-Not all actions are applicable to all elements. For example, <tt>:insert_top</tt> and <tt>:insert_bottom</tt> expects a parent element with children.
-
----
+<alert kind="note">
+Not all actions are applicable to all elements. For example, `:insert_top` and `:insert_bottom` expects a parent element with children.
+</alert>
 
 ### Supplying content
 
@@ -123,11 +120,9 @@ Deface supports three options for supplying content to be used by an override:
 - <tt>:partial</tt> - Relative path to a partial
 - <tt>:template</tt> - Relative path to a template
 
----
-
+<alert kind="note">
 As Deface operates on the Erb source the content supplied to an override can include Erb, it is not limited to just HTML. You also have access to all variables accessible in the original Erb context.
-
----
+</alert>
 
 ### Targeting elements
 
@@ -220,15 +215,6 @@ contents (and importantly not against the finished / generated HTML). In
 order for Deface to make ruby blocks contained in a view parseable they
 are converted into a pseudo markup as follows.
 
----
-
-Version 1.0 of Deface, used in Spree 2.1, changed the code tag syntax.
-Formerly code tags were parsed as `<code erb-loud>` and `<code erb-silent>`. They are now parsed as `<erb loud>` and `<erb silent>`.
-Deface overrides which used selectors like `code[erb-loud]` should now
-use `erb[loud]`.
-
----
-
 Given the following Erb file:
 
 ```erb
@@ -279,26 +265,17 @@ after upgrades.
 Once you've reviewed the new source you can update the `:original` value
 to new source to clear the warning.
 
----
-
+<alert kind="note">
 Deface removes all whitespace from both the actual and `:original`
 source values before comparing, to reduce false warnings caused by basic
 whitespace differences.
-
----
+</alert>
 
 ### Organizing Overrides
 
 The suggested method for organizing your overrides is to create a
 separate file for each override inside the **app/overrides** directory,
 naming each file the same as the **:name** specified within.
-
----
-
-Using this method will ensure your overrides are compatible with
-future theming developments (editor).
-
----
 
 ### More information on Deface
 

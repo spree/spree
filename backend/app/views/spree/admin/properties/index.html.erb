@@ -3,7 +3,7 @@
 <% end %>
 
 <% content_for :page_actions do %>
-  <%= button_link_to Spree.t(:new_property), new_object_url, { class: "btn-success", icon: 'add', 'data-update' => 'new_property', id: 'new_property_link' } %>
+  <%= button_link_to Spree.t(:new_property), new_object_url, { class: "btn-success", icon: 'add.svg', 'data-update' => 'new_property', id: 'new_property_link' } %>
 <% end if can?(:create, Spree::Property) %>
 
 <% content_for :table_filter do %>
@@ -29,7 +29,7 @@
       </div>
 
       <div class="form-actions" data-hook="admin_pproperties_index_search_buttons">
-        <%= button Spree.t(:search), 'search' %>
+        <%= button Spree.t(:search), 'search.svg' %>
       </div>
 
     <% end %>
@@ -37,6 +37,7 @@
 <% end %>
 
 <% if @properties.any? %>
+<div class="table-responsive">
   <table class="table" id='listing_properties' data-hook>
     <thead>
       <tr data-hook="listing_properties_header">
@@ -58,6 +59,7 @@
       <% end %>
     </tbody>
   </table>
+</div>
 <% else %>
   <div class="alert alert-info no-objects-found">
     <%= Spree.t(:no_resource_found, resource: plural_resource_name(Spree::Property)) %>,
@@ -65,4 +67,4 @@
   </div>
 <% end %>
 
-<%= paginate @collection, theme: 'twitter-bootstrap-4' %>
+<%= paginate @collection, theme: 'admin-twitter-bootstrap-4' %>

@@ -22,7 +22,7 @@ const NotFoundPage = () => (
         </P>
         <P>
           For documentation on the API go to&nbsp;
-          <Link to="/api/overview">API section</Link>
+          <Link to="https://api.spreecommerce.org/">API section</Link>
         </P>
       </div>
     </div>

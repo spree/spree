@@ -6,15 +6,44 @@ describe 'Spree OAuth', type: :request do
   describe 'get token' do
     context 'by password' do
       before do
+        module Spree
+          module Auth
+            class Config
+              def self.[](key)
+                {
+                  confirmable: true
+                }[key]
+              end
+
+              def self.[]=(key)
+              end
+            end
+          end
+        end
+
         allow(Spree.user_class).to receive(:find_for_database_authentication).with(hash_including(:email)) { user }
         allow(user).to receive(:valid_for_authentication?).and_return(true)
+        allow(user).to receive(:active_for_authentication?).and_return(active_value)
         post '/spree_oauth/token?grant_type=password&username=new@user.com&password=secret'
       end
 
-      it 'returns new token' do
-        expect(response.status).to eq(200)
-        expect(json_response).to have_attributes([:access_token, :token_type, :expires_in, :refresh_token, :created_at])
-        expect(json_response['token_type']).to eq('Bearer')
+      context 'when the user is confirmed' do
+        let(:active_value) { true }
+
+        it 'returns new token' do
+          expect(response.status).to eq(200)
+          expect(json_response).to have_attributes([:access_token, :token_type, :expires_in, :refresh_token, :created_at])
+          expect(json_response['token_type']).to eq('Bearer')
+        end
+      end
+
+      context 'when the user is not confirmed' do
+        let(:active_value) { false }
+
+        it 'does not return new token' do
+          expect(response.status).to eq(400)
+          expect(json_response[:error]).to eq("invalid_grant")
+        end
       end
     end
   end

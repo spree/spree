@@ -54,6 +54,7 @@ module Spree
       end
 
       def load_data
+        @stores = Spree::Store.all
         @providers = Gateway.providers.sort_by(&:name)
       end
 

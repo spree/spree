@@ -30,9 +30,9 @@ describe Spree::PromotionHandler::PromotionDuplicator do
       let(:excluded_fields) { ['code', 'name', 'path', 'id', 'created_at', 'updated_at', 'deleted_at'] }
 
       it 'returns a duplicate of a promotion with the path, name and code fields changed' do
-        expect("#{promotion.path}_new").to eq new_promotion.path
         expect("New #{promotion.name}").to eq new_promotion.name
-        expect("#{promotion.code}_new").to eq new_promotion.code
+        expect(new_promotion.path).to match /#{promotion.path}_[a-zA-Z]{4}/
+        expect(new_promotion.code).to match /#{promotion.code}_[a-zA-Z]{4}/
       end
 
       it 'returns a duplicate of a promotion with all the fields (except the path, name and code fields) the same' do

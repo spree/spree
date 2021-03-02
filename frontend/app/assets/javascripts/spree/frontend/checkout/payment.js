@@ -1,28 +1,73 @@
+/* global Cleave */
+var CARD_NUMBER_SELECTOR = '.cardNumber'
+var CARD_EXPIRATION_SELECTOR = '.cardExpiry'
+var CARD_CODE_SELECTOR = '.cardCode'
+
 //= require spree/frontend/coupon_manager
 Spree.ready(function ($) {
   Spree.onPayment = function () {
     if ($('#checkout_form_payment').length) {
       if ($('#existing_cards').length) {
-        $('#payment-method-fields').hide()
         $('#payment-methods').hide()
-        $('#use_existing_card_yes').click(function () {
-          $('#payment-method-fields').hide()
+        $('.existing-cc-radio').click(function () {
+          $(this).prop('checked', true)
+          $('#use_existing_card_no').prop('checked', false)
+          $('#use_existing_card_yes').prop('checked', true)
           $('#payment-methods').hide()
-          $('.existing-cc-radio').prop('disabled', false)
+          Spree.enableSave()
         })
         $('#use_existing_card_no').click(function () {
-          $('#payment-method-fields').show()
           $('#payment-methods').show()
-          $('.existing-cc-radio').prop('disabled', true)
+          $('.existing-cc-radio').prop('checked', false)
+          $('#use_existing_card_yes').prop('checked', false)
+          Spree.enableSave()
         })
       }
-      $('.cardNumber').payment('formatCardNumber')
-      $('.cardExpiry').payment('formatCardExpiry')
-      $('.cardCode').payment('formatCardCVC')
-      $('.cardNumber').change(function () {
-        $(this).parent().siblings('.ccType').val($.payment.cardType(this.value))
-      })
+
+      if ($(CARD_NUMBER_SELECTOR).length > 0 &&
+          $(CARD_EXPIRATION_SELECTOR).length > 0 &&
+          $(CARD_CODE_SELECTOR).length > 0) {
+        /* eslint-disable no-new */
+        new Cleave(CARD_NUMBER_SELECTOR, {
+          creditCard: true,
+          onCreditCardTypeChanged: function (type) {
+            $('.ccType').val(type)
+          }
+        })
+        /* eslint-disable no-new */
+        new Cleave(CARD_EXPIRATION_SELECTOR, {
+          date: true,
+          datePattern: ['m', 'Y']
+        })
+        /* eslint-disable no-new */
+        new Cleave(CARD_CODE_SELECTOR, {
+          numericOnly: true,
+          blocks: [3]
+        })
+      }
+
       $('input[type="radio"][name="order[payments_attributes][][payment_method_id]"]').click(function () {
+        $('#payment-methods').hide()
+        $('.payment-sources').hide()
+        Spree.enableSave()
+        if ($('#payment_method_' + this.value).find('fieldset').children().length !== 0) {
+          if (this.closest('label').dataset.type === 'card') {
+            if ($('#existing_cards').length) {
+              $('.existing-cc-radio').first().prop('checked', true);
+              $('#use_existing_card_no').prop('checked', false)
+              $('#use_existing_card_yes').prop('checked', true)
+              $('#existing_cards').show();
+              $('#payment-methods').hide();
+              $('.payment-sources').show()
+            }
+          } else {
+            $('.existing-cc-radio').prop('checked', false);
+            $('#use_existing_card_no').prop('checked', false);
+            $('#existing_cards').hide();
+            $('#payment-methods').show();
+            $('.payment-sources').show()
+          }
+        }
         $('#payment-methods li').hide()
         if (this.checked) {
           $('#payment_method_' + this.value).show()

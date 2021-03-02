@@ -1,5 +1,5 @@
 ---
-title: 'View Customization'
+title: 'Templates'
 section: customization
 order: 0
 ---
@@ -7,7 +7,7 @@ order: 0
 ## Overview
 
 View customization allows you to extend or replace any view within a
-Spree application bot for the Customer Storefront (Frontend) and Admin Panel (Backend).
+Spree application both for the Customer Storefront (Frontend) and Admin Panel (Backend).
 
 ## Template replacement
 
@@ -22,13 +22,13 @@ For example, to override product details page, create the file `app/views/spree/
 
 ## Storefront (Frontend)
 
-### Import storefront views into your application
+### Import storefront customizable elements into your application
 
-You can import all views from spree frontend into your application
+You can import all customizable elements from spree frontend into your application
 using this command (in your application root directory):
 
 ```bash
-rails g spree:frontend:copy_views
+rails g spree:frontend:copy_storefront
 ```
 
 All of those views will be added to your `app/views` directory under `spree` folder. You can modify them as you wish.
@@ -77,7 +77,7 @@ You need to set a preference in `config/initializers/spree.rb` file, eg.
 
 ```ruby
 Spree.config do |config|
-  config.admin_show_version = 'my_new_admin_logo.png'
+  config.admin_show_version = false
 end
 ```
 

@@ -169,7 +169,7 @@ describe Spree::Order, type: :model do
       order.finalize!
     end
 
-    it 'sends an order confirmation email' do
+    it 'sends an order confirmation email to customer' do
       mail_message = double 'Mail::Message'
       expect(Spree::OrderMailer).to receive(:confirm_email).with(order.id).and_return mail_message
       expect(mail_message).to receive :deliver_later
@@ -186,6 +186,25 @@ describe Spree::Order, type: :model do
       allow(order).to receive_messages(confirmation_delivered?: true)
       expect(Spree::OrderMailer).not_to receive(:confirm_email)
       order.finalize!
+    end
+
+    context 'new order notifications' do
+      it 'sends a new order notification email to store owner when notification email address is set' do
+        # NOTE: 'store' factory has new_order_notifications_email set by default
+        mail_message = double 'Mail::Message'
+        expect(Spree::OrderMailer).to receive(:store_owner_notification_email).with(order.id).and_return mail_message
+        expect(mail_message).to receive :deliver_later
+        order.finalize!
+      end
+
+      it 'does not send a new order notification email to store owner when notification email address is blank' do
+        store = order.store
+        store.update(new_order_notifications_email: '')
+
+        mail_message = double 'Mail::Message'
+        expect(Spree::OrderMailer).to_not receive(:store_owner_notification_email)
+        order.finalize!
+      end
     end
 
     it 'freezes all adjustments' do
@@ -492,8 +511,8 @@ describe Spree::Order, type: :model do
 
   # Regression test for #4199
   context '#available_payment_methods' do
-    let(:ok_method) { double :payment_method, available_for_order?: true }
-    let(:no_method) { double :payment_method, available_for_order?: false }
+    let(:ok_method) { double :payment_method, available_for_order?: true, available_for_store?: true }
+    let(:no_method) { double :payment_method, available_for_order?: false, available_for_store?: true }
     let(:methods) { [ok_method, no_method] }
 
     it 'includes frontend payment methods' do
@@ -520,6 +539,7 @@ describe Spree::Order, type: :model do
 
     it 'does not include a payment method that is not suitable for this order' do
       allow(Spree::PaymentMethod).to receive(:available_on_front_end).and_return(methods)
+
       expect(order.available_payment_methods).to match_array [ok_method]
     end
   end
@@ -574,12 +594,11 @@ describe Spree::Order, type: :model do
       it 'matches line item when options match' do
         allow(order).to receive(:foos_match).and_return(true)
         expect(Spree::Dependencies.cart_compare_line_items_service.constantize.new.call(order: order, line_item: @line_items.first, options: { foos: { bar: :zoo } }).value).to be true
-
       end
 
       it 'does not match line item without options' do
         allow(order).to receive(:foos_match).and_return(false)
-        expect(Spree::Dependencies.cart_compare_line_items_service.constantize.new.call(order: order, line_item: @line_items.first, options: {}).value).to be false
+        expect(Spree::Dependencies.cart_compare_line_items_service.constantize.new.call(order: order, line_item: @line_items.first).value).to be false
       end
     end
   end
@@ -772,7 +791,7 @@ describe Spree::Order, type: :model do
                            create(:line_item, price: 1.0, quantity: 1)]
     end
 
-    it 'returns the correct lum sum of items' do
+    it 'returns the correct sum of items' do
       expect(@order.amount).to eq(3.0)
     end
   end
@@ -819,13 +838,48 @@ describe Spree::Order, type: :model do
   end
 
   describe '#pre_tax_item_amount' do
-    it "sums all of the line items' pre tax amounts" do
-      subject.line_items = [
-        Spree::LineItem.new(price: 10, quantity: 2, pre_tax_amount: 5.0),
-        Spree::LineItem.new(price: 30, quantity: 1, pre_tax_amount: 14.0)
-      ]
+    let(:order) { create(:order) }
 
-      expect(subject.pre_tax_item_amount).to eq 19.0
+    before do
+      line_item = create(:line_item, order: order, price: 10, quantity: 2)
+      line_item_2 = create(:line_item, order: order, price: 30, quantity: 1)
+
+      line_item.update(pre_tax_amount: 5.0)
+      line_item_2.update(pre_tax_amount: 14.0)
+    end
+
+    it "sums all of the line items' pre tax amounts" do
+      expect(order.pre_tax_item_amount).to eq BigDecimal(19)
+    end
+  end
+
+  describe '#display_pre_tax_item_amount' do
+    it 'returns the value as a spree money' do
+      allow(order).to receive(:pre_tax_item_amount).and_return(10.55)
+      expect(order.display_pre_tax_item_amount).to eq(Spree::Money.new(10.55))
+    end
+  end
+
+  describe '#pre_tax_total' do
+    let(:order) { create(:order) }
+
+    before do
+      line_item = create(:line_item, order: order, price: 10, quantity: 2)
+      shipment = create(:shipment, order: order, cost: 5)
+
+      line_item.update(pre_tax_amount: 8.0)
+      shipment.update(pre_tax_amount: 4.0)
+    end
+
+    it "sums all of the line items' and shipments pre tax amounts" do
+      expect(order.pre_tax_total).to eq BigDecimal(12)
+    end
+  end
+
+  describe '#display_pre_tax_total' do
+    it 'returns the value as a spree money' do
+      allow(order).to receive(:pre_tax_total).and_return(10.55)
+      expect(order.display_pre_tax_total).to eq(Spree::Money.new(10.55))
     end
   end
 
@@ -1153,5 +1207,184 @@ describe Spree::Order, type: :model do
     let!(:order) { create(:order_with_line_items) }
 
     it { expect { order.destroy }.to change { Spree::Address.count }.by(-2) }
+  end
+
+  describe '#valid_promotions' do
+    def create_adjustment(label, order_or_line_item, amount, source)
+      create(:adjustment,
+              order: order,
+              adjustable: order_or_line_item,
+              source: source,
+              amount: amount,
+              state: 'closed',
+              label: label,
+              mandatory: false)
+    end
+
+    let!(:order) { create(:order_with_line_items, line_items_count: 10) }
+    let(:line_item) { order.line_items.first }
+
+    let(:zero_promo) { create :promotion_with_order_adjustment, weighted_order_adjustment_amount: 0, starts_at: Time.now, code: 'Zero', id: 1 }
+    let(:order_promo) { create :promotion_with_order_adjustment, weighted_order_adjustment_amount: 10, starts_at: Time.now, code: 'Order1', id: 2 }
+    let(:line_item_promo) { create :promotion_with_item_adjustment, adjustment_rate: 10, starts_at: Time.now, code: 'LineItem', id: 3 }
+
+    let(:calculator) { Spree::Calculator::FlatRate.new(preferred_amount: 10) }
+    let(:source) { Spree::Promotion::Actions::CreateItemAdjustments.create(calculator: calculator, promotion_id: order_promo.id) }
+    let(:zero_calculator) { Spree::Calculator::FlatRate.new(preferred_amount: 0) }
+    let(:zero_source) { Spree::Promotion::Actions::CreateItemAdjustments.create calculator: zero_calculator, promotion_id: zero_promo.id }
+    let(:line_item_source) { Spree::Promotion::Actions::CreateItemAdjustments.create calculator: calculator, promotion_id: line_item_promo.id }
+
+    context 'without promotions' do
+      it 'expect to return an empty array' do
+        expect(order.valid_promotions).to eq []
+      end
+    end
+
+    context 'with promotions' do
+      let!(:zero_adjustment) { create_adjustment('Zero adjustment', order, -0, zero_source) }
+      let!(:adjustment) { create_adjustment('Adjustment', order, -50, source) }
+      let!(:non_eligible_adjustment) { create_adjustment('Non Eligible Adjustment', order, -100, source) }
+      let!(:line_item_adjustment) { create_adjustment('Adjustment', line_item, -200, line_item_source) }
+
+      before do
+        promotions = [zero_promo, order_promo, line_item_promo]
+        promotions.each do |promotion|
+          promotion.orders << order
+          promotion.actions << Spree::Promotion::Actions::CreateAdjustment.new
+          promotion.rules << Spree::Promotion::Rules::FirstOrder.new
+          promotion.save!
+        end
+
+        order.all_adjustments.where(amount: [0, -50, -200]).each do |adjustment|
+          adjustment.update_column(:eligible, true)
+        end
+      end
+
+      it 'expect return valid order promotions' do
+        expect(order.valid_promotions).to eq(order.order_promotions.where(promotion_id: [2, 3]))
+      end
+    end
+  end
+
+  describe '#cart_promo_total' do
+    let!(:order) { create(:order_with_line_items, line_items_count: 10) }
+
+    subject { order.reload.cart_promo_total }
+
+    context 'without promotions' do
+      it 'returns 0' do
+        expect(subject).to eq(BigDecimal('0.00'))
+      end
+    end
+
+    context 'with promotions' do
+      let(:free_shipping_promotion) { create(:free_shipping_promotion, code: 'freeship') }
+      let(:line_item_promotion) { create(:promotion_with_item_adjustment, code: 'li_discount', adjustment_rate: 10) }
+      let(:order_promotion) { create(:promotion_with_order_adjustment, code: 'discount', weighted_order_adjustment_amount: 10) }
+
+      context 'free shipping' do
+        before do
+          order.coupon_code = free_shipping_promotion.code
+          Spree::PromotionHandler::Coupon.new(order).apply
+        end
+
+        it 'includes free shipping prromo' do
+          expect(order.promotions).to include(free_shipping_promotion)
+        end
+
+        it 'returns 0' do
+          expect(subject).to eq(BigDecimal('0.00'))
+        end
+      end
+
+      context 'line item discount' do
+        before do
+          order.coupon_code = line_item_promotion.code
+          Spree::PromotionHandler::Coupon.new(order).apply
+        end
+
+        it 'includes line item promo' do
+          expect(order.promotions).to include(line_item_promotion)
+        end
+
+        it 'reeturns -100.0' do
+          # 10 items x -10 discount
+          expect(subject).to eq(BigDecimal('-100.00'))
+        end
+      end
+
+      context 'order discount' do
+        before do
+          order.coupon_code = order_promotion.code
+          Spree::PromotionHandler::Coupon.new(order).apply
+        end
+
+        it 'includes order promo' do
+          expect(order.promotions).to include(order_promotion)
+        end
+
+        it 'reeturns -10.0' do
+          expect(subject).to eq(BigDecimal('-10.00'))
+        end
+      end
+
+      context 'multiple promotions' do
+        before do
+          free_shipping_promotion.activate(order: order)
+          line_item_promotion.activate(order: order)
+          order_promotion.activate(order: order)
+          order.update_with_updater!
+        end
+
+        it 'includes all promotions' do
+          expect(order.promotions).to include(free_shipping_promotion, line_item_promotion, order_promotion)
+        end
+
+        it 'returns -110.00' do
+          expect(subject).to eq(BigDecimal('-110.00'))
+        end
+      end
+    end
+  end
+
+  describe '#has_free_shipping?' do
+    subject { order.has_free_shipping? }
+
+    let(:order) { create(:order_with_line_items, line_items_count: line_items_count) }
+    let(:line_items_count) { 10 }
+
+    context 'when promotion is applied' do
+      let(:free_shipping_promotion) { create(:free_shipping_promotion, code: 'freeship') }
+
+      before do
+        order.coupon_code = free_shipping_promotion.code
+        Spree::PromotionHandler::Coupon.new(order).apply
+      end
+
+      it { is_expected.to be true }
+
+      context 'when free shipping promotion has item total rule' do
+        let(:free_shipping_promotion) do
+          create(:free_shipping_promotion_with_item_total_rule,
+                 code: 'freeship',
+                 starts_at: 1.day.ago,
+                 expires_at: 1.day.from_now)
+        end
+
+        context 'when order total is in defined range' do
+          it { is_expected.to be true }
+        end
+
+        context 'when order total is not in defined range' do
+          let(:line_items_count) { 15 }
+
+          it { is_expected.to be false }
+        end
+      end
+    end
+
+    context 'when promotion is not applied' do
+      it { is_expected.to be false }
+    end
   end
 end

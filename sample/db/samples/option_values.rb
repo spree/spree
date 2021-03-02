@@ -1,53 +1,55 @@
 Spree::Sample.load_sample('option_types')
 
-size = Spree::OptionType.find_by!(presentation: 'Size')
-color = Spree::OptionType.find_by!(presentation: 'Color')
+color_option_type = Spree::OptionType.find_by!(name: 'color')
+length_option_type = Spree::OptionType.find_by!(name: 'length')
+size_option_type = Spree::OptionType.find_by!(name: 'size')
 
-option_values_attributes = [
-  {
-    name: 'Small',
-    presentation: 'S',
-    position: 1,
-    option_type: size
-  },
-  {
-    name: 'Medium',
-    presentation: 'M',
-    position: 2,
-    option_type: size
-  },
-  {
-    name: 'Large',
-    presentation: 'L',
-    position: 3,
-    option_type: size
-  },
-  {
-    name: 'Extra Large',
-    presentation: 'XL',
-    position: 4,
-    option_type: size
-  },
-  {
-    name: 'Red',
-    presentation: 'Red',
-    position: 1,
-    option_type: color
-  },
-  {
-    name: 'Green',
-    presentation: 'Green',
-    position: 2,
-    option_type: color
-  },
-  {
-    name: 'Blue',
-    presentation: 'Blue',
-    position: 3,
-    option_type: color
-  }
-]
+colors = {
+  white: '#FFFFFF',
+  purple: '#800080',
+  red: '#FF0000',
+  black: '#000000',
+  brown: '#8B4513',
+  green: '#228C22',
+  grey: '#808080',
+  orange: '#FF8800',
+  burgundy: '#A8003B',
+  beige: '#E1C699',
+  mint: '#AAF0D1',
+  blue: '#0000FF',
+  dark_blue: '#00008b',
+  khaki: '#BDB76B',
+  yellow: '#FFFF00',
+  light_blue: '#add8e6',
+  pink: '#FFA6C9',
+  lila: '#cf9de6',
+  ecru: '#F4F2D6'
+}
 
-option_values_attributes.each do |attrs|
-  Spree::OptionValue.where(attrs).first_or_create!
+lengths = { mini: 'Mini', midi: 'Midi', maxi: 'Maxi' }
+
+sizes = { xs: 'XS', s: 'S', m: 'M', l: 'L', xl: 'XL' }
+
+colors.each_with_index do |color, index|
+  color_option_type.option_values.find_or_create_by!(
+    name: color.first,
+    presentation: color.last,
+    position: index + 1
+  )
+end
+
+lengths.each_with_index do |length, index|
+  length_option_type.option_values.find_or_create_by!(
+    name: length.first,
+    presentation: length.last,
+    position: index + 1
+  )
+end
+
+sizes.each_with_index do |size, index|
+  size_option_type.option_values.find_or_create_by!(
+    name: size.first,
+    presentation: size.last,
+    position: index + 1
+  )
 end

@@ -1,7 +1,7 @@
 ---
 title: Upgrading Spree 3.7 to 4.0
 section: upgrades
-order: 0
+order: 2
 ---
 
 This guide covers upgrading a **3.7 Spree application** to **Spree 4.0**. 
@@ -37,6 +37,58 @@ In Spree 4.0 we completely removed Paperclip support in favour of ActiveStorage.
 Also please remove any occurances of `Rails.application.config.use_paperclip` and `Configuration::Paperclip` in your codebase.
 
 Please follow the [official Paperclip to ActiveStorage migration guide](https://github.com/thoughtbot/paperclip/blob/master/MIGRATING.md)
+
+## Replace `class_eval` with `Module.prepend`
+
+Rails 6.0 ships with [new code autoloader called Zeitwerk](https://medium.com/@fxn/zeitwerk-a-new-code-loader-for-ruby-ae7895977e73) which has some [strict rules in terms of file naming and contents](https://github.com/fxn/zeitwerk#file-structure). If you used `class_eval` to extend and modify Spree classes you will need to rewrite those with `Module.prepend`. Eg.
+
+Old decorator - `app/models/spree/order_decorator.rb`
+
+```ruby
+Spree::Order.class_eval do
+  has_many :new_custom_model
+
+  def some_method
+     # ...
+  end
+end
+```
+
+New decorator - `app/models/my_store/spree/order_decorator.rb`
+
+```ruby
+module MyStore
+  module Spree
+    module OrderDecorator
+      def self.prepended(base)
+        base.has_many :new_custom_model
+      end
+
+      def some_method
+        # ...
+      end
+    end
+  end
+end
+
+::Spree::Order.prepend(MyStore::Spree::OrderDecorator)
+```
+
+When migrating class method to the new [autoloader](https://medium.com/@fxn/zeitwerk-a-new-code-loader-for-ruby-ae7895977e73) things are a little different because you will have to prepend to the Singleton class as shown in this example: 
+
+```ruby
+module Spree::BaseDecorator
+  def spree_base_scopes
+    # custom implementation
+  end
+end
+
+Spree::Base.singleton_class.send :prepend, Spree::BaseDecorator
+```
+
+Please also consider other options for [Logic Customization](/developer/customization/logic.html).
+
+We recommend also reading through [Ruby modules: Include vs Prepend vs Extend](https://medium.com/@leo_hetsch/ruby-modules-include-vs-prepend-vs-extend-f09837a5b073)
 
 ## Replace OrderContents with services in your codebase
 
@@ -163,8 +215,8 @@ Remove this line if your're using `spree_frontend`:
 ## Update Gemfile
 
 ```ruby
-gem 'spree', '~> 4.0.0.rc2'
-gem 'spree_auth_devise', '~> 4.0.0.rc2'
+gem 'spree', '~> 4.0'
+gem 'spree_auth_devise', '~> 4.0'
 gem 'spree_gateway', '~> 3.6'
 ```
 

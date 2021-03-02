@@ -1,21 +1,13 @@
 pre[class*='language-'] {
-  font-size: 1em;
-  line-height: 1.5em;
-  letter-spacing: 0.3px;
-  word-spacing: 1px;
-  color: #495057;
-  padding: 2rem;
-  background-color: #f8f9fa;
-  border-radius: 3px;
-  border: 1px solid #ededed;
+  word-spacing: 1px !important;
+  border-radius: 6px !important;
   overflow: auto;
-  transition: box-shadow 0.3s ease-in-out;
   position: relative;
   z-index: 3;
 }
 
-pre[class*='language-']:hover {
-  box-shadow: 0 0 1.5rem 0 rgba(34, 139, 230, 0.1);
+p {
+  line-height: 1.6em;
 }
 
 code[class*='language-'],
@@ -36,6 +28,14 @@ pre[class*='language-'] {
   hyphens: none;
 }
 
+@media (max-width: 460px) {
+  code[class*='language-'],
+  pre[class*='language-'] {
+    word-break: break-word;
+    white-space: unset
+  }
+}
+
 pre[class*='language-']::-moz-selection,
 pre[class*='language-'] ::-moz-selection,
 code[class*='language-']::-moz-selection,
@@ -54,8 +54,7 @@ code[class*='language-'] ::selection {
 
 /* Code blocks */
 pre[class*='language-'] {
-  padding: 1em;
-  margin: 0.5em 0 1em 0;
+  padding: .8571429em 1.1428571em !important;
   overflow: auto;
 }
 
@@ -63,6 +62,7 @@ pre[class*='language-'] {
 :not(pre) > code[class*='language-'] {
   padding: 0.1em;
   border-radius: 0.3em;
+  background-color: #4d5169 !important;
 }
 
 .token.comment,
@@ -184,4 +184,8 @@ pre > code.highlight {
     rgba(45, 32, 6, 0.2) 70%,
     rgba(45, 32, 6, 0)
   );
+}
+
+.nested-links p > a {
+  text-decoration: underline;
 }

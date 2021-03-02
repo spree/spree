@@ -1,0 +1,270 @@
+.add-to-cart-form {
+  &-price {
+    font-size: font-px-to-rem(24px);
+    color: $font-color;
+    font-weight: 500;
+    @include media-breakpoint-up(sm) {
+      font-size: font-px-to-rem(36px);
+    }
+
+    .compare-at-price {
+      color: theme-color("info");
+      text-decoration: line-through;
+    }
+  }
+  &-general-availability {
+    font-size: font-px-to-rem(12px);
+    color: $font-color;
+    font-weight: 500;
+    @include media-breakpoint-up(sm) {
+      font-size: font-px-to-rem(20px);
+    }
+    &-value {
+      color: theme-color("primary");
+      &--danger {
+        color: theme-color("danger");
+      }
+      &--warning {
+        color: theme-color("warning");
+      }
+    }
+  }
+  .quantity-select button {
+    background: $input-background;
+    color: color-yiq($input-background);
+    touch-action: manipulation;
+  }
+  @include media-breakpoint-up(md) {
+    &-price {
+      font-size: font-px-to-rem(28px);
+    }
+    &-general-availability {
+      font-size: font-px-to-rem(14px);
+    }
+  }
+  hr {
+    border-color: $global-border-style;
+  }
+}
+
+.product-variants {
+  $self: &;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  &-variant {
+    transition: opacity 200ms;
+    &-title {
+      font-size: font-px-to-rem(12px);
+      @include media-breakpoint-up(sm) {
+        font-size: font-px-to-rem(20px);
+      }
+      &-value {
+        font-weight: 500;
+      }
+    }
+    &-values {
+      $self2: &;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      margin-left: -calc-spacer(1);
+      margin-right: -calc-spacer(1);
+      &-label {
+        font-size: font-px-to-rem(11px);
+        border: 2px solid theme-color-level("light", 1);
+        font-weight: 500;
+        min-width: 26px;
+        padding: calc-spacer(1);
+        transition: border-color 200ms;
+        cursor: pointer;
+        &:hover {
+          border-color: theme-color("dark-text");
+        }
+      }
+      &-radio {
+        opacity: 0;
+        position: fixed;
+        height: 0;
+        width: 0;
+        &:checked {
+          & + #{$self}-variant-values-label {
+            border-color: theme-color("dark-text");
+          }
+        }
+        &:focus + label, &:focus + svg {
+          outline: theme-color("dark-text") dotted 2px;
+        }
+        &--bad-combination {
+          & + #{$self2}-label {
+            position: relative;
+            color: theme-color-level("light", 1);
+            &:hover {
+              border-color: theme-color-level("light", 1);
+              cursor: not-allowed;
+            }
+            &:after {
+              display: block;
+              width: 2px;
+              height: 100% * sqrt(2);
+              content: "";
+              background: theme-color-level("light", 1);
+              transition: background 200ms;
+              transform: rotate(-45deg);
+              top: 50% - 50% * sqrt(2);
+              left: calc(50% - 1px);
+              position: absolute;
+            }
+          }
+        }
+
+        &:disabled + label {
+          color: theme-color-level("light", 1);
+          cursor: not-allowed;
+          opacity: 0.5;
+
+          &:active,
+          &:focus {
+            outline: theme-color("dark-text") dotted thin;
+          }
+        }
+      }
+    }
+    &--color {
+      $self3: &;
+      #{$self}-variant {
+        &-values {
+          &-label {
+            $size: 28px;
+            $size-border: 3px;
+            border-radius: 50%;
+            border-width: $size-border;
+            width: $size;
+            height: $size;
+            padding: calc-spacer(0);
+            line-height: $size - $size-border * 2;
+            &:before {
+              $inner-circle-size: $size - ($size-border - 1px) * 2; // Cover outer border by 1px to avoid color bleed.
+              content: "";
+              margin: -1px;
+              display: block;
+              border: 2px solid theme-color("light");
+              width: $inner-circle-size;
+              height: $inner-circle-size;
+              border-radius: 50%;
+              position: absolute;
+            }
+          }
+          &-radio {
+            &--bad-combination {
+              & + #{$self}-variant-values-label {
+                &:after {
+                  height: 100%;
+                  top: 0;
+                }
+              }
+            }
+            &:checked {
+              &--bad-combination {
+                & + #{$self}-variant-values-label {
+                  &:after {
+                    background: theme-color("dark-text");
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    &--disabled {
+      opacity: 0.3;
+      #{$self}-variant {
+        &-values {
+          &-label {
+            &:hover {
+              border-color: theme-color-level("light", 1);
+              cursor: not-allowed;
+            }
+          }
+          &-radio {
+            &--bad-combination {
+              & + #{$self}-variant-values-label {
+                &:hover {
+                  &:after {
+                    background: theme-color-level("light", 1);
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  & > li + li {
+    margin-top: calc-spacer(4);
+  }
+  @include media-breakpoint-up(md) {
+    &-variant {
+      &-title {
+        font-size: font-px-to-rem(14px);
+      }
+      &-values {
+        &-value {
+          font-size: font-px-to-rem(14px);
+        }
+      }
+    }
+  }
+}
+
+.color-select-label:focus {
+  outline: none;
+}
+
+.select-label {
+  cursor: pointer;
+  padding: 4px 7px;
+  border: 2px solid theme-color("borders");
+  min-width: 32px;
+  max-height: 32px;
+  text-align: center;
+  font-size: font-px-to-rem(14px);
+  font-weight: 500;
+  @include media-breakpoint-up(sm) {
+    border: 3px solid theme-color("borders");
+    padding: 7px 7px;
+    min-width: 49px;
+    max-height: 49px;
+    font-size: font-px-to-rem(20px);
+  }
+  @include media-breakpoint-up(md) {
+    border: 2px solid theme-color("borders");
+    padding: 4px 7px;
+    min-width: 32px;
+    max-height: 32px;
+    font-size: font-px-to-rem(14px);
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  input:checked + & {
+    border-color: theme-color("secondary");
+  }
+}
+
+.add-to-cart-button {
+  padding: 6px 12px;
+  font-size: font-px-to-rem(17px);
+  @include media-breakpoint-up(sm) {
+    padding: 12px;
+    font-size: font-px-to-rem(30px);
+  }
+  @include media-breakpoint-up(md) {
+    padding: 6px 12px;
+    font-size: font-px-to-rem(18px);
+  }
+}

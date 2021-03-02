@@ -1,0 +1,32 @@
+#breadcrumbs {
+  padding: 0;
+}
+
+.breadcrumb {
+  background: none;
+  padding: 0.5rem 0;
+  margin: 0;
+  li {
+    color: $font-color;
+    font-size: font-px-to-rem(11px);
+    @include media-breakpoint-up(sm) {
+      font-size: font-px-to-rem(16px);
+    }
+    @include media-breakpoint-up(lg) {
+      font-size: font-px-to-rem(12px);
+    }
+    a {
+      color: inherit;
+    }
+  }
+}
+
+.breadcrumb-product-name {
+  padding-right: 9.5px;
+}
+
+.truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

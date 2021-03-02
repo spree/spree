@@ -1,32 +1,54 @@
 require 'rspec/expectations'
 require 'spree/i18n'
 require 'spree/testing_support/i18n'
+require 'spec_helper'
 
 describe 'i18n' do
   before do
     I18n.backend.store_translations(:en,
-                                                                          spree: {
-                                                                            foo: 'bar',
-                                                                            bar: {
-                                                                              foo: 'bar within bar scope',
-                                                                              invalid: nil,
-                                                                              legacy_translation: 'back in the day...'
-                                                                            },
-                                                                            invalid: nil,
-                                                                            legacy_translation: 'back in the day...'
-                                                                          })
+                                    spree: {
+                                      foo: 'bar',
+                                      bar: {
+                                        foo: 'bar within bar scope',
+                                        invalid: nil,
+                                        legacy_translation: 'back in the day...'
+                                      },
+                                      invalid: nil,
+                                      legacy_translation: 'back in the day...'
+                                    })
+  end
+
+  describe '#available_locales' do
+    context 'when SpreeI18n is defined' do
+      before do
+        class_double('SpreeI18n').
+          as_stubbed_const(transfer_nested_constants: true)
+        class_double('SpreeI18n::Locale', all: [:en, :de, :nl]).as_stubbed_const(transfer_nested_constants: true)
+      end
+
+      it 'returns all locales from the SpreeI18n' do
+        locales = Spree.available_locales
+
+        expected_locales = (['en', 'de', 'nl'] + I18n.available_locales).uniq.compact
+
+        expect(locales).to eq expected_locales
+      end
+    end
+
+    context 'when SpreeI18n is not defined' do
+      it 'returns just default locales' do
+        locales = Spree.available_locales
+
+        expected_locales = ([Rails.application.config.i18n.default_locale, I18n.locale, :en] + I18n.available_locales).uniq.compact
+
+        expect(locales).to eq expected_locales
+      end
+    end
   end
 
   it 'translates within the spree scope' do
     expect(Spree.normal_t(:foo)).to eql('bar')
     expect(Spree.translate(:foo)).to eql('bar')
-  end
-
-  it 'translates within the spree scope using a path' do
-    allow(Spree).to receive(:virtual_path).and_return('bar')
-
-    expect(Spree.normal_t('.legacy_translation')).to eql('back in the day...')
-    expect(Spree.translate('.legacy_translation')).to eql('back in the day...')
   end
 
   it 'raise error without any context when using a path' do

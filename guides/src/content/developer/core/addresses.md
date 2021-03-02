@@ -5,7 +5,7 @@ section: core
 
 ## Address
 
-The `Address` model in the `spree` gem is used to track address information, mainly for orders. Address information can also be tied to the `Spree::User` objects which come from the `spree_auth_devise` extension.
+The `Address` model in the `spree` gem is used to track address information, mainly for orders. Address information can also be tied to the `Spree::User` objects which come from the [Spree Auth Devise](https://github.com/spree/spree_auth_devise) extension.
 
 Addresses have the following attributes:
 
@@ -21,6 +21,16 @@ Addresses have the following attributes:
 * `company`: A company name.
 
 Addresses can also link to countries and states. An address must always link to a `Spree::Country` object. It can optionally link to a `Spree::State` object, but only in the cases where the related country has no states listed. In that case, the state information is still required, and is kept within the `state_name` field on the address record. An easy way to get the state information for the address is to call `state_text` on that object.
+
+## Users
+
+As of Spree 4.0 `Spree::User` can have multiple addresses and can manage them on the Checkout and Account page. Previously this feature was part of the [Spree Address Book](https://github.com/spree-contrib/spree_address_book) extension. Each `Spree::Address` object has a `user_id` column which links to the User.
+
+Additionaly in the `Spree::User` there is `ship_address_id` and `bill_address_id` columns which indicates which addresses are the default ones for this User.
+
+## Checkout
+
+When a signed in User completes the Checkout Spree clones the selected Shipping and Billing Addresses and associates them with the Order. We do so that even if User modifies those addresses in the future their current state is preserved. Cloned addresses aren't associated to the User anymore. Originals will still be visible in their Address Books for future use.
 
 ## Zones
 

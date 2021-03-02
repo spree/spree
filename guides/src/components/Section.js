@@ -11,8 +11,8 @@ import { Link } from 'gatsby'
  */
 
 const Section = ({ title, path, children, className }) => (
-  <div className={cx('pa0 pa2-ns flex w-100 w-50-ns mb4 mb0-ns', className)}>
-    <div className="ba b--light-gray br2 pa3 w-100">
+  <div className={cx('pa0 pa2-ns flex w-100 mb4 mb0-ns', className)}>
+    <div className="ba b--light-gray br2 pa3 w-100 bg-white">
       <h2 className="f3 mt0 spree-blue">
         {path ? (
           <Link to={path} className="link spree-blue">
@@ -22,6 +22,7 @@ const Section = ({ title, path, children, className }) => (
           title
         )}
       </h2>
+      <hr class="bb bw1 b--black-10" />
       <p className="lh-copy">{children}</p>
     </div>
   </div>
@@ -29,7 +30,7 @@ const Section = ({ title, path, children, className }) => (
 
 Section.propTypes = {
   title: PropTypes.string.isRequired,
-  path: PropTypes.string.isRequired,
+  path: PropTypes.string,
   children: PropTypes.node.isRequired,
   className: PropTypes.string
 }

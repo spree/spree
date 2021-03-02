@@ -1,14 +1,22 @@
 ---
-title: Legacy REST API v1 guide
+title: Spree API reference
 ---
 
-<alert kind="warning">
-  If you're implementing a new project please use [REST API v2](/api/v2). 
-  API v1 is a legacy API - it won't be extended and improved.
-</alert>
+Currently Spree has two REST APIs and in the future we will add GraphQL as well.
 
-This site covers the inner working of Spree\'s RESTful API. It assumes a basic understanding of the principles of REST.
+## [REST API v2](https://api.spreecommerce.org/docs/api-v2/api/docs/v2/storefront/index.yaml)
 
-The REST API is designed to give developers a convenient way to access data contained within Spree. With a standard read/write interface to store data, it is now very simple to write third party applications (eg. iPhone) that can talk to your Spree store. It is also possible to build sophisticated middleware applications that can serve as a bridge between Spree and a warehouse or inventory system.
+* Modern lightweight REST API based on JSON API schema built
+* OAuth 2.0 authentication
+* Recommended for building Storefronts and mobile apps
+* [JavaScript / TypeScript SDK](https://github.com/spree/spree-storefront-api-v2-js-sdk) available
 
-For a comprehensive list of API functions, start browsing the resources in the above diagram.
+## [REST API v1](/api/v1/summary.html)
+
+* Older REST API that requires API key authentication for access
+* Full feature set of Admin Panel
+* Recommended for building System integrations
+
+## GraphQL
+GraphQL support is coming soon!
+

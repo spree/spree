@@ -1,6 +1,7 @@
 ---
 title: 'Calculators'
 section: core
+order: 7
 ---
 
 ## Overview
@@ -80,14 +81,6 @@ Thus, if you have ten items in your shopping cart, your `first_item` preference 
 - $5 for each of the 3 subsequent items:$5 \* 3 = \$15
 - \$0 for the remaining 6 items
 
-### Free Shipping
-
-This calculator will take an object, and then work out the shipping total for that object. Useful for when you want to apply free shipping to an order.
-
-$$
-This is a little confusing and vague. Need to investigate more and explain better. Also, might this be obsolete with the new split shipments functionality?
-$$
-
 ### Per Item
 
 The Per Item calculator computes a value for every item within an order. This is useful for providing a discount for a specific product, without it affecting others.
@@ -141,7 +134,7 @@ The Price Sack calculator is useful for when you want to provide a discount for 
 - `minimal_amount`: The minimum amount for the line items total to trigger the calculator.
 - `discount_amount`: The amount to discount from the order if the line items total is equal to or greater than the `minimal_amount`.
 - `normal_amount`: The amount to discount from the order if the line items total is less than the `minimal_amount`.
-- `currency`: The currency for this calculator. Defaults to the currency you have set for your store with `Spree::Config[:currency]`
+- `currency`: The currency for this calculator. Defaults to the currency you have set for your application with `Spree::Config[:currency]`
 
 Suppose you have a Price Sack calculator with a `minimal_amount` preference of \$50, a `normal_amount` preference of $2, and a `discount_amount` of$5. An order with a line items total of $60 would result in a discount of$5 for the whole order. An order of $20 would result in a discount of$2.
 

@@ -1,0 +1,345 @@
+.spree-flat-input {
+  color: theme-color("secondary");
+  transition: basic-transition(border-color);
+  padding: 15px;
+  width: 100%;
+  height: auto;
+  border-width: 1px;
+  border-style: solid;
+  border-color: $second-global-border;
+  border-radius: 0;
+  outline: none;
+  font-size: font-px-to-rem(12px);
+  line-height: inherit;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  @include media-breakpoint-up(sm) {
+    padding: 25px;
+    font-size: font-px-to-rem(23px);
+  }
+  @include media-breakpoint-up(lg) {
+    padding: 20px;
+    font-size: font-px-to-rem(14px);
+  }
+  &:focus {
+    border-color: theme-color("secondary");
+  }
+  &::placeholder {
+    text-transform: uppercase;
+  }
+}
+
+.spree-flat-select {
+  @extend .spree-flat-input;
+  appearance: none;
+  padding-top:22px;
+  padding-bottom:21px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  &-arrow {
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    @include media-breakpoint-up(sm) {
+      right: 23px;
+    }
+    @include media-breakpoint-up(lg) {
+      right: 20px;
+    }
+  }
+}
+
+.field_with_errors {
+  input{
+    border-color: $danger;
+  }
+}
+
+.spree-flat-label {
+  color: theme-color("secondary");
+  text-transform: uppercase;
+  font-size: font-px-to-rem(12px);
+
+  @include media-breakpoint-up(sm) {
+    font-size: font-px-to-rem(17px);
+  }
+}
+
+.spree-checkbox-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.spree-checkbox {
+  position: relative;
+  height: 22px;
+  display: block;
+  float: left;
+  width: 22px;
+  margin-right: 0.5rem;
+
+  @include media-breakpoint-up(sm) {
+    width: 32px;
+    height: 32px;
+  }
+
+  @include media-breakpoint-up(lg) {
+    width: 22px;
+    height: 22px;
+  }
+
+  input[type="checkbox"] {
+    opacity: 0;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+  }
+
+  label {
+    transition: basic-transition(background-color);
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    font-size: 0;
+    border-radius: 0;
+    border: 2px solid theme-color("secondary");
+    background-color: $input-background;
+    cursor: pointer;
+
+    @include media-breakpoint-up(sm) {
+      width: 32px;
+      height: 32px;
+    }
+
+    @include media-breakpoint-up(lg) {
+      width: 22px;
+      height: 22px;
+    }
+  }
+
+  label:after {
+    transition: basic-transition(opacity);
+    opacity: 0;
+    content: "";
+    position: absolute;
+    width: 12px;
+    height: 8px;
+    background: transparent;
+    top: 4px;
+    left: 3px;
+    border: 3px solid white;
+    border-top: none;
+    border-right: none;
+    transform: rotate(-45deg);
+
+    @include media-breakpoint-up(sm) {
+      width: 15px;
+      height: 10px;
+      top: 6px;
+      left: 6px;
+    }
+
+    @include media-breakpoint-up(lg) {
+      width: 12px;
+      height: 8px;
+      top: 4px;
+      left: 3px;
+    }
+  }
+
+  input[type="checkbox"]:focus + label {
+    border-color: $primary-color;
+  }
+
+  input[type="checkbox"]:checked + label {
+    background-color: theme-color("secondary");
+
+    &:after {
+      opacity: 1;
+    }
+  }
+
+  @include media-breakpoint-up(lg) {
+    height: 28px;
+    width: 28px;
+
+    label {
+      height: 28px;
+      width: 28px;
+    }
+
+    label:after {
+      width: 14px;
+      height: 9px;
+      top: 6px;
+      left: 5px;
+    }
+  }
+}
+
+.spree-checkbox-label {
+  color: theme-color("info");
+  font-size: font-px-to-rem(12px);
+  margin: 0;
+  // Autoprefixer don't seem to catch this
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  cursor: pointer;
+
+  @include media-breakpoint-up(sm) {
+    font-size: font-px-to-rem(21px);
+  }
+
+  @include media-breakpoint-up(lg) {
+    font-size: font-px-to-rem(16px);
+  }
+}
+
+.spree-btn {
+  text-transform: uppercase;
+  letter-spacing: 0.05rem;
+  font-size: font-px-to-rem(14px);
+  font-weight: bold;
+
+  &.btn-primary {
+    font-size: font-px-to-rem(17px);
+  }
+
+  &.btn-outline-primary {
+    border-width: 2px;
+  }
+
+  @include media-breakpoint-up(sm) {
+    padding-top: 14px;
+    padding-bottom: 14px;
+
+    &.btn-primary {
+      font-size: font-px-to-rem(28px);
+    }
+
+    &.btn-outline-primary {
+      font-size: font-px-to-rem(28px);
+    }
+  }
+
+  @include media-breakpoint-up(lg) {
+    padding-top: 6px;
+    padding-bottom: 6px;
+
+    &.btn-primary {
+      font-size: font-px-to-rem(20px);
+    }
+
+    &.btn-outline-primary {
+      font-size: font-px-to-rem(20px);
+    }
+  }
+}
+
+.spree-radio-label {
+  position: relative;
+  padding-left: 30px;
+  cursor: pointer;
+  @include media-breakpoint-up(sm) {
+    padding-left: 55px;
+  }
+  @include media-breakpoint-up(lg) {
+    padding-left: 52px;
+  }
+  input {
+    position: absolute;
+    opacity: 0;
+    height: 0;
+    width: 0;
+    &:focus + span {
+      border-radius: 50%;
+      border: 2px solid $primary-color;
+    }
+  }
+  &-custom-input {
+    @include colored-circle-radio($secondary-color);
+    position: absolute;
+    top: 2px;
+    left: 0;
+    width: 18px;
+    height: 18px;
+    background-size: contain;
+    @include media-breakpoint-up(sm) {
+      width: 32px;
+      height: 32px;
+    }
+    @include media-breakpoint-up(lg) {
+      width: 27px;
+      height: 27px;
+    }
+  }
+  input:checked ~ &-custom-input {
+    @include colored-full-circle-radio($secondary-color);
+    background-size: contain;
+  }
+}
+
+//Slide in labels
+@mixin float-label-container {
+  display: block;
+  position: relative;
+}
+
+@mixin float-label {
+  label {
+    position: absolute;
+    left: 1em;
+    top: -0.5em;
+    cursor: text;
+    opacity: 1;
+    background: $input-background;
+    padding: 0 4px;
+    transition: all .2s;
+    @content;
+    &.state-select-label{
+      opacity: 1 !important;
+      left:1em !important;
+    }
+  }
+}
+
+@mixin float-label-input {
+  &::placeholder {
+    opacity: 0;
+    color: $secondary-font-color;
+    transition: all .2s;
+  }
+  &:placeholder-shown:not(:focus)::placeholder {
+      opacity: 0.3;
+      transition: all .2s;
+  }
+}
+
+@mixin float-label-scaled {
+  &:placeholder-shown:not(:focus) + * {
+      @content;
+  }
+}
+
+.has-float-label {
+  @include float-label-container;
+  @include float-label;
+
+  input, textarea {
+    @include float-label-input;
+    @include float-label-scaled {
+      opacity: 0;
+      left: 0em;
+    }
+  }
+  .form-control:focus {
+    box-shadow: none;
+  }
+}

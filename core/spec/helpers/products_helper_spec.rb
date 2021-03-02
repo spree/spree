@@ -195,13 +195,15 @@ THIS IS THE BEST PRODUCT EVER!
     end
 
     context '#cache_key_for_products' do
-      subject { helper.cache_key_for_products }
+      subject { helper.cache_key_for_products(products) }
 
       let(:zone) { Spree::Zone.new }
       let(:price_options) { { tax_zone: zone } }
+      let!(:products) { create_list(:product, 5) }
+      let(:product_ids) { products.map(&:id).join('-') }
+      let(:taxon) { create(:taxon) }
 
       before do
-        @products = double('products collection')
         allow(helper).to receive(:params).and_return(page: 10)
         allow(helper).to receive(:current_price_options) { price_options }
       end
@@ -210,23 +212,45 @@ THIS IS THE BEST PRODUCT EVER!
         let(:updated_at) { Date.new(2011, 12, 13) }
 
         before do
-          allow(@products).to receive(:count).and_return(5)
-          allow(@products).to receive(:maximum).with(:updated_at) { updated_at }
+          allow(products).to receive(:maximum).with(:updated_at) { updated_at }
         end
 
-        it { is_expected.to eq('en/USD/spree/zones/new/spree/products/all-10-20111213-5') }
+        it { is_expected.to eq("en/USD/spree/zones/new/spree/products/#{product_ids}-10--20111213-") }
       end
 
       context 'when there is no considered maximum updated date' do
         let(:today) { Date.new(2013, 12, 11) }
 
         before do
-          allow(@products).to receive(:count).and_return(1_234_567)
-          allow(@products).to receive(:maximum).with(:updated_at).and_return(nil)
+          allow(products).to receive(:maximum).with(:updated_at).and_return(nil)
           allow(Date).to receive(:today) { today }
         end
 
-        it { is_expected.to eq('en/USD/spree/zones/new/spree/products/all-10-20131211-1234567') }
+        it { is_expected.to eq("en/USD/spree/zones/new/spree/products/#{product_ids}-10--20131211-") }
+      end
+
+      context 'with Taxon ID present' do
+        let(:updated_at) { Date.new(2011, 12, 13) }
+
+        before do
+          @taxon = taxon
+          allow(products).to receive(:maximum).with(:updated_at) { updated_at }
+        end
+
+        it { is_expected.to eq("en/USD/spree/zones/new/spree/products/#{product_ids}-10--20111213-#{taxon.id}") }
+      end
+
+      context 'with `additional_cache_key` passed' do
+        subject { helper.cache_key_for_products(products, 'json-ld') }
+
+        let(:updated_at) { Date.new(2011, 12, 13) }
+
+        before do
+          @taxon = taxon
+          allow(products).to receive(:maximum).with(:updated_at) { updated_at }
+        end
+
+        it { is_expected.to eq("en/USD/spree/zones/new/spree/products/#{product_ids}-10--20111213-#{taxon.id}/json-ld") }
       end
     end
 
@@ -290,6 +314,60 @@ THIS IS THE BEST PRODUCT EVER!
 
         it 'the values are nevertheless returned in alphabetical order of their keys' do
           expect(cache_key).to eq('en/USD/true/spree/zones/new/spree/products/new/')
+        end
+      end
+
+      context 'given possible promotions' do
+        let(:zone) { nil }
+        let(:promotion) { create :promotion }
+        let(:promotion_2) { create :promotion }
+
+        before do
+          allow(product).to receive(:possible_promotions).and_return([promotion, promotion_2])
+        end
+
+        it { is_expected.to eq("en/USD/spree/products/new/#{promotion.cache_key}/#{promotion_2.cache_key}") }
+      end
+    end
+
+    context '#available_status' do
+      subject(:status) { helper.available_status(product) }
+
+      let(:product) { create(:product) }
+
+      context 'product is available' do
+        it 'has available status' do
+          expect(status).to eq(Spree.t(:available))
+        end
+      end
+
+      context 'product was deleted' do
+        before do
+          product.delete
+        end
+
+        it 'has deleted status' do
+          expect(status).to eq(Spree.t(:deleted))
+        end
+      end
+
+      context 'product is discontinued' do
+        before do
+          product.discontinue!
+        end
+
+        it 'has discontinued status' do
+          expect(status).to eq(Spree.t(:discontinued))
+        end
+      end
+
+      context 'product will be available soon' do
+        before do
+          product.available_on = 1.month.from_now
+        end
+
+        it 'has pending sale status' do
+          expect(status).to eq(Spree.t(:pending_sale))
         end
       end
     end

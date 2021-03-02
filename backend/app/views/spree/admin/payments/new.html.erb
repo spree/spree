@@ -12,7 +12,7 @@
       <%= render partial: 'form', locals: { f: f } %>
 
       <div class="form-actions" data-hook="buttons">
-        <%= button @order.cart? ? Spree.t('actions.continue') : Spree.t('actions.update'), @order.cart? ? 'arrow-right' : 'save' %>
+        <%= button @order.cart? ? Spree.t('actions.continue') : Spree.t('actions.update'), @order.cart? ? 'arrow-right.svg' : 'save.svg' %>
       </div>
     </fieldset>
   <% end %>

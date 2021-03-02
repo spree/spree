@@ -5,16 +5,16 @@ module Spree
     load_and_authorize_resource class: Spree::Address
 
     def index
-      @addresses = spree_current_user.addresses
+      @addresses = try_spree_current_user.addresses
     end
 
     def create
-      @address = spree_current_user.addresses.build(address_params)
+      @address = try_spree_current_user.addresses.build(address_params)
       if @address.save
-        flash[:notice] = Spree.t(:successfully_created, scope: :address_book)
-        redirect_to :index
+        flash[:notice] = I18n.t(:successfully_created, scope: :address_book)
+        redirect_to spree.account_path
       else
-        render :new
+        render action: 'new'
       end
     end
 
@@ -37,6 +37,7 @@ module Spree
       else
         new_address = @address.clone
         new_address.attributes = address_params
+        new_address.user_id = @address.user_id
         @address.update_attribute(:deleted_at, Time.current)
         if new_address.save
           flash[:notice] = Spree.t(:successfully_updated, scope: :address_book)
@@ -57,16 +58,7 @@ module Spree
     private
 
     def address_params
-      params[:address].permit(:address,
-                              :firstname,
-                              :lastname,
-                              :address1,
-                              :address2,
-                              :city,
-                              :state_id,
-                              :zipcode,
-                              :country_id,
-                              :phone)
+      params.require(:address).permit(permitted_address_attributes)
     end
   end
 end

@@ -20,10 +20,10 @@ module Spree
 
       def update
         if params[:product][:taxon_ids].present?
-          params[:product][:taxon_ids] = params[:product][:taxon_ids].split(',')
+          params[:product][:taxon_ids] = params[:product][:taxon_ids].reject(&:empty?)
         end
         if params[:product][:option_type_ids].present?
-          params[:product][:option_type_ids] = params[:product][:option_type_ids].split(',')
+          params[:product][:option_type_ids] = params[:product][:option_type_ids].reject(&:empty?)
         end
         invoke_callbacks(:update, :before)
         if @object.update(permitted_resource_params)

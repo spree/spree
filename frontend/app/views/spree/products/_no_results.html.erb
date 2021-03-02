@@ -1,0 +1,14 @@
+<div class="container mt-lg-5">
+  <div class="text-center pt-lg-5">
+    <%= icon(name: 'search-no-results',
+             classes: 'plp-not-found-image mb-3',
+             width: 83,
+             height: 75) %>
+    <h6 class="plp-not-found-header mb-3 pb-sm-3 mt-sm-3 pt-sm-3 mt-lg-5 pt-lg-5 pb-lg-0"><%= Spree.t('plp.no_results_found') %></h6>
+    <p class="plp-not-found-text">
+      <%= Spree.t('plp.not_found_text1', keywords: params[:keywords]) %>
+      <br class="d-lg-none">
+      <%= Spree.t('plp.not_found_text2') %>
+    </p>
+  </div>
+</div>

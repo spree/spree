@@ -1,0 +1,25 @@
+<h3 class="pt-4 font-weight-bold text-uppercase product-details-subtitle"><%= Spree.t(:description) %></h3>
+<div id="product-description-short" class="m-0 text-break product-description" data-hook="description">
+  <% if Spree::Config[:show_raw_product_description] %>
+    <%= raw product_description(@product).truncate(450) %>
+  <% else %>
+    <%= sanitize product_description(@product).truncate(450) %>
+  <% end %>
+</div>
+
+<div id="product-description-long" class="m-0 text-break product-description d-none" data-hook="description">
+  <% if Spree::Config[:show_raw_product_description] %>
+    <%= raw product_description(@product) %>
+  <% else %>
+    <%= sanitize product_description(@product) %>
+  <% end %>
+</div>
+
+<% if product_description(@product).length > 450 %>
+  <span id="product-description-arrow" class="d-flex justify-content-center align-items-center mt-3 mx-auto product-description-arrow" aria-hidden="true">
+    <%= icon(name: 'arrow-right',
+             classes: 'spree-icon-arrow spree-icon-arrow-down',
+             width: 20,
+             height: 20) %>
+  </span>
+<% end %>

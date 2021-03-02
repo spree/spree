@@ -1,0 +1,93 @@
+<% cache [common_product_cache_keys, products&.maximum(:updated_at)&.to_i, id, products&.ids&.join(',')] do %>
+  <div id="<%= id %>-mobile" class="carousel slide d-md-none homepage-carousel" data-interval="false">
+    <div class="carousel-inner">
+      <% products.each_slice(2).with_index do |sliced_items, index| %>
+        <div class="carousel-item <%= 'active' if index == 0 %>">
+          <div class="container">
+            <div class="row carousel-items-container">
+              <% sliced_items.each_with_index do |item, idx| %>
+                <div class="col-6">
+                  <%= render 'spree/shared/product', product: item, image_class: 'w-100' %>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+
+    </div>
+    <a
+      class="d-flex position-absolute justify-content-center align-items-center carousel-icon-control carousel-icon-control--previous"
+      href="#<%= id %>-mobile"
+      role="button"
+      data-slide="prev">
+      <span class="d-flex justify-content-center align-items-center carousel-icon-control-rounded" aria-hidden="true">
+        <%= icon(name: 'arrow-right',
+                classes: 'spree-icon-arrow spree-icon-arrow-left',
+                width: 20,
+                height: 20) %>
+      </span>
+      <span class="sr-only"><%= Spree.t(:previous) %></span>
+    </a>
+
+    <a
+      class="d-flex position-absolute justify-content-center align-items-center carousel-icon-control carousel-icon-control--next"
+      href="#<%= id %>-mobile"
+      role="button"
+      data-slide="next">
+      <span class="d-flex justify-content-center align-items-center carousel-icon-control-rounded" aria-hidden="true">
+        <%= icon(name: 'arrow-right',
+                classes: 'spree-icon-arrow spree-icon-arrow-right',
+                width: 20,
+                height: 20) %>
+      </span>
+      <span class="sr-only"><%= Spree.t(:next) %></span>
+    </a>
+  </div>
+
+  <div id="<%= id %>-desktop" class="carousel slide d-none d-md-block homepage-carousel" data-interval="false">
+    <div class="carousel-inner carousel-inner-width">
+      <% products.each_slice(4).with_index do |sliced_items, index| %>
+        <div class="carousel-item <%= 'active' if index == 0 %>">
+          <div class="container position-relative">
+            <a
+              class="d-flex position-absolute justify-content-center align-items-center carousel-icon-control carousel-icon-control--previous"
+              href="#<%= id %>-desktop"
+              role="button"
+              data-slide="prev">
+              <span class="d-flex justify-content-center align-items-center carousel-icon-control-rounded" aria-hidden="true">
+                <%= icon(name: 'arrow-right',
+                        classes: 'spree-icon-arrow spree-icon-arrow-left',
+                        width: 20,
+                        height: 20) %>
+              </span>
+              <span class="sr-only"><%= Spree.t(:previous) %></span>
+            </a>
+
+            <div class="row carousel-items-container">
+              <% sliced_items.each do |item| %>
+                <div class="col-3">
+                  <%= render 'spree/shared/product', product: item, image_class: 'w-100' %>
+                </div>
+              <% end %>
+            </div>
+
+            <a
+              class="d-md-flex position-absolute justify-content-center align-items-center carousel-icon-control carousel-icon-control--next"
+              href="#<%= id %>-desktop"
+              role="button"
+              data-slide="next">
+              <span class="d-flex justify-content-center align-items-center carousel-icon-control-rounded" aria-hidden="true">
+                <%= icon(name: 'arrow-right',
+                        classes: 'spree-icon-arrow spree-icon-arrow-right',
+                        width: 20,
+                        height: 20) %>
+              </span>
+              <span class="sr-only"><%= Spree.t(:next) %></span>
+            </a>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>

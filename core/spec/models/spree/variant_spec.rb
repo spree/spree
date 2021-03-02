@@ -22,6 +22,54 @@ describe Spree::Variant, type: :model do
       variant.price = 0
       expect(variant).to be_valid
     end
+
+    context 'SKU' do
+      context 'default behaviour' do
+        context 'invalid' do
+          let(:variant_2) { build(:variant, sku: variant.sku) }
+
+          it 'with the same SKU' do
+            expect(variant_2.valid?).to eq(false)
+          end
+        end
+
+        context 'valid' do
+          let(:variant_2) { build(:variant, sku: 'OTHER-SKU') }
+
+          it 'with different SKU' do
+            expect(variant_2.valid?).to eq(true)
+          end
+
+          it 'without SKU' do
+            variant_2.sku = ''
+            expect(variant_2.valid?).to eq(true)
+          end
+        end
+      end
+
+      context 'disabled validation' do
+        before do
+          Spree::Config[:disable_sku_validation] = true
+        end
+
+        after do
+          Spree::Config[:disable_sku_validation] = false
+        end
+
+        context 'valid' do
+          let(:variant_2) { build(:variant, sku: 'OTHER-SKU') }
+
+          it 'with the same SKU' do
+            expect(variant_2.valid?).to eq(true)
+          end
+
+          it 'without SKU' do
+            variant_2.sku = ''
+            expect(variant_2.valid?).to eq(true)
+          end
+        end
+      end
+    end
   end
 
   context 'after create' do
@@ -370,20 +418,20 @@ describe Spree::Variant, type: :model do
     end
   end
 
-  # Regression test for #2432
-  describe 'options_text' do
-    let!(:variant) { build(:variant, option_values: []) }
-    let!(:master) { create(:master_variant) }
+  describe '#options_text' do
+    let(:variant) { build :variant }
+    let(:fake_presenter) { double :fake_presenter }
+
+    subject(:options_text) { variant.options_text }
 
     before do
-      # Order bar than foo
-      variant.option_values << create(:option_value, name: 'Foo', presentation: 'Foo', option_type: create(:option_type, position: 2, name: 'Foo Type', presentation: 'Foo Type'))
-      variant.option_values << create(:option_value, name: 'Bar', presentation: 'Bar', option_type: create(:option_type, position: 1, name: 'Bar Type', presentation: 'Bar Type'))
-      variant.save
+      allow(Spree::Variants::OptionsPresenter).to receive(:new).with(variant).and_return(fake_presenter)
     end
 
-    it 'orders by bar than foo' do
-      expect(variant.options_text).to eql 'Bar Type: Bar, Foo Type: Foo'
+    it 'calls Spree::Variants::OptionsPresenter' do
+      expect(fake_presenter).to receive(:to_sentence)
+
+      options_text
     end
   end
 

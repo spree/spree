@@ -104,8 +104,8 @@ describe 'Properties', type: :feature, js: true do
     it 'successfully create and then remove product property' do
       fill_in_property
 
-      expect(page).to have_css('tbody#product_properties tr:nth-child(2)')
-      expect(page).to have_css('tbody#product_properties tr').twice
+      expect(page).to have_css('tbody#sortVert tr:nth-child(2)')
+      expect(page).to have_css('tbody#sortVert tr').twice
 
       delete_product_property
 
@@ -145,15 +145,15 @@ describe 'Properties', type: :feature, js: true do
       accept_confirm do
         click_icon :delete
       end
-      expect(page.document).to have_content('successfully removed!')
-                           .or have_content('Cannot delete record')
+      expect(page.document).to have_content('successfully removed!').
+                           or have_content('Cannot delete record')
     end
 
     def check_property_row_count(expected_row_count)
       within('#sidebar') do
         click_link 'Properties'
       end
-      expect(page).to have_css('tbody#product_properties tr', count: expected_row_count)
+      expect(page).to have_css('tbody#sortVert tr', count: expected_row_count)
     end
   end
 end

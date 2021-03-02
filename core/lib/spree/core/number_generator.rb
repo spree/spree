@@ -13,21 +13,22 @@ module Spree
       end
 
       def included(host)
-        generator_method   = method(:generate_permalink)
         generator_instance = self
 
         host.class_eval do
           validates(:number, presence: true, uniqueness: { allow_blank: true })
 
           before_validation do |instance|
-            instance.number ||= generator_method.call(host)
+            instance.number ||= generate_permalink(host)
           end
 
           define_singleton_method(:number_generator) { generator_instance }
+
+          def generate_permalink(host)
+            host.number_generator.generate_permalink(host)
+          end
         end
       end
-
-      private
 
       def generate_permalink(host)
         length = @length

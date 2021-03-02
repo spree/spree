@@ -1,3 +1,4 @@
+# coding: utf-8
 require 'spec_helper'
 
 describe 'Variants', type: :feature do
@@ -21,7 +22,7 @@ describe 'Variants', type: :feature do
       expect(page).to have_field(id: 'variant_height', with: '3.00')
       expect(page).to have_field(id: 'variant_width', with: '1.00')
       expect(page).to have_field(id: 'variant_depth', with: '1.50')
-      expect(page).to have_select('variant[tax_category_id]')
+      expect(page).to have_css('.form-group[data-hook="tax_category"]', text: 'None')
     end
   end
 
@@ -30,6 +31,7 @@ describe 'Variants', type: :feature do
       context 'using Russian Rubles' do
         before do
           Spree::Config[:currency] = 'RUB'
+          create(:store, default: true, default_currency: 'RUB')
           create(:variant, product: product, price: 19.99)
         end
 

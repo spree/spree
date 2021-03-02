@@ -4,25 +4,32 @@ module Spree
       class BaseController < ActionController::API
         include CanCan::ControllerAdditions
         include Spree::Core::ControllerHelpers::StrongParameters
+        include Spree::Core::ControllerHelpers::Store
+        include Spree::Core::ControllerHelpers::Locale
+        include Spree::Core::ControllerHelpers::Currency
         rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
         rescue_from CanCan::AccessDenied, with: :access_denied
+        rescue_from Spree::Core::GatewayError, with: :gateway_error
+        rescue_from ActionController::ParameterMissing, with: :error_during_processing
+        rescue_from ArgumentError, with: :error_during_processing
 
         def content_type
           Spree::Api::Config[:api_v2_content_type]
         end
 
-        private
+        protected
 
         def serialize_collection(collection)
           collection_serializer.new(
             collection,
-            collection_options(collection)
+            collection_options(collection).merge(params: serializer_params)
           ).serializable_hash
         end
 
         def serialize_resource(resource)
           resource_serializer.new(
             resource,
+            params: serializer_params,
             include: resource_includes,
             fields: sparse_fields
           ).serializable_hash
@@ -38,8 +45,6 @@ module Spree
 
         def render_serialized_payload(status = 200)
           render json: yield, status: status, content_type: content_type
-        rescue ArgumentError => exception
-          render_error_payload(exception.message, 400)
         end
 
         def render_error_payload(error, status = 422)
@@ -50,12 +55,13 @@ module Spree
           end
         end
 
-        def spree_current_store
-          @spree_current_store ||= Spree::Store.current(request.env['SERVER_NAME'])
-        end
-
         def spree_current_user
-          @spree_current_user ||= Spree.user_class.find_by(id: doorkeeper_token.resource_owner_id) if doorkeeper_token
+          return nil unless doorkeeper_token
+          return @spree_current_user if @spree_current_user
+
+          doorkeeper_authorize!
+
+          @spree_current_user ||= Spree.user_class.find_by(id: doorkeeper_token.resource_owner_id)
         end
 
         def spree_authorize!(action, subject, *args)
@@ -104,8 +110,8 @@ module Spree
           fields.presence
         end
 
-        def current_currency
-          spree_current_store.default_currency || Spree::Config[:currency]
+        def serializer_params
+          { currency: current_currency, store: current_store, user: spree_current_user }
         end
 
         def record_not_found
@@ -114,6 +120,20 @@ module Spree
 
         def access_denied(exception)
           render_error_payload(exception.message, 403)
+        end
+
+        def gateway_error(exception)
+          render_error_payload(exception.message)
+        end
+
+        def error_during_processing(exception)
+          result = error_handler.call(exception: exception, opts: { user: spree_current_user })
+
+          render_error_payload(result.value[:message], 400)
+        end
+
+        def error_handler
+          Spree::Api::Dependencies.error_handler.constantize
         end
       end
     end

@@ -1,0 +1,30 @@
+<%= render partial: 'spree/shared/error_messages', locals: { target: @user } %>
+<div class="checkout-registration container">
+  <div class="row col-xs-12 col-lg-11 mx-auto">
+    <div class="col-xs-12 col-lg-6">
+      <%= render partial: 'spree/shared/login' if defined?(spree_login_path) %>
+    </div>
+    <div class="col-xs-12 col-lg-6">
+      <div class="col-lg-11 mx-auto">
+        <% if defined?(spree_signup_path) %>
+          <%= render partial: 'spree/shared/registration', locals: { registration_button: '' } %>
+        <% end %>
+        <% if Spree::Config[:allow_guest_checkout] %>
+          <div class="checkout-registration-styled-or">
+            <%= Spree.t(:or) %>
+          </div>
+          <% path = spree.respond_to?(:update_checkout_registration_path) ? spree.update_checkout_registration_path : spree_signup_path %>
+
+          <%= form_for @order, url: path, method: :put, html: { id: 'checkout_form_registration' } do |f| %>
+            <div class="form-group">
+              <p class="form-group checkout-content-inner-field">
+                <%= f.email_field :email, class: 'spree-flat-input', placeholder: Spree.t(:email) %>
+              </p>
+            </div>
+            <%= f.submit Spree.t(:continue_as_guest), class: 'btn btn-block btn-outline-primary spree-btn' %>
+          <% end %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

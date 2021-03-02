@@ -5,6 +5,7 @@ import { cx } from 'emotion'
 
 // --- Components
 import Header from 'components/Header'
+import Footer from 'components/Footer'
 import Sidebar from 'components/Sidebar'
 import SiteMetadata from 'components/SiteMetadata'
 
@@ -25,7 +26,6 @@ export default class Layout extends React.Component {
     nav: PropTypes.array,
     activeSection: PropTypes.string,
     activeRootSection: PropTypes.string,
-    pathname: PropTypes.string,
     description: PropTypes.string,
     title: PropTypes.string
   }
@@ -34,7 +34,6 @@ export default class Layout extends React.Component {
     return (
       <React.Fragment>
         <SiteMetadata
-          pathname={this.props.pathname}
           title={this.props.title}
           description={this.props.description}
         />
@@ -43,25 +42,30 @@ export default class Layout extends React.Component {
             activeRootSection={this.props.activeRootSection}
             nav={this.props.nav}
           />
-          {this.props.nav && (
-            <Sidebar
-              nav={this.props.nav}
-              activeSection={this.props.activeSection}
-            />
-          )}
 
-          <main
-            className={cx(
-              this.props.nav && 'bg-white nested-links lh-copy pa4 ph5-l pt3'
+          <div className="z-3 relative ph4 items-center mw9 center h-100">
+            {this.props.nav && this.props.activeSection != 'api' && (
+              <Sidebar
+                nav={this.props.nav}
+                activeSection={this.props.activeSection}
+              />
             )}
-            css={{
-              '@media (min-width: 60rem)': {
-                marginLeft: this.props.nav ? styles.sidebar.width : '0'
-              }
-            }}
-          >
-            {this.props.children}
-          </main>
+
+            <main
+              className={cx(
+                this.props.nav &&
+                  'bg-white lh-copy pa4 ph5-l pt3 relative'
+              )}
+              css={{
+                '@media (min-width: 60rem)': {
+                  marginLeft: this.props.nav ? styles.sidebar.width : '0'
+                }
+              }}
+            >
+              {this.props.children}
+            </main>
+            <Footer hasSidebar={this.props.nav !== undefined} />
+          </div>
         </div>
       </React.Fragment>
     )

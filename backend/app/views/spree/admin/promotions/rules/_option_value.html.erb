@@ -1,9 +1,8 @@
 <div class="card-body">
   <div class="promo-rule-option-values">
-    <div class="js-promo-rule-option-values"></div>
-
+    <div class="js-promo-rule-option-values"></div> <!-- display div for option value select -->
     <button class="btn btn-primary btn-success js-add-promo-rule-option-value">
-      <span class="icon icon-add"></span>
+      <%= svg_icon name: "add.svg", width: '16', height: '16' %>
       <%= Spree.t(:add) %>
     </button>
   </div>
@@ -13,30 +12,25 @@
   data: { :'original-option-values' => promotion_rule.preferred_eligible_values } %>
 
 <script type="text/x-handlebars-template" id="promo-rule-option-value-option-values-select-name-template">
-  <%= param_prefix %>[preferred_eligible_values][{{productId}}]
+  <%= param_prefix %>[preferred_eligible_values][{{productId}}][]
 </script>
 
 <script type="text/x-handlebars-template" id="promo-rule-option-value-template">
-  <div class="promo-rule-option-value panel  ">
-    <div class="card-header">
+  <div class="promo-rule-option-value panel card mb-3" id="promo-rule-option-value-{{productId}}">
+    <div class="card-header d-flex justify-content-between">
+      <label><%= Spree.t(:product) %> <%= Spree.t(:option_values) %></label>
       <a class="js-remove-promo-rule-option-value delete pull-right">
-        <span class="icon icon-delete"></span>
+        <%= svg_icon name: "delete.svg", width: '16', height: '16' %>
       </a>
-      <div class="col-12 col-md-6">
-        <label><%= Spree.t(:product) %></label>
-      </div>
-      <div class="col-12 col-md-5">
-        <label><%= Spree.t(:option_values) %></label>
-      </div>
-      <div class="clearfix"></div>
     </div>
-    <div class="card-body row">
-      <div class="col-12 col-md-6">
-        <input class="js-promo-rule-option-value-product-select fullwidth" type="hidden" value="{{ productSelect.value }}">
+    <div class="card-body row p-3">
+      <div class="col-12 col-md-6 product-select">
+        <%= select_tag "product", nil, class: 'js-promo-rule-option-value-product-select d-block w-100', id: "promo-rule-option-value-product-select-{{productId}}" %>
       </div>
-      <div class="col-12 col-md-6">
-        <input class="js-promo-rule-option-value-option-values-select fullwidth" name="<%= param_prefix %>[preferred_eligible_values][{{ productSelect.value }}]" type="hidden" value={{optionValuesSelect.value}}>
+      <div class="col-12 col-md-6 option-value-select">
+        <%= select_tag "#{param_prefix}[preferred_eligible_values][{{ productId }}][]", nil, multiple: true, disabled: true, class: 'js-promo-rule-option-value-option-values-select d-none w-100', id: "promo-rule-option-value-option-values-select-{{productId}}" %>
       </div>
     </div>
   </div>
 </script>
+

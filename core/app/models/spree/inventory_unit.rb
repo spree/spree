@@ -1,14 +1,14 @@
 module Spree
   class InventoryUnit < Spree::Base
     with_options inverse_of: :inventory_units do
-      belongs_to :variant, class_name: 'Spree::Variant'
+      belongs_to :variant, -> { with_deleted }, class_name: 'Spree::Variant'
       belongs_to :order, class_name: 'Spree::Order'
       belongs_to :shipment, class_name: 'Spree::Shipment', touch: true, optional: true
-      belongs_to :return_authorization, class_name: 'Spree::ReturnAuthorization'
+      has_many :return_items, inverse_of: :inventory_unit
+      has_many :return_authorizations, class_name: 'Spree::ReturnAuthorization', through: :return_items
       belongs_to :line_item, class_name: 'Spree::LineItem'
     end
 
-    has_many :return_items, inverse_of: :inventory_unit
     belongs_to :original_return_item, class_name: 'Spree::ReturnItem'
 
     scope :backordered, -> { where state: 'backordered' }
@@ -82,11 +82,6 @@ module Spree
 
     def extract_singular_inventory!
       split_inventory!(1)
-    end
-
-    # Remove variant default_scope `deleted_at: nil`
-    def variant
-      Spree::Variant.unscoped { super }
     end
 
     def current_or_new_return_item

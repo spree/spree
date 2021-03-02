@@ -1,0 +1,319 @@
+@mixin svg-sizes {
+  @include media-breakpoint-between(md, md) {
+    height: 41px;
+    width: 41px;
+  }
+}
+@mixin item-title-font-size {
+  font-size: font-px-to-rem(16px);
+  @include media-breakpoint-up(md) {
+    font-size: font-px-to-rem(29px);
+  }
+  @include media-breakpoint-up(lg) {
+    font-size: font-px-to-rem(24px);
+  }
+}
+.account-page {
+  font-weight: 500;
+  h3 {
+    color: $font-color;
+    margin: 33px 0;
+    font-size: font-px-to-rem(32px);
+
+    @include media-breakpoint-down(md) {
+      text-align: center;
+      font-size: font-px-to-rem(34px);
+    }
+    @include media-breakpoint-down(sm) {
+      font-size: font-px-to-rem(18px);
+    }
+  }
+
+  > div {
+    @include media-breakpoint-up(md) {
+      margin-bottom: 85px;
+    }
+  }
+
+  thead {
+    border-bottom: 1px solid $global-border-style;
+  }
+
+  th {
+    color: theme-color("secondary");
+    padding: 7.5px 0;
+  }
+
+  &-user-full-name {
+    width: 200px;
+    display: inline-block;
+  }
+
+  &-user-info {
+    border-bottom: 1px solid $global-border-style;
+
+    &-item {
+      address {
+        font-size: font-px-to-rem(14px);
+        @include media-breakpoint-up(md) {
+          font-size: font-px-to-rem(26px);
+        }
+        @include media-breakpoint-up(lg) {
+          font-size: font-px-to-rem(18px);
+        }
+      }
+      margin-top: 20px;
+
+      @include media-breakpoint-up(lg) {
+        display: inline-block;
+        flex-basis: 30%;
+        margin-top: 34px;
+      }
+      &-title {
+        @include item-title-font-size;
+        color: $font-color;
+        margin-top: 25px;
+        font-weight: 500;
+
+        &-edit {
+          position: relative;
+          float: right;
+          margin-top: -4px;
+
+          &-img {
+            height: initial;
+            @include svg-sizes;
+          }
+        }
+
+        &:first-child {
+          margin-top: 0;
+        }
+
+        @include media-breakpoint-up(lg) {
+          &-edit {
+            float: none;
+            margin: -4px 0 0 20px;
+            position: absolute;
+          }
+        }
+      }
+
+      &-definition {
+        margin-top: 10px;
+        font-size: font-px-to-rem(14px);
+
+        @include media-breakpoint-up(sm) {
+          margin-top: 28px;
+          font-size: font-px-to-rem(26px);
+        }
+        @include media-breakpoint-up(lg) {
+          margin-top: 10px;
+          font-size: font-px-to-rem(18px);
+        }
+
+        &:first-child {
+          margin-top: 0;
+        }
+      }
+
+      &-store-credits {
+        padding: 12px 20px;
+        margin-top: 30px;
+        margin-bottom: 30px;
+        background: $secondary-background;
+        color: $secondary-font-color;
+        @include media-breakpoint-up(sm) {
+          padding: 21px 35px;
+          margin-top: 43px;
+        }
+
+        font-size: font-px-to-rem(16px);
+        font-weight: 500;
+        letter-spacing: 0.4px;
+        @include media-breakpoint-up(sm) {
+          font-size: font-px-to-rem(20px);
+          letter-spacing: 0.5px;
+        }
+
+        &-amount {
+          font-weight: 600;
+          @include media-breakpoint-up(sm) {
+            font-size: font-px-to-rem(22px);
+          }
+        }
+      }
+
+      .delete-button-wrapper {
+        order: -1;
+
+        @include media-breakpoint-up(lg) {
+          order: 1;
+        }
+      }
+
+      .address-button {
+        float: right;
+        top: -3px;
+        position: relative;
+        text-decoration: none;
+
+        &.delete-button {
+          float: right;
+        }
+
+        @include media-breakpoint-up(md) {
+          float: none;
+          margin-top: 5px;
+
+          &.delete-button {
+            float: none;
+            margin-right: 0;
+          }
+        }
+      }
+    }
+
+    @include media-breakpoint-up(md) {
+      border-bottom: none;
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+  }
+
+  &-orders {
+    border-top: 1px solid $global-border-style;
+    h3 {
+      @include media-breakpoint-down(sm) {
+        margin: 30px 0 0;
+        padding: 25px 0;
+      }
+    }
+    tr {
+      border-bottom: 1px solid $global-border-style;
+
+      @include media-breakpoint-down(md) {
+        &:last-child {
+          border-bottom: 0;
+        }
+      }
+    }
+
+    td {
+      padding: 25px 0;
+    }
+
+    table {
+      width: 100%;
+    }
+  }
+
+  &-order-number {
+    order: 3;
+    font-size: font-px-to-rem(16px);
+    a {
+      color: $font-color;
+    }
+    @include media-breakpoint-up(md) {
+      font-size: font-px-to-rem(29px);
+    }
+    @include media-breakpoint-up(lg) {
+      font-size: font-px-to-rem(18px);
+    }
+  }
+
+  &-order-status {
+    order: 2;
+    font-size: font-px-to-rem(14px);
+    text-transform: uppercase;
+    @include media-breakpoint-up(md) {
+      font-size: font-px-to-rem(26px);
+    }
+    @include media-breakpoint-up(lg) {
+      font-size: font-px-to-rem(18px);
+      text-transform: initial;
+    }
+  }
+
+  &-order-date {
+    order: 1;
+    font-size: 14px;
+    font-size: font-px-to-rem(14px);
+    @include media-breakpoint-up(md) {
+      font-size: font-px-to-rem(26px);
+    }
+    @include media-breakpoint-up(lg) {
+      font-size: font-px-to-rem(18px);
+    }
+  }
+
+  &-order-total {
+    order: 4;
+    font-size: font-px-to-rem(16px);
+    @include media-breakpoint-up(md) {
+      font-size: font-px-to-rem(29px);
+    }
+    @include media-breakpoint-up(lg) {
+      font-size: font-px-to-rem(18px);
+    }
+  }
+
+  &-order-payment-state,
+  &-order-shipment-state {
+    @include media-breakpoint-up(md) {
+      font-size: font-px-to-rem(18px);
+    }
+  }
+
+  @include media-breakpoint-between(xs, md) {
+    thead,
+    .account-page-order-payment-state,
+    .account-page-order-shipment-state {
+      display: none;
+    }
+
+    tr {
+      display: flex;
+      flex-wrap: wrap;
+      padding: 25px 0;
+
+      td {
+        width: 50%;
+        border: none;
+        padding: 0;
+      }
+    }
+
+    &-arrow-container {
+      right: $container-padding;
+      position: absolute;
+    }
+
+    & &-order-arrow {
+      right: 0px;
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      margin: 10px;
+      border-top: 1px solid black;
+      border-right: 1px solid black;
+      transform: rotate(45deg);
+      @include media-breakpoint-up(md) {
+        margin-top: 25px;
+      }
+    }
+
+    &-text-primary {
+      color: theme-color("primary");
+    }
+
+    &-lead {
+      font-weight: 600;
+    }
+  }
+  &-new-address-link {
+    @include item-title-font-size;
+  }
+}

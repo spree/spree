@@ -1,5 +1,5 @@
 ---
-title: Logic Customization
+title: Business Logic
 section: customization
 order: 4
 ---
@@ -22,35 +22,82 @@ extension is to create a file within the relevant **app/models/spree** or
 ## Extending Models
 
 Adding a custom method to the [Product](https://github.com/spree/spree/blob/master/core/app/models/spree/product.rb) model:
-`app/models/spree/product_decorator.rb`
+`app/models/my_store/spree/product_decorator.rb`
 
 ```ruby
 module MyStore
-  module ProductDecorator
-    def some_method
-      ...
+  module Spree
+    module ProductDecorator
+      def self.prepended(base)
+        base.before_validation :strip_whitespaces
+      end
+
+      def some_method
+        ...
+      end
+
+      protected
+
+      def strip_whitespaces
+        ...
+      end
     end
   end
 end
 
-Spree::Product.prepend MyStore::ProductDecorator
+::Spree::Product.prepend MyStore::Spree::ProductDecorator if ::Spree::Product.included_modules.exclude?(MyStore::Spree::ProductDecorator)
+```
+
+#### Adding new associations to existing models
+
+Assume you want to add a new model called `Video` associated to `Spree::Product`. Let's start with creating a database migration:
+
+```shell
+bundle exec rails g migration CreateVideos url:string product:references
+bundle exec rails db:migrate
+```
+
+Add new model to `app/models/videos.rb`:
+
+```ruby
+class Video < ApplicationRecord
+  belongs_to :product, class_name: 'Spree::Product'
+end
+```
+
+Finally add the association in `ProductDecorator` in `app/models/my_store/spree/product_decorator.rb`:
+
+```ruby
+module MyStore
+  module Spree
+    module ProductDecorator
+      def self.prepended(base)
+        base.has_many :videos, class_name: 'Video', foreign_key: 'product_id', dependent: :destroy
+      end
+    end
+  end
+end
+
+::Spree::Product.prepend MyStore::Spree::ProductDecorator if ::Spree::Product.included_modules.exclude?(MyStore::Spree::ProductDecorator)
 ```
 
 ## Extending Controllers
 
 Adding a custom action to the [ProductsController](https://github.com/spree/spree/blob/master/frontend/app/controllers/spree/products_controller.rb):
-`app/controllers/spree/products_controller_decorator.rb`
+`app/controllers/my_store/spree/products_controller_decorator.rb`
 
 ```ruby
 module MyStore
-  module ProductsControllerDecorator
-    def some_action
-      ...
+  module Spree
+    module ProductsControllerDecorator
+      def some_action
+        ...
+      end
     end
   end
 end
 
-Spree::ProductsController.prepend MyStore::ProductsControllerDecorator
+::Spree::ProductsController.prepend MyStore::Spree::ProductsControllerDecorator if ::Spree::ProductsController.included_modules.exclude?(MyStore::Spree::ProductsControllerDecorator)
 ```
 
 The exact same format can be used to redefine an existing method.
@@ -63,18 +110,20 @@ the `:load_data before_action`.
 
 ```ruby
 module MyStore
-  module ProductsControllerDecorator
-    def self.prepended(base)
-      base.before_action :load_data, only: :some_action
-    end
+  module Spree
+    module ProductsControllerDecorator
+      def self.prepended(base)
+        base.before_action :load_data, only: :some_action
+      end
 
-    def some_action
-      ...
+      def some_action
+        ...
+      end
     end
   end
 end
 
-Spree::ProductsController.prepend MyStore::ProductsControllerDecorator
+::Spree::ProductsController.prepend MyStore::Spree::ProductsControllerDecorator if ::Spree::ProductsController.included_modules.exclude?(MyStore::Spree::ProductsControllerDecorator)
 ```
 
 `:load_data` will use `params[:id]` to lookup the product by its permalink.

@@ -1,5 +1,5 @@
 ---
-title: 'Images Customization'
+title: 'Images'
 section: customization
 order: 2
 ---
@@ -15,10 +15,10 @@ To read more about ActiveStorage head to the [official documentation](https://ed
 
 ### Image dimensions
 
-To change the default image dimensions or add new ones you need to create a decorator file `app/models/spree/image_decorator.rb`:
+To change the default image dimensions or add new ones you need to create a decorator file `app/models/my_store/spree/image_decorator.rb`:
 
 ```ruby
-module YourApplication
+module MyStore
   module Spree
     module ImageDecorator
       module ClassMethods
@@ -40,7 +40,7 @@ module YourApplication
   end
 end
 
-Spree::Image.prepend ::YourApplication::Spree::ImageDecorator
+::Spree::Image.prepend ::MyStore::Spree::ImageDecorator
 ```
 
 You can also create image variations on the fly in your templates, eg.
@@ -58,7 +58,7 @@ or [Google Cloud Storage](https://guides.rubyonrails.org/active_storage_overview
 
 ## Paperclip
 
-**Paperclip** support will be removed in Spree 4.0. To migrate to **ActiveStorage** please read [the official migration guide](https://github.com/thoughtbot/paperclip/blob/master/MIGRATING.md).
+**Paperclip** support was removed in Spree 4.0. To migrate to **ActiveStorage** please read [the official migration guide](https://github.com/thoughtbot/paperclip/blob/master/MIGRATING.md).
 
 ### Image dimensions
 

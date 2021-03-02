@@ -1,12 +1,12 @@
 ---
-title: Dependendencies system
+title: Dependency system
 section: customization
 order: 3
 ---
 
 ## Overview
 
-Dependendencies is a a new way to customize Spree. With Dependencies you can easily replace parts of Spree internals with your custom classes. You can replace [Services](https://github.com/spree/spree/tree/master/core/app/services/spree), Abilities and [Serializers](https://github.com/spree/spree/tree/master/api/app/serializers/spree/v2). More will come in the future.
+Dependency is a a new way to customize Spree. With Dependencies you can easily replace parts of Spree internals with your custom classes. You can replace [Services](https://github.com/spree/spree/tree/master/core/app/services/spree), Abilities and [Serializers](https://github.com/spree/spree/tree/master/api/app/serializers/spree/v2). More will come in the future.
 
 <alert kind="warning">
   Dependencies are available in [Spree 3.7](/release_notes/3_7_0.html) and later.
@@ -16,18 +16,23 @@ Dependendencies is a a new way to customize Spree. With Dependencies you can eas
 
 To replace [serializers](https://github.com/Netflix/fast_jsonapi) or Services in a specific API endpoint you can create a simple decorator:
 
-Create a `app/controllers/spree/api/v2/storefront/cart_controller_decorator.rb`
-```ruby
-  module MyCartControllerDecorator
-    def resource_serializer
-      MyNewAwesomeCartSerializer
-    end
+Create a `app/controllers/my_store/spree/cart_controller_decorator.rb`
 
-    def add_item_service
-      MyNewAwesomeAddItemToCart
+```ruby
+  module MyStore
+    module Spree
+      module CartControllerDecorator
+        def resource_serializer
+          MyNewAwesomeCartSerializer
+        end
+
+        def add_item_service
+          MyNewAwesomeAddItemToCart
+        end
+      end
     end
   end
-  Spree::Api::V2::Storefront::CartController.prepend MyCartControllerDecorator
+  Spree::Api::V2::Storefront::CartController.prepend MyStore::Spree::CartControllerDecorator
 ```
 
 This will change the serializer in this API endpoint to `MyNewAwesomeCartSerializer` and also it will swap the default `add_item_service` to `MyNewAwesomeAddItemToCart`.
@@ -41,8 +46,8 @@ Storefront and Platform APIs have separate Dependencies injection points so you 
 In your Spree initializer (`config/initializers/spree.rb`) please add:
 
 ```ruby
-Spree::Api::Dependencies[:storefront_cart_serializer] = 'MyNewAwesomeCartSerializer'
-Spree::Api::Dependencies[:storefront_cart_add_item_service] = 'MyNewAwesomeAddItemToCart'
+Spree::Api::Dependencies.storefront_cart_serializer = 'MyNewAwesomeCartSerializer'
+Spree::Api::Dependencies.storefront_cart_add_item_service = 'MyNewAwesomeAddItemToCart'
 ```
 
 This will swap the default Cart serializer and Add Item to Cart service for your custom ones within all Storefront API endpoints that uses those classes.
@@ -56,7 +61,7 @@ This will swap the default Cart serializer and Add Item to Cart service for your
 You can also inject classes globally to the entire Spree stack. Be careful about this though as this touches every aspect of the application (both APIs, Admin Panel and default Rails frontend if you're using it).
 
 ```ruby
-Spree::Dependencies[:cart_add_item_service] = 'MyNewAwesomeAddItemToCart'
+Spree::Dependencies.cart_add_item_service = 'MyNewAwesomeAddItemToCart'
 ```
 
 or
@@ -70,8 +75,8 @@ end
 You can mix and match both global and API level customizations:
 
 ```ruby
-Spree::Dependencies[:cart_add_item_service] = 'MyNewAwesomeAddItemToCart'
-Spree::Api::Dependencies[:storefront_cart_add_item_service] = 'AnotherAddItemToCart'
+Spree::Dependencies.cart_add_item_service = 'MyNewAwesomeAddItemToCart'
+Spree::Api::Dependencies.storefront_cart_add_item_service = 'AnotherAddItemToCart'
 ```
 
 The second line will have precedence over the first one, and the Storefront API will use `AnotherAddItemToCart` and the rest of the application will use `MyNewAwesomeAddItemToCart`

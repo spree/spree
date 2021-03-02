@@ -1,0 +1,23 @@
+<% if promotion.nil? %>
+  <div class='shopping-cart-coupon-code <%= classes %>' data-hook='coupon_code'>
+    <div class="input-group">
+      <%= order_form.text_field :coupon_code, size: '30', class: 'form-control border-right-0', placeholder: Spree.t('cart_page.add_promo_code'), aria: { label: Spree.t('cart_page.add_promo_code') } %>
+      <div class="input-group-append">
+        <%= button_tag '+', name: '', id: 'shopping-cart-coupon-code-button', class: 'btn border-left-0' %>
+      </div>
+    </div>
+  </div>
+<% else %>
+  <div class='shopping-cart-coupon-code <%= classes %>' data-hook='coupon_code'>
+    <div class="input-group">
+      <%= order_form.text_field :applied_coupon_code, name: '', size: '30', class: 'form-control border-right-0 disabled',
+        value: Spree.t(:promotion_label, name: promotion.name),
+        data: { code: promotion.code } %>
+      <div class="input-group-append">
+        <%= button_tag name: '', id: 'shopping-cart-remove-coupon-code-button', class: 'btn border-left-0 remove' do %>
+          <%= icon(name: 'close', width: 15, height: 14) %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>
