@@ -13,7 +13,7 @@ import { Link } from 'gatsby'
 const Section = ({ title, path, children, className }) => (
   <div className={cx('pa0 pa2-ns flex w-100 mb4 mb0-ns', className)}>
     <div className="ba b--light-gray br2 pa3 w-100 bg-white">
-      <h2 className="f3 mt0 spree-blue">
+      <h2 className="f3 mt0 spree-blue bb b--light-gray pb2">
         {path ? (
           <Link to={path} className="link spree-blue">
             {title}
@@ -22,7 +22,6 @@ const Section = ({ title, path, children, className }) => (
           title
         )}
       </h2>
-      <hr class="bb bw1 b--black-10" />
       <p className="lh-copy">{children}</p>
     </div>
   </div>

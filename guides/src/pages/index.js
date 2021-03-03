@@ -4,7 +4,6 @@ import * as React from 'react'
 // --- Components
 import Layout from 'components/Layout'
 import Section from 'components/Section'
-import Alert from 'components/helpers/Alert'
 
 /**
  * Component
@@ -42,6 +41,13 @@ const IndexPage = () => (
               <li className="dib mr2"><a href="/api/v1/summary.html">REST API v1</a></li>
               <li className="dib mr2"><a href="https://api.spreecommerce.org/docs/api-v2/api/docs/v2/storefront/index.yaml">REST API v2</a></li>
             </ul>
+          </Section>
+
+          <Section path="/extensions/" title="Extensions" className="w-50-ns">
+            <p>
+              Extensions provide additional features and integrations for your Spree store.
+              Content Management, Internationalization, Order Management, Marketing, Marketplace, Payments providers, Shipping, Tax Calculation and more!
+            </p>
           </Section>
 
           <Section

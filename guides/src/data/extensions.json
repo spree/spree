@@ -1,0 +1,304 @@
+{
+  "categories": [
+    {
+      "name": "Authentication",
+      "extensions": [
+        {
+          "name": "Devise",
+          "description": "Provides authentication services for Spree, using the Devise gem such as signup, login, reset password, account confirmation and more",
+          "url": "https://github.com/spree/spree_auth_devise"
+        }
+      ]
+    },
+    {
+      "name": "Content Management",
+      "extensions": [
+        {
+          "name": "Blogs",
+          "description": "Move your existing Shopify blogs over to Spree bringing all your blog posts and URL's with you",
+          "url": "https://github.com/MatthewKennedy/spree_blogs"
+        },
+        {
+          "name": "Pages",
+          "description": "Simple, easy to use Shopify style pages for Spree 4.2 and up, with Action Text (TRIX rich text editor) ready via configs",
+          "url": "https://github.com/MatthewKennedy/spree_pages"
+        },
+        {
+          "name": "Static Content",
+          "description": "Manage static pages",
+          "url": "https://github.com/spree-contrib/spree_static_content"
+        },
+        {
+          "name": "Editor",
+          "description": "Rich text editor for Spree with Image and File uploading in-place.",
+          "url": "https://github.com/spree-contrib/spree_editor"
+        }
+      ]
+    },
+    {
+      "name": "Internationalization",
+      "extensions": [
+        {
+          "name": "I18n",
+          "description": "I18n translation files for Spree Commerce.",
+          "url": "https://github.com/spree-contrib/spree_i18n"
+        },
+        {
+          "name": "Globalize",
+          "description": "Adds support for model translations (multi-language stores)",
+          "url": "https://github.com/spree-contrib/spree_globalize"
+        }
+      ]
+    },
+    {
+      "name": "Order Management",
+      "extensions": [
+        {
+          "name": "Handling Fees",
+          "description": "Adds Handling Fee functionality to Spree.",
+          "url": "https://github.com/spree-contrib/spree_handling_fees"
+        },
+        {
+          "name": "Order Comments",
+          "description": "Add commenting to orders / shipments / etc ...",
+          "url": "https://github.com/spree-contrib/spree_comments"
+        },
+        {
+          "name": "Print Invoice",
+          "description": "Create a PDF invoice for Spree orders.",
+          "url": "https://github.com/spree-contrib/spree_print_invoice"
+        }
+      ]
+    },
+    {
+      "name": "Marketing",
+      "extensions": [
+        {
+          "name": "Analytics Trackers",
+          "description": "Adds support for Analytics Trackers (Google Analytics & Segment)",
+          "url": "https://github.com/spree-contrib/spree_analytics_trackers"
+        },
+        {
+          "name": "Affiliates",
+          "description": "Affiliate support for Spree Commerce.",
+          "url": "https://github.com/spree-contrib/spree_affiliate"
+        },
+        {
+          "name": "Email to a friend",
+          "description": "Email a friend functionality for Spree Commerce.",
+          "url": "https://github.com/spree-contrib/spree_email_to_friend"
+        },
+        {
+          "name": "MailChimp E-Commerce",
+          "description": "Full Spree Mailchimp E-Commerce integration",
+          "url": "https://github.com/spree-contrib/spree_mailchimp_ecommerce"
+        },
+        {
+          "name": "Product Feed",
+          "description": "Connect your Spree store directly to Google Merchant Center and Facebook Catalog via a live RSS feed",
+          "url": "https://github.com/MatthewKennedy/spree_product_feed"
+        },
+        {
+          "name": "Sitemap",
+          "description": "Sitemap Generator for Spree Commerce.",
+          "url": "https://github.com/spree-contrib/spree_sitemap"
+        },
+        {
+          "name": "Virtual Gift Card",
+          "description": "A virtual gift card solution",
+          "url": "https://github.com/ShopFelixGray/spree_virtual_gift_card"
+        }
+      ]
+    },
+    {
+      "name": "Marketplace & Multi-tenancy",
+      "extensions": [
+        {
+          "name": "Mirakl",
+          "description": "Spree intergration for Mirakl API",
+          "url": "https://github.com/spree-contrib/spree_shared"
+        },
+        {
+          "name": "Multi Vendor",
+          "description": "Official marketplace extension",
+          "url": "https://github.com/ShopFelixGray/spree_mirakl_api"
+        },
+        {
+          "name": "Apartment",
+          "description": "Multi-tenancy for Spree using Apartment (per tenant databases).",
+          "url": "https://github.com/spree-contrib/spree_shared"
+        }
+      ]
+    },
+    {
+      "name": "Payments",
+      "extensions": [
+        {
+          "name": "Adyen",
+          "description": "Adyen payment gateway integration for Spree.",
+          "url": "https://github.com/spree-contrib/spree-adyen"
+        },
+        {
+          "name": "Affirm",
+          "description": "Affirm payment method",
+          "url": "https://github.com/Affirm/spree_affirm"
+        },
+        {
+          "name": "Amazon Pay",
+          "description": "Add Pay with Amazon to your Spree Commerce solution",
+          "url": "https://github.com/ShopFelixGray/spree_pay_with_amazon"
+        },
+        {
+          "name": "Gateway",
+          "description": "Officially supported payment gateways such as Stripe, Apple Pay, Authorize.net and over 20 more",
+          "url": "https://github.com/spree/spree_gateway"
+        },
+        {
+          "name": "Braintree vzero",
+          "description": "Official Spree Braintree + PayPal extension",
+          "url": "https://github.com/spree-contrib/spree_braintree_vzero"
+        },
+        {
+          "name": "PayPal Express",
+          "description": "A better Spree PayPal Express Extension.",
+          "url": "https://github.com/spree-contrib/better_spree_paypal_express"
+        },
+        {
+          "name": "Stripe Terminal",
+          "description": "This gem allows you to process payments with the stripe terminal via the backend of spree.",
+          "url": "https://github.com/ShopFelixGray/spree_stripe_terminal"
+        }
+      ]
+    },
+    {
+      "name": "Products",
+      "extensions": [
+        {
+          "name": "Digital Products",
+          "description": "A Spree extension to enable downloadable products",
+          "url": "https://github.com/spree-contrib/spree_digital"
+        },
+        {
+          "name": "Videos",
+          "description": "Allows linking of youtube reference IDs to products",
+          "url": "https://github.com/spree-contrib/spree_videos"
+        },
+        {
+          "name": "Volume Pricing",
+          "description": "Spree extension which supports sales volume based pricing (quantity discounts).",
+          "url": "https://github.com/spree-contrib/spree_volume_pricing"
+        }
+      ]
+    },
+    {
+      "name": "Shipping",
+      "extensions": [
+        {
+          "name": "Active Shipping",
+          "description": "Integration with USPS, FedEx, Canada Post and others",
+          "url": "https://github.com/spree-contrib/spree_active_shipping"
+        },
+        {
+          "name": "EasyPost",
+          "description": "This is an extension to integrate Easy Post into Spree",
+          "url": "https://github.com/ShopFelixGray/spree_easypost"
+        },
+        {
+          "name": "ShipStation",
+          "description": "Connect your Spree store with ShipStation, allowing ShipStation to pull shipments from your store, and when a shipment is sent, update the order with a tracking number and mark it as shipped",
+          "url": "https://github.com/MatthewKennedy/spree_shipstation"
+        }
+      ]
+    },
+    {
+      "name": "Social",
+      "extensions": [
+        {
+          "name": "Social Login",
+          "description": "Login or signup via Facebook, Twitter, Amazon and other",
+          "url": "https://github.com/spree-contrib/spree_social"
+        },
+        {
+          "name": "Social Sharing",
+          "description": "Add social sharing buttons for your Spree products",
+          "url": "https://github.com/spree-contrib/spree_social_products"
+        },
+        {
+          "name": "Reviews",
+          "description": "Straightforward review/rating functionality.",
+          "url": "https://github.com/spree-contrib/spree_reviews"
+        }
+      ]
+    },
+    {
+      "name": "Tax Calculation",
+      "extensions": [
+        {
+          "name": "Avatax",
+          "description": "The new officially certified Spree Avatax (Avalara) extension",
+          "url": "https://github.com/spree-contrib/spree_avatax_official"
+        },
+        {
+          "name": "TaxCloud",
+          "description": "US sales tax extension for Spree using the Tax Cloud service.",
+          "url": "https://github.com/spree-contrib/spree_tax_cloud"
+        },
+        {
+          "name": "TaxJar",
+          "description": "Spree Taxjar is a US sales tax extension for Spree using the Taxjar service",
+          "url": "https://github.com/spree-contrib/spree_taxjar"
+        }
+      ]
+    },
+    {
+      "name": "Upselling",
+      "extensions": [
+        {
+          "name": "Product Assembly",
+          "description": "Adds ability to make product bundles",
+          "url": "https://github.com/spree-contrib/spree-product-assembly"
+        },
+        {
+          "name": "Related Products",
+          "description": "Possible uses: Accessories, Cross Sells, Up Sells, Compatible Products, Replacement Products, Warranty & Support Products",
+          "url": "https://github.com/spree-contrib/spree_related_products"
+        },
+        {
+          "name": "Recently Viewed",
+          "description": "Recently viewed products in Spree Commerce.",
+          "url": "https://github.com/spree-contrib/spree_recently_viewed"
+        },
+        {
+          "name": "SearchKick",
+          "description": "Add Elasticsearch integration to Spree, powered by searchkick",
+          "url": "https://github.com/spree-contrib/spree_searchkick"
+        },
+        {
+          "name": "Wishlists",
+          "description": "Wishlist extension for Spree Commerce.",
+          "url": "https://github.com/spree-contrib/spree_wishlist"
+        }
+      ]
+    },
+    {
+      "name": "Other",
+      "extensions": [
+        {
+          "name": "Contact Us",
+          "description": "Adds Contact Us form to your Spree Commerce store",
+          "url": "https://github.com/spree-contrib/spree_contact_us"
+        },
+        {
+          "name": "Mail Settings",
+          "description": "Additional settings for email send out",
+          "url": "https://github.com/spree-contrib/spree_mail_settings"
+        },
+        {
+          "name": "Shopify Importer",
+          "description": "Migrate your Shopify store to Spree",
+          "url": "https://github.com/spree-contrib/spree_shopify_importer"
+        }
+      ]
+    }
+  ]
+}
