@@ -1,0 +1,1358 @@
+km:
+  activerecord:
+    attributes:
+      spree/address:
+        address1: អាសយដ្ឋាន
+        address2: អាសយដ្ឋាន (បន្ត)
+        city: ស្រុក/ក្រុង
+        country: ប្រទេស
+        firstname: នាមខ្លួន
+        lastname: នាមត្រកូល
+        phone: ទូរស័ព្ទ
+        state: ខេត្ត/រដ្ឋ
+        zipcode: កូដប្រៃសនីយ៍
+      spree/calculator/tiered_flat_rate:
+        preferred_base_amount:
+        preferred_tiers:
+      spree/calculator/tiered_percent:
+        preferred_base_percent:
+        preferred_tiers:
+      spree/country:
+        iso: ISO
+        iso3: ISO3
+        iso_name: ឈ្មោះ ISO
+        name: ឈ្មោះ
+        numcode: កូដ ISO
+      spree/credit_card:
+        base:
+        cc_type: ប្រភេទ
+        month: ខែ
+        name:
+        number: លេខ
+        verification_value: ទិន្នន័យផ្ទៀងផ្ទាត់
+        year: ឆ្នាំ
+      spree/inventory_unit:
+        state: ខេត្ត/រដ្ឋ
+      spree/line_item:
+        price: តម្លៃ
+        quantity: ចំនួន
+      spree/option_type:
+        name: ឈ្មោះ
+        presentation: បង្ហាញជា
+      spree/order:
+        checkout_complete: បានបង់ប្រាក់រួច
+        completed_at: បង់កាល
+        considered_risky:
+        coupon_code: កូដបញ្ចុះតម្លៃ
+        created_at: ថ្ងៃបញ្ជា
+        email: អ៊ីម៉ែលរបស់អតិថិជន
+        ip_address: លេខ IP
+        item_total: ទំនិញសរុប
+        number: លេខ
+        payment_state: ការបង់ប្រាក់
+        shipment_state: ស្ថានភាព​នៃការ​ដឹកជញ្ជូន
+        special_instructions: សេចក្ដីណែនាំ​ពិសេស
+        state: ខេត្ត/រដ្ឋ
+        total: សរុប
+      spree/order/bill_address:
+        address1: អាសយដ្ឋានទូរទាត់ លេខផ្លូវ
+        city: អាសយដ្ឋានទូរទាត់ ស្រុក/ក្រុង
+        firstname: អាសយដ្ឋានទូរទាត់ ត្រកូល
+        lastname: អាសយដ្ឋានទូរទាត់ ឈ្មោះ
+        phone: អាសយដ្ឋានទូរទាត់ ទូរស័ព្ទ
+        state: អាសយដ្ឋានទូរទាត់ ខេត្ត/រដ្ឋ
+        zipcode: អាសយដ្ឋានទូរទាត់ លេខកូដប្រៃសនីយ៍
+      spree/order/ship_address:
+        address1: អាសយដ្ឋានទទួលទំនិញ លេខផ្លូវ
+        city: អាសយដ្ឋានទទួលទំនិញ ស្រុក/ក្រុង
+        firstname: អាសយដ្ឋានទទួលទំនិញ ត្រកូល
+        lastname: អាសយដ្ឋានទទួលទំនិញ ឈ្មោះ
+        phone: អាសយដ្ឋានទទួលទំនិញ ទូរស័ព្ទ
+        state: អាសយដ្ឋានទទួលទំនិញ ខេត្ត/រឮ
+        zipcode: អាសយដ្ឋានទទួលទំនិញ កូដប្រៃសនីយ៍
+      spree/payment:
+        amount: តម្លៃ
+      spree/payment_method:
+        name: វិធីបង់ប្រាក់
+      spree/product:
+        available_on: មានសុពលភាព​នៅ
+        cost_currency: រូបិយវត្ថុ
+        cost_price: តម្លៃនាំចូល
+        description: ពិពណ៌នា
+        master_price: តម្លៃលក់
+        name: ឈ្មោះទំនិញ
+        on_hand: នៅក្នុងឃ្លាំង
+        shipping_category: វិធីដឹកជញ្ជូន
+        tax_category: ប្រភេទពន្ធ
+      spree/promotion:
+        advertise: ការផ្សាយពាជ្ជកម្ម
+        code: កូដ
+        description: ពិពណ៌នា
+        event_name: ឈ្មោះព្រិត្តិការណ៍
+        expires_at: ផុតសុពលភាព​នៅ
+        name: ឈ្មោះ
+        path: អាសយដ្ឋានឯកសារ
+        starts_at: ចាប់ផ្ដើមនៅ
+        usage_limit: កំណត់​ការ​ប្រើប្រាស់
+      spree/promotion_category:
+        name: ប្រភេទប្រម៉ូសិន
+      spree/property:
+        name: ឈ្មោះ
+        presentation: បង្ហាញជា
+      spree/prototype:
+        name: ឈ្មោះ
+      spree/return_authorization:
+        amount: តម្លៃ
+      spree/role:
+        name: ឈ្មោះ
+      spree/state:
+        abbr: សរសេរកាត់
+        name: ឈ្មោះ
+      spree/state_change:
+        state_changes:
+        state_from:
+        state_to:
+        timestamp:
+        type:
+        updated:
+        user:
+      spree/store:
+        mail_from_address:
+        meta_description:
+        meta_keywords:
+        name: ឈ្មោះ
+        seo_title:  ដាក់ចំណងជើង SEO
+        url:
+      spree/tax_category:
+        description: ចំណាំ
+        name: ឈ្មោះ
+      spree/tax_rate:
+        amount: អត្រា
+        included_in_price: ត្រូវបានបូកបញ្ចូលក្នុងតម្លៃ
+        show_rate_in_label: បង្ហាញក្នុងស្លាកតម្លៃ
+      spree/taxon:
+        name: ឈ្មោះ
+        permalink: ភ្ជាប់បង្ហាញ (Permalink)
+        position: ទីតាំង
+      spree/taxonomy:
+        name: ឈ្មោះ
+      spree/user:
+        email: អ៊ីម៉ែល
+        password: ពាក្យសម្ងាត់
+        password_confirmation: បញ្ជាក់ពាក្យសម្ងាត់ម្ដងទៀត
+      spree/variant:
+        cost_currency: រូបិយវត្ថុ
+        cost_price: តម្លៃនាំចូល
+        depth: ជម្រៅ
+        height: កម្ពស់
+        price: តម្លៃលក់
+        sku: កូដ
+        weight: ទម្ងន់
+        width: ប្រវែង
+      spree/zone:
+        description: ពិពណ៌នា
+        name: ឈ្មោះតំបន់
+    errors:
+      models:
+        spree/calculator/tiered_flat_rate:
+          attributes:
+            base:
+              keys_should_be_positive_number:
+            preferred_tiers:
+              should_be_hash:
+        spree/calculator/tiered_percent:
+          attributes:
+            base:
+              keys_should_be_positive_number:
+              values_should_be_percent:
+            preferred_tiers:
+              should_be_hash:
+        spree/classification:
+          attributes:
+            taxon_id:
+              already_linked:
+        spree/credit_card:
+          attributes:
+            base:
+              card_expired: ប័ណ្ណអស់សុពលភាព
+              expiry_invalid: ការផុតកំណត់មិនត្រឹមត្រូវ
+        spree/line_item:
+          attributes:
+            currency:
+              must_match_order_currency:
+        spree/refund:
+          attributes:
+            amount:
+              greater_than_allowed:
+        spree/reimbursement:
+          attributes:
+            base:
+              return_items_order_id_does_not_match:
+        spree/return_item:
+          attributes:
+            inventory_unit:
+              other_completed_return_item_exists:
+            reimbursement:
+              cannot_be_associated_unless_accepted:
+        spree/store:
+          attributes:
+            base:
+              cannot_destroy_default_store:
+    models:
+      spree/address:
+        one: អាសយដ្ឋាន
+        other: អាសយដ្ឋាន
+      spree/country:
+        one: ប្រទេស
+        other: ប្រទេស
+      spree/credit_card:
+        one: ប័ណ្ណឥណទាន
+        other: ប័ណ្ណឥណទាន
+      spree/customer_return:
+      spree/inventory_unit:
+        one: ឯកតារក្សា
+        other: ឯកតារក្សា
+      spree/line_item:
+        one: 
+        other: 
+      spree/option_type:
+      spree/option_value:
+      spree/order:
+        one: បញ្ជាទិញ
+        other: បញ្ជាទិញ
+      spree/payment:
+        one: ការទូរទាត់
+        other: ការទូរទាត់
+      spree/payment_method:
+      spree/product:
+        one: ទំនិញ
+        other: ទំនិញ
+      spree/promotion:
+      spree/promotion_category:
+      spree/property:
+        one: លក្ខណៈ
+        other: លក្ខណៈ
+      spree/prototype:
+        one: គំរូទំនិញ
+        other: គំរូទំនិញ
+      spree/refund_reason: មូលហេតុ​ដែល​សង​រទំនិញវិញ
+      spree/reimbursement: មូលហេតុ​ដែល​សង​ជំងឺចិត្ត
+      spree/reimbursement_type: ប្រភេទសងជំងឺចិត្ត
+      spree/return_authorization:
+        one: បញ្ជាក់សងទំនិញវិញ
+        other: បញ្ជាក់សងទំនិញវិញ
+      spree/return_authorization_reason:
+      spree/role:
+        one: តួរនាទី
+        other: តួរនាទី
+      spree/shipment:
+        one: ដឹកជញ្ជូន
+        other: ដឹកជញ្ជូន
+      spree/shipping_category:
+        one: វិធីដឹកជញ្ជូន
+        other: វិធីដឹកជញ្ជូន
+      spree/shipping_method:
+      spree/state:
+        one: ប្រទេស
+        other: ប្រទេស
+      spree/state_change:
+      spree/stock_location:
+      spree/stock_movement:
+      spree/stock_transfer:
+      spree/tax_category:
+        one: ប្រភេទពន្ធ
+        other: ប្រភេទពន្ធ
+      spree/tax_rate:
+        one: អត្រាពន្អ
+        other: អត្រាពន្អ
+      spree/taxon:
+        one: ចំណាត់ថ្នាក់
+        other: ចំណាត់ថ្នាក់
+      spree/taxonomy:
+        one: ចំណាត់ថ្នាក់
+        other: ចំណាត់ថ្នាក់
+      spree/tracker:
+      spree/user:
+        one: អ្នកប្រើប្រាស់
+        other: អ្នកប្រើប្រាស់
+      spree/variant:
+        one: ប្រភេទ
+        other: ប្រភេទ
+      spree/zone:
+        one: តំបន់
+        other: តំបន់
+  devise:
+    confirmations:
+      confirmed: គណនីរបស់អ្នកត្រូវ​បាន​បញ្ជាក់ដោយជោគជ័យ ។ ឥឡូវនេះ អ្នក​បាន​ភ្ជាប់ចូល​ហើយ ។
+      send_instructions: ប្រហែលប៉ុន្មាននាទីទៀត អ្នកនឹងទទួលបានអ៊ីម៉ែលណែនាំពីរបៀប​បញ្ជាក់គណនីរបស់អ្នក ។
+    failure:
+      inactive: គណនីរបស់អ្នកមិនទាន់បានបើកឲ្យប្រើប្រាស់នោះទេ ។
+      invalid: អ៊ីម៉ែល ឬ ពាក្យសម្ងាត់មិនត្រឹមត្រូវ ។
+      invalid_token: កូដផ្ទៀងផ្ទាត់មិនត្រឹមត្រូវ ។
+      locked: គណនីរបស់អ្នកត្រូវ​បាន​បិទ ។
+      timeout: វេន​ប្រើប្រាស់របស់អ្នកត្រូវបានបញ្ចប់ សូម​ចូលប្រើប្រាស់ម្ដងទៀត ។
+      unauthenticated: ដើម្បីបន្តទៀតបាន អ្នកត្រូវតែចុះឈ្មោះ ឬ ចូលប្រើប្រាស់​ជាមុនសិន ។
+      unconfirmed: អ្នកត្រូវតែបញ្ជាក់គណនី​សិន ទើប​បន្ត​ទៀតបាន ។
+    mailer:
+      confirmation_instructions:
+        subject: អំពី​បៀបបញ្ជាក់គណនី
+      reset_password_instructions:
+        subject: អំពីរបៀប​កំណត់ពាក្យ​សម្ងាត់ថ្មី
+      unlock_instructions:
+        subject: អំពីរបៀប​បើក​គណនីវិញ
+    oauth_callbacks:
+      failure: មិនអាចឲ្យអ្នក %{kind} បានទេ ដោយសារតែ \%{reason}\.
+      success: បាន %{kind} គណនីអ្នក ដោយ​ជោគជ័យ ។
+    unlocks:
+      send_instructions: ក្នុង​ប៉ុន្មាននាទីទៀត អ្នកនឹងទទួលបានអ៊ីម៉ែលណែនាំពីរបៀប​បញ្ជាក់បើ​គណនីឡើងវិញ ។
+      unlocked: គណនីរបស់អ្នកត្រូវបានបើកឲ្យប្រើប្រាស់ឡើងវិញហើយ ។ ឥឡូវនេះ អ្នក​បាន​ភ្ជាប់ចូល​ហើយ ។
+    user_passwords:
+      user:
+        cannot_be_blank: ពាក្យសម្ងាត់ មិន​អាច​ទុក​ឲ្យ​ទទេបានទេ ។
+        send_instructions: នុង​ប៉ុន្មាននាទីទៀត អ្នកនឹងទទួលបានអ៊ីម៉ែលណែនាំពីរបៀប​កំណត់ពាក្យសម្ងាត់ឡើងវិញ ។
+        updated: ពាក្យសម្ងាត់ត្រូវបានប្ដូរ​ដោយជោគជ័យ ។ ឥឡូវនេះ អ្នក​បាន​ភ្ជាប់ចូល​ហើយ ។
+    user_registrations:
+      destroyed: ជម្រាបលា ! គណនីរបស់អ្នកត្រូវបានលុបចោលហើយ ! សង្ឃឹមថា​យើង​នឹង​បានជួប​គ្នា​ទៀត !
+      inactive_signed_up: អ្នកបានចុះឈ្មោះដោយជោគជ័យ ។ ប៉ុន្តែ​យើងពុំអាច​អនុញ្ញាត​ឲ្យ​អ្នក​ចូលប្រើប្រាស់​បាន​ទេ ដោយសារ​តែ​គណនីរបស់អ្នក​ %{reason}.
+      signed_up: សូមស្វាគមន៍ ! អ្នកបានចុះឈ្មោះដោយជោគជ័យ ។
+      updated: អ្នក​បាន​កែប្រែគណនី​ដោយ​ជោគជ័យ ។
+    user_sessions:
+      signed_in: ចូលប្រើប្រាស់​បាន​ជោគជ័យ ។ 
+      signed_out: បានចាកចេញដោយជោគជ័យ ។
+  errors:
+    messages:
+      already_confirmed: ត្រូវបានបញ្ជាក់រួចហើយ
+      not_found: មិនមានទេ
+      not_locked: ត្រូវបានបិទ
+      not_saved:
+        one: 'មានកំហុស​ មួយ ដែល​មិន​ឲ្យ​រក្សាទុក %{resource} មួយនេះ ៖'
+        other: "មាន​កំហុស %{count} ដែល​មិន​ឲ្យ​រក្សាទុក %{resource} មួយនេះ ៖"
+  spree:
+    filter: តម្រង់
+    quick_search: ស្វែងរកដោយរហ័ស . . .
+    abbreviation: ពាក្យ​កាត់
+    accept:
+    acceptance_errors:
+    acceptance_status:
+    accepted:
+    account: គណនី
+    account_updated: គណនីត្រូវបានកែប្រែហើយ !
+    action: ប្រតិបត្តិការ
+    actions:
+      cancel: បោះបង់
+      continue: បន្ត
+      create: បង្កើត
+      destroy: លុបចោល
+      edit: កែប្រែ
+      list: រាយនាម
+      listing: រាយនាមបញ្ជី
+      new: ថ្មី
+      refund: សងប្រាក់វិញ
+      save: រក្សាទុក
+      update: កែប្រែ
+    activate: បើក
+    active: ដំណើរការ
+    add: បន្ថែម
+    add_action_of_type: បន្ថែប្រតិបត្តិការ​ ប្រភេទ
+    add_country: បន្ថែមប្រទេស
+    add_coupon_code: បន្ថែម​កូដបញ្ចុះតម្លៃ
+    add_new_header: បន្ថែមចំណងជើងថ្មី
+    add_new_style: បន្ថែម​របៀប​ថ្មី
+    add_one: បន្ថែមមួយ
+    add_option_value: បន្ថែម​ជ្រើស
+    add_product: បន្ថែម​ទំនិញ
+    add_product_properties: បន្ថែម​លក្ខណៈ​បរស់​ទំនិញ
+    add_rule_of_type: បន្ថែម​របៀប
+    add_state: បន្ថែម​ខេត្ត/រដ្ឋ
+    add_stock: បន្ថែម​ស្តុបទំនិញ
+    add_stock_management: បន្ថែមការ​គ្រប់គ្រង​ទំនិញ
+    add_to_cart: បន្ថែមចូលក្នុងកន្ត្រក
+    add_variant: បន្ថែមប្រភេទ
+    additional_item: តម្លៃបន្ថែំ
+    address1: អាសយដ្ឋាន
+    address2: អាសយដ្ឋាន (បន្ត)
+    adjustable:
+    adjustment: កែប្រែ
+    adjustment_amount: តម្លៃ
+    adjustment_successfully_closed: ការកែប្រែត្រូវបានបិទ​ ! 
+    adjustment_successfully_opened: ការកែប្រែត្រូវត្រូវបានបើក !
+    adjustment_total: កែប្រែសរុប
+    adjustments: ការកែប្រែ
+    admin:
+      tab:
+        configuration: រូបសណ្ឋាន
+        option_types: ប្រភេទជម្រើស
+        orders: បញ្ជាទិញ
+        overview: ទូទៅ
+        products: ទំនិញ
+        promotions: ការបញ្ចុះតម្លៃ
+        promotion_categories: ប្រភេទបញ្ចុះតម្លៃ
+        properties: លក្ខណៈ
+        prototypes: គំរូ
+        reports: របាយការន៍
+        taxonomies: កម្រិតចំណាត់ថ្នាក់
+        taxons: ចំណាត់ថ្នាក់
+        users: អ្នកប្រើប្រាស់
+        return_authorizations: អនុញ្ញាតឱ្យត្រឡប់មកវិញ
+        customer_returns: អតិថិជនផ្ញើមកវិញ 
+      user:
+        account: គណនី
+        addresses: អាសយដ្ឋាន
+        items: ទំនិញ
+        items_purchased: ទំនិញបានជាវ
+        order_history: ប្រវត្តិនៃការ​បញ្ជាទិញ
+        order_num: ចំនួន​បញ្ជាទិញ
+        orders: បញ្ជាទិញ
+        user_information: ព័ត៌មានគណនី
+    administration: គ្រប់គ្រង
+    advertise:
+    agree_to_privacy_policy: ឯកភាពនឹង​គោលការណ៍​ឯកជនភាព
+    agree_to_terms_of_service: ឯកភាព​នឹង​លក្ខខណ្ឌ​សេវាកម្ម
+    all: ទាំងអស់
+    all_adjustments_closed: ការកែប្រែទាំងអស់ត្រូវត្រូវបានបិទ !
+    all_adjustments_opened: ការកែប្រែទាំងអស់​ត្រូវត្រូវបានបើក !
+    all_departments: គ្រប់ផ្នែក
+    all_items_have_been_returned: វត្ថុទាំងអស់ត្រូវបានប្រគល់ជូនវិញ
+    all_rights_reserved: រក្សា​រ​សិទ្ធ​គ្រប់យ៉ាង
+    allow_ssl_in_development_and_test: អនុញ្ញាតឲ្យប្រើ SSL ក្នុងរបៀប​អ្នកសសេរកូដ និង តេស្ត
+    allow_ssl_in_production: អនុញ្ញាតឲ្យប្រើ SSL ក្នុងកម្មវិធី​ផ្លូវការ
+    allow_ssl_in_staging: អនុញ្ញាតឲ្យប្រើ SSL ក្នុងកម្មវិធី​តេស្ត
+    already_signed_up_for_analytics: អ្នក​បាន​ចុះឈ្មោះសម្រាប់ Spree Analytics
+    alt_text: ចំណាំផ្សេង
+    alternative_phone: ទូរស័ព្ទផ្សេង
+    amount: តម្លៃ
+    analytics_desc_header_1: Spree Analytics
+    analytics_desc_header_2: ទិន្នន័​វិភាគផ្ទាល់​ត្រូវ​បាន​បញ្ចូល​លើ​ផ្ទាំងព័ត៌មាន Spree
+    analytics_desc_list_1: ទទួល​ព័ត៌មាន​ការ​លក់​តាម​ជាក់ស្ដែង​ផ្ទាល់
+    analytics_desc_list_2: ទាមទារ​គណនី Spree ដែល​មិន​គិតថ្លៃតែ​ប៉ុណ្ណោះ ដើម្បី​បើក​ឲ្យ​ដំណើការ
+    analytics_desc_list_3: តំឡើង​ដោយ​មិន​ចាំបាច់ត្រូវចេះសរសេរកូដ
+    analytics_desc_list_4: ឥតអស់ប្រាក់
+    analytics_trackers: តាមដាន​ការ​វិភាគ
+    and: និង
+    approve: បញ្ជាក់
+    approved_at: បញ្ជាក់កាល
+    approver: បញ្ជាក់ដោយ
+    are_you_sure: តើអ្នកប្រាកដថា
+    are_you_sure_delete: តើអ្នកប្រាកដថា​ចង់​លុប​ការ​រក្សា​មួយនេះ ?
+    associated_adjustment_closed: ការកែប្រែដែលពាក់ព័ន្ធ​ត្រូវ​បាន​បិទ មិនអាចគិត​ឡើង​បាន​ទៀតទេ ។ តើអ្នក​ចង់បើកវិញទេ ?
+    at_symbol: '@'
+    authorization_failure: មិន​ត្រូវអនុញ្ញាត
+    authorized:
+    auto_capture:
+    available_on: មាន​កាល
+    average_order_value:
+    avs_response:
+    back: ត្រឡប់ក្រោយ
+    back_end: ត្រឡប់​ដល់​ចុងបញ្ចប់
+    back_to_payment:
+    back_to_resource_list:
+    back_to_rma_reason_list:
+    back_to_store: ត្រឡប់ទៅស្តុបវិញ
+    back_to_users_list: ត្រឡប់ទៅបញ្ជីអ្នកប្រើប្រាស់​វិញ
+    backorderable: អាចកក់មុនបាន
+    backorderable_default:
+    backordered:
+    backorders_allowed: ការ​កក់​ដែល​បាន​អនុញ្ញាត
+    balance_due: ទឹកប្រាក់ដែល​ត្រូវទូទាត់
+    base_amount:
+    base_percent:
+    bill_address: អាសយដ្ឋានទទួលវិក្កយបត្រ
+    billing: ទូរទាត់​
+    billing_address: អាសយដ្ឋានទូរទាត់
+    both: ទាំងពីរ
+    calculated_reimbursements:
+    calculator: ម៉ាស៊ីនគិតលេខ
+    calculator_settings_warning: ប្រសិនបើអ្នក​ផ្លាស់ប្ដូរប្រភេទ​ម៉ាស៊ីនគិតលេខ អ្នកត្រូវតែរក្សា​ជាមុនសិន ទើប​អ្នក​អាច​កែប្រែ​ក្នុង​កម្មវិធី​ម៉ាស៊ីនគិតលេខ
+    cancel: បោះបង់
+    canceled_at: បោះបង់កាល
+    canceler: បោះបង់ដោយ
+    cannot_create_customer_returns: អ្នកមិនអាចបង្កើតការសងប្រាក់ទៅអតថិជន​បានទេ
+    cannot_create_payment_without_payment_methods: អ្នក​មិនអាចធ្វើការបង់ប្រាក់បានទេ ប្រសិនបើមិនបានកំណត់វិធីបង់ប្រាក់ណាមួយ ។
+    cannot_create_returns: មិនអាចបង្កើតថា​ សងទំនិញវិញ ដោយសារ​តែ​ការ​បញ្ជាទិញនេះ​មិនទាន់បាន​ដឹកជញ្ជូនទៅទេ
+    cannot_perform_operation: មិនអាចដំណើរការប្រតិបត្តិការ​ដែល​បាន​ស្នើ
+    cannot_set_shipping_method_without_address: មិនអាចបង្កើតវិធីដឹកជញ្ជូន​ ប្រសិនបើមិនទាន់មានព័ត៌មាន​លំអិត​អំពីអតិថិជន ។
+    capture: ទូទាត់ប្រាក់
+    capture_events:
+    card_code: កូដប័ណ្ណ
+    card_number: លេខប័ណ្ណ
+    card_type: ប្រភេទប័ណ្ណ
+    card_type_is: ប្រភេទប័ណ្ណគឺ
+    cart: កន្ត្រក
+    cart_subtotal: សរុប​នៃ​កន្ត្រក
+    categories: ប្រភេទទំនិញ
+    category: ប្រភេទទំនិញ
+    charged:
+    check_for_spree_alerts: ពិនិត្យការជូនដំណឹងពី Spree
+    checkout: បង់ប្រាក់
+    choose_a_customer: ជ្រើសរើសអតិថិជនមួយ
+    choose_a_taxon_to_sort_products_for: ជ្រើសរើសចំណាត់ថ្នាក់ដើម្បី​រៀបចំទំនិញ
+    choose_currency: ជ្រើសរើស​រូបិយវត្ថុ
+    choose_dashboard_locale: ជ្រើសរើសទីតាំងសម្រាប់ផ្ទុកផ្ទាំងព៏ត៌មាន
+    choose_location:
+    city: ក្រុង/ស្រុក
+    clear_cache:
+    clear_cache_ok:
+    clear_cache_warning:
+    click_and_drag_on_the_products_to_sort_them:
+    clone: ចម្លងទាំងស្រុង
+    close: បិទ
+    close_all_adjustments: បិទការកែប្រែទាំងអស់
+    code: កូដ
+    company: ក្រុមហ៊ុន
+    complete: រួចរាលើ
+    configuration: កំណត់
+    configurations: កំណត់
+    confirm: បញ្ជាក់
+    confirm_delete: បញ្ជាក់ការលុប
+    confirm_password: បញ្ជាក់ពាក្យសម្ងាត់​
+    continue: បន្ត
+    continue_shopping: បន្តជាវទំនិញ
+    cost_currency: គិតជា
+    cost_price: តម្លៃ
+    could_not_connect_to_jirafe: មិនអាចភ្ជាប់ទៅកាន់ Jirafe ដើម្បីទាញទិន្នន័យរបស់អ្នក ។ ប្រព័ន្ធ​នឹងព្យាយាមភ្ជាប់ដោយ​ស្វ័ប្រវត្តិ​នៅ​ពេល​ក្រោយ ។ 
+    could_not_create_customer_return:
+    could_not_create_stock_movement: មានបញ្ហាកើតឡើងដែល​មិនអាចរក្សាការផ្លាសប្រូរទំនិញ​នេះ​បាន​ឡើយ ។ សូមព្យាយាមម្ដងទៀត ។
+    count_on_hand: ទំនិញ​ដែល​កំពុងមានស្រាប់
+    countries: ប្រទេស
+    country: ប្រទេស
+    country_based: តាមប្រទេស
+    country_name: ឈ្មោះ
+    country_names:
+      CA:
+      FRA:
+      ITA:
+      US:
+    coupon: កូដបញ្ចុះតម្លៃ
+    coupon_code: កូដបញ្ចុះតម្លៃ
+    coupon_code_already_applied: កូដបញ្ចុះតម្លៃត្រូវបានប្រើប្រាស់សម្រាប់ការបញ្ជាទិញនេះរួចហើយ ។ 
+    coupon_code_applied: កូដបញ្ចុះតម្លៃត្រូវបានអនុវត្ត​សម្រាប់ការបញ្ជាទិញរបស់អ្នកដោយជោគជ័យ ។ 
+    coupon_code_better_exists: កូដបញ្ចុះតម្លៃដែល​ប្រើមុន​ទទួល​បាន​ការ​បញ្ចុះតម្លៃច្រើនជាង ។ 
+    coupon_code_expired: កូដបញ្ចុះតម្លៃអស់សុពលភាព
+    coupon_code_max_usage: កូដបញ្ចុះតម្លៃ​អស់​ចំនួន​ប្រើប្រាស់
+    coupon_code_not_eligible: កូដបញ្ចុះតម្លៃមួយនេះ ពុំអាចប្រើប្រាស់សម្រាប់ការបញ្ជាទិញនេះទេ ។
+    coupon_code_not_found: កូដបញ្ចុះតម្លៃដែល​អ្នកបានបញ្ចូល​គ្មាន​នោះទេ ។ សូម​ព្យាយាមម្ដងទៀត ។ 
+    coupon_code_unknown_error:
+    create: បង្កើត
+    create_a_new_account: បង្កើតគណនីថ្មី
+    create_new_order:
+    create_reimbursement:
+    created_at: បង្កើតកាល
+    credit: ឥណទាន
+    credit_card: ប័ណ្ណឥណទាន
+    credit_cards: ប័ណ្ណឥណទាន
+    credit_owed: ឥណទានបំណុល
+    credits:
+    currency: រូបិយវត្ថុ
+    currency_decimal_mark: កណ្ដក់សញ្ញា​បែងចែកប្រាក់ដុំ​ និង រាយ
+    currency_settings: កំណត់រូបិយវត្ថុ
+    currency_symbol_position: ដាក់សញ្ញា​សម្គាល់រូបិយវត្ថុមុន គឺ ក្រោយ​ចំនួន​ប្រាក់ ?
+    currency_thousands_separator: បែងចែក​លេខ​ខ្ទង់ពាន់
+    current: បច្ចុប្បន្ន
+    current_promotion_usage: 'ចំនួនប្រើប្រាស់បច្ចុប្បន្ន ៖ %{count}'
+    customer: អតិថិជន
+    customer_details: ព័ត៌មានលំអិតស្ដីអំពីអតិថិជន
+    customer_details_updated: ព័ត៌មានលំអិតស្ដីអំពីអតិថិជនត្រូវ​បានកែប្រែ
+    customer_return:
+    customer_returns:
+    customer_search: ស្វែងរកអតិថិជន
+    cut: កាត់
+    cvv_response:
+    dash:
+      jirafe:
+        app_id: App ID
+        app_token: App Token
+        currently_unavailable: ពេលនេះ Jirafe ពុំអាចប្រើបានទេ. Spree តភ្ជាប់ទៅ Jirafe ដោយស្វ័យប្រវត្តិ​ឆាប់ៗនេះ.
+        explanation: ព័ត៌មានខាងក្រោមនេះអាចត្រូវបានបំពេញរួចអស់ហើយ ប្រសិនបើអ្នកចុះឈ្មោះ Jirafe ពីផ្ទាំងព័ត៌មាន​អ្នកគ្រប់គ្រង ។ 
+        header: កំណត់ការវិភាគ Jirafe
+        site_id: ID របស់​ទំព័រ
+        token: Token
+      jirafe_settings_updated: ការកំណត់ Jirafe ត្រូវបានកែប្រែ ។
+    date: ថ្ងៃ
+    date_completed: ថ្ងៃបញ្ចប់
+    date_picker:
+      # FlatPickr human friendly formatting
+      fpr_human_friendly_date_format: M j, Y
+      fpr_human_friendly_date_time_format: M j, Y - H:i
+    date_range: ចន្លោះថ្ងៃ
+    default: ទម្រង់ដើម
+    default_refund_amount:
+    default_tax:
+    default_tax_zone: 
+    delete: លុបចោល
+    deleted_variants_present:
+    delivery: ដឹកជញ្ជូន
+    depth: ជម្រៅ
+    description: ពិពណ៌នា
+    destination: ទិសដៅ
+    destroy: លុបចោល
+    details:
+    discount_amount: ចំនួនបញ្ចុះតម្លៃ
+    dismiss_banner: ឥទទេ ! អរគុណច្រើនណាស់ ប៉ុន្តែ​មិនចាំបាច់បង្ហាញឲ្យខ្ញុំ​ឃើញទៀតទេ ។ 
+    display: បង្ហាញ
+    display_currency: រូបិយវត្ថុដែលបង្ហាញ
+    doesnt_track_inventory:
+    edit: កែប្រែ
+    editing_resource:
+    editing_rma_reason:
+    editing_user: កែប្រែគណនីអ្នកប្រើប្រាស់
+    eligibility_errors:
+      messages:
+        has_excluded_product:
+        item_total_less_than:
+        item_total_less_than_or_equal:
+        item_total_more_than:
+        item_total_more_than_or_equal:
+        limit_once_per_user:
+        missing_product:
+        missing_taxon:
+        no_applicable_products:
+        no_matching_taxons:
+        no_user_or_email_specified:
+        no_user_specified:
+        not_first_order:
+    email: អ៊ីម៉ែល
+    empty: ទទេ
+    empty_cart: កន្ត្រក់ពុំទាន់មានអ្វីទាំងអស់
+    enable_mail_delivery: អនុញ្ញាត​ឲ្យផ្ញើម៉ែលចេញ
+    end: ចប់
+    ending_in: ចប់នៅ
+    environment: របៀប
+    error: កំហុស
+    errors:
+      messages:
+        could_not_create_taxon: មិនអាចបង្កើតចំណាត់ថ្នាក់
+        no_payment_methods_available: ក្នុងដំណាក់កាលនេះ ពុំ​មាន​វិធីបង់ប្រាក់ណាទេ
+        no_shipping_methods_available: ពុំមានវិធី​ដឹកជញ្ជូនសម្រាប់​ទីតាំងមួយនេះទេ ។ សូមធ្វើការ
+    errors_prohibited_this_record_from_being_saved:
+      one: មានកំហុស មួយ ដែល​មិន​ឲ្យ​ធ្វើការ​រក្សា​លើ​កំណត់ត្រា​នេះ 
+      other: "មានកំហុស %{count} ដែល​មិន​ឲ្យ​ធ្វើការ​រក្សា​លើ​កំណត់ត្រា​នេះ"
+    event: ព្រិត្តិការណ៍
+    events:
+      spree:
+        cart:
+          add: បញ្ចូលក្នុង​កន្ត្រក
+        checkout:
+          coupon_code_added: កូដបញ្ចុះតម្លៃត្រូវបានប្រើប្រាស់
+        content:
+          visited: ចូលទៅកាន់ទំព័រ​ស្ថេ
+        order:
+          contents_changed: ខ្លឹមសារនៃ​បញ្ជាទិញ​ត្រូវបានប្ដូរ
+        page_view: ទំព័រស្ថេរ​ត្រូវ​បាន​មើលរួច
+        user:
+          signup: អ្នកប្រើប្រាស់ចុះឈ្មឡ
+    exceptions:
+      count_on_hand_setter: មិនអាចកំណត់ count_on_hand ដោយដៃនោះទេ ដោយសារ​តែវា​ត្រូវបាន​កំណត់​ស្វ័យប្រវត្តិដោយ recalculate_count_on_hand ។ សូមមេត្តាប្រើប្រាស់ `update_column(:count_on_hand, value)` ជំនួសវិញ ។
+    exchange_for:
+    excl:
+    existing_shipments:
+    expedited_exchanges_warning:
+    expiration: ផុតសុពលភាព
+    extension: បន្ថែម
+    failed_payment_attempts:
+    filename: ឈ្មោះឯកសារ
+    fill_in_customer_info: សូមបំពេញព័ត៌មាន​អតិថិជន
+    filter_results: តម្រងលិទ្ធផល
+    finalize: រួចរាល់
+    finalized:
+    find_a_taxon: រកប្រភេទមួយ
+    first_item: ទំនិញដំបូង​តម្លៃ
+    first_name: ឈ្មោះ
+    first_name_begins_with: ឈ្មោះ​ដែល​ផ្ដើម​ដោយ​អក្សរ
+    flat_percent: អត្រាថេរ
+    flat_rate_per_order: អត្រាងាប់ (ក្នុងមួយបញ្ជាទិញ)
+    flexible_rate: អត្រាបត់បែន
+    forgot_password: ភ្លេចពាក្យសម្ងាត់
+    free_shipping: ដឹកជញ្ជូនដោយមិនអស់ថ្លៃ
+    free_shipping_amount:
+    front_end: ផ្ទាំងខាងមុខ
+    gateway: ច្រកចេញចូល
+    gateway_config_unavailable: ក្នុងដំណាក់ការនេះ ពុំ​មាន​ច្រចេញចូលណាទេ
+    gateway_error: កំហុសផ្នែកច្រកចេញចូល
+    general: ទូទៅ
+    general_settings: កំណត់ទូទៅ
+    google_analytics: Google Analytics
+    google_analytics_id: Analytics ID
+    guest_checkout: ទូរទាត់សម្រាប់អតិថិជន​មិនអាចិន្ត្រៃយ៍
+    guest_user_account: ទូរទាត់ដូចជាអតិថិជន​មិនអាចិន្ត្រៃយ៍
+    has_no_shipped_units: ពុំមានទំនិញណាមួយ​បាន​ដឹកជញ្ជូនទេ
+    height: កម្ពស់
+    hide_cents: មិនបង្ហាញប្រាក់​សេន
+    home: ទំព័រដើម
+    i18n:
+      available_locales: ភាសាដែល​មាន​ស្រាប់
+      language: ភាសា
+      localization_settings: កំណត់ភាសា
+      this_file_language: ភាសាខ្មែរ (km)
+    icon: រូបតំណាង
+    identifier:
+    image: រូបភាព
+    images: រូបភាព
+    implement_eligible_for_return:
+    implement_requires_manual_intervention:
+    inactive:
+    incl:
+    included_in_price: បានបញ្ចូលស្រាប់ក្នុងតម្លៃ
+    included_price_validation: មិនអាចជ្រើសបានទេ លើកលែកតែអ្នក​បាន​កំណត់ កូដតំបន់​ពន្ធ​លំនាំដើម រួចហើយ ។ 
+    incomplete:
+    info_number_of_skus_not_shown:
+    info_product_has_multiple_skus:
+    instructions_to_reset_password: 'បំពេញបែបបទខាងក្រោម ហើយ​ សេចក្ដីការណែនាំអំពី​កំណត់​ពាក្យ​សម្ងាត់ឡើងវិញនឹងត្រូវបានផ្ញើទៅអ្នកតាមរយៈ ៖ '
+    insufficient_stock: ទំនិញនៅសល់​មិន​គ្រប់ចំនួន​ទេ នៅតែ %{on_hand} ប៉ុណ្ណោះ
+    insufficient_stock_lines_present:
+    intercept_email_address: អ៊ីម៉ែលដែល​ទទួល​សំបុត្រ
+    intercept_email_instructions: កែអ៊ីម៉ែល​អ្នក​ទទួល ដោយ​ជំនួស​ដោយ​មួយនេះ 
+    internal_name: Internal Name
+    invalid_credit_card: ប័ណ្ណមិនត្រឹមត្រូវ
+    invalid_exchange_variant:
+    invalid_payment_provider: ក្រុមហ៊ុនផ្ដល់សេវាកម្មទូរទាត់​មិន​ត្រឹមត្រូវ ។ 
+    invalid_promotion_action: ធ្វើការបញ្ចុះតម្លៃមិនត្រឹមត្រូវ ។ 
+    invalid_promotion_rule: វិធី​បញ្ចុះតម្លៃមិនត្រឹមត្រូវ ។
+    inventory: ទំនិញ
+    inventory_adjustment: កែប្រែទំនិញនៅសល់
+    inventory_error_flash_for_insufficient_quantity: មានទំនិញមួយ​ដែល​អ្នក​បានរើស ត្រូវទិញយកអស់ហើយ ។ 
+    inventory_state:
+    is_not_available_to_shipment_address: មិនអាចដឹកទៅដល់ទីតាំង​ដែល​បាន​កំណត់មុន
+    iso_name: ឈ្មោះ ISO
+    item: មុខទំនិញ
+    item_description: បរិយាយ
+    item_total: សរុបមាន
+    item_total_rule:
+      operators:
+        gt: ច្រើនជាង
+        gte: ច្រើនជាង ឬ ស្មើនឹង
+        lt: តិចជាង
+        lte: តិចជាង ឬ ស្មើនឹង
+    items_cannot_be_shipped: យើងខ្ញុំ​មិនអាចដឹកទំនិញដែលអ្នក​បាន​ជ្រើស​ទៅកាន់អាសយដ្ឋានរបស់អ្នកទេ ។ សូម​ជ្រើស​យក​ទីតាំងផ្សេង​ដើម្បី​ទទួល​ទំនិញ ។
+    items_in_rmas:
+    items_reimbursed:
+    items_to_be_reimbursed:
+    jirafe: Jirafe
+    landing_page_rule:
+      path: កន្លែងរក្សាឯកសារ
+    last_name: ត្រកូល
+    last_name_begins_with: ត្រកូលដែល​ផ្ដើម​ដោយ​អក្សរ
+    learn_more: សិក្សាបន្ថែម
+    lifetime_stats:
+    line_item_adjustments:
+    list: បញ្ជី
+    loading: កំពុងផ្ទុក
+    locale_changed: ទីតាំង​ត្រូវបានប្ដូរ
+    location: ទីតាំង
+    lock: បិទ
+    log_entries:
+    logged_in_as: ចូលប្រើក្នុងនាមជា
+    logged_in_succesfully: បានចូលប្រើដោយជោគជ័យ
+    logged_out: អ្នកបានចាកចេញរួចហើយ ។ 
+    login: ចូលប្រើ
+    login_as_existing: ចូលប្រើក្នុងនាមជាអតិថិន​ដែល​មាន​ស្រាប់
+    login_failed: មិនត្រូវបាន​អនុញ្ញាត​ឲ្យចូលទេ
+    login_name: ចូលប្រើ
+    logout: ចាកចេញ
+    logs:
+    look_for_similar_items: រកទំនិញ​ដែល​ប្រហែល​នេះ
+    make_refund: សងប្រាក់វិញ
+    make_sure_the_above_reimbursement_amount_is_correct:
+    manage_promotion_categories:
+    manage_variants:
+    manual_intervention_required:
+    master_price: តម្លៃដើម
+    match_choices:
+      all: ទាំងអស់
+      none: ទទេ
+    max_items: ទំនិញដែល​ច្រើន​ជាងគេ
+    member_since: បានក្លាយជាសមាជិក​កាល
+    memo:
+    meta_description: បរិយាយសម្រាប់គេរកឃើញ​តាម​អ៊ីនធឺណិត
+    meta_keywords: ពាក្យ​សម្ងាន់ៗ ឲ្យ​គេរក
+    meta_title:
+    metadata: Metadata
+    minimal_amount: តម្លៃទាប​បំផុត
+    month: ខែ
+    more: ច្រើនទៀត
+    move_stock_between_locations: រើទំនិញ
+    my_account: គណនីរបស់ខ្ញុំ
+    my_orders: ការបញ្ជាទិញរបស់ខ្ញុំ
+    name: ឈ្មោះ
+    name_on_card:
+    name_or_sku: ឈ្មោះ ឬ កូដ SKU
+    new: ថ្មី
+    new_adjustment: កែប្រែថ្មី
+    new_country: ប្រទេសថ្មី
+    new_customer: ងតិថិជនថ្មី
+    new_customer_return:
+    new_image: រូបភាពថ្មី
+    new_option_type: ប្រភេទជម្រើស​ថ្មី
+    new_order: បញ្ជាទិញថ្មី
+    new_order_completed: បញ្ជាទិញដែល​បាន​រួចរាល់​ថ្មី
+    new_payment: ការបង់ប្រាក់​ថ្មី
+    new_payment_method: វិធីបង់ប្រាក់​ថ្មី
+    new_product: ទំនិញថ្មី
+    new_promotion: ការបញ្ចុះតម្លៃថ្មី
+    new_promotion_category: ប្រភេទ​បញ្ចុះតម្លៃថ្មី
+    new_property: លក្ខណៈថ្មី
+    new_prototype: គំរូថ្មី
+    new_refund: ការសងប្រាក់ថ្មី
+    new_refund_reason: មូលហេតុ​ដែល​សងប្រាក់​ថ្មី
+    new_return_authorization: ការអនុញ្ញាត​ឲ្យ​សង​ទំនិញវិញ​ថ្មី
+    new_rma_reason:
+    new_shipment_at_location: 
+    new_shipping_category: ប្រភេទដឹកជញ្ជូន​ថ្មី
+    new_shipping_method: វិធី​ដឹកជញ្ជូន​ថ្មី
+    new_state: ខេត្ត/រដ្ឋ​ថ្មី
+    new_stock_location: ទីតាំងឃ្លាំង​ថ្មី
+    new_stock_movement: ការរើទំនិញ​ថ្មី
+    new_stock_transfer: ការ​រើ​ទំនិញថ្មី
+    new_tax_category: ប្រភេទពន្ធ​ថ្មី
+    new_tax_rate: អត្រាពន្ធថ្មី
+    new_taxon: ចំណាត់ថ្នាក់ថ្មី
+    new_taxonomy: កម្រិតចំណាត់ថ្នាក់ថ្មី
+    new_tracker: Tracker ថ្មី
+    new_user: អ្នកប្រើប្រាស់ថ្មី
+    new_variant: គំរូថ្មី
+    new_zone: តំបន់ថ្មី
+    next: បន្តទៀត
+    no_actions_added: ពុំ​មាន​ប្រតិបត្តិការថ្មីណា
+    no_payment_found: ពុំ​មាន​ការ​ទូរទាត់ណា
+    no_pending_payments: ពុំ​មាន​ការទូរទាត់​ណា​កំពុងដំណើរការ
+    no_products_found: ពុំ​មាន​ទំនិញណា
+    no_resource_found:
+    no_results: ពុំ​មាន​លទ្ធផល
+    no_returns_found:
+    no_rules_added: ពុំ​មាន​វិធីថ្មីណា
+    no_shipping_method_selected:
+    no_state_changes:
+    no_tracking_present: ពុំ​មាន​ព័ត៌មាន​តាមដាន​ណា​ត្រូវបានដាក់មក
+    none: ទទេ
+    none_selected:
+    normal_amount: Normal Amount
+    not: មិន
+    not_available: N/A
+    not_enough_stock: មិនមានគ្រប់ទំនិញនៅក្នុងឃ្លាំងដើមដើម្បីបញ្ចប់​ការ​ផ្ទេរនោះទេ
+    not_found: "គ្មាន %{resource}"
+    note:
+    notice_messages:
+      product_cloned: ទំនិញត្រូវបានចម្លងរួច
+      product_deleted: ទំនិញត្រូវបានលុបចោលហើយ
+      product_not_cloned: ទំនិញមិនអាចចម្លងបានទេ
+      product_not_deleted: ទំនិញមិនអាចលុបចោលបានទេ
+      variant_deleted: គំរូផ្សេងៗត្រូវ​បាន​លុប​ហើយ
+      variant_not_deleted: គំរូផ្សេងៗ​មិន​អាចលុបចោល​បានទេ
+    num_orders:
+    on_hand: មាន​ស្រាប់
+    open: បើក
+    open_all_adjustments: បើក​ការ​កែប្រែទាំងអស់
+    option_type: ប្រភេទជម្រើស
+    option_type_placeholder: ជម្រើសជាលំនាំដើម
+    option_types: ប្រភេទ​ជម្រើស
+    option_value: ជម្រើស
+    option_values: ជម្រើស
+    optional: មិនចាំបាច់
+    options: ជម្រើស
+    or: ឬ
+    or_over_price: "%{price} ឬ ថ្លៃជាង"
+    order: បញ្ជាទិញ
+    order_adjustments: កែប្រែបញ្ជាទិញ
+    order_already_updated:
+    order_approved:
+    order_canceled:
+    order_details: ព័ត៌មាន​បញ្ជាទិញ
+    order_email_resent: លិខិត​បញ្ជាទិញត្រូវបានផ្ញើឡើងវិញ
+    order_information: ព័ត៌មាន​បញ្ជាទិញ
+    order_mailer:
+      cancel_email:
+        dear_customer: លោកស្រី/នាងកញ្ញា/លោក ជាទីគោរព \n 
+        instructions: ការបញ្ជាទិញរបស់អ្នក ត្រូវបាន​លុបចោលហើយ ។  សូមមេត្តាពិនិត្យ​បញ្ជាទិញរបស់​​អ្នក​ឡើង​វិញ ។ 
+        order_summary_canceled: ការបញ្ជាទិញ [បានលុប]
+        subject: ការលុបបញ្ជាទិញ
+        subtotal:
+        total:
+      confirm_email:
+        dear_customer: លោកស្រី/នាងកញ្ញា/លោក ជាទីគោរព \n 
+        instructions: សូម​មត្តា​ពិនិត្យ​ឡើង​វិញនូវ​បញ្ជាទិញ​ដែល​អ្នក​បាន​ធញវើ​ឡើង ។ 
+        order_summary: ការបញ្ជាទិញ
+        subject: បញ្ជាក់លើ​បញ្ជាទិញ
+        subtotal:
+        thanks: សូមអរគុណយ៉ាងជ្រាលជ្រៅបំផុត !
+        total:
+    order_not_found: យើងខ្ញុំពុំ​អាចរកឃើញ​ការបញ្ជាទិញរបស់អ្នកនោះទេ ។ សូមមេត្តាសាកល្បង​ប្រតិបត្តិការផ្សេង
+    order_number: បញ្ជាទិញ %{number}
+    order_processed_successfully: បញ្ជាទិញរបស់អ្នក​ត្រូវ​បាន​រៀបចំរួចស្រេចអស់​ហើយ !
+    order_resumed:
+    order_state:
+      address: អាសយដ្ឋាន
+      awaiting_return: រង់ចាំសងវិញ
+      canceled: បានលុបចោល
+      cart: កន្ត្រក
+      complete: រួចរាល់
+      confirm: បញ្ជាក់
+      considered_risky:
+      delivery: ដឹកជញ្ជូន
+      payment: ទូរទាត់
+      resumed: បានបន្តវិញ
+      returned: បានសងវិញ
+    order_summary: ព័ត៌មាន​លំអិត
+    order_sure_want_to: តើអ្នកពិតជាចង់ %{event} បញ្ជាទិញនេះមែនទេ ?
+    order_total: តម្លៃសរុប
+    order_updated: បញ្ជាទិញត្រូវបានកែប្រែ
+    orders: បញ្ជាទិញ
+    other_items_in_other:
+    out_of_stock: ដាច់ស្តុក
+    overview: សរុប
+    package_from: វិចខ្ចប់ពី
+    pagination:
+      next_page: ទំព័រមុខ »
+      previous_page: "« ទំព័រក្រោយ"
+      truncate: "…"
+    password: ពាក្យសម្ងាត់
+    paste: បិទភ្ជាប់
+    path: ទីតាំងឯកសារ
+    pay: បង់
+    payment: ការទូរទាត់
+    payment_could_not_be_created: មិនអាចទូរទាត់បានទេ
+    payment_identifier:
+    payment_information: ព័ត៌មាន​សម្រាប់ទូរទាត់
+    payment_method: វិធីបង់ប្រាក់
+    payment_method_not_supported:
+    payment_methods: វិធីបង់ប្រាក់
+    payment_processing_failed: មិនអាចធ្វ់​ការ​បង់ប្រាក់បានទេ ។ សូមពិនិត្យ​ឡើងវិញ​នូវ​គ្រប់ព័ត៌មាន​ដែល​អ្នក​បាន​បំពេញ ។ 
+    payment_processor_choose_banner_text: ប្រសិនបើអ្នក​ត្រូវការជំនួយ​លើ​ការ​បង់ប្រាក់ សូមចូលទៅកាន់
+    payment_processor_choose_link: ទំព័រទូរទាត់របស់​យើងខ្ញុំ
+    payment_state: ស្ថានភាព​នៃ​ការ​បង់ប្រាក់
+    payment_states:
+      balance_due: ចំនួនត្រូវបង់
+      checkout: បង់ប្រាក់
+      completed: រួចរាល់
+      credit_owed: ជំពាក់
+      failed: បរាជ័យ
+      paid: បង់រួច
+      pending: រង់ចំ
+      processing: កំពុងដោះស្រាយ
+      void: លុបចោល
+    payment_updated: កែប្រែការទូរទាត់
+    payments: ការទូរទាត់
+    pending:  រង់ចាំ
+    percent: ភាគរយ
+    percent_per_item: ភាគរយ​លើ​មុខទំនិញ
+    permalink: ភ្ជាប់ (Permalink)
+    phone: ទូរស័ព្ទ
+    place_order: បញ្ជាទិញ
+    please_define_payment_methods: សូមមត្តាកំណត់វិធីបង់ប្រាក់ជាមុនសិន ។ 
+    populate_get_error: មាន​កំហុស​មួយ​បាន​កើតឡើង ។ សូមមេត្តា​ជ្រើសយកទំនិញ​ណាមួយ ។ 
+    powered_by: បាននាំមកដោយ 
+    pre_tax_amount:
+    pre_tax_refund_amount:
+    pre_tax_total:
+    preferred_reimbursement_type:
+    presentation: បង្ហាញ
+    previous: មុន
+    previous_state_missing:
+    price: តម្លៃ
+    price_range: ចន្លោះតម្លៃ
+    price_sack: Price Sack
+    process: ដំណើរការ
+    product: ទំនិញ
+    product_details: ព័ត៌មានផលិតផល
+    product_has_no_description: ទំនិញនេះ​មិន​បាន​បរិយាយទេ
+    product_not_available_in_this_currency: ទំនិញនេះ​មិន​អាចទិញបានទេ​សម្រាប់​រូបិយវត្ថុ​ដែល​អ្នក​បាន​ជ្រើសយក
+    product_properties: លក្ខណៈរបស់ទំនិញ
+    product_rule:
+      choose_products: ជ្រើសរើសទំនិញ
+      label:
+      match_all: ទាំងអស់
+      match_any: យ៉ាងហោចណាស់ក៏មានមួយ
+      match_none:
+      product_source:
+        group: ដាក់ជាក្រុមតាមទំនិញ
+        manual: ជ្រើសរើសដោយដៃ
+    products: ទំនិញ
+    promotion: ការបញ្ចុះតម្លៃ
+    promotion_action: ប្រតិបត្តិបញ្ចុះតម្លៃ
+    promotion_action_types:
+      create_adjustment:
+        description: បន្ថែមការកែប្រែតម្លៃបញ្ចុះ​ក្នុង​បញ្ជាទិញ
+        name: បង្កើតការកែប្រែ
+      create_item_adjustments:
+        description:
+        name:
+      create_line_items:
+        description: បន្ថែម​ការ​កែប្រែតម្លៃបញ្ចុះ​សម្រាប់ទំនិញណាមួយ​ក្នុង​បញ្ជាទិញ
+        name: បង្កើត
+      free_shipping:
+        description:
+        name:
+    promotion_actions: ប្រតិបត្តិការ
+    promotion_form:
+      match_policies:
+        all: ត្រូវនឹងវិធីណាមួយ
+        any: ត្រូវនឹងវិធីទាំងអស់
+    promotion_rule: វិធី​បញ្ចុះតម្លៃ
+    promotion_rule_types:
+      first_order:
+        description: ត្រូវតារជាការ​ជាវដំបូងរបស់​អតិថិជន
+        name: បញ្ជាទិញដំបូង
+      item_total:
+        description: សរុបនៃបញ្ជាទិញ​តាម​ត្រូវ​នឹង​ការទាមទារ
+        name: ទំនិញសរុប
+      landing_page:
+        description: អតិថិជន​ត្រូវតែទៅកាន់ទំព័រជាក់ស្ដែងណាមួយ
+        name: ទំព័រមេ
+      one_use_per_user:
+        description: អ្នកប្រើប្រាស់មួយ​ប្រើបាន​តែមួយដងតែប៉ុណ្ណោះ
+        name: ម្នាក់បានតែម្ដង
+      option_value:
+        description: 
+        name:
+      product:
+        description: បញ្ជាទិញ​មាន​មុខទំនិញបានកំណត់
+        name: ទំនិញ
+      taxon:
+        description: បញ្ជាទិញ​មាន​មុខទំនិញស្ថិត​ក្នុង​ប្រភេទ​ដែលបានកំណត់
+        name: ប្រភេទ
+      user:
+        description: សម្រាប់តែអ្នកប្រើប្រាស់ដែលបានកំណត់
+        name: អ្នកប្រើប្រាស់
+      user_logged_in:
+        description: សម្រាប់តែអ្នកប្រើប្រាស់ដែល​បាន​ចូលប្រើ
+        name: ចូលប្រើវប្រាស់
+    promotion_uses: កម្រិតនៃការបញ្ចុះតម្លៃ
+    promotionable: អាចមានការបញ្ចុះតម្លៃ
+    promotions: ការបញ្ចុះតម្លៃ
+    propagate_all_variants:
+    properties: លក្ខណៈ
+    property: លក្ខណៈ
+    prototype: ចំណាត់ថ្នាក់
+    prototypes: ចំណាត់ថ្នាល់
+    provider: អ្នកផ្គត់ផ្គង់
+    provider_settings_warning: ប្រសិនបើអ្នកប្ដូរ​ប្រភេទ​អ្នកផ្គត់ផ្គង់ អ្នកត្រូវតែចុចរក្សា​ជាមុនសិន ក្រោយមក​ទើបអាច​កែប្រែ​ការកំណត់អ្នក​ផ្គត់ផ្គង់
+    qty: ចំនួន
+    quantity: ចំនួន
+    quantity_returned: ចំនួន​បាន​សងវិញ
+    quantity_shipped: ចំនួន​ដឹកជញ្ជូន
+    quick_search:
+    rate: អត្រា
+    reason: មូលហេតុ
+    receive: ទទួល
+    receive_stock: ឃ្លាំងទទួល
+    received: បានទទួល
+    reception_status:
+    reference: លេខយោង
+    refund: សងប្រាក់
+    refund_amount_must_be_greater_than_zero: ប្រាក់ដែលត្រូវសង​ត្រូវតែធំជាង សូន្យ
+    refund_reasons: មូលហេតុដែល​ត្រូវសងប្រាក់ទៅអតិថិជន
+    refunded_amount: ចំនួន​ប្រាក់ត្រូវសង
+    refunds:
+    register: ចុះឈ្មោះជា​អ្នកប្រើប្រាស់ថ្មី
+    registration: ចុះឈ្មោះ
+    reimburse:
+    reimbursed:
+    reimbursement:
+    reimbursement_mailer:
+      reimbursement_email:
+        days_to_send:
+        dear_customer:
+        exchange_summary:
+        for:
+        instructions:
+        refund_summary:
+        subject:
+        total_refunded:
+    reimbursement_perform_failed:
+    reimbursement_status:
+    reimbursement_type:
+    reimbursement_type_override:
+    reimbursement_types: ប្រភេទសំណង
+    reimbursements: សំណង
+    reject:
+    rejected:
+    remember_me: ចាំព័ត៌មានខ្ញុំ
+    remove: ដកចេញ
+    rename: ប្ដូរឈ្មោះ
+    report:
+    reports: របាយការណ៍
+    resend: ផ្ញើឡើងវិញ
+    reset_password: កំណត់ពាក្យសម្ងាត់វិញ
+    response_code: កូដឆ្លើយតប
+    resume: បន្តឡើងវិញ
+    resumed: បានបន្តឡើងវិញ
+    return: សងវិញ
+    return_authorization: អនុញ្ញាត​ឲ្យ​សង​ទំនិញវិញ
+    return_authorization_reasons: មូលហេតុដែល​អនុញ្ញាត​ឲ្យ​សង​ទំនិញវិញ
+    return_authorization_updated: ការ​អនុញ្ញាត​ឲ្យ​សង​ទំនិញវិញ
+    return_authorizations: អនុញ្ញាត​ឲ្យ​សង​ទំនិញវិញ
+    return_item_inventory_unit_ineligible:
+    return_item_inventory_unit_reimbursed:
+    return_item_rma_ineligible:
+    return_item_time_period_ineligible:
+    return_items:
+    return_items_cannot_be_associated_with_multiple_orders:
+    return_number:
+    return_quantity: ចំនួន​សងវិញ
+    returned: បានសងវិញរួច
+    returns: សងវិញ
+    review: វាយតម្លៃ
+    risk:
+    risk_analysis:
+    risky:
+    rma_credit: ឥណទាន RMA
+    rma_number: លេខ RMA
+    rma_value: តម្លៃ RMA
+    roles: តួរនាទី
+    rules: វិធី
+    safe:
+    sales_total: សរុបលក់
+    sales_total_description: សរុប​ចំនួន​លក់​បាន​គិត​តាម​គ្រប់បញ្ជាទិញទាំងអស់
+    sales_totals: សរុបលក់
+    save_and_continue: រក្សា​ និង បន្ត
+    save_my_address:
+    say_no: false
+    say_yes: true
+    scope: តំបន់
+    search: ស្វែងរក
+    search_results: ស្វែងរកលទ្ធផលសម្រាប់ '%{keywords}'
+    searching: កំពុងស្វែងរក
+    secure_connection_type: ប្រភេទតភ្ជាប់សុវត្ថិភាព
+    security_settings: កំណត់សុវត្ថិភាព
+    select: ជ្រើសរើស
+    select_a_return_authorization_reason:
+    select_a_stock_location:
+    select_from_prototype: ជ្រើសចេញពីគំរូដើម
+    select_stock: ជ្រើសរើសពីឃ្លាំង
+    send_copy_of_all_mails_to: ផ្ញើសេចក្ដីចម្លងនៃសំបុត្រទាំងអស់ទៅកាន់​
+    send_mails_as: ផ្ញើអ៊ីម៉ែល​ក្នុងនាមជា
+    server: ម៉ាស៊ីនមេ
+    server_error: ម៉ាស៊ីនម៉េ​កើត​កំហុស
+    settings: កំណត់
+    ship: ផ្ញើ
+    ship_address: អាសយដ្ឋាន​ទទួល​ទំនិញ
+    ship_total: សរុប​ការដឹកជញ្ជូន
+    shipment: ការដឹកជញ្ជូន
+    shipment_adjustments:
+    shipment_details:
+    shipment_mailer:
+      shipped_email:
+        dear_customer: លោកស្រី/នាងកញ្ញា/លោក ជាទីគោរព \n
+        instructions: បញ្ជាទិញរបស់​អ្នក​ត្រូវបាន​ផ្ញើទៅកាន់អ្នកហើយ ។ 
+        shipment_summary: ព័ត៌មាន​នៃការដឹកជញ្ជូន
+        subject: សេចក្ដីជូនដំណឹងស្ដីអំពីការផ្ញើទំនិញ
+        thanks: សូមអរគុណយ៉ាងជ្រាលជ្រៅបំផុត ! 
+        track_information: 'ព័ត៌មានតាមដាន​ ៖ %{tracking}'
+        track_link: 'ភ្ជាប់សម្រាប់​ចូលមើល ៖ %{url}'
+    shipment_state: ស្ថានភាព​របស់​ការដឹកជញ្ជូន
+    shipment_states:
+      backorder: បានអស់ទំនិញហើយ
+      canceled: បានបោះបង់
+      partial: ដឹកមួយចំណែកសិន
+      pending: កំពុងរង់ចាំ
+      ready: រួចរាល់
+      shipped: បានដឹករួច
+    shipment_transfer_error:
+    shipment_transfer_success:
+    shipments: ដឹកដល់ផ្ទះ
+    shipped: បានដឹករួច
+    shipping: កំពុងឲ្យទៅអ្នកទទួល
+    shipping_address: អាសយដ្ឋាន​ទទួល
+    shipping_categories: ប្រភេទដឹកជញ្ជូន
+    shipping_category: ប្រភេទដឹកជញ្ជូន
+    shipping_flat_rate_per_item: អត្រាងាប់លើទំនិញនីមួយៗ
+    shipping_flat_rate_per_order: អត្រាងាប់
+    shipping_flexible_rate: អត្រាបត់បែន​លើ​ទំនិញនីមួយៗ
+    shipping_instructions: សេចក្ដីណែនាំការដឹកជញ្ជូន
+    shipping_method: វិធីដឹកជញ្ជូន
+    shipping_methods: វិធីដឹកជញ្ជូន
+    shipping_price_sack:
+    shipping_total: សរុបដឹក
+    shop_by_taxonomy: ជាវតាម %{taxonomy}
+    shopping_cart: កន្ត្រក
+    show: បង្ហាញ
+    show_active: បង្ហាញរបស់​សកម្ម
+    show_deleted: បង្ហាញរបស់​បាន​លុប
+    show_only_complete_orders: បង្ហាញ​បញ្ជាទិញ​ដែល​ចប់ហើយ
+    show_only_considered_risky:
+    show_rate_in_label: បង្ហាញអត្រា​លើ​ស្លាកតម្លៃ
+    sku: កូដ SKU
+    skus:
+    slug:
+    source: ប្រភព
+    special_instructions: សេចក្ដីណែនាំពិសេស
+    split: ផ្ដាច់
+    spree_gateway_error_flash_for_checkout: ព័ត៌មានស្ដីអំពីវិធីបង់ប្រាក់របស់​អ្នក​មានកំហុស ។ សូម​ពិនិត្យ​ព័ត៌មាន​ឡើងវិញ និង ព្យាយាម​ម្ដង​ទៀត ។
+    ssl:
+      change_protocol:
+    start: ចាប់ផ្ដើម
+    state: ខេត្ត/រដ្ឋ
+    state_based: តាមខេត្ត/រដ្ឋ
+    state_machine_states:
+      accepted:
+      address:
+      authorized:
+      awaiting:
+      awaiting_return:
+      backordered:
+      canceled:
+      cart:
+      checkout:
+      closed:
+      complete:
+      completed:
+      confirm:
+      delivery:
+      errored:
+      failed:
+      given_to_customer:
+      invalid:
+      manual_intervention_required:
+      on_hand:
+      open:
+      order:
+      payment:
+      pending:
+      processing:
+      ready:
+      reimbursed:
+      resumed:
+      returned:
+      shipped:
+      void:
+    states: ខេត្ត/រដ្ឋ
+    states_required: តម្រូវឲ្យមានខេត្ត/រដ្ឋ
+    status: ស្ថានភាព
+    stock: ស្តុក
+    stock_location: ទីតាំងឃ្លាំង
+    stock_location_info: ព័ត៌មានទីតាំងឃ្លាំង
+    stock_locations: ទីតាំងឃ្លាំង
+    stock_locations_need_a_default_country:
+    stock_management: គ្រប់គ្រងឃ្លាំង
+    stock_management_requires_a_stock_location: សូមបង្កើតទីតាំងឃ្លាំង​សិន ដើម្បីធ្វើ​ការគ្រប់គ្រងឃ្លាំង ។
+    stock_movements: ប្ដូរឃ្លាំង
+    stock_movements_for_stock_location: ប្ដូរឃ្លាំងសម្រាប់ %{stock_location_name}
+    stock_successfully_transferred: ឃ្លាំង​បាន​ប្ដូរទីតាំង​ដោយ​ជោគជ័យ ។
+    stock_transfer: រើទំនិញនៅឃ្លាំង
+    stock_transfers: រើទំនិញនៅឃ្លាំង
+    stop: ចំណត
+    store: ហាង
+    store_set_default_button: កំណត់ជាលំនាំដើម
+    stores: ហាង
+    store_credit_name: ឈ្មោះឥណទានហាង
+
+    store_credit_categories: ប្រភេទឥណទានហាង
+    store_credit_payment_method:
+      unable_to_void: "មិនអាចចាត់ទុកជាមោឃៈ : %{auth_code}"
+      unable_to_credit: "មិនអាចផ្តល់ឥណទាន: %{auth_code}"
+      successful_action: "សកម្មភាព %{action} ត្រូវបានធ្វើរួច"
+      unable_to_find: "មិនអាចរកឃើញ"
+      insufficient_funds: "ឥណទានមិនគ្រប់គ្រាន់"
+      currency_mismatch: "រូបិយប័ណ្ណឥណទានមិនត្រូវគ្នានឹងរូបិយប័ណ្ណបញ្ជាទិញទេ"
+      insufficient_authorized_amount: "ចំនួនទឹកប្រាក់ដែលមានការអនុញ្ញាតមិនគ្រប់គ្រាន់"
+      unable_to_find_for_action: "មិនអាចរកកាតឥណទាន  %{auth_code} សម្រាប់សកម្មភាព %{action}"
+      user_has_no_store_credits: "អ្នកប្រើមិនមានឥណទានហាងទេ"
+      select_one_store_credit: "ជ្រើសរើសឥណទានហាងដើម្បីចូលទៅសមតុល្យដែលនៅសល់"
+
+    street_address: លេខផ្លូវ
+    street_address_2: លេខផ្លូវ (បន្ត)
+    subtotal: សរុប
+    subtract: ដកចេញ
+    success: ជោគជ័យ
+    successfully_created: "%{resource} ត្រូវបាន​បង្កើត​ដោយជោគជ័យ !"
+    successfully_refunded:
+    successfully_removed: "%{resource} ត្រូវ​បាន​លុប​ដោុយជោគជ័យ!"
+    successfully_signed_up_for_analytics: ចុះឈ្មោះ​ប្រើប្រាស់ Spree Analytics ដោយ​មិន​គិត​ថ្លៃ​បាន​ជោគជ័យ
+    successfully_updated: "%{resource} ត្រូវបាន​កែប្រែដោយជោគជ័យ!"
+    summary:
+    tax: ពន្ធ
+    tax_categories: ប្រភេទពន្ធ
+    tax_category: ប្រភេទពន្ធ
+    tax_code:
+    tax_included:
+    tax_rate_amount_explanation: អត្រាពន្ធត្រូវតែដាក់ជា​លេខទសភាគ ដើម្បីងាយគិត (ឧ. បើ​អត្រាពន្ធ 5% ឲ្យ​បញ្ចូលថា 0.05)
+    tax_rates: អត្រាពន្ធ
+    taxon: ឯកតាចំណាត់ថ្នាក់
+    taxon_edit: កែប្រែឯកតាចំណាត់ថ្នាក់
+    taxon_placeholder: បន្ថែមឯកតាចំណាត់ថ្នាក់
+    taxon_rule:
+      choose_taxons:
+      label:
+      match_all:
+      match_any:
+    taxonomies: ចំណាត់ថ្នាក់
+    taxonomy: ចំណាត់ថ្នាក់
+    taxonomy_edit: កែប្រែចំណាត់ថ្នាក់
+    taxonomy_tree_error: ការកែប្រែដែល​តម្រូវនេះ មិនអាចធ្វើ​ឡើង​បាន​ទេ រចនាសម្ព័ន្ធ​ត្រូវ​បាន​បង្វែរ​មក​ស្ថានភាព​មុន​វិញ សូម​ព្យាយាម​ម្ដងទៀត ។
+    taxonomy_tree_instruction: "* ចុចស្ដាំលើ​រចនាសមញព័ន្ធ​កូន ដើម្បីទៅកាន់​ម៉ឺនុយ​ ហើយអាចបន្ថែម លុប ឬ រៀបចំ​ផ្នែក​កូនណាមួយ"
+    taxons: ឯកតាចំណាត់ថ្នាក់
+    test: សាកល្បង
+    test_mailer:
+      test_email:
+        greeting: អបអរសាទរ!
+        message: ប្រសិនបើអ្នក​ទទួល​បាន​អ៊ីម៉ែលនេះ មានន័យថា អ្នក​បាន​កំណត់​អ៊ីម៉ែល​ជោគជ័យហើយ ! 
+        subject: ការសាកល្បង
+    test_mode: កម្មវិធីសាកល្បង
+    thank_you_for_your_order: សូមអរគុណសម្រាប់ការជាវ ។ សូម​បោះពុម្ព ឬ ថត​ទុក​ទំព័រ​បញ្ជាក់នេះ ដើម្បី​ទុកជា​ឯកសារ​សម្រាប់អ្នក ។
+    there_are_no_items_for_this_order: ក្នុង​បញ្ជាទិញនេះ ពុំ​មាន​មុខទំនិញណាឡើយ ។ សូមមត្តា​បន្ថែម​ទំនិញណាមួយ​ដើម្បីបន្ត​បញ្ជាទិញនេះ ។ 
+    there_were_problems_with_the_following_fields: មានបញ្ហាមួយចំនួន​ក្នុង​បែបបទ​ខាង​ក្រោមនេះ 
+    this_order_has_already_received_a_refund:
+    thumbnail: រូបតាង
+    tiered_flat_rate:
+    tiered_percent:
+    tiers:
+    time: វេលា
+    to_add_variants_you_must_first_define: ដើម្បីបន្ថែម​ប្រភេទផ្សេងៗ អ្នក​ត្រូវតែកំណត់ជាមុនសិន 
+    total: សរុប
+    total_per_item:
+    total_pre_tax_refund:
+    total_price:
+    total_sales:
+    track_inventory:
+    tracking: តាមដាន
+    tracking_number: លេខតាមដាន
+    tracking_url: ភ្ជាប់​មើល
+    tracking_url_placeholder: ឧ. http://quickship.com/package?num=:tracking
+    transaction_id:
+    transfer_from_location: ផ្ញើចេញពី
+    transfer_stock: ផ្ញើទំនិញ
+    transfer_to_location: ផ្ញើទៅ
+    tree: រចនាសម្ព័ន្ធ
+    type: ប្រភេទ
+    type_to_search: បញ្ចូលដើម្បីស្វែងរក
+    unable_to_connect_to_gateway: មិនអាចតភ្ជាប់ទៅកាន់ច្រកចេញចោល
+    unable_to_create_reimbursements:
+    under_price: ក្រោម %{price}
+    unlock: បើក
+    unrecognized_card_type: ប្រភេទប័ណ្ណមិនស្គាល់
+    unshippable_items: ទំនិញដែល​មិនអាចដឹកជញ្ជូនបាន
+    update: កែប្រែ
+    updating: កំពុងកែប្រែ
+    usage_limit: កំណត់ការប្រើប្រាស់
+    use_app_default:
+    use_billing_address: ប្រើអាសយដ្ឋាន​ទទួលវិក្កយបត្រ
+    use_new_cc: ប្រើប្រាស់ប័ណ្ណថ្មី
+    use_s3: ប្រើប្រាស់ Amazon S3 For Images
+    user: អ្នកប្រើប្រាស់
+    user_rule:
+      choose_users: ជ្រើសរើស​អ្នកប្រើប្រាស់
+    users: អ្នកប្រើប្រាស់
+    validation:
+      cannot_be_less_than_shipped_units: មិនអាចតិចជាងចំនួនដែល​បានដឹកទៅ ។ 
+      cannot_destroy_line_item_as_inventory_units_have_shipped:
+      exceeds_available_stock: ច្រើនជាង​ចំនួន​ដែល​មានស្រាប់ក្នុងឃ្លាំង ។ សូម​ធានាថា​​បាន​កំណត់​ចំនួន​ទំនិញ​ត្រឹមត្រូវហើយ ។ 
+      is_too_large: ច្រើនហួស -- ចំនួន​ទំនិញ​ដែល​កំពុងមាន​គឺ​មិន​គ្រប់​ចំនួន​នេះទេ!
+      must_be_int: ត្រូវតែជាលេខធំជាងសូន្យ
+      must_be_non_negative: ត្រូវតែមិនមែនជា​លេខដក
+      unpaid_amount_not_zero:
+    value: តម្លៃ
+    variant: ផ្សេងៗ
+    variant_placeholder: ជ្រើសប្រភេទមួយ
+    variants: ប្រភេទផ្សេងៗ
+    version: ជំនាន់
+    void: លុបចោល
+    weight: ទម្ងន់
+    what_is_a_cvv: (CVV) ជាអ្វីទៅ ?
+    what_is_this: នេះជាអ្វីទៅ ?
+    width: កម្រាស់
+    year: ឆ្នាំ
+    you_have_no_orders_yet: អ្នកពុំទាន់មានបញ្ជាទិញអ្វីទាំងអស់
+    your_cart_is_empty: កន្ត្រក​ទទេ
+    your_order_is_empty_add_product: ការបញ្ជាទិញរបស់អ្នក​គឺ​ទទេសូន្យ សូមធ្វើការស្វែងរក និង ជ្រើសយក​ទំនិញខាងលើ
+    zip: កូដប្រៃសនីយ៍
+    zipcode: កូដប្រៃសនីយ៍
+    zone: តំបន់
+    zones: តំបន់

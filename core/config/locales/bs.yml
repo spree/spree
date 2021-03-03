@@ -1,0 +1,4 @@
+bs:
+  spree:
+    i18n:
+      this_file_language: 'Bosanski Jezik (bs)'

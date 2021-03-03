@@ -1,0 +1,1294 @@
+ko:
+  activerecord:
+    attributes:
+      spree/address:
+        address1:
+        address2:
+        city:
+        country:
+        firstname:
+        lastname:
+        phone:
+        state:
+        zipcode:
+      spree/calculator/tiered_flat_rate:
+        preferred_base_amount:
+        preferred_tiers:
+      spree/calculator/tiered_percent:
+        preferred_base_percent:
+        preferred_tiers:
+      spree/country:
+        iso:
+        iso3:
+        iso_name:
+        name:
+        numcode:
+      spree/credit_card:
+        base:
+        cc_type:
+        month:
+        name:
+        number:
+        verification_value:
+        year:
+      spree/inventory_unit:
+        state:
+      spree/line_item:
+        price:
+        quantity:
+      spree/option_type:
+        name:
+        presentation:
+      spree/order:
+        checkout_complete:
+        completed_at:
+        considered_risky:
+        coupon_code:
+        created_at:
+        email:
+        ip_address:
+        item_total:
+        number:
+        payment_state:
+        shipment_state:
+        special_instructions:
+        state:
+        total:
+      spree/order/bill_address:
+        address1:
+        city:
+        firstname:
+        lastname:
+        phone:
+        state:
+        zipcode:
+      spree/order/ship_address:
+        address1:
+        city:
+        firstname:
+        lastname:
+        phone:
+        state:
+        zipcode:
+      spree/payment:
+        amount:
+      spree/payment_method:
+        name:
+      spree/product:
+        available_on:
+        cost_currency:
+        cost_price:
+        description:
+        master_price:
+        name:
+        on_hand:
+        shipping_category:
+        tax_category:
+      spree/promotion:
+        advertise:
+        code:
+        description:
+        event_name:
+        expires_at:
+        name:
+        path:
+        starts_at:
+        usage_limit:
+      spree/promotion_category:
+        name:
+      spree/property:
+        name:
+        presentation:
+      spree/prototype:
+        name:
+      spree/return_authorization:
+        amount:
+      spree/role:
+        name:
+      spree/state:
+        abbr:
+        name:
+      spree/state_change:
+        state_changes:
+        state_from:
+        state_to:
+        timestamp:
+        type:
+        updated:
+        user:
+      spree/store:
+        mail_from_address:
+        meta_description:
+        meta_keywords:
+        name:
+        seo_title:
+        url:
+      spree/tax_category:
+        description:
+        name:
+      spree/tax_rate:
+        amount:
+        included_in_price:
+        show_rate_in_label:
+      spree/taxon:
+        name:
+        permalink:
+        position:
+      spree/taxonomy:
+        name:
+      spree/user:
+        email:
+        password:
+        password_confirmation:
+      spree/variant:
+        cost_currency:
+        cost_price:
+        depth:
+        height:
+        price:
+        sku:
+        weight:
+        width:
+      spree/zone:
+        description:
+        name:
+    errors:
+      models:
+        spree/calculator/tiered_flat_rate:
+          attributes:
+            base:
+              keys_should_be_positive_number:
+            preferred_tiers:
+              should_be_hash:
+        spree/calculator/tiered_percent:
+          attributes:
+            base:
+              keys_should_be_positive_number:
+              values_should_be_percent:
+            preferred_tiers:
+              should_be_hash:
+        spree/classification:
+          attributes:
+            taxon_id:
+              already_linked:
+        spree/credit_card:
+          attributes:
+            base:
+              card_expired:
+              expiry_invalid:
+        spree/line_item:
+          attributes:
+            currency:
+              must_match_order_currency:
+        spree/refund:
+          attributes:
+            amount:
+              greater_than_allowed:
+        spree/reimbursement:
+          attributes:
+            base:
+              return_items_order_id_does_not_match:
+        spree/return_item:
+          attributes:
+            inventory_unit:
+              other_completed_return_item_exists:
+            reimbursement:
+              cannot_be_associated_unless_accepted:
+        spree/store:
+          attributes:
+            base:
+              cannot_destroy_default_store:
+    models:
+      spree/address:
+      spree/country:
+      spree/credit_card:
+      spree/customer_return:
+      spree/inventory_unit:
+      spree/line_item:
+      spree/option_type:
+      spree/option_value:
+      spree/order:
+      spree/payment:
+      spree/payment_method:
+      spree/product:
+      spree/promotion:
+      spree/promotion_category:
+      spree/property:
+      spree/prototype:
+      spree/refund_reason:
+      spree/reimbursement:
+      spree/reimbursement_type:
+      spree/return_authorization:
+      spree/return_authorization_reason:
+      spree/role:
+      spree/shipment:
+      spree/shipping_category:
+      spree/shipping_method:
+      spree/state:
+      spree/state_change:
+      spree/stock_location:
+      spree/stock_movement:
+      spree/stock_transfer:
+      spree/tax_category:
+      spree/tax_rate:
+      spree/taxon:
+      spree/taxonomy:
+      spree/tracker:
+      spree/user:
+      spree/variant:
+      spree/zone:
+  devise:
+    confirmations:
+      confirmed:
+      send_instructions:
+    failure:
+      inactive:
+      invalid:
+      invalid_token:
+      locked:
+      timeout:
+      unauthenticated:
+      unconfirmed:
+    mailer:
+      confirmation_instructions:
+        subject:
+      reset_password_instructions:
+        subject:
+      unlock_instructions:
+        subject:
+    oauth_callbacks:
+      failure:
+      success:
+    unlocks:
+      send_instructions:
+      unlocked:
+    user_passwords:
+      user:
+        cannot_be_blank:
+        send_instructions:
+        updated:
+    user_registrations:
+      destroyed:
+      inactive_signed_up:
+      signed_up:
+      updated:
+    user_sessions:
+      signed_in:
+      signed_out:
+  errors:
+    messages:
+      already_confirmed:
+      not_found:
+      not_locked:
+      not_saved:
+  spree:
+    abbreviation: "생략"
+    accept:
+    acceptance_errors:
+    acceptance_status:
+    accepted:
+    account: "계정"
+    account_updated: "계정 정보가 수정되었습니다!"
+    action: "행동"
+    actions:
+      cancel: "취소"
+      continue:
+      create: "생성"
+      destroy: "삭제"
+      edit:
+      list: "목록"
+      listing: "목록"
+      new:
+      refund:
+      save:
+      update: "수정"
+    activate:
+    active: "활성"
+    add: "추가"
+    add_action_of_type:
+    add_country: "국가 추가"
+    add_coupon_code:
+    add_new_header:
+    add_new_style:
+    add_one:
+    add_option_value: "옵션 값 추가"
+    add_product: "상품 추가"
+    add_product_properties: "상품 속성 추가"
+    add_rule_of_type:
+    add_state:
+    add_stock:
+    add_stock_management:
+    add_to_cart: "장바구니에 추가"
+    add_variant:
+    additional_item: "추가 된 아이템 비용"
+    address1:
+    address2:
+    adjustable:
+    adjustment: "정산"
+    adjustment_amount:
+    adjustment_successfully_closed:
+    adjustment_successfully_opened:
+    adjustment_total: "정산 합계"
+    adjustments: "정산"
+    admin:
+      tab:
+        configuration:
+        option_types:
+        orders:
+        overview:
+        products:
+        promotions:
+        promotion_categories:
+        properties:
+        prototypes:
+        reports:
+        taxonomies:
+        taxons:
+        users:
+      user:
+        account:
+        addresses:
+        items:
+        items_purchased:
+        order_history:
+        order_num:
+        orders:
+        user_information:
+    administration: "관리"
+    advertise:
+    agree_to_privacy_policy:
+    agree_to_terms_of_service:
+    all: "전체"
+    all_adjustments_closed:
+    all_adjustments_opened:
+    all_departments:
+    all_items_have_been_returned:
+    allow_ssl_in_development_and_test:
+    allow_ssl_in_production:
+    allow_ssl_in_staging:
+    already_signed_up_for_analytics:
+    alt_text: "대체 텍스트"
+    alternative_phone: "휴대폰 번호"
+    amount: "액수"
+    analytics_desc_header_1:
+    analytics_desc_header_2:
+    analytics_desc_list_1:
+    analytics_desc_list_2:
+    analytics_desc_list_3:
+    analytics_desc_list_4:
+    analytics_trackers: "애날리틱스 트래커"
+    and:
+    approve:
+    approved_at:
+    approver:
+    are_you_sure: "확실합니까?"
+    are_you_sure_delete: "기록을 삭제하시겠습니까?"
+    associated_adjustment_closed:
+    at_symbol: '@'
+    authorization_failure: "인증 실패"
+    authorized:
+    auto_capture:
+    available_on: "시작일"
+    average_order_value:
+    avs_response:
+    back: "뒤로"
+    back_end:
+    back_to_payment:
+    back_to_resource_list:
+    back_to_rma_reason_list:
+    back_to_store: "스토어로 돌아가기"
+    back_to_users_list:
+    backorderable:
+    backorderable_default:
+    backordered:
+    backorders_allowed:
+    balance_due: "부족"
+    base_amount:
+    base_percent:
+    bill_address: "청구서 주소"
+    billing: "청구서"
+    billing_address: "청구서 주소"
+    both: "양 쪽 모두"
+    calculated_reimbursements:
+    calculator: "계산기"
+    calculator_settings_warning:
+    cancel: "취소"
+    canceled_at:
+    canceler:
+    cannot_create_customer_returns:
+    cannot_create_payment_without_payment_methods:
+    cannot_create_returns:
+    cannot_perform_operation: "요청한 명령을 실핼 할 수 없습니다"
+    cannot_set_shipping_method_without_address:
+    capture: "캡쳐"
+    capture_events:
+    card_code: "카드 코드"
+    card_number: "카드 번호"
+    card_type:
+    card_type_is: "카드 종료는 입니다"
+    cart: "장바구니"
+    cart_subtotal:
+    categories:
+    category:
+    charged:
+    check_for_spree_alerts:
+    checkout:
+    choose_a_customer:
+    choose_a_taxon_to_sort_products_for:
+    choose_currency:
+    choose_dashboard_locale:
+    choose_location:
+    city:
+    clear_cache:
+    clear_cache_ok:
+    clear_cache_warning:
+    click_and_drag_on_the_products_to_sort_them:
+    clone: "복사"
+    close:
+    close_all_adjustments:
+    code: "코드"
+    company:
+    complete: "완료"
+    configuration: "설정"
+    configurations: "설정"
+    confirm: "확인"
+    confirm_delete:
+    confirm_password: "비밀번호 확인"
+    continue: "계속"
+    continue_shopping: "계속 쇼핑"
+    cost_currency:
+    cost_price: "비용"
+    could_not_connect_to_jirafe:
+    could_not_create_customer_return:
+    could_not_create_stock_movement:
+    count_on_hand:
+    countries:
+    country: "국가"
+    country_based: "국가 기반"
+    country_name:
+    country_names:
+      CA:
+      FRA:
+      ITA:
+      US:
+    coupon: "쿠폰"
+    coupon_code: "쿠폰 코드"
+    coupon_code_already_applied:
+    coupon_code_applied:
+    coupon_code_better_exists:
+    coupon_code_expired:
+    coupon_code_max_usage:
+    coupon_code_not_eligible:
+    coupon_code_not_found:
+    coupon_code_unknown_error:
+    create: "생성"
+    create_a_new_account: "새 계정 생성"
+    create_new_order:
+    create_reimbursement:
+    created_at:
+    credit:
+    credit_card: "신용카드"
+    credit_cards:
+    credit_owed:
+    credits:
+    currency:
+    currency_decimal_mark:
+    currency_settings:
+    currency_symbol_position:
+    currency_thousands_separator:
+    current: "현재"
+    current_promotion_usage:
+    customer: "고객"
+    customer_details: "고객 정보"
+    customer_details_updated:
+    customer_return:
+    customer_returns:
+    customer_search: "고객 검색"
+    cut:
+    cvv_response:
+    dash:
+      jirafe:
+        app_id:
+        app_token:
+        currently_unavailable:
+        explanation:
+        header:
+        site_id:
+        token:
+      jirafe_settings_updated:
+    date:
+    date_completed:
+    date_picker:
+      # FlatPickr human friendly formatting
+      fpr_human_friendly_date_format: M j, Y
+      fpr_human_friendly_date_time_format: M j, Y - H:i
+    date_range: "날짜 범위"
+    default: "기본"
+    default_refund_amount:
+    default_tax:
+    default_tax_zone:
+    delete: "삭제"
+    deleted_variants_present:
+    delivery:
+    depth: "높이"
+    description: "설명"
+    destination:
+    destroy: "삭제"
+    details:
+    discount_amount: "할인액"
+    dismiss_banner:
+    display: "표시"
+    display_currency:
+    doesnt_track_inventory:
+    edit: "편집"
+    editing_resource:
+    editing_rma_reason:
+    editing_user: "사용자 편집"
+    eligibility_errors:
+      messages:
+        has_excluded_product:
+        item_total_less_than:
+        item_total_less_than_or_equal:
+        item_total_more_than:
+        item_total_more_than_or_equal:
+        limit_once_per_user:
+        missing_product:
+        missing_taxon:
+        no_applicable_products:
+        no_matching_taxons:
+        no_user_or_email_specified:
+        no_user_specified:
+        not_first_order:
+    email: "이메일"
+    empty:
+    empty_cart: "장바구니 비우기"
+    enable_mail_delivery:
+    end:
+    ending_in:
+    environment: "환경"
+    error: "에러"
+    errors:
+      messages:
+        could_not_create_taxon:
+        no_payment_methods_available:
+        no_shipping_methods_available:
+    errors_prohibited_this_record_from_being_saved:
+      one: "저장하는 중에 문제가 발생했습니다."
+      other: "저장하는 중에 문제가 %{count}개 발생했습니다."
+    event: "이벤트"
+    events:
+      spree:
+        cart:
+          add:
+        checkout:
+          coupon_code_added:
+        content:
+          visited:
+        order:
+          contents_changed:
+        page_view:
+        user:
+          signup:
+    exceptions:
+      count_on_hand_setter:
+    exchange_for:
+    excl:
+    existing_shipments:
+    expedited_exchanges_warning:
+    expiration: "유효 기간"
+    extension: "확장"
+    failed_payment_attempts:
+    filename: "파일이름"
+    fill_in_customer_info:
+    filter_results:
+    finalize:
+    finalized:
+    find_a_taxon:
+    first_item: "첫 아이템 비용"
+    first_name: "이름"
+    first_name_begins_with: "이름으로 시작"
+    flat_percent:
+    flat_rate_per_order:
+    flexible_rate:
+    forgot_password:
+    free_shipping: "무료 배송"
+    free_shipping_amount:
+    front_end:
+    gateway: "게이트웨이"
+    gateway_config_unavailable:
+    gateway_error: "게이트웨이 에러"
+    general:
+    general_settings: "일반 설정"
+    google_analytics: "구글 애날리스틱"
+    google_analytics_id: "애날리스틱 ID"
+    guest_checkout: "비회원 주문"
+    guest_user_account: "비회원으로 결제"
+    has_no_shipped_units:
+    height: "세로"
+    hide_cents:
+    home: Home
+    i18n:
+      available_locales:
+      language:
+      localization_settings:
+      this_file_language: "한국어 (ko)"
+    icon: "아이콘"
+    identifier:
+    image: "이미지"
+    images: "이미지"
+    implement_eligible_for_return:
+    implement_requires_manual_intervention:
+    inactive:
+    incl:
+    included_in_price:
+    included_price_validation:
+    incomplete:
+    info_number_of_skus_not_shown:
+    info_product_has_multiple_skus:
+    instructions_to_reset_password:
+    insufficient_stock:
+    insufficient_stock_lines_present:
+    intercept_email_address:
+    intercept_email_instructions:
+    internal_name:
+    invalid_credit_card:
+    invalid_exchange_variant:
+    invalid_payment_provider:
+    invalid_promotion_action:
+    invalid_promotion_rule:
+    inventory: "인벤토리"
+    inventory_adjustment: "인벤토리 정산"
+    inventory_error_flash_for_insufficient_quantity:
+    inventory_state:
+    is_not_available_to_shipment_address:
+    iso_name:
+    item: "아이템"
+    item_description: "아이템 설명"
+    item_total: "아이템 합계"
+    item_total_rule:
+      operators:
+        gt: "보다 큰"
+        gte: "보다 크거나 같은"
+        lt:
+        lte:
+    items_cannot_be_shipped:
+    items_in_rmas:
+    items_reimbursed:
+    items_to_be_reimbursed:
+    jirafe:
+    landing_page_rule:
+      path: Path
+    last_name: "성"
+    last_name_begins_with: "성으로 시작"
+    learn_more: Learn More
+    lifetime_stats:
+    line_item_adjustments:
+    list: "목록"
+    loading: "로딩"
+    locale_changed: "지역이 변경됨"
+    location:
+    lock:
+    log_entries:
+    logged_in_as:
+    logged_in_succesfully: "로그인 성공"
+    logged_out: "로그아웃 되었습니다."
+    login: "로그인"
+    login_as_existing:
+    login_failed:
+    login_name: "로그인"
+    logout: "로그아웃"
+    logs:
+    look_for_similar_items: "비슷한 상품들"
+    make_refund:
+    make_sure_the_above_reimbursement_amount_is_correct:
+    manage_promotion_categories:
+    manage_variants:
+    manual_intervention_required:
+    master_price: "기본 가격"
+    match_choices:
+      all:
+      none:
+    max_items: "최대 아이템"
+    member_since:
+    memo:
+    meta_description: "메타 설명"
+    meta_keywords: "메타 키워드"
+    meta_title:
+    metadata: "메타데이터"
+    minimal_amount: "최소량"
+    month:
+    more:
+    move_stock_between_locations:
+    my_account: "내 계정"
+    my_orders: "내 주문"
+    name: "이름"
+    name_on_card:
+    name_or_sku: "이름 또는 SKU"
+    new:
+    new_adjustment: "새 정산"
+    new_country:
+    new_customer: "새 고객"
+    new_customer_return:
+    new_image: "새 이미지"
+    new_option_type: "새 옵션 타입"
+    new_order: "새 주문"
+    new_order_completed:
+    new_payment: "새 결제"
+    new_payment_method: "새 결제 방법"
+    new_product: "새 상품"
+    new_promotion: "새 프로모션"
+    new_promotion_category:
+    new_property: "새 속성"
+    new_prototype: "새 견본"
+    new_refund:
+    new_refund_reason:
+    new_return_authorization:
+    new_rma_reason:
+    new_shipment_at_location:
+    new_shipping_category:
+    new_shipping_method:
+    new_state:
+    new_stock_location:
+    new_stock_movement:
+    new_stock_transfer:
+    new_tax_category: "새 세금 분류"
+    new_tax_rate: "새로운 세율"
+    new_taxon: "새 분류군"
+    new_taxonomy: "새 분류계"
+    new_tracker: "새 트랙커"
+    new_user: "새 사용자"
+    new_variant: "새 품종"
+    new_zone: "새 지역"
+    next: "다음"
+    no_actions_added:
+    no_payment_found:
+    no_pending_payments:
+    no_products_found: "찾는 상품이 없음"
+    no_resource_found:
+    no_results: "결과가 없음"
+    no_returns_found:
+    no_rules_added: "추가 된 규칙이 없음"
+    no_shipping_method_selected:
+    no_state_changes:
+    no_tracking_present:
+    none: "없음"
+    none_selected:
+    normal_amount:
+    not:
+    not_available:
+    not_enough_stock:
+    not_found:
+    note:
+    notice_messages:
+      product_cloned:
+      product_deleted:
+      product_not_cloned:
+      product_not_deleted:
+      variant_deleted: "품종이 삭제됐습니다"
+      variant_not_deleted: "품종을 삭제할 수 없습니다"
+    num_orders:
+    on_hand: "재고"
+    open:
+    open_all_adjustments:
+    option_type: "옵션 타입"
+    option_type_placeholder:
+    option_types: "옵션 타입"
+    option_value: "옵션 값"
+    option_values: "옵션 값"
+    optional:
+    options: "옵션"
+    or: "또는"
+    or_over_price:
+    order: "주문"
+    order_adjustments:
+    order_already_updated:
+    order_approved:
+    order_canceled:
+    order_details: "주문 상세"
+    order_email_resent: "주문 확인 메일 재발송"
+    order_information:
+    order_mailer:
+      cancel_email:
+        dear_customer:
+        instructions:
+        order_summary_canceled:
+        subject: "주문 취소"
+        subtotal:
+        total:
+      confirm_email:
+        dear_customer:
+        instructions:
+        order_summary:
+        subject: "주문 확인"
+        subtotal:
+        thanks:
+        total:
+    order_not_found:
+    order_number:
+    order_populator:
+      out_of_stock:
+      please_enter_reasonable_quantity:
+      selected_quantity_not_available:
+    order_processed_successfully:
+    order_resumed:
+    order_state:
+      address: "주소"
+      awaiting_return:
+      canceled: "취소됨"
+      cart: "장바구니"
+      complete: "완료"
+      confirm: "확인"
+      considered_risky:
+      delivery:
+      payment: "지불"
+      resumed:
+      returned:
+    order_summary: "주문 요약"
+    order_sure_want_to:
+    order_total: "주문 합계"
+    order_updated: "주문이 수정됨"
+    orders: "주문"
+    other_items_in_other:
+    out_of_stock: "품절"
+    overview: Overiew
+    package_from:
+    pagination:
+      next_page:
+      previous_page:
+      truncate: "…"
+    password: "비밀번호"
+    paste:
+    path: "경로"
+    pay:
+    payment: "지불"
+    payment_could_not_be_created:
+    payment_identifier:
+    payment_information: "지불 정보"
+    payment_method: "결제 방법"
+    payment_method_not_supported:
+    payment_methods: "결제 방법"
+    payment_processing_failed: "결제 중에 문제가 발생했습니다. 잠시 후에 다시 해보시기 바랍니다."
+    payment_processor_choose_banner_text:
+    payment_processor_choose_link:
+    payment_state: "지불 상태"
+    payment_states:
+      balance_due: "부족"
+      checkout:
+      completed: "완료"
+      credit_owed:
+      failed:
+      paid: "지불"
+      pending: "보류"
+      processing:
+      void:
+    payment_updated:
+    payments: "지불"
+    pending:
+    percent:
+    percent_per_item:
+    permalink: "퍼마링크"
+    phone: "전화번호"
+    place_order:
+    please_define_payment_methods:
+    populate_get_error:
+    powered_by:
+    pre_tax_amount:
+    pre_tax_refund_amount:
+    pre_tax_total:
+    preferred_reimbursement_type:
+    presentation: "표시"
+    previous: "이전"
+    previous_state_missing:
+    price: "가격"
+    price_range:
+    price_sack:
+    process: "과정"
+    product: "상품"
+    product_details: "상품 상세"
+    product_has_no_description:
+    product_not_available_in_this_currency:
+    product_properties: "상품 속성"
+    product_rule:
+      choose_products: "상품 선택"
+      label:
+      match_all: "모두"
+      match_any: "최소 하나"
+      match_none:
+      product_source:
+        group: "상품군에서"
+        manual:
+    products: "상품"
+    promotion:
+    promotion_action:
+    promotion_action_types:
+      create_adjustment:
+        description:
+        name:
+      create_item_adjustments:
+        description:
+        name:
+      create_line_items:
+        description:
+        name:
+      free_shipping:
+        description:
+        name:
+    promotion_actions:
+    promotion_form:
+      match_policies:
+        all: "이 규칙에 모두 일치"
+        any: "이 규칙에 하나라도 일치"
+    promotion_rule: Promotion Rule
+    promotion_rule_types:
+      first_order:
+        description:
+        name: "첫 주문"
+      item_total:
+        description:
+        name:
+      landing_page:
+        description:
+        name:
+      one_use_per_user:
+        description:
+        name:
+      option_value:
+        description:
+        name:
+      product:
+        description:
+        name:
+      taxon:
+        description:
+        name:
+      user:
+        description:
+        name:
+      user_logged_in:
+        description:
+        name:
+    promotion_uses:
+    promotionable:
+    promotions:
+    propagate_all_variants:
+    properties: "속성"
+    property: "속성"
+    prototype: "견본"
+    prototypes: "견본"
+    provider: "제공자"
+    provider_settings_warning:
+    qty: "수량"
+    quantity:
+    quantity_returned:
+    quantity_shipped:
+    quick_search:
+    rate:
+    reason: "이유"
+    receive:
+    receive_stock:
+    received:
+    reception_status:
+    reference:
+    refund:
+    refund_amount_must_be_greater_than_zero:
+    refund_reasons:
+    refunded_amount:
+    refunds:
+    register:
+    registration: "등록"
+    reimburse:
+    reimbursed:
+    reimbursement:
+    reimbursement_mailer:
+      reimbursement_email:
+        days_to_send:
+        dear_customer:
+        exchange_summary:
+        for:
+        instructions:
+        refund_summary:
+        subject:
+        total_refunded:
+    reimbursement_perform_failed:
+    reimbursement_status:
+    reimbursement_type:
+    reimbursement_type_override:
+    reimbursement_types:
+    reimbursements:
+    reject:
+    rejected:
+    remember_me: "이메일 저장"
+    remove: "삭제"
+    rename:
+    report:
+    reports: "리포트"
+    resend: "재발송"
+    reset_password: "비밀번호 재설정"
+    response_code: "응답 코드"
+    resume:
+    resumed:
+    return:
+    return_authorization:
+    return_authorization_reasons:
+    return_authorization_updated:
+    return_authorizations:
+    return_item_inventory_unit_ineligible:
+    return_item_inventory_unit_reimbursed:
+    return_item_rma_ineligible:
+    return_item_time_period_ineligible:
+    return_items:
+    return_items_cannot_be_associated_with_multiple_orders:
+    return_number:
+    return_quantity:
+    returned:
+    returns:
+    review:
+    risk:
+    risk_analysis:
+    risky:
+    rma_credit:
+    rma_number: "RMA 번호"
+    rma_value: "RMA 값"
+    roles:
+    rules: "규칙"
+    safe:
+    sales_total:
+    sales_total_description:
+    sales_totals:
+    save_and_continue: "저장하고 계속"
+    save_my_address:
+    say_no: false
+    say_yes: true
+    scope: "범위"
+    search: "검색"
+    search_results: "%{keywords}의 검색 결과"
+    searching: "검색중"
+    secure_connection_type:
+    security_settings:
+    select: "선택"
+    select_a_return_authorization_reason:
+    select_a_stock_location:
+    select_from_prototype: "견본에서 선택"
+    select_stock:
+    send_copy_of_all_mails_to: "모든 메일 사본을 다음 주소로 보냄"
+    send_mails_as:
+    server: "서버"
+    server_error:
+    settings: "설정"
+    ship:
+    ship_address: "배송 주소"
+    ship_total:
+    shipment: "배송"
+    shipment_adjustments:
+    shipment_details:
+    shipment_mailer:
+      shipped_email:
+        dear_customer:
+        instructions:
+        shipment_summary:
+        subject:
+        thanks:
+        track_information:
+        track_link:
+    shipment_state: "배송 상태"
+    shipment_states:
+      backorder:
+      canceled:
+      partial:
+      pending: "보류"
+      ready: "대기"
+      shipped:
+    shipment_transfer_error:
+    shipment_transfer_success:
+    shipments: "배송"
+    shipped: "배송됨"
+    shipping: "배송료"
+    shipping_address: "배송 주소"
+    shipping_categories: "배송 분류"
+    shipping_category: "배송 분류"
+    shipping_flat_rate_per_item:
+    shipping_flat_rate_per_order:
+    shipping_flexible_rate:
+    shipping_instructions:
+    shipping_method:
+    shipping_methods:
+    shipping_price_sack:
+    shipping_total:
+    shop_by_taxonomy:
+    shopping_cart: "장바구니"
+    show: "보기"
+    show_active:
+    show_deleted: "삭제 된 상품까지 보기"
+    show_only_complete_orders: "완료 된 주문만 보기"
+    show_only_considered_risky:
+    show_rate_in_label:
+    sku:
+    skus:
+    slug:
+    source:
+    special_instructions:
+    split:
+    spree_gateway_error_flash_for_checkout:
+    ssl:
+      change_protocol:
+    start: "시작"
+    state:
+    state_based:
+    state_machine_states:
+      accepted:
+      address:
+      authorized:
+      awaiting:
+      awaiting_return:
+      backordered:
+      canceled:
+      cart:
+      checkout:
+      closed:
+      complete:
+      completed:
+      confirm:
+      delivery:
+      errored:
+      failed:
+      given_to_customer:
+      invalid:
+      manual_intervention_required:
+      on_hand:
+      open:
+      order:
+      payment:
+      pending:
+      processing:
+      ready:
+      reimbursed:
+      resumed:
+      returned:
+      shipped:
+      void:
+    states:
+    states_required:
+    status: "상태"
+    stock:
+    stock_location:
+    stock_location_info:
+    stock_locations:
+    stock_locations_need_a_default_country:
+    stock_management:
+    stock_management_requires_a_stock_location:
+    stock_movements:
+    stock_movements_for_stock_location:
+    stock_successfully_transferred:
+    stock_transfer:
+    stock_transfers:
+    stop: "끝"
+    store: "상점"
+    street_address: Street 주소
+    street_address_2: Street 주소 (cont'd)
+    subtotal:
+    subtract:
+    success:
+    successfully_created:
+    successfully_refunded:
+    successfully_removed:
+    successfully_signed_up_for_analytics:
+    successfully_updated:
+    summary:
+    tax: "세금"
+    tax_categories: "세금 분류"
+    tax_category: "세금 분류"
+    tax_code:
+    tax_included:
+    tax_rate_amount_explanation:
+    tax_rates: "세율"
+    taxon: "분류군"
+    taxon_edit: "분류군 편집"
+    taxon_placeholder:
+    taxon_rule:
+      choose_taxons:
+      label:
+      match_all:
+      match_any:
+    taxonomies: "분류계"
+    taxonomy: "분류군"
+    taxonomy_edit:
+    taxonomy_tree_error:
+    taxonomy_tree_instruction:
+    taxons: "종류"
+    test: "테스트"
+    test_mailer:
+      test_email:
+        greeting:
+        message:
+        subject:
+    test_mode: "테스트 모드"
+    thank_you_for_your_order:
+    there_are_no_items_for_this_order:
+    there_were_problems_with_the_following_fields: "다음 값들에 문제가 있습니다"
+    this_order_has_already_received_a_refund:
+    thumbnail: "미리보기"
+    tiered_flat_rate:
+    tiered_percent:
+    tiers:
+    time:
+    to_add_variants_you_must_first_define: "품종을 추가하려면 먼저 정의해야 합니다"
+    total: "합계"
+    total_per_item:
+    total_pre_tax_refund:
+    total_price:
+    total_sales:
+    track_inventory:
+    tracking:
+    tracking_number:
+    tracking_url:
+    tracking_url_placeholder:
+    transaction_id:
+    transfer_from_location:
+    transfer_stock:
+    transfer_to_location:
+    tree:
+    type:
+    type_to_search:
+    unable_to_connect_to_gateway:
+    unable_to_create_reimbursements:
+    under_price:
+    unlock:
+    unrecognized_card_type:
+    unshippable_items:
+    update: "수정"
+    updating:
+    usage_limit:
+    use_app_default:
+    use_billing_address: "배송받으실 분이 주문자와 동일합니다."
+    use_new_cc:
+    use_s3:
+    user: "사용자"
+    user_rule:
+      choose_users:
+    users: "사용자"
+    validation:
+      cannot_be_less_than_shipped_units:
+      cannot_destroy_line_item_as_inventory_units_have_shipped:
+      exceeds_available_stock:
+      is_too_large:
+      must_be_int:
+      must_be_non_negative:
+      unpaid_amount_not_zero:
+    value: "값"
+    variant:
+    variant_placeholder:
+    variants: "품종"
+    version: "버전"
+    void:
+    weight: "무게"
+    what_is_a_cvv: "신용카드 코드(CVV)란?"
+    what_is_this:
+    width: "가로"
+    year: "년"
+    you_have_no_orders_yet:
+    your_cart_is_empty: "장바구니가 비었습니다"
+    your_order_is_empty_add_product:
+    zip: "우편번호"
+    zipcode: "우편번호"
+    zone: "지역"
+    zones: "지역"

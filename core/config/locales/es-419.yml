@@ -1,0 +1,4 @@
+es-419:
+  spree:
+    i18n:
+      this_file_language: 'Español - Latin America & Caribbean (es-419)'

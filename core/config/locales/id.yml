@@ -1,0 +1,1335 @@
+id:
+  activerecord:
+    attributes:
+      spree/address:
+        address1: Alamat
+        address2: Alamat (lanjutan)
+        city: Kota
+        country: Negara
+        firstname: Nama Depan
+        lastname: Nama Belakang
+        phone: Telepon
+        state: Provinsi
+        zipcode: Kode Pos
+      spree/calculator/tiered_flat_rate:
+        preferred_base_amount:
+        preferred_tiers:
+      spree/calculator/tiered_percent:
+        preferred_base_percent:
+        preferred_tiers:
+      spree/country:
+        iso: ISO
+        iso3: ISO3
+        iso_name: Nama ISO
+        name: Nama
+        numcode: Kode ISO
+      spree/credit_card:
+        base: Basis
+        cc_type: Tipe
+        month: Bulan
+        name: Nama
+        number: Nomor
+        verification_value: Kode Verifikasi
+        year: Tahun
+      spree/inventory_unit:
+        state: Status
+      spree/line_item:
+        price: Harga
+        quantity: Kuantitas
+      spree/option_type:
+        name: Nama
+        presentation: Presentasi
+      spree/order:
+        checkout_complete: Checkout Selesai
+        completed_at: Terpenuhi Saat
+        considered_risky: Dianggap berisiko
+        coupon_code: Kode Kupon
+        created_at: Tanggal Pemesanan
+        email: E-mail Pelanggan
+        ip_address: Alamat IP
+        item_total: Total Barang
+        number: Nomor
+        payment_state: Status Pembayaran
+        shipment_state: Status Pengiriman
+        special_instructions: Instruksi Tambahan
+        state: State
+        total: Total
+      spree/order/bill_address:
+        address1: Alamat penagihan nama jalan
+        city: Alamat penagihan kota
+        firstname: Alamat penagihan nama depan
+        lastname: Alamat penagihan nama keluarga
+        phone: Alamat penagihan nomor telepon
+        state: Alamat penagihan nama propinsi
+        zipcode: Alamat penagihan kode pos
+      spree/order/ship_address:
+        address1: Alamat pengiriman nama jalan
+        city: Alamat pengiriman kota
+        firstname: Alamat pengiriman nama depan
+        lastname: Alamat pengiriman nama keluarga
+        phone: Alamat pengirimian telepon
+        state: Alamat pengiriman provinsi
+        zipcode: Alamat pengiriman kode pos
+      spree/payment:
+        amount: Jumlah
+      spree/payment_method:
+        name: Nama
+      spree/product:
+        available_on: Tersedia Pada
+        cost_currency: Kurs Biaya
+        cost_price: Harga Pengeluaran
+        description: Deskripsi
+        master_price: Harga Master
+        name: Nama
+        on_hand: Yang Tersedia
+        shipping_category: Kategori Pengiriman
+        tax_category: Kategori Pajak
+      spree/promotion:
+        advertise: Iklan
+        code: Kode
+        description: Deskripsi
+        event_name: Nama Event
+        expires_at: Berakhir Pada
+        name: Nama
+        path: Path
+        starts_at: Mulai Pada
+        usage_limit: Batas Penggunaan
+      spree/promotion_category:
+        name: Nama
+      spree/property:
+        name: Nama
+        presentation: Presentasi
+      spree/prototype:
+        name: Nama
+      spree/return_authorization:
+        amount: Jumlah
+      spree/role:
+        name: Nama
+      spree/state:
+        abbr: Singkatan
+        name: Nama
+      spree/state_change:
+        state_changes: Perubahan State
+        state_from: State dari
+        state_to: State ke
+        timestamp: Waktu
+        type: Tipe
+        updated: Updated
+        user: User
+      spree/store:
+        mail_from_address:
+        meta_description:
+        meta_keywords: 
+        name: Nama
+        seo_title: Judul SEO
+        url:
+      spree/tax_category:
+        description: Deskripsi
+        name: Nama
+      spree/tax_rate:
+        amount: Persentase
+        included_in_price: Termasuk dalam Harga
+        show_rate_in_label: Tunjukan persentase di label
+      spree/taxon:
+        name: Nama
+        permalink: Permalink
+        position: Posisi
+      spree/taxonomy:
+        name: Nama
+      spree/user:
+        email: Email
+        password: Kata Sandi
+        password_confirmation: Konfirmasi Kata Sandi
+      spree/variant:
+        cost_currency: Kurs Biaya
+        cost_price: Harga Pengeluaran
+        depth: Kedalaman
+        height: Ketinggian
+        price: Harga
+        sku: SKU
+        weight: Berat
+        width: Lebar
+      spree/zone:
+        description: Deskripsi
+        name: Nama
+    errors:
+      models:
+        spree/calculator/tiered_flat_rate:
+          attributes:
+            base:
+              keys_should_be_positive_number:
+            preferred_tiers:
+              should_be_hash:
+        spree/calculator/tiered_percent:
+          attributes:
+            base:
+              keys_should_be_positive_number:
+              values_should_be_percent:
+            preferred_tiers:
+              should_be_hash:
+        spree/classification:
+          attributes:
+            taxon_id:
+              already_linked:
+        spree/credit_card:
+          attributes:
+            base:
+              card_expired:
+              expiry_invalid:
+        spree/line_item:
+          attributes:
+            currency:
+              must_match_order_currency:
+        spree/refund:
+          attributes:
+            amount:
+              greater_than_allowed:
+        spree/reimbursement:
+          attributes:
+            base:
+              return_items_order_id_does_not_match:
+        spree/return_item:
+          attributes:
+            inventory_unit:
+              other_completed_return_item_exists:
+            reimbursement:
+              cannot_be_associated_unless_accepted:
+        spree/store:
+          attributes:
+            base:
+              cannot_destroy_default_store:
+    models:
+      spree/address:
+        one: Alamat
+        other: Alamat lainnya
+      spree/country:
+        one: Negara
+        other: Negara lainnya
+      spree/credit_card:
+        one: Kartu Kredit
+        other: Kartu kredit lainnya
+      spree/customer_return:
+      spree/inventory_unit:
+        one: Satuan Unit
+        other: Satuan Unit lainnya
+      spree/line_item:
+        one: Barang
+        other: Barang lainnya
+      spree/option_type:
+      spree/option_value:
+      spree/order:
+        one: Pemesanan
+        other: Pemesanan lainnya
+      spree/payment:
+        one: Pembayaran
+        other: Pembayaran lainnya
+      spree/payment_method:
+      spree/product:
+        one: Produk
+        other: Produk lainnya
+      spree/promotion:
+      spree/promotion_category:
+      spree/property:
+        one: Properti
+        other: Properti lainnya
+      spree/prototype:
+        one: Prototipe
+        other: Prototipe lainnya
+      spree/refund_reason:
+      spree/reimbursement:
+      spree/reimbursement_type:
+      spree/return_authorization:
+        one: Otorisasi Pengembalian
+        other: Otorisasi Pengembalian lainnya
+      spree/return_authorization_reason:
+      spree/role:
+        one: Peran
+        other: Peran lainnya
+      spree/shipment:
+        one: Pengiriman
+        other: Pengiriman lainnya
+      spree/shipping_category:
+        one: Kategori Pengiriman
+        other: Kategori Pengiriman lainnya
+      spree/shipping_method:
+      spree/state:
+        one: Provinsi
+        other: Provinsi lainnya
+      spree/state_change:
+      spree/stock_location:
+      spree/stock_movement:
+      spree/stock_transfer:
+      spree/tax_category:
+        one: Kategori Pajak
+        other: Kategori Pajak lainnya
+      spree/tax_rate:
+        one: Persentase Pajak
+        other: Persentase Pajak lainnya
+      spree/taxon:
+        one: Takson
+        other: Takson lainnya
+      spree/taxonomy:
+        one: Taksonomi
+        other: Taksonomi lainnya
+      spree/tracker:
+      spree/user:
+        one: Pengguna
+        other: Pengguna lainnya
+      spree/variant:
+        one: Varian
+        other: Varian lainnya
+      spree/zone:
+        one: Wilayah
+        other: Wilayah-wilayah
+  devise:
+    confirmations:
+      confirmed: Akun Anda telah berhasil di konfirmasi. Anda sekarang telah masuk sistem.
+      send_instructions: Anda akan menerima email dengan instruksi tentang bagaimana caranya untuk mengkonfirmasi akun Anda beberapa menit lagi.
+    failure:
+      inactive: Akun Anda belum teraktivasi
+      invalid: Email atau password salah
+      invalid_token: Token otentikasi Anda salah
+      locked: Akun Anda sedang terkunci
+      timeout: Sesi Anda telah berakhir, silahkan login kembali untuk melanjutkan.
+      unauthenticated: Anda perlu login atau mendaftar dulu sebelum melanjutkan.
+      unconfirmed: Anda perlu mengkonfirmasi akun Anda sebelum melanjutkan.
+    mailer:
+      confirmation_instructions:
+        subject: Instruksi konfirmasi.
+      reset_password_instructions:
+        subject: Instruksi reset kata sandi
+      unlock_instructions:
+        subject: Instruksi membuka Akun terkunci
+    oauth_callbacks:
+      failure: Tidak bisa mengizinkan Anda dari %{kind} karena %{reason}
+      success: Berhasil mendapat izin dari akun %{kind}
+    unlocks:
+      send_instructions: Anda akan menerima email dengan instruksi tentang bagaimana caranya untuk mengaktifkan akun yang terkunci beberapa menit lagi.
+      unlocked: Akun Anda telah tidak terkunci lagi. Anda sekarang telah masuk sistem.
+    user_passwords:
+      user:
+        cannot_be_blank: Kata sandi Anda tidak boleh kosong
+        send_instructions: Anda akan menerima email dengan instruksi tentang bagaimana caranya untuk mengganti ulang kata sandi Anda beberapa menit lagi.
+        updated: Kata sandi Anda telah berhasil diganti. Anda sekarang telah masuk sistem.
+    user_registrations:
+      destroyed: Dadah! Akun Anda telah berhasil dibatalkan. Semoga kita berjumpa lagi.
+      inactive_signed_up: Anda telah berhasil didaftarkan. Namun, Anda tidak dapat masuk ke sistem kami karena %{reason}
+      signed_up: Selamat datang! Anda telah berhasil didaftarkan.
+      updated: Anda telah berhasil memperbarui Akun Anda.
+    user_sessions:
+      signed_in: Berhasil masuk ke dalam sistem.
+      signed_out: Berhasil keluar dari sistem.
+  errors:
+    messages:
+      already_confirmed: telah dikonfirmasi.
+      not_found: tidak ditemukan
+      not_locked: tidak terkunci
+      not_saved: "%{count} kesalahan menyebabkan %{resource} tidak bisa disimpan"
+  spree:
+    abbreviation: Singkatan
+    accept:
+    acceptance_errors:
+    acceptance_status:
+    accepted:
+    account: Akun
+    account_updated: Akun sudah diperbarui!
+    action: Aksi
+    actions:
+      cancel: Batal
+      continue: Lanjutkan
+      create: Buat
+      destroy: Hapus
+      edit: Ubah
+      list: Daftar
+      listing: Daftar
+      new: Baru
+      refund:
+      save: Simpan
+      update: Pembaharuan
+    activate: Aktivasi
+    active: Aktif
+    add: Tambahkan
+    add_action_of_type: Tambahkan Aksi Dari Tipe
+    add_country: Tambahkan Negara
+    add_coupon_code:
+    add_new_header: Tambahkan Header
+    add_new_style: Tambahkan Style Baru
+    add_one: Tambahkan satu
+    add_option_value: Tambahkan Data Untuk Opsi
+    add_product: Tambahkan Produk
+    add_product_properties: Tambahkan Properti Produk
+    add_rule_of_type: Tambahkan Aturan Untuk Tipe
+    add_state: Tambahkan Status
+    add_stock: Tambah Stok
+    add_stock_management: Manajemen Penambahan Stok
+    add_to_cart: Tambahkan ke Keranjang Belanja
+    add_variant: Tambah Variasi
+    additional_item: Tambahan Harga Barang
+    address1: Alamat
+    address2: Alamat (lanjutan)
+    adjustable:
+    adjustment: Penyesuaian
+    adjustment_amount: Jumlah
+    adjustment_successfully_closed: Penyesuaian telah berhasil ditutup!
+    adjustment_successfully_opened: Penyesuaian telah berhasil dibuka!
+    adjustment_total: Total Penyesuaian
+    adjustments: Penambahan
+    admin:
+      tab:
+        configuration:
+        option_types:
+        orders:
+        overview:
+        products:
+        promotions:
+        properties:
+        prototypes:
+        reports:
+        taxonomies:
+        taxons:
+        users:
+      user:
+        account:
+        addresses:
+        items:
+        items_purchased:
+        order_history:
+        order_num:
+        orders:
+        user_information:
+    administration: Administrasi
+    advertise:
+    agree_to_privacy_policy: Setuju kepada Kebijakan Privasi
+    agree_to_terms_of_service: Setuju kepada Ketentuan Servis
+    all: Semua
+    all_adjustments_closed: Semua penyesuaian berhasil ditutup!
+    all_adjustments_opened: Semua penyesuaian berhasil dibuka!
+    all_departments: Semua departemen
+    all_items_have_been_returned:
+    allow_ssl_in_development_and_test: Memperbolehkan SSL untuk development dan test
+    allow_ssl_in_production: Memperbolehkan SSL untuk production
+    allow_ssl_in_staging: Memperbolehkan SSL untuk staging mode
+    already_signed_up_for_analytics: Anda sudah terdaftar untuk Analisis Sistem
+    alt_text: Alternatif
+    alternative_phone: Nomor Telepon Yang Lain
+    amount: Jumlah
+    analytics_desc_header_1: Analisis Sistem
+    analytics_desc_header_2: Analisis langsung terintegrasi pada dasbor Sistem Anda
+    analytics_desc_list_1: Dapatkan informasi penjualan langsung saat itu juga
+    analytics_desc_list_2: Hanya memerlukan akun Sistem untuk mengaktifkannya
+    analytics_desc_list_3: Tidak ada kode yang bisa di install
+    analytics_desc_list_4: Ini semua gratis!
+    analytics_trackers: Analisis tracker
+    and: dan
+    approve: Disetujui
+    approved_at: Disetujui pada
+    approver: Disetujui oleh
+    are_you_sure: Anda yakin?
+    are_you_sure_delete: Anda yakin mau menghilangkan record berikut?
+    associated_adjustment_closed: Penyesuaian yang dimaksud telah ditutup. Apakah Anda mau membukanya?
+    at_symbol: '@'
+    authorization_failure: Gagal Otorisasi
+    authorized: Otorisasi
+    auto_capture: auto capture
+    available_on: Tersedia Pada
+    average_order_value:
+    avs_response:
+    back: Kembali
+    back_end: Back End
+    back_to_payment:
+    back_to_resource_list:
+    back_to_rma_reason_list:
+    back_to_store: Kembali ke Toko
+    back_to_users_list: Kembali ke Daftar User
+    backorderable:
+    backorderable_default:
+    backordered:
+    backorders_allowed:
+    balance_due: Sisa Pelunasan
+    base_amount:
+    base_percent:
+    bill_address: Alamat Tagihan
+    billing: Penagihan
+    billing_address: Alamat Penagihan
+    both: Kedua-nya
+    calculated_reimbursements:
+    calculator: Kalkulator
+    calculator_settings_warning: Jika anda sedang mengganti tipe kalkulator, anda harus menyimpan terlebih dahulu sebelum anda dapat mengubah pengaturan kalkulator
+    cancel: Batal
+    canceled_at: Dibatalkan pada
+    canceler: Dibatalkan oleh
+    cannot_create_customer_returns:
+    cannot_create_payment_without_payment_methods: Anda tidak dapat melakukan pembayaran untuk pemesanan, tanpa mendefinisikan metode pembayaran terlebih dahulu
+    cannot_create_returns: Tidak dapat melakukan pengembalian untuk pemesanan ini karena tidak ada barang yang dikirim
+    cannot_perform_operation: Tidak dapat melakukan pekerjaan yang diminta
+    cannot_set_shipping_method_without_address: Tidak bisa memilih metode pengiriman sampai detil info pelanggan diberikan.
+    capture: Ambil
+    capture_events: Capture Event
+    card_code: Kode Kartu
+    card_number: Nomor Kartu
+    card_type: Tipe kartu
+    card_type_is: Tipe kartu adalah
+    cart: Keranjang belanja
+    cart_subtotal: Cart subtotal
+    categories: Kategori
+    category: Kategori
+    charged: charged
+    check_for_spree_alerts: Cek peringatan Sistem
+    checkout: Checkout
+    choose_a_customer: Pilih pelanggan
+    choose_a_taxon_to_sort_products_for: Pilih takson yang diurutkan
+    choose_currency: Pilih Mata Uang
+    choose_dashboard_locale: Pilih Bahasa Dashboard
+    choose_location: Pilih Lokasi
+    city: Kota
+    clear_cache: Clear cache
+    clear_cache_ok: clear cache OK
+    clear_cache_warning:
+    click_and_drag_on_the_products_to_sort_them:
+    clone: Gandakan
+    close: Tutup
+    close_all_adjustments: Tutup Semua Penyesuaian
+    code: Kode
+    company: Perusahaan
+    complete: Selesai
+    configuration: Konfigurasi
+    configurations: Konfigurasi
+    confirm: Yakin
+    confirm_delete: Konfirmasi Penghapusan
+    confirm_password: Konfirmasi Kata Sandi
+    continue: Lanjut
+    continue_shopping: Lanjutkan belanja
+    cost_currency: Biaya Mata Uang
+    cost_price: Harga Pokok
+    could_not_connect_to_jirafe: Tidak dapat terhubung ke Jirafe untuk sinkronisasi data. Akan dicoba kembali secara otomatis.
+    could_not_create_customer_return:
+    could_not_create_stock_movement: Ada masalah saat menyimpan pergerakan stok. Silahkan dicoba kembali.
+    count_on_hand:
+    countries: Negara
+    country: Negara
+    country_based: Berdasarkan negara
+    country_name: Nama Negara
+    country_names:
+      CA:
+      FRA:
+      ITA:
+      US:
+    coupon: Kupon
+    coupon_code: Kode kupon
+    coupon_code_already_applied: Kode kupon suda diaplikasikan ke pemesanan ini sebelumnya.
+    coupon_code_applied: Kode kupon sudah digunakan pada pemesanan anda
+    coupon_code_better_exists: Penggunaan kode kupon sebelumnya menghasilkan pembelian yang lebih baik
+    coupon_code_expired: Kode kupon ini telah berakhir masa aktifnya.
+    coupon_code_max_usage: Pemakaian kode kupon telah melewati batas
+    coupon_code_not_eligible: Kode kupon tidak bisa digunakan untuk pemesanan ini.
+    coupon_code_not_found: Kode kupon yang Anda masukkan tidak tersedia. Silahkan dicoba kembali.
+    coupon_code_unknown_error:
+    create: Buat
+    create_a_new_account: Buat akun baru
+    create_new_order: Bikin order baru
+    create_reimbursement: bikin reimbursement
+    created_at: Dibuat Saat
+    credit: Kredit
+    credit_card: Kartu Kredit
+    credit_cards: Kartu Kredit
+    credit_owed: Pemberian Kredit
+    credits: Kredit
+    currency: Mata Uang
+    currency_decimal_mark: Kurs tanda desimal
+    currency_settings: Pengaturan Mata Uang
+    currency_symbol_position: Letakkan simbol mata uang di depan atau belakang jumlah uang?
+    currency_thousands_separator: Kurs pemisah ribuan
+    current: Sekarang
+    current_promotion_usage: 'Pemakaian Saat Ini: %{count}'
+    customer: Pelanggan
+    customer_details: Detail Pelanggan
+    customer_details_updated: Detail pelanggan telah diubah
+    customer_return: Pengembalian kostumer
+    customer_returns: Pengembalian kostumer
+    customer_search: Pencarian pelanggan
+    cut: Potong
+    cvv_response: Cvv respon
+    dash:
+      jirafe:
+        app_id: ID Aplikasi
+        app_token: Token Aplikasi
+        currently_unavailable:
+        explanation:
+        header: Pengaturan Analisis Jirafe
+        site_id: ID Situs
+        token: Token
+      jirafe_settings_updated: Pengaturan Jirafe telah diperbarui
+    date: Tanggal
+    date_completed: Tanggal Selesai
+    date_picker:
+      # FlatPickr human friendly formatting
+      fpr_human_friendly_date_format: M j, Y
+      fpr_human_friendly_date_time_format: M j, Y - H:i
+    date_range: Rentang Tanggal
+    default: Nilai Awal
+    default_refund_amount:
+    default_tax: Nilai Awal Pajak
+    default_tax_zone: Wilayah Pajak Awal
+    delete: Hapus
+    deleted_variants_present:
+    delivery: Pengiriman
+    depth: Kedalaman
+    description: Deskripsi
+    destination: Tujuan
+    destroy: Hapus
+    details: Detail
+    discount_amount: Jumlah Diskon
+    dismiss_banner: Tidak. Terima Kasih! Saya tidak tertarik, jangan tampilkan pesan ini lagi
+    display: Tampilan
+    display_currency: Tampilan mata uang
+    doesnt_track_inventory:
+    edit: Ubah
+    editing_resource:
+    editing_rma_reason:
+    editing_user: Pengubahan Pengguna
+    eligibility_errors:
+      messages:
+        has_excluded_product:
+        item_total_less_than:
+        item_total_less_than_or_equal:
+        item_total_more_than:
+        item_total_more_than_or_equal:
+        limit_once_per_user:
+        missing_product:
+        missing_taxon:
+        no_applicable_products:
+        no_matching_taxons:
+        no_user_or_email_specified:
+        no_user_specified:
+        not_first_order:
+    email: Email
+    empty: Kosong
+    empty_cart: Kosongkan Keranjang Belanja
+    enable_mail_delivery: Aktifkan Pengiriman Pesan
+    end: Akhir
+    ending_in: Berakhir pada
+    environment: Lingkungan
+    error: kesalahan
+    errors:
+      messages:
+        could_not_create_taxon: Tidak dapat membuat takson
+        no_payment_methods_available: Tidak terdapat metode pembayaran di lingkugan ini
+        no_shipping_methods_available: Tidak terdapat metode pengiriman pada lokasi, tolong ganti alamat tujuan dan coba lagi
+    errors_prohibited_this_record_from_being_saved:
+      one: 1 kesalahan yang tidak boleh dilakukan pada data ini sehingga data tidak dapat disimpan
+      other: "%{count} kesalahan tidak boleh dilakukan pada data ini sehingga data tidak dapat disimpan"
+    event: Event
+    events:
+      spree:
+        cart:
+          add: Tambah ke keranjang belanja
+        checkout:
+          coupon_code_added: Kode kupon ditambahkan
+        content:
+          visited: Kunjungi halaman statis
+        order:
+          contents_changed: Konten pemesanan berganti
+        page_view: Halaman statis telah dilihat
+        user:
+          signup: Pendaftaran pengguna
+    exceptions:
+      count_on_hand_setter:
+    exchange_for:
+    excl:
+    existing_shipments:
+    expedited_exchanges_warning:
+    expiration: Waktu kedaluwarsa
+    extension: Ektensi
+    failed_payment_attempts:
+    filename: Nama file
+    fill_in_customer_info: Silahkan isi informasi pelanggan
+    filter_results: Hasil Filter
+    finalize: Penyelesaian
+    finalized: Diselesaikan
+    find_a_taxon:
+    first_item: Harga Barang Pertama
+    first_name: Nama Depan
+    first_name_begins_with: Nama Depan Dimulai Dengan
+    flat_percent: Persentase Tetap
+    flat_rate_per_order: Tarif Tetap (per pemesanan)
+    flexible_rate: Tarif Fleksibel
+    forgot_password: Lupa Kata Sandi?
+    free_shipping: Gratis Pengiriman
+    free_shipping_amount: Jumlah Gratis Pengiriman
+    front_end: Tampilan Depan
+    gateway: Gateway
+    gateway_config_unavailable: Gateway tidak tersedia untuk lingkungan
+    gateway_error: Kesalahan Gateway
+    general: Umum
+    general_settings: Pengaturan Umum
+    google_analytics: Google Analytics
+    google_analytics_id: Analytics ID
+    guest_checkout: Checkout sebagai Tamu
+    guest_user_account: Bayar sebagai Tamu
+    has_no_shipped_units: tidak memiliki unit untuk dikirimkan
+    height: Tinggi
+    hide_cents: Sembunyikan nilai sen
+    home: Beranda
+    i18n:
+      available_locales:
+      language: Bahasa
+      localization_settings: Pengaturan Lokalisasi
+      this_file_language: Indonesian (id)
+    icon: Ikon
+    identifier:
+    image: Gambar
+    images: Gambar
+    implement_eligible_for_return:
+    implement_requires_manual_intervention:
+    inactive:
+    incl:
+    included_in_price: Termasuk dalam Harga
+    included_price_validation: tidak dapat dipilih jika anda tidak mengatur Area Awal Pajak
+    incomplete:
+    info_number_of_skus_not_shown:
+    info_product_has_multiple_skus:
+    instructions_to_reset_password: Isi formulir di bawah ini dan instruksi perubahan kata sandi akan dikirimkan ke email anda
+    insufficient_stock: Stok tidak cukup, hanya tersedia %{on_hand} buah
+    insufficient_stock_lines_present:
+    intercept_email_address: Intercept Email Address
+    intercept_email_instructions: Ganti email penerima dengan email ini
+    internal_name:
+    invalid_credit_card:
+    invalid_exchange_variant:
+    invalid_payment_provider: Penyedia pembayaran tidak valid
+    invalid_promotion_action: Aksi promosi tidak valid
+    invalid_promotion_rule: Aturan promosi tidak valid
+    inventory: Inventori
+    inventory_adjustment: Penyesuaian Inventori
+    inventory_error_flash_for_insufficient_quantity: Sebuah barang dalam keranjang Anda menjadi tidak tersedia.
+    inventory_state:
+    is_not_available_to_shipment_address: tidak tersedia untuk alamat tujuan
+    iso_name: Nama ISO
+    item: Barang
+    item_description: Deskripsi Barang
+    item_total: Total Barang
+    item_total_rule:
+      operators:
+        gt: lebih besar dari
+        gte: lebih besar dari atau sama dengan
+        lt:
+        lte:
+    items_cannot_be_shipped:
+    items_in_rmas:
+    items_reimbursed:
+    items_to_be_reimbursed:
+    jirafe: Jirafe
+    landing_page_rule:
+      path: Path
+    last_name: Nama Belakang
+    last_name_begins_with: Nama Belakang Dimulai Dengan
+    learn_more: Mengenal Lebih
+    lifetime_stats:
+    line_item_adjustments:
+    list: Daftar
+    loading: Loading
+    locale_changed: Bahasa telah terganti
+    location: Lokasi
+    lock: Kunci
+    log_entries:
+    logged_in_as: Login sebagai
+    logged_in_succesfully: Login berhasil
+    logged_out: Anda telah keluar.
+    login: Login
+    login_as_existing: Login sebagai Pelanggan yang Terdaftar
+    login_failed: Otentikasi login gagal.
+    login_name: Login
+    logout: Keluar
+    logs:
+    look_for_similar_items: Cari barang yang mirip
+    make_refund: Melakukan pengembalian
+    make_sure_the_above_reimbursement_amount_is_correct:
+    manage_promotion_categories:
+    manage_variants:
+    manual_intervention_required:
+    master_price: Harga Master
+    match_choices:
+      all: Semua
+      none: Tidak ada
+    max_items: Maks. Barang
+    member_since: Anggota dari
+    memo: Memo
+    meta_description: Deskripsi Meta
+    meta_keywords: Kata Kunci Meta
+    meta_title: Judul Meta
+    metadata: Metadata
+    minimal_amount: Jumlah Minimal
+    month: Bulan
+    more: Lanjut
+    move_stock_between_locations: Pindahkan Stok Antara Lokasi
+    my_account: Akunku
+    my_orders: Pemesanan Saya
+    name: Nama
+    name_on_card: Nama di Kartu
+    name_or_sku: Nama atau SKU (inputkan paling tidak 4 karakter dari nama produk)
+    new: Buat Baru
+    new_adjustment: Penyesuaian Baru
+    new_country: Negara Baru
+    new_customer: Pelanggan Baru
+    new_customer_return: Pengembalian Pelanggan Baru
+    new_image: Gambar Baru
+    new_option_type: Pilihan Tipe Baru
+    new_order: Pemesanan baru
+    new_order_completed: Pemesanan baru selesai
+    new_payment: Pembayaran baru
+    new_payment_method: Metode baru pembayaran
+    new_product: Produk baru
+    new_promotion: Promosi baru
+    new_promotion_category:
+    new_property: Properti baru
+    new_prototype: Prototipe baru
+    new_refund:
+    new_refund_reason:
+    new_return_authorization: Pengembalian baru
+    new_rma_reason:
+    new_shipment_at_location:
+    new_shipping_category: Kategori pengiriman baru
+    new_shipping_method: Metode pengiriman baru
+    new_state: Provinsi baru
+    new_stock_location: Lokasi Stok Baru
+    new_stock_movement:
+    new_stock_transfer:
+    new_tax_category: Kategori pajak baru
+    new_tax_rate: Tarif pajak baru
+    new_taxon: Takson baru
+    new_taxonomy: Taksonomi baru
+    new_tracker: Pelacak baru
+    new_user: Pengguna baru
+    new_variant: Variasi Baru
+    new_zone: Daerah baru
+    next: Lanjut
+    no_actions_added: Tidak ada aksi yang ditambahkan
+    no_payment_found:
+    no_pending_payments:
+    no_products_found: Produk tidak ditemukan
+    no_resource_found:
+    no_results: Tidak ada hasil
+    no_returns_found:
+    no_rules_added: Tidak ada aturan tambahan
+    no_shipping_method_selected:
+    no_state_changes:
+    no_tracking_present:
+    none: Tidak ada
+    none_selected:
+    normal_amount: Jumlah normal
+    not: Bukan
+    not_available: Tidak tersedia
+    not_enough_stock:
+    not_found: "%{resource} tidak ditemukan"
+    note:
+    notice_messages:
+      product_cloned: Produk telah digandakan
+      product_deleted: Produk telah dihapus
+      product_not_cloned: Produk tidak dapat digandakan
+      product_not_deleted: Produk tidak dapat dihapus
+      variant_deleted: Varian dapat dihapus
+      variant_not_deleted: Varian tidak dapat dihapus
+    num_orders:
+    on_hand: Stok yang tersedia
+    open: Buka
+    open_all_adjustments: Buka Semua Penyesuaian
+    option_type: Pilihan tipe
+    option_type_placeholder:
+    option_types: Pilihan tipe
+    option_value: Pilihan nilai
+    option_values: Pilihan nilai
+    optional: Pilihan
+    options: Pilihan
+    or: Atau
+    or_over_price: "%{price} atau lebih"
+    order: Pemesanan
+    order_adjustments: Penyesuaian pemesanan
+    order_already_updated:
+    order_approved:
+    order_canceled:
+    order_details: Rincian pemesanan
+    order_email_resent: Pengiriman ulang email pemesanan
+    order_information: Informasi Pemesanan
+    order_mailer:
+      cancel_email:
+        dear_customer: Untuk pelanggan,\n
+        instructions: Pemesanan anda telah DIBATALKAN.  Silahkan simpan informasi pendaftaran ini untuk catatan anda.
+        order_summary_canceled: Rekap pemesanan [DIBATALKAN]
+        subject: Pembatalan order
+        subtotal:
+        total:
+      confirm_email:
+        dear_customer: Untuk pelanggan,\n
+        instructions: Silahkan melihat dan menyimpan urutan informasi sebagai berikut untuk catatan anda.
+        order_summary: Rekap pemesanan
+        subject: Konfirmasi pemesanan
+        subtotal:
+        thanks: Terima kasih.
+        total:
+    order_not_found: Kami tidak dapat menemukan pemesanan Anda. Silahkan coba lagi.
+    order_number: Nomor Pemesanan
+    order_processed_successfully: Pemesanan anda telah berhasil diproses
+    order_resumed:
+    order_state:
+      address: Alamat
+      awaiting_return: Menunggu pengembalian
+      canceled: Telah dibatalkan
+      cart: keranjang
+      complete: selesai
+      confirm: konfirmasi
+      considered_risky: Dianggap berisiko
+      delivery: pengiriman
+      payment: pembayaran
+      resumed: dilanjutkan
+      returned: kembali
+    order_summary: Rekap pemesanan
+    order_sure_want_to: Apakah anda yakin %{event} pemesanan ini?
+    order_total: Total pemesanan
+    order_updated: Memperbarui pemesanan
+    orders: Pemesanan
+    other_items_in_other:
+    out_of_stock: Stok habis
+    overview: Keseluruhan
+    package_from: paket dari
+    pagination:
+      first: halaman awal
+      previous: « halaman sebelumnya
+      next_page: halaman selanjutnya »
+      previous_page: "« halaman sebelumnya"
+      truncate: "…"
+    password: Kata sandi
+    paste: Tempel
+    path: Path
+    pay: Membayar
+    payment: Pembayaran
+    payment_could_not_be_created:
+    payment_identifier:
+    payment_information: Informasi Pembayaran
+    payment_method: Metode Pembayaran
+    payment_method_not_supported:
+    payment_methods: Metode Pembayaran
+    payment_processing_failed: Pembayaran tidak dapat diproses, silahkan periksa rincian yang anda masukan
+    payment_processor_choose_banner_text: Jika anda membutuhkan pilihan bantuan untuk proses pembayaran, silahkan kunjungi
+    payment_processor_choose_link: halaman pembayaran kami
+    payment_state: Status pembayaran
+    payment_states:
+      balance_due: Saldo
+      checkout: checkout
+      completed: Selesai
+      credit_owed: Kredit yang dimiliki
+      failed: gagal
+      paid: Terbayar
+      pending: tertunda
+      processing: pemprosesan
+      void: membatalkan
+    payment_updated: Pembayaran diperbaharui
+    payments: Pembayaran
+    pending:
+    percent: Persen
+    percent_per_item: Persentase per barang
+    permalink: Permalink
+    phone: Telepon
+    place_order: Tempat Pemesanan
+    please_define_payment_methods: Silahkan mendefinisikan beberapa metode pembayaran pertama.
+    populate_get_error: Sesuatu ada yang salah. Silahkan mencoba ulang untuk menambahkan barang.
+    powered_by: Didukung oleh
+    pre_tax_amount:
+    pre_tax_refund_amount:
+    pre_tax_total:
+    preferred_reimbursement_type:
+    presentation: Presentasi
+    previous: Sebelumnya
+    previous_state_missing:
+    price: Harga
+    price_range: Batasan Harga
+    price_sack: price sack
+    process: Proses
+    product: Produk
+    product_details: Rincian Produk
+    product_has_no_description: Produk ini tidak memiliki deskripsi
+    product_not_available_in_this_currency:
+    product_properties: Properti Produk
+    product_rule:
+      choose_products: Pilih produk
+      label:
+      match_all: semua
+      match_any: Minimal satu
+      match_none:
+      product_source:
+        group: Dari kelompok produk
+        manual: Pilih manual
+    products: Produk
+    promotion: Promosi
+    promotion_action: Kegiatan promosi
+    promotion_action_types:
+      create_adjustment:
+        description: Membuat penyesuaian kredit promosi pada pembelian
+        name: Membuat penyesuaian
+      create_item_adjustments:
+        description:
+        name:
+      create_line_items:
+        description: Penuhi keranjang belanja dengan kuantitas varian yang telah ditentukan
+        name: Tambah barang baru
+      free_shipping:
+        description:
+        name:
+    promotion_actions: Aksi
+    promotion_form:
+      match_policies:
+        all: Sesuai dengan semua peraturan
+        any: Sesuai dengan beberapa peraturan
+    promotion_rule: Aturan Promosi
+    promotion_rule_types:
+      first_order:
+        description: Harus pemesanan pertama Pelanggan
+        name: Pemesanan Pertama
+      item_total:
+        description: Total Pemesanan memenuhi kriteria-kriteria ini
+        name: Total Barang
+      landing_page:
+        description: Pelanggan harus telah mengunjungi halaman spesifik
+        name: Halaman Arahan
+      one_use_per_user:
+        description:
+        name:
+      option_value:
+        description:
+        name:
+      product:
+        description: Pemesanan berisi produk spesifik
+        name: Produk
+      taxon:
+        description:
+        name:
+      user:
+        description: Hanya tersedia untuk pengguna tertentu
+        name: Pengguna
+      user_logged_in:
+        description: Hanya tersedia untuk pengguna yang telah masuk
+        name: Pengguna yang telah masuk
+    promotion_uses:
+    promotionable:
+    promotions: Promosi
+    propagate_all_variants:
+    properties: Properti
+    property: Properti
+    prototype: Prototipe
+    prototypes: Prototipe
+    provider: Penyedia
+    provider_settings_warning: Jika anda mengubah tipe penyedia, pertama kali anda harus simpan dulu sebelum dapat mengubah pengaturan penyedia
+    qty: Kuantitas
+    quantity: Jumlah
+    quantity_returned: Kuantitas Pengembalian
+    quantity_shipped: Kuantitas dikirim
+    quick_search: Pencarian Cepat
+    rate: Harga
+    reason: Sebab
+    receive: Terima
+    receive_stock:
+    received: Telah diterima
+    reception_status:
+    reference: Referensi
+    refund: Pengembalian Uang
+    refund_amount_must_be_greater_than_zero: Pengembalian Uang harus lebih besar dari 0
+    refund_reasons: Alasan Pengembalian Uang
+    refunded_amount:
+    refunds:
+    register: Mendaftar sebagai Pengguna Baru
+    registration: Pendaftaran
+    reimburse:
+    reimbursed:
+    reimbursement:
+    reimbursement_mailer:
+      reimbursement_email:
+        days_to_send:
+        dear_customer:
+        exchange_summary:
+        for:
+        instructions:
+        refund_summary:
+        subject:
+        total_refunded:
+    reimbursement_perform_failed:
+    reimbursement_status:
+    reimbursement_type:
+    reimbursement_type_override:
+    reimbursement_types:
+    reimbursements:
+    reject: Ditolak
+    rejected: Penolakan
+    remember_me: Ingat otomatis
+    remove: Menghapus
+    rename: Menamakan Ulang
+    report:
+    reports: Laporan
+    resend: Kirim Ulang
+    reset_password: atur ulang kata sandi
+    response_code: Kode Respon
+    resume: Lanjutkan
+    resumed: Telah Dilanjutkan
+    return: Kembali
+    return_authorization: Otorisasi Pengembalian
+    return_authorization_reasons:
+    return_authorization_updated: Otorisasi Pengembalian telah dirubah
+    return_authorizations: Otorisasi Pengembalian
+    return_item_inventory_unit_ineligible:
+    return_item_inventory_unit_reimbursed:
+    return_item_rma_ineligible:
+    return_item_time_period_ineligible:
+    return_items: Pengembalian Barang
+    return_items_cannot_be_associated_with_multiple_orders:
+    return_number: Nomor Pengembalian Barang
+    return_quantity: Jumlah Pengembalian
+    returned: Telah Dikembalikan
+    returns:
+    review: Periksa
+    risk: Risiko
+    risk_analysis: Analisis risiko
+    risky: berisiko
+    rma_credit: Kredit RMA
+    rma_number: Nomor RMA
+    rma_value: Nilai RMA
+    roles: Peran
+    rules: Aturan
+    safe: Aman
+    sales_total: Total Penjualan
+    sales_total_description: Total Penjualan untuk semua Pemesanan
+    sales_totals: Total Penjualan
+    save_and_continue: Simpan dan Lanjutkan
+    save_my_address: Simpan alamat
+    say_no: Tidak
+    say_yes: Ya
+    scope: Cakupan
+    search: Cari
+    search_results: Hasil Pencarian '%{keywords}'
+    searching: Pencarian
+    secure_connection_type: Jenis Koneksi Aman
+    security_settings: Pengaturan Kemanan
+    select: Pilih
+    select_a_return_authorization_reason:
+    select_a_stock_location:
+    select_from_prototype: Pilih dari Prototipe
+    select_stock: Pilih stok
+    send_copy_of_all_mails_to: Kirim Salinan ke semua
+    send_mails_as: Kirim pesan sebagai
+    server: Server
+    server_error: Server mengalami kesalahan
+    settings: Pengaturan
+    ship: Kirim
+    ship_address: Alamat Kirim
+    ship_total: Total Pengiriman
+    shipment: Pengiriman
+    shipment_adjustments: Tambahan Pengiriman
+    shipment_details: Detail Pengiriman
+    shipment_mailer:
+      shipped_email:
+        dear_customer: Kepada Pelanggan,\n
+        instructions: Pemesanan anda telah dikirimkan
+        shipment_summary: Rekap Pengiriman
+        subject: Pemberitahuan Pengiriman
+        thanks: Terima kasih untuk bisnis anda
+        track_information: 'Informasi Pelacakan: %{tracking}'
+        track_link:
+    shipment_state: Status Pengiriman
+    shipment_states:
+      backorder: backorder
+      canceled:
+      partial: Sebagian
+      pending: tunda
+      ready: siap
+      shipped: dikirim
+    shipment_transfer_error:
+    shipment_transfer_success:
+    shipments: Pengiriman
+    shipped: Dikirim
+    shipping: Mengirimkan
+    shipping_address: Alamat Pengiriman
+    shipping_categories: Kategori Pengiriman
+    shipping_category: Kategori Pengiriman
+    shipping_flat_rate_per_item: Tarif flat per barang
+    shipping_flat_rate_per_order: Tarif flat
+    shipping_flexible_rate: Tarif fleksible per paket barang
+    shipping_instructions: Instruksi Pengiriman
+    shipping_method: Metode Pengiriman
+    shipping_methods: Metode Pengiriman
+    shipping_price_sack: Harga sack Pengiriman
+    shipping_total: Total Pengiriman
+    shop_by_taxonomy: Belanja berdasar %{taxonomy}
+    shopping_cart: Keranjang Belanja
+    show: Perlihatkan
+    show_active: Lihat yang Aktif
+    show_deleted: Lihat yang Dihapus
+    show_only_complete_orders: Tampilkan hanya pemesanan yang telah terpenuhi
+    show_only_considered_risky: Tampilkan yang dianggap berisiko
+    show_rate_in_label: Tampilkan nilai di label
+    sku: SKU
+    skus: SKU
+    slug: Slug
+    source: Sumber
+    special_instructions: Instruksi Spesial
+    split: Urai
+    spree_gateway_error_flash_for_checkout: Terdapat suatu masalah dengan informasi pembayaran anda. Cek informasi anda lagi dan coba lagi.
+    ssl:
+      change_protocol:
+    start: Mulai
+    state: Provinsi
+    state_based: Berdasar Provinsi
+    state_machine_states:
+      accepted: Diterima
+      address: Alamat
+      authorized:
+      awaiting:
+      awaiting_return:
+      backordered:
+      canceled:
+      cart:
+      checkout:
+      closed:
+      complete:
+      completed:
+      confirm:
+      delivery:
+      errored:
+      failed:
+      given_to_customer:
+      invalid:
+      manual_intervention_required:
+      on_hand:
+      open:
+      order:
+      payment:
+      pending:
+      processing:
+      ready:
+      reimbursed:
+      resumed:
+      returned:
+      shipped:
+      void:
+    states: Provinsi
+    states_required: Memerlukan Provinsi
+    status: Status
+    stock:
+    stock_location: Lokasi Stok
+    stock_location_info: Informasi lokasi stok
+    stock_locations: Lokasi Stok
+    stock_locations_need_a_default_country:
+    stock_management: Manajemen Stok
+    stock_management_requires_a_stock_location:
+    stock_movements: Pergerakan Stok
+    stock_movements_for_stock_location:
+    stock_successfully_transferred:
+    stock_transfer: Pemindahan Stok
+    stock_transfers: Pemindahan Stok
+    stop: Berakhir
+    store: Toko
+    street_address: Alamat Jalan
+    street_address_2: Alamat Jalan (lanjutan)
+    subtotal: Subtotal
+    subtract: Kurangi
+    success: Sukses
+    successfully_created: "%{resource} telah Berhasil Dibuat!"
+    successfully_refunded:
+    successfully_removed: "%{resource} telah Berhasil Dihapus!"
+    successfully_signed_up_for_analytics:
+    successfully_updated: "%{resource} telah Berhasil Diubah!"
+    summary:
+    tax: Pajak
+    tax_categories: Kategori Pajak
+    tax_category: Kategori Pajak
+    tax_code: Kode Pajak
+    tax_included: Termasuk Pajak
+    tax_rate_amount_explanation:
+    tax_rates: Tingkat Pajak
+    taxon: Takson
+    taxon_edit: Ubah Takson
+    taxon_placeholder: Placeholder Takson
+    taxon_rule:
+      choose_taxons:
+      label:
+      match_all:
+      match_any:
+    taxonomies: Taksonomi
+    taxonomy:
+    taxonomy_edit: Edit taksonomy
+    taxonomy_tree_error: Permintaan perubahan belum diterima dan susunan kembali kepada pengaturan awal, tolong coba lagi.
+    taxonomy_tree_instruction: "* Klik kanan untuk mengakses child di dalam tree untuk menambah, menghapus atau mengurutkan"
+    taxons: Takson
+    test: Tes
+    test_mailer:
+      test_email:
+        greeting: Selamat!
+        message: Jika anda telah menerima email ini, maka pengaturan email anda benar.
+        subject: Testmail
+    test_mode: Mode Tes
+    thank_you_for_your_order: Terima kasih atas pemesanan anda. Silahkan cetak salinan dari halaman konfirmasi ini untuk arsip anda.
+    there_are_no_items_for_this_order: Tidak ada barang dalam pemesanan ini
+    there_were_problems_with_the_following_fields: Terdapat beberapa masalah dengan
+    this_order_has_already_received_a_refund:
+    thumbnail: Thumbnail
+    tiered_flat_rate:
+    tiered_percent:
+    tiers:
+    time: Waktu
+    to_add_variants_you_must_first_define: Untuk menambah varian, pertama kali anda harus mendefinisikan
+    total: Total
+    total_per_item: Total per barang
+    total_pre_tax_refund:
+    total_price: Total Harga
+    total_sales:
+    track_inventory:
+    tracking: Pelacakan
+    tracking_number: Nomor Pelacakan
+    tracking_url:
+    tracking_url_placeholder: 'contoh: e.g. http://quickship.com/package?num=:tracking'
+    transaction_id:
+    transfer_from_location:
+    transfer_stock:
+    transfer_to_location:
+    tree: Susunan
+    type: Tipe
+    type_to_search: Ketik untuk Mencari
+    unable_to_connect_to_gateway: Tidak dapat berkoneksi dengan gateway.
+    unable_to_create_reimbursements:
+    under_price: Dibawah %{price}
+    unlock:
+    unrecognized_card_type: Tipe Kartu tidak dikenal
+    unshippable_items: Barang-barang yang Tidak Bisa Dikirim
+    update: Perbarui
+    updating: Memberbarui
+    usage_limit: Batas Penggunaan
+    use_app_default:
+    use_billing_address: Alamat Penagihan
+    use_new_cc: Gunakan kartu baru
+    use_s3: Pakai Amazon S3 untuk gambar
+    user: Pengguna
+    user_rule:
+      choose_users: Pilih Pengguna
+    users: Pengguna
+    validation:
+      cannot_be_less_than_shipped_units: tidak bisa kurang dari jumlah barang yang dikirimkan.
+      cannot_destroy_line_item_as_inventory_units_have_shipped:
+      exceeds_available_stock: melebihi stok yang tersedia. Silahkan pastikan barang-barang Anda mempunyai jumlah yang benar.
+      is_too_large: terlalu besar -- stok tidak dapat memenuhi kuantitas yang telah dipesan!
+      must_be_int: Harus berupa integer
+      must_be_non_negative: Harus merupakan nilai positif
+      unpaid_amount_not_zero:
+    value: Nilai
+    variant: Varian
+    variant_placeholder: Varian placeholder
+    variants: Varian
+    version: Versi
+    void: Batalkan
+    weight: Berat
+    what_is_a_cvv: Apa itu (CVV) Credit Card Code?
+    what_is_this: Apa ini?
+    width: Lebar
+    year: Tahun
+    you_have_no_orders_yet: Anda belum mempunyai pemesanan.
+    your_cart_is_empty: Keranjang Belanja anda kosong
+    your_order_is_empty_add_product: Pemesanan Anda kosong, silahkan cari dan tambahkan barang di atas
+    zip: Kode Pos
+    zipcode: Kode Pos
+    zone: Wilayah
+    zones: Wilayah
