@@ -22,7 +22,7 @@ describe Spree::LocaleHelper, type: :helper do
   end
 
   describe '#all_locales_options' do
-    it { expect(all_locales_options).to contain_exactly(['English (US)', 'en'], ['Deutsch (DE)', 'de'], ['Français (FR)', 'fr']) }
+    it { expect(all_locales_options).to contain_exactly([Spree.t('i18n.this_file_language', locale: 'en'), 'en'], ['Deutsch (DE)', 'de'], ['Français (FR)', 'fr']) }
   end
 
   describe '#available_locales_options' do
@@ -31,7 +31,7 @@ describe Spree::LocaleHelper, type: :helper do
       create(:store, supported_locales: 'en')
     end
 
-    it { expect(available_locales_options).to contain_exactly(['English (US)', 'en'], ['Deutsch (DE)', 'de']) }
+    it { expect(available_locales_options).to contain_exactly([Spree.t('i18n.this_file_language', locale: 'en'), 'en'], ['Deutsch (DE)', 'de']) }
   end
 
   describe '#supported_locales_options' do
