@@ -19,6 +19,7 @@ module Spree
       end
 
       initializer 'spree.environment', before: :load_config_initializers do |app|
+        app.config.i18n.fallbacks = true
         app.config.spree = Environment.new(SpreeCalculators.new, Spree::AppConfiguration.new, Spree::AppDependencies.new)
         Spree::Config = app.config.spree.preferences
         Spree::Dependencies = app.config.spree.dependencies
