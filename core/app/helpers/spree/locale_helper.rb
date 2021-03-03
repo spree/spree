@@ -1,7 +1,9 @@
 module Spree
   module LocaleHelper
     def all_locales_options
-      supported_locales_for_all_stores.map { |locale| locale_presentation(locale) }
+      locales_converted_to_string = supported_locales_for_all_stores.map(&:to_s)
+      unique_locals = locales_converted_to_string.uniq
+      unique_locals.map { |locale| locale_presentation(locale) }
     end
 
     def available_locales_options
@@ -15,10 +17,10 @@ module Spree
     end
 
     def locale_presentation(locale)
-      if I18n.exists?('spree.i18n.this_file_language', locale: locale)
+      if I18n.exists?('spree.i18n.this_file_language', locale: locale, fallback: false)
         [Spree.t('i18n.this_file_language', locale: locale), locale.to_s]
       else
-        locale.to_s == 'en' ? ['English (US)', 'en'] : [locale, locale.to_s]
+        [locale.to_s, locale.to_s]
       end
     end
 
