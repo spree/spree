@@ -11,7 +11,6 @@ SPREE_GEMS = %w(core api cmd backend frontend sample).freeze
 
 task default: :test
 
-
 desc "Give a health report pertaininng to the locale files in core/config/locales"
 task :i18n_health do
   Dir.chdir("#{File.dirname(__FILE__)}/core") do

@@ -914,7 +914,7 @@ en:
       select_locale: Select locale
       show_only: Show only
       supported_locales: Supported Locales
-      this_file_language: English (US)
+      this_file_language: English (en)
       translations: Translations
     icon: Icon
     id: Id
