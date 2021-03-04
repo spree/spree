@@ -11,6 +11,28 @@ SPREE_GEMS = %w(core api cmd backend frontend sample).freeze
 
 task default: :test
 
+
+desc "Give a health report pertaininng to the locale files in core/config/locales"
+task :i18n_health do
+  Dir.chdir("#{File.dirname(__FILE__)}/core") do
+    sh "i18n-tasks health"
+  end
+end
+
+desc "Finds translations with missing key in en.yml"
+task :add_missing_translations do
+  Dir.chdir("#{File.dirname(__FILE__)}/core") do
+    sh "i18n-tasks add-missing --locales en en-GB en-AU en-US en-IN en-NZ"
+  end
+end
+
+desc "Translates locales from en.yml to all other files in core/config/locales"
+task :translate_missing do
+  Dir.chdir("#{File.dirname(__FILE__)}/core") do
+    sh "i18n-tasks translate-missing"
+  end
+end
+
 desc "Runs all tests in all Spree engines"
 task test: :test_app do
   SPREE_GEMS.each do |gem_name|

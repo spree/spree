@@ -524,7 +524,7 @@ de:
       successfully_updated: Erfolgreich geupdated
       unsuccessfully_saved: Beim Versuch, Ihre Adresse zu speichern, ist ein Fehler aufgetreten.
       unsuccessfully_updated: Beim Versuch, Ihre Adresse zu aktualisieren, wurde ein Update durchgeführt.
-    address_name_placeholder: Platzhalter für Adressnamen
+    address_name_placeholder: Geben Sie dieser Adresse einen eindeutigen Namen (Arbeit, Zuhause usw.)
     addresses: Adressen
     adjustable: Einstellbar
     adjustment: Einstellung
@@ -923,6 +923,7 @@ de:
       this_file_language: Englisch (en)
       translations: Übersetzungen
     icon: Symbol
+    id: Ich würde
     image: Bild
     images: Bilder
     implement_eligible_for_return: 'Muss #eligible_for_return implementiert werden? für Ihren EligibilityValidator.'

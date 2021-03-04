@@ -83,10 +83,6 @@ search:
   ## The options specified above are passed down to each scanner. Per-scanner options can be specified as well.
   ## See this example of a custom scanner: https://github.com/glebm/i18n-tasks/wiki/A-custom-scanner-example
 
-## Translation Services
-translation:
-  google_translate_api_key: "AIzaSyCdHhnij_XeGGvc_T3QNUIc5xbG_bCU9LI"
-
 ## Do not consider these keys missing:
 ignore_missing:
   - 'date.month_names'

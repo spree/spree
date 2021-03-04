@@ -923,6 +923,7 @@ fr:
       this_file_language: Anglais (en)
       translations: Traductions
     icon: Icône
+    id: Identifiant
     image: Image
     images: Images
     implement_eligible_for_return: 'Doit implémenter #eligible_for_return? pour votre EligibleValidator.'

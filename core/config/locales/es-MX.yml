@@ -923,6 +923,7 @@ es-MX:
       this_file_language: Inglés (EE. UU.)
       translations: Traducciones
     icon: Icono
+    id: Identificación
     image: Imagen
     images: Imagenes
     implement_eligible_for_return: "¿Debe implementar #eligible_for_return? para su EligibilityValidator."

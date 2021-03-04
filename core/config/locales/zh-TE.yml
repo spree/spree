@@ -923,6 +923,7 @@ zh-TE:
       this_file_language: 英文（美国）
       translations: 笔译
     icon: 图标
+    id: ID
     image: 图像
     images: 图片
     implement_eligible_for_return: 必须实施#eligible_for_return吗？为您的EligibilityValidator。

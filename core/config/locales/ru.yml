@@ -923,6 +923,7 @@ ru:
       this_file_language: Английский (en)
       translations: Переводы
     icon: Значок
+    id: Идентификатор
     image: Изображение
     images: Изображений
     implement_eligible_for_return: 'Необходимо реализовать #elibility_for_return? для вашего EligibilityValidator.'
