@@ -583,6 +583,9 @@ en-NZ:
     alternative_phone: Alternative Phone
     amount: Amount
     and: and
+    api:
+      key_cleared: Key cleared
+      key_generated: Key generated
     approve: approve
     approved_at: Approved at
     approver: Approver

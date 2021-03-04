@@ -54,8 +54,18 @@ data:
 search:
   ## Paths or `File.find` patterns to search in:
   paths:
+    # Frontend
+    - '../frontend/app/controllers'
+    - '../frontend/app/helpers'
+    - '../frontend/app/models'
     - '../frontend/app/views'
+
+    # Backend
+    - '../backend/app/controllers'
+    - '../backend/app/helpers'
+    - '../backend/app/models'
     - '../backend/app/views'
+
 
   # ## Root directories for relative keys resolution.
   # relative_roots:
