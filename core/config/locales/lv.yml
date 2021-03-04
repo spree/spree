@@ -1,63 +1,131 @@
 ---
 lv:
+  activemodel:
+    attributes:
+      spree/order_cancellations:
+        cancel:
+        quantity:
+        shipment:
+        state:
+    errors:
+      models:
+        spree/fulfilment_changer:
+          attributes:
+            current_shipment:
+              can_not_have_backordered_inventory_units:
+              has_already_been_shipped:
+            desired_shipment:
+              can_not_transfer_within_same_shipment:
+              has_not_enough_stock_at_desired_location:
+              not_enough_stock_at_desired_location:
   activerecord:
     attributes:
+      pree/store_credit_category:
+        name:
       spree/address:
         address1: Adrese
         address2: Adrese (papildus)
         city: Pilsēta
+        company:
         country: Valsts
         firstname: Vārds
+        label:
         lastname: Uzvārds
         phone: Telefons
         state: Rajons
         zipcode: Pasta indekss
+      spree/adjustment:
+        adjustable:
+        adjustment_reason_id:
+        amount:
+        label:
+        name:
+        state:
+      spree/adjustment_reason:
+        active:
+        code:
+        name:
+        state:
       spree/calculator/tiered_flat_rate:
         preferred_base_amount:
         preferred_tiers:
       spree/calculator/tiered_percent:
         preferred_base_percent:
         preferred_tiers:
+      spree/carton:
+        tracking:
       spree/country:
         iso: ISO
         iso3: ISO3
         iso_name: ISO nosaukums
         name: Nosaukums
         numcode: ISO kods
+        states_required:
       spree/credit_card:
         base:
+        card_code:
         cc_type: Tips
+        expiration:
         month: Mēnesis
         name:
         number: Numurs
         verification_value:
         year: Gads
+      spree/customer_return:
+        name:
+        number:
+        pre_tax_total:
+        reimbursement_status:
+        total:
+      spree/image:
+        alt:
+        attachment:
       spree/inventory_unit:
         state: Stāvoklis
+      spree/legacy_user:
+        email:
+        password:
+        password_confirmation:
       spree/line_item:
+        description:
+        name:
         price: Cena
         quantity: Daudzums
+        total:
       spree/option_type:
+        filterable:
         name: Nosaukums
         presentation: Prezentācija
+      spree/option_value:
+        name:
+        presentation:
       spree/order:
+        additional_tax_total:
+        approved_at:
+        approver_id:
+        canceled_at:
+        canceler_id:
         checkout_complete:
         completed_at: Pabeigts
         considered_risky:
         coupon_code: Kupona kods
         created_at: Izveidots
         email: Epasts
+        included_tax_total:
         ip_address: IP adrese
         item_total:
+        name:
         number: Numurs
         payment_state: Maksājuma stāvoklis
         shipment_state: Piegādes stāvoklis
+        shipment_total:
         special_instructions:
         state: Stāvoklis
         total: Kopā
       spree/order/bill_address:
         address1: Adrese
         city: Pilsēta
+        country:
         firstname: Vārds
         lastname: Uzvārds
         phone: Tālrunis
@@ -66,6 +134,7 @@ lv:
       spree/order/ship_address:
         address1: Adrese
         city: Pilsēta
+        country:
         firstname: Vārds
         lastname: Uzvārds
         phone: Tālrunis
@@ -73,39 +142,117 @@ lv:
         zipcode: Pasta indekss
       spree/payment:
         amount: Daudzums
+        number:
+        response_code:
+        state:
       spree/payment_method:
+        active:
+        auto_capture:
+        description:
+        display_on:
         name: Nosaukums
+        type:
       spree/product:
         available_on: Pieejams pēc
+        can_be_part:
         cost_currency: Izmaksas valūta
         cost_price: Pašizmaksa
+        depth:
         description: Apraksts
+        discontinue_on:
+        height:
+        individual_sale:
+        less_than:
         master_price: Gala cena/Master Price
+        meta_description:
+        meta_keywords:
+        meta_title:
         name: Nosaukums
         on_hand: Pieejams
+        price:
+        promotionable:
         shipping_category: Piegādes kategorija
+        slug:
         tax_category: Nodokļu kategorija
+        weight:
+        width:
+      spree/product_property:
+        value:
       spree/promotion:
         advertise:
         code: Kods
         description: Apraksts
         event_name:
         expires_at:
+        generate_code:
         name:
         path:
+        promotion_category:
         starts_at:
         usage_limit:
       spree/promotion_category:
+        code:
         name: Nosaukums
       spree/property:
         name: Nosaukums
         presentation: Prezentācija
       spree/prototype:
         name: Nosaukums
+      spree/refund:
+        amount:
+        description:
+        refund_reason_id:
+      spree/refund_reason:
+        active:
+        code:
+        name:
+      spree/reimbursement:
+        number:
+        reimbursement_status:
+        total:
+      spree/reimbursement/credit:
+        amount:
+      spree/reimbursement_type:
+        name:
+        type:
       spree/return_authorization:
         amount: Summa
+        pre_tax_total:
+      spree/return_authorization_reason:
+        name:
+      spree/return_item:
+        acceptance_status:
+        acceptance_status_errors:
+        charged:
+        exchange_variant:
+        inventory_unit_state:
+        override_reimbursement_type_id:
+        preferred_reimbursement_type_id:
+        reception_status:
+        return_reason:
+        total:
+      spree/return_reason:
+        active:
+        memo:
+        name:
+        number:
+        state:
       spree/role:
         name: Nosaukums
+      spree/shipment:
+        number:
+        tracking:
+      spree/shipping_category:
+        name:
+      spree/shipping_method:
+        admin_name:
+        code:
+        display_on:
+        name:
+        tracking_url:
+      spree/shipping_rate:
+        amount:
+        tax_rate:
       spree/state:
         abbr: Saīsinājums
         name: Nosaukums
@@ -117,26 +264,71 @@ lv:
         type:
         updated:
         user:
+      spree/stock_item:
+        count_on_hand:
+      spree/stock_location:
+        active:
+        address1:
+        address2:
+        admin_name:
+        backorderable_default:
+        city:
+        code:
+        country_id:
+        default:
+        internal_name:
+        name:
+        phone:
+        propagate_all_variants:
+        state_id:
+        zipcode:
+      spree/stock_movement:
+        action:
+        quantity:
+      spree/stock_transfer:
+        created_at:
+        description:
+        tracking_number:
       spree/store:
         mail_from_address:
         meta_description:
         meta_keywords:
         name:
+        seo_robots:
         seo_title:
         url:
+      spree/store_credit:
+        amount:
+        amount_used:
+        memo:
+      spree/store_credit_category:
+        name:
+      spree/store_credit_event:
+        action:
       spree/tax_category:
         description: Apraksts
+        is_default:
         name: Nosaukums
+        tax_code:
       spree/tax_rate:
         amount: Summa
         included_in_price: Included in Price
+        name:
         show_rate_in_label: Show rate in label
       spree/taxon:
+        description:
+        icon:
+        meta_description:
+        meta_keywords:
+        meta_title:
         name: Nosaukums
         permalink: Permalink
         position: Stāvoklis
       spree/taxonomy:
         name: Nosaukums
+      spree/tracker:
+        active:
+        analytics_id:
       spree/user:
         email: E-pasts
         password: Parole
@@ -151,9 +343,12 @@ lv:
         weight: Svars
         width: Platums
       spree/zone:
+        default_tax:
         description: Apraksts
         name: Nosaukums
     errors:
+      messages:
+        invalid:
       models:
         spree/calculator/tiered_flat_rate:
           attributes:
@@ -177,10 +372,25 @@ lv:
             base:
               card_expired:
               expiry_invalid:
+        spree/image:
+          attributes:
+            attachment:
+              attachment_must_be_present:
+              not_allowed_content_type:
         spree/line_item:
           attributes:
             currency:
               must_match_order_currency:
+        spree/product:
+          attributes:
+            base:
+              cannot_destroy_if_attached_to_line_items:
+            discontinue_on:
+              invalid_date_range:
+        spree/promotion:
+          attributes:
+            expires_at:
+              invalid_date_range:
         spree/refund:
           attributes:
             amount:
@@ -195,14 +405,50 @@ lv:
               other_completed_return_item_exists:
             reimbursement:
               cannot_be_associated_unless_accepted:
+        spree/shipping_method:
+          attributes:
+            base:
+              required_shipping_category:
         spree/store:
           attributes:
             base:
               cannot_destroy_default_store:
+        spree/store_credit:
+          attributes:
+            amount_authorized:
+              exceeds_total_credits:
+            amount_used:
+              cannot_be_greater_than_amount:
+              greater_than_zero_restrict_delete:
+        spree/store_credit_category:
+          attributes:
+            base:
+              cannot_destroy_if_used_in_store_credit:
+        spree/taxon_image:
+          attributes:
+            attachment:
+              not_allowed_content_type:
+        spree/variant:
+          attributes:
+            base:
+              cannot_destroy_if_attached_to_line_items:
+              must_supply_price_for_variant_or_master:
+              no_master_variant_found_to_infer_price:
     models:
+      reimbursement_perform_failed:
+      reimbursement_status:
+      reimbursement_type:
+      reimbursement_type_override:
+      reimbursement_types:
+      reimbursements:
       spree/address:
         one: Adrese
         other: Adreses
+      spree/adjustment:
+        one:
+        other:
+      spree/calculator:
+        one:
       spree/country:
         one: Valsts
         other: Valstis
@@ -210,14 +456,28 @@ lv:
         one: Credit Card
         other: Credit Cards
       spree/customer_return:
+        one:
+        other:
+      spree/image:
+        one:
+        other:
       spree/inventory_unit:
         one: Krājuma vienība
         other: Krājuma vienības
+      spree/legacy_user:
+        one:
+        other:
       spree/line_item:
         one: Pozīcijas vienība
         other: Pozīcijas vienības
+      spree/log_entry:
+        other:
       spree/option_type:
+        one:
+        other:
       spree/option_value:
+        one:
+        other:
       spree/order:
         one: Pasūtījums
         other: Pasūtījumi
@@ -225,25 +485,48 @@ lv:
         one: Maksājums
         other: Maksājumi
       spree/payment_method:
+        one:
+        other:
       spree/product:
         one: Produkts
         other: Produkti
+      spree/product_property:
+        one:
+        other:
       spree/promotion:
+        one:
+        other:
       spree/promotion_category:
+        one:
+        other:
       spree/property:
         one: Property
         other: Properties
       spree/prototype:
         one: Prototips
         other: Prototipi
+      spree/refund:
+        one:
+        other:
       spree/refund_reason:
+        one:
+        other:
       spree/reimbursement:
+        one:
+        other:
       spree/reimbursement_type:
+        one:
+        other:
       spree/return_authorization:
         one: Atgriešanas autorizācija
         other: Atgriešanas autorizācijas
       spree/return_authorization_reason:
+        one:
+        other:
       spree/role:
+        few:
+        many:
+        oher:
         one: Loma
         other: Lomas
       spree/shipment:
@@ -253,13 +536,36 @@ lv:
         one: Piegādes kategorija
         other: Piegādes kategorijas
       spree/shipping_method:
+        one:
+        other:
       spree/state:
         one: Štats
         other: Štati
       spree/state_change:
+        one:
+        other:
       spree/stock_location:
+        one:
+        other:
       spree/stock_movement:
+        one:
+        other:
       spree/stock_transfer:
+        errors:
+          variants_unavailable:
+        few:
+        many:
+        one:
+        other:
+      spree/store:
+        one:
+        other:
+      spree/store_credit:
+        one:
+        other:
+      spree/store_credit_category:
+        one:
+        other:
       spree/tax_category:
         one: Nodokļu kategorija
         other: Nodokļu kategorijas
@@ -267,39 +573,137 @@ lv:
         one: Nodokļu likme
         other: Nodokļu likmes
       spree/taxon:
+        one:
+        other:
       spree/taxonomy:
+        one:
+        other:
       spree/tracker:
+        one:
+        other:
       spree/user:
         one: Lietotājs
         other: Lietotāji
       spree/variant:
+        one:
+        other:
       spree/zone:
         one: Zona
         other: Zonas
+  address_book:
+    edit_shipping_address:
+    new_shipping_address:
+    save:
+    successfully_created:
   devise:
     confirmations:
       confirmed: Jūsu lietotājs ir veiksmīgi apstiprināts. Jūs esat pieslēdzies.
+      new:
+        resend_confirmation_instructions:
       send_instructions: Pāris minūšu laikā uz Jūsu epastu tiks nosūtīts apraksts, kā apstiprināt Jūsu lietotāju.
+      send_paranoid_instructions:
     failure:
+      already_authenticated:
       inactive: Jūsu lietotājs vēl nav aktivizēts.
       invalid: Nekorekts epasts vai parole.
       invalid_token: Nekorekts žetons.
+      last_attempt:
       locked: Jūsu lietotājs ir nobloķēts.
+      not_found_in_database:
       timeout: Jūsu sesijas laiks ir beidzies. Lūdzu pieslēdzieties vēlreiz, lai turpinātu.
       unauthenticated: Jums ir jāpieslēdzas vai jāreģistrējas, lai turpinātu.
       unconfirmed: Jums ir jāapstiprina reģistrācijas epasts, lai turpinātu.
     mailer:
       confirmation_instructions:
+        action:
+        greeting:
+        instruction:
         subject: Apstiprināšanas apraksts
+      email_changed:
+        greeting:
+        message:
+        subject:
+      password_change:
+        greeting:
+        message:
+        subject:
       reset_password_instructions:
+        action:
+        greeting:
+        instruction:
+        instruction_2:
+        instruction_3:
         subject: Paroles nomainīšanas apraksts
       unlock_instructions:
+        action:
+        greeting:
+        instruction:
+        message:
         subject: Atbloķēšanas apraksts
     oauth_callbacks:
       failure: 'Neizdevās autorizēties ar %{kind} lietotāju. Iemesls: "%{reason}".'
       success: Veiksmīgi autorizējis ar %{kind} lietotāju.
+    omniauth_callbacks:
+      failure:
+      success:
+    passwords:
+      edit:
+        change_my_password:
+        change_your_password:
+        confirm_new_password:
+        new_password:
+      new:
+        forgot_your_password:
+        send_me_reset_password_instructions:
+      no_token:
+      send_instructions:
+      send_paranoid_instructions:
+      updated:
+      updated_not_active:
+    registrations:
+      destroyed:
+      edit:
+        are_you_sure:
+        cancel_my_account:
+        currently_waiting_confirmation_for_email:
+        leave_blank_if_you_don_t_want_to_change_it:
+        title:
+        unhappy:
+        update:
+        we_need_your_current_password_to_confirm_your_changes:
+      new:
+        sign_up:
+      signed_up:
+      signed_up_but_inactive:
+      signed_up_but_locked:
+      signed_up_but_unconfirmed:
+      update_needs_confirmation:
+      updated:
+      updated_but_not_signed_in:
+    sessions:
+      already_signed_out:
+      new:
+        sign_in:
+      signed_in:
+      signed_out:
+      spree_user:
+        signed_in:
+        signed_out:
+    shared:
+      links:
+        back:
+        didn_t_receive_confirmation_instructions:
+        didn_t_receive_unlock_instructions:
+        forgot_your_password:
+        sign_in:
+        sign_in_with_provider:
+        sign_up:
+      minimum_password_length:
     unlocks:
+      new:
+        resend_unlock_instructions:
       send_instructions: Pāris minūšu laikā uz Jūsu epastu tiks nosūtīts apraksts, kā atbloķēt Jūsu lietotāju.
+      send_paranoid_instructions:
       unlocked: Jūsu lietotājs ir veiksmīgi atbloķēts. Jūs esat pieslēdzies.
     user_passwords:
       user:
@@ -317,32 +721,60 @@ lv:
   errors:
     messages:
       already_confirmed: ir jau apstiprināts, lūdzu mēģiniet pieslēgties
+      confirmation_period_expired:
+      expired:
       not_found: netika atrasts
       not_locked: netika nobloķēts
       not_saved:
         one: "%{resource} netika saglabāts %{count} kļūdas dēļ:"
         other: "%{resource} netika saglabāts %{count} kļūdu dēļ:"
         zero: "%{resource} netika saglabāts %{count} kļūdu dēļ:"
+  number:
+    currency:
+      format:
+        separator:
+    percentage:
+      format:
+        precision:
+  pagination:
+    first:
+    last:
+    next:
+    previous:
+    truncate:
   spree:
+    Icon:
+    MAX_ITEMS:
     abbreviation: Saīsinājums
     accept: Apstiprināt
     acceptance_errors: Apstiprināšanas kļūdas
     acceptance_status: Apstiprināšanas status
     accepted: Apstiprināts
     account: Konts
+    account_info:
     account_updated: Konts izmainīts!
     action: Darbība
     actions:
+      actions:
+        cancel:
+        destroy:
+        edit:
+        save:
+      add:
       cancel: Atcelt
       continue: Turpināt
       create: Izveidot
+      delete:
       destroy: Dzēst
       edit: Labot
       list: Saraksts
       listing: Saraksts
       new: Jauns
       refund: Atgriezt
+      remove:
       save: Saglabāt
+      ship:
+      split:
       update: Atjauninājums
     activate: Aktivizēt
     active: Aktīvs
@@ -350,6 +782,8 @@ lv:
     add_action_of_type: Add action of type
     add_country: Pievienot valsti
     add_coupon_code: Pievienot kupona kodu
+    add_new_address:
+    add_new_credit_card:
     add_new_header: Pievienot jaunu galveni
     add_new_style: Pievienot jaunu stilu
     add_one: Pievienot vienu
@@ -360,41 +794,112 @@ lv:
     add_state: Pievienot rajonu
     add_stock:
     add_stock_management:
+    add_store:
+    add_store_credit:
     add_to_cart: Pievienot grozam
     add_variant:
+    added_to_cart:
     additional_item: Papildus vienības maksa
+    address:
     address1: Adrese
     address2: Adrese (papildus)
+    address_action_popup:
+      delete_button:
+      delete_text:
+      delete_title:
+    address_book:
+      add_new_shipping_address:
+      address_name_label:
+      address_name_placeholder:
+      addresses:
+      edit_address:
+      edit_shipping_address:
+      label:
+      main_navigation:
+      new_address:
+      new_shipping_address:
+      no_shipping_addresses_on_file:
+      other_address:
+      remove_address:
+      save:
+      shipping_addresses:
+      successfully_created:
+      successfully_removed:
+      successfully_saved:
+      successfully_updated:
+      successfully_updatedspree:
+        adjustment_labels:
+          tax_rates:
+            excluding_tax:
+            including_tax:
+      unsuccessfully_saved:
+      unsuccessfully_updated:
+    addresses:
     adjustable: Regulējams
     adjustment: Piemērošana
     adjustment_amount: Noregulēšana daudzums
+    adjustment_labels:
+      order:
+      tax_rates:
+        excluding_tax:
+        including_tax:
+        sales_tax_with_rate:
+        vat_with_rate:
     adjustment_successfully_closed: Noregulēšana veiksmīgi aizvērta
     adjustment_successfully_opened: Noregulēšana veiksmīgi atvērta
     adjustment_total:
     adjustments: Piemērošanas
     admin:
+      order:
+        events:
+          admin:
+            order:
+              events:
+                resend:
+          approve:
+          cancel:
+          resend:
+          resume:
+      orders:
+        cart:
+      return_authorization:
+        product:
       tab:
+        checkout:
         configuration:
+        customer_returns:
         option_types:
         orders: Pasūtījumi
         overview:
+        payments:
         products: Produkti
         promotion_categories: Akciju kategorijas
         promotions: Akcijas
         properties: Opcijas
         prototypes: Prototipi
         reports: Pārskati
+        return_authorizations:
+        settings:
+        shipping:
+        stock:
         taxonomies:
         taxons:
         users: Lietotāji
       user:
         account: Konts
         addresses: Adrese
+        admin:
+          user:
+            order_num:
+        available_store_credit:
         items: Preces
         items_purchased: Iegādātās preces
+        no_store_credit:
         order_history: Pasūtījumu vēsture
         order_num: Pasūtījuma numurs
         orders: Pasūtījumi
+        store_credits:
+        stores:
         user_information:
     administration: Administrēšana
     advertise:
@@ -405,9 +910,14 @@ lv:
     all_adjustments_opened:
     all_departments: Visas nodaļas
     all_items_have_been_returned: Visas preces tika atgrieztas
+    all_rights_reserved:
+    allow_currency_change:
+      long:
+      short:
     allow_ssl_in_development_and_test:
     allow_ssl_in_production:
     allow_ssl_in_staging:
+    already_have_account:
     already_signed_up_for_analytics:
     alt_text: Cits teksts
     alternative_phone: Cits telefons
@@ -418,8 +928,26 @@ lv:
     analytics_desc_list_2:
     analytics_desc_list_3:
     analytics_desc_list_4:
+    analytics_engine:
     analytics_trackers:
     and:
+    api:
+      access:
+      api:
+        access:
+        clear_key:
+        generate_key:
+        key:
+        no_key:
+        regenerate_key:
+      clear_key:
+      generate_key:
+      key:
+      key_cleared:
+      key_generated:
+      no_key:
+      regenerate_key:
+    apply_code:
     approve:
     approved_at:
     approver:
@@ -427,40 +955,82 @@ lv:
     are_you_sure_delete: Vai esiet pārliecināts, ka vēlaties dzēst šo ierakstu?
     associated_adjustment_closed:
     at_symbol: "@"
+    attachment_default_style:
+    attachment_default_url:
+    attachment_path:
+    attachment_styles:
+    attachment_url:
+    author_link:
+    author_name:
     authorization_failure: Autorizācija neizdevās
     authorized:
     auto_capture:
+    availability:
+    available:
     available_on: Pieejams no
     average_order_value:
     avs_response:
     back: Atpakaļ
     back_end:
+    back_to_adjustments_list:
+    back_to_images_list:
+    back_to_option_types_list:
+    back_to_orders_list:
     back_to_payment:
+    back_to_payment_methods_list:
+    back_to_payments_list:
+    back_to_products_list:
+    back_to_promotions_list:
+    back_to_properties_list:
+    back_to_prototypes_list:
+    back_to_reports_list:
     back_to_resource_list:
     back_to_rma_reason_list:
+    back_to_shipping_categories:
+    back_to_shipping_methods_list:
+    back_to_states_list:
+    back_to_stock_locations_list:
+    back_to_stock_movements_list:
+    back_to_stock_transfers_list:
     back_to_store: Atgriezties veikalā
+    back_to_tax_categories_list:
+    back_to_taxonomies_list:
+    back_to_trackers_list:
     back_to_users_list:
+    back_to_zones_list:
+    backorder:
     backorderable:
     backorderable_default:
     backordered:
+    backordered_confirm_info:
+    backordered_info:
     backorders_allowed:
     balance_due: Atlikums
     base_amount:
     base_percent:
+    basic_information:
     bill_address: Rēķina adrese
     billing: Rēķins
     billing_address: Rēķina adrese
     both: Abi
+    breadcrumbs:
     calculated_reimbursements:
     calculator: Kalkulātors
     calculator_settings_warning: Ja tu maini kalkulatora tipu, vispirms saglabā esošos datus, pirms maini kalkulatora iestatījumus
+    call_us_now:
     cancel: Atcelt
+    cancel_inventory:
+    canceled:
     canceled_at:
     canceler:
     cannot_create_customer_returns:
+    cannot_create_payment_link:
     cannot_create_payment_without_payment_methods:
     cannot_create_returns: Nevar izveidot atgriešanu, jo šis pasūtījums vēl nav izsūtīts.
+    cannot_destroy_if_attached_to_line_items:
+    cannot_empty_completed_order:
     cannot_perform_operation:
+    cannot_return_more_than_bought_quantity:
     cannot_set_shipping_method_without_address:
     capture: Capture
     capture_events:
@@ -469,12 +1039,40 @@ lv:
     card_type:
     card_type_is: Kartes tips ir
     cart: Grozs
+    cart_page:
+      add_promo_code:
+      change_quantity:
+      checkout:
+      empty_info:
+      header:
+      product:
+      quantity:
+      remove_from_cart:
+      title:
     cart_subtotal:
+      one:
+      other:
     categories: Kategorijas
     category: Kategorija
+    category_nav_bar:
+      get_up_to_30_percent_off:
+      jackets_and_coats:
+      new_collection:
+      special_offers:
+      summer_2019:
+    change_quantity:
+    change_your_password:
+    channel:
     charged:
     check_for_spree_alerts:
     checkout: Pasūtīt
+    checkout_page:
+      back_to_cart:
+      checkout_navigation:
+      delivery_method:
+      header:
+      main_navigation:
+      product:
     choose_a_customer:
     choose_a_taxon_to_sort_products_for:
     choose_currency:
@@ -488,15 +1086,25 @@ lv:
     clone: Klonēt
     close:
     close_all_adjustments:
+    closed:
     code: Kods
+    commission:
     company:
+    compare_at_price:
     complete: Pabeigts
+    complete_order:
     configuration: Konfigurācija
     configurations: Konfigurācijas
+    configure_s3:
     confirm: Apstiprini
     confirm_delete: Apstiprināt izdzēšanu
+    confirm_order:
     confirm_password: Paroles apstiprinājums
+    contact_email:
+    contact_phone:
+    contact_us:
     continue: Turpināt
+    continue_as_guest:
     continue_shopping: Turpināt iepirkšanos
     cost_currency:
     cost_price: Pašizmaksa
@@ -513,26 +1121,34 @@ lv:
       FRA:
       ITA:
       US:
+    country_rule:
+      label:
     coupon: Kupons
     coupon_code: Kupona kods
     coupon_code_already_applied:
     coupon_code_applied:
+    coupon_code_apply:
     coupon_code_better_exists:
     coupon_code_expired:
     coupon_code_max_usage:
     coupon_code_not_eligible:
     coupon_code_not_found: Ievadītais kupona kods neeksistē. Lūdzu, mēģiniet vēlreiz.
+    coupon_code_removed:
     coupon_code_unknown_error:
     create: Izveidot
     create_a_new_account: Izveidot jaunu kontu
     create_new_order:
     create_reimbursement:
     created_at:
+    created_by:
     credit: Kredīts
+    credit_allowed:
     credit_card: Kredītkarte
     credit_cards:
     credit_owed: Kredīta parāds
+    credited:
     credits:
+    currencies:
     currency:
     currency_decimal_mark:
     currency_settings:
@@ -546,7 +1162,9 @@ lv:
     customer_return:
     customer_returns:
     customer_search: Klienta meklēšana
+    customer_support_email:
     cut:
+    cvv:
     cvv_response:
     dash:
       jirafe:
@@ -561,30 +1179,63 @@ lv:
     date:
     date_completed:
     date_picker:
+      first_day:
+      format:
       fpr_human_friendly_date_format: M j, Y
       fpr_human_friendly_date_time_format: M j, Y - H:i
+      js_format:
     date_range: Datuma diapazons
     default:
+    default_country_cannot_be_deleted:
+    default_currency:
+    default_meta_description:
+    default_meta_keywords:
     default_refund_amount:
+    default_seo_title:
     default_tax:
     default_tax_zone:
     delete: Izdzēst
+    delete_from_taxon:
+    deleted:
     deleted_variants_present:
     delivery: Piegāde
+    delivery_information:
     depth: Dziļums
     description: Apraksts
     destination:
     destroy: Izdzēst
     details:
+    discontinue_on:
+    discontinued:
+    discontinued_variants_present:
     discount_amount:
+    discount_type:
     dismiss_banner:
     display: Rādīt
     display_currency:
     doesnt_track_inventory:
+    dont_have_account:
     edit: Rediģēt
+    edit_reimbursement:
+    editing_option_type:
+    editing_payment_method:
+    editing_product:
+    editing_promotion:
+    editing_property:
+    editing_prototype:
     editing_resource:
     editing_rma_reason:
+    editing_shipping_category:
+    editing_shipping_method:
+    editing_state:
+    editing_stock_location:
+    editing_stock_movement:
+    editing_tax_category:
+    editing_tax_rate:
+    editing_tracker:
     editing_user: Rediģēt lietotāju
+    editing_zone:
+    elect_a_date:
     eligibility_errors:
       messages:
         has_excluded_product:
@@ -605,14 +1256,23 @@ lv:
     empty_cart: Iztukšot grozu
     enable_mail_delivery: Atļaut pasta sūtīšanu
     end:
+    ending_at:
     ending_in:
+    ends_at:
     environment: Vide
     error: Kļūda
+    error_user_destroy_with_orders:
     errors:
       messages:
+        blank:
+        cannot_remove_icon:
         could_not_create_taxon:
         no_payment_methods_available:
         no_shipping_methods_available:
+      services:
+        get_shipping_rates:
+          no_line_items:
+          no_shipping_address:
     errors_prohibited_this_record_from_being_saved:
       one: Dēļ 1 kļūdas ieraksts netika saglabāts
       other: Dēļ %{count} kļūdām ieraksts netika saglabāts
@@ -637,61 +1297,127 @@ lv:
     existing_shipments:
     expedited_exchanges_warning:
     expiration: Izbeigšanās
+    expiration_date:
     extension: Paplašinājums
+    extensions_directory:
+    facebook:
     failed_payment_attempts:
     filename: Faila nosaukums
     fill_in_customer_info:
+    filter:
     filter_results:
+    filterable:
     finalize: Pabeigt
+    finalize_all_adjustments:
     finalized:
     find_a_taxon:
     first_item: Pirmās vienības maksājums
     first_name: Vārds
     first_name_begins_with: Vārds sākas ar
+    firstname:
     flat_percent: Pamatprocents
+    flat_rate_per_item:
     flat_rate_per_order: Pamatlikme (par pasūtījumu)
     flexible_rate: Elastīga likme
+    follow_us:
+    footer:
+    footer_info:
     forgot_password: Parole aizmirsta
+    free:
     free_shipping:
     free_shipping_amount:
+    from:
     front_end: Front End
     gateway: Gateway
     gateway_config_unavailable: Gateway unavailable for environment
     gateway_error: Gateway kļūda
     general: Vispārīgi
     general_settings: Vispārīgi iestatījumi
+    generate_code:
+    get_back_to_the:
+    globalize:
+      locales_displayed_on_translation_forms:
+      store_translations:
+    go_to_category:
+    go_to_facebook:
+    go_to_homepage:
+    go_to_instagram:
+    go_to_twitter:
     google_analytics: Google analītiķis
     google_analytics_id: Analītiķa ID
     guest_checkout: Ciemiņa izrakstīšanās
     guest_user_account: Izrakstīties kā ciemiņam
     has_no_shipped_units: Nav nosūtītu vienību
+    header_banner:
     height: Augstums
+    help_center:
     hide_cents:
+    hide_from_subcategories_nav:
     home: Mājas
+    home_page:
+    homepage:
+      bestsellers:
+      fashion_trends:
+      fashion_trends_note:
+      men:
+      new:
+      new_collection:
+      read_more:
+      shoes:
+      shop_now:
+      sportswear:
+      streetstyle:
+      summer_2019:
+      summer_2020:
+      summer_collection:
+      summer_sale:
+      trending:
+      up_to_60:
+      women:
     i18n:
       available_locales:
+      country:
+      default_country:
+      fields:
       language: Valoda
+      locales_displayed_on_frontend_select_box:
       localization_settings:
+      only_complete:
+      only_incomplete:
+      select_locale:
+      show_only:
+      supported_locales:
       this_file_language: Latvijas (lv)
+      translations:
     icon: Icon
+    id:
     identifier:
     image: Attēls
+    image_settings:
+    image_settings_updated:
+    image_settings_warning:
     images: Attēli
     implement_eligible_for_return:
     implement_requires_manual_intervention:
+    in_stock:
     inactive:
     incl:
     included_in_price:
     included_price_validation:
     incomplete:
     info_number_of_skus_not_shown:
+      one:
+      other:
     info_product_has_multiple_skus:
+    instagram:
     instructions_to_reset_password: 'Aizpildiet formu zemāk un uz e-pastu tiks nosūtīta instrukcija kā atjaunot paroli:'
     insufficient_stock: Insufficient stock available, only %{on_hand} remaining
+    insufficient_stock_item_quantity:
     insufficient_stock_lines_present:
     intercept_email_address:
     intercept_email_instructions:
     internal_name:
+    internationalization:
     invalid_credit_card:
     invalid_exchange_variant:
     invalid_payment_provider:
@@ -701,8 +1427,17 @@ lv:
     inventory_adjustment: Inventūras korekcija
     inventory_error_flash_for_insufficient_quantity:
     inventory_state:
+    inventory_states:
+      canceled:
+      on_hand:
+      returned:
+      shipped:
     is_not_available_to_shipment_address: nav pieejams sūtīšanas adresei
+    is_published:
+    iso:
+    iso3:
     iso_name:
+    issued_on:
     item: Prece
     item_description: Preces apraksts
     item_total: Kopā
@@ -717,19 +1452,33 @@ lv:
     items_reimbursed:
     items_to_be_reimbursed:
     jirafe:
+    join_slack:
     landing_page_rule:
+      must_have_visited_path:
       path: Ceļš
     last_name: Uzvārds
     last_name_begins_with: Uzvārds sākas ar
+    lastname:
     learn_more: Learn More
     lifetime_stats:
+    limit_usage_to:
     line_item_adjustments:
     list: Saraksts
+    listing_countries:
+    listing_orders:
+    listing_products:
+    listing_reports:
+    listing_tax_categories:
+    listing_users:
     loading: Lādējās
+    loading_tree:
     locale_changed: Valoda nomainīta
+    locale_not_changed:
     location:
     lock:
     log_entries:
+    log_in:
+    log_in_to_continue:
     logged_in_as: Pieslēgties kā
     logged_in_succesfully: Pieslēgšanās veiksmīga
     logged_out: Jūs esat atslēgts no sistēmas.
@@ -737,15 +1486,26 @@ lv:
     login_as_existing: Pieslēgties kā esošais klients
     login_failed: Pieslēgšanās sistēmai neizdevās.
     login_name: Pieslēgties
+    logo:
+    logo_alt:
     logout: Atslēgties
     logs:
     look_for_similar_items: Meklēt līdzīgas preces
+    maestro_or_solo_cards:
+    mail_from_address:
+    mail_method_settings:
+    mail_methods:
+      send_testmail:
+    mailer_logo:
+    main_image:
     make_refund:
     make_sure_the_above_reimbursement_amount_is_correct:
     manage_promotion_categories:
     manage_variants:
     manual_intervention_required:
+    master:
     master_price:
+    master_sku:
     match_choices:
       all:
       none:
@@ -757,14 +1517,35 @@ lv:
     meta_title:
     metadata:
     minimal_amount:
+    missing_return_authorization:
+    mobile:
     month: Mēnesis
     more:
     move_stock_between_locations:
+    move_to:
+    move_variant_to:
+    multiple_stores:
+    mutable:
     my_account: Mans konts
     my_orders: Mani pasūtījumi
     name: Nosaukums
     name_on_card:
     name_or_sku: Vārds vai SKU
+    nav_bar:
+      admin_panel:
+      change_country:
+      close_menu:
+      desktop:
+      go_to_previous_menu:
+      log_in:
+      log_out:
+      mobile:
+      my_account:
+      my_orders:
+      show_menu:
+      show_search:
+      show_user_menu:
+      sign_up:
     new: Jauns
     new_adjustment: Jauns pielāgojums
     new_country: Jauna valsts
@@ -774,6 +1555,7 @@ lv:
     new_option_type: Jauns opciju tips
     new_order: Jauns pasūtījums
     new_order_completed: Jaunais pasūtījums pabeigts
+    new_order_notifications_email:
     new_payment: Jauns maksājums
     new_payment_method: Jauns maksājuma veids
     new_product: Jauns produkts
@@ -783,8 +1565,10 @@ lv:
     new_prototype: Jauns prototips
     new_refund: Jauna atmaksa
     new_refund_reason: Jauns atmaksas iemesls
+    new_reimbursement_type:
     new_return_authorization: New Return Authorization
     new_rma_reason:
+    new_role:
     new_shipment_at_location:
     new_shipping_category: Jauna piegādes kategorija
     new_shipping_method: Jauns piegādes veids
@@ -792,6 +1576,8 @@ lv:
     new_stock_location:
     new_stock_movement:
     new_stock_transfer:
+    new_store_credit:
+    new_store_credit_category:
     new_tax_category: Jauna nodokļu kategorija
     new_tax_rate: Jauna nodokļu likme
     new_taxon: New Taxon
@@ -802,15 +1588,31 @@ lv:
     new_zone: Jauna zona
     next: Nākamais
     no_actions_added:
+    no_address_given:
+    no_available_date_set:
+    no_cc_type:
+    no_country:
+    no_limits_zone:
+    no_orders_found:
     no_payment_found:
+    no_payment_methods_found:
+    no_payment_provider_settings_message:
     no_pending_payments:
+    no_product_available:
+      for_this_quantity:
+      opps:
     no_products_found: Neviens produkts netika atrasts
+    no_promotions_found:
     no_resource_found:
+    no_resource_found_link:
     no_results: Nav rezultātu
     no_returns_found:
     no_rules_added: Nav noteikumu pievienotu
     no_shipping_method_selected:
+    no_shipping_methods_found:
     no_state_changes:
+    no_stock_locations_found:
+    no_trackers_found:
     no_tracking_present:
     none: Nekas
     none_selected: Nav atzīmētu
@@ -821,6 +1623,8 @@ lv:
     not_found: "%{resource} is not found"
     note: Piezīme
     notice_messages:
+      icon_removed:
+      prices_saved:
       product_cloned: Produkts ir klonēts
       product_deleted: Produkts ir izdzēsts
       product_not_cloned: Produktu neizdevās klonēt
@@ -828,6 +1632,8 @@ lv:
       variant_deleted: Variants ir izdzēsts
       variant_not_deleted: Variants nav izdzēsts
     num_orders:
+    number:
+    ok:
     on_hand: Ir uz vietas
     open:
     open_all_adjustments:
@@ -845,9 +1651,12 @@ lv:
     order_already_updated: Pasūtījums jau tika labots
     order_approved: Pasūtījums apstiprināts
     order_canceled: Pasūtījums atcelts
+    order_completed:
     order_details: Pasūtījuma detaļas
     order_email_resent: Pasūtījuma e-pasts vēlreiz pārsūtīts
+    order_has_no_payments:
     order_information: Pasūtījuma informācija
+    order_line_items:
     order_mailer:
       cancel_email:
         dear_customer: Cienījāmais klient,
@@ -855,6 +1664,7 @@ lv:
         order_summary_canceled: Pasūtījuma %{number} kopsavilkums [ATCELTS]
         subject: Pasūtījuma atcelšana
         subtotal: Starpsumma %{subtotal}
+        thanks:
         total: Summa %{total}
       confirm_email:
         dear_customer: Cienījamais klient,
@@ -864,9 +1674,29 @@ lv:
         subtotal: Starpsumma %{subtotal}
         thanks: Paldies par Jūsu veikto pasūtījumu.
         total: Summa %{total}
+      inventory_cancellation:
+        dear_customer:
+        instructions:
+        order_summary_canceled:
+        subject:
+      store_owner_notification_email:
+        heading:
+        instructions:
+        order_summary:
+        subject:
+        thanks:
+      store_team:
+      subtotal:
+      total:
     order_not_found: Pasūtījums netika atrasts
     order_number: Pasūtījuma numurs
+    order_please_refresh:
+    order_populator:
+      out_of_stock:
+      please_enter_reasonable_quantity:
+      selected_quantity_not_available:
     order_processed_successfully: Jūsu pasūtījums ir apstrādāts veiksmīgi
+    order_refresh_totals:
     order_resumed: Pasūtījums atjaunots
     order_state:
       address: Adrese
@@ -878,8 +1708,23 @@ lv:
       considered_risky: Bīstams
       delivery: Piegāde
       payment: Apmaksa
+      payment_confirm:
       resumed: Atjaunots
       returned: Atgriezts
+    order_states:
+      address:
+      awaiting_return:
+      canceled:
+      cart:
+      complete:
+      confirm:
+      considered_risky:
+      delivery:
+      payment:
+      resumed:
+      returned:
+    order_success:
+    order_success_explain:
     order_summary: Pasūtījuma apkopojums
     order_sure_want_to: Vai esiet pārliecināts, ka vēlaties %{event} šo pasūtījumu?
     order_total: Kopējais pasūtījums
@@ -889,8 +1734,11 @@ lv:
     out_of_stock: Izpārdots
     overview: Pārskats
     package_from: Piegāde no
+    page_not_found:
     pagination:
+      first:
       next_page: Nākamā lapa
+      previous:
       previous_page: Iepriekšējā lapa
       truncate: "…"
     password: Parole
@@ -898,6 +1746,7 @@ lv:
     path: Ceļš
     pay: maksā
     payment: Maksājums
+    payment_amount:
     payment_could_not_be_created:
     payment_identifier:
     payment_information: Maksājuma informācija
@@ -907,6 +1756,8 @@ lv:
     payment_processing_failed:
     payment_processor_choose_banner_text:
     payment_processor_choose_link:
+    payment_provider_setting:
+    payment_provider_settings:
     payment_state: Maksājuma statuss
     payment_states:
       balance_due:
@@ -918,15 +1769,54 @@ lv:
       pending:
       processing:
       void:
+    payment_type:
     payment_updated: Maksājums atjaunots
     payments: Maksājumi
+    payments_count:
+    pdp:
+      checkout:
+      description:
+      details:
+      products_included_in_promotion:
+      quantity:
+      view_cart:
+      you_may_also_like:
     pending:
+    pending_sale:
     percent:
     percent_per_item:
     permalink:
     phone: Telefons
     place_order: Veikt pasūtījumu
     please_define_payment_methods:
+    please_enter_reasonable_quantity:
+    plp:
+      best_selling:
+      clear_all:
+      collection:
+      color:
+      default:
+      done:
+      filter_by:
+      home:
+      home_page:
+      newest_first:
+      no_results:
+      no_results_found:
+      not_found_filters1:
+      not_found_filters2:
+      not_found_filters3:
+      not_found_text1:
+      not_found_text2:
+      price:
+      price_high_to_low:
+      price_low_to_high:
+      result:
+      results_for:
+      size:
+      sort_by:
+      top_sellers:
+      type:
     populate_get_error:
     powered_by:
     pre_tax_amount:
@@ -934,11 +1824,16 @@ lv:
     pre_tax_total:
     preferred_reimbursement_type:
     presentation: Prezentācija
+    preview_product:
+    preview_taxon:
     previous: Iepriekšējais
     previous_state_missing:
+    previously_used_card:
     price: Cena
+    price_from:
     price_range: Price Range
     price_sack: Price Sack
+    prices:
     process: Apstrādāt
     product: Produkts
     product_details: Produkta detaļas
@@ -970,13 +1865,26 @@ lv:
       free_shipping:
         description:
         name:
+      promotion_actions:
+      promotion_form:
+        match_policies:
+          all:
+          any:
     promotion_actions:
+    promotion_categories:
+    promotion_category:
+    promotion_cloned:
     promotion_form:
       match_policies:
         all:
         any:
+    promotion_label:
+    promotion_not_cloned:
     promotion_rule:
     promotion_rule_types:
+      country:
+        description:
+        name:
       first_order:
         description:
         name:
@@ -1014,6 +1922,7 @@ lv:
     prototypes: Prototipi
     provider: Piegādātājs
     provider_settings_warning: Ja tu maini piegādātāja tipu, tev vajag vispirms saglabāt pirms veikt izmaiņas piegādātāja uzstādījumiem
+    purchased_quantity:
     qty: Daudzums
     quantity: Daudzums
     quantity_returned: Daudzums atgriezts
@@ -1026,6 +1935,7 @@ lv:
     received: Saņemts
     reception_status:
     reference:
+    reference_contains:
     refund: Atmaksāt
     refund_amount_must_be_greater_than_zero:
     refund_reasons:
@@ -1044,7 +1954,9 @@ lv:
         for:
         instructions:
         refund_summary:
+        store_team:
         subject:
+        thanks:
         total_refunded:
     reimbursement_perform_failed:
     reimbursement_status:
@@ -1056,9 +1968,13 @@ lv:
     rejected: Atraidīts
     remember_me: Atcerēties mani
     remove: Dzēst
+    remove_image:
     rename: Pārsaukt
     report: Ziņot
     reports: Atskaites
+    required:
+    required_fields:
+    resellable:
     resend: Pārsūtīt
     reset_password: Nomainīt manu paroli
     response_code: Atbildes kods
@@ -1066,11 +1982,16 @@ lv:
     resumed: Atsākts
     return: atgriezties
     return_authorization:
+    return_authorization_canceled:
     return_authorization_reasons:
+    return_authorization_states:
+      authorized:
+      canceled:
     return_authorization_updated:
     return_authorizations:
     return_item_inventory_unit_ineligible:
     return_item_inventory_unit_reimbursed:
+    return_item_order_not_completed:
     return_item_rma_ineligible:
     return_item_time_period_ineligible:
     return_items: Atgriezt preci
@@ -1086,14 +2007,22 @@ lv:
     rma_credit: RMA Credit
     rma_number: RMA numurs
     rma_value: RMA vērtība
+    role:
+    role_id:
     roles: Lomas
     rules: Noteikumi
+    s3_access_key:
+    s3_bucket:
+    s3_headers:
+    s3_protocol:
+    s3_secret:
     safe: Drošs
     sales_total: Kopējā realizācija
     sales_total_description: Sales Total For All Orders
     sales_totals:
     save_and_continue: Saglabāt un turpināt
     save_my_address: Saglabāt manu adresi
+    saving:
     say_no:
     say_yes:
     scope: Scope
@@ -1103,30 +2032,46 @@ lv:
     secure_connection_type: Secure Connection Type
     security_settings: Security Settings
     select: Izvēlēties
+    select_a_date:
+    select_a_date_range:
     select_a_return_authorization_reason:
     select_a_stock_location:
+    select_a_store_credit_reason:
+    select_an_option:
     select_from_prototype: Izvēlēties no prototipiem
     select_stock:
+    selected_quantity_not_available:
     send_copy_of_all_mails_to: Sūtīt visu vēstuļu kopijas uz
     send_mails_as: Sūtīt vēstules kā
+    seo:
+    seo_robots:
+    seo_title:
     server: Serveris
     server_error: Serveris atgrieza kļūdu
     settings: Uzstādījumi
     ship: sūtīt
     ship_address: Piegādes adrese
+    ship_to:
     ship_total:
     shipment: Piegāde
     shipment_adjustments:
     shipment_details:
+    shipment_inc_vat:
     shipment_mailer:
       shipped_email:
         dear_customer:
         instructions:
         shipment_summary:
+        shipping_method:
+        store_team:
         subject:
         thanks:
         track_information:
         track_link:
+      shipping_rates:
+        display_price:
+          excluding_tax:
+          including_tax:
     shipment_state: Piegādes statuss
     shipment_states:
       backorder:
@@ -1150,27 +2095,68 @@ lv:
     shipping_method: Piegādes veids
     shipping_methods: Piegādes veidi
     shipping_price_sack:
+    shipping_rate:
+      display_price:
+        display_price_with_explanations:
+        excluding_tax:
+        including_tax:
+    shipping_rate_tax:
+      label:
+        sales_tax:
+        vat:
+    shipping_rates:
+      display_price:
+        excluding_tax:
+        including_tax:
     shipping_total:
     shop_by_taxonomy: Pirkt pēc %{taxonomy}
+    shop_now:
     shopping_cart: Iepirkuma grozs
     show: Parādīt
     show_active: Parādīt aktīvos
+    show_currency_selector:
+      long_html:
+      short:
     show_deleted: Parādīt izdzēstos
+    show_discontinued:
     show_only_complete_orders: Parādīt tikai pabeigtos pasūtījumus
     show_only_considered_risky:
+    show_property:
     show_rate_in_label:
+    show_store_selector:
+      long:
+      short:
+    sign_up:
+    signup:
     sku:
     skus:
     slug:
+    smtp:
+    smtp_authentication_type:
+    smtp_domain:
+    smtp_mail_host:
+    smtp_password:
+    smtp_port:
+    smtp_send_all_emails_as_from_following_address:
+    smtp_send_copy_to_this_addresses:
+    smtp_username:
+    social:
     source:
     special_instructions:
     split:
+    spree/order:
+      coupon_code:
     spree_gateway_error_flash_for_checkout:
     ssl:
       change_protocol:
     start:
+    start_date:
+    starting_from:
     state: Stāvoklis
     state_based:
+    state_change:
+    state_changes:
+    state_from:
     state_machine_states:
       accepted: Pieņemts
       address: Adrese
@@ -1201,27 +2187,98 @@ lv:
       reimbursed:
       resumed: Atjaunots
       returned: Atgriezts
+      shipment:
       shipped: Piegādāts
       void: Anulēts
+    state_to:
     states:
     states_required:
     status: Stāvoklis
     stock:
+    stock_item:
+    stock_item_id:
     stock_location:
     stock_location_info:
     stock_locations:
     stock_locations_need_a_default_country:
     stock_management:
     stock_management_requires_a_stock_location:
+    stock_movement:
     stock_movements:
     stock_movements_for_stock_location:
     stock_successfully_transferred:
     stock_transfer:
+      errors:
+        must_have_variant:
+        variants_unavailable:
+    stock_transfer_name:
     stock_transfers:
     stop:
     store: Veikals
+    store_credit:
+      additional_payment_needed:
+      allocated:
+      applicable_amount:
+      apply:
+      authorized:
+      available_amount:
+      captured:
+      credit:
+      display_action:
+        adjustment:
+        admin:
+          authorize:
+        credit:
+        void:
+      errors:
+        cannot_change_used_store_credit:
+        unable_to_create:
+        unable_to_delete:
+        unable_to_fund:
+        unable_to_update:
+      remaining_amount:
+      remove:
+    store_credit_categories:
+    store_credit_category:
+      default:
+    store_credit_name:
+    store_credit_payment_method:
+      currency_mismatch:
+      insufficient_authorized_amount:
+      insufficient_funds:
+      select_one_store_credit:
+      successful_action:
+      unable_to_credit:
+      unable_to_find:
+      unable_to_find_for_action:
+      unable_to_void:
+      user_has_no_store_credits:
+    store_credits:
+      credit_balance:
+    store_default:
+    store_errors:
+      unable_to_create:
+      unable_to_delete:
+      unable_to_update:
+    store_form:
+      checkout_zone_help:
+      code_help:
+      customer_support_email_help:
+      default_country_help:
+      footer_help:
+      languages_help:
+      locales_help:
+      mail_from_address_help:
+      new_order_notifications_email_help:
+      seo_robots:
+      social_help:
+    store_not_set_as_default:
+    store_set_as_default:
+    store_set_default_button:
+    stores:
     street_address: Ielas adrese
     street_address_2: Ielas adrese (turpinājums)
+    subtitle:
     subtotal: Starpsumma
     subtract: Atskaitīt
     success:
@@ -1231,6 +2288,11 @@ lv:
     successfully_signed_up_for_analytics:
     successfully_updated: "%{resource} tika veiksmīgi saglabāts(-a)!"
     summary:
+    supported_currencies:
+    supported_currencies_long:
+    supported_locales:
+    tags:
+    tags_placeholder:
     tax: Nodokļi
     tax_categories: Nodokļu kategorijas
     tax_category: Nodokļu kategorija
@@ -1238,8 +2300,11 @@ lv:
     tax_included:
     tax_rate_amount_explanation:
     tax_rates: Nodokļu likmes
+    tax_settings:
+    tax_total:
     taxon:
     taxon_edit:
+    taxon_missing_alt:
     taxon_placeholder:
     taxon_rule:
       choose_taxons:
@@ -1248,6 +2313,8 @@ lv:
       match_any:
     taxonomies: Klasifikatori
     taxonomy:
+    taxonomy_brands_name:
+    taxonomy_categories_name:
     taxonomy_edit: Labot klasifikatoru
     taxonomy_tree_error: Prasītās izmaiņas nav pieņemtas un koks ir atgriezts iepriekšējā stāvoklī, lūdzu, mēģiniet vēlreiz.
     taxonomy_tree_instruction: "* Ar labo peli uzklikšķiniet kokā, lai piekļūtu izvēlei: pievienošanai, izdzēšanai vai sortēšanai."
@@ -1259,6 +2326,7 @@ lv:
         message:
         subject:
     test_mode:
+    text:
     thank_you_for_your_order: Paldies par sadarbību. Lūdzu, izdrukājiet šo apstiprinājumu savai zināšanai.
     there_are_no_items_for_this_order:
     there_were_problems_with_the_following_fields: Problēmas ar sekojošiem laukiem
@@ -1268,6 +2336,8 @@ lv:
     tiered_percent:
     tiers:
     time:
+    timestamp:
+    title:
     to_add_variants_you_must_first_define: Lai pievienotu variantu, vispirms definējiet
     total: Kopā
     total_per_item:
@@ -1284,27 +2354,40 @@ lv:
     transfer_stock:
     transfer_to_location:
     tree: Koks
+    twitter:
     type: Tips
     type_to_search: Type to search
     unable_to_connect_to_gateway: Nav spējīgs pievienoties gateway.
     unable_to_create_reimbursements:
     under_price: Under %{price}
+    unfinalize_all_adjustments:
     unlock:
     unrecognized_card_type: Neatpazīstams kartes tips
     unshippable_items:
     update: Atjaunot
     updating: Atjaunojas
+    url:
     usage_limit: Lietotāja limits
     use_app_default:
     use_billing_address: Lietot rēķina adresi
+    use_existing_cc:
     use_new_cc: Izmntot jaunu karti
+    use_new_cc_or_payment_method:
     use_s3:
+    used:
     user: Lietotājs
+    user_mailer:
+      reset_password_instructions:
+        instructions_1:
+        instructions_2:
+    user_not_found:
     user_rule:
       choose_users:
+    user_selectable:
     users: Lietotāji
     validation:
       cannot_be_less_than_shipped_units: nevar būt mazāks par izsūtītām vienībām.
+      cannot_destory_line_item_as_inventory_units_have_shipped:
       cannot_destroy_line_item_as_inventory_units_have_shipped:
       exceeds_available_stock:
       is_too_large: ir par lielu - pieejamais daudzums nevar nodrošināt prasīto daudzumu!
@@ -1314,6 +2397,7 @@ lv:
     value: Vērtība
     variant: Variants
     variant_placeholder: Izvēlies variantu
+    variant_prices_search_placeholder:
     variants: Varianti
     version: Versija
     void: Void
@@ -1327,5 +2411,12 @@ lv:
     your_order_is_empty_add_product: Jūsu pasūtijums ir tukšs, lūdzu pievienojiet preces
     zip: Pasta indekss
     zipcode: Pasta indekss
+    zipcode_required:
     zone: Zona
     zones: Zonas
+  views:
+    pagination:
+      first:
+      last:
+      next:
+      previous:
