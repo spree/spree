@@ -83,13 +83,8 @@ search:
   ## See this example of a custom scanner: https://github.com/glebm/i18n-tasks/wiki/A-custom-scanner-example
 
 ## Translation Services
-# translation:
-#   # Google Translate
-#   # Get an API key and set billing info at https://code.google.com/apis/console to use Google Translate
-#   google_translate_api_key: "AbC-dEf5"
-#   # DeepL Pro Translate
-#   # Get an API key and subscription at https://www.deepl.com/pro to use DeepL Pro
-#   deepl_api_key: "48E92789-57A3-466A-9959-1A1A1A1A1A1A"
+translation:
+  google_translate_api_key: "AIzaSyDlkLyCna-kIo5lhxe3zVmj-CBHrFx8fhA"
 
 ## Do not consider these keys missing:
 # ignore_missing:
