@@ -89,7 +89,8 @@ translation:
 
 ## Do not consider these keys missing:
 ignore_missing:
-  - 'spree.id'
+  - 'date.month_names'
+  - 'date.abbr_day_names'
   - 'spree.date_picker.*'
   - 'spree.fpr_human_friendly_date_format'
   - 'spree.fpr_human_friendly_date_time_format'

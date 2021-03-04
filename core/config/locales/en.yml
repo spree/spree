@@ -391,9 +391,6 @@ en:
     save: Save
     successfully_created: New address has been successfully created
   bill_address: Bill address
-  date:
-    abbr_day_names: Abbr day names
-    month_names: Month names
   devise:
     confirmations:
       confirmed: Your account was successfully confirmed. You are now signed in.
@@ -521,7 +518,7 @@ en:
       successfully_updated: Updated successfully
       unsuccessfully_saved: There was an error while trying to save your address.
       unsuccessfully_updated: There was an update while trying to update your address.
-    address_name_placeholder: Address name placeholder
+    address_name_placeholder: Give this address a unique name (Work, Home, etc.)
     addresses: Addresses
     adjustable: Adjustable
     adjustment: Adjustment
@@ -920,6 +917,7 @@ en:
       this_file_language: English (US)
       translations: Translations
     icon: Icon
+    id: Id
     image: Image
     images: Images
     implement_eligible_for_return: 'Must implement #eligible_for_return? for your EligibilityValidator.'
@@ -1610,7 +1608,7 @@ en:
     states_required: States Required
     status: Status
     stock: Stock
-    stock_item_id: Stock item
+    stock_item_id: Stock Item
     stock_location: Stock Location
     stock_location_info: Stock location info
     stock_locations: Stock Locations
