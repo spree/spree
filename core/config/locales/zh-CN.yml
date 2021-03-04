@@ -1,16 +1,17 @@
+---
 zh-CN:
   activerecord:
     attributes:
       spree/address:
-        address1: "地址1"
-        address2: "地址2(非必填)"
-        city: "城市"
-        country: "国家"
-        firstname: "名字"
-        lastname: "姓氏"
-        phone: "电话"
-        state: "省份"
-        zipcode: "邮政编码"
+        address1: 地址1
+        address2: 地址2(非必填)
+        city: 城市
+        country: 国家
+        firstname: 名字
+        lastname: 姓氏
+        phone: 电话
+        state: 省份
+        zipcode: 邮政编码
       spree/calculator/tiered_flat_rate:
         preferred_base_amount:
         preferred_tiers:
@@ -18,165 +19,165 @@ zh-CN:
         preferred_base_percent:
         preferred_tiers:
       spree/country:
-        iso: "ISO"
-        iso3: "ISO3"
-        iso_name: "ISO名称"
-        name: "名称"
-        numcode: "ISO编号"
+        iso: ISO
+        iso3: ISO3
+        iso_name: ISO名称
+        name: 名称
+        numcode: ISO编号
       spree/credit_card:
         base:
-        cc_type: "信用卡类型"
-        month: "月份"
-        name: "持卡人姓名"
-        number: "卡号"
-        verification_value: "验证码"
-        year: "年份"
+        cc_type: 信用卡类型
+        month: 月份
+        name: 持卡人姓名
+        number: 卡号
+        verification_value: 验证码
+        year: 年份
       spree/inventory_unit:
-        state: "状态"
+        state: 状态
       spree/line_item:
-        price: "单价"
-        quantity: "数量"
+        price: 单价
+        quantity: 数量
       spree/option_type:
-        name: "名称"
-        presentation: "描述"
+        name: 名称
+        presentation: 描述
       spree/order:
-        checkout_complete: "完成结账"
-        completed_at: "结账日期"
-        considered_risky: "风险"
-        coupon_code: "优惠券号码"
-        created_at: "下单日期"
-        email: "电子邮件"
+        checkout_complete: 完成结账
+        completed_at: 结账日期
+        considered_risky: 风险
+        coupon_code: 优惠券号码
+        created_at: 下单日期
+        email: 电子邮件
         ip_address: IP地址
-        item_total: "小记"
-        number: "订单号"
-        payment_state: "支付状态"
-        shipment_state: "物流状态"
-        special_instructions: "特别说明"
-        state: "状态"
-        total: "总计"
+        item_total: 小记
+        number: 订单号
+        payment_state: 支付状态
+        shipment_state: 物流状态
+        special_instructions: 特别说明
+        state: 状态
+        total: 总计
       spree/order/bill_address:
-        address1: "地址"
-        city: "城市"
-        firstname: "名字"
-        lastname: "姓氏"
-        phone: "电话"
-        state: "省份"
-        zipcode: "邮政编码"
+        address1: 地址
+        city: 城市
+        firstname: 名字
+        lastname: 姓氏
+        phone: 电话
+        state: 省份
+        zipcode: 邮政编码
       spree/order/ship_address:
-        address1: "地址"
-        city: "城市"
-        firstname: "名字"
-        lastname: "姓氏"
-        phone: "电话"
-        state: "省份"
-        zipcode: "邮政编码"
+        address1: 地址
+        city: 城市
+        firstname: 名字
+        lastname: 姓氏
+        phone: 电话
+        state: 省份
+        zipcode: 邮政编码
       spree/payment:
-        amount: "金额"
+        amount: 金额
       spree/payment_method:
-        name: "名称"
+        name: 名称
       spree/product:
-        available_on: "上架日期"
-        cost_currency: "成本币种"
-        cost_price: "成本"
-        description: "描述"
-        master_price: "默认价格"
-        name: "名称"
-        on_hand: "库存"
-        shipping_category: "物流分类"
-        tax_category: "缴税分类"
+        available_on: 上架日期
+        cost_currency: 成本币种
+        cost_price: 成本
+        description: 描述
+        master_price: 默认价格
+        name: 名称
+        on_hand: 库存
+        shipping_category: 物流分类
+        tax_category: 缴税分类
       spree/promotion:
-        advertise: "推广"
-        code: "编号"
-        description: "描述"
-        event_name: "事件名称"
-        expires_at: "过期日期"
-        name: "名称"
-        path: "路径"
-        starts_at: "开始日期"
-        usage_limit: "使用次数限制"
+        advertise: 推广
+        code: 编号
+        description: 描述
+        event_name: 事件名称
+        expires_at: 过期日期
+        name: 名称
+        path: 路径
+        starts_at: 开始日期
+        usage_limit: 使用次数限制
       spree/promotion_category:
-        name: "名称"
-        code: "编号"
+        code: 编号
+        name: 名称
       spree/property:
-        name: "名称"
-        presentation: "描述"
+        name: 名称
+        presentation: 描述
       spree/prototype:
-        name: "名称"
+        name: 名称
       spree/return_authorization:
-        amount: "金额"
+        amount: 金额
       spree/role:
         name: ming cheng
       spree/state:
-        abbr: "缩写"
-        name: "名称"
+        abbr: 缩写
+        name: 名称
       spree/state_change:
-        state_changes: "状态变更"
+        state_changes: 状态变更
         state_from:
         state_to:
-        timestamp: "时间"
-        type: "类型"
+        timestamp: 时间
+        type: 类型
         updated:
-        user: "用户"
+        user: 用户
       spree/store:
         mail_from_address:
-        meta_description: "meta描述语"
-        meta_keywords: "meta关键词"
-        name: "名称"
-        seo_title: "SEO 标题"
-        url: "URL地址"
+        meta_description: meta描述语
+        meta_keywords: meta关键词
+        name: 名称
+        seo_title: SEO 标题
+        url: URL地址
       spree/tax_category:
-        description: "描述"
-        name: "名称"
+        description: 描述
+        name: 名称
       spree/tax_rate:
-        amount: "税率"
-        included_in_price: "包含在售价中"
-        show_rate_in_label: "在标签中显示比率"
+        amount: 税率
+        included_in_price: 包含在售价中
+        show_rate_in_label: 在标签中显示比率
       spree/taxon:
-        name: "名称"
-        permalink: "永久链接"
-        position: "位置"
+        name: 名称
+        permalink: 永久链接
+        position: 位置
       spree/taxonomy:
-        name: "名称"
+        name: 名称
       spree/user:
-        email: "电子邮箱"
-        password: "密码"
-        password_confirmation: "确认密码"
+        email: 电子邮箱
+        password: 密码
+        password_confirmation: 确认密码
       spree/variant:
-        cost_currency: "成本币种"
-        cost_price: "成本"
-        depth: "长度/深度"
-        height: "高度"
-        price: "单价"
-        sku: "条码"
-        weight: "重量"
-        width: "宽度"
+        cost_currency: 成本币种
+        cost_price: 成本
+        depth: 长度/深度
+        height: 高度
+        price: 单价
+        sku: 条码
+        weight: 重量
+        width: 宽度
       spree/zone:
-        description: "描述"
-        name: "名称"
+        description: 描述
+        name: 名称
     errors:
       models:
         spree/calculator/tiered_flat_rate:
           attributes:
             base:
-              keys_should_be_positive_number: "应该为正数"
+              keys_should_be_positive_number: 应该为正数
             preferred_tiers:
               should_be_hash:
         spree/calculator/tiered_percent:
           attributes:
             base:
-              keys_should_be_positive_number:  "应该为正数"
+              keys_should_be_positive_number: 应该为正数
               values_should_be_percent:
             preferred_tiers:
               should_be_hash:
         spree/classification:
           attributes:
             taxon_id:
-              already_linked: "已经关联"
+              already_linked: 已经关联
         spree/credit_card:
           attributes:
             base:
-              card_expired: "信用卡过期"
-              expiry_invalid: "信用卡过期日不正确"
+              card_expired: 信用卡过期
+              expiry_invalid: 信用卡过期日不正确
         spree/line_item:
           attributes:
             currency:
@@ -201,424 +202,421 @@ zh-CN:
               cannot_destroy_default_store:
     models:
       spree/address:
-        one: "地址"
-        other: "地址"
+        one: 地址
+        other: 地址
       spree/country:
-        one: "国家"
-        other: "国家"
+        one: 国家
+        other: 国家
       spree/credit_card:
-        one: "信用卡"
-        other: "信用卡"
+        one: 信用卡
+        other: 信用卡
       spree/customer_return:
       spree/inventory_unit:
-        one: "库存单位"
-        other: "库存单位"
+        one: 库存单位
+        other: 库存单位
       spree/line_item:
-        one: "单项"
-        other: "单项"
+        one: 单项
+        other: 单项
       spree/option_type:
-        one: "选项类型"
-        other: "选项类型"
+        one: 选项类型
+        other: 选项类型
       spree/option_value:
       spree/order:
-        one: "订单"
-        other: "订单"
+        one: 订单
+        other: 订单
       spree/payment:
-        one: "支付"
-        other: "支付"
+        one: 支付
+        other: 支付
       spree/payment_method:
-        one: "支付方式"
-        other: "支付方式"
+        one: 支付方式
+        other: 支付方式
       spree/product:
-        one: "产品"
-        other: "产品"
-      spree/promotion: "促销"
+        one: 产品
+        other: 产品
+      spree/promotion: 促销
       spree/promotion_category:
-        one: "促销分类"
-        other: "促销分类"
+        one: 促销分类
+        other: 促销分类
       spree/property:
-        one: "属性"
-        other: "属性"
+        one: 属性
+        other: 属性
       spree/prototype:
-        one: "原型"
-        other: "原型"
+        one: 原型
+        other: 原型
       spree/refund_reason:
-        one: '退款原因'
-        other: '退款原因' 
+        one: 退款原因
+        other: 退款原因
       spree/reimbursement:
       spree/reimbursement_type:
-        one: '退款类型'
-        other: '退款类型'
+        one: 退款类型
+        other: 退款类型
       spree/return_authorization:
-        one: "返回授权"
-        other: "返回授权"
+        one: 返回授权
+        other: 返回授权
       spree/return_authorization_reason:
       spree/role:
-        one: "角色"
-        other: "角色"
+        one: 角色
+        other: 角色
       spree/shipment:
-        one: "物流"
-        other: "物流"
+        one: 物流
+        other: 物流
       spree/shipping_category:
-        one: "物流分类"
-        other: "物流分类"
+        one: 物流分类
+        other: 物流分类
       spree/shipping_method:
-        one: "配送方式"
-        other: "配送方式"
+        one: 配送方式
+        other: 配送方式
       spree/state:
-        one: "省份"
-        other: "省份"
+        one: 省份
+        other: 省份
       spree/state_change:
       spree/stock_location:
       spree/stock_movement:
       spree/stock_transfer:
-        one: "库存转移"
-        other: "库存转移"
+        one: 库存转移
+        other: 库存转移
       spree/store_credit:
         one: Store Credit
         other: Store Credits
       spree/store_credit_category:
-        one: "Store Credit 类型"
-        other: "Store Credit 类型"
+        one: Store Credit 类型
+        other: Store Credit 类型
       spree/tax_category:
-        one: "缴税分类"
-        other: "缴税分类"
+        one: 缴税分类
+        other: 缴税分类
       spree/tax_rate:
-        one: "税率"
-        other: "税率"
+        one: 税率
+        other: 税率
       spree/taxon:
-        one: "分类"
-        other: "分类"
+        one: 分类
+        other: 分类
       spree/taxonomy:
-        one: "分类"
-        other: "分类"
+        one: 分类
+        other: 分类
       spree/tracker:
       spree/user:
-        one: "用户"
-        other: "用户"
+        one: 用户
+        other: 用户
       spree/variant:
-        one: "具体型号"
-        other: "具体型号"
+        one: 具体型号
+        other: 具体型号
       spree/zone:
-        one: "区域"
-        other: "区域"
+        one: 区域
+        other: 区域
   devise:
     confirmations:
-      confirmed: "您已成功确认您的帐户信息。您现在已登录。"
-      send_instructions: "您将在几分钟后收到一封说明如何确认帐号的邮件。"
+      confirmed: 您已成功确认您的帐户信息。您现在已登录。
+      send_instructions: 您将在几分钟后收到一封说明如何确认帐号的邮件。
     failure:
-      inactive: "您的帐号尚未激活。"
-      invalid: "找不到该电子邮件地址或者密码,请更正并再次尝试。"
-      invalid_token: "无效的授权口令。"
-      locked: "您的帐号已被冻结。"
-      timeout: "您的登录时间过长，请重新登录后继续其他操作。"
-      unauthenticated: "您需要在继续操作之前进行登录或者注册。"
-      unconfirmed: "您需要在继续操作之前确认您的帐号。"
+      inactive: 您的帐号尚未激活。
+      invalid: 找不到该电子邮件地址或者密码,请更正并再次尝试。
+      invalid_token: 无效的授权口令。
+      locked: 您的帐号已被冻结。
+      timeout: 您的登录时间过长，请重新登录后继续其他操作。
+      unauthenticated: 您需要在继续操作之前进行登录或者注册。
+      unconfirmed: 您需要在继续操作之前确认您的帐号。
     mailer:
       confirmation_instructions:
-        subject: "确认帐号说明"
+        subject: 确认帐号说明
       reset_password_instructions:
-        subject: "重置密码说明"
+        subject: 重置密码说明
       unlock_instructions:
-        subject: "帐号解锁说明"
+        subject: 帐号解锁说明
     oauth_callbacks:
-      failure: "由于%{reason}，您暂时无法从%{kind}获得授权。"
-      success: "成功地从%{kind}帐号获得授权。"
+      failure: 由于%{reason}，您暂时无法从%{kind}获得授权。
+      success: 成功地从%{kind}帐号获得授权。
     unlocks:
-      send_instructions: "您将在几分钟之后收到一封说明如何解锁帐号的邮件。"
-      unlocked: "您的帐号已被成功解锁。您现在已登录。"
+      send_instructions: 您将在几分钟之后收到一封说明如何解锁帐号的邮件。
+      unlocked: 您的帐号已被成功解锁。您现在已登录。
     user_passwords:
       user:
-        cannot_be_blank: "密码不能为空。"
-        send_instructions: "您将在几分钟之后收到一封说明如何重置密码的邮件。"
-        updated: "您已成功修改您的密码，您现在已登录。"
+        cannot_be_blank: 密码不能为空。
+        send_instructions: 您将在几分钟之后收到一封说明如何重置密码的邮件。
+        updated: 您已成功修改您的密码，您现在已登录。
     user_registrations:
-      destroyed: "再见！您已成功取消帐号注册。希望您再次光临。"
-      inactive_signed_up: "您已成功注册。但是，由于您的帐号%{reason}，您暂时无法登录。"
-      signed_up: "欢迎！您已成功注册。"
-      updated: "您已成功更新您的帐号信息。"
+      destroyed: 再见！您已成功取消帐号注册。希望您再次光临。
+      inactive_signed_up: 您已成功注册。但是，由于您的帐号%{reason}，您暂时无法登录。
+      signed_up: 欢迎！您已成功注册。
+      updated: 您已成功更新您的帐号信息。
     user_sessions:
-      signed_in: "成功登录。"
-      signed_out: "成功注销。"
+      signed_in: 成功登录。
+      signed_out: 成功注销。
   errors:
     messages:
-      already_confirmed: "已被确认"
-      not_found: "无法找到"
-      not_locked: "未冻结"
-      not_saved: "由于以下%{count}个错误，导致%{resource}无法保存："
+      already_confirmed: 已被确认
+      not_found: 无法找到
+      not_locked: 未冻结
+      not_saved: 由于以下%{count}个错误，导致%{resource}无法保存：
   spree:
-    abbreviation: "缩写"
-    store_credit_categories: "Store Credit 类型"
-    accept: "接受"
+    abbreviation: 缩写
+    accept: 接受
     acceptance_errors:
     acceptance_status:
-    accepted: "已接收"
-    account: "帐户"
-    account_updated: "帐户更新完成!"
-    action: "操作"
+    accepted: 已接收
+    account: 帐户
+    account_updated: 帐户更新完成!
+    action: 操作
     actions:
-      cancel: "取消"
-      continue: "继续"
-      create: "创建"
-      destroy: "删除"
-      edit: "编辑"
-      list: "列表"
-      listing: "正在列出"
-      new: "新建"
+      cancel: 取消
+      continue: 继续
+      create: 创建
+      destroy: 删除
+      edit: 编辑
+      list: 列表
+      listing: 正在列出
+      new: 新建
       refund:
-      save: "保存"
-      update: "更新"
-    activate: "激活"
-    active: "激活"
-    add: "添加"
-    add_action_of_type: "添加激活方式"
-    add_country: "添加国家"
+      save: 保存
+      update: 更新
+    activate: 激活
+    active: 激活
+    add: 添加
+    add_action_of_type: 添加激活方式
+    add_country: 添加国家
     add_coupon_code:
-    add_new_header: "添加新的头部"
-    add_new_style: "添加新的样式"
-    add_one: "新建"
-    add_option_value: "添加选项值"
-    add_product: "添加产品"
-    add_product_properties: "添加产品属性"
-    add_rule_of_type: "添加新的类型规则"
-    add_state: "添加一个省份"
-    add_stock: "添加库存"
-    add_stock_management: "添加库存管理"
-    add_to_cart: "加入购物车"
-    add_variant: "添加具体型号"
-    additional_item: "额外项目花费"
-    address1: "地址"
-    address2: "地址（继续）"
+    add_new_header: 添加新的头部
+    add_new_style: 添加新的样式
+    add_one: 新建
+    add_option_value: 添加选项值
+    add_product: 添加产品
+    add_product_properties: 添加产品属性
+    add_rule_of_type: 添加新的类型规则
+    add_state: 添加一个省份
+    add_stock: 添加库存
+    add_stock_management: 添加库存管理
+    add_to_cart: 加入购物车
+    add_variant: 添加具体型号
+    additional_item: 额外项目花费
+    address1: 地址
+    address2: 地址（继续）
     adjustable:
-    adjustment: "调整"
-    adjustment_amount: "金额"
+    adjustment: 调整
+    adjustment_amount: 金额
     adjustment_labels:
       tax_rates:
-        including_tax: '%{name}%{amount} (Included in Price)'
-        excluding_tax: '%{name}%{amount}'
-    adjustment_successfully_closed: "价格调整已被禁用！"
-    adjustment_successfully_opened: "价格调整已被启用！"
-    adjustment_total: "调整总数"
-    adjustments: "其他调整"
+        excluding_tax: "%{name}%{amount}"
+        including_tax: "%{name}%{amount} (Included in Price)"
+    adjustment_successfully_closed: 价格调整已被禁用！
+    adjustment_successfully_opened: 价格调整已被启用！
+    adjustment_total: 调整总数
+    adjustments: 其他调整
     admin:
       tab:
-        configuration: "配置"
-        option_types: "选项类型"
-        orders: "订单"
-        overview: "概览"
-        products: "产品"
-        promotions: "促销"
-        promotion_categories: "促销分类"
-        properties: "属性"
-        prototypes: "原型"
-        reports: "报告"
-        taxonomies: "分类层级"
-        taxons: "分类"
-        users: "用户"
-        return_authorizations: "退货审批"
-        customer_returns: "客户退货"
+        configuration: 配置
+        customer_returns: 客户退货
+        option_types: 选项类型
+        orders: 订单
+        overview: 概览
+        products: 产品
+        promotion_categories: 促销分类
+        promotions: 促销
+        properties: 属性
+        prototypes: 原型
+        reports: 报告
+        return_authorizations: 退货审批
+        taxonomies: 分类层级
+        taxons: 分类
+        users: 用户
       user:
-        account: "账户"
-        addresses: "地址"
-        items: "商品"
-        items_purchased: "已购商品"
-        order_history: "订单历史"
-        order_num: "订单号"
-        orders: "订单"
+        account: 账户
+        addresses: 地址
+        items: 商品
+        items_purchased: 已购商品
+        order_history: 订单历史
+        order_num: 订单号
+        orders: 订单
         user_information:
-    administration: "管理"
-    advertise: "推广"
-    agree_to_privacy_policy: "同意隐私政策"
-    agree_to_terms_of_service: "同意服务条款"
-    all: "全部"
-    all_adjustments_closed: "所有价格调整已被成功禁用！"
-    all_adjustments_opened: "所有价格调整已被成功启用！"
-    all_departments: "所有部门"
+    administration: 管理
+    advertise: 推广
+    agree_to_privacy_policy: 同意隐私政策
+    agree_to_terms_of_service: 同意服务条款
+    all: 全部
+    all_adjustments_closed: 所有价格调整已被成功禁用！
+    all_adjustments_opened: 所有价格调整已被成功启用！
+    all_departments: 所有部门
     all_items_have_been_returned:
-    allow_ssl_in_development_and_test: "允许在开发以及测试模式下使用SSL"
-    allow_ssl_in_production: "允许在生产模式下使用SSL"
-    allow_ssl_in_staging: "允许在演示模式下使用SSL"
-    already_signed_up_for_analytics: "您已注册Spree Analytics帐号"
-    alt_text: "其他文本"
-    alternative_phone: "其他电话"
-    amount: "金额"
+    allow_ssl_in_development_and_test: 允许在开发以及测试模式下使用SSL
+    allow_ssl_in_production: 允许在生产模式下使用SSL
+    allow_ssl_in_staging: 允许在演示模式下使用SSL
+    already_signed_up_for_analytics: 您已注册Spree Analytics帐号
+    alt_text: 其他文本
+    alternative_phone: 其他电话
+    amount: 金额
     analytics_desc_header_1: Spree Analytics
     analytics_desc_header_2:
     analytics_desc_list_1:
-    analytics_desc_list_2: "仅需要一个免费的Spree帐号用于激活"
+    analytics_desc_list_2: 仅需要一个免费的Spree帐号用于激活
     analytics_desc_list_3:
-    analytics_desc_list_4: "完全免费"
-    analytics_trackers: "追踪分析"
-    and: "以及"
-    approve: "核准"
-    approved_at: "核准日期"
-    approver: "核准者"
-    are_you_sure: "你确定么？"
-    are_you_sure_delete: "你确定你要删除这条记录么?"
-    associated_adjustment_closed: "相关联的价格调整已被关闭，并且不会被重复计算。您需要启用它吗？"
-    at_symbol: '@'
-    authorization_failure: "认证失败"
-    authorized: '已经审批'
-    canceled: '已经取消'
-    number: '订单号'
-    auto_capture: "自动扣款"
-    available_on: "上架日期"
-    discontinue_on: "下架日期"
-    average_order_value: "订单平均价"
+    analytics_desc_list_4: 完全免费
+    analytics_trackers: 追踪分析
+    and: 以及
+    approve: 核准
+    approved_at: 核准日期
+    approver: 核准者
+    are_you_sure: 你确定么？
+    are_you_sure_delete: 你确定你要删除这条记录么?
+    associated_adjustment_closed: 相关联的价格调整已被关闭，并且不会被重复计算。您需要启用它吗？
+    at_symbol: "@"
+    authorization_failure: 认证失败
+    authorized: 已经审批
+    auto_capture: 自动扣款
+    available_on: 上架日期
+    average_order_value: 订单平均价
     avs_response:
-    back: "后退"
-    back_end: "后端"
+    back: 后退
+    back_end: 后端
     back_to_payment:
     back_to_resource_list:
     back_to_rma_reason_list:
-    back_to_store: "回到商店"
-    back_to_users_list: "回到用户列表"
-    backorderable: "可预订"
+    back_to_store: 回到商店
+    back_to_users_list: 回到用户列表
+    backorderable: 可预订
     backorderable_default:
-    backordered: "待补"
+    backordered: 待补
     backorders_allowed:
-    balance_due: "尚欠款"
+    balance_due: 尚欠款
     base_amount:
     base_percent:
-    bill_address: "账单地址"
-    billing: "账单"
-    billing_address: "账单地址"
-    both: "全部"
+    bill_address: 账单地址
+    billing: 账单
+    billing_address: 账单地址
+    both: 全部
     calculated_reimbursements:
-    calculator: "计算器"
-    calculator_settings_warning: "如果你正在修改计算方式，你必须在编辑计算器设置之前先保存"
-    cancel: "取消"
-    canceled_at: "取消时间"
+    calculator: 计算器
+    calculator_settings_warning: 如果你正在修改计算方式，你必须在编辑计算器设置之前先保存
+    cancel: 取消
+    canceled: 已经取消
+    canceled_at: 取消时间
     canceler:
-    cannot_create_customer_returns: "您无法创建客户退款"
-    cannot_create_payment_without_payment_methods: "您无法在没有定义任何支付方式的情况下进行支付。"
-    cannot_create_returns: "没有配送的订单不能申请退货"
-    cannot_perform_operation: "无法执行请求的操作"
-    cannot_set_shipping_method_without_address: "缺乏客户的详细信息，无法设置配送方式。"
-    capture: "付款"
+    cannot_create_customer_returns: 您无法创建客户退款
+    cannot_create_payment_without_payment_methods: 您无法在没有定义任何支付方式的情况下进行支付。
+    cannot_create_returns: 没有配送的订单不能申请退货
+    cannot_perform_operation: 无法执行请求的操作
+    cannot_set_shipping_method_without_address: 缺乏客户的详细信息，无法设置配送方式。
+    capture: 付款
     capture_events:
-    card_code: "卡验证码"
-    card_number: "卡号"
-    card_type: "卡类型"
-    card_type_is: "卡的类型是"
-    cart: "购物车"
-    cart_subtotal: "购物车小计"
-    categories: "分类"
-    category: "分类"
-    charged:
-    check_for_spree_alerts: "查收Spree的通知"
-    checkout: "结账"
-    choose_a_customer: "选择用户"
+    card_code: 卡验证码
+    card_number: 卡号
+    card_type: 卡类型
+    card_type_is: 卡的类型是
+    cart: 购物车
+    cart_subtotal: 购物车小计
+    categories: 分类
+    category: 分类
+    charged: 付款金额
+    check_for_spree_alerts: 查收Spree的通知
+    checkout: 结账
+    choose_a_customer: 选择用户
     choose_a_taxon_to_sort_products_for:
-    choose_currency: "选择货币"
-    choose_dashboard_locale: "选择控制面板语言"
+    choose_currency: 选择货币
+    choose_dashboard_locale: 选择控制面板语言
     choose_location:
-    city: "城市"
-    clear_cache: "清除缓存"
-    clear_cache_ok: "缓存清除成功"
-    clear_cache_warning: "清除缓存提醒"
-    click_and_drag_on_the_products_to_sort_them: "在商品上点击拖拽进行排序"
-    clone: "复制"
-    close: "关闭"
-    close_all_adjustments: "禁用所有价格调整"
-    code: "编码"
-    company: "公司"
-    complete: "完成"
-    configuration: "配置"
-    configurations: "配置"
-    confirm: "确认"
-    confirm_delete: "确认删除"
-    confirm_password: "确认密码"
-    continue: "继续"
-    continue_shopping: "继续购物"
-    cost_currency: "成本币种"
-    cost_price: "进货价"
-    could_not_connect_to_jirafe: "无法连接Jirafe。稍后将会自动重新连接。"
+    city: 城市
+    clear_cache: 清除缓存
+    clear_cache_ok: 缓存清除成功
+    clear_cache_warning: 清除缓存提醒
+    click_and_drag_on_the_products_to_sort_them: 在商品上点击拖拽进行排序
+    clone: 复制
+    close: 关闭
+    close_all_adjustments: 禁用所有价格调整
+    code: 编码
+    company: 公司
+    complete: 完成
+    configuration: 配置
+    configurations: 配置
+    confirm: 确认
+    confirm_delete: 确认删除
+    confirm_password: 确认密码
+    continue: 继续
+    continue_shopping: 继续购物
+    cost_currency: 成本币种
+    cost_price: 进货价
+    could_not_connect_to_jirafe: 无法连接Jirafe。稍后将会自动重新连接。
     could_not_create_customer_return:
     could_not_create_stock_movement:
-    count_on_hand: "库存数量"
-    countries: "国家"
-    country: "国家"
-    country_based: "根据国家"
-    country_name: "名称"
+    count_on_hand: 库存数量
+    countries: 国家
+    country: 国家
+    country_based: 根据国家
+    country_name: 名称
     country_names:
       CA:
       FRA:
       ITA:
       US:
-    coupon: "优惠券"
-    coupon_code: "优惠券号码"
-    coupon_code_already_applied: "优惠券号码已在本订单中使用"
-    coupon_code_applied: "优惠券号码已在订单中生效。"
+    coupon: 优惠券
+    coupon_code: 优惠券号码
+    coupon_code_already_applied: 优惠券号码已在本订单中使用
+    coupon_code_applied: 优惠券号码已在订单中生效。
     coupon_code_better_exists:
-    coupon_code_expired: "优惠券号码已过期"
-    coupon_code_max_usage: "优惠券号码使用次数超出限制"
-    coupon_code_not_eligible: "您的订单号码无法在您的订单上生效。"
-    coupon_code_not_found: "您所输入的优惠券号码不存在。请重新输入。"
+    coupon_code_expired: 优惠券号码已过期
+    coupon_code_max_usage: 优惠券号码使用次数超出限制
+    coupon_code_not_eligible: 您的订单号码无法在您的订单上生效。
+    coupon_code_not_found: 您所输入的优惠券号码不存在。请重新输入。
     coupon_code_unknown_error:
-    create: "创建"
-    create_a_new_account: "创建一个新帐号"
-    create_new_order: "新建订单"
+    create: 创建
+    create_a_new_account: 创建一个新帐号
+    create_new_order: 新建订单
     create_reimbursement:
-    created_at: "创建日期"
-    credit: "欠款??"
-    credit_card: "信用卡"
-    credit_cards: "信用卡"
-    credit_owed: "应予退款"
+    created_at: 创建日期
+    credit: 欠款??
+    credit_card: 信用卡
+    credit_cards: 信用卡
+    credit_owed: 应予退款
     credits:
-    currency: "币种"
+    currency: 币种
     currency_decimal_mark:
-    currency_settings: "当前设置"
-    currency_symbol_position: "在金额之前或者之后放置币种符号？"
-    currency_thousands_separator: "千元分割符"
-    current: "现在的"
-    current_promotion_usage: "当前已使用：%{count}"
-    customer: "顾客"
-    customer_details: "顾客详细信息"
-    customer_details_updated: "已更新客户的详细信息"
-    customer_return:  "客户退货"
-    customer_returns: "客户退货"
-    customer_search: "顾客搜索"
-    cut: "剪下"
+    currency_settings: 当前设置
+    currency_symbol_position: 在金额之前或者之后放置币种符号？
+    currency_thousands_separator: 千元分割符
+    current: 现在的
+    current_promotion_usage: 当前已使用：%{count}
+    customer: 顾客
+    customer_details: 顾客详细信息
+    customer_details_updated: 已更新客户的详细信息
+    customer_return: 客户退货
+    customer_returns: 客户退货
+    customer_search: 顾客搜索
+    cut: 剪下
     cvv_response:
     dash:
       jirafe:
         app_id:
-        app_token: "添加口令"
+        app_token: 添加口令
         currently_unavailable:
         explanation:
         header: Jirafe分析器设置
         site_id:
-        token: "口令"
+        token: 口令
       jirafe_settings_updated: Jirafe设置已更新。
-    date: "日期"
-    date_completed: "完成日期"
+    date: 日期
+    date_completed: 完成日期
     date_picker:
-      # FlatPickr human friendly formatting
       fpr_human_friendly_date_format: M j, Y
       fpr_human_friendly_date_time_format: M j, Y - H:i
-    date_range: "时间范围"
-    default: "默认"
+    date_range: 时间范围
+    default: 默认
     default_refund_amount:
-    default_tax: "默认缴税"
-    default_tax_zone: "默认缴税区域"
-    delete: "删除"
+    default_tax: 默认缴税
+    default_tax_zone: 默认缴税区域
+    delete: 删除
     deleted_variants_present:
-    delivery: "配送"
-    depth: "长"
-    description: "描述"
-    destination: "目的地"
-    destroy: "删除"
-    details: "详情"
-    discount_amount: "折扣金额"
-    dismiss_banner: "不，谢谢！我对此不感兴趣，请不要再显示此信息。"
-    display: "显示"
-    display_currency: "显示货币符号"
+    delivery: 配送
+    depth: 长
+    description: 描述
+    destination: 目的地
+    destroy: 删除
+    details: 详情
+    discontinue_on: 下架日期
+    discount_amount: 折扣金额
+    dismiss_banner: 不，谢谢！我对此不感兴趣，请不要再显示此信息。
+    display: 显示
+    display_currency: 显示货币符号
     doesnt_track_inventory:
-    edit: "编辑"
+    edit: 编辑
     editing_resource:
     editing_rma_reason:
-    editing_user: "编辑用户"
+    editing_user: 编辑用户
     eligibility_errors:
       messages:
         has_excluded_product:
@@ -634,446 +632,448 @@ zh-CN:
         no_user_or_email_specified:
         no_user_specified:
         not_first_order:
-    email: "电子邮件"
-    empty: "空"
-    empty_cart: "清空购物车"
-    enable_mail_delivery: "开启邮件发送"
-    end: "结束"
+    email: 电子邮件
+    empty: 空
+    empty_cart: 清空购物车
+    enable_mail_delivery: 开启邮件发送
+    end: 结束
     ending_in: Ending in
-    environment: "环境"
-    error: "错误"
+    environment: 环境
+    error: 错误
     errors:
       messages:
-        could_not_create_taxon: "无法添加分类"
-        no_payment_methods_available: "当前运行环境下没有配置好支付方式"
-        no_shipping_methods_available: "选中的地址没有适合的运送方式，请修改您的地址后再次尝试"
+        could_not_create_taxon: 无法添加分类
+        no_payment_methods_available: 当前运行环境下没有配置好支付方式
+        no_shipping_methods_available: 选中的地址没有适合的运送方式，请修改您的地址后再次尝试
     errors_prohibited_this_record_from_being_saved:
       one: 1个错误导致此记录无法保存
       other: "%{count}个错误导致此记录无法保存"
-    event: "事件"
+    event: 事件
     events:
       spree:
         cart:
-          add: "添加商品到购物车"
+          add: 添加商品到购物车
         checkout:
-          coupon_code_added: "添加了优惠券号码"
+          coupon_code_added: 添加了优惠券号码
         content:
-          visited: "访问了静态页面"
+          visited: 访问了静态页面
         order:
-          contents_changed: "订单内容更新"
-        page_view: "静态页面被访问"
+          contents_changed: 订单内容更新
+        page_view: 静态页面被访问
         user:
-          signup: "用户注册"
+          signup: 用户注册
     exceptions:
-      count_on_hand_setter: "无法手动设置 count_on_hand, 将会在 recalculate_count_on_hand 中被自动设定。请使用 `update_column(:count_on_hand, value)`"
-    exchange_for: "换货"
+      count_on_hand_setter: 无法手动设置 count_on_hand, 将会在 recalculate_count_on_hand 中被自动设定。请使用 `update_column(:count_on_hand, value)`
+    exchange_for: 换货
     excl:
     existing_shipments:
     expedited_exchanges_warning:
-    expiration: "过期"
-    extension: "扩展"
+    expiration: 过期
+    extension: 扩展
     failed_payment_attempts:
-    filename: "文件名"
-    fill_in_customer_info: "请填写顾客信息"
-    filter: "过滤"
-    filter_results: "过滤结果"
-    finalize: "完成"
-    finalized: "已完成"
-    find_a_taxon: "查找一种分类"
-    first_item: "首件产品价格??"
-    first_name: "名"
-    first_name_begins_with: "名的开始"
-    flat_percent: "固定费率"
-    flat_rate_per_order: "固定费率 (每订单)"
-    flexible_rate: "灵活费率"
-    forgot_password: "忘记密码"
-    free_shipping: "免运送费"
+    filename: 文件名
+    fill_in_customer_info: 请填写顾客信息
+    filter: 过滤
+    filter_results: 过滤结果
+    finalize: 完成
+    finalized: 已完成
+    find_a_taxon: 查找一种分类
+    first_item: 首件产品价格??
+    first_name: 名
+    first_name_begins_with: 名的开始
+    flat_percent: 固定费率
+    flat_rate_per_order: 固定费率 (每订单)
+    flexible_rate: 灵活费率
+    forgot_password: 忘记密码
+    free_shipping: 免运送费
     free_shipping_amount:
-    front_end: "前端"
-    gateway: "网关"
-    gateway_config_unavailable: "当前运行环境下无可用的网关"
-    gateway_error: "网关出错"
-    general: "一般"
-    general_settings: "一般设置"
+    front_end: 前端
+    gateway: 网关
+    gateway_config_unavailable: 当前运行环境下无可用的网关
+    gateway_error: 网关出错
+    general: 一般
+    general_settings: 一般设置
     google_analytics: Google Analytics
     google_analytics_id: Analytics ID
-    guest_checkout: "匿名用户结账"
-    guest_user_account: "作为一个匿名用户结账"
-    has_no_shipped_units: "没有已配送的单元"
-    height: "高度"
-    hide_cents: "隐藏分钱"
-    home: "首页"
+    guest_checkout: 匿名用户结账
+    guest_user_account: 作为一个匿名用户结账
+    has_no_shipped_units: 没有已配送的单元
+    height: 高度
+    hide_cents: 隐藏分钱
+    home: 首页
     i18n:
-      available_locales: "可用的语言"
-      language: "语言"
+      available_locales: 可用的语言
+      language: 语言
       localization_settings:
       this_file_language: 中文 简体 (zh-CN)
-      translations: "翻译"
-    icon: "图标"
+      translations: 翻译
+    icon: 图标
     identifier:
-    image: "图片"
-    images: "图片"
+    image: 图片
+    images: 图片
     implement_eligible_for_return:
     implement_requires_manual_intervention:
     inactive:
     incl:
-    included_in_price: "包含在售价中"
-    included_price_validation: "除非您设置了默认的缴税区域，否则无法选择"
+    included_in_price: 包含在售价中
+    included_price_validation: 除非您设置了默认的缴税区域，否则无法选择
     incomplete:
     info_number_of_skus_not_shown:
     info_product_has_multiple_skus:
-    instructions_to_reset_password: "请填写如下表格来重置你的密码，重置后的密码会通过电子邮件发送给您"
-    insufficient_stock: "库存不足，当前还剩下%{on_hand}件库存"
+    instructions_to_reset_password: 请填写如下表格来重置你的密码，重置后的密码会通过电子邮件发送给您
+    insufficient_stock: 库存不足，当前还剩下%{on_hand}件库存
     insufficient_stock_lines_present:
-    intercept_email_address: "用于接收邮件的邮箱地址"
-    intercept_email_instructions: "使用以下邮箱地址覆盖所有收件人邮箱"
-    internal_name: "Internal Name"
-    invalid_credit_card: "无效的信用卡。"
+    intercept_email_address: 用于接收邮件的邮箱地址
+    intercept_email_instructions: 使用以下邮箱地址覆盖所有收件人邮箱
+    internal_name: Internal Name
+    invalid_credit_card: 无效的信用卡。
     invalid_exchange_variant:
-    invalid_payment_provider: "无效的支付服务提供商。"
-    invalid_promotion_action: "无效的优惠方式。"
-    invalid_promotion_rule: "无效的促销规则。"
-    inventory: "库存"
-    inventory_adjustment: "库存调整"
-    inventory_error_flash_for_insufficient_quantity: "您的购物车中的一个商品已经不可购买。"
-    inventory_state: "库存状态"
-    is_not_available_to_shipment_address: "无法送达要求的配送地址"
+    invalid_payment_provider: 无效的支付服务提供商。
+    invalid_promotion_action: 无效的优惠方式。
+    invalid_promotion_rule: 无效的促销规则。
+    inventory: 库存
+    inventory_adjustment: 库存调整
+    inventory_error_flash_for_insufficient_quantity: 您的购物车中的一个商品已经不可购买。
+    inventory_state: 库存状态
+    is_not_available_to_shipment_address: 无法送达要求的配送地址
     iso_name: ISO名称
-    item: "商品项"
-    item_description: "商品项描述"
-    item_total: "商品总计"
+    item: 商品项
+    item_description: 商品项描述
+    item_total: 商品总计
     item_total_rule:
       operators:
-        gt: "大于"
-        gte: "大于或等于"
-        lt: "小于"
-        lte: "小于或等于"
-    items_cannot_be_shipped: "商品无法发货"
-    items_in_rmas: "商品"
+        gt: 大于
+        gte: 大于或等于
+        lt: 小于
+        lte: 小于或等于
+    items_cannot_be_shipped: 商品无法发货
+    items_in_rmas: 商品
     items_reimbursed:
     items_to_be_reimbursed:
     jirafe: Jirafe
     landing_page_rule:
       path: Path
-    last_name: "姓"
-    last_name_begins_with: "姓的开始"
-    learn_more: "更多"
-    lifetime_stats: "行为统计"
+    last_name: 姓
+    last_name_begins_with: 姓的开始
+    learn_more: 更多
+    lifetime_stats: 行为统计
     line_item_adjustments:
-    list: "列表"
-    loading: "加载"
+    list: 列表
+    loading: 加载
     locale_changed: Locale已变更
-    location: "位置"
-    lock: "锁住/冻结"
+    location: 位置
+    lock: 锁住/冻结
     log_entries:
-    logged_in_as: "已登录为"
-    logged_in_succesfully: "登录成功"
-    logged_out: "您已经登出系统"
-    login: "登录"
-    login_as_existing: "作为一个已有客户登录"
-    login_failed: "登录认证失败。"
-    login_name: "用户名"
-    logout: "退出"
+    logged_in_as: 已登录为
+    logged_in_succesfully: 登录成功
+    logged_out: 您已经登出系统
+    login: 登录
+    login_as_existing: 作为一个已有客户登录
+    login_failed: 登录认证失败。
+    login_name: 用户名
+    logout: 退出
     logs:
-    look_for_similar_items: "寻找类似的产品"
-    make_refund: "进行退款??"
+    look_for_similar_items: 寻找类似的产品
+    make_refund: 进行退款??
     make_sure_the_above_reimbursement_amount_is_correct:
     manage_promotion_categories:
     manage_variants:
     manual_intervention_required:
-    master_price: "默认价格"
+    master_price: 默认价格
     match_choices:
-      all: "全部"
-      none: "清空"
-    max_items: "最大商品项??"
-    member_since: "会员开始时间"
+      all: 全部
+      none: 清空
+    max_items: 最大商品项??
+    member_since: 会员开始时间
     memo:
-    meta_description: "元描述"
-    meta_keywords: "关键字"
-    meta_title: "元标题"
-    metadata: "元数据"
-    minimal_amount: "少量"
-    month: "月"
-    more: "更多"
+    meta_description: 元描述
+    meta_keywords: 关键字
+    meta_title: 元标题
+    metadata: 元数据
+    minimal_amount: 少量
+    month: 月
+    more: 更多
     move_stock_between_locations:
-    my_account: "我的帐户"
-    my_orders: "我的订单"
-    name: "名称"
+    my_account: 我的帐户
+    my_orders: 我的订单
+    name: 名称
     name_on_card:
-    name_or_sku: "名称或条形码（输入产品名称中的至少4个字母）"
-    new: "新建"
-    new_adjustment: "新建调整"
-    new_country: "新建国家"
-    new_customer: "新建客户"
-    new_customer_return: "新建客户退货"
-    new_image: "新建图片"
-    new_option_type: "新建选项类型"
-    new_order: "新建订单"
-    new_order_completed: "新建订单完成"
-    new_payment: "新建支付"
-    new_payment_method: "新建支付方式"
-    new_product: "新建产品"
-    new_promotion: "新建促销活动"
-    new_promotion_category: "新建促销分类"
-    new_property: "新建属性"
-    new_prototype: "新建原型"
-    new_refund: "新建退款"
-    new_refund_reason: '新建退款原因'
-    new_return_authorization: "新建退货审批"
-    new_reimbursement_type: "新建退款类型"
+    name_or_sku: 名称或条形码（输入产品名称中的至少4个字母）
+    new: 新建
+    new_adjustment: 新建调整
+    new_country: 新建国家
+    new_customer: 新建客户
+    new_customer_return: 新建客户退货
+    new_image: 新建图片
+    new_option_type: 新建选项类型
+    new_order: 新建订单
+    new_order_completed: 新建订单完成
+    new_payment: 新建支付
+    new_payment_method: 新建支付方式
+    new_product: 新建产品
+    new_promotion: 新建促销活动
+    new_promotion_category: 新建促销分类
+    new_property: 新建属性
+    new_prototype: 新建原型
+    new_refund: 新建退款
+    new_refund_reason: 新建退款原因
+    new_reimbursement_type: 新建退款类型
+    new_return_authorization: 新建退货审批
     new_rma_reason:
+    new_role: 新建角色
     new_shipment_at_location:
-    new_shipping_category: "新建配送分类"
-    new_shipping_method: "新建配送方式"
-    new_state: "新建省份"
-    new_stock_location: "添加仓库位置"
-    new_stock_movement: "新建库存移动"
-    new_stock_transfer: "新建库存转移"
-    new_tax_category: "新建缴税类型"
-    new_tax_rate: "新建税率"
-    new_taxon: "新建分类"
-    new_taxonomy: "新建分类层级"
+    new_shipping_category: 新建配送分类
+    new_shipping_method: 新建配送方式
+    new_state: 新建省份
+    new_stock_location: 添加仓库位置
+    new_stock_movement: 新建库存移动
+    new_stock_transfer: 新建库存转移
+    new_store_credit_category: 新建Store Credit 类型
+    new_tax_category: 新建缴税类型
+    new_tax_rate: 新建税率
+    new_taxon: 新建分类
+    new_taxonomy: 新建分类层级
     new_tracker: New Tracker
-    new_user: "新建用户"
-    new_variant: "新建具体型号"
-    new_zone: "新建区域"
-    new_store_credit_category: "新建Store Credit 类型"
-    new_role: "新建角色"
-    next: "下一页"
-    no_actions_added: "未添加动作"
+    new_user: 新建用户
+    new_variant: 新建具体型号
+    new_zone: 新建区域
+    next: 下一页
+    no_actions_added: 未添加动作
     no_payment_found:
     no_pending_payments:
-    no_products_found: "找不到产品"
-    no_resource_found: "找不到资源"
-    no_results: "无任何结果"
+    no_products_found: 找不到产品
+    no_resource_found: 找不到资源
+    no_results: 无任何结果
     no_returns_found:
-    no_rules_added: "未添加规则"
+    no_rules_added: 未添加规则
     no_shipping_method_selected:
     no_state_changes:
-    no_tracking_present: "未提供跟踪细节。"
-    none: "没有"
+    no_tracking_present: 未提供跟踪细节。
+    none: 没有
     none_selected:
     normal_amount: Normal Amount
     not: false
     not_available: N/A
     not_enough_stock:
-    not_found: "未找到%{resource}"
+    not_found: 未找到%{resource}
     note:
     notice_messages:
-      product_cloned: "产品已经被复制"
-      product_deleted: "产品已经被删除"
-      product_not_cloned: "产品无法被复制"
-      product_not_deleted: "产品无法被删除"
-      variant_deleted: "具体型号已经被删除"
-      variant_not_deleted: "具体型号不能被删除"
-    num_orders: "订单数量"
-    on_hand: "库存"
-    open: "打开"
-    open_all_adjustments: "启用所有价格调整"
-    option_type: "选项类型"
-    option_type_placeholder: "选项类型默认值"
-    option_types: "选项类型"
-    option_value: "选项值"
-    option_values: "选项值"
-    optional: "可选的"
-    options: "选项"
-    or: "或"
+      product_cloned: 产品已经被复制
+      product_deleted: 产品已经被删除
+      product_not_cloned: 产品无法被复制
+      product_not_deleted: 产品无法被删除
+      variant_deleted: 具体型号已经被删除
+      variant_not_deleted: 具体型号不能被删除
+    num_orders: 订单数量
+    number: 订单号
+    on_hand: 库存
+    open: 打开
+    open_all_adjustments: 启用所有价格调整
+    option_type: 选项类型
+    option_type_placeholder: 选项类型默认值
+    option_types: 选项类型
+    option_value: 选项值
+    option_values: 选项值
+    optional: 可选的
+    options: 选项
+    or: 或
     or_over_price: "%{price}或以上"
-    order: "订单"
-    order_adjustments: "订单调整"
-    order_already_updated: "订单已经更新"
-    order_approved: "订单已核准"
-    order_canceled: "订单已取消"
-    order_details: "订单详情"
-    order_email_resent: "重新发出了订单邮件"
-    order_information: "订单信息"
+    order: 订单
+    order_adjustments: 订单调整
+    order_already_updated: 订单已经更新
+    order_approved: 订单已核准
+    order_canceled: 订单已取消
+    order_details: 订单详情
+    order_email_resent: 重新发出了订单邮件
+    order_information: 订单信息
     order_mailer:
       cancel_email:
-        dear_customer: "亲爱的顾客，"
-        instructions: "您的订单已被取消。请保留此取消信息记录。"
-        order_summary_canceled: "订单总览 [已取消]"
-        subject: "取消订单"
+        dear_customer: 亲爱的顾客，
+        instructions: 您的订单已被取消。请保留此取消信息记录。
+        order_summary_canceled: 订单总览 [已取消]
+        subject: 取消订单
         subtotal:
         total:
       confirm_email:
-        dear_customer: "亲爱的顾客，"
-        instructions: "请仔细阅读并保留以下订单信息记录。"
-        order_summary: "订单总览"
-        subject: "订单确认"
+        dear_customer: 亲爱的顾客，
+        instructions: 请仔细阅读并保留以下订单信息记录。
+        order_summary: 订单总览
+        subject: 订单确认
         subtotal:
-        thanks: "谢谢您的购买。"
+        thanks: 谢谢您的购买。
         total:
-    order_not_found: "我们无法找到您的订单。请重新尝试。"
-    order_number: "订单号 %{number}"
-    order_processed_successfully: "您的订单已经被成功处理了"
+    order_not_found: 我们无法找到您的订单。请重新尝试。
+    order_number: 订单号 %{number}
+    order_processed_successfully: 您的订单已经被成功处理了
     order_resumed:
     order_states:
-      address: "地址"
-      awaiting_return: "等待退货"
-      canceled: "取消"
-      cart: "购物车"
-      complete: "完成"
-      confirm: "确认"
+      address: 地址
+      awaiting_return: 等待退货
+      canceled: 取消
+      cart: 购物车
+      complete: 完成
+      confirm: 确认
       considered_risky:
-      delivery: "配送"
-      payment: "支付"
-      resumed: "重新开始"
-      returned: "返回"
-    order_summary: "订单概述"
-    order_sure_want_to: "您确定您想要%{event}这个订单么?"
-    order_total: "订单总计"
-    order_updated: "订单已更新"
-    orders: "订单"
+      delivery: 配送
+      payment: 支付
+      resumed: 重新开始
+      returned: 返回
+    order_summary: 订单概述
+    order_sure_want_to: 您确定您想要%{event}这个订单么?
+    order_total: 订单总计
+    order_updated: 订单已更新
+    orders: 订单
     other_items_in_other:
-    out_of_stock: "没有库存"
-    overview: "首页"
-    package_from: "包裹来自"
+    out_of_stock: 没有库存
+    overview: 首页
+    package_from: 包裹来自
     pagination:
-      next_page: "下一页 »"
+      next_page: 下一页 »
       previous_page: "« 上一页"
       truncate: "…"
-    password: "密码"
-    paste: "粘贴"
-    path: "路径"
-    pay: "支付"
-    payment: "支付"
+    password: 密码
+    paste: 粘贴
+    path: 路径
+    pay: 支付
+    payment: 支付
     payment_could_not_be_created:
     payment_identifier:
-    payment_information: "支付信息"
-    payment_method: "支付方式"
+    payment_information: 支付信息
+    payment_method: 支付方式
     payment_method_not_supported:
-    payment_methods: "支付方式"
-    payment_processing_failed: "无法处理支付信息，请检查您所输入的详细信息"
-    payment_processor_choose_banner_text: "如果您需要关于支付处理的帮助，请访问"
-    payment_processor_choose_link: "我们的支付页面"
-    payment_state: "支付状态"
+    payment_methods: 支付方式
+    payment_processing_failed: 无法处理支付信息，请检查您所输入的详细信息
+    payment_processor_choose_banner_text: 如果您需要关于支付处理的帮助，请访问
+    payment_processor_choose_link: 我们的支付页面
+    payment_state: 支付状态
     payment_states:
-      balance_due: "欠款"
-      checkout: "支付"
-      completed: "完成"
+      balance_due: 欠款
+      checkout: 支付
+      completed: 完成
       credit_owed: credit owed
-      failed: "失败"
-      paid: "已支付"
-      pending: "等待中"
-      processing: "正在处理"
-      void: "无效"
-    payment_updated: "支付已更新"
-    payments: "支付"
+      failed: 失败
+      paid: 已支付
+      pending: 等待中
+      processing: 正在处理
+      void: 无效
+    payment_updated: 支付已更新
+    payments: 支付
     pending:
-    percent: "百分比"
-    percent_per_item: "单件百分比"
-    permalink: "永久链接"
-    phone: "电话"
-    place_order: "下单"
-    please_define_payment_methods: "请先设定支付方式。"
-    populate_get_error: "出错了，请重新添加项目。"
-    powered_by: "技术支持"
-    pre_tax_amount: "税前金额"
-    pre_tax_refund_amount: "税前退款金额"
-    pre_tax_total: "税前总计"
+    percent: 百分比
+    percent_per_item: 单件百分比
+    permalink: 永久链接
+    phone: 电话
+    place_order: 下单
+    please_define_payment_methods: 请先设定支付方式。
+    populate_get_error: 出错了，请重新添加项目。
+    powered_by: 技术支持
+    pre_tax_amount: 税前金额
+    pre_tax_refund_amount: 税前退款金额
+    pre_tax_total: 税前总计
     preferred_reimbursement_type:
-    presentation: "描述"
-    previous: "上一页"
-    previous_state_missing: "状态未知"
-    price: "价格"
-    price_range: "价格范围"
-    price_sack: "袋价格"
-    process: "处理"
-    product: "产品"
-    product_details: "产品详情"
-    product_has_no_description: "该产品没有描述"
-    product_not_available_in_this_currency: "此产品在当前选中的货币下不可购买。"
-    product_properties: "产品属性"
+    presentation: 描述
+    previous: 上一页
+    previous_state_missing: 状态未知
+    price: 价格
+    price_range: 价格范围
+    price_sack: 袋价格
+    process: 处理
+    product: 产品
+    product_details: 产品详情
+    product_has_no_description: 该产品没有描述
+    product_not_available_in_this_currency: 此产品在当前选中的货币下不可购买。
+    product_properties: 产品属性
     product_rule:
-      choose_products: "选择产品"
-      label: "订单应该包含这些商品的数量"
-      match_all: "全部"
-      match_any: "至少一个"
+      choose_products: 选择产品
+      label: 订单应该包含这些商品的数量
+      match_all: 全部
+      match_any: 至少一个
       match_none:
       product_source:
-        group: "从产品分组"
-        manual: "手工选择"
-    products: "产品"
-    promotion: "促销"
-    promotion_action: "优惠方式"
+        group: 从产品分组
+        manual: 手工选择
+    products: 产品
+    promotion: 促销
+    promotion_action: 优惠方式
     promotion_action_types:
       create_adjustment:
-        description: "为订单添加促销用的价格调整"
-        name: "添加订单的价格调整"
+        description: 为订单添加促销用的价格调整
+        name: 添加订单的价格调整
       create_item_adjustments:
-        description: "为订单上的单项产品添加一笔促销用的价格调整"
-        name: "添加单项的价格调整"
+        description: 为订单上的单项产品添加一笔促销用的价格调整
+        name: 添加单项的价格调整
       create_line_items:
-        description: "增加特定商品到订单中"
-        name: "赠送礼品"
+        description: 增加特定商品到订单中
+        name: 赠送礼品
       free_shipping:
-        description: "整张订单免费发货"
-        name: "免运费"
-    promotion_actions: "优惠方式"
+        description: 整张订单免费发货
+        name: 免运费
+    promotion_actions: 优惠方式
     promotion_form:
       match_policies:
-        all: "匹配任意规则"
-        any: "匹配所有规则"
-    promotion_rule: "促销规则"
+        all: 匹配任意规则
+        any: 匹配所有规则
+    promotion_rule: 促销规则
     promotion_rule_types:
       first_order:
-        description: "必须是客户的第一笔订单"
-        name: "第一笔订单"
+        description: 必须是客户的第一笔订单
+        name: 第一笔订单
       item_total:
-        description: "订单总额满足这些条件"
-        name: "小记"
+        description: 订单总额满足这些条件
+        name: 小记
       landing_page:
-        description: "客户必须访问了指定的页面"
-        name: "登录页面"
+        description: 客户必须访问了指定的页面
+        name: 登录页面
       one_use_per_user:
-        description: "每人只可使用一次"
-        name: "每人一次"
+        description: 每人只可使用一次
+        name: 每人一次
       option_value:
         description:
         name:
       product:
-        description: "订单包含指定的产品"
-        name: "产品"
+        description: 订单包含指定的产品
+        name: 产品
       taxon:
-        description: "订单中包括指定分类产品"
-        name: "分类"
+        description: 订单中包括指定分类产品
+        name: 分类
       user:
-        description: "只对指定的用户生效"
-        name: "用户"
+        description: 只对指定的用户生效
+        name: 用户
       user_logged_in:
-        description: "只对已经登录的用户有效"
-        name: "用户登录"
-    promotion_uses: "促销使用频率"
+        description: 只对已经登录的用户有效
+        name: 用户登录
+    promotion_uses: 促销使用频率
     promotionable:
-    promotions: "促销"
+    promotions: 促销
     propagate_all_variants:
-    properties: "属性"
-    property: "属性"
-    prototype: "原型"
-    prototypes: "原型"
-    provider: "提供者"
-    provider_settings_warning: "如果您正在修改提供者类型，您需要在编辑提供者设置之前先保存。"
-    qty: "数量"
-    quantity: "数量"
-    quantity_returned: "返回的数量"
-    quantity_shipped: "已发货数量"
-    quick_search: "快速搜索"
-    rate: "费率"
-    reason: "原因"
-    receive: "收到"
+    properties: 属性
+    property: 属性
+    prototype: 原型
+    prototypes: 原型
+    provider: 提供者
+    provider_settings_warning: 如果您正在修改提供者类型，您需要在编辑提供者设置之前先保存。
+    purchased_quantity: 购买数量
+    qty: 数量
+    quantity: 数量
+    quantity_returned: 返回的数量
+    quantity_shipped: 已发货数量
+    quick_search: 快速搜索
+    rate: 费率
+    reason: 原因
+    receive: 收到
     receive_stock:
-    received: "已收到"
+    received: 已收到
     reception_status:
     reference:
-    refund: "退款"
+    refund: 退款
     refund_amount_must_be_greater_than_zero:
-    refund_reasons: '退款原因'
+    refund_reasons: 退款原因
     refunded_amount:
     refunds:
-    register: "注册成为新用户"
-    registration: "注册"
-    reimburse: '退款'
-    reimbursed: '已退款'
+    register: 注册成为新用户
+    registration: 注册
+    reimburse: 退款
+    reimbursed: 已退款
     reimbursement:
     reimbursement_mailer:
       reimbursement_email:
@@ -1087,30 +1087,27 @@ zh-CN:
         total_refunded:
     reimbursement_perform_failed:
     reimbursement_status:
-    reimbursement_type: "退款类型"
+    reimbursement_type: 退款类型
     reimbursement_type_override:
-    reimbursement_types: "退款类型"
-    purchased_quantity: "购买数量"
-    charged: "付款金额"
+    reimbursement_types: 退款类型
     reimbursements:
     reject:
     rejected:
-    remember_me: "记住我"
-    remove: "移出"
-    rename: "重命名"
+    remember_me: 记住我
+    remove: 移出
+    rename: 重命名
     report:
-    reports: "报表"
-    resend: "重新发送"
-    reset_password: "重置密码"
-    response_code: "返回代码"
-    resume: "恢复"
-    resumed: "已恢复"
-    return: "退货"
-    returns: "退货"		
-    return_authorization: "退货审批"
-    return_authorization_reasons: "退货审批原因"
-    return_authorization_updated: "退货审批已更新"
-    return_authorizations: "退货审批"
+    reports: 报表
+    resend: 重新发送
+    reset_password: 重置密码
+    response_code: 返回代码
+    resume: 恢复
+    resumed: 已恢复
+    return: 退货
+    return_authorization: 退货审批
+    return_authorization_reasons: 退货审批原因
+    return_authorization_updated: 退货审批已更新
+    return_authorizations: 退货审批
     return_item_inventory_unit_ineligible:
     return_item_inventory_unit_reimbursed:
     return_item_rma_ineligible:
@@ -1118,100 +1115,101 @@ zh-CN:
     return_items:
     return_items_cannot_be_associated_with_multiple_orders:
     return_number:
-    return_quantity: "退货数量"
-    returned: "已退回"
+    return_quantity: 退货数量
+    returned: 已退回
+    returns: 退货
     review: Review
     risk:
     risk_analysis:
     risky:
     rma_credit: RMA Credit
-    rma_number: "退货单号"
-    rma_value: "退货价值"
-    roles: "角色"
+    rma_number: 退货单号
+    rma_value: 退货价值
+    roles: 角色
     rules: Rules
-    safe: "安全"
-    sales_total: "销售总计"
-    sales_total_description: "所有订单总销量"
-    sales_totals: "总销量"
-    save_and_continue: "保存并继续"
-    save_my_address: "保存我的地址"
-    say_no: "不"
-    say_yes: "是的"
-    scope: "范围"
-    search: "搜索"
-    search_results: "搜索 '%{keywords}' 的结果"
-    searching: "搜索"
-    secure_connection_type: "安全连接类型"
-    security_settings: "安全设置"
-    select: "选择"
-    select_a_return_authorization_reason: '选择一个退货审批原因'
-    select_a_stock_location: '选择一个库存区域'
-    select_from_prototype: "从原型中选择"
+    safe: 安全
+    sales_total: 销售总计
+    sales_total_description: 所有订单总销量
+    sales_totals: 总销量
+    save_and_continue: 保存并继续
+    save_my_address: 保存我的地址
+    say_no: 不
+    say_yes: 是的
+    scope: 范围
+    search: 搜索
+    search_results: 搜索 '%{keywords}' 的结果
+    searching: 搜索
+    secure_connection_type: 安全连接类型
+    security_settings: 安全设置
+    select: 选择
+    select_a_return_authorization_reason: 选择一个退货审批原因
+    select_a_stock_location: 选择一个库存区域
+    select_from_prototype: 从原型中选择
     select_stock:
-    send_copy_of_all_mails_to: "将所有邮件的副本发送至"
-    send_mails_as: "发送邮件作为"
-    server: "服务器"
-    server_error: "服务器返回了一个错误"
-    settings: "设置"
-    ship: "发货"
-    ship_address: "配送地址"
+    send_copy_of_all_mails_to: 将所有邮件的副本发送至
+    send_mails_as: 发送邮件作为
+    server: 服务器
+    server_error: 服务器返回了一个错误
+    settings: 设置
+    ship: 发货
+    ship_address: 配送地址
     ship_total:
-    shipment: "配送"
+    shipment: 配送
     shipment_adjustments:
     shipment_details:
     shipment_mailer:
       shipped_email:
-        dear_customer: "亲爱的顾客，"
-        instructions: "您的订单已发货"
-        shipment_summary: "发货概览"
-        subject: "发货通知"
-        thanks: "谢谢您的购买"
-        track_information: "物流信息： %{tracking}"
+        dear_customer: 亲爱的顾客，
+        instructions: 您的订单已发货
+        shipment_summary: 发货概览
+        subject: 发货通知
+        thanks: 谢谢您的购买
+        track_information: 物流信息： %{tracking}
         track_link:
-    shipment_state: "配送状态"
+    shipment_state: 配送状态
     shipment_states:
-      backorder: "缺货预售"
-      canceled: "已取消"
-      partial: "部分发货"
-      pending: "等待中"
-      ready: "就绪"
-      shipped: "已发货"
+      backorder: 缺货预售
+      canceled: 已取消
+      partial: 部分发货
+      pending: 等待中
+      ready: 就绪
+      shipped: 已发货
     shipment_transfer_error:
     shipment_transfer_success:
-    shipments: "配送"
-    shipped: "已发货"
-    shipping: "配送中"
-    shipping_address: "配送地址"
-    shipping_categories: "配送类型"
-    shipping_category: "配送分类"
-    shipping_flat_rate_per_item: "以单项计固定费率"
-    shipping_flat_rate_per_order: "固定费率"
-    shipping_flexible_rate: "以每项计弹性价格"
-    shipping_instructions: "配送指南"
-    shipping_method: "配送方式"
-    shipping_methods: "配送方式"
+    shipments: 配送
+    shipped: 已发货
+    shipping: 配送中
+    shipping_address: 配送地址
+    shipping_categories: 配送类型
+    shipping_category: 配送分类
+    shipping_flat_rate_per_item: 以单项计固定费率
+    shipping_flat_rate_per_order: 固定费率
+    shipping_flexible_rate: 以每项计弹性价格
+    shipping_instructions: 配送指南
+    shipping_method: 配送方式
+    shipping_methods: 配送方式
     shipping_price_sack:
-    shipping_total: '邮费'
-    shop_by_taxonomy: "根据%{taxonomy}购物"
-    shopping_cart: "购物车"
-    show: "显示"
-    show_active: "显示激活的"
-    show_deleted: "显示删除的"
-    show_only_complete_orders: "只显示完整的订单"
-    show_only_considered_risky: "只显示有风险的订单"
+    shipping_total: 邮费
+    shop_by_taxonomy: 根据%{taxonomy}购物
+    shopping_cart: 购物车
+    show: 显示
+    show_active: 显示激活的
+    show_deleted: 显示删除的
+    show_only_complete_orders: 只显示完整的订单
+    show_only_considered_risky: 只显示有风险的订单
     show_rate_in_label:
-    sku: "条形码"
+    sku: 条形码
     skus:
     slug:
-    source: "来源"
-    special_instructions: "特别说明"
-    split: "分拆"
-    spree_gateway_error_flash_for_checkout: "您的支付信息存在错误。请检查您的信息后再次尝试。"
+    source: 来源
+    special_instructions: 特别说明
+    split: 分拆
+    spree_gateway_error_flash_for_checkout: 您的支付信息存在错误。请检查您的信息后再次尝试。
     ssl:
       change_protocol:
-    start: "开始"
-    state: "省份"
-    state_based: "根据省份"
+    start: 开始
+    state: 省份
+    state_based: 根据省份
     state_machine_states:
       accepted:
       address:
@@ -1244,131 +1242,132 @@ zh-CN:
       returned:
       shipped:
       void:
-    states: "省份"
+    states: 省份
     states_required:
-    status: "状态"
-    stock: "库存"
-    stock_location: "库存区域"
-    stock_location_info: "库存区域资讯"
-    stock_locations: "库存区域"
+    status: 状态
+    stock: 库存
+    stock_location: 库存区域
+    stock_location_info: 库存区域资讯
+    stock_locations: 库存区域
     stock_locations_need_a_default_country:
-    stock_management: "库存管理"
-    stock_management_requires_a_stock_location: "请先新增库存区域，才可使用库存管理"
-    stock_movements: "库存动向"
+    stock_management: 库存管理
+    stock_management_requires_a_stock_location: 请先新增库存区域，才可使用库存管理
+    stock_movements: 库存动向
     stock_movements_for_stock_location: "%{stock_location_name} 的库存动向"
-    stock_successfully_transferred: "库存已成功在两区域转移"
-    stock_transfer: "库存转移"
-    stock_transfers: "库存转移"
-    stop: "结束"
-    store: "商城"
-    street_address: "地址"
-    street_address_2: "地址2(非必填)"
-    subtotal: "小计"
-    subtract: "减去"
-    success: "成功"
+    stock_successfully_transferred: 库存已成功在两区域转移
+    stock_transfer: 库存转移
+    stock_transfers: 库存转移
+    stop: 结束
+    store: 商城
+    store_credit_categories: Store Credit 类型
+    street_address: 地址
+    street_address_2: 地址2(非必填)
+    subtotal: 小计
+    subtract: 减去
+    success: 成功
     successfully_created: "%{resource} 已被成功添加!"
     successfully_refunded:
     successfully_removed: "%{resource} 已被成功删除!"
     successfully_signed_up_for_analytics:
     successfully_updated: "%{resource} 已被成功更新!"
     summary:
-    tax: "税"
-    tax_categories: "缴税分类"
-    tax_category: "缴税分类"
-    tax_code: "税号"
+    tags: 标签
+    tags_placeholder: 添加标签
+    tax: 税
+    tax_categories: 缴税分类
+    tax_category: 缴税分类
+    tax_code: 税号
     tax_included:
     tax_rate_amount_explanation:
-    tax_rates: "税率"
-    taxon: "分类"
-    taxon_edit: "编辑分类"
-    taxon_placeholder: "添加分类"
-    tags: "标签"
-    tags_placeholder: "添加标签"
+    tax_rates: 税率
+    taxon: 分类
+    taxon_edit: 编辑分类
+    taxon_placeholder: 添加分类
     taxon_rule:
-      choose_taxons: "选择分类"
-      label: "订单必须包含这些分类的数量"
-      match_all: "全部"
-      match_any: "至少一个"
-    taxonomies: "分类层级"
-    taxonomy: "分类层级"
-    taxonomy_edit: "编辑分类层级"
-    taxonomy_tree_error: "请求的变更没有被接受，分类树会恢复到之前的状态，请重新尝试."
+      choose_taxons: 选择分类
+      label: 订单必须包含这些分类的数量
+      match_all: 全部
+      match_any: 至少一个
+    taxonomies: 分类层级
+    taxonomy: 分类层级
+    taxonomy_edit: 编辑分类层级
+    taxonomy_tree_error: 请求的变更没有被接受，分类树会恢复到之前的状态，请重新尝试.
     taxonomy_tree_instruction: "* 右键单击一个树的子结点以访问添加、删除或者排序字节点的菜单."
-    taxons: "分类"
-    test: "测试"
+    taxons: 分类
+    test: 测试
     test_mailer:
       test_email:
-        greeting: "恭喜!"
-        message: "如果您收到此邮件，则说明您的邮件设置是正确的"
-        subject: "测试邮件"
-    test_mode: "测试模式"
-    thank_you_for_your_order: "感谢您的订购，请打印这张订单作为购买凭证。"
+        greeting: 恭喜!
+        message: 如果您收到此邮件，则说明您的邮件设置是正确的
+        subject: 测试邮件
+    test_mode: 测试模式
+    thank_you_for_your_order: 感谢您的订购，请打印这张订单作为购买凭证。
     there_are_no_items_for_this_order:
-    there_were_problems_with_the_following_fields: "以下字段存在错误"
+    there_were_problems_with_the_following_fields: 以下字段存在错误
     this_order_has_already_received_a_refund:
-    thumbnail: "缩略图"
+    thumbnail: 缩略图
     tiered_flat_rate:
     tiered_percent:
     tiers:
-    time: "时间"
-    to_add_variants_you_must_first_define: "要添加具体型号，您需要先定义"
-    total: "总计"
+    time: 时间
+    to_add_variants_you_must_first_define: 要添加具体型号，您需要先定义
+    total: 总计
     total_per_item:
-    total_pre_tax_refund: "税前总共退款金额"
-    total_price: "总价"
-    total_sales: "总计消费金额"
-    track_inventory: "追踪库存"
-    tracking: "追踪"
-    tracking_number: "物流编号"
-    tracking_url: "查询网站"
-    tracking_url_placeholder: "比如，http://quickship.com/package?num=:tracking"
+    total_pre_tax_refund: 税前总共退款金额
+    total_price: 总价
+    total_sales: 总计消费金额
+    track_inventory: 追踪库存
+    tracking: 追踪
+    tracking_number: 物流编号
+    tracking_url: 查询网站
+    tracking_url_placeholder: 比如，http://quickship.com/package?num=:tracking
     transaction_id:
     transfer_from_location:
-    transfer_stock: "转移库存"
+    transfer_stock: 转移库存
     transfer_to_location:
-    tree: "树"
-    type: "类型"
-    type_to_search: "搜索类型"
-    unable_to_connect_to_gateway: "无法连接支付网关."
+    tree: 树
+    type: 类型
+    type_to_search: 搜索类型
+    unable_to_connect_to_gateway: 无法连接支付网关.
     unable_to_create_reimbursements:
-    under_price: "低于 %{price}"
-    unlock: "解锁"
-    unrecognized_card_type: "无法辨识的支付卡种类"
-    unshippable_items: "无法邮寄的商品"
-    update: "更新"
-    updating: "更新中"
-    usage_limit: "使用限制"
-    use_app_default: "使用默认"
-    use_billing_address: "使用账单地址"
-    use_new_cc: "使用一张新卡"
-    use_s3: "使用Amazon S3存储图片"
-    user: "用户"
+    under_price: 低于 %{price}
+    unlock: 解锁
+    unrecognized_card_type: 无法辨识的支付卡种类
+    unshippable_items: 无法邮寄的商品
+    update: 更新
+    updating: 更新中
+    usage_limit: 使用限制
+    use_app_default: 使用默认
+    use_billing_address: 使用账单地址
+    use_new_cc: 使用一张新卡
+    use_s3: 使用Amazon S3存储图片
+    user: 用户
     user_rule:
-      choose_users: "选择用户"
-    users: "用户详情"
+      choose_users: 选择用户
+    users: 用户详情
     validation:
-      cannot_be_less_than_shipped_units: "不能少于已配送的单位数。"
+      cannot_be_less_than_shipped_units: 不能少于已配送的单位数。
       cannot_destroy_line_item_as_inventory_units_have_shipped:
-      exceeds_available_stock: "超出可用的库存。请确认订单项拥有有效的数量。"
-      is_too_large: "数量太多了 -- 现有库存无法满足您需要的数量!"
-      must_be_int: "必须是整数"
-      must_be_non_negative: "不能为负数"
+      exceeds_available_stock: 超出可用的库存。请确认订单项拥有有效的数量。
+      is_too_large: 数量太多了 -- 现有库存无法满足您需要的数量!
+      must_be_int: 必须是整数
+      must_be_non_negative: 不能为负数
       unpaid_amount_not_zero:
-    value: "值"
-    variant: "具体型号"
-    variant_placeholder: "选择具体型号"
-    variants: "具体型号"
-    version: "版本"
-    void: "作废"
-    weight: "重量"
-    what_is_a_cvv: "信用卡验证码(CVV)是什么"
-    what_is_this: "这是什么?"
-    width: "宽度"
-    year: "年"
-    you_have_no_orders_yet: "您还没有下过订单"
-    your_cart_is_empty: "您的购物车是空的"
-    your_order_is_empty_add_product: "您的订单是空的，请搜索并且添加以上的产品"
-    zip: "邮编"
-    zipcode: "邮编"
-    zone: "区域"
-    zones: "区域"
+    value: 值
+    variant: 具体型号
+    variant_placeholder: 选择具体型号
+    variants: 具体型号
+    version: 版本
+    void: 作废
+    weight: 重量
+    what_is_a_cvv: 信用卡验证码(CVV)是什么
+    what_is_this: 这是什么?
+    width: 宽度
+    year: 年
+    you_have_no_orders_yet: 您还没有下过订单
+    your_cart_is_empty: 您的购物车是空的
+    your_order_is_empty_add_product: 您的订单是空的，请搜索并且添加以上的产品
+    zip: 邮编
+    zipcode: 邮编
+    zone: 区域
+    zones: 区域

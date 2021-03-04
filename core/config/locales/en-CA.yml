@@ -1,4 +1,5 @@
+---
 en-CA:
   spree:
     i18n:
-      this_file_language: 'English (en-CA)'
+      this_file_language: English (en-CA)

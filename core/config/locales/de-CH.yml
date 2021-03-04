@@ -1,3 +1,4 @@
+---
 de-CH:
   activerecord:
     attributes:
@@ -337,8 +338,8 @@ de-CH:
         orders:
         overview:
         products:
-        promotions:
         promotion_categories:
+        promotions:
         properties:
         prototypes:
         reports:
@@ -384,7 +385,7 @@ de-CH:
     are_you_sure: Sind Sie sicher
     are_you_sure_delete: Sind sie sicher, dass Sie diesen Eintrag löschen möchten?
     associated_adjustment_closed:
-    at_symbol: '@'
+    at_symbol: "@"
     authorization_failure: Anmeldung fehlgeschlagen
     authorized:
     auto_capture:
@@ -519,7 +520,6 @@ de-CH:
     date:
     date_completed:
     date_picker:
-      # FlatPickr human friendly formatting
       fpr_human_friendly_date_format: M j, Y
       fpr_human_friendly_date_time_format: M j, Y - H:i
     date_range: Datum (von/bis)
@@ -696,7 +696,7 @@ de-CH:
     login_name: Benutzer
     logout: Abmelden
     logs:
-    look_for_similar_items: "Ähnliche Artikel"
+    look_for_similar_items: Ähnliche Artikel
     make_refund:
     make_sure_the_above_reimbursement_amount_is_correct:
     manage_promotion_categories:
@@ -844,7 +844,7 @@ de-CH:
     orders: Bestellungen
     other_items_in_other:
     out_of_stock: Ausverkauft
-    overview: "Übersicht"
+    overview: Übersicht
     package_from:
     pagination:
       next_page:

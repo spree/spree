@@ -1,4 +1,5 @@
+---
 es-VE:
   spree:
     i18n:
-      this_file_language: 'Español (es-VE)'
+      this_file_language: Español (es-VE)

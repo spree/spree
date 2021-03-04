@@ -1,14 +1,15 @@
+---
 vi:
   activerecord:
     attributes:
       spree/address:
-        address1: "Địa chỉ"
-        address2: "Địa chỉ (tiếp)"
+        address1: Địa chỉ
+        address2: Địa chỉ (tiếp)
         city: Thành phố
         country: Quốc gia
         firstname: Tên
         lastname: Họ
-        phone: "Điện thoại"
+        phone: Điện thoại
         state: Bang
         zipcode: Mã Zip
       spree/calculator/tiered_flat_rate:
@@ -46,7 +47,7 @@ vi:
         coupon_code:
         created_at: Ngày đặt hàng
         email: Email của khách hàng
-        ip_address: "Địa chỉ IP"
+        ip_address: Địa chỉ IP
         item_total: Tổng sản phẩm
         number: Số
         payment_state: Trạng thái thanh toán
@@ -55,21 +56,21 @@ vi:
         state: Bang
         total: Tổng
       spree/order/bill_address:
-        address1: "Đỉa chị thanh toán - tên đường"
-        city: "Đỉa chị thanh toán - thành phố"
-        firstname: "Đỉa chị thanh toán - tên"
-        lastname: "Đỉa chị thanh toán - họ"
-        phone: "Đỉa chị thanh toán - ĐT"
-        state: "Đỉa chị thanh toán - bang"
-        zipcode: "Đỉa chị thanh toán - mã zip"
+        address1: Đỉa chị thanh toán - tên đường
+        city: Đỉa chị thanh toán - thành phố
+        firstname: Đỉa chị thanh toán - tên
+        lastname: Đỉa chị thanh toán - họ
+        phone: Đỉa chị thanh toán - ĐT
+        state: Đỉa chị thanh toán - bang
+        zipcode: Đỉa chị thanh toán - mã zip
       spree/order/ship_address:
-        address1: "Đỉa chị giao hàng - tên đường"
-        city: "Đỉa chị giao hàng - thành phố"
-        firstname: "Đỉa chị giao hàng - tên"
-        lastname: "Đỉa chị giao hàng - họ"
-        phone: "Đỉa chị giao hàng - ĐT"
-        state: "Đỉa chị giao hàng - bang"
-        zipcode: "Đỉa chị giao hàng - mã zip"
+        address1: Đỉa chị giao hàng - tên đường
+        city: Đỉa chị giao hàng - thành phố
+        firstname: Đỉa chị giao hàng - tên
+        lastname: Đỉa chị giao hàng - họ
+        phone: Đỉa chị giao hàng - ĐT
+        state: Đỉa chị giao hàng - bang
+        zipcode: Đỉa chị giao hàng - mã zip
       spree/payment:
         amount: Giá trị
       spree/payment_method:
@@ -91,7 +92,7 @@ vi:
         event_name: Tên sự kiện
         expires_at: Hết hạn lúc
         name: Tên
-        path: "Đường dẫn"
+        path: Đường dẫn
         starts_at: Bắt đầu lúc
         usage_limit: Giới hạn sử dụng
       spree/promotion_category:
@@ -143,7 +144,7 @@ vi:
       spree/variant:
         cost_currency: Tiền tệ
         cost_price: Giá nhập
-        depth: sâu 
+        depth: sâu
         height: Cao
         price: Giá bán
         sku: Mã
@@ -243,7 +244,7 @@ vi:
       send_instructions: Bạn sẽ nhận được thư hướng dẫn xác nhận tài khoản của mình trong một vài phút tới.
     failure:
       inactive: Tài khoản của bạn chưa được kích hoạt.
-      invalid: "Địa chỉ hòm thư hoặc mật khẩu không hợp lệ."
+      invalid: Địa chỉ hòm thư hoặc mật khẩu không hợp lệ.
       invalid_token: Token ủy quyền không đúng.
       locked: Tài khoản của bạn đang bị khoá.
       timeout: Session hết hạn, xin vui lòng đăng nhập lại.
@@ -273,11 +274,11 @@ vi:
       signed_up: Chào mừng! Bạn đã thành công đăng kí.
       updated: Bạn đã thành công cập nhật tài khoản.
     user_sessions:
-      signed_in: "Đăng nhập thành công."
-      signed_out: "Đăng xuất thành công."
+      signed_in: Đăng nhập thành công.
+      signed_out: Đăng xuất thành công.
   errors:
     messages:
-      already_confirmed: "đã được chứng nhận"
+      already_confirmed: đã được chứng nhận
       not_found: không tìm thấy
       not_locked: không bị khoá
       not_saved: "%{count} lỗi cấm %{resource} này lưu:"
@@ -321,15 +322,15 @@ vi:
     add_to_cart: Cho vào sọt
     add_variant: Tạo biến thể
     additional_item: Giá phải trả thêm
-    address1: "Địa chỉ"
-    address2: "Địa chỉ (tiếp)"
+    address1: Địa chỉ
+    address2: Địa chỉ (tiếp)
     adjustable:
-    adjustment: "Điều chỉnh"
+    adjustment: Điều chỉnh
     adjustment_amount: Giá trị
-    adjustment_successfully_closed: "Điều chỉnh đã được đóng!"
-    adjustment_successfully_opened: "Điều chỉnh đã được mở!"
+    adjustment_successfully_closed: Điều chỉnh đã được đóng!
+    adjustment_successfully_opened: Điều chỉnh đã được mở!
     adjustment_total: Tổng Điều chỉnh
-    adjustments: "Điều chỉnh"
+    adjustments: Điều chỉnh
     admin:
       tab:
         configuration: Cấu hình
@@ -337,8 +338,8 @@ vi:
         orders: Đơn hàng
         overview: Tổng quát
         products: Sản phẩm
-        promotions: Khuyến mãi
         promotion_categories: Phân loại khuyến mãi
+        promotions: Khuyến mãi
         properties: Đặc tính
         prototypes: Khuôn mẫu
         reports: Báo cáo
@@ -356,8 +357,8 @@ vi:
         user_information: Thông tin tài khoản
     administration: Quản trị
     advertise:
-    agree_to_privacy_policy: "Đồng ý với Điều khoản riêng tư"
-    agree_to_terms_of_service: "Đồng ý với Điều khoản dịch vụ"
+    agree_to_privacy_policy: Đồng ý với Điều khoản riêng tư
+    agree_to_terms_of_service: Đồng ý với Điều khoản dịch vụ
     all: Tất cả
     all_adjustments_closed: Tất cả điều chỉnh đã được đóng!
     all_adjustments_opened: Tất cả điều chỉnh đã được mở!
@@ -368,7 +369,7 @@ vi:
     allow_ssl_in_staging: Cho phép dùng SSL trong môi trường staging
     already_signed_up_for_analytics: Bạn đã đăng kí với Spree Analytics rồi
     alt_text: Chú thích khác
-    alternative_phone: "Điện thoại khác"
+    alternative_phone: Điện thoại khác
     amount: Giá trị
     analytics_desc_header_1: Thống kê Spree
     analytics_desc_header_2: Các thông số thống kê được tích hợp vào Spree dashboard
@@ -383,8 +384,8 @@ vi:
     approver: Người xác nhận
     are_you_sure: Bạn có chắn chắn không?
     are_you_sure_delete: Bạn có chắc bạn muốn xóa hồ sơ này không?
-    associated_adjustment_closed: "Điều chỉnh liên đới đã bị đóng và không thể tính lại. Bạn có muốn mở nó không?"
-    at_symbol: '@'
+    associated_adjustment_closed: Điều chỉnh liên đới đã bị đóng và không thể tính lại. Bạn có muốn mở nó không?
+    at_symbol: "@"
     authorization_failure: Không được ủy quyền truy cập
     authorized:
     auto_capture:
@@ -406,9 +407,9 @@ vi:
     balance_due: Tiền cần thanh toán
     base_amount:
     base_percent:
-    bill_address: "Địa chỉ thanh toán"
+    bill_address: Địa chỉ thanh toán
     billing: Thanh Toán
-    billing_address: "Địa chỉ thanh toán"
+    billing_address: Địa chỉ thanh toán
     both: Both
     calculated_reimbursements:
     calculator: Máy tính
@@ -445,8 +446,8 @@ vi:
     clear_cache_warning:
     click_and_drag_on_the_products_to_sort_them:
     clone: Nhân bản
-    close: "Đóng"
-    close_all_adjustments: "Đóng tất cả chỉnh sửa"
+    close: Đóng
+    close_all_adjustments: Đóng tất cả chỉnh sửa
     code: Mã
     company: Công ty
     complete: hoàn tất
@@ -493,12 +494,12 @@ vi:
     credit_owed: Nợ tín dụng
     credits:
     currency:
-    currency_decimal_mark: "Điểm phân cách tiền hàng số lẻ"
+    currency_decimal_mark: Điểm phân cách tiền hàng số lẻ
     currency_settings:
     currency_symbol_position:
     currency_thousands_separator: Phân cách số hàng nghìn
     current: Hiện thời
-    current_promotion_usage: "Đang dùng: %{count}"
+    current_promotion_usage: 'Đang dùng: %{count}'
     customer: Khách hàng
     customer_details: Thông tin khách hàng
     customer_details_updated: The customer's details have been updated.
@@ -520,7 +521,6 @@ vi:
     date: Ngày
     date_completed:
     date_picker:
-      # FlatPickr human friendly formatting
       fpr_human_friendly_date_format: M j, Y
       fpr_human_friendly_date_time_format: M j, Y - H:i
     date_range: Giới hạn ngày
@@ -533,7 +533,7 @@ vi:
     delivery: Delivery
     depth: Sâu
     description: Miêu tả
-    destination: "Đích đến"
+    destination: Đích đến
     destroy: Hủy diệt
     details:
     discontinue_on: Kết thúc vào ngày
@@ -610,7 +610,7 @@ vi:
     first_item: Món hàng đầu tiên giá
     first_name: Tên
     first_name_begins_with: Tên bắt đầu với
-    flat_percent: "Định mức phần trăm"
+    flat_percent: Định mức phần trăm
     flat_rate_per_order: Lãi suất sàn (cho từng đơn hàng)
     flexible_rate: Lãi suất dao động
     forgot_password: Quên mật khẩu
@@ -648,7 +648,7 @@ vi:
     incomplete:
     info_number_of_skus_not_shown:
     info_product_has_multiple_skus:
-    instructions_to_reset_password: "Điền vào mẫu phía dưới và hướng dẫn cách thay đổi mật khẩu sẽ được gửi qua email đến bạn:"
+    instructions_to_reset_password: 'Điền vào mẫu phía dưới và hướng dẫn cách thay đổi mật khẩu sẽ được gửi qua email đến bạn:'
     insufficient_stock: Không đủ hàng, chỉ còn lại %{on_hand}
     insufficient_stock_lines_present:
     intercept_email_address: Can thiệp địa chỉ email
@@ -660,7 +660,7 @@ vi:
     invalid_promotion_action: Hành động khuyến mại không đúng.
     invalid_promotion_rule: Luật khuyến mại không đúng.
     inventory: Hàng
-    inventory_adjustment: "Điều chỉnh hàng tồn"
+    inventory_adjustment: Điều chỉnh hàng tồn
     inventory_error_flash_for_insufficient_quantity: Một sản phẩm trong sọt của bạn đã cháy hàng.
     inventory_state:
     is_not_available_to_shipment_address: không thể chuyển đến địa chỉ chỉ định
@@ -680,26 +680,26 @@ vi:
     items_to_be_reimbursed:
     jirafe: Jirafe
     landing_page_rule:
-      path: "Đường dẫn"
+      path: Đường dẫn
     last_name: Họ
     last_name_begins_with: Tên họ bắt đầu với
-    learn_more: "Đọc thêm"
+    learn_more: Đọc thêm
     lifetime_stats:
     line_item_adjustments:
     list: Liệt kê
-    loading: "Đang tải"
+    loading: Đang tải
     locale_changed: Thay đổi địa hóa
-    location: "Địa điểm"
+    location: Địa điểm
     lock: Khoá
     log_entries:
-    logged_in_as: "Đã đăng nhập với"
-    logged_in_succesfully: "Đăng nhập thành công"
+    logged_in_as: Đã đăng nhập với
+    logged_in_succesfully: Đăng nhập thành công
     logged_out: Bạn đã đăng xuất
-    login: "Đăng nhập"
-    login_as_existing: "Đăng nhập như khách hàng cũ"
-    login_failed: "Đăng nhập không uy quyền."
-    login_name: "Đăng nhập"
-    logout: "Đăng xuất"
+    login: Đăng nhập
+    login_as_existing: Đăng nhập như khách hàng cũ
+    login_failed: Đăng nhập không uy quyền.
+    login_name: Đăng nhập
+    logout: Đăng xuất
     logs:
     look_for_similar_items: Tìm sản phẩm tương tự
     make_refund: Thối tiền
@@ -723,7 +723,7 @@ vi:
     more: Hơn nữa
     move_stock_between_locations: Dời hàng giữa kho
     my_account: Tài khoản của tôi
-    my_orders: "Đơn đặt hàng của tôi"
+    my_orders: Đơn đặt hàng của tôi
     name: Tên
     name_on_card:
     name_or_sku: Tên hoặc SKU
@@ -734,18 +734,18 @@ vi:
     new_customer_return:
     new_image: Hình mới
     new_option_type: Kiểu tùy chọn mới
-    new_order: "Đơn đặt hàng mới"
+    new_order: Đơn đặt hàng mới
     new_order_completed: Thanh toán mới hoàn tất
     new_payment: Thanh toán mới
     new_payment_method: Phương thức thanh toán mới
     new_product: Sản phẩm mới
     new_promotion: Khuyến mại mới
     new_promotion_category: Tạo khuyến mại mới
-    new_property: "Đặc tính mới"
+    new_property: Đặc tính mới
     new_prototype: Nguyên mẫu mới
     new_refund:
     new_refund_reason:
-    new_return_authorization: "Ủy quyền trả về mới"
+    new_return_authorization: Ủy quyền trả về mới
     new_rma_reason:
     new_shipment_at_location:
     new_shipping_category: Loại hình vận chuyển mới
@@ -756,7 +756,7 @@ vi:
     new_stock_transfer: Di chuyển hàng mới
     new_tax_category: Biểu thuế mới
     new_tax_rate: Lãi suất mới
-    new_taxon: "Đơn vị Phân loại mới"
+    new_taxon: Đơn vị Phân loại mới
     new_taxonomy: Phân loại mới
     new_tracker: Tracker mới
     new_user: Người dùng mới
@@ -783,8 +783,8 @@ vi:
     not_found:
     note:
     notice_messages:
-      product_cloned: "Đã nhân bản sản phẩm"
-      product_deleted: "Đã xóa sản phẩm"
+      product_cloned: Đã nhân bản sản phẩm
+      product_deleted: Đã xóa sản phẩm
       product_not_cloned: Không thể nhân bản sản phẩm
       product_not_deleted: Không thể xóa sản phẩm
       variant_deleted: Biến thể đã được xóa
@@ -802,18 +802,18 @@ vi:
     options: Tùy chọn
     or: hoặc
     or_over_price: "%{price} or over"
-    order: "Đơn hàng"
+    order: Đơn hàng
     order_adjustments:
     order_already_updated:
     order_approved:
     order_canceled:
     order_details: Chi tiết đơn hàng
-    order_email_resent: "Đơn hàng đã được gửi email lại"
+    order_email_resent: Đơn hàng đã được gửi email lại
     order_information: Thông tin đơn hàng
     order_mailer:
       cancel_email:
         dear_customer: Kính chào quý khách,\n
-        instructions: "Đơn đặt hàng của quý khách bị hủy. Vui lòng kiểm tra lại đơn hàng của bạn."
+        instructions: Đơn đặt hàng của quý khách bị hủy. Vui lòng kiểm tra lại đơn hàng của bạn.
         order_summary_canceled:
         subject:
         subtotal:
@@ -828,7 +828,7 @@ vi:
         total:
     order_not_found: Không tìm thấy đơn hàng. Xin vui lòng thử hành động khác.
     order_number: Số đơn hàng
-    order_processed_successfully: "Đơn đặt hàng của bạn đã được xử lý thành công"
+    order_processed_successfully: Đơn đặt hàng của bạn đã được xử lý thành công
     order_resumed:
     order_state:
       address:
@@ -845,8 +845,8 @@ vi:
     order_summary: Tóm tắt đơn đặt hàng
     order_sure_want_to: Bạn có chắc bạn muốn %{event} đơn hàng này?
     order_total: Tổng giá sau thuế
-    order_updated: "Đơn hàng được cập nhật"
-    orders: "Đơn hàng"
+    order_updated: Đơn hàng được cập nhật
+    orders: Đơn hàng
     other_items_in_other:
     out_of_stock: Hết hàng
     overview: Tổng kết
@@ -857,7 +857,7 @@ vi:
       truncate: "…"
     password: Mật khẩu
     paste: Paste
-    path: "Đường dẫn"
+    path: Đường dẫn
     pay: thanh toán
     payment: Thanh toán
     payment_could_not_be_created:
@@ -886,8 +886,8 @@ vi:
     percent: Phần trăm
     percent_per_item:
     permalink:
-    phone: "Điện thoại"
-    place_order: "Đặt hàng"
+    phone: Điện thoại
+    place_order: Đặt hàng
     please_define_payment_methods:
     populate_get_error:
     powered_by: Tiếp sức bởi
@@ -906,7 +906,7 @@ vi:
     product_details: Chi tiết sản phẩm
     product_has_no_description: Sản phẩm không có chú thích
     product_not_available_in_this_currency: Sản phẩm này không được cung cấp ở tiền tệ được chọn.
-    product_properties: "Đặc tính sản phẩm"
+    product_properties: Đặc tính sản phẩm
     product_rule:
       choose_products:
       label:
@@ -938,7 +938,7 @@ vi:
       match_policies:
         all:
         any:
-    promotion_label: 'Khuyến mãi (%{name})'
+    promotion_label: Khuyến mãi (%{name})
     promotion_rule:
     promotion_rule_types:
       first_order:
@@ -972,8 +972,8 @@ vi:
     promotionable: Có thể khuyến mãi
     promotions: Khuyến mãi
     propagate_all_variants:
-    properties: "Đặc tính"
-    property: "Đặc tính"
+    properties: Đặc tính
+    property: Đặc tính
     prototype: Nguyên mẫu
     prototypes: Nguyên mẫu
     provider: Nhà cung cấp
@@ -987,7 +987,7 @@ vi:
     reason: Lí do
     receive: nhận
     receive_stock: Nhận hàng
-    received: "Đã nhận"
+    received: Đã nhận
     reception_status:
     reference: Tham khảo
     refund: Thối
@@ -995,8 +995,8 @@ vi:
     refund_reasons:
     refunded_amount:
     refunds:
-    register: "Đăng ký như một thành viên mới"
-    registration: "Đăng ký"
+    register: Đăng ký như một thành viên mới
+    registration: Đăng ký
     reimburse:
     reimbursed:
     reimbursement:
@@ -1027,12 +1027,12 @@ vi:
     reset_password: Khởi tạo lại mật khẩu
     response_code: Mã phản hồi
     resume: tiếp tục
-    resumed: "Đã tiếp tục"
+    resumed: Đã tiếp tục
     return: trở về
-    return_authorization: "Ủy Quyền Trả Về"
+    return_authorization: Ủy Quyền Trả Về
     return_authorization_reasons:
-    return_authorization_updated: "Ủy Quyền Trả Về đã được cập nhật"
-    return_authorizations: "Ủy Quyền Trả Về"
+    return_authorization_updated: Ủy Quyền Trả Về đã được cập nhật
+    return_authorizations: Ủy Quyền Trả Về
     return_item_inventory_unit_ineligible:
     return_item_inventory_unit_reimbursed:
     return_item_rma_ineligible:
@@ -1041,7 +1041,7 @@ vi:
     return_items_cannot_be_associated_with_multiple_orders:
     return_number:
     return_quantity: Số lượng trả về
-    returned: "Đã trả về"
+    returned: Đã trả về
     returns: Trả hàng
     review:
     risk:
@@ -1077,7 +1077,7 @@ vi:
     server_error: Máy chủ bị lỗi
     settings: Cấu hình
     ship: Gửi
-    ship_address: "Địa chỉ giao hàng"
+    ship_address: Địa chỉ giao hàng
     ship_total: Tổng chuyển hàng
     shipment: Vận chuyển
     shipment_adjustments:
@@ -1102,9 +1102,9 @@ vi:
     shipment_transfer_error:
     shipment_transfer_success:
     shipments: Vận chuyển
-    shipped: "Đã chuyển phát"
+    shipped: Đã chuyển phát
     shipping: Vận chuyển
-    shipping_address: "Địa chỉ giao hàng"
+    shipping_address: Địa chỉ giao hàng
     shipping_categories: Loại vận chuyển
     shipping_category: Loại vận chuyển
     shipping_flat_rate_per_item: Giá thấp nhất với từng mục gói
@@ -1171,9 +1171,9 @@ vi:
     states_required: Yêu cầu bang
     status: Tình trạng
     stock:
-    stock_location: "Địa điểm hàng"
+    stock_location: Địa điểm hàng
     stock_location_info: Thông tin địa điểm hàng
-    stock_locations: "Địa điểm hàng"
+    stock_locations: Địa điểm hàng
     stock_locations_need_a_default_country:
     stock_management: Quản lý hàng
     stock_management_requires_a_stock_location:
@@ -1184,8 +1184,8 @@ vi:
     stock_transfers: Chuyển hàng
     stop: Kết thúc
     store: Cửa hàng
-    street_address: "Địa chỉ"
-    street_address_2: "Địa chỉ (tiếp)"
+    street_address: Địa chỉ
+    street_address_2: Địa chỉ (tiếp)
     subtotal: Tổng giá trước thuế
     subtract: Trừ đi
     success:
@@ -1195,15 +1195,15 @@ vi:
     successfully_signed_up_for_analytics: Thành công đăng kí cho Spree Analytics
     successfully_updated: "%{resource} has been successfully updated!"
     summary:
+    tags_placeholder: tags
     tax: Thuế
     tax_categories: Loại thuế
     tax_category: Biểu thuế
     tax_code:
     tax_included:
-    tags_placeholder: tags
     tax_rate_amount_explanation: Mức thuế ở số thập phân để trợ giúp cách tính, (nghĩa là; nếu mức thuế là 5% thì nhập vào 0.05
     tax_rates: Lãi suất thuế
-    taxon: "Đơn vị phân loại"
+    taxon: Đơn vị phân loại
     taxon_edit: Sửa đổi đơn vị phân loại
     taxon_placeholder: Thêm vào một phân loại
     taxon_rule:
@@ -1216,7 +1216,7 @@ vi:
     taxonomy_edit: Sửa đổi phân loại
     taxonomy_tree_error: Thay đồi theo yêu cầu không được chấp nhận và hệ cây đã quay trở về trạng thái như trước, xin hay thử lại lần nữa.
     taxonomy_tree_instruction: "* Nhấp chuột phải vào 1 phần tử con trong hệ cây để truy cập thực đơn để thêm, xóa và sắp xếp một phần tử con."
-    taxons: "Đơn vị phân loại"
+    taxons: Đơn vị phân loại
     test: Kiểm tra
     test_mailer:
       test_email:
@@ -1233,7 +1233,7 @@ vi:
     tiered_percent:
     tiers:
     time: Thời gian
-    to_add_variants_you_must_first_define: "Để thêm biến thể, bạn phải định nghĩa trước"
+    to_add_variants_you_must_first_define: Để thêm biến thể, bạn phải định nghĩa trước
     total: Giá trị
     total_per_item:
     total_pre_tax_refund:
@@ -1258,7 +1258,7 @@ vi:
     unrecognized_card_type: Không nhận ra được loại thẻ
     unshippable_items: Sản phẩm không vận chuyển được
     update: Cập nhật
-    updating: "Đang cập nhật"
+    updating: Đang cập nhật
     usage_limit: Giới hạn sử dụng
     use_app_default:
     use_billing_address: Dùng địa chỉ thanh toán
@@ -1289,7 +1289,7 @@ vi:
     year: Năm
     you_have_no_orders_yet: You have no orders yet.
     your_cart_is_empty: Sọt hàng rỗng
-    your_order_is_empty_add_product: "Đơn hàng của bạn rỗng, xin hay tìm và thêm vào sản phảm như trên"
+    your_order_is_empty_add_product: Đơn hàng của bạn rỗng, xin hay tìm và thêm vào sản phảm như trên
     zip: Mã bưu điện
     zipcode: Mã Zip
     zone: Vùng

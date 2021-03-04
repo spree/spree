@@ -1,3 +1,4 @@
+---
 da:
   activerecord:
     attributes:
@@ -30,7 +31,7 @@ da:
         name:
         number: Nummer
         verification_value: CVV-kode
-        year: "År"
+        year: År
       spree/inventory_unit:
         state: Delstat
       spree/line_item:
@@ -391,8 +392,8 @@ da:
         orders: Ordrer
         overview: Oversigt
         products: Produkter
-        promotions: Kampagner
         promotion_categories:
+        promotions: Kampagner
         properties:
         prototypes:
         reports: Rapporter
@@ -438,7 +439,7 @@ da:
     are_you_sure: Er du sikker?
     are_you_sure_delete: Er du sikker på at du vil slette denne post?
     associated_adjustment_closed: Den tilhørende justering er lukket, og vil ikke blive genberegnet. Vil du åben den?
-    at_symbol: '@'
+    at_symbol: "@"
     authorization_failure: Autorisation fejlede
     authorized:
     auto_capture:
@@ -573,7 +574,6 @@ da:
     date: Dato
     date_completed: Dato gennemført
     date_picker:
-      # FlatPickr human friendly formatting
       fpr_human_friendly_date_format: M j, Y
       fpr_human_friendly_date_time_format: M j, Y - H:i
     date_range: Datointerval
@@ -644,7 +644,7 @@ da:
         user:
           signup: Tilmeld dig
     exceptions:
-      count_on_hand_setter: "Antal tilgængelig kan ikke sættes manuelt. Det sættes automatisk af recalculate_count_on_hand callback. Brug `update_column(:count_on_hand, value)` istedet."
+      count_on_hand_setter: Antal tilgængelig kan ikke sættes manuelt. Det sættes automatisk af recalculate_count_on_hand callback. Brug `update_column(:count_on_hand, value)` istedet.
     exchange_for:
     excl:
     existing_shipments:
@@ -842,8 +842,8 @@ da:
       variant_not_deleted: Variant kunne ikke slettes
     num_orders:
     on_hand: På lager
-    open: "Åben"
-    open_all_adjustments: "Åbn alle justeringer"
+    open: Åben
+    open_all_adjustments: Åbn alle justeringer
     option_type: Alternativ udgave
     option_type_placeholder: Vælg en alternativ udgave
     option_types: Alternative udgaver
@@ -1111,7 +1111,7 @@ da:
     say_yes: Ja
     scope: Område
     search: Søg
-    search_results: "Søgeresultater for '%{keywords}'"
+    search_results: Søgeresultater for '%{keywords}'
     searching: Søger
     secure_connection_type: Sikker forbindelsestype
     security_settings: Sikkerhedsindstillinger
@@ -1335,7 +1335,7 @@ da:
     what_is_a_cvv: Hvad er en sikkerhedskode (CVC)?
     what_is_this: Hvad er dette?
     width: Bredde
-    year: "År"
+    year: År
     you_have_no_orders_yet: Du har endnu ingen ordre.
     your_cart_is_empty: Din indkøbskurv er tom
     your_order_is_empty_add_product: Din ordre er tom.

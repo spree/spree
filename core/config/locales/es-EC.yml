@@ -1,3 +1,4 @@
+---
 es-EC:
   activerecord:
     attributes:
@@ -385,8 +386,8 @@ es-EC:
         orders: Pedidos
         overview: Visión general
         products: Productos
-        promotions: Promociones
         promotion_categories:
+        promotions: Promociones
         properties:
         prototypes:
         reports: Informes
@@ -432,7 +433,7 @@ es-EC:
     are_you_sure: "¿Estás seguro?"
     are_you_sure_delete: "¿Estás seguro de que quieres borrar este registro?"
     associated_adjustment_closed: El ajuste asociado está cerrado y no será recalculado. ¿Quieres abrirlo?
-    at_symbol: '@'
+    at_symbol: "@"
     authorization_failure: Fallo en la autorización
     authorized:
     auto_capture:
@@ -567,7 +568,6 @@ es-EC:
     date: Fecha
     date_completed: Fecha completada
     date_picker:
-      # FlatPickr human friendly formatting
       fpr_human_friendly_date_format: M j, Y
       fpr_human_friendly_date_time_format: M j, Y a \\la\\s H:i
     date_range: Rango de fechas
@@ -845,7 +845,7 @@ es-EC:
     option_values: Valores de opción
     optional: Opcional
     options: Opciones
-    or: "ó"
+    or: ó
     or_over_price: "%{price} ó más"
     order: Pedido
     order_adjustments: Ajustes de pedido
@@ -1290,7 +1290,7 @@ es-EC:
     transfer_from_location: Transferido desde
     transfer_stock: Transferencia de Stock
     transfer_to_location: Transferido a
-    tree: "Árbol"
+    tree: Árbol
     type: Tipo
     type_to_search: Tipo a buscar
     unable_to_connect_to_gateway: No es posible la conexión a la pasarela

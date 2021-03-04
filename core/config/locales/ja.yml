@@ -1,16 +1,17 @@
+---
 ja:
   activerecord:
     attributes:
       spree/address:
-        address1: "住所1"
-        address2: "住所2"
-        city: "市区町村"
-        country: "国"
-        firstname: "名前（名）"
-        lastname: "名前（姓）"
-        phone: "電話番号"
-        state: "都道府県（州）"
-        zipcode: "郵便番号"
+        address1: 住所1
+        address2: 住所2
+        city: 市区町村
+        country: 国
+        firstname: 名前（名）
+        lastname: 名前（姓）
+        phone: 電話番号
+        state: 都道府県（州）
+        zipcode: 郵便番号
       spree/calculator/tiered_flat_rate:
         preferred_base_amount:
         preferred_tiers:
@@ -21,94 +22,94 @@ ja:
         iso: ISO
         iso3: ISO3
         iso_name: ISO名
-        name: "名"
+        name: 名
         numcode: ISOコード
       spree/credit_card:
         base:
-        cc_type: "カード類"
-        month: "月"
+        cc_type: カード類
+        month: 月
         name:
-        number: "カード番号"
-        verification_value: "照合コード"
-        year: "年"
+        number: カード番号
+        verification_value: 照合コード
+        year: 年
       spree/inventory_unit:
-        state: "状態"
+        state: 状態
       spree/line_item:
-        price: "価格"
-        quantity: "数量"
+        price: 価格
+        quantity: 数量
       spree/option_type:
-        name: "名称"
-        presentation: "表示"
+        name: 名称
+        presentation: 表示
       spree/order:
-        checkout_complete: "注文の受け付けを完了しました"
-        completed_at: "完了日時"
-        considered_risky: "リスク"
-        coupon_code: "クーポンコード"
-        created_at: "注文日"
-        email: "メールアドレス"
+        checkout_complete: 注文の受け付けを完了しました
+        completed_at: 完了日時
+        considered_risky: リスク
+        coupon_code: クーポンコード
+        created_at: 注文日
+        email: メールアドレス
         ip_address: IPアドレス
-        item_total: "合計個数"
-        name: "注文"
-        number: "注文番号"
-        payment_state: "支払い状態"
-        shipment_state: "配送状態"
-        special_instructions: "特記事項"
-        state: "状態"
-        total: "合計"
+        item_total: 合計個数
+        name: 注文
+        number: 注文番号
+        payment_state: 支払い状態
+        shipment_state: 配送状態
+        special_instructions: 特記事項
+        state: 状態
+        total: 合計
       spree/order/bill_address:
-        address1: "請求先の住所"
-        city: "請求先の住所・市"
-        firstname: "請求先の名"
-        lastname: "請求先の姓"
-        phone: "請求先の電話番号"
-        state: "請求先の都道府県(州)"
-        zipcode: "請求先の郵便番号"
+        address1: 請求先の住所
+        city: 請求先の住所・市
+        firstname: 請求先の名
+        lastname: 請求先の姓
+        phone: 請求先の電話番号
+        state: 請求先の都道府県(州)
+        zipcode: 請求先の郵便番号
       spree/order/ship_address:
-        address1: "配送先の住所"
-        city: "配送先の市"
-        firstname: "配送先の名"
-        lastname: "配送先の姓"
-        phone: "配送先の電話番号"
-        state: "配送先の都道府県(州)"
-        zipcode: "配送先の郵便番号"
+        address1: 配送先の住所
+        city: 配送先の市
+        firstname: 配送先の名
+        lastname: 配送先の姓
+        phone: 配送先の電話番号
+        state: 配送先の都道府県(州)
+        zipcode: 配送先の郵便番号
       spree/payment:
-        amount: "金額"
+        amount: 金額
       spree/payment_method:
-        name: "名称"
+        name: 名称
       spree/product:
-        available_on: "販売開始日"
-        cost_currency: "コストカレンシー"
-        cost_price: "原価"
-        description: "説明"
-        master_price: "値段"
-        name: "商品名"
-        on_hand: "入荷数"
-        shipping_category: "配達区間"
-        tax_category: "税区"
+        available_on: 販売開始日
+        cost_currency: コストカレンシー
+        cost_price: 原価
+        description: 説明
+        master_price: 値段
+        name: 商品名
+        on_hand: 入荷数
+        shipping_category: 配達区間
+        tax_category: 税区
       spree/promotion:
-        advertise: "表示する"
-        code: "コード"
-        description: "説明"
-        event_name: "イベント名"
-        expires_at: "有効期限"
-        name: "名称"
-        path: "パス"
-        starts_at: "開始日時"
-        usage_limit: "使用可能回数"
+        advertise: 表示する
+        code: コード
+        description: 説明
+        event_name: イベント名
+        expires_at: 有効期限
+        name: 名称
+        path: パス
+        starts_at: 開始日時
+        usage_limit: 使用可能回数
       spree/promotion_category:
         name:
       spree/property:
-        name: "名称"
-        presentation: "表示"
+        name: 名称
+        presentation: 表示
       spree/prototype:
-        name: "名称"
+        name: 名称
       spree/return_authorization:
-        amount: "合計"
+        amount: 合計
       spree/role:
-        name: "名称"
+        name: 名称
       spree/state:
-        abbr: "略語"
-        name: "名称"
+        abbr: 略語
+        name: 名称
       spree/state_change:
         state_changes:
         state_from:
@@ -125,34 +126,34 @@ ja:
         seo_title:
         url:
       spree/tax_category:
-        description: "説明"
-        name: "名称"
+        description: 説明
+        name: 名称
       spree/tax_rate:
-        amount: "率"
-        included_in_price: "税込み"
-        show_rate_in_label: "税率を見る"
+        amount: 率
+        included_in_price: 税込み
+        show_rate_in_label: 税率を見る
       spree/taxon:
-        name: "名称"
-        permalink: "固定リンク"
-        position: "位置"
+        name: 名称
+        permalink: 固定リンク
+        position: 位置
       spree/taxonomy:
-        name: "名称"
+        name: 名称
       spree/user:
         email: Eメール
-        password: "パスワード"
-        password_confirmation: "パスワード（確認）"
+        password: パスワード
+        password_confirmation: パスワード（確認）
       spree/variant:
-        cost_currency: "コストカレンシー"
-        cost_price: "原価"
-        depth: "奥行き"
-        height: "高さ"
-        price: "価格"
-        sku: "品番"
-        weight: "重量"
-        width: "幅"
+        cost_currency: コストカレンシー
+        cost_price: 原価
+        depth: 奥行き
+        height: 高さ
+        price: 価格
+        sku: 品番
+        weight: 重量
+        width: 幅
       spree/zone:
-        description: "説明"
-        name: "名前"
+        description: 説明
+        name: 名前
     errors:
       models:
         spree/calculator/tiered_flat_rate:
@@ -201,104 +202,104 @@ ja:
               cannot_destroy_default_store:
     models:
       spree/address:
-        one: "住所"
-        other: "住所"
+        one: 住所
+        other: 住所
       spree/country:
-        one: "国名"
-        other: "国名"
+        one: 国名
+        other: 国名
       spree/credit_card:
-        one: "クレジットカード"
-        other: "クレジットカード"
+        one: クレジットカード
+        other: クレジットカード
       spree/customer_return:
       spree/inventory_unit:
-        one: "在庫品単位"
-        other: "在庫品単位"
+        one: 在庫品単位
+        other: 在庫品単位
       spree/line_item:
-        one: "品目"
-        other: "品目"
+        one: 品目
+        other: 品目
       spree/option_type:
       spree/option_value:
       spree/order:
-        one: "注文"
-        other: "注文"
+        one: 注文
+        other: 注文
       spree/payment:
-        one: "支払い"
-        other: "支払い"
+        one: 支払い
+        other: 支払い
       spree/payment_method:
       spree/product:
-        one: "商品"
-        other: "商品"
+        one: 商品
+        other: 商品
       spree/promotion:
       spree/promotion_category:
       spree/property:
-        one: "属性"
-        other: "属性"
+        one: 属性
+        other: 属性
       spree/prototype:
-        one: "プロトタイプ"
-        other: "プロトタイプ"
+        one: プロトタイプ
+        other: プロトタイプ
       spree/refund_reason:
       spree/reimbursement:
       spree/reimbursement_type:
       spree/return_authorization:
-        one: "返品許可"
-        other: "返品許可"
+        one: 返品許可
+        other: 返品許可
       spree/return_authorization_reason:
       spree/role:
-        one: "役割"
-        other: "役割"
+        one: 役割
+        other: 役割
       spree/shipment:
-        one: "配送"
-        other: "配送"
+        one: 配送
+        other: 配送
       spree/shipping_category:
-        one: "配送カテゴリ"
-        other: "配送カテゴリ"
+        one: 配送カテゴリ
+        other: 配送カテゴリ
       spree/shipping_method:
       spree/state:
-        one: "都道府県（州）"
-        other: "都道府県（州）"
+        one: 都道府県（州）
+        other: 都道府県（州）
       spree/state_change:
       spree/stock_location:
       spree/stock_movement:
       spree/stock_transfer:
       spree/tax_category:
-        one: "税区分"
-        other: "税区分"
+        one: 税区分
+        other: 税区分
       spree/tax_rate:
-        one: "税率"
-        other: "税率"
+        one: 税率
+        other: 税率
       spree/taxon:
-        one: "分類"
-        other: "分類"
+        one: 分類
+        other: 分類
       spree/taxonomy:
-        one: "分類ツリー"
-        other: "分類ツリー"
+        one: 分類ツリー
+        other: 分類ツリー
       spree/tracker:
       spree/user:
-        one: "ユーザー"
-        other: "ユーザー"
+        one: ユーザー
+        other: ユーザー
       spree/variant:
-        one: "種類"
-        other: "種類"
+        one: 種類
+        other: 種類
       spree/zone:
-        one: "ゾーン"
-        other: "ゾーン"
+        one: ゾーン
+        other: ゾーン
   devise:
     confirmations:
-      confirmed: "アカウントが正常に確認されました。ログインしました。"
+      confirmed: アカウントが正常に確認されました。ログインしました。
       send_instructions:
     failure:
-      inactive: "アカウントはまだ確認されませんでした。"
+      inactive: アカウントはまだ確認されませんでした。
       invalid: Eメールアドレスもしくはパスワードが異なります。
-      invalid_token: "無効な認証トークン。"
-      locked: "アカウントはロックされています"
+      invalid_token: 無効な認証トークン。
+      locked: アカウントはロックされています
       timeout:
-      unauthenticated: "続ける前にサインインかサインアップが必要です。"
-      unconfirmed: "続ける前にアカウントの確認が必要です。"
+      unauthenticated: 続ける前にサインインかサインアップが必要です。
+      unconfirmed: 続ける前にアカウントの確認が必要です。
     mailer:
       confirmation_instructions:
         subject:
       reset_password_instructions:
-        subject: "パスワードのリセット方法"
+        subject: パスワードのリセット方法
       unlock_instructions:
         subject:
     oauth_callbacks:
@@ -309,17 +310,17 @@ ja:
       unlocked:
     user_passwords:
       user:
-        cannot_be_blank: "パスワードを入力してください。"
+        cannot_be_blank: パスワードを入力してください。
         send_instructions:
-        updated: "パスワードの変更に成功しました。サインインし直してください。"
+        updated: パスワードの変更に成功しました。サインインし直してください。
     user_registrations:
       destroyed:
       inactive_signed_up:
       signed_up:
       updated:
     user_sessions:
-      signed_in: "サインインに成功しました。"
-      signed_out: "サインアウトに成功しました。"
+      signed_in: サインインに成功しました。
+      signed_out: サインアウトに成功しました。
   errors:
     messages:
       already_confirmed:
@@ -327,69 +328,69 @@ ja:
       not_locked:
       not_saved:
   spree:
-    abbreviation: "省略"
+    abbreviation: 省略
     accept:
     acceptance_errors:
     acceptance_status:
     accepted:
-    account: "アカウント"
-    account_updated: "アカウントが更新されました。"
-    action: "アクション"
+    account: アカウント
+    account_updated: アカウントが更新されました。
+    action: アクション
     actions:
-      cancel: "キャンセル"
+      cancel: キャンセル
       continue:
-      create: "作成"
-      destroy: "削除"
-      edit: "編集"
-      list: "リスト"
-      listing: "一覧"
-      new: "新規"
+      create: 作成
+      destroy: 削除
+      edit: 編集
+      list: リスト
+      listing: 一覧
+      new: 新規
       refund:
-      save: "保存"
-      update: "更新"
-    activate: "アクティベートする"
-    active: "有効"
-    add: "追加"
-    add_action_of_type: "次のタイプのアクションを追加する"
-    add_country: "国の追加"
+      save: 保存
+      update: 更新
+    activate: アクティベートする
+    active: 有効
+    add: 追加
+    add_action_of_type: 次のタイプのアクションを追加する
+    add_country: 国の追加
     add_coupon_code:
-    add_new_header: "新規ヘッダの追加"
-    add_new_style: "新規スタイルの追加"
-    add_one: "新規追加"
-    add_option_value: "オプションの値を追加"
-    add_product: "新規商品の追加"
-    add_product_properties: "商品に属性を追加"
-    add_rule_of_type: "次のタイプのルールを追加する"
-    add_state: "都道府県（州）の追加"
-    add_stock: "ストック追加"
+    add_new_header: 新規ヘッダの追加
+    add_new_style: 新規スタイルの追加
+    add_one: 新規追加
+    add_option_value: オプションの値を追加
+    add_product: 新規商品の追加
+    add_product_properties: 商品に属性を追加
+    add_rule_of_type: 次のタイプのルールを追加する
+    add_state: 都道府県（州）の追加
+    add_stock: ストック追加
     add_stock_management:
-    add_to_cart: "カートに追加"
+    add_to_cart: カートに追加
     add_variant:
     additional_item: 2品目からの値段増加
-    address1: "住所１"
-    address2: "住所２"
+    address1: 住所１
+    address2: 住所２
     adjustable:
-    adjustment: "調整（値引き・追加料金）"
+    adjustment: 調整（値引き・追加料金）
     adjustment_amount:
     adjustment_successfully_closed:
     adjustment_successfully_opened:
-    adjustment_total: "調整（値引き・追加料金）総額"
-    adjustments: "調整（値引き・追加料金）"
+    adjustment_total: 調整（値引き・追加料金）総額
+    adjustments: 調整（値引き・追加料金）
     admin:
       tab:
         configuration:
         option_types:
-        orders: "注文"
+        orders: 注文
         overview:
-        products: "商品"
-        promotions:
+        products: 商品
         promotion_categories:
+        promotions:
         properties:
         prototypes:
-        reports: "リポート"
+        reports: リポート
         taxonomies:
         taxons:
-        users: "ユーザー"
+        users: ユーザー
       user:
         account:
         addresses:
@@ -399,157 +400,157 @@ ja:
         order_num:
         orders:
         user_information:
-    administration: "管理"
+    administration: 管理
     advertise:
     agree_to_privacy_policy:
     agree_to_terms_of_service:
-    all: "全て"
+    all: 全て
     all_adjustments_closed:
     all_adjustments_opened:
-    all_departments: "全てのカテゴリ"
+    all_departments: 全てのカテゴリ
     all_items_have_been_returned:
-    allow_ssl_in_development_and_test: "開発モードとテストモードでSSLを使用"
-    allow_ssl_in_production: "プロダクションモードでSSLを使用"
-    allow_ssl_in_staging: "ステージングモードでSSLを使用"
+    allow_ssl_in_development_and_test: 開発モードとテストモードでSSLを使用
+    allow_ssl_in_production: プロダクションモードでSSLを使用
+    allow_ssl_in_staging: ステージングモードでSSLを使用
     already_signed_up_for_analytics:
-    alt_text: "代替のテキスト"
-    alternative_phone: "代替の電話番号"
-    amount: "金額"
+    alt_text: 代替のテキスト
+    alternative_phone: 代替の電話番号
+    amount: 金額
     analytics_desc_header_1:
     analytics_desc_header_2:
     analytics_desc_list_1:
     analytics_desc_list_2:
     analytics_desc_list_3:
     analytics_desc_list_4:
-    analytics_trackers: "アナリティクストラッカー"
-    and: "と"
+    analytics_trackers: アナリティクストラッカー
+    and: と
     approve:
     approved_at:
     approver:
-    are_you_sure: "これで宜しいですか?"
-    are_you_sure_delete: "削除しますか?"
+    are_you_sure: これで宜しいですか?
+    are_you_sure_delete: 削除しますか?
     associated_adjustment_closed:
-    at_symbol: '@'
-    authorization_failure: "認証に失敗しました"
+    at_symbol: "@"
+    authorization_failure: 認証に失敗しました
     authorized:
     auto_capture:
-    available_on: "発売開始日・入荷日"
+    available_on: 発売開始日・入荷日
     average_order_value:
     avs_response:
-    back: "戻る"
-    back_end: "バックエンド"
+    back: 戻る
+    back_end: バックエンド
     back_to_payment:
     back_to_resource_list:
     back_to_rma_reason_list:
-    back_to_store: "ショップに戻る"
-    back_to_users_list: "ユーザー一覧に戻る"
+    back_to_store: ショップに戻る
+    back_to_users_list: ユーザー一覧に戻る
     backorderable:
     backorderable_default:
     backordered:
     backorders_allowed:
-    balance_due: "未払額"
+    balance_due: 未払額
     base_amount:
     base_percent:
-    bill_address: "請求先住所"
-    billing: "決済"
-    billing_address: "請求先住所"
-    both: "両方とも"
+    bill_address: 請求先住所
+    billing: 決済
+    billing_address: 請求先住所
+    both: 両方とも
     calculated_reimbursements:
-    calculator: "計算方法"
-    calculator_settings_warning: "計算方法のタイプを変更する場合は、計算方法の設定を編集する前に保存してください。"
-    cancel: "キャンセル"
+    calculator: 計算方法
+    calculator_settings_warning: 計算方法のタイプを変更する場合は、計算方法の設定を編集する前に保存してください。
+    cancel: キャンセル
     canceled_at:
     canceler:
     cannot_create_customer_returns:
-    cannot_create_payment_without_payment_methods: "支払い方法が選択されていないので、支払いを行うことができません"
-    cannot_create_returns: "未発送の注文品に対して返品が出来ません。注文をキャンセルし注文を作り直すか問い合わせて下さい。"
-    cannot_perform_operation: "処理出来ませんでした"
+    cannot_create_payment_without_payment_methods: 支払い方法が選択されていないので、支払いを行うことができません
+    cannot_create_returns: 未発送の注文品に対して返品が出来ません。注文をキャンセルし注文を作り直すか問い合わせて下さい。
+    cannot_perform_operation: 処理出来ませんでした
     cannot_set_shipping_method_without_address:
-    capture: "入金申請（キャプチャリング）"
+    capture: 入金申請（キャプチャリング）
     capture_events:
-    card_code: "カード照合値[セキュリティーコード]"
-    card_number: "カード番号"
+    card_code: カード照合値[セキュリティーコード]
+    card_number: カード番号
     card_type:
-    card_type_is: "カード類"
-    cart: "カート"
+    card_type_is: カード類
+    cart: カート
     cart_subtotal:
-    categories: "カテゴリー"
-    category: "カテゴリー"
+    categories: カテゴリー
+    category: カテゴリー
     charged:
     check_for_spree_alerts: Spreeアラートの確認
-    checkout: "レジに進む"
+    checkout: レジに進む
     choose_a_customer: Choose a customer
     choose_a_taxon_to_sort_products_for:
-    choose_currency: "通貨の選択"
-    choose_dashboard_locale: "言語の選択"
+    choose_currency: 通貨の選択
+    choose_dashboard_locale: 言語の選択
     choose_location:
-    city: "市区町村"
+    city: 市区町村
     clear_cache:
     clear_cache_ok:
     clear_cache_warning:
     click_and_drag_on_the_products_to_sort_them:
-    clone: "複製"
+    clone: 複製
     close:
     close_all_adjustments:
-    code: "コード"
+    code: コード
     company:
-    complete: "完了"
-    configuration: "設定"
-    configurations: "設定"
-    confirm: "確認する"
-    confirm_delete: "削除を確認"
-    confirm_password: "パスワードの確認"
-    continue: "続ける"
-    continue_shopping: "ショッピングを続ける"
-    cost_currency: "通貨"
-    cost_price: "原価"
+    complete: 完了
+    configuration: 設定
+    configurations: 設定
+    confirm: 確認する
+    confirm_delete: 削除を確認
+    confirm_password: パスワードの確認
+    continue: 続ける
+    continue_shopping: ショッピングを続ける
+    cost_currency: 通貨
+    cost_price: 原価
     could_not_connect_to_jirafe:
     could_not_create_customer_return:
     could_not_create_stock_movement:
     count_on_hand:
-    countries: "国"
-    country: "国"
-    country_based: "国による区別"
+    countries: 国
+    country: 国
+    country_based: 国による区別
     country_name:
     country_names:
       CA:
       FRA:
       ITA:
       US:
-    coupon: "クーポン"
-    coupon_code: "クーポンコード"
+    coupon: クーポン
+    coupon_code: クーポンコード
     coupon_code_already_applied:
-    coupon_code_applied: "クーポンコードが適応されました。"
+    coupon_code_applied: クーポンコードが適応されました。
     coupon_code_better_exists:
     coupon_code_expired:
     coupon_code_max_usage:
     coupon_code_not_eligible:
     coupon_code_not_found:
     coupon_code_unknown_error:
-    create: "作成"
-    create_a_new_account: "新規アカウント作成"
+    create: 作成
+    create_a_new_account: 新規アカウント作成
     create_new_order:
     create_reimbursement:
     created_at:
-    credit: "債権"
-    credit_card: "クレジットカード"
-    credit_cards: "クレジットカード"
-    credit_owed: "過払い額"
+    credit: 債権
+    credit_card: クレジットカード
+    credit_cards: クレジットカード
+    credit_owed: 過払い額
     credits:
-    currency: "通貨"
+    currency: 通貨
     currency_decimal_mark:
-    currency_settings: "通貨の設定"
-    currency_symbol_position: "通貨のマークを前もしくは後ろにつけますか？"
+    currency_settings: 通貨の設定
+    currency_symbol_position: 通貨のマークを前もしくは後ろにつけますか？
     currency_thousands_separator:
-    current: "現在"
+    current: 現在
     current_promotion_usage:
-    customer: "お客様"
-    customer_details: "お客様詳細情報"
-    customer_details_updated: "お客様詳細情報が更新されました。"
+    customer: お客様
+    customer_details: お客様詳細情報
+    customer_details_updated: お客様詳細情報が更新されました。
     customer_return:
     customer_returns:
-    customer_search: "お客様の検索"
-    cut: "カット"
+    customer_search: お客様の検索
+    cut: カット
     cvv_response:
     dash:
       jirafe:
@@ -562,33 +563,32 @@ ja:
         token:
       jirafe_settings_updated:
     date:
-    date_completed: "完了日"
+    date_completed: 完了日
     date_picker:
-      # FlatPickr human friendly formatting
       fpr_human_friendly_date_format: M j, Y
       fpr_human_friendly_date_time_format: M j, Y - H:i
-    date_range: "日範囲"
-    default: "初期設定"
+    date_range: 日範囲
+    default: 初期設定
     default_refund_amount:
-    default_tax: "デフォルトの税"
-    default_tax_zone: "デフォルトのタックスゾーン"
-    delete: "削除"
+    default_tax: デフォルトの税
+    default_tax_zone: デフォルトのタックスゾーン
+    delete: 削除
     deleted_variants_present:
-    delivery: "配送/お届け"
-    depth: "奥行き"
-    description: "説明"
+    delivery: 配送/お届け
+    depth: 奥行き
+    description: 説明
     destination:
-    destroy: "破壊する"
+    destroy: 破壊する
     details:
-    discount_amount: "割引額"
-    dismiss_banner: "いいえ。結構です！興味ありません。再びこのメッセージを表示しないでください。"
-    display: "表示"
-    display_currency: "通貨の表示"
+    discount_amount: 割引額
+    dismiss_banner: いいえ。結構です！興味ありません。再びこのメッセージを表示しないでください。
+    display: 表示
+    display_currency: 通貨の表示
     doesnt_track_inventory:
-    edit: "編集"
+    edit: 編集
     editing_resource:
     editing_rma_reason:
-    editing_user: "ユーザーの編集"
+    editing_user: ユーザーの編集
     eligibility_errors:
       messages:
         has_excluded_product:
@@ -605,112 +605,112 @@ ja:
         no_user_specified:
         not_first_order:
     email: Eメール
-    empty: "空です"
-    empty_cart: "カートを空にする"
-    enable_mail_delivery: "メールによるお知らせを有効にする/許可する"
-    end: "終わり"
-    ending_in: "末尾の数字"
-    environment: "動作モード"
-    error: "エラー"
+    empty: 空です
+    empty_cart: カートを空にする
+    enable_mail_delivery: メールによるお知らせを有効にする/許可する
+    end: 終わり
+    ending_in: 末尾の数字
+    environment: 動作モード
+    error: エラー
     errors:
       messages:
-        could_not_create_taxon: "分類の作成が失敗しました"
-        no_payment_methods_available: "この環境では支払い方法が設定されていません。"
-        no_shipping_methods_available: "この場所へ発送可能な配送方法がありませんでした。別の住所を設定するか問い合わせして下さい。"
+        could_not_create_taxon: 分類の作成が失敗しました
+        no_payment_methods_available: この環境では支払い方法が設定されていません。
+        no_shipping_methods_available: この場所へ発送可能な配送方法がありませんでした。別の住所を設定するか問い合わせして下さい。
     errors_prohibited_this_record_from_being_saved:
-      one: "エラーにより登録出来ませんでした。"
+      one: エラーにより登録出来ませんでした。
       other: "%{count}つのエラーにより登録出来ませんでした。"
-    event: "イベント"
+    event: イベント
     events:
       spree:
         cart:
-          add: "カートに入れる"
+          add: カートに入れる
         checkout:
-          coupon_code_added: "クーポンコード追加"
+          coupon_code_added: クーポンコード追加
         content:
-          visited: "静的コンテンツページの訪問"
+          visited: 静的コンテンツページの訪問
         order:
-          contents_changed: "注文内容の変更"
-        page_view: "静的ページを見る"
+          contents_changed: 注文内容の変更
+        page_view: 静的ページを見る
         user:
-          signup: "ユーザー登録"
+          signup: ユーザー登録
     exceptions:
       count_on_hand_setter:
     exchange_for:
     excl:
     existing_shipments:
     expedited_exchanges_warning:
-    expiration: "有効期限"
-    extension: "拡張"
+    expiration: 有効期限
+    extension: 拡張
     failed_payment_attempts:
-    filename: "ファイル名"
+    filename: ファイル名
     fill_in_customer_info:
-    filter: "フィルタ"
-    filter_results: "検索結果"
-    finalize: "確定"
+    filter: フィルタ
+    filter_results: 検索結果
+    finalize: 確定
     finalized:
     find_a_taxon:
-    first_item: "一品目の値段"
-    first_name: "名前（名）"
-    first_name_begins_with: "名前（名）が以下の文字列で始まる"
-    flat_percent: "定率"
-    flat_rate_per_order: "定格(一注文につき)"
-    flexible_rate: "変動料金"
-    forgot_password: "パスワードを忘れた方"
-    free_shipping: "配送料無料"
+    first_item: 一品目の値段
+    first_name: 名前（名）
+    first_name_begins_with: 名前（名）が以下の文字列で始まる
+    flat_percent: 定率
+    flat_rate_per_order: 定格(一注文につき)
+    flexible_rate: 変動料金
+    forgot_password: パスワードを忘れた方
+    free_shipping: 配送料無料
     free_shipping_amount:
-    front_end: "フロントエンド"
-    gateway: "ゲートウェー"
-    gateway_config_unavailable: "この環境ではゲートウェーを利用できません。"
-    gateway_error: "ゲートウェーエラー"
-    general: "一般"
-    general_settings: "一般設定"
+    front_end: フロントエンド
+    gateway: ゲートウェー
+    gateway_config_unavailable: この環境ではゲートウェーを利用できません。
+    gateway_error: ゲートウェーエラー
+    general: 一般
+    general_settings: 一般設定
     google_analytics: Googleアナリティクス
-    google_analytics_id: "アナリティクスID"
-    guest_checkout: "ゲスト注文"
-    guest_user_account: "登録せずにゲストとして注文する"
-    has_no_shipped_units: "の発送済みユニットはありません"
-    height: "高さ"
-    hide_cents: "セントの非表示"
-    home: "ホーム"
+    google_analytics_id: アナリティクスID
+    guest_checkout: ゲスト注文
+    guest_user_account: 登録せずにゲストとして注文する
+    has_no_shipped_units: の発送済みユニットはありません
+    height: 高さ
+    hide_cents: セントの非表示
+    home: ホーム
     i18n:
       available_locales:
       language:
       localization_settings:
-      this_file_language: "日本語 (ja)"
-    icon: "アイコン"
+      this_file_language: 日本語 (ja)
+    icon: アイコン
     identifier:
-    image: "画像"
-    images: "画像"
+    image: 画像
+    images: 画像
     implement_eligible_for_return:
     implement_requires_manual_intervention:
     inactive:
     incl:
-    included_in_price: "価格に含まれる"
-    included_price_validation: "はデフォルトのタックスゾーンを設定しない限り選択できません。"
+    included_in_price: 価格に含まれる
+    included_price_validation: はデフォルトのタックスゾーンを設定しない限り選択できません。
     incomplete:
     info_number_of_skus_not_shown:
     info_product_has_multiple_skus:
-    instructions_to_reset_password: "下のフォームを入力してからパスワードの再設定方法の説明がメールで送信されます。"
-    insufficient_stock: "在庫が十分ではありません。残り%{on_hand}個です。"
+    instructions_to_reset_password: 下のフォームを入力してからパスワードの再設定方法の説明がメールで送信されます。
+    insufficient_stock: 在庫が十分ではありません。残り%{on_hand}個です。
     insufficient_stock_lines_present:
-    intercept_email_address: "置き換え用のメールアドレス"
-    intercept_email_instructions: "メールの宛先をこのアドレスで置き換えます。"
+    intercept_email_address: 置き換え用のメールアドレス
+    intercept_email_instructions: メールの宛先をこのアドレスで置き換えます。
     internal_name:
     invalid_credit_card:
     invalid_exchange_variant:
     invalid_payment_provider:
     invalid_promotion_action:
     invalid_promotion_rule:
-    inventory: "在庫"
-    inventory_adjustment: "在庫調整"
+    inventory: 在庫
+    inventory_adjustment: 在庫調整
     inventory_error_flash_for_insufficient_quantity:
     inventory_state:
-    is_not_available_to_shipment_address: "はこの配達先では発送出来ません。"
+    is_not_available_to_shipment_address: はこの配達先では発送出来ません。
     iso_name: ISO名
-    item: "アイテム"
-    item_description: "アイテム説明"
-    item_total: "合計"
+    item: アイテム
+    item_description: アイテム説明
+    item_total: 合計
     item_total_rule:
       operators:
         gt:
@@ -723,274 +723,274 @@ ja:
     items_to_be_reimbursed:
     jirafe:
     landing_page_rule:
-      path: "パス"
-    last_name: "名前（姓）"
-    last_name_begins_with: "名前（姓）が以下の文字列で始まる"
-    learn_more: "もっと詳しく"
+      path: パス
+    last_name: 名前（姓）
+    last_name_begins_with: 名前（姓）が以下の文字列で始まる
+    learn_more: もっと詳しく
     lifetime_stats:
     line_item_adjustments:
-    list: "リスト"
-    loading: "読み込み中"
-    locale_changed: "ロケールを変更しました"
+    list: リスト
+    loading: 読み込み中
+    locale_changed: ロケールを変更しました
     location:
     lock:
     log_entries:
-    logged_in_as: "ログイン"
-    logged_in_succesfully: "ログインに成功しました"
-    logged_out: "ログアウトしました。"
-    login: "ログイン"
-    login_as_existing: "アカウント持ちのお客様ログイン"
-    login_failed: "ログイン認証失敗"
-    login_name: "ログイン名"
-    logout: "ログアウト"
+    logged_in_as: ログイン
+    logged_in_succesfully: ログインに成功しました
+    logged_out: ログアウトしました。
+    login: ログイン
+    login_as_existing: アカウント持ちのお客様ログイン
+    login_failed: ログイン認証失敗
+    login_name: ログイン名
+    logout: ログアウト
     logs:
-    look_for_similar_items: "似た商品を探す"
-    make_refund: "返金する"
+    look_for_similar_items: 似た商品を探す
+    make_refund: 返金する
     make_sure_the_above_reimbursement_amount_is_correct:
     manage_promotion_categories:
     manage_variants:
     manual_intervention_required:
-    master_price: "定価"
+    master_price: 定価
     match_choices:
-      all: "すべて"
-      none: "なし"
-    max_items: "商品の数の最大限"
+      all: すべて
+      none: なし
+    max_items: 商品の数の最大限
     member_since:
     memo:
-    meta_description: "メタ情報説明"
-    meta_keywords: "メタキーワード"
+    meta_description: メタ情報説明
+    meta_keywords: メタキーワード
     meta_title:
-    metadata: "メタデータ"
-    minimal_amount: "最低額"
-    month: "月"
-    more: "さらに"
+    metadata: メタデータ
+    minimal_amount: 最低額
+    month: 月
+    more: さらに
     move_stock_between_locations:
-    my_account: "アカウント情報"
-    my_orders: "注文情報"
-    name: "名称"
-    name_on_card: "カード名義"
-    name_or_sku: "品名もしくは品番"
-    new: "新規"
-    new_adjustment: "新規の値引き・追加請求"
+    my_account: アカウント情報
+    my_orders: 注文情報
+    name: 名称
+    name_on_card: カード名義
+    name_or_sku: 品名もしくは品番
+    new: 新規
+    new_adjustment: 新規の値引き・追加請求
     new_country:
-    new_customer: "新規顧客"
+    new_customer: 新規顧客
     new_customer_return:
-    new_image: "新規画像"
-    new_option_type: "新規オプションタイプ"
-    new_order: "新規注文"
-    new_order_completed: "新規注文作成完了"
-    new_payment: "新規の支払い"
-    new_payment_method: "支払い方法を追加"
-    new_product: "新規商品"
-    new_promotion: "新規プロモーション"
+    new_image: 新規画像
+    new_option_type: 新規オプションタイプ
+    new_order: 新規注文
+    new_order_completed: 新規注文作成完了
+    new_payment: 新規の支払い
+    new_payment_method: 支払い方法を追加
+    new_product: 新規商品
+    new_promotion: 新規プロモーション
     new_promotion_category:
-    new_property: "新規属性"
-    new_prototype: "新規プロトタイプ"
+    new_property: 新規属性
+    new_prototype: 新規プロトタイプ
     new_refund:
     new_refund_reason:
-    new_return_authorization: "新規返品依頼"
+    new_return_authorization: 新規返品依頼
     new_rma_reason:
     new_shipment_at_location:
-    new_shipping_category: "新規配送カテゴリー"
-    new_shipping_method: "新規配送方法"
-    new_state: "新規都道府県（州）"
+    new_shipping_category: 新規配送カテゴリー
+    new_shipping_method: 新規配送方法
+    new_state: 新規都道府県（州）
     new_stock_location:
     new_stock_movement:
     new_stock_transfer:
-    new_tax_category: "新規税金カテゴリー"
-    new_tax_rate: "新規税率"
-    new_taxon: "新規分類"
-    new_taxonomy: "新規分類ツリー"
-    new_tracker: "新規トラッカー"
-    new_user: "新規ユーザー"
-    new_variant: "新規種類"
-    new_zone: "新規ゾーン"
-    next: "次へ"
+    new_tax_category: 新規税金カテゴリー
+    new_tax_rate: 新規税率
+    new_taxon: 新規分類
+    new_taxonomy: 新規分類ツリー
+    new_tracker: 新規トラッカー
+    new_user: 新規ユーザー
+    new_variant: 新規種類
+    new_zone: 新規ゾーン
+    next: 次へ
     no_actions_added:
     no_payment_found:
     no_pending_payments:
-    no_products_found: "商品が見付かりませんでした。"
+    no_products_found: 商品が見付かりませんでした。
     no_resource_found:
-    no_results: "検索結果がありませんでした。"
+    no_results: 検索結果がありませんでした。
     no_returns_found:
-    no_rules_added: "ルールが追加されていません"
+    no_rules_added: ルールが追加されていません
     no_shipping_method_selected:
     no_state_changes:
     no_tracking_present:
-    none: "空です"
+    none: 空です
     none_selected:
-    normal_amount: "通常価格"
-    not: "非"
+    normal_amount: 通常価格
+    not: 非
     not_available: N/A
     not_enough_stock:
     not_found: "%{resource}が見つかりません"
     note:
     notice_messages:
-      product_cloned: "商品を複製しました"
-      product_deleted: "商品を削除しました"
-      product_not_cloned: "商品を複製することが出来ませんでした"
-      product_not_deleted: "商品を削除することが出来ませんでした"
-      variant_deleted: "種類を削除しました"
-      variant_not_deleted: "種類を削除することが出来ませんでした"
+      product_cloned: 商品を複製しました
+      product_deleted: 商品を削除しました
+      product_not_cloned: 商品を複製することが出来ませんでした
+      product_not_deleted: 商品を削除することが出来ませんでした
+      variant_deleted: 種類を削除しました
+      variant_not_deleted: 種類を削除することが出来ませんでした
     num_orders:
-    on_hand: "入荷数"
+    on_hand: 入荷数
     open:
     open_all_adjustments:
-    option_type: "オプションタイプ"
-    option_type_placeholder: "プレイスホルダ"
-    option_types: "オプションタイプ"
-    option_value: "オプション価格"
-    option_values: "オプション価格"
+    option_type: オプションタイプ
+    option_type_placeholder: プレイスホルダ
+    option_types: オプションタイプ
+    option_value: オプション価格
+    option_values: オプション価格
     optional:
-    options: "オプション"
-    or: "もしくは"
+    options: オプション
+    or: もしくは
     or_over_price: "%{price}以上"
-    order: "注文"
+    order: 注文
     order_adjustments:
     order_already_updated:
     order_approved:
     order_canceled:
-    order_details: "注文詳細"
-    order_email_resent: "注文詳細メールを再送信しました"
-    order_information: "注文情報"
+    order_details: 注文詳細
+    order_email_resent: 注文詳細メールを再送信しました
+    order_information: 注文情報
     order_mailer:
       cancel_email:
         dear_customer:
         instructions:
         order_summary_canceled:
-        subject: "注文のキャンセル"
+        subject: 注文のキャンセル
         subtotal:
         total:
       confirm_email:
         dear_customer:
         instructions:
         order_summary:
-        subject: "注文確認"
+        subject: 注文確認
         subtotal:
         thanks:
         total:
     order_not_found:
-    order_number: "注文 %{number}"
-    order_processed_successfully: "注文が完了しました。"
+    order_number: 注文 %{number}
+    order_processed_successfully: 注文が完了しました。
     order_resumed:
     order_state:
-      address: "住所"
-      awaiting_return: "返品待ち"
-      canceled: "キャンセル"
-      cart: "カート"
-      complete: "完了"
-      confirm: "確認"
+      address: 住所
+      awaiting_return: 返品待ち
+      canceled: キャンセル
+      cart: カート
+      complete: 完了
+      confirm: 確認
       considered_risky:
-      delivery: "配送"
-      payment: "支払い"
-      resumed: "再開"
-      returned: "返品済み"
-    order_summary: "注文サマリー"
-    order_sure_want_to: "本当にこの注文を%{event}しますか？"
-    order_total: "合計"
-    order_updated: "注文内容が更新されました。"
-    orders: "注文"
+      delivery: 配送
+      payment: 支払い
+      resumed: 再開
+      returned: 返品済み
+    order_summary: 注文サマリー
+    order_sure_want_to: 本当にこの注文を%{event}しますか？
+    order_total: 合計
+    order_updated: 注文内容が更新されました。
+    orders: 注文
     other_items_in_other:
-    out_of_stock: "在庫が品切れです"
-    overview: "概要"
+    out_of_stock: 在庫が品切れです
+    overview: 概要
     package_from:
     pagination:
-      next_page: "次のページ »"
+      next_page: 次のページ »
       previous_page: "« 前のページ"
       truncate: "…"
-    password: "パスワード"
+    password: パスワード
     paste: Paste
-    path: "パス"
-    pay: "支払い"
-    payment: "支払い方法"
+    path: パス
+    pay: 支払い
+    payment: 支払い方法
     payment_could_not_be_created:
     payment_identifier:
-    payment_information: "支払い情報"
-    payment_method: "支払い方法"
+    payment_information: 支払い情報
+    payment_method: 支払い方法
     payment_method_not_supported:
-    payment_methods: "支払い方法"
-    payment_processing_failed: "決済が失敗しました。入力した情報を確認してから再び決済を行ってみて下さい。"
-    payment_processor_choose_banner_text: "もし決済処理会社の選択でお困りでしたら、どうぞ"
-    payment_processor_choose_link: "こちらへ"
-    payment_state: "支払い状況"
+    payment_methods: 支払い方法
+    payment_processing_failed: 決済が失敗しました。入力した情報を確認してから再び決済を行ってみて下さい。
+    payment_processor_choose_banner_text: もし決済処理会社の選択でお困りでしたら、どうぞ
+    payment_processor_choose_link: こちらへ
+    payment_state: 支払い状況
     payment_states:
-      balance_due: "未支払い"
-      checkout: "決算中"
-      completed: "完了"
-      credit_owed: "過払い額"
-      failed: "失敗しました"
-      paid: "支払い済み"
-      pending: "支払い待ち"
-      processing: "処理中"
-      void: "無効"
-    payment_updated: "支払いが更新されました。"
-    payments: "支払い方法"
+      balance_due: 未支払い
+      checkout: 決算中
+      completed: 完了
+      credit_owed: 過払い額
+      failed: 失敗しました
+      paid: 支払い済み
+      pending: 支払い待ち
+      processing: 処理中
+      void: 無効
+    payment_updated: 支払いが更新されました。
+    payments: 支払い方法
     pending:
     percent:
     percent_per_item: Percent Per Item
-    permalink: "パーマリンク"
-    phone: "電話番号"
-    place_order: "注文を送信する"
-    please_define_payment_methods: "まず支払い方法を定義してください。"
+    permalink: パーマリンク
+    phone: 電話番号
+    place_order: 注文を送信する
+    please_define_payment_methods: まず支払い方法を定義してください。
     populate_get_error: Something went wrong. Please try adding the item again.
     powered_by: Powered by
     pre_tax_amount:
     pre_tax_refund_amount:
     pre_tax_total:
     preferred_reimbursement_type:
-    presentation: "表示名"
-    previous: "前へ"
+    presentation: 表示名
+    previous: 前へ
     previous_state_missing:
-    price: "価格"
-    price_range: "価格帯"
-    price_sack: "プライスサック"
-    process: "処理する"
-    product: "商品"
-    product_details: "商品詳細"
-    product_has_no_description: "この商品に詳細がありません。"
+    price: 価格
+    price_range: 価格帯
+    price_sack: プライスサック
+    process: 処理する
+    product: 商品
+    product_details: 商品詳細
+    product_has_no_description: この商品に詳細がありません。
     product_not_available_in_this_currency:
-    product_properties: "商品情報"
+    product_properties: 商品情報
     product_rule:
-      choose_products: "商品を選択してください"
+      choose_products: 商品を選択してください
       label:
-      match_all: "すべて"
-      match_any: "少なくとも一つ"
+      match_all: すべて
+      match_any: 少なくとも一つ
       match_none:
       product_source:
-        group: "商品グループから"
-        manual: "手動で選択"
-    products: "商品"
-    promotion: "プロモーション"
-    promotion_action: "プロモーションアクション"
+        group: 商品グループから
+        manual: 手動で選択
+    products: 商品
+    promotion: プロモーション
+    promotion_action: プロモーションアクション
     promotion_action_types:
       create_adjustment:
-        description: "注文に対して値引きする"
-        name: "値引き"
+        description: 注文に対して値引きする
+        name: 値引き
       create_item_adjustments:
         description:
         name:
       create_line_items:
-        description: "特定の種類の商品をカートに加える"
-        name: "商品追加"
+        description: 特定の種類の商品をカートに加える
+        name: 商品追加
       free_shipping:
         description:
         name:
-    promotion_actions: "アクション"
+    promotion_actions: アクション
     promotion_form:
       match_policies:
-        all: "以下のルールすべてに該当する"
-        any: "以下のルールのいずれかに該当する"
-    promotion_rule: "プロモーションルール"
+        all: 以下のルールすべてに該当する
+        any: 以下のルールのいずれかに該当する
+    promotion_rule: プロモーションルール
     promotion_rule_types:
       first_order:
-        description: "最初の注文である"
-        name: "最初の注文"
+        description: 最初の注文である
+        name: 最初の注文
       item_total:
-        description: "商品金額合計"
-        name: "商品金額合計"
+        description: 商品金額合計
+        name: 商品金額合計
       landing_page:
-        description: "お客様が特定のページを訪問済みである"
-        name: "ランディングページ"
+        description: お客様が特定のページを訪問済みである
+        name: ランディングページ
       one_use_per_user:
         description:
         name:
@@ -998,46 +998,46 @@ ja:
         description:
         name:
       product:
-        description: "注文に特定の商品を含む"
-        name: "商品"
+        description: 注文に特定の商品を含む
+        name: 商品
       taxon:
         description:
         name:
       user:
-        description: "特定のユーザー限定"
-        name: "ユーザー"
+        description: 特定のユーザー限定
+        name: ユーザー
       user_logged_in:
-        description: "ログイン中のユーザー限定"
-        name: "ログイン中のユーザー"
+        description: ログイン中のユーザー限定
+        name: ログイン中のユーザー
     promotion_uses:
     promotionable:
-    promotions: "プロモーション"
+    promotions: プロモーション
     propagate_all_variants:
-    properties: "属性"
-    property: "属性"
-    prototype: "プロトタイプ"
-    prototypes: "プロトタイプ"
-    provider: "プロバイダー"
-    provider_settings_warning: "プロバイダータイプを変更する時は、プロバイダー設定を編集する前に保存しなければなりません。"
-    qty: "個数"
+    properties: 属性
+    property: 属性
+    prototype: プロトタイプ
+    prototypes: プロトタイプ
+    provider: プロバイダー
+    provider_settings_warning: プロバイダータイプを変更する時は、プロバイダー設定を編集する前に保存しなければなりません。
+    qty: 個数
     quantity:
-    quantity_returned: "返送された数"
-    quantity_shipped: "発送された数"
-    quick_search: "検索"
-    rate: "比率"
-    reason: "理由"
-    receive: "受信"
+    quantity_returned: 返送された数
+    quantity_shipped: 発送された数
+    quick_search: 検索
+    rate: 比率
+    reason: 理由
+    receive: 受信
     receive_stock:
-    received: "受信した"
+    received: 受信した
     reception_status:
     reference:
-    refund: "払い戻し"
+    refund: 払い戻し
     refund_amount_must_be_greater_than_zero:
     refund_reasons:
     refunded_amount:
     refunds:
-    register: "新規ユーザーとして登録"
-    registration: "登録"
+    register: 新規ユーザーとして登録
+    registration: 登録
     reimburse:
     reimbursed:
     reimbursement:
@@ -1059,21 +1059,21 @@ ja:
     reimbursements:
     reject:
     rejected:
-    remember_me: "記録する"
-    remove: "削除"
-    rename: "リネーム"
+    remember_me: 記録する
+    remove: 削除
+    rename: リネーム
     report:
-    reports: "リポート"
-    resend: "再送信"
-    reset_password: "パスワードを再設定する"
-    response_code: "レスポンスコード"
-    resume: "リジューム"
-    resumed: "リジュームされた"
-    return: "返品"
-    return_authorization: "返品承認"
+    reports: リポート
+    resend: 再送信
+    reset_password: パスワードを再設定する
+    response_code: レスポンスコード
+    resume: リジューム
+    resumed: リジュームされた
+    return: 返品
+    return_authorization: 返品承認
     return_authorization_reasons:
-    return_authorization_updated: "返品承認が更新されました"
-    return_authorizations: "返品承認"
+    return_authorization_updated: 返品承認が更新されました
+    return_authorizations: 返品承認
     return_item_inventory_unit_ineligible:
     return_item_inventory_unit_reimbursed:
     return_item_rma_ineligible:
@@ -1081,46 +1081,46 @@ ja:
     return_items:
     return_items_cannot_be_associated_with_multiple_orders:
     return_number:
-    return_quantity: "返品数"
-    returned: "返品済み"
-    returns: "返品"
-    review: "内容を確認する"
+    return_quantity: 返品数
+    returned: 返品済み
+    returns: 返品
+    review: 内容を確認する
     risk:
     risk_analysis:
     risky:
     rma_credit: RMAクレジット
     rma_number: RMA番号
     rma_value: RMA値
-    roles: "役割"
-    rules: "ルール"
+    roles: 役割
+    rules: ルール
     safe:
-    sales_total: "売上げ合計"
-    sales_total_description: "全注文の売上合計"
+    sales_total: 売上げ合計
+    sales_total_description: 全注文の売上合計
     sales_totals:
-    save_and_continue: "保存して続行"
+    save_and_continue: 保存して続行
     save_my_address:
-    say_no: "いいえ"
-    say_yes: "はい"
-    scope: "範囲"
-    search: "検索"
+    say_no: いいえ
+    say_yes: はい
+    scope: 範囲
+    search: 検索
     search_results: "'%{keywords}' の検索結果"
-    searching: "検索中"
-    secure_connection_type: "接続保護のタイプ"
-    security_settings: "セキュリティの設定"
-    select: "選択"
+    searching: 検索中
+    secure_connection_type: 接続保護のタイプ
+    security_settings: セキュリティの設定
+    select: 選択
     select_a_return_authorization_reason:
     select_a_stock_location:
-    select_from_prototype: "プロトタイプから選択"
+    select_from_prototype: プロトタイプから選択
     select_stock:
-    send_copy_of_all_mails_to: "全てのメールのコピーをこの宛先に送る"
-    send_mails_as: "メール送信者名"
-    server: "サーバ"
-    server_error: "サーバーエラー"
-    settings: "設定"
-    ship: "配送"
-    ship_address: "配送先住所"
+    send_copy_of_all_mails_to: 全てのメールのコピーをこの宛先に送る
+    send_mails_as: メール送信者名
+    server: サーバ
+    server_error: サーバーエラー
+    settings: 設定
+    ship: 配送
+    ship_address: 配送先住所
     ship_total:
-    shipment: "発送"
+    shipment: 発送
     shipment_adjustments:
     shipment_details:
     shipment_mailer:
@@ -1128,54 +1128,54 @@ ja:
         dear_customer:
         instructions:
         shipment_summary:
-        subject: "発送の通知"
+        subject: 発送の通知
         thanks:
         track_information:
         track_link:
-    shipment_state: "配送状況"
+    shipment_state: 配送状況
     shipment_states:
-      backorder: "入荷待ち"
+      backorder: 入荷待ち
       canceled:
-      partial: "一部配送"
-      pending: "配送準備中"
-      ready: "配送可能"
-      shipped: "配送済み"
+      partial: 一部配送
+      pending: 配送準備中
+      ready: 配送可能
+      shipped: 配送済み
     shipment_transfer_error:
     shipment_transfer_success:
-    shipments: "配送"
-    shipped: "発送済"
-    shipping: "送料"
-    shipping_address: "配送先"
-    shipping_categories: "配送カテゴリー"
-    shipping_category: "配送カテゴリー"
+    shipments: 配送
+    shipped: 発送済
+    shipping: 送料
+    shipping_address: 配送先
+    shipping_categories: 配送カテゴリー
+    shipping_category: 配送カテゴリー
     shipping_flat_rate_per_item:
     shipping_flat_rate_per_order:
     shipping_flexible_rate:
-    shipping_instructions: "配送に関して"
-    shipping_method: "配送方法"
-    shipping_methods: "配送方法"
+    shipping_instructions: 配送に関して
+    shipping_method: 配送方法
+    shipping_methods: 配送方法
     shipping_price_sack:
     shipping_total:
     shop_by_taxonomy: "%{taxonomy}"
-    shopping_cart: "ショッピングカート"
-    show: "表示"
-    show_active: "有効のを表示する"
-    show_deleted: "削除済みのを表示"
-    show_only_complete_orders: "処理済みの注文のみを表示"
+    shopping_cart: ショッピングカート
+    show: 表示
+    show_active: 有効のを表示する
+    show_deleted: 削除済みのを表示
+    show_only_complete_orders: 処理済みの注文のみを表示
     show_only_considered_risky:
-    show_rate_in_label: "税率を見る"
-    sku: "品番[SKU]"
+    show_rate_in_label: 税率を見る
+    sku: 品番[SKU]
     skus:
     slug:
     source:
-    special_instructions: "特別な指示"
+    special_instructions: 特別な指示
     split:
-    spree_gateway_error_flash_for_checkout: "支払い情報に問題があります。情報をお確かめになり再試行願います。"
+    spree_gateway_error_flash_for_checkout: 支払い情報に問題があります。情報をお確かめになり再試行願います。
     ssl:
       change_protocol:
-    start: "始め"
-    state: "都道府県（州）"
-    state_based: "都道府県(州)による区別"
+    start: 始め
+    state: 都道府県（州）
+    state_based: 都道府県(州)による区別
     state_machine_states:
       accepted:
       address:
@@ -1208,9 +1208,9 @@ ja:
       returned:
       shipped:
       void:
-    states: "都道府県（州）"
-    states_required: "必須"
-    status: "状況"
+    states: 都道府県（州）
+    states_required: 必須
+    status: 状況
     stock:
     stock_location:
     stock_location_info:
@@ -1223,12 +1223,12 @@ ja:
     stock_successfully_transferred:
     stock_transfer:
     stock_transfers:
-    stop: "終わり"
-    store: "ストア"
-    street_address: "住所"
-    street_address_2: "住所の続き"
-    subtotal: "合計"
-    subtract: "引く"
+    stop: 終わり
+    store: ストア
+    street_address: 住所
+    street_address_2: 住所の続き
+    subtotal: 合計
+    subtract: 引く
     success:
     successfully_created: "%{resource}が作成されました!"
     successfully_refunded:
@@ -1236,101 +1236,101 @@ ja:
     successfully_signed_up_for_analytics:
     successfully_updated: "%{resource}が更新されました!"
     summary:
-    tax: "税金"
-    tax_categories: "税金カテゴリー"
-    tax_category: "税金カテゴリー"
+    tax: 税金
+    tax_categories: 税金カテゴリー
+    tax_category: 税金カテゴリー
     tax_code:
     tax_included:
     tax_rate_amount_explanation:
-    tax_rates: "税率"
-    taxon: "分類"
-    taxon_edit: "分類を編集"
-    taxon_placeholder: "分類プレイスホルダ"
+    tax_rates: 税率
+    taxon: 分類
+    taxon_edit: 分類を編集
+    taxon_placeholder: 分類プレイスホルダ
     taxon_rule:
       choose_taxons:
       label:
       match_all:
       match_any:
-    taxonomies: "分類ツリー"
-    taxonomy: "分類ツリー"
-    taxonomy_edit: "分類ツリーを編集する"
-    taxonomy_tree_error: "要求された変更は受け付けられず、ツリーは以前の状態に戻っています。再度お試しください。"
+    taxonomies: 分類ツリー
+    taxonomy: 分類ツリー
+    taxonomy_edit: 分類ツリーを編集する
+    taxonomy_tree_error: 要求された変更は受け付けられず、ツリーは以前の状態に戻っています。再度お試しください。
     taxonomy_tree_instruction: "* 追加・削除・ソートなどのメニューを選択するには、ツリーのノードを右クリックしてください。"
-    taxons: "分類"
-    test: "テスト"
+    taxons: 分類
+    test: テスト
     test_mailer:
       test_email:
-        greeting: "おめでとうございます！"
-        message: "もしこのメールを受け取ったのなら、あなたのメール設定は正しいです。"
-        subject: "テストメール"
-    test_mode: "テストモード"
-    thank_you_for_your_order: "ご注文ありがとうございます。この確認画面を控えとして印刷してください。"
+        greeting: おめでとうございます！
+        message: もしこのメールを受け取ったのなら、あなたのメール設定は正しいです。
+        subject: テストメール
+    test_mode: テストモード
+    thank_you_for_your_order: ご注文ありがとうございます。この確認画面を控えとして印刷してください。
     there_are_no_items_for_this_order:
-    there_were_problems_with_the_following_fields: "以下の入力欄で問題がありました"
+    there_were_problems_with_the_following_fields: 以下の入力欄で問題がありました
     this_order_has_already_received_a_refund:
-    thumbnail: "サムネール"
+    thumbnail: サムネール
     tiered_flat_rate:
     tiered_percent:
     tiers:
     time:
-    to_add_variants_you_must_first_define: "種類を追加するには、まずそれを定義する必要があります。"
-    total: "合計"
+    to_add_variants_you_must_first_define: 種類を追加するには、まずそれを定義する必要があります。
+    total: 合計
     total_per_item:
     total_pre_tax_refund:
     total_price:
     total_sales:
     track_inventory:
-    tracking: "トラッキング"
+    tracking: トラッキング
     tracking_number:
     tracking_url:
-    tracking_url_placeholder: "トラッキングURL"
+    tracking_url_placeholder: トラッキングURL
     transaction_id:
     transfer_from_location:
     transfer_stock:
     transfer_to_location:
-    tree: "ツリー"
-    type: "支払い方法"
-    type_to_search: "何か入力すると検索します"
-    unable_to_connect_to_gateway: "ゲートウェイに接続できません。"
+    tree: ツリー
+    type: 支払い方法
+    type_to_search: 何か入力すると検索します
+    unable_to_connect_to_gateway: ゲートウェイに接続できません。
     unable_to_create_reimbursements:
     under_price: "%{price}より安い"
     unlock:
-    unrecognized_card_type: "認識できないカードタイプ"
+    unrecognized_card_type: 認識できないカードタイプ
     unshippable_items:
-    update: "更新"
-    updating: "更新中"
-    usage_limit: "使用制限"
-    use_app_default: "デフォルトを使用する"
-    use_billing_address: "請求先住所を使用する"
-    use_new_cc: "新しいカードを使用する"
-    use_s3: "商品画像の保存にAmazon S3を使用する"
-    user: "ユーザー"
+    update: 更新
+    updating: 更新中
+    usage_limit: 使用制限
+    use_app_default: デフォルトを使用する
+    use_billing_address: 請求先住所を使用する
+    use_new_cc: 新しいカードを使用する
+    use_s3: 商品画像の保存にAmazon S3を使用する
+    user: ユーザー
     user_rule:
-      choose_users: "ユーザーの選択"
-    users: "ユーザー"
+      choose_users: ユーザーの選択
+    users: ユーザー
     validation:
-      cannot_be_less_than_shipped_units: "配送ユニットの個数より小さくはできません"
+      cannot_be_less_than_shipped_units: 配送ユニットの個数より小さくはできません
       cannot_destroy_line_item_as_inventory_units_have_shipped:
       exceeds_available_stock:
-      is_too_large: "要求された量は在庫を超えています。"
-      must_be_int: "整数であることが必要です"
+      is_too_large: 要求された量は在庫を超えています。
+      must_be_int: 整数であることが必要です
       must_be_non_negative: 0以上の数字が必要です
       unpaid_amount_not_zero:
-    value: "値"
-    variant: "種類"
-    variant_placeholder: "種類プレイスホルダ"
-    variants: "種類"
-    version: "バージョン"
-    void: "無効"
-    weight: "重量"
-    what_is_a_cvv: "カード照合値(CVV)とは?"
-    what_is_this: "これは何?"
-    width: "横幅"
-    year: "年"
-    you_have_no_orders_yet: "まだ注文がありません。"
-    your_cart_is_empty: "カートは空です"
+    value: 値
+    variant: 種類
+    variant_placeholder: 種類プレイスホルダ
+    variants: 種類
+    version: バージョン
+    void: 無効
+    weight: 重量
+    what_is_a_cvv: カード照合値(CVV)とは?
+    what_is_this: これは何?
+    width: 横幅
+    year: 年
+    you_have_no_orders_yet: まだ注文がありません。
+    your_cart_is_empty: カートは空です
     your_order_is_empty_add_product:
-    zip: "郵便番号"
+    zip: 郵便番号
     zipcode:
-    zone: "ゾーン"
-    zones: "ゾーン"
+    zone: ゾーン
+    zones: ゾーン

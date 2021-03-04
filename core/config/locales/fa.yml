@@ -1,17 +1,18 @@
+---
 fa:
   Bazaar: بازار
   activerecord:
     attributes:
       spree/address:
-        address1: "آدرس"
-        address2: "ادامه آدرس"
-        city: "شهر"
-        country: "کشور"
-        firstname: "نام"
-        lastname: "نام‌خانوادگی"
-        phone: "تلفن"
-        state: "استان"
-        zipcode: "کد پستی"
+        address1: آدرس
+        address2: ادامه آدرس
+        city: شهر
+        country: کشور
+        firstname: نام
+        lastname: نام‌خانوادگی
+        phone: تلفن
+        state: استان
+        zipcode: کد پستی
       spree/calculator/tiered_flat_rate:
         preferred_base_amount:
         preferred_tiers:
@@ -22,27 +23,28 @@ fa:
         iso: ISO
         iso3: ISO3
         iso_name: ISO Name
-        name: "نام"
+        name: نام
         numcode: ISO Code
       spree/credit_card:
         base:
-        cc_type: "نوع"
-        month: "ماه"
+        cc_type: نوع
+        month: ماه
         name:
-        number: "عدد"
+        number: عدد
         verification_value:
-        year: "سال"
+        year: سال
       spree/inventory_unit:
-        state: "استان"
+        state: استان
       spree/line_item:
-        price: "قیمت"
-        quantity: "مقدار"
+        price: قیمت
+        quantity: مقدار
       spree/option_type:
-        name: "نام"
-        presentation: "نمایش"
+        name: نام
+        presentation: نمایش
       spree/order:
         checkout_complete:
         completed_at: پایان یافته در
+        considered_risky: ریسکی
         coupon_code: کد کوپن
         created_at: ساخته شده در
         email: ایمیل
@@ -54,8 +56,6 @@ fa:
         special_instructions: دستورالعمل ویژه
         state: وضعیت
         total: مجموع
-        considered_risky: ریسکی
-
       spree/order/bill_address:
         address1:
         city:
@@ -92,24 +92,24 @@ fa:
         description:
         event_name:
         expires_at:
-        name: "نام"
-        path: "مسیر"
+        name: نام
+        path: مسیر
         starts_at:
         usage_limit:
       spree/promotion_category:
         name: نام
       spree/property:
-        name: "نام"
-        presentation: "نمایش"
+        name: نام
+        presentation: نمایش
       spree/prototype:
-        name: "نام"
+        name: نام
       spree/return_authorization:
         amount: مقدار
       spree/role:
-        name: "نام"
+        name: نام
       spree/state:
         abbr:
-        name: "نام"
+        name: نام
       spree/state_change:
         state_changes:
         state_from:
@@ -126,8 +126,8 @@ fa:
         seo_title:
         url:
       spree/tax_category:
-        description: "توضیحات"
-        name: "نام"
+        description: توضیحات
+        name: نام
       spree/tax_rate:
         amount:
         included_in_price:
@@ -137,11 +137,11 @@ fa:
         permalink:
         position:
       spree/taxonomy:
-        name: "نام"
+        name: نام
       spree/user:
-        email: "ایمیل"
-        password: "رمز‌عبور"
-        password_confirmation: "تایید رمز‌عبور"
+        email: ایمیل
+        password: رمز‌عبور
+        password_confirmation: تایید رمز‌عبور
       spree/variant:
         cost_currency:
         cost_price: Cost Price
@@ -152,8 +152,8 @@ fa:
         weight: وزن
         width: عرض
       spree/zone:
-        description: "توضیحات"
-        name: "نام"
+        description: توضیحات
+        name: نام
     errors:
       models:
         spree/calculator/tiered_flat_rate:
@@ -201,15 +201,21 @@ fa:
             base:
               cannot_destroy_default_store:
     models:
+      reimbursement_perform_failed:
+      reimbursement_status: وضعیت بازپرداخت
+      reimbursement_type: نوع بازپرداخت
+      reimbursement_type_override:
+      reimbursement_types: انواع بازپرداخت
+      reimbursements: بازپرداخت‌ها
       spree/address:
-        one: "آدرس"
-        other: "آدرس‌ها"
+        one: آدرس
+        other: آدرس‌ها
       spree/country:
-        one: "کشور"
-        other: "کشورها"
+        one: کشور
+        other: کشورها
       spree/credit_card:
-        one: "کارت اعتباری"
-        other: "کارت‌های اعتباری"
+        one: کارت اعتباری
+        other: کارت‌های اعتباری
       spree/customer_return:
       spree/inventory_unit:
       spree/line_item:
@@ -223,25 +229,19 @@ fa:
         other: Payments
       spree/payment_method:
       spree/product:
-        one: "محصول"
-        other: "محصول‌ها"
+        one: محصول
+        other: محصول‌ها
       spree/promotion: فروش ویژه
       spree/promotion_category: دسته بندی فروش ویژه
       spree/property:
-        one: "خصوصیت"
-        other: "خصوصیات"
+        one: خصوصیت
+        other: خصوصیات
       spree/prototype:
         one: نمونه آزمایشی
         other: نمنونه های آزمایشی
       spree/refund_reason: دلیل استرداد
       spree/reimbursement: بازپرداخت
       spree/reimbursement_type: نوع بازپرداخت
-      reimbursement_perform_failed:
-      reimbursement_status: وضعیت بازپرداخت
-      reimbursement_type: نوع بازپرداخت
-      reimbursement_type_override:
-      reimbursement_types: انواع بازپرداخت
-      reimbursements: بازپرداخت‌ها
       spree/return_authorization: مجوز بازگشت
       spree/return_authorization_reason: دلیل مجوز بازگشت
       spree/role: نقش
@@ -263,8 +263,8 @@ fa:
         other: Taxonomies
       spree/tracker:
       spree/user:
-        one: "کاربر"
-        other: "کاربرها"
+        one: کاربر
+        other: کاربرها
       spree/variant:
         one: Variant
         other: Variants
@@ -316,16 +316,14 @@ fa:
       not_locked:
       not_saved:
   spree:
-    quick_search: جستوجو سریع . . .
-    filter: فیلتر
-    abbreviation: "مخفف"
+    abbreviation: مخفف
     accept:
     acceptance_errors:
     acceptance_status:
     accepted:
-    account: "حساب"
-    account_updated: "حساب شما بروزرسانی شد!"
-    action: "حرکت"
+    account: حساب
+    account_updated: حساب شما بروزرسانی شد!
+    action: حرکت
     actions:
       cancel: لغو
       continue:
@@ -366,18 +364,18 @@ fa:
     admin:
       tab:
         configuration: تنظیمات
+        option_types: انواع اختیارات
         orders: سفارشات
         overview: نمای کلی
         products: محصولات
+        promotion_categories:
         promotions: فروش ویژه
         properties: ویژگی ها
-        promotion_categories:
         prototypes: نمونه های اولیه
         reports: گزارشات
-        users: کاربران
-        option_types: انواع اختیارات
         taxonomies: رده بندی
         taxons: گونه
+        users: کاربران
     administration: مدیریت
     agree_to_privacy_policy:
     agree_to_terms_of_service:
@@ -403,12 +401,12 @@ fa:
     are_you_sure: آیا مطمئن هستید؟
     are_you_sure_delete: آیا مطمئن هستید که می خواهید این سطر را پاک کنید؟
     associated_adjustment_closed:
+    at_symbol: "@"
     attachment_default_style: Attachments Style
     attachment_default_url: Attachments URL
     attachment_path: Attachments Path
     attachment_styles: Paperclip Styles
     attachment_url:
-    at_symbol: '@'
     authorization_failure: خرابی در صدور مجوز
     available_on: موجود است در
     back: برگشت
@@ -527,7 +525,6 @@ fa:
     date:
     date_completed: Date Completed
     date_picker:
-      # FlatPickr human friendly formatting
       fpr_human_friendly_date_format: M j, Y
       fpr_human_friendly_date_time_format: M j, Y - H:i
     date_range: محدوده ی زمانی
@@ -548,14 +545,14 @@ fa:
     display: نمایش
     display_currency: Display currency
     edit: ویرایش
-    editing_resource: ویرایش منابع
-    editing_rma_reason: ویرایش دلایل RMA
     editing_option_type: ویرایش نوع انتخاب
     editing_payment_method: ویرایش متد پرداخت
     editing_product: ویرایش محصول
     editing_promotion: Editing Promotion
     editing_property: ویرایش اموال
     editing_prototype: ویرایش نمونه اولیه
+    editing_resource: ویرایش منابع
+    editing_rma_reason: ویرایش دلایل RMA
     editing_shipping_category: ویرایش دسته بندی ارسال
     editing_shipping_method: ویرایش روش ارسال
     editing_state: ویرایش ایالت یا استان
@@ -576,32 +573,33 @@ fa:
     error: ایراد
     errors:
       messages:
-        could_not_create_taxon: "امکان ایجاد نوع دسته‌بندی وجود ندارد"
+        could_not_create_taxon: امکان ایجاد نوع دسته‌بندی وجود ندارد
         no_payment_methods_available:
-        no_shipping_methods_available: "ارسال برای ناحیه انتخاب شده مقدور نمی‌باشد، لطفا منطقه‌ی دیگری را انتخاب کنید"
+        no_shipping_methods_available: ارسال برای ناحیه انتخاب شده مقدور نمی‌باشد، لطفا منطقه‌ی دیگری را انتخاب کنید
     errors_prohibited_this_record_from_being_saved:
-      one: "یک ایراد مانع از انجام ذخیره‌سازی است"
+      one: یک ایراد مانع از انجام ذخیره‌سازی است
       other: "%{count} ایراد مانع از انجام ذخیره‌سازی است"
-    event: "رویداد"
+    event: رویداد
     events:
       spree:
         cart:
-          add: "اضافه به سبد خرید"
+          add: اضافه به سبد خرید
         checkout:
-          coupon_code_added: "کد کوپن اضافه شد"
+          coupon_code_added: کد کوپن اضافه شد
         content:
           visited:
         order:
-          contents_changed: "محتویات سفارش تغییر یافت"
+          contents_changed: محتویات سفارش تغییر یافت
         page_view:
         user:
-          signup: "ثبت‌نام کاربر"
+          signup: ثبت‌نام کاربر
     exceptions:
       count_on_hand_setter:
     expiration: انقضاء
     extension: الحاقی
     filename: نام فایل
     fill_in_customer_info:
+    filter: فیلتر
     filter_results: فیلتر کردن نتایج
     finalize: نهایی کردن
     first_item: هزینه اولین آیتم
@@ -675,7 +673,7 @@ fa:
     listing_tax_categories: لیست کردن دسته بندی های مالیات
     listing_users: لیست کردن کاربران
     loading: در حال بارگذاری
-    locale_changed: (زبان سایت به فارسی تغییر کرد)
+    locale_changed: "(زبان سایت به فارسی تغییر کرد)"
     location:
     lock:
     logged_in_as: شما وارد شدید به عنوان
@@ -756,7 +754,7 @@ fa:
     not: not
     not_available: N/A
     not_enough_stock:
-    not_found: ! '%{resource} is not found'
+    not_found: "%{resource} is not found"
     notice_messages:
       product_cloned: Product has been cloned
       product_deleted: محصول حذف شد
@@ -775,7 +773,7 @@ fa:
     optional: اختیاری
     options: اختیارات
     or: یا
-    or_over_price: ! '%{price} or over'
+    or_over_price: "%{price} or over"
     order: سفارش
     order_adjustments: Order adjustments
     order_details: جزئیات سفارش
@@ -821,8 +819,8 @@ fa:
     package_from:
     pagination:
       next_page: next page &raquo;
-      previous_page: ! '&laquo; previous page'
-      truncate: ! '&hellip;'
+      previous_page: "&laquo; previous page"
+      truncate: "&hellip;"
     password: رمز عبور
     paste: Paste
     path: Path
@@ -868,16 +866,16 @@ fa:
     product_not_available_in_this_currency:
     product_properties: ویژگی های محصول
     product_rule:
-      choose_products: "محصول‌ها را انتخاب کنید"
+      choose_products: محصول‌ها را انتخاب کنید
       label:
-      match_all: "همه"
-      match_any: "حداقل یکی"
+      match_all: همه
+      match_any: حداقل یکی
       match_none:
       product_source:
         group: از گروه محصول
         manual: انتخاب دستی
     products: محصولات
-    promotion: "فروش ویژه"
+    promotion: فروش ویژه
     promotion_action: فروش ویژه فعال
     promotion_action_types:
       create_adjustment:
@@ -937,16 +935,17 @@ fa:
     quantity:
     quantity_returned: Quantity Returned
     quantity_shipped: Quantity Shipped
+    quick_search: جستوجو سریع . . .
     rate: Rate
     reason: Reason
     receive: receive
     receive_stock:
     received: دریافت شد
     reference: ارجاع
+    refund: استرداد
     refund_amount_must_be_greater_than_zero: مقدار بازپرداخت باید از صفر بیشتر باشد
     refund_reasons: دلیل استرداد
     refunded_amount: مقدار استرداد
-    refund: استرداد
     register: به عنوان کاربر جدید ثبت نام کنید
     registration: ثبت نام
     remember_me: من را به یاد بسپار
@@ -969,14 +968,14 @@ fa:
     rma_credit: RMA Credit
     rma_number: RMA Number
     rma_value: RMA Value
-    roles: "نقش ها"
+    roles: نقش ها
     rules: قوانین
-    safe: مطمئن
     s3_access_key: Access Key
     s3_bucket: Bucket
     s3_headers: S3 Headers
     s3_protocol: S3 Protocol
     s3_secret: Secret Key
+    safe: مطمئن
     sales_total: کل فروش
     sales_total_description: کل فروش برای همه سفارش ها
     sales_totals: کلیه فروش ها
@@ -1009,7 +1008,7 @@ fa:
         shipment_summary: Shipment Summary
         subject: Shipment Notification
         thanks: Thank you for your business.
-        track_information: ! 'Tracking Information: %{tracking}'
+        track_information: 'Tracking Information: %{tracking}'
         track_link:
     shipment_state: Shipment State
     shipment_states:
@@ -1077,10 +1076,10 @@ fa:
     street_address_2: ادامه آدرس
     subtotal: جمع
     subtract: Subtract
-    successfully_created: ! '%{resource} با موفقیت اضافه شد!'
-    successfully_removed: ! '%{resource} با موفقیت حذف شد!'
+    successfully_created: "%{resource} با موفقیت اضافه شد!"
+    successfully_removed: "%{resource} با موفقیت حذف شد!"
     successfully_signed_up_for_analytics:
-    successfully_updated: ! '%{resource} با موفقیت به روز رسانی شد!'
+    successfully_updated: "%{resource} با موفقیت به روز رسانی شد!"
     tax: مالیات
     tax_categories: دسته بندی های مالیات
     tax_category: دسته بندی مالیات
@@ -1095,7 +1094,7 @@ fa:
     taxonomy: رده‌بندی
     taxonomy_edit: ویرایش طبقه بندی
     taxonomy_tree_error: The requested change has not been accepted and the tree has been returned to its previous state, please try again.
-    taxonomy_tree_instruction: ! '* Right click a child in the tree to access the menu for adding, deleting or sorting a child.'
+    taxonomy_tree_instruction: "* Right click a child in the tree to access the menu for adding, deleting or sorting a child."
     taxons: گونه ها
     test: تست
     test_mailer:
@@ -1134,8 +1133,8 @@ fa:
     use_s3: Use Amazon S3 For Images
     user: کاربر
     user_rule:
-      choose_users: "انتخاب کاربرها"
-    users: "کاربرها"
+      choose_users: انتخاب کاربرها
+    users: کاربرها
     validation:
       cannot_be_less_than_shipped_units: cannot be less than the number of shipped units.
       cannot_destory_line_item_as_inventory_units_have_shipped: Cannot destory line item as some inventory units have shipped.

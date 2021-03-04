@@ -1,8 +1,9 @@
+---
 ar:
   activerecord:
     attributes:
       spree/address:
-        address1:  " العنوان "
+        address1: " العنوان "
         address2: " (العنوان (تابع "
         city: " المدينة "
         country: " البلد "
@@ -135,7 +136,7 @@ ar:
         permalink: " الرابط الثابت "
         position: " موضع "
       spree/taxonomy:
-        name:  " اسم "
+        name: " اسم "
       spree/user:
         email: " البريد الإلكتروني "
         password: " كلمه المرور "
@@ -286,8 +287,8 @@ ar:
       confirmed: " تم تأكيد حسابك بنجاح. انت الآن مسجل دخولك "
       send_instructions: " ستتلقى بريدًا إلكترونيًا يحتوي على تعليمات حول كيفية تأكيد حسابك في بضع دقائق "
     failure:
-      inactive: "لم يتم تفعيل حسابك بعد "
-      invalid: "البريد الإلكتروني أو كلمة السر خاطئة "
+      inactive: 'لم يتم تفعيل حسابك بعد '
+      invalid: 'البريد الإلكتروني أو كلمة السر خاطئة '
       invalid_token: " رمز المصادقة غير صالح "
       locked: " حسابك مغلق "
       timeout: " انتهت جلستك ، يرجى تسجيل الدخول مرة أخرى للمتابعة "
@@ -328,8 +329,6 @@ ar:
         one: " حدث خطأ أثناء منع حفظ %{resource}: "
         other: " أدت أخطاء %{count} إلى منع حفظ %{resource} هذا: "
   spree:
-    filter: " فلتر "
-    quick_search: " بحث سريع . . . "
     abbreviation: " اختصار "
     accept:
     acceptance_errors:
@@ -381,17 +380,17 @@ ar:
     admin:
       tab:
         configuration: " التكوين "
-        option_types: " أنواع الخيارات "
-        return_authorizations: " أذون الإرجاع "
         customer_returns: " عائدات الزبائن "
+        option_types: " أنواع الخيارات "
         orders: " طلب "
         overview: " نظرة عامة "
         products: " منتجات "
-        promotions: " ترويج "
         promotion_categories: " فئات الترويج "
+        promotions: " ترويج "
         properties: " الخصائص "
         prototypes: " النماذج "
         reports: " التقارير "
+        return_authorizations: " أذون الإرجاع "
         taxonomies: " تصنيفات "
         taxons: " أصناف "
         users: " المستخدمين "
@@ -569,7 +568,6 @@ ar:
     date: " التاريخ "
     date_completed: " تاريخ الانتهاء "
     date_picker:
-      # FlatPickr human friendly formatting
       fpr_human_friendly_date_format: d/m/Y
       fpr_human_friendly_date_time_format: d/m/Y - H:i
     date_range: " نطاق التاريخ "
@@ -650,6 +648,7 @@ ar:
     failed_payment_attempts:
     filename: " اسم الملف "
     fill_in_customer_info: " يرجى ملء معلومات العميل "
+    filter: " فلتر "
     filter_results: " نتائج التصفية "
     finalize: " إنهاء "
     finalized:
@@ -1103,11 +1102,11 @@ ar:
     sales_totals: " إجماليات المبيعات "
     save_and_continue: " حفظ ومتابعة "
     save_my_address:
-    say_no: "false"
-    say_yes: "true"
+    say_no: 'false'
+    say_yes: 'true'
     scope: " النطاق "
     search: " بحث "
-    search_results: "Search results for '%{keywords}'"
+    search_results: Search results for '%{keywords}'
     searching: " يبحث "
     secure_connection_type: " نوع الاتصال الآمن "
     security_settings: " إعدادات الأمان "
@@ -1134,8 +1133,8 @@ ar:
         shipment_summary: " ملخص الشحنة "
         subject: " إشعار الشحن "
         thanks: " شكرا لعملك "
-        track_information: "Tracking Information: %{tracking}"
-        track_link: "Tracking Link: %{url}"
+        track_information: 'Tracking Information: %{tracking}'
+        track_link: 'Tracking Link: %{url}'
     shipment_state: " دولة الشحن "
     shipment_states:
       backorder: " تأجيل "
@@ -1154,13 +1153,14 @@ ar:
     shipping_category: " فئة الشحن "
     shipping_flat_rate_per_item: " سعر ثابت لكل سلعة "
     shipping_flat_rate_per_order: " سعر ثابت "
-    shipping_flexible_rate: "Flexible Rate per package item"
+    shipping_flexible_rate: Flexible Rate per package item
     shipping_instructions: " تعليمات الشحن "
     shipping_method: " طريقة الشحن "
     shipping_methods: " طرق الشحن "
     shipping_price_sack: " كيس سعر "
     shipping_total:
-    shop_by_taxonomy: "Shop by %{taxonomy}"
+    shop_by_taxonomy: Shop by %{taxonomy}
+    shop_now: " تسوق الآن "
     shopping_cart: " عربة التسوق "
     show: " إظهار "
     show_active: " إظهار النشط "
@@ -1168,13 +1168,13 @@ ar:
     show_only_complete_orders: " عرض الطلبات الكاملة فقط "
     show_only_considered_risky:
     show_rate_in_label: " إظهار السعر في المسمى "
-    sku: "SKU"
+    sku: SKU
     skus:
     slug:
-    source: "Source"
-    special_instructions: "Special Instructions"
-    split: "Split"
-    spree_gateway_error_flash_for_checkout: "There was a problem with your payment information. Please check your information and try again."
+    source: Source
+    special_instructions: Special Instructions
+    split: Split
+    spree_gateway_error_flash_for_checkout: There was a problem with your payment information. Please check your information and try again.
     ssl:
       change_protocol:
     start: ابدأ
@@ -1338,4 +1338,3 @@ ar:
     zipcode: " الرمز البريدي "
     zone: " المنطقة "
     zones: " المناطق "
-    shop_now: " تسوق الآن "

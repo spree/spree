@@ -1,3 +1,4 @@
+---
 bg:
   activerecord:
     attributes:
@@ -321,15 +322,13 @@ bg:
   devise:
     confirmations:
       confirmed: Вашият акаунт е потвърден. Вече сте вписан.
-      send_instructions: >-
-        До няколко минути ще получите съобщение с обяснение как да потвърдите
-        своя акаунт.
+      send_instructions: До няколко минути ще получите съобщение с обяснение как да потвърдите своя акаунт.
     failure:
       inactive: Вашият акаунт все още не е активен.
       invalid: Грешен имейл или парола
       invalid_token: Invalid authentication token.
       locked: Вашият акаунт е заключен.
-      timeout: 'Вашата сесия е изтекла, моля влезте повторно.'
+      timeout: Вашата сесия е изтекла, моля влезте повторно.
       unauthenticated: Трябва да се впишете или регистрирате преди да продължите
       unconfirmed: Трябва да потвърдите акаунта си преди да продължите.
     mailer:
@@ -340,25 +339,19 @@ bg:
       unlock_instructions:
         subject: Инструкции за отключване
     oauth_callbacks:
-      failure: 'Could not authorise you from %{kind} because %{reason}.'
-      success: 'Successfully authorised from %{kind} account.'
+      failure: Could not authorise you from %{kind} because %{reason}.
+      success: Successfully authorised from %{kind} account.
     unlocks:
-      send_instructions: >-
-        До няколко минути ще получите имейл с инструкции как да отключите своя
-        акаунт.
+      send_instructions: До няколко минути ще получите имейл с инструкции как да отключите своя акаунт.
       unlocked: Вашият акаунт бе отключен успешно. Вече сте вписани.
     user_passwords:
       user:
         cannot_be_blank: Вашата парола не може бъде празна
-        send_instructions: >-
-          До няколко минути ще получите имейл с инструкции как да промените
-          паролата си.
+        send_instructions: До няколко минути ще получите имейл с инструкции как да промените паролата си.
         updated: Вашата парола бе променена успешко. Вече сте вписани.
     user_registrations:
       destroyed: Вашият акаунт бе отменен успешно. Надяваме се да ви видим скоро.
-      inactive_signed_up: >-
-        You have signed up successfully. However, we could not sign you in
-        because your account is %{reason}.
+      inactive_signed_up: You have signed up successfully. However, we could not sign you in because your account is %{reason}.
       signed_up: Вие се регистрирахте успешно.
       updated: Успешно обновихте своя акаунт.
     user_sessions:
@@ -370,8 +363,8 @@ bg:
       not_found: не намерен
       not_locked: не бе заключен
       not_saved:
-        one: 'Една грешка предоотврати запазването на %{resource}'
-        other: '%{count} грешки предоотвратиха запазването на %{resource}'
+        one: Една грешка предоотврати запазването на %{resource}
+        other: "%{count} грешки предоотвратиха запазването на %{resource}"
   spree:
     abbreviation: Абривиатура
     accept: Приеми
@@ -478,9 +471,9 @@ bg:
     approved_at: Одобрена на
     approver: Одобрител
     are_you_sure: Сигурни ли сте
-    are_you_sure_delete: 'Сигурни ли сте, че искате да изтриете този запис?'
+    are_you_sure_delete: Сигурни ли сте, че искате да изтриете този запис?
     associated_adjustment_closed:
-    at_symbol: '@'
+    at_symbol: "@"
     authorization_failure: Грешка на ауторизиране
     authorized: Ауторизирани
     auto_capture:
@@ -629,7 +622,6 @@ bg:
     date: Дата
     date_completed:
     date_picker:
-      # FlatPickr human friendly formatting
       fpr_human_friendly_date_format: M j, Y
       fpr_human_friendly_date_time_format: M j, Y - H:i
     date_range:
@@ -681,12 +673,10 @@ bg:
       messages:
         could_not_create_taxon: Провал в създаването на група
         no_payment_methods_available: Няма методи за заплащане конфигурирани за тази среда
-        no_shipping_methods_available: >-
-          Няма възможност за изпращане по куриер до избраната локация, моля
-          сменете адреса си и пробвайте пак.
+        no_shipping_methods_available: Няма възможност за изпращане по куриер до избраната локация, моля сменете адреса си и пробвайте пак.
     errors_prohibited_this_record_from_being_saved:
       one: Грешка попречи на тези дани да бъдат записани.
-      other: '%{count} errors prohibited this record from being saved'
+      other: "%{count} errors prohibited this record from being saved"
     event: Събитие
     events:
       spree:
@@ -702,10 +692,7 @@ bg:
         user:
           signup: Потребителски вход
     exceptions:
-      count_on_hand_setter: >-
-        Грешка при ръчното обновяването на count_on_hand, тъй като бе обновено
-        от повик към recalculate_count_on_hand. Моля
-        използвайте`update_column(:count_on_hand, value)` вместо това.
+      count_on_hand_setter: Грешка при ръчното обновяването на count_on_hand, тъй като бе обновено от повик към recalculate_count_on_hand. Моля използвайте`update_column(:count_on_hand, value)` вместо това.
     exchange_for:
     excl:
     existing_shipments:
@@ -764,7 +751,7 @@ bg:
     info_number_of_skus_not_shown:
     info_product_has_multiple_skus:
     instructions_to_reset_password:
-    insufficient_stock: 'Недостатъчно количество стока в наличност, само %{on_hand} остават.'
+    insufficient_stock: Недостатъчно количество стока в наличност, само %{on_hand} остават.
     insufficient_stock_lines_present:
     intercept_email_address: Пресрещане на имеил адрес
     intercept_email_instructions: Отемни сегашните имеил приемници и замени с този адрес.
@@ -789,9 +776,7 @@ bg:
         gte: повече от или равно на
         lt:
         lte:
-    items_cannot_be_shipped: >-
-      Нямаме възможносттта да доставим тези предмети до този адрес. Моля
-      изберете друг адрес на доставка.
+    items_cannot_be_shipped: Нямаме възможносттта да доставим тези предмети до този адрес. Моля изберете друг адрес на доставка.
     items_in_rmas:
     items_reimbursed:
     items_to_be_reimbursed:
@@ -908,7 +893,7 @@ bg:
     not: не
     not_available: Няма в наличност
     not_enough_stock: Няма достатъчно налични количества в стока да се извърши поръчката.
-    not_found: '%{resource} is not found'
+    not_found: "%{resource} is not found"
     note:
     notice_messages:
       product_cloned: Продуктът бе дупликиран
@@ -955,7 +940,7 @@ bg:
         thanks:
         total:
     order_not_found:
-    order_number: 'Номер %{number}'
+    order_number: Номер %{number}
     order_processed_successfully:
     order_resumed:
     order_state:
@@ -983,8 +968,8 @@ bg:
     package_from: package from
     pagination:
       next_page: next page »
-      previous_page: « previous page
-      truncate: …
+      previous_page: "« previous page"
+      truncate: "…"
     password: Парола
     paste: Постави
     path: Път
@@ -1022,7 +1007,7 @@ bg:
     permalink: Permalink
     phone: Телефон
     place_order: Направи поръчка
-    please_define_payment_methods: 'Моля, първо дефинирайте методи за плащане.'
+    please_define_payment_methods: Моля, първо дефинирайте методи за плащане.
     plp:
       default: По подразбиране
       home: Начална страница
@@ -1106,7 +1091,7 @@ bg:
         description: Достъпно само за определени потребители
         name: Потребител
       user_logged_in:
-        description: 'Достъпно само за потребители, които са влезли в сайта'
+        description: Достъпно само за потребители, които са влезли в сайта
         name: Потребителят е влязал в сайта
     promotion_uses:
     promotionable:
@@ -1163,7 +1148,7 @@ bg:
     rename: Преименувай
     report:
     reports:
-    required: '*'
+    required: "*"
     required_fields: Задължителни полета
     resend: Препрати
     reset_password: Възстанови паролата
@@ -1204,7 +1189,7 @@ bg:
     say_yes: Да
     scope: Scope
     search: Търси
-    search_results: 'Резултати за ''%{keywords}'''
+    search_results: Резултати за '%{keywords}'
     searching: Търсене
     secure_connection_type:
     security_settings:
@@ -1376,7 +1361,7 @@ bg:
     tiered_percent:
     tiers:
     time: Време
-    to_add_variants_you_must_first_define: 'За да добавите варианти, трябва да дефинирате'
+    to_add_variants_you_must_first_define: За да добавите варианти, трябва да дефинирате
     total: Общо
     total_per_item:
     total_pre_tax_refund:
@@ -1396,7 +1381,7 @@ bg:
     type_to_search: Тип на търсене
     unable_to_connect_to_gateway:
     unable_to_create_reimbursements:
-    under_price: 'Под %{price}'
+    under_price: Под %{price}
     unlock: Отключи
     unrecognized_card_type: Неразпознат тип карта
     unshippable_items: Неизпращаеми артикули
@@ -1414,9 +1399,7 @@ bg:
     validation:
       cannot_be_less_than_shipped_units: не може да бъде по-малко от броя на изпратените единици
       cannot_destroy_line_item_as_inventory_units_have_shipped:
-      exceeds_available_stock: >-
-        е над наличността. Моля, уверете че уговорните покупки имат валидна
-        стойност.
+      exceeds_available_stock: е над наличността. Моля, уверете че уговорните покупки имат валидна стойност.
       is_too_large: е прекалено голяма --  наличността не достига!
       must_be_int: трябва да е цяло число
       must_be_non_negative: трябва да е позитивна стойност
@@ -1434,7 +1417,7 @@ bg:
     year: Година
     you_have_no_orders_yet: Все още нямате поръчки
     your_cart_is_empty: Вашата кошница е празна
-    your_order_is_empty_add_product: 'Вашата кошница е празна, моля добаете артикули'
+    your_order_is_empty_add_product: Вашата кошница е празна, моля добаете артикули
     zip: пощ. кид
     zipcode: пощ. код
     zone: Зона

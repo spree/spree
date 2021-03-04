@@ -1,3 +1,4 @@
+---
 es-CL:
   activerecord:
     attributes:
@@ -27,10 +28,10 @@ es-CL:
         base: Base
         cc_type: Tipo
         month: Mes
+        name: Nombre
         number: Número
         verification_value: Código de verificación (CVV)
         year: Año
-        name: Nombre
       spree/inventory_unit:
         state: Estado
       spree/line_item:
@@ -42,6 +43,7 @@ es-CL:
       spree/order:
         checkout_complete: Pedido completo
         completed_at: Completado En
+        considered_risky: Arriesgado
         coupon_code: Código Cupón
         created_at: Fecha del Pedido
         email: E-Mail del Cliente
@@ -53,7 +55,6 @@ es-CL:
         special_instructions: Instrucciones especiales
         state: Estado
         total: Total
-        considered_risky: Arriesgado
       spree/order/bill_address:
         address1: Calle dirección de facturación
         city: Ciudad dirección de facturación
@@ -113,19 +114,19 @@ es-CL:
         name: Nombre
       spree/state_change:
         state_changes: Cambio de estados
-        type: Tipo
         state_from: Estado inicial
         state_to: Estado final
-        user: Usuario
         timestamp: Fecha del cambio
+        type: Tipo
         updated: Actualizado
+        user: Usuario
       spree/store:
-        url: URL
+        mail_from_address: Dirección de email de envío
         meta_description: Meta descripción
         meta_keywords: Meta palabras claves
-        seo_title: Título SEO
         name: Nombre de la Tienda
-        mail_from_address: Dirección de email de envío
+        seo_title: Título SEO
+        url: URL
       spree/tax_category:
         description: Descripción
         name: Nombre
@@ -155,6 +156,52 @@ es-CL:
       spree/zone:
         description: Descripción
         name: Nombre
+    errors:
+      models:
+        spree/calculator/tiered_flat_rate:
+          attributes:
+            base:
+              keys_should_be_positive_number: Tier keys should all be numbers larger than 0
+            preferred_tiers:
+              should_be_hash: should be a hash
+        spree/calculator/tiered_percent:
+          attributes:
+            base:
+              keys_should_be_positive_number: Tier keys should all be numbers larger than 0
+              values_should_be_percent: Tier values should all be percentages between 0% and 100%
+            preferred_tiers:
+              should_be_hash: should be a hash
+        spree/classification:
+          attributes:
+            taxon_id:
+              already_linked: is already linked to this product
+        spree/credit_card:
+          attributes:
+            base:
+              card_expired: Card has expired
+              expiry_invalid: Card expiration is invalid
+        spree/line_item:
+          attributes:
+            currency:
+              must_match_order_currency: Must match order currency
+        spree/refund:
+          attributes:
+            amount:
+              greater_than_allowed: is greater than the allowed amount.
+        spree/reimbursement:
+          attributes:
+            base:
+              return_items_order_id_does_not_match: One or more of the return items specified do not belong to the same order as the reimbursement.
+        spree/return_item:
+          attributes:
+            inventory_unit:
+              other_completed_return_item_exists: "%{inventory_unit_id} has already been taken by return item %{return_item_id}"
+            reimbursement:
+              cannot_be_associated_unless_accepted: cannot be associated to a return item that is not accepted.
+        spree/store:
+          attributes:
+            base:
+              cannot_destroy_default_store: Cannot destroy the default Store.
     models:
       spree/address:
         one: Dirección
@@ -237,12 +284,12 @@ es-CL:
       spree/state_change:
         one: Cambio de estado
         other: Cambio de estados
-      spree/stock_movement:
-        one: Movimiento de Stock
-        other: Movimientos de Stock
       spree/stock_location:
         one: Ubicación de Stock
         other: Ubicaciones de Stock
+      spree/stock_movement:
+        one: Movimiento de Stock
+        other: Movimientos de Stock
       spree/stock_transfer:
         one: Transferencia de Stock
         other: Transferencias de Stock
@@ -270,53 +317,6 @@ es-CL:
       spree/zone:
         one: Zona
         other: Zonas
-    errors:
-      models:
-        spree/calculator/tiered_flat_rate:
-          attributes:
-            base:
-              keys_should_be_positive_number: "Tier keys should all be numbers larger than 0"
-            preferred_tiers:
-              should_be_hash: "should be a hash"
-        spree/calculator/tiered_percent:
-          attributes:
-            base:
-              keys_should_be_positive_number: "Tier keys should all be numbers larger than 0"
-              values_should_be_percent: "Tier values should all be percentages between 0% and 100%"
-            preferred_tiers:
-              should_be_hash: "should be a hash"
-        spree/classification:
-          attributes:
-            taxon_id:
-              already_linked: "is already linked to this product"
-        spree/credit_card:
-          attributes:
-            base:
-              card_expired: "Card has expired"
-              expiry_invalid: "Card expiration is invalid"
-        spree/line_item:
-          attributes:
-            currency:
-              must_match_order_currency: "Must match order currency"
-        spree/refund:
-          attributes:
-            amount:
-              greater_than_allowed: is greater than the allowed amount.
-        spree/reimbursement:
-          attributes:
-            base:
-              return_items_order_id_does_not_match: One or more of the return items specified do not belong to the same order as the reimbursement.
-        spree/return_item:
-          attributes:
-            reimbursement:
-              cannot_be_associated_unless_accepted: cannot be associated to a return item that is not accepted.
-            inventory_unit:
-              other_completed_return_item_exists: "%{inventory_unit_id} has already been taken by return item %{return_item_id}"
-        spree/store:
-          attributes:
-            base:
-              cannot_destroy_default_store: Cannot destroy the default Store.
-
   devise:
     confirmations:
       confirmed: Tu cuenta fue confirmada satisfactoriamente. Ya estás registrado.
@@ -326,7 +326,7 @@ es-CL:
       invalid: E-Mail o contraseña inválida.
       invalid_token: Cadena de autenticación no válida.
       locked: Tu cuenta está bloqueada.
-      timeout: 'Tu sesión expiró, por favor inicia sesión nuevamente para continuar.'
+      timeout: Tu sesión expiró, por favor inicia sesión nuevamente para continuar.
       unauthenticated: Necesitas registrarte o activar tu cuenta antes de continuar.
       unconfirmed: Tienes que confirmar tu cuenta antes de continuar.
     mailer:
@@ -355,26 +355,23 @@ es-CL:
     user_sessions:
       signed_in: Has iniciado sesión satisfactoriamente.
       signed_out: Sesión finalizada satisfactoriamente.
-
   errors:
     messages:
       already_confirmed: fue ya confirmada.
       not_found: no encontrado
       not_locked: no estaba bloqueada
       not_saved:
-        one: '1 error evitó que este %{resource} fuese grabado.'
+        one: 1 error evitó que este %{resource} fuese grabado.
         other: "%{count} errores evitaron que este %{resource} fuese grabado:"
-
   number:
     percentage:
       format:
         precision: 1
-
   spree:
     abbreviation: Abreviación
     accept: Aceptar
-    acceptance_status: Estado de aceptación
     acceptance_errors: Errores de aceptación
+    acceptance_status: Estado de aceptación
     accepted: Aceptado
     account: Cuenta
     account_updated: Cuenta actualizada
@@ -417,8 +414,8 @@ es-CL:
     adjustment_amount: Valor
     adjustment_labels:
       tax_rates:
-        including_tax: '%{name}%{amount} (Incluido en el precio)'
-        excluding_tax: '%{name}%{amount}'
+        excluding_tax: "%{name}%{amount}"
+        including_tax: "%{name}%{amount} (Incluido en el precio)"
     adjustment_successfully_closed: El ajuste ha sido cerrado satisfactoriamente
     adjustment_successfully_opened: El ajuste ha sido abierto satisfactoriamente
     adjustment_total: Total del ajuste
@@ -430,8 +427,8 @@ es-CL:
         orders: Pedidos
         overview: Visión general
         products: Productos
-        promotions: Promociones
         promotion_categories:
+        promotions: Promociones
         properties: Atributos
         prototypes: Prototipos
         reports: Informes
@@ -444,7 +441,7 @@ es-CL:
         items: Artículos
         items_purchased: Artículos comprados
         order_history: Historial de pedidos
-        order_num: "Pedido #"
+        order_num: 'Pedido #'
         orders: Pedidos
         user_information: Información del usuario
     administration: Administración
@@ -474,7 +471,7 @@ es-CL:
     are_you_sure: "¿Estás seguro?"
     are_you_sure_delete: "¿Estás seguro de que quieres borrar este registro?"
     associated_adjustment_closed: El ajuste asociado está cerrado y no será recalculado. ¿Quieres abrirlo?
-    at_symbol: '@'
+    at_symbol: "@"
     authorization_failure: Fallo en la autorización
     authorized: Autorizado
     auto_capture: Captura automática
@@ -483,14 +480,14 @@ es-CL:
     avs_response: AVS Response
     back: Volver
     back_end: Backend
-    backordered: Pedido pendiente
-    back_to_resource_list: 'Volver al listado de %{resource}'
     back_to_payment: Volver al pago
+    back_to_resource_list: Volver al listado de %{resource}
     back_to_rma_reason_list: Volver al listado de razones RMA
     back_to_store: Volver a la Tienda
     back_to_users_list: Volver al Listado de Usuarios
     backorderable: backorderable
     backorderable_default: Backorderable default
+    backordered: Pedido pendiente
     backorders_allowed: Permitida la Devolución
     balance_due: Saldo adeudado
     base_amount: Valor base
@@ -501,12 +498,12 @@ es-CL:
     both: Ambos
     calculated_reimbursements: Los reembolsos calculados
     calculator: Calculador
-    calculator_settings_warning: 'Si cambias el tipo de calculador, debes guardar primero antes de editar las preferencias del calculador'
+    calculator_settings_warning: Si cambias el tipo de calculador, debes guardar primero antes de editar las preferencias del calculador
     cancel: cancelar
-    canceler: Candelado
     canceled_at: Cancelado en
-    cannot_create_payment_without_payment_methods: No puedes crear un pago para un pedido sin antes definir un medio de pago
+    canceler: Candelado
     cannot_create_customer_returns: No se puede crear devoluciones para el cliente ya que este pedido no ha enviado artículos.
+    cannot_create_payment_without_payment_methods: No puedes crear un pago para un pedido sin antes definir un medio de pago
     cannot_create_returns: No puedes crear devoluciones para un pedido que no tiene unidades enviadas.
     cannot_perform_operation: No se pudo realizar la operación solicitada.
     cannot_set_shipping_method_without_address: No se puede establecer el método de envío hasta que no se proporcionen los detalles del cliente.
@@ -518,15 +515,15 @@ es-CL:
     card_type_is: El tipo de tarjeta es
     cart: Carrito
     cart_subtotal:
-      one: 'Subtotal (1 artículo)'
-      other: 'Subtotal (%{count} artículos)'
+      one: Subtotal (1 artículo)
+      other: Subtotal (%{count} artículos)
     categories: Categorías
     category: Categoría
     charged: Cargado
     check_for_spree_alerts: Comprobar alertas
     checkout: Realizar pedido
     choose_a_customer: Seleccione un cliente
-    choose_a_taxon_to_sort_products_for: "Elegir una Clasificación para ordenar productos por"
+    choose_a_taxon_to_sort_products_for: Elegir una Clasificación para ordenar productos por
     choose_currency: Seleccione moneda
     choose_dashboard_locale: Seleccione idioma del Dashboard
     choose_location: Seleccione Ubicación
@@ -579,10 +576,10 @@ es-CL:
     create_reimbursement: Crear reembolso
     created_at: Creado el
     credit: Crédito
-    credits: Créditos
     credit_card: Tarjeta de Crédito
     credit_cards: Tarjetas de Crédito
     credit_owed: Crédito adeudado
+    credits: Créditos
     currency: Moneda
     currency_settings: Parámetros de moneda
     current: Actual
@@ -608,7 +605,6 @@ es-CL:
     date: Fecha
     date_completed: Fecha completada
     date_picker:
-      # FlatPickr human friendly formatting
       fpr_human_friendly_date_format: M j, Y
       fpr_human_friendly_date_time_format: M j, Y a \\la\\s H:i
     date_range: Rango de fechas
@@ -621,16 +617,16 @@ es-CL:
     deleted_variants_present: Algunos artículos de este pedido ya no están disponibles.
     delivery: Entregar
     depth: Profundidad
-    details: Detalles
     description: Descripción
     destination: Destino
     destroy: Eliminar
+    details: Detalles
     discount_amount: Valor del descuento
     dismiss_banner: No. Gracias! No estoy interesado. no mostrar este mensaje otra vez
     display: Mostrar
     doesnt_track_inventory: No realizar el siguiente de inventario
     edit: Editar
-    editing_resource: 'Editando %{resource}'
+    editing_resource: Editando %{resource}
     editing_rma_reason: Editando razón RMA
     editing_user: Editando Usuario
     eligibility_errors:
@@ -658,7 +654,7 @@ es-CL:
     errors:
       messages:
         could_not_create_taxon: No pude crear la Clasificación
-        no_shipping_methods_available: 'No hay métodos de envió disponibles para la localización seleccionada, por favor cambia tu dirección e inténtalo de nuevo'
+        no_shipping_methods_available: No hay métodos de envió disponibles para la localización seleccionada, por favor cambia tu dirección e inténtalo de nuevo
     errors_prohibited_this_record_from_being_saved:
       one: 1 error impidió que pudiera guardarse el registro
       other: "%{count} errores impidieron que pudiera guardarse el registro"
@@ -677,21 +673,21 @@ es-CL:
         user:
           signup: Registrar Usuario
     exceptions:
-      count_on_hand_setter: "No se pudo establecer count_on_hand manualmente, ya que está establecido automáticamente por la callback recalculate_count_on_hand. Por favor utiliza `update_column(:count_on_hand, value)` en vez de ello."
+      count_on_hand_setter: No se pudo establecer count_on_hand manualmente, ya que está establecido automáticamente por la callback recalculate_count_on_hand. Por favor utiliza `update_column(:count_on_hand, value)` en vez de ello.
     exchange_for: Intercambio de
-    expedited_exchanges_warning: "Cualquier cambio especificado serán entregado al cliente. Al cliente se le cargará el importe total del artículo si no devuelve en %{days_window} days_window días."
     excl: excl.
+    existing_shipments: Enví existentes
+    expedited_exchanges_warning: Cualquier cambio especificado serán entregado al cliente. Al cliente se le cargará el importe total del artículo si no devuelve en %{days_window} days_window días.
     expiration: Vencimiento
     extension: Extensión
-    existing_shipments: Enví existentes
     failed_payment_attempts: Intentos fallidos de pago
     filename: Nombre de Archivo
     fill_in_customer_info: Por favor rellena información del cliente
     filter: Filtro
     filter_results: Filtrar resultados
     finalize: Finalizar
-    find_a_taxon: Encontrar una Clasificación
     finalized: Finalizado
+    find_a_taxon: Encontrar una Clasificación
     first_item: Primer artículo
     first_name: Nombre
     first_name_begins_with: Nombre comienza por
@@ -721,17 +717,17 @@ es-CL:
     icon: Icono
     image: Imagen
     images: Imágenes
-    implement_eligible_for_return: "Debe implementar #eligible_for_return? para su EligibilityValidator."
-    implement_requires_manual_intervention: "Debe implmentar #requires_manual_intervention? para su EligibilityValidator."
+    implement_eligible_for_return: 'Debe implementar #eligible_for_return? para su EligibilityValidator.'
+    implement_requires_manual_intervention: 'Debe implmentar #requires_manual_intervention? para su EligibilityValidator.'
     inactive: Inactivo
     incl: incl.
     included_in_price: Incluido en el precio
     included_price_validation: No puede ser seleccionado a menos que establezcas una Zona de Impuesto por defecto
     incomplete: Incompleto
-    info_product_has_multiple_skus: "Este producto tiene %{count} variantes:"
     info_number_of_skus_not_shown:
-      one: "y otro"
-      other: "y %{count} otros"
+      one: y otro
+      other: y %{count} otros
+    info_product_has_multiple_skus: 'Este producto tiene %{count} variantes:'
     instructions_to_reset_password: Por favor ingresa tu e-mail en el siguiente formulario
     insufficient_stock: Stock insuficiente, sólo %{on_hand} restante
     insufficient_stock_lines_present: Algunos artículos de este pedido no tienen la cantidad suficiente.
@@ -760,8 +756,8 @@ es-CL:
         lte: Menor o igual que
     items_cannot_be_shipped: No es posible enviar los elementos seleccionados a su dirección de entrega. Por favor indica otra dirección de entrega.
     items_in_rmas: Artículos de devolución autorizados
-    items_to_be_reimbursed: Los productos que se reembolsarán
     items_reimbursed: Artículos Reembolsados
+    items_to_be_reimbursed: Los productos que se reembolsarán
     jirafe: Jirafe
     landing_page_rule:
       path: Ruta
@@ -769,14 +765,13 @@ es-CL:
     last_name_begins_with: Apellido comienza con
     learn_more: Aprender más
     lifetime_stats: Estadísticas de por vida
-    line_item_adjustments: "Line item adjustments"
+    line_item_adjustments: Line item adjustments
     list: Lista
     loading: Cargando
     locale_changed: Idioma cambiado
     location: Localización
     lock: Bloquear
-    log_entries: "Registros de entrada"
-    logs: Registros
+    log_entries: Registros de entrada
     logged_in_as: Identificado como
     logged_in_succesfully: Conectado con éxito
     logged_out: Se ha cerrado la sesión.
@@ -785,12 +780,13 @@ es-CL:
     login_failed: No se ha podido iniciar la sesión, error de autenticación.
     login_name: E-Mail
     logout: Cerrar sesión
+    logs: Registros
     look_for_similar_items: Buscar artículos similares
     make_refund: Realizar devolución
     make_sure_the_above_reimbursement_amount_is_correct: Asegúrese de que el valor del reembolso de arriba es correcto
     manage_promotion_categories: Administrar las categorías de promoción
-    manual_intervention_required: Requiere intervención manual
     manage_variants: Administrar Variantes
+    manual_intervention_required: Requiere intervención manual
     master_price: Precio principal
     match_choices:
       all: Todos
@@ -813,9 +809,9 @@ es-CL:
     name_or_sku: Nombre o SKU (introducir al menos los 4 primeros caracteres o nombre del producto)
     new: Nuevo
     new_adjustment: Nuevo Ajuste
+    new_country: Nuevo País
     new_customer: Nuevo Cliente
     new_customer_return: Nueva devolución del cliente
-    new_country: Nuevo País
     new_image: Nueva Imagen
     new_option_type: Nuevo Tipo de Opción
     new_order: Nuevo Pedido
@@ -829,12 +825,12 @@ es-CL:
     new_prototype: Nuevo prototipo
     new_refund: Nuevo reembolso
     new_refund_reason: Nueva razón de reembolso
-    new_rma_reason: Nueva razón de RMA
     new_return_authorization: Nueva autorización de devolución
+    new_rma_reason: Nueva razón de RMA
     new_role: Nuevo Rol
+    new_shipment_at_location: Nueva Ubicación de envío
     new_shipping_category: Nueva categoría de envío
     new_shipping_method: Nueva forma de envío
-    new_shipment_at_location: Nueva Ubicación de envío
     new_state: Nuevo estado
     new_stock_location: Nueva localización de stock
     new_stock_movement: Nuevo movimiento de stock
@@ -852,10 +848,10 @@ es-CL:
     no_payment_found: No hay pagos encontrados
     no_pending_payments: No hay pagos pendientes
     no_products_found: No se encontraron productos
-    no_results: Sin resultados
-    no_rules_added: No se añadieron reglas
     no_resource_found: No se encontraron %{resource}
-    no_returns_found:  No se encontraron reembolsos
+    no_results: Sin resultados
+    no_returns_found: No se encontraron reembolsos
+    no_rules_added: No se añadieron reglas
     no_shipping_method_selected: Ningún método de envío seleccionado.
     no_state_changes: Ningún estado cambia todavía.
     no_tracking_present: No se proporcionaron detalles del tracking
@@ -921,9 +917,9 @@ es-CL:
       awaiting_return: esperando devolución
       canceled: cancelada
       cart: carrito
-      considered_risky: Considerado riesgoso
       complete: completado
       confirm: Confirmada
+      considered_risky: Considerado riesgoso
       delivery: Entrega
       payment: Pago
       resumed: reanudado
@@ -949,8 +945,8 @@ es-CL:
     payment_could_not_be_created: El pago no se ha podido crear.
     payment_information: Información del Pago
     payment_method: Medio de Pago
-    payment_methods: Medios de Pago
     payment_method_not_supported: Medio de Pago no soportado, por favo seleccione otro.
+    payment_methods: Medios de Pago
     payment_processing_failed: El pago no pudo ser procesado, por favor comprueba los detalles que has ingresado
     payment_processor_choose_banner_text: Si necesitas ayuda a la hora de escojer un procesador de pago, por favor visita
     payment_processor_choose_link: nuestra pagina de pagos
@@ -967,23 +963,23 @@ es-CL:
       void: anular
     payment_updated: Pago actualizado
     payments: Pagos
+    pending: Pendiente
     percent: Porcentaje
     percent_per_item: Porcentaje por artículo
     permalink: Permalink
-    pending: Pendiente
     phone: Teléfono
     place_order: Realizar Pedido
     please_define_payment_methods: Por favor define algún medio de pago primero
     please_enter_reasonable_quantity: Por favor introduzca una cantidad razonable.
     populate_get_error: Se produjo un error. Por favor intenta añadir el artículo otra vez.
     powered_by: Desarrollado por
-    pre_tax_refund_amount: Pre-Tax Valor devolución
     pre_tax_amount: Pre-Tax Valor
+    pre_tax_refund_amount: Pre-Tax Valor devolución
     pre_tax_total: Pre-Tax Total
     preferred_reimbursement_type: Tipo preferido de Reembolso
     presentation: Presentación
     previous: Anterior
-    previous_state_missing: "n/a"
+    previous_state_missing: n/a
     price: Precio
     price_range: Rango de precios
     price_sack: Precio Sack
@@ -1004,7 +1000,6 @@ es-CL:
         manual: Escoje manualmente
     products: Productos
     promotion: Promoción
-    promotionable: Promocionable
     promotion_action: Acción de promoción
     promotion_action_types:
       create_adjustment:
@@ -1025,7 +1020,7 @@ es-CL:
       match_policies:
         all: Cumple todas estas reglas
         any: Cumple cualquiera de estas reglas
-    promotion_label: 'Promoción (%{name})'
+    promotion_label: Promoción (%{name})
     promotion_rule: Regla de promoción
     promotion_rule_types:
       first_order:
@@ -1046,17 +1041,18 @@ es-CL:
       product:
         description: El pedido incluye productos específicos
         name: Producto(s)
+      taxon:
+        description: Pedido incluye productos de una clasificación(es) especifica(s)
+        name: Taxón
       user:
         description: Disponible solamente a usuarios específicos
         name: Usuario
       user_logged_in:
         description: Disponible solamente a usuarios registrados
         name: Usuario registrado
-      taxon:
-        description: Pedido incluye productos de una clasificación(es) especifica(s)
-        name: Taxón
-    promotions: Promociones
     promotion_uses: Usos de promoción
+    promotionable: Promocionable
+    promotions: Promociones
     propagate_all_variants: Propagar todas las Variantes
     properties: Propiedades
     property: Propiedad
@@ -1087,7 +1083,17 @@ es-CL:
     reimburse: Reembolsar
     reimbursed: Reembolsado
     reimbursement: Reembolso
-    reimbursement_perform_failed: "El reembolso no pudo realizarse.  Error: %{error}"
+    reimbursement_mailer:
+      reimbursement_email:
+        days_to_send: "'Usted tiene %{days} días para devolver cualquier artículo que esperé cambiar.'"
+        dear_customer: Estimado cliente,
+        exchange_summary: Resumen del Cambio
+        for: para
+        instructions: Su reembolso ha sido procesado.
+        refund_summary: Resumen de Reembolso
+        subject: Notificación de Reembolso
+        total_refunded: "'Total Reembolsado: %{total}'"
+    reimbursement_perform_failed: 'El reembolso no pudo realizarse.  Error: %{error}'
     reimbursement_status: Estado del reembolso
     reimbursement_type: Tipo reembolso
     reimbursement_type_override: Tipo de anulación de reembolso
@@ -1118,16 +1124,6 @@ es-CL:
     return_item_time_period_ineligible: Return item is outside the eligible time period
     return_items: Artículos devueltos
     return_items_cannot_be_associated_with_multiple_orders: Los artículos de vuelta no se pueden asociar con varios pedidos.
-    reimbursement_mailer:
-      reimbursement_email:
-        days_to_send: "'Usted tiene %{days} días para devolver cualquier artículo que esperé cambiar.'"
-        dear_customer: Estimado cliente,
-        exchange_summary: Resumen del Cambio
-        for: para
-        instructions: Su reembolso ha sido procesado.
-        refund_summary: Resumen de Reembolso
-        subject: Notificación de Reembolso
-        total_refunded: "'Total Reembolsado: %{total}'"
     return_number: Número devolución
     return_quantity: Cantidad de devolución
     returned: Devuelto
@@ -1152,7 +1148,7 @@ es-CL:
     say_yes: Si
     scope: Alcance
     search: Buscar
-    search_results: "Resultados para las búsqueda de '%{keywords}'"
+    search_results: Resultados para las búsqueda de '%{keywords}'
     searching: Buscando
     secure_connection_type: Tipo de conexión segura
     security_settings: Configuración de seguridad
@@ -1161,7 +1157,7 @@ es-CL:
     select_a_stock_location: Seleccione una ubicación de stock
     select_from_prototype: Seleccionar desde el prototipo
     select_stock: Seleccionar Stock
-    selected_quantity_not_available: 'El artículo %{item} no está disponible.'
+    selected_quantity_not_available: El artículo %{item} no está disponible.
     send_copy_of_all_mails_to: Enviar copia de todos los emails a
     send_mails_as: Enviar emails como
     server: Servidor
@@ -1171,8 +1167,8 @@ es-CL:
     ship_address: Dirección de envío
     ship_total: Total de envío
     shipment: Envío
-    shipment_adjustments: "Ajustes de envío"
-    shipment_details: "Desde %{stock_location} por %{shipping_method}"
+    shipment_adjustments: Ajustes de envío
+    shipment_details: Desde %{stock_location} por %{shipping_method}
     shipment_mailer:
       shipped_email:
         dear_customer: Estimado Cliente,\n
@@ -1190,8 +1186,8 @@ es-CL:
       pending: Pendiente
       ready: Listo
       shipped: Enviado
-    shipment_transfer_success: 'Transferido con éxito'
-    shipment_transfer_error: 'Hubo un error al transferir'
+    shipment_transfer_error: Hubo un error al transferir
+    shipment_transfer_success: Transferido con éxito
     shipments: Envíos
     shipped: Enviado
     shipping: Envío
@@ -1207,8 +1203,8 @@ es-CL:
     shipping_price_sack: Precio empaque
     shipping_rates:
       display_price:
-        including_tax: "%{price} (incl. %{tax_amount} %{tax_rate_name})"
         excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
+        including_tax: "%{price} (incl. %{tax_amount} %{tax_rate_name})"
     shipping_total: Total envío
     shop_by_taxonomy: Comprar por %{taxonomy}
     shopping_cart: Carrito de compra
@@ -1226,11 +1222,10 @@ es-CL:
     split: Dividir
     spree_gateway_error_flash_for_checkout: Hubo un problema con tu información de pago. Por favor revisa tu información e intentado de nuevo
     ssl:
-      change_protocol: "Por favor cambia a HTTP (en lugar de HTTPS) y vuelve a intentar."
+      change_protocol: Por favor cambia a HTTP (en lugar de HTTPS) y vuelve a intentar.
     start: Empezar
     state: Estado
     state_based: Estado basado
-    states: Estados
     state_machine_states:
       accepted: Aceptado
       address: Dirección
@@ -1238,22 +1233,22 @@ es-CL:
       awaiting: Esperando
       awaiting_return: Esperando devolución
       backordered: Pendiente de entrega
-      cart: Carrito
       canceled: Cancelado
+      cart: Carrito
       checkout: Revisar
-      confirm: Confirmar
+      closed: Cerrado
       complete: Completo
       completed: Completado
-      closed: Cerrado
+      confirm: Confirmar
       delivery: Entrega
       errored: Con errores
       failed: Fracasado
       given_to_customer: Entregado al cliente
       invalid: Inválido
       manual_intervention_required: Requiere intervención manual
+      on_hand: En mano
       open: Abierto
       order: Pedido
-      on_hand: En mano
       payment: Pago
       pending: Pendiente
       processing: Processing
@@ -1263,6 +1258,7 @@ es-CL:
       returned: Devuelto
       shipped: Transportado
       void: Vacío
+    states: Estados
     states_required: Provincias requeridas
     status: Estado
     stock: Stock
@@ -1291,11 +1287,11 @@ es-CL:
     successfully_updated: "%{resource} ha sido actualizado con éxito"
     summary: Resumen
     tax: Impuesto
-    tax_included: "Impuesto (incl.)"
     tax_categories: Categorías de impuestos
     tax_category: Categoría impuesto
     tax_code: Código de impuesto
-    tax_rate_amount_explanation: "Las tarifas de impuestos son numeros decimales (p. ej. si la tarifa de impuesto es del 5%, introducir 0.05)"
+    tax_included: Impuesto (incl.)
+    tax_rate_amount_explanation: Las tarifas de impuestos son numeros decimales (p. ej. si la tarifa de impuesto es del 5%, introducir 0.05)
     tax_rates: Tarifas de impuesto
     taxon: Clasificación
     taxon_edit: Editar Clasificación
@@ -1365,13 +1361,13 @@ es-CL:
       choose_users: Escoje Usuarios
     users: Usuarios
     validation:
-      unpaid_amount_not_zero: "La cantidad no fue totalmente reembolsada. Aún así: % {amount}"
       cannot_be_less_than_shipped_units: no puede ser menor que el número de unidades enviadas.
       cannot_destroy_line_item_as_inventory_units_have_shipped: No se puede eliminar artículo ya que algunas unidades se han enviado.
       exceeds_available_stock: excede el stock disponible. Por favor asegúrate que los artículos tienen un cantidad válida.
       is_too_large: demasiado grande -- el stock disponible no puede cubrir la cantidad solicitada
       must_be_int: debe ser un número entero
       must_be_non_negative: debe ser un valor positivo
+      unpaid_amount_not_zero: 'La cantidad no fue totalmente reembolsada. Aún así: % {amount}'
     value: Valor
     variant: Variante
     variant_placeholder: Escoje una variante
@@ -1393,6 +1389,6 @@ es-CL:
   views:
     pagination:
       first: Primera
-      previous: Anterior
-      next: Siguiente
       last: Última
+      next: Siguiente
+      previous: Anterior

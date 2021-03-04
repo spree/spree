@@ -1,3 +1,4 @@
+---
 en-GB:
   activerecord:
     attributes:
@@ -328,8 +329,6 @@ en-GB:
         one: '1 error prohibited with %{resource} from being saved:'
         other: "%{count} errors prohibited this %{resource} from being saved:"
   spree:
-    filter: Filter
-    quick_search: Quick Search . . .
     abbreviation: Abbreviation
     accept:
     acceptance_errors:
@@ -385,8 +384,8 @@ en-GB:
         orders: Orders
         overview: Overview
         products: Products
-        promotions: Promotions
         promotion_categories:
+        promotions: Promotions
         properties:
         prototypes:
         reports: Reports
@@ -432,7 +431,7 @@ en-GB:
     are_you_sure: Are you sure
     are_you_sure_delete: Are you sure you want to delete this record?
     associated_adjustment_closed: The associated adjustment is closed, and will not be recalculated. Do you want to open it?
-    at_symbol: '@'
+    at_symbol: "@"
     authorization_failure: Authorisation Failure
     authorized:
     auto_capture:
@@ -567,7 +566,6 @@ en-GB:
     date: Date
     date_completed: Date Completed
     date_picker:
-      # FlatPickr human friendly formatting
       fpr_human_friendly_date_format: M j, Y
       fpr_human_friendly_date_time_format: M j, Y - H:i
     date_range: Date Range
@@ -648,6 +646,7 @@ en-GB:
     failed_payment_attempts:
     filename: Filename
     fill_in_customer_info: Please fill in customer info
+    filter: Filter
     filter_results: Filter Results
     finalize: Finalise
     finalized:

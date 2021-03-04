@@ -1,4 +1,5 @@
+---
 gl:
   spree:
     i18n:
-      this_file_language: 'Galego (gl)'
+      this_file_language: Galego (gl)

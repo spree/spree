@@ -1,3 +1,4 @@
+---
 ca:
   activerecord:
     attributes:
@@ -381,8 +382,8 @@ ca:
         orders:
         overview:
         products:
-        promotions:
         promotion_categories:
+        promotions:
         properties:
         prototypes:
         reports:
@@ -428,7 +429,7 @@ ca:
     are_you_sure: Està segur?
     are_you_sure_delete: Està segur que vol eliminar aquesta entrada?
     associated_adjustment_closed:
-    at_symbol: '@'
+    at_symbol: "@"
     authorization_failure: Fallada d'autorització
     authorized:
     auto_capture:
@@ -563,7 +564,6 @@ ca:
     date: Data
     date_completed:
     date_picker:
-      # FlatPickr human friendly formatting
       fpr_human_friendly_date_format: M j, Y
       fpr_human_friendly_date_time_format: M j, Y - H:i
     date_range: Rang de Data
@@ -1310,7 +1310,7 @@ ca:
       cannot_be_less_than_shipped_units: no pot ser menys que el nombre d'unitats enviades.
       cannot_destroy_line_item_as_inventory_units_have_shipped:
       exceeds_available_stock:
-      is_too_large: "és massa gran -- no hi ha suficients productes disponibles per a aquesta quantitat"
+      is_too_large: és massa gran -- no hi ha suficients productes disponibles per a aquesta quantitat
       must_be_int: ha de ser un sencer
       must_be_non_negative: ha de ser un valor no negatiu
       unpaid_amount_not_zero:

@@ -1,3 +1,4 @@
+---
 km:
   activerecord:
     attributes:
@@ -121,7 +122,7 @@ km:
         meta_description:
         meta_keywords:
         name: ឈ្មោះ
-        seo_title:  ដាក់ចំណងជើង SEO
+        seo_title: ដាក់ចំណងជើង SEO
         url:
       spree/tax_category:
         description: ចំណាំ
@@ -213,8 +214,8 @@ km:
         one: ឯកតារក្សា
         other: ឯកតារក្សា
       spree/line_item:
-        one: 
-        other: 
+        one:
+        other:
       spree/option_type:
       spree/option_value:
       spree/order:
@@ -317,7 +318,7 @@ km:
       signed_up: សូមស្វាគមន៍ ! អ្នកបានចុះឈ្មោះដោយជោគជ័យ ។
       updated: អ្នក​បាន​កែប្រែគណនី​ដោយ​ជោគជ័យ ។
     user_sessions:
-      signed_in: ចូលប្រើប្រាស់​បាន​ជោគជ័យ ។ 
+      signed_in: ចូលប្រើប្រាស់​បាន​ជោគជ័យ ។
       signed_out: បានចាកចេញដោយជោគជ័យ ។
   errors:
     messages:
@@ -325,11 +326,9 @@ km:
       not_found: មិនមានទេ
       not_locked: ត្រូវបានបិទ
       not_saved:
-        one: 'មានកំហុស​ មួយ ដែល​មិន​ឲ្យ​រក្សាទុក %{resource} មួយនេះ ៖'
-        other: "មាន​កំហុស %{count} ដែល​មិន​ឲ្យ​រក្សាទុក %{resource} មួយនេះ ៖"
+        one: មានកំហុស​ មួយ ដែល​មិន​ឲ្យ​រក្សាទុក %{resource} មួយនេះ ៖
+        other: មាន​កំហុស %{count} ដែល​មិន​ឲ្យ​រក្សាទុក %{resource} មួយនេះ ៖
   spree:
-    filter: តម្រង់
-    quick_search: ស្វែងរកដោយរហ័ស . . .
     abbreviation: ពាក្យ​កាត់
     accept:
     acceptance_errors:
@@ -374,27 +373,27 @@ km:
     adjustable:
     adjustment: កែប្រែ
     adjustment_amount: តម្លៃ
-    adjustment_successfully_closed: ការកែប្រែត្រូវបានបិទ​ ! 
+    adjustment_successfully_closed: ការកែប្រែត្រូវបានបិទ​ !
     adjustment_successfully_opened: ការកែប្រែត្រូវត្រូវបានបើក !
     adjustment_total: កែប្រែសរុប
     adjustments: ការកែប្រែ
     admin:
       tab:
         configuration: រូបសណ្ឋាន
+        customer_returns: អតិថិជនផ្ញើមកវិញ
         option_types: ប្រភេទជម្រើស
         orders: បញ្ជាទិញ
         overview: ទូទៅ
         products: ទំនិញ
-        promotions: ការបញ្ចុះតម្លៃ
         promotion_categories: ប្រភេទបញ្ចុះតម្លៃ
+        promotions: ការបញ្ចុះតម្លៃ
         properties: លក្ខណៈ
         prototypes: គំរូ
         reports: របាយការន៍
+        return_authorizations: អនុញ្ញាតឱ្យត្រឡប់មកវិញ
         taxonomies: កម្រិតចំណាត់ថ្នាក់
         taxons: ចំណាត់ថ្នាក់
         users: អ្នកប្រើប្រាស់
-        return_authorizations: អនុញ្ញាតឱ្យត្រឡប់មកវិញ
-        customer_returns: អតិថិជនផ្ញើមកវិញ 
       user:
         account: គណនី
         addresses: អាសយដ្ឋាន
@@ -435,7 +434,7 @@ km:
     are_you_sure: តើអ្នកប្រាកដថា
     are_you_sure_delete: តើអ្នកប្រាកដថា​ចង់​លុប​ការ​រក្សា​មួយនេះ ?
     associated_adjustment_closed: ការកែប្រែដែលពាក់ព័ន្ធ​ត្រូវ​បាន​បិទ មិនអាចគិត​ឡើង​បាន​ទៀតទេ ។ តើអ្នក​ចង់បើកវិញទេ ?
-    at_symbol: '@'
+    at_symbol: "@"
     authorization_failure: មិន​ត្រូវអនុញ្ញាត
     authorized:
     auto_capture:
@@ -509,7 +508,7 @@ km:
     continue_shopping: បន្តជាវទំនិញ
     cost_currency: គិតជា
     cost_price: តម្លៃ
-    could_not_connect_to_jirafe: មិនអាចភ្ជាប់ទៅកាន់ Jirafe ដើម្បីទាញទិន្នន័យរបស់អ្នក ។ ប្រព័ន្ធ​នឹងព្យាយាមភ្ជាប់ដោយ​ស្វ័ប្រវត្តិ​នៅ​ពេល​ក្រោយ ។ 
+    could_not_connect_to_jirafe: មិនអាចភ្ជាប់ទៅកាន់ Jirafe ដើម្បីទាញទិន្នន័យរបស់អ្នក ។ ប្រព័ន្ធ​នឹងព្យាយាមភ្ជាប់ដោយ​ស្វ័ប្រវត្តិ​នៅ​ពេល​ក្រោយ ។
     could_not_create_customer_return:
     could_not_create_stock_movement: មានបញ្ហាកើតឡើងដែល​មិនអាចរក្សាការផ្លាសប្រូរទំនិញ​នេះ​បាន​ឡើយ ។ សូមព្យាយាមម្ដងទៀត ។
     count_on_hand: ទំនិញ​ដែល​កំពុងមានស្រាប់
@@ -524,13 +523,13 @@ km:
       US:
     coupon: កូដបញ្ចុះតម្លៃ
     coupon_code: កូដបញ្ចុះតម្លៃ
-    coupon_code_already_applied: កូដបញ្ចុះតម្លៃត្រូវបានប្រើប្រាស់សម្រាប់ការបញ្ជាទិញនេះរួចហើយ ។ 
-    coupon_code_applied: កូដបញ្ចុះតម្លៃត្រូវបានអនុវត្ត​សម្រាប់ការបញ្ជាទិញរបស់អ្នកដោយជោគជ័យ ។ 
-    coupon_code_better_exists: កូដបញ្ចុះតម្លៃដែល​ប្រើមុន​ទទួល​បាន​ការ​បញ្ចុះតម្លៃច្រើនជាង ។ 
+    coupon_code_already_applied: កូដបញ្ចុះតម្លៃត្រូវបានប្រើប្រាស់សម្រាប់ការបញ្ជាទិញនេះរួចហើយ ។
+    coupon_code_applied: កូដបញ្ចុះតម្លៃត្រូវបានអនុវត្ត​សម្រាប់ការបញ្ជាទិញរបស់អ្នកដោយជោគជ័យ ។
+    coupon_code_better_exists: កូដបញ្ចុះតម្លៃដែល​ប្រើមុន​ទទួល​បាន​ការ​បញ្ចុះតម្លៃច្រើនជាង ។
     coupon_code_expired: កូដបញ្ចុះតម្លៃអស់សុពលភាព
     coupon_code_max_usage: កូដបញ្ចុះតម្លៃ​អស់​ចំនួន​ប្រើប្រាស់
     coupon_code_not_eligible: កូដបញ្ចុះតម្លៃមួយនេះ ពុំអាចប្រើប្រាស់សម្រាប់ការបញ្ជាទិញនេះទេ ។
-    coupon_code_not_found: កូដបញ្ចុះតម្លៃដែល​អ្នកបានបញ្ចូល​គ្មាន​នោះទេ ។ សូម​ព្យាយាមម្ដងទៀត ។ 
+    coupon_code_not_found: កូដបញ្ចុះតម្លៃដែល​អ្នកបានបញ្ចូល​គ្មាន​នោះទេ ។ សូម​ព្យាយាមម្ដងទៀត ។
     coupon_code_unknown_error:
     create: បង្កើត
     create_a_new_account: បង្កើតគណនីថ្មី
@@ -548,7 +547,7 @@ km:
     currency_symbol_position: ដាក់សញ្ញា​សម្គាល់រូបិយវត្ថុមុន គឺ ក្រោយ​ចំនួន​ប្រាក់ ?
     currency_thousands_separator: បែងចែក​លេខ​ខ្ទង់ពាន់
     current: បច្ចុប្បន្ន
-    current_promotion_usage: 'ចំនួនប្រើប្រាស់បច្ចុប្បន្ន ៖ %{count}'
+    current_promotion_usage: ចំនួនប្រើប្រាស់បច្ចុប្បន្ន ៖ %{count}
     customer: អតិថិជន
     customer_details: ព័ត៌មានលំអិតស្ដីអំពីអតិថិជន
     customer_details_updated: ព័ត៌មានលំអិតស្ដីអំពីអតិថិជនត្រូវ​បានកែប្រែ
@@ -562,7 +561,7 @@ km:
         app_id: App ID
         app_token: App Token
         currently_unavailable: ពេលនេះ Jirafe ពុំអាចប្រើបានទេ. Spree តភ្ជាប់ទៅ Jirafe ដោយស្វ័យប្រវត្តិ​ឆាប់ៗនេះ.
-        explanation: ព័ត៌មានខាងក្រោមនេះអាចត្រូវបានបំពេញរួចអស់ហើយ ប្រសិនបើអ្នកចុះឈ្មោះ Jirafe ពីផ្ទាំងព័ត៌មាន​អ្នកគ្រប់គ្រង ។ 
+        explanation: ព័ត៌មានខាងក្រោមនេះអាចត្រូវបានបំពេញរួចអស់ហើយ ប្រសិនបើអ្នកចុះឈ្មោះ Jirafe ពីផ្ទាំងព័ត៌មាន​អ្នកគ្រប់គ្រង ។
         header: កំណត់ការវិភាគ Jirafe
         site_id: ID របស់​ទំព័រ
         token: Token
@@ -570,14 +569,13 @@ km:
     date: ថ្ងៃ
     date_completed: ថ្ងៃបញ្ចប់
     date_picker:
-      # FlatPickr human friendly formatting
       fpr_human_friendly_date_format: M j, Y
       fpr_human_friendly_date_time_format: M j, Y - H:i
     date_range: ចន្លោះថ្ងៃ
     default: ទម្រង់ដើម
     default_refund_amount:
     default_tax:
-    default_tax_zone: 
+    default_tax_zone:
     delete: លុបចោល
     deleted_variants_present:
     delivery: ដឹកជញ្ជូន
@@ -587,7 +585,7 @@ km:
     destroy: លុបចោល
     details:
     discount_amount: ចំនួនបញ្ចុះតម្លៃ
-    dismiss_banner: ឥទទេ ! អរគុណច្រើនណាស់ ប៉ុន្តែ​មិនចាំបាច់បង្ហាញឲ្យខ្ញុំ​ឃើញទៀតទេ ។ 
+    dismiss_banner: ឥទទេ ! អរគុណច្រើនណាស់ ប៉ុន្តែ​មិនចាំបាច់បង្ហាញឲ្យខ្ញុំ​ឃើញទៀតទេ ។
     display: បង្ហាញ
     display_currency: រូបិយវត្ថុដែលបង្ហាញ
     doesnt_track_inventory:
@@ -624,8 +622,8 @@ km:
         no_payment_methods_available: ក្នុងដំណាក់កាលនេះ ពុំ​មាន​វិធីបង់ប្រាក់ណាទេ
         no_shipping_methods_available: ពុំមានវិធី​ដឹកជញ្ជូនសម្រាប់​ទីតាំងមួយនេះទេ ។ សូមធ្វើការ
     errors_prohibited_this_record_from_being_saved:
-      one: មានកំហុស មួយ ដែល​មិន​ឲ្យ​ធ្វើការ​រក្សា​លើ​កំណត់ត្រា​នេះ 
-      other: "មានកំហុស %{count} ដែល​មិន​ឲ្យ​ធ្វើការ​រក្សា​លើ​កំណត់ត្រា​នេះ"
+      one: មានកំហុស មួយ ដែល​មិន​ឲ្យ​ធ្វើការ​រក្សា​លើ​កំណត់ត្រា​នេះ
+      other: មានកំហុស %{count} ដែល​មិន​ឲ្យ​ធ្វើការ​រក្សា​លើ​កំណត់ត្រា​នេះ
     event: ព្រិត្តិការណ៍
     events:
       spree:
@@ -651,6 +649,7 @@ km:
     failed_payment_attempts:
     filename: ឈ្មោះឯកសារ
     fill_in_customer_info: សូមបំពេញព័ត៌មាន​អតិថិជន
+    filter: តម្រង់
     filter_results: តម្រងលិទ្ធផល
     finalize: រួចរាល់
     finalized:
@@ -692,7 +691,7 @@ km:
     inactive:
     incl:
     included_in_price: បានបញ្ចូលស្រាប់ក្នុងតម្លៃ
-    included_price_validation: មិនអាចជ្រើសបានទេ លើកលែកតែអ្នក​បាន​កំណត់ កូដតំបន់​ពន្ធ​លំនាំដើម រួចហើយ ។ 
+    included_price_validation: មិនអាចជ្រើសបានទេ លើកលែកតែអ្នក​បាន​កំណត់ កូដតំបន់​ពន្ធ​លំនាំដើម រួចហើយ ។
     incomplete:
     info_number_of_skus_not_shown:
     info_product_has_multiple_skus:
@@ -700,16 +699,16 @@ km:
     insufficient_stock: ទំនិញនៅសល់​មិន​គ្រប់ចំនួន​ទេ នៅតែ %{on_hand} ប៉ុណ្ណោះ
     insufficient_stock_lines_present:
     intercept_email_address: អ៊ីម៉ែលដែល​ទទួល​សំបុត្រ
-    intercept_email_instructions: កែអ៊ីម៉ែល​អ្នក​ទទួល ដោយ​ជំនួស​ដោយ​មួយនេះ 
+    intercept_email_instructions: កែអ៊ីម៉ែល​អ្នក​ទទួល ដោយ​ជំនួស​ដោយ​មួយនេះ
     internal_name: Internal Name
     invalid_credit_card: ប័ណ្ណមិនត្រឹមត្រូវ
     invalid_exchange_variant:
-    invalid_payment_provider: ក្រុមហ៊ុនផ្ដល់សេវាកម្មទូរទាត់​មិន​ត្រឹមត្រូវ ។ 
-    invalid_promotion_action: ធ្វើការបញ្ចុះតម្លៃមិនត្រឹមត្រូវ ។ 
+    invalid_payment_provider: ក្រុមហ៊ុនផ្ដល់សេវាកម្មទូរទាត់​មិន​ត្រឹមត្រូវ ។
+    invalid_promotion_action: ធ្វើការបញ្ចុះតម្លៃមិនត្រឹមត្រូវ ។
     invalid_promotion_rule: វិធី​បញ្ចុះតម្លៃមិនត្រឹមត្រូវ ។
     inventory: ទំនិញ
     inventory_adjustment: កែប្រែទំនិញនៅសល់
-    inventory_error_flash_for_insufficient_quantity: មានទំនិញមួយ​ដែល​អ្នក​បានរើស ត្រូវទិញយកអស់ហើយ ។ 
+    inventory_error_flash_for_insufficient_quantity: មានទំនិញមួយ​ដែល​អ្នក​បានរើស ត្រូវទិញយកអស់ហើយ ។
     inventory_state:
     is_not_available_to_shipment_address: មិនអាចដឹកទៅដល់ទីតាំង​ដែល​បាន​កំណត់មុន
     iso_name: ឈ្មោះ ISO
@@ -742,7 +741,7 @@ km:
     log_entries:
     logged_in_as: ចូលប្រើក្នុងនាមជា
     logged_in_succesfully: បានចូលប្រើដោយជោគជ័យ
-    logged_out: អ្នកបានចាកចេញរួចហើយ ។ 
+    logged_out: អ្នកបានចាកចេញរួចហើយ ។
     login: ចូលប្រើ
     login_as_existing: ចូលប្រើក្នុងនាមជាអតិថិន​ដែល​មាន​ស្រាប់
     login_failed: មិនត្រូវបាន​អនុញ្ញាត​ឲ្យចូលទេ
@@ -795,7 +794,7 @@ km:
     new_refund_reason: មូលហេតុ​ដែល​សងប្រាក់​ថ្មី
     new_return_authorization: ការអនុញ្ញាត​ឲ្យ​សង​ទំនិញវិញ​ថ្មី
     new_rma_reason:
-    new_shipment_at_location: 
+    new_shipment_at_location:
     new_shipping_category: ប្រភេទដឹកជញ្ជូន​ថ្មី
     new_shipping_method: វិធី​ដឹកជញ្ជូន​ថ្មី
     new_state: ខេត្ត/រដ្ឋ​ថ្មី
@@ -828,7 +827,7 @@ km:
     not: មិន
     not_available: N/A
     not_enough_stock: មិនមានគ្រប់ទំនិញនៅក្នុងឃ្លាំងដើមដើម្បីបញ្ចប់​ការ​ផ្ទេរនោះទេ
-    not_found: "គ្មាន %{resource}"
+    not_found: គ្មាន %{resource}
     note:
     notice_messages:
       product_cloned: ទំនិញត្រូវបានចម្លងរួច
@@ -860,15 +859,15 @@ km:
     order_information: ព័ត៌មាន​បញ្ជាទិញ
     order_mailer:
       cancel_email:
-        dear_customer: លោកស្រី/នាងកញ្ញា/លោក ជាទីគោរព \n 
-        instructions: ការបញ្ជាទិញរបស់អ្នក ត្រូវបាន​លុបចោលហើយ ។  សូមមេត្តាពិនិត្យ​បញ្ជាទិញរបស់​​អ្នក​ឡើង​វិញ ។ 
+        dear_customer: លោកស្រី/នាងកញ្ញា/លោក ជាទីគោរព \n
+        instructions: ការបញ្ជាទិញរបស់អ្នក ត្រូវបាន​លុបចោលហើយ ។  សូមមេត្តាពិនិត្យ​បញ្ជាទិញរបស់​​អ្នក​ឡើង​វិញ ។
         order_summary_canceled: ការបញ្ជាទិញ [បានលុប]
         subject: ការលុបបញ្ជាទិញ
         subtotal:
         total:
       confirm_email:
-        dear_customer: លោកស្រី/នាងកញ្ញា/លោក ជាទីគោរព \n 
-        instructions: សូម​មត្តា​ពិនិត្យ​ឡើង​វិញនូវ​បញ្ជាទិញ​ដែល​អ្នក​បាន​ធញវើ​ឡើង ។ 
+        dear_customer: លោកស្រី/នាងកញ្ញា/លោក ជាទីគោរព \n
+        instructions: សូម​មត្តា​ពិនិត្យ​ឡើង​វិញនូវ​បញ្ជាទិញ​ដែល​អ្នក​បាន​ធញវើ​ឡើង ។
         order_summary: ការបញ្ជាទិញ
         subject: បញ្ជាក់លើ​បញ្ជាទិញ
         subtotal:
@@ -914,7 +913,7 @@ km:
     payment_method: វិធីបង់ប្រាក់
     payment_method_not_supported:
     payment_methods: វិធីបង់ប្រាក់
-    payment_processing_failed: មិនអាចធ្វ់​ការ​បង់ប្រាក់បានទេ ។ សូមពិនិត្យ​ឡើងវិញ​នូវ​គ្រប់ព័ត៌មាន​ដែល​អ្នក​បាន​បំពេញ ។ 
+    payment_processing_failed: មិនអាចធ្វ់​ការ​បង់ប្រាក់បានទេ ។ សូមពិនិត្យ​ឡើងវិញ​នូវ​គ្រប់ព័ត៌មាន​ដែល​អ្នក​បាន​បំពេញ ។
     payment_processor_choose_banner_text: ប្រសិនបើអ្នក​ត្រូវការជំនួយ​លើ​ការ​បង់ប្រាក់ សូមចូលទៅកាន់
     payment_processor_choose_link: ទំព័រទូរទាត់របស់​យើងខ្ញុំ
     payment_state: ស្ថានភាព​នៃ​ការ​បង់ប្រាក់
@@ -930,15 +929,15 @@ km:
       void: លុបចោល
     payment_updated: កែប្រែការទូរទាត់
     payments: ការទូរទាត់
-    pending:  រង់ចាំ
+    pending: រង់ចាំ
     percent: ភាគរយ
     percent_per_item: ភាគរយ​លើ​មុខទំនិញ
     permalink: ភ្ជាប់ (Permalink)
     phone: ទូរស័ព្ទ
     place_order: បញ្ជាទិញ
-    please_define_payment_methods: សូមមត្តាកំណត់វិធីបង់ប្រាក់ជាមុនសិន ។ 
-    populate_get_error: មាន​កំហុស​មួយ​បាន​កើតឡើង ។ សូមមេត្តា​ជ្រើសយកទំនិញ​ណាមួយ ។ 
-    powered_by: បាននាំមកដោយ 
+    please_define_payment_methods: សូមមត្តាកំណត់វិធីបង់ប្រាក់ជាមុនសិន ។
+    populate_get_error: មាន​កំហុស​មួយ​បាន​កើតឡើង ។ សូមមេត្តា​ជ្រើសយកទំនិញ​ណាមួយ ។
+    powered_by: បាននាំមកដោយ
     pre_tax_amount:
     pre_tax_refund_amount:
     pre_tax_total:
@@ -1000,7 +999,7 @@ km:
         description: អ្នកប្រើប្រាស់មួយ​ប្រើបាន​តែមួយដងតែប៉ុណ្ណោះ
         name: ម្នាក់បានតែម្ដង
       option_value:
-        description: 
+        description:
         name:
       product:
         description: បញ្ជាទិញ​មាន​មុខទំនិញបានកំណត់
@@ -1131,12 +1130,12 @@ km:
     shipment_mailer:
       shipped_email:
         dear_customer: លោកស្រី/នាងកញ្ញា/លោក ជាទីគោរព \n
-        instructions: បញ្ជាទិញរបស់​អ្នក​ត្រូវបាន​ផ្ញើទៅកាន់អ្នកហើយ ។ 
+        instructions: បញ្ជាទិញរបស់​អ្នក​ត្រូវបាន​ផ្ញើទៅកាន់អ្នកហើយ ។
         shipment_summary: ព័ត៌មាន​នៃការដឹកជញ្ជូន
         subject: សេចក្ដីជូនដំណឹងស្ដីអំពីការផ្ញើទំនិញ
-        thanks: សូមអរគុណយ៉ាងជ្រាលជ្រៅបំផុត ! 
-        track_information: 'ព័ត៌មានតាមដាន​ ៖ %{tracking}'
-        track_link: 'ភ្ជាប់សម្រាប់​ចូលមើល ៖ %{url}'
+        thanks: សូមអរគុណយ៉ាងជ្រាលជ្រៅបំផុត !
+        track_information: ព័ត៌មានតាមដាន​ ៖ %{tracking}
+        track_link: ភ្ជាប់សម្រាប់​ចូលមើល ៖ %{url}
     shipment_state: ស្ថានភាព​របស់​ការដឹកជញ្ជូន
     shipment_states:
       backorder: បានអស់ទំនិញហើយ
@@ -1230,23 +1229,21 @@ km:
     stock_transfers: រើទំនិញនៅឃ្លាំង
     stop: ចំណត
     store: ហាង
+    store_credit_categories: ប្រភេទឥណទានហាង
+    store_credit_name: ឈ្មោះឥណទានហាង
+    store_credit_payment_method:
+      currency_mismatch: រូបិយប័ណ្ណឥណទានមិនត្រូវគ្នានឹងរូបិយប័ណ្ណបញ្ជាទិញទេ
+      insufficient_authorized_amount: ចំនួនទឹកប្រាក់ដែលមានការអនុញ្ញាតមិនគ្រប់គ្រាន់
+      insufficient_funds: ឥណទានមិនគ្រប់គ្រាន់
+      select_one_store_credit: ជ្រើសរើសឥណទានហាងដើម្បីចូលទៅសមតុល្យដែលនៅសល់
+      successful_action: សកម្មភាព %{action} ត្រូវបានធ្វើរួច
+      unable_to_credit: 'មិនអាចផ្តល់ឥណទាន: %{auth_code}'
+      unable_to_find: មិនអាចរកឃើញ
+      unable_to_find_for_action: មិនអាចរកកាតឥណទាន  %{auth_code} សម្រាប់សកម្មភាព %{action}
+      unable_to_void: 'មិនអាចចាត់ទុកជាមោឃៈ : %{auth_code}'
+      user_has_no_store_credits: អ្នកប្រើមិនមានឥណទានហាងទេ
     store_set_default_button: កំណត់ជាលំនាំដើម
     stores: ហាង
-    store_credit_name: ឈ្មោះឥណទានហាង
-
-    store_credit_categories: ប្រភេទឥណទានហាង
-    store_credit_payment_method:
-      unable_to_void: "មិនអាចចាត់ទុកជាមោឃៈ : %{auth_code}"
-      unable_to_credit: "មិនអាចផ្តល់ឥណទាន: %{auth_code}"
-      successful_action: "សកម្មភាព %{action} ត្រូវបានធ្វើរួច"
-      unable_to_find: "មិនអាចរកឃើញ"
-      insufficient_funds: "ឥណទានមិនគ្រប់គ្រាន់"
-      currency_mismatch: "រូបិយប័ណ្ណឥណទានមិនត្រូវគ្នានឹងរូបិយប័ណ្ណបញ្ជាទិញទេ"
-      insufficient_authorized_amount: "ចំនួនទឹកប្រាក់ដែលមានការអនុញ្ញាតមិនគ្រប់គ្រាន់"
-      unable_to_find_for_action: "មិនអាចរកកាតឥណទាន  %{auth_code} សម្រាប់សកម្មភាព %{action}"
-      user_has_no_store_credits: "អ្នកប្រើមិនមានឥណទានហាងទេ"
-      select_one_store_credit: "ជ្រើសរើសឥណទានហាងដើម្បីចូលទៅសមតុល្យដែលនៅសល់"
-
     street_address: លេខផ្លូវ
     street_address_2: លេខផ្លូវ (បន្ត)
     subtotal: សរុប
@@ -1283,19 +1280,19 @@ km:
     test_mailer:
       test_email:
         greeting: អបអរសាទរ!
-        message: ប្រសិនបើអ្នក​ទទួល​បាន​អ៊ីម៉ែលនេះ មានន័យថា អ្នក​បាន​កំណត់​អ៊ីម៉ែល​ជោគជ័យហើយ ! 
+        message: ប្រសិនបើអ្នក​ទទួល​បាន​អ៊ីម៉ែលនេះ មានន័យថា អ្នក​បាន​កំណត់​អ៊ីម៉ែល​ជោគជ័យហើយ !
         subject: ការសាកល្បង
     test_mode: កម្មវិធីសាកល្បង
     thank_you_for_your_order: សូមអរគុណសម្រាប់ការជាវ ។ សូម​បោះពុម្ព ឬ ថត​ទុក​ទំព័រ​បញ្ជាក់នេះ ដើម្បី​ទុកជា​ឯកសារ​សម្រាប់អ្នក ។
-    there_are_no_items_for_this_order: ក្នុង​បញ្ជាទិញនេះ ពុំ​មាន​មុខទំនិញណាឡើយ ។ សូមមត្តា​បន្ថែម​ទំនិញណាមួយ​ដើម្បីបន្ត​បញ្ជាទិញនេះ ។ 
-    there_were_problems_with_the_following_fields: មានបញ្ហាមួយចំនួន​ក្នុង​បែបបទ​ខាង​ក្រោមនេះ 
+    there_are_no_items_for_this_order: ក្នុង​បញ្ជាទិញនេះ ពុំ​មាន​មុខទំនិញណាឡើយ ។ សូមមត្តា​បន្ថែម​ទំនិញណាមួយ​ដើម្បីបន្ត​បញ្ជាទិញនេះ ។
+    there_were_problems_with_the_following_fields: មានបញ្ហាមួយចំនួន​ក្នុង​បែបបទ​ខាង​ក្រោមនេះ
     this_order_has_already_received_a_refund:
     thumbnail: រូបតាង
     tiered_flat_rate:
     tiered_percent:
     tiers:
     time: វេលា
-    to_add_variants_you_must_first_define: ដើម្បីបន្ថែម​ប្រភេទផ្សេងៗ អ្នក​ត្រូវតែកំណត់ជាមុនសិន 
+    to_add_variants_you_must_first_define: ដើម្បីបន្ថែម​ប្រភេទផ្សេងៗ អ្នក​ត្រូវតែកំណត់ជាមុនសិន
     total: សរុប
     total_per_item:
     total_pre_tax_refund:
@@ -1331,9 +1328,9 @@ km:
       choose_users: ជ្រើសរើស​អ្នកប្រើប្រាស់
     users: អ្នកប្រើប្រាស់
     validation:
-      cannot_be_less_than_shipped_units: មិនអាចតិចជាងចំនួនដែល​បានដឹកទៅ ។ 
+      cannot_be_less_than_shipped_units: មិនអាចតិចជាងចំនួនដែល​បានដឹកទៅ ។
       cannot_destroy_line_item_as_inventory_units_have_shipped:
-      exceeds_available_stock: ច្រើនជាង​ចំនួន​ដែល​មានស្រាប់ក្នុងឃ្លាំង ។ សូម​ធានាថា​​បាន​កំណត់​ចំនួន​ទំនិញ​ត្រឹមត្រូវហើយ ។ 
+      exceeds_available_stock: ច្រើនជាង​ចំនួន​ដែល​មានស្រាប់ក្នុងឃ្លាំង ។ សូម​ធានាថា​​បាន​កំណត់​ចំនួន​ទំនិញ​ត្រឹមត្រូវហើយ ។
       is_too_large: ច្រើនហួស -- ចំនួន​ទំនិញ​ដែល​កំពុងមាន​គឺ​មិន​គ្រប់​ចំនួន​នេះទេ!
       must_be_int: ត្រូវតែជាលេខធំជាងសូន្យ
       must_be_non_negative: ត្រូវតែមិនមែនជា​លេខដក
@@ -1345,7 +1342,7 @@ km:
     version: ជំនាន់
     void: លុបចោល
     weight: ទម្ងន់
-    what_is_a_cvv: (CVV) ជាអ្វីទៅ ?
+    what_is_a_cvv: "(CVV) ជាអ្វីទៅ ?"
     what_is_this: នេះជាអ្វីទៅ ?
     width: កម្រាស់
     year: ឆ្នាំ

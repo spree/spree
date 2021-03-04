@@ -3,23 +3,25 @@ de:
   activemodel:
     attributes:
       spree/order_cancellations:
-        quantity: Anzahl
-        state: Status
-        shipment: Sendung
         cancel: Abbrechen
+        quantity: Anzahl
+        shipment: Sendung
+        state: Status
     errors:
       models:
         spree/fulfilment_changer:
           attributes:
+            current_shipment:
+              can_not_have_backordered_inventory_units: hat Nachbestelungseinheiten
+              has_already_been_shipped: wurde bereits versendet
             desired_shipment:
               can_not_transfer_within_same_shipment: Kann nicht innerhalb derselben Sendung übertragen werden
-              not_enough_stock_at_desired_location: Die Anzahl der Lagerartikel reicht am gewünschten Lagerort nicht aus
               has_not_enough_stock_at_desired_location: hat nicht genügend Vorrat an gewünschter Lager
-            current_shipment:
-              has_already_been_shipped: wurde bereits versendet
-              can_not_have_backordered_inventory_units: hat Nachbestelungseinheiten
+              not_enough_stock_at_desired_location: Die Anzahl der Lagerartikel reicht am gewünschten Lagerort nicht aus
   activerecord:
     attributes:
+      pree/store_credit_category:
+        name: Name
       spree/address:
         address1: Adresse
         address2: Adresse (Fortsetzung)
@@ -27,18 +29,18 @@ de:
         company: Firma
         country: Land
         firstname: Vorname
+        label: Etikette
         lastname: Nachname
         phone: Telefonnummer
         state: Bundesland
         zipcode: PLZ
-        label: Etikette
       spree/adjustment:
         adjustable: Anpassbar
+        adjustment_reason_id: Grund
         amount: Summe
         label: Beschreibung
         name: Name
         state: Status
-        adjustment_reason_id: Grund
       spree/adjustment_reason:
         active: Aktiv
         code: Code
@@ -50,6 +52,8 @@ de:
       spree/calculator/tiered_percent:
         preferred_base_percent: Basisprozent
         preferred_tiers: Stufen
+      spree/carton:
+        tracking: Tracking
       spree/country:
         iso: ISO
         iso3: ISO3
@@ -57,8 +61,6 @@ de:
         name: Name
         numcode: ISO-Nummer
         states_required: Bundesland erforderlich
-      spree/carton:
-        tracking: Tracking
       spree/credit_card:
         base: Basis
         card_code: Kartenprüfnummer
@@ -70,11 +72,11 @@ de:
         verification_value: Kartenprüfnummer
         year: Jahr
       spree/customer_return:
+        name: Name
         number: Rücksendenummer
         pre_tax_total: Vorsteuer Gesamtsumme
-        total: Gesamt
         reimbursement_status: Vergütungsstatus
-        name: Name
+        total: Gesamt
       spree/image:
         alt: Alternativer Text
         attachment: Dateiname
@@ -88,12 +90,12 @@ de:
         description: Artikelbeschreibung
         name: Name
         price: Preis
-        total: Preis (total)
         quantity: Menge
+        total: Preis (total)
       spree/option_type:
+        filterable: filtrierbar
         name: Name
         presentation: Angezeigter Wert
-        filterable: filtrierbar
       spree/option_value:
         name: Name
         presentation: Angezeigter Wert
@@ -114,8 +116,8 @@ de:
         item_total: Artikel gesamt
         number: Bestellnummer
         payment_state: Bezahlstatus
-        shipment_total: Versand gesamt
         shipment_state: Versandstatus
+        shipment_total: Versand gesamt
         special_instructions: Zusätzliche Angaben
         state: Status
         total: Gesamtsumme
@@ -197,8 +199,8 @@ de:
         refund_reason_id: Grund
       spree/refund_reason:
         active: Aktiv
-        name: Name
         code: Code
+        name: Name
       spree/reimbursement:
         number: Nummer
         reimbursement_status: Status
@@ -223,9 +225,9 @@ de:
         return_reason: Grund
         total: Gesamt
       spree/return_reason:
-        name: Name
         active: Aktiv
         memo: Notiz
+        name: Name
         number: Rücksendungsnummer
         state: Status
       spree/role:
@@ -242,8 +244,8 @@ de:
         name: Name
         tracking_url: Tracking URL
       spree/shipping_rate:
-        tax_rate: Steuersatz
         amount: Summe
+        tax_rate: Steuersatz
       spree/state:
         abbr: Abkürzung
         name: Name
@@ -255,29 +257,13 @@ de:
         type: Typ
         updated: Geändert am
         user: Benutzer
-      spree/store:
-        mail_from_address: Versandadresse
-        meta_description: Seitenbeschreibung
-        meta_keywords: Stichwörter
-        name: Name des Shops
-        seo_title: Name (Suchmaschinenoptimiert)
-        url: Adresse des Shops
-        seo_robots: SEO-Roboter
-      spree/store_credit:
-        amount: Summe
-        amount_used: Vervendete Summe
-        memo: Notiz
-      pree/store_credit_category:
-        name: Name
-      spree/store_credit_event:
-        action: Aktion
       spree/stock_item:
         count_on_hand: Anzahl auf Lager
       spree/stock_location:
-        admin_name: Interne Bezeichnung
         active: Aktiv
         address1: Straße
         address2: Straße (Zusatz)
+        admin_name: Interne Bezeichnung
         backorderable_default: Nachbestellbar (standard)
         city: Ort
         code: Code
@@ -296,6 +282,20 @@ de:
         created_at: Erstellt am
         description: Beschreibung
         tracking_number: Tracking Nummer
+      spree/store:
+        mail_from_address: Versandadresse
+        meta_description: Seitenbeschreibung
+        meta_keywords: Stichwörter
+        name: Name des Shops
+        seo_robots: SEO-Roboter
+        seo_title: Name (Suchmaschinenoptimiert)
+        url: Adresse des Shops
+      spree/store_credit:
+        amount: Summe
+        amount_used: Vervendete Summe
+        memo: Notiz
+      spree/store_credit_event:
+        action: Aktion
       spree/tax_category:
         description: Beschreibung
         is_default: Standard
@@ -366,8 +366,8 @@ de:
         spree/image:
           attributes:
             attachment:
-              not_allowed_content_type: Der Inhaltstyp ist nicht zulässig
               attachment_must_be_present: Muss vorhanden Sein
+              not_allowed_content_type: Der Inhaltstyp ist nicht zulässig
         spree/line_item:
           attributes:
             currency:
@@ -406,11 +406,11 @@ de:
               cannot_destroy_default_store: Kann den Standard-Store nicht löschen
         spree/store_credit:
           attributes:
+            amount_authorized:
+              exceeds_total_credits: Überschreitet das Gesamtguthaben
             amount_used:
               cannot_be_greater_than_amount: Kann nicht größer als die Summe sein.
               greater_than_zero_restrict_delete: Ist größer als Null. Guthaben kann nicht gelöscht werden.
-            amount_authorized:
-              exceeds_total_credits: Überschreitet das Gesamtguthaben
         spree/store_credit_category:
           attributes:
             base:
@@ -423,8 +423,8 @@ de:
           attributes:
             base:
               cannot_destroy_if_attached_to_line_items: Variante kann nicht gelöscht werden wenn sie zu einem Einzelposten gehört
-              no_master_variant_found_to_infer_price: Es wurde keine Master-Variante gefunden, die auf den Preis schließen lässt
               must_supply_price_for_variant_or_master: Muss Preis für eine Variante oder ein Master-Preis für das Produkt eingeben
+              no_master_variant_found_to_infer_price: Es wurde keine Master-Variante gefunden, die auf den Preis schließen lässt
     models:
       spree/address:
         one: Adresse
@@ -618,17 +618,17 @@ de:
   pagination:
     first: "&laquo;"
     last: "&raquo;"
-    previous: "&lsaquo;"
     next: "&rsaquo;"
+    previous: "&lsaquo;"
     truncate: "&hellip;"
   spree:
-    account_info: Kontoinformation
     abbreviation: Abkürzung
     accept: Akzeptieren
     acceptance_errors: Akzeptanzfehler
     acceptance_status: Akzeptanzstatus
     accepted: Akzeptiert
     account: Konto
+    account_info: Kontoinformation
     account_updated: Konto aktualisiert!
     action: Aktion
     actions:
@@ -656,11 +656,11 @@ de:
     activate: Aktivieren
     active: Aktiv
     add: Hinzufügen
-    add_new_credit_card: Neue Karte hinzufügen
     add_action_of_type: Aktion hinzufügen
     add_country: Land hinzufügen
     add_coupon_code: Gutscheincode hinzufügen
     add_new_address: Neue Adresse hinzufügen
+    add_new_credit_card: Neue Karte hinzufügen
     add_new_header: Header hinzufügen
     add_new_style: Stil hinzufügen
     add_one: Hinzufügen
@@ -671,38 +671,38 @@ de:
     add_state: Bundesland hinzufügen
     add_stock: Lager hinzufügen
     add_stock_management: Lagerverwaltung hinzufügen
-    add_to_cart: In den Warenkorb
-    add_variant: Variante hinzufügen
     add_store: Neuer Laden
     add_store_credit: Ladenguthaben hinzufügen
+    add_to_cart: In den Warenkorb
+    add_variant: Variante hinzufügen
     added_to_cart: Artikel erfolgreich in den Warenkorb gelegt!
     additional_item: Kosten für weiteren Artikel
     address: Adresse
     address1: Adresse
     address2: Adresse (Zusatz)
-    addresses: Addressen
     address_action_popup:
       delete_button: Ja,löschen!
       delete_text: Möchten Sie wirklich <br /> diese Adresse löschen?
       delete_title: Sind Sie sicher?
     address_book:
-      other_address: Andere Addresse
       add_new_shipping_address: Neue Adresse hinzufügen
-      new_shipping_address: Neue Addresse
+      address_name_placeholder: Geben Sie dieser Adresse einen eindeutigen Namen (Arbeit, Zuhause usw.)
+      edit_address: Adresse bearbeiten
       edit_shipping_address: Adresse bearbeiten
+      new_address: Neues Adresse
+      new_shipping_address: Neue Addresse
       no_shipping_addresses_on_file: Keine Adressen in der Datei
+      other_address: Andere Addresse
+      remove_address: Adresse entfernen
+      save: Speichern
       shipping_addresses: Addressen
       successfully_created: Adresse wurde erfolgreich erstellt.
       successfully_removed: Adresse wurde erfolgreich entfernt.
       successfully_saved: Erfolgreich gespeichert
-      unsuccessfully_saved: Es gab einen Fehler beim Versuch, Ihre Adresse zu speichern.
       successfully_updated: Erfolgreich aktualisiert
+      unsuccessfully_saved: Es gab einen Fehler beim Versuch, Ihre Adresse zu speichern.
       unsuccessfully_updated: Beim Versuch, Ihre Adresse zu aktualisieren, wurde ein Update durchgeführt.
-      save: Speichern
-      address_name_placeholder: Geben Sie dieser Adresse einen eindeutigen Namen (Arbeit, Zuhause usw.)
-      new_address: "Neues Adresse"
-      edit_address: "Adresse bearbeiten"
-      remove_address: Adresse entfernen
+    addresses: Addressen
     adjustable: Anpassbar
     adjustment: Anpassung
     adjustment_amount: Betrag
@@ -710,9 +710,9 @@ de:
       order: "%{promotion} %{promotion_name} wurde angewendet"
       tax_rates:
         excluding_tax: "%{name}%{amount}"
-        sales_tax_with_rate: "%{amount} %{name}"
         including_tax: "%{name}%{amount} (Im Preis enthalten)"
-        vat_with_rate: "inkl. %{amount} %{name}"
+        sales_tax_with_rate: "%{amount} %{name}"
+        vat_with_rate: inkl. %{amount} %{name}
     adjustment_successfully_closed: Anpassung wurde erfolgreich geschlossen!
     adjustment_successfully_opened: Anpassung wurde erfolgreich geöffnet!
     adjustment_total: Anpassungen Gesamt
@@ -762,8 +762,8 @@ de:
         available_store_credit: Der Benutzer hat %{amount} im Guthaben verfügbar.
         items: Artikel
         items_purchased: Gekaufte Artikel
-        order_history: Bestellhistorie
         no_store_credit: Der Benutzer hat kein Guthaben verfügbar.
+        order_history: Bestellhistorie
         order_num: Bestellnummer
         orders: Bestellungen
         store_credits: Guthaben im Laden
@@ -782,8 +782,8 @@ de:
     allow_ssl_in_development_and_test: Erlaube SSL im Vorproduktions- und Testmodus
     allow_ssl_in_production: Erlaube SSL im Produktionsmodus
     allow_ssl_in_staging: Erlaube SSL im Vorproduktionsmodus
-    already_signed_up_for_analytics: Sie haben sich bereits für Spree Analytics registriert
     already_have_account: Haben Sie bereits ein Konto?
+    already_signed_up_for_analytics: Sie haben sich bereits für Spree Analytics registriert
     alt_text: Alternativer Text
     alternative_phone: Alternative Telefonnummer
     amount: Summe
@@ -812,7 +812,7 @@ de:
     are_you_sure: Sind Sie sicher
     are_you_sure_delete: Sind sie sich sicher, dass Sie diesen Eintrag löschen möchten?
     associated_adjustment_closed: Die verknüpfte Anpassung ist geschlossen und wird nicht neu berechnet. Möchten Sie die Anpassung öffnen?
-    at_symbol: '@'
+    at_symbol: "@"
     authorization_failure: Bitte authentifizieren Sie sich.
     authorized: Autorisiert
     auto_capture: Automatische Erfassung
@@ -834,8 +834,8 @@ de:
     backorderable: Nachbestellbar
     backorderable_default: Nachbestellbar (standard)
     backordered: Nachbestellt
-    backordered_info: Nachbestellt Info
     backordered_confirm_info: Der ausgewählte Artikel ist nachbestellt, Sie sollten mit Verzögerungen rechnen. Sind Sie sicher, dass Sie es bestellen möchten?
+    backordered_info: Nachbestellt Info
     backorders_allowed: Nachbestellt (Standard)
     balance_due: Soll
     base_amount: Grundwert
@@ -846,11 +846,10 @@ de:
     billing_address: Rechnungsadresse
     both: beides
     breadcrumbs: Breadcrumbs
-    call_us_now: 'Ruf uns jetzt an: '
-    change_quantity: Menge ändern
     calculated_reimbursements: Errechnete Vergütung
     calculator: Rechner
     calculator_settings_warning: Wenn Sie den Berechungs-Typ ändern, müssen Sie erst speichern, bevor Sie die Berechnungs-Einstellungen bearbeiten können
+    call_us_now: 'Ruf uns jetzt an: '
     cancel: abbrechen
     cancel_inventory: Inventar löschen
     canceled: Storniert
@@ -879,11 +878,11 @@ de:
       header: Ihr Warenkorb
       product: Artikel
       quantity: Menge
-      title: Warenkorb
       remove_from_cart: Aus dem Korb nehmen
+      title: Warenkorb
     cart_subtotal:
-      one: 'Zwischensumme (1 Artikel)'
-      other: 'Zwischensumme (%{count} Artikel)'
+      one: Zwischensumme (1 Artikel)
+      other: Zwischensumme (%{count} Artikel)
     categories: Kategorien
     category: Kategorie
     category_nav_bar:
@@ -892,17 +891,18 @@ de:
       new_collection: NEUE KOLLEKTION
       special_offers: SONDERANGEBOTE
       summer_2019: SOMMER 2019
+    change_quantity: Menge ändern
     channel: Kanal
     charged: Berechnet
     check_for_spree_alerts: Auf Warnungen von Spree prüfen
     checkout: Zur Kasse
     checkout_page:
       back_to_cart: Zurück zum Warenkorb
+      checkout_navigation: Kasse Navigation
       delivery_method: Versandart
       header: Kasse
-      product: Artikel
       main_navigation: Hauptnavigation
-      checkout_navigation: Kasse Navigation
+      product: Artikel
     choose_a_customer: Kunden auswählen
     choose_a_taxon_to_sort_products_for: Sortierungsklassifizierung wählen
     choose_currency: Währung auswählen
@@ -1003,7 +1003,6 @@ de:
     date: Datum
     date_completed: Abschlußdatum
     date_picker:
-      # FlatPickr human friendly formatting
       fpr_human_friendly_date_format: M j, Y
       fpr_human_friendly_date_time_format: M j, Y um H:i
     date_range: Datum (von/bis)
@@ -1059,22 +1058,22 @@ de:
     enable_mail_delivery: E-Mail Versand aktivieren
     end: Ende
     ending_at: Gültig bis
-    ends_at: Endet am
     ending_in: Gültig bis
+    ends_at: Endet am
     environment: Umgebung
     error: Fehler
     error_user_destroy_with_orders: Fehler Benutzer gelöscht mit Bestellungen
     errors:
       messages:
         blank: Leer
-        could_not_create_taxon: Konnte die Produktklasse nicht erstellen
         cannot_remove_icon: Bild kann nicht entfernt werden
+        could_not_create_taxon: Konnte die Produktklasse nicht erstellen
         no_payment_methods_available: Für diese Umgebung wurden keine Zahlungsmethoden definiert
         no_shipping_methods_available: Für diese Region sind keine Versandart verfügbar. Bitte wählen Sie eine anderen Region aus.
       services:
         get_shipping_rates:
-          no_shipping_address: Um Versandkosten zu generieren, muss die Bestellung eine Versandadresse haben
           no_line_items: Um Versandkosten zu generieren, müssen Sie zu der Bestellung einige Bestellposten hinzufügen
+          no_shipping_address: Um Versandkosten zu generieren, muss die Bestellung eine Versandadresse haben
     errors_prohibited_this_record_from_being_saved:
       one: 1 Prüfung ist fehlgeschlagen
       other: "%{count} Prüfungen sind fehlgeschlagen"
@@ -1108,10 +1107,9 @@ de:
     fill_in_customer_info: Bitte geben Sie die Kundendaten ein
     filter: Filtern
     filter_results: Ergebnisse filtern
+    filterable: Filtrierbar
     finalize: Abschließen
     finalize_all_adjustments: Alle Anpassungen finalisieren
-    unfinalize_all_adjustments: Alle Anpassungen definalisieren
-    filterable: Filtrierbar
     finalized: abgeschlossen
     find_a_taxon: Klassifizierung suchen
     first_item: Kosten für das erste Produkt
@@ -1146,6 +1144,7 @@ de:
     has_no_shipped_units: hat keine gelieferten Einheiten
     header_banner: Header-Banner
     height: Höhe
+    help_center: Hilfezentrum
     hide_cents: Centbeträge ausblenden
     hide_from_subcategories_nav: Aus der Unterkategorien-Navigation ausblenden
     home: Startseite
@@ -1163,12 +1162,11 @@ de:
       sportswear: SPORTBEKLEIDUNG
       streetstyle: STREETSTYLE
       summer_2019: Sommer 2019
-      summer_collection:  Sommer Kollektion
+      summer_collection: Sommer Kollektion
       summer_sale: SUMMER SALE
       trending: TRENDING
       up_to_60: BIS ZUM 60%
       women: DAMEN
-    help_center: Hilfezentrum
     i18n:
       available_locales: Verfügbare Locales
       fields: Felder
@@ -1222,9 +1220,9 @@ de:
       returned: zurück erstattet
       shipped: Ausgeliefert
     is_not_available_to_shipment_address: ist nicht erhältlich für Lieferadresse
-    iso_name: Iso-Name
     iso: ISO Alpha-2
     iso3: ISO Alpha-3
+    iso_name: Iso-Name
     issued_on: Ausgestellt am
     item: Artikel
     item_description: Artikelbeschreibung
@@ -1257,7 +1255,6 @@ de:
     locale_not_changed: Locale wurde nicht geändert
     location: Standort
     lock: Sperren
-    logo: Logo
     log_entries: Logeinträge
     log_in: Anmelden
     log_in_to_continue: Anmelden um fortzufahren
@@ -1268,14 +1265,15 @@ de:
     login_as_existing: Anmeldung für registrierte Benutzer
     login_failed: Anmeldung fehlgeschlagen.
     login_name: Benutzer
+    logo: Logo
     logo_alt: Markenlogo
     logout: Abmelden
     logs: Logs
     look_for_similar_items: Ähnliche Artikel
+    mail_from_address: Mail von Adresse
     mailer_logo: Mailer-Logo (nur JPG- oder PNG-Bilder)
     make_refund: Gutschrift erstellen
     make_sure_the_above_reimbursement_amount_is_correct: Stellen Sie sicher, dass die oben genannte Summe der Vergütung korrekt ist!
-    mail_from_address: Mail von Adresse
     manage_promotion_categories: Werbungskategorien editieren.
     manage_variants: Varianten editieren
     manual_intervention_required: Manuelles eingreifen erforderlich
@@ -1364,6 +1362,7 @@ de:
     no_address_given: Keine Adresse angegeben
     no_available_date_set: Verfügbarkeitsdatum nicht vorhanden
     no_country: Kein Land festgelegt
+    no_limits_zone: nicht Zonen begrenzt
     no_payment_found: Keine Zahlung gefunden
     no_payment_provider_settings_message: Dieser Zahlungsanbieter verfügt über keine benutzerdefinierten Einstellungen
     no_pending_payments: Keine ausstehenden Zahlungen
@@ -1379,7 +1378,6 @@ de:
     no_shipping_method_selected: Keine Lieferungsart gewählt
     no_state_changes: Keine Statusänderung
     no_tracking_present: Keine Informationen zur Sendungsverfolgung angegeben.
-    no_limits_zone: nicht Zonen begrenzt
     none: kein
     none_selected: nicht gewählt
     normal_amount: Normale Anzahl
@@ -1389,14 +1387,14 @@ de:
     not_found: "%{resource} wurde nicht gefunden"
     note: Notiz
     notice_messages:
+      icon_removed: Bild wurde erfolgreich entfernt
+      prices_saved: Preise erfolgreich gespeichert
       product_cloned: Produkt wurde geklont
       product_deleted: Produkt wurde gelöscht
       product_not_cloned: Produkt konnte nicht kopiert werden
       product_not_deleted: Produkt konnte nicht gelöscht werden
       variant_deleted: Variante wurde gelöscht
       variant_not_deleted: Variante konnte nicht gelöscht werden
-      icon_removed: Bild wurde erfolgreich entfernt
-      prices_saved: Preise erfolgreich gespeichert
     num_orders: Anzahl Bestellungen
     number: Nummer
     ok: OK
@@ -1424,25 +1422,24 @@ de:
     order_information: Bestellinformationen
     order_line_items: Bestellposten
     order_mailer:
-      store_team: '%{store_name} Team'
       cancel_email:
-        dear_customer: 'Sehr geehrte Kundin, geehrter Kunde,'
+        dear_customer: Sehr geehrte Kundin, geehrter Kunde,
         instructions: Ihre Bestellung wurde storniert. Bitte bewahren Sie diese Information für Ihre Unterlagen auf.
         order_summary_canceled: Bestellzusammenfassung [STORNO]
         subject: Bestellung storniert
         subtotal: Zwischensumme
-        total: Gesamtsumme
         thanks: Vielen Dank für Ihren Besuch.
+        total: Gesamtsumme
       confirm_email:
         dear_customer: Sehr geehrte Kundin, geehrter Kunde,
-        instructions:  bitte prüfen Sie noch einmal die folgende Bestellung und bewahren die Bestellbestätigung für Ihre Unterlagen auf.
+        instructions: bitte prüfen Sie noch einmal die folgende Bestellung und bewahren die Bestellbestätigung für Ihre Unterlagen auf.
         order_summary: Folgende Artikel wurden von Ihnen bestellt
         subject: Bestellbestätigung
         subtotal: Zwischensumme
         thanks: Vielen Dank für Ihre Bestellung.
         total: Gesamtsumme
       inventory_cancellation:
-        dear_customer: 'Sehr geehrte Kundin, geehrter Kunde,'
+        dear_customer: Sehr geehrte Kundin, geehrter Kunde,
         instructions: ein oder mehrere Artikel aus Ihrer Bestellung wurden storniert. Bitte bewahren Sie diese Information für Ihre Unterlagen auf.
         order_summary_canceled: Stornierte Artikel
         subject: Stornierung von Artikeln
@@ -1450,10 +1447,11 @@ de:
         heading: Neue Bestellung erhalten
         instructions: Sie haben eine neue Bestellung erhalten.
         order_summary: Bestellung %{number} Zusammenfassung
-        subject: '% {store_name} hat eine neue Bestellung erhalten'
+        subject: "% {store_name} hat eine neue Bestellung erhalten"
         thanks: Vielen Dank für Ihr Geschäft.
-      subtotal: ! 'Zwischensumme :'
-      total: ! 'Gesamtsumme:'
+      store_team: "%{store_name} Team"
+      subtotal: 'Zwischensumme :'
+      total: 'Gesamtsumme:'
     order_not_found: Wir konnten Ihre Bestellung nicht finden. Bitte versuchen Sie es später noch einmal.
     order_number: Bestellnummer %{number}
     order_please_refresh: Die Bestellung muss aktualisiert werden
@@ -1503,6 +1501,7 @@ de:
     payment_processing_failed: Die Bezahlung konnte nicht abgeschlossen werden, bitte überprüfen Sie Ihre Angaben.
     payment_processor_choose_banner_text: Wenn Sie hilfe bei der Auswahl des Zahlungsabwicklers haben, bitte besuchen Sie
     payment_processor_choose_link: unsere Zahlungsabwickler-Seite
+    payment_provider_settings: Einstellungen des Zahlungsanbieters
     payment_state: Zahlungsstatus
     payment_states:
       balance_due: Zahlung ausstehend
@@ -1516,7 +1515,6 @@ de:
       void: nichtig
     payment_type: Zahlungsart
     payment_updated: Zahlung aktualisiert
-    payment_provider_settings: Einstellungen des Zahlungsanbieters
     payments: Zahlungen
     payments_count: Bezahl Anzahl
     pdp:
@@ -1541,8 +1539,8 @@ de:
       clear_all: ALLES LÖSCHEN
       collection: KOLLEKTION
       color: FARBE
-      done: ERLEDIGT
       default: STANDARD
+      done: ERLEDIGT
       filter_by: FILTERN NACH
       newest_first: NEUSTE ZUERST
       no_results: Keine Ergebnisse
@@ -1573,9 +1571,9 @@ de:
     previous_state_missing: Kein vorheriger Status
     previously_used_card: Zuvor verwendete Karten
     price: Preis
-    prices: Preise
     price_range: Preisbereich
     price_sack: Preis füllen
+    prices: Preise
     process: Abschicken
     product: Produkt
     product_details: Produkt-Details
@@ -1615,7 +1613,7 @@ de:
         all: Alle Regeln müssen greifen
         any: Eine dieser Regeln muss greifen
     promotion_label: Werbeaktion (%{name})
-    promotion_not_cloned: "Werbeaktion konnte nicht gekolnt werden. Grund: %{error}"
+    promotion_not_cloned: 'Werbeaktion konnte nicht gekolnt werden. Grund: %{error}'
     promotion_rule: Werbeaktions-Regel
     promotion_rule_types:
       country:
@@ -1679,7 +1677,6 @@ de:
     refunds: Rückerstattungen
     register: Als Neukunde registrieren
     registration: Registrierung
-    remove_image: Entferne Bild
     reimburse: Vergüten
     reimbursed: Vergütet
     reimbursement: Vergütung
@@ -1691,10 +1688,10 @@ de:
         for: für
         instructions: Anweisungen
         refund_summary: Kurzfassung Gutschrift
+        store_team: "%{store_name} Team"
         subject: Betreff
-        total_refunded: Gesamtwert Gutschriften
         thanks: Vielen Dank
-        store_team: '%{store_name} Team'
+        total_refunded: Gesamtwert Gutschriften
     reimbursement_perform_failed: Vergütung fehlgeschlagen
     reimbursement_status: Vergütungsstatus
     reimbursement_type: Vergütungstyp
@@ -1705,10 +1702,11 @@ de:
     rejected: abgelehnt
     remember_me: Auf diesem Computer speichern
     remove: Entfernen
+    remove_image: Entferne Bild
     rename: Rename
     report: Bericht
     reports: Berichte
-    required: '*'
+    required: "*"
     required_fields: Pflichtfelder
     resellable: Wiederverkäuflich
     resend: Erneut Versenden
@@ -1762,25 +1760,26 @@ de:
     secure_connection_type: Sicherer Verbindungstyp
     security_settings: Sicherheitseinstellungen
     select: Auswählen
-    select_an_option: Wähle eine Option
     select_a_date: Wählen Sie ein Datum
     select_a_date_range: Wählen Sie einen Datumsbereich
     select_a_return_authorization_reason: Rückgabeberechtigungsgrund wählen
     select_a_stock_location: Lager wählen
     select_a_store_credit_reason: Wählen Sie einen Grund aus, um das Guthaben zu erhalten
+    select_an_option: Wähle eine Option
     select_from_prototype: Von einem Prototypen
     select_stock: Lager wählen
     selected_quantity_not_available: ausgewählte %{item} ist nicht verfügbar.
-    seo: SEO
-    seo_robots: SEO-Roboter
     send_copy_of_all_mails_to: Schicke eine Kopie aller E-Mails an
     send_mails_as: Schicke E-Mail als
+    seo: SEO
+    seo_robots: SEO-Roboter
     seo_title: SEO Titel
     server: Server
     server_error: Der Server hat einen Fehler gemeldet
     settings: Einstellungen
     ship: verschicken
     ship_address: Lieferadresse
+    ship_to: 'Versand nach:'
     ship_total: Versand gesamt
     shipment: Sendung
     shipment_adjustments: Sendung anpassen
@@ -1790,12 +1789,12 @@ de:
         dear_customer: Sehr geehrte Kundin, geehrter Kunde,
         instructions: Ihre Bestellung wurde versandt.
         shipment_summary: Versandzusammenfassung
-        shipping_method: "DE Shipping method: %{shipping_method}"
+        shipping_method: 'DE Shipping method: %{shipping_method}'
+        store_team: "%{store_name} Team"
         subject: Versand-Benachrichtigung
         thanks: Vielen Dank für Ihre Bestellung.
         track_information: 'Sendungsverfolgung: %{tracking}'
         track_link: 'Sendungsverfolgung: %{url}'
-        store_team: '%{store_name} Team'
     shipment_state: Versandstatus
     shipment_states:
       backorder: Nachlieferung
@@ -1833,7 +1832,6 @@ de:
         excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
         including_tax: "%{price} (inkl. %{tax_amount} %{tax_rate_name})"
     shipping_total: Lieferkosten gesamt
-    ship_to: "Versand nach:"
     shop_by_taxonomy: Nach %{taxonomy} filtern
     shopping_cart: Warenkorb
     show: Anzeigen
@@ -1842,17 +1840,17 @@ de:
     show_discontinued: Eingestellte Anzeigen
     show_only_complete_orders: Nur abgeschlossene Bestellungen anzeigen
     show_only_considered_risky: Nur riskante Bestellungen anzeigen
-    show_rate_in_label: Zeige Steuer im Label
     show_property: Eigenschaft anzeige
+    show_rate_in_label: Zeige Steuer im Label
     show_store_selector:
-      short: Store-Auswahl anzeigen
       long: Zeigen Sie die Store-Auswahl in der Hauptnavigationsleiste von Storefront an und ermöglichen Sie Benutzern, Store und Währung zu ändern
+      short: Store-Auswahl anzeigen
     sign_up: Registrieren
     sku: Artikelnummer
     skus: Artikelnummern
     slug: Permalink
-    source: Quelle
     social: Sozial
+    source: Quelle
     special_instructions: Spezielle Anweisungen
     split: Aufteilen
     spree_gateway_error_flash_for_checkout: Es gab Probleme mit Ihren Zahlungsinformationen. Bitte überprüfen Sie Ihre Angaben und probieren Sie es erneut.
@@ -1892,8 +1890,8 @@ de:
       reimbursed: Vergütet
       resumed: Fortgeführt
       returned: Rückgesendet
-      shipped: Geliefert
       shipment: Sendung
+      shipped: Geliefert
       void: Fehlstelle
     states: Bundesländer
     states_required: Bundesland erforderlich
@@ -1913,67 +1911,66 @@ de:
     stock_transfer:
       errors:
         must_have_variant: Sie müssen mindestens eine Variante hinzufügen.
-        variants_unavailable: "Einige Varianten sind für% {stock} nicht verfügbar."
+        variants_unavailable: Einige Varianten sind für% {stock} nicht verfügbar.
     stock_transfer_name: Umlagerung Name
     stock_transfers: Umlagerung
     stop: Bis
     store: Laden
     store_credit:
-      apply: Anwenden
       additional_payment_needed: Wählen Sie eine andere Zahlungsmethode für den Restbetrag von <strong>%{amount}</strong>.
       allocated: Hinzugefügt
-      applicable_amount: "Für diese Bestellung wird ein Guthaben von <strong>%{amount}</strong> gutgeschrieben"
+      applicable_amount: Für diese Bestellung wird ein Guthaben von <strong>%{amount}</strong> gutgeschrieben
+      apply: Anwenden
       authorized: Authorisiert
-      available_amount: "Sie haben <strong>%{amount}</strong> Guthaben zur Verfügung!"
+      available_amount: Sie haben <strong>%{amount}</strong> Guthaben zur Verfügung!
       captured: Gebraucht
       credit: Kredit
       display_action:
         adjustment: Anpassung
-        credit: Guthaben
-        void: Guthaben
         admin:
           authorize: Autorisiert
+        credit: Guthaben
+        void: Guthaben
       errors:
         cannot_change_used_store_credit: Sie können ein bereits verwendetes Guthaben nicht ändern
         unable_to_create: Guthaben kann nicht erstellt werden
         unable_to_delete: Guthaben kann nicht löschen werden
         unable_to_fund: Die Bestellung kann nicht mit Guthaben bezahlt werden
         unable_to_update: Guthaben kann nicht aktualisiert werden
-      remaining_amount: "Sie haben <strong>%{amount}</strong> im Guthaben Ihres Kontos verbleiben."
+      remaining_amount: Sie haben <strong>%{amount}</strong> im Guthaben Ihres Kontos verbleiben.
       remove: Löschen
-    store_credit_name: Guthaben
+    store_credit_categories: Guthabenkategorien
     store_credit_category:
       default: Standard
-    store_credit_categories: Guthabenkategorien
-    store_credit_payment_method: 
+    store_credit_name: Guthaben
+    store_credit_payment_method:
       currency_mismatch: Die Guthabenwährung ist anders als der Bestellwährung
-      insufficient_funds: Guthaben Restbetrag ist nicht ausreichend
       insufficient_authorized_amount: Es kann nicht mehr als der autorisierte Betrag erfasst werden
+      insufficient_funds: Guthaben Restbetrag ist nicht ausreichend
       select_one_store_credit: Wählen Sie Guthaben aus, um zum verbleibenden Restbetrag zu gelangen
       successful_action: Erfolgreich Guthaben %{action}
-      unable_to_credit: "Code: %{auth_code} kann nicht gutgeschrieben werden"
+      unable_to_credit: 'Code: %{auth_code} kann nicht gutgeschrieben werden'
       unable_to_find: Guthaben konnte nicht gefunden werden
-      unable_to_find_for_action: "Guthaben für auth Code: %{auth_code} für Aktion: %{action} konnte nicht gefunden werden"
-      unable_to_void: "Code: %{auth_code} kann nicht ungültig gemacht werden"
+      unable_to_find_for_action: 'Guthaben für auth Code: %{auth_code} für Aktion: %{action} konnte nicht gefunden werden'
+      unable_to_void: 'Code: %{auth_code} kann nicht ungültig gemacht werden'
       user_has_no_store_credits: Der Benutzer hat kein verfügbares Guthaben
     store_credits: Guthaben
     store_default: Standard Laden
-    store_form:
-      code_help: "Store Unique Identifier, eine abgekürzte Version des Store-Namens (wird als Layoutverzeichnisname verwendet und ist auch hilfreich, um Vorlagen nach Store zu trennen)."
-      checkout_zone_help: "Durch Auswahl einer Zone werden Kunden beim Auschecken auf Adressen in Ländern oder Staaten in dieser Zone beschränkt.
-        Weitere Informationen <a href='https://guides.spreecommerce.org/user/configuration/configuring_geography.html#zones' target='_blank' class='alert-link'> finden Sie in der Dokumentation </a>."
-      languages_help: "Installieren Sie die <a href='https://github.com/spree-contrib/spree_i18n target='_blank' class='alert-link'> Spree I18n-Erweiterung </a>, um weitere Sprachen hinzuzufügen."
-      social_help: "Wenn Sie im Fußzeilenteil Ihrer Website einen Link zu Ihren sozialen Konten erstellen möchten, füllen Sie bitte die folgenden Felder aus."
-      footer_help: "Dieser Inhalt ist in der Fußzeile Ihres Shops sichtbar."
-      mail_from_address_help: "Dies ist die E-Mail, die der Absender aller E-Mails Ihres Geschäfts ist (Auftragsbestätigung, Versandbenachrichtigung usw.)"
-      customer_support_email_help: "Diese E-Mail ist für Ihre Store-Besucher in der Fußzeile sichtbar."
-      new_order_notifications_email_help: "Wenn Sie jedes Mal eine E-Mail-Benachrichtigung erhalten möchten, wenn jemand eine Bestellung aufgibt, geben Sie bitte eine E-Mail-Adresse an, an die diese Benachrichtigung gesendet werden soll."
-      seo_robots: "Weitere Informationen finden Sie auf dieser Seite <a href='https://developers.google.com/search/reference/robots_meta_tag' target='_blank'></a>"
-      default_country_help: "Dies ist das Land, das im Formular Checkout-Adresse vorgewählt wird."
     store_errors:
       unable_to_create: Der Laden kann nicht erstellt werden.
-      unable_to_update: Der Laden kann nicht aktualisiert werden.
       unable_to_delete: Der Laden kann nicht gelöscht werden.
+      unable_to_update: Der Laden kann nicht aktualisiert werden.
+    store_form:
+      checkout_zone_help: Durch Auswahl einer Zone werden Kunden beim Auschecken auf Adressen in Ländern oder Staaten in dieser Zone beschränkt. Weitere Informationen <a href='https://guides.spreecommerce.org/user/configuration/configuring_geography.html#zones' target='_blank' class='alert-link'> finden Sie in der Dokumentation </a>.
+      code_help: Store Unique Identifier, eine abgekürzte Version des Store-Namens (wird als Layoutverzeichnisname verwendet und ist auch hilfreich, um Vorlagen nach Store zu trennen).
+      customer_support_email_help: Diese E-Mail ist für Ihre Store-Besucher in der Fußzeile sichtbar.
+      default_country_help: Dies ist das Land, das im Formular Checkout-Adresse vorgewählt wird.
+      footer_help: Dieser Inhalt ist in der Fußzeile Ihres Shops sichtbar.
+      languages_help: Installieren Sie die <a href='https://github.com/spree-contrib/spree_i18n target='_blank' class='alert-link'> Spree I18n-Erweiterung </a>, um weitere Sprachen hinzuzufügen.
+      mail_from_address_help: Dies ist die E-Mail, die der Absender aller E-Mails Ihres Geschäfts ist (Auftragsbestätigung, Versandbenachrichtigung usw.)
+      new_order_notifications_email_help: Wenn Sie jedes Mal eine E-Mail-Benachrichtigung erhalten möchten, wenn jemand eine Bestellung aufgibt, geben Sie bitte eine E-Mail-Adresse an, an die diese Benachrichtigung gesendet werden soll.
+      seo_robots: Weitere Informationen finden Sie auf dieser Seite <a href='https://developers.google.com/search/reference/robots_meta_tag' target='_blank'></a>
+      social_help: Wenn Sie im Fußzeilenteil Ihrer Website einen Link zu Ihren sozialen Konten erstellen möchten, füllen Sie bitte die folgenden Felder aus.
     store_not_set_as_default: Der Laden % {store} konnte nicht als Standardladen festgelegt werden.
     store_set_as_default: Der Laden %{store} ist jetzt Standardladen.
     store_set_default_button: Als Standard einstellen
@@ -1984,7 +1981,7 @@ de:
     subtract: abziehen
     success: erfolgreich
     successfully_created: "%{resource} wurde erfolgreich erstellt."
-    successfully_refunded: "Gutschrift erfolgreich"
+    successfully_refunded: Gutschrift erfolgreich
     successfully_removed: "%{resource} wurde erfolgreich gelöscht."
     successfully_signed_up_for_analytics: Erfolgreich für Spree Analytics angemeldet
     successfully_updated: "%{resource} wurde erfolgreich aktualisiert."
@@ -2001,8 +1998,8 @@ de:
     tax_rates: Steuersätze
     taxon: Produktklasse
     taxon_edit: Produktklasse bearbeiten
-    taxon_placeholder: Produktklasse hinzufügen
     taxon_missing_alt: Kategorie Banner Beschreibung
+    taxon_placeholder: Produktklasse hinzufügen
     taxon_rule:
       choose_taxons: Klassifizierungen wählen
       label: Notiz
@@ -2010,9 +2007,9 @@ de:
       match_any: Auf manche anwenden
     taxonomies: Produktklassifizierungen
     taxonomy: Produktklassifizierung
-    taxonomy_edit: Produktklassifizierung bearbeiten
     taxonomy_brands_name: Marken
     taxonomy_categories_name: Kategorien
+    taxonomy_edit: Produktklassifizierung bearbeiten
     taxonomy_tree_error: Die angeforderte Änderung wurde nicht akzeptiert, und der Baum wurde in seinen vorherigen Zustand versetzt, bitte noch einmal versuchen!
     taxonomy_tree_instruction: "* Rechtsklick auf ein Kind im Baum öffnet das Menü zum Hinzufügen, Löschen oder Sortieren."
     taxons: Produktklassen
@@ -2048,12 +2045,13 @@ de:
     transfer_stock: Transferlager
     transfer_to_location: Transferieren zu
     tree: Baum
+    twitter: Twitter
     type: Typ
     type_to_search: Typ suchen
-    twitter: Twitter
     unable_to_connect_to_gateway: Konnte nicht zur Schnitstelle verbinden.
     unable_to_create_reimbursements: Konnte Vergütung nicht erstellen.
     under_price: Unter %{price}
+    unfinalize_all_adjustments: Alle Anpassungen definalisieren
     unlock: Entsperren
     unrecognized_card_type: Unbekannter Kartentyp
     unshippable_items: Nicht lieferbare Artikel

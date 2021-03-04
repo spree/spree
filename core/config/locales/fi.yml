@@ -1,3 +1,4 @@
+---
 fi:
   activerecord:
     attributes:
@@ -344,6 +345,7 @@ fi:
         one: 'Yksi virhe esti kohteen %{resource} tallennuksen:'
         other: "%{count} virhettä estivät kohteen %{resource} tallennuksen:"
   spree:
+    Icon: Kuvake
     abbreviation: Lyhenne
     accept:
     acceptance_errors:
@@ -399,8 +401,8 @@ fi:
         orders: Tilaukset
         overview: Yleiskatsaus
         products: Tuotteet
-        promotions: Kampanjat
         promotion_categories: Kampanjakategoriat
+        promotions: Kampanjat
         properties: Ominaisuudet
         prototypes: Prototyypit
         reports: Raportit
@@ -581,7 +583,6 @@ fi:
     date: Päivä
     date_completed: Valmistunut
     date_picker:
-      # FlatPickr human friendly formatting
       fpr_human_friendly_date_format: M j, Y
       fpr_human_friendly_date_time_format: M j, Y - H:i
     date_range: Päivämäärä (mistä mihin)
@@ -694,6 +695,7 @@ fi:
       available_locales: Käytettävissä olevat kielet
       fields: Kentät
       language: Kieli
+      locales_displayed_on_frontend_select_box: Kaupassa näytettävät kielet
       localization_settings: Lokalisointiasetukset
       only_complete: Vain valmiit
       only_incomplete: Vain keskeneräiset
@@ -702,8 +704,6 @@ fi:
       supported_locales: Tuetut kielet
       this_file_language: Suomi (fi)
       translations: Käännökset
-      locales_displayed_on_frontend_select_box: Kaupassa näytettävät kielet
-    Icon: Kuvake
     identifier:
     image: Kuva
     images: Kuvat
@@ -1142,7 +1142,7 @@ fi:
     select_a_stock_location:
     select_from_prototype: Valitse prototyypistä
     select_stock: Valitse varasto
-    selected_quantity_not_available: 'valitulle tuotteelle %{item} ei ole saatavissa'
+    selected_quantity_not_available: valitulle tuotteelle %{item} ei ole saatavissa
     send_copy_of_all_mails_to: Lähetä kopio kaikista sähköposteista
     send_mails_as: Lähetä sähköpostiviestit
     server: Palvelin

@@ -1,3 +1,4 @@
+---
 lv:
   activerecord:
     attributes:
@@ -253,8 +254,8 @@ lv:
         other: Piegādes kategorijas
       spree/shipping_method:
       spree/state:
-        one: "Štats"
-        other: "Štati"
+        one: Štats
+        other: Štati
       spree/state_change:
       spree/stock_location:
       spree/stock_movement:
@@ -296,7 +297,7 @@ lv:
         subject: Atbloķēšanas apraksts
     oauth_callbacks:
       failure: 'Neizdevās autorizēties ar %{kind} lietotāju. Iemesls: "%{reason}".'
-      success: "Veiksmīgi autorizējis ar %{kind} lietotāju."
+      success: Veiksmīgi autorizējis ar %{kind} lietotāju.
     unlocks:
       send_instructions: Pāris minūšu laikā uz Jūsu epastu tiks nosūtīts apraksts, kā atbloķēt Jūsu lietotāju.
       unlocked: Jūsu lietotājs ir veiksmīgi atbloķēts. Jūs esat pieslēdzies.
@@ -378,8 +379,8 @@ lv:
         orders: Pasūtījumi
         overview:
         products: Produkti
-        promotions: Akcijas
         promotion_categories: Akciju kategorijas
+        promotions: Akcijas
         properties: Opcijas
         prototypes: Prototipi
         reports: Pārskati
@@ -425,7 +426,7 @@ lv:
     are_you_sure: Vai esiet pārliecināts?
     are_you_sure_delete: Vai esiet pārliecināts, ka vēlaties dzēst šo ierakstu?
     associated_adjustment_closed:
-    at_symbol: '@'
+    at_symbol: "@"
     authorization_failure: Autorizācija neizdevās
     authorized:
     auto_capture:
@@ -560,7 +561,6 @@ lv:
     date:
     date_completed:
     date_picker:
-      # FlatPickr human friendly formatting
       fpr_human_friendly_date_format: M j, Y
       fpr_human_friendly_date_time_format: M j, Y - H:i
     date_range: Datuma diapazons
@@ -852,18 +852,18 @@ lv:
       cancel_email:
         dear_customer: Cienījāmais klient,
         instructions: Jūsu pasūtījums tika atcelts. Lūdzu, saglabājiet šo atcelšanas informāciju par Jūsu pasūtījumu.
-        order_summary_canceled: "Pasūtījuma %{number} kopsavilkums [ATCELTS]"
+        order_summary_canceled: Pasūtījuma %{number} kopsavilkums [ATCELTS]
         subject: Pasūtījuma atcelšana
-        subtotal: "Starpsumma %{subtotal}"
-        total: "Summa %{total}"
+        subtotal: Starpsumma %{subtotal}
+        total: Summa %{total}
       confirm_email:
         dear_customer: Cienījamais klient,
         instructions: Lūdzu, pārskatiet un saglabājiet informāciju par Jūsu pasūtījumu.
-        order_summary: "Pasūtījuma %{number} kopsavilkums"
+        order_summary: Pasūtījuma %{number} kopsavilkums
         subject: Pasūtījuma apstiprināšana
+        subtotal: Starpsumma %{subtotal}
         thanks: Paldies par Jūsu veikto pasūtījumu.
-        subtotal: "Starpsumma %{subtotal}"
-        total: "Summa %{total}"
+        total: Summa %{total}
     order_not_found: Pasūtījums netika atrasts
     order_number: Pasūtījuma numurs
     order_processed_successfully: Jūsu pasūtījums ir apstrādāts veiksmīgi
@@ -881,7 +881,7 @@ lv:
       resumed: Atjaunots
       returned: Atgriezts
     order_summary: Pasūtījuma apkopojums
-    order_sure_want_to: "Vai esiet pārliecināts, ka vēlaties %{event} šo pasūtījumu?"
+    order_sure_want_to: Vai esiet pārliecināts, ka vēlaties %{event} šo pasūtījumu?
     order_total: Kopējais pasūtījums
     order_updated: Pasūtījums atjaunots
     orders: Pasūtījumi
@@ -942,7 +942,7 @@ lv:
     process: Apstrādāt
     product: Produkts
     product_details: Produkta detaļas
-    product_has_no_description: "Šim produktam nav nosaukuma"
+    product_has_no_description: Šim produktam nav nosaukuma
     product_not_available_in_this_currency:
     product_properties: Produkta īpašības
     product_rule:
@@ -1098,7 +1098,7 @@ lv:
     say_yes:
     scope: Scope
     search: Meklēšana
-    search_results: "Meklēšanas rezultāti '%{keywords}'"
+    search_results: Meklēšanas rezultāti '%{keywords}'
     searching: Searching
     secure_connection_type: Secure Connection Type
     security_settings: Security Settings
@@ -1151,7 +1151,7 @@ lv:
     shipping_methods: Piegādes veidi
     shipping_price_sack:
     shipping_total:
-    shop_by_taxonomy: "Pirkt pēc %{taxonomy}"
+    shop_by_taxonomy: Pirkt pēc %{taxonomy}
     shopping_cart: Iepirkuma grozs
     show: Parādīt
     show_active: Parādīt aktīvos
@@ -1288,7 +1288,7 @@ lv:
     type_to_search: Type to search
     unable_to_connect_to_gateway: Nav spējīgs pievienoties gateway.
     unable_to_create_reimbursements:
-    under_price: "Under %{price}"
+    under_price: Under %{price}
     unlock:
     unrecognized_card_type: Neatpazīstams kartes tips
     unshippable_items:

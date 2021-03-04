@@ -1,4 +1,5 @@
+---
 is:
   spree:
     i18n:
-      this_file_language: 'Íslenska (is)'
+      this_file_language: Íslenska (is)

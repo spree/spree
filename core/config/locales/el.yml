@@ -370,7 +370,7 @@ el:
       not_locked: δεν είναι κλειδωμένο
       not_saved:
         one: '1 πρόβλημα εμπόδισε αυτήν την %{resource} απο το να αποθηκευτέι:'
-        other: '%{count} προβήματα εμπόδισαν αυτήν την %{resource} απο το να αποθηκευτέι:'
+        other: "%{count} προβήματα εμπόδισαν αυτήν την %{resource} απο το να αποθηκευτέι:"
   spree:
     abbreviation: Συντομογραφία
     accept:
@@ -492,7 +492,7 @@ el:
     are_you_sure: Είσαι σίγουρος?
     are_you_sure_delete: Είσαι σίγουρος οτι θέλεις να διαγράψης αυτήν την καταχώρηση?
     associated_adjustment_closed: The associated adjustment is closed, and will not be recalculated. Do you want to open it?
-    at_symbol: '@'
+    at_symbol: "@"
     authorization_failure: Αποτυχία εξουσιοδότησης
     authorized: Εξουσιοδοτημένο
     auto_capture: Αυτόματη Επιβεβαίωση
@@ -695,7 +695,7 @@ el:
         no_shipping_methods_available: Δεν υπάρχουν διαθέσιμη τρόποι αποστολής για αυτην την τοποθεσία, παρακαλω αλλάξτε διευθυνση και δοκιμαστε ξανά.
     errors_prohibited_this_record_from_being_saved:
       one: 1 σφάλμα δεν επέτρεψε αυτην την εγγραφή να αποθηκευτει
-      other: '%{count} σφάλματα δεν επέτρεψαν αυτην την εγγραφή να αποθηκευτει'
+      other: "%{count} σφάλματα δεν επέτρεψαν αυτην την εγγραφή να αποθηκευτει"
     event: Event
     events:
       spree:
@@ -933,7 +933,7 @@ el:
     not: δεν
     not_available: N/A
     not_enough_stock: Δεν υπαρχει αρκετο περιεχομενο στην τοποθεσια για την μεταφορα.
-    not_found: '%{resource} δεν βρέθηκς'
+    not_found: "%{resource} δεν βρέθηκς"
     note:
     notice_messages:
       product_cloned: Το Προϊόν κλονοποιήθηκε
@@ -955,7 +955,7 @@ el:
     optional: Μη απαραίτητο
     options: Επιλογές
     or: ή
-    or_over_price: '%{price} η παραπάνω'
+    or_over_price: "%{price} η παραπάνω"
     order: Παραγγελία
     order_adjustments: Ρυθμίσεις παραγγελίας
     order_already_updated:
@@ -1007,8 +1007,8 @@ el:
     package_from: πακέτο από
     pagination:
       next_page: επόμενη σελίδα »
-      previous_page: « προηγούμενη σελίδα
-      truncate: …
+      previous_page: "« προηγούμενη σελίδα"
+      truncate: "…"
     password: Κωδικός
     paste: Επικόλληση
     path: Διαδρομή
@@ -1379,11 +1379,11 @@ el:
     subtotal: Υποσύνολο
     subtract: Αφαίρεση
     success:
-    successfully_created: '%{resource} δημιουργήθηκε επιτυχώς!'
+    successfully_created: "%{resource} δημιουργήθηκε επιτυχώς!"
     successfully_refunded:
-    successfully_removed: '%{resource} αφαιρέθηκε επιτυχώς!'
+    successfully_removed: "%{resource} αφαιρέθηκε επιτυχώς!"
     successfully_signed_up_for_analytics: Successfully signed up for Spree Analytics
-    successfully_updated: '%{resource} ενημερώθηκε επιτυχώς!'
+    successfully_updated: "%{resource} ενημερώθηκε επιτυχώς!"
     summary: Περίληψη
     supported_currencies: Διαθέσιμα Συναλλάγματα
     tax: Φόρος
@@ -1405,7 +1405,7 @@ el:
     taxonomy: Κατηγοριοποίηση
     taxonomy_edit: Ενημέρωση Κατηγοριοποίησης
     taxonomy_tree_error: The requested change has not been accepted and the tree has been returned to its previous state, please try again.
-    taxonomy_tree_instruction: '* Κάντε δεξί κλικ σε ένα στοιχείο στο δέντρο για πρόσβαση στο μενού για προσθήκη, διαγραφή ή ταξινόμηση ενός στοιχείου.'
+    taxonomy_tree_instruction: "* Κάντε δεξί κλικ σε ένα στοιχείο στο δέντρο για πρόσβαση στο μενού για προσθήκη, διαγραφή ή ταξινόμηση ενός στοιχείου."
     taxons: Κατηγορία
     test: Τεστ
     test_mailer:

@@ -1,4 +1,5 @@
+---
 sw:
   spree:
     i18n:
-      this_file_language: 'Kiswahili (sw)'
+      this_file_language: Kiswahili (sw)

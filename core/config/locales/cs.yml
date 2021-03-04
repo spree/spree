@@ -1,3 +1,4 @@
+---
 cs:
   activerecord:
     attributes:
@@ -28,7 +29,7 @@ cs:
         cc_type: Typ
         month: Měsíc
         name: Jméno
-        number: "Číslo"
+        number: Číslo
         verification_value: Verifikační hodnota
         year: Rok
       spree/inventory_unit:
@@ -48,7 +49,7 @@ cs:
         email: Email zákazníka
         ip_address: IP Adresa
         item_total: Položky celkem
-        number: "Číslo"
+        number: Číslo
         payment_state: Stav platby
         shipment_state: Stav zásilky
         special_instructions: Speciální instrukce
@@ -71,7 +72,7 @@ cs:
         state: Země
         zipcode: PSČ
       spree/payment:
-        amount: "Částka"
+        amount: Částka
       spree/payment_method:
         name: Název
       spree/product:
@@ -148,7 +149,7 @@ cs:
         price: Cena
         sku: SKU
         weight: Hmotnost
-        width: "Šířka"
+        width: Šířka
       spree/zone:
         description: Popis
         name: Název
@@ -217,9 +218,9 @@ cs:
         one: Inventární jednotka
         other: Inventárních jednotek
       spree/line_item:
-        few: "Řádkové položky"
-        one: "Řádková položka"
-        other: "Řádkových položek"
+        few: Řádkové položky
+        one: Řádková položka
+        other: Řádkových položek
       spree/option_type:
       spree/option_value:
       spree/order:
@@ -242,9 +243,9 @@ cs:
         one: Vlastnost
         other: Vlastností
       spree/prototype:
-        few: "Šablony"
-        one: "Šablona"
-        other: "Šablon"
+        few: Šablony
+        one: Šablona
+        other: Šablon
       spree/refund_reason:
       spree/reimbursement:
       spree/reimbursement_type:
@@ -324,7 +325,7 @@ cs:
         subject: Instrukce k odemčení účtu
     oauth_callbacks:
       failure: 'Není možné autorizovat z %{kind}, protože: %{reason}.'
-      success: "Úspěšná autorizace z účtu %{kind}."
+      success: Úspěšná autorizace z účtu %{kind}.
     unlocks:
       send_instructions: Za několik minut obdržíte email s instrukcemi, jak odemknout svůj účet.
       unlocked: Váš účet byl úspěšně odemknut. Nyní jste přihlášen(a).
@@ -356,8 +357,8 @@ cs:
     acceptance_errors: Chyby přijetí
     acceptance_status: Stav přijetí
     accepted: Přijato
-    account: "Účet"
-    account_updated: "Účet aktualizován"
+    account: Účet
+    account_updated: Účet aktualizován
     action: Akce
     actions:
       cancel: Zrušit
@@ -394,7 +395,7 @@ cs:
     address2: Adresa (pokrač.)
     adjustable: Přizpůsobitelné
     adjustment: Přizpůsobení
-    adjustment_amount: "Částka"
+    adjustment_amount: Částka
     adjustment_successfully_closed: Nastavení bylo úspěšně uzavřeno!
     adjustment_successfully_opened: Nastavení bylo úspěšně otevřeno!
     adjustment_total: Celkové přizpůsobení
@@ -406,8 +407,8 @@ cs:
         orders: Objednávky
         overview: Přehled
         products: Produkty
-        promotions: Akce
         promotion_categories: Kategorie akcí
+        promotions: Akce
         properties: Vlastnosti
         prototypes: Prototypy
         reports: Výkazy
@@ -453,7 +454,7 @@ cs:
     are_you_sure: Jste si jisti?
     are_you_sure_delete: Jste si jisti, že chcete vymazat tento záznam?
     associated_adjustment_closed: Přidružené nastavení je uzavřeno a nebude přepočítáno. Chcete jej otevřít?
-    at_symbol: '@'
+    at_symbol: "@"
     authorization_failure: Chyba autorizace
     authorized: autorizováno
     auto_capture: Automatické zachycení
@@ -492,7 +493,7 @@ cs:
     capture: Strhnout
     capture_events: Zachytit události
     card_code: Bezpečnostní číslo karty
-    card_number: "Číslo karty"
+    card_number: Číslo karty
     card_type: Typ karty
     card_type_is: Typ karty je
     cart: Košík
@@ -571,8 +572,8 @@ cs:
       one: 'Aktuální využití: %{count}'
       other: 'Aktuální využití: %{count}'
     customer: Zákazník
-    customer_details: "Údaje zákazníka"
-    customer_details_updated: "Údaje zákazníka byly aktualizovány"
+    customer_details: Údaje zákazníka
+    customer_details_updated: Údaje zákazníka byly aktualizovány
     customer_return: Vratka zákazníka
     customer_returns: Vratky zákazníka
     customer_search: Vyhledávání zákazníků
@@ -591,7 +592,6 @@ cs:
     date: Datum
     date_completed: Datum dokončení
     date_picker:
-      # FlatPickr human friendly formatting
       fpr_human_friendly_date_format: M j, Y
       fpr_human_friendly_date_time_format: M j, Y - H:i
     date_range: Datum (od-do)
@@ -613,7 +613,7 @@ cs:
     display_currency: Zobrazit symbol měny
     doesnt_track_inventory: Nepoužívá sledování skladu
     edit: Upravit
-    editing_resource: 'Editovat %{resource}'
+    editing_resource: Editovat %{resource}
     editing_rma_reason: Editovat důvod reklamace
     editing_user: Můj účet
     eligibility_errors:
@@ -642,7 +642,7 @@ cs:
     errors:
       messages:
         could_not_create_taxon: Nelze vytvořit kategorii
-        no_payment_methods_available: "Žádné platební metody nelze konfigurovat v tomto prostředí"
+        no_payment_methods_available: Žádné platební metody nelze konfigurovat v tomto prostředí
         no_shipping_methods_available: Pro zvolené cílové místo není k dispozici žádný způsob dodání, změňte prosím adresu a zkuste to znovu.
     errors_prohibited_this_record_from_being_saved:
       few: "%{count} chyby zabraňují uložení"
@@ -667,7 +667,7 @@ cs:
     exchange_for: Vyměnit za
     excl: vynech.
     existing_shipments: Existující zásilky
-    expedited_exchanges_warning: "Jakákoliv vybraná výměna bude zákazníkovi odeslána ihned po uložení. Zákazníkovi bude účtována plná hodnota položky pokud nevrátí původní položku do %{days_window} dnů."
+    expedited_exchanges_warning: Jakákoliv vybraná výměna bude zákazníkovi odeslána ihned po uložení. Zákazníkovi bude účtována plná hodnota položky pokud nevrátí původní položku do %{days_window} dnů.
     expiration: Expirace
     extension: Rozměr
     failed_payment_attempts: Chybných pokusů o platbu
@@ -704,7 +704,7 @@ cs:
       available_locales: Dostupné lokalizace
       language: Jazyk
       localization_settings: Nastavení lokalizace
-      this_file_language: "Čeština (cs)"
+      this_file_language: Čeština (cs)
     icon: Ikona
     identifier: Identifikátor
     image: Obrázek
@@ -838,13 +838,13 @@ cs:
     no_pending_payments: Žádné čekající platby
     no_products_found: Nebyly nalezeny žádné výrobky
     no_resource_found: Nebyly nalezeny žádné zdroje
-    no_results: "Žádné výsledky"
+    no_results: Žádné výsledky
     no_returns_found: Nebyly nalezeny žádné refundace.
-    no_rules_added: "Žádné přidané pravidla"
+    no_rules_added: Žádné přidané pravidla
     no_shipping_method_selected: Nebyl vybrán způsob dopravy
     no_state_changes: Žádné změny stavu
     no_tracking_present: Sledování zásilky není dostupné
-    none: "Žádný"
+    none: Žádný
     none_selected: Nic vybráno
     normal_amount: Normální množství
     not: ne
@@ -886,23 +886,23 @@ cs:
         instructions: Vaše objednávka byla zrušena. Uschovejte si prosím tyto informace o zrušení k vaší evidenci.
         order_summary_canceled: Shrnutí objednávky [Zrušeno]
         subject: Zrušení objednávky
-        subtotal: ! 'Mezisoučet:'
-        total: ! 'Celkem:'
+        subtotal: 'Mezisoučet:'
+        total: 'Celkem:'
       confirm_email:
         dear_customer: Vážený zákazníku,\n
         instructions: Zkontrolujte si a uschovejte si prosím následující údaje objednávky k vaší evidenci.
         order_summary: Přehled objednávek
         subject: Potvrzení objednávky
-        subtotal: ! 'Mezisoučet:'
+        subtotal: 'Mezisoučet:'
         thanks: Děkujeme za Váš nákup.
-        total: ! 'Celkem:'
+        total: 'Celkem:'
     order_not_found: Nemůžeme nalézt Vaši objednávku. Zkuste prosím akci provést později.
     order_number: Objednávka %{number}
     order_processed_successfully: Vaše objednávka byla úspěšně zpracována
     order_resumed: Objednávka obnovena
     order_state:
       address: Adresa
-      awaiting_return: "Čeká na návrat"
+      awaiting_return: Čeká na návrat
       canceled: Zrušeno
       cart: Košik
       complete: Dokončení
@@ -947,7 +947,7 @@ cs:
       credit_owed: Dluží kredit
       failed: Selhalo
       paid: Zaplaceno
-      pending: "Čekající na vyřízení"
+      pending: Čekající na vyřízení
       processing: Zpracováváno
       void: Neplatná
     payment_updated: Platba upravena
@@ -967,7 +967,7 @@ cs:
     preferred_reimbursement_type: Preferovaný způsob náhrady
     presentation: Prezentace
     previous: Předchozí
-    previous_state_missing: "n/a"
+    previous_state_missing: n/a
     price: Cena
     price_range: Cenové rozpětí
     price_sack: Ceny balíku
@@ -1042,8 +1042,8 @@ cs:
     propagate_all_variants: Nabízet všechny varianty
     properties: Vlastnosti
     property: Vlastnost
-    prototype: "Šablona"
-    prototypes: "Šablony"
+    prototype: Šablona
+    prototypes: Šablony
     provider: Provider
     provider_settings_warning: Pokud měníte poskytovatele, je nutné uložit nové nastavení a teprve potom upravit nastavení uživatele
     qty: Množství
@@ -1070,15 +1070,15 @@ cs:
     reimbursement: Náhrada
     reimbursement_mailer:
       reimbursement_email:
-        days_to_send: ! 'Máte %{days} na vrácení jakéhokoliv zboží, které má být vyměněno.'
+        days_to_send: Máte %{days} na vrácení jakéhokoliv zboží, které má být vyměněno.
         dear_customer: Vážený zákazníku
         exchange_summary: Přehled výměn
         for: pro
         instructions: Vaše výměny byly zpracovány.
         refund_summary: Přehled refundací
         subject: Notifikace o výměně
-        total_refunded:  ! 'Celkem refundováno: %{total}'
-    reimbursement_perform_failed: "Náhrada nemůže být provedena.  Chyba: %{error}"
+        total_refunded: 'Celkem refundováno: %{total}'
+    reimbursement_perform_failed: 'Náhrada nemůže být provedena.  Chyba: %{error}'
     reimbursement_status: Stav náhrady
     reimbursement_type: Typ náhrady
     reimbursement_type_override: Přepsání typu náhrady
@@ -1116,7 +1116,7 @@ cs:
     risk_analysis: Analýza rizika
     risky: Rizikový
     rma_credit: RMA kredity
-    rma_number: "Číslo vrácení zboží (RMA)"
+    rma_number: Číslo vrácení zboží (RMA)
     rma_value: Hodnota vrácení zboží (RMA)
     roles: Role
     rules: Pravidla
@@ -1163,8 +1163,8 @@ cs:
     shipment_states:
       backorder: V externím skladu
       canceled: Zrušena
-      partial: "Částečná"
-      pending: "Čekající na vyřízení"
+      partial: Částečná
+      pending: Čekající na vyřízení
       ready: Připravit
       shipped: Dodáno
     shipment_transfer_error: Chyba převodu variant.
@@ -1191,8 +1191,8 @@ cs:
     show_only_complete_orders: Zobrazit pouze dokončené objednávky
     show_only_considered_risky: Zobrazit pouze rizikové
     show_rate_in_label: Zobrazit sazby v popisku
-    sku: "Číslo zboží (SKU)"
-    skus: "Čísla zboží (SKU)"
+    sku: Číslo zboží (SKU)
+    skus: Čísla zboží (SKU)
     slug: Slug
     source: Zdroj
     special_instructions: Zvláštní instrukce
@@ -1253,7 +1253,7 @@ cs:
     stop: Konec
     store: Obchod
     street_address: Ulice
-    street_address_2: "Číslo ulice"
+    street_address_2: Číslo ulice
     subtotal: Mezisoučet
     subtract: Odečet
     success: Úspěch
@@ -1299,7 +1299,7 @@ cs:
     tiered_flat_rate: Kategorizovaná pevná sazba
     tiered_percent: Kategorizovaná procentuální sazba
     tiers: Kategorie
-    time: "Čas"
+    time: Čas
     to_add_variants_you_must_first_define: Pro přidání variant je musíte nejprve nadefinovat.
     total: Celkem
     total_per_item: Celkem za položku
@@ -1308,7 +1308,7 @@ cs:
     total_sales: Celkem tržba
     track_inventory: Sledovat zásoby
     tracking: Sledování
-    tracking_number: "Číslo pro sledování"
+    tracking_number: Číslo pro sledování
     tracking_url: URL pro sledování
     tracking_url_placeholder: 'URL pro doručovací služby, např: http://quickship.com/package?num=:tracking'
     transaction_id: ID transakce
@@ -1352,7 +1352,7 @@ cs:
     weight: Váha
     what_is_a_cvv: Co to je (CVV) kód kreditní karty?
     what_is_this: Co je to?
-    width: "Šířka"
+    width: Šířka
     year: Rok
     you_have_no_orders_yet: Zatím nemate žádnou objednávku
     your_cart_is_empty: Váš nákupní košík je prázdný

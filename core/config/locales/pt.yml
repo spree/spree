@@ -1,3 +1,4 @@
+---
 pt:
   activerecord:
     attributes:
@@ -337,8 +338,8 @@ pt:
         orders:
         overview:
         products:
-        promotions:
         promotion_categories:
+        promotions:
         properties:
         prototypes:
         reports:
@@ -384,7 +385,7 @@ pt:
     are_you_sure: Tem a certeza?
     are_you_sure_delete: Tem a certeza que deseja remover este registo?
     associated_adjustment_closed:
-    at_symbol: '@'
+    at_symbol: "@"
     authorization_failure: Falha na autorização
     authorized:
     auto_capture:
@@ -519,7 +520,6 @@ pt:
     date:
     date_completed: Date Completed
     date_picker:
-      # FlatPickr human friendly formatting
       fpr_human_friendly_date_format: M j, Y
       fpr_human_friendly_date_time_format: M j, Y - H:i
     date_range: Entre as Datas
@@ -1242,7 +1242,7 @@ pt:
     transfer_from_location:
     transfer_stock:
     transfer_to_location:
-    tree: "Árvore"
+    tree: Árvore
     type: Tipo
     type_to_search: Tipo de pesquisa
     unable_to_connect_to_gateway: Impossível conectar-se ao Gateway
@@ -1266,7 +1266,7 @@ pt:
       cannot_be_less_than_shipped_units: não pode ser menor que o número de unidades enviadas.
       cannot_destroy_line_item_as_inventory_units_have_shipped:
       exceeds_available_stock:
-      is_too_large: "é muito grande -- quantidade em stock não consegue cobrir este pedido!"
+      is_too_large: é muito grande -- quantidade em stock não consegue cobrir este pedido!
       must_be_int: deve ser um inteiro
       must_be_non_negative: deve ser um valor positivo ou zero
       unpaid_amount_not_zero:

@@ -1,4 +1,5 @@
+---
 cy:
   spree:
     i18n:
-      this_file_language: 'Cymraeg (cy)'
+      this_file_language: Cymraeg (cy)

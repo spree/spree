@@ -1,3 +1,4 @@
+---
 nl:
   activerecord:
     attributes:
@@ -157,29 +158,29 @@ nl:
         spree/calculator/tiered_flat_rate:
           attributes:
             base:
-              keys_should_be_positive_number:  "Staffel sleutels moeten getallen zijn groter dan 0"
+              keys_should_be_positive_number: Staffel sleutels moeten getallen zijn groter dan 0
             preferred_tiers:
-              should_be_hash: "moet een hash zijn"
+              should_be_hash: moet een hash zijn
         spree/calculator/tiered_percent:
           attributes:
             base:
-              keys_should_be_positive_number:  "Staffel sleutels moeten getallen zijn groter dan 0"
-              values_should_be_percent: "Staffel waardes dienen percentages te zijn tussen 0% and 100%"
+              keys_should_be_positive_number: Staffel sleutels moeten getallen zijn groter dan 0
+              values_should_be_percent: Staffel waardes dienen percentages te zijn tussen 0% and 100%
             preferred_tiers:
-              should_be_hash: "moet een hash zijn"
+              should_be_hash: moet een hash zijn
         spree/classification:
           attributes:
             taxon_id:
-              already_linked: "is reeds gekoppeld aan dit product"
+              already_linked: is reeds gekoppeld aan dit product
         spree/credit_card:
           attributes:
             base:
               card_expired: Kaart is verlopen
-              expiry_invalid: "Kaart verloopdatum is ongeldig"
+              expiry_invalid: Kaart verloopdatum is ongeldig
         spree/line_item:
           attributes:
             currency:
-              must_match_order_currency: "moet overeenkomen met de order valuta"
+              must_match_order_currency: moet overeenkomen met de order valuta
         spree/refund:
           attributes:
             amount:
@@ -415,8 +416,8 @@ nl:
         orders: Bestellingen
         overview: Overzicht
         products: Producten
-        promotions: Promoties
         promotion_categories: Promotiecategorieën
+        promotions: Promoties
         properties: Eigenschappen
         prototypes: Prototypes
         reports: Rapportages
@@ -462,7 +463,7 @@ nl:
     are_you_sure: Weet je het zeker
     are_you_sure_delete: Wilt je dit record echt verwijderen?
     associated_adjustment_closed: De bijbehorende aanpassing is gesloten, en wordt niet herberekend. Wil je de aanpassing openen?
-    at_symbol: '@'
+    at_symbol: "@"
     authorization_failure: Autorisatie mislukt
     authorized: Geautoriseerd
     auto_capture: Automatische vastlegging
@@ -472,7 +473,7 @@ nl:
     back: Terug
     back_end: Backend
     back_to_payment: Terug naar betaling
-    back_to_resource_list: 'Terug naar %{resource}-lijst'
+    back_to_resource_list: Terug naar %{resource}-lijst
     back_to_rma_reason_list: Terug naar RMA redenlijst
     back_to_store: Verder winkelen
     back_to_users_list: Terug naar gebruikers lijst
@@ -597,7 +598,6 @@ nl:
     date: Datum
     date_completed: Datum voluit
     date_picker:
-      # FlatPickr human friendly formatting
       fpr_human_friendly_date_format: M j, Y
       fpr_human_friendly_date_time_format: M j, Y - H:i
     date_range: Datumbereik
@@ -619,7 +619,7 @@ nl:
     display_currency: Weergave valuta
     doesnt_track_inventory: Voorraad wordt niet bijgehouden
     edit: Wijzig
-    editing_resource: 'Bewerken %{resource}'
+    editing_resource: Bewerken %{resource}
     editing_rma_reason: Bewerken RMA Reden'
     editing_user: Bewerk gebruikers
     eligibility_errors:
@@ -722,9 +722,9 @@ nl:
     included_price_validation: kan niet worden gekozen tenzij je een standaardbelastingszone hebt ingesteld.
     incomplete: onvolledig
     info_number_of_skus_not_shown:
-      one: "en een andere"
-      other: "en %{count} anderen"
-    info_product_has_multiple_skus: "Dit product heeft %{count} varianten:"
+      one: en een andere
+      other: en %{count} anderen
+    info_product_has_multiple_skus: 'Dit product heeft %{count} varianten:'
     instructions_to_reset_password: 'Vul je e-mailadres in. De instructies om je wachtwoord te resetten worden naar je verstuurd:'
     insufficient_stock: Onvoldoende voorraad beschikbaar, enkel %{on_hand} beschikbaar
     insufficient_stock_lines_present:
@@ -894,7 +894,7 @@ nl:
         order_summary_canceled: Besteloverzicht [GEANNULEERD]
         subject: Bestelling is geannuleerd
         subtotal: Subtotaal
-        total:  Totaal
+        total: Totaal
       confirm_email:
         dear_customer: Beste klant,
         instructions: Controleer je bestelling en bewaar deze mail.
@@ -974,7 +974,7 @@ nl:
     preferred_reimbursement_type: Voorkeur terugbetaling
     presentation: Presentatie
     previous: vorige
-    previous_state_missing: "n/a"
+    previous_state_missing: n/a
     price: Prijs
     price_range: Prijsklasse
     price_sack: Prijsvork
@@ -1014,7 +1014,7 @@ nl:
       match_policies:
         all: Moet overeenkomen met één van deze regels
         any: Moet overeenkomen met alle regels
-    promotion_label: 'Promotie (%{name})'
+    promotion_label: Promotie (%{name})
     promotion_rule: Promotieregel
     promotion_rule_types:
       first_order:
@@ -1078,7 +1078,7 @@ nl:
     reimbursement: Terugbetaling
     reimbursement_mailer:
       reimbursement_email:
-        days_to_send: ! 'U heeft %{days} dagen een de items terug te sturen.'
+        days_to_send: U heeft %{days} dagen een de items terug te sturen.
         dear_customer: Beste Klant
         exchange_summary: Samenvatting
         for: voor
@@ -1086,7 +1086,7 @@ nl:
         refund_summary: Samenvatting vergoeding
         subject: Bericht vergoeding
         total_refunded: Totaal terugbetaald
-    reimbursement_perform_failed: "Terugbetaling kon niet worden uitgevoerd.  Fout: %{error}"
+    reimbursement_perform_failed: 'Terugbetaling kon niet worden uitgevoerd.  Fout: %{error}'
     reimbursement_status: Terugbetalingsstatus
     reimbursement_type: Terugbetalingstype
     reimbursement_type_override: Terugbetalingstype override
@@ -1157,7 +1157,7 @@ nl:
     ship_total: Verzend totaal
     shipment: Verzending
     shipment_adjustments: Verzending aanpassingen
-    shipment_details: "Van %{stock_location} via %{shipping_method}"
+    shipment_details: Van %{stock_location} via %{shipping_method}
     shipment_mailer:
       shipped_email:
         dear_customer: Beste klant
@@ -1207,7 +1207,7 @@ nl:
     split: Splits
     spree_gateway_error_flash_for_checkout: Er was een probleem met je betaal gegevens. Controleer je gegevens en probeer het opnieuw.
     ssl:
-      change_protocol: "Switch naar HTTP (ipv HTTPS) and probeer het verzoek opnieuw."
+      change_protocol: Switch naar HTTP (ipv HTTPS) and probeer het verzoek opnieuw.
     start: Start
     state: Status
     state_based: Status gebaseerd
@@ -1350,7 +1350,7 @@ nl:
       is_too_large: is te veel - voorraad kan de aanvraag niet aan!
       must_be_int: moet een getal zijn
       must_be_non_negative: moet een positief getal zijn
-      unpaid_amount_not_zero: "Bedrag was niet volledig terugbetaald. Restant: %{amount}"
+      unpaid_amount_not_zero: 'Bedrag was niet volledig terugbetaald. Restant: %{amount}'
     value: Waarde
     variant: Variant
     variant_placeholder: Kies een variant

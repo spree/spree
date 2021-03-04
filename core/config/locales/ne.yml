@@ -1,3 +1,4 @@
+---
 ne:
   activerecord:
     attributes:
@@ -328,8 +329,6 @@ ne:
         one: '१ त्रुटि %{resource} सँग संसाधन बचत हुनबाट रोकियो:'
         other: "%{count} त्रुटिहरूले यस %{resource} लाई बचत गर्नबाट रोक्‍यो:"
   spree:
-    filter: फिल्टर
-    quick_search: द्रुत खोजी . . .
     abbreviation: संक्षिप्त
     accept: स्वीकार्नुहोस्
     acceptance_errors: स्वीकृति त्रुटिहरू
@@ -385,8 +384,8 @@ ne:
         orders: अर्डर
         overview: विस्तृत सर्वेक्षण
         products: उत्पादनहरू
-        promotions: पदोन्नतिहरु
         promotion_categories: पदोन्नति कोटिहरु
+        promotions: पदोन्नतिहरु
         properties: गुणहरू
         prototypes: प्रोटोटाइपहरू
         reports: रिपोर्टहरू
@@ -432,7 +431,7 @@ ne:
     are_you_sure: के तपाईँ निश्चित हुनुहुन्छ
     are_you_sure_delete: के तपाई पक्का यो रेकर्ड मेट्न चाहानुहुन्छ?
     associated_adjustment_closed: सम्बन्धित समायोजन बन्द छ, र पुन:गणना हुनेछैन। के तपाइँ यसलाई खोल्न चाहानुहुन्छ?
-    at_symbol: '@'
+    at_symbol: "@"
     authorization_failure: प्राधिकरण विफलता
     authorized: अधिकृत
     auto_capture: स्वत:कब्जा
@@ -648,6 +647,7 @@ ne:
     failed_payment_attempts: असफल भुक्तानी प्रयासहरू
     filename: फाइलनाम
     fill_in_customer_info: कृपया ग्राहक जानकारी भर्नुहोस्
+    filter: फिल्टर
     filter_results: फिल्टर परिणामहरू
     finalize: अन्तिम गर्नु
     finalized: अन्तिम
@@ -1025,6 +1025,7 @@ ne:
     quantity: मात्रा
     quantity_returned: मात्रा फिर्ता भयो
     quantity_shipped: मात्रा ढुवानी गरियो
+    quick_search: द्रुत खोजी . . .
     rate: दर
     reason: कारण
     receive: प्राप्त गर्नुहोस्
@@ -1131,8 +1132,8 @@ ne:
         shipment_summary: ढुवानी सारांश
         subject: ढुवानी सूचना
         thanks: तपाईको व्यवसायका लागि धन्यबाद।
-        track_information: 'ट्र्याकिंग सूचना %{tracking}'
-        track_link: 'ट्र्याकिंग लिंक %{url}'
+        track_information: ट्र्याकिंग सूचना %{tracking}
+        track_link: ट्र्याकिंग लिंक %{url}
     shipment_state: ढुवानी अवस्था
     shipment_states:
       backorder: ब्याकआर्डर
@@ -1157,7 +1158,7 @@ ne:
     shipping_methods: वितरण विधिहरू
     shipping_price_sack: मूल्य बोरा
     shipping_total: शिपिंग कुल
-    shop_by_taxonomy: '%{taxonomy} द्वारा किनमेल'
+    shop_by_taxonomy: "%{taxonomy} द्वारा किनमेल"
     shopping_cart: किनमेल टोकरी
     show: देखाउनु
     show_active: सक्रिय देखाउनुहोस्
@@ -1220,7 +1221,7 @@ ne:
     stock_management: स्टक प्रबन्धन
     stock_management_requires_a_stock_location: स्टक प्रबन्ध गर्नका लागि कृपया स्टक स्थान सिर्जना गर्नुहोस्।
     stock_movements: स्टक चाल
-    stock_movements_for_stock_location: '%{stock_location_name} का लागि स्टक चाल'
+    stock_movements_for_stock_location: "%{stock_location_name} का लागि स्टक चाल"
     stock_successfully_transferred: स्टक सफलतापूर्वक स्थानहरू बीच हस्तान्तरण गरियो।
     stock_transfer: स्टक स्थानान्तरण
     stock_transfers: स्टक स्थानान्तरण
@@ -1294,7 +1295,7 @@ ne:
     type_to_search: खोजी गर्न टाइप गर्नुहोस्
     unable_to_connect_to_gateway: गेटवेमा जडान गर्न असमर्थ।
     unable_to_create_reimbursements: प्रतिपूर्ति सिर्जना गर्न असमर्थ
-    under_price: '%{price} अन्तर्गत'
+    under_price: "%{price} अन्तर्गत"
     unlock: अनलक गर्नुहोस्
     unrecognized_card_type: अपरिचित कार्ड प्रकार
     unshippable_items: अप्रकाशित वस्तुहरू

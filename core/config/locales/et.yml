@@ -1,3 +1,4 @@
+---
 et:
   activerecord:
     attributes:
@@ -365,8 +366,8 @@ et:
         orders:
         overview:
         products: Tooted
-        promotions:
         promotion_categories:
+        promotions:
         properties:
         prototypes:
         reports: Raportid
@@ -412,7 +413,7 @@ et:
     are_you_sure: Kas oled kindel?
     are_you_sure_delete: Kas oled kindel, et soovid seda kirjet kustutada?
     associated_adjustment_closed:
-    at_symbol: '@'
+    at_symbol: "@"
     authorization_failure: Tõrge autoriseerimisel
     authorized:
     auto_capture:
@@ -547,7 +548,6 @@ et:
     date: Kuupäev
     date_completed:
     date_picker:
-      # FlatPickr human friendly formatting
       fpr_human_friendly_date_format: M j, Y
       fpr_human_friendly_date_time_format: M j, Y - H:i
     date_range: Vali vahemik
@@ -643,8 +643,8 @@ et:
     gateway: Lüüs
     gateway_config_unavailable:
     gateway_error: Lüüsi viga
-    general: "Üldine"
-    general_settings: "Üldised sätted"
+    general: Üldine
+    general_settings: Üldised sätted
     google_analytics: Google Analytics
     google_analytics_id: Google Analytics ID
     guest_checkout: Sooritas ostu külalisena
@@ -872,7 +872,7 @@ et:
     orders: Tellimused
     other_items_in_other:
     out_of_stock: Laost lõppenud
-    overview: "Ülevaade"
+    overview: Ülevaade
     package_from:
     pagination:
       next_page:

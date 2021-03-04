@@ -1,3 +1,4 @@
+---
 sl-SI:
   activerecord:
     attributes:
@@ -337,8 +338,8 @@ sl-SI:
         orders:
         overview:
         products:
-        promotions:
         promotion_categories:
+        promotions:
         properties:
         prototypes:
         reports:
@@ -384,7 +385,7 @@ sl-SI:
     are_you_sure: Ste prepričani?
     are_you_sure_delete: Ste prepričani, da želite izbrisati ta vnos?
     associated_adjustment_closed:
-    at_symbol: '@'
+    at_symbol: "@"
     authorization_failure: Napaka pri avtorizaciji
     authorized:
     auto_capture:
@@ -411,7 +412,7 @@ sl-SI:
     both: Oboje
     calculated_reimbursements:
     calculator: Kalkulator
-    calculator_settings_warning: "Če spreminjate tip kalkulatorja, morate pred urejanjem nastavitev najprej shraniti."
+    calculator_settings_warning: Če spreminjate tip kalkulatorja, morate pred urejanjem nastavitev najprej shraniti.
     cancel: prekini
     canceled_at:
     canceler:
@@ -423,7 +424,7 @@ sl-SI:
     capture: zajemi
     capture_events:
     card_code: Koda Kartice
-    card_number: "Številka Kartice"
+    card_number: Številka Kartice
     card_type:
     card_type_is: Tip kartice je
     cart: Košarica
@@ -519,7 +520,6 @@ sl-SI:
     date:
     date_completed:
     date_picker:
-      # FlatPickr human friendly formatting
       fpr_human_friendly_date_format: M j, Y
       fpr_human_friendly_date_time_format: M j, Y - H:i
     date_range: Obdobje
@@ -827,7 +827,7 @@ sl-SI:
     order_resumed:
     order_state:
       address: naslov
-      awaiting_return: "čakajo na vrnitev"
+      awaiting_return: čakajo na vrnitev
       canceled: preklicana
       cart: košarica
       complete: končaj
@@ -970,7 +970,7 @@ sl-SI:
     prototype: Prototip
     prototypes: Prototipi
     provider: Ponudnik
-    provider_settings_warning: "Če spreminjate tip ponudnika, morate najprej shraniti predno lahko urejate nastavitve ponudnika"
+    provider_settings_warning: Če spreminjate tip ponudnika, morate najprej shraniti predno lahko urejate nastavitve ponudnika
     qty: Količina
     quantity:
     quantity_returned: Quantity Returned
@@ -1116,7 +1116,7 @@ sl-SI:
     show_only_complete_orders: Prikaži le dokončana naročila
     show_only_considered_risky:
     show_rate_in_label:
-    sku: "šifra"
+    sku: šifra
     skus:
     slug:
     source:
@@ -1277,7 +1277,7 @@ sl-SI:
     weight: Teža
     what_is_a_cvv: Kaj je CVV varnostna številka kreditne kartice?
     what_is_this: Kaj je to?
-    width: "Širina"
+    width: Širina
     year: Leto
     you_have_no_orders_yet: You have no orders yet.
     your_cart_is_empty: Vaša nakupovalna košarica je prazna

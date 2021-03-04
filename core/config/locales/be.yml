@@ -1,3 +1,4 @@
+---
 be:
   activerecord:
     attributes:
@@ -95,8 +96,8 @@ be:
         starts_at: Дата пачатку прома-акцыі
         usage_limit: Ліміт выкарыстання
       spree/promotion_category:
-        name: Назва
         code: Код
+        name: Назва
       spree/property:
         name: Назва
         presentation: Адлюстраваць як
@@ -366,8 +367,8 @@ be:
       unlock_instructions:
         subject: Інструкцыі па разблакаванню
     oauth_callbacks:
-      failure: "Няўдалая аўтарызацыя з %{kind} бо %{reason}."
-      success: "Паспяхова ўвайшлі з %{kind} акаўнта."
+      failure: Няўдалая аўтарызацыя з %{kind} бо %{reason}.
+      success: Паспяхова ўвайшлі з %{kind} акаўнта.
     unlocks:
       send_instructions: Вы атрымаеце ліст з інструкцыямі аб тым як разблакаваць ваш акаўнт на працягу некалькіх хвілін.
       unlocked: Ваш акаўнт быў паспяхова разблакаваны. Зараз вы ўвайшлі ў сістэму.
@@ -378,7 +379,7 @@ be:
         updated: Ваш пароль паспяхова зменены. Цяпер вы ў сістэме.
     user_registrations:
       destroyed: Да сустрэчы! Ваш акаўнт быў паспяхова выдалены. Спадзяемся ўбачыць вас у хуткім будучыні.
-      inactive_signed_up: "Вы паспяхова зарэгістраваліся. На жаль, вы не змаглі ўвайсці, таму што ваш акаўнт %{reason}."
+      inactive_signed_up: Вы паспяхова зарэгістраваліся. На жаль, вы не змаглі ўвайсці, таму што ваш акаўнт %{reason}.
       signed_up: Вітаем! Вы паспяхова зарэгістраваліся.
       updated: Ваш акаўнт быў паспяхова абноўлены.
     user_sessions:
@@ -391,9 +392,10 @@ be:
       not_locked: не быў заблакаваны
       not_saved:
         many: "%{count} памылак перашкаджаюць захаванню %{resource}:"
-        one: "Адна памылка перашкаджае захаванню %{resource}:"
+        one: 'Адна памылка перашкаджае захаванню %{resource}:'
         other: "%{count} памылкі перашкаджаюць захаванню %{resource}:"
   spree:
+    MAX_ITEMS: Максімальная колькасць найменняў па пачатковай стаўцы
     abbreviation: Абрэвіятура
     accept: Прыняць
     acceptance_errors: Памылкі прыёму
@@ -449,8 +451,8 @@ be:
         orders: Заказы
         overview: Агляд
         products: Тавары
-        promotions: Акцыі
         promotion_categories: Катэгорыі акцый
+        promotions: Акцыі
         properties: Уласцівасці
         prototypes: Прататыпы
         reports: Справаздачы
@@ -496,7 +498,7 @@ be:
     are_you_sure: Вы ўпэўнены
     are_you_sure_delete: Вы ўпэўнены, што жадаеце выдаліць гэты запіс?
     associated_adjustment_closed: Звязаная карэкціроўка закрыта, і не будзе пералічана. Ці хочаце вы адкрыць яе?
-    at_symbol: '@'
+    at_symbol: "@"
     authorization_failure: Памылка аўтарызацыі
     authorized: Аўтарызаваны
     auto_capture: Аўтозахоп
@@ -541,7 +543,7 @@ be:
     cart: Кошык
     cart_subtotal:
       one: Прамежкавы вынік (1 пазіцыя)
-      other: "Промижник вынік (пазіцый: %{count})"
+      other: 'Промижник вынік (пазіцый: %{count})'
     categories: Катэгорыі
     category: Катэгорыя
     charged: Загружаны
@@ -557,7 +559,7 @@ be:
     clear_cache_ok: Кэш быў выдалены
     clear_cache_warning: Увага, дадзенае дзеянне прывядзе да ачыстцы кэша
     click_and_drag_on_the_products_to_sort_them: Перацягніце тавары мышкай для сартавання
-    clone: ​​Капіяваць
+    clone: "​​Капіяваць"
     close: Закрыць
     close_all_adjustments: Закрыць усе карэкціроўкі
     code: Кодавае слова
@@ -611,7 +613,7 @@ be:
     currency_symbol_position: Палажэнне сімвала валюты адносна сумы
     currency_thousands_separator: Падзяляльнік тысяч валюты
     current: Бягучы
-    current_promotion_usage: "Выкарыстана: %{count}"
+    current_promotion_usage: 'Выкарыстана: %{count}'
     customer: Кліент
     customer_details: Рэквізіты кліента
     customer_details_updated: Дадзеныя кліента былі абноўленыя.
@@ -633,7 +635,6 @@ be:
     date: Дата
     date_completed: Дата завяршэння
     date_picker:
-      # FlatPickr human friendly formatting
       fpr_human_friendly_date_format: M j, Y
       fpr_human_friendly_date_time_format: M j, Y - H:i
     date_range: Перыяд часу
@@ -655,16 +656,16 @@ be:
     display_currency: Паказваць валюту
     doesnt_track_inventory: Не адсочваць наяўнасць
     edit: Рэдагаваць
-    editing_resource: "Рэдагаваць %{resource}"
+    editing_resource: Рэдагаваць %{resource}
     editing_rma_reason: Рэдагаваць прычыну скаргі
     editing_user: Рэдагаваць карыстальніка
     eligibility_errors:
       messages:
         has_excluded_product: У кошыку ёсць тавар, які не дазваляе прымяніць код купона.
-        item_total_less_than: "Гэты код купона нельга прымяніць да заказах на суму да %{amount}."
-        item_total_less_than_or_equal: "Гэты купон нельга прымяніць да заказаў на суму да %{amount}."
-        item_total_more_than: "Гэты код купона нельга прымяніць да заказаў на суму больш %{amount}."
-        item_total_more_than_or_equal: "Гэты код купона нельга прымяніць да заказаў на суму ўключна ад %{amount}."
+        item_total_less_than: Гэты код купона нельга прымяніць да заказах на суму да %{amount}.
+        item_total_less_than_or_equal: Гэты купон нельга прымяніць да заказаў на суму да %{amount}.
+        item_total_more_than: Гэты код купона нельга прымяніць да заказаў на суму больш %{amount}.
+        item_total_more_than_or_equal: Гэты код купона нельга прымяніць да заказаў на суму ўключна ад %{amount}.
         limit_once_per_user: Гэты код купона можна выкарыстоўваць толькі адзін раз.
         missing_product: Гэты код купона нельга прымяніць, таму што ў кошыку няма ўсіх неабходных тавараў.
         missing_taxon: Неабходна дадаць тавар усіх акцыйных катэгорый, каб прымяніць гэты код купона.
@@ -683,9 +684,9 @@ be:
     error: памылка
     errors:
       messages:
-       could_not_create_taxon: Немагчыма стварыць таксон
-       no_payment_methods_available: Для гэтага асяроддзя не наладжана ніводнага спосабу аплаты
-       no_shipping_methods_available: Для названага месцазнаходжання адсутнічаюць спосабы дастаўкі, калі ласка, зменіце адрас і паспрабуйце зноў.
+        could_not_create_taxon: Немагчыма стварыць таксон
+        no_payment_methods_available: Для гэтага асяроддзя не наладжана ніводнага спосабу аплаты
+        no_shipping_methods_available: Для названага месцазнаходжання адсутнічаюць спосабы дастаўкі, калі ласка, зменіце адрас і паспрабуйце зноў.
     errors_prohibited_this_record_from_being_saved:
       few: "%{count} памылкі не дазваляюць захаваць запіс у базе"
       many: "%{count} памылак не дазваляюць захаваць запіс у базе"
@@ -710,7 +711,7 @@ be:
     exchange_for: Абмяняць на
     excl: за выкл.
     existing_shipments: Існуючыя адпраўлення
-    expedited_exchanges_warning: "Любая паказаная замена будзе адпраўлена пакупніку неадкладна пасля захавання. З пакупніка будзе спісана поўная сума за замену, калі арыгінальная пакупка не будзе вернутая за %{days_window} дзён."
+    expedited_exchanges_warning: Любая паказаная замена будзе адпраўлена пакупніку неадкладна пасля захавання. З пакупніка будзе спісана поўная сума за замену, калі арыгінальная пакупка не будзе вернутая за %{days_window} дзён.
     expiration: Заканчэнне дзеяння
     extension: Пашырэнне
     failed_payment_attempts: Няўдалыя спробы правядзення плацяжу
@@ -753,8 +754,8 @@ be:
     identifier: Ідэнтыфікатар
     image: Малюнак
     images: Малюнкі
-    implement_eligible_for_return: Для валідацыі патрабаванняў метад #eligible_for_return? павінен быць рэалізаваныя.
-    implement_requires_manual_intervention: Для валідацыі патрабаванняў метад #requires_manual_intervention? павінен быць рэалізаваныя.
+    implement_eligible_for_return: Для валідацыі патрабаванняў метад
+    implement_requires_manual_intervention: Для валідацыі патрабаванняў метад
     inactive: Неактыўны
     incl: Укл.
     included_in_price: Ўключана ў кошт
@@ -762,14 +763,13 @@ be:
     incomplete: Няпоўны
     info_number_of_skus_not_shown:
       one: і адзін іншы
-      other: "і %{count} іншых"
-    info_product_has_multiple_skus: "Гэты прадукт мае %{count} варыянтаў"
+      other: і %{count} іншых
+    info_product_has_multiple_skus: Гэты прадукт мае %{count} варыянтаў
     instructions_to_reset_password: Каб скінуць пароль, запоўніце форму ніжэй. Новы пароль будзе адпраўлены вам па электроннай пошце
-    insufficient_stock: "Нехапае адзінак тавару, толькі %{on_hand} ёсць у наяўнасці"
+    insufficient_stock: Нехапае адзінак тавару, толькі %{on_hand} ёсць у наяўнасці
     insufficient_stock_lines_present: Некаторыя пазіцыі гэтай замовы маюць недастатковае колькасць.
     intercept_email_address: Перахоп лістоў
     intercept_email_instructions: Замяніць email атрымальніка на гэты адрас.
-    внутреннее_название: Унутранае імя
     invalid_credit_card: Няправільная крэдытная картка.
     invalid_exchange_variant: Няправільнае змяненне варыянтаў
     invalid_payment_provider: Няправільна ўказаны спосаб аплаты
@@ -796,13 +796,6 @@ be:
     items_to_be_reimbursed:
     jirafe: Jirafe
     landing_page_rule:
-      path: Путь
-    items_in_rmas:
-    items_reimbursed:
-    items_to_be_reimbursed:
-    jirafe: Jirafe
-    landing_page_rule:
-    path: Шлях
     last_name: Прозвішча
     last_name_begins_with: Прозвішча пачынаецца з
     learn_more: Даведацца больш
@@ -831,9 +824,8 @@ be:
     manual_intervention_required: Трэба чалавечае ўмяшальніцтва
     master_price: Асноўная цана
     match_choices:
-     all: Усім
-     none: Ніводнаму
-    MAX_ITEMS: Максімальная колькасць найменняў па пачатковай стаўцы
+      all: Усім
+      none: Ніводнаму
     member_since: Зарэгістраваны ад
     memo: Заўвага
     meta_description: Метаапісанне
@@ -896,10 +888,8 @@ be:
     no_shipping_method_selected: Не выбраны спосабы дастаўкі
     no_state_changes: Няма зменаў статусу
     no_tracking_present: Адсутнічаюць дэталі адсочвання
-    ні: Ніводнага
     none_selected: Не выбрана
     normal_amount: Звычайная сума
-    ня: не
     not_available: Недаступны
     not_enough_stock: Недастаткова пазіцый ў зыходным месцазнаходжанні для завяршэння руху
     not_found: "%{resource} не знойдзены"
@@ -923,7 +913,7 @@ be:
     optional: Не абавязкова
     options: Опцыі
     or: ці
-    or_over_price: "больш за %{price}"
+    or_over_price: больш за %{price}
     order: Заказ
     order_adjustments: Карэкціроўкі замовы
     order_already_updated: Заказ ужо зменены
@@ -949,7 +939,7 @@ be:
         thanks: Дзякуй, што выбралі нас.
         total: Усяго
     order_not_found: Мы не змаглі знайсці Ваш заказ. Паспрабуйце яшчэ раз.
-    order_number: "Заказ %{number}"
+    order_number: Заказ %{number}
     order_processed_successfully: Ваш заказ быў паспяхова апрацаваны
     order_resumed: Заказ працягнуты
     order_state:
@@ -965,7 +955,7 @@ be:
       resumed: Адноўлены
       returned: Вернуты
     order_summary: Зводка па замове
-    order_sure_want_to: "Вы ўпэўнены, што жадаеце %{event} гэты заказ?"
+    order_sure_want_to: Вы ўпэўнены, што жадаеце %{event} гэты заказ?
     order_total: Усяго па заказу
     order_updated: Заказ абноўлены
     orders: Заказы
@@ -975,8 +965,8 @@ be:
     package_from: Фасоўка ў
     pagination:
       next_page: наступная старонка »
-      previous_page: « папярэдняя старонка
-      truncate: …
+      previous_page: "« папярэдняя старонка"
+      truncate: "…"
     password: Пароль
     paste: Уставіць
     path: Шлях
@@ -1001,7 +991,6 @@ be:
       paid: аплочаны
       pending: у чаканні
       processing: у апрацоўцы
-    void: ануляваны
     payment_updated: Плацёж абноўлены
     payments: Плацяжы
     pending: У чаканні
@@ -1046,14 +1035,14 @@ be:
         description: Стварае прома-карэкціроўкі для замовы
         name: Стварыць карэкціроўку
       create_item_adjustments:
-        description: "Стварае крэдытныя карэкціроўкі на пазіцыю замовы"
-        name: "Стварыць карэкціроўкі на пазіцыю"
+        description: Стварае крэдытныя карэкціроўкі на пазіцыю замовы
+        name: Стварыць карэкціроўкі на пазіцыю
       create_line_items:
         description: Запаўняе кошык названай колькасцю пазіцый
         name: Стварыць элемент замовы
       free_shipping:
-        description: "Робіць дастаўку замовы бясплатнай"
-        name: "Бясплатная дастаўка"
+        description: Робіць дастаўку замовы бясплатнай
+        name: Бясплатная дастаўка
       promotion_actions: Акцыі
       promotion_form:
         match_policies:
@@ -1088,11 +1077,8 @@ be:
       user_logged_in:
         description: Толькі для зарэгістраваных карыстальнікаў
         name: Карыстальнік увайшоў
-
-
-
-    promotion_uses: "Прымяненне прома-акцый"
-    promotionable: "акцыйны тавар"
+    promotion_uses: Прымяненне прома-акцый
+    promotionable: акцыйны тавар
     promotions: Прома-акцыі
     propagate_all_variants: Прымяненне да ўсіх варыянтаў
     properties: Уласцівасці
@@ -1120,27 +1106,27 @@ be:
     refunds: Вяртанне
     register: Зарэгістравацца як новы карыстальнік
     registration: Рэгістрацыя
-    reimburse: "Кампенсіраваць"
-    reimbursed: "Кампенсіравана"
-    reimbursement: "Кампенсацыя"
+    reimburse: Кампенсіраваць
+    reimbursed: Кампенсіравана
+    reimbursement: Кампенсацыя
     reimbursement_mailer:
       reimbursement_email:
-        days_to_send: "Вы можаце вярнуцца для абмену любых тавараў на працягу %{days} дзён."
-        dear_customer: "Паважаны пакупнік,\\n"
-        exchange_summary: "Сцісла аб абмене"
-        for: "на"
-        instructions: "Ваша кампенсацыя было апрацавана."
-        refund_summary: "Сцісла аб вяртанні"
-        subject: "Паведамленне аб кампенсацыі"
-        total_refunded: "Усяго вернута: %{total}"
-    reimbursement_perform_failed: "Немагчыма правесці кампенсацыю. Памылка %{error}"
-    reimbursement_status: "Стан кампенсацыі"
-    reimbursement_type: "Тып кампенсацыі"
-    reimbursement_type_override: "Змена тыпу кампенсацыі"
-    reimbursement_types: "Тыпы кампенсацыі"
-    reimbursements: "Кампенсацыі"
-    reject: "Адхіліць"
-    rejected: "Адхілена"
+        days_to_send: Вы можаце вярнуцца для абмену любых тавараў на працягу %{days} дзён.
+        dear_customer: Паважаны пакупнік,\n
+        exchange_summary: Сцісла аб абмене
+        for: на
+        instructions: Ваша кампенсацыя было апрацавана.
+        refund_summary: Сцісла аб вяртанні
+        subject: Паведамленне аб кампенсацыі
+        total_refunded: 'Усяго вернута: %{total}'
+    reimbursement_perform_failed: Немагчыма правесці кампенсацыю. Памылка %{error}
+    reimbursement_status: Стан кампенсацыі
+    reimbursement_type: Тып кампенсацыі
+    reimbursement_type_override: Змена тыпу кампенсацыі
+    reimbursement_types: Тыпы кампенсацыі
+    reimbursements: Кампенсацыі
+    reject: Адхіліць
+    rejected: Адхілена
     remember_me: Запомніць мяне
     remove: Прыбраць
     rename: Перайменаваць
@@ -1185,7 +1171,7 @@ be:
     say_yes: Так
     scope: Фільтр
     search: Пошук
-    search_results: "Вынікі пошуку па запыце '%{keywords}'"
+    search_results: Вынікі пошуку па запыце '%{keywords}'
     searching: Ідзе пошук...
     secure_connection_type: Тып абароненага злучэння
     security_settings: Налады бяспекі
@@ -1194,7 +1180,7 @@ be:
     select_a_stock_location: Выбраць адрас склада
     select_from_prototype: Выбраць з прататыпаў
     select_stock: Выбраць склад
-    selected_quantity_not_available: "тавару %{item} недастаткова."
+    selected_quantity_not_available: тавару %{item} недастаткова.
     send_copy_of_all_mails_to: Адсылаць копіі ўсіх лістоў на
     send_mails_as: Адсылаць пошту як
     server: Сервер
@@ -1205,7 +1191,7 @@ be:
     ship_total: Усяго да дастаўцы
     shipment: Адпраўка
     shipment_adjustments: Карэкціроўкі дастаўкі
-    shipment_details: "Від %{stock_location} праз %{shipping_method}"
+    shipment_details: Від %{stock_location} праз %{shipping_method}
     shipment_mailer:
       shipped_email:
         dear_customer: Дарагі пакупнік, \n
@@ -1213,8 +1199,8 @@ be:
         shipment_summary: Дэталі дастаўкі
         subject: Апавяшчэнне аб дастаўцы
         thanks: Дзякуй, што выбралі нас.
-        track_information: "Дэталі адсочвання дастаўкі: %{tracking}"
-        track_link: "Адрас трекінга: %{url}"
+        track_information: 'Дэталі адсочвання дастаўкі: %{tracking}'
+        track_link: 'Адрас трекінга: %{url}'
     shipment_state: Статус адпраўкі
     shipment_states:
       backorder: затрымліваецца
@@ -1302,7 +1288,7 @@ be:
     stock_management: Упраўленне запасамі
     stock_management_requires_a_stock_location: Дадайце размяшчэнне склада для кіравання запасамі.
     stock_movements: Перамяшчэння тавараў
-    stock_movements_for_stock_location: "Перамяшчэння тавараў для %{stock_location_name}"
+    stock_movements_for_stock_location: Перамяшчэння тавараў для %{stock_location_name}
     stock_successfully_transferred: Тавары паспяхова перамешчаныя з аднаго склада на іншы.
     stock_transfer: Рух тавараў
     stock_transfers: Рухі тавараў
@@ -1332,8 +1318,8 @@ be:
     taxon_rule:
       choose_taxons: Выбраць таксоны
       label: Заўвага
-      match_all: "усе"
-      match_any: "па меншай меры адзін"
+      match_all: усе
+      match_any: па меншай меры адзін
     taxonomies: Таксанаміі
     taxonomy: Таксанамія
     taxonomy_edit: Рэдагаванне таксанаміі
@@ -1375,8 +1361,8 @@ be:
     type: Тып
     type_to_search: Пачніце ўводзіць, каб актываваць пошук
     unable_to_connect_to_gateway: Не атрымалася падлучыцца да аплатнага шлюза.
-    unable_to_create_reimbursements: "Немагчыма стварыць кампенсацыі, паколькі некаторыя пазіцыі чакаюць чалавечага ўмяшання."
-    under_price: "Танней %{price}"
+    unable_to_create_reimbursements: Немагчыма стварыць кампенсацыі, паколькі некаторыя пазіцыі чакаюць чалавечага ўмяшання.
+    under_price: Танней %{price}
     unlock: Разблакаваць
     unrecognized_card_type: Невядомы тып карткі
     unshippable_items: Неадпраўленыя тавары
@@ -1398,7 +1384,7 @@ be:
       is_too_large: занадта шмат - колькасць на складзе менш запытанай колькасці!
       must_be_int: павінен быць цэлым лікам
       must_be_non_negative: павінен быць неадмоўным лікам
-      unpaid_amount_not_zero: "сума цалкам кампенсавана. Рэшта %{amount}"
+      unpaid_amount_not_zero: сума цалкам кампенсавана. Рэшта %{amount}
     value: Значэнне
     variant: Варыянт
     variant_placeholder: Абярыце варыянт
@@ -1417,3 +1403,6 @@ be:
     zipcode: Паштовы індэкс
     zone: Гандлёвая зона
     zones: Гандлёвыя зоны
+    внутреннее_название: Унутранае імя
+    ня: не
+    ні: Ніводнага

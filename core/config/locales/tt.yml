@@ -1,4 +1,5 @@
+---
 tt:
   spree:
     i18n:
-      this_file_language: 'татар теле (tt)'
+      this_file_language: татар теле (tt)

@@ -1,3 +1,4 @@
+---
 id:
   activerecord:
     attributes:
@@ -119,7 +120,7 @@ id:
       spree/store:
         mail_from_address:
         meta_description:
-        meta_keywords: 
+        meta_keywords:
         name: Nama
         seo_title: Judul SEO
         url:
@@ -427,7 +428,7 @@ id:
     are_you_sure: Anda yakin?
     are_you_sure_delete: Anda yakin mau menghilangkan record berikut?
     associated_adjustment_closed: Penyesuaian yang dimaksud telah ditutup. Apakah Anda mau membukanya?
-    at_symbol: '@'
+    at_symbol: "@"
     authorization_failure: Gagal Otorisasi
     authorized: Otorisasi
     auto_capture: auto capture
@@ -562,7 +563,6 @@ id:
     date: Tanggal
     date_completed: Tanggal Selesai
     date_picker:
-      # FlatPickr human friendly formatting
       fpr_human_friendly_date_format: M j, Y
       fpr_human_friendly_date_time_format: M j, Y - H:i
     date_range: Rentang Tanggal
@@ -893,8 +893,8 @@ id:
     package_from: paket dari
     pagination:
       first: halaman awal
-      previous: « halaman sebelumnya
       next_page: halaman selanjutnya »
+      previous: "« halaman sebelumnya"
       previous_page: "« halaman sebelumnya"
       truncate: "…"
     password: Kata sandi

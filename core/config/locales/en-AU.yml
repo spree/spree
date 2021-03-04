@@ -1,3 +1,4 @@
+---
 en-AU:
   activerecord:
     attributes:
@@ -381,8 +382,8 @@ en-AU:
         orders:
         overview:
         products:
-        promotions:
         promotion_categories:
+        promotions:
         properties:
         prototypes:
         reports:
@@ -428,7 +429,7 @@ en-AU:
     are_you_sure: Are you sure?
     are_you_sure_delete: Are you sure you want to delete this record?
     associated_adjustment_closed:
-    at_symbol: '@'
+    at_symbol: "@"
     authorization_failure: Authorisation Failure
     authorized:
     auto_capture:
@@ -563,7 +564,6 @@ en-AU:
     date:
     date_completed: Date Completed
     date_picker:
-      # FlatPickr human friendly formatting
       fpr_human_friendly_date_format: M j, Y
       fpr_human_friendly_date_time_format: M j, Y - H:i
     date_range: Date Range

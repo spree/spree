@@ -60,7 +60,7 @@ lt:
         city: Mokėtojo miestas
         firstname: Mokėtojo vardas
         lastname: Mokėtojo pavardė
-        phone: Mokėtojo telefonas 
+        phone: Mokėtojo telefonas
         state: Mokėtojo apskritis
         zipcode: Mokėtojo pašto kodas
       spree/order/ship_address:
@@ -326,12 +326,6 @@ lt:
       spree/zone:
         one: Zona
         other: Zonos
-  views:
-    pagination:
-      next: 'Kitas &#8250;'
-      last: 'Paskutinis &#8250;&#8250;'
-      previous: '&#8249; Ankstesnis'
-      first: '&#8249;&#8249; Pirmas'
   devise:
     confirmations:
       confirmed: Jūs sėkmingai prisiregistravote ir prisijungėte.
@@ -354,6 +348,10 @@ lt:
     oauth_callbacks:
       failure: Negalime Jūsų autorizuoti %{kind} nes \%{reason}\.
       success: Sėkmingai patvirtinote %{kind} paskyrą.
+    sessions:
+      spree_user:
+        signed_in: Sėkmingai prisijungėte.
+        signed_out: Sėkmingai atsijungėte.
     unlocks:
       send_instructions: Netrukus gausite el. laišką su instrukcijomis, kaip atsirakinti savo paskyrą.
       unlocked: Jūsų paskyra sėkmingai atrakinta. Jūs esate prisijungęs.
@@ -367,10 +365,6 @@ lt:
       inactive_signed_up: Jūs sėkmingai prisiregistravote. Deja negalite prisijungti prie savo paskyros, nes %{reason}.
       signed_up: Sveikiname sėkmingai prisiregistravus!
       updated: Sėkmingai atnaujinote savo paskyros duomenis.
-    sessions:
-      spree_user:
-        signed_in: Sėkmingai prisijungėte.
-        signed_out: Sėkmingai atsijungėte.
   errors:
     messages:
       already_confirmed: jau buvo patvirtinta
@@ -460,8 +454,8 @@ lt:
         orders: Užsakymai
         overview: Peržiūra
         products: Prekės
-        promotions: Akcijos
         promotion_categories: Akcijų kategorijos
+        promotions: Akcijos
         properties: Savybės
         prototypes: Šablonai
         reports: Ataskaitos
@@ -477,9 +471,9 @@ lt:
         items: Nupirktos prekės
         items_purchased: Nupirktos prekės
         order_history: Užsakymų istorija
-        store_credits: Suteikti kreditai
         order_num:
         orders: Užsakymai
+        store_credits: Suteikti kreditai
         user_information: Kliento informacija
     administration: Administravimas
     advertise: Rodyti parduotuvėje
@@ -488,7 +482,7 @@ lt:
     all: Visi
     all_adjustments_closed: Kainos korekcijos anuliuotos!
     all_adjustments_opened: Kainos korekcijos pritaikytos!
-    all_departments: Visi 
+    all_departments: Visi
     all_items_have_been_returned: Visos prekės buvo grąžintos
     allow_ssl_in_development_and_test: Leisti naudoti SSL development ir test aplinkose.
     allow_ssl_in_production: Leisti naudoti SSL kliento serveryje (production)
@@ -510,17 +504,17 @@ lt:
       clear_key: Panaikinti raktą
       generate_key: Generuoti naują raktą
       key: API raktas
-      no_key: API raktas nepriskirtas
-      regenerate_key: Išnaujo generuoti raktą
       key_cleared: API raktas ištrintas
       key_generated: API raktas sugeneruotas
+      no_key: API raktas nepriskirtas
+      regenerate_key: Išnaujo generuoti raktą
     approve: Patvirtinti
     approved_at: Patvirtinta
     approver: Patvirtino
     are_you_sure: Ar jūs tikras
     are_you_sure_delete: Ar tikrai norite ištrinti šį įrašą?
     associated_adjustment_closed: Šis susijęs pataisymas yra uždarytas ir nebus perskaičiuotas. Ar norite jį atidaryti?
-    at_symbol: '@'
+    at_symbol: "@"
     authorization_failure: Autorizacijos klaida
     authorized: Patvirtinti
     auto_capture: Automatinis užfiksavimas
@@ -617,8 +611,8 @@ lt:
     coupon: Kuponas
     coupon_code: Nuolaidos kodas
     coupon_code_already_applied: Nuolaidos kodas jau buvo pritaikytas šiam užsakymui
-    coupon_code_apply: Naudoti
     coupon_code_applied: Nuolaida buvo sėkmingai pritaikyta jūsų užsakymui.
+    coupon_code_apply: Naudoti
     coupon_code_better_exists: Ankstesnis kuponas turi didesnę nuolaidą
     coupon_code_expired: Nuolaidos galiojimo laikas baigėsi
     coupon_code_max_usage: Visos nuolaidos jau panaudotos
@@ -664,7 +658,6 @@ lt:
     date: Data
     date_completed: Baigimo data
     date_picker:
-      # FlatPickr human friendly formatting
       fpr_human_friendly_date_format: M j, Y
       fpr_human_friendly_date_time_format: M j, Y - H:i
     date_range: Datos intervalas
@@ -726,7 +719,7 @@ lt:
         no_shipping_methods_available: Negalime pristatyti į pasirinktą vietovę. Prašome pakeisti adresą ir pabandyti dar kartą.
     errors_prohibited_this_record_from_being_saved:
       one: Nepavyko išsaugoti įrašo
-      other: "Rasta klaidų. Neįmanoma išsaugoti įrašo"
+      other: Rasta klaidų. Neįmanoma išsaugoti įrašo
     event: Įvykis
     events:
       spree:
@@ -784,8 +777,8 @@ lt:
       available_locales: Galimos kalbos
       fields: Laukai
       language: Kalba
-      localization_settings: Lokalizacijos nustatymai
       locales_displayed_on_frontend_select_box: Kalbos rodomos vartotojams pasirinkimo sąraše
+      localization_settings: Lokalizacijos nustatymai
       only_complete: Tik baigti
       only_incomplete: Tik nebaigti
       select_locale: Pasirinkti kalbą
@@ -885,7 +878,7 @@ lt:
     meta_title: Meta pavadinimas
     metadata: Metadata
     minimal_amount: Mažiausias kiekis
-    missing_return_authorization: 
+    missing_return_authorization:
     month: Mėnuo
     more: Daugiau
     move_stock_between_locations: Perkelti likutį į naują vietą
@@ -1247,7 +1240,7 @@ lt:
     say_yes: true
     scope: Apimtis
     search: Paieška
-    search_results: "Paieškos rezultatai: '%{keywords}'"
+    search_results: 'Paieškos rezultatai: ''%{keywords}'''
     searching: Ieškoma
     secure_connection_type: Saugaus susijungimo tipas
     security_settings: Saugumo nustatymai
@@ -1274,11 +1267,11 @@ lt:
         dear_customer: Mielas pirkėjau,
         instructions: Jūsų užsakymas buvo išsiųstas
         shipment_summary: Siuntos santrauka
+        shipping_method: Išsiųsta per
         subject: Siuntos pranešimas
         thanks: Ačiū, kad perkate!
         track_information: 'Siuntos kodas: %{tracking}'
         track_link: 'Sekimo nuoroda: %{url}'
-        shipping_method: Išsiųsta per
     shipment_state: Siuntos būsena
     shipment_states:
       backorder: išankstinis užsakymas
@@ -1320,11 +1313,11 @@ lt:
     skus:
     slug: URL
     smtp_authentication_type: SMTP autentikacijos tipas
+    smtp_password: SMTP slaptažodis
+    smtp_port: SMTP prievadas
     smtp_send_all_emails_as_from_following_address: Siųsti el. laiškus iš šio pašto adreso.
     smtp_send_copy_to_this_addresses: Visų iš parduotuvės pašto dėžutės išsiųstų laiškų kopijas siųsti į šią dėžutę.
     smtp_username: SMTP vartotojo vardas
-    smtp_password: SMTP slaptažodis
-    smtp_port: SMTP prievadas
     source: Vieta
     special_instructions: Specialios instrukcijos
     split: Išskaidyti
@@ -1499,3 +1492,9 @@ lt:
     zipcode: Pašto kodas
     zone: Zona
     zones: Zonos
+  views:
+    pagination:
+      first: "&#8249;&#8249; Pirmas"
+      last: Paskutinis &#8250;&#8250;
+      next: Kitas &#8250;
+      previous: "&#8249; Ankstesnis"

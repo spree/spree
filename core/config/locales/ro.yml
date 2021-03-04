@@ -1,3 +1,4 @@
+---
 ro:
   activerecord:
     attributes:
@@ -5,7 +6,7 @@ ro:
         address1: Adresă
         address2: Adresă (continuare)
         city: Localitate
-        country: "Țara"
+        country: Țara
         firstname: Prenume
         lastname: Nume
         phone: Telefon
@@ -81,7 +82,7 @@ ro:
         description: Descriere
         master_price: Preț de bază
         name: Nume
-        on_hand: "În stoc"
+        on_hand: În stoc
         shipping_category: Categorie de livrare
         tax_category: Categorie taxă
       spree/promotion:
@@ -92,7 +93,7 @@ ro:
         expires_at: Expiră la
         name: Nume
         path: Cale
-        starts_at: "Începe la"
+        starts_at: Începe la
         usage_limit: Limită de folosire
       spree/promotion_category:
         name:
@@ -144,7 +145,7 @@ ro:
         cost_currency: Valută preț de cost
         cost_price: Preț de cost
         depth: Adâncime
-        height: "Înălțime"
+        height: Înălțime
         price: Preț
         sku: Cod produs
         weight: Greutate
@@ -203,8 +204,8 @@ ro:
         one: Adresă
         other: Adrese
       spree/country:
-        one: "Țara"
-        other: "Țări"
+        one: Țara
+        other: Țări
       spree/credit_card:
         one: Card de credit
         other: Carduri de credit
@@ -340,7 +341,7 @@ ro:
       cancel: Anulează
       continue: Continuă
       create: Creează
-      destroy: "Șterge"
+      destroy: Șterge
       edit: Editează
       list: Listează
       listing: Listare
@@ -383,8 +384,8 @@ ro:
         orders: Comenzi
         overview: Prezentare generală
         products: Produse
-        promotions: Promoții
         promotion_categories:
+        promotions: Promoții
         properties: Proprietăți
         prototypes: Prototipuri
         reports: Rapoarte
@@ -423,27 +424,27 @@ ro:
     analytics_desc_list_3: Niciun cod de instalat
     analytics_desc_list_4: Este complet gratuit!
     analytics_trackers: Analytics Trackers
-    and: "și"
+    and: și
     approve:
     approved_at:
     approver:
     are_you_sure: Ești sigur(ă)
     are_you_sure_delete: Ești sigur(ă) că vrei să ștergi această înregistrare?
     associated_adjustment_closed: Ajustarea asociată este închisă și nu va fi recalculată. Doriți să o deschideți?
-    at_symbol: '@'
+    at_symbol: "@"
     authorization_failure: Autorizare nereușită
     authorized:
     auto_capture:
     available_on: Disponibil de la
     average_order_value:
     avs_response:
-    back: "Înapoi"
+    back: Înapoi
     back_end: Interfața de administrare
     back_to_payment:
     back_to_resource_list:
     back_to_rma_reason_list:
-    back_to_store: "Înapoi la magazin"
-    back_to_users_list: "Înapoi la lista de utilizatori"
+    back_to_store: Înapoi la magazin
+    back_to_users_list: Înapoi la lista de utilizatori
     backorderable: Permite comenzi în așteptare
     backorderable_default:
     backordered:
@@ -466,7 +467,7 @@ ro:
     cannot_create_returns: Nu poți genera un retur deoarece această comandă nu a fost livrată încă.
     cannot_perform_operation: Operațiunea cerută nu poate fi îndeplinită
     cannot_set_shipping_method_without_address: Metoda de livrare nu poate fi setată înaintea furnizării datelor clientului.
-    capture: "Înregistrare"
+    capture: Înregistrare
     capture_events:
     card_code: Codul cardului
     card_number: Numărul cardului
@@ -490,8 +491,8 @@ ro:
     clear_cache_warning:
     click_and_drag_on_the_products_to_sort_them:
     clone: Clonă
-    close: "Închide"
-    close_all_adjustments: "Închide toate ajustările"
+    close: Închide
+    close_all_adjustments: Închide toate ajustările
     code: Cod
     company: Firma
     complete: complet
@@ -508,8 +509,8 @@ ro:
     could_not_create_customer_return:
     could_not_create_stock_movement: A apărut o problemă la salvarea mișcării de stoc. Vă rog reîncercați.
     count_on_hand: Valoare stoc
-    countries: "Țări"
-    country: "Țara"
+    countries: Țări
+    country: Țara
     country_based: Bazat pe țară
     country_name: Nume
     country_names:
@@ -565,7 +566,6 @@ ro:
     date: Data
     date_completed: Data efectuării
     date_picker:
-      # FlatPickr human friendly formatting
       fpr_human_friendly_date_format: M j, Y
       fpr_human_friendly_date_time_format: M j, Y - H:i
     date_range: Perioada
@@ -573,13 +573,13 @@ ro:
     default_refund_amount:
     default_tax: Taxă prestabilită
     default_tax_zone: Zonă de taxare prestabilită
-    delete: "Șterge"
+    delete: Șterge
     deleted_variants_present:
     delivery: Livrare
     depth: Adâncime
     description: Descriere
     destination: Destinație
-    destroy: "Șterge"
+    destroy: Șterge
     details:
     discount_amount: Valoare reducere
     dismiss_banner: Nu, mulțumesc! Nu sunt interesat, nu mai afișa acest mesaj din nou.
@@ -634,7 +634,7 @@ ro:
           contents_changed: Conținutul comenzii a fost modificat
         page_view: Pagină vizualizată
         user:
-          signup: "Înregistrare utilizator"
+          signup: Înregistrare utilizator
     exceptions:
       count_on_hand_setter:
     exchange_for:
@@ -670,7 +670,7 @@ ro:
     guest_checkout: Comandă oaspete
     guest_user_account: Comandă ca oaspete
     has_no_shipped_units: Nu are unități de expediție
-    height: "Înălțime"
+    height: Înălțime
     hide_cents: Ascunde subunități monetare (bani)
     home: Acasă
     i18n:
@@ -726,11 +726,11 @@ ro:
       path: Cale
     last_name: Nume
     last_name_begins_with: Numele începe cu
-    learn_more: "Învață mai multe"
+    learn_more: Învață mai multe
     lifetime_stats:
     line_item_adjustments:
     list: Listă
-    loading: "Încarcă"
+    loading: Încarcă
     locale_changed: Localizare schimbat
     location: Locație
     lock: Blochează
@@ -874,7 +874,7 @@ ro:
     order_resumed:
     order_state:
       address: adresă
-      awaiting_return: "în așteptarea returului"
+      awaiting_return: în așteptarea returului
       canceled: anulat
       cart: coș cumpărături
       complete: procesat
@@ -919,7 +919,7 @@ ro:
       credit_owed: credit datorat
       failed: nereușit
       paid: plătit
-      pending: "în așteptare"
+      pending: în așteptare
       processing: se procesează
       void: void
     payment_updated: Plată salvată
@@ -1035,8 +1035,8 @@ ro:
     refund_reasons:
     refunded_amount:
     refunds:
-    register: "Înregistrează-te ca utilizator nou"
-    registration: "Înregistrare"
+    register: Înregistrează-te ca utilizator nou
+    registration: Înregistrare
     reimburse:
     reimbursed:
     reimbursement:
@@ -1058,8 +1058,8 @@ ro:
     reimbursements:
     reject:
     rejected:
-    remember_me: "Ține-mi minte datele"
-    remove: "Șterge"
+    remember_me: Ține-mi minte datele
+    remove: Șterge
     rename: Redenumește
     report:
     reports: Rapoarte
@@ -1136,7 +1136,7 @@ ro:
       backorder: comandă în afara stocului
       canceled:
       partial: parțial
-      pending: "în așteptare"
+      pending: în așteptare
       ready: pregătit
       shipped: livrat
     shipment_transfer_error:
