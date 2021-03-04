@@ -592,6 +592,9 @@ ru:
     alternative_phone: Альтернативный телефон
     amount: Количество
     and: и
+    api:
+      key_cleared: Ключ очищен
+      key_generated: Ключ создан
     approve: одобрить
     approved_at: Утверждено в
     approver: Утверждающий

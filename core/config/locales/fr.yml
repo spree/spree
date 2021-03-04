@@ -592,6 +592,9 @@ fr:
     alternative_phone: Téléphone alternatif
     amount: Quantité
     and: et
+    api:
+      key_cleared: Clé effacée
+      key_generated: Clé générée
     approve: approuver
     approved_at: Approuvé à
     approver: Approbateur

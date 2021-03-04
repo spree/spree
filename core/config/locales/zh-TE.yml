@@ -592,6 +592,9 @@ zh-TE:
     alternative_phone: 备用电话
     amount: 数量
     and: 和
+    api:
+      key_cleared: 钥匙已清除
+      key_generated: 密钥生成
     approve: 批准
     approved_at: 批准于
     approver: 批准人

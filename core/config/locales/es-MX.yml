@@ -592,6 +592,9 @@ es-MX:
     alternative_phone: Telefono alternativo
     amount: Cantidad
     and: y
+    api:
+      key_cleared: Clave borrada
+      key_generated: Clave generada
     approve: aprobar
     approved_at: Aprobado en
     approver: Aprobador

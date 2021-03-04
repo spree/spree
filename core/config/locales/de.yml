@@ -592,6 +592,9 @@ de:
     alternative_phone: Alternatives Telefon
     amount: Menge
     and: und
+    api:
+      key_cleared: Schlüssel gelöscht
+      key_generated: Schlüssel generiert
     approve: genehmigen
     approved_at: Genehmigt bei
     approver: Genehmiger
