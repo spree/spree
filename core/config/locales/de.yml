@@ -519,6 +519,7 @@ de:
       successfully_updated: Erfolgreich geupdated
       unsuccessfully_saved: Beim Versuch, Ihre Adresse zu speichern, ist ein Fehler aufgetreten.
       unsuccessfully_updated: Beim Versuch, Ihre Adresse zu aktualisieren, wurde ein Update durchgeführt.
+    address_name_placeholder: Platzhalter für Adressnamen
     addresses: Adressen
     adjustable: Einstellbar
     adjustment: Einstellung
@@ -788,6 +789,7 @@ de:
     doesnt_track_inventory: Inventar wird nicht verfolgt
     dont_have_account: Kein Account?
     edit: Bearbeiten
+    edit_address: Adresse bearbeiten
     editing_resource: Bearbeiten von %{resource}
     editing_rma_reason: RMA-Grund bearbeiten
     editing_user: Bearbeiten Sie Ihr Konto
@@ -963,6 +965,7 @@ de:
     items_reimbursed: Artikel erstattet
     items_to_be_reimbursed: Zu erstattende Artikel
     join_slack: Mach mit bei Slack
+    label: Etikette
     last_name: Nachname
     last_name_begins_with: Nachname beginnt mit
     lastname: Nachname
@@ -1038,6 +1041,7 @@ de:
       show_user_menu: Benutzermenü anzeigen
       sign_up: ANMELDEN
     new: Neu
+    new_address: Neue Adresse
     new_adjustment: Neue Anpassung
     new_country: Neues Land
     new_customer: Neuen Account erstellen

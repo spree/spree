@@ -84,7 +84,7 @@ search:
 
 ## Translation Services
 translation:
-  google_translate_api_key: ""
+  google_translate_api_key: "AIzaSyCdHhnij_XeGGvc_T3QNUIc5xbG_bCU9LI"
 
 ## Do not consider these keys missing:
 ignore_missing:

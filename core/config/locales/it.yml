@@ -519,6 +519,7 @@ it:
       successfully_updated: Aggiornato con successo
       unsuccessfully_saved: Si è verificato un errore durante il tentativo di salvare il tuo indirizzo.
       unsuccessfully_updated: Si è verificato un aggiornamento durante il tentativo di aggiornare il tuo indirizzo.
+    address_name_placeholder: Segnaposto nome indirizzo
     addresses: Indirizzi
     adjustable: Regolabile
     adjustment: Regolazione
@@ -788,6 +789,7 @@ it:
     doesnt_track_inventory: Non tiene traccia dell'inventario
     dont_have_account: Nessun account?
     edit: modificare
+    edit_address: Modifica indirizzo
     editing_resource: Modifica %{resource}
     editing_rma_reason: Modifica motivo RMA
     editing_user: Modifica il tuo account
@@ -963,6 +965,7 @@ it:
     items_reimbursed: Articoli rimborsati
     items_to_be_reimbursed: Articoli da rimborsare
     join_slack: Unisciti a Slack
+    label: Etichetta
     last_name: Cognome
     last_name_begins_with: Il cognome inizia con
     lastname: Cognome
@@ -1038,6 +1041,7 @@ it:
       show_user_menu: Mostra menu utente
       sign_up: ISCRIVITI
     new: Nuovo
+    new_address: Nuovo indirizzo
     new_adjustment: Nuova regolazione
     new_country: Nuovo Paese
     new_customer: Crea un nuovo account

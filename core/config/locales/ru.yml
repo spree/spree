@@ -519,6 +519,7 @@ ru:
       successfully_updated: Успешно Обновлено
       unsuccessfully_saved: При сохранении вашего адреса произошла ошибка.
       unsuccessfully_updated: При попытке обновить ваш адрес произошло обновление.
+    address_name_placeholder: Заполнитель имени адреса
     addresses: Адреса
     adjustable: Регулируемый
     adjustment: Корректирование
@@ -788,6 +789,7 @@ ru:
     doesnt_track_inventory: Он не отслеживает инвентарь
     dont_have_account: Нет аккаунта?
     edit: Редактировать
+    edit_address: Изменить адрес
     editing_resource: Редактирование %{resource}
     editing_rma_reason: Редактирование причины RMA
     editing_user: Редактировать Ваш аккаунт
@@ -963,6 +965,7 @@ ru:
     items_reimbursed: Пункты возмещены
     items_to_be_reimbursed: Пункты, подлежащие возмещению
     join_slack: Присоединяйтесь к Slack
+    label: Этикетка
     last_name: Фамилия
     last_name_begins_with: Фамилия начинается с
     lastname: Фамилия
@@ -1038,6 +1041,7 @@ ru:
       show_user_menu: Показать меню пользователя
       sign_up: ЗАРЕГИСТРИРОВАТЬСЯ
     new: Новый
+    new_address: Новый адрес
     new_adjustment: Новая корректировка
     new_country: Новая страна
     new_customer: Создать новый аккаунт

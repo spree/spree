@@ -516,6 +516,7 @@ en:
       successfully_updated: Updated successfully
       unsuccessfully_saved: There was an error while trying to save your address.
       unsuccessfully_updated: There was an update while trying to update your address.
+    address_name_placeholder: Address name placeholder
     addresses: Addresses
     adjustable: Adjustable
     adjustment: Adjustment
@@ -785,6 +786,7 @@ en:
     doesnt_track_inventory: It doesn't track inventory
     dont_have_account: No account?
     edit: Edit
+    edit_address: Edit address
     editing_resource: Editing %{resource}
     editing_rma_reason: Editing RMA Reason
     editing_user: Edit Your account
@@ -960,6 +962,7 @@ en:
     items_reimbursed: Items reimbursed
     items_to_be_reimbursed: Items to be reimbursed
     join_slack: Join Slack
+    label: Label
     last_name: Last Name
     last_name_begins_with: Last Name Begins With
     lastname: Last Name
@@ -1035,6 +1038,7 @@ en:
       show_user_menu: Show user menu
       sign_up: SIGN UP
     new: New
+    new_address: New address
     new_adjustment: New Adjustment
     new_country: New Country
     new_customer: Create new account
