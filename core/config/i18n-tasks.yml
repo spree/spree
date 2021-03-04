@@ -84,7 +84,7 @@ search:
 
 ## Translation Services
 translation:
-  google_translate_api_key: "AIzaSyDlkLyCna-kIo5lhxe3zVmj-CBHrFx8fhA"
+  google_translate_api_key: ""
 
 ## Do not consider these keys missing:
 # ignore_missing:
@@ -124,5 +124,4 @@ translation:
 #
 # The PatternMapper can also match key literals via a special %{key} interpolation, e.g.:
 #
-# <%# I18n::Tasks.add_scanner 'I18n::Tasks::Scanners::PatternMapper',
-#       patterns: [['\bSpree\.t[( ]\s*%{key}', 'spree.%{key}']] %>
+#"<%# I18n::Tasks.add_scanner 'I18n::Tasks::Scanners::PatternMapper', patterns: [['\bSpree\.t[( ]\s*%{key}', 'spree.%{key}']] %>"

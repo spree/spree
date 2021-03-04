@@ -437,9 +437,6 @@ en:
         one: '1 error prohibited this %{resource} from being saved:'
         other: "%{count} errors prohibited this %{resource} from being saved:"
   number:
-    currency:
-      format:
-        separator:
     percentage:
       format:
         precision: 1
@@ -909,7 +906,7 @@ en:
       select_locale: Select locale
       show_only: Show only
       supported_locales: Supported Locales
-      this_file_language: English (en)
+      this_file_language: English (US)
       translations: Translations
     icon: Icon
     image: Image
