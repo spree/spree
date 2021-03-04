@@ -390,6 +390,10 @@ de:
   address_book:
     save: speichern
     successfully_created: Neue Adresse wurde erfolgreich erstellt
+  bill_address: Rechnungsadresse
+  date:
+    abbr_day_names: Abkürzung Tagesnamen
+    month_names: Monatsnamen
   devise:
     confirmations:
       confirmed: Ihr Konto wurde erfolgreich bestätigt. Sie sind jetzt angemeldet.
@@ -455,6 +459,7 @@ de:
     acceptance_errors: Akzeptanzfehler
     acceptance_status: Akzeptanzstatus
     accepted: Akzeptiert
+    access: Zugriff
     account: Konto
     account_info: Kontoinformation
     account_updated: Konto aktualisiert
@@ -685,6 +690,7 @@ de:
     clear_cache: Cache leeren
     clear_cache_ok: Der Cache wurde geleert
     clear_cache_warning: Durch das Löschen des Cache wird die Leistung Ihres Geschäfts vorübergehend beeinträchtigt.
+    clear_key: Schlüssel löschen
     click_and_drag_on_the_products_to_sort_them: Klicken und ziehen Sie auf die Produkte, um sie zu sortieren.
     clone: Klon
     close: Schließen
@@ -738,6 +744,7 @@ de:
     created_at: Hergestellt in
     created_by: Erstellt von
     credit: Anerkennung
+    credit_allowed: Gutschrift erlaubt
     credit_card: Kreditkarte
     credit_cards: Kreditkarten
     credit_owed: Gutschrift geschuldet
@@ -790,6 +797,7 @@ de:
     dont_have_account: Kein Account?
     edit: Bearbeiten
     edit_address: Adresse bearbeiten
+    edit_reimbursement: Erstattung bearbeiten
     editing_resource: Bearbeiten von %{resource}
     editing_rma_reason: RMA-Grund bearbeiten
     editing_user: Bearbeiten Sie Ihr Konto
@@ -884,6 +892,7 @@ de:
     general: Allgemeines
     general_settings: Allgemeine Einstellungen
     generate_code: Gutscheincode generieren
+    generate_key: Schlüssel generieren
     get_back_to_the: Geh zurück zum
     go_to_category: Gehen Sie zur Kategorie
     go_to_facebook: Gehe zu Facebook
@@ -965,6 +974,7 @@ de:
     items_reimbursed: Artikel erstattet
     items_to_be_reimbursed: Zu erstattende Artikel
     join_slack: Mach mit bei Slack
+    key: Schlüssel
     label: Etikette
     last_name: Nachname
     last_name_begins_with: Nachname beginnt mit
@@ -1019,6 +1029,8 @@ de:
     month: Monat
     more: Mehr
     move_stock_between_locations: Lager zwischen Standorten verschieben
+    move_variant_to: Variante nach verschieben
+    multiple_stores: Mehrere Geschäfte
     mutable: Veränderlich
     my_account: Mein Konto
     my_orders: meine Bestellungen
@@ -1087,6 +1099,7 @@ de:
     no_available_date_set: Kein verfügbares Datum festgelegt
     no_cc_type: N / A
     no_country: Kein Land festgelegt
+    no_key: Kein Schlüssel
     no_limits_zone: Keine Grenzen
     no_payment_found: Keine Zahlung gefunden
     no_payment_provider_settings_message: Dieser Zahlungsanbieter verfügt über keine benutzerdefinierten Einstellungen
@@ -1141,6 +1154,7 @@ de:
     order_canceled: Bestellung storniert
     order_details: Bestelldetails
     order_email_resent: E-Mail erneut senden
+    order_has_no_payments: Bestellung hat keine Zahlungen
     order_information: Bestellinformationen
     order_line_items: Werbebuchungen bestellen
     order_mailer:
@@ -1166,6 +1180,7 @@ de:
       subtotal: 'Zwischensumme:'
       total: 'Auftragssumme:'
     order_not_found: Wir konnten Ihre Bestellung nicht finden. Bitte versuchen Sie diese Aktion erneut.
+    order_num: Bestellnummer
     order_number: Bestellen Sie %{number}
     order_processed_successfully: Ihre Bestellung wurde erfolgreich bearbeitet
     order_resumed: Bestellung wieder aufgenommen
@@ -1201,6 +1216,7 @@ de:
     path: Pfad
     pay: Zahlen
     payment: Zahlung
+    payment_amount: Zahlungsbetrag
     payment_could_not_be_created: Zahlung konnte nicht erstellt werden.
     payment_identifier: Zahlungskennung
     payment_information: Zahlungsinformationen
@@ -1225,6 +1241,7 @@ de:
     payment_type: Zahlungsart
     payment_updated: Zahlung aktualisiert
     payments: Zahlungen
+    payments_count: Zahlungen zählen
     pdp:
       checkout: Überprüfen
       description: Beschreibung
@@ -1314,6 +1331,7 @@ de:
         description: Macht alle Sendungen für die Bestellung kostenlos
         name: Kostenloser Versand
     promotion_actions: Aktionen
+    promotion_categories: Werbekategorien
     promotion_category: Werbekategorie
     promotion_cloned: Promotion wurde geklont
     promotion_form:
@@ -1380,6 +1398,7 @@ de:
     refund_reasons: Gründe für die Rückerstattung
     refunded_amount: Rückerstatteter Betrag
     refunds: Rückerstattungen
+    regenerate_key: Schlüssel neu generieren
     register: Registrieren
     registration: Anmeldung
     reimburse: Erstatten
@@ -1453,6 +1472,7 @@ de:
     sales_total: Umsatz insgesamt
     sales_total_description: Verkaufssumme für alle Bestellungen
     sales_totals: Verkaufssummen
+    save: speichern
     save_and_continue: Speichern und fortfahren
     save_my_address: Speichern Sie meine Adresse
     saving: Sparen
@@ -1593,6 +1613,7 @@ de:
     states_required: Erforderliche Staaten
     status: Status
     stock: Lager
+    stock_item_id: Lagerware
     stock_location: Lagerort
     stock_location_info: Lager Standortinfo
     stock_locations: Lagerstandorte

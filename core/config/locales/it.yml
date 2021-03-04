@@ -390,6 +390,10 @@ it:
   address_book:
     save: Salva
     successfully_created: Il nuovo indirizzo è stato creato con successo
+  bill_address: Indirizzo della fattura
+  date:
+    abbr_day_names: Nomi dei giorni Abbr
+    month_names: Nomi dei mesi
   devise:
     confirmations:
       confirmed: Il tuo account è stato confermato con successo. Ora sei connesso.
@@ -455,6 +459,7 @@ it:
     acceptance_errors: Errori di accettazione
     acceptance_status: Stato di accettazione
     accepted: Accettato
+    access: Accesso
     account: account
     account_info: Informazioni sull'account
     account_updated: Account aggiornato
@@ -685,6 +690,7 @@ it:
     clear_cache: Cancella cache
     clear_cache_ok: La cache è stata svuotata
     clear_cache_warning: La cancellazione della cache ridurrà temporaneamente le prestazioni del tuo negozio.
+    clear_key: Chiaro chiave
     click_and_drag_on_the_products_to_sort_them: Fare clic e trascinare sui prodotti per ordinarli.
     clone: Clone
     close: Vicino
@@ -738,6 +744,7 @@ it:
     created_at: Creato a
     created_by: Creato da
     credit: Credito
+    credit_allowed: Credito consentito
     credit_card: Carta di credito
     credit_cards: Carte di credito
     credit_owed: Credito dovuto
@@ -790,6 +797,7 @@ it:
     dont_have_account: Nessun account?
     edit: modificare
     edit_address: Modifica indirizzo
+    edit_reimbursement: Modifica rimborso
     editing_resource: Modifica %{resource}
     editing_rma_reason: Modifica motivo RMA
     editing_user: Modifica il tuo account
@@ -884,6 +892,7 @@ it:
     general: Generale
     general_settings: impostazioni generali
     generate_code: Genera codice coupon
+    generate_key: Genera chiave
     get_back_to_the: Torna al
     go_to_category: Vai alla categoria
     go_to_facebook: Vai su Facebook
@@ -965,6 +974,7 @@ it:
     items_reimbursed: Articoli rimborsati
     items_to_be_reimbursed: Articoli da rimborsare
     join_slack: Unisciti a Slack
+    key: Chiave
     label: Etichetta
     last_name: Cognome
     last_name_begins_with: Il cognome inizia con
@@ -1019,6 +1029,8 @@ it:
     month: Mese
     more: Di più
     move_stock_between_locations: Spostare le scorte tra le posizioni
+    move_variant_to: Sposta la variante in
+    multiple_stores: Più negozi
     mutable: Mutevole
     my_account: Il mio account
     my_orders: i miei ordini
@@ -1087,6 +1099,7 @@ it:
     no_available_date_set: Nessuna data disponibile impostata
     no_cc_type: N / A
     no_country: Nessun paese impostato
+    no_key: Nessuna chiave
     no_limits_zone: Senza limiti
     no_payment_found: Nessun pagamento trovato
     no_payment_provider_settings_message: Questo fornitore di servizi di pagamento non ha impostazioni personalizzate disponibili
@@ -1141,6 +1154,7 @@ it:
     order_canceled: Ordine annullato
     order_details: Dettagli dell'ordine
     order_email_resent: Ordina e-mail reinviata
+    order_has_no_payments: L'ordine non ha pagamenti
     order_information: Informazioni sull'ordine
     order_line_items: Voci di riga dell'ordine
     order_mailer:
@@ -1166,6 +1180,7 @@ it:
       subtotal: 'Totale parziale:'
       total: 'Ordine totale:'
     order_not_found: Non siamo riusciti a trovare il tuo ordine. Per favore prova di nuovo l'azione.
+    order_num: Ordine num
     order_number: Ordina %{number}
     order_processed_successfully: Il tuo ordine è stato elaborato con successo
     order_resumed: Ordine ripreso
@@ -1201,6 +1216,7 @@ it:
     path: Sentiero
     pay: pagare
     payment: Pagamento
+    payment_amount: Importo del pagamento
     payment_could_not_be_created: Impossibile creare il pagamento.
     payment_identifier: Identificatore di pagamento
     payment_information: Informazioni sul pagamento
@@ -1225,6 +1241,7 @@ it:
     payment_type: Modalità di pagamento
     payment_updated: Pagamento aggiornato
     payments: Pagamenti
+    payments_count: Contano i pagamenti
     pdp:
       checkout: Check-out
       description: Descrizione
@@ -1314,6 +1331,7 @@ it:
         description: Rende gratuite tutte le spedizioni dell'ordine
         name: Spedizione gratuita
     promotion_actions: Azioni
+    promotion_categories: Categorie di promozione
     promotion_category: Categoria promozione
     promotion_cloned: La promozione è stata clonata
     promotion_form:
@@ -1380,6 +1398,7 @@ it:
     refund_reasons: Motivi di rimborso
     refunded_amount: Importo rimborsato
     refunds: Rimborsi
+    regenerate_key: Rigenera chiave
     register: Registrati
     registration: Registrazione
     reimburse: Rimborsare
@@ -1453,6 +1472,7 @@ it:
     sales_total: Totale vendite
     sales_total_description: Totale vendite per tutti gli ordini
     sales_totals: Totali vendite
+    save: Salva
     save_and_continue: Salva e continua
     save_my_address: Salva il mio indirizzo
     saving: Salvataggio
@@ -1593,6 +1613,7 @@ it:
     states_required: Stati richiesti
     status: Stato
     stock: Azione
+    stock_item_id: Articolo di scorta
     stock_location: Posizione magazzino
     stock_location_info: Informazioni sulla posizione delle scorte
     stock_locations: Posizioni delle scorte

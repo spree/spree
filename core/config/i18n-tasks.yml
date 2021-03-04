@@ -55,6 +55,7 @@ search:
   ## Paths or `File.find` patterns to search in:
   paths:
     - '../frontend/app/views'
+    - '../backend/app/views'
 
   # ## Root directories for relative keys resolution.
   # relative_roots:
@@ -88,7 +89,10 @@ translation:
 
 ## Do not consider these keys missing:
 ignore_missing:
+  - 'spree.id'
   - 'spree.date_picker.*'
+  - 'spree.fpr_human_friendly_date_format'
+  - 'spree.fpr_human_friendly_date_time_format'
   - 'views.pagination.truncate'
   - 'number.currency.format.separator'
   - 'activerecord.models.spree/address'

@@ -390,6 +390,10 @@ fr:
   address_book:
     save: Sauvegarder
     successfully_created: La nouvelle adresse a été créée avec succès
+  bill_address: Adresse de facturation
+  date:
+    abbr_day_names: Noms de jour abbr
+    month_names: Noms de mois
   devise:
     confirmations:
       confirmed: Votre compte a été confirmé avec succès. Vous êtes maintenant inscrit.
@@ -455,6 +459,7 @@ fr:
     acceptance_errors: Erreurs d'acceptation
     acceptance_status: Statut d'acceptation
     accepted: Accepté
+    access: Accéder
     account: Compte
     account_info: Informations de compte
     account_updated: Compte mis à jour
@@ -685,6 +690,7 @@ fr:
     clear_cache: Vider le cache
     clear_cache_ok: Le cache a été vidé
     clear_cache_warning: La suppression du cache réduira temporairement les performances de votre boutique.
+    clear_key: Effacer la clé
     click_and_drag_on_the_products_to_sort_them: Cliquez et faites glisser sur les produits pour les trier.
     clone: Cloner
     close: Fermer
@@ -738,6 +744,7 @@ fr:
     created_at: Créé à
     created_by: Créé par
     credit: Crédit
+    credit_allowed: Crédit autorisé
     credit_card: Carte de crédit
     credit_cards: Cartes de crédit
     credit_owed: Crédit dû
@@ -790,6 +797,7 @@ fr:
     dont_have_account: Pas de compte?
     edit: Éditer
     edit_address: Modifier l'adresse
+    edit_reimbursement: Modifier le remboursement
     editing_resource: Modification de %{resource}
     editing_rma_reason: Modification du motif RMA
     editing_user: Modifier votre compte
@@ -884,6 +892,7 @@ fr:
     general: Général
     general_settings: réglages généraux
     generate_code: Générer un code promo
+    generate_key: Générer la clé
     get_back_to_the: Revenez à la
     go_to_category: Aller à la catégorie
     go_to_facebook: Aller sur Facebook
@@ -965,6 +974,7 @@ fr:
     items_reimbursed: Articles remboursés
     items_to_be_reimbursed: Articles à rembourser
     join_slack: Rejoignez Slack
+    key: Clé
     label: Étiqueter
     last_name: Nom de famille
     last_name_begins_with: Le nom commence par
@@ -1019,6 +1029,8 @@ fr:
     month: Mois
     more: Suite
     move_stock_between_locations: Déplacer le stock entre les emplacements
+    move_variant_to: Déplacer la variante vers
+    multiple_stores: Plusieurs magasins
     mutable: Mutable
     my_account: Mon compte
     my_orders: Mes commandes
@@ -1087,6 +1099,7 @@ fr:
     no_available_date_set: Aucun jeu de dates disponible
     no_cc_type: N / A
     no_country: Aucun pays défini
+    no_key: Pas de clé
     no_limits_zone: Pas de limites
     no_payment_found: Aucun paiement trouvé
     no_payment_provider_settings_message: Ce fournisseur de paiement n'a pas de paramètres personnalisés disponibles
@@ -1141,6 +1154,7 @@ fr:
     order_canceled: Commande annulée
     order_details: détails de la commande
     order_email_resent: E-mail de commande renvoyé
+    order_has_no_payments: La commande n'a pas de paiements
     order_information: Informations sur la commande
     order_line_items: Articles de campagne de commande
     order_mailer:
@@ -1166,6 +1180,7 @@ fr:
       subtotal: 'Total:'
       total: 'Total de la commande:'
     order_not_found: Nous n'avons pas trouvé votre commande. Veuillez réessayer cette action.
+    order_num: Numéro de commande
     order_number: Commande %{number}
     order_processed_successfully: Votre commande a été traitée avec succès
     order_resumed: Commande reprise
@@ -1201,6 +1216,7 @@ fr:
     path: Chemin
     pay: Payer
     payment: Paiement
+    payment_amount: Montant du paiement
     payment_could_not_be_created: Le paiement n'a pas pu être créé.
     payment_identifier: Identifiant de paiement
     payment_information: Informations de paiement
@@ -1225,6 +1241,7 @@ fr:
     payment_type: Type de paiement
     payment_updated: Paiement mis à jour
     payments: Paiements
+    payments_count: Les paiements comptent
     pdp:
       checkout: Vérifier
       description: Description
@@ -1314,6 +1331,7 @@ fr:
         description: Rend tous les envois pour la commande gratuits
         name: Livraison gratuite
     promotion_actions: Actions
+    promotion_categories: Catégories de promotion
     promotion_category: Catégorie de promotion
     promotion_cloned: La promotion a été clonée
     promotion_form:
@@ -1380,6 +1398,7 @@ fr:
     refund_reasons: Raisons de remboursement
     refunded_amount: Montant remboursé
     refunds: Remboursements
+    regenerate_key: Régénérer la clé
     register: S'inscrire
     registration: Inscription
     reimburse: Rembourser
@@ -1453,6 +1472,7 @@ fr:
     sales_total: Total des ventes
     sales_total_description: Total des ventes pour toutes les commandes
     sales_totals: Totaux des ventes
+    save: Sauvegarder
     save_and_continue: Sauvegarder et continuer
     save_my_address: Sauvegarder mon adresse
     saving: Économie
@@ -1593,6 +1613,7 @@ fr:
     states_required: États requis
     status: Statut
     stock: Stocker
+    stock_item_id: Article en stock
     stock_location: Emplacement du stock
     stock_location_info: Informations sur l'emplacement du stock
     stock_locations: Emplacements des stocks

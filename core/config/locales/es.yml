@@ -390,6 +390,10 @@ es:
   address_book:
     save: Salvar
     successfully_created: Se ha creado correctamente la nueva dirección
+  bill_address: Dirección de factura
+  date:
+    abbr_day_names: Nombres de días abreviados
+    month_names: Nombres de meses
   devise:
     confirmations:
       confirmed: Tu cuenta fue confirmada exitosamente. Ya estás registrado.
@@ -455,6 +459,7 @@ es:
     acceptance_errors: Errores de aceptación
     acceptance_status: Estado de aceptación
     accepted: Aceptado
+    access: Acceso
     account: Cuenta
     account_info: Informacion de cuenta
     account_updated: Cuenta actualizada
@@ -685,6 +690,7 @@ es:
     clear_cache: Limpiar cache
     clear_cache_ok: Caché se vació
     clear_cache_warning: Limpiar la caché reducirá temporalmente el rendimiento de su tienda.
+    clear_key: Clave clara
     click_and_drag_on_the_products_to_sort_them: Haga clic y arrastre sobre los productos para ordenarlos.
     clone: Clon
     close: Cerrar
@@ -738,6 +744,7 @@ es:
     created_at: Creado en
     created_by: Creado por
     credit: Crédito
+    credit_allowed: Crédito permitido
     credit_card: Tarjeta de crédito
     credit_cards: Tarjetas de crédito
     credit_owed: Crédito adeudado
@@ -790,6 +797,7 @@ es:
     dont_have_account: "¿No tienes cuenta?"
     edit: Editar
     edit_address: Editar dirección
+    edit_reimbursement: Editar reembolso
     editing_resource: Editando %{resource}
     editing_rma_reason: Editar motivo de RMA
     editing_user: Edita tu cuenta
@@ -884,6 +892,7 @@ es:
     general: General
     general_settings: Configuración general
     generate_code: Generar código de cupón
+    generate_key: Generar clave
     get_back_to_the: Vuelve al
     go_to_category: Ir a categoría
     go_to_facebook: Ir a Facebook
@@ -965,6 +974,7 @@ es:
     items_reimbursed: Artículos reembolsados
     items_to_be_reimbursed: Elementos a reembolsar
     join_slack: Únete a Slack
+    key: Llave
     label: Etiqueta
     last_name: Apellido
     last_name_begins_with: El apellido comienza con
@@ -1019,6 +1029,8 @@ es:
     month: Mes
     more: Más
     move_stock_between_locations: Mover existencias entre ubicaciones
+    move_variant_to: Mover variante a
+    multiple_stores: Varias tiendas
     mutable: Mudable
     my_account: Mi cuenta
     my_orders: Mis ordenes
@@ -1087,6 +1099,7 @@ es:
     no_available_date_set: No hay fecha disponible
     no_cc_type: N / A
     no_country: Ningún país establecido
+    no_key: No hay llave
     no_limits_zone: Sin limites
     no_payment_found: No se encontró pago
     no_payment_provider_settings_message: Este proveedor de pagos no tiene configuraciones personalizadas disponibles
@@ -1141,6 +1154,7 @@ es:
     order_canceled: Orden cancelada
     order_details: Detalles del pedido
     order_email_resent: Enviar correo electrónico de pedido
+    order_has_no_payments: El pedido no tiene pagos
     order_information: información del pedido
     order_line_items: Artículos de línea de pedido
     order_mailer:
@@ -1166,6 +1180,7 @@ es:
       subtotal: 'Total parcial:'
       total: 'Total del pedido:'
     order_not_found: No pudimos encontrar su pedido. Intente esa acción de nuevo.
+    order_num: Núm. De pedido
     order_number: Orden %{number}
     order_processed_successfully: Su pedido ha sido procesado con éxito.
     order_resumed: Orden reanudada
@@ -1201,6 +1216,7 @@ es:
     path: Camino
     pay: pagar
     payment: Pago
+    payment_amount: Monto del pago
     payment_could_not_be_created: No se pudo crear el pago.
     payment_identifier: Identificador de pago
     payment_information: Información del pago
@@ -1225,6 +1241,7 @@ es:
     payment_type: Tipo de pago
     payment_updated: Pago actualizado
     payments: Pagos
+    payments_count: Los pagos cuentan
     pdp:
       checkout: Revisa
       description: Descripción
@@ -1314,6 +1331,7 @@ es:
         description: Hace que todos los envíos del pedido sean gratuitos
         name: Envío gratis
     promotion_actions: Comportamiento
+    promotion_categories: Categorías de promoción
     promotion_category: Categoría de promoción
     promotion_cloned: La promoción ha sido clonada
     promotion_form:
@@ -1380,6 +1398,7 @@ es:
     refund_reasons: Razones de reembolso
     refunded_amount: Monto reembolsado
     refunds: Reembolsos
+    regenerate_key: Regenerar clave
     register: Registrarse
     registration: Registro
     reimburse: Reembolsar
@@ -1453,6 +1472,7 @@ es:
     sales_total: Total de ventas
     sales_total_description: Total de ventas para todos los pedidos
     sales_totals: Totales de ventas
+    save: Salvar
     save_and_continue: Guardar y continuar
     save_my_address: Guardar mi direccion
     saving: Ahorro
@@ -1593,6 +1613,7 @@ es:
     states_required: Estados requeridos
     status: Estado
     stock: Valores
+    stock_item_id: Artículo de stock
     stock_location: Ubicación de stock
     stock_location_info: Información de ubicación de stock
     stock_locations: Ubicaciones de stock

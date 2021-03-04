@@ -390,6 +390,10 @@ en:
   address_book:
     save: Save
     successfully_created: New address has been successfully created
+  bill_address: Bill address
+  date:
+    abbr_day_names: Abbr day names
+    month_names: Month names
   devise:
     confirmations:
       confirmed: Your account was successfully confirmed. You are now signed in.
@@ -452,6 +456,7 @@ en:
     acceptance_errors: Acceptance errors
     acceptance_status: Acceptance status
     accepted: Accepted
+    access: Access
     account: Account
     account_info: Account info
     account_updated: Account updated
@@ -682,6 +687,7 @@ en:
     clear_cache: Clear Cache
     clear_cache_ok: Cache was flushed
     clear_cache_warning: Clearing cache will temporarily reduce the performance of your store.
+    clear_key: Clear key
     click_and_drag_on_the_products_to_sort_them: Click and drag on the products to sort them.
     clone: Clone
     close: Close
@@ -735,6 +741,7 @@ en:
     created_at: Created At
     created_by: Created By
     credit: Credit
+    credit_allowed: Credit allowed
     credit_card: Credit Card
     credit_cards: Credit Cards
     credit_owed: Credit Owed
@@ -787,6 +794,7 @@ en:
     dont_have_account: No account?
     edit: Edit
     edit_address: Edit address
+    edit_reimbursement: Edit reimbursement
     editing_resource: Editing %{resource}
     editing_rma_reason: Editing RMA Reason
     editing_user: Edit Your account
@@ -881,6 +889,7 @@ en:
     general: General
     general_settings: General Settings
     generate_code: Generate coupon code
+    generate_key: Generate key
     get_back_to_the: Get back to the
     go_to_category: Go to category
     go_to_facebook: Go to facebook
@@ -962,6 +971,7 @@ en:
     items_reimbursed: Items reimbursed
     items_to_be_reimbursed: Items to be reimbursed
     join_slack: Join Slack
+    key: Key
     label: Label
     last_name: Last Name
     last_name_begins_with: Last Name Begins With
@@ -1016,6 +1026,8 @@ en:
     month: Month
     more: More
     move_stock_between_locations: Move Stock Between Locations
+    move_variant_to: Move variant to
+    multiple_stores: Multiple stores
     mutable: Mutable
     my_account: My Account
     my_orders: My Orders
@@ -1084,6 +1096,7 @@ en:
     no_available_date_set: No available date set
     no_cc_type: N/A
     no_country: No country set
+    no_key: No key
     no_limits_zone: No Limits
     no_payment_found: No payment found
     no_payment_provider_settings_message: This payment provider has no custom settings available
@@ -1138,6 +1151,7 @@ en:
     order_canceled: Order canceled
     order_details: Order Details
     order_email_resent: Order Email Resent
+    order_has_no_payments: Order has no payments
     order_information: Order Information
     order_line_items: Order Line Items
     order_mailer:
@@ -1163,6 +1177,7 @@ en:
       subtotal: 'Subtotal:'
       total: 'Order Total:'
     order_not_found: We couldn't find your order. Please try that action again.
+    order_num: Order num
     order_number: Order %{number}
     order_processed_successfully: Your order has been processed successfully
     order_resumed: Order resumed
@@ -1198,6 +1213,7 @@ en:
     path: Path
     pay: pay
     payment: Payment
+    payment_amount: Payment amount
     payment_could_not_be_created: Payment could not be created.
     payment_identifier: Payment Identifier
     payment_information: Payment Information
@@ -1222,6 +1238,7 @@ en:
     payment_type: Payment type
     payment_updated: Payment Updated
     payments: Payments
+    payments_count: Payments count
     pdp:
       checkout: Checkout
       description: Description
@@ -1311,6 +1328,7 @@ en:
         description: Makes all shipments for the order free
         name: Free shipping
     promotion_actions: Actions
+    promotion_categories: Promotion categories
     promotion_category: Promotion Category
     promotion_cloned: Promotion has been cloned
     promotion_form:
@@ -1377,6 +1395,7 @@ en:
     refund_reasons: Refund Reasons
     refunded_amount: Refunded Amount
     refunds: Refunds
+    regenerate_key: Regenerate key
     register: Register
     registration: Registration
     reimburse: Reimburse
@@ -1450,6 +1469,7 @@ en:
     sales_total: Sales Total
     sales_total_description: Sales Total For All Orders
     sales_totals: Sales Totals
+    save: Save
     save_and_continue: Save and Continue
     save_my_address: Save my address
     saving: Saving
@@ -1590,6 +1610,7 @@ en:
     states_required: States Required
     status: Status
     stock: Stock
+    stock_item_id: Stock item
     stock_location: Stock Location
     stock_location_info: Stock location info
     stock_locations: Stock Locations

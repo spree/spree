@@ -390,6 +390,10 @@ zh-TE:
   address_book:
     save: 救
     successfully_created: 新地址已成功创建
+  bill_address: 帐单地址
+  date:
+    abbr_day_names: 缩写日期名称
+    month_names: 月份名称
   devise:
     confirmations:
       confirmed: 您的帐户已成功确认。您现在已登录。
@@ -455,6 +459,7 @@ zh-TE:
     acceptance_errors: 验收错误
     acceptance_status: 接受状态
     accepted: 公认
+    access: 使用权
     account: 帐户
     account_info: 帐户信息
     account_updated: 帐户已更新
@@ -685,6 +690,7 @@ zh-TE:
     clear_cache: 清除缓存
     clear_cache_ok: 缓存已刷新
     clear_cache_warning: 清除缓存会暂时降低商店的性能。
+    clear_key: 清除键
     click_and_drag_on_the_products_to_sort_them: 单击并拖动产品以对其进行排序。
     clone: 克隆
     close: 关闭
@@ -738,6 +744,7 @@ zh-TE:
     created_at: 创建于
     created_by: 由...制作
     credit: 信用
+    credit_allowed: 允许信用
     credit_card: 信用卡
     credit_cards: 信用卡
     credit_owed: 欠债
@@ -790,6 +797,7 @@ zh-TE:
     dont_have_account: 没有账号？
     edit: 编辑
     edit_address: Edit address
+    edit_reimbursement: 编辑报销
     editing_resource: 编辑%{resource}
     editing_rma_reason: 编辑RMA原因
     editing_user: 编辑您的帐户
@@ -884,6 +892,7 @@ zh-TE:
     general: 一般的
     general_settings: 常规设置
     generate_code: 生成优惠券代码
+    generate_key: 产生金钥
     get_back_to_the: 回到
     go_to_category: 转到类别
     go_to_facebook: 去脸书
@@ -965,6 +974,7 @@ zh-TE:
     items_reimbursed: 报销项目
     items_to_be_reimbursed: 需报销的物品
     join_slack: 加入松弛
+    key: 钥匙
     label: Label
     last_name: 姓
     last_name_begins_with: 姓氏开头
@@ -1019,6 +1029,8 @@ zh-TE:
     month: 月
     more: 更多的
     move_stock_between_locations: 在位置之间移动库存
+    move_variant_to: 将变体移至
+    multiple_stores: 多家商店
     mutable: 可变的
     my_account: 我的帐户
     my_orders: 我的订单
@@ -1087,6 +1099,7 @@ zh-TE:
     no_available_date_set: 没有可用的日期
     no_cc_type: 不适用
     no_country: 没有国家设定
+    no_key: 没有钥匙
     no_limits_zone: 无限
     no_payment_found: 找不到付款
     no_payment_provider_settings_message: 该付款提供商没有可用的自定义设置
@@ -1141,6 +1154,7 @@ zh-TE:
     order_canceled: 订单已取消
     order_details: 订单详细信息
     order_email_resent: 订单已重新发送电子邮件
+    order_has_no_payments: 订单没有付款
     order_information: 订单信息
     order_line_items: 订单项
     order_mailer:
@@ -1166,6 +1180,7 @@ zh-TE:
       subtotal: 小计：
       total: 合计订单：
     order_not_found: 我们找不到您的订单。请重试该操作。
+    order_num: 订单号
     order_number: 订单%{number}
     order_processed_successfully: 您的订单已成功处理
     order_resumed: 订单已恢复
@@ -1201,6 +1216,7 @@ zh-TE:
     path: 小路
     pay: 支付
     payment: 支付
+    payment_amount: 支付金额
     payment_could_not_be_created: 无法创建付款。
     payment_identifier: 付款标识符
     payment_information: 支付信息
@@ -1225,6 +1241,7 @@ zh-TE:
     payment_type: 付款方式
     payment_updated: 付款已更新
     payments: 付款方式
+    payments_count: 付款计数
     pdp:
       checkout: 退房
       description: 描述
@@ -1314,6 +1331,7 @@ zh-TE:
         description: 使所有订单的出货都免费
         name: 免运费
     promotion_actions: 动作
+    promotion_categories: 促销类别
     promotion_category: 促销类别
     promotion_cloned: 促销活动已克隆
     promotion_form:
@@ -1380,6 +1398,7 @@ zh-TE:
     refund_reasons: 退款原因
     refunded_amount: 退款金额
     refunds: 退款额
+    regenerate_key: 重新生成密钥
     register: 登记
     registration: 登记
     reimburse: 补偿
@@ -1453,6 +1472,7 @@ zh-TE:
     sales_total: 总销量
     sales_total_description: 所有订单的销售总额
     sales_totals: 销售总额
+    save: 救
     save_and_continue: 保存并继续
     save_my_address: 保存我的地址
     saving: 保存
@@ -1593,6 +1613,7 @@ zh-TE:
     states_required: 要求的国家
     status: 状态
     stock: 库存
+    stock_item_id: 库存项目
     stock_location: 库存位置
     stock_location_info: 库存位置信息
     stock_locations: 库存地点

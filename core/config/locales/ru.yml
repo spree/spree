@@ -390,6 +390,10 @@ ru:
   address_book:
     save: Сохранять
     successfully_created: Новый адрес успешно создан
+  bill_address: Адрес счета
+  date:
+    abbr_day_names: Сокращенные названия дней
+    month_names: Названия месяцев
   devise:
     confirmations:
       confirmed: Ваша учетная запись была успешно подтверждена. Вы вошли в систему.
@@ -455,6 +459,7 @@ ru:
     acceptance_errors: Ошибки приема
     acceptance_status: Статус приема
     accepted: Принято
+    access: Доступ
     account: Счет
     account_info: Информация об аккаунте
     account_updated: Аккаунт обновлен
@@ -685,6 +690,7 @@ ru:
     clear_cache: Очистить кэш
     clear_cache_ok: Кеш был очищен
     clear_cache_warning: Очистка кеша временно снизит производительность вашего магазина.
+    clear_key: Очистить ключ
     click_and_drag_on_the_products_to_sort_them: Щелкните и перетащите продукты, чтобы отсортировать их.
     clone: Клонировать
     close: Закрывать
@@ -738,6 +744,7 @@ ru:
     created_at: Создано на
     created_by: Сделано
     credit: Кредит
+    credit_allowed: Кредит разрешен
     credit_card: Кредитная карта
     credit_cards: Кредитные карты
     credit_owed: Кредит причитается
@@ -790,6 +797,7 @@ ru:
     dont_have_account: Нет аккаунта?
     edit: Редактировать
     edit_address: Изменить адрес
+    edit_reimbursement: Изменить возмещение
     editing_resource: Редактирование %{resource}
     editing_rma_reason: Редактирование причины RMA
     editing_user: Редактировать Ваш аккаунт
@@ -884,6 +892,7 @@ ru:
     general: Общий
     general_settings: общие настройки
     generate_code: Создать код купона
+    generate_key: Сгенерировать ключ
     get_back_to_the: Вернуться к
     go_to_category: Перейти в категорию
     go_to_facebook: Перейти к Facebook
@@ -965,6 +974,7 @@ ru:
     items_reimbursed: Пункты возмещены
     items_to_be_reimbursed: Пункты, подлежащие возмещению
     join_slack: Присоединяйтесь к Slack
+    key: Ключ
     label: Этикетка
     last_name: Фамилия
     last_name_begins_with: Фамилия начинается с
@@ -1019,6 +1029,8 @@ ru:
     month: Месяц
     more: Более
     move_stock_between_locations: Перемещение запаса между локациями
+    move_variant_to: Переместить вариант в
+    multiple_stores: Несколько магазинов
     mutable: Мутабельный
     my_account: Мой счет
     my_orders: мои заказы
@@ -1087,6 +1099,7 @@ ru:
     no_available_date_set: Дата недоступна
     no_cc_type: N / A
     no_country: Страна не указана
+    no_key: Нет ключа
     no_limits_zone: Без ограничений
     no_payment_found: Платеж не найден
     no_payment_provider_settings_message: У этого поставщика платежей нет доступных пользовательских настроек
@@ -1141,6 +1154,7 @@ ru:
     order_canceled: Заказ отменен
     order_details: Информация для заказа
     order_email_resent: Отправить электронное письмо с заказом повторно
+    order_has_no_payments: По заказу нет платежей
     order_information: запросить информацию
     order_line_items: Позиции заказа
     order_mailer:
@@ -1166,6 +1180,7 @@ ru:
       subtotal: 'Промежуточный итог:'
       total: 'Весь заказ:'
     order_not_found: Мы не смогли найти ваш заказ. Пожалуйста, попробуйте это действие еще раз.
+    order_num: Номер заказа
     order_number: Заказать %{number}
     order_processed_successfully: Ваш заказ был успешно обработан
     order_resumed: Заказ возобновлен
@@ -1201,6 +1216,7 @@ ru:
     path: Дорожка
     pay: платить
     payment: Оплата
+    payment_amount: Сумма к оплате
     payment_could_not_be_created: Платеж не может быть создан.
     payment_identifier: Идентификатор платежа
     payment_information: Платежная информация
@@ -1225,6 +1241,7 @@ ru:
     payment_type: Способ оплаты
     payment_updated: Платеж обновлен
     payments: Платежи
+    payments_count: Количество платежей
     pdp:
       checkout: Проверить
       description: Описание
@@ -1314,6 +1331,7 @@ ru:
         description: Делает все отгрузки по заказу бесплатными
         name: Бесплатная доставка
     promotion_actions: Действия
+    promotion_categories: Категории продвижения
     promotion_category: Категория продвижения
     promotion_cloned: Рекламная акция была клонирована
     promotion_form:
@@ -1380,6 +1398,7 @@ ru:
     refund_reasons: Причины возврата
     refunded_amount: Возвращенная сумма
     refunds: Возврат
+    regenerate_key: Восстановить ключ
     register: регистр
     registration: Постановка на учет
     reimburse: Возместить
@@ -1453,6 +1472,7 @@ ru:
     sales_total: Всего продаж
     sales_total_description: Итого по продажам по всем заказам
     sales_totals: Итого по продажам
+    save: Сохранять
     save_and_continue: Сохранить и продолжить
     save_my_address: Сохранить мой адрес
     saving: Экономия
@@ -1593,6 +1613,7 @@ ru:
     states_required: Необходимые состояния
     status: Положение дел
     stock: Акции
+    stock_item_id: Товар на складе
     stock_location: Расположение на складе
     stock_location_info: Информация о местонахождении склада
     stock_locations: Места на складе
