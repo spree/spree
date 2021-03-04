@@ -53,10 +53,10 @@ data:
 # Find translate calls
 search:
   ## Paths or `File.find` patterns to search in:
-  # paths:
-  #  - app/
+  paths:
+    - '../frontend/app/views'
 
-  ## Root directories for relative keys resolution.
+  # ## Root directories for relative keys resolution.
   # relative_roots:
   #   - app/controllers
   #   - app/helpers
@@ -87,12 +87,14 @@ translation:
   google_translate_api_key: ""
 
 ## Do not consider these keys missing:
-# ignore_missing:
-# - 'errors.messages.{accepted,blank,invalid,too_short,too_long}'
-# - '{devise,simple_form}.*'
+ignore_missing:
+  - 'spree.date_picker.*'
+  - 'views.pagination.truncate'
+  - 'number.currency.format.separator'
+  - 'activerecord.models.spree/address'
 
 ## Consider these keys used:
-# ignore_unused:
+ignore_unused:
 # - 'activerecord.attributes.*'
 # - '{devise,kaminari,will_paginate}.*'
 # - 'simple_form.{yes,no}'
@@ -124,4 +126,4 @@ translation:
 #
 # The PatternMapper can also match key literals via a special %{key} interpolation, e.g.:
 #
-#"<%# I18n::Tasks.add_scanner 'I18n::Tasks::Scanners::PatternMapper', patterns: [['\bSpree\.t[( ]\s*%{key}', 'spree.%{key}']] %>"
+<% I18n::Tasks.add_scanner 'I18n::Tasks::Scanners::PatternMapper', patterns: [['\bSpree\.t[( ]\s*%{key}', 'spree.%{key}']] %>
