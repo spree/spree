@@ -32,7 +32,7 @@ To create a new product based on the new prototype, click "Products" from the Ad
 
 ![Product From Prototype](../../../images/user/products/product_from_prototype.jpg)
 
-When you do so, the Spree system shows you values for both of the Option Types you entered, so that it can automatically create [Product Variants](/user/products/creating_products.html#understanding-variants) for you for each of them.
+When you do so, the Spree system shows you values for both of the Option Types you entered, so that it can automatically create [Product Variants](/user/products/creating_products.html#understanding-variants) for each of them.
 
 Let's create the Product and all Variants for the fictional "Hinkledink Picture Frame" product. Input the product's Name, SKU, and Master Price (remember, you can change this for each variant). Make sure to set the Available On date to today so it will show up in your store. Check the boxes for the options this particular product has and click "Create".
 
