@@ -66,6 +66,19 @@ search:
     - '../backend/app/models'
     - '../backend/app/views'
 
+    # Core
+    - '../core/app/controllers'
+    - '../core/app/finders'
+    - '../core/app/helpers'
+    - '../core/app/mailers'
+    - '../core/app/models'
+    - '../core/app/pagnators'
+    - '../core/app/presenters'
+    - '../core/app/services'
+    - '../core/app/sorters'
+    - '../core/app/validators'
+    - '../core/app/views'
+
 
   # ## Root directories for relative keys resolution.
   # relative_roots:
@@ -109,11 +122,9 @@ ignore_missing:
 
 ## Consider these keys used:
 ignore_unused:
-# - 'activerecord.attributes.*'
-# - '{devise,kaminari,will_paginate}.*'
-# - 'simple_form.{yes,no}'
-# - 'simple_form.{placeholders,hints,labels}.*'
-# - 'simple_form.{error_notification,required}.:'
+  - 'spree.date_picker.*'
+  - 'spree.fpr_human_friendly_date_format'
+  - 'spree.fpr_human_friendly_date_time_format'
 
 ## Exclude these keys from the `i18n-tasks eq-base' report:
 # ignore_eq_base:

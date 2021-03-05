@@ -12,10 +12,17 @@ SPREE_GEMS = %w(core api cmd backend frontend sample).freeze
 task default: :test
 
 namespace :i18n do
-  desc "Give a health report pertaining to the locale files in core/config/locales"
+  desc "Gives a health report pertaining to the locale files in core/config/locales"
   task :health_check do
     Dir.chdir("#{File.dirname(__FILE__)}/core") do
       sh "i18n-tasks health"
+    end
+  end
+
+  desc "Lists all unused locales in en.yml"
+  task :unused do
+    Dir.chdir("#{File.dirname(__FILE__)}/core") do
+      sh "i18n-tasks unused --locales en"
     end
   end
 
