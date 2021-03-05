@@ -5,7 +5,7 @@ order: 2
 
 ## Introduction
 
-Your Spree store allows you to make decisions about in which parts of the world you will sell products, and how those areas are grouped into geographical regions for the convenience of setting [shipping](/user/shipments/) and [taxation](/user/configuration/configuring_taxes.html) policies. This is accomplished through the use of zones, countries, and states.
+Your Spree store allows you to decide in which parts of the world to sell products, and how to group different areas into geographical regions so that you may conveniently set [shipping](/user/shipments/) and [taxation](/user/configuration/configuring_taxes.html) policies. This is accomplished through the use of zones, countries, and states.
 
 ## Zones
 
