@@ -4,7 +4,7 @@ title: Shipping Categories
 
 ## Shipping Categories
 
-Shipping Categories are used to address special shipping needs for one or more of your products. The most common use for shipping categories is when certain products cannot be shipped in the same box. This is often due to a size or material constraints.
+Shipping Categories are used to address special shipping needs for one or more of your products. The most common use for shipping categories is when certain products cannot be shipped in the same box. This is often due to size or material constraints.
 
 For example, if a customer purchases a jump rope and a treadmill from an online exercise equipment store, the treadmill would be considered an over-sized item by most shipping carriers and would require special shipping arrangements. The jump rope could be sent via standard shipping.
 
@@ -20,7 +20,7 @@ To create a new shipping category, go to the Admin Interface, click the "Configu
 
 ### Adding a Shipping Category to a Product
 
-Once you've created your shipping categories you can assign the appropriate category to each of your products. To associate a shipping category with a product, go to the Admin Interface and click the "Products" tab; then click on the product that you would like to edit from the list that appears.
+Once you've created your shipping categories, you can assign the appropriate category to each of your products. To associate a shipping category with a product, go to the Admin Interface and click the "Products" tab; then click on the product that you would like to edit from the list that appears.
 
 Once you are in edit mode for the product, select the shipping category you want to assign to the product from the "Shipping Categories" drop-down menu, and click "Update".
 
