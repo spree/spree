@@ -44,8 +44,8 @@
 
 Spree.routes.api_tokens = Spree.pathFor('api_tokens')
 Spree.routes.ensure_cart = Spree.pathFor('ensure_cart')
-Spree.routes.api_v2_storefront_cart_apply_coupon_code = Spree.pathFor('api/v2/storefront/cart/apply_coupon_code')
-Spree.routes.api_v2_storefront_cart_remove_coupon_code = Spree.pathFor('api/v2/storefront/cart/remove_coupon_code')
+Spree.routes.api_v2_storefront_cart_apply_coupon_code = Spree.localizedPathFor('api/v2/storefront/cart/apply_coupon_code')
+Spree.routes.api_v2_storefront_cart_remove_coupon_code = function(couponCode) { return Spree.localizedPathFor('api/v2/storefront/cart/remove_coupon_code/' + couponCode) }
 Spree.routes.product = function(id) { return Spree.localizedPathFor('products/' + id) }
 Spree.routes.product_related = function(id) { return Spree.localizedPathFor('products/' + id + '/related') }
 Spree.routes.product_carousel = function (taxonId) { return Spree.localizedPathFor('product_carousel/' + taxonId) }
