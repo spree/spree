@@ -1,3 +1,6 @@
+# THIS FILE CONTAINS LOCALIZATION KEYS : date and number formats, number precisions,
+# number separators and all non-textual values depending on the language.
+# These values must not reach a translator, so they are separated in this file.
 ---
 en:
   number:
