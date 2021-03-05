@@ -1,0 +1,18 @@
+en:
+  number:
+    percentage:
+      format:
+        precision: 1
+  pagination:
+    first: "&laquo;"
+    last: "&raquo;"
+    next: "&rsaquo;"
+    previous: "&lsaquo;"
+    truncate: "&hellip;"
+  spree:
+    at_symbol: "@"
+    date_picker:
+      fpr_human_friendly_date_format: M j, Y
+      fpr_human_friendly_date_time_format: M j, Y at H:i
+    i18n:
+      this_file_language: English (en)

@@ -436,16 +436,6 @@ en:
       not_saved:
         one: '1 error prohibited this %{resource} from being saved:'
         other: "%{count} errors prohibited this %{resource} from being saved:"
-  number:
-    percentage:
-      format:
-        precision: 1
-  pagination:
-    first: "&laquo;"
-    last: "&raquo;"
-    next: "&rsaquo;"
-    previous: "&lsaquo;"
-    truncate: "&hellip;"
   spree:
     abbreviation: Abbreviation
     accept: Accept
@@ -589,7 +579,6 @@ en:
     are_you_sure: Are you sure?
     are_you_sure_delete: Are you sure you want to delete this record?
     associated_adjustment_closed: The associated adjustment is closed, and will not be recalculated. Do you want to open it?
-    at_symbol: "@"
     authorization_failure: Authorization Failure
     authorized: Authorized
     auto_capture: Auto Capture
@@ -756,9 +745,6 @@ en:
     cvv_response: CVV Response
     date: Date
     date_completed: Date Completed
-    date_picker:
-      fpr_human_friendly_date_format: M j, Y
-      fpr_human_friendly_date_time_format: M j, Y at H:i
     date_range: Date Range
     default: Default
     default_country_cannot_be_deleted: Default country cannot be deleted
@@ -906,7 +892,6 @@ en:
       select_locale: Select locale
       show_only: Show only
       supported_locales: Supported Locales
-      this_file_language: English (US)
       translations: Translations
     icon: Icon
     image: Image
@@ -1139,7 +1124,7 @@ en:
     order_mailer:
       cancel_email:
         dear_customer: Dear %{name},
-        instructions: Your order has been CANCELED.  Please retain this cancellation information for your records.
+        instructions: Your order has been CANCELED. Please retain this cancellation information for your records.
         order_summary_canceled: Order %{number} Summary [CANCELED]
         subject: Cancellation of Order
         thanks: Thank you for your business.
