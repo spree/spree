@@ -59,7 +59,7 @@ To create a new stock transfer, go to your Admin Interface, click "Configuration
 
 ![New Stock Transfer](../../../images/user/config/new_stock_transfer.jpg)
 
-You can enter an optional Reference Number which can correlate to a PO number, a transfer request number, a tracking number, or any other identifier you wish to use.
+You can enter an optional Reference Number that can correlate to a PO number, a transfer request number, a tracking number, or any other identifier you wish to use.
 
 Next, select your Source and Destination stock locations. If you are receiving stock from a supplier, check the "Receive Stock" checkbox and the "Source" drop-down box will be hidden.
 
