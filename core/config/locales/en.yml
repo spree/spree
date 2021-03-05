@@ -451,7 +451,6 @@ en:
     abbreviation: Abbreviation
     accept: Accept
     acceptance_errors: Acceptance errors
-    acceptance_status: Acceptance status
     accepted: Accepted
     access: Access
     account: Account
@@ -470,32 +469,24 @@ en:
       refund: Refund
       save: Save
       update: Update
-    activate: Activate
     active: Active
     add: Add
     add_action_of_type: Add action of type
-    add_country: Add Country
     add_coupon_code: Add Coupon Code
     add_new_address: Add new address
     add_new_credit_card: Add a new card
-    add_new_header: Add New Header
-    add_new_style: Add New Style
     add_one: Add One
     add_option_value: Add Option Value
     add_product: Add Product
     add_product_properties: Add Product Properties
     add_rule_of_type: Add rule of type
-    add_state: Add State
     add_stock: Add Stock
     add_store: New Store
     add_store_credit: Add Store Credit
     add_to_cart: Add To Cart
     add_variant: Add Variant
     added_to_cart: Added to cart successfully!
-    additional_item: Additional Item
     address: Address
-    address1: Address
-    address2: Address (contd.)
     address_action_popup:
       delete_button: yes, delete
       delete_text: Do you really want <br /> to delete this address?
@@ -522,13 +513,10 @@ en:
     addresses: Addresses
     adjustable: Adjustable
     adjustment: Adjustment
-    adjustment_amount: Amount
     adjustment_labels:
       tax_rates:
         excluding_tax: "%{name}%{amount}"
         including_tax: "%{name}%{amount} (Included in Price)"
-    adjustment_successfully_closed: Adjustment has been successfully closed!
-    adjustment_successfully_opened: Adjustment has been successfully opened!
     adjustment_total: Adjustment Total
     adjustments: Adjustments
     admin:
@@ -538,26 +526,6 @@ en:
           cancel: cancel
           resend: Resend
           resume: resume
-      orders:
-        cart: Cart
-      return_authorization:
-        product: Product
-      tab:
-        configuration: Configuration
-        customer_returns: Customer Returns
-        option_types: Option Types
-        orders: Orders
-        overview: Overview
-        products: Products
-        promotion_categories: Promotion Categories
-        promotions: Promotions
-        properties: Properties
-        prototypes: Prototypes
-        reports: Reports
-        return_authorizations: Return Authorizations
-        taxonomies: Taxonomies
-        taxons: Taxons
-        users: Users
       user:
         account: Account
         addresses: Addresses
@@ -566,22 +534,16 @@ en:
         items_purchased: Items Purchased
         no_store_credit: User has no Store Credit available.
         order_history: Order History
-        order_num: 'Order #'
         orders: Orders
         store_credits: Store Credits
         stores: Stores
-        user_information: User Information
     administration: Administration
     advertise: Advertise
-    agree_to_privacy_policy: Agree to Privacy Policy
-    agree_to_terms_of_service: Agree to Terms of Service
     all: All
     all_adjustments_closed: All adjustments successfully closed!
     all_adjustments_opened: All adjustments successfully opened!
-    all_departments: All departments
     all_items_have_been_returned: All items have been returned
     all_rights_reserved: All rights reserved
-    already_have_account: Already have an account?
     alt_text: Alternative Text
     alternative_phone: Alternative Phone
     amount: Amount
@@ -589,14 +551,11 @@ en:
     api:
       key_cleared: Key cleared
       key_generated: Key generated
-    approve: approve
     approved_at: Approved at
     approver: Approver
     are_you_sure: Are you sure?
     are_you_sure_delete: Are you sure you want to delete this record?
-    associated_adjustment_closed: The associated adjustment is closed, and will not be recalculated. Do you want to open it?
     at_symbol: "@"
-    authorization_failure: Authorization Failure
     authorized: Authorized
     auto_capture: Auto Capture
     availability: availability
@@ -605,16 +564,10 @@ en:
     average_order_value: Average Order Value
     avs_response: AVS Response
     back: Back
-    back_end: Backend
-    back_to_payment: Back To Payment
     back_to_resource_list: Back To %{resource} List
-    back_to_rma_reason_list: Back To RMA Reason List
     back_to_store: Back to Store
-    back_to_users_list: Back To Users List
     backorderable: Backorderable
     backorderable_default: Backorderable default
-    backordered: Backordered
-    backordered_confirm_info: Selected item is backordered so expect delays. Are you sure you want to order it?
     backordered_info: Backordered
     backorders_allowed: backorders allowed
     balance_due: Balance Due
@@ -622,9 +575,7 @@ en:
     base_percent: Base Percent
     basic_information: Basic Information
     bill_address: Bill Address
-    billing: Billing
     billing_address: Billing Address
-    both: Both
     breadcrumbs: Breadcrumbs
     calculated_reimbursements: Calculated Reimbursements
     calculator: Calculator
@@ -640,8 +591,6 @@ en:
     cannot_empty_completed_order: Order has already been processed so it cannot be emptied
     cannot_perform_operation: Cannot perform requested operation
     cannot_return_more_than_bought_quantity: Cannot return more than bought quantity.
-    cannot_set_shipping_method_without_address: Cannot set shipping method until customer details are provided.
-    capture: Capture
     capture_events: Capture events
     card_code: Card Varification Code (CVC)
     card_number: Card Number
@@ -658,47 +607,29 @@ en:
       quantity: quantity
       remove_from_cart: Remove from cart
       title: Shopping Cart
-    cart_subtotal:
-      one: Subtotal (1 item)
-      other: Subtotal (%{count} items)
-    categories: Categories
     category: Category
-    category_nav_bar:
-      get_up_to_30_percent_off: GET UP TO 30% OFF
-      jackets_and_coats: JACKET & COASTS
-      new_collection: NEW COLLECTION
-      special_offers: SPECIAL OFFERS
     channel: Channel
     charged: Charged
-    checkout: Checkout
     checkout_page:
       back_to_cart: back to the cart
       checkout_navigation: Checkout navigation
       delivery_method: delivery method
       header: Checkout
       main_navigation: Main navigation
-      product: Product
     choose_a_customer: Choose a customer
-    choose_a_taxon_to_sort_products_for: Choose a taxon to sort products for
     choose_currency: Choose Currency
-    choose_dashboard_locale: Choose Dashboard Locale
     choose_location: Choose location
     city: City
     clear_cache: Clear Cache
-    clear_cache_ok: Cache was flushed
     clear_cache_warning: Clearing cache will temporarily reduce the performance of your store.
     clear_key: Clear key
-    click_and_drag_on_the_products_to_sort_them: Click and drag on the products to sort them.
     clone: Clone
     close: Close
     close_all_adjustments: Close All Adjustments
     code: Code
     company: Company
     compare_at_price: Compare at price
-    complete: complete
-    configuration: Configuration
     configurations: Configurations
-    confirm: Confirm
     confirm_delete: Confirm Deletion
     confirm_password: Password Confirmation
     contact_phone: Contact phone
@@ -708,49 +639,29 @@ en:
     continue_shopping: Continue shopping
     cost_currency: Cost Currency
     cost_price: Cost Price
-    could_not_create_customer_return: Could not create customer return
     could_not_create_stock_movement: There was a problem saving this stock movement. Please try again.
     count_on_hand: Count On Hand
     countries: Countries
     country: Country
     country_based: Country Based
     country_name: Name
-    country_names:
-      CA: Canada
-      FRA: France
-      ITA: Italy
-      US: United States of America
     country_rule:
       label: Choose must be shipped to this country
-    coupon: Coupon
     coupon_code: Coupon code
-    coupon_code_already_applied: The coupon code has already been applied to this order
     coupon_code_applied: The coupon code was successfully applied to your order.
-    coupon_code_apply: Apply
-    coupon_code_better_exists: The previously applied coupon code results in a better deal
-    coupon_code_expired: The coupon code is expired
-    coupon_code_max_usage: Coupon code usage limit exceeded
-    coupon_code_not_eligible: This coupon code is not eligible for this order
-    coupon_code_not_found: The coupon code you entered doesn't exist. Please try again.
     coupon_code_removed: The coupon code was successfully removed from your order.
-    coupon_code_unknown_error: This coupon code could not be applied to the cart at this time.
     create: Create
-    create_a_new_account: Create a new account
     create_new_order: Create new order
     create_reimbursement: Create reimbursement
     created_at: Created At
     created_by: Created By
-    credit: Credit
     credit_allowed: Credit allowed
     credit_card: Credit Card
-    credit_cards: Credit Cards
     credit_owed: Credit Owed
     credited: Credited
     credits: Credits
-    currencies: Currencies
     currency: Currency
     currency_settings: Currency Settings
-    current: Current
     current_promotion_usage: 'current usage: %{count}'
     customer: Customer
     customer_details: Customer Details
@@ -775,9 +686,7 @@ en:
     default_tax: Default Tax
     default_tax_zone: Default Tax Zone
     delete: Delete
-    delete_from_taxon: Delete From Taxon
     deleted: Deleted
-    delivery: Delivery
     delivery_information: Delivery Information
     depth: Depth
     description: Description
@@ -787,8 +696,6 @@ en:
     discontinue_on: Discontinue On
     discontinued: Discontinued
     discontinued_variants_present: Some line items in this order have products that are no longer available.
-    discount_amount: Discount Amount
-    dismiss_banner: No. Thanks! I'm not interested, do not display this message again
     display: Display
     doesnt_track_inventory: It doesn't track inventory
     dont_have_account: No account?
@@ -796,7 +703,6 @@ en:
     edit_address: Edit address
     edit_reimbursement: Edit reimbursement
     editing_resource: Editing %{resource}
-    editing_rma_reason: Editing RMA Reason
     editing_user: Edit Your account
     eligibility_errors:
       messages:
@@ -815,9 +721,6 @@ en:
         not_first_order: This coupon code can only be applied to your first order.
     email: Email
     empty: Empty
-    empty_cart: Empty Cart
-    enable_mail_delivery: Enable Mail Delivery
-    end: End
     ending_at: Ending at
     ending_in: Ending in
     ends_at: Ends at
@@ -828,7 +731,6 @@ en:
         blank: can't be blank
         cannot_remove_icon: Cannot remove image
         could_not_create_taxon: Could not create taxon
-        no_shipping_methods_available: No shipping methods available for selected location, please change your address and try again.
       services:
         get_shipping_rates:
           no_line_items: To generate Shipping Rates you need to add some Line Items to Order
@@ -836,7 +738,6 @@ en:
     errors_prohibited_this_record_from_being_saved:
       one: 1 error prohibited this record from being saved
       other: "%{count} errors prohibited this record from being saved"
-    event: Event
     events:
       spree:
         cart:
@@ -850,15 +751,10 @@ en:
         page_view: Static page viewed
         user:
           signup: User signup
-    exceptions:
-      count_on_hand_setter: Cannot set count_on_hand manually, as it is set automatically by the recalculate_count_on_hand callback. Please use `update_column(:count_on_hand, value)` instead.
     exchange_for: Exchange for
-    excl: excl.
     existing_shipments: Existing shipments
     expedited_exchanges_warning: Any specified exchanges will ship to the customer immediately upon saving. The customer will be charged the full amount of the item if they do not return the original item within %{days_window} days.
     expiration: Expiration
-    expiration_date: Expiration Date
-    extension: Extension
     extensions_directory: Extensions Directory
     facebook: Facebook
     failed_payment_attempts: Failed Payment Attempts
@@ -867,13 +763,9 @@ en:
     filter: Filter
     filter_results: Filter Results
     filterable: Filterable
-    finalize: Finalize
-    finalized: Finalized
     find_a_taxon: Find a Taxon
-    first_item: First Item
     first_name: First Name
     first_name_begins_with: First Name Begins With
-    firstname: First Name
     flat_percent: Flat Percent
     flat_rate_per_order: Flat Rate
     flexible_rate: Flexible Rate
@@ -881,23 +773,13 @@ en:
     footer: Footer
     forgot_password: Forgot password?
     free: Free
-    free_shipping: Free Shipping
-    free_shipping_amount: "-"
-    front_end: Front End
-    gateway: Gateway
     gateway_error: Gateway Error
-    general: General
     general_settings: General Settings
     generate_code: Generate coupon code
     generate_key: Generate key
     get_back_to_the: Get back to the
     go_to_category: Go to category
-    go_to_facebook: Go to facebook
-    go_to_homepage: Go to Home Page
-    go_to_instagram: Go to instagram
-    go_to_twitter: Go to twitter
     guest_checkout: Guest Checkout
-    guest_user_account: Checkout as a Guest
     has_no_shipped_units: has no shipped units
     header_banner: Header banner
     height: Height
@@ -919,29 +801,19 @@ en:
       supported_locales: Supported Locales
       this_file_language: English (en)
       translations: Translations
-    icon: Icon
     id: Id
-    image: Image
     images: Images
     implement_eligible_for_return: 'Must implement #eligible_for_return? for your EligibilityValidator.'
     implement_requires_manual_intervention: 'Must implement #requires_manual_intervention? for your EligibilityValidator.'
     in_stock: In Stock
-    inactive: Inactive
-    incl: incl.
     included_in_price: Included in Price
-    included_price_validation: cannot be selected unless you have set a Default Tax Zone
     incomplete: Incomplete
     info_number_of_skus_not_shown:
       one: and one other
       other: and %{count} others
     info_product_has_multiple_skus: 'This product has %{count} variants:'
     instagram: Instagram
-    instructions_to_reset_password: Please enter your email on the form below
-    insufficient_stock: Insufficient stock available, only %{on_hand} remaining
-    insufficient_stock_item_quantity: Insufficient stock quantity available
     insufficient_stock_lines_present: Some line items in this order have insufficient quantity.
-    intercept_email_address: Intercept Email Address
-    intercept_email_instructions: Override email recipient and replace with this address.
     internal_name: Internal Name
     internationalization: Internationalization
     invalid_credit_card: Invalid credit card.
@@ -949,16 +821,11 @@ en:
     invalid_payment_provider: Invalid payment provider.
     invalid_promotion_action: Invalid promotion action.
     invalid_promotion_rule: Invalid promotion rule.
-    inventory: Inventory
-    inventory_adjustment: Inventory Adjustment
     inventory_error_flash_for_insufficient_quantity: An item in your cart has become unavailable.
-    inventory_state: Inventory State
-    is_not_available_to_shipment_address: is not available to shipment address
     iso: ISO Alpha-2
     iso3: ISO Alpha-3
     iso_name: ISO Name
     issued_on: Issued On
-    item: Item
     item_description: Item Description
     item_total: Item Total
     item_total_rule:
@@ -976,29 +843,16 @@ en:
     label: Label
     last_name: Last Name
     last_name_begins_with: Last Name Begins With
-    lastname: Last Name
-    learn_more: Learn More
     lifetime_stats: Lifetime Stats
     limit_usage_to: Limit usage to
     line_item_adjustments: Line item adjustments
-    list: List
     loading: Loading
     loading_tree: Loading tree. Please wait…
-    locale_changed: Locale Changed
     location: Location
-    lock: Lock
     log_entries: Log Entries
-    log_in: Log in
     log_in_to_continue: Log in to continue
-    logged_in_as: Logged in as
-    logged_in_succesfully: Logged in successfully
-    logged_out: You have been logged out.
     login: Login
-    login_as_existing: Login as Existing Customer
-    login_failed: Login authentication failed.
-    login_name: Login
     logo: Logo
-    logo_alt: Brand logo
     logout: Logout
     logs: Logs
     look_for_similar_items: Look for similar items
@@ -1006,7 +860,6 @@ en:
     mailer_logo: Mailer logo (JPG or PNG images only)
     make_refund: Make refund
     make_sure_the_above_reimbursement_amount_is_correct: Make sure the above reimbursement amount is correct
-    manage_promotion_categories: Manage Promotion Categories
     manage_variants: Manage Variants
     manual_intervention_required: Manual intervention required
     master: Master
@@ -1015,16 +868,12 @@ en:
     match_choices:
       all: All
       none: None
-    max_items: Max Items
     member_since: Member Since
     memo: Memo
     meta_description: Meta Description
     meta_keywords: Meta Keywords
     meta_title: Meta Title
-    metadata: Metadata
-    minimal_amount: Minimal Amount
     missing_return_authorization: Missing Return Authorization for %{item_name}.
-    month: Month
     more: More
     move_stock_between_locations: Move Stock Between Locations
     move_variant_to: Move variant to
@@ -1037,29 +886,20 @@ en:
     name_or_sku: Name or SKU (enter at least first 3 characters of product name)
     nav_bar:
       admin_panel: Admin Panel
-      change_country: Change country
-      close_menu: Close menu
       desktop: Desktop navigation
       go_to_previous_menu: Go to previous menu
-      log_in: LOG IN
-      log_out: LOG OUT
       mobile: Mobile navigation
       my_account: MY ACCOUNT
-      my_orders: MY ORDERS
       show_menu: Show menu
       show_search: Show search
       show_user_menu: Show user menu
-      sign_up: SIGN UP
-    new: New
     new_address: New address
     new_adjustment: New Adjustment
     new_country: New Country
-    new_customer: Create new account
     new_customer_return: New Customer Return
     new_image: New Image
     new_option_type: New Option Type
     new_order: New Order
-    new_order_completed: New Order Completed
     new_order_notifications_email: New Order Notifications Email
     new_payment: New Payment
     new_payment_method: New Payment Method
@@ -1081,19 +921,16 @@ en:
     new_stock_location: New Stock Location
     new_stock_movement: New Stock Movement
     new_stock_transfer: New Stock Transfer
-    new_store_credit: New Store Credit
     new_store_credit_category: New Store Credit Category
     new_tax_category: New Tax Category
     new_tax_rate: New Tax Rate
     new_taxon: New Taxon
     new_taxonomy: New Taxonomy
-    new_tracker: New Tracker
     new_user: New User
     new_variant: New Variant
     new_zone: New Zone
     next: Next
     no_actions_added: No actions added
-    no_address_given: No address given
     no_available_date_set: No available date set
     no_cc_type: N/A
     no_country: No country set
@@ -1101,25 +938,18 @@ en:
     no_limits_zone: No Limits
     no_payment_found: No payment found
     no_payment_provider_settings_message: This payment provider has no custom settings available
-    no_pending_payments: No pending payments
     no_product_available:
       for_this_quantity: Sorry, it looks like some products are not available in selected quantity.
       opps: Oops!
-    no_products_found: No products found
     no_resource_found: No %{resource} found
     no_results: No results
-    no_returns_found: No returns found
     no_rules_added: No rules added
     no_shipping_method_selected: No shipping method selected.
     no_state_changes: No state changes yet.
     no_tracking_present: No tracking details provided.
     none: None
-    none_selected: None Selected
-    normal_amount: Normal Amount
     not: not
     not_available: N/A
-    not_enough_stock: There is not enough inventory at the source location to complete this transfer.
-    not_found: "%{resource} is not found"
     note: Note
     notice_messages:
       icon_removed: Image has been successfully removed
@@ -1133,27 +963,20 @@ en:
     num_orders: "# Orders"
     number: Number
     ok: OK
-    on_hand: On Hand
-    open: Open
     open_all_adjustments: Open All Adjustments
-    option_type: Option Type
     option_type_placeholder: Choose an option type
     option_types: Option Types
-    option_value: Option Value
     option_values: Option Values
     optional: Optional
     options: Options
     or: or
-    or_over_price: "%{price} or over"
     order: Order
     order_adjustments: Order adjustments
     order_already_updated: The order has already been updated.
     order_approved: Order approved
     order_canceled: Order canceled
-    order_details: Order Details
     order_email_resent: Order Email Resent
     order_has_no_payments: Order has no payments
-    order_information: Order Information
     order_line_items: Order Line Items
     order_mailer:
       cancel_email:
@@ -1180,7 +1003,6 @@ en:
     order_not_found: We couldn't find your order. Please try that action again.
     order_num: Order num
     order_number: Order %{number}
-    order_processed_successfully: Your order has been processed successfully
     order_resumed: Order resumed
     order_state:
       address: address
@@ -1199,31 +1021,21 @@ en:
     order_summary: Order Summary
     order_sure_want_to: Are you sure you want to %{event} this order?
     order_total: Order Total
-    order_updated: Order Updated
     orders: Orders
     out_of_stock: Out of Stock
-    overview: Overview
     package_from: package from
     page_not_found: Sorry! Page you are looking can’t be found.
-    pagination:
-      next_page: next page &raquo;
-      previous_page: "&laquo; previous page"
-      truncate: "&hellip;"
     password: Password
     paste: Paste
     path: Path
-    pay: pay
     payment: Payment
     payment_amount: Payment amount
     payment_could_not_be_created: Payment could not be created.
     payment_identifier: Payment Identifier
-    payment_information: Payment Information
     payment_method: Payment Method
     payment_method_not_supported: That payment method is unsupported. Please choose another one.
     payment_methods: Payment Methods
     payment_processing_failed: Payment could not be processed, please check the details you entered
-    payment_processor_choose_banner_text: If you need help choosing a payment processor, please visit
-    payment_processor_choose_link: our payments page
     payment_provider_settings: Payment Provider Settings
     payment_state: Payment State
     payment_states:
@@ -1242,26 +1054,17 @@ en:
     payments_count: Payments count
     pdp:
       checkout: Checkout
-      description: Description
-      details: Details
       products_included_in_promotion: Products included in the promotion
       quantity: Quantity
       view_cart: View cart
-      you_may_also_like: You may also like
     pending: Pending
     pending_sale: Pending Sale
-    percent: Percent
     percent_per_item: Percent Per Item
     permalink: Permalink
     phone: Phone
-    place_order: Place Order
     please_define_payment_methods: Please define some payment methods first.
-    please_enter_reasonable_quantity: Please enter a reasonable quantity.
     plp:
-      best_selling: BEST SELLING
       clear_all: CLEAR ALL
-      collection: COLLECTION
-      color: COLOR
       default: DEFAULT
       done: DONE
       filter_by: FILTER BY
@@ -1275,14 +1078,8 @@ en:
       price: price
       price_high_to_low: PRICE (HIGH - LOW)
       price_low_to_high: PRICE (LOW - HIGH)
-      result: RESULT
       results_for: RESULTS FOR
-      size: SIZE
       sort_by: SORT BY
-      top_sellers: TOP SELLERS
-      type: TYPE
-    populate_get_error: Something went wrong. Please try adding the item again.
-    powered_by: Powered by
     pre_tax_amount: Pre-Tax Amount
     pre_tax_refund_amount: Pre-Tax Refund Amount
     pre_tax_total: Pre-Tax Total
@@ -1294,15 +1091,11 @@ en:
     previous_state_missing: n/a
     previously_used_card: Previously Used Cards
     price: Price
-    price_range: Price Range
     price_sack: Price Sack
     prices: Prices
-    process: Process
     product: Product
-    product_details: Product Details
     product_has_no_description: This product has no description
     product_not_available_in_this_currency: This product is not available in the selected currency.
-    product_properties: Product Properties
     product_rule:
       choose_products: Choose products
       label: Order must contain x amount of these products
@@ -1378,27 +1171,17 @@ en:
     provider: Provider
     provider_settings_warning: If you are changing the provider type, you must save first before you can edit the provider settings
     purchased_quantity: Purchased Quantity
-    qty: Qty
     quantity: Quantity
-    quantity_returned: Quantity Returned
-    quantity_shipped: Quantity Shipped
     quick_search: Quick search..
     rate: Rate
     reason: Reason
-    receive: receive
     receive_stock: Receive Stock
-    received: Received
-    reception_status: Reception Status
     reference: Reference
     reference_contains: Reference Contains
     refund: Refund
-    refund_amount_must_be_greater_than_zero: Refund amount must be greater than zero
     refund_reasons: Refund Reasons
-    refunded_amount: Refunded Amount
     refunds: Refunds
     regenerate_key: Regenerate key
-    register: Register
-    registration: Registration
     reimburse: Reimburse
     reimbursed: Reimbursed
     reimbursement: Reimbursement
@@ -1407,84 +1190,61 @@ en:
         days_to_send: You have %{days} days to send back any items awaiting exchange.
         dear_customer: Dear %{name},
         exchange_summary: Exchange Summary
-        for: for
         instructions: Your reimbursement has been processed.
         refund_summary: Refund Summary
         store_team: "%{store_name} Team"
         subject: Reimbursement Notification
         thanks: Thank you for your business.
         total_refunded: 'Total refunded: %{total}'
-    reimbursement_perform_failed: 'Reimbursement could not be performed.  Error: %{error}'
     reimbursement_status: Reimbursement status
     reimbursement_type: Reimbursement type
     reimbursement_type_override: Reimbursement Type Override
     reimbursement_types: Reimbursement Types
-    reimbursements: Reimbursements
     reject: Reject
     rejected: Rejected
     remember_me: Remember me
     remove: Remove
     remove_image: Remove Image
     rename: Rename
-    report: Report
     reports: Reports
     required: "*"
     required_fields: required fields
     resellable: Resellable
     resend: Resend
-    reset_password: Reset my password
-    response_code: Response Code
-    resume: resume
-    resumed: Resumed
-    return: return
-    return_authorization: Return Authorization
     return_authorization_canceled: Return authorization canceled
     return_authorization_reasons: Return Authorization Reasons
     return_authorization_states:
       authorized: Authorized
       canceled: Canceled
-    return_authorization_updated: Return authorization updated
     return_authorizations: Return Authorizations
     return_item_inventory_unit_ineligible: Return item's inventory unit must be shipped
     return_item_inventory_unit_reimbursed: Return item's inventory unit is already reimbursed
     return_item_order_not_completed: Return item's order must be completed
     return_item_rma_ineligible: Return item requires an RMA
     return_item_time_period_ineligible: Return item is outside the eligible time period
-    return_items: Return Items
     return_items_cannot_be_associated_with_multiple_orders: Return items cannot be associated with multiple orders.
     return_number: Return Number
     return_quantity: Return Quantity
-    returned: Returned
     returns: Returns
-    review: Review
     risk: Risk
     risk_analysis: Risk Analysis
     risky: Risky
-    rma_credit: RMA Credit
     rma_number: RMA Number
-    rma_value: RMA Value
     role_id: Role ID
     roles: Roles
     rules: Rules
     safe: Safe
     sales_total: Sales Total
-    sales_total_description: Sales Total For All Orders
     sales_totals: Sales Totals
     save: Save
-    save_and_continue: Save and Continue
-    save_my_address: Save my address
     saving: Saving
     say_no: 'No'
     say_yes: 'Yes'
-    scope: Scope
     search: Search
-    search_results: Search results for '%{keywords}'
     searching: Searching
-    secure_connection_type: Secure Connection Type
     security_settings: Security Settings
     select: Select
     select_a_date: Select a date
-    select_a_date_range: Select a date range
     select_a_return_authorization_reason: Select a reason for the return authorization
     select_a_stock_location: Select a stock location
     select_a_store_credit_reason: Select a reason for the store credit
@@ -1492,21 +1252,16 @@ en:
     select_from_prototype: Select From Prototype
     select_stock: Select stock
     selected_quantity_not_available: selected of %{item} is not available.
-    send_copy_of_all_mails_to: Send Copy of All Mails To
-    send_mails_as: Send Mails As
     seo: SEO
     seo_robots: SEO Robots
     seo_title: SEO Title
-    server: Server
     server_error: The server returned an error
     settings: Settings
     ship: Ship
-    ship_address: Ship Address
     ship_to: 'Shipping to:'
     ship_total: Ship Total
     shipment: Shipment
     shipment_adjustments: Shipment adjustments
-    shipment_details: From %{stock_location} via %{shipping_method}
     shipment_mailer:
       shipped_email:
         dear_customer: Dear %{name},
@@ -1526,10 +1281,8 @@ en:
       pending: pending
       ready: ready
       shipped: shipped
-    shipment_transfer_error: There was an error transferring variants
     shipment_transfer_success: Variants successfully transferred
     shipments: Shipments
-    shipped: Shipped
     shipping: Shipping
     shipping_address: Shipping Address
     shipping_categories: Shipping Categories
@@ -1545,7 +1298,6 @@ en:
       display_price:
         excluding_tax: "%{price} (+ %{tax_amount} %{tax_rate_name})"
         including_tax: "%{price} (incl. %{tax_amount} %{tax_rate_name})"
-    shipping_total: Shipping total
     shop_by_taxonomy: Shop by %{taxonomy}
     shopping_cart: Shopping Cart
     show: Show
@@ -1561,16 +1313,12 @@ en:
       short: Show Store selector
     sign_up: Sign Up
     sku: SKU
-    skus: SKUs
     slug: Slug
     social: Social
     source: Source
     special_instructions: Special Instructions
     split: Split
     spree_gateway_error_flash_for_checkout: There was a problem with your payment information. Please check your information and try again.
-    ssl:
-      change_protocol: Please switch to using HTTP (rather than HTTPS) and retry this request.
-    start: Start
     starting_from: Starts at
     state: State
     state_based: State Based
@@ -1616,7 +1364,6 @@ en:
     stock_location_info: Stock location info
     stock_locations: Stock Locations
     stock_locations_need_a_default_country: You must create a default country before creating a stock location.
-    stock_management: Stock Management
     stock_management_requires_a_stock_location: Please create a stock location in order to manage stock.
     stock_movements: Stock Movements
     stock_movements_for_stock_location: Stock Movements for %{stock_location_name}
@@ -1627,7 +1374,6 @@ en:
         variants_unavailable: Some variants are not available on %{stock}
     stock_transfer_name: Stock Transfer
     stock_transfers: Stock Transfers
-    stop: Stop
     store: Store
     store_credit:
       additional_payment_needed: Select another payment method for the remaining <strong>%{amount}</strong>.
@@ -1642,7 +1388,6 @@ en:
         cannot_change_used_store_credit: You cannot change a store credit that has already been used
         unable_to_create: Unable to create store credit
         unable_to_delete: Unable to delete store credit
-        unable_to_fund: Unable to pay for order using store credits
         unable_to_update: Unable to update store credit
       remaining_amount: You have <strong>%{amount}</strong> remaining in your account's Store Credit.
       remove: Remove
@@ -1652,15 +1397,11 @@ en:
       currency_mismatch: Store credit currency does not match order currency
       insufficient_authorized_amount: Unable to capture more than authorized amount
       insufficient_funds: Store credit amount remaining is not sufficient
-      select_one_store_credit: Select store credit to go towards remaining balance
       successful_action: Successful store credit %{action}
       unable_to_credit: 'Unable to credit code: %{auth_code}'
       unable_to_find: Could not find store credit
       unable_to_find_for_action: 'Could not find store credit for auth code: %{auth_code} for action: %{action}'
       unable_to_void: 'Unable to void code: %{auth_code}'
-      user_has_no_store_credits: User does not have any available store credit
-    store_credits: Store Credits
-    store_default: Default store
     store_errors:
       unable_to_create: Unable to create store.
       unable_to_delete: Unable to delete store.
@@ -1683,17 +1424,13 @@ en:
     street_address: Street Address
     street_address_2: Street Address (cont'd)
     subtotal: Subtotal
-    subtract: Subtract
     success: Success
     successfully_created: "%{resource} has been successfully created!"
-    successfully_refunded: "%{resource} has been successfully refunded!"
     successfully_removed: "%{resource} has been successfully removed!"
     successfully_updated: "%{resource} has been successfully updated!"
     summary: Summary
     supported_currencies: Supported Currencies
-    supported_currencies_long: A comma separated list of supported currencies
     supported_locales: Supported Locales
-    tags: Tags
     tags_placeholder: Add Tags
     tax: Tax
     tax_categories: Tax Categories
@@ -1702,8 +1439,6 @@ en:
     tax_included: Tax (incl.)
     tax_rate_amount_explanation: Tax rates are a decimal amount to aid in calculations, (i.e. if the tax rate is 5% then enter 0.05)
     tax_rates: Tax Rates
-    taxon: Taxon
-    taxon_edit: Edit Taxon
     taxon_missing_alt: Category banner description
     taxon_placeholder: Add a Taxon
     taxon_rule:
@@ -1712,21 +1447,16 @@ en:
       match_all: all
       match_any: at least one
     taxonomies: Taxonomies
-    taxonomy: Taxonomy
     taxonomy_brands_name: Brands
     taxonomy_categories_name: Categories
-    taxonomy_edit: Edit taxonomy
     taxonomy_tree_error: The requested change has not been accepted and the tree has been returned to its previous state, please try again.
     taxonomy_tree_instruction: "* Right click (or double tap on iOS device) a child in the tree to access the menu for adding, deleting or sorting a child."
     taxons: Taxons
-    test: Test
     test_mailer:
       test_email:
         greeting: Congratulations!
         message: If you have received this email, then your email settings are correct.
         subject: Test Mail
-    test_mode: Test Mode
-    thank_you_for_your_order: Thank you for your business.  Please print out a copy of this confirmation page for your records.
     there_are_no_items_for_this_order: There are no items for this order. Please add an item to the order to continue.
     there_were_problems_with_the_following_fields: There were problems with the following fields
     this_order_has_already_received_a_refund: This order has already received a refund
@@ -1737,7 +1467,6 @@ en:
     time: Time
     to_add_variants_you_must_first_define: To add variants, you must first define
     total: Total
-    total_per_item: Total per item
     total_pre_tax_refund: Total Pre-Tax Refund
     total_price: Total price
     total_sales: Total Sales
@@ -1756,20 +1485,13 @@ en:
     type_to_search: Type to search
     unable_to_connect_to_gateway: Unable to connect to gateway.
     unable_to_create_reimbursements: Unable to create reimbursements because there are items pending manual intervention.
-    under_price: Under %{price}
-    unlock: Unlock
     unrecognized_card_type: Unrecognized card type
-    unshippable_items: Unshippable Items
     update: Update
-    updating: Updating
     url: URL
     usage_limit: Usage Limit
     use_app_default: Use App Default
     use_billing_address: Use Billing Address
-    use_existing_cc: Use an existing card on file
     use_new_cc: Use a new card
-    use_new_cc_or_payment_method: Use a new card / payment method
-    use_s3: Use Amazon S3 For Images
     used: Used
     user: User
     user_not_found: User not found
@@ -1789,15 +1511,10 @@ en:
     variant_placeholder: Choose a variant
     variant_prices_search_placeholder: Search for SKU or variant name...
     variants: Variants
-    version: Version
-    void: Void
     weight: Weight
     what_is_a_cvv: What is a (CVV) Credit Card Code?
-    what_is_this: What's This?
     width: Width
-    year: Year
     you_have_no_orders_yet: You have no orders yet
-    your_cart_is_empty: Your cart is empty
     your_order_is_empty_add_product: Your order is empty, please search for and add a product above
     zip: Zip
     zipcode: Zip Code

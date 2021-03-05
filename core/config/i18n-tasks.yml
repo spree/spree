@@ -54,6 +54,14 @@ data:
 search:
   ## Paths or `File.find` patterns to search in:
   paths:
+    # API
+    - '../api/app/controllers'
+    - '../api/app/helpers'
+    - '../api/app/models'
+    - '../api/app/serializers'
+    - '../api/app/services'
+    - '../api/app/views'
+
     # Frontend
     - '../frontend/app/controllers'
     - '../frontend/app/helpers'
@@ -125,6 +133,33 @@ ignore_unused:
   - 'spree.date_picker.*'
   - 'spree.fpr_human_friendly_date_format'
   - 'spree.fpr_human_friendly_date_time_format'
+  - 'spree.promotion_action_types.*'
+  - 'spree.promotion_rule_types.*'
+  - 'spree.shipment_states.*'
+  - 'spree.state_machine_states.*'
+  - 'spree.return_authorization_states.*'
+  - 'spree.promotion_form.match_policies.*'
+  - 'spree.product_rule.*'
+  - 'spree.payment_states.*'
+  - 'spree.order_state.*'
+  - 'spree.item_total_rule.*'
+  - 'spree.events.*'
+  - 'spree.eligibility_errors.messages.*'
+  - 'spree.admin.order.events.*'
+  - 'spree.adjustment_labels.tax_rates.*'
+  - 'spree.address_book.*'
+  - 'spree.validation.*'
+  - 'spree.taxon_rule.*'
+  - 'spree.shipping_rates.*'
+  - 'errors.messages.*'
+  - 'devise.*'
+  - 'activerecord.*'
+  - 'activemodel.*'
+  - 'number.*'
+  - 'pagination.*'
+  # not sure
+  - 'spree.i18n.*'
+  - 'spree.actions.*'
 
 ## Exclude these keys from the `i18n-tasks eq-base' report:
 # ignore_eq_base:
