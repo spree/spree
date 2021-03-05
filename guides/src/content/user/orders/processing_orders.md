@@ -27,7 +27,7 @@ If you click either the Order Number or the "Edit" icon, you will open the order
 
 ![Payment to Process](../../../images/user/orders/payment_to_process.jpg)
 
-As you can see above, we have only a single payment to process, for the full amount ($22.59). Processing this payment is literally a click away; just click on the "Capture" icon next to the payment.
+As you can see above, we have only a single payment to process, for the full amount ($131.93). Processing this payment is literally a click away; just click on the "Capture" icon next to the payment.
 
 If the payment is processed successfully, the page will re-load, showing you that the payment state has progressed from "Pending" to "Completed".
 
