@@ -16,17 +16,17 @@ There's now a simple way to create a new Store Credit Category. You can do it by
 
 ![New SC Category](../../../images/user/config/new_sc_category.jpg)
 
-There is only one input box that tells what kind of category you will create. Simply input the name and press the **Create** button.
+There is only one input box to define the new category you will create. Simply input the name and press the **Create** button.
 
 ![New SC Category Name](../../../images/user/config/new_sc_category_name.jpg)
 
 ## Editing and Deleting Store Credit Categories
 
-The previously created Category is visible in the Store Credit Categories settings. You can now create more of them or make additional changes to existing ones.
-In every other section in Spree you can see **Edit** and **Delete** buttons next to the name of category.
+The previously created Category is visible in the Store Credit Categories settings. You can now create more categories or make changes to existing ones.
+As in every other section of Spree, you can see **Edit** and **Delete** buttons next to the name of each category.
 
 ![Category Edit](../../../images/user/config/category_edit_icon.jpg)
 
 ![Category Delete](../../../images/user/config/category_delete_icon.jpg)
 
-You can now assign Store Credit to the User's accounts. You can learn more about it [here](/user/users/editing_users.html)
+You can now assign Store Credit to the users' accounts. You can learn more about it [here](/user/users/editing_users.html)
