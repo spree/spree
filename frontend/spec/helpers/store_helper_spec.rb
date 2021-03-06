@@ -36,7 +36,7 @@ module Spree
     end
 
     describe '#store_locale_name' do
-      it { expect(store_locale_name(Spree::Store.default)).to eq('English (US)') }
+      it { expect(store_locale_name(Spree::Store.default)).to eq(Spree.t('i18n.this_file_language', locale: 'en')) }
       it { expect(store_locale_name(eu_store)).to eq('Deutsch (DE)') }
       it { expect { store_locale_name(nil) }.not_to raise_error }
     end

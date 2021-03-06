@@ -34,7 +34,7 @@ describe 'Stores admin', type: :feature, js: true do
       expect(store_table).to have_content('My Store')
       expect(store_table).to have_content('example.com')
       expect(store_table).to have_content('EUR, USD')
-      expect(store_table).to have_content('English (US), Français (FR)')
+      expect(store_table).to have_content("#{Spree.t('i18n.this_file_language', locale: 'en')}, Français (FR)")
     end
   end
 
@@ -96,7 +96,7 @@ describe 'Stores admin', type: :feature, js: true do
       select2_search 'GBP', from: 'Supported Currencies'
       select2_select 'GBP', from: 'Supported Currencies'
 
-      select2 'English (US)', from: 'Default locale'
+      select2 Spree.t('i18n.this_file_language', locale: 'en'), from: 'Default locale'
 
       click_button 'Create'
 
